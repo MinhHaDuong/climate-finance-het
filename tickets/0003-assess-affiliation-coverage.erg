@@ -1,9 +1,7 @@
-%erg v1
+%erg 0.1
 Title: Assess affiliation coverage for go/no-go gate
-Status: open
 Created: 2026-04-13
 Author: claude
-Blocked-by: 0002
 
 --- log ---
 2026-04-13T15:45Z claude created

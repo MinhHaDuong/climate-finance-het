@@ -1,0 +1,37 @@
+%erg 0.1
+Title: Move zoo-only.pdf target into zoo.mk after #725 merges
+Created: 2026-04-21
+Author: claude
+Closed: migrated from Status: closed
+
+--- log ---
+2026-04-24T00:00Z agent closed — zoo PDF target already in zoo.mk (PR #733 + #725 complete)
+2026-04-21T00:00Z claude created — deferred from #733 exit criteria 3+4
+
+2026-06-03T19:48Z claude renumbered from 0093 (duplicate ID with 0093-fix-companion-mk-uv-run, created earlier)
+
+--- body ---
+## Context
+
+PR #733 (feat(0092): add zoo.mk) met exit criteria 1 and 2 but could not
+satisfy criteria 3–4 because they depend on PR #725 (zoo-only.qmd render
+target), which had not merged at force-approve time.
+
+This ticket defers those two criteria.
+
+## Actions
+
+1. After PR #725 merges, move the `output/content/zoo-only.pdf` target
+   from `Makefile` into `zoo.mk`.
+
+2. Add an end-to-end test that calls `make output/content/zoo-only.pdf`
+   from a clean state and asserts the PDF is produced.
+
+## Test
+
+`make output/content/zoo-only.pdf` succeeds from a clean figures/ state;
+the test asserts the output file exists and is non-empty.
+
+## Dependencies
+
+- PR #725 (t0090-zoo-only-render) must be merged first.

@@ -1,6 +1,5 @@
-%erg v1
+%erg 0.1
 Title: Add S0_centroid cosine-centroid distance as zoo method
-Status: open
 Created: 2026-04-24
 Author: claude
 

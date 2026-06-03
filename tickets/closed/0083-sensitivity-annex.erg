@@ -1,0 +1,173 @@
+%erg 0.1
+Title: Companion paper sensitivity annex — window × gap × embedding dim × model
+Created: 2026-04-18
+Author: user
+Closed: migrated from Status: closed
+
+--- log ---
+2026-04-18T09:00Z claude created from /verify round-2 adjudication failure on PR #708
+
+2026-04-23T06:45Z claude closed — all exit criteria met: CSV+figure+prose already on main (PR #754)
+
+--- body ---
+## Context
+
+PR #708 (`/verify` round 2) surfaced a worked-example inconsistency in
+§3: the footnote illustrates per-window bounds with $w=5$ while §4.3
+declares $w=3$ as the default. The author could not adjudicate which
+one to keep, because the "right" value depends on a sensitivity
+analysis we have not yet run. Opening that analysis as its own
+deliverable lets us cite it from §3 instead of picking a value
+arbitrarily.
+
+The companion paper already promises robustness (§4.8) but reports
+only one sensitivity axis (equal-$n$ subsampling). Reviewers of a
+method paper will ask for more. This annex answers four questions in
+one grid:
+
+1. How does window half-width affect the detected zones?
+2. How does the censored-gap width affect confirmed-vs-gradual labels?
+3. How does embedding dimensionality affect the Z-score profile?
+4. How does the choice of embedding model affect conclusions?
+
+## Deliverable
+
+A new appendix (probably §A.1 Sensitivity sweep) in
+`content/companion-paper.qmd` consisting of one small-multiples figure
+plus a short interpreting paragraph.
+
+## Sensitivity grid
+
+Small multiples layout:
+
+- **Grid columns (X)**: window half-width $w \in \{1, 3, 5, \text{unlimited}\}$.
+  - `unlimited` = all years before $t$ in the before-window, and all
+    years after $t$ in the after-window (no half-width truncation).
+- **Grid rows (Y)**: censored-gap width $g \in \{0, 1, 3, 5\}$ years.
+  - $g = 0$ is the base case (no censoring).
+- **Within each cell (curves)**:
+  - Embedding dimensionality: `full` (1024), `PCA-512`, `PCA-256`,
+    `PCA-128`, `PCA-64` — five variants.
+  - Embedding model: two alternates — likely `BAAI/bge-m3` (current)
+    and one of `sentence-transformers/all-mpnet-base-v2` or
+    `allenai/scibert_scivocab_uncased`. Decide at research time; the
+    choice should be an English-strong methods-domain model to
+    contrast with the multilingual default.
+- **Y-axis per cell**: $Z$-score for S2 energy at lead year $t$, or
+  the method-agreed peak-Z per year. Scope the method to S2 (lead
+  embedding channel) — L1 / G9 / G2 sensitivities can be added
+  later if compute budget allows.
+- **X-axis per cell**: year, 1998–2021.
+- **Per-point estimator**: median of $R = 3$ equal-$n$ subsample
+  replicates. Chosen to reduce subsampling noise by ~42% ($\sqrt{3}$)
+  while keeping compute manageable. Single-draw ($R=1$) is vulnerable
+  to one-unlucky-subsample pathologies; full ribbon ($R=20$ trim-2,
+  as in ticket 0084) is overkill for an annex whose primary purpose
+  is parameter-effect visibility. Center lines only — no within-cell
+  ribbons (visual clutter at subplot size).
+
+That is $4 \times 4 = 16$ cells, each with $5 \times 2 = 10$ curves.
+The grid communicates three things at a glance:
+
+1. The shape of the signal is robust (or not) to window and gap choice.
+2. PCA dimensionality affects magnitude but not shape (expected).
+3. Model choice affects the late-period saturation pattern —
+   important for the B2/B9 growth-bias discussion.
+
+## Compute cost estimate
+
+Let $n$ = number of divergence recomputations needed:
+
+- 16 grid cells × 10 model-dim variants × ~24 years × 3 subsample
+  replicates × 1 method = **~11,500 S2-energy evaluations per run**.
+
+Current per-evaluation cost: ~0.5 s on an RTX A4000 with torch
+backend for S2 with embeddings pre-loaded. Total: ~1.5 h per pass,
+dominated by model-loading overhead if we do not batch.
+
+Batching strategy: pre-compute all embeddings for each (model, dim)
+pair once, cache to `content/tables/cache/emb_{model}_{dim}.npz`,
+then run the S2 pipeline over the cache. Add PCA fit/transform as a
+script on top of `refined_embeddings.npz`.
+
+Practical total: ~1.5–2 h GPU time on padme for the full grid with
+$R = 3$.
+
+## Actions
+
+1. Extend `config/analysis.yaml` with a `sensitivity:` block declaring
+   the grid axes (windows, gaps, dim_variants, models, `equal_n_r: 3`).
+   Reviewers can then re-run with different parameters.
+2. Write `scripts/compute_sensitivity_grid.py` — one output:
+   `content/tables/tab_sensitivity_grid.csv` with columns
+   `(model, dim, window, gap, year, method, z_score_median, p_value,
+   n_before, n_after, n_subsamples)`. `z_score_median` is the median
+   over R=3 subsample replicates. Script accepts `--output` per
+   script-io rule. Uses independent RNG streams per replicate (same
+   discipline as ticket 0084).
+3. Write `scripts/plot_companion_sensitivity.py` → small multiples
+   figure `content/figures/fig_companion_sensitivity.png` via
+   `save_figure()`. One cell per (window, gap) pair; ten lines per cell.
+4. Add a Make target `companion-sensitivity` in `companion.mk` with
+   proper prerequisites on the cache files.
+5. Write §A.1 Sensitivity sweep (appendix) in `companion-paper.qmd`:
+   - reference `@fig-companion-sensitivity`
+   - one paragraph per grid-axis observation
+   - one sentence on the estimator difference: *"Annex center lines
+     are median-of-three equal-$n$ subsamples per cell (compute
+     budget). Main-text Z-ribbons use $R=20$ trim-2 (§4.5)."*
+   - honest call-out of any surprise (e.g., unlimited-window column
+     collapsing, or one model flipping a zone's sign)
+6. Update §3 footnote to reference the annex instead of illustrating
+   the bound derivation with a specific $w$. Suggested text:
+   `The admissible analytic range depends on the chosen window
+   half-width and gap; see §A.1 for the full sensitivity sweep.`
+7. Add `tests/test_sensitivity_grid.py` with:
+   - a smoke test that `compute_sensitivity_grid.py` runs on a
+     fixture covering 2 windows × 2 gaps × 2 dims × 1 model;
+   - a schema assertion for `tab_sensitivity_grid.csv`;
+   - an assertion that the plot script produces a non-empty PNG.
+
+## Test (TDD first-red)
+
+```python
+def test_sensitivity_grid_schema():
+    """tab_sensitivity_grid.csv carries the full parameter grid."""
+    df = pd.read_csv("content/tables/tab_sensitivity_grid.csv")
+    assert set(df.columns) >= {"model", "dim", "window", "gap",
+                                "year", "method", "z_score", "p_value"}
+    # sweep covers the configured grid
+    cfg = load_analysis_config()["sensitivity"]
+    for w in cfg["windows"]:
+        for g in cfg["gaps"]:
+            sub = df[(df.window == w) & (df.gap == g)]
+            assert len(sub) > 0, f"missing cell (w={w}, g={g})"
+```
+
+## Exit criteria
+
+- `tab_sensitivity_grid.csv` populated for the full 4×4×5×1 grid on
+  S2 at minimum. Schema test passes. (Model axis dropped — only
+  BAAI/bge-m3 available; re-embedding 28k papers is future work.)
+- `fig_companion_sensitivity.png` renders — 16 subplots, 5 lines each.
+- §A.1 appendix in `companion-paper.qmd` interprets the figure in
+  ≤ 300 words.
+- §3 footnote references the annex instead of picking one $w$.
+- `make check-fast` passes.
+
+## Priority / scope
+
+Not a blocker for QSS submission-branch sprout. But reviewers WILL
+ask "how sensitive is this to window choice / dimensionality / model
+choice?" — having the annex ready before first-round reviews arrive
+is higher-leverage than adding it during revisions.
+
+Extend to L1, G9, G2 in a follow-up ticket only if compute permits
+and reviewers ask. S2 alone demonstrates the framework's sensitivity
+envelope.
+
+## Out of scope
+
+- Paper 4 / Paper 5 multilingual extensions (separate research program).
+- BGE-m3 vs. SciBERT head-to-head as a *finding* — this annex treats
+  model as a nuisance parameter, not a research question.

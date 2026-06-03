@@ -1,0 +1,70 @@
+%erg 0.1
+Title: Submit "Paris didn't matter" short piece to Nature Climate Change
+Created: 2026-04-13
+Author: user
+Closed: migrated from Status: closed
+
+--- log ---
+2026-04-13T19:30Z claude created
+2026-04-13T19:30Z claude note epic — spawned from Imagine session reviewing companion paper publication strategy
+2026-04-13T21:03Z claude note decomposed into subtasks 0015-0020
+2026-04-13T21:07Z claude note added research/planning gates 0021-0023
+2026-04-14T12:48Z user status closed — won't do: "Paris didn't matter" oversells what the data shows; mid-2010s JS divergence is real signal; Oeconomia paper's cautious "corroborates" framing is correct, NCC inversion is not
+
+--- body ---
+## Context
+The companion methods paper contains a finding that is counterintuitive and
+highly citable but buried inside a framework validation: computational analysis
+of ~32,000 works shows climate finance scholarship crystallized around
+Copenhagen (2009), not Paris (2015). The field's conceptual categories haven't
+changed in 15 years. The core (cited >= 50) shows no structural break at all.
+
+This finding is currently used as "corroborative evidence" in the Oeconomia
+paper (under review) and as a validation example in the companion methods paper
+(draft). It leads in neither.
+
+Extracting it into a short, sharp piece for a high-visibility venue maximizes
+citation impact. Nature Climate Change publishes "Analysis" pieces (~2,000
+words, 4 figures). The argument targets everyone writing about climate finance
+governance — they'd need to cite it when discussing periodization.
+
+The companion methods paper becomes a preprint (arXiv/SocArXiv) providing full
+technical details, cited by the NCC piece.
+
+## Self-plagiarism management
+- Oeconomia paper (under review): uses the same break detection results as
+  corroboration. The NCC piece would frame differently (policy implications vs
+  intellectual history). Different audience, different argument. Cross-reference
+  explicitly.
+- Companion paper: released as preprint, not journal submission. The NCC piece
+  cites it for methods. No overlap issue with a preprint.
+
+## Actions
+1. Draft 2,000-word Analysis piece: "The categories we fight in"
+2. Lead with the finding: Paris produced no structural break
+3. Four figures: (a) sliding-window divergence showing 2009 peak, (b) core vs
+   full corpus comparison, (c) efficiency-accountability bimodality KDE,
+   (d) alluvial diagram showing stable cluster structure
+4. Release companion paper as preprint on SocArXiv
+5. Verify NCC "Analysis" format requirements
+6. Submit
+
+## Test
+Draft passes internal review: counterintuitive finding stated in first
+paragraph, policy implications clear, no overlap with Oeconomia framing.
+
+## Subtasks
+| # | Title | Blocked by | Wave |
+|---|-------|------------|------|
+| 0021 | Audit codebase and Makefile for NCC readiness | — | 0 (research) |
+| 0022 | Literature review on the NCC message | — | 0 (research) |
+| 0023 | Research Article 6 relationship | — | 0 (research) |
+| 0015 | Make companion paper preprint-ready | 0021 | 1 |
+| 0017 | Verify NCC Analysis format requirements | — | 0 (research) |
+| 0016 | Post companion preprint on SocArXiv | 0015 | 2 |
+| 0018 | Adapt 4 figures for NCC format | 0017, 0021 | 2 |
+| 0019 | Draft NCC piece | 0017, 0018, 0022, 0023 | 3 |
+| 0020 | Submit to NCC | 0016, 0019 | 4 |
+
+## Exit criteria
+Piece submitted to NCC. Companion preprint posted.

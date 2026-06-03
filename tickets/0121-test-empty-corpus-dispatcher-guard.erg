@@ -1,6 +1,5 @@
-%erg v1
+%erg 0.1
 Title: Standing regression test — dispatcher must never emit 1-column DataFrame on empty corpus
-Status: open
 Created: 2026-04-25
 Author: claude
 

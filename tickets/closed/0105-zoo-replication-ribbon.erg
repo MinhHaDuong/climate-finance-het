@@ -1,0 +1,164 @@
+%erg 0.1
+Title: Implement replication ribbon for zoo result figures (equal_n_r=20)
+Created: 2026-04-24
+Author: claude
+Closed: migrated from Status: closed
+
+--- log ---
+2026-04-24T11:45Z claude created
+2026-04-27T02:07Z claude note sweep-assess: not picked
+2026-05-01T09:00Z claude note raid-reimagine: Path B — reuse compute_divergence_subsampled.py (existing RNG namespacing, tested seed isolation, 1-invocation-1-output). Point estimate unchanged; ribbon is visual overlay. Extend SUBSAMP_METHODS to all 6 stochastic methods; add C2ST statistic fns; wire subsample CSV into crossyear zscore via --subsample-csv; derive z_lo/z_hi with shared mu/sigma.
+2026-05-01T17:00Z claude note /verify PR #781 APPROVED
+2026-05-02T00:00Z claude close — PR #781 merged; housekeeping sweep confirmed celebrate was skipped
+--- body ---
+## Context
+
+`config/analysis.yaml` has `equal_n_r: 20, subsample_trim: 2` (planned in ticket 0084)
+but these parameters are never read. The current D(t,w) for stochastic equal-n methods
+(S1, S2, S3, S4, C2ST variants) is computed from **one** random subsample, making the
+point estimate noisy. The ribbon adds visual honesty: a faint per-window band showing
+[Q10, Q90] across R replicates.
+
+### Statistical design (read before implementing)
+
+**What the ribbon represents**: sampling variability of D(t,w) under repeated
+equal-n subsampling of the same data. It is NOT a null model band (the ±2 / fill_between
+null zone handles that) and NOT a bootstrap CI (which would resample with replacement).
+It shows: *how stable is this estimate if I draw a different subsample?*
+
+**Point estimate change**: moving from R=1 to R=20 changes the main `value` to the
+trimmed mean (dropping `subsample_trim=2` from each tail of 20 values). This makes
+the point estimate more stable and slightly shrinks σ_w (intertemporal std), which
+will modestly change Z-score magnitudes for existing methods. This is intentional
+and should be flagged in commit and STATE.md.
+
+**Normalization**: z_lo / z_hi must be derived using the **same** μ_w and σ_w as
+the main z_score (computed from trimmed-mean `value`). Never normalize each replicate
+separately — that would make ribbon width represent normalization variation, not
+estimation noise.
+
+**Ribbon width interpretation**: width = (value_hi − value_lo) / σ_w in Z-units.
+A ribbon of width 1 Z-unit means the D estimate could shift by one intertemporal
+standard deviation from sampling alone. When the ribbon overlaps ±2, the conclusion
+"significant change" is uncertain.
+
+**Which methods get a non-trivial ribbon**: only those using `equal_n=True` in
+`_iter_window_pairs` with a non-deterministic `rng`. This is the semantic methods
+(S1_MMD, S2_energy, S3_sliced_wasserstein, S4_frechet) and C2ST variants.
+Citation methods (G1-G9) and lexical methods (L1-L3) do not use equal-n subsampling
+or are deterministic — their ribbon will be a flat line (z_lo = z_hi = z_score);
+skip writing those columns rather than storing zero-width bands.
+
+**R=20 precision**: with 20 values and trim=2, the 10th/90th percentile is the 3rd/18th
+sorted value. SE of each percentile ≈ 0.15σ_D — adequate for a visual ribbon, not for
+inference. If a future use case requires inference-quality CIs, raise R to 50-100.
+
+**Seed protocol**: replicate r uses seed = `base_seed + r` (base_seed from config).
+This makes the ribbon reproducible across runs of `compute_divergence.py`.
+
+## Relevant files
+
+- `scripts/compute_divergence.py` — dispatcher; add `--replicates` flag
+- `scripts/_divergence_semantic.py` — `_iter_window_pairs`; already accepts `rng`
+- `scripts/compute_crossyear_zscore.py` — Z-score transform; must propagate lo/hi
+- `scripts/plot_zoo_results.py` — plot; add `fill_between` ribbon per window
+- `scripts/schemas.py` — extend `CrossyearZscoreSchema` and divergence schema
+- `config/analysis.yaml` — `equal_n_r`, `subsample_trim` already present
+- `divergence.mk` — Makefile targets for the 4 stochastic methods
+
+## Actions
+
+1. **`compute_divergence.py`**: add `--replicates INT` (default=1). When >1:
+   - Run the compute function R times, incrementing seed each time.
+   - Collect per-replicate D(t,w) values; sort; drop `subsample_trim` from each tail.
+   - `value` = trimmed mean; `value_lo` = sorted[trim]; `value_hi` = sorted[R-trim-1].
+   - Write these as extra columns. For R=1 (or non-stochastic methods), leave lo/hi as NaN.
+
+2. **`schemas.py`**: add optional `value_lo: float, value_hi: float` to divergence schema;
+   add `z_lo: float, z_hi: float` to `CrossyearZscoreSchema` (nullable).
+
+3. **`compute_crossyear_zscore.py`**: after computing μ_w, σ_w and z_score per window,
+   if `value_lo`/`value_hi` columns are present and non-null, compute:
+   `z_lo = (value_lo − μ_w) / σ_w`, `z_hi = (value_hi − μ_w) / σ_w`.
+   Write them to the output CSV; leave NaN for methods without replicate data.
+
+4. **`divergence.mk`**: for S1, S2, S3, S4, C2ST_embedding, C2ST_lexical targets,
+   pass `--replicates $(ZOO_R)` where `ZOO_R ?= 20`. Other methods: no change.
+
+5. **`plot_zoo_results.py`**: in `_plot()`, after reading df, if `z_lo` and `z_hi`
+   columns are present and non-null for a window, add:
+   ```python
+   ax.fill_between(sub["year"], sub["z_lo"], sub["z_hi"],
+                   alpha=0.08, color=style["color"], zorder=2)
+   ```
+   before drawing the main line. No new CLI argument needed — the script reads what
+   the CSV provides.
+
+6. Rebuild all 18 zoo figures. The 4 stochastic methods will have ribbons; others unchanged.
+
+7. Update STATE.md to note that Z-score values for S1-S4 and C2ST have changed (trimmed
+   mean now used as point estimate instead of single replicate).
+
+## Test
+
+```python
+# tests/test_crossyear_zscore.py
+def test_ribbon_columns_present_for_replicated_method():
+    """tab_crossyear_S2_energy.csv must have z_lo, z_hi columns when replicates>1."""
+    df = pd.read_csv("content/tables/tab_crossyear_S2_energy.csv")
+    assert "z_lo" in df.columns, "missing z_lo"
+    assert "z_hi" in df.columns, "missing z_hi"
+    w3 = df[df["window"] == "3"].dropna(subset=["z_lo", "z_hi"])
+    assert len(w3) > 0, "no non-null ribbon rows for w=3"
+    # ribbon must be non-degenerate (some spread expected)
+    assert (w3["z_hi"] - w3["z_lo"]).mean() > 0.01
+
+def test_ribbon_normalization_consistent():
+    """z_lo and z_hi must be derived from the same μ/σ as z_score."""
+    df = pd.read_csv("content/tables/tab_crossyear_S2_energy.csv")
+    for w, grp in df.groupby("window"):
+        mu = grp["value"].mean()
+        sigma = grp["value"].std()
+        if sigma == 0:
+            continue
+        expected_z = (grp["value"] - mu) / sigma
+        pd.testing.assert_series_equal(
+            grp["z_score"].reset_index(drop=True),
+            expected_z.reset_index(drop=True),
+            check_names=False, atol=1e-6,
+        )
+        # z_lo should equal (value_lo - mu) / sigma
+        if "value_lo" in grp.columns:
+            expected_zlo = (grp["value_lo"] - mu) / sigma
+            pd.testing.assert_series_equal(
+                grp["z_lo"].reset_index(drop=True),
+                expected_zlo.reset_index(drop=True),
+                check_names=False, atol=1e-6,
+            )
+```
+
+## Verification
+
+- [ ] `tab_crossyear_S2_energy.csv` has `z_lo`, `z_hi` columns, non-null for w=3
+- [ ] `tab_crossyear_G1_pagerank.csv` has `z_lo` = `z_hi` = NaN (deterministic method)
+- [ ] Test above passes
+- [ ] `fig_zoo_S2_energy.png` shows faint ribbon around the w=3 line
+- [ ] Ribbon collapses to a line for G1/L1/G9 (deterministic) figures
+- [ ] `make check` passes
+
+## Invariants
+
+- Ribbon columns are nullable; no existing consumers break when columns absent
+- R=1 (default) produces identical output to current behaviour for all methods
+- Schema validator (`strict=True`) must pass with new nullable columns
+- Do not change window construction or Z-score formula
+
+## Exit criteria
+
+All 6 stochastic-method zoo figures show visible ribbon. Tests pass. STATE.md updated.
+
+## Picker assessment 2026-04-27T02:07Z
+**Decision:** not picked
+**Scope:** ~45 min, figure pipeline + test
+**Risk:** medium
+**Reason:** 0078 is lower risk and more contained

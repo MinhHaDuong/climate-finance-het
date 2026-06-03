@@ -1,6 +1,5 @@
-%erg v1
+%erg 0.1
 Title: Pipeline efficiency: profiling, make -j, test speed
-Status: open
 Created: 2026-04-15
 Author: user
 

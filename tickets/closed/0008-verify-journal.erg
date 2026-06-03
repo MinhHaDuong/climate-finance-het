@@ -1,0 +1,53 @@
+%erg 0.1
+Title: Verify target journal for multilingual paper
+Created: 2026-04-13
+Author: claude
+Closed: migrated from Status: closed
+
+--- log ---
+2026-04-13T15:45Z claude created
+2026-04-13T18:30Z claude status pending — awaiting Couperin eligibility response
+2026-04-13T18:30Z claude note research complete, all three original candidates eliminated (none diamond OA), email sent to F. Bordignon (ENPC library)
+2026-04-17T10:00Z claude status closed — superseded by new publication strategy
+2026-04-17T10:00Z claude note parent epic 0001 is on hold (log 2026-04-13T19:30Z); strategy moved to epic 0026 (QSS chosen for companion method paper) + tickets 0013/0014 (venues for corpus v2.0 + finding paper — three candidates: Global Environmental Change / World Development / Nature Climate Change, narrow when data matures)
+
+--- body ---
+## Context
+Target: 30+ citations. Diamond OA preferred, but Couperin-covered APC acceptable.
+
+## Research results (2026-04-13)
+
+### Original candidates — all eliminated
+- **QSS** (MIT Press/ISSI): Gold OA, APC $750 (ISSI) / $1,200. NOT diamond.
+- **Research Evaluation** (OUP): Hybrid, APC ~$3,000–4,500. NOT diamond.
+- **ST&HV** (SAGE/4S): Hybrid, APC ~$3,000+. NOT diamond.
+
+### Diamond OA alternatives — insufficient citation potential
+- **Cultural Analytics** (Princeton): Diamond OA but scope mismatch (literary/cultural objects, not metascience). IF 1.1, H-index 12. Cannot reach 30 citations.
+- **ESTS** (4S): Diamond OA, 80-90% desk rejection, 5,000 word limit. Not viable.
+- **Revue d'anthropologie des connaissances**: Diamond OA, French. Citation ceiling too low.
+
+### Viable options (APC covered or low)
+| Priority | Journal | APC | Path to zero cost | 30+ cites |
+|----------|---------|-----|--------------------|-----------|
+| 1 | Scientometrics (Springer) | €2,200 | Couperin/ENPC — awaiting confirmation | Realistic (IF 3.5) |
+| 2 | JASIST (Wiley) | $3,480 | Couperin/ENPC — awaiting confirmation | Realistic |
+| 3 | QSS (MIT Press) | $750 | ISSI membership €75 + Garfield waiver | Realistic (IF 3.5, 5y: 6.6) |
+
+### Citation reality
+Multilingual embeddings for bibliometrics is novel but niche. Median expectation:
+5–10 citations in 3 years. 30+ = top 7–8%. Best strategy: frame as general
+methodological requirement for any cross-linguistic bibliometric study, not just
+climate finance.
+
+## Pending action
+Email sent 2026-04-13 to Frédérique Bordignon (frederique.bordignon@enpc.fr),
+ENPC library IST, asking about Couperin eligibility for Springer and Wiley via ENPC.
+
+## Decision tree
+- If Couperin covers Springer → Scientometrics
+- If Couperin covers Wiley → JASIST
+- If neither → QSS ($750 ISSI + waiver request)
+
+## Exit criteria
+Journal chosen. Formatting requirements known.

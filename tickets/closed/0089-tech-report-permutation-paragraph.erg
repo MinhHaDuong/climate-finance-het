@@ -1,0 +1,56 @@
+%erg 0.1
+Title: Add permutation-test methods paragraph to technical report
+Created: 2026-04-21
+Author: claude
+Closed: migrated from Status: closed
+
+--- log ---
+2026-04-21T14:00Z claude created
+2026-04-21T14:00Z claude note rehomes the deferral from 0086; former tracker 0034 closed without covering this
+2026-04-21T14:30Z orchestrator reimagine: home = new `content/_includes/techrep/null-model.md`, wired after `zscore.md`. Fix test glob: use `content/_includes/**/*.md` not `content/_includes/*.md`.
+2026-04-25T18:33Z orchestrator closed — work already completed. null-model.md (68 lines) exists, wired in technical-report.qmd, 12 grep hits for permutation/null model. All 3 exit criteria met.
+
+--- body ---
+## Context
+Ticket 0086 documented the null-model acceleration (GPU-batched matmul,
+precomputed TF-IDF, joblib) in `.claude/rules/architecture.md` and
+`docs/handoff-padme-divergence.md`, but deferred the matching methods
+paragraph in the technical report. At the time, the paragraph was
+parked under ticket 0034 (structural-breaks-v2 include) because
+`content/_includes/structural-breaks.md` still described the obsolete
+KMeans+JS pipeline and a permutation paragraph would have sat beside
+incoherent prose.
+
+Ticket 0034 has since been closed — its target shifted from the
+technical report to the companion paper (see 0034 log,
+2026-04-15). The deferred paragraph therefore has no live tracker.
+Neither `content/_includes/structural-breaks.md` nor
+`content/technical-report.qmd` currently mentions the permutation test
+or the null-model acceleration (grep: 0 hits for
+`permut|null.model|_permutation_accel`).
+
+## Actions
+1. Decide on the right home: a dedicated `content/_includes/null-model-methods.md`
+   include, or an inline paragraph in whichever structural-breaks section
+   survives the rewrite (see 0026/0027 epics).
+2. Write ≤ 1 paragraph covering: what the permutation test computes
+   (null distribution under label exchangeability), the three
+   acceleration strategies (GPU batched permutations, precomputed
+   TF-IDF, joblib across (year, window)), and the rationale for the
+   NJOBS knob.
+3. Wire into `content/technical-report.qmd` (or let an existing include
+   pick it up).
+
+## Test
+`grep -rn 'permutation\|null model' content/_includes/techrep/`
+returns ≥ 1 hit in `techrep/null-model.md` (note: non-recursive `*.md` glob
+misses `_includes/techrep/` subdirectory; use recursive search).
+
+## Exit criteria
+- One paragraph on permutation-test methods + acceleration lands in the
+  technical report and renders via `make technical-report`.
+- The paragraph reads coherently alongside the surrounding structural-
+  breaks prose (i.e. it does not sit next to the obsolete KMeans+JS
+  description).
+- Cross-references to the architecture.md and handoff doc are either
+  added or explicitly declined as redundant.

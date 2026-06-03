@@ -1,6 +1,5 @@
-%erg v1
+%erg 0.1
 Title: Migrate direct corpus reads to pipeline_loaders (arch rule 9)
-Status: open
 Created: 2026-04-15
 Author: claude
 
