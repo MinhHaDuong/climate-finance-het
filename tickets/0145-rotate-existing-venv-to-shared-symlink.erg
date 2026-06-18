@@ -2,10 +2,12 @@
 Title: Rotate existing real .venv directories into symlinks to the shared /data env
 Created: 2026-06-18
 Author: HDMX-coding-agent
+Closed: rotate-venv-to-shared.sh delivered and tested; one-time main-checkout rotation is a user-run command (agent sandboxed from destructive ops on the live dir)
 
 --- log ---
 2026-06-18T00:00Z HDMX-coding-agent created
 
+2026-06-18T09:46Z HDMX-coding-agent closed — rotate-venv-to-shared.sh delivered and tested; one-time main-checkout rotation is a user-run command (agent sandboxed from destructive ops on the live dir)
 --- body ---
 ## Context
 PR #797 made the post-checkout hook symlink each new worktree's `.venv` to a
