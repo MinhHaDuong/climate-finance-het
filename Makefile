@@ -714,11 +714,10 @@ archive-datapaper: check-corpus corpus-tables figures-datapaper
 	bash release/scripts/build_datapaper_archive.sh
 
 # Repair shared-env console-script shebangs (ticket 0158). uv only rewrites them
-# on an actual sync, so scripts a removed worktree left behind keep its dangling
-# interpreter (e.g. `dvc`, which has no `python -m` entry point). This rewrites
-# every bin/ python shebang to the canonical resolved interpreter. Idempotent;
-# a no-op where .venv is absent or already canonical.
-.PHONY: venv-canonicalize
+# on an actual sync, so scripts that a removed worktree left behind keep its
+# dangling interpreter (e.g. `dvc`, which has no `python -m` entry point). This
+# rewrites every bin/ python shebang to the canonical resolved interpreter.
+# Idempotent; a no-op where .venv is absent or already canonical.
 venv-canonicalize:
 	@v=$(realpath .venv); \
 	if [ -n "$$v" ] && [ -x "$$v/bin/python3" ]; then \
