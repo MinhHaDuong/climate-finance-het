@@ -9,9 +9,15 @@ Author: HDMX-coding-agent
 --- body ---
 ## Context
 Editor's personal emphasis (E3/E4) + Reviewer 1 §2: the history↔quant relation
-is thin and the quantitative analysis is transparent but unjustified.
+is thin and the quantitative analysis is transparent but unjustified. Also owns
+Reviewer 2's headline point (R2a): the central claim — that the categories which
+made climate finance measurable also made it politically contestable, because
+the translation from qualitative realities into quantitative indicators is
+inherently indeterminate — is "potentially innovative" but must be substantiated
+explicitly throughout, not merely asserted.
 
 ## Actions
+0. (R2a) Make the indeterminacy thesis the explicit analytic spine: state it plainly early, then substantiate it at each act with concrete evidence that the qualitative→quantitative translation was underdetermined and that this underdetermination is what opened political contestation. Pairs with the commensuration/economisation thread (0137).
 1. Frame the quant role explicitly up front: confirmatory / exploratory / generative — and state which findings are which.
 2. Resolve directionality: are the three traditions derived from Table 1 or imposed on it? State it. Mobilise Figure 2 in the §1 argument (or cut it).
 3. Add a methods justification (appendix or expanded methods note) answering: corpus construction (sources/docs/reports + boundary criteria, grey-lit inclusion, institutional-doc exclusion, econ-journal underrepresentation); why three periods + how detected; why co-citation + the 250-doc limit in §2; Louvain vs Leiden + modularity 0.68; full-text cleaning; k-means + k + robustness checks.

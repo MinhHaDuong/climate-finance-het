@@ -15,6 +15,7 @@ Blocked-by: 0143
 
 --- log ---
 2026-06-18T06:33Z HDMX-coding-agent created
+2026-06-18T07:05Z HDMX-coding-agent note skeptical completeness audit (sonnet agent) vs decision PDF found 7 gaps where remarks sat only in this inventory, not in a child action step. Closed: R2a→0136 action 0 (indeterminacy thesis as analytic spine); R2p, R2w-substantive, R2x, R2y, R2z, R2ad→added as explicit 0141 action bullets. R2p was missing from this inventory entirely — now added below.
 
 --- body ---
 ## Context
@@ -70,7 +71,7 @@ every referee point (addressed or declined-with-reason).
   - replace abstract formulations ("These were not natural categories but historical constructs"; "The vocabulary was not descriptively neutral…") with direct claims. → 0134
   - connect Desrosières quote (p7) to the empirical case; Desrosières/Porter may not be the best refs — engage Escobar, Tim Mitchell. → 0141, 0143
   - why is borrowing the aid reporting system problematic (consequences, who drove it)? → 0141
-  - Article 4.3 "transactional language" sentence unclear; describe "rigorous incremental-cost framework" concretely; date/explain when it was abandoned vs extended; explain the welfare-theoretic-transfers sentence (p8). → 0141
+  - Article 4.3 "transactional language" sentence unclear; describe "rigorous incremental-cost framework" concretely; date/explain when it was abandoned vs extended; explain the welfare-theoretic-transfers sentence (p8); p8 "the need for a broader category arose" needs evidence (R2p). → 0141
   - CDM: how it functioned in practice; "concept later migrated" develop w/ examples; substantiate "carbon accounting not financial accounting"; who generated post-2012 demand. → 0141
   - p12 "political legitimacy" introduced suddenly (why/for whom); UNFCCC-2007 + Stern → "new economic object" claim too strong; "required not just models but accounting infrastructure" too abstract; Copenhagen context + why $100bn (and the "$100bn anecdotal vs US defense $1.5T" provocation); how climate finance became politically binding (mechanisms); unpack measurement-apparatus/performativity concretely; performativity "declarative not explanatory". → 0136/0141
   - p13 Rio markers role/functioning (reporting context, by whom, purpose); UNFCCC reporting (to whom/by whom/purpose); competing donor vs recipient measurement regimes explicit; §2.3 more examples/sources; p15 OECD expert groups "set terms of debate" (when/where/who/methods/debates); accountability-vocabulary crystallisation examples; p16 UN Advisory Group composition (finance ministers, economists, central bankers, no climate scientists) — does it matter? → 0141
