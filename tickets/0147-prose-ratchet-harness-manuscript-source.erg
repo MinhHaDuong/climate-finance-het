@@ -1,0 +1,35 @@
+%erg 0.1
+Title: prose ratchet harness — manuscript_source substrate + negative-guard tests + ceiling files
+Created: 2026-06-18
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-18T08:50Z HDMX-coding-agent created
+
+--- body ---
+## Context
+v2.0.3 infrastructure. Build the NEGATIVE half of the prose ratchet, ported from
+the AEDIST / Econom'IA technical report (the mature model) and the book proposal.
+Per the CI test-polarity rule (added in 0148): tests pin only negative guards +
+mechanical checks; positive voice lives in the editorial brief.
+
+## Relevant prior art
+- AEDIST: `tests/manuscript_source.py` (substrate), `tests/test_manuscript_*` (parametrized regex bans), `tests/data/emdash_ceiling.txt` (committed integer ceiling, only ratchets down).
+- This repo: `config/ai-tells.yml` (seed wordlists), `scripts/qa_word_count.py` (PDF-based checks to fold in, source-based + line-anchored).
+
+## Actions
+1. `tests/manuscript_source_qmd.py` — load `content/manuscript.qmd`; strip YAML front-matter, HTML/`%` comments, blockquotes/quoted spans, code; expose `body()`, `section(heading)`, `paragraphs()`, `abstract()`.
+2. `tests/test_manuscript_prose.py` (`pytestmark = pytest.mark.adherence`) — parametrized regex bans, seeded as the UNION of:
+   - ai-tells.yml blacklist words/phrases + conditional words (`robust`, `landscape`).
+   - reviewer/v2.0.2 defects: define-by-negation (`not X, but Y`; "not natural categories but historical constructs"), empty paragraph-closers, repeated-high-level-claim openers.
+   - AEDIST defect classes: AI-English doublets, lab-journal connectives, forward-promises, hardcoded cross-ref numbers (require `@ref`), hedging conditionals.
+3. Ceiling files `tests/data/*_ceiling.txt` for density metrics (em-dash count, `not X but Y` count) — init at current count, only ratchet down; per-paragraph local caps as constants.
+4. Register the `adherence` marker in `pyproject.toml`.
+
+## Test
+- Red first: a known-bad fixture string trips each guard. Green: the guards import the substrate and run under `pytest -m adherence`.
+
+## Exit criteria
+- [ ] `pytest -m adherence tests/test_manuscript_prose.py` runs; every defect class has a guard
+- [ ] Ceiling files committed; lowering one is the only way to pass after a reduction
+- [ ] `adherence` marker registered

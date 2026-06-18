@@ -1,0 +1,24 @@
+%erg 0.1
+Title: v2.0.3 ratchet — version tracker
+Created: 2026-06-18
+Author: HDMX-coding-agent
+Blocked-by: 0147
+Blocked-by: 0148
+Blocked-by: 0149
+
+--- log ---
+2026-06-18T08:50Z HDMX-coding-agent created
+
+--- body ---
+## Context
+Version-milestone tracker for **v2.0.3 — prose ratchet infrastructure**. Gate:
+while this ticket is open, v2.0.4 work (blocked by it) stays hidden from
+`erg ready`. Closing it = "ratchet shipped, decisions unlock."
+
+## Children
+- [ ] 0147 prose-ratchet harness (substrate + negative guards + ceilings)
+- [ ] 0148 editorial brief + CI polarity rule + LLM judge
+- [ ] 0149 initialize ratchet over manuscript + triage findings
+
+## Exit criteria
+- [ ] 0147, 0148, 0149 closed; `make check` runs the prose ratchet green
