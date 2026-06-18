@@ -1,0 +1,51 @@
+%erg 0.1
+Title: Standing regression test: worktree creation must not block on heavy eager work
+Created: 2026-06-18
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-18T00:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+The post-checkout hook twice grew an eager, heavy per-worktree operation that
+made worktree creation slow enough to time out and fail: copying the ~1.8 GB uv
+env (fixed in #797) and checking out ~1.7 GB of DVC data (fixed in #801). Same
+class of defect, two instances — so it has a shape and will recur whenever
+someone adds "just one more setup step" to the hook.
+
+`tests/test_post_checkout_hook.py` guards the two known instances by source
+inspection (no `dvc checkout`, `.venv` is a symlink). That catches those exact
+strings but not a *new* heavy step (e.g. an eager `uv sync`, a `dvc pull`, a
+large copy). A behavioural test that actually creates a throwaway worktree and
+asserts it completes fast would catch the class.
+
+## Relevant files
+- `hooks/post-checkout` — the surface under test.
+- `tests/test_post_checkout_hook.py` — where the new test belongs.
+
+## Actions
+1. Add a `@pytest.mark.integration` test that: creates a throwaway `git worktree
+   add` from HEAD (hooks enabled), times it, and asserts (a) it finishes well
+   under a threshold (e.g. 15 s), and (b) it produced no large copy — `.venv` is
+   a symlink and the worktree's tree size stays small (no GB-scale data/ or
+   .venv). Tear the worktree down in a finally block.
+2. Keep it out of `check-fast` (it spawns subprocesses) per the marker rules.
+
+## Test
+- The new test is itself the deliverable; it must FAIL if the hook is reverted to
+  eagerly copy the env or checkout DVC data (verify by temporarily restoring the
+  old hook in a scratch).
+
+## Verification
+- [ ] Test passes on the current (fixed) hook.
+- [ ] Test fails if an eager heavy step is reintroduced into the hook.
+
+## Invariants
+- Must not depend on `/data` existing (skip or adapt where the shared env path is
+  absent), so CI on a machine without the data disk still runs.
+- Must clean up its throwaway worktree even on failure.
+
+## Exit criteria
+- A standing integration test guards worktree-creation speed against the whole
+  eager-heavy-setup class, not just the two known string instances.
