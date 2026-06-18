@@ -1,0 +1,53 @@
+%erg 0.1
+Title: Split Makefile by workpackage (analysis / per-paper writing)
+Created: 2026-04-23
+Author: claude
+
+--- log ---
+2026-04-23T12:06Z claude created
+
+--- body ---
+## Context
+
+The project already fans out: one analysis → manuscript, data paper,
+companion, technical report, NCC variant, corpus report. Phony target
+groups (`analysis-*`, `manuscript-*`, `datapaper-*`, `companion-*`,
+`techrep-*`) and the sub-Makefiles (`companion.mk`, `divergence.mk`) show
+the split is 80 % present; the harness `coding.md` rule just asks to
+finish it so each writing-side build works with no analysis toolchain.
+
+One wrinkle: handoffs are stored via DVC, not committed directly.
+`content/figures/` and `content/tables/` are gitignored; restoration relies
+on `dvc pull` against the `.dvc` files that *are* tracked. This satisfies
+the intent of the rule (versioned durable state), but the clean-room build
+now requires `dvc` client + remote credentials, not only TeX Live.
+
+## Actions
+
+1. Audit the existing phony groups to confirm the workpackage partition:
+   which targets *must* live on the analysis side (Python, data access)
+   and which can live on the writing side (Pandoc/LaTeX + `dvc pull`).
+2. Extract `manuscript.mk`, `datapaper.mk`, `companion.mk` (promote the
+   existing file), `techrep.mk`, and if warranted `ncc.mk` — each taking
+   only `content/**` DVC-restored artifacts and source prose as inputs.
+3. Keep analysis targets (`corpus-*`, `figures`, `stats`, `corpus-tables`,
+   `corpus-handoff`, `check-*`) in the top-level `Makefile`.
+4. Confirm every file that a writing-side Makefile reads is either
+   committed to git, tracked by a `.dvc` file, or declared as a source
+   prose input. No implicit dependencies on pipeline state.
+5. Document the writing-side toolchain explicitly (TeX Live + Pandoc +
+   `dvc` client + remote credentials, no `uv sync`).
+
+## Test
+
+For each writing workpackage: in a container with only the writing toolchain
+(no `uv`, no Python analysis deps), run `dvc pull` then
+`$(MAKE) -f <wp>.mk`. The PDF must build.
+
+## Exit criteria
+
+- One writing-side Makefile per output paper, each buildable standalone.
+- Every input to a writing Makefile is either committed to git or DVC-tracked.
+- CI job (or documented local recipe) demonstrates the clean-room build for
+  at least the manuscript WP.
+- Writing-toolchain spec in `README.md` or equivalent.

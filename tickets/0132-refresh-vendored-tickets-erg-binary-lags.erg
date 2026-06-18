@@ -1,0 +1,27 @@
+%erg 0.1
+Title: Refresh vendored tickets/erg binary (lags installed)
+Created: 2026-06-18
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-18T06:02Z HDMX-coding-agent created
+
+--- body ---
+## Context
+The committed `tickets/erg` (rev 9c23c37, built 2026-06-03) lags the installed
+`~/.local/bin/erg` (rev eb9c2b7, built 2026-06-11). Running `erg migrate` with
+the newer installed binary rewrites `.claude/settings.json` (`validate`->`check`),
+`.gitignore` (`tickets/tools/go/erg`->`tickets/erg`), and `tickets/.erg-assets`
+to match the newer asset manifest. The vendored binary still uses the old
+`validate` subcommand, so refreshing only the assets without the binary would
+break the pre-commit hook.
+
+## Actions
+1. Rebuild or copy the current binary into `tickets/erg` (`cp build/erg tickets/erg`).
+2. Run `erg migrate tickets` to refresh `.erg-assets`, `.claude/settings.json`, `.gitignore`.
+3. Verify the pre-commit hook still validates `.erg` edits.
+
+## Exit criteria
+- [ ] `tickets/erg version` matches installed binary revision
+- [ ] `erg check tickets/` passes with vendored binary
+- [ ] pre-commit hook uses `erg check` not `erg validate`
