@@ -29,7 +29,7 @@ content/*-vars.yml
 !content/manuscript-vars.yml
 
 # Python / uv
-.venv/
+.venv
 __pycache__/
 *.pyc
 .mypy_cache/
