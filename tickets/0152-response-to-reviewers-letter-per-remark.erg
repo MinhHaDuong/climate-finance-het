@@ -6,17 +6,27 @@ Blocked-by: 0155
 
 --- log ---
 2026-06-18T08:50Z HDMX-coding-agent created
+2026-06-18T15:10Z HDMX-coding-agent note scaffolded 60-row traceability skeleton at release/2026-03-18 Oeconomia/response-traceability.md (every atomic remark pre-mapped to its child ticket). Author rule: NO remark closed as non-actionable; every close is HITL (author sign-off per row). Dropped the old "decline-with-reason" action accordingly.
 
 --- body ---
 ## Context
 v2.0.5. The binding deliverable of the resubmission: a letter answering every
 editor/R1/R2 point. Template: `release/revision-runbook.md` §4.
 
+The per-remark ledger is scaffolded at
+`release/2026-03-18 Oeconomia/response-traceability.md` — 60 atomic remarks,
+each pre-routed to its owning child ticket.
+
+## Closing discipline (author-set, binding)
+- **No remark is closed as non-actionable.** Every remark gets a substantive
+  manuscript response — no decline / out-of-scope / won't-fix disposition.
+- **Every close is human-in-the-loop.** A remark counts as answered only when
+  the author has signed off its row in the traceability table.
+
 ## Actions
-1. One numbered response per remark (addressed / declined-with-reason), quoting the referee.
-2. Traceability table: remark → manuscript §/page → diff/commit.
-3. Decline-with-reason entries where applicable (e.g., 0142 if the 3-act structure is kept).
+1. One numbered response per remark, quoting the referee, in the letter.
+2. Fill the traceability table: remark → response → manuscript §/page → diff/commit, then author Sign-off per row.
 
 ## Exit criteria
-- [ ] Every point in the 0133 inventory has a response
+- [ ] Every remark in the traceability table has a response AND author Sign-off
 - [ ] Letter saved under `release/YYYY-MM-DD Oeconomia revision/`
