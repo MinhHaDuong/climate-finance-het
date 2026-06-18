@@ -1,0 +1,23 @@
+%erg 0.1
+Title: editorial brief + CI test-polarity rule + LLM-judge wiring
+Created: 2026-06-18
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-18T08:50Z HDMX-coding-agent created
+
+--- body ---
+## Context
+v2.0.3 infrastructure. The POSITIVE half + governance. Ported from AEDIST
+`docs/editorial-brief.md` and its CI test-polarity rule.
+
+## Actions
+1. Create `docs/editorial-brief.md` (schema: **Decision** / **Rationale** / **Ticket** / **Status**). Seed from `.claude/rules/writing.md` ghost-mode + house rules (define-at-first-use, concrete actors/dates, North-South specificity) and — once 0150/0151 land — the framing + thesis decisions.
+2. Add the **CI test-polarity rule** to `.claude/rules/writing.md`: tests pin only negative guards + mechanical checks; positive authorial phrasing is never asserted in tests — it lives in the brief and is checked by `/review-pr-prose`. Keep terse — `TestAlwaysLoadedContextBudget` caps always-loaded rules at 300 lines.
+3. Wire the `/review-pr-prose` brief-auditor agent to read `docs/editorial-brief.md`.
+4. LLM-judge harness with AEDIST reduction guards: output words ≤ input, em-dash=0 in abstract, every number/claim preserved verbatim, no invented summary verdicts.
+
+## Exit criteria
+- [ ] `docs/editorial-brief.md` exists and is consumed by `/review-pr-prose`
+- [ ] writing.md carries the polarity rule; context-budget test still green
+- [ ] LLM-judge guards documented and runnable

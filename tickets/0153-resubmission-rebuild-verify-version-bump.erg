@@ -1,0 +1,23 @@
+%erg 0.1
+Title: resubmission rebuild verify version-bump and Zenodo HAL deposit
+Created: 2026-06-18
+Author: HDMX-coding-agent
+Blocked-by: 0155
+
+--- log ---
+2026-06-18T08:50Z HDMX-coding-agent created
+
+--- body ---
+## Context
+v2.0.5 final step. Package and deposit the revised manuscript.
+
+## Actions
+1. `make manuscript` + `make check`; `@adherence` prose ratchet green; `/review-pr-prose` clean.
+2. Version bump (manuscript-vars / config snapshot only if numbers changed — most edits are prose).
+3. Zenodo new-version (not new record) + HAL; update STATE.md links.
+4. submission-branch Revision-stage cherry-picks to `submission/oeconomia-varia`; tag `v1.1-oeconomia-revised`.
+5. Upload revised PDF + response letter via the Œconomia platform "Revisions" form.
+
+## Exit criteria
+- [ ] Clean build + green ratchet
+- [ ] Zenodo/HAL revised; tag pushed; resubmitted on platform

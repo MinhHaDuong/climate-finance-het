@@ -2,16 +2,9 @@
 Title: Oeconomia R&R — resubmission tracking ticket
 Created: 2026-06-18
 Author: HDMX-coding-agent
-Blocked-by: 0134
-Blocked-by: 0135
-Blocked-by: 0136
-Blocked-by: 0137
-Blocked-by: 0138
-Blocked-by: 0139
-Blocked-by: 0140
-Blocked-by: 0141
-Blocked-by: 0142
-Blocked-by: 0143
+Blocked-by: 0154
+Blocked-by: 0155
+Blocked-by: 0156
 
 --- log ---
 2026-06-18T06:33Z HDMX-coding-agent created
@@ -28,6 +21,18 @@ Recommendations: R1 "Resubmit for Review", R2 "Revisions Required".
 This is a **tracking ticket** — stays open until every child below is closed,
 then a final integration pass verifies the resubmission cover letter answers
 every referee point (addressed or declined-with-reason).
+
+## Version ladder (gating)
+Execution is sequenced as shippable version increments, each gated by a version
+tracker (closing a tracker unlocks the next version's work via Blocked-by):
+- **v2.0.1** ✅ Vannes communication (de-anon + render; uploaded). Separate branch.
+- **v2.0.2** light & easy fixes (0140 safe subset; DAC/GNI/GEF done, PR #796).
+- **v2.0.3** prose ratchet → tracker **0154** (0147 harness, 0148 brief+polarity, 0149 initialize+triage).
+- **v2.0.4** orientation & decisions → tracker **0155** (0142 structure, 0150 economists framing, 0151 indeterminacy thesis; all needs-human, I draft options).
+- **v2.0.5** implementation → tracker **0156** (0134–0139, 0141, 0143 content; 0152 response letter; 0153 resubmission + deposit).
+This master is now Blocked-by the three version trackers (0154/0155/0156), not the
+ten leaves directly. The original child-ticket inventory below is unchanged; the
+trackers group them by version.
 
 ## Child tickets (workstreams)
 - [ ] 0134 — prose pass: define-by-negation, empty declaratives, formulaic closers (editor E1 + R2 prose). **The single most-emphasized issue.**

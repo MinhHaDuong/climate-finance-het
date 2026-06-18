@@ -1,0 +1,25 @@
+%erg 0.1
+Title: initialize prose ratchet over manuscript and triage findings
+Created: 2026-06-18
+Author: HDMX-coding-agent
+Blocked-by: 0147
+Blocked-by: 0148
+
+--- log ---
+2026-06-18T08:50Z HDMX-coding-agent created
+
+--- body ---
+## Context
+v2.0.3. With the ratchet (0147) and brief (0148) in place, run it over the WHOLE
+manuscript. The point: surface defects the referees never named.
+
+## Actions
+1. Run the `@adherence` prose suite + `/review-pr-prose` over `content/manuscript.qmd`.
+2. Enumerate every current violation (this is the defect inventory beyond the referee list).
+3. Fix the trivial ones in this version (then lower the ceiling files).
+4. File each non-trivial violation (needs author prose) as an implementation finding referencing 0156.
+
+## Exit criteria
+- [ ] Full-manuscript ratchet run produces an enumerated findings list
+- [ ] Trivial violations fixed; ceilings lowered to the new counts
+- [ ] Non-trivial findings ticketed under v2.0.5

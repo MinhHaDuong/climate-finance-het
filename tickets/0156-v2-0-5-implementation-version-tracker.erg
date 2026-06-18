@@ -1,0 +1,32 @@
+%erg 0.1
+Title: v2.0.5 implementation — version tracker
+Created: 2026-06-18
+Author: HDMX-coding-agent
+Blocked-by: 0134
+Blocked-by: 0135
+Blocked-by: 0136
+Blocked-by: 0137
+Blocked-by: 0138
+Blocked-by: 0139
+Blocked-by: 0141
+Blocked-by: 0143
+Blocked-by: 0152
+Blocked-by: 0153
+
+--- log ---
+2026-06-18T08:50Z HDMX-coding-agent created
+
+--- body ---
+## Context
+Version-milestone tracker for **v2.0.5 — implementation** (research → writing →
+verification → resubmission). Blocked by v2.0.4 (0155).
+
+## Children
+- [ ] 0135 reframe economists · 0136 quant integration + methods · 0137 commensuration thread
+- [ ] 0138 loss & damage · 0139 finance-development nexus · 0141 concretize actors
+- [ ] 0143 bibliography additions
+- [ ] 0134 human-led prose rewrite (ratchet-guarded; run last)
+- [ ] 0152 response-to-reviewers letter · 0153 resubmission + deposit
+
+## Exit criteria
+- [ ] All children closed; resubmitted to Œconomia; closes master tracker 0133

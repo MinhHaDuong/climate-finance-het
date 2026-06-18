@@ -1,0 +1,22 @@
+%erg 0.1
+Title: response to reviewers letter + per-remark traceability table
+Created: 2026-06-18
+Author: HDMX-coding-agent
+Blocked-by: 0155
+
+--- log ---
+2026-06-18T08:50Z HDMX-coding-agent created
+
+--- body ---
+## Context
+v2.0.5. The binding deliverable of the resubmission: a letter answering every
+editor/R1/R2 point. Template: `release/revision-runbook.md` §4.
+
+## Actions
+1. One numbered response per remark (addressed / declined-with-reason), quoting the referee.
+2. Traceability table: remark → manuscript §/page → diff/commit.
+3. Decline-with-reason entries where applicable (e.g., 0142 if the 3-act structure is kept).
+
+## Exit criteria
+- [ ] Every point in the 0133 inventory has a response
+- [ ] Letter saved under `release/YYYY-MM-DD Oeconomia revision/`
