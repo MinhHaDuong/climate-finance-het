@@ -2,11 +2,13 @@
 Title: Co-locate uv env with cache on /data so worktree creation stops copying 1.8 GB
 Created: 2026-06-18
 Author: HDMX-coding-agent
+Closed: Implemented: shared uv env on /data via symlinked .venv; PR #797
 
 --- log ---
 2026-06-18T00:00Z HDMX-coding-agent created
 2026-06-18T00:00Z HDMX-coding-agent note root cause + fix validated empirically on doudou
 
+2026-06-18T08:18Z HDMX-coding-agent closed — Implemented: shared uv env on /data via symlinked .venv; PR #797
 --- body ---
 ## Context
 Creating a worktree was painfully slow and now fails outright (EnterWorktree
