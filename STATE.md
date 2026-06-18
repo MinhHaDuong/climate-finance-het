@@ -1,6 +1,6 @@
 # State
 
-Last updated: 2026-05-02 21:00 UTC
+Last updated: 2026-06-19 (housekeeping sweep)
 
 ## Current goal
 
