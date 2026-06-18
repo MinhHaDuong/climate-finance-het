@@ -327,7 +327,7 @@ check-manuscript-data:
 	$$ok || { echo "Run '$(UV_RUN) dvc pull' to sync data, or 'make corpus' to rebuild."; exit 1; }
 
 corpus-validate: $(REFINED)
-	$(UV_RUN) pytest tests/test_corpus_acceptance.py -v -s --tb=long
+	$(UV_RUN) python -m pytest tests/test_corpus_acceptance.py -v -s --tb=long
 
 # ── Corpus reporting (Phase 2 — reads only refined data) ──
 content/tables/tab_citation_coverage.md: scripts/export_citation_coverage.py scripts/utils.py $(REFINED)
@@ -701,7 +701,7 @@ archive-datapaper: check-corpus corpus-tables figures-datapaper
 
 # ── All checks (tests) ───────────────────────────────────
 check:
-	$(UV_RUN) pytest tests/ -v --tb=short -n 4
+	$(UV_RUN) python -m pytest tests/ -v --tb=short -n 4
 
 # Fast subset: unit tests only (no Python subprocess spawning, no sleeps, < 10s).
 check-fast:
@@ -710,19 +710,19 @@ check-fast:
 # Smoke pipeline: run Phase 2 on a 100-row fixture (no DVC pull needed, <30s).
 # Exercises: compute_breakpoints, compute_clusters, plot_fig1_bars.
 smoke:
-	$(UV_RUN) pytest tests/test_smoke_pipeline.py -v --tb=short
+	$(UV_RUN) python -m pytest tests/test_smoke_pipeline.py -v --tb=short
 
 # Determinism check: run figure scripts twice on smoke data, diff outputs.
 # Catches unseeded randomness, leaking timestamps, floating-point non-determinism.
 determinism-check:
-	$(UV_RUN) pytest tests/test_determinism.py -v --tb=short
+	$(UV_RUN) python -m pytest tests/test_determinism.py -v --tb=short
 
 # Regression hashes: compare Phase 2 output hashes against golden baseline.
 # Runs as pytest (one test per script, module-scoped fixture = scripts run once).
 #   make regression          — check against golden baseline
 #   make regression-update   — regenerate golden baseline (after intentional change)
 regression:
-	$(UV_RUN) pytest tests/test_regression.py -v --tb=short -m integration -k "test_regression_"
+	$(UV_RUN) python -m pytest tests/test_regression.py -v --tb=short -m integration -k "test_regression_"
 
 regression-update:
 	$(UV_RUN) python scripts/compute_regression_hashes.py --update-golden
