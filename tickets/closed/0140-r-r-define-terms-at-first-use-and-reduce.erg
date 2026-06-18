@@ -2,12 +2,15 @@
 Title: R&R define terms at first use and reduce jargon
 Created: 2026-06-18
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #815
 
 --- log ---
 2026-06-18T06:33Z HDMX-coding-agent created
 2026-06-18T08:25Z HDMX-coding-agent note v2.0.2. Trimmed to the safe factual define-at-first-use subset (DAC/GNI/GEF done, PR #796). Substantive definitions (Rio-markers function, Barnesian, CDM-in-practice) move to 0141 / implementation. Closeable when the v2.0.2 subset ships.
 2026-06-18T06:45Z HDMX-coding-agent note expanded acronyms at first use: DAC, GNI, GEF (safe factual edits). Substantive jargon defs (Rio markers function, concessional/grant-element/face-value, Barnesian form, CDM in practice) left for the author per editor's human-engagement mandate.
+2026-06-18T14:55Z HDMX-coding-agent note Worked interactively with author (branch t140-define-terms). concessional/grant-element/face-value glossed at first use (§1.2) with forward-ref; Rio-markers, GEF, Bali, Barnesian glossed in place. DAC/GNI confirmed already-defined. The worked transaction grew past this ticket and was promoted to a §3.1 centerpiece (see 0136/0141). All edits track-changed (blue) pending author sign-off.
 
+2026-06-18T15:16Z HDMX-coding-agent closed — autoclosed — PR #815
 --- body ---
 ## Context
 Reviewer 2 linear comments: jargon and acronyms used before definition. QUICK,
