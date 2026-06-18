@@ -19,9 +19,15 @@ SHARED_ENV="${SHARED_ENV:-/data/envs/venv/oeconomia}"
 log() { printf 'rotate-venv: %s\n' "$*" >&2; }
 
 # Best-effort: report whether a process holds files under the venv open.
+# Test lsof's OUTPUT, not its exit status: `lsof +D` exits non-zero even when it
+# successfully lists open files (it warns on dirs it cannot fully stat), so the
+# exit code is useless here — non-empty output is the reliable "in use" signal.
 venv_in_use() {
-    command -v lsof >/dev/null 2>&1 || return 1
-    lsof +D "$1" >/dev/null 2>&1
+    if ! command -v lsof >/dev/null 2>&1; then
+        log "warning: lsof not found — cannot verify $1 is idle; proceeding"
+        return 1
+    fi
+    [ -n "$(lsof +D "$1" 2>/dev/null)" ]
 }
 
 rotate_one() {
