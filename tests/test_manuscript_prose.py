@@ -137,9 +137,13 @@ EMPTY_CLOSER = [
 # "not X, but Y" define-by-negation: the centerpiece v2.0.2 reviewer defect.
 DEFINE_BY_NEGATION_RE = re.compile(r"\bnot\b[^.,;:]{1,60}?,?\s+but\b", re.IGNORECASE)
 # Hardcoded figure/table/equation cross-refs (should be @fig-/@tbl-/@eq-).
+# Plural ("Figures 3 and 4") and lowercase ("figure 3") forms are caught too, so
+# the ratchet cannot be silently evaded by a casing or pluralization change.
 # "Section N" is excluded: Oeconomia house style mandates numbered sections, so
 # referring to them by number in prose is legitimate, not a Quarto-ref defect.
-HARDCODED_XREF_RE = re.compile(r"\b(?:Figure|Table|Fig\.|Equation|Eq\.)\s+\d+")
+HARDCODED_XREF_RE = re.compile(
+    r"\b(?:Figures?|Tables?|Fig\.|Equations?|Eq\.)\s+\d+", re.IGNORECASE
+)
 
 EM_DASH_PARAGRAPH_CAP = 4  # local clustering cap; reviewer pass (0134) ratchets toward 2
 
@@ -307,8 +311,9 @@ def test_fang_define_by_negation():
 
 
 def test_fang_hardcoded_xref():
-    found = find_hardcoded_xref("As shown in Figure 3 and Table 2, the trend holds.")
-    assert len(found) == 2
+    # Singular, plural, and lowercase forms must all be caught.
+    found = find_hardcoded_xref("See Figure 3, Tables 1, figure 4, and Eq. 2.")
+    assert len(found) == 4
 
 
 def test_fang_conditional_words():
