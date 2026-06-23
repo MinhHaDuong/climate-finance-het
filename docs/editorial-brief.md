@@ -54,7 +54,7 @@ signal. Never claim "Paris did not matter" or that 2015 produced no change.
 categories — a marginal rise, not a rupture. Denying the rise outright
 overcorrects and misreports the computation, which corroborates the history.
 
-**Ticket:** memory `feedback_oversell_breaks`.
+**Ticket:** none — memory `feedback_oversell_breaks`.
 
 **Status:** active
 
@@ -68,7 +68,7 @@ generic agents ("policymakers", "stakeholders", "the international community").
 identifiable actors with motivations; generic agents erase the economist's role
 the paper is tracing.
 
-**Ticket:** `.claude/rules/writing.md` (citation practices).
+**Ticket:** none — `.claude/rules/writing.md` (citation practices).
 
 **Status:** active
 
@@ -81,7 +81,7 @@ finance, Rio markers, additionality) at its first appearance.
 term obvious to a climate-finance economist is opaque to a historian of
 economics, and vice versa.
 
-**Ticket:** `.claude/rules/writing.md` (voice and style).
+**Ticket:** none — `.claude/rules/writing.md` (voice and style).
 
 **Status:** active
 
@@ -94,7 +94,7 @@ what X is", punchy one-beat sentences, or pep-talk closers).
 **Rationale:** The target venue is Œconomia. The motivational register reads as
 machine-written and is out of place in a history-of-economic-thought article.
 
-**Ticket:** memory `feedback_het_register`; `.claude/rules/writing.md` (ghost mode).
+**Ticket:** none — memory `feedback_het_register`; `.claude/rules/writing.md` (ghost mode).
 
 **Status:** active
 
@@ -106,6 +106,6 @@ motivations, not as a monolithic binary.
 **Rationale:** "The Global South wants X" flattens a contested field; the paper's
 contribution is to show which actors pushed which categories and why.
 
-**Ticket:** `.claude/rules/writing.md` (things to avoid).
+**Ticket:** none — `.claude/rules/writing.md` (things to avoid).
 
 **Status:** active

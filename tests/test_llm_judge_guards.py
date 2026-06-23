@@ -2,10 +2,15 @@
 
 Red-first: each guard is exercised on a faithful reduction (passes) and on a
 known-bad reduction (trips the specific guard).
+
+No pytest marker: these are pure unit tests (no subprocess, no I/O), so they run
+in the default `check-fast` bucket — unlike the `adherence`-marked governance
+tests in test_editorial_governance.py.
 """
 
 import os
 import sys
+from pathlib import Path
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
@@ -15,10 +20,12 @@ from qa_llm_judge_guards import (
     extract_numbers,
     introduced_llmisms,
     invented_numbers,
+    load_llmisms,
     word_count,
 )
 
 LLMISMS = ["delve", "tapestry", "robust"]
+REPO_ROOT = Path(__file__).resolve().parent.parent
 
 
 def test_word_count():
@@ -91,9 +98,14 @@ def test_check_reduction_catches_invented_number_and_verdict():
 
 def test_cli_has_argparse():
     """CLI flag presence by source inspection (project rule)."""
-    src = open(
-        os.path.join(os.path.dirname(__file__), "..", "scripts", "qa_llm_judge_guards.py")
-    ).read()
+    src = (REPO_ROOT / "scripts" / "qa_llm_judge_guards.py").read_text(encoding="utf-8")
     assert "argparse" in src
     assert "--input" in src
     assert "--reduced" in src
+
+
+def test_load_llmisms_against_real_config():
+    """Guard against ai-tells.yml schema drift silently emptying the wordlist."""
+    words = load_llmisms(REPO_ROOT / "config" / "ai-tells.yml")
+    assert "delve" in words  # a blacklisted word
+    assert "robust" in words  # a conditional word, folded in unconditionally

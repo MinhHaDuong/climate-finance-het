@@ -43,6 +43,15 @@ _WORD_RE = re.compile(r"\w[\w'’-]*", re.UNICODE)
 _NUMBER_RE = re.compile(r"\d[\d,.]*\d|\d")
 
 
+_FRONTMATTER_RE = re.compile(r"\A---\n.*?\n---\n", re.DOTALL)
+
+
+def strip_front_matter(text: str) -> str:
+    """Drop a leading YAML front-matter block (so its ``---`` fences are not
+    miscounted as em dashes when a raw ``.qmd`` is passed to the CLI)."""
+    return _FRONTMATTER_RE.sub("", text, count=1)
+
+
 def word_count(text: str) -> int:
     """Number of word tokens in ``text``."""
     return len(_WORD_RE.findall(text))
@@ -70,13 +79,24 @@ def invented_numbers(input_text: str, reduced_text: str) -> list[str]:
 
 
 def introduced_llmisms(reduced_text: str, llmisms: list[str]) -> list[str]:
-    """LLMism-list words present in the reduction (whole-word, case-insensitive)."""
+    """LLMism-list words present in the reduction (whole-word, case-insensitive).
+
+    Source-agnostic by design: any LLMism in the reduction is flagged, even if
+    the source already contained it. A reduction is meant to *clean* prose, so
+    carrying a tell forward is itself a defect.
+    """
     low = reduced_text.lower()
     return [w for w in llmisms if re.search(rf"\b{re.escape(w.lower())}\b", low)]
 
 
 def load_llmisms(ai_tells_path: Path) -> list[str]:
-    """Blacklisted words from config/ai-tells.yml (the single source)."""
+    """Blacklisted words from config/ai-tells.yml (the single source).
+
+    The ``conditional_words`` (e.g. ``robust``, ``landscape``) are folded in
+    *unconditionally* — stricter than the /review-pr-prose auditor, which honours
+    their ``ok_when`` context. A reduction has no licence to introduce them, so
+    the conservative reading is intentional.
+    """
     with open(ai_tells_path, encoding="utf-8") as fh:
         data = yaml.safe_load(fh)
     words = list(data.get("blacklisted_words", []))
@@ -159,8 +179,8 @@ def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     llmisms = load_llmisms(args.ai_tells)
     report = check_reduction(
-        args.input.read_text(encoding="utf-8"),
-        args.reduced.read_text(encoding="utf-8"),
+        strip_front_matter(args.input.read_text(encoding="utf-8")),
+        strip_front_matter(args.reduced.read_text(encoding="utf-8")),
         llmisms,
     )
     log.info("%s", report.render())
