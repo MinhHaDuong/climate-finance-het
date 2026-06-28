@@ -1,0 +1,54 @@
+%erg 0.1
+Title: Split build: remaining writing workpackages + evict analysis intermediates
+Created: 2026-06-28
+Author: HDMX-coding-agent
+
+--- log ---
+2026-06-28T19:43Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Child of tracker 0131 (Split Makefile by workpackage). The manuscript
+writing workpackage is done (branch t0131-manuscript-wp): manuscript.mk
+builds the Œconomia article clean-room from git-tracked deliverables with
+no data, isolated via the `manuscript` Quarto profile. This ticket covers
+the rest of 0131 for the other papers and the analysis-intermediate eviction.
+
+## Relevant files
+- `Makefile` — still defines render rules for corpus-report, technical-report,
+  breakpoint-detect-method-zoo, data-paper, multilayer-detection (lines ~672+).
+- `manuscript.mk`, `_quarto-manuscript.yml` — the pattern to replicate per paper.
+- `.gitignore` — ignore-then-negate block for `content/{figures,tables}`.
+- `content/tables/tab_lexical_tfidf.csv` (35 MB), `tab_pole_papers.csv` (3.8 MB),
+  `qa_type_report.csv` (3.7 MB) — analysis intermediates living under content/tables/.
+
+## Actions
+1. Per remaining paper, extract a `<wp>.mk` (datapaper.mk, techrep.mk,
+   companion/multilayer, ncc) plus a `_quarto-<wp>.yml` profile that excludes
+   sibling docs, mirroring manuscript.mk. Each builds clean-room from committed
+   deliverables only.
+2. git-track each paper's small byte-stable writing deliverables (figures +
+   tables) via .gitignore negations, like the manuscript's 3 PNGs + tab_venues.md.
+   Note: tab_corpus_sources.md / tab_languages.md / tab_citation_coverage.md are
+   the data-paper/techrep includes — they belong to those slices, not the manuscript.
+3. 0131 action 8 — evict the large analysis intermediates (tab_lexical_tfidf.csv,
+   tab_pole_papers.csv, qa_type_report.csv, …) out of content/tables/ into an
+   analysis-side derived/scratch dir; update producing + consuming Make targets.
+4. Keep DVC scoped to genuine corpus data.
+
+## Test
+For each remaining writing workpackage: in a data-less worktree, run
+`make -f <wp>.mk output/content/<doc>.pdf` and confirm the PDF builds with
+only Quarto + TeX (no uv, no data) — the proof manuscript.mk already passes.
+
+## Invariants
+- `make papers` from the full Makefile still builds all docs (with data).
+- Per-target QUARTO_PROFILE export (not file-scope) so profiles don't leak.
+
+## Exit criteria
+- One `<wp>.mk` + profile per remaining paper, each buildable clean-room.
+- Analysis intermediates evicted from content/tables/; targets updated.
+- 0131 can close once all children land.
+
+Parent tracker: tickets/0131-split-build-by-workpackage.erg
