@@ -1,0 +1,280 @@
+---
+title: "Économistes sous contrainte"
+subtitle: "Controverses et construction de la finance climat comme objet économique (1990--2025)"
+author: "Minh Ha-Duong --- CNRS, CIRED"
+institute: "21^e^ colloque international Charles Gide --- Vannes, 2--4 juillet 2026"
+lang: fr
+format:
+  beamer:
+    theme: metropolis
+    aspectratio: 169
+    pdf-engine: xelatex
+    fig-align: center
+    keep-tex: true
+    header-includes: |
+      \setbeamertemplate{caption}{\raggedright\insertcaption\par}
+      \setbeamerfont{footnote}{size=\tiny}
+      \titlegraphic{\hfill\includegraphics[height=2.1cm]{slides-assets/turkey-380kv-line.jpg}}
+---
+
+# Introduction
+
+## Un chiffre net, un objet instable
+
+> En novembre 2024, à Bakou, les négociateurs adoptent un nouvel objectif :
+> les pays développés mobiliseront **300 milliards de dollars par an** d'ici 2035.
+
+. . .
+
+- Aucune caisse ne contient cette somme
+- Aucun registre unique ne l'enregistre
+- Aucune méthode de comptage ne s'impose sans contestation
+
+. . .
+
+Le nombre est produit par l'application de **conventions comptables** à des flux
+hétérogènes --- conventions elles-mêmes disputées.
+
+::: {.notes}
+Même ouverture que le papier. Laisser le paradoxe s'installer avant la thèse.
+:::
+
+## Bakou, COP29 --- 11--22 novembre 2024
+
+\begin{center}
+\includegraphics[width=\linewidth,height=0.8\textheight,keepaspectratio]{slides-assets/cop29-baku-summit.jpg}
+\end{center}
+
+::: {.notes}
+Photo de famille des chefs d'État. Ceux qui fixent le chiffre ne fixent pas l'objet.
+Crédit : Présidence d'Azerbaïdjan / Wikimedia Commons, CC BY 4.0.
+:::
+
+## Construit, pas découvert
+
+La finance climat n'a pas été **découverte** comme une réalité déjà là.
+
+Les flux existent : budgets, prêts, garanties, investissements privés.
+Ce qui est **construit**, c'est leur agrégation comme grandeur gouvernable.
+
+. . .
+
+**« Économistes sous contrainte »** --- au pied de la lettre :
+
+- **Diplomatique** : les montants sont fixés *avant* que l'objet soit stabilisé
+- **Statistique** : l'appareil de l'aide publique préexiste et impose ses catégories
+- **Politique** : concilier efficacité de la mobilisation et redevabilité des transferts
+
+::: {.notes}
+Le cœur du propos pour un public d'histoire de la pensée économique :
+les économistes ne sont ni souverains ni exécutants. Ils travaillent dans la contrainte.
+:::
+
+## Un chapitre manquant de l'histoire de l'économie du climat
+
+| Ce que l'histoire a étudié | Ce que ce travail ajoute |
+|---|---|
+| Nordhaus, Stern, modèles intégrés | Les catégories comptables |
+| L'optimisation | La commensuration |
+| « Quel prix pour le carbone ? » | « Ce dollar compte-t-il ? » |
+| Construire des modèles | Fabriquer des catégories |
+
+. . .
+
+Une histoire de la pensée économique **hors de ses lieux canoniques** :
+rapports d'experts, comités statistiques, banques de développement.
+
+## Histoire institutionnelle + test computationnel
+
+:::: {.columns}
+::: {.column width="50%"}
+**Le dossier historique**
+
+- Textes CCNUCC, OCDE, banques multilatérales
+- Littérature d'économie politique
+- Observation participante des débats
+:::
+::: {.column width="50%"}
+**Un corpus de contrôle**
+
+- ~30 000 travaux, 1990--2024
+- Multilingue, six sources
+- Représentations vectorielles, périodisation endogène
+:::
+::::
+
+. . .
+
+Le corpus ne **remplace** pas l'interprétation : il la soumet à un test indépendant.
+
+![Croissance de la littérature : champ quasi inexistant avant 2007.](figures/fig_bars_v1.png){width="62%"}
+
+## Trois époques, deux ruptures
+
+:::: {.columns}
+::: {.column width="45%"}
+1. **Avant** (1990--2006) : trois traditions disjointes
+2. **Cristallisation** (2007--2014) : la fabrique comptable
+3. **Champ établi** (2015--2025) : controverses sur l'objet existant
+
+\medskip
+Les ruptures endogènes tombent en **2007** et **2013** --- pas en 2015.
+Paris diversifie les thèmes sans refonder les catégories de mesure.
+:::
+::: {.column width="55%"}
+![Vitesse de renouvellement des thèmes : deux sauts de langage.](figures/fig_breaks.png){width="100%"}
+:::
+::::
+
+# Avant 2007 : trois traditions disjointes
+
+## Les pièces existent, l'objet n'est pas assemblé
+
+| Tradition | Question centrale | Limite avant 2007 |
+|---|---|---|
+| Économie de l'environnement | Quel prix pour le carbone ? | Pas de comptabilité des flux Nord-Sud |
+| Statistique de l'aide (OCDE/CAD) | Comment compter l'aide ? | Catégories conçues pour l'aide, pas le climat |
+| Partage de l'effort | Qui doit payer ? | Faible traduction en suivi financier |
+
+. . .
+
+Aucun des trois langages --- prix du carbone, aide, partage de l'effort ---
+ne suffit seul à produire une comptabilité de la finance climat.
+
+# Cristallisation (2007--2014)
+
+## La fabrique comptable
+
+:::: {.columns}
+::: {.column width="68%"}
+**Une contrainte politique, pas une découverte théorique**
+
+- Bali 2007 : engagements *mesurables, notifiables, vérifiables*
+- Copenhague 2009 : promesse des 100 milliards
+- Le chiffre crée une **obligation de mesure** (engagement performatif)
+
+\medskip
+**L'OCDE/CAD construit l'infrastructure** : marqueurs de Rio, équivalent-don,
+formulaires, conventions d'attribution. Des économistes comme **Jan
+Corfee-Morlot** y fixent les catégories opératoires.
+:::
+::: {.column width="32%"}
+![](slides-assets/corfee-morlot.jpg){width="62%"}
+
+\footnotesize Jan Corfee-Morlot (OCDE) --- une économiste à la frontière science-société.
+:::
+::::
+
+::: {.notes}
+Performativité au sens de Callon : l'engagement ne crée pas les flux,
+il oblige à construire l'agrégat qu'il promet de mesurer.
+Portrait : photo de profil Google Scholar, illustration académique.
+:::
+
+## Deux pôles durables
+
+| | **Pôle efficacité** | **Pôle redevabilité** |
+|---|---|---|
+| Question | Augmenter les volumes ? | Vérifier le transfert réel ? |
+| Concepts | Levier, dérisquage, mobilisation | Additionnalité, équivalent-don |
+| Lieux | Banques multilatérales, OCDE | ONG, économie politique |
+| Risque | Diluer le climat dans l'ingénierie | Contentieux distributif insoluble |
+
+. . .
+
+Les deux pôles partagent les mêmes catégories et les interprètent différemment.
+La controverse n'est pas un accident : c'est une **condition de fonctionnement**.
+
+# Champ établi (2015--2025)
+
+## Compter, c'est gouverner
+
+L'Accord de Paris (article 9) donne à la finance climat un statut juridique central.
+La catégorie est assez installée pour servir, assez indéterminée pour soutenir des
+lectures divergentes.
+
+![Les mécanismes de Kyoto reculent ; gouvernance de Paris, renouvelables, obligations vertes et ESG progressent.](figures/fig_composition.png){width="78%"}
+
+## Le cas Türkiye / Banque mondiale (2025)
+
+Projet *Transforming Power Transmission* (P508354), 1,7 GW de renouvelables intégrés.
+La Turquie, sous la catégorie investissement, emprunte par ailleurs en dollars à ~7,5 %.
+
+| Instrument | Comptage possible | Controverse révélée |
+|---|---|---|
+| Prêt IBRD --- 625 M€ | Quasi-intégral | Concessionnalité du bilan AAA, pas une subvention |
+| Prêt CTF --- 32,8 M€ | Valeur faciale *ou* équivalent-don (~½) | Argent prêté $\neq$ transfert réel |
+| Don CTF --- 2 M\$ | Intégral | Marginal dans le total |
+| Réseau (ensemble) | Marqueur « principal » ou co-bénéfice | Additionnalité, spécificité climatique |
+
+. . .
+
+Une seule opération, plusieurs conventions. **Les électrons n'ont pas de couleur.**
+
+::: {.notes}
+Le moment concret le plus parlant : chaque étape (prix du capital, équivalent-don,
+marqueur, attribution) est gouvernée par une convention.
+:::
+
+## Quatre controverses : la même catégorie, deux comptages
+
+:::: {.columns}
+::: {.column width="64%"}
+\small
+
+| Controverse | Efficacité | Redevabilité |
+|---|---|---|
+| Prêts concessionnels | Valeur faciale | Équivalent-don |
+| Marqueurs de Rio | Auto-déclaration | Surdéclaration |
+| Finance privée mobilisée | Multiplicateur | Double comptage |
+| Frontière aide / climat | Synergie | Réétiquetage |
+
+\normalsize\footnotesize Le *Shadow Report* d'Oxfam recalcule des totaux bien plus
+bas que les chiffres officiels de l'OCDE.
+:::
+::: {.column width="34%"}
+\begin{center}
+\includegraphics[height=3cm]{slides-assets/oecd-cover.png}\\[2pt]
+\includegraphics[height=3cm]{slides-assets/oxfam-cover.png}
+\end{center}
+
+\footnotesize \centering Deux comptages du même engagement.
+:::
+::::
+
+::: {.notes}
+OCDE = pôle efficacité (comptage officiel). Oxfam = pôle redevabilité (recalcul critique).
+Couvertures sous copyright, usage d'illustration / citation académique.
+:::
+
+# Conclusion
+
+## L'ambiguïté comme ressource de gouvernement
+
+On croit la finance climat controversée parce que ses catégories sont mal définies.
+C'est l'inverse.
+
+. . .
+
+Elle est devenue **gouvernable** parce que ses catégories sont **assez définies**
+pour permettre la déclaration et la comparaison, et **assez ambiguës** pour agréger
+des intérêts contradictoires.
+
+. . .
+
+La quantification ne pacifie pas le conflit ; elle le rend **administrable**.
+Les économistes font un **travail de frontière** : entre aide et climat, entre prêt
+et transfert, entre efficacité financière et justice distributive.
+
+## Chantiers ouverts
+
+1. **Archivistique** : comment certaines conventions ont été retenues plutôt que d'autres
+2. **Géographique** : la finance climat vue depuis les pays récipiendaires
+3. **Juridique** : des coûts incrémentaux (1992) à l'objectif quantifié de Bakou
+4. **Le test** des « pertes et préjudices » : recondduira-t-il l'ambiguïté, ou rouvrira-t-il
+   la question de ce qui est dû, à qui, et pourquoi ?
+
+\vfill
+\begin{center}
+\large Merci. \quad\footnotesize \textmd{minh.ha-duong@cnrs.fr} --- code et données : \texttt{doi.org/10.5281/zenodo.19097045}
+\end{center}
