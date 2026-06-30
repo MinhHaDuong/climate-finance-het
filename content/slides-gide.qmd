@@ -38,22 +38,32 @@ format:
 
 ## Un chiffre net, un objet instable
 
-> En novembre 2024, à Bakou, les négociateurs adoptent un nouvel objectif :
-> les pays développés mobiliseront **300 milliards de dollars par an** d'ici 2035.
+\begin{center}
+{\Large « 300 milliards de dollars par an »}\\[2pt]
+{\footnotesize COP29 --- Bakou, 24 novembre 2024}
+\end{center}
+
+\small
+
+- **ONU** --- « la COP29 s'achève sur une promesse de 300 milliards… l'accord qualifié d'*insulte* »
+- **NPR** --- « negotiators struck a *controversial* \$300 billion deal »
+- ***Euronews*** --- « un accord à 300 milliards de dollars pour les pays en développement »
+
+\normalsize
 
 . . .
 
-- Aucune caisse ne contient cette somme
-- Aucun registre unique ne l'enregistre
-- Aucune méthode de comptage ne s'impose sans contestation
+Pourtant : **aucune caisse** ne contient cette somme, **aucun registre** ne
+l'enregistre, **aucune méthode** de comptage ne s'impose sans contestation.
 
 . . .
 
-Le nombre est produit par l'application de **conventions comptables** à des flux
+Le nombre résulte de l'application de **conventions comptables** à des flux
 hétérogènes --- conventions elles-mêmes disputées.
 
 ::: {.notes}
-Même ouverture que le papier. Laisser le paradoxe s'installer avant la thèse.
+Le chiffre est traité comme un fait solide par la presse ; le reste du propos montre
+qu'il désigne un objet construit. Laisser le paradoxe s'installer avant la thèse.
 :::
 
 ## Construit, pas découvert
