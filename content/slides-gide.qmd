@@ -99,8 +99,6 @@ Nordhaus, Stern, modèles intégrés & Les catégories comptables \\
 \addlinespace
 L'optimisation & La commensuration \\
 \addlinespace
-« Quel prix pour le carbone ? » & « Ce dollar compte-t-il ? » \\
-\addlinespace
 Construire des modèles & Fabriquer des catégories \\
 \bottomrule
 \end{tabular}
@@ -108,6 +106,11 @@ Construire des modèles & Fabriquer des catégories \\
 
 Une histoire de la pensée économique **hors de ses lieux canoniques** :
 rapports d'experts, comités statistiques, banques de développement.
+
+\vfill
+
+\footnotesize Historiographie HET/STS : Aykut \& Dahan 2015 ; Pottier 2016. \quad
+Sociologie de la quantification : Desrosières 1998 ; Espeland \& Stevens 1998 ; Çalışkan \& Callon 2009.
 
 # Méthode
 
@@ -134,67 +137,83 @@ rapports d'experts, comités statistiques, banques de développement.
 
 Le corpus ne **remplace** pas l'interprétation : il la soumet à un test indépendant.
 
-## Trois époques, deux ruptures
+## Deux tournants, trois époques
+
+Deux tournants historiques découpent la période : **Bali (2007)** et **Paris (2015)**.
+
+\medskip
 
 1. **Avant** (1990--2006) : trois traditions disjointes
 2. **Cristallisation** (2007--2014) : la fabrique comptable
 3. **Champ établi** (2015--2025) : controverses sur l'objet existant
 
-\medskip
-Tournants historiques à Bali (2007) et Paris (2015).
+## {.plain}
 
-## La littérature sur la finance climat, 1990--2023
+\begin{tikzpicture}[remember picture,overlay]
+\node at (current page.center)
+  {\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{figures/fig_bars_v1.png}};
+\end{tikzpicture}
 
-\begin{center}
-\includegraphics[width=0.95\paperwidth,height=0.9\textheight,keepaspectratio]{figures/fig_bars_v1.png}
-\end{center}
+::: {.notes}
+La littérature sur la finance climat, 1990--2023 : champ quasi inexistant avant 2007,
+structuré après Bali et Copenhague.
+:::
 
-## Vitesse de renouvellement des thèmes dans le corpus
+## {.plain}
 
-\begin{center}
-\includegraphics[width=0.95\paperwidth,height=0.9\textheight,keepaspectratio]{figures/fig_breaks.png}
-\end{center}
+\begin{tikzpicture}[remember picture,overlay]
+\node at (current page.center)
+  {\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{figures/fig_breaks.png}};
+\end{tikzpicture}
+
+::: {.notes}
+Vitesse de renouvellement des thèmes dans le corpus : deux ruptures (2007, 2013).
+:::
 
 # Avant la finance climat (1990--2006)
+
+## Trois sous-champs de l'économie
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}P{0.42\linewidth}P{0.50\linewidth}@{}}
+\toprule
+\textbf{Sous-champ} & \textbf{Auteurs clés} \\
+\midrule
+Économie de l'environnement & Pigou ; Ayres \& Kneese ; Nordhaus ; Stern ; Weitzman \\
+\addlinespace
+Développement et coopération internationale & OCDE/CAD ; Desrosières ; Porter ; Michaelowa \\
+\addlinespace
+Efficacité et équité & Negishi ; Roberts \& Weikmans \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Trois lignées faiblement reliées : avant 2007, elles ne se citent guère.
+
+\vfill
+
+\footnotesize Ayres \& Kneese 1969 ; Nordhaus 1992 ; Stern 2007 ; Weitzman 2007 ;
+Desrosières 1998 ; Porter 1995 ; Michaelowa \& Michaelowa 2007 ; Negishi 1960 ; Roberts \& Weikmans 2017.
 
 ## Les pièces existent, l'objet n'est pas assemblé
 
 \begin{center}
-\begin{tabular}{@{}P{0.27\linewidth}P{0.26\linewidth}P{0.38\linewidth}@{}}
+\begin{tabular}{@{}P{0.40\linewidth}P{0.24\linewidth}P{0.30\linewidth}@{}}
 \toprule
-\textbf{Tradition} & \textbf{Question centrale} & \textbf{Limite avant 2007} \\
+\textbf{Sous-champ} & \textbf{Question centrale} & \textbf{Limite avant 2007} \\
 \midrule
 Économie de l'environnement & Quel prix pour le carbone ? & Pas de comptabilité des flux Nord-Sud \\
 \addlinespace
-Statistique de l'aide (OCDE/CAD) & Comment compter l'aide ? & Catégories conçues pour l'aide, pas le climat \\
+Développement et coopération internationale & Comment compter l'aide ? & Catégories conçues pour l'aide, pas le climat \\
 \addlinespace
-Partage de l'effort & Qui doit payer ? & Faible traduction en suivi financier \\
+Efficacité et équité & Qui doit payer ? & Faible traduction en suivi financier \\
 \bottomrule
 \end{tabular}
 \end{center}
 
 Aucun des trois langages --- prix du carbone, aide, partage de l'effort ---
 ne suffit seul à produire une comptabilité de la finance climat.
-
-## Trois traditions, leurs auteurs
-
-\begin{center}
-\begin{tabular}{@{}P{0.30\linewidth}P{0.60\linewidth}@{}}
-\toprule
-\textbf{Tradition} & \textbf{Auteurs et institutions} \\
-\midrule
-Économie de l'environnement & Pigou ; Ayres \& Kneese ; Nordhaus ; Manne \& Richels ; Stern ; Weitzman \\
-\addlinespace
-Statistique de l'aide & OCDE/CAD ; Desrosières ; Porter ; marqueurs de Rio ; A. \& K. Michaelowa \\
-\addlinespace
-Partage de l'effort & CCNUCC ; Protocole de Kyoto ; Negishi ; Roberts \& Weikmans \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-\bigskip
-
-Trois lignées faiblement reliées : avant 2007, elles ne se citent guère.
 
 # Cristallisation (2007--2014)
 
@@ -225,27 +244,6 @@ Performativité au sens de Callon : l'engagement ne crée pas les flux,
 il oblige à construire l'agrégat qu'il promet de mesurer.
 Portrait : photo de profil Google Scholar, illustration académique.
 :::
-
-## Deux pôles durables
-
-\begin{center}
-\begin{tabular}{@{}P{0.14\linewidth}P{0.37\linewidth}P{0.37\linewidth}@{}}
-\toprule
- & \textbf{Pôle efficacité} & \textbf{Pôle redevabilité} \\
-\midrule
-Question & Augmenter les volumes ? & Vérifier le transfert réel ? \\
-\addlinespace
-Concepts & Levier, dérisquage, mobilisation & Additionnalité, équivalent-don \\
-\addlinespace
-Lieux & Banques multilatérales, OCDE & ONG, économie politique \\
-\addlinespace
-Risque & Diluer le climat dans l'ingénierie & Contentieux distributif insoluble \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-Les deux pôles partagent les mêmes catégories et les interprètent différemment.
-La controverse n'est pas un accident : c'est une **condition de fonctionnement**.
 
 ## {.plain}
 
@@ -321,6 +319,27 @@ Chaque étape --- prix du capital, équivalent-don, marqueur, attribution ---
 est gouvernée par une convention.
 :::
 
+## Deux pôles durables
+
+\begin{center}
+\begin{tabular}{@{}P{0.14\linewidth}P{0.37\linewidth}P{0.37\linewidth}@{}}
+\toprule
+ & \textbf{Pôle efficacité} & \textbf{Pôle redevabilité} \\
+\midrule
+Question & Augmenter les volumes ? & Vérifier le transfert réel ? \\
+\addlinespace
+Concepts & Levier, dérisquage, mobilisation & Additionnalité, équivalent-don \\
+\addlinespace
+Lieux & Banques multilatérales, OCDE & ONG, économie politique \\
+\addlinespace
+Risque & Diluer le climat dans l'ingénierie & Contentieux distributif insoluble \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Les deux pôles partagent les mêmes catégories et les interprètent différemment.
+La controverse n'est pas un accident : c'est une **condition de fonctionnement**.
+
 ## Quatre controverses : la même catégorie, deux comptages
 
 :::: {.columns}
@@ -367,7 +386,7 @@ des intérêts contradictoires.
 
 . . .
 
-La quantification ne pacifie pas le conflit ; elle le rend **administrable**.
+La quantification rend **administrable** des conflits pré-existants. Mise en visibilité, pas une résolution.
 Les économistes font un **travail de frontière** : entre aide et climat, entre prêt
 et transfert, entre efficacité financière et justice distributive.
 
