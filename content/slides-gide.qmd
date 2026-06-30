@@ -2,7 +2,6 @@
 title: "Économistes sous contrainte"
 subtitle: "Controverses et construction de la finance climat comme objet économique (1990--2025)"
 author: "Minh Ha-Duong --- CNRS, CIRED"
-institute: "21^e^ colloque international Charles Gide --- Vannes, 2--4 juillet 2026"
 lang: fr
 format:
   beamer:
@@ -16,6 +15,8 @@ format:
       \setbeamerfont{footnote}{size=\tiny}
       \titlegraphic{%
         \begin{tikzpicture}[remember picture,overlay]
+          \node[anchor=north west,font=\footnotesize] at ([xshift=0.8cm,yshift=-0.7cm]current page.north west)
+            {21\textsuperscript{e} colloque international Charles Gide --- Vannes, 2--4 juillet 2026};
           \node[anchor=north east] at ([xshift=-0.7cm,yshift=-0.55cm]current page.north east)
             {\includegraphics[height=1.5cm]{slides-assets/logo-cired.png}};
           \node[anchor=south] at ([yshift=0.25cm]current page.south)
@@ -32,9 +33,10 @@ format:
 
 ## {.plain}
 
-\centering
-
-\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{slides-assets/cop29-baku-summit.jpg}
+\begin{tikzpicture}[remember picture,overlay]
+\node at (current page.center)
+  {\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{slides-assets/cop29-baku-summit.jpg}};
+\end{tikzpicture}
 
 ## Un chiffre net, un objet instable
 
@@ -45,9 +47,9 @@ format:
 
 \small
 
-- **ONU** --- « la COP29 s'achève sur une promesse de 300 milliards… l'accord qualifié d'*insulte* »
-- **NPR** --- « negotiators struck a *controversial* \$300 billion deal »
 - ***Euronews*** --- « un accord à 300 milliards de dollars pour les pays en développement »
+- **ONU Info** --- « la COP29 s'achève sur une promesse de 300 milliards… l'accord qualifié d'*insulte* par les pays en développement »
+- **NPR** --- « negotiators struck a *controversial* \$300 billion deal »
 
 \normalsize
 
@@ -55,11 +57,8 @@ format:
 
 Pourtant : **aucune caisse** ne contient cette somme, **aucun registre** ne
 l'enregistre, **aucune méthode** de comptage ne s'impose sans contestation.
-
-. . .
-
-Le nombre résulte de l'application de **conventions comptables** à des flux
-hétérogènes --- conventions elles-mêmes disputées.
+Le nombre résulte de **conventions comptables** appliquées à des flux hétérogènes
+--- conventions elles-mêmes disputées.
 
 ::: {.notes}
 Le chiffre est traité comme un fait solide par la presse ; le reste du propos montre
@@ -117,12 +116,14 @@ rapports d'experts, comités statistiques, banques de développement.
 :::
 ::::
 
+\bigskip
+
 Le corpus ne **remplace** pas l'interprétation : il la soumet à un test indépendant.
 
 ## La littérature sur la finance climat, 1990--2023
 
 \begin{center}
-\includegraphics[width=\linewidth,height=0.82\textheight,keepaspectratio]{figures/fig_bars_v1.png}
+\includegraphics[width=0.95\paperwidth,height=0.9\textheight,keepaspectratio]{figures/fig_bars_v1.png}
 \end{center}
 
 ## Trois époques, deux ruptures
@@ -132,16 +133,15 @@ Le corpus ne **remplace** pas l'interprétation : il la soumet à un test indép
 3. **Champ établi** (2015--2025) : controverses sur l'objet existant
 
 \medskip
-Les ruptures endogènes tombent en **2007** et **2013** --- pas en 2015.
 Paris diversifie les thèmes sans refonder les catégories de mesure.
 
-## Deux ruptures endogènes : 2007 et 2013
+## Vitesse de renouvellement des thèmes dans le corpus
 
 \begin{center}
-\includegraphics[width=\linewidth,height=0.82\textheight,keepaspectratio]{figures/fig_breaks.png}
+\includegraphics[width=0.95\paperwidth,height=0.9\textheight,keepaspectratio]{figures/fig_breaks.png}
 \end{center}
 
-# Avant 2007 : trois traditions disjointes
+# Avant la finance climat (1990--2006)
 
 ## Les pièces existent, l'objet n'est pas assemblé
 
