@@ -31,14 +31,13 @@ format:
 
 \tableofcontents
 
-# Introduction
+# 1 — Introduction
 
-## {.plain}
+## Bakou, COP29 --- 11--22 novembre 2024
 
-\begin{tikzpicture}[remember picture,overlay]
-\node at (current page.center)
-  {\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{slides-assets/cop29-baku-summit.jpg}};
-\end{tikzpicture}
+\begin{center}
+\makebox[\linewidth][c]{\includegraphics[width=\paperwidth]{slides-assets/cop29-baku-summit.jpg}}
+\end{center}
 
 ## Un chiffre net, un objet instable
 
@@ -104,17 +103,19 @@ Construire des modèles & Fabriquer des catégories \\
 \end{tabular}
 \end{center}
 
-Une histoire de la pensée économique **hors de ses lieux canoniques** :
-rapports d'experts, comités statistiques, banques de développement.
-
 \vfill
 
 \small Historiographie HET/STS : Aykut \& Dalmedico 2015 ; Pottier 2016. \quad
 Sociologie de la quantification : Desrosières 1998 ; Espeland \& Stevens 1998 ; Çalışkan \& Callon 2009.
 
-# Méthode
+# 2 — Méthode
 
 ## Histoire institutionnelle + test computationnel
+
+Une histoire de la pensée économique **hors de ses lieux canoniques** :
+rapports d'experts, comités statistiques, banques de développement.
+
+\medskip
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -147,10 +148,6 @@ Deux tournants **politiques** : **Bali (2007)** et **Paris (2015)**.
 2. **Cristallisation** (2007--2014) : la fabrique comptable
 3. **Champ établi** (2015--2025) : controverses sur l'objet existant
 
-\medskip
-
-Le **renouvellement** des thèmes culmine en **2007** (et 2013), pas en 2015 : Paris **réoriente** sans refonder les catégories.
-
 ## {.plain}
 
 \begin{tikzpicture}[remember picture,overlay]
@@ -176,7 +173,7 @@ Vitesse de renouvellement des thèmes : le churn culmine en 2007 (Bali) et 2013
 comparable — il réoriente les thèmes sans refonder les catégories de mesure.
 :::
 
-# Avant la finance climat (1990--2006)
+# 3 — Avant la finance climat (1990--2006)
 
 ## Trois sous-champs de l'économie
 
@@ -232,7 +229,7 @@ Efficacité et équité & Qui doit payer ? & Faible traduction en suivi financie
 Aucun des trois langages --- prix du carbone, aide, partage de l'effort ---
 ne suffit seul à produire une comptabilité de la finance climat.
 
-# Cristallisation (2007--2014)
+# 4 — Cristallisation (2007--2014)
 
 ## La fabrique comptable
 
@@ -270,9 +267,7 @@ lectures divergentes.
 
 \bigskip
 
-Après 2015, les thèmes se recomposent : les mécanismes de Kyoto reculent ; la
-gouvernance de Paris, les renouvelables, les obligations vertes et l'ESG progressent.
-Mais **les catégories de mesure**, elles, ne sont pas refondées.
+Après 2015, la discussion se recompose *(figure suivante)*.
 
 ## {.plain}
 
@@ -287,7 +282,7 @@ renouvelables, obligations vertes et ESG progressent. Sans refonte des
 catégories de mesure.
 :::
 
-# Champ établi (2015--2025)
+# 5 — Champ établi (2015--2025)
 
 ## Un projet de finance climat de la Banque mondiale en Türkiye
 
@@ -313,9 +308,7 @@ renouvelables --- mais il transporte aussi l'électricité de toutes les sources
 :::
 ::::
 
-## Une opération, plusieurs conventions de comptage
-
-La Turquie emprunte par ailleurs en dollars à ~7,5 %.
+## Combien de finance climat dans ce projet ?
 
 \begin{center}
 \begin{tabular}{@{}P{0.22\linewidth}P{0.28\linewidth}P{0.39\linewidth}@{}}
@@ -331,7 +324,9 @@ Don CTF\newline 2 M\$ & Intégral & Marginal dans le total \\
 \end{tabular}
 \end{center}
 
-\small IBRD : International Bank for Reconstruction and Development ; CTF : Clean Technology Fund (taux 0,25 % indicatif).
+\small La Turquie emprunte par ailleurs en dollars à $\approx$ 7,5 %.
+
+\footnotesize IBRD : International Bank for Reconstruction and Development ; CTF : Clean Technology Fund (taux 0,25 % indicatif).
 
 ::: {.notes}
 Mécanisme IBRD : les États actionnaires apportent leur garantie (capital appelable) ;
@@ -343,41 +338,18 @@ Chaque étape --- prix du capital, équivalent-don, marqueur, attribution ---
 est gouvernée par une convention.
 :::
 
-## Deux pôles durables
-
-\begin{center}
-\begin{tabular}{@{}P{0.14\linewidth}P{0.37\linewidth}P{0.37\linewidth}@{}}
-\toprule
- & \textbf{Pôle efficacité} & \textbf{Pôle redevabilité} \\
-\midrule
-Question & Augmenter les volumes ? & Vérifier le transfert réel ? \\
-\addlinespace
-Concepts & Levier, dérisquage, mobilisation & Additionnalité, équivalent-don \\
-\addlinespace
-Lieux & Banques multilatérales, OCDE & ONG, économie politique \\
-\addlinespace
-Risque & Diluer le climat dans l'ingénierie & Contentieux distributif insoluble \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-Les deux pôles partagent les mêmes catégories et les interprètent différemment.
-La controverse n'est pas un accident : c'est une **condition de fonctionnement**.
-
-## Quatre controverses : la même catégorie, deux comptages
+## Quatre controverses
 
 :::: {.columns}
 ::: {.column width="64%"}
-\small
+1. **Valeur** des prêts concessionnels — faciale *vs* équivalent-don
+2. **Crédibilité** des marqueurs de Rio — auto-déclaration *vs* surdéclaration
+3. **Attribution** de la finance privée mobilisée — comptage large *vs* strict
+4. **Additionnalité** : aide ou obligation climatique — synergie *vs* réétiquetage
 
-| Controverse | Efficacité | Redevabilité |
-|---|---|---|
-| Prêts concessionnels | Valeur faciale | Équivalent-don |
-| Marqueurs de Rio | Auto-déclaration | Surdéclaration |
-| Finance privée mobilisée | Multiplicateur | Double comptage |
-| Frontière aide / climat | Synergie | Réétiquetage |
+\medskip
 
-\normalsize\footnotesize Le *Shadow Report* d'Oxfam recalcule des totaux bien plus
+\footnotesize Le *Shadow Report* d'Oxfam recalcule des totaux bien plus
 bas que les chiffres officiels de l'OCDE.
 :::
 ::: {.column width="34%"}
@@ -395,7 +367,36 @@ OCDE = pôle efficacité (comptage officiel). Oxfam = pôle redevabilité (recal
 Couvertures sous copyright, usage d'illustration / citation académique.
 :::
 
-# Conclusion
+## Deux pôles, pas seize positions
+
+\begin{center}
+\begin{tabular}{@{}P{0.14\linewidth}P{0.37\linewidth}P{0.37\linewidth}@{}}
+\toprule
+ & \textbf{Pôle efficacité} & \textbf{Pôle redevabilité} \\
+\midrule
+Question & Augmenter les volumes ? & Vérifier le transfert réel ? \\
+\addlinespace
+Concepts & Levier, dérisquage, mobilisation & Additionnalité, équivalent-don \\
+\addlinespace
+Lieux & Banques multilatérales, OCDE & ONG, économie politique \\
+\addlinespace
+Risque & Diluer le climat dans l'ingénierie & Contentieux distributif insoluble \\
+\addlinespace
+Revues & Energy Policy, Energy Economics, Renew. \& Sustain. Energy Rev. & Climate Policy, Global Env. Politics, Climatic Change \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Chaque pôle prend le **même camp** dans les quatre controverses : non pas seize positions, mais deux.
+
+::: {.notes}
+Ligne « Revues » : écologie des revues du corpus (Tableau 4 / annexe A.5). Les travaux
+proches du pôle efficacité se concentrent dans les revues d'énergie et de finance ; ceux
+du pôle redevabilité dans les revues de gouvernance environnementale et de politique
+climatique. La polarisation se voit donc empiriquement, pas seulement conceptuellement.
+:::
+
+# 6 — Conclusion
 
 ## L'ambiguïté comme ressource de gouvernement
 
