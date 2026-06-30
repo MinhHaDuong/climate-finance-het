@@ -106,6 +106,12 @@ def main():
     y_positions = np.arange(n_periods)[::-1]  # top = Before, bottom = Disputes
     bar_height = 0.55
 
+    # Font sizes: enlarged for projection in --wide, manuscript sizes otherwise
+    title_fs = 12 if args.wide else 7.5
+    pct_fs = 11 if args.wide else 6.5
+    ytick_fs = 11 if args.wide else 6.5
+    xlabel_fs = 11 if args.wide else 7
+
     for panel_idx, col in enumerate(ordered_cols):
         ax = axes_flat[panel_idx]
         values = pct[col].values
@@ -120,17 +126,20 @@ def main():
             ax.text(
                 values[j] + 0.5, y_positions[j],
                 f"{values[j]:.0f}%",
-                ha="left", va="center", fontsize=6.5, color=DARK,
+                ha="left", va="center", fontsize=pct_fs, color=DARK,
             )
 
-        # Panel title (bold) + TF-IDF subtitle (italic, smaller)
+        # Panel title (bold) + TF-IDF subtitle (italic, smaller; omitted in --wide)
         short = SHORT_LABELS.get(col, f"Cluster {col}")
-        tfidf = _format_tfidf_line(raw_labels.get(int(col), ""))
+        # Wide: center titles over the panel so long labels overflow symmetrically.
+        title_x, title_ha = (0.5, "center") if args.wide else (0, "left")
         ax.text(
-            0, 1.24, short,
-            transform=ax.transAxes, fontsize=7.5, fontweight="bold",
-            color=DARK, ha="left", va="bottom",
+            title_x, 1.24, short,
+            transform=ax.transAxes, fontsize=title_fs, fontweight="bold",
+            color=DARK, ha=title_ha, va="bottom",
         )
+        # Subtitle omitted in --wide (illegible at projection size).
+        tfidf = "" if args.wide else _format_tfidf_line(raw_labels.get(int(col), ""))
         if tfidf:
             ax.text(
                 0, 1.06, tfidf,
@@ -145,13 +154,13 @@ def main():
         # Y-axis: period labels only in left column
         ax.set_yticks(y_positions)
         if panel_idx % ncols == 0:
-            ax.set_yticklabels(period_short, fontsize=6.5)
+            ax.set_yticklabels(period_short, fontsize=ytick_fs)
         else:
             ax.set_yticklabels([])
 
         # X-axis: ticks on bottom row only
         if panel_idx >= (nrows - 1) * ncols:
-            ax.set_xlabel("%", fontsize=7)
+            ax.set_xlabel("%", fontsize=xlabel_fs)
         else:
             ax.set_xticklabels([])
 
@@ -162,7 +171,7 @@ def main():
         ax.tick_params(left=False)
 
     if args.wide:
-        fig.subplots_adjust(top=0.90, bottom=0.14, hspace=0.95, wspace=0.22)
+        fig.subplots_adjust(top=0.90, bottom=0.14, hspace=0.95, wspace=0.55)
     else:
         fig.subplots_adjust(top=0.97, bottom=0.07, hspace=0.75, wspace=0.18)
 
