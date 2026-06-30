@@ -120,12 +120,6 @@ rapports d'experts, comités statistiques, banques de développement.
 
 Le corpus ne **remplace** pas l'interprétation : il la soumet à un test indépendant.
 
-## La littérature sur la finance climat, 1990--2023
-
-\begin{center}
-\includegraphics[width=0.95\paperwidth,height=0.9\textheight,keepaspectratio]{figures/fig_bars_v1.png}
-\end{center}
-
 ## Trois époques, deux ruptures
 
 1. **Avant** (1990--2006) : trois traditions disjointes
@@ -134,6 +128,14 @@ Le corpus ne **remplace** pas l'interprétation : il la soumet à un test indép
 
 \medskip
 Paris diversifie les thèmes sans refonder les catégories de mesure.
+
+## La littérature sur la finance climat, 1990--2023
+
+\begin{center}
+\includegraphics[width=0.95\paperwidth,height=0.82\textheight,keepaspectratio]{figures/fig_bars_v1.png}
+\end{center}
+
+\begin{center}\footnotesize Tournants historiques à Bali (2007) et Paris (2015).\end{center}
 
 ## Vitesse de renouvellement des thèmes dans le corpus
 
@@ -145,11 +147,19 @@ Paris diversifie les thèmes sans refonder les catégories de mesure.
 
 ## Les pièces existent, l'objet n'est pas assemblé
 
-| Tradition | Question centrale | Limite avant 2007 |
-|---|---|---|
-| Économie de l'environnement | Quel prix pour le carbone ? | Pas de comptabilité des flux Nord-Sud |
-| Statistique de l'aide (OCDE/CAD) | Comment compter l'aide ? | Catégories conçues pour l'aide, pas le climat |
-| Partage de l'effort | Qui doit payer ? | Faible traduction en suivi financier |
+\begin{center}
+\begin{tabular}{@{}p{0.25\linewidth}p{0.27\linewidth}p{0.38\linewidth}@{}}
+\toprule
+\textbf{Tradition} & \textbf{Question centrale} & \textbf{Limite avant 2007} \\
+\midrule
+Économie de l'environnement & Quel prix pour le carbone ? & Pas de comptabilité des flux Nord-Sud \\
+\addlinespace
+Statistique de l'aide (OCDE/CAD) & Comment compter l'aide ? & Catégories conçues pour l'aide, pas le climat \\
+\addlinespace
+Partage de l'effort & Qui doit payer ? & Faible traduction en suivi financier \\
+\bottomrule
+\end{tabular}
+\end{center}
 
 Aucun des trois langages --- prix du carbone, aide, partage de l'effort ---
 ne suffit seul à produire une comptabilité de la finance climat.
@@ -186,12 +196,21 @@ Portrait : photo de profil Google Scholar, illustration académique.
 
 ## Deux pôles durables
 
-| | **Pôle efficacité** | **Pôle redevabilité** |
-|---|---|---|
-| Question | Augmenter les volumes ? | Vérifier le transfert réel ? |
-| Concepts | Levier, dérisquage, mobilisation | Additionnalité, équivalent-don |
-| Lieux | Banques multilatérales, OCDE | ONG, économie politique |
-| Risque | Diluer le climat dans l'ingénierie | Contentieux distributif insoluble |
+\begin{center}
+\begin{tabular}{@{}p{0.14\linewidth}p{0.37\linewidth}p{0.37\linewidth}@{}}
+\toprule
+ & \textbf{Pôle efficacité} & \textbf{Pôle redevabilité} \\
+\midrule
+Question & Augmenter les volumes ? & Vérifier le transfert réel ? \\
+\addlinespace
+Concepts & Levier, dérisquage, mobilisation & Additionnalité, équivalent-don \\
+\addlinespace
+Lieux & Banques multilatérales, OCDE & ONG, économie politique \\
+\addlinespace
+Risque & Diluer le climat dans l'ingénierie & Contentieux distributif insoluble \\
+\bottomrule
+\end{tabular}
+\end{center}
 
 Les deux pôles partagent les mêmes catégories et les interprètent différemment.
 La controverse n'est pas un accident : c'est une **condition de fonctionnement**.
