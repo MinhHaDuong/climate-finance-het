@@ -316,7 +316,7 @@ La Turquie emprunte par ailleurs en dollars à ~7,5 %.
 \toprule
 \textbf{Instrument} & \textbf{Comptage possible} & \textbf{Controverse révélée} \\
 \midrule
-Prêt IBRD\newline 625 M€, $\approx$ 3\,\% & Quasi-intégral & Concessionnalité du bilan AAA, pas une subvention \\
+Prêt IBRD\newline 625 M€, $\approx$ 3\,\% & Quasi-intégral & Taux bas dû à la note AAA de la Banque, pas à une subvention d'un donneur \\
 \addlinespace
 Prêt CTF\newline 32,8 M€, 0,25\,\% & Valeur faciale \emph{ou} équivalent-don ($\approx$ ½) & Argent prêté $\neq$ transfert réel \\
 \addlinespace
@@ -328,6 +328,11 @@ Don CTF\newline 2 M\$ & Intégral & Marginal dans le total \\
 \footnotesize IBRD : International Bank for Reconstruction and Development ; CTF : Clean Technology Fund.
 
 ::: {.notes}
+Mécanisme IBRD : les États actionnaires apportent leur garantie (capital appelable) ;
+la Banque emprunte en AAA à très bas coût et reprête à ~3 % sans perdre d'argent.
+L'avantage de taux vient de son bilan, pas d'un transfert budgétaire d'un pays
+développé — d'où la controverse : faut-il le compter comme contribution climat ?
+
 Chaque étape --- prix du capital, équivalent-don, marqueur, attribution ---
 est gouvernée par une convention.
 :::
