@@ -318,18 +318,19 @@ renouvelables --- mais il transporte aussi l'électricité de toutes les sources
 \toprule
 \textbf{Instrument} & \textbf{Comptage possible} & \textbf{Controverse révélée} \\
 \midrule
-Prêt IBRD\newline 625 M€, $\approx$ 3\,\% & Quasi-intégral & Taux bas dû à la note AAA de la Banque, pas à une subvention d'un donneur \\
+Prêt IBRD\newline 625 M€, $\approx$ 3\,\% & Quasi-intégral\textsuperscript{*} & Taux bas dû à la note AAA de la Banque, pas à une subvention d'un donneur \\
 \addlinespace
-Prêt CTF\newline 32,8 M€, 0,25\,\% & Valeur faciale \emph{ou} équivalent-don ($\approx$ ½) & Argent prêté $\neq$ transfert réel \\
+Prêt CTF\newline 32,8 M€, 0,25\,\% & Valeur faciale \emph{ou} équivalent-don\textsuperscript{*} & Argent prêté $\neq$ transfert réel \\
 \addlinespace
 Don CTF\newline 2 M\$ & Intégral & Marginal dans le total \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-\small La Turquie emprunte par ailleurs en dollars à $\approx$ 7,5 %.
+\footnotesize IBRD : International Bank for Reconstruction and Development\newline
+CTF : Clean Technology Fund (taux 0,25 % indicatif).
 
-\footnotesize IBRD : International Bank for Reconstruction and Development ; CTF : Clean Technology Fund (taux 0,25 % indicatif).
+\footnotesize \textsuperscript{*}La Turquie emprunte par ailleurs en dollars à $\approx$ 7,5 %.
 
 ::: {.notes}
 Mécanisme IBRD : les États actionnaires apportent leur garantie (capital appelable) ;
@@ -378,8 +379,6 @@ Couvertures sous copyright, usage d'illustration / citation académique.
  & \textbf{Pôle efficacité} & \textbf{Pôle redevabilité} \\
 \midrule
 Question & Augmenter les volumes ? & Vérifier le transfert réel ? \\
-\addlinespace
-Concepts & Levier, dérisquage, mobilisation & Additionnalité, équivalent-don \\
 \addlinespace
 Lieux & Banques multilatérales, OCDE & ONG, économie politique \\
 \addlinespace
