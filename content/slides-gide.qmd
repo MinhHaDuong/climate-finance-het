@@ -223,7 +223,11 @@ L'Accord de Paris (article 9) donne à la finance climat un statut juridique cen
 La catégorie est assez installée pour servir, assez indéterminée pour soutenir des
 lectures divergentes.
 
-![Les mécanismes de Kyoto reculent ; gouvernance de Paris, renouvelables, obligations vertes et ESG progressent.](figures/fig_composition.png){width="78%"}
+\bigskip
+
+Après 2015, les thèmes se recomposent : les mécanismes de Kyoto reculent ; la
+gouvernance de Paris, les renouvelables, les obligations vertes et l'ESG progressent.
+Mais **les catégories de mesure**, elles, ne sont pas refondées.
 
 ## Le cas Türkiye / Banque mondiale (2025)
 
