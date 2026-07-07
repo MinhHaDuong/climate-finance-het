@@ -43,8 +43,8 @@ Corps de page :
 > — Géopol : « combien ça vaut » — décomposition des 100 M[illiards] par
 >   pays → lecture géopolitique des négociations. → Reci [Belém ?], 1,3 T
 >
-> — [Corfee-]Morlot inspirée de Roelis & Oliveira [?] ; Green et des
->   Norvégiens surtout. Hans Kojo Sike [?] '93 : indicateurs négociés
+> — [Corfee-]Morlot inspirée de Martins [?] et Oliveira [?] ; Green et des
+>   Norvégiens surtout. Hans Vigo Soke [?] '93 : indicateurs négociés
 >   avec les Samis
 
 ### Slide 5 — « Économistes sous contrainte, au pied de la lettre » (stylo vert)
@@ -113,17 +113,40 @@ Bas de page (raturé) :
      (conclusion VF) ; ajouter des références à la conclusion.
    - Lecture géopolitique : décomposer les 100 Md par pays ; prolonger vers
      la feuille de route de Bakou à Belém (1 300 Md$) [?].
-5. **Pistes archivistiques** : les inspirations de Corfee-Morlot (« Green et
-   des Norvégiens surtout », indicateurs négociés avec les Samis, '93) —
-   piste pour l'histoire fine des marqueurs ; noms à confirmer.
+5. **Pistes archivistiques** (identifications 2026-07-07, à confirmer) :
+   - **« Green » + « Martins et Oliveira » = le modèle GREEN de l'OCDE** :
+     Burniaux, Martin, Nicoletti & **Oliveira Martins**, *GREEN — A
+     Multi-Sector, Multi-Region General Equilibrium Model for Quantifying
+     the Costs of Curbing CO2 Emissions: A Technical Manual*, OECD
+     Economics Department WP 116, 1992. La remarque de la salle suggère une
+     **continuité interne à l'OCDE** entre l'ère modélisation (GREEN,
+     département Économie, 1991-92) et l'ère mesure (Corfee-Morlot,
+     direction Environnement) — nuance le récit « la finance climat naît
+     hors de la modélisation » : à vérifier (liens de citation ou de
+     collaboration Corfee-Morlot ↔ équipe GREEN). Alimente 0135/0141.
+   - **« Hans Vigo Soke '93 » = Hans Viggo Sæbø** (Statistics Norway) :
+     Alfsen & Sæbø, « Environmental quality indicators: Background,
+     principles and examples from Norway », *Environmental and Resource
+     Economics* 3(5), 1993, 415-435 (aussi Statistics Norway DP 71).
+     La filiation nordique des indicateurs environnementaux (comptabilité
+     des ressources norvégienne → indicateurs OCDE), avec l'épisode des
+     indicateurs négociés avec les Samis comme cas de quantification
+     négociée avec les parties prenantes — piste pour l'histoire fine des
+     marqueurs.
 
 ## Lectures incertaines à trancher par l'auteur
 
-- [ ] « Lucas Ward (Nancy) » — qui ? et le contenu exact de la note en marge.
+- [ ] « Lucas [?] Ward [?] (Nancy) » — HET travaillant sur les flux d'idées
+      entre économistes opérationnels en banque centrale et économistes
+      académiques (thème « scientization of central banks » : littérature
+      Goutsmedt/Acosta/Cherrier/Sergi). Nom exact à retrouver dans le
+      programme papier du colloque (sciencesconf inaccessible depuis ici).
 - [ ] « n[iveau]x de vie : −5 %/an pdt 48 ans Nord ; ×2 Sud » — sens et source.
 - [ ] « les acquis de Kyoto *sombrent* » ou « *comblent* » ?
 - [ ] « Ambiguïté = bateau » — lecture et sens.
 - [ ] « Charlieu = livre » — quel livre / auteur ?
-- [ ] « → Reci, 1,3 T » — Belém ? (feuille de route Bakou→Belém, 1 300 Md$)
-- [ ] « Morlot inspirée de Roelis & Oliveira » — noms exacts.
-- [ ] « Hans Kojo Sike '93 » — nom exact (indicateurs négociés avec les Samis).
+- [ ] « → Reci, 1,3 T » — lu comme la feuille de route « Baku to Belém »
+      vers 1 300 Md$/an (décision NCQG, COP29) ; à confirmer.
+- [x] « Martins et Oliveira, Green » — équipe du modèle GREEN, OCDE 1992
+      (Burniaux, Martin, Nicoletti, Oliveira Martins) ; voir §5.
+- [x] « Hans Vigo Soke '93 » — Hans Viggo Sæbø (Alfsen & Sæbø 1993) ; voir §5.
