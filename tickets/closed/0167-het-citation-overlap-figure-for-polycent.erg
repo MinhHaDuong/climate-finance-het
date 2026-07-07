@@ -2,6 +2,7 @@
 Title: HET citation-overlap figure for polycentric_activity
 Created: 2026-07-07
 Author: minh
+Closed: autoclosed — PR #860
 
 --- log ---
 2026-07-07T13:08Z minh created
@@ -11,6 +12,7 @@ Author: minh
 2026-07-07T14:53Z note fixed two correctness bugs found in review: seed year overridden by curated seeds.csv (several seeds resolve to reprints/translations on OpenAlex with a much later publication_year); Samuelson1952 title-search false-positive rejected explicitly. Added --citations-input edge drawing to het_plot_overlap.py
 2026-07-07T14:59Z note author spotted edges pointing to the future; root cause is classic texts (Kant, Keynes, Walras, Bourbaki) resolving to modern reprint editions on OpenAlex; het_plot_overlap.py now drops any edge where ref year > source year
 2026-07-07T15:18Z note session end-of-day handoff: PR #860 open, pipeline complete and working (593 works, 173 edges after artifact filtering). Blocker: none technical -- waiting on author decision (polycentric_activity ticket 0027) on whether/where the figure enters the manuscript. If resuming: het_build_corpus.py/het_embed.py/het_plot_overlap.py are stable; the --drop-seeds exclusion list and known year/edge caveats are documented in the ticket body and conception/het-overlap-citations.md
+2026-07-07T20:14Z HDMX-coding-agent closed — autoclosed — PR #860
 --- body ---
 ## Context
 Companion figure for the HET paper "Un theoreme, sept costumes" / "One
