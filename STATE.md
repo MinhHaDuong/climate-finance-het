@@ -1,6 +1,6 @@
 # State
 
-Last updated: 2026-06-28T22:52Z
+Last updated: 2026-07-07T15:16Z
 
 ## Current goal
 
@@ -14,15 +14,15 @@ implementation** (tracker 0156) — the prose pass applying the decisions, then 
 - Parallel: Charles Gide conference paper `manuscript-Gide.qmd` — uploaded to colloque website 2026-06-29, sent to A. Missemer and Y. Dosquet, **presented at Vannes 2026-07-02/04**. No RHPE submission (earlier "sent to RHPE reviewer" note was wrong): the RHPE special-issue call "Crises" opens post-colloquium; answering it is an open decision. Tag `gide-submitted-2026-06-29` (commit 4ac6e3a); record in `papiers/sent/2026-06-29 Charles Gide/`. Follow-up: bib accuracy validation **0164**.
 
 ## Status
-<!-- generated 2026-06-28T22:52Z -->
+<!-- generated 2026-07-07T15:16Z -->
 
-**Tickets:** 42 ready · 9 blocked — `erg ready tickets/` for full list
+**Tickets:** 43 ready · 9 blocked — `erg ready tickets/` for full list
 **Recent commits:**
-  3b30844 Merge pull request #842 from MinhHaDuong/ticket-bib-validation
-  ce8cf6f ticket(0164): systematic main.bib accuracy validation
-  646f354 Merge pull request #841 from MinhHaDuong/gide-crossref-fr
-  998088a Merge pull request #840 from MinhHaDuong/fix-bib-buchner
-  9302145 manuscript(gide): French crossref prefixes (Tableau/Figure)
+  082dccc Merge pull request #859 from MinhHaDuong/claude/repo-tickets-structure-t1n0hu
+  366c64e decision: title and abstract lead with the birth of an aggregate
+  f577199 decision(0165): resubmission base is the translated VF; propagate to editorial brief
+  699ac43 ticket(0166): corpus lead-lag test, grey vs academic first use of instrument concepts
+  0366efd docs(vannes): decode the geopolitical-reading note (Ariane Dupont)
 
 ## Corpus (v1.1.1)
 
@@ -37,5 +37,4 @@ Test failures: none (prose-ratchet 41 + 33 adherence). Blockers: none.
 
 - **0135 / 0134** — v2.0.5 prose pass: apply hybrid economists framing; eliminate define-by-negation. Unblocked by v2.0.4.
 - **0162** — reduce em-dash density toward 2/paragraph (from 0149 inventory).
-
-Background: null-model ribbon 15/18 (G3/G4/G7 no null); bias audit 0071–0078; arch rule 9 (0043/0044).
+- Background: null-model ribbon 15/18 (G3/G4/G7 no null); bias audit 0071–0078; arch rule 9 (0043/0044).
