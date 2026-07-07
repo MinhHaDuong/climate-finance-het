@@ -2,10 +2,12 @@
 Title: document het_* companion pipeline in architecture.md
 Created: 2026-07-07
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #864
 
 --- log ---
 2026-07-07T20:28Z HDMX-coding-agent created
 
+2026-07-07T20:29Z HDMX-coding-agent closed — autoclosed — PR #864
 --- body ---
 ## Context
 PR #860 (ticket 0167) added `scripts/het_*.py` and `data/het/` — a
