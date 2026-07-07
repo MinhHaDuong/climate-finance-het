@@ -9,6 +9,7 @@ Author: HDMX-coding-agent
 2026-06-19T08:18Z HDMX-coding-agent note 0159 Phase 1: folded the 60-row traceability table into this ticket body (it is active R&R working state, not a frozen record). Deleted the standalone release/2026-03-18 Oeconomia/response-traceability.md; its home is now this ticket. referee-reports.md (frozen) archived under papiers/actif/Oeconomia_Inventing_Climate_Finance/.
 
 2026-06-24T17:44Z HDMX-coding-agent note blocker 0155 closed — Blocked-by removed.
+2026-07-07T20:55Z HDMX-coding-agent note Vannes Q&A material appended (1990 boundary, 2007 causal bridge) for letter drafting
 --- body ---
 ## Context
 v2.0.5. The binding deliverable of the resubmission: a letter answering every
@@ -32,6 +33,18 @@ the 0159 reorg, since it is active R&R working state, not a frozen record.
 ## Exit criteria
 - [ ] Every remark in the traceability table has a response AND author Sign-off
 - [ ] Letter saved under `papiers/actif/Oeconomia_Inventing_Climate_Finance/YYYY-MM-DD Oeconomia revision/`
+
+## Letter material from Vannes (2026-07-07)
+`docs/notes-vannes-2026-07.md` §4 (Dosquet Q&A) — strengthens the letter
+prose on already-routed rows, without reopening signed-off rows:
+- **Why 1990** (rows E3a/R1.o3, Appendix A.2): the 1990 boundary is an
+  observation window, not an origin thesis — science has intellectual
+  autonomy and may produce ideas before the Convention; archives are
+  lacunary before 2000.
+- **Why 2007** (row E3b; §2 content via 0141/R2.18): stronger causal bridge
+  than the post-2012 CDM collapse — by 2007 the perception that Kyoto market
+  mechanisms would not deliver finance at scale (EUA/CER phase-1 crash
+  2006-07) creates the demand for direct accounting of flows.
 
 ## Traceability table
 

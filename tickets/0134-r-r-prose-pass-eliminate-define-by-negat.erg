@@ -2,6 +2,7 @@
 Title: R&R prose pass — eliminate define-by-negation, empty declaratives, formulaic closers
 Created: 2026-06-18
 Author: HDMX-coding-agent
+Blocked-by: 0171
 
 --- log ---
 2026-06-18T06:33Z HDMX-coding-agent created
@@ -9,6 +10,7 @@ Author: HDMX-coding-agent
 
 2026-06-23T07:45Z HDMX-coding-agent note blocker 0147 closed — Blocked-by removed.
 2026-06-24T17:44Z HDMX-coding-agent note blocker 0155 closed — Blocked-by removed.
+2026-07-07T20:55Z HDMX-coding-agent note Blocked-by 0171 added: the final prose pass runs after the conclusion rebuild, per the run-last rule in 0156
 --- body ---
 ## Context
 Editor E1 + Reviewer 2, the most-emphasized issue: prose "defines concepts by

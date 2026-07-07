@@ -127,7 +127,13 @@ Bas de page (raturé) :
      finance à l'échelle (krach EUA/CER phase 1 en 2006-07) crée la demande
      d'une comptabilité directe des flux. Pont causal à renforcer en §2.
    - **Les deux pôles et la littérature sur le crédit** : « entrer dans la
-     bataille : si » = l'auteur veut en faire **un livre**. Scoping : dans
+     bataille : si » = l'auteur veut en faire **un livre**. Décodage validé
+     (auteur, 2026-07-07) : les deux pôles sont la logique de solidarité
+     (don, burden-sharing, public) et la logique de crédit/investissement
+     (prêt, levier, privé mobilisé) — la tension qui produit la controverse
+     valeur faciale / équivalent-don ; « la littérature sur le crédit » est
+     le nexus finance-développement (King & Levine, Aghion & Bolton) et son
+     versant critique (de-risking, blended finance). Scoping : dans
      l'article, faire le minimum que R1.5 demande (situer blended
      finance/de-risking dans le nexus finance-développement, 0139) ; la
      bataille complète va au projet livre (`docs/projet livre - pitch.md`,

@@ -2,11 +2,13 @@
 Title: R&R make commensuration economisation the structuring thread
 Created: 2026-06-18
 Author: HDMX-coding-agent
+Blocked-by: 0172
 
 --- log ---
 2026-06-18T06:33Z HDMX-coding-agent created
 
 2026-06-24T17:44Z HDMX-coding-agent note blocker 0155 closed — Blocked-by removed.
+2026-07-07T20:55Z HDMX-coding-agent note Vannes input appended to body (aggregate ≈ monetary aggregate analogy)
 --- body ---
 ## Context
 Reviewer 1 §3: the commensuration (Espeland & Stevens 1998) / economisation
@@ -16,6 +18,17 @@ contribution but appears once in §2 then is dropped.
 ## Actions
 1. Promote the distinction to a structuring thread: at each stage show how a commensuration move (e.g. Rio markers as tracking tools) became an economisation move (their use to compute leverage ratios / claim $100bn compliance).
 2. Add explicit commensuration→economisation transitions in §1, §2, and the post-2015 section.
+
+## Input from Vannes (2026-07-07)
+`docs/notes-vannes-2026-07.md` § Interprétation 1: the audience named the
+analogy **aggregate ≈ monetary aggregate** (written twice on the handout,
+slides 5 and 20). It is richer than the GDP analogy: several competing
+perimeters coexist legitimately (M1/M2/M3 ↔ face value / grant-equivalent /
+mobilised), the aggregate is defined by perimeter convention, serves as an
+instrument of government, and its targeting has a history of abandonments
+and redefinitions (monetarism). Use it to carry the commensuration→
+economisation thread into the intro and conclusion (coordinate with 0171);
+title/abstract framing is decided in the brief (`title-frames-aggregate-birth`).
 
 ## Exit criteria
 - [ ] The distinction recurs as an analytic device in each act, not just §2

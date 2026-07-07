@@ -1,0 +1,57 @@
+%erg 0.1
+Title: v2.0.5 conclusion rebuild — land on the birth of an aggregate
+Created: 2026-07-07
+Author: HDMX-coding-agent
+Blocked-by: 0172
+
+--- log ---
+2026-07-07T20:44Z HDMX-coding-agent created
+
+--- body ---
+## Context
+Vannes diagnosis (`docs/notes-vannes-2026-07.md` §4, « plus de terreau en
+conclusion »): the VF conclusion is the weakest part of the validated base —
+it evacuates into « chantiers » (the book programme, not article material),
+its bibliographic anchoring is thin (Gieryn alone), and it is where the
+« ambiguity as resource is an STS commonplace » objection would land. The
+conclusion is the priority worksite of the revision. Runs on the translated
+VF base (decision 0165), before the final prose pass (0134 is blocked on
+this ticket).
+
+## Actions
+1. Land the conclusion on the thesis: the birth of a new economic aggregate,
+   with its general conditions — a political number fixed before the object,
+   a pre-existing statistical infrastructure, economists under constraint —
+   and the monetary-aggregates analogy (brief entry
+   `title-frames-aggregate-birth`).
+2. Present the abandonment-of-precision trajectory (art. 4.3 incremental
+   costs → NCQG) as a result of the paper, not a recap.
+3. Use loss & damage / insurance logic as the falsifiable test of the thesis
+   (coordinate with 0138).
+4. Arm the anti-commonplace defense explicitly: the novelty is not
+   « ambiguity is productive » (boundary objects, Star & Griesemer) but
+   (a) a precise definition existed (art. 4.3) and was abandoned, (b) the
+   ambiguity lives in the accounting conventions of an aggregate, (c)
+   economists produced it.
+5. Adopt the Vannes prose corrections: « assez ambiguës pour *servir* des
+   intérêts contradictoires » (not « agréger ») ; candidate closing line:
+   « on a inventé une façon plus économique de se disputer ».
+6. Migrate the « chantiers » to the book project (`docs/projet livre -
+   pitch.md`), keeping at most one limits line.
+7. Anchor bibliographically: Popp Berman 2022, Desrosières, history of
+   monetary aggregates (entries via 0143).
+
+## Test
+- `/review-pr-prose` brief auditor passes the new conclusion against
+  `title-frames-aggregate-birth` and `het-register-not-motivational`;
+  prose ratchet does not regress.
+
+## Invariants
+- No « endogenous periodization » claim; computation stays confirmatory
+  (brief `periodization-corroborated-not-endogenous`).
+
+## Exit criteria
+- [ ] Conclusion lands on the aggregate-birth thesis with the three
+      conditions stated; no « chantiers » list remains
+- [ ] STS-commonplace defense present
+- [ ] At least two of the three anchor references cited in the conclusion
