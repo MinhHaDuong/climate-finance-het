@@ -103,8 +103,9 @@ Bas de page (raturé) :
    mobilisée), l'agrégat est défini par convention de périmètre, il sert
    d'instrument de gouvernement, et son ciblage a une histoire (monétarisme)
    faite d'abandons et de redéfinitions. Alimente 0137 (fil commensuration),
-   l'intro et la conclusion ; candidat pour le titre ou la première phrase
-   de l'abstract.
+   l'intro et la conclusion. **Décidé (auteur, 2026-07-07)** : le
+   titre/abstract de la resoumission mène avec la naissance de l'agrégat —
+   voir `docs/editorial-brief.md` → `title-frames-aggregate-birth`.
 2. **Étiquetage des slides Türkiye par controverse** — Additionnalité (16),
    Valeur + Crédibilité (17), Attribution (18) : rendre explicite dans le
    texte la correspondance biunivoque cas ↔ quatre controverses.

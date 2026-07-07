@@ -38,6 +38,27 @@ letter.
 
 **Status:** active
 
+## title-frames-aggregate-birth
+
+**Decision:** The resubmission's title and abstract lead with the birth of
+a new economic aggregate — how climate finance was made into an aggregate
+(conventional perimeter, no single ledger, governing by measurement), in
+the lineage of histories of GDP and the monetary aggregates. "Strategic
+ambiguity" is the mechanism inside the story, not the headline.
+
+**Rationale:** Author decision 2026-07-07. The Vannes audience named the
+question ("comment un nouvel agrégat est né") and the author's own margin
+notes twice equate agrégat ≈ masse monétaire. "Ambiguity as resource" is
+an STS commonplace (boundary objects) and exposed as a headline; the
+aggregate-birth claim is the fresh, HET-native contribution and gives the
+conclusion its landing (conditions of aggregate birth: a political number
+fixed before the object, a pre-existing statistical infrastructure,
+economists under constraint).
+
+**Ticket:** 0165 (base decision); `docs/notes-vannes-2026-07.md` §1, §4.
+
+**Status:** active
+
 ## construction-not-discovery
 
 **Decision:** Prose frames climate finance as a constructed economic object —
