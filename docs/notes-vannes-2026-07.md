@@ -39,6 +39,9 @@ Corps de page :
 
 ### Page blanche face à « 1 — Introduction »
 
+Source des références : **Ariane Dupont** [Dupont-Kieffer ?], en
+conversation au colloque (identifiée par l'auteur, 2026-07-07).
+
 > Copenhague
 >
 > — Géopol : « combien ça vaut » — décomposition des 100 M[illiards] par
@@ -158,7 +161,14 @@ Bas de page (raturé) :
      conclusion de la révision.
    - Lecture géopolitique : décomposer les 100 Md par pays ; prolonger vers
      la feuille de route de Bakou à Belém (1 300 Md$) [?].
-5. **Pistes archivistiques** (identifications 2026-07-07, à confirmer) :
+5. **Pistes archivistiques** (identifications 2026-07-07, à confirmer) —
+   données par **Ariane Dupont** [Dupont-Kieffer ?]. Si c'est bien Ariane
+   Dupont-Kieffer (Paris 1, historienne de l'économétrie, spécialiste de
+   Ragnar Frisch), la piste nordique est son terrain : la lignée
+   norvégienne (comptabilité nationale et des ressources, Statistics
+   Norway) est cohérente avec ses travaux — contact précieux pour
+   l'histoire fine des indicateurs, et relectrice potentielle du récit
+   « naissance d'un agrégat ».
    - **« Green » + « Martins et Oliveira » = le modèle GREEN de l'OCDE** :
      Burniaux, Martin, Nicoletti & **Oliveira Martins**, *GREEN — A
      Multi-Sector, Multi-Region General Equilibrium Model for Quantifying
