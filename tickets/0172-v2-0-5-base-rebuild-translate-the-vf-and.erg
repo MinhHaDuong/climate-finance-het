@@ -1,0 +1,50 @@
+%erg 0.1
+Title: v2.0.5 base rebuild — translate the VF and reimport the VEn evidence blocks
+Created: 2026-07-07
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-07-07T20:49Z HDMX-coding-agent created
+
+2026-07-07T20:49Z HDMX-coding-agent label needs-human
+--- body ---
+## Context
+Decision 0165 (editorial brief `resubmission-base-is-translated-vf`): the
+v2.0.5 manuscript is rebuilt from the VF (`content/manuscript-Gide.qmd`,
+Vannes-validated), translated into English **as an act of writing, not
+machine-passed** — hence needs-human. VEn material enters only by active
+reimport. This ticket owns Step 1 of the plan, which 0165 described but no
+0156 child executed; the content tickets (0135/0137/0138/0139/0141/0171)
+apply to the base this ticket produces and are blocked by it.
+
+## Relevant files
+- `content/manuscript-Gide.qmd` — VF source (frozen: HAL/tag `gide-submitted-2026-06-29`)
+- `content/manuscript.qmd` — VEn; target file, and source of the evidence blocks
+- `docs/editorial-brief.md` — standing decisions the translation must satisfy
+- `tickets/0152-…` — traceability table gating the reimports
+
+## Actions
+1. Translate the VF section by section into `content/manuscript.qmd`
+   (author-led writing; the brief and prose ratchet apply to the
+   translation, not assumed from the French).
+2. Build the reimport inventory of VEn evidence blocks (corpus-evidence
+   sections, appendix A.1–A.6, §3.1 worked transaction, §2
+   concretizations) — agent-preparable.
+3. Reimport block by block: nothing enters without an explicit import
+   decision, each checked against the 0152 table rows it serves.
+4. Align the two Türkiye factual discrepancies on primary sources (1.7 vs
+   15 GW; grant element half vs three-quarters) — VF/HAL stays frozen, the
+   English text gets the corrected figures (scope shared with 0161/0164).
+
+## Verification
+- [ ] Row-by-row coverage check against the 0152 table + reimport inventory
+- [ ] Prose ratchet and adherence tests pass on the rebuilt manuscript
+
+## Invariants
+- `manuscript-Gide.qmd` unchanged (frozen submission record)
+- No signed-off 0152 row loses its supporting content
+
+## Exit criteria
+- [ ] `manuscript.qmd` is the translated VF with all decided reimports in place
+- [ ] Reimport inventory archived (list of blocks kept/dropped, with reasons)
