@@ -17,6 +17,48 @@ realign, summary verdicts) must clear the four reduction guards in
 `scripts/qa_llm_judge_guards.py` — output no longer than input, zero em dashes,
 no invented number, no LLMism introduced — before their output is trusted.
 
+## resubmission-base-is-translated-vf
+
+**Decision:** The v2.0.5 resubmission manuscript is rebuilt from the
+translated VF (`manuscript-Gide.qmd`) — its framing (économistes sous
+contrainte), thesis-titled sections, and conclusion-that-lands are the
+spine. VEn material (corpus-evidence sections, appendix A.1–A.6, §2
+concretizations) enters only by active reimport, gated row-by-row against
+the 0152 traceability table. Translation is treated as writing: the prose
+brief and ratchet apply to the translated text, not assumed from the French.
+
+**Rationale:** Effort is symmetric with revising the VEn in place, but
+failure modes are not: dropped reviewer-required content has a mechanical
+detector (traceability table); residual pre-decision prose does not, and
+prose (E1) was the editor's most-emphasized issue. The VF voice was
+field-tested at Vannes. HAL preprint overlap is disclosed in the cover
+letter.
+
+**Ticket:** 0165 (decision); 0156 (v2.0.5 tracker); 0152 (traceability).
+
+**Status:** active
+
+## title-frames-aggregate-birth
+
+**Decision:** The resubmission's title and abstract lead with the birth of
+a new economic aggregate — how climate finance was made into an aggregate
+(conventional perimeter, no single ledger, governing by measurement), in
+the lineage of histories of GDP and the monetary aggregates. "Strategic
+ambiguity" is the mechanism inside the story, not the headline.
+
+**Rationale:** Author decision 2026-07-07. The Vannes audience named the
+question ("comment un nouvel agrégat est né") and the author's own margin
+notes twice equate agrégat ≈ masse monétaire. "Ambiguity as resource" is
+an STS commonplace (boundary objects) and exposed as a headline; the
+aggregate-birth claim is the fresh, HET-native contribution and gives the
+conclusion its landing (conditions of aggregate birth: a political number
+fixed before the object, a pre-existing statistical infrastructure,
+economists under constraint).
+
+**Ticket:** 0165 (base decision); `docs/notes-vannes-2026-07.md` §1, §4.
+
+**Status:** active
+
 ## construction-not-discovery
 
 **Decision:** Prose frames climate finance as a constructed economic object —
