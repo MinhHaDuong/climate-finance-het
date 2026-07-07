@@ -1,0 +1,57 @@
+%erg 0.1
+Title: decision — resubmission base text: VEn restructured vs VF translated
+Created: 2026-07-07
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-07-07T14:30Z HDMX-coding-agent created
+
+--- body ---
+## Context
+The Œconomia decision is "reject in current form / resubmit (major)" — more
+than just revise. Two candidate base texts exist for the v2.0.5 rewrite:
+
+- **VEn** `content/manuscript.qmd` (~12.7k words) — the reviewed manuscript,
+  already carrying post-decision work woven in: appendix A.1–A.6 (0136),
+  definitions (0140), corpus-evidence sections, two-anchor traditions table.
+- **VF** `content/manuscript-Gide.qmd` (~6.9k words) — the Vannes conference
+  paper (HAL, tag `gide-submitted-2026-06-29`), written post-decision with
+  the "économistes sous contrainte" framing, thesis-titled sections, tighter
+  prose. Its bibliography is a strict subset of VEn's; no unique refs.
+
+Both share the three-act structure (0142 decision A holds either way).
+Analysis (session 2026-07-07): total effort is nearly symmetric — the
+difference is the *default*. Base-VEn: an old sentence survives unless
+actively reworked (risk: insufficient transformation on E1, the editor's
+most-emphasized issue; only partially netted by the prose ratchet). Base-VF:
+an old sentence enters only if actively imported (risk: dropping
+reviewer-required content; netted by the 0152 HITL traceability table and
+the reimport inventory). Seams fall inside narrative flow under base-VEn,
+between narrative and evidence blocks under base-VF.
+
+Evidence from Vannes (2026-07-02/04, `docs/notes-vannes-2026-07.md`): small
+but engaged audience; the VF framing resonated — "how a new aggregate is
+born" named as the fascinating question; "agrégat ≈ masse monétaire" analogy
+offered twice in the author's margin notes. Oral-only, small-N caveat.
+
+## Options
+- **A. Base VEn, graft VF elements** — rewrite intro/method/conclusion and
+  section titles from the VF; keep body in place; prose pass 0134 over the
+  rest. Safest for coverage; most exposed on E1 residue.
+- **B. Base VF translated, reimport evidence** — translate the VF (~7k words,
+  treated as writing, not machine passing); reinsert corpus-evidence
+  sections, appendix A.1–A.6, §2 concretizations (already in English);
+  verify coverage row-by-row against the 0152 table. Freshest voice; most
+  exposed on dropped content; larger public overlap with the HAL preprint
+  (disclose in cover letter; interacts with 0153 action 0 re-anonymization).
+
+Both options require: hybrid framing C (0150) written explicitly, the
+indeterminacy thesis (0151), the 0143 bibliography additions, and the two
+Türkiye factual discrepancies resolved first (1.7 vs 15 GW; grant element
+half vs three-quarters — VF/HAL is frozen, align VEn on primary sources;
+scope 0161/0164).
+
+## Exit criteria
+- [ ] Author selects A or B; the 1-paragraph rationale is recorded here
+- [ ] Decision propagated to `docs/editorial-brief.md` — gates 0156 sequencing
