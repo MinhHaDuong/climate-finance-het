@@ -1,6 +1,6 @@
 # State
 
-Last updated: 2026-07-07T15:16Z
+Last updated: 2026-07-07T20:26Z
 
 ## Current goal
 
@@ -9,9 +9,9 @@ v2.0.3 (prose-ratchet infra) and v2.0.4 (framing decisions) shipped. **Now: v2.0
 implementation** (tracker 0156) — the prose pass applying the decisions, then resubmission.
 
 ### Roadmap
-- **v2.0.5** (0156): prose pass 0134 (define-by-negation) + 0135 (hybrid economists framing), em-dash 0162, content 0137/0138/0139/0141/0143, response letter 0152, resubmit 0153.
+- **v2.0.5** (0156): rebuild from the translated VF `manuscript-Gide.qmd` (decision 0165) — prose pass 0134 (define-by-negation) + 0135 (hybrid economists framing), em-dash 0162, content 0137/0138/0139/0141/0143, response letter 0152, resubmit 0153.
 - Parallel (not R&R): method paper **0026** — `multilayer-detection.qmd`.
-- Parallel: Charles Gide conference paper `manuscript-Gide.qmd` — uploaded to colloque website 2026-06-29, sent to A. Missemer and Y. Dosquet, **presented at Vannes 2026-07-02/04**. No RHPE submission (earlier "sent to RHPE reviewer" note was wrong): the RHPE special-issue call "Crises" opens post-colloquium; answering it is an open decision. Tag `gide-submitted-2026-06-29` (commit 4ac6e3a); record in `papiers/sent/2026-06-29 Charles Gide/`. Follow-up: bib accuracy validation **0164**.
+- Parallel: Charles Gide conference paper `manuscript-Gide.qmd` — uploaded to colloque website 2026-06-29, sent to A. Missemer and Y. Dosquet, **presented at Vannes 2026-07-02/04**. No RHPE submission: no special-issue call exists, so there is no decision to take (moot, 2026-07-07). Tag `gide-submitted-2026-06-29` (commit 4ac6e3a); record in `papiers/sent/2026-06-29 Charles Gide/`. Follow-up: bib accuracy validation **0164**.
 
 ## Status
 <!-- generated 2026-07-07T15:16Z -->
