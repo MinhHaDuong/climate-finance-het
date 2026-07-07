@@ -3,9 +3,12 @@ Title: decision — resubmission base text: VEn restructured vs VF translated
 Created: 2026-07-07
 Author: HDMX-coding-agent
 Label: needs-human
+Closed: author chose B — VF translated as base, evidence reimported; propagated to editorial brief
 
 --- log ---
 2026-07-07T14:30Z HDMX-coding-agent created
+2026-07-07T16:40Z HDMX-coding-agent note author selected B (interactive session); recorded + propagated to editorial brief
+2026-07-07T16:40Z HDMX-coding-agent closed — author chose B; propagation done
 
 --- body ---
 ## Context
@@ -52,6 +55,20 @@ Türkiye factual discrepancies resolved first (1.7 vs 15 GW; grant element
 half vs three-quarters — VF/HAL is frozen, align VEn on primary sources;
 scope 0161/0164).
 
+## Decision (2026-07-07) — B. VF translated as base, evidence reimported
+The VF (`manuscript-Gide.qmd`), whose voice and framing were validated at
+Vannes, becomes the base: translated into English as an act of writing (not
+machine-passed), with the brief/ratchet applied to the translation. The VEn
+evidence blocks — corpus-evidence sections, appendix A.1–A.6, §2
+concretizations, already in English — are reimported one by one; nothing
+enters the manuscript without an active import decision. Coverage is gated
+row-by-row against the 0152 traceability table plus the reimport inventory
+(session 2026-07-05/07 analysis). Rationale: total effort is symmetric with
+option A, but the failure modes are not — dropped content has a mechanical
+detector (traceability table), residual old prose does not, and E1 prose was
+the editor's most-emphasized issue. The HAL overlap is disclosed in the
+cover letter; interacts with 0153 action 0 (re-anonymization).
+
 ## Exit criteria
-- [ ] Author selects A or B; the 1-paragraph rationale is recorded here
-- [ ] Decision propagated to `docs/editorial-brief.md` — gates 0156 sequencing
+- [x] Author selects A or B; the 1-paragraph rationale is recorded here
+- [x] Decision propagated to `docs/editorial-brief.md` — gates 0156 sequencing
