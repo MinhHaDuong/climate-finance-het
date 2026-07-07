@@ -1,0 +1,41 @@
+%erg 0.1
+Title: guard enrich_embeddings.py model.half() with CUDA check
+Created: 2026-07-07
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-07T20:18Z HDMX-coding-agent created
+
+--- body ---
+## Context
+PR #860 (ticket 0167, HET citation-overlap companion pipeline) needed a
+CPU-only host and found `model.half()` in the main Phase 1 pipeline is
+GPU-only in practice — fp16 on CPU has no fast kernels and is slower than
+fp32, not faster. The companion script `scripts/het_embed.py` guards its
+own `.half()` call with `torch.cuda.is_available()`; `enrich_embeddings.py`
+does not.
+
+## Relevant files
+- `scripts/enrich_embeddings.py:208` — unconditional `model.half()`
+- `scripts/het_embed.py:54` — reference guard: `if torch.cuda.is_available(): model.half()`
+
+## Actions
+1. Wrap `model.half()` in `enrich_embeddings.py` with the same
+   `torch.cuda.is_available()` guard used in `het_embed.py`.
+
+## Test
+- Existing enrichment tests should still pass; no new test needed for a
+  one-line conditional (behavior on padme's GPU is unchanged, CPU-only run
+  no longer forces slow fp16).
+
+## Verification
+- [ ] `model.half()` only runs when `torch.cuda.is_available()` is true
+- [ ] `make check-fast` passes
+
+## Invariants
+- No change to embedding output on GPU hosts (padme) — same fp16 path taken
+  when CUDA is available.
+
+## Exit criteria
+- [ ] Guard added, `make check` passes
+
