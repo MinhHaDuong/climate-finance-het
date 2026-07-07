@@ -225,11 +225,12 @@ Bas de page (raturé) :
 
 ## Lectures incertaines à trancher par l'auteur
 
-- [ ] « Lucas [?] Ward [?] (Nancy) » — HET travaillant sur les flux d'idées
+- [ ] « Lucas [?] Ward [?] » — HET travaillant sur les flux d'idées
       entre économistes opérationnels en banque centrale et économistes
       académiques (thème « scientization of central banks » : littérature
-      Goutsmedt/Acosta/Cherrier/Sergi). Nom exact à retrouver dans le
-      programme papier du colloque (sciencesconf inaccessible depuis ici).
+      Goutsmedt/Acosta/Cherrier/Sergi). **« (Nancy) » = fausse piste**
+      (auteur, 2026-07-07) — ne pas chercher l'affiliation par là. Nom
+      exact à retrouver dans le programme papier du colloque.
 - [x] « n[iveau]x de vie… » — retiré (notes personnelles sur un autre papier).
 - [x] « les acquis de Kyoto *sombrent* » — confirmé (fiasco du CDM, Dosquet).
 - [x] « Ambiguïté = bateau » — bateau *STS* : risque de lieu commun ; voir §4.
