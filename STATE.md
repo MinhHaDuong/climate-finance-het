@@ -1,6 +1,6 @@
 # State
 
-Last updated: 2026-07-07T20:26Z
+Last updated: 2026-07-07T20:40Z
 
 ## Current goal
 
@@ -14,15 +14,15 @@ implementation** (tracker 0156) — the prose pass applying the decisions, then 
 - Parallel: Charles Gide conference paper `manuscript-Gide.qmd` — uploaded to colloque website 2026-06-29, sent to A. Missemer and Y. Dosquet, **presented at Vannes 2026-07-02/04**. No RHPE submission: no special-issue call exists, so there is no decision to take (moot, 2026-07-07). Tag `gide-submitted-2026-06-29` (commit 4ac6e3a); record in `papiers/sent/2026-06-29 Charles Gide/`. Follow-up: bib accuracy validation **0164**.
 
 ## Status
-<!-- generated 2026-07-07T15:16Z -->
+<!-- generated 2026-07-07T20:40Z -->
 
-**Tickets:** 43 ready · 9 blocked — `erg ready tickets/` for full list
+**Tickets:** 44 ready · 10 blocked — `erg ready tickets/` for full list
 **Recent commits:**
-  082dccc Merge pull request #859 from MinhHaDuong/claude/repo-tickets-structure-t1n0hu
-  366c64e decision: title and abstract lead with the birth of an aggregate
-  f577199 decision(0165): resubmission base is the translated VF; propagate to editorial brief
-  699ac43 ticket(0166): corpus lead-lag test, grey vs academic first use of instrument concepts
-  0366efd docs(vannes): decode the geopolitical-reading note (Ariane Dupont)
+  56c88ea Merge pull request #865 from MinhHaDuong/worktree-t170-dependency-tracking
+  07ab974 ticket(0170): track cross-repo dependency, deferred
+  973d586 Merge pull request #862 from MinhHaDuong/worktree-het-citation-figure
+  858ea6a Merge pull request #863 from MinhHaDuong/worktree-explore-status
+  0b13d23 Merge pull request #864 from MinhHaDuong/worktree-t169-het-companion-doc
 
 ## Corpus (v1.1.1)
 
