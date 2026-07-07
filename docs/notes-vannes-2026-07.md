@@ -138,8 +138,14 @@ Bas de page (raturé) :
      (art. 4.3 → NCQG) comme résultat, pas comme rappel ; (c) pertes et
      préjudices comme test falsifiable de la thèse ; (d) références :
      Popp Berman (style de raisonnement), Desrosières (lignée
-     statistique-État), histoire des agrégats monétaires ; les chantiers
-     réduits à un paragraphe bref.
+     statistique-État), histoire des agrégats monétaires.
+     **Précision de l'auteur (2026-07-07) : chantier = livre.** Les
+     « chantiers » de la conclusion VF sont le programme du livre en
+     cours, annoncés à l'oral pour le colloque — ils n'ont pas vocation à
+     figurer tels quels dans l'article. Pour la resoumission : la
+     conclusion atterrit sur la thèse (a-b-c ci-dessus) ; les chantiers
+     migrent vers le projet livre (`docs/projet livre - pitch.md`), sauf
+     mention d'une ligne s'il en faut une pour les limites.
    - **« Ambiguïté = bateau [STS] »** — mise en garde (soufflée par
      l'agent, pré-Vannes) : « l'ambiguïté comme ressource » est un lieu
      commun STS (objets-frontières, Star & Griesemer). L'audience réduite
