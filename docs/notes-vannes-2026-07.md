@@ -19,19 +19,20 @@ Marge haute :
 
 Corps de page :
 
-> = n[iveau]x de vie [?] : −5 %/an pdt 48 ans Nord ; ×2 Sud
+> [ligne retirée à la demande de l'auteur : notes personnelles sur un
+> autre papier]
 >
 > élargie aux politiques concrètes
 >
 > ? pk '90 → ≠ science policy
 >
-> ? pk 2007 = les acquis de Kyoto sombrent [comblent ?] — tu l'as dit
+> ? pk 2007 = les acquis de Kyoto sombrent — tu l'as dit
 >
 > ✱ Tension entre 2 pôles ? Questionne la littérature sur le crédit ?
 >   entrer dans la bataille : si
 >
 > ✱ Q : est-ce que le Nord a choisi l'arène qui lui est favorable ?
->   Pas plus que d'habitude. Ambiguïté = bateau [?].
+>   Pas plus que d'habitude. Ambiguïté = bateau [STS].
 >   Ajouter + de références à la conclusion.
 >
 > ✱ Charlieu [?] = livre
@@ -101,16 +102,38 @@ Bas de page (raturé) :
    contradictoires » (au lieu d'« agréger ») ; la chute « on a inventé une
    façon plus économique de se disputer » (la quantification comme mode de
    dispute à moindre coût) — candidate pour la conclusion.
-4. **Questions de la salle à traiter dans la révision** :
-   - Pourquoi 1990 comme point de départ ; positionnement vis-à-vis de la
-     littérature science policy.
-   - 2007 : le rôle de l'effondrement des acquis de Kyoto (CDM) dans la
-     cristallisation — déjà dans le texte (VEn §1), à rendre plus saillant.
-   - Les deux pôles engagent-ils la littérature sur le crédit ? (« entrer
-     dans la bataille : si ») — recoupe 0139 (nexus finance-développement).
-   - Le Nord a-t-il choisi l'arène qui lui est favorable ? Réponse esquissée :
-     « pas plus que d'habitude » — recoupe le point des arènes asymétriques
-     (conclusion VF) ; ajouter des références à la conclusion.
+4. **Questions de la salle, avec les réponses de l'auteur (2026-07-07)** :
+   - **Pourquoi 1990 ? (question Dosquet)** — réponse donnée : la science a
+     son autonomie intellectuelle ; on n'exclut pas qu'elle produise des
+     idées avant la Convention. Peu de références, mais les archives sont
+     lacunaires avant 2000. → À intégrer comme justification de la borne
+     1990 dans l'annexe (répond aussi à E3, frontières du corpus) : la
+     borne est une fenêtre d'observation, pas une thèse d'origine.
+   - **Pourquoi la rupture 2007 ? (Dosquet)** — on acte le fiasco du CDM et
+     des autres mécanismes de Kyoto. La VEn a déjà l'effondrement du CDM
+     (post-2012, prix des CER) ; le point de Dosquet est plus fort : dès
+     2007, la perception que les mécanismes de marché ne livreraient pas la
+     finance à l'échelle (krach EUA/CER phase 1 en 2006-07) crée la demande
+     d'une comptabilité directe des flux. Pont causal à renforcer en §2.
+   - **Les deux pôles et la littérature sur le crédit** : « entrer dans la
+     bataille : si » = l'auteur veut en faire **un livre**. Scoping : dans
+     l'article, faire le minimum que R1.5 demande (situer blended
+     finance/de-risking dans le nexus finance-développement, 0139) ; la
+     bataille complète va au projet livre (`docs/projet livre - pitch.md`,
+     `docs/projet livre - plan détaillé.md`).
+   - **Le Nord a-t-il choisi l'arène qui lui est favorable ?** Réponse
+     esquissée : « pas plus que d'habitude » — recoupe le point des arènes
+     asymétriques (conclusion VF) ; ajouter des références à la conclusion.
+   - **« Ambiguïté = bateau [STS] »** — mise en garde (soufflée par
+     l'agent, pré-Vannes) : « l'ambiguïté comme ressource » est un lieu
+     commun STS (objets-frontières, Star & Griesemer). L'audience réduite
+     n'a pas tiqué, mais un referee STS-compétent pourrait. Défense à
+     rendre explicite : la nouveauté n'est pas « l'ambiguïté est
+     productive », c'est (a) la démonstration historique qu'une définition
+     précise existait (art. 4.3) et a été *abandonnée*, (b) l'ambiguïté
+     logée dans les conventions comptables d'un agrégat, (c) les
+     économistes comme producteurs de cette ambiguïté. À armer dans la
+     conclusion de la révision.
    - Lecture géopolitique : décomposer les 100 Md par pays ; prolonger vers
      la feuille de route de Bakou à Belém (1 300 Md$) [?].
 5. **Pistes archivistiques** (identifications 2026-07-07, à confirmer) :
@@ -175,10 +198,10 @@ Bas de page (raturé) :
       académiques (thème « scientization of central banks » : littérature
       Goutsmedt/Acosta/Cherrier/Sergi). Nom exact à retrouver dans le
       programme papier du colloque (sciencesconf inaccessible depuis ici).
-- [ ] « n[iveau]x de vie : −5 %/an pdt 48 ans Nord ; ×2 Sud » — sens et source.
-- [ ] « les acquis de Kyoto *sombrent* » ou « *comblent* » ?
-- [ ] « Ambiguïté = bateau » — lecture et sens.
-- [ ] « Charlieu = livre » — quel livre / auteur ?
+- [x] « n[iveau]x de vie… » — retiré (notes personnelles sur un autre papier).
+- [x] « les acquis de Kyoto *sombrent* » — confirmé (fiasco du CDM, Dosquet).
+- [x] « Ambiguïté = bateau » — bateau *STS* : risque de lieu commun ; voir §4.
+- [ ] « Charlieu = livre » — quel livre / auteur ? (lié au projet livre ?)
 - [ ] « → Reci, 1,3 T » — lu comme la feuille de route « Baku to Belém »
       vers 1 300 Md$/an (décision NCQG, COP29) ; à confirmer.
 - [x] « Martins et Oliveira, Green » — équipe du modèle GREEN, OCDE 1992
