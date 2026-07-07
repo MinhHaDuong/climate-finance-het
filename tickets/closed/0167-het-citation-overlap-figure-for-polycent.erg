@@ -1,0 +1,77 @@
+%erg 0.1
+Title: HET citation-overlap figure for polycentric_activity
+Created: 2026-07-07
+Author: minh
+Closed: autoclosed — PR #860
+
+--- log ---
+2026-07-07T13:08Z minh created
+
+2026-07-07T13:28Z note embed.py hit two bugs: CPU fp16 (.half()) is unusably slow -- guard with torch.cuda.is_available(); bge-m3 CPU encoding of 1162 short texts genuinely takes several minutes, not seconds
+2026-07-07T14:33Z note author feedback: added --drop-seeds and --y-min/--title to let the display variant exclude Leontief-coda + HET-methodology citations and zoom to 1900+
+2026-07-07T14:53Z note fixed two correctness bugs found in review: seed year overridden by curated seeds.csv (several seeds resolve to reprints/translations on OpenAlex with a much later publication_year); Samuelson1952 title-search false-positive rejected explicitly. Added --citations-input edge drawing to het_plot_overlap.py
+2026-07-07T14:59Z note author spotted edges pointing to the future; root cause is classic texts (Kant, Keynes, Walras, Bourbaki) resolving to modern reprint editions on OpenAlex; het_plot_overlap.py now drops any edge where ref year > source year
+2026-07-07T15:18Z note session end-of-day handoff: PR #860 open, pipeline complete and working (593 works, 173 edges after artifact filtering). Blocker: none technical -- waiting on author decision (polycentric_activity ticket 0027) on whether/where the figure enters the manuscript. If resuming: het_build_corpus.py/het_embed.py/het_plot_overlap.py are stable; the --drop-seeds exclusion list and known year/edge caveats are documented in the ticket body and conception/het-overlap-citations.md
+2026-07-07T20:14Z HDMX-coding-agent closed — autoclosed — PR #860
+--- body ---
+## Context
+Companion figure for the HET paper "Un theoreme, sept costumes" / "One
+Theorem, Seven Guises", which lives in the sibling project
+`polycentric_activity` (tracker `tickets/0011`, manuscript drafted on branch
+`t0014-het-manuscrit-v1`, not yet merged). The paper's thesis is that seven
+independent literatures (+ a Leontief coda) proved the same network-potentials
+theorem without citing each other. This figure makes that claim visually
+checkable: a citation-overlap scatter (Y = year, X = PCA1 of a title+abstract
++keywords embedding) showing whether the seven costumes' reference networks
+occupy separate regions or overlap.
+
+Author asked to reuse this project's existing OpenAlex/embeddings machinery
+rather than duplicate it in `polycentric_activity` (decision: 2026-07-07).
+
+## Relevant files
+- `data/het/seeds.csv` -- 71 works cited in the HET manuscript (extracted from
+  its `\cite` keys against `polycentric_activity`'s refs.bib + het-refs.bib on
+  branch t0014). 18 of the 71 are tagged into 8 "costume" branches.
+- `scripts/het_build_corpus.py` -- hop-0/1/2 OpenAlex crawl (seeds -> their
+  references -> references of the branch-reachable references). Writes
+  `data/het/works.csv` + `data/het/citations.csv`.
+- `scripts/het_embed.py` -- BAAI/bge-m3 embeddings (same model/text convention
+  as `enrich_embeddings.py`, but standalone: that script's periodization
+  filter is 1990-2024 and would drop this 1916-1992 corpus). Writes
+  `data/het/embeddings.npz` + `data/het/works_pca.csv` (adds a PCA1 column).
+- `scripts/het_plot_overlap.py` -- the figure itself.
+- `tests/test_het_build_corpus.py` -- unit tests for the crawl logic.
+
+## Actions
+1. Run `uv run python scripts/het_build_corpus.py` (crawl; ~1 min with an
+   OpenAlex API key configured).
+2. Run `uv run --extra cpu python scripts/het_embed.py` (needs
+   `uv sync --group corpus --extra cpu` first).
+3. Run `uv run python scripts/het_plot_overlap.py`.
+4. Copy `data/het/het_overlap.svg` (+ .png) into `polycentric_activity`,
+   natural location `conception/het-overlap-citations.svg`, referenced from
+   the manuscript or from a note alongside `conception/het-squelette.md`.
+
+## Verification
+- [ ] Seed resolution rate logged and reasonable (64/71 achieved 2026-07-07;
+      unresolved are pre-1960s items OpenAlex doesn't index -- Heckscher 1916
+      Swedish, Mises 1920 German, two 1951 Cowles book chapters -- documented,
+      not silently dropped).
+- [ ] `_n_branches > 2` warning does not fire silently (script logs a count if
+      it does; current corpus has a max of 2).
+- [ ] Figure legend covers all 8 branches + context; overlap wedges visible.
+
+## Invariants
+- Does not touch `enrich_embeddings.py`'s shared cache or the main
+  `data/catalogs/` corpus (Phase 1/2 contract) -- reads/writes only under
+  `data/het/`.
+- Only `data/het/seeds.csv` (the curated 71-work bibliography) is committed --
+  matches this project's own convention (`content/figures/*` gitignored,
+  Phase-1 catalogs DVC-managed): `works.csv`, `works_pca.csv`,
+  `citations.csv`, `embeddings.npz`, `het_overlap.{png,svg}` and `pool/` are
+  all regenerable from seeds.csv via the three `het_*.py` scripts (see
+  Actions) and exceed the repo's 500KB plain-git file limit anyway.
+
+## Exit criteria
+- [ ] Figure produced and copied into `polycentric_activity`.
+- [ ] `make check-fast` (ruff + unit tests) passes.
