@@ -262,11 +262,20 @@ def main():
     parser.add_argument("--output-citations", default=os.path.join(HET_DIR, "citations.csv"))
     parser.add_argument("--delay", type=float, default=0.15)
     parser.add_argument("--limit-seeds", type=int, default=0, help="For smoke testing")
+    parser.add_argument(
+        "--drop-seeds", default="",
+        help="Comma-separated seed keys to exclude from this run (e.g. to try "
+             "a display variant without touching the source-of-truth seeds.csv)",
+    )
     args = parser.parse_args()
 
     seeds = pd.read_csv(args.seeds).fillna("")
     if args.limit_seeds:
         seeds = seeds.head(args.limit_seeds)
+    if args.drop_seeds:
+        dropped = {k.strip() for k in args.drop_seeds.split(",") if k.strip()}
+        seeds = seeds[~seeds["key"].isin(dropped)]
+        log.info("Dropped %d seeds: %s", len(dropped), ", ".join(sorted(dropped)))
 
     cache = Cache(CACHE_PATH)
     seed_oa_id, _unresolved = resolve_seeds(seeds, cache, args.delay)

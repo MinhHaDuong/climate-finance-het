@@ -114,11 +114,13 @@ def label_seeds(ax, df):
         )
 
 
-def build_legend(ax):
+def build_legend(ax, df):
+    """Only list branches actually present in this run's data."""
+    present = {b for lst in df["_branches_list"] for b in lst}
     handles = [
-        Line2D([0], [0], marker="o", linestyle="", color=color, markersize=8,
-               label=BRANCH_LABELS[branch])
-        for branch, color in BRANCH_COLORS.items()
+        Line2D([0], [0], marker="o", linestyle="", color=BRANCH_COLORS[branch],
+               markersize=8, label=BRANCH_LABELS[branch])
+        for branch in BRANCH_COLORS if branch in present
     ]
     handles.append(
         Line2D([0], [0], marker="o", linestyle="", color=CONTEXT_COLOR, markersize=8,
@@ -133,6 +135,10 @@ def main():
     parser.add_argument("--works-input", default=os.path.join(HET_DIR, "works_pca.csv"))
     parser.add_argument("--output-stem", default=os.path.join(HET_DIR, "het_overlap"))
     parser.add_argument("--pdf", action="store_true", help="Also save PDF")
+    parser.add_argument("--y-min", type=float, default=None, help="Crop the year axis (zoom)")
+    parser.add_argument(
+        "--title", default="HET corpus: citation overlap across the seven costumes (+ Leontief coda)"
+    )
     args = parser.parse_args()
 
     df = pd.read_csv(args.works_input)
@@ -148,13 +154,15 @@ def main():
     plot_single_branch_or_context(ax, df)
     plot_overlap_wedges(ax, df)
     label_seeds(ax, df)
-    build_legend(ax)
+    build_legend(ax, df)
 
     ax.set_xlabel("PCA1 of title + abstract + keywords embedding (multilingual-MiniLM-L12)")
     ax.set_ylabel("Year of publication")
-    ax.set_title("HET corpus: citation overlap across the seven costumes (+ Leontief coda)")
+    ax.set_title(args.title)
     ax.spines[["top", "right"]].set_visible(False)
     ax.grid(axis="y", color="#e1e0d9", linewidth=0.6, zorder=0)
+    if args.y_min is not None:
+        ax.set_ylim(bottom=args.y_min)
     fig.tight_layout()
 
     save_figure(fig, args.output_stem, pdf=args.pdf, dpi=200)
