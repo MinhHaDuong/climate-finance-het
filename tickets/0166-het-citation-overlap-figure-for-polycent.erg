@@ -7,6 +7,7 @@ Author: minh
 2026-07-07T13:08Z minh created
 
 2026-07-07T13:28Z note embed.py hit two bugs: CPU fp16 (.half()) is unusably slow -- guard with torch.cuda.is_available(); bge-m3 CPU encoding of 1162 short texts genuinely takes several minutes, not seconds
+2026-07-07T14:33Z note author feedback: added --drop-seeds and --y-min/--title to let the display variant exclude Leontief-coda + HET-methodology citations and zoom to 1900+
 --- body ---
 ## Context
 Companion figure for the HET paper "Un theoreme, sept costumes" / "One
