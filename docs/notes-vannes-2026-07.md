@@ -35,7 +35,7 @@ Corps de page :
 >   Pas plus que d'habitude. Ambiguïté = bateau [STS].
 >   Ajouter + de références à la conclusion.
 >
-> ✱ Charlieu [?] = livre
+> ✱ Chantier = livre
 
 ### Page blanche face à « 1 — Introduction »
 
@@ -233,7 +233,8 @@ Bas de page (raturé) :
 - [x] « n[iveau]x de vie… » — retiré (notes personnelles sur un autre papier).
 - [x] « les acquis de Kyoto *sombrent* » — confirmé (fiasco du CDM, Dosquet).
 - [x] « Ambiguïté = bateau » — bateau *STS* : risque de lieu commun ; voir §4.
-- [ ] « Charlieu = livre » — quel livre / auteur ? (lié au projet livre ?)
+- [x] « Chantier = livre » (mal lu « Charlieu ») — les chantiers de la
+      conclusion sont le programme du livre en cours ; voir §4.
 - [ ] « → Reci, 1,3 T » — lu comme la feuille de route « Baku to Belém »
       vers 1 300 Md$/an (décision NCQG, COP29) ; à confirmer.
 - [x] « Martins et Oliveira, Green » — équipe du modèle GREEN, OCDE 1992
