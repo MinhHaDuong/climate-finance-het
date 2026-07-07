@@ -1,0 +1,59 @@
+%erg 0.1
+Title: cross-repo dependency: extract shared corpus/embedding code?
+Created: 2026-07-07
+Author: HDMX-coding-agent
+Label: deferred
+
+--- log ---
+2026-07-07T20:36Z HDMX-coding-agent created
+
+--- body ---
+## Context
+Ticket 0167 (PR #860) added `scripts/het_*.py` to this repo to generate a
+figure for a paper that lives in the sibling repo `polycentric_activity`.
+Documented in `architecture.md` (ticket 0169) as a deliberate call: reuse
+this repo's OpenAlex-crawl/embedding conventions in place rather than
+duplicate them there.
+
+That reuse is a real Python import, not a copy: `het_build_corpus.py` does
+`from utils import (...)`, `het_embed.py` does `from enrich_embeddings
+import build_text` and `from utils import get_logger`. So the actual shape
+of the dependency is: a paper's build pipeline, living in one git repo
+(`polycentric_activity`), depends on internal, unpackaged modules
+(`utils.py`, `enrich_embeddings.py`) of a *different* git repo
+(`climate-finance-het`) that has no notion of being depended upon —
+no version pin, no package boundary, no test coverage on the
+`polycentric_activity` side that would catch a breaking refactor here.
+`het_build_corpus.py`'s own tests live in *this* repo and only exercise
+its own logic, not the contract with the paper that actually consumes the
+figure.
+
+The author flagged (2026-07-07): this may be the point where the shared
+OpenAlex-crawl/embedding conventions (`retry_get`, `reconstruct_abstract`,
+`build_text`, plus whatever `utils.py` exports) should be promoted out of
+`climate-finance-het` into an independent, installable, reusable project —
+something both repos (and any future one) depend on as a normal package,
+rather than one repo's paper pipeline reaching into another repo's
+`scripts/`. Author wants to think about this more before deciding — this
+ticket tracks the question, not a plan to execute.
+
+## Relevant files
+- `scripts/utils.py`, `scripts/enrich_embeddings.py` — the modules
+  `het_*.py` imports from
+- `scripts/het_build_corpus.py`, `scripts/het_embed.py` — the importers
+- `.claude/rules/architecture.md` §"Companion pipelines" — current
+  (in-place-reuse) rationale, would need revision if this is acted on
+
+## Open questions (for the author, not this ticket to answer)
+- Is this dependency going to recur (more companion figures for other
+  sibling papers), or a one-off that doesn't justify the extraction cost?
+- What's the right boundary for an extracted package — just the OpenAlex
+  HTTP/retry layer, or the embedding conventions too?
+- Versioning/publishing story: local path dependency between repos, a
+  private PyPI-style package, or a git submodule?
+
+## Exit criteria
+- Author decision recorded (keep in-place / extract to independent
+  project / other). No code change implied by closing this ticket —
+  closing just means the question has been resolved one way or another.
+
