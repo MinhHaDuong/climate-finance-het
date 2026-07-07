@@ -65,6 +65,21 @@ The Makefile knob is `NJOBS` (in `divergence.mk`). Default `-1` uses all cores �
 Submission *records* (cover/decision letters, frozen PDFs, deposit archives) are
 not engine — they live outside the repo under `papiers/<state>/<track>/` (0159).
 
+## Companion pipelines (out of phase contract)
+
+`scripts/het_build_corpus.py`, `het_embed.py`, `het_plot_overlap.py`, and
+`data/het/` are not part of this paper's own build. They generate a citation-
+overlap figure for a different paper, "Un théorème, sept costumes", which
+lives in the sibling repo `polycentric_activity` (its tickets 0011/0027).
+The scripts live here — not there — because this repo already has the
+OpenAlex-crawl and embedding conventions they reuse (`retry_get`,
+`reconstruct_abstract`, `build_text`); duplicating that machinery in the
+other repo was rejected as the worse option (ticket 0167). They read/write
+only `data/het/` (only `seeds.csv` committed, the rest regenerable) and
+never touch `enrich_cache/` or the Phase 1/2 contract files. The figure and
+its methodology note are committed in `polycentric_activity/conception/`,
+not here.
+
 ## Data location
 
 Data lives **outside the repo**, at `CLIMATE_FINANCE_DATA` in `.env`.

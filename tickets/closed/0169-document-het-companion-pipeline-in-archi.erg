@@ -1,0 +1,30 @@
+%erg 0.1
+Title: document het_* companion pipeline in architecture.md
+Created: 2026-07-07
+Author: HDMX-coding-agent
+Closed: autoclosed — PR #864
+
+--- log ---
+2026-07-07T20:28Z HDMX-coding-agent created
+
+2026-07-07T20:29Z HDMX-coding-agent closed — autoclosed — PR #864
+--- body ---
+## Context
+PR #860 (ticket 0167) added `scripts/het_*.py` and `data/het/` — a
+standalone companion pipeline unrelated to this paper's own build, reusing
+this repo's OpenAlex/embedding conventions to generate a citation-overlap
+figure for a different paper in the sibling repo `polycentric_activity`
+(tickets 0011/0027 there). Author confirmed (post-hoc, this session) that
+keeping the machinery here rather than duplicating it in the other repo was
+the deliberate call, matching what `polycentric_activity` ticket 0027
+already records. `architecture.md` had no mention of this, so a future
+reader scanning `scripts/` had no signal these three files sit outside the
+Phase 1-4 taxonomy.
+
+## Relevant files
+- `.claude/rules/architecture.md` — added a "Companion pipelines" section
+
+## Exit criteria
+- [x] architecture.md documents the het_* companion pipeline and why it
+      lives here instead of in `polycentric_activity`
+
