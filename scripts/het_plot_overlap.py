@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Plot citation overlap across the HET "seven costumes" (+ Leontief coda).
+"""Plot the HET citation-overlap corpus.
 
 One-off companion to het_build_corpus.py / het_embed.py (see those
 docstrings). Y = publication year, X = PCA1 of the title+abstract+keywords
-embedding. Each of the 8 costume branches gets a fixed categorical hue;
-works reachable from two branches (the overlap the figure exists to show)
-are drawn as split two-color wedges; works with no branch (context/
-methodology citations) are neutral gray. Marker size/opacity fades by hop
-distance from the seed (0 = seed, 1 = reference, 2 = reference-of-reference).
+embedding. Each branch gets a fixed categorical hue; works reachable from two
+branches are drawn as split two-color wedges; works with no branch (context
+citations) are neutral gray. Marker size/opacity fades by hop distance from
+the seed (0 = seed, 1 = reference, 2 = reference-of-reference). Citation
+edges are drawn as thin lines, colored by the citing work's branch.
 
 Produces:
   data/het/het_overlap.png (+ .svg)
@@ -59,6 +59,29 @@ def split_branches(cell):
     if not isinstance(cell, str) or not cell:
         return []
     return cell.split("|")
+
+
+def plot_edges(ax, df, citations_df):
+    """Citation edges as thin lines, colored by the citing work's branch.
+
+    Drawn first (lowest zorder) so points sit legibly on top. An edge whose
+    source has no branch is skipped -- it would just be gray noise, and
+    there are far more of those than branch-colored edges to show.
+    """
+    pos = df.set_index("openalex_id")[["pca1", "year", "_branches_list"]]
+    n_drawn = 0
+    for source_id, ref_id in citations_df.itertuples(index=False):
+        if source_id not in pos.index or ref_id not in pos.index:
+            continue
+        branches = pos.at[source_id, "_branches_list"]
+        if not branches:
+            continue
+        x0, y0 = pos.at[source_id, "pca1"], pos.at[source_id, "year"]
+        x1, y1 = pos.at[ref_id, "pca1"], pos.at[ref_id, "year"]
+        ax.plot([x0, x1], [y0, y1], color=BRANCH_COLORS[branches[0]],
+                alpha=0.15, linewidth=0.6, zorder=0, solid_capstyle="round")
+        n_drawn += 1
+    log.info("Edges drawn: %d/%d", n_drawn, len(citations_df))
 
 
 def plot_single_branch_or_context(ax, df):
@@ -124,21 +147,20 @@ def build_legend(ax, df):
     ]
     handles.append(
         Line2D([0], [0], marker="o", linestyle="", color=CONTEXT_COLOR, markersize=8,
-               label="Context / methodology citation")
+               label="Context citation")
     )
     ax.legend(handles=handles, loc="upper left", bbox_to_anchor=(1.01, 1.0),
-              fontsize=7, frameon=False, title="Costume branch")
+              fontsize=7, frameon=False, title="Branch")
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--works-input", default=os.path.join(HET_DIR, "works_pca.csv"))
+    parser.add_argument("--citations-input", default=os.path.join(HET_DIR, "citations.csv"))
     parser.add_argument("--output-stem", default=os.path.join(HET_DIR, "het_overlap"))
     parser.add_argument("--pdf", action="store_true", help="Also save PDF")
     parser.add_argument("--y-min", type=float, default=None, help="Crop the year axis (zoom)")
-    parser.add_argument(
-        "--title", default="HET corpus: citation overlap across the seven costumes (+ Leontief coda)"
-    )
+    parser.add_argument("--title", default="HET corpus: citation overlap by branch")
     args = parser.parse_args()
 
     df = pd.read_csv(args.works_input)
@@ -149,8 +171,10 @@ def main():
     if (df["_n_branches"] > 2).any():
         log.warning("%d works reachable from >2 branches; only the first 2 are drawn",
                     (df["_n_branches"] > 2).sum())
+    citations_df = pd.read_csv(args.citations_input)
 
     fig, ax = plt.subplots(figsize=(9, 6.5))
+    plot_edges(ax, df, citations_df)
     plot_single_branch_or_context(ax, df)
     plot_overlap_wedges(ax, df)
     label_seeds(ax, df)

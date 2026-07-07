@@ -161,6 +161,16 @@ def batch_resolve(oa_ids, cache, delay, batch_size=50):
         log.info("Resolved batch %d/%d (%d ids)", i // batch_size + 1, n_batches, len(batch))
 
 
+# Verified 2026-07-07: title search for this key repeatedly matches a
+# different, unrelated paper (Takayama & Judge's "Spatial Equilibrium and
+# Quadratic Programming", 1964) instead of Samuelson's actual 1952 AER
+# article ("Spatial Price Equilibrium and Linear Programming"), which
+# OpenAlex does not appear to index under Samuelson's name -- a title-search
+# false positive (0.80 similarity) rather than a same-work reprint. Left
+# unresolved rather than silently mislabeled.
+KNOWN_BAD_TITLE_MATCHES = {"Samuelson1952": "10.2307/1236473"}
+
+
 def resolve_seeds(seeds, cache, delay):
     """Resolve every seed row to an OpenAlex ID (by DOI, else title search)."""
     seed_oa_id = {}
@@ -170,9 +180,16 @@ def resolve_seeds(seeds, cache, delay):
         rec = resolve_by_doi(doi, delay) if doi else None
         if rec is None and title:
             rec, _score = resolve_by_title(title, delay)
+        if rec is not None and rec["doi"] == KNOWN_BAD_TITLE_MATCHES.get(key):
+            rec = None
         if rec is None:
             unresolved.append(key)
             continue
+        # The curated bibliography's year (verified by the author) takes
+        # precedence over whatever specific edition OpenAlex resolved to --
+        # several seeds only exist on OpenAlex as a later reprint/translation
+        # (e.g. de Finetti 1937 resolves to a 1992 Springer reprint).
+        rec["year"] = row["year"]
         cache.put(rec)
         seed_oa_id[key] = rec["openalex_id"]
 
@@ -232,7 +249,14 @@ def expand_hop2(hop1_ids, seed_oa_ids, reach, cache, delay):
 def assemble_works(seed_oa_id, hop1_ids, hop2_ids, reach, cache):
     """Build the final works table: one row per resolved work, tagged with hop and branches."""
     all_ids = set(seed_oa_id.values()) | hop1_ids | hop2_ids
-    key_of_oa_id = {oa_id: key for key, oa_id in seed_oa_id.items()}
+    # Two seed keys can resolve to the same OpenAlex record (e.g. an original
+    # and its translation, both cited separately: Kantorovich1939/1960).
+    # Cache.put() keeps whichever seed's year was written first -- so the
+    # label must follow the same seed, or it ends up paired with the wrong
+    # year. setdefault (not a plain dict comp) keeps the first-seen key.
+    key_of_oa_id = {}
+    for key, oa_id in seed_oa_id.items():
+        key_of_oa_id.setdefault(oa_id, key)
     rows = []
     for oa_id in all_ids:
         rec = cache.get(oa_id)
