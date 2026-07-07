@@ -67,9 +67,17 @@ def plot_edges(ax, df, citations_df):
     Drawn first (lowest zorder) so points sit legibly on top. An edge whose
     source has no branch is skipped -- it would just be gray noise, and
     there are far more of those than branch-colored edges to show.
+
+    Also skips an edge where the cited work's year is later than the citing
+    work's -- a citation can't reach into the future, so this is always an
+    OpenAlex resolution artifact (a classic text resolved to a modern
+    reprint/anthology edition), not a real reversed citation. The 15 curated
+    seeds are corrected for this (het_build_corpus.py uses the verified
+    bibliography year); references have no such ground truth to correct
+    against, so the edge is dropped rather than drawn from a wrong date.
     """
     pos = df.set_index("openalex_id")[["pca1", "year", "_branches_list"]]
-    n_drawn = 0
+    n_drawn, n_backwards = 0, 0
     for source_id, ref_id in citations_df.itertuples(index=False):
         if source_id not in pos.index or ref_id not in pos.index:
             continue
@@ -78,9 +86,14 @@ def plot_edges(ax, df, citations_df):
             continue
         x0, y0 = pos.at[source_id, "pca1"], pos.at[source_id, "year"]
         x1, y1 = pos.at[ref_id, "pca1"], pos.at[ref_id, "year"]
+        if y1 > y0:
+            n_backwards += 1
+            continue
         ax.plot([x0, x1], [y0, y1], color=BRANCH_COLORS[branches[0]],
                 alpha=0.15, linewidth=0.6, zorder=0, solid_capstyle="round")
         n_drawn += 1
+    log.info("Edges skipped as resolution artifacts (cited work dated later than citing work): %d",
+             n_backwards)
     log.info("Edges drawn: %d/%d", n_drawn, len(citations_df))
 
 
