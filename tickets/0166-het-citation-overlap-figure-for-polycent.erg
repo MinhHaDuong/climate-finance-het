@@ -8,6 +8,7 @@ Author: minh
 
 2026-07-07T13:28Z note embed.py hit two bugs: CPU fp16 (.half()) is unusably slow -- guard with torch.cuda.is_available(); bge-m3 CPU encoding of 1162 short texts genuinely takes several minutes, not seconds
 2026-07-07T14:33Z note author feedback: added --drop-seeds and --y-min/--title to let the display variant exclude Leontief-coda + HET-methodology citations and zoom to 1900+
+2026-07-07T14:53Z note fixed two correctness bugs found in review: seed year overridden by curated seeds.csv (several seeds resolve to reprints/translations on OpenAlex with a much later publication_year); Samuelson1952 title-search false-positive rejected explicitly. Added --citations-input edge drawing to het_plot_overlap.py
 --- body ---
 ## Context
 Companion figure for the HET paper "Un theoreme, sept costumes" / "One
