@@ -123,7 +123,23 @@ Bas de page (raturé) :
      `docs/projet livre - plan détaillé.md`).
    - **Le Nord a-t-il choisi l'arène qui lui est favorable ?** Réponse
      esquissée : « pas plus que d'habitude » — recoupe le point des arènes
-     asymétriques (conclusion VF) ; ajouter des références à la conclusion.
+     asymétriques (conclusion VF).
+   - **« Plus de terreau en conclusion »** — décodage de l'auteur
+     (2026-07-07) : façon polie de dire que **la conclusion est faible**.
+     Diagnostic : la conclusion VF s'évacue en « chantiers » (travaux
+     futurs) au lieu d'atterrir ; l'ancrage bibliographique y est mince
+     (Gieryn seul) ; et c'est là que loge le risque « ambiguïté = bateau
+     STS ». Convergence des deux notes : la conclusion est le chantier
+     prioritaire de la révision. Terreau disponible : (a) atterrir sur la
+     naissance de l'agrégat comme mécanisme général — conditions : un
+     chiffre politique fixé avant l'objet, une infrastructure statistique
+     préexistante, des économistes sous contrainte — avec l'analogie des
+     agrégats monétaires ; (b) le trajet abandon-de-la-précision
+     (art. 4.3 → NCQG) comme résultat, pas comme rappel ; (c) pertes et
+     préjudices comme test falsifiable de la thèse ; (d) références :
+     Popp Berman (style de raisonnement), Desrosières (lignée
+     statistique-État), histoire des agrégats monétaires ; les chantiers
+     réduits à un paragraphe bref.
    - **« Ambiguïté = bateau [STS] »** — mise en garde (soufflée par
      l'agent, pré-Vannes) : « l'ambiguïté comme ressource » est un lieu
      commun STS (objets-frontières, Star & Griesemer). L'audience réduite
