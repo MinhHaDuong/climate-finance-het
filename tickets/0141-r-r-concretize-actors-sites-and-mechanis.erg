@@ -8,6 +8,7 @@ Author: HDMX-coding-agent
 2026-06-18T14:55Z HDMX-coding-agent note New §3.1 "What climate finance is, concretely" (branch t140-define-terms) is a concrete worked transaction answering R2.g2/R2.34: named actors/sites/instruments (World Bank IBRD + Clean Technology Fund; Türkiye TPTS project P508354; OECD DAC grant-equivalent rules; Joint MDB methodology vs OECD Rio markers), real rates and dates. Adds the additionality + specificity critique ("electrons have no colour"; the WB financed grids long before Rio) and the donor-vs-recipient/MDB-vs-DAC measurement-regime contrast. Partially serves the Rio-markers-functioning and competing-measurement-regimes actions here. Track-changed (blue) pending author sign-off.
 
 2026-06-24T17:44Z HDMX-coding-agent note blocker 0155 closed — Blocked-by removed.
+2026-07-07T20:55Z HDMX-coding-agent note Vannes input appended to body (Baku 1.3T/0.3T gap, geopolitical reading, Türkiye↔controversies mapping)
 --- body ---
 ## Context
 Reviewer 2 (general + linear) + Reviewer 1 other comments: replace abstract /
@@ -31,6 +32,24 @@ consequences.
 - Performativity argument: make explanatory not declarative; unpack apparatus/methodologies/consequences (p12).
 - p16 UN Advisory Group composition (finance ministers, economists, central bankers, no climate scientists) — reflect on whether it matters.
 - Connect the Desrosières quote (p7) to the empirical case.
+
+## Input from Vannes (2026-07-07)
+`docs/notes-vannes-2026-07.md` §4–5:
+- **Baku gap, missing from both VF and VEn**: developing countries asked
+  **$1,300bn/yr**; the NCQG core target is $300bn (the 1.3T survives only as
+  the aspirational « Baku to Belém Roadmap », outside the obligation). The
+  1.3T/0.3T gap is the distributive controversy made visible by the
+  aggregate itself — muscle the Baku paragraph with it.
+- **Geopolitical reading (Ariane Dupont)**: Southern countries read the
+  aggregate by decomposing it — « combien je vaux » in the $100bn. This is
+  the recipient-side use of the aggregate (a device for *valuing countries*
+  as much as verifying donors); it completes the asymmetric-arenas point
+  with a concrete Southern perspective.
+- **Türkiye cases ↔ four controversies**: make the one-to-one mapping
+  explicit in the text — additionality (is it a climate project?), value +
+  credibility (how much finance in this project?), attribution (the
+  OECD/Oxfam duel).
+- **OECD GREEN-team continuity lead** (verify first) — see 0135.
 
 ## Exit criteria
 - [ ] Each flagged passage revised with concrete actors/dates/mechanisms; tracked in the cover-letter traceability table

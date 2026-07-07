@@ -9,6 +9,7 @@ Author: HDMX-coding-agent
 2026-06-18T14:55Z HDMX-coding-agent note New §3.1 (branch t140-define-terms) introduces primary/grey sources currently cited as inline/footnote text, needing verified bib entries: World Bank TPTS press release (2025) + project page (P508354); OECD DAC 2023 grant-equivalent methodology (DCD/DAC/STAT(2023)25); CIF/CTF financial terms & conditions; Joint MDB Methodology for tracking climate finance; Türkiye 2025 USD sovereign bond data; three-month Euribor 2025 levels. Add as action 6 when the §3.1 set-piece is accepted.
 
 2026-06-24T17:44Z HDMX-coding-agent note blocker 0155 closed — Blocked-by removed.
+2026-07-07T20:55Z HDMX-coding-agent note Vannes candidates appended (Popp Berman, Desrosières-lineage, scientization set); author picks before adding
 --- body ---
 ## Context
 New references requested by the referees. QUICK to add as verified bib entries;
@@ -21,6 +22,17 @@ every entry (DOI/venue) before adding — do not fabricate metadata.
 3. Mitchell, Timothy — on development/economy as object. (R2)
 4. King & Levine (1993) — finance-development nexus. (R1 add'l)
 5. Aghion & Bolton — finance-development. (R1 add'l)
+
+## Candidates from Vannes (2026-07-07) — author picks, same verification rule
+`docs/notes-vannes-2026-07.md` §4 and §6. For the conclusion rebuild (0171):
+- Popp Berman, *Thinking Like an Economist* (2022) — **Œconomia published a
+  symposium on it**, a direct editorial link.
+- Desrosières already cited (p7); add a history-of-monetary-aggregates
+  reference for the aggregate-birth analogy.
+Scientization set (supports 0166 framing if kept):
+- Claveau & Dion 2018 (*J. of Economic Methodology*); Hirschman & Popp
+  Berman 2014 (*Socio-Economic Review*); Acosta, Cherrier, Claveau, Fontan,
+  Goutsmedt, Sergi 2024 (*HOPE*); Goutsmedt & Sergi 2025 (*Finance & Society*).
 
 ## Test
 - `related-work-note-validate`-style DOI re-resolution on each new entry.

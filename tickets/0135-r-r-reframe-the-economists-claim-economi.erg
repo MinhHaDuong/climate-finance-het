@@ -8,6 +8,7 @@ Author: HDMX-coding-agent
 2026-06-18T08:25Z HDMX-coding-agent note Framing decision (old action 1) extracted to 0150 (needs-human, v2.0.4). This ticket is execution only: propagate the chosen framing once 0150 lands. v2.0.5 (Blocked-by 0155).
 
 2026-06-24T17:44Z HDMX-coding-agent note blocker 0155 closed — Blocked-by removed.
+2026-07-07T20:55Z HDMX-coding-agent note Vannes input appended to body (OECD GREEN-team continuity lead)
 --- body ---
 ## Context
 Reviewer 1 §1 + editor E2. The paper attributes climate-finance construction to
@@ -25,6 +26,16 @@ practice, or supply evidence of individual economists' intellectual role.
 
 ## Test
 - Manuscript asserts the chosen framing consistently; grep for "economists" attributions cross-checked against the framing.
+
+## Input from Vannes (2026-07-07)
+`docs/notes-vannes-2026-07.md` §5 (Ariane Dupont): possible **internal OECD
+continuity** between the modelling era (GREEN model — Burniaux, Martin,
+Nicoletti, Oliveira Martins, OECD Economics Dept WP 116, 1992) and the
+measurement era (Corfee-Morlot, Environment directorate). Verify citation or
+collaboration links Corfee-Morlot ↔ GREEN team before using. If real, it
+nuances « climate finance was born outside modelling » and strengthens the
+rationality-diffusion framing: the carriers moved inside the same
+institution. Shared lead with 0141.
 
 ## Exit criteria
 - [ ] Central claim reframed and internally consistent
