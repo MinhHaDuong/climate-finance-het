@@ -24,7 +24,9 @@ translated VF (`manuscript-Gide.qmd`) — its framing (économistes sous
 contrainte), thesis-titled sections, and conclusion-that-lands are the
 spine. VEn material (corpus-evidence sections, appendix A.1–A.6, §2
 concretizations) enters only by active reimport, gated row-by-row against
-the 0152 traceability table. Translation is treated as writing: the prose
+the 0152 traceability table. The translation is machine-performed,
+style-anchored on the author's pre-AI-era English prose (method updated
+2026-07-07, superseding the earlier "act of writing" wording); the prose
 brief and ratchet apply to the translated text, not assumed from the French.
 
 **Rationale:** Effort is symmetric with revising the VEn in place, but
