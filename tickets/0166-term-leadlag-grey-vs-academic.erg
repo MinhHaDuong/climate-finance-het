@@ -1,0 +1,62 @@
+%erg 0.1
+Title: corpus test — direction of circulation: grey vs academic first use of instrument concepts
+Created: 2026-07-07
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-07T16:20Z HDMX-coding-agent created — author green light (session 2026-07-07)
+
+--- body ---
+## Context
+Hypothesis from the scientization literature (Hirschman & Popp Berman 2014:
+the direction of idea circulation depends on the nature of the knowledge —
+policy devices travel from practice, theory from academia; see
+`docs/notes-vannes-2026-07.md` §6): climate finance *instrument* concepts
+(Rio markers, grant equivalent, mobilised private finance, additionality,
+blended finance, de-risking) should appear in the grey/institutional
+segment of the corpus *before* the academic segment, while theoretical
+frames flow the other way.
+
+If confirmed, one analysis answers two referee objections at once:
+- **R1.1** — the absence of core economics journals is the signature of how
+  instrument knowledge circulates (institutional channels first), not a
+  corpus selection artifact.
+- **E3** — a quantitative element that visibly earns its footprint.
+
+Feasibility: `refined_works.csv` carries `from_grey` and per-source
+provenance booleans; term matching runs on title+abstract+keywords (same
+text contract as the embeddings). Segment definition (grey = `from_grey`;
+academic = indexed sources without grey flag) must be stated in the table
+caption and tested.
+
+## Method sketch (Execute refines)
+- Term list and match patterns (incl. spelling variants, EN minimum;
+  document the language limitation) in `config/analysis.yaml` — no
+  hardcoded lists (arch rule 6).
+- New Phase-2 script `scripts/compute_term_leadlag.py` (dispatcher not
+  needed: single method). Reads via `load_refined_works()` (arch rule 9),
+  `--output` required (script-io rule).
+- Output CSV: one row per (term, segment) with first_year, n_before_2015,
+  n_total; plus per-term lead = academic_first − grey_first. Pandera
+  schema in `scripts/schemas.py` (strict, coerce).
+- Robustness to singletons: also report the year each term reaches k≥3
+  cumulative occurrences per segment (first attestation can be an outlier).
+- Makefile: own target in an existing or new `.mk`; 1 invocation = 1 output.
+
+## First test (Red)
+`tests/test_term_leadlag.py::test_first_appearance_by_segment` — build a
+synthetic works DataFrame (6 rows: term "grant equivalent" in grey rows
+2010, 2012 and academic rows 2013, 2015; distractor rows without the term)
+monkeypatched into the loader; run the compute function with a 2-term
+config; assert first_year and k=3 attestation per (term, segment) and
+lead values match hand-computed expectations, and that the output
+validates against the new schema.
+
+## Exit criteria
+- [ ] Term list + patterns in `config/analysis.yaml`
+- [ ] `compute_term_leadlag.py` + schema + passing tests (unit + io-discipline)
+- [ ] Output table generated from the real corpus, committed under
+      `content/tables/` with segment definition in caption
+- [ ] Three-sentence findings note appended to this ticket (feeds 0136/0141
+      integration; manuscript prose is NOT in scope here)
+- [ ] `make check` passes
