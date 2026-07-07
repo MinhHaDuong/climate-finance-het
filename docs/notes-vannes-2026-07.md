@@ -134,6 +134,40 @@ Bas de page (raturé) :
      négociée avec les parties prenantes — piste pour l'histoire fine des
      marqueurs.
 
+6. **Littérature « scientization of central banks »** (survol 2026-07-07,
+   suite à la remarque de la collègue de Nancy sur le sens de circulation
+   des idées selon leur nature) :
+   - **Claveau & Dion 2018** (*J. of Economic Methodology*) : le sens du
+     flux d'influence s'est **inversé dans le temps** — la balance des
+     citations en économie monétaire penchait vers l'académie (années
+     1970-80), elle penche désormais vers les banques centrales, devenues
+     dominantes dans leur propre champ savant.
+   - **Hirschman & Popp Berman 2014** (*Socio-Economic Review*) : le sens
+     de circulation dépend de la **forme** du savoir — les *policy devices*
+     (PIB, analyse coût-bénéfice, règles budgétaires) et le *style de
+     raisonnement économique* voyagent vers la décision publique ; le
+     conseil théorique direct voyage mal. Prolongé par Popp Berman,
+     *Thinking Like an Economist* (2022) — dont **Œconomia a publié un
+     symposium** : lien éditorial direct pour 0143.
+   - **Acosta, Cherrier, Claveau, Fontan, Goutsmedt, Sergi 2024** (*HOPE*,
+     « Six Decades of Economic Research at the Bank of England ») et
+     **Goutsmedt & Sergi 2025** (*Finance & Society*, « Redefining
+     scientization ») : la scientisation est stratégique et différenciée
+     selon la fonction (modèles de prévision vs recherche contributive) —
+     pas un transfert linéaire académie → praticiens.
+   - **Import pour le manuscrit** : l'hypothèse symétrique pour la finance
+     climat — les *instruments* (marqueurs de Rio, équivalent-don,
+     attribution de la finance mobilisée) naissent côté opérationnel et la
+     théorisation académique suit (Michaelowa 2007 analyse des marqueurs de
+     1998 ; Stadelmann 2011 des baselines de Copenhague), tandis que les
+     *cadres théoriques* (défaillances de marché, levier) circulent en sens
+     inverse. **Testable dans le corpus** : dater la première apparition de
+     chaque catégorie clé dans le segment gris vs académique. Répondrait à
+     la fois à R1.1 (absence des revues d'économie = les savoirs
+     d'instrument circulent par les canaux institutionnels d'abord) et à
+     E3 (un quantitatif qui gagne sa place). Ticket à ouvrir si l'auteur
+     valide.
+
 ## Lectures incertaines à trancher par l'auteur
 
 - [ ] « Lucas [?] Ward [?] (Nancy) » — HET travaillant sur les flux d'idées
