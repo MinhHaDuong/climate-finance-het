@@ -44,12 +44,19 @@ conversation au colloque (identifiée par l'auteur, 2026-07-07).
 
 > Copenhague
 >
-> — Géopol : « combien ça vaut » — décomposition des 100 M[illiards] par
->   pays → lecture géopolitique des négociations. → Reci [Belém ?], 1,3 T
+> — Géopol : « combien je vaux » — décomposition des 100 M[illiard]s par
+>   pays → lecture géopolitique des négociations. → récl[amé], 1,3 T
 >
 > — [Corfee-]Morlot inspirée de Martins [?] et Oliveira [?] ; Green et des
 >   Norvégiens surtout. Hans Vigo Soke [?] '93 : indicateurs négociés
 >   avec les Samis
+
+Décodage (auteur, 2026-07-07) : remarque d'**Ariane Dupont** — la lecture
+géopolitique des négociations, c'est que les pays du Sud comprennent
+« combien je vaux » : ils décomposent les 100 milliards par pays. Réponse
+de l'auteur : « Merci pour la remarque, ce n'est pas une question » — et
+rappel que les pays en développement avaient demandé **1,3 trillion** de
+dollars à Bakou, pas 0,3.
 
 ### Slide 5 — « Économistes sous contrainte, au pied de la lettre » (stylo vert)
 
@@ -159,8 +166,18 @@ Bas de page (raturé) :
      logée dans les conventions comptables d'un agrégat, (c) les
      économistes comme producteurs de cette ambiguïté. À armer dans la
      conclusion de la révision.
-   - Lecture géopolitique : décomposer les 100 Md par pays ; prolonger vers
-     la feuille de route de Bakou à Belém (1 300 Md$) [?].
+   - **Lecture géopolitique (Ariane Dupont)** : les pays du Sud lisent
+     l'agrégat en le décomposant — « combien je vaux » dans les
+     100 milliards. Import pour le manuscrit : c'est l'usage récipiendaire
+     de l'agrégat — un dispositif de *valorisation des pays* autant que de
+     vérification des donneurs — qui complète le point des arènes
+     asymétriques avec une perspective Sud concrète. Et muscler le
+     paragraphe Bakou : les pays en développement demandaient
+     **1 300 Md$/an** ; l'accord fixe 300 Md$ de cible cœur (le 1,3 T
+     survit en « Baku to Belém Roadmap », aspirationnel, hors obligation).
+     L'écart 1,3 T / 0,3 T est la controverse distributive rendue visible
+     par l'agrégat lui-même — ni la VF ni la VEn ne le mentionnent
+     aujourd'hui (0141).
 5. **Pistes archivistiques** (identifications 2026-07-07, à confirmer) —
    données par **Ariane Dupont** [Dupont-Kieffer ?]. Si c'est bien Ariane
    Dupont-Kieffer (Paris 1, historienne de l'économétrie, spécialiste de
@@ -236,8 +253,8 @@ Bas de page (raturé) :
 - [x] « Ambiguïté = bateau » — bateau *STS* : risque de lieu commun ; voir §4.
 - [x] « Chantier = livre » (mal lu « Charlieu ») — les chantiers de la
       conclusion sont le programme du livre en cours ; voir §4.
-- [ ] « → Reci, 1,3 T » — lu comme la feuille de route « Baku to Belém »
-      vers 1 300 Md$/an (décision NCQG, COP29) ; à confirmer.
+- [x] « → récl[amé], 1,3 T » — les 1 300 Md$/an demandés par les pays en
+      développement à Bakou (la cible cœur adoptée étant 300 Md$) ; voir §4.
 - [x] « Martins et Oliveira, Green » — équipe du modèle GREEN, OCDE 1992
       (Burniaux, Martin, Nicoletti, Oliveira Martins) ; voir §5.
 - [x] « Hans Vigo Soke '93 » — Hans Viggo Sæbø (Alfsen & Sæbø 1993) ; voir §5.
