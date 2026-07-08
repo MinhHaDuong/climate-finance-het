@@ -288,6 +288,14 @@ def test_mitchell_object_and_aid_apparatus_cited():
     )
 
 
+def test_biennial_assessment_figure_is_sourced():
+    """Ticket 0192: the $340--650bn total-flows figure must carry its source
+    (the 2014 UNFCCC Biennial Assessment), not stand uncited."""
+    assert "@unfccc2014biennial" in section("Crystallization"), (
+        "the $340--650bn Biennial Assessment figure is not sourced"
+    )
+
+
 def test_100bn_legal_standing_and_baku_gap_visible():
     """Ticket 0191: the $100bn pledge's move from Copenhagen 'take note' to Cancún
     decision standing must be cited (@unfccc2010cancun); and the Baku passage must
