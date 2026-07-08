@@ -24,7 +24,7 @@ $(SEP_COVERAGE): scripts/compute_pre2007_coverage.py scripts/utils.py \
 
 $(SEP_NULL): scripts/compute_null_separation.py scripts/_null_separation.py \
 		scripts/plot_fig_traditions.py scripts/utils.py scripts/schemas.py \
-		$(CONFIG) $(REFINED) $(REFINED_CIT)
+		scripts/pipeline_loaders.py $(CONFIG) $(REFINED) $(REFINED_CIT)
 	$(PYTHON) $< --output $@
 
 .PHONY: pre2007-coverage pre2007-separation separation
