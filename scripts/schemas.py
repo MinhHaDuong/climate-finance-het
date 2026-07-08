@@ -166,6 +166,7 @@ Pre2007CoverageSchema = DataFrameSchema(
 
 NullSeparationSchema = DataFrameSchema(
     columns={
+        "labelling": Column(str),
         "statistic": Column(str),
         "observed": Column(float, nullable=True),
         "null_mean": Column(float, nullable=True),
@@ -176,6 +177,7 @@ NullSeparationSchema = DataFrameSchema(
         "seed": Column(int),
         "n_nodes": Column(int),
         "n_edges": Column(int),
+        "n_truncated": Column(int),
     },
     strict=True,
     coerce=True,

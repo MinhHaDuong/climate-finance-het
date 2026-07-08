@@ -27,17 +27,13 @@ from pipeline_loaders import (
     load_analysis_config,
     load_refined_citations,
     load_refined_works,
+    pre2007_cutoff_year,
 )
 from schemas import Pre2007CoverageSchema
 from script_io_args import parse_io_args, validate_io
 from utils import get_logger, normalize_doi
 
 log = get_logger("compute_pre2007_coverage")
-
-
-def _pre2007_cutoff(cfg):
-    """Last year of Act I (pre-crystallisation): first break - 1 = 2006."""
-    return int(cfg["periodization"]["breaks"][0]) - 1
 
 
 def _is_grey(series):
@@ -93,7 +89,7 @@ def main():
     argparse.ArgumentParser().parse_args(_extra)  # reject unknown flags
 
     cfg = load_analysis_config()
-    cutoff = _pre2007_cutoff(cfg)
+    cutoff = pre2007_cutoff_year(cfg)
     log.info("Pre-%d coverage diagnostic", cutoff + 1)
 
     works = load_refined_works()

@@ -7,15 +7,25 @@ almost regardless. This script asks the fortify-or-demote question: does
 the observed within-tradition cohesion exceed what the degree sequence
 alone produces?
 
-The three tradition seed-sets are the same Louvain communities the
-published figure (@fig-traditions) anchors by author names — we import
-build_pre2007_traditions() so the null tests exactly those seed-sets. The
-null is a configuration-model rewiring of the subgraph induced by the
+Two labellings of the same co-citation graph are tested, distinguished by a
+``labelling`` column so the robustness is itself traceable:
+
+- ``louvain_anchored`` — seed-sets are the Louvain communities the published
+  figure (@fig-traditions) anchors by author name. Louvain maximises
+  modularity by construction, so "the optimised partition beats a
+  configuration-model null on that same graph" overstates the manuscript's
+  claim about three *historically* defined traditions.
+- ``a_priori_anchors`` — seed-sets fixed a priori from the intellectual-history
+  record (@tbl-traditions authors, config ``pre2007_separation.anchor_*``),
+  via ``label_nodes_by_anchors``. This labelling path invokes no community
+  detection at all, so the circularity objection cannot reach it.
+
+The null is a configuration-model rewiring of the subgraph induced by the
 tradition nodes: edges reshuffled, degrees preserved.
 
 Output: content/tables/tab_null_separation_pre2007.csv, one row per
-statistic (within_tradition_share, modularity), validated by
-NullSeparationSchema.
+(labelling, statistic) — within_tradition_share and modularity for each of
+the two labellings — validated by NullSeparationSchema.
 
 Usage:
     uv run python scripts/compute_null_separation.py \
@@ -31,6 +41,7 @@ import os
 
 import pandas as pd
 from _null_separation import (
+    label_nodes_by_anchors,
     null_separation_test,
     partition_modularity,
     within_tradition_share,
@@ -60,12 +71,14 @@ def tradition_seed_sets(result):
     return node_to_tradition
 
 
-def _result_row(statistic_name, stat_fn, subgraph, node_to_tradition, n_perm, seed):
+def _result_row(labelling, statistic_name, stat_fn, subgraph,
+                node_to_tradition, n_perm, seed):
     """One CSV row: observed vs degree-preserving null for one statistic."""
     res = null_separation_test(
         subgraph, node_to_tradition, stat_fn, n_perm=n_perm, seed=seed
     )
     return {
+        "labelling": labelling,
         "statistic": statistic_name,
         "observed": res["observed"],
         "null_mean": res["null_mean"],
@@ -76,7 +89,33 @@ def _result_row(statistic_name, stat_fn, subgraph, node_to_tradition, n_perm, se
         "seed": res["seed"],
         "n_nodes": subgraph.number_of_nodes(),
         "n_edges": subgraph.number_of_edges(),
+        "n_truncated": res["n_truncated"],
     }
+
+
+def _labelling_rows(labelling, graph, node_to_tradition, n_perm, seed):
+    """Two statistic rows (share, modularity) for one labelling of the graph.
+
+    The induced subgraph is restricted to the labelled nodes so the rewiring
+    preserves exactly their degree sequence.
+    """
+    trad_nodes = list(node_to_tradition)
+    subgraph = graph.subgraph(trad_nodes).copy()
+    log.info(
+        "[%s] %d nodes across %d traditions; induced subgraph %d nodes, %d edges",
+        labelling, len(trad_nodes), len(set(node_to_tradition.values())),
+        subgraph.number_of_nodes(), subgraph.number_of_edges(),
+    )
+    return [
+        _result_row(
+            labelling, "within_tradition_share", within_tradition_share,
+            subgraph, node_to_tradition, n_perm, seed,
+        ),
+        _result_row(
+            labelling, "modularity", partition_modularity,
+            subgraph, node_to_tradition, n_perm, seed,
+        ),
+    ]
 
 
 def main():
@@ -106,34 +145,31 @@ def main():
         ).to_csv(io_args.output, index=False)
         return
 
-    node_to_tradition = tradition_seed_sets(result)
-    trad_nodes = list(node_to_tradition)
-    subgraph = result["graph"].subgraph(trad_nodes).copy()
-    log.info(
-        "Tradition seed-sets: %d nodes across %d traditions; "
-        "induced subgraph %d nodes, %d edges",
-        len(trad_nodes),
-        len(set(node_to_tradition.values())),
-        subgraph.number_of_nodes(),
-        subgraph.number_of_edges(),
-    )
-    log.info("Null: %d degree-preserving rewirings (seed=%d)", n_perm, seed)
+    graph = result["graph"]
+    log.info("Null: %d degree-preserving rewirings per statistic (seed=%d)",
+             n_perm, seed)
 
-    rows = [
-        _result_row(
-            "within_tradition_share", within_tradition_share,
-            subgraph, node_to_tradition, n_perm, seed,
-        ),
-        _result_row(
-            "modularity", partition_modularity,
-            subgraph, node_to_tradition, n_perm, seed,
-        ),
-    ]
+    # Labelling 1 — Louvain-anchored seed-sets (circular; kept for comparison).
+    louvain_labels = tradition_seed_sets(result)
+
+    # Labelling 2 — a-priori anchors, NO community detection in this path.
+    anchor_authors = {k: list(v) for k, v in sep_cfg["anchor_authors"].items()}
+    anchor_works = {k: list(v) for k, v in sep_cfg.get("anchor_works", {}).items()}
+    apriori_labels = label_nodes_by_anchors(graph, anchor_works, anchor_authors)
+
+    rows = []
+    rows += _labelling_rows("louvain_anchored", graph, louvain_labels,
+                            n_perm, seed)
+    rows += _labelling_rows("a_priori_anchors", graph, apriori_labels,
+                            n_perm, seed)
+
     for row in rows:
         log.info(
-            "  %-22s observed=%.4f null=%.4f+-%.4f z=%.2f p=%.4g",
-            row["statistic"], row["observed"], row["null_mean"],
-            row["null_std"], row["z_score"], row["p_value"],
+            "  [%-16s] %-22s observed=%.4f null=%.4f+-%.4f z=%.2f p=%.4g "
+            "(n_truncated=%d)",
+            row["labelling"], row["statistic"], row["observed"],
+            row["null_mean"], row["null_std"], row["z_score"],
+            row["p_value"], row["n_truncated"],
         )
 
     df = pd.DataFrame(rows)

@@ -159,6 +159,25 @@ sensitivity:
 # partition seed are imported from plot_fig_traditions so the null tests
 # the same seed-sets as the published figure (@fig-traditions); only the
 # permutation RNG seed and replicate count are set here.
+#
+# Two labellings of the same graph are tested (a `labelling` column in the
+# output CSV distinguishes them):
+#   louvain_anchored  — seed-sets from the Louvain communities the figure
+#                       anchors by author name. Optimises modularity by
+#                       construction, so it overstates the manuscript claim.
+#   a_priori_anchors  — seed-sets fixed a priori from the intellectual-history
+#                       record (@tbl-traditions authors), with NO community
+#                       detection anywhere in the labelling path.
+# anchor_authors / anchor_works define the a-priori membership. Authors are
+# first-author surname substrings; works are normalised DOIs (empty by default,
+# author matching suffices). A DOI match wins over an author match; an author
+# matching two traditions is ambiguous and dropped.
 pre2007_separation:
   random_seed: 42      # permutation RNG for degree-preserving rewiring
   n_perm: 1000         # rewired null replicates
+  anchor_authors:
+    pricing: [weitzman, barrett, carraro, montgomery, pizer,
+              nordhaus, ayres, kneese, manne, richels, stern]
+    cdm:     [michaelowa, sutter, ellis, haites, pearson]
+    unfccc:  [north, dimaggio, finnemore, negishi]
+  anchor_works: {}
