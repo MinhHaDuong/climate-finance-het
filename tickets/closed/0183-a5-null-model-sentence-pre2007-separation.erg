@@ -11,6 +11,7 @@ Closed: retreated pre-2007 separation claim; negative result reported (author-va
 2026-07-08T16:00Z HDMX-coding-agent note Author-validated approach (2026-07-08), SUPERSEDES the descriptive-consistency plan. Decision: a FRANK RETREAT, not a numbers-hedged claim. The three confessing sentences (A.1, section 1.5, A.5) state plainly that the pre-2007 corpus is too thin to test the separation and that it rests on the intellectual history — with NO null-model / z-score / degree-preserving / community-detection jargon that reads as excuse-making. One qualitative negative-result paragraph near A.5 reports that we tried three quantitative tests (co-citation division, a sparsity-conditioned control, a cross-tradition citation-over-time check) and none is conclusive for the early years, framed as a virtue. The null-model machinery stays in the annexe as the reported negative result; it is NOT pushed to the technical report. Numbers are not cited in the confessing sentences. Removed needs-human: this is now execution of an author-approved decision.
 
 2026-07-08T12:15Z HDMX-coding-agent closed — retreated pre-2007 separation claim; negative result reported (author-validated)
+2026-07-08T17:30Z HDMX-coding-agent note Author revision on PR #885 (post-close). REVERSES the "not pushed to the technical report" invariant: the detailed negative-result treatment MOVES from the article into the technical annex. Deleted the standalone article paragraph after A.5; added a technical subsection content/_includes/techrep/pre2007-separation.md (three bullets, technical register, numbers cited: fitted Louvain within-share 0.89 vs 0.37 z≈25 N=1000, a-priori degenerate ~3 env-econ nodes, temporal NO SIGNAL). Stripped the self-justification from the article retreat sentences (removed "three times over", "report the outcome rather than pass over it", and the "A boundary that only the historical record can presently establish remains a finding" sentence). A.1/A.5/§1.5 now redirect to "the companion technical report".
 --- body ---
 ## Context
 Ticket 0182 asked whether the manuscript claim — that the three pre-2007
@@ -52,8 +53,11 @@ Frank retreat, not a numbers-hedged descriptive-consistency claim.
 - `content/manuscript.qmd` — A.1, section 1.5, A.5 (the three reworded loci + the new paragraph)
 
 ## Invariants
-- Null-model machinery stays in the annexe as the reported negative result;
-  not pushed to the technical report.
+- The article states the retreat plainly (fact only); the detailed
+  negative-result treatment lives in the technical annex
+  (`content/_includes/techrep/pre2007-separation.md`), not in the article body.
+  (Author revision, PR #885 — reverses the earlier "not pushed to the
+  technical report" decision.)
 - Author-sign gate: 0152 rows E3c/E3d/R1.2 must be re-confirmed by the author
   on the retreat reading (HITL). This ticket does not reopen them.
 
