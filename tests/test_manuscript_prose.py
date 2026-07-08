@@ -288,6 +288,22 @@ def test_mitchell_object_and_aid_apparatus_cited():
     )
 
 
+def test_100bn_legal_standing_and_baku_gap_visible():
+    """Ticket 0191: the $100bn pledge's move from Copenhagen 'take note' to Cancún
+    decision standing must be cited (@unfccc2010cancun); and the Baku passage must
+    make the distributive gap visible — the $1.3T call vs the $300bn binding goal,
+    the non-binding 'Baku to Belém' roadmap — and set the magnitude against a state
+    defence budget. Mechanical presence, no phrasing pinned."""
+    cryst = section("Crystallization")
+    assert "@unfccc2010cancun" in cryst, "Cancún formalisation of the $100bn pledge not cited"
+    controv = section("Counting is governing")
+    assert "1.3 trillion" in controv, "Baku $1.3T call (the ask) not made visible"
+    assert "Baku to Bel" in controv, "'Baku to Belém' roadmap not named"
+    assert "national defence" in controv.lower() or "1.01 trillion" in controv, (
+        "defence-budget scale comparator missing"
+    )
+
+
 def test_loss_and_damage_is_a_bounded_thesis_limit():
     """Ticket 0138 (R1.4): loss and damage must stand as its own subsection that
     (a) gives the Warsaw-to-Fund genealogy the referee named, not just the 2022
