@@ -1,0 +1,40 @@
+%erg 0.1
+Title: R&R Article 4.3 to Bali — the incremental-cost framework and the shift to a broader category
+Created: 2026-07-08
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-08T20:01Z HDMX-coding-agent created
+2026-07-08T20:01Z HDMX-coding-agent note child of tracker 0141 (split into PR-sized units)
+
+--- body ---
+## Context
+Reviewer 2 flagged the §2.1 passages on the Article 4.3 obligation as abstract
+and under-argued. This child owns the concrete rewrite of the move from the
+narrow incremental-cost obligation to a broader category of climate finance.
+Tracker: 0141.
+
+## Relevant passages
+- `content/manuscript.qmd` §2.1 — Article 4.3 "transactional language" sentence;
+  "rigorous incremental-cost framework"; welfare-theoretic-transfers sentence
+  (p8); "the need for a broader category arose" (p8).
+
+## Actions
+1. Make the Article 4.3 "transactional language" claim concrete: what the treaty
+   text actually obliged, who read it how.
+2. State when and why the incremental-cost framework was abandoned vs extended,
+   with the mechanism named (R2 substantive).
+3. Ground "the need for a broader category arose" (p8) in evidence/examples, not
+   assertion (R2p).
+4. Bali Action Plan: explain what changed institutionally/politically between
+   Article 4.3 and Decision 1/CP.13, and what triggered the shift (R2w).
+
+## Test (prose ratchet)
+- Negative guard only: no new define-by-negation, no em-dash ceiling breach in
+  the revised §2.1 (`tests/test_manuscript_prose.py`). Positive editorial intent,
+  if any standing decision emerges, goes to `docs/editorial-brief.md`.
+
+## Exit criteria
+- [ ] Each flagged §2.1 passage revised with concrete actors/dates/mechanisms
+- [ ] Cover-letter traceability rows (R2p, R2w) updated with §ref + commit SHA
+- [ ] Prose in the author's voice per `docs/style-anchor-v205.md`; `make check-fast` green

@@ -1,0 +1,37 @@
+%erg 0.1
+Title: R&R Turkiye worked case to four-controversies mapping
+Created: 2026-07-08
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-08T20:01Z HDMX-coding-agent created
+2026-07-08T20:01Z HDMX-coding-agent note child of tracker 0141 (split into PR-sized units)
+
+--- body ---
+## Context
+The §3.1 worked transaction (World Bank IBRD + Clean Technology Fund, Turkiye
+TPTS project P508354) already names actors, sites, instruments, rates and dates.
+The Vannes notes ask for the one-to-one mapping from that case to the four
+controversies to be made explicit in the text. Tracker: 0141.
+
+## Relevant passages
+- `content/manuscript.qmd` §3.1 — the Turkiye worked transaction and the four
+  controversies (additionality; value + credibility; attribution).
+- `docs/notes-vannes-2026-07.md` §5.
+
+## Actions
+1. Map the case to each controversy explicitly:
+   - additionality — is it a climate project? ("electrons have no colour"; the WB
+     financed grids long before Rio)
+   - value + credibility — how much finance is really in this project?
+   - attribution — the OECD/Oxfam duel over who counts it.
+2. Keep the §3.1 concreteness (project ID, rates, dates); add the mapping as
+   connective tissue, not a new table.
+
+## Test (prose ratchet)
+- Negative guard only; keep the existing concrete figures traceable.
+
+## Exit criteria
+- [ ] §3.1 case mapped one-to-one to the four controversies in prose
+- [ ] Cover-letter traceability rows (R2.g2/R2.34) updated with §ref + commit SHA
+- [ ] Prose in the author's voice per `docs/style-anchor-v205.md`; `make check-fast` green

@@ -1,0 +1,45 @@
+%erg 0.1
+Title: R&R the 2007/Stern new-economic-object claim and the performativity passage
+Created: 2026-07-08
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-08T20:01Z HDMX-coding-agent created
+2026-07-08T20:01Z HDMX-coding-agent note child of tracker 0141 (split into PR-sized units)
+2026-07-08T20:01Z HDMX-coding-agent note overlaps the central-claim tickets 0134/0136 (R2.21 already narrowed the 2007/Stern claim); scope here is the performativity + politically-binding passages, coordinate before editing shared intro lines.
+
+--- body ---
+## Context
+The §2.x passage where the 2007/Stern moment is said to "create the conditions for
+a new kind of economic object" was flagged as too strong (R2y), and the
+surrounding performativity argument is declarative rather than explanatory.
+Tracker: 0141. R2.21 (ticket 0136) already narrowed the datable claim — this child
+handles the performativity and politically-binding passages, not a re-narrowing.
+
+## Relevant passages
+- `content/manuscript.qmd` §2.x/p12 — political legitimacy introduced "suddenly"
+  (R2x); UNFCCC-2007 + Stern "created the conditions" (R2y); "required not just
+  models but accounting infrastructure" (R2z); performativity argument (p12); how
+  climate finance became politically binding (R2ad).
+
+## Actions
+1. p12 political legitimacy: say why it becomes a concern at this stage and for
+   whom (R2x).
+2. Demonstrate carefully or soften the 2007/Stern "created the conditions" claim
+   (R2y), consistent with the R2.21 narrowing already made.
+3. Make "required not just models but accounting infrastructure" concrete (R2z;
+   cf. R1j at p3 — coordinate with 0139 on the models-vs-infrastructure framing).
+4. Turn the performativity argument from declarative to explanatory: name the
+   apparatus, methodologies, consequences (p12).
+5. Name the institutional/legal mechanisms by which climate finance became
+   politically binding (R2ad).
+
+## Test (prose ratchet)
+- Negative guard only; no strengthening of the 2007/Stern break (methodological
+  honesty: computation corroborates, does not endogenise — see writing.md).
+
+## Exit criteria
+- [ ] §2.x performativity + politically-binding passages revised, explanatory not declarative
+- [ ] 2007/Stern claim consistent with the R2.21 narrowing
+- [ ] Cover-letter traceability rows (R2x, R2y, R2z, R2ad) updated with §ref + commit SHA
+- [ ] Prose in the author's voice per `docs/style-anchor-v205.md`; `make check-fast` green
