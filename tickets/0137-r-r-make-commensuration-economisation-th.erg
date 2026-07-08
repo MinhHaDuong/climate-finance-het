@@ -9,6 +9,7 @@ Author: HDMX-coding-agent
 2026-06-24T17:44Z HDMX-coding-agent note blocker 0155 closed — Blocked-by removed.
 2026-07-07T20:55Z HDMX-coding-agent note Vannes input appended to body (aggregate ≈ monetary aggregate analogy)
 2026-07-08T13:05Z HDMX-coding-agent note blocker 0172 closed — Blocked-by removed.
+2026-07-08T14:20Z HDMX-coding-agent note thread added to intro + each act (intro def, Act I dev-econ, Act II Rio-markers flip, Act III end-state); conclusion + monetary-aggregate (M1/M2/M3) analogy deferred to 0171 per roadmap sequencing to avoid stepping on title-frames-aggregate-birth.
 --- body ---
 ## Context
 Reviewer 1 §3: the commensuration (Espeland & Stevens 1998) / economisation
@@ -31,4 +32,6 @@ economisation thread into the intro and conclusion (coordinate with 0171);
 title/abstract framing is decided in the brief (`title-frames-aggregate-birth`).
 
 ## Exit criteria
-- [ ] The distinction recurs as an analytic device in each act, not just §2
+- [x] The distinction recurs as an analytic device in each act, not just §2
+      (intro §def; Act I `content/manuscript.qmd` dev-econ para; Act II Rio-markers
+      commensuration→economisation flip; Act III end-state para)
