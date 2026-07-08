@@ -1,0 +1,47 @@
+%erg 0.1
+Title: Exit condition: every cited work has local fulltext (enforced test + allowlist)
+Created: 2026-07-08
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-08T19:54Z HDMX-coding-agent created
+
+--- body ---
+## Context
+The harness norm "cite only what you keep locally" (prose scholarly-integrity
+rule; memory `reference_cited_works_local_docs_articles`) had no enforcement.
+After #893/#899 indexed docs/articles into main.bib, 75 of 98 cited works have
+local fulltext. This ticket turns the norm into a CI-enforced exit condition and
+records the 23-work gap as an explicit allowlist.
+
+Sibling of 0188 (which fixes wrong DOIs). This one is about coverage, not
+correctness.
+
+## Relevant files
+- `tests/test_cited_works_available.py` — the gate (added here).
+- `config/no-fulltext-allowlist.txt` — accepted exceptions (added here).
+- `content/bibliography/main.bib`, `content/*.qmd` — inputs.
+
+## Actions (done in this PR)
+1. Add the test: every `@key` cited in content/*.qmd that resolves to a bib
+   entry must carry a `file=` field OR be allowlisted.
+2. Seed the allowlist with the 23 currently-unattainable cited works
+   (paywalled books/articles, tool/blog cites, 2 flagged for verification).
+
+## Test
+`tests/test_cited_works_available.py` — three checks: coverage (no cited work
+lacks fulltext and allowlist), no-redundant-allowlist (an allowlisted key that
+gained fulltext must be removed), allowlist-entries-are-real-keys.
+
+## Verification
+- [ ] `uv run pytest tests/test_cited_works_available.py` passes.
+- [ ] Adding a new `@cite` for a work with no PDF and no allowlist entry fails
+      the test.
+
+## Invariants
+- `make check-fast` passes; test is unit (no subprocess/network).
+
+## Exit criteria
+- The gate is in CI and green. Reducing the allowlist (acquiring the paywalled
+  works via bibCNRS/ISTEX/Click&Read) is ongoing housekeeping tracked separately,
+  not a blocker for this ticket.
