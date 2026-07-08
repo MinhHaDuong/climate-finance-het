@@ -2,11 +2,13 @@
 Title: v2.0.5 reimport 2/4 — acte I, traditions + clôture de résolution (B01–B05)
 Created: 2026-07-08
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #875
 
 --- log ---
 2026-07-08T07:44Z HDMX-coding-agent created split of 0175 (author: one validation unit per PR)
 
 2026-07-08T09:09Z HDMX-coding-agent note blocker 0176 closed — Blocked-by removed.
+2026-07-08T09:35Z HDMX-coding-agent closed — autoclosed — PR #875
 --- body ---
 ## Context
 Child 2/4 of 0175. Chained after 0176 (same file). The VF compressed the

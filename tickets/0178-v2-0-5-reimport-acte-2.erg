@@ -2,11 +2,11 @@
 Title: v2.0.5 reimport 3/4 — acte II, cristallisation (B06–B10)
 Created: 2026-07-08
 Author: HDMX-coding-agent
-Blocked-by: 0177
 
 --- log ---
 2026-07-08T07:44Z HDMX-coding-agent created split of 0175 (author: one validation unit per PR)
 
+2026-07-08T09:35Z HDMX-coding-agent note blocker 0177 closed — Blocked-by removed.
 --- body ---
 ## Context
 Child 3/4 of 0175. Chained after 0177 (same file). Includes the highest-
