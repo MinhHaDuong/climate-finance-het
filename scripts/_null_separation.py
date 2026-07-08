@@ -103,7 +103,22 @@ def within_tradition_share(G, node_to_tradition):
 
 
 def partition_modularity(G, node_to_tradition):
-    """Newman modularity of the tradition partition (tradition nodes only)."""
+    """Newman modularity of the tradition partition (tradition nodes only).
+
+    Computed UNWEIGHTED (``weight=None``): the sparsity concern is about the
+    presence of co-citation edges, and ``double_edge_swap`` preserves only the
+    binary degree sequence. Unweighted modularity is a deliberate design
+    choice, not the networkx default (which weights by the co-citation edge
+    ``weight`` attribute).
+
+    Note on non-independence: for a fixed partition on the tradition-induced
+    subgraph, Q = within_tradition_share - K, where
+    K = Σ_c (d_c / 2m)^2 is invariant under any degree-preserving rewiring
+    (degrees and edge count fixed). So the unweighted modularity is an affine
+    image of within_tradition_share with the SAME variance and z-score under
+    the null — a descriptive companion, not an independent second test. That
+    is why within_tradition_share is reported as the single primary statistic.
+    """
     nodes = [n for n in G.nodes() if node_to_tradition.get(n) is not None]
     H = G.subgraph(nodes)
     if H.number_of_edges() == 0:
@@ -111,7 +126,7 @@ def partition_modularity(G, node_to_tradition):
     communities = {}
     for n in nodes:
         communities.setdefault(node_to_tradition[n], set()).add(n)
-    return nx.community.modularity(H, communities.values())
+    return nx.community.modularity(H, communities.values(), weight=None)
 
 
 def rewire_degree_preserving(G, seed, n_swaps_factor=10):

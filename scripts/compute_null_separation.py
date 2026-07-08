@@ -20,12 +20,23 @@ Two labellings of the same co-citation graph are tested, distinguished by a
   via ``label_nodes_by_anchors``. This labelling path invokes no community
   detection at all, so the circularity objection cannot reach it.
 
-The null is a configuration-model rewiring of the subgraph induced by the
-tradition nodes: edges reshuffled, degrees preserved.
+The null is a configuration-model rewiring of the subgraph *induced* by the
+tradition-labelled nodes: the graph is first restricted to those nodes, then
+its edges are reshuffled with degrees preserved. This is a modelling choice —
+we condition on the internal degree sequence of the tradition nodes, not on
+their degrees in the full corpus graph. An alternative (rewire the full graph,
+then re-induce) would also randomise cross-boundary attachment to unlabelled
+works; that is left as a possible future sensitivity check.
+
+within_tradition_share is the single PRIMARY statistic. modularity is reported
+only as a descriptive companion: on a fixed partition it equals
+within_tradition_share - K with K invariant under degree-preserving rewiring,
+so it is an affine image with the same z under the null, not an independent
+second test (see partition_modularity in _null_separation.py).
 
 Output: content/tables/tab_null_separation_pre2007.csv, one row per
-(labelling, statistic) — within_tradition_share and modularity for each of
-the two labellings — validated by NullSeparationSchema.
+(labelling, statistic) — within_tradition_share (primary) and modularity
+(companion) for each of the two labellings — validated by NullSeparationSchema.
 
 Usage:
     uv run python scripts/compute_null_separation.py \
@@ -50,7 +61,7 @@ from pipeline_loaders import load_analysis_config
 from plot_fig_traditions import build_pre2007_traditions
 from schemas import NullSeparationSchema
 from script_io_args import parse_io_args, validate_io
-from utils import CATALOGS_DIR, get_logger
+from utils import CATALOGS_DIR, get_logger, normalize_doi
 
 log = get_logger("compute_null_separation")
 
@@ -154,9 +165,17 @@ def main():
     louvain_labels = tradition_seed_sets(result)
 
     # Labelling 2 — a-priori anchors, NO community detection in this path.
+    # DOIs are normalised to match the graph's node ids (normalised ref_doi).
     anchor_authors = {k: list(v) for k, v in sep_cfg["anchor_authors"].items()}
-    anchor_works = {k: list(v) for k, v in sep_cfg.get("anchor_works", {}).items()}
+    anchor_works = {
+        k: [normalize_doi(d) for d in v]
+        for k, v in sep_cfg.get("anchor_works", {}).items()
+    }
     apriori_labels = label_nodes_by_anchors(graph, anchor_works, anchor_authors)
+    log.info("a_priori anchors matched %d nodes: %s",
+             len(apriori_labels),
+             {t: sum(1 for x in apriori_labels.values() if x == t)
+              for t in set(apriori_labels.values())})
 
     rows = []
     rows += _labelling_rows("louvain_anchored", graph, louvain_labels,

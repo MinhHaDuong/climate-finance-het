@@ -73,6 +73,33 @@ def test_null_test_records_truncation_count():
     assert res["n_truncated"] == 0
 
 
+def test_rewire_flags_truncation_on_unmixable_graph():
+    """A star cannot be degree-preservingly rewired: truncated must be True.
+
+    Every edge of a star shares the centre node, so no double-edge swap can
+    avoid creating a parallel edge — double_edge_swap exhausts max_tries and
+    raises NetworkXAlgorithmError. The flag must surface that, not swallow it.
+    """
+    from _null_separation import rewire_degree_preserving
+
+    star = nx.star_graph(5)  # 6 nodes, 5 edges, all incident to node 0
+    H, truncated = rewire_degree_preserving(star, seed=1)
+    assert truncated is True
+    assert dict(H.degree()) == dict(star.degree())  # degrees still preserved
+
+
+def test_null_test_counts_truncated_replicates():
+    """n_truncated counts every truncated replicate (all of them, for a star)."""
+    from _null_separation import null_separation_test, within_tradition_share
+
+    star = nx.star_graph(5)
+    labels = {n: ("a" if n % 2 else "b") for n in star.nodes()}
+    res = null_separation_test(
+        star, labels, within_tradition_share, n_perm=15, seed=2
+    )
+    assert res["n_truncated"] == 15  # every rewiring of a star truncates
+
+
 def test_three_cliques_beat_rewired_null():
     """Three cliques: observed separation >> null; random graph: not.
 
