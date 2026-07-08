@@ -8,7 +8,7 @@
 #
 # One bibkey per line; `#` comments allowed. Remove a key once its fulltext is
 # acquired (the test flags redundant entries that now have a file= field).
-# Reducing this list is ongoing work (see tickets 0143, 0189); acquiring the
+# Reducing this list is ongoing work (see tickets 0143, 0197); acquiring the
 # paywalled books/articles needs bibCNRS/ISTEX access, not a swarm.
 
 # --- copyrighted books, no legitimate open-access edition ---
