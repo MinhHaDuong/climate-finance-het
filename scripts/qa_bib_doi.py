@@ -24,7 +24,6 @@ test (``tests/test_bib_doi_title.py``).
 """
 
 import csv
-import logging
 import os
 import re
 import sys
@@ -34,8 +33,9 @@ from difflib import SequenceMatcher
 
 import bibtexparser
 import requests
+from utils import get_logger
 
-log = logging.getLogger("qa_bib_doi")
+log = get_logger("qa_bib_doi")
 
 # Non-Crossref DOI registrars — Crossref's /works endpoint 404s on these by
 # design, so a 404 here is not evidence of a wrong identifier.
@@ -97,19 +97,28 @@ def first_author_surname(author_field):
     return _strip_accents(_delatex(surname).lower()).strip()
 
 
+PREFIX_MATCH_MIN_WORDS = 4  # a prefix only proves identity if it is substantial
+
+
 def title_ratio(bib_title, crossref_title):
     """Similarity of two titles, subtitle-truncation tolerant.
 
-    When one normalized title is a prefix of the other, Crossref has merely
-    dropped the subtitle — treat as a full match. Otherwise fall back to a
-    SequenceMatcher ratio.
+    When one normalized title is a prefix of the other *and* the shorter one is
+    at least ``PREFIX_MATCH_MIN_WORDS`` words, Crossref has merely dropped a
+    subtitle — treat as a full match. The word floor matters: a short generic
+    bib title ("Climate Policy") can be a prefix of an unrelated longer Crossref
+    title ("Climate Policy in the EU"), so accepting *any* prefix would let a
+    wrong DOI on a short title pass the hard WRONG_PAPER gate. Below the floor,
+    and for non-prefix pairs, fall back to a SequenceMatcher ratio.
     """
     a = normalize_title(bib_title)
     b = normalize_title(crossref_title)
     if not a or not b:
         return 0.0
     if a.startswith(b) or b.startswith(a):
-        return 1.0
+        shorter = a if len(a) <= len(b) else b
+        if len(shorter.split()) >= PREFIX_MATCH_MIN_WORDS:
+            return 1.0
     return SequenceMatcher(None, a, b).ratio()
 
 
@@ -237,7 +246,6 @@ def main(argv=None):
     parser.add_argument("--limit", type=int, default=None,
                         help="Cap entries checked (debugging)")
     args = parser.parse_args(argv)
-    logging.basicConfig(level=logging.INFO, format="%(message)s")
 
     rows = run_audit(args.input, delay=args.delay, limit=args.limit)
 

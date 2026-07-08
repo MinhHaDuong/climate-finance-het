@@ -54,6 +54,12 @@ def test_period_subtitle_truncation_is_a_match():
     assert title_ratio(bib, crossref) == 1.0
 
 
+def test_short_generic_prefix_is_not_a_full_match():
+    """A short bib title prefixing an unrelated longer one must not read as 1.0,
+    or a wrong DOI on a generic title would pass the hard WRONG_PAPER gate."""
+    assert title_ratio("Climate Policy", "Climate Policy in the EU") < 1.0
+
+
 def test_genuinely_different_titles_score_low():
     ratio = title_ratio("Buying Greenhouse Insurance",
                         "A comparison of aggregate energy demand models")
