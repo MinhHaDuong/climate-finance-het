@@ -86,7 +86,8 @@ def compute_coverage(works, cit, cutoff_year):
 def main():
     io_args, _extra = parse_io_args()
     validate_io(output=io_args.output)
-    argparse.ArgumentParser().parse_args(_extra)  # reject unknown flags
+    parser = argparse.ArgumentParser()
+    parser.parse_args(_extra)  # reject unknown flags
 
     cfg = load_analysis_config()
     cutoff = pre2007_cutoff_year(cfg)

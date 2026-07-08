@@ -121,7 +121,8 @@ def _labelling_rows(labelling, graph, node_to_tradition, n_perm, seed):
 def main():
     io_args, extra = parse_io_args()
     validate_io(output=io_args.output, inputs=io_args.input)
-    argparse.ArgumentParser().parse_args(extra)  # reject unknown flags
+    parser = argparse.ArgumentParser()
+    parser.parse_args(extra)  # reject unknown flags
 
     cfg = load_analysis_config()
     sep_cfg = cfg["pre2007_separation"]
