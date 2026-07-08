@@ -1,0 +1,73 @@
+%erg 0.1
+Title: Fortify-or-demote — null conditionné par la densité pour la séparation pré-2007 des trois traditions
+Created: 2026-07-08
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-08T09:18Z HDMX-coding-agent created — author decision « OK pour fortifier », separate chantier, handoff format
+
+--- body ---
+## Context
+The Act-I corpus evidence claims the three traditions (environmental
+economics, development economics, burden-sharing) were structurally
+separate before 2007 (manuscript A.1 question 2 / A.5; 0152 rows E3c,
+E3d, R1.2 — author-signed). Author diagnosis (2026-07-08): the pre-2007
+citation graph is the sparsest slice of the corpus (retro-indexing skew,
+ticket 0071; grey literature under-referenced), so co-citation would
+show separation almost regardless — a falsificationist test with low
+power is not a test. Decision: **fortify** — measure whether the
+observed separation exceeds what sparsity alone produces; **demote with
+evidence** if it does not. Related, complementary, stays open: 0077
+(per-year density vs G2/G9 breaks). See also 0074 (Louvain seed
+variance), 0076 (joint type-I error).
+
+## Relevant files
+- `scripts/compute_null_model.py` + `scripts/_permutation_accel.py` — existing permutation-null machinery (G9_community pattern to reuse)
+- `scripts/pipeline_loaders.py` — corpus access ONLY through loaders (arch rule 9): `load_refined_citations()`, `load_refined_works()`
+- `config/analysis.yaml` — seeds, window bounds, permutation count (no hardcoded constants; arch rules 6–7)
+- `content/manuscript.qmd` — A.1 tripod + A.5; the claims at stake (do NOT edit in this ticket)
+- `tickets/0152-…` rows E3c/E3d/R1.2 — signed responses whose support depends on the verdict
+- `docs/reimport-inventory-v205.md` — B19/B05 context
+
+## Actions
+1. **Diagnostic** (decides interpretive regime): for the pre-2007 slice —
+   work count, share with ≥1 outgoing edge in `refined_citations`, median
+   references per work, coverage split academic vs grey. One CSV +
+   schema (`content/tables/tab_pre2007_coverage.csv`).
+2. **Null model**: degree-preserving rewiring (configuration model) of
+   the pre-2007 co-citation graph, N permutations (seed + N from
+   config/analysis.yaml). Statistic: separation of the three tradition
+   seed-sets (inter-tradition co-citation share, and modularity of the
+   3-partition as secondary). Observed vs null → z / empirical p.
+   One CSV output per Phase 2 rules (1 invocation = 1 output).
+3. **Verdict artifact**: short note (path referenced from this ticket's
+   log at close) stating FORTIFIED (observed separation exceeds the
+   sparsity-conditioned null) or DEMOTE (it does not), with the numbers.
+4. **File the follow-up manuscript ticket** per verdict (one validation
+   unit, do not edit the manuscript here): FORTIFIED → add the null-model
+   sentence to A.5; DEMOTE → reword the A.1 tripod (two tests + one
+   descriptive consistency check) and reopen 0152 rows E3c/E3d for
+   author re-sign.
+
+## Test
+- `tests/test_null_separation.py::test_three_cliques_beat_rewired_null` —
+  toy graph with three cliques must yield observed separation ≫ null;
+  a random graph of same degree sequence must not. Red first (TDD).
+
+## Verification
+- [ ] Scripts follow Phase 2 rules: `--output` via script_io_args, Pandera
+      schema, seed from config, loaders only, save path from Makefile `$@`
+- [ ] New `.mk` include or existing divergence.mk extension — no 400-line
+      Makefile edits
+- [ ] `make check-fast` green
+
+## Invariants
+- No Phase 1 trigger (works from the existing contract files)
+- `content/manuscript.qmd` untouched by this ticket
+- 0152 rows untouched until the follow-up ticket
+
+## Exit criteria
+- [ ] Coverage diagnostic archived with schema
+- [ ] Null run archived (seed, N, statistic) — numbers traceable per the provenance norm
+- [ ] Verdict FORTIFIED/DEMOTE stated in ticket log with the deciding numbers
+- [ ] Follow-up manuscript-wording ticket filed per verdict
