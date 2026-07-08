@@ -2,6 +2,7 @@
 Title: R&R concretize actors sites and mechanisms across flagged passages
 Created: 2026-06-18
 Author: HDMX-coding-agent
+Closed: All children 0189-0194 closed; routed actions done (0135 closed, 0139 merged); integration re-read verified union on origin/main + full prose suite green; cover-letter traceability tracked in 0152
 
 --- log ---
 2026-06-18T06:33Z HDMX-coding-agent created
@@ -12,6 +13,7 @@ Author: HDMX-coding-agent
 2026-07-08T13:05Z HDMX-coding-agent note blocker 0172 closed — Blocked-by removed.
 2026-07-08T16:10Z R2.30/object-construction: Mitchell 2002 cited at the development-economics DAC passage (line 96), Mitchell 1998 at the intro thesis (line 64). Selection rationale + Escobar-deferred note in 0143.
 2026-07-08T20:01Z HDMX-coding-agent note SPLIT into PR-sized children (0189-0194); this becomes a tracking ticket. Stays open until every child is closed. Two actions routed to existing siblings (0135, 0139) rather than duplicated.
+2026-07-08T21:33Z HDMX-coding-agent closed — All children 0189-0194 closed; routed actions done (0135 closed, 0139 merged); integration re-read verified union on origin/main + full prose suite green; cover-letter traceability tracked in 0152
 --- body ---
 ## Context
 Reviewer 2 (general + linear) + Reviewer 1 other comments: replace abstract /
