@@ -1,0 +1,31 @@
+%erg 0.1
+Title: v2.0.5 base 2/3 — reimport inventory of VEn evidence blocks
+Created: 2026-07-08
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-08T07:18Z HDMX-coding-agent created split of 0172 phase 2 (author prefers three short tickets)
+
+--- body ---
+## Context
+Phase 2/3 of the base rebuild (tracker 0172). Inventory the evidence
+blocks of the current VEn (`content/manuscript.qmd` as of v2.0.4) so the
+author can decide block by block what re-enters the translated base.
+Runs in parallel with 0173 — reads only the old VEn and the 0152 table.
+
+## Relevant files
+- `content/manuscript.qmd` (pre-0173 state) — source of the evidence blocks
+- `tickets/0152-…` — per-remark traceability table the blocks serve
+
+## Actions
+1. Inventory the VEn evidence blocks: corpus-evidence sections, appendix
+   A.1–A.6, §3.1 worked transaction, §2 concretizations, plus any other
+   empirical passage absent from the VF.
+2. For each block: location, one-line description, the 0152 rows it
+   serves, keep/drop recommendation with reason. Decision column is the
+   author's.
+
+## Exit criteria
+- [ ] `docs/reimport-inventory-v205.md` committed: every block mapped to
+      its 0152 rows, recommendation + empty decision column, ready for
+      author sign-off

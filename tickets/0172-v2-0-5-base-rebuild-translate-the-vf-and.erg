@@ -2,6 +2,9 @@
 Title: v2.0.5 base rebuild — translate the VF and reimport the VEn evidence blocks
 Created: 2026-07-07
 Author: HDMX-coding-agent
+Blocked-by: 0173
+Blocked-by: 0174
+Blocked-by: 0175
 
 --- log ---
 2026-07-07T20:49Z HDMX-coding-agent created
@@ -9,6 +12,7 @@ Author: HDMX-coding-agent
 2026-07-07T20:49Z HDMX-coding-agent label needs-human
 2026-07-07T20:52Z HDMX-coding-agent unlabel needs-human
 2026-07-07T20:52Z author update: translation is machine-performed, style-anchored on the author's pre-AI-era English prose; needs-human dropped — agent-runnable, HITL stays at PR review and 0152 sign-off
+2026-07-08T07:18Z HDMX-coding-agent note split into three short tickets per author decision (triphasic): 0173 translation, 0174 inventory, 0175 reimports. This ticket becomes the tracking ticket — stays open until all three close; manuscript children stay blocked by it. Türkiye action moved to 0175, downgraded to reconciliation (both texts primary-sourced, verified 2026-07-08).
 --- body ---
 ## Context
 Decision 0165 (editorial brief `resubmission-base-is-translated-vf`): the
@@ -29,29 +33,15 @@ this ticket produces and are blocked by it.
 - `docs/editorial-brief.md` — standing decisions the translation must satisfy
 - `tickets/0152-…` — traceability table gating the reimports
 
-## Actions
-1. Assemble the style reference: a sample of the author's pre-AI-era
-   English prose (own published articles). Then machine-translate the VF
-   section by section into `content/manuscript.qmd`, prompting with that
-   style anchor; the brief and prose ratchet apply to the translation,
-   not assumed from the French.
-2. Build the reimport inventory of VEn evidence blocks (corpus-evidence
-   sections, appendix A.1–A.6, §3.1 worked transaction, §2
-   concretizations) — agent-preparable.
-3. Reimport block by block: nothing enters without an explicit import
-   decision, each checked against the 0152 table rows it serves.
-4. Align the two Türkiye factual discrepancies on primary sources (1.7 vs
-   15 GW; grant element half vs three-quarters) — VF/HAL stays frozen, the
-   English text gets the corrected figures (scope shared with 0161/0164).
+## Children (tracking ticket — split 2026-07-08, one PR each)
+- [ ] 0173 base 1/3 — style anchor + machine translation of the VF
+- [ ] 0174 base 2/3 — reimport inventory of VEn evidence blocks (parallel to 0173)
+- [ ] 0175 base 3/3 — reimport sub-tracker → 0176 annexe · 0177 acte I · 0178 acte II · 0179 acte III+Türkiye (chained, one validation unit per PR)
 
 ## Verification
 - [ ] Row-by-row coverage check against the 0152 table + reimport inventory
-- [ ] Prose ratchet and adherence tests pass on the rebuilt manuscript
-
-## Invariants
-- `manuscript-Gide.qmd` unchanged (frozen submission record)
-- No signed-off 0152 row loses its supporting content
+      (integration review when all three children are closed)
 
 ## Exit criteria
-- [ ] `manuscript.qmd` is the translated VF with all decided reimports in place
-- [ ] Reimport inventory archived (list of blocks kept/dropped, with reasons)
+- [ ] All three children closed; `manuscript.qmd` is the translated VF with
+      all decided reimports in place; manuscript children unblock

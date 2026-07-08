@@ -10,6 +10,7 @@ Author: HDMX-coding-agent
 
 2026-06-24T17:44Z HDMX-coding-agent note blocker 0155 closed — Blocked-by removed.
 2026-07-07T20:55Z HDMX-coding-agent note Vannes candidates appended (Popp Berman, Desrosières-lineage, scientization set); author picks before adding
+2026-07-08T08:10Z HDMX-coding-agent note author directive: this ticket carries the Escobar/Mitchell discussion entirely and exclusively — discussion section added (remark text, manuscript anchor, candidate works, disambiguation); do not open that discussion in any other ticket or session context
 --- body ---
 ## Context
 New references requested by the referees. QUICK to add as verified bib entries;
@@ -18,10 +19,58 @@ every entry (DOI/venue) before adding — do not fabricate metadata.
 
 ## Actions — add to bibliography/main.bib (verified)
 1. Golka (2024), "Epistemic Gerrymandering: ESG, Impact Investing, and the Financial Governance of Sustainability," Review of International Political Economy, 31:6, 1894–1918. (R1 §1)
-2. Escobar — critical scholarship on development aid. (R2)
-3. Mitchell, Timothy — on development/economy as object. (R2)
+2. Escobar — see discussion section below (author picks the works).
+3. Mitchell, Timothy — see discussion section below (author picks the works).
 4. King & Levine (1993) — finance-development nexus. (R1 add'l)
 5. Aghion & Bolton — finance-development. (R1 add'l)
+6. Star & Griesemer (1989), "Institutional Ecology, 'Translations' and
+   Boundary Objects…", Social Studies of Science 19(3) — canonical
+   definition, engaged head-on in the conclusion (brief
+   `boundary-object-conceded-then-displaced`, 0171).
+7. Star (2010), "This is Not a Boundary Object", Science, Technology &
+   Human Values 35(5) — the standardisation/infrastructure dynamic the
+   displacement relies on (same brief entry, 0171).
+
+## Discussion Escobar/Mitchell — SOLE HOME of this discussion (author decision pending)
+
+This ticket carries the works-selection discussion entirely and exclusively
+(author directive 2026-07-08). Hold it here or in a session opened on this
+ticket; other tickets only point here (0133 child list; 0152 row R2.30).
+Prose integration afterwards stays in the content tickets (0141 owns the
+passage).
+
+**The remark (R2.30, verbatim from the 0152 table):** « Desrosières/Porter
+may not be the best refs for biased aid architectures — engage Escobar,
+Tim Mitchell. »
+
+**Manuscript anchor:** the biased-aid-architectures passage and the
+Desrosières quote (p7 of v1; in the v2.0.5 base, the DAC statistical-
+conventions paragraph, §1 development-economics tradition). The question:
+do Escobar/Mitchell *replace* Desrosières/Porter there, or complement them
+(construction-of-categories lineage vs postcolonial critique of the
+development apparatus)?
+
+**Candidate works to discuss** (canonical shortlist; verify DOI/venue
+before any entry — do not fabricate):
+- Escobar, *Encountering Development: The Making and Unmaking of the Third
+  World*, Princeton UP, 1995 — the reference critique of development as a
+  discursive apparatus.
+- Escobar, "Power and Visibility: Development and the Invention and
+  Management of the Third World," *Cultural Anthropology* 3(4), 1988 —
+  article-length alternative if the book is too broad.
+- Mitchell, *Rule of Experts: Egypt, Techno-Politics, Modernity*, U. of
+  California Press, 2002 — expertise making "the economy" governable.
+- Mitchell, "Fixing the Economy," *Cultural Studies* 12(1), 1998 — the
+  economy as a constructed object; closest fit to the paper's
+  object-construction thesis.
+- Mitchell, *Carbon Democracy*, Verso, 2011 — energy/politics angle;
+  probably too far from the aid-architecture passage.
+
+**Disambiguation:** do not confuse Timothy Mitchell with Ian Mitchell
+(CGD), whose 2021 note "Is Climate Finance Really New and Additional?"
+appears in `docs/ai-tech-reports/Climate_Finance_Annotated_Bibliography.md`
+— the CGD note is relevant to additionality (R2 elsewhere), not to this
+remark.
 
 ## Candidates from Vannes (2026-07-07) — author picks, same verification rule
 `docs/notes-vannes-2026-07.md` §4 and §6. For the conclusion rebuild (0171):

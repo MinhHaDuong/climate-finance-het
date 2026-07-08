@@ -210,3 +210,58 @@ is to make that visible, not to rebuild. The "endogenous" guard cross-refs
 **Ticket:** 0142 (v2.0.4 decision); cover-letter response.
 
 **Status:** active
+
+## turkiye-figures-settled
+
+**Decision:** The Türkiye TPTS transaction (§3.1) keeps the VEn formulation:
+1.7 GW directly integrated (World Bank communiqué 2025-08-04, PID PIDIA01318)
+*and* some fifteen gigawatts of additional wind and solar capacity accommodated
+(project page P508354) — the two figures measure different things and each
+carries its own footnote. Grant element: roughly three-quarters of face value
+(≈ US$28M / US$38M at the DAC 6% discount rate), with the computation in the
+footnote; the VF's "half" was a talk-level rounding. **This debate is closed
+(author, 2026-07-08, third and final settlement). Do not reopen it in any
+ticket, review, or reconciliation pass; a numbers audit (0161/0164) may verify
+the citations, not re-arbitrate the choice.**
+
+**Rationale:** Both manuscripts were already primary-sourced; the apparent
+discrepancy was two true figures measuring different quantities. The debate had
+been settled before and resurfaced through ticket phrasing ("align the
+discrepancies") that read as an open question — recording the settlement here
+is what kills the resurrection.
+
+**Ticket:** 0172 action 4 → 0175 → 0180 (deleted); executed as part of the B11
+merge in 0179.
+
+**Status:** active
+
+## boundary-object-conceded-then-displaced
+
+**Decision:** Engage Star & Griesemer's concept explicitly and by name in the
+conclusion (author, 2026-07-08: assume the exposure — the HET audience makes
+the STS-commonplace risk acceptable because it is not the paper's main angle).
+The move is concede-then-displace: grant that climate finance qualifies as a
+boundary object in the canonical 1989 sense (interpretive flexibility; weakly
+structured in common use at the COP, strongly structured in site-specific
+accounting; cooperation without consensus), then state what the classification
+leaves unexplained — (a) a precise definition existed (Art. 4.3 incremental
+costs) and was abandoned; (b) the ambiguity lodges in the accounting
+conventions of an *aggregate*; (c) economists produced and maintain it; and,
+per Star (2010), the post-2014/2015 standardisation battles (grant-equivalent
+reform, Art. 13 transparency framework) move the thing from boundary object to
+boundary *infrastructure*. Cite Star & Griesemer 1989 and Star 2010 (verified
+entries via 0143). Distinct notion guard: the introduction's « objet-limite »
+(VF) means a hybrid between two disciplinary traditions, NOT the S&G concept —
+translate it as "borderline object" (or rephrase), never "boundary object";
+do not conflate the two.
+
+**Rationale:** Avoiding the term looked evasive to any STS-literate referee and
+wasted the strongest defense: the paper *out-specifies* the concept instead of
+dodging it. The concession costs nothing (weak-sense fit is real) and the
+displacement is exactly the paper's contribution (0171's anti-commonplace
+defense, now formulated head-on).
+
+**Ticket:** 0171 (conclusion engagement); 0143 (Star refs); 0173 translation
+keeps "borderline object" in the introduction.
+
+**Status:** active

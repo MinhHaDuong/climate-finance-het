@@ -1,0 +1,28 @@
+%erg 0.1
+Title: v2.0.5 reimport 1/4 — annexe A.1–A.6 (blocs B16–B21 + B23)
+Created: 2026-07-08
+Author: HDMX-coding-agent
+Blocked-by: 0173
+Blocked-by: 0174
+
+--- log ---
+2026-07-08T07:44Z HDMX-coding-agent created split of 0175 (author: one validation unit per PR)
+
+--- body ---
+## Context
+Child 1/4 of 0175. The six VEn appendix blocks are mandatory keeps: they
+answer 13 editor remarks already author-signed-off (commit 248c9f0);
+dropping any silently reopens closed remarks. The translated VF annexe has
+only 5 subsections and lacks the A.5 (embedding) and A.6 (clustering)
+justifications entirely.
+
+## Actions
+1. Reimport B16–B21 (appendix A.1–A.6) into the translated base,
+   harmonised to the annexe structure and UK style policy.
+2. B23 (author decision 2026-07-08): the reflexive commensuration point
+   (Espeland & Stevens) enters as a method point in A.1 — not in the
+   introduction. Serves the 0137 commensuration thread.
+
+## Exit criteria
+- [ ] All six blocks present, each checked against its 0152 rows (E3–E4 series)
+- [ ] Prose ratchet + adherence green

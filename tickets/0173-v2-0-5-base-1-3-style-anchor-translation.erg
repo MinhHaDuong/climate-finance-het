@@ -1,0 +1,33 @@
+%erg 0.1
+Title: v2.0.5 base 1/3 — style anchor + machine translation of the VF
+Created: 2026-07-08
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-08T07:18Z HDMX-coding-agent created split of 0172 phase 1 (author prefers three short tickets)
+
+--- body ---
+## Context
+Phase 1/3 of the base rebuild (tracker 0172, decision 0165): translate the
+frozen VF `content/manuscript-Gide.qmd` into English as the new
+`content/manuscript.qmd`. Machine-performed, style-anchored on the author's
+pre-AI-era English prose; the editorial brief and prose ratchet apply to
+the output, not assumed from the French.
+
+## Relevant files
+- `content/manuscript-Gide.qmd` — VF source (frozen: HAL/tag `gide-submitted-2026-06-29`)
+- `~/CNRS/html/src/Ha-Duong.bib` — list of the author's publications (style anchor source)
+- `docs/editorial-brief.md` — standing decisions the translation must satisfy
+
+## Actions
+1. Assemble the style anchor: select 3–5 pre-AI-era English articles
+   (first-authored, prose-rich), extract representative passages.
+   **Author validates the selection before translation starts.**
+2. Translate section by section, prompting with the anchor.
+
+## Invariants
+- `manuscript-Gide.qmd` unchanged (frozen submission record)
+
+## Exit criteria
+- [ ] Style anchor archived under `docs/` and validated by the author
+- [ ] `manuscript.qmd` is the translated VF; prose ratchet + adherence green
