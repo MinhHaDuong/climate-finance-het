@@ -25,6 +25,7 @@ import numpy as np
 import pandas as pd
 
 from pipeline_io import save_figure
+from pipeline_loaders import load_analysis_config, pre2007_cutoff_year
 from plot_style import DARK, DPI, FIGWIDTH, apply_style
 from scipy.sparse import lil_matrix
 from script_io_args import parse_io_args, validate_io
@@ -39,7 +40,9 @@ from utils import (
 log = get_logger("plot_fig_traditions")
 
 # --- Parameters ---
-CUTOFF_YEAR = 2006
+# CUTOFF_YEAR is not a hardcoded constant: it is derived from the config
+# periodization (first break - 1) via pre2007_cutoff_year(), the single source
+# of truth shared with compute_pre2007_coverage.py.
 TOP_N = 250
 MIN_COCIT = 3
 RANDOM_STATE = 42
@@ -213,7 +216,7 @@ def _assign_traditions(G, partition):
 def _render_traditions(G, partition, pos, comm_to_tradition,
                        trad_to_comm, comm_to_nodes, ref_counts,
                        actual_top_n, n_comm, modularity,
-                       out_stem, pdf):
+                       out_stem, pdf, cutoff_year):
     """Render the traditions network figure."""
     fig_w = FIGWIDTH * 1.6
     fig_h = fig_w * 0.75
@@ -255,7 +258,7 @@ def _render_traditions(G, partition, pos, comm_to_tradition,
     _draw_legend(ax, trad_to_comm, comm_to_nodes, comm_to_tradition)
 
     ax.set_title(
-        f"Co-citation communities in pre-{CUTOFF_YEAR + 1} "
+        f"Co-citation communities in pre-{cutoff_year + 1} "
         f"climate finance scholarship\n"
         f"(top {actual_top_n} most-cited references, "
         f"{n_comm} communities, modularity={modularity:.2f})",
@@ -323,6 +326,80 @@ def _draw_legend(ax, trad_to_comm, comm_to_nodes, comm_to_tradition):
               handlelength=1.2, handleheight=1.0)
 
 
+def build_pre2007_traditions(works_path, cit_path=None):
+    """Build the pre-2007 co-citation graph and its tradition assignment.
+
+    This is the single source of truth for the pre-2007 tradition seed-sets:
+    the figure renders it, and compute_null_separation.py tests it against a
+    degree-preserving null. Returns None when there is no pre-2007 network.
+
+    Returns
+    -------
+    dict | None
+        graph, partition (node->community), comm_to_tradition,
+        trad_to_comm, comm_to_nodes, ref_counts, n_comm, modularity,
+        actual_top_n.
+
+    """
+    cutoff_year = pre2007_cutoff_year(load_analysis_config())
+
+    cit, doi_meta = _load_data(works_path, cit_path)
+
+    # Filter to pre-2007 references
+    cit["ref_year_num"] = pd.to_numeric(cit["ref_year"], errors="coerce")
+    pre_dois = (
+        set(cit.loc[cit["ref_year_num"] <= cutoff_year, "ref_doi"])
+        - {"", "nan", "none"}
+    )
+
+    ref_counts_all = cit.groupby("ref_doi").size()
+    ref_counts = ref_counts_all.loc[
+        ref_counts_all.index.isin(pre_dois)
+    ].sort_values(ascending=False)
+    log.info("  Pre-%d refs: %d (cited >= 1)",
+             cutoff_year, len(ref_counts))
+
+    actual_top_n = min(TOP_N, len(ref_counts))
+    if actual_top_n == 0:
+        log.info("No pre-%d references found.", cutoff_year)
+        return None
+
+    top_refs = ref_counts.head(actual_top_n).index.tolist()
+    log.info("  Using top %d; citation range: %d .. %d",
+             actual_top_n,
+             ref_counts.iloc[0],
+             ref_counts.iloc[actual_top_n - 1])
+
+    G = _build_cocitation_network(cit, doi_meta, ref_counts, top_refs)
+    if G.number_of_nodes() == 0:
+        log.info("Empty network.")
+        return None
+
+    partition = community_louvain.best_partition(
+        G, weight="weight", random_state=RANDOM_STATE)
+    n_comm = len(set(partition.values()))
+    modularity = community_louvain.modularity(
+        partition, G, weight="weight")
+    log.info("  Louvain: %d communities, modularity=%.4f",
+             n_comm, modularity)
+
+    comm_to_tradition, trad_to_comm, comm_to_nodes = _assign_traditions(
+        G, partition)
+
+    return {
+        "graph": G,
+        "partition": partition,
+        "comm_to_tradition": comm_to_tradition,
+        "trad_to_comm": trad_to_comm,
+        "comm_to_nodes": comm_to_nodes,
+        "ref_counts": ref_counts,
+        "n_comm": n_comm,
+        "modularity": modularity,
+        "actual_top_n": actual_top_n,
+        "cutoff_year": cutoff_year,
+    }
+
+
 def main():
     io_args, extra = parse_io_args()
     validate_io(output=io_args.output, inputs=io_args.input)
@@ -345,52 +422,22 @@ def main():
         else None
     )
 
-    cit, doi_meta = _load_data(works_path, cit_path)
-
-    # Filter to pre-2007 references
-    cit["ref_year_num"] = pd.to_numeric(cit["ref_year"], errors="coerce")
-    pre_dois = (
-        set(cit.loc[cit["ref_year_num"] <= CUTOFF_YEAR, "ref_doi"])
-        - {"", "nan", "none"}
-    )
-
-    ref_counts_all = cit.groupby("ref_doi").size()
-    ref_counts = ref_counts_all.loc[
-        ref_counts_all.index.isin(pre_dois)
-    ].sort_values(ascending=False)
-    log.info("  Pre-%d refs: %d (cited >= 1)",
-             CUTOFF_YEAR, len(ref_counts))
-
-    actual_top_n = min(TOP_N, len(ref_counts))
-    if actual_top_n == 0:
-        log.info("No pre-%d references found. Creating empty output.",
-                 CUTOFF_YEAR)
+    result = build_pre2007_traditions(works_path, cit_path)
+    if result is None:
+        log.info("No pre-2007 traditions network. Creating empty output.")
         open(io_args.output, "w").close()
         return
 
-    top_refs = ref_counts.head(actual_top_n).index.tolist()
-    log.info("  Using top %d; citation range: %d .. %d",
-             actual_top_n,
-             ref_counts.iloc[0],
-             ref_counts.iloc[actual_top_n - 1])
-
-    G = _build_cocitation_network(cit, doi_meta, ref_counts, top_refs)
-
-    if G.number_of_nodes() == 0:
-        log.info("Empty network. Creating empty output.")
-        open(io_args.output, "w").close()
-        return
-
-    partition = community_louvain.best_partition(
-        G, weight="weight", random_state=RANDOM_STATE)
-    n_comm = len(set(partition.values()))
-    modularity = community_louvain.modularity(
-        partition, G, weight="weight")
-    log.info("  Louvain: %d communities, modularity=%.4f",
-             n_comm, modularity)
-
-    comm_to_tradition, trad_to_comm, comm_to_nodes = _assign_traditions(
-        G, partition)
+    G = result["graph"]
+    partition = result["partition"]
+    comm_to_tradition = result["comm_to_tradition"]
+    trad_to_comm = result["trad_to_comm"]
+    comm_to_nodes = result["comm_to_nodes"]
+    ref_counts = result["ref_counts"]
+    n_comm = result["n_comm"]
+    modularity = result["modularity"]
+    actual_top_n = result["actual_top_n"]
+    cutoff_year = result["cutoff_year"]
 
     log.info("Tradition assignments:")
     for trad, c in trad_to_comm.items():
@@ -407,7 +454,7 @@ def main():
     _render_traditions(G, partition, pos, comm_to_tradition,
                        trad_to_comm, comm_to_nodes, ref_counts,
                        actual_top_n, n_comm, modularity,
-                       out_stem, args.pdf)
+                       out_stem, args.pdf, cutoff_year)
 
     log.info("Done.")
 

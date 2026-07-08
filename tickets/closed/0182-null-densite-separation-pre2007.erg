@@ -1,0 +1,88 @@
+%erg 0.1
+Title: Fortify-or-demote — null conditionné par la densité pour la séparation pré-2007 des trois traditions
+Created: 2026-07-08
+Author: HDMX-coding-agent
+Closed: autoclosed — PR #876
+
+--- log ---
+2026-07-08T09:18Z HDMX-coding-agent created — author decision « OK pour fortifier », separate chantier, handoff format
+2026-07-08T09:38Z HDMX-coding-agent note Coverage diagnostic (tab_pre2007_coverage.csv): 1344 pre-2007 works, 608 with DOI, share with >=1 outgoing edge 0.303, median refs/work 0, academic/grey = 1342/2 (share_grey 0.0015). Sparse slice confirmed — the low-power worry is real.
+2026-07-08T09:39Z HDMX-coding-agent note Null model (tab_null_separation_pre2007.csv, degree-preserving double_edge_swap, N=1000, seed=42): induced tradition subgraph 84 nodes / 369 edges. within_tradition_share observed 0.8889 vs null 0.3739+-0.0199, z=25.9, p=0.000999. modularity observed 0.5542 vs null -0.0120+-0.0199, z=28.4, p=0.000999.
+2026-07-08T09:40Z HDMX-coding-agent verdict FORTIFIED — observed separation of the three pre-2007 traditions exceeds the sparsity-conditioned (degree-preserving) null by ~26 sd on both statistics (empirical p at the N=1000 floor); the separation is a real intellectual boundary, not an artefact of thin indexing.
+2026-07-08T09:41Z HDMX-coding-agent note Follow-up filed: tickets/0183 (add the null-model sentence to A.5). 0152 rows E3c/E3d/R1.2 stay as-signed (FORTIFIED supports them; no reopen).
+2026-07-08T13:05Z HDMX-coding-agent note Red-team circularity fix (PR #876). The 09:39 run derived the three seed-sets from Louvain communities detected on the SAME graph the null then tests; Louvain maximises modularity by construction, so that run overstates the evidence for the HISTORICAL three-tradition claim. Added a second, non-circular labelling: a-priori anchors fixed from @tbl-traditions authors (config pre2007_separation.anchor_authors), assigned by first-author match with NO community detection in the labelling path (label_nodes_by_anchors). Both labellings now ship in one output with a `labelling` column.
+2026-07-08T13:06Z HDMX-coding-agent note Dual run (tab_null_separation_pre2007.csv, degree-preserving double_edge_swap, N=1000, seed=42, n_truncated=0 on all four tests — no partial mixing). louvain_anchored (84 nodes / 369 edges): within_tradition_share obs 0.8889 vs null 0.3736+-0.0202 z=25.50 p=0.000999; modularity obs 0.5542 vs null -0.0123+-0.0202 z=28.04 p=0.000999. a_priori_anchors (16 anchor-author nodes / 33 edges): within_tradition_share obs 0.8485 vs null 0.6077+-0.0334 z=7.21 p=0.000999; modularity obs 0.1693 vs null -0.0373+-0.0334 z=6.19 p=0.000999.
+2026-07-08T13:07Z HDMX-coding-agent verdict FORTIFIED holds. Threshold judged by: z>3 AND empirical p<0.01 on BOTH statistics (the exit-criterion bar). The non-circular a-priori-anchors run clears it (z=7.21 and 6.19; p=0.000999 = the N=1000 floor, no null replicate reached the observed value). The effect is markedly weaker than the Louvain-anchored run (z~6-7 vs z~26; modularity 0.17 vs 0.55) — expected, since the a-priori seed-sets are only the ~16 named-author works, a thinner and harder test, and the sparser subgraph gives the null a higher baseline (share 0.61 vs 0.37). It still beats the density-conditioned null convincingly on both statistics with zero community detection in the labelling path, so the pre-2007 separation is a real historically-defined boundary, not an artefact of modularity maximisation on the tested graph. A.5 must lead with the a-priori result, not the z~26 Louvain figure.
+2026-07-08T13:08Z HDMX-coding-agent note Two panel considers landed in the same pass: (a) double_edge_swap now returns a truncation flag; null_separation_test counts n_truncated (in the CSV) and logs the requested swap count + warns on any truncation — no silently partial rewiring. (b) Single source of truth for the cutoff year: plot_fig_traditions.py no longer hardcodes CUTOFF_YEAR=2006; both it and compute_pre2007_coverage.py read pipeline_loaders.pre2007_cutoff_year(cfg) (= periodization break[0]-1). Adjusted 0183 planned A.5 wording to the a-priori numbers.
+2026-07-08T14:30Z HDMX-coding-agent note SUPERSEDES the 13:06-13:08 run. Full-panel review (PR #876, two request-changes) caught three defects, now fixed: (A) the anchor list was the UNION of the graph-tuned figure anchors and table names — circular. Rebuilt anchor_authors STRICTLY from @tbl-traditions Key references (env_econ: ayres/kneese/nordhaus/manne/richels/stern/weitzman; development: desrosieres; burden_sharing: negishi/stadelmann) and put the two straddler Michaelowa papers in anchor_works by DOI (michaelowa2007->development 10.1007/s10584-007-9270-3, michaelowa2019->burden_sharing 10.1002/wcc.613). (B) modularity was inadvertently WEIGHTED (nx default weight="weight"), so it was not the affine image of the unweighted within_tradition_share and gave a spurious independent-looking z (6.19 vs 7.21). Fixed to weight=None. (C) added truncation-branch tests (nx.star_graph). (D) documented the induced-subgraph scoping + homonym caveat.
+2026-07-08T14:31Z HDMX-coding-agent note Z-DISCREPANCY RESOLVED. On a fixed partition, unweighted modularity Q = within_tradition_share - K, K = Σ_c(d_c/2m)^2 invariant under degree-preserving rewiring, so z is identical by construction. The archived 6.19-vs-7.21 gap was the weighted-vs-unweighted bug in (B). After weight=None the two z coincide to float precision: louvain_anchored z_share = z_modularity = 25.3637 (25.363677997096786 vs ...794). Modularity is a descriptive companion, NOT an independent second test — within_tradition_share is the single primary statistic.
+2026-07-08T14:32Z HDMX-coding-agent note Corrected dual run (tab_null_separation_pre2007.csv, N=1000, seed=42, n_truncated=0). louvain_anchored (84 nodes / 369 edges): within_tradition_share obs 0.8889 vs null 0.3736+-0.0203 z=25.36 p=0.000999. a_priori_anchors: STRICT table anchors match only 3 nodes, ALL env_econ (development 0, burden_sharing 0) — induced subgraph 3 nodes / 1 edge, single tradition, so within_tradition_share=1.0 trivially, null 1.0+-0.0, z=NaN, p=1. Diagnosis (verified against the graph): of the ~20 table anchor identifiers only "stern" appears among the 243 co-citation-core pre-2007 reference nodes; nordhaus/weitzman/manne/richels/ayres/kneese/negishi/desrosieres/stadelmann are absent — reference-node first-author metadata is sparse and the aid/burden-sharing anchor works are not citation-central in the pre-2007 slice.
+2026-07-08T14:33Z HDMX-coding-agent verdict SUPERSEDES the 13:07 FORTIFIED. With correct table-only anchors and a single honest statistic the verdict is DEMOTE / NON-CIRCULAR TEST INCONCLUSIVE. The a-priori labelling cannot populate the three traditions in the pre-2007 co-citation core (two of three get zero anchor nodes), so a density-conditioned null cannot independently confirm the three-way separation. The separation is NOT refuted — the fitted Louvain partition still separates cleanly (share 0.89, modularity 0.50, z=25.4 vs the null) — but that partition is optimised on the tested graph, i.e. circular, so it corroborates the historical reading only weakly. Bottom line: the manuscript's three-tradition separation rests on the qualitative historical record plus a fitted (circular) partition; the non-circular density-conditioned test is underpowered to the point of degeneracy and provides no independent support. A.5 must be a descriptive-consistency claim, not a "survives a density-conditioned null" claim.
+2026-07-08T14:34Z HDMX-coding-agent note DEMOTE branch consequence (per action 4): 0152 rows E3c/E3d/R1.2 were signed on the FORTIFIED reading and may need author re-sign now that the non-circular test is inconclusive. NOT reopening unilaterally (HITL sign-off per the traceability-ledger norm) — flagged needs-human for the author's call. 0183 reworded to the descriptive-consistency claim.
+
+2026-07-08T12:37Z HDMX-coding-agent closed — autoclosed — PR #876
+--- body ---
+## Context
+The Act-I corpus evidence claims the three traditions (environmental
+economics, development economics, burden-sharing) were structurally
+separate before 2007 (manuscript A.1 question 2 / A.5; 0152 rows E3c,
+E3d, R1.2 — author-signed). Author diagnosis (2026-07-08): the pre-2007
+citation graph is the sparsest slice of the corpus (retro-indexing skew,
+ticket 0071; grey literature under-referenced), so co-citation would
+show separation almost regardless — a falsificationist test with low
+power is not a test. Decision: **fortify** — measure whether the
+observed separation exceeds what sparsity alone produces; **demote with
+evidence** if it does not. Related, complementary, stays open: 0077
+(per-year density vs G2/G9 breaks). See also 0074 (Louvain seed
+variance), 0076 (joint type-I error).
+
+## Relevant files
+- `scripts/compute_null_model.py` + `scripts/_permutation_accel.py` — existing permutation-null machinery (G9_community pattern to reuse)
+- `scripts/pipeline_loaders.py` — corpus access ONLY through loaders (arch rule 9): `load_refined_citations()`, `load_refined_works()`
+- `config/analysis.yaml` — seeds, window bounds, permutation count (no hardcoded constants; arch rules 6–7)
+- `content/manuscript.qmd` — A.1 tripod + A.5; the claims at stake (do NOT edit in this ticket)
+- `tickets/0152-…` rows E3c/E3d/R1.2 — signed responses whose support depends on the verdict
+- `docs/reimport-inventory-v205.md` — B19/B05 context
+
+## Actions
+1. **Diagnostic** (decides interpretive regime): for the pre-2007 slice —
+   work count, share with ≥1 outgoing edge in `refined_citations`, median
+   references per work, coverage split academic vs grey. One CSV +
+   schema (`content/tables/tab_pre2007_coverage.csv`).
+2. **Null model**: degree-preserving rewiring (configuration model) of
+   the pre-2007 co-citation graph, N permutations (seed + N from
+   config/analysis.yaml). Statistic: separation of the three tradition
+   seed-sets (inter-tradition co-citation share, and modularity of the
+   3-partition as secondary). Observed vs null → z / empirical p.
+   One CSV output per Phase 2 rules (1 invocation = 1 output).
+3. **Verdict artifact**: short note (path referenced from this ticket's
+   log at close) stating FORTIFIED (observed separation exceeds the
+   sparsity-conditioned null) or DEMOTE (it does not), with the numbers.
+4. **File the follow-up manuscript ticket** per verdict (one validation
+   unit, do not edit the manuscript here): FORTIFIED → add the null-model
+   sentence to A.5; DEMOTE → reword the A.1 tripod (two tests + one
+   descriptive consistency check) and reopen 0152 rows E3c/E3d for
+   author re-sign.
+
+## Test
+- `tests/test_null_separation.py::test_three_cliques_beat_rewired_null` —
+  toy graph with three cliques must yield observed separation ≫ null;
+  a random graph of same degree sequence must not. Red first (TDD).
+
+## Verification
+- [x] Scripts follow Phase 2 rules: `--output` via script_io_args, Pandera
+      schema, seed from config, loaders only, save path from Makefile `$@`
+- [x] New `.mk` include or existing divergence.mk extension — no 400-line
+      Makefile edits
+- [x] `make check-fast` green
+
+## Invariants
+- No Phase 1 trigger (works from the existing contract files)
+- `content/manuscript.qmd` untouched by this ticket
+- 0152 rows untouched until the follow-up ticket
+
+## Exit criteria
+- [x] Coverage diagnostic archived with schema (compute_pre2007_coverage.py + Pre2007CoverageSchema; regenerate via `make pre2007-coverage`)
+- [x] Null run archived (seed, N, statistic) — numbers traceable per the provenance norm (compute_null_separation.py + NullSeparationSchema; `make pre2007-separation`, seed/N in config/analysis.yaml). Single primary statistic (within_tradition_share); modularity kept only as an affine descriptive companion (= share - K), NOT an independent test. Dual labelling: louvain_anchored (circular, fitted partition) + a_priori_anchors (non-circular; degenerate — only 3 co-citation-core nodes match the table anchors); `labelling` + `n_truncated` columns in the output
+- [x] Verdict FORTIFIED/DEMOTE stated in ticket log with the deciding numbers (DEMOTE / non-circular test inconclusive — see log 2026-07-08T14:33Z; supersedes the retracted 09:40 FORTIFIED)
+- [x] Follow-up manuscript-wording ticket filed per verdict (tickets/0183)

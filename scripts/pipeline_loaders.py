@@ -143,6 +143,17 @@ def load_analysis_config():
         return yaml.safe_load(f)
 
 
+def pre2007_cutoff_year(cfg):
+    """Last year of Act I (pre-crystallisation): first break - 1.
+
+    Single source of truth for the pre-2007 slice boundary. Derived from
+    config periodization (breaks[0] - 1 = 2006), so plot_fig_traditions and
+    compute_pre2007_coverage share one definition rather than a hardcoded
+    constant.
+    """
+    return int(cfg["periodization"]["breaks"][0]) - 1
+
+
 def load_analysis_periods(config_dir=None):
     """Derive period tuples and labels from config/analysis.yaml.
 
