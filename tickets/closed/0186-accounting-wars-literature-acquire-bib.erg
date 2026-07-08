@@ -2,11 +2,13 @@
 Title: Acquire and bib the climate-finance accounting-wars literature
 Created: 2026-07-08
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #896
 
 --- log ---
 2026-07-08T00:00Z HDMX-coding-agent created — Imagine session on framing the climate-finance aggregate. Decided against the "fuzzy number" / Knightian "ambiguity" formalisms (scientistic, re-naturalize the number, fight the constructivist thesis) in favour of strategic/constructive ambiguity theorised as convention (Desrosières) + boundary object. The accounting-wars literature is the empirical spine that makes "the number is made, not measured" demonstrable. Half the peer-reviewed core is already in docs/articles/; the grey-lit set-pieces and refs.bib entries are missing.
 2026-07-08T00:00Z HDMX-coding-agent note — RESCOPED at raid feasibility. The premise was wrong: the real bib is content/bibliography/main.bib (not refs.bib), and it ALREADY carries the whole accounting-wars set, each backed by a local PDF — weikmans_roberts2019 (anchor), roberts_weikmans2017, roberts2021, oxfam shadow reports 2018/2023 (carty_lecomte2018, zagema2023), stadelmann2011/2013, caruso_ellis2013, jachnik2015, corfee-morlot2009/2012, desrosieres1998, espeland_stevens1998, star_griesemer1989. Executing the acquisition as written would duplicate ~11 entries. Genuine residuals: (1) the framing note — DELIVERED as docs/framing-aggregate-strategic-ambiguity.md; (2) two missing primary sources (Copenhagen Accord para. 8, India DEA 2015 rebuttal), left as an author's-call acquisition since the bib may be scoped as-is deliberately.
 
+2026-07-08T15:43Z HDMX-coding-agent closed — autoclosed — PR #896
 --- body ---
 ## Context
 The manuscript argues the climate finance aggregate (the $100bn/yr figure,
