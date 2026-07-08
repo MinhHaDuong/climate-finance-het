@@ -7,6 +7,7 @@ Author: HDMX-coding-agent
 2026-07-08T20:01Z HDMX-coding-agent created
 2026-07-08T20:01Z HDMX-coding-agent note child of tracker 0141 (split into PR-sized units)
 
+2026-07-08T20:48Z HDMX-coding-agent note Reconciled vs post-137/139 text: Rio-marker detail (L132), SCF + provided/received + 340-650bn (L134), MDB/GCF/IDFC competing regimes (L200), OECD expert groups (L140/L165), Desrosieres routinisation (L163) all already in via merged commensuration/finance-dev work. Sole residual: the 340-650bn figure was uncited, now sourced to @unfccc2014biennial (verified para 144). Closed by PR t0192-tail.
 --- body ---
 ## Context
 The §2.3 machinery of measurement — Rio markers, UNFCCC reporting, the rival

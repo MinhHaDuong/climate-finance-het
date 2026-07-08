@@ -288,6 +288,14 @@ def test_mitchell_object_and_aid_apparatus_cited():
     )
 
 
+def test_biennial_assessment_figure_is_sourced():
+    """Ticket 0192: the $340--650bn total-flows figure must carry its source
+    (the 2014 UNFCCC Biennial Assessment), not stand uncited."""
+    assert "@unfccc2014biennial" in section("Crystallization"), (
+        "the $340--650bn Biennial Assessment figure is not sourced"
+    )
+
+
 def test_loss_and_damage_is_a_bounded_thesis_limit():
     """Ticket 0138 (R1.4): loss and damage must stand as its own subsection that
     (a) gives the Warsaw-to-Fund genealogy the referee named, not just the 2022
