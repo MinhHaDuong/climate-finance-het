@@ -210,3 +210,27 @@ is to make that visible, not to rebuild. The "endogenous" guard cross-refs
 **Ticket:** 0142 (v2.0.4 decision); cover-letter response.
 
 **Status:** active
+
+## turkiye-figures-settled
+
+**Decision:** The Türkiye TPTS transaction (§3.1) keeps the VEn formulation:
+1.7 GW directly integrated (World Bank communiqué 2025-08-04, PID PIDIA01318)
+*and* some fifteen gigawatts of additional wind and solar capacity accommodated
+(project page P508354) — the two figures measure different things and each
+carries its own footnote. Grant element: roughly three-quarters of face value
+(≈ US$28M / US$38M at the DAC 6% discount rate), with the computation in the
+footnote; the VF's "half" was a talk-level rounding. **This debate is closed
+(author, 2026-07-08, third and final settlement). Do not reopen it in any
+ticket, review, or reconciliation pass; a numbers audit (0161/0164) may verify
+the citations, not re-arbitrate the choice.**
+
+**Rationale:** Both manuscripts were already primary-sourced; the apparent
+discrepancy was two true figures measuring different quantities. The debate had
+been settled before and resurfaced through ticket phrasing ("align the
+discrepancies") that read as an open question — recording the settlement here
+is what kills the resurrection.
+
+**Ticket:** 0172 action 4 → 0175 → 0180 (deleted); executed as part of the B11
+merge in 0179.
+
+**Status:** active

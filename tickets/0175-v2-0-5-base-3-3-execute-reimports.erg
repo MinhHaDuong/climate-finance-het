@@ -6,7 +6,6 @@ Blocked-by: 0176
 Blocked-by: 0177
 Blocked-by: 0178
 Blocked-by: 0179
-Blocked-by: 0180
 
 --- log ---
 2026-07-08T07:18Z HDMX-coding-agent created split of 0172 phase 3 (author prefers three short tickets)
@@ -23,8 +22,7 @@ Children are chained because they all edit `content/manuscript.qmd`.
 - [ ] 0176 annexe A.1–A.6 (B16–B21 + B23 method point)
 - [ ] 0177 acte I — traditions + clôture de résolution (B01–B05)
 - [ ] 0178 acte II — cristallisation, incl. B09 economists-as-architects (B06–B10)
-- [ ] 0179 acte III (B11–B15)
-- [ ] 0180 réconciliation Türkiye (1,7 vs 15 GW ; élément-don)
+- [ ] 0179 acte III (B11–B15; Türkiye figures per brief `turkiye-figures-settled`)
 
 ## Invariants
 - No signed-off 0152 row loses its supporting content
