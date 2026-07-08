@@ -2,10 +2,12 @@
 Title: Exit condition: every cited work has local fulltext (enforced test + allowlist)
 Created: 2026-07-08
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #904
 
 --- log ---
 2026-07-08T19:54Z HDMX-coding-agent created
 
+2026-07-08T21:11Z HDMX-coding-agent closed — autoclosed — PR #904
 --- body ---
 ## Context
 The harness norm "cite only what you keep locally" (prose scholarly-integrity
