@@ -288,6 +288,25 @@ def test_mitchell_object_and_aid_apparatus_cited():
     )
 
 
+def test_100bn_legal_standing_and_baku_gap_visible():
+    """Ticket 0191: the $100bn pledge's move from Copenhagen 'take note' to Cancún
+    decision standing must be cited (@unfccc2010cancun); and the Baku passage must
+    make the distributive gap visible — the $1.3T call vs the $300bn binding goal,
+    the non-binding 'Baku to Belém' roadmap — and set the magnitude against a state
+    defence budget. Mechanical presence, no phrasing pinned."""
+    cryst = section("Crystallization")
+    assert "@unfccc2010cancun" in cryst, "Cancún formalisation of the $100bn pledge not cited"
+    controv = section("Counting is governing")
+    assert "1.3 trillion" in controv, "Baku $1.3T call (the ask) not made visible"
+    assert "Baku to Bel" in controv, "'Baku to Belém' roadmap not named"
+    assert "national defence" in controv.lower() or "1.01 trillion" in controv, (
+        "defence-budget scale comparator missing"
+    )
+    assert "floor" in controv.lower(), (
+        "recipient-side decomposition (SIDS/LDC allocation floors) missing"
+    )
+
+
 def test_article43_to_bali_shift_is_concrete():
     """Ticket 0189 (R2p, R2w): the Article 4.3 obligation must name the Annex II /
     GEF machinery behind it, and the Bali shift must name its concrete trigger
