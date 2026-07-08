@@ -1,0 +1,70 @@
+%erg 0.1
+Title: Retreat the pre-2007 separation claim and report the negative result
+Created: 2026-07-08
+Author: HDMX-coding-agent
+Closed: retreated pre-2007 separation claim; negative result reported (author-validated)
+
+--- log ---
+2026-07-08T09:40Z HDMX-coding-agent created — follow-up from 0182 verdict FORTIFIED; add the null-model sentence to A.5
+2026-07-08T13:09Z HDMX-coding-agent note Rewrote the planned A.5 wording after 0182's red-team circularity fix (PR #876). The 09:40 numbers were the Louvain-anchored run (seed-sets detected on the same graph the null tests — circular). The non-circular a-priori-anchors run is the load-bearing evidence now.
+2026-07-08T14:35Z HDMX-coding-agent note SUPERSEDES 09:40 and 13:09. Corrected 0182 run: a-priori anchors from @tbl-traditions Key references match only 3 co-citation-core nodes, all environmental economics (development 0, burden_sharing 0). The non-circular density-conditioned test is DEGENERATE / inconclusive (verdict DEMOTE). Flagged needs-human: the softened claim and the 0152 E3c/E3d/R1.2 re-sign are the author's call.
+2026-07-08T16:00Z HDMX-coding-agent note Author-validated approach (2026-07-08), SUPERSEDES the descriptive-consistency plan. Decision: a FRANK RETREAT, not a numbers-hedged claim. The three confessing sentences (A.1, section 1.5, A.5) state plainly that the pre-2007 corpus is too thin to test the separation and that it rests on the intellectual history — with NO null-model / z-score / degree-preserving / community-detection jargon that reads as excuse-making. One qualitative negative-result paragraph near A.5 reports that we tried three quantitative tests (co-citation division, a sparsity-conditioned control, a cross-tradition citation-over-time check) and none is conclusive for the early years, framed as a virtue. The null-model machinery stays in the annexe as the reported negative result; it is NOT pushed to the technical report. Numbers are not cited in the confessing sentences. Removed needs-human: this is now execution of an author-approved decision.
+
+2026-07-08T12:15Z HDMX-coding-agent closed — retreated pre-2007 separation claim; negative result reported (author-validated)
+2026-07-08T17:30Z HDMX-coding-agent note Author revision on PR #885 (post-close). REVERSES the "not pushed to the technical report" invariant: the detailed negative-result treatment MOVES from the article into the technical annex. Deleted the standalone article paragraph after A.5; added a technical subsection content/_includes/techrep/pre2007-separation.md (three bullets, technical register, numbers cited: fitted Louvain within-share 0.89 vs 0.37 z≈25 N=1000, a-priori degenerate ~3 env-econ nodes, temporal NO SIGNAL). Stripped the self-justification from the article retreat sentences (removed "three times over", "report the outcome rather than pass over it", and the "A boundary that only the historical record can presently establish remains a finding" sentence). A.1/A.5/§1.5 now redirect to "the companion technical report".
+--- body ---
+## Context
+Ticket 0182 asked whether the manuscript claim — that the three pre-2007
+intellectual traditions (environmental economics, development economics,
+burden-sharing) were structurally separate — survives a density-conditioned
+null once the labelling is kept clean of community detection. Two rounds of
+testing killed it as a *corpus* finding: the strong separation of the
+Louvain-anchored partition is circular (the partition is optimised on the
+very graph the null tests); fixing tradition membership a priori from the
+founding works is degenerate, because outside environmental economics those
+works barely appear as citation nodes in the thin pre-2007 slice; and a
+temporal cross-tradition citation-coupling test found no integration break
+at crystallization surviving a density control. The early corpus is too
+sparse to bear a quantitative test of the separation. The separation rests
+on the intellectual-historical record. This is reported as an honest
+NEGATIVE RESULT, not hidden.
+
+## Decision (author-validated 2026-07-08)
+Frank retreat, not a numbers-hedged descriptive-consistency claim.
+
+## Actions (done)
+1. Retreated the three strong loci in `content/manuscript.qmd` to the honest
+   position — A.1 (the confirmatory tripod), section 1.5 ("occupy separate
+   lineages sharing almost no co-citation edges"), and A.5 ("the three
+   traditions hardly read one another"). No null-model / z-score /
+   degree-preserving / community-detection jargon in the confessing
+   sentences; the separation now rests on the intellectual history, with a
+   note that a fuller early record may make the test possible later.
+2. Added one qualitative negative-result paragraph near A.5: we tried a
+   co-citation division, a sparsity-conditioned control and a
+   cross-tradition citation-over-time check; none is conclusive before 2007
+   because coverage is sparse and the founding works barely enter the corpus.
+   Framed as a virtue, pointing to the reproducibility materials generically.
+3. Preserved the annexe's co-citation evidence for the other periods (the
+   full-span community persistence, the method description): the retreat is
+   only about the pre-2007 separation claim.
+
+## Relevant files
+- `content/manuscript.qmd` — A.1, section 1.5, A.5 (the three reworded loci + the new paragraph)
+
+## Invariants
+- The article states the retreat plainly (fact only); the detailed
+  negative-result treatment lives in the technical annex
+  (`content/_includes/techrep/pre2007-separation.md`), not in the article body.
+  (Author revision, PR #885 — reverses the earlier "not pushed to the
+  technical report" decision.)
+- Author-sign gate: 0152 rows E3c/E3d/R1.2 must be re-confirmed by the author
+  on the retreat reading (HITL). This ticket does not reopen them.
+
+## Exit criteria
+- [x] A.1, section 1.5 and A.5 state the pre-2007 separation as resting on the
+      intellectual history, with the honest limit stated plainly
+- [x] One qualitative negative-result paragraph reports the three inconclusive
+      tests without excuse-making jargon
+- [x] Other-period co-citation evidence and method description preserved
+- [x] Prose, venue-table and adherence test suites green
