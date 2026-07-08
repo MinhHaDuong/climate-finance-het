@@ -866,6 +866,9 @@ class TestScriptNaming:
         # out of _PIPELINE_PREFIXES on purpose: the no-bare-print rule is
         # for this pipeline's scripts, not the companions'.
         "het_",
+        # Exploratory scout scripts: one-off empirical recon (reported negative
+        # results), not production Phase-2. Kept in-repo for reproducibility.
+        "scout_",
     )
     LIBRARY_MODULES = {
         "utils.py",
