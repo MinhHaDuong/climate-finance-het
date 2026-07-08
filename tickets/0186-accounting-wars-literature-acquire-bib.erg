@@ -1,0 +1,58 @@
+%erg 0.1
+Title: Acquire and bib the climate-finance accounting-wars literature
+Created: 2026-07-08
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-08T00:00Z HDMX-coding-agent created — Imagine session on framing the climate-finance aggregate. Decided against the "fuzzy number" / Knightian "ambiguity" formalisms (scientistic, re-naturalize the number, fight the constructivist thesis) in favour of strategic/constructive ambiguity theorised as convention (Desrosières) + boundary object. The accounting-wars literature is the empirical spine that makes "the number is made, not measured" demonstrable. Half the peer-reviewed core is already in docs/articles/; the grey-lit set-pieces and refs.bib entries are missing.
+
+--- body ---
+## Context
+The manuscript argues the climate finance aggregate (the $100bn/yr figure,
+tracked flows) is a *constructed* economic object, made durable by strategic
+definitional ambiguity over what counts. The framing decision (Imagine,
+2026-07-08): do NOT mobilize "fuzzy number" (Zadeh formalism — ornamental,
+re-naturalizes the number) or "ambiguity" in the Knightian/Ellsberg sense
+(false friend for economists — that is unknown *probability*, not undetermined
+*referent*). Instead theorise the vagueness as an instituted **convention**
+(Desrosières) and a **boundary object** (Star & Griesemer) that coordinates
+OECD / UNFCCC / NGOs / Southern governments precisely because each reads its
+own boundary into it. The accounting-wars literature supplies the empirical
+proof: the OECD ~$59.5bn/yr vs Oxfam net grant-equivalent ~$19–22.5bn/yr split
+for 2017–18 is the same flows yielding a 3× gap purely from counting
+conventions.
+
+Peer-reviewed core already local (docs/articles/): weikmans_roberts2019
+(the "accounting muddle" anchor, *Climate and Development* 11(2) — NOT WIREs),
+roberts_weikmans2017 ("...what counts as climate finance"), roberts2021
+(*Nature Climate Change* commentary), khan_weikmans2019, pauw2022,
+buchner2011/2013 (CPI Global Landscape). None are yet in refs.bib.
+
+## Relevant files
+- `docs/articles/` — gitignored PDF library; 7 relevant PDFs already present, 4 to add
+- `refs.bib` — target bibliography; currently has no accounting-wars entries
+- `docs/` — home for the short framing note (new file)
+- `.claude/rules/writing.md` — constructivist thesis + "specific actors, not policymakers" rule this evidence serves
+- memory `feedback_manuscript_number_provenance`, `feedback_visual_verify_citations`, `reference_cited_works_local_docs_articles`
+
+## Actions
+1. Fetch the four missing set-piece sources into `docs/articles/`:
+   - Oxfam *Climate Finance Shadow Report 2020* (+ 2025/CARE update if available) — the $59.5bn vs $19–22.5bn exhibit
+   - OECD (2017) *Estimating publicly-mobilised private finance for climate action* — the attribution rulebook
+   - Government of India, DEA (2015) *Climate Change Finance, Analysis of a Recent OECD Report* — Global-South state rebuttal
+   - Copenhagen Accord (2009) para. 8 — the founding under-specification (primary text)
+2. Add ~11 entries to `refs.bib`, verifying each DOI/metadata sur pièce (peer-reviewed core + grey-lit set-pieces + Desrosières / Espeland & Stevens / Star & Griesemer scaffolding). Tag grey/advocacy sources honestly.
+3. Write a short `docs/` framing note: the strategic-ambiguity-as-convention argument, with the OECD-vs-Oxfam 3× gap as centerpiece and the four ★ sources (Weikmans & Roberts 2019/2017, Oxfam 2020, OECD 2017 mobilised) that argue the number is politically produced.
+
+## Verification
+- [ ] Each new PDF opened and its bib metadata verified against the source (copyright page / masthead), not a search summary — the OECD 2023/24 headline figures in particular were flagged unverified in the Imagine research
+- [ ] `refs.bib` entries resolve (DOI/URL live); grey-lit vs peer-reviewed flagged
+- [ ] Framing note names specific actors/dates (OECD DAC, UNFCCC SCF, Oxfam, India DEA), per writing.md
+
+## Invariants
+- Cite only works whose full text is local in docs/articles/ (harness rule)
+- Do not overclaim: the aggregate is contested/constructed, not "fake"; keep the confirmatory register
+- No numbers reach the manuscript without provenance to the opened source
+
+## Exit criteria
+- Four missing sources local in docs/articles/; ~11 verified entries in refs.bib; framing note drafted in docs/ — a future drafting session has a self-contained evidence base for the strategic-ambiguity argument.
