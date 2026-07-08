@@ -302,6 +302,9 @@ def test_100bn_legal_standing_and_baku_gap_visible():
     assert "national defence" in controv.lower() or "1.01 trillion" in controv, (
         "defence-budget scale comparator missing"
     )
+    assert "floor" in controv.lower(), (
+        "recipient-side decomposition (SIDS/LDC allocation floors) missing"
+    )
 
 
 def test_loss_and_damage_is_a_bounded_thesis_limit():
