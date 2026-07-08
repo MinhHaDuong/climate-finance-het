@@ -2,7 +2,6 @@
 Title: v2.0.5 base 3/3 — execute reimports + Türkiye figures reconciliation
 Created: 2026-07-08
 Author: HDMX-coding-agent
-Blocked-by: 0176
 Blocked-by: 0177
 Blocked-by: 0178
 Blocked-by: 0179
@@ -11,6 +10,7 @@ Blocked-by: 0179
 2026-07-08T07:18Z HDMX-coding-agent created split of 0172 phase 3 (author prefers three short tickets)
 2026-07-08T07:44Z HDMX-coding-agent note split into 0176 annexe / 0177 acte I / 0178 acte II / 0179 acte III+Türkiye per author decision: each reimport family is one validation unit, one PR. Children chained (they edit the same file). This ticket becomes a sub-tracker. B22 transfers to 0171; B23 lands in 0176.
 
+2026-07-08T09:09Z HDMX-coding-agent note blocker 0176 closed — Blocked-by removed.
 --- body ---
 ## Context
 Sub-tracker for the reimport programme (phase 3/3 of the base rebuild,
