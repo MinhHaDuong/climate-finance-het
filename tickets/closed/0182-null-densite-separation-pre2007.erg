@@ -2,6 +2,7 @@
 Title: Fortify-or-demote — null conditionné par la densité pour la séparation pré-2007 des trois traditions
 Created: 2026-07-08
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #876
 
 --- log ---
 2026-07-08T09:18Z HDMX-coding-agent created — author decision « OK pour fortifier », separate chantier, handoff format
@@ -19,6 +20,7 @@ Author: HDMX-coding-agent
 2026-07-08T14:33Z HDMX-coding-agent verdict SUPERSEDES the 13:07 FORTIFIED. With correct table-only anchors and a single honest statistic the verdict is DEMOTE / NON-CIRCULAR TEST INCONCLUSIVE. The a-priori labelling cannot populate the three traditions in the pre-2007 co-citation core (two of three get zero anchor nodes), so a density-conditioned null cannot independently confirm the three-way separation. The separation is NOT refuted — the fitted Louvain partition still separates cleanly (share 0.89, modularity 0.50, z=25.4 vs the null) — but that partition is optimised on the tested graph, i.e. circular, so it corroborates the historical reading only weakly. Bottom line: the manuscript's three-tradition separation rests on the qualitative historical record plus a fitted (circular) partition; the non-circular density-conditioned test is underpowered to the point of degeneracy and provides no independent support. A.5 must be a descriptive-consistency claim, not a "survives a density-conditioned null" claim.
 2026-07-08T14:34Z HDMX-coding-agent note DEMOTE branch consequence (per action 4): 0152 rows E3c/E3d/R1.2 were signed on the FORTIFIED reading and may need author re-sign now that the non-circular test is inconclusive. NOT reopening unilaterally (HITL sign-off per the traceability-ledger norm) — flagged needs-human for the author's call. 0183 reworded to the descriptive-consistency claim.
 
+2026-07-08T12:37Z HDMX-coding-agent closed — autoclosed — PR #876
 --- body ---
 ## Context
 The Act-I corpus evidence claims the three traditions (environmental
