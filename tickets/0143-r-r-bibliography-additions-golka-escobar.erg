@@ -15,10 +15,11 @@ Author: HDMX-coding-agent
 2026-07-08T13:23Z HDMX-coding-agent note Mitchell works added (both, verified on PDFs): mitchell2002 (Rule of Experts, UC Press, ISBN 0-520-23262-3) + mitchell1998 (Fixing the Economy, Cultural Studies 12(1):82-101, doi 10.1080/095023898335627); Timothy not Ian. All 4 Escobar/Mitchell works now in bib + docs/. Remaining: which to cite where, and replace-vs-complement Desrosieres/Porter at the DAC passage (0141).
 2026-07-08T13:28Z HDMX-coding-agent note poppberman2022 added (Thinking Like an Economist, Princeton UP 2022, ISBN 978-0-691-16738-1; verified from EPUB OPF metadata; epub in docs/). For the conclusion 0171 (Œconomia symposium link).
 2026-07-08T16:10Z R2.30 read-and-decide: read Mitchell 1998 (Fixing the Economy) + 2002 (Rule of Experts ch.7 The Object of Development). Decision: cite Mitchell 2002 at the DAC/Desrosieres passage (biased aid architectures) COMPLEMENTING Desrosieres/Porter; cite Mitchell 1998 in the intro for the object-construction lineage. Escobar NOT read yet -- deferred, author will read later before deciding. Prose landed in branch t0141-mitchell-refs.
+2026-07-08T21:35Z HDMX-coding-agent note 0135 disconnected from 0143 (2026-07-08): the Golka(2024) prose-integration route via 0135 is dropped; Golka stays a bib candidate under 0143's own scope, not tied to the economists-reframe ticket
 --- body ---
 ## Context
 New references requested by the referees. QUICK to add as verified bib entries;
-integration into prose lives in the content tickets (0135/0139/0141). Validate
+integration into prose lives in the content tickets (0139/0141; 0135 disconnected 2026-07-08 — Golka not integrated there). Validate
 every entry (DOI/venue) before adding — do not fabricate metadata.
 
 ## Actions — add to bibliography/main.bib (verified)
