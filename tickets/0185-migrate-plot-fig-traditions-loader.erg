@@ -1,0 +1,36 @@
+%erg 0.1
+Title: Migrate plot_fig_traditions.py works read to the loader (arch rule 9)
+Created: 2026-07-08
+Author: HDMX-coding-agent
+
+--- body ---
+## Context
+Raised twice on PR #876 (review red team + adherence nit): the pre-2007
+separation null (0182) reuses `build_pre2007_traditions()` in
+`scripts/plot_fig_traditions.py`, whose `_load_data()` reads the works
+catalog via a direct `pd.read_csv(works_path)` instead of
+`pipeline_loaders.load_refined_works()` — an arch-rule-9 violation. It
+pre-dates #876 and was not introduced there; #876 only added a second
+consumer (`compute_null_separation.py`). Deliberately NOT fixed in #876:
+migrating the read risks the published figure's byte-reproducibility,
+which is out of the circularity-fix scope.
+
+## Relevant files
+- `scripts/plot_fig_traditions.py` — `_load_data()` (~L91), the direct read
+- `scripts/pipeline_loaders.py` — `load_refined_works()`
+- `scripts/compute_null_separation.py` — the new second consumer
+
+## Actions
+1. Replace the direct `pd.read_csv(works_path)` in `_load_data()` with
+   `load_refined_works()` (thin read + coercion), keeping the same columns
+   the figure and the null both rely on.
+2. Regenerate the figure and confirm byte-identity (or record the intended
+   diff if coercion legitimately changes dtypes).
+
+## Test
+- Existing `tests/test_null_separation.py` still green; figure output
+  unchanged (or the diff is explained).
+
+## Exit criteria
+- [ ] `plot_fig_traditions.py` reads works through the loader
+- [ ] Figure byte-identical or diff justified; `make check-fast` green
