@@ -24,9 +24,7 @@ power1997
 stodden2014implementing
 
 # --- closed-access journal articles (paywalled; no author/repo copy found) ---
-care_weber2023
 lee2004trust
-shang_jin2023
 
 # --- not a fetchable "paper" (tool / blog post / spec) ---
 amstutz2016cwl
@@ -37,4 +35,3 @@ iterative2024dvc
 # dimaggio1983: canonical (DiMaggio & Powell 1983) but only a PT translation is OA
 # bara2025aibibliometric: fetched a different paper; entry may be mis-attributed
 bara2025aibibliometric
-dimaggio1983
