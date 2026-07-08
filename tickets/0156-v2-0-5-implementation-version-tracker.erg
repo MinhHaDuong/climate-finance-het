@@ -3,8 +3,6 @@ Title: v2.0.5 implementation — version tracker
 Created: 2026-06-18
 Author: HDMX-coding-agent
 Blocked-by: 0134
-Blocked-by: 0135
-Blocked-by: 0141
 Blocked-by: 0143
 Blocked-by: 0152
 Blocked-by: 0153
@@ -24,6 +22,8 @@ Blocked-by: 0171
 2026-07-08T16:02Z HDMX-coding-agent note blocker 0138 closed — Blocked-by removed.
 2026-07-08T20:10Z HDMX-coding-agent note blocker 0139 closed — Blocked-by removed.
 2026-07-08T20:11Z HDMX-coding-agent note blocker 0137 closed — Blocked-by removed.
+2026-07-08T21:33Z HDMX-coding-agent note blocker 0135 closed — Blocked-by removed.
+2026-07-08T21:33Z HDMX-coding-agent note blocker 0141 closed — Blocked-by removed.
 --- body ---
 ## Context
 Version-milestone tracker for **v2.0.5 — implementation** (research → writing →
