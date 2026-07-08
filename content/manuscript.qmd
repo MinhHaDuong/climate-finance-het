@@ -209,9 +209,9 @@ These points were sorted into six groups, with no expected answer indicated. Eac
 
 ### A.3 First point: the breaks over time {.unnumbered}
 
-The periodization -- 1990--2006, 2007--2014, 2015--2024 -- rests first on institutional history: before Bali and Copenhagen, the category is not stabilised; between 2007 and 2014, the counting devices crystallize; after Paris, the controversies unfold in an established frame. To test it without whispering it the answer, the break years are sought while deliberately ignoring the calendar of the COPs. The principle is simple: measure, year after year, how far the vocabulary and the themes of the literature move from one window of a few years to the next. When this measure jumps, one year concentrates a change of language.
+The periodization -- 1990--2006, 2007--2014, 2015--2024 -- rests first on institutional history: before Bali and Copenhagen, the category is not stabilised; between 2007 and 2014, the counting devices crystallise; after Paris, the controversies unfold in an established frame. To test it without whispering it the answer, the break years are sought while deliberately ignoring the calendar of the COPs. The principle is simple: measure, year after year, how far the vocabulary and the themes of the literature move from one window of a few years to the next. When this measure jumps, one year concentrates a change of language.
 
-On @fig-breaks, the sharpest jumps fall around 2007, with a second, weaker one towards 2013. The Paris Agreement, for its part, produces no comparable break: it diversifies the themes without refounding the categories of measurement. This is exactly what the thesis predicts, since after 2015 the disputes unfold within categories already crystallized.
+On @fig-breaks, the sharpest jumps fall around 2007, with a second, weaker one towards 2013. The Paris Agreement, for its part, produces no comparable break: it diversifies the themes without refounding the categories of measurement. This is exactly what the thesis predicts, since after 2015 the disputes unfold within categories already crystallised.
 
 ### A.4 Second point: the citation lineages {.unnumbered}
 
