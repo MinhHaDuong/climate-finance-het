@@ -151,3 +151,14 @@ sensitivity:
   dims: [64, 128, 256, 512, 1024]
   equal_n_r: 3         # R=3 median-of-three equal-n subsample replicates
   method: S2_energy
+
+# ── Pre-2007 tradition-separation null model (ticket 0182) ───────────────
+# compute_null_separation.py degree-preserving-rewiring null for the
+# separation of the three pre-2007 intellectual traditions. The graph-
+# construction parameters (cutoff_year, top_n, min_cocit) and the Louvain
+# partition seed are imported from plot_fig_traditions so the null tests
+# the same seed-sets as the published figure (@fig-traditions); only the
+# permutation RNG seed and replicate count are set here.
+pre2007_separation:
+  random_seed: 42      # permutation RNG for degree-preserving rewiring
+  n_perm: 1000         # rewired null replicates

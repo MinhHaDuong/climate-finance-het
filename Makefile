@@ -79,6 +79,7 @@ endif
 -include multilayer-detection.mk
 -include zoo.mk
 -include venues.mk
+-include separation.mk
 -include manuscript.mk
 
 # ── Quarto ───────────────────────────────────────────────

@@ -144,6 +144,44 @@ NullModelSchema = DataFrameSchema(
 )
 
 # ---------------------------------------------------------------------------
+# Pre-2007 coverage diagnostic CSV (ticket 0182)
+# ---------------------------------------------------------------------------
+# Long format: one (metric, value) row per coverage statistic for the
+# pre-2007 slice. Decides the interpretive regime for the separation test.
+
+Pre2007CoverageSchema = DataFrameSchema(
+    columns={
+        "metric": Column(str),
+        "value": Column(float, nullable=True),
+    },
+    strict=True,
+    coerce=True,
+)
+
+# ---------------------------------------------------------------------------
+# Pre-2007 tradition-separation null CSV (ticket 0182)
+# ---------------------------------------------------------------------------
+# One row per separation statistic (within_tradition_share, modularity):
+# observed value vs degree-preserving (configuration-model) null.
+
+NullSeparationSchema = DataFrameSchema(
+    columns={
+        "statistic": Column(str),
+        "observed": Column(float, nullable=True),
+        "null_mean": Column(float, nullable=True),
+        "null_std": Column(float, nullable=True),
+        "z_score": Column(float, nullable=True),
+        "p_value": Column(float, nullable=True),
+        "n_perm": Column(int),
+        "seed": Column(int),
+        "n_nodes": Column(int),
+        "n_edges": Column(int),
+    },
+    strict=True,
+    coerce=True,
+)
+
+# ---------------------------------------------------------------------------
 # Bootstrap replicates CSV (ticket 0047)
 # ---------------------------------------------------------------------------
 
