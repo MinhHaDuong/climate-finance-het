@@ -6,6 +6,8 @@ Author: HDMX-coding-agent
 --- log ---
 2026-06-19T15:23Z HDMX-coding-agent created
 
+2026-07-08T20:08Z HDMX-coding-agent note Audit complete -> docs/audit-manuscript-stat-provenance.md. 18 numbers traced. Manuscript figures are v1-pinned; appendix A.3/A.5/A.6 + fig-breaks are current-corpus. Priority: A.5 rows (84 nodes/369 edges/0.89/0.37/z25) are hand-transcribed, output CSV uncommitted, and conflict 2x with cocitation-communities.md (169/1056) -- reconcile. Frozen-data policy: 3 options drafted (HITL, Action 4).
+
 --- body ---
 ## Context
 R&R (v2.0.5). Closing 0136 (PR #823) exposed a class bug, not a one-off: the
