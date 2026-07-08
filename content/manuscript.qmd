@@ -184,3 +184,48 @@ Economists, practitioners as much as academics, occupy a constrained position in
 Climate finance thus offers a privileged observatory of the political limits of economic quantification. Quantification does not pacify the conflict; it makes it administrable. It transforms a dispute over historical responsibility, equity and development into a dispute over accounting categories. This displacement is productive: without it, collective commitments would be unverifiable; with it, they become verifiable only at the price of recurring controversies over what is being verified.
 
 This conclusion opens several work sites. The first is archival: a finer history of the committees of the OECD, the UNFCCC and the multilateral banks would show how some conventions were retained rather than others. The second is geographic: the history of climate finance seen from the recipient countries, and not only from the reporting institutions dominated by the donors, remains largely unwritten. Climate finance is indeed governable because the conventions make the conflict measurable, but also because they displace the conflict towards arenas where technical capacities are unequally distributed. It is the donors who define and measure. The third is legal: the passage from the incremental costs of Article 4.3 to the collective quantified goal of Baku deserves an institutional history of its own. Finally, the financing of "loss and damage" is a decisive test of the viability of the agreements on climate finance. If this category is absorbed by the existing conventions, the strategic ambiguity of climate finance will be renewed. If it forces other instruments of measurement, it could reopen what Copenhagen had closed: the question of what is owed, to whom, and why.
+
+\newpage
+
+## Appendix. Methodological note on the computational analysis {.unnumbered}
+
+### A.1 Introduction {.unnumbered}
+
+The computational analysis does not produce the interpretation. The periodization, the intellectual traditions and the controversies were established from the historical record: UNFCCC texts, reports of the OECD and the multilateral banks, the political economy literature, actors' trajectories and reporting controversies. The corpus serves only to check whether independent signals -- vocabulary, citations, neighbourhoods of meaning -- point the same way as this reading.
+
+Three questions are put to it. The first: does the language of the field tip over at the end of the 2000s, as the idea of a crystallization would have it? The second: before 2007, do the three traditions already cite the same references, or do they remain separate? The third: after Paris, can the tension between efficiency and accountability be read in the themes and in the journals? The three sections below answer these questions in order.
+
+### A.2 The corpus {.unnumbered}
+
+The corpus gathers about {{< meta corpus_total_approx >}} works published between 1990 and 2024, drawn from six sources: OpenAlex, ISTEX, institutional grey literature, World Bank reports, teaching canons and complementary references collected by hand. Duplicates are removed first by DOI identifier, then by matching titles and years. Including the grey literature is a substantive choice: the categories studied here were made in expert reports and institutional decisions as much as in academic journals.
+
+The corpus remains imperfect. It contains only the metadata. It stays dominated by English, despite multilingual queries. It reflects the institutions that publish and index their work better than the informal negotiations, and it probably under-represents the knowledge produced in the administrations of recipient countries. Its results are therefore structural clues, not an exhaustive cartography.
+
+To compare works by their meaning, and not by their exact words alone, each title, abstract and keyword list is translated into a point in a "space of meaning": two texts on close subjects are neighbours there, even if they do not use the same words, for instance because they are in different languages. It becomes possible to treat the corpus on a geometric basis, as a vast cloud of points.
+
+These points were sorted into six groups, with no expected answer indicated. Each group can then be recognised by the words that characterise it. The number six is arbitrary. Climate finance forms a continuum, not a set of well-separated schools. The groups do bring out, however, the different themes of the climate negotiations. And the evolution, from one period to the next, of the share of publications per group matches the history of these negotiations.
+
+![Thematic recomposition of the climate finance literature. The Kyoto mechanisms recede, while Paris governance, renewables, green bonds and ESG take more room after 2015.](figures/fig_composition.png){#fig-composition width=85%}
+
+### A.3 First point: the breaks over time {.unnumbered}
+
+The periodization -- 1990--2006, 2007--2014, 2015--2024 -- rests first on institutional history: before Bali and Copenhagen, the category is not stabilised; between 2007 and 2014, the counting devices crystallize; after Paris, the controversies unfold in an established frame. To test it without whispering it the answer, the break years are sought while deliberately ignoring the calendar of the COPs. The principle is simple: measure, year after year, how far the vocabulary and the themes of the literature move from one window of a few years to the next. When this measure jumps, one year concentrates a change of language.
+
+On @fig-breaks, the sharpest jumps fall around 2007, with a second, weaker one towards 2013. The Paris Agreement, for its part, produces no comparable break: it diversifies the themes without refounding the categories of measurement. This is exactly what the thesis predicts, since after 2015 the disputes unfold within categories already crystallized.
+
+### A.4 Second point: the citation lineages {.unnumbered}
+
+The second question concerns shared references. We take the most-cited works before 2007, link two references whenever a same text of the corpus cites them together, then let these links draw groupings, without fixing their number in advance. The important result is the fragmentation of the network rather than the detail of the groups: climate modelling, aid statistics and international governance form weakly connected lineages. Before the crystallization, the three traditions hardly read one another.
+
+### A.5 Third point: the efficiency / accountability polarisation {.unnumbered}
+
+The third question asks whether the post-Paris polarisation shows in the texts themselves. For this, in the same space that served to sort the publications into six groups, they can be projected along an efficiency/accountability axis. It is then possible to validate the axis against the ecology of the journals, whose editorial lines are known. The works close to the efficiency pole appear more in the journals of finance, energy and climate risk. The works close to the accountability pole concentrate more often in the journals of environmental governance, climate policy and political economy. This venue concentration is tabulated in @tbl-venues.
+
+{{< include tables/tab_venues.md >}}
+
+**Reproducibility, data and code.** The operations summarised above rest on standard statistical methods: the vector representations ("embeddings") are produced by the multilingual model `BAAI/bge-m3`. The grouping of texts by their meaning uses the k-means algorithm with six groups on the embeddings. Break detection combines the Jensen--Shannon divergence and the cosine distance over the thematic distributions. The co-citation communities are examined with the Louvain method. The scripts and the full reproduction chain are archived on Zenodo (DOI: [10.5281/zenodo.19097045](https://doi.org/10.5281/zenodo.19097045)) and developed in open science at <https://github.com/MinhHaDuong/climate-finance-het>.
+
+## Bibliography {.unnumbered}
+
+::: {#refs}
+:::
