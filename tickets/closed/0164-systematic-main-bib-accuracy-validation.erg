@@ -2,10 +2,12 @@
 Title: Systematic main.bib accuracy validation (authors, correct-paper, DOI)
 Created: 2026-06-28
 Author: HDMX-coding-agent
+Closed: Systematic Crossref audit added (scripts/qa_bib_doi.py + standing test); 6 mechanical errors fixed; 3 HITL DOI retargets tracked by 0188
 
 --- log ---
 2026-06-28T22:31Z HDMX-coding-agent created
 
+2026-07-08T20:20Z HDMX-coding-agent closed — Systematic Crossref audit added (scripts/qa_bib_doi.py + standing test); 6 mechanical errors fixed; 3 HITL DOI retargets tracked by 0188
 --- body ---
 ## Context
 Three citation errors surfaced while preparing the Charles Gide paper, all in
