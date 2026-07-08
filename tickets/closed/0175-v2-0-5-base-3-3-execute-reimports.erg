@@ -2,6 +2,7 @@
 Title: v2.0.5 base 3/3 — execute reimports + Türkiye figures reconciliation
 Created: 2026-07-08
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #888
 
 --- log ---
 2026-07-08T07:18Z HDMX-coding-agent created split of 0172 phase 3 (author prefers three short tickets)
@@ -11,6 +12,7 @@ Author: HDMX-coding-agent
 2026-07-08T09:35Z HDMX-coding-agent note blocker 0177 closed — Blocked-by removed.
 2026-07-08T10:42Z HDMX-coding-agent note blocker 0179 closed — Blocked-by removed.
 2026-07-08T10:44Z HDMX-coding-agent note stale Blocked-by 0178 removed (0178 closed on the base branch, PR #877); all reimport children closed, sub-tracker unblocked.
+2026-07-08T13:05Z HDMX-coding-agent closed — autoclosed — PR #888
 --- body ---
 ## Context
 Sub-tracker for the reimport programme (phase 3/3 of the base rebuild,
