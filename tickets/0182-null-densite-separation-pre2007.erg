@@ -5,6 +5,10 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-07-08T09:18Z HDMX-coding-agent created — author decision « OK pour fortifier », separate chantier, handoff format
+2026-07-08T09:38Z HDMX-coding-agent note Coverage diagnostic (tab_pre2007_coverage.csv): 1344 pre-2007 works, 608 with DOI, share with >=1 outgoing edge 0.303, median refs/work 0, academic/grey = 1342/2 (share_grey 0.0015). Sparse slice confirmed — the low-power worry is real.
+2026-07-08T09:39Z HDMX-coding-agent note Null model (tab_null_separation_pre2007.csv, degree-preserving double_edge_swap, N=1000, seed=42): induced tradition subgraph 84 nodes / 369 edges. within_tradition_share observed 0.8889 vs null 0.3739+-0.0199, z=25.9, p=0.000999. modularity observed 0.5542 vs null -0.0120+-0.0199, z=28.4, p=0.000999.
+2026-07-08T09:40Z HDMX-coding-agent verdict FORTIFIED — observed separation of the three pre-2007 traditions exceeds the sparsity-conditioned (degree-preserving) null by ~26 sd on both statistics (empirical p at the N=1000 floor); the separation is a real intellectual boundary, not an artefact of thin indexing.
+2026-07-08T09:41Z HDMX-coding-agent note Follow-up filed: tickets/0183 (add the null-model sentence to A.5). 0152 rows E3c/E3d/R1.2 stay as-signed (FORTIFIED supports them; no reopen).
 
 --- body ---
 ## Context
@@ -67,7 +71,7 @@ variance), 0076 (joint type-I error).
 - 0152 rows untouched until the follow-up ticket
 
 ## Exit criteria
-- [ ] Coverage diagnostic archived with schema
-- [ ] Null run archived (seed, N, statistic) — numbers traceable per the provenance norm
-- [ ] Verdict FORTIFIED/DEMOTE stated in ticket log with the deciding numbers
-- [ ] Follow-up manuscript-wording ticket filed per verdict
+- [x] Coverage diagnostic archived with schema (compute_pre2007_coverage.py + Pre2007CoverageSchema; regenerate via `make pre2007-coverage`)
+- [x] Null run archived (seed, N, statistic) — numbers traceable per the provenance norm (compute_null_separation.py + NullSeparationSchema; `make pre2007-separation`, seed/N in config/analysis.yaml)
+- [x] Verdict FORTIFIED/DEMOTE stated in ticket log with the deciding numbers (FORTIFIED, see log 2026-07-08T09:40Z)
+- [x] Follow-up manuscript-wording ticket filed per verdict (tickets/0183)

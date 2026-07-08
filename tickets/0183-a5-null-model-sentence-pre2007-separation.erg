@@ -1,0 +1,63 @@
+%erg 0.1
+Title: A.5 — add the density-conditioned null-model sentence (pre-2007 separation FORTIFIED)
+Created: 2026-07-08
+Author: HDMX-coding-agent
+Blocked-by: 0182
+
+--- log ---
+2026-07-08T09:40Z HDMX-coding-agent created — follow-up from 0182 verdict FORTIFIED; add the null-model sentence to A.5
+
+--- body ---
+## Context
+Ticket 0182 fortified the manuscript claim (A.1 tripod / A.5) that the
+three pre-2007 intellectual traditions were structurally separate. The
+worry was low power: the pre-2007 co-citation graph is the sparsest slice
+of the corpus (coverage diagnostic: 1344 works, only 30% carry any
+outgoing edge, median references per work = 0, grey literature 2/1344),
+so co-citation would show separation almost regardless. A degree-
+preserving configuration-model null rules this out:
+
+- Induced tradition subgraph: 84 nodes (pricing 33, cdm 32, unfccc 19),
+  369 edges.
+- Within-tradition co-citation share: observed 0.889 vs null 0.374 ± 0.020
+  (z = 25.9, empirical p = 0.001, N = 1000, seed 42).
+- 3-partition modularity: observed 0.554 vs null -0.012 ± 0.020
+  (z = 28.4, p = 0.001).
+
+The observed separation exceeds the sparsity-conditioned null by ~26 sd.
+Verdict FORTIFIED: the separation is a real intellectual boundary, not an
+artefact of thin indexing. This ticket writes that one result into A.5.
+
+## Relevant files
+- `content/manuscript.qmd` — A.5 (co-citation traditions); the sentence lands here
+- `content/_includes/cocitation-communities.md` — @fig-traditions narrative (secondary home if A.5 defers to the electronic supplement)
+- `content/tables/tab_null_separation_pre2007.csv` — regenerate via `make pre2007-separation` (gitignored; seed/N in config/analysis.yaml)
+- `tickets/0152-…` rows E3c/E3d/R1.2 — author-signed; FORTIFIED keeps them supported (no reopen needed)
+
+## Actions
+1. Add one sentence to A.5 reporting the null-model result: the observed
+   within-tradition co-citation share (0.89) and 3-partition modularity
+   (0.55) exceed a degree-preserving configuration-model null
+   (0.37 / -0.01; z ≈ 26, p ≈ 0.001, N = 1000), so the pre-2007
+   separation survives conditioning on the graph's sparsity.
+2. Cite the numbers by provenance (regenerable Make target + config seed),
+   not as free-floating figures — per the manuscript-number provenance norm.
+3. Keep the HET register; state what the test shows, not method jargon.
+
+## Test
+- Prose adherence stays green: `make check-fast` (negative guards only;
+  do not pin the positive sentence — CI-polarity rule).
+
+## Verification
+- [ ] A.5 carries the null-model sentence with the four numbers (observed
+      share, null mean, z, N) traceable to `tab_null_separation_pre2007.csv`
+- [ ] `make manuscript` renders; the sentence reads in context
+- [ ] `make check-fast` green
+
+## Invariants
+- No change to the pipeline outputs (0182 shipped them); this is prose only
+- 0152 rows E3c/E3d/R1.2 stay as-signed (FORTIFIED supports them)
+
+## Exit criteria
+- [ ] The density-conditioned null result is stated in A.5, sourced to the
+      0182 artifact
