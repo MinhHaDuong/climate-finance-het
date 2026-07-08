@@ -11,7 +11,6 @@ implementation** (tracker 0156) — the prose pass applying the decisions, then 
 ### Roadmap
 - **v2.0.5** (0156): base rebuild **0172 DONE** (VF translated + reimports + honest pre-2007 retreat in Appendix A.5; pre-2007 separation is NOT a corpus result — DEMOTE + scout NO-SIGNAL, reported as a negative result). **Next: content pass** → 0135/0137/0138/0139/0141 → conclusion **0171** (aggregate-birth landing + Star/Griesemer concede-then-displace) → title **0181** → prose 0134 → em-dash 0162. Parallel: bib 0143, letter 0152, audits 0161/0164. Resubmit 0153.
 - Parallel (not R&R): method paper **0026** — `multilayer-detection.qmd`.
-- Gide paper: presented at Vannes, settled (see git + `papiers/`); only live follow-up is bib validation **0164**.
 
 ## Status
 <!-- generated 2026-07-08T13:51Z -->
