@@ -1,0 +1,65 @@
+%erg 0.1
+Title: Fix 3 mis-attributed bib DOIs found by Crossref audit
+Created: 2026-07-08
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-08T16:17Z HDMX-coding-agent created
+
+--- body ---
+## Context
+A DOI↔title audit of `content/bibliography/main.bib` against Crossref (run
+during the #899 roar wrap-up, 2026-07-08) found five entries whose DOI resolves
+to a different paper than the entry's title — LLM-fabricated metadata (real
+title, wrong DOI). Two were fixed in #899 (`delvenne2017`, `li2021`). Three
+remain, each needing a judgment call, so they were split out rather than rushed
+into the wrap-up.
+
+The audit method: for every DOI-bearing entry, fetch `api.crossref.org/works/<doi>`,
+compare normalized titles (SequenceMatcher, threshold 0.6). Subtitle-truncation
+and non-Crossref DOIs (arXiv 10.48550, figshare 10.6084) are false positives.
+
+## The three entries (bib DOI → what that DOI actually is)
+- `manne_richels1992` — DOI `10.1016/0301-4215(92)90024-V` resolves to "A
+  comparison of aggregate energy demand models". The Energy Policy article
+  "Buying greenhouse insurance" (Manne & Richels, 1991) is
+  `10.1016/0301-4215(91)90034-L`. BUT the entry may be intended as the 1992 MIT
+  Press *book* of the same title — decide article vs book first (author call).
+- `atwoli_etal2022` — DOI `10.1136/bmj.o851` resolves to a Covid-19 NHS news
+  item. The BMJ version of the multi-journal climate editorial has a different
+  DOI (this editorial was co-published across ~200 journals; pick the BMJ one to
+  match the entry's `journal = {BMJ}`, or retarget to the version whose PDF is
+  filed).
+- `min2021measuring` — DOI `10.1007/s11192-021-04068-w` resolves to "Letters to
+  the editor in exercise science". Correct work is Min, Bu et al., "Measuring
+  Knowledge Accumulation in Science: The Role of Intellectual Debts",
+  Scientometrics 2021 — resolve the real Scientometrics DOI.
+
+## Relevant files
+- `content/bibliography/main.bib` — the three entries.
+- audit approach recorded in memory `reference_bib_fulltext_index`.
+
+## Actions
+1. For each entry, resolve the correct DOI via Crossref title+author search;
+   verify against the filed PDF in `docs/articles/<key>.pdf` where one exists.
+2. Decide `manne_richels1992` article-vs-book (author sign-off) and set DOI +
+   entry type accordingly.
+3. Fix the DOI (and venue/type if needed) in one commit.
+
+## Test
+Extend the audit into a repeatable check first: `tests/test_bib_doi_title.py`
+that asserts every DOI-bearing entry's title matches its Crossref title (skip
+arXiv/figshare registrars; offline-skippable / marked slow). Red before the fix.
+
+## Verification
+- [ ] Each of the 3 DOIs resolves (Crossref) to the paper named in the entry.
+- [ ] `manne_richels1992` type/DOI confirmed with author.
+- [ ] Audit script reports 0 remaining title-mismatch suspects.
+
+## Invariants
+- `make check-fast` passes; no other bib entries altered.
+- Citation *keys* unchanged (cited in `content/*.qmd`); only DOI/venue fixed.
+
+## Exit criteria
+- The 3 entries carry correct DOIs; a standing DOI↔title consistency test guards
+  the class going forward.
