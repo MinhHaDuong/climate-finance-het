@@ -1,0 +1,59 @@
+%erg 0.1
+Title: Draft manuscript section: the aggregate as constructed economic object
+Created: 2026-07-08
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-08T15:56Z HDMX-coding-agent created
+
+--- body ---
+## Context
+The manuscript's core thesis is that climate finance crystallized as a
+constructed economic object. The accounting-wars evidence base for the section
+that *shows* the central aggregate ($100bn/yr) is made-not-measured is now
+complete in `content/bibliography/main.bib` and designed in the framing note
+`docs/framing-aggregate-strategic-ambiguity.md` (from the 2026-07-08 Imagine
+session, tickets 0186 + PRs #896/#898). This ticket writes the prose.
+
+The framing decision is settled: theorise the aggregate's vagueness as
+**strategic ambiguity institutionalised as a convention** (Desrosières) +
+**boundary object** (Star & Griesemer) + **commensuration** (Espeland &
+Stevens). Do NOT reach for the *fuzzy-number* (Zadeh) or Knightian-*ambiguity*
+formalisms — the framing note explains why each re-naturalises the number and
+fights the constructivist thesis. The load-bearing move: the object crystallised
+*because* its central number stayed strategically underdetermined — vagueness is
+evidence FOR crystallisation, not a failure to consolidate.
+
+## Relevant files
+- `content/manuscript.qmd` — target; locate the aggregate/crystallisation section (aligns with the 0181 title/abstract leading with aggregate-birth)
+- `docs/framing-aggregate-strategic-ambiguity.md` — the design and argument spine, keyed to the bib
+- `content/bibliography/main.bib` — cite from here: weikmans_roberts2019, roberts_weikmans2017, roberts2021, dasgupta2015 (India rebuttal), carty_lecomte2018 + zagema2023 (Oxfam shadow reports), stadelmann2011/2013, caruso_ellis2013, jachnik2015, corfee-morlot2009, unfccc2009copenhagen (para. 8), desrosieres1998, espeland_stevens1998, star_griesemer1989
+- `.claude/rules/writing.md` — constructivist thesis, "specific actors not policymakers", confirmatory (not endogenous) register
+- `docs/oeconomia-style.md` — house style
+- `docs/editorial-brief.md` — check for standing decisions before drafting
+
+## Actions
+1. Draft the section following the framing note's four-point spine: (1) the number is not common practice; (2) the construction sites (Rio markers, mobilised-private attribution, "new and additional"); (3) counter-accounting makes the convention legible (Oxfam vs OECD); (4) underdetermined from birth (Copenhagen para. 8).
+2. Name specific actors and dates (OECD DAC, UNFCCC SCF, Oxfam, India DEA/Dasgupta) — not "policymakers".
+3. Keep the confirmatory framing; do not overclaim breaks or say Paris "didn't matter".
+
+## Test (first, red)
+Per the CI prose-polarity rule (`.claude/rules/writing.md`): add only NEGATIVE
+guards + mechanical checks to `tests/test_manuscript_prose.py` — e.g. a guard
+that the section does not use "fuzzy number"/"ambiguity aversion" as load-bearing
+terms, and (if a citation-presence mechanical check fits the existing pattern)
+that the new bib keys are cited. Never pin a positive phrasing.
+
+## Verification
+- [ ] Section drafted in `content/manuscript.qmd`, four-point spine present
+- [ ] Only pipeline/source-traceable numbers used; the OECD-vs-Oxfam dollar figures ($59.5bn vs ~$22.5bn) quoted SUR PIÈCE from the carty_lecomte2018 / zagema2023 PDFs — NOT from the 0186 research summary (feedback_manuscript_number_provenance)
+- [ ] `make check-fast` green; `make manuscript` renders; visual eyeball of citations (feedback_visual_verify_citations)
+- [ ] `/review-pr-prose` brief + AI-tells auditors pass
+
+## Invariants
+- Constructivist register held; no re-naturalising the aggregate
+- No fuzzy-number / Knightian-ambiguity formalism as machinery
+- Prose adherence tests stay negative-guard only (no positive-phrasing pins)
+
+## Exit criteria
+- The manuscript section that argues the aggregate is a constructed object is drafted, cites the accounting-wars evidence base, quotes the OECD-vs-Oxfam gap sur pièce, and passes the prose review + build gates.
