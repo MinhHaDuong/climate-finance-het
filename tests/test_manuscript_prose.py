@@ -296,6 +296,69 @@ def test_biennial_assessment_figure_is_sourced():
     )
 
 
+def test_100bn_legal_standing_and_baku_gap_visible():
+    """Ticket 0191: the $100bn pledge's move from Copenhagen 'take note' to Cancún
+    decision standing must be cited (@unfccc2010cancun); and the Baku passage must
+    make the distributive gap visible — the $1.3T call vs the $300bn binding goal,
+    the non-binding 'Baku to Belém' roadmap — and set the magnitude against a state
+    defence budget. Mechanical presence, no phrasing pinned."""
+    cryst = section("Crystallization")
+    assert "@unfccc2010cancun" in cryst, "Cancún formalisation of the $100bn pledge not cited"
+    controv = section("Counting is governing")
+    assert "1.3 trillion" in controv, "Baku $1.3T call (the ask) not made visible"
+    assert "Baku to Bel" in controv, "'Baku to Belém' roadmap not named"
+    assert "national defence" in controv.lower() or "1.01 trillion" in controv, (
+        "defence-budget scale comparator missing"
+    )
+    assert "floor" in controv.lower(), (
+        "recipient-side decomposition (SIDS/LDC allocation floors) missing"
+    )
+
+
+def test_article43_to_bali_shift_is_concrete():
+    """Ticket 0189 (R2p, R2w): the Article 4.3 obligation must name the Annex II /
+    GEF machinery behind it, and the Bali shift must name its concrete trigger
+    (IPCC AR4) and the mechanism behind the move to a broader category
+    (adaptation's local benefit vs mitigation's global-benefit increment) — not
+    just assert that a shift happened. Mechanical presence, no phrasing pinned."""
+    before = section("three disjoint traditions")
+    assert "Annex II" in before, "Article 4.3 obligation not tied to Annex II"
+    assert "Global Environment Facility" in before, (
+        "incremental-cost mechanism (GEF) not named in the Article 4.3 passage"
+    )
+    cryst = section("Crystallization")
+    assert "Fourth Assessment Report" in cryst, "Bali's own trigger (IPCC AR4) not named"
+    assert "adaptation" in cryst.lower(), (
+        "mitigation/adaptation incremental-cost asymmetry not stated as the mechanism"
+    )
+
+
+def test_cdm_functioning_named():
+    """Ticket 0190: the CDM passage must show the mechanism functioning — the
+    registering body (Executive Board) and the source of post-2012 demand (the
+    EU ETS) — beyond the already-present CER / additionality / price-collapse
+    detail. Presence check, survives rewrites."""
+    before = section("three disjoint traditions")
+    assert "Executive Board" in before, "CDM Executive Board (registering body) not named"
+    assert "Emissions Trading System" in before, (
+        "post-2012 demand source (EU ETS) not named"
+    )
+
+
+def test_turkiye_case_maps_to_four_controversies():
+    """Ticket 0194: the Türkiye case must keep its concrete detail (project ID,
+    amounts) and make the mapping to the four recurring controversies explicit in
+    prose — including why the private-finance-attribution controversy does not
+    apply to this all-public deal, and the $100bn rescaling. Guards against the
+    mapping being dropped, or the concrete figures shed, on a later rewrite."""
+    case = section("Türkiye")
+    assert "P508354" in case, "Türkiye case dropped its project identifier"
+    assert "625" in case, "Türkiye case dropped the IBRD loan figure"
+    assert "four controvers" in case.lower(), "explicit mapping to the four controversies missing"
+    assert "private" in case, "the private-finance-attribution (non-)applicability not addressed"
+    assert "100 billion" in case, "the $100bn rescaling of the attribution dispute missing"
+
+
 def test_loss_and_damage_is_a_bounded_thesis_limit():
     """Ticket 0138 (R1.4): loss and damage must stand as its own subsection that
     (a) gives the Warsaw-to-Fund genealogy the referee named, not just the 2022

@@ -2,11 +2,13 @@
 Title: R&R CDM functioning and the migration of carbon accounting
 Created: 2026-07-08
 Author: HDMX-coding-agent
+Closed: CDM functioning (cycle, DOE, EB) + EU ETS/Doha demand added; PR t0141-clean-trio
 
 --- log ---
 2026-07-08T20:01Z HDMX-coding-agent created
 2026-07-08T20:01Z HDMX-coding-agent note child of tracker 0141 (split into PR-sized units)
 
+2026-07-08T21:04Z HDMX-coding-agent closed — CDM functioning (cycle, DOE, EB) + EU ETS/Doha demand added; PR t0141-clean-trio
 --- body ---
 ## Context
 Reviewer 2 asked for the CDM passage in §2.2 to show how the mechanism actually
