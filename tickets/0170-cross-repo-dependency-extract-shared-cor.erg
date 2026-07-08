@@ -2,10 +2,11 @@
 Title: cross-repo dependency: extract shared corpus/embedding code?
 Created: 2026-07-07
 Author: HDMX-coding-agent
-Label: deferred
 
 --- log ---
 2026-07-07T20:36Z HDMX-coding-agent created
+
+2026-07-08T11:15Z claude note DECISION: extract. The recurrence question is answered -- the HET figure pipeline in polycentric_activity is expanding (swim-lane figure, Louvain community detection, venue-lane binning), reusing the OpenAlex-crawl/embedding conventions each time; not a one-off. Measured the reuse surface and blast radius (body below), and added an execution spec. Deferred label removed: this is now ready for a coding agent. Execution stays in a future session.
 
 --- body ---
 ## Context
@@ -44,16 +45,75 @@ ticket tracks the question, not a plan to execute.
 - `.claude/rules/architecture.md` §"Companion pipelines" — current
   (in-place-reuse) rationale, would need revision if this is acted on
 
-## Open questions (for the author, not this ticket to answer)
-- Is this dependency going to recur (more companion figures for other
-  sibling papers), or a one-off that doesn't justify the extraction cost?
-- What's the right boundary for an extracted package — just the OpenAlex
-  HTTP/retry layer, or the embedding conventions too?
-- Versioning/publishing story: local path dependency between repos, a
-  private PyPI-style package, or a git submodule?
+## Decision (2026-07-08)
+Extract. The three open questions resolve as follows:
+- **Recur?** Yes. The polycentric_activity HET figure work is growing
+  (field swim-lane figure, Louvain community detection on the citation
+  graph, venue→lane binning), each reusing the same OpenAlex-crawl and
+  embedding-text conventions. The one-off assumption is void.
+- **Boundary?** The OpenAlex + embedding-text layer only — not the
+  `pipeline_loaders`/`pipeline_io` domain modules. Concretely the six
+  symbols the HET scripts actually import: `retry_get`,
+  `reconstruct_abstract`, `normalize_doi`, `build_text`, and the two
+  constants `MAILTO`, `OPENALEX_API_KEY`. `get_logger` stays out (see
+  blast radius); the package uses stdlib `logging.getLogger`.
+- **Packaging?** A small standalone package both repos depend on via a
+  uv source (`[tool.uv.sources]` — this repo already uses that block).
+  Local path dependency during development; git source once it stabilises.
+  No PyPI.
+
+## Measured facts (the carve-out surface and blast radius)
+Where each borrowed symbol is defined, and how many files in THIS repo use it:
+- `retry_get` — `scripts/pipeline_io.py` — 13 files
+- `reconstruct_abstract` — `scripts/pipeline_text.py` — 5 files
+- `normalize_doi` — `scripts/utils.py` — 50 files
+- `build_text` — `scripts/enrich_embeddings.py` — 3 files
+- `get_logger` — `scripts/utils.py` — 159 files (LEFT in place)
+Third-party deps of that layer: `requests`, `numpy`, `pandas` (no torch).
+Strategy to keep blast radius near zero: the extracted package becomes the
+source of truth; the host modules (`utils.py`, `pipeline_io.py`,
+`pipeline_text.py`, `enrich_embeddings.py`) import the moved functions FROM
+the package and RE-EXPORT them, so the 50/159/13/5/3 existing call sites
+keep their current `from utils import ...` / `from pipeline_io import ...`
+imports unchanged. Only the definitions move; the shims preserve the API.
+
+## Actions
+1. Create the package (proposed name `openalex-corpus`, a small standalone
+   repo or a `libs/openalex-corpus/` path package): move the definitions of
+   `retry_get`, `reconstruct_abstract`, `normalize_doi`, `build_text`, and
+   the `MAILTO`/`OPENALEX_API_KEY` constants into it. Package uses stdlib
+   `logging`; no dependency back into this repo.
+2. In this repo, turn the four host modules into thin shims: each imports
+   its moved symbols from `openalex-corpus` and re-exports them (keep the
+   names). Add the package to this repo's deps via `[tool.uv.sources]`.
+3. In `polycentric_activity`, point the HET analysis workpackage at
+   `openalex-corpus` directly (it must NOT import from this repo's
+   `scripts/` any more). Coordinate with polycentric_activity ticket for
+   the figure pipeline.
+4. Update `.claude/rules/architecture.md` §"Companion pipelines": replace
+   the in-place-reuse rationale with the shared-package one.
+
+## Test
+Write the contract test FIRST (red): in the new package,
+`tests/test_openalex.py` exercising `retry_get` (mock a 429→200 retry),
+`reconstruct_abstract` (inverted-index dict → text), `normalize_doi`
+(canonicalisation cases), and `build_text` (row → text convention). This is
+the coverage that currently does not exist on the cross-repo contract.
+
+## Verification
+- [ ] `openalex-corpus` builds and its own test suite passes.
+- [ ] This repo's `make check` (or equivalent) is green AFTER the shims —
+      no existing call site changed behaviour.
+- [ ] `polycentric_activity`'s HET figure pipeline builds against the
+      package with no import from `climate-finance-het/scripts/`.
+- [ ] `architecture.md` updated.
+
+## Invariants
+- No behaviour change in this repo's own pipeline; the shims are API-preserving.
+- `get_logger` and the `pipeline_*` domain modules are NOT moved.
+- The 500KB plain-git limit and DVC conventions of this repo are untouched.
 
 ## Exit criteria
-- Author decision recorded (keep in-place / extract to independent
-  project / other). No code change implied by closing this ticket —
-  closing just means the question has been resolved one way or another.
+- The package exists, both repos depend on it, no repo reaches into
+  another's `scripts/`, and all three test suites are green.
 
