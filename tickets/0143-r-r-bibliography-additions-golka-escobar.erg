@@ -13,6 +13,7 @@ Author: HDMX-coding-agent
 2026-07-08T08:10Z HDMX-coding-agent note author directive: this ticket carries the Escobar/Mitchell discussion entirely and exclusively — discussion section added (remark text, manuscript anchor, candidate works, disambiguation); do not open that discussion in any other ticket or session context
 2026-07-08T13:21Z HDMX-coding-agent note author picked the Escobar works (both, verified on the PDFs): escobar1995 (Encountering Development, Princeton UP, ISBN 0-691-00102-2) + escobar1988 (Power and Visibility, Cultural Anthropology 3(4):428-443, doi 10.1525/can.1988.3.4.02a00060); entries added to main.bib, PDFs in docs/. Still pending: the Mitchell work(s), and the replace-vs-complement call for the DAC passage.
 2026-07-08T13:23Z HDMX-coding-agent note Mitchell works added (both, verified on PDFs): mitchell2002 (Rule of Experts, UC Press, ISBN 0-520-23262-3) + mitchell1998 (Fixing the Economy, Cultural Studies 12(1):82-101, doi 10.1080/095023898335627); Timothy not Ian. All 4 Escobar/Mitchell works now in bib + docs/. Remaining: which to cite where, and replace-vs-complement Desrosieres/Porter at the DAC passage (0141).
+2026-07-08T13:28Z HDMX-coding-agent note poppberman2022 added (Thinking Like an Economist, Princeton UP 2022, ISBN 978-0-691-16738-1; verified from EPUB OPF metadata; epub in docs/). For the conclusion 0171 (Œconomia symposium link).
 --- body ---
 ## Context
 New references requested by the referees. QUICK to add as verified bib entries;
