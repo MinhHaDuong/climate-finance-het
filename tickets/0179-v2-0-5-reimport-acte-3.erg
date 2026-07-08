@@ -1,29 +1,26 @@
 %erg 0.1
-Title: v2.0.5 reimport 4/4 — acte III + réconciliation Türkiye (B11–B15)
+Title: v2.0.5 reimport 4/4 — acte III (B11–B15)
 Created: 2026-07-08
 Author: HDMX-coding-agent
 Blocked-by: 0178
 
 --- log ---
 2026-07-08T07:44Z HDMX-coding-agent created split of 0175 (author: one validation unit per PR)
+2026-07-08T07:50Z HDMX-coding-agent note Türkiye reconciliation extracted to 0180 (author: distinct validation unit); B11 reimports the transaction granularity as-is, figures arbitrated in 0180
 
 --- body ---
 ## Context
-Child 4/4 of 0175. Chained after 0178 (same file). Closes the reimport
-programme; B22 (conclusion limitations) transfers to 0171's scope (the
-conclusion rebuild keeps at most one limits line).
+Child 4/4 of 0175. Chained after 0178 (same file). B22 (conclusion
+limitations) transfers to 0171's scope (the conclusion rebuild keeps at
+most one limits line). The Türkiye figures arbitration is 0180.
 
 ## Actions
 1. Keep B12 (Paris/transparency, open R2.31/R2.32) and B14 (loss &
    damage, the only match for still-open R1.4; coordinate with 0138).
 2. Merge B11 (worked transaction granularity), B13 (four controversies,
    open R2.30), B15 (corpus evidence Act III) per the 0174 inventory.
-3. Türkiye reconciliation (verified 2026-07-08: both texts primary-
-   sourced). State precisely what each figure measures — 1.7 GW direct
-   integration (communiqué 2025-08-04, PID PIDIA01318) vs ~15 GW enabled
-   (project page P508354); grant element half vs three-quarters. Keep the
-   accurate formulation; VF/HAL stays frozen; scope shared with 0161/0164.
+   B11 figures enter as-is; 0180 arbitrates them.
 
 ## Exit criteria
-- [ ] R1.4 material present; Türkiye figures reconciled on cited sources
+- [ ] R1.4 material present
 - [ ] Prose ratchet + adherence green; no signed-off 0152 row loses support
