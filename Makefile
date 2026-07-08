@@ -119,7 +119,6 @@ MULTILAYER_INCLUDES := content/_includes/embedding-generation.md \
 ZOO_INCLUDES := content/_includes/techrep/overview.md \
 		content/_includes/techrep/zscore.md \
 		content/_includes/techrep/null-model.md \
-		content/_includes/techrep/pre2007-separation.md \
 		content/_includes/techrep-zoo.md \
 		content/_includes/zoo/S1_mmd.md \
 		content/_includes/zoo/S2_energy.md \
