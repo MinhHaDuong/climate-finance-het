@@ -34,6 +34,10 @@ content/tables/*
 !content/tables/tab_venues.md
 !content/tables/tab_venues_fr.md
 !content/tables/tab_venues_fr_caption.md
+# A.5 pre-2007 separation is cited number-by-number in the manuscript prose;
+# commit its generator output so every cited value has an archived record (ticket 0161).
+!content/tables/tab_null_separation_pre2007.csv
+!content/tables/tab_pre2007_coverage.csv
 content/*-vars.yml
 !content/manuscript-vars.yml
 

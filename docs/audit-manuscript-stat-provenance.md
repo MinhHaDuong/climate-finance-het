@@ -87,6 +87,18 @@ artifact records the value, so the prose is the sole record — the "0.68" failu
    and 84/369 has no committed generator output to adjudicate between them. Reconciling this, and
    committing the generator output, is the non-negotiable fix regardless of the policy chosen.
 
+   **Refined diagnosis (code read, no run).** The two builders are algorithmically equivalent on
+   inspection: same cutoff (2006, both from `breaks[0]-1` via `pre2007_cutoff_year`), same
+   `normalize_doi` applied to both `source_doi` and `ref_doi`, same `TOP_N=250`, `MIN_COCIT=3`,
+   same isolate removal, same co-citation definition (group by `source_doi`, count co-citing
+   source papers per reference pair). Nothing in the code explains a 2× gap. The most likely cause
+   is therefore **not a code bug but two different `refined_citations` snapshots** at the two
+   generation times — and `refined_citations` is precisely the artifact the in-progress v1.1.2
+   GROBID reference-extraction pass regenerates. The co-citation graph is built entirely from that
+   file, so it is far more sensitive to citation-extraction changes than the works count is. This
+   is an inference from reading the code, not a proven cause; the confirming test is to run both
+   builders on one frozen `refined_citations` and diff.
+
 3. **A.3 is traceable but current (rows 1–9).** All nine clustering numbers match
    `clustering-comparison.md` exactly. That include is committed — but carries
    `<!-- WARNING: AI-generated, not human-reviewed -->` and a `STALE` note
@@ -100,7 +112,34 @@ artifact records the value, so the prose is the sole record — the "0.68" failu
 
 5. **Figures and method params are sound.** Rows 3, 15, 16, and the two v1 figures need no action.
 
-## Frozen-data policy decision (HITL — Action 4)
+## Frozen-data policy decision (Action 4) — DECIDED: Option C (2026-07-08)
+
+Author chose **C**: keep the v1 figures frozen, disclose the appendix diagnostics as
+current-corpus robustness, and give every cited number an archived source. Rationale for C over
+B (re-baseline): the current corpus is mid-flight (v1.1.2 regenerating on padme), re-baselining
+would re-open the Errata 1 label-instability risk, and it would desync the frozen figures from
+the submission. Sequenced as "C now, B once v1.1.2 is frozen" if single-version cleanliness is
+wanted later.
+
+**Done in this PR (autonomous):**
+- Disclosure paragraph added to A.2 (`manuscript.qmd`): states that the two v1 figures are frozen
+  while `@fig-breaks` and the appendix statistics use the current working corpus, reproducible
+  from the pipeline, and that nothing in the argument turns on the difference.
+- `.gitignore` exception for `tab_null_separation_pre2007.csv` + `tab_pre2007_coverage.csv` so the
+  A.5 generator output becomes a committable handoff artifact (ends the prose-only status).
+
+**Handoff — needs a pipeline run on your side (after v1.1.2 settles; no-heavy-compute rule):**
+1. `make separation` → commit `tab_null_separation_pre2007.csv` (now un-ignored); check the A.5
+   prose numbers (84/369/0.89/0.37/z≈25) against the committed CSV and fix any drift.
+2. Reconcile the 84/369-vs-169/1,056 pre-2007 graph: run both builders on the same frozen
+   `refined_citations`; if they still disagree it is a code bug (two canonical graphs), else it was
+   citation-snapshot drift — either way, cite one construction.
+3. Refresh the stale, AI-generated `clustering-comparison.md` (`compute_clustering_comparison`) and
+   re-check the nine A.3 numbers.
+
+---
+
+### The three options as drafted (for the record)
 
 The manuscript needs one coherent rule, applied to the whole appendix. Three options:
 

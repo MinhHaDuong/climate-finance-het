@@ -8,6 +8,8 @@ Author: HDMX-coding-agent
 
 2026-07-08T20:08Z HDMX-coding-agent note Audit complete -> docs/audit-manuscript-stat-provenance.md. 18 numbers traced. Manuscript figures are v1-pinned; appendix A.3/A.5/A.6 + fig-breaks are current-corpus. Priority: A.5 rows (84 nodes/369 edges/0.89/0.37/z25) are hand-transcribed, output CSV uncommitted, and conflict 2x with cocitation-communities.md (169/1056) -- reconcile. Frozen-data policy: 3 options drafted (HITL, Action 4).
 
+2026-07-08T20:18Z HDMX-coding-agent note Frozen-data policy DECIDED: Option C (author). Done: A.2 disclosure paragraph (v1 figures frozen; @fig-breaks + appendix stats current-corpus, confirmatory); .gitignore exception un-ignores tab_null_separation_pre2007.csv + tab_pre2007_coverage.csv. Handoff (pipeline run, post-v1.1.2): make separation + commit CSV, reconcile 84/369-vs-169/1056 on one frozen refined_citations, refresh clustering-comparison.md. Diagnosis: two co-citation builders algorithmically equivalent on inspection -> likely citation-snapshot drift, not a code bug.
+
 --- body ---
 ## Context
 R&R (v2.0.5). Closing 0136 (PR #823) exposed a class bug, not a one-off: the
