@@ -1,0 +1,44 @@
+%erg 0.1
+Title: R&R the $100bn, the Baku gap, and the scale of the number
+Created: 2026-07-08
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-08T20:01Z HDMX-coding-agent created
+2026-07-08T20:01Z HDMX-coding-agent note child of tracker 0141 (split into PR-sized units)
+2026-07-08T20:01Z HDMX-coding-agent note IN PROGRESS elsewhere — this is the cluster referred to informally as "141B"; a parallel session is editing these passages. PR should cite this ticket.
+
+--- body ---
+## Context
+The headline numbers — the $100bn pledge and the Baku NCQG — are where the
+aggregate does its distributive work. Reviewer 2 asked that the provenance and the
+scale be documented precisely rather than gestured at. The Vannes notes add the
+Baku 1.3T/0.3T gap and the Southern reading of the aggregate. Tracker: 0141.
+
+## Relevant passages
+- `content/manuscript.qmd` §2.3 / §3 — $100bn provenance ("not derived from any
+  economic model"); Copenhagen context; the "$100bn vs US defense" scale
+  provocation; the Baku NCQG paragraph; p16 UN Advisory Group composition.
+- `docs/notes-vannes-2026-07.md` §4–5.
+
+## Actions
+1. Document the $100bn provenance precisely: Copenhagen Accord, who set it, that it
+   was not derived from a model.
+2. Address scale: the concrete comparator is the ~$1.01T US defense budget (Trump's
+   >$1T ask, FY26) — cite the figure, keep the provocation measured.
+3. Muscle the Baku paragraph with the gap: developing countries asked $1,300bn/yr;
+   the NCQG core target is $300bn; the 1.3T survives only as the aspirational
+   "Baku to Belem Roadmap", outside the obligation.
+4. Add the Southern reading (Dupont): countries decompose the aggregate —
+   "combien je vaux" — using it to value countries, not only to verify donors.
+5. UN Advisory Group composition (p16): finance ministers, economists, central
+   bankers, no climate scientists — reflect on whether it matters.
+
+## Test (prose ratchet)
+- Negative guard only; any $-figure cited must be traceable to an archived source
+  (see `feedback_manuscript_number_provenance`).
+
+## Exit criteria
+- [ ] $100bn provenance + scale + Baku gap + Southern reading + Advisory Group all revised
+- [ ] Cover-letter traceability rows updated with §ref + commit SHA
+- [ ] Prose in the author's voice per `docs/style-anchor-v205.md`; `make check-fast` green

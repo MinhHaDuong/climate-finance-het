@@ -11,29 +11,40 @@ Author: HDMX-coding-agent
 2026-07-07T20:55Z HDMX-coding-agent note Vannes input appended to body (Baku 1.3T/0.3T gap, geopolitical reading, Türkiye↔controversies mapping)
 2026-07-08T13:05Z HDMX-coding-agent note blocker 0172 closed — Blocked-by removed.
 2026-07-08T16:10Z R2.30/object-construction: Mitchell 2002 cited at the development-economics DAC passage (line 96), Mitchell 1998 at the intro thesis (line 64). Selection rationale + Escobar-deferred note in 0143.
+2026-07-08T20:01Z HDMX-coding-agent note SPLIT into PR-sized children (0189-0194); this becomes a tracking ticket. Stays open until every child is closed. Two actions routed to existing siblings (0135, 0139) rather than duplicated.
 --- body ---
 ## Context
 Reviewer 2 (general + linear) + Reviewer 1 other comments: replace abstract /
 declarative passages with concrete actors, sites, instruments, dates, and
 consequences.
 
-## Actions (passage-level, R2 list)
-- Development-economics section: how economic reasoning entered negotiations; name actors/institutions/mechanisms; name the OECD development economists.
-- Clarify: models-vs-accounting-infrastructure opposition (really IAMs vs DAC measurement, p3); "longer trajectory of climate economics" intention (p3).
-- Why borrowing the aid reporting system is problematic (consequences + who drove it).
-- Article 4.3 "transactional language" sentence; "rigorous incremental-cost framework" (concrete); when/why it was abandoned vs extended; welfare-theoretic-transfers sentence (p8).
-- p8 "the need for a broader category arose" — provide evidence/examples (R2p).
-- Bali Action Plan: beyond the gloss in 0140, explain what changed institutionally/politically between Article 4.3 and Decision 1/CP.13, and what triggered the shift (R2w substantive).
-- CDM functioning; "concept later migrated" (examples); "carbon accounting not financial accounting" (substantiate); who generated post-2012 demand.
-- p12 "political legitimacy" introduced suddenly — say why it becomes a concern at this stage and for whom (R2x).
-- UNFCCC-2007 + Stern Review "created the conditions for a new kind of economic object" — claim too strong as stated; demonstrate carefully or soften (R2y).
-- "an economic object… that required not just models but accounting infrastructure" (p12) — too abstract; specify concretely (R2z; cf. R1j models-vs-infrastructure at p3).
-- How climate finance became politically binding — name the institutional/legal mechanisms (R2ad).
-- $100bn provenance ("not derived from any economic model") documented precisely; Copenhagen context; the "$100bn anecdotal vs US defense $1.5T" provocation — address scale.
-- Rio markers role/functioning (reporting context, by whom, purpose); UNFCCC reporting (to whom/by whom/purpose); donor vs recipient competing measurement regimes; OECD expert groups "set terms of debate" (when/where/who/methods/debates); accountability-vocabulary crystallisation examples; §2.3 more sources.
-- Performativity argument: make explanatory not declarative; unpack apparatus/methodologies/consequences (p12).
-- p16 UN Advisory Group composition (finance ministers, economists, central bankers, no climate scientists) — reflect on whether it matters.
-- Connect the Desrosières quote (p7) to the empirical case.
+This is now a **tracking ticket**. The passage-level R2 list below is split into
+PR-sized children, one manuscript region each. The tracker stays open until every
+child is closed, then closes only after an integration re-read of the combined
+diff against the R2 list.
+
+## Children (split 2026-07-08)
+- **0189** — Article 4.3 → Bali: incremental-cost framework and the shift to a
+  broader category (§2.1; R2p, R2w; welfare-transfers p8).
+- **0190** — CDM functioning and the migration of carbon accounting (§2.2;
+  post-2012 demand; carbon vs financial accounting).
+- **0191** — the $100bn, the Baku gap, the scale of the number (§2.3/§3; $100bn
+  provenance + Copenhagen; scale vs ~$1.01T US defense; Baku 1.3T/0.3T gap;
+  Southern "combien je vaux" reading; p16 UN Advisory Group). *Cluster informally
+  called "141B"; a parallel session is editing these passages.*
+- **0192** — competing measurement regimes: Rio markers, UNFCCC reporting, OECD
+  expert groups; connect the Desrosières quote (p7) to the empirical case (§2.3).
+- **0193** — the 2007/Stern "new economic object" claim (R2y) and the
+  performativity passage (R2x, R2z, R2ad); consistent with the R2.21 narrowing in
+  0136.
+- **0194** — Türkiye worked case ↔ four-controversies mapping (§3.1; R2.g2/R2.34).
+
+## Routed to existing siblings (not duplicated here)
+- Development-economics section + naming the OECD development economists → **0135**.
+- Models-vs-accounting-infrastructure (IAMs vs DAC, p3) + "longer trajectory of
+  climate economics" + finance-development framing → **0139**.
+- Why borrowing the aid reporting system is problematic → substantively covered by
+  the Mitchell 2002 cite already landed (PR #901) + 0192.
 
 ## Input from Vannes (2026-07-07)
 `docs/notes-vannes-2026-07.md` §4–5:
@@ -53,5 +64,7 @@ consequences.
   OECD/Oxfam duel).
 - **OECD GREEN-team continuity lead** (verify first) — see 0135.
 
-## Exit criteria
-- [ ] Each flagged passage revised with concrete actors/dates/mechanisms; tracked in the cover-letter traceability table
+## Exit criteria (tracker)
+- [ ] Children 0189, 0190, 0191, 0192, 0193, 0194 all closed
+- [ ] Routed actions confirmed done under 0135 and 0139
+- [ ] Integration re-read: combined diff covers every R2 passage above; cover-letter traceability table complete

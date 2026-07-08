@@ -1,0 +1,99 @@
+"""Guard the bib DOI↔title accuracy class (ticket 0164).
+
+Two layers:
+
+* Fast unit tests pin the matching logic — subtitle-truncation tolerance,
+  LaTeX-accent folding, corporate-author skipping — so the audit's false-positive
+  suppressions cannot silently regress. These run in ``make check-fast``.
+
+* One ``@slow`` test runs the live Crossref audit over the whole bib and asserts
+  that no DOI-bearing entry resolves to the wrong paper (or fails to resolve),
+  except the entries explicitly allowlisted below. It skips when Crossref is
+  unreachable so an offline ``make check`` still passes.
+
+The author-name sub-class is deliberately *advisory* (see ``qa_bib_doi``): first
+-author surname matching is too noisy (compound surnames, name order) to gate CI.
+"""
+
+import os
+import sys
+
+import pytest
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
+
+from qa_bib_doi import (
+    first_author_surname,
+    normalize_title,
+    run_audit,
+    suspects,
+    title_ratio,
+)
+
+# DOI-bearing entries whose Crossref title does NOT match — each a known
+# LLM-fabricated identifier awaiting an author judgment call, tracked by
+# ticket 0188 (article-vs-book, which co-published version, real Scientometrics
+# DOI). Shrinks to empty as 0188 lands; a new key here means a new defect.
+KNOWN_WRONG_PAPER = {
+    "manne_richels1992": "0188 — article (1991 DOI) vs 1992 MIT Press book, author call",
+    "atwoli_etal2022": "0188 — multi-journal editorial, pick the BMJ-version DOI",
+    "min2021measuring": "0188 — resolve the real Scientometrics DOI",
+}
+
+
+def test_subtitle_truncation_is_a_match():
+    """Crossref dropping a subtitle must not read as a wrong paper."""
+    bib = "Climate Finance Shadow Report 2023: Assessing the Delivery"
+    crossref = "Climate Finance Shadow Report 2023"
+    assert title_ratio(bib, crossref) == 1.0
+
+
+def test_period_subtitle_truncation_is_a_match():
+    bib = "Optimalite, equite et prix du carbone. A propos de Hotelling"
+    crossref = "Optimalite, equite et prix du carbone"
+    assert title_ratio(bib, crossref) == 1.0
+
+
+def test_short_generic_prefix_is_not_a_full_match():
+    """A short bib title prefixing an unrelated longer one must not read as 1.0,
+    or a wrong DOI on a generic title would pass the hard WRONG_PAPER gate."""
+    assert title_ratio("Climate Policy", "Climate Policy in the EU") < 1.0
+
+
+def test_genuinely_different_titles_score_low():
+    ratio = title_ratio("Buying Greenhouse Insurance",
+                        "A comparison of aggregate energy demand models")
+    assert ratio < 0.6
+
+
+def test_latex_accent_folds_in_surname():
+    assert first_author_surname(r"Barab{\'a}si, Albert-L{\'a}szl{\'o}") == "barabasi"
+
+
+def test_corporate_author_yields_no_surname():
+    """A braced organisation author has no personal surname to compare."""
+    assert first_author_surname("{Nature Climate Change}") == ""
+
+
+def test_normalize_title_strips_latex_and_case():
+    assert normalize_title("Latent {Dirichlet} Allocation") == "latent dirichlet allocation"
+
+
+@pytest.mark.slow
+def test_every_bib_doi_resolves_to_the_right_paper():
+    """Live Crossref audit: no entry's DOI points at the wrong paper.
+
+    Skips if Crossref is broadly unreachable (offline CI).
+    """
+    rows = run_audit(delay=0.1)
+    checked = [r for r in rows if r["verdict"] != "NO_DOI"
+               and r["verdict"] != "SKIP_REGISTRAR"]
+    errors = [r for r in checked if r["verdict"] == "NETWORK_ERROR"]
+    if not checked or len(errors) > 0.1 * len(checked):
+        pytest.skip(f"Crossref unreachable ({len(errors)}/{len(checked)} errored)")
+
+    offenders = {r["key"] for r in suspects(rows)} - set(KNOWN_WRONG_PAPER)
+    assert not offenders, (
+        "bib DOIs resolving to the wrong paper (not in the 0188 allowlist): "
+        f"{sorted(offenders)}"
+    )

@@ -1,0 +1,40 @@
+%erg 0.1
+Title: R&R competing measurement regimes — Rio markers, UNFCCC reporting, OECD expert groups
+Created: 2026-07-08
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-08T20:01Z HDMX-coding-agent created
+2026-07-08T20:01Z HDMX-coding-agent note child of tracker 0141 (split into PR-sized units)
+
+--- body ---
+## Context
+The §2.3 machinery of measurement — Rio markers, UNFCCC reporting, the rival
+donor and recipient regimes, and the OECD expert groups that set the terms — is
+described too abstractly. Reviewer 2 wants the who/where/how made concrete, and
+the Desrosieres quote connected to the empirical case. Complements the Mitchell
+aid-apparatus cite already landed (PR #901). Tracker: 0141.
+
+## Relevant passages
+- `content/manuscript.qmd` §2.3 — Rio markers role/functioning; UNFCCC reporting;
+  donor-vs-recipient competing regimes; OECD expert groups "set terms of debate";
+  accountability-vocabulary crystallisation; the Desrosieres quote (p7).
+
+## Actions
+1. Rio markers: reporting context, by whom, for what purpose.
+2. UNFCCC reporting: to whom, by whom, for what purpose.
+3. Contrast the donor-side and recipient-side measurement regimes (MDB vs DAC)
+   as competing, not complementary.
+4. OECD expert groups "set the terms of debate": when, where, who, methods, which
+   debates — with examples of accountability vocabulary crystallising.
+5. Connect the Desrosieres quote (p7) to the empirical case rather than leaving it
+   free-standing; add sources to §2.3.
+
+## Test (prose ratchet)
+- Negative guard only; keep the Desrosieres/Porter and Mitchell 2002 cites intact.
+
+## Exit criteria
+- [ ] §2.3 measurement-regime passages revised with concrete actors/methods/dates
+- [ ] Desrosieres quote tied to the empirical case
+- [ ] Cover-letter traceability rows updated with §ref + commit SHA
+- [ ] Prose in the author's voice per `docs/style-anchor-v205.md`; `make check-fast` green

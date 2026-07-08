@@ -1,0 +1,59 @@
+%erg 0.1
+Title: Migrate qa_* scripts to shared script-io + harden bib-audit heuristics
+Created: 2026-07-08
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-08T20:33Z HDMX-coding-agent created
+
+--- body ---
+## Context
+Surfaced by the /gaze review of PR #908 (ticket 0164). Two low-risk,
+non-blocking findings deferred so they don't scope-creep 0164:
+
+1. **script-io convention.** `.claude/rules/script-io.md` requires scripts that
+   produce a file to accept a required `--output` via the shared
+   `parse_io_args`/`validate_io` (`scripts/script_io_args.py`). The `qa_*` family
+   hand-rolls its own argparse instead: `qa_bib_doi.py` (new, #908),
+   `qa_bibliography.py`, `qa_citations.py`, `qa_missing_references.py`. This is a
+   pre-existing project-wide gap, not a #908 regression — the rule permits
+   migrate-on-touch, so batch it deliberately rather than one-off.
+
+2. **bib-audit heuristic edge cases** in `scripts/qa_bib_doi.py`:
+   - `AUTHOR_MISMATCH` uses substring containment (`bib not in cr and cr not in
+     bib`), so a short-surname swap ("li" vs "lin") is silently not flagged.
+     Advisory-only today (never gates CI), but worth tightening to token-equal.
+   - `title_ratio` prefix-match was hardened in #908 with a 4-word floor; revisit
+     whether a length-ratio guard is stronger than a raw word count.
+
+## Relevant files
+- `scripts/qa_bib_doi.py`, `scripts/qa_bibliography.py`,
+  `scripts/qa_citations.py`, `scripts/qa_missing_references.py`
+- `scripts/script_io_args.py` — the shared parser to adopt
+- `.claude/rules/script-io.md` — the convention
+
+## Actions
+1. Migrate each `qa_*` script to `parse_io_args`/`validate_io`; keep the
+   audit-summary log path working (an audit's product is the verdict, so decide
+   whether `--output` is genuinely required or the rule needs a QA carve-out —
+   raise with author if the latter).
+2. Tighten `AUTHOR_MISMATCH` to surname-token equality after accent/LaTeX fold.
+3. Add a unit test for the short-surname case.
+
+## Test
+- `tests/test_io_discipline.py::TestParseIoArgs` extended to assert each `qa_*`
+  script imports `parse_io_args` (red first).
+- Unit test: an author swap with a short surname is flagged.
+
+## Verification
+- [ ] Each `qa_*` script uses the shared I/O parser (or a documented carve-out).
+- [ ] Short-surname author swap is detected by the audit.
+- [ ] `make check-fast` passes.
+
+## Invariants
+- Do not change `qa_bib_doi.py`'s public `run_audit`/`suspects` API — the
+  standing test `tests/test_bib_doi_title.py` imports it.
+
+## Exit criteria
+- `qa_*` scripts consistent with script-io.md (or the rule amended); audit
+  heuristic edge cases closed with tests.

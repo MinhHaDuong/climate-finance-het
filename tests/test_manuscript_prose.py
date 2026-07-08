@@ -308,6 +308,25 @@ def test_loss_and_damage_is_a_bounded_thesis_limit():
     assert "negishi" in ld, "coalition note does not link back to the effort-sharing tradition"
 
 
+def test_finance_development_lineage_is_situated():
+    """Ticket 0139 (R1.5): the mobilisation/leverage vocabulary must be traced to
+    its scholarly home, the finance-and-growth literature (King & Levine 1993,
+    Aghion & Bolton 1997), AND the disconnection must be analysed — climate
+    finance borrowed the vocabulary while sealing its central category off from
+    that literature's unsettled empirical questions. Guards against the
+    vocabulary sitting unmoored (lineage never named), or the lineage being
+    cited as decoration without the disconnection point that carries the
+    analytic weight the reviewer asked for."""
+    cryst = section("Crystallization").lower()
+    for key in ("king_levine1993", "aghion_bolton1997"):
+        assert key in cryst, f"finance-and-growth lineage missing citation {key!r}"
+    assert "finance-and-growth" in cryst or "financial deepening" in cryst, \
+        "the finance-and-growth / financial-deepening lineage is not named"
+    assert "disconnection" in cryst or re.search(
+        r"cut loose|sealed?\s+\w*\s*off|stopped at the words", cryst,
+    ), "the disconnection from the finance-development debates is not analysed"
+
+
 # --------------------------------------------------------------------------- #
 # Fang tests — each guard must catch its defect on a known-bad fixture
 # --------------------------------------------------------------------------- #
