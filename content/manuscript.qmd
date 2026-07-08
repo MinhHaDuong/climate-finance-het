@@ -195,6 +195,8 @@ The computational results are confirmatory rather than exploratory or generative
 
 The direction of inference runs from history to data. The three traditions in @tbl-traditions were established from the intellectual record and then checked against the citation structure, rather than read off a clustering. That is why the table keeps its intellectual-history anchors and its co-citation anchors in separate columns, and why the two columns do not coincide, a divergence taken up in A.5.
 
+Our own procedure is itself subject to this scrutiny: reducing a scattered, multilingual literature to comparable coordinates is an act of commensuration, the very operation whose spread through climate finance this paper studies [@espeland_stevens1998]. The method therefore inherits both the reach and the blind spots of the accounting it examines, which is one more reason to read its output as corroboration rather than proof.
+
 Three questions organise what follows. First: does the language of the field tip over at the end of the 2000s, as the idea of a crystallization would have it? Second: before 2007, do the three traditions already cite the same references, or do they remain separate? Third: after Paris, can the tension between efficiency and accountability be read in the themes and in the journals? Sections A.4 to A.6 answer these in order; A.2 and A.3 first set out the corpus and the way meaning is measured.
 
 ### A.2 The corpus and its boundaries {.unnumbered}
