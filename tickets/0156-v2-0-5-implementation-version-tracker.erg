@@ -13,7 +13,6 @@ Blocked-by: 0152
 Blocked-by: 0153
 Blocked-by: 0162
 Blocked-by: 0171
-Blocked-by: 0172
 
 --- log ---
 2026-06-18T08:50Z HDMX-coding-agent created
@@ -24,6 +23,7 @@ Blocked-by: 0172
 2026-07-07T20:55Z HDMX-coding-agent note added child 0171 (conclusion rebuild, from Vannes diagnosis); Vannes inputs propagated into 0135/0137/0141/0143/0152
 2026-07-07T20:50Z added child 0172 (base rebuild, needs-human): translation + reimport had no owner; manuscript children 0135/0137/0138/0139/0141/0171 now blocked by 0172
 2026-07-08T07:18Z HDMX-coding-agent note 0172 split into 0173 (translation) + 0174 (inventory) + 0175 (reimports) per author decision; 0172 is now a sub-tracker
+2026-07-08T13:05Z HDMX-coding-agent note blocker 0172 closed — Blocked-by removed.
 --- body ---
 ## Context
 Version-milestone tracker for **v2.0.5 — implementation** (research → writing →
