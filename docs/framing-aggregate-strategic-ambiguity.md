@@ -48,7 +48,9 @@ bibliography already carries:
    under incompatible rules, so the aggregate cannot be reliably totalled or
    disaggregated (`weikmans_roberts2019`, the accounting-muddle anchor;
    `roberts_weikmans2017` on "what counts"; `roberts2021` on the failed
-   promise).
+   promise). A state actor makes the same charge: India's finance ministry
+   reads the OECD-CPI count as self-reported, "bent" to inflate, and
+   unverifiable (`dasgupta2015`).
 2. **The construction sites are visible.** The OECD DAC Rio markers and the MRV
    framework decide, one activity at a time, what enters the total
    (`corfee-morlot2009`); mobilised-private-finance attribution is an openly
@@ -63,8 +65,9 @@ bibliography already carries:
    sur pièce from the local PDFs at drafting time; not transcribed here.)*
 4. **The referent was underdetermined from birth.** The Copenhagen commitment
    named "$100 billion a year, mobilised jointly" without fixing public vs
-   private, gross vs net, grants vs loans, or the additionality baseline. The
-   slack was diplomatic, and it survived into the accounting regime.
+   private, gross vs net, grants vs loans, or the additionality baseline
+   (`unfccc2009copenhagen`, Decision 2/CP.15, para. 8). The slack was
+   diplomatic, and it survived into the accounting regime.
 
 ## The load-bearing claim
 
@@ -76,17 +79,16 @@ consolidate. Framed as strategic ambiguity institutionalised as convention, the
 vagueness becomes evidence *for* the crystallisation thesis. That is the paper to
 write.
 
-## Residual acquisitions (author's call)
+## Primary sources acquired
 
-The bibliography already covers the accounting wars. Two primary sources would
-strengthen §4 but are not yet local:
+The two primary sources are now local (`docs/articles/`) and in `main.bib`,
+verified sur pièce:
 
-- **Copenhagen Accord, decision 2/CP.15, para. 8** (UNFCCC, 2009) — the founding
-  under-specification, citable as primary text.
-- **Government of India, Dept. of Economic Affairs (2015), *Climate Change
-  Finance: Analysis of a Recent OECD Report*** — a Global-South state actor
-  contesting the OECD mobilisation count; supplies the "specific actors, not
-  policymakers" grounding the writing rules require.
-
-Both are freely available. Acquire into `docs/articles/` and add to `main.bib`
-only if the drafting session wants para. 4 evidenced by primary text.
+- **Copenhagen Accord, Decision 2/CP.15, para. 8** (UNFCCC, 2009,
+  `unfccc2009copenhagen`) — the founding under-specification. Para. 8 reads
+  "developed countries commit to a goal of mobilizing jointly USD 100 billion
+  dollars a year by 2020".
+- **Dasgupta & Climate Change Finance Unit (2015, `dasgupta2015`)** — India's
+  Department of Economic Affairs contesting the OECD-CPI mobilisation count;
+  supplies the "specific actors, not policymakers" grounding the writing rules
+  require.
