@@ -274,6 +274,26 @@ def test_substrate_smoke():
     assert "Copenhagen" in section("Crystallization")
 
 
+def test_loss_and_damage_is_a_bounded_thesis_limit():
+    """Ticket 0138 (R1.4): loss and damage must stand as its own subsection that
+    (a) gives the Warsaw-to-Fund genealogy the referee named, not just the 2022
+    fund; (b) states explicitly that this is where the within-categories reading
+    does not hold; and (c) links the insurance logic to the effort-sharing
+    tradition's coalition question. Guards against the material staying a single
+    unmarked paragraph in the 'four controversies' list, or shedding the
+    genealogy or the coalition link on a later rewrite."""
+    ld = section("Loss and damage").lower()  # raises if the subsection is absent
+    for marker in ("warsaw", "santiago", "2013", "2023"):
+        assert marker in ld, f"loss-and-damage genealogy missing {marker!r}"
+    assert re.search(
+        r"does not hold|outside the (crystalliz\w+|established) categor|"
+        r"limit(s)? (the|this) (claim|reading|thesis)",
+        ld,
+    ), "no explicit statement that loss and damage bounds the within-categories reading"
+    assert "coalition" in ld, "no coalition-formation note"
+    assert "negishi" in ld, "coalition note does not link back to the effort-sharing tradition"
+
+
 # --------------------------------------------------------------------------- #
 # Fang tests — each guard must catch its defect on a known-bad fixture
 # --------------------------------------------------------------------------- #
