@@ -59,11 +59,11 @@ variance), 0076 (joint type-I error).
   a random graph of same degree sequence must not. Red first (TDD).
 
 ## Verification
-- [ ] Scripts follow Phase 2 rules: `--output` via script_io_args, Pandera
+- [x] Scripts follow Phase 2 rules: `--output` via script_io_args, Pandera
       schema, seed from config, loaders only, save path from Makefile `$@`
-- [ ] New `.mk` include or existing divergence.mk extension — no 400-line
+- [x] New `.mk` include or existing divergence.mk extension — no 400-line
       Makefile edits
-- [ ] `make check-fast` green
+- [x] `make check-fast` green
 
 ## Invariants
 - No Phase 1 trigger (works from the existing contract files)
