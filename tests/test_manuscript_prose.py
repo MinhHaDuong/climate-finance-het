@@ -274,6 +274,20 @@ def test_substrate_smoke():
     assert "Copenhagen" in section("Crystallization")
 
 
+def test_mitchell_object_and_aid_apparatus_cited():
+    """R2.30 + object-construction lineage: Mitchell's account of the economy as
+    a constructed object (1998) anchors the intro thesis, and his critique of the
+    development/aid apparatus (2002) is engaged in the development-economics
+    passage alongside Desrosières/Porter — the on-point reference for the
+    'biased aid architectures' remark, read before citing."""
+    assert "@mitchell1998" in section("a precise number"), (
+        "Mitchell 1998 not cited in the introduction thesis"
+    )
+    assert "@mitchell2002" in section("three disjoint traditions"), (
+        "Mitchell 2002 not cited in the development-economics passage"
+    )
+
+
 def test_loss_and_damage_is_a_bounded_thesis_limit():
     """Ticket 0138 (R1.4): loss and damage must stand as its own subsection that
     (a) gives the Warsaw-to-Fund genealogy the referee named, not just the 2022
