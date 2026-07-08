@@ -2,13 +2,14 @@
 Title: v2.0.5 reimport 4/4 — acte III (B11–B15)
 Created: 2026-07-08
 Author: HDMX-coding-agent
-Blocked-by: 0178
+Closed: B11-B15 reimported into translated §3 (v2.0.5 reimport 4/4)
 
 --- log ---
 2026-07-08T07:44Z HDMX-coding-agent created split of 0175 (author: one validation unit per PR)
 2026-07-08T07:50Z HDMX-coding-agent note Türkiye reconciliation extracted to 0180 (author: distinct validation unit); B11 reimports the transaction granularity as-is, figures arbitrated in 0180
 2026-07-08T08:00Z HDMX-coding-agent note 0180 deleted — author settled the arbitration (final): B11 keeps the VEn formulation, both GW figures with their footnotes, grant element three-quarters. Recorded in docs/editorial-brief.md `turkiye-figures-settled`; do not reopen.
 
+2026-07-08T10:42Z HDMX-coding-agent closed — B11-B15 reimported into translated §3 (v2.0.5 reimport 4/4)
 --- body ---
 ## Context
 Child 4/4 of 0175. Chained after 0178 (same file). B22 (conclusion
@@ -25,5 +26,5 @@ most one limits line). The Türkiye figures arbitration is 0180.
    DAC computation). Closed debate; do not re-arbitrate.
 
 ## Exit criteria
-- [ ] R1.4 material present
-- [ ] Prose ratchet + adherence green; no signed-off 0152 row loses support
+- [x] R1.4 material present (B14 loss-and-damage paragraph + Oxfam breakdown + CDB/FOCAC)
+- [x] Prose ratchet + adherence green; no signed-off 0152 row loses support
