@@ -2,12 +2,14 @@
 Title: v2.0.5 reimport 1/4 — annexe A.1–A.6 (blocs B16–B21 + B23)
 Created: 2026-07-08
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #873
 
 --- log ---
 2026-07-08T07:44Z HDMX-coding-agent created split of 0175 (author: one validation unit per PR)
 
 2026-07-08T08:33Z HDMX-coding-agent note blocker 0174 closed — Blocked-by removed.
 2026-07-08T08:34Z HDMX-coding-agent note blocker 0173 closed — Blocked-by removed.
+2026-07-08T09:09Z HDMX-coding-agent closed — autoclosed — PR #873
 --- body ---
 ## Context
 Child 1/4 of 0175. The six VEn appendix blocks are mandatory keeps: they
