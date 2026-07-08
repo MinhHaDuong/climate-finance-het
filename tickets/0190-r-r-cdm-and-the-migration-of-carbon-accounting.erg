@@ -1,0 +1,36 @@
+%erg 0.1
+Title: R&R CDM functioning and the migration of carbon accounting
+Created: 2026-07-08
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-08T20:01Z HDMX-coding-agent created
+2026-07-08T20:01Z HDMX-coding-agent note child of tracker 0141 (split into PR-sized units)
+
+--- body ---
+## Context
+Reviewer 2 asked for the CDM passage in §2.2 to show how the mechanism actually
+worked and how carbon accounting travelled from it into the wider field, rather
+than asserting the migration. Tracker: 0141.
+
+## Relevant passages
+- `content/manuscript.qmd` §2.2 — CDM functioning; "concept later migrated";
+  "carbon accounting not financial accounting"; post-2012 demand.
+
+## Actions
+1. Describe CDM functioning concretely: the CER unit, the additionality test, the
+   project cycle, named actors.
+2. Give examples for "the concept later migrated" — where the accounting logic
+   reappeared.
+3. Substantiate "carbon accounting not financial accounting": what the distinction
+   does and why it matters here.
+4. Name who generated post-2012 demand once the first commitment period lapsed.
+
+## Test (prose ratchet)
+- Negative guard only: no new define-by-negation / em-dash breach in §2.2
+  (`tests/test_manuscript_prose.py`).
+
+## Exit criteria
+- [ ] §2.2 CDM passage revised with concrete mechanism/actors/dates
+- [ ] Cover-letter traceability row updated with §ref + commit SHA
+- [ ] Prose in the author's voice per `docs/style-anchor-v205.md`; `make check-fast` green
