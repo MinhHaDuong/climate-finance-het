@@ -5,7 +5,6 @@ Author: HDMX-coding-agent
 Blocked-by: 0134
 Blocked-by: 0135
 Blocked-by: 0137
-Blocked-by: 0139
 Blocked-by: 0141
 Blocked-by: 0143
 Blocked-by: 0152
@@ -24,6 +23,7 @@ Blocked-by: 0171
 2026-07-08T07:18Z HDMX-coding-agent note 0172 split into 0173 (translation) + 0174 (inventory) + 0175 (reimports) per author decision; 0172 is now a sub-tracker
 2026-07-08T13:05Z HDMX-coding-agent note blocker 0172 closed — Blocked-by removed.
 2026-07-08T16:02Z HDMX-coding-agent note blocker 0138 closed — Blocked-by removed.
+2026-07-08T20:10Z HDMX-coding-agent note blocker 0139 closed — Blocked-by removed.
 --- body ---
 ## Context
 Version-milestone tracker for **v2.0.5 — implementation** (research → writing →
