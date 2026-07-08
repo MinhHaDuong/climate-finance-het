@@ -1,0 +1,25 @@
+%erg 0.1
+Title: v2.0.5 reimport 3/4 — acte II, cristallisation (B06–B10)
+Created: 2026-07-08
+Author: HDMX-coding-agent
+Blocked-by: 0177
+
+--- log ---
+2026-07-08T07:44Z HDMX-coding-agent created split of 0175 (author: one validation unit per PR)
+
+--- body ---
+## Context
+Child 3/4 of 0175. Chained after 0177 (same file). Includes the highest-
+stakes single block: B09 "Economists as architects" (AGF/Stern/Hourcade),
+which has NO counterpart in the VF and is the most direct answer to R1.1,
+reviewer 1's central critique.
+
+## Actions
+1. Keep B06 (Copenhagen/performativity, signed-off R2.21/R2.28) and B09
+   (keep confirmed by author 2026-07-08).
+2. Merge B07 (statistical infrastructure), B08 (key concepts, open
+   R2.35/R1.5), B10 (corpus evidence Act II) per the 0174 inventory.
+
+## Exit criteria
+- [ ] B09 present as a full subsection; R1.1 coverage traceable in 0152
+- [ ] Prose ratchet + adherence green

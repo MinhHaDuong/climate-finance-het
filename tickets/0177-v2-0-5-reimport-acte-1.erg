@@ -1,0 +1,30 @@
+%erg 0.1
+Title: v2.0.5 reimport 2/4 — acte I, traditions + clôture de résolution (B01–B05)
+Created: 2026-07-08
+Author: HDMX-coding-agent
+Blocked-by: 0176
+
+--- log ---
+2026-07-08T07:44Z HDMX-coding-agent created split of 0175 (author: one validation unit per PR)
+
+--- body ---
+## Context
+Child 2/4 of 0175. Chained after 0176 (same file). The VF compressed the
+three §1 tradition subsections into one table, losing concrete
+CDM/GNI/additionality detail that answers four still-open 0141 remarks
+(R2.15–R2.18).
+
+## Actions
+1. Merge B01–B03 detail back into the translated §1 (per the 0174
+   inventory decisions); keep B05 (corpus evidence Act I + tbl-traditions
+   caption, signed-off rows R1.2/E3d).
+2. B04 (author decision 2026-07-08): dropped as a subsection, but Act I
+   must not end on item 3 of an enumeration — write a short resolution
+   close carrying the intersection argument (political commitment ×
+   statistical infrastructure × market-failure logic → Copenhagen).
+   Check first whether the VF Cristallisation opening already carries
+   this bridge; do not duplicate it.
+
+## Exit criteria
+- [ ] R2.15–R2.18 material present; B05 anchored; Act I ends on a resolution
+- [ ] Prose ratchet + adherence green

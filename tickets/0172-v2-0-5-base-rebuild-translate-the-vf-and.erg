@@ -36,7 +36,7 @@ this ticket produces and are blocked by it.
 ## Children (tracking ticket — split 2026-07-08, one PR each)
 - [ ] 0173 base 1/3 — style anchor + machine translation of the VF
 - [ ] 0174 base 2/3 — reimport inventory of VEn evidence blocks (parallel to 0173)
-- [ ] 0175 base 3/3 — execute reimports + Türkiye figures reconciliation (after 0173+0174)
+- [ ] 0175 base 3/3 — reimport sub-tracker → 0176 annexe · 0177 acte I · 0178 acte II · 0179 acte III+Türkiye (chained, one validation unit per PR)
 
 ## Verification
 - [ ] Row-by-row coverage check against the 0152 table + reimport inventory
