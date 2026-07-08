@@ -11,6 +11,7 @@ Author: HDMX-coding-agent
 2026-06-24T17:44Z HDMX-coding-agent note blocker 0155 closed — Blocked-by removed.
 2026-07-07T20:55Z HDMX-coding-agent note Vannes candidates appended (Popp Berman, Desrosières-lineage, scientization set); author picks before adding
 2026-07-08T08:10Z HDMX-coding-agent note author directive: this ticket carries the Escobar/Mitchell discussion entirely and exclusively — discussion section added (remark text, manuscript anchor, candidate works, disambiguation); do not open that discussion in any other ticket or session context
+2026-07-08T13:21Z HDMX-coding-agent note author picked the Escobar works (both, verified on the PDFs): escobar1995 (Encountering Development, Princeton UP, ISBN 0-691-00102-2) + escobar1988 (Power and Visibility, Cultural Anthropology 3(4):428-443, doi 10.1525/can.1988.3.4.02a00060); entries added to main.bib, PDFs in docs/. Still pending: the Mitchell work(s), and the replace-vs-complement call for the DAC passage.
 --- body ---
 ## Context
 New references requested by the referees. QUICK to add as verified bib entries;
@@ -19,7 +20,7 @@ every entry (DOI/venue) before adding — do not fabricate metadata.
 
 ## Actions — add to bibliography/main.bib (verified)
 1. Golka (2024), "Epistemic Gerrymandering: ESG, Impact Investing, and the Financial Governance of Sustainability," Review of International Political Economy, 31:6, 1894–1918. (R1 §1)
-2. Escobar — see discussion section below (author picks the works).
+2. Escobar — DONE: escobar1995 + escobar1988 added (both picked, verified on PDFs).
 3. Mitchell, Timothy — see discussion section below (author picks the works).
 4. King & Levine (1993) — finance-development nexus. (R1 add'l)
 5. Aghion & Bolton — finance-development. (R1 add'l)
