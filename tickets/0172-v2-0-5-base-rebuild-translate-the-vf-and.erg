@@ -2,7 +2,6 @@
 Title: v2.0.5 base rebuild — translate the VF and reimport the VEn evidence blocks
 Created: 2026-07-07
 Author: HDMX-coding-agent
-Blocked-by: 0173
 Blocked-by: 0175
 
 --- log ---
@@ -13,6 +12,7 @@ Blocked-by: 0175
 2026-07-07T20:52Z author update: translation is machine-performed, style-anchored on the author's pre-AI-era English prose; needs-human dropped — agent-runnable, HITL stays at PR review and 0152 sign-off
 2026-07-08T07:18Z HDMX-coding-agent note split into three short tickets per author decision (triphasic): 0173 translation, 0174 inventory, 0175 reimports. This ticket becomes the tracking ticket — stays open until all three close; manuscript children stay blocked by it. Türkiye action moved to 0175, downgraded to reconciliation (both texts primary-sourced, verified 2026-07-08).
 2026-07-08T08:33Z HDMX-coding-agent note blocker 0174 closed — Blocked-by removed.
+2026-07-08T08:34Z HDMX-coding-agent note blocker 0173 closed — Blocked-by removed.
 --- body ---
 ## Context
 Decision 0165 (editorial brief `resubmission-base-is-translated-vf`): the
