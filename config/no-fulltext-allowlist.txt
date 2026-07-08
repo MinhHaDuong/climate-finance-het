@@ -24,14 +24,9 @@ power1997
 stodden2014implementing
 
 # --- closed-access journal articles (paywalled; no author/repo copy found) ---
-barrett1994
 care_weber2023
-carraro1993
-finnemore1998
 lee2004trust
-michaelowa2003
 shang_jin2023
-sutter2007
 
 # --- not a fetchable "paper" (tool / blog post / spec) ---
 amstutz2016cwl
