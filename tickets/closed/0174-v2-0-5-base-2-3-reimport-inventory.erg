@@ -2,10 +2,12 @@
 Title: v2.0.5 base 2/3 — reimport inventory of VEn evidence blocks
 Created: 2026-07-08
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #872
 
 --- log ---
 2026-07-08T07:18Z HDMX-coding-agent created split of 0172 phase 2 (author prefers three short tickets)
 
+2026-07-08T08:33Z HDMX-coding-agent closed — autoclosed — PR #872
 --- body ---
 ## Context
 Phase 2/3 of the base rebuild (tracker 0172). Inventory the evidence
