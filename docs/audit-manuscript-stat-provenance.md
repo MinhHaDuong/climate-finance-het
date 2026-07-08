@@ -114,21 +114,23 @@ artifact records the value, so the prose is the sole record — the "0.68" failu
 
 ## Frozen-data policy decision (Action 4) — DECIDED: Option C (2026-07-08)
 
-Author chose **C**: keep the v1 figures frozen, disclose the appendix diagnostics as
-current-corpus robustness, and give every cited number an archived source. Rationale for C over
-B (re-baseline): the current corpus is mid-flight (v1.1.2 regenerating on padme), re-baselining
-would re-open the Errata 1 label-instability risk, and it would desync the frozen figures from
-the submission. Sequenced as "C now, B once v1.1.2 is frozen" if single-version cleanliness is
-wanted later.
+The author chose **C** in the working session that produced this PR (message "C then." in reply
+to the drafted A/B/C options; "merge on approve" as sign-off on the resulting R&R prose PR #907):
+keep the v1 figures frozen, disclose the appendix diagnostics as current-corpus robustness, and
+give every cited number an archived source. Rationale for C over B (re-baseline): the current
+corpus is mid-flight (v1.1.2 regenerating on padme), re-baselining would re-open the Errata 1
+label-instability risk, and it would desync the frozen figures from the submission. Sequenced as
+"C now, B once v1.1.2 is frozen" if single-version cleanliness is wanted later.
 
 **Done in this PR (autonomous):**
 - Disclosure paragraph added to A.2 (`manuscript.qmd`): states that the two v1 figures are frozen
   while `@fig-breaks` and the appendix statistics use the current working corpus, reproducible
   from the pipeline, and that nothing in the argument turns on the difference.
-- `.gitignore` exception for `tab_null_separation_pre2007.csv` + `tab_pre2007_coverage.csv` so the
-  A.5 generator output becomes a committable handoff artifact (ends the prose-only status).
+- `.gitignore` exception for `tab_null_separation_pre2007.csv` + `tab_pre2007_coverage.csv`, which
+  *prepares* the A.5 generator output to be committed. The tables are not generated in this PR, so
+  A.5 remains prose-only until the handoff step below runs and commits the CSV.
 
-**Handoff — needs a pipeline run on your side (after v1.1.2 settles; no-heavy-compute rule):**
+**Handoff — needs a pipeline run on your side (after v1.1.2 settles; no-heavy-compute rule). Tracked as ticket 0195:**
 1. `make separation` → commit `tab_null_separation_pre2007.csv` (now un-ignored); check the A.5
    prose numbers (84/369/0.89/0.37/z≈25) against the committed CSV and fix any drift.
 2. Reconcile the 84/369-vs-169/1,056 pre-2007 graph: run both builders on the same frozen
@@ -172,7 +174,8 @@ committed under B/C). See [[feedback_manuscript_number_provenance]].
 
 - **"Every pipeline-derived number has a documented, reproducible source"** — table above; all
   18 rows sourced to `file:line`. One class (rows 10–14) is unarchived, and its node/edge counts
-  conflict with a second committed source (finding 2) — reconciliation required.
-- **"Mismatches resolved"** — deferred to the policy decision (HITL); resolutions are
-  option-dependent and must not silently rewrite v1-pinned numbers (ticket invariant).
-- **"Frozen-data policy decision recorded"** — three options drafted above; author to choose.
+  conflict with a second committed source (finding 2) — reconciliation deferred to ticket 0195.
+- **"Mismatches resolved"** — policy C chosen (below). The corpus-version mismatch is resolved by
+  disclosure (A.2 paragraph, this PR); the A.5 archiving + builder reconciliation run on the
+  pipeline under ticket 0195. No v1-pinned number was rewritten (ticket invariant).
+- **"Frozen-data policy decision recorded"** — DONE: Option C, chosen by the author (see below).

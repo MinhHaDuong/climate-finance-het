@@ -1,0 +1,58 @@
+%erg 0.1
+Title: 0161 follow-up regenerate and archive appendix stat tables on frozen corpus
+Created: 2026-07-08
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-08T20:24Z HDMX-coding-agent created
+
+--- body ---
+## Context
+Follow-up to 0161 (audit + frozen-data policy C). The audit chose to keep the v1
+figures frozen and disclose the appendix diagnostics as current-corpus robustness
+(PR #907, `docs/audit-manuscript-stat-provenance.md`). The disclosure prose and the
+`.gitignore` exception landed autonomously. What remains needs a pipeline run against
+the corpus and so is deferred to the author's machine flow — and best done once the
+in-progress v1.1.2 GROBID reference-extraction corpus is frozen, so the archived
+numbers do not immediately go stale.
+
+## Relevant files
+- `content/manuscript.qmd` — A.5 prose numbers (84 nodes / 369 edges / share 0.89 /
+  null 0.37 / z≈25) transcribed at line ~276; A.3 nine clustering numbers ~256–260.
+- `scripts/compute_null_separation.py`, `scripts/plot_fig_traditions.py` — A.5 generator
+  (builder A) + its co-citation graph; `separation.mk` target `make separation`.
+- `scripts/compute_temporal_communities.py`, `content/_includes/cocitation-communities.md`
+  — builder B (reports the conflicting 169 / 1,056 pre-2007 graph).
+- `content/_includes/clustering-comparison.md` — stale, AI-generated A.3 source.
+- `content/tables/tab_null_separation_pre2007.csv`, `tab_pre2007_coverage.csv` — now
+  un-ignored (PR #907), awaiting generation + commit.
+
+## Actions
+1. On the frozen v1.1.2 corpus, `make separation`; commit
+   `tab_null_separation_pre2007.csv` (+ coverage). Verify the A.5 prose numbers match
+   the committed CSV; fix any drift in `manuscript.qmd`.
+2. Reconcile the pre-2007 co-citation graph: run builder A and builder B on the *same*
+   frozen `refined_citations` and diff node/edge counts. If they agree, it was
+   citation-snapshot drift — cite one construction and note it. If they still disagree
+   ~2×, it is a code bug (two canonical graphs) — fix and cite one.
+3. Regenerate `clustering-comparison.md` (`compute_clustering_comparison`); re-check the
+   nine A.3 numbers against the fresh include; drop the STALE/AI-generated warnings once
+   human-reviewed.
+
+## Test
+- `content/tables/tab_null_separation_pre2007.csv` exists, is committed, and its values
+  equal the A.5 prose numbers (red first: assert the CSV row matches the cited figures).
+
+## Verification
+- [ ] A.5 numbers backed by a committed CSV, values match prose
+- [ ] Builder A vs builder B pre-2007 graph reconciled; manuscript cites one construction
+- [ ] `clustering-comparison.md` regenerated + human-reviewed; A.3 numbers re-checked
+- [ ] `make manuscript` renders clean
+
+## Invariants
+- Keep the v1 figures frozen (policy C); do not re-baseline the figures here.
+- Do not silently rewrite a cited number — every change traces to the committed CSV.
+
+## Exit criteria
+- Every A.5/A.3 number has a committed, reproducible source; the two co-citation
+  builders reconciled to one construction; clustering include refreshed.
