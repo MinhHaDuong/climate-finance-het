@@ -1,0 +1,35 @@
+%erg 0.1
+Title: v2.0.5 base 3/3 — execute reimports + Türkiye figures reconciliation
+Created: 2026-07-08
+Author: HDMX-coding-agent
+Blocked-by: 0173
+Blocked-by: 0174
+
+--- log ---
+2026-07-08T07:18Z HDMX-coding-agent created split of 0172 phase 3 (author prefers three short tickets)
+
+--- body ---
+## Context
+Phase 3/3 of the base rebuild (tracker 0172). Reimport the decided blocks
+into the translated base; nothing enters without an explicit author
+decision in the 0174 inventory.
+
+## Actions
+1. Reimport block by block per the signed-off inventory, each checked
+   against the 0152 rows it serves.
+2. Reconcile the Türkiye figures. Verified 2026-07-08: both texts already
+   cite primary sources — VF footnote: communiqué 2025-08-04 + PID
+   PIDIA01318 ("1.7 GW direct integration"); VEn: project page P508354
+   ("some fifteen GW enabled"); grant element half vs three-quarters. Not
+   a fact-finding task: state precisely what each figure measures and keep
+   the accurate formulation. VF/HAL stays frozen; scope shared with
+   0161/0164.
+
+## Invariants
+- No signed-off 0152 row loses its supporting content
+- `manuscript-Gide.qmd` unchanged
+
+## Exit criteria
+- [ ] All decided reimports in place; inventory archived with kept/dropped reasons
+- [ ] Türkiye figures reconciled on the cited primary sources
+- [ ] Prose ratchet + adherence green on the rebuilt manuscript

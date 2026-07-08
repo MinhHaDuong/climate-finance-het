@@ -23,13 +23,14 @@ Blocked-by: 0172
 2026-06-23T08:50Z HDMX-coding-agent note added child 0162 (em-dash density) from 0149 inventory
 2026-07-07T20:55Z HDMX-coding-agent note added child 0171 (conclusion rebuild, from Vannes diagnosis); Vannes inputs propagated into 0135/0137/0141/0143/0152
 2026-07-07T20:50Z added child 0172 (base rebuild, needs-human): translation + reimport had no owner; manuscript children 0135/0137/0138/0139/0141/0171 now blocked by 0172
+2026-07-08T07:18Z HDMX-coding-agent note 0172 split into 0173 (translation) + 0174 (inventory) + 0175 (reimports) per author decision; 0172 is now a sub-tracker
 --- body ---
 ## Context
 Version-milestone tracker for **v2.0.5 — implementation** (research → writing →
 verification → resubmission). Blocked by v2.0.4 (0155).
 
 ## Children
-- [ ] 0172 base rebuild — translate the VF, reimport VEn evidence (needs-human; gates all manuscript children)
+- [ ] 0172 base rebuild (sub-tracker; gates all manuscript children) → 0173 translation · 0174 inventory · 0175 reimports
 - [ ] 0135 reframe economists · 0136 quant integration + methods · 0137 commensuration thread
 - [ ] 0138 loss & damage · 0139 finance-development nexus · 0141 concretize actors
 - [ ] 0143 bibliography additions
