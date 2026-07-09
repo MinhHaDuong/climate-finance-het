@@ -31,14 +31,11 @@ from qa_bib_doi import (
 )
 
 # DOI-bearing entries whose Crossref title does NOT match — each a known
-# LLM-fabricated identifier awaiting an author judgment call, tracked by
-# ticket 0188 (article-vs-book, which co-published version, real Scientometrics
-# DOI). Shrinks to empty as 0188 lands; a new key here means a new defect.
-KNOWN_WRONG_PAPER = {
-    "manne_richels1992": "0188 — article (1991 DOI) vs 1992 MIT Press book, author call",
-    "atwoli_etal2022": "0188 — multi-journal editorial, pick the BMJ-version DOI",
-    "min2021measuring": "0188 — resolve the real Scientometrics DOI",
-}
+# LLM-fabricated identifier awaiting an author judgment call. Empty since 0188
+# resolved the last three (manne → 1992 MIT Press book, no DOI; atwoli → BMJ
+# 10.1136/bmj.n1734; min → real 2021 techfore DOI). A new key here means a new
+# defect; the gate below is now unallowlisted.
+KNOWN_WRONG_PAPER: dict[str, str] = {}
 
 
 def test_subtitle_truncation_is_a_match():

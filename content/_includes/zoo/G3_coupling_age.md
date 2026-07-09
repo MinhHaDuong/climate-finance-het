@@ -40,4 +40,4 @@ for all citations made by papers published in year $t$.
 ### References
 
 Seminal: @kessler1963bibliographic (Kessler 1963, "Bibliographic coupling between scientific papers").
-Recent analogue: @min2021measuring (Min et al. 2021, "Measuring knowledge accumulation in science").
+Recent analogue: @min2021measuring (Min et al. 2021, "Predicting scientific breakthroughs based on knowledge structure variations").
