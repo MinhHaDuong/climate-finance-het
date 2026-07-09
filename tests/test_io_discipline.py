@@ -206,6 +206,7 @@ class TestQaScriptsUseSharedIo:
         "qa_embeddings.py",
         "qa_metadata.py",
         "qa_missing_references.py",
+        "qa_pdf_content.py",
     ]
 
     @pytest.mark.parametrize("script", QA_SCRIPTS)

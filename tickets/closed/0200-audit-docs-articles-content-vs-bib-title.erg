@@ -2,10 +2,14 @@
 Title: Audit docs/articles content vs bib title (cited-works test is presence-only)
 Created: 2026-07-09
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #947
 
 --- log ---
 2026-07-09T12:09Z HDMX-coding-agent created
+2026-07-09T16:00Z HDMX-coding-agent note Built scripts/qa_pdf_content.py (poppler CLIs, no heavy dep; qa_ prefix = QA/audit family, per living convention). Ran on 161 PDFs: 12 flagged below 0.30.
+2026-07-09T16:40Z claude note CORRECTION + hardening (raid re-verify). The 16:00 note misdiagnosed three flags as "image-only, no evidence of wrong file": `file(1)` shows michaelowa2007.pdf, stadelmann2011.pdf and roberts2021.pdf are HTML documents (saved error/paywall pages) mis-saved under a .pdf name — genuine broken files the presence gate misses, the exact Lepenies-class defect. Added a magic-byte classifier (pdf_magic) so these surface distinctly as "<NOT A PDF: html>" (score -2) rather than lumped with scanned images. Result: 3 not-a-PDF (michaelowa2007 + stadelmann2011 CITED, roberts2021 uncited) + 9 low-score false positives. Of the 5 cited flags, golka2024/szekely2013/mitchell2002 verified CORRECT by opening the PDF (Routledge no-text-layer / Elsevier coversheet / book front-matter); michaelowa2007 + stadelmann2011 need human re-acquisition → follow-up ticket. Decision: KEEP as standing non-CI make target audit-pdf-content (recurring wrong/broken-file class; inherently HITL for scanned PDFs). Regression guard: tests/test_audit_pdf_content.py pins matching logic + pdf_magic.
 
+2026-07-09T19:47Z HDMX-coding-agent closed — autoclosed — PR #947
 --- body ---
 ## Context
 While anchoring 0171 action 7 (read-before-cite on Lepenies 2016), the local
