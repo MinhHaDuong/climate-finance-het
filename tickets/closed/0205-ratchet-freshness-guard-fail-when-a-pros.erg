@@ -2,10 +2,12 @@
 Title: Ratchet freshness guard: fail when a prose-ratchet ceiling is stale
 Created: 2026-07-09
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #940
 
 --- log ---
 2026-07-09T13:11Z HDMX-coding-agent created
 
+2026-07-09T13:36Z HDMX-coding-agent closed — autoclosed — PR #940
 --- body ---
 ## Context
 The prose ratchets in `tests/test_manuscript_prose.py` assert only
