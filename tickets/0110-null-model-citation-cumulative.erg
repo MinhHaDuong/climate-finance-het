@@ -2,10 +2,12 @@
 Title: Null model drivers for cumulative citation methods G3, G4, G7 (null-hypothesis design needed)
 Created: 2026-04-24
 Author: claude
+Label: deferred
 
 --- log ---
 2026-04-24T12:30Z claude created — split from 0109 by orchestrator reimagine. G3/G4/G7 are cumulative per-year methods; the G2 node-permutation template does not apply.
 2026-04-27T02:07Z claude note sweep-skip: scope-too-large expires:2026-04-28T02:07Z hash:e033cb5b8270
+2026-07-09T13:27Z HDMX-coding-agent label deferred
 --- body ---
 ## Context
 

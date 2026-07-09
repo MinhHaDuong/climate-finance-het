@@ -2,10 +2,12 @@
 Title: Add S0_centroid cosine-centroid distance as zoo method
 Created: 2026-04-24
 Author: claude
+Label: deferred
 
 --- log ---
 2026-04-24T11:45Z claude created
 2026-04-27T02:07Z claude note sweep-assess: not picked
+2026-07-09T13:27Z HDMX-coding-agent label deferred
 --- body ---
 ## Context
 

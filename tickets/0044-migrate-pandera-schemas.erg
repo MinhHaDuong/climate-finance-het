@@ -2,10 +2,12 @@
 Title: Add Pandera schema validation to CSV-writing scripts (arch rule 2)
 Created: 2026-04-15
 Author: claude
+Label: deferred
 
 --- log ---
 2026-04-15T12:05Z claude created
 2026-04-27T02:07Z claude note sweep-assess: not picked
+2026-07-09T13:27Z HDMX-coding-agent label deferred
 --- body ---
 ## Context
 

@@ -2,10 +2,12 @@
 Title: Migrate direct corpus reads to pipeline_loaders (arch rule 9)
 Created: 2026-04-15
 Author: claude
+Label: deferred
 
 --- log ---
 2026-04-15T12:00Z claude created
 2026-04-27T02:07Z claude note sweep-assess: not picked
+2026-07-09T13:27Z HDMX-coding-agent label deferred
 --- body ---
 ## Context
 

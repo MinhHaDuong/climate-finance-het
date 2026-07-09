@@ -2,6 +2,7 @@
 Title: Standing regression test — dispatcher must never emit 1-column DataFrame on empty corpus
 Created: 2026-04-25
 Author: claude
+Label: deferred
 
 --- log ---
 2026-04-25T23:55Z claude created — follow-up from 0118/0120 sweep; guards the class, not just instances
@@ -9,6 +10,7 @@ Author: claude
 2026-04-27T02:07Z claude note sweep-assess: not picked
 2026-04-29T00:09Z claude note sweep-skip: three-strikes hash:6fee5392f4bc
 
+2026-07-09T13:27Z HDMX-coding-agent label deferred
 --- body ---
 ## Context
 
