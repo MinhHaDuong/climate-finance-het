@@ -2,10 +2,12 @@
 Title: Harden rule-9 variable-path detector against over-match false positives
 Created: 2026-07-09
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #945
 
 --- log ---
 2026-07-09T12:20Z HDMX-coding-agent created
 
+2026-07-09T16:01Z HDMX-coding-agent closed — autoclosed — PR #945
 --- body ---
 ## Context
 Ticket 0198 (PR #927) strengthened the rule-9 detector
