@@ -458,6 +458,29 @@ def test_abandonment_of_precision_is_displacement_not_repeal():
     )
 
 
+def test_conclusion_engages_star_griesemer_concede_then_displace():
+    """Ticket 0171 (action 4, brief boundary-object-conceded-then-displaced): the
+    conclusion must engage Star & Griesemer's boundary object by name
+    (@star_griesemer1989), concede the weak-sense fit, then displace — landing,
+    via Star 2010 (@star2010), on boundary *infrastructure* (post-2015
+    standardisation). Mechanical presence + the two citations; no phrasing pinned.
+    """
+    concl = section("Conclusion")
+    concll = concl.lower()
+    assert "@star_griesemer1989" in concl, "Star & Griesemer 1989 not cited in the conclusion"
+    assert "@star2010" in concl, "Star 2010 (the infrastructure move) not cited in the conclusion"
+    assert "boundary object" in concll, "the boundary-object concept is not engaged by name"
+    assert "infrastructure" in concll, "the displacement to boundary *infrastructure* is missing"
+    assert re.search(r"concede|the description fits|worth conceding|one might", concll), (
+        "no concession of the weak-sense boundary-object fit"
+    )
+    assert re.search(
+        r"stops short|leaves? (it )?unexplained|does not explain|need not begin|"
+        r"less a boundary object",
+        concll,
+    ), "no displacement — what the boundary-object label does not explain"
+
+
 def test_finance_development_lineage_is_situated():
     """Ticket 0139 (R1.5): the mobilisation/leverage vocabulary must be traced to
     its scholarly home, the finance-and-growth literature (King & Levine 1993,
