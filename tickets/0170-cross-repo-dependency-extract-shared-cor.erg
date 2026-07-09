@@ -14,6 +14,8 @@ Author: HDMX-coding-agent
 
 2026-07-09T00:00Z claude note bump verify-reroll — round 1 (PR #958 / A2): the Test-section second red test (shim-resolution guard asserting every carved symbol resolves via its old path to the package definition) was specified for the shim slice but omitted; only retry_get parity was committed. Added tests/test_shim_resolution.py (commit 4411c3b); round 2 gate APPROVED. Ticket stays OPEN (Moves B/C pending).
 
+2026-07-10T00:00Z claude note Move B+C resolved as DELETION, not relocation — premise changed. Read-only analysis of polycentric_activity found: (a) it has no Python env at all (scripts run via `uv run --with`); (b) its ACTIVE het figure is now an embedding-free citation swim-lane (analysis-het-figure/plot_lanes.py) + a two-hop indirect-citation measure — a different analysis; (c) the embedding-based OVERLAP figure that the het_*.py trio produced was RETIRED (author confirmed: "no more embedding and pca in polycentric"). So relocating the trio would mean standing up a torch+sentence-transformers env in the paper repo for a dead figure. Author chose delete. Also verified: polycentric only ever duplicated retry_get inline (urllib), never the embedding conventions — so nothing there needs the package for this figure, and the "both repos depend on it" exit criterion is moot. Deleted het_build_corpus/het_embed/het_plot_overlap + their test, swept the dead het_ naming-allowlist entry and a stale comment, and (Move C) deleted architecture.md §Companion pipelines. Kept data/het/seeds.csv (polycentric reads it by path). 0170 complete on merge.
+
 --- body ---
 ## Context
 Ticket 0167 (PR #860) added `scripts/het_*.py` to this repo to generate a
@@ -193,14 +195,18 @@ so a typo in a re-export fails loudly rather than silently breaking a
 rarely-run script.
 
 ## Verification
-- [ ] `openalex-corpus` builds and its own test suite passes.
-- [ ] This repo's `make check` is green AFTER the shims — no existing call
-      site changed behaviour; the shim-resolution test passes.
-- [ ] `data/het/` and `scripts/het_*.py` no longer exist in this repo.
-- [ ] `polycentric_activity`'s HET figure pipeline builds against the
-      package (git source) with no import from `climate-finance-het/scripts/`.
-- [ ] `architecture.md` §"Companion pipelines" is deleted; the package note
-      is added.
+- [x] `openalex-corpus` builds and its own test suite passes (PR #954/#956, 25/25).
+- [x] This repo's check-fast is green AFTER the shims — no existing call site
+      changed behaviour; equivalence + shim-resolution tests pass (PR #958,
+      1127 passed).
+- [x] `scripts/het_*.py` no longer exist in this repo (Move B). `data/het/seeds.csv`
+      kept: `polycentric_activity` reads it by path.
+- [~] MOOT: `polycentric_activity` does NOT consume the package — the overlap
+      figure it fed was retired (author-confirmed) in favour of an
+      embedding-free swim-lane figure; polycentric never imported this repo's
+      `scripts/` (it only inlined `retry_get` on urllib).
+- [x] `architecture.md` §"Companion pipelines" deleted; the package note added
+      and updated to reflect the retirement (Move C).
 
 ## Invariants
 - No behaviour change in this repo's own pipeline; the shims are API-preserving.
@@ -210,11 +216,14 @@ rarely-run script.
   (no import cycle).
 - The 500KB plain-git limit and DVC conventions of this repo are untouched.
 
-## Exit criteria
-- The convention layer lives in `libs/openalex-corpus/`; this repo consumes it
-  via API-preserving shims; paper B's `het_*.py` have moved to
-  polycentric_activity and consume the package by git source; **no repo
-  reaches into another's `scripts/` and no orphan companion scripts remain
-  here**; all three test suites (package, this repo, polycentric figure
-  build) are green.
+## Exit criteria (met — resolved as delete, not relocate)
+- The convention layer lives in `libs/openalex-corpus/` and this repo consumes
+  it via API-preserving shims (Move A, PRs #954/#956/#958). **No repo reaches
+  into another's `scripts/` and no orphan companion scripts remain here** — the
+  `het_*.py` trio is deleted (Move B), not relocated, because the overlap
+  figure it produced was retired in favour of polycentric's own swim-lane
+  figure. `architecture.md` §Companion pipelines is gone (Move C). The two live
+  suites (package 25/25, this repo check-fast) are green; there is no
+  "polycentric figure build" suite to gate — that path was retired, which is
+  the whole reason the relocation collapsed into a deletion.
 
