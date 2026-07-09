@@ -1,0 +1,5 @@
+labelling,statistic,observed,null_mean,null_std,z_score,p_value,n_perm,seed,n_nodes,n_edges,n_truncated
+louvain_anchored,within_tradition_share,0.8888888888888888,0.3726016260162602,0.020407170692855615,25.299306339088773,0.000999000999000999,1000,42,84,369,0
+louvain_anchored,modularity,0.5029744199881023,-0.01331284288452639,0.020407170692855615,25.299306339088773,0.000999000999000999,1000,42,84,369,0
+a_priori_anchors,within_tradition_share,1.0,1.0,0.0,,1.0,1000,42,3,1,0
+a_priori_anchors,modularity,0.0,0.0,0.0,,1.0,1000,42,3,1,0
