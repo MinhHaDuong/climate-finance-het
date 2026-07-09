@@ -174,6 +174,24 @@ class TestMigratedScripts:
         assert result.returncode != 0
         assert "output" in result.stderr.lower()
 
+    def test_qa_metadata_requires_output(self):
+        """qa_metadata.py rejects invocation without --output (ticket 0203)."""
+        result = subprocess.run(
+            [sys.executable, os.path.join(SCRIPTS_DIR, "qa_metadata.py")],
+            capture_output=True, text=True,
+        )
+        assert result.returncode != 0
+        assert "output" in result.stderr.lower()
+
+    def test_qa_embeddings_requires_output(self):
+        """qa_embeddings.py rejects invocation without --output (ticket 0203)."""
+        result = subprocess.run(
+            [sys.executable, os.path.join(SCRIPTS_DIR, "qa_embeddings.py")],
+            capture_output=True, text=True,
+        )
+        assert result.returncode != 0
+        assert "output" in result.stderr.lower()
+
 
 class TestQaScriptsUseSharedIo:
     """qa_* audit scripts adopt the shared parse_io_args parser (ticket 0196).
@@ -185,6 +203,8 @@ class TestQaScriptsUseSharedIo:
         "qa_bib_doi.py",
         "qa_bibliography.py",
         "qa_citations.py",
+        "qa_embeddings.py",
+        "qa_metadata.py",
         "qa_missing_references.py",
     ]
 
