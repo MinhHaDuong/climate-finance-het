@@ -1,0 +1,64 @@
+%erg 0.1
+Title: Migrate 4 variable-path contract-read offenders surfaced by 0198 detector
+Created: 2026-07-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-09T11:47Z HDMX-coding-agent created
+
+--- body ---
+## Context
+Strengthening the rule-9 detector in 0198 (variable bound to a contract
+literal, then read via the variable — the same-line matcher's blind spot)
+surfaced four Phase-2 offenders the human post-0185 sweep missed. 0198 migrated
+its three named targets and seeded these four into
+`TestCorpusThroughLoaders.KNOWN_VIOLATIONS` (allowlisted, so `make check-fast`
+stays green). They need migration through `pipeline_loaders`, each with a
+figure/table byte-check that the 0198 checkout could not run (no data).
+
+## The four offenders
+- `scripts/analyze_unfccc_topics.py:138,145` — `citations_path = os.path.join(
+  CATALOGS_DIR, "refined_citations.csv")` then `pd.read_csv(citations_path,
+  usecols=[...])`. Migrate to `load_refined_citations()` (mind the `usecols`).
+- `scripts/export_corpus_table.py:88,89` — `path = os.path.join(CATALOGS_DIR,
+  "refined_works.csv")` then `pd.read_csv(path)`. Trivial — mirror 0198's
+  export_citation_coverage.py migration.
+- `scripts/compute_vars.py:144,148,371,377` — a contract-bound `path` read at
+  144→148, plus `pd.read_csv(REFINED_CITATIONS_PATH)` at 371 and a refined read
+  at 377. The `_read_csv(filename, directory=TABLES_DIR)` helper (120–126) is
+  shared with legitimate content/tables reads — disentangle contract vs table
+  reads; only route the contract ones through loaders.
+- `scripts/plot_fig1_bars.py:51,55,62` — `csv_path = io_args.input[0] if
+  io_args.input else os.path.join(CATALOGS_DIR, "refined_works.csv")` then
+  `pd.read_csv(csv_path, usecols=..., dtype={"year": "Int64"})`. NOT a clean
+  drop-in: `load_refined_works()` returns all columns and coerces `year` to
+  float, dropping the `usecols`/`Int64` optimisation — verify the bars figure
+  byte-identically or justify the dtype change.
+
+## Relevant files
+- `tests/test_arch_compliance.py` — remove each entry from `KNOWN_VIOLATIONS`
+  as it is migrated (the not-stale guard forces this).
+- `scripts/pipeline_loaders.py` — `load_refined_works()` / `load_refined_citations()`.
+
+## Actions
+1. Migrate each offender to the loader, mirroring 0198's conditional pattern
+   (explicit `--input` path → direct read; default `None` → loader).
+2. Remove each from `KNOWN_VIOLATIONS` in the same commit.
+3. Byte-check each regenerated figure/table on a data-provisioned checkout
+   (`make figures` / the relevant target), or justify the diff analytically.
+
+## Test
+- `tests/test_arch_compliance.py::TestCorpusThroughLoaders` already covers the
+  detector; migration is green when each script drops off KNOWN_VIOLATIONS and
+  `test_known_violations_not_stale` still passes for the remainder.
+
+## Verification
+- [ ] The four offenders read contracts through `pipeline_loaders`.
+- [ ] Each output byte-identical or diff justified.
+- [ ] `KNOWN_VIOLATIONS` no longer lists the four; `make check-fast` green.
+
+## Invariants
+- Do not weaken the detector. Migrations preserve figure/table bytes.
+
+## Exit criteria
+- All four offenders migrated; `make check-fast` green.
