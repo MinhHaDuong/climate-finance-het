@@ -1,0 +1,79 @@
+%erg 0.1
+Title: Extract render .mk + Quarto profile for the 4 remaining writing papers
+Created: 2026-07-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-09T20:30Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Child of tracker 0163 (which is a child of 0131). The manuscript writing
+workpackage is already split out (`manuscript.mk` + `_quarto-manuscript.yml`,
+clean-room build proven). This ticket replicates that pattern for the four
+remaining papers so each renders standalone from committed deliverables with
+no analysis toolchain (no `uv`, no data). It does NOT touch the large analysis
+intermediates — that eviction is the sibling ticket 0208, deliberately kept
+separate because it carries the cross-cutting `make papers` risk.
+
+Grouped as one ticket (not one-per-paper) on purpose: every extraction edits
+the same Makefile render block (~lines 664-718) and the same `.gitignore`
+negate-block, so separate PRs would serialize into merge-conflict churn (the
+multi-PR-on-one-file trap, feedback_fetch_before_sibling_merge). One coherent
+edit avoids it; each paper is still independently verified by the clean-room
+test below.
+
+## Relevant files
+- `Makefile` — render rules to move out: `output/content/corpus-report.pdf`
+  (~677), `technical-report.pdf` (~680, depends on `.lexical_tfidf.stamp` +
+  `ZOO_INCLUDES` + `$(TECHREP_FIGS)` + `$(MULTILAYER_FIGS)`),
+  `data-paper.pdf` (~683), `multilayer-detection.pdf` (~686) and its
+  `multilayer-detection-techrep.pdf` variant. Also the `papers:` target (664),
+  `.PHONY` (226), and the `datapaper-render`/`datapaper-figures` aliases.
+- `manuscript.mk`, `_quarto-manuscript.yml` — the exact pattern to mirror
+  (per-target `QUARTO_PROFILE` export, sibling-doc exclusion in the profile).
+- `.gitignore` — ignore-then-negate block (lines 29-40) for
+  `content/{figures,tables}`; add negations for each paper's small deliverables.
+- `content/_includes/` — already git-tracked; the model for what "committed
+  deliverable" means.
+- `README.md` — writing-toolchain spec goes here (re-homed 0131 exit criterion 4).
+
+## Actions
+1. Extract a `<wp>.mk` + `_quarto-<wp>.yml` per paper — corpus-report,
+   technical-report (carrying the breakpoint-detect-method-zoo sub-include),
+   data-paper, multilayer-detection (+ its techrep variant). Each profile
+   excludes sibling docs so a bare render does not walk all papers. Mirror
+   `manuscript.mk`'s per-target `QUARTO_PROFILE` export (not file-scope).
+2. git-track each paper's small byte-stable writing deliverables (figures +
+   the paper's includes/tables) via `.gitignore` negations. Note:
+   `tab_corpus_sources.md` / `tab_languages.md` / `tab_citation_coverage.md`
+   are data-paper/techrep includes — track them under those slices.
+3. Document the writing toolchain in README (0131 exit criterion 4, re-homed
+   via 0163): the clean-room writing build needs only Quarto + TeX Live +
+   Pandoc — no `uv`, no `dvc` client, no data.
+4. Keep the top-level `Makefile` render targets working by `-include`-ing the
+   new `.mk` files, exactly as `manuscript.mk`/`multilayer-detection.mk` are.
+
+## Test
+For EACH of the four papers, in a data-less worktree (no `uv`, no data pull):
+`make -f <wp>.mk output/content/<doc>.pdf` builds the PDF with only Quarto +
+TeX. This is the proof `manuscript.mk` already passes — replicate it per paper.
+Write the phase-separation guard test first (mirror
+`tests/` manuscript-WP RED test) asserting each `<wp>.mk` reads only committed
+deliverables + source prose, no Phase-1/2 script prerequisites.
+
+## Invariants
+- `make papers` from the full Makefile still builds all six PDFs (with data).
+- Per-target `QUARTO_PROFILE` export so profiles don't leak across docs.
+- No analysis-intermediate eviction here — that is 0208. This ticket must not
+  move `tab_lexical_tfidf.csv` / `tab_pole_papers.csv` / `qa_type_report.csv`.
+
+## Exit criteria
+- One `<wp>.mk` + profile per remaining paper (4 papers), each buildable
+  clean-room, proven by the per-paper test.
+- Each paper's small deliverables git-tracked via `.gitignore` negations.
+- Writing-toolchain spec present in README.
+- `make papers` unaffected.
+
+Parent tracker: tickets/0163-split-build-remaining-writing-workpackag.erg

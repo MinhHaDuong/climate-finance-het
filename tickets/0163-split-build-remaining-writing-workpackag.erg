@@ -7,6 +7,7 @@ Author: HDMX-coding-agent
 2026-06-28T19:43Z HDMX-coding-agent created
 
 2026-07-09T20:00Z note Re-homed 0131 exit criterion 4 (README writing-toolchain spec) into exit criteria; corrected stale 'can close once children land' framing now that 0131 closed via #948.
+2026-07-09T20:11Z note Split into children 0207 (mk extraction) + 0208 (intermediate eviction); 0163 now a tracker, stays open until both land.
 --- body ---
 ## Context
 
@@ -24,7 +25,29 @@ the rest of 0131 for the other papers and the analysis-intermediate eviction.
 - `content/tables/tab_lexical_tfidf.csv` (35 MB), `tab_pole_papers.csv` (3.8 MB),
   `qa_type_report.csv` (3.7 MB) — analysis intermediates living under content/tables/.
 
-## Actions
+## Tracker (2026-07-09)
+
+0163 is now a TRACKER — its work is delegated to two children, split to
+isolate the risky eviction from the mechanical `.mk` extraction and to avoid
+same-file merge churn (both extractions edit the same Makefile block +
+`.gitignore`). 0163 stays open until BOTH close, then a short integration
+re-read confirms `make papers` still builds all six and the clean-room per-paper
+builds pass.
+
+- **0207** — extract render `.mk` + Quarto profile for the 4 remaining papers
+  (corpus-report, technical-report+zoo, data-paper, multilayer+techrep);
+  git-track their small deliverables; document the writing toolchain in README.
+  Covers actions 1, 2 and the re-homed README exit criterion.
+- **0208** — evict the 3 large analysis intermediates out of `content/tables/`,
+  rewiring the `&:` grouped target + `.lexical_tfidf.stamp` chain. Covers
+  actions 3 and 4.
+
+Scope note: NCC has no `.qmd` and is absent from the `papers:` target, so it is
+not a writing workpackage (the earlier "ncc.mk" mention below is dropped).
+`multilayer-detection.mk` is a *figures* `.mk`, not a render workpackage, so the
+multilayer render rule still lives in the main Makefile and is 0207's job.
+
+## Actions (delegated to children above; kept for reference)
 1. Per remaining paper, extract a `<wp>.mk` (datapaper.mk, techrep.mk,
    companion/multilayer, ncc) plus a `_quarto-<wp>.yml` profile that excludes
    sibling docs, mirroring manuscript.mk. Each builds clean-room from committed
