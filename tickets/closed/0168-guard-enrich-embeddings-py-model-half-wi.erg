@@ -2,10 +2,12 @@
 Title: guard enrich_embeddings.py model.half() with CUDA check
 Created: 2026-07-07
 Author: HDMX-coding-agent
+Closed: done
 
 --- log ---
 2026-07-07T20:18Z HDMX-coding-agent created
 
+2026-07-09T16:00Z HDMX-coding-agent closed — done
 --- body ---
 ## Context
 PR #860 (ticket 0167, HET citation-overlap companion pipeline) needed a
