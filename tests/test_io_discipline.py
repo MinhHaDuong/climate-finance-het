@@ -138,6 +138,64 @@ class TestMigratedScripts:
         assert result.returncode != 0
         assert "output" in result.stderr.lower()
 
+    def test_qa_bib_doi_requires_output(self):
+        """qa_bib_doi.py rejects invocation without --output (ticket 0196)."""
+        result = subprocess.run(
+            [sys.executable, os.path.join(SCRIPTS_DIR, "qa_bib_doi.py")],
+            capture_output=True, text=True,
+        )
+        assert result.returncode != 0
+        assert "output" in result.stderr.lower()
+
+    def test_qa_bibliography_requires_output(self):
+        """qa_bibliography.py rejects invocation without --output (ticket 0196)."""
+        result = subprocess.run(
+            [sys.executable, os.path.join(SCRIPTS_DIR, "qa_bibliography.py")],
+            capture_output=True, text=True,
+        )
+        assert result.returncode != 0
+        assert "output" in result.stderr.lower()
+
+    def test_qa_citations_requires_output(self):
+        """qa_citations.py rejects invocation without --output (ticket 0196)."""
+        result = subprocess.run(
+            [sys.executable, os.path.join(SCRIPTS_DIR, "qa_citations.py")],
+            capture_output=True, text=True,
+        )
+        assert result.returncode != 0
+        assert "output" in result.stderr.lower()
+
+    def test_qa_missing_references_requires_output(self):
+        """qa_missing_references.py rejects invocation without --output (ticket 0196)."""
+        result = subprocess.run(
+            [sys.executable, os.path.join(SCRIPTS_DIR, "qa_missing_references.py")],
+            capture_output=True, text=True,
+        )
+        assert result.returncode != 0
+        assert "output" in result.stderr.lower()
+
+
+class TestQaScriptsUseSharedIo:
+    """qa_* audit scripts adopt the shared parse_io_args parser (ticket 0196).
+
+    Source inspection (not subprocess) per coding-python: cheap, no import cost.
+    """
+
+    QA_SCRIPTS = [
+        "qa_bib_doi.py",
+        "qa_bibliography.py",
+        "qa_citations.py",
+        "qa_missing_references.py",
+    ]
+
+    @pytest.mark.parametrize("script", QA_SCRIPTS)
+    def test_imports_parse_io_args(self, script):
+        with open(os.path.join(SCRIPTS_DIR, script)) as f:
+            source = f.read()
+        assert "parse_io_args" in source, (
+            f"{script} must import parse_io_args from script_io_args"
+        )
+
 
 class TestComputeBreakpointsOneOutput:
     """compute_breakpoints.py writes exactly one file to --output (#594)."""

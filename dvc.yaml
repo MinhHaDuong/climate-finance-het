@@ -234,7 +234,7 @@ stages:
 
   # Phase 1b.4: Citation QC — verify against Crossref ground truth
   qa_citations:
-    cmd: uv run --env-file .env python scripts/qa_citations.py --works-input data/catalogs/enriched_works.csv
+    cmd: uv run --env-file .env python scripts/qa_citations.py --output content/tables/qa_citations_report.json --works-input data/catalogs/enriched_works.csv
     deps:
       - scripts/qa_citations.py
       - scripts/utils.py

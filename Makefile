@@ -305,7 +305,7 @@ deploy-corpus:
 # ── Corpus diagnostics (Phase 1 — reads enrichment caches) ──
 content/tables/qa_citations_report.json: scripts/qa_citations.py scripts/utils.py \
 		$(DATA_DIR)/citations.csv
-	$(PYTHON) $<
+	$(PYTHON) $< --output $@
 
 # ═══════════════════════════════════════════════════════════
 # PHASE 2 — Analysis & Figures (fast, deterministic, run often)

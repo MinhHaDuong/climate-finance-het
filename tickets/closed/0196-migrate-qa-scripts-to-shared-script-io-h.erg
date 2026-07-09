@@ -2,10 +2,12 @@
 Title: Migrate qa_* scripts to shared script-io + harden bib-audit heuristics
 Created: 2026-07-08
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #929
 
 --- log ---
 2026-07-08T20:33Z HDMX-coding-agent created
 
+2026-07-09T12:24Z HDMX-coding-agent closed — autoclosed — PR #929
 --- body ---
 ## Context
 Surfaced by the /gaze review of PR #908 (ticket 0164). Two low-risk,
