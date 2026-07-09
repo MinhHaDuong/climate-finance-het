@@ -66,3 +66,19 @@ def test_stopwords_do_not_inflate_containment():
 
 def test_normalize_strips_punctuation_and_case():
     assert audit.normalize("The Power: A History!") == "the power a history"
+
+
+def test_pdf_magic_classifies_by_leading_bytes(tmp_path):
+    """A real PDF, an HTML page mis-saved as .pdf (the michaelowa2007 /
+    stadelmann2011 case), and junk are told apart by their header."""
+    real = tmp_path / "real.pdf"
+    real.write_bytes(b"%PDF-1.5\n...")
+    assert audit.pdf_magic(real) == "pdf"
+
+    html = tmp_path / "saved_page.pdf"
+    html.write_bytes(b"<!DOCTYPE html>\n<html><body>Access denied</body></html>")
+    assert audit.pdf_magic(html) == "html"
+
+    other = tmp_path / "junk.pdf"
+    other.write_bytes(b"\x00\x01broken")
+    assert audit.pdf_magic(other) == "other"

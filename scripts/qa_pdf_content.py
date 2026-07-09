@@ -169,6 +169,27 @@ def resolve_pdf(articles_dir: Path, file_field: str) -> Path:
     return articles_dir / Path(file_field).name
 
 
+def pdf_magic(pdf_path: Path) -> str:
+    """Classify a file by its leading bytes.
+
+    Returns "pdf" for a real PDF (`%PDF` header), "html" for a saved webpage
+    (an error/paywall page mis-saved under a `.pdf` name — the michaelowa2007 /
+    stadelmann2011 case), or "other" otherwise. A non-`pdf` result is a stronger
+    signal than a low title score: the file is not the work at all, so it can
+    never be read or cited from — flag it distinctly from a scanned-but-real PDF.
+    """
+    try:
+        head = pdf_path.read_bytes()[:1024]
+    except OSError:
+        return "other"
+    if head.startswith(b"%PDF"):
+        return "pdf"
+    low = head.lstrip().lower()
+    if low.startswith((b"<!doctype html", b"<html", b"<?xml", b"<!--")):
+        return "html"
+    return "other"
+
+
 # --------------------------------------------------------------------------- #
 # Audit driver.
 # --------------------------------------------------------------------------- #
@@ -182,6 +203,18 @@ def audit(articles_dir: Path, bib_path: Path, root: Path, globs: list[str]):
             rows.append({
                 "key": key, "cited": key in cited, "score": -1.0,
                 "bib_title": info["title"], "pdf_signal": "<PDF MISSING>",
+            })
+            continue
+        kind = pdf_magic(pdf)
+        if kind != "pdf":
+            # Not a PDF at all — a saved HTML error/paywall page or truncated
+            # download under a `.pdf` name. The presence gate (file exists) passes
+            # but the work is unreadable/uncitable. Score -2 so it sorts to the
+            # very top, distinct from both missing (-1) and low-title-score files.
+            rows.append({
+                "key": key, "cited": key in cited, "score": -2.0,
+                "bib_title": info["title"],
+                "pdf_signal": f"<NOT A PDF: {kind}>",
             })
             continue
         meta = pdf_meta_title(pdf)
@@ -207,13 +240,19 @@ def write_report(rows, output: str):
 
 
 def print_table(rows, threshold: float):
-    flagged = [r for r in rows if 0 <= r["score"] < threshold]
-    missing = [r for r in rows if r["score"] < 0]
+    not_pdf = [r for r in rows if r["score"] == -2.0]
+    missing = [r for r in rows if r["score"] == -1.0]
+    low_score = [r for r in rows if 0 <= r["score"] < threshold]
+    flagged = not_pdf + missing + low_score
+    # Cited hazards: a broken/wrong/unreadable file under a key the manuscript
+    # actually cites — the real risk (a fabricated-in-effect citation).
     cited_hazards = [r for r in flagged if r["cited"]]
     logger.info("Audited %d PDF-bearing bib entries.", len(rows))
     logger.info(
-        "Flagged %d below score %.2f (%d cited hazards, %d missing PDFs).\n",
-        len(flagged), threshold, len(cited_hazards), len(missing),
+        "Flagged %d (%d not-a-PDF, %d missing, %d low title score < %.2f); "
+        "%d cited hazards.\n",
+        len(flagged), len(not_pdf), len(missing), len(low_score), threshold,
+        len(cited_hazards),
     )
     logger.info("%-6s %-28s %-40s %s", "SCORE", "KEY", "BIB TITLE", "PDF SIGNAL")
     logger.info("%s", "-" * 110)
@@ -225,7 +264,7 @@ def print_table(rows, threshold: float):
             r["pdf_signal"][:40], mark,
         )
     if cited_hazards:
-        logger.info("\n=== CITED-KEY MISMATCHES (human re-acquisition needed) ===")
+        logger.info("\n=== CITED-KEY HAZARDS (human re-acquisition needed) ===")
         for r in cited_hazards:
             logger.info("  %s (score %.3f): bib=%r vs pdf=%r",
                         r["key"], r["score"], r["bib_title"], r["pdf_signal"])

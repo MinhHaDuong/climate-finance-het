@@ -1,0 +1,43 @@
+%erg 0.1
+Title: Re-acquire 3 HTML-not-PDF cited/uncited files flagged by 0200 audit
+Created: 2026-07-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-09T19:20Z HDMX-coding-agent created
+
+--- body ---
+## Context
+The 0200 PDF-content audit (`scripts/qa_pdf_content.py`, `make audit-pdf-content`)
+found three files in `docs/articles/` that are **not PDFs at all** — they are HTML
+documents (saved error/paywall pages) stored under a `.pdf` name. `file(1)` confirms
+each is `HTML document`. The `test_cited_works_available.py` presence gate passes
+(a file exists) but the work is unreadable and uncitable — the same defect class as
+the Lepenies mis-download that motivated 0200, and worse for the two under *cited*
+keys (a fabricated-in-effect citation).
+
+This is human-in-loop work: re-acquire the correct PDFs (BibCNRS/EZproxy, publisher,
+DOIfetch, Anna's Archive as last resort — see reference_paywalled_acquisition), verify
+each against its copyright page, and drop it in over the broken file.
+
+## The three files (from the 0200 audit, score -2 "<NOT A PDF: html>")
+- `docs/articles/michaelowa2007.pdf` — **CITED**. bib title: "Climate or Development:
+  Is ODA Diverted from Its Original Purpose?" (Michaelowa & Michaelowa).
+- `docs/articles/stadelmann2011.pdf` — **CITED**. bib title: "New and Additional to
+  What? Assessing Options for Baselines to Assess 'New and Additional' Climate Finance".
+- `docs/articles/roberts2021.pdf` — uncited. bib title: "Rebooting a Failed Promise of
+  Climate Finance". Lower priority (no manuscript hazard) but fix while here.
+
+## Actions
+1. Re-acquire each correct PDF; verify title/authors against the copyright page.
+2. Replace the broken HTML files in `docs/articles/` (gitignored — not committed).
+3. Re-run `make audit-pdf-content`; confirm the three no longer appear as "<NOT A PDF>".
+
+## Verification
+- [ ] `file docs/articles/{michaelowa2007,stadelmann2011,roberts2021}.pdf` → each "PDF document".
+- [ ] `make audit-pdf-content` shows 0 "<NOT A PDF>" rows.
+- [ ] michaelowa2007 + stadelmann2011 content confirmed against copyright page.
+
+## Exit criteria
+- The two cited broken files (and, best-effort, roberts2021) are replaced with the
+  correct works; the audit reports no not-a-PDF entries.
