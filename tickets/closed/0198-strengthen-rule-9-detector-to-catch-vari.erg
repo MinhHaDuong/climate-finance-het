@@ -2,10 +2,12 @@
 Title: Strengthen rule-9 detector to catch variable-path contract reads + migrate 3 offenders
 Created: 2026-07-09
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #927
 
 --- log ---
 2026-07-09T09:52Z HDMX-coding-agent created
 
+2026-07-09T12:32Z HDMX-coding-agent closed — autoclosed — PR #927
 --- body ---
 ## Context
 Ticket 0185 migrated `plot_fig_traditions.py::_load_data()` off a direct
