@@ -1,0 +1,73 @@
+%erg 0.1
+Title: Migrate qa_metadata + qa_embeddings to shared script-io
+Created: 2026-07-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-09T12:28Z HDMX-coding-agent created
+
+--- body ---
+## Context
+Surfaced by the /roar sweep after ticket 0196 (PR #929) migrated the
+`qa_bib_doi`/`qa_bibliography`/`qa_citations`/`qa_missing_references` family to
+the shared `parse_io_args`/`validate_io` with a required `--output`. Two more QA
+reporters remain on the exact same anti-pattern — a hardcoded module-level
+`OUTPUT_PATH` written by hand-rolled argparse — and are still carried in
+`tests/test_script_hygiene.py::OUTPUT_EXEMPT`:
+
+- `scripts/qa_metadata.py:38,430` — `OUTPUT_PATH = ...` then
+  `json.dump(report, open(OUTPUT_PATH, "w"))`.
+- `scripts/qa_embeddings.py:33,347` — same shape.
+
+These are direct siblings of `qa_citations.py` (migrated in 0196), so the 0196
+decision applies unchanged: **`--output` required, no QA carve-out**. Migrating
+them lets the `OUTPUT_EXEMPT` allowlist shrink toward only genuinely-exempt
+scripts (pure-stdout reporters and DVC-managed stages), so the standing
+`test_all_producing_scripts_accept_output` guard actually asserts these two
+comply instead of exempting them.
+
+Out of scope: the `corpus_merge_citations` / `corpus_ref_match` /
+`corpus_parse_citations_grobid` DVC stages also define a hardcoded `OUTPUT_PATH`,
+but their path is owned by `dvc.yaml`; migrating them means editing the DVC stage
+cmds and is a separate decision — leave them exempt here.
+
+## Relevant files
+- `scripts/qa_metadata.py`, `scripts/qa_embeddings.py` — to migrate
+- `scripts/script_io_args.py` — the shared parser to adopt
+- `tests/test_script_hygiene.py` — remove the two `OUTPUT_EXEMPT` entries
+- `.claude/rules/script-io.md` — the convention
+- Check for Makefile/dvc.yaml invocations of each (0196 found qa_citations was in
+  the DVC repro chain; grep both before assuming manual-only).
+
+## Actions
+1. Migrate `qa_metadata.py` and `qa_embeddings.py` to
+   `parse_io_args`/`validate_io`; replace the hardcoded `OUTPUT_PATH` with
+   `io_args.output`; thread any script-specific flags via the `extra` parser
+   (see `qa_citations.py` post-0196 as the worked example).
+2. Update every invocation site (Makefile target, dvc.yaml stage cmd, docstring
+   `Usage:`/`Run with:` line, any re-run hints) to pass `--output`.
+3. Remove `qa_metadata.py` and `qa_embeddings.py` from `OUTPUT_EXEMPT`.
+
+## Test
+- `tests/test_io_discipline.py`: extend `TestMigratedScripts` with a
+  `test_qa_metadata_requires_output` + `test_qa_embeddings_requires_output`
+  (subprocess, integration) — red first — and add both to
+  `TestQaScriptsUseSharedIo::QA_SCRIPTS` (source-inspection import check).
+
+## Verification
+- [ ] `qa_metadata.py` and `qa_embeddings.py` use the shared I/O parser with
+  required `--output`; no module-level `OUTPUT_PATH` remains.
+- [ ] Both removed from `OUTPUT_EXEMPT`; `test_all_producing_scripts_accept_output`
+  still passes.
+- [ ] All invocation sites (docstring + Makefile/dvc if any) pass `--output`.
+- [ ] `make check-fast` passes.
+
+## Invariants
+- Do not change the JSON report schema either script emits — downstream
+  acceptance tests (`test_corpus_acceptance.py`) key on report fields.
+- Keep each script manual-runnable: if it is NOT wired into a Makefile/dvc
+  target, document the `--output` path in its docstring `Usage:` line.
+
+## Exit criteria
+- Both scripts consistent with script-io.md; `OUTPUT_EXEMPT` no longer lists
+  them; hygiene + acceptance tests green.
