@@ -23,6 +23,7 @@ Run as a CLI to regenerate the report; import ``run_audit`` from the standing
 test (``tests/test_bib_doi_title.py``).
 """
 
+import argparse
 import csv
 import os
 import re
@@ -33,6 +34,7 @@ from difflib import SequenceMatcher
 
 import bibtexparser
 import requests
+from script_io_args import parse_io_args, validate_io
 from utils import get_logger
 
 log = get_logger("qa_bib_doi")
@@ -80,6 +82,11 @@ def normalize_title(title):
     return t
 
 
+def _fold_surname(surname):
+    """Normalize a surname for comparison: LaTeX macros + accents + case folded."""
+    return _strip_accents(_delatex(surname).lower()).strip()
+
+
 def first_author_surname(author_field):
     """Best-effort last name of the first author from a bibtex author string.
 
@@ -94,7 +101,21 @@ def first_author_surname(author_field):
         surname = first.split(",")[0]
     else:                                  # 'Barbara Buchner'
         surname = first.split()[-1] if first.split() else ""
-    return _strip_accents(_delatex(surname).lower()).strip()
+    return _fold_surname(surname)
+
+
+def author_mismatch(bib_surname, cr_surname):
+    """True when both surnames are present and differ after accent/LaTeX fold.
+
+    Surname-token *equality*, not the old substring containment: "li" and "lin"
+    are different authors and must be flagged, where ``bib not in cr`` let a
+    short surname slip inside a longer one unreported (ticket 0196). Folding is
+    idempotent, so callers may pass already-folded or raw surnames. Advisory
+    only — AUTHOR_MISMATCH never gates CI.
+    """
+    if not bib_surname or not cr_surname:
+        return False
+    return _fold_surname(bib_surname) != _fold_surname(cr_surname)
 
 
 PREFIX_MATCH_MIN_WORDS = 4  # a prefix only proves identity if it is substantial
@@ -191,8 +212,7 @@ def _verdict(entry, session, delay):
     row["title_ratio"] = f"{ratio:.2f}"
     if ratio < TITLE_THRESHOLD:
         row["verdict"] = "WRONG_PAPER"
-    elif cr_surname and bib_surname and cr_surname != bib_surname \
-            and bib_surname not in cr_surname and cr_surname not in bib_surname:
+    elif author_mismatch(bib_surname, cr_surname):
         row["verdict"] = "AUTHOR_MISMATCH"
     else:
         row["verdict"] = "OK"
@@ -235,26 +255,22 @@ def advisories(rows):
 
 
 def main(argv=None):
-    import argparse
-
+    io_args, extra = parse_io_args(argv)
+    validate_io(output=io_args.output)
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--input", default=DEFAULT_BIB, help="Path to main.bib")
-    parser.add_argument("--output", default=None,
-                        help="CSV report path (default: stdout summary only)")
     parser.add_argument("--delay", type=float, default=0.2,
                         help="Seconds between Crossref calls (politeness)")
     parser.add_argument("--limit", type=int, default=None,
                         help="Cap entries checked (debugging)")
-    args = parser.parse_args(argv)
+    args = parser.parse_args(extra)
 
-    rows = run_audit(args.input, delay=args.delay, limit=args.limit)
+    bib_path = io_args.input[0] if io_args.input else DEFAULT_BIB
+    rows = run_audit(bib_path, delay=args.delay, limit=args.limit)
 
-    if args.output:
-        os.makedirs(os.path.dirname(os.path.abspath(args.output)), exist_ok=True)
-        with open(args.output, "w", newline="", encoding="utf-8") as fh:
-            writer = csv.DictWriter(fh, fieldnames=list(rows[0].keys()))
-            writer.writeheader()
-            writer.writerows(rows)
+    with open(io_args.output, "w", newline="", encoding="utf-8") as fh:
+        writer = csv.DictWriter(fh, fieldnames=list(rows[0].keys()))
+        writer.writeheader()
+        writer.writerows(rows)
 
     counts = {}
     for r in rows:

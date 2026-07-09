@@ -9,24 +9,20 @@ Produces:
 - Reverse check: highly-cited corpus papers by bib authors not in bib
 """
 
-import argparse
 import os
 import re
 
 import bibtexparser
 import pandas as pd
 from rapidfuzz import fuzz
+from script_io_args import parse_io_args, validate_io
 from utils import BASE_DIR, CATALOGS_DIR, get_logger, normalize_doi
 
 log = get_logger("qa_bibliography")
 
 # --- Paths ---
-TABLES_DIR = os.path.join(BASE_DIR, "content", "tables")
-os.makedirs(TABLES_DIR, exist_ok=True)
-
 BIB_PATH = os.path.join(BASE_DIR, "bibliography", "main.bib")
 CORPUS_PATH = os.path.join(CATALOGS_DIR, "refined_works.csv")
-OUTPUT_PATH = os.path.join(TABLES_DIR, "bib_corpus_match.csv")
 
 FUZZY_THRESHOLD = 85
 
@@ -248,6 +244,9 @@ def reverse_check(bib_entries, corpus, cited_threshold=500):
 
 
 def main():
+    io_args, _ = parse_io_args()
+    validate_io(output=io_args.output)
+
     log.info("=" * 70)
     log.info("Bibliography-Corpus Verification")
     log.info("=" * 70)
@@ -266,8 +265,8 @@ def main():
 
     # Save
     df = pd.DataFrame(results)
-    df.to_csv(OUTPUT_PATH, index=False, encoding="utf-8")
-    log.info("Saved %d rows to %s", len(df), OUTPUT_PATH)
+    df.to_csv(io_args.output, index=False, encoding="utf-8")
+    log.info("Saved %d rows to %s", len(df), io_args.output)
 
     # Summary
     doi_matches = [r for r in results if r["match_type"] == "doi"]
@@ -319,6 +318,4 @@ def main():
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.parse_args()
     main()

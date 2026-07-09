@@ -23,6 +23,7 @@ import pytest
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
 from qa_bib_doi import (
+    author_mismatch,
     first_author_surname,
     normalize_title,
     run_audit,
@@ -77,6 +78,27 @@ def test_corporate_author_yields_no_surname():
 
 def test_normalize_title_strips_latex_and_case():
     assert normalize_title("Latent {Dirichlet} Allocation") == "latent dirichlet allocation"
+
+
+def test_short_surname_swap_is_flagged():
+    """'li' vs 'lin' are different authors — the old substring test hid this
+    (ticket 0196: surname-token equality, not containment)."""
+    assert author_mismatch("li", "lin")
+
+
+def test_identical_surnames_not_flagged():
+    assert not author_mismatch("buchner", "buchner")
+
+
+def test_latex_accent_surnames_fold_equal():
+    """Accent/LaTeX-only differences are not an author mismatch."""
+    assert not author_mismatch(r"Barab{\'a}si", "barabasi")
+
+
+def test_missing_surname_is_not_a_mismatch():
+    """A corporate author (no surname) or an authorless Crossref record: skip."""
+    assert not author_mismatch("", "smith")
+    assert not author_mismatch("smith", "")
 
 
 @pytest.mark.slow

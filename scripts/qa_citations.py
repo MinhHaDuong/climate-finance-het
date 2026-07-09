@@ -24,14 +24,12 @@ import time
 import numpy as np
 import pandas as pd
 import requests
+from script_io_args import parse_io_args, validate_io
 from utils import CATALOGS_DIR, MAILTO, get_logger, normalize_doi
 
 log = get_logger("qa_citations")
 
 HEADERS = {"User-Agent": f"ClimateFinancePipeline/1.0 (mailto:{MAILTO})"}
-OUTPUT_PATH = os.path.join(
-    os.path.dirname(__file__), "..", "content", "tables", "qa_citations_report.json"
-)
 CROSSREF_DELAY = 0.15  # seconds between API calls (polite rate limiting)
 
 
@@ -254,6 +252,8 @@ def test_completeness(
 
 
 def main():
+    io_args, extra = parse_io_args()
+    validate_io(output=io_args.output)
     parser = argparse.ArgumentParser(
         description="Citation QA: verify accuracy and completeness against Crossref"
     )
@@ -264,7 +264,7 @@ def main():
     parser.add_argument("--works-input",
                         default=os.path.join(CATALOGS_DIR, "enriched_works.csv"),
                         help="Works CSV to read DOIs from (default: enriched_works.csv)")
-    args = parser.parse_args()
+    args = parser.parse_args(extra)
 
     rng = np.random.default_rng(args.seed)
 
@@ -310,10 +310,9 @@ def main():
         "completeness": completeness,
     }
 
-    os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
-    with open(OUTPUT_PATH, "w") as f:
+    with open(io_args.output, "w") as f:
         json.dump(report, f, indent=2)
-    log.info("Report saved to: %s", OUTPUT_PATH)
+    log.info("Report saved to: %s", io_args.output)
 
 
 if __name__ == "__main__":

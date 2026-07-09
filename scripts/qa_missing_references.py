@@ -18,11 +18,11 @@ Run with:
   uv run python scripts/qa_missing_references.py
 """
 
-import argparse
 import os
 import re
 
 import bibtexparser
+from script_io_args import parse_io_args, validate_io
 from utils import get_logger
 
 log = get_logger("qa_missing_references")
@@ -33,7 +33,6 @@ log = get_logger("qa_missing_references")
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BIB_PATH = os.path.join(BASE_DIR, "content", "bibliography", "main.bib")
 ARTICLES_DIR = os.path.join(BASE_DIR, "docs", "articles")
-OUTPUT_PATH = os.path.join(BASE_DIR, "docs", "missing_references.txt")
 
 # ---------------------------------------------------------------------------
 # Hard-coded ISBNs for books that lack a DOI in the .bib file.
@@ -196,6 +195,9 @@ def _format_output_lines(doi_lines, url_lines, isbn_lines, no_id_lines):
 
 
 def main() -> None:
+    io_args, _ = parse_io_args()
+    validate_io(output=io_args.output)
+
     # Parse bibliography
     with open(BIB_PATH, encoding="utf-8") as f:
         bib_db = bibtexparser.load(f)
@@ -226,20 +228,17 @@ def main() -> None:
 
     lines = _format_output_lines(doi_lines, url_lines, isbn_lines, no_id_lines)
 
-    os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
-    with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
+    with open(io_args.output, "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
 
     sections = [("DOI", doi_lines), ("URL", url_lines),
                 ("ISBN", isbn_lines), ("no identifier", no_id_lines)]
     n_missing = sum(len(s) for _, s in sections)
-    log.info("Written %d missing entries to %s", n_missing, OUTPUT_PATH)
+    log.info("Written %d missing entries to %s", n_missing, io_args.output)
     for label, section in sections:
         if section:
             log.info("  %d with %s", len(section), label)
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.parse_args()
     main()
