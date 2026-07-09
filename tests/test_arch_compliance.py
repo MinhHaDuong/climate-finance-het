@@ -400,3 +400,40 @@ class TestCorpusThroughLoaders:
                 f"'{name}' no longer reads contract files directly — "
                 f"remove it from KNOWN_VIOLATIONS"
             )
+
+    # -- Detector unit tests (0198): variable-path reads must be caught --------
+    # The same-line matcher missed `pd.read_csv(works_path)` where works_path
+    # defaults to the refined_works.csv literal a few lines up — a live
+    # violation that stayed green until a human caught it by eye (PR #876,
+    # ticket 0185). These fixtures pin the strengthened detector.
+
+    def test_detector_flags_variable_path_contract_read(self):
+        """A read via a variable bound to a contract literal (multi-line
+        ternary default) must be flagged — the 0185 blind spot."""
+        fixture = (
+            "works_path = (\n"
+            "    input_list[0] if input_list\n"
+            "    else os.path.join(CATALOGS_DIR, 'refined_works.csv')\n"
+            ")\n"
+            "works = pd.read_csv(works_path)\n"
+        )
+        assert TestCorpusThroughLoaders()._has_direct_contract_read(fixture)
+
+    def test_detector_flags_param_default_contract_read(self):
+        """A read via a parameter defaulting to a contract-bound constant is
+        caught (the export_citation_coverage.py pattern)."""
+        fixture = (
+            "REFINED_PATH = os.path.join(CATALOGS_DIR, 'refined_works.csv')\n"
+            "def main(refined_path=REFINED_PATH):\n"
+            "    refined = pd.read_csv(refined_path, low_memory=False)\n"
+        )
+        assert TestCorpusThroughLoaders()._has_direct_contract_read(fixture)
+
+    def test_detector_ignores_noncontract_variable_read(self):
+        """A read of a non-contract table via a variable must NOT be flagged —
+        guards against over-broad detection of legitimate content/tables reads."""
+        fixture = (
+            "table_path = os.path.join(TABLES_DIR, 'tab_venues.csv')\n"
+            "df = pd.read_csv(table_path)\n"
+        )
+        assert not TestCorpusThroughLoaders()._has_direct_contract_read(fixture)
