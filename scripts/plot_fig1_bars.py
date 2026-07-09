@@ -13,6 +13,7 @@ import re
 import matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
+from pipeline_loaders import load_refined_works
 from plot_style import (
     DARK,
     DPI,
@@ -22,7 +23,7 @@ from plot_style import (
     apply_style,
 )
 from script_io_args import parse_io_args, validate_io
-from utils import CATALOGS_DIR, save_figure
+from utils import save_figure
 
 apply_style()
 
@@ -48,18 +49,34 @@ def main():
     args = parser.parse_args(extra)
 
     # --- Load corpus ---
-    csv_path = io_args.input[0] if io_args.input else os.path.join(CATALOGS_DIR, "refined_works.csv")
+    # An explicit --input path reads that file directly (usecols/Int64 kept);
+    # the default contract read goes through load_refined_works(). The loader
+    # returns all columns and coerces `year` to numeric (float64, NaN for
+    # unparseable) rather than the usecols Int64 optimisation — but the plot
+    # bins by whole-number year and filters to 1992..2023, so 1992.0 vs 1992
+    # groups identically and drops the same NaN rows: the bars are unchanged.
     usecols = ["year", "title", "abstract"]
-    if args.v1_only:
-        # Check column exists before loading
-        header = pd.read_csv(csv_path, nrows=0).columns
-        if "in_v1" not in header:
-            raise RuntimeError(
-                "--v1-only requires 'in_v1' column in refined_works.csv. "
-                "Re-run: uv run python scripts/corpus_filter.py --apply"
-            )
-        usecols.append("in_v1")
-    df = pd.read_csv(csv_path, usecols=usecols, dtype={"year": "Int64"})
+    if io_args.input:
+        csv_path = io_args.input[0]
+        if args.v1_only:
+            header = pd.read_csv(csv_path, nrows=0).columns
+            if "in_v1" not in header:
+                raise RuntimeError(
+                    "--v1-only requires 'in_v1' column in refined_works.csv. "
+                    "Re-run: uv run python scripts/corpus_filter.py --apply"
+                )
+            usecols.append("in_v1")
+        df = pd.read_csv(csv_path, usecols=usecols, dtype={"year": "Int64"})
+    else:
+        df = load_refined_works()
+        if args.v1_only:
+            if "in_v1" not in df.columns:
+                raise RuntimeError(
+                    "--v1-only requires 'in_v1' column in refined_works.csv. "
+                    "Re-run: uv run python scripts/corpus_filter.py --apply"
+                )
+            usecols.append("in_v1")
+        df = df[usecols]
     if args.v1_only:
         df = df[df["in_v1"] == 1]
     df = df[(df["year"] >= 1992) & (df["year"] <= 2023)].copy()

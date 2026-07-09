@@ -12,6 +12,7 @@ and abstract availability.
 import os
 
 import pandas as pd
+from pipeline_loaders import load_refined_works
 from script_io_args import parse_io_args, validate_io
 from utils import BASE_DIR, CATALOGS_DIR, get_logger, save_csv
 
@@ -84,11 +85,10 @@ def _write_md_table(summary: pd.DataFrame, path: str) -> None:
 
 
 def main():
-    # Load refined corpus (after filtering)
-    path = os.path.join(CATALOGS_DIR, "refined_works.csv")
-    df = pd.read_csv(path)
-    df["year"] = pd.to_numeric(df["year"], errors="coerce")
-    df["cited_by_count"] = pd.to_numeric(df["cited_by_count"], errors="coerce").fillna(0)
+    # Load refined corpus (after filtering). load_refined_works() coerces
+    # year to numeric and cited_by_count to numeric-filled-0 — the same
+    # coercion this script did inline before the loader migration.
+    df = load_refined_works()
     df["doi_lower"] = df["doi"].str.lower().str.strip()
     df["has_doi"] = df["doi_lower"].apply(
         lambda x: bool(x) and str(x) not in ("", "nan", "none")
@@ -100,7 +100,7 @@ def main():
     abs_s = df["abstract"].fillna("").astype(str).str.strip()
     df["has_abstract"] = (abs_s.str.len() > 10) & (abs_s != "nan")
 
-    log.info("Loaded %d refined works from %s", len(df), path)
+    log.info("Loaded %d refined works", len(df))
 
     # Load unified corpus (before filtering) for raw counts
     # Must include from_* columns — usecols=["source"] dropped them (#251 bug)
