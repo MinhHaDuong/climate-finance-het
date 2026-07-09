@@ -14,7 +14,6 @@
 # --- copyrighted books, no legitimate open-access edition ---
 aykut_dahan2015
 callon1998
-desrosieres1998
 mackenzie2006
 merry2016
 north1990
