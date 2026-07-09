@@ -5,6 +5,7 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-07-09T12:09Z HDMX-coding-agent created
+2026-07-09T16:00Z HDMX-coding-agent note Built scripts/qa_pdf_content.py (poppler CLIs, no heavy dep; qa_ prefix per naming convention). Ran on 161 PDFs: 0 confirmed wrong files. 12 flagged below 0.30, all false positives (scanned/image-only PDFs or Elsevier-cover/front-matter first pages). 5 flags under cited keys — szekely2013 + mitchell2002 CONFIRMED correct via deeper text; golka2024, michaelowa2007, stadelmann2011 are image-only (no extractable text) → human eyeball only, no evidence of wrong file. Decision: KEEP as standing non-CI make target audit-pdf-content (12 flags = several; wrong-file defect class is recurring — Lepenies). Not a hard CI gate: scanned PDFs make it inherently HITL. Regression guard: tests/test_audit_pdf_content.py pins matching logic.
 
 --- body ---
 ## Context

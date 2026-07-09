@@ -223,7 +223,7 @@ ZOO_FIGS := $(ZOO_SCHEMATICS) $(ZOO_RESULT_FIGS)
 ALL_FIGS := $(MANUSCRIPT_FIGS) $(DATAPAPER_FIGS) $(MULTILAYER_FIGS) $(TECHREP_FIGS) $(NCC_FIGS)
 
 # ── Default target ────────────────────────────────────────
-.PHONY: all setup manuscript papers figures figures-manuscript figures-datapaper figures-companion figures-techrep figures-ncc stats check check-fast venv-canonicalize smoke benchmark determinism-check regression regression-update check-corpus check-manuscript-data data corpus corpus-sync corpus-discover corpus-enrich corpus-extend corpus-filter corpus-align corpus-filter-all corpus-tables corpus-validate deploy-corpus clean rebuild archive-analysis archive-manuscript archive-datapaper analysis-figures analysis-tables analysis-stats manuscript-render manuscript-figures datapaper-render datapaper-figures corpus-handoff
+.PHONY: all setup manuscript papers figures figures-manuscript figures-datapaper figures-companion figures-techrep figures-ncc stats check check-fast venv-canonicalize smoke benchmark determinism-check regression regression-update audit-pdf-content check-corpus check-manuscript-data data corpus corpus-sync corpus-discover corpus-enrich corpus-extend corpus-filter corpus-align corpus-filter-all corpus-tables corpus-validate deploy-corpus clean rebuild archive-analysis archive-manuscript archive-datapaper analysis-figures analysis-tables analysis-stats manuscript-render manuscript-figures datapaper-render datapaper-figures corpus-handoff
 
 .DEFAULT_GOAL := manuscript
 
@@ -741,6 +741,13 @@ check: | venv-canonicalize
 # Fast subset: unit tests only (no Python subprocess spawning, no sleeps, < 10s).
 check-fast: | venv-canonicalize
 	$(PYTHON) -m pytest tests/ -v --tb=short -m "not slow and not integration" -n 4
+
+# PDF content audit: does each docs/articles/*.pdf match its bib title?
+# Author-run, human-verified — NOT wired into check/check-fast: scanned PDFs have
+# no extractable text, so low scores are HUMAN-eyeball flags, never a hard gate.
+# Reads PDFs from the main checkout (they are gitignored, absent from worktrees).
+audit-pdf-content:
+	$(PYTHON) scripts/qa_pdf_content.py --output output/pdf_content_audit.csv
 
 # Smoke pipeline: run Phase 2 on a 100-row fixture (no DVC pull needed, <30s).
 # Exercises: compute_breakpoints, compute_clusters, plot_fig1_bars.
