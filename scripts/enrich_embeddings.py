@@ -204,8 +204,10 @@ def main():
         torch.set_num_threads(n_cpu)
         log.info("Loading %s (%d threads)...", MODEL_NAME, n_cpu)
         model = SentenceTransformer(MODEL_NAME)
-        # FP16 halves VRAM (~6.4 GB instead of ~12.8 GB), fits 16 GB GPUs
-        model.half()
+        # FP16 halves VRAM (~6.4 GB instead of ~12.8 GB), fits 16 GB GPUs.
+        # CPU has no fast fp16 kernels, so fp32 there (guard matches het_embed.py).
+        if torch.cuda.is_available():
+            model.half()
 
         new_texts = df.loc[~hit_mask, "_text"].tolist()
         log.info("Encoding %d texts...", n_new)
