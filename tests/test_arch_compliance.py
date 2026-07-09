@@ -350,17 +350,77 @@ class TestCorpusThroughLoaders:
         "plot_alluvial_html.py",
         "plot_fig_seed_axis.py",
         "plot_interactive_corpus.py",
+        # Surfaced by the strengthened variable-path detector (0198): each binds
+        # a path variable to a contract literal, then reads it — invisible to the
+        # old same-line matcher. Migration deferred to 0199 (needs a data-side
+        # figure/table byte-check that this checkout cannot run).
+        "analyze_unfccc_topics.py",
+        "compute_vars.py",
+        "export_corpus_table.py",
+        "plot_fig1_bars.py",
     }
 
     _CONTRACT_FILES = re.compile(r"refined_works|refined_citations|refined_embeddings")
+    # A *quoted* contract-file path literal — distinct from _CONTRACT_FILES so
+    # binding does not match loader function names (load_refined_citations) or
+    # argparse attribute reads (args.refined_works), only genuine path strings.
+    _CONTRACT_LITERAL = re.compile(
+        r"""["'][^"']*refined_(?:works|citations|embeddings)[^"']*\.(?:csv|npz|feather)["']"""
+    )
     _DIRECT_READ = re.compile(r"read_csv|read_feather|np\.load")
+    _READ_OF_VAR = re.compile(r"(?:read_csv|read_feather|np\.load)\(\s*([A-Za-z_]\w*)")
+    _ASSIGN = re.compile(r"^\s*([A-Za-z_]\w*)\s*=(?!=)")
+    _ALIAS = re.compile(r"([A-Za-z_]\w*)\s*=(?!=)\s*([A-Za-z_]\w*)\b")
+
+    def _contract_bound_vars(self, source):
+        """Names bound to a contract-file path within this source.
+
+        Catches three bindings the same-line matcher misses: a direct
+        assignment whose (possibly multi-line, parenthesised) statement names a
+        contract file, and — propagated to a fixpoint — plain aliases and
+        function parameter defaults (`def main(refined_path=REFINED_PATH)`).
+        """
+        lines = source.splitlines()
+        bound = set()
+        i = 0
+        while i < len(lines):
+            m = self._ASSIGN.match(lines[i])
+            if not m:
+                i += 1
+                continue
+            # Accumulate the logical statement by balancing parentheses so a
+            # multi-line ternary default (`x = (... else ".../refined_works.csv")`)
+            # is attributed to its target.
+            stmt = lines[i]
+            depth = stmt.count("(") - stmt.count(")")
+            j = i
+            while depth > 0 and j + 1 < len(lines):
+                j += 1
+                stmt += "\n" + lines[j]
+                depth += lines[j].count("(") - lines[j].count(")")
+            if self._CONTRACT_LITERAL.search(stmt):
+                bound.add(m.group(1))
+            i = j + 1
+        for _ in range(5):  # fixpoint over aliases / parameter defaults
+            added = False
+            for a in self._ALIAS.finditer(source):
+                lhs, rhs = a.group(1), a.group(2)
+                if rhs in bound and lhs not in bound:
+                    bound.add(lhs)
+                    added = True
+            if not added:
+                break
+        return bound
 
     def _has_direct_contract_read(self, source):
         """Return True if source reads a contract file without loaders.
 
-        Checks each non-comment line for both a direct-read call (read_csv,
-        np.load, read_feather) and a contract filename on the same line.
+        Flags a direct-read call (read_csv, np.load, read_feather) that names a
+        contract file on the same line, OR that reads a variable bound to a
+        contract-file path elsewhere in the source (the variable-path pattern
+        the same-line matcher missed — ticket 0198).
         """
+        bound = self._contract_bound_vars(source)
         for line in source.splitlines():
             stripped = line.strip()
             if stripped.startswith("#"):
@@ -368,6 +428,9 @@ class TestCorpusThroughLoaders:
             if "pipeline_loaders" in line:
                 continue
             if self._DIRECT_READ.search(line) and self._CONTRACT_FILES.search(line):
+                return True
+            rm = self._READ_OF_VAR.search(line)
+            if rm and rm.group(1) in bound:
                 return True
         return False
 
