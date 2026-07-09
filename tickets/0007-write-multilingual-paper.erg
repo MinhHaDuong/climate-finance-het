@@ -6,10 +6,12 @@ Blocked-by: 0005
 Blocked-by: 0006
 Blocked-by: 0010
 Blocked-by: 0011
+Label: deferred
 
 --- log ---
 2026-04-13T15:45Z claude created
 
+2026-07-09T13:27Z HDMX-coding-agent label deferred
 --- body ---
 ## Context
 Paper outline in docs/research-note-multilingual.md specifies seven sections

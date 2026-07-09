@@ -2,10 +2,12 @@
 Title: Across-seed Louvain variance for G9 Z-scores
 Created: 2026-04-17
 Author: claude
+Label: deferred
 
 --- log ---
 2026-04-17T07:40Z claude created as child of 0070 for bias B6
 2026-04-27T02:07Z claude note sweep-skip: scope-too-large expires:2026-04-28T02:07Z hash:72206f3db605
+2026-07-09T13:27Z HDMX-coding-agent label deferred
 --- body ---
 ## Context
 

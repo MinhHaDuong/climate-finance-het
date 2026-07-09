@@ -2,10 +2,12 @@
 Title: Robustness suite: five bias checks for divergence pipeline
 Created: 2026-04-15
 Author: user
+Label: deferred
 
 --- log ---
 2026-04-15T23:30Z claude created — bias inventory from first real-data run
 2026-04-27T02:07Z claude note sweep-skip: scope-too-large expires:2026-04-28T02:07Z hash:3a7a5709be03
+2026-07-09T13:27Z HDMX-coding-agent label deferred
 --- body ---
 ## Context
 The divergence pipeline has a growth-rate confound (ticket 0045) plus
