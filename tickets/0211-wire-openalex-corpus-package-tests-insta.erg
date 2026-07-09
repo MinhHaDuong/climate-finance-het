@@ -1,0 +1,67 @@
+%erg 0.1
+Title: Wire openalex-corpus package tests + installability guard into host CI
+Created: 2026-07-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-09T22:26Z HDMX-coding-agent created
+
+--- body ---
+## Context
+Ticket 0170 added the `libs/openalex-corpus/` path package and rewired the host
+modules to consume it. Its own 25-test suite is green, but it runs only
+**standalone** — `make check-fast`/`make check` invoke `pytest tests/`, which
+never descends into `libs/`. So the package is not gated by host CI. This let a
+real defect ship to review: the package declared only `pandas` while `crawl.py`
+imports `requests`; the shared dev env already had `requests`, so "23/23 green"
+masked a failed clean install (caught by a /gaze reviewer, fixed in PR #956).
+The missing-dependency-declaration bug has a **class shape** — any future edit
+that imports a new third-party module without declaring it recurs silently.
+Three /gaze reviewers across #956/#958/#960 flagged the same gap.
+
+See memory `feedback_isolated_venv_proves_installability`.
+
+## Relevant files
+- `libs/openalex-corpus/pyproject.toml` — package deps; needs a runnable test entry
+- `libs/openalex-corpus/tests/` — the 25 tests (contract + crawl) not in host CI
+- `pyproject.toml` (root) — `[tool.uv.sources]` has the package as a non-editable
+  path dep; no `[tool.uv.workspace]` member, `norecursedirs=["libs"]` set
+- `Makefile` — `check` / `check-fast` targets (`pytest tests/` only)
+- `tests/test_openalex_corpus_equivalence.py` — host-side guard already gated
+
+## Actions
+1. Make `make check-fast` (or a new `check-package` target it depends on) run the
+   package's own suite — e.g. `uv run --package openalex-corpus pytest libs/openalex-corpus/tests`
+   via a uv workspace member, OR a dedicated target. Keep `norecursedirs=["libs"]`
+   so root discovery stays clean; add the package suite as an explicit step.
+2. Add an **installability guard**: a test/target that builds+installs the package
+   into a fresh isolated venv and imports it — catches an undeclared runtime dep
+   (the `requests` class). `uv venv .venv-check && VIRTUAL_ENV=… uv pip install .`
+   then `python -c "import openalex_corpus"`; mark it `@pytest.mark.integration`
+   (spawns subprocess) so it stays out of the fast lane if run via pytest.
+3. Consider a `test_ruff` adherence test covering `libs/openalex-corpus/`
+   (reviewer-flagged repo-wide absence of any `test_ruff`); decide whether to
+   scope it to the package or the whole repo.
+
+## Test
+Write first (red): a test that asserts the package's declared dependencies cover
+its actual imports — e.g. install into a clean venv with `--no-deps` + only the
+declared deps and assert `import openalex_corpus` succeeds (fails today if a dep
+is undeclared). This is the guard that would have caught the `requests` miss.
+
+## Verification
+- [ ] `make check-fast` (or `make check`) exercises the package's 25 tests.
+- [ ] An isolated-install guard fails when a package import lacks a declared dep
+      (verify by temporarily removing `requests` from the package pyproject).
+- [ ] Root `pytest` discovery still clean (no `openalex_corpus` collection error).
+
+## Invariants
+- Do not make the package an EDITABLE install of a worktree path (the 0170
+  decision: non-editable, so the shared env never `.pth`-links to a throwaway
+  worktree).
+- The shared `/data` env must not be disturbed by the new target beyond what a
+  normal `uv sync` already installs.
+
+## Exit criteria
+- The package's test suite and an installability guard both run under the host
+  `make` test targets; a deliberately-undeclared dependency fails CI.
