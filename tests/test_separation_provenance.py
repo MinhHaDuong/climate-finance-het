@@ -84,16 +84,20 @@ def test_a5_prose_matches_committed_csv():
     z_score = float(row["z_score"])
     n_perm = int(row["n_perm"])
 
-    checks = {
-        f"{n_nodes} nodes": f"{n_nodes} nodes",
-        f"{n_edges} edges": f"{n_edges} edges",
-        f"share {observed:.2f}": f"{observed:.2f}",
-        f"null {null_mean:.2f}": f"{null_mean:.2f}",
-        f"z ≈ {round(z_score)}": f"{round(z_score)}",
-        f"N = {n_perm} permutations": str(n_perm),
-    }
-    for label, needle in checks.items():
+    # Each needle is context-anchored: a bare number is not enough, because a
+    # two-digit value like z can be a substring of an unrelated figure in the
+    # bullet (e.g. "25" inside "250 most-cited"). Anchoring each needle to the
+    # surrounding prose words makes the check non-vacuous.
+    checks = [
+        f"{n_nodes} nodes",
+        f"{n_edges} edges",
+        f"share {observed:.2f}",
+        f"null of {null_mean:.2f}",
+        f"z ≈ {round(z_score)},",
+        f"N = {n_perm} permutations",
+    ]
+    for needle in checks:
         assert needle in bullet, (
-            f"A.5 prose does not cite the committed {label!r} "
+            f"A.5 prose does not cite the committed {needle!r} "
             f"(CSV value not found in bullet). Bullet:\n{bullet}"
         )
