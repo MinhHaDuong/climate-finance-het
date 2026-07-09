@@ -67,6 +67,18 @@ def test_persistent_500_exhausts_to_runtimeerror(requests_mock):
         retry_get("https://api.openalex.org/works", max_retries=2)
 
 
+def test_retries_timeout_then_succeeds(requests_mock):
+    requests_mock.get(
+        "https://api.openalex.org/works",
+        [{"exc": requests.exceptions.Timeout},
+         {"status_code": 200, "json": {"ok": True}}],
+    )
+    counters: dict[str, int] = {}
+    resp = retry_get("https://api.openalex.org/works", counters=counters)
+    assert resp.status_code == 200
+    assert counters["retries"] == 1
+
+
 class TestMailtoInjection:
     """mailto is injected by the caller, never hardcoded in the package."""
 
@@ -88,3 +100,12 @@ class TestMailtoInjection:
                   user_agent="MyPipeline/2.0 (mailto:a@b.org)")
         assert requests_mock.last_request.headers["User-Agent"] == \
             "MyPipeline/2.0 (mailto:a@b.org)"
+
+    def test_neither_mailto_nor_user_agent_sets_no_package_ua(self, requests_mock):
+        # With neither given, the package injects no User-Agent — requests uses
+        # its own default, not an openalex-corpus/mailto string.
+        requests_mock.get("https://api.openalex.org/works", json={})
+        retry_get("https://api.openalex.org/works")
+        ua = requests_mock.last_request.headers.get("User-Agent", "")
+        assert "openalex-corpus" not in ua
+        assert "mailto:" not in ua
