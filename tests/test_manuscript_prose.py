@@ -31,7 +31,7 @@ from pathlib import Path
 
 import pytest
 import yaml
-from manuscript_source_qmd import REPO_ROOT, abstract, body, paragraphs, section
+from manuscript_source_qmd import REPO_ROOT, abstract, body, paragraphs, raw, section
 
 pytestmark = pytest.mark.adherence
 
@@ -409,6 +409,32 @@ def test_loss_and_damage_is_the_falsifiable_test_in_the_conclusion():
     assert not re.search(r"how far the settlement can stretch|on that answer rides", ld), (
         "the forward-looking bifurcation is still duplicated in the §3 subsection; "
         "it must land only in the conclusion"
+    )
+
+
+def test_title_and_abstract_lead_with_aggregate_birth():
+    """Ticket 0181: the title and abstract lead with the birth of an economic
+    aggregate (brief title-frames-aggregate-birth), and the abstract's opening
+    paragraph states the three conditions (a political number fixed before the
+    object, a pre-existing statistical infrastructure, economists under
+    constraint). 'Strategic ambiguity' is the mechanism, not the headline.
+    Mechanical presence; no phrasing pinned."""
+    title_line = next(
+        line for line in raw().splitlines() if line.strip().startswith("title:")
+    )
+    assert "aggregate" in title_line.lower(), (
+        "the title does not lead with the economic aggregate"
+    )
+    ab = abstract().lower()
+    assert "aggregate" in ab, "the abstract does not name the economic aggregate"
+    assert re.search(r"political number|before .{0,40}(count|settled|object)", ab), (
+        "condition 1 (a political number fixed before the object) missing from the abstract"
+    )
+    assert re.search(r"infrastructure|development-aid accounts|already (standing|in place)", ab), (
+        "condition 2 (a pre-existing statistical infrastructure) missing from the abstract"
+    )
+    assert "constraint" in ab, (
+        "condition 3 (economists under constraint) missing from the abstract"
     )
 
 
