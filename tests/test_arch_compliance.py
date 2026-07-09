@@ -350,11 +350,6 @@ class TestCorpusThroughLoaders:
         "plot_alluvial_html.py",
         "plot_fig_seed_axis.py",
         "plot_interactive_corpus.py",
-        # Surfaced by the strengthened variable-path detector (0198): each binds
-        # a path variable to a contract literal, then reads it — invisible to the
-        # old same-line matcher. Migration deferred to 0199 (needs a data-side
-        # figure/table byte-check that this checkout cannot run).
-        "compute_vars.py",
     }
 
     _CONTRACT_FILES = re.compile(r"refined_works|refined_citations|refined_embeddings")

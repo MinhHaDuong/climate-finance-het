@@ -15,6 +15,7 @@ import warnings
 
 import numpy as np
 import pandas as pd
+from pipeline_loaders import load_refined_citations, load_refined_works
 from script_io_args import parse_io_args, validate_io
 from utils import (
     BASE_DIR,
@@ -141,11 +142,11 @@ def _read_json(filename, directory=TABLES_DIR):
 
 def corpus_stats(v):
     """Corpus size, language, multi-source from refined_works.csv."""
-    path = os.path.join(CATALOGS_DIR, "refined_works.csv")
-    if not os.path.isfile(path):
-        warnings.warn(f"Missing: {path}")
+    try:
+        df = load_refined_works()
+    except FileNotFoundError as exc:
+        warnings.warn(str(exc))
         return
-    df = pd.read_csv(path)
     n = len(df)
     v["corpus_total"] = _int(n)
     v["corpus_total_approx"] = _int(round(n, -3))
@@ -368,15 +369,13 @@ def citation_stats(v):
     from utils import REFINED_CITATIONS_PATH, REFINED_WORKS_PATH, normalize_doi
 
     if os.path.isfile(REFINED_CITATIONS_PATH):
-        ref_cite_df = pd.read_csv(REFINED_CITATIONS_PATH)[["source_doi"]]
+        ref_cite_df = load_refined_citations()[["source_doi"]]
         v["cite_refined_rows"] = _int(len(ref_cite_df))
         v["cite_refined_sources"] = _int(ref_cite_df["source_doi"].nunique())
 
         # Coverage: % of refined DOIs that appear as citation sources
         if os.path.isfile(REFINED_WORKS_PATH):
-            refined_df = pd.read_csv(
-                REFINED_WORKS_PATH, usecols=["doi", "cited_by_count"]
-            )
+            refined_df = load_refined_works()[["doi", "cited_by_count"]]
             refined_dois = {normalize_doi(d) for d in refined_df["doi"].dropna()} - {""}
             source_dois = {normalize_doi(d) for d in ref_cite_df["source_doi"].dropna()}
             covered = len(source_dois & refined_dois)
