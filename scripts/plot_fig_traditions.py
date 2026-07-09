@@ -25,13 +25,16 @@ import numpy as np
 import pandas as pd
 
 from pipeline_io import save_figure
-from pipeline_loaders import load_analysis_config, pre2007_cutoff_year
+from pipeline_loaders import (
+    load_analysis_config,
+    load_refined_works,
+    pre2007_cutoff_year,
+)
 from plot_style import DARK, DPI, FIGWIDTH, apply_style
 from scipy.sparse import lil_matrix
 from script_io_args import parse_io_args, validate_io
 from utils import (
     BASE_DIR,
-    CATALOGS_DIR,
     get_logger,
     load_refined_citations,
     normalize_doi,
@@ -88,7 +91,10 @@ def _load_data(works_path, cit_path):
     cit = cit[~cit["ref_doi"].isin(["nan", "none"])]
     log.info("  Citation pairs: %d", len(cit))
 
-    works = pd.read_csv(works_path)
+    if works_path is not None:
+        works = pd.read_csv(works_path)
+    else:
+        works = load_refined_works()
     works["doi_norm"] = works["doi"].apply(normalize_doi)
     doi_meta = {}
     for _, row in works.iterrows():
@@ -413,10 +419,7 @@ def main():
     apply_style()
     out_stem = os.path.splitext(io_args.output)[0]
 
-    works_path = (
-        io_args.input[0] if io_args.input
-        else os.path.join(CATALOGS_DIR, "refined_works.csv")
-    )
+    works_path = io_args.input[0] if io_args.input else None
     cit_path = (
         io_args.input[1] if io_args.input and len(io_args.input) >= 2
         else None

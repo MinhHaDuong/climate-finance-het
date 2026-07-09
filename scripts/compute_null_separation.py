@@ -48,7 +48,6 @@ Usage:
 """
 
 import argparse
-import os
 
 import pandas as pd
 from _null_separation import (
@@ -61,7 +60,7 @@ from pipeline_loaders import load_analysis_config
 from plot_fig_traditions import build_pre2007_traditions
 from schemas import NullSeparationSchema
 from script_io_args import parse_io_args, validate_io
-from utils import CATALOGS_DIR, get_logger, normalize_doi
+from utils import get_logger, normalize_doi
 
 log = get_logger("compute_null_separation")
 
@@ -140,10 +139,7 @@ def main():
     seed = int(sep_cfg["random_seed"])
     n_perm = int(sep_cfg["n_perm"])
 
-    works_path = (
-        io_args.input[0] if io_args.input
-        else os.path.join(CATALOGS_DIR, "refined_works.csv")
-    )
+    works_path = io_args.input[0] if io_args.input else None
     cit_path = (
         io_args.input[1] if io_args.input and len(io_args.input) >= 2
         else None
