@@ -1,0 +1,51 @@
+%erg 0.1
+Title: Drop fabricated manne_richels1992 DOI from scout_tradition_coupling ANCHORS
+Created: 2026-07-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-09T12:11Z HDMX-coding-agent created
+
+--- body ---
+## Context
+Ticket 0188 (#928) removed the LLM-fabricated DOI `10.1016/0301-4215(92)90024-V`
+from `content/bibliography/main.bib` — it resolves to an unrelated energy-demand
+paper, and `manne_richels1992` is the 1992 MIT Press *book* (no Crossref DOI).
+The 0188 verify-gate sweep found the same fabricated identifier still hardcoded
+in `scripts/scout_tradition_coupling.py:73`, inside the `ANCHORS` dict. The
+standing DOI↔title audit (`tests/test_bib_doi_title.py`) only scans `main.bib`,
+so this instance survives.
+
+`ANCHORS` maps citekey → `(doi, title)`, where the DOI is a fresh-embed fallback
+lookup key for `@tbl-traditions` anchors not present as corpus works. A fabricated
+DOI here would fetch the *wrong paper's* metadata for the embedding fallback — a
+silent correctness defect in the tradition-coupling scout, not just dead metadata.
+
+## Relevant files
+- `scripts/scout_tradition_coupling.py:72-75` — the `manne_richels1992` ANCHORS entry.
+
+## Actions
+1. Set the `manne_richels1992` ANCHORS value to `(None, "Buying Greenhouse
+   Insurance: The Economic Costs of CO2 Emission Limits")` — no DOI (book), full
+   title so the fresh-embed fallback matches the correct work.
+2. Verify no other ANCHORS entry carries a fabricated/wrong DOI (spot-check the
+   remaining ones against Crossref while here).
+
+## Test
+- Red first: a unit test asserting the `manne_richels1992` ANCHORS entry has
+  `doi is None` (or, more generally, that no ANCHORS DOI equals the known
+  fabricated string). Alternatively extend the audit to scan Python ANCHORS
+  dicts — decide during Execute whether the class warrants a standing guard or a
+  single pinned assertion suffices (only one instance found in the 0188 sweep).
+
+## Verification
+- [ ] `scout_tradition_coupling.py` ANCHORS no longer contains the fabricated DOI.
+- [ ] The `manne_richels1992` anchor title matches the book title used in main.bib.
+- [ ] `make check-fast` passes.
+
+## Invariants
+- Scout output for the other anchors unchanged; only the manne entry is touched.
+
+## Exit criteria
+- The fabricated DOI is gone from the scout, and the anchor resolves to the
+  correct Manne & Richels 1992 book.
