@@ -356,7 +356,6 @@ class TestCorpusThroughLoaders:
         # figure/table byte-check that this checkout cannot run).
         "analyze_unfccc_topics.py",
         "compute_vars.py",
-        "export_corpus_table.py",
         "plot_fig1_bars.py",
     }
 
