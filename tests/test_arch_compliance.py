@@ -370,68 +370,105 @@ class TestCorpusThroughLoaders:
     _DIRECT_READ = re.compile(r"read_csv|read_feather|np\.load")
     _READ_OF_VAR = re.compile(r"(?:read_csv|read_feather|np\.load)\(\s*([A-Za-z_]\w*)")
     _ASSIGN = re.compile(r"^\s*([A-Za-z_]\w*)\s*=(?!=)")
-    _ALIAS = re.compile(r"([A-Za-z_]\w*)\s*=(?!=)\s*([A-Za-z_]\w*)\b")
+    # Statement-start alias only — anchored to `^`, so a call-site kwarg
+    # (`helper(low_memory=works_path)`) does not match (0202 case 3).
+    _ALIAS_STMT = re.compile(r"^\s*([A-Za-z_]\w*)\s*=(?!=)\s*([A-Za-z_]\w*)\b")
+    # An `ident=ident` pair anywhere — used only within a `def` signature to
+    # bind parameter defaults (`def main(refined_path=REFINED_PATH)`).
+    _KWARG = re.compile(r"([A-Za-z_]\w*)\s*=(?!=)\s*([A-Za-z_]\w*)\b")
+    _DEF = re.compile(r"^\s*(?:async\s+)?def\b")
 
-    def _contract_bound_vars(self, source):
-        """Names bound to a contract-file path within this source.
-
-        Catches three bindings the same-line matcher misses: a direct
-        assignment whose (possibly multi-line, parenthesised) statement names a
-        contract file, and — propagated to a fixpoint — plain aliases and
-        function parameter defaults (`def main(refined_path=REFINED_PATH)`).
+    @staticmethod
+    def _strip_comments(source):
+        """Remove #-comments string-aware, so the binding passes never key on a
+        name that appears only inside a comment (0202 case 2). A `#` inside a
+        string literal is preserved; the first unquoted `#` truncates the line.
         """
-        lines = source.splitlines()
-        bound = set()
-        i = 0
-        while i < len(lines):
-            m = self._ASSIGN.match(lines[i])
-            if not m:
-                i += 1
-                continue
-            # Accumulate the logical statement by balancing parentheses so a
-            # multi-line ternary default (`x = (... else ".../refined_works.csv")`)
-            # is attributed to its target.
-            stmt = lines[i]
-            depth = stmt.count("(") - stmt.count(")")
-            j = i
-            while depth > 0 and j + 1 < len(lines):
-                j += 1
-                stmt += "\n" + lines[j]
-                depth += lines[j].count("(") - lines[j].count(")")
-            if self._CONTRACT_LITERAL.search(stmt):
-                bound.add(m.group(1))
-            i = j + 1
-        for _ in range(5):  # fixpoint over aliases / parameter defaults
-            added = False
-            for a in self._ALIAS.finditer(source):
-                lhs, rhs = a.group(1), a.group(2)
-                if rhs in bound and lhs not in bound:
-                    bound.add(lhs)
-                    added = True
-            if not added:
-                break
-        return bound
+        out = []
+        for line in source.splitlines():
+            quote = None
+            k = 0
+            n = len(line)
+            while k < n:
+                ch = line[k]
+                if quote:
+                    if ch == "\\":
+                        k += 2
+                        continue
+                    if ch == quote:
+                        quote = None
+                elif ch in ("'", '"'):
+                    quote = ch
+                elif ch == "#":
+                    line = line[:k]
+                    break
+                k += 1
+            out.append(line)
+        return "\n".join(out)
 
     def _has_direct_contract_read(self, source):
         """Return True if source reads a contract file without loaders.
 
-        Flags a direct-read call (read_csv, np.load, read_feather) that names a
-        contract file on the same line, OR that reads a variable bound to a
-        contract-file path elsewhere in the source (the variable-path pattern
-        the same-line matcher missed — ticket 0198).
+        A single forward pass maintains the live set of names bound to a
+        contract-file path and checks each read against the binding state *at
+        that point*. Flagged: a direct-read call (read_csv / np.load /
+        read_feather) naming a contract file on the same line, or one reading a
+        name currently bound to a contract path (the variable-path pattern the
+        same-line matcher missed — ticket 0198).
+
+        Forward flow is what makes taint decay correct (0202 case 1): a name
+        rebound to a non-contract path is dropped from the live set, so a later
+        read of it is not flagged — while a genuine contract read that occurs
+        before any rebinding still is. Comments are stripped up front (case 2)
+        and only `def`-signature defaults, never call-site kwargs, propagate
+        taint (case 3).
         """
-        bound = self._contract_bound_vars(source)
-        for line in source.splitlines():
-            stripped = line.strip()
-            if stripped.startswith("#"):
-                continue
-            if "pipeline_loaders" in line:
-                continue
-            if self._DIRECT_READ.search(line) and self._CONTRACT_FILES.search(line):
-                return True
-            rm = self._READ_OF_VAR.search(line)
-            if rm and rm.group(1) in bound:
-                return True
+        code = self._strip_comments(source)
+        lines = code.splitlines()
+        bound = set()
+        i = 0
+        n = len(lines)
+        while i < n:
+            line = lines[i]
+            # Accumulate the logical statement by balancing parentheses so a
+            # multi-line ternary default or def signature is one unit.
+            stmt = line
+            depth = line.count("(") - line.count(")")
+            j = i
+            while depth > 0 and j + 1 < n:
+                j += 1
+                stmt += "\n" + lines[j]
+                depth += lines[j].count("(") - lines[j].count(")")
+
+            # --- update the live binding set from this statement ---
+            if self._DEF.match(line):
+                # Bind any parameter default aliasing a currently-bound name.
+                for pm in self._KWARG.finditer(stmt):
+                    if pm.group(2) in bound:
+                        bound.add(pm.group(1))
+            else:
+                am = self._ASSIGN.match(line)
+                if am:
+                    lhs = am.group(1)
+                    if self._CONTRACT_LITERAL.search(stmt):
+                        bound.add(lhs)  # taint: bound to a contract literal
+                    else:
+                        sm = self._ALIAS_STMT.match(line)
+                        if sm and sm.group(2) in bound:
+                            bound.add(lhs)  # propagate taint through an alias
+                        else:
+                            bound.discard(lhs)  # decay on non-contract rebind
+
+            # --- check reads on this statement's physical lines ---
+            for sline in stmt.splitlines():
+                if "pipeline_loaders" in sline:
+                    continue
+                if self._DIRECT_READ.search(sline) and self._CONTRACT_FILES.search(sline):
+                    return True
+                rm = self._READ_OF_VAR.search(sline)
+                if rm and rm.group(1) in bound:
+                    return True
+            i = j + 1
         return False
 
     def test_no_new_direct_contract_reads(self):
@@ -498,5 +535,44 @@ class TestCorpusThroughLoaders:
         fixture = (
             "table_path = os.path.join(TABLES_DIR, 'tab_venues.csv')\n"
             "df = pd.read_csv(table_path)\n"
+        )
+        assert not TestCorpusThroughLoaders()._has_direct_contract_read(fixture)
+
+    # -- Over-match hardening (0202): three dormant false positives the 0198 --
+    # whole-source alias fixpoint reproduced. Each pins the intended
+    # NON-detection; all currently fail-safe (a live FP is a loud CI failure).
+
+    def test_detector_decays_taint_on_reassignment(self):
+        """Case 1: a name bound to a contract literal, consumed correctly (via a
+        loader), then rebound to a non-contract path and read, must NOT be
+        flagged — taint must not survive the reassignment."""
+        fixture = (
+            "path = os.path.join(CATALOGS_DIR, 'refined_works.csv')\n"
+            "works = load_refined_works(path)\n"
+            "path = os.path.join(TABLES_DIR, 'tab_venues.csv')\n"
+            "df = pd.read_csv(path)\n"
+        )
+        assert not TestCorpusThroughLoaders()._has_direct_contract_read(fixture)
+
+    def test_detector_ignores_alias_in_comment(self):
+        """Case 2: an aliasing assignment that only appears inside a #-comment
+        must NOT taint its left-hand name."""
+        fixture = (
+            "works_path = os.path.join(CATALOGS_DIR, 'refined_works.csv')\n"
+            "# legacy = works_path   (an old alias, now commented out)\n"
+            "legacy = os.path.join(TABLES_DIR, 'tab_venues.csv')\n"
+            "df = pd.read_csv(legacy)\n"
+        )
+        assert not TestCorpusThroughLoaders()._has_direct_contract_read(fixture)
+
+    def test_detector_ignores_call_site_kwarg(self):
+        """Case 3: a call-site keyword argument whose name matches a bound name
+        (`helper(low_memory=works_path)`) must NOT bind the kwarg name."""
+        fixture = (
+            "works_path = os.path.join(CATALOGS_DIR, 'refined_works.csv')\n"
+            "works = load_refined_works(works_path)\n"
+            "low_memory = os.path.join(TABLES_DIR, 'tab_venues.csv')\n"
+            "helper(low_memory=works_path)\n"
+            "df = pd.read_csv(low_memory)\n"
         )
         assert not TestCorpusThroughLoaders()._has_direct_contract_read(fixture)
