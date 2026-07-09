@@ -500,3 +500,42 @@ class TestCorpusThroughLoaders:
             "df = pd.read_csv(table_path)\n"
         )
         assert not TestCorpusThroughLoaders()._has_direct_contract_read(fixture)
+
+    # -- Over-match hardening (0202): three dormant false positives the 0198 --
+    # whole-source alias fixpoint reproduced. Each pins the intended
+    # NON-detection; all currently fail-safe (a live FP is a loud CI failure).
+
+    def test_detector_decays_taint_on_reassignment(self):
+        """Case 1: a name bound to a contract literal, consumed correctly (via a
+        loader), then rebound to a non-contract path and read, must NOT be
+        flagged — taint must not survive the reassignment."""
+        fixture = (
+            "path = os.path.join(CATALOGS_DIR, 'refined_works.csv')\n"
+            "works = load_refined_works(path)\n"
+            "path = os.path.join(TABLES_DIR, 'tab_venues.csv')\n"
+            "df = pd.read_csv(path)\n"
+        )
+        assert not TestCorpusThroughLoaders()._has_direct_contract_read(fixture)
+
+    def test_detector_ignores_alias_in_comment(self):
+        """Case 2: an aliasing assignment that only appears inside a #-comment
+        must NOT taint its left-hand name."""
+        fixture = (
+            "works_path = os.path.join(CATALOGS_DIR, 'refined_works.csv')\n"
+            "# legacy = works_path   (an old alias, now commented out)\n"
+            "legacy = os.path.join(TABLES_DIR, 'tab_venues.csv')\n"
+            "df = pd.read_csv(legacy)\n"
+        )
+        assert not TestCorpusThroughLoaders()._has_direct_contract_read(fixture)
+
+    def test_detector_ignores_call_site_kwarg(self):
+        """Case 3: a call-site keyword argument whose name matches a bound name
+        (`helper(low_memory=works_path)`) must NOT bind the kwarg name."""
+        fixture = (
+            "works_path = os.path.join(CATALOGS_DIR, 'refined_works.csv')\n"
+            "works = load_refined_works(works_path)\n"
+            "low_memory = os.path.join(TABLES_DIR, 'tab_venues.csv')\n"
+            "helper(low_memory=works_path)\n"
+            "df = pd.read_csv(low_memory)\n"
+        )
+        assert not TestCorpusThroughLoaders()._has_direct_contract_read(fixture)
