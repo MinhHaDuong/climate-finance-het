@@ -58,8 +58,9 @@ TRADITION_SEEDS = {
         {"title_fragment": "production consumption externalities", "author": "ayres", "year": 1969},
         # Nordhaus 1992
         {"doi": "10.1126/science.258.5086.1315", "author": "nordhaus", "year": 1992},
-        # Manne & Richels 1992
-        {"doi": "10.1016/0301-4215(92)90024-v", "author": "manne", "year": 1992},
+        # Manne & Richels 1992 - MIT Press book, no Crossref DOI; the prior
+        # doi literal here was LLM-fabricated (0188/0201/0209)
+        {"title_fragment": "buying greenhouse insurance", "author": "manne", "year": 1992},
         # Stern 2007
         {"title_fragment": "economics of climate change", "author": "stern", "year": 2007},
         # Weitzman 2007
