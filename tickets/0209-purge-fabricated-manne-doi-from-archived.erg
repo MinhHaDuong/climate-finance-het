@@ -1,0 +1,54 @@
+%erg 0.1
+Title: Purge fabricated manne DOI from archived detect_traditions_v3 + standing class guard
+Created: 2026-07-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-09T20:19Z HDMX-coding-agent created
+
+--- body ---
+## Context
+The LLM-fabricated DOI `10.1016/0301-4215(92)90024-V` (an unrelated energy-demand
+paper; Manne & Richels 1992 is a MIT Press *book* with no Crossref DOI) has now
+been found and removed in **three** places:
+- `content/bibliography/main.bib` — ticket 0188 / PR #928
+- `scripts/scout_tradition_coupling.py` ANCHORS — ticket 0201 / PR #943
+- `scripts/archive_traditions/detect_traditions_v3.py:62` — **still present**,
+  surfaced by the /roar sweep after the 199–202 raid.
+
+Three instances of one fabricated string is a class, not a coincidence. The
+standing DOI↔title audit (`tests/test_bib_doi_title.py`) scans only `main.bib`;
+0201 added `tests/test_scout_anchors.py` scoped to the scout. Neither covers the
+archived detector, and `archive_traditions/` is not caught by the hygiene skip
+(`rel_dir == "archive"`, not `archive_traditions`).
+
+`detect_traditions_v3.py` is a superseded, archived script (the live detector is
+`scout_tradition_coupling.py`) — not imported by any live code — so the instance
+is dormant, but it is a copy source waiting to reintroduce the fabricated DOI.
+
+## Relevant files
+- `scripts/archive_traditions/detect_traditions_v3.py:62` — the fabricated entry.
+- A new/extended test scanning Python DOI literals against a known-fabricated set.
+
+## Actions
+1. Set the `manne` entry in detect_traditions_v3.py's anchor list to drop the
+   fabricated DOI (mirror 0201: no DOI, correct book title), or remove the entry
+   if the archived script is truly dead and never revived.
+2. Add a standing class guard: a test that greps every `scripts/**/*.py` (including
+   `archive_traditions/`) for the known-fabricated DOI string(s), failing on any
+   hit. Seed it with `10.1016/0301-4215(92)90024-V`; make the fabricated-set
+   extensible so future discoveries add one line. This catches the class in any
+   future PR, unlike the file-scoped 0201/0188 guards.
+
+## Test
+- Red first: the new guard fails against current main (detect_traditions_v3 hit),
+  passes after Action 1.
+
+## Verification
+- [ ] `grep -rn '0301-4215(92)90024' scripts/` returns nothing.
+- [ ] The class guard scans all scripts/ Python and fails on a seeded fabricated DOI.
+- [ ] `make check-fast` green.
+
+## Exit criteria
+- The fabricated DOI is gone from every script; a standing test guards the class
+  across all of scripts/, not just main.bib or one file.
