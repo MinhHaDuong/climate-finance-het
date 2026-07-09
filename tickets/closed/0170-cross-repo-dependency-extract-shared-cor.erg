@@ -2,6 +2,7 @@
 Title: cross-repo dependency: extract shared corpus/embedding code?
 Created: 2026-07-07
 Author: HDMX-coding-agent
+Closed: All moves merged: package extracted + host wired via shims (A, #954/#956/#958); het_*.py trio deleted as overlap figure retired (B+C, #960)
 
 --- log ---
 2026-07-07T20:36Z HDMX-coding-agent created
@@ -16,6 +17,7 @@ Author: HDMX-coding-agent
 
 2026-07-10T00:00Z claude note Move B+C resolved as DELETION, not relocation — premise changed. Read-only analysis of polycentric_activity found: (a) it has no Python env at all (scripts run via `uv run --with`); (b) its ACTIVE het figure is now an embedding-free citation swim-lane (analysis-het-figure/plot_lanes.py) + a two-hop indirect-citation measure — a different analysis; (c) the embedding-based OVERLAP figure that the het_*.py trio produced was RETIRED (author confirmed: "no more embedding and pca in polycentric"). So relocating the trio would mean standing up a torch+sentence-transformers env in the paper repo for a dead figure. Author chose delete. Also verified: polycentric only ever duplicated retry_get inline (urllib), never the embedding conventions — so nothing there needs the package for this figure, and the "both repos depend on it" exit criterion is moot. Deleted het_build_corpus/het_embed/het_plot_overlap + their test, swept the dead het_ naming-allowlist entry and a stale comment, and (Move C) deleted architecture.md §Companion pipelines. Kept data/het/seeds.csv (polycentric reads it by path). 0170 complete on merge.
 
+2026-07-09T22:23Z HDMX-coding-agent closed — All moves merged: package extracted + host wired via shims (A, #954/#956/#958); het_*.py trio deleted as overlap figure retired (B+C, #960)
 --- body ---
 ## Context
 Ticket 0167 (PR #860) added `scripts/het_*.py` to this repo to generate a
