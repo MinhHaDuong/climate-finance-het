@@ -1,0 +1,68 @@
+%erg 0.1
+Title: Ratchet freshness guard: fail when a prose-ratchet ceiling is stale
+Created: 2026-07-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-09T13:11Z HDMX-coding-agent created
+
+--- body ---
+## Context
+The prose ratchets in `tests/test_manuscript_prose.py` assert only
+`count <= ceiling`. A green suite therefore proves the manuscript is *under* each
+ceiling, never *at* it. When the v2.0.5 base rebuild from the French VF
+(0172/0173) replaced the entire prose, the em-dash ceiling still read 132 and the
+define-by-negation ceiling 20, while the rebuilt `body()` carried 0 of each. The
+suite stayed green for weeks while the guards protected nothing near the real
+counts. PR #935 (tickets 0134/0162) re-cut them by hand, but nothing prevents the
+same drift after the next base edit. See memory
+`feedback_ratchet_stale_after_rebuild`.
+
+The author's decision (2026-07-09): "ratchets should be kept fresh." This ticket
+adds a standing guard so a large ceiling→actual gap fails CI instead of hiding.
+
+## Relevant files
+- `tests/test_manuscript_prose.py` — the ratchet tests + `_ceiling()` helper; new test lands here.
+- `tests/data/*_ceiling.txt` — the four committed ceilings (emdash, define_by_negation, conditional_words, hardcoded_xref).
+- `config/ai-tells.yml` — `density_limits` documents the intended budgets (em_dashes max_per_paragraph 2; "not X, but Y" max_per_document 3).
+
+## Design decision (for the executor)
+The guard must catch *egregious* staleness (132 vs 0, 20 vs 0) while tolerating
+*intentional* headroom — define_by_negation is deliberately held at 3 (the
+`ai-tells` `max_per_document` budget) against an actual of 0, and
+conditional_words sits at 5 vs actual 3. So the guard is NOT "ceiling == actual".
+
+Recommended: assert `ceiling - actual <= SLACK` per metric, with a single
+`RATCHET_SLACK = 5`. Current gaps — emdash 0, define_by_negation 3,
+conditional_words 2, hardcoded_xref 0 — all pass; a post-rebuild 132-vs-0 or
+20-vs-0 fails loudly with a message telling the author to re-cut the ceiling.
+Alternatives considered: (a) hard `ceiling == actual` — rejected, kills the
+ai-tells budgets; (b) a `make ratchet-refresh` helper that rewrites ceilings to
+actual — rejected as the primary mechanism (manual, skippable, and also erases
+intentional budgets), though it may be worth adding as a convenience alongside.
+
+## Actions
+1. Add `RATCHET_SLACK = 5` and a `test_ratchet_ceilings_are_fresh` that, for each
+   `(metric, find_fn)` pair, asserts `ceiling(metric) - len(find_fn(body())) <= RATCHET_SLACK`.
+2. Emit a message naming the metric, its actual count and ceiling, and the
+   remedy ("re-cut tests/data/<metric>_ceiling.txt toward the actual count").
+3. Add a fang: a fixture ceiling far above a known actual must fail the check.
+
+## Test (red first)
+- `test_ratchet_ceilings_are_fresh` — red first by temporarily setting one
+  ceiling to actual+6 in a fixture (not the live file) and asserting the helper
+  flags it; then green against the four live ceilings.
+
+## Verification
+- [ ] New test present and green against the current four ceilings.
+- [ ] Fang proves it fails when a ceiling exceeds actual by more than `RATCHET_SLACK`.
+- [ ] `pytest -m adherence tests/test_manuscript_prose.py` green.
+
+## Invariants
+- The existing `count <= ceiling` ratchets stay unchanged (this is an *additional*
+  upper guard, not a replacement).
+- The intentional budgets (define_by_negation 3, conditional_words 5) still pass.
+
+## Exit criteria
+- A stale ceiling (gap > RATCHET_SLACK) fails the adherence suite; the four
+  current ceilings pass.
