@@ -2,9 +2,11 @@
 Title: Migrate plot_fig_traditions.py works read to the loader (arch rule 9)
 Created: 2026-07-08
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #919
 
 --- log ---
 2026-07-08T12:41Z HDMX-coding-agent created
+2026-07-09T09:48Z HDMX-coding-agent closed — autoclosed — PR #919
 --- body ---
 ## Context
 Raised twice on PR #876 (review red team + adherence nit): the pre-2007
