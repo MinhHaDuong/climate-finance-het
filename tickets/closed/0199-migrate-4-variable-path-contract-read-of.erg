@@ -2,10 +2,12 @@
 Title: Migrate 4 variable-path contract-read offenders surfaced by 0198 detector
 Created: 2026-07-09
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #949
 
 --- log ---
 2026-07-09T11:47Z HDMX-coding-agent created
 
+2026-07-09T20:05Z HDMX-coding-agent closed — autoclosed — PR #949
 --- body ---
 ## Context
 Strengthening the rule-9 detector in 0198 (variable bound to a contract
