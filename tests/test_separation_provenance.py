@@ -41,15 +41,23 @@ def _louvain_share_row():
 
 
 def _a5_bullet():
-    """The manuscript's A.5 co-citation-separation bullet text."""
+    """The manuscript's A.5 co-citation-separation bullet text.
+
+    Runs from the bold label to the end of the markdown list item — a blank
+    line or the start of the next bullet — so a legitimate prose reflow that
+    wraps the item across source lines does not truncate the checked text.
+    """
     with open(MANUSCRIPT, encoding="utf-8") as f:
         text = f.read()
-    # The bullet begins with the bold label and runs to the next newline.
     marker = "**Co-citation community separation.**"
     start = text.find(marker)
     assert start != -1, "A.5 co-citation-separation bullet not found in manuscript"
-    end = text.find("\n", start)
-    return text[start:end]
+    rest = text[start:]
+    # List item ends at a blank line or the next bullet ("\n- ").
+    ends = [rest.find("\n\n"), rest.find("\n- ")]
+    ends = [e for e in ends if e != -1]
+    end = min(ends) if ends else len(rest)
+    return rest[:end]
 
 
 def test_separation_csv_committed():
