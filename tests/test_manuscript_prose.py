@@ -412,6 +412,30 @@ def test_loss_and_damage_is_the_falsifiable_test_in_the_conclusion():
     )
 
 
+def test_conclusion_lands_on_aggregate_birth():
+    """Ticket 0171 (action 1): the conclusion must land on the thesis — the birth of
+    a new economic aggregate — placed in the GDP / monetary-aggregates lineage that
+    makes 'aggregate' more than a metaphor, and stating its three general conditions:
+    a political number fixed before the object, a pre-existing statistical
+    infrastructure, and economists under constraint. 'Strategic ambiguity' stays the
+    mechanism inside the story, not the headline (brief title-frames-aggregate-birth).
+    Mechanical presence, no phrasing pinned."""
+    concl = section("Conclusion").lower()
+    assert "aggregate" in concl, "the conclusion does not name the economic aggregate"
+    assert re.search(r"monetary aggregat|gross domestic product|\bgdp\b", concl), (
+        "the aggregate-birth claim is not placed in the GDP / monetary-aggregates lineage"
+    )
+    assert re.search(r"before .{0,50}(object|was (defined|settled)|would count|anyone)", concl), (
+        "condition 1 (a political number fixed before the object) not stated"
+    )
+    assert re.search(r"infrastructure|development-aid accounts|already (standing|in place)", concl), (
+        "condition 2 (a pre-existing statistical infrastructure) not stated"
+    )
+    assert "economists" in concl and re.search(r"constraint|constrain", concl), (
+        "condition 3 (economists under constraint) not stated"
+    )
+
+
 def test_finance_development_lineage_is_situated():
     """Ticket 0139 (R1.5): the mobilisation/leverage vocabulary must be traced to
     its scholarly home, the finance-and-growth literature (King & Levine 1993,
