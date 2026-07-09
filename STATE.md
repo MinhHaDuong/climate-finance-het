@@ -1,6 +1,6 @@
 # State
 
-Last updated: 2026-07-08T21:50Z
+Last updated: 2026-07-09T10:20Z
 
 ## Current goal
 
@@ -9,18 +9,19 @@ v2.0.3 (prose-ratchet infra) and v2.0.4 (framing decisions) shipped. **Now: v2.0
 implementation** (tracker 0156) — finishing the prose pass, then resubmission.
 
 ### Roadmap
-- **v2.0.5** (0156): base rebuild **0172 DONE**; **content pass DONE** — 0135 economists, 0137 commensuration, 0138 loss&damage (R1.4), 0139 finance-dev, 0141 concretize (+children 0189–0194) all closed. **Next: conclusion 0171** (aggregate-birth landing + Star/Griesemer concede-then-displace) → title **0181** → prose 0134 → em-dash 0162. Parallel: bib 0143, letter 0152, audit 0161. Resubmit 0153.
+- **v2.0.5** (0156): base rebuild + content pass DONE; bib 0143 closed, Desrosières fulltext acquired (#918). **Conclusion 0171 UNDERWAY** — actions 3 L&D falsifiable-test (#920), 1 aggregate-birth landing (#922), 2 abandonment-as-result (#923) DONE; **remaining 4 Star & Griesemer, 6 chantiers→book, 7 bib anchoring (light)**. Then title **0181** → prose 0134 → em-dash 0162. Parallel: letter 0152, audit 0161. Resubmit 0153.
 - Parallel (not R&R): method paper **0026** — `multilayer-detection.qmd`.
 
 ## Status
-<!-- generated 2026-07-08T21:50Z -->
+<!-- generated 2026-07-09T10:20Z -->
 
-**Tickets:** 42 ready · 12 blocked — `erg ready tickets/` for full list
+**Tickets:** 41 ready · 12 blocked — `erg ready tickets/` for full list
 **Recent commits:**
-  8dcffd9 tickets: disconnect 0135 from 0143 (Golka route dropped)
-  96b311d tickets: close 0135 (economists reframe) and 0141 (concretize tracker)
-  138a63c ticket(0197): close and archive — PR #904
-  0a8ec8d ticket: renumber 0189->0197 (ID collision with parallel session)
+  3151d05 Merge pull request #923 from MinhHaDuong/worktree-t0171-abandonment
+  27e9a07 manuscript(0171): abandonment of precision as displacement, not repeal
+  a98513d Merge pull request #922 from MinhHaDuong/worktree-t0171-aggregate-birth
+  f98a60d manuscript(0171): land the conclusion on the birth of an economic aggregate
+  c93aee3 Merge pull request #921 from MinhHaDuong/t185-followup-rule9-detector
 
 ## Corpus (v1.1.1)
 
@@ -33,6 +34,6 @@ Test failures: none (prose-ratchet + adherence green). Blockers: none.
 
 ## Next actions
 
-- **Content pass complete (2026-07-08):** the five R&R content children (+0189–0194) all closed. Next: **0171** conclusion → 0181 title → 0134 prose → 0162 em-dash → 0153 resubmit.
-- **Needs author (HITL):** 0152 letter rows; 0143 remaining calls (Golka disconnected from 0135; King-Levine/Aghion-Bolton; Escobar read-later). New UNFCCC PDFs (cancun, biennial) archived locally.
-- Ready now, base-independent: **0161** stats provenance · **0166** lead-lag · **0185** loader arch-rule-9.
+- **0171 conclusion rebuild underway (2026-07-09):** actions 3/1/2 merged (#920/#922/#923). Next: **action 4** Star & Griesemer concede-then-displace (cadre aloud first, "do not louper") → 6 chantiers→`docs/projet livre - pitch.md` → 7 bib anchoring (light, no systematic GDP↔CF comparison — brief). Every 0171 PR is HITL prose (author voice sign-off).
+- **Needs author (HITL):** 0152 letter rows; Escobar read-later before cite (R2.30). Decided: delegate-participation funding not attributed to 1992 (no source).
+- Ready now, base-independent: **0161** stats provenance · **0166** lead-lag.
