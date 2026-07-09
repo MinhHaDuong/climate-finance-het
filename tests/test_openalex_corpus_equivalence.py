@@ -1,29 +1,17 @@
-"""Migration-safety guard: openalex_corpus.retry_get == pipeline_io.retry_get.
+"""Migration-safety guard: pipeline_io.retry_get delegates faithfully to the package.
 
-Ticket 0170 extracts the OpenAlex conventions into the standalone
-``openalex-corpus`` package. Before the host modules are rewired to re-export
-from it (the deferred shim slice), this test freezes the fact that the package
-port is behaviourally identical to the original — same status codes, same
-counter bookkeeping, same injected ``mailto`` param, same raised exceptions —
-when the package is called with ``mailto=MAILTO``.
-
-Once the shim lands, ``pipeline_io.retry_get`` IS the package function and the
-comparison becomes trivially true; the guard remains harmless. Until the
-package is a wired dependency, it is reached via an explicit path insert (the
-package is not yet installed into the host env); the test skips if either side
-is unimportable rather than failing the suite.
+Ticket 0170 extracts the OpenAlex conventions into the ``openalex-corpus``
+package and rewires ``pipeline_io.retry_get`` into a thin shim that injects this
+repo's ``MAILTO`` and User-Agent and delegates to ``openalex_corpus.retry_get``.
+This test freezes the behavioural parity: same status codes, same counter
+bookkeeping, same injected ``mailto`` param, same raised exceptions — asserting
+``pipeline_io.retry_get(...) == openalex_corpus.retry_get(..., mailto=MAILTO)``
+across every retry path. It is the safety net for that shim; if a future edit
+diverges the two, this fails loudly. ``importorskip`` keeps it from breaking a
+suite run in an env where the package is not installed.
 """
 
-import os
-import sys
-
 import pytest
-
-_PKG_SRC = os.path.join(
-    os.path.dirname(__file__), "..", "libs", "openalex-corpus", "src"
-)
-if _PKG_SRC not in sys.path:
-    sys.path.insert(0, _PKG_SRC)
 
 pipeline_io = pytest.importorskip("pipeline_io")
 _pkg = pytest.importorskip("openalex_corpus")
