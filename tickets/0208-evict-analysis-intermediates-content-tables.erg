@@ -1,0 +1,75 @@
+%erg 0.1
+Title: Evict large analysis intermediates out of content/tables/
+Created: 2026-07-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-09T20:30Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Child of tracker 0163 (child of 0131), action 8. `content/tables/` conflates
+two roles: small byte-stable *writing deliverables* (git-tracked, consumed by
+papers) and large *analysis intermediates* (consumed only by other Phase-2
+scripts). The 44 MB of `content/tables/` is ~80% one file. This ticket moves
+the analysis intermediates to an analysis-side derived/scratch directory and
+rewires the producing + consuming Make targets, so `content/tables/` holds only
+writing deliverables.
+
+Kept separate from the `.mk` extraction (sibling 0207) because this is the
+cross-cutting, `make papers`-breaking part: the files sit on grouped targets
+and stamp chains that feed a git-tracked deliverable and the technical report.
+Isolating it makes the risky diff reviewable on its own.
+
+## Relevant files
+- `content/tables/tab_lexical_tfidf.csv` (35 MB) — produced by
+  `Makefile:579` (`compute_lexical.py`); consumed by
+  `scripts/plot_fig_lexical_tfidf.py` → `.lexical_tfidf.stamp` (`Makefile:599`)
+  → **`output/content/technical-report.pdf` prerequisite (`Makefile:680`)**.
+- `content/tables/tab_pole_papers.csv` (3.8 MB) — produced by the grouped
+  `&:` target at `Makefile:478`; consumed by **`tab_venues.md`**
+  (`Makefile:352`, a git-tracked manuscript deliverable) and rules at
+  `Makefile:505`, `543`. The grouped-target coupling is the main trap: every
+  consumer path must move in the same commit.
+- `content/tables/qa_type_report.csv` (3.7 MB) — produced by
+  `scripts/qa_detect_type.py`; no downstream consumer found (QA output only).
+- `.gitignore` lines 33-40 — `content/tables/*` ignore + negations; the evicted
+  files were never negated (already gitignored), so eviction is a path move.
+
+## Actions
+1. Choose an analysis-side derived/scratch dir (e.g. `data/derived/tables/` or
+   an analysis-local path consistent with the DATA_DIR convention — NOT under
+   `content/`). Confirm it is gitignored / DVC-scoped per architecture rules.
+2. Move the three intermediates there; update every producing target
+   (`Makefile:478` grouped `&:`, `579`, `qa_detect_type.py` output path) and
+   every consuming target/script (`plot_fig_lexical_tfidf.py`,
+   `.lexical_tfidf.stamp`, `export_tab_venues.py`, rules at 352/505/543).
+   Follow `.claude/rules/script-io.md`: pass paths via `--output`/`--input`,
+   no hardcoded `content/tables/` in scripts.
+3. Keep DVC scoped to genuine corpus data (0163 action 4) — DVC the moved
+   intermediates only if they must persist across machines.
+
+## Test
+- `make papers` still builds all six PDFs (regression; the load-bearing test).
+- `make -f manuscript.mk output/content/manuscript.pdf` clean-room still passes
+  (tab_venues.md deliverable unaffected by the tab_pole_papers.csv move).
+- Grep guard (mirror the arch-compliance style): assert no script hardcodes
+  `content/tables/tab_lexical_tfidf.csv` / `tab_pole_papers.csv` /
+  `qa_type_report.csv` after the move.
+- Write the failing grep guard first (RED), then move + rewire to green.
+
+## Invariants
+- `make papers` unaffected.
+- `tab_venues.md` still regenerates from the relocated `tab_pole_papers.csv`.
+- `technical-report.pdf` still builds via the relocated `tab_lexical_tfidf.csv`
+  → `.lexical_tfidf.stamp` chain.
+- No writing deliverable leaves `content/tables/`.
+
+## Exit criteria
+- The three analysis intermediates live outside `content/tables/`; all
+  producing + consuming targets updated in one commit.
+- `content/tables/` contains only writing-facing deliverables.
+- `make papers` and the manuscript clean-room build both pass.
+
+Parent tracker: tickets/0163-split-build-remaining-writing-workpackag.erg
