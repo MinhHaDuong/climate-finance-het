@@ -65,27 +65,6 @@ The Makefile knob is `NJOBS` (in `divergence.mk`). Default `-1` uses all cores �
 Submission *records* (cover/decision letters, frozen PDFs, deposit archives) are
 not engine — they live outside the repo under `papiers/<state>/<track>/` (0159).
 
-## Companion pipelines (out of phase contract)
-
-`scripts/het_build_corpus.py`, `het_embed.py`, `het_plot_overlap.py`, and
-`data/het/` are not part of this paper's own build. They generate a citation-
-overlap figure for a different paper, "Un théorème, sept costumes", which
-lives in the sibling repo `polycentric_activity` (its tickets 0011/0027).
-The scripts live here — not there — because this repo already has the
-OpenAlex-crawl and embedding conventions they reuse (`retry_get`,
-`reconstruct_abstract`, `build_text`); duplicating that machinery in the
-other repo was rejected as the worse option (ticket 0167). They read/write
-only `data/het/` (only `seeds.csv` committed, the rest regenerable) and
-never touch `enrich_cache/` or the Phase 1/2 contract files. The figure and
-its methodology note are committed in `polycentric_activity/conception/`,
-not here.
-
-Those reused conventions now live in the `openalex-corpus` package (see below),
-not in `scripts/` directly. Ticket 0170 tracks relocating the `het_*.py`
-scripts to `polycentric_activity` so they consume the package by git source;
-until that lands they remain here, importing the conventions via this repo's
-own `scripts/` re-export shims.
-
 ## Shared conventions package (`libs/openalex-corpus`)
 
 The model-agnostic OpenAlex conventions — `retry_get` (polite HTTP with
@@ -99,8 +78,17 @@ the symbols, so every existing `from utils import …` / `from pipeline_io impor
 call site is unchanged; `pipeline_io.retry_get` is a thin shim that injects this
 repo's `MAILTO` and User-Agent. Behavioural parity is pinned by
 `tests/test_openalex_corpus_equivalence.py`. The package is consumed via a
-non-editable `[tool.uv.sources]` path entry; `polycentric_activity` will consume
-it by git source.
+non-editable `[tool.uv.sources]` path entry.
+
+The package has no external consumers today. It was extracted so a sibling
+paper's pipeline could share these conventions rather than reach into this
+repo's `scripts/`; the concrete case — the embedding-based citation-overlap
+figure for "Un théorème, sept costumes" (`polycentric_activity`) — was retired
+when that paper moved to its own embedding-free swim-lane figure, and its
+`het_*.py` scripts were deleted here (ticket 0170, Move B). A future sibling
+repo would consume the package by git source. `data/het/seeds.csv` is kept:
+`polycentric_activity`'s `conception/het_indirect_citations.py` still reads it
+by path.
 
 ## Data location
 
