@@ -481,6 +481,20 @@ def test_conclusion_engages_star_griesemer_concede_then_displace():
     ), "no displacement — what the boundary-object label does not explain"
 
 
+def test_conclusion_chantiers_migrated_leaving_one_limit():
+    """Ticket 0171 (action 6): the 'work sites' / chantiers list (archival,
+    geographic, legal future-research directions) is migrated to the book project;
+    the conclusion keeps at most one limits line — the recipient-side asymmetry
+    (donors define and measure). Negative guard on the list + one presence."""
+    concl = section("Conclusion").lower()
+    assert "work site" not in concl, (
+        "the chantiers / 'work sites' list is still in the conclusion — migrate it to the book"
+    )
+    assert "recipient countries" in concl or "who define and measure" in concl, (
+        "the one kept limit (recipient-side asymmetry) is missing from the conclusion"
+    )
+
+
 def test_finance_development_lineage_is_situated():
     """Ticket 0139 (R1.5): the mobilisation/leverage vocabulary must be traced to
     its scholarly home, the finance-and-growth literature (King & Levine 1993,
