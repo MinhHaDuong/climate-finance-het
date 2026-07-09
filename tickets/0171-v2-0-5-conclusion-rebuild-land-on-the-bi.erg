@@ -48,7 +48,13 @@ this ticket).
 6. Migrate the « chantiers » to the book project (`docs/projet livre -
    pitch.md`), keeping at most one limits line.
 7. Anchor bibliographically: Popp Berman 2022, Desrosières, history of
-   monetary aggregates (entries via 0143).
+   monetary aggregates (entries via 0143). Candidate history-of-
+   quantification anchors verified and available in main.bib but not yet
+   cited: morgan2007, lepenies2016 (Power of a Single Number / GDP),
+   tooze2001 (Statistics and the German State). Inherited from 0143 on its
+   close (2026-07-09) — pick what serves the aggregate-birth landing;
+   uncited is CI-safe (the cited-works gate is cite⇒available, not
+   entry⇒cited), so no obligation to force all three.
 
 ## Test
 - `/review-pr-prose` brief auditor passes the new conclusion against
