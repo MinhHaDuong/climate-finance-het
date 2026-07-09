@@ -1,0 +1,43 @@
+%erg 0.1
+Title: Audit docs/articles content vs bib title (cited-works test is presence-only)
+Created: 2026-07-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-09T12:09Z HDMX-coding-agent created
+
+--- body ---
+## Context
+While anchoring 0171 action 7 (read-before-cite on Lepenies 2016), the local
+file `docs/articles/lepenies2016.pdf` turned out to be the **wrong book** — its
+content was *Taste as Experience: The Philosophy and Aesthetics of Food*, not
+Lepenies' *The Power of a Single Number*. The bib entry was correct; the PDF was
+a mis-download saved under the wrong key. Caught only because read-before-cite
+forced opening the file. Fixed in PR (correct Columbia UP 2016 PDF swapped in,
+copyright verified).
+
+The gap: `tests/test_cited_works_available.py` gates cite ⇒ *presence* of a
+`file=` PDF, not that the PDF's **content matches the entry**. A wrong file
+passes. `lepenies2016` was uncited, so nothing shipped wrong — but another
+mismatched file under a *cited* key would put a fabricated-in-effect citation in
+the manuscript.
+
+## Actions
+1. One-shot audit: for each `docs/articles/*.pdf` with a bib `file=`, extract the
+   PDF title (pdfinfo metadata + first-page text) and compare, fuzzily, to the
+   bib `title`. Flag mismatches for human check (scanned PDFs have no reliable
+   metadata — expect false positives, human-verify).
+2. Report the mismatch list. Re-acquire/replace the wrong files (human-in-loop,
+   as for Lepenies).
+3. Decide whether a lightweight, non-CI helper is worth keeping (per
+   feedback_no_tool_for_single_use: if this is a one-off, just run it and drop
+   the script; if mismatches are several, keep it as a `make` audit target).
+
+## Test
+- Author-run: the audit script prints a mismatch table; each flagged entry is
+  human-verified against the copyright page (do NOT auto-replace on a fuzzy match).
+
+## Exit criteria
+- [ ] Every cited entry's local PDF confirmed to be the right work (or flagged +
+      re-acquired)
+- [ ] Decision recorded on whether to keep a standing audit helper

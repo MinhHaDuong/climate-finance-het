@@ -481,6 +481,18 @@ def test_conclusion_engages_star_griesemer_concede_then_displace():
     ), "no displacement — what the boundary-object label does not explain"
 
 
+def test_conclusion_gdp_lineage_anchored():
+    """Ticket 0171 (action 7, light anchor): the GDP / aggregate lineage in the
+    conclusion is anchored on @lepenies2016 (GDP as a political number resting on a
+    convention), cited on the analogy line alongside @desrosieres1998. Light anchor
+    only — the analogy justifies the framing, it is not a systematic comparison
+    (brief title-frames-aggregate-birth, analogy-scope decision)."""
+    concl = section("Conclusion")
+    assert "@lepenies2016" in concl, (
+        "the GDP lineage (Lepenies 2016, Power of a Single Number) is not cited on the analogy line"
+    )
+
+
 def test_conclusion_chantiers_migrated_leaving_one_limit():
     """Ticket 0171 (action 6): the 'work sites' / chantiers list (archival,
     geographic, legal future-research directions) is migrated to the book project;
