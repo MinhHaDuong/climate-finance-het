@@ -1,0 +1,64 @@
+%erg 0.1
+Title: Strengthen rule-9 detector to catch variable-path contract reads + migrate 3 offenders
+Created: 2026-07-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-09T09:52Z HDMX-coding-agent created
+
+--- body ---
+## Context
+Ticket 0185 migrated `plot_fig_traditions.py::_load_data()` off a direct
+`pd.read_csv(works_path)` to `load_refined_works()`. That violation had been
+live for a long time yet CI stayed green: the rule-9 detector
+(`tests/test_arch_compliance.py::TestCorpusThroughLoaders._has_direct_contract_read`)
+matches a read call **and** a contract filename on the **same line**, so
+`pd.read_csv(works_path)` — where `works_path` defaults to the
+`refined_works.csv` literal a few lines up — is invisible. A human reviewer
+caught 0185 by eye (PR #876), not the test.
+
+A post-0185 sweep found the identical pattern still live in three Phase-2
+scripts (all default a path variable to the `refined_works.csv` literal, then
+read it via the variable):
+- `scripts/plot_heatmap_communities_clusters.py:270` — `works = pd.read_csv(works_path)`
+- `scripts/plot_fig45_pca_scatter.py:357` — `works = pd.read_csv(works_path)`
+- `scripts/export_citation_coverage.py:37` — `refined = pd.read_csv(refined_path)` (default `REFINED_PATH = .../refined_works.csv`)
+
+(memory: feedback_rule9_detector_variable_path_blindspot)
+
+## Relevant files
+- `tests/test_arch_compliance.py` — `TestCorpusThroughLoaders`, `KNOWN_VIOLATIONS`
+- `scripts/plot_heatmap_communities_clusters.py`, `scripts/plot_fig45_pca_scatter.py`,
+  `scripts/export_citation_coverage.py` — the three offenders
+- `scripts/pipeline_loaders.py` — `load_refined_works()` / `load_refined_citations()`
+
+## Actions
+1. Strengthen the detector: flag a Phase-2 `pd.read_csv`/`np.load`/`read_feather`
+   whose argument is a variable assigned a contract literal anywhere in the
+   function (or, simpler and more robust: flag any Phase-2 direct read not routed
+   through `pipeline_loaders`, then seed the current offenders into
+   `KNOWN_VIOLATIONS`). Prefer the simpler form — it also catches future evasions.
+2. Migrate the three offenders to `load_refined_works()`, mirroring 0185's
+   `cit_path` conditional pattern (explicit `--input` → direct read; default
+   `None` → loader). Remove the newly-dead `CATALOGS_DIR`/`os` imports as 0185 did.
+3. Byte-check each regenerated figure/table on a data-provisioned checkout
+   (`make figures` / the relevant target), or justify the diff analytically as in
+   0185 (the `year` float-coercion is neutralised only where a `if "." in year`
+   label guard exists — verify per script, it is not universal).
+
+## Test
+- First: extend the detector so the three offenders turn red (add a failing
+  assertion / remove them from any implicit exemption), confirming the test now
+  sees variable-path reads. Then migrate to green.
+
+## Verification
+- [ ] Detector flags a `pd.read_csv(var)` contract read (unit test on a fixture)
+- [ ] The three offenders read works through `load_refined_works()`
+- [ ] Each output byte-identical or diff justified; `make check-fast` green
+
+## Invariants
+- Do not weaken any acceptance test. Migrations must preserve figure/table bytes.
+
+## Exit criteria
+- Rule-9 detector catches variable-path contract reads; the three known offenders
+  migrated; `make check-fast` green.
