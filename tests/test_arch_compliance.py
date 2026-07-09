@@ -356,7 +356,6 @@ class TestCorpusThroughLoaders:
         # figure/table byte-check that this checkout cannot run).
         "analyze_unfccc_topics.py",
         "compute_vars.py",
-        "plot_fig1_bars.py",
     }
 
     _CONTRACT_FILES = re.compile(r"refined_works|refined_citations|refined_embeddings")
