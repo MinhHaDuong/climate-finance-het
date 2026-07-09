@@ -1,0 +1,70 @@
+%erg 0.1
+Title: Remove stale OUTPUT_EXEMPT entries (analyze_100bn, export_citation_coverage)
+Created: 2026-07-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-09T13:10Z HDMX-coding-agent created
+
+--- body ---
+## Context
+Surfaced by the /roar anti-pattern sweep after ticket 0203 (PR #934) migrated
+`qa_metadata`/`qa_embeddings` off the hand-rolled module-level `OUTPUT_PATH`.
+The sweep for `^OUTPUT_PATH = ` in `scripts/` turned up five more hits. Three
+(`corpus_merge_citations`, `corpus_ref_match`, `corpus_parse_citations_grobid`)
+are genuine DVC-stage exemptions and stay. The other two are **not** unmigrated —
+they already fully honor a required `--output`:
+
+- `scripts/analyze_100bn.py:388` — `parse_io_args()` + `validate_io(...)`, then
+  `global OUTPUT_PATH; OUTPUT_PATH = io_args.output` (main() rebinds the module
+  constant before writing).
+- `scripts/export_citation_coverage.py:86` — same, rebound at module scope in
+  the `__main__` block; already in `BLACKBOX_SCRIPTS`, smoke-run with `--output`,
+  and its Makefile target already passes `--output $@` (Makefile:350).
+
+Yet both are still listed in `tests/test_script_hygiene.py::OUTPUT_EXEMPT`. The
+exemption is **stale**: `test_all_producing_scripts_accept_output` passes any
+script whose source contains `parse_io_args` (or `--output`), so removing these
+two keeps the test green *and* makes the guard actually assert them — the same
+allowlist-shrink goal that motivated 0196 and 0203.
+
+Each also retains a dead module-level `OUTPUT_PATH = os.path.join(...)` default
+that is always overwritten — a mutable-global smell worth removing in the same PR
+(drop the constant; use `io_args.output` directly, dropping the `global`
+statement in `analyze_100bn.py`).
+
+## Relevant files
+- `tests/test_script_hygiene.py` — remove the two `OUTPUT_EXEMPT` entries.
+- `scripts/analyze_100bn.py` — remove dead `OUTPUT_PATH` constant + `global`.
+- `scripts/export_citation_coverage.py` — remove dead `OUTPUT_PATH` constant.
+
+## Actions
+1. Remove `"analyze_100bn.py"` and `"export_citation_coverage.py"` from
+   `OUTPUT_EXEMPT`.
+2. In each script, delete the module-level `OUTPUT_PATH = os.path.join(...)`
+   constant and write directly to `io_args.output` (in `analyze_100bn.py` drop
+   the `global OUTPUT_PATH` reassignment; thread the path as a local/param).
+3. Confirm no other module still reads the removed constant (grep).
+
+## Test
+- Red first: `tests/test_io_discipline.py::TestQaScriptsUseSharedIo` has no room
+  for these (they are not qa_*), so add a targeted assertion — extend the
+  hygiene guard by removing the exempt entries and let
+  `test_all_producing_scripts_accept_output` cover them; add a source-inspection
+  test asserting neither script contains a module-level `OUTPUT_PATH =` constant.
+
+## Verification
+- [ ] Both removed from `OUTPUT_EXEMPT`; `test_all_producing_scripts_accept_output`
+  passes.
+- [ ] No module-level `OUTPUT_PATH` constant remains in either script.
+- [ ] `export_citation_coverage` smoke test (`BLACKBOX_SCRIPTS`) still green.
+- [ ] `make check-fast` passes.
+
+## Invariants
+- Do not change either script's output content or the Makefile target path
+  (`content/tables/tab_100bn_papers.csv`, `content/tables/tab_citation_coverage.md`).
+- The DVC-stage exemptions (`corpus_*`) stay untouched.
+
+## Exit criteria
+- `OUTPUT_EXEMPT` no longer lists the two scripts; the hardcoded `OUTPUT_PATH`
+  constants are gone; hygiene + smoke tests green.
