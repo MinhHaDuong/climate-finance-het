@@ -2,13 +2,14 @@
 Title: corpus test — direction of circulation: grey vs academic first use of instrument concepts
 Created: 2026-07-07
 Author: HDMX-coding-agent
-Label: deferred
+Closed: deferred to post-submission paper — R&R deliverable (R1.1 narrative) done; full analysis lives in memory seed project_paper_instrument_circulation
 
 --- log ---
 2026-07-07T16:20Z HDMX-coding-agent created — author green light (session 2026-07-07)
 2026-07-09T00:00Z HDMX-coding-agent note single-term pilot (de-risking) exposes a segmentation blocker — from_grey too sparse to detect instrument lead-lag; see Pilot findings + Blocker sections. Not ready for Execute as specified.
 2026-07-09T00:05Z HDMX-coding-agent note DEFERRED (author decision, session 2026-07-09): drop quantitative table from the R&R; use de-risking as a named narrative for R1.1 (see Findings note); spin the full six-term venue-based analysis out as a separate paper (seed filed in memory). Ticket stays open, labelled deferred, for the post-submission paper.
 
+2026-07-09T13:03Z HDMX-coding-agent closed — deferred to post-submission paper — R&R deliverable (R1.1 narrative) done; full analysis lives in memory seed project_paper_instrument_circulation
 --- body ---
 ## Context
 Hypothesis from the scientization literature (Hirschman & Popp Berman 2014:
@@ -69,8 +70,10 @@ methodological burden — the wrong bet against the R&R clock (gated on the 0172
 manuscript rebuild). R1.1 is answered in prose using the Findings note above;
 E3's quantitative footprint is earned elsewhere. The full six-term, venue-based
 instrument-circulation analysis is spun out as a post-submission paper (seed:
-memory `project_paper_instrument_circulation`). Ticket kept open, labelled
-`deferred`, as that paper's entry point.
+memory `project_paper_instrument_circulation`), which is that paper's durable
+entry point — so this ticket closes now rather than lingering as a pseudo-tracker
+(cf. feedback_followup_lets_parent_close). A fresh ticket opens when the paper
+starts.
 
 ## Blocker: segment definition must be redesigned before Execute
 The ticket's segment rule (grey = `from_grey`; academic = the rest) is
