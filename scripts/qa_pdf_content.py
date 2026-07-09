@@ -23,12 +23,13 @@ a CI gate, because scanned PDFs make the flag list inherently human-verified.
 import argparse
 import csv
 import logging
-import os
 import re
 import subprocess
 import sys
 from difflib import SequenceMatcher
 from pathlib import Path
+
+from script_io_args import parse_io_args, validate_io
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
@@ -271,10 +272,12 @@ def print_table(rows, threshold: float):
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "--output", required=True,
-        help="CSV report path (required; full audit including passing entries)",
+    # --output via the shared I/O parser (script-io.md / ticket 0196); the report
+    # is the single required output. Script-specific flags parse from `extra`.
+    io_args, extra = parse_io_args(argv)
+    validate_io(output=io_args.output)
+    parser = argparse.ArgumentParser(
+        description="Audit docs/articles PDF content vs bib title"
     )
     parser.add_argument(
         "--articles-dir", default=DEFAULT_ARTICLES_DIR,
@@ -288,11 +291,7 @@ def main(argv=None):
         "--threshold", type=float, default=0.30,
         help="Flag entries scoring below this (default: 0.30)",
     )
-    args = parser.parse_args(argv)
-
-    out_dir = os.path.dirname(args.output)
-    if out_dir and not os.path.isdir(out_dir):
-        raise FileNotFoundError(f"Output directory does not exist: {out_dir}")
+    args = parser.parse_args(extra)
 
     root = Path(__file__).resolve().parent.parent
     bib_path = Path(args.bib)
@@ -301,9 +300,9 @@ def main(argv=None):
     articles_dir = Path(args.articles_dir)
 
     rows = audit(articles_dir, bib_path, root, DEFAULT_QMD_GLOBS)
-    write_report(rows, args.output)
+    write_report(rows, io_args.output)
     print_table(rows, args.threshold)
-    logger.info("\nFull report written to %s", args.output)
+    logger.info("\nFull report written to %s", io_args.output)
     return 0
 
 
