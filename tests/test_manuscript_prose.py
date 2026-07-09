@@ -184,6 +184,39 @@ def _assert_within_ceiling(name: str, count: int) -> None:
     )
 
 
+# Freshness guard (ticket 0205): the ``count <= ceiling`` ratchets prove the
+# manuscript is *under* each ceiling, never *at* it, so a base rebuild can open a
+# huge gap no test flags (em-dash 132 vs 0 after the v2.0.5 rebuild). This upper
+# bound catches that. The slack tolerates deliberate ai-tells headroom.
+RATCHET_SLACK = 5
+RATCHET_METRICS = ("emdash", "define_by_negation", "conditional_words", "hardcoded_xref")
+
+
+def _ratchet_actuals() -> dict[str, int]:
+    """Current count for each density-ratchet metric, keyed by its ceiling name."""
+    b = body()
+    return {
+        "emdash": count_em_dashes(b),
+        "define_by_negation": len(find_define_by_negation(b)),
+        "conditional_words": len(find_conditional_words(b)),
+        "hardcoded_xref": len(find_hardcoded_xref(b)),
+    }
+
+
+def _live_ceilings() -> dict[str, int]:
+    return {name: _ceiling(name) for name in RATCHET_METRICS}
+
+
+def _find_stale(ceilings: dict[str, int], actuals: dict[str, int], slack: int) -> list[str]:
+    """Metrics whose ceiling exceeds actual by more than ``slack`` (stale)."""
+    return [
+        f"{name}: ceiling {ceilings[name]} vs actual {actuals[name]} "
+        f"(gap {ceilings[name] - actuals[name]})"
+        for name in actuals
+        if ceilings[name] - actuals[name] > slack
+    ]
+
+
 # --------------------------------------------------------------------------- #
 # Live-manuscript guards
 # --------------------------------------------------------------------------- #
@@ -263,6 +296,22 @@ def test_em_dash_paragraph_cap():
     assert not over, (
         f"{len(over)} paragraph(s) exceed the {EM_DASH_PARAGRAPH_CAP}-em-dash "
         f"cap (ticket 0147). Diversify the punctuation:\n{preview}"
+    )
+
+
+def test_ratchet_ceilings_are_fresh():
+    """Ticket 0205: a density-ratchet ceiling sitting more than ``RATCHET_SLACK``
+    above its actual count is stale — it guards nothing near the real value. The
+    v2.0.5 base rebuild once left the em-dash ceiling at 132 against an actual of
+    0, and define-by-negation at 20 against 0, while the ``count <= ceiling`` suite
+    stayed green (ticket 0134/0162, #935). This upper guard fails loudly instead,
+    and names the remedy. Distinct from the lower ``count <= ceiling`` ratchets,
+    which stay in force; the intentional ai-tells budgets (define-by-negation 3,
+    conditional-words 5) sit within the slack and pass."""
+    stale = _find_stale(_live_ceilings(), _ratchet_actuals(), RATCHET_SLACK)
+    assert not stale, (
+        "stale ratchet ceiling(s) — re-cut tests/data/<metric>_ceiling.txt toward "
+        "the actual count (ticket 0205):\n  " + "\n  ".join(stale)
     )
 
 
@@ -599,6 +648,13 @@ def test_fang_conditional_words():
     words = [c["word"] for c in _ai_tells()["conditional_words"]]
     bad = " ".join(f"the {w} result" for w in words)
     assert len(find_conditional_words(bad)) == len(words)
+
+
+def test_fang_ratchet_freshness():
+    # Boundary: a gap equal to the slack is fresh; one beyond it is stale.
+    actual = {"emdash": 0}
+    assert not _find_stale({"emdash": RATCHET_SLACK}, actual, RATCHET_SLACK)
+    assert _find_stale({"emdash": RATCHET_SLACK + 1}, actual, RATCHET_SLACK)
 
 
 def test_fang_em_dash_count():
