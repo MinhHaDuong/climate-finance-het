@@ -5,6 +5,7 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-07-07T16:20Z HDMX-coding-agent created — author green light (session 2026-07-07)
+2026-07-09T00:00Z HDMX-coding-agent note single-term pilot (de-risking) exposes a segmentation blocker — from_grey too sparse to detect instrument lead-lag; see Pilot findings + Blocker sections. Not ready for Execute as specified.
 
 --- body ---
 ## Context
@@ -28,6 +29,43 @@ provenance booleans; term matching runs on title+abstract+keywords (same
 text contract as the embeddings). Segment definition (grey = `from_grey`;
 academic = indexed sources without grey flag) must be stated in the table
 caption and tested.
+
+## Pilot findings — de-risking (2026-07-09)
+Single-term pilot on the real corpus (regex `\bde[-\s]?risk`, matched on
+title+abstract+keywords — the embedding text contract):
+- 98 works mention de-risk*. First attestation 2012, reaches k≥3 in 2014,
+  climbs to 27 in 2025.
+- The `from_grey` segment (208 rows total, median year 2021) contains
+  **zero** de-risking hits. All 98 fall in the "academic" bucket.
+- Yet the two earliest attestations are plainly institutional:
+  2012 = Climate Policy Initiative report "Moving the Fulcrum: A Primer on
+  Public Climate Financing Instruments…" (OpenAlex-indexed, `from_grey=False`);
+  2013 = a rural-electrification practitioner case study. The Nature Climate
+  Change academic framing arrives only in 2014. The term itself was coined
+  institutionally (UNDP DREI, ~2013).
+
+Interpretation: the *content* corroborates Hirschman & Popp Berman (instruments
+surface in institutional/practice channels first), but the corpus's `from_grey`
+boolean is blind to it — OpenAlex indexes grey literature and files it as
+academic, so early institutional documents land in the wrong segment.
+
+## Blocker: segment definition must be redesigned before Execute
+The ticket's segment rule (grey = `from_grey`; academic = the rest) is
+structurally unable to detect instrument-term lead-lag: `from_grey` captures
+~0.7% of the corpus (208/30987) and specifically misses the early institutional
+documents where instruments first appear. Options, recommend (1):
+1. **Venue-based classification** — reclassify by journal/host string:
+   working-paper servers (SSRN), institutional repositories (DSpace), IGO/NGO
+   report series → grey; peer-reviewed journals → academic. This is where the
+   signal lives, and it needs no Phase-1 rerun.
+2. Enrich `from_grey` upstream (Phase 1) to catch OpenAlex-indexed institutional
+   sources — heavier, touches the corpus contract.
+3. Reframe as practitioner/applied-venue vs theory-venue (the grey documents
+   that *are* flagged are recent, median 2021, so a source-flag split can't see
+   the early window either way).
+
+Next step before coding: prototype (1) on de-risking to confirm it recovers the
+institutional-first ordering, then generalise the venue map.
 
 ## Method sketch (Execute refines)
 - Term list and match patterns (incl. spelling variants, EN minimum;
@@ -53,6 +91,8 @@ lead values match hand-computed expectations, and that the output
 validates against the new schema.
 
 ## Exit criteria
+- [ ] Segment definition redesigned (venue-based) and validated on de-risking —
+      pilot confirms it recovers institutional-first ordering (see Blocker)
 - [ ] Term list + patterns in `config/analysis.yaml`
 - [ ] `compute_term_leadlag.py` + schema + passing tests (unit + io-discipline)
 - [ ] Output table generated from the real corpus, committed under
