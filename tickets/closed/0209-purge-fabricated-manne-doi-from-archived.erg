@@ -2,10 +2,12 @@
 Title: Purge fabricated manne DOI from archived detect_traditions_v3 + standing class guard
 Created: 2026-07-09
 Author: HDMX-coding-agent
+Closed: Fabricated manne DOI purged from detect_traditions_v3; standing class guard added scanning all scripts/**/*.py
 
 --- log ---
 2026-07-09T20:19Z HDMX-coding-agent created
 
+2026-07-09T22:13Z HDMX-coding-agent closed — Fabricated manne DOI purged from detect_traditions_v3; standing class guard added scanning all scripts/**/*.py
 --- body ---
 ## Context
 The LLM-fabricated DOI `10.1016/0301-4215(92)90024-V` (an unrelated energy-demand
