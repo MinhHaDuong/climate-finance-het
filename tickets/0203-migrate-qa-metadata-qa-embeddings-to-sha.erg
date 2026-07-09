@@ -2,12 +2,10 @@
 Title: Migrate qa_metadata + qa_embeddings to shared script-io
 Created: 2026-07-09
 Author: HDMX-coding-agent
-Closed: migrated qa_metadata + qa_embeddings to shared script-io; OUTPUT_EXEMPT shrunk
 
 --- log ---
 2026-07-09T12:28Z HDMX-coding-agent created
 
-2026-07-09T12:45Z HDMX-coding-agent closed — migrated qa_metadata + qa_embeddings to shared script-io; OUTPUT_EXEMPT shrunk
 --- body ---
 ## Context
 Surfaced by the /roar sweep after ticket 0196 (PR #929) migrated the
