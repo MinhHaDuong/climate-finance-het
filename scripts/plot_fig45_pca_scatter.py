@@ -24,13 +24,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from pipeline_loaders import load_refined_works
+from script_io_args import parse_io_args, validate_io
 from sklearn.decomposition import PCA
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.mixture import GaussianMixture
-from script_io_args import parse_io_args, validate_io
 from utils import (
-    BASE_DIR,
-    CATALOGS_DIR,
     get_logger,
     load_analysis_config,
     load_analysis_periods,
@@ -333,10 +332,7 @@ def main():
     out_dir = os.path.dirname(io_args.output)
     os.makedirs(out_dir or ".", exist_ok=True)
 
-    works_path = (
-        io_args.input[0] if io_args.input
-        else os.path.join(CATALOGS_DIR, "refined_works.csv")
-    )
+    works_path = io_args.input[0] if io_args.input else None
     emb_path = (
         io_args.input[1] if io_args.input and len(io_args.input) >= 2
         else None
@@ -354,7 +350,10 @@ def main():
     _year_min = _cfg["periodization"]["year_min"]
     _year_max = _cfg["periodization"]["year_max"]
 
-    works = pd.read_csv(works_path)
+    if works_path is not None:
+        works = pd.read_csv(works_path)
+    else:
+        works = load_refined_works()
     works["year"] = pd.to_numeric(works["year"], errors="coerce")
     has_title = works["title"].notna() & (works["title"].str.len() > 0)
     in_range = (works["year"] >= _year_min) & (works["year"] <= _year_max)

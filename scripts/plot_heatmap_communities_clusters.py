@@ -24,12 +24,11 @@ from collections import defaultdict
 
 import numpy as np
 import pandas as pd
+from pipeline_loaders import load_refined_works
 from plot_style import DARK, DPI, MED, apply_style
 from scipy.sparse import lil_matrix
 from script_io_args import parse_io_args, validate_io
 from utils import (
-    BASE_DIR,
-    CATALOGS_DIR,
     get_logger,
     load_analysis_config,
     load_cluster_labels,
@@ -230,10 +229,7 @@ def _render_heatmap(heatmap_data, cluster_short, out_stem, pdf):
 
 def _resolve_inputs(input_list):
     """Resolve works, embeddings, and citations paths from --input."""
-    works_path = (
-        input_list[0] if input_list
-        else os.path.join(CATALOGS_DIR, "refined_works.csv")
-    )
+    works_path = input_list[0] if input_list else None
     emb_path = input_list[1] if input_list and len(input_list) >= 2 else None
     cit_path = input_list[2] if input_list and len(input_list) >= 3 else None
     return works_path, emb_path, cit_path
@@ -267,7 +263,10 @@ def main():
     log.info("=" * 70)
 
     log.info("--- Step 1: Load data and run KMeans ---")
-    works = pd.read_csv(works_path)
+    if works_path is not None:
+        works = pd.read_csv(works_path)
+    else:
+        works = load_refined_works()
     works["year"] = pd.to_numeric(works["year"], errors="coerce")
 
     _cfg = load_analysis_config()

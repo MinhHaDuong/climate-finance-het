@@ -12,6 +12,7 @@ Usage:
 import os
 
 import pandas as pd
+from pipeline_loaders import load_refined_works
 from script_io_args import parse_io_args, validate_io
 from utils import (
     BASE_DIR,
@@ -24,7 +25,6 @@ from utils import (
 
 log = get_logger("export_citation_coverage")
 
-REFINED_PATH = os.path.join(CATALOGS_DIR, "refined_works.csv")
 CITATIONS_PATH = os.path.join(CATALOGS_DIR, "citations.csv")
 OUTPUT_PATH = os.path.join(BASE_DIR, "content", "tables", "tab_citation_coverage.md")
 
@@ -33,8 +33,11 @@ _period_tuples, _period_labels = load_analysis_periods()
 PERIODS = [(label, start, end) for label, (start, end) in zip(_period_labels, _period_tuples)]
 
 
-def main(refined_path=REFINED_PATH, citations_path=CITATIONS_PATH):
-    refined = pd.read_csv(refined_path, low_memory=False)
+def main(refined_path=None, citations_path=CITATIONS_PATH):
+    if refined_path is not None:
+        refined = pd.read_csv(refined_path, low_memory=False)
+    else:
+        refined = load_refined_works()
     citations = pd.read_csv(citations_path, usecols=["source_doi"], low_memory=False)
 
     # Normalize DOIs for matching
@@ -85,6 +88,6 @@ if __name__ == "__main__":
     OUTPUT_PATH = io_args.output
     inputs = io_args.input or []
     main(
-        refined_path=inputs[0] if len(inputs) > 0 else REFINED_PATH,
+        refined_path=inputs[0] if len(inputs) > 0 else None,
         citations_path=inputs[1] if len(inputs) > 1 else CITATIONS_PATH,
     )

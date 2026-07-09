@@ -1,0 +1,69 @@
+%erg 0.1
+Title: Harden rule-9 variable-path detector against over-match false positives
+Created: 2026-07-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-09T12:20Z HDMX-coding-agent created
+
+--- body ---
+## Context
+Ticket 0198 (PR #927) strengthened the rule-9 detector
+(`tests/test_arch_compliance.py::TestCorpusThroughLoaders._contract_bound_vars`)
+to catch variable-path contract reads — fixing the *under*-matching blind spot
+that let a live violation ship green (0185). Two independent /gaze reviewers then
+reproduced three *over*-matching false positives in the new whole-source alias
+fixpoint. All are **dormant** today (green CI proves no current script triggers
+them) and all fail in the safe direction — a future false positive is a loud CI
+failure a developer sees immediately, never a silent wrong-ship. They are
+out of 0198's scope (under-match fix), hence this follow-up.
+
+The defect class: `_contract_bound_vars` has no lexical awareness of comments,
+strings, reassignment, or call-vs-binding context.
+
+1. **Taint never decays on reassignment.** A name added to `bound` is never
+   removed. Reproduced fixture:
+   ```
+   path = os.path.join(CATALOGS_DIR, 'refined_works.csv')
+   df1 = pd.read_csv(path)
+   path = os.path.join(TABLES_DIR, 'tab_venues.csv')   # reused name, different file
+   df2 = pd.read_csv(path)                              # falsely flagged
+   ```
+2. **Alias pass scans comments.** `_ALIAS.finditer` runs over raw `source`; the
+   main read scan skips `#`-lines but the alias pass does not, so a commented
+   `# legacy = works_path` taints `legacy`.
+3. **Alias pass fires on keyword arguments.** `_ALIAS`'s `ident=ident` pattern
+   matches call-site kwargs (`helper(low_memory=works_path)`), spuriously binding
+   the kwarg name.
+
+## Relevant files
+- `tests/test_arch_compliance.py` — `_contract_bound_vars`, `_ALIAS`, `_ASSIGN`
+
+## Actions
+1. Strip `#`-comments before the alias/assignment passes (reuse the main scan's
+   comment filter).
+2. Anchor `_ALIAS` to statement-start (an assignment / def-default), not any
+   `ident=ident` anywhere on a line, so call-site kwargs don't bind.
+3. Decide the reassignment-decay question: either drop taint on a later
+   non-contract assignment to the same name, or accept it and document why
+   (a per-function scope reset may be simpler than flow-sensitive decay).
+
+## Test
+- First: add three fixtures pinning the intended NON-detection (each of the
+  three cases above must return False), confirming they fail red against the
+  current fixpoint. Then harden to green.
+
+## Verification
+- [ ] Reassignment fixture: non-contract read after name reuse → NOT flagged
+- [ ] Comment fixture: aliased-in-comment name → NOT flagged
+- [ ] Kwarg fixture: kwarg name matching a bound name → NOT flagged
+- [ ] The three real 0198 offenders + the 4 in KNOWN_VIOLATIONS still flagged
+      (no under-match regression); `make check-fast` green
+
+## Invariants
+- Must not reintroduce the 0185/0198 under-match blind spot: every currently
+  caught variable-path read stays caught.
+
+## Exit criteria
+- The three over-match false positives are fixed with pinning fixtures, no
+  under-match regression, `make check-fast` green.
