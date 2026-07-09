@@ -379,6 +379,39 @@ def test_loss_and_damage_is_a_bounded_thesis_limit():
     assert "negishi" in ld, "coalition note does not link back to the effort-sharing tradition"
 
 
+def test_loss_and_damage_is_the_falsifiable_test_in_the_conclusion():
+    """Ticket 0171 (action 3, formulation b): the loss-and-damage payoff must land
+    as an explicit falsifiable test *in the conclusion* — the regime is predicted
+    to absorb L&D into the mobilisation/accounting template rather than adjudicated
+    liability, with a stated way the thesis could be wrong, anchored on the
+    documentary fact that the regime already forecloses the liability logic (Paris
+    decision 1/CP.21 para 51, @unfccc2015paris). And it must land ONCE: the
+    forward-looking bifurcation must NOT also sit in the §3 'Loss and damage'
+    subsection (single-landing — §3 keeps the anomaly, the conclusion owns the
+    test). Mechanical presence + negative single-landing guard; no phrasing pinned.
+    """
+    concl_raw = section("Conclusion")
+    concl = concl_raw.lower()
+    assert "liability" in concl, (
+        "the conclusion does not name the liability logic L&D would require to break the thesis"
+    )
+    assert "@unfccc2015paris" in concl_raw, (
+        "the liability-foreclosure anchor (Paris decision 1/CP.21 para 51) is not cited "
+        "in the conclusion"
+    )
+    assert re.search(
+        r"falsif|refut|would be wrong|could be wrong|test of the (thesis|reading|claim)|"
+        r"embarrass|prediction",
+        concl,
+    ), "the conclusion does not frame loss and damage as a falsifiable test of the thesis"
+    # single-landing: the forward-looking bifurcation must have left the §3 subsection
+    ld = section("Loss and damage").lower()
+    assert not re.search(r"how far the settlement can stretch|on that answer rides", ld), (
+        "the forward-looking bifurcation is still duplicated in the §3 subsection; "
+        "it must land only in the conclusion"
+    )
+
+
 def test_finance_development_lineage_is_situated():
     """Ticket 0139 (R1.5): the mobilisation/leverage vocabulary must be traced to
     its scholarly home, the finance-and-growth literature (King & Levine 1993,
