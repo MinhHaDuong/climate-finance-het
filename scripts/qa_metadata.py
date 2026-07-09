@@ -12,10 +12,11 @@ Checks:
 
 Reports proportions with 95% Wilson confidence intervals.
 
-Saves results to content/tables/qa_metadata_report.json
+Saves the JSON report to the caller-supplied --output path.
 
 Usage:
-    uv run python scripts/qa_metadata.py [--sample-n 100] [--seed 42]
+    uv run python scripts/qa_metadata.py --output content/tables/qa_metadata_report.json
+        [--sample-n 100] [--seed 42]
 """
 
 import argparse
@@ -30,14 +31,12 @@ import numpy as np
 import pandas as pd
 import requests
 from scipy.stats import binomtest
+from script_io_args import parse_io_args, validate_io
 from utils import CATALOGS_DIR, MAILTO, get_logger, normalize_doi
 
 log = get_logger("qa_metadata")
 
 HEADERS = {"User-Agent": f"ClimateFinancePipeline/1.0 (mailto:{MAILTO})"}
-OUTPUT_PATH = os.path.join(
-    os.path.dirname(__file__), "..", "content", "tables", "qa_metadata_report.json"
-)
 
 CROSSREF_DELAY = 0.15  # seconds between Crossref API calls
 DOI_RESOLVE_TIMEOUT = 15  # seconds for DOI resolution HEAD request
@@ -372,6 +371,8 @@ def _valid_doi(s):
 
 
 def main():
+    io_args, extra = parse_io_args()
+    validate_io(output=io_args.output)
     parser = argparse.ArgumentParser(
         description="QA metadata: spot-check titles/years against Crossref"
     )
@@ -389,7 +390,7 @@ def main():
         default=os.path.join(CATALOGS_DIR, "refined_works.csv"),
         help="Works CSV (default: refined_works.csv)"
     )
-    args = parser.parse_args()
+    args = parser.parse_args(extra)
 
     # ── Load data ─────────────────────────────────────────────────────────────
     if not os.path.isfile(args.works_input):
@@ -426,10 +427,9 @@ def main():
                           doi_counters, doi_details,
                           no_doi_counters, no_doi_details)
 
-    os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
-    with open(OUTPUT_PATH, "w") as f:
+    with open(io_args.output, "w") as f:
         json.dump(report, f, indent=2)
-    log.info("Report saved to: %s", OUTPUT_PATH)
+    log.info("Report saved to: %s", io_args.output)
 
     log_mismatches(doi_details)
 

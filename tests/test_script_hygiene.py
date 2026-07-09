@@ -1057,10 +1057,9 @@ class TestOutputFlag:
         # QA reporters (stdout / fixed JSON)
         # qa_citations.py, qa_bibliography.py, qa_missing_references.py migrated
         # to parse_io_args with required --output (ticket 0196) — no longer exempt.
+        # qa_embeddings.py, qa_metadata.py migrated likewise (ticket 0203).
         "qa_detect_language.py",
         "qa_detect_type.py",
-        "qa_embeddings.py",
-        "qa_metadata.py",
         "qa_word_count.py",
         "qa_llm_judge_guards.py",
         # Catalog harvesters (DVC-managed)

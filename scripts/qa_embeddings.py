@@ -7,10 +7,11 @@ nearest-neighbour spot-check for human inspection.
 
 No API calls — all computation is local (numpy/scipy on refined_embeddings.npz).
 
-Saves results to content/tables/qa_embeddings_report.json
+Saves the JSON report to the caller-supplied --output path.
 
 Usage:
-    uv run python scripts/qa_embeddings.py [--n-pairs 200] [--n-neighbours 5] [--seed 42]
+    uv run python scripts/qa_embeddings.py --output content/tables/qa_embeddings_report.json
+        [--n-pairs 200] [--n-neighbours 5] [--seed 42]
 """
 
 import argparse
@@ -20,6 +21,7 @@ import os
 import numpy as np
 import pandas as pd
 from scipy import stats
+from script_io_args import parse_io_args, validate_io
 from utils import (
     CATALOGS_DIR,
     REFINED_EMBEDDINGS_PATH,
@@ -30,9 +32,6 @@ from utils import (
 log = get_logger("qa_embeddings")
 
 CLUSTERS_PATH = os.path.join(CATALOGS_DIR, "semantic_clusters.csv")
-OUTPUT_PATH = os.path.join(
-    os.path.dirname(__file__), "..", "content", "tables", "qa_embeddings_report.json"
-)
 
 
 # ---------------------------------------------------------------------------
@@ -306,6 +305,8 @@ def find_nearest_neighbours(
 # ---------------------------------------------------------------------------
 
 def main():
+    io_args, extra = parse_io_args()
+    validate_io(output=io_args.output)
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--n-pairs", type=int, default=200,
                         help="Number of pairs to sample for within/between test (default: 200)")
@@ -313,7 +314,7 @@ def main():
                         help="Number of nearest neighbours per landmark (default: 5)")
     parser.add_argument("--seed", type=int, default=42,
                         help="Random seed for reproducibility (default: 42)")
-    args = parser.parse_args()
+    args = parser.parse_args(extra)
 
     rng = np.random.default_rng(args.seed)
 
@@ -343,10 +344,9 @@ def main():
         },
     }
 
-    os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
-    with open(OUTPUT_PATH, "w") as f:
+    with open(io_args.output, "w") as f:
         json.dump(report, f, indent=2)
-    log.info("Report saved to %s", OUTPUT_PATH)
+    log.info("Report saved to %s", io_args.output)
 
 
 if __name__ == "__main__":
