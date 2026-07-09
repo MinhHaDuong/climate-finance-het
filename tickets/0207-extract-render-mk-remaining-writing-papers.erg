@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-09T20:30Z HDMX-coding-agent created
 
+2026-07-09T20:34Z note Read-first falsified the manuscript-symmetry assumption: the 4 papers' vars/figures/tables are live data-derived, none git-tracked. Author chose freeze-all-four staged, data-paper first. Recorded decision + compute_vars.py pinning consequence + freshness-guard follow-up.
 --- body ---
 ## Context
 
@@ -54,6 +55,29 @@ test below.
    Pandoc — no `uv`, no `dvc` client, no data.
 4. Keep the top-level `Makefile` render targets working by `-include`-ing the
    new `.mk` files, exactly as `manuscript.mk`/`multilayer-detection.mk` are.
+
+## Decision (2026-07-09, author) — freeze scope + staging
+
+Read-first inspection falsified this ticket's original symmetry assumption: the
+manuscript went clean-room because it is a FROZEN submission (`manuscript-vars.yml`
+pinned to v1.0, figures + `tab_venues.md` committed). The other four papers are
+LIVE: their `*-vars.yml` are `compute_vars.py` outputs from `$(REFINED)`, their
+figures/tables are live `plot_*`/`export_*` outputs — NONE git-tracked. Only the
+shared `_includes/*.md` are committed.
+
+Author decision (AskUserQuestion, 2026-07-09): clean-room all four, delivered
+per-paper starting with **data-paper** (clearest submission case; RDJ4HSS). The
+"do not freeze" option was explicitly rejected.
+
+Consequence to honor per paper: to make `<paper>-vars.yml` findable in a data-less
+build it must be pulled OUT of the `compute_vars.py` grouped `&:` target
+(`COMPUTED_STATS`) and pinned, exactly as `manuscript-vars.yml` already is. Frozen
+numbers then stop tracking the corpus until re-frozen — a freshness-guard follow-up
+(cf. 0205's ratchet-freshness guard) should fail when a frozen deliverable drifts
+from a regeneration. File that follow-up; do not block this ticket on it.
+
+Staging: data-paper first (its own PR, proof), then multilayer, then
+technical-report + corpus-report. 0207 stays open until all four land.
 
 ## Test
 For EACH of the four papers, in a data-less worktree (no `uv`, no data pull):
