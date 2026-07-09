@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-06-28T19:43Z HDMX-coding-agent created
 
+2026-07-09T20:00Z note Re-homed 0131 exit criterion 4 (README writing-toolchain spec) into exit criteria; corrected stale 'can close once children land' framing now that 0131 closed via #948.
 --- body ---
 ## Context
 
@@ -49,6 +50,11 @@ only Quarto + TeX (no uv, no data) — the proof manuscript.mk already passes.
 ## Exit criteria
 - One `<wp>.mk` + profile per remaining paper, each buildable clean-room.
 - Analysis intermediates evicted from content/tables/; targets updated.
-- 0131 can close once all children land.
+- Writing-toolchain spec documented in README (0131 exit criterion 4,
+  re-homed here): the clean-room writing build needs only Quarto + TeX Live
+  + Pandoc — no `uv`, no `dvc` client, no data (0131 action 9 scoped DVC to
+  corpus data only).
 
-Parent tracker: tickets/0131-split-build-by-workpackage.erg
+Parent tracker: tickets/0131-split-build-by-workpackage.erg (CLOSED #948 —
+0131 closed rather than held open as a single-child pseudo-tracker; this
+ticket carries all remaining scope).
