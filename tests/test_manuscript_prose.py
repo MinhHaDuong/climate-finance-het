@@ -436,6 +436,28 @@ def test_conclusion_lands_on_aggregate_birth():
     )
 
 
+def test_abandonment_of_precision_is_displacement_not_repeal():
+    """Ticket 0171 (action 2): the Article 4.3 -> aggregate trajectory must read as a
+    result — a displacement of the centre of gravity — not as repeal. The 1992
+    obligation is stated to persist (Article 4.3 still binds / still operates), and
+    the conclusion must not claim the aggregate 'replaces' the earlier logic. This
+    keeps the conclusion consistent with the body's 'extended, not repealed'
+    (@sec-crystallization). Mechanical presence + negative guard; no phrasing pinned.
+    """
+    concl = section("Conclusion")
+    concll = concl.lower()
+    assert "4.3" in concl, "the persisting Article 4.3 obligation is not named in the conclusion"
+    assert re.search(
+        r"never rescinded|not (been )?rescinded|still binds|still operates|does not repeal|"
+        r"not (a )?repeal|overlay",
+        concll,
+    ), "the conclusion does not state that the precise 1992 obligation persists (displacement, not repeal)"
+    assert not re.search(r"replaces the logic of reimbursing", concll), (
+        "the trajectory still claims the aggregate 'replaces' the earlier logic — an overclaim, "
+        "since Article 4.3 was never rescinded"
+    )
+
+
 def test_finance_development_lineage_is_situated():
     """Ticket 0139 (R1.5): the mobilisation/leverage vocabulary must be traced to
     its scholarly home, the finance-and-growth literature (King & Levine 1993,

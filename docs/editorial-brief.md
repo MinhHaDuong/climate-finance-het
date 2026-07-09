@@ -57,7 +57,14 @@ conclusion its landing (conditions of aggregate birth: a political number
 fixed before the object, a pre-existing statistical infrastructure,
 economists under constraint).
 
-**Ticket:** 0165 (base decision); `docs/notes-vannes-2026-07.md` §1, §4.
+**Scope of the analogy (author, 2026-07-09):** keep the GDP / monetary-aggregates
+analogy *light* — cherry-pick the main results of the history-of-quantification
+literature (Desrosières, Lepenies on GDP, Morgan/Tooze on aggregates) to *justify*
+the aggregate-birth framing, but do **not** develop a systematic GDP ↔ climate-finance
+comparison. The analogy licenses the framing; it is not itself a section of the paper.
+
+**Ticket:** 0165 (base decision); 0171 (conclusion landing, action 7 bib anchoring);
+`docs/notes-vannes-2026-07.md` §1, §4.
 
 **Status:** active
 
