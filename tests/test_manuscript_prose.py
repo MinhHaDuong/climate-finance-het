@@ -145,7 +145,7 @@ HARDCODED_XREF_RE = re.compile(
     r"\b(?:Figures?|Tables?|Fig\.|Equations?|Eq\.)\s+\d+", re.IGNORECASE
 )
 
-EM_DASH_PARAGRAPH_CAP = 4  # local clustering cap; reviewer pass (0134) ratchets toward 2
+EM_DASH_PARAGRAPH_CAP = 2  # local clustering cap at the ai-tells target (max_per_paragraph: 2)
 
 
 def find_define_by_negation(text: str) -> list[str]:
