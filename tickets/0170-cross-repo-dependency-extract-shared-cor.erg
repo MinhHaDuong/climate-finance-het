@@ -8,6 +8,8 @@ Author: HDMX-coding-agent
 
 2026-07-08T11:15Z claude note DECISION: extract. The recurrence question is answered -- the HET figure pipeline in polycentric_activity is expanding (swim-lane figure, Louvain community detection, venue-lane binning), reusing the OpenAlex-crawl/embedding conventions each time; not a one-off. Measured the reuse surface and blast radius (body below), and added an execution spec. Deferred label removed: this is now ready for a coding agent. Execution stays in a future session.
 
+2026-07-09T00:00Z claude note REVISED after a deep architecture review grounded in the code. Three corrections. (1) The 2026-07-08 plan extracted a package but LEFT het_*.py squatting in this repo -- that is the actual smell (paper B's pipeline in paper A's engine repo), and a package without relocation is strictly worse (more parts, same smell). Clean = 3 moves: relocate het_*.py to polycentric, extract the convention layer, inject the constants. (2) Boundary corrected: het_embed uses a DIFFERENT, cheaper model (paraphrase-multilingual-MiniLM-L12-v2, not bge-m3 -- see its own docstring), so the embedding spaces are deliberately non-comparable; what is shared is the model-agnostic canonical-text convention, so build_text + its helper is_boilerplate_abstract MUST be single-source (in the package), not duplicated. (3) MAILTO/OPENALEX_API_KEY are deployment config, not convention -- inject as params, do not ship. Also: normalize_doi is defined in pipeline_text.py, not utils.py (the 2026-07-08 table mislabelled it; utils.py only re-exports). Repo topology now decided (was deferred): libs/ path package owned by THIS repo, git-sourced by polycentric.
+
 --- body ---
 ## Context
 Ticket 0167 (PR #860) added `scripts/het_*.py` to this repo to generate a
@@ -38,6 +40,16 @@ rather than one repo's paper pipeline reaching into another repo's
 `scripts/`. Author wants to think about this more before deciding — this
 ticket tracks the question, not a plan to execute.
 
+Precise statement of the smell (2026-07-09 review): there is **no live
+cross-repo Python import today**. The `het_*.py` scripts physically live in
+*this* repo and are run here; polycentric_activity references this repo only
+by an absolute path to a data file (`data/het/seeds.csv`), not by import.
+The `het_*.py` scripts are also **not in this repo's Makefile** — they are
+orphan scripts. So the disease is not a fragile import contract (that only
+materialises *after* a migration); it is that **paper B's build pipeline
+squats in paper A's engine repo**. The cure is therefore relocation first,
+sharing second — not sharing alone.
+
 ## Relevant files
 - `scripts/utils.py`, `scripts/enrich_embeddings.py` — the modules
   `het_*.py` imports from
@@ -45,75 +57,160 @@ ticket tracks the question, not a plan to execute.
 - `.claude/rules/architecture.md` §"Companion pipelines" — current
   (in-place-reuse) rationale, would need revision if this is acted on
 
-## Decision (2026-07-08)
-Extract. The three open questions resolve as follows:
+## Decision (2026-07-08, revised 2026-07-09)
+Clean up, not just extract. The clean end-state is **three moves**; the
+2026-07-08 plan did only the middle one and would have left the smell in
+place (see revision log). The open questions resolve as follows:
+
 - **Recur?** Yes. The polycentric_activity HET figure work is growing
   (field swim-lane figure, Louvain community detection on the citation
   graph, venue→lane binning), each reusing the same OpenAlex-crawl and
-  embedding-text conventions. The one-off assumption is void.
-- **Boundary?** The OpenAlex + embedding-text layer only — not the
-  `pipeline_loaders`/`pipeline_io` domain modules. Concretely the six
-  symbols the HET scripts actually import: `retry_get`,
-  `reconstruct_abstract`, `normalize_doi`, `build_text`, and the two
-  constants `MAILTO`, `OPENALEX_API_KEY`. `get_logger` stays out (see
-  blast radius); the package uses stdlib `logging.getLogger`.
-- **Packaging?** A small standalone package both repos depend on via a
-  uv source (`[tool.uv.sources]` — this repo already uses that block).
-  Local path dependency during development; git source once it stabilises.
-  No PyPI.
+  canonical-text conventions. The one-off assumption is void. (Caveat: the
+  *growth* — community detection, venue binning — needs graph code, not the
+  carved symbols; the shared surface itself is small and roughly stable at
+  the five symbols below.)
+
+- **Relocate?** Yes — this is the move that actually removes the smell.
+  `het_build_corpus.py`, `het_embed.py`, `het_plot_overlap.py` are paper B's
+  pipeline; they move to `polycentric_activity`. Nothing "companion" remains
+  in this repo's `scripts/`. Extraction without relocation is strictly worse
+  than today (a new package *plus* the same orphan scripts).
+
+- **Boundary?** The OpenAlex-crawl + canonical-text layer — not the
+  `pipeline_loaders` domain modules, not the embedding *model*. Five symbols:
+  `retry_get`, `reconstruct_abstract`, `normalize_doi`, `build_text`, and
+  `build_text`'s helper `is_boilerplate_abstract` (34 lines incl. its
+  junk-phrase list — it rides along, the 2026-07-08 plan missed it).
+  - `build_text` **is** in scope: het_embed uses a *different, cheaper*
+    model (`paraphrase-multilingual-MiniLM-L12-v2`, its docstring says the
+    vectors are not for quantitative claims), so the embedding spaces are
+    deliberately non-comparable. What both pipelines share is the
+    *model-agnostic canonical-text convention* ("what string represents a
+    work"). Once the scripts live in different repos, that convention must be
+    single-source — duplicating it reintroduces the silent drift we are
+    killing.
+  - `MAILTO`, `OPENALEX_API_KEY` are **out** — deployment config, not
+    convention. The package functions take them as parameters; each repo
+    supplies its own from its own `.env`. Shipping the constants couples the
+    package to a particular env layout.
+  - `get_logger` stays out; the package uses stdlib `logging.getLogger`.
+
+- **Packaging / topology?** (Was deferred — now decided.) A `libs/openalex-corpus/`
+  **path package inside THIS repo**, owned here because this is where the
+  conventions originate. This repo depends on it via `[tool.uv.sources]`
+  (already uses that block). `polycentric_activity` depends on it via **git
+  source**, pinning a SHA. One source of truth, no third repo, skew is
+  one-directional and visible. No PyPI.
 
 ## Measured facts (the carve-out surface and blast radius)
-Where each borrowed symbol is defined, and how many files in THIS repo use it:
-- `retry_get` — `scripts/pipeline_io.py` — 13 files
-- `reconstruct_abstract` — `scripts/pipeline_text.py` — 5 files
-- `normalize_doi` — `scripts/utils.py` — 50 files
-- `build_text` — `scripts/enrich_embeddings.py` — 3 files
+Where each symbol is **defined** (verified 2026-07-09), and its transitive deps:
+- `retry_get` — `scripts/pipeline_io.py` — 13 files; carries `RETRY_MAX_RETRIES`
+- `reconstruct_abstract` — `scripts/pipeline_text.py` — 5 files; pure, self-contained
+- `normalize_doi` — `scripts/pipeline_text.py` (NOT utils.py — the 2026-07-08
+  table was wrong; `utils.py` only re-exports it) — ~50 call sites; pure regex
+- `build_text` — `scripts/enrich_embeddings.py` — 3 files; calls
+  `is_boilerplate_abstract` (same module) → that helper + its junk-list move too
+- `is_boilerplate_abstract` — `scripts/enrich_embeddings.py` — rides with build_text
 - `get_logger` — `scripts/utils.py` — 159 files (LEFT in place)
-Third-party deps of that layer: `requests`, `numpy`, `pandas` (no torch).
+- `MAILTO`, `OPENALEX_API_KEY` — `scripts/pipeline_io.py` — LEFT in place, injected
+
+Key structural fact: **`utils.py` is already a re-export facade** — it imports
+from `pipeline_io`/`pipeline_text`/`pipeline_loaders`/`pipeline_progress` and
+re-exports (its docstring advertises `from utils import normalize_doi, ...`).
+The het scripts import everything `from utils`, i.e. through the curated public
+surface, not raw internals. This makes the shim strategy idiomatic here.
+
+Third-party deps of the carved layer: `requests`, `numpy`, `pandas`. No torch
+(the `torch`/`sentence_transformers` imports in `enrich_embeddings.py` are lazy,
+inside a function, and stay out of scope).
+
 Strategy to keep blast radius near zero: the extracted package becomes the
-source of truth; the host modules (`utils.py`, `pipeline_io.py`,
-`pipeline_text.py`, `enrich_embeddings.py`) import the moved functions FROM
-the package and RE-EXPORT them, so the 50/159/13/5/3 existing call sites
-keep their current `from utils import ...` / `from pipeline_io import ...`
-imports unchanged. Only the definitions move; the shims preserve the API.
+source of truth; the host modules (`pipeline_io.py`, `pipeline_text.py`,
+`enrich_embeddings.py`) import the moved symbols FROM the package and
+RE-EXPORT them; `utils.py`'s existing re-export chain is unchanged. So the
+159/50/13/5/3 existing call sites keep their current `from utils import ...` /
+`from pipeline_io import ...` imports. Only the definitions move; the shims
+preserve the API. Precondition to verify at execution: each carved symbol is
+self-contained enough that the host module → package direction has no cycle
+back (confirmed for the pure functions; `build_text` needs `is_boilerplate_abstract`
+moved with it).
 
 ## Actions
-1. Create the package (proposed name `openalex-corpus`, a small standalone
-   repo or a `libs/openalex-corpus/` path package): move the definitions of
-   `retry_get`, `reconstruct_abstract`, `normalize_doi`, `build_text`, and
-   the `MAILTO`/`OPENALEX_API_KEY` constants into it. Package uses stdlib
-   `logging`; no dependency back into this repo.
-2. In this repo, turn the four host modules into thin shims: each imports
-   its moved symbols from `openalex-corpus` and re-exports them (keep the
-   names). Add the package to this repo's deps via `[tool.uv.sources]`.
-3. In `polycentric_activity`, point the HET analysis workpackage at
-   `openalex-corpus` directly (it must NOT import from this repo's
-   `scripts/` any more). Coordinate with polycentric_activity ticket for
-   the figure pipeline.
-4. Update `.claude/rules/architecture.md` §"Companion pipelines": replace
-   the in-place-reuse rationale with the shared-package one.
+The three moves. (1) is the extraction; (2) is the relocation that actually
+cures the smell; do NOT ship (1) without (2).
+
+**Move A — extract the convention layer.**
+1. Create `libs/openalex-corpus/` (path package in THIS repo). Move the
+   *definitions* of `retry_get` (+ `RETRY_MAX_RETRIES`), `reconstruct_abstract`,
+   `normalize_doi`, `build_text`, and `is_boilerplate_abstract` (+ its
+   junk-list) into it. Functions that need `mailto`/`api_key` take them as
+   parameters — the package does NOT read `.env` and does NOT define
+   `MAILTO`/`OPENALEX_API_KEY`. Package uses stdlib `logging`; no dependency
+   back into this repo. Deps: `requests`, `numpy`, `pandas`.
+2. In this repo, turn the host modules into thin shims: `pipeline_io.py`,
+   `pipeline_text.py`, `enrich_embeddings.py` import their moved symbols from
+   `openalex_corpus` and re-export them (keep the names); `utils.py`'s
+   existing re-export chain then works unchanged. At the call sites that pass
+   `MAILTO`/`OPENALEX_API_KEY` into `retry_get`, thread the constants through
+   as arguments (this repo still owns the constants). Add the package via
+   `[tool.uv.sources]` (path source).
+
+**Move B — relocate paper B's pipeline out.**
+3. `git mv` (across repos) `scripts/het_build_corpus.py`, `het_embed.py`,
+   `het_plot_overlap.py` and the committed `data/het/seeds.csv` into
+   `polycentric_activity`. Point them at `openalex_corpus` (git source,
+   pinned SHA) — they must NOT import from `climate-finance-het/scripts/` any
+   more. Each supplies its own `mailto`/`api_key` from its own `.env`. Its
+   model choice (MiniLM) stays there. Coordinate via a polycentric_activity
+   ticket for the figure pipeline. After this, `data/het/` and the het
+   scripts no longer exist in this repo.
+
+**Move C — update the map.**
+4. Update `.claude/rules/architecture.md`: **delete** the §"Companion
+   pipelines" section (nothing companion remains here) and add a short note
+   that the OpenAlex-crawl/canonical-text conventions live in
+   `libs/openalex-corpus/`, consumed here via shims and by polycentric via
+   git source.
 
 ## Test
 Write the contract test FIRST (red): in the new package,
-`tests/test_openalex.py` exercising `retry_get` (mock a 429→200 retry),
-`reconstruct_abstract` (inverted-index dict → text), `normalize_doi`
-(canonicalisation cases), and `build_text` (row → text convention). This is
-the coverage that currently does not exist on the cross-repo contract.
+`tests/test_openalex.py` exercising `retry_get` (mock a 429→200 retry, and
+assert `mailto`/`api_key` are read from the passed arguments, not the
+environment), `reconstruct_abstract` (inverted-index dict → text),
+`normalize_doi` (canonicalisation cases), and `build_text` +
+`is_boilerplate_abstract` (row → text convention, incl. a boilerplate
+abstract that gets skipped). This is the coverage that does not exist on the
+cross-repo contract today.
+
+Second red test, in THIS repo: a shim-resolution test that imports every
+carved symbol via its old path (`from utils import ...`, `from pipeline_io
+import retry_get`, etc.) and asserts it resolves to the package definition —
+so a typo in a re-export fails loudly rather than silently breaking a
+rarely-run script.
 
 ## Verification
 - [ ] `openalex-corpus` builds and its own test suite passes.
-- [ ] This repo's `make check` (or equivalent) is green AFTER the shims —
-      no existing call site changed behaviour.
+- [ ] This repo's `make check` is green AFTER the shims — no existing call
+      site changed behaviour; the shim-resolution test passes.
+- [ ] `data/het/` and `scripts/het_*.py` no longer exist in this repo.
 - [ ] `polycentric_activity`'s HET figure pipeline builds against the
-      package with no import from `climate-finance-het/scripts/`.
-- [ ] `architecture.md` updated.
+      package (git source) with no import from `climate-finance-het/scripts/`.
+- [ ] `architecture.md` §"Companion pipelines" is deleted; the package note
+      is added.
 
 ## Invariants
 - No behaviour change in this repo's own pipeline; the shims are API-preserving.
-- `get_logger` and the `pipeline_*` domain modules are NOT moved.
+- `get_logger`, the constants `MAILTO`/`OPENALEX_API_KEY`, and the
+  `pipeline_loaders` domain modules are NOT moved.
+- The package never reads `.env` and has no dependency back into this repo
+  (no import cycle).
 - The 500KB plain-git limit and DVC conventions of this repo are untouched.
 
 ## Exit criteria
-- The package exists, both repos depend on it, no repo reaches into
-  another's `scripts/`, and all three test suites are green.
+- The convention layer lives in `libs/openalex-corpus/`; this repo consumes it
+  via API-preserving shims; paper B's `het_*.py` have moved to
+  polycentric_activity and consume the package by git source; **no repo
+  reaches into another's `scripts/` and no orphan companion scripts remain
+  here**; all three test suites (package, this repo, polycentric figure
+  build) are green.
 
