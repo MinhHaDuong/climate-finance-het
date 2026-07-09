@@ -1066,7 +1066,8 @@ class TestEmbeddingQuality:
         if not os.path.isfile(QA_REPORT_PATH):
             pytest.skip(
                 "qa_embeddings_report.json not found — "
-                "run: uv run python scripts/qa_embeddings.py"
+                "run: uv run python scripts/qa_embeddings.py "
+                "--output content/tables/qa_embeddings_report.json"
             )
         with open(QA_REPORT_PATH) as f:
             return json.load(f)
@@ -1076,14 +1077,16 @@ class TestEmbeddingQuality:
         assert "within_vs_between" in report, \
             "Missing 'within_vs_between' section in QA report" + _diagnosis(
                 "qa_embeddings.py produced incomplete output",
-                "uv run python scripts/qa_embeddings.py",
+                "uv run python scripts/qa_embeddings.py "
+                "--output content/tables/qa_embeddings_report.json",
                 "< 1 min",
                 "Cannot verify embedding semantic validity",
             )
         assert "nearest_neighbours" in report, \
             "Missing 'nearest_neighbours' section in QA report" + _diagnosis(
                 "qa_embeddings.py produced incomplete output",
-                "uv run python scripts/qa_embeddings.py",
+                "uv run python scripts/qa_embeddings.py "
+                "--output content/tables/qa_embeddings_report.json",
                 "< 1 min",
                 "Cannot inspect nearest-neighbour quality",
             )
@@ -1099,7 +1102,8 @@ class TestEmbeddingQuality:
         assert not missing, \
             f"Missing keys in within_vs_between: {missing}" + _diagnosis(
                 "qa_embeddings.py output schema changed",
-                "uv run python scripts/qa_embeddings.py",
+                "uv run python scripts/qa_embeddings.py "
+                "--output content/tables/qa_embeddings_report.json",
                 "< 1 min",
                 "Downstream consumers expect these fields",
             )
@@ -1152,7 +1156,8 @@ class TestMetadataQuality:
             import warnings
             warnings.warn(
                 f"qa_metadata_report.json not found at {QA_METADATA_REPORT_PATH}. "
-                "Run: uv run python scripts/qa_metadata.py to generate it."
+                "Run: uv run python scripts/qa_metadata.py "
+                "--output content/tables/qa_metadata_report.json to generate it."
             )
             pytest.skip("qa_metadata_report.json not found (needs live API calls)")
 
@@ -1168,7 +1173,8 @@ class TestMetadataQuality:
                 f"Missing '{key}' in qa_metadata_report.json"
                 + _diagnosis(
                     "qa_metadata.py output schema changed",
-                    "Re-run: uv run python scripts/qa_metadata.py",
+                    "Re-run: uv run python scripts/qa_metadata.py "
+                    "--output content/tables/qa_metadata_report.json",
                     "~2 min",
                     "Metadata quality metrics unavailable for technical report",
                 )
