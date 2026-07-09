@@ -8,7 +8,7 @@ Depends on pandas only for NaN handling in ``build_text``.
 import pandas as pd
 
 
-def is_boilerplate_abstract(abstract, title=None):
+def is_boilerplate_abstract(abstract: object, title: str | None = None) -> bool:
     """Return True if abstract is boilerplate/junk that should be skipped.
 
     Detects repository metadata strings, known boilerplate phrases,
@@ -41,7 +41,7 @@ def is_boilerplate_abstract(abstract, title=None):
     return False
 
 
-def build_text(row):
+def build_text(row: pd.Series) -> str:
     """Concatenate title, abstract, and keywords for embedding.
 
     Skips boilerplate abstracts (repository metadata, known junk phrases,

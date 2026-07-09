@@ -32,13 +32,14 @@ import gzip
 import json
 import logging
 import os
-import random
 import re
 import time
 from typing import TYPE_CHECKING, Any
 
 import pandas as pd
 import requests  # type: ignore[import-untyped]
+from openalex_corpus import RETRY_MAX_RETRIES
+from openalex_corpus import retry_get as _pkg_retry_get
 
 if TYPE_CHECKING:
     from matplotlib.figure import Figure
@@ -52,9 +53,9 @@ _log = logging.getLogger("pipeline.io")
 MAILTO = "minh.ha-duong@cnrs.fr"
 OPENALEX_API_KEY = os.environ.get("OPENALEX_API_KEY", "")
 
-# Retry budgets — single source of truth for polite_get and retry_get defaults
+# Retry budgets. RETRY_MAX_RETRIES is the single source of truth in the
+# openalex-corpus package (re-exported above for callers using it from here).
 POLITE_MAX_RETRIES = 3   # catalog scrapers (quick, many URLs)
-RETRY_MAX_RETRIES = 5    # enrichment fetchers (heavy, fewer URLs)
 CONSECUTIVE_FAIL_LIMIT = 5  # circuit breaker: abort after this many consecutive 429s
 
 
@@ -95,104 +96,18 @@ def retry_get(url: str, params: dict[str, Any] | None = None,
               backoff_base: float = 2.0, jitter_max: float = 1.0) -> requests.Response:
     """HTTP GET with bounded exponential backoff+jitter and optional counter tracking.
 
-    Parameters
-    ----------
-    url : str
-        Request URL.
-    params : dict, optional
-        Query parameters.
-    headers : dict, optional
-        HTTP headers.
-    delay : float
-        Base polite delay before each attempt (seconds).
-    max_retries : int
-        Maximum retry attempts for 429/5xx/timeout.
-    timeout : float
-        Per-request timeout in seconds.
-    counters : dict, optional
-        Mutable dict updated with keys ``retries``, ``rate_limited``,
-        ``server_errors``, ``client_errors``.
-    backoff_base : float
-        Base for exponential backoff (seconds).
-    jitter_max : float
-        Maximum random jitter added to each backoff (seconds).
-
-    Returns
-    -------
-    requests.Response on success.
-
-    Raises
-    ------
-    RuntimeError after all retries are exhausted.
-
+    Thin project shim over ``openalex_corpus.retry_get``: injects this repo's
+    deployment config (``MAILTO`` and the ``ClimateFinancePipeline`` User-Agent),
+    which the package keeps out of its convention layer. The retry/backoff logic
+    itself lives in the package (ticket 0170). Signature and behaviour are
+    unchanged for all existing callers; see ``tests/test_openalex_corpus_equivalence.py``.
     """
-    if params is None:
-        params = {}
-    if "mailto" not in params and "mailto" not in url:
-        params["mailto"] = MAILTO
-    if headers is None:
-        headers = {}
-    headers.setdefault("User-Agent", f"ClimateFinancePipeline/1.0 (mailto:{MAILTO})")
-    if counters is None:
-        counters = {}
-
-    from urllib.parse import urlparse
-    host = urlparse(url).hostname or url
-
-    last_exc = None
-    for attempt in range(max_retries):
-        try:
-            time.sleep(delay)
-            resp = requests.get(url, params=params, headers=headers, timeout=timeout)
-        except requests.exceptions.Timeout as exc:
-            last_exc = exc
-            counters["retries"] = counters.get("retries", 0) + 1
-            backoff = min(backoff_base ** attempt + random.uniform(0, jitter_max), 60)
-            _log.warning("Timeout on attempt %d/%d, retrying in %.1fs...",
-                         attempt + 1, max_retries, backoff)
-            time.sleep(backoff)
-            continue
-        except requests.exceptions.RequestException as exc:
-            last_exc = exc
-            counters["retries"] = counters.get("retries", 0) + 1
-            backoff = min(backoff_base ** attempt + random.uniform(0, jitter_max), 60)
-            time.sleep(backoff)
-            continue
-
-        if resp.status_code == 429:
-            counters["rate_limited"] = counters.get("rate_limited", 0) + 1
-            counters["retries"] = counters.get("retries", 0) + 1
-            if attempt == max_retries - 1:
-                # Return the 429 response instead of raising — lets callers
-                # inspect budget headers and degrade gracefully.
-                _log.warning("Rate limited (429) by %s after %d attempts, returning response.",
-                             host, max_retries)
-                return resp
-            retry_after = min(
-                int(resp.headers.get("Retry-After", backoff_base ** (attempt + 1))), 120
-            )
-            jitter = random.uniform(0, min(jitter_max * 2, 2))
-            wait = retry_after + jitter
-            _log.warning("Rate limited (429) by %s, waiting %.1fs...", host, wait)
-            time.sleep(wait)
-            continue
-        if resp.status_code >= 500:
-            counters["server_errors"] = counters.get("server_errors", 0) + 1
-            counters["retries"] = counters.get("retries", 0) + 1
-            backoff = min(backoff_base ** attempt + random.uniform(0, jitter_max), 60)
-            _log.warning("Server error %d on attempt %d/%d, retrying in %.1fs...",
-                         resp.status_code, attempt + 1, max_retries, backoff)
-            time.sleep(backoff)
-            last_exc = resp.status_code
-            continue
-        if resp.status_code >= 400:
-            counters["client_errors"] = counters.get("client_errors", 0) + 1
-            resp.raise_for_status()
-        return resp
-
-    raise RuntimeError(
-        f"Failed after {max_retries} attempts: {url} "
-        f"(last error: {last_exc})"
+    return _pkg_retry_get(
+        url, params=params, headers=headers, delay=delay,
+        max_retries=max_retries, timeout=timeout, counters=counters,
+        backoff_base=backoff_base, jitter_max=jitter_max,
+        mailto=MAILTO,
+        user_agent=f"ClimateFinancePipeline/1.0 (mailto:{MAILTO})",
     )
 
 

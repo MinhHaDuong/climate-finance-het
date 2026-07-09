@@ -12,6 +12,8 @@ Author: HDMX-coding-agent
 
 2026-07-09T02:00Z claude note Move A split into A1/A2 for locally-verifiable delivery. PR #954 lands A1: libs/openalex-corpus/ with the four PURE convention functions (reconstruct_abstract, normalize_doi, build_text, is_boilerplate_abstract) copied verbatim + a 14-case contract test; standalone (not yet in make check). Deferred to A2 (a session with safe shared /data-env access): retry_get + RETRY_MAX_RETRIES (live Phase-1 HTTP path, 13 call sites) AND the shim rewire of pipeline_io/pipeline_text/enrich_embeddings + [tool.uv.sources] (needs uv sync against the shared env). So Actions Move A step 1 above is delivered only for the pure functions; retry_get moves in A2. Moves B (relocate het_*.py) and C (architecture.md) remain separate PRs. Ticket stays OPEN.
 
+2026-07-09T00:00Z claude note bump verify-reroll — round 1 (PR #958 / A2): the Test-section second red test (shim-resolution guard asserting every carved symbol resolves via its old path to the package definition) was specified for the shim slice but omitted; only retry_get parity was committed. Added tests/test_shim_resolution.py (commit 4411c3b); round 2 gate APPROVED. Ticket stays OPEN (Moves B/C pending).
+
 --- body ---
 ## Context
 Ticket 0167 (PR #860) added `scripts/het_*.py` to this repo to generate a

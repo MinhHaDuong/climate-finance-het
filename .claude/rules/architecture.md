@@ -80,6 +80,28 @@ never touch `enrich_cache/` or the Phase 1/2 contract files. The figure and
 its methodology note are committed in `polycentric_activity/conception/`,
 not here.
 
+Those reused conventions now live in the `openalex-corpus` package (see below),
+not in `scripts/` directly. Ticket 0170 tracks relocating the `het_*.py`
+scripts to `polycentric_activity` so they consume the package by git source;
+until that lands they remain here, importing the conventions via this repo's
+own `scripts/` re-export shims.
+
+## Shared conventions package (`libs/openalex-corpus`)
+
+The model-agnostic OpenAlex conventions — `retry_get` (polite HTTP with
+backoff, `mailto` injected by the caller), `reconstruct_abstract`,
+`normalize_doi`, `build_text`, `is_boilerplate_abstract` — live in a standalone
+path package `libs/openalex-corpus`, this repo's source of truth for them
+(ticket 0170). It ships no deployment config (`MAILTO`/API keys are injected as
+parameters) and no embedding model choice. This repo's `scripts/pipeline_io.py`,
+`pipeline_text.py`, and `enrich_embeddings.py` import from it and **re-export**
+the symbols, so every existing `from utils import …` / `from pipeline_io import …`
+call site is unchanged; `pipeline_io.retry_get` is a thin shim that injects this
+repo's `MAILTO` and User-Agent. Behavioural parity is pinned by
+`tests/test_openalex_corpus_equivalence.py`. The package is consumed via a
+non-editable `[tool.uv.sources]` path entry; `polycentric_activity` will consume
+it by git source.
+
 ## Data location
 
 Data lives **outside the repo**, at `CLIMATE_FINANCE_DATA` in `.env`.

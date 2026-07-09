@@ -1,7 +1,10 @@
 """Pure text-transform utilities for the literature indexing pipeline.
 
 All functions here are stateless: no I/O, no side effects, no imports
-beyond stdlib + pandas + ftfy. Safe to import in any context.
+beyond stdlib + pandas + ftfy. Safe to import in any context. ``normalize_doi``
+and ``reconstruct_abstract`` are re-exported from the ``openalex_corpus``
+convention package (their single source of truth, ticket 0170); the package's
+pure-text submodule has no third-party imports, so the guarantee holds.
 
 Exports
 -------
@@ -33,6 +36,8 @@ import re
 
 import ftfy
 import pandas as pd
+from openalex_corpus.text import normalize_doi as normalize_doi
+from openalex_corpus.text import reconstruct_abstract as reconstruct_abstract
 
 # ---------------------------------------------------------------------------
 # General text normalization
@@ -73,23 +78,6 @@ def normalize_text(text: str | None) -> str:
 # ---------------------------------------------------------------------------
 # DOI helpers
 # ---------------------------------------------------------------------------
-
-def normalize_doi(doi_raw: str | list | None) -> str:
-    """Normalize a DOI: handle lists, strip URL prefix, lowercase, trim."""
-    if doi_raw is None:
-        return ""
-    if isinstance(doi_raw, list):
-        if not doi_raw:
-            return ""
-        doi_raw = doi_raw[0]
-    doi = str(doi_raw).strip()
-    for prefix in ("https://doi.org/", "http://doi.org/", "http://dx.doi.org/",
-                    "https://dx.doi.org/", "doi:"):
-        if doi.lower().startswith(prefix):
-            doi = doi[len(prefix):]
-            break
-    return doi.strip().lower()
-
 
 def normalize_doi_safe(doi_raw: object) -> str:
     """Normalize a DOI, returning "" for NaN/None values.
@@ -143,18 +131,6 @@ def normalize_title(title: str | None) -> str:
 # ---------------------------------------------------------------------------
 # Abstract helpers
 # ---------------------------------------------------------------------------
-
-def reconstruct_abstract(inverted_index: dict | None) -> str:
-    """Rebuild plain text from an OpenAlex abstract_inverted_index dict."""
-    if not inverted_index:
-        return ""
-    word_positions = []
-    for word, positions in inverted_index.items():
-        for pos in positions:
-            word_positions.append((pos, word))
-    word_positions.sort()
-    return " ".join(w for _, w in word_positions)
-
 
 # ---------------------------------------------------------------------------
 # Language normalisation
