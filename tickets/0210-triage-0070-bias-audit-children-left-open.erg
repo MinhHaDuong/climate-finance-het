@@ -1,0 +1,57 @@
+%erg 0.1
+Title: Triage 0070 bias-audit children (0071-0077) left open after epic closed
+Created: 2026-07-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-09T20:45Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Surfaced by a /roar sweep (after 0207) for the "declared-done-but-left-open"
+pattern — the same shape as 0131. Epic **0070** (bias-audit-companion-paper) is
+CLOSED (`tickets/closed/0070-...erg`), but six of its children remain open in the
+ready list with no `Closed:` header:
+
+- 0071 retro-indexing-skew (B2)
+- 0072 language-stratified-sensitivity (B3)
+- 0074 louvain-across-seed-variance (B6)
+- 0075 reconcile-window-set (B7) — **its own log says "orchestrator close: all
+  exit criteria met ... test_windows_match PASSED" (2026-04-28)**, yet the file
+  was never actually closed/archived.
+- 0076 joint-type-one-error (B8) — log notes "Child of 0070 closed."
+- 0077 citation-graph-density (B10)
+
+These have cluttered `erg ready` for ~3 months. At least 0075 is a pure
+bookkeeping gap (done, never archived). The others need per-ticket verification:
+either the bias-audit work landed with the epic close (→ close) or it lapsed
+(→ keep open with an explicit blocker/deferred label).
+
+## Relevant files
+- `tickets/0071-*.erg` … `tickets/0077-*.erg` — the six open children.
+- `tickets/closed/0070-bias-audit-companion-paper.erg` — the closed epic; read
+  its close reason to see which biases it considered resolved.
+
+## Actions
+1. Read the closed 0070 epic's final state to see which children it treated as
+   resolved on close.
+2. For each of 0071, 0072, 0074, 0075, 0076, 0077: verify its exit criteria
+   against the current codebase (test IDs / config / paper sections it names).
+3. Close + archive the ones whose exit criteria are met (0075 at minimum, per
+   its own log). For any not met, add a `deferred` label or a `Blocked-by` so it
+   stops appearing as ready without triage context.
+4. Land as one PR (all six are bias-audit siblings; no code change, ticket-only).
+
+## Test
+- `erg check` passes after the changes.
+- `erg ready` no longer lists a child whose exit criteria are demonstrably met.
+
+## Invariants
+- Do not close a child whose exit criteria are NOT verifiably met — label/block
+  it instead. No non-actionable close (project rule).
+
+## Exit criteria
+- Each of the six 0070 children is either closed+archived (criteria met, with the
+  verifying evidence in its close reason) or explicitly deferred/blocked.
+- `erg ready` reflects only genuinely actionable tickets among them.
