@@ -2,10 +2,13 @@
 Title: Fix 3 mis-attributed bib DOIs found by Crossref audit
 Created: 2026-07-08
 Author: HDMX-coding-agent
+Closed: 3 mis-attributed DOIs fixed; standing DOI-title audit now unallowlisted
 
 --- log ---
 2026-07-08T16:17Z HDMX-coding-agent created
 
+2026-07-09T12:00Z author decision (AskUserQuestion): manne_richels1992 -> MIT Press 1992 book (@book, no DOI); min2021measuring -> replace with real Min/Bu/Sun 2021 techfore paper 10.1016/j.techfore.2020.120502; atwoli -> BMJ 10.1136/bmj.n1734 (n2177 is a news item about the editorial, not the editorial)
+2026-07-09T12:00Z HDMX-coding-agent closed — 3 mis-attributed DOIs fixed; standing DOI-title audit now unallowlisted
 --- body ---
 ## Context
 A DOI↔title audit of `content/bibliography/main.bib` against Crossref (run
