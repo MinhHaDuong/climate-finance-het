@@ -1,0 +1,128 @@
+%erg 0.1
+Title: corpus test — direction of circulation: grey vs academic first use of instrument concepts
+Created: 2026-07-07
+Author: HDMX-coding-agent
+Closed: deferred to post-submission paper — R&R deliverable (R1.1 narrative) done; full analysis lives in memory seed project_paper_instrument_circulation
+
+--- log ---
+2026-07-07T16:20Z HDMX-coding-agent created — author green light (session 2026-07-07)
+2026-07-09T00:00Z HDMX-coding-agent note single-term pilot (de-risking) exposes a segmentation blocker — from_grey too sparse to detect instrument lead-lag; see Pilot findings + Blocker sections. Not ready for Execute as specified.
+2026-07-09T00:05Z HDMX-coding-agent note DEFERRED (author decision, session 2026-07-09): drop quantitative table from the R&R; use de-risking as a named narrative for R1.1 (see Findings note); spin the full six-term venue-based analysis out as a separate paper (seed filed in memory). Ticket stays open, labelled deferred, for the post-submission paper.
+
+2026-07-09T13:03Z HDMX-coding-agent closed — deferred to post-submission paper — R&R deliverable (R1.1 narrative) done; full analysis lives in memory seed project_paper_instrument_circulation
+--- body ---
+## Context
+Hypothesis from the scientization literature (Hirschman & Popp Berman 2014:
+the direction of idea circulation depends on the nature of the knowledge —
+policy devices travel from practice, theory from academia; see
+`docs/notes-vannes-2026-07.md` §6): climate finance *instrument* concepts
+(Rio markers, grant equivalent, mobilised private finance, additionality,
+blended finance, de-risking) should appear in the grey/institutional
+segment of the corpus *before* the academic segment, while theoretical
+frames flow the other way.
+
+If confirmed, one analysis answers two referee objections at once:
+- **R1.1** — the absence of core economics journals is the signature of how
+  instrument knowledge circulates (institutional channels first), not a
+  corpus selection artifact.
+- **E3** — a quantitative element that visibly earns its footprint.
+
+Feasibility: `refined_works.csv` carries `from_grey` and per-source
+provenance booleans; term matching runs on title+abstract+keywords (same
+text contract as the embeddings). Segment definition (grey = `from_grey`;
+academic = indexed sources without grey flag) must be stated in the table
+caption and tested.
+
+## Pilot findings — de-risking (2026-07-09)
+Single-term pilot on the real corpus (regex `\bde[-\s]?risk`, matched on
+title+abstract+keywords — the embedding text contract):
+- 98 works mention de-risk*. First attestation 2012, reaches k≥3 in 2014,
+  climbs to 27 in 2025.
+- The `from_grey` segment (208 rows total, median year 2021) contains
+  **zero** de-risking hits. All 98 fall in the "academic" bucket.
+- Yet the two earliest attestations are plainly institutional:
+  2012 = Climate Policy Initiative report "Moving the Fulcrum: A Primer on
+  Public Climate Financing Instruments…" (OpenAlex-indexed, `from_grey=False`);
+  2013 = a rural-electrification practitioner case study. The Nature Climate
+  Change academic framing arrives only in 2014. The term itself was coined
+  institutionally (UNDP DREI, ~2013).
+
+Interpretation: the *content* corroborates Hirschman & Popp Berman (instruments
+surface in institutional/practice channels first), but the corpus's `from_grey`
+boolean is blind to it — OpenAlex indexes grey literature and files it as
+academic, so early institutional documents land in the wrong segment.
+
+## Findings note (feeds R1.1; three-sentence exit criterion)
+The travel of "de-risking" illustrates R1.1 as narrative rather than as a table.
+The term was coined in institutional practice — UNDP's Derisking Renewable
+Energy Investment framework (2013) and Climate Policy Initiative's 2012 primer
+on public financing instruments — and entered peer-reviewed economics only
+afterwards, formalised in *Nature Climate Change* in 2014. That the concept
+appears in the corpus's institutional documents before its academic ones is the
+signature of how instrument knowledge circulates: through international
+organisations first, which is why core economics journals are under-represented
+by design and not by selection artifact.
+
+## Disposition (deferred)
+Not built for the R&R. The `from_grey` blocker (below) turns what was pitched as
+a cheap two-for-one referee answer into a small research project with its own
+methodological burden — the wrong bet against the R&R clock (gated on the 0172
+manuscript rebuild). R1.1 is answered in prose using the Findings note above;
+E3's quantitative footprint is earned elsewhere. The full six-term, venue-based
+instrument-circulation analysis is spun out as a post-submission paper (seed:
+memory `project_paper_instrument_circulation`), which is that paper's durable
+entry point — so this ticket closes now rather than lingering as a pseudo-tracker
+(cf. feedback_followup_lets_parent_close). A fresh ticket opens when the paper
+starts.
+
+## Blocker: segment definition must be redesigned before Execute
+The ticket's segment rule (grey = `from_grey`; academic = the rest) is
+structurally unable to detect instrument-term lead-lag: `from_grey` captures
+~0.7% of the corpus (208/30987) and specifically misses the early institutional
+documents where instruments first appear. Options, recommend (1):
+1. **Venue-based classification** — reclassify by journal/host string:
+   working-paper servers (SSRN), institutional repositories (DSpace), IGO/NGO
+   report series → grey; peer-reviewed journals → academic. This is where the
+   signal lives, and it needs no Phase-1 rerun.
+2. Enrich `from_grey` upstream (Phase 1) to catch OpenAlex-indexed institutional
+   sources — heavier, touches the corpus contract.
+3. Reframe as practitioner/applied-venue vs theory-venue (the grey documents
+   that *are* flagged are recent, median 2021, so a source-flag split can't see
+   the early window either way).
+
+Next step before coding: prototype (1) on de-risking to confirm it recovers the
+institutional-first ordering, then generalise the venue map.
+
+## Method sketch (Execute refines)
+- Term list and match patterns (incl. spelling variants, EN minimum;
+  document the language limitation) in `config/analysis.yaml` — no
+  hardcoded lists (arch rule 6).
+- New Phase-2 script `scripts/compute_term_leadlag.py` (dispatcher not
+  needed: single method). Reads via `load_refined_works()` (arch rule 9),
+  `--output` required (script-io rule).
+- Output CSV: one row per (term, segment) with first_year, n_before_2015,
+  n_total; plus per-term lead = academic_first − grey_first. Pandera
+  schema in `scripts/schemas.py` (strict, coerce).
+- Robustness to singletons: also report the year each term reaches k≥3
+  cumulative occurrences per segment (first attestation can be an outlier).
+- Makefile: own target in an existing or new `.mk`; 1 invocation = 1 output.
+
+## First test (Red)
+`tests/test_term_leadlag.py::test_first_appearance_by_segment` — build a
+synthetic works DataFrame (6 rows: term "grant equivalent" in grey rows
+2010, 2012 and academic rows 2013, 2015; distractor rows without the term)
+monkeypatched into the loader; run the compute function with a 2-term
+config; assert first_year and k=3 attestation per (term, segment) and
+lead values match hand-computed expectations, and that the output
+validates against the new schema.
+
+## Exit criteria
+- [ ] Segment definition redesigned (venue-based) and validated on de-risking —
+      pilot confirms it recovers institutional-first ordering (see Blocker)
+- [ ] Term list + patterns in `config/analysis.yaml`
+- [ ] `compute_term_leadlag.py` + schema + passing tests (unit + io-discipline)
+- [ ] Output table generated from the real corpus, committed under
+      `content/tables/` with segment definition in caption
+- [ ] Three-sentence findings note appended to this ticket (feeds 0136/0141
+      integration; manuscript prose is NOT in scope here)
+- [ ] `make check` passes
