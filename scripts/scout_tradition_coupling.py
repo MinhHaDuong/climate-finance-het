@@ -70,8 +70,8 @@ ANCHORS: dict[str, dict[str, tuple[str | None, str]]] = {
             "An Optimal Transition Path for Controlling Greenhouse Gases",
         ),
         "manne_richels1992": (
-            "10.1016/0301-4215(92)90024-V",
-            "Buying Greenhouse Insurance",
+            None,
+            "Buying Greenhouse Insurance: The Economic Costs of CO2 Emission Limits",
         ),
         "stern2007": (None, "The Economics of Climate Change: The Stern Review"),
         "weitzman2007": (

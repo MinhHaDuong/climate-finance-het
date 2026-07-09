@@ -2,10 +2,12 @@
 Title: Drop fabricated manne_richels1992 DOI from scout_tradition_coupling ANCHORS
 Created: 2026-07-09
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #943
 
 --- log ---
 2026-07-09T12:11Z HDMX-coding-agent created
 
+2026-07-09T15:56Z HDMX-coding-agent closed — autoclosed — PR #943
 --- body ---
 ## Context
 Ticket 0188 (#928) removed the LLM-fabricated DOI `10.1016/0301-4215(92)90024-V`
