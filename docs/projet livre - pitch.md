@@ -110,6 +110,14 @@ Préface 2 - Yannick Glemarec
 Bibliographie\
 Remerciements. À propos de l\'auteur
 
+# Chantiers de recherche (prolongements de l'article Œconomia)
+
+La conclusion de l'article *Economists under Constraint* signale trois prolongements qu'elle laisse au livre :
+
+- **Archivistique** : une histoire fine des comités de l'OCDE, de la CCNUCC et des banques multilatérales, montrant pourquoi certaines conventions ont été retenues plutôt que d'autres.
+- **Géographique** : l'histoire de la finance climat vue depuis les pays receveurs, et non seulement depuis les institutions de reporting dominées par les donneurs — largement inécrite. (L'article en conserve la seule ligne de limite ; le développement revient au livre.)
+- **Juridique** : le passage des coûts incrémentaux de l'Article 4.3 à l'objectif quantifié collectif de Bakou mérite une histoire institutionnelle propre.
+
 # []{#anchor-7}Bibliographie commentée
 
 ## []{#anchor-8}Originalité par rapport à l'offre actuelle sur la finance verte
