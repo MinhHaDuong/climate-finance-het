@@ -2,10 +2,12 @@
 Title: corpus test — direction of circulation: grey vs academic first use of instrument concepts
 Created: 2026-07-07
 Author: HDMX-coding-agent
+Label: deferred
 
 --- log ---
 2026-07-07T16:20Z HDMX-coding-agent created — author green light (session 2026-07-07)
 2026-07-09T00:00Z HDMX-coding-agent note single-term pilot (de-risking) exposes a segmentation blocker — from_grey too sparse to detect instrument lead-lag; see Pilot findings + Blocker sections. Not ready for Execute as specified.
+2026-07-09T00:05Z HDMX-coding-agent note DEFERRED (author decision, session 2026-07-09): drop quantitative table from the R&R; use de-risking as a named narrative for R1.1 (see Findings note); spin the full six-term venue-based analysis out as a separate paper (seed filed in memory). Ticket stays open, labelled deferred, for the post-submission paper.
 
 --- body ---
 ## Context
@@ -48,6 +50,27 @@ Interpretation: the *content* corroborates Hirschman & Popp Berman (instruments
 surface in institutional/practice channels first), but the corpus's `from_grey`
 boolean is blind to it — OpenAlex indexes grey literature and files it as
 academic, so early institutional documents land in the wrong segment.
+
+## Findings note (feeds R1.1; three-sentence exit criterion)
+The travel of "de-risking" illustrates R1.1 as narrative rather than as a table.
+The term was coined in institutional practice — UNDP's Derisking Renewable
+Energy Investment framework (2013) and Climate Policy Initiative's 2012 primer
+on public financing instruments — and entered peer-reviewed economics only
+afterwards, formalised in *Nature Climate Change* in 2014. That the concept
+appears in the corpus's institutional documents before its academic ones is the
+signature of how instrument knowledge circulates: through international
+organisations first, which is why core economics journals are under-represented
+by design and not by selection artifact.
+
+## Disposition (deferred)
+Not built for the R&R. The `from_grey` blocker (below) turns what was pitched as
+a cheap two-for-one referee answer into a small research project with its own
+methodological burden — the wrong bet against the R&R clock (gated on the 0172
+manuscript rebuild). R1.1 is answered in prose using the Findings note above;
+E3's quantitative footprint is earned elsewhere. The full six-term, venue-based
+instrument-circulation analysis is spun out as a post-submission paper (seed:
+memory `project_paper_instrument_circulation`). Ticket kept open, labelled
+`deferred`, as that paper's entry point.
 
 ## Blocker: segment definition must be redesigned before Execute
 The ticket's segment rule (grey = `from_grey`; academic = the rest) is
