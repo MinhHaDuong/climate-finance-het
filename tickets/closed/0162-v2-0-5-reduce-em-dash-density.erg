@@ -2,11 +2,13 @@
 Title: v2.0.5 prose finding — reduce em-dash density toward 2 per paragraph
 Created: 2026-06-23
 Author: HDMX-coding-agent
-Blocked-by: 0134
+Closed: autoclosed — PR #935
 
 --- log ---
 2026-06-23T08:50Z HDMX-coding-agent created from 0149 ratchet inventory
 
+2026-07-09T13:01Z HDMX-coding-agent note blocker 0134 closed — Blocked-by removed.
+2026-07-09T13:01Z HDMX-coding-agent closed — autoclosed — PR #935
 --- body ---
 ## Context
 Surfaced by the 0149 full-manuscript ratchet run (the defect inventory beyond

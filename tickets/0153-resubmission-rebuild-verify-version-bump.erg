@@ -3,7 +3,6 @@ Title: resubmission rebuild verify version-bump and Zenodo HAL deposit
 Created: 2026-06-18
 Author: HDMX-coding-agent
 Blocked-by: 0152
-Blocked-by: 0162
 
 --- log ---
 2026-06-18T08:50Z HDMX-coding-agent created
@@ -11,6 +10,7 @@ Blocked-by: 0162
 
 2026-06-24T17:44Z HDMX-coding-agent note blocker 0155 closed — Blocked-by removed.
 2026-07-08T09:00Z HDMX-coding-agent note Blocked-by 0152 + 0162 restored: removing 0155 left the final step unblocked, visible as ready to autonomous sweeps. 0162 transitively carries 0134→0171→0172; 0152 must accompany the deposit.
+2026-07-09T13:01Z HDMX-coding-agent note blocker 0162 closed — Blocked-by removed.
 --- body ---
 ## Context
 v2.0.5 final step. Package and deposit the revised manuscript.
