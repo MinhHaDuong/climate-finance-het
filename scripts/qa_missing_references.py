@@ -15,7 +15,7 @@ Output format mirrors the doifetch input convention:
   #	<Label>
 
 Run with:
-  uv run python scripts/qa_missing_references.py
+  uv run python scripts/qa_missing_references.py --output docs/missing_references.txt
 """
 
 import os

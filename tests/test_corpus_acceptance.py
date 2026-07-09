@@ -801,7 +801,8 @@ class TestCitationQuality:
             import warnings
             warnings.warn(
                 f"qa_citations_report.json not found at {QC_CITATIONS_REPORT_PATH}. "
-                "Run: uv run python scripts/qa_citations.py to generate it."
+                "Run: uv run python scripts/qa_citations.py "
+                "--output content/tables/qa_citations_report.json to generate it."
             )
             pytest.skip("qa_citations_report.json not found (needs live API calls)")
 
@@ -821,7 +822,8 @@ class TestCitationQuality:
             import warnings
             warnings.warn(
                 f"qa_citations_report.json is {age_days:.0f} days old. "
-                "Consider re-running: uv run python scripts/qa_citations.py"
+                "Consider re-running: uv run python scripts/qa_citations.py "
+                "--output content/tables/qa_citations_report.json"
             )
 
         # Check DOI count matches current corpus
@@ -845,7 +847,8 @@ class TestCitationQuality:
         assert "verification" in report, \
             "Report missing 'verification' section" + _diagnosis(
                 "qa_citations.py report format changed",
-                "Re-run: uv run python scripts/qa_citations.py",
+                "Re-run: uv run python scripts/qa_citations.py "
+                "--output content/tables/qa_citations_report.json",
                 "~3 min",
                 "Cannot verify citation link quality",
             )
@@ -853,7 +856,8 @@ class TestCitationQuality:
         assert "sample_n" in data, \
             "verification missing sample_n" + _diagnosis(
                 "qa_citations.py report incomplete",
-                "Re-run: uv run python scripts/qa_citations.py",
+                "Re-run: uv run python scripts/qa_citations.py "
+                "--output content/tables/qa_citations_report.json",
                 "~3 min",
                 "Cannot assess sample size",
             )

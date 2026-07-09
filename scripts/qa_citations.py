@@ -9,11 +9,11 @@ Test A (accuracy): sample citation rows, verify each (source_doi, ref_doi) pair
 Test B (completeness): sample source DOIs, re-fetch from Crossref, check all
     their ref DOIs are in our data. Reports proportion captured with 95% Wilson CI.
 
-Saves results to content/tables/qa_citations_report.json
+Saves the JSON report to the caller-supplied --output path.
 
 Usage:
-    uv run python scripts/qa_citations.py [--sample-n 300] [--seed 42]
-        [--works-input data/catalogs/enriched_works.csv]
+    uv run python scripts/qa_citations.py --output content/tables/qa_citations_report.json
+        [--sample-n 300] [--seed 42] [--works-input data/catalogs/enriched_works.csv]
 """
 
 import argparse

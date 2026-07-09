@@ -101,6 +101,18 @@ def test_missing_surname_is_not_a_mismatch():
     assert not author_mismatch("smith", "")
 
 
+def test_dropped_particle_is_not_a_mismatch():
+    """'First Last' bib order keeps only the trailing token ('berg'); Crossref
+    keeps the particle ('van der berg'). The shared tail matches — no false flag
+    (ticket 0196 gaze finding: don't turn the tightening into particle noise)."""
+    assert not author_mismatch("berg", "van der berg")
+    assert not author_mismatch("van der berg", "berg")
+
+
+def test_genuinely_different_surnames_are_flagged():
+    assert author_mismatch("smith", "jones")
+
+
 @pytest.mark.slow
 def test_every_bib_doi_resolves_to_the_right_paper():
     """Live Crossref audit: no entry's DOI points at the wrong paper.

@@ -1055,7 +1055,8 @@ class TestOutputFlag:
     # Scripts with __main__ that legitimately don't need --output:
     OUTPUT_EXEMPT = {
         # QA reporters (stdout / fixed JSON)
-        "qa_citations.py",
+        # qa_citations.py, qa_bibliography.py, qa_missing_references.py migrated
+        # to parse_io_args with required --output (ticket 0196) — no longer exempt.
         "qa_detect_language.py",
         "qa_detect_type.py",
         "qa_embeddings.py",
@@ -1093,8 +1094,6 @@ class TestOutputFlag:
         "build_smoke_fixture.py",
         "compute_regression_hashes.py",
         "compute_regression_history.py",
-        "qa_bibliography.py",
-        "qa_missing_references.py",
         "analyze_unfccc_topics.py",
         # Analysis-only reporters (stdout, no output file)
         "analyze_zscore_vs_pvalue.py",

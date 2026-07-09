@@ -107,15 +107,24 @@ def first_author_surname(author_field):
 def author_mismatch(bib_surname, cr_surname):
     """True when both surnames are present and differ after accent/LaTeX fold.
 
-    Surname-token *equality*, not the old substring containment: "li" and "lin"
+    Surname-token equality, not the old substring containment: "li" and "lin"
     are different authors and must be flagged, where ``bib not in cr`` let a
-    short surname slip inside a longer one unreported (ticket 0196). Folding is
-    idempotent, so callers may pass already-folded or raw surnames. Advisory
-    only — AUTHOR_MISMATCH never gates CI.
+    short surname slip inside a longer one unreported (ticket 0196).
+
+    Compared on the shorter trailing token run so a dropped particle is not a
+    mismatch: ``first_author_surname`` yields only the last token of a
+    "First Last" bib name ("Jan van der Berg" -> "berg") while Crossref keeps
+    the particle ("van der Berg" -> "van der berg"); the tails ["berg"] match.
+    A genuine short-surname swap still differs on its trailing token
+    (["li"] != ["lin"]). Folding is idempotent, so callers may pass folded or
+    raw surnames. Advisory only — AUTHOR_MISMATCH never gates CI.
     """
-    if not bib_surname or not cr_surname:
+    bib = _fold_surname(bib_surname).split()
+    cr = _fold_surname(cr_surname).split()
+    if not bib or not cr:
         return False
-    return _fold_surname(bib_surname) != _fold_surname(cr_surname)
+    n = min(len(bib), len(cr))
+    return bib[-n:] != cr[-n:]
 
 
 PREFIX_MATCH_MIN_WORDS = 4  # a prefix only proves identity if it is substantial

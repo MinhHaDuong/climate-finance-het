@@ -4,9 +4,12 @@ Matches the 47 entries in bibliography/main.bib against
 refined_works.csv by DOI (exact) then by title+year (fuzzy).
 
 Produces:
-- tables/bib_corpus_match.csv: per-entry match results
+- --output CSV (e.g. content/tables/bib_corpus_match.csv): per-entry match results
 - Console summary: DOI matches, fuzzy matches, unmatched keys
 - Reverse check: highly-cited corpus papers by bib authors not in bib
+
+Run with:
+  uv run python scripts/qa_bibliography.py --output content/tables/bib_corpus_match.csv
 """
 
 import os
