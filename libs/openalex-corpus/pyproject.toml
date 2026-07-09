@@ -5,6 +5,13 @@ description = "Shared OpenAlex crawl + canonical-text conventions (model-agnosti
 requires-python = ">=3.10"
 dependencies = [
     "pandas",
+    "requests",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "requests-mock",
 ]
 
 [build-system]
