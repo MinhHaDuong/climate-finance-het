@@ -134,16 +134,17 @@ def build_citation_cooccurrence(df: pd.DataFrame, max_works: int = 10000) -> np.
     Only uses shared-citation overlap as a proxy for citation-space proximity.
     Limited to max_works for memory reasons.
     """
-    from utils import CATALOGS_DIR
-    citations_path = os.path.join(CATALOGS_DIR, "refined_citations.csv")
-    if not os.path.exists(citations_path):
-        log.warning("refined_citations.csv not found — skipping citation silhouette")
+    from pipeline_loaders import load_refined_citations
+    try:
+        cit = load_refined_citations()
+    except FileNotFoundError:
+        log.warning("refined_citations not found — skipping citation silhouette")
         return None
 
-    log.info("Loading refined_citations.csv for citation-space silhouette …")
-    # refined_citations.csv columns: source_doi, source_id, ref_doi, ref_title, ...
-    cit = pd.read_csv(citations_path, usecols=["source_id", "ref_doi"],
-                      low_memory=False)
+    log.info("Loading refined_citations for citation-space silhouette …")
+    # refined_citations columns: source_doi, source_id, ref_doi, ref_title, ...
+    # The loader returns all columns; take the same subset the usecols read did.
+    cit = cit[["source_id", "ref_doi"]]
 
     # Index works present in df
     n = min(len(df), max_works)

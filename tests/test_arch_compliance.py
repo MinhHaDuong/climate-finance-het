@@ -354,7 +354,6 @@ class TestCorpusThroughLoaders:
         # a path variable to a contract literal, then reads it — invisible to the
         # old same-line matcher. Migration deferred to 0199 (needs a data-side
         # figure/table byte-check that this checkout cannot run).
-        "analyze_unfccc_topics.py",
         "compute_vars.py",
     }
 
