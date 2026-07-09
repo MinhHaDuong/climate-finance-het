@@ -2,10 +2,13 @@
 Title: Standing regression test: worktree creation must not block on heavy eager work
 Created: 2026-06-18
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #951
 
 --- log ---
 2026-06-18T00:00Z HDMX-coding-agent created
+2026-07-09T22:00Z HDMX-coding-agent note added behavioural class-guard test_worktree_creation_is_fast_and_light (integration): times git worktree add, asserts <15s and <200 MB tree, and that a materialised .venv is a symlink. Portable (no /data dependency); tears down in finally. Falsified against a reverted hook.
 
+2026-07-09T20:10Z HDMX-coding-agent closed — autoclosed — PR #951
 --- body ---
 ## Context
 The post-checkout hook twice grew an eager, heavy per-worktree operation that
@@ -38,8 +41,8 @@ asserts it completes fast would catch the class.
   old hook in a scratch).
 
 ## Verification
-- [ ] Test passes on the current (fixed) hook.
-- [ ] Test fails if an eager heavy step is reintroduced into the hook.
+- [x] Test passes on the current (fixed) hook. (`test_worktree_creation_is_fast_and_light`, 11 passed)
+- [x] Test fails if an eager heavy step is reintroduced into the hook. (falsified: a 250 MB eager artifact appended to the hook → FAILED "269 MB > 200 MB", hook then restored clean)
 
 ## Invariants
 - Must not depend on `/data` existing (skip or adapt where the shared env path is
