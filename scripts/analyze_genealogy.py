@@ -11,7 +11,7 @@ Reads:
   <derived>/tab_pole_papers.csv  (optional — from analyze_bimodality.py)
 
 Produces:
-  content/tables/tab_lineages.csv — backbone papers with lineage, position, metadata
+  data/derived/tables/tab_lineages.csv — backbone papers with lineage, position, metadata
 """
 
 import argparse

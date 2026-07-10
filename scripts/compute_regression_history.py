@@ -40,18 +40,18 @@ SCRIPTS = [
     {
         "name": "compute_breakpoints",
         "script": "scripts/compute_breakpoints.py",
-        "args": ["--output", "content/tables/tab_breakpoints.csv"],
+        "args": ["--output", "data/derived/tables/tab_breakpoints.csv"],
         "outputs": [
-            "content/tables/tab_breakpoints.csv",
+            "data/derived/tables/tab_breakpoints.csv",
         ],
     },
     {
         "name": "compute_breakpoint_robustness",
         "script": "scripts/compute_breakpoints.py",
-        "args": ["--output", "content/tables/tab_breakpoint_robustness.csv",
+        "args": ["--output", "data/derived/tables/tab_breakpoint_robustness.csv",
                  "--robustness"],
         "outputs": [
-            "content/tables/tab_breakpoint_robustness.csv",
+            "data/derived/tables/tab_breakpoint_robustness.csv",
         ],
     },
     {
@@ -59,8 +59,8 @@ SCRIPTS = [
         "script": "scripts/compute_clusters.py",
         "args": [],
         "outputs": [
-            "content/tables/tab_alluvial.csv",
-            "content/tables/cluster_labels.json",
+            "data/derived/tables/tab_alluvial.csv",
+            "data/derived/tables/cluster_labels.json",
         ],
     },
 ]

@@ -1,8 +1,8 @@
 """Render the static alluvial figure (matplotlib PNG).
 
-Reads:  content/tables/tab_alluvial.csv
-        data/catalogs/cluster_labels.json
-        content/tables/tab_core_shares.csv  (optional: full corpus only, for "% core" labels)
+Reads:  data/derived/tables/tab_alluvial.csv
+        data/derived/tables/cluster_labels.json
+        data/derived/tables/tab_core_shares.csv  (optional: full corpus only, for "% core" labels)
 Writes: content/figures/fig_alluvial.png  (and core/censor variants)
 
 Flags: --core-only, --pdf
@@ -22,7 +22,13 @@ import numpy as np
 import pandas as pd
 from matplotlib.path import Path
 from script_io_args import parse_io_args, validate_io
-from utils import BASE_DIR, get_logger, load_analysis_config, save_figure
+from utils import (
+    BASE_DIR,
+    DERIVED_TABLES_DIR,
+    get_logger,
+    load_analysis_config,
+    save_figure,
+)
 
 log = get_logger("plot_fig_alluvial")
 
@@ -185,19 +191,19 @@ def main():
     if io_args.input:
         alluvial_data = pd.read_csv(io_args.input[0], index_col=0)
     else:
-        alluvial_data = pd.read_csv(os.path.join(TABLES_DIR, tab_al), index_col=0)
+        alluvial_data = pd.read_csv(os.path.join(DERIVED_TABLES_DIR, tab_al), index_col=0)
     alluvial_data.columns = alluvial_data.columns.astype(int)
     period_labels = alluvial_data.index.tolist()
     n_periods = len(period_labels)
     n_clusters = len(alluvial_data.columns)
 
-    with open(os.path.join(TABLES_DIR, label_file)) as f:
+    with open(os.path.join(DERIVED_TABLES_DIR, label_file)) as f:
         cluster_labels_raw = json.load(f)
     cluster_labels = {int(k): v for k, v in cluster_labels_raw.items()}
 
     core_crosstab = None
     if not args.core_only:
-        shares_path = os.path.join(TABLES_DIR, "tab_core_shares.csv")
+        shares_path = os.path.join(DERIVED_TABLES_DIR, "tab_core_shares.csv")
         if os.path.exists(shares_path):
             core_crosstab = pd.read_csv(shares_path, index_col=0)
             core_crosstab.columns = core_crosstab.columns.astype(int)

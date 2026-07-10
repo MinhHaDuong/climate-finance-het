@@ -15,8 +15,8 @@ Downstream scripts:
   plot_alluvial_html.py  →  tab_alluvial.csv, cluster_labels.json
 
 Usage:
-    uv run python scripts/compute_clusters.py --output content/tables/tab_alluvial.csv
-    uv run python scripts/compute_clusters.py --output content/tables/tab_alluvial_core.csv --core-only
+    uv run python scripts/compute_clusters.py --output data/derived/tables/tab_alluvial.csv
+    uv run python scripts/compute_clusters.py --output data/derived/tables/tab_alluvial_core.csv --core-only
 """
 
 import argparse

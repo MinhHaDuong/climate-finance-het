@@ -27,11 +27,11 @@ DERIVED := data/derived/tables
 .PHONY: figures verify
 
 figures: content/figures/fig_bars_v1.png content/figures/fig_composition.png \
-         content/tables/tab_venues.md content/tables/tab_alluvial.csv
+         content/tables/tab_venues.md $(DERIVED)/tab_alluvial.csv
 
-content/tables/tab_alluvial.csv content/tables/tab_core_shares.csv content/tables/cluster_labels.json &: \
+$(DERIVED)/tab_alluvial.csv $(DERIVED)/tab_core_shares.csv $(DERIVED)/cluster_labels.json &: \
 		scripts/compute_clusters.py scripts/utils.py $(REFINED) $(DATA)/refined_embeddings.npz
-	$(UV_RUN) python $<
+	$(UV_RUN) python $< --output $(DERIVED)/tab_alluvial.csv
 
 # ── Figures ─────────────────────────────────────────────────
 content/figures/fig_bars_v1.png: scripts/plot_fig1_bars.py scripts/plot_style.py scripts/utils.py $(REFINED)

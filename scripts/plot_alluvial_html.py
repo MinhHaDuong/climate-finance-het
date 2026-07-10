@@ -1,8 +1,8 @@
 """Interactive HTML alluvial diagram with hover tooltips.
 
 Reads:
-  content/tables/tab_alluvial.csv — period × cluster counts
-  data/catalogs/cluster_labels.json — human-readable cluster names
+  data/derived/tables/tab_alluvial.csv — period × cluster counts
+  data/derived/tables/cluster_labels.json — human-readable cluster names
 
 Produces:
   content/figures/fig_alluvial.html — interactive SVG with paper tooltips
@@ -16,7 +16,7 @@ import os
 import numpy as np
 import pandas as pd
 from script_io_args import parse_io_args, validate_io
-from utils import BASE_DIR, get_logger, load_analysis_config
+from utils import BASE_DIR, DERIVED_TABLES_DIR, get_logger, load_analysis_config
 
 log = get_logger("plot_alluvial_html")
 
@@ -43,10 +43,10 @@ def load_data(core_only=False, censor_gap=0):
     if censor_gap > 0:
         fig_name += f"_censor{censor_gap}"
 
-    alluvial_data = pd.read_csv(os.path.join(TABLES_DIR, tab_file), index_col=0)
+    alluvial_data = pd.read_csv(os.path.join(DERIVED_TABLES_DIR, tab_file), index_col=0)
     alluvial_data.columns = alluvial_data.columns.astype(int)
 
-    with open(os.path.join(TABLES_DIR, label_file)) as f:
+    with open(os.path.join(DERIVED_TABLES_DIR, label_file)) as f:
         cluster_labels_raw = json.load(f)
     cluster_labels = {int(k): v for k, v in cluster_labels_raw.items()}
 

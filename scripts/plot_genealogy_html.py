@@ -1,7 +1,7 @@
 """Interactive HTML citation genealogy with hover tooltips and DOI links.
 
 Reads:
-  content/tables/tab_lineages.csv — backbone papers with positions
+  data/derived/tables/tab_lineages.csv — backbone papers with positions
   data/catalogs/refined_citations.csv — for internal citation edges
 
 Produces:
@@ -18,6 +18,7 @@ from matplotlib.colors import to_rgba
 from script_io_args import parse_io_args, validate_io
 from utils import (
     BASE_DIR,
+    DERIVED_TABLES_DIR,
     get_logger,
     load_analysis_config,
     load_analysis_periods,
@@ -383,7 +384,7 @@ def main():
     validate_io(output=io_args.output)
 
     parser = argparse.ArgumentParser(description="Render interactive genealogy HTML")
-    parser.add_argument("--lineages", default=os.path.join(TABLES_DIR, "tab_lineages.csv"),
+    parser.add_argument("--lineages", default=os.path.join(DERIVED_TABLES_DIR, "tab_lineages.csv"),
                         help="Input lineages table path")
     args = parser.parse_args(extra)
 

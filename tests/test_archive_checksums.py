@@ -20,14 +20,14 @@ EXPECTED_OUTPUTS = [
     "content/figures/fig_bars.png",
     "content/figures/fig_composition.png",
     "content/tables/tab_venues.md",
-    "content/tables/tab_alluvial.csv",
-    "content/tables/tab_core_shares.csv",
-    "content/tables/tab_bimodality.csv",
-    "content/tables/tab_axis_detection.csv",
-    # Large analysis intermediate evicted to the derived scratch dir (ticket 0208);
-    # ANALYSIS_OUTPUTS references it via the $(DERIVED) Make variable.
+    # Analysis intermediates evicted to the derived scratch dir (tickets 0208, 0218);
+    # ANALYSIS_OUTPUTS references them via the $(DERIVED) Make variable.
+    "$(DERIVED)/tab_alluvial.csv",
+    "$(DERIVED)/tab_core_shares.csv",
+    "$(DERIVED)/tab_bimodality.csv",
+    "$(DERIVED)/tab_axis_detection.csv",
     "$(DERIVED)/tab_pole_papers.csv",
-    "content/tables/cluster_labels.json",
+    "$(DERIVED)/cluster_labels.json",
 ]
 
 

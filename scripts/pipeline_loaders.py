@@ -92,9 +92,7 @@ REFINED_CITATIONS_PATH = os.path.join(CATALOGS_DIR, "refined_citations.csv")
 REFINED_WORKS_FEATHER = os.path.join(CATALOGS_DIR, "refined_works.feather")
 REFINED_CITATIONS_FEATHER = os.path.join(CATALOGS_DIR, "refined_citations.feather")
 
-_CLUSTER_LABELS_PATH = os.path.join(
-    BASE_DIR, "content", "tables", "cluster_labels.json"
-)
+_CLUSTER_LABELS_PATH = os.path.join(DERIVED_TABLES_DIR, "cluster_labels.json")
 
 
 # ---------------------------------------------------------------------------

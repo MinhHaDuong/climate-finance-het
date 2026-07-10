@@ -118,11 +118,13 @@ def _run_script(script_name, *args, output_dir=None, timeout=60):
 def smoke_output_dir(tmp_path):
     """Create a temp output tree mirroring content/{figures,tables}.
 
-    Scripts resolve output paths from BASE_DIR/content/. We can't easily
-    redirect that without touching every script (that's #509). Instead,
-    we back up affected files before the test and restore them after.
+    Scripts resolve output paths from BASE_DIR. We can't easily redirect
+    that without touching every script (that's #509). Instead, we back up
+    affected files before the test and restore them after. The analysis
+    tables live under data/derived/tables/ (evicted there by ticket 0218);
+    figures stay under content/figures/.
     """
-    tables = os.path.join(ROOT_DIR, "content", "tables")
+    tables = os.path.join(ROOT_DIR, "data", "derived", "tables")
     figures = os.path.join(ROOT_DIR, "content", "figures")
 
     # Track files that existed before the test

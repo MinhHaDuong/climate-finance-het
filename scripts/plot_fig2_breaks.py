@@ -5,7 +5,7 @@ Shows both Jensen-Shannon (solid) and cosine (dashed) z-scores (window=3).
 2007 is a cosine break, 2013 is a JS break. Paris and Glasgow are not breaks.
 
 Inputs:
-  - content/tables/tab_breakpoints.csv
+  - data/derived/tables/tab_breakpoints.csv
 
 Outputs:
   - content/figures/fig2_breaks.png (+.pdf if --pdf)
@@ -20,7 +20,7 @@ import numpy as np
 import pandas as pd
 from plot_style import DARK, DPI, FIGWIDTH, LIGHT, MED, apply_style
 from script_io_args import parse_io_args, validate_io
-from utils import BASE_DIR, save_figure
+from utils import DERIVED_TABLES_DIR, save_figure
 
 apply_style()
 import matplotlib.pyplot as plt
@@ -39,7 +39,7 @@ def main():
     if io_args.input:
         csv_path = io_args.input[0]
     else:
-        csv_path = os.path.join(BASE_DIR, "content", "tables", "tab_breakpoints.csv")
+        csv_path = os.path.join(DERIVED_TABLES_DIR, "tab_breakpoints.csv")
     df = pd.read_csv(csv_path)
     years = df["year"].values
     z_js = df["z_js_w3"].values

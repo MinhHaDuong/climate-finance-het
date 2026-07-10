@@ -14,10 +14,10 @@ Other flags:
 Note: The k-sensitivity *figure* is produced by plot_fig_k_sensitivity.py.
 
 Usage:
-    uv run python scripts/compute_breakpoints.py --output content/tables/tab_breakpoints.csv
-    uv run python scripts/compute_breakpoints.py --output content/tables/tab_breakpoint_robustness.csv --robustness
-    uv run python scripts/compute_breakpoints.py --output content/tables/tab_breakpoints_core.csv --core-only
-    uv run python scripts/compute_breakpoints.py --output content/tables/tab_k_sensitivity.csv --k-sensitivity
+    uv run python scripts/compute_breakpoints.py --output data/derived/tables/tab_breakpoints.csv
+    uv run python scripts/compute_breakpoints.py --output data/derived/tables/tab_breakpoint_robustness.csv --robustness
+    uv run python scripts/compute_breakpoints.py --output data/derived/tables/tab_breakpoints_core.csv --core-only
+    uv run python scripts/compute_breakpoints.py --output data/derived/tables/tab_k_sensitivity.csv --k-sensitivity
 """
 
 import argparse

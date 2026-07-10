@@ -29,5 +29,5 @@ $(VENUE_TABLE): scripts/compute_venue_concentration.py scripts/summarize_core_ve
 # ── Figure ────────────────────────────────────────────────────────────────
 
 $(VENUE_FIG): scripts/plot_venue_concentration.py scripts/plot_style.py scripts/utils.py \
-		$(VENUE_TABLE) content/tables/tab_breakpoints.csv
-	$(PYTHON) $< --output $@ --input $(VENUE_TABLE) content/tables/tab_breakpoints.csv
+		$(VENUE_TABLE) $(DERIVED)/tab_breakpoints.csv
+	$(PYTHON) $< --output $@ --input $(VENUE_TABLE) $(DERIVED)/tab_breakpoints.csv

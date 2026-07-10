@@ -1,7 +1,7 @@
 """Lexical validation of structural breaks via TF-IDF term shift analysis.
 
 Reads:  refined_works.csv,
-        tab_breakpoint_robustness.csv (to derive detected break years)
+        data/derived/tables/tab_breakpoint_robustness.csv (to derive detected break years)
 Writes: tab_lexical_tfidf.csv (all break years + control years, with p-values)
 
 Note: The lexical TF-IDF *figures* are produced by plot_fig_lexical_tfidf.py.
@@ -12,7 +12,7 @@ Exports (for import by plot_fig_lexical_tfidf.py):
 
 import os
 
-from utils import BASE_DIR, get_logger
+from utils import BASE_DIR, DERIVED_TABLES_DIR, get_logger
 
 log = get_logger("compute_lexical")
 
@@ -70,7 +70,7 @@ if __name__ == "__main__":
     log.info("Loaded %d works", len(df))
 
     # Load detected break years from breakpoints table
-    robust_path = os.path.join(TABLES_DIR, "tab_breakpoint_robustness.csv")
+    robust_path = os.path.join(DERIVED_TABLES_DIR, "tab_breakpoint_robustness.csv")
     try:
         robust_df = pd.read_csv(robust_path)
     except (FileNotFoundError, pd.errors.EmptyDataError):

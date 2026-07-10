@@ -51,30 +51,30 @@ REGISTRY: list[dict] = [
     {
         "name": "compute_breakpoints",
         "script": "compute_breakpoints.py",
-        "args": ["--output", "content/tables/tab_breakpoints.csv"],
+        "args": ["--output", "data/derived/tables/tab_breakpoints.csv"],
         "deps": [],
         "outputs": [
-            "content/tables/tab_breakpoints.csv",
+            "data/derived/tables/tab_breakpoints.csv",
         ],
     },
     {
         "name": "compute_breakpoint_robustness",
         "script": "compute_breakpoints.py",
-        "args": ["--output", "content/tables/tab_breakpoint_robustness.csv",
+        "args": ["--output", "data/derived/tables/tab_breakpoint_robustness.csv",
                  "--robustness"],
         "deps": [],
         "outputs": [
-            "content/tables/tab_breakpoint_robustness.csv",
+            "data/derived/tables/tab_breakpoint_robustness.csv",
         ],
     },
     {
         "name": "compute_clusters",
         "script": "compute_clusters.py",
-        "args": ["--output", "content/tables/tab_alluvial.csv"],
+        "args": ["--output", "data/derived/tables/tab_alluvial.csv"],
         "deps": [],
         "outputs": [
-            "content/tables/tab_alluvial.csv",
-            "content/tables/cluster_labels.json",
+            "data/derived/tables/tab_alluvial.csv",
+            "data/derived/tables/cluster_labels.json",
         ],
     },
     {
@@ -115,7 +115,7 @@ REGISTRY: list[dict] = [
         "name": "plot_fig2_breaks",
         "script": "plot_fig2_breaks.py",
         "args": ["--output", "content/figures/fig_breaks.png",
-                 "--input", "content/tables/tab_breakpoints.csv"],
+                 "--input", "data/derived/tables/tab_breakpoints.csv"],
         "deps": ["compute_breakpoints"],
         "outputs": [
             "content/figures/fig_breaks.png",
@@ -126,7 +126,7 @@ REGISTRY: list[dict] = [
         "script": "plot_fig2_composition.py",
         "args": [
             "--output", "content/figures/fig_composition.png",
-            "--input", "content/tables/tab_alluvial.csv",
+            "--input", "data/derived/tables/tab_alluvial.csv",
         ],
         "deps": ["compute_clusters"],
         "outputs": [
@@ -137,7 +137,7 @@ REGISTRY: list[dict] = [
         "name": "plot_fig_alluvial",
         "script": "plot_fig_alluvial.py",
         "args": ["--output", "content/figures/fig_alluvial.png",
-                 "--input", "content/tables/tab_alluvial.csv"],
+                 "--input", "data/derived/tables/tab_alluvial.csv"],
         "deps": ["compute_clusters"],
         "outputs": [
             "content/figures/fig_alluvial.png",
@@ -147,9 +147,9 @@ REGISTRY: list[dict] = [
         "name": "plot_fig_breakpoints",
         "script": "plot_fig_breakpoints.py",
         "args": ["--output", "content/figures/fig_breakpoints.png",
-                 "--input", "content/tables/tab_breakpoints.csv",
-                 "content/tables/tab_breakpoint_robustness.csv",
-                 "content/tables/tab_alluvial.csv"],
+                 "--input", "data/derived/tables/tab_breakpoints.csv",
+                 "data/derived/tables/tab_breakpoint_robustness.csv",
+                 "data/derived/tables/tab_alluvial.csv"],
         "deps": ["compute_breakpoints", "compute_breakpoint_robustness",
                  "compute_clusters"],
         "outputs": [
@@ -345,6 +345,7 @@ def run_and_hash(
     Wave 2 (dependent scripts) runs in parallel after wave 1.
     Wave 2 scripts receive --input args pointing at the tmp directory,
     so no intermediate staging into content/ is needed.
+
     """
     from concurrent.futures import ThreadPoolExecutor, as_completed
 
