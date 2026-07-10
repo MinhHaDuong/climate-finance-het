@@ -2,10 +2,12 @@
 Title: Harden fast-path auto-mark: pin hook-ordering + quantify over-sweep
 Created: 2026-07-10
 Author: HDMX-coding-agent
+Closed: done
 
 --- log ---
 2026-07-10T09:49Z HDMX-coding-agent created
 
+2026-07-10T10:07Z HDMX-coding-agent closed — done
 --- body ---
 ## Context
 Follow-up from 0216 (fast-path tier guards, PR #978, tracker 0213). The
@@ -46,6 +48,43 @@ the /gaze review of #978:
 Write first (red): the pytester regression test from action 1 (fails if the hook
 ordering ever stops deselecting the synthetic heavy-import test).
 
+## Findings & decision (2026-07-10)
+
+### Action 1 — hook ordering pinned
+`tests/test_fast_path_hook_ordering.py` (integration tier) spins a real
+collection in a throwaway dir whose conftest mirrors the production auto-mark
+(same `file_has_heavy_import`, same `add_marker(slow)` in
+`pytest_collection_modifyitems`) and asserts a synthetic heavy-import test is
+deselected under the fast-path selector and selected under `-m slow`.
+`--collect-only` keeps the synthetic module's lazy import from firing. Teeth
+verified by mutation: disabling the `add_marker` call fails the deselection
+assertion.
+
+### Action 2 — over-sweep quantified, module granularity kept
+Measured over the current suite: 95 test functions (~120 collected items) across
+7 heavy-import modules are auto-marked with no explicit marker of their own.
+Breakdown by whether per-test refinement could recover fast-path time:
+- **Heavy compute (~104 items)** — `test_divergence` (56), `test_null_model`
+  (37), `test_embedding_sensitivity` (11): each runs tens of seconds even with
+  the heavy import excluded (all timed out >55s). The layer-2 duration ratchet
+  would bounce them off the fast path anyway — the auto-mark agrees with it, not
+  over-reaches. Recoverable time: none.
+- **Top-level import** — `test_pipeline_io` (2): imports matplotlib at module
+  top level, so importing the module already pays the tax. Per-test marking
+  cannot help.
+- **Genuinely light + lazy import (~12 items)** — `test_analytical_null` (~3.3s)
+  and `test_zoo_figure_polish` (~2.6s): the only recoverable set, and each still
+  retains one matplotlib-touching test.
+
+**Decision: keep module granularity.** Recovering ~12 quick tests in two modules
+would require *sound* per-test detection of which tests reach a lazy import
+(through fixtures, helpers, transitive calls — not a body scan), a fragile
+re-implementation of pytest's machinery whose false negatives would silently
+readmit the exact import tax the guard removes. No coverage is lost (every
+over-swept test still runs in `make check`), and an over-swept test can be run in
+the inner loop directly (`pytest tests/test_foo.py::test_bar`, no `-m` filter).
+Decision recorded in `tests/_tier_autoscan.py::file_has_heavy_import` docstring.
+
 ## Exit criteria
-- Hook-ordering pinned by a regression test.
-- Over-sweep quantified; a documented decision on module- vs per-test granularity.
+- [x] Hook-ordering pinned by a regression test.
+- [x] Over-sweep quantified; a documented decision on module- vs per-test granularity.
