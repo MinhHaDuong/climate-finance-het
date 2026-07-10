@@ -7,6 +7,7 @@ Blocked-by: 0215
 --- log ---
 2026-07-10T00:00Z HDMX-coding-agent created
 
+2026-07-10T08:04Z MinhHaDuong decision: "I agree with the inner loop" — endorses moving numerical-kernel tests (dcor/torch-bound) to slow; the fast inner loop covers only pure logic + what you edit (testmon 0217), full numerical validation stays in make check.
 --- body ---
 ## Context
 Part of tracker 0213. The fast gate must be composed of pure-Python logic tests

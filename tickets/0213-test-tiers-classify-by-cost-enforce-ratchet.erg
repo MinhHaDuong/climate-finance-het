@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-10T00:00Z HDMX-coding-agent created
 
+2026-07-10T08:04Z MinhHaDuong approved the inner-loop trade-off (see 0214 log): numerical-kernel tests move off the fast path. Load-bearing design decision resolved; children unblocked pending ticket review.
 --- body ---
 ## Context
 `make check-fast` (contract: unit tests + lint, <30s inner loop) had drifted to
