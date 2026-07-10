@@ -1,6 +1,6 @@
-"""Tickets 0208 + 0218 + 0231 — analysis intermediates evicted from content/tables/.
+"""Tickets 0208 + 0218 + 0231 — analysis intermediates evicted from deliverables/_shared/tables/.
 
-`content/tables/` conflates small byte-stable *writing deliverables* (the `.md`
+`deliverables/_shared/tables/` conflates small byte-stable *writing deliverables* (the `.md`
 `{{< include >}}` fragments and a few pinned `.csv`) with *analysis
 intermediates* consumed only by other Phase-2 scripts. Ticket 0208 evicted the
 four heavy ones; ticket 0218 finishes the class and adds a standing guard so a
@@ -14,16 +14,16 @@ Two guards, complementary:
    the *known* evictees (producer, consumer, or docstring reference).
 
 2. `test_content_tables_targets_are_declared_deliverables` — the *class*
-   ratchet. Every `content/tables/tab_*.csv` that appears as a Make **target**
+   ratchet. Every `deliverables/_shared/tables/tab_*.csv` that appears as a Make **target**
    in the TOP-LEVEL `Makefile` must be a declared deliverable (a
-   `!content/tables/...` negation in `.gitignore`). A brand-new `tab_*.csv`
-   intermediate landing in `content/tables/` — even one nobody added to
+   `!deliverables/_shared/tables/...` negation in `.gitignore`). A brand-new `tab_*.csv`
+   intermediate landing in `deliverables/_shared/tables/` — even one nobody added to
    `EVICTED` — fails here.
 
    The ratchet is deliberately scoped to the `tab_*.csv` naming class (ticket
    0218 Test spec). The `*.json` intermediates it also evicts
    (`cluster_labels*.json`) stay covered by the fixed `EVICTED` literal-scan
-   above; other content/tables `*_report.json` QA outputs
+   above; other deliverables/_shared/tables `*_report.json` QA outputs
    (`qa_citations_report.json`, `multilingual_report.json`) are a distinct
    class, out of 0218's scope, and are neither flagged nor moved here.
 
@@ -31,11 +31,11 @@ Scope (ticket 0231): the class ratchet scans the top-level `Makefile` AND every
 sub-Makefile (`divergence.mk`, `zoo.mk`, `multilayer-detection.mk`, `venues.mk`).
 Those subsystems route their `tab_*` targets through a per-subsystem directory
 variable (`DIV_TABLES`, `ZOO_TABLES`, `COMP_TABLES`, `VENUE_TABLE`), so a target
-line reads `$(DIV_TABLES)/tab_div_$(m).csv`, not a literal `content/tables/...`
+line reads `$(DIV_TABLES)/tab_div_$(m).csv`, not a literal `deliverables/_shared/tables/...`
 path. The ratchet therefore resolves Make variable references before matching:
 it expands `$(VAR)` from the assignments collected across all makefiles, then
-flags any target whose *resolved* path lands under `content/tables/`. Flipping a
-`*_TABLES` variable back to `content/tables` re-reddens the whole subsystem —
+flags any target whose *resolved* path lands under `deliverables/_shared/tables/`. Flipping a
+`*_TABLES` variable back to `deliverables/_shared/tables` re-reddens the whole subsystem —
 which is the regression this guard exists to catch (0218 evicted the top-level
 literal set; 0231 evicted the variable-routed sub-Makefile class).
 """
@@ -80,17 +80,17 @@ EVICTED = [
 ]
 
 def _bad_patterns(basename):
-    """Path constructions that resolve `basename` under content/tables/.
+    """Path constructions that resolve `basename` under deliverables/_shared/tables/.
 
-    Anchored on the basename so a legit content/tables/ deliverable elsewhere
+    Anchored on the basename so a legit deliverables/_shared/tables/ deliverable elsewhere
     on the same line (e.g. a tab_venues.md target that *reads* the evicted
     file from $(DERIVED)) does not trip the guard.
     """
     return [
-        f"content/tables/{basename}",          # literal path (Make + docstrings)
+        f"deliverables/_shared/tables/{basename}",          # literal path (Make + docstrings)
         f'TABLES_DIR, "{basename}"',            # os.path.join(TABLES_DIR, "…")
         f"TABLES_DIR, '{basename}'",
-        f'"tables", "{basename}"',              # os.path.join(BASE_DIR, "content", "tables", "…")
+        f'"tables", "{basename}"',              # os.path.join(BASE_DIR, "deliverables", "_shared", "tables", "…")
         f"'tables', '{basename}'",
     ]
 
@@ -107,7 +107,7 @@ def _scripts():
 
 
 def _offending_lines(path, basename):
-    """Lines in `path` that place `basename` under a content/tables marker.
+    """Lines in `path` that place `basename` under a deliverables/_shared/tables marker.
 
     The derived-dir constant `DERIVED_TABLES_DIR` is the *correct* destination,
     so its occurrences are masked before matching (it superstring-contains the
@@ -130,7 +130,7 @@ def test_makefiles_do_not_place_evicted_under_content_tables():
             for lineno, line in _offending_lines(path, basename):
                 offenders.append(f"{os.path.relpath(path, PROJECT_ROOT)}:{lineno}: {line}")
     assert not offenders, (
-        "Evicted intermediates still resolve under content/tables/ in Make:\n"
+        "Evicted intermediates still resolve under deliverables/_shared/tables/ in Make:\n"
         + "\n".join(offenders)
     )
 
@@ -142,16 +142,16 @@ def test_scripts_do_not_place_evicted_under_content_tables():
             for lineno, line in _offending_lines(path, basename):
                 offenders.append(f"{os.path.relpath(path, PROJECT_ROOT)}:{lineno}: {line}")
     assert not offenders, (
-        "Evicted intermediates still resolve under content/tables/ in scripts:\n"
+        "Evicted intermediates still resolve under deliverables/_shared/tables/ in scripts:\n"
         + "\n".join(offenders)
     )
 
 
 # --- Class ratchet (ticket 0218) -------------------------------------------
 
-# The intermediate naming class the ratchet guards: content/tables/tab_*.csv
+# The intermediate naming class the ratchet guards: deliverables/_shared/tables/tab_*.csv
 # (0218 Test spec). json intermediates ride the fixed EVICTED literal-scan.
-_CONTENT_TABLE_DATA = re.compile(r"content/tables/(tab_[\w.-]*\.csv)")
+_CONTENT_TABLE_DATA = re.compile(r"deliverables/_shared/tables/(tab_[\w.-]*\.csv)")
 
 
 def _logical_lines(path):
@@ -205,7 +205,7 @@ def _resolve(token, varmap, _depth=0):
 
     Bounded recursion; unknown or loop variables (e.g. a `$(m)` foreach index)
     are left verbatim, which is sufficient — we only need the *directory* prefix
-    to resolve to decide whether a target lands under content/tables/.
+    to resolve to decide whether a target lands under deliverables/_shared/tables/.
     """
     if _depth > 10 or "$" not in token:
         return token
@@ -216,7 +216,7 @@ def _resolve(token, varmap, _depth=0):
 
 
 def _content_table_targets(makefile_path, varmap):
-    """Basenames of content/tables/tab_*.csv appearing as a Make target.
+    """Basenames of deliverables/_shared/tables/tab_*.csv appearing as a Make target.
 
     The *target* is the text left of the `:` / `&:` rule separator on a
     non-recipe logical line; prerequisites and recipe arguments are ignored.
@@ -243,13 +243,13 @@ def _content_table_targets(makefile_path, varmap):
 
 
 def _gitignore_deliverable_whitelist():
-    """content/tables/*.csv basenames negated (kept) in .gitignore."""
+    """deliverables/_shared/tables/*.csv basenames negated (kept) in .gitignore."""
     whitelisted = set()
     path = os.path.join(PROJECT_ROOT, ".gitignore")
     with open(path, encoding="utf-8") as f:
         for line in f:
             line = line.strip()
-            if line.startswith("!content/tables/"):
+            if line.startswith("!deliverables/_shared/tables/"):
                 base = os.path.basename(line[len("!") :])
                 if base.endswith(".csv"):
                     whitelisted.add(base)
@@ -257,10 +257,10 @@ def _gitignore_deliverable_whitelist():
 
 
 def test_content_tables_targets_are_declared_deliverables():
-    """No un-whitelisted tab_*.csv intermediate may be a content/tables/ target.
+    """No un-whitelisted tab_*.csv intermediate may be a deliverables/_shared/tables/ target.
 
-    Every `content/tables/tab_*.csv` produced by the top-level `Makefile` or any
-    sub-Makefile must be a declared deliverable (a `!content/tables/...` negation
+    Every `deliverables/_shared/tables/tab_*.csv` produced by the top-level `Makefile` or any
+    sub-Makefile must be a declared deliverable (a `!deliverables/_shared/tables/...` negation
     in `.gitignore`). Anything else is a Phase-2 intermediate that belongs under
     `$(DERIVED)` (data/derived/tables). Sub-Makefile targets routed through a
     `*_TABLES` directory variable are variable-expanded before the check, so the
@@ -274,9 +274,9 @@ def test_content_tables_targets_are_declared_deliverables():
     whitelist = _gitignore_deliverable_whitelist()
     offenders = sorted(targets - whitelist)
     assert not offenders, (
-        "content/tables/ data-table targets that are neither a declared "
+        "deliverables/_shared/tables/ data-table targets that are neither a declared "
         "deliverable (.gitignore negation) nor evicted to $(DERIVED):\n"
         + "\n".join(offenders)
         + "\n\nEither move the producer output to $(DERIVED) (intermediate) or "
-        "add a `!content/tables/<name>` negation to .gitignore (deliverable)."
+        "add a `!deliverables/_shared/tables/<name>` negation to .gitignore (deliverable)."
     )

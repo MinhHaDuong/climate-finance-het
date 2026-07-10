@@ -13,21 +13,21 @@
     "data/derived/tables/tab_alluvial.csv": "caddb1ed64d9cfff01212d7bda9bb445c3040a238b06ba1befc0d6815450d5fb"
   },
   "plot_fig1_bars": {
-    "content/figures/fig_bars.png": "5c5bb484ebc90049ec6040d81f0eaa60f59f9d824a7c26f5f0ce282a71016932"
+    "deliverables/_shared/figures/fig_bars.png": "5c5bb484ebc90049ec6040d81f0eaa60f59f9d824a7c26f5f0ce282a71016932"
   },
   "plot_fig1_bars_v1": {
-    "content/figures/fig_bars_v1.png": "e8e794c689b3edc51e31957a4e3276049ebbb8908cdc71a9c379875516e76222"
+    "deliverables/_shared/figures/fig_bars_v1.png": "e8e794c689b3edc51e31957a4e3276049ebbb8908cdc71a9c379875516e76222"
   },
   "plot_fig2_breaks": {
-    "content/figures/fig_breaks.png": "029a3856aa189131690be860e7f749f997109165b60d8e6266c8ea8b34ecfbd6"
+    "deliverables/_shared/figures/fig_breaks.png": "029a3856aa189131690be860e7f749f997109165b60d8e6266c8ea8b34ecfbd6"
   },
   "plot_fig2_composition": {
-    "content/figures/fig_composition.png": "53c0c8aebd8d6cca5199bf3424469eb4f68e1b6b90b1fcc7cac3f76cab6879b4"
+    "deliverables/_shared/figures/fig_composition.png": "53c0c8aebd8d6cca5199bf3424469eb4f68e1b6b90b1fcc7cac3f76cab6879b4"
   },
   "plot_fig_alluvial": {
-    "content/figures/fig_alluvial.png": "368bc3e7aaff8d5dc3d876608a1e313ef8e0f3c8447f494742b69edac336817f"
+    "deliverables/_shared/figures/fig_alluvial.png": "368bc3e7aaff8d5dc3d876608a1e313ef8e0f3c8447f494742b69edac336817f"
   },
   "plot_fig_breakpoints": {
-    "content/figures/fig_breakpoints.png": "1883b4db7f5a77b058bc6ccef7a81a13889796ccaa06006b3fe945e3ee26608e"
+    "deliverables/_shared/figures/fig_breakpoints.png": "1883b4db7f5a77b058bc6ccef7a81a13889796ccaa06006b3fe945e3ee26608e"
   }
 }

@@ -23,7 +23,7 @@ from utils import BASE_DIR, DERIVED_TABLES_DIR, get_logger
 
 log = get_logger("export_core_venues_markdown")
 
-TABLES_DIR = os.path.join(BASE_DIR, "content", "tables")
+TABLES_DIR = os.path.join(BASE_DIR, "deliverables", "_shared", "tables")
 
 # Institutional publisher groups: label → list of canonical venue prefixes
 PUBLISHER_GROUPS = [

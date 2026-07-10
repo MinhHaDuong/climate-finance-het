@@ -20,7 +20,7 @@ def _load_config_windows():
 
 
 def _load_paper_windows():
-    paper_text = (ROOT / "content/multilayer-detection.qmd").read_text()
+    paper_text = (ROOT / "deliverables/multilayer/multilayer-detection.qmd").read_text()
     # Slice §4.8 section only — between "### 4.8 Robustness" and "### 4.9"
     section_match = re.search(
         r"### 4\.8 Robustness(.*?)### 4\.9", paper_text, re.DOTALL

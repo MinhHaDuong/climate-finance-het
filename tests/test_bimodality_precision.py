@@ -13,7 +13,7 @@ import pytest
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 from utils import BASE_DIR, DERIVED_TABLES_DIR
 
-TABLES_DIR = os.path.join(BASE_DIR, "content", "tables")
+TABLES_DIR = os.path.join(BASE_DIR, "deliverables", "_shared", "tables")
 
 
 def _max_decimal_places(series):

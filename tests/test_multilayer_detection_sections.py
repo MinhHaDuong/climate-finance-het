@@ -13,7 +13,7 @@ import re
 from pathlib import Path
 
 REPO = Path(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-PAPER = REPO / "content" / "multilayer-detection.qmd"
+PAPER = REPO / "deliverables" / "multilayer" / "multilayer-detection.qmd"
 
 
 def _text() -> str:

@@ -28,8 +28,16 @@ from utils import (
 
 log = get_logger("compute_vars")
 
-TABLES_DIR = os.path.join(BASE_DIR, "content", "tables")
-CONTENT_DIR = os.path.join(BASE_DIR, "content")
+TABLES_DIR = os.path.join(BASE_DIR, "deliverables", "_shared", "tables")
+CONTENT_DIR = os.path.join(BASE_DIR, "deliverables", "_shared")
+
+# Each document's -vars.yml lands in its own deliverable folder (ticket 0226).
+# technical-report-vars.yml is shared by 4 docs, so it lives in _shared/.
+DOC_OUTPUT_DIR = {
+    "technical-report": os.path.join(BASE_DIR, "deliverables", "_shared"),
+    "data-paper": os.path.join(BASE_DIR, "deliverables", "data-paper"),
+    "multilayer-detection": os.path.join(BASE_DIR, "deliverables", "multilayer"),
+}
 
 # Which variables each document uses (direct + {{< include >}}'d files).
 # Each document gets a sibling -vars.yml containing only its variables.
@@ -415,7 +423,7 @@ def write_yaml(v, path):
 # ── Main ─────────────────────────────────────────────────────
 
 
-def main(output_dir):
+def main():
     v = {}
     corpus_stats(v)
     embedding_stats(v)
@@ -442,7 +450,9 @@ def main(output_dir):
         if missing:
             log.warning("%s: %d variables missing: %s", doc_name, len(missing), missing)
             all_missing.extend(f"{doc_name}:{k}" for k in missing)
-        path = os.path.join(output_dir, f"{doc_name}-vars.yml")
+        out_dir = DOC_OUTPUT_DIR[doc_name]
+        os.makedirs(out_dir, exist_ok=True)
+        path = os.path.join(out_dir, f"{doc_name}-vars.yml")
         write_yaml(doc_v, path)
 
     if all_missing:
@@ -457,6 +467,7 @@ def main(output_dir):
 if __name__ == "__main__":
     io_args, _extra = parse_io_args()
     validate_io(output=io_args.output)
-    # --output receives the primary output path (first vars file);
-    # all sibling vars files are co-produced in the same directory.
-    main(os.path.dirname(io_args.output))
+    # --output receives the primary output path (first vars file) for the Make
+    # grouped-target contract; each doc's vars file is routed to its own
+    # deliverable folder via DOC_OUTPUT_DIR (ticket 0226).
+    main()

@@ -70,7 +70,7 @@ class TestZooMkStructure:
     def test_zoo_pdf_target_in_zoo_mk(self, zoo_mk_text):
         """breakpoint-detect-method-zoo.pdf recipe must live in zoo.mk, not only in Makefile."""
         assert re.search(
-            r"^output/content/breakpoint-detect-method-zoo\.pdf\s*:",
+            r"^deliverables/zoo/breakpoint-detect-method-zoo\.pdf\s*:",
             zoo_mk_text,
             re.MULTILINE,
         ), "breakpoint-detect-method-zoo.pdf recipe must live in zoo.mk"

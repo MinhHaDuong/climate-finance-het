@@ -147,7 +147,7 @@ def draw_dag(deps, output_path=None):
     ax.set_aspect("equal")
     ax.axis("off")
 
-    out_path = output_path or os.path.join(BASE_DIR, "content", "figures", "fig_dag.png")
+    out_path = output_path or os.path.join(BASE_DIR, "deliverables", "_shared", "figures", "fig_dag.png")
     fig.savefig(out_path, dpi=DPI, bbox_inches="tight",
                 facecolor="white", pad_inches=0.1)
     log.info("Saved %s", out_path)

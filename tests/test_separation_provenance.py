@@ -4,9 +4,9 @@ committed CSV (ticket 0195, follow-up to the 0161 stat-provenance audit).
 The 0161 audit found the A.5 numbers (nodes, edges, within-tradition share,
 null mean, z, permutation count) were hand-transcribed into the manuscript
 with no committed source table. This test closes that gap: it reads the
-values from ``content/tables/tab_null_separation_pre2007.csv`` and asserts
-each one appears, at the precision the prose uses, in the A.5 bullet of
-``content/manuscript.qmd``.
+values from ``deliverables/_shared/tables/tab_null_separation_pre2007.csv`` and
+asserts each one appears, at the precision the prose uses, in the A.5 bullet of
+``deliverables/manuscript/manuscript.qmd``.
 
 The test extracts numbers from the CSV rather than pinning literals, so a
 legitimate regeneration on a frozen corpus that updates *both* the CSV and
@@ -22,8 +22,8 @@ import os
 import pandas as pd
 
 REPO = os.path.dirname(os.path.dirname(__file__))
-CSV = os.path.join(REPO, "content", "tables", "tab_null_separation_pre2007.csv")
-MANUSCRIPT = os.path.join(REPO, "content", "manuscript.qmd")
+CSV = os.path.join(REPO, "deliverables", "_shared", "tables", "tab_null_separation_pre2007.csv")
+MANUSCRIPT = os.path.join(REPO, "deliverables", "manuscript", "manuscript.qmd")
 
 
 def _louvain_share_row():

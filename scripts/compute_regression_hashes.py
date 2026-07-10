@@ -80,22 +80,22 @@ REGISTRY: list[dict] = [
     {
         "name": "plot_fig1_bars",
         "script": "plot_fig1_bars.py",
-        "args": ["--output", "content/figures/fig_bars.png"],
+        "args": ["--output", "deliverables/_shared/figures/fig_bars.png"],
         "deps": [],
         "outputs": [
-            "content/figures/fig_bars.png",
+            "deliverables/_shared/figures/fig_bars.png",
         ],
     },
     {
         "name": "plot_fig1_bars_v1",
         "script": "plot_fig1_bars.py",
         "args": [
-            "--output", "content/figures/fig_bars_v1.png",
+            "--output", "deliverables/_shared/figures/fig_bars_v1.png",
             "--v1-only",
         ],
         "deps": [],
         "outputs": [
-            "content/figures/fig_bars_v1.png",
+            "deliverables/_shared/figures/fig_bars_v1.png",
         ],
     },
     {
@@ -110,50 +110,50 @@ REGISTRY: list[dict] = [
     # --- Wave 2: depend on compute_* outputs ---
     # Each entry passes --input pointing at the intermediate files produced
     # by Wave 1. _redirect_args rewrites these to the tmp directory, so the
-    # harness never touches real content/.
+    # harness never touches real deliverables/.
     {
         "name": "plot_fig2_breaks",
         "script": "plot_fig2_breaks.py",
-        "args": ["--output", "content/figures/fig_breaks.png",
+        "args": ["--output", "deliverables/_shared/figures/fig_breaks.png",
                  "--input", "data/derived/tables/tab_breakpoints.csv"],
         "deps": ["compute_breakpoints"],
         "outputs": [
-            "content/figures/fig_breaks.png",
+            "deliverables/_shared/figures/fig_breaks.png",
         ],
     },
     {
         "name": "plot_fig2_composition",
         "script": "plot_fig2_composition.py",
         "args": [
-            "--output", "content/figures/fig_composition.png",
+            "--output", "deliverables/_shared/figures/fig_composition.png",
             "--input", "data/derived/tables/tab_alluvial.csv",
         ],
         "deps": ["compute_clusters"],
         "outputs": [
-            "content/figures/fig_composition.png",
+            "deliverables/_shared/figures/fig_composition.png",
         ],
     },
     {
         "name": "plot_fig_alluvial",
         "script": "plot_fig_alluvial.py",
-        "args": ["--output", "content/figures/fig_alluvial.png",
+        "args": ["--output", "deliverables/_shared/figures/fig_alluvial.png",
                  "--input", "data/derived/tables/tab_alluvial.csv"],
         "deps": ["compute_clusters"],
         "outputs": [
-            "content/figures/fig_alluvial.png",
+            "deliverables/_shared/figures/fig_alluvial.png",
         ],
     },
     {
         "name": "plot_fig_breakpoints",
         "script": "plot_fig_breakpoints.py",
-        "args": ["--output", "content/figures/fig_breakpoints.png",
+        "args": ["--output", "deliverables/_shared/figures/fig_breakpoints.png",
                  "--input", "data/derived/tables/tab_breakpoints.csv",
                  "data/derived/tables/tab_breakpoint_robustness.csv",
                  "data/derived/tables/tab_alluvial.csv"],
         "deps": ["compute_breakpoints", "compute_breakpoint_robustness",
                  "compute_clusters"],
         "outputs": [
-            "content/figures/fig_breakpoints.png",
+            "deliverables/_shared/figures/fig_breakpoints.png",
         ],
     },
 ]
@@ -263,7 +263,7 @@ def _hash_output(path: Path) -> str:
 def _redirect_args(args: list[str], output_root: Path) -> list[str]:
     """Rewrite --output and --input paths to use output_root instead of ROOT.
 
-    Paths that start with a known relative prefix (content/, tests/,
+    Paths that start with a known relative prefix (deliverables/, tests/,
     data/derived/) are redirected to output_root/<relpath>. Absolute paths
     under ROOT are converted to relative first.
     """
@@ -278,9 +278,9 @@ def _redirect_args(args: list[str], output_root: Path) -> list[str]:
             except ValueError:
                 result.append(arg)
                 continue
-        # Relative path starting with content/, tests/, or the derived scratch
-        # dir (Phase-2 intermediates evicted there, ticket 0218) → redirect
-        if arg.startswith(("content/", "tests/", "data/derived/")):
+        # Relative path starting with deliverables/, tests/, or the derived
+        # scratch dir (Phase-2 intermediates evicted there, ticket 0218) → redirect
+        if arg.startswith(("deliverables/", "tests/", "data/derived/")):
             redirected = output_root / arg
             redirected.parent.mkdir(parents=True, exist_ok=True)
             result.append(str(redirected))
@@ -345,7 +345,7 @@ def run_and_hash(
     Wave 1 (independent scripts) runs in parallel.
     Wave 2 (dependent scripts) runs in parallel after wave 1.
     Wave 2 scripts receive --input args pointing at the tmp directory,
-    so no intermediate staging into content/ is needed.
+    so no intermediate staging into deliverables/ is needed.
 
     """
     from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -354,8 +354,8 @@ def run_and_hash(
         output_root = ROOT
 
     # Ensure output directories exist
-    (output_root / "content" / "tables").mkdir(parents=True, exist_ok=True)
-    (output_root / "content" / "figures").mkdir(parents=True, exist_ok=True)
+    (output_root / "deliverables" / "_shared" / "tables").mkdir(parents=True, exist_ok=True)
+    (output_root / "deliverables" / "_shared" / "figures").mkdir(parents=True, exist_ok=True)
     # build_het_core writes to tests/fixtures/smoke/catalogs/
     (output_root / "tests" / "fixtures" / "smoke" / "catalogs").mkdir(
         parents=True, exist_ok=True,

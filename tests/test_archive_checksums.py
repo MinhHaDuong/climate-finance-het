@@ -17,9 +17,9 @@ MAKEFILE_ANALYSIS = os.path.join(PROJECT_ROOT, "build", "templates", "Makefile.a
 
 # The outputs that reviewers must be able to verify (from ticket #210).
 EXPECTED_OUTPUTS = [
-    "content/figures/fig_bars.png",
-    "content/figures/fig_composition.png",
-    "content/tables/tab_venues.md",
+    "deliverables/_shared/figures/fig_bars.png",
+    "deliverables/_shared/figures/fig_composition.png",
+    "deliverables/_shared/tables/tab_venues.md",
     # Analysis intermediates evicted to the derived scratch dir (tickets 0208, 0218);
     # ANALYSIS_OUTPUTS references them via the $(DERIVED) Make variable.
     "$(DERIVED)/tab_alluvial.csv",
@@ -53,7 +53,7 @@ class TestAnalysisOutputsVariable:
 
 
     def test_no_includes_in_outputs(self):
-        """ANALYSIS_OUTPUTS must not reference content/_includes/ (Phase 2 outputs live in content/tables/)."""
+        """ANALYSIS_OUTPUTS must not reference _includes/ (Phase 2 tables live in deliverables/_shared/tables/)."""
         mk = _read_makefile()
         m = re.search(
             r"^ANALYSIS_OUTPUTS\s*:?=(.*?)(?=\n\S|\Z)",
@@ -63,8 +63,8 @@ class TestAnalysisOutputsVariable:
         assert m, "ANALYSIS_OUTPUTS variable not found"
         value = m.group(1)
         assert "_includes/" not in value, (
-            "ANALYSIS_OUTPUTS must not reference content/_includes/ — "
-            "generated tables live in content/tables/"
+            "ANALYSIS_OUTPUTS must not reference _includes/ — "
+            "generated tables live in deliverables/_shared/tables/"
         )
 
 

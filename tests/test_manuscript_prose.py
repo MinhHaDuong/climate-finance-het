@@ -1,4 +1,4 @@
-"""Negative half of the prose ratchet over content/manuscript.qmd (ticket 0147).
+"""Negative half of the prose ratchet over deliverables/manuscript/manuscript.qmd (ticket 0147).
 
 Per the CI test-polarity rule (ticket 0148): this file pins only *negative*
 guards and mechanical density checks. No positive authorial wording is asserted

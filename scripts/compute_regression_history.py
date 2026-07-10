@@ -143,8 +143,8 @@ def _run_at_commit(sha: str, worktree_base: Path) -> dict[str, dict[str, str]]:
                 shutil.copy2(f, wt_fixture / f.name)
 
         # Ensure output dirs exist
-        (wt_path / "content" / "tables").mkdir(parents=True, exist_ok=True)
-        (wt_path / "content" / "figures").mkdir(parents=True, exist_ok=True)
+        (wt_path / "deliverables" / "_shared" / "tables").mkdir(parents=True, exist_ok=True)
+        (wt_path / "deliverables" / "_shared" / "figures").mkdir(parents=True, exist_ok=True)
 
         # Sync dependencies in worktree
         sync = subprocess.run(

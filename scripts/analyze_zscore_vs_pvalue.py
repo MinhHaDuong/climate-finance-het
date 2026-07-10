@@ -27,7 +27,7 @@ from utils import get_logger
 log = get_logger("analyze_zscore_vs_pvalue")
 
 # Default paths relative to the repo tables directory
-_DEFAULT_TABLES = Path(__file__).parent.parent / "content" / "tables"
+_DEFAULT_TABLES = Path(__file__).parent.parent / "deliverables" / "_shared" / "tables"
 _DEFAULT_CROSSYEAR = _DEFAULT_TABLES / "tab_crossyear_S2_energy.csv"
 _DEFAULT_NULL = _DEFAULT_TABLES / "tab_null_S2_energy.csv"
 

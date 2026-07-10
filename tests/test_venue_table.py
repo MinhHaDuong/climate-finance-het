@@ -11,8 +11,8 @@ import re
 import pytest
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
-MANUSCRIPT = os.path.join(ROOT, "content", "manuscript.qmd")
-TAB_VENUES = os.path.join(ROOT, "content", "tables", "tab_venues.md")
+MANUSCRIPT = os.path.join(ROOT, "deliverables", "manuscript", "manuscript.qmd")
+TAB_VENUES = os.path.join(ROOT, "deliverables", "_shared", "tables", "tab_venues.md")
 SCRIPT = os.path.join(ROOT, "scripts", "export_tab_venues.py")
 
 
@@ -54,7 +54,7 @@ class TestVenueTableInManuscript:
 @pytest.mark.slow
 class TestVenueTableFile:
     def test_tab_venues_exists(self):
-        assert os.path.isfile(TAB_VENUES), "content/tables/tab_venues.md must exist"
+        assert os.path.isfile(TAB_VENUES), "deliverables/_shared/tables/tab_venues.md must exist"
 
     def test_tab_venues_has_rows(self):
         text = read(TAB_VENUES)

@@ -2,16 +2,16 @@
 paths:
   - "scripts/**"
   - "config/**"
-  - "content/**"
+  - "deliverables/**"
 ---
 
 # PR review — doc propagation checklist (project-specific)
 
 When `/review-pr` triggers doc propagation, trace references in these project files:
-- `content/technical-report.qmd`
-- `content/data-paper.qmd`
-- `content/manuscript.qmd`
-- `content/*-vars.yml`
+- `deliverables/technical-report/technical-report.qmd`
+- `deliverables/data-paper/data-paper.qmd`
+- `deliverables/manuscript/manuscript.qmd`
+- `deliverables/*/*-vars.yml`
 - `docs/`
 - `README.md`, `STATE.md`, `ROADMAP.md`
 - `.claude/rules/architecture.md`

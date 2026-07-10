@@ -8,12 +8,12 @@ How economists and institutions co-produced the categories, metrics, and account
 
 | Document | File | Journal | Status |
 |----------|------|---------|--------|
-| Manuscript | `content/manuscript.qmd` | Œconomia (Varia) | Submitted 2026-03-18, under review |
-| Data paper | `content/data-paper.qmd` | RDJ4HSS (diamond OA) | Submitted 2026-03-26, under review |
-| Technical report | `content/technical-report.qmd` | HAL working paper | Complete |
-| Companion paper | `content/companion-paper.qmd` | Scientometrics / QSS | Outline |
+| Manuscript | `deliverables/manuscript/manuscript.qmd` | Œconomia (Varia) | Submitted 2026-03-18, under review |
+| Data paper | `deliverables/data-paper/data-paper.qmd` | RDJ4HSS (diamond OA) | Submitted 2026-03-26, under review |
+| Technical report | `deliverables/technical-report/technical-report.qmd` | HAL working paper | Complete |
+| Method paper | `deliverables/multilayer/multilayer-detection.qmd` | Scientometrics / QSS | Outline |
 
-All four are Quarto documents sharing fragments via `content/_includes/`.
+Each is its own Quarto project under `deliverables/<x>/`, sharing fragments and assets via `deliverables/_shared/_includes/`.
 
 ## Setup
 
@@ -67,7 +67,7 @@ the repo:
   git-tracked, and it builds from those alone with **Quarto + TeX Live + Pandoc —
   no `uv`, no `dvc`, no data**. This proves the exact submitted PDF reproduces on a
   bare machine. Today the only clean-room paper is the manuscript
-  (`make -f manuscript.mk output/content/manuscript.pdf`), because it is the live
+  (`make -f deliverables/manuscript/manuscript.mk deliverables/manuscript/manuscript.pdf`), because it is the live
   Œconomia R&R being rebuilt for resubmission.
 - **Live** — every other document (corpus-report, technical-report, data-paper,
   multilayer-detection) builds from the corpus via `make papers`. Its numbers are
@@ -83,17 +83,15 @@ keeps only the live working copy.
 ## Repository structure
 
 ```
-├── _quarto.yml                       # Quarto project config (4 documents)
-├── content/                          # All Quarto source material
-│   ├── manuscript.qmd                # Main article (Œconomia)
-│   ├── technical-report.qmd          # Full pipeline documentation
-│   ├── data-paper.qmd                # Corpus data paper
-│   ├── companion-paper.qmd           # Methods companion
-│   ├── _includes/                    # Shared Markdown fragments
-│   ├── bibliography/                 # main.bib + oeconomia.csl
-│   ├── figures/                      # Generated figures (gitignored)
-│   └── tables/                       # Generated tables (gitignored)
-├── output/                           # Quarto rendered output (gitignored)
+├── deliverables/                     # One Quarto project per document
+│   ├── manuscript/                    #   manuscript.qmd + -Gide.qmd + manuscript.mk
+│   ├── technical-report/              #   Full pipeline documentation
+│   ├── data-paper/                    #   Corpus data paper
+│   ├── multilayer/                    #   Method paper + techrep variant
+│   ├── corpus-report/  agentic/  zoo/ #   Other papers
+│   ├── slides-gide/  slides-eshet/    #   Conference slide decks
+│   └── _shared/                       #   _includes/, bibliography/, figures/, tables/ (generated)
+│                                      #   (each deliverable's PDF/DOCX renders next to its .qmd, gitignored)
 ├── config/                           # Pipeline parameters (YAML)
 ├── Makefile                          # Build: make corpus, make figures, make manuscript
 ├── dvc.yaml                          # Phase 1 pipeline DAG (DVC stages)

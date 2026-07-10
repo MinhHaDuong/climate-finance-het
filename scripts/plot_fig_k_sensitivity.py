@@ -22,7 +22,7 @@ from utils import BASE_DIR, DERIVED_TABLES_DIR, get_logger, save_figure
 
 log = get_logger("plot_fig_k_sensitivity")
 
-TABLES_DIR = os.path.join(BASE_DIR, "content", "tables")
+TABLES_DIR = os.path.join(BASE_DIR, "deliverables", "_shared", "tables")
 
 K_DEFAULT = 6
 

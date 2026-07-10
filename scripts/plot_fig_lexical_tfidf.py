@@ -116,7 +116,7 @@ def main():
                         help="Also save PDF output")
     args = parser.parse_args(extra)
 
-    figures_dir = os.path.join(BASE_DIR, "content", "figures")
+    figures_dir = os.path.join(BASE_DIR, "deliverables", "_shared", "figures")
     os.makedirs(figures_dir, exist_ok=True)
 
     # --- Input resolution ---

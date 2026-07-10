@@ -623,7 +623,7 @@ class TestArchiveBitInvariance:
             re.MULTILINE | re.DOTALL,
         )
         assert m_out, "ANALYSIS_OUTPUTS not found"
-        output_paths = re.findall(r"content/\S+", m_out.group(1))
+        output_paths = re.findall(r"deliverables/\S+", m_out.group(1))
         # For each output, find its Makefile rule and collect script prereqs
         needed = set()
         for out in output_paths:

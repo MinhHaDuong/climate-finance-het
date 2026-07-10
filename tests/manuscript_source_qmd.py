@@ -1,6 +1,6 @@
 """Shared accessors for the Quarto manuscript source (ticket 0147).
 
-``content/manuscript.qmd`` is Quarto Markdown: a YAML front-matter block,
+``deliverables/manuscript/manuscript.qmd`` is Quarto Markdown: a YAML front-matter block,
 then prose interleaved with HTML comments, fenced code, Quarto shortcodes
 (``{{< meta ... >}}``), pipe tables, and blockquotes. The prose-adherence
 guards in ``test_manuscript_prose.py`` must scan authored prose only, so this
@@ -28,7 +28,7 @@ from pathlib import Path
 import pytest
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-MANUSCRIPT = REPO_ROOT / "content" / "manuscript.qmd"
+MANUSCRIPT = REPO_ROOT / "deliverables" / "manuscript" / "manuscript.qmd"
 
 _FRONTMATTER_RE = re.compile(r"\A---\n.*?\n---\n", re.DOTALL)
 _HTML_COMMENT_RE = re.compile(r"<!--.*?-->", re.DOTALL)
@@ -43,7 +43,7 @@ _HEADING_RE = re.compile(r"^(#{2,4})\s+(.*?)\s*$", re.MULTILINE)
 def raw() -> str:
     """The full manuscript.qmd source, exactly as committed."""
     if not MANUSCRIPT.exists():
-        pytest.skip("content/manuscript.qmd not found")
+        pytest.skip("deliverables/manuscript/manuscript.qmd not found")
     return MANUSCRIPT.read_text(encoding="utf-8")
 
 

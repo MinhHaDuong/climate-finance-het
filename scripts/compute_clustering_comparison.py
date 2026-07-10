@@ -54,8 +54,8 @@ log = get_logger("compute_clustering_comparison")
 
 warnings.filterwarnings("ignore", category=FutureWarning)
 
-TABLES_DIR = os.path.join(BASE_DIR, "content", "tables")
-FIGURES_DIR = os.path.join(BASE_DIR, "content", "figures")
+TABLES_DIR = os.path.join(BASE_DIR, "deliverables", "_shared", "tables")
+FIGURES_DIR = os.path.join(BASE_DIR, "deliverables", "_shared", "figures")
 os.makedirs(TABLES_DIR, exist_ok=True)
 os.makedirs(FIGURES_DIR, exist_ok=True)
 

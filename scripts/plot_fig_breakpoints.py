@@ -31,7 +31,7 @@ from utils import (
 
 log = get_logger("plot_fig_breakpoints")
 
-TABLES_DIR = os.path.join(BASE_DIR, "content", "tables")
+TABLES_DIR = os.path.join(BASE_DIR, "deliverables", "_shared", "tables")
 WINDOW_SIZES = [2, 3, 4]
 
 

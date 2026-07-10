@@ -29,9 +29,9 @@
 DATA_DIR     := data/catalogs
 DERIVED      := data/derived/tables
 CONFIG       := config/analysis.yaml
-BIB         := content/bibliography/main.bib
-CSL         := content/bibliography/oeconomia.csl
-SRC         := content/manuscript.qmd
+BIB         := deliverables/_shared/bibliography/main.bib
+CSL         := deliverables/_shared/bibliography/oeconomia.csl
+SRC         := deliverables/manuscript/manuscript.qmd
 
 # Phase 1 artifact chain (the contract between phases)
 UNIFIED     := $(DATA_DIR)/unified_works.csv
@@ -85,64 +85,64 @@ endif
 -include zoo.mk
 -include venues.mk
 -include separation.mk
--include manuscript.mk
+-include deliverables/manuscript/manuscript.mk
 
 # ── Quarto ───────────────────────────────────────────────
 # ── Per-document include sets ────────────────────────────
-MANUSCRIPT_INCLUDES := content/tables/tab_venues.md
+MANUSCRIPT_INCLUDES := deliverables/_shared/tables/tab_venues.md
 
-TECHREP_INCLUDES := content/_includes/corpus-construction.md \
-		content/_includes/corpus-enrichment.md \
-		content/_includes/corpus-filtering.md \
-		content/_includes/core-vs-full.md \
-		content/_includes/structural-breaks.md \
-		content/_includes/alluvial-diagram.md \
-		content/_includes/bimodality-analysis.md \
-		content/_includes/pca-scatter.md \
-		content/_includes/citation-genealogy.md \
-		content/_includes/cocitation-communities.md \
-		content/_includes/citation-quality.md \
-		content/_includes/reproducibility.md \
-		content/tables/tab_citation_coverage.md
+TECHREP_INCLUDES := deliverables/_shared/_includes/corpus-construction.md \
+		deliverables/_shared/_includes/corpus-enrichment.md \
+		deliverables/_shared/_includes/corpus-filtering.md \
+		deliverables/_shared/_includes/core-vs-full.md \
+		deliverables/_shared/_includes/structural-breaks.md \
+		deliverables/_shared/_includes/alluvial-diagram.md \
+		deliverables/_shared/_includes/bimodality-analysis.md \
+		deliverables/_shared/_includes/pca-scatter.md \
+		deliverables/_shared/_includes/citation-genealogy.md \
+		deliverables/_shared/_includes/cocitation-communities.md \
+		deliverables/_shared/_includes/citation-quality.md \
+		deliverables/_shared/_includes/reproducibility.md \
+		deliverables/_shared/tables/tab_citation_coverage.md
 
-DATAPAPER_INCLUDES := content/_includes/corpus-construction.md \
-		content/_includes/corpus-filtering.md \
-		content/_includes/embedding-generation.md \
-		content/_includes/reproducibility.md \
-		content/tables/tab_corpus_sources.md \
-		content/tables/tab_languages.md
+DATAPAPER_INCLUDES := deliverables/_shared/_includes/corpus-construction.md \
+		deliverables/_shared/_includes/corpus-filtering.md \
+		deliverables/_shared/_includes/embedding-generation.md \
+		deliverables/_shared/_includes/reproducibility.md \
+		deliverables/_shared/tables/tab_corpus_sources.md \
+		deliverables/_shared/tables/tab_languages.md
 
-MULTILAYER_INCLUDES := content/_includes/embedding-generation.md \
-		content/_includes/structural-breaks.md \
-		content/_includes/alluvial-diagram.md \
-		content/_includes/bimodality-analysis.md \
-		content/_includes/pca-scatter.md \
-		content/_includes/core-vs-full.md
+MULTILAYER_INCLUDES := deliverables/_shared/_includes/embedding-generation.md \
+		deliverables/_shared/_includes/structural-breaks.md \
+		deliverables/_shared/_includes/alluvial-diagram.md \
+		deliverables/_shared/_includes/bimodality-analysis.md \
+		deliverables/_shared/_includes/pca-scatter.md \
+		deliverables/_shared/_includes/core-vs-full.md
 
 # Method-zoo include tree: one composer + 18 per-method entries.
 # Used by breakpoint-detect-method-zoo.qmd and transitively by technical-report.qmd.
-ZOO_INCLUDES := content/_includes/techrep/overview.md \
-		content/_includes/techrep/zscore.md \
-		content/_includes/techrep/null-model.md \
-		content/_includes/techrep-zoo.md \
-		content/_includes/zoo/S1_mmd.md \
-		content/_includes/zoo/S2_energy.md \
-		content/_includes/zoo/S3_sliced_wasserstein.md \
-		content/_includes/zoo/S4_frechet.md \
-		content/_includes/zoo/C2ST_embedding.md \
-		content/_includes/zoo/L1_js.md \
-		content/_includes/zoo/L2_ntr.md \
-		content/_includes/zoo/L3_term_burst.md \
-		content/_includes/zoo/C2ST_lexical.md \
-		content/_includes/zoo/G1_pagerank.md \
-		content/_includes/zoo/G2_spectral.md \
-		content/_includes/zoo/G3_coupling_age.md \
-		content/_includes/zoo/G4_cross_tradition.md \
-		content/_includes/zoo/G5_pref_attachment.md \
-		content/_includes/zoo/G6_entropy.md \
-		content/_includes/zoo/G7_disruption.md \
-		content/_includes/zoo/G8_betweenness.md \
-		content/_includes/zoo/G9_community.md
+ZOO_INCLUDES := deliverables/_shared/_includes/techrep/overview.md \
+		deliverables/_shared/_includes/techrep/zscore.md \
+		deliverables/_shared/_includes/techrep/null-model.md \
+		deliverables/_shared/_includes/techrep-zoo.md \
+		deliverables/_shared/_includes/zoo/S1_mmd.md \
+		deliverables/_shared/_includes/zoo/S2_energy.md \
+		deliverables/_shared/_includes/zoo/S3_sliced_wasserstein.md \
+		deliverables/_shared/_includes/zoo/S4_frechet.md \
+		deliverables/_shared/_includes/zoo/C2ST_embedding.md \
+		deliverables/_shared/_includes/zoo/L1_js.md \
+		deliverables/_shared/_includes/zoo/L2_ntr.md \
+		deliverables/_shared/_includes/zoo/L3_term_burst.md \
+		deliverables/_shared/_includes/zoo/C2ST_lexical.md \
+		deliverables/_shared/_includes/zoo/G1_pagerank.md \
+		deliverables/_shared/_includes/zoo/G2_spectral.md \
+		deliverables/_shared/_includes/zoo/G3_coupling_age.md \
+		deliverables/_shared/_includes/zoo/G4_cross_tradition.md \
+		deliverables/_shared/_includes/zoo/G5_pref_attachment.md \
+		deliverables/_shared/_includes/zoo/G6_entropy.md \
+		deliverables/_shared/_includes/zoo/G7_disruption.md \
+		deliverables/_shared/_includes/zoo/G8_betweenness.md \
+		deliverables/_shared/_includes/zoo/G9_community.md
 
 # Quarto resolves includes across ALL project files (_quarto.yml render list),
 # even when rendering a single document. Every render target needs the full set.
@@ -150,76 +150,76 @@ PROJECT_INCLUDES := $(MANUSCRIPT_INCLUDES) $(TECHREP_INCLUDES) \
 		$(DATAPAPER_INCLUDES) $(MULTILAYER_INCLUDES) $(ZOO_INCLUDES)
 
 # ── Per-document figure sets ─────────────────────────────
-MANUSCRIPT_FIGS := content/figures/fig_bars_v1.png content/figures/fig_composition.png content/figures/fig_breaks.png
+MANUSCRIPT_FIGS := deliverables/_shared/figures/fig_bars_v1.png deliverables/_shared/figures/fig_composition.png deliverables/_shared/figures/fig_breaks.png
 
-DATAPAPER_FIGS  := content/figures/fig_bars.png content/figures/fig_dag.png
+DATAPAPER_FIGS  := deliverables/_shared/figures/fig_bars.png deliverables/_shared/figures/fig_dag.png
 
-MULTILAYER_FIGS  := content/figures/fig_breakpoints.png content/figures/fig_alluvial.png \
-                   content/figures/fig_breaks.png \
-                   content/figures/fig_bimodality.png \
-                   content/figures/fig_seed_axis_core.png content/figures/fig_pca_scatter.png \
-                   content/figures/fig_genealogy.png \
-                   content/figures/fig_companion_zseries.png \
-                   content/figures/fig_companion_heatmap.png \
-                   content/figures/fig_companion_terms.png \
-                   content/figures/fig_companion_community.png
+MULTILAYER_FIGS  := deliverables/_shared/figures/fig_breakpoints.png deliverables/_shared/figures/fig_alluvial.png \
+                   deliverables/_shared/figures/fig_breaks.png \
+                   deliverables/_shared/figures/fig_bimodality.png \
+                   deliverables/_shared/figures/fig_seed_axis_core.png deliverables/_shared/figures/fig_pca_scatter.png \
+                   deliverables/_shared/figures/fig_genealogy.png \
+                   deliverables/_shared/figures/fig_companion_zseries.png \
+                   deliverables/_shared/figures/fig_companion_heatmap.png \
+                   deliverables/_shared/figures/fig_companion_terms.png \
+                   deliverables/_shared/figures/fig_companion_community.png
 
-TECHREP_FIGS    := content/figures/fig_alluvial_core.png \
-                   content/figures/fig_bimodality_core.png \
-                   content/figures/fig_bimodality_lexical_core.png \
-                   content/figures/fig_bimodality_keywords_core.png \
-                   content/figures/fig_bimodality_lexical.png \
-                   content/figures/fig_bimodality_keywords.png \
-                   content/figures/fig_kde.png \
-                   content/figures/fig_traditions.png \
-                   content/figures/fig_communities.png \
-                   content/figures/fig_semantic.png \
-                   content/figures/fig_semantic_lang.png \
-                   content/figures/fig_semantic_period.png
+TECHREP_FIGS    := deliverables/_shared/figures/fig_alluvial_core.png \
+                   deliverables/_shared/figures/fig_bimodality_core.png \
+                   deliverables/_shared/figures/fig_bimodality_lexical_core.png \
+                   deliverables/_shared/figures/fig_bimodality_keywords_core.png \
+                   deliverables/_shared/figures/fig_bimodality_lexical.png \
+                   deliverables/_shared/figures/fig_bimodality_keywords.png \
+                   deliverables/_shared/figures/fig_kde.png \
+                   deliverables/_shared/figures/fig_traditions.png \
+                   deliverables/_shared/figures/fig_communities.png \
+                   deliverables/_shared/figures/fig_semantic.png \
+                   deliverables/_shared/figures/fig_semantic_lang.png \
+                   deliverables/_shared/figures/fig_semantic_period.png
 
-NCC_FIGS        := content/figures/fig_ncc_divergence.png \
-                   content/figures/fig_ncc_core_comparison.png \
-                   content/figures/fig_ncc_bimodality.png \
-                   content/figures/fig_ncc_alluvial.png
+NCC_FIGS        := deliverables/_shared/figures/fig_ncc_divergence.png \
+                   deliverables/_shared/figures/fig_ncc_core_comparison.png \
+                   deliverables/_shared/figures/fig_ncc_bimodality.png \
+                   deliverables/_shared/figures/fig_ncc_alluvial.png
 
 # Method-zoo figures (17 schematics + 18 zoo result panels).
 # schematic_C2ST.png serves both C2ST_embedding and C2ST_lexical, hence 17 schematics for 18 methods.
-ZOO_SCHEMATICS := content/figures/schematic_S1_mmd.png \
-                  content/figures/schematic_S2_energy.png \
-                  content/figures/schematic_S3_sliced_wasserstein.png \
-                  content/figures/schematic_S4_frechet.png \
-                  content/figures/schematic_C2ST.png \
-                  content/figures/schematic_L1_js.png \
-                  content/figures/schematic_L2_ntr.png \
-                  content/figures/schematic_L3_burst.png \
-                  content/figures/schematic_G1_pagerank.png \
-                  content/figures/schematic_G2_spectral.png \
-                  content/figures/schematic_G3_coupling_age.png \
-                  content/figures/schematic_G4_cross_tradition.png \
-                  content/figures/schematic_G5_pref_attachment.png \
-                  content/figures/schematic_G6_entropy.png \
-                  content/figures/schematic_G7_disruption.png \
-                  content/figures/schematic_G8_betweenness.png \
-                  content/figures/schematic_G9_community.png
+ZOO_SCHEMATICS := deliverables/_shared/figures/schematic_S1_mmd.png \
+                  deliverables/_shared/figures/schematic_S2_energy.png \
+                  deliverables/_shared/figures/schematic_S3_sliced_wasserstein.png \
+                  deliverables/_shared/figures/schematic_S4_frechet.png \
+                  deliverables/_shared/figures/schematic_C2ST.png \
+                  deliverables/_shared/figures/schematic_L1_js.png \
+                  deliverables/_shared/figures/schematic_L2_ntr.png \
+                  deliverables/_shared/figures/schematic_L3_burst.png \
+                  deliverables/_shared/figures/schematic_G1_pagerank.png \
+                  deliverables/_shared/figures/schematic_G2_spectral.png \
+                  deliverables/_shared/figures/schematic_G3_coupling_age.png \
+                  deliverables/_shared/figures/schematic_G4_cross_tradition.png \
+                  deliverables/_shared/figures/schematic_G5_pref_attachment.png \
+                  deliverables/_shared/figures/schematic_G6_entropy.png \
+                  deliverables/_shared/figures/schematic_G7_disruption.png \
+                  deliverables/_shared/figures/schematic_G8_betweenness.png \
+                  deliverables/_shared/figures/schematic_G9_community.png
 
-ZOO_RESULT_FIGS := content/figures/fig_zoo_S1_MMD.png \
-                   content/figures/fig_zoo_S2_energy.png \
-                   content/figures/fig_zoo_S3_sliced_wasserstein.png \
-                   content/figures/fig_zoo_S4_frechet.png \
-                   content/figures/fig_zoo_C2ST_embedding.png \
-                   content/figures/fig_zoo_C2ST_lexical.png \
-                   content/figures/fig_zoo_L1.png \
-                   content/figures/fig_zoo_L2.png \
-                   content/figures/fig_zoo_L3.png \
-                   content/figures/fig_zoo_G1_pagerank.png \
-                   content/figures/fig_zoo_G2_spectral.png \
-                   content/figures/fig_zoo_G3_coupling_age.png \
-                   content/figures/fig_zoo_G4_cross_tradition.png \
-                   content/figures/fig_zoo_G5_pref_attachment.png \
-                   content/figures/fig_zoo_G6_entropy.png \
-                   content/figures/fig_zoo_G7_disruption.png \
-                   content/figures/fig_zoo_G8_betweenness.png \
-                   content/figures/fig_zoo_G9_community.png
+ZOO_RESULT_FIGS := deliverables/_shared/figures/fig_zoo_S1_MMD.png \
+                   deliverables/_shared/figures/fig_zoo_S2_energy.png \
+                   deliverables/_shared/figures/fig_zoo_S3_sliced_wasserstein.png \
+                   deliverables/_shared/figures/fig_zoo_S4_frechet.png \
+                   deliverables/_shared/figures/fig_zoo_C2ST_embedding.png \
+                   deliverables/_shared/figures/fig_zoo_C2ST_lexical.png \
+                   deliverables/_shared/figures/fig_zoo_L1.png \
+                   deliverables/_shared/figures/fig_zoo_L2.png \
+                   deliverables/_shared/figures/fig_zoo_L3.png \
+                   deliverables/_shared/figures/fig_zoo_G1_pagerank.png \
+                   deliverables/_shared/figures/fig_zoo_G2_spectral.png \
+                   deliverables/_shared/figures/fig_zoo_G3_coupling_age.png \
+                   deliverables/_shared/figures/fig_zoo_G4_cross_tradition.png \
+                   deliverables/_shared/figures/fig_zoo_G5_pref_attachment.png \
+                   deliverables/_shared/figures/fig_zoo_G6_entropy.png \
+                   deliverables/_shared/figures/fig_zoo_G7_disruption.png \
+                   deliverables/_shared/figures/fig_zoo_G8_betweenness.png \
+                   deliverables/_shared/figures/fig_zoo_G9_community.png
 
 ZOO_FIGS := $(ZOO_SCHEMATICS) $(ZOO_RESULT_FIGS)
 
@@ -308,7 +308,7 @@ deploy-corpus:
 	$(UV_RUN) dvc push
 
 # ── Corpus diagnostics (Phase 1 — reads enrichment caches) ──
-content/tables/qa_citations_report.json: scripts/qa_citations.py scripts/utils.py \
+deliverables/_shared/tables/qa_citations_report.json: scripts/qa_citations.py scripts/utils.py \
 		$(DATA_DIR)/citations.csv
 	$(PYTHON) $< --output $@
 
@@ -317,7 +317,7 @@ content/tables/qa_citations_report.json: scripts/qa_citations.py scripts/utils.p
 # ═══════════════════════════════════════════════════════════
 # Inputs: Phase 1 outputs only (refined_works.csv, refined_embeddings.npz, refined_citations.csv).
 # het_mostcited_50.csv is produced within Phase 2 by build_het_core.py.
-# Outputs: content/figures/*.png, content/tables/*.csv, content/*-vars.yml
+# Outputs: deliverables/_shared/figures/*.png, deliverables/_shared/tables/*.csv, deliverables/<x>/*-vars.yml
 
 # Gate for Phase 2: verify all three contract files exist.
 # If any is missing, suggest dvc pull (data not synced) or make corpus (not built).
@@ -351,26 +351,26 @@ corpus-validate: $(REFINED)
 	$(PYTHON) -m pytest tests/test_corpus_acceptance.py -v -s --tb=long
 
 # ── Corpus reporting (Phase 2 — reads only refined data) ──
-content/tables/tab_citation_coverage.md: scripts/export_citation_coverage.py scripts/utils.py $(REFINED)
+deliverables/_shared/tables/tab_citation_coverage.md: scripts/export_citation_coverage.py scripts/utils.py $(REFINED)
 	$(PYTHON) $< --output $@
 
-content/tables/tab_venues.md: scripts/export_tab_venues.py scripts/utils.py $(REFINED) $(DERIVED)/tab_pole_papers.csv
+deliverables/_shared/tables/tab_venues.md: scripts/export_tab_venues.py scripts/utils.py $(REFINED) $(DERIVED)/tab_pole_papers.csv
 	$(PYTHON) $< --output $@ --pole-papers $(DERIVED)/tab_pole_papers.csv
 
-content/tables/tab_corpus_sources.csv content/tables/tab_corpus_sources.md &: scripts/export_corpus_table.py scripts/utils.py $(REFINED)
+deliverables/_shared/tables/tab_corpus_sources.csv deliverables/_shared/tables/tab_corpus_sources.md &: scripts/export_corpus_table.py scripts/utils.py $(REFINED)
 	$(PYTHON) $< --output $@
 
-content/tables/tab_languages.md: scripts/export_language_table.py scripts/utils.py $(ENRICHED)
+deliverables/_shared/tables/tab_languages.md: scripts/export_language_table.py scripts/utils.py $(ENRICHED)
 	$(PYTHON) $< --output $@
 
-corpus-tables: content/tables/tab_corpus_sources.csv content/tables/tab_corpus_sources.md \
-               content/tables/tab_citation_coverage.md \
-               content/tables/tab_languages.md
+corpus-tables: deliverables/_shared/tables/tab_corpus_sources.csv deliverables/_shared/tables/tab_corpus_sources.md \
+               deliverables/_shared/tables/tab_citation_coverage.md \
+               deliverables/_shared/tables/tab_languages.md
 
 # ── Statistics (computed from pipeline outputs) ──────────
 # manuscript-vars.yml is pinned to v1.0 values — not auto-generated by compute_vars.py.
-COMPUTED_STATS := content/technical-report-vars.yml \
-                  content/data-paper-vars.yml content/multilayer-detection-vars.yml
+COMPUTED_STATS := deliverables/_shared/technical-report-vars.yml \
+                  deliverables/data-paper/data-paper-vars.yml deliverables/multilayer/multilayer-detection-vars.yml
 
 # Grouped target (&:) — one invocation writes all 3 files. Requires GNU Make >= 4.3.
 $(COMPUTED_STATS) &: scripts/compute_vars.py scripts/utils.py $(REFINED) \
@@ -382,7 +382,7 @@ $(COMPUTED_STATS) &: scripts/compute_vars.py scripts/utils.py $(REFINED) \
 		$(wildcard $(REFINED_EMB)) \
 		$(wildcard $(DATA_DIR)/citations.csv) \
 		$(wildcard $(REFINED_CIT)) \
-		$(wildcard content/tables/qa_citations_report.json)
+		$(wildcard deliverables/_shared/tables/qa_citations_report.json)
 	$(PYTHON) $< --output $@
 
 stats: $(COMPUTED_STATS)
@@ -393,27 +393,27 @@ stats: $(COMPUTED_STATS)
 $(MOSTCITED): scripts/build_het_core.py scripts/utils.py $(REFINED) $(REFINED_CIT)
 	$(PYTHON) $< --output $@
 
-content/tables/tab_core_venues_top10.md: scripts/export_core_venues_markdown.py scripts/summarize_core_venues.py scripts/utils.py $(MOSTCITED)
+deliverables/_shared/tables/tab_core_venues_top10.md: scripts/export_core_venues_markdown.py scripts/summarize_core_venues.py scripts/utils.py $(MOSTCITED)
 	$(PYTHON) $< --output $@
 
 # ── Figures ──────────────────────────────────────────────
 
 # -- Manuscript (Oeconomia article) --
 # Fig 1 (bars): corpus growth per year
-content/figures/fig_bars.png: scripts/plot_fig1_bars.py scripts/plot_style.py scripts/utils.py $(CONFIG) $(REFINED)
+deliverables/_shared/figures/fig_bars.png: scripts/plot_fig1_bars.py scripts/plot_style.py scripts/utils.py $(CONFIG) $(REFINED)
 	$(PYTHON) $< --output $@
 
 # Fig 1 v1 variant: restricted to submission corpus for manuscript stability
-content/figures/fig_bars_v1.png: scripts/plot_fig1_bars.py scripts/plot_style.py scripts/utils.py $(CONFIG) $(REFINED)
+deliverables/_shared/figures/fig_bars_v1.png: scripts/plot_fig1_bars.py scripts/plot_style.py scripts/utils.py $(CONFIG) $(REFINED)
 	$(PYTHON) $< --output $@ --v1-only
 
 # Fig 2 (composition): frozen v1 archive data + corrected labels
-content/figures/fig_composition.png: scripts/plot_fig2_composition.py scripts/plot_style.py scripts/utils.py $(CONFIG) \
+deliverables/_shared/figures/fig_composition.png: scripts/plot_fig2_composition.py scripts/plot_style.py scripts/utils.py $(CONFIG) \
 		config/v1_tab_alluvial.csv config/v1_cluster_labels.json
 	$(PYTHON) $< --output $@ --input config/v1_tab_alluvial.csv --labels config/v1_cluster_labels.json
 
 # Fig 2 wide variant (2x3 landscape) for slides — same frozen data, --wide layout
-content/figures/fig_composition_wide.png: scripts/plot_fig2_composition.py scripts/plot_style.py scripts/utils.py $(CONFIG) \
+deliverables/_shared/figures/fig_composition_wide.png: scripts/plot_fig2_composition.py scripts/plot_style.py scripts/utils.py $(CONFIG) \
 		config/v1_tab_alluvial.csv config/v1_cluster_labels.json
 	$(PYTHON) $< --wide --output $@ --input config/v1_tab_alluvial.csv --labels config/v1_cluster_labels.json
 
@@ -425,13 +425,13 @@ $(SEMANTIC_CLUSTERS): scripts/analyze_embeddings.py scripts/utils.py $(CONFIG) $
 	$(PYTHON) $< --output $@
 
 # Semantic UMAP maps (one parameterized plot script, 3 invocations)
-content/figures/fig_semantic.png: scripts/plot_semantic.py scripts/utils.py $(SEMANTIC_CLUSTERS)
+deliverables/_shared/figures/fig_semantic.png: scripts/plot_semantic.py scripts/utils.py $(SEMANTIC_CLUSTERS)
 	$(PYTHON) $< --color-by cluster --output $@
 
-content/figures/fig_semantic_lang.png: scripts/plot_semantic.py scripts/utils.py $(SEMANTIC_CLUSTERS)
+deliverables/_shared/figures/fig_semantic_lang.png: scripts/plot_semantic.py scripts/utils.py $(SEMANTIC_CLUSTERS)
 	$(PYTHON) $< --color-by language --output $@
 
-content/figures/fig_semantic_period.png: scripts/plot_semantic.py scripts/utils.py $(SEMANTIC_CLUSTERS)
+deliverables/_shared/figures/fig_semantic_period.png: scripts/plot_semantic.py scripts/utils.py $(SEMANTIC_CLUSTERS)
 	$(PYTHON) $< --color-by period --output $@
 
 # -- Companion paper (quantitative) --
@@ -455,26 +455,26 @@ $(DERIVED)/tab_core_shares.csv &: \
 # To update: copy from the reproducibility archive and commit.
 
 # Breakpoints figure
-content/figures/fig_breakpoints.png: \
+deliverables/_shared/figures/fig_breakpoints.png: \
 		scripts/plot_fig_breakpoints.py scripts/utils.py $(CONFIG) \
 		$(DERIVED)/tab_breakpoints.csv $(DERIVED)/tab_breakpoint_robustness.csv \
 		$(DERIVED)/tab_alluvial.csv
 	$(PYTHON) $< --output $@ --input $(DERIVED)/tab_breakpoints.csv $(DERIVED)/tab_breakpoint_robustness.csv $(DERIVED)/tab_alluvial.csv
 
 # Alluvial figure (static PNG)
-content/figures/fig_alluvial.png: \
+deliverables/_shared/figures/fig_alluvial.png: \
 		scripts/plot_fig_alluvial.py scripts/utils.py $(CONFIG) \
 		$(DERIVED)/tab_alluvial.csv $(DERIVED)/cluster_labels.json
 	$(PYTHON) $< --output $@ --input $(DERIVED)/tab_alluvial.csv
 
 # Alluvial figure (interactive HTML)
-content/figures/fig_alluvial.html: \
+deliverables/_shared/figures/fig_alluvial.html: \
 		scripts/plot_alluvial_html.py scripts/utils.py $(CONFIG) \
 		$(DERIVED)/tab_alluvial.csv $(DERIVED)/cluster_labels.json
 	$(PYTHON) $< --output $@
 
 # Period divergence curves
-content/figures/fig_breaks.png: scripts/plot_fig2_breaks.py scripts/plot_style.py scripts/utils.py $(CONFIG) \
+deliverables/_shared/figures/fig_breaks.png: scripts/plot_fig2_breaks.py scripts/plot_style.py scripts/utils.py $(CONFIG) \
 		$(DERIVED)/tab_breakpoints.csv
 	$(PYTHON) $< --output $@ --input $(DERIVED)/tab_breakpoints.csv
 
@@ -485,24 +485,24 @@ $(DERIVED)/tab_pole_papers.csv &: \
 	$(PYTHON) $< --output $(DERIVED)/tab_bimodality.csv
 
 # Bimodality figures (each reads tab_pole_papers.csv)
-content/figures/fig_bimodality.png: scripts/plot_bimodality.py scripts/utils.py \
+deliverables/_shared/figures/fig_bimodality.png: scripts/plot_bimodality.py scripts/utils.py \
 		$(DERIVED)/tab_pole_papers.csv
 	$(PYTHON) $< --output $@
 
-content/figures/fig_bimodality_lexical.png: scripts/plot_bimodality_lexical.py scripts/utils.py \
+deliverables/_shared/figures/fig_bimodality_lexical.png: scripts/plot_bimodality_lexical.py scripts/utils.py \
 		$(DERIVED)/tab_pole_papers.csv
 	$(PYTHON) $< --output $@
 
-content/figures/fig_bimodality_keywords.png: scripts/plot_bimodality_keywords.py scripts/utils.py \
+deliverables/_shared/figures/fig_bimodality_keywords.png: scripts/plot_bimodality_keywords.py scripts/utils.py \
 		$(DERIVED)/tab_pole_papers.csv
 	$(PYTHON) $< --output $@
 
 # Seed-axis violin (core, manuscript figure)
-content/figures/fig_seed_axis_core.png: scripts/plot_fig_seed_axis.py scripts/plot_style.py scripts/utils.py $(CONFIG) $(REFINED)
+deliverables/_shared/figures/fig_seed_axis_core.png: scripts/plot_fig_seed_axis.py scripts/plot_style.py scripts/utils.py $(CONFIG) $(REFINED)
 	$(PYTHON) $< --output $@
 
 # PCA scatter (unsupervised)
-content/figures/fig_pca_scatter.png: scripts/plot_fig45_pca_scatter.py scripts/utils.py $(CONFIG) $(REFINED)
+deliverables/_shared/figures/fig_pca_scatter.png: scripts/plot_fig45_pca_scatter.py scripts/utils.py $(CONFIG) $(REFINED)
 	$(PYTHON) $< --output $@
 
 # Citation genealogy: model (lineage table) then renderers
@@ -510,11 +510,11 @@ $(DERIVED)/tab_lineages.csv: scripts/analyze_genealogy.py scripts/utils.py $(CON
 		$(REFINED) $(REFINED_CIT) $(DERIVED)/tab_pole_papers.csv $(SEMANTIC_CLUSTERS)
 	$(PYTHON) $< --output $@
 
-content/figures/fig_genealogy.png: scripts/plot_genealogy.py scripts/utils.py $(CONFIG) \
+deliverables/_shared/figures/fig_genealogy.png: scripts/plot_genealogy.py scripts/utils.py $(CONFIG) \
 		$(DERIVED)/tab_lineages.csv $(REFINED_CIT)
 	$(PYTHON) $< --output $@
 
-content/figures/fig_genealogy.html: scripts/plot_genealogy_html.py scripts/utils.py $(CONFIG) \
+deliverables/_shared/figures/fig_genealogy.html: scripts/plot_genealogy_html.py scripts/utils.py $(CONFIG) \
 		$(DERIVED)/tab_lineages.csv $(REFINED_CIT)
 	$(PYTHON) $< --output $@
 
@@ -532,13 +532,13 @@ $(DERIVED)/tab_alluvial_core.csv $(DERIVED)/cluster_labels_core.json &: \
 	$(PYTHON) $< --output $(DERIVED)/tab_alluvial_core.csv --core-only
 
 # Core-only figures
-content/figures/fig_breakpoints_core.png: \
+deliverables/_shared/figures/fig_breakpoints_core.png: \
 		scripts/plot_fig_breakpoints.py scripts/utils.py $(CONFIG) \
 		$(DERIVED)/tab_breakpoints_core.csv $(DERIVED)/tab_breakpoint_robustness_core.csv \
 		$(DERIVED)/tab_alluvial_core.csv
 	$(PYTHON) $< --output $@ --core-only --input $(DERIVED)/tab_breakpoints_core.csv $(DERIVED)/tab_breakpoint_robustness_core.csv $(DERIVED)/tab_alluvial_core.csv
 
-content/figures/fig_alluvial_core.png: \
+deliverables/_shared/figures/fig_alluvial_core.png: \
 		scripts/plot_fig_alluvial.py scripts/utils.py $(CONFIG) \
 		$(DERIVED)/tab_alluvial_core.csv $(DERIVED)/cluster_labels_core.json
 	$(PYTHON) $< --output $@ --core-only --input $(DERIVED)/tab_alluvial_core.csv
@@ -550,20 +550,20 @@ $(DERIVED)/tab_pole_papers_core.csv &: \
 	$(PYTHON) $< --output $(DERIVED)/tab_bimodality_core.csv --core-only
 
 # Bimodality core variant figures
-content/figures/fig_bimodality_core.png: scripts/plot_bimodality.py scripts/utils.py \
+deliverables/_shared/figures/fig_bimodality_core.png: scripts/plot_bimodality.py scripts/utils.py \
 		$(DERIVED)/tab_pole_papers_core.csv
 	$(PYTHON) $< --core-only --output $@
 
-content/figures/fig_bimodality_lexical_core.png: scripts/plot_bimodality_lexical.py scripts/utils.py \
+deliverables/_shared/figures/fig_bimodality_lexical_core.png: scripts/plot_bimodality_lexical.py scripts/utils.py \
 		$(DERIVED)/tab_pole_papers_core.csv
 	$(PYTHON) $< --core-only --output $@
 
-content/figures/fig_bimodality_keywords_core.png: scripts/plot_bimodality_keywords.py scripts/utils.py \
+deliverables/_shared/figures/fig_bimodality_keywords_core.png: scripts/plot_bimodality_keywords.py scripts/utils.py \
 		$(DERIVED)/tab_pole_papers_core.csv
 	$(PYTHON) $< --core-only --output $@
 
 # Pre-2007 co-citation traditions network
-content/figures/fig_traditions.png: scripts/plot_fig_traditions.py scripts/plot_style.py scripts/utils.py $(CONFIG) $(REFINED) $(REFINED_CIT)
+deliverables/_shared/figures/fig_traditions.png: scripts/plot_fig_traditions.py scripts/plot_style.py scripts/utils.py $(CONFIG) $(REFINED) $(REFINED_CIT)
 	$(PYTHON) $< --output $@
 
 # Co-citation communities (compute: community assignments + summary table)
@@ -572,11 +572,11 @@ $(COMMUNITIES): scripts/analyze_cocitation.py scripts/utils.py $(REFINED_CIT)
 	$(PYTHON) $< --output $@
 
 # Co-citation communities (plot: network figure)
-content/figures/fig_communities.png: scripts/plot_cocitation.py scripts/utils.py $(COMMUNITIES) $(REFINED_CIT)
+deliverables/_shared/figures/fig_communities.png: scripts/plot_cocitation.py scripts/utils.py $(COMMUNITIES) $(REFINED_CIT)
 	$(PYTHON) $< --output $@ --input $(COMMUNITIES)
 
 # KDE supplementary
-content/figures/fig_kde.png: scripts/plot_figS_kde.py scripts/plot_style.py scripts/utils.py $(CONFIG) \
+deliverables/_shared/figures/fig_kde.png: scripts/plot_figS_kde.py scripts/plot_style.py scripts/utils.py $(CONFIG) \
 		$(DERIVED)/tab_pole_papers.csv
 	$(PYTHON) $< --output $@
 
@@ -586,7 +586,7 @@ $(DERIVED)/tab_lexical_tfidf.csv: scripts/compute_lexical.py scripts/utils.py $(
 	$(PYTHON) $< --output $@
 
 # Multilingual epistemic structure (exploratory JSON report)
-content/tables/multilingual_report.json: scripts/analyze_multilingual.py scripts/utils.py \
+deliverables/_shared/tables/multilingual_report.json: scripts/analyze_multilingual.py scripts/utils.py \
 		scripts/build_het_core.py $(REFINED) $(REFINED_EMB) $(REFINED_CIT) $(SEMANTIC_CLUSTERS)
 	$(PYTHON) $< --output $@
 
@@ -595,7 +595,7 @@ $(DERIVED)/tab_k_sensitivity.csv: scripts/compute_breakpoints.py scripts/utils.p
 	$(PYTHON) $< --output $@ --k-sensitivity
 
 # K-sensitivity figure
-content/figures/fig_k_sensitivity.png: scripts/plot_fig_k_sensitivity.py $(CONFIG) \
+deliverables/_shared/figures/fig_k_sensitivity.png: scripts/plot_fig_k_sensitivity.py $(CONFIG) \
 		$(DERIVED)/tab_k_sensitivity.csv
 	$(PYTHON) $< --output $@
 
@@ -606,7 +606,7 @@ content/figures/fig_k_sensitivity.png: scripts/plot_fig_k_sensitivity.py $(CONFI
 	$(PYTHON) $< --output $@ --input $(DERIVED)/tab_lexical_tfidf.csv
 
 # DVC pipeline DAG (data paper)
-content/figures/fig_dag.png: scripts/plot_fig_dag.py scripts/plot_style.py $(CONFIG) dvc.yaml
+deliverables/_shared/figures/fig_dag.png: scripts/plot_fig_dag.py scripts/plot_style.py $(CONFIG) dvc.yaml
 	$(PYTHON) $< --output $@
 
 # -- NCC Analysis (Nature Climate Change) --
@@ -619,7 +619,7 @@ $(DERIVED)/tab_breakpoint_robustness_censor2.csv: scripts/compute_breakpoints.py
 	$(PYTHON) $< --output $@ --robustness --censor-gap 2
 
 # NCC Figure (a): Divergence with 2009 peak (baseline vs censor-gap k=2)
-content/figures/fig_ncc_divergence.png: \
+deliverables/_shared/figures/fig_ncc_divergence.png: \
 		scripts/plot_ncc_divergence.py scripts/utils.py $(CONFIG) \
 		$(DERIVED)/tab_breakpoints.csv \
 		$(DERIVED)/tab_breakpoints_censor2.csv \
@@ -627,7 +627,7 @@ content/figures/fig_ncc_divergence.png: \
 	$(PYTHON) $< --output $@ --input $(DERIVED)/tab_breakpoints.csv $(DERIVED)/tab_breakpoints_censor2.csv $(DERIVED)/tab_breakpoint_robustness_censor2.csv
 
 # NCC Figure (b): Core vs full corpus comparison panel
-content/figures/fig_ncc_core_comparison.png: \
+deliverables/_shared/figures/fig_ncc_core_comparison.png: \
 		scripts/plot_ncc_core_comparison.py scripts/utils.py $(CONFIG) \
 		$(DERIVED)/tab_breakpoints.csv $(DERIVED)/tab_breakpoint_robustness.csv \
 		$(DERIVED)/tab_alluvial.csv \
@@ -636,13 +636,13 @@ content/figures/fig_ncc_core_comparison.png: \
 	$(PYTHON) $< --output $@
 
 # NCC Figure (c): Bimodality KDE with period decomposition
-content/figures/fig_ncc_bimodality.png: \
+deliverables/_shared/figures/fig_ncc_bimodality.png: \
 		scripts/plot_ncc_bimodality.py scripts/utils.py $(CONFIG) \
 		$(DERIVED)/tab_pole_papers.csv
 	$(PYTHON) $< --output $@
 
 # NCC Figure (d): Alluvial diagram (NCC format)
-content/figures/fig_ncc_alluvial.png: \
+deliverables/_shared/figures/fig_ncc_alluvial.png: \
 		scripts/plot_ncc_alluvial.py scripts/utils.py $(CONFIG) \
 		$(DERIVED)/tab_alluvial.csv $(DERIVED)/cluster_labels.json
 	$(PYTHON) $< --output $@ --input $(DERIVED)/tab_alluvial.csv
@@ -664,40 +664,43 @@ analysis-stats: stats
 # PHASE 3 — Render (Quarto → PDF/DOCX)
 # ═══════════════════════════════════════════════════════════
 
-manuscript: output/content/manuscript.pdf output/content/manuscript.docx
+manuscript: deliverables/manuscript/manuscript.pdf deliverables/manuscript/manuscript.docx
 
-papers: check-corpus output/content/corpus-report.pdf output/content/technical-report.pdf output/content/breakpoint-detect-method-zoo.pdf output/content/data-paper.pdf output/content/multilayer-detection.pdf output/content/multilayer-detection-techrep.pdf
+papers: check-corpus deliverables/corpus-report/corpus-report.pdf deliverables/technical-report/technical-report.pdf deliverables/zoo/breakpoint-detect-method-zoo.pdf deliverables/data-paper/data-paper.pdf deliverables/multilayer/multilayer-detection.pdf deliverables/multilayer/multilayer-detection-techrep.pdf
 
 # ── Namespaced aliases (Phase 3) ────────────────────────
 manuscript-render: manuscript
 manuscript-figures: figures-manuscript
 
-datapaper-render: output/content/data-paper.pdf
+datapaper-render: deliverables/data-paper/data-paper.pdf
 datapaper-figures: figures-datapaper
 
-# The output/content/manuscript.{pdf,docx} render rules live in manuscript.mk
+# The manuscript render rules live in deliverables/manuscript/manuscript.mk
 # (Phase 3 writing workpackage, -include'd above). They depend only on committed
 # handoff artifacts so the manuscript builds clean-room with no data — ticket 0131.
+# Each deliverable's PDF is rendered NEXT TO its source (quarto's single-file
+# render ignores a project output-dir), so the Make target IS the output file and
+# Make verifies it exists (ticket 0226).
 
-output/content/corpus-report.pdf: content/corpus-report.qmd $(PROJECT_INCLUDES) $(BIB) content/technical-report-vars.yml
+deliverables/corpus-report/corpus-report.pdf: deliverables/corpus-report/corpus-report.qmd $(PROJECT_INCLUDES) $(BIB) deliverables/_shared/technical-report-vars.yml
 	quarto render $< --to pdf
 
-output/content/technical-report.pdf: content/technical-report.qmd $(PROJECT_INCLUDES) $(BIB) content/technical-report-vars.yml $(TECHREP_FIGS) $(MULTILAYER_FIGS) .lexical_tfidf.stamp
+deliverables/technical-report/technical-report.pdf: deliverables/technical-report/technical-report.qmd $(PROJECT_INCLUDES) $(BIB) deliverables/_shared/technical-report-vars.yml $(TECHREP_FIGS) $(MULTILAYER_FIGS) .lexical_tfidf.stamp
 	quarto render $< --to pdf
 
-output/content/data-paper.pdf: content/data-paper.qmd $(PROJECT_INCLUDES) $(BIB) content/data-paper-vars.yml
+deliverables/data-paper/data-paper.pdf: deliverables/data-paper/data-paper.qmd $(PROJECT_INCLUDES) $(BIB) deliverables/data-paper/data-paper-vars.yml
 	quarto render $< --to pdf
 
-output/content/multilayer-detection.pdf: content/multilayer-detection.qmd $(PROJECT_INCLUDES) $(BIB) content/multilayer-detection-vars.yml
+deliverables/multilayer/multilayer-detection.pdf: deliverables/multilayer/multilayer-detection.qmd $(PROJECT_INCLUDES) $(BIB) deliverables/multilayer/multilayer-detection-vars.yml
 	quarto render $< --to pdf
 
 # ── Phase 4a — analysis archive (packages Phase 2 outputs) ─
 # Data + scripts: reviewers verify figures/tables are reproducible.
 #   tar xzf archive.tar.gz && cd ... && uv sync && make
 SHELL            := /bin/bash
-ANALYSIS_OUTPUTS := content/figures/fig_bars_v1.png \
-                    content/figures/fig_composition.png \
-                    content/tables/tab_venues.md \
+ANALYSIS_OUTPUTS := deliverables/_shared/figures/fig_bars_v1.png \
+                    deliverables/_shared/figures/fig_composition.png \
+                    deliverables/_shared/tables/tab_venues.md \
                     $(DERIVED)/tab_alluvial.csv \
                     $(DERIVED)/tab_core_shares.csv \
                     $(DERIVED)/tab_bimodality.csv \
@@ -713,7 +716,7 @@ archive-analysis: check-manuscript-data $(ANALYSIS_OUTPUTS)
 # No Python needed — only Quarto + XeLaTeX.
 #   tar xzf archive.tar.gz && cd ... && make
 
-archive-manuscript: $(MANUSCRIPT_FIGS) $(MANUSCRIPT_INCLUDES) content/manuscript-vars.yml output/content/manuscript.pdf
+archive-manuscript: $(MANUSCRIPT_FIGS) $(MANUSCRIPT_INCLUDES) deliverables/manuscript/manuscript-vars.yml deliverables/manuscript/manuscript.pdf
 	bash build/build_manuscript_archive.sh
 
 # ── Phase 4c — data paper archive (full pipeline) ─────────
@@ -777,7 +780,7 @@ test-durations: | venv-canonicalize
 # no extractable text, so low scores are HUMAN-eyeball flags, never a hard gate.
 # Reads PDFs from the main checkout (they are gitignored, absent from worktrees).
 audit-pdf-content:
-	$(PYTHON) scripts/qa_pdf_content.py --output output/pdf_content_audit.csv
+	$(PYTHON) scripts/qa_pdf_content.py --output data/derived/pdf_content_audit.csv
 
 # Smoke pipeline: run Phase 2 on a 100-row fixture (no DVC pull needed, <30s).
 # Exercises: compute_breakpoints, compute_clusters, plot_fig1_bars.
@@ -820,6 +823,6 @@ setup:
 
 # ── Housekeeping ─────────────────────────────────────────
 clean:
-	rm -rf output/
+	rm -rf deliverables/*/*.pdf deliverables/*/*.docx deliverables/*/*_files deliverables/*/.quarto
 
 rebuild: clean all

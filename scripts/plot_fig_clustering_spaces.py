@@ -20,8 +20,8 @@ from utils import BASE_DIR, get_logger
 
 log = get_logger("plot_fig_clustering_spaces")
 
-FIGURES_DIR = os.path.join(BASE_DIR, "content", "figures")
-TABLES_DIR = os.path.join(BASE_DIR, "content", "tables")
+FIGURES_DIR = os.path.join(BASE_DIR, "deliverables", "_shared", "figures")
+TABLES_DIR = os.path.join(BASE_DIR, "deliverables", "_shared", "tables")
 
 
 def plot_multi_space_figure(space_results, output_dir=FIGURES_DIR, pdf=False):

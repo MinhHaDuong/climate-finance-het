@@ -32,9 +32,9 @@ def _run_twice(script, args, out_name, tmp_path):
         out_dir = tmp_path / run_id
         out_dir.mkdir()
         # Create content subdirs that scripts expect
-        (out_dir / "content" / "figures").mkdir(parents=True)
-        (out_dir / "content" / "tables").mkdir(parents=True)
-        out_path = out_dir / "content" / "figures" / out_name
+        (out_dir / "deliverables" / "_shared" / "figures").mkdir(parents=True)
+        (out_dir / "deliverables" / "_shared" / "tables").mkdir(parents=True)
+        out_path = out_dir / "deliverables" / "_shared" / "figures" / out_name
         result = subprocess.run(
             [sys.executable, os.path.join(SCRIPTS_DIR, script),
              "--output", str(out_path)] + args,
@@ -46,8 +46,8 @@ def _run_twice(script, args, out_name, tmp_path):
             f"{script} run {run_id} failed:\n{result.stderr}"
         )
     return (
-        tmp_path / "run1" / "content" / "figures" / out_name,
-        tmp_path / "run2" / "content" / "figures" / out_name,
+        tmp_path / "run1" / "deliverables" / "_shared" / "figures" / out_name,
+        tmp_path / "run2" / "deliverables" / "_shared" / "figures" / out_name,
     )
 
 

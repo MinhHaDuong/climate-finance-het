@@ -38,8 +38,8 @@ logger = logging.getLogger(__name__)
 DEFAULT_ARTICLES_DIR = (
     "/home/haduong/CNRS/projets/actifs/climate-finance-het/docs/articles"
 )
-DEFAULT_BIB = "content/bibliography/main.bib"
-DEFAULT_QMD_GLOBS = ["content/*.qmd", "content/**/*.qmd"]
+DEFAULT_BIB = "deliverables/_shared/bibliography/main.bib"
+DEFAULT_QMD_GLOBS = ["deliverables/*/*.qmd", "deliverables/**/*.qmd"]
 
 # Reuse the citation-key / entry-head patterns from test_cited_works_available.
 CITE = re.compile(r"(?<!\w)@([\w][\w:.\-+/]*)")
@@ -285,7 +285,7 @@ def main(argv=None):
     )
     parser.add_argument(
         "--bib", default=DEFAULT_BIB,
-        help="BibTeX file with file= fields (default: content/bibliography/main.bib)",
+        help="BibTeX file with file= fields (default: deliverables/_shared/bibliography/main.bib)",
     )
     parser.add_argument(
         "--threshold", type=float, default=0.30,

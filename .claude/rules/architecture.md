@@ -7,13 +7,32 @@ paths:
 
 ## Project structure
 
-Quarto multi-document project (`_quarto.yml`). Outputs share reusable fragments in `content/_includes/`:
+Each deliverable is its own Quarto project under `deliverables/<x>/` with its own
+`_quarto.yml`, so `quarto render deliverables/<x>` selects it directly — no
+exclusion-mask profile files (ticket 0226). Quarto's single-file render writes
+the PDF/DOCX **next to the source** (`deliverables/<x>/<doc>.pdf`), so the Make
+render target equals the output file and Make verifies it; the top-level
+`output/` directory was retired. Shared assets (bibliography, `_includes/`,
+generated `figures/` and `tables/`, `technical-report-vars.yml`) live in
+`deliverables/_shared/` and are referenced by `../_shared/...` from each doc;
+includes resolve relative to the top rendering doc, and every deliverable folder
+sits one level under `deliverables/`, so the prefix is uniform.
 
-- `content/manuscript.qmd` — main article (self-contained)
-- `content/corpus-report.qmd` — corpus construction, data quality, corpus contents
-- `content/technical-report.qmd` — analysis methods and results (composed of includes)
-- `content/data-paper.qmd` — corpus data paper (RDJ4HSS submission)
-- `content/companion-paper.qmd` — method paper (QSS submission, epic 0026)
+The 11 documents across 9 folders:
+
+- `deliverables/manuscript/` — `manuscript.qmd` (main Œconomia article) +
+  `manuscript-Gide.qmd` (Charles Gide conference variant); `manuscript-vars.yml`
+  (pinned) and `manuscript.mk` (Phase-3 clean-room render) live here.
+- `deliverables/corpus-report/corpus-report.qmd` — corpus construction, data quality, contents
+- `deliverables/technical-report/technical-report.qmd` — analysis methods and results (composed of includes)
+- `deliverables/data-paper/data-paper.qmd` — corpus data paper (RDJ4HSS submission)
+- `deliverables/multilayer/` — `multilayer-detection.qmd` + `multilayer-detection-techrep.qmd`
+- `deliverables/agentic/agentic-paper.qmd` — the agentic-workflow paper
+- `deliverables/zoo/breakpoint-detect-method-zoo.qmd` — the breakpoint-detection method zoo
+- `deliverables/slides-gide/`, `deliverables/slides-eshet/` — conference slide decks (deliverables, not papers)
+
+(The former `companion-paper.qmd` no longer exists; the method paper is now the
+`multilayer/` pair.)
 
 ## Pipeline phases
 
@@ -30,7 +49,7 @@ The pipeline has four phases. Each phase's scripts follow a naming convention an
 
 **Phase 2 — Analysis & figures** (fast, deterministic, run often):
 - Scripts: `analyze_*`, `plot_*`, `compute_*`, `export_*`, `summarize_*`, `build_het_core.py`
-- Reads Phase 1 outputs; produces `content/figures/`, `content/tables/`, `content/_includes/`, `content/*-vars.yml` (writing deliverables) and analysis intermediates under `data/derived/` (not destined for a document)
+- Reads Phase 1 outputs; produces `deliverables/_shared/figures/`, `deliverables/_shared/tables/`, `deliverables/_shared/_includes/`, and each doc's `deliverables/<x>/*-vars.yml` (writing deliverables) and analysis intermediates under `data/derived/` (not destined for a document)
 
 ### Phase 2 rules
 
@@ -55,7 +74,7 @@ The permutation null models in `scripts/compute_null_model.py` use three complem
 The Makefile knob is `NJOBS` (in `divergence.mk`). Default `-1` uses all cores — fine for a single method, oversubscribes under `make -jN`. When composing with `-j`, pass `NJOBS ≈ cores/N` (e.g. on 24 cores: `make -j4 NJOBS=6 null-model`). End-to-end on padme: ~3h → ~7min.
 
 **Phase 3 — Render** (Quarto → PDF/DOCX):
-- Reads Phase 2 outputs. Build artifacts go to `output/` (gitignored).
+- Reads Phase 2 outputs. Each deliverable's PDF/DOCX renders next to its `.qmd` under `deliverables/<x>/` (gitignored).
 
 **Phase 4 — Release & archives** (reproducibility packaging):
 - Scripts: `build/build_*_archive.sh`
@@ -123,14 +142,14 @@ Each phase writes to one place, so an artifact's directory tells you its phase:
 | Phase | Produces | Lives in |
 |-------|----------|----------|
 | **1 — Corpus** (`catalog_/enrich_/qa_/corpus_`) | the corpus contract | `data/catalogs/` (DVC) |
-| **2 — Analysis** (`analyze_/compute_/plot_/export_`) | writing deliverables | `content/figures/`, `content/tables/`, `content/_includes/`, `content/*-vars.yml` |
+| **2 — Analysis** (`analyze_/compute_/plot_/export_`) | writing deliverables | `deliverables/_shared/{figures,tables,_includes}/`, `deliverables/<x>/*-vars.yml` |
 | | analysis **intermediates** (not for a document) | `data/derived/` |
-| **3 — Render** (Quarto) | PDF / DOCX | `output/` (gitignored) |
+| **3 — Render** (Quarto) | PDF / DOCX | `deliverables/<x>/` next to source (gitignored) |
 | **4 — Release** (`build/build_*_archive.sh`) | reproducibility archives | `*.tar.gz` |
 
 The split inside Phase 2 is the crux: it emits two kinds of file — things a paper
-renders (→ `content/`) and intermediates only other scripts read (→ `data/derived/`).
-Mixing them is what bloated `content/tables/` (ticket 0208) and hid Phase-2 outputs
+renders (→ `deliverables/_shared/`) and intermediates only other scripts read (→ `data/derived/`).
+Mixing them is what bloated the shared tables dir (ticket 0208) and hid Phase-2 outputs
 in `data/catalogs/` (ticket 0219).
 
 ### Phase is semantic, not a filename prefix (ticket 0227)

@@ -27,8 +27,8 @@ from utils import BASE_DIR, get_logger
 
 log = get_logger("plot_fig_clustering_comparison")
 
-FIGURES_DIR = os.path.join(BASE_DIR, "content", "figures")
-TABLES_DIR = os.path.join(BASE_DIR, "content", "tables")
+FIGURES_DIR = os.path.join(BASE_DIR, "deliverables", "_shared", "figures")
+TABLES_DIR = os.path.join(BASE_DIR, "deliverables", "_shared", "tables")
 
 
 def _save(fig, stem, output_dir, pdf=False):

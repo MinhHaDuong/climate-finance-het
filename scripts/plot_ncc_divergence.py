@@ -32,7 +32,7 @@ from utils import BASE_DIR, DERIVED_TABLES_DIR, get_logger, save_figure
 
 log = get_logger("plot_ncc_divergence")
 
-TABLES_DIR = os.path.join(BASE_DIR, "content", "tables")
+TABLES_DIR = os.path.join(BASE_DIR, "deliverables", "_shared", "tables")
 
 # NCC specifications
 NCC_SINGLE_COL_MM = 89

@@ -23,8 +23,8 @@ ARCHITECTURE_MD = os.path.join(ROOT, ".claude", "rules", "architecture.md")
 CODING_GUIDELINES_MD = os.path.join(ROOT, ".claude", "rules", "coding.md")
 ARCHITECTURE_MD = os.path.join(ROOT, ".claude", "rules", "architecture.md")
 README_MD = os.path.join(ROOT, "README.md")
-CORPUS_CONSTRUCTION_MD = os.path.join(ROOT, "content", "_includes", "corpus-construction.md")
-REPRODUCIBILITY_MD = os.path.join(ROOT, "content", "_includes", "reproducibility.md")
+CORPUS_CONSTRUCTION_MD = os.path.join(ROOT, "deliverables", "_shared", "_includes", "corpus-construction.md")
+REPRODUCIBILITY_MD = os.path.join(ROOT, "deliverables", "_shared", "_includes", "reproducibility.md")
 
 
 def read(path):

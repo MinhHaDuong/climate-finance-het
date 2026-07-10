@@ -11,7 +11,7 @@
 
 # ── Paths ─────────────────────────────────────────────────────────────────
 
-ZOO_FIGS   := content/figures
+ZOO_FIGS   := deliverables/_shared/figures
 ZOO_TABLES := $(DERIVED)
 
 # ── Schematic stems (match plot_schematic_{stem}.py filenames) ────────────
@@ -150,5 +150,5 @@ bias-figures: $(BIAS_FIGS)
 # ── Zoo PDF render (Phase 3) ─────────────────────────────────────────────────
 # Thin wrapper over $(ZOO_INCLUDES) for reviewers or cherry-picking.
 # Mirrors the TR recipe; same vars file, same bibliography, same engine.
-output/content/breakpoint-detect-method-zoo.pdf: content/breakpoint-detect-method-zoo.qmd $(PROJECT_INCLUDES) $(BIB) content/technical-report-vars.yml $(ZOO_FIGS)
+deliverables/zoo/breakpoint-detect-method-zoo.pdf: deliverables/zoo/breakpoint-detect-method-zoo.qmd $(PROJECT_INCLUDES) $(BIB) deliverables/_shared/technical-report-vars.yml $(ZOO_FIGS)
 	quarto render $< --to pdf

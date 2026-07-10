@@ -16,7 +16,7 @@ from utils import BASE_DIR, CATALOGS_DIR, get_logger, normalize_lang
 log = get_logger("export_language_table")
 
 ENRICHED_PATH = os.path.join(CATALOGS_DIR, "enriched_works.csv")
-OUTPUT_DIR = os.path.join(BASE_DIR, "content", "tables")
+OUTPUT_DIR = os.path.join(BASE_DIR, "deliverables", "_shared", "tables")
 OUTPUT_MD = os.path.join(OUTPUT_DIR, "tab_languages.md")
 
 # ISO 639-1 → display name for languages we want to show individually

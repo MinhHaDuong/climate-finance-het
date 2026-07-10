@@ -31,7 +31,7 @@ log = get_logger("qa_missing_references")
 # Paths
 # ---------------------------------------------------------------------------
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BIB_PATH = os.path.join(BASE_DIR, "content", "bibliography", "main.bib")
+BIB_PATH = os.path.join(BASE_DIR, "deliverables", "_shared", "bibliography", "main.bib")
 ARTICLES_DIR = os.path.join(BASE_DIR, "docs", "articles")
 
 # ---------------------------------------------------------------------------

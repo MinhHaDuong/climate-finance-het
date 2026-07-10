@@ -28,7 +28,7 @@ from utils import (
 log = get_logger("plot_bimodality")
 
 # --- Paths ---
-TABLES_DIR = os.path.join(BASE_DIR, "content", "tables")
+TABLES_DIR = os.path.join(BASE_DIR, "deliverables", "_shared", "tables")
 
 # Three-act periods (from config)
 _period_tuples, _period_labels = load_analysis_periods()

@@ -1,5 +1,5 @@
 ---
-globs: ["content/**"]
+globs: ["deliverables/**"]
 ---
 
 # Writing Rules

@@ -1,6 +1,6 @@
 # multilayer-detection.mk — Figures for the companion paper (ticket 0058)
 #
-# Four canonical PNGs consumed by content/multilayer-detection.qmd.
+# Four canonical PNGs consumed by deliverables/multilayer/multilayer-detection.qmd.
 #
 # Include from the main Makefile:  include multilayer-detection.mk
 #
@@ -12,11 +12,11 @@
 #   $(COMP_TABLES)/tab_div_C2ST_{embedding,lexical}.csv
 #
 # Optional inputs (ticket 0056 interpretation layer; stub fallback if absent):
-#   content/tables/tab_discrim_terms*.csv
-#   content/tables/tab_community_shifts*.csv
+#   deliverables/_shared/tables/tab_discrim_terms*.csv
+#   deliverables/_shared/tables/tab_community_shifts*.csv
 
 COMP_TABLES := $(DERIVED)
-COMP_FIGS   := content/figures
+COMP_FIGS   := deliverables/_shared/figures
 COMP_CFG    := config/analysis.yaml
 COMP_UTILS  := scripts/_companion_plot_utils.py
 COMP_STYLE  := scripts/plot_style.py
@@ -85,22 +85,22 @@ companion-sensitivity: \
 # ── Technical supplement (ticket 0096) ───────────────────────────────────
 
 MULTILAYER_TECHREP_INCLUDES := \
-    content/_includes/techrep/overview.md \
-    content/_includes/techrep/zscore.md \
-    content/_includes/techrep/null-model.md \
-    content/_includes/zoo/S2_energy.md \
-    content/_includes/zoo/L1_js.md \
-    content/_includes/zoo/G9_community.md \
-    content/_includes/zoo/G2_spectral.md \
-    content/_includes/zoo/C2ST_embedding.md \
-    content/_includes/zoo/C2ST_lexical.md
+    deliverables/_shared/_includes/techrep/overview.md \
+    deliverables/_shared/_includes/techrep/zscore.md \
+    deliverables/_shared/_includes/techrep/null-model.md \
+    deliverables/_shared/_includes/zoo/S2_energy.md \
+    deliverables/_shared/_includes/zoo/L1_js.md \
+    deliverables/_shared/_includes/zoo/G9_community.md \
+    deliverables/_shared/_includes/zoo/G2_spectral.md \
+    deliverables/_shared/_includes/zoo/C2ST_embedding.md \
+    deliverables/_shared/_includes/zoo/C2ST_lexical.md
 
-output/content/multilayer-detection-techrep.pdf: \
-    content/multilayer-detection-techrep.qmd \
+deliverables/multilayer/multilayer-detection-techrep.pdf: \
+    deliverables/multilayer/multilayer-detection-techrep.qmd \
     $(MULTILAYER_TECHREP_INCLUDES) \
     $(BIB) \
-    content/technical-report-vars.yml
+    deliverables/_shared/technical-report-vars.yml
 	quarto render $< --to pdf
 
 .PHONY: multilayer-techrep
-multilayer-techrep: output/content/multilayer-detection-techrep.pdf
+multilayer-techrep: deliverables/multilayer/multilayer-detection-techrep.pdf

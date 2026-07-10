@@ -12,7 +12,7 @@ Test B (completeness): sample source DOIs, re-fetch from Crossref, check all
 Saves the JSON report to the caller-supplied --output path.
 
 Usage:
-    uv run python scripts/qa_citations.py --output content/tables/qa_citations_report.json
+    uv run python scripts/qa_citations.py --output deliverables/_shared/tables/qa_citations_report.json
         [--sample-n 300] [--seed 42] [--works-input data/catalogs/enriched_works.csv]
 """
 

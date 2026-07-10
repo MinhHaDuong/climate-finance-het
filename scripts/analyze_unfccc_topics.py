@@ -33,7 +33,7 @@ log = get_logger("analyze_unfccc_topics")
 warnings.filterwarnings("ignore", category=FutureWarning)
 warnings.filterwarnings("ignore", message=".*KMeans.*")
 
-TABLES_DIR = os.path.join(BASE_DIR, "content", "tables")
+TABLES_DIR = os.path.join(BASE_DIR, "deliverables", "_shared", "tables")
 OUTPUT_CSV = os.path.join(TABLES_DIR, "tab_unfccc_topics.csv")
 
 # ---------------------------------------------------------------------------

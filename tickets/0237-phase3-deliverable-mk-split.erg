@@ -2,12 +2,12 @@
 Title: Phase-3 render as per-deliverable .mk — un-scatter PDF rules, split render from compute
 Created: 2026-07-10
 Author: HDMX-coding-agent
-Blocked-by: 0226
 
 --- log ---
 2026-07-10T15:20Z HDMX-coding-agent created
 2026-07-10T15:20Z note spun out of the 0231 confirmation session (2026-07-10). `make papers` is not a Phase-3 build: it starts with `check-corpus` and each companion PDF rule depends on Phase-2 outputs (figures/tables), so asking for a PDF drags in the whole analysis. Demonstrated twice live: `make papers` died on a missing Phase-1 `citations.csv`, then on `import umap` in a Phase-2 clustering step — neither should touch a render. `manuscript.mk` already proves the target shape (3 render rules, 0 Phase-2 rules). Blocked-by 0226 so each deliverable's `_quarto.yml` home is settled before the render `.mk` moves beside it.
 
+2026-07-10T16:37Z HDMX-coding-agent note blocker 0226 closed — Blocked-by removed.
 --- body ---
 ## Context
 

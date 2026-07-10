@@ -26,7 +26,7 @@ Create when a paper is ready to submit. The branch freezes the submitted state a
 
 ```bash
 git checkout -b submission/$0-$1 main
-# Verify build: make output/content/$1.pdf
+# Verify build: make deliverables/$1/$1.pdf
 git tag v{N}.0-$0-submitted
 ```
 
@@ -36,7 +36,7 @@ Place records (cover letter, AI disclosure, journal-specific files) in `papiers/
 
 Branch is frozen. Guards: pre-commit rejects merges (cherry-pick only), pre-push blocks deletion, GitHub prevents force-push.
 
-Frozen: git tag, pinned vars in `content/{document}-vars.yml`, reference data in `config/`, Zenodo archives.
+Frozen: git tag, pinned vars in `deliverables/{document}/{document}-vars.yml`, reference data in `config/`, Zenodo archives.
 
 No changes except errata, reviewer responses, and revision commits.
 

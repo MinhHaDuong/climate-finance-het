@@ -37,7 +37,7 @@ fi
 #    diff-filter=AM: only check Added/Modified, skip Renamed (already in history)
 large=$(git diff --cached --name-only --diff-filter=AM | while IFS= read -r file; do
     case "$file" in uv.lock) continue ;; esac
-    case "$file" in content/tables/*.csv) continue ;; esac
+    case "$file" in deliverables/_shared/tables/*.csv) continue ;; esac
     case "$file" in tickets/erg|tickets/erg-github) continue ;; esac
     size=$(wc -c < "$file" 2>/dev/null || echo 0)
     if [ "$size" -gt 512000 ]; then

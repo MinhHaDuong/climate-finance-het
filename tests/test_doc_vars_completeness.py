@@ -6,6 +6,7 @@ document. Prevents silent empty-string rendering when a new variable is
 added to prose but not registered in compute_vars.py.
 """
 
+import glob
 import os
 import re
 import sys
@@ -16,7 +17,13 @@ import pytest
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 from compute_vars import DOC_VARS
 
-CONTENT_DIR = os.path.join(os.path.dirname(__file__), "..", "content")
+DELIVERABLES = os.path.join(os.path.dirname(__file__), "..", "deliverables")
+
+
+def _qmd_path(doc_name):
+    """Locate a doc's .qmd under its deliverable folder (folder name may differ)."""
+    matches = glob.glob(os.path.join(DELIVERABLES, "*", f"{doc_name}.qmd"))
+    return matches[0] if matches else None
 
 META_RE = re.compile(r"\{\{<\s*meta\s+(\w+)\s*>\}\}")
 INCLUDE_RE = re.compile(r"\{\{<\s*include\s+(\S+)\s*>\}\}")
@@ -54,8 +61,8 @@ def _all_vars_for_doc(qmd_path):
 @pytest.mark.parametrize("doc_name", list(DOC_VARS.keys()))
 def test_doc_vars_complete(doc_name):
     """Every {{< meta X >}} in doc + includes must appear in DOC_VARS."""
-    qmd_path = os.path.join(CONTENT_DIR, f"{doc_name}.qmd")
-    if not os.path.isfile(qmd_path):
+    qmd_path = _qmd_path(doc_name)
+    if not qmd_path or not os.path.isfile(qmd_path):
         pytest.skip(f"{qmd_path} not found")
 
     used = _all_vars_for_doc(qmd_path)
@@ -70,8 +77,8 @@ def test_doc_vars_complete(doc_name):
 @pytest.mark.parametrize("doc_name", list(DOC_VARS.keys()))
 def test_doc_vars_no_extras(doc_name):
     """DOC_VARS should not list variables that no shortcode uses (dead entries)."""
-    qmd_path = os.path.join(CONTENT_DIR, f"{doc_name}.qmd")
-    if not os.path.isfile(qmd_path):
+    qmd_path = _qmd_path(doc_name)
+    if not qmd_path or not os.path.isfile(qmd_path):
         pytest.skip(f"{qmd_path} not found")
 
     used = _all_vars_for_doc(qmd_path)

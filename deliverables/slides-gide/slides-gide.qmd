@@ -1,0 +1,434 @@
+---
+title: "Économistes sous contrainte"
+subtitle: "Construire et contester la finance climat, 1990--2025"
+author: "Minh Ha-Duong --- CNRS, CIRED"
+lang: fr
+format:
+  beamer:
+    theme: metropolis
+    aspectratio: 169
+    pdf-engine: xelatex
+    fig-align: center
+    keep-tex: true
+    header-includes: |
+      \setbeamertemplate{caption}{\raggedright\insertcaption\par}
+      \setbeamerfont{footnote}{size=\tiny}
+      \usepackage{array}
+      \newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+      \titlegraphic{%
+        \begin{tikzpicture}[remember picture,overlay]
+          \node[anchor=north west,font=\footnotesize] at ([xshift=0.8cm,yshift=-0.7cm]current page.north west)
+            {21\textsuperscript{e} colloque international Charles Gide --- Vannes, 2--4 juillet 2026};
+          \node[anchor=north east] at ([xshift=-0.7cm,yshift=-0.55cm]current page.north east)
+            {\includegraphics[height=1.5cm]{slides-assets/logo-cired.png}};
+          \node[anchor=south] at ([yshift=0.25cm]current page.south)
+            {\includegraphics[width=0.78\paperwidth]{slides-assets/bandeau-tutelles.png}};
+        \end{tikzpicture}%
+      }
+---
+
+## Plan
+
+\tableofcontents
+
+# 1 — Introduction
+
+## Bakou, COP29 --- 11--22 novembre 2024
+
+\begin{center}
+\makebox[\linewidth][c]{\includegraphics[width=\paperwidth]{slides-assets/cop29-baku-summit.jpg}}
+\end{center}
+
+## Un chiffre net, un objet instable
+
+\begin{center}
+{\Large « 300 milliards de dollars par an »}\\[2pt]
+{\footnotesize COP29 --- Bakou, 23 novembre 2024}
+\end{center}
+
+\medskip
+
+Un même accord, trois lectures :
+
+- ***Euronews*** : « un accord à 300 milliards pour les pays en développement »
+- **ONU Info** : « l'accord qualifié d'*insulte* par les pays en développement »
+- **NPR** : « a *controversial* \$300 billion deal »
+
+. . .
+
+Pourtant : **aucune caisse** ne contient cette somme, **aucun registre** ne
+l'enregistre, **aucune méthode** de comptage ne s'impose sans contestation.
+
+. . .
+
+\begin{center}
+\large\textbf{Est-ce un objet économique ?}
+\end{center}
+
+::: {.notes}
+Le chiffre est traité comme un fait solide par la presse ; le reste du propos montre
+qu'il désigne un objet construit. Laisser le paradoxe s'installer avant la thèse.
+:::
+
+## Les économistes l'ont construite, pas découverte
+
+**Oui** --- un objet économique à part entière.
+
+Les flux existent : budgets, prêts, garanties, investissements privés.
+Ce qui est **construit**, c'est leur agrégation comme grandeur gouvernable.
+
+**« Économistes sous contrainte »** --- au pied de la lettre :
+
+- **Diplomatique** : les montants sont fixés *avant* que l'objet soit stabilisé
+- **Statistique** : l'appareil de l'aide publique préexiste et impose ses catégories
+- **Politique** : concilier efficacité de la mobilisation et redevabilité des transferts
+
+::: {.notes}
+Le cœur du propos pour un public d'histoire de la pensée économique :
+les économistes ne sont ni souverains ni exécutants. Ils travaillent dans la contrainte.
+:::
+
+## Un chapitre manquant de l'histoire de l'économie du climat
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}P{0.42\linewidth}P{0.42\linewidth}@{}}
+\toprule
+\textbf{Ce que l'histoire a étudié} & \textbf{Ce que ce travail ajoute} \\
+\midrule
+Nordhaus, Stern, modèles intégrés & Les catégories comptables \\
+\addlinespace
+L'optimisation & La commensuration \\
+\addlinespace
+Construire des modèles & Fabriquer des catégories \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vfill
+
+\small Historiographie HET/STS : Aykut \& Dalmedico 2015 ; Pottier 2016. \quad
+Sociologie de la quantification : Desrosières 1998 ; Espeland \& Stevens 1998. \quad
+Économisation : Çalışkan \& Callon 2009.
+
+# 2 — Méthode
+
+## Histoire institutionnelle + test computationnel
+
+Une histoire de la pensée économique **hors de ses lieux canoniques** :
+rapports d'experts, comités statistiques, banques de développement.
+
+\medskip
+
+:::: {.columns}
+::: {.column width="50%"}
+**Le dossier historique**
+
+- Textes CCNUCC, OCDE, banques multilatérales
+- Littérature d'économie politique
+- Observation participante des débats
+:::
+::: {.column width="50%"}
+**Un corpus de contrôle**
+
+- ~30 000 travaux, 1990--2024
+- Multilingue, six sources
+- Représentations vectorielles, périodisation endogène
+:::
+::::
+
+\bigskip
+
+Le corpus ne **remplace** pas l'interprétation : il la soumet à un test indépendant.
+
+## Deux tournants, trois époques
+
+Deux tournants **politiques** : **Bali (2007)** et **Paris (2015)**.
+
+\medskip
+
+1. **Avant** (1990--2006) : trois traditions disjointes
+2. **Cristallisation** (2007--2014) : la fabrique comptable
+3. **Champ établi** (2015--2025) : controverses sur l'objet existant
+
+## {.plain}
+
+\begin{tikzpicture}[remember picture,overlay]
+\node at (current page.center)
+  {\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{../_shared/figures/fig_bars_v1.png}};
+\end{tikzpicture}
+
+::: {.notes}
+La littérature sur la finance climat, 1990--2023 : champ quasi inexistant avant 2007,
+structuré après Bali et Copenhague.
+:::
+
+## {.plain}
+
+\begin{tikzpicture}[remember picture,overlay]
+\node at (current page.center)
+  {\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{../_shared/figures/fig_breaks.png}};
+\end{tikzpicture}
+
+::: {.notes}
+Vitesse de renouvellement des thèmes : le churn culmine en 2007 (Bali) et 2013
+(IPCC AR5 2013--14, GCF opérationnel 2014). Paris 2015 ne produit pas de pic
+comparable — il réoriente les thèmes sans refonder les catégories de mesure.
+:::
+
+# 3 — Avant la finance climat (1990--2006)
+
+## Trois sous-champs de l'économie
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}P{0.40\linewidth}P{0.52\linewidth}@{}}
+\toprule
+\textbf{Sous-champ} & \textbf{Références clés} \\
+\midrule
+Économie de l'environnement & Ayres \& Kneese 1969 ; Manne \& Richels 1992 ; Nordhaus 1992 ; Stern 2007 ; Weitzman 2007 \\
+\addlinespace
+Aide, développement, commerce & Porter 1995 ; Michaelowa \& Michaelowa 2007 \\
+\addlinespace
+Efficacité et équité & Negishi 1960 ; Roberts \& Weikmans 2017 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Trois lignées faiblement reliées : avant 2007, elles ne se citent guère.
+
+::: {.notes}
+Économie de l'environnement. Ayres \& Kneese 1969, *Production, Consumption and
+Externalities* (AER) : la matérialité des externalités. Nordhaus 1992 (Science) :
+DICE, prix optimal du carbone. Stern 2007 ; Weitzman 2007 : taux d'actualisation et
+risque extrême. → Apport : le prix du carbone, mais aucune comptabilité des flux Nord-Sud.
+
+Aide, développement, commerce. Desrosières 1998, *La politique des
+grands nombres* : la statistique comme convention. Porter 1995, *Trust in Numbers* :
+l'objectivité quantitative comme technologie de confiance. Michaelowa \& Michaelowa
+2007 : surdéclaration des marqueurs de Rio. → Apport : les catégories de l'aide (APD).
+
+Efficacité et équité. Negishi 1960 : pondérations de bien-être — qui compte, et combien ?
+Roberts \& Weikmans 2017 : fragmentation et conflits distributifs sur ce qui compte comme
+finance climat. → Apport : la grammaire de la responsabilité.
+:::
+
+## Les pièces existent, l'objet n'est pas assemblé
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}P{0.42\linewidth}P{0.50\linewidth}@{}}
+\toprule
+\textbf{Sous-champ} & \textbf{Avant 2007} \\
+\midrule
+Économie de l'environnement & Modèles intégrés mondiaux ou orientés au Nord \\
+\addlinespace
+Aide, développement, commerce & Vise la transparence de l'aide au développement \\
+\addlinespace
+Efficacité et équité & Préconise des mécanismes de marché (permis d'émission) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Aucun des trois langages --- prix du carbone, aide, partage de l'effort ---
+ne suffit seul à produire une comptabilité de la finance climat.
+
+# 4 — Cristallisation (2007--2014)
+
+## La fabrique comptable
+
+:::: {.columns}
+::: {.column width="68%"}
+**Une contrainte politique, pas une découverte théorique**
+
+- Bali 2007 : engagements *mesurables, notifiables, vérifiables*
+- Copenhague 2009 : promesse des 100 milliards
+- Le chiffre crée une **obligation de mesure** : performatif par les formulaires, non par un modèle
+
+\medskip
+**L'OCDE/CAD construit l'infrastructure** : marqueurs de Rio, équivalent-don,
+formulaires, conventions d'attribution. Des économistes comme **Jan
+Corfee-Morlot** y fixent les catégories opératoires.
+:::
+::: {.column width="32%"}
+![](slides-assets/corfee-morlot.jpg){width="62%"}
+
+\footnotesize Jan Corfee-Morlot (OCDE) --- une économiste à la frontière science-société.
+:::
+::::
+
+::: {.notes}
+Performativité au sens de Callon : l'engagement ne crée pas les flux,
+il oblige à construire l'agrégat qu'il promet de mesurer.
+Portrait : photo de profil Google Scholar, illustration académique.
+:::
+
+## Compter, c'est gouverner
+
+L'Accord de Paris (article 9) donne à la finance climat un statut juridique central.
+La catégorie est assez installée pour servir, assez indéterminée pour soutenir des
+lectures divergentes.
+
+\bigskip
+
+Après 2015, la discussion se recompose *(figure suivante)*.
+
+## {.plain}
+
+\begin{tikzpicture}[remember picture,overlay]
+\node at (current page.center)
+  {\includegraphics[width=\paperwidth]{../_shared/figures/fig_composition_wide.png}};
+\end{tikzpicture}
+
+::: {.notes}
+Recomposition thématique du corpus : Kyoto recule ; gouvernance de Paris,
+renouvelables, obligations vertes et ESG progressent. Sans refonte des
+catégories de mesure.
+:::
+
+# 5 — Champ établi (2015--2025)
+
+## Un projet de finance climat de la Banque mondiale en Türkiye
+
+:::: {.columns}
+::: {.column width="58%"}
+*Transforming Power Transmission* (P508354) :\newline
+1,7 GW de renouvelables intégrés au réseau.
+
+\bigskip
+
+**Est-ce un projet climat ?** Un réseau modernisé aide à intégrer les
+renouvelables --- mais il transporte aussi l'électricité de toutes les sources.
+
+\bigskip
+
+**Les électrons n'ont pas de couleur.**
+:::
+::: {.column width="42%"}
+\begin{center}
+\includegraphics[width=0.82\linewidth]{slides-assets/turkey-380kv-line.jpg}\\[2pt]
+{\footnotesize Le projet modernise le réseau de transport. Photo : ligne 380 kV (illustrative).}
+\end{center}
+:::
+::::
+
+## Combien de finance climat dans ce projet ?
+
+\begin{center}
+\begin{tabular}{@{}P{0.22\linewidth}P{0.28\linewidth}P{0.39\linewidth}@{}}
+\toprule
+\textbf{Instrument} & \textbf{Comptage possible} & \textbf{Controverse révélée} \\
+\midrule
+Prêt IBRD\newline 625 M€, $\approx$ 3\,\% & Quasi-intégral\textsuperscript{*} & Taux bas dû à la note AAA de la Banque, pas à une subvention d'un donneur \\
+\addlinespace
+Prêt CTF\newline 32,8 M€, 0,25\,\% & Valeur faciale \emph{ou} équivalent-don\textsuperscript{*} & Argent prêté $\neq$ transfert réel \\
+\addlinespace
+Don CTF\newline 2 M\$ & Intégral & Marginal dans le total \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\footnotesize IBRD : International Bank for Reconstruction and Development\newline
+CTF : Clean Technology Fund (taux 0,25 % indicatif).
+
+\footnotesize \textsuperscript{*}La Turquie emprunte par ailleurs en dollars à $\approx$ 7,5 %.
+
+::: {.notes}
+Mécanisme IBRD : les États actionnaires apportent leur garantie (capital appelable) ;
+la Banque emprunte en AAA à très bas coût et reprête à ~3 % sans perdre d'argent.
+L'avantage de taux vient de son bilan, pas d'un transfert budgétaire d'un pays
+développé — d'où la controverse : faut-il le compter comme contribution climat ?
+
+Chaque étape --- prix du capital, équivalent-don, marqueur, attribution ---
+est gouvernée par une convention.
+:::
+
+## Quatre controverses
+
+:::: {.columns}
+::: {.column width="64%"}
+1. **Valeur** des prêts concessionnels — faciale *vs* équivalent-don
+2. **Crédibilité** des marqueurs de Rio — auto-déclaration *vs* surdéclaration
+3. **Attribution** de la finance privée mobilisée — comptage large *vs* strict
+4. **Additionnalité** : aide ou obligation climatique — synergie *vs* réétiquetage
+
+\medskip
+
+\footnotesize Le *Shadow Report* d'Oxfam recalcule des totaux bien plus
+bas que les chiffres officiels de l'OCDE.
+:::
+::: {.column width="34%"}
+\begin{center}
+\includegraphics[height=3cm]{slides-assets/oecd-cover.png}\\[2pt]
+\includegraphics[height=3cm]{slides-assets/oxfam-cover.png}
+\end{center}
+
+\footnotesize \centering Deux comptages du même engagement.
+:::
+::::
+
+::: {.notes}
+OCDE = pôle efficacité (comptage officiel). Oxfam = pôle redevabilité (recalcul critique).
+Couvertures sous copyright, usage d'illustration / citation académique.
+:::
+
+## Deux pôles, pas seize positions
+
+\begin{center}
+\begin{tabular}{@{}P{0.14\linewidth}P{0.37\linewidth}P{0.37\linewidth}@{}}
+\toprule
+ & \textbf{Pôle efficacité} & \textbf{Pôle redevabilité} \\
+\midrule
+Question & Augmenter les volumes ? & Vérifier le transfert réel ? \\
+\addlinespace
+Lieux & Banques multilatérales, OCDE & ONG, économie politique \\
+\addlinespace
+Risque & Climat dilué dans l'ingénierie financière & Climat réduit à un contentieux \\
+\addlinespace
+Revues & Energy Policy, Energy Economics, Renew. \& Sustain. Energy Rev. & Climate Policy, Global Env. Politics, Climatic Change \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Chaque pôle prend le **même camp** dans les quatre controverses.
+
+::: {.notes}
+Ligne « Revues » : écologie des revues du corpus (Tableau 4 / annexe A.5). Les travaux
+proches du pôle efficacité se concentrent dans les revues d'énergie et de finance ; ceux
+du pôle redevabilité dans les revues de gouvernance environnementale et de politique
+climatique. La polarisation se voit donc empiriquement, pas seulement conceptuellement.
+:::
+
+# 6 — Conclusion
+
+## L'ambiguïté : défaut ou ressource ?
+
+On croit la finance climat controversée parce que ses catégories sont mal définies.
+C'est l'inverse.
+
+. . .
+
+Elle est devenue **gouvernable** parce que ses catégories sont **assez définies**
+pour permettre la déclaration et la comparaison, et **assez ambiguës** pour agréger
+des intérêts contradictoires.
+
+. . .
+
+La quantification rend **administrable** des conflits pré-existants. Mise en visibilité, pas une résolution.
+Les économistes font un **travail de frontière** *(Gieryn 1983)* : entre aide et climat,
+entre prêt et transfert, entre efficacité financière et justice distributive.
+
+## Chantiers ouverts
+
+1. **Archivistique** : comment certaines conventions ont été retenues plutôt que d'autres
+2. **Géographique** : la finance climat vue depuis les pays récipiendaires
+3. **Juridique** : des coûts incrémentaux (1992) à l'objectif quantifié de Bakou
+4. **Le test** des « pertes et préjudices » : reconduira-t-il l'ambiguïté, ou rouvrira-t-il
+   la question de ce qui est dû, à qui, et pourquoi ?
+
+\vfill
+\begin{center}
+{\Large Merci.}\\[8pt]
+minh.ha-duong@cnrs.fr\\[3pt]
+{\footnotesize Code et données : \texttt{doi.org/10.5281/zenodo.19097045}}
+\end{center}

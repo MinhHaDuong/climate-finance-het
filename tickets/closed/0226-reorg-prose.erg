@@ -1,0 +1,54 @@
+%erg 0.1
+Title: Reorg workstream — prose (deliverables/ per-paper Quarto projects)
+Created: 2026-07-10
+Author: HDMX-coding-agent
+Blocked-by: 0223
+Label: deferred
+Closed: autoclosed — PR #1002
+
+--- log ---
+2026-07-10T00:00Z HDMX-coding-agent created
+
+2026-07-10T09:49Z HDMX-coding-agent label deferred
+2026-07-10T10:07Z note author ratified the deliverables/ per-paper Quarto layout 2026-07-10; proceed post-resubmit
+2026-07-10T18:30Z HDMX-coding-agent note scope reconciliation: only manuscript.mk moved into deliverables/manuscript/. zoo.mk, multilayer-detection.mk, divergence.mk, venues.mk, separation.mk stay at repo root as Phase-2 concern files; extracting their single render rule into per-deliverable render .mk is 0237's job. The stale "Relevant files" line naming zoo.mk/multilayer-detection.mk was struck accordingly.
+2026-07-10T16:37Z HDMX-coding-agent closed — autoclosed — PR #1002
+--- body ---
+## Context
+Third stage of the top-level tidy (tracker `0223`). `content/` runs ~7
+deliverables through one Quarto project, which forces the exclusion-mask profile
+files (`_quarto-manuscript.yml`, `_quarto-manuscript-Gide.yml` — lists of
+`!content/…`). Give each deliverable its own folder and its own `_quarto.yml`
+so `quarto render deliverables/<x>` selects it directly; the mask files
+disappear. Slides are deliverables, not papers, and sit as peers.
+
+## Relevant files
+- `docs/repo-layout.md` — target `deliverables/` tree
+- `content/*.qmd`, `content/*-vars.yml`, `content/_includes/`, `content/bibliography/`
+- `_quarto.yml`, `_quarto-manuscript.yml`, `_quarto-manuscript-Gide.yml`
+- `manuscript.mk` → into `deliverables/manuscript/` (the only render `.mk` moved here)
+
+## Actions
+1. Create `deliverables/<x>/` per deliverable; move its `.qmd` + `-vars.yml` +
+   its `.mk` in. Shared assets → `deliverables/_shared/`
+   (bib, `_includes/`, `style-references/`, generated `figures/`).
+2. Give each folder a self-contained `_quarto.yml`; reference shared assets by
+   relative path (`bibliography: ../_shared/main.bib`) or symlink. Delete the
+   three root `_quarto*.yml` mask files.
+3. Keep the manuscript's clean-room build discipline: renders from tracked
+   handoff artifacts only, no `uv run`, no data fetch.
+
+## Test
+- Red first: `quarto render deliverables/data-paper` produces the PDF with no
+  reference to the other deliverables (no exclusion mask needed).
+- `make manuscript` must not trigger any Phase 1 script or API call.
+
+## Invariants
+- Manuscript stays frozen (pinned vars, tracked figures); companions stay live.
+- Oeconomia house style preserved for the manuscript.
+- No Phase 1 from a writing-side build.
+
+## Exit criteria
+- Each deliverable is a self-contained `_quarto.yml` folder under `deliverables/`.
+- Root `_quarto*.yml` mask files gone; slides live as peers under `deliverables/`.
+- Writing-side build green from handoff artifacts alone.
