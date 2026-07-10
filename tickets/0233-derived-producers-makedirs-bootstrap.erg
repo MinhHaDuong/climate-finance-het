@@ -1,0 +1,72 @@
+%erg 0.1
+Title: $(DERIVED) producers must create their output dir before validate_io (bootstrap the class)
+Created: 2026-07-10
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-10T13:20Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Ticket 0218 evicted 17 Phase-2 intermediates from `content/tables/` (git-tracked,
+always present) to `data/derived/tables/` (`$(DERIVED)`, gitignored, regenerable).
+That surfaced a latent fragility: producers that write via
+`script_io_args.validate_io()` only *check* the output dir exists — they
+`raise FileNotFoundError("Output directory does not exist")` if it is absent —
+they do not create it. `content/tables/` existed for free; `$(DERIVED)` does not.
+
+0218 fixed the four producers it touched (`compute_breakpoints`, `compute_clusters`,
+`analyze_bimodality`, `analyze_genealogy`) by adding
+`os.makedirs(os.path.dirname(io_args.output) or ".", exist_ok=True)` before
+`validate_io`. A roar sweep found **three pre-existing producers with the same gap**
+— they already write to `$(DERIVED)` via `validate_io` without a makedirs bootstrap:
+
+- `scripts/analyze_embeddings.py` -> `$(DERIVED)/semantic_clusters.csv` (`main()` ~L43 validate_io, no makedirs)
+- `scripts/analyze_cocitation.py` -> `$(DERIVED)/communities.csv` (`main()` ~L215 validate_io, no makedirs)
+- `scripts/build_het_core.py` -> `$(DERIVED)/het_mostcited_50.csv` (MOSTCITED; `main()` ~L382 validate_io, no makedirs)
+
+They "work" today only because a full `make figures`/`make papers` happens to run a
+makedirs-producer (e.g. `analyze_bimodality`) first, which creates `$(DERIVED)` as a
+side effect. Under `make -jN` or an isolated target build on a clean tree (no
+`data/derived/`), whichever of these runs first fails. This is order-dependent
+fragility, not correctness — the same class 0218 fixed for its four producers.
+
+## Relevant files
+- `scripts/analyze_embeddings.py`, `scripts/analyze_cocitation.py`,
+  `scripts/build_het_core.py` — add the makedirs bootstrap before `validate_io`.
+- `scripts/script_io_args.py` — `validate_io` (do NOT change; its raise-on-missing-dir
+  is pinned by `tests/test_io_discipline.py`).
+- `tests/test_evict_analysis_intermediates.py` / `tests/test_io_discipline.py` —
+  home for the class regression guard.
+
+## Actions
+1. In each of the three producers' `main()`, insert
+   `os.makedirs(os.path.dirname(io_args.output) or ".", exist_ok=True)` immediately
+   before `validate_io(output=io_args.output)`. Confirm each has `import os`.
+2. Add a class regression guard (see Test) so a NEW `$(DERIVED)`-writing producer
+   that forgets the bootstrap is caught — a standing test, not a per-PR gate.
+
+## Test
+- RED-first: a guard that, for every top-level Makefile target whose output is under
+  `$(DERIVED)` and whose recipe runs a `scripts/*.py` using `validate_io`, asserts the
+  script creates its output dir. Two viable forms: source inspection (grep the script
+  body for `os.makedirs` alongside `validate_io`) marked `adherence`, or behavioural
+  (in a tmp CWD with no `data/derived/`, invoke the script with
+  `--output data/derived/tables/x.csv` and assert it does not raise "Output directory
+  does not exist") marked `integration`.
+- Prove teeth: reverting the makedirs on one producer turns the guard RED.
+
+## Invariants
+- `validate_io` behaviour unchanged (unit test still sees the raise).
+- No Phase-1 trigger; DVC untouched. Behaviour of the three producers unchanged
+  except the output dir is now auto-created.
+
+## Exit criteria
+- The three producers create their output dir before `validate_io`.
+- A clean tree (`rm -r data/derived`) build of each affected `$(DERIVED)` target
+  (`make $(DERIVED)/semantic_clusters.csv`, `.../communities.csv`,
+  `.../het_mostcited_50.csv`) succeeds without pre-creating the dir.
+- The class regression guard is green and would fail on a re-introduced gap.
+
+Ticket-ref: tickets/closed/0218-evict-remaining-phase-2-intermediates-fr.erg
