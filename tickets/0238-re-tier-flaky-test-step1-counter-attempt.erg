@@ -1,0 +1,79 @@
+%erg 0.1
+Title: Flaky test_step1_counter_attempted — data/order-dependent in fast tier
+Created: 2026-07-10
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-10T17:52Z HDMX-coding-agent created
+2026-07-10T17:58Z HDMX-coding-agent note surfaced during raid 237 (0226+0237); both execute agents hit it under xdist, cleared on retry
+
+--- body ---
+## Context
+
+Surfaced during raid 237 (tickets 0226 + 0237). `make check-fast` intermittently
+reports **1 failed**: `tests/test_robustness_observability.py::TestStepCounters::test_step1_counter_attempted`.
+Both Execute agents (0226 and 0237) hit it once under the parallel (`pytest -n`
+xdist) fast run, and it **cleared on a retry / in isolation** — the 0226 agent
+saw it "failed once under xdist then passed," and on a fresh baseline worktree
+with no DVC data the test **passed** when run alone (`pytest …::test_step1_counter_attempted`
+→ 1 passed).
+
+## Observation (cause NOT yet established — do not assume)
+
+- The test imports and exercises `step1_cross_source` from `scripts/enrich_abstracts.py`
+  (`tests/test_robustness_observability.py:495`, `:509`).
+- `step1_cross_source` reads the corpus when there are missing abstracts:
+  `scripts/enrich_abstracts.py:135-136` does
+  `pd.read_csv(os.path.join(CATALOGS_DIR, "unified_works.csv"), …)` — but this is
+  **inside the function** (after a `if len(missing) == 0: return 0` guard), not at
+  import time. So a naive "module-level read" explanation is FALSE (verified).
+- The failure is intermittent and correlates with the parallel xdist run in a
+  worktree lacking `data/catalogs/unified_works.csv`; it does not reproduce in
+  isolation. This points at an order/state interaction (fixture df with missing
+  abstracts reaching the real corpus read, or cross-worker state), not a simple
+  hard data dependency — but the exact trigger is unconfirmed.
+
+## Relevant files
+
+- `tests/test_robustness_observability.py` — `TestStepCounters::test_step1_counter_attempted`
+  (imports at ~495/509; the class is otherwise a mix of `@pytest.mark.integration`
+  subprocess tests and unmarked in-process ones — confirm which tier this test lands in).
+- `scripts/enrich_abstracts.py:135-136` — the `unified_works.csv` read inside
+  `step1_cross_source`.
+
+## Actions
+
+1. Reproduce deterministically: run the fast suite under xdist in a worktree with
+   NO `data/catalogs/` (e.g. a fresh `git worktree`), several times, to catch the
+   failing interleaving. Capture the actual assertion/traceback (not just "1 failed").
+2. Isolate the trigger: does the test's input df have missing abstracts (so
+   `step1_cross_source` reaches the `pd.read_csv`)? Is `CATALOGS_DIR` mutated by a
+   sibling test in the same worker?
+3. Fix at the root once isolated — options, pick by evidence:
+   - If the test genuinely needs the corpus read: give it a tmp `unified_works.csv`
+     fixture (monkeypatch `CATALOGS_DIR`), so it is self-contained and fast-tier-legal.
+   - If it needs a subprocess / real data: mark it `@pytest.mark.integration` (or
+     `slow`) so it leaves the fast tier — per coding-python.md, the fast tier is
+     pure-Python, no data, no subprocess.
+   - If it is cross-test state leakage: fix the leaking test, not this one.
+
+## Test
+
+Red first: a reproduction that fails deterministically (the xdist-in-no-data loop
+from Action 1), captured as the failing case before the fix.
+
+## Verification
+
+- [ ] `make check-fast` green across 5 consecutive runs in a fresh no-DVC-data worktree.
+- [ ] The chosen fix matches the isolated cause (fixture / re-tier / leak fix), documented in the commit.
+- [ ] Test tier is coding-python.md-legal (fast = pure-Python, no data/subprocess).
+
+## Invariants
+
+- Do not delete the test's coverage — `step1_attempted` counter behavior must stay pinned.
+- `make check` (all tiers) still green.
+
+## Exit criteria
+
+- The flake no longer reproduces under xdist in a no-data worktree.
+- The test's tier and self-containment conform to the fast/integration/slow contract.
