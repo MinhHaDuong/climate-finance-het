@@ -8,6 +8,8 @@ Author: HDMX-coding-agent
 
 2026-07-10T09:49Z HDMX-coding-agent label deferred
 2026-07-10T10:11Z HDMX-coding-agent unlabel deferred
+2026-07-10T10:57Z note raid 2026-07-10: execute attempt FAILED — no commits landed. Root cause: the execute prompt hardcoded primary-checkout absolute paths, so the agent edited the shared main checkout instead of its worktree; a parallel session's reset wiped the leaked edits. Re-scope required (see body: Scoping findings). Sub-Makefile subsystems split to 0231.
+2026-07-10T10:57Z note scoper correction: '~15 intermediates' undercounts by 4-5x; the generalized guard must scan the TOP-LEVEL Makefile ONLY (sub-Makefile ~70 targets → 0231) or it false-positive-storms.
 --- body ---
 ## Context
 
@@ -53,6 +55,38 @@ Defer freely behind deadline work.
   `.gitignore` negation block) OR resolve under `$(DERIVED)`. A new intermediate
   landing in `content/tables/` fails the test. Write this ratchet RED first.
 - Regression: `make papers` builds all six PDFs; manuscript clean-room build passes.
+
+## Scoping findings (raid 2026-07-10 — read before re-executing)
+
+A read-only scoping pass produced the keep/evict classification and two
+corrections the first execute attempt lacked:
+
+1. **Scope is the top-level `Makefile` literal set only.** 17 literal-path
+   `content/tables/tab_*` targets are in scope (bimodality[_core], axis_detection
+   [_core], breakpoints[_core,_censor2], breakpoint_robustness[_core,_censor2],
+   alluvial[_core], cluster_labels[_core].json, core_shares, lineages,
+   k_sensitivity). The `tab_axis_detection_core.csv` output is **dead** (no
+   consumer). KEEP in `content/tables/`: the `.md` `{{< include >}}` deliverables,
+   the `.gitignore`-whitelisted pinned `.csv` (tab_null_separation_pre2007,
+   tab_pre2007_coverage), and `tab_corpus_sources.csv` (grouped with its `.md`,
+   no separate consumer).
+2. **Guard scans the top-level `Makefile` ONLY.** Four sub-Makefiles
+   (`divergence.mk`/`zoo.mk`/`multilayer-detection.mk`/`venues.mk`) route ~70 more
+   `tab_*` targets to `content/tables/` via a `*_TABLES` dir variable. A guard that
+   scans `*.mk` would go RED on all ~70 pre-existing targets — a false-positive
+   storm, not a regression. Scope the scan to `Makefile`; document the boundary in
+   the guard docstring. The sub-Makefile subsystems are **ticket 0231** (blocked-by
+   this one), which later widens the guard.
+
+Archive coupling to update (5 entries move): `ANALYSIS_OUTPUTS` (Makefile ~701-706),
+`build/build_analysis_archive.sh:25-30`, `build/templates/Makefile.analysis-manuscript:30-32`,
+`tests/test_archive_checksums.py` `EXPECTED_OUTPUTS`. Also fix
+`scripts/plot_interactive_corpus.py:57-58` — drop the legacy `CATALOGS_DIR`
+fallback for `tab_pole_papers.csv`.
+
+**Execution note:** the next run MUST edit files at **worktree-rooted paths**, not
+the primary-checkout absolute path — the failed attempt's prompt hardcoded the
+latter and the agent edited the shared main checkout (see log).
 
 ## Invariants
 - `make papers` unaffected; every writing deliverable stays in `content/tables/`.
