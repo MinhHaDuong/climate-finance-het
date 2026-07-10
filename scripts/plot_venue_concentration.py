@@ -6,7 +6,7 @@ Transition zones from tab_breakpoints.csv overlaid as vertical shaded bands.
 
 Inputs:
   - content/tables/tab_venue_concentration.csv
-  - content/tables/tab_breakpoints.csv (for transition zones)
+  - data/derived/tables/tab_breakpoints.csv (for transition zones)
 
 Outputs:
   - content/figures/fig_venue_concentration.png
@@ -14,7 +14,7 @@ Outputs:
 Usage:
     uv run python scripts/plot_venue_concentration.py \
         --output content/figures/fig_venue_concentration.png \
-        --input content/tables/tab_venue_concentration.csv content/tables/tab_breakpoints.csv
+        --input content/tables/tab_venue_concentration.csv data/derived/tables/tab_breakpoints.csv
 """
 
 import os
@@ -23,7 +23,7 @@ import numpy as np
 import pandas as pd
 from plot_style import DARK, DPI, FIGWIDTH, FILL, MED, apply_style
 from script_io_args import parse_io_args, validate_io
-from utils import BASE_DIR, save_figure
+from utils import BASE_DIR, DERIVED_TABLES_DIR, save_figure
 
 apply_style()
 import matplotlib.pyplot as plt
@@ -67,7 +67,7 @@ def main():
     if io_args.input and len(io_args.input) >= 2:
         bp_path = io_args.input[1]
     else:
-        bp_path = os.path.join(BASE_DIR, "content", "tables", "tab_breakpoints.csv")
+        bp_path = os.path.join(DERIVED_TABLES_DIR, "tab_breakpoints.csv")
 
     transition_years = []
     if os.path.exists(bp_path):

@@ -5,9 +5,9 @@ Change specifications (Arial, 5-8pt, double-column width). Reads the same
 data as plot_fig_alluvial.py but applies NCC-specific styling.
 
 Reads:
-  content/tables/tab_alluvial.csv        — period x cluster counts
-  content/tables/cluster_labels.json     — human-readable cluster names
-  content/tables/tab_core_shares.csv     — core % per cluster (optional)
+  data/derived/tables/tab_alluvial.csv        — period x cluster counts
+  data/derived/tables/cluster_labels.json     — human-readable cluster names
+  data/derived/tables/tab_core_shares.csv     — core % per cluster (optional)
 
 Writes:
   content/figures/fig_ncc_alluvial.png (and .pdf if --pdf)
@@ -28,7 +28,7 @@ import numpy as np
 import pandas as pd
 from matplotlib.path import Path
 from script_io_args import parse_io_args, validate_io
-from utils import BASE_DIR, get_logger, save_figure
+from utils import BASE_DIR, DERIVED_TABLES_DIR, get_logger, save_figure
 
 log = get_logger("plot_ncc_alluvial")
 
@@ -220,20 +220,20 @@ def main():
         alluvial_data = pd.read_csv(io_args.input[0], index_col=0)
     else:
         alluvial_data = pd.read_csv(
-            os.path.join(TABLES_DIR, "tab_alluvial.csv"), index_col=0,
+            os.path.join(DERIVED_TABLES_DIR, "tab_alluvial.csv"), index_col=0,
         )
     alluvial_data.columns = alluvial_data.columns.astype(int)
     period_labels = alluvial_data.index.tolist()
     n_periods = len(period_labels)
     n_clusters = len(alluvial_data.columns)
 
-    with open(os.path.join(TABLES_DIR, "cluster_labels.json")) as f:
+    with open(os.path.join(DERIVED_TABLES_DIR, "cluster_labels.json")) as f:
         cluster_labels_raw = json.load(f)
     cluster_labels = {int(k): v for k, v in cluster_labels_raw.items()}
 
     # Optional core shares
     core_crosstab = None
-    shares_path = os.path.join(TABLES_DIR, "tab_core_shares.csv")
+    shares_path = os.path.join(DERIVED_TABLES_DIR, "tab_core_shares.csv")
     if os.path.exists(shares_path):
         core_crosstab = pd.read_csv(shares_path, index_col=0)
         core_crosstab.columns = core_crosstab.columns.astype(int)

@@ -2,6 +2,7 @@
 Title: Evict remaining Phase-2 intermediates from content/tables; guard the class
 Created: 2026-07-10
 Author: HDMX-coding-agent
+Closed: evicted + class guard green; verified end-to-end on real corpus
 
 --- log ---
 2026-07-10T08:23Z HDMX-coding-agent created
@@ -10,6 +11,8 @@ Author: HDMX-coding-agent
 2026-07-10T10:11Z HDMX-coding-agent unlabel deferred
 2026-07-10T10:57Z note raid 2026-07-10: execute attempt FAILED — no commits landed. Root cause: the execute prompt hardcoded primary-checkout absolute paths, so the agent edited the shared main checkout instead of its worktree; a parallel session's reset wiped the leaked edits. Re-scope required (see body: Scoping findings). Sub-Makefile subsystems split to 0231.
 2026-07-10T10:57Z note scoper correction: '~15 intermediates' undercounts by 4-5x; the generalized guard must scan the TOP-LEVEL Makefile ONLY (sub-Makefile ~70 targets → 0231) or it false-positive-storms.
+2026-07-10T12:11Z HDMX-coding-agent closed — evicted + class guard green; verified end-to-end on real corpus
+2026-07-10T12:11Z execution findings: (1) venues.mk consumes tab_breakpoints.csv — repointed to $(DERIVED); its ~70 producers stay for 0231. (2) producers writing to gitignored $(DERIVED) via validate_io needed os.makedirs bootstrap (content/tables gave it free pre-eviction). (3) qa_citations_report.json/multilingual_report.json are a distinct report class, left in place per atomic scope. Verified end-to-end on real corpus: fig_breakpoints (--input) + fig_alluvial.html (default DERIVED read) + clean-tree bootstrap.
 --- body ---
 ## Context
 

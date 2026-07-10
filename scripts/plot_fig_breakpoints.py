@@ -1,8 +1,8 @@
 """Render the structural break detection figure.
 
-Reads:  content/tables/tab_breakpoints.csv
-        content/tables/tab_breakpoint_robustness.csv
-        content/tables/tab_alluvial.csv  (to compute N for title in --core-only mode)
+Reads:  data/derived/tables/tab_breakpoints.csv
+        data/derived/tables/tab_breakpoint_robustness.csv
+        data/derived/tables/tab_alluvial.csv  (to compute N for title in --core-only mode)
 Writes: content/figures/fig_breakpoints.png  (and core/censor variants)
 
 Flags: --core-only, --censor-gap N, --pdf
@@ -21,7 +21,13 @@ import pandas as pd
 import seaborn as sns
 from plot_style import COP_EVENTS
 from script_io_args import parse_io_args, validate_io
-from utils import BASE_DIR, get_logger, load_analysis_config, save_figure
+from utils import (
+    BASE_DIR,
+    DERIVED_TABLES_DIR,
+    get_logger,
+    load_analysis_config,
+    save_figure,
+)
 
 log = get_logger("plot_fig_breakpoints")
 
@@ -64,12 +70,12 @@ def main():
     #   breakpoints.csv, breakpoint_robustness.csv, alluvial.csv
     if io_args.input:
         bp_path = io_args.input[0]
-        robust_path = io_args.input[1] if len(io_args.input) > 1 else os.path.join(TABLES_DIR, tab_bp_robust)
-        al_path = io_args.input[2] if len(io_args.input) > 2 else os.path.join(TABLES_DIR, tab_al)
+        robust_path = io_args.input[1] if len(io_args.input) > 1 else os.path.join(DERIVED_TABLES_DIR, tab_bp_robust)
+        al_path = io_args.input[2] if len(io_args.input) > 2 else os.path.join(DERIVED_TABLES_DIR, tab_al)
     else:
-        bp_path = os.path.join(TABLES_DIR, tab_bp)
-        robust_path = os.path.join(TABLES_DIR, tab_bp_robust)
-        al_path = os.path.join(TABLES_DIR, tab_al)
+        bp_path = os.path.join(DERIVED_TABLES_DIR, tab_bp)
+        robust_path = os.path.join(DERIVED_TABLES_DIR, tab_bp_robust)
+        al_path = os.path.join(DERIVED_TABLES_DIR, tab_al)
 
     bp_df = pd.read_csv(bp_path)
     try:

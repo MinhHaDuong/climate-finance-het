@@ -14,13 +14,14 @@ Other flags:
 Note: The k-sensitivity *figure* is produced by plot_fig_k_sensitivity.py.
 
 Usage:
-    uv run python scripts/compute_breakpoints.py --output content/tables/tab_breakpoints.csv
-    uv run python scripts/compute_breakpoints.py --output content/tables/tab_breakpoint_robustness.csv --robustness
-    uv run python scripts/compute_breakpoints.py --output content/tables/tab_breakpoints_core.csv --core-only
-    uv run python scripts/compute_breakpoints.py --output content/tables/tab_k_sensitivity.csv --k-sensitivity
+    uv run python scripts/compute_breakpoints.py --output data/derived/tables/tab_breakpoints.csv
+    uv run python scripts/compute_breakpoints.py --output data/derived/tables/tab_breakpoint_robustness.csv --robustness
+    uv run python scripts/compute_breakpoints.py --output data/derived/tables/tab_breakpoints_core.csv --core-only
+    uv run python scripts/compute_breakpoints.py --output data/derived/tables/tab_k_sensitivity.csv --k-sensitivity
 """
 
 import argparse
+import os
 import warnings
 
 import numpy as np
@@ -295,6 +296,9 @@ def _compute_k_sensitivity_table(df, embeddings, n_min, censor_gap):
 
 def main():
     io_args, extra = parse_io_args()
+    # Output lands under data/derived/tables/ (gitignored, regenerable — ticket 0218);
+    # create it so validate_io's dir check passes on a clean tree.
+    os.makedirs(os.path.dirname(io_args.output) or ".", exist_ok=True)
     validate_io(output=io_args.output)
 
     parser = argparse.ArgumentParser(description="Compute structural break tables")

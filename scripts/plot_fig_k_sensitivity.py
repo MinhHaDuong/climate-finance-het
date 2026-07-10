@@ -1,6 +1,6 @@
 """K-sensitivity figure: structural break persistence across cluster counts.
 
-Reads:  tab_k_sensitivity.csv
+Reads:  data/derived/tables/tab_k_sensitivity.csv
 Writes: fig_k_sensitivity.png (and .pdf if --pdf)
 
 Flags: --pdf
@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from plot_style import COP_EVENTS
 from script_io_args import parse_io_args, validate_io
-from utils import BASE_DIR, get_logger, save_figure
+from utils import BASE_DIR, DERIVED_TABLES_DIR, get_logger, save_figure
 
 log = get_logger("plot_fig_k_sensitivity")
 
@@ -34,7 +34,7 @@ def main():
     parser = argparse.ArgumentParser(description="Plot k-sensitivity figure")
     parser.add_argument("--pdf", action="store_true", help="Also save PDF output")
     parser.add_argument("--k-sensitivity",
-                        default=os.path.join(TABLES_DIR, "tab_k_sensitivity.csv"),
+                        default=os.path.join(DERIVED_TABLES_DIR, "tab_k_sensitivity.csv"),
                         help="Path to tab_k_sensitivity.csv")
     args = parser.parse_args(extra)
 

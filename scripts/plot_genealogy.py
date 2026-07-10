@@ -1,7 +1,7 @@
 """Static citation genealogy figure (matplotlib).
 
 Reads:
-  content/tables/tab_lineages.csv — backbone papers with positions
+  data/derived/tables/tab_lineages.csv — backbone papers with positions
   data/catalogs/refined_citations.csv — for internal citation edges
 
 Produces:
@@ -22,6 +22,7 @@ from matplotlib.path import Path
 from script_io_args import parse_io_args, validate_io
 from utils import (
     BASE_DIR,
+    DERIVED_TABLES_DIR,
     get_logger,
     load_analysis_config,
     load_analysis_periods,
@@ -288,7 +289,7 @@ def main():
     parser = argparse.ArgumentParser(description="Render static genealogy figure")
     parser.add_argument("--pdf", action="store_true",
                         help="Also save PDF output")
-    parser.add_argument("--lineages", default=os.path.join(TABLES_DIR, "tab_lineages.csv"),
+    parser.add_argument("--lineages", default=os.path.join(DERIVED_TABLES_DIR, "tab_lineages.csv"),
                         help="Input lineages table path")
     args = parser.parse_args(extra)
 

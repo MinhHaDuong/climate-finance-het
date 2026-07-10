@@ -8,13 +8,13 @@ Method:
 - Validate with TF-IDF and keyword co-occurrence
 
 Produces:
-- content/tables/tab_bimodality.csv: Dip test p-values, GMM BIC, pole paper counts
+- data/derived/tables/tab_bimodality.csv: Dip test p-values, GMM BIC, pole paper counts
 - <derived>/tab_pole_papers.csv: Per-paper score and pole assignment (analysis intermediate)
-- content/tables/tab_axis_detection.csv: Unsupervised TF-IDF components and alignment to pole axis
+- data/derived/tables/tab_axis_detection.csv: Unsupervised TF-IDF components and alignment to pole axis
 
 Usage:
-    uv run python scripts/analyze_bimodality.py --output content/tables/tab_bimodality.csv
-    uv run python scripts/analyze_bimodality.py --output content/tables/tab_bimodality_core.csv --core-only
+    uv run python scripts/analyze_bimodality.py --output data/derived/tables/tab_bimodality.csv
+    uv run python scripts/analyze_bimodality.py --output data/derived/tables/tab_bimodality_core.csv --core-only
 """
 
 import argparse
@@ -424,6 +424,9 @@ def _compute_tfidf_axis(df, eff_mask, acc_mask):
 
 def main():
     io_args, extra = parse_io_args()
+    # Output lands under data/derived/tables/ (gitignored, regenerable — ticket 0218);
+    # create it so validate_io's dir check passes on a clean tree.
+    os.makedirs(os.path.dirname(io_args.output) or ".", exist_ok=True)
     validate_io(output=io_args.output)
 
     parser = argparse.ArgumentParser(description="Bimodality analysis (tables only)")

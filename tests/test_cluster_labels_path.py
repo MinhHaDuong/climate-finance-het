@@ -1,7 +1,8 @@
 """cluster_labels.json is a Phase 2 artifact, not Phase 1.
 
-It must be read from content/tables/, not data/catalogs/.
-Tickets: #199, #204
+It is a Phase-2 analysis intermediate: read from data/derived/tables/
+(evicted there by ticket 0218), never from data/catalogs/ (Phase 1).
+Tickets: #199, #204, 0218
 """
 
 import os
@@ -15,10 +16,12 @@ import utils
 
 
 def test_cluster_labels_path_is_phase2():
-    """_CLUSTER_LABELS_PATH must point to content/tables/, not data/catalogs/."""
+    """_CLUSTER_LABELS_PATH must point to data/derived/tables/, not data/catalogs/."""
     path = pipeline_loaders._CLUSTER_LABELS_PATH
-    assert path.endswith(os.path.join("content", "tables", "cluster_labels.json")), (
-        f"cluster_labels.json path should end with content/tables/cluster_labels.json, "
+    assert path.endswith(
+        os.path.join("derived", "tables", "cluster_labels.json")
+    ), (
+        f"cluster_labels.json path should end with derived/tables/cluster_labels.json, "
         f"got {path}"
     )
     assert "catalogs" not in path, (

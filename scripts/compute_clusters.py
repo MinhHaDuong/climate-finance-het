@@ -15,8 +15,8 @@ Downstream scripts:
   plot_alluvial_html.py  →  tab_alluvial.csv, cluster_labels.json
 
 Usage:
-    uv run python scripts/compute_clusters.py --output content/tables/tab_alluvial.csv
-    uv run python scripts/compute_clusters.py --output content/tables/tab_alluvial_core.csv --core-only
+    uv run python scripts/compute_clusters.py --output data/derived/tables/tab_alluvial.csv
+    uv run python scripts/compute_clusters.py --output data/derived/tables/tab_alluvial_core.csv --core-only
 """
 
 import argparse
@@ -300,6 +300,9 @@ def _check_ari_alignment(df):
 
 def main():
     io_args, extra = parse_io_args()
+    # Output lands under data/derived/tables/ (gitignored, regenerable — ticket 0218);
+    # create it so validate_io's dir check passes on a clean tree.
+    os.makedirs(os.path.dirname(io_args.output) or ".", exist_ok=True)
     validate_io(output=io_args.output)
 
     parser = argparse.ArgumentParser(description="Compute alluvial tables and cluster labels")

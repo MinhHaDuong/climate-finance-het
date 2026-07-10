@@ -20,6 +20,7 @@ from script_io_args import parse_io_args, validate_io
 from utils import (
     BASE_DIR,
     CATALOGS_DIR,
+    DERIVED_TABLES_DIR,
     SOURCE_NAMES,
     get_logger,
     load_analysis_periods,
@@ -261,7 +262,7 @@ def _bimodality_period_keys():
 
 def bimodality_stats(v):
     """Bimodality results from tab_bimodality.csv and tab_bimodality_core.csv."""
-    df = _read_csv("tab_bimodality.csv")
+    df = _read_csv("tab_bimodality.csv", directory=DERIVED_TABLES_DIR)
     if df is None:
         return
 
@@ -292,7 +293,7 @@ def bimodality_stats(v):
             v[f"bim_n_{key}"] = _int(row["n_papers"])
 
     # Core
-    core = _read_csv("tab_bimodality_core.csv")
+    core = _read_csv("tab_bimodality_core.csv", directory=DERIVED_TABLES_DIR)
     if core is None:
         return
     emb_core = core[core["method"] == "embedding"]
@@ -314,7 +315,7 @@ def bimodality_stats(v):
 
 def pca_stats(v):
     """PCA axis detection from tab_axis_detection.csv."""
-    df = _read_csv("tab_axis_detection.csv")
+    df = _read_csv("tab_axis_detection.csv", directory=DERIVED_TABLES_DIR)
     if df is None:
         return
 

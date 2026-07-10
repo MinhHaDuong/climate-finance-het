@@ -16,7 +16,7 @@ import numpy as np
 import pandas as pd
 from plot_style import DARK, DPI, FIGWIDTH, LIGHT, MED, apply_style
 from script_io_args import parse_io_args, validate_io
-from utils import BASE_DIR, load_cluster_labels, save_figure
+from utils import DERIVED_TABLES_DIR, load_cluster_labels, save_figure
 
 apply_style()
 import matplotlib.pyplot as plt
@@ -67,7 +67,7 @@ def main():
     if io_args.input:
         csv_path = io_args.input[0]
     else:
-        csv_path = args.alluvial or os.path.join(BASE_DIR, "content", "tables", "tab_alluvial.csv")
+        csv_path = args.alluvial or os.path.join(DERIVED_TABLES_DIR, "tab_alluvial.csv")
     df = pd.read_csv(csv_path, index_col=0)
 
     # Convert to percentages

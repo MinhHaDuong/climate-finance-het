@@ -6,12 +6,12 @@ that the "climate finance" category was constructed through peripheral
 literature, not through the most-cited works.
 
 Reads:
-  content/tables/tab_breakpoints.csv              — full corpus divergence
-  content/tables/tab_breakpoint_robustness.csv    — full corpus breaks
-  content/tables/tab_breakpoints_core.csv         — core divergence
-  content/tables/tab_breakpoint_robustness_core.csv — core breaks
-  content/tables/tab_alluvial.csv                 — for N count (full)
-  content/tables/tab_alluvial_core.csv            — for N count (core)
+  data/derived/tables/tab_breakpoints.csv              — full corpus divergence
+  data/derived/tables/tab_breakpoint_robustness.csv    — full corpus breaks
+  data/derived/tables/tab_breakpoints_core.csv         — core divergence
+  data/derived/tables/tab_breakpoint_robustness_core.csv — core breaks
+  data/derived/tables/tab_alluvial.csv                 — for N count (full)
+  data/derived/tables/tab_alluvial_core.csv            — for N count (core)
 
 Writes:
   content/figures/fig_ncc_core_comparison.png (and .pdf if --pdf)
@@ -29,7 +29,13 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import pandas as pd
 from script_io_args import parse_io_args, validate_io
-from utils import BASE_DIR, get_logger, load_analysis_config, save_figure
+from utils import (
+    BASE_DIR,
+    DERIVED_TABLES_DIR,
+    get_logger,
+    load_analysis_config,
+    save_figure,
+)
 
 log = get_logger("plot_ncc_core_comparison")
 
@@ -141,14 +147,14 @@ def main():
         paths_core = io_args.input[3], io_args.input[4], io_args.input[5]
     else:
         paths_full = (
-            os.path.join(TABLES_DIR, "tab_breakpoints.csv"),
-            os.path.join(TABLES_DIR, "tab_breakpoint_robustness.csv"),
-            os.path.join(TABLES_DIR, "tab_alluvial.csv"),
+            os.path.join(DERIVED_TABLES_DIR, "tab_breakpoints.csv"),
+            os.path.join(DERIVED_TABLES_DIR, "tab_breakpoint_robustness.csv"),
+            os.path.join(DERIVED_TABLES_DIR, "tab_alluvial.csv"),
         )
         paths_core = (
-            os.path.join(TABLES_DIR, "tab_breakpoints_core.csv"),
-            os.path.join(TABLES_DIR, "tab_breakpoint_robustness_core.csv"),
-            os.path.join(TABLES_DIR, "tab_alluvial_core.csv"),
+            os.path.join(DERIVED_TABLES_DIR, "tab_breakpoints_core.csv"),
+            os.path.join(DERIVED_TABLES_DIR, "tab_breakpoint_robustness_core.csv"),
+            os.path.join(DERIVED_TABLES_DIR, "tab_alluvial_core.csv"),
         )
 
     bp_full, robust_full, n_full = _load_panel_data(*paths_full)

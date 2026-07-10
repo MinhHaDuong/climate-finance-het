@@ -22,12 +22,12 @@ ANALYSIS_OUTPUTS=(
     content/figures/fig_bars_v1.png
     content/figures/fig_composition.png
     content/tables/tab_venues.md
-    content/tables/tab_alluvial.csv
-    content/tables/tab_core_shares.csv
-    content/tables/tab_bimodality.csv
-    content/tables/tab_axis_detection.csv
+    data/derived/tables/tab_alluvial.csv
+    data/derived/tables/tab_core_shares.csv
+    data/derived/tables/tab_bimodality.csv
+    data/derived/tables/tab_axis_detection.csv
     data/derived/tables/tab_pole_papers.csv
-    content/tables/cluster_labels.json
+    data/derived/tables/cluster_labels.json
 )
 
 echo "=== Building analysis archive ==="

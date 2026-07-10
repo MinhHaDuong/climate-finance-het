@@ -42,6 +42,11 @@ content/tables/*
 # commit its generator output so every cited value has an archived record (ticket 0161).
 !content/tables/tab_null_separation_pre2007.csv
 !content/tables/tab_pre2007_coverage.csv
+# tab_corpus_sources.csv is a writing deliverable grouped with tab_corpus_sources.md
+# (produced by the same export_corpus_table.py target); it stays in content/tables/,
+# not evicted to $(DERIVED) — declared here so the class guard treats it as a
+# deliverable, not a Phase-2 intermediate (ticket 0218).
+!content/tables/tab_corpus_sources.csv
 content/*-vars.yml
 !content/manuscript-vars.yml
 

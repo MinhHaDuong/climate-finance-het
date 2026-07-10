@@ -48,15 +48,11 @@ os.makedirs(FIGURES_DIR, exist_ok=True)
 
 EMBEDDINGS_PATH = os.path.join(CATALOGS_DIR, "embeddings.npz")
 CLUSTERS_PATH = os.path.join(DERIVED_TABLES_DIR, "semantic_clusters.csv")
-CLUSTER_LABELS_PATH = os.path.join(TABLES_DIR, "cluster_labels.json")
+CLUSTER_LABELS_PATH = os.path.join(DERIVED_TABLES_DIR, "cluster_labels.json")
 BIB_PATH = os.path.join(BASE_DIR, "bibliography", "main.bib")
 
-# Pole papers is an analysis intermediate in the derived dir; also accept the
-# legacy catalogs/ location for older data snapshots.
-TAB5_CANDIDATES = [
-    os.path.join(DERIVED_TABLES_DIR, "tab_pole_papers.csv"),
-    os.path.join(CATALOGS_DIR, "tab_pole_papers.csv"),
-]
+# Pole papers is an analysis intermediate in the derived dir (ticket 0208).
+TAB5_PATH = os.path.join(DERIVED_TABLES_DIR, "tab_pole_papers.csv")
 
 _cfg = load_analysis_config()
 CITE_THRESHOLD = _cfg["clustering"]["cite_threshold"]
@@ -84,15 +80,11 @@ works["doi_norm"] = works["doi"].apply(normalize_doi)
 
 
 # ── 2. Load axis scores (tab_pole_papers.csv) ────────────────────────
-tab5_path = None
-for candidate in TAB5_CANDIDATES:
-    if os.path.exists(candidate):
-        tab5_path = candidate
-        break
+tab5_path = TAB5_PATH if os.path.exists(TAB5_PATH) else None
 
 if tab5_path is None:
     raise FileNotFoundError(
-        "tab_pole_papers.csv not found in derived/ or catalogs/. "
+        f"tab_pole_papers.csv not found at {TAB5_PATH}. "
         "Run analyze_bimodality.py first."
     )
 

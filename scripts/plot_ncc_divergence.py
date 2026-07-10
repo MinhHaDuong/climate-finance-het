@@ -5,9 +5,9 @@ to show that the single surviving breakpoint is 2009. Formatted for
 Nature Climate Change specifications (Arial, 5-8pt, 89mm or 183mm width).
 
 Reads:
-  content/tables/tab_breakpoints.csv         — baseline divergence series
-  content/tables/tab_breakpoints_censor2.csv — censored-gap k=2 series
-  content/tables/tab_breakpoint_robustness_censor2.csv — robust breaks (k=2)
+  data/derived/tables/tab_breakpoints.csv         — baseline divergence series
+  data/derived/tables/tab_breakpoints_censor2.csv — censored-gap k=2 series
+  data/derived/tables/tab_breakpoint_robustness_censor2.csv — robust breaks (k=2)
 
 Writes:
   content/figures/fig_ncc_divergence.png (and .pdf if --pdf)
@@ -15,9 +15,9 @@ Writes:
 Usage:
     uv run python scripts/plot_ncc_divergence.py \
         --output content/figures/fig_ncc_divergence.png \
-        --input content/tables/tab_breakpoints.csv \
-               content/tables/tab_breakpoints_censor2.csv \
-               content/tables/tab_breakpoint_robustness_censor2.csv
+        --input data/derived/tables/tab_breakpoints.csv \
+               data/derived/tables/tab_breakpoints_censor2.csv \
+               data/derived/tables/tab_breakpoint_robustness_censor2.csv
 """
 
 import argparse
@@ -28,7 +28,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import pandas as pd
 from script_io_args import parse_io_args, validate_io
-from utils import BASE_DIR, get_logger, save_figure
+from utils import BASE_DIR, DERIVED_TABLES_DIR, get_logger, save_figure
 
 log = get_logger("plot_ncc_divergence")
 
@@ -96,10 +96,10 @@ def main():
         bp_censor_path = io_args.input[1]
         robust_censor_path = io_args.input[2]
     else:
-        bp_baseline_path = os.path.join(TABLES_DIR, "tab_breakpoints.csv")
-        bp_censor_path = os.path.join(TABLES_DIR, "tab_breakpoints_censor2.csv")
+        bp_baseline_path = os.path.join(DERIVED_TABLES_DIR, "tab_breakpoints.csv")
+        bp_censor_path = os.path.join(DERIVED_TABLES_DIR, "tab_breakpoints_censor2.csv")
         robust_censor_path = os.path.join(
-            TABLES_DIR, "tab_breakpoint_robustness_censor2.csv"
+            DERIVED_TABLES_DIR, "tab_breakpoint_robustness_censor2.csv"
         )
 
     # --- Load data ---
