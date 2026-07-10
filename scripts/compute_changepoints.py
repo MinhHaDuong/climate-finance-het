@@ -29,7 +29,7 @@ import os
 import pandas as pd
 import ruptures
 from _divergence_io import load_divergence_tables
-from pipeline_loaders import load_analysis_config
+from pipeline_loaders import DERIVED_TABLES_DIR, load_analysis_config
 from script_io_args import parse_io_args, validate_io
 from utils import get_logger
 
@@ -313,11 +313,7 @@ def main():
     if io_args.input:
         input_paths = io_args.input
     else:
-        tables_dir = os.path.join(
-            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-            "content",
-            "tables",
-        )
+        tables_dir = DERIVED_TABLES_DIR
         # Try new-style first
         input_paths = sorted(glob.glob(os.path.join(tables_dir, "tab_div_*.csv")))
         if not input_paths:

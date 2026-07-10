@@ -24,7 +24,7 @@ import sys
 
 import pandas as pd
 from pipeline_io import save_csv
-from pipeline_loaders import load_analysis_config
+from pipeline_loaders import DERIVED_TABLES_DIR, load_analysis_config
 from schemas import CrossyearZscoreSchema
 from script_io_args import parse_io_args, validate_io
 from utils import get_logger
@@ -186,7 +186,9 @@ def main() -> None:
 
     method = args.method
     input_path = (
-        io_args.input[0] if io_args.input else f"content/tables/tab_div_{method}.csv"
+        io_args.input[0]
+        if io_args.input
+        else f"{DERIVED_TABLES_DIR}/tab_div_{method}.csv"
     )
 
     validate_io(output=io_args.output, inputs=io_args.input)

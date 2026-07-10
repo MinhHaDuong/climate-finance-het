@@ -35,7 +35,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 import pandas as pd
 from pipeline_io import save_figure
-from pipeline_loaders import load_analysis_config
+from pipeline_loaders import DERIVED_TABLES_DIR, load_analysis_config
 from plot_style import DARK, FILL, LIGHT, MED, apply_style
 from script_io_args import parse_io_args, validate_io
 from utils import get_logger
@@ -365,7 +365,7 @@ def main() -> None:
     validate_io(output=io_args.output)
 
     output_stem = os.path.splitext(io_args.output)[0]
-    input_path = f"content/tables/tab_crossyear_{method}.csv"
+    input_path = os.path.join(DERIVED_TABLES_DIR, f"tab_crossyear_{method}.csv")
 
     if not os.path.exists(input_path):
         log.warning("Input not found: %s — producing empty figure", input_path)

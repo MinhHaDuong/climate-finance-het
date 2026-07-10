@@ -42,7 +42,7 @@ from _divergence_io import load_divergence_tables
 from pipeline_io import save_figure
 from plot_style import apply_style
 from script_io_args import parse_io_args, validate_io
-from utils import get_logger
+from utils import DERIVED_TABLES_DIR, get_logger
 
 log = get_logger("plot_divergence")
 
@@ -390,12 +390,11 @@ def main():
     args = parser.parse_args(extra)
 
     if not io_args.input:
-        tables_dir = os.path.join(
-            os.path.dirname(os.path.dirname(io_args.output)), "tables"
-        )
         import glob
 
-        io_args.input = sorted(glob.glob(os.path.join(tables_dir, "tab_div_*.csv")))
+        io_args.input = sorted(
+            glob.glob(os.path.join(DERIVED_TABLES_DIR, "tab_div_*.csv"))
+        )
 
     div_df, breaks_df = load_divergence_tables(io_args.input)
 

@@ -20,7 +20,7 @@
 
 # ── Paths ─────────────────────────────────────────────────────────────────
 
-DIV_TABLES := content/tables
+DIV_TABLES := $(DERIVED)
 DIV_FIGS   := content/figures
 DIV_CFG    := config/analysis.yaml
 DIV_DISPATCH := scripts/compute_divergence.py

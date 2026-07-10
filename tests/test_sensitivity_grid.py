@@ -24,7 +24,7 @@ def test_sensitivity_config_block_exists():
 
 def test_sensitivity_grid_schema():
     """tab_sensitivity_grid.csv carries required columns (smoke: file must exist)."""
-    path = "content/tables/tab_sensitivity_grid.csv"
+    path = "data/derived/tables/tab_sensitivity_grid.csv"
     if not os.path.exists(path):
         pytest.skip(
             "tab_sensitivity_grid.csv not yet generated — run compute_sensitivity_grid.py"
