@@ -1,0 +1,58 @@
+%erg 0.1
+Title: Complete data/catalogs Phase-2 eviction + generalize the phase-layout guard to the class
+Created: 2026-07-10
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-10T09:20Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Child of tracker 0221. Ticket 0219 evicted two named Phase-2 outputs
+(`semantic_clusters.csv`, `het_mostcited_50.csv`) from `data/catalogs/` and added a
+**per-file** guard. Because the guard pins basenames, it missed a third leak:
+`COMMUNITIES := data/catalogs/communities.csv` (Makefile:570), produced by
+`analyze_cocitation.py` (Phase 2). This ticket finishes the class and hardens the
+guard so completeness no longer depends on remembering to name each file.
+
+## Relevant files
+- `Makefile` — `COMMUNITIES := data/catalogs/communities.csv` (~570), producer
+  `$(COMMUNITIES): scripts/analyze_cocitation.py …` (~571), consumer
+  `content/figures/fig_communities.png: … $(COMMUNITIES)` and `analyze_embeddings.py:156`.
+- `scripts/analyze_cocitation.py` (producer default), `scripts/analyze_embeddings.py`
+  (~156 reads `os.path.join(CATALOGS_DIR, "communities.csv")`), `scripts/plot_cocitation.py`.
+- `tests/test_phase_layout.py` — the per-file guard from 0219, to be generalized.
+
+## Actions
+1. **Sweep** `data/catalogs/` for every Make target/constant whose producer is a
+   Phase-2 script (`analyze_/compute_/plot_/export_/summarize_/build_het`). Known:
+   `communities.csv`. List and evict each to `data/derived/` exactly as 0219 did —
+   Makefile constant → `$(DERIVED)/`, script `CATALOGS_DIR` reads → `DERIVED_TABLES_DIR`,
+   docstrings; producer-write and consumer-read move together.
+2. **Generalize the guard** (`tests/test_phase_layout.py`): replace the two-basename
+   whitelist with a class rule — parse the Makefile for targets under `$(DATA_DIR)`/
+   `data/catalogs/` whose recipe/prereq is a Phase-2 script, and fail if any exist.
+   A NEW Phase-2 output under `data/catalogs/` must fail the test WITHOUT editing it.
+3. **Classify the ambiguous subtrees** (0221 remaining item 3): `data/het/`
+   (git-tracked seeds) and `data/run_reports/` — confirm each is in the right phase
+   bucket, or document the exception in `architecture.md`.
+
+## Test
+- RED: the generalized guard fails on today's tree (catches `communities.csv`).
+- GREEN after eviction. Add a synthetic-fixture assertion that a fabricated
+  `data/catalogs/foo.csv` produced by an `analyze_*` target trips the guard.
+- Regression: `make check-fast` green.
+
+## Invariants
+- `make papers` unaffected; producer-write and consumer-read resolve to one path.
+- Phase separation preserved; DVC untouched; moved files stay gitignored, regenerable.
+
+## Exit criteria
+- No Phase-2 output resolves under `data/catalogs/` (verified by the generalized,
+  class-level guard, not a basename list).
+- `data/het/` and `data/run_reports/` classified/documented.
+- `make check-fast` green.
+
+Parent tracker: tickets/0221-tracking-reorganize-the-repo-so-layout-m.erg
+Ticket-ref: tickets/0219-layout-data-split-by-dataflow-phase-evic.erg

@@ -1,0 +1,84 @@
+%erg 0.1
+Title: Tracking: reorganize the repo so layout mirrors dataflow phase
+Created: 2026-07-10
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-10T09:19Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Retroactive tracker. A design conversation (2026-07-10) settled how the repo is
+organized and produced a reorganization, but the pieces were executed as
+individual tickets without an owning tracker — so the "tracking logic" (below) was
+the one logic left incomplete, and the reorg shipped partial: a per-file guard let
+a third leak (`communities.csv`) slip through unnoticed. This ticket records the
+decision and tracks the reorg to completion.
+
+## The decision — four logics, layout mirrors phase
+
+The repo is organized along four logics that must each be coherent and must not
+bleed into one another:
+
+- **build** — Makefiles / workpackage `.mk`s.
+- **layout** — directories.
+- **data-analysis** — dataflow phases (1 corpus → 2 analysis → 3 render → 4 release).
+- **tracking** — tickets.
+
+Settled rules:
+1. **Layout mirrors the data-analysis phase**, on the coarse, stable axis. A file's
+   directory names its phase. Documented in `.claude/rules/architecture.md`
+   (§ Data location, § Artifact homes by phase).
+2. **Flat by phase, NOT by workpackage.** Mirroring the `.mk` workpackages into the
+   layout couples layout to build and breaks on cross-workpackage files
+   (`tab_pole_papers.csv` has three consumers, no single owner). `data/catalogs`=
+   Phase 1, `data/derived`=Phase 2.
+3. **Build: clean-room vs live.** In-repo clean-room freeze == the paper being
+   (re)submitted from the repo (the manuscript R&R); everything else builds live.
+   An already-submitted paper's frozen form is its external deposit, not an in-repo
+   copy (0163/0207).
+
+## Children
+
+Done:
+- **0208** (merged #969) — evict the heavy Phase-2 intermediates out of
+  `content/tables/` → `data/derived/`.
+- **0219** (merged #974) — evict `semantic_clusters.csv` + `het_mostcited_50.csv`
+  out of `data/catalogs/` → `data/derived/`; document the phase-split convention;
+  add the (per-file) guard `tests/test_phase_layout.py`.
+- **0163 / 0207** (closed #970) — build clean-room-vs-live architecture documented;
+  premise-falsified `.mk`-per-paper scope retired.
+
+Open:
+- **0218** — residual small Phase-2 intermediates still in `content/tables/`, plus
+  the `plot_interactive_corpus.py:58` `tab_pole_papers` fallback still pointing at
+  `CATALOGS_DIR`.
+- **0222** — complete the `data/catalogs/` eviction (`communities.csv` + sweep) and
+  generalize the per-file guard to the class (see Remaining).
+
+## Remaining (the incompleteness this tracker exists to close)
+
+1. **Audit `data/catalogs/` for ALL Phase-2 outputs, not the two 0219 named.**
+   Confirmed leak: `COMMUNITIES := data/catalogs/communities.csv` (Makefile:570),
+   produced by `analyze_cocitation.py` (Phase 2) — evict to `data/derived/` and
+   rewire its consumers (`analyze_embeddings.py:156`, `plot_cocitation.py`). Sweep
+   for any others (every `$(DATA_DIR)/…` or `CATALOGS_DIR`-joined path whose
+   producer is an `analyze_/compute_/plot_/export_/summarize_/build_het` script).
+2. **Generalize the guard from per-file to per-CLASS.** `tests/test_phase_layout.py`
+   currently pins two basenames. Replace with: any Make target produced by a Phase-2
+   script must resolve under `data/derived/`, detected by producer-script prefix —
+   so a NEW Phase-2 output under `data/catalogs/` fails without editing the test.
+3. **Classify the ambiguous subtrees.** `data/het/` (git-tracked seeds) and
+   `data/run_reports/` — confirm each sits in the right phase bucket or document why.
+
+## Exit criteria (tracker closes when)
+- No Phase-2 output resolves under `data/catalogs/` (class-level, guard-enforced).
+- 0218 closed (content/tables residual + pole-papers fallback).
+- The four-logics decision + phase-mirror rule documented (DONE — architecture.md).
+- A short completeness re-read confirms `make papers` still builds all six.
+
+Ticket-ref: tickets/0218-evict-remaining-phase-2-intermediates-fr.erg
+Ticket-ref: tickets/0219-layout-data-split-by-dataflow-phase-evic.erg
+Ticket-ref: tickets/0222-complete-data-catalogs-phase-2-eviction.erg
+Ticket-ref: tickets/0163-split-build-remaining-writing-workpackag.erg
