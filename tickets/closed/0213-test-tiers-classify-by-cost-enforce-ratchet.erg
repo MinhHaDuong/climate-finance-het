@@ -2,11 +2,14 @@
 Title: Test-suite rethink: classify by cost, enforce by ratchet (tracking)
 Created: 2026-07-10
 Author: HDMX-coding-agent
+Closed: done
 
 --- log ---
 2026-07-10T00:00Z HDMX-coding-agent created
 
 2026-07-10T08:04Z MinhHaDuong approved the inner-loop trade-off (see 0214 log): numerical-kernel tests move off the fast path. Load-bearing design decision resolved; children unblocked pending ticket review.
+2026-07-10T09:49Z All children merged: 0214 (#973 gates+make lint), 0215 (#972 adherence tier), 0216 (#978 auto-mark+ratchet), 0217 (#977 testmon REJECT). Integration verified on merged main: check-fast ~93s->24s, 926 tests, no dcor/heavy test on fast path, ratchet green. Follow-ups open: 0220 (global rule table, cross-repo), 0228 (harden auto-mark: pin hook-ordering + quantify over-sweep).
+2026-07-10T09:49Z HDMX-coding-agent closed — done
 --- body ---
 ## Context
 `make check-fast` (contract: unit tests + lint, <30s inner loop) had drifted to
