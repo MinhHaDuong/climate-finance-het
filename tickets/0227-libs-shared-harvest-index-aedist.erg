@@ -1,0 +1,41 @@
+%erg 0.1
+Title: Seed — shared corpus harvest + indexing for AEDIST via libs/
+Created: 2026-07-10
+Author: HDMX-coding-agent
+Label: deferred
+
+--- log ---
+2026-07-10T00:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+Design seed, not yet scoped for Execute. During the layout adjudication
+(2026-07-10) the author identified **corpus harvesting + indexing** as
+infrastructure to be shared with the AEDIST project
+(`~/CNRS/papiers/actif/AEDIST-technical-report/`). This is the concrete driver
+that was missing when `libs/openalex-corpus` was first extracted (0170) — the
+package "has no external consumers today"; AEDIST would be the first.
+
+This is why the code reorg (0225) declined a top-level `src/`: cross-repo
+sharing belongs in `libs/` (git-source consumable), not an internal package.
+
+## Direction (to scope later)
+- **Harvest** — `libs/openalex-corpus` already holds `retry_get`,
+  `reconstruct_abstract`, `normalize_doi`, `build_text`,
+  `is_boilerplate_abstract`. Confirm these cover AEDIST's fetch needs; harden
+  the package boundary (it injects `MAILTO`/keys as params, ships no model).
+- **Indexing** — deliberately excluded from the package ("ships no embedding
+  model choice"). AEDIST needs it. Decide: extend `openalex-corpus` with a
+  model-agnostic indexing interface, or add a sibling `libs/corpus-index`
+  package. Keep model/deployment choice injected by the caller, as with harvest.
+- **Consumption** — AEDIST imports via `[tool.uv.sources]` git entry; pin a
+  parity/contract test as `test_openalex_corpus_equivalence.py` does.
+
+## Blocking / sequencing
+- Post-resubmit (deferred). Needs AEDIST's harvest/index requirements firmed up
+  before Execute — likely a joint design pass with the AEDIST tickets store.
+
+## Exit criteria (when scoped)
+- AEDIST's shared harvest/index needs enumerated.
+- A decision recorded: extend `openalex-corpus` vs new `libs/` package.
+- Child tickets filed for the actual extraction.

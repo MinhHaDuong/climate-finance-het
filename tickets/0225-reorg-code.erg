@@ -1,5 +1,5 @@
 %erg 0.1
-Title: Reorg workstream — code (src/ package + scripts/ by phase)
+Title: Reorg workstream — code (scripts/ by phase; shared harvest/index → libs/)
 Created: 2026-07-10
 Author: HDMX-coding-agent
 Blocked-by: 0223
@@ -9,45 +9,55 @@ Label: deferred
 2026-07-10T00:00Z HDMX-coding-agent created
 
 2026-07-10T09:49Z HDMX-coding-agent label deferred
+2026-07-10T10:07Z note author decision: decline src/; keep _-private/pipeline_/scripts convention + phase subgrouping; extractions land in phase subdir; shared harvest/index → libs/ (0227)
 --- body ---
 ## Context
 Second stage of the top-level tidy (tracker `0223`). `scripts/` holds 173 flat
 files that are really a library plus a set of entry points (`utils` imported
-160×, `script_io_args` 93×). Introduce `src/climatefinance/` for importable
-code; group entry points under `scripts/{harvest,analysis,figures,qa}/`.
+160×, `script_io_args` 93×).
 
-Placement rule, layering invariant, and the 19-file audit table are in
-`docs/repo-layout.md` — the load-bearing input. Read it first.
+**Decision 2026-07-10 (author):** do NOT introduce a top-level `src/` package.
+The existing library convention stands — `_`-private modules + `pipeline_*`
+loaders in `scripts/`, with cross-repo sharing via `libs/` (see architecture.md
+§ Shared conventions package). Instead: group `scripts/` by dataflow phase, and
+land the audit's five computation extractions as ordinary modules *inside* their
+phase subdir. The shared future infrastructure the author foresees — **corpus
+harvesting + indexing for AEDIST** — routes to `libs/`, not `src/` (a top-level
+package is this-repo-internal; AEDIST consumes `libs/` by git source).
 
 ## Relevant files
-- `docs/repo-layout.md` — migration checklist (LIBRARY-10 / SPLIT-5 / MOVE-2 / STAY-2)
+- `docs/repo-layout.md` — placement rule, layering invariant, 19-file audit (destinations now `scripts/<phase>/`, not `src/`)
 - `scripts/*.py` — 173 files
 - `divergence.mk`, `separation.mk`, `venues.mk` — shared-analysis fragments → `scripts/analysis/analysis.mk`
+- `libs/openalex-corpus` — the AEDIST-shared harvest package (indexing conventions to be added; see 0227 seed / memory)
 
 ## Actions (risk ascending — separate PRs)
 1. Relocate shared-analysis fragments to `scripts/analysis/analysis.mk` (pure
    `-include` path edits).
-2. Figures split: `plot_*`, `export_*` → `scripts/figures/`.
-3. `src/` move: LIBRARY-10 intact; SPLIT-5 extract leaked computation; MOVE-2
-   intact via `python -m`. Flip Makefile invocations to `-m climatefinance.*`.
-   Behind `make clean && make all`.
+2. Group entry points by phase: `scripts/{harvest,analysis,figures,qa}/`.
+   `plot_*`/`export_*` → `figures/`; `analyze_*`/`compute_*` → `analysis/`;
+   `catalog_*`/`enrich_*`/`corpus_*`/`scout*` → `harvest/`; `qa_*` → `qa/`.
+3. Land the five SPLIT extractions (`corpus_filters`, `traditions`,
+   `changepoints`, `teaching`, `venues`) as plain/`_`-private modules in the
+   owning phase subdir; the leaking scripts import from them. LIBRARY-10 and
+   MOVE-2 stay in `scripts/` (relocated by phase) — no `src/`, no `python -m`.
 4. (follow-up, off critical path) sever `compute_clustering_comparison.py`'s
    import of the two clustering plotters — the backward arrow.
 
 ## Test
-- Red first for the `src/` move: an isolated-venv installability test
-  (`uv pip install .` in a fresh venv, then `python -c "import climatefinance"`
-  and `python -m climatefinance.compute_divergence --help`). A green shared-env
-  suite does not prove installability.
 - Byte-check each SPLIT as old-code-vs-new-code on the same input, not vs a
   drifting golden.
+- `make -n <target>` produces an identical target/prereq list before and after
+  each relocation (paths change, graph does not).
 
 ## Invariants
-- Nothing that renders lands in `src/` (layering invariant).
+- Layering: a compute module never imports a plotter (architecture.md rule 4).
+- Existing library convention unchanged: `_`-private + `pipeline_*` loaders;
+  no top-level `src/`.
 - `make check` green; `make clean && make all` green.
-- One logical move per PR; the `src/` move is gated, not a big bang.
+- One logical move per PR.
 
 ## Exit criteria
-- `src/climatefinance/` exists and is import-installable in a fresh venv.
 - `scripts/` grouped by phase; no flat 170-file directory.
-- Makefile drives compute via `python -m`; full build green.
+- The five extractions live beside their phase; leaking scripts import them.
+- Full build green; `make -n` target lists unchanged by the moves.

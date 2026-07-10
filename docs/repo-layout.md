@@ -1,19 +1,21 @@
 # Repository layout — target state and migration
 
-> **Status: proposal, not yet ratified.** The canonical architecture rules live
-> in `.claude/rules/architecture.md` (§ Project structure, § Pipeline phases, §
-> Data location, § Artifact homes by phase), governed by tracker `0221`. This
-> note covers only the **code + prose** axis (`src/`, `scripts/` by phase,
-> `deliverables/` per-paper Quarto) and **departs** from `architecture.md` on
-> two points that need author ratification before Execute:
-> 1. `src/climatefinance/` — `architecture.md` keeps analysis code in `scripts/`
->    with `_`-private modules + `pipeline_*` loaders, and extracts shared
->    conventions to `libs/openalex-corpus`. A top-level `src/` package is new.
-> 2. `deliverables/` per-paper Quarto — `architecture.md` documents `content/`
->    as one multi-doc Quarto project.
+> **Status (2026-07-10, author-adjudicated).** Canonical rules live in
+> `.claude/rules/architecture.md`, governed by tracker `0221`. This note covers
+> the **code + prose** axis. Decisions:
+> - **`deliverables/` per-paper Quarto — RATIFIED.** Replaces the one-`content/`
+>   multi-doc project; update `architecture.md` § Project structure when it lands.
+> - **`src/climatefinance/` — DECLINED.** The existing library convention stands
+>   (`_`-private + `pipeline_*` loaders in `scripts/`; `libs/` for cross-repo
+>   sharing). The sections below that mention `src/` are superseded: LIBRARY-10
+>   and MOVE-2 files stay in `scripts/` (relocated by phase), and the SPLIT-5
+>   extractions land as plain/`_`-private modules **inside their phase subdir**
+>   (`scripts/analysis/traditions.py`, etc.) — read every "`src/`" below as
+>   "the owning `scripts/<phase>/` module."
+> - **Shared harvest + indexing for AEDIST → `libs/`.** Cross-repo sharing grows
+>   `libs/openalex-corpus`, not a top-level `src/`. Seed `0227`.
 >
-> The data-layout axis is **not** in scope here — it is owned by `0221`/`0218`/
-> `0222` and already documented in `architecture.md`. Where this note and
+> The data-layout axis is owned by `0221`/`0218`/`0222`. Where this note and
 > `architecture.md` disagree, `architecture.md` wins until it is updated.
 
 The top level grew to 43 entries with two flat mega-directories (`scripts/`,

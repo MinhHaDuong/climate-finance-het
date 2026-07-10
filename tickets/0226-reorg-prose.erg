@@ -9,6 +9,7 @@ Label: deferred
 2026-07-10T00:00Z HDMX-coding-agent created
 
 2026-07-10T09:49Z HDMX-coding-agent label deferred
+2026-07-10T10:07Z note author ratified the deliverables/ per-paper Quarto layout 2026-07-10; proceed post-resubmit
 --- body ---
 ## Context
 Third stage of the top-level tidy (tracker `0223`). `content/` runs ~7
