@@ -16,6 +16,7 @@ blacklisted_words:
   - underscores
   - foster
   - tapestry
+  - load-bearing
 
 # These words are OK in specific contexts (annotated).
 conditional_words:

@@ -1,0 +1,54 @@
+%erg 0.1
+Title: Fable-led manuscript style alignment on the author's voice (few-shot)
+Created: 2026-07-10
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-10T23:30Z HDMX-coding-agent created
+
+--- body ---
+## Context
+Author directive (2026-07-10, 0152 letter session): "I want a Fable-led
+manuscript revision to align the style on my voice, based on comparative
+samples (few shot learning)." The v2.0.5 English base was style-anchored once
+at translation time (ticket 0173), but the R&R children (0134-0143) and the
+appendix build-out accreted prose from many sessions. The response letter is
+now first-person singular; the manuscript still uses the authorial "we" —
+the voice/person question is settled with the author at kickoff, not assumed.
+
+## Relevant files
+- `deliverables/manuscript/manuscript.qmd` — the text to align
+- `docs/style-anchor-v205.md` — curated samples of the author's pre-AI English
+  prose (6 sources + 1 French register anchor); the few-shot base
+- `config/ai-tells.yml` + `tests/test_manuscript_prose.py` — mechanical guards
+- `.claude/rules/writing.md` (ghost mode), `docs/editorial-brief.md` — standing
+  editorial decisions
+
+## Actions
+1. Kickoff with the author: settle voice decisions (we→I?, British-English
+   consistency, hedging register, question-closings).
+2. Build the few-shot set: anchor passages paired with current manuscript
+   passages (comparative samples), per section.
+3. Run with the Fable model. Produce section-by-section rewrite proposals as a
+   reviewable diff; autonomous manuscript changes go through branch + PR for
+   author arbitration (prose-workpackage rule).
+4. Iterate on the author's accept/reject per section.
+
+## Test
+- Prose suite green before and after (`tests/test_manuscript_prose.py`);
+  ratchet ceilings may tighten, never rise.
+
+## Verification
+- [ ] Author reads the diff (latexdiff or PDF) and arbitrates per section
+- [ ] AI-tells auditor: no high-confidence hits on the aligned text
+- [ ] No content drift: citation keys, numbers, and figure/table references
+      byte-identical before/after (grep-verified)
+
+## Invariants
+- No factual, numerical, or citation changes — style only.
+- No-oversell norms (periodization framing) untouched.
+- Œconomia house style (docs/oeconomia-style.md) respected.
+
+## Exit criteria
+- [ ] Author signs off the aligned manuscript
+- [ ] Full prose + adherence suites green

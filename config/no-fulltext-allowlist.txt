@@ -33,3 +33,4 @@ iterative2024dvc
 # --- needs author verification: entry metadata questioned (see ticket 0188) ---
 # bara2025aibibliometric: fetched a different paper; entry may be mis-attributed
 bara2025aibibliometric
+marcussen2009
