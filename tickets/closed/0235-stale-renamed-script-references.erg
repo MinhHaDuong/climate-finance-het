@@ -2,10 +2,12 @@
 Title: Fix stale references to renamed scripts (collect_syllabi, compare_clustering)
 Created: 2026-07-10
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #999
 
 --- log ---
 2026-07-10T00:00Z HDMX-coding-agent created
 
+2026-07-10T15:13Z HDMX-coding-agent closed — autoclosed — PR #999
 --- body ---
 ## Context
 Two scripts were renamed at some point — `collect_syllabi.py` →

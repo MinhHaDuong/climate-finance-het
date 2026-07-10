@@ -1,4 +1,4 @@
-"""Tests for compare_clustering.py — clustering methods comparison.
+"""Tests for compute_clustering_comparison.py — clustering methods comparison.
 
 Ticket: #299 (tracking), sub-issues #300–#304.
 Tests clustering method implementations and comparison framework.

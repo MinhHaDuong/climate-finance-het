@@ -1289,6 +1289,44 @@ class TestNoHalfFinishedWork:
         assert not offenders, f"{name} found:\n  " + "\n  ".join(offenders)
 
 
+class TestNoStaleRenamedScriptRefs:
+    """Renamed scripts must not be referenced by their old basenames (0235).
+
+    collect_syllabi.py  -> catalog_syllabi.py
+    compare_clustering.py -> compute_clustering_comparison.py
+
+    A lingering old name in a log hint or docstring sends a reader (or a
+    future grep) to a script that no longer exists. Git history is exempt —
+    this scans only live code under scripts/ and tests/.
+    """
+
+    OLD_NAMES = ("collect_syllabi", "compare_clustering")
+
+    def test_no_old_script_basenames_in_code(self):
+        offenders = []
+        for name in _all_scripts():
+            src = _read_script(name)
+            for old in self.OLD_NAMES:
+                if old in src:
+                    offenders.append(f"scripts/{name}: {old}")
+        # tests/ — exclude this guard file itself, which names the old
+        # basenames as data (its OLD_NAMES list would otherwise self-match).
+        self_name = os.path.basename(__file__)
+        for fname in sorted(os.listdir(TESTS_DIR)):
+            if not fname.endswith(".py") or fname == self_name:
+                continue
+            with open(os.path.join(TESTS_DIR, fname)) as f:
+                src = f.read()
+            for old in self.OLD_NAMES:
+                if old in src:
+                    offenders.append(f"tests/{fname}: {old}")
+        assert not offenders, (
+            "Stale references to pre-rename script basenames "
+            "(update the reference, or move it to git history):\n  "
+            + "\n  ".join(offenders)
+        )
+
+
 class TestPytestCollectionScope:
     """pytest must not recurse into .claude/worktrees/ (ticket 0234).
 
