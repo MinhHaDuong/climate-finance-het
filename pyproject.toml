@@ -69,7 +69,14 @@ dev = [
 # descend into libs/, so an unscoped root run never chokes on `import
 # openalex_corpus`. The host `make check`/`check-fast` still gate the package —
 # they collect it explicitly via the `check-package` target.
-norecursedirs = ["libs"]
+# Setting norecursedirs REPLACES pytest's built-in defaults, so we must
+# re-list them. The load-bearing pattern is `.*` — it excludes every dotdir,
+# including `.claude/worktrees/*/` where live worktrees hold their own copy of
+# tests/ (ticket 0234: a bare `["libs"]` dropped `.*`, so from the primary
+# checkout a tree-walking pytest collected every worktree's tests/, inflating
+# the run and surfacing cross-worktree failures). `libs` keeps an unscoped root
+# run from choking on the openalex_corpus import (see note above the section).
+norecursedirs = [".*", "build", "dist", "CVS", "_darcs", "node_modules", "venv", "*.egg", "libs"]
 markers = [
     "slow: network access, external/real data, a heavy numerical dependency (dcor/torch/ot/sentence_transformers), matplotlib rendering, or heavy compute (deselect with '-m \"not slow\"')",
     "integration: marks tests that spawn subprocesses or use sleep-based timing (deselect with '-m \"not integration\"')",
