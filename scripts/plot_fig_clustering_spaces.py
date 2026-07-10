@@ -103,7 +103,7 @@ def main():
     input_path = io_args.input[0] if io_args.input else os.path.join(TABLES_DIR, "clustering_multi_space.json")
     if not os.path.exists(input_path):
         log.error("Input file not found: %s", input_path)
-        log.error("Run compare_clustering.py first to generate it.")
+        log.error("Run compute_clustering_comparison.py first to generate it.")
         raise SystemExit(1)
 
     with open(input_path) as f:
