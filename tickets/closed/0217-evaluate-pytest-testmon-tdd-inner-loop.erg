@@ -1,0 +1,105 @@
+%erg 0.1
+Title: Evaluate pytest-testmon for the TDD inner loop (spike)
+Created: 2026-07-10
+Author: HDMX-coding-agent
+Closed: done
+
+--- log ---
+2026-07-10T00:00Z HDMX-coding-agent created
+
+2026-07-10T09:28Z HDMX-coding-agent closed — done
+--- body ---
+## Context
+Part of tracker 0213. Even a perfectly-composed 20-30s fast suite is too slow to
+run on every save. The true TDD inner loop wants only the tests affected by the
+uncommitted edit. `pytest-testmon` tracks per-test coverage and reruns only tests
+whose dependencies changed — sub-second, marker-independent. This is a spike:
+decide whether testmon earns a place as the keystroke loop, with check-fast
+demoted to the pre-commit gate. Time-boxed; the deliverable is a recommendation,
+not necessarily adoption.
+
+## Relevant files
+- `pyproject.toml` — dev dependency group (would add `pytest-testmon`)
+- `Makefile` — a possible `make tdd` / `make watch` target
+- `.claude/rules/coding-python.md` — testing-loop guidance would gain a line
+
+## Actions
+1. Add `pytest-testmon` to a dev-only dep group; measure warm inner-loop latency
+   after editing one core module (e.g. `pipeline_text.py`) vs full check-fast.
+2. Assess friction: `.testmondata` lifecycle, interaction with `-n 4` xdist
+   (testmon + xdist historically conflict — verify), worktree portability, and
+   whether it plays with the heavy lazy imports (dcor/torch) without re-paying
+   import cost per selection.
+3. Recommend: adopt (with a `make tdd` target + docs), defer, or reject — with
+   the measured numbers behind the call.
+
+## Test
+No production code under test — this is a spike. If adopted, the follow-up adds a
+`make tdd` target and a test asserting the target exists and invokes testmon
+(source-inspection, no subprocess).
+
+## Verification
+- [ ] Measured inner-loop latency (testmon warm) vs check-fast, single-module edit.
+- [ ] xdist interaction resolved or documented (run testmon without `-n`).
+- [ ] Clear recommendation with numbers; if adopt, a `make tdd` target + doc line.
+
+## Invariants
+- testmon is an inner-loop convenience only — it never replaces `make check` as
+  the PR gate, and never gates CI (its selection is machine-local state).
+- No heavy runtime dep added to the shipping package; dev group only.
+
+## Exit criteria
+- A written recommendation (adopt/defer/reject) backed by measured latency; if
+  adopt, `make tdd` + a one-line rule doc; if not, a note on why for the record.
+
+## Findings (spike, 2026-07-10, doudou, pytest-testmon 2.2.0)
+
+Recommendation: **REJECT** as the default keystroke loop. Measured on the fast
+pool (`-m "not slow and not integration"`, ~1118 tests).
+
+Measured latency:
+
+| Scenario | Time | Tests run |
+|----------|------|-----------|
+| `make check-fast` (`-n 4`, no testmon) — the baseline | 80 s | 1118 |
+| testmon cold DB build (single-proc, coverage-traced) | 94 s | 1118 |
+| testmon warm, no change, **`-n 4`** | 90-107 s | **all 1118** (no selection) |
+| testmon warm, no change, **single-proc** (`-p no:xdist`) | **6 s** | ~0 (240 deselected, rest skipped) |
+| testmon after editing `pipeline_text.py`, single-proc | **110 s** | **1104** |
+
+Why reject:
+
+1. **xdist conflict is real and fatal to the value prop.** The repo runs
+   everything at `-n 4`. Under `-n 4` testmon does not select — it reruns the
+   full suite (90-107 s), no better than check-fast. Selection only works with
+   xdist disabled (`-p no:xdist`), forfeiting the 4x parallelism that makes the
+   full suite tolerable. testmon upstream does not support pytest-xdist.
+
+2. **Dependency topology defeats selection for the common edit.** Core modules
+   (`pipeline_text`, `pipeline_io`, the loaders, config) are transitive
+   dependencies of ~1104 of the ~1118 fast tests. Editing the ticket's own
+   example module `pipeline_text.py` invalidates 1104 tests; single-proc that is
+   110 s — *slower* than `make check-fast` (80 s at `-n 4`). testmon's speed-up
+   (~6 s) only appears for edits to leaf modules with few dependents, the
+   minority of TDD edits on this pipeline.
+
+3. **No stable baseline in this environment.** Bare worktrees hit collection
+   ImportErrors (data/deps absent — e.g. `test_bib_doi_title.py`) that interrupt
+   selection. `.testmondata` is machine-local and not worktree-portable, so every
+   throwaway worktree pays the 94 s coverage-traced cold build. The shared
+   `/data` env is thrashed by parallel `uv sync` (testmon observed uninstalled
+   then reinstalled mid-session), which changes testmon's environment fingerprint
+   and forces full reruns.
+
+4. **Coverage-tracing tax.** testmon's per-test coverage adds ~15-20% to a full
+   run (94 s traced vs 80 s untraced).
+
+Net: for the dominant case (editing a central pipeline module) testmon is slower
+than the existing `make check-fast`; it wins only for leaf-file edits, and only
+if you abandon xdist and keep a stable env and a persistent (non-throwaway)
+`.testmondata` — conditions this repo does not meet. Not adopted; no `make tdd`
+target added. `pytest-testmon` was added to the dev group only for measurement
+and reverted. Secondary discovery: `make check-fast` is ~80 s here, not the
+20-30 s assumed in the tracker premise — a cheaper inner-loop lever is explicit
+path/`-k` scoping (optionally under `ptw`/pytest-watch), which needs no coverage
+fingerprint and keeps `-n 4`. Possible follow-up under tracker 0213.
