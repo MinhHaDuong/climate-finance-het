@@ -1,0 +1,52 @@
+%erg 0.1
+Title: Fix stale references to renamed scripts (collect_syllabi, compare_clustering)
+Created: 2026-07-10
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-10T00:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+Two scripts were renamed at some point — `collect_syllabi.py` →
+`catalog_syllabi.py` and `compare_clustering.py` →
+`compute_clustering_comparison.py` — but a few references still name the old
+files. The functional cases (stale `per-file-ignores` entries that silently
+dropped F401 facade exemptions) were fixed in 0232; these remaining two are
+cosmetic (a user-facing log hint and a test docstring) and were left for a
+separate cleanup so 0232 stayed atomic.
+
+Found during 0232 roar sweep. See memory
+`feedback_ruff_fix_breaks_reexport_facades`.
+
+## Relevant files
+- `scripts/plot_fig_clustering_spaces.py:106` — `log.error("Run
+  compare_clustering.py first ...")` names the old script; should be
+  `compute_clustering_comparison.py` (verify the actual invocation/target).
+- `tests/test_compare_clustering.py:1` — module docstring says "Tests for
+  compare_clustering.py"; the test file targets `compute_clustering_comparison`.
+  Update the docstring (renaming the test file itself is optional and higher-
+  churn — decide during execution).
+
+## Actions
+1. Update the log-hint string to the current script name.
+2. Update the test docstring (and decide whether to `git mv` the test file to
+   match — optional).
+3. Grep once more for both old basenames repo-wide to confirm nothing else
+   lingers.
+
+## Test
+Write first (red): a hygiene assertion (or a one-off grep in an existing
+adherence test) that neither `collect_syllabi` nor `compare_clustering` appears
+as a filename reference outside git history.
+
+## Verification
+- [ ] `grep -rn "compare_clustering\|collect_syllabi"` returns only intentional
+      history/this-ticket references.
+
+## Invariants
+- Cosmetic only — no behaviour change.
+
+## Exit criteria
+- No stale references to the pre-rename script names remain in code, config, or
+  docstrings.
