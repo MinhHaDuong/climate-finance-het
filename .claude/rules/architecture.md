@@ -133,6 +133,25 @@ renders (→ `content/`) and intermediates only other scripts read (→ `data/de
 Mixing them is what bloated `content/tables/` (ticket 0208) and hid Phase-2 outputs
 in `data/catalogs/` (ticket 0219).
 
+### Phase is semantic, not a filename prefix (ticket 0227)
+
+The prefix table above is a heuristic. A script's phase is what it *does*, not the
+letters that start its name. Known exceptions:
+
+- `compute_reranker_calibration.py` — `compute_` prefix, but Phase-1: it scores
+  corpus relevance and writes `reranker_calibration.csv` / `reranker_hitl_review.csv`
+  to `CATALOGS_DIR`. Correctly a Phase-1 corpus artifact.
+- `qa_embeddings.py`, `qa_detect_type.py` — `qa_` prefix (a Phase-1 corpus prefix in
+  the table), but their derived outputs are Phase-2: they write to
+  `DERIVED_TABLES_DIR` (`semantic_clusters.csv`, `qa_type_report.csv`).
+
+Guard coverage boundary: `tests/test_phase_layout.py` reads the Makefile and checks
+only Makefile-wired targets. A script that writes to a hardcoded `CATALOGS_DIR`
+default with no Make target is invisible to it — `compute_reranker_calibration.py`
+is exactly that case. The guard is a net for wired producers, not a complete phase
+audit; the ~20-basename allowlist an exhaustive scanner would need was judged not
+worth the upkeep against a low leak probability.
+
 ## Incremental caches vs DVC outputs
 
 - **`enrich_cache/`** — persistent cache directory (gitignored, not a DVC output). Survives `dvc repro`.

@@ -25,6 +25,18 @@ MAKEFILE = os.path.join(PROJECT_ROOT, "Makefile")
 SCRIPTS_DIR = os.path.join(PROJECT_ROOT, "scripts")
 
 # A Make prerequisite naming one of these script prefixes marks a Phase-2 producer.
+#
+# Two blind spots, documented in .claude/rules/architecture.md
+# ("Phase is semantic, not a filename prefix"):
+#   1. Only Makefile-wired targets are checked. A script writing to a hardcoded
+#      CATALOGS_DIR default with no Make target is invisible here — e.g.
+#      compute_reranker_calibration.py (Phase-1 corpus scoring, correctly under
+#      data/catalogs/, no Make target).
+#   2. The prefix is a heuristic, not the semantic phase: compute_reranker_calibration
+#      has a compute_ prefix but is Phase-1; qa_embeddings / qa_detect_type have a
+#      qa_ prefix but write Phase-2 outputs to DERIVED_TABLES_DIR.
+# Extending the guard to close these (a ~20-basename allowlist) was declined (0227):
+# low leak probability, upkeep not worth it.
 PHASE2_PRODUCER = re.compile(r"scripts/(analyze_|compute_|plot_|export_|summarize_|build_het)")
 CATALOGS = "data/catalogs/"
 DERIVED = "data/derived/"
