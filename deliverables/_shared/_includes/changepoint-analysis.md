@@ -1,5 +1,12 @@
 ## 9. Change-Point Detection in Field Structure
-<!-- WARNING: AI-generated, not human-reviewed -->
+<!-- WARNING: AI-generated, not human-reviewed | attributions verified & corrected 2026-07-11 (ticket 0244) -->
+<!-- PROVENANCE UNRESOLVED (0244): the annual-silhouette series, BIC values (per number of breaks) and
+     t-statistics come from the log output of `scripts/compute_clustering_comparison.py`; no committed
+     table or JSON holds them (the script's outputs to deliverables/_shared/tables/ are gitignored/absent),
+     and no Make target regenerates them. Not re-derivable here (rerun forbidden by 0244). Institutional
+     anchors named in the Discussion (Stern Review 2006, Bali Action Plan COP-13 2007, GCF operational
+     ~2012, ADP/Durban 2011, GFANZ/Glasgow COP-26 2021) spot-checked against the UNFCCC record and
+     consistent; the causal readings tied to specific break years remain the author's interpretive call. -->
 
 **Script:** `scripts/compute_clustering_comparison.py` (annual silhouette), BIC piecewise-constant model
 

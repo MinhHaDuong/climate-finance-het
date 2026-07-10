@@ -1,5 +1,17 @@
 ## Clustering Method and Representation Space Comparison
-<!-- WARNING: AI-generated, not human-reviewed -->
+<!-- WARNING: AI-generated, not human-reviewed | attributions verified & corrected 2026-07-11 (ticket 0244) -->
+<!-- Literature attribution verified 2026-07-11 (0244): Yu et al. (2017, PLoS One) = Yu D, Wang W,
+     Zhang S, Zhang W, Liu R, "Hybrid self-optimized clustering model based on citation links and
+     textual features to detect research topics", PLoS One 12(10), doi:10.1371/journal.pone.0187164.
+     Corpus size "7,303 papers" (7,308 minus 5 isolated nodes) and optimal weights α=0.55 / β=0.45
+     both CONFIRMED against the paper. No correction needed. -->
+<!-- PROVENANCE UNRESOLVED (0244): the ARI, silhouette and noise-fraction numbers here come from the
+     log output of `scripts/compute_clustering_comparison.py`. That script writes tab_clustering_ari.csv,
+     tab_clustering_perturbation.csv, clustering_optimal_k.json and clustering_multi_space.json to
+     deliverables/_shared/tables/, but NONE of those are committed (gitignored/absent), and there is no
+     Make target regenerating them. The figures reflect the 27,315-work snapshot (see STALE marker at
+     the "full" snapshot below; current corpus ~27,509). Not re-derivable here (rerun forbidden by 0244).
+     ARI 0.980 (k-means stability) and 0.587 (spectral) feed the 0152 letter E3f — directionally robust. -->
 
 **Script:** `scripts/compute_clustering_comparison.py`
 
