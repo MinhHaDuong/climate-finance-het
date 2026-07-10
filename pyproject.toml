@@ -63,9 +63,11 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-# libs/openalex-corpus is a separate installed package with its own test suite
-# (run standalone / on install); the host suite never collects it, so an
-# unscoped root `pytest` does not choke on `import openalex_corpus`.
+# libs/openalex-corpus is a separate installed package with its own test suite.
+# This guards *implicit* discovery only: a bare `pytest` (no path) does not
+# descend into libs/, so an unscoped root run never chokes on `import
+# openalex_corpus`. The host `make check`/`check-fast` still gate the package —
+# they collect it explicitly via the `check-package` target.
 norecursedirs = ["libs"]
 markers = [
     "slow: network access, external/real data, a heavy numerical dependency (dcor/torch/ot/sentence_transformers), matplotlib rendering, or heavy compute (deselect with '-m \"not slow\"')",
