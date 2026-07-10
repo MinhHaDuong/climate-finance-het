@@ -2,10 +2,12 @@
 Title: Migrate nested `uv run <tool>` availability checks to shutil.which
 Created: 2026-07-10
 Author: HDMX-coding-agent
+Closed: done
 
 --- log ---
 2026-07-10T00:00Z HDMX-coding-agent created
 
+2026-07-10T15:01Z HDMX-coding-agent closed — done
 --- body ---
 ## Context
 `tests/test_script_hygiene.py` gates its ruff and mypy hygiene tests on

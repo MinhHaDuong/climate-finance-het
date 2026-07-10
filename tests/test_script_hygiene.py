@@ -20,6 +20,7 @@ Uses existing code checkers where available:
 import ast
 import os
 import re
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -121,10 +122,13 @@ _SYSPATH_EXEMPT = {
     )
 }
 
-_RUFF_AVAILABLE = (
-    subprocess.run(["uv", "run", "ruff", "--version"], capture_output=True).returncode
-    == 0
-)
+# Resolve the tool binary via shutil.which, not a nested `uv run` (ticket 0236):
+# pytest already runs inside the project venv under `make lint`, so a declared,
+# lockfile-pinned tool is on PATH. A nested `uv run` re-enters uv from inside uv,
+# forcing a per-call sync check that breaks under `UV_NO_SYNC` in a clean
+# CI/cloud container. Mirrors the pattern in test_ruff.py.
+_RUFF = shutil.which("ruff")
+_RUFF_AVAILABLE = _RUFF is not None
 
 
 # ---------------------------------------------------------------------------
@@ -249,9 +253,7 @@ class TestRuffModernPython:
         """No legacy typing imports (List, Dict, Tuple, Optional, Union)."""
         result = subprocess.run(
             [
-                "uv",
-                "run",
-                "ruff",
+                _RUFF,
                 "check",
                 "--select",
                 "UP006,UP007,UP035",
@@ -304,9 +306,7 @@ class TestFunctionComplexity:
         """No function exceeds McCabe complexity 25 (C901 wall)."""
         result = subprocess.run(
             [
-                "uv",
-                "run",
-                "ruff",
+                _RUFF,
                 "check",
                 "--select",
                 "C901",
@@ -329,9 +329,7 @@ class TestFunctionComplexity:
         """No function exceeds 120 statements (PLR0915 wall)."""
         result = subprocess.run(
             [
-                "uv",
-                "run",
-                "ruff",
+                _RUFF,
                 "check",
                 "--select",
                 "PLR0915",
@@ -355,9 +353,7 @@ class TestFunctionComplexity:
         """No function exceeds 25 branches (PLR0912 wall)."""
         result = subprocess.run(
             [
-                "uv",
-                "run",
-                "ruff",
+                _RUFF,
                 "check",
                 "--select",
                 "PLR0912",
@@ -382,9 +378,7 @@ class TestFunctionComplexity:
         """Warn when functions exceed McCabe complexity 15."""
         result = subprocess.run(
             [
-                "uv",
-                "run",
-                "ruff",
+                _RUFF,
                 "check",
                 "--select",
                 "C901",
@@ -408,9 +402,7 @@ class TestFunctionComplexity:
         """Warn when functions exceed 80 statements."""
         result = subprocess.run(
             [
-                "uv",
-                "run",
-                "ruff",
+                _RUFF,
                 "check",
                 "--select",
                 "PLR0915",
@@ -434,9 +426,7 @@ class TestFunctionComplexity:
         """Warn when functions exceed 15 branches."""
         result = subprocess.run(
             [
-                "uv",
-                "run",
-                "ruff",
+                _RUFF,
                 "check",
                 "--select",
                 "PLR0912",
@@ -719,10 +709,8 @@ class TestNoBarePrint:
 # Type annotations on core modules (mypy)
 # ---------------------------------------------------------------------------
 
-_MYPY_AVAILABLE = (
-    subprocess.run(["uv", "run", "mypy", "--version"], capture_output=True).returncode
-    == 0
-)
+_MYPY = shutil.which("mypy")
+_MYPY_AVAILABLE = _MYPY is not None
 
 
 class TestTypingCoreModules:
@@ -746,9 +734,7 @@ class TestTypingCoreModules:
         paths = [os.path.join(SCRIPTS_DIR, m) for m in self.TYPED_MODULES]
         result = subprocess.run(
             [
-                "uv",
-                "run",
-                "mypy",
+                _MYPY,
                 "--ignore-missing-imports",
                 "--disallow-untyped-defs",
                 "--follow-imports=silent",
