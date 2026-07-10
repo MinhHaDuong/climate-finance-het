@@ -1,0 +1,51 @@
+%erg 0.1
+Title: pytest recurses into .claude/worktrees/ — exclude via norecursedirs
+Created: 2026-07-10
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-10T00:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+`pytest` does not honour `.gitignore`, so from the primary checkout `make check`
+(and any `pytest tests/` variant that reaches the repo root) descends into
+`.claude/worktrees/*/`, collecting each live worktree's copy of `tests/`. This
+inflates the run (duplicate collection across every worktree — the cause of the
+"tests are really slow" report on 2026-07-10) and can surface confusing
+cross-worktree failures when a sibling worktree holds different code. ruff is
+unaffected: it respects `.gitignore` and skips the worktrees dir.
+
+Found during ticket 0232 (repo ruff-clean) wrap-up.
+
+## Relevant files
+- `pyproject.toml` — `[tool.pytest.ini_options]` (add `norecursedirs`).
+- `Makefile` — `check` / `check-fast` / `lint` targets pass `tests/`, but a
+  bare `pytest` or a test that walks the tree can still recurse.
+
+## Actions
+1. Add `.claude` (and any other worktree/venv roots) to `norecursedirs` in
+   `[tool.pytest.ini_options]`, e.g.
+   `norecursedirs = [".claude", ".venv", ".git", "output", "data"]`.
+   Confirm the existing defaults (`.*`, `build`, `dist`, etc.) are preserved.
+2. Verify `make check-fast` collection count is unchanged when run from the
+   primary checkout with live worktrees present (no duplicate test IDs).
+
+## Test
+Write first (red): an adherence test asserting `norecursedirs` in
+`[tool.pytest.ini_options]` includes `.claude`, OR a collection-count check that
+`pytest --collect-only -q tests/` from the repo root with a worktree present
+yields no `.claude/worktrees` node ids.
+
+## Verification
+- [ ] `pytest --collect-only` from the primary checkout lists no test under
+      `.claude/worktrees/`.
+- [ ] `make check-fast` runtime/collection unaffected by the number of live
+      worktrees.
+
+## Invariants
+- Do not exclude `tests/` or any real source dir.
+
+## Exit criteria
+- pytest collection ignores `.claude/worktrees/`, so `make check` runtime no
+  longer scales with the number of live worktrees.
