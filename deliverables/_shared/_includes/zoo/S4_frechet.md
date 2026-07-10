@@ -14,7 +14,7 @@ where $(\mu_k, \Sigma_k)$ are the empirical mean and covariance of each window's
 
 ### Principle figure
 
-![](figures/schematic_S4_frechet.png){width=100%}
+![](../_shared/figures/schematic_S4_frechet.png){width=100%}
 
 *Fréchet distance: fitted Gaussian ellipses (1σ) with means connected by arrow.*
 
@@ -28,7 +28,7 @@ where $(\mu_k, \Sigma_k)$ are the empirical mean and covariance of each window's
 
 ### Corpus results
 
-![](figures/fig_zoo_S4_frechet.png){width=100%}
+![](../_shared/figures/fig_zoo_S4_frechet.png){width=100%}
 
 *Cross-year Z-score for S4 (Fréchet), w=2–5.*
 

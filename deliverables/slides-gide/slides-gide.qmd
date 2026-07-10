@@ -155,7 +155,7 @@ Deux tournants **politiques** : **Bali (2007)** et **Paris (2015)**.
 
 \begin{tikzpicture}[remember picture,overlay]
 \node at (current page.center)
-  {\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{figures/fig_bars_v1.png}};
+  {\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{../_shared/figures/fig_bars_v1.png}};
 \end{tikzpicture}
 
 ::: {.notes}
@@ -167,7 +167,7 @@ structuré après Bali et Copenhague.
 
 \begin{tikzpicture}[remember picture,overlay]
 \node at (current page.center)
-  {\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{figures/fig_breaks.png}};
+  {\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{../_shared/figures/fig_breaks.png}};
 \end{tikzpicture}
 
 ::: {.notes}
@@ -277,7 +277,7 @@ Après 2015, la discussion se recompose *(figure suivante)*.
 
 \begin{tikzpicture}[remember picture,overlay]
 \node at (current page.center)
-  {\includegraphics[width=\paperwidth]{figures/fig_composition_wide.png}};
+  {\includegraphics[width=\paperwidth]{../_shared/figures/fig_composition_wide.png}};
 \end{tikzpicture}
 
 ::: {.notes}

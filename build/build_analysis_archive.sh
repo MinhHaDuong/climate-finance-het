@@ -19,9 +19,9 @@ TMP="/tmp/$ARCHIVE"
 
 # Analysis outputs — must match Makefile ANALYSIS_OUTPUTS
 ANALYSIS_OUTPUTS=(
-    content/figures/fig_bars_v1.png
-    content/figures/fig_composition.png
-    content/tables/tab_venues.md
+    deliverables/_shared/figures/fig_bars_v1.png
+    deliverables/_shared/figures/fig_composition.png
+    deliverables/_shared/tables/tab_venues.md
     data/derived/tables/tab_alluvial.csv
     data/derived/tables/tab_core_shares.csv
     data/derived/tables/tab_bimodality.csv

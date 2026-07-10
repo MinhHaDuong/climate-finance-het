@@ -27,7 +27,7 @@ For our {{< meta emb_dimensions >}}-dimensional embeddings, Euclidean distances 
 
 ### Principle figure
 
-![](figures/schematic_S2_energy.png){width=100%}
+![](../_shared/figures/schematic_S2_energy.png){width=100%}
 
 *Energy distance: cross-group pairwise distances (grey) with representative pair highlighted.*
 
@@ -41,7 +41,7 @@ For our {{< meta emb_dimensions >}}-dimensional embeddings, Euclidean distances 
 
 ### Corpus results
 
-![](figures/fig_zoo_S2_energy.png){width=100%}
+![](../_shared/figures/fig_zoo_S2_energy.png){width=100%}
 
 *Cross-year Z-score for S2 (Energy Distance), w=2–5. Peak at 1998; monotonic decline through 2005.*
 

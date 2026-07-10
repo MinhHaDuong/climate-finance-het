@@ -22,7 +22,7 @@ The burst $Z$-score is $(f_v(t) - \bar{f}_v) / \hat{\sigma}_{f_v}$.
 
 ### Principle figure
 
-![](figures/schematic_L3_burst.png){width=100%}
+![](../_shared/figures/schematic_L3_burst.png){width=100%}
 
 *Burst detection: annual frequency for 'green finance', 'climate risk', 'green bond' with burst threshold.*
 
@@ -36,7 +36,7 @@ The burst $Z$-score is $(f_v(t) - \bar{f}_v) / \hat{\sigma}_{f_v}$.
 
 ### Corpus results
 
-![](figures/fig_zoo_L3.png){width=100%}
+![](../_shared/figures/fig_zoo_L3.png){width=100%}
 
 *Cross-year Z-score for L3 (burst term count), w=2–5.*
 

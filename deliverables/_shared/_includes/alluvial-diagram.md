@@ -17,19 +17,19 @@ Cluster labels are derived from abstract TF-IDF distinctiveness rather than nois
 
 Labels and paper counts are saved to `cluster_labels.json` and `tab_alluvial.csv`. @fig-lexical-tfidf-2007, @fig-lexical-tfidf-2015, and @fig-lexical-tfidf-2021 show the TF-IDF term distinctiveness for each cluster at three points in time.
 
-![TF-IDF distinctive terms by cluster, 2007.](figures/fig_lexical_tfidf_2007.png){#fig-lexical-tfidf-2007 width=100%}
+![TF-IDF distinctive terms by cluster, 2007.](../_shared/figures/fig_lexical_tfidf_2007.png){#fig-lexical-tfidf-2007 width=100%}
 
-![TF-IDF distinctive terms by cluster, 2015.](figures/fig_lexical_tfidf_2015.png){#fig-lexical-tfidf-2015 width=100%}
+![TF-IDF distinctive terms by cluster, 2015.](../_shared/figures/fig_lexical_tfidf_2015.png){#fig-lexical-tfidf-2015 width=100%}
 
-![TF-IDF distinctive terms by cluster, 2021.](figures/fig_lexical_tfidf_2021.png){#fig-lexical-tfidf-2021 width=100%}
+![TF-IDF distinctive terms by cluster, 2021.](../_shared/figures/fig_lexical_tfidf_2021.png){#fig-lexical-tfidf-2021 width=100%}
 
 ### Results
 
 @fig-alluvial shows the full-corpus alluvial diagram; @fig-alluvial-core shows the core subset.
 
-![Alluvial diagram: thematic flows across three periods (full corpus).](figures/fig_alluvial.png){#fig-alluvial width=100%}
+![Alluvial diagram: thematic flows across three periods (full corpus).](../_shared/figures/fig_alluvial.png){#fig-alluvial width=100%}
 
-![Alluvial diagram: thematic flows across three periods (core subset, cited_by_count >= {{< meta corpus_core_threshold >}}).](figures/fig_alluvial_core.png){#fig-alluvial-core width=100%}
+![Alluvial diagram: thematic flows across three periods (core subset, cited_by_count >= {{< meta corpus_core_threshold >}}).](../_shared/figures/fig_alluvial_core.png){#fig-alluvial-core width=100%}
 
 ### Core share annotations
 

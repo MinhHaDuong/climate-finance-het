@@ -21,7 +21,7 @@ $$D_{\text{G8}}(t, w) = |\bar{B}_{\text{after}} - \bar{B}_{\text{before}}|$$
 
 ### Principle figure
 
-![](figures/schematic_G8_betweenness.png){width=100%}
+![](../_shared/figures/schematic_G8_betweenness.png){width=100%}
 
 *Star, ring, and chain topologies with node size ∝ betweenness centrality. Star maximises the hub's betweenness; ring distributes it equally; chain concentrates it at the middle. After Freeman (1977, Fig. 2).*
 
@@ -35,7 +35,7 @@ $$D_{\text{G8}}(t, w) = |\bar{B}_{\text{after}} - \bar{B}_{\text{before}}|$$
 
 ### Corpus results
 
-![](figures/fig_zoo_G8_betweenness.png){width=100%}
+![](../_shared/figures/fig_zoo_G8_betweenness.png){width=100%}
 
 *Cross-year Z-score for G8 (betweenness), w=2–5.*
 

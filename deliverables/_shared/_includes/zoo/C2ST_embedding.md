@@ -33,7 +33,7 @@ Reference level: $\mathrm{AUC} = 0.5$ (random classifier).
 
 ### Principle figure
 
-![](figures/schematic_C2ST.png){width=100%}
+![](../_shared/figures/schematic_C2ST.png){width=100%}
 
 *C2ST principle: a logistic classifier fits a decision boundary in PCA-projected embedding space; cross-validated AUC above 0.50 confirms the before/after distributions differ. Script: `scripts/plot_schematic_C2ST.py`.*
 
@@ -55,7 +55,7 @@ AUC visibly above 0.5 corroborates the distance-based signals but does not by it
 
 ### Corpus results
 
-![](figures/fig_zoo_C2ST_embedding.png){width=100%}
+![](../_shared/figures/fig_zoo_C2ST_embedding.png){width=100%}
 
 *Cross-year Z-score for C2ST (embedding), w=2–5.*
 

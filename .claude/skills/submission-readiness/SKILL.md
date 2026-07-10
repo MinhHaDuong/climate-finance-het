@@ -18,7 +18,7 @@ Run before creating a submission branch (`/submission-branch`). Every item must 
 
 ## Data freeze
 
-- [ ] Computed variables pinned in `content/{document}-vars.yml`
+- [ ] Computed variables pinned in `deliverables/{document}/{document}-vars.yml`
 - [ ] Reference data snapshots saved in `config/` (e.g., `config/v1_*` files)
 - [ ] Manuscript decoupled from live corpus — re-running `dvc repro` does not change the paper
 - [ ] Provenance column links current corpus rows to the frozen version
@@ -41,6 +41,6 @@ Run before creating a submission branch (`/submission-branch`). Every item must 
 
 The v1.0 Oeconomia submission established this pattern:
 - Frozen `config/v1_cluster_labels.json`, `config/v1_tab_alluvial.csv`, `config/v1_identifiers.txt.gz`
-- Pinned `content/manuscript-vars.yml`
+- Pinned `deliverables/manuscript/manuscript-vars.yml`
 - Zenodo tarballs (analysis 56 MB + manuscript 683 KB), tested on two machines
 - `papiers/actif/Oeconomia_Inventing_Climate_Finance/2026-03-18 Oeconomia/` with cover letter, AI disclosure, anonymized PDF

@@ -22,31 +22,31 @@ proxy for sampling uncertainty rather than a formal confidence interval.
 
 ---
 
-{{< include _includes/zoo/S1_mmd.md >}}
+{{< include ../_shared/_includes/zoo/S1_mmd.md >}}
 
 \newpage
 
 ---
 
-{{< include _includes/zoo/S2_energy.md >}}
+{{< include ../_shared/_includes/zoo/S2_energy.md >}}
 
 \newpage
 
 ---
 
-{{< include _includes/zoo/S3_sliced_wasserstein.md >}}
+{{< include ../_shared/_includes/zoo/S3_sliced_wasserstein.md >}}
 
 \newpage
 
 ---
 
-{{< include _includes/zoo/S4_frechet.md >}}
+{{< include ../_shared/_includes/zoo/S4_frechet.md >}}
 
 \newpage
 
 ---
 
-{{< include _includes/zoo/C2ST_embedding.md >}}
+{{< include ../_shared/_includes/zoo/C2ST_embedding.md >}}
 
 \newpage
 
@@ -62,25 +62,25 @@ discriminating terms can be read directly.
 
 ---
 
-{{< include _includes/zoo/L1_js.md >}}
+{{< include ../_shared/_includes/zoo/L1_js.md >}}
 
 \newpage
 
 ---
 
-{{< include _includes/zoo/L2_ntr.md >}}
+{{< include ../_shared/_includes/zoo/L2_ntr.md >}}
 
 \newpage
 
 ---
 
-{{< include _includes/zoo/L3_term_burst.md >}}
+{{< include ../_shared/_includes/zoo/L3_term_burst.md >}}
 
 \newpage
 
 ---
 
-{{< include _includes/zoo/C2ST_lexical.md >}}
+{{< include ../_shared/_includes/zoo/C2ST_lexical.md >}}
 
 \newpage
 
@@ -106,52 +106,52 @@ the remaining graph methods either show the convergence signal or weak/noisy pat
 
 ---
 
-{{< include _includes/zoo/G1_pagerank.md >}}
+{{< include ../_shared/_includes/zoo/G1_pagerank.md >}}
 
 \newpage
 
 ---
 
-{{< include _includes/zoo/G2_spectral.md >}}
+{{< include ../_shared/_includes/zoo/G2_spectral.md >}}
 
 \newpage
 
 ---
 
-{{< include _includes/zoo/G3_coupling_age.md >}}
+{{< include ../_shared/_includes/zoo/G3_coupling_age.md >}}
 
 \newpage
 
 ---
 
-{{< include _includes/zoo/G4_cross_tradition.md >}}
+{{< include ../_shared/_includes/zoo/G4_cross_tradition.md >}}
 
 \newpage
 
 ---
 
-{{< include _includes/zoo/G5_pref_attachment.md >}}
+{{< include ../_shared/_includes/zoo/G5_pref_attachment.md >}}
 
 \newpage
 
 ---
 
-{{< include _includes/zoo/G6_entropy.md >}}
+{{< include ../_shared/_includes/zoo/G6_entropy.md >}}
 
 \newpage
 
 ---
 
-{{< include _includes/zoo/G7_disruption.md >}}
+{{< include ../_shared/_includes/zoo/G7_disruption.md >}}
 
 \newpage
 
 ---
 
-{{< include _includes/zoo/G8_betweenness.md >}}
+{{< include ../_shared/_includes/zoo/G8_betweenness.md >}}
 
 \newpage
 
 ---
 
-{{< include _includes/zoo/G9_community.md >}}
+{{< include ../_shared/_includes/zoo/G9_community.md >}}

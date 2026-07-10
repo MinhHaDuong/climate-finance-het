@@ -12,7 +12,7 @@ format:
     height: 900
     footer: "ESHET-HES Joint Conference, Nice 2026"
     logo: ""
-bibliography: bibliography/main.bib
+bibliography: ../_shared/bibliography/main.bib
 ---
 
 ## {background-color="#1a1a2e"}
@@ -65,7 +65,7 @@ not just policy studies. The Espeland & Stevens reference signals STS literacy.
 
 ## Three acts
 
-![](figures/fig_bars.png){width="80%"}
+![](../_shared/figures/fig_bars.png){width="80%"}
 
 ::: {.notes}
 The figure shows publication volume. Three acts visible:
@@ -205,7 +205,7 @@ The punchline. This is what the HET audience should take away.
 - Endogenous periodisation
 :::
 ::: {.column width="50%"}
-![](figures/fig_composition.png){width="100%"}
+![](../_shared/figures/fig_composition.png){width="100%"}
 :::
 ::::
 

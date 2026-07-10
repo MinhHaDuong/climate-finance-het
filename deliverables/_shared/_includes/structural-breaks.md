@@ -42,9 +42,9 @@ Because the corpus grows rapidly over time, divergence peaks could be driven by 
 
 @fig-breakpoints shows the divergence profiles; @fig-breaks shows the manuscript's simplified two-metric view.
 
-![Structural break detection: JS divergence and cosine distance z-scores by candidate year and window size.](figures/fig_breakpoints.png){#fig-breakpoints width=100%}
+![Structural break detection: JS divergence and cosine distance z-scores by candidate year and window size.](../_shared/figures/fig_breakpoints.png){#fig-breakpoints width=100%}
 
-![Breakpoints summary (manuscript figure variant).](figures/fig_breaks.png){#fig-breaks width=80%}
+![Breakpoints summary (manuscript figure variant).](../_shared/figures/fig_breaks.png){#fig-breaks width=80%}
 
 ### Results: full corpus (N = {{< meta analysis_corpus_n >}})
 

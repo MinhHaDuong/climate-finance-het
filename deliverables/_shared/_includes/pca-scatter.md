@@ -32,7 +32,7 @@ On core ({{< meta corpus_core >}} papers), no PC passes ΔBIC > 200. Unsupervise
 
 ### Figures
 
-![Supervised seed axis (efficiency vs. accountability), core papers. Point size proportional to citation count.](figures/fig_seed_axis_core.png){#fig-seed-axis-core width=100%}
+![Supervised seed axis (efficiency vs. accountability), core papers. Point size proportional to citation count.](../_shared/figures/fig_seed_axis_core.png){#fig-seed-axis-core width=100%}
 
-![Unsupervised PCA scatter: three bimodal components (full corpus).](figures/fig_pca_scatter.png){#fig-pca-scatter width=100%}
+![Unsupervised PCA scatter: three bimodal components (full corpus).](../_shared/figures/fig_pca_scatter.png){#fig-pca-scatter width=100%}
 

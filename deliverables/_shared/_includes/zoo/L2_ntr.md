@@ -24,7 +24,7 @@ where $P_\tau$ is the aggregated TF-IDF distribution for the year or window $\ta
 
 ### Principle figure
 
-![](figures/schematic_L2_ntr.png){width=100%}
+![](../_shared/figures/schematic_L2_ntr.png){width=100%}
 
 *NTR: novelty (backward KL) and transience (forward KL) arrows around focal year t=2005.*
 
@@ -48,7 +48,7 @@ NTR estimates for $t < 1999$ should be interpreted cautiously.
 
 ### Corpus results
 
-![](figures/fig_zoo_L2.png){width=100%}
+![](../_shared/figures/fig_zoo_L2.png){width=100%}
 
 *Cross-year Z-score for L2 (NTR), w=2–5.*
 

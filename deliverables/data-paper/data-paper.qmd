@@ -8,7 +8,7 @@ author:
       - name: "CNRS"
 date: "2026-03-26"
 metadata-files: [data-paper-vars.yml]
-bibliography: bibliography/main.bib
+bibliography: ../_shared/bibliography/main.bib
 abstract: |
   This data paper presents a curated, multilingual corpus of
   {{< meta corpus_total >}} works on climate finance published between 1990
@@ -81,7 +81,7 @@ The pipeline removes flagged works unless they meet one of four protection crite
 
 @tbl-quality summarises corpus composition and metadata completeness per source. The "Refined" column counts works with a `from_*` provenance flag after deduplication and quality filtering; a single work may appear in multiple rows if discovered by several sources. %non-EN is the share of non-English works, %DOI the share with a valid DOI, %Abstract the share with an abstract longer than 50 characters, and %Refs the share with at least one reference in the citation graph.
 
-{{< include tables/tab_corpus_sources.md >}}
+{{< include ../_shared/tables/tab_corpus_sources.md >}}
 
 The merge pipeline reduces {{< meta corpus_raw >}} raw records to {{< meta corpus_total >}} refined works ({{< meta corpus_removal_pct >}}% removal rate). Of the {{< meta filter_flagged >}} works flagged (counts are non-exclusive: a single work may trigger multiple flags), citation isolation ({{< meta filter_citation_isolated >}}) and cross-encoder relevance scoring ({{< meta filter_llm_irrelevant >}}) are the most common, followed by absent abstracts with irrelevant titles ({{< meta filter_no_abstract >}}), missing metadata ({{< meta filter_missing_metadata >}}), and title blacklist matches ({{< meta filter_title_blacklist >}}). Of these, {{< meta filter_protected >}} are retained by protection criteria, yielding {{< meta filter_net_removals >}} net removals; an additional 21 content-duplicates discovered during enrichment are also removed.
 
@@ -89,7 +89,7 @@ As @tbl-quality shows, OpenAlex contributes {{< meta openalex_pct >}}% of refine
 
 Relevance filtering (flag 6) uses a cross-encoder reranker (BAAI/bge-reranker-v2-m3, 568M parameters) for deterministic, reproducible scores. The query "climate policy and financial mechanisms" was selected from 20 candidates (AUC = 0.766 on weak labels); human validation on a blinded sample of 100 works yielded AUC = 0.818 and 81% accuracy. The chosen query privileges instrumental framing; works centred on climate justice without financial mechanisms vocabulary may score lower. These methods serve as independent checks on the flagging pipeline, not as ground truth, since what counts as "climate finance" is itself a contested category. The Zenodo deposit includes all calibration and validation tables.
 
-{{< include tables/tab_languages.md >}}
+{{< include ../_shared/tables/tab_languages.md >}}
 
 Near-duplicate detection identified coordinated multi-journal publications --- notably the COP27 editorial [@atwoli_etal2022], published with identical or near-identical abstracts across 60+ journals under different DOIs. These are not data errors but a deliberate publication strategy; the `near_duplicate_group` column enables users to deduplicate by content if their analysis requires it.
 
@@ -107,7 +107,7 @@ The Zenodo deposit (DOI: [10.5281/zenodo.19236130](https://doi.org/10.5281/zenod
 
 **Source catalogs.** Per-source catalogs (`openalex_works.csv`, `istex_works.csv`, etc.) enable provenance tracking back to individual databases before merge and deduplication. The corpus does not include a dedicated Open Access or fulltext URL column; users can recover OA links via the OpenAlex API using the `source_id` field, or construct ISTEX fulltext URLs from ISTEX identifiers in the source catalogs.
 
-![Annual publication volume in the corpus. The search window is 1990--2024; the earliest works date from 1992.](figures/fig_bars.png){#fig-bars width=100%}
+![Annual publication volume in the corpus. The search window is 1990--2024; the earliest works date from 1992.](../_shared/figures/fig_bars.png){#fig-bars width=100%}
 
 Citation coverage --- the share of corpus works that appear as a citing source in the citation network --- is unevenly distributed over time: approximately 27% for works published before 2007 versus 47% for post-2015 works. This gap reflects two compounding factors: early and grey-literature works are less likely to carry DOIs or to have their reference lists indexed by Crossref and OpenAlex, and the field itself was smaller before 2007. Users conducting temporal citation-network analyses should account for this systematic undercount of early-period connectivity.
 

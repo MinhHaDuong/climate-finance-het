@@ -31,6 +31,6 @@ Internal citation edges are extracted from `citations.csv`: an edge (A -> B) exi
 
 ### Figure
 
-![Citation genealogy: backbone papers by lineage band, with cross-lineage arcs.](figures/fig_genealogy.png){#fig-genealogy width=100%}
+![Citation genealogy: backbone papers by lineage band, with cross-lineage arcs.](../_shared/figures/fig_genealogy.png){#fig-genealogy width=100%}
 
 An interactive HTML/SVG version with hover tooltips and DOI click-through is available as `fig_genealogy.html`. Lineage assignments for all backbone papers are in `tab_lineages.csv`.

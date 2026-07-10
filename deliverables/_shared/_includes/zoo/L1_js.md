@@ -19,7 +19,7 @@ $\text{JS} \in [0, \log 2]$; the square root is a proper metric.
 
 ### Principle figure
 
-![](figures/schematic_L1_js.png){width=100%}
+![](../_shared/figures/schematic_L1_js.png){width=100%}
 
 *JS divergence: mean TF-IDF distributions before vs. after; starred terms have largest |P−Q|.*
 
@@ -37,7 +37,7 @@ $\text{JS} \in [0, \log 2]$; the square root is a proper metric.
 
 ### Corpus results
 
-![](figures/fig_zoo_L1.png){width=100%}
+![](../_shared/figures/fig_zoo_L1.png){width=100%}
 
 *Cross-year Z-score for L1 (JS-TF-IDF), w=2–5.*
 

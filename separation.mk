@@ -13,7 +13,7 @@
 #
 # Inputs (Phase 1 contract): $(REFINED), $(REFINED_CIT) — from main Makefile.
 
-SEP_TABLES   := content/tables
+SEP_TABLES   := deliverables/_shared/tables
 SEP_COVERAGE := $(SEP_TABLES)/tab_pre2007_coverage.csv
 SEP_NULL     := $(SEP_TABLES)/tab_null_separation_pre2007.csv
 

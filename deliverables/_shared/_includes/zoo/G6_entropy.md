@@ -21,7 +21,7 @@ $$D_{\text{G6}}(t, w) = |H_{\text{after}} - H_{\text{before}}|$$
 
 ### Principle figure
 
-![](figures/schematic_G6_entropy.png){width=100%}
+![](../_shared/figures/schematic_G6_entropy.png){width=100%}
 
 *Entropy divergence: before/after in-degree histograms with H annotated on each panel.*
 
@@ -35,7 +35,7 @@ $$D_{\text{G6}}(t, w) = |H_{\text{after}} - H_{\text{before}}|$$
 
 ### Corpus results
 
-![](figures/fig_zoo_G6_entropy.png){width=100%}
+![](../_shared/figures/fig_zoo_G6_entropy.png){width=100%}
 
 *Cross-year Z-score for G6 (degree entropy), w=2–5. **Peak at 2007** confirms G5 finding.*
 

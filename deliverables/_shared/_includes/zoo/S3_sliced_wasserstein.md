@@ -16,7 +16,7 @@ Sample estimate: average over $K=200$ random unit directions, computing $W_2$ as
 
 ### Principle figure
 
-![](figures/schematic_S3_sliced_wasserstein.png){width=100%}
+![](../_shared/figures/schematic_S3_sliced_wasserstein.png){width=100%}
 
 *Sliced Wasserstein: random projection directions with sorted quantile matching.*
 
@@ -30,7 +30,7 @@ Sample estimate: average over $K=200$ random unit directions, computing $W_2$ as
 
 ### Corpus results
 
-![](figures/fig_zoo_S3_sliced_wasserstein.png){width=100%}
+![](../_shared/figures/fig_zoo_S3_sliced_wasserstein.png){width=100%}
 
 *Cross-year Z-score for S3 (Sliced Wasserstein), w=2–5.*
 

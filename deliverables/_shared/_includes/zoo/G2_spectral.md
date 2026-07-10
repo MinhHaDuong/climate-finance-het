@@ -17,7 +17,7 @@ We use the top-2 eigenvalues via `scipy.sparse.linalg.eigsh`.
 
 ### Principle figure
 
-![](figures/schematic_G2_spectral.png){width=100%}
+![](../_shared/figures/schematic_G2_spectral.png){width=100%}
 
 *Spectral gap: 10 smallest Laplacian eigenvalues for 2000–2004 (blue) and 2007–2011 (red) citation subgraphs. The largest gap (shaded) locates the natural cluster count. After Von Luxburg (2007, Fig. 4).*
 
@@ -31,7 +31,7 @@ We use the top-2 eigenvalues via `scipy.sparse.linalg.eigsh`.
 
 ### Corpus results
 
-![](figures/fig_zoo_G2_spectral.png){width=100%}
+![](../_shared/figures/fig_zoo_G2_spectral.png){width=100%}
 
 *Cross-year Z-score for G2 (spectral gap), w=2–5.*
 

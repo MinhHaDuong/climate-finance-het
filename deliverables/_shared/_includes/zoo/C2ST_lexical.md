@@ -36,7 +36,7 @@ The `pca_dim=32` parameter (`divergence.c2st.pca_dim` in `config/analysis.yaml`)
 
 ### Principle figure
 
-![](figures/schematic_C2ST.png){width=100%}
+![](../_shared/figures/schematic_C2ST.png){width=100%}
 
 *C2ST principle: a logistic classifier fits a decision boundary in feature space; cross-validated AUC above 0.50 confirms the before/after distributions differ. The same schematic applies to both the embedding and lexical channels — only the feature axes change. Script: `scripts/plot_schematic_C2ST.py`.*
 
@@ -62,7 +62,7 @@ AUC visibly above 0.5 corroborates the distance-based signals but does not by it
 
 ### Corpus results
 
-![](figures/fig_zoo_C2ST_lexical.png){width=100%}
+![](../_shared/figures/fig_zoo_C2ST_lexical.png){width=100%}
 
 *Cross-year Z-score for C2ST (lexical), w=2–5.*
 

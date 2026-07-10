@@ -21,7 +21,7 @@ where histograms use 50 log-spaced bins over $[10^{-5}, 1]$.
 
 ### Principle figure
 
-![](figures/schematic_G1_pagerank.png){width=100%}
+![](../_shared/figures/schematic_G1_pagerank.png){width=100%}
 
 *PageRank divergence: overlapping log-scale histograms before/after with 5-node hub inset.*
 
@@ -35,7 +35,7 @@ where histograms use 50 log-spaced bins over $[10^{-5}, 1]$.
 
 ### Corpus results
 
-![](figures/fig_zoo_G1_pagerank.png){width=100%}
+![](../_shared/figures/fig_zoo_G1_pagerank.png){width=100%}
 
 *Cross-year Z-score for G1 (PageRank JS), w=2–5.*
 

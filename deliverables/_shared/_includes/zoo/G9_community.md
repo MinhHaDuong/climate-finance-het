@@ -22,7 +22,7 @@ $$D_{\text{G9}}(t, w) = \text{JS}(q^{before}, q^{after})$$
 
 ### Principle figure
 
-![](figures/schematic_G9_community.png){width=100%}
+![](../_shared/figures/schematic_G9_community.png){width=100%}
 
 *Community divergence: before/after force-directed layouts with community-share stacked bars.*
 
@@ -36,7 +36,7 @@ $$D_{\text{G9}}(t, w) = \text{JS}(q^{before}, q^{after})$$
 
 ### Corpus results
 
-![](figures/fig_zoo_G9_community.png){width=100%}
+![](../_shared/figures/fig_zoo_G9_community.png){width=100%}
 
 *Cross-year Z-score for G9 (community JS), w=2–5. Peak at 2001 — field convergence, not 2007 break.*
 

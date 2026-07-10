@@ -18,7 +18,7 @@ $$D_{\text{G5}}(t, w) = |\hat{\gamma}_{\text{after}} - \hat{\gamma}_{\text{befor
 
 ### Principle figure
 
-![](figures/schematic_G5_pref_attachment.png){width=100%}
+![](../_shared/figures/schematic_G5_pref_attachment.png){width=100%}
 
 *Preferential attachment: log-log in-degree scatter with two power-law fits (γ_before, γ_after).*
 
@@ -32,7 +32,7 @@ $$D_{\text{G5}}(t, w) = |\hat{\gamma}_{\text{after}} - \hat{\gamma}_{\text{befor
 
 ### Corpus results
 
-![](figures/fig_zoo_G5_pref_attachment.png){width=100%}
+![](../_shared/figures/fig_zoo_G5_pref_attachment.png){width=100%}
 
 *Cross-year Z-score for G5 (PA exponent), w=2–5. **Peak at 2007** confirms structural break in citation topology.*
 

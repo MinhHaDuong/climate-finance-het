@@ -3,8 +3,8 @@ title: "Multi-layer Detection: Technical Supplement"
 subtitle: "Methods for the six detectors used in the companion paper"
 author: "Minh Ha-Duong"
 date: today
-metadata-files: [technical-report-vars.yml]
-bibliography: bibliography/main.bib
+metadata-files: [../_shared/technical-report-vars.yml]
+bibliography: ../_shared/bibliography/main.bib
 format:
   pdf:
     pdf-engine: xelatex
@@ -20,11 +20,11 @@ and the same sliding-window protocol described in §4 of the companion paper.
 
 For the full 18-method comparative survey see the technical report.
 
-{{< include _includes/techrep/overview.md >}}
+{{< include ../_shared/_includes/techrep/overview.md >}}
 
-{{< include _includes/techrep/zscore.md >}}
+{{< include ../_shared/_includes/techrep/zscore.md >}}
 
-{{< include _includes/techrep/null-model.md >}}
+{{< include ../_shared/_includes/techrep/null-model.md >}}
 
 \newpage
 
@@ -32,15 +32,15 @@ For the full 18-method comparative survey see the technical report.
 
 # Voting detectors
 
-{{< include _includes/zoo/S2_energy.md >}}
+{{< include ../_shared/_includes/zoo/S2_energy.md >}}
 
 ---
 
-{{< include _includes/zoo/L1_js.md >}}
+{{< include ../_shared/_includes/zoo/L1_js.md >}}
 
 ---
 
-{{< include _includes/zoo/G9_community.md >}}
+{{< include ../_shared/_includes/zoo/G9_community.md >}}
 
 \newpage
 
@@ -48,12 +48,12 @@ For the full 18-method comparative survey see the technical report.
 
 # Reference layers
 
-{{< include _includes/zoo/G2_spectral.md >}}
+{{< include ../_shared/_includes/zoo/G2_spectral.md >}}
 
 ---
 
-{{< include _includes/zoo/C2ST_embedding.md >}}
+{{< include ../_shared/_includes/zoo/C2ST_embedding.md >}}
 
 ---
 
-{{< include _includes/zoo/C2ST_lexical.md >}}
+{{< include ../_shared/_includes/zoo/C2ST_lexical.md >}}

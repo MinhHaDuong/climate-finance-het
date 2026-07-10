@@ -15,8 +15,8 @@ date: "2026-06-18"
 date-format: "D MMMM YYYY"
 lang: fr
 metadata-files: [manuscript-vars.yml]
-bibliography: bibliography/main.bib
-csl: bibliography/oeconomia.csl
+bibliography: ../_shared/bibliography/main.bib
+csl: ../_shared/bibliography/oeconomia.csl
 number-sections: true
 crossref:
   fig-title: Figure
@@ -78,13 +78,13 @@ La périodisation proposée découle de notre lecture des textes, de l'observati
 
 Cette manière de faire de l'histoire intellectuelle peut surprendre. La discipline lit d'ordinaire de près un petit nombre de textes canoniques. Or la finance climat n'a pas de canon. Du moins, s'il existe un canon dans le domaine, notre moissonnage des syllabus de cours de finance climat trouvables sur internet ne l'a pas fait remonter. En effet la finance climat s'est formée récemment, dans des milliers de rapports d'experts, de décisions institutionnelles et d'articles dispersés, en plusieurs langues -- une littérature trop vaste et trop éclatée pour qu'un seul lecteur la tienne tout entière. Nous établissons un corpus empirique à visée exhaustive, dans lequel les publications institutionnelles prennent une place importante. Cela correspond à la nature de l'objet étudié : la finance climat n'est pas définie par une théorie unique publiée dans un petit nombre de productions académiques anglo-saxonnes.
 
-![Croissance de la littérature sur la finance climat, 1990--2023. Le champ est presque inexistant avant 2007, se structure après Bali et Copenhague, puis se développe dans les catégories stabilisées après Paris.](figures/fig_bars_v1.png){#fig-bars width=85%}
+![Croissance de la littérature sur la finance climat, 1990--2023. Le champ est presque inexistant avant 2007, se structure après Bali et Copenhague, puis se développe dans les catégories stabilisées après Paris.](../_shared/figures/fig_bars_v1.png){#fig-bars width=85%}
 
 L'argument historique couvre la période 1990--2025. Le corpus bibliographique systématique s'arrête toutefois à 2024, dernière année complète disponible au moment de l'analyse ; l'année 2025 est mobilisée par le cas Türkiye comme test contemporain des catégories stabilisées.
 
 L'analyse computationnelle d'environ {{< meta corpus_total_approx >}} travaux est discutée en annexe. Les résultats fournissent des indices convergents : les ruptures lexicales, les communautés de co-citation et la recomposition thématique du corpus sont cohérentes avec une périodisation en trois moments : avant la finance climat (1990--2006), cristallisation (2007--2014), champ établi et controversé (2015--2024). Ainsi, la Figure 2 montre la vitesse de renouvellement des thèmes traités dans la littérature. L'indice est exprimé en unités relatives, et calculé sans connaissance a priori de la périodisation. Les résultats accréditent notre lecture en deux ruptures. Les changements lexicographiques tabulés en annexe montrent bien, entre les périodes, le recul des termes associés au Mécanisme de développement propre et au vocabulaire de Kyoto, et la progression des termes associés à la finance mobilisée, aux fonds, aux flux, à l'aide et, plus tard, à la finance verte.
 
-![Vitesse de renouvellement des thèmes couverts dans la littérature sur la finance climat : le champ a connu deux périodes de changement plus rapide. Voir la recomposition qualitative des thèmes traités en annexe A.5.](figures/fig_breaks.png){#fig-breaks width=85%}
+![Vitesse de renouvellement des thèmes couverts dans la littérature sur la finance climat : le champ a connu deux périodes de changement plus rapide. Voir la recomposition qualitative des thèmes traités en annexe A.5.](../_shared/figures/fig_breaks.png){#fig-breaks width=85%}
 
 ## Avant la finance climat : trois traditions disjointes (1990--2006) {#sec-before}
 
@@ -207,7 +207,7 @@ Pour comparer les travaux par leur sens, et non par leurs seuls mots exacts, cha
 
 On a classé ces points en six groupes, sans indiquer de réponse attendue. Chaque groupe peut être ensuite repéré par les mots qui le caractérisent. Le nombre de six est arbitraire. La finance climat forme un continuum, non un ensemble d'écoles bien séparées. Cependant, les groupes font bien apparaître les différents thèmes des négociations climatiques. Et l'évolution, d'une période à l'autre, de la part des publications par groupe correspond à l'histoire de ces négociations.
 
-![Recomposition thématique de la littérature sur la finance climat. Les mécanismes Kyoto reculent, tandis que la gouvernance de Paris, les renouvelables, les obligations vertes et l'ESG prennent davantage de place après 2015.](figures/fig_composition.png){#fig-composition width=85%}
+![Recomposition thématique de la littérature sur la finance climat. Les mécanismes Kyoto reculent, tandis que la gouvernance de Paris, les renouvelables, les obligations vertes et l'ESG prennent davantage de place après 2015.](../_shared/figures/fig_composition.png){#fig-composition width=85%}
 
 ### A.3 Premier point : les ruptures dans le temps {.unnumbered}
 
@@ -223,7 +223,7 @@ La deuxième question porte sur les références partagées. On prend les travau
 
 La troisième question demande si la polarisation d'après Paris se voit dans les textes eux-mêmes. Pour cela, dans le même espace qui a servi à classer les publications en six groupes, on peut les projeter selon un axe efficacité/redevabilité. Il est alors possible de valider l'axe par rapport à l'écologie des revues, dont on connaît la ligne éditoriale. Les travaux proches du pôle efficacité apparaissent davantage dans les revues de finance, d'énergie et de risque climatique. Les travaux proches du pôle redevabilité se concentrent plus souvent dans les revues de gouvernance environnementale, de politique climatique et d'économie politique.
 
-{{< include tables/tab_venues_fr.md >}}
+{{< include ../_shared/tables/tab_venues_fr.md >}}
 
 **Reproductibilité, données et code.** Les opérations résumées ci-dessus reposent sur des méthodes statistiques standard : les représentations vectorielles (« embeddings ») sont produites par le modèle multilingue `BAAI/bge-m3`. Le regroupement des textes par leur sens utilise l'algorithme k-means à six groupes sur les embeddings. La détection des ruptures combine la divergence de Jensen--Shannon et la distance cosinus, sur les répartitions thématiques. Les communautés de co-citations sont examinées par la méthode de Louvain. Les scripts et la chaîne de reproduction complète sont archivés sur Zenodo (DOI : [10.5281/zenodo.19097045](https://doi.org/10.5281/zenodo.19097045)) et développés en science ouverte à l'adresse <https://github.com/MinhHaDuong/climate-finance-het>.
 

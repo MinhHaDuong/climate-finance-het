@@ -19,7 +19,7 @@ Corpus signal: mean $CD$ of papers published in year $t$.
 
 ### Principle figure
 
-![](figures/schematic_G7_disruption.png){width=100%}
+![](../_shared/figures/schematic_G7_disruption.png){width=100%}
 
 *Disruption taxonomy: focal paper (gold) + references (grey, inner ring) + citing papers coloured by type. Red f = cite focal only; orange b = cite both; blue c = cite references only. CD = (f−b)/(f+b+c). After Funk & Owen-Smith (2017, Fig. 1).*
 
@@ -33,7 +33,7 @@ Corpus signal: mean $CD$ of papers published in year $t$.
 
 ### Corpus results
 
-![](figures/fig_zoo_G7_disruption.png){width=100%}
+![](../_shared/figures/fig_zoo_G7_disruption.png){width=100%}
 
 *Cross-year Z-score for G7 (disruption index CD), cumulative window.*
 

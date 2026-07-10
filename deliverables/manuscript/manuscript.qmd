@@ -14,8 +14,8 @@ jel:
 date: "2026-07-08"
 date-format: "MMMM D, YYYY"
 metadata-files: [manuscript-vars.yml]
-bibliography: bibliography/main.bib
-csl: bibliography/oeconomia.csl
+bibliography: ../_shared/bibliography/main.bib
+csl: ../_shared/bibliography/oeconomia.csl
 number-sections: true
 format:
   pdf:
@@ -79,13 +79,13 @@ The proposed periodization follows from our reading of the texts, from participa
 
 This way of doing intellectual history may surprise. The discipline usually reads a small number of canonical texts closely. Yet climate finance has no canon. At least, if a canon exists in the field, our harvest of the climate finance course syllabi findable on the internet did not bring it up. Climate finance took shape recently, in thousands of expert reports, institutional decisions and scattered articles, in several languages -- a literature too vast and too fragmented for a single reader to hold entire. We build an empirical corpus that aims at exhaustiveness, in which institutional publications take an important place. This matches the nature of the object under study: climate finance is not defined by a single theory published in a small set of Anglo-American academic outputs.
 
-![Growth of the climate finance literature, 1990--2023. The field is nearly nonexistent before 2007, structures itself after Bali and Copenhagen, then develops within the categories stabilised after Paris.](figures/fig_bars_v1.png){#fig-bars width=85%}
+![Growth of the climate finance literature, 1990--2023. The field is nearly nonexistent before 2007, structures itself after Bali and Copenhagen, then develops within the categories stabilised after Paris.](../_shared/figures/fig_bars_v1.png){#fig-bars width=85%}
 
 The historical argument covers the period 1990--2025. The systematic bibliographic corpus stops at 2024, the last complete year available at the time of the analysis; the year 2025 enters through the Türkiye case, as a contemporary test of the stabilised categories.
 
 The computational analysis of about {{< meta corpus_total_approx >}} works is discussed in the appendix. The results provide convergent clues: the lexical breaks, the co-citation communities and the thematic recomposition of the corpus are consistent with a periodization in three moments: before climate finance (1990--2006), crystallization (2007--2014), an established and contested field (2015--2024). Thus @fig-breaks shows the speed at which the themes treated in the literature renew themselves. The index is expressed in relative units and computed with no prior knowledge of the periodization. The results support our reading in two breaks. The lexicographic shifts tabulated in the appendix show, between periods, the retreat of terms tied to the Clean Development Mechanism and the Kyoto vocabulary, and the advance of terms tied to mobilised finance, funds, flows, aid and, later, green finance.
 
-![Speed of thematic renewal in the climate finance literature: the field went through two spells of faster change. See the qualitative recomposition of the themes treated in appendix A.3.](figures/fig_breaks.png){#fig-breaks width=85%}
+![Speed of thematic renewal in the climate finance literature: the field went through two spells of faster change. See the qualitative recomposition of the themes treated in appendix A.3.](../_shared/figures/fig_breaks.png){#fig-breaks width=85%}
 
 ## Before climate finance: three disjoint traditions (1990--2006) {#sec-before}
 
@@ -271,7 +271,7 @@ These points are then sorted into six groups, with no expected answer supplied, 
 
 k-means is kept over the alternatives for stability. HDBSCAN, which would leave works in sparse regions unassigned, labels about ninety-eight per cent of the corpus as noise, since the semantic space holds no density-separated regions to find. Spectral clustering is unstable, at an adjusted Rand index of 0.59 across corpus snapshots, and its cost grows with the cube of the corpus size. k-means is deterministic given a seed and stays stable under the marginal growth a living corpus undergoes, at an adjusted Rand index of 0.98 between successive snapshots. Its one weakness, that about one re-clustering in ten reshuffles the partition boundaries, produced the labelling error corrected in our first erratum, and is now contained by seeding from fixed reference centroids. A final caution: the three representations are nearly independent, since k-means assignments agree at an adjusted Rand index of only 0.06 to 0.22 across the semantic, lexical and citation spaces, and citation ties carry about three times more group structure than topical similarity. That is why the three traditions are read from the co-citation lineages of A.5, and not from the embedding groups: what a work cites separates the field more sharply than what it is about.
 
-![Thematic recomposition of the climate finance literature. The Kyoto mechanisms recede, while Paris governance, renewables, green bonds and ESG take more room after 2015.](figures/fig_composition.png){#fig-composition width=85%}
+![Thematic recomposition of the climate finance literature. The Kyoto mechanisms recede, while Paris governance, renewables, green bonds and ESG take more room after 2015.](../_shared/figures/fig_composition.png){#fig-composition width=85%}
 
 ### A.4 First question: the breaks over time {.unnumbered}
 
@@ -293,7 +293,7 @@ We use Louvain rather than Leiden because at 250 nodes the flaw Leiden corrects,
 
 The third question asks whether the post-Paris polarisation shows in the texts themselves. In the same space that served to sort the publications into six groups, the works can be projected along an efficiency/accountability axis, and the axis can then be validated against the ecology of the journals, whose editorial lines are known. The works close to the efficiency pole appear more often in the journals of finance, energy and climate risk. The works close to the accountability pole concentrate more often in the journals of environmental governance, climate policy and political economy. This venue concentration is tabulated in @tbl-venues.
 
-{{< include tables/tab_venues.md >}}
+{{< include ../_shared/tables/tab_venues.md >}}
 
 **Reproducibility, data and code.** The scripts and the full reproduction chain, covering the embedding, clustering, break detection and co-citation steps described above, are archived on Zenodo (DOI: [10.5281/zenodo.19097045](https://doi.org/10.5281/zenodo.19097045)) and developed in open science at <https://github.com/MinhHaDuong/climate-finance-het>.
 

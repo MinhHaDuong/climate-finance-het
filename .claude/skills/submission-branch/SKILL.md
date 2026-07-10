@@ -36,7 +36,7 @@ Place records (cover letter, AI disclosure, journal-specific files) in `papiers/
 
 Branch is frozen. Guards: pre-commit rejects merges (cherry-pick only), pre-push blocks deletion, GitHub prevents force-push.
 
-Frozen: git tag, pinned vars in `content/{document}-vars.yml`, reference data in `config/`, Zenodo archives.
+Frozen: git tag, pinned vars in `deliverables/{document}/{document}-vars.yml`, reference data in `config/`, Zenodo archives.
 
 No changes except errata, reviewer responses, and revision commits.
 

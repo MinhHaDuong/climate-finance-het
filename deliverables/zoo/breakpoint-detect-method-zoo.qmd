@@ -3,8 +3,8 @@ title: "The Zoo: 18 Methods for Corpus Change Detection"
 subtitle: "Technical reference (excerpt from *Analysis Methods and Results*)"
 author: "Minh Ha-Duong"
 date: "2026-04-21"
-metadata-files: [technical-report-vars.yml]
-bibliography: bibliography/main.bib
+metadata-files: [../_shared/technical-report-vars.yml]
+bibliography: ../_shared/bibliography/main.bib
 format:
   pdf:
     pdf-engine: xelatex
@@ -12,10 +12,10 @@ format:
     papersize: a4
 ---
 
-{{< include _includes/techrep/overview.md >}}
+{{< include ../_shared/_includes/techrep/overview.md >}}
 
-{{< include _includes/techrep/zscore.md >}}
+{{< include ../_shared/_includes/techrep/zscore.md >}}
 
-{{< include _includes/techrep/null-model.md >}}
+{{< include ../_shared/_includes/techrep/null-model.md >}}
 
-{{< include _includes/techrep-zoo.md >}}
+{{< include ../_shared/_includes/techrep-zoo.md >}}

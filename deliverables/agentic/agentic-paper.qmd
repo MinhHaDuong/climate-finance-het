@@ -2,7 +2,7 @@
 title: "Dragon Dreaming with Code Agents: A Case Study of Human-AI Collaboration in Bibliometric Research"
 author: "Minh Ha-Duong"
 date: "2026-03-16"
-bibliography: bibliography/main.bib
+bibliography: ../_shared/bibliography/main.bib
 format:
   pdf:
     pdf-engine: xelatex

@@ -17,7 +17,7 @@ $$D_{\text{G4}}(t) = \frac{C_{cross}(t)}{C_{within}(t) + C_{cross}(t)}$$
 
 ### Principle figure
 
-![](figures/schematic_G4_cross_tradition.png){width=100%}
+![](../_shared/figures/schematic_G4_cross_tradition.png){width=100%}
 
 *Cross-tradition citation flows between finance, development economics, and physical science clusters. Arrow width ∝ citation volume; self-loops = within-tradition. G4=72.5% cross-tradition. After Börner (2010), Klavans & Boyack (2017).*
 
@@ -31,7 +31,7 @@ $$D_{\text{G4}}(t) = \frac{C_{cross}(t)}{C_{within}(t) + C_{cross}(t)}$$
 
 ### Corpus results
 
-![](figures/fig_zoo_G4_cross_tradition.png){width=100%}
+![](../_shared/figures/fig_zoo_G4_cross_tradition.png){width=100%}
 
 *Cross-year Z-score for G4 (cross-tradition ratio), cumulative window.*
 

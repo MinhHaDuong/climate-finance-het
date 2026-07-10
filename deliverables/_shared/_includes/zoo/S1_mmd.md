@@ -14,7 +14,7 @@ where $k(\cdot,\cdot)$ is a radial basis function kernel $k(x,y) = \exp(-\|x-y\|
 
 ### Principle figure
 
-![](figures/schematic_S1_mmd.png){width=100%}
+![](../_shared/figures/schematic_S1_mmd.png){width=100%}
 
 *MMD principle: two embedding clouds with kernel witness function.*
 
@@ -28,7 +28,7 @@ where $k(\cdot,\cdot)$ is a radial basis function kernel $k(x,y) = \exp(-\|x-y\|
 
 ### Corpus results
 
-![](figures/fig_zoo_S1_MMD.png){width=100%}
+![](../_shared/figures/fig_zoo_S1_MMD.png){width=100%}
 
 *Cross-year Z-score for S1 (MMD), w=2–5. Peak at 1998 (field heterogeneity); monotonic decline.*
 

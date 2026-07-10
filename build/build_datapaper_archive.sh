@@ -61,10 +61,10 @@ YAML
 # ── Figures, tables, vars for rendering (hard fail) ──────
 echo "  Copying figures and tables..."
 mkdir -p "$TMP/code/content/figures" "$TMP/code/content/tables"
-cp content/figures/fig_bars.png "$TMP/code/content/figures/"
-cp content/tables/tab_corpus_sources.md content/tables/tab_languages.md \
+cp deliverables/_shared/figures/fig_bars.png "$TMP/code/content/figures/"
+cp deliverables/_shared/tables/tab_corpus_sources.md deliverables/_shared/tables/tab_languages.md \
    "$TMP/code/content/tables/"
-cp content/data-paper-vars.yml "$TMP/code/content/"
+cp deliverables/data-paper/data-paper-vars.yml "$TMP/code/content/"
 
 # ── Checksums for make verify ────────────────────────────
 echo "  Computing data checksums..."

@@ -24,7 +24,7 @@ This analysis tests whether the corpus is structured around two opposed intellec
 - **KDE visualization:** Kernel density estimate with bandwidth 0.15, split by period (1990--2006, 2007--2014, 2015--2024). GMM component overlays shown as dashed grey lines. @fig-kde shows the overall KDE of embedding scores.
 - **Per-period bimodality:** ΔBIC = {{< meta bim_dbic_pre2007 >}} (1990--2006, n={{< meta bim_n_pre2007 >}}), ΔBIC = {{< meta bim_dbic_2007_2014 >}} (2007--2014, n={{< meta bim_n_2007_2014 >}}; unimodal), ΔBIC = {{< meta bim_dbic_post2015 >}} (2015--2024, n={{< meta bim_n_post2015 >}}; strong bimodality). The bimodal structure emerges most clearly in the established-field period.
 
-![KDE of embedding axis scores with GMM component overlay.](figures/fig_kde.png){#fig-kde width=100%}
+![KDE of embedding axis scores with GMM component overlay.](../_shared/figures/fig_kde.png){#fig-kde width=100%}
 
 ### Method B: TF-IDF lexical axis
 
@@ -64,17 +64,17 @@ On core:
 
 ### Figures
 
-![KDE of embedding axis scores by period, full corpus.](figures/fig_bimodality.png){#fig-bimodality width=100%}
+![KDE of embedding axis scores by period, full corpus.](../_shared/figures/fig_bimodality.png){#fig-bimodality width=100%}
 
-![TF-IDF lexical axis scores by period.](figures/fig_bimodality_lexical.png){#fig-bimodality-lexical width=100%}
+![TF-IDF lexical axis scores by period.](../_shared/figures/fig_bimodality_lexical.png){#fig-bimodality-lexical width=100%}
 
-![Keyword co-occurrence scatter: efficiency vs. accountability term counts.](figures/fig_bimodality_keywords.png){#fig-bimodality-keywords width=100%}
+![Keyword co-occurrence scatter: efficiency vs. accountability term counts.](../_shared/figures/fig_bimodality_keywords.png){#fig-bimodality-keywords width=100%}
 
-![KDE of embedding axis scores, core subset.](figures/fig_bimodality_core.png){#fig-bimodality-core width=100%}
+![KDE of embedding axis scores, core subset.](../_shared/figures/fig_bimodality_core.png){#fig-bimodality-core width=100%}
 
-![TF-IDF lexical axis scores, core subset.](figures/fig_bimodality_lexical_core.png){#fig-bimodality-lexical-core width=100%}
+![TF-IDF lexical axis scores, core subset.](../_shared/figures/fig_bimodality_lexical_core.png){#fig-bimodality-lexical-core width=100%}
 
-![Keyword co-occurrence scatter, core subset.](figures/fig_bimodality_keywords_core.png){#fig-bimodality-keywords-core width=100%}
+![Keyword co-occurrence scatter, core subset.](../_shared/figures/fig_bimodality_keywords_core.png){#fig-bimodality-keywords-core width=100%}
 
 ### Data outputs
 

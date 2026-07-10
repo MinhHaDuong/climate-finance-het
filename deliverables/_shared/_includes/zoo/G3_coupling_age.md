@@ -19,7 +19,7 @@ for all citations made by papers published in year $t$.
 
 ### Principle figure
 
-![](figures/schematic_G3_coupling_age.png){width=100%}
+![](../_shared/figures/schematic_G3_coupling_age.png){width=100%}
 
 *Citation age histograms (log scale) with exponential decay fit for 2000–2004 and 2007–2011 citing windows. The shift in mean age (Δ=1.4 yr) is annotated. After Price (1965).*
 
@@ -33,7 +33,7 @@ for all citations made by papers published in year $t$.
 
 ### Corpus results
 
-![](figures/fig_zoo_G3_coupling_age.png){width=100%}
+![](../_shared/figures/fig_zoo_G3_coupling_age.png){width=100%}
 
 *Cross-year Z-score for G3 (bibliographic coupling age), cumulative window.*
 

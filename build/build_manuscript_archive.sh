@@ -26,16 +26,16 @@ mkdir -p "$TMP/content/bibliography" \
 cd "$PROJ_ROOT"
 
 # Pre-built figures (validated, not regenerated)
-cp content/figures/fig_bars_v1.png     "$TMP/content/figures/"
-cp content/figures/fig_composition.png "$TMP/content/figures/"
+cp deliverables/_shared/figures/fig_bars_v1.png     "$TMP/content/figures/"
+cp deliverables/_shared/figures/fig_composition.png "$TMP/content/figures/"
 
 # Manuscript content
-cp content/manuscript.qmd          "$TMP/content/"
-cp content/manuscript-vars.yml     "$TMP/content/"
-cp content/author-footnote.tex     "$TMP/content/"
-cp content/tables/tab_venues.md    "$TMP/content/tables/"
-cp content/bibliography/main.bib   "$TMP/content/bibliography/"
-cp content/bibliography/oeconomia.csl "$TMP/content/bibliography/"
+cp deliverables/manuscript/manuscript.qmd          "$TMP/content/"
+cp deliverables/manuscript/manuscript-vars.yml     "$TMP/content/"
+cp deliverables/manuscript/author-footnote.tex     "$TMP/content/"
+cp deliverables/_shared/tables/tab_venues.md    "$TMP/content/tables/"
+cp deliverables/_shared/bibliography/main.bib   "$TMP/content/bibliography/"
+cp deliverables/_shared/bibliography/oeconomia.csl "$TMP/content/bibliography/"
 
 # Pre-built output PDF (at root, away from Quarto's clean scope)
 cp output/content/manuscript.pdf   "$TMP/expected-manuscript.pdf"

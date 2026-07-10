@@ -4,7 +4,7 @@
 
 This analysis traces the evolution of co-citation communities in the climate finance literature across four time windows, testing whether the three intellectual traditions posited by the manuscript (environmental economics, development economics, burden-sharing) are empirically detectable as distinct citation lineages. @fig-traditions shows the pre-2007 co-citation network with the three traditions colored.
 
-![Pre-2007 co-citation network showing three intellectual traditions (manuscript Electronic Supplement figure).](figures/fig_traditions.png){#fig-traditions width=100%}
+![Pre-2007 co-citation network showing three intellectual traditions (manuscript Electronic Supplement figure).](../_shared/figures/fig_traditions.png){#fig-traditions width=100%}
 
 ### Method
 
@@ -74,7 +74,7 @@ Cramer's V = 0.248 (chi-squared = 204.1, $p < 10^{-32}$, df = 20), indicating a 
 
 @fig-communities shows the full-span co-citation network with community coloring.
 
-![Co-citation network (full span, top 250 references), colored by Louvain community.](figures/fig_communities.png){#fig-communities width=100%}
+![Co-citation network (full span, top 250 references), colored by Louvain community.](../_shared/figures/fig_communities.png){#fig-communities width=100%}
 
 ### Interpretation
 
