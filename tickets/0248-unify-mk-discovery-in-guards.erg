@@ -1,0 +1,63 @@
+%erg 0.1
+Title: Unify .mk discovery across test guards — close root-only globs before the reorg moves more
+Created: 2026-07-10
+Author: HDMX-coding-agent
+Label: deferred
+
+--- log ---
+2026-07-10T00:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+Ticket 0239 relocated the 5 Phase-2 analysis `.mk` from the repo root to
+`scripts/analysis/`. That surfaced a class defect: several test guards each
+hand-roll their own `.mk` enumeration by globbing a **fixed** directory set, so
+when a fragment moves, it silently drops out of the guard's coverage — the test
+keeps passing because it now parametrizes over fewer files, not because the
+contract still holds. Three sites were caught and extended during 0239 (two by
+the PR, one by `/gaze`). Two more still glob root + `deliverables/` but **not**
+`scripts/analysis/`:
+
+- `tests/test_makefile_contract.py:259-261`
+  (`test_project_includes_union_retired`) — scans for `$(PROJECT_INCLUDES)`
+  use/def; the moved fragments are no longer scanned.
+- `tests/test_deliverables_layout.py:55-59` (`_MAKEFILES`, feeds
+  `test_render_targets_next_to_source` et al.) — the comment says it covers
+  "concern .mk", but the concern fragments now live under `scripts/analysis/`
+  and are not globbed.
+
+Neither fails today (the analysis fragments happen not to use `PROJECT_INCLUDES`
+and carry no render target), so this is a **latent** coverage gap, not a live
+bug. But 0240 (scripts grouped by phase) and 0241/0242 move more files, so the
+gap will widen exactly when it matters.
+
+## The class fix (not five hand-rolled globs)
+The root cause is five copies of ".mk enumeration" with independent, drifting
+directory lists. Introduce ONE shared helper — e.g.
+`tests/_mk_discovery.py::all_makefiles()` returning `Makefile` + root `*.mk` +
+`scripts/analysis/*.mk` + `deliverables/*/*.mk` — and migrate every guard to it.
+A future `.mk` move then updates one place, and no guard can silently narrow.
+
+## Relevant files (the 5 enumeration sites)
+- `tests/test_evict_analysis_intermediates.py:98-105` (already extended — migrate to the helper)
+- `tests/test_io_discipline.py:274-286` (already extended — migrate)
+- `tests/test_build_phase_separation.py:49-52` (already extended by /gaze — migrate)
+- `tests/test_makefile_contract.py:259-261` (**gap** — not covering scripts/analysis)
+- `tests/test_deliverables_layout.py:55-59` (**gap** — not covering scripts/analysis)
+
+## Test
+- Add a meta-guard (adherence): grep the test tree for `glob(...*.mk...)` /
+  `listdir ... .mk` outside the shared helper; fail if any guard hand-rolls its
+  own `.mk` enumeration. This is the standing regression test for the class —
+  it catches a new hand-rolled glob in an unrelated future PR.
+
+## Invariants
+- `make lint` green; no behaviour change to the guards' actual contracts — only
+  their file-coverage is unified and widened.
+
+## Exit criteria
+- One shared `.mk` discovery helper; all 5 sites migrated to it.
+- The two gap sites now cover `scripts/analysis/*.mk`.
+- A meta-guard fails on any future hand-rolled `.mk` glob outside the helper.
+
+Ticket-ref: tickets/0225-reorg-code.erg
