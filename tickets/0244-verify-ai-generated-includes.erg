@@ -1,0 +1,50 @@
+%erg 0.1
+Title: Verify citations and claims in the four remaining AI-generated techrep includes
+Created: 2026-07-11
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-11T00:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+Roar sweep after the 0152 session (2026-07-10). Five includes under
+`deliverables/_shared/_includes/` carry the marker "AI-generated, not
+human-reviewed". The one verified during 0152 — `bibliometric-context.md`
+(§11) — contained a PHANTOM reference ("Baran et al. 2024" did not exist; the
+real paper is Rusydiana 2023), a wrong corpus size (657 vs 2,311/3,000 for
+Shang & Jin), and a false claim ("none report validity metrics" — the
+CiteSpace studies do). The same defect class must be assumed in the four
+others until verified:
+
+- `cop-topic-structure.md` (§10) — PRIORITY: its numbers (anti-clustering
+  silhouettes, ARI 0.13) are cited by the 0152 response letter, E3f.
+- `clustering-comparison.md`
+- `changepoint-analysis.md`
+- `temporal-structure.md`
+
+## Actions
+1. For each include: verify every author-year attribution and external claim
+   against resolvable metadata (CrossRef/DOI) and, where cited, hold the
+   fulltext (read-before-cite norm). Pipeline numbers: trace to an archived
+   output (manuscript-number-provenance norm).
+2. Correct errors in place with a dated provenance comment (§11 precedent,
+   commit 5402708).
+3. After human review, downgrade or remove the warning marker.
+
+## Test
+- Spot-check: every DOI named in the four includes resolves; every pipeline
+  number cited in the 0152 letter (E3f) traces to an archived output.
+
+## Verification
+- [ ] Four includes verified, corrections committed with provenance comments
+- [ ] cop-topic-structure numbers vetted before the 0152 letter is sent
+
+## Invariants
+- No silent rewrites: every correction carries a provenance comment.
+
+## Exit criteria
+- [ ] All four includes verified or corrected; markers reviewed by the author
+- [ ] Follow-up decision recorded: adopt or reject a mechanical guard
+      (adherence test: author-year citations in _includes/ must resolve to
+      main.bib or carry a DOI)
