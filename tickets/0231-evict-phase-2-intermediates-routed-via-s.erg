@@ -2,12 +2,12 @@
 Title: Evict Phase-2 intermediates routed via sub-Makefile *_TABLES dir vars (divergence/zoo/multilayer/venues)
 Created: 2026-07-10
 Author: HDMX-coding-agent
-Blocked-by: 0218
 
 --- log ---
 2026-07-10T10:57Z HDMX-coding-agent created
 2026-07-10T11:00Z note spun out of the 0218 raid scoping pass (2026-07-10): the scoper found 0218's "~15 intermediates" undercounts the class 4-5x once sub-Makefiles are included. Different risk profile (~70 targets), own ticket. Blocked-by 0218 so the top-level Makefile eviction + generalized guard land first.
 
+2026-07-10T12:11Z HDMX-coding-agent note blocker 0218 closed — Blocked-by removed.
 --- body ---
 ## Context
 
