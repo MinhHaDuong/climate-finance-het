@@ -1,27 +1,37 @@
 # State
 
-Last updated: 2026-07-10T07:18Z (housekeeping sweep)
+Last updated: 2026-07-10T07:22Z
 
 ## Current goal
 
 **Œconomia R&R resubmission** — version ladder (v2.0.3 → v2.0.5) gated by tracker tickets.
-v2.0.3 (prose-ratchet infra) and v2.0.4 (framing decisions) shipped. **Now: v2.0.5
-implementation** (tracker 0156) — finishing the prose pass, then resubmission.
+v2.0.3 (prose-ratchet infra), v2.0.4 (framing), and the v2.0.5 **content pass** have shipped.
+Remaining path to resubmit: the reviewer letter (0152, HITL) and the final rebuild + deposit
+(0153). Tracker 0156 stays open until resubmitted (closes master tracker 0133).
 
 ### Roadmap
-- **v2.0.5** (0156): base rebuild + content pass DONE; bib 0143 closed, Desrosières fulltext acquired (#918). **Conclusion 0171 UNDERWAY** — actions 3 L&D falsifiable-test (#920), 1 aggregate-birth landing (#922), 2 abandonment-as-result (#923) DONE; **remaining 4 Star & Griesemer, 6 chantiers→book, 7 bib anchoring (light)**. Then title **0181** → prose 0134 → em-dash 0162. Parallel: letter 0152, audit 0161. Resubmit 0153.
-- Parallel (not R&R): method paper **0026** — `multilayer-detection.qmd`.
+- **v2.0.5 content pass — DONE.** Base rebuild 0172, conclusion 0171, title/abstract 0181,
+  prose pass 0134, em-dash 0162, bibliography 0143, stats-provenance audit 0161 — all closed.
+- **v2.0.5 remaining to resubmit** (tracker 0156):
+  - **0152** — response-to-reviewers letter + per-remark traceability (HITL author sign-off).
+  - **0195** — regenerate + archive appendix stat tables on the frozen corpus (0161 follow-up).
+  - **0153** — final clean rebuild, version bump, Zenodo/HAL deposit, resubmit on platform.
+- **Infra (not R&R):** build-split tracker **0163** → children **0207** (render .mk + Quarto
+  profile for the 4 remaining papers) + **0208** (evict analysis intermediates out of
+  content/tables/). Package extraction 0170 closed; **0211** wires openalex-corpus tests +
+  installability guard into host CI.
+- **Parallel (not R&R):** method paper **0026** — `multilayer-detection.qmd`.
 
 ## Status
-<!-- generated 2026-07-09T10:20Z -->
+<!-- generated 2026-07-10T07:22Z -->
 
-**Tickets:** 41 ready · 12 blocked — `erg ready tickets/` for full list
+**Tickets:** 6 ready · 37 blocked/deferred (43 open, 160 closed) — `erg ready tickets/` for full list
 **Recent commits:**
-  3151d05 Merge pull request #923 from MinhHaDuong/worktree-t0171-abandonment
-  27e9a07 manuscript(0171): abandonment of precision as displacement, not repeal
-  a98513d Merge pull request #922 from MinhHaDuong/worktree-t0171-aggregate-birth
-  f98a60d manuscript(0171): land the conclusion on the birth of an economic aggregate
-  c93aee3 Merge pull request #921 from MinhHaDuong/t185-followup-rule9-detector
+  d8eac24 ticket(0206): close — re-acquire 3 HTML-not-PDF files via DOIfetch
+  eae988a ticket(0211): file follow-up — wire openalex-corpus tests + installability guard into CI
+  5c43b48 ticket(0170): close and archive — all moves merged
+  9c80891 ticket(0209): close and archive — fabricated DOI purged + class guard
+  733348e ticket(0170): delete het_*.py trio + Companion-pipelines doc (Move B+C)
 
 ## Corpus (v1.1.1)
 
@@ -30,10 +40,12 @@ implementation** (tracker 0156) — finishing the prose pass, then resubmission.
 
 ## Health
 
-Test failures: none (prose-ratchet + adherence green). Blockers: none.
+Tests green: 1128 passed, 21 skipped (`make check-fast` ~93s — over the <30s target, worth a
+look but not blocking). Blockers: none.
 
 ## Next actions
 
-- **0171 conclusion rebuild underway (2026-07-09):** actions 3/1/2 merged (#920/#922/#923). Next: **action 4** Star & Griesemer concede-then-displace (cadre aloud first, "do not louper") → 6 chantiers→`docs/projet livre - pitch.md` → 7 bib anchoring (light, no systematic GDP↔CF comparison — brief). Every 0171 PR is HITL prose (author voice sign-off).
-- **Needs author (HITL):** 0152 letter rows; Escobar read-later before cite (R2.30). Decided: delegate-participation funding not attributed to 1992 (no source).
-- Ready now, base-independent: **0161** stats provenance · **0166** lead-lag.
+- **Resubmission critical path (HITL):** 0152 letter rows → 0153 final rebuild + Zenodo/HAL
+  deposit + resubmit. Escobar read-later before cite (R2.30) still pending.
+- **Ready infra, base-independent:** 0207 render .mk · 0208 evict intermediates · 0211 CI
+  wiring · 0195 stat-table regeneration.
