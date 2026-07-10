@@ -1,0 +1,40 @@
+%erg 0.1
+Title: Repo layout reorg — tidy the top level in three stages (data, code, prose)
+Created: 2026-07-10
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-10T00:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+Top level reached 43 entries with two flat mega-directories: `scripts/` (173
+files mixing library, entry points, plotting) and `content/` (~7 deliverables
+sharing one Quarto project, forcing exclusion-mask profile files). Target state,
+placement rule, and the 19-file migration audit are in `docs/repo-layout.md`.
+
+This is a **tracking ticket**. Work proceeds in three stages ("ranger la chambre
+en plusieurs temps"): data (en cours), code, prose. It stays open until all
+children close.
+
+## Children
+- `0224` — Workstream DATA (config/, data/, DVC tidy) — en cours
+- `0225` — Workstream CODE (src/ + scripts/ reorg)
+- `0226` — Workstream PROSE (deliverables/ Quarto reorg)
+
+## Scheduling — after the Œconomia resubmit
+The resubmit is the deadline track; the reorg is tidying with no deadline
+payoff. CODE (`0225`) rewrites import paths + Make invocations, PROSE (`0226`)
+moves `manuscript.qmd` into `deliverables/manuscript/` — both destabilize the
+exact machinery the resubmission build depends on. Sequence both **after** the
+resubmit ships. DATA (`0224`, en cours) is Quarto/import-independent and may
+continue in parallel, but only if its moves do not touch DVC stages the
+resubmit build reads; otherwise freeze it too.
+
+## Relevant files
+- `docs/repo-layout.md` — target tree, placement rule, layering invariant, ordered moves
+
+## Exit criteria
+- All three workstream children closed
+- Integration review: `make clean && make all` green from the reorganized tree
+- Root entry count materially reduced; no flat 170-file directory remains
