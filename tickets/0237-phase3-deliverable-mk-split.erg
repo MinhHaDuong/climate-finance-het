@@ -1,0 +1,132 @@
+%erg 0.1
+Title: Phase-3 render as per-deliverable .mk — un-scatter PDF rules, split render from compute
+Created: 2026-07-10
+Author: HDMX-coding-agent
+Blocked-by: 0226
+
+--- log ---
+2026-07-10T15:20Z HDMX-coding-agent created
+2026-07-10T15:20Z note spun out of the 0231 confirmation session (2026-07-10). `make papers` is not a Phase-3 build: it starts with `check-corpus` and each companion PDF rule depends on Phase-2 outputs (figures/tables), so asking for a PDF drags in the whole analysis. Demonstrated twice live: `make papers` died on a missing Phase-1 `citations.csv`, then on `import umap` in a Phase-2 clustering step — neither should touch a render. `manuscript.mk` already proves the target shape (3 render rules, 0 Phase-2 rules). Blocked-by 0226 so each deliverable's `_quarto.yml` home is settled before the render `.mk` moves beside it.
+
+--- body ---
+## Context
+
+Spun out of the 0231 confirmation session (2026-07-10). The author's mental model
+is that `make papers` should be a **Phase-3 build** — render the companion PDFs
+from handoff artifacts, no corpus, no `uv run`, no analysis. It is not.
+
+- `make manuscript` (Makefile:667) already IS Phase-3: it depends only on the
+  rendered PDF/DOCX, built by `manuscript.mk` from `$(MANUSCRIPT_INPUTS)` — a
+  per-deliverable render `.mk` with **3 render rules and 0 Phase-2 rules**. This is
+  the reference implementation.
+- `make papers` (Makefile:669) is not: it opens with `check-corpus` (asserts the
+  322 MB corpus contract) and each companion PDF rule depends on Phase-2 outputs
+  (e.g. `zoo.mk:153` → `$(ZOO_FIGS)`), which chain back through the derived tables
+  to the corpus. So a "render" request regenerates the analysis.
+
+The entanglement is a live defect, demonstrated twice this session: `make papers`
+died first on a missing Phase-1 `data/catalogs/citations.csv`, then on
+`ModuleNotFoundError: umap` inside `analyze_embeddings.py` (a Phase-2 clustering
+step). A Phase-3 render should never need the corpus, a GPU, or `umap`.
+
+Root cause: **the render rules (Phase 3) are scattered into the analysis `.mk`
+files (Phase 2), so render and compute share a file and a dependency edge.** The
+decomposition axis is wrong for Phase 3: analysis is organized by *concern*
+(`divergence.mk`, `zoo.mk`, …); a paper draws from several concerns and has no
+single owning concern file, so its render rule ends up wherever it was convenient.
+
+## The decision — decompose Phase 3 by deliverable, split the build by phase
+
+This is the build half of tracker 0221 (layout mirrors dataflow phase) and the
+build companion to 0226 (deliverables/<x>/ per-paper Quarto projects). Settled in
+the 2026-07-10 discussion (author = MOA):
+
+1. **One Phase-3 render `.mk` per deliverable** (each paper AND each slide deck),
+   living beside its `_quarto.yml` under `deliverables/<x>/` (0226). It owns the
+   PDF/DOCX render rule(s) and nothing else. `manuscript.mk` is the template.
+2. **Analysis concern `.mk` stay pure Phase-2** — produce `data/derived/`,
+   `content/figures/`, `content/tables/*.md`, `content/*-vars.yml`. No render rules.
+3. **Split the include sets by phase.** The writing-side build (`make papers` /
+   `make manuscript` / `make slides`) `-include`s only the deliverable `.mk` and
+   renders from artifacts on disk — no `check-corpus`, no `uv run`. The
+   analysis-side build (`make analysis` / `make corpus`) `-include`s the concern
+   `.mk`. (This is `~/.claude/rules/git.md` § "Split the build by workpackage.")
+4. **Shared interface = a tiny `paths.mk`** defining the artifact locations
+   (`DERIVED`, `content/figures`, `content/tables`, the `*-vars.yml` names)
+   `-include`d by both sides, so render and compute agree on paths without either
+   triggering the other. 0231 already centralized the table half (`$(DERIVED)` /
+   `DERIVED_TABLES_DIR`).
+
+**Accepted trade-off (Option A, hard split):** once render and compute are in
+separate include sets, `make papers` will NOT rebuild a stale figure — by design.
+The discipline becomes "run analysis, then render," the same contract the frozen
+manuscript already lives under (0163/0207). This preserves the live-vs-frozen
+distinction (project memory `frozen_manuscript_vs_live_companions`): a companion is
+frozen into committed artifacts only at submission, on its submission branch.
+
+## Relevant files
+
+- `manuscript.mk` — REFERENCE implementation (per-deliverable Phase-3 `.mk`).
+- Render rules to extract (the scatter inventory, 2026-07-10):
+  - `Makefile:682` — `output/content/corpus-report.pdf`
+  - `Makefile:685` — `output/content/technical-report.pdf`
+  - `Makefile:688` — `output/content/data-paper.pdf`
+  - `Makefile:691` — `output/content/multilayer-detection.pdf`
+  - `zoo.mk:153` — `output/content/breakpoint-detect-method-zoo.pdf` (1 render rule
+    buried among 13 Phase-2 rules)
+  - `multilayer-detection.mk:98` — `output/content/multilayer-detection-techrep.pdf`
+    (1 render rule among 7 Phase-2 rules)
+- `Makefile:669` (`papers:` target, drop `check-corpus`), `Makefile:335`
+  (`check-corpus`), the `-include` block (Makefile:83-88).
+- `divergence.mk`, `zoo.mk`, `multilayer-detection.mk`, `venues.mk` — become
+  pure Phase-2 after their render rules are extracted.
+
+## Actions
+
+1. Create a per-deliverable render `.mk` for each companion (co-located with its
+   `_quarto.yml` per 0226): corpus-report, technical-report, data-paper,
+   multilayer-detection, breakpoint-detect-method-zoo, multilayer-detection-techrep.
+   Move the render rule verbatim; its Phase-2 prerequisites become artifact-file
+   dependencies satisfied by a prior `make analysis`, not targets the render build
+   knows how to rebuild.
+2. Extract `DERIVED`, `content/figures`, `content/tables`, vars-file names into
+   `paths.mk`; `-include` it from both the analysis and writing sides.
+3. Re-cut the top-level include block: `make papers`/`manuscript`/`slides`
+   `-include` only deliverable `.mk`; `make analysis`/`corpus` `-include` concern
+   `.mk`. Drop `check-corpus` from the `papers` prerequisite list.
+4. Any slide decks get the same per-deliverable render `.mk` treatment.
+
+## Test
+
+First (RED): a phase-purity guard in `tests/test_phase_layout.py` (or a new
+`tests/test_build_phase_separation.py`) — **no `.mk` file may contain BOTH a
+`output/content/*.pdf` render target AND a Phase-2 compute target** (a
+`$(...)/tab_*.csv:` or `content/figures/fig_*.png:` rule). RED now on `zoo.mk` and
+`multilayer-detection.mk`; GREEN once render rules are extracted to deliverable
+`.mk`. Mutation-proof by fabricating a mixed rule.
+
+## Verification
+
+- [ ] `grep -c '\.pdf:' <concern>.mk` == 0 for divergence/zoo/multilayer/venues.
+- [ ] With all handoff artifacts present, `make -n papers` emits **no** `uv run`
+      and does not invoke `check-corpus` — proof it is Phase-3-only.
+- [ ] `make papers` on a checkout with artifacts present but NO corpus succeeds
+      (the clean-room property `make manuscript` already has).
+- [ ] `make analysis` still regenerates every artifact from the corpus.
+
+## Invariants
+
+- The six companion PDFs + the manuscript still build (given artifacts / corpus).
+- No Phase-1 trigger from any writing-side target. DVC untouched.
+- Live-vs-frozen distinction preserved: companions regenerate from data via
+  `make analysis`; freezing happens only at submission.
+
+## Exit criteria
+
+- Each deliverable (paper + slide) has its own Phase-3 render `.mk`; concern `.mk`
+  hold zero render rules; the four inline PDF rules leave the top-level Makefile.
+- `make papers` is Phase-3: no `check-corpus`, no `uv run`, renders from artifacts.
+- Phase-purity guard is GREEN and has teeth.
+
+Ticket-ref: tickets/0221-tracking-reorganize-the-repo-so-layout-m.erg
+Ticket-ref: tickets/0226-reorg-prose.erg
