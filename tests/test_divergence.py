@@ -372,8 +372,14 @@ class TestSeedReproducibility:
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.slow
 class TestMetricProperties:
-    """Verify basic metric axioms for the S1-S4 distance functions."""
+    """Verify basic metric axioms for the S1-S4 distance functions.
+
+    Heavy numerical dependency: imports dcor (~7s numba-JIT at import) and ot —
+    slow tier, off the fast inner loop (tickets 0213/0214). The axioms still run
+    in `make check`.
+    """
 
     @pytest.fixture
     def random_arrays(self):
@@ -611,8 +617,13 @@ class TestEqualN:
         unequal = [pair for pair in sizes if pair[0] != pair[1]]
         assert len(unequal) > 0, "Expected some unequal window sizes in growth data"
 
+    @pytest.mark.slow
     def test_equal_n_s2_not_correlated_with_size(self):
-        """Corrected S2 energy should not strongly correlate with window size."""
+        """Corrected S2 energy should not strongly correlate with window size.
+
+        Heavy: many S2 energy computations via dcor — slow tier, off the fast
+        inner loop (tickets 0213/0214). Still runs in `make check`.
+        """
         from _divergence_semantic import compute_s2_energy
 
         df, emb = _make_growth_data(n_years=20, growth_factor=10, dim=16)

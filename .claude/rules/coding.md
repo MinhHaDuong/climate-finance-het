@@ -27,6 +27,19 @@ Generic coding rules are in `~/.claude/rules/coding.md`. This file adds project-
 
 Typing policy — core modules must be fully typed, enforced by mypy in `test_script_hygiene.py::TestTypingCoreModules` (which owns the canonical module list). When touching a core module, annotations are required on new/changed functions. Do NOT type: `main()` bodies, plot scripts, DataFrame column access, one-off scripts.
 
+### Test tiers — classify by cost, not mechanism (tickets 0213/0214)
+
+Markers gate which `make` target runs a test. Pick the tier by **cost**, not by the mechanism it happens to use:
+
+| Tier | Marker | Belongs here | Gate |
+|------|--------|--------------|------|
+| fast | *(none)* | pure-Python logic; pandas/numpy fine; **no** dcor/torch/ot/matplotlib, no subprocess, no lint | `make check-fast` |
+| integration | `@pytest.mark.integration` | spawns a subprocess / drives a script / sleep-based timing | `make check` |
+| slow | `@pytest.mark.slow` | network, real data, a heavy numerical dependency (dcor/torch/ot/sentence_transformers), or heavy compute | `make check` |
+| adherence | `@pytest.mark.adherence` | ruff / mypy / hygiene / contracts | `make lint` |
+
+`make check-fast` = `-m "not slow and not integration and not adherence"` (the inner loop — must stay pure logic). `make lint` = `-m adherence`. `make check` runs everything. No coverage is lost by moving a test to a slower tier — `make check` still runs it before every PR.
+
 ## Testing
 
 - Acceptance tests (e.g., `make corpus-validate`) are the top-level contract — never weaken without discussion.

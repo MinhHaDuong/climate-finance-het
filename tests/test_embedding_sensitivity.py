@@ -103,8 +103,14 @@ class TestHelpers:
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.slow
 class TestPCABreakPreservation:
-    """Verify that PCA projection preserves a known distributional shift."""
+    """Verify that PCA projection preserves a known distributional shift.
+
+    Heavy numerical dependency: computes energy distances via dcor (~7s numba-JIT
+    at import) — slow tier, off the fast inner loop (tickets 0213/0214). Still
+    runs in `make check`.
+    """
 
     def test_pca_preserves_shift(self):
         """Two Gaussian clusters with a shift at t=10 should remain
