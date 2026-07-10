@@ -82,7 +82,11 @@ def _collect(workdir: str, selector: str) -> set[str]:
         capture_output=True,
         text=True,
     )
-    assert proc.returncode == 0, f"collection failed:\n{proc.stdout}\n{proc.stderr}"
+    # 0 = items collected, 5 = none matched the selector (an empty selection, not
+    # a failure). Anything else is a real collection error.
+    assert proc.returncode in (0, 5), (
+        f"collection failed (exit {proc.returncode}):\n{proc.stdout}\n{proc.stderr}"
+    )
     names = set()
     for line in proc.stdout.splitlines():
         line = line.strip()
