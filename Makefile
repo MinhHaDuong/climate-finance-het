@@ -22,12 +22,11 @@
 #   make rebuild            Clean + rebuild everything
 
 # ── Paths ─────────────────────────────────────────────────
-# Data lives in data/catalogs/ (managed by DVC).
-# Python scripts resolve the same path via utils.py (BASE_DIR/data).
+# data/ is split by dataflow phase (see .claude/rules/architecture.md § Data location):
+#   data/catalogs/ (+ pool/ exports/ syllabi/) = Phase-1 corpus, DVC-managed.
+#   data/derived/  = Phase-2 derived data, gitignored + regenerable.
+# Python scripts resolve the same paths via utils.py (CATALOGS_DIR / DERIVED_TABLES_DIR).
 DATA_DIR     := data/catalogs
-# Analysis-side scratch dir for large Phase-2 intermediates consumed only by
-# other Phase-2 scripts (not writing deliverables). Python resolves the same
-# path via utils.DERIVED_TABLES_DIR (DATA_DIR/derived/tables). Ticket 0208.
 DERIVED      := data/derived/tables
 CONFIG       := config/analysis.yaml
 BIB         := content/bibliography/main.bib
@@ -41,7 +40,9 @@ EXTENDED    := $(DATA_DIR)/extended_works.csv
 REFINED     := $(DATA_DIR)/refined_works.csv
 REFINED_EMB := $(DATA_DIR)/refined_embeddings.npz
 REFINED_CIT := $(DATA_DIR)/refined_citations.csv
-MOSTCITED   := $(DATA_DIR)/het_mostcited_50.csv
+
+# Phase 2 derived data (regenerable, under data/derived/)
+MOSTCITED   := $(DERIVED)/het_mostcited_50.csv
 
 # Phase 1→2 handoff: Feather files for fast Phase 2 reads
 REFINED_FTH := $(DATA_DIR)/refined_works.feather
@@ -418,7 +419,7 @@ content/figures/fig_composition_wide.png: scripts/plot_fig2_composition.py scrip
 
 # -- Data paper --
 # Semantic clusters (computation only — no figures)
-SEMANTIC_CLUSTERS := $(DATA_DIR)/semantic_clusters.csv
+SEMANTIC_CLUSTERS := $(DERIVED)/semantic_clusters.csv
 
 $(SEMANTIC_CLUSTERS): scripts/analyze_embeddings.py scripts/utils.py $(CONFIG) $(ENRICHED) $(DATA_DIR)/embeddings.npz
 	$(PYTHON) $< --output $@

@@ -14,7 +14,7 @@ import numpy as np
 import pandas as pd
 from build_het_core import is_global_south, is_non_english
 from pipeline_loaders import (
-    CATALOGS_DIR,
+    DERIVED_TABLES_DIR,
     REFINED_WORKS_PATH,
     load_refined_citations,
     load_refined_embeddings,
@@ -279,7 +279,7 @@ def main():
     log.info("Loaded %d citation edges", len(citations_df))
     _log_mem("after load citations")
 
-    clusters_path = os.path.join(CATALOGS_DIR, "semantic_clusters.csv")
+    clusters_path = os.path.join(DERIVED_TABLES_DIR, "semantic_clusters.csv")
     clusters_df = pd.read_csv(clusters_path, low_memory=False)
     log.info("Loaded %d cluster assignments", len(clusters_df))
     _log_mem("after load clusters")

@@ -2,7 +2,7 @@
 """Summarize publication venues for core works.
 
 Reads:
-- $DATA/catalogs/het_mostcited_50.csv
+- $DATA/derived/tables/het_mostcited_50.csv
 
 Writes:
 - tables/tab_core_venues_journals.csv
@@ -18,7 +18,7 @@ import re
 
 import pandas as pd
 from script_io_args import parse_io_args, validate_io
-from utils import BASE_DIR, CATALOGS_DIR, get_logger, save_csv
+from utils import BASE_DIR, DERIVED_TABLES_DIR, get_logger, save_csv
 
 log = get_logger("summarize_core_venues")
 
@@ -32,7 +32,7 @@ def parse_args():
     parser.add_argument(
         "--core",
         type=str,
-        default=os.path.join(CATALOGS_DIR, "het_mostcited_50.csv"),
+        default=os.path.join(DERIVED_TABLES_DIR, "het_mostcited_50.csv"),
         help="Input core works CSV",
     )
     parser.add_argument(

@@ -1,0 +1,90 @@
+%erg 0.1
+Title: Layout: data/ split by dataflow phase — evict remaining Phase-2 derived data from data/catalogs
+Created: 2026-07-10
+Author: HDMX-coding-agent
+Closed: phase-split migration complete — semantic_clusters + het_mostcited under data/derived, convention documented, guard green
+
+--- log ---
+2026-07-10T08:46Z HDMX-coding-agent created
+
+2026-07-10T09:02Z HDMX-coding-agent closed — phase-split migration complete — semantic_clusters + het_mostcited under data/derived, convention documented, guard green
+--- body ---
+## Context
+
+The project is organized along four logics — build (Makefiles / workpackage
+`.mk`s), layout (directories), data-analysis (dataflow phases), tracking
+(tickets). The layout logic drifted from the data-analysis logic: **Phase-2
+derived data leaked into `data/catalogs/`, the Phase-1 corpus directory.**
+
+`data/` is subdivided by phase — but only half-consistently:
+- `data/catalogs/` (+ `pool/`, `exports/`, `syllabi/`) = Phase-1 corpus, DVC-managed.
+- `data/derived/` = Phase-2 derived data (gitignored, regenerable), established by
+  0208 when it evicted the heavy `content/tables/` intermediates.
+
+Two Phase-2 outputs still resolve under `data/catalogs/` (Phase 1's dir):
+- `semantic_clusters.csv` — produced by `analyze_embeddings.py` (Phase 2).
+- `het_mostcited_50.csv` — produced by `build_het_core.py` (Phase 2).
+
+Completing the phase split makes the layout mirror the data-analysis phase, with the
+build constants following.
+
+## Decision — flat `data/derived/`, split by phase not workpackage
+
+`data/derived/` stays FLAT. It is NOT subdivided to mirror the `.mk` workpackages:
+mirroring couples layout to build and breaks on the first cross-workpackage file —
+`tab_pole_papers.csv` is already consumed by three workpackages and has no single
+owner. `data/` splits on the coarse, stable axis (phase): `catalogs`=Phase 1,
+`derived`=Phase 2.
+
+## Relevant files
+- `Makefile` — `SEMANTIC_CLUSTERS := $(DATA_DIR)/semantic_clusters.csv` (~421),
+  `MOSTCITED := $(DATA_DIR)/het_mostcited_50.csv` (44) become `$(DERIVED)/...`.
+  Producer recipes already pass `--output $@`. Fix the stale `DERIVED` comment (~30)
+  that mislabels the path as `DATA_DIR/derived/tables`.
+- `scripts/analyze_embeddings.py` (`CLUSTERS_PATH`, ~37 + docstring ~14),
+  `scripts/analyze_multilingual.py` (~282), `scripts/analyze_genealogy.py` (~106 +
+  docstring ~10) — hardcode `os.path.join(CATALOGS_DIR, "semantic_clusters.csv")`.
+  Prefer the script-io flag pattern 0208 used for cross-script reads (`--clusters`),
+  else `DERIVED_TABLES_DIR` — whichever keeps producer-write and consumer-read on the
+  SAME resolved path (verify DERIVED_TABLES_DIR resolves == Makefile `$(DERIVED)`).
+- `scripts/build_het_core.py`, `scripts/export_core_venues_markdown.py` — docstrings.
+- Docs to keep aligned: `.claude/rules/architecture.md` (Data location + phases),
+  `.gitignore` (data/ governance comment), `Makefile` DERIVED comment.
+
+## Actions
+1. Retarget the two Makefile constants to `$(DERIVED)/`; move the three scripts'
+   `semantic_clusters.csv` reads off `CATALOGS_DIR` onto the derived path, mirroring
+   0208's wiring exactly (flags where cross-script). Fix docstrings.
+2. Document the phase-split convention where the layout is described:
+   `.claude/rules/architecture.md` (Data location + the Phase-2 outputs line),
+   `.gitignore` comment, Makefile constant-block comment. Reconcile the stale
+   "data lives outside the repo / never hardcode data/catalogs" wording with reality.
+3. Keep DVC scoped to corpus data; the moved files stay gitignored, non-DVC,
+   regenerable — no git mv (untracked), no on-disk move (next `make` regenerates).
+
+## Scope out
+- `tests/fixtures/smoke/catalogs/het_mostcited_50.csv` — a self-contained smoke-test
+  mini-corpus mirror; internal path is a test detail. Left as-is.
+- Residual small `content/tables/` intermediates — the opposite leak, owned by 0218.
+
+## Test
+- New guard `tests/test_phase_layout.py` (adherence marker, grep-ratchet style like
+  0208's): no Make constant or `scripts/*.py` line resolves `semantic_clusters.csv`
+  or `het_mostcited_50.csv` under `data/catalogs/` or `CATALOGS_DIR`. Excludes
+  `tests/fixtures/`. RED first, then migrate to green.
+- Regression: `make check-fast` stays green.
+
+## Invariants
+- `make papers` unaffected — producer-write and consumer-read paths move together in
+  one commit and resolve to the same location.
+- Phase separation preserved; DVC untouched; files stay gitignored + regenerable.
+
+## Exit criteria
+- No Phase-2 output (`semantic_clusters.csv`, `het_mostcited_50.csv`) resolves under
+  `data/catalogs/`; both live under `data/derived/`.
+- Phase-split convention documented in `architecture.md`, `.gitignore`, Makefile.
+- New class guard green; would fail on a re-introduced Phase-2 output under catalogs.
+- `make check-fast` green.
+
+Ticket-ref: tickets/0163-split-build-remaining-writing-workpackag.erg
+Ticket-ref: tickets/0218-evict-remaining-phase-2-intermediates-fr.erg

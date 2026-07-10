@@ -30,7 +30,7 @@ The pipeline has four phases. Each phase's scripts follow a naming convention an
 
 **Phase 2 — Analysis & figures** (fast, deterministic, run often):
 - Scripts: `analyze_*`, `plot_*`, `compute_*`, `export_*`, `summarize_*`, `build_het_core.py`
-- Reads Phase 1 outputs; produces `content/figures/`, `content/tables/`, `content/_includes/`, `content/*-vars.yml`
+- Reads Phase 1 outputs; produces `content/figures/`, `content/tables/`, `content/_includes/`, `content/*-vars.yml` (writing deliverables) and analysis intermediates under `data/derived/` (not destined for a document)
 
 ### Phase 2 rules
 
@@ -92,12 +92,23 @@ by path.
 
 ## Data location
 
-Data lives **outside the repo**, at `CLIMATE_FINANCE_DATA` in `.env`.
-`scripts/utils.py` reads `.env` and exports `DATA_DIR`, `CATALOGS_DIR`, `EMBEDDINGS_PATH`. Never hardcode `data/catalogs/` relative to the repo.
+`DATA_DIR` defaults to `<repo>/data` and can be relocated onto another disk by
+setting `CLIMATE_FINANCE_DATA` in `.env`. `scripts/utils.py` re-exports `DATA_DIR`,
+`CATALOGS_DIR`, `DERIVED_TABLES_DIR`, `EMBEDDINGS_PATH` from `pipeline_loaders`.
+Resolve paths through those constants — never hardcode `data/catalogs/` in a script.
+
+`data/` is split by dataflow phase, so the directory names which phase owns a file:
+
+- `data/catalogs/` (+ `pool/`, `exports/`, `syllabi/`) — **Phase-1 corpus**,
+  DVC-managed (materialized locally by `dvc pull` from the padme remote).
+- `data/derived/` — **Phase-2 derived data**: analysis intermediates and derived
+  tables, gitignored and regenerable (`make` recreates them from the corpus). No
+  Phase-2 output belongs under `data/catalogs/`; guard `tests/test_phase_layout.py`.
 
 ## Incremental caches vs DVC outputs
 
 - **`enrich_cache/`** — persistent cache directory (gitignored, not a DVC output). Survives `dvc repro`.
+- **`data/derived/`** — Phase-2 derived data (analysis intermediates, derived tables). Gitignored, non-DVC, regenerable by `make`. Split by phase from `data/catalogs/` so the directory mirrors the pipeline phase (tickets 0208, 0219).
 - **DVC output** — declared in `dvc.yaml` `outs:`. Ephemeral — DVC may delete it.
 
 When adding a new enrichment script: put incremental state in `enrich_cache/<name>.csv`, write the DVC output separately.

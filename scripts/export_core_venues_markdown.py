@@ -5,7 +5,7 @@ Produces a Quarto-includable markdown table grouping venues by publisher
 where institutional series overlap, matching the manuscript's @tbl-venues.
 
 Reads:
-- $DATA/catalogs/het_mostcited_50.csv
+- $DATA/derived/tables/het_mostcited_50.csv
 
 Writes:
 - content/tables/tab_core_venues_top10.md
@@ -19,7 +19,7 @@ import os
 import pandas as pd
 from script_io_args import parse_io_args, validate_io
 from summarize_core_venues import canonical_venue, venue_type
-from utils import BASE_DIR, CATALOGS_DIR, get_logger
+from utils import BASE_DIR, DERIVED_TABLES_DIR, get_logger
 
 log = get_logger("export_core_venues_markdown")
 
@@ -46,7 +46,7 @@ def main():
     parser.add_argument(
         "--core",
         type=str,
-        default=os.path.join(CATALOGS_DIR, "het_mostcited_50.csv"),
+        default=os.path.join(DERIVED_TABLES_DIR, "het_mostcited_50.csv"),
         help="Input core works CSV",
     )
     args = parser.parse_args(extra)
