@@ -15,11 +15,13 @@ across `scripts/` (83) and `tests/` (88). A guard asserting returncode 0 would b
 red from its first commit, so the tree must be cleaned first — as its own
 reviewable unit, separate from wiring the guard.
 
-Blocked-by 0218: that raid (`t218-evict-phase2-intermediates`) is live and
-touches many `scripts/`/`tests/` files. A repo-wide `ruff --fix` sweep run
-concurrently would collide (import-reorder diffs conflict with almost any edit,
-and a non-conflicting silent drop is worse — see rules/git.md multi-PR wave).
-Run this only once 0218 has merged and `origin/main` is quiet.
+Run only against a quiet tree — no concurrent session touching the code. A
+repo-wide `ruff --fix` sweep rewrites imports across ~171 sites in `scripts/`
+and `tests/`; run against a moving tree it collides (import-reorder diffs
+conflict with almost any edit, and a non-conflicting silent drop is worse — see
+rules/git.md multi-PR wave). Blocked-by 0218 because that raid
+(`t218-evict-phase2-intermediates`) is live on exactly those directories; do the
+sweep only once 0218 has merged and `origin/main` is quiet.
 
 ## Relevant files
 - `scripts/*.py` — 83 violations
@@ -40,8 +42,8 @@ Run this only once 0218 has merged and `origin/main` is quiet.
   - PERF102 incorrect-dict-iterator (1)
 
 ## Actions
-1. Fetch origin; confirm 0218 is merged and no sibling session is mid-sweep on
-   `scripts/`/`tests/` before starting (rules/workflow.md sync gate).
+1. Confirm the tree is quiet: fetch origin, 0218 merged, and no sibling session
+   mid-sweep on `scripts/`/`tests/` (rules/workflow.md sync gate).
 2. `uv run ruff check . --fix` for the 144 mechanical fixes. Review the diff.
 3. Hand-resolve the ~27 remainder. Prefer a real fix; for the complexity rules,
    a `# noqa: C901  # <reason>` is acceptable on legitimately-branchy analysis
