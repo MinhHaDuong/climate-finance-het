@@ -50,11 +50,12 @@ _SHARED_REF = re.compile(
 # A Make render rule: the target (first token, left of `:`) is a PDF/DOCX file.
 _RENDER_TARGET = re.compile(r"^(?P<t>[\w./-]+\.(?:pdf|docx))\s*:")
 
-# Makefiles that carry render rules (top-level + concern .mk + the manuscript's).
+# Makefiles that carry render rules (top-level + concern .mk + every
+# per-deliverable render .mk under deliverables/<x>/, ticket 0237).
 _MAKEFILES = (
     [os.path.join(REPO_ROOT, "Makefile")]
     + glob.glob(os.path.join(REPO_ROOT, "*.mk"))
-    + [os.path.join(DELIVERABLES, "manuscript", "manuscript.mk")]
+    + glob.glob(os.path.join(DELIVERABLES, "*", "*.mk"))
 )
 
 
