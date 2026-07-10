@@ -12,7 +12,7 @@
 # ── Paths ─────────────────────────────────────────────────────────────────
 
 ZOO_FIGS   := content/figures
-ZOO_TABLES := content/tables
+ZOO_TABLES := $(DERIVED)
 
 # ── Schematic stems (match plot_schematic_{stem}.py filenames) ────────────
 
@@ -54,7 +54,7 @@ $(ZOO_FIGS)/schematic_%.png: scripts/plot_schematic_%.py scripts/script_io_args.
 # ── Cross-year Z-score tables ─────────────────────────────────────────────
 #
 # Standardise D(t,w) across years to produce Z(t,w).
-# Output: content/tables/tab_crossyear_{method}.csv
+# Output: $(ZOO_TABLES)/tab_crossyear_{method}.csv
 # Depends only on the corresponding tab_div_{method}.csv.
 
 .PHONY: crossyear-tables

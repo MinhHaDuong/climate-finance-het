@@ -9,7 +9,7 @@
 
 # ── Paths ─────────────────────────────────────────────────────────────────
 
-VENUE_TABLE := content/tables/tab_venue_concentration.csv
+VENUE_TABLE := $(DERIVED)/tab_venue_concentration.csv
 VENUE_FIG   := content/figures/fig_venue_concentration.png
 
 # ── Phony targets ─────────────────────────────────────────────────────────

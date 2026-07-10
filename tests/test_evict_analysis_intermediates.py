@@ -1,4 +1,4 @@
-"""Tickets 0208 + 0218 — analysis intermediates evicted from content/tables/.
+"""Tickets 0208 + 0218 + 0231 — analysis intermediates evicted from content/tables/.
 
 `content/tables/` conflates small byte-stable *writing deliverables* (the `.md`
 `{{< include >}}` fragments and a few pinned `.csv`) with *analysis
@@ -27,12 +27,17 @@ Two guards, complementary:
    (`qa_citations_report.json`, `multilingual_report.json`) are a distinct
    class, out of 0218's scope, and are neither flagged nor moved here.
 
-Scope boundary (ticket 0218, scoping finding 2): the class ratchet scans the
-top-level `Makefile` ONLY. The sub-Makefiles (`divergence.mk`, `zoo.mk`,
-`multilayer-detection.mk`, `venues.mk`) route ~70 more `tab_*` targets to
-`content/tables/` via their own `*_TABLES` dir variable; scanning them would go
-RED on all ~70 pre-existing targets — a false-positive storm, not a regression.
-Widening the guard to those subsystems is ticket 0231 (blocked by this one).
+Scope (ticket 0231): the class ratchet scans the top-level `Makefile` AND every
+sub-Makefile (`divergence.mk`, `zoo.mk`, `multilayer-detection.mk`, `venues.mk`).
+Those subsystems route their `tab_*` targets through a per-subsystem directory
+variable (`DIV_TABLES`, `ZOO_TABLES`, `COMP_TABLES`, `VENUE_TABLE`), so a target
+line reads `$(DIV_TABLES)/tab_div_$(m).csv`, not a literal `content/tables/...`
+path. The ratchet therefore resolves Make variable references before matching:
+it expands `$(VAR)` from the assignments collected across all makefiles, then
+flags any target whose *resolved* path lands under `content/tables/`. Flipping a
+`*_TABLES` variable back to `content/tables` re-reddens the whole subsystem —
+which is the regression this guard exists to catch (0218 evicted the top-level
+literal set; 0231 evicted the variable-routed sub-Makefile class).
 """
 
 import glob
@@ -170,11 +175,54 @@ def _logical_lines(path):
     return out
 
 
-def _content_table_targets(makefile_path):
+_ASSIGN = re.compile(r"^\s*([A-Za-z_][\w]*)\s*[:?]?=\s*(.*?)\s*$")
+_VARREF = re.compile(r"\$[({]([A-Za-z_][\w]*)[)}]")
+
+
+def _variable_map(paths):
+    """Collect `NAME = value` / `:=` / `?=` assignments across all makefiles.
+
+    Make variables are global across `-include`d sub-Makefiles, so the map is
+    built from the union. Later assignments win (matches Make's last-wins for
+    the simple `:=`/`=` used here). Recipe lines (leading TAB) are skipped.
+    """
+    varmap = {}
+    for path in paths:
+        for line in _logical_lines(path):
+            if line.startswith("\t") or line.lstrip().startswith("#"):
+                continue
+            m = _ASSIGN.match(line)
+            if m and ":" not in m.group(2).split("#", 1)[0]:
+                # Guard against matching a rule like `target: dep` as NAME=value:
+                # a real assignment's RHS holds no rule separator. `:=`/`?=` are
+                # handled by the optional `[:?]?=` in the pattern.
+                varmap[m.group(1)] = m.group(2)
+    return varmap
+
+
+def _resolve(token, varmap, _depth=0):
+    """Expand `$(VAR)`/`${VAR}` references in `token` using `varmap`.
+
+    Bounded recursion; unknown or loop variables (e.g. a `$(m)` foreach index)
+    are left verbatim, which is sufficient — we only need the *directory* prefix
+    to resolve to decide whether a target lands under content/tables/.
+    """
+    if _depth > 10 or "$" not in token:
+        return token
+    return _VARREF.sub(
+        lambda mo: _resolve(varmap.get(mo.group(1), mo.group(0)), varmap, _depth + 1),
+        token,
+    )
+
+
+def _content_table_targets(makefile_path, varmap):
     """Basenames of content/tables/tab_*.csv appearing as a Make target.
 
     The *target* is the text left of the `:` / `&:` rule separator on a
     non-recipe logical line; prerequisites and recipe arguments are ignored.
+    Each target token is variable-expanded first, so a subsystem target written
+    as `$(DIV_TABLES)/tab_div_$(m).csv` is judged by where `$(DIV_TABLES)`
+    resolves, not by its literal text.
     """
     basenames = set()
     for line in _logical_lines(makefile_path):
@@ -187,7 +235,8 @@ def _content_table_targets(makefile_path):
         if ":=" in line and sep == ":":    # variable assignment, not a rule
             continue
         for token in lhs.split():
-            m = _CONTENT_TABLE_DATA.search(token)
+            resolved = _resolve(token, varmap)
+            m = _CONTENT_TABLE_DATA.search(resolved)
             if m:
                 basenames.add(os.path.basename(m.group(1)))
     return basenames
@@ -210,13 +259,18 @@ def _gitignore_deliverable_whitelist():
 def test_content_tables_targets_are_declared_deliverables():
     """No un-whitelisted tab_*.csv intermediate may be a content/tables/ target.
 
-    Every `content/tables/tab_*.csv` produced by the top-level Makefile must be
-    a declared deliverable (a `!content/tables/...` negation in `.gitignore`).
-    Anything else is a Phase-2 intermediate that belongs under `$(DERIVED)`
-    (data/derived/tables).
+    Every `content/tables/tab_*.csv` produced by the top-level `Makefile` or any
+    sub-Makefile must be a declared deliverable (a `!content/tables/...` negation
+    in `.gitignore`). Anything else is a Phase-2 intermediate that belongs under
+    `$(DERIVED)` (data/derived/tables). Sub-Makefile targets routed through a
+    `*_TABLES` directory variable are variable-expanded before the check, so the
+    verdict follows where the variable resolves.
     """
-    makefile = os.path.join(PROJECT_ROOT, "Makefile")
-    targets = _content_table_targets(makefile)
+    makefiles = _makefiles()
+    varmap = _variable_map(makefiles)
+    targets = set()
+    for path in makefiles:
+        targets |= _content_table_targets(path, varmap)
     whitelist = _gitignore_deliverable_whitelist()
     offenders = sorted(targets - whitelist)
     assert not offenders, (

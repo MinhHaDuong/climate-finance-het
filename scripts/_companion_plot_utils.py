@@ -17,13 +17,9 @@ from typing import Any
 
 import pandas as pd
 from pipeline_io import save_figure
-from utils import load_analysis_config
+from utils import DERIVED_TABLES_DIR, load_analysis_config
 
-DEFAULT_TABLES_DIR = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-    "content",
-    "tables",
-)
+DEFAULT_TABLES_DIR = DERIVED_TABLES_DIR
 
 # Method IDs in the fixed lead order used by the heatmap and Z-series panels.
 DISTANCE_METHODS = ("S2_energy", "L1", "G9_community", "G2_spectral")

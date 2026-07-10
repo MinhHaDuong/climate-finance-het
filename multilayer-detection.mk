@@ -8,14 +8,14 @@
 #   companion-figures  — build all four PNGs
 #
 # Inputs (ticket 0042 rerun outputs; produced by divergence-summary):
-#   content/tables/tab_summary_{S2_energy,L1,G9_community,G2_spectral}.csv
-#   content/tables/tab_div_C2ST_{embedding,lexical}.csv
+#   $(COMP_TABLES)/tab_summary_{S2_energy,L1,G9_community,G2_spectral}.csv
+#   $(COMP_TABLES)/tab_div_C2ST_{embedding,lexical}.csv
 #
 # Optional inputs (ticket 0056 interpretation layer; stub fallback if absent):
 #   content/tables/tab_discrim_terms*.csv
 #   content/tables/tab_community_shifts*.csv
 
-COMP_TABLES := content/tables
+COMP_TABLES := $(DERIVED)
 COMP_FIGS   := content/figures
 COMP_CFG    := config/analysis.yaml
 COMP_UTILS  := scripts/_companion_plot_utils.py
