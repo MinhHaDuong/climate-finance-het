@@ -1,0 +1,30 @@
+%erg 0.1
+Title: make check exits 0 while pytest reports failures — gate integrity
+Created: 2026-07-11
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-11T01:05Z HDMX-coding-agent created
+
+--- body ---
+## Context
+Lair run 2026-07-10 (background `make check` on main, doudou): pytest printed
+`21 failed, 1388 passed, 32 skipped, 4 errors in 1333s` yet the make process
+exited 0. A green gate that cannot fail is no gate. Observation only — cause
+not yet established. Candidates: recipe/prerequisite chaining in the Makefile
+(`check: check-package | venv-canonicalize`; a later sub-invocation summarised
+`25 passed` after the failing suite), or the rtk Bash-hook proxy swallowing the
+exit code. Log: `~/.local/share/rtk/tee/1783717128_make_check.log`.
+
+## Actions
+1. Reproduce: `make check` on a tree with one deliberately failing fast test;
+   record exit codes at each layer (pytest, make, rtk-wrapped shell).
+2. Isolate the swallowing layer; fix so failures propagate.
+
+## Test
+- A deliberately failing test makes `make check` exit non-zero (mutation-teeth
+  check, then revert).
+
+## Exit criteria
+- [ ] `make check` exit code equals pytest verdict
+- [ ] Mechanism documented in the ticket log

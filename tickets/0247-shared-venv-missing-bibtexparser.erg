@@ -1,0 +1,28 @@
+%erg 0.1
+Title: Shared venv missing bibtexparser (declared in pyproject) — 3 io_discipline failures
+Created: 2026-07-11
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-11T01:05Z HDMX-coding-agent created
+
+--- body ---
+## Context
+`bibtexparser` is declared in pyproject.toml (line 57) but absent from the
+shared /data venv: `scripts/qa_bibliography.py`, `qa_bib_doi.py` and
+`qa_missing_references.py` crash on import, failing three
+`test_io_discipline.py::TestMigratedScripts` tests (they expect an argparse
+"--output required" error, they get a ModuleNotFoundError traceback). Found
+during the 2026-07-10 lair full-suite run; also blocked the DOIfetch
+missing-references regeneration earlier that day (worked around by editing the
+DOIfetch queue directly).
+
+## Actions
+1. When no sibling session is mid-run on the shared env: `uv sync` from the
+   main checkout (norm: never sync the shared /data env while a sibling
+   background agent is running — memory feedback_no_shared_env_sync).
+2. Re-run the three tests; confirm green.
+
+## Exit criteria
+- [ ] `uv run python -c "import bibtexparser"` succeeds
+- [ ] tests/test_io_discipline.py TestMigratedScripts all green

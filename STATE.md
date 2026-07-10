@@ -1,37 +1,28 @@
 # State
 
-Last updated: 2026-07-10T07:22Z
+Last updated: 2026-07-10T20:48Z
 
 ## Current goal
 
-**Œconomia R&R resubmission** — version ladder (v2.0.3 → v2.0.5) gated by tracker tickets.
-v2.0.3 (prose-ratchet infra), v2.0.4 (framing), and the v2.0.5 **content pass** have shipped.
-Remaining path to resubmit: the reviewer letter (0152, HITL) and the final rebuild + deposit
-(0153). Tracker 0156 stays open until resubmitted (closes master tracker 0133).
+**Œconomia R&R resubmission.** v2.0.5 shipped. Critical path: **0152** letter
+(DRAFT v3 done 2026-07-10: first-person, A4, 60-row ledger filled, all 14
+Editor rows author-signed; **R1/R2 sign-offs next session**) → **0195** stat
+tables → **0153** final rebuild + Zenodo/HAL deposit + resubmit. Tracker 0156
+stays open until resubmitted (then closes 0133).
 
-### Roadmap
-- **v2.0.5 content pass — DONE.** Base rebuild 0172, conclusion 0171, title/abstract 0181,
-  prose pass 0134, em-dash 0162, bibliography 0143, stats-provenance audit 0161 — all closed.
-- **v2.0.5 remaining to resubmit** (tracker 0156):
-  - **0152** — response-to-reviewers letter + per-remark traceability (HITL author sign-off).
-  - **0195** — regenerate + archive appendix stat tables on the frozen corpus (0161 follow-up).
-  - **0153** — final clean rebuild, version bump, Zenodo/HAL deposit, resubmit on platform.
-- **Infra (not R&R):** build-split tracker **0163** → children **0207** (render .mk + Quarto
-  profile for the 4 remaining papers) + **0208** (evict analysis intermediates out of
-  content/tables/). Package extraction 0170 closed; **0211** wires openalex-corpus tests +
-  installability guard into host CI.
-- **Parallel (not R&R):** method paper **0026** — `multilayer-detection.qmd`.
+### Also open
+- **0244** — verify 4 AI-generated techrep includes (phantom ref caught in §11);
+  vet `cop-topic-structure.md` before the letter goes out (it backs E3f).
+- **0245** brief entries · **0243** Fable style alignment · **0026** method paper.
+- **0246/0247** — harness: make-check exit-0 bug; shared venv missing bibtexparser.
 
 ## Status
-<!-- generated 2026-07-10T07:22Z -->
-
-**Tickets:** 6 ready · 37 blocked/deferred (43 open, 160 closed) — `erg ready tickets/` for full list
+<!-- generated 2026-07-10T20:48Z -->
+**Tickets:** 5 ready · 43 blocked — `erg ready tickets/` for full list
 **Recent commits:**
-  d8eac24 ticket(0206): close — re-acquire 3 HTML-not-PDF files via DOIfetch
-  eae988a ticket(0211): file follow-up — wire openalex-corpus tests + installability guard into CI
-  5c43b48 ticket(0170): close and archive — all moves merged
-  9c80891 ticket(0209): close and archive — fabricated DOI purged + class guard
-  733348e ticket(0170): delete het_*.py trio + Companion-pipelines doc (Move B+C)
+  76f6ca8 Merge pull request #1008 from MinhHaDuong/t-roar-file-tickets
+  fc6ef2d Merge pull request #1007 from MinhHaDuong/t152-response-letter
+  50927b8 manuscript(0152): drop the false pre-2007 co-citation paragraph
 
 ## Corpus (v1.1.1)
 
@@ -40,12 +31,10 @@ Remaining path to resubmit: the reviewer letter (0152, HITL) and the final rebui
 
 ## Health
 
-Tests green: 1128 passed, 21 skipped (`make check-fast` ~93s — over the <30s target, worth a
-look but not blocking). Blockers: none.
+check-fast 932 + lint 149 green. Full suite on doudou: 1388 passed, 21 failed + 4
+errors, all data/env-dependent (no local corpus data; C2ST timeouts; bibtexparser
+→ 0247), none from the merged diff. `make check` exited 0 despite failures → 0246.
 
 ## Next actions
 
-- **Resubmission critical path (HITL):** 0152 letter rows → 0153 final rebuild + Zenodo/HAL
-  deposit + resubmit. Escobar read-later before cite (R2.30) still pending.
-- **Ready infra, base-independent:** 0207 render .mk · 0208 evict intermediates · 0211 CI
-  wiring · 0195 stat-table regeneration.
+- **HITL:** 0152 R1/R2 sign-offs → 0195 → 0153 (rebuild, deposit, resubmit).
