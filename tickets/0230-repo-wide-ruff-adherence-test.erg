@@ -1,0 +1,48 @@
+%erg 0.1
+Title: Add a repo-wide ruff adherence test
+Created: 2026-07-10
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-10T00:00Z HDMX-coding-agent created
+
+2026-07-10T10:52Z HDMX-coding-agent note blocker 0211 closed — Blocked-by removed.
+--- body ---
+## Context
+Multiple /gaze reviewers (#956/#958/#960) noted the repo has no `def test_ruff`
+anywhere — lint drift is only caught in CI-less `make lint`, never as a pinned
+pytest adherence guard. The harness Python rule requires every project to carry
+a ruff adherence test so lint failures surface locally before review. Spun out
+of ticket 0211 action 3, which the 0211 scoper deferred as out-of-scope
+(0211 wired the package suite + installability guards; a repo-wide ruff test is
+a separable concern, YAGNI at that point).
+
+## Relevant files
+- `tests/` — where a `test_ruff.py` (or a case in an existing adherence module)
+  would live; mark `@pytest.mark.adherence` so it lands in the `make lint` tier.
+- `libs/openalex-corpus/` — decide whether the repo-wide test also covers the
+  path package or the package carries its own.
+- `~/.claude/rules/coding-python.md` — canonical adherence-test snippet.
+
+## Actions
+1. Add an `@pytest.mark.adherence` test that runs `uv run ruff check .` and
+   asserts returncode 0 (per the harness snippet).
+2. Decide scope: whole repo (including `libs/`) vs a package-local test. Prefer
+   one repo-wide test if ruff config already reaches `libs/`.
+3. Confirm `make lint` picks it up and it is deselected from `check-fast`.
+
+## Test
+Write first (red): a test that shells `uv run ruff check .` and asserts
+returncode 0. It goes red the moment any tracked file has a lint violation.
+
+## Verification
+- [ ] `make lint` runs the ruff adherence test.
+- [ ] The test is in the `adherence` marker tier (out of `check-fast`).
+- [ ] A deliberately-introduced lint error makes it fail.
+
+## Invariants
+- Do not add ruff to the fast inner loop (`check-fast`) — adherence tier only.
+
+## Exit criteria
+- A ruff adherence test gates the repo (and the openalex-corpus package) so lint
+  failures are caught locally before review.
