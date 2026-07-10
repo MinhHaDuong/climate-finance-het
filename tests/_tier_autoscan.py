@@ -55,6 +55,30 @@ def file_has_heavy_import(path: str) -> bool:
     Cached per path — the auto-mark hook calls this once per collected item, but
     many items share one module file. Missing/unreadable files are treated as
     not-heavy (fail open; the ratchet backstops anything that slips through).
+
+    Granularity: module, not per-test (decision, ticket 0228). A whole module
+    leaves the fast path when its *source* imports a heavy dep, even a lazy one
+    fired by only a few tests. Quantified over-sweep on 2026-07-10: 95 test
+    functions (~120 collected items) across 7 heavy-import modules are
+    auto-marked with no explicit marker of their own. But ~104 of those items
+    live in three heavy-*compute* modules (``test_divergence``,
+    ``test_null_model``, ``test_embedding_sensitivity``) whose tests each run
+    tens of seconds even with the heavy import excluded — the layer-2 duration
+    ratchet would bounce them off the fast path anyway, so the auto-mark is not
+    over-reaching there, it agrees with the ratchet. ``test_pipeline_io`` imports
+    matplotlib at top level, so importing the module already pays the tax and
+    per-test marking cannot help. The genuinely recoverable set is ~12 light
+    tests in two modules (``test_analytical_null`` ~3.3s, ``test_zoo_figure_polish``
+    ~2.6s), and even those each retain one matplotlib-touching test. Recovering
+    them would require *sound* per-test detection of which tests reach a lazy
+    import — through fixtures, helpers, and transitive calls, not a body scan — a
+    fragile re-implementation of pytest's own machinery whose false negatives
+    would silently readmit the exact import tax this guard removes. Module
+    granularity is the conservative default: no coverage is lost (every
+    over-swept test still runs in ``make check``), and a developer wanting an
+    over-swept test in the inner loop runs it directly (``pytest
+    tests/test_foo.py::test_bar``, no ``-m`` filter) rather than via the fast-path
+    selector.
     """
     try:
         with open(path, encoding="utf-8") as f:
