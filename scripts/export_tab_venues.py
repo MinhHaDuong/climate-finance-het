@@ -7,7 +7,7 @@ among core works (cited >= 50). Output: content/tables/tab_venues.md
 Usage:
     uv run python scripts/export_tab_venues.py --output content/tables/tab_venues.md \
         [--refined-works data/catalogs/refined_works.csv] \
-        [--pole-papers content/tables/tab_pole_papers.csv] \
+        [--pole-papers <derived>/tab_pole_papers.csv] \
         [--min-papers 10] [--core-threshold 50]
 """
 
@@ -17,7 +17,7 @@ import os
 import numpy as np
 import pandas as pd
 from script_io_args import parse_io_args, validate_io
-from utils import BASE_DIR, CATALOGS_DIR, get_logger
+from utils import CATALOGS_DIR, DERIVED_TABLES_DIR, get_logger
 
 log = get_logger("export_tab_venues")
 
@@ -34,7 +34,7 @@ def main():
     parser.add_argument("--refined-works", default=os.path.join(CATALOGS_DIR, "refined_works.csv"),
                         help="Path to refined_works.csv")
     parser.add_argument("--pole-papers",
-                        default=os.path.join(BASE_DIR, "content", "tables", "tab_pole_papers.csv"),
+                        default=os.path.join(DERIVED_TABLES_DIR, "tab_pole_papers.csv"),
                         help="Path to tab_pole_papers.csv")
     args = parser.parse_args(extra)
 

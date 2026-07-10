@@ -13,7 +13,7 @@ from plot_style import DARK, DPI, FIGWIDTH, FILL, LIGHT, MED, apply_style
 from scipy.stats import gaussian_kde
 from script_io_args import parse_io_args, validate_io
 from sklearn.mixture import GaussianMixture
-from utils import BASE_DIR, get_logger, save_figure
+from utils import DERIVED_TABLES_DIR, get_logger, save_figure
 
 log = get_logger("plot_figS_kde")
 
@@ -30,7 +30,7 @@ def main():
     args = parser.parse_args(extra)
 
     # Load scores
-    path = os.path.join(BASE_DIR, "content", "tables", "tab_pole_papers.csv")
+    path = os.path.join(DERIVED_TABLES_DIR, "tab_pole_papers.csv")
     df = pd.read_csv(path)
     scores = df["axis_score"].dropna().values
     log.info("Loaded %d axis scores from %s", len(scores), path)

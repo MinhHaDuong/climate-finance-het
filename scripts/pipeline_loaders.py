@@ -61,6 +61,12 @@ EXPORTS_DIR = os.path.join(DATA_DIR, "exports")
 RAW_DIR = os.path.join(DATA_DIR, "raw")
 POOL_DIR = os.path.join(DATA_DIR, "pool")
 
+# Analysis-side scratch dir for large Phase-2 intermediates consumed only by
+# other Phase-2 scripts (not writing deliverables): kept out of content/tables/
+# so that directory holds only byte-stable writing outputs (ticket 0208).
+# Regenerable — NOT a DVC output; DVC stays scoped to genuine corpus data.
+DERIVED_TABLES_DIR = os.path.join(DATA_DIR, "derived", "tables")
+
 # Embeddings live in a separate .npz rather than as columns in refined_works.csv:
 # - Size: 1024 floats × 30k rows as CSV text ≈ 1.3 GB vs. ~120 MB compressed binary
 # - Incremental cache: stores keys + text hashes + model config so only new/changed

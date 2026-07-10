@@ -25,6 +25,10 @@
 # Data lives in data/catalogs/ (managed by DVC).
 # Python scripts resolve the same path via utils.py (BASE_DIR/data).
 DATA_DIR     := data/catalogs
+# Analysis-side scratch dir for large Phase-2 intermediates consumed only by
+# other Phase-2 scripts (not writing deliverables). Python resolves the same
+# path via utils.DERIVED_TABLES_DIR (DATA_DIR/derived/tables). Ticket 0208.
+DERIVED      := data/derived/tables
 CONFIG       := config/analysis.yaml
 BIB         := content/bibliography/main.bib
 CSL         := content/bibliography/oeconomia.csl
@@ -349,8 +353,8 @@ corpus-validate: $(REFINED)
 content/tables/tab_citation_coverage.md: scripts/export_citation_coverage.py scripts/utils.py $(REFINED)
 	$(PYTHON) $< --output $@
 
-content/tables/tab_venues.md: scripts/export_tab_venues.py scripts/utils.py $(REFINED) content/tables/tab_pole_papers.csv
-	$(PYTHON) $< --output $@
+content/tables/tab_venues.md: scripts/export_tab_venues.py scripts/utils.py $(REFINED) $(DERIVED)/tab_pole_papers.csv
+	$(PYTHON) $< --output $@ --pole-papers $(DERIVED)/tab_pole_papers.csv
 
 content/tables/tab_corpus_sources.csv content/tables/tab_corpus_sources.md &: scripts/export_corpus_table.py scripts/utils.py $(REFINED)
 	$(PYTHON) $< --output $@
@@ -475,21 +479,21 @@ content/figures/fig_breaks.png: scripts/plot_fig2_breaks.py scripts/plot_style.p
 
 # Bimodality tables (computation only — figures are separate targets below)
 content/tables/tab_bimodality.csv content/tables/tab_axis_detection.csv \
-content/tables/tab_pole_papers.csv &: \
+$(DERIVED)/tab_pole_papers.csv &: \
 		scripts/analyze_bimodality.py scripts/utils.py $(CONFIG) $(REFINED)
 	$(PYTHON) $< --output content/tables/tab_bimodality.csv
 
 # Bimodality figures (each reads tab_pole_papers.csv)
 content/figures/fig_bimodality.png: scripts/plot_bimodality.py scripts/utils.py \
-		content/tables/tab_pole_papers.csv
+		$(DERIVED)/tab_pole_papers.csv
 	$(PYTHON) $< --output $@
 
 content/figures/fig_bimodality_lexical.png: scripts/plot_bimodality_lexical.py scripts/utils.py \
-		content/tables/tab_pole_papers.csv
+		$(DERIVED)/tab_pole_papers.csv
 	$(PYTHON) $< --output $@
 
 content/figures/fig_bimodality_keywords.png: scripts/plot_bimodality_keywords.py scripts/utils.py \
-		content/tables/tab_pole_papers.csv
+		$(DERIVED)/tab_pole_papers.csv
 	$(PYTHON) $< --output $@
 
 # Seed-axis violin (core, manuscript figure)
@@ -502,7 +506,7 @@ content/figures/fig_pca_scatter.png: scripts/plot_fig45_pca_scatter.py scripts/u
 
 # Citation genealogy: model (lineage table) then renderers
 content/tables/tab_lineages.csv: scripts/analyze_genealogy.py scripts/utils.py $(CONFIG) \
-		$(REFINED) $(REFINED_CIT) content/tables/tab_pole_papers.csv $(SEMANTIC_CLUSTERS)
+		$(REFINED) $(REFINED_CIT) $(DERIVED)/tab_pole_papers.csv $(SEMANTIC_CLUSTERS)
 	$(PYTHON) $< --output $@
 
 content/figures/fig_genealogy.png: scripts/plot_genealogy.py scripts/utils.py $(CONFIG) \
@@ -540,21 +544,21 @@ content/figures/fig_alluvial_core.png: \
 
 # Bimodality core variant tables
 content/tables/tab_bimodality_core.csv content/tables/tab_axis_detection_core.csv \
-content/tables/tab_pole_papers_core.csv &: \
+$(DERIVED)/tab_pole_papers_core.csv &: \
 		scripts/analyze_bimodality.py scripts/utils.py $(CONFIG) $(REFINED)
 	$(PYTHON) $< --output content/tables/tab_bimodality_core.csv --core-only
 
 # Bimodality core variant figures
 content/figures/fig_bimodality_core.png: scripts/plot_bimodality.py scripts/utils.py \
-		content/tables/tab_pole_papers_core.csv
+		$(DERIVED)/tab_pole_papers_core.csv
 	$(PYTHON) $< --core-only --output $@
 
 content/figures/fig_bimodality_lexical_core.png: scripts/plot_bimodality_lexical.py scripts/utils.py \
-		content/tables/tab_pole_papers_core.csv
+		$(DERIVED)/tab_pole_papers_core.csv
 	$(PYTHON) $< --core-only --output $@
 
 content/figures/fig_bimodality_keywords_core.png: scripts/plot_bimodality_keywords.py scripts/utils.py \
-		content/tables/tab_pole_papers_core.csv
+		$(DERIVED)/tab_pole_papers_core.csv
 	$(PYTHON) $< --core-only --output $@
 
 # Pre-2007 co-citation traditions network
@@ -572,11 +576,11 @@ content/figures/fig_communities.png: scripts/plot_cocitation.py scripts/utils.py
 
 # KDE supplementary
 content/figures/fig_kde.png: scripts/plot_figS_kde.py scripts/plot_style.py scripts/utils.py $(CONFIG) \
-		content/tables/tab_pole_papers.csv
+		$(DERIVED)/tab_pole_papers.csv
 	$(PYTHON) $< --output $@
 
 # Lexical TF-IDF table (diagnostic, not in manuscript)
-content/tables/tab_lexical_tfidf.csv: scripts/compute_lexical.py scripts/utils.py $(REFINED) \
+$(DERIVED)/tab_lexical_tfidf.csv: scripts/compute_lexical.py scripts/utils.py $(REFINED) \
 		content/tables/tab_breakpoint_robustness.csv
 	$(PYTHON) $< --output $@
 
@@ -597,8 +601,8 @@ content/figures/fig_k_sensitivity.png: scripts/plot_fig_k_sensitivity.py $(CONFI
 # Lexical TF-IDF figures (one per detected break year; output filenames are
 # dynamic, so we use a sentinel file to track freshness).
 .lexical_tfidf.stamp: scripts/plot_fig_lexical_tfidf.py scripts/plot_style.py $(CONFIG) \
-		content/tables/tab_lexical_tfidf.csv
-	$(PYTHON) $< --output $@
+		$(DERIVED)/tab_lexical_tfidf.csv
+	$(PYTHON) $< --output $@ --input $(DERIVED)/tab_lexical_tfidf.csv
 
 # DVC pipeline DAG (data paper)
 content/figures/fig_dag.png: scripts/plot_fig_dag.py scripts/plot_style.py $(CONFIG) dvc.yaml
@@ -633,7 +637,7 @@ content/figures/fig_ncc_core_comparison.png: \
 # NCC Figure (c): Bimodality KDE with period decomposition
 content/figures/fig_ncc_bimodality.png: \
 		scripts/plot_ncc_bimodality.py scripts/utils.py $(CONFIG) \
-		content/tables/tab_pole_papers.csv
+		$(DERIVED)/tab_pole_papers.csv
 	$(PYTHON) $< --output $@
 
 # NCC Figure (d): Alluvial diagram (NCC format)
@@ -697,7 +701,7 @@ ANALYSIS_OUTPUTS := content/figures/fig_bars_v1.png \
                     content/tables/tab_core_shares.csv \
                     content/tables/tab_bimodality.csv \
                     content/tables/tab_axis_detection.csv \
-                    content/tables/tab_pole_papers.csv \
+                    $(DERIVED)/tab_pole_papers.csv \
                     content/tables/cluster_labels.json
 
 archive-analysis: check-manuscript-data $(ANALYSIS_OUTPUTS)

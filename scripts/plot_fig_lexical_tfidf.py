@@ -9,7 +9,7 @@ written) because the number of output files depends on the data.
 Usage:
     uv run python scripts/plot_fig_lexical_tfidf.py --output .lexical_tfidf.stamp
     uv run python scripts/plot_fig_lexical_tfidf.py --output .lexical_tfidf.stamp \
-        --input content/tables/tab_lexical_tfidf.csv [--pdf]
+        --input data/derived/tables/tab_lexical_tfidf.csv [--pdf]
 """
 
 import argparse
@@ -18,7 +18,7 @@ import os
 import matplotlib.pyplot as plt
 import pandas as pd
 from script_io_args import parse_io_args, validate_io
-from utils import BASE_DIR, get_logger, save_figure
+from utils import BASE_DIR, DERIVED_TABLES_DIR, get_logger, save_figure
 
 log = get_logger("plot_fig_lexical_tfidf")
 

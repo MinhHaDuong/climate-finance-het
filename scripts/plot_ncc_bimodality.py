@@ -5,7 +5,7 @@ the period-decomposed KDE showing emergence of bimodality after 2015.
 Formatted for Nature Climate Change specifications.
 
 Reads:
-  content/tables/tab_pole_papers.csv — per-paper axis scores and metadata
+  <derived>/tab_pole_papers.csv — per-paper axis scores and metadata (analysis intermediate)
 
 Writes:
   content/figures/fig_ncc_bimodality.png (and .pdf if --pdf)
@@ -25,7 +25,13 @@ import pandas as pd
 from scipy.stats import gaussian_kde, norm
 from sklearn.mixture import GaussianMixture
 from script_io_args import parse_io_args, validate_io
-from utils import BASE_DIR, get_logger, load_analysis_periods, save_figure
+from utils import (
+    BASE_DIR,
+    DERIVED_TABLES_DIR,
+    get_logger,
+    load_analysis_periods,
+    save_figure,
+)
 
 log = get_logger("plot_ncc_bimodality")
 
@@ -166,7 +172,7 @@ def main():
     if io_args.input:
         input_path = io_args.input[0]
     else:
-        input_path = os.path.join(TABLES_DIR, "tab_pole_papers.csv")
+        input_path = os.path.join(DERIVED_TABLES_DIR, "tab_pole_papers.csv")
 
     df = pd.read_csv(input_path)
     df["year"] = pd.to_numeric(df["year"], errors="coerce").astype(int)

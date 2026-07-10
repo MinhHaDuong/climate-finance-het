@@ -185,8 +185,8 @@ if __name__ == "__main__":
         result = pd.concat(all_rows, ignore_index=True)
         result.to_csv(io_args.output, index=False)
         years_saved = sorted(result["break_year"].unique())
-        log.info("Saved TF-IDF table -> tables/tab_lexical_tfidf.csv "
-                 "(%d rows, break years: %s)", len(result), years_saved)
+        log.info("Saved TF-IDF table -> %s "
+                 "(%d rows, break years: %s)", io_args.output, len(result), years_saved)
         log.info("Run plot_fig_lexical_tfidf.py to generate the figures.")
     else:
         log.warning("No break years had enough abstracts for TF-IDF comparison.")

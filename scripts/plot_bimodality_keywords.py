@@ -1,7 +1,7 @@
 """Keyword scatter + marginals (bimodality validation C).
 
 Reads:
-  content/tables/tab_pole_papers.csv — per-paper keyword counts and metadata
+  <derived>/tab_pole_papers.csv — per-paper keyword counts and metadata (analysis intermediate)
 
 Produces:
   content/figures/fig_bimodality_keywords.png (and .pdf if --pdf)
@@ -16,6 +16,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from script_io_args import parse_io_args, validate_io
 from utils import (
     BASE_DIR,
+    DERIVED_TABLES_DIR,
     get_logger,
     load_analysis_periods,
     save_figure,
@@ -105,7 +106,7 @@ def main():
         input_path = io_args.input[0]
     else:
         suffix = "_core" if args.core_only else ""
-        input_path = os.path.join(TABLES_DIR, f"tab_pole_papers{suffix}.csv")
+        input_path = os.path.join(DERIVED_TABLES_DIR, f"tab_pole_papers{suffix}.csv")
 
     df = pd.read_csv(input_path)
     df["year"] = pd.to_numeric(df["year"], errors="coerce").astype(int)

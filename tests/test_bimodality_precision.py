@@ -11,7 +11,7 @@ import pandas as pd
 import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
-from utils import BASE_DIR
+from utils import BASE_DIR, DERIVED_TABLES_DIR
 
 TABLES_DIR = os.path.join(BASE_DIR, "content", "tables")
 
@@ -86,7 +86,7 @@ class TestBimodalityPrecision:
             )
 
     def test_pole_papers_scores_max_4dp(self):
-        path = os.path.join(TABLES_DIR, "tab_pole_papers.csv")
+        path = os.path.join(DERIVED_TABLES_DIR, "tab_pole_papers.csv")
         if not os.path.exists(path):
             pytest.skip("tab_pole_papers.csv not built")
         df = pd.read_csv(path)
