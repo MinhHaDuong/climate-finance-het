@@ -2,7 +2,6 @@
 Title: Reorg workstream — code (scripts/ by phase; shared harvest/index → libs/)
 Created: 2026-07-10
 Author: HDMX-coding-agent
-Blocked-by: 0223
 Label: deferred
 
 --- log ---
@@ -10,6 +9,7 @@ Label: deferred
 
 2026-07-10T09:49Z HDMX-coding-agent label deferred
 2026-07-10T10:07Z note author decision: decline src/; keep _-private/pipeline_/scripts convention + phase subgrouping; extractions land in phase subdir; shared harvest/index → libs/ (0229)
+2026-07-10T00:00Z HDMX-coding-agent note strip stale Blocked-by 0223 — the edge encoded "wait for layout ratification", discharged 2026-07-10 (0223 log: deliverables/ RATIFIED, src/ DECLINED). 0223 is a tracking parent that stays open until this child closes, so child-blocked-by-parent was an inverted/cyclic edge (0226, same edge, was executed and merged regardless). Ticket stays deferred: parked behind the Œconomia R&R per 0223 scheduling.
 --- body ---
 ## Context
 Second stage of the top-level tidy (tracker `0223`). `scripts/` holds 173 flat
