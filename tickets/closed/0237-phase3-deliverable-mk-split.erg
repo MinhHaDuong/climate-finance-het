@@ -2,6 +2,7 @@
 Title: Phase-3 render as per-deliverable .mk — un-scatter PDF rules, split render from compute
 Created: 2026-07-10
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1003
 
 --- log ---
 2026-07-10T15:20Z HDMX-coding-agent created
@@ -9,6 +10,7 @@ Author: HDMX-coding-agent
 
 2026-07-10T16:37Z HDMX-coding-agent note blocker 0226 closed — Blocked-by removed.
 2026-07-10T18:00Z HDMX-coding-agent note executed on branch t237-phase3-deliverable-mk-split. Action 4 (slide decks get a render .mk) was vacuous: no slide-deck render rule exists in any .mk (slides-gide / slides-eshet have _quarto.yml but no Make render target), so there was nothing to extract. ZOO_FIGS shadow fixed during zoo render extraction: the render prereqs now reference $(ZOO_SCHEMATICS) $(ZOO_RESULT_FIGS) explicitly (at root, ZOO_FIGS aliased a file list in Makefile but a directory path in the concern zoo.mk). multilayer Phase-2 remainder stays at root as multilayer-detection.mk; zoo Phase-2 remainder stays at root as zoo.mk (rename to scripts/analysis/ deferred to 0225). PR closes this ticket.
+2026-07-10T17:41Z HDMX-coding-agent closed — autoclosed — PR #1003
 --- body ---
 ## Context
 
