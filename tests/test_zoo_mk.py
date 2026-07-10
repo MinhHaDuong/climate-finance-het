@@ -83,7 +83,8 @@ class TestZooMkStructure:
         """The zoo PDF render rule lives in deliverables/zoo/zoo.mk (ticket 0237).
 
         Phase 3 render is split from Phase 2 compute: the render rule sits beside
-        its source under deliverables/zoo/, not in the root concern zoo.mk.
+        its source under deliverables/zoo/, not in the concern fragment
+        scripts/analysis/zoo-figures.mk.
         """
         render_text = ZOO_RENDER_MK.read_text()
         assert re.search(
