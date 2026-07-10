@@ -251,3 +251,129 @@ class TestComputeBreakpointsOneOutput:
             "compute_breakpoints.py should use mutually exclusive argument "
             "group for --robustness and --k-sensitivity"
         )
+
+
+# ---------------------------------------------------------------------------
+# $(DERIVED) producers create their output dir before validate_io (ticket 0233)
+# ---------------------------------------------------------------------------
+#
+# `validate_io` only *checks* the output dir exists (it raises on a missing
+# dir; that raise is pinned by test_validate_io_checks_output_dir). It does not
+# create it. `content/tables/` is git-tracked and always present, but
+# `data/derived/` (= $(DERIVED)) is gitignored and regenerable — absent on a
+# clean tree. So every producer whose Make target writes under $(DERIVED) must
+# `os.makedirs(...)` before `validate_io`, or an isolated / `make -jN` build on
+# a clean tree fails depending on which producer runs first (ticket 0218 fixed
+# four; 0233 finishes the class and adds this standing guard).
+#
+# The guard is Makefile-driven, not a hardcoded script list: it discovers every
+# $(DERIVED)-valued producer target from the Makefile, so a NEW producer that
+# forgets the bootstrap is caught automatically.
+
+
+def _makefile_text():
+    """Concatenate the main Makefile and every included *.mk."""
+    root = os.path.join(os.path.dirname(__file__), "..")
+    text = ""
+    for name in ["Makefile"] + sorted(
+        f for f in os.listdir(root) if f.endswith(".mk")
+    ):
+        with open(os.path.join(root, name)) as f:
+            text += f"\n# === {name} ===\n" + f.read()
+    return text
+
+
+def _derived_producer_scripts():
+    """Scripts wired to a Make target whose output resolves under data/derived.
+
+    Two-pass Make variable resolution scoped to $(DERIVED)-valued variables,
+    then scan target lines for a `scripts/*.py` prerequisite.
+    """
+    import re
+
+    text = _makefile_text()
+
+    # Join `\`-continuation lines so a recipe target and its prerequisites
+    # (often wrapped) are scanned as one logical line.
+    text = re.sub(r"\\\n\s*", " ", text)
+
+    # Pass 1: collect variables whose value expands under data/derived.
+    assign = re.compile(r"^([A-Z][A-Z0-9_]*)\s*:?=\s*(.+?)\s*$", re.MULTILINE)
+    values = {m.group(1): m.group(2) for m in assign.finditer(text)}
+
+    def expands_to_derived(val, depth=0):
+        if depth > 10:
+            return False
+        val = val.strip()
+        if val.startswith("data/derived"):
+            return True
+        m = re.match(r"^\$\(([A-Z][A-Z0-9_]*)\)", val)
+        if m and m.group(1) in values:
+            return expands_to_derived(values[m.group(1)], depth + 1)
+        return False
+
+    derived_vars = {v for v, val in values.items() if expands_to_derived(val)}
+
+    # Pass 2: target lines whose LHS resolves under data/derived. LHS forms:
+    #   $(VAR):                  bare derived var  (e.g. $(SEMANTIC_CLUSTERS))
+    #   $(DERIVEDVAR)/literal:   var + suffix      (e.g. $(DERIVED)/tab_x.csv)
+    #   data/derived/literal:    literal path
+    producers = {}
+    target = re.compile(r"^(?!\t)(\S.*?):(?!=)\s*(.*)$")
+    for line in text.splitlines():
+        m = target.match(line)
+        if not m:
+            continue
+        lhs = m.group(1).strip()
+        var = re.match(r"^\$\(([A-Z][A-Z0-9_]*)\)", lhs)
+        is_derived = (
+            lhs.startswith("data/derived")
+            or (var is not None and var.group(1) in derived_vars)
+        )
+        if not is_derived:
+            continue
+        script = re.search(r"scripts/(\S+\.py)", m.group(2))
+        if script:
+            producers[script.group(1)] = lhs
+    return producers
+
+
+class TestDerivedProducersMakedirs:
+    """Every $(DERIVED)-writing producer creates its output dir before validate_io.
+
+    Source inspection (adherence tier) — cheap, deterministic, no subprocess.
+    Ticket 0233; the class the ticket 0218 fix belongs to.
+    """
+
+    pytestmark = pytest.mark.adherence
+
+    PRODUCERS = _derived_producer_scripts()
+
+    def test_discovery_nonempty(self):
+        """Sanity: the Makefile scan must find the known $(DERIVED) producers."""
+        found = set(self.PRODUCERS)
+        expected = {
+            "analyze_embeddings.py",
+            "analyze_cocitation.py",
+            "build_het_core.py",
+        }
+        missing = expected - found
+        assert not missing, (
+            f"Makefile scan lost known $(DERIVED) producers: {sorted(missing)}"
+        )
+
+    @pytest.mark.parametrize("script", sorted(_derived_producer_scripts()))
+    def test_makedirs_before_validate_io(self, script):
+        with open(os.path.join(SCRIPTS_DIR, script)) as f:
+            source = f.read()
+        if "validate_io(" not in source:
+            pytest.skip(f"{script} does not use validate_io")
+        vi = source.index("validate_io(")
+        md = source.find("os.makedirs(")
+        assert md != -1 and md < vi, (
+            f"{script} writes under $(DERIVED) but does not os.makedirs() its "
+            f"output dir before validate_io — an isolated/clean-tree build "
+            f"(no data/derived/) will fail. Add "
+            f"os.makedirs(os.path.dirname(io_args.output) or '.', exist_ok=True) "
+            f"before validate_io (ticket 0233)."
+        )
