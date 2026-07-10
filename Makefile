@@ -21,16 +21,21 @@
 #   make clean              Remove build outputs
 #   make rebuild            Clean + rebuild everything
 
+# ── Shared artifact-location interface (ticket 0237) ──────
+# paths.mk holds the variable definitions (DERIVED, BIB, CSL, the per-doc
+# *_INCLUDES and *_FIGS lists) shared between the analysis-side build (concern
+# .mk at root) and the writing-side build (per-deliverable render .mk under
+# deliverables/<x>/). Included FIRST so immediate (:=) uses below resolve.
+-include paths.mk
+
 # ── Paths ─────────────────────────────────────────────────
 # data/ is split by dataflow phase (see .claude/rules/architecture.md § Data location):
 #   data/catalogs/ (+ pool/ exports/ syllabi/) = Phase-1 corpus, DVC-managed.
 #   data/derived/  = Phase-2 derived data, gitignored + regenerable.
 # Python scripts resolve the same paths via utils.py (CATALOGS_DIR / DERIVED_TABLES_DIR).
+# DERIVED, BIB, CSL now live in paths.mk (shared with the render workpackages).
 DATA_DIR     := data/catalogs
-DERIVED      := data/derived/tables
 CONFIG       := config/analysis.yaml
-BIB         := deliverables/_shared/bibliography/main.bib
-CSL         := deliverables/_shared/bibliography/oeconomia.csl
 SRC         := deliverables/manuscript/manuscript.qmd
 
 # Phase 1 artifact chain (the contract between phases)
@@ -79,156 +84,32 @@ ifneq ($(UV_PROJECT_ENVIRONMENT),)
 export UV_PROJECT_ENVIRONMENT
 endif
 
-# ── Modular Makefile includes ────────────────────────────
+# ── Modular Makefile includes (Phase-2 concern .mk only) ─────
+# The per-deliverable render .mk (Phase 3) are NOT included here: `make papers`
+# calls them via `$(MAKE) -f deliverables/<x>/<x>.mk` so the render process never
+# parses these Phase-2 rules (ticket 0237).
 -include divergence.mk
 -include multilayer-detection.mk
 -include zoo.mk
 -include venues.mk
 -include separation.mk
--include deliverables/manuscript/manuscript.mk
 
 # ── Quarto ───────────────────────────────────────────────
-# ── Per-document include sets ────────────────────────────
-MANUSCRIPT_INCLUDES := deliverables/_shared/tables/tab_venues.md
-
-TECHREP_INCLUDES := deliverables/_shared/_includes/corpus-construction.md \
-		deliverables/_shared/_includes/corpus-enrichment.md \
-		deliverables/_shared/_includes/corpus-filtering.md \
-		deliverables/_shared/_includes/core-vs-full.md \
-		deliverables/_shared/_includes/structural-breaks.md \
-		deliverables/_shared/_includes/alluvial-diagram.md \
-		deliverables/_shared/_includes/bimodality-analysis.md \
-		deliverables/_shared/_includes/pca-scatter.md \
-		deliverables/_shared/_includes/citation-genealogy.md \
-		deliverables/_shared/_includes/cocitation-communities.md \
-		deliverables/_shared/_includes/citation-quality.md \
-		deliverables/_shared/_includes/reproducibility.md \
-		deliverables/_shared/tables/tab_citation_coverage.md
-
-DATAPAPER_INCLUDES := deliverables/_shared/_includes/corpus-construction.md \
-		deliverables/_shared/_includes/corpus-filtering.md \
-		deliverables/_shared/_includes/embedding-generation.md \
-		deliverables/_shared/_includes/reproducibility.md \
-		deliverables/_shared/tables/tab_corpus_sources.md \
-		deliverables/_shared/tables/tab_languages.md
-
-MULTILAYER_INCLUDES := deliverables/_shared/_includes/embedding-generation.md \
-		deliverables/_shared/_includes/structural-breaks.md \
-		deliverables/_shared/_includes/alluvial-diagram.md \
-		deliverables/_shared/_includes/bimodality-analysis.md \
-		deliverables/_shared/_includes/pca-scatter.md \
-		deliverables/_shared/_includes/core-vs-full.md
-
-# Method-zoo include tree: one composer + 18 per-method entries.
-# Used by breakpoint-detect-method-zoo.qmd and transitively by technical-report.qmd.
-ZOO_INCLUDES := deliverables/_shared/_includes/techrep/overview.md \
-		deliverables/_shared/_includes/techrep/zscore.md \
-		deliverables/_shared/_includes/techrep/null-model.md \
-		deliverables/_shared/_includes/techrep-zoo.md \
-		deliverables/_shared/_includes/zoo/S1_mmd.md \
-		deliverables/_shared/_includes/zoo/S2_energy.md \
-		deliverables/_shared/_includes/zoo/S3_sliced_wasserstein.md \
-		deliverables/_shared/_includes/zoo/S4_frechet.md \
-		deliverables/_shared/_includes/zoo/C2ST_embedding.md \
-		deliverables/_shared/_includes/zoo/L1_js.md \
-		deliverables/_shared/_includes/zoo/L2_ntr.md \
-		deliverables/_shared/_includes/zoo/L3_term_burst.md \
-		deliverables/_shared/_includes/zoo/C2ST_lexical.md \
-		deliverables/_shared/_includes/zoo/G1_pagerank.md \
-		deliverables/_shared/_includes/zoo/G2_spectral.md \
-		deliverables/_shared/_includes/zoo/G3_coupling_age.md \
-		deliverables/_shared/_includes/zoo/G4_cross_tradition.md \
-		deliverables/_shared/_includes/zoo/G5_pref_attachment.md \
-		deliverables/_shared/_includes/zoo/G6_entropy.md \
-		deliverables/_shared/_includes/zoo/G7_disruption.md \
-		deliverables/_shared/_includes/zoo/G8_betweenness.md \
-		deliverables/_shared/_includes/zoo/G9_community.md
-
-# Quarto resolves includes across ALL project files (_quarto.yml render list),
-# even when rendering a single document. Every render target needs the full set.
-PROJECT_INCLUDES := $(MANUSCRIPT_INCLUDES) $(TECHREP_INCLUDES) \
-		$(DATAPAPER_INCLUDES) $(MULTILAYER_INCLUDES) $(ZOO_INCLUDES)
-
-# ── Per-document figure sets ─────────────────────────────
-MANUSCRIPT_FIGS := deliverables/_shared/figures/fig_bars_v1.png deliverables/_shared/figures/fig_composition.png deliverables/_shared/figures/fig_breaks.png
-
-DATAPAPER_FIGS  := deliverables/_shared/figures/fig_bars.png deliverables/_shared/figures/fig_dag.png
-
-MULTILAYER_FIGS  := deliverables/_shared/figures/fig_breakpoints.png deliverables/_shared/figures/fig_alluvial.png \
-                   deliverables/_shared/figures/fig_breaks.png \
-                   deliverables/_shared/figures/fig_bimodality.png \
-                   deliverables/_shared/figures/fig_seed_axis_core.png deliverables/_shared/figures/fig_pca_scatter.png \
-                   deliverables/_shared/figures/fig_genealogy.png \
-                   deliverables/_shared/figures/fig_companion_zseries.png \
-                   deliverables/_shared/figures/fig_companion_heatmap.png \
-                   deliverables/_shared/figures/fig_companion_terms.png \
-                   deliverables/_shared/figures/fig_companion_community.png
-
-TECHREP_FIGS    := deliverables/_shared/figures/fig_alluvial_core.png \
-                   deliverables/_shared/figures/fig_bimodality_core.png \
-                   deliverables/_shared/figures/fig_bimodality_lexical_core.png \
-                   deliverables/_shared/figures/fig_bimodality_keywords_core.png \
-                   deliverables/_shared/figures/fig_bimodality_lexical.png \
-                   deliverables/_shared/figures/fig_bimodality_keywords.png \
-                   deliverables/_shared/figures/fig_kde.png \
-                   deliverables/_shared/figures/fig_traditions.png \
-                   deliverables/_shared/figures/fig_communities.png \
-                   deliverables/_shared/figures/fig_semantic.png \
-                   deliverables/_shared/figures/fig_semantic_lang.png \
-                   deliverables/_shared/figures/fig_semantic_period.png
+# The per-document include sets (*_INCLUDES) and figure sets (*_FIGS) live in
+# paths.mk, shared with the render workpackages. NCC_FIGS is analysis-only.
 
 NCC_FIGS        := deliverables/_shared/figures/fig_ncc_divergence.png \
                    deliverables/_shared/figures/fig_ncc_core_comparison.png \
                    deliverables/_shared/figures/fig_ncc_bimodality.png \
                    deliverables/_shared/figures/fig_ncc_alluvial.png
 
-# Method-zoo figures (17 schematics + 18 zoo result panels).
-# schematic_C2ST.png serves both C2ST_embedding and C2ST_lexical, hence 17 schematics for 18 methods.
-ZOO_SCHEMATICS := deliverables/_shared/figures/schematic_S1_mmd.png \
-                  deliverables/_shared/figures/schematic_S2_energy.png \
-                  deliverables/_shared/figures/schematic_S3_sliced_wasserstein.png \
-                  deliverables/_shared/figures/schematic_S4_frechet.png \
-                  deliverables/_shared/figures/schematic_C2ST.png \
-                  deliverables/_shared/figures/schematic_L1_js.png \
-                  deliverables/_shared/figures/schematic_L2_ntr.png \
-                  deliverables/_shared/figures/schematic_L3_burst.png \
-                  deliverables/_shared/figures/schematic_G1_pagerank.png \
-                  deliverables/_shared/figures/schematic_G2_spectral.png \
-                  deliverables/_shared/figures/schematic_G3_coupling_age.png \
-                  deliverables/_shared/figures/schematic_G4_cross_tradition.png \
-                  deliverables/_shared/figures/schematic_G5_pref_attachment.png \
-                  deliverables/_shared/figures/schematic_G6_entropy.png \
-                  deliverables/_shared/figures/schematic_G7_disruption.png \
-                  deliverables/_shared/figures/schematic_G8_betweenness.png \
-                  deliverables/_shared/figures/schematic_G9_community.png
-
-ZOO_RESULT_FIGS := deliverables/_shared/figures/fig_zoo_S1_MMD.png \
-                   deliverables/_shared/figures/fig_zoo_S2_energy.png \
-                   deliverables/_shared/figures/fig_zoo_S3_sliced_wasserstein.png \
-                   deliverables/_shared/figures/fig_zoo_S4_frechet.png \
-                   deliverables/_shared/figures/fig_zoo_C2ST_embedding.png \
-                   deliverables/_shared/figures/fig_zoo_C2ST_lexical.png \
-                   deliverables/_shared/figures/fig_zoo_L1.png \
-                   deliverables/_shared/figures/fig_zoo_L2.png \
-                   deliverables/_shared/figures/fig_zoo_L3.png \
-                   deliverables/_shared/figures/fig_zoo_G1_pagerank.png \
-                   deliverables/_shared/figures/fig_zoo_G2_spectral.png \
-                   deliverables/_shared/figures/fig_zoo_G3_coupling_age.png \
-                   deliverables/_shared/figures/fig_zoo_G4_cross_tradition.png \
-                   deliverables/_shared/figures/fig_zoo_G5_pref_attachment.png \
-                   deliverables/_shared/figures/fig_zoo_G6_entropy.png \
-                   deliverables/_shared/figures/fig_zoo_G7_disruption.png \
-                   deliverables/_shared/figures/fig_zoo_G8_betweenness.png \
-                   deliverables/_shared/figures/fig_zoo_G9_community.png
-
-ZOO_FIGS := $(ZOO_SCHEMATICS) $(ZOO_RESULT_FIGS)
-
-# ZOO_FIGS deliberately excluded from ALL_FIGS / make figures: plot scripts not yet wired.
-# Add to ALL_FIGS when plot_schematic_*.py and plot_zoo_results.py have Makefile targets.
+# Zoo figures (ZOO_SCHEMATICS / ZOO_RESULT_FIGS, defined in paths.mk) are
+# deliberately excluded from ALL_FIGS / make figures: plot scripts not yet wired.
+# Add them to ALL_FIGS when plot_schematic_*.py and plot_zoo_results.py have targets.
 ALL_FIGS := $(MANUSCRIPT_FIGS) $(DATAPAPER_FIGS) $(MULTILAYER_FIGS) $(TECHREP_FIGS) $(NCC_FIGS)
 
 # ── Default target ────────────────────────────────────────
-.PHONY: all setup manuscript papers figures figures-manuscript figures-datapaper figures-companion figures-techrep figures-ncc stats check check-package check-fast lint test-durations venv-canonicalize smoke benchmark determinism-check regression regression-update audit-pdf-content check-corpus check-manuscript-data data corpus corpus-sync corpus-discover corpus-enrich corpus-extend corpus-filter corpus-align corpus-filter-all corpus-tables corpus-validate deploy-corpus clean rebuild archive-analysis archive-manuscript archive-datapaper analysis-figures analysis-tables analysis-stats manuscript-render manuscript-figures datapaper-render datapaper-figures corpus-handoff
+.PHONY: all setup manuscript papers corpus-report technical-report data-paper multilayer-detection multilayer-techrep zoo figures figures-manuscript figures-datapaper figures-companion figures-techrep figures-ncc stats check check-package check-fast lint test-durations venv-canonicalize smoke benchmark determinism-check regression regression-update audit-pdf-content check-corpus check-manuscript-data data corpus corpus-sync corpus-discover corpus-enrich corpus-extend corpus-filter corpus-align corpus-filter-all corpus-tables corpus-validate deploy-corpus clean rebuild archive-analysis archive-manuscript archive-datapaper analysis-figures analysis-tables analysis-stats manuscript-render manuscript-figures datapaper-render datapaper-figures corpus-handoff
 
 .DEFAULT_GOAL := manuscript
 
@@ -664,35 +545,45 @@ analysis-stats: stats
 # PHASE 3 — Render (Quarto → PDF/DOCX)
 # ═══════════════════════════════════════════════════════════
 
-manuscript: deliverables/manuscript/manuscript.pdf deliverables/manuscript/manuscript.docx
+# Each deliverable owns a Phase-3 render .mk beside its source under
+# deliverables/<x>/ (ticket 0237). `manuscript` and `papers` invoke them via
+# `$(MAKE) -f` — a separate make process that parses only the render .mk (+
+# paths.mk), never these Phase-2 rules. So `papers` is Phase-3 only: no
+# check-corpus, no uv run, rendering from artifacts a prior `make analysis` left
+# on disk. Each render .mk depends only on committed/handoff artifacts, so a
+# deliverable builds clean-room with no corpus data. Quarto's single-file render
+# writes the PDF NEXT TO its source (it ignores a project output-dir), so the
+# Make target IS the output file and Make verifies it (tickets 0131, 0226, 0237).
 
-papers: check-corpus deliverables/corpus-report/corpus-report.pdf deliverables/technical-report/technical-report.pdf deliverables/zoo/breakpoint-detect-method-zoo.pdf deliverables/data-paper/data-paper.pdf deliverables/multilayer/multilayer-detection.pdf deliverables/multilayer/multilayer-detection-techrep.pdf
+manuscript:
+	$(MAKE) -f deliverables/manuscript/manuscript.mk deliverables/manuscript/manuscript.pdf deliverables/manuscript/manuscript.docx
+
+papers: corpus-report technical-report data-paper multilayer-detection multilayer-techrep zoo
+
+corpus-report:
+	$(MAKE) -f deliverables/corpus-report/corpus-report.mk deliverables/corpus-report/corpus-report.pdf
+
+technical-report:
+	$(MAKE) -f deliverables/technical-report/technical-report.mk deliverables/technical-report/technical-report.pdf
+
+data-paper:
+	$(MAKE) -f deliverables/data-paper/data-paper.mk deliverables/data-paper/data-paper.pdf
+
+multilayer-detection:
+	$(MAKE) -f deliverables/multilayer/multilayer.mk deliverables/multilayer/multilayer-detection.pdf
+
+multilayer-techrep:
+	$(MAKE) -f deliverables/multilayer/multilayer.mk deliverables/multilayer/multilayer-detection-techrep.pdf
+
+zoo:
+	$(MAKE) -f deliverables/zoo/zoo.mk deliverables/zoo/breakpoint-detect-method-zoo.pdf
 
 # ── Namespaced aliases (Phase 3) ────────────────────────
 manuscript-render: manuscript
 manuscript-figures: figures-manuscript
 
-datapaper-render: deliverables/data-paper/data-paper.pdf
+datapaper-render: data-paper
 datapaper-figures: figures-datapaper
-
-# The manuscript render rules live in deliverables/manuscript/manuscript.mk
-# (Phase 3 writing workpackage, -include'd above). They depend only on committed
-# handoff artifacts so the manuscript builds clean-room with no data — ticket 0131.
-# Each deliverable's PDF is rendered NEXT TO its source (quarto's single-file
-# render ignores a project output-dir), so the Make target IS the output file and
-# Make verifies it exists (ticket 0226).
-
-deliverables/corpus-report/corpus-report.pdf: deliverables/corpus-report/corpus-report.qmd $(PROJECT_INCLUDES) $(BIB) deliverables/_shared/technical-report-vars.yml
-	quarto render $< --to pdf
-
-deliverables/technical-report/technical-report.pdf: deliverables/technical-report/technical-report.qmd $(PROJECT_INCLUDES) $(BIB) deliverables/_shared/technical-report-vars.yml $(TECHREP_FIGS) $(MULTILAYER_FIGS) .lexical_tfidf.stamp
-	quarto render $< --to pdf
-
-deliverables/data-paper/data-paper.pdf: deliverables/data-paper/data-paper.qmd $(PROJECT_INCLUDES) $(BIB) deliverables/data-paper/data-paper-vars.yml
-	quarto render $< --to pdf
-
-deliverables/multilayer/multilayer-detection.pdf: deliverables/multilayer/multilayer-detection.qmd $(PROJECT_INCLUDES) $(BIB) deliverables/multilayer/multilayer-detection-vars.yml
-	quarto render $< --to pdf
 
 # ── Phase 4a — analysis archive (packages Phase 2 outputs) ─
 # Data + scripts: reviewers verify figures/tables are reproducible.
@@ -716,7 +607,7 @@ archive-analysis: check-manuscript-data $(ANALYSIS_OUTPUTS)
 # No Python needed — only Quarto + XeLaTeX.
 #   tar xzf archive.tar.gz && cd ... && make
 
-archive-manuscript: $(MANUSCRIPT_FIGS) $(MANUSCRIPT_INCLUDES) deliverables/manuscript/manuscript-vars.yml deliverables/manuscript/manuscript.pdf
+archive-manuscript: $(MANUSCRIPT_FIGS) $(MANUSCRIPT_INCLUDES) deliverables/manuscript/manuscript-vars.yml manuscript
 	bash build/build_manuscript_archive.sh
 
 # ── Phase 4c — data paper archive (full pipeline) ─────────

@@ -6,6 +6,11 @@ from pathlib import Path
 import pytest
 
 ZOO_MK = Path(__file__).resolve().parent.parent / "zoo.mk"
+# The Phase-3 render rule moved beside its source (ticket 0237); the root zoo.mk
+# is now the pure Phase-2 concern file.
+ZOO_RENDER_MK = (
+    Path(__file__).resolve().parent.parent / "deliverables" / "zoo" / "zoo.mk"
+)
 
 _CROSSYEAR_RE = re.compile(
     r"^CROSSYEAR_METHODS\s*:=\s*(.*?)(?=\n\S|\n\n|\Z)",
@@ -67,10 +72,22 @@ class TestZooMkStructure:
         ):
             assert expected in methods, f"{expected} missing from CROSSYEAR_METHODS"
 
-    def test_zoo_pdf_target_in_zoo_mk(self, zoo_mk_text):
-        """breakpoint-detect-method-zoo.pdf recipe must live in zoo.mk, not only in Makefile."""
+    def test_zoo_pdf_target_in_render_mk(self):
+        """The zoo PDF render rule lives in deliverables/zoo/zoo.mk (ticket 0237).
+
+        Phase 3 render is split from Phase 2 compute: the render rule sits beside
+        its source under deliverables/zoo/, not in the root concern zoo.mk.
+        """
+        render_text = ZOO_RENDER_MK.read_text()
         assert re.search(
             r"^deliverables/zoo/breakpoint-detect-method-zoo\.pdf\s*:",
-            zoo_mk_text,
+            render_text,
             re.MULTILINE,
-        ), "breakpoint-detect-method-zoo.pdf recipe must live in zoo.mk"
+        ), "breakpoint-detect-method-zoo.pdf recipe must live in deliverables/zoo/zoo.mk"
+
+    def test_root_zoo_mk_has_no_render_rule(self, zoo_mk_text):
+        """The root concern zoo.mk must be pure Phase-2 — no render rule (0237)."""
+        assert "quarto render" not in zoo_mk_text, (
+            "root zoo.mk must not carry a render recipe; it moved to deliverables/zoo/zoo.mk"
+        )
+        assert ".pdf:" not in zoo_mk_text, "root zoo.mk must carry no .pdf render target"

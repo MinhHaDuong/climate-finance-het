@@ -221,27 +221,49 @@ class TestFailFastChecks:
 
 
 # ---------------------------------------------------------------------------
-# Quarto project-wide include resolution (#217)
+# Per-deliverable render rules (#217, tickets 0226 + 0237)
 # ---------------------------------------------------------------------------
 
-class TestProjectWideIncludes:
-    """Quarto resolves includes across ALL project files, even when rendering
-    a single document. Every render target must depend on all includes."""
+def read_paths_mk():
+    p = os.path.join(os.path.dirname(__file__), "..", "paths.mk")
+    with open(p) as f:
+        return f.read()
+
+
+class TestPerDeliverableIncludes:
+    """Since 0226 each deliverable is a folder-scoped Quarto project, and since
+    0237 each owns a render-only .mk that depends on its OWN includes (not the
+    retired PROJECT_INCLUDES union). The per-doc include sets live in paths.mk."""
 
     def test_citation_coverage_in_techrep_includes(self):
         """tab_citation_coverage.md is included transitively via citation-quality.md."""
-        mk = read_makefile()
-        m = re.search(r"^TECHREP_INCLUDES\s*:=\s*(.*?)(?=\n\S|\n\n)", mk,
+        paths = read_paths_mk()
+        m = re.search(r"^TECHREP_INCLUDES\s*:=\s*(.*?)(?=\n\S|\n\n)", paths,
                        re.MULTILINE | re.DOTALL)
-        assert m, "TECHREP_INCLUDES not found"
+        assert m, "TECHREP_INCLUDES not found in paths.mk"
         assert "tab_citation_coverage.md" in m.group(1), \
             "TECHREP_INCLUDES must list tab_citation_coverage.md (transitive dep of citation-quality.md)"
 
-    def test_project_includes_variable_exists(self):
-        """A PROJECT_INCLUDES variable must aggregate all per-document include sets."""
-        mk = read_makefile()
-        assert re.search(r"^PROJECT_INCLUDES\s*:?=", mk, re.MULTILINE), \
-            "PROJECT_INCLUDES variable not declared"
+    def test_project_includes_union_retired(self):
+        """The PROJECT_INCLUDES union model is retired (0237): no render rule uses it.
+
+        Each render .mk depends on its own doc's includes, so no `.mk` may still
+        reference $(PROJECT_INCLUDES).
+        """
+        import glob
+        root = os.path.join(os.path.dirname(__file__), "..")
+        # A live use ($(PROJECT_INCLUDES)) or definition (PROJECT_INCLUDES :=/=),
+        # not an incidental mention in a comment.
+        use_or_def = re.compile(r"\$\(PROJECT_INCLUDES\)|^\s*PROJECT_INCLUDES\s*:?=", re.MULTILINE)
+        offenders = []
+        for mkpath in [os.path.join(root, "Makefile")] + glob.glob(
+            os.path.join(root, "*.mk")
+        ) + glob.glob(os.path.join(root, "deliverables", "*", "*.mk")):
+            with open(mkpath) as f:
+                if use_or_def.search(f.read()):
+                    offenders.append(os.path.relpath(mkpath, root))
+        assert not offenders, \
+            f"PROJECT_INCLUDES is retired; still used/defined in: {offenders}"
 
     def test_manuscript_pdf_rule_lives_in_manuscript_mk(self):
         """The manuscript render rule lives in deliverables/manuscript/manuscript.mk (tickets 0131, 0226).
@@ -266,13 +288,25 @@ class TestProjectWideIncludes:
         assert "PROJECT_INCLUDES" not in wp, \
             "manuscript.mk must not couple to PROJECT_INCLUDES (it is its own Quarto project)"
 
-    def test_techrep_pdf_depends_on_project_includes(self):
-        """technical-report.pdf must depend on PROJECT_INCLUDES."""
+    def test_techrep_pdf_rule_lives_in_render_mk(self):
+        """technical-report.pdf lives in its render .mk and depends on TECHREP_INCLUDES (0237)."""
         mk = read_makefile()
-        m = re.search(r"^deliverables/technical-report/technical-report\.pdf\s*:(.*?)$", mk, re.MULTILINE)
-        assert m, "technical-report.pdf target not found"
-        assert "PROJECT_INCLUDES" in m.group(1), \
-            "technical-report.pdf must depend on $(PROJECT_INCLUDES)"
+        assert not re.search(
+            r"^deliverables/technical-report/technical-report\.pdf\s*:", mk, re.MULTILINE
+        ), "technical-report.pdf rule must live in its render .mk, not the top-level Makefile"
+        render_path = os.path.join(
+            os.path.dirname(__file__), "..", "deliverables", "technical-report",
+            "technical-report.mk",
+        )
+        with open(render_path) as f:
+            wp = f.read()
+        m = re.search(
+            r"^deliverables/technical-report/technical-report\.pdf\s*:(.*?)$",
+            wp, re.MULTILINE,
+        )
+        assert m, "technical-report.pdf target not found in technical-report.mk"
+        assert "TECHREP_INCLUDES" in m.group(1), \
+            "technical-report.pdf must depend on $(TECHREP_INCLUDES)"
 
 
 # ---------------------------------------------------------------------------
