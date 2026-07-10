@@ -1,7 +1,0 @@
-project:
-  render:
-    - "!content/corpus-report.qmd"
-    - "!content/technical-report.qmd"
-    - "!content/breakpoint-detect-method-zoo.qmd"
-    - "!content/data-paper.qmd"
-    - "!content/multilayer-detection.qmd"
