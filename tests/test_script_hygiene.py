@@ -1301,3 +1301,45 @@ class TestNoHalfFinishedWork:
                 if rx.search(line) and "noqa: hygiene" not in line:
                     offenders.append(f"{script}:{i}: {line.strip()}")
         assert not offenders, f"{name} found:\n  " + "\n  ".join(offenders)
+
+
+class TestPytestCollectionScope:
+    """pytest must not recurse into .claude/worktrees/ (ticket 0234).
+
+    `norecursedirs` REPLACES pytest's built-in defaults rather than
+    appending to them. A value of just ["libs"] therefore silently dropped
+    the default `.*` pattern that excludes dotdirs like `.claude`. From the
+    primary checkout that made a tree-walking `pytest` descend into every
+    live worktree's copy of tests/, inflating collection (duplicate test IDs)
+    and surfacing confusing cross-worktree failures.
+    """
+
+    @staticmethod
+    def _norecursedirs():
+        import tomllib
+
+        with open(os.path.join(REPO, "pyproject.toml"), "rb") as f:
+            cfg = tomllib.load(f)
+        return cfg["tool"]["pytest"]["ini_options"].get("norecursedirs", [])
+
+    def test_claude_worktrees_excluded(self):
+        """A norecursedirs pattern must match `.claude` so worktree copies of
+        tests/ are never collected from the primary checkout."""
+        import fnmatch
+
+        patterns = self._norecursedirs()
+        assert any(fnmatch.fnmatch(".claude", p) for p in patterns), (
+            f"norecursedirs={patterns} does not exclude .claude — pytest will "
+            "recurse into .claude/worktrees/*/tests/ from the primary checkout"
+        )
+
+    def test_libs_still_excluded(self):
+        """The pre-existing libs exclusion must be preserved (an unscoped root
+        `pytest` must not choke on libs/openalex-corpus)."""
+        import fnmatch
+
+        patterns = self._norecursedirs()
+        assert any(fnmatch.fnmatch("libs", p) for p in patterns), (
+            f"norecursedirs={patterns} no longer excludes libs — an unscoped "
+            "root pytest run will choke on the openalex_corpus import"
+        )
