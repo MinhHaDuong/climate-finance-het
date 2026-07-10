@@ -2,11 +2,13 @@
 Title: make check exits 0 while pytest reports failures — gate integrity
 Created: 2026-07-11
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1013
 
 --- log ---
 2026-07-11T01:05Z HDMX-coding-agent created
 2026-07-11T00:37Z HDMX-coding-agent note False alarm: make DOES propagate the exit code; the observed 0 came from a `| tail` pipeline in a shell with pipefail OFF. Evidence — real recipe is plain `$(PYTHON) -m pytest tests/ -v --tb=short -n 4` (no `-` prefix, no `|| true`; `check-package` is a hard prereq that passed). Scratch repro (deliberate failing test under a scratch makefile): `make -f /tmp/t0246.mk check; echo $?` -> 2 (propagates); `make ... check 2>&1 | tail -1; echo $?` -> 0 (pipe swallows, pipefail off); same with `set -o pipefail` -> 2 (recovers). rtk proxy is exit-faithful: `rtk make ... check` and `rtk proxy make ... check` both -> 2. The lair log is an rtk `tee` capture, so the reader saw the pipeline's exit, not make's. Lesson: read exit status from `$?`/`PIPESTATUS[0]` of make itself, never from a `| tail` (or any pipeline) unless `set -o pipefail` is active. No repo code change needed.
 
+2026-07-10T23:39Z HDMX-coding-agent closed — autoclosed — PR #1013
 --- body ---
 ## Context
 Lair run 2026-07-10 (background `make check` on main, doudou): pytest printed
