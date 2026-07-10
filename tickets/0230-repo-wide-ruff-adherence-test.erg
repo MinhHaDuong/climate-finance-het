@@ -2,11 +2,11 @@
 Title: Add a repo-wide ruff adherence test
 Created: 2026-07-10
 Author: HDMX-coding-agent
-Blocked-by: 0211
 
 --- log ---
 2026-07-10T00:00Z HDMX-coding-agent created
 
+2026-07-10T10:52Z HDMX-coding-agent note blocker 0211 closed — Blocked-by removed.
 --- body ---
 ## Context
 Multiple /gaze reviewers (#956/#958/#960) noted the repo has no `def test_ruff`

@@ -2,10 +2,12 @@
 Title: Wire openalex-corpus package tests + installability guard into host CI
 Created: 2026-07-09
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #986
 
 --- log ---
 2026-07-09T22:26Z HDMX-coding-agent created
 
+2026-07-10T10:52Z HDMX-coding-agent closed — autoclosed — PR #986
 --- body ---
 ## Context
 Ticket 0170 added the `libs/openalex-corpus/` path package and rewired the host
