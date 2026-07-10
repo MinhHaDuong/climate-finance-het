@@ -2,10 +2,12 @@
 Title: pytest recurses into .claude/worktrees/ — exclude via norecursedirs
 Created: 2026-07-10
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #998
 
 --- log ---
 2026-07-10T00:00Z HDMX-coding-agent created
 
+2026-07-10T15:09Z HDMX-coding-agent closed — autoclosed — PR #998
 --- body ---
 ## Context
 `pytest` does not honour `.gitignore`, so from the primary checkout `make check`
