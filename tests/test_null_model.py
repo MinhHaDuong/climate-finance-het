@@ -835,6 +835,7 @@ class TestSharedRngContamination:
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.integration
 class TestBackendComparison:
     """Compare sequential, parallel-CPU, and GPU permutation backends.
 

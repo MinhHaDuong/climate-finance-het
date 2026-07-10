@@ -12,6 +12,7 @@ import sys
 
 import numpy as np
 import pandas as pd
+import pytest
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 sys.path.insert(0, SCRIPTS_DIR)
@@ -246,7 +247,6 @@ class TestC2STSchemaStrict:
     def test_rejects_missing_variance_columns(self):
         """Missing auc_std must fail strict C2STDivergenceSchema validation."""
         import pandera.errors
-        import pytest
         from schemas import C2STDivergenceSchema
 
         bad = pd.DataFrame(
@@ -294,6 +294,7 @@ class TestC2STDispatcherIntegration:
         )
         assert hasattr(compute_divergence, "DivergenceSchema")
 
+    @pytest.mark.integration
     def test_end_to_end_c2st_lexical_on_smoke_fixture(self, tmp_path):
         """Run compute_divergence.py --method C2ST_lexical against the smoke
         fixture; output must pass C2STDivergenceSchema.

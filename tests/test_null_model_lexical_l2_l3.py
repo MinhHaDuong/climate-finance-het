@@ -13,6 +13,7 @@ import sys
 
 import numpy as np
 import pandas as pd
+import pytest
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 sys.path.insert(0, SCRIPTS_DIR)
@@ -245,8 +246,13 @@ class TestL3Permutations:
 # ── L2 tests ─────────────────────────────────────────────────────────────────
 
 
+@pytest.mark.integration
 class TestL2Permutations:
-    """Tests for _run_l2_permutations."""
+    """Tests for _run_l2_permutations.
+
+    Heavy parallel-vs-sequential backend equivalence — excluded from
+    check-fast, consistent with the other backend tests in this suite.
+    """
 
     def test_l2_output_schema(self):
         """_run_l2_permutations returns DataFrame matching NullModelSchema."""

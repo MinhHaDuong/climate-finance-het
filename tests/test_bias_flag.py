@@ -8,6 +8,12 @@ import os
 import subprocess
 import sys
 
+import pytest
+
+# Both tests spawn compute_divergence.py via subprocess — excluded from
+# check-fast per the subprocess-tests-are-integration rule (coding-python.md).
+pytestmark = pytest.mark.integration
+
 
 def test_no_equal_n_flag_accepted(tmp_path):
     """compute_divergence.py must accept --no-equal-n flag without argparse error.
