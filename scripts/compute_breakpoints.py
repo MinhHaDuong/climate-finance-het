@@ -21,6 +21,7 @@ Usage:
 """
 
 import argparse
+import os
 import warnings
 
 import numpy as np
@@ -295,6 +296,9 @@ def _compute_k_sensitivity_table(df, embeddings, n_min, censor_gap):
 
 def main():
     io_args, extra = parse_io_args()
+    # Output lands under data/derived/tables/ (gitignored, regenerable — ticket 0218);
+    # create it so validate_io's dir check passes on a clean tree.
+    os.makedirs(os.path.dirname(io_args.output) or ".", exist_ok=True)
     validate_io(output=io_args.output)
 
     parser = argparse.ArgumentParser(description="Compute structural break tables")

@@ -306,6 +306,9 @@ def save_lineage_table(backbone_dois, lineage, positions, doi_meta, output_path)
 
 def main():
     io_args, extra = parse_io_args()
+    # Output lands under data/derived/tables/ (gitignored, regenerable — ticket 0218);
+    # create it so validate_io's dir check passes on a clean tree.
+    os.makedirs(os.path.dirname(io_args.output) or ".", exist_ok=True)
     validate_io(output=io_args.output)
 
     works, cit, doi_meta, doi_to_cluster = load_data()
