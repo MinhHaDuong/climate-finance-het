@@ -5,6 +5,7 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-07-10T09:19Z HDMX-coding-agent created
+2026-07-10T10:00Z note 0222 landed: communities.csv evicted to data/derived/, and the phase-layout guard generalized from a two-basename whitelist to a producer-phase CLASS rule (any Phase-2-produced Make target under data/catalogs/ now fails without editing the test; consumer-side CATALOGS_DIR reads of derived outputs also caught). data/het/ + data/run_reports/ classified in the architecture.md tree. Remaining before this tracker closes: 0218 (content/tables residual + pole-papers fallback).
 
 --- body ---
 ## Context

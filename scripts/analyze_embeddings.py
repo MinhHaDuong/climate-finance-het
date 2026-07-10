@@ -154,7 +154,7 @@ def main():
     # Step 4: Cross-validate with co-citation communities
     # ============================================================
 
-    cocit_path = os.path.join(CATALOGS_DIR, "communities.csv")
+    cocit_path = os.path.join(DERIVED_TABLES_DIR, "communities.csv")
     if os.path.exists(cocit_path):
         log.info("=== Cross-validation with co-citation communities ===")
         cocit = pd.read_csv(cocit_path)

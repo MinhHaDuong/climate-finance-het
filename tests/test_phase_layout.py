@@ -1,85 +1,95 @@
-"""Ticket 0219 — layout mirrors dataflow phase: no Phase-2 output under data/catalogs/.
+"""Tickets 0219 / 0222 — layout mirrors dataflow phase: no Phase-2 output under data/catalogs/.
 
 `data/` is split by pipeline phase: `data/catalogs/` (+ pool/exports/syllabi) is
 Phase-1 corpus (DVC-managed), `data/derived/` is Phase-2 derived data (gitignored,
-regenerable). Two Phase-2 outputs used to leak into the Phase-1 corpus dir:
-`semantic_clusters.csv` (analyze_embeddings.py) and `het_mostcited_50.csv`
-(build_het_core.py). This guard pins them out of `data/catalogs/` so the layout
-keeps mirroring the phase — a re-introduced `$(DATA_DIR)/...` or
-`os.path.join(CATALOGS_DIR, "<name>")` for these basenames fails the test.
+regenerable). A Phase-2 output living in the Phase-1 corpus dir breaks that mirror.
 
-Grep-ratchet style (like ticket 0208's guard): a stale hardcoded path is lexically
-stable, so a line-level scan is a durable regression guard.
+This is a **class** guard (0222 generalized 0219's two-basename whitelist): it reads
+the Makefile as the source of truth and fails if *any* target produced by a Phase-2
+script resolves under `data/catalogs/`, or if any script reads a `data/derived`
+output from `CATALOGS_DIR`. A newly-introduced Phase-2 output under `data/catalogs/`
+fails the test with no edit to this file.
 """
 
 import glob
 import os
+import re
 
 import pytest
 
-# Grep-ratchet guard — belongs to the mechanical adherence gate (`pytest -m adherence`).
+# Mechanical adherence gate (`make lint` / `pytest -m adherence`).
 pytestmark = pytest.mark.adherence
 
 PROJECT_ROOT = os.path.join(os.path.dirname(__file__), "..")
-SCRIPTS_DIR = os.path.join(PROJECT_ROOT, "scripts")
 MAKEFILE = os.path.join(PROJECT_ROOT, "Makefile")
+SCRIPTS_DIR = os.path.join(PROJECT_ROOT, "scripts")
 
-# Phase-2 outputs evicted from data/catalogs/ by ticket 0219.
-PHASE2_OUTPUTS = [
-    "semantic_clusters.csv",
-    "het_mostcited_50.csv",
-]
-
-
-def _bad_patterns(basename):
-    """Path constructions that resolve `basename` under the Phase-1 corpus dir.
-
-    Anchored on the basename so a legit Phase-1 read on the same line (e.g.
-    refined_works.csv from CATALOGS_DIR) does not trip the guard.
-    """
-    return [
-        f"data/catalogs/{basename}",                 # literal repo path (Make + docstrings)
-        f"$DATA/catalogs/{basename}",                # $DATA/catalogs/<name> docstrings
-        f'CATALOGS_DIR, "{basename}"',               # os.path.join(CATALOGS_DIR, name)
-        f"CATALOGS_DIR, '{basename}'",
-        f"$(DATA_DIR)/{basename}",                   # Makefile constant under Phase 1
-    ]
-    # Note: bare `catalogs/<name>` is intentionally NOT matched — it would catch the
-    # scoped-out smoke fixture `tests/fixtures/smoke/catalogs/<name>` (a self-contained
-    # test mirror, ticket 0219 § Scope out), not the production Phase-1 corpus dir.
+# A Make prerequisite naming one of these script prefixes marks a Phase-2 producer.
+PHASE2_PRODUCER = re.compile(r"scripts/(analyze_|compute_|plot_|export_|summarize_|build_het)")
+CATALOGS = "data/catalogs/"
+DERIVED = "data/derived/"
+_MAKE_VAR = re.compile(r"\$\(([A-Z_][A-Z0-9_]*)\)")
 
 
-def _scan(path):
-    """Return list of (lineno, line) in `path` matching any bad pattern."""
-    hits = []
-    with open(path, encoding="utf-8") as fh:
+def _makefile_constants():
+    """Parse `NAME := value` assignments and fully expand nested $(REF) references."""
+    raw = {}
+    with open(MAKEFILE, encoding="utf-8") as fh:
+        for line in fh:
+            m = re.match(r"^([A-Z_][A-Z0-9_]*)\s*:=\s*(.+?)\s*$", line)
+            if m:
+                raw[m.group(1)] = m.group(2)
+
+    def expand(value, seen):
+        def repl(mm):
+            name = mm.group(1)
+            if name in raw and name not in seen:
+                return expand(raw[name], seen | {name})
+            return mm.group(0)
+        return _MAKE_VAR.sub(repl, value)
+
+    return {k: expand(v, {k}) for k, v in raw.items()}
+
+
+def _resolve(token, consts):
+    return _MAKE_VAR.sub(lambda m: consts.get(m.group(1), m.group(0)), token)
+
+
+def test_no_phase2_target_under_catalogs():
+    """Producer side: no target built by a Phase-2 script resolves under data/catalogs/."""
+    consts = _makefile_constants()
+    offenders = []
+    with open(MAKEFILE, encoding="utf-8") as fh:
         for i, line in enumerate(fh, 1):
-            for basename in PHASE2_OUTPUTS:
-                if any(pat in line for pat in _bad_patterns(basename)):
-                    hits.append((i, line.rstrip()))
-                    break
-    return hits
-
-
-def _production_files():
-    """Makefile + scripts/*.py. Excludes tests/fixtures/ (self-contained mirrors)."""
-    files = [MAKEFILE]
-    files += glob.glob(os.path.join(SCRIPTS_DIR, "*.py"))
-    return files
-
-
-def test_no_phase2_output_under_catalogs():
-    offenders = {}
-    for path in _production_files():
-        hits = _scan(path)
-        if hits:
-            offenders[os.path.relpath(path, PROJECT_ROOT)] = hits
+            # A rule line "target[ target…]: prereqs" (not a ":=" assignment, not a recipe).
+            m = re.match(r"^([^\s#][^:=]*):\s+(\S.*)$", line)
+            if not m or not PHASE2_PRODUCER.search(m.group(2)):
+                continue
+            for tok in m.group(1).split():
+                if CATALOGS in _resolve(tok, consts):
+                    offenders.append(f"Makefile:{i}: {tok} -> {_resolve(tok, consts)}")
     assert not offenders, (
-        "Phase-2 outputs must live under data/derived/, not data/catalogs/ "
-        "(ticket 0219). Offending lines:\n"
-        + "\n".join(
-            f"  {f}:{ln}: {txt}"
-            for f, hits in offenders.items()
-            for ln, txt in hits
-        )
+        "Phase-2 outputs must resolve under data/derived/, not data/catalogs/ "
+        "(ticket 0219/0222). A Phase-2-produced Make target still lands in the "
+        "Phase-1 corpus dir:\n  " + "\n  ".join(offenders)
+    )
+
+
+def test_no_script_reads_derived_output_from_catalogs():
+    """Consumer side: no script reads a data/derived output via CATALOGS_DIR."""
+    consts = _makefile_constants()
+    derived_names = {
+        os.path.basename(v) for v in consts.values() if DERIVED in v and v.endswith((".csv", ".json", ".npz"))
+    }
+    offenders = []
+    for path in glob.glob(os.path.join(SCRIPTS_DIR, "*.py")):
+        with open(path, encoding="utf-8") as fh:
+            for i, line in enumerate(fh, 1):
+                for name in derived_names:
+                    if f'CATALOGS_DIR, "{name}"' in line or f"CATALOGS_DIR, '{name}'" in line:
+                        rel = os.path.relpath(path, PROJECT_ROOT)
+                        offenders.append(f"{rel}:{i}: reads {name} from CATALOGS_DIR")
+    assert not offenders, (
+        "A Phase-2 derived output is read from CATALOGS_DIR — use DERIVED_TABLES_DIR "
+        "(ticket 0219/0222):\n  " + "\n  ".join(offenders)
     )
