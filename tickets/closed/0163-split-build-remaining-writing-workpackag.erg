@@ -2,12 +2,15 @@
 Title: Split build: remaining writing workpackages + evict analysis intermediates
 Created: 2026-06-28
 Author: HDMX-coding-agent
+Closed: both children resolved — 0208 merged (eviction), 0207 reduced+closed (architecture rule)
 
 --- log ---
 2026-06-28T19:43Z HDMX-coding-agent created
 
 2026-07-09T20:00Z note Re-homed 0131 exit criterion 4 (README writing-toolchain spec) into exit criteria; corrected stale 'can close once children land' framing now that 0131 closed via #948.
 2026-07-09T20:11Z note Split into children 0207 (mk extraction) + 0208 (intermediate eviction); 0163 now a tracker, stays open until both land.
+2026-07-10T09:00Z note Both children resolved. 0208 merged (#969): intermediates evicted content/tables/ -> data/derived/tables/. 0207 reduced + closed: the "extract .mk / freeze the 4 papers" premise was falsified (none is an active in-repo submission; data-paper frozen externally on Zenodo, three companions stay live). Reduced deliverable = the README architecture rule (clean-room == active submission; live papers build from data). The .mk-per-paper exit criterion below is retired as premise-falsified, not delivered. Closing tracker.
+2026-07-10T08:22Z HDMX-coding-agent closed — both children resolved — 0208 merged (eviction), 0207 reduced+closed (architecture rule)
 --- body ---
 ## Context
 

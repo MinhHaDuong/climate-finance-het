@@ -1,0 +1,65 @@
+%erg 0.1
+Title: Extract render .mk + Quarto profile for the 4 remaining writing papers
+Created: 2026-07-09
+Author: HDMX-coding-agent
+Closed: premise falsified — no in-repo freeze for the 4 papers; reduced to README architecture rule
+
+--- log ---
+2026-07-09T20:30Z HDMX-coding-agent created
+
+2026-07-09T20:34Z note Read-first falsified the manuscript-symmetry assumption: the 4 papers' vars/figures/tables are live data-derived, none git-tracked. Author chose freeze-all-four staged, data-paper first.
+2026-07-10T09:00Z note Premise falsified a second time and scope REDUCED (author-approved). The freeze-all-four decision conflated a submitted paper with three live companions. Correct architecture: in-repo clean-room freeze == the paper being (re)submitted FROM the repo (the manuscript R&R); every other paper builds live from data. No .mk extraction / freeze for the four. Reduced deliverable = document the architecture rule in README. Closing.
+
+2026-07-10T08:22Z HDMX-coding-agent closed — premise falsified — no in-repo freeze for the 4 papers; reduced to README architecture rule
+--- body ---
+## Outcome (2026-07-10) — scope reduced, closed
+
+The founding premise — "replicate the manuscript's clean-room freeze for the four
+remaining papers" — is false. None of the four is an active in-repo submission:
+
+- **Manuscript** is frozen in-repo *because* it is the live Œconomia R&R being
+  rebuilt for resubmission (0153). That is the one legitimate in-repo freeze.
+- **Data-paper** is already submitted (RDJ4HSS, sent 2026-03-26) and its frozen,
+  reproducible form lives OUTSIDE the repo: `papiers/sent/RDJ4HSS_Curated_Corpus_
+  Climate_Finance/` (PDF, Figure1, Table1-3, cover letter) plus a 208 MB Zenodo
+  reproducibility archive `climate-finance-datapaper.tar.gz`. Per the 0159
+  architecture rule (submission records live outside the repo), that IS the clean
+  frozen state. Giving `content/data-paper.qmd` a second in-repo freeze would
+  manufacture a drifting duplicate of an immutable deposit. Repo copy stays live.
+- **corpus-report / technical-report / multilayer-detection** are not submitted —
+  live companions whose numbers should track the corpus, not be pinned.
+
+Freezing a live paper only manufactures staleness (which then needs a freshness
+guard to patrol — the reason the 0212 follow-up was dropped). So the four keep
+their existing data-dependent render rules in the main `Makefile` / `make papers`;
+no per-paper `.mk`, no `.gitignore` negations, no vars pinning.
+
+## Architecture rule (the reduced deliverable)
+
+Documented in `README.md`:
+
+> Clean-room build == the paper being (re)submitted from the repo. Only a paper
+> pinned by an external commitment (submission / R&R) is frozen in-repo and built
+> clean-room from git-tracked deliverables (Quarto + TeX Live + Pandoc — no `uv`,
+> no `dvc`, no data). Today that is the manuscript (`manuscript.mk`). Every other
+> document (corpus-report, technical-report, data-paper, multilayer-detection)
+> builds LIVE from the corpus via `make papers`. An already-submitted paper's
+> frozen form is its external deposit (`papiers/sent/…` + Zenodo), not an in-repo
+> copy.
+
+## What actually shipped under 0163 (this ticket's tracker)
+
+- **0208** (merged, PR #969) — evicted the large analysis intermediates out of
+  `content/tables/` into `data/derived/tables/`; `content/tables/` now holds only
+  writing-facing deliverables. The real clean-build / de-crowding win.
+- This ticket — the README architecture rule above.
+
+## Exit criteria (revised)
+
+- [x] Architecture rule documented in README (clean-room == active submission;
+      live papers build from data; submitted papers frozen externally).
+- [x] No spurious in-repo freezes introduced; the four remain live in `make papers`.
+- [x] Superseded scope (per-paper `.mk` extraction + vars pinning) recorded as
+      premise-falsified, not silently dropped.
+
+Parent tracker: tickets/0163-split-build-remaining-writing-workpackag.erg
