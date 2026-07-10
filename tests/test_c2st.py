@@ -162,6 +162,11 @@ class TestC2STCore:
 # ---------------------------------------------------------------------------
 
 
+# Heavy compute: computing a real C2ST output pulls the classifier/embedding
+# stack, and the first schema class to run pays that import (~5s). Marking the
+# class — not the one test that happened to run first — is the robust fix
+# (ticket 0216, same whack-a-mole shape as the dcor import tax).
+@pytest.mark.slow
 class TestC2STEmbeddingSchema:
     """Output of compute_c2st_embedding matches C2STDivergenceSchema."""
 
@@ -196,6 +201,7 @@ class TestC2STEmbeddingSchema:
             assert col in result.columns, f"{col} missing from C2ST output"
 
 
+@pytest.mark.slow
 class TestC2STLexicalSchema:
     """Output of compute_c2st_lexical matches C2STDivergenceSchema."""
 

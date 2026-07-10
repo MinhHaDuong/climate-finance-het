@@ -25,6 +25,11 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
+# Every test here drives a figure script through subprocess (`_run`), so the
+# whole module is the integration tier (ticket 0216 — surfaced by the fast-path
+# ratchet as unmarked subprocess tests taxing the inner loop at 5-6s each).
+pytestmark = pytest.mark.integration
+
 REPO = Path(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SCRIPTS_DIR = REPO / "scripts"
 
