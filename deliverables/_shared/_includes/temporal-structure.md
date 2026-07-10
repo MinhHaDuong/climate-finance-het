@@ -1,7 +1,16 @@
 ## Temporal Structure Analysis
-<!-- WARNING: AI-generated, not human-reviewed -->
+<!-- WARNING: AI-generated, not human-reviewed | attributions verified & corrected 2026-07-11 (ticket 0244) -->
+<!-- PROVENANCE UNRESOLVED (0244): the rolling-window silhouette/best-k tables, cross-space ARI-by-window
+     and language-share tables come from script log output, not a committed artifact; the named scripts'
+     outputs to deliverables/_shared/tables/ are gitignored/absent and no Make target regenerates them.
+     Figures reflect the 27,315-work snapshot (current corpus ~27,509). Not re-derivable here (rerun
+     forbidden by 0244). STALE SCRIPT REFERENCE: `scripts/analyze_space_interactions.py` is cited in the
+     header but does not exist in the repo — the cross-space/temporal numbers cannot be attributed to a
+     resolvable producer. No institutional attribution errors found (Stern 2006 / Bali COP-13 2007 / Paris
+     2015 consistent with the UNFCCC record). -->
 
-**Script:** `scripts/compute_clustering_comparison.py` (multi-space silhouette), `scripts/analyze_space_interactions.py`
+**Script:** `scripts/compute_clustering_comparison.py` (multi-space silhouette), `scripts/analyze_space_interactions.py` <!-- 0244: this second script is absent from the repo -->
+
 
 Section 7 establishes that the full corpus shows weak cluster structure. But this static picture may obscure temporal dynamics: did the field once have clear boundaries that later dissolved? This section examines how cluster structure evolves over time in each representation space.
 

@@ -1,5 +1,18 @@
 ## 10. UNFCCC Negotiation Architecture and Academic Field Structure
-<!-- WARNING: AI-generated, not human-reviewed -->
+<!-- WARNING: AI-generated, not human-reviewed | attributions verified & corrected 2026-07-11 (ticket 0244) -->
+<!-- PROVENANCE UNRESOLVED (0244): every pipeline number in this section (silhouettes
+     -0.011 / -0.010 / +0.007, ARI 0.126 / 0.128, work counts 27,315 / 21,430 / 5,885 and the
+     topic-share tables) comes from the *log output* of `scripts/analyze_unfccc_topics.py`, which
+     is not wired to any Make target and writes only `tab_unfccc_topics.csv` (per-work
+     assignments, itself uncommitted/gitignored). No committed table holds the silhouette/ARI
+     values, so they could not be independently re-derived here (rerun forbidden by 0244). The
+     27,315-work snapshot predates the current analysis corpus (~27,509; see the STALE marker in
+     clustering-comparison.md), so exact figures may drift on a fresh run; the *direction*
+     (near-zero silhouette, weak ARI) is robust. NOTE for the 0152 letter E3f: the lexical
+     silhouette is +0.007 — weakly POSITIVE, not anti-clustered; only the semantic (-0.011) and
+     citation (-0.010) spaces are strictly anti-clustered. The letter's phrase "anti-clustered in
+     the semantic, lexical and citation spaces" should read "near-zero to anti-clustered" to stay
+     exact. ARI 0.13 / 0.98 / 0.59 and "~98% noise" all round correctly from these numbers. -->
 
 ### The co-production hypothesis
 
@@ -22,7 +35,10 @@ The manuscript argues that climate finance was "invented" --- its categories co-
 | CDM/JI → Article 6 | Carbon market economics | CDM Executive Board, methodology panels | 2005--2012, revival post-2021 |
 | Adaptation Fund, LDCF, SCCF | Development/adaptation economics | UNDP, IIED, World Bank development divisions | 2010--present |
 | \$100bn → NCQG | Public finance accounting | OECD-DAC, SCF, Oxfam counter-analyses | 2012--present |
-| Green bonds, Art. 2.1(c) | Financial economics | World Bank (first green bond 2008), TCFD, FSB | 2016--present |
+| Green bonds, Art. 2.1(c) | Financial economics | EIB (world's first green bond 2007), World Bank (first labelled "green bond" 2008), TCFD, FSB | 2016--present | <!-- corrected 2026-07-11 (0244): the EIB Climate Awareness Bond (July 2007) was the world's first green bond; the World Bank's Nov-2008 issue was the first labelled "green bond" — the original text credited the World Bank as first. Source: eib.org 10th-anniversary release. -->
+
+<!-- verified 2026-07-11 (0244): CDM direct carbon revenue "$15--24 billion" over 2001--2012 is within published estimates (developing-country CDM revenue, carbon-price dependent) — no change. UNFCCC decision facts (Bali COP-13 2007, Copenhagen COP-15 2009 $100bn, Cancún COP-16 2010, Durban COP-17 2011 ADP, Doha COP-18 2012, Paris 2015 Arts. 9/13/6/2.1(c), L&D fund COP-27 2022 → operationalized COP-28 2023, NCQG COP-29 Baku 2024 $300bn core / $1.3tn aspirational) spot-checked and consistent with the UNFCCC record. -->
+
 | WIM, Santiago Network, L\&D Fund | Climate justice / loss attribution | WIM ExCom, attribution science | 2019--present |
 
 ### UNFCCC-guided topic classification: results
