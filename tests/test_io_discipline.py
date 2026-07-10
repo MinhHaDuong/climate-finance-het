@@ -350,12 +350,27 @@ class TestDerivedProducersMakedirs:
     PRODUCERS = _derived_producer_scripts()
 
     def test_discovery_nonempty(self):
-        """Sanity: the Makefile scan must find the known $(DERIVED) producers."""
+        """The Makefile scan must find every known $(DERIVED) producer.
+
+        Pinning the full known set (not just a sample) means a discovery
+        regression that silently drops a producer — leaving it unguarded —
+        fails here instead of passing vacuously.
+        """
         found = set(self.PRODUCERS)
         expected = {
             "analyze_embeddings.py",
             "analyze_cocitation.py",
             "build_het_core.py",
+            "compute_lexical.py",
+            "compute_analytical_null.py",
+            "compute_crossyear_zscore.py",
+            "compute_sensitivity_grid.py",
+            "compute_venue_concentration.py",
+            # 0218's four (already fixed) — the guard must keep covering them.
+            "compute_breakpoints.py",
+            "compute_clusters.py",
+            "analyze_bimodality.py",
+            "analyze_genealogy.py",
         }
         missing = expected - found
         assert not missing, (
@@ -368,12 +383,20 @@ class TestDerivedProducersMakedirs:
             source = f.read()
         if "validate_io(" not in source:
             pytest.skip(f"{script} does not use validate_io")
+        # The makedirs must (a) target the output path — os.path.dirname of the
+        # parsed output — and (b) sit in the main() prologue, between
+        # parse_io_args() and validate_io(). Anchoring both defeats a decoy: an
+        # unrelated makedirs elsewhere (e.g. analyze_genealogy's module-level
+        # makedirs(TABLES_DIR), analyze_bimodality's makedirs(pole_dir)) must
+        # NOT satisfy the guard, so deleting the real fix turns it RED.
         vi = source.index("validate_io(")
-        md = source.find("os.makedirs(")
-        assert md != -1 and md < vi, (
-            f"{script} writes under $(DERIVED) but does not os.makedirs() its "
-            f"output dir before validate_io — an isolated/clean-tree build "
+        pio = source.rfind("parse_io_args()", 0, vi)
+        prologue = source[pio:vi] if pio != -1 else source[:vi]
+        assert "os.makedirs(os.path.dirname(io_args.output)" in prologue, (
+            f"{script} writes under $(DERIVED) but does not "
+            f"os.makedirs(os.path.dirname(io_args.output) ...) between "
+            f"parse_io_args() and validate_io — an isolated/clean-tree build "
             f"(no data/derived/) will fail. Add "
             f"os.makedirs(os.path.dirname(io_args.output) or '.', exist_ok=True) "
-            f"before validate_io (ticket 0233)."
+            f"immediately before validate_io (ticket 0233)."
         )
