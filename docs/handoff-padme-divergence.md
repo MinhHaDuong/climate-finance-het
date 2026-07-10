@@ -12,7 +12,7 @@ methods (5 semantic, 3 lexical, 8 citation graph), 3 change point detectors
 convergence analysis across channels.
 
 Architecture: 1-script-1-output, Pandera schema validation, modular
-Makefile (`divergence.mk`), configurable seeds, shared I/O module.
+Makefile (`scripts/analysis/divergence.mk`), configurable seeds, shared I/O module.
 
 77 tests (27 fast / 50 slow), 15 golden value regression tests.
 
@@ -115,7 +115,7 @@ scripts/
   plot_convergence.py            # heatmap + stacked bars
   schemas.py                     # DivergenceSchema (Pandera)
 config/analysis.yaml             # all parameters (divergence section)
-divergence.mk                   # Make targets
+scripts/analysis/divergence.mk  # Make targets
 docs/literature-review-structural-break-detection.md
 ```
 

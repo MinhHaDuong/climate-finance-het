@@ -1,6 +1,8 @@
-# zoo.mk — Zoo figures: 17 ELI15 schematics + 18 cross-year result panels
+# zoo-figures.mk — Zoo figures: 17 ELI15 schematics + 18 cross-year result panels
 #
-# Included from the main Makefile:  -include zoo.mk
+# Phase-2 concern fragment (renamed from zoo.mk to disambiguate from the Phase-3
+# render fragment deliverables/zoo/zoo.mk; ticket 0239).
+# Included from the main Makefile:  -include scripts/analysis/zoo-figures.mk
 #
 # Targets:
 #   zoo-figures      All 35 zoo figures (schematics + result panels)

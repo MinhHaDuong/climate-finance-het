@@ -1,6 +1,6 @@
 # venues.mk — Venue concentration analysis (ticket 0073)
 #
-# Include from the main Makefile:  include venues.mk
+# Include from the main Makefile:  -include scripts/analysis/venues.mk
 #
 # Targets:
 #   venue-concentration-table  Compute HHI + Shannon entropy per year

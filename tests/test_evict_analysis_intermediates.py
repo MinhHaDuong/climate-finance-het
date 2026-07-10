@@ -28,7 +28,8 @@ Two guards, complementary:
    class, out of 0218's scope, and are neither flagged nor moved here.
 
 Scope (ticket 0231): the class ratchet scans the top-level `Makefile` AND every
-sub-Makefile (`divergence.mk`, `zoo.mk`, `multilayer-detection.mk`, `venues.mk`).
+sub-Makefile under `scripts/analysis/` (`divergence.mk`, `zoo-figures.mk`,
+`multilayer-detection.mk`, `venues.mk`, `separation.mk`; relocated by 0239).
 Those subsystems route their `tab_*` targets through a per-subsystem directory
 variable (`DIV_TABLES`, `ZOO_TABLES`, `COMP_TABLES`, `VENUE_TABLE`), so a target
 line reads `$(DIV_TABLES)/tab_div_$(m).csv`, not a literal `deliverables/_shared/tables/...`
@@ -98,6 +99,9 @@ def _bad_patterns(basename):
 def _makefiles():
     paths = [os.path.join(PROJECT_ROOT, "Makefile")]
     paths += glob.glob(os.path.join(PROJECT_ROOT, "*.mk"))
+    # Phase-2 analysis concern .mk moved under scripts/analysis/ (ticket 0239);
+    # keep scanning them so the eviction guard still covers the moved fragments.
+    paths += glob.glob(os.path.join(SCRIPTS_DIR, "analysis", "*.mk"))
     return paths
 
 

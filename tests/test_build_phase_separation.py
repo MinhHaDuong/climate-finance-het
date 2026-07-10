@@ -45,8 +45,10 @@ def _has_phase2(text: str) -> bool:
 
 
 def _all_mk_files() -> list[str]:
-    """Every build fragment: root concern .mk + per-deliverable render .mk."""
+    """Every build fragment: root paths.mk + Phase-2 analysis concern .mk under
+    scripts/analysis/ (relocated by ticket 0239) + per-deliverable render .mk."""
     files = glob.glob(os.path.join(REPO_ROOT, "*.mk"))
+    files += glob.glob(os.path.join(REPO_ROOT, "scripts", "analysis", "*.mk"))
     files += glob.glob(os.path.join(REPO_ROOT, "deliverables", "*", "*.mk"))
     return sorted(files)
 

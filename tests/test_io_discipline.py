@@ -6,6 +6,7 @@ Covers:
 - Makefile pattern rule exists for figure scripts
 """
 
+import glob
 import os
 import subprocess
 import sys
@@ -272,14 +273,19 @@ class TestComputeBreakpointsOneOutput:
 
 
 def _makefile_text():
-    """Concatenate the main Makefile and every included *.mk."""
+    """Concatenate the main Makefile and every included *.mk.
+
+    Phase-2 analysis concern fragments moved under scripts/analysis/ (ticket
+    0239); include them so the $(DERIVED)-producer scan still sees their targets.
+    """
     root = os.path.join(os.path.dirname(__file__), "..")
+    mk_files = [os.path.join(root, "Makefile")]
+    mk_files += sorted(glob.glob(os.path.join(root, "*.mk")))
+    mk_files += sorted(glob.glob(os.path.join(root, "scripts", "analysis", "*.mk")))
     text = ""
-    for name in ["Makefile"] + sorted(
-        f for f in os.listdir(root) if f.endswith(".mk")
-    ):
-        with open(os.path.join(root, name)) as f:
-            text += f"\n# === {name} ===\n" + f.read()
+    for path in mk_files:
+        with open(path) as f:
+            text += f"\n# === {os.path.basename(path)} ===\n" + f.read()
     return text
 
 

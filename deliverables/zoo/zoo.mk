@@ -9,7 +9,7 @@
 #
 # Invoked by the root Makefile's `papers` target via `$(MAKE) -f` so this render
 # process never parses the root Phase-2 rules (ticket 0237). The Phase-2 remainder
-# (schematic/result-panel/cross-year compute rules) stays at root as zoo.mk.
+# (schematic/result-panel/cross-year compute rules) lives at scripts/analysis/zoo-figures.mk (ticket 0239).
 #
 # The figure prerequisites reference $(ZOO_SCHEMATICS) $(ZOO_RESULT_FIGS)
 # explicitly, not the ambiguous $(ZOO_FIGS) — at the root the latter shadowed a

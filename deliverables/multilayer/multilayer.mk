@@ -12,7 +12,7 @@
 # Invoked by the root Makefile's `papers` target via `$(MAKE) -f` so this render
 # process never parses the root Phase-2 rules (ticket 0237). The Phase-2 remainder
 # of the old multilayer-detection.mk (the four companion-figure compute rules)
-# stays at root as multilayer-detection.mk.
+# lives at scripts/analysis/multilayer-detection.mk (ticket 0239).
 
 -include paths.mk
 
