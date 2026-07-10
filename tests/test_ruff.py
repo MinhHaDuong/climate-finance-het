@@ -37,3 +37,30 @@ def test_ruff_clean():
     assert result.returncode == 0, (
         "ruff reported lint violations:\n" + result.stdout + result.stderr
     )
+
+
+def test_hygiene_tool_probes_use_shutil_which():
+    """The adherence hygiene tests must resolve ruff/mypy via ``shutil.which``.
+
+    Ticket 0236: ``tests/test_script_hygiene.py`` used to gate its ruff and mypy
+    tests on module-level ``subprocess.run(["uv", "run", <tool>, "--version"])``
+    probes evaluated at collection time. A nested ``uv run`` re-enters uv from
+    inside the venv pytest already runs in, spawning a per-call sync check that
+    misbehaves under ``UV_NO_SYNC`` in a clean CI/cloud container. Resolve the
+    binary with ``shutil.which`` instead, matching ``test_ruff_clean`` above.
+
+    Checked from this sibling module (not in-file) so the test's own search
+    tokens cannot self-match the source it inspects.
+    """
+    hygiene_src = (REPO_ROOT / "tests" / "test_script_hygiene.py").read_text()
+    normalized = "".join(hygiene_src.split())
+    assert '"uv","run"' not in normalized, (
+        "nested `uv run` tool invocation remains in test_script_hygiene.py; "
+        "resolve ruff/mypy binaries via shutil.which instead (ticket 0236)"
+    )
+    assert 'shutil.which("ruff")' in hygiene_src, (
+        "ruff availability must resolve via shutil.which (ticket 0236)"
+    )
+    assert 'shutil.which("mypy")' in hygiene_src, (
+        "mypy availability must resolve via shutil.which (ticket 0236)"
+    )
