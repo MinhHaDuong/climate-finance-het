@@ -523,7 +523,7 @@ class TestCorpusThroughLoaders:
 
     def test_detector_ignores_noncontract_variable_read(self):
         """A read of a non-contract table via a variable must NOT be flagged —
-        guards against over-broad detection of legitimate content/tables reads."""
+        guards against over-broad detection of legitimate deliverables/_shared/tables reads."""
         fixture = (
             "table_path = os.path.join(TABLES_DIR, 'tab_venues.csv')\n"
             "df = pd.read_csv(table_path)\n"

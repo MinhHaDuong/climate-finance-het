@@ -26,7 +26,7 @@ log = get_logger("analyze_teaching_canon")
 
 INPUT_CSV = os.path.join(DATA_DIR, "syllabi", "reading_lists.csv")
 DEFAULT_UNIFIED = os.path.join(DATA_DIR, "catalogs", "unified_works.csv")
-OUTPUT_TABLE = os.path.join(BASE_DIR, "content", "tables", "tab_teaching_canon.csv")
+OUTPUT_TABLE = os.path.join(BASE_DIR, "deliverables", "_shared", "tables", "tab_teaching_canon.csv")
 
 MIN_INSTITUTIONS = 3
 

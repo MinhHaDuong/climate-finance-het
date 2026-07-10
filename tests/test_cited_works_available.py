@@ -14,9 +14,9 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-BIB = ROOT / "content" / "bibliography" / "main.bib"
+BIB = ROOT / "deliverables" / "_shared" / "bibliography" / "main.bib"
 ALLOWLIST = ROOT / "config" / "no-fulltext-allowlist.txt"
-QMD_GLOBS = ["content/*.qmd", "content/**/*.qmd"]
+QMD_GLOBS = ["deliverables/*/*.qmd", "deliverables/**/*.qmd"]
 
 # pandoc citation key: @ at a word boundary, then key chars (Better BibTeX set).
 CITE = re.compile(r"(?<!\w)@([\w][\w:.\-+/]*)")

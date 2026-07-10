@@ -29,8 +29,8 @@ from utils import (
 log = get_logger("plot_genealogy_html")
 
 # --- Paths ---
-FIGURES_DIR = os.path.join(BASE_DIR, "content", "figures")
-TABLES_DIR = os.path.join(BASE_DIR, "content", "tables")
+FIGURES_DIR = os.path.join(BASE_DIR, "deliverables", "_shared", "figures")
+TABLES_DIR = os.path.join(BASE_DIR, "deliverables", "_shared", "tables")
 os.makedirs(FIGURES_DIR, exist_ok=True)
 
 # --- Config ---

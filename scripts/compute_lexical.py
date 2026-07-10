@@ -16,7 +16,7 @@ from utils import BASE_DIR, DERIVED_TABLES_DIR, get_logger
 
 log = get_logger("compute_lexical")
 
-TABLES_DIR = os.path.join(BASE_DIR, "content", "tables")
+TABLES_DIR = os.path.join(BASE_DIR, "deliverables", "_shared", "tables")
 
 # --- Shared lexical denoising constants (imported by plot_fig_lexical_tfidf.py) ---
 MIN_PERIOD_DF = 3

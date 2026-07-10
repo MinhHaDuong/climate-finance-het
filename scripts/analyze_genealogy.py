@@ -36,7 +36,7 @@ log = get_logger("analyze_genealogy")
 warnings.filterwarnings("ignore", category=FutureWarning)
 
 # --- Paths ---
-TABLES_DIR = os.path.join(BASE_DIR, "content", "tables")
+TABLES_DIR = os.path.join(BASE_DIR, "deliverables", "_shared", "tables")
 os.makedirs(TABLES_DIR, exist_ok=True)
 
 # --- Config ---

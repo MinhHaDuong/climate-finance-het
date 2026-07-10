@@ -59,7 +59,7 @@ def main():
         conc_path = io_args.input[0]
     else:
         conc_path = os.path.join(
-            BASE_DIR, "content", "tables", "tab_venue_concentration.csv"
+            BASE_DIR, "deliverables", "_shared", "tables", "tab_venue_concentration.csv"
         )
     conc = pd.read_csv(conc_path)
 

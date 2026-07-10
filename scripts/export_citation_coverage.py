@@ -1,7 +1,7 @@
 """Export citation coverage table by period for Quarto includes.
 
 Produces:
-- content/tables/tab_citation_coverage.md: period coverage + core coverage
+- deliverables/_shared/tables/tab_citation_coverage.md: period coverage + core coverage
 
 Reads: refined_works.csv, citations.csv
 
@@ -26,7 +26,7 @@ from utils import (
 log = get_logger("export_citation_coverage")
 
 CITATIONS_PATH = os.path.join(CATALOGS_DIR, "citations.csv")
-OUTPUT_PATH = os.path.join(BASE_DIR, "content", "tables", "tab_citation_coverage.md")
+OUTPUT_PATH = os.path.join(BASE_DIR, "deliverables", "_shared", "tables", "tab_citation_coverage.md")
 
 CORE_THRESHOLD = 50
 _period_tuples, _period_labels = load_analysis_periods()

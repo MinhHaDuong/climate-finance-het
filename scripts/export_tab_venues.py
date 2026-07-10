@@ -2,10 +2,10 @@
 """Generate venue table for the Oeconomia manuscript.
 
 Shows distinctive journals per pole (efficiency vs accountability)
-among core works (cited >= 50). Output: content/tables/tab_venues.md
+among core works (cited >= 50). Output: deliverables/_shared/tables/tab_venues.md
 
 Usage:
-    uv run python scripts/export_tab_venues.py --output content/tables/tab_venues.md \
+    uv run python scripts/export_tab_venues.py --output deliverables/_shared/tables/tab_venues.md \
         [--refined-works data/catalogs/refined_works.csv] \
         [--pole-papers <derived>/tab_pole_papers.csv] \
         [--min-papers 10] [--core-threshold 50]

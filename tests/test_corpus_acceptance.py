@@ -112,7 +112,7 @@ def filter_config():
 
 
 QC_CITATIONS_REPORT_PATH = os.path.join(
-    os.path.dirname(__file__), "..", "content", "tables", "qa_citations_report.json"
+    os.path.dirname(__file__), "..", "deliverables", "_shared", "tables", "qa_citations_report.json"
 )
 
 
@@ -799,7 +799,7 @@ class TestCitationQuality:
             warnings.warn(
                 f"qa_citations_report.json not found at {QC_CITATIONS_REPORT_PATH}. "
                 "Run: uv run python scripts/qa_citations.py "
-                "--output content/tables/qa_citations_report.json to generate it."
+                "--output deliverables/_shared/tables/qa_citations_report.json to generate it."
             )
             pytest.skip("qa_citations_report.json not found (needs live API calls)")
 
@@ -820,7 +820,7 @@ class TestCitationQuality:
             warnings.warn(
                 f"qa_citations_report.json is {age_days:.0f} days old. "
                 "Consider re-running: uv run python scripts/qa_citations.py "
-                "--output content/tables/qa_citations_report.json"
+                "--output deliverables/_shared/tables/qa_citations_report.json"
             )
 
         # Check DOI count matches current corpus
@@ -845,7 +845,7 @@ class TestCitationQuality:
             "Report missing 'verification' section" + _diagnosis(
                 "qa_citations.py report format changed",
                 "Re-run: uv run python scripts/qa_citations.py "
-                "--output content/tables/qa_citations_report.json",
+                "--output deliverables/_shared/tables/qa_citations_report.json",
                 "~3 min",
                 "Cannot verify citation link quality",
             )
@@ -854,7 +854,7 @@ class TestCitationQuality:
             "verification missing sample_n" + _diagnosis(
                 "qa_citations.py report incomplete",
                 "Re-run: uv run python scripts/qa_citations.py "
-                "--output content/tables/qa_citations_report.json",
+                "--output deliverables/_shared/tables/qa_citations_report.json",
                 "~3 min",
                 "Cannot assess sample size",
             )
@@ -1045,7 +1045,7 @@ def test_language_null_rate_below_2_percent(enriched):
 # ═══════════════════════════════════════════════════════════
 
 QA_REPORT_PATH = os.path.join(
-    os.path.dirname(__file__), "..", "content", "tables", "qa_embeddings_report.json"
+    os.path.dirname(__file__), "..", "deliverables", "_shared", "tables", "qa_embeddings_report.json"
 )
 
 
@@ -1064,7 +1064,7 @@ class TestEmbeddingQuality:
             pytest.skip(
                 "qa_embeddings_report.json not found — "
                 "run: uv run python scripts/qa_embeddings.py "
-                "--output content/tables/qa_embeddings_report.json"
+                "--output deliverables/_shared/tables/qa_embeddings_report.json"
             )
         with open(QA_REPORT_PATH) as f:
             return json.load(f)
@@ -1075,7 +1075,7 @@ class TestEmbeddingQuality:
             "Missing 'within_vs_between' section in QA report" + _diagnosis(
                 "qa_embeddings.py produced incomplete output",
                 "uv run python scripts/qa_embeddings.py "
-                "--output content/tables/qa_embeddings_report.json",
+                "--output deliverables/_shared/tables/qa_embeddings_report.json",
                 "< 1 min",
                 "Cannot verify embedding semantic validity",
             )
@@ -1083,7 +1083,7 @@ class TestEmbeddingQuality:
             "Missing 'nearest_neighbours' section in QA report" + _diagnosis(
                 "qa_embeddings.py produced incomplete output",
                 "uv run python scripts/qa_embeddings.py "
-                "--output content/tables/qa_embeddings_report.json",
+                "--output deliverables/_shared/tables/qa_embeddings_report.json",
                 "< 1 min",
                 "Cannot inspect nearest-neighbour quality",
             )
@@ -1100,7 +1100,7 @@ class TestEmbeddingQuality:
             f"Missing keys in within_vs_between: {missing}" + _diagnosis(
                 "qa_embeddings.py output schema changed",
                 "uv run python scripts/qa_embeddings.py "
-                "--output content/tables/qa_embeddings_report.json",
+                "--output deliverables/_shared/tables/qa_embeddings_report.json",
                 "< 1 min",
                 "Downstream consumers expect these fields",
             )
@@ -1140,7 +1140,7 @@ class TestEmbeddingQuality:
 # ═══════════════════════════════════════════════════════════
 
 QA_METADATA_REPORT_PATH = os.path.join(
-    os.path.dirname(__file__), "..", "content", "tables", "qa_metadata_report.json"
+    os.path.dirname(__file__), "..", "deliverables", "_shared", "tables", "qa_metadata_report.json"
 )
 
 
@@ -1154,7 +1154,7 @@ class TestMetadataQuality:
             warnings.warn(
                 f"qa_metadata_report.json not found at {QA_METADATA_REPORT_PATH}. "
                 "Run: uv run python scripts/qa_metadata.py "
-                "--output content/tables/qa_metadata_report.json to generate it."
+                "--output deliverables/_shared/tables/qa_metadata_report.json to generate it."
             )
             pytest.skip("qa_metadata_report.json not found (needs live API calls)")
 
@@ -1171,7 +1171,7 @@ class TestMetadataQuality:
                 + _diagnosis(
                     "qa_metadata.py output schema changed",
                     "Re-run: uv run python scripts/qa_metadata.py "
-                    "--output content/tables/qa_metadata_report.json",
+                    "--output deliverables/_shared/tables/qa_metadata_report.json",
                     "~2 min",
                     "Metadata quality metrics unavailable for technical report",
                 )

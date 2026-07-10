@@ -4,7 +4,7 @@ These tests verify mathematical facts about the cross-year Z-score, not code
 behavior. They serve as documentation (the proposition is true) and as
 regression guards (the proof algebra stays correct if this file is modified).
 
-See content/_includes/techrep/null-model.md §Two notions of Z-score for the
+See deliverables/_shared/_includes/techrep/null-model.md §Two notions of Z-score for the
 formal statement and proof.
 """
 

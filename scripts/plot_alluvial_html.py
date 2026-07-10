@@ -21,8 +21,8 @@ from utils import BASE_DIR, DERIVED_TABLES_DIR, get_logger, load_analysis_config
 log = get_logger("plot_alluvial_html")
 
 # --- Paths ---
-FIGURES_DIR = os.path.join(BASE_DIR, "content", "figures")
-TABLES_DIR = os.path.join(BASE_DIR, "content", "tables")
+FIGURES_DIR = os.path.join(BASE_DIR, "deliverables", "_shared", "figures")
+TABLES_DIR = os.path.join(BASE_DIR, "deliverables", "_shared", "tables")
 os.makedirs(FIGURES_DIR, exist_ok=True)
 
 _cfg = load_analysis_config()

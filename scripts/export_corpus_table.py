@@ -177,7 +177,7 @@ def main():
 
 
 # Default output path (overridden by --output)
-_output_csv = os.path.join(BASE_DIR, "content", "tables", "tab_corpus_sources.csv")
+_output_csv = os.path.join(BASE_DIR, "deliverables", "_shared", "tables", "tab_corpus_sources.csv")
 
 if __name__ == "__main__":
     io_args, _extra = parse_io_args()

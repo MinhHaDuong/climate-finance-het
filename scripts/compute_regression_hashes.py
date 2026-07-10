@@ -354,8 +354,8 @@ def run_and_hash(
         output_root = ROOT
 
     # Ensure output directories exist
-    (output_root / "content" / "tables").mkdir(parents=True, exist_ok=True)
-    (output_root / "content" / "figures").mkdir(parents=True, exist_ok=True)
+    (output_root / "deliverables" / "_shared" / "tables").mkdir(parents=True, exist_ok=True)
+    (output_root / "deliverables" / "_shared" / "figures").mkdir(parents=True, exist_ok=True)
     # build_het_core writes to tests/fixtures/smoke/catalogs/
     (output_root / "tests" / "fixtures" / "smoke" / "catalogs").mkdir(
         parents=True, exist_ok=True,

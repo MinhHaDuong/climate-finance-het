@@ -109,7 +109,7 @@ def main():
     # Save report
     report = df[["lang_original", "lang_normalized", "lang_detected", "lang_final"]].copy()
     report["changed"] = df["lang_original"].apply(normalize_lang) != df["lang_final"]
-    report_path = os.path.join(BASE_DIR, "content", "tables", "qa_language_report.csv")
+    report_path = os.path.join(BASE_DIR, "deliverables", "_shared", "tables", "qa_language_report.csv")
     save_csv(report[report["changed"]], report_path)
 
     if args.apply:

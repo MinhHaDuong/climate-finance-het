@@ -82,7 +82,7 @@ def _smoke_env(output_dir=None):
     """Environment dict that redirects pipeline_loaders to fixture data.
 
     If output_dir is given, also sets CLIMATE_FINANCE_OUTPUT to redirect
-    table/figure outputs away from the repo's content/ directory.
+    table/figure outputs away from the repo's deliverables/_shared/ output dirs.
     """
     env = {
         **os.environ,
@@ -98,7 +98,7 @@ def _smoke_env(output_dir=None):
 def _run_script(script_name, *args, output_dir=None, timeout=60):
     """Run a Phase 2 script against smoke fixture data.
 
-    When output_dir is given, script outputs go there instead of content/.
+    When output_dir is given, script outputs go there instead of the repo output dirs.
     """
     result = subprocess.run(
         [sys.executable, os.path.join(SCRIPTS_DIR, script_name), *args],
@@ -115,16 +115,16 @@ def _run_script(script_name, *args, output_dir=None, timeout=60):
 
 @pytest.fixture
 def smoke_output_dir(tmp_path):
-    """Create a temp output tree mirroring content/{figures,tables}.
+    """Create a temp output tree mirroring the figure/table output dirs.
 
     Scripts resolve output paths from BASE_DIR. We can't easily redirect
     that without touching every script (that's #509). Instead, we back up
     affected files before the test and restore them after. The analysis
     tables live under data/derived/tables/ (evicted there by ticket 0218);
-    figures stay under content/figures/.
+    figures stay under deliverables/_shared/figures/.
     """
     tables = os.path.join(ROOT_DIR, "data", "derived", "tables")
-    figures = os.path.join(ROOT_DIR, "content", "figures")
+    figures = os.path.join(ROOT_DIR, "deliverables", "_shared", "figures")
 
     # Track files that existed before the test
     affected_tables = [
@@ -160,7 +160,7 @@ class TestSmokeCriticalPath:
     These scripts form the critical pipeline chain:
     refined_works.csv → breakpoints → clusters → figures.
 
-    The smoke_output_dir fixture backs up and restores any content/
+    The smoke_output_dir fixture backs up and restores any real
     files that scripts overwrite, so production outputs are preserved.
     """
 

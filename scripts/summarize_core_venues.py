@@ -45,7 +45,7 @@ def parse_args():
 
     # Primary output is --output; sibling outputs derive from its directory
     args.out_all = io_args.output
-    out_dir = os.path.dirname(io_args.output) or os.path.join(BASE_DIR, "content", "tables")
+    out_dir = os.path.dirname(io_args.output) or os.path.join(BASE_DIR, "deliverables", "_shared", "tables")
     args.out_journals = os.path.join(out_dir, "tab_core_venues_journals.csv")
     args.out_series = os.path.join(out_dir, "tab_core_venues_series.csv")
     args.out_institutions = os.path.join(out_dir, "tab_core_institutions.csv")

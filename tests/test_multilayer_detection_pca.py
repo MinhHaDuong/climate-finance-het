@@ -10,7 +10,7 @@ import re
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 
-COMPANION = os.path.join(ROOT, "content", "multilayer-detection.qmd")
+COMPANION = os.path.join(ROOT, "deliverables", "multilayer", "multilayer-detection.qmd")
 
 
 def read(path):

@@ -16,15 +16,16 @@ import subprocess
 import pytest
 
 REPO_ROOT = os.path.join(os.path.dirname(__file__), "..")
-MANUSCRIPT_MK = os.path.join(REPO_ROOT, "manuscript.mk")
+MANUSCRIPT_MK = os.path.join(REPO_ROOT, "deliverables", "manuscript", "manuscript.mk")
 
 # The manuscript's writing-facing deliverables — what manuscript.qmd actually
-# consumes via ![](figures/...) and {{< include tables/tab_venues.md >}}.
+# consumes via ![](../_shared/figures/...) and
+# {{< include ../_shared/tables/tab_venues.md >}}.
 MANUSCRIPT_DELIVERABLES = [
-    "content/figures/fig_bars_v1.png",
-    "content/figures/fig_composition.png",
-    "content/figures/fig_breaks.png",
-    "content/tables/tab_venues.md",
+    "deliverables/_shared/figures/fig_bars_v1.png",
+    "deliverables/_shared/figures/fig_composition.png",
+    "deliverables/_shared/figures/fig_breaks.png",
+    "deliverables/_shared/tables/tab_venues.md",
 ]
 
 # Tokens that betray a Phase-1/data dependency leaking into the writing build.
@@ -34,7 +35,7 @@ DATA_TOKENS = ["$(REFINED)", "$(DATA_DIR)", "refined_works", "data/"]
 @pytest.mark.integration
 @pytest.mark.parametrize("path", MANUSCRIPT_DELIVERABLES)
 def test_deliverable_is_git_tracked(path):
-    """Each manuscript deliverable must be tracked by git (like content/_includes/)."""
+    """Each manuscript deliverable must be tracked by git (like deliverables/_shared/_includes/)."""
     result = subprocess.run(
         ["git", "ls-files", "--error-unmatch", path],
         cwd=REPO_ROOT,
@@ -48,7 +49,7 @@ def test_deliverable_is_git_tracked(path):
 
 
 def test_manuscript_mk_exists():
-    assert os.path.isfile(MANUSCRIPT_MK), "manuscript.mk missing at repo root"
+    assert os.path.isfile(MANUSCRIPT_MK), "manuscript.mk missing at deliverables/manuscript/"
 
 
 def test_manuscript_pdf_rule_has_no_data_prereq():

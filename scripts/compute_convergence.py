@@ -31,7 +31,8 @@ def main():
         # Default: look for changepoints table
         tables_dir = os.path.join(
             os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-            "content",
+            "deliverables",
+            "_shared",
             "tables",
         )
         input_path = os.path.join(tables_dir, "tab_changepoints.csv")

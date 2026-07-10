@@ -32,7 +32,7 @@ from utils import (
 
 log = get_logger("plot_fig_alluvial")
 
-TABLES_DIR = os.path.join(BASE_DIR, "content", "tables")
+TABLES_DIR = os.path.join(BASE_DIR, "deliverables", "_shared", "tables")
 
 
 def _compute_stacks(alluvial_data, period_labels, n_clusters):

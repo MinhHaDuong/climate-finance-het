@@ -16,7 +16,7 @@ import pytest
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 ROOT_DIR = os.path.join(os.path.dirname(__file__), "..")
-TABLES_DIR = os.path.join(ROOT_DIR, "content", "tables")
+TABLES_DIR = os.path.join(ROOT_DIR, "deliverables", "_shared", "tables")
 
 sys.path.insert(0, SCRIPTS_DIR)
 

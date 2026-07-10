@@ -31,7 +31,7 @@ warnings.filterwarnings("ignore")
 
 log = get_logger("analyze_100bn")
 
-TABLES_DIR = os.path.join(BASE_DIR, "content", "tables")
+TABLES_DIR = os.path.join(BASE_DIR, "deliverables", "_shared", "tables")
 OUTPUT_PATH = os.path.join(TABLES_DIR, "tab_100bn_papers.csv")
 
 

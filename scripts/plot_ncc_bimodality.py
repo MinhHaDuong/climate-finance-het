@@ -35,7 +35,7 @@ from utils import (
 
 log = get_logger("plot_ncc_bimodality")
 
-TABLES_DIR = os.path.join(BASE_DIR, "content", "tables")
+TABLES_DIR = os.path.join(BASE_DIR, "deliverables", "_shared", "tables")
 
 # NCC specifications
 NCC_DOUBLE_COL_MM = 183

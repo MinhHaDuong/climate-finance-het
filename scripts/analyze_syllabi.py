@@ -23,7 +23,7 @@ from utils import BASE_DIR, DATA_DIR, get_logger
 log = get_logger("analyze_syllabi")
 
 INPUT_CSV = os.path.join(DATA_DIR, "syllabi", "reading_lists.csv")
-OUTPUT_TABLE = os.path.join(BASE_DIR, "content", "tables", "tab_syllabi_breakdown.csv")
+OUTPUT_TABLE = os.path.join(BASE_DIR, "deliverables", "_shared", "tables", "tab_syllabi_breakdown.csv")
 
 
 def build_breakdown(df):

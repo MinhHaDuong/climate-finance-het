@@ -12,7 +12,7 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
-DATA_PAPER = os.path.join(ROOT, "content", "data-paper.qmd")
+DATA_PAPER = os.path.join(ROOT, "deliverables", "data-paper", "data-paper.qmd")
 SCRIPT = os.path.join(ROOT, "scripts", "export_language_table.py")
 
 

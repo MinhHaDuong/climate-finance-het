@@ -56,7 +56,7 @@ def regression_outputs(tmp_path_factory):
 
     Uses module scope — all scripts run once per test session.
     Outputs are redirected to a temporary directory via run_and_hash(output_root=...),
-    so the real content/ tree is never touched.
+    so the real deliverables/_shared/ tree is never touched.
     """
     from compute_regression_hashes import run_and_hash
 
@@ -148,7 +148,7 @@ class TestRegressionInfra:
 
     def test_no_stage_intermediates_function(self):
         """_stage_intermediates was removed: Wave 2 scripts now accept --input,
-        so the harness no longer needs to copy intermediates into content/."""
+        so the harness no longer needs to copy intermediates into deliverables/_shared/."""
         import scripts.compute_regression_hashes as mod
         assert not hasattr(mod, "_stage_intermediates"), (
             "compute_regression_hashes still has _stage_intermediates; "
@@ -175,16 +175,16 @@ class TestRedirectArgs:
     """Unit tests for _redirect_args path rewriting."""
 
     def test_relative_content_path_redirected(self, tmp_path):
-        args = ["--output", "content/figures/fig_bars.png"]
+        args = ["--output", "deliverables/_shared/figures/fig_bars.png"]
         result = _redirect_args(args, tmp_path)
         assert result[0] == "--output"
-        assert result[1] == str(tmp_path / "content" / "figures" / "fig_bars.png")
+        assert result[1] == str(tmp_path / "deliverables" / "_shared" / "figures" / "fig_bars.png")
 
     def test_absolute_path_under_root_redirected(self, tmp_path):
-        abs_path = str(HARNESS_ROOT / "content" / "tables" / "tab.csv")
+        abs_path = str(HARNESS_ROOT / "deliverables" / "_shared" / "tables" / "tab.csv")
         args = ["--output", abs_path]
         result = _redirect_args(args, tmp_path)
-        assert result[1] == str(tmp_path / "content" / "tables" / "tab.csv")
+        assert result[1] == str(tmp_path / "deliverables" / "_shared" / "tables" / "tab.csv")
 
     def test_non_content_arg_unchanged(self, tmp_path):
         args = ["--robustness", "--v1-only"]
@@ -209,23 +209,23 @@ class TestRedirectArgs:
 
 
 class TestRegressionIsolation:
-    """Regression outputs must not touch content/ directories."""
+    """Regression outputs must not touch deliverables/_shared/ directories."""
 
     @pytest.mark.integration
     def test_regression_outputs_do_not_touch_content_dir(self, regression_outputs):
-        """After regression_outputs runs, no file under content/figures/ or
-        content/tables/ should have been created or modified.
+        """After regression_outputs runs, no file under deliverables/_shared/figures/ or
+        deliverables/_shared/tables/ should have been created or modified.
 
         The fixture should redirect all outputs to a tmp directory, so the
-        real content/ tree stays untouched.
+        real deliverables/_shared/ tree stays untouched.
         """
         # regression_outputs already ran (module-scoped fixture).
         # Check that it returned a start_time we can compare against.
         results, errors, start_time = regression_outputs
 
         content_dirs = [
-            ROOT_PATH / "content" / "figures",
-            ROOT_PATH / "content" / "tables",
+            ROOT_PATH / "deliverables" / "_shared" / "figures",
+            ROOT_PATH / "deliverables" / "_shared" / "tables",
         ]
         touched = []
         for d in content_dirs:
@@ -236,6 +236,6 @@ class TestRegressionIsolation:
                     touched.append(str(f.relative_to(ROOT_PATH)))
 
         assert not touched, (
-            "Regression fixture modified files in content/:\n"
+            "Regression fixture modified files in deliverables/_shared/:\n"
             + "\n".join(f"  {p}" for p in touched)
         )

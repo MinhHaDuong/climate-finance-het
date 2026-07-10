@@ -4,21 +4,21 @@ SNAPSHOT_DATE = "2026-03-26"
 
 
 def test_date_in_companion_paper():
-    text = Path("content/multilayer-detection.qmd").read_text()
+    text = Path("deliverables/multilayer/multilayer-detection.qmd").read_text()
     assert SNAPSHOT_DATE in text, (
         f"Snapshot date {SNAPSHOT_DATE} not found in multilayer-detection.qmd"
     )
 
 
 def test_date_in_data_paper():
-    text = Path("content/data-paper.qmd").read_text()
+    text = Path("deliverables/data-paper/data-paper.qmd").read_text()
     assert SNAPSHOT_DATE in text, (
         f"Snapshot date {SNAPSHOT_DATE} not found in data-paper.qmd"
     )
 
 
 def test_date_in_corpus_report():
-    text = Path("content/corpus-report.qmd").read_text()
+    text = Path("deliverables/corpus-report/corpus-report.qmd").read_text()
     assert SNAPSHOT_DATE in text, (
         f"Snapshot date {SNAPSHOT_DATE} not found in corpus-report.qmd"
     )

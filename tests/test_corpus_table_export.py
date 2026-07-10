@@ -14,7 +14,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
 TABLES_DIR = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-    "content", "tables",
+    "deliverables", "_shared", "tables",
 )
 CSV_PATH = os.path.join(TABLES_DIR, "tab_corpus_sources.csv")
 
