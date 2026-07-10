@@ -1,0 +1,66 @@
+%erg 0.1
+Title: Reorg code 1/4 — relocate the 5 Phase-2 analysis .mk into scripts/analysis/
+Created: 2026-07-10
+Author: HDMX-coding-agent
+Label: deferred
+
+--- log ---
+2026-07-10T00:00Z HDMX-coding-agent created
+2026-07-10T00:00Z HDMX-coding-agent note split from 0225 (code workstream) as an integer child; parent 0225 is the sub-tracker. Scope corrected to ALL 5 analysis .mk (0225 Action 1 named only 3). Parked behind the Œconomia R&R per 0223.
+
+--- body ---
+## Context
+First and lowest-risk stage of the code reorg (parent sub-tracker `0225`,
+grand-tracker `0223`). The main `Makefile` `-include`s five Phase-2 "concern"
+`.mk` fragments that still sit at the repo root. Move them under
+`scripts/analysis/` so the top level stops carrying build fragments.
+
+`0225` Action 1 named only three (`divergence.mk`, `separation.mk`,
+`venues.mk`). There are **five** — `multilayer-detection.mk` and `zoo.mk` are
+the same class (Phase-2, `-include`d at `Makefile:91-95`, each defines
+`$(DERIVED)` tables + `deliverables/_shared/figures`). Relocate all five.
+
+## Not in scope (already done / stays put)
+- **Render / manuscript `.mk` — already per-deliverable** (ticket 0237):
+  `deliverables/{manuscript,corpus-report,data-paper,multilayer,technical-report,zoo}/*.mk`.
+  No Phase-3 `.mk` remains at root. This ticket is Phase-2 only.
+- **`paths.mk` stays at root** — it is the shared variable interface (`DERIVED`,
+  `BIB`, `CSL`, `*_INCLUDES`, `*_FIGS`) `-include`d by BOTH the Phase-2 Makefile
+  and every Phase-3 render `.mk` (0237). Moving it would break the render
+  workpackages.
+
+## Name collision to resolve
+Root `zoo.mk` is Phase-2-pure (0237 moved its render rule to
+`deliverables/zoo/zoo.mk`), but the two files share the basename `zoo.mk`.
+On relocation, rename the Phase-2 one (e.g. `scripts/analysis/zoo-figures.mk`)
+so the render `deliverables/zoo/zoo.mk` remains the unambiguous `zoo.mk`.
+
+## Relevant files
+- `divergence.mk`, `separation.mk`, `venues.mk`, `multilayer-detection.mk`,
+  `zoo.mk` — the five to move
+- `Makefile:91-95` — the `-include` lines to repoint
+- `paths.mk` — stays; do not move
+- `docs/repo-layout.md` — placement rule
+
+## Actions
+1. `git mv` the five fragments into `scripts/analysis/` (renaming the Phase-2
+   `zoo.mk`); repoint the `-include` lines in `Makefile`.
+2. Grep for any other reference to the old root paths (sub-makes, docs, CI).
+
+## Test
+- `make -n <target>` yields an identical target/prereq list before and after
+  (paths in the `.mk` change, the dependency graph does not) for one target per
+  moved fragment.
+
+## Invariants
+- `make check` green; the moves are pure `-include` path edits — no recipe
+  logic changes.
+- `paths.mk` untouched at root; render `.mk` untouched under `deliverables/`.
+
+## Exit criteria
+- The five Phase-2 analysis `.mk` live under `scripts/analysis/`; none at root
+  except `paths.mk`.
+- No dangling reference to a moved fragment's old path.
+- `make -n` target lists unchanged by the move.
+
+Ticket-ref: tickets/0225-reorg-code.erg

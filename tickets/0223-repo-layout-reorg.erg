@@ -9,6 +9,7 @@ Label: deferred
 
 2026-07-10T09:49Z HDMX-coding-agent label deferred
 2026-07-10T10:07Z note author-adjudicated 2026-07-10: deliverables/ RATIFIED, src/ DECLINED (keep libs/ for cross-repo), AEDIST shared harvest/index → 0229
+2026-07-10T00:00Z HDMX-coding-agent note child 0226 (prose) closed via PR #1002; child 0225 (code) fanned out into integer sub-children 0239-0242 (0225 is now a sub-tracker). This tracker closes when 0225 closes. All parked behind the Œconomia R&R.
 --- body ---
 ## Context
 Top level reached 43 entries with two flat mega-directories: `scripts/` (173
