@@ -7,7 +7,7 @@ builds the internal citation DAG, and computes a year × band layout.
 Reads:
   data/catalogs/refined_works.csv
   data/catalogs/refined_citations.csv
-  data/catalogs/semantic_clusters.csv
+  data/derived/tables/semantic_clusters.csv
   <derived>/tab_pole_papers.csv  (optional — from analyze_bimodality.py)
 
 Produces:
@@ -103,7 +103,7 @@ def load_data():
 
     # Load KMeans semantic clusters (needed for CDM cluster identification)
     log.info("Loading semantic clusters...")
-    sem_df = pd.read_csv(os.path.join(CATALOGS_DIR, "semantic_clusters.csv"))
+    sem_df = pd.read_csv(os.path.join(DERIVED_TABLES_DIR, "semantic_clusters.csv"))
     sem_df["doi_norm"] = sem_df["doi"].apply(normalize_doi)
     doi_to_cluster = dict(zip(sem_df["doi_norm"], sem_df["semantic_cluster"]))
     log.info("Semantic clusters loaded: %d papers", len(sem_df))

@@ -23,7 +23,7 @@ import pandas as pd
 from scipy import stats
 from script_io_args import parse_io_args, validate_io
 from utils import (
-    CATALOGS_DIR,
+    DERIVED_TABLES_DIR,
     REFINED_EMBEDDINGS_PATH,
     REFINED_WORKS_PATH,
     get_logger,
@@ -31,7 +31,7 @@ from utils import (
 
 log = get_logger("qa_embeddings")
 
-CLUSTERS_PATH = os.path.join(CATALOGS_DIR, "semantic_clusters.csv")
+CLUSTERS_PATH = os.path.join(DERIVED_TABLES_DIR, "semantic_clusters.csv")
 
 
 # ---------------------------------------------------------------------------

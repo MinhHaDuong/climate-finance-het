@@ -11,7 +11,7 @@ Method:
 - Cross-validate with co-citation communities (if available)
 
 Produces:
-- data/catalogs/semantic_clusters.csv: Cluster assignments with UMAP coordinates
+- data/derived/tables/semantic_clusters.csv: Cluster assignments with UMAP coordinates
 """
 
 import os
@@ -23,6 +23,7 @@ import pandas as pd
 from script_io_args import parse_io_args, validate_io
 from utils import (
     CATALOGS_DIR,
+    DERIVED_TABLES_DIR,
     EMBEDDINGS_PATH,
     get_logger,
     load_analysis_config,
@@ -34,7 +35,7 @@ log = get_logger("analyze_embeddings")
 
 warnings.filterwarnings("ignore", category=FutureWarning)
 
-CLUSTERS_PATH = os.path.join(CATALOGS_DIR, "semantic_clusters.csv")
+CLUSTERS_PATH = os.path.join(DERIVED_TABLES_DIR, "semantic_clusters.csv")
 
 
 def main():

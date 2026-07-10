@@ -17,11 +17,11 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from script_io_args import parse_io_args, validate_io
-from utils import CATALOGS_DIR, get_logger, save_figure
+from utils import DERIVED_TABLES_DIR, get_logger, save_figure
 
 log = get_logger("plot_semantic")
 
-CLUSTERS_CSV = os.path.join(CATALOGS_DIR, "semantic_clusters.csv")
+CLUSTERS_CSV = os.path.join(DERIVED_TABLES_DIR, "semantic_clusters.csv")
 
 
 def _plot_cluster(df, ax):
