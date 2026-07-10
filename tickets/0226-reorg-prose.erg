@@ -10,6 +10,7 @@ Label: deferred
 
 2026-07-10T09:49Z HDMX-coding-agent label deferred
 2026-07-10T10:07Z note author ratified the deliverables/ per-paper Quarto layout 2026-07-10; proceed post-resubmit
+2026-07-10T18:30Z HDMX-coding-agent note scope reconciliation: only manuscript.mk moved into deliverables/manuscript/. zoo.mk, multilayer-detection.mk, divergence.mk, venues.mk, separation.mk stay at repo root as Phase-2 concern files; extracting their single render rule into per-deliverable render .mk is 0237's job. The stale "Relevant files" line naming zoo.mk/multilayer-detection.mk was struck accordingly.
 --- body ---
 ## Context
 Third stage of the top-level tidy (tracker `0223`). `content/` runs ~7
@@ -23,7 +24,7 @@ disappear. Slides are deliverables, not papers, and sit as peers.
 - `docs/repo-layout.md` — target `deliverables/` tree
 - `content/*.qmd`, `content/*-vars.yml`, `content/_includes/`, `content/bibliography/`
 - `_quarto.yml`, `_quarto-manuscript.yml`, `_quarto-manuscript-Gide.yml`
-- `manuscript.mk`, `zoo.mk`, `multilayer-detection.mk` → into each `deliverables/<x>/`
+- `manuscript.mk` → into `deliverables/manuscript/` (the only render `.mk` moved here)
 
 ## Actions
 1. Create `deliverables/<x>/` per deliverable; move its `.qmd` + `-vars.yml` +
