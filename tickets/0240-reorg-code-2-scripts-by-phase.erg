@@ -1,0 +1,58 @@
+%erg 0.1
+Title: Reorg code 2/4 — group scripts/ 173 files by dataflow phase
+Created: 2026-07-10
+Author: HDMX-coding-agent
+Label: deferred
+
+--- log ---
+2026-07-10T00:00Z HDMX-coding-agent created
+2026-07-10T00:00Z HDMX-coding-agent note split from 0225 (code workstream) as an integer child; the high-risk stage (173-file move, import-path churn). Parked behind the Œconomia R&R per 0223.
+
+--- body ---
+## Context
+Second stage of the code reorg (parent sub-tracker `0225`, grand-tracker
+`0223`). `scripts/` holds 173 flat files that are really a library plus a set of
+entry points. Group the entry points by dataflow phase so the directory names
+the phase, WITHOUT introducing a top-level `src/` package (author declined
+2026-07-10; the `_`-private + `pipeline_*` loader convention stands, cross-repo
+sharing via `libs/`).
+
+This is the highest-risk stage: it rewrites import paths across the tree
+(`utils` is imported ~160×, `script_io_args` ~93×). Land it alone.
+
+## Relevant files
+- `scripts/*.py` — 173 files
+- `docs/repo-layout.md` — the placement rule + 19-file migration audit
+  (destinations `scripts/<phase>/`, not `src/`)
+- `.claude/rules/architecture.md` § Pipeline phases — the phase → prefix map
+
+## Actions
+1. Create phase subdirs and move entry points:
+   - `plot_*` / `export_*` → `scripts/figures/`
+   - `analyze_*` / `compute_*` → `scripts/analysis/`
+   - `catalog_*` / `enrich_*` / `corpus_*` / `scout*` → `scripts/harvest/`
+   - `qa_*` → `scripts/qa/`
+   Respect the semantic-phase exceptions (architecture.md § "Phase is semantic":
+   `compute_reranker_calibration` is Phase-1; `qa_embeddings` / `qa_detect_type`
+   emit Phase-2 outputs). Shared library modules (`utils`, `pipeline_*`,
+   `_*`-private) stay where imports resolve, or move as a unit with call-site
+   fixes.
+2. Update every import and every Makefile / `.mk` script path to the new
+   locations.
+
+## Test
+- `make check` green after the move (import resolution is the real gate).
+- `make -n <target>` for one target per phase yields the same prereq graph
+  (only the `scripts/<phase>/…` path segment changes).
+
+## Invariants
+- No top-level `src/`; no `python -m` flip; library convention unchanged.
+- Layering (architecture.md rule 4): a compute module never imports a plotter.
+- One logical move per PR (this ticket = the phase-grouping move only).
+
+## Exit criteria
+- `scripts/` grouped by phase; no flat ~170-file directory remains.
+- `make check` and `make clean && make all` green from the regrouped tree.
+- All imports and Make script paths repointed; no dangling reference.
+
+Ticket-ref: tickets/0225-reorg-code.erg

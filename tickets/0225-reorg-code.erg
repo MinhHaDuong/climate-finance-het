@@ -2,7 +2,6 @@
 Title: Reorg workstream — code (scripts/ by phase; shared harvest/index → libs/)
 Created: 2026-07-10
 Author: HDMX-coding-agent
-Blocked-by: 0223
 Label: deferred
 
 --- log ---
@@ -10,6 +9,8 @@ Label: deferred
 
 2026-07-10T09:49Z HDMX-coding-agent label deferred
 2026-07-10T10:07Z note author decision: decline src/; keep _-private/pipeline_/scripts convention + phase subgrouping; extractions land in phase subdir; shared harvest/index → libs/ (0229)
+2026-07-10T00:00Z HDMX-coding-agent note strip stale Blocked-by 0223 — the edge encoded "wait for layout ratification", discharged 2026-07-10 (0223 log: deliverables/ RATIFIED, src/ DECLINED). 0223 is a tracking parent that stays open until this child closes, so child-blocked-by-parent was an inverted/cyclic edge (0226, same edge, was executed and merged regardless). Ticket stays deferred: parked behind the Œconomia R&R per 0223 scheduling.
+2026-07-10T00:00Z HDMX-coding-agent note split into integer children 0239-0242 (author directive); 0225 now a sub-tracker. Fixed .mk scope: all 5 analysis .mk relocate (was 3); render/manuscript .mk already per-deliverable via 0237; root zoo.mk is Phase-2-pure (render split out by 0237) but name-clashes with deliverables/zoo/zoo.mk → rename on relocation.
 --- body ---
 ## Context
 Second stage of the top-level tidy (tracker `0223`). `scripts/` holds 173 flat
@@ -31,33 +32,41 @@ package is this-repo-internal; AEDIST consumes `libs/` by git source).
 - `divergence.mk`, `separation.mk`, `venues.mk` — shared-analysis fragments → `scripts/analysis/analysis.mk`
 - `libs/openalex-corpus` — the AEDIST-shared harvest package (indexing conventions to be added; see 0229 seed / memory)
 
-## Actions (risk ascending — separate PRs)
-1. Relocate shared-analysis fragments to `scripts/analysis/analysis.mk` (pure
-   `-include` path edits).
-2. Group entry points by phase: `scripts/{harvest,analysis,figures,qa}/`.
-   `plot_*`/`export_*` → `figures/`; `analyze_*`/`compute_*` → `analysis/`;
-   `catalog_*`/`enrich_*`/`corpus_*`/`scout*` → `harvest/`; `qa_*` → `qa/`.
-3. Land the five SPLIT extractions (`corpus_filters`, `traditions`,
-   `changepoints`, `teaching`, `venues`) as plain/`_`-private modules in the
-   owning phase subdir; the leaking scripts import from them. LIBRARY-10 and
-   MOVE-2 stay in `scripts/` (relocated by phase) — no `src/`, no `python -m`.
-4. (follow-up, off critical path) sever `compute_clustering_comparison.py`'s
-   import of the two clustering plotters — the backward arrow.
+## Sub-tracker — the four Actions are now integer child tickets
+This ticket held four Actions explicitly slated for separate PRs; per ticket
+discipline a multi-PR ticket is split into one child per PR before work starts.
+`0225` is now a **sub-tracker** (grand-tracker `0223` → `0225` → children below)
+and stays open until its children close. Children are NOT `blocked-by 0225` — a
+leaf blocked-by its own tracker is the cyclic edge stripped from this ticket on
+2026-07-10; only real prerequisites are encoded.
 
-## Test
-- Byte-check each SPLIT as old-code-vs-new-code on the same input, not vs a
-  drifting golden.
-- `make -n <target>` produces an identical target/prereq list before and after
-  each relocation (paths change, graph does not).
+- **0239** — code 1/4: relocate the **5** Phase-2 analysis `.mk` into
+  `scripts/analysis/` (0225's Action 1 named only 3 — `multilayer-detection.mk`
+  and `zoo.mk` are the same class; scope corrected). Rename the Phase-2 `zoo.mk`
+  to end the basename clash with the Phase-3 `deliverables/zoo/zoo.mk`.
+  `paths.mk` stays at root; render `.mk` already per-deliverable (0237).
+  Low-risk, independent — lands first.
+- **0240** — code 2/4: group `scripts/` 173 files by phase
+  (`harvest/analysis/figures/qa/`). High-risk (import-path churn), independent.
+- **0241** — code 3/4: land the five SPLIT extractions in their phase subdir.
+  Blocked-by 0240 (destination dirs come from 0240).
+- **0242** — code 4/4 (follow-up): sever `compute_clustering_comparison.py`'s
+  plotter import — the backward arrow. Off critical path.
 
-## Invariants
+## Invariants (inherited by every child)
 - Layering: a compute module never imports a plotter (architecture.md rule 4).
 - Existing library convention unchanged: `_`-private + `pipeline_*` loaders;
-  no top-level `src/`.
+  no top-level `src/`, no `python -m`.
 - `make check` green; `make clean && make all` green.
 - One logical move per PR.
 
-## Exit criteria
-- `scripts/` grouped by phase; no flat 170-file directory.
-- The five extractions live beside their phase; leaking scripts import them.
+## Exit criteria (tracker closes when)
+- 0239, 0240, 0241, 0242 all closed.
+- `scripts/` grouped by phase; no flat ~170-file directory; no analysis `.mk` at
+  root except `paths.mk`.
 - Full build green; `make -n` target lists unchanged by the moves.
+
+Ticket-ref: tickets/0239-reorg-code-1-analysis-mk-relocate.erg
+Ticket-ref: tickets/0240-reorg-code-2-scripts-by-phase.erg
+Ticket-ref: tickets/0241-reorg-code-3-split-extractions.erg
+Ticket-ref: tickets/0242-reorg-code-4-sever-clustering-backarrow.erg

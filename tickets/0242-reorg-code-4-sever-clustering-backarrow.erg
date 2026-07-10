@@ -1,0 +1,44 @@
+%erg 0.1
+Title: Reorg code 4/4 — sever compute_clustering_comparison's import of the plotters
+Created: 2026-07-10
+Author: HDMX-coding-agent
+Label: deferred
+
+--- log ---
+2026-07-10T00:00Z HDMX-coding-agent created
+2026-07-10T00:00Z HDMX-coding-agent note split from 0225 (code workstream) as an integer child; off-critical-path follow-up. Independent of the moves, but cleanest once scripts/ is grouped (0240). Parked behind the Œconomia R&R per 0223.
+
+--- body ---
+## Context
+Final, off-critical-path stage of the code reorg (parent sub-tracker `0225`,
+grand-tracker `0223`). `compute_clustering_comparison.py` imports the two
+clustering *plotter* modules — a compute → plot backward arrow that violates the
+layering rule (architecture.md rule 4: a compute module never imports a
+plotter). Sever it so the dependency points only compute → plot, never back.
+
+## Relevant files
+- `scripts/compute_clustering_comparison.py` — holds the backward import
+- the two clustering plotter modules it imports (identify from the import lines)
+
+## Actions
+1. Identify what `compute_clustering_comparison` actually needs from the
+   plotters (likely a shared label/order helper, not the plotting itself).
+2. Extract that shared piece into a neutral module both can import, or inline it
+   compute-side; drop the plotter import.
+
+## Test
+- Byte-check `compute_clustering_comparison`'s output unchanged (old-vs-new on
+  the same input).
+- A grep/import-graph assertion: no `compute_*` module imports a `plot_*`
+  module (candidate standing guard, if cheap).
+
+## Invariants
+- No behaviour change; layering restored (compute never imports plot).
+- `make check` green.
+
+## Exit criteria
+- `compute_clustering_comparison` no longer imports either plotter.
+- Output byte-identical before/after.
+- Optionally: a standing test that no `compute_*` imports a `plot_*`.
+
+Ticket-ref: tickets/0225-reorg-code.erg

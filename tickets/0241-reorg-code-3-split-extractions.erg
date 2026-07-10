@@ -1,0 +1,56 @@
+%erg 0.1
+Title: Reorg code 3/4 — land the 5 SPLIT extractions in their phase subdir
+Created: 2026-07-10
+Author: HDMX-coding-agent
+Blocked-by: 0240
+Label: deferred
+
+--- log ---
+2026-07-10T00:00Z HDMX-coding-agent created
+2026-07-10T00:00Z HDMX-coding-agent note split from 0225 (code workstream) as an integer child. Blocked-by 0240: the extractions land inside the phase subdirs 0240 creates. Parked behind the Œconomia R&R per 0223.
+
+--- body ---
+## Context
+Third stage of the code reorg (parent sub-tracker `0225`, grand-tracker
+`0223`). The `scripts/` audit (`docs/repo-layout.md`) flagged five clusters of
+duplicated / in-lined computation that should be extracted into their own
+modules so the leaking scripts import them instead of re-implementing. Land each
+extraction as a plain or `_`-private module **inside the owning phase subdir**
+(created by 0240) — no top-level `src/`.
+
+## Depends on 0240
+The destination phase subdirs (`scripts/analysis/`, `scripts/harvest/`, …) are
+created by 0240. This ticket places the extracted modules there and repoints the
+importing scripts, so it must land after 0240.
+
+## The five extractions
+- `corpus_filters` — shared corpus-filtering predicate
+- `traditions` — tradition-assignment logic
+- `changepoints` — change-point helper
+- `teaching` — teaching-corpus helper
+- `venues` — venue-concentration helper
+(LIBRARY-10 and MOVE-2 from the audit stay in `scripts/`, relocated by phase in
+0240 — no `src/`.)
+
+## Relevant files
+- `docs/repo-layout.md` — the audit rows naming each extraction + its importers
+- the five owning phase subdirs under `scripts/` (from 0240)
+
+## Test
+- Byte-check each extraction as **old-code-vs-new-code on the same input**
+  (import the pre-extraction function and the extracted one, assert identical
+  output on the current corpus slice) — never against a drifting committed
+  golden. See feedback memory `bytecheck_old_vs_new_not_golden`.
+
+## Invariants
+- No behaviour change: each extraction is a pure move of logic + an import.
+- Layering (architecture.md rule 4): a compute module never imports a plotter.
+- One extraction per commit; `make check` green.
+
+## Exit criteria
+- The five extractions live beside their phase; each leaking script imports the
+  shared module instead of re-implementing.
+- Byte-identical output before/after for every extraction.
+- `make check` green.
+
+Ticket-ref: tickets/0225-reorg-code.erg
