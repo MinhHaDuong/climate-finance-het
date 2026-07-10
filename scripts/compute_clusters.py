@@ -27,13 +27,13 @@ import warnings
 
 import numpy as np
 import pandas as pd
+from script_io_args import parse_io_args, validate_io
 from sklearn.cluster import KMeans
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import adjusted_rand_score
-from script_io_args import parse_io_args, validate_io
 from utils import (
     BASE_DIR,
-    CATALOGS_DIR,
+    DERIVED_TABLES_DIR,
     get_logger,
     load_analysis_config,
     load_analysis_corpus,
@@ -270,7 +270,7 @@ def _save_core_shares(df, alluvial_data, period_labels, cite_threshold, suffix, 
 
 def _check_ari_alignment(df):
     """Check KMeans/Louvain alignment via Adjusted Rand Index."""
-    cocit_path = os.path.join(CATALOGS_DIR, "communities.csv")
+    cocit_path = os.path.join(DERIVED_TABLES_DIR, "communities.csv")
     if not os.path.exists(cocit_path):
         log.warning("communities.csv not found, skipping ARI alignment check.")
         return

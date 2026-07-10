@@ -2,10 +2,12 @@
 Title: Complete data/catalogs Phase-2 eviction + generalize the phase-layout guard to the class
 Created: 2026-07-10
 Author: HDMX-coding-agent
+Closed: communities.csv evicted to data/derived; guard generalized to producer-phase class rule
 
 --- log ---
 2026-07-10T09:20Z HDMX-coding-agent created
 
+2026-07-10T09:40Z HDMX-coding-agent closed — communities.csv evicted to data/derived; guard generalized to producer-phase class rule
 --- body ---
 ## Context
 

@@ -6,7 +6,7 @@ Method (Small 1973, White & Griffith 1981):
   communities using the Louvain algorithm.
 
 Produces:
-- data/catalogs/communities.csv: Community assignments for top-cited works
+- data/derived/tables/communities.csv: Community assignments for top-cited works
 
 Options:
   --robustness    Louvain resolution sensitivity (logged, no file output)

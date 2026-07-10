@@ -567,7 +567,7 @@ content/figures/fig_traditions.png: scripts/plot_fig_traditions.py scripts/plot_
 	$(PYTHON) $< --output $@
 
 # Co-citation communities (compute: community assignments + summary table)
-COMMUNITIES := data/catalogs/communities.csv
+COMMUNITIES := $(DERIVED)/communities.csv
 $(COMMUNITIES): scripts/analyze_cocitation.py scripts/utils.py $(REFINED_CIT)
 	$(PYTHON) $< --output $@
 
