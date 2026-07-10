@@ -1,0 +1,65 @@
+%erg 0.1
+Title: Evict remaining Phase-2 intermediates from content/tables; guard the class
+Created: 2026-07-10
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-10T08:23Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Sibling follow-up to 0208 (closed), which evicted only the four *heavy* analysis
+intermediates (`tab_lexical_tfidf`, `tab_pole_papers[_core]`, `qa_type_report`)
+from `content/tables/` into `data/derived/tables/`. That fixed the disk problem
+(~44 MB, 80% one file) but left the *architectural* one: `content/tables/` still
+mixes writing deliverables with ~15 smaller Phase-2 intermediates consumed only
+by other Phase-2 scripts. 0208's exit criterion "content/tables/ contains only
+writing deliverables" is therefore only spiritually met. This ticket finishes the
+separation for the residual and adds a standing guard so the class cannot recur.
+
+Low priority — non-blocking tidiness, not on the Œconomia R&R critical path.
+Defer freely behind deadline work.
+
+## Relevant files
+- `Makefile` — targets producing `content/tables/tab_*.csv` intermediates:
+  `tab_bimodality[_core]`, `tab_axis_detection[_core]`, `tab_breakpoints[_core,_censor2]`,
+  `tab_breakpoint_robustness[_core,_censor2]`, `tab_alluvial[_core]`, `tab_lineages`,
+  `tab_k_sensitivity`, `tab_core_shares`, ... — classify each: consumed by a `.qmd`
+  (deliverable, keep) vs. only by Phase-2 scripts (intermediate, evict to `$(DERIVED)`).
+- `.gitignore` — the `content/tables/*` ignore + negation block is the current
+  (implicit) deliverable whitelist; the `.md` tables and a few pinned `.csv`
+  (tab_null_separation_pre2007, tab_pre2007_coverage) are deliverables.
+- `scripts/utils.py` `DERIVED_TABLES_DIR`, Makefile `$(DERIVED)` — the destination
+  and pattern established by 0208; reuse verbatim.
+- `tests/test_evict_analysis_intermediates.py` — 0208's guard; currently pins only
+  the 4 named basenames. Generalize to the class (see Test).
+
+## Actions
+1. Classify every `content/tables/tab_*.csv` Make target: deliverable (read by a
+   `.qmd`/include) or intermediate (read only by Phase-2 scripts). Grep the `.qmd`
+   and `content/_includes/` for each basename to decide.
+2. Move the intermediates to `$(DERIVED)` and rewire producers + consumers in one
+   commit per coherent group, exactly as 0208 did (check the archive coupling:
+   `ANALYSIS_OUTPUTS`, `build/build_analysis_archive.sh`,
+   `build/templates/Makefile.analysis-manuscript`, `tests/test_archive_checksums.py`).
+3. Keep DVC scoped to corpus data; the moved intermediates stay gitignored, non-DVC.
+
+## Test
+- Generalize the guard to the class: every `content/tables/tab_*.csv` that appears
+  as a Make *target* must be whitelisted as a deliverable (present in the
+  `.gitignore` negation block) OR resolve under `$(DERIVED)`. A new intermediate
+  landing in `content/tables/` fails the test. Write this ratchet RED first.
+- Regression: `make papers` builds all six PDFs; manuscript clean-room build passes.
+
+## Invariants
+- `make papers` unaffected; every writing deliverable stays in `content/tables/`.
+- No Phase-1 trigger; DVC untouched.
+
+## Exit criteria
+- Every non-deliverable `content/tables/tab_*.csv` intermediate lives under
+  `data/derived/tables/`; producers + consumers + archive manifest updated.
+- The class guard is green and would fail on a re-introduced intermediate.
+- `make papers` and the manuscript clean-room build pass.
+
+Ticket-ref: tickets/0163-split-build-remaining-writing-workpackag.erg
