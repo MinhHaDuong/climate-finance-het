@@ -46,8 +46,16 @@ Two facts found while scoping:
 1. Add `ruff>=0.11.12,<0.12` to `[dependency-groups] dev` in `pyproject.toml`
    (upper bound so a minor bump can't silently add rules); `uv lock` pins the
    exact version. `uv run ruff` then resolves the pinned build, not system PATH.
-2. Add `tests/test_ruff.py`: an `@pytest.mark.adherence` test that shells
-   `uv run ruff check .` and asserts returncode 0 (per the harness snippet).
+2. Add `tests/test_ruff.py`: an `@pytest.mark.adherence` test that runs ruff and
+   asserts returncode 0. Resolve the binary with `shutil.which("ruff")`, NOT a
+   nested `uv run ruff`. Rationale: pytest already runs inside the project venv
+   (via `make lint` → `uv run … pytest`), so the pinned ruff is on that venv's
+   PATH — `which` finds it directly. A nested `uv run` re-enters uv from inside
+   uv, forcing an extra lockfile/sync check per call and breaking under
+   `UV_NO_SYNC`; in a clean CI/cloud container that nested resolution is the
+   fragile path. The harness snippet writes `uv run ruff` for brevity; the
+   container-robust form is `shutil.which`. Assert `which` is non-None (fail
+   loudly if ruff is undeclared/uninstalled — not a silent skip).
 3. Confirm `make lint` runs it and `make check-fast` deselects it (adherence
    marker is already excluded from the fast tier).
 4. Scope note: one repo-wide test covers `libs/` too — ruff config discovery
@@ -55,16 +63,18 @@ Two facts found while scoping:
    `libs/openalex-corpus/` under the same rules. No package-local test needed.
 
 ## Test
-Write first (red): `tests/test_ruff.py` shells `uv run ruff check .` and asserts
-returncode 0. Red today (171 violations); green once 0232 lands. Prove teeth by
-introducing a deliberate lint error and seeing it fail.
+Write first (red): `tests/test_ruff.py` resolves ruff via `shutil.which("ruff")`
+and runs `[ruff, "check", "."]`, asserting returncode 0. Red today (171
+violations); green once 0232 lands. Prove teeth by introducing a deliberate lint
+error and seeing it fail.
 
 ## Verification
 - [ ] `make lint` runs the ruff adherence test.
 - [ ] The test is in the `adherence` marker tier (out of `check-fast`).
 - [ ] A deliberately-introduced lint error makes it fail.
-- [ ] `uv run ruff --version` resolves the lockfile-pinned build, not
-      `~/.local/bin/ruff` — the verdict is version-stable across machines.
+- [ ] `shutil.which("ruff")` resolves the venv-local pinned build (not
+      `~/.local/bin/ruff`) when run under `make lint` — verdict is version-stable
+      and portable to a clean CI/cloud container.
 
 ## Invariants
 - Do not add ruff to the fast inner loop (`check-fast`) — adherence tier only.
