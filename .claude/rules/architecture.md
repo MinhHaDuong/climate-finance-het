@@ -99,11 +99,39 @@ Resolve paths through those constants — never hardcode `data/catalogs/` in a s
 
 `data/` is split by dataflow phase, so the directory names which phase owns a file:
 
-- `data/catalogs/` (+ `pool/`, `exports/`, `syllabi/`) — **Phase-1 corpus**,
-  DVC-managed (materialized locally by `dvc pull` from the padme remote).
-- `data/derived/` — **Phase-2 derived data**: analysis intermediates and derived
-  tables, gitignored and regenerable (`make` recreates them from the corpus). No
-  Phase-2 output belongs under `data/catalogs/`; guard `tests/test_phase_layout.py`.
+```
+data/
+├── catalogs/     Phase-1 corpus (contract: refined_works/embeddings/citations)   DVC (dvc.yaml outs)
+├── pool/         Phase-1 raw source pulls                                         DVC (data/pool.dvc)
+├── exports/      Phase-1 exports                                                  DVC (data/exports.dvc)
+├── syllabi/      Phase-1 teaching sources                                         DVC (data/syllabi.dvc)
+├── het/          seed lists (small, stable)                                       git-tracked
+├── raw/          Phase-1 scratch                                                  gitignored
+├── run_reports/  Phase-1 QA reports                                               gitignored
+└── derived/      Phase-2 derived data (intermediates + derived tables)            gitignored, regenerable
+```
+
+The load-bearing rule: **`data/catalogs/` = corpus (Phase 1, DVC-managed);
+`data/derived/` = analysis outputs (Phase 2, regenerable, gitignored).** No Phase-2
+output belongs under `data/catalogs/` — guard `tests/test_phase_layout.py` fails if
+a script or Make constant resolves one there.
+
+## Artifact homes by phase
+
+Each phase writes to one place, so an artifact's directory tells you its phase:
+
+| Phase | Produces | Lives in |
+|-------|----------|----------|
+| **1 — Corpus** (`catalog_/enrich_/qa_/corpus_`) | the corpus contract | `data/catalogs/` (DVC) |
+| **2 — Analysis** (`analyze_/compute_/plot_/export_`) | writing deliverables | `content/figures/`, `content/tables/`, `content/_includes/`, `content/*-vars.yml` |
+| | analysis **intermediates** (not for a document) | `data/derived/` |
+| **3 — Render** (Quarto) | PDF / DOCX | `output/` (gitignored) |
+| **4 — Release** (`build/build_*_archive.sh`) | reproducibility archives | `*.tar.gz` |
+
+The split inside Phase 2 is the crux: it emits two kinds of file — things a paper
+renders (→ `content/`) and intermediates only other scripts read (→ `data/derived/`).
+Mixing them is what bloated `content/tables/` (ticket 0208) and hid Phase-2 outputs
+in `data/catalogs/` (ticket 0219).
 
 ## Incremental caches vs DVC outputs
 
