@@ -1,0 +1,60 @@
+%erg 0.1
+Title: Duration-ratchet guard: fail a fast-path test that exceeds budget
+Created: 2026-07-10
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-10T00:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+Part of tracker 0213. This is the enforcement that converts "whack-a-mole
+forever" into "caught automatically". Heavy deps are lazy-imported inside test
+bodies (only `test_pipeline_io.py` imports one at module level), so a static
+import guard cannot see the cost — only runtime duration reveals it. A meta-test
+reads recorded per-test durations and fails if any test selected by the fast
+gate exceeds a budget. The threshold is generous (~3s) — far above the doudou
+timing noise (heavies are 7-30s) so it never false-trips, while still catching a
+new heavy test the moment it lands unmarked on the fast path.
+
+## Relevant files
+- `pyproject.toml` — pytest config; add a durations-store mechanism
+- `tests/test_script_hygiene.py` (or a new `tests/test_fast_path_budget.py`) —
+  the ratchet meta-test (itself marked `adherence`)
+- `Makefile` — `check` may need `--store-durations` (or a JSON dump) so the
+  ratchet has fresh data; `.test_durations` gitignored or committed (decide)
+
+## Actions
+1. Record per-test durations on a full `make check` run — either
+   `pytest --durations=0` parsed, `pytest-split --store-durations`
+   (`.test_durations` JSON), or a small `--durations` JSON hook. Prefer the
+   lightest that needs no new heavy dep (see feedback_no_heavy_deps).
+2. Write the ratchet meta-test (`@pytest.mark.adherence`): load the durations,
+   compute the fast-path selection (`not slow and not integration and not
+   adherence`), assert `max(fast_path_durations) <= BUDGET_S` (BUDGET_S=3.0,
+   from config). On breach, name the offending test and the tier it should join.
+2b. Handle cold-start: skip with a clear reason if no durations file exists yet
+    (first run), so the guard never blocks on missing data.
+3. Wire regeneration so stale durations are obvious — a target or a note that the
+   ratchet reflects the last `make check` run.
+
+## Test
+Write first (red): feed the ratchet a synthetic durations record containing one
+fast-path test at 10s and assert the meta-test fails naming that test; feed one
+where the 10s test is marked slow and assert it passes.
+
+## Verification
+- [ ] Ratchet fails on a synthetic 10s unmarked fast-path test (red fixture).
+- [ ] Ratchet passes when the same test is marked slow/integration/adherence.
+- [ ] On a fresh checkout with no durations file, the guard skips, not errors.
+- [ ] No new heavy runtime dependency added for this (config-light).
+
+## Invariants
+- Threshold lives in config (`config/analysis.yaml` or pyproject), not hardcoded.
+- The guard is deterministic given a durations file; timing noise must not flip
+  it (budget >> noise).
+
+## Exit criteria
+- A duration-ratchet `adherence` test guards the fast path; a heavy unmarked
+  fast-path test turns it red with an actionable message; documented in the
+  marker rule table.

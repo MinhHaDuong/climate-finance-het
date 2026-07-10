@@ -1,0 +1,65 @@
+%erg 0.1
+Title: Rewire test gates: cost-based tiers + make lint; broaden slow
+Created: 2026-07-10
+Author: HDMX-coding-agent
+Blocked-by: 0215
+
+--- log ---
+2026-07-10T00:00Z HDMX-coding-agent created
+
+2026-07-10T08:04Z MinhHaDuong decision: "I agree with the inner loop" — endorses moving numerical-kernel tests (dcor/torch-bound) to slow; the fast inner loop covers only pure logic + what you edit (testmon 0217), full numerical validation stays in make check.
+--- body ---
+## Context
+Part of tracker 0213. The fast gate must be composed of pure-Python logic tests
+only. Today check-fast is `-m "not slow and not integration"` — it still runs
+`adherence` (lint) and any heavy-import/heavy-compute test that isn't marked.
+This ticket rewires the Make gates and broadens the `slow` marker's documented
+scope to include heavy numerical dependencies and heavy compute (closing the
+taxonomy gap that let backend-equivalence and dcor-import tests onto the fast
+path). Blocked by 0215, which must first give every lint/hygiene test the
+`adherence` marker so `not adherence` actually deselects them.
+
+## Relevant files
+- `Makefile` — `check-fast` (742), `check` (738) targets; add `lint` target
+- `pyproject.toml` — `[tool.pytest.ini_options] markers` (70-73): reword the
+  `slow` description to include "heavy numerical dependency or heavy compute"
+- `.claude/rules/coding-python.md` (global) + `.claude/rules/coding.md` (project)
+  — the marker table documents mechanism-based rules; update to cost-based
+- Tests currently on the fast path that need `slow` under the new definition:
+  `test_divergence.py::TestMetricProperties` (dcor/ot import), and any test that
+  lazy-imports dcor/torch/ot/sentence_transformers or renders matplotlib
+
+## Actions
+1. `make check-fast` → `-m "not slow and not integration and not adherence"`.
+2. Add `make lint` → `-m adherence` (depends on `venv-canonicalize`); document
+   that it is run alongside tests, not inside the inner loop.
+3. Reword the `slow` marker description in pyproject.toml to: "network access,
+   external/real data, a heavy numerical dependency (dcor/torch/ot/
+   sentence_transformers), or heavy compute".
+4. Mark the heavy-numerical fast-path tests `slow` (e.g. `TestMetricProperties`,
+   `TestCommunityDivergence` if dcor/ot-bound) — verify by the ratchet from 0216
+   or by `--durations` that no >3s test remains unmarked on the fast path.
+5. Update both marker-rule tables (global coding-python.md, project coding.md) to
+   the cost-based taxonomy and cross-reference this ticket.
+
+## Test
+Write first (red): a test asserting `make check-fast`'s pytest `-m` expression
+excludes `adherence` (source-inspect the Makefile line — string match, no
+subprocess), and that `make lint` selects `-m adherence`. Fails today (check-fast
+does not exclude adherence).
+
+## Verification
+- [ ] `make check-fast` marker expression excludes slow, integration, adherence.
+- [ ] `make lint` exists and runs the adherence tier.
+- [ ] pyproject.toml `slow` description names heavy deps + heavy compute.
+- [ ] `uv run pytest -m "not slow and not integration and not adherence"
+      --durations=10` shows no >3s test (once 0216's ratchet exists, it enforces).
+- [ ] Both rule tables updated; `make check` unchanged and green.
+
+## Invariants
+- No coverage loss: `make check` still runs slow + integration + adherence.
+- Don't weaken any acceptance test; markers move tests between gates, never skip.
+
+## Exit criteria
+- check-fast is pure-logic-only; `make lint` owns the adherence tier; `slow`
+  documents the broadened cost-based meaning; rule docs match.

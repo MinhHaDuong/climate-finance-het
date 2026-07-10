@@ -1,0 +1,51 @@
+%erg 0.1
+Title: Evaluate pytest-testmon for the TDD inner loop (spike)
+Created: 2026-07-10
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-10T00:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+Part of tracker 0213. Even a perfectly-composed 20-30s fast suite is too slow to
+run on every save. The true TDD inner loop wants only the tests affected by the
+uncommitted edit. `pytest-testmon` tracks per-test coverage and reruns only tests
+whose dependencies changed — sub-second, marker-independent. This is a spike:
+decide whether testmon earns a place as the keystroke loop, with check-fast
+demoted to the pre-commit gate. Time-boxed; the deliverable is a recommendation,
+not necessarily adoption.
+
+## Relevant files
+- `pyproject.toml` — dev dependency group (would add `pytest-testmon`)
+- `Makefile` — a possible `make tdd` / `make watch` target
+- `.claude/rules/coding-python.md` — testing-loop guidance would gain a line
+
+## Actions
+1. Add `pytest-testmon` to a dev-only dep group; measure warm inner-loop latency
+   after editing one core module (e.g. `pipeline_text.py`) vs full check-fast.
+2. Assess friction: `.testmondata` lifecycle, interaction with `-n 4` xdist
+   (testmon + xdist historically conflict — verify), worktree portability, and
+   whether it plays with the heavy lazy imports (dcor/torch) without re-paying
+   import cost per selection.
+3. Recommend: adopt (with a `make tdd` target + docs), defer, or reject — with
+   the measured numbers behind the call.
+
+## Test
+No production code under test — this is a spike. If adopted, the follow-up adds a
+`make tdd` target and a test asserting the target exists and invokes testmon
+(source-inspection, no subprocess).
+
+## Verification
+- [ ] Measured inner-loop latency (testmon warm) vs check-fast, single-module edit.
+- [ ] xdist interaction resolved or documented (run testmon without `-n`).
+- [ ] Clear recommendation with numbers; if adopt, a `make tdd` target + doc line.
+
+## Invariants
+- testmon is an inner-loop convenience only — it never replaces `make check` as
+  the PR gate, and never gates CI (its selection is machine-local state).
+- No heavy runtime dep added to the shipping package; dev group only.
+
+## Exit criteria
+- A written recommendation (adopt/defer/reject) backed by measured latency; if
+  adopt, `make tdd` + a one-line rule doc; if not, a note on why for the record.
