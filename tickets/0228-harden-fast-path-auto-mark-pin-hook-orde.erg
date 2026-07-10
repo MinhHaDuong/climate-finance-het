@@ -1,0 +1,51 @@
+%erg 0.1
+Title: Harden fast-path auto-mark: pin hook-ordering + quantify over-sweep
+Created: 2026-07-10
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-10T09:49Z HDMX-coding-agent created
+
+--- body ---
+## Context
+Follow-up from 0216 (fast-path tier guards, PR #978, tracker 0213). The
+collection-time auto-mark works (verified live: check-fast ~93s → ~24s, no
+dcor/heavy test on the fast path). Two non-blocking robustness gaps surfaced in
+the /gaze review of #978:
+
+1. **Hook-ordering assumption is unpinned.** The auto-mark relies on
+   `pytest_collection_modifyitems` (conftest) running before pytest's core `-m`
+   mark-filter. Verified to hold under pytest 9.0.2, but no regression test locks
+   it — a future pytest hook-ordering change could silently defeat the auto-mark
+   with no test failure. (built-in reviewer, #978)
+2. **Module-granularity over-sweeps.** The scanner marks a whole file `slow` when
+   its source contains a heavy import, even a lazy one fired by only a few tests.
+   Concrete: `tests/test_null_model.py` imports torch only inside two
+   CUDA-skip-guarded methods, yet all 37 tests (34 unrelated to torch) leave the
+   fast path. Safe direction (they still run in `make check`) and intentional per
+   0216, but the scale of lost fast-path coverage is under-quantified. (panel
+   reviewer, #978)
+
+## Relevant files
+- `tests/conftest.py` — `pytest_collection_modifyitems` auto-mark hook
+- `tests/_tier_autoscan.py` — static heavy-import scanner
+- `tests/test_fast_path_budget.py` — ratchet + unit tests for the scanner
+
+## Actions
+1. Add a `pytester`/`testdir`-based regression test (integration tier) that
+   spins a real collection with a synthetic heavy-import module and asserts it is
+   deselected under `-m "not slow and not integration and not adherence"` and
+   selected under `-m slow` — pinning the hook-ordering behaviour.
+2. Quantify the over-sweep: count tests moved off the fast path whose module's
+   heavy import is lazy and never fired by that test. Decide whether per-test
+   refinement (e.g. only auto-mark tests whose own body/callees reach the import)
+   is worth the added fragility, or whether module-granularity is the right
+   conservative default (document the decision either way).
+
+## Test
+Write first (red): the pytester regression test from action 1 (fails if the hook
+ordering ever stops deselecting the synthetic heavy-import test).
+
+## Exit criteria
+- Hook-ordering pinned by a regression test.
+- Over-sweep quantified; a documented decision on module- vs per-test granularity.
