@@ -51,12 +51,12 @@ subprocess), and that `make lint` selects `-m adherence`. Fails today (check-fas
 does not exclude adherence).
 
 ## Verification
-- [ ] `make check-fast` marker expression excludes slow, integration, adherence.
-- [ ] `make lint` exists and runs the adherence tier.
-- [ ] pyproject.toml `slow` description names heavy deps + heavy compute.
-- [ ] `uv run pytest -m "not slow and not integration and not adherence"
+- [x] `make check-fast` marker expression excludes slow, integration, adherence.
+- [x] `make lint` exists and runs the adherence tier.
+- [x] pyproject.toml `slow` description names heavy deps + heavy compute.
+- [x] `uv run pytest -m "not slow and not integration and not adherence"
       --durations=10` shows no >3s test (once 0216's ratchet exists, it enforces).
-- [ ] Both rule tables updated; `make check` unchanged and green.
+- [x] Both rule tables updated; `make check` unchanged and green.
 
 ## Invariants
 - No coverage loss: `make check` still runs slow + integration + adherence.

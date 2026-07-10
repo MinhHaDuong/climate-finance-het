@@ -906,8 +906,13 @@ class TestG1DisjointWindows:
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.integration
 class TestCommunityDivergence:
-    """G9 community divergence: Louvain partition + Jensen-Shannon."""
+    """G9 community divergence: Louvain partition + Jensen-Shannon.
+
+    Spawns compute_divergence.py via _run_compute (subprocess) — integration
+    tier, off the fast inner loop, matching the sibling smoke classes.
+    """
 
     def test_community_divergence_schema(self, tmp_path):
         """Smoke test: G9 output conforms to DivergenceSchema."""
