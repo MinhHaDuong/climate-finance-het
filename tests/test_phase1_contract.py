@@ -11,15 +11,13 @@ Covers:
 """
 
 import os
-import sys
 import subprocess
-import tempfile
-
-import yaml
+import sys
 
 import numpy as np
 import pandas as pd
 import pytest
+import yaml
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 MAKEFILE = os.path.join(os.path.dirname(__file__), "..", "Makefile")
@@ -93,6 +91,7 @@ class TestClimateFinanceDataSemantics:
     def test_catalogs_dir_appends_catalogs(self, monkeypatch):
         monkeypatch.setenv("CLIMATE_FINANCE_DATA", "/tmp/mydata")
         import importlib
+
         import pipeline_loaders
         importlib.reload(pipeline_loaders)
         try:
@@ -104,6 +103,7 @@ class TestClimateFinanceDataSemantics:
     def test_default_catalogs_dir_without_override(self, monkeypatch):
         monkeypatch.delenv("CLIMATE_FINANCE_DATA", raising=False)
         import importlib
+
         import pipeline_loaders
         importlib.reload(pipeline_loaders)
         try:

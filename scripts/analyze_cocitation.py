@@ -22,7 +22,6 @@ import pandas as pd
 from scipy.sparse import lil_matrix
 from script_io_args import parse_io_args, validate_io
 from utils import (
-    BASE_DIR,
     CATALOGS_DIR,
     get_logger,
     load_refined_citations,
@@ -194,7 +193,6 @@ def run_robustness(G):
                 row[col] = partitions[gamma].get(doi, -1)
             sens_rows.append(row)
 
-        sens_df = pd.DataFrame(sens_rows)
 
         # ARI between resolution levels
         log.info("  Pairwise ARI:")

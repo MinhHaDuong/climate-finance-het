@@ -16,7 +16,7 @@ import pytest
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 sys.path.insert(0, SCRIPTS_DIR)
 
-from utils import REFS_COLUMNS  # noqa: E402
+from utils import REFS_COLUMNS
 
 
 @pytest.fixture

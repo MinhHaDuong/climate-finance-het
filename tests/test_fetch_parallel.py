@@ -50,7 +50,7 @@ class TestFetchParallelDifferentHosts:
         Sequential with 0.5s polite_get delay + per-host politeness would take
         ~5-8s. Parallel should finish in ~1-2s.
         """
-        from catalog_syllabi import PAGES_PATH, SEARCH_PATH, stage_fetch
+        from catalog_syllabi import stage_fetch
 
         urls = [f"http://host{i}.example.com/syllabus" for i in range(10)]
         search_records = [_make_search_record(u) for u in urls]

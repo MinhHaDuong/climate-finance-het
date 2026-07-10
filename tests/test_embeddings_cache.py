@@ -15,8 +15,8 @@ import ast
 import os
 import sys
 
-import yaml
 import pytest
+import yaml
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 DVC_YAML = os.path.join(os.path.dirname(__file__), "..", "dvc.yaml")

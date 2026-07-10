@@ -16,8 +16,6 @@ Docs must:
 import os
 import re
 
-import pytest
-
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 
 AGENTS_MD = os.path.join(ROOT, "AGENTS.md")

@@ -123,6 +123,7 @@ class TestCacheRoundTrip:
 
     def test_round_trip(self):
         from unittest.mock import patch
+
         from enrich_language import load_cache, save_cache
         with tempfile.TemporaryDirectory() as tmpdir:
             with patch("enrich_language.CACHE_DIR", tmpdir):
@@ -133,6 +134,7 @@ class TestCacheRoundTrip:
 
     def test_empty_cache(self):
         from unittest.mock import patch
+
         from enrich_language import load_cache
         with tempfile.TemporaryDirectory() as tmpdir:
             with patch("enrich_language.CACHE_DIR", tmpdir):

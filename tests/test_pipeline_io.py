@@ -9,7 +9,7 @@ import pytest
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 sys.path.insert(0, SCRIPTS_DIR)
 
-from pipeline_io import save_figure  # noqa: E402
+from pipeline_io import save_figure
 
 
 class TestSaveFigureDefault:

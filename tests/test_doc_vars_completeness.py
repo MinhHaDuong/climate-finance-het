@@ -14,7 +14,7 @@ import pytest
 
 # Allow importing from scripts/
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
-from compute_vars import DOC_VARS  # noqa: E402
+from compute_vars import DOC_VARS
 
 CONTENT_DIR = os.path.join(os.path.dirname(__file__), "..", "content")
 

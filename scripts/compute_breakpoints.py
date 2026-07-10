@@ -28,8 +28,8 @@ import numpy as np
 import pandas as pd
 from scipy.spatial.distance import cosine as cosine_dist
 from scipy.stats import pearsonr
-from sklearn.cluster import KMeans
 from script_io_args import parse_io_args, validate_io
+from sklearn.cluster import KMeans
 from utils import get_logger, load_analysis_corpus
 
 log = get_logger("compute_breakpoints")

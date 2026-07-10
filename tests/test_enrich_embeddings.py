@@ -7,8 +7,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
 import pandas as pd
 import pytest
-
-from enrich_embeddings import is_boilerplate_abstract, build_text
+from enrich_embeddings import build_text, is_boilerplate_abstract
 
 
 class TestIsBoilerplateAbstract:

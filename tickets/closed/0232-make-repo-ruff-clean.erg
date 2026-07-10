@@ -2,11 +2,13 @@
 Title: Make the repo ruff-clean
 Created: 2026-07-10
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #993
 
 --- log ---
 2026-07-10T00:00Z HDMX-coding-agent created
 
 2026-07-10T12:11Z HDMX-coding-agent note blocker 0218 closed — Blocked-by removed.
+2026-07-10T14:31Z HDMX-coding-agent closed — autoclosed — PR #993
 --- body ---
 ## Context
 Split out of 0230. Adding a repo-wide ruff adherence guard (0230) is blocked by

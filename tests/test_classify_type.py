@@ -4,13 +4,12 @@ Ensures the refactored function produces identical output to the original
 for representative inputs covering all code paths.
 """
 
-import sys
 import os
+import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
 from qa_detect_type import classify_type
-
 
 # Each tuple: (description, row_dict, expected_type)
 CASES = [

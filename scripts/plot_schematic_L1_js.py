@@ -134,7 +134,7 @@ def main() -> None:
     x = np.arange(TOP_N)
     bar_width = 0.32
 
-    bars_p = ax.bar(
+    ax.bar(
         x - bar_width / 2,
         p_top,
         width=bar_width,
@@ -143,7 +143,7 @@ def main() -> None:
         label=f"P  ({BEFORE_YEARS[0]}–{BEFORE_YEARS[1]})",
         zorder=3,
     )
-    bars_q = ax.bar(
+    ax.bar(
         x + bar_width / 2,
         q_top,
         width=bar_width,
@@ -188,7 +188,7 @@ def main() -> None:
     )
 
     # JS formula + value in legend
-    leg = ax.legend(
+    ax.legend(
         loc="upper right",
         fontsize=6.5,
         frameon=True,

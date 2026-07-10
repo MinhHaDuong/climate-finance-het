@@ -15,7 +15,6 @@ Extend/filter mode tests that run corpus_filter via subprocess are marked @integ
 import os
 import subprocess
 import sys
-import tempfile
 
 import pandas as pd
 import pytest

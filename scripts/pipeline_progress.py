@@ -12,18 +12,16 @@ sort_dois_by_priority
     Sort a list of DOIs by descending priority score.
 """
 
-from typing import Any
-
 import logging
 import signal
 import subprocess
 import threading
 import time
 from collections.abc import Callable
+from types import TracebackType
+from typing import Any
 
 import pandas as pd
-from types import TracebackType
-
 from rich.progress import (
     BarColumn,
     MofNCompleteColumn,

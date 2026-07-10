@@ -23,12 +23,18 @@ ROOT = os.path.join(os.path.dirname(__file__), "..")
 SCRIPTS_DIR = os.path.join(ROOT, "scripts")
 GOLDEN_PATH = os.path.join(ROOT, "tests", "fixtures", "smoke", "golden_hashes.json")
 
-import sys  # noqa: E402
+import sys
+
 sys.path.insert(0, SCRIPTS_DIR)
-from compute_regression_hashes import (  # noqa: E402
-    REGISTRY, ROOT as HARNESS_ROOT, _hash_output, _redirect_args, _smoke_env,
+from pathlib import Path
+
+from compute_regression_hashes import (
+    REGISTRY,
+    _redirect_args,
 )
-from pathlib import Path  # noqa: E402
+from compute_regression_hashes import (
+    ROOT as HARNESS_ROOT,
+)
 
 sys.path.pop(0)
 
@@ -230,6 +236,6 @@ class TestRegressionIsolation:
                     touched.append(str(f.relative_to(ROOT_PATH)))
 
         assert not touched, (
-            f"Regression fixture modified files in content/:\n"
+            "Regression fixture modified files in content/:\n"
             + "\n".join(f"  {p}" for p in touched)
         )

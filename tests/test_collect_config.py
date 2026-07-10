@@ -15,7 +15,6 @@ Covers:
 import os
 import sys
 
-import pytest
 import yaml
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
