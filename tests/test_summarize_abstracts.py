@@ -9,7 +9,6 @@ Exit criteria (from ticket):
 - Summaries preserve key terms from the original
 """
 
-import json
 import os
 import sys
 
@@ -19,14 +18,12 @@ import pytest
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
 from summarize_abstracts import (
-    TOKEN_LIMIT,
     classify_abstract_length,
     generate_summary,
     load_summary_cache,
     save_summary_cache,
     summarize_too_long_abstracts,
 )
-
 
 # ============================================================
 # Fixtures

@@ -29,11 +29,9 @@ from utils import (
     FROM_COLS,
     REFINED_CITATIONS_PATH,
     REFINED_EMBEDDINGS_PATH,
-    WORKS_COLUMNS,
-    normalize_doi,
     load_analysis_config,
+    normalize_doi,
 )
-
 
 # ── Paths ────────────────────────────────────────────────────
 
@@ -770,7 +768,6 @@ class TestBlacklistValidation:
     def test_blacklist_summary(self, audit, filter_config, capsys):
         """Print blacklist coverage summary (always passes)."""
         noise_title = filter_config["noise_title"]
-        safe_title = filter_config["safe_title"]
 
         lines = ["\n  Blacklist coverage:"]
         for term in noise_title:

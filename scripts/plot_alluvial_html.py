@@ -147,7 +147,7 @@ def collect_top_papers(df, period_labels, n_clusters):
     return top_papers
 
 
-def render_html(alluvial_data, cluster_labels, period_stacks, top_papers, output_path):
+def render_html(alluvial_data, cluster_labels, period_stacks, top_papers, output_path):  # noqa: C901  # sequential figure-assembly steps, splitting adds no clarity
     """Render the interactive HTML/SVG alluvial diagram."""
     import matplotlib.pyplot as plt
 

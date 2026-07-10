@@ -236,6 +236,12 @@ def _sliding_abs_diff(works, internal_edges, cfg, metric_fn, label):
 
     Parameters
     ----------
+    works : pd.DataFrame
+        Corpus works (graph nodes) with year metadata.
+    internal_edges : pd.DataFrame
+        Intra-corpus citation edges used to build each window graph.
+    cfg : dict
+        Analysis configuration (sliding-window and gap parameters).
     metric_fn : callable(G) -> float
         Graph metric to compare. Should return np.nan on failure.
     label : str

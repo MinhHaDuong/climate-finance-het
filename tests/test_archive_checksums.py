@@ -149,7 +149,7 @@ class TestDockerfileAnalysis:
 
     def test_cmd_targets_exist_in_analysis_makefile(self):
         """Every make target in Dockerfile CMD must exist in Makefile.analysis-manuscript."""
-        df = _read_dockerfile()
+        _read_dockerfile()
         mk_analysis = _read_makefile_analysis()
         # Extract targets from CMD line: expect "make" and "make verify"
         # Verify that 'figures' (default goal) and 'verify' targets exist

@@ -167,7 +167,7 @@ def main() -> None:
     ax2 = ax_bot
     width = 0.38
 
-    bars_high = ax2.bar(
+    ax2.bar(
         _years - width / 2,
         _high_res,
         width=width,
@@ -175,7 +175,7 @@ def main() -> None:
         alpha=0.75,
         label="High resonance (term persists)",
     )
-    bars_low = ax2.bar(
+    ax2.bar(
         _years + width / 2,
         _low_res,
         width=width,

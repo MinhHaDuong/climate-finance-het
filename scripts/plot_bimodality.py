@@ -15,8 +15,8 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from scipy.stats import gaussian_kde
-from sklearn.mixture import GaussianMixture
 from script_io_args import parse_io_args, validate_io
+from sklearn.mixture import GaussianMixture
 from utils import (
     BASE_DIR,
     DERIVED_TABLES_DIR,

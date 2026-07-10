@@ -113,6 +113,16 @@ def _run_abs_diff_permutations(
         Method label for logging (e.g. "G6").
     metric_fn : callable(G) -> float
         Graph scalar metric.
+    works : pd.DataFrame
+        Corpus works (graph nodes) with year metadata.
+    internal_edges : pd.DataFrame
+        Intra-corpus citation edges used to build each window graph.
+    div_df : pd.DataFrame
+        Per-window divergence observations driving the null.
+    cfg : dict
+        Analysis configuration (sliding-window and gap parameters).
+    n_jobs : int
+        Number of parallel workers.  1 = sequential, -1 = all cores.
     n_perm_override : int or None
         If set, caps n_perm to this value (used by G8 for tractability).
 

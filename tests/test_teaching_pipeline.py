@@ -11,7 +11,6 @@ Verifies that:
 
 import os
 import sys
-import tempfile
 
 import pandas as pd
 import pytest
@@ -37,7 +36,7 @@ class TestBuildTeachingYaml:
 
     def test_csv_to_yaml_roundtrip(self, tmp_path):
         """CSV readings are converted to YAML with correct schema."""
-        from build_teaching_yaml import load_scraped, build_yaml_structure
+        from build_teaching_yaml import build_yaml_structure, load_scraped
 
         rows = [
             {"doi": "10.1234/test1", "title": "Test Paper",
@@ -72,7 +71,7 @@ class TestBuildTeachingYaml:
 
     def test_doi_dedup_within_course(self, tmp_path):
         """Duplicate DOIs within same course are deduplicated."""
-        from build_teaching_yaml import load_scraped, build_yaml_structure
+        from build_teaching_yaml import build_yaml_structure, load_scraped
 
         rows = [
             {"doi": "10.1234/dup", "title": "Paper A", "authors": "",
@@ -214,6 +213,7 @@ class TestBuildTeachingYamlNoManual:
     def test_no_manual_catalog_import(self):
         """build_teaching_yaml.py should not reference manual catalog."""
         import inspect
+
         import build_teaching_yaml
         source = inspect.getsource(build_teaching_yaml)
         assert "manual_catalog" not in source, \
@@ -221,7 +221,7 @@ class TestBuildTeachingYamlNoManual:
 
     def test_main_runs_without_manual(self, tmp_path, monkeypatch):
         """main() should succeed with only a CSV input, no manual YAML."""
-        from build_teaching_yaml import load_scraped, build_yaml_structure
+        from build_teaching_yaml import build_yaml_structure, load_scraped
 
         # Create a CSV with readings meeting the threshold
         cols = ["doi", "title", "authors", "year", "journal_or_publisher",
@@ -356,7 +356,7 @@ class TestTwoTierFilter:
 
     def test_detailed_syllabus_readings_pass_at_one_course(self, tmp_path):
         """Readings from detailed syllabi (>=MIN_READINGS_DETAILED DOIs) pass at n_courses=1."""
-        from build_teaching_yaml import load_scraped, MIN_READINGS_DETAILED, MIN_COURSES
+        from build_teaching_yaml import MIN_COURSES, MIN_READINGS_DETAILED, load_scraped
 
         # Create a CSV: one detailed course with many readings + one small course
         rows = []
@@ -416,7 +416,7 @@ class TestTwoTierFilter:
 
     def test_standard_filter_still_applies(self, tmp_path):
         """Title-only readings still need n_courses>=3 to pass the filter."""
-        from build_teaching_yaml import load_scraped, MIN_COURSES
+        from build_teaching_yaml import MIN_COURSES, load_scraped
 
         # DOI reading at n_courses=1 — passes because MIN_COURSES=1
         # (DOI from a classified syllabus is reliable provenance)

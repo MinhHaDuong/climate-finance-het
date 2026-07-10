@@ -20,7 +20,6 @@ import os
 
 import numpy as np
 import pandas as pd
-from qa_near_duplicates import detect_near_duplicate_groups
 from filter_flags import (
     _load_config,
     compute_protection,
@@ -31,6 +30,7 @@ from filter_flags import (
     flag_semantic_outlier,
     flag_title_blacklist,
 )
+from qa_near_duplicates import detect_near_duplicate_groups
 from utils import (
     CATALOGS_DIR,
     CONFIG_DIR,

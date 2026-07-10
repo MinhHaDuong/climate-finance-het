@@ -155,7 +155,7 @@ def _compute_null_z_threshold(df: pd.DataFrame, null_df: pd.DataFrame) -> pd.Dat
     return null_df
 
 
-def _plot(
+def _plot(  # noqa: PLR0912  # per-panel plotting branches
     df: pd.DataFrame,
     method: str,
     output_stem: str,

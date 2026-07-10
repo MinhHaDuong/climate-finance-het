@@ -79,7 +79,11 @@ class TestClusterMethods:
 
     def test_all_methods_agree_on_well_separated(self, synthetic_embeddings):
         """On trivially separable data, all methods should mostly agree."""
-        from compute_clustering_comparison import cluster_kmeans, cluster_hdbscan, cluster_spectral
+        from compute_clustering_comparison import (
+            cluster_hdbscan,
+            cluster_kmeans,
+            cluster_spectral,
+        )
         from sklearn.metrics import adjusted_rand_score
 
         X, true = synthetic_embeddings
@@ -250,12 +254,12 @@ class TestClusteringArchitectureSplit:
     def test_clustering_methods_has_algorithm_functions(self):
         """Core algorithm functions must be importable from clustering_methods."""
         from clustering_methods import (
-            cluster_kmeans,
             cluster_hdbscan,
+            cluster_kmeans,
             cluster_spectral,
-            silhouette_sweep,
             hdbscan_sweep,
             perturbation_stability,
+            silhouette_sweep,
         )
         assert all(callable(f) for f in [
             cluster_kmeans, cluster_hdbscan, cluster_spectral,

@@ -122,6 +122,12 @@ def _collect_permutation_rows(window_iter, statistic_fn, n_perm, n_jobs=1):
 
     Parameters
     ----------
+    window_iter : iterable
+        Yields per-window tuples ``(y, w, X, Y, perm_rng)`` to test.
+    statistic_fn : callable
+        Computes the observed/null statistic for one window.
+    n_perm : int
+        Number of permutations per window.
     n_jobs : int
         Number of parallel workers.  1 = sequential (original path),
         -1 = all available cores.

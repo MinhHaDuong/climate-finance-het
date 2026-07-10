@@ -7,27 +7,21 @@ Covers:
 - Budget logging from response headers
 """
 
-import json
 import os
 import sys
-import tempfile
 from unittest.mock import MagicMock
-
-import pytest
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 sys.path.insert(0, SCRIPTS_DIR)
 
 from openalex_pool import (
     build_filter,
-    read_last_run_date,
-    write_last_run_date,
     load_query_dates,
-    save_query_dates,
     query_slug,
-    LAST_RUN_PATH,
+    read_last_run_date,
+    save_query_dates,
+    write_last_run_date,
 )
-
 
 # ---------------------------------------------------------------------------
 # build_filter

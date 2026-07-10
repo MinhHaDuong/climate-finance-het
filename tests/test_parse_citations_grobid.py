@@ -1,13 +1,11 @@
 """Tests for GROBID-based citation parsing."""
 
-import json
 import os
 import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
-import pytest
-from corpus_parse_citations_grobid import parse_tei_citation, build_cache_key
+from corpus_parse_citations_grobid import build_cache_key, parse_tei_citation
 
 
 class TestParseTeiCitation:

@@ -175,7 +175,6 @@ def _draw_diagram(ax, flows, using_real):
     """Draw the 3-tradition flow diagram."""
     total = flows.sum()
     c_cross = flows.sum() - np.trace(flows)
-    c_within = np.trace(flows)
     g4 = c_cross / total if total > 0 else 0.0
 
     # --- Draw arrows ---

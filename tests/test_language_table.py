@@ -9,8 +9,6 @@ Verifies that:
 import os
 import sys
 
-import pytest
-
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
@@ -41,8 +39,8 @@ def test_locale_normalised_hyphen():
 
 
 def test_none_returns_unknown():
-    from export_language_table import normalise_language
     import pandas as pd
+    from export_language_table import normalise_language
     assert normalise_language(pd.NA) == "unknown"
     assert normalise_language(float("nan")) == "unknown"
 

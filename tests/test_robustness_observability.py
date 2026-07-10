@@ -246,7 +246,6 @@ class TestJsonlLogging:
 
     def test_log_jsonl_path_accepted_without_error(self, tmp_path):
         """--log-jsonl flag is accepted by all three scripts without parse error."""
-        log_path = tmp_path / "run.jsonl"
         for script in [
             "enrich_abstracts.py",
             "enrich_citations_batch.py",
@@ -384,7 +383,7 @@ class TestResumePreview:
     @pytest.mark.timeout(30)
     def test_enrich_citations_batch_preview_on_empty_corpus(self, tmp_path):
         works_path = make_mini_works(tmp_path)
-        citations_path = make_mini_citations(tmp_path)
+        make_mini_citations(tmp_path)
         env = {
             **os.environ,
             "CLIMATE_FINANCE_DATA": str(tmp_path),

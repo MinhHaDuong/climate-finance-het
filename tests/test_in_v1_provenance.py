@@ -14,7 +14,6 @@ import gzip
 import os
 import subprocess
 import sys
-import tempfile
 
 import pandas as pd
 import pytest
@@ -23,7 +22,6 @@ SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 sys.path.insert(0, SCRIPTS_DIR)
 
 from corpus_filter import add_in_v1_column, load_v1_identifiers
-
 
 # ---------------------------------------------------------------------------
 # Unit tests: load_v1_identifiers

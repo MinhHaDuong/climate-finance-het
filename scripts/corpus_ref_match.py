@@ -25,9 +25,8 @@ import os
 import time
 
 import pandas as pd
-from rapidfuzz import fuzz, process
-
 from pipeline_text import normalize_title
+from rapidfuzz import fuzz, process
 from utils import CATALOGS_DIR, REFS_COLUMNS, get_logger, save_csv
 
 log = get_logger("ref_match_corpus")
@@ -51,6 +50,7 @@ def _build_corpus_index(
     Returns:
         year_choices: year -> [normalized_titles] for extractOne
         title_to_doi: normalized_title -> doi for result lookup
+
     """
     corpus = pd.read_csv(corpus_path, dtype=str, keep_default_na=False)
     year_choices: dict[str, list[str]] = {}
@@ -160,6 +160,7 @@ def match_refs_to_corpus(
 
     Returns:
         Number of matched rows written.
+
     """
     year_choices, title_to_doi = _build_corpus_index(corpus_path)
     total_entries = sum(len(v) for v in year_choices.values())

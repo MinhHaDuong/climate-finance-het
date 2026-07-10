@@ -12,14 +12,13 @@ Usage:
 Output: prints a table of (commit, script, output, hash) and flags changes.
 """
 
-import hashlib
 import csv
+import hashlib
 import io
 import json
 import os
 import shutil
 import subprocess
-import sys
 import tempfile
 from pathlib import Path
 
