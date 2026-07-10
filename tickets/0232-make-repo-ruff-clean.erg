@@ -1,0 +1,67 @@
+%erg 0.1
+Title: Make the repo ruff-clean
+Created: 2026-07-10
+Author: HDMX-coding-agent
+Blocked-by: 0218
+
+--- log ---
+2026-07-10T00:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+Split out of 0230. Adding a repo-wide ruff adherence guard (0230) is blocked by
+the tree not being clean: `uv run ruff check .` reports **171 violations** today
+across `scripts/` (83) and `tests/` (88). A guard asserting returncode 0 would be
+red from its first commit, so the tree must be cleaned first — as its own
+reviewable unit, separate from wiring the guard.
+
+Blocked-by 0218: that raid (`t218-evict-phase2-intermediates`) is live and
+touches many `scripts/`/`tests/` files. A repo-wide `ruff --fix` sweep run
+concurrently would collide (import-reorder diffs conflict with almost any edit,
+and a non-conflicting silent drop is worse — see rules/git.md multi-PR wave).
+Run this only once 0218 has merged and `origin/main` is quiet.
+
+## Relevant files
+- `scripts/*.py` — 83 violations
+- `tests/*.py` — 88 violations
+- `libs/openalex-corpus/src/**` — confirm ruff reaches it (config discovery walks
+  up to the root `[tool.ruff]`; verify no residual violations there)
+- `pyproject.toml` — `[tool.ruff.lint] select` and `per-file-ignores`
+
+## Violation profile (as of 2026-07-10, `ruff check . --statistics`)
+- 144 auto-fixable via `ruff check . --fix`:
+  - F401 unused-import (72), I001 unsorted-imports (58), RUF100 unused-noqa (10),
+    D413 missing-blank-line-after-last-section (5), F541 f-string-no-placeholder (1)
+- ~27 need a hand decision (NOT auto-fixed):
+  - F841 unused-variable (15) — delete or use
+  - C901 complex-structure (3), PLR0912 too-many-branches (2),
+    PLR0915 too-many-statements (1) — refactor OR `# noqa` with a one-line reason
+  - D417 undocumented-param (3) — add param docs
+  - PERF102 incorrect-dict-iterator (1)
+
+## Actions
+1. Fetch origin; confirm 0218 is merged and no sibling session is mid-sweep on
+   `scripts/`/`tests/` before starting (rules/workflow.md sync gate).
+2. `uv run ruff check . --fix` for the 144 mechanical fixes. Review the diff.
+3. Hand-resolve the ~27 remainder. Prefer a real fix; for the complexity rules,
+   a `# noqa: C901  # <reason>` is acceptable on legitimately-branchy analysis
+   code rather than a risk-bearing refactor of working numerics.
+4. `uv run ruff check .` returns 0. `make check` still green.
+
+## Test
+Not a code-behaviour change — verification is `uv run ruff check .` returncode 0
+plus a green `make check` (no regression from the import edits). The pinned guard
+itself lands in 0230, on top of this clean tree.
+
+## Verification
+- [ ] `uv run ruff check .` returns 0 across the whole repo (incl. `libs/`).
+- [ ] `make check` passes (no behaviour regression from unused-import deletion or
+      import reordering).
+
+## Invariants
+- No behaviour change: `--fix` may delete genuinely-used-via-side-effect imports;
+  re-run the suite after fixing. Do not touch analysis numerics to satisfy a
+  complexity rule — `# noqa` with reason instead.
+
+## Exit criteria
+- The tree is ruff-clean, unblocking 0230's guard.

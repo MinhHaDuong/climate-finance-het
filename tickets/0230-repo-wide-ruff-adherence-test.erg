@@ -2,47 +2,70 @@
 Title: Add a repo-wide ruff adherence test
 Created: 2026-07-10
 Author: HDMX-coding-agent
+Blocked-by: 0232
 
 --- log ---
 2026-07-10T00:00Z HDMX-coding-agent created
 
 2026-07-10T10:52Z HDMX-coding-agent note blocker 0211 closed — Blocked-by removed.
+
+2026-07-10T00:00Z HDMX-coding-agent note rescoped to guard-only; cleanup split to 0232 (171 live violations would keep the guard red). Blocked-by 0232. Added cold-codebase requirement: ruff is not a declared dep today.
 --- body ---
 ## Context
 Multiple /gaze reviewers (#956/#958/#960) noted the repo has no `def test_ruff`
 anywhere — lint drift is only caught in CI-less `make lint`, never as a pinned
 pytest adherence guard. The harness Python rule requires every project to carry
 a ruff adherence test so lint failures surface locally before review. Spun out
-of ticket 0211 action 3, which the 0211 scoper deferred as out-of-scope
-(0211 wired the package suite + installability guards; a repo-wide ruff test is
-a separable concern, YAGNI at that point).
+of ticket 0211 action 3, which the 0211 scoper deferred as out-of-scope.
+
+Rescoped 2026-07-10: this ticket is the **guard only**. The repo has 171 live
+ruff violations, so cleaning the tree is a separate validation unit — split to
+0232, which this is Blocked-by. The guard can only go green on a clean tree.
+
+Two facts found while scoping:
+- The ping-pong the author hit earlier came from ruff in the *inner* loop. This
+  guard lives in the `adherence` tier (`make lint`), out of `check-fast`, so it
+  cannot ping-pong the inner loop (invariant below).
+- **ruff is not a declared dependency** anywhere in `pyproject.toml` (only
+  `[tool.ruff]` config). `make lint` relies on ambient ruff today. For the guard
+  to run on a **cold codebase** (fresh clone → `uv sync` → `make lint`), ruff
+  must be added to the `dev` dependency-group.
 
 ## Relevant files
-- `tests/` — where a `test_ruff.py` (or a case in an existing adherence module)
-  would live; mark `@pytest.mark.adherence` so it lands in the `make lint` tier.
-- `libs/openalex-corpus/` — decide whether the repo-wide test also covers the
-  path package or the package carries its own.
+- `tests/` — a `test_ruff.py` marked `@pytest.mark.adherence`.
+- `pyproject.toml` — add `ruff` to `[dependency-groups] dev`; the test is picked
+  up by the existing `make lint` (`pytest -m adherence`).
+- `Makefile` — `lint` target (already `-m adherence`); confirm no change needed.
 - `~/.claude/rules/coding-python.md` — canonical adherence-test snippet.
 
 ## Actions
-1. Add an `@pytest.mark.adherence` test that runs `uv run ruff check .` and
-   asserts returncode 0 (per the harness snippet).
-2. Decide scope: whole repo (including `libs/`) vs a package-local test. Prefer
-   one repo-wide test if ruff config already reaches `libs/`.
-3. Confirm `make lint` picks it up and it is deselected from `check-fast`.
+1. Add `ruff>=<pin>` to `[dependency-groups] dev` in `pyproject.toml` so a cold
+   `uv sync` installs it. `uv lock`.
+2. Add `tests/test_ruff.py`: an `@pytest.mark.adherence` test that shells
+   `uv run ruff check .` and asserts returncode 0 (per the harness snippet).
+3. Confirm `make lint` runs it and `make check-fast` deselects it (adherence
+   marker is already excluded from the fast tier).
+4. Scope note: one repo-wide test covers `libs/` too — ruff config discovery
+   walks up to the root `[tool.ruff]`, so `ruff check .` from the root lints
+   `libs/openalex-corpus/` under the same rules. No package-local test needed.
 
 ## Test
-Write first (red): a test that shells `uv run ruff check .` and asserts
-returncode 0. It goes red the moment any tracked file has a lint violation.
+Write first (red): `tests/test_ruff.py` shells `uv run ruff check .` and asserts
+returncode 0. Red today (171 violations); green once 0232 lands. Prove teeth by
+introducing a deliberate lint error and seeing it fail.
 
 ## Verification
 - [ ] `make lint` runs the ruff adherence test.
 - [ ] The test is in the `adherence` marker tier (out of `check-fast`).
 - [ ] A deliberately-introduced lint error makes it fail.
+- [ ] Cold codebase: a fresh clone with only `uv sync` (dev group) can run
+      `make lint` — ruff is installed from declared deps, not ambient.
 
 ## Invariants
 - Do not add ruff to the fast inner loop (`check-fast`) — adherence tier only.
+- Depends on a clean tree (0232); do not merge this before 0232.
 
 ## Exit criteria
-- A ruff adherence test gates the repo (and the openalex-corpus package) so lint
-  failures are caught locally before review.
+- A ruff adherence test gates the whole repo (including `libs/openalex-corpus`)
+  so lint failures are caught locally before review, and it runs on a cold
+  checkout via declared dev deps.
