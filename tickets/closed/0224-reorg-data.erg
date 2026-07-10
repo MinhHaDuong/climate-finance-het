@@ -3,10 +3,12 @@ Title: Reorg workstream — data (config/, data/, DVC layout)
 Created: 2026-07-10
 Author: HDMX-coding-agent
 Blocked-by: 0223
+Closed: duplicate: data-layout reorg owned by 0221/0218/0222; config/v1_* are frozen reference inputs (Makefile only --inputs them), not misplaced build products — no unique scope
 
 --- log ---
 2026-07-10T00:00Z HDMX-coding-agent created
 
+2026-07-10T09:49Z HDMX-coding-agent closed — duplicate: data-layout reorg owned by 0221/0218/0222; config/v1_* are frozen reference inputs (Makefile only --inputs them), not misplaced build products — no unique scope
 --- body ---
 ## Context
 First stage of the top-level tidy (tracker `0223`). Data-side already in

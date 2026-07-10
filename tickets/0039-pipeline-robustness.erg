@@ -9,6 +9,7 @@ Label: deferred
 2026-04-15T20:00Z claude note from simplify review
 2026-04-27T02:07Z claude note sweep-assess: not picked
 2026-07-09T13:27Z HDMX-coding-agent label deferred
+2026-07-10T09:49Z note audit 2026-07-10: mostly satisfied (G7 proxy tag; compute_changepoints.py:358-365 year-range validation; energy subsampling guard). Residual gap: hardcoded RandomState(42)/seed=42 still at analyze_multilingual.py:191, analyze_unfccc_topics.py:328, compute_lexical.py:150, plot_fig45_pca_scatter.py:208, plot_bimodality.py:71, plot_cocitation.py:140 — bypass config. Kept deferred pending close+re-ticket decision
 --- body ---
 ## Context
 Several robustness gaps identified during code review.

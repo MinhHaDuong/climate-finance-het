@@ -1,10 +1,26 @@
 # Repository layout — target state and migration
 
+> **Status: proposal, not yet ratified.** The canonical architecture rules live
+> in `.claude/rules/architecture.md` (§ Project structure, § Pipeline phases, §
+> Data location, § Artifact homes by phase), governed by tracker `0221`. This
+> note covers only the **code + prose** axis (`src/`, `scripts/` by phase,
+> `deliverables/` per-paper Quarto) and **departs** from `architecture.md` on
+> two points that need author ratification before Execute:
+> 1. `src/climatefinance/` — `architecture.md` keeps analysis code in `scripts/`
+>    with `_`-private modules + `pipeline_*` loaders, and extracts shared
+>    conventions to `libs/openalex-corpus`. A top-level `src/` package is new.
+> 2. `deliverables/` per-paper Quarto — `architecture.md` documents `content/`
+>    as one multi-doc Quarto project.
+>
+> The data-layout axis is **not** in scope here — it is owned by `0221`/`0218`/
+> `0222` and already documented in `architecture.md`. Where this note and
+> `architecture.md` disagree, `architecture.md` wins until it is updated.
+
 The top level grew to 43 entries with two flat mega-directories (`scripts/`,
 173 files; `content/`, ~7 deliverables). This note fixes the target tree, the
 rule that decides where a file goes, and the migration checklist.
 
-Tracking ticket: `tickets/0223-repo-layout-reorg.erg`.
+Tracking ticket: `tickets/0223-repo-layout-reorg.erg` (code + prose axis).
 
 ## Target tree
 

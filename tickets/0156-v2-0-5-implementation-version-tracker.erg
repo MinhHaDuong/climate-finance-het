@@ -30,14 +30,14 @@ Version-milestone tracker for **v2.0.5 — implementation** (research → writin
 verification → resubmission). Blocked by v2.0.4 (0155).
 
 ## Children
-- [ ] 0172 base rebuild (sub-tracker; gates all manuscript children) → 0173 translation · 0174 inventory · 0175 reimports
-- [ ] 0135 reframe economists · 0136 quant integration + methods · 0137 commensuration thread
-- [ ] 0138 loss & damage · 0139 finance-development nexus · 0141 concretize actors
-- [ ] 0143 bibliography additions
-- [ ] 0171 conclusion rebuild — land on the birth of an aggregate (Vannes; before 0134)
-- [ ] 0181 titre + abstract — aggregate-birth framing (after 0171, before 0134)
-- [ ] 0134 human-led prose rewrite (ratchet-guarded; run last, blocked by 0171+0181)
-- [ ] 0162 reduce em-dash density toward 2/paragraph (ratchet finding from 0149)
+- [x] 0172 base rebuild (sub-tracker; gates all manuscript children) → 0173 translation · 0174 inventory · 0175 reimports
+- [x] 0135 reframe economists · 0136 quant integration + methods · 0137 commensuration thread
+- [x] 0138 loss & damage · 0139 finance-development nexus · 0141 concretize actors
+- [x] 0143 bibliography additions
+- [x] 0171 conclusion rebuild — land on the birth of an aggregate (Vannes; before 0134)
+- [x] 0181 titre + abstract — aggregate-birth framing (after 0171, before 0134)
+- [x] 0134 human-led prose rewrite (ratchet-guarded; run last, blocked by 0171+0181)
+- [x] 0162 reduce em-dash density toward 2/paragraph (ratchet finding from 0149)
 - [ ] 0152 response-to-reviewers letter · 0153 resubmission + deposit
 
 ## Exit criteria

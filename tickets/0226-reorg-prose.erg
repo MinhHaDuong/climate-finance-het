@@ -3,10 +3,12 @@ Title: Reorg workstream — prose (deliverables/ per-paper Quarto projects)
 Created: 2026-07-10
 Author: HDMX-coding-agent
 Blocked-by: 0223
+Label: deferred
 
 --- log ---
 2026-07-10T00:00Z HDMX-coding-agent created
 
+2026-07-10T09:49Z HDMX-coding-agent label deferred
 --- body ---
 ## Context
 Third stage of the top-level tidy (tracker `0223`). `content/` runs ~7

@@ -2,10 +2,13 @@
 Title: Tracking: reorganize the repo so layout mirrors dataflow phase
 Created: 2026-07-10
 Author: HDMX-coding-agent
+Label: deferred
 
 --- log ---
 2026-07-10T09:19Z HDMX-coding-agent created
 
+2026-07-10T09:49Z HDMX-coding-agent label deferred
+2026-07-10T09:50Z note audit 2026-07-10: code+prose axis of this reorg is tracked separately by 0223 (children 0225 code, 0226 prose); 0224 closed as duplicate of this tracker's data-layout scope (0218/0222). 0223's src/ + deliverables/ proposals depart from architecture.md and need author ratification before Execute
 --- body ---
 ## Context
 
