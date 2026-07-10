@@ -12,11 +12,9 @@ Exports (for import by plot_fig_lexical_tfidf.py):
 
 import os
 
-from utils import BASE_DIR, DERIVED_TABLES_DIR, get_logger
+from utils import DERIVED_TABLES_DIR, get_logger
 
 log = get_logger("compute_lexical")
-
-TABLES_DIR = os.path.join(BASE_DIR, "content", "tables")
 
 # --- Shared lexical denoising constants (imported by plot_fig_lexical_tfidf.py) ---
 MIN_PERIOD_DF = 3
@@ -48,9 +46,10 @@ if __name__ == "__main__":
     from utils import load_analysis_corpus
 
     io_args, extra = parse_io_args()
+    # Output lands under data/derived/tables/ (gitignored, regenerable — ticket 0233);
+    # create it so validate_io's dir check passes on a clean tree.
+    os.makedirs(os.path.dirname(io_args.output) or ".", exist_ok=True)
     validate_io(output=io_args.output)
-
-    os.makedirs(os.path.dirname(io_args.output) or TABLES_DIR, exist_ok=True)
 
     # --- Args ---
     parser = argparse.ArgumentParser(description="Compute lexical TF-IDF table at break years")
