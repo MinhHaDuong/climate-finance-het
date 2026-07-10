@@ -2,12 +2,12 @@
 Title: Evict remaining Phase-2 intermediates from content/tables; guard the class
 Created: 2026-07-10
 Author: HDMX-coding-agent
-Label: deferred
 
 --- log ---
 2026-07-10T08:23Z HDMX-coding-agent created
 
 2026-07-10T09:49Z HDMX-coding-agent label deferred
+2026-07-10T10:11Z HDMX-coding-agent unlabel deferred
 --- body ---
 ## Context
 

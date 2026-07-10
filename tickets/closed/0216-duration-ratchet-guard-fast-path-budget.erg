@@ -2,10 +2,12 @@
 Title: Duration-ratchet guard: fail a fast-path test that exceeds budget
 Created: 2026-07-10
 Author: HDMX-coding-agent
+Closed: done
 
 --- log ---
 2026-07-10T00:00Z HDMX-coding-agent created
 
+2026-07-10T09:33Z HDMX-coding-agent closed — done
 --- body ---
 ## Context
 Part of tracker 0213. This is the enforcement that converts "whack-a-mole

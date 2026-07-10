@@ -228,7 +228,7 @@ ZOO_FIGS := $(ZOO_SCHEMATICS) $(ZOO_RESULT_FIGS)
 ALL_FIGS := $(MANUSCRIPT_FIGS) $(DATAPAPER_FIGS) $(MULTILAYER_FIGS) $(TECHREP_FIGS) $(NCC_FIGS)
 
 # ── Default target ────────────────────────────────────────
-.PHONY: all setup manuscript papers figures figures-manuscript figures-datapaper figures-companion figures-techrep figures-ncc stats check check-fast lint venv-canonicalize smoke benchmark determinism-check regression regression-update audit-pdf-content check-corpus check-manuscript-data data corpus corpus-sync corpus-discover corpus-enrich corpus-extend corpus-filter corpus-align corpus-filter-all corpus-tables corpus-validate deploy-corpus clean rebuild archive-analysis archive-manuscript archive-datapaper analysis-figures analysis-tables analysis-stats manuscript-render manuscript-figures datapaper-render datapaper-figures corpus-handoff
+.PHONY: all setup manuscript papers figures figures-manuscript figures-datapaper figures-companion figures-techrep figures-ncc stats check check-fast lint test-durations venv-canonicalize smoke benchmark determinism-check regression regression-update audit-pdf-content check-corpus check-manuscript-data data corpus corpus-sync corpus-discover corpus-enrich corpus-extend corpus-filter corpus-align corpus-filter-all corpus-tables corpus-validate deploy-corpus clean rebuild archive-analysis archive-manuscript archive-datapaper analysis-figures analysis-tables analysis-stats manuscript-render manuscript-figures datapaper-render datapaper-figures corpus-handoff
 
 .DEFAULT_GOAL := manuscript
 
@@ -567,7 +567,7 @@ content/figures/fig_traditions.png: scripts/plot_fig_traditions.py scripts/plot_
 	$(PYTHON) $< --output $@
 
 # Co-citation communities (compute: community assignments + summary table)
-COMMUNITIES := data/catalogs/communities.csv
+COMMUNITIES := $(DERIVED)/communities.csv
 $(COMMUNITIES): scripts/analyze_cocitation.py scripts/utils.py $(REFINED_CIT)
 	$(PYTHON) $< --output $@
 
@@ -753,6 +753,18 @@ check-fast: | venv-canonicalize
 # tests, not inside the inner loop — a warm mypy cache makes it ~1s. Ticket 0214.
 lint: | venv-canonicalize
 	$(PYTHON) -m pytest tests/ --tb=short -m adherence -n 4
+
+# Record per-test durations for the fast-path ratchet (ticket 0216) into the
+# gitignored .test_durations.json. Serial (-n0) and opt-in so timings reflect
+# true per-test cost, not xdist contention. Run this to refresh the data the
+# ratchet (test_fast_path_budget.py, adherence tier) checks on the next run.
+# --continue-on-collection-errors: a base (non-corpus) env may lack an optional
+# dep (e.g. bibtexparser), which hard-stops collection of one module; the
+# recorder is best-effort and should still time every collectable fast-path test.
+test-durations: | venv-canonicalize
+	RECORD_TEST_DURATIONS=1 $(PYTHON) -m pytest tests/ --tb=short \
+		-m "not slow and not integration and not adherence" \
+		-p no:xdist -q --continue-on-collection-errors
 
 # PDF content audit: does each docs/articles/*.pdf match its bib title?
 # Author-run, human-verified — NOT wired into check/check-fast: scanned PDFs have

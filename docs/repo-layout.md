@@ -13,7 +13,7 @@
 >   (`scripts/analysis/traditions.py`, etc.) — read every "`src/`" below as
 >   "the owning `scripts/<phase>/` module."
 > - **Shared harvest + indexing for AEDIST → `libs/`.** Cross-repo sharing grows
->   `libs/openalex-corpus`, not a top-level `src/`. Seed `0227`.
+>   `libs/openalex-corpus`, not a top-level `src/`. Seed `0229`.
 >
 > The data-layout axis is owned by `0221`/`0218`/`0222`. Where this note and
 > `architecture.md` disagree, `architecture.md` wins until it is updated.

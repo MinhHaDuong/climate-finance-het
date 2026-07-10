@@ -40,6 +40,11 @@ Markers gate which `make` target runs a test. Pick the tier by **cost**, not by 
 
 `make check-fast` = `-m "not slow and not integration and not adherence"` (the inner loop — must stay pure logic). `make lint` = `-m adherence`. `make check` runs everything. No coverage is lost by moving a test to a slower tier — `make check` still runs it before every PR.
 
+Two guards keep the fast tier honest (ticket 0216, owned by `tests/test_fast_path_budget.py` + `tests/conftest.py`):
+
+- **Auto-mark** — a collection hook marks any test whose module imports a heavy dependency (dcor/torch/ot/sentence_transformers/matplotlib) `slow` automatically, so you rarely mark those by hand. `import dcor` alone costs ~7s (numba JIT), so this is the deterministic fix for the per-worker import tax.
+- **Ratchet** — an `adherence` test fails if any fast-path test on the last recorded run exceeds the budget in `[tool.fast_path_ratchet]` (pyproject). Heavy *compute* that no heavy *import* reveals lands here: give it `slow` (heavy compute / real data) or `integration` (subprocess). Refresh timings with `make test-durations` (serial, so the budget measures true cost, not xdist contention).
+
 ## Testing
 
 - Acceptance tests (e.g., `make corpus-validate`) are the top-level contract — never weaken without discussion.

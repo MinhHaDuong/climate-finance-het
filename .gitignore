@@ -52,6 +52,9 @@ __pycache__/
 .mypy_cache/
 .ruff_cache/
 .pytest_cache/
+# Per-test durations recorded by the fast-path ratchet (ticket 0216) — a
+# machine/run-specific artifact regenerated on every `make check`.
+.test_durations.json
 .cache/
 
 # Replication archive

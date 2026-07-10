@@ -8,7 +8,7 @@ Label: deferred
 2026-07-10T00:00Z HDMX-coding-agent created
 
 2026-07-10T09:49Z HDMX-coding-agent label deferred
-2026-07-10T10:07Z note author-adjudicated 2026-07-10: deliverables/ RATIFIED, src/ DECLINED (keep libs/ for cross-repo), AEDIST shared harvest/index → 0227
+2026-07-10T10:07Z note author-adjudicated 2026-07-10: deliverables/ RATIFIED, src/ DECLINED (keep libs/ for cross-repo), AEDIST shared harvest/index → 0229
 --- body ---
 ## Context
 Top level reached 43 entries with two flat mega-directories: `scripts/` (173
@@ -41,7 +41,7 @@ with `architecture.md` and 0221's "flat by phase, NOT by workpackage" rule.
 - **Shared harvest + indexing for AEDIST → `libs/`, not `src/`.** The author
   foresees corpus harvesting + indexing shared with AEDIST. That is cross-repo,
   so it grows `libs/openalex-corpus` (harvest, exists) + indexing (to add),
-  consumed by AEDIST via git source. Tracked as seed `0227`.
+  consumed by AEDIST via git source. Tracked as seed `0229`.
 
 ## Children
 - `0225` — Workstream CODE (src/ + scripts/ reorg)

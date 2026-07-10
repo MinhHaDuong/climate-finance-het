@@ -9,7 +9,7 @@ Label: deferred
 2026-07-10T00:00Z HDMX-coding-agent created
 
 2026-07-10T09:49Z HDMX-coding-agent label deferred
-2026-07-10T10:07Z note author decision: decline src/; keep _-private/pipeline_/scripts convention + phase subgrouping; extractions land in phase subdir; shared harvest/index → libs/ (0227)
+2026-07-10T10:07Z note author decision: decline src/; keep _-private/pipeline_/scripts convention + phase subgrouping; extractions land in phase subdir; shared harvest/index → libs/ (0229)
 --- body ---
 ## Context
 Second stage of the top-level tidy (tracker `0223`). `scripts/` holds 173 flat
@@ -29,7 +29,7 @@ package is this-repo-internal; AEDIST consumes `libs/` by git source).
 - `docs/repo-layout.md` — placement rule, layering invariant, 19-file audit (destinations now `scripts/<phase>/`, not `src/`)
 - `scripts/*.py` — 173 files
 - `divergence.mk`, `separation.mk`, `venues.mk` — shared-analysis fragments → `scripts/analysis/analysis.mk`
-- `libs/openalex-corpus` — the AEDIST-shared harvest package (indexing conventions to be added; see 0227 seed / memory)
+- `libs/openalex-corpus` — the AEDIST-shared harvest package (indexing conventions to be added; see 0229 seed / memory)
 
 ## Actions (risk ascending — separate PRs)
 1. Relocate shared-analysis fragments to `scripts/analysis/analysis.mk` (pure
