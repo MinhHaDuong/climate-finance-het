@@ -170,8 +170,13 @@ class TestDivergenceSubsampleSchema:
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.integration
 class TestSubsampleReplicatesPresent:
-    """compute_divergence_subsampled.py produces R rows per (year, window)."""
+    """compute_divergence_subsampled.py produces R rows per (year, window).
+
+    Spawns compute_divergence_subsampled.py via subprocess — excluded from
+    check-fast per the subprocess-tests-are-integration rule.
+    """
 
     def test_subsample_replicates_present_s2(self, tmp_path):
         """Smoke: R=3 replicates per cell for S2_energy on the smoke fixture."""
