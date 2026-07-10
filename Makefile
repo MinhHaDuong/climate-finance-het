@@ -109,7 +109,7 @@ NCC_FIGS        := deliverables/_shared/figures/fig_ncc_divergence.png \
 ALL_FIGS := $(MANUSCRIPT_FIGS) $(DATAPAPER_FIGS) $(MULTILAYER_FIGS) $(TECHREP_FIGS) $(NCC_FIGS)
 
 # ── Default target ────────────────────────────────────────
-.PHONY: all setup manuscript papers figures figures-manuscript figures-datapaper figures-companion figures-techrep figures-ncc stats check check-package check-fast lint test-durations venv-canonicalize smoke benchmark determinism-check regression regression-update audit-pdf-content check-corpus check-manuscript-data data corpus corpus-sync corpus-discover corpus-enrich corpus-extend corpus-filter corpus-align corpus-filter-all corpus-tables corpus-validate deploy-corpus clean rebuild archive-analysis archive-manuscript archive-datapaper analysis-figures analysis-tables analysis-stats manuscript-render manuscript-figures datapaper-render datapaper-figures corpus-handoff
+.PHONY: all setup manuscript papers corpus-report technical-report data-paper multilayer-detection multilayer-techrep zoo figures figures-manuscript figures-datapaper figures-companion figures-techrep figures-ncc stats check check-package check-fast lint test-durations venv-canonicalize smoke benchmark determinism-check regression regression-update audit-pdf-content check-corpus check-manuscript-data data corpus corpus-sync corpus-discover corpus-enrich corpus-extend corpus-filter corpus-align corpus-filter-all corpus-tables corpus-validate deploy-corpus clean rebuild archive-analysis archive-manuscript archive-datapaper analysis-figures analysis-tables analysis-stats manuscript-render manuscript-figures datapaper-render datapaper-figures corpus-handoff
 
 .DEFAULT_GOAL := manuscript
 
@@ -545,24 +545,45 @@ analysis-stats: stats
 # PHASE 3 — Render (Quarto → PDF/DOCX)
 # ═══════════════════════════════════════════════════════════
 
-manuscript: deliverables/manuscript/manuscript.pdf deliverables/manuscript/manuscript.docx
+# Each deliverable owns a Phase-3 render .mk beside its source under
+# deliverables/<x>/ (ticket 0237). `manuscript` and `papers` invoke them via
+# `$(MAKE) -f` — a separate make process that parses only the render .mk (+
+# paths.mk), never these Phase-2 rules. So `papers` is Phase-3 only: no
+# check-corpus, no uv run, rendering from artifacts a prior `make analysis` left
+# on disk. Each render .mk depends only on committed/handoff artifacts, so a
+# deliverable builds clean-room with no corpus data. Quarto's single-file render
+# writes the PDF NEXT TO its source (it ignores a project output-dir), so the
+# Make target IS the output file and Make verifies it (tickets 0131, 0226, 0237).
 
-papers: check-corpus deliverables/corpus-report/corpus-report.pdf deliverables/technical-report/technical-report.pdf deliverables/zoo/breakpoint-detect-method-zoo.pdf deliverables/data-paper/data-paper.pdf deliverables/multilayer/multilayer-detection.pdf deliverables/multilayer/multilayer-detection-techrep.pdf
+manuscript:
+	$(MAKE) -f deliverables/manuscript/manuscript.mk deliverables/manuscript/manuscript.pdf deliverables/manuscript/manuscript.docx
+
+papers: corpus-report technical-report data-paper multilayer-detection multilayer-techrep zoo
+
+corpus-report:
+	$(MAKE) -f deliverables/corpus-report/corpus-report.mk deliverables/corpus-report/corpus-report.pdf
+
+technical-report:
+	$(MAKE) -f deliverables/technical-report/technical-report.mk deliverables/technical-report/technical-report.pdf
+
+data-paper:
+	$(MAKE) -f deliverables/data-paper/data-paper.mk deliverables/data-paper/data-paper.pdf
+
+multilayer-detection:
+	$(MAKE) -f deliverables/multilayer/multilayer.mk deliverables/multilayer/multilayer-detection.pdf
+
+multilayer-techrep:
+	$(MAKE) -f deliverables/multilayer/multilayer.mk deliverables/multilayer/multilayer-detection-techrep.pdf
+
+zoo:
+	$(MAKE) -f deliverables/zoo/zoo.mk deliverables/zoo/breakpoint-detect-method-zoo.pdf
 
 # ── Namespaced aliases (Phase 3) ────────────────────────
 manuscript-render: manuscript
 manuscript-figures: figures-manuscript
 
-datapaper-render: deliverables/data-paper/data-paper.pdf
+datapaper-render: data-paper
 datapaper-figures: figures-datapaper
-
-# Each deliverable owns a Phase-3 render .mk beside its source under
-# deliverables/<x>/ (ticket 0237). The `manuscript` and `papers` targets above
-# invoke them via `$(MAKE) -f`, so no render rule lives in this Phase-2 Makefile.
-# Each render .mk depends only on committed/handoff artifacts, so a deliverable
-# builds clean-room with no corpus data. Quarto's single-file render writes the
-# PDF NEXT TO its source (it ignores a project output-dir), so the Make target IS
-# the output file and Make verifies it exists (tickets 0131, 0226, 0237).
 
 # ── Phase 4a — analysis archive (packages Phase 2 outputs) ─
 # Data + scripts: reviewers verify figures/tables are reproducible.
@@ -586,7 +607,7 @@ archive-analysis: check-manuscript-data $(ANALYSIS_OUTPUTS)
 # No Python needed — only Quarto + XeLaTeX.
 #   tar xzf archive.tar.gz && cd ... && make
 
-archive-manuscript: $(MANUSCRIPT_FIGS) $(MANUSCRIPT_INCLUDES) deliverables/manuscript/manuscript-vars.yml deliverables/manuscript/manuscript.pdf
+archive-manuscript: $(MANUSCRIPT_FIGS) $(MANUSCRIPT_INCLUDES) deliverables/manuscript/manuscript-vars.yml manuscript
 	bash build/build_manuscript_archive.sh
 
 # ── Phase 4c — data paper archive (full pipeline) ─────────
