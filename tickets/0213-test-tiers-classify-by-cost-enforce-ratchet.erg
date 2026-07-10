@@ -1,0 +1,72 @@
+%erg 0.1
+Title: Test-suite rethink: classify by cost, enforce by ratchet (tracking)
+Created: 2026-07-10
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-10T00:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+`make check-fast` (contract: unit tests + lint, <30s inner loop) had drifted to
+~90-100s. Investigation (PR #966) traced it to heavy tests leaking onto the fast
+path. The five worst were fixed tactically by adding `@pytest.mark.integration`.
+But the fixes are mole-whacking; the **root cause is structural**:
+
+1. **Markers classify by *mechanism* (subprocess / sleep / network) as a proxy
+   for *cost*, and the proxy leaks.** A 22s numba permutation test spawns nothing
+   and touches no network, so it sits on the fast path. A metric-axiom test does
+   50x10 arithmetic but pays ~7s to `import dcor` (numba eager-JIT at import, no
+   disk cache) — also fast by mechanism, slow by cost.
+2. **No enforcement → silent drift.** Nothing fails when a slow test lands on the
+   fast path; #966 found five by accident and nothing prevents a sixth.
+3. **Lint is conflated with unit testing.** `test_mypy_passes` costs 0.36s warm
+   but 9-19s cold (fresh worktree / cold `.mypy_cache`), and carries no marker;
+   other hygiene tests are `adherence`. check-fast does not even exclude
+   `adherence`, so lint runs inside the inner loop.
+4. **The <30s target is measured on doudou** (contended shared box); the same
+   suite timed 49s and 64s minutes apart. A hard wall-clock number there is
+   theater — enforce *composition*, let wall-clock fall out.
+
+Key measurements (PR #966 worktree, doudou):
+- cold mypy 9.4s / warm 0.36s; `dmypy` rejects `--follow-imports=silent` (moot).
+- `import dcor` ~7s every fresh process; the `energy_distance` call is 0.00s.
+- Only `tests/test_pipeline_io.py` imports a heavy dep at *module* level — the
+  rest lazy-import inside test bodies, so a static-import guard misses them.
+  Cost is only visible at runtime → enforcement must be duration-based.
+
+## Proposed architecture
+Reclassify marker semantics from mechanism to **cost/purpose**, rewire the gates,
+and add a runtime guard so drift is caught automatically:
+
+| Tier | Means | Gate |
+|------|-------|------|
+| *(none)* fast | pure-Python logic; pandas/numpy OK; no dcor/torch/ot/matplotlib, no subprocess, no lint | check-fast |
+| integration | spawns a subprocess / drives a script | check |
+| slow | network, real data, **heavy numerical dep, or heavy compute** (broadened) | check |
+| adherence | ruff / mypy / hygiene / contracts (applied consistently) | make lint |
+
+- check-fast → `-m "not slow and not integration and not adherence"`
+- make lint → `-m adherence` (warm mypy ~1s; runs alongside tests)
+- check → everything (unchanged)
+
+## Children
+- 0214 — rewire gates: cost-based tiers + `make lint`; broaden `slow` semantics
+- 0215 — apply `adherence` marker consistently to all lint/hygiene tests
+- 0216 — duration-ratchet guard: fail a fast-path test that exceeds budget
+- 0217 — evaluate pytest-testmon for the true TDD inner loop (spike)
+
+This tracker stays open until all four children close, then closes after an
+integration review confirming check-fast is composed of pure-logic tests only
+and the ratchet is green.
+
+## Invariants
+- No coverage loss: every test reclassified to slow/integration/adherence still
+  runs in `make check` before every PR.
+- PR #966 (tactical marker fixes) is independent and merges on its own.
+
+## Exit criteria
+- All four children merged; check-fast selects pure-logic tests only; the
+  duration-ratchet guard is active and green; `make lint` runs the adherence
+  tier; the <30s claim is either met structurally or replaced by a
+  composition-based contract measured on a clean runner.

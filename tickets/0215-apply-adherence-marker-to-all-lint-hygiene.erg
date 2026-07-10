@@ -1,0 +1,53 @@
+%erg 0.1
+Title: Apply adherence marker consistently to all lint/hygiene tests
+Created: 2026-07-10
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-10T00:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+Part of tracker 0213, and a prerequisite for 0214 (which deselects `adherence`
+from check-fast). The `adherence` marker is applied inconsistently: 50 tests
+carry it, but `test_script_hygiene.py::TestTypingCoreModules::test_mypy_passes`
+(the cold-cache 9-19s offender) carries no marker, and other ruff/mypy/contract
+checks may be equally unmarked. Until every rule-enforcement test is `adherence`,
+`-m "not adherence"` will not actually remove lint from the fast path.
+
+## Relevant files
+- `tests/test_script_hygiene.py` — mix of adherence-marked and unmarked hygiene
+  tests; `test_mypy_passes` (737), ruff/version checks, complexity/length smells
+- `tests/test_editorial_governance.py`, `tests/test_manuscript_prose.py` —
+  already carry adherence (confirm complete)
+- Any `test_ruff` / contract / schema-presence / arch-rule tests across `tests/`
+
+## Actions
+1. Audit `tests/` for rule-enforcement tests: mypy, ruff, complexity/length
+   smells, arch-rule-N contract checks, hygiene (no-stubs/TODO), doc-drift.
+2. Mark each `@pytest.mark.adherence` (class- or method-level as appropriate).
+   `test_mypy_passes` and any ruff-invoking test are the priority — they carry
+   the cold-cache and subprocess cost.
+3. Where a hygiene test also spawns a subprocess (ruff/mypy via `subprocess.run`),
+   `adherence` is the governing tier for gating; keep any existing `integration`
+   only if needed, but ensure `-m "not adherence"` deselects it. Prefer a single
+   `adherence` marker for lint tests over stacking.
+
+## Test
+Write first (red): a meta-test that scans `tests/` and asserts every test which
+invokes `ruff` or `mypy` (source contains `"ruff"`/`"mypy"` + `subprocess`) is
+marked `adherence`. Fails today on `test_mypy_passes`.
+
+## Verification
+- [ ] `uv run pytest -m adherence --co -q` count rises to include mypy/ruff tests.
+- [ ] `uv run pytest -m "not adherence" -k "mypy or ruff" --co` collects nothing.
+- [ ] The red meta-test passes after marking.
+
+## Invariants
+- No coverage loss: adherence tests still run in `make check` (and `make lint`
+  once 0214 lands).
+- Do not change what any hygiene test asserts — only its marker.
+
+## Exit criteria
+- Every lint/hygiene/contract test carries `adherence`; the meta-test guards it;
+  `-m "not adherence"` cleanly removes all lint from a selection.
