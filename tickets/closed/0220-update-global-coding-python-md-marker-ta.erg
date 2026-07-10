@@ -2,10 +2,13 @@
 Title: Update global coding-python.md marker table to cost-based tiers
 Created: 2026-07-10
 Author: HDMX-coding-agent
+Closed: migrated-to-idh-0269
 
 --- log ---
 2026-07-10T08:51Z HDMX-coding-agent created
 
+2026-07-10T09:59Z Migrated to ImperialDragonHarness ticket 0269 (the repo that owns rules/coding-python.md). Filed there via IDH PR #446. Closing here — wrong-repo ticket.
+2026-07-10T09:59Z HDMX-coding-agent closed — migrated-to-idh-0269
 --- body ---
 ## Context
 Follow-up from 0214 (test-tiers rethink, tracker 0213). The project marker table
