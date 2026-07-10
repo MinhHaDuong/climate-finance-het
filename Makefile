@@ -556,24 +556,13 @@ manuscript-figures: figures-manuscript
 datapaper-render: deliverables/data-paper/data-paper.pdf
 datapaper-figures: figures-datapaper
 
-# The manuscript render rules live in deliverables/manuscript/manuscript.mk
-# (Phase 3 writing workpackage, -include'd above). They depend only on committed
-# handoff artifacts so the manuscript builds clean-room with no data — ticket 0131.
-# Each deliverable's PDF is rendered NEXT TO its source (quarto's single-file
-# render ignores a project output-dir), so the Make target IS the output file and
-# Make verifies it exists (ticket 0226).
-
-deliverables/corpus-report/corpus-report.pdf: deliverables/corpus-report/corpus-report.qmd $(PROJECT_INCLUDES) $(BIB) deliverables/_shared/technical-report-vars.yml
-	quarto render $< --to pdf
-
-deliverables/technical-report/technical-report.pdf: deliverables/technical-report/technical-report.qmd $(PROJECT_INCLUDES) $(BIB) deliverables/_shared/technical-report-vars.yml $(TECHREP_FIGS) $(MULTILAYER_FIGS) .lexical_tfidf.stamp
-	quarto render $< --to pdf
-
-deliverables/data-paper/data-paper.pdf: deliverables/data-paper/data-paper.qmd $(PROJECT_INCLUDES) $(BIB) deliverables/data-paper/data-paper-vars.yml
-	quarto render $< --to pdf
-
-deliverables/multilayer/multilayer-detection.pdf: deliverables/multilayer/multilayer-detection.qmd $(PROJECT_INCLUDES) $(BIB) deliverables/multilayer/multilayer-detection-vars.yml
-	quarto render $< --to pdf
+# Each deliverable owns a Phase-3 render .mk beside its source under
+# deliverables/<x>/ (ticket 0237). The `manuscript` and `papers` targets above
+# invoke them via `$(MAKE) -f`, so no render rule lives in this Phase-2 Makefile.
+# Each render .mk depends only on committed/handoff artifacts, so a deliverable
+# builds clean-room with no corpus data. Quarto's single-file render writes the
+# PDF NEXT TO its source (it ignores a project output-dir), so the Make target IS
+# the output file and Make verifies it exists (tickets 0131, 0226, 0237).
 
 # ── Phase 4a — analysis archive (packages Phase 2 outputs) ─
 # Data + scripts: reviewers verify figures/tables are reproducible.

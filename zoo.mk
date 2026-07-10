@@ -147,8 +147,7 @@ $(ZOO_FIGS)/fig_zoo_bias_%.png: scripts/plot_zoo_bias_comparison.py \
 bias-tables: $(foreach m,$(BIAS_METHODS),$(ZOO_TABLES)/tab_div_biased_$(m).csv)
 bias-figures: $(BIAS_FIGS)
 
-# ── Zoo PDF render (Phase 3) ─────────────────────────────────────────────────
-# Thin wrapper over $(ZOO_INCLUDES) for reviewers or cherry-picking.
-# Mirrors the TR recipe; same vars file, same bibliography, same engine.
-deliverables/zoo/breakpoint-detect-method-zoo.pdf: deliverables/zoo/breakpoint-detect-method-zoo.qmd $(PROJECT_INCLUDES) $(BIB) deliverables/_shared/technical-report-vars.yml $(ZOO_FIGS)
-	quarto render $< --to pdf
+# The Phase-3 render rule (breakpoint-detect-method-zoo.pdf) now lives in
+# deliverables/zoo/zoo.mk, invoked via `$(MAKE) -f` by the root `papers` target.
+# This file is the Phase-2 remainder: it only PRODUCES the zoo figures/tables the
+# render consumes (ticket 0237).

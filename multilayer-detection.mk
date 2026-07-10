@@ -83,24 +83,8 @@ companion-sensitivity: \
     $(COMP_FIGS)/fig_companion_sensitivity.png
 
 # ── Technical supplement (ticket 0096) ───────────────────────────────────
-
-MULTILAYER_TECHREP_INCLUDES := \
-    deliverables/_shared/_includes/techrep/overview.md \
-    deliverables/_shared/_includes/techrep/zscore.md \
-    deliverables/_shared/_includes/techrep/null-model.md \
-    deliverables/_shared/_includes/zoo/S2_energy.md \
-    deliverables/_shared/_includes/zoo/L1_js.md \
-    deliverables/_shared/_includes/zoo/G9_community.md \
-    deliverables/_shared/_includes/zoo/G2_spectral.md \
-    deliverables/_shared/_includes/zoo/C2ST_embedding.md \
-    deliverables/_shared/_includes/zoo/C2ST_lexical.md
-
-deliverables/multilayer/multilayer-detection-techrep.pdf: \
-    deliverables/multilayer/multilayer-detection-techrep.qmd \
-    $(MULTILAYER_TECHREP_INCLUDES) \
-    $(BIB) \
-    deliverables/_shared/technical-report-vars.yml
-	quarto render $< --to pdf
-
-.PHONY: multilayer-techrep
-multilayer-techrep: deliverables/multilayer/multilayer-detection-techrep.pdf
+# The Phase-3 render rules for BOTH multilayer-detection.pdf and its technical
+# supplement (multilayer-detection-techrep.pdf) now live in
+# deliverables/multilayer/multilayer.mk, invoked via `$(MAKE) -f` by the root
+# `papers` target. MULTILAYER_TECHREP_INCLUDES moved to paths.mk. This file is the
+# Phase-2 remainder: it only PRODUCES the companion figures (ticket 0237).
