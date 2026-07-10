@@ -90,6 +90,11 @@ def _base_cfg(n_perm=20):
 # ---------------------------------------------------------------------------
 
 
+# Heavy compute: a real C2ST permutation run pulls the classifier stack, and the
+# first NullModel class to run pays that import (~5-8s). Marking the class is the
+# robust fix (ticket 0216); the file also has an integration smoke class, so it
+# is listed in TestMarkerDiscipline.EXCEPTIONS.
+@pytest.mark.slow
 class TestC2STEmbeddingNullModel:
     """Unit tests for _run_c2st_embedding_permutations."""
 
@@ -193,6 +198,7 @@ class TestC2STEmbeddingNullModel:
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.slow
 class TestC2STLexicalNullModel:
     """Unit tests for _run_c2st_lexical_permutations."""
 

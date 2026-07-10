@@ -73,6 +73,17 @@ markers = [
     "adherence: project rule enforcement (hygiene/discipline/contracts)",
 ]
 
+[tool.fast_path_ratchet]
+# Duration-ratchet guard (ticket 0216): fail if any fast-path test
+# (`-m "not slow and not integration and not adherence"`) on the last recorded
+# run exceeds this budget. Enforced by tests/test_fast_path_budget.py; timings
+# are recorded by the conftest.py hooks into durations_file (gitignored).
+# Start generous — the ~7s dcor import tax is gone via the collection-time
+# auto-mark, so the residual heavy-compute tail sets the floor. Tighten as the
+# fast path gets leaner.
+budget_seconds = 5.0
+durations_file = ".test_durations.json"
+
 [tool.uv]
 conflicts = [
     [{ extra = "cpu" }, { extra = "cu130" }],

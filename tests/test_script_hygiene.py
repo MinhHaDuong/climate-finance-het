@@ -820,6 +820,9 @@ class TestMarkerDiscipline:
     EXCEPTIONS = {
         # @integration subprocess tests + @slow TestPCABreakPreservation (dcor).
         "test_embedding_sensitivity.py",
+        # @integration smoke class (subprocess) + @slow C2ST NullModel classes
+        # (classifier-stack import ~5-8s). Different tests, not a mislabel (0216).
+        "test_null_model_c2st.py",
     }
 
     def test_no_slow_in_subprocess_files(self):
