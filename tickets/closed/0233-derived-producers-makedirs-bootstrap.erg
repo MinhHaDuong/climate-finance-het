@@ -2,10 +2,12 @@
 Title: $(DERIVED) producers must create their output dir before validate_io (bootstrap the class)
 Created: 2026-07-10
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #992
 
 --- log ---
 2026-07-10T13:20Z HDMX-coding-agent created
 
+2026-07-10T15:26Z HDMX-coding-agent closed — autoclosed — PR #992
 --- body ---
 ## Context
 
