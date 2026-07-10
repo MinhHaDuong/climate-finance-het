@@ -1,0 +1,32 @@
+%erg 0.1
+Title: Record the 2026-07-10 settled editorial decisions in the brief
+Created: 2026-07-11
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-11T00:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+Session 0152 (2026-07-10) settled several editorial decisions now implemented
+in the manuscript and letter. Per the standing norm (memory
+feedback_settled_debates_to_brief), settled debates must enter
+`docs/editorial-brief.md` at settlement time or they get re-litigated.
+
+## Actions — one brief entry each (Decision / Rationale / Ticket / Status)
+1. Intro leads with the birth-of-an-aggregate question; GDP-construction
+   research cited (Lepenies, Desrosières); contested-functioning is the case's
+   trait, not the frame.
+2. Green finance is a cousin of climate finance, not a sister (lineage
+   statement in §Controversies preamble); the article's object remains the
+   aggregate.
+3. Scientization-of-central-banking programme frames the economist-officials
+   in §Crystallization (Marcussen; Claveau & Dion; Acosta et al.; Goutsmedt &
+   Sergi).
+4. Second tradition opens on its target: the eradication of poverty.
+5. Response letter: first person singular, sole author; A4 for all generated
+   PDFs.
+
+## Exit criteria
+- [ ] Five entries added to docs/editorial-brief.md, cross-referenced to
+      ticket 0152 and the implementing commits
