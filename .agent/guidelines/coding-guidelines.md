@@ -5,21 +5,27 @@ Consult this file when writing or modifying Python scripts, pipeline steps, or b
 ## Testing
 
 - Tests live in `tests/`. A new script or changed behavior starts with a test in `tests/test_<module>.py`.
-- `make check-fast`: unit tests + prose lint, < 20 s — run during development.
-- `make check`: full suite including integration + slow tests — run before opening a PR.
+- `make check-fast`: pure-Python logic only — the fast inner loop.
+- `make lint`: the adherence tier (ruff / mypy / hygiene / contracts), run alongside tests.
+- `make check`: full suite including integration + slow + adherence — run before opening a PR.
 - Acceptance tests (e.g., `make corpus-validate`) are the top-level contract — never weaken them without discussion.
 
-### Test markers
+### Test markers — classify by cost, not mechanism (tickets 0213/0214)
 
-| Marker | Meaning | Excluded from |
-|--------|---------|---------------|
-| *(none)* | Unit test — pure logic, no subprocess, no sleep | — |
-| `@pytest.mark.integration` | Spawns subprocesses or uses sleep-based timing | `check-fast` |
-| `@pytest.mark.slow` | Requires network access or real corpus data | `check-fast` |
+| Marker | Belongs here | Gate |
+|--------|--------------|------|
+| *(none)* | pure-Python logic; pandas/numpy fine; no dcor/torch/ot/matplotlib, no subprocess, no lint | `make check-fast` |
+| `@pytest.mark.integration` | spawns a subprocess / drives a script / sleep-based timing | `make check` |
+| `@pytest.mark.slow` | network, real data, a heavy numerical dependency (dcor/torch/ot/sentence_transformers), or heavy compute | `make check` |
+| `@pytest.mark.adherence` | ruff / mypy / hygiene / contracts | `make lint` |
+
+`check-fast` = `-m "not slow and not integration and not adherence"`. No coverage is lost by a slower tier — `make check` runs everything.
 
 **When writing new tests:**
 - CLI flag presence → check via source inspection (`open().read()` + string match), not subprocess `--help`. This avoids ~1 s per Python startup.
-- Tests that run a Python script via `subprocess.run()` → mark `@pytest.mark.integration`. Fast tool invocations (ruff, mypy) are exempt.
+- Tests that run a Python script via `subprocess.run()` → mark `@pytest.mark.integration`.
+- Tests that import a heavy numerical dep (dcor/torch/ot) or render matplotlib → mark `@pytest.mark.slow`.
+- Tests that invoke ruff / mypy / hygiene checks → mark `@pytest.mark.adherence` (run via `make lint`).
 - Tests that use `time.sleep()` or threading timeouts → mark `@pytest.mark.integration`.
 - Tests that import heavy modules only for `inspect.getsource()` → read the file directly instead.
 

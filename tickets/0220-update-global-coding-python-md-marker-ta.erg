@@ -1,0 +1,43 @@
+%erg 0.1
+Title: Update global coding-python.md marker table to cost-based tiers
+Created: 2026-07-10
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-10T08:51Z HDMX-coding-agent created
+
+--- body ---
+## Context
+Follow-up from 0214 (test-tiers rethink, tracker 0213). The project marker table
+in `.claude/rules/coding.md` was updated to the cost-based taxonomy (fast =
+pure logic; slow = network/real-data/heavy-dep/heavy-compute; integration =
+subprocess; adherence = lint via `make lint`). The **global** table in
+`~/.claude/rules/coding-python.md` still documents the old mechanism-based rule
+(integration = subprocess/sleep; slow = network/real data) and does not mention
+`make lint` or the adherence tier as a gate.
+
+This is a cross-repo change: the global rule lives in the ImperialDragonHarness
+repo, is shared across all projects, and is linter-protected in this project's
+checkout. It must land via that repo's own PR flow, not from here.
+
+## Relevant files
+- `~/.claude/rules/coding-python.md` (ImperialDragonHarness) — the "Marker"
+  table under `## Testing` and the "When writing new tests" bullets
+- `.claude/rules/coding.md` (this repo, already updated by 0214) — the reference
+  for the target wording
+
+## Actions
+1. In the harness repo, update the marker table to the four cost-based tiers and
+   add `make lint` as the adherence gate, matching this repo's coding.md.
+2. Reword "slow" to include heavy numerical dependency / heavy compute.
+3. Keep the guidance generic (no project-specific dcor/torch names in the global
+   rule — name the category, give deps as examples only).
+
+## Verification
+- [ ] Global table lists fast / integration / slow / adherence by cost.
+- [ ] `make lint` / adherence-as-gate documented globally.
+- [ ] No project-specific coupling introduced into the shared rule.
+
+## Exit criteria
+- The global coding-python.md marker guidance matches the cost-based taxonomy;
+  a new project inherits the correct tiering rules.

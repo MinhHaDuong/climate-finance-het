@@ -2,12 +2,14 @@
 Title: Rewire test gates: cost-based tiers + make lint; broaden slow
 Created: 2026-07-10
 Author: HDMX-coding-agent
+Closed: done
 
 --- log ---
 2026-07-10T00:00Z HDMX-coding-agent created
 
 2026-07-10T08:04Z MinhHaDuong decision: "I agree with the inner loop" — endorses moving numerical-kernel tests (dcor/torch-bound) to slow; the fast inner loop covers only pure logic + what you edit (testmon 0217), full numerical validation stays in make check.
 2026-07-10T08:26Z HDMX-coding-agent note blocker 0215 closed — Blocked-by removed.
+2026-07-10T08:51Z HDMX-coding-agent closed — done
 --- body ---
 ## Context
 Part of tracker 0213. The fast gate must be composed of pure-Python logic tests
@@ -49,12 +51,12 @@ subprocess), and that `make lint` selects `-m adherence`. Fails today (check-fas
 does not exclude adherence).
 
 ## Verification
-- [ ] `make check-fast` marker expression excludes slow, integration, adherence.
-- [ ] `make lint` exists and runs the adherence tier.
-- [ ] pyproject.toml `slow` description names heavy deps + heavy compute.
-- [ ] `uv run pytest -m "not slow and not integration and not adherence"
+- [x] `make check-fast` marker expression excludes slow, integration, adherence.
+- [x] `make lint` exists and runs the adherence tier.
+- [x] pyproject.toml `slow` description names heavy deps + heavy compute.
+- [x] `uv run pytest -m "not slow and not integration and not adherence"
       --durations=10` shows no >3s test (once 0216's ratchet exists, it enforces).
-- [ ] Both rule tables updated; `make check` unchanged and green.
+- [x] Both rule tables updated; `make check` unchanged and green.
 
 ## Invariants
 - No coverage loss: `make check` still runs slow + integration + adherence.

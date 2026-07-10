@@ -227,7 +227,7 @@ ZOO_FIGS := $(ZOO_SCHEMATICS) $(ZOO_RESULT_FIGS)
 ALL_FIGS := $(MANUSCRIPT_FIGS) $(DATAPAPER_FIGS) $(MULTILAYER_FIGS) $(TECHREP_FIGS) $(NCC_FIGS)
 
 # ── Default target ────────────────────────────────────────
-.PHONY: all setup manuscript papers figures figures-manuscript figures-datapaper figures-companion figures-techrep figures-ncc stats check check-fast venv-canonicalize smoke benchmark determinism-check regression regression-update audit-pdf-content check-corpus check-manuscript-data data corpus corpus-sync corpus-discover corpus-enrich corpus-extend corpus-filter corpus-align corpus-filter-all corpus-tables corpus-validate deploy-corpus clean rebuild archive-analysis archive-manuscript archive-datapaper analysis-figures analysis-tables analysis-stats manuscript-render manuscript-figures datapaper-render datapaper-figures corpus-handoff
+.PHONY: all setup manuscript papers figures figures-manuscript figures-datapaper figures-companion figures-techrep figures-ncc stats check check-fast lint venv-canonicalize smoke benchmark determinism-check regression regression-update audit-pdf-content check-corpus check-manuscript-data data corpus corpus-sync corpus-discover corpus-enrich corpus-extend corpus-filter corpus-align corpus-filter-all corpus-tables corpus-validate deploy-corpus clean rebuild archive-analysis archive-manuscript archive-datapaper analysis-figures analysis-tables analysis-stats manuscript-render manuscript-figures datapaper-render datapaper-figures corpus-handoff
 
 .DEFAULT_GOAL := manuscript
 
@@ -742,9 +742,16 @@ venv-canonicalize:
 check: | venv-canonicalize
 	$(PYTHON) -m pytest tests/ -v --tb=short -n 4
 
-# Fast subset: unit tests only (no Python subprocess spawning, no sleeps, < 10s).
+# Fast inner loop: pure-Python logic only. Deselects slow (network / real data /
+# heavy numerical dep / heavy compute), integration (subprocess / sleep), and
+# adherence (lint — ruff/mypy/hygiene, run via `make lint`). Ticket 0214.
 check-fast: | venv-canonicalize
-	$(PYTHON) -m pytest tests/ -v --tb=short -m "not slow and not integration" -n 4
+	$(PYTHON) -m pytest tests/ -v --tb=short -m "not slow and not integration and not adherence" -n 4
+
+# Lint / rule-enforcement tier (ruff, mypy, hygiene, contracts). Run alongside
+# tests, not inside the inner loop — a warm mypy cache makes it ~1s. Ticket 0214.
+lint: | venv-canonicalize
+	$(PYTHON) -m pytest tests/ --tb=short -m adherence -n 4
 
 # PDF content audit: does each docs/articles/*.pdf match its bib title?
 # Author-run, human-verified — NOT wired into check/check-fast: scanned PDFs have

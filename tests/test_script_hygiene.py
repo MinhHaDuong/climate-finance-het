@@ -813,9 +813,14 @@ class TestMarkerDiscipline:
     mislabeled — subprocess tests should be @integration.
     """
 
-    # Files that legitimately use both @slow and subprocess (none expected).
-    # Add entries here only with a comment explaining why.
-    EXCEPTIONS = set()
+    # Files that legitimately use both @slow and subprocess. Under the
+    # cost-based tiers (tickets 0213/0214) a single file may hold @integration
+    # (subprocess) tests AND a @slow test (heavy numerical dep / heavy compute);
+    # the two tiers describe different tests, not a mislabel.
+    EXCEPTIONS = {
+        # @integration subprocess tests + @slow TestPCABreakPreservation (dcor).
+        "test_embedding_sensitivity.py",
+    }
 
     def test_no_slow_in_subprocess_files(self):
         """Files that import subprocess must not use @slow (use @integration)."""

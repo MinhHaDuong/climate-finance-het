@@ -68,7 +68,7 @@ dev = [
 # unscoped root `pytest` does not choke on `import openalex_corpus`.
 norecursedirs = ["libs"]
 markers = [
-    "slow: marks tests that require network access or external data (deselect with '-m \"not slow\"')",
+    "slow: network access, external/real data, a heavy numerical dependency (dcor/torch/ot/sentence_transformers), matplotlib rendering, or heavy compute (deselect with '-m \"not slow\"')",
     "integration: marks tests that spawn subprocesses or use sleep-based timing (deselect with '-m \"not integration\"')",
     "adherence: project rule enforcement (hygiene/discipline/contracts)",
 ]

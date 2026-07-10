@@ -23,6 +23,7 @@ import os
 import sys
 
 import networkx as nx
+import pytest
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 sys.path.insert(0, SCRIPTS_DIR)
@@ -100,6 +101,7 @@ def test_null_test_counts_truncated_replicates():
     assert res["n_truncated"] == 15  # every rewiring of a star truncates
 
 
+@pytest.mark.slow
 def test_three_cliques_beat_rewired_null():
     """Three cliques: observed separation >> null; random graph: not.
 
