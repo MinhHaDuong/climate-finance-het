@@ -1068,3 +1068,91 @@ class TestEmptyResultsGuard:
         assert isinstance(result, pd.DataFrame)
         assert {"year", "window", "hyperparams", "value"}.issubset(result.columns)
         assert len(result) == 0
+
+
+# ---------------------------------------------------------------------------
+# Dispatcher contract on a tiny/empty corpus (ticket 0121)
+# ---------------------------------------------------------------------------
+#
+# The pre-0118 bug class: a compute_* function returning pd.DataFrame([]) (0
+# columns) which the dispatcher turns into a 1-column ['channel'] frame that
+# fails DivergenceSchema.validate. TestEmptyResultsGuard covers 4/18 methods
+# by *direct* calls; this class exercises all 18 through the actual dispatcher
+# subprocess on a single-year corpus that forces every empty-window path.
+#
+# Non-C2ST methods emit the DivergenceSchema columns; C2ST methods carry the
+# extra CV-variance columns (schemas.C2STDivergenceSchema).
+
+from compute_divergence import METHODS as _DISPATCH_METHODS
+
+_DISPATCH_METHOD_KEYS = list(_DISPATCH_METHODS.keys())
+
+_DISPATCH_BASE_COLS = {"year", "channel", "window", "hyperparams", "value"}
+# empty_divergence_df columns + channel (added by the dispatcher) plus the
+# C2ST CV-variance columns (_divergence_c2st._C2ST_COLUMNS).
+_DISPATCH_C2ST_COLS = _DISPATCH_BASE_COLS | {
+    "auc_std",
+    "auc_q025",
+    "auc_q975",
+    "n_folds",
+    "p_value_vs_chance",
+}
+
+
+def _write_tiny_corpus(tmp_path):
+    """Build a single-year (all year=2015) corpus that forces empty windows.
+
+    Returns (works_csv, embeddings_npz, citations_csv). Every sliding method's
+    per_window_year_ranges is empty; every citation method sees no internal
+    edges. The dispatcher must still emit a valid-schema CSV.
+    """
+    works = tmp_path / "works.csv"
+    pd.DataFrame(
+        {
+            "doi": ["10.1/a", "10.1/b"],
+            "year": [2015, 2015],
+            "cited_by_count": [0, 0],
+            "abstract": ["carbon finance mechanism", "climate adaptation fund"],
+        }
+    ).to_csv(works, index=False)
+
+    emb = tmp_path / "refined_embeddings.npz"
+    vectors = np.random.RandomState(0).randn(2, 16).astype(np.float32)
+    np.savez(emb, vectors=vectors)
+
+    citations = tmp_path / "citations.csv"
+    pd.DataFrame(columns=["source_doi", "ref_doi", "ref_year"]).to_csv(
+        citations, index=False
+    )
+    return works, emb, citations
+
+
+@pytest.mark.slow
+@pytest.mark.integration
+class TestDispatcherEmptyCorpusContract:
+    """Every METHOD emits a schema-valid CSV through the dispatcher on an
+    empty-window corpus — never a bare 1-column ['channel'] frame."""
+
+    @pytest.mark.parametrize("method", _DISPATCH_METHOD_KEYS)
+    def test_dispatcher_result_columns_on_empty_corpus(self, method, tmp_path):
+        from compute_divergence import METHODS
+
+        _, _, _, needs_emb, needs_cit = METHODS[method]
+        works, emb, citations = _write_tiny_corpus(tmp_path)
+        if needs_emb:
+            inputs = [works, emb]
+        elif needs_cit:
+            inputs = [works, citations]
+        else:
+            inputs = [works]
+
+        out = tmp_path / f"tab_div_{method}.csv"
+        result = _run_compute(method, out, input_paths=inputs)
+        assert result.returncode == 0, f"{method} crashed:\n{result.stderr}"
+        assert out.exists(), f"{method}: no output written"
+
+        df = pd.read_csv(out)
+        expected = (
+            _DISPATCH_C2ST_COLS if method.startswith("C2ST_") else _DISPATCH_BASE_COLS
+        )
+        assert set(df.columns) == expected, f"{method}: got {set(df.columns)}"
