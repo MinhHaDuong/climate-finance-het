@@ -1,0 +1,65 @@
+%erg 0.1
+Title: Repo layout reorg — tidy the top level in three stages (data, code, prose)
+Created: 2026-07-10
+Author: HDMX-coding-agent
+Label: deferred
+
+--- log ---
+2026-07-10T00:00Z HDMX-coding-agent created
+
+2026-07-10T09:49Z HDMX-coding-agent label deferred
+2026-07-10T10:07Z note author-adjudicated 2026-07-10: deliverables/ RATIFIED, src/ DECLINED (keep libs/ for cross-repo), AEDIST shared harvest/index → 0229
+--- body ---
+## Context
+Top level reached 43 entries with two flat mega-directories: `scripts/` (173
+files mixing library, entry points, plotting) and `content/` (~7 deliverables
+sharing one Quarto project, forcing exclusion-mask profile files). Target state,
+placement rule, and the 19-file migration audit are in `docs/repo-layout.md`.
+
+This is a **tracking ticket** for the CODE + PROSE axis of the repo reorg. Work
+proceeds in stages ("ranger la chambre en plusieurs temps"): code, prose. It
+stays open until its children close.
+
+## Relationship to 0221 (read first)
+`0221` is the pre-existing reorg tracker; it owns the **data-layout** axis
+(`data/catalogs` = Phase 1 / `data/derived` = Phase 2), with children `0218`
+and `0222`, and it codified the governing principle in the canonical rules doc
+`.claude/rules/architecture.md` (§ Project structure, § Data location, §
+Artifact homes by phase). This ticket does **not** duplicate that; the former
+DATA workstream `0224` was closed as a duplicate of `0221`/`0218`/`0222`.
+`0223` extends the same reorg onto code and prose, and must stay consistent
+with `architecture.md` and 0221's "flat by phase, NOT by workpackage" rule.
+
+## Author ratification (2026-07-10) — resolved
+- **`deliverables/` per-paper Quarto — RATIFIED.** Proceed with the prose
+  reorg (0226); `architecture.md` § Project structure to be updated to match
+  when the move lands.
+- **`src/climatefinance/` — DECLINED.** Keep the existing library convention
+  (`_`-private + `pipeline_*` loaders in `scripts/`; `libs/` for cross-repo
+  sharing). Code reorg (0225) is now phase sub-grouping + in-place extractions,
+  no `src/`, no `python -m` flip.
+- **Shared harvest + indexing for AEDIST → `libs/`, not `src/`.** The author
+  foresees corpus harvesting + indexing shared with AEDIST. That is cross-repo,
+  so it grows `libs/openalex-corpus` (harvest, exists) + indexing (to add),
+  consumed by AEDIST via git source. Tracked as seed `0229`.
+
+## Children
+- `0225` — Workstream CODE (src/ + scripts/ reorg)
+- `0226` — Workstream PROSE (deliverables/ Quarto reorg)
+
+## Scheduling — after the Œconomia resubmit
+The resubmit is the deadline track; the reorg is tidying with no deadline
+payoff. CODE (`0225`) rewrites import paths + Make invocations, PROSE (`0226`)
+moves `manuscript.qmd` into `deliverables/manuscript/` — both destabilize the
+exact machinery the resubmission build depends on. Sequence both **after** the
+resubmit ships. DATA (`0224`, en cours) is Quarto/import-independent and may
+continue in parallel, but only if its moves do not touch DVC stages the
+resubmit build reads; otherwise freeze it too.
+
+## Relevant files
+- `docs/repo-layout.md` — target tree, placement rule, layering invariant, ordered moves
+
+## Exit criteria
+- All three workstream children closed
+- Integration review: `make clean && make all` green from the reorganized tree
+- Root entry count materially reduced; no flat 170-file directory remains

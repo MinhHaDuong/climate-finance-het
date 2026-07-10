@@ -1,0 +1,40 @@
+%erg 0.1
+Title: Reorg workstream — data (config/, data/, DVC layout)
+Created: 2026-07-10
+Author: HDMX-coding-agent
+Blocked-by: 0223
+Closed: duplicate: data-layout reorg owned by 0221/0218/0222; config/v1_* are frozen reference inputs (Makefile only --inputs them), not misplaced build products — no unique scope
+
+--- log ---
+2026-07-10T00:00Z HDMX-coding-agent created
+
+2026-07-10T09:49Z HDMX-coding-agent closed — duplicate: data-layout reorg owned by 0221/0218/0222; config/v1_* are frozen reference inputs (Makefile only --inputs them), not misplaced build products — no unique scope
+--- body ---
+## Context
+First stage of the top-level tidy (tracker `0223`). Data-side already in
+progress per the author. This ticket captures the data workstream so its scope
+does not bleed into the code and prose stages.
+
+The data workstream does **not** touch `scripts/` or `content/` — those are
+`0225` and `0226`. It is confined to `config/`, `data/`, and DVC wiring, which
+are Quarto- and import-independent, so it can land first and in parallel.
+
+## Actions
+1. Confirm what "en cours" already covers; record the current state here.
+2. Decide whether `config/` artifacts that are generated (`v1_cluster_*`,
+   `v1_identifiers.txt.gz`, `v1_tab_alluvial.csv`) belong in `config/` (hand
+   authored) or move under `data/`/`output/` (generated). Config should hold
+   inputs, not build products.
+3. Keep DVC stage paths coherent with any move (the risky part — `dvc.yaml` /
+   `dvc.lock`).
+
+## Test
+- `make corpus-sync` (doudou) or the relevant data target still resolves after
+  any path change; `dvc status` clean.
+
+## Invariants
+- Data flows padme→doudou only; do not trigger Phase 1 from a doudou build.
+- No `scripts/` or `content/` moves here.
+
+## Exit criteria
+- Data-side layout settled and documented; DVC coherent; tracker `0223` updated.

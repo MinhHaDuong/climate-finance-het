@@ -2,11 +2,13 @@
 Title: 0161 follow-up regenerate and archive appendix stat tables on frozen corpus
 Created: 2026-07-08
 Author: HDMX-coding-agent
+Label: deferred
 
 --- log ---
 2026-07-08T20:24Z HDMX-coding-agent created
 2026-07-09T13:20Z HDMX-coding-agent note Author HITL (proceed fully on current pre-v1.1.2 corpus, not waiting for the freeze). Action 1 DONE: make separation on current corpus; committed tab_null_separation_pre2007.csv + tab_pre2007_coverage.csv; A.5 prose (84 nodes/369 edges/share 0.89/null 0.37/z25/N1000) matches the CSV exactly, no drift; added tests/test_separation_provenance.py (CSV<->prose guard). Action 2 DONE (reconciled): on the SAME current corpus builder A (compute_null_separation full graph) = 243 nodes/1335 edges/10 comm/mod 0.6623; builder B (compute_temporal_communities) = 244 nodes/1335 edges/9 comm/mod 0.6602 -- edges identical, one node on the isolate/top-250 tie-break boundary, modularity equal to 2 dp. The old ~2x gap (committed cocitation-communities.md 169/1056/18/0.18) was citation-snapshot drift, NOT a code bug -- confirms the 0161 diagnosis. Manuscript A.5 already cites one construction (builder A) and defers community counts to the technical report as "too fragile". Action 3 (regenerate clustering-comparison.md + human-review + drop AI-generated warning) split to a follow-up: needs author sign-off and is best on the frozen corpus.
 
+2026-07-10T09:49Z HDMX-coding-agent label deferred
 --- body ---
 ## Context
 Follow-up to 0161 (audit + frozen-data policy C). The audit chose to keep the v1

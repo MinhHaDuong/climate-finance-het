@@ -9,6 +9,7 @@ Label: deferred
 2026-04-15T20:00Z claude note from simplify review; 52 tests take 128s
 2026-04-27T02:07Z claude note sweep-assess: not picked
 2026-07-09T13:27Z HDMX-coding-agent label deferred
+2026-07-10T09:49Z note audit 2026-07-10: ~80% satisfied by later work (test_regression.py golden hashes; 0213/0214/0215/0216 cost-tier+ratchet; test_divergence.py:456-475 dual-format; :393-445 S1-S4 axioms; test_changepoints.py). Residual gap: no 'make check-divergence' dry-run target. Kept deferred pending decision to close+re-ticket the sliver
 --- body ---
 ## Context
 The test suite works but has gaps in strategy: no regression guards
