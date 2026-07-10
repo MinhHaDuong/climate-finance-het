@@ -63,8 +63,14 @@ literature (Desrosières, Lepenies on GDP, Morgan/Tooze on aggregates) to *justi
 the aggregate-birth framing, but do **not** develop a systematic GDP ↔ climate-finance
 comparison. The analogy licenses the framing; it is not itself a section of the paper.
 
+**Intro body pivots too (author, 2026-07-10):** the introduction — not only the
+title and abstract — opens on the birth-of-an-aggregate question, citing the
+GDP-construction research (Lepenies 2016, Desrosières 1998) as the lineage. The
+case's contested functioning (the number is always arguable) is a trait of *this*
+aggregate, not the organizing frame of the paper.
+
 **Ticket:** 0165 (base decision); 0171 (conclusion landing, action 7 bib anchoring);
-`docs/notes-vannes-2026-07.md` §1, §4.
+0245 (intro pivot, commit 485bd92); `docs/notes-vannes-2026-07.md` §1, §4.
 
 **Status:** active
 
@@ -270,5 +276,63 @@ defense, now formulated head-on).
 
 **Ticket:** 0171 (conclusion engagement); 0143 (Star refs); 0173 translation
 keeps "borderline object" in the introduction.
+
+**Status:** active
+
+## green-finance-is-a-cousin-not-a-sister
+
+**Decision:** In the §Controversies preamble, name green finance as a *cousin* of
+climate finance, not a sister — an adjacent lineage, not a parallel object. The
+article's object stays the climate-finance aggregate; green finance is placed, not
+analysed alongside.
+
+**Rationale:** Author decision 2026-07-10. A sister framing would double the paper's
+scope and blur the very aggregate whose birth it traces; cousin acknowledges the
+neighbouring field without annexing it.
+
+**Ticket:** 0245 (this record); commit 1fe8e29 (§Controversies preamble lineage
+statement).
+
+**Status:** active
+
+## scientization-of-central-banking-frames-the-officials
+
+**Decision:** Frame the economist-officials in §Crystallization through the
+scientization-of-central-banking research programme, citing Marcussen 2009,
+Claveau & Dion 2018, Acosta et al. 2024, and Goutsmedt & Sergi 2025.
+
+**Rationale:** Author decision 2026-07-10. The programme gives a documented scholarly
+basis for the claim that an economic mode of reasoning entered institutional practice
+through trained officials — cross-ref `economic-rationality-carried-by-economists`,
+which this literature substantiates rather than the bare "economists built it".
+
+**Ticket:** 0245; commit 1fe8e29.
+
+**Status:** active
+
+## second-tradition-opens-on-poverty-eradication
+
+**Decision:** The second pre-history tradition (development economics / aid
+statistics) opens on its target: the eradication of poverty.
+
+**Rationale:** Author decision 2026-07-10. Naming what the tradition was *for* grounds
+the aid-statistics lineage in its purpose before the accounting machinery (DAC, Rio
+markers) enters, keeping the actor-and-motivation discipline of the writing rules.
+
+**Ticket:** 0245; commit 1fe8e29.
+
+**Status:** active
+
+## response-letter-first-person-singular-a4
+
+**Decision:** The resubmission response letter is written in the first person
+singular (the paper has a sole author). Every generated PDF uses A4 paper size.
+
+**Rationale:** Author decision 2026-07-10 (session 0152). A single-author letter reads
+in the first person singular, not an editorial "we"; A4 is the house paper size for
+all generated PDFs. The letter lives outside the repo, in the submission records under
+`papiers/<state>/<track>/`.
+
+**Ticket:** 0245; session 0152 (letter is outside the repo — no commit in this repo).
 
 **Status:** active
