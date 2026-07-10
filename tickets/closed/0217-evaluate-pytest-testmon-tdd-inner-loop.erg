@@ -2,10 +2,12 @@
 Title: Evaluate pytest-testmon for the TDD inner loop (spike)
 Created: 2026-07-10
 Author: HDMX-coding-agent
+Closed: rejected-incompatible
 
 --- log ---
 2026-07-10T00:00Z HDMX-coding-agent created
 
+2026-07-10T09:24Z HDMX-coding-agent closed — rejected-incompatible
 --- body ---
 ## Context
 Part of tracker 0213. Even a perfectly-composed 20-30s fast suite is too slow to
@@ -49,3 +51,30 @@ No production code under test — this is a spike. If adopted, the follow-up add
 ## Exit criteria
 - A written recommendation (adopt/defer/reject) backed by measured latency; if
   adopt, `make tdd` + a one-line rule doc; if not, a note on why for the record.
+
+## Findings (spike outcome — 2026-07-10)
+
+**Recommendation: REJECT (revisit when testmon supports pytest 9.x).**
+
+Reproduced on the project env (pytest 9.0.2, pytest-testmon latest >=2.1):
+
+1. **Hard incompatibility with pytest 9.x.** Plain documented usage
+   `pytest --testmon` crashes on every invocation — serial OR with `-n`:
+   `INTERNALERROR> KeyError: 'lf'` in `testmon/configure.py:_get_noselect_reasons`
+   (`options["lf"]`). testmon expects a pytest option key that pytest 9 no longer
+   exposes the same way. Not a misuse — it fails on the canonical command.
+2. **No pytest-xdist support (independent blocker).** testmon does not run under
+   `-n`; `check-fast` relies on `-n 4` for its speed, so testmon could never be a
+   drop-in replacement even once (1) is fixed — at best a serial `make tdd`.
+
+Because (1) makes testmon unusable with the current pytest, no `make tdd` target,
+no dependency, and no `.gitignore` entry were added — shipping a dev dep that
+crashes on invocation is worse than none.
+
+**Revisit condition:** re-run this spike when pytest-testmon publishes a release
+compatible with pytest >=9 (track the testmon changelog). If adopted then, it
+would be a *serial* keystroke loop (`make tdd`, no `-n`) complementing — never
+replacing — `make check-fast`. The inner-loop coverage gap it would fill is real
+(tickets 0213/0214 moved numerical-kernel tests to `slow`, off the fast path);
+until testmon is compatible, the mitigation is running the relevant
+`tests/test_<module>.py` directly during TDD.
