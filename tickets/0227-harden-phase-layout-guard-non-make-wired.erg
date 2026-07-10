@@ -1,0 +1,67 @@
+%erg 0.1
+Title: Harden phase-layout guard: non-Make-wired outputs + phase-by-prefix exceptions
+Created: 2026-07-10
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-10T09:46Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Surfaced by the /roar sweep after 0222 closed the `data/catalogs/` Phase-2
+eviction. The class guard `tests/test_phase_layout.py` (0222) parses the Makefile
+and keys phase off the producer script's filename prefix. The sweep found two
+blind spots in that design — no active leak today, but the guard would miss a
+future one:
+
+1. **Only Makefile-wired targets are checked.** A Phase-2 script that writes an
+   output via a hardcoded `os.path.join(CATALOGS_DIR, "x.csv")` default with **no
+   Make target** is invisible to the guard. Concrete: `compute_reranker_calibration.py`
+   writes `reranker_calibration.csv` and `reranker_hitl_review.csv` to `CATALOGS_DIR`
+   and has no Make target. (It is *correct* here — it is semantically Phase-1
+   corpus-relevance scoring, "Flag 6" — so this is not a leak, but it proves the
+   guard cannot see such outputs at all.)
+
+2. **Phase-by-filename-prefix has exceptions.** The taxonomy (`analyze_/compute_/
+   plot_/export_/summarize_` = Phase 2; `catalog_/enrich_/qa_/qc_/corpus_` = Phase 1)
+   misclassifies real scripts:
+   - `compute_reranker_calibration.py` — `compute_` prefix, but Phase-1 semantics.
+   - `qa_embeddings.py`, `qa_detect_type.py` — `qa_` prefix, but Phase-2 semantics
+     (they read/write `data/derived/` outputs). Already resolved correctly by 0208/0219,
+     but they show the prefix is a heuristic, not ground truth.
+
+## Relevant files
+- `tests/test_phase_layout.py` — the guard (parses Makefile, keys on prefix).
+- `scripts/compute_reranker_calibration.py` — the non-Make-wired Phase-1 example.
+- `.claude/rules/architecture.md` — where the phase taxonomy + exceptions live.
+
+## Actions (decide the cheap-vs-thorough trade-off first)
+1. **Document the exceptions** (cheap, do regardless): in `architecture.md`, note
+   that phase is semantic, not just prefix — list the known exceptions
+   (`compute_reranker_calibration` = Phase 1; `qa_embeddings`/`qa_detect_type` = Phase 2).
+2. **Optionally extend the guard** to scan script write-sites: flag any
+   `os.path.join(CATALOGS_DIR, "<name>.csv")` **write** default in a Phase-2 script
+   that is not a Phase-1 corpus artifact. Requires a maintained allowlist of the
+   legit Phase-1 catalogs artifacts (refined/enriched/citations/…​ + the reranker
+   exception) — weigh the maintenance cost against the low leak probability.
+3. If (2) is judged not worth it, at minimum add a comment in the guard naming the
+   two blind spots so a future reader knows the coverage boundary.
+
+## Test
+- If extending the guard: RED on a fabricated Phase-2 script writing
+  `CATALOGS_DIR/foo.csv` with no Make target; GREEN after the allowlist/logic.
+- `make lint` (adherence tier) stays green.
+
+## Invariants
+- No false positive on the legit Phase-1 catalogs artifacts (refined_works,
+  enriched_works, citations, corpus_audit, reranker_calibration, …).
+- `make check-fast` / `make lint` green.
+
+## Exit criteria
+- The phase-classification exceptions documented in `architecture.md`.
+- The guard's coverage boundary either closed (option 2) or explicitly commented
+  (option 3) so the blind spot is known, not silent.
+
+Parent tracker: tickets/0221-tracking-reorganize-the-repo-so-layout-m.erg
+Ticket-ref: tickets/0222-complete-data-catalogs-phase-2-eviction.erg
