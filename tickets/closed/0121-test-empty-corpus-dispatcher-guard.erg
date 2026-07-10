@@ -2,6 +2,7 @@
 Title: Standing regression test — dispatcher must never emit 1-column DataFrame on empty corpus
 Created: 2026-04-25
 Author: claude
+Closed: dispatcher empty-corpus contract guard added (18 methods, RED-proven)
 
 --- log ---
 2026-04-25T23:55Z claude created — follow-up from 0118/0120 sweep; guards the class, not just instances
@@ -12,6 +13,7 @@ Author: claude
 2026-07-09T13:27Z HDMX-coding-agent label deferred
 2026-07-10T09:49Z HDMX-coding-agent unlabel deferred
 2026-07-10T09:49Z note audit 2026-07-10: undeferred — cited blocker (S4_frechet, ticket 0118/PR#773) now closed+archived; ripe, ~30min regression test
+2026-07-10T10:46Z HDMX-coding-agent closed — dispatcher empty-corpus contract guard added (18 methods, RED-proven)
 --- body ---
 ## Context
 
@@ -57,9 +59,9 @@ PASS; a SchemaError or a 1-column `['channel']` CSV is a FAIL.
 
 ## Exit criteria
 
-- [ ] Test exists and passes for all methods in `METHODS.keys()`
-- [ ] Test is marked `@pytest.mark.slow` (excluded from check-fast)
-- [ ] `make check-fast` clean
+- [x] Test exists and passes for all methods in `METHODS.keys()`
+- [x] Test is marked `@pytest.mark.slow` (excluded from check-fast)
+- [x] `make check-fast` clean
 
 ## Picker assessment 2026-04-26T22:06Z
 **Decision:** not picked

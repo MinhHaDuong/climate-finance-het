@@ -114,15 +114,24 @@ def smoke_env():
     }
 
 
-def run_compute(method, output_path, timeout=300):
-    """Run compute_divergence.py --method M --output P."""
+def run_compute(method, output_path, timeout=300, input_paths=None):
+    """Run compute_divergence.py --method M --output P.
+
+    input_paths : list[str] | None
+        When provided, forwarded as ``--input <path...>`` so the method reads
+        the given fixture files instead of the smoke corpus. Default (None)
+        leaves the smoke-env corpus in place — existing call sites unchanged.
+    """
+    cmd = [
+        sys.executable,
+        os.path.join(SCRIPTS_DIR, "compute_divergence.py"),
+        "--method", method,
+        "--output", str(output_path),
+    ]
+    if input_paths:
+        cmd += ["--input", *[str(p) for p in input_paths]]
     return subprocess.run(
-        [
-            sys.executable,
-            os.path.join(SCRIPTS_DIR, "compute_divergence.py"),
-            "--method", method,
-            "--output", str(output_path),
-        ],
+        cmd,
         env=smoke_env(),
         capture_output=True,
         text=True,
