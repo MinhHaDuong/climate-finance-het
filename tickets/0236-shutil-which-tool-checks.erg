@@ -1,0 +1,54 @@
+%erg 0.1
+Title: Migrate nested `uv run <tool>` availability checks to shutil.which
+Created: 2026-07-10
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-10T00:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+`tests/test_script_hygiene.py` gates its ruff and mypy hygiene tests on
+module-level availability probes that spawn a **nested** `uv run <tool>
+--version` at collection time:
+
+- `_RUFF_AVAILABLE` (line ~124)
+- `_MYPY_AVAILABLE` (line ~722)
+
+Ticket 0230 established the better pattern (in `tests/test_ruff.py`): resolve the
+tool with `shutil.which(...)`, not a nested `uv run`. pytest already runs inside
+the project venv under `make lint`, so a declared+pinned tool is on PATH; a
+nested `uv run` re-enters uv from inside uv, spawns a subprocess per collection,
+and behaves differently under `UV_NO_SYNC` in a clean CI/cloud container. Both
+`ruff` and `mypy` are now declared dev deps, so `shutil.which` resolves them.
+
+Found during the 0230 roar sweep.
+
+## Relevant files
+- `tests/test_script_hygiene.py` — `_RUFF_AVAILABLE`, `_MYPY_AVAILABLE`.
+- `tests/test_ruff.py` — reference for the `shutil.which` pattern.
+
+## Actions
+1. Replace both nested-`uv run --version` probes with
+   `shutil.which("ruff") is not None` / `shutil.which("mypy") is not None`.
+2. Since both tools are declared dev deps, consider asserting availability
+   (fail loudly) rather than skipping — a missing declared tool is a setup bug,
+   not a reason to silently pass. Match whatever `test_ruff.py` does.
+3. Confirm `make lint` still green; no collection-time subprocess remains.
+
+## Test
+Write first (red): an assertion (or grep-based hygiene check) that
+`test_script_hygiene.py` contains no `uv", "run"` nested-subprocess tool probe;
+the ruff/mypy gates resolve via `shutil.which`.
+
+## Verification
+- [ ] `make lint` green.
+- [ ] No `subprocess.run(["uv", "run", ...])` remains for tool availability in
+      the adherence tests.
+
+## Invariants
+- Do not change which tests run — only how the tool binary is resolved.
+
+## Exit criteria
+- Adherence-tier tool availability is resolved via `shutil.which`, consistent
+  with `test_ruff.py`; no nested `uv run` at collection time.
