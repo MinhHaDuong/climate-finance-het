@@ -2,10 +2,12 @@
 Title: Apply adherence marker consistently to all lint/hygiene tests
 Created: 2026-07-10
 Author: HDMX-coding-agent
+Closed: done
 
 --- log ---
 2026-07-10T00:00Z HDMX-coding-agent created
 
+2026-07-10T08:26Z HDMX-coding-agent closed — done
 --- body ---
 ## Context
 Part of tracker 0213, and a prerequisite for 0214 (which deselects `adherence`
