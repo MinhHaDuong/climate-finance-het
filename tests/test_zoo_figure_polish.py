@@ -19,7 +19,7 @@ def test_no_w5_in_crossyear_tables():
     L2 is excluded: it uses its own window config [3, 5] for novelty/transience
     lookback, which is a different concept from the sliding window w in S1-S4.
     """
-    csvs = glob.glob("content/tables/tab_crossyear_*.csv")
+    csvs = glob.glob("data/derived/tables/tab_crossyear_*.csv")
     if not csvs:
         pytest.skip("No crossyear tables found — padme rerun needed (ticket 0100)")
     for path in csvs:
@@ -155,11 +155,11 @@ def test_l2_crossyear_value_matches_null_observed():
     RED before fix: crossyear value ≈ 5.35 (mean of 3 metrics) vs observed ≈ 3.38 (resonance only).
     Skips if artifacts absent OR stale (pre-fix mean-of-3 values still present).
     """
-    crossyear = "content/tables/tab_crossyear_L2.csv"
-    null_csv = "content/tables/tab_null_L2.csv"
+    crossyear = "data/derived/tables/tab_crossyear_L2.csv"
+    null_csv = "data/derived/tables/tab_null_L2.csv"
     if not (os.path.exists(crossyear) and os.path.exists(null_csv)):
         pytest.skip(
-            "Padme artifacts absent — run make content/tables/tab_crossyear_L2.csv first"
+            "Padme artifacts absent — run make data/derived/tables/tab_crossyear_L2.csv first"
         )
     cy = pd.read_csv(crossyear)
     # Detect stale artifact: pre-fix year=1999 value was ~5.35 (mean of 3 metrics);
@@ -168,7 +168,7 @@ def test_l2_crossyear_value_matches_null_observed():
     if not sentinel_rows.empty and sentinel_rows["value"].iloc[0] > 4.5:
         pytest.skip(
             f"tab_crossyear_L2.csv is stale (year=1999 value={sentinel_rows['value'].iloc[0]:.2f}); "
-            "regenerate with: make content/tables/tab_crossyear_L2.csv"
+            "regenerate with: make data/derived/tables/tab_crossyear_L2.csv"
         )
     nm = pd.read_csv(null_csv)
     merged = cy.merge(nm, on=["year", "window"])
