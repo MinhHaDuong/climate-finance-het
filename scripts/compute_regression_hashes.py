@@ -263,9 +263,9 @@ def _hash_output(path: Path) -> str:
 def _redirect_args(args: list[str], output_root: Path) -> list[str]:
     """Rewrite --output and --input paths to use output_root instead of ROOT.
 
-    Paths that start with a known relative prefix (content/, tests/) are
-    redirected to output_root/<relpath>. Absolute paths under ROOT are
-    converted to relative first.
+    Paths that start with a known relative prefix (content/, tests/,
+    data/derived/) are redirected to output_root/<relpath>. Absolute paths
+    under ROOT are converted to relative first.
     """
     result: list[str] = []
     for arg in args:
@@ -278,8 +278,9 @@ def _redirect_args(args: list[str], output_root: Path) -> list[str]:
             except ValueError:
                 result.append(arg)
                 continue
-        # Relative path starting with content/ or tests/ → redirect
-        if arg.startswith(("content/", "tests/")):
+        # Relative path starting with content/, tests/, or the derived scratch
+        # dir (Phase-2 intermediates evicted there, ticket 0218) → redirect
+        if arg.startswith(("content/", "tests/", "data/derived/")):
             redirected = output_root / arg
             redirected.parent.mkdir(parents=True, exist_ok=True)
             result.append(str(redirected))
