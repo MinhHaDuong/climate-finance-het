@@ -9,7 +9,7 @@ written) because the number of output files depends on the data.
 Usage:
     uv run python scripts/plot_fig_lexical_tfidf.py --output .lexical_tfidf.stamp
     uv run python scripts/plot_fig_lexical_tfidf.py --output .lexical_tfidf.stamp \
-        --input content/tables/tab_lexical_tfidf.csv [--pdf]
+        --input data/derived/tables/tab_lexical_tfidf.csv [--pdf]
 """
 
 import argparse
@@ -18,7 +18,7 @@ import os
 import matplotlib.pyplot as plt
 import pandas as pd
 from script_io_args import parse_io_args, validate_io
-from utils import BASE_DIR, get_logger, save_figure
+from utils import BASE_DIR, DERIVED_TABLES_DIR, get_logger, save_figure
 
 log = get_logger("plot_fig_lexical_tfidf")
 
@@ -117,13 +117,12 @@ def main():
     args = parser.parse_args(extra)
 
     figures_dir = os.path.join(BASE_DIR, "content", "figures")
-    tables_dir = os.path.join(BASE_DIR, "content", "tables")
     os.makedirs(figures_dir, exist_ok=True)
 
     # --- Input resolution ---
     tfidf_path = (
         io_args.input[0] if io_args.input
-        else os.path.join(tables_dir, "tab_lexical_tfidf.csv")
+        else os.path.join(DERIVED_TABLES_DIR, "tab_lexical_tfidf.csv")
     )
 
     # --- Load pre-computed TF-IDF table ---

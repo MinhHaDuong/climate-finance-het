@@ -58,6 +58,7 @@ from pipeline_loaders import (
     CATALOGS_DIR,
     CONFIG_DIR,
     DATA_DIR,
+    DERIVED_TABLES_DIR,
     EMBEDDINGS_CACHE_DIR,
     EMBEDDINGS_CACHE_PATH,
     EMBEDDINGS_PATH,

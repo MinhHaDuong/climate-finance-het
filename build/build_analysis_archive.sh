@@ -26,7 +26,7 @@ ANALYSIS_OUTPUTS=(
     content/tables/tab_core_shares.csv
     content/tables/tab_bimodality.csv
     content/tables/tab_axis_detection.csv
-    content/tables/tab_pole_papers.csv
+    data/derived/tables/tab_pole_papers.csv
     content/tables/cluster_labels.json
 )
 

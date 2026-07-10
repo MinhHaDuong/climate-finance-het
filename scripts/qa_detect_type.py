@@ -12,7 +12,7 @@ Usage:
 
 Outputs:
     - stdout: type distribution summary
-    - content/tables/qa_type_report.csv: classification report
+    - <derived>/qa_type_report.csv: classification report (analysis intermediate)
     - data/catalogs/refined_works.csv: updated with doc_type column (with --apply)
 """
 
@@ -21,7 +21,7 @@ import os
 import re
 
 import pandas as pd
-from utils import BASE_DIR, CATALOGS_DIR, get_logger, save_csv
+from utils import CATALOGS_DIR, DERIVED_TABLES_DIR, get_logger, save_csv
 
 log = get_logger("qa_detect_type")
 
@@ -281,7 +281,7 @@ def main():
 
     # Save report
     report = df[["title", "journal", "source", "doc_type"]].copy()
-    report_path = os.path.join(BASE_DIR, "content", "tables", "qa_type_report.csv")
+    report_path = os.path.join(DERIVED_TABLES_DIR, "qa_type_report.csv")
     save_csv(report, report_path)
 
     if args.apply:

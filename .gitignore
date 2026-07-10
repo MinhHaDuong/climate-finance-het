@@ -17,6 +17,9 @@ data/raw/
 data/run_reports/
 data/teaching_sources.yaml
 data/catalogs/.citations_batch_checkpoint.csv
+# Analysis-side scratch dir for large Phase-2 intermediates (ticket 0208) —
+# regenerable, not a writing deliverable, not DVC-tracked.
+data/derived/
 
 # Make sentinel files (dynamic-output targets)
 *.stamp

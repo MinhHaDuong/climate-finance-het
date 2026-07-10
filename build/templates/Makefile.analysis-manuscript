@@ -20,6 +20,8 @@ export PATH := $(HOME)/.local/bin:$(PATH)
 
 DATA    := data/catalogs
 REFINED := $(DATA)/refined_works.csv
+# Analysis-side scratch dir for large intermediates (matches utils.DERIVED_TABLES_DIR).
+DERIVED := data/derived/tables
 
 .DEFAULT_GOAL := figures
 .PHONY: figures verify
@@ -43,22 +45,22 @@ $(DATA)/het_mostcited_50.csv: scripts/build_het_core.py scripts/utils.py $(REFIN
 	$(UV_RUN) python $<
 
 content/tables/tab_venues.md: scripts/export_tab_venues.py scripts/utils.py $(REFINED) \
-		content/tables/tab_pole_papers.csv
+		$(DERIVED)/tab_pole_papers.csv
 	$(UV_RUN) python $<
 
-content/tables/tab_pole_papers.csv &: scripts/analyze_bimodality.py scripts/utils.py $(REFINED)
+$(DERIVED)/tab_pole_papers.csv &: scripts/analyze_bimodality.py scripts/utils.py $(REFINED)
 	$(UV_RUN) python $<
 
 content/figures/fig_bimodality.png: scripts/plot_bimodality.py scripts/utils.py \
-		content/tables/tab_pole_papers.csv
+		$(DERIVED)/tab_pole_papers.csv
 	$(UV_RUN) python $<
 
 content/figures/fig_bimodality_lexical.png: scripts/plot_bimodality_lexical.py scripts/utils.py \
-		content/tables/tab_pole_papers.csv
+		$(DERIVED)/tab_pole_papers.csv
 	$(UV_RUN) python $<
 
 content/figures/fig_bimodality_keywords.png: scripts/plot_bimodality_keywords.py scripts/utils.py \
-		content/tables/tab_pole_papers.csv
+		$(DERIVED)/tab_pole_papers.csv
 	$(UV_RUN) python $<
 
 # ── Verification ──────────────────────────────────────────

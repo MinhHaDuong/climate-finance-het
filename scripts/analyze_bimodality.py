@@ -8,9 +8,9 @@ Method:
 - Validate with TF-IDF and keyword co-occurrence
 
 Produces:
-- tables/tab_bimodality.csv: Dip test p-values, GMM BIC, pole paper counts
-- tables/tab_pole_papers.csv: Per-paper score and pole assignment
-- tables/tab_axis_detection.csv: Unsupervised TF-IDF components and alignment to pole axis
+- content/tables/tab_bimodality.csv: Dip test p-values, GMM BIC, pole paper counts
+- <derived>/tab_pole_papers.csv: Per-paper score and pole assignment (analysis intermediate)
+- content/tables/tab_axis_detection.csv: Unsupervised TF-IDF components and alignment to pole axis
 
 Usage:
     uv run python scripts/analyze_bimodality.py --output content/tables/tab_bimodality.csv
@@ -30,6 +30,7 @@ from script_io_args import parse_io_args, validate_io
 from utils import (
     BASE_DIR,
     CATALOGS_DIR,
+    DERIVED_TABLES_DIR,
     get_logger,
     load_analysis_config,
     load_analysis_periods,
@@ -176,8 +177,14 @@ def _save_all_tables(*, df, n_eff, n_acc, n_both, bic1, bic2, delta_bic,
                      lex_dbic, main_axis_label, best_corr, best_dbic,
                      best_idx, explained, period_stats, component_rows,
                      emb_component_rows, output_path,
-                     out_dir, tab_axis, tab_pole):
-    """Step 7: Save all output tables (bimodality summary, axis detection, pole papers)."""
+                     out_dir, tab_axis, tab_pole, pole_dir):
+    """Step 7: Save all output tables (bimodality summary, axis detection, pole papers).
+
+    The per-paper pole table is a large analysis intermediate consumed only by
+    other Phase-2 scripts; it is written to `pole_dir` (an analysis-side scratch
+    dir) rather than beside the small writing-facing summary/axis tables
+    (ticket 0208).
+    """
     summary_rows = [{
         "method": "embedding",
         "n_papers": len(df),
@@ -248,7 +255,8 @@ def _save_all_tables(*, df, n_eff, n_acc, n_both, bic1, bic2, delta_bic,
         df["axis_score"] > 0, "efficiency",
         np.where(df["axis_score"] < 0, "accountability", "neutral")
     )
-    pole_path = os.path.join(out_dir, tab_pole) if out_dir else tab_pole
+    os.makedirs(pole_dir, exist_ok=True)
+    pole_path = os.path.join(pole_dir, tab_pole)
     pole_papers.to_csv(pole_path, index=False)
     log.info("Saved -> %s (%d papers)", pole_path, len(pole_papers))
 
@@ -459,7 +467,7 @@ def main():
         period_stats=period_stats, component_rows=component_rows,
         emb_component_rows=emb_component_rows,
         output_path=io_args.output, out_dir=out_dir,
-        tab_axis=tab_axis, tab_pole=tab_pole,
+        tab_axis=tab_axis, tab_pole=tab_pole, pole_dir=DERIVED_TABLES_DIR,
     )
     log.info("Done.")
 

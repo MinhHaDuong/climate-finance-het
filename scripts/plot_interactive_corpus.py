@@ -27,6 +27,7 @@ import plotly.graph_objects as go
 from utils import (
     BASE_DIR,
     CATALOGS_DIR,
+    DERIVED_TABLES_DIR,
     get_logger,
     load_analysis_config,
     normalize_doi,
@@ -50,9 +51,10 @@ CLUSTERS_PATH = os.path.join(CATALOGS_DIR, "semantic_clusters.csv")
 CLUSTER_LABELS_PATH = os.path.join(TABLES_DIR, "cluster_labels.json")
 BIB_PATH = os.path.join(BASE_DIR, "bibliography", "main.bib")
 
-# Tab5 can be in tables/ (repo) or catalogs/ (data dir) — try both
+# Pole papers is an analysis intermediate in the derived dir; also accept the
+# legacy catalogs/ location for older data snapshots.
 TAB5_CANDIDATES = [
-    os.path.join(TABLES_DIR, "tab_pole_papers.csv"),
+    os.path.join(DERIVED_TABLES_DIR, "tab_pole_papers.csv"),
     os.path.join(CATALOGS_DIR, "tab_pole_papers.csv"),
 ]
 
@@ -90,7 +92,7 @@ for candidate in TAB5_CANDIDATES:
 
 if tab5_path is None:
     raise FileNotFoundError(
-        "tab_pole_papers.csv not found in tables/ or catalogs/. "
+        "tab_pole_papers.csv not found in derived/ or catalogs/. "
         "Run analyze_bimodality.py first."
     )
 

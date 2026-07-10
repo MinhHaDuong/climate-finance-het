@@ -8,7 +8,7 @@ Reads:
   data/catalogs/refined_works.csv
   data/catalogs/refined_citations.csv
   data/catalogs/semantic_clusters.csv
-  content/tables/tab_pole_papers.csv  (optional — from analyze_bimodality.py)
+  <derived>/tab_pole_papers.csv  (optional — from analyze_bimodality.py)
 
 Produces:
   content/tables/tab_lineages.csv — backbone papers with lineage, position, metadata
@@ -25,6 +25,7 @@ from script_io_args import parse_io_args, validate_io
 from utils import (
     BASE_DIR,
     CATALOGS_DIR,
+    DERIVED_TABLES_DIR,
     get_logger,
     load_analysis_config,
     load_analysis_periods,
@@ -149,7 +150,7 @@ CDM_CLUSTER = 2
 def assign_lineages(backbone_dois, doi_meta, doi_to_cluster):
     """Assign each backbone paper to one of three lineage bands."""
     # Load bimodality pole scores if available
-    pole_path = os.path.join(TABLES_DIR, "tab_pole_papers.csv")
+    pole_path = os.path.join(DERIVED_TABLES_DIR, "tab_pole_papers.csv")
     use_bimodal = os.path.exists(pole_path)
 
     if use_bimodal:
