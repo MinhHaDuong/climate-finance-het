@@ -60,6 +60,7 @@ dev = [
     "fpdf2>=2.8.7",
     "mypy>=1.10",
     "pytest-xdist>=3.5",
+    "ruff>=0.11.12,<0.12",
 ]
 
 [tool.pytest.ini_options]
