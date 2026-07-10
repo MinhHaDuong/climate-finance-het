@@ -1,10 +1,10 @@
 # manuscript.mk — Phase 3 writing workpackage for the Œconomia article.
 #
-# Standalone clean-room build: produces output/content/manuscript.{pdf,docx}
+# Standalone clean-room build: produces deliverables/manuscript/manuscript.{pdf,docx}
 # from committed handoff artifacts ALONE — no uv, no Python, no corpus data.
 # Toolchain: Quarto + a LaTeX engine (XeLaTeX via TeX Live) + Pandoc only.
 #
-#   make -f deliverables/manuscript/manuscript.mk output/content/manuscript.pdf
+#   make -f deliverables/manuscript/manuscript.mk deliverables/manuscript/manuscript.pdf
 #
 # Also -include'd by the top-level Makefile so `make manuscript` resolves the
 # same rules. Prerequisites are the prose source plus the git-tracked writing
@@ -14,10 +14,11 @@
 # main Makefile; this file only CONSUMES them. (Tickets 0131, 0226.)
 #
 # Since 0226 the manuscript is its own Quarto project
-# (deliverables/manuscript/_quarto.yml, output-dir ../../output/content). Quarto
-# project discovery is scoped to that folder, which holds only the two
-# manuscript-workpackage docs, so the old exclusion-mask profile files
-# (_quarto-manuscript*.yml) are gone.
+# (deliverables/manuscript/_quarto.yml). Quarto project discovery is scoped to
+# that folder, which holds only the two manuscript-workpackage docs, so the old
+# exclusion-mask profile files (_quarto-manuscript*.yml) are gone. Quarto's
+# single-file render writes the PDF/DOCX NEXT TO the source, so the Make target
+# is that file and Make verifies it.
 
 # Reproducible PDF metadata timestamps when built standalone (the top-level
 # Makefile exports the same; ?=-style guard keeps it a no-op when included).
@@ -36,10 +37,10 @@ MANUSCRIPT_DELIVERABLES := deliverables/_shared/figures/fig_bars_v1.png \
 MANUSCRIPT_INPUTS := $(MANUSCRIPT_SRC) $(MANUSCRIPT_BIB) $(MANUSCRIPT_CSL) \
                      $(MANUSCRIPT_VARS) $(MANUSCRIPT_DELIVERABLES)
 
-output/content/manuscript.pdf: $(MANUSCRIPT_INPUTS)
+deliverables/manuscript/manuscript.pdf: $(MANUSCRIPT_INPUTS)
 	quarto render $(MANUSCRIPT_SRC) --to pdf
 
-output/content/manuscript.docx: $(MANUSCRIPT_INPUTS)
+deliverables/manuscript/manuscript.docx: $(MANUSCRIPT_INPUTS)
 	quarto render $(MANUSCRIPT_SRC) --to docx
 
 # ── Charles Gide conference variant ─────────────────────────────────────────
@@ -65,8 +66,8 @@ GIDE_INPUTS := $(GIDE_SRC) $(MANUSCRIPT_BIB) $(MANUSCRIPT_CSL) \
                $(MANUSCRIPT_VARS) \
                $(MANUSCRIPT_DELIVERABLES) $(GIDE_VENUES_FR)
 
-output/content/manuscript-Gide.pdf: $(GIDE_INPUTS)
+deliverables/manuscript/manuscript-Gide.pdf: $(GIDE_INPUTS)
 	quarto render $(GIDE_SRC) --to pdf
 
 .PHONY: gide
-gide: output/content/manuscript-Gide.pdf
+gide: deliverables/manuscript/manuscript-Gide.pdf

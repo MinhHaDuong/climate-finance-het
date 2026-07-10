@@ -8,13 +8,15 @@ paths:
 ## Project structure
 
 Each deliverable is its own Quarto project under `deliverables/<x>/` with its own
-`_quarto.yml` (`output-dir: ../../output/content`), so `quarto render
-deliverables/<x>` selects it directly — no exclusion-mask profile files (ticket
-0226). Shared assets (bibliography, `_includes/`, generated `figures/` and
-`tables/`, `technical-report-vars.yml`) live in `deliverables/_shared/` and are
-referenced by `../_shared/...` from each doc; includes resolve relative to the
-top rendering doc, and every deliverable folder sits one level under
-`deliverables/`, so the prefix is uniform.
+`_quarto.yml`, so `quarto render deliverables/<x>` selects it directly — no
+exclusion-mask profile files (ticket 0226). Quarto's single-file render writes
+the PDF/DOCX **next to the source** (`deliverables/<x>/<doc>.pdf`), so the Make
+render target equals the output file and Make verifies it; the top-level
+`output/` directory was retired. Shared assets (bibliography, `_includes/`,
+generated `figures/` and `tables/`, `technical-report-vars.yml`) live in
+`deliverables/_shared/` and are referenced by `../_shared/...` from each doc;
+includes resolve relative to the top rendering doc, and every deliverable folder
+sits one level under `deliverables/`, so the prefix is uniform.
 
 The 11 documents across 9 folders:
 
@@ -72,7 +74,7 @@ The permutation null models in `scripts/compute_null_model.py` use three complem
 The Makefile knob is `NJOBS` (in `divergence.mk`). Default `-1` uses all cores — fine for a single method, oversubscribes under `make -jN`. When composing with `-j`, pass `NJOBS ≈ cores/N` (e.g. on 24 cores: `make -j4 NJOBS=6 null-model`). End-to-end on padme: ~3h → ~7min.
 
 **Phase 3 — Render** (Quarto → PDF/DOCX):
-- Reads Phase 2 outputs. Build artifacts go to `output/` (gitignored).
+- Reads Phase 2 outputs. Each deliverable's PDF/DOCX renders next to its `.qmd` under `deliverables/<x>/` (gitignored).
 
 **Phase 4 — Release & archives** (reproducibility packaging):
 - Scripts: `build/build_*_archive.sh`
@@ -142,7 +144,7 @@ Each phase writes to one place, so an artifact's directory tells you its phase:
 | **1 — Corpus** (`catalog_/enrich_/qa_/corpus_`) | the corpus contract | `data/catalogs/` (DVC) |
 | **2 — Analysis** (`analyze_/compute_/plot_/export_`) | writing deliverables | `deliverables/_shared/{figures,tables,_includes}/`, `deliverables/<x>/*-vars.yml` |
 | | analysis **intermediates** (not for a document) | `data/derived/` |
-| **3 — Render** (Quarto) | PDF / DOCX | `output/` (gitignored) |
+| **3 — Render** (Quarto) | PDF / DOCX | `deliverables/<x>/` next to source (gitignored) |
 | **4 — Release** (`build/build_*_archive.sh`) | reproducibility archives | `*.tar.gz` |
 
 The split inside Phase 2 is the crux: it emits two kinds of file — things a paper

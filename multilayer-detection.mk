@@ -95,7 +95,7 @@ MULTILAYER_TECHREP_INCLUDES := \
     deliverables/_shared/_includes/zoo/C2ST_embedding.md \
     deliverables/_shared/_includes/zoo/C2ST_lexical.md
 
-output/content/multilayer-detection-techrep.pdf: \
+deliverables/multilayer/multilayer-detection-techrep.pdf: \
     deliverables/multilayer/multilayer-detection-techrep.qmd \
     $(MULTILAYER_TECHREP_INCLUDES) \
     $(BIB) \
@@ -103,4 +103,4 @@ output/content/multilayer-detection-techrep.pdf: \
 	quarto render $< --to pdf
 
 .PHONY: multilayer-techrep
-multilayer-techrep: output/content/multilayer-detection-techrep.pdf
+multilayer-techrep: deliverables/multilayer/multilayer-detection-techrep.pdf

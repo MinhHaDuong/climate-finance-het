@@ -256,12 +256,12 @@ class TestProjectWideIncludes:
         redefine the rule.
         """
         mk = read_makefile()
-        assert not re.search(r"^output/content/manuscript\.pdf\s*:", mk, re.MULTILINE), \
+        assert not re.search(r"^deliverables/manuscript/manuscript\.pdf\s*:", mk, re.MULTILINE), \
             "manuscript.pdf rule must live in manuscript.mk, not the top-level Makefile"
         mk_path = os.path.join(os.path.dirname(__file__), "..", "deliverables", "manuscript", "manuscript.mk")
         with open(mk_path) as f:
             wp = f.read()
-        m = re.search(r"^output/content/manuscript\.pdf\s*:(.*?)$", wp, re.MULTILINE)
+        m = re.search(r"^deliverables/manuscript/manuscript\.pdf\s*:(.*?)$", wp, re.MULTILINE)
         assert m, "manuscript.pdf target not found in manuscript.mk"
         assert "PROJECT_INCLUDES" not in wp, \
             "manuscript.mk must not couple to PROJECT_INCLUDES (it is its own Quarto project)"
@@ -269,7 +269,7 @@ class TestProjectWideIncludes:
     def test_techrep_pdf_depends_on_project_includes(self):
         """technical-report.pdf must depend on PROJECT_INCLUDES."""
         mk = read_makefile()
-        m = re.search(r"^output/content/technical-report\.pdf\s*:(.*?)$", mk, re.MULTILINE)
+        m = re.search(r"^deliverables/technical-report/technical-report\.pdf\s*:(.*?)$", mk, re.MULTILINE)
         assert m, "technical-report.pdf target not found"
         assert "PROJECT_INCLUDES" in m.group(1), \
             "technical-report.pdf must depend on $(PROJECT_INCLUDES)"

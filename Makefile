@@ -664,31 +664,34 @@ analysis-stats: stats
 # PHASE 3 — Render (Quarto → PDF/DOCX)
 # ═══════════════════════════════════════════════════════════
 
-manuscript: output/content/manuscript.pdf output/content/manuscript.docx
+manuscript: deliverables/manuscript/manuscript.pdf deliverables/manuscript/manuscript.docx
 
-papers: check-corpus output/content/corpus-report.pdf output/content/technical-report.pdf output/content/breakpoint-detect-method-zoo.pdf output/content/data-paper.pdf output/content/multilayer-detection.pdf output/content/multilayer-detection-techrep.pdf
+papers: check-corpus deliverables/corpus-report/corpus-report.pdf deliverables/technical-report/technical-report.pdf deliverables/zoo/breakpoint-detect-method-zoo.pdf deliverables/data-paper/data-paper.pdf deliverables/multilayer/multilayer-detection.pdf deliverables/multilayer/multilayer-detection-techrep.pdf
 
 # ── Namespaced aliases (Phase 3) ────────────────────────
 manuscript-render: manuscript
 manuscript-figures: figures-manuscript
 
-datapaper-render: output/content/data-paper.pdf
+datapaper-render: deliverables/data-paper/data-paper.pdf
 datapaper-figures: figures-datapaper
 
-# The output/content/manuscript.{pdf,docx} render rules live in manuscript.mk
+# The manuscript render rules live in deliverables/manuscript/manuscript.mk
 # (Phase 3 writing workpackage, -include'd above). They depend only on committed
 # handoff artifacts so the manuscript builds clean-room with no data — ticket 0131.
+# Each deliverable's PDF is rendered NEXT TO its source (quarto's single-file
+# render ignores a project output-dir), so the Make target IS the output file and
+# Make verifies it exists (ticket 0226).
 
-output/content/corpus-report.pdf: deliverables/corpus-report/corpus-report.qmd $(PROJECT_INCLUDES) $(BIB) deliverables/_shared/technical-report-vars.yml
+deliverables/corpus-report/corpus-report.pdf: deliverables/corpus-report/corpus-report.qmd $(PROJECT_INCLUDES) $(BIB) deliverables/_shared/technical-report-vars.yml
 	quarto render $< --to pdf
 
-output/content/technical-report.pdf: deliverables/technical-report/technical-report.qmd $(PROJECT_INCLUDES) $(BIB) deliverables/_shared/technical-report-vars.yml $(TECHREP_FIGS) $(MULTILAYER_FIGS) .lexical_tfidf.stamp
+deliverables/technical-report/technical-report.pdf: deliverables/technical-report/technical-report.qmd $(PROJECT_INCLUDES) $(BIB) deliverables/_shared/technical-report-vars.yml $(TECHREP_FIGS) $(MULTILAYER_FIGS) .lexical_tfidf.stamp
 	quarto render $< --to pdf
 
-output/content/data-paper.pdf: deliverables/data-paper/data-paper.qmd $(PROJECT_INCLUDES) $(BIB) deliverables/data-paper/data-paper-vars.yml
+deliverables/data-paper/data-paper.pdf: deliverables/data-paper/data-paper.qmd $(PROJECT_INCLUDES) $(BIB) deliverables/data-paper/data-paper-vars.yml
 	quarto render $< --to pdf
 
-output/content/multilayer-detection.pdf: deliverables/multilayer/multilayer-detection.qmd $(PROJECT_INCLUDES) $(BIB) deliverables/multilayer/multilayer-detection-vars.yml
+deliverables/multilayer/multilayer-detection.pdf: deliverables/multilayer/multilayer-detection.qmd $(PROJECT_INCLUDES) $(BIB) deliverables/multilayer/multilayer-detection-vars.yml
 	quarto render $< --to pdf
 
 # ── Phase 4a — analysis archive (packages Phase 2 outputs) ─
@@ -713,7 +716,7 @@ archive-analysis: check-manuscript-data $(ANALYSIS_OUTPUTS)
 # No Python needed — only Quarto + XeLaTeX.
 #   tar xzf archive.tar.gz && cd ... && make
 
-archive-manuscript: $(MANUSCRIPT_FIGS) $(MANUSCRIPT_INCLUDES) deliverables/manuscript/manuscript-vars.yml output/content/manuscript.pdf
+archive-manuscript: $(MANUSCRIPT_FIGS) $(MANUSCRIPT_INCLUDES) deliverables/manuscript/manuscript-vars.yml deliverables/manuscript/manuscript.pdf
 	bash build/build_manuscript_archive.sh
 
 # ── Phase 4c — data paper archive (full pipeline) ─────────
@@ -777,7 +780,7 @@ test-durations: | venv-canonicalize
 # no extractable text, so low scores are HUMAN-eyeball flags, never a hard gate.
 # Reads PDFs from the main checkout (they are gitignored, absent from worktrees).
 audit-pdf-content:
-	$(PYTHON) scripts/qa_pdf_content.py --output output/pdf_content_audit.csv
+	$(PYTHON) scripts/qa_pdf_content.py --output data/derived/pdf_content_audit.csv
 
 # Smoke pipeline: run Phase 2 on a 100-row fixture (no DVC pull needed, <30s).
 # Exercises: compute_breakpoints, compute_clusters, plot_fig1_bars.
@@ -820,6 +823,6 @@ setup:
 
 # ── Housekeeping ─────────────────────────────────────────
 clean:
-	rm -rf output/
+	rm -rf deliverables/*/*.pdf deliverables/*/*.docx deliverables/*/*_files deliverables/*/.quarto
 
 rebuild: clean all

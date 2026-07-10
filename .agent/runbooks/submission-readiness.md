@@ -5,7 +5,7 @@ Every item must pass. If one fails, fix it before sprouting.
 
 ## Build
 
-- [ ] Paper builds cleanly: e.g., `make output/content/manuscript.pdf`
+- [ ] Paper builds cleanly: e.g., `make deliverables/manuscript/manuscript.pdf`
 - [ ] Full test suite passes: `make check`
 - [ ] No warnings or missing references in the build log
 

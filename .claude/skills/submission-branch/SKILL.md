@@ -26,7 +26,7 @@ Create when a paper is ready to submit. The branch freezes the submitted state a
 
 ```bash
 git checkout -b submission/$0-$1 main
-# Verify build: make output/content/$1.pdf
+# Verify build: make deliverables/$1/$1.pdf
 git tag v{N}.0-$0-submitted
 ```
 

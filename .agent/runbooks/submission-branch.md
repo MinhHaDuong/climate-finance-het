@@ -36,7 +36,7 @@ The release journal stays in the repo at `docs/release-journal.md`.
 git checkout -b submission/{journal}-{document} main
 ```
 
-Verify the paper builds cleanly (use the actual target, e.g., `make output/content/manuscript.pdf`).
+Verify the paper builds cleanly (use the actual target, e.g., `make deliverables/manuscript/manuscript.pdf`).
 
 Tag the submission point:
 
@@ -121,7 +121,7 @@ git checkout submission/{journal}-{document}
 
 After addressing all reviewer points:
 
-1. Rebuild the paper (e.g., `make output/content/manuscript.pdf`)
+1. Rebuild the paper (e.g., `make deliverables/manuscript/manuscript.pdf`)
 2. Prepare a diff/track-changes document if required
 3. Add resubmission artifacts to `papiers/<state>/<track>/`
 4. Commit: `release: resubmit {document} to {journal} (revision 1)`

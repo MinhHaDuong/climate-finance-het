@@ -12,7 +12,7 @@ auteurs.md:
 Usage:
     uv run python scripts/qa_word_count.py [path/to/manuscript.pdf]
 
-If no path is given, defaults to output/content/manuscript.pdf.
+If no path is given, defaults to deliverables/manuscript/manuscript.pdf.
 """
 
 import argparse
@@ -25,7 +25,7 @@ from utils import get_logger
 log = get_logger("qa_word_count")
 
 
-DEFAULT_PDF = "output/content/manuscript.pdf"
+DEFAULT_PDF = "deliverables/manuscript/manuscript.pdf"
 
 # Section headings: numbered (1. Foo, 2.1 Bar) or known unnumbered headings
 HEADING_RE = re.compile(

@@ -38,7 +38,7 @@ cp deliverables/_shared/bibliography/main.bib   "$TMP/content/bibliography/"
 cp deliverables/_shared/bibliography/oeconomia.csl "$TMP/content/bibliography/"
 
 # Pre-built output PDF (at root, away from Quarto's clean scope)
-cp output/content/manuscript.pdf   "$TMP/expected-manuscript.pdf"
+cp deliverables/manuscript/manuscript.pdf   "$TMP/expected-manuscript.pdf"
 
 # Build infrastructure (no Python needed)
 cp build/templates/Makefile.manuscript "$TMP/Makefile"

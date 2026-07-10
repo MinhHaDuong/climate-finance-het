@@ -11,6 +11,11 @@ are referenced by `../_shared/...`. This guard pins that structure:
    `bibliography/` not prefixed `../_shared/`) remains in any deliverable
    `.qmd` or shared `_includes` fragment — includes resolve relative to the top
    rendering doc, so every such path must carry the `../_shared/` prefix.
+5. Every render rule targets its PDF/DOCX next to the source under
+   `deliverables/<x>/`; none targets the retired `output/` tree. Quarto's
+   single-file render ignores a project output-dir, so the Make target must
+   equal the file quarto actually writes (next to the .qmd) for Make to verify
+   it.
 
 Fast tier (pure-Python, no subprocess): a lexical structure ratchet.
 """
@@ -42,10 +47,51 @@ _SHARED_REF = re.compile(
 )
 
 
+# A Make render rule: the target (first token, left of `:`) is a PDF/DOCX file.
+_RENDER_TARGET = re.compile(r"^(?P<t>[\w./-]+\.(?:pdf|docx))\s*:")
+
+# Makefiles that carry render rules (top-level + concern .mk + the manuscript's).
+_MAKEFILES = (
+    [os.path.join(REPO_ROOT, "Makefile")]
+    + glob.glob(os.path.join(REPO_ROOT, "*.mk"))
+    + [os.path.join(DELIVERABLES, "manuscript", "manuscript.mk")]
+)
+
+
 def test_no_root_quarto_masks():
     """The root exclusion-mask profile files must be gone."""
     masks = glob.glob(os.path.join(REPO_ROOT, "_quarto*.yml"))
     assert not masks, f"root _quarto*.yml mask files must not exist: {masks}"
+
+
+def test_render_targets_next_to_source():
+    """Every render rule targets deliverables/<x>/<doc>.{pdf,docx}, never output/.
+
+    Quarto's single-file render writes next to the source and ignores a project
+    output-dir, so a rule whose target is `output/content/<doc>.pdf` silently
+    produces nothing at that path while `make` still returns 0. Pinning the
+    target under `deliverables/<x>/` makes the target equal the real output so
+    Make verifies it.
+    """
+    per_deliverable = re.compile(r"^deliverables/[^/]+/[\w-]+\.(?:pdf|docx)$")
+    offenders = []
+    for mkpath in _MAKEFILES:
+        if not os.path.isfile(mkpath):
+            continue
+        with open(mkpath, encoding="utf-8") as f:
+            for lineno, line in enumerate(f, 1):
+                if line.startswith("\t"):  # recipe line
+                    continue
+                m = _RENDER_TARGET.match(line)
+                if not m:
+                    continue
+                target = m.group("t")
+                rel = os.path.relpath(mkpath, REPO_ROOT)
+                if target.startswith("output/"):
+                    offenders.append(f"{rel}:{lineno}: targets retired output/ tree: {target}")
+                elif not per_deliverable.match(target):
+                    offenders.append(f"{rel}:{lineno}: render target not under deliverables/<x>/: {target}")
+    assert not offenders, "render rules must write next to source:\n" + "\n".join(offenders)
 
 
 def test_content_tree_gone_or_empty():

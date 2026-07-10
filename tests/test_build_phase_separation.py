@@ -57,12 +57,12 @@ def test_manuscript_pdf_rule_has_no_data_prereq():
     with open(MANUSCRIPT_MK) as f:
         text = f.read()
 
-    # Isolate the output/content/manuscript.pdf rule block (prereq line + recipe).
+    # Isolate the deliverables/manuscript/manuscript.pdf rule block (prereq line + recipe).
     lines = text.splitlines()
     block = []
     in_rule = False
     for line in lines:
-        if line.startswith("output/content/manuscript.pdf:"):
+        if line.startswith("deliverables/manuscript/manuscript.pdf:"):
             in_rule = True
             block.append(line)
             continue
@@ -71,7 +71,7 @@ def test_manuscript_pdf_rule_has_no_data_prereq():
             if line and not line[0].isspace():
                 break
             block.append(line)
-    assert block, "output/content/manuscript.pdf rule not found in manuscript.mk"
+    assert block, "deliverables/manuscript/manuscript.pdf rule not found in manuscript.mk"
 
     rule_text = "\n".join(block)
     for token in DATA_TOKENS:

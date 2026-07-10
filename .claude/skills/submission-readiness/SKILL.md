@@ -12,7 +12,7 @@ Run before creating a submission branch (`/submission-branch`). Every item must 
 
 ## Build
 
-- [ ] Paper builds cleanly: e.g., `make output/content/$ARGUMENTS.pdf`
+- [ ] Paper builds cleanly: e.g., `make deliverables/$ARGUMENTS/$ARGUMENTS.pdf`
 - [ ] Full test suite passes: `make check`
 - [ ] No warnings or missing references in the build log
 

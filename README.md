@@ -67,7 +67,7 @@ the repo:
   git-tracked, and it builds from those alone with **Quarto + TeX Live + Pandoc —
   no `uv`, no `dvc`, no data**. This proves the exact submitted PDF reproduces on a
   bare machine. Today the only clean-room paper is the manuscript
-  (`make -f deliverables/manuscript/manuscript.mk output/content/manuscript.pdf`), because it is the live
+  (`make -f deliverables/manuscript/manuscript.mk deliverables/manuscript/manuscript.pdf`), because it is the live
   Œconomia R&R being rebuilt for resubmission.
 - **Live** — every other document (corpus-report, technical-report, data-paper,
   multilayer-detection) builds from the corpus via `make papers`. Its numbers are
@@ -91,7 +91,7 @@ keeps only the live working copy.
 │   ├── corpus-report/  agentic/  zoo/ #   Other papers
 │   ├── slides-gide/  slides-eshet/    #   Conference slide decks
 │   └── _shared/                       #   _includes/, bibliography/, figures/, tables/ (generated)
-├── output/                           # Quarto rendered output (gitignored)
+│                                      #   (each deliverable's PDF/DOCX renders next to its .qmd, gitignored)
 ├── config/                           # Pipeline parameters (YAML)
 ├── Makefile                          # Build: make corpus, make figures, make manuscript
 ├── dvc.yaml                          # Phase 1 pipeline DAG (DVC stages)
