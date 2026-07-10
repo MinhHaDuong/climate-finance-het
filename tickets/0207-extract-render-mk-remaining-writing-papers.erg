@@ -7,6 +7,7 @@ Author: HDMX-coding-agent
 2026-07-09T20:30Z HDMX-coding-agent created
 
 2026-07-09T20:34Z note Read-first falsified the manuscript-symmetry assumption: the 4 papers' vars/figures/tables are live data-derived, none git-tracked. Author chose freeze-all-four staged, data-paper first. Recorded decision + compute_vars.py pinning consequence + freshness-guard follow-up.
+2026-07-10T00:00Z note Filed the promised freshness-guard follow-up as 0212 (blocked-by 0207). Staging note: the four slices land as separate per-paper PRs against this one ticket — intermediate PRs use Ticket-ref (do NOT close 0207); only the final slice carries the closing Ticket: line. submission/rdj-data-paper already exists as a remote branch — check it before launching the data-paper slice.
 --- body ---
 ## Context
 
@@ -74,7 +75,7 @@ build it must be pulled OUT of the `compute_vars.py` grouped `&:` target
 (`COMPUTED_STATS`) and pinned, exactly as `manuscript-vars.yml` already is. Frozen
 numbers then stop tracking the corpus until re-frozen — a freshness-guard follow-up
 (cf. 0205's ratchet-freshness guard) should fail when a frozen deliverable drifts
-from a regeneration. File that follow-up; do not block this ticket on it.
+from a regeneration. Filed as 0212 (blocked-by 0207); does not block this ticket.
 
 Staging: data-paper first (its own PR, proof), then multilayer, then
 technical-report + corpus-report. 0207 stays open until all four land.

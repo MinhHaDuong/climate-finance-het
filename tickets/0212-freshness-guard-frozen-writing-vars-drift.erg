@@ -1,0 +1,66 @@
+%erg 0.1
+Title: Freshness guard: fail when a frozen writing-deliverable drifts from its regeneration
+Created: 2026-07-10
+Author: HDMX-coding-agent
+Blocked-by: 0207
+
+--- log ---
+2026-07-10T00:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Follow-up promised by 0207. To make the four remaining papers build clean-room,
+0207 pins each `<paper>-vars.yml` OUT of the `compute_vars.py` grouped `&:`
+target (`COMPUTED_STATS`, Makefile:367) and commits it, exactly as
+`manuscript-vars.yml` is already pinned (Makefile:366). Once pinned, a frozen
+`*-vars.yml` (and the paper's committed figures/tables) stops tracking the
+corpus: `$(REFINED)` can change and the frozen numbers silently go stale. There
+is no guard today — `make papers` reads the frozen file and never notices drift.
+
+0205 solved the analogous problem for prose-ratchet ceilings (a green suite
+whose ceilings no longer match the manuscript). This ticket does the same for
+frozen writing deliverables: a check that regenerates the pinned artifact from
+the current corpus and fails if it differs from the committed copy.
+
+## Relevant files
+- `Makefile:366-383` — `manuscript-vars.yml` pinning comment + `COMPUTED_STATS`
+  grouped target + `stats:` alias. The pinned-out `*-vars.yml` files land here.
+- `content/manuscript-vars.yml`, and (after 0207) `content/data-paper-vars.yml`,
+  `content/technical-report-vars.yml`, `content/multilayer-detection-vars.yml`.
+- `scripts/compute_vars.py` — the regenerator; the guard invokes it into a temp
+  path and diffs against the committed file.
+- `tickets/closed/0205-ratchet-freshness-guard-fail-when-a-pros.erg` — the
+  pattern to mirror (freshness guard, not a ratchet).
+
+## Actions
+1. Add a freshness check (Make target `check-frozen-vars` or a marked test) that,
+   for each pinned `*-vars.yml`, regenerates it from the current `$(REFINED)`
+   into a temp path and diffs against the committed copy. Fail on drift, with a
+   message naming the file and the re-freeze command.
+2. Scope it correctly: this is a Phase-1-dependent check (needs data), so it must
+   NOT run in the clean-room writing build or in `check-fast`. Gate it behind
+   data availability (skip cleanly when `$(REFINED)` is absent), mirroring how
+   0205's guard degrades.
+3. Wire it where drift matters — a pre-freeze / pre-submission gate, not the
+   per-render path. Document in README beside the writing-toolchain spec.
+
+## Test
+- RED: pin a `*-vars.yml`, mutate one committed value, assert the guard fails.
+- GREEN: regenerate, assert the guard passes.
+- Assert the guard SKIPS (not fails) when `$(REFINED)` is unavailable, so the
+  clean-room writing build and `check-fast` stay data-less.
+
+## Invariants
+- Clean-room writing build stays data-less (0207 invariant) — the guard never
+  runs on the render path.
+- `check-fast` stays < 30 s and data-free.
+
+## Exit criteria
+- A freshness guard exists that fails when any pinned `*-vars.yml` drifts from a
+  regeneration on the current corpus.
+- It skips cleanly without data; it is absent from the clean-room render path.
+- Documented beside the writing-toolchain spec in README.
+
+Parent tracker: tickets/0163-split-build-remaining-writing-workpackag.erg
+Blocked by: tickets/0207 (the pinning it guards must exist first).
