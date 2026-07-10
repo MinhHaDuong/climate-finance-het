@@ -2,10 +2,12 @@
 Title: Re-acquire 3 HTML-not-PDF cited/uncited files flagged by 0200 audit
 Created: 2026-07-09
 Author: HDMX-coding-agent
+Closed: Re-acquired all three PDFs via DOIfetch; content verified against copyright pages; make audit-pdf-content reports 0 not-a-PDF.
 
 --- log ---
 2026-07-09T19:20Z HDMX-coding-agent created
 
+2026-07-10T07:20Z HDMX-coding-agent closed — Re-acquired all three PDFs via DOIfetch; content verified against copyright pages; make audit-pdf-content reports 0 not-a-PDF.
 --- body ---
 ## Context
 The 0200 PDF-content audit (`scripts/qa_pdf_content.py`, `make audit-pdf-content`)
