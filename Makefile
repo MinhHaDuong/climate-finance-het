@@ -88,11 +88,11 @@ endif
 # The per-deliverable render .mk (Phase 3) are NOT included here: `make papers`
 # calls them via `$(MAKE) -f deliverables/<x>/<x>.mk` so the render process never
 # parses these Phase-2 rules (ticket 0237).
--include divergence.mk
--include multilayer-detection.mk
--include zoo.mk
--include venues.mk
--include separation.mk
+-include scripts/analysis/divergence.mk
+-include scripts/analysis/multilayer-detection.mk
+-include scripts/analysis/zoo-figures.mk
+-include scripts/analysis/venues.mk
+-include scripts/analysis/separation.mk
 
 # ── Quarto ───────────────────────────────────────────────
 # The per-document include sets (*_INCLUDES) and figure sets (*_FIGS) live in

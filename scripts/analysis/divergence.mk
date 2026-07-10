@@ -1,6 +1,6 @@
 # divergence.mk — Multi-channel structural break detection pipeline
 #
-# Include from the main Makefile:  include divergence.mk
+# Include from the main Makefile:  -include scripts/analysis/divergence.mk
 #
 # Architecture: one CSV per method via scripts/compute_divergence.py --method X
 #

@@ -249,7 +249,7 @@ def test_community_runs(tmp_path: Path, companion_tables: Path):
 
 # ─── Stub-fallback smoke (no interpretation CSV → PNG still rendered) ────
 #
-# Figures 3 and 4 promise in multilayer-detection.mk that the Make target succeeds
+# Figures 3 and 4 promise in scripts/analysis/multilayer-detection.mk that the Make target succeeds
 # even when ticket 0056's interpretation layer is absent. Drive the
 # fallback path by pointing --tables-dir at an empty directory.
 

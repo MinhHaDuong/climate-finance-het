@@ -1,13 +1,20 @@
-"""Tests for zoo.mk structure — schematic + result panel recipes."""
+"""Tests for the zoo Phase-2 concern .mk structure — schematic + result panels.
+
+The Phase-2 concern fragment moved to `scripts/analysis/zoo-figures.mk` and was
+renamed to end the basename clash with the Phase-3 render fragment
+`deliverables/zoo/zoo.mk` (ticket 0239).
+"""
 
 import re
 from pathlib import Path
 
 import pytest
 
-ZOO_MK = Path(__file__).resolve().parent.parent / "zoo.mk"
-# The Phase-3 render rule moved beside its source (ticket 0237); the root zoo.mk
-# is now the pure Phase-2 concern file.
+ZOO_MK = (
+    Path(__file__).resolve().parent.parent / "scripts" / "analysis" / "zoo-figures.mk"
+)
+# The Phase-3 render rule lives beside its source (ticket 0237); the Phase-2
+# concern fragment is scripts/analysis/zoo-figures.mk (ticket 0239).
 ZOO_RENDER_MK = (
     Path(__file__).resolve().parent.parent / "deliverables" / "zoo" / "zoo.mk"
 )
@@ -20,7 +27,7 @@ _CROSSYEAR_RE = re.compile(
 
 def _parse_crossyear_methods(mk: str) -> list[str]:
     m = _CROSSYEAR_RE.search(mk)
-    assert m, "CROSSYEAR_METHODS not found in zoo.mk"
+    assert m, "CROSSYEAR_METHODS not found in zoo-figures.mk"
     return [t for t in m.group(1).split() if t != "\\"]
 
 
@@ -37,17 +44,17 @@ class TestZooMkStructure:
 
     def test_zoo_figures_target_exists(self, zoo_mk_text):
         assert re.search(r"^zoo-figures\s*:", zoo_mk_text, re.MULTILINE), (
-            "zoo-figures target missing from zoo.mk"
+            "zoo-figures target missing from zoo-figures.mk"
         )
 
     def test_schematic_pattern_recipe_exists(self, zoo_mk_text):
         assert re.search(r"schematic_%\.png\s*:.*plot_schematic_%\.py", zoo_mk_text), (
-            "Pattern rule for schematic_%.png missing from zoo.mk"
+            "Pattern rule for schematic_%.png missing from zoo-figures.mk"
         )
 
     def test_result_panel_pattern_recipe_exists(self, zoo_mk_text):
         assert re.search(r"fig_zoo_%\.png\s*:.*plot_zoo_results\.py", zoo_mk_text), (
-            "Pattern rule for fig_zoo_%.png missing from zoo.mk"
+            "Pattern rule for fig_zoo_%.png missing from zoo-figures.mk"
         )
 
     def test_crossyear_tables_is_phony(self, zoo_mk_text):
@@ -85,9 +92,12 @@ class TestZooMkStructure:
             re.MULTILINE,
         ), "breakpoint-detect-method-zoo.pdf recipe must live in deliverables/zoo/zoo.mk"
 
-    def test_root_zoo_mk_has_no_render_rule(self, zoo_mk_text):
-        """The root concern zoo.mk must be pure Phase-2 — no render rule (0237)."""
+    def test_concern_zoo_mk_has_no_render_rule(self, zoo_mk_text):
+        """The concern fragment must be pure Phase-2 — no render rule (0237)."""
         assert "quarto render" not in zoo_mk_text, (
-            "root zoo.mk must not carry a render recipe; it moved to deliverables/zoo/zoo.mk"
+            "zoo-figures.mk must not carry a render recipe; render lives in "
+            "deliverables/zoo/zoo.mk"
         )
-        assert ".pdf:" not in zoo_mk_text, "root zoo.mk must carry no .pdf render target"
+        assert ".pdf:" not in zoo_mk_text, (
+            "zoo-figures.mk must carry no .pdf render target"
+        )

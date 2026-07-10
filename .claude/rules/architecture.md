@@ -55,7 +55,7 @@ The pipeline has four phases. Each phase's scripts follow a naming convention an
 
 1. **1 invocation = 1 output.** Each Make target calls one script that writes one file. No side-effect outputs.
 2. **Schema-validated.** New CSV artifacts get a Pandera schema in `scripts/schemas.py` (strict=True, coerce=True). Validate at write time — if the schema fails, the script fails, Make stops. (Legacy scripts are migrated as touched.)
-3. **Modular Makefiles.** Each analysis concern gets its own `.mk` file (`divergence.mk`, etc.), included by the main Makefile. Adding a new analysis = adding a `.mk`, not editing a 400-line Makefile.
+3. **Modular Makefiles.** Each analysis concern gets its own `.mk` file under `scripts/analysis/` (`divergence.mk`, etc.; ticket 0239), `-include`d by the main Makefile. Adding a new analysis = adding a `.mk`, not editing a 400-line Makefile.
 4. **Compute / Plot / Include are separate.** A compute script produces a table. A plot script reads a table and produces a figure. An include reads tables/figures and produces prose. Never mix.
 5. **`save_figure()` mandatory.** All plot scripts use `save_figure(fig, stem, dpi=N)` from `pipeline_io.py` — strips metadata for byte-reproducible PNGs. Never call `fig.savefig()` directly.
 6. **Config-driven parameters.** All research parameters in `config/analysis.yaml`, read via `load_analysis_config()`. No hardcoded constants for values that might change (windows, seeds, thresholds).
@@ -71,7 +71,7 @@ The permutation null models in `scripts/compute_null_model.py` use three complem
 - **Precomputed TF-IDF** for `L1`: the vectorizer runs once per window; permutations only reshuffle row indices into the sparse matrix — eliminating redundant `vectorizer.transform()` calls per (year, window).
 - **CPU parallel via joblib** across (year, window) pairs for `G2_spectral`, `G9_community`, and `L2`. Default `n_jobs=1` at the API boundary preserves test determinism; the CLI exposes `--n-jobs` (`-1` = all cores) for production runs.
 
-The Makefile knob is `NJOBS` (in `divergence.mk`). Default `-1` uses all cores — fine for a single method, oversubscribes under `make -jN`. When composing with `-j`, pass `NJOBS ≈ cores/N` (e.g. on 24 cores: `make -j4 NJOBS=6 null-model`). End-to-end on padme: ~3h → ~7min.
+The Makefile knob is `NJOBS` (in `scripts/analysis/divergence.mk`). Default `-1` uses all cores — fine for a single method, oversubscribes under `make -jN`. When composing with `-j`, pass `NJOBS ≈ cores/N` (e.g. on 24 cores: `make -j4 NJOBS=6 null-model`). End-to-end on padme: ~3h → ~7min.
 
 **Phase 3 — Render** (Quarto → PDF/DOCX):
 - Reads Phase 2 outputs. Each deliverable's PDF/DOCX renders next to its `.qmd` under `deliverables/<x>/` (gitignored).

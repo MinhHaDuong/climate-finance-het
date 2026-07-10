@@ -2,7 +2,7 @@
 #
 # Four canonical PNGs consumed by deliverables/multilayer/multilayer-detection.qmd.
 #
-# Include from the main Makefile:  include multilayer-detection.mk
+# Include from the main Makefile:  -include scripts/analysis/multilayer-detection.mk
 #
 # Targets:
 #   companion-figures  — build all four PNGs

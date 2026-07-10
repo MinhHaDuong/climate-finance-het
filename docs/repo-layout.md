@@ -71,13 +71,21 @@ layering constraint. **Nothing that renders is imported by compute.**
 
 ### Makefile fragments
 
-A build fragment lives next to what it *builds*:
+A build fragment lives next to what it *builds*, and the split is by phase:
 
-- Deliverable-scoped (`manuscript.mk`, `zoo.mk`, `multilayer-detection.mk`) →
-  into that `deliverables/<x>/` folder.
-- Shared analysis (`divergence.mk`, `separation.mk`, `venues.mk`) →
-  `scripts/analysis/analysis.mk`, because what they build feeds several
-  deliverables, not one.
+- **Phase-3 render** fragments → the deliverable's own folder,
+  `deliverables/<x>/<x>.mk` (`manuscript.mk`, `zoo.mk`, `multilayer.mk`, …).
+  `make papers` invokes each via `$(MAKE) -f`, so the render process never
+  parses the Phase-2 rules (ticket 0237).
+- **Phase-2 analysis concern** fragments → `scripts/analysis/`, one file per
+  concern (`divergence.mk`, `separation.mk`, `venues.mk`,
+  `multilayer-detection.mk`, `zoo-figures.mk`), because what they build feeds
+  several deliverables, not one (ticket 0239). They stay separate, not merged —
+  the modular-Makefile rule (architecture.md Phase-2 rule 3) is one `.mk` per
+  concern. The Phase-2 `zoo` fragment is `zoo-figures.mk` to disambiguate from
+  the Phase-3 render `deliverables/zoo/zoo.mk`.
+- `paths.mk` stays at the repo root — the shared variable interface `-include`d
+  by both the Phase-2 Makefile and every Phase-3 render fragment.
 
 Moving a `.mk` file is cheap: `-include`d rules resolve relative to the *root*
 Makefile, so paths inside are unchanged — only the `-include` line edits.

@@ -1,6 +1,6 @@
 # separation.mk — Pre-2007 tradition-separation fortify-or-demote (ticket 0182)
 #
-# Include from the main Makefile:  -include separation.mk
+# Include from the main Makefile:  -include scripts/analysis/separation.mk
 #
 # Tests whether the observed separation of the three pre-2007 intellectual
 # traditions in the co-citation graph exceeds what the degree sequence alone
