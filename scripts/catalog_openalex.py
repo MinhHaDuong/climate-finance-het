@@ -35,19 +35,14 @@ import pandas as pd
 import yaml
 from openalex_pool import (
     OA_API,
-    LAST_RUN_PATH,
-    SIDECAR_PATH,
-    build_filter,
+    _download_tiers,
     budget_exhausted,
+    build_filter,  # noqa: F401 -- re-exported through this module for tests
     capture_budget,
-    dry_run_query,
-    fetch_query,
+    fetch_query,  # noqa: F401 -- re-exported through this module for tests
     load_query_dates,
     query_slug,
-    read_last_run_date,
-    save_query_dates,
     write_last_run_date,
-    _download_tiers,
 )
 from utils import (
     CATALOGS_DIR,

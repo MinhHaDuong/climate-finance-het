@@ -297,7 +297,6 @@ def main():
     )
 
     # ΔY annotation
-    x_ann = ax.get_xlim()[1] * 0.55 if ax.get_xscale() == "linear" else 1.5
     ax.annotate(
         rf"$\Delta\gamma$ = {delta_gamma:.2f}",
         xy=(0.62, 0.47),

@@ -22,7 +22,7 @@ sys.path.insert(0, SCRIPTS_DIR)
 
 class TestSchemaModuleExists:
     def test_schemas_importable(self):
-        from schemas import RefinedWorksSchema, RefinedCitationsSchema
+        from schemas import RefinedCitationsSchema, RefinedWorksSchema
         assert RefinedWorksSchema is not None
         assert RefinedCitationsSchema is not None
 
@@ -73,8 +73,8 @@ class TestSchemaRejectsBadData:
     """Schemas catch common contract violations."""
 
     def test_missing_required_column(self):
-        from schemas import RefinedWorksSchema
         import pandera.pandas as pa
+        from schemas import RefinedWorksSchema
         df = pd.DataFrame({"title": ["test"], "year": ["2020"]})
         with pytest.raises(pa.errors.SchemaError):
             RefinedWorksSchema.validate(df)

@@ -14,7 +14,7 @@ import re
 import numpy as np
 import pandas as pd
 import yaml
-from utils import CATALOGS_DIR, CONFIG_DIR, get_logger, normalize_doi_safe
+from utils import CONFIG_DIR, get_logger, normalize_doi_safe
 
 log = get_logger("filter_flags")
 
@@ -234,12 +234,11 @@ def flag_semantic_outlier(df, config, *, embeddings, emb_df):
 # ============================================================
 
 # Re-export for backward compatibility — corpus_filter.py and tests import from here
-from filter_flags_llm import (  # noqa: E402, F401
+from filter_flags_llm import (  # noqa: F401
     _cache_key,
     flag_llm_irrelevant,
     flag_llm_irrelevant_streaming,
 )
-
 
 # ============================================================
 # Protection

@@ -14,7 +14,6 @@ Produces:
   data/derived/tables/tab_lineages.csv — backbone papers with lineage, position, metadata
 """
 
-import argparse
 import os
 import warnings
 from collections import defaultdict
@@ -28,7 +27,6 @@ from utils import (
     DERIVED_TABLES_DIR,
     get_logger,
     load_analysis_config,
-    load_analysis_periods,
     load_refined_citations,
     normalize_doi,
 )

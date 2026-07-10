@@ -11,13 +11,12 @@ import sys
 import tempfile
 
 import pandas as pd
-import pytest
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 sys.path.insert(0, SCRIPTS_DIR)
 
-from catalog_merge import _dedup_vectorized, _load_and_tag  # noqa: E402
-from utils import FROM_COLS, WORKS_COLUMNS  # noqa: E402
+from catalog_merge import _dedup_vectorized, _load_and_tag
+from utils import FROM_COLS, WORKS_COLUMNS
 
 
 def _make_catalog(rows, source_name):

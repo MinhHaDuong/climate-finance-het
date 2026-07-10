@@ -2,18 +2,18 @@
 Analyze interactions between time, semantic, lexical, and citation clustering spaces.
 """
 
-import sys
 import os
+import sys
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
 
 import numpy as np
 import pandas as pd
 from scipy.sparse import csr_matrix
 from scipy.sparse.linalg import svds
-from sklearn.preprocessing import normalize
 from sklearn.cluster import KMeans
-from sklearn.metrics import adjusted_rand_score, silhouette_score
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics import adjusted_rand_score, silhouette_score
 
 SEED = 42
 K = 6
@@ -152,7 +152,7 @@ def print_separator(char="=", width=70):
 # Main analysis
 # ──────────────────────────────────────────────────────────────────────────────
 
-def main():
+def main():  # noqa: C901, PLR0912, PLR0915  # archived exploratory script, not refactored
     works, embeddings, citations = load_data()
     works, embeddings, _ = filter_works(works, embeddings)
 

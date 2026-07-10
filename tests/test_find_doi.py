@@ -25,7 +25,7 @@ class TestResolveDoi:
 
     def test_find_doi_cached_in_memory(self):
         """Calling find_doi twice with same title queries OpenAlex only once."""
-        from enrich_dois import find_doi, _title_cache
+        from enrich_dois import _title_cache, find_doi
 
         _title_cache.clear()
 
@@ -49,7 +49,7 @@ class TestResolveDoi:
 
     def test_find_doi_cached_on_disk(self):
         """After clearing in-memory cache, disk cache prevents re-query."""
-        from enrich_dois import find_doi, _title_cache, normalize_title
+        from enrich_dois import _title_cache, find_doi, normalize_title
 
         _title_cache.clear()
 
@@ -71,7 +71,7 @@ class TestResolveDoi:
 
     def test_find_doi_empty_title(self):
         """Empty or whitespace title returns empty string without querying."""
-        from enrich_dois import find_doi, _title_cache
+        from enrich_dois import _title_cache, find_doi
 
         _title_cache.clear()
 
@@ -85,7 +85,7 @@ class TestResolveDoi:
 
     def test_find_doi_below_threshold(self):
         """Title match below TITLE_SIM_THRESHOLD caches empty string."""
-        from enrich_dois import find_doi, _title_cache
+        from enrich_dois import _title_cache, find_doi
 
         _title_cache.clear()
 
@@ -102,7 +102,7 @@ class TestResolveDoi:
 
     def test_find_doi_author_cache_key(self):
         """find_doi with author+year checks precise key first, then title-only."""
-        from enrich_dois import find_doi, _title_cache, normalize_title
+        from enrich_dois import _title_cache, find_doi, normalize_title
 
         _title_cache.clear()
 
@@ -130,7 +130,7 @@ class TestResolveDoi:
 
     def test_find_doi_author_falls_back_to_title_only(self):
         """When no author-keyed entry exists, fall back to title-only cache."""
-        from enrich_dois import find_doi, _title_cache, normalize_title
+        from enrich_dois import _title_cache, find_doi, normalize_title
 
         _title_cache.clear()
 
@@ -154,7 +154,7 @@ class TestResolveDoi:
 
     def test_find_doi_author_writes_both_cache_keys(self):
         """When author is provided, find_doi writes to both author and title keys."""
-        from enrich_dois import find_doi, _title_cache
+        from enrich_dois import _title_cache, find_doi
 
         _title_cache.clear()
 
@@ -180,7 +180,7 @@ class TestResolveDoi:
 
     def test_find_doi_no_author_still_works(self):
         """find_doi without author but with year writes precise + title keys."""
-        from enrich_dois import find_doi, _title_cache
+        from enrich_dois import _title_cache, find_doi
 
         _title_cache.clear()
 
@@ -320,7 +320,7 @@ class TestResolveDoi:
 
     def test_find_doi_saves_to_disk_cache(self):
         """find_doi saves result to disk cache after OpenAlex query."""
-        from enrich_dois import find_doi, _title_cache
+        from enrich_dois import _title_cache, find_doi
 
         _title_cache.clear()
 

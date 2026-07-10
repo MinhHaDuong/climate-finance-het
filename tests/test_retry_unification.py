@@ -21,7 +21,7 @@ class TestPoliteGetRobustness:
 
     def test_polite_get_survives_max_minus_one_429s(self, requests_mock):
         """polite_get should survive POLITE_MAX_RETRIES-1 consecutive 429s."""
-        from utils import polite_get, POLITE_MAX_RETRIES
+        from utils import POLITE_MAX_RETRIES, polite_get
 
         responses = [
             {"status_code": 429, "headers": {"Retry-After": "0"}}
@@ -50,10 +50,10 @@ class TestPoliteGetRobustness:
     def test_polite_get_uses_jitter(self, requests_mock, monkeypatch):
         """polite_get should use jittered backoff, not fixed waits."""
         import time
+
         from utils import polite_get
 
         sleeps = []
-        original_sleep = time.sleep
         monkeypatch.setattr(time, "sleep", lambda s: sleeps.append(s))
 
         responses = [

@@ -23,12 +23,11 @@ import warnings
 
 import numpy as np
 import pandas as pd
+from script_io_args import parse_io_args, validate_io
 from sklearn.decomposition import PCA, TruncatedSVD
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.mixture import GaussianMixture
-from script_io_args import parse_io_args, validate_io
 from utils import (
-    BASE_DIR,
     CATALOGS_DIR,
     DERIVED_TABLES_DIR,
     get_logger,

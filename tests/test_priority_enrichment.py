@@ -29,7 +29,9 @@ class TestImportPriorityUtil:
             from utils import compute_priority_scores
         except ImportError:
             try:
-                from enrich_priority import compute_priority_scores
+                from enrich_priority import (
+                    compute_priority_scores,  # noqa: F401 -- import success is the assertion
+                )
             except ImportError:
                 pytest.fail(
                     "compute_priority_scores not found in utils.py or enrich_priority.py"
@@ -41,7 +43,9 @@ class TestImportPriorityUtil:
             from utils import sort_dois_by_priority
         except ImportError:
             try:
-                from enrich_priority import sort_dois_by_priority
+                from enrich_priority import (
+                    sort_dois_by_priority,  # noqa: F401 -- import success is the assertion
+                )
             except ImportError:
                 pytest.fail(
                     "sort_dois_by_priority not found in utils.py or enrich_priority.py"

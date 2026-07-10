@@ -17,7 +17,6 @@ import sys
 
 import numpy as np
 import pandas as pd
-
 from utils import get_logger
 
 log = get_logger("build_smoke_fixture")

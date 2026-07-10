@@ -13,8 +13,7 @@ import pytest
 # Ensure scripts/ is importable
 sys.path.insert(0, "scripts")
 
-from pipeline_io import CONSECUTIVE_FAIL_LIMIT, RateLimitExhausted  # noqa: E402
-
+from pipeline_io import CONSECUTIVE_FAIL_LIMIT, RateLimitExhausted
 
 # ---------------------------------------------------------------------------
 # catalog_istex: fetch_istex_api should abort on consecutive 429s

@@ -16,7 +16,6 @@ def test_split_year_excluded_from_before_window():
     # Build synthetic df: papers at years 2000-2005
     df = pd.DataFrame({"year": list(range(2000, 2006)), "work_id": range(6)})
     emb = np.eye(6)
-    cfg = {"divergence": {"gap": 1, "max_subsample": 1000}}
 
     # Split year t=2003, window=2: before should be [2001, 2002], not including 2003
     result = _get_window_embeddings(

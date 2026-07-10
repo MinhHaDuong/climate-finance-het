@@ -4,13 +4,13 @@ Ticket #428: each enrichment writes to its own cache; this script joins them.
 """
 
 import os
-import json
+
+# Import after path setup
+import sys
 
 import pandas as pd
 import pytest
 
-# Import after path setup
-import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
 

@@ -23,7 +23,7 @@ log = get_logger("plot_cocitation")
 DPI = 150
 
 
-def main():
+def main():  # noqa: C901  # linear CLI+plot flow
     io_args, extra = parse_io_args()
     validate_io(output=io_args.output)
 
@@ -51,7 +51,7 @@ def main():
     # However, to preserve visual fidelity with the original, we read the
     # citation data and rebuild edges the same way the analyze script does.
     from scipy.sparse import lil_matrix
-    from utils import CATALOGS_DIR, load_refined_citations, normalize_doi
+    from utils import load_refined_citations, normalize_doi
 
     cit = load_refined_citations()
     cit["source_doi"] = cit["source_doi"].apply(normalize_doi)

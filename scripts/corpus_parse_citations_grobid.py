@@ -29,7 +29,6 @@ from utils import (
     REFS_COLUMNS,
     get_logger,
     make_run_id,
-    normalize_doi,
     save_run_report,
 )
 

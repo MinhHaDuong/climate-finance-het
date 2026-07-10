@@ -15,7 +15,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
 from qa_near_duplicates import detect_near_duplicate_groups
 
-
 # ============================================================
 # Fixtures
 # ============================================================

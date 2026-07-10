@@ -2,7 +2,6 @@
 Title: Add a repo-wide ruff adherence test
 Created: 2026-07-10
 Author: HDMX-coding-agent
-Blocked-by: 0232
 
 --- log ---
 2026-07-10T00:00Z HDMX-coding-agent created
@@ -10,6 +9,7 @@ Blocked-by: 0232
 2026-07-10T10:52Z HDMX-coding-agent note blocker 0211 closed — Blocked-by removed.
 
 2026-07-10T00:00Z HDMX-coding-agent note rescoped to guard-only; cleanup split to 0232 (171 live violations would keep the guard red). Blocked-by 0232. Added requirement to declare a lockfile-pinned ruff dev dep (today uv run resolves system ruff, so the verdict is version-unstable across machines).
+2026-07-10T14:31Z HDMX-coding-agent note blocker 0232 closed — Blocked-by removed.
 --- body ---
 ## Context
 Multiple /gaze reviewers (#956/#958/#960) noted the repo has no `def test_ruff`

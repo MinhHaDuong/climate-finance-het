@@ -22,8 +22,7 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SCRIPTS_DIR = os.path.join(REPO_ROOT, "scripts")
 sys.path.insert(0, SCRIPTS_DIR)
 
-from utils import WORKS_COLUMNS, FROM_COLS, normalize_doi
-
+from utils import FROM_COLS, WORKS_COLUMNS, normalize_doi
 
 # ============================================================
 # Fixture helpers

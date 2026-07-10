@@ -9,7 +9,6 @@ Verifies:
 
 import os
 import sys
-import tempfile
 
 import pandas as pd
 import pytest
@@ -49,7 +48,6 @@ class TestSaveCsvAtomic:
         original_df.to_csv(target, index=False, encoding="utf-8")
         original_content = open(target, encoding="utf-8").read()
 
-        real_to_csv = pd.DataFrame.to_csv
 
         def crash_during_write(self_df, path_or_buf, **kwargs):
             # Write corrupted/partial data to whatever file we're given,

@@ -23,7 +23,6 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 import pandas as pd
-
 from pipeline_io import save_figure
 from pipeline_loaders import (
     load_analysis_config,
@@ -34,7 +33,6 @@ from plot_style import DARK, DPI, FIGWIDTH, apply_style
 from scipy.sparse import lil_matrix
 from script_io_args import parse_io_args, validate_io
 from utils import (
-    BASE_DIR,
     get_logger,
     load_refined_citations,
     normalize_doi,
@@ -279,7 +277,7 @@ def _render_traditions(G, partition, pos, comm_to_tradition,
 def _draw_labels(ax, G, pos, trad_to_comm, comm_to_nodes, ref_counts):
     """Draw node labels for top-cited nodes per tradition."""
     label_nodes = set()
-    for trad, c in trad_to_comm.items():
+    for c in trad_to_comm.values():
         nodes_sorted = sorted(
             comm_to_nodes[c], key=lambda d: -ref_counts.get(d, 0))
         label_nodes.update(nodes_sorted[:5])

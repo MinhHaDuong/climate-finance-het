@@ -32,6 +32,7 @@ def parse_io_args(argv=None):
         args.output : str (required)
         args.input : list[str] | None (optional, nargs="+")
         extra : list[str] — remaining args for script-specific parsing
+
     """
     parser = argparse.ArgumentParser(add_help=False)
     parser.add_argument(
@@ -59,6 +60,7 @@ def validate_io(output, inputs=None):
     ------
     FileNotFoundError
         If output directory or any input file is missing.
+
     """
     out_dir = os.path.dirname(output)
     if out_dir and not os.path.isdir(out_dir):

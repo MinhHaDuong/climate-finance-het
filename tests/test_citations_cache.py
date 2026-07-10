@@ -52,7 +52,7 @@ class TestCacheIsData:
 
     def test_load_done_includes_sentinels(self, tmp_catalogs):
         """DOIs with sentinel ref_doi (__NO_REFS__) are also counted as done."""
-        from enrich_citations_batch import load_done_dois, SENTINEL_REF_DOI
+        from enrich_citations_batch import SENTINEL_REF_DOI, load_done_dois
         from utils import REFS_COLUMNS
 
         cache_path = tmp_catalogs / "enrich_cache" / "crossref_refs.csv"
