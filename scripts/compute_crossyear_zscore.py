@@ -19,6 +19,7 @@ Usage::
 """
 
 import argparse
+import os
 import re
 import sys
 
@@ -191,6 +192,9 @@ def main() -> None:
         else f"{DERIVED_TABLES_DIR}/tab_div_{method}.csv"
     )
 
+    # Output lands under data/derived/tables/ (gitignored, regenerable — ticket 0233);
+    # create it so validate_io's dir check passes on a clean tree.
+    os.makedirs(os.path.dirname(io_args.output) or ".", exist_ok=True)
     validate_io(output=io_args.output, inputs=io_args.input)
 
     log.info("Reading %s", input_path)
