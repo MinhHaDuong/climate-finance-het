@@ -3,11 +3,13 @@ Title: Reorg code 1/4 — relocate the 5 Phase-2 analysis .mk into scripts/analy
 Created: 2026-07-10
 Author: HDMX-coding-agent
 Label: deferred
+Closed: autoclosed — PR #1006
 
 --- log ---
 2026-07-10T00:00Z HDMX-coding-agent created
 2026-07-10T00:00Z HDMX-coding-agent note split from 0225 (code workstream) as an integer child; parent 0225 is the sub-tracker. Scope corrected to ALL 5 analysis .mk (0225 Action 1 named only 3). Parked behind the Œconomia R&R per 0223.
 
+2026-07-10T21:38Z HDMX-coding-agent closed — autoclosed — PR #1006
 --- body ---
 ## Context
 First and lowest-risk stage of the code reorg (parent sub-tracker `0225`,
