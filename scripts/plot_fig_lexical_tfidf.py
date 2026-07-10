@@ -117,13 +117,12 @@ def main():
     args = parser.parse_args(extra)
 
     figures_dir = os.path.join(BASE_DIR, "content", "figures")
-    tables_dir = os.path.join(BASE_DIR, "content", "tables")
     os.makedirs(figures_dir, exist_ok=True)
 
     # --- Input resolution ---
     tfidf_path = (
         io_args.input[0] if io_args.input
-        else os.path.join(tables_dir, "tab_lexical_tfidf.csv")
+        else os.path.join(DERIVED_TABLES_DIR, "tab_lexical_tfidf.csv")
     )
 
     # --- Load pre-computed TF-IDF table ---

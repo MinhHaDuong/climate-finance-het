@@ -13,6 +13,11 @@ lexically stable, so a line-level scan is a durable regression guard.
 import glob
 import os
 
+import pytest
+
+# Grep-ratchet guard — belongs to the mechanical adherence gate (`pytest -m adherence`).
+pytestmark = pytest.mark.adherence
+
 PROJECT_ROOT = os.path.join(os.path.dirname(__file__), "..")
 SCRIPTS_DIR = os.path.join(PROJECT_ROOT, "scripts")
 
