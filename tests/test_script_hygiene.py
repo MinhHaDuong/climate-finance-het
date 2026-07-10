@@ -26,6 +26,13 @@ from pathlib import Path
 
 import pytest
 
+# The entire file is rule-enforcement / lint / hygiene: ruff and mypy invocations,
+# complexity and length smells, arch-rule and contract checks. It belongs to the
+# adherence tier (ticket 0215) so the fast inner loop (`-m "not adherence"`,
+# ticket 0214) deselects it — same convention as test_editorial_governance.py and
+# test_manuscript_prose.py.
+pytestmark = pytest.mark.adherence
+
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SCRIPTS_DIR = os.path.join(REPO, "scripts")
 MAKEFILE = os.path.join(REPO, "Makefile")
@@ -833,6 +840,45 @@ class TestMarkerDiscipline:
             f"{violations}"
         )
 
+    def test_lint_tests_are_adherence(self):
+        """Files invoking ruff/mypy must be in the adherence tier (ticket 0215).
+
+        Rule-enforcement/lint tests belong to the `adherence` tier so that
+        `-m "not adherence"` (the fast inner loop, ticket 0214) cleanly removes
+        them — a cold `.mypy_cache` costs 9-19s and has no place on the keystroke
+        loop. Detection is static (no subprocess): a file that spawns ruff or
+        mypy (a quoted `"ruff"`/`"mypy"` command token alongside
+        `import subprocess`) must declare a module-level
+        `pytestmark = pytest.mark.adherence`, matching the convention already
+        used by test_editorial_governance.py and test_manuscript_prose.py.
+        """
+        violations = []
+        for fname in sorted(os.listdir(TESTS_DIR)):
+            if not fname.startswith("test_") or not fname.endswith(".py"):
+                continue
+            path = os.path.join(TESTS_DIR, fname)
+            with open(path) as f:
+                source = f.read()
+            invokes_lint = "import subprocess" in source and bool(
+                re.search(r"""["'](ruff|mypy)["']""", source)
+            )
+            if not invokes_lint:
+                continue
+            has_module_adherence = bool(
+                re.search(
+                    r"^pytestmark\s*=.*pytest\.mark\.adherence",
+                    source,
+                    re.MULTILINE,
+                )
+            )
+            if not has_module_adherence:
+                violations.append(fname)
+        assert not violations, (
+            "Files invoking ruff/mypy must declare module-level "
+            "`pytestmark = pytest.mark.adherence` so the fast loop deselects "
+            f"them (ticket 0215): {violations}"
+        )
+
 
 # ---------------------------------------------------------------------------
 # Script naming convention (#547)
@@ -1220,7 +1266,6 @@ class TestNoValuesCallOnSeries:
         )
 
 
-@pytest.mark.adherence
 class TestNoHalfFinishedWork:
     """Ratchet: stubs (NotImplementedError), skip-marked tests
     (pytest.skip, @pytest.mark.skip), and TODO comments are signals
