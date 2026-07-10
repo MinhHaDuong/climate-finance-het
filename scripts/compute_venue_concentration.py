@@ -14,6 +14,8 @@ Usage:
     uv run python scripts/compute_venue_concentration.py --output content/tables/tab_venue_concentration.csv
 """
 
+import os
+
 import numpy as np
 import pandas as pd
 from pipeline_io import save_csv
@@ -87,6 +89,9 @@ def compute_concentration(df: pd.DataFrame) -> pd.DataFrame:
 
 def main():
     io_args, _extra = parse_io_args()
+    # Output lands under data/derived/tables/ (gitignored, regenerable — ticket 0233);
+    # create it so validate_io's dir check passes on a clean tree.
+    os.makedirs(os.path.dirname(io_args.output) or ".", exist_ok=True)
     validate_io(output=io_args.output)
 
     if io_args.input:

@@ -28,6 +28,7 @@ null distribution parameters, not the observed statistic).
 
 import argparse
 import math
+import os
 import sys
 
 import pandas as pd
@@ -156,6 +157,9 @@ def main() -> None:
     args = parser.parse_args(extra)
     method = args.method
 
+    # Output lands under data/derived/tables/ (gitignored, regenerable — ticket 0233);
+    # create it so validate_io's dir check passes on a clean tree.
+    os.makedirs(os.path.dirname(io_args.output) or ".", exist_ok=True)
     validate_io(output=io_args.output)
 
     cfg = load_analysis_config()
