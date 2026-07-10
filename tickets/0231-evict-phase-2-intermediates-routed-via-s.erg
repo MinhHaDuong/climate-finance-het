@@ -1,0 +1,74 @@
+%erg 0.1
+Title: Evict Phase-2 intermediates routed via sub-Makefile *_TABLES dir vars (divergence/zoo/multilayer/venues)
+Created: 2026-07-10
+Author: HDMX-coding-agent
+Blocked-by: 0218
+
+--- log ---
+2026-07-10T10:57Z HDMX-coding-agent created
+2026-07-10T11:00Z note spun out of the 0218 raid scoping pass (2026-07-10): the scoper found 0218's "~15 intermediates" undercounts the class 4-5x once sub-Makefiles are included. Different risk profile (~70 targets), own ticket. Blocked-by 0218 so the top-level Makefile eviction + generalized guard land first.
+
+--- body ---
+## Context
+
+Spun out of ticket 0218's raid scoping pass (2026-07-10). 0218 evicts the
+residual Phase-2 intermediate `.csv` files that sit in `content/tables/` as
+**hardcoded-literal** Make targets in the top-level `Makefile`. The scoper found
+that four `-include`d sub-Makefiles route a much larger population of `tab_*`
+targets to `content/tables/` via a shared **directory variable**, not literals:
+
+- `divergence.mk`: `DIV_TABLES := content/tables` (line 23) — ~51 targets
+  (`tab_div_*`, `tab_null_*`, `tab_boot_*`, `tab_subsample_*`, `tab_summary_*`,
+  `tab_sens_pca/jl_*`, `tab_changepoints.csv`, `tab_convergence.csv`).
+- `zoo.mk`: `ZOO_TABLES := content/tables` (line 15) — `tab_crossyear_*`,
+  `tab_analytical_null_*`, `tab_div_biased_*`.
+- `multilayer-detection.mk`: `COMP_TABLES := content/tables` (line 18) +
+  `_companion_plot_utils.py:22` `DEFAULT_TABLES_DIR` — `tab_sensitivity_grid.csv`.
+- `venues.mk`: `VENUE_TABLE := content/tables/tab_venue_concentration.csv` (line 12).
+
+All are Phase-2-script-only intermediates by the same classification rule 0218
+uses (none is `{{< include >}}`'d by a `.qmd`). Blast radius ~70+ derived files
+and dozens of consumer scripts — a different risk profile from 0218's literal
+set, which is why it is its own ticket.
+
+## Why blocked by 0218
+
+0218 lands the top-level `content/tables/` eviction AND generalizes the guard
+`tests/test_evict_analysis_intermediates.py` to the class — but, per the scoper,
+scoped to the **top-level Makefile only** (else the guard goes RED on these ~70
+pre-existing sub-Makefile targets: a false-positive storm, not a regression
+signal). This ticket then (a) migrates the sub-Makefile subsystems by flipping
+each `*_TABLES` variable from `content/tables` to `$(DERIVED)`, and (b) widens
+the guard's scan to include the `.mk` files once their targets resolve under
+`$(DERIVED)`.
+
+## Actions
+1. Flip `DIV_TABLES`, `ZOO_TABLES`, `COMP_TABLES` from `content/tables` to
+   `$(DERIVED)` (data/derived/tables/); repoint `VENUE_TABLE`. Update
+   `_companion_plot_utils.py:22 DEFAULT_TABLES_DIR`.
+2. Rewire every consumer (grep each `tab_*` basename). Most producer scripts
+   derive sibling paths from `os.path.dirname(io_args.output)`, so only the
+   Makefile `--output` argument moves — confirm per script.
+3. Update archive coupling if any of these appear in `ANALYSIS_OUTPUTS` /
+   `build/build_analysis_archive.sh` / `tests/test_archive_checksums.py`.
+4. Widen the class guard's Makefile scan to the `.mk` files (remove the
+   top-level-only boundary 0218 documented) once the subsystems resolve under
+   `$(DERIVED)`.
+
+## Test
+- Guard (post-widening): every `content/tables/tab_*.csv` that is a Make target
+  in `Makefile` OR any `.mk` must be whitelisted-deliverable or resolve under
+  `$(DERIVED)`. RED on a fabricated sub-Makefile intermediate.
+- Regression: `make papers` builds all six PDFs; manuscript clean-room build
+  passes (HUMAN-run — long build).
+
+## Invariants
+- `make papers` unaffected; no Phase-1 trigger; DVC untouched.
+
+## Exit criteria
+- Every sub-Makefile Phase-2 `tab_*` intermediate resolves under `$(DERIVED)`.
+- The class guard covers `.mk` targets (top-level-only boundary removed).
+- `make papers` + clean-room build pass (human gate).
+
+Ticket-ref: tickets/0218-evict-remaining-phase-2-intermediates-fr.erg
+Ticket-ref: tickets/0221-tracking-reorganize-the-repo-so-layout-m.erg
