@@ -758,6 +758,7 @@ name = "climate-finance-het"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "bibtexparser" },
     { name = "dcor" },
     { name = "ftfy" },
     { name = "langdetect" },
@@ -801,7 +802,6 @@ cu130 = [
 [package.dev-dependencies]
 corpus = [
     { name = "beautifulsoup4" },
-    { name = "bibtexparser" },
     { name = "ddgs" },
     { name = "dvc" },
     { name = "dvc-ssh" },
@@ -819,6 +819,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "bibtexparser" },
     { name = "dcor", specifier = ">=0.6.1" },
     { name = "ftfy", specifier = ">=6.3.1" },
     { name = "langdetect", specifier = ">=1.0.9" },
@@ -853,7 +854,6 @@ provides-extras = ["cpu", "cu130"]
 [package.metadata.requires-dev]
 corpus = [
     { name = "beautifulsoup4" },
-    { name = "bibtexparser" },
     { name = "ddgs" },
     { name = "dvc", specifier = ">=3.67.0" },
     { name = "dvc-ssh", specifier = ">=4.2.2" },
