@@ -2,12 +2,13 @@
 Title: Reorg code 3/4 — land the 5 SPLIT extractions in their phase subdir
 Created: 2026-07-10
 Author: HDMX-coding-agent
-Blocked-by: 0240
+Blocked-by: 0257
 Label: deferred
 
 --- log ---
 2026-07-10T00:00Z HDMX-coding-agent created
 2026-07-10T00:00Z HDMX-coding-agent note split from 0225 (code workstream) as an integer child. Blocked-by 0240: the extractions land inside the phase subdirs 0240 creates. Parked behind the Œconomia R&R per 0223.
+2026-07-11T06:52Z HDMX-coding-agent note re-pointed Blocked-by 0240 → 0257. 0240 became the epic TRACKER (decomposed 2026-07-11); a leaf blocked-by its own tracker is the anti-pattern the author flagged. The real prerequisite is the wave-1 analysis move (0257) — the extracted modules land in the scripts/analysis/ subdir that 0257 creates.
 
 --- body ---
 ## Context
@@ -18,10 +19,12 @@ modules so the leaking scripts import them instead of re-implementing. Land each
 extraction as a plain or `_`-private module **inside the owning phase subdir**
 (created by 0240) — no top-level `src/`.
 
-## Depends on 0240
-The destination phase subdirs (`scripts/analysis/`, `scripts/harvest/`, …) are
-created by 0240. This ticket places the extracted modules there and repoints the
-importing scripts, so it must land after 0240.
+## Depends on 0257
+The destination phase subdir (`scripts/analysis/`) is created by the wave-1
+analysis move `0257` (a child of the epic tracker `0240`). This ticket places the
+extracted modules there and repoints the importing scripts, so it must land after
+0257. (0257 is itself Blocked-by 0253 + 0254 — the path model and the
+classification audit — so the whole prerequisite chain flows through it.)
 
 ## The five extractions
 - `corpus_filters` — shared corpus-filtering predicate

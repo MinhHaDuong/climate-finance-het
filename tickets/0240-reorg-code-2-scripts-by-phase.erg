@@ -1,5 +1,5 @@
 %erg 0.1
-Title: Reorg code 2/4 — group scripts/ 173 files by dataflow phase
+Title: EPIC — reorg scripts/ by dataflow phase (two-tier move, relative source roots)
 Created: 2026-07-10
 Author: HDMX-coding-agent
 Label: deferred
@@ -7,52 +7,94 @@ Label: deferred
 --- log ---
 2026-07-10T00:00Z HDMX-coding-agent created
 2026-07-10T00:00Z HDMX-coding-agent note split from 0225 (code workstream) as an integer child; the high-risk stage (173-file move, import-path churn). Parked behind the Œconomia R&R per 0223.
+2026-07-11T06:52Z HDMX-coding-agent note decomposed into an EPIC TRACKER with de-risked children (author-approved architecture, 2026-07-11): two-tier move (only pure entry points move; library modules stay flat) + relative-source-root import model. Children 0253-0259 filed; 0241 re-pointed to Blocked-by 0257 (the analysis move) instead of this tracker. This ticket is now a tracker with NO Blocked-by — children encode real prerequisites only, never blocked-by the tracker.
 
 --- body ---
-## Context
-Second stage of the code reorg (parent sub-tracker `0225`, grand-tracker
-`0223`). `scripts/` holds 173 flat files that are really a library plus a set of
-entry points. Group the entry points by dataflow phase so the directory names
-the phase, WITHOUT introducing a top-level `src/` package (author declined
-2026-07-10; the `_`-private + `pipeline_*` loader convention stands, cross-repo
-sharing via `libs/`).
+## Epic goal
+`scripts/` holds 173 flat files that are really a **library plus a set of entry
+points**. Group the pure entry points by dataflow phase so the directory names
+the phase — WITHOUT a top-level `src/`, without a `python -m` flip, and without
+churning the ~160 `from utils import` / ~93 `script_io_args` call sites. This is
+the high-risk stage of the code reorg (sub-tracker `0225`, grand-tracker `0223`);
+it is decomposed here into de-risked, independently-landable children.
 
-This is the highest-risk stage: it rewrites import paths across the tree
-(`utils` is imported ~160×, `script_io_args` ~93×). Land it alone.
+## The two-tier rule (baked in — do not re-open)
+Two tiers move differently:
+- **Tier-3 — pure entry points** (run, never imported): move into
+  `scripts/<phase>/` (`figures/`, `harvest/`, `analysis/`, `qa/`).
+- **Tier-2 — internal library modules** (imported by another script — `utils`,
+  `pipeline_*`, `schemas`, `script_io_args`, `_*`-private, and any helper only
+  ever imported): STAY FLAT at `scripts/` root. That flat root becomes the
+  library surface on the path.
+A file that is BOTH an entry point AND imported is resolved by the 0254 audit:
+either its library part is extracted into a neutral flat `_*` module (the 0250
+pattern), or it is reclassified Tier-2. `libs/<pkg>` (cross-project,
+`openalex-corpus`) is a SEPARATE track (ticket 0229, AEDIST-gated) — NOT part of
+this epic.
 
-## Relevant files
-- `scripts/*.py` — 173 files
-- `docs/repo-layout.md` — the placement rule + 19-file migration audit
-  (destinations `scripts/<phase>/`, not `src/`)
-- `.claude/rules/architecture.md` § Pipeline phases — the phase → prefix map
+## Approved import-path model (decisions 1+2, do not re-open)
+Unify the repo on **relative source roots** (filed as 0253):
+- `pytest` `pythonpath = ["scripts", "libs/openalex-corpus/src"]` +
+  Makefile `PYTHONPATH=scripts:libs/openalex-corpus/src`.
+- This RETIRES the `tests/conftest.py` `sys.path.insert` hack AND the
+  non-editable `openalex-corpus` `[tool.uv.sources]` local install, while KEEPING
+  `libs/openalex-corpus/pyproject.toml` (AEDIST consumes it by git source, 0229).
+- **De-shim**: drop the pure re-export pass-throughs (`pipeline_text` re-exporting
+  `normalize_doi` / `reconstruct_abstract`), but KEEP `pipeline_io.retry_get` (a
+  real adapter injecting `MAILTO`).
+Flat module names stay (`from utils import`) — zero import churn; no `src/`, no
+`python -m`.
 
-## Actions
-1. Create phase subdirs and move entry points:
-   - `plot_*` / `export_*` → `scripts/figures/`
-   - `analyze_*` / `compute_*` → `scripts/analysis/`
-   - `catalog_*` / `enrich_*` / `corpus_*` / `scout*` → `scripts/harvest/`
-   - `qa_*` → `scripts/qa/`
-   Respect the semantic-phase exceptions (architecture.md § "Phase is semantic":
-   `compute_reranker_calibration` is Phase-1; `qa_embeddings` / `qa_detect_type`
-   emit Phase-2 outputs). Shared library modules (`utils`, `pipeline_*`,
-   `_*`-private) stay where imports resolve, or move as a unit with call-site
-   fixes.
-2. Update every import and every Makefile / `.mk` script path to the new
-   locations.
+The tables-vs-intermediate-output split stays at the ARTIFACT layer
+(`deliverables/_shared/tables/` vs `data/derived/`, already guarded) — it does
+NOT drive script grouping.
 
-## Test
-- `make check` green after the move (import resolution is the real gate).
-- `make -n <target>` for one target per phase yields the same prereq graph
-  (only the `scripts/<phase>/…` path segment changes).
+## Wave structure
+- **Wave 0** (foundations, parallel, no prerequisite):
+  - 0b — import-path model (0253). Load-bearing: unblocks every move.
+  - 0a — entry-point/library classification audit + extract embedded helpers
+    (0254). Produces the definitive Tier-2/Tier-3 list.
+- **Wave 1** (the moves, each Blocked-by 0253 + 0254; independent of each other):
+  0255 figures, 0256 harvest, 0257 analysis, 0258 qa.
+- **Wave 2** (extractions): 0241 lands the five SPLIT extractions in the phase
+  subdirs — Blocked-by 0257 (the analysis move that creates the destination).
+- **Independent**: 0259 restores the seed-scan coverage 0250 narrowed.
 
-## Invariants
-- No top-level `src/`; no `python -m` flip; library convention unchanged.
+Already done (closed): 0242 (sever clustering back-arrow), 0248 (unify .mk
+discovery), 0250 (wave-0a exemplar — extracted `build_pre2007_traditions` to
+neutral `scripts/_pre2007_traditions.py`).
+
+## Children checklist (tracker closes when all are closed)
+- [ ] 0253 — wave-0b: import-path model (source roots + retire conftest hack +
+      retire non-editable wheel + de-shim). Blocked-by: none.
+- [ ] 0254 — wave-0a: entry-point/library classification audit + extract embedded
+      helpers; publishes the Tier-2/Tier-3 list. Blocked-by: none.
+- [ ] 0255 — wave-1: move `scripts/figures/` (`plot_*`/`export_*`). Blocked-by: 0253 0254.
+- [ ] 0256 — wave-1: move `scripts/harvest/` (`catalog_/enrich_/corpus_/scout*`). Blocked-by: 0253 0254.
+- [ ] 0257 — wave-1: move `scripts/analysis/` (`analyze_/compute_/summarize_/build_het_core`). Blocked-by: 0253 0254.
+- [ ] 0258 — wave-1: move `scripts/qa/` (`qa_*`). Blocked-by: 0253 0254.
+- [ ] 0241 — wave-2: land the five SPLIT extractions in their phase subdir. Blocked-by: 0257.
+- [ ] 0259 — hygiene: `RANDOM_STATE` → `config/analysis.yaml`. Blocked-by: none.
+
+## Invariants (inherited by every child)
+- No top-level `src/`; no `python -m` flip; flat module names unchanged.
+- Only Tier-3 entry points move; Tier-2 library modules stay flat.
 - Layering (architecture.md rule 4): a compute module never imports a plotter.
-- One logical move per PR (this ticket = the phase-grouping move only).
+- `make check` green; `make clean && make all` green.
+- One logical move per PR.
 
-## Exit criteria
-- `scripts/` grouped by phase; no flat ~170-file directory remains.
-- `make check` and `make clean && make all` green from the regrouped tree.
-- All imports and Make script paths repointed; no dangling reference.
+## Exit criteria (tracker closes when)
+- 0253, 0254, 0255, 0256, 0257, 0258, 0241, 0259 all closed.
+- `scripts/` grouped by phase; no flat ~170-file directory; Tier-2 library surface
+  intact at `scripts/` root.
+- `make -n` target lists unchanged by the moves; full build green.
 
 Ticket-ref: tickets/0225-reorg-code.erg
+Ticket-ref: tickets/0253-reorg-code-import-path-model-pythonpath.erg
+Ticket-ref: tickets/0254-reorg-code-entry-point-vs-library-classi.erg
+Ticket-ref: tickets/0255-reorg-code-move-scripts-figures-plot-exp.erg
+Ticket-ref: tickets/0256-reorg-code-move-scripts-harvest-catalog.erg
+Ticket-ref: tickets/0257-reorg-code-move-scripts-analysis-analyze.erg
+Ticket-ref: tickets/0258-reorg-code-move-scripts-qa-qa-entry-poin.erg
+Ticket-ref: tickets/0241-reorg-code-3-split-extractions.erg
+Ticket-ref: tickets/0259-hygiene-random-state-seed-to-config-anal.erg
