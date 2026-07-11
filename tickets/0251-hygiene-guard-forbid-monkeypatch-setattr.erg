@@ -1,0 +1,58 @@
+%erg 0.1
+Title: hygiene guard: forbid monkeypatch.setattr(utils, CONST) in tests — wrong-namespace config patch class
+Created: 2026-07-11
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-11T06:11Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Ticket 0249 fixed two tests that patched a constant on `utils` and then called
+code in a module that had bound that constant by value at import
+(`from utils import CATALOGS_DIR`). Such a patch works only while the consuming
+module is not yet cached in `sys.modules`, so the test passes in isolation and
+fails under xdist whenever a sibling test imports the module first — the exact
+`make check-fast` breakage 0249 repaired (step1 counter test, then the same
+pattern in the api-key test). Two real instances across two files is a class
+shape; `/gaze` is per-PR, only a standing test catches the class returning in
+an unrelated future PR.
+
+`utils` is a re-export facade (architecture.md): every constant it exposes is
+bound by value into consuming scripts at import, so
+`monkeypatch.setattr(utils, "<CONST>", ...)` in a test is wrong by
+construction — the patch must target the consuming module's namespace.
+
+## Relevant files
+- `tests/test_script_hygiene.py` — home of grep-ratchet hygiene guards; add the new check here.
+- `tests/test_robustness_observability.py` (step1 counter test) and
+  `tests/test_retry_unification.py` (api-key test) — the two fixed instances,
+  reference for the correct pattern (`monkeypatch.setattr(ea, ...)`).
+
+## Actions
+1. Add an adherence-tier test that scans `tests/*.py` for
+   `monkeypatch.setattr(utils` (and `setattr(utils,` bare form) and fails with
+   a message pointing at the consuming-module-namespace idiom and ticket 0249.
+2. Keep it a negative guard (forbidden pattern), no allowlist unless a
+   legitimate hit exists at implementation time (none known: `utils` owns no
+   call-time-resolved constant that tests patch).
+
+## Test
+- RED: temporarily reintroduce `monkeypatch.setattr(utils, "CATALOGS_DIR", ...)`
+  in any test file; the new guard must fail naming file:line (mutation proof of
+  teeth, per feedback_pin_test_mutation_teeth).
+
+## Verification
+- [ ] Guard fails on the mutated file, passes on the clean tree.
+- [ ] `make lint` green (guard is `@pytest.mark.adherence`).
+
+## Invariants
+- `make check-fast` and `make lint` stay green; no false positive on
+  `tests/test_pipeline_e2e.py` (patches utils AND the consuming module —
+  decide whether dual-namespace assignment stays allowed and document it).
+
+## Exit criteria
+- [ ] Standing guard merged; reintroducing the 0249 defect class fails `make lint`.
+
+Ticket-ref: tickets/closed/0249-step1-counter-test-reads-hardcoded-catal.erg
