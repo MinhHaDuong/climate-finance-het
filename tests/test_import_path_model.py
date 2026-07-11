@@ -20,6 +20,7 @@ These contract tests (adherence) pin the config; the pilot test (integration)
 proves the model end to end on one file moved into ``scripts/figures/``.
 """
 
+import ast
 import os
 import subprocess
 import sys
@@ -27,6 +28,7 @@ from pathlib import Path
 
 import pytest
 import tomllib
+from _source_roots import source_root_env
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SOURCE_ROOTS = ["scripts", "libs/openalex-corpus/src"]
@@ -118,7 +120,8 @@ class TestPilotSubdirResolution:
     @pytest.mark.integration
     def test_pilot_resolves_flat_imports_from_subdir(self):
         assert (REPO_ROOT / PILOT).exists(), f"pilot file missing: {PILOT}"
-        env = {**os.environ, "PYTHONPATH": os.pathsep.join(SOURCE_ROOTS)}
+        # Explicit source roots — never rely on an ambient PYTHONPATH.
+        env = source_root_env({k: v for k, v in os.environ.items() if k != "PYTHONPATH"})
         result = subprocess.run(
             [sys.executable, PILOT, "--output", "/tmp/_pilot_import_probe.png"],
             cwd=REPO_ROOT,
@@ -132,3 +135,74 @@ class TestPilotSubdirResolution:
                 f"pilot {PILOT} failed to resolve a flat import from its subdir:\n"
                 f"{result.stderr[-1500:]}"
             )
+
+
+def _main_guard_scripts() -> list[str]:
+    """Every scripts/**.py (incl. subdirs) with a __main__ guard, except archive/.
+
+    Returns paths relative to the repo root. Uses AST to detect the guard so a
+    string match in a docstring does not create a phantom entry.
+    """
+    scripts_dir = REPO_ROOT / "scripts"
+    out: list[str] = []
+    for path in sorted(scripts_dir.rglob("*.py")):
+        rel_parts = path.relative_to(scripts_dir).parts
+        if rel_parts[0] == "archive" or path.name.startswith("__"):
+            continue
+        try:
+            tree = ast.parse(path.read_text(), filename=str(path))
+        except SyntaxError:
+            continue
+        has_main = any(
+            isinstance(node, ast.If)
+            and "__main__" in ast.dump(node.test)
+            for node in ast.walk(tree)
+        )
+        if has_main:
+            out.append(str(path.relative_to(REPO_ROOT)))
+    return out
+
+
+class TestAllEntryPointsImport:
+    """Mechanical guard the wave-1 move tickets (0255-0258) depend on.
+
+    Every entry point (a scripts/**.py with a __main__ guard, in the flat root or
+    a phase subdir) must import cleanly under the source-root path — proving no
+    move stranded a flat import. This sets the source roots itself; it never
+    relies on an ambient PYTHONPATH or the retired wheel.
+    """
+
+    ENTRY_POINTS = _main_guard_scripts()
+
+    def test_found_entry_points(self):
+        # Guard against the enumeration silently returning nothing (which would
+        # make the parametrised test vacuously green).
+        assert len(self.ENTRY_POINTS) > 30, (
+            f"suspiciously few entry points found: {len(self.ENTRY_POINTS)}"
+        )
+
+    @pytest.mark.integration
+    @pytest.mark.parametrize("script", ENTRY_POINTS, ids=ENTRY_POINTS)
+    def test_entry_point_imports_under_source_roots(self, script):
+        # Import the module in a fresh interpreter with only the source roots on
+        # PYTHONPATH — the module's directory is added by runpy-style loading, so
+        # a subdir entry point resolves its flat imports exactly as at runtime.
+        mod_dir = str((REPO_ROOT / script).parent)
+        mod_name = Path(script).stem
+        env = source_root_env(
+            {k: v for k, v in os.environ.items() if k != "PYTHONPATH"}
+        )
+        # Prepend the module's own directory (what `python path/to/x.py` does).
+        env["PYTHONPATH"] = os.pathsep.join([mod_dir, env["PYTHONPATH"]])
+        result = subprocess.run(
+            [sys.executable, "-c", f"import {mod_name}"],
+            cwd=REPO_ROOT,
+            env=env,
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
+        assert result.returncode == 0, (
+            f"{script} does not import cleanly under the source roots:\n"
+            f"{result.stderr[-1500:]}"
+        )

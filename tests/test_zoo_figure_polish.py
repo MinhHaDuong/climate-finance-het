@@ -8,6 +8,7 @@ import sys
 
 import pandas as pd
 import pytest
+from _source_roots import source_root_env
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 sys.path.insert(0, SCRIPTS_DIR)
@@ -89,6 +90,7 @@ def test_metric_filter_selects_resonance_only(tmp_path):
         ],
         capture_output=True,
         text=True,
+        env=source_root_env(),  # source roots on PYTHONPATH (ticket 0253)
     )
     assert result.returncode == 0, result.stderr
     df = pd.read_csv(output_csv)

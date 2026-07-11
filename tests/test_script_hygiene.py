@@ -1286,6 +1286,8 @@ class TestOutputFlag:
         """Run script --output /tmp/... and verify the file appears."""
         import subprocess
 
+        from _source_roots import source_root_env
+
         out_path = tmp_path / f"test_output{ext}"
         cmd = [
             sys.executable,
@@ -1293,7 +1295,10 @@ class TestOutputFlag:
             "--output",
             str(out_path),
         ] + extra_args
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+        # Source roots on PYTHONPATH (ticket 0253) so the script resolves flat
+        # imports without an ambient PYTHONPATH or the retired wheel.
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30,
+                                env=source_root_env())
         assert result.returncode == 0, (
             f"{script} failed (rc={result.returncode}):\n{result.stderr[-500:]}"
         )
