@@ -17,7 +17,8 @@ import math
 import os
 
 import pandas as pd
-from pipeline_text import normalize_doi, normalize_lang
+from openalex_corpus.text import normalize_doi
+from pipeline_text import normalize_lang
 from utils import CATALOGS_DIR, get_logger, save_csv
 
 log = get_logger("enrich_join")

@@ -2,21 +2,22 @@
 
 All functions here are stateless: no I/O, no side effects, no imports
 beyond stdlib + pandas + ftfy. Safe to import in any context. ``normalize_doi``
-and ``reconstruct_abstract`` are re-exported from the ``openalex_corpus``
-convention package (their single source of truth, ticket 0170); the package's
-pure-text submodule has no third-party imports, so the guarantee holds.
+and ``reconstruct_abstract`` live in the ``openalex_corpus`` convention package
+(their single source of truth, ticket 0170) — import them from
+``openalex_corpus.text`` directly, not through this module (ticket 0253 dropped
+the pass-through re-exports). ``normalize_doi`` is still imported here for the
+``normalize_doi_safe`` NaN-guarding wrapper, this repo's own convenience helper.
 
 Exports
 -------
 normalize_text
     Fix encoding artifacts from aggregator APIs: HTML entities, mojibake,
     zero-width chars, literal escape sequences, whitespace.
-normalize_doi
-    Strip URL prefix, lowercase, trim a DOI string.
+normalize_doi_safe
+    Wrap ``openalex_corpus.text.normalize_doi`` with NaN/None handling for
+    pandas ``.apply()``.
 normalize_title
     Lowercase, strip punctuation, collapse spaces for fuzzy dedup.
-reconstruct_abstract
-    Rebuild plain text from an OpenAlex abstract_inverted_index dict.
 clean_doi
     Extract a bare 10.xxxx/... DOI from a raw or URL-prefixed string.
 ISO_639_1_CODES
@@ -36,8 +37,7 @@ import re
 
 import ftfy
 import pandas as pd
-from openalex_corpus.text import normalize_doi as normalize_doi
-from openalex_corpus.text import reconstruct_abstract as reconstruct_abstract
+from openalex_corpus.text import normalize_doi  # used by normalize_doi_safe below
 
 # ---------------------------------------------------------------------------
 # General text normalization
