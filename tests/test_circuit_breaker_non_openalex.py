@@ -10,8 +10,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-# Ensure scripts/ is importable
-sys.path.insert(0, "scripts")
+# Ensure scripts/harvest is importable (moved catalog_/enrich_ entry points)
+sys.path.insert(0, "scripts/harvest")
 
 from pipeline_io import CONSECUTIVE_FAIL_LIMIT, RateLimitExhausted
 

@@ -19,6 +19,7 @@ import pytest
 import yaml
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
+HARVEST_DIR = os.path.join(SCRIPTS_DIR, "harvest")
 DVC_YAML = os.path.join(os.path.dirname(__file__), "..", "dvc.yaml")
 sys.path.insert(0, SCRIPTS_DIR)
 
@@ -44,7 +45,7 @@ class TestEnrichEmbeddingsScript:
 
     @pytest.fixture(autouse=True)
     def _load_source(self):
-        path = os.path.join(SCRIPTS_DIR, "enrich_embeddings.py")
+        path = os.path.join(HARVEST_DIR, "enrich_embeddings.py")
         with open(path) as f:
             self.source = f.read()
 

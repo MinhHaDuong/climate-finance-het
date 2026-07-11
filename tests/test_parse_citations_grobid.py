@@ -3,7 +3,7 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "harvest"))
 
 from corpus_parse_citations_grobid import build_cache_key, parse_tei_citation
 

@@ -49,7 +49,7 @@ across the shaded 2007–2014 window with no sustained regime shift.
 ```
 CLIMATE_FINANCE_DATA=$PWD/data HF_HOME=/home/haduong/data/cache/huggingface \
   HF_HUB_DISABLE_PROGRESS_BARS=1 TQDM_DISABLE=1 HF_HUB_OFFLINE=1 \
-  uv run python scripts/scout_tradition_coupling.py \
+  uv run python scripts/harvest/scout_tradition_coupling.py \
   --output content/figures/scratch/scout_tradition_coupling.png
 ```
 

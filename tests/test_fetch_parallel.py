@@ -16,7 +16,7 @@ import pytest
 
 pytestmark = pytest.mark.integration
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "harvest"))
 
 
 def _make_search_record(url):

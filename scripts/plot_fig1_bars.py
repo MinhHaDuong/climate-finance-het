@@ -63,7 +63,7 @@ def main():
             if "in_v1" not in header:
                 raise RuntimeError(
                     "--v1-only requires 'in_v1' column in refined_works.csv. "
-                    "Re-run: uv run python scripts/corpus_filter.py --apply"
+                    "Re-run: uv run python scripts/harvest/corpus_filter.py --apply"
                 )
             usecols.append("in_v1")
         df = pd.read_csv(csv_path, usecols=usecols, dtype={"year": "Int64"})
@@ -73,7 +73,7 @@ def main():
             if "in_v1" not in df.columns:
                 raise RuntimeError(
                     "--v1-only requires 'in_v1' column in refined_works.csv. "
-                    "Re-run: uv run python scripts/corpus_filter.py --apply"
+                    "Re-run: uv run python scripts/harvest/corpus_filter.py --apply"
                 )
             usecols.append("in_v1")
         df = df[usecols]

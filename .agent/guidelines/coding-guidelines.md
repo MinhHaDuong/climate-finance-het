@@ -141,8 +141,8 @@ When adding a new enrichment script: put incremental state in `enrich_cache/<nam
 
 ```bash
 # Citation enrichment (Crossref + OpenAlex run in parallel, then merge)
-uv run python scripts/enrich_citations_batch.py                  # Crossref → enrich_cache/crossref_refs.csv
-uv run python scripts/enrich_citations_openalex.py               # OpenAlex → enrich_cache/openalex_refs.csv
+uv run python scripts/harvest/enrich_citations_batch.py                  # Crossref → enrich_cache/crossref_refs.csv
+uv run python scripts/harvest/enrich_citations_openalex.py               # OpenAlex → enrich_cache/openalex_refs.csv
 uv run python scripts/corpus_merge_citations.py                         # Concat caches → citations.csv (the DVC output)
 uv run python scripts/qa/qa_citations.py --output content/tables/qa_citations_report.json  # Verify citation quality (n=300, accuracy + completeness)
 # Or simply: make citations  (runs all four; Crossref + OpenAlex in parallel)

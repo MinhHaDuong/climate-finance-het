@@ -6,7 +6,8 @@ import sys
 import pandas as pd
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
-sys.path.insert(0, SCRIPTS_DIR)
+HARVEST_DIR = os.path.join(SCRIPTS_DIR, "harvest")
+sys.path.insert(0, HARVEST_DIR)
 
 
 def _make_csv(path, rows, columns):
@@ -518,7 +519,7 @@ class TestRefMatchCorpus:
 
     def test_progress_logging(self):
         """Script contains progress logging calls with ETA and dedup info."""
-        src_path = os.path.join(SCRIPTS_DIR, "corpus_ref_match.py")
+        src_path = os.path.join(HARVEST_DIR, "corpus_ref_match.py")
         with open(src_path) as f:
             source = f.read()
         assert "PROGRESS_INTERVAL" in source, "Should define progress interval"

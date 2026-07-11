@@ -20,7 +20,7 @@ import sys
 import pytest
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
-sys.path.insert(0, SCRIPTS_DIR)
+sys.path.insert(0, os.path.join(SCRIPTS_DIR, "harvest"))
 
 
 class TestExtractCacheKey:

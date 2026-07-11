@@ -285,7 +285,7 @@ def load_refined_embeddings():
 
     Returns the (N, D) float32 array where N == len(refined_works.csv).
     Raises FileNotFoundError with a remediation hint if the file is missing.
-    Run ``make corpus-align`` (or ``uv run python scripts/corpus_align.py``)
+    Run ``make corpus-align`` (or ``uv run python scripts/harvest/corpus_align.py``)
     to produce this file.
     """
     import numpy as np
@@ -293,7 +293,7 @@ def load_refined_embeddings():
     if not os.path.exists(REFINED_EMBEDDINGS_PATH):
         raise FileNotFoundError(
             f"refined_embeddings.npz not found at {REFINED_EMBEDDINGS_PATH}. "
-            "Run: uv run python scripts/corpus_align.py"
+            "Run: uv run python scripts/harvest/corpus_align.py"
         )
     return np.load(REFINED_EMBEDDINGS_PATH)["vectors"]
 
@@ -329,7 +329,7 @@ def load_refined_citations():
     Returns a DataFrame whose ``source_doi`` values are all members of
     ``normalize_doi(refined_works.csv.doi)``.
     Raises FileNotFoundError with a remediation hint if the file is missing.
-    Run ``make corpus-align`` (or ``uv run python scripts/corpus_align.py``)
+    Run ``make corpus-align`` (or ``uv run python scripts/harvest/corpus_align.py``)
     to produce this file.
     """
     if os.path.exists(REFINED_CITATIONS_FEATHER):
@@ -338,7 +338,7 @@ def load_refined_citations():
         raise FileNotFoundError(
             f"refined_citations not found at {REFINED_CITATIONS_FEATHER} or "
             f"{REFINED_CITATIONS_PATH}. "
-            "Run: make corpus-handoff (or uv run python scripts/corpus_align.py)"
+            "Run: make corpus-handoff (or uv run python scripts/harvest/corpus_align.py)"
         )
     return pd.read_csv(REFINED_CITATIONS_PATH, low_memory=False)
 
@@ -376,7 +376,7 @@ def load_analysis_corpus(
         if "in_v1" not in works.columns:
             raise RuntimeError(
                 "v1_only=True but 'in_v1' column missing from refined_works.csv. "
-                "Re-run: uv run python scripts/corpus_filter.py --apply"
+                "Re-run: uv run python scripts/harvest/corpus_filter.py --apply"
             )
         keep_mask = keep_mask & (works["in_v1"] == 1)
         _log.info("v1_only: restricting to %d / %d rows", keep_mask.sum(), len(works))
@@ -390,7 +390,7 @@ def load_analysis_corpus(
             raise RuntimeError(
                 f"Embedding/refined_works row count mismatch "
                 f"({len(all_embeddings)} vs {len(works)}). "
-                "Re-run: uv run python scripts/corpus_align.py"
+                "Re-run: uv run python scripts/harvest/corpus_align.py"
             )
         embeddings = all_embeddings[keep_mask]
 

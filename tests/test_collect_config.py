@@ -18,7 +18,8 @@ import sys
 import yaml
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
-sys.path.insert(0, SCRIPTS_DIR)
+HARVEST_DIR = os.path.join(SCRIPTS_DIR, "harvest")
+sys.path.insert(0, HARVEST_DIR)
 
 ROOT_DIR = os.path.join(os.path.dirname(__file__), "..")
 
@@ -158,7 +159,7 @@ class TestNoHardcodedQueries:
     """#176: catalog scripts must not contain hardcoded query strings."""
 
     def _read_script(self, name):
-        path = os.path.join(SCRIPTS_DIR, name)
+        path = os.path.join(HARVEST_DIR, name)
         with open(path) as f:
             return f.read()
 
@@ -232,7 +233,7 @@ class TestQueryWorldbankDedup:
         """Records with the same UUID from different queries are deduplicated."""
         from unittest.mock import patch
 
-        sys.path.insert(0, os.path.join(ROOT_DIR, "scripts"))
+        sys.path.insert(0, os.path.join(ROOT_DIR, "scripts", "harvest"))
         from catalog_grey import query_worldbank
 
         fake_results = {
@@ -261,7 +262,7 @@ class TestQueryWorldbankDedup:
         """Records with empty source_id are never deduplicated against each other."""
         from unittest.mock import patch
 
-        sys.path.insert(0, os.path.join(ROOT_DIR, "scripts"))
+        sys.path.insert(0, os.path.join(ROOT_DIR, "scripts", "harvest"))
         from catalog_grey import query_worldbank
 
         fake_results = {
@@ -288,7 +289,7 @@ class TestQueryWorldbankDedup:
         """A single string query still works (backward compatibility)."""
         from unittest.mock import patch
 
-        sys.path.insert(0, os.path.join(ROOT_DIR, "scripts"))
+        sys.path.insert(0, os.path.join(ROOT_DIR, "scripts", "harvest"))
         from catalog_grey import query_worldbank
 
         def mock_single(wb_query, year_min=None, year_max=None):
