@@ -770,7 +770,7 @@ class TestPdfDiscipline:
         "analyze_100bn.py",
         "analyze_embeddings.py",
         "analyze_unfccc_topics.py",
-        "compute_reranker_calibration.py",
+        "harvest/compute_reranker_calibration.py",
         "plot_interactive_corpus.py",
     ]
 

@@ -76,7 +76,7 @@ class TestEnrichDoisCLI:
 class TestEnrichAbstractsCLI:
     @pytest.fixture(autouse=True, scope="class")
     def _load_source(self, request):
-        request.cls._source = _read_script("enrich_abstracts.py")
+        request.cls._source = _read_script("harvest/enrich_abstracts.py")
 
     def test_accepts_works_input(self):
         assert _has_flag(self._source, "--works-input"), \
@@ -95,7 +95,7 @@ class TestEnrichAbstractsCLI:
 class TestEnrichCitationsBatchCLI:
     @pytest.fixture(autouse=True, scope="class")
     def _load_source(self, request):
-        request.cls._source = _read_script("enrich_citations_batch.py")
+        request.cls._source = _read_script("harvest/enrich_citations_batch.py")
 
     def test_accepts_works_input(self):
         assert _has_flag(self._source, "--works-input"), \
@@ -113,7 +113,7 @@ class TestEnrichCitationsBatchCLI:
 class TestEnrichCitationsOpenAlexCLI:
     @pytest.fixture(autouse=True, scope="class")
     def _load_source(self, request):
-        request.cls._source = _read_script("enrich_citations_openalex.py")
+        request.cls._source = _read_script("harvest/enrich_citations_openalex.py")
 
     def test_accepts_works_input(self):
         assert _has_flag(self._source, "--works-input"), \

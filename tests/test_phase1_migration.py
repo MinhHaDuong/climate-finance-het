@@ -14,6 +14,7 @@ import sys
 import numpy as np
 import pandas as pd
 import pytest
+from _source_roots import source_root_env
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 HARVEST_DIR = os.path.join(SCRIPTS_DIR, "harvest")
@@ -66,7 +67,7 @@ class TestPhase1Integration:
         import subprocess
 
         # Set env and run
-        env = os.environ.copy()
+        env = source_root_env()
         env["CLIMATE_FINANCE_DATA"] = str(temp_catalogs.parent)
 
         result = subprocess.run(
@@ -103,7 +104,7 @@ class TestIncrementiality:
         """Running corpus_filter --apply twice produces identical refined_works.csv."""
         import subprocess
 
-        env = os.environ.copy()
+        env = source_root_env()
         env["CLIMATE_FINANCE_DATA"] = str(temp_catalogs.parent)
 
         cmd = [
