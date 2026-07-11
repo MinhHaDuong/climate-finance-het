@@ -266,8 +266,6 @@ def main():
     parser = argparse.ArgumentParser(
         description="Compare clustering methods across corpus snapshots"
     )
-    parser.add_argument("--pdf", action="store_true",
-                        help="Also save PDF output")
     parser.add_argument("--no-perturbation", action="store_true",
                         help="Skip perturbation stability (saves time)")
     parser.add_argument("--n-perturbation", type=int, default=10,
