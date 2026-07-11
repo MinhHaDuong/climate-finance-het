@@ -45,14 +45,36 @@ cd "$PROJ_ROOT"
 cp -L "$DATA_DIR/refined_works.csv"     "$TMP/data/catalogs/"
 cp -L "$DATA_DIR/refined_embeddings.npz" "$TMP/data/catalogs/"
 
-# Scripts needed to build figures + tables
-for s in utils.py pipeline_loaders.py pipeline_io.py pipeline_progress.py \
-         pipeline_text.py plot_style.py plot_fig1_bars.py \
-         plot_fig2_composition.py compute_clusters.py build_het_core.py \
-         export_core_venues_markdown.py summarize_core_venues.py \
-         export_tab_venues.py export_citation_coverage.py analyze_bimodality.py \
-         plot_bimodality.py plot_bimodality_lexical.py plot_bimodality_keywords.py; do
-    cp "scripts/$s" "$TMP/scripts/"
+# Scripts needed to build figures + tables.
+# Full repo-relative paths, mirrored into the archive with `cp --parents` so the
+# archived tree matches the repo: tier-2 libs stay flat at scripts/ while the
+# reorg'd entry points keep their scripts/{figures,analysis}/ subdir (epic 0240).
+# The archived Makefile.analysis-manuscript invokes them at these mirrored paths,
+# and PYTHONPATH=scripts (ticket 0253) still resolves their flat `from utils …`
+# imports. Guarded by tests/test_archive_script_paths — every path here must
+# resolve to a real file, so the next mover cannot silently strand the cp.
+SCRIPTS=(
+    scripts/utils.py
+    scripts/pipeline_loaders.py
+    scripts/pipeline_io.py
+    scripts/pipeline_progress.py
+    scripts/pipeline_text.py
+    scripts/plot_style.py
+    scripts/figures/plot_fig1_bars.py
+    scripts/figures/plot_fig2_composition.py
+    scripts/analysis/compute_clusters.py
+    scripts/analysis/build_het_core.py
+    scripts/figures/export_core_venues_markdown.py
+    scripts/analysis/summarize_core_venues.py
+    scripts/figures/export_tab_venues.py
+    scripts/figures/export_citation_coverage.py
+    scripts/analysis/analyze_bimodality.py
+    scripts/figures/plot_bimodality.py
+    scripts/figures/plot_bimodality_lexical.py
+    scripts/figures/plot_bimodality_keywords.py
+)
+for src in "${SCRIPTS[@]}"; do
+    cp --parents "$src" "$TMP/"
 done
 
 # openalex-corpus convention package — imported as source via PYTHONPATH
