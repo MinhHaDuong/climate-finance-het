@@ -87,6 +87,7 @@ def test_no_phase2_target_under_catalogs():
     )
 
 
+@pytest.mark.integration
 def test_no_committed_symlink_under_data():
     """No git-tracked symlink under data/ (ticket 0252).
 
