@@ -3,10 +3,12 @@ Title: Unify .mk discovery across test guards — close root-only globs before t
 Created: 2026-07-10
 Author: HDMX-coding-agent
 Label: deferred
+Closed: unified .mk discovery via tests/_mk_discovery.py; 5 sites migrated, 2 gaps closed, meta-guard added; PR #1019 approved
 
 --- log ---
 2026-07-10T00:00Z HDMX-coding-agent created
 
+2026-07-11T06:20Z HDMX-coding-agent closed — unified .mk discovery via tests/_mk_discovery.py; 5 sites migrated, 2 gaps closed, meta-guard added; PR #1019 approved
 --- body ---
 ## Context
 Ticket 0239 relocated the 5 Phase-2 analysis `.mk` from the repo root to

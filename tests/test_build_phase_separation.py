@@ -17,12 +17,13 @@ a `quarto render` recipe or `.pdf:`/`.docx:` target marks Phase-3 render; a
 Phase-2 compute — and fails any file that carries both.
 """
 
-import glob
 import os
 import re
 import subprocess
+from pathlib import Path
 
 import pytest
+from _mk_discovery import mk_fragments
 
 REPO_ROOT = os.path.join(os.path.dirname(__file__), "..")
 MANUSCRIPT_MK = os.path.join(REPO_ROOT, "deliverables", "manuscript", "manuscript.mk")
@@ -44,13 +45,15 @@ def _has_phase2(text: str) -> bool:
     return bool(_PHASE2_RECIPE_RE.search(text))
 
 
-def _all_mk_files() -> list[str]:
-    """Every build fragment: root paths.mk + Phase-2 analysis concern .mk under
-    scripts/analysis/ (relocated by ticket 0239) + per-deliverable render .mk."""
-    files = glob.glob(os.path.join(REPO_ROOT, "*.mk"))
-    files += glob.glob(os.path.join(REPO_ROOT, "scripts", "analysis", "*.mk"))
-    files += glob.glob(os.path.join(REPO_ROOT, "deliverables", "*", "*.mk"))
-    return sorted(files)
+def _all_mk_files() -> list[Path]:
+    """Every `-include`d build fragment (shared discovery, ticket 0248).
+
+    The single-phase purity guard checks the *fragments* — not the top-level
+    Makefile, which legitimately wires both render and compute — so this uses
+    `mk_fragments()` (root + scripts/analysis/ + per-deliverable render .mk),
+    without the main Makefile.
+    """
+    return mk_fragments()
 
 
 @pytest.mark.adherence

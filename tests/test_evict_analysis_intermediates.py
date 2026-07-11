@@ -46,6 +46,7 @@ import os
 import re
 
 import pytest
+from _mk_discovery import all_makefiles
 
 # Grep-ratchet guard — belongs to the mechanical adherence gate (`pytest -m adherence`).
 pytestmark = pytest.mark.adherence
@@ -97,12 +98,9 @@ def _bad_patterns(basename):
 
 
 def _makefiles():
-    paths = [os.path.join(PROJECT_ROOT, "Makefile")]
-    paths += glob.glob(os.path.join(PROJECT_ROOT, "*.mk"))
-    # Phase-2 analysis concern .mk moved under scripts/analysis/ (ticket 0239);
-    # keep scanning them so the eviction guard still covers the moved fragments.
-    paths += glob.glob(os.path.join(SCRIPTS_DIR, "analysis", "*.mk"))
-    return paths
+    # Shared discovery (ticket 0248): Makefile + every fragment, so a `.mk`
+    # relocation updates one place and this guard can never silently narrow.
+    return all_makefiles()
 
 
 def _scripts():

@@ -24,6 +24,8 @@ import glob
 import os
 import re
 
+from _mk_discovery import all_makefiles
+
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 DELIVERABLES = os.path.join(REPO_ROOT, "deliverables")
 
@@ -50,13 +52,12 @@ _SHARED_REF = re.compile(
 # A Make render rule: the target (first token, left of `:`) is a PDF/DOCX file.
 _RENDER_TARGET = re.compile(r"^(?P<t>[\w./-]+\.(?:pdf|docx))\s*:")
 
-# Makefiles that carry render rules (top-level + concern .mk + every
-# per-deliverable render .mk under deliverables/<x>/, ticket 0237).
-_MAKEFILES = (
-    [os.path.join(REPO_ROOT, "Makefile")]
-    + glob.glob(os.path.join(REPO_ROOT, "*.mk"))
-    + glob.glob(os.path.join(DELIVERABLES, "*", "*.mk"))
-)
+# Every Makefile that could carry a render rule. Shared discovery (ticket 0248):
+# all_makefiles() also covers scripts/analysis/*.mk, closing the gap where
+# relocated fragments (0239) went unscanned. Analysis fragments carry no render
+# target, so the widened set adds no offenders — it only guarantees a future
+# relocated render .mk cannot slip out of coverage.
+_MAKEFILES = all_makefiles()
 
 
 def test_no_root_quarto_masks():

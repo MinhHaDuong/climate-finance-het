@@ -6,12 +6,12 @@ Covers:
 - Makefile pattern rule exists for figure scripts
 """
 
-import glob
 import os
 import subprocess
 import sys
 
 import pytest
+from _mk_discovery import all_makefiles
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 MAKEFILE = os.path.join(os.path.dirname(__file__), "..", "Makefile")
@@ -275,15 +275,12 @@ class TestComputeBreakpointsOneOutput:
 def _makefile_text():
     """Concatenate the main Makefile and every included *.mk.
 
-    Phase-2 analysis concern fragments moved under scripts/analysis/ (ticket
-    0239); include them so the $(DERIVED)-producer scan still sees their targets.
+    Fragment discovery is shared (ticket 0248): `all_makefiles()` covers the
+    root, scripts/analysis/ (relocated by 0239), and deliverables/ fragments, so
+    the $(DERIVED)-producer scan can never silently miss a relocated fragment.
     """
-    root = os.path.join(os.path.dirname(__file__), "..")
-    mk_files = [os.path.join(root, "Makefile")]
-    mk_files += sorted(glob.glob(os.path.join(root, "*.mk")))
-    mk_files += sorted(glob.glob(os.path.join(root, "scripts", "analysis", "*.mk")))
     text = ""
-    for path in mk_files:
+    for path in all_makefiles():
         with open(path) as f:
             text += f"\n# === {os.path.basename(path)} ===\n" + f.read()
     return text
