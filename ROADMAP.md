@@ -11,7 +11,6 @@ manuscript rebuilt (v2.0.5), response letter drafted (ticket 0152).
 
 - [x] Wait for reviewers feedback
 - [ ] Revise and Resubmit — in progress: R1/R2 ledger sign-offs, then 0195 → 0153 (rebuild, deposit, resubmit)
-- [ ] Prepare Econom'IA conference slides (Cergy, May 27–28, 2026; present aedist results)
 - [ ] Continue Tier 1 reading plan (defence against reviewer questions)
 
 ## Data paper manuscript next steps
