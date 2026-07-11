@@ -252,8 +252,8 @@ def test_load_data_reads_works_through_loader(monkeypatch):
     pd.read_csv. Shared by the figure (plot_fig_traditions) and the
     pre-2007 separation null (compute_null_separation), both via the
     neutral _pre2007_traditions module."""
-    import pandas as pd
     import _pre2007_traditions as p27
+    import pandas as pd
 
     works = pd.DataFrame({
         "doi": ["10.1/a"],
