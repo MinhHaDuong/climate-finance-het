@@ -2,6 +2,7 @@
 Title: Tracking: reorganize the repo so layout mirrors dataflow phase
 Created: 2026-07-10
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1015
 
 --- log ---
 2026-07-10T09:19Z HDMX-coding-agent created
@@ -14,6 +15,7 @@ Author: HDMX-coding-agent
 2026-07-10T09:50Z note audit 2026-07-10: code+prose axis of this reorg is tracked separately by 0223 (children 0225 code, 0226 prose); 0224 closed as duplicate of this tracker's data-layout scope (0218/0222). 0223's src/ + deliverables/ proposals depart from architecture.md and need author ratification before Execute
 2026-07-10T10:11Z HDMX-coding-agent unlabel deferred
 2026-07-11T01:45Z HDMX-coding-agent note integration-review (all 4 children closed): re-read merged diffs of 0222 (d5e1045, communities.csv->$(DERIVED)+class guard), 0218 (eviction of tab_* residuals + 0233 makedirs follow-on), 0227 (#985, guard blind-spots documented in architecture.md rather than code-extended), 0237 (#1003, Phase-3 per-deliverable .mk split) plus 0239 (#1006, relocated the 5 Phase-2 analysis .mk into scripts/analysis/). They COMPOSE without contradiction: layout mirrors phase (data/catalogs=P1 DVC, data/derived=P2 gitignored, deliverables/<x>=P3), build .mk split by phase (scripts/analysis/*.mk=P2, deliverables/<x>/*.mk=P3), guard enforces the data split. Exit criteria vs current tree: (1) MET — tests/test_phase_layout.py 2 passed; COMMUNITIES/MOSTCITED/SEMANTIC_CLUSTERS all resolve to $(DERIVED). (2) MET — 0218 in tickets/closed/. (3) MET — four-logics + phase-mirror in architecture.md (Data location, Artifact homes by phase, Phase-is-semantic 0227). (4) MET — `make -n papers` dispatches to 6 per-deliverable Phase-3 sub-makes with zero check-corpus/uv run leak (stops on a missing Phase-2 handoff artifact = correct clean-room behavior in a data-less worktree). Suites: check-fast 944 passed / 10 skipped / 1 failed; the single failure is TestStepCounters::test_step1_counter_attempted (FileNotFoundError on data/catalogs/unified_works.csv) — a pre-existing data-dependency test defect unrelated to this reorg, filed as follow-up 0249. make lint 151 passed / 5 skipped. OBSERVATION (out of guard scope, non-blocking): stale individual DVC pointers data/catalogs/{communities,het_mostcited_50,het_core}.csv.dvc survive from the original DVC init (42efd9d) although these files are now Phase-2 products produced under $(DERIVED); the guard checks Make/script path resolution, not .dvc pointer files, so the guard-enforced criterion is met — pointer cleanup was never in 0219/0222 scope. Verdict: ALL criteria MET -> close tracker (via PR **Ticket:** line, so erg-pr-merge archives on merge). Follow-up 0249 filed on the same branch.
+2026-07-11T01:48Z HDMX-coding-agent closed — autoclosed — PR #1015
 --- body ---
 ## Context
 
