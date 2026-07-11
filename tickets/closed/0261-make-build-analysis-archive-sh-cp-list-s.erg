@@ -2,10 +2,12 @@
 Title: Make build_analysis_archive.sh cp-list subdir-aware for reorg movers
 Created: 2026-07-11
 Author: HDMX-coding-agent
+Closed: Analysis archive cp-loop now resolves each script's real path via cp --parents (mirrored subdirs); archived Makefile updated; path-resolution guard added and mutation-proven
 
 --- log ---
 2026-07-11T09:51Z HDMX-coding-agent created
 
+2026-07-11T10:02Z HDMX-coding-agent closed — Analysis archive cp-loop now resolves each script's real path via cp --parents (mirrored subdirs); archived Makefile updated; path-resolution guard added and mutation-proven
 --- body ---
 ## Context
 `build/build_analysis_archive.sh` copies the analysis scripts into the
