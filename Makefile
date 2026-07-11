@@ -59,6 +59,17 @@ REFINED_CIT_FTH := $(DATA_DIR)/refined_citations.feather
 export PYTHONHASHSEED := 0
 export SOURCE_DATE_EPOCH := 0
 
+# ── Import source roots (ticket 0253) ─────────────────────
+# Every script invocation resolves flat module names (from utils import …,
+# import openalex_corpus) via two relative source roots, so an entry point keeps
+# working after it moves into a scripts/<phase>/ subdir. `scripts` carries the
+# pipeline modules; `libs/openalex-corpus/src` carries the openalex_corpus
+# package as source (its non-editable wheel is retired). Exported once here so
+# every recipe shell — and every subprocess a Make-invoked pytest spawns —
+# inherits it. Mirrors [tool.pytest.ini_options] pythonpath. Prepended, so an
+# ambient PYTHONPATH is preserved.
+export PYTHONPATH := scripts:libs/openalex-corpus/src$(if $(PYTHONPATH),:$(PYTHONPATH),)
+
 # ── Toolchain ─────────────────────────────────────────────
 # Env policy: secrets sourced from project .env via uv --env-file;
 # never via export KEY := $(shell ...) or command-line KEY=value.
