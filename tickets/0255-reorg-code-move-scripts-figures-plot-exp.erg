@@ -2,6 +2,7 @@
 Title: Reorg code — move scripts/figures/ (plot_/export_ entry points)
 Created: 2026-07-11
 Author: HDMX-coding-agent
+Blocked-by: 0260
 Label: deferred
 
 --- log ---

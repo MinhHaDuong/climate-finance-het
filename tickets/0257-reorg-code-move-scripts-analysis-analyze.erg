@@ -2,6 +2,7 @@
 Title: Reorg code — move scripts/analysis/ (analyze_/compute_/summarize_/build_het_core)
 Created: 2026-07-11
 Author: HDMX-coding-agent
+Blocked-by: 0260
 Label: deferred
 
 --- log ---
