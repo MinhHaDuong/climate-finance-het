@@ -11,18 +11,17 @@ output from `CATALOGS_DIR`. A newly-introduced Phase-2 output under `data/catalo
 fails the test with no edit to this file.
 """
 
-import glob
 import os
 import re
 
 import pytest
+from _script_discovery import all_script_files
 
 # Mechanical adherence gate (`make lint` / `pytest -m adherence`).
 pytestmark = pytest.mark.adherence
 
 PROJECT_ROOT = os.path.join(os.path.dirname(__file__), "..")
 MAKEFILE = os.path.join(PROJECT_ROOT, "Makefile")
-SCRIPTS_DIR = os.path.join(PROJECT_ROOT, "scripts")
 
 # A Make prerequisite naming one of these script prefixes marks a Phase-2 producer.
 #
@@ -94,7 +93,7 @@ def test_no_script_reads_derived_output_from_catalogs():
         os.path.basename(v) for v in consts.values() if DERIVED in v and v.endswith((".csv", ".json", ".npz"))
     }
     offenders = []
-    for path in glob.glob(os.path.join(SCRIPTS_DIR, "*.py")):
+    for path in all_script_files():  # recursive, subdir-safe (ticket 0260)
         with open(path, encoding="utf-8") as fh:
             for i, line in enumerate(fh, 1):
                 for name in derived_names:

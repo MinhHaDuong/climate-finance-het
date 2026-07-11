@@ -18,14 +18,11 @@ compute layer import. The allowlist is now empty.
 """
 
 import ast
-import os
 
 import pytest
+from _script_discovery import all_script_files
 
 pytestmark = pytest.mark.adherence
-
-REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SCRIPTS_DIR = os.path.join(REPO, "scripts")
 
 # Known, pre-existing compute → plot violations awaiting their own relocation
 # ticket. Each entry MUST cite the tracking ticket. Remove an entry the moment
@@ -34,18 +31,19 @@ LAYERING_ALLOWLIST: dict[str, str] = {}
 
 
 def _compute_scripts():
-    """Top-level `compute_*.py` scripts under scripts/ (archive excluded)."""
-    result = []
-    for f in os.listdir(SCRIPTS_DIR):
-        if f.startswith("compute_") and f.endswith(".py"):
-            result.append(f)
-    return sorted(result)
+    """Every `compute_*.py` script, recursively (archive excluded).
+
+    Routed through the shared recursive enumerator (ticket 0260) so a wave-1
+    move of a `compute_*` entry point into `scripts/analysis/` cannot silently
+    drop it from this compute↛plot guard. Returns full paths.
+    """
+    return [p for p in all_script_files() if p.name.startswith("compute_")]
 
 
-def _imported_plot_modules(name):
+def _imported_plot_modules(path):
     """Return the sorted set of `plot_*` module names imported by a script."""
-    with open(os.path.join(SCRIPTS_DIR, name)) as fh:
-        tree = ast.parse(fh.read(), filename=name)
+    with open(path) as fh:
+        tree = ast.parse(fh.read(), filename=path.name)
     hits = set()
     for node in ast.walk(tree):
         if isinstance(node, ast.ImportFrom):
@@ -62,12 +60,12 @@ def _imported_plot_modules(name):
 def test_no_compute_imports_plotter():
     """No compute_*.py imports a plot_* module (allowlist excepted)."""
     violators = {}
-    for name in _compute_scripts():
-        if name in LAYERING_ALLOWLIST:
+    for path in _compute_scripts():
+        if path.name in LAYERING_ALLOWLIST:
             continue
-        plots = _imported_plot_modules(name)
+        plots = _imported_plot_modules(path)
         if plots:
-            violators[name] = plots
+            violators[path.name] = plots
     assert not violators, (
         "compute → plot backward arrow (architecture rule 4). "
         "A compute module must not import a plotter:\n"
@@ -77,10 +75,11 @@ def test_no_compute_imports_plotter():
 
 def test_no_stale_layering_allowlist():
     """Every allowlisted violation still offends — remove it once fixed."""
+    by_name = {p.name: p for p in _compute_scripts()}
     stale = [
         name
         for name in LAYERING_ALLOWLIST
-        if name in _compute_scripts() and not _imported_plot_modules(name)
+        if name in by_name and not _imported_plot_modules(by_name[name])
     ]
     assert not stale, (
         "These scripts no longer import a plotter — remove them from "
