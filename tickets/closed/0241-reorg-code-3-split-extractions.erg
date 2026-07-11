@@ -3,6 +3,7 @@ Title: Reorg code 3/4 — land the 5 SPLIT extractions in their phase subdir
 Created: 2026-07-10
 Author: HDMX-coding-agent
 Label: deferred
+Closed: All five SPLIT extractions resolved by prior tickets under the two-tier rule: traditions -> _pre2007_traditions.py (0250); venues -> _venue_naming.py, teaching -> _course_dedup.py, corpus_filters -> _corpus_predicates.py (all 0254, flat _-modules not phase subdirs); changepoints reclassified Tier-2 (compute_changepoints stays flat, imported by compute_convergence — no helper module needed). Importers repointed and verified; change-point detection centralized. repo-layout.md reconciliation table added. No code left to write.
 
 --- log ---
 2026-07-10T00:00Z HDMX-coding-agent created
@@ -10,6 +11,7 @@ Label: deferred
 2026-07-11T06:52Z HDMX-coding-agent note re-pointed Blocked-by 0240 → 0257. 0240 became the epic TRACKER (decomposed 2026-07-11); a leaf blocked-by its own tracker is the anti-pattern the author flagged. The real prerequisite is the wave-1 analysis move (0257) — the extracted modules land in the scripts/analysis/ subdir that 0257 creates.
 
 2026-07-11T09:20Z HDMX-coding-agent note blocker 0257 closed — Blocked-by removed.
+2026-07-11T10:00Z HDMX-coding-agent closed — All five SPLIT extractions resolved by prior tickets under the two-tier rule: traditions -> _pre2007_traditions.py (0250); venues -> _venue_naming.py, teaching -> _course_dedup.py, corpus_filters -> _corpus_predicates.py (all 0254, flat _-modules not phase subdirs); changepoints reclassified Tier-2 (compute_changepoints stays flat, imported by compute_convergence — no helper module needed). Importers repointed and verified; change-point detection centralized. repo-layout.md reconciliation table added. No code left to write.
 --- body ---
 ## Context
 Third stage of the code reorg (parent sub-tracker `0225`, grand-tracker
