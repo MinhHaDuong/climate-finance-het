@@ -91,53 +91,112 @@ Moving a `.mk` file is cheap: `-include`d rules resolve relative to the *root*
 Makefile, so paths inside are unchanged — only the `-include` line edits.
 Moving the referenced *scripts* is the real edit (prereq paths).
 
-## Migration checklist — the 19 flagged dual-role files
+## Definitive Tier-2 / Tier-3 classification (ticket 0254)
 
-Audited by intent (2026-07-10). 10 were false positives (declared libraries the
-syntactic filter mis-flagged); 9 are genuinely dual-role. Destinations are
-`scripts/<phase>/`, not `src/`.
+> **This table is the contract wave-1 moves (0255–0258) consume.** It supersedes
+> the 2026-07-10 "19 flagged dual-role files" checklist (which predates the
+> two-tier rule and proposed phase-subdir destinations for *imported* files — a
+> contradiction the ratified rule resolves: **imported by another script ⇒ stays
+> flat**). Built mechanically from the `scripts/*.py` import graph; the gate test
+> `tests/test_script_classification.py` pins it.
 
-### LIBRARY → stays in `scripts/` (relocated by phase), no split (10)
+**The rule.** A top-level `scripts/*.py` is **Tier-2 (stays flat)** iff it is
+imported by any other top-level script (test-only importers do not count);
+otherwise it is **Tier-3 (a pure entry point that moves to `scripts/<phase>/`)**.
+`_`-prefix, a `__main__` guard, or filename prefix are heuristics, not the test —
+being imported is.
 
-`clustering_methods`, `script_io_args`, `_companion_plot_utils`,
-`_divergence_{citation,lexical,semantic}`,
-`_permutation_{c2st,graph,lexical,semantic}`. Each self-declares as a library
-(`_`-prefix + "no main" docstring, or "Pure algorithmic module"). No CLI, no
-split — already the existing convention.
+**Reconciliation.** 177 top-level `scripts/*.py` (174 audited + 3 modules 0254
+extracted) = **45 Tier-2 (flat)** + **132 Tier-3 (movers)**. Movers by phase:
+figures 62 · harvest 25 · analysis 34 · qa 11.
 
-### SPLIT — extract leaked *computation* into `scripts/<phase>/`, script stays (5)
+### Tier-2 — flat library surface (45, stay at `scripts/` root)
 
-| Script (stays in `scripts/`) | Extract to | Leaked symbol(s) |
+**Private `_`-modules (21):** `_citation_methods`, `_companion_plot_utils`,
+`_corpus_predicates`, `_course_dedup`, `_divergence_backend`, `_divergence_c2st`,
+`_divergence_citation`, `_divergence_community`, `_divergence_io`,
+`_divergence_lexical`, `_divergence_semantic`, `_null_separation`,
+`_permutation_accel`, `_permutation_c2st`, `_permutation_citation`,
+`_permutation_graph`, `_permutation_io`, `_permutation_lexical`,
+`_permutation_semantic`, `_pre2007_traditions`, `_venue_naming`.
+
+**Named libraries, no `__main__` (18):** `clustering_methods`, `filter_flags`,
+`filter_flags_llm`, `openalex_pool`, `pipeline_io`, `pipeline_loaders`,
+`pipeline_progress`, `pipeline_text`, `plot_style`, `qa_near_duplicates`,
+`schemas`, `script_io_args`, `syllabi_config`, `syllabi_crossref`,
+`syllabi_harvest`, `syllabi_io`, `syllabi_process`, `utils`.
+
+**Dual-role reclassified Tier-2 (6, have a thin `main()` but are genuinely
+reused computational libraries — extraction would fracture a tight cluster):**
+`compute_divergence` (`METHODS` dispatch registry, rule 8), `compute_null_model`
++ `compute_divergence_bootstrap` (permutation drivers imported across the
+divergence family), `compute_changepoints` (convergence computation reused by
+`compute_convergence.py`), `corpus_merge_citations` (`merge_citations` reused by
+the cache-migration one-off), `enrich_dois` (`find_doi` cached-lookup API reused
+by `syllabi_process`). Extracting any is a viable future refinement but not
+required; the flat classification already makes every mover import-leaf.
+
+### Tier-3 — movers by phase (132; each an entry point imported by no script)
+
+- **→ `scripts/figures/` (0255): 62** — all `plot_*` and `export_*`. Includes
+  `export_core_venues_markdown` (now imports `_venue_naming`, not
+  `summarize_core_venues`) and both clustering plotters (the former
+  `compute_clustering_comparison` backward arrow was already severed by 0242).
+- **→ `scripts/harvest/` (0256): 25** — all `catalog_*`, `enrich_*`, `corpus_*`,
+  `scout_tradition_coupling`, plus the two Phase-1 teaching-harvest builders
+  `build_teaching_yaml` / `build_teaching_canon`, and the semantic exception
+  `compute_reranker_calibration` (Phase-1 despite its `compute_` prefix).
+- **→ `scripts/analysis/` (0257): 34** — all `analyze_*`, the Tier-3 `compute_*`,
+  `summarize_*`, `build_het_core`, plus `build_smoke_fixture` (test-fixture
+  builder). `summarize_core_venues` and `build_het_core` are movers *because* 0254
+  extracted their leaked helpers.
+- **→ `scripts/qa/` (0258): 11** — all `qa_*` except `qa_near_duplicates` (a
+  pure library, Tier-2).
+
+### 0254 resolutions of the dual-role hazard
+
+Nine files were entry-point-AND-imported. Three had a genuine helper leaked from
+an output-producing entry point → **extracted to a neutral flat `_`-module (the
+0250 pattern), byte-identical by construction**, freeing the entry point to move:
+
+| Entry point (now Tier-3) | Extracted helper(s) → flat module | Repointed importer(s) |
 |---|---|---|
-| `build_het_core.py` | `scripts/harvest/corpus_filters.py` | `is_global_south`, `is_non_english` |
-| `build_teaching_yaml.py` | `scripts/harvest/teaching.py` | `_dedup_course_names` (private!) |
-| `compute_changepoints.py` | `scripts/analysis/changepoints.py` | `compute_convergence` |
-| `summarize_core_venues.py` | `scripts/analysis/venues.py` | `canonical_venue`, `venue_type`, `institution_group` |
-| `plot_fig_traditions.py` | `scripts/analysis/traditions.py` | `build_pre2007_traditions` (network build + Louvain, not rendering) |
+| `summarize_core_venues` | `canonical_venue`/`venue_type`/`institution_group` → `_venue_naming.py` | `compute_venue_concentration`, `export_core_venues_markdown` |
+| `build_het_core` | `is_global_south`/`is_non_english` → `_corpus_predicates.py` | `analyze_multilingual` |
+| `build_teaching_yaml` | `_dedup_course_names` → `_course_dedup.py` | `analyze_syllabi` |
 
-### MOVE — stays in `scripts/analysis/`, no split, no `-m` (2)
+The other six were **reclassified Tier-2** (see above). One correction to the old
+audit: `qa_near_duplicates` has no `__main__` and its docstring documents a
+`from qa_near_duplicates import …` API — it is already a pure library (Tier-2),
+never dual-role.
 
-`compute_divergence` (`METHODS` registry + dispatch), `compute_null_model`
-(permutation drivers). Import-clean, reused by multiple non-test callers; they
-relocate by phase but keep path invocation.
+### Flags for the move tickets
 
-### STAY in `scripts/figures/` — the importer is the bug (2)
-
-`plot_fig_clustering_comparison`, `plot_fig_clustering_spaces`. What leaked is
-pure rendering; the smell is that `compute_clustering_comparison.py` (a compute
-script) imports a plotter — the backward arrow. Fix by severing the import
-(compute writes tables; Make runs the plotter separately), not by relocating.
+- **Prefix gaps.** The move tickets key on filename prefixes, but three Tier-3
+  entry points match no listed prefix: `build_teaching_yaml`, `build_teaching_canon`
+  (→ harvest, above) and `build_smoke_fixture` (→ analysis). Route them by phase,
+  not prefix.
+- **Unwired orphans (4).** `analyze_alluvial`, `analyze_communities_clusters`,
+  `compute_temporal_communities`, `plot_interactive_corpus` have no `__main__`
+  guard and no Make target — they run at module top level and nothing invokes
+  them. Classified Tier-3 (not library surface), but they are dead-code
+  candidates: verify before moving, or triage separately. Out of 0254 scope.
 
 ## Ordered moves (risk ascending)
 
 1. **Analysis fragments** → `scripts/analysis/analysis.mk` (pure `-include` path
    edits; zero build-graph change). Do first.
-2. **Phase sub-grouping** — `plot_*`/`export_*` → `scripts/figures/`;
-   `analyze_*`/`compute_*` + `_`-private → `scripts/analysis/`;
-   `catalog_*`/`enrich_*`/`corpus_*` → `scripts/harvest/`; `qa_*` → `scripts/qa/`.
+2. **Phase sub-grouping** — move only the Tier-3 entry points per the table
+   above: `plot_*`/`export_*` → `scripts/figures/`; Tier-3 `analyze_*`/`compute_*`/
+   `summarize_*`/`build_het_core`/`build_smoke_fixture` → `scripts/analysis/`;
+   `catalog_*`/`enrich_*`/`corpus_*`/`scout*`/`build_teaching_*`/
+   `compute_reranker_calibration` → `scripts/harvest/`; `qa_*` → `scripts/qa/`.
+   Every Tier-2 module (all `_`-private and the named libraries) stays flat.
 3. **`deliverables/` co-location** + per-paper `_quarto.yml` (kills the
    exclusion-mask profile files; DVC-independent).
-4. **The five extractions** land beside their phase; leaking scripts import them.
-   Behind a full `make clean && make all` gate.
-5. **`compute_clustering_comparison` dependency-inversion cleanup** — separate
-   follow-up; not on the reorg critical path.
+4. **Dual-role extractions** — done in wave-0a as flat `_`-modules, not phase
+   subdirs (0250 extracted `_pre2007_traditions`; 0254 extracted `_venue_naming`,
+   `_corpus_predicates`, `_course_dedup`). The remaining six dual-role files stay
+   flat as Tier-2 libraries; no phase-subdir extraction is required.
+5. **`compute_clustering_comparison` dependency-inversion cleanup** — already
+   severed by 0242; the two clustering plotters move as ordinary Tier-3 figures.
