@@ -875,6 +875,73 @@ class TestMarkerDiscipline:
 
 
 # ---------------------------------------------------------------------------
+# Wrong-namespace monkeypatch guard (ticket 0251; defect class from 0249)
+# ---------------------------------------------------------------------------
+
+
+class TestNoWrongNamespacePatch:
+    """Forbid patching constants on the ``utils`` re-export facade in tests.
+
+    ``utils`` is a re-export facade (architecture.md): every constant it
+    exposes (CATALOGS_DIR, DATA_DIR, ...) is bound BY VALUE into consuming
+    scripts at import time (``from utils import CATALOGS_DIR``). A test that
+    patches the constant on ``utils`` therefore never reaches a consuming
+    module already cached in sys.modules — the test passes in isolation and
+    fails under xdist whenever a sibling test imports the module first.
+    Ticket 0249 fixed two real instances of this class. The correct idiom
+    patches the consuming module's namespace::
+
+        import enrich_abstracts as ea
+        monkeypatch.setattr(ea, "CATALOGS_DIR", str(tmp_path))
+
+    Detected forms (lexical, per line): ``utils`` as the object argument of
+    any setattr call — covers both ``monkeypatch.setattr`` and bare
+    ``setattr`` — and the monkeypatch string-target form ``"utils.<CONST>"``.
+
+    Known limitations of the lexical scan, accepted deliberately:
+
+    - an aliased import (``import utils as u`` then patching ``u``) is not
+      caught; no test file aliases utils today (checked 2026-07-11, ticket
+      0251) and new code has no reason to start.
+    - direct attribute assignment (``utils.CONST = x``) is not flagged. The
+      two legitimate patterns found by the 0249 sweep use it and stay
+      allowed: a test patching utils' own namespace before calling a
+      function that lives in utils itself (test_robustness_observability.py
+      save_run_report tests), and dual-namespace patching of utils AND the
+      consuming module together (test_pipeline_e2e.py _patched_merge_dirs).
+    """
+
+    FORBIDDEN = [
+        # utils as the object argument of a setattr call
+        # (monkeypatch.setattr and bare setattr alike)
+        re.compile(r"setattr\(\s*utils\s*,"),
+        # monkeypatch string-target form: setattr with a "utils.CONST" string
+        re.compile(r"""setattr\(\s*["']utils\."""),
+    ]
+
+    def test_no_setattr_on_utils_namespace(self):
+        """No test may patch a constant on the utils module via setattr."""
+        violations = []
+        for fname in sorted(os.listdir(TESTS_DIR)):
+            if not fname.endswith(".py"):
+                continue
+            path = os.path.join(TESTS_DIR, fname)
+            with open(path) as f:
+                lines = f.readlines()
+            for lineno, line in enumerate(lines, start=1):
+                if any(rx.search(line) for rx in self.FORBIDDEN):
+                    violations.append(f"tests/{fname}:{lineno}: {line.strip()}")
+        assert not violations, (
+            "Wrong-namespace config patch (ticket 0249 defect class): utils "
+            "is a re-export facade whose constants are bound by value into "
+            "consuming scripts at import, so patching them on utils never "
+            "reaches a cached module. Patch the consuming module's namespace "
+            'instead, e.g. monkeypatch.setattr(ea, "CATALOGS_DIR", ...). '
+            "Violations:\n" + "\n".join(violations)
+        )
+
+
+# ---------------------------------------------------------------------------
 # Script naming convention (#547)
 # ---------------------------------------------------------------------------
 
