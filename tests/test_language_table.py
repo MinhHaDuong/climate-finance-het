@@ -9,11 +9,11 @@ Verifies that:
 import os
 import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "figures"))  # 0255: moved figures entry points
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 DATA_PAPER = os.path.join(ROOT, "deliverables", "data-paper", "data-paper.qmd")
-SCRIPT = os.path.join(ROOT, "scripts", "export_language_table.py")
+SCRIPT = os.path.join(ROOT, "scripts", "figures", "export_language_table.py")
 
 
 def read(path):

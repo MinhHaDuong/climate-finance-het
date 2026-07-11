@@ -16,7 +16,10 @@ from utils import get_logger
 
 log = get_logger("plot_fig_dag")
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# Repo root, from scripts/figures/ (three levels up: figures → scripts → repo).
+BASE_DIR = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+)
 
 # ── Load pipeline ──────────────────────────────────────────
 

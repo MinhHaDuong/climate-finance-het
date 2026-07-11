@@ -180,14 +180,14 @@ class TestSmokeCriticalPath:
 
     def test_plot_fig1_bars(self, smoke_output_dir):
         output = os.path.join(smoke_output_dir, "fig1_bars.png")
-        result = _run_script("plot_fig1_bars.py", "--output", output)
+        result = _run_script("figures/plot_fig1_bars.py", "--output", output)
         assert result.returncode == 0, (
             f"plot_fig1_bars.py failed:\n{result.stderr}"
         )
 
     def test_plot_fig1_bars_v1(self, smoke_output_dir):
         output = os.path.join(smoke_output_dir, "fig1_bars_v1.png")
-        result = _run_script("plot_fig1_bars.py", "--v1-only", "--output", output)
+        result = _run_script("figures/plot_fig1_bars.py", "--v1-only", "--output", output)
         assert result.returncode == 0, (
             f"plot_fig1_bars.py --v1-only failed:\n{result.stderr}"
         )

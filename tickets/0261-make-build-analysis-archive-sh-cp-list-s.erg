@@ -1,0 +1,69 @@
+%erg 0.1
+Title: Make build_analysis_archive.sh cp-list subdir-aware for reorg movers
+Created: 2026-07-11
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-11T09:51Z HDMX-coding-agent created
+
+--- body ---
+## Context
+`build/build_analysis_archive.sh` copies the analysis scripts into the
+reproducibility archive with a basename loop:
+
+```sh
+for s in ... plot_fig1_bars.py compute_clusters.py build_het_core.py \
+         export_tab_venues.py ... ; do
+    cp "scripts/$s" "$TMP/scripts/"
+```
+
+The `cp "scripts/$s"` assumes every script is flat at `scripts/`. The wave-1
+reorg (epic 0240) moved these entry points into phase subdirectories:
+- `compute_clusters.py`, `build_het_core.py`, `analyze_bimodality.py`,
+  `summarize_core_venues.py` → `scripts/analysis/` (ticket 0257, already merged)
+- `plot_fig1_bars.py`, `plot_fig2_composition.py`, `plot_bimodality*.py`,
+  `export_tab_venues.py`, `export_citation_coverage.py`,
+  `export_core_venues_markdown.py` → `scripts/figures/` (ticket 0255)
+
+So `cp "scripts/compute_clusters.py"` already fails post-0257, and 0255 adds the
+figures movers to the broken set. The breakage is latent because the repo has no
+CI (reference_repo_no_ci) and the guard tests only assert the *basename string*
+appears in the script text (`test_archive_checksums.py::TestArchiveScripts`,
+`test_script_hygiene.py` ANALYSIS_OUTPUTS cp-coverage), not that the `cp`
+resolves — both pass on basenames regardless of subdir.
+
+Discovered during 0255; deliberately not fixed there to keep that ticket an
+atomic single-move and because the fix spans 0257's movers too.
+
+## Relevant files
+- `build/build_analysis_archive.sh` — the basename cp-loop (lines ~50-55)
+- `tests/test_archive_checksums.py` — asserts basename presence only
+- `tests/test_script_hygiene.py` — ANALYSIS_OUTPUTS cp-coverage (basename)
+- `docs/repo-layout.md` — Tier-2/Tier-3 classification (which script is where)
+
+## Actions
+1. Make the cp-loop subdir-aware — resolve each script's actual path (e.g.
+   `find scripts -name "$s"`, or list `subdir/script.py` pairs), so a moved
+   entry point copies from its real location and lands in the archive.
+2. Preserve the archive's internal layout decision (flat vs mirrored subdirs) and
+   ensure the archived Makefile/PYTHONPATH still resolves the scripts.
+
+## Test
+- A test that actually runs (or dry-runs) the cp-loop and asserts every listed
+  script resolves to an existing path — turning the basename-only guard into a
+  path-resolution guard. Red now (cp "scripts/compute_clusters.py" misses).
+
+## Verification
+- [ ] `build_analysis_archive.sh` copies every listed script from its real path
+- [ ] Guard test upgraded to check path resolution, not just basename presence
+- [ ] `make lint` + `make check` green
+
+## Invariants
+- The reproducibility archive stays self-contained and builds clean-room.
+- No change to the live pipeline — Phase-4 packaging only.
+
+## Exit criteria
+- The archive build resolves every mover's real path; a path-resolution guard
+  prevents silent regression.
+
+Ticket-ref: tickets/0240-reorg-code-2-scripts-by-phase.erg

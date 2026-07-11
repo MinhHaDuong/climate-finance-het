@@ -168,7 +168,7 @@ class TestSingleOutputType:
         """No plot_* script produces both PNG and HTML."""
         violations = []
         for name in _all_scripts():
-            if not name.startswith("plot_"):
+            if not os.path.basename(name).startswith("plot_"):
                 continue
             path = os.path.join(SCRIPTS_DIR, name)
             src = Path(path).read_text()
@@ -203,16 +203,16 @@ class TestSaveFigureMandatory:
 
     # Pre-existing violations. Remove entries as they are migrated.
     KNOWN_VIOLATIONS = {
-        "plot_fig_clustering_comparison.py",
-        "plot_fig_clustering_spaces.py",
-        "plot_fig_dag.py",
+        "figures/plot_fig_clustering_comparison.py",
+        "figures/plot_fig_clustering_spaces.py",
+        "figures/plot_fig_dag.py",
     }
 
     def test_plot_scripts_use_save_figure(self):
         """No plot_* script may call .savefig() directly (use save_figure())."""
         violations = []
         for name in _all_scripts():
-            if not name.startswith("plot_"):
+            if not os.path.basename(name).startswith("plot_"):
                 continue
             if name in self.KNOWN_VIOLATIONS:
                 continue
@@ -276,18 +276,18 @@ class TestNoHardcodedSeeds:
         "analysis/compute_clusters.py",
         "analysis/compute_lexical.py",
         "analysis/compute_temporal_communities.py",
-        "plot_alluvial_html.py",
-        "plot_bimodality.py",
-        "plot_cocitation.py",
-        "plot_fig45_pca_scatter.py",
+        "figures/plot_alluvial_html.py",
+        "figures/plot_bimodality.py",
+        "figures/plot_cocitation.py",
+        "figures/plot_fig45_pca_scatter.py",
         # plot_fig_traditions.py removed (ticket 0250): its RANDOM_STATE=42
         # relocated with build_pre2007_traditions into the neutral helper
         # scripts/_pre2007_traditions.py. That helper now sources the seed from
         # config (pre2007_traditions.louvain_seed, ticket 0259) and the scan
         # covers _*.py helpers, so neither module hardcodes a seed.
-        "plot_figS_kde.py",
-        "plot_heatmap_communities_clusters.py",
-        "plot_ncc_bimodality.py",
+        "figures/plot_figS_kde.py",
+        "figures/plot_heatmap_communities_clusters.py",
+        "figures/plot_ncc_bimodality.py",
     }
 
     # Patterns that indicate a hardcoded seed (literal int in seed position).
@@ -362,10 +362,10 @@ class TestCorpusThroughLoaders:
         "analysis/analyze_communities_clusters.py",
         "analysis/analyze_genealogy.py",
         "analysis/compute_temporal_communities.py",
-        "export_tab_venues.py",
-        "plot_alluvial_html.py",
-        "plot_fig_seed_axis.py",
-        "plot_interactive_corpus.py",
+        "figures/export_tab_venues.py",
+        "figures/plot_alluvial_html.py",
+        "figures/plot_fig_seed_axis.py",
+        "figures/plot_interactive_corpus.py",
     }
 
     _CONTRACT_FILES = re.compile(r"refined_works|refined_citations|refined_embeddings")

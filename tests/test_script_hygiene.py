@@ -771,7 +771,7 @@ class TestPdfDiscipline:
         "analysis/analyze_embeddings.py",
         "analysis/analyze_unfccc_topics.py",
         "harvest/compute_reranker_calibration.py",
-        "plot_interactive_corpus.py",
+        "figures/plot_interactive_corpus.py",
     ]
 
     @pytest.mark.parametrize("script", NON_PLOTTING)
@@ -1223,17 +1223,17 @@ class TestOutputFlag:
     SMOKE = "tests/fixtures/smoke/catalogs"
     BLACKBOX_SCRIPTS = [
         # Phase 2 plots
-        ("plot_fig1_bars.py", ["--input", f"{SMOKE}/refined_works.csv"], ".png"),
-        ("plot_fig_dag.py", [], ".png"),
+        ("figures/plot_fig1_bars.py", ["--input", f"{SMOKE}/refined_works.csv"], ".png"),
+        ("figures/plot_fig_dag.py", [], ".png"),
         # Phase 2 exports
         (
-            "export_citation_coverage.py",
+            "figures/export_citation_coverage.py",
             ["--input", f"{SMOKE}/refined_works.csv", f"{SMOKE}/refined_citations.csv"],
             ".md",
         ),
-        ("export_language_table.py", ["--input", f"{SMOKE}/refined_works.csv"], ".md"),
+        ("figures/export_language_table.py", ["--input", f"{SMOKE}/refined_works.csv"], ".md"),
         (
-            "export_tab_venues.py",
+            "figures/export_tab_venues.py",
             [
                 "--refined-works",
                 f"{SMOKE}/refined_works.csv",
@@ -1249,7 +1249,7 @@ class TestOutputFlag:
         ("analysis/summarize_core_venues.py", ["--core", f"{SMOKE}/refined_works.csv"], ".csv"),
         # Remaining Phase 2 plot scripts (#549 wave 2)
         (
-            "plot_fig45_pca_scatter.py",
+            "figures/plot_fig45_pca_scatter.py",
             [
                 "--input",
                 f"{SMOKE}/refined_works.csv",
@@ -1258,17 +1258,17 @@ class TestOutputFlag:
             ".png",
         ),
         (
-            "plot_fig_lexical_tfidf.py",
+            "figures/plot_fig_lexical_tfidf.py",
             ["--input", f"{SMOKE}/tab_lexical_tfidf.csv"],
             ".stamp",
         ),
         (
-            "plot_fig_traditions.py",
+            "figures/plot_fig_traditions.py",
             ["--input", f"{SMOKE}/refined_works.csv", f"{SMOKE}/refined_citations.csv"],
             ".png",
         ),
         (
-            "plot_heatmap_communities_clusters.py",
+            "figures/plot_heatmap_communities_clusters.py",
             [
                 "--input",
                 f"{SMOKE}/refined_works.csv",

@@ -23,6 +23,7 @@ FIXTURES_DIR = os.path.join(os.path.dirname(__file__), "fixtures", "smoke")
 ROOT_DIR = os.path.join(os.path.dirname(__file__), "..")
 
 sys.path.insert(0, SCRIPTS_DIR)
+sys.path.insert(0, os.path.join(SCRIPTS_DIR, "figures"))  # 0255: moved figures entry points
 
 
 from conftest import run_compute as _run_compute

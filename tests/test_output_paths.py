@@ -15,8 +15,8 @@ SCRIPTS_DIR = os.path.join(ROOT, "scripts")
 
 # Scripts that produce generated tables (Phase 2 outputs)
 TABLE_SCRIPTS = [
-    "export_tab_venues.py",
-    "export_citation_coverage.py",
+    "figures/export_tab_venues.py",
+    "figures/export_citation_coverage.py",
 ]
 
 

@@ -50,15 +50,7 @@ zoo-figures: $(ZOO_SCHEMATICS) $(ZOO_RESULT_FIGS)
 # Each script accepts --output <path>.  No corpus data needed — scripts load
 # real embeddings when available and fall back to synthetic data otherwise.
 
-$(ZOO_FIGS)/schematic_%.png: scripts/plot_schematic_%.py scripts/script_io_args.py
-	$(PYTHON) $< --output $@
-
-# Pilot (ticket 0253): plot_schematic_L3_burst.py lives under scripts/figures/ to
-# prove the import-path model — a phase-subdir entry point resolves its flat
-# imports (from utils import …) via the exported PYTHONPATH source root. An
-# explicit rule overrides the pattern above for this one stem; the bulk moves of
-# the remaining schematics are tickets 0255-0258.
-$(ZOO_FIGS)/schematic_L3_burst.png: scripts/figures/plot_schematic_L3_burst.py scripts/script_io_args.py
+$(ZOO_FIGS)/schematic_%.png: scripts/figures/plot_schematic_%.py scripts/script_io_args.py
 	$(PYTHON) $< --output $@
 
 # ── Cross-year Z-score tables ─────────────────────────────────────────────
@@ -120,8 +112,8 @@ $(foreach m,$(ANALYTICAL_NULL_METHODS),$(eval \
 
 # Pattern rule for all methods: passes --null-ci when tab_null_*.csv exists,
 # and --analytical-null when tab_analytical_null_*.csv exists.
-$(ZOO_FIGS)/fig_zoo_%.png: $(ZOO_TABLES)/tab_crossyear_%.csv scripts/plot_zoo_results.py
-	$(PYTHON) scripts/plot_zoo_results.py --method $* --output $@ \
+$(ZOO_FIGS)/fig_zoo_%.png: $(ZOO_TABLES)/tab_crossyear_%.csv scripts/figures/plot_zoo_results.py
+	$(PYTHON) scripts/figures/plot_zoo_results.py --method $* --output $@ \
 		$(if $(wildcard $(ZOO_TABLES)/tab_null_$*.csv),--null-ci $(ZOO_TABLES)/tab_null_$*.csv,) \
 		$(if $(wildcard $(ZOO_TABLES)/tab_analytical_null_$*.csv),--analytical-null $(ZOO_TABLES)/tab_analytical_null_$*.csv,)
 
@@ -146,9 +138,9 @@ $(ZOO_TABLES)/tab_div_biased_C2ST_embedding.csv: $(DIV_DISPATCH) scripts/_diverg
 
 BIAS_FIGS := $(foreach m,$(BIAS_METHODS),$(ZOO_FIGS)/fig_zoo_bias_$(m).png)
 
-$(ZOO_FIGS)/fig_zoo_bias_%.png: scripts/plot_zoo_bias_comparison.py \
+$(ZOO_FIGS)/fig_zoo_bias_%.png: scripts/figures/plot_zoo_bias_comparison.py \
     $(ZOO_TABLES)/tab_div_%.csv $(ZOO_TABLES)/tab_div_biased_%.csv
-	$(PYTHON) scripts/plot_zoo_bias_comparison.py --method $* \
+	$(PYTHON) scripts/figures/plot_zoo_bias_comparison.py --method $* \
 	    --input $(ZOO_TABLES)/tab_div_$*.csv \
 	    --biased-csv $(ZOO_TABLES)/tab_div_biased_$*.csv \
 	    --output $@

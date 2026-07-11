@@ -6,6 +6,7 @@ import sys
 
 import pandas as pd
 import pytest
+from _source_roots import source_root_env
 
 
 @pytest.fixture()
@@ -24,7 +25,7 @@ def test_plot_zoo_bias_creates_figure(tmp_path, bias_csvs):
     p_deb, p_bias = bias_csvs
     out = str(tmp_path / "fig_zoo_bias_S2_energy.png")
     script = os.path.join(
-        os.path.dirname(__file__), "..", "scripts", "plot_zoo_bias_comparison.py"
+        os.path.dirname(__file__), "..", "scripts", "figures", "plot_zoo_bias_comparison.py"
     )
     result = subprocess.run(
         [
@@ -41,6 +42,7 @@ def test_plot_zoo_bias_creates_figure(tmp_path, bias_csvs):
         ],
         capture_output=True,
         text=True,
+        env=source_root_env(),  # source roots on PYTHONPATH (ticket 0253)
     )
     assert result.returncode == 0, f"Script failed:\n{result.stderr}"
     assert os.path.exists(out), "Output PNG not created"
