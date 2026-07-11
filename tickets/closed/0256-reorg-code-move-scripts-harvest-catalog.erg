@@ -3,6 +3,7 @@ Title: Reorg code — move scripts/harvest/ (catalog_/enrich_/corpus_/scout entr
 Created: 2026-07-11
 Author: HDMX-coding-agent
 Label: deferred
+Closed: Moved 25 Tier-3 harvest entry points to scripts/harvest/; repointed dvc.yaml (36), tests, docs; Tier-2 corpus_merge_citations + enrich_dois stay flat. make lint + check-fast green.
 
 --- log ---
 2026-07-11T06:52Z HDMX-coding-agent created
@@ -11,6 +12,7 @@ Label: deferred
 2026-07-11T07:22Z HDMX-coding-agent note blocker 0253 closed — Blocked-by removed.
 2026-07-11T07:22Z HDMX-coding-agent note blocker 0254 closed — Blocked-by removed.
 2026-07-11T08:12Z HDMX-coding-agent note blocker 0260 closed — Blocked-by removed.
+2026-07-11T08:55Z HDMX-coding-agent closed — Moved 25 Tier-3 harvest entry points to scripts/harvest/; repointed dvc.yaml (36), tests, docs; Tier-2 corpus_merge_citations + enrich_dois stay flat. make lint + check-fast green.
 --- body ---
 ## Context
 Wave-1 move of the code reorg epic (tracker `0240`). Relocate the Phase-1
