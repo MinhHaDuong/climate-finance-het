@@ -1,0 +1,63 @@
+%erg 0.1
+Title: Reorg code — move scripts/harvest/ (catalog_/enrich_/corpus_/scout entry points)
+Created: 2026-07-11
+Author: HDMX-coding-agent
+Blocked-by: 0253
+Blocked-by: 0254
+Label: deferred
+
+--- log ---
+2026-07-11T06:52Z HDMX-coding-agent created
+2026-07-11T06:52Z HDMX-coding-agent note wave-1 move of epic 0240. Blocked-by 0253 (path model) + 0254 (Tier list). Respect semantic-phase exceptions: compute_reranker_calibration is Phase-1, qa_near_duplicates classification comes from 0254.
+
+--- body ---
+## Context
+Wave-1 move of the code reorg epic (tracker `0240`). Relocate the Phase-1
+corpus-building **entry points** — `catalog_*`, `enrich_*`, `corpus_*`, `scout*`
+— into `scripts/harvest/`. Only Tier-3 entry points (per the 0254 audit) move;
+imported library modules stay flat.
+
+## Depends on 0253 + 0254
+- `0253` installs the relative source-root path model (subdir imports resolve).
+- `0254` publishes the Tier-2/Tier-3 list — the contract for what moves.
+
+## Semantic-phase exceptions (architecture.md § "Phase is semantic")
+Phase is what a script *does*, not its prefix. Honour the known exceptions when
+deciding placement:
+- `compute_reranker_calibration.py` — `compute_` prefix but Phase-1 (writes
+  reranker calibration to `CATALOGS_DIR`); it is a harvest/Phase-1 script.
+- Any `enrich_*`/`corpus_*` that the 0254 audit flagged as imported stays flat.
+Do not move a script into `harvest/` on prefix alone — check the audit's phase
+classification.
+
+## Relevant files
+- `scripts/catalog_*.py`, `scripts/enrich_*.py`, `scripts/corpus_*.py`, `scripts/scout*.py`
+- `docs/repo-layout.md` — Tier-2/Tier-3 audit table (0254)
+- `.claude/rules/architecture.md` § Phase is semantic — the exception list
+- `Makefile` + Phase-1 `.mk`/build scripts — corpus target script paths to repoint
+
+## Actions
+1. `git mv` each Tier-3 harvest entry point into `scripts/harvest/`.
+2. Repoint every Make / build script path to the new location.
+3. Leave Tier-2 library modules and the semantic-phase-flagged scripts flat.
+
+## Test
+- `make -n` for one corpus target yields the same prereq graph — only the path
+  segment changes.
+- Moved entry points import + run under `PYTHONPATH=scripts:libs/openalex-corpus/src`.
+- `make check` green.
+
+## Invariants
+- Only Tier-3 entry points move; Tier-2 modules + semantic exceptions stay flat.
+- No top-level `src/`; no `python -m`; flat module names unchanged.
+- Phase separation: a harvest move must not let Phase-1 be triggered by a later
+  phase (feedback `phase_separation`).
+- One logical move per PR (this ticket = the harvest move only).
+
+## Exit criteria
+- All Tier-3 `catalog_*`/`enrich_*`/`corpus_*`/`scout*` entry points under
+  `scripts/harvest/`; semantic exceptions correctly left flat.
+- Every Make/build script path repointed; no dangling reference.
+- `make check` green.
+
+Ticket-ref: tickets/0240-reorg-code-2-scripts-by-phase.erg

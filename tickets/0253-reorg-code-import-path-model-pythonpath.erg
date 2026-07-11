@@ -1,0 +1,86 @@
+%erg 0.1
+Title: Reorg code — import-path model: pythonpath source roots, retire conftest hack + non-editable wheel, de-shim
+Created: 2026-07-11
+Author: HDMX-coding-agent
+Label: deferred
+
+--- log ---
+2026-07-11T06:52Z HDMX-coding-agent created
+2026-07-11T06:52Z HDMX-coding-agent note wave-0b of epic 0240. Load-bearing: unblocks every phase-subdir move (0255-0258). Start now — no prerequisite.
+
+--- body ---
+## Context
+Wave-0b of the code reorg epic (tracker `0240`). Before any entry point can move
+into a `scripts/<phase>/` subdir, the repo must resolve `from utils import …`
+(and the ~93 `script_io_args` / ~160 `utils` call sites) from a subdir the same
+way it does from the flat root. The approved model (author decisions 1+2,
+2026-07-10) unifies the repo on **relative source roots** and retires two
+accreted import hacks in the same change. This keeps flat module names — zero
+import-statement churn — with no `src/`, no `python -m`.
+
+## Approved model (do not re-open — baked in by 0240)
+1. **pytest source roots**: set `pythonpath = ["scripts", "libs/openalex-corpus/src"]`
+   in `pyproject.toml` `[tool.pytest.ini_options]`.
+2. **Makefile source roots**: export `PYTHONPATH=scripts:libs/openalex-corpus/src`
+   for every Phase-2 script invocation.
+3. **Retire the conftest hack**: delete the `tests/conftest.py:29` `sys.path.insert`
+   that currently injects `scripts/` — the pytest `pythonpath` replaces it.
+4. **Retire the non-editable wheel**: drop the `openalex-corpus`
+   `[tool.uv.sources]` local-path install (the wheel is no longer imported via
+   site-packages; it is on `PYTHONPATH` by source root). KEEP
+   `libs/openalex-corpus/pyproject.toml` so AEDIST consumes it by git source
+   (ticket 0229) — only this repo's local install is retired.
+5. **De-shim the pure re-exports**: drop the pass-through re-exports in
+   `pipeline_text` (`normalize_doi` / `reconstruct_abstract` re-exported from
+   `libs/openalex-corpus`) so call sites import from the real home. KEEP
+   `pipeline_io.retry_get` — it is a real adapter (injects this repo's `MAILTO`
+   and User-Agent), not a pass-through.
+
+Out of scope: `libs/<pkg>` packaging (ticket 0229, AEDIST-gated); the file moves
+themselves (0255-0258).
+
+## Relevant files
+- `pyproject.toml` — `[tool.pytest.ini_options]` pythonpath; `[tool.uv.sources]` entry to drop
+- `tests/conftest.py` — the `sys.path.insert` hack at ~line 29 to delete
+- `scripts/pipeline_text.py` — pure re-exports to drop (`normalize_doi`, `reconstruct_abstract`)
+- `scripts/pipeline_io.py` — `retry_get` adapter to KEEP
+- `Makefile` + `scripts/analysis/*.mk` — `PYTHONPATH=` export for script invocations
+- `docs/repo-layout.md`, `.claude/rules/architecture.md` § Shared conventions — note the model change
+- `tests/test_openalex_corpus_equivalence.py` — parity guard that must stay green
+
+## Actions
+1. Add the pytest `pythonpath` source roots; delete the conftest `sys.path.insert`.
+2. Add the Makefile `PYTHONPATH` export.
+3. Drop the `[tool.uv.sources]` local-path install for `openalex-corpus`; `uv lock`.
+4. De-shim `pipeline_text` pure re-exports; repoint the (few) call sites to the
+   real home. Leave `pipeline_io.retry_get` intact.
+5. **Pilot before declaring done**: move ONE entry point (e.g. a single `plot_*`)
+   into a phase subdir and prove `make <its-target>` runs AND `pytest` collects
+   and passes with it there. Revert the pilot move (it belongs to 0255-0258) once
+   proven — this ticket ships the path model, not the moves.
+
+## Test
+- A file placed under `scripts/<phase>/` resolves `from utils import …` under the
+  new path config (the pilot proves it end to end).
+- `pytest` collects the whole suite via `pythonpath` with the conftest hack gone.
+- Import-resolution smoke over ALL entry points: every `scripts/*.py` with a
+  `__main__` imports cleanly under `PYTHONPATH=scripts:libs/openalex-corpus/src`
+  (a loop that imports each module name, asserts no ImportError).
+- `tests/test_openalex_corpus_equivalence.py` stays green after the de-shim.
+
+## Invariants
+- Flat module names unchanged (`from utils import`, `from script_io_args import`)
+  — zero import-statement churn at call sites except the de-shimmed pair.
+- No top-level `src/`; no `python -m` flip.
+- `libs/openalex-corpus/pyproject.toml` retained (AEDIST git-source consumption).
+- `pipeline_io.retry_get` adapter retained.
+- `make check` and `make clean && make all` green.
+
+## Exit criteria
+- pytest and Makefile both resolve imports via relative source roots.
+- `tests/conftest.py` `sys.path.insert` hack removed; `[tool.uv.sources]` local
+  install removed; `pipeline_text` pure re-exports removed; `retry_get` kept.
+- Pilot move proved run + collect, then reverted.
+- Full suite green.
+
+Ticket-ref: tickets/0240-reorg-code-2-scripts-by-phase.erg

@@ -1,0 +1,65 @@
+%erg 0.1
+Title: Reorg code — move scripts/analysis/ (analyze_/compute_/summarize_/build_het_core)
+Created: 2026-07-11
+Author: HDMX-coding-agent
+Blocked-by: 0253
+Blocked-by: 0254
+Label: deferred
+
+--- log ---
+2026-07-11T06:52Z HDMX-coding-agent created
+2026-07-11T06:52Z HDMX-coding-agent note wave-1 move of epic 0240. Blocked-by 0253 (path model) + 0254 (Tier list). scripts/analysis/ partly exists (the .mk fragments from 0239 already live there); this adds the entry-point scripts. Also the real prerequisite for 0241 (extractions land in this subdir).
+
+--- body ---
+## Context
+Wave-1 move of the code reorg epic (tracker `0240`). Relocate the Phase-2
+analysis **entry points** — `analyze_*`, `compute_*`, `summarize_*`, and
+`build_het_core.py` — into `scripts/analysis/`. The directory partly exists: the
+five analysis `.mk` fragments were relocated there by ticket 0239. Only Tier-3
+entry points (per the 0254 audit) move; imported library modules stay flat, as do
+the semantic-phase exceptions.
+
+This move is the real prerequisite for `0241` (the five SPLIT extractions land in
+the phase subdirs this ticket creates) — 0241 is re-pointed to Blocked-by this
+ticket, not the tracker.
+
+## Depends on 0253 + 0254
+- `0253` installs the relative source-root path model (subdir imports resolve).
+- `0254` publishes the Tier-2/Tier-3 list — the contract for what moves.
+
+## Semantic-phase exceptions (architecture.md § "Phase is semantic")
+- `compute_reranker_calibration.py` is Phase-1 (harvest), NOT analysis — it does
+  not move here (handled by 0256's harvest scope / stays flat per the audit).
+- Any `compute_*`/`summarize_*` the 0254 audit flagged as imported stays flat
+  (e.g. an extracted `summarize_core_venues` library part).
+
+## Relevant files
+- `scripts/analyze_*.py`, `scripts/compute_*.py`, `scripts/summarize_*.py`, `scripts/build_het_core.py`
+- `scripts/analysis/` — already holds the analysis `.mk` fragments (0239)
+- `docs/repo-layout.md` — Tier-2/Tier-3 audit table (0254)
+- `Makefile` + `scripts/analysis/*.mk` — analysis target script paths to repoint
+
+## Actions
+1. `git mv` each Tier-3 analysis entry point into `scripts/analysis/`.
+2. Repoint every Make target script path to the new location.
+3. Leave Tier-2 library modules and semantic-phase exceptions flat.
+
+## Test
+- `make -n` for one analysis target yields the same prereq graph — only the path
+  segment changes.
+- Moved entry points import + run under `PYTHONPATH=scripts:libs/openalex-corpus/src`.
+- `make check` green; analysis outputs byte-identical before/after (pure move).
+
+## Invariants
+- Only Tier-3 entry points move; Tier-2 modules + semantic exceptions stay flat.
+- No top-level `src/`; no `python -m`; flat module names unchanged.
+- Layering (architecture.md rule 4): a compute module never imports a plotter.
+- One logical move per PR (this ticket = the analysis move only).
+
+## Exit criteria
+- All Tier-3 `analyze_*`/`compute_*`/`summarize_*`/`build_het_core` entry points
+  under `scripts/analysis/`.
+- Every Make script path repointed; no dangling reference.
+- `make check` and `make clean && make all` green; outputs byte-identical.
+
+Ticket-ref: tickets/0240-reorg-code-2-scripts-by-phase.erg

@@ -1,0 +1,57 @@
+%erg 0.1
+Title: Reorg code — move scripts/figures/ (plot_/export_ entry points)
+Created: 2026-07-11
+Author: HDMX-coding-agent
+Blocked-by: 0253
+Blocked-by: 0254
+Label: deferred
+
+--- log ---
+2026-07-11T06:52Z HDMX-coding-agent created
+2026-07-11T06:52Z HDMX-coding-agent note wave-1 move of epic 0240. Blocked-by 0253 (path model must resolve subdir imports) + 0254 (Tier-2/Tier-3 list decides what moves).
+
+--- body ---
+## Context
+Wave-1 move of the code reorg epic (tracker `0240`). Relocate the Phase-2
+figure-producing **entry points** — `plot_*` and `export_*` — into
+`scripts/figures/`. Only Tier-3 entry points (per the 0254 audit) move; any
+`plot_*`/`export_*` file that is imported by another script stays flat (Tier-2)
+or was already extracted by 0254.
+
+## Depends on 0253 + 0254
+- `0253` installs the relative source-root path model, so a file under
+  `scripts/figures/` still resolves `from utils import …`.
+- `0254` publishes the definitive Tier-2 (stays-flat) vs Tier-3 (moves) list —
+  the contract for exactly which files move here.
+
+## Relevant files
+- `scripts/plot_*.py`, `scripts/export_*.py` — the Tier-3 subset (per 0254)
+- `docs/repo-layout.md` — the Tier-2/Tier-3 audit table (0254)
+- `Makefile` + `scripts/analysis/*.mk` — figure/table target script paths to repoint
+- `tests/test_layering.py` — layering guard (a plotter never imports a compute driver the wrong way)
+
+## Actions
+1. `git mv` each Tier-3 `plot_*` / `export_*` entry point into `scripts/figures/`.
+2. Repoint every Make target script path (`scripts/plot_x.py` →
+   `scripts/figures/plot_x.py`). Imports need no edit (flat module names via the
+   path model).
+3. Leave every Tier-2 library module flat at `scripts/` root.
+
+## Test
+- `make -n` for one figure target and one export target yields the same prereq
+  graph — only the `scripts/figures/…` path segment changes.
+- The moved entry points import + run under `PYTHONPATH=scripts:libs/openalex-corpus/src`.
+- `make check` green; figure outputs byte-identical before/after (pure move).
+
+## Invariants
+- Only Tier-3 entry points move; Tier-2 library modules stay flat.
+- No top-level `src/`; no `python -m`; flat module names unchanged.
+- Layering (architecture.md rule 4): a compute module never imports a plotter.
+- One logical move per PR (this ticket = the figures move only).
+
+## Exit criteria
+- All Tier-3 `plot_*`/`export_*` entry points live under `scripts/figures/`.
+- Every Make script path repointed; no dangling reference.
+- `make check` and `make clean && make all` green; figures byte-identical.
+
+Ticket-ref: tickets/0240-reorg-code-2-scripts-by-phase.erg

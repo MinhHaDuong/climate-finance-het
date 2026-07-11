@@ -1,0 +1,60 @@
+%erg 0.1
+Title: Hygiene — RANDOM_STATE seed to config/analysis.yaml (restore seed-scan coverage)
+Created: 2026-07-11
+Author: HDMX-coding-agent
+Label: deferred
+
+--- log ---
+2026-07-11T06:52Z HDMX-coding-agent created
+2026-07-11T06:52Z HDMX-coding-agent note fallout of epic 0240's exemplar (0250). Independent — no prerequisite. Restores the seed-scan coverage 0250 silently narrowed.
+
+--- body ---
+## Context
+Independent hygiene item surfaced by the code reorg epic (tracker `0240`). Ticket
+`0250` relocated `RANDOM_STATE = 42` into `scripts/_pre2007_traditions.py`. That
+neutral module carries no Phase-2 filename prefix, so it fell out of the
+prefix-gated hardcoded-seed scan in `tests/test_arch_compliance.py`. The stale
+`KNOWN_VIOLATIONS` entry for the old location was removed in the same change,
+which left the relocated seed **unguarded** — a hardcoded `42` that architecture
+rule 7 ("random seeds from config") forbids, now invisible to the guard.
+
+This is the class defect flagged in feedback `moving_files_narrows_guard_globs`:
+relocating a file silently narrows a fixed-prefix guard glob, and a green suite
+hides the lost coverage.
+
+## Relevant files
+- `scripts/_pre2007_traditions.py` — holds the relocated `RANDOM_STATE = 42`
+- `config/analysis.yaml` — canonical home for seeds (read via `load_analysis_config()`)
+- `tests/test_arch_compliance.py` — the prefix-gated hardcoded-seed scan
+- `.claude/rules/architecture.md` § Phase 2 rule 7 (random seeds from config)
+
+## Actions
+Pick the coherent fix (decide across the whole logical unit, do not half-do):
+1. **Preferred** — read the seed from `config/analysis.yaml` via
+   `load_analysis_config()` in `_pre2007_traditions.py`, as every other
+   stochastic op does; remove the hardcoded `42`. This is the rule-7 remedy AND
+   removes the guard's blind spot at once.
+2. **If a config read is genuinely unwarranted here** — extend the seed scan in
+   `tests/test_arch_compliance.py` to cover shared `_*.py` helpers (not just
+   Phase-2-prefixed files), so the neutral module is in scope again.
+Option 1 is preferred; only fall back to 2 with a stated reason.
+
+## Test
+- RED first: a seed-scan test that flags a hardcoded `RandomState(42)` /
+  `seed=42` in `scripts/_pre2007_traditions.py` currently PASSES (the blind spot)
+  — make it FAIL by widening the scan (or prove option 1 removes the literal so
+  the widened scan stays green).
+- Prove the guard's teeth by mutating: reintroduce a hardcoded seed and confirm
+  the scan fails (feedback `pin_test_mutation_teeth`).
+
+## Invariants
+- No behaviour change: the seed value stays 42 (moved to config, not changed).
+- `make lint` and `make check-fast` green.
+
+## Exit criteria
+- No hardcoded seed literal in `scripts/_pre2007_traditions.py` (option 1), OR
+  the seed scan covers shared `_*.py` helpers (option 2).
+- The seed-scan guard fails on a reintroduced hardcoded seed (proven by mutation).
+- `make lint` green.
+
+Ticket-ref: tickets/0240-reorg-code-2-scripts-by-phase.erg

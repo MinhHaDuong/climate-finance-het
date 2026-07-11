@@ -1,0 +1,64 @@
+%erg 0.1
+Title: Reorg code — move scripts/qa/ (qa_ entry points)
+Created: 2026-07-11
+Author: HDMX-coding-agent
+Blocked-by: 0253
+Blocked-by: 0254
+Label: deferred
+
+--- log ---
+2026-07-11T06:52Z HDMX-coding-agent created
+2026-07-11T06:52Z HDMX-coding-agent note wave-1 move of epic 0240. Blocked-by 0253 (path model) + 0254 (Tier list). Respect qa_embeddings/qa_detect_type Phase-2 semantics; qa_near_duplicates classification comes from 0254.
+
+--- body ---
+## Context
+Wave-1 move of the code reorg epic (tracker `0240`). Relocate the `qa_*` **entry
+points** into `scripts/qa/`. Only Tier-3 entry points (per the 0254 audit) move;
+imported library modules stay flat.
+
+## Depends on 0253 + 0254
+- `0253` installs the relative source-root path model (subdir imports resolve).
+- `0254` publishes the Tier-2/Tier-3 list — the contract for what moves.
+
+## Semantic-phase note (architecture.md § "Phase is semantic")
+The `qa_` prefix sits in the Phase-1 prefix table, but phase is what the script
+*does*:
+- `qa_embeddings.py`, `qa_detect_type.py` emit **Phase-2** outputs
+  (`semantic_clusters.csv`, `qa_type_report.csv` → `DERIVED_TABLES_DIR`). The
+  directory move to `scripts/qa/` groups them by concern; it does not change
+  their phase or their output home.
+- `qa_near_duplicates.py` is imported by `corpus_filter` — its 0254
+  classification decides whether it moves or its library part is extracted first.
+Group by concern, not by asserting a single phase for the folder.
+
+## Relevant files
+- `scripts/qa_*.py` — the Tier-3 subset (per 0254)
+- `docs/repo-layout.md` — Tier-2/Tier-3 audit table (0254)
+- `.claude/rules/architecture.md` § Phase is semantic
+- `Makefile` + relevant `.mk` — `qa_*` target script paths to repoint
+
+## Actions
+1. `git mv` each Tier-3 `qa_*` entry point into `scripts/qa/`.
+2. Repoint every Make target script path to the new location.
+3. Leave Tier-2 library modules flat (e.g. an extracted `qa_near_duplicates`
+   library part).
+
+## Test
+- `make -n` for one `qa_*` target yields the same prereq graph — only the path
+  segment changes.
+- Moved entry points import + run under `PYTHONPATH=scripts:libs/openalex-corpus/src`.
+- `make check` green.
+
+## Invariants
+- Only Tier-3 entry points move; Tier-2 modules stay flat.
+- No top-level `src/`; no `python -m`; flat module names unchanged.
+- Phase semantics unchanged: `qa_embeddings`/`qa_detect_type` still write their
+  Phase-2 outputs to `DERIVED_TABLES_DIR`.
+- One logical move per PR (this ticket = the qa move only).
+
+## Exit criteria
+- All Tier-3 `qa_*` entry points under `scripts/qa/`.
+- Every Make script path repointed; no dangling reference.
+- `make check` green.
+
+Ticket-ref: tickets/0240-reorg-code-2-scripts-by-phase.erg

@@ -1,0 +1,72 @@
+%erg 0.1
+Title: Reorg code — entry-point vs library classification audit + extract embedded helpers
+Created: 2026-07-11
+Author: HDMX-coding-agent
+Label: deferred
+
+--- log ---
+2026-07-11T06:52Z HDMX-coding-agent created
+2026-07-11T06:52Z HDMX-coding-agent note wave-0a of epic 0240. 0250 is the exemplar (extracted build_pre2007_traditions to neutral _pre2007_traditions.py). Produces the definitive Tier-2/Tier-3 file list the moves consume. Start now — no prerequisite.
+
+--- body ---
+## Context
+Wave-0a of the code reorg epic (tracker `0240`). The two-tier rule the epic
+rests on: only PURE **entry points** (run, never imported) move into
+`scripts/<phase>/`; **internal library modules** (imported by another script)
+STAY FLAT at `scripts/` root, which becomes the library surface on the path.
+The moves (0255-0258) need a definitive classification before they run — a file
+that is BOTH an entry point AND imported by another module is the hazard: move it
+and the importer's `from <name> import …` breaks.
+
+`0250` is the exemplar of the fix: `build_pre2007_traditions` was a genuine
+analysis helper embedded in a `plot_*` entry point AND imported by
+`compute_null_separation`; it was extracted to a neutral `scripts/_pre2007_traditions.py`
+that stays flat while the plot entry point is free to move.
+
+## Actions
+1. Build the import graph over `scripts/*.py`: for each file, does it have a
+   `__main__` (entry point) and is it imported by any other script?
+2. For every file that is BOTH an entry point AND imported by another module,
+   decide per file:
+   - **Extract** the imported (library) part into a neutral `_*` module that
+     stays flat (the 0250 pattern), freeing the entry point to move; OR
+   - **Classify Tier-2** (stays flat) if it is really a pure helper mislabelled
+     as an entry point.
+   Known candidates to resolve:
+   - `summarize_core_venues` — imported by `compute_venue_concentration` AND
+     `export_core_venues_markdown`.
+   - `qa_near_duplicates` — imported by `corpus_filter`.
+   (Enumerate the rest from the graph; do not assume these two are exhaustive.)
+3. Emit the **definitive Tier-2 (stays-flat) vs Tier-3 (moves) file list** — the
+   contract the four move tickets (0255-0258) consume. Record it in
+   `docs/repo-layout.md` (or a linked audit table there).
+
+## Relevant files
+- `scripts/*.py` — 173 files to classify
+- `docs/repo-layout.md` — home for the Tier-2/Tier-3 audit table
+- `scripts/_pre2007_traditions.py` — the 0250 exemplar extraction (neutral, flat)
+- `tests/test_layering.py` — layering guard the extractions must keep green
+
+## Test
+- An import-graph test: assert no file classified Tier-3 (moves) is imported by
+  any other `scripts/*.py` module — i.e. the moving set is import-leaf on the
+  library surface. This is the mechanical gate the move tickets rely on.
+- For any embedded-helper extraction: byte-check old-vs-new (import the
+  pre-extraction function and the extracted one, assert identical output on the
+  current corpus slice) — never against a committed golden (feedback memory
+  `bytecheck_old_vs_new_not_golden`).
+
+## Invariants
+- No behaviour change: each extraction is a pure move of logic + an import repoint.
+- Layering (architecture.md rule 4): a compute module never imports a plotter.
+- Extracted library modules stay FLAT at `scripts/` root (Tier-2), not in a phase
+  subdir.
+- `make check` green.
+
+## Exit criteria
+- Definitive Tier-2 vs Tier-3 file list published in `docs/repo-layout.md`.
+- Every entry-point-that-is-also-imported resolved (extracted or reclassified);
+  no Tier-3 file is imported by another script.
+- Byte-identical output before/after for every extraction; `make check` green.
+
+Ticket-ref: tickets/0240-reorg-code-2-scripts-by-phase.erg
