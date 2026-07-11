@@ -35,37 +35,40 @@ DERIVED := data/derived/tables
 figures: content/figures/fig_bars_v1.png content/figures/fig_composition.png \
          content/tables/tab_venues.md $(DERIVED)/tab_alluvial.csv
 
+# Script paths mirror the repo layout after the epic-0240 reorg: entry points
+# live under scripts/{figures,analysis}/, tier-2 libs (utils, plot_style) stay
+# flat at scripts/. PYTHONPATH=scripts resolves the flat imports either way.
 $(DERIVED)/tab_alluvial.csv $(DERIVED)/tab_core_shares.csv $(DERIVED)/cluster_labels.json &: \
-		scripts/compute_clusters.py scripts/utils.py $(REFINED) $(DATA)/refined_embeddings.npz
+		scripts/analysis/compute_clusters.py scripts/utils.py $(REFINED) $(DATA)/refined_embeddings.npz
 	$(UV_RUN) python $< --output $(DERIVED)/tab_alluvial.csv
 
 # ── Figures ─────────────────────────────────────────────────
-content/figures/fig_bars_v1.png: scripts/plot_fig1_bars.py scripts/plot_style.py scripts/utils.py $(REFINED)
+content/figures/fig_bars_v1.png: scripts/figures/plot_fig1_bars.py scripts/plot_style.py scripts/utils.py $(REFINED)
 	$(UV_RUN) python $< --v1-only
 
-content/figures/fig_composition.png: scripts/plot_fig2_composition.py scripts/plot_style.py scripts/utils.py \
+content/figures/fig_composition.png: scripts/figures/plot_fig2_composition.py scripts/plot_style.py scripts/utils.py \
 		config/v1_tab_alluvial.csv config/v1_cluster_labels.json
 	$(UV_RUN) python $< --alluvial config/v1_tab_alluvial.csv --labels config/v1_cluster_labels.json
 
-$(DATA)/het_mostcited_50.csv: scripts/build_het_core.py scripts/utils.py $(REFINED)
+$(DATA)/het_mostcited_50.csv: scripts/analysis/build_het_core.py scripts/utils.py $(REFINED)
 	$(UV_RUN) python $<
 
-content/tables/tab_venues.md: scripts/export_tab_venues.py scripts/utils.py $(REFINED) \
+content/tables/tab_venues.md: scripts/figures/export_tab_venues.py scripts/utils.py $(REFINED) \
 		$(DERIVED)/tab_pole_papers.csv
 	$(UV_RUN) python $<
 
-$(DERIVED)/tab_pole_papers.csv &: scripts/analyze_bimodality.py scripts/utils.py $(REFINED)
+$(DERIVED)/tab_pole_papers.csv &: scripts/analysis/analyze_bimodality.py scripts/utils.py $(REFINED)
 	$(UV_RUN) python $<
 
-content/figures/fig_bimodality.png: scripts/plot_bimodality.py scripts/utils.py \
+content/figures/fig_bimodality.png: scripts/figures/plot_bimodality.py scripts/utils.py \
 		$(DERIVED)/tab_pole_papers.csv
 	$(UV_RUN) python $<
 
-content/figures/fig_bimodality_lexical.png: scripts/plot_bimodality_lexical.py scripts/utils.py \
+content/figures/fig_bimodality_lexical.png: scripts/figures/plot_bimodality_lexical.py scripts/utils.py \
 		$(DERIVED)/tab_pole_papers.csv
 	$(UV_RUN) python $<
 
-content/figures/fig_bimodality_keywords.png: scripts/plot_bimodality_keywords.py scripts/utils.py \
+content/figures/fig_bimodality_keywords.png: scripts/figures/plot_bimodality_keywords.py scripts/utils.py \
 		$(DERIVED)/tab_pole_papers.csv
 	$(UV_RUN) python $<
 
