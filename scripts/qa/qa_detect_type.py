@@ -8,7 +8,7 @@ Adds a `doc_type` column and fixes misleading `journal` entries (e.g. "World Ban
 is a publisher, not a journal).
 
 Usage:
-    uv run python scripts/qa_detect_type.py [--apply]
+    uv run python scripts/qa/qa_detect_type.py [--apply]
 
 Outputs:
     - stdout: type distribution summary

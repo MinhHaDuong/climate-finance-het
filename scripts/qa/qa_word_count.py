@@ -10,7 +10,7 @@ auteurs.md:
   - AI-tell blacklisted words (from AGENTS.md)
 
 Usage:
-    uv run python scripts/qa_word_count.py [path/to/manuscript.pdf]
+    uv run python scripts/qa/qa_word_count.py [path/to/manuscript.pdf]
 
 If no path is given, defaults to deliverables/manuscript/manuscript.pdf.
 """

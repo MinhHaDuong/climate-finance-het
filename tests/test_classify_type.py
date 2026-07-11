@@ -7,7 +7,7 @@ for representative inputs covering all code paths.
 import os
 import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "qa"))
 
 from qa_detect_type import classify_type
 

@@ -15,7 +15,7 @@ Reports proportions with 95% Wilson confidence intervals.
 Saves the JSON report to the caller-supplied --output path.
 
 Usage:
-    uv run python scripts/qa_metadata.py --output content/tables/qa_metadata_report.json
+    uv run python scripts/qa/qa_metadata.py --output content/tables/qa_metadata_report.json
         [--sample-n 100] [--seed 42]
 """
 

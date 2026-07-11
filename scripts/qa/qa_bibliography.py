@@ -9,7 +9,7 @@ Produces:
 - Reverse check: highly-cited corpus papers by bib authors not in bib
 
 Run with:
-  uv run python scripts/qa_bibliography.py --output content/tables/bib_corpus_match.csv
+  uv run python scripts/qa/qa_bibliography.py --output content/tables/bib_corpus_match.csv
 """
 
 import os

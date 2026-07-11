@@ -20,7 +20,7 @@ import sys
 
 import pytest
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "qa"))
 
 # qa_bib_doi imports bibtexparser, which lives in the Phase-1 `corpus`
 # dependency-group (not installed on Phase-2/3 hosts like doudou). Skip the whole

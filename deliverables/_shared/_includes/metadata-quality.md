@@ -1,6 +1,6 @@
 ## Metadata Accuracy
 
-**Script:** `scripts/qa_metadata.py`
+**Script:** `scripts/qa/qa_metadata.py`
 
 **Data:** `content/tables/qa_metadata_report.json`
 

@@ -10,7 +10,7 @@ No API calls — all computation is local (numpy/scipy on refined_embeddings.npz
 Saves the JSON report to the caller-supplied --output path.
 
 Usage:
-    uv run python scripts/qa_embeddings.py --output content/tables/qa_embeddings_report.json
+    uv run python scripts/qa/qa_embeddings.py --output content/tables/qa_embeddings_report.json
         [--n-pairs 200] [--n-neighbours 5] [--seed 42]
 """
 
