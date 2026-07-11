@@ -12,7 +12,7 @@ import resource
 
 import numpy as np
 import pandas as pd
-from build_het_core import is_global_south, is_non_english
+from _corpus_predicates import is_global_south, is_non_english
 from pipeline_loaders import (
     DERIVED_TABLES_DIR,
     REFINED_WORKS_PATH,
