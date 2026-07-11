@@ -3,6 +3,7 @@ Title: Reorg code — move scripts/figures/ (plot_/export_ entry points)
 Created: 2026-07-11
 Author: HDMX-coding-agent
 Label: deferred
+Closed: All 62 Tier-3 figures entry points moved to scripts/figures/; full-surface repoint (build/tests/docs/archive); plot_style + Tier-2 exports stay flat; make lint + check-fast green; reorg complete — scripts/ root is Tier-2-only + phase subdirs
 
 --- log ---
 2026-07-11T06:52Z HDMX-coding-agent created
@@ -11,6 +12,7 @@ Label: deferred
 2026-07-11T07:22Z HDMX-coding-agent note blocker 0253 closed — Blocked-by removed.
 2026-07-11T07:22Z HDMX-coding-agent note blocker 0254 closed — Blocked-by removed.
 2026-07-11T08:12Z HDMX-coding-agent note blocker 0260 closed — Blocked-by removed.
+2026-07-11T09:52Z HDMX-coding-agent closed — All 62 Tier-3 figures entry points moved to scripts/figures/; full-surface repoint (build/tests/docs/archive); plot_style + Tier-2 exports stay flat; make lint + check-fast green; reorg complete — scripts/ root is Tier-2-only + phase subdirs
 --- body ---
 ## Context
 Wave-1 move of the code reorg epic (tracker `0240`). Relocate the Phase-2
