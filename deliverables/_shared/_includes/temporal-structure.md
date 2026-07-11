@@ -9,7 +9,7 @@
      resolvable producer. No institutional attribution errors found (Stern 2006 / Bali COP-13 2007 / Paris
      2015 consistent with the UNFCCC record). -->
 
-**Script:** `scripts/compute_clustering_comparison.py` (multi-space silhouette), `scripts/analyze_space_interactions.py` <!-- 0244: this second script is absent from the repo -->
+**Script:** `scripts/analysis/compute_clustering_comparison.py` (multi-space silhouette), `scripts/analyze_space_interactions.py` <!-- 0244: this second script is absent from the repo -->
 
 
 Section 7 establishes that the full corpus shows weak cluster structure. But this static picture may obscure temporal dynamics: did the field once have clear boundaries that later dissolved? This section examines how cluster structure evolves over time in each representation space.

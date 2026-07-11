@@ -1,6 +1,6 @@
 ## Bimodality Analysis
 
-**Script:** `scripts/analyze_bimodality.py`
+**Script:** `scripts/analysis/analyze_bimodality.py`
 
 This analysis tests whether the corpus is structured around two opposed intellectual communities -- an "efficiency" pole and an "accountability" pole -- using three independent methods.
 

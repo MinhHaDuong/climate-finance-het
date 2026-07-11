@@ -242,7 +242,7 @@ def load_cluster_labels(n_clusters=6):
 
     warnings.warn(
         f"cluster_labels.json not found at {_CLUSTER_LABELS_PATH}. "
-        "Run: uv run python scripts/compute_clusters.py",
+        "Run: uv run python scripts/analysis/compute_clusters.py",
         stacklevel=2,
     )
     return {i: f"Cluster {i}" for i in range(n_clusters)}

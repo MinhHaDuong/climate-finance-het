@@ -12,7 +12,7 @@ Uses IDENTICAL methodology for each window:
 Then align communities across windows using Jaccard similarity on DOI sets.
 
 Usage:
-    uv run python scripts/compute_temporal_communities.py
+    uv run python scripts/analysis/compute_temporal_communities.py
 """
 
 import os

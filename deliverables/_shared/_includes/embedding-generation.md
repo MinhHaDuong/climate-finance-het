@@ -1,6 +1,6 @@
 ## Embedding Generation
 
-**Scripts:** `scripts/harvest/enrich_embeddings.py` (Phase 1: encoding), `scripts/analyze_embeddings.py` (Phase 2: UMAP + clustering)
+**Scripts:** `scripts/harvest/enrich_embeddings.py` (Phase 1: encoding), `scripts/analysis/analyze_embeddings.py` (Phase 2: UMAP + clustering)
 
 **Model:** `BAAI/bge-m3` (sentence-transformers library). This multilingual model produces 1024-dimensional vectors with an 8192-token context window, chosen for its ability to place texts in English, French, Chinese, Japanese, and German into a shared semantic space without truncation of typical abstracts.
 

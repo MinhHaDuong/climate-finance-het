@@ -10,7 +10,7 @@ Writes:
 - tables/tab_core_venues_all.csv
 
 Usage:
-    uv run python scripts/summarize_core_venues.py
+    uv run python scripts/analysis/summarize_core_venues.py
 """
 
 import os

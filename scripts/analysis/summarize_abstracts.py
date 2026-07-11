@@ -10,7 +10,7 @@ This script:
 4. Updates the DataFrame with summaries and abstract_status column
 
 Usage:
-    uv run python scripts/summarize_abstracts.py [--works-input PATH] [--model MODEL]
+    uv run python scripts/analysis/summarize_abstracts.py [--works-input PATH] [--model MODEL]
 """
 
 import argparse

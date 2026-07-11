@@ -224,7 +224,7 @@ class TestComputeBreakpointsOneOutput:
 
     def test_no_companion_files(self):
         """Default mode must not write stem-derived companion files."""
-        source_path = os.path.join(SCRIPTS_DIR, "compute_breakpoints.py")
+        source_path = os.path.join(SCRIPTS_DIR, "analysis", "compute_breakpoints.py")
         with open(source_path) as f:
             source = f.read()
         # The script should not derive companion filenames from the output stem
@@ -235,7 +235,7 @@ class TestComputeBreakpointsOneOutput:
 
     def test_k_sensitivity_not_hardcoded(self):
         """K-sensitivity output path must come from --output, not hardcoded."""
-        source_path = os.path.join(SCRIPTS_DIR, "compute_breakpoints.py")
+        source_path = os.path.join(SCRIPTS_DIR, "analysis", "compute_breakpoints.py")
         with open(source_path) as f:
             source = f.read()
         assert '"tab_k_sensitivity.csv"' not in source, (
@@ -245,7 +245,7 @@ class TestComputeBreakpointsOneOutput:
 
     def test_mutually_exclusive_modes(self):
         """--robustness and --k-sensitivity should be mutually exclusive."""
-        source_path = os.path.join(SCRIPTS_DIR, "compute_breakpoints.py")
+        source_path = os.path.join(SCRIPTS_DIR, "analysis", "compute_breakpoints.py")
         with open(source_path) as f:
             source = f.read()
         assert "add_mutually_exclusive_group" in source, (
@@ -361,19 +361,19 @@ class TestDerivedProducersMakedirs:
         """
         found = set(self.PRODUCERS)
         expected = {
-            "analyze_embeddings.py",
-            "analyze_cocitation.py",
-            "build_het_core.py",
-            "compute_lexical.py",
-            "compute_analytical_null.py",
-            "compute_crossyear_zscore.py",
-            "compute_sensitivity_grid.py",
-            "compute_venue_concentration.py",
+            "analysis/analyze_embeddings.py",
+            "analysis/analyze_cocitation.py",
+            "analysis/build_het_core.py",
+            "analysis/compute_lexical.py",
+            "analysis/compute_analytical_null.py",
+            "analysis/compute_crossyear_zscore.py",
+            "analysis/compute_sensitivity_grid.py",
+            "analysis/compute_venue_concentration.py",
             # 0218's four (already fixed) — the guard must keep covering them.
-            "compute_breakpoints.py",
-            "compute_clusters.py",
-            "analyze_bimodality.py",
-            "analyze_genealogy.py",
+            "analysis/compute_breakpoints.py",
+            "analysis/compute_clusters.py",
+            "analysis/analyze_bimodality.py",
+            "analysis/analyze_genealogy.py",
         }
         missing = expected - found
         assert not missing, (

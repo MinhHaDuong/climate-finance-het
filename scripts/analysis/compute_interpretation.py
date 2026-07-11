@@ -5,12 +5,12 @@ For a given zone (year range), computes log-odds ratios with Dirichlet prior
 This answers: *what* changed at each validated transition zone?
 
 Usage:
-    uv run python scripts/compute_interpretation.py --zone 2007-2011 \
+    uv run python scripts/analysis/compute_interpretation.py --zone 2007-2011 \
         --output content/tables/tab_interp_2007_2011.csv
 
     # Smoke fixture:
     CLIMATE_FINANCE_DATA=tests/fixtures/smoke \
-        uv run python scripts/compute_interpretation.py --zone 2007-2011 \
+        uv run python scripts/analysis/compute_interpretation.py --zone 2007-2011 \
         --output /tmp/tab_interp_2007_2011.csv
 """
 

@@ -377,7 +377,7 @@ class TestComputeConvergenceScript:
         result = subprocess.run(
             [
                 sys.executable,
-                os.path.join(SCRIPTS_DIR, "compute_convergence.py"),
+                os.path.join(SCRIPTS_DIR, "analysis", "compute_convergence.py"),
                 "--output",
                 str(output_path),
                 "--input",

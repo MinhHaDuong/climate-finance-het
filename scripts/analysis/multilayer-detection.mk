@@ -68,8 +68,8 @@ companion-figures: \
 
 # ── Sensitivity grid (ticket 0083) ──────────────────────────────────────
 $(COMP_TABLES)/tab_sensitivity_grid.csv: \
-    scripts/compute_sensitivity_grid.py $(COMP_CFG)
-	$(PYTHON) scripts/compute_sensitivity_grid.py --output $@
+    scripts/analysis/compute_sensitivity_grid.py $(COMP_CFG)
+	$(PYTHON) scripts/analysis/compute_sensitivity_grid.py --output $@
 
 $(COMP_FIGS)/fig_companion_sensitivity.png: \
     scripts/plot_companion_sensitivity.py $(COMP_CFG) \

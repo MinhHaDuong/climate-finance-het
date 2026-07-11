@@ -12,11 +12,11 @@ Output: content/tables/tab_pre2007_coverage.csv (long format, one
 (metric, value) row per statistic), validated by Pre2007CoverageSchema.
 
 Usage:
-    uv run python scripts/compute_pre2007_coverage.py \
+    uv run python scripts/analysis/compute_pre2007_coverage.py \
         --output content/tables/tab_pre2007_coverage.csv
 
     CLIMATE_FINANCE_DATA=tests/fixtures/smoke \
-        uv run python scripts/compute_pre2007_coverage.py \
+        uv run python scripts/analysis/compute_pre2007_coverage.py \
         --output /tmp/tab_pre2007_coverage.csv
 """
 

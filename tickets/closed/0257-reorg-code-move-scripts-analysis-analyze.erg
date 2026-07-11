@@ -3,6 +3,7 @@ Title: Reorg code — move scripts/analysis/ (analyze_/compute_/summarize_/build
 Created: 2026-07-11
 Author: HDMX-coding-agent
 Label: deferred
+Closed: 34 Tier-3 analysis entry points moved to scripts/analysis/; full-surface repoint (build/mk/dvc/tests/docs/pyproject/source-hints); Tier-2 compute drivers kept flat; recipe-identity + gates green
 
 --- log ---
 2026-07-11T06:52Z HDMX-coding-agent created
@@ -11,6 +12,7 @@ Label: deferred
 2026-07-11T07:22Z HDMX-coding-agent note blocker 0253 closed — Blocked-by removed.
 2026-07-11T07:22Z HDMX-coding-agent note blocker 0254 closed — Blocked-by removed.
 2026-07-11T08:12Z HDMX-coding-agent note blocker 0260 closed — Blocked-by removed.
+2026-07-11T09:20Z HDMX-coding-agent closed — 34 Tier-3 analysis entry points moved to scripts/analysis/; full-surface repoint (build/mk/dvc/tests/docs/pyproject/source-hints); Tier-2 compute drivers kept flat; recipe-identity + gates green
 --- body ---
 ## Context
 Wave-1 move of the code reorg epic (tracker `0240`). Relocate the Phase-2

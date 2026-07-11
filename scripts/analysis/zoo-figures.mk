@@ -71,17 +71,17 @@ $(ZOO_FIGS)/schematic_L3_burst.png: scripts/figures/plot_schematic_L3_burst.py s
 crossyear-tables: $(addprefix $(ZOO_TABLES)/tab_crossyear_,$(addsuffix .csv,$(CROSSYEAR_METHODS)))
 
 # L2: filter to resonance-only before Z-scoring to align with run_l2_permutations (ticket 0112).
-$(ZOO_TABLES)/tab_crossyear_L2.csv: $(ZOO_TABLES)/tab_div_L2.csv scripts/compute_crossyear_zscore.py
-	$(PYTHON) scripts/compute_crossyear_zscore.py --method L2 --metric resonance --output $@
+$(ZOO_TABLES)/tab_crossyear_L2.csv: $(ZOO_TABLES)/tab_div_L2.csv scripts/analysis/compute_crossyear_zscore.py
+	$(PYTHON) scripts/analysis/compute_crossyear_zscore.py --method L2 --metric resonance --output $@
 
 # Stochastic methods: pass --subsample-csv for replication ribbon (ticket 0105).
 RIBBON_METHODS := S1_MMD S2_energy S3_sliced_wasserstein S4_frechet C2ST_embedding C2ST_lexical
 $(foreach m,$(RIBBON_METHODS),$(eval \
-$(ZOO_TABLES)/tab_crossyear_$(m).csv: $(ZOO_TABLES)/tab_div_$(m).csv $(ZOO_TABLES)/tab_subsample_$(m).csv scripts/compute_crossyear_zscore.py ; \
-	$(PYTHON) scripts/compute_crossyear_zscore.py --method $(m) --subsample-csv $(ZOO_TABLES)/tab_subsample_$(m).csv --output $$@))
+$(ZOO_TABLES)/tab_crossyear_$(m).csv: $(ZOO_TABLES)/tab_div_$(m).csv $(ZOO_TABLES)/tab_subsample_$(m).csv scripts/analysis/compute_crossyear_zscore.py ; \
+	$(PYTHON) scripts/analysis/compute_crossyear_zscore.py --method $(m) --subsample-csv $(ZOO_TABLES)/tab_subsample_$(m).csv --output $$@))
 
-$(ZOO_TABLES)/tab_crossyear_%.csv: $(ZOO_TABLES)/tab_div_%.csv scripts/compute_crossyear_zscore.py
-	$(PYTHON) scripts/compute_crossyear_zscore.py --method $* --output $@
+$(ZOO_TABLES)/tab_crossyear_%.csv: $(ZOO_TABLES)/tab_div_%.csv scripts/analysis/compute_crossyear_zscore.py
+	$(PYTHON) scripts/analysis/compute_crossyear_zscore.py --method $* --output $@
 
 # ── Zoo result panel recipes (pattern rule) ───────────────────────────────
 #
@@ -107,8 +107,8 @@ $(foreach m,$(NULL_METHODS_ALL),$(eval \
 
 ANALYTICAL_NULL_METHODS := C2ST_embedding C2ST_lexical
 
-$(ZOO_TABLES)/tab_analytical_null_C2ST_%.csv: scripts/compute_analytical_null.py $(REFINED) $(DIV_CFG)
-	$(PYTHON) scripts/compute_analytical_null.py \
+$(ZOO_TABLES)/tab_analytical_null_C2ST_%.csv: scripts/analysis/compute_analytical_null.py $(REFINED) $(DIV_CFG)
+	$(PYTHON) scripts/analysis/compute_analytical_null.py \
 		--method C2ST_$* --output $@
 
 .PHONY: analytical-null-tables

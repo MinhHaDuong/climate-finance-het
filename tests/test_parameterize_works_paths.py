@@ -151,7 +151,7 @@ class TestQcCitationsCLI:
 class TestAnalyzeEmbeddingsCLI:
     @pytest.fixture(autouse=True, scope="class")
     def _load_source(self, request):
-        request.cls._source = _read_script("analyze_embeddings.py")
+        request.cls._source = _read_script("analysis/analyze_embeddings.py")
 
     def test_accepts_works_input(self):
         assert _has_flag(self._source, "--works-input"), \

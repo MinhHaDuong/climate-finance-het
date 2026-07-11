@@ -85,6 +85,7 @@ def test_compute_grid_unit(monkeypatch):
     column assembly — the logic owned by compute_grid itself.
     """
     sys.path.insert(0, SCRIPTS_DIR)
+    sys.path.insert(0, os.path.join(SCRIPTS_DIR, "analysis"))  # 0257
     import compute_sensitivity_grid as csg
 
     # Build a fake compute_s2_energy that returns one row per valid year

@@ -80,7 +80,7 @@ make sensitivity-figures
 
 ```bash
 # Old pipeline (KMeans k=6 + JS):
-python3 scripts/compute_breakpoints.py --output /tmp/old_breaks.csv
+python3 scripts/analysis/compute_breakpoints.py --output /tmp/old_breaks.csv
 # New pipeline: content/tables/tab_changepoints_convergence.csv
 # Do the same years appear? Is 2007/2013 confirmed or an artifact?
 ```

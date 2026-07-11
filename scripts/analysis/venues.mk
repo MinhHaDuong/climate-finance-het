@@ -22,7 +22,7 @@ venue-concentration-figure: $(VENUE_FIG)
 
 # ── Table ─────────────────────────────────────────────────────────────────
 
-$(VENUE_TABLE): scripts/compute_venue_concentration.py scripts/summarize_core_venues.py \
+$(VENUE_TABLE): scripts/analysis/compute_venue_concentration.py scripts/analysis/summarize_core_venues.py \
 		scripts/schemas.py scripts/utils.py $(REFINED)
 	$(PYTHON) $< --output $@
 

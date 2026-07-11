@@ -5,7 +5,7 @@ Samples 100 rows from refined_works.csv (stratified by source provenance
 to preserve diversity), plus matching embeddings and citations.
 
 Usage:
-    uv run python scripts/build_smoke_fixture.py
+    uv run python scripts/analysis/build_smoke_fixture.py
 
 Reads from data/catalogs/ (full corpus), writes to tests/fixtures/smoke/.
 Run from the repo root after `dvc pull` to regenerate.

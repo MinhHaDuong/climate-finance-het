@@ -2,7 +2,7 @@
 <!-- WARNING: AI-generated, not human-reviewed | attributions verified & corrected 2026-07-11 (ticket 0244) -->
 <!-- PROVENANCE UNRESOLVED (0244): every pipeline number in this section (silhouettes
      -0.011 / -0.010 / +0.007, ARI 0.126 / 0.128, work counts 27,315 / 21,430 / 5,885 and the
-     topic-share tables) comes from the *log output* of `scripts/analyze_unfccc_topics.py`, which
+     topic-share tables) comes from the *log output* of `scripts/analysis/analyze_unfccc_topics.py`, which
      is not wired to any Make target and writes only `tab_unfccc_topics.csv` (per-work
      assignments, itself uncommitted/gitignored). No committed table holds the silhouette/ARI
      values, so they could not be independently re-derived here (rerun forbidden by 0244). The

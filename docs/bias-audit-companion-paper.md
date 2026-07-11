@@ -136,7 +136,7 @@ special-issue pulse, not field-level change.
 G2 (spectral, since in-venue co-citation is dense), and G9 (community
 partition, since communities often track venues).
 
-**Current defense.** None detected. `scripts/summarize_core_venues.py`
+**Current defense.** None detected. `scripts/analysis/summarize_core_venues.py`
 produces a post-hoc summary but is not part of the analysis pipeline. No
 venue-concentration index (Herfindahl, entropy, HHI) is computed per
 year.
@@ -210,7 +210,7 @@ peaks.
 **Current defense.**
 - Config allows `windows: [2, 3, 4, 5]` (`config/analysis.yaml:25`).
 - The "≥ 2 of 3 windows" robustness rule is implemented in
-  `scripts/compute_breakpoints.py:140–165` (`find_robust_breakpoints`).
+  `scripts/analysis/compute_breakpoints.py:140–165` (`find_robust_breakpoints`).
 - Companion paper §6.4 states "Results are tested with half-widths w = 2,
   3, 4" (`content/companion-paper.qmd:211`).
 
@@ -238,7 +238,7 @@ dates cited in the abstract.
 
 **Current defense.** Multi-signal validation (≥ 2 independent channels
 above Z > 2.0 within a 2-year window), implemented as the "≥ 2 of 3
-windows" vote in `scripts/compute_breakpoints.py:160` and reinforced by
+windows" vote in `scripts/analysis/compute_breakpoints.py:160` and reinforced by
 a cross-channel agreement rule described in the paper at line 132
 ("detected in 2 of 3 window sizes"). This is a correction-by-design but
 not a formal Type-I-error statement.

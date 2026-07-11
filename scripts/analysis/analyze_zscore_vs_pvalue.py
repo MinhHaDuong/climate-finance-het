@@ -9,8 +9,8 @@ If the null table does not exist (compute_null_model has not been run), it
 exits with a clear message.
 
 Usage:
-    uv run python scripts/analyze_zscore_vs_pvalue.py
-    uv run python scripts/analyze_zscore_vs_pvalue.py \\
+    uv run python scripts/analysis/analyze_zscore_vs_pvalue.py
+    uv run python scripts/analysis/analyze_zscore_vs_pvalue.py \\
         --crossyear path/to/tab_crossyear_S2_energy.csv \\
         --null path/to/tab_null_S2_energy.csv
 """

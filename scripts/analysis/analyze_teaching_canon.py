@@ -13,7 +13,7 @@ institutions. This documents the absence of a clear teaching canon:
 only a handful of works converge across institutions.
 
 Usage:
-    python scripts/analyze_teaching_canon.py
+    python scripts/analysis/analyze_teaching_canon.py
 """
 
 import os

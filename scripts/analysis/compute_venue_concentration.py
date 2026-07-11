@@ -11,7 +11,7 @@ Outputs:
   - content/tables/tab_venue_concentration.csv
 
 Usage:
-    uv run python scripts/compute_venue_concentration.py --output content/tables/tab_venue_concentration.csv
+    uv run python scripts/analysis/compute_venue_concentration.py --output content/tables/tab_venue_concentration.csv
 """
 
 import os
