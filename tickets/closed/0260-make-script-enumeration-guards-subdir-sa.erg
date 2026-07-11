@@ -2,10 +2,12 @@
 Title: Make script-enumeration guards subdir-safe before wave-1 moves
 Created: 2026-07-11
 Author: HDMX-coding-agent
+Closed: Shared recursive enumerator tests/_script_discovery.py + meta-guard landed; 6 flat guards migrated; 0255-0258 Blocked-by 0260; make lint + fast tier green
 
 --- log ---
 2026-07-11T08:02Z HDMX-coding-agent created
 
+2026-07-11T08:12Z HDMX-coding-agent closed — Shared recursive enumerator tests/_script_discovery.py + meta-guard landed; 6 flat guards migrated; 0255-0258 Blocked-by 0260; make lint + fast tier green
 --- body ---
 ## Context
 

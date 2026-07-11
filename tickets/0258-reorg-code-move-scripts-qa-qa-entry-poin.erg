@@ -2,7 +2,6 @@
 Title: Reorg code — move scripts/qa/ (qa_ entry points)
 Created: 2026-07-11
 Author: HDMX-coding-agent
-Blocked-by: 0260
 Label: deferred
 
 --- log ---
@@ -11,6 +10,7 @@ Label: deferred
 
 2026-07-11T07:22Z HDMX-coding-agent note blocker 0253 closed — Blocked-by removed.
 2026-07-11T07:22Z HDMX-coding-agent note blocker 0254 closed — Blocked-by removed.
+2026-07-11T08:12Z HDMX-coding-agent note blocker 0260 closed — Blocked-by removed.
 --- body ---
 ## Context
 Wave-1 move of the code reorg epic (tracker `0240`). Relocate the `qa_*` **entry
