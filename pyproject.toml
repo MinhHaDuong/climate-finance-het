@@ -30,7 +30,6 @@ dependencies = [
     "ruptures>=1.1.9",
     "pybursts>=0.1.1",
     "python-louvain",
-    "openalex-corpus",
 ]
 
 [project.optional-dependencies]
@@ -120,9 +119,10 @@ torch = [
     { index = "pytorch-cpu", extra = "cpu" },
     { index = "pytorch-cu130", extra = "cu130" },
 ]
-# Non-editable path source: uv builds a wheel and installs it into the env, so
-# the shared /data env never .pth-links to a (throwaway) worktree checkout.
-openalex-corpus = { path = "libs/openalex-corpus" }
+# openalex-corpus is imported as source via the PYTHONPATH source root
+# `libs/openalex-corpus/src` (ticket 0253), not installed as a wheel. Its
+# standalone packaging (libs/openalex-corpus/pyproject.toml) is retained so
+# git-source consumers (AEDIST, ticket 0229) can depend on it.
 
 [tool.ruff]
 target-version = "py310"
