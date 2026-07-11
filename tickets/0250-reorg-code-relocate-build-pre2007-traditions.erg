@@ -1,0 +1,67 @@
+%erg 0.1
+Title: Relocate build_pre2007_traditions out of plot_fig_traditions (compute → plot arrow)
+Created: 2026-07-11
+Author: HDMX-coding-agent
+Label: deferred
+
+--- log ---
+2026-07-11T00:00Z HDMX-coding-agent created
+2026-07-11T00:00Z HDMX-coding-agent note discovered while doing 0242 (sever clustering back-arrow). The layering guard added in 0242 (tests/test_layering.py) allowlists compute_null_separation.py pending this ticket.
+
+--- body ---
+## Context
+The layering guard added in ticket 0242 (`tests/test_layering.py`) forbids any
+`compute_*.py` from importing a `plot_*` module (architecture rule 4: a compute
+module never imports a plotter). It flagged a second, distinct violation beyond
+the clustering one that 0242 fixed:
+
+`scripts/compute_null_separation.py:60` does
+`from plot_fig_traditions import build_pre2007_traditions`, then calls it at
+`:148` to build the pre-2007 traditions network it runs the null-separation test
+on. Unlike the clustering case (where the compute module *drove* the plotters),
+here a genuine **analysis helper** (`build_pre2007_traditions`) is misplaced
+inside a plot module. `plot_fig_traditions.py` also uses it for its own figure,
+so it is a shared analysis routine living on the wrong layer.
+
+This is allowlisted in `LAYERING_ALLOWLIST` (test_layering.py) with a
+stale-entry check that fails once the import is gone — so closing this ticket
+requires removing the allowlist entry in the same change.
+
+## Relevant files
+- `scripts/compute_null_separation.py` — imports+calls `build_pre2007_traditions`
+- `scripts/plot_fig_traditions.py` — current home of `build_pre2007_traditions`; also its consumer
+- `tests/test_layering.py` — guard + `LAYERING_ALLOWLIST["compute_null_separation.py"] = "0250"`
+
+## Actions
+1. Move `build_pre2007_traditions` (and any private helpers it needs) into a
+   neutral analysis module both sides can import — e.g. a new
+   `scripts/_pre2007_traditions.py`, or fold it into `compute_null_separation`'s
+   analysis layer if `plot_fig_traditions` can import it there without creating a
+   plot → compute cycle that violates the arrow the other way. Prefer a neutral
+   `_pre2007_traditions.py` shared module.
+2. Update both `compute_null_separation.py` and `plot_fig_traditions.py` to
+   import from the new location.
+3. Remove the `compute_null_separation.py` entry from `LAYERING_ALLOWLIST`.
+
+## Test
+- RED first: with the allowlist entry removed and no relocation yet,
+  `tests/test_layering.py::test_no_compute_imports_plotter` fails on
+  `compute_null_separation.py`. (Or drive it via the existing stale-entry check.)
+
+## Verification
+- [ ] `compute_null_separation.py` no longer imports any `plot_*` module.
+- [ ] `plot_fig_traditions.py` still produces its figure (unchanged output).
+- [ ] `compute_null_separation.py` output byte-identical before/after (same
+      function, same data — relocation only).
+- [ ] `LAYERING_ALLOWLIST` no longer contains `compute_null_separation.py`.
+
+## Invariants
+- No behaviour change; pure relocation. `make lint` and `make check-fast` green.
+- No plot → compute cycle introduced by the move.
+
+## Exit criteria
+- `build_pre2007_traditions` lives in a neutral (non-plot) module; both callers
+  import it from there; the layering allowlist is empty of this entry and the
+  guard passes with it removed.
+
+Ticket-ref: tickets/0242-reorg-code-4-sever-clustering-backarrow.erg
