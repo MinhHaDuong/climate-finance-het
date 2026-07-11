@@ -15,9 +15,9 @@ stages:
   # Hand-exported from bib.cnrs.fr (CNRS credentials required); conversion is
   # deterministic so it lives in the pipeline rather than as a pre-placed artifact.
   catalog_bibcnrs:
-    cmd: uv run --env-file .env python scripts/catalog_bibcnrs.py
+    cmd: uv run --env-file .env python scripts/harvest/catalog_bibcnrs.py
     deps:
-      - scripts/catalog_bibcnrs.py
+      - scripts/harvest/catalog_bibcnrs.py
       - scripts/utils.py
       - scripts/pipeline_io.py
       - scripts/pipeline_loaders.py
@@ -32,9 +32,9 @@ stages:
   # DVC runs independent stages in parallel and skips unchanged ones.
 
   catalog_istex:
-    cmd: uv run --env-file .env python scripts/catalog_istex.py --api
+    cmd: uv run --env-file .env python scripts/harvest/catalog_istex.py --api
     deps:
-      - scripts/catalog_istex.py
+      - scripts/harvest/catalog_istex.py
       - scripts/utils.py
       - scripts/pipeline_io.py
       - scripts/pipeline_loaders.py
@@ -47,9 +47,9 @@ stages:
       - data/catalogs/istex_refs.csv
 
   catalog_openalex:
-    cmd: uv run --env-file .env python scripts/catalog_openalex.py --resume
+    cmd: uv run --env-file .env python scripts/harvest/catalog_openalex.py --resume
     deps:
-      - scripts/catalog_openalex.py
+      - scripts/harvest/catalog_openalex.py
       - scripts/utils.py
       - scripts/pipeline_io.py
       - scripts/pipeline_loaders.py
@@ -68,9 +68,9 @@ stages:
   # citation-graph-based harvest. See ticket for redesign.
 
   catalog_grey:
-    cmd: uv run --env-file .env python scripts/catalog_grey.py
+    cmd: uv run --env-file .env python scripts/harvest/catalog_grey.py
     deps:
-      - scripts/catalog_grey.py
+      - scripts/harvest/catalog_grey.py
       - scripts/utils.py
       - scripts/pipeline_io.py
       - scripts/pipeline_loaders.py
@@ -83,11 +83,11 @@ stages:
 
   catalog_teaching:
     cmd: >-
-      uv run --env-file .env python scripts/build_teaching_yaml.py &&
-      uv run --env-file .env python scripts/build_teaching_canon.py
+      uv run --env-file .env python scripts/harvest/build_teaching_yaml.py &&
+      uv run --env-file .env python scripts/harvest/build_teaching_canon.py
     deps:
-      - scripts/build_teaching_yaml.py
-      - scripts/build_teaching_canon.py
+      - scripts/harvest/build_teaching_yaml.py
+      - scripts/harvest/build_teaching_canon.py
       - scripts/utils.py
       - scripts/pipeline_io.py
       - scripts/pipeline_loaders.py
@@ -99,9 +99,9 @@ stages:
 
   # Merge all per-source CSVs → unified_works.csv
   catalog_merge:
-    cmd: uv run --env-file .env python scripts/catalog_merge.py
+    cmd: uv run --env-file .env python scripts/harvest/catalog_merge.py
     deps:
-      - scripts/catalog_merge.py
+      - scripts/harvest/catalog_merge.py
       - scripts/utils.py
       - scripts/pipeline_io.py
       - scripts/pipeline_loaders.py
@@ -151,10 +151,10 @@ stages:
 
   enrich_abstracts:
     cmd: >-
-      uv run --env-file .env python scripts/enrich_abstracts.py --works-input data/catalogs/unified_works.csv
+      uv run --env-file .env python scripts/harvest/enrich_abstracts.py --works-input data/catalogs/unified_works.csv
       --output data/catalogs/enrich_cache/.abstracts.stamp
     deps:
-      - scripts/enrich_abstracts.py
+      - scripts/harvest/enrich_abstracts.py
       - scripts/utils.py
       - scripts/pipeline_io.py
       - scripts/pipeline_text.py
@@ -166,10 +166,10 @@ stages:
 
   enrich_language:
     cmd: >-
-      uv run --env-file .env python scripts/enrich_language.py --works-input data/catalogs/unified_works.csv
+      uv run --env-file .env python scripts/harvest/enrich_language.py --works-input data/catalogs/unified_works.csv
       --output data/catalogs/enrich_cache/.language.stamp
     deps:
-      - scripts/enrich_language.py
+      - scripts/harvest/enrich_language.py
       - scripts/utils.py
       - scripts/pipeline_io.py
       - scripts/pipeline_text.py
@@ -197,9 +197,9 @@ stages:
   # `dvc repro join_enrichments` reads whatever caches exist on disk.
   # Use `make corpus-enrich` to run all enrichment stages first.
   join_enrichments:
-    cmd: uv run --env-file .env python scripts/enrich_join.py
+    cmd: uv run --env-file .env python scripts/harvest/enrich_join.py
     deps:
-      - scripts/enrich_join.py
+      - scripts/harvest/enrich_join.py
       - scripts/utils.py
       - scripts/pipeline_io.py
       - scripts/pipeline_text.py
@@ -217,14 +217,14 @@ stages:
   # citations.csv is produced downstream by the ref_match stage (#539).
   enrich_citations:
     cmd: >-
-      uv run --env-file .env python scripts/enrich_citations_batch.py --works-input data/catalogs/enriched_works.csv & p1=$!;
-      uv run --env-file .env python scripts/enrich_citations_openalex.py --works-input data/catalogs/enriched_works.csv & p2=$!;
+      uv run --env-file .env python scripts/harvest/enrich_citations_batch.py --works-input data/catalogs/enriched_works.csv & p1=$!;
+      uv run --env-file .env python scripts/harvest/enrich_citations_openalex.py --works-input data/catalogs/enriched_works.csv & p2=$!;
       wait $p1 && wait $p2 &&
-      uv run --env-file .env python scripts/corpus_parse_citations_grobid.py
+      uv run --env-file .env python scripts/harvest/corpus_parse_citations_grobid.py
     deps:
-      - scripts/enrich_citations_batch.py
-      - scripts/enrich_citations_openalex.py
-      - scripts/corpus_parse_citations_grobid.py
+      - scripts/harvest/enrich_citations_batch.py
+      - scripts/harvest/enrich_citations_openalex.py
+      - scripts/harvest/corpus_parse_citations_grobid.py
       - scripts/utils.py
       - scripts/pipeline_io.py
       - scripts/pipeline_loaders.py
@@ -248,9 +248,9 @@ stages:
   # Phase 1b.5: Sentence embeddings (encoding only — no UMAP/clustering)
   # Requires uv sync --group corpus --extra cpu (or --extra cu130 on GPU)
   enrich_embeddings:
-    cmd: uv run --env-file .env python scripts/enrich_embeddings.py --works-input data/catalogs/enriched_works.csv --output data/catalogs/embeddings.npz
+    cmd: uv run --env-file .env python scripts/harvest/enrich_embeddings.py --works-input data/catalogs/enriched_works.csv --output data/catalogs/embeddings.npz
     deps:
-      - scripts/enrich_embeddings.py
+      - scripts/harvest/enrich_embeddings.py
       - scripts/utils.py
       - scripts/pipeline_io.py
       - scripts/pipeline_loaders.py
@@ -265,9 +265,9 @@ stages:
   # corpus_filter.py loads config/corpus_filter.yaml via filter_flags.py.
   extend:
     cmd: >-
-      uv run --env-file .env python scripts/corpus_filter.py --extend --works-input data/catalogs/enriched_works.csv --works-output data/catalogs/extended_works.csv
+      uv run --env-file .env python scripts/harvest/corpus_filter.py --extend --works-input data/catalogs/enriched_works.csv --works-output data/catalogs/extended_works.csv
     deps:
-      - scripts/corpus_filter.py
+      - scripts/harvest/corpus_filter.py
       - scripts/filter_flags.py
       - scripts/filter_flags_llm.py
       - scripts/utils.py
@@ -285,9 +285,9 @@ stages:
   # Also loads config/corpus_filter.yaml for retention policy parameters.
   filter:
     cmd: >-
-      uv run --env-file .env python scripts/corpus_filter.py --filter --works-input data/catalogs/extended_works.csv --works-output data/catalogs/refined_works.csv
+      uv run --env-file .env python scripts/harvest/corpus_filter.py --filter --works-input data/catalogs/extended_works.csv --works-output data/catalogs/refined_works.csv
     deps:
-      - scripts/corpus_filter.py
+      - scripts/harvest/corpus_filter.py
       - scripts/filter_flags.py
       - scripts/filter_flags_llm.py
       - scripts/utils.py
@@ -308,9 +308,9 @@ stages:
   # Writes enrich_cache/ref_matches.csv, then merges all citation caches
   # (crossref + openalex + grobid + ref_matches) into citations.csv.
   ref_match:
-    cmd: uv run --env-file .env python scripts/corpus_ref_match.py && uv run --env-file .env python scripts/corpus_merge_citations.py
+    cmd: uv run --env-file .env python scripts/harvest/corpus_ref_match.py && uv run --env-file .env python scripts/corpus_merge_citations.py
     deps:
-      - scripts/corpus_ref_match.py
+      - scripts/harvest/corpus_ref_match.py
       - scripts/corpus_merge_citations.py
       - scripts/utils.py
       - scripts/pipeline_io.py
@@ -324,9 +324,9 @@ stages:
   #   refined_embeddings.npz[vectors][i] ↔ refined_works.csv row i
   #   refined_citations.csv edges restricted to refined DOIs
   align:
-    cmd: uv run --env-file .env python scripts/corpus_align.py
+    cmd: uv run --env-file .env python scripts/harvest/corpus_align.py
     deps:
-      - scripts/corpus_align.py
+      - scripts/harvest/corpus_align.py
       - scripts/utils.py
       - scripts/pipeline_io.py
       - scripts/pipeline_loaders.py
