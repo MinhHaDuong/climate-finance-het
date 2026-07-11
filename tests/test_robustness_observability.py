@@ -496,10 +496,9 @@ class TestStepCounters:
         step1_cross_source resolves CATALOGS_DIR at call time.
         """
         import enrich_abstracts as ea
-        import utils as utils_mod
 
         # Redirect CATALOGS_DIR so it doesn't look for real unified_works.csv
-        monkeypatch.setattr(utils_mod, "CATALOGS_DIR", str(tmp_path))
+        monkeypatch.setattr(ea, "CATALOGS_DIR", str(tmp_path))
 
         df = mini_df.copy()
         df["_missing"] = df["abstract"].apply(ea.is_missing)
