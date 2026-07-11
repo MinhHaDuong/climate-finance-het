@@ -1,0 +1,46 @@
+%erg 0.1
+Title: Hygiene sweep: stale .dvc pointers and dead remote branch
+Created: 2026-07-11
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-11T06:55Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Two hygiene leftovers from the 2026-07-10/11 night run and morning wrap-up,
+parked here so STATE.md stays a pure index.
+
+1. Stale .dvc pointers: the night-run env sync surfaced a stale path in the
+   shared environment (openalex-corpus pointing at a defunct /tmp review
+   worktree, since fixed). A sweep of the repo's .dvc pointer files against
+   dvc.yaml outs and the current data/ layout (architecture.md) is pending —
+   pointers referencing moved or retired locations should be corrected or
+   removed.
+2. Dead remote branch `t-flaky-step1-counter-ticket`: its PR #1004 was closed
+   as superseded (0249 root-caused and fixed the flakiness it filed 0238 for).
+   Same profile as t0212, which the author had deleted on 2026-07-11. Deleting
+   discards the unmerged filing commit — author arbitration required.
+
+## Actions
+
+1. Inventory `*.dvc` files and dvc.yaml outs; diff against the data/ layout.
+2. Fix or remove stale pointers; note each decision in this ticket's log.
+3. Ask the author: delete `origin/t-flaky-step1-counter-ticket` yes/no; apply.
+
+## Verification
+
+- [ ] `dvc status` (on padme, where data lives) reports no missing/stale refs
+- [ ] `git branch -r` shows no branch whose PR is closed-unmerged without an
+      explicit author decision logged here
+
+## Invariants
+
+- No data deletion; pointers only. Data flows padme→doudou only.
+- make check-fast and make lint stay green.
+
+## Exit criteria
+
+- [ ] .dvc pointers consistent with dvc.yaml and data/ layout
+- [ ] Dead-branch decision logged and applied

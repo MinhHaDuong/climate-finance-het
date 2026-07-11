@@ -6,10 +6,11 @@ Building toward a book on international climate finance between solidarity and p
 
 ## Oeconomia manuscript next steps
 
-Submitted to Oeconomia (Varia) on 2026-03-18. Waiting for referee reports (~3 months).
+Submitted to Oeconomia (Varia) on 2026-03-18. Revise-and-resubmit received;
+manuscript rebuilt (v2.0.5), response letter drafted (ticket 0152).
 
-- [ ] Wait for reviewers feedback
-- [ ] Revise and Resubmit
+- [x] Wait for reviewers feedback
+- [ ] Revise and Resubmit — in progress: R1/R2 ledger sign-offs, then 0195 → 0153 (rebuild, deposit, resubmit)
 - [ ] Prepare Econom'IA conference slides (Cergy, May 27–28, 2026; present aedist results)
 - [ ] Continue Tier 1 reading plan (defence against reviewer questions)
 
@@ -25,8 +26,8 @@ Submitted data paper to RDJ4HSS (diamond OA).
 
 21st International Colloquium of the Charles Gide Association, theme "Crises". Abstract accepted.
 
-- [ ] Write conference paper (due 2026-06-15)
-- [ ] Present at Vannes (2026-07-02 to 04)
+- [x] Write conference paper (due 2026-06-15) — `manuscript-Gide.qmd`, French short version
+- [x] Present at Vannes (2026-07-02 to 04)
 - [ ] Consider submission to RHPE special issue on "Crises" (call post-conference)
 
 ## Next articles
@@ -47,3 +48,4 @@ Submitted data paper to RDJ4HSS (diamond OA).
 - **v1.1.1 — Pipeline refactor (2026-03)**: enrichment split into 4 independent DVC stages (#428), code smell cleanup (#507), agent harness consolidation, script I/O discipline (#547, #549)
 - **v1.1.2 — Citation enrichment (in progress)**: GROBID reference parsing (#539), Crossref DOI fallback, circuit breakers (#590, #598), citation hardening (#529)
 - **Imperial Dragon harness (2026-04-01)**: workflow renamed from Dragon Dreaming (4 phases) to Imperial Dragon (5 claws), generic harness extracted to ~/.claude/ (#628)
+- **v2.0.5 — Œconomia R&R revision (2026-06/07)**: referee reports answered point by point (60-remark ledger, ticket 0152), manuscript rebuilt on the "birth of an aggregate" framing, Gide-Vannes French short version presented (2026-07-02/04)

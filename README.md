@@ -8,7 +8,7 @@ How economists and institutions co-produced the categories, metrics, and account
 
 | Document | File | Journal | Status |
 |----------|------|---------|--------|
-| Manuscript | `deliverables/manuscript/manuscript.qmd` | Œconomia (Varia) | Submitted 2026-03-18, under review |
+| Manuscript | `deliverables/manuscript/manuscript.qmd` | Œconomia (Varia) | Submitted 2026-03-18; R&R, revision v2.0.5 in progress |
 | Data paper | `deliverables/data-paper/data-paper.qmd` | RDJ4HSS (diamond OA) | Submitted 2026-03-26, under review |
 | Technical report | `deliverables/technical-report/technical-report.qmd` | HAL working paper | Complete |
 | Method paper | `deliverables/multilayer/multilayer-detection.qmd` | Scientometrics / QSS | Outline |
