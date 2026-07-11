@@ -470,7 +470,7 @@ class TestPlotConvergence:
         result = subprocess.run(
             [
                 sys.executable,
-                os.path.join(SCRIPTS_DIR, "plot_convergence.py"),
+                os.path.join(SCRIPTS_DIR, "figures", "plot_convergence.py"),
                 "--output",
                 str(fig_out),
                 "--input",

@@ -253,7 +253,7 @@ class TestPlotSmoke:
         plot_result = subprocess.run(
             [
                 sys.executable,
-                os.path.join(SCRIPTS_DIR, "plot_divergence.py"),
+                os.path.join(SCRIPTS_DIR, "figures", "plot_divergence.py"),
                 "--palette",
                 "gradient",
                 "--output",
