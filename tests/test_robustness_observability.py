@@ -487,20 +487,26 @@ class TestStepCounters:
         )
 
     def test_step1_counter_attempted(self, mini_df, tmp_path, monkeypatch):
-        """step1_cross_source sets step1_attempted in counters."""
-        # Redirect CATALOGS_DIR so it doesn't look for real unified_works.csv
-        import utils as utils_mod
+        """step1_cross_source sets step1_attempted in counters.
 
-        monkeypatch.setattr(utils_mod, "CATALOGS_DIR", str(tmp_path))
-        from enrich_abstracts import is_missing, step1_cross_source
+        Import the module BEFORE patching, as any earlier test sharing the
+        worker does: enrich_abstracts binds CATALOGS_DIR by value at import,
+        so patching utils.CATALOGS_DIR never reaches a cached module. The
+        patch must target the enrich_abstracts namespace, where
+        step1_cross_source resolves CATALOGS_DIR at call time.
+        """
+        import enrich_abstracts as ea
+
+        # Redirect CATALOGS_DIR so it doesn't look for real unified_works.csv
+        monkeypatch.setattr(ea, "CATALOGS_DIR", str(tmp_path))
 
         df = mini_df.copy()
-        df["_missing"] = df["abstract"].apply(is_missing)
-        # Create a dummy unified_works.csv
+        df["_missing"] = df["abstract"].apply(ea.is_missing)
+        # Create a synthetic unified_works.csv in the tmp dir
         unified = df[["doi", "abstract"]].copy()
         unified.to_csv(os.path.join(str(tmp_path), "unified_works.csv"), index=False)
         counters = {}
-        step1_cross_source(df, counters)
+        ea.step1_cross_source(df, counters)
         assert "step1_attempted" in counters
         assert counters["step1_attempted"] >= 0
 

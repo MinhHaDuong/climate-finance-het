@@ -1,7 +1,9 @@
 """Clustering methods comparison: KMeans vs HDBSCAN vs Spectral.
 
-Orchestrator script: loads corpus snapshots, runs comparison, saves tables,
-delegates figure generation to dedicated plot_fig_*.py scripts.
+Compute script: loads corpus snapshots, runs comparison, saves tables. Figures
+are produced separately by the dedicated plot_fig_clustering_*.py scripts, which
+read the saved tables from disk — this module never imports a plotter
+(architecture rule 4).
 
 Ticket: #299 (tracking), sub-issues #300–#304.
 
@@ -41,8 +43,6 @@ from clustering_methods import (
     silhouette_sweep,
     spectral_eigengap,
 )
-from plot_fig_clustering_comparison import generate_figures
-from plot_fig_clustering_spaces import plot_multi_space_figure
 from utils import (
     BASE_DIR,
     get_logger,
@@ -266,8 +266,6 @@ def main():
     parser = argparse.ArgumentParser(
         description="Compare clustering methods across corpus snapshots"
     )
-    parser.add_argument("--pdf", action="store_true",
-                        help="Also save PDF output")
     parser.add_argument("--no-perturbation", action="store_true",
                         help="Skip perturbation stability (saves time)")
     parser.add_argument("--n-perturbation", type=int, default=10,
@@ -310,12 +308,12 @@ def main():
     # Save results
     save_results(ari_table, perturbation_table, optimal_k)
 
-    # Generate figures — delegates to dedicated plot_fig_*.py scripts
-    generate_figures(ari_table, perturbation_table, optimal_k,
-                     pdf=args.pdf)
-    plot_multi_space_figure(space_results, pdf=args.pdf)
-
-    log.info("Comparison complete.")
+    # Figures are produced by the dedicated plot_fig_*.py scripts, which read
+    # the tables saved above from disk (architecture rule 4: compute never
+    # imports a plotter). Regenerate them with:
+    #   uv run python scripts/plot_fig_clustering_comparison.py --output ...
+    #   uv run python scripts/plot_fig_clustering_spaces.py --output ...
+    log.info("Comparison complete. Run plot_fig_clustering_*.py for figures.")
 
 
 if __name__ == "__main__":
