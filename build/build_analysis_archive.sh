@@ -55,6 +55,17 @@ for s in utils.py pipeline_loaders.py pipeline_io.py pipeline_progress.py \
     cp "scripts/$s" "$TMP/scripts/"
 done
 
+# openalex-corpus convention package — imported as source via PYTHONPATH
+# (ticket 0253), not installed as a wheel (removed from uv.lock). The bundled
+# scripts (utils.py, pipeline_text.py, …) import openalex_corpus, so the archive
+# must carry the package source, matching the Makefile/Dockerfile source root
+# libs/openalex-corpus/src.
+mkdir -p "$TMP/libs"
+cp -r libs/openalex-corpus "$TMP/libs/"
+rm -rf "$TMP/libs/openalex-corpus/__pycache__" \
+       "$TMP/libs/openalex-corpus/src/openalex_corpus/__pycache__" \
+       "$TMP/libs/openalex-corpus/tests"
+
 # Config + build infrastructure
 cp config/analysis.yaml            "$TMP/config/"
 cp config/v1_tab_alluvial.csv      "$TMP/config/"

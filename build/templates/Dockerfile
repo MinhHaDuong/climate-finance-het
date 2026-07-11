@@ -42,4 +42,10 @@ RUN echo 'CLIMATE_FINANCE_DATA=data' > .env
 ENV PYTHONHASHSEED=0
 ENV SOURCE_DATE_EPOCH=0
 
+# Import source roots (ticket 0253): openalex-corpus is imported as source, not
+# installed as a wheel, so it and the flat scripts/ modules must be on PYTHONPATH.
+# Belt-and-suspenders alongside the Makefile export — makes `docker run … python
+# scripts/x.py` work, not only the `make` CMD. WORKDIR is /app.
+ENV PYTHONPATH=/app/scripts:/app/libs/openalex-corpus/src
+
 CMD ["make", "corpus"]
