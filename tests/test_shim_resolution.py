@@ -5,14 +5,23 @@ Ticket 0170 Move A extracts the OpenAlex convention layer into the
 ``enrich_embeddings`` into re-export shims. A typo in a re-export line would
 silently break a rarely-run script rather than fail a test.
 
-This test imports every carved symbol via its OLD path (the one existing call
-sites use) and asserts it resolves to the package definition. For the four pure
-passthroughs that is object identity; ``retry_get`` is a thin shim (it injects
-this repo's ``MAILTO``/User-Agent), so it is deliberately *not* the package
-function — behavioural parity for it is pinned separately by
+This test imports every carved symbol via its host path and asserts it resolves
+to the package definition (object identity). ``retry_get`` is a thin shim (it
+injects this repo's ``MAILTO``/User-Agent), so it is deliberately *not* the
+package function — behavioural parity for it is pinned separately by
 ``test_openalex_corpus_equivalence.py``. Here we only assert the shim exists,
 is distinct from the package function, and that ``RETRY_MAX_RETRIES`` is the
 package's single source of truth re-exported unchanged.
+
+Ticket 0253 de-shimmed ``pipeline_text``: ``normalize_doi`` and
+``reconstruct_abstract`` are no longer re-exported from it — call sites import
+them from ``openalex_corpus.text`` directly, and the ``utils`` facade sources
+them straight from the package. The contract that survives is that both resolve
+to the package object *wherever the repo still exposes them* — i.e. via
+``utils`` — which the parametrisation below still pins. ``enrich_embeddings``
+keeps its ``build_text`` / ``is_boilerplate_abstract`` re-exports (embedding
+helpers centralise there; call sites and ``test_enrich_embeddings`` import them
+from it).
 
 ``importorskip`` keeps the suite green in an env where the package is not
 installed.
@@ -26,15 +35,12 @@ pkg = pytest.importorskip("openalex_corpus")
 @pytest.mark.parametrize(
     "module_path, symbol",
     [
-        # pure passthroughs — old path must BE the package object
-        ("pipeline_text", "normalize_doi"),
-        ("pipeline_text", "reconstruct_abstract"),
+        # pure passthroughs — host path must BE the package object
         ("enrich_embeddings", "build_text"),
         ("enrich_embeddings", "is_boilerplate_abstract"),
-        # utils re-export facade chains through to the same package objects.
-        # (utils re-exports the pipeline_text symbols; build_text /
-        # is_boilerplate_abstract are imported directly from enrich_embeddings
-        # by call sites, not via the utils facade — covered above.)
+        # utils facade sources normalize_doi / reconstruct_abstract straight
+        # from openalex_corpus.text (ticket 0253); it must expose the package
+        # object so `from utils import normalize_doi` stays identical.
         ("utils", "normalize_doi"),
         ("utils", "reconstruct_abstract"),
     ],
@@ -47,6 +53,20 @@ def test_pure_symbol_resolves_to_package(module_path, symbol):
         f"{module_path}.{symbol} must re-export the package definition "
         f"(openalex_corpus.{symbol}); got a distinct object — the re-export "
         f"line is broken."
+    )
+
+
+def test_pipeline_text_dropped_reconstruct_abstract_reexport():
+    """Ticket 0253: reconstruct_abstract is no longer a pipeline_text symbol.
+
+    It was a pure pass-through with no internal consumer; call sites now import
+    it from openalex_corpus.text. normalize_doi is still imported by pipeline_text
+    for its normalize_doi_safe wrapper, so it is intentionally not asserted absent.
+    """
+    pipeline_text = pytest.importorskip("pipeline_text")
+    assert not hasattr(pipeline_text, "reconstruct_abstract"), (
+        "pipeline_text.reconstruct_abstract re-export should be gone (0253) — "
+        "import it from openalex_corpus.text."
     )
 
 

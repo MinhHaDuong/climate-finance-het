@@ -95,6 +95,15 @@ REFS_COLUMNS = [
 # ---------------------------------------------------------------------------
 
 # ---------------------------------------------------------------------------
+# normalize_doi / reconstruct_abstract — sourced straight from the
+# openalex_corpus convention package (ticket 0253 dropped pipeline_text's
+# pass-through re-exports). The utils facade still exposes both, so
+# `from utils import normalize_doi` is unchanged. (Kept first so isort orders
+# this contiguous re-export region: openalex_corpus < pipeline_*.)
+# ---------------------------------------------------------------------------
+from openalex_corpus.text import normalize_doi, reconstruct_abstract
+
+# ---------------------------------------------------------------------------
 # Re-exports from pipeline_io
 # ---------------------------------------------------------------------------
 from pipeline_io import (
@@ -155,9 +164,7 @@ from pipeline_text import (
     clean_doi,
     detect_language,
     is_valid_iso639_1,
-    normalize_doi,
     normalize_doi_safe,
     normalize_lang,
     normalize_title,
-    reconstruct_abstract,
 )

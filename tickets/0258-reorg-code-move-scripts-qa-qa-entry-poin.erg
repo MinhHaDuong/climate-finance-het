@@ -2,13 +2,13 @@
 Title: Reorg code — move scripts/qa/ (qa_ entry points)
 Created: 2026-07-11
 Author: HDMX-coding-agent
-Blocked-by: 0253
 Label: deferred
 
 --- log ---
 2026-07-11T06:52Z HDMX-coding-agent created
 2026-07-11T06:52Z HDMX-coding-agent note wave-1 move of epic 0240. Blocked-by 0253 (path model) + 0254 (Tier list). Respect qa_embeddings/qa_detect_type Phase-2 semantics; qa_near_duplicates classification comes from 0254.
 
+2026-07-11T07:22Z HDMX-coding-agent note blocker 0253 closed — Blocked-by removed.
 2026-07-11T07:22Z HDMX-coding-agent note blocker 0254 closed — Blocked-by removed.
 --- body ---
 ## Context

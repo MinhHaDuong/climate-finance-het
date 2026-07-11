@@ -24,6 +24,7 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
+from _source_roots import source_root_env
 
 # Every test here drives a figure script through subprocess (`_run`), so the
 # whole module is the integration tier (ticket 0216 — surfaced by the fast-path
@@ -152,6 +153,7 @@ def _run(script: str, args: list[str]) -> subprocess.CompletedProcess:
         capture_output=True,
         text=True,
         timeout=120,
+        env=source_root_env(),  # source roots on PYTHONPATH (ticket 0253)
     )
 
 

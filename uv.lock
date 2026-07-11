@@ -766,7 +766,6 @@ dependencies = [
     { name = "matplotlib" },
     { name = "networkx", version = "3.4.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-19-climate-finance-het-cpu' and extra == 'extra-19-climate-finance-het-cu130')" },
     { name = "networkx", version = "3.6.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'extra-19-climate-finance-het-cpu' and extra == 'extra-19-climate-finance-het-cu130')" },
-    { name = "openalex-corpus" },
     { name = "pandas", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-19-climate-finance-het-cpu' and extra == 'extra-19-climate-finance-het-cu130')" },
     { name = "pandas", version = "3.0.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'extra-19-climate-finance-het-cpu' and extra == 'extra-19-climate-finance-het-cu130')" },
     { name = "pandera" },
@@ -826,7 +825,6 @@ requires-dist = [
     { name = "litellm", specifier = ">=1.30.0,<=1.82.6" },
     { name = "matplotlib" },
     { name = "networkx" },
-    { name = "openalex-corpus", directory = "libs/openalex-corpus" },
     { name = "pandas" },
     { name = "pandera", specifier = ">=0.30.1" },
     { name = "pdfplumber" },
@@ -3491,28 +3489,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/b4/15/203d537e58986b5673e7f232453a2a2f110f22757b15921cbdeea392e520/openai-2.29.0.tar.gz", hash = "sha256:32d09eb2f661b38d3edd7d7e1a2943d1633f572596febe64c0cd370c86d52bec", size = 671128, upload-time = "2026-03-17T17:53:49.599Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/d0/b1/35b6f9c8cf9318e3dbb7146cc82dab4cf61182a8d5406fc9b50864362895/openai-2.29.0-py3-none-any.whl", hash = "sha256:b7c5de513c3286d17c5e29b92c4c98ceaf0d775244ac8159aeb1bddf840eb42a", size = 1141533, upload-time = "2026-03-17T17:53:47.348Z" },
-]
-
-[[package]]
-name = "openalex-corpus"
-version = "0.1.0"
-source = { directory = "libs/openalex-corpus" }
-dependencies = [
-    { name = "pandas", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-19-climate-finance-het-cpu' and extra == 'extra-19-climate-finance-het-cu130')" },
-    { name = "pandas", version = "3.0.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'extra-19-climate-finance-het-cpu' and extra == 'extra-19-climate-finance-het-cu130')" },
-    { name = "requests" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "pandas" },
-    { name = "requests" },
-]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "pytest" },
-    { name = "requests-mock" },
 ]
 
 [[package]]

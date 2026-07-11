@@ -16,4 +16,11 @@ WORKDIR /app
 COPY . .
 RUN uv sync
 
+# Import source roots (ticket 0253): openalex-corpus is imported as source (the
+# archive bundles libs/openalex-corpus/), not installed as a wheel, so it and the
+# flat scripts/ modules must be on PYTHONPATH. Belt-and-suspenders alongside the
+# archive Makefile export — makes `podman run … python scripts/x.py` work, not
+# only the `make` CMD. WORKDIR is /app.
+ENV PYTHONPATH=/app/scripts:/app/libs/openalex-corpus/src
+
 CMD ["sh", "-c", "make && make verify"]

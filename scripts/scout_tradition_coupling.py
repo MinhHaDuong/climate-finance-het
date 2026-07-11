@@ -48,7 +48,7 @@ import os
 import numpy as np
 import pandas as pd
 import pipeline_loaders as pl
-from pipeline_text import normalize_doi
+from openalex_corpus.text import normalize_doi
 
 log = logging.getLogger("scout.tradition_coupling")
 

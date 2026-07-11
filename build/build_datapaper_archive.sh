@@ -31,7 +31,11 @@ rm -rf "$TMP/code/.dvc" "$TMP/code/attic" "$TMP/code/.claude"
 # ── Data: deposit files ──────────────────────────────────
 echo "  Preparing deposit CSV (dropping abstracts)..."
 cd "$PROJ_ROOT"
-uv run --env-file .env python scripts/export_deposit.py --output "$TMP/data/climate_finance_corpus.csv"
+# Direct script run (no make) — put the source roots on PYTHONPATH so utils /
+# openalex_corpus resolve (imported as source, not installed; ticket 0253). cwd
+# is $PROJ_ROOT, so the relative roots resolve.
+PYTHONPATH="scripts:libs/openalex-corpus/src${PYTHONPATH:+:$PYTHONPATH}" \
+    uv run --env-file .env python scripts/export_deposit.py --output "$TMP/data/climate_finance_corpus.csv"
 
 echo "  Copying embeddings, citations, and source catalogs..."
 cp -L "$DATA_DIR/embeddings.npz" "$TMP/data/"

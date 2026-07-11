@@ -16,6 +16,7 @@ import subprocess
 import sys
 
 import pytest
+from _source_roots import source_root_env
 from _tier_autoscan import (
     NON_FAST_MARKERS,
     durations_path,
@@ -26,7 +27,10 @@ SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 FIXTURES_DIR = os.path.join(os.path.dirname(__file__), "fixtures", "smoke")
 GOLDEN_DIR = os.path.join(FIXTURES_DIR, "golden")
 
-sys.path.insert(0, SCRIPTS_DIR)
+# Flat imports (from utils import …) resolve via the `scripts` source root
+# declared in [tool.pytest.ini_options] pythonpath (ticket 0253) — the old
+# path-injection hack is retired. SCRIPTS_DIR remains for run_compute() below,
+# which builds an absolute path to a script it launches as a subprocess.
 
 
 # ---------------------------------------------------------------------------
@@ -105,13 +109,19 @@ def pytest_sessionfinish(session, exitstatus):
 
 
 def smoke_env():
-    """Environment that redirects pipeline_loaders to fixture data."""
-    return {
+    """Environment that redirects pipeline_loaders to fixture data.
+
+    Sets the source roots on PYTHONPATH (ticket 0253) so the subprocess launched
+    by run_compute() resolves flat imports (from utils import …, import
+    openalex_corpus) without an ambient PYTHONPATH and without the retired wheel —
+    the child inherits environment, not the parent's sys.path.
+    """
+    return source_root_env({
         **os.environ,
         "CLIMATE_FINANCE_DATA": FIXTURES_DIR,
         "PYTHONHASHSEED": "0",
         "SOURCE_DATE_EPOCH": "0",
-    }
+    })
 
 
 def run_compute(method, output_path, timeout=300, input_paths=None):

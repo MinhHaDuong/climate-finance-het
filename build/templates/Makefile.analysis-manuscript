@@ -13,6 +13,12 @@
 export PYTHONHASHSEED := 0
 export SOURCE_DATE_EPOCH := 0
 
+# Import source roots (ticket 0253): every `uv run python scripts/x.py` below
+# resolves flat imports (from utils import …, import openalex_corpus) via these
+# two roots. openalex-corpus is imported as source (the archive bundles
+# libs/openalex-corpus/), not installed — so it must be on PYTHONPATH.
+export PYTHONPATH := scripts:libs/openalex-corpus/src
+
 # ── Toolchain ─────────────────────────────────────────────
 UV      ?= uv
 UV_RUN  ?= $(UV) run
