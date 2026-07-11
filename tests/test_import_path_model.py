@@ -23,10 +23,10 @@ proves the model end to end on one file moved into ``scripts/figures/``.
 import os
 import subprocess
 import sys
-import tomllib
 from pathlib import Path
 
 import pytest
+import tomllib
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SOURCE_ROOTS = ["scripts", "libs/openalex-corpus/src"]
