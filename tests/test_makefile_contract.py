@@ -12,6 +12,7 @@ import re
 from pathlib import Path
 
 import yaml
+from _mk_discovery import all_makefiles
 
 MAKEFILE = os.path.join(os.path.dirname(__file__), "..", "Makefile")
 DVC_YAML = os.path.join(os.path.dirname(__file__), "..", "dvc.yaml")
@@ -250,15 +251,15 @@ class TestPerDeliverableIncludes:
         Each render .mk depends on its own doc's includes, so no `.mk` may still
         reference $(PROJECT_INCLUDES).
         """
-        import glob
         root = os.path.join(os.path.dirname(__file__), "..")
         # A live use ($(PROJECT_INCLUDES)) or definition (PROJECT_INCLUDES :=/=),
         # not an incidental mention in a comment.
         use_or_def = re.compile(r"\$\(PROJECT_INCLUDES\)|^\s*PROJECT_INCLUDES\s*:?=", re.MULTILINE)
         offenders = []
-        for mkpath in [os.path.join(root, "Makefile")] + glob.glob(
-            os.path.join(root, "*.mk")
-        ) + glob.glob(os.path.join(root, "deliverables", "*", "*.mk")):
+        # Shared discovery (ticket 0248): all_makefiles() now also covers
+        # scripts/analysis/*.mk, closing the gap where relocated fragments (0239)
+        # went unscanned for a lingering $(PROJECT_INCLUDES) reference.
+        for mkpath in all_makefiles():
             with open(mkpath) as f:
                 if use_or_def.search(f.read()):
                     offenders.append(os.path.relpath(mkpath, root))
