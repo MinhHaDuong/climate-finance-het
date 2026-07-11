@@ -13,6 +13,7 @@ fails the test with no edit to this file.
 
 import os
 import re
+import subprocess
 
 import pytest
 from _script_discovery import all_script_files
@@ -83,6 +84,34 @@ def test_no_phase2_target_under_catalogs():
         "Phase-2 outputs must resolve under data/derived/, not data/catalogs/ "
         "(ticket 0219/0222). A Phase-2-produced Make target still lands in the "
         "Phase-1 corpus dir:\n  " + "\n  ".join(offenders)
+    )
+
+
+def test_no_committed_symlink_under_data():
+    """No git-tracked symlink under data/ (ticket 0252).
+
+    Symlinks under data/ are workflow artifacts — worktree data-sharing links
+    into the primary checkout, machine-specific absolute paths. Committing one
+    ships a broken (or looping: data/catalogs/catalogs, commit 431af0ce) path
+    to every other checkout and derails recursive traversals. Data reachability
+    is DVC's job (.dvc pointers), never a committed symlink.
+    """
+    out = subprocess.run(
+        ["git", "ls-files", "-s", "--", "data/"],
+        capture_output=True,
+        text=True,
+        cwd=PROJECT_ROOT,
+        check=True,
+    ).stdout
+    offenders = [
+        line.split("\t", 1)[1]
+        for line in out.splitlines()
+        if line.startswith("120000 ")
+    ]
+    assert not offenders, (
+        "Committed symlink(s) under data/ — machine-specific paths that break "
+        "other checkouts (ticket 0252). git rm them; track data with DVC "
+        "pointers instead:\n  " + "\n  ".join(offenders)
     )
 
 
