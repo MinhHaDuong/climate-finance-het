@@ -50,15 +50,7 @@ zoo-figures: $(ZOO_SCHEMATICS) $(ZOO_RESULT_FIGS)
 # Each script accepts --output <path>.  No corpus data needed — scripts load
 # real embeddings when available and fall back to synthetic data otherwise.
 
-$(ZOO_FIGS)/schematic_%.png: scripts/plot_schematic_%.py scripts/script_io_args.py
-	$(PYTHON) $< --output $@
-
-# Pilot (ticket 0253): plot_schematic_L3_burst.py lives under scripts/figures/ to
-# prove the import-path model — a phase-subdir entry point resolves its flat
-# imports (from utils import …) via the exported PYTHONPATH source root. An
-# explicit rule overrides the pattern above for this one stem; the bulk moves of
-# the remaining schematics are tickets 0255-0258.
-$(ZOO_FIGS)/schematic_L3_burst.png: scripts/figures/plot_schematic_L3_burst.py scripts/script_io_args.py
+$(ZOO_FIGS)/schematic_%.png: scripts/figures/plot_schematic_%.py scripts/script_io_args.py
 	$(PYTHON) $< --output $@
 
 # ── Cross-year Z-score tables ─────────────────────────────────────────────
