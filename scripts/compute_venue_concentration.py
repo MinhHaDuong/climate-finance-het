@@ -18,10 +18,10 @@ import os
 
 import numpy as np
 import pandas as pd
+from _venue_naming import canonical_venue, venue_type
 from pipeline_io import save_csv
 from schemas import VenueConcentrationSchema
 from script_io_args import parse_io_args, validate_io
-from summarize_core_venues import canonical_venue, venue_type
 from utils import get_logger
 
 log = get_logger("compute_venue_concentration")

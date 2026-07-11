@@ -24,6 +24,7 @@ import re
 import networkx as nx
 import numpy as np
 import pandas as pd
+from _corpus_predicates import is_global_south, is_non_english
 from script_io_args import parse_io_args, validate_io
 from utils import (
     CATALOGS_DIR,
@@ -110,36 +111,6 @@ QUOTAS = {
     "global_south_min": 0.20,
 }
 
-# Global South country keywords for affiliation matching
-GLOBAL_SOUTH_KEYWORDS = {
-    "china", "india", "brazil", "indonesia", "mexico", "nigeria",
-    "bangladesh", "pakistan", "vietnam", "ethiopia", "egypt",
-    "philippines", "kenya", "tanzania", "colombia", "argentina",
-    "south africa", "peru", "venezuela", "chile", "ecuador",
-    "guatemala", "cameroon", "ghana", "senegal", "morocco",
-    "tunisia", "algeria", "thailand", "malaysia", "sri lanka",
-    "nepal", "myanmar", "cambodia", "laos", "mongolia",
-    "fiji", "samoa", "tonga", "tuvalu", "vanuatu",
-    "bolivia", "paraguay", "uruguay", "costa rica", "panama",
-    "honduras", "nicaragua", "el salvador", "dominican republic",
-    "jamaica", "trinidad", "barbados", "cuba", "haiti",
-    "uganda", "mozambique", "zambia", "zimbabwe", "malawi",
-    "madagascar", "niger", "mali", "burkina faso", "chad",
-    "congo", "rwanda", "burundi", "benin", "togo",
-    "sierra leone", "liberia", "guinea", "gambia",
-    "jordan", "lebanon", "iraq", "iran", "afghanistan",
-    "uzbekistan", "kazakhstan", "kyrgyzstan", "tajikistan",
-    "beijing", "shanghai", "mumbai", "delhi", "são paulo",
-    "nairobi", "dar es salaam", "lagos", "cairo", "dhaka",
-    "jakarta", "manila", "hanoi", "bogota", "lima",
-    "buenos aires", "santiago", "quito", "accra", "dakar",
-    "addis ababa", "kampala", "lusaka", "harare", "maputo",
-    "bangui", "kinshasa", "abidjan", "tunis", "rabat",
-    "islamabad", "karachi", "colombo", "kathmandu",
-    "flacso", "eclac", "cepal",
-}
-
-
 # ── HELPERS ─────────────────────────────────────────────────────────────
 
 def text_blob(row):
@@ -221,25 +192,6 @@ def field_score(row):
     if has_excluded:
         return "exclude"
     return "unknown"
-
-
-def is_non_english(row):
-    """Check if paper is non-English."""
-    lang = str(row.get("language", "") or "").lower().strip()
-    if not lang:
-        return False
-    return lang not in ("en", "eng", "en_us", "english")
-
-
-def is_global_south(row):
-    """Detect Global South affiliation from affiliations field."""
-    aff = str(row.get("affiliations", "") or "").lower()
-    if not aff:
-        return False
-    for kw in GLOBAL_SOUTH_KEYWORDS:
-        if kw in aff:
-            return True
-    return False
 
 
 def robust_minmax(values):

@@ -14,9 +14,9 @@ Usage:
 """
 
 import os
-import re
 
 import pandas as pd
+from _venue_naming import canonical_venue, institution_group, venue_type
 from script_io_args import parse_io_args, validate_io
 from utils import BASE_DIR, DERIVED_TABLES_DIR, get_logger, save_csv
 
@@ -51,86 +51,6 @@ def parse_args():
     args.out_institutions = os.path.join(out_dir, "tab_core_institutions.csv")
     args.out_institution_types = os.path.join(out_dir, "tab_core_institution_by_type.csv")
     return args
-
-
-# Each entry is (matcher, canonical_name).
-# matcher is either a substring str or a callable(low: str) -> bool.
-# More specific patterns must precede more general ones within the same family.
-_VENUE_RULES: list[tuple] = [
-    # Exact-match edge case
-    (lambda s: s == "mf policy paper", "IMF Policy Paper"),
-    # World Bank — most specific first
-    (lambda s: "world bank" in s and ("ebook" in s or "publication" in s or "washington, dc" in s),
-     "World Bank eBooks"),
-    ("world bank policy research working paper", "World Bank Policy Research Working Paper"),
-    ("world bank", "World Bank"),
-    # OECD — most specific first
-    ("oecd/iea climate change expert group papers", "OECD/IEA Climate Change Expert Group Papers"),
-    (lambda s: "oecd" in s and "working paper" in s, "OECD Working Papers"),
-    (lambda s: "oecd" in s and "paper" in s, "OECD Papers"),
-    (lambda s: s.startswith("oecd"), "OECD"),
-    # IMF — most specific first
-    ("imf working paper", "IMF Working Paper"),
-    ("imf staff climate notes", "IMF Staff Climate Notes"),
-    ("imf staff country reports", "IMF Staff Country Reports"),
-    (lambda s: "imf" in s and ("discussion note" in s or "staff" in s), "IMF Staff Notes"),
-    ("imf", "IMF"),
-    # Repositories and indexes
-    ("ssrn", "SSRN Electronic Journal"),
-    ("repec", "RePEc"),
-    ("depositonce", "DepositOnce"),
-    ("zenodo", "Zenodo"),
-    ("figshare", "Figshare"),
-    ("preprints", "Preprints"),
-]
-
-
-def canonical_venue(name):
-    v = str(name or "").strip()
-    low = v.lower()
-    if not low:
-        return "[missing]"
-    for matcher, canonical in _VENUE_RULES:
-        matched = matcher(low) if callable(matcher) else (matcher in low)
-        if matched:
-            return canonical
-    return v
-
-
-def venue_type(name):
-    low = str(name or "").lower()
-    if not low or low == "[missing]":
-        return "missing"
-
-    if low == "climate finance and the usd 100 billion goal":
-        return "report_series"
-
-    wp_pattern = re.compile(r"working paper|working papers|discussion paper|policy research working paper|\bwp\b")
-    report_pattern = re.compile(
-        r"ebook|ebooks|report|reports|publications|world bank|oecd|imf|unfccc|climate policy initiative|\bcpi\b"
-    )
-    non_journal_pattern = re.compile(
-        r"ssrn|repec|zenodo|figshare|preprints|open science framework|depositonce|research online"
-    )
-
-    if wp_pattern.search(low):
-        return "working_paper_series"
-    if report_pattern.search(low):
-        return "report_series"
-    if non_journal_pattern.search(low):
-        return "repository_or_index"
-    return "journal"
-
-
-def institution_group(name):
-    low = str(name or "").lower()
-    if "oecd" in low:
-        return "OECD"
-    if "world bank" in low:
-        return "World Bank"
-    if "imf" in low:
-        return "IMF"
-    return "Other/None"
 
 
 def summarize(df, group_cols, top_n):

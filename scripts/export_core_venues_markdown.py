@@ -17,8 +17,8 @@ Usage:
 import os
 
 import pandas as pd
+from _venue_naming import canonical_venue, venue_type
 from script_io_args import parse_io_args, validate_io
-from summarize_core_venues import canonical_venue, venue_type
 from utils import BASE_DIR, DERIVED_TABLES_DIR, get_logger
 
 log = get_logger("export_core_venues_markdown")

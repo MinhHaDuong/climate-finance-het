@@ -3,11 +3,13 @@ Title: Reorg code — entry-point vs library classification audit + extract embe
 Created: 2026-07-11
 Author: HDMX-coding-agent
 Label: deferred
+Closed: Definitive Tier-2/Tier-3 classification published in docs/repo-layout.md; 3 dual-role helpers extracted to flat _venue_naming/_corpus_predicates/_course_dedup (byte-identical), 6 reclassified Tier-2; gate test tests/test_script_classification.py freezes the flat library surface. make check-fast + make lint green.
 
 --- log ---
 2026-07-11T06:52Z HDMX-coding-agent created
 2026-07-11T06:52Z HDMX-coding-agent note wave-0a of epic 0240. 0250 is the exemplar (extracted build_pre2007_traditions to neutral _pre2007_traditions.py). Produces the definitive Tier-2/Tier-3 file list the moves consume. Start now — no prerequisite.
 
+2026-07-11T07:22Z HDMX-coding-agent closed — Definitive Tier-2/Tier-3 classification published in docs/repo-layout.md; 3 dual-role helpers extracted to flat _venue_naming/_corpus_predicates/_course_dedup (byte-identical), 6 reclassified Tier-2; gate test tests/test_script_classification.py freezes the flat library surface. make check-fast + make lint green.
 --- body ---
 ## Context
 Wave-0a of the code reorg epic (tracker `0240`). The two-tier rule the epic
