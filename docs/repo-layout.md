@@ -53,7 +53,12 @@ run), not a syntactic property. Decide per file:
    `_`-private module (the existing convention), or moves to `libs/` if it is
    shared across repos. No top-level `src/`.
 2. **Invoked by the Makefile, imported by nothing → entry point**, in the
-   `scripts/<phase>/` that matches what it produces.
+   `scripts/<phase>/` that matches what it produces. Moving it there keeps its
+   flat imports working: the repo resolves `from utils import …` /
+   `import openalex_corpus` via the relative source roots `scripts` and
+   `libs/openalex-corpus/src` on `PYTHONPATH` (pytest `pythonpath` + the
+   Makefile `export PYTHONPATH`), so a subdir entry point needs no `sys.path`
+   hack and no `python -m` (ticket 0253; pilot `scripts/figures/`).
 3. **A script that *leaks* a helper** (imported ≥1 but authored to run) → extract
    the *helper* into a module in the owning `scripts/<phase>/`; the script stays.
    Import-count is a symptom; the docstring / `_`-prefix / pure-function-vs-`main()`

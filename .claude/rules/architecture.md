@@ -91,13 +91,22 @@ backoff, `mailto` injected by the caller), `reconstruct_abstract`,
 `normalize_doi`, `build_text`, `is_boilerplate_abstract` — live in a standalone
 path package `libs/openalex-corpus`, this repo's source of truth for them
 (ticket 0170). It ships no deployment config (`MAILTO`/API keys are injected as
-parameters) and no embedding model choice. This repo's `scripts/pipeline_io.py`,
-`pipeline_text.py`, and `enrich_embeddings.py` import from it and **re-export**
-the symbols, so every existing `from utils import …` / `from pipeline_io import …`
-call site is unchanged; `pipeline_io.retry_get` is a thin shim that injects this
-repo's `MAILTO` and User-Agent. Behavioural parity is pinned by
-`tests/test_openalex_corpus_equivalence.py`. The package is consumed via a
-non-editable `[tool.uv.sources]` path entry.
+parameters) and no embedding model choice.
+
+This repo **imports the package as source** via the relative source root
+`libs/openalex-corpus/src` on `PYTHONPATH` (ticket 0253): pytest gets it from
+`[tool.pytest.ini_options] pythonpath`, every Make/`.mk` invocation from the
+top-level `export PYTHONPATH`. The former non-editable `[tool.uv.sources]` wheel
+install is retired; `libs/openalex-corpus/pyproject.toml` is kept so git-source
+consumers (AEDIST, ticket 0229) still depend on it. Call sites import
+`normalize_doi`, `reconstruct_abstract`, `build_text`, `is_boilerplate_abstract`
+from `openalex_corpus.*` directly (the `utils` facade re-exposes the first two
+from the package, unchanged for `from utils import …`). Two project-owned
+adapters remain and are **not** pure pass-throughs: `pipeline_io.retry_get`
+injects this repo's `MAILTO` and User-Agent, and `enrich_embeddings` re-exports
+`build_text` / `is_boilerplate_abstract` where its own pipeline uses them.
+Behavioural parity is pinned by `tests/test_openalex_corpus_equivalence.py`;
+symbol resolution by `tests/test_shim_resolution.py`.
 
 The package has no external consumers today. It was extracted so a sibling
 paper's pipeline could share these conventions rather than reach into this
