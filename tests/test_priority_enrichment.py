@@ -15,6 +15,7 @@ import pandas as pd
 import pytest
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
+HARVEST_DIR = os.path.join(SCRIPTS_DIR, "harvest")
 sys.path.insert(0, SCRIPTS_DIR)
 
 
@@ -196,7 +197,7 @@ class TestSortDoisByPriority:
 class TestScriptUsedPriority:
     def test_enrich_citations_batch_mentions_priority(self):
         """enrich_citations_batch.py source should reference priority ordering."""
-        path = os.path.join(SCRIPTS_DIR, "enrich_citations_batch.py")
+        path = os.path.join(HARVEST_DIR, "enrich_citations_batch.py")
         with open(path) as f:
             source = f.read()
         assert "priority" in source.lower(), \

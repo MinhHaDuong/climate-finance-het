@@ -20,9 +20,10 @@ import pytest
 import yaml
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
+HARVEST_DIR = os.path.join(SCRIPTS_DIR, "harvest")
 MAKEFILE = os.path.join(os.path.dirname(__file__), "..", "Makefile")
 DVC_YAML = os.path.join(os.path.dirname(__file__), "..", "dvc.yaml")
-sys.path.insert(0, SCRIPTS_DIR)
+sys.path.insert(0, HARVEST_DIR)
 
 
 # ---------------------------------------------------------------------------
@@ -317,7 +318,7 @@ class TestCorpusAlignCLI:
 
         env = _env_with_data(tmp_path)
         result = subprocess.run(
-            [sys.executable, os.path.join(SCRIPTS_DIR, "corpus_align.py"),
+            [sys.executable, os.path.join(HARVEST_DIR, "corpus_align.py"),
              "--dry-run",
              "--refined-works", str(refined_path),
              "--embeddings", str(tmp_path / "embeddings.npz"),
@@ -345,7 +346,7 @@ class TestCorpusAlignCLI:
         env = _env_with_data(tmp_path)
 
         result = subprocess.run(
-            [sys.executable, os.path.join(SCRIPTS_DIR, "corpus_align.py"),
+            [sys.executable, os.path.join(HARVEST_DIR, "corpus_align.py"),
              "--refined-works", str(refined_path),
              "--embeddings", str(tmp_path / "embeddings.npz"),
              "--citations", str(tmp_path / "citations.csv"),
@@ -373,7 +374,7 @@ class TestCorpusAlignCLI:
 
     def test_help_flag(self):
         result = subprocess.run(
-            [sys.executable, os.path.join(SCRIPTS_DIR, "corpus_align.py"), "--help"],
+            [sys.executable, os.path.join(HARVEST_DIR, "corpus_align.py"), "--help"],
             capture_output=True, text=True,
         )
         assert result.returncode == 0

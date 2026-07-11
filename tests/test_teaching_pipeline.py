@@ -16,7 +16,7 @@ import pandas as pd
 import pytest
 import yaml
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "harvest"))
 
 BASE_DIR = os.path.join(os.path.dirname(__file__), "..")
 
@@ -484,7 +484,7 @@ class TestDvcYamlIntegration:
         deps = teaching["deps"]
 
         assert "data/syllabi" in deps, "catalog_teaching should depend on data/syllabi"
-        assert "scripts/build_teaching_yaml.py" in deps, \
+        assert "scripts/harvest/build_teaching_yaml.py" in deps, \
             "catalog_teaching should depend on build_teaching_yaml.py"
 
     def test_catalog_teaching_stage_runs_build_teaching_yaml(self):

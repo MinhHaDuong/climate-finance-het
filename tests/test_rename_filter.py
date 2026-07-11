@@ -6,6 +6,7 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
+HARVEST_DIR = os.path.join(SCRIPTS_DIR, "harvest")
 
 
 def test_filter_flags_importable():
@@ -17,7 +18,7 @@ def test_filter_flags_importable():
 
 def test_corpus_filter_script_exists():
     """corpus_filter.py exists (renamed from corpus_refine.py)."""
-    assert os.path.isfile(os.path.join(SCRIPTS_DIR, "corpus_filter.py"))
+    assert os.path.isfile(os.path.join(HARVEST_DIR, "corpus_filter.py"))
 
 
 def test_old_names_removed():

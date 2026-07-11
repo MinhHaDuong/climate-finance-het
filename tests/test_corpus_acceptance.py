@@ -127,7 +127,7 @@ class TestFileExistence:
         assert os.path.isfile(REFINED_PATH), \
             f"refined_works.csv missing at {REFINED_PATH}" + _diagnosis(
                 "corpus_filter.py --apply was not run, or ran on a different machine",
-                "uv run python scripts/corpus_filter.py --apply",
+                "uv run python scripts/harvest/corpus_filter.py --apply",
                 "5-30 min (depends on reranker cache)",
                 "No corpus for Phase 2 — all analysis blocked",
             )
@@ -136,7 +136,7 @@ class TestFileExistence:
         assert os.path.isfile(AUDIT_PATH), \
             f"corpus_audit.csv missing at {AUDIT_PATH}" + _diagnosis(
                 "corpus_filter.py did not write the audit trail",
-                "uv run python scripts/corpus_filter.py --apply",
+                "uv run python scripts/harvest/corpus_filter.py --apply",
                 "5-30 min",
                 "No provenance for removed papers — irreproducible",
             )
@@ -145,7 +145,7 @@ class TestFileExistence:
         assert os.path.isfile(EMBEDDINGS_PATH), \
             f"embeddings.npz missing at {EMBEDDINGS_PATH}" + _diagnosis(
                 "enrich_embeddings.py was not run",
-                "uv run python scripts/enrich_embeddings.py",
+                "uv run python scripts/harvest/enrich_embeddings.py",
                 "~16 min on CPU for full corpus",
                 "No embedding-based analysis (bimodality, PCA, outliers)",
             )
@@ -163,7 +163,7 @@ class TestFileExistence:
         assert os.path.isfile(CACHE_PATH), \
             f"llm_relevance_cache.csv missing at {CACHE_PATH}" + _diagnosis(
                 "Reranker scoring was not run (Flag 6)",
-                "uv run python scripts/corpus_filter.py --apply (with reranker backend)",
+                "uv run python scripts/harvest/corpus_filter.py --apply (with reranker backend)",
                 "~10 min on GPU, ~2 hours on CPU",
                 "Flag 6 will score from scratch on next run — slow but not broken",
             )
@@ -310,7 +310,7 @@ class TestAuditTrail:
         assert len(audit) == len(enriched), \
             f"Audit has {len(audit):,} rows but enriched has {len(enriched):,}" + _diagnosis(
                 "corpus_filter.py crashed mid-run or was interrupted",
-                "Re-run: uv run python scripts/corpus_filter.py --apply",
+                "Re-run: uv run python scripts/harvest/corpus_filter.py --apply",
                 "5-30 min",
                 "Cannot verify which papers were removed or why",
             )
@@ -481,7 +481,7 @@ class TestEmbeddings:
             f"Only {n_emb:,} embeddings for {n_refined:,} refined papers " \
             f"({100*n_emb/n_refined:.0f}% coverage)" + _diagnosis(
                 "Embedding generation ran on a smaller corpus version",
-                "uv run python scripts/enrich_embeddings.py (incremental)",
+                "uv run python scripts/harvest/enrich_embeddings.py (incremental)",
                 "~5 min for delta",
                 "Embedding-based analyses (bimodality, PCA) use wrong subset",
             )
@@ -525,14 +525,14 @@ class TestCorpusAlign:
     """refined_embeddings.npz and refined_citations.csv must exist, be fresh,
     and satisfy the Phase 1→2 contract invariants.
 
-    Failures here mean: run  uv run python scripts/corpus_align.py
+    Failures here mean: run  uv run python scripts/harvest/corpus_align.py
     """
 
     def test_refined_embeddings_exist(self):
         assert os.path.isfile(REFINED_EMBEDDINGS_PATH), \
             f"refined_embeddings.npz missing at {REFINED_EMBEDDINGS_PATH}" + _diagnosis(
                 "corpus_align.py was not run after corpus_filter.py",
-                "uv run python scripts/corpus_align.py",
+                "uv run python scripts/harvest/corpus_align.py",
                 "~2 min",
                 "Phase 2 scripts will crash or use the wrong (unaligned) embeddings",
             )
@@ -541,7 +541,7 @@ class TestCorpusAlign:
         assert os.path.isfile(REFINED_CITATIONS_PATH), \
             f"refined_citations.csv missing at {REFINED_CITATIONS_PATH}" + _diagnosis(
                 "corpus_align.py was not run after corpus_filter.py",
-                "uv run python scripts/corpus_align.py",
+                "uv run python scripts/harvest/corpus_align.py",
                 "~2 min",
                 "Phase 2 citation/co-citation scripts will crash",
             )
@@ -555,7 +555,7 @@ class TestCorpusAlign:
         assert n_emb == n_refined, \
             f"refined_embeddings.npz has {n_emb:,} rows but refined_works.csv has {n_refined:,}" + _diagnosis(
                 "corpus_align.py was run against a different version of refined_works.csv",
-                "uv run python scripts/corpus_align.py",
+                "uv run python scripts/harvest/corpus_align.py",
                 "~2 min",
                 "Row misalignment: embedding[i] no longer corresponds to refined_works row i",
             )
@@ -569,7 +569,7 @@ class TestCorpusAlign:
         assert emb_mtime >= refined_mtime, \
             "refined_embeddings.npz is older than refined_works.csv" + _diagnosis(
                 "refined_works.csv was regenerated but corpus_align.py was not re-run",
-                "uv run python scripts/corpus_align.py",
+                "uv run python scripts/harvest/corpus_align.py",
                 "~2 min",
                 "Stale alignment: embeddings no longer match current corpus rows",
             )
@@ -583,7 +583,7 @@ class TestCorpusAlign:
         assert cit_mtime >= refined_mtime, \
             "refined_citations.csv is older than refined_works.csv" + _diagnosis(
                 "refined_works.csv was regenerated but corpus_align.py was not re-run",
-                "uv run python scripts/corpus_align.py",
+                "uv run python scripts/harvest/corpus_align.py",
                 "~2 min",
                 "Stale alignment: citation graph may include removed papers",
             )
@@ -609,7 +609,7 @@ class TestCorpusAlign:
         assert n_strays == 0, \
             f"{n_strays} source_dois in refined_citations.csv not found in refined_works" + _diagnosis(
                 "corpus_align.py was run against a different refined_works.csv",
-                "uv run python scripts/corpus_align.py",
+                "uv run python scripts/harvest/corpus_align.py",
                 "~2 min",
                 "Citation graph references removed papers — co-citation analysis corrupted",
             )
@@ -713,7 +713,7 @@ class TestContentQuality:
         assert not missing, \
             f"Missing from_* columns: {missing}" + _diagnosis(
                 "catalog_merge.py was not updated to produce from_* columns",
-                "Re-run: uv run python scripts/catalog_merge.py",
+                "Re-run: uv run python scripts/harvest/catalog_merge.py",
                 "5 min",
                 "Source provenance tracking broken — multi-source analysis impossible",
             )

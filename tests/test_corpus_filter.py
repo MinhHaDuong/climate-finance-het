@@ -20,6 +20,7 @@ import pandas as pd
 import pytest
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
+HARVEST_DIR = os.path.join(SCRIPTS_DIR, "harvest")
 PYTHON = sys.executable
 FIXTURE_DIR = os.path.join(os.path.dirname(__file__), "fixtures")
 
@@ -27,7 +28,7 @@ FIXTURE_DIR = os.path.join(os.path.dirname(__file__), "fixtures")
 def run_script(*args, cwd=None):
     """Run corpus_filter.py with args, return (returncode, stdout+stderr)."""
     result = subprocess.run(
-        [PYTHON, os.path.join(SCRIPTS_DIR, "corpus_filter.py"), *args],
+        [PYTHON, os.path.join(HARVEST_DIR, "corpus_filter.py"), *args],
         capture_output=True, text=True, cwd=cwd or os.path.dirname(SCRIPTS_DIR)
     )
     return result.returncode, result.stdout + result.stderr
@@ -39,7 +40,7 @@ def run_script(*args, cwd=None):
 
 def _read_script(script_name):
     """Read script source text for flag inspection."""
-    path = os.path.join(SCRIPTS_DIR, script_name)
+    path = os.path.join(HARVEST_DIR, script_name)
     with open(path) as f:
         return f.read()
 

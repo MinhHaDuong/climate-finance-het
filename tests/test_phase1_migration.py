@@ -16,12 +16,13 @@ import pandas as pd
 import pytest
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
+HARVEST_DIR = os.path.join(SCRIPTS_DIR, "harvest")
 sys.path.insert(0, SCRIPTS_DIR)
 
 
 def _read_script(script_name):
-    """Read script source text for flag inspection."""
-    path = os.path.join(SCRIPTS_DIR, script_name)
+    """Read script source text for flag inspection (moved harvest entry points)."""
+    path = os.path.join(HARVEST_DIR, script_name)
     with open(path) as f:
         return f.read()
 
@@ -70,7 +71,7 @@ class TestPhase1Integration:
 
         result = subprocess.run(
             [
-                "python", os.path.join(SCRIPTS_DIR, "corpus_filter.py"),
+                "python", os.path.join(HARVEST_DIR, "corpus_filter.py"),
                 "--apply", "--skip-llm", "--skip-citation-flag",
                 "--works-input", str(temp_catalogs / "unified_works.csv"),
                 "--works-output", str(temp_catalogs / "refined_works.csv"),
@@ -106,7 +107,7 @@ class TestIncrementiality:
         env["CLIMATE_FINANCE_DATA"] = str(temp_catalogs.parent)
 
         cmd = [
-            "python", os.path.join(SCRIPTS_DIR, "corpus_filter.py"),
+            "python", os.path.join(HARVEST_DIR, "corpus_filter.py"),
             "--apply", "--skip-llm", "--skip-citation-flag",
             "--works-input", str(temp_catalogs / "unified_works.csv"),
             "--works-output", str(temp_catalogs / "refined_works.csv"),

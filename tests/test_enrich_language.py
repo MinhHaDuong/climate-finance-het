@@ -17,7 +17,8 @@ import pandas as pd
 import pytest
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
-sys.path.insert(0, SCRIPTS_DIR)
+HARVEST_DIR = os.path.join(SCRIPTS_DIR, "harvest")
+sys.path.insert(0, HARVEST_DIR)
 
 
 # ---------- language normalization ----------
@@ -280,7 +281,7 @@ class TestDVCStage:
 
     def test_stage_deps_include_script(self):
         deps = self.dvc["stages"]["enrich_language"]["deps"]
-        assert "scripts/enrich_language.py" in deps
+        assert "scripts/harvest/enrich_language.py" in deps
 
     def test_stage_deps_include_unified(self):
         deps = self.dvc["stages"]["enrich_language"]["deps"]
@@ -315,7 +316,7 @@ class TestScriptStructure:
 
     @pytest.fixture(autouse=True)
     def _load_source(self):
-        path = os.path.join(SCRIPTS_DIR, "enrich_language.py")
+        path = os.path.join(HARVEST_DIR, "enrich_language.py")
         with open(path) as f:
             self.source = f.read()
 

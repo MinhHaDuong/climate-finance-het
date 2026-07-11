@@ -20,7 +20,9 @@ pytestmark = pytest.mark.integration
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SCRIPTS_DIR = os.path.join(REPO_ROOT, "scripts")
+HARVEST_DIR = os.path.join(SCRIPTS_DIR, "harvest")
 sys.path.insert(0, SCRIPTS_DIR)
+sys.path.insert(0, HARVEST_DIR)
 
 from utils import FROM_COLS, WORKS_COLUMNS, normalize_doi
 
@@ -335,7 +337,7 @@ class TestCorpusFilterExtend:
         n_input = len(pd.read_csv(unified_path))
 
         result = subprocess.run(
-            [sys.executable, os.path.join(SCRIPTS_DIR, "corpus_filter.py"),
+            [sys.executable, os.path.join(HARVEST_DIR, "corpus_filter.py"),
              "--extend", "--cheap",
              "--works-input", str(unified_path),
              "--works-output", str(extended_path)],
@@ -370,7 +372,7 @@ class TestCorpusFilterExtend:
         extended_path = catalogs_dir / "extended_works.csv"
 
         subprocess.run(
-            [sys.executable, os.path.join(SCRIPTS_DIR, "corpus_filter.py"),
+            [sys.executable, os.path.join(HARVEST_DIR, "corpus_filter.py"),
              "--extend", "--cheap",
              "--works-input", str(unified_path),
              "--works-output", str(extended_path)],
@@ -402,7 +404,7 @@ class TestCorpusFilterApply:
 
         # Extend
         subprocess.run(
-            [sys.executable, os.path.join(SCRIPTS_DIR, "corpus_filter.py"),
+            [sys.executable, os.path.join(HARVEST_DIR, "corpus_filter.py"),
              "--extend", "--cheap",
              "--works-input", str(unified_path),
              "--works-output", str(extended_path)],
@@ -413,7 +415,7 @@ class TestCorpusFilterApply:
 
         # Filter
         result = subprocess.run(
-            [sys.executable, os.path.join(SCRIPTS_DIR, "corpus_filter.py"),
+            [sys.executable, os.path.join(HARVEST_DIR, "corpus_filter.py"),
              "--filter",
              "--works-input", str(extended_path),
              "--works-output", str(refined_path)],
@@ -466,14 +468,14 @@ class TestCorpusAlign:
         refined_path = catalogs_dir / "refined_works.csv"
 
         subprocess.run(
-            [sys.executable, os.path.join(SCRIPTS_DIR, "corpus_filter.py"),
+            [sys.executable, os.path.join(HARVEST_DIR, "corpus_filter.py"),
              "--extend", "--cheap",
              "--works-input", str(unified_path),
              "--works-output", str(extended_path)],
             capture_output=True, text=True, cwd=REPO_ROOT,
         )
         subprocess.run(
-            [sys.executable, os.path.join(SCRIPTS_DIR, "corpus_filter.py"),
+            [sys.executable, os.path.join(HARVEST_DIR, "corpus_filter.py"),
              "--filter",
              "--works-input", str(extended_path),
              "--works-output", str(refined_path)],
@@ -516,7 +518,7 @@ class TestCorpusAlign:
         out_cit = catalogs_dir / "refined_citations.csv"
 
         result = subprocess.run(
-            [sys.executable, os.path.join(SCRIPTS_DIR, "corpus_align.py"),
+            [sys.executable, os.path.join(HARVEST_DIR, "corpus_align.py"),
              "--refined-works", str(refined_path),
              "--embeddings", str(emb_path),
              "--citations", str(cit_path),
@@ -578,7 +580,7 @@ class TestFullPipeline:
         # Stage 3: extend
         extended_path = catalogs_dir / "extended_works.csv"
         r = subprocess.run(
-            [sys.executable, os.path.join(SCRIPTS_DIR, "corpus_filter.py"),
+            [sys.executable, os.path.join(HARVEST_DIR, "corpus_filter.py"),
              "--extend", "--cheap",
              "--works-input", str(enriched_path),
              "--works-output", str(extended_path)],
@@ -591,7 +593,7 @@ class TestFullPipeline:
         # Stage 4: filter
         refined_path = catalogs_dir / "refined_works.csv"
         r = subprocess.run(
-            [sys.executable, os.path.join(SCRIPTS_DIR, "corpus_filter.py"),
+            [sys.executable, os.path.join(HARVEST_DIR, "corpus_filter.py"),
              "--filter",
              "--works-input", str(extended_path),
              "--works-output", str(refined_path)],
@@ -624,7 +626,7 @@ class TestFullPipeline:
                 catalogs_dir / "citations.csv", index=False)
 
         r = subprocess.run(
-            [sys.executable, os.path.join(SCRIPTS_DIR, "corpus_align.py"),
+            [sys.executable, os.path.join(HARVEST_DIR, "corpus_align.py"),
              "--refined-works", str(refined_path),
              "--embeddings", str(emb_path),
              "--citations", str(catalogs_dir / "citations.csv"),

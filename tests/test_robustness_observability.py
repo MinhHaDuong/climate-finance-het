@@ -20,7 +20,8 @@ import pandas as pd
 import pytest
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
-sys.path.insert(0, SCRIPTS_DIR)
+HARVEST_DIR = os.path.join(SCRIPTS_DIR, "harvest")
+sys.path.insert(0, HARVEST_DIR)
 
 
 # ---------------------------------------------------------------------------
@@ -65,7 +66,7 @@ def make_mini_citations(tmp_path):
 
 def _read_script(script_name):
     """Read script source text for flag inspection."""
-    path = os.path.join(SCRIPTS_DIR, script_name)
+    path = os.path.join(HARVEST_DIR, script_name)
     with open(path) as f:
         return f.read()
 
@@ -226,7 +227,7 @@ class TestJsonlLogging:
         subprocess.run(
             [
                 sys.executable,
-                os.path.join(SCRIPTS_DIR, "enrich_abstracts.py"),
+                os.path.join(HARVEST_DIR, "enrich_abstracts.py"),
                 "--dry-run",
                 "--works-input",
                 works_path,
@@ -252,7 +253,7 @@ class TestJsonlLogging:
             "enrich_citations_openalex.py",
         ]:
             result = subprocess.run(
-                [sys.executable, os.path.join(SCRIPTS_DIR, script), "--help"],
+                [sys.executable, os.path.join(HARVEST_DIR, script), "--help"],
                 capture_output=True,
                 text=True,
             )
@@ -366,7 +367,7 @@ class TestResumePreview:
         result = subprocess.run(
             [
                 sys.executable,
-                os.path.join(SCRIPTS_DIR, "enrich_abstracts.py"),
+                os.path.join(HARVEST_DIR, "enrich_abstracts.py"),
                 "--dry-run",
                 "--works-input",
                 works_path,
@@ -391,7 +392,7 @@ class TestResumePreview:
         result = subprocess.run(
             [
                 sys.executable,
-                os.path.join(SCRIPTS_DIR, "enrich_citations_batch.py"),
+                os.path.join(HARVEST_DIR, "enrich_citations_batch.py"),
                 "--works-input",
                 works_path,
                 "--run-id",
@@ -421,7 +422,7 @@ class TestRunReport:
         subprocess.run(
             [
                 sys.executable,
-                os.path.join(SCRIPTS_DIR, "enrich_abstracts.py"),
+                os.path.join(HARVEST_DIR, "enrich_abstracts.py"),
                 "--dry-run",
                 "--works-input",
                 works_path,

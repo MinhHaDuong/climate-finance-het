@@ -13,7 +13,7 @@ import tempfile
 import pandas as pd
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
-sys.path.insert(0, SCRIPTS_DIR)
+sys.path.insert(0, os.path.join(SCRIPTS_DIR, "harvest"))
 
 from catalog_merge import _dedup_vectorized, _load_and_tag
 from utils import FROM_COLS, WORKS_COLUMNS
