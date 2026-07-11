@@ -1,28 +1,27 @@
 # State
 
-Last updated: 2026-07-10T20:48Z
+Last updated: 2026-07-11T06:55Z
 
 ## Current goal
 
-**Œconomia R&R resubmission.** v2.0.5 shipped. Critical path: **0152** letter
-(DRAFT v3 done 2026-07-10: first-person, A4, 60-row ledger filled, all 14
-Editor rows author-signed; **R1/R2 sign-offs next session**) → **0195** stat
-tables → **0153** final rebuild + Zenodo/HAL deposit + resubmit. Tracker 0156
-stays open until resubmitted (then closes 0133).
+**Œconomia R&R resubmission.** Critical path: **0152** (letter DRAFT v3 done,
+14 Editor rows signed; R1/R2 sign-offs + E3f vetting pending — see ticket) →
+**0195** stat tables → **0153** rebuild, deposit, resubmit. Tracker 0156 open
+until resubmitted.
 
-### Also open
-- **0244** — verify 4 AI-generated techrep includes (phantom ref caught in §11);
-  vet `cop-topic-structure.md` before the letter goes out (it backs E3f).
-- **0245** brief entries · **0243** Fable style alignment · **0026** method paper.
-- **0246/0247** — harness: make-check exit-0 bug; shared venv missing bibtexparser.
+### Also open (details live in the tickets)
+- **0243** voice alignment — author decisions on draft PR #1016.
+- **0244** AI-generated includes — author marker review.
+- **0252** hygiene sweep (.dvc pointers, dead branch) · **0026** method paper.
+- Harness PR #472 (reuse gate + supervisor doctrine) awaits author review.
 
 ## Status
-<!-- generated 2026-07-10T20:48Z -->
-**Tickets:** 5 ready · 43 blocked — `erg ready tickets/` for full list
+<!-- generated 2026-07-11T06:55Z -->
+**Tickets:** 4 ready · 42 blocked — `erg ready tickets/` for full list
 **Recent commits:**
-  76f6ca8 Merge pull request #1008 from MinhHaDuong/t-roar-file-tickets
-  fc6ef2d Merge pull request #1007 from MinhHaDuong/t152-response-letter
-  50927b8 manuscript(0152): drop the false pre-2007 co-citation paragraph
+  de07787c ticket(0251): close and archive — guard landed, gates green
+  caa2e2ed ticket(0248): close and archive — .mk discovery unified, PR #1019
+  fe53ba8b ticket(0242): close and archive — backward arrow severed, PR #1017
 
 ## Corpus (v1.1.1)
 
@@ -31,10 +30,10 @@ stays open until resubmitted (then closes 0133).
 
 ## Health
 
-check-fast 932 + lint 149 green. Full suite on doudou: 1388 passed, 21 failed + 4
-errors, all data/env-dependent (no local corpus data; C2ST timeouts; bibtexparser
-→ 0247), none from the merged diff. `make check` exited 0 despite failures → 0246.
+check-fast 954 + lint 152 green (wrong-namespace guard 0251 in). 0246 was a
+false alarm: make is exit-faithful, a `| tail` pipe swallowed the exit code.
+2026-07-10/11 night regime + morning: 8 PRs merged, 6 tickets closed.
 
 ## Next actions
 
-- **HITL:** 0152 R1/R2 sign-offs → 0195 → 0153 (rebuild, deposit, resubmit).
+- **HITL Monday:** 0152 · 0244 · 0243 — the tickets carry the work.
