@@ -200,7 +200,7 @@ deploy-corpus:
 	$(UV_RUN) dvc push
 
 # ── Corpus diagnostics (Phase 1 — reads enrichment caches) ──
-deliverables/_shared/tables/qa_citations_report.json: scripts/qa_citations.py scripts/utils.py \
+deliverables/_shared/tables/qa_citations_report.json: scripts/qa/qa_citations.py scripts/utils.py \
 		$(DATA_DIR)/citations.csv
 	$(PYTHON) $< --output $@
 
@@ -682,7 +682,7 @@ test-durations: | venv-canonicalize
 # no extractable text, so low scores are HUMAN-eyeball flags, never a hard gate.
 # Reads PDFs from the main checkout (they are gitignored, absent from worktrees).
 audit-pdf-content:
-	$(PYTHON) scripts/qa_pdf_content.py --output data/derived/pdf_content_audit.csv
+	$(PYTHON) scripts/qa/qa_pdf_content.py --output data/derived/pdf_content_audit.csv
 
 # Smoke pipeline: run Phase 2 on a 100-row fixture (no DVC pull needed, <30s).
 # Exercises: compute_breakpoints, compute_clusters, plot_fig1_bars.
