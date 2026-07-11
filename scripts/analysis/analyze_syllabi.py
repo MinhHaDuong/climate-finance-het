@@ -10,7 +10,7 @@ This table documents the coverage and convergence of the scraped syllabi,
 supporting the choice of selection criteria for the teaching source pipeline.
 
 Usage:
-    python scripts/analyze_syllabi.py
+    python scripts/analysis/analyze_syllabi.py
 """
 
 import argparse

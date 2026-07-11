@@ -166,14 +166,14 @@ class TestSmokeCriticalPath:
 
     def test_compute_breakpoints(self, smoke_output_dir):
         output = os.path.join(smoke_output_dir, "tab_breakpoints.csv")
-        result = _run_script("compute_breakpoints.py", "--output", output)
+        result = _run_script("analysis/compute_breakpoints.py", "--output", output)
         assert result.returncode == 0, (
             f"compute_breakpoints.py failed:\n{result.stderr}"
         )
 
     def test_compute_clusters(self, smoke_output_dir):
         output = os.path.join(smoke_output_dir, "tab_alluvial.csv")
-        result = _run_script("compute_clusters.py", "--output", output)
+        result = _run_script("analysis/compute_clusters.py", "--output", output)
         assert result.returncode == 0, (
             f"compute_clusters.py failed:\n{result.stderr}"
         )

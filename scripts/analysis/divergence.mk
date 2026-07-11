@@ -108,7 +108,7 @@ divergence-figures: $(DIV_FIG_STAMP)
 # PCA dimensionality sweep and Johnson-Lindenstrauss random projections.
 # Tests whether structural breaks survive dimensionality reduction.
 
-SENS_SCRIPT := scripts/compute_embedding_sensitivity.py
+SENS_SCRIPT := scripts/analysis/compute_embedding_sensitivity.py
 SENS_PLOT   := scripts/plot_divergence.py
 SENS_METHODS := S1_MMD S2_energy
 
@@ -155,7 +155,7 @@ sensitivity: sensitivity-tables sensitivity-figures
 #   plot_convergence.py     → fig_convergence.png  (heatmap + bars)
 
 CP_SCRIPT  := scripts/compute_changepoints.py
-CV_SCRIPT  := scripts/compute_convergence.py
+CV_SCRIPT  := scripts/analysis/compute_convergence.py
 CP_PLOT    := scripts/plot_convergence.py
 CP_TABLE   := $(DIV_TABLES)/tab_changepoints.csv
 CV_TABLE   := $(DIV_TABLES)/tab_convergence.csv
@@ -280,7 +280,7 @@ bootstrap-tables: $(BOOT_CSV)
 # Supports semantic, lexical, and the two lead citation methods (G2, G9).
 # Output: tab_subsample_{method}.csv
 
-SUBSAMP_DISPATCH := scripts/compute_divergence_subsampled.py
+SUBSAMP_DISPATCH := scripts/analysis/compute_divergence_subsampled.py
 SUBSAMP_METHODS_SEM := S1_MMD S2_energy S3_sliced_wasserstein S4_frechet
 SUBSAMP_METHODS_LEX := L1
 SUBSAMP_METHODS_CIT := G9_community G2_spectral

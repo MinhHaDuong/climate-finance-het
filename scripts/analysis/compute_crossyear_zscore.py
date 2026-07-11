@@ -13,7 +13,7 @@ automatically — no special branch required.
 
 Usage::
 
-    uv run python scripts/compute_crossyear_zscore.py \\
+    uv run python scripts/analysis/compute_crossyear_zscore.py \\
         --method S2_energy \\
         --output content/tables/tab_crossyear_S2_energy.csv
 """

@@ -61,7 +61,7 @@ class TestScriptFiles:
         assert os.path.isfile(os.path.join(HARVEST_DIR, "enrich_embeddings.py"))
 
     def test_analyze_embeddings_script_exists(self):
-        assert os.path.isfile(os.path.join(SCRIPTS_DIR, "analyze_embeddings.py"))
+        assert os.path.isfile(os.path.join(SCRIPTS_DIR, "analysis", "analyze_embeddings.py"))
 
     def test_enrich_script_does_not_import_umap(self):
         """Encoding-only script must not import umap or sklearn."""
@@ -73,7 +73,7 @@ class TestScriptFiles:
 
     def test_analyze_script_does_not_import_sentence_transformers(self):
         """Analysis script must not import sentence_transformers or torch."""
-        with open(os.path.join(SCRIPTS_DIR, "analyze_embeddings.py")) as f:
+        with open(os.path.join(SCRIPTS_DIR, "analysis", "analyze_embeddings.py")) as f:
             source = f.read()
         assert "SentenceTransformer" not in source
         assert "import torch" not in source

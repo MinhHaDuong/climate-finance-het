@@ -8,7 +8,7 @@ Reads:  tab_changepoints.csv
 Writes: tab_convergence.csv
 
 Usage:
-    python3 scripts/compute_convergence.py \
+    python3 scripts/analysis/compute_convergence.py \
         --output content/tables/tab_convergence.csv \
         --input content/tables/tab_changepoints.csv
 """

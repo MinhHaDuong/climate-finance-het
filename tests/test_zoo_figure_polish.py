@@ -78,7 +78,7 @@ def test_metric_filter_selects_resonance_only(tmp_path):
     result = subprocess.run(
         [
             sys.executable,
-            "scripts/compute_crossyear_zscore.py",
+            "scripts/analysis/compute_crossyear_zscore.py",
             "--method",
             "L2",
             "--metric",

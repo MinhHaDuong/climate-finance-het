@@ -17,6 +17,7 @@ SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 FIXTURES_DIR = os.path.join(os.path.dirname(__file__), "fixtures", "smoke")
 
 sys.path.insert(0, SCRIPTS_DIR)
+sys.path.insert(0, os.path.join(SCRIPTS_DIR, "analysis"))  # 0257: moved analysis entry points
 
 from conftest import smoke_env
 
@@ -171,7 +172,7 @@ def _run_interpretation(zone, output_path, extra_args=None, timeout=120):
     """Run compute_interpretation.py --zone Z --output P."""
     cmd = [
         sys.executable,
-        os.path.join(SCRIPTS_DIR, "compute_interpretation.py"),
+        os.path.join(SCRIPTS_DIR, "analysis", "compute_interpretation.py"),
         "--zone",
         zone,
         "--output",

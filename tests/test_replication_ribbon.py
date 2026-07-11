@@ -13,6 +13,7 @@ import pytest
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 sys.path.insert(0, SCRIPTS_DIR)
+sys.path.insert(0, os.path.join(SCRIPTS_DIR, "analysis"))  # 0257: moved analysis entry points
 
 from compute_crossyear_zscore import compute_crossyear_zscores
 

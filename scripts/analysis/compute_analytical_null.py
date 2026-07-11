@@ -11,11 +11,11 @@ or corpus loading of embeddings/texts needed.
 
 Usage::
 
-    uv run python scripts/compute_analytical_null.py \\
+    uv run python scripts/analysis/compute_analytical_null.py \\
         --method C2ST_embedding \\
         --output content/tables/tab_analytical_null_C2ST_embedding.csv
 
-    uv run python scripts/compute_analytical_null.py \\
+    uv run python scripts/analysis/compute_analytical_null.py \\
         --method C2ST_lexical \\
         --output content/tables/tab_analytical_null_C2ST_lexical.csv
 

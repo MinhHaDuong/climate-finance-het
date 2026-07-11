@@ -4,7 +4,7 @@ Produces tab_sensitivity_grid.csv consumed by plot_companion_sensitivity.py
 and referenced in the §Sensitivity appendix of multilayer-detection.qmd.
 
 Usage:
-    uv run python scripts/compute_sensitivity_grid.py \
+    uv run python scripts/analysis/compute_sensitivity_grid.py \
         --output content/tables/tab_sensitivity_grid.csv
 
 Do NOT run on a local workstation — corpus is on padme. The Makefile

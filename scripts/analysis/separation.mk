@@ -17,12 +17,12 @@ SEP_TABLES   := deliverables/_shared/tables
 SEP_COVERAGE := $(SEP_TABLES)/tab_pre2007_coverage.csv
 SEP_NULL     := $(SEP_TABLES)/tab_null_separation_pre2007.csv
 
-$(SEP_COVERAGE): scripts/compute_pre2007_coverage.py scripts/utils.py \
+$(SEP_COVERAGE): scripts/analysis/compute_pre2007_coverage.py scripts/utils.py \
 		scripts/pipeline_loaders.py scripts/schemas.py $(CONFIG) \
 		$(REFINED) $(REFINED_CIT)
 	$(PYTHON) $< --output $@
 
-$(SEP_NULL): scripts/compute_null_separation.py scripts/_null_separation.py \
+$(SEP_NULL): scripts/analysis/compute_null_separation.py scripts/_null_separation.py \
 		scripts/plot_fig_traditions.py scripts/utils.py scripts/schemas.py \
 		scripts/pipeline_loaders.py $(CONFIG) $(REFINED) $(REFINED_CIT)
 	$(PYTHON) $< --output $@

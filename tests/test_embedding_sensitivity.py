@@ -20,6 +20,7 @@ FIXTURES_DIR = os.path.join(os.path.dirname(__file__), "fixtures", "smoke")
 ROOT_DIR = os.path.join(os.path.dirname(__file__), "..")
 
 sys.path.insert(0, SCRIPTS_DIR)
+sys.path.insert(0, os.path.join(SCRIPTS_DIR, "analysis"))  # 0257: moved analysis entry points
 
 
 def _smoke_env():
@@ -37,7 +38,7 @@ def _run_sensitivity(method, projection, output_path, timeout=300):
     result = subprocess.run(
         [
             sys.executable,
-            os.path.join(SCRIPTS_DIR, "compute_embedding_sensitivity.py"),
+            os.path.join(SCRIPTS_DIR, "analysis", "compute_embedding_sensitivity.py"),
             "--method",
             method,
             "--projection",

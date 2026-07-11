@@ -180,10 +180,10 @@ stages:
 
   summarize_abstracts:
     cmd: >-
-      uv run --env-file .env python scripts/summarize_abstracts.py --works-input data/catalogs/unified_works.csv &&
+      uv run --env-file .env python scripts/analysis/summarize_abstracts.py --works-input data/catalogs/unified_works.csv &&
       date -Iseconds > data/catalogs/enrich_cache/.summaries.stamp
     deps:
-      - scripts/summarize_abstracts.py
+      - scripts/analysis/summarize_abstracts.py
       - scripts/utils.py
       - scripts/pipeline_io.py
       - scripts/pipeline_text.py

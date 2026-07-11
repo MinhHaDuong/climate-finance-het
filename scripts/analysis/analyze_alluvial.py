@@ -4,16 +4,16 @@ DEPRECATED: Planned for removal in v1.0 milestone.
 The pipeline has been split into focused, single-responsibility scripts.
 Use them directly for better Makefile integration:
 
-  uv run python scripts/compute_breakpoints.py [flags]  # one of: tab_breakpoints.csv, tab_breakpoint_robustness.csv, tab_k_sensitivity.csv
-  uv run python scripts/compute_clusters.py [flags]     # tab_alluvial.csv, cluster_labels.json
-  uv run python scripts/compute_lexical.py [flags]      # tab_lexical_tfidf.csv
+  uv run python scripts/analysis/compute_breakpoints.py [flags]  # one of: tab_breakpoints.csv, tab_breakpoint_robustness.csv, tab_k_sensitivity.csv
+  uv run python scripts/analysis/compute_clusters.py [flags]     # tab_alluvial.csv, cluster_labels.json
+  uv run python scripts/analysis/compute_lexical.py [flags]      # tab_lexical_tfidf.csv
   uv run python scripts/plot_fig_breakpoints.py [flags] # fig_breakpoints.png
   uv run python scripts/plot_fig_alluvial.py [flags]    # fig_alluvial.png
   uv run python scripts/plot_alluvial_html.py [flags]  # fig_alluvial.html
   uv run python scripts/plot_fig_k_sensitivity.py       # fig_k_sensitivity.png (needs --k-sensitivity first)
   uv run python scripts/plot_fig_lexical_tfidf.py       # fig_lexical_tfidf_{year}.png
 
-This wrapper exists so that old usage (e.g. `uv run python scripts/analyze_alluvial.py`)
+This wrapper exists so that old usage (e.g. `uv run python scripts/analysis/analyze_alluvial.py`)
 continues to work without modification until v1.0.
 """
 
@@ -23,9 +23,9 @@ import sys
 
 # Which flags each sub-script accepts
 SCRIPT_FLAGS = {
-    "scripts/compute_breakpoints.py": {"--core-only", "--censor-gap", "--robustness", "--k-sensitivity"},
-    "scripts/compute_clusters.py":    {"--core-only", "--breaks"},
-    "scripts/compute_lexical.py":     set(),
+    "scripts/analysis/compute_breakpoints.py": {"--core-only", "--censor-gap", "--robustness", "--k-sensitivity"},
+    "scripts/analysis/compute_clusters.py":    {"--core-only", "--breaks"},
+    "scripts/analysis/compute_lexical.py":     set(),
     "scripts/plot_fig_breakpoints.py": {"--core-only", "--censor-gap", "--pdf"},
     "scripts/plot_fig_alluvial.py":    {"--core-only", "--censor-gap", "--pdf"},
     "scripts/plot_alluvial_html.py":   {"--core-only", "--censor-gap"},

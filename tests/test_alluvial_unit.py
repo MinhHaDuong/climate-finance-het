@@ -20,6 +20,7 @@ import pytest
 # Allow imports from scripts/
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 sys.path.insert(0, SCRIPTS_DIR)
+sys.path.insert(0, os.path.join(SCRIPTS_DIR, "analysis"))  # 0257: moved analysis entry points
 
 
 # ---------------------------------------------------------------------------
@@ -236,17 +237,17 @@ class TestBuildArgv:
     # module-level argparse (which would call sys.argv and fail).
 
     SCRIPT_FLAGS = {
-        "scripts/compute_breakpoints.py": {
+        "scripts/analysis/compute_breakpoints.py": {
             "--core-only",
             "--censor-gap",
             "--robustness",
             "--k-sensitivity",
         },
-        "scripts/compute_clusters.py": {
+        "scripts/analysis/compute_clusters.py": {
             "--core-only",
             "--breaks",
         },
-        "scripts/compute_lexical.py": set(),
+        "scripts/analysis/compute_lexical.py": set(),
     }
 
     @staticmethod
@@ -267,27 +268,27 @@ class TestBuildArgv:
     def test_core_only_forwarded_to_breakpoints(self):
         args = Namespace(core_only=True, censor_gap=0, robustness=False, breaks=None)
         argv = self._build_argv(
-            "scripts/compute_breakpoints.py", args, self.SCRIPT_FLAGS
+            "scripts/analysis/compute_breakpoints.py", args, self.SCRIPT_FLAGS
         )
         assert "--core-only" in argv
 
     def test_core_only_forwarded_to_clusters(self):
         args = Namespace(core_only=True, censor_gap=0, robustness=False, breaks=None)
-        argv = self._build_argv("scripts/compute_clusters.py", args, self.SCRIPT_FLAGS)
+        argv = self._build_argv("scripts/analysis/compute_clusters.py", args, self.SCRIPT_FLAGS)
         assert "--core-only" in argv
 
     def test_core_only_not_forwarded_to_lexical(self):
         args = Namespace(core_only=True, censor_gap=0, robustness=False, breaks=None)
-        argv = self._build_argv("scripts/compute_lexical.py", args, self.SCRIPT_FLAGS)
+        argv = self._build_argv("scripts/analysis/compute_lexical.py", args, self.SCRIPT_FLAGS)
         assert "--core-only" not in argv
 
     def test_censor_gap_only_to_breakpoints(self):
         args = Namespace(core_only=False, censor_gap=2, robustness=False, breaks=None)
         bp_argv = self._build_argv(
-            "scripts/compute_breakpoints.py", args, self.SCRIPT_FLAGS
+            "scripts/analysis/compute_breakpoints.py", args, self.SCRIPT_FLAGS
         )
         cl_argv = self._build_argv(
-            "scripts/compute_clusters.py", args, self.SCRIPT_FLAGS
+            "scripts/analysis/compute_clusters.py", args, self.SCRIPT_FLAGS
         )
         assert ["--censor-gap", "2"] == bp_argv
         assert cl_argv == []
@@ -295,13 +296,13 @@ class TestBuildArgv:
     def test_robustness_only_to_breakpoints(self):
         args = Namespace(core_only=False, censor_gap=0, robustness=True, breaks=None)
         bp_argv = self._build_argv(
-            "scripts/compute_breakpoints.py", args, self.SCRIPT_FLAGS
+            "scripts/analysis/compute_breakpoints.py", args, self.SCRIPT_FLAGS
         )
         cl_argv = self._build_argv(
-            "scripts/compute_clusters.py", args, self.SCRIPT_FLAGS
+            "scripts/analysis/compute_clusters.py", args, self.SCRIPT_FLAGS
         )
         lx_argv = self._build_argv(
-            "scripts/compute_lexical.py", args, self.SCRIPT_FLAGS
+            "scripts/analysis/compute_lexical.py", args, self.SCRIPT_FLAGS
         )
         assert "--robustness" in bp_argv
         assert "--robustness" not in cl_argv
@@ -312,13 +313,13 @@ class TestBuildArgv:
             core_only=False, censor_gap=0, robustness=False, breaks="2007,2013"
         )
         bp_argv = self._build_argv(
-            "scripts/compute_breakpoints.py", args, self.SCRIPT_FLAGS
+            "scripts/analysis/compute_breakpoints.py", args, self.SCRIPT_FLAGS
         )
         cl_argv = self._build_argv(
-            "scripts/compute_clusters.py", args, self.SCRIPT_FLAGS
+            "scripts/analysis/compute_clusters.py", args, self.SCRIPT_FLAGS
         )
         lx_argv = self._build_argv(
-            "scripts/compute_lexical.py", args, self.SCRIPT_FLAGS
+            "scripts/analysis/compute_lexical.py", args, self.SCRIPT_FLAGS
         )
         assert "--breaks" not in bp_argv
         assert ["--breaks", "2007,2013"] == cl_argv[-2:]
@@ -333,9 +334,9 @@ class TestBuildArgv:
         args = Namespace(
             core_only=True, censor_gap=3, robustness=True, breaks="2007,2015"
         )
-        bp = self._build_argv("scripts/compute_breakpoints.py", args, self.SCRIPT_FLAGS)
-        cl = self._build_argv("scripts/compute_clusters.py", args, self.SCRIPT_FLAGS)
-        lx = self._build_argv("scripts/compute_lexical.py", args, self.SCRIPT_FLAGS)
+        bp = self._build_argv("scripts/analysis/compute_breakpoints.py", args, self.SCRIPT_FLAGS)
+        cl = self._build_argv("scripts/analysis/compute_clusters.py", args, self.SCRIPT_FLAGS)
+        lx = self._build_argv("scripts/analysis/compute_lexical.py", args, self.SCRIPT_FLAGS)
         # breakpoints gets: --core-only, --censor-gap 3, --robustness
         assert "--core-only" in bp
         assert "--censor-gap" in bp

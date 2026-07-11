@@ -10,6 +10,7 @@ import pytest
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 sys.path.insert(0, SCRIPTS_DIR)
+sys.path.insert(0, os.path.join(SCRIPTS_DIR, "analysis"))  # 0257: moved analysis entry points
 
 from analyze_multilingual import (
     classify_quadrant,
@@ -238,7 +239,7 @@ class TestScriptCLI:
 
     def test_requires_output(self):
         result = subprocess.run(
-            [sys.executable, os.path.join(SCRIPTS_DIR, "analyze_multilingual.py")],
+            [sys.executable, os.path.join(SCRIPTS_DIR, "analysis", "analyze_multilingual.py")],
             capture_output=True, text=True,
         )
         assert result.returncode != 0

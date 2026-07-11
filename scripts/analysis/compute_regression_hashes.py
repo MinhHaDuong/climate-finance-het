@@ -6,13 +6,13 @@ against an existing one.
 
 Usage:
     # Generate golden hashes (first time or after intentional change):
-    uv run python scripts/compute_regression_hashes.py --update-golden
+    uv run python scripts/analysis/compute_regression_hashes.py --update-golden
 
     # Compare current outputs against golden baseline:
-    uv run python scripts/compute_regression_hashes.py --check
+    uv run python scripts/analysis/compute_regression_hashes.py --check
 
     # Dump current hashes to stdout (no file I/O):
-    uv run python scripts/compute_regression_hashes.py --dump
+    uv run python scripts/analysis/compute_regression_hashes.py --dump
 
 Environment: PYTHONHASHSEED=0, SOURCE_DATE_EPOCH=0, MPLBACKEND=Agg,
 CLIMATE_FINANCE_DATA pointed at the smoke fixture.

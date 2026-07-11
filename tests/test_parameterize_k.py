@@ -25,7 +25,7 @@ class TestKFromConfig:
 
     def test_no_hardcoded_n_clusters(self):
         """KMeans(n_clusters=...) must not use a literal integer."""
-        source = open(os.path.join(SCRIPTS_DIR, "analyze_embeddings.py")).read()
+        source = open(os.path.join(SCRIPTS_DIR, "analysis", "analyze_embeddings.py")).read()
         tree = ast.parse(source)
         for node in ast.walk(tree):
             if isinstance(node, ast.keyword) and node.arg == "n_clusters":

@@ -38,7 +38,7 @@ def _smoke_env():
 def _run_subsampled(method, div_csv, output_path, r=None, timeout=300):
     cmd = [
         sys.executable,
-        os.path.join(SCRIPTS_DIR, "compute_divergence_subsampled.py"),
+        os.path.join(SCRIPTS_DIR, "analysis", "compute_divergence_subsampled.py"),
         "--method",
         method,
         "--div-csv",

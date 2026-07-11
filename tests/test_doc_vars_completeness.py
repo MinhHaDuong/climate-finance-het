@@ -15,6 +15,7 @@ import pytest
 
 # Allow importing from scripts/
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "analysis"))  # 0257
 from compute_vars import DOC_VARS
 
 DELIVERABLES = os.path.join(os.path.dirname(__file__), "..", "deliverables")

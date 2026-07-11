@@ -39,11 +39,11 @@ Output: content/tables/tab_null_separation_pre2007.csv, one row per
 (companion) for each of the two labellings — validated by NullSeparationSchema.
 
 Usage:
-    uv run python scripts/compute_null_separation.py \
+    uv run python scripts/analysis/compute_null_separation.py \
         --output content/tables/tab_null_separation_pre2007.csv
 
     CLIMATE_FINANCE_DATA=tests/fixtures/smoke \
-        uv run python scripts/compute_null_separation.py \
+        uv run python scripts/analysis/compute_null_separation.py \
         --output /tmp/tab_null_separation_pre2007.csv
 """
 

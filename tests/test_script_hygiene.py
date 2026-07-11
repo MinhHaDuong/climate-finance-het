@@ -669,8 +669,8 @@ _PIPELINE_PREFIXES = (
 # CLI tools that happen to start with a pipeline prefix but produce
 # human-readable console output (print is intentional, not a logging miss).
 _PRINT_ALLOWLIST = {
-    "compute_regression_hashes.py",
-    "compute_regression_history.py",
+    "analysis/compute_regression_hashes.py",
+    "analysis/compute_regression_history.py",
 }
 
 
@@ -687,7 +687,7 @@ class TestNoBarePrint:
         """Pipeline scripts may not use bare print() (use log.info())."""
         violators = []
         for name in _all_scripts():
-            if not name.startswith(_PIPELINE_PREFIXES):
+            if not os.path.basename(name).startswith(_PIPELINE_PREFIXES):
                 continue
             if name in _PRINT_ALLOWLIST:
                 continue
@@ -763,13 +763,13 @@ class TestPdfDiscipline:
 
     # Scripts known to produce no figures (confirmed: no save_figure/savefig)
     NON_PLOTTING = [
-        "analyze_bimodality.py",
-        "compute_breakpoints.py",
-        "compute_clusters.py",
-        "compute_lexical.py",
-        "analyze_100bn.py",
-        "analyze_embeddings.py",
-        "analyze_unfccc_topics.py",
+        "analysis/analyze_bimodality.py",
+        "analysis/compute_breakpoints.py",
+        "analysis/compute_clusters.py",
+        "analysis/compute_lexical.py",
+        "analysis/analyze_100bn.py",
+        "analysis/analyze_embeddings.py",
+        "analysis/analyze_unfccc_topics.py",
         "harvest/compute_reranker_calibration.py",
         "plot_interactive_corpus.py",
     ]
@@ -1246,7 +1246,7 @@ class TestOutputFlag:
             ],
             ".md",
         ),
-        ("summarize_core_venues.py", ["--core", f"{SMOKE}/refined_works.csv"], ".csv"),
+        ("analysis/summarize_core_venues.py", ["--core", f"{SMOKE}/refined_works.csv"], ".csv"),
         # Remaining Phase 2 plot scripts (#549 wave 2)
         (
             "plot_fig45_pca_scatter.py",
@@ -1317,8 +1317,8 @@ class TestNoValuesCallOnSeries:
     """
 
     COCITATION_SCRIPTS = [
-        "scripts/analyze_communities_clusters.py",
-        "scripts/compute_temporal_communities.py",
+        "scripts/analysis/analyze_communities_clusters.py",
+        "scripts/analysis/compute_temporal_communities.py",
         "scripts/archive_traditions/detect_traditions_v2.py",
         "scripts/archive_traditions/detect_traditions_pre2015.py",
         "scripts/archive_traditions/detect_traditions_pre2020.py",

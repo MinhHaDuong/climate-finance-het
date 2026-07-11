@@ -8,7 +8,7 @@ Run as part of `make check` (via pytest). One test per script, so
 failures pinpoint exactly which script's output changed.
 
 When a change is intentional:
-    uv run python scripts/compute_regression_hashes.py --update-golden
+    uv run python scripts/analysis/compute_regression_hashes.py --update-golden
     git add tests/fixtures/smoke/golden_hashes.json
     # commit with explanation of why outputs changed
 """
@@ -26,6 +26,7 @@ GOLDEN_PATH = os.path.join(ROOT, "tests", "fixtures", "smoke", "golden_hashes.js
 import sys
 
 sys.path.insert(0, SCRIPTS_DIR)
+sys.path.insert(0, os.path.join(SCRIPTS_DIR, "analysis"))  # 0257: moved analysis entry points
 from pathlib import Path
 
 from compute_regression_hashes import (
@@ -87,7 +88,7 @@ def _make_test(entry):
         golden = _load_golden()
         assert name in golden, (
             f"{name} not in golden_hashes.json. Run: "
-            "uv run python scripts/compute_regression_hashes.py --update-golden"
+            "uv run python scripts/analysis/compute_regression_hashes.py --update-golden"
         )
         assert name in results, f"{name} produced no outputs"
 
@@ -98,7 +99,7 @@ def _make_test(entry):
                 f"{name}: {os.path.basename(rel_path)} changed\n"
                 f"  golden:  {expected_hash[:16]}...\n"
                 f"  current: {actual_hash[:16]}...\n"
-                "If intentional: uv run python scripts/compute_regression_hashes.py --update-golden"
+                "If intentional: uv run python scripts/analysis/compute_regression_hashes.py --update-golden"
             )
 
     test_func.__name__ = f"test_regression_{name}"
@@ -121,7 +122,7 @@ class TestRegressionInfra:
     def test_golden_hashes_exist(self):
         assert os.path.exists(GOLDEN_PATH), (
             "Golden hashes not found. Generate with: "
-            "uv run python scripts/compute_regression_hashes.py --update-golden"
+            "uv run python scripts/analysis/compute_regression_hashes.py --update-golden"
         )
 
     def test_golden_hashes_valid_json(self):
@@ -135,7 +136,7 @@ class TestRegressionInfra:
         missing = registry_names - golden_names
         assert not missing, (
             f"Golden hashes missing for: {missing}. "
-            "Run: uv run python scripts/compute_regression_hashes.py --update-golden"
+            "Run: uv run python scripts/analysis/compute_regression_hashes.py --update-golden"
         )
 
     def test_makefile_has_regression_target(self):
@@ -149,7 +150,7 @@ class TestRegressionInfra:
     def test_no_stage_intermediates_function(self):
         """_stage_intermediates was removed: Wave 2 scripts now accept --input,
         so the harness no longer needs to copy intermediates into deliverables/_shared/."""
-        import scripts.compute_regression_hashes as mod
+        import scripts.analysis.compute_regression_hashes as mod
         assert not hasattr(mod, "_stage_intermediates"), (
             "compute_regression_hashes still has _stage_intermediates; "
             "Wave 2 scripts should accept --input instead"

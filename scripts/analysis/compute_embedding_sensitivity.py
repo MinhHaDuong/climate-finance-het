@@ -5,13 +5,13 @@ Tests whether structural break detection survives dimensionality reduction
 concern that results may be specific to BGE-M3 embedding geometry.
 
 Usage:
-    python3 scripts/compute_embedding_sensitivity.py \
+    python3 scripts/analysis/compute_embedding_sensitivity.py \
         --method S1_MMD --projection pca \
         --output content/tables/tab_sens_pca_S1_MMD.csv
 
     # Smoke fixture:
     CLIMATE_FINANCE_DATA=tests/fixtures/smoke \
-        python3 scripts/compute_embedding_sensitivity.py \
+        python3 scripts/analysis/compute_embedding_sensitivity.py \
         --method S2_energy --projection pca \
         --output /tmp/tab_sens_pca_S2_energy.csv
 """

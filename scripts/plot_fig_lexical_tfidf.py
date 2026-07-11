@@ -131,7 +131,7 @@ def main():
     except FileNotFoundError:
         raise FileNotFoundError(
             f"Missing {tfidf_path}. "
-            "Run: uv run python scripts/compute_lexical.py"
+            "Run: uv run python scripts/analysis/compute_lexical.py"
         ) from None
 
     break_years = sorted(tfidf_all["break_year"].unique())

@@ -17,6 +17,7 @@ import pytest
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 sys.path.insert(0, SCRIPTS_DIR)
+sys.path.insert(0, os.path.join(SCRIPTS_DIR, "analysis"))  # 0257: moved analysis entry points
 
 
 class TestComputeConcentration:
@@ -187,7 +188,7 @@ class TestVenueConcentrationSubprocess:
                 "uv",
                 "run",
                 "python",
-                os.path.join(SCRIPTS_DIR, "compute_venue_concentration.py"),
+                os.path.join(SCRIPTS_DIR, "analysis", "compute_venue_concentration.py"),
                 "--output",
                 str(output_csv),
                 "--input",

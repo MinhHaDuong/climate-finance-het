@@ -13,8 +13,8 @@ Produces:
 - data/derived/tables/tab_axis_detection.csv: Unsupervised TF-IDF components and alignment to pole axis
 
 Usage:
-    uv run python scripts/analyze_bimodality.py --output data/derived/tables/tab_bimodality.csv
-    uv run python scripts/analyze_bimodality.py --output data/derived/tables/tab_bimodality_core.csv --core-only
+    uv run python scripts/analysis/analyze_bimodality.py --output data/derived/tables/tab_bimodality.csv
+    uv run python scripts/analysis/analyze_bimodality.py --output data/derived/tables/tab_bimodality_core.csv --core-only
 """
 
 import argparse

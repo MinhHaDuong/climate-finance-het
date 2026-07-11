@@ -13,7 +13,7 @@ Reads:  $DATA/catalogs/refined_works.csv, $DATA/catalogs/refined_citations.csv
 Writes: $DATA/derived/tables/het_mostcited_50.csv
 
 Usage:
-    uv run python scripts/build_het_core.py --output data/derived/tables/het_mostcited_50.csv \
+    uv run python scripts/analysis/build_het_core.py --output data/derived/tables/het_mostcited_50.csv \
         [--refined-works data/catalogs/refined_works.csv]
 """
 

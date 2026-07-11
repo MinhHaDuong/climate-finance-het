@@ -8,13 +8,13 @@ Output schema: DivergenceSubsampleSchema
   (method, year, window, hyperparams, replicate, value)
 
 Usage:
-    uv run python scripts/compute_divergence_subsampled.py --method S2_energy \
+    uv run python scripts/analysis/compute_divergence_subsampled.py --method S2_energy \
         --output content/tables/tab_subsample_S2_energy.csv \
         --div-csv content/tables/tab_div_S2_energy.csv
 
     # Smoke fixture:
     CLIMATE_FINANCE_DATA=tests/fixtures/smoke \
-        uv run python scripts/compute_divergence_subsampled.py --method S2_energy \
+        uv run python scripts/analysis/compute_divergence_subsampled.py --method S2_energy \
         --output /tmp/tab_subsample_S2_energy.csv \
         --div-csv /tmp/tab_div_S2_energy.csv
 """

@@ -151,7 +151,7 @@ select = [
 # Re-export facades: imports are public API, not unused
 "scripts/utils.py" = ["F401", "E402"]
 "scripts/harvest/catalog_syllabi.py" = ["F401"]
-"scripts/compute_clustering_comparison.py" = ["F401"]
+"scripts/analysis/compute_clustering_comparison.py" = ["F401"]
 
 [tool.ruff.lint.mccabe]
 max-complexity = 15

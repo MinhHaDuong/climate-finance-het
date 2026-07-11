@@ -138,7 +138,7 @@ class TestAnalyzeNoFigures:
 
     # Scripts already split — should stay clean.
     CLEAN_ANALYZE = [
-        "analyze_embeddings.py",
+        "analysis/analyze_embeddings.py",
     ]
 
     @pytest.mark.parametrize("script", CLEAN_ANALYZE)
@@ -261,22 +261,21 @@ class TestNoHardcodedSeeds:
     @staticmethod
     def _in_scope(name):
         """Phase-2-prefixed scripts or shared private helpers (_*.py)."""
-        return name.startswith(_PHASE2_PREFIXES) or os.path.basename(
-            name
-        ).startswith("_")
+        base = os.path.basename(name)
+        return base.startswith(_PHASE2_PREFIXES) or base.startswith("_")
 
     # Pre-existing violations. Remove entries as they are migrated to config.
     KNOWN_VIOLATIONS = {
-        "analyze_bimodality.py",
-        "analyze_cocitation.py",
-        "analyze_communities_clusters.py",
-        "analyze_embeddings.py",
-        "analyze_multilingual.py",
-        "analyze_unfccc_topics.py",
-        "compute_breakpoints.py",
-        "compute_clusters.py",
-        "compute_lexical.py",
-        "compute_temporal_communities.py",
+        "analysis/analyze_bimodality.py",
+        "analysis/analyze_cocitation.py",
+        "analysis/analyze_communities_clusters.py",
+        "analysis/analyze_embeddings.py",
+        "analysis/analyze_multilingual.py",
+        "analysis/analyze_unfccc_topics.py",
+        "analysis/compute_breakpoints.py",
+        "analysis/compute_clusters.py",
+        "analysis/compute_lexical.py",
+        "analysis/compute_temporal_communities.py",
         "plot_alluvial_html.py",
         "plot_bimodality.py",
         "plot_cocitation.py",
@@ -357,12 +356,12 @@ class TestCorpusThroughLoaders:
 
     # Pre-existing violations. Remove entries as they are migrated.
     KNOWN_VIOLATIONS = {
-        "analyze_100bn.py",
-        "analyze_bimodality.py",
-        "analyze_cocitation.py",
-        "analyze_communities_clusters.py",
-        "analyze_genealogy.py",
-        "compute_temporal_communities.py",
+        "analysis/analyze_100bn.py",
+        "analysis/analyze_bimodality.py",
+        "analysis/analyze_cocitation.py",
+        "analysis/analyze_communities_clusters.py",
+        "analysis/analyze_genealogy.py",
+        "analysis/compute_temporal_communities.py",
         "export_tab_venues.py",
         "plot_alluvial_html.py",
         "plot_fig_seed_axis.py",
@@ -485,7 +484,7 @@ class TestCorpusThroughLoaders:
         files directly — use pipeline_loaders instead."""
         violations = []
         for name in _all_scripts():
-            if not name.startswith(_PHASE2_PREFIXES):
+            if not os.path.basename(name).startswith(_PHASE2_PREFIXES):
                 continue
             if name in self._EXEMPT or name in self.KNOWN_VIOLATIONS:
                 continue
