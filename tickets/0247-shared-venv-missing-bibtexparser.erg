@@ -5,6 +5,7 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-07-11T01:05Z HDMX-coding-agent created
+2026-07-11T09:00Z HDMX-coding-agent note Corrected diagnosis: bibtexparser is not missing from a stale env — it was declared in the `corpus` dependency GROUP (Phase-1, not installed on Phase-2/3 machines). But the three importing scripts serve the WRITING side: qa_bibliography.py reads bibliography/main.bib + corpus and writes a match CSV; qa_bib_doi.py reads deliverables/_shared/bibliography/main.bib and audits DOIs vs Crossref; qa_missing_references.py reads deliverables/_shared/bibliography/main.bib and writes the missing-refs list (DOIfetch sync). The dependency was misclassified. Fix: moved bibtexparser from the `corpus` group to `[project]` dependencies; `uv lock`. Verified import + the three TestMigratedScripts tests green.
 
 --- body ---
 ## Context
@@ -17,12 +18,14 @@ during the 2026-07-10 lair full-suite run; also blocked the DOIfetch
 missing-references regeneration earlier that day (worked around by editing the
 DOIfetch queue directly).
 
-## Actions
-1. When no sibling session is mid-run on the shared env: `uv sync` from the
-   main checkout (norm: never sync the shared /data env while a sibling
-   background agent is running — memory feedback_no_shared_env_sync).
-2. Re-run the three tests; confirm green.
+## Actions (superseded — see 2026-07-11 log)
+The env was not stale; the dependency was misclassified. The three scripts that
+import bibtexparser are writing-side (they read `deliverables/_shared/bibliography/main.bib`),
+so the dependency belongs in `[project]`, not the Phase-1 `corpus` group.
+1. Move `bibtexparser` from the `corpus` group to `[project]` dependencies. Done.
+2. `uv lock` to update the lockfile. Done.
+3. Re-run the three tests; confirm green. Done.
 
 ## Exit criteria
-- [ ] `uv run python -c "import bibtexparser"` succeeds
-- [ ] tests/test_io_discipline.py TestMigratedScripts all green
+- [x] `uv run python -c "import bibtexparser"` succeeds (bibtexparser 1.4.4)
+- [x] tests/test_io_discipline.py TestMigratedScripts all green (12 passed, incl. qa_bib_doi / qa_bibliography / qa_missing_references × requires_output)

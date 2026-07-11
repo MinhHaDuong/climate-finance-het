@@ -12,6 +12,7 @@ dependencies = [
     "networkx",
     "requests",
     "pyyaml",
+    "bibtexparser",
     "langdetect>=1.0.9",
     "pdfplumber",
     "pytest",
@@ -54,7 +55,6 @@ corpus = [
     "beautifulsoup4",
     "pdfplumber",
     "ddgs",
-    "bibtexparser",
 ]
 dev = [
     "fpdf2>=2.8.7",
