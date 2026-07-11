@@ -30,12 +30,7 @@ SCRIPTS_DIR = os.path.join(REPO, "scripts")
 # Known, pre-existing compute → plot violations awaiting their own relocation
 # ticket. Each entry MUST cite the tracking ticket. Remove an entry the moment
 # its violation is fixed — see test_no_stale_layering_allowlist.
-LAYERING_ALLOWLIST = {
-    # compute_null_separation.py imports build_pre2007_traditions() from
-    # plot_fig_traditions.py — a misplaced shared analysis helper. Ticket 0250
-    # relocates it to a neutral module.
-    "compute_null_separation.py": "0250",
-}
+LAYERING_ALLOWLIST: dict[str, str] = {}
 
 
 def _compute_scripts():
