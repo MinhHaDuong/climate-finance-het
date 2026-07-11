@@ -250,7 +250,20 @@ class TestNoHardcodedSeeds:
 
     Detection: regex scan for literal integer arguments to known seed
     parameters (random_state=N, seed=N) and RandomState(N) calls.
+
+    Scope: Phase-2-prefixed scripts AND shared private helper modules (_*.py).
+    A stochastic op relocated into a neutral _*.py helper (ticket 0250 moved
+    RANDOM_STATE into _pre2007_traditions.py) must stay under rule-7 coverage —
+    a fixed-prefix glob would otherwise silently narrow, hiding the seed from
+    the guard (feedback moving_files_narrows_guard_globs, 0259).
     """
+
+    @staticmethod
+    def _in_scope(name):
+        """Phase-2-prefixed scripts or shared private helpers (_*.py)."""
+        return name.startswith(_PHASE2_PREFIXES) or os.path.basename(
+            name
+        ).startswith("_")
 
     # Pre-existing violations. Remove entries as they are migrated to config.
     KNOWN_VIOLATIONS = {
@@ -270,9 +283,9 @@ class TestNoHardcodedSeeds:
         "plot_fig45_pca_scatter.py",
         # plot_fig_traditions.py removed (ticket 0250): its RANDOM_STATE=42
         # relocated with build_pre2007_traditions into the neutral helper
-        # scripts/_pre2007_traditions.py, so the plot module no longer hardcodes
-        # a seed. The relocated seed is a pre-existing un-migrated violation now
-        # in a non-Phase-2-prefixed helper, outside this prefix-gated scan.
+        # scripts/_pre2007_traditions.py. That helper now sources the seed from
+        # config (pre2007_traditions.louvain_seed, ticket 0259) and the scan
+        # covers _*.py helpers, so neither module hardcodes a seed.
         "plot_figS_kde.py",
         "plot_heatmap_communities_clusters.py",
         "plot_ncc_bimodality.py",
@@ -298,7 +311,7 @@ class TestNoHardcodedSeeds:
         """No Phase 2 script (outside known violations) may hardcode seeds."""
         violations = []
         for name in _all_scripts():
-            if not name.startswith(_PHASE2_PREFIXES):
+            if not self._in_scope(name):
                 continue
             if name in self.KNOWN_VIOLATIONS:
                 continue
