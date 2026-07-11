@@ -1,0 +1,64 @@
+%erg 0.1
+Title: Fix regression harness paths broken by 0240 scripts reorg
+Created: 2026-07-11
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-11T14:36Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+All 10 tests/test_regression.py tests fail on main ("<name> produced no
+outputs"), discovered by the 2026-07-11 /lair full `make check` (log:
+~/.local/share/rtk/tee/1783780386_make_check.log). Root cause is the 0240
+scripts/ reorg, ninth surface of the relocation class
+(project_file_relocation_move_surface memory):
+
+1. `compute_regression_hashes.py` moved from `scripts/` to `scripts/analysis/`,
+   so its `ROOT` (derived from `__file__`, line ~39) now resolves one level too
+   deep: `SCRIPTS_DIR` = `<repo>/scripts/scripts`.
+2. Even with ROOT fixed, the REGISTRY entries (lines ~50-150) hold pre-reorg
+   flat basenames (`compute_breakpoints.py`, `plot_fig1_bars.py`,
+   `build_het_core.py`, ...) — the scripts now live under `scripts/analysis/`
+   and `scripts/figures/`.
+
+Verified: resolving `SCRIPTS_DIR / entry["script"]` finds 0 of 10 registry
+scripts on current main. Invisible to check-fast (regression tests are slow
+tier) and to per-move greps during 0240 (the registry stores basenames, not
+`scripts/`-prefixed paths, so path-sweep greps missed them).
+
+## Relevant files
+
+- `scripts/analysis/compute_regression_hashes.py` — ROOT constant + REGISTRY script fields
+- `tests/test_regression.py` — the 10 failing consumers
+- `tests/fixtures/smoke/` — fixtures the harness runs against
+
+## Actions
+
+1. Red test first (fast tier, no data): assert every REGISTRY entry's
+   `SCRIPTS_DIR / script` exists on disk. Fails 10/10 today.
+2. Fix ROOT for the new location (or anchor on git toplevel), repoint the 10
+   REGISTRY `script` fields to their subdir paths.
+3. Run the 10 test_regression tests to confirm green (goldens should match —
+   the scripts themselves are unchanged, only the launcher lost them).
+
+## Test
+
+- New guard: `test_regression.py` (or harness module test) — every REGISTRY
+  script path exists. Red on current main.
+
+## Verification
+
+- [ ] Guard test red before fix, green after
+- [ ] `uv run pytest tests/test_regression.py` 10/10 pass
+- [ ] `make check-fast` and `make lint` stay green
+
+## Invariants
+
+- Golden hashes unchanged — this is a launcher fix, not a behaviour change.
+
+## Exit criteria
+
+- [ ] All 10 test_regression tests pass on main
+- [ ] Fast-tier guard prevents silent registry-path rot on future moves

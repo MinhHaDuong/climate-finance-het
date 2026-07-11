@@ -1,0 +1,52 @@
+%erg 0.1
+Title: Triage 2026-07-11 make-check slow-tier failures on doudou
+Created: 2026-07-11
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-11T14:36Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+The 2026-07-11 /lair full `make check` on doudou (main @ 315be9e1, log:
+~/.local/share/rtk/tee/1783780386_make_check.log) surfaced 19 failures + 4
+errors. Ten are root-caused (regression harness, ticket 0262). The remaining
+nine failures + four errors need triage: environmental (doudou data/compute
+state) vs real. None is release-blocking on its face, but the golden-value
+pair is unclassified and could hide numeric drift.
+
+Clusters, with observed messages:
+
+1. `test_corpus_table_export` (4 ERRORS) — Missing
+   `deliverables/_shared/tables/tab_corpus_sources.csv` ("run
+   export_corpus_table.py first"). Generated, untracked; likely just not built
+   here. Decide: build in test fixture, mark differently, or accept.
+2. `test_corpus_acceptance::test_language_null_rate_below_2_percent` — null
+   rate 4.1% (1743/42916) vs <2% expected. Local corpus predates the language
+   backfill? Re-check after v1.1.2 lands and `make corpus-sync`.
+3. `test_golden_values` S3_sliced_wasserstein + S4_frechet — AssertionError
+   (mismatch vs golden). UNCLASSIFIED: lib-version/hardware sensitivity on
+   doudou, or genuine drift. Highest-priority triage of this ticket.
+4. `test_null_model_c2st` (2) — subprocess.TimeoutExpired on the CPU-only
+   machine. Budget vs machine mismatch; consider a longer timeout or slow-tier
+   gating by capability.
+5. `test_fetch_parallel` (3) + `test_bib_doi_title` (1) — FileNotFoundError on
+   tmp/cache paths; environment or fixture setup, possibly flaky.
+
+## Actions
+
+1. Re-run each cluster on padme (data-complete, GPU) after 0262 merges.
+2. Classify each: env-only (document/gate), flaky (fix fixture), or real (fix
+   or re-ticket per cluster; atomic tickets).
+3. For cluster 3, byte-compare S3/S4 outputs on both machines to separate
+   hardware sensitivity from drift.
+
+## Verification
+
+- [ ] Each of the 5 clusters has a logged disposition
+- [ ] `make check` green on padme, or every residual red maps to an open ticket
+
+## Exit criteria
+
+- [ ] No unclassified `make check` failure remains on either machine
