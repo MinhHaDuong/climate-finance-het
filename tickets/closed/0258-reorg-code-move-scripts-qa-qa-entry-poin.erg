@@ -3,6 +3,7 @@ Title: Reorg code — move scripts/qa/ (qa_ entry points)
 Created: 2026-07-11
 Author: HDMX-coding-agent
 Label: deferred
+Closed: Moved 11 qa Tier-3 entry points to scripts/qa/; repointed Makefile+dvc.yaml build refs and all test/doc source references; qa_near_duplicates stays flat (Tier-2); make lint + check-fast green; entry-point import smoke passes.
 
 --- log ---
 2026-07-11T06:52Z HDMX-coding-agent created
@@ -11,6 +12,7 @@ Label: deferred
 2026-07-11T07:22Z HDMX-coding-agent note blocker 0253 closed — Blocked-by removed.
 2026-07-11T07:22Z HDMX-coding-agent note blocker 0254 closed — Blocked-by removed.
 2026-07-11T08:12Z HDMX-coding-agent note blocker 0260 closed — Blocked-by removed.
+2026-07-11T08:29Z HDMX-coding-agent closed — Moved 11 qa Tier-3 entry points to scripts/qa/; repointed Makefile+dvc.yaml build refs and all test/doc source references; qa_near_duplicates stays flat (Tier-2); make lint + check-fast green; entry-point import smoke passes.
 --- body ---
 ## Context
 Wave-1 move of the code reorg epic (tracker `0240`). Relocate the `qa_*` **entry

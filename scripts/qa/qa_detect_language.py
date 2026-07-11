@@ -5,7 +5,7 @@ then compares with the existing `language` field. Fixes mismatches and
 fills NaN values.
 
 Usage:
-    uv run python scripts/qa_detect_language.py [--apply] [--sample N]
+    uv run python scripts/qa/qa_detect_language.py [--apply] [--sample N]
 
 Outputs:
     - stdout: summary of changes

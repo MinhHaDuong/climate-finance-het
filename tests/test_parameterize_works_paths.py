@@ -132,7 +132,7 @@ class TestEnrichCitationsOpenAlexCLI:
 class TestQcCitationsCLI:
     @pytest.fixture(autouse=True, scope="class")
     def _load_source(self, request):
-        request.cls._source = _read_script("qa_citations.py")
+        request.cls._source = _read_script("qa/qa_citations.py")
 
     def test_accepts_works_input(self):
         assert _has_flag(self._source, "--works-input"), \

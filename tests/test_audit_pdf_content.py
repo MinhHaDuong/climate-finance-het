@@ -1,6 +1,6 @@
 """Regression guard for the PDF-content audit's pure matching logic.
 
-The audit (`scripts/qa_pdf_content.py`) flags a bib entry when its local PDF's
+The audit (`scripts/qa/qa_pdf_content.py`) flags a bib entry when its local PDF's
 title signal does not match the bib `title`. The real audit is author-run and
 human-verified against copyright pages; here we only pin the *scoring* so a low
 score for a genuine mismatch and a high score for the right work stay stable.
@@ -14,7 +14,7 @@ from pathlib import Path
 
 _SPEC = importlib.util.spec_from_file_location(
     "qa_pdf_content",
-    Path(__file__).resolve().parent.parent / "scripts" / "qa_pdf_content.py",
+    Path(__file__).resolve().parent.parent / "scripts" / "qa" / "qa_pdf_content.py",
 )
 audit = importlib.util.module_from_spec(_SPEC)
 _SPEC.loader.exec_module(audit)

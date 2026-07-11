@@ -12,7 +12,7 @@ import os
 import sys
 from pathlib import Path
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "qa"))
 
 from qa_llm_judge_guards import (
     check_reduction,
@@ -98,7 +98,7 @@ def test_check_reduction_catches_invented_number_and_verdict():
 
 def test_cli_has_argparse():
     """CLI flag presence by source inspection (project rule)."""
-    src = (REPO_ROOT / "scripts" / "qa_llm_judge_guards.py").read_text(encoding="utf-8")
+    src = (REPO_ROOT / "scripts" / "qa" / "qa_llm_judge_guards.py").read_text(encoding="utf-8")
     assert "argparse" in src
     assert "--input" in src
     assert "--reduced" in src

@@ -14,7 +14,7 @@ local to this file. A decision is retired by flipping **Status:** to
 
 Governance note: LLM reductions of manuscript prose (descaffold, abstract
 realign, summary verdicts) must clear the four reduction guards in
-`scripts/qa_llm_judge_guards.py` — output no longer than input, zero em dashes,
+`scripts/qa/qa_llm_judge_guards.py` — output no longer than input, zero em dashes,
 no invented number, no LLMism introduced — before their output is trusted.
 
 ## resubmission-base-is-translated-vf
