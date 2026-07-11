@@ -3,12 +3,14 @@ Title: EPIC — reorg scripts/ by dataflow phase (two-tier move, relative source
 Created: 2026-07-10
 Author: HDMX-coding-agent
 Label: deferred
+Closed: Epic complete: scripts/ regrouped by dataflow phase. All 10 children merged (0253 import-model incl CI/CD/container robustness; 0254 classification+gate; 0259 seed->config; 0260 subdir-safe guards; 0255-0258 the four phase moves; 0241 extractions reconciled; 0261 archive cp-loop). Result: scripts/ root = 45 flat Tier-2 modules + phase subdirs figures/62 harvest/25 analysis/34 qa/11 (=132 movers). Integration review: recipe-identity per move, all guards green (import-path/classification/layering/phase-layout/arch/discovery/archive-paths), make lint 166 + check-fast 948 on combined main; union sweep found+fixed one dangling build ref (venues.mk plot_venue_concentration) + 2 archive-README provenance refs. dvc.lock refreshes on next dvc repro; full make clean && make all data build is the author's supervised acceptance (pure refactor validated by recipe-identity, not a data rebuild).
 
 --- log ---
 2026-07-10T00:00Z HDMX-coding-agent created
 2026-07-10T00:00Z HDMX-coding-agent note split from 0225 (code workstream) as an integer child; the high-risk stage (173-file move, import-path churn). Parked behind the Œconomia R&R per 0223.
 2026-07-11T06:52Z HDMX-coding-agent note decomposed into an EPIC TRACKER with de-risked children (author-approved architecture, 2026-07-11): two-tier move (only pure entry points move; library modules stay flat) + relative-source-root import model. Children 0253-0259 filed; 0241 re-pointed to Blocked-by 0257 (the analysis move) instead of this tracker. This ticket is now a tracker with NO Blocked-by — children encode real prerequisites only, never blocked-by the tracker.
 
+2026-07-11T10:10Z HDMX-coding-agent closed — Epic complete: scripts/ regrouped by dataflow phase. All 10 children merged (0253 import-model incl CI/CD/container robustness; 0254 classification+gate; 0259 seed->config; 0260 subdir-safe guards; 0255-0258 the four phase moves; 0241 extractions reconciled; 0261 archive cp-loop). Result: scripts/ root = 45 flat Tier-2 modules + phase subdirs figures/62 harvest/25 analysis/34 qa/11 (=132 movers). Integration review: recipe-identity per move, all guards green (import-path/classification/layering/phase-layout/arch/discovery/archive-paths), make lint 166 + check-fast 948 on combined main; union sweep found+fixed one dangling build ref (venues.mk plot_venue_concentration) + 2 archive-README provenance refs. dvc.lock refreshes on next dvc repro; full make clean && make all data build is the author's supervised acceptance (pure refactor validated by recipe-identity, not a data rebuild).
 --- body ---
 ## Epic goal
 `scripts/` holds 173 flat files that are really a **library plus a set of entry
