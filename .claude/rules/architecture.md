@@ -137,12 +137,12 @@ Resolve paths through those constants — never hardcode `data/catalogs/` in a s
 ```
 data/
 ├── catalogs/     Phase-1 corpus (contract: refined_works/embeddings/citations)   DVC (dvc.yaml outs)
+│   └── run_reports/  Phase-1 QA run summaries (pipeline_io.save_run_report)      DVC (run_reports.dvc)
 ├── pool/         Phase-1 raw source pulls                                         DVC (data/pool.dvc)
 ├── exports/      Phase-1 exports                                                  DVC (data/exports.dvc)
 ├── syllabi/      Phase-1 teaching sources                                         DVC (data/syllabi.dvc)
 ├── het/          seed lists (small, stable)                                       git-tracked
 ├── raw/          Phase-1 scratch                                                  gitignored
-├── run_reports/  Phase-1 QA reports                                               gitignored
 └── derived/      Phase-2 derived data (intermediates + derived tables)            gitignored, regenerable
 ```
 
