@@ -177,6 +177,25 @@ audit: `qa_near_duplicates` has no `__main__` and its docstring documents a
 `from qa_near_duplicates import …` API — it is already a pure library (Tier-2),
 never dual-role.
 
+### Reconciliation of the original five SPLIT extractions (ticket 0241)
+
+The pre-two-tier audit named five leaked-helper clusters to "extract into the
+owning phase subdir." The ratified two-tier rule overrode the *destination* — an
+imported helper stays flat as a `_`-module, never in a phase subdir — but every
+cluster is now resolved. Final state:
+
+| Original SPLIT target (phase subdir) | Leaked symbol(s) | Final resolution |
+|---|---|---|
+| `corpus_filters` (`build_het_core`) | `is_global_south`, `is_non_english` | flat `_corpus_predicates.py` (0254); importers `build_het_core`, `analyze_multilingual` |
+| `traditions` (`plot_fig_traditions`) | `build_pre2007_traditions` | flat `_pre2007_traditions.py` (0250); importers `plot_fig_traditions`, `compute_null_separation` |
+| `teaching` (`build_teaching_yaml`) | `_dedup_course_names` | flat `_course_dedup.py` (0254); importers `build_teaching_yaml`, `analyze_syllabi` |
+| `venues` (`summarize_core_venues`) | `canonical_venue`, `venue_type`, `institution_group` | flat `_venue_naming.py` (0254); importers `summarize_core_venues`, `compute_venue_concentration`, `export_core_venues_markdown` |
+| `changepoints` (`compute_changepoints`) | `compute_convergence` | no extraction — `compute_changepoints` reclassified Tier-2 (stays flat), imported by `compute_convergence`; a helper module was unnecessary |
+
+The `corpus_filters` name was the phase-subdir proposal; the shared predicate
+landed as `_corpus_predicates.py`. Change-point detection (`ruptures` Pelt/Dynp/
+KernelCPD) lives only in `compute_changepoints.py` — no inlined duplicate remains.
+
 ### Flags for the move tickets
 
 - **Prefix gaps.** The move tickets key on filename prefixes, but three Tier-3
