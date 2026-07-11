@@ -3,11 +3,13 @@ Title: Reorg code 4/4 — sever compute_clustering_comparison's import of the pl
 Created: 2026-07-10
 Author: HDMX-coding-agent
 Label: deferred
+Closed: severed compute->plot backward arrow; standing layering guard added; PR #1017 approved
 
 --- log ---
 2026-07-10T00:00Z HDMX-coding-agent created
 2026-07-10T00:00Z HDMX-coding-agent note split from 0225 (code workstream) as an integer child; off-critical-path follow-up. Independent of the moves, but cleanest once scripts/ is grouped (0240). Parked behind the Œconomia R&R per 0223.
 
+2026-07-11T06:19Z HDMX-coding-agent closed — severed compute->plot backward arrow; standing layering guard added; PR #1017 approved
 --- body ---
 ## Context
 Final, off-critical-path stage of the code reorg (parent sub-tracker `0225`,
