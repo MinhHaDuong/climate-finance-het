@@ -152,6 +152,16 @@ sensitivity:
   equal_n_r: 3         # R=3 median-of-three equal-n subsample replicates
   method: S2_energy
 
+# ── Pre-2007 co-citation traditions (tickets 0250, 0259) ─────────────────
+# build_pre2007_traditions in scripts/_pre2007_traditions.py builds the
+# co-citation network of the most-cited pre-2007 references and assigns its
+# Louvain communities to three intellectual traditions. louvain_seed is that
+# partition's random_state; plot_fig_traditions imports it (figure spring
+# layout) and compute_null_separation runs against the same seed-sets, so one
+# key fixes the seed the published figure and the null model both use.
+pre2007_traditions:
+  louvain_seed: 42     # Louvain partition random_state (was RANDOM_STATE=42)
+
 # ── Pre-2007 tradition-separation null model (ticket 0182) ───────────────
 # compute_null_separation.py degree-preserving-rewiring null for the
 # separation of the three pre-2007 intellectual traditions. The graph-
