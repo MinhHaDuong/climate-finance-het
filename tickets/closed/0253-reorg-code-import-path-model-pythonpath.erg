@@ -3,11 +3,13 @@ Title: Reorg code — import-path model: pythonpath source roots, retire conftes
 Created: 2026-07-11
 Author: HDMX-coding-agent
 Label: deferred
+Closed: Import-path model shipped: pytest+Makefile source roots (scripts, libs/openalex-corpus/src), conftest hack + non-editable wheel retired, pipeline_text de-shimmed, pilot moved to scripts/figures/ proves subdir flat-import resolution. Gates green.
 
 --- log ---
 2026-07-11T06:52Z HDMX-coding-agent created
 2026-07-11T06:52Z HDMX-coding-agent note wave-0b of epic 0240. Load-bearing: unblocks every phase-subdir move (0255-0258). Start now — no prerequisite.
 
+2026-07-11T07:22Z HDMX-coding-agent closed — Import-path model shipped: pytest+Makefile source roots (scripts, libs/openalex-corpus/src), conftest hack + non-editable wheel retired, pipeline_text de-shimmed, pilot moved to scripts/figures/ proves subdir flat-import resolution. Gates green.
 --- body ---
 ## Context
 Wave-0b of the code reorg epic (tracker `0240`). Before any entry point can move
