@@ -1,0 +1,52 @@
+%erg 0.1
+Title: step1 counter test reads hardcoded CATALOGS_DIR — fails in any data-less worktree
+Created: 2026-07-11
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-11T01:43Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+`tests/test_robustness_observability.py::TestStepCounters::test_step1_counter_attempted`
+fails with `FileNotFoundError` on `data/catalogs/unified_works.csv` in any worktree
+without the DVC corpus. The code under test reads the real `CATALOGS_DIR` path
+unmonkeypatched, so the test depends on the Phase-1 corpus being physically present
+— which it is not in a fresh worktree or a data-less CI checkout. Found during 0247
+(2026-07-11) and re-confirmed during the 0221 integration review: `make check-fast`
+reports exactly this one failure (944 passed, 10 skipped, 1 failed) on a corpus-less
+worktree; every other fast test passes.
+
+This is a test-isolation defect, not a product bug: the step-1 counter logic is
+fine, but the fast tier must not require the ~1.3 GB DVC corpus.
+
+## Relevant files
+- `tests/test_robustness_observability.py` — `TestStepCounters::test_step1_counter_attempted`
+  (the failing test; reads real `CATALOGS_DIR`).
+- `scripts/utils.py` / `pipeline_loaders` — where `CATALOGS_DIR` / `unified_works.csv`
+  resolve.
+
+## Actions
+1. Either monkeypatch/fixture the corpus path so the counter reads a tiny synthetic
+   `unified_works.csv` in a tmp dir, OR
+2. Auto-mark the test `slow` / data-dependent (so it leaves the fast tier and only
+   runs where the corpus is present).
+
+Prefer (1) if the step-1 counter can be exercised against a minimal fixture — it
+keeps observability coverage in the fast tier. Fall back to (2) if the counter
+genuinely needs the full corpus.
+
+## Test
+- RED: `make check-fast` in a corpus-less worktree currently fails on this test.
+- GREEN: `make check-fast` passes with no corpus present (fixture path), or the
+  test is excluded from the fast tier (auto-mark).
+
+## Invariants
+- Do not weaken what the counter asserts where the corpus IS present.
+- No new heavy dependency; a synthetic CSV fixture suffices.
+
+## Exit criteria
+- `make check-fast` is green in a fresh, data-less worktree.
+
+Ticket-ref: tickets/0221-tracking-reorganize-the-repo-so-layout-m.erg
