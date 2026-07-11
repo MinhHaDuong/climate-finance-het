@@ -1,0 +1,57 @@
+%erg 0.1
+Title: Make script-enumeration guards subdir-safe before wave-1 moves
+Created: 2026-07-11
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-11T08:02Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Coordination PR for epic 0240 (reorg scripts/ by dataflow phase). Wave-1
+(tickets 0255-0258) moves ~132 `scripts/*.py` entry points into phase
+subdirectories (`scripts/figures/`, `scripts/harvest/`, `scripts/analysis/`,
+`scripts/qa/`). Six test guards enumerate scripts with a **flat**
+`os.listdir(SCRIPTS_DIR)` / `glob("*.py")` — so a moved file silently drops out
+of the guard's coverage and the test keeps passing over fewer files. This is the
+same coverage-narrowing class defect as ticket 0248 (`.mk` discovery) and 0259
+(seed scan). Fix the CLASS *before* the moves, so no move can narrow a guard.
+
+This is a child of epic 0240 (`Ticket-ref` above, NOT `Blocked-by` — it is not
+blocked by the epic, it unblocks it). It PRECEDES and unblocks 0255-0258, which
+are re-pointed `Blocked-by: 0260`. It mirrors the 0248 shared-helper pattern
+(`tests/_mk_discovery.py` + `tests/test_mk_discovery_unified.py`).
+
+## Relevant files
+- `tests/_script_discovery.py` — NEW canonical recursive enumerator (mirrors `tests/_mk_discovery.py`).
+- `tests/test_script_discovery_unified.py` — NEW adherence meta-guard (mirrors `tests/test_mk_discovery_unified.py`).
+- `tests/test_script_classification.py:61` — 0254 Tier gate; `os.listdir` → recursive (CRITICAL: must see moved files).
+- `tests/test_layering.py:39` — 0242 compute↛plot guard; `os.listdir` → recursive.
+- `tests/test_phase_layout.py:97` — `glob("*.py")` → recursive.
+- `tests/test_script_hygiene.py:997,1205` — `glob("*.py")` → recursive.
+- `tests/test_evict_analysis_intermediates.py:108` — `glob("*.py")` → recursive.
+
+## Actions
+1. Add `tests/_script_discovery.py`: `all_script_files()` (recursive `scripts/**/*.py`, excl `archive*/` + `__pycache__`), plus basenames/stems/stem-map shapes.
+2. Migrate the 6 flat sites to it, preserving each guard's exact contract (only the file set widens).
+3. Add the meta-guard: fail if any test file outside the helper hand-rolls a flat script enumeration. Prove teeth by mutation.
+4. Re-point 0255-0258 to `Blocked-by: 0260`.
+
+## Test
+Red first: the meta-guard `test_no_handrolled_script_enumeration` fails while the
+6 flat sites still hand-roll their glob; goes green once all 6 route through the
+helper. Mutation-prove: temporarily re-add a flat glob to a migrated site → the
+meta-guard fails → revert.
+
+## Verification
+- [ ] `make check-fast` and `make lint` pass; per-guard counts do not DROP (may rise: `scripts/figures/plot_schematic_L3_burst.py` already exists in a subdir, so the widening is exercised today, not a pure no-op).
+- [ ] Meta-guard green on the migrated tree, red on a reintroduced flat glob.
+- [ ] 0255-0258 show `Blocked-by: 0260`.
+
+## Invariants
+- Each migrated guard still enforces its SAME rule (import-leaf classification, compute↛plot layering, phase-layout, conforming-prefix, --output, no-intermediate-in-tables). Only file coverage widens.
+- Already-recursive guards (`os.walk` in `test_arch_compliance`, `test_fabricated_doi_class_guard`, `test_script_hygiene:58`) are left untouched.
+
+## Exit criteria
+- Shared helper + meta-guard landed; 6 flat sites migrated; 0255-0258 `Blocked-by: 0260`; full suite green.

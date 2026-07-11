@@ -26,6 +26,7 @@ import sys
 from pathlib import Path
 
 import pytest
+from _script_discovery import all_script_files
 
 # The entire file is rule-enforcement / lint / hygiene: ruff and mypy invocations,
 # complexity and length smells, arch-rule and contract checks. It belongs to the
@@ -994,7 +995,7 @@ class TestScriptNaming:
     }
 
     def test_all_scripts_have_conforming_prefix(self):
-        for f in Path(SCRIPTS_DIR).glob("*.py"):
+        for f in all_script_files():  # recursive, subdir-safe (ticket 0260)
             if f.name.startswith("_") or f.name in self.LIBRARY_MODULES:
                 continue
             assert any(f.name.startswith(p) for p in self.PREFIXES), (
@@ -1202,7 +1203,7 @@ class TestOutputFlag:
     def test_all_producing_scripts_accept_output(self):
         """Every script with __main__ that writes files must accept --output."""
         violators = []
-        for f in Path(SCRIPTS_DIR).glob("*.py"):
+        for f in all_script_files():  # recursive, subdir-safe (ticket 0260)
             src = f.read_text()
             if "__name__" not in src or "__main__" not in src:
                 continue

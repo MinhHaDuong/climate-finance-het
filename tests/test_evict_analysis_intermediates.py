@@ -41,18 +41,17 @@ which is the regression this guard exists to catch (0218 evicted the top-level
 literal set; 0231 evicted the variable-routed sub-Makefile class).
 """
 
-import glob
 import os
 import re
 
 import pytest
 from _mk_discovery import all_makefiles
+from _script_discovery import all_script_files
 
 # Grep-ratchet guard — belongs to the mechanical adherence gate (`pytest -m adherence`).
 pytestmark = pytest.mark.adherence
 
 PROJECT_ROOT = os.path.join(os.path.dirname(__file__), "..")
-SCRIPTS_DIR = os.path.join(PROJECT_ROOT, "scripts")
 
 # Intermediates evicted to $(DERIVED) — 0208 (heavy four) + 0218 (the residual class).
 EVICTED = [
@@ -104,8 +103,9 @@ def _makefiles():
 
 
 def _scripts():
-    # Top-level scripts only — archived/ variants are frozen and not built.
-    return glob.glob(os.path.join(SCRIPTS_DIR, "*.py"))
+    # Recursive, subdir-safe enumeration via the shared helper (ticket 0260) —
+    # archive*/ variants are frozen and excluded there.
+    return all_script_files()
 
 
 def _offending_lines(path, basename):

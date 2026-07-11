@@ -20,14 +20,11 @@ Adherence tier — runs under `make lint`, not the fast inner loop.
 """
 
 import ast
-import os
 
 import pytest
+from _script_discovery import script_paths_by_stem
 
 pytestmark = pytest.mark.adherence
-
-REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SCRIPTS_DIR = os.path.join(REPO, "scripts")
 
 # Tier-2 named libraries (no __main__; imported as a library surface).
 NAMED_LIBRARIES = {
@@ -56,16 +53,10 @@ RECLASSIFIED_DUAL_ROLE = {
 NAMED_FLAT = NAMED_LIBRARIES | RECLASSIFIED_DUAL_ROLE
 
 
-def _top_modules():
-    return sorted(
-        f[:-3] for f in os.listdir(SCRIPTS_DIR) if f.endswith(".py")
-    )
-
-
-def _script_imports(name):
-    """Top-level module names imported by scripts/<name>.py."""
-    with open(os.path.join(SCRIPTS_DIR, name + ".py")) as fh:
-        tree = ast.parse(fh.read(), filename=name + ".py")
+def _script_imports(path):
+    """Top-level module names imported by a script at `path`."""
+    with open(path) as fh:
+        tree = ast.parse(fh.read(), filename=path.name)
     hits = set()
     for node in ast.walk(tree):
         if isinstance(node, ast.ImportFrom):
@@ -78,11 +69,15 @@ def _script_imports(name):
 
 
 def _imported_by_script():
-    """Map: top-level module -> set of top-level scripts that import it."""
-    modules = set(_top_modules())
+    """Map: module stem -> set of script stems that import it."""
+    # Recursive enumeration via the shared helper (ticket 0260): a wave-1 move of
+    # an entry point into scripts/<phase>/ keeps its module stem, so it stays in
+    # the surface this Tier gate pins instead of silently dropping out.
+    paths = script_paths_by_stem()
+    modules = set(paths)
     importers = {}
-    for name in sorted(modules):
-        for m in _script_imports(name):
+    for name, path in sorted(paths.items()):
+        for m in _script_imports(path):
             if m in modules and m != name:
                 importers.setdefault(m, set()).add(name)
     return importers
