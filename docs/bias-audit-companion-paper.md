@@ -109,12 +109,12 @@ graph channels (G2, G9) since citation edges are language-agnostic once
 DOIs resolve.
 
 **Current defense.**
-- Embedding model: `scripts/enrich_embeddings.py:36` uses `BAAI/bge-m3`
+- Embedding model: `scripts/harvest/enrich_embeddings.py:36` uses `BAAI/bge-m3`
   explicitly for multilingual coverage of English, French, Chinese,
   Japanese, German (`content/_includes/embedding-generation.md:5`).
 - §6.4 already acknowledges: "We use `BAAI/bge-m3`, a multilingual
   model... future work should compare results across embedding models."
-- Language enrichment pipeline (`scripts/enrich_language.py`) assigns a
+- Language enrichment pipeline (`scripts/harvest/enrich_language.py`) assigns a
   language label per record, so the data is available for stratification.
 
 **Recommended action.** ⚠ — the defense addresses model choice but not
