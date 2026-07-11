@@ -12,7 +12,6 @@ until resubmitted.
 ### Also open (details live in the tickets)
 - **0243** voice alignment — author decisions on draft PR #1016.
 - **0244** AI-generated includes — author marker review.
-- **0026** method paper.
 - Harness PR #472 (reuse gate + supervisor doctrine) awaits author review.
 
 ## Status
