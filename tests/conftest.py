@@ -26,7 +26,10 @@ SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 FIXTURES_DIR = os.path.join(os.path.dirname(__file__), "fixtures", "smoke")
 GOLDEN_DIR = os.path.join(FIXTURES_DIR, "golden")
 
-sys.path.insert(0, SCRIPTS_DIR)
+# Flat imports (from utils import …) resolve via the `scripts` source root
+# declared in [tool.pytest.ini_options] pythonpath (ticket 0253) — the old
+# path-injection hack is retired. SCRIPTS_DIR remains for run_compute() below,
+# which builds an absolute path to a script it launches as a subprocess.
 
 
 # ---------------------------------------------------------------------------

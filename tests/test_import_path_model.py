@@ -54,11 +54,17 @@ class TestPathModelConfig:
             )
 
     def test_conftest_has_no_scripts_syspath_hack(self):
-        """The conftest sys.path.insert hack is retired — pythonpath replaces it."""
-        src = (REPO_ROOT / "tests" / "conftest.py").read_text()
-        assert "sys.path.insert" not in src, (
-            "tests/conftest.py must not inject scripts/ via sys.path.insert — "
-            "the pytest pythonpath source root replaces that hack (ticket 0253)."
+        """The conftest path-injection hack is retired — pythonpath replaces it."""
+        # Strip comments so a comment *naming* the retired hack does not trip the
+        # guard; only an executable injection call should fail it.
+        code_lines = [
+            ln.split("#", 1)[0]
+            for ln in (REPO_ROOT / "tests" / "conftest.py").read_text().splitlines()
+        ]
+        code = "\n".join(code_lines)
+        assert "sys.path.insert" not in code and "sys.path.append" not in code, (
+            "tests/conftest.py must not inject scripts/ onto sys.path — the "
+            "pytest pythonpath source root replaces that hack (ticket 0253)."
         )
 
     def test_makefile_exports_pythonpath(self):

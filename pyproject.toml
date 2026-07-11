@@ -64,6 +64,12 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
+# Relative source roots (ticket 0253): flat module names resolve from any
+# subdir. `scripts` carries the pipeline modules (utils, pipeline_io, …);
+# `libs/openalex-corpus/src` carries the openalex_corpus package as source
+# (its non-editable wheel is retired). This replaces the tests/conftest.py
+# sys.path.insert hack — the same two roots the Makefile exports as PYTHONPATH.
+pythonpath = ["scripts", "libs/openalex-corpus/src"]
 # libs/openalex-corpus is a separate installed package with its own test suite.
 # This guards *implicit* discovery only: a bare `pytest` (no path) does not
 # descend into libs/, so an unscoped root run never chokes on `import
