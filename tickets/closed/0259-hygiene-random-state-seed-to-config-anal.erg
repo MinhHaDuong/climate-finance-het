@@ -3,11 +3,13 @@ Title: Hygiene — RANDOM_STATE seed to config/analysis.yaml (restore seed-scan 
 Created: 2026-07-11
 Author: HDMX-coding-agent
 Label: deferred
+Closed: seed sourced from config pre2007_traditions.louvain_seed; seed scan widened to _*.py helpers; gates green
 
 --- log ---
 2026-07-11T06:52Z HDMX-coding-agent created
 2026-07-11T06:52Z HDMX-coding-agent note fallout of epic 0240's exemplar (0250). Independent — no prerequisite. Restores the seed-scan coverage 0250 silently narrowed.
 
+2026-07-11T07:06Z HDMX-coding-agent closed — seed sourced from config pre2007_traditions.louvain_seed; seed scan widened to _*.py helpers; gates green
 --- body ---
 ## Context
 Independent hygiene item surfaced by the code reorg epic (tracker `0240`). Ticket
