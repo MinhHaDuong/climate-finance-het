@@ -11,10 +11,10 @@ of them import a `plot_*` module. Adherence tier — runs under `make lint`, not
 fast inner loop.
 
 Ticket 0242 severed `compute_clustering_comparison.py`'s import of the two
-clustering plotters. `compute_null_separation.py` retains a second, distinct
-violation (it imports the analysis helper `build_pre2007_traditions`, which is
-misplaced inside `plot_fig_traditions.py`); relocating that helper is separate
-work tracked by ticket 0250 and is allowlisted below until then.
+clustering plotters. Ticket 0250 severed the second violation by relocating the
+shared analysis helper `build_pre2007_traditions` out of `plot_fig_traditions.py`
+into the neutral module `_pre2007_traditions.py`, which both the plot and the
+compute layer import. The allowlist is now empty.
 """
 
 import ast

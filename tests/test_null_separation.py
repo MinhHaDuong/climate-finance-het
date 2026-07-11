@@ -250,9 +250,10 @@ def test_load_data_reads_works_through_loader(monkeypatch):
     """arch rule 9 (ticket 0185): with no explicit works_path, _load_data
     must read the works catalog via load_refined_works(), not a direct
     pd.read_csv. Shared by the figure (plot_fig_traditions) and the
-    pre-2007 separation null (compute_null_separation)."""
+    pre-2007 separation null (compute_null_separation), both via the
+    neutral _pre2007_traditions module."""
     import pandas as pd
-    import plot_fig_traditions as pft
+    import _pre2007_traditions as p27
 
     works = pd.DataFrame({
         "doi": ["10.1/a"],
@@ -273,10 +274,10 @@ def test_load_data_reads_works_through_loader(monkeypatch):
         calls["works"] += 1
         return works.copy()
 
-    monkeypatch.setattr(pft, "load_refined_works", fake_load_works)
-    monkeypatch.setattr(pft, "load_refined_citations", lambda: cit.copy())
+    monkeypatch.setattr(p27, "load_refined_works", fake_load_works)
+    monkeypatch.setattr(p27, "load_refined_citations", lambda: cit.copy())
 
-    _cit, doi_meta = pft._load_data(None, None)
+    _cit, doi_meta = p27._load_data(None, None)
 
     assert calls["works"] == 1, "works must be read through load_refined_works()"
     assert "10.1/a" in doi_meta
