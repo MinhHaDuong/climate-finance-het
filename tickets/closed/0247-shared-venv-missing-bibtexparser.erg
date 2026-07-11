@@ -2,11 +2,13 @@
 Title: Shared venv missing bibtexparser (declared in pyproject) — 3 io_discipline failures
 Created: 2026-07-11
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1014
 
 --- log ---
 2026-07-11T01:05Z HDMX-coding-agent created
 2026-07-11T09:00Z HDMX-coding-agent note Corrected diagnosis: bibtexparser is not missing from a stale env — it was declared in the `corpus` dependency GROUP (Phase-1, not installed on Phase-2/3 machines). But the three importing scripts serve the WRITING side: qa_bibliography.py reads bibliography/main.bib + corpus and writes a match CSV; qa_bib_doi.py reads deliverables/_shared/bibliography/main.bib and audits DOIs vs Crossref; qa_missing_references.py reads deliverables/_shared/bibliography/main.bib and writes the missing-refs list (DOIfetch sync). The dependency was misclassified. Fix: moved bibtexparser from the `corpus` group to `[project]` dependencies; `uv lock`. Verified import + the three TestMigratedScripts tests green.
 
+2026-07-11T00:45Z HDMX-coding-agent closed — autoclosed — PR #1014
 --- body ---
 ## Context
 `bibtexparser` is declared in pyproject.toml (line 57) but absent from the
