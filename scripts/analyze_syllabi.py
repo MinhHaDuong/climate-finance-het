@@ -17,7 +17,7 @@ import argparse
 import os
 
 import pandas as pd
-from build_teaching_yaml import _dedup_course_names
+from _course_dedup import _dedup_course_names
 from utils import BASE_DIR, DATA_DIR, get_logger
 
 log = get_logger("analyze_syllabi")
