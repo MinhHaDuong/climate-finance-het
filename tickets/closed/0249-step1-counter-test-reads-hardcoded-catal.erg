@@ -2,10 +2,13 @@
 Title: step1 counter test reads hardcoded CATALOGS_DIR — fails in any data-less worktree
 Created: 2026-07-11
 Author: HDMX-coding-agent
+Closed: test isolation fixed; check-fast green on data-less worktree
 
 --- log ---
 2026-07-11T01:43Z HDMX-coding-agent created
+2026-07-11T06:06Z HDMX-coding-agent note Fixed via option 1 (synthetic fixture stays in fast tier): the test patched utils.CATALOGS_DIR but enrich_abstracts binds the value at import, so a cached module kept the real path; now patches enrich_abstracts.CATALOGS_DIR (call-time resolution). Sweep found and fixed the same wrong-namespace patch in test_retry_unification.py (OPENALEX_API_KEY). make check-fast 945 passed / 10 skipped, make lint 151 passed / 5 skipped, both exit 0 on corpus-less doudou worktree.
 
+2026-07-11T06:07Z HDMX-coding-agent closed — test isolation fixed; check-fast green on data-less worktree
 --- body ---
 ## Context
 

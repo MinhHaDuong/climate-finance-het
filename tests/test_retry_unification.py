@@ -71,9 +71,16 @@ class TestMineOpenalexKeywordsApiKey:
     """enrich_openalex_keywords.py should send the API key when available."""
 
     def test_fetch_sends_api_key(self, monkeypatch, requests_mock):
-        """fetch_openalex_metadata should include api_key in params."""
-        import utils
-        monkeypatch.setattr(utils, "OPENALEX_API_KEY", "test-key-123")
+        """fetch_openalex_metadata should include api_key in params.
+
+        Patch OPENALEX_API_KEY in the enrich_openalex_keywords namespace:
+        the module binds it by value at import, so patching utils reaches
+        it only while the module is not yet cached in sys.modules (same
+        defect class as the step1 counter test, ticket 0249).
+        """
+        import enrich_openalex_keywords as eok
+
+        monkeypatch.setattr(eok, "OPENALEX_API_KEY", "test-key-123")
 
         captured_params = {}
 
@@ -87,8 +94,7 @@ class TestMineOpenalexKeywordsApiKey:
             json=capture_request,
         )
 
-        from enrich_openalex_keywords import fetch_openalex_metadata
-        fetch_openalex_metadata(["10.1000/test"])
+        eok.fetch_openalex_metadata(["10.1000/test"])
 
         # The api_key param should be present
         assert "api_key" in captured_params, (
