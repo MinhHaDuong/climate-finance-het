@@ -56,8 +56,8 @@ from _null_separation import (
     partition_modularity,
     within_tradition_share,
 )
+from _pre2007_traditions import build_pre2007_traditions
 from pipeline_loaders import load_analysis_config
-from plot_fig_traditions import build_pre2007_traditions
 from schemas import NullSeparationSchema
 from script_io_args import parse_io_args, validate_io
 from utils import get_logger, normalize_doi

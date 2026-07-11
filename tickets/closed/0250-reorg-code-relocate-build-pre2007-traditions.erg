@@ -3,11 +3,13 @@ Title: Relocate build_pre2007_traditions out of plot_fig_traditions (compute →
 Created: 2026-07-11
 Author: HDMX-coding-agent
 Label: deferred
+Closed: relocated build_pre2007_traditions to neutral _pre2007_traditions.py; layering allowlist empty
 
 --- log ---
 2026-07-11T00:00Z HDMX-coding-agent created
 2026-07-11T00:00Z HDMX-coding-agent note discovered while doing 0242 (sever clustering back-arrow). The layering guard added in 0242 (tests/test_layering.py) allowlists compute_null_separation.py pending this ticket.
 
+2026-07-11T06:42Z HDMX-coding-agent closed — relocated build_pre2007_traditions to neutral _pre2007_traditions.py; layering allowlist empty
 --- body ---
 ## Context
 The layering guard added in ticket 0242 (`tests/test_layering.py`) forbids any

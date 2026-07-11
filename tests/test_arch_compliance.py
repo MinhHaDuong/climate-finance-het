@@ -268,7 +268,11 @@ class TestNoHardcodedSeeds:
         "plot_bimodality.py",
         "plot_cocitation.py",
         "plot_fig45_pca_scatter.py",
-        "plot_fig_traditions.py",
+        # plot_fig_traditions.py removed (ticket 0250): its RANDOM_STATE=42
+        # relocated with build_pre2007_traditions into the neutral helper
+        # scripts/_pre2007_traditions.py, so the plot module no longer hardcodes
+        # a seed. The relocated seed is a pre-existing un-migrated violation now
+        # in a non-Phase-2-prefixed helper, outside this prefix-gated scan.
         "plot_figS_kde.py",
         "plot_heatmap_communities_clusters.py",
         "plot_ncc_bimodality.py",
