@@ -35,7 +35,11 @@ log = get_logger("_pre2007_traditions")
 # of truth shared with compute_pre2007_coverage.py.
 TOP_N = 250
 MIN_COCIT = 3
-RANDOM_STATE = 42
+# Louvain partition seed, sourced from config/analysis.yaml (architecture
+# rule 7 — no hardcoded seeds). plot_fig_traditions imports this constant for
+# its spring-layout seed, so it stays a module-level name; only its *value*
+# now comes from config.
+RANDOM_STATE = int(load_analysis_config()["pre2007_traditions"]["louvain_seed"])
 
 TRADITION_ANCHORS = {
     "pricing": ["weitzman", "barrett", "carraro", "montgomery", "pizer"],
