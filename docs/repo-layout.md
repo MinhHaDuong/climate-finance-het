@@ -56,9 +56,11 @@ run), not a syntactic property. Decide per file:
    `scripts/<phase>/` that matches what it produces. Moving it there keeps its
    flat imports working: the repo resolves `from utils import …` /
    `import openalex_corpus` via the relative source roots `scripts` and
-   `libs/openalex-corpus/src` on `PYTHONPATH` (pytest `pythonpath` + the
-   Makefile `export PYTHONPATH`), so a subdir entry point needs no `sys.path`
-   hack and no `python -m` (ticket 0253; pilot `scripts/figures/`).
+   `libs/openalex-corpus/src`. The single rule (ticket 0253): **these source
+   roots are on the path in every execution context — pytest (`pythonpath`),
+   make (`export`), test subprocesses (explicit env), containers (Dockerfile
+   `ENV`), and archive scripts/Makefiles — never assumed ambient.** So a subdir
+   entry point needs no `sys.path` hack and no `python -m` (pilot `scripts/figures/`).
 3. **A script that *leaks* a helper** (imported ≥1 but authored to run) → extract
    the *helper* into a module in the owning `scripts/<phase>/`; the script stays.
    Import-count is a symptom; the docstring / `_`-prefix / pure-function-vs-`main()`

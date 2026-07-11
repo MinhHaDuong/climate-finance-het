@@ -94,9 +94,16 @@ path package `libs/openalex-corpus`, this repo's source of truth for them
 parameters) and no embedding model choice.
 
 This repo **imports the package as source** via the relative source root
-`libs/openalex-corpus/src` on `PYTHONPATH` (ticket 0253): pytest gets it from
-`[tool.pytest.ini_options] pythonpath`, every Make/`.mk` invocation from the
-top-level `export PYTHONPATH`. The former non-editable `[tool.uv.sources]` wheel
+`libs/openalex-corpus/src` on `PYTHONPATH` (ticket 0253). The single rule:
+**the source roots (`scripts` + `libs/openalex-corpus/src`) are placed on the
+path in every execution context — pytest (`pythonpath`), make (`export`), test
+subprocesses (explicit env via `tests/_source_roots.py`), containers (Dockerfile
+`ENV`), and archive scripts/Makefiles — never assumed ambient.** Concretely:
+pytest gets them from `[tool.pytest.ini_options] pythonpath`, every Make/`.mk`
+invocation from the top-level `export PYTHONPATH`, each test that launches a
+script subprocess from `source_root_env()`, and the reproducibility archives
+carry both the bundled `libs/openalex-corpus/` and the `PYTHONPATH` env/export.
+The former non-editable `[tool.uv.sources]` wheel
 install is retired; `libs/openalex-corpus/pyproject.toml` is kept so git-source
 consumers (AEDIST, ticket 0229) still depend on it. Call sites import
 `normalize_doi`, `reconstruct_abstract`, `build_text`, `is_boilerplate_abstract`
