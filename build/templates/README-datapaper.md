@@ -59,8 +59,8 @@ paper's figure and tables. They illustrate how to work with the dataset:
 | Script | Output | What it does |
 |--------|--------|--------------|
 | `scripts/plot_fig_bars.py` | `fig_bars.png` | Annual publication volume bar chart |
-| `scripts/export_corpus_table.py` | `tab_corpus_sources.md` | Per-source quality and completeness table |
-| `scripts/export_language_table.py` | `tab_languages.md` | Language distribution table |
+| `scripts/figures/export_corpus_table.py` | `tab_corpus_sources.md` | Per-source quality and completeness table |
+| `scripts/figures/export_language_table.py` | `tab_languages.md` | Language distribution table |
 
 ## License
 

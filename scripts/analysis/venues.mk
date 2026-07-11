@@ -28,6 +28,6 @@ $(VENUE_TABLE): scripts/analysis/compute_venue_concentration.py scripts/analysis
 
 # ── Figure ────────────────────────────────────────────────────────────────
 
-$(VENUE_FIG): scripts/plot_venue_concentration.py scripts/plot_style.py scripts/utils.py \
+$(VENUE_FIG): scripts/figures/plot_venue_concentration.py scripts/plot_style.py scripts/utils.py \
 		$(VENUE_TABLE) $(DERIVED)/tab_breakpoints.csv
 	$(PYTHON) $< --output $@ --input $(VENUE_TABLE) $(DERIVED)/tab_breakpoints.csv
