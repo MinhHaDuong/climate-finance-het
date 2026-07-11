@@ -2,10 +2,13 @@
 Title: hygiene guard: forbid monkeypatch.setattr(utils, CONST) in tests — wrong-namespace config patch class
 Created: 2026-07-11
 Author: HDMX-coding-agent
+Closed: standing guard merged via t0251-guard-monkeypatch-utils; mutation-proven teeth
 
 --- log ---
 2026-07-11T06:11Z HDMX-coding-agent created
 
+2026-07-11T06:25Z guard implemented in tests/test_script_hygiene.py::TestNoWrongNamespacePatch; mutation RED named file:line for both forms, GREEN after revert; make lint and make check-fast exit 0
+2026-07-11T06:25Z HDMX-coding-agent closed — standing guard merged via t0251-guard-monkeypatch-utils; mutation-proven teeth
 --- body ---
 ## Context
 
