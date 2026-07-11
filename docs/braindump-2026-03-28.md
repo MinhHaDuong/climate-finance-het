@@ -126,7 +126,7 @@ Note: Polars reads CSV/Parquet natively, so it fits the handoff pattern (corpus 
 
 **Dead asset detection** (**NOT DONE**) — walk the Makefile DAG + `import` graph, flag scripts that no target depends on and data files that no script reads. Prevents accumulation of orphan artifacts post-refactor.
 
-**Dependency graph as a figure** (**DONE** — `scripts/plot_fig_dag.py`, `content/figures/fig_dag.png`) — auto-generate a DAG visualization from Makefile + DVC (`make dag` target). `graphviz` from `dvc dag --dot` + Makefile parsing. Useful for the technical report and for onboarding.
+**Dependency graph as a figure** (**DONE** — `scripts/figures/plot_fig_dag.py`, `content/figures/fig_dag.png`) — auto-generate a DAG visualization from Makefile + DVC (`make dag` target). `graphviz` from `dvc dag --dot` + Makefile parsing. Useful for the technical report and for onboarding.
 
 **Script complexity budget** (**NOT DONE**) — enforce that `run()` is the only function above a cyclomatic complexity threshold per script. Everything else (arg parsing, I/O) should be trivial. Ruff `C901` already exists — the twist is scoping it: low threshold globally, higher allowance only for functions named `run`.
 

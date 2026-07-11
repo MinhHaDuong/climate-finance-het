@@ -151,25 +151,25 @@ uv run python scripts/qa/qa_citations.py --output content/tables/qa_citations_re
 uv run python scripts/analysis/compute_breakpoints.py     # tab_breakpoints.csv, tab_breakpoint_robustness.csv
 uv run python scripts/analysis/compute_clusters.py        # tab_alluvial.csv, cluster_labels.json, tab_core_shares.csv
 uv run python scripts/analysis/compute_lexical.py         # tab_lexical_tfidf.csv (all breaks + controls, with p-values)
-uv run python scripts/plot_fig_breakpoints.py    # fig_breakpoints.png
-uv run python scripts/plot_fig_alluvial.py       # fig_alluvial.png
-uv run python scripts/plot_alluvial_html.py     # fig_alluvial.html
+uv run python scripts/figures/plot_fig_breakpoints.py    # fig_breakpoints.png
+uv run python scripts/figures/plot_fig_alluvial.py       # fig_alluvial.png
+uv run python scripts/figures/plot_alluvial_html.py     # fig_alluvial.html
 uv run python scripts/analysis/compute_breakpoints.py --core-only       # Core variants of breakpoints tables
 uv run python scripts/analysis/compute_clusters.py --core-only          # Core variants of alluvial tables
-uv run python scripts/plot_fig_breakpoints.py --core-only      # fig_breakpoints_core.png
-uv run python scripts/plot_fig_alluvial.py --core-only         # fig_alluvial_core.png
+uv run python scripts/figures/plot_fig_breakpoints.py --core-only      # fig_breakpoints_core.png
+uv run python scripts/figures/plot_fig_alluvial.py --core-only         # fig_alluvial_core.png
 uv run python scripts/analysis/compute_breakpoints.py --robustness      # tab_k_sensitivity.csv
-uv run python scripts/plot_fig_k_sensitivity.py                # fig_k_sensitivity.png
-uv run python scripts/plot_fig_lexical_tfidf.py                # fig_lexical_tfidf_{year}.png per break
+uv run python scripts/figures/plot_fig_k_sensitivity.py                # fig_k_sensitivity.png
+uv run python scripts/figures/plot_fig_lexical_tfidf.py                # fig_lexical_tfidf_{year}.png per break
 uv run python scripts/analysis/compute_breakpoints.py --censor-gap 1    # Censored breaks (k=1)
 uv run python scripts/analysis/compute_breakpoints.py --censor-gap 2    # Censored breaks (k=2)
 uv run python scripts/analysis/analyze_bimodality.py      # Fig 5a/5b/5c
 uv run python scripts/analysis/analyze_bimodality.py --core-only  # Fig 5a/5b/5c (core: cited ≥ 50)
-uv run python scripts/plot_fig45_pca_scatter.py --core-only --supervised  # Fig 4 seed axis (paper)
-uv run python scripts/plot_fig45_pca_scatter.py  # Fig 4 PCA scatter (appendix, full corpus)
+uv run python scripts/figures/plot_fig45_pca_scatter.py --core-only --supervised  # Fig 4 seed axis (paper)
+uv run python scripts/figures/plot_fig45_pca_scatter.py  # Fig 4 PCA scatter (appendix, full corpus)
 uv run python scripts/analysis/analyze_genealogy.py       # Fig 4 genealogy (depends on bimodality output)
 uv run python scripts/analysis/summarize_core_venues.py   # Core venue tables + institution summaries
-uv run python scripts/export_core_venues_markdown.py  # Manuscript-ready top-10 venue markdown table
+uv run python scripts/figures/export_core_venues_markdown.py  # Manuscript-ready top-10 venue markdown table
 ```
 
 ## Citation graph

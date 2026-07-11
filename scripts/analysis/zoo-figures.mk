@@ -112,8 +112,8 @@ $(foreach m,$(ANALYTICAL_NULL_METHODS),$(eval \
 
 # Pattern rule for all methods: passes --null-ci when tab_null_*.csv exists,
 # and --analytical-null when tab_analytical_null_*.csv exists.
-$(ZOO_FIGS)/fig_zoo_%.png: $(ZOO_TABLES)/tab_crossyear_%.csv scripts/plot_zoo_results.py
-	$(PYTHON) scripts/plot_zoo_results.py --method $* --output $@ \
+$(ZOO_FIGS)/fig_zoo_%.png: $(ZOO_TABLES)/tab_crossyear_%.csv scripts/figures/plot_zoo_results.py
+	$(PYTHON) scripts/figures/plot_zoo_results.py --method $* --output $@ \
 		$(if $(wildcard $(ZOO_TABLES)/tab_null_$*.csv),--null-ci $(ZOO_TABLES)/tab_null_$*.csv,) \
 		$(if $(wildcard $(ZOO_TABLES)/tab_analytical_null_$*.csv),--analytical-null $(ZOO_TABLES)/tab_analytical_null_$*.csv,)
 
@@ -138,9 +138,9 @@ $(ZOO_TABLES)/tab_div_biased_C2ST_embedding.csv: $(DIV_DISPATCH) scripts/_diverg
 
 BIAS_FIGS := $(foreach m,$(BIAS_METHODS),$(ZOO_FIGS)/fig_zoo_bias_$(m).png)
 
-$(ZOO_FIGS)/fig_zoo_bias_%.png: scripts/plot_zoo_bias_comparison.py \
+$(ZOO_FIGS)/fig_zoo_bias_%.png: scripts/figures/plot_zoo_bias_comparison.py \
     $(ZOO_TABLES)/tab_div_%.csv $(ZOO_TABLES)/tab_div_biased_%.csv
-	$(PYTHON) scripts/plot_zoo_bias_comparison.py --method $* \
+	$(PYTHON) scripts/figures/plot_zoo_bias_comparison.py --method $* \
 	    --input $(ZOO_TABLES)/tab_div_$*.csv \
 	    --biased-csv $(ZOO_TABLES)/tab_div_biased_$*.csv \
 	    --output $@

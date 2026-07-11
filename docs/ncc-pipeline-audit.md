@@ -17,9 +17,9 @@ surviving breakpoint is at 2009. The current figures show baseline k=0.
 **Existing scripts:**
 - `scripts/analysis/compute_breakpoints.py` -- supports `--censor-gap N` flag.
   Produces `tab_breakpoints.csv` (and censor variants).
-- `scripts/plot_fig_breakpoints.py` -- supports `--censor-gap N` flag.
+- `scripts/figures/plot_fig_breakpoints.py` -- supports `--censor-gap N` flag.
   Reads the censor-variant CSV and renders the figure.
-- `scripts/plot_fig2_breaks.py` -- simpler two-metric view (JS + cosine,
+- `scripts/figures/plot_fig2_breaks.py` -- simpler two-metric view (JS + cosine,
   w=3 only). Does NOT support censor-gap; reads only baseline CSV.
 
 **Existing Makefile targets:**
@@ -54,7 +54,7 @@ while the full corpus does.
 **What is needed:**
 - A new composite figure (panel a = full corpus, panel b = core) or
   a single multi-panel plot. No existing script produces this.
-- New plot script, e.g., `scripts/plot_ncc_core_comparison.py`, that
+- New plot script, e.g., `scripts/figures/plot_ncc_core_comparison.py`, that
   reads both `tab_breakpoints.csv` and `tab_breakpoints_core.csv` and
   renders a side-by-side panel figure.
 - New Makefile target for the composite figure.
@@ -64,10 +64,10 @@ while the full corpus does.
 **Need:** KDE showing the bimodal distribution along the seed axis.
 
 **Existing scripts and figures:**
-- `scripts/plot_figS_kde.py` -- grayscale KDE with GMM overlay, reads
+- `scripts/figures/plot_figS_kde.py` -- grayscale KDE with GMM overlay, reads
   `tab_pole_papers.csv`. Produces `content/figures/fig_kde.png`. This is
   the closest match. Currently a supplement figure, not period-decomposed.
-- `scripts/plot_bimodality.py` -- KDE by period (3 panels: pre-2007,
+- `scripts/figures/plot_bimodality.py` -- KDE by period (3 panels: pre-2007,
   2007-2014, 2015-2024) with GMM overlay. Produces
   `content/figures/fig_bimodality.png`.
 
@@ -91,7 +91,7 @@ while the full corpus does.
 stability.
 
 **Existing scripts and figures:**
-- `scripts/plot_fig_alluvial.py` -- renders static PNG. Supports
+- `scripts/figures/plot_fig_alluvial.py` -- renders static PNG. Supports
   `--core-only`. Produces `content/figures/fig_alluvial.png`.
 - `content/figures/fig_alluvial.png` -- exists, full corpus.
 - `content/figures/fig_alluvial_core.png` -- exists, core subset.
@@ -293,8 +293,8 @@ are pre-built, not rebuilt on every render).
 |------|---------|
 | `content/ncc-analysis.qmd` | Main NCC document |
 | `content/ncc-analysis-vars.yml` | Auto-generated vars (add to compute_vars.py) |
-| `scripts/plot_ncc_divergence.py` | Figure (a): divergence with 2009 peak |
-| `scripts/plot_ncc_core_comparison.py` | Figure (b): full vs core panel |
+| `scripts/figures/plot_ncc_divergence.py` | Figure (a): divergence with 2009 peak |
+| `scripts/figures/plot_ncc_core_comparison.py` | Figure (b): full vs core panel |
 | 2 new Makefile targets for censor-gap tables | Intermediate data |
 | 4 new Makefile targets for NCC figures | Build targets |
 | 1 new Makefile target for NCC PDF | Render target |

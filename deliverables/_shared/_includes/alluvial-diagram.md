@@ -1,6 +1,6 @@
 ## Alluvial Diagram
 
-**Scripts:** `scripts/compute_alluvial.py` + `scripts/plot_fig_alluvial.py` (PNG) + `scripts/plot_alluvial_html.py` (HTML)
+**Scripts:** `scripts/compute_alluvial.py` + `scripts/figures/plot_fig_alluvial.py` (PNG) + `scripts/figures/plot_alluvial_html.py` (HTML)
 
 ### Period assignment
 

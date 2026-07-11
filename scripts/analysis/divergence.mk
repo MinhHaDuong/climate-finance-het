@@ -94,8 +94,8 @@ divergence-tables: $(DIV_CSV_ALL)
 
 DIV_FIG_STAMP := $(DIV_FIGS)/.divergence_figs.stamp
 
-$(DIV_FIG_STAMP): scripts/plot_divergence.py $(DIV_CSV_ALL)
-	$(PYTHON) scripts/plot_divergence.py \
+$(DIV_FIG_STAMP): scripts/figures/plot_divergence.py $(DIV_CSV_ALL)
+	$(PYTHON) scripts/figures/plot_divergence.py \
 		--output $(DIV_FIGS)/fig_divergence.png \
 		--input $(DIV_CSV_ALL)
 	touch $@
@@ -109,7 +109,7 @@ divergence-figures: $(DIV_FIG_STAMP)
 # Tests whether structural breaks survive dimensionality reduction.
 
 SENS_SCRIPT := scripts/analysis/compute_embedding_sensitivity.py
-SENS_PLOT   := scripts/plot_divergence.py
+SENS_PLOT   := scripts/figures/plot_divergence.py
 SENS_METHODS := S1_MMD S2_energy
 
 # Tables: one CSV per (method, projection) pair
@@ -156,7 +156,7 @@ sensitivity: sensitivity-tables sensitivity-figures
 
 CP_SCRIPT  := scripts/compute_changepoints.py
 CV_SCRIPT  := scripts/analysis/compute_convergence.py
-CP_PLOT    := scripts/plot_convergence.py
+CP_PLOT    := scripts/figures/plot_convergence.py
 CP_TABLE   := $(DIV_TABLES)/tab_changepoints.csv
 CV_TABLE   := $(DIV_TABLES)/tab_convergence.csv
 CP_FIG     := $(DIV_FIGS)/fig_convergence.png
@@ -317,7 +317,7 @@ subsample-tables: $(SUBSAMP_CSV)
 # Joins point estimates + bootstrap CIs + null model into one table per method.
 # For all four lead methods, also joins subsampling ribbon columns.
 
-SUMM_DISPATCH := scripts/export_divergence_summary.py
+SUMM_DISPATCH := scripts/figures/export_divergence_summary.py
 SUMM_CSV := $(foreach m,$(BOOT_METHODS),$(DIV_TABLES)/tab_summary_$(m).csv)
 
 # Summary with ribbon (all four lead methods — S2, L1, G9, G2)

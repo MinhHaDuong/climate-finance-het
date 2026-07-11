@@ -23,7 +23,7 @@ $(SEP_COVERAGE): scripts/analysis/compute_pre2007_coverage.py scripts/utils.py \
 	$(PYTHON) $< --output $@
 
 $(SEP_NULL): scripts/analysis/compute_null_separation.py scripts/_null_separation.py \
-		scripts/plot_fig_traditions.py scripts/utils.py scripts/schemas.py \
+		scripts/figures/plot_fig_traditions.py scripts/utils.py scripts/schemas.py \
 		scripts/pipeline_loaders.py $(CONFIG) $(REFINED) $(REFINED_CIT)
 	$(PYTHON) $< --output $@
 

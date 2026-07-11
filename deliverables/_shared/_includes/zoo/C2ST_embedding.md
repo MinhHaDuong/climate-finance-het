@@ -35,7 +35,7 @@ Reference level: $\mathrm{AUC} = 0.5$ (random classifier).
 
 ![](../_shared/figures/schematic_C2ST.png){width=100%}
 
-*C2ST principle: a logistic classifier fits a decision boundary in PCA-projected embedding space; cross-validated AUC above 0.50 confirms the before/after distributions differ. Script: `scripts/plot_schematic_C2ST.py`.*
+*C2ST principle: a logistic classifier fits a decision boundary in PCA-projected embedding space; cross-validated AUC above 0.50 confirms the before/after distributions differ. Script: `scripts/figures/plot_schematic_C2ST.py`.*
 
 ### Advantages, biases, limitations
 

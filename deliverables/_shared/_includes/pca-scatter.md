@@ -1,6 +1,6 @@
 ## PCA Scatter Plots
 
-**Script:** `scripts/plot_fig45_pca_scatter.py`
+**Script:** `scripts/figures/plot_fig45_pca_scatter.py`
 
 This script visualizes how the field's thematic structure evolves over time by plotting individual papers in year × axis-score space.
 

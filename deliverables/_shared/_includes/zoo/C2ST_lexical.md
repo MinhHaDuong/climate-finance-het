@@ -38,7 +38,7 @@ The `pca_dim=32` parameter (`divergence.c2st.pca_dim` in `config/analysis.yaml`)
 
 ![](../_shared/figures/schematic_C2ST.png){width=100%}
 
-*C2ST principle: a logistic classifier fits a decision boundary in feature space; cross-validated AUC above 0.50 confirms the before/after distributions differ. The same schematic applies to both the embedding and lexical channels — only the feature axes change. Script: `scripts/plot_schematic_C2ST.py`.*
+*C2ST principle: a logistic classifier fits a decision boundary in feature space; cross-validated AUC above 0.50 confirms the before/after distributions differ. The same schematic applies to both the embedding and lexical channels — only the feature axes change. Script: `scripts/figures/plot_schematic_C2ST.py`.*
 
 ### Advantages, biases, limitations
 

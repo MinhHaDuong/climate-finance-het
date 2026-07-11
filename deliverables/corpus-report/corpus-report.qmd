@@ -22,7 +22,7 @@ The pipeline produces the corpus (§2), quality checks validate it (§3), and §
 
 The corpus building pipeline is managed by DVC (Data Version Control). The five discovery stages run independently; their outputs are merged into a single catalog, then enriched, refined, and aligned in a linear chain. Enrichment runs on the full `unified_works.csv` so that all metadata is available when the flagging rules are evaluated. The extend step computes six quality flags for every work without removing any rows; the filter step applies the retention policy and writes `refined_works.csv` together with `corpus_audit.csv`. The align step produces the Phase 2 canonical inputs (`refined_embeddings.npz`, `refined_citations.csv`) from full enrichment caches.
 
-![DVC pipeline DAG — generated from `dvc.yaml` by `scripts/plot_fig_dag.py`.](../_shared/figures/fig_dag.png){#fig-dag width=100%}
+![DVC pipeline DAG — generated from `dvc.yaml` by `scripts/figures/plot_fig_dag.py`.](../_shared/figures/fig_dag.png){#fig-dag width=100%}
 
 \newpage
 

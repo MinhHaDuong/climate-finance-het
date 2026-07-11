@@ -1,10 +1,10 @@
 """Smoke tests for the four multilayer-detection figure scripts (ticket 0058).
 
 Each of the four scripts:
-- ``scripts/plot_companion_zseries.py``    — Figure 1 (Z-score time series)
-- ``scripts/plot_companion_heatmap.py``    — Figure 2 (transition zone heatmap)
-- ``scripts/plot_companion_terms.py``      — Figure 3 (discriminative terms)
-- ``scripts/plot_companion_community.py``  — Figure 4 (community flow)
+- ``scripts/figures/plot_companion_zseries.py``    — Figure 1 (Z-score time series)
+- ``scripts/figures/plot_companion_heatmap.py``    — Figure 2 (transition zone heatmap)
+- ``scripts/figures/plot_companion_terms.py``      — Figure 3 (discriminative terms)
+- ``scripts/figures/plot_companion_community.py``  — Figure 4 (community flow)
 
 must
 
@@ -35,10 +35,10 @@ REPO = Path(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SCRIPTS_DIR = REPO / "scripts"
 
 COMPANION_SCRIPTS = {
-    "zseries": "plot_companion_zseries.py",
-    "heatmap": "plot_companion_heatmap.py",
-    "terms": "plot_companion_terms.py",
-    "community": "plot_companion_community.py",
+    "zseries": "figures/plot_companion_zseries.py",
+    "heatmap": "figures/plot_companion_heatmap.py",
+    "terms": "figures/plot_companion_terms.py",
+    "community": "figures/plot_companion_community.py",
 }
 
 

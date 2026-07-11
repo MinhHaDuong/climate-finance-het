@@ -243,16 +243,16 @@ corpus-validate: $(REFINED)
 	$(PYTHON) -m pytest tests/test_corpus_acceptance.py -v -s --tb=long
 
 # ── Corpus reporting (Phase 2 — reads only refined data) ──
-deliverables/_shared/tables/tab_citation_coverage.md: scripts/export_citation_coverage.py scripts/utils.py $(REFINED)
+deliverables/_shared/tables/tab_citation_coverage.md: scripts/figures/export_citation_coverage.py scripts/utils.py $(REFINED)
 	$(PYTHON) $< --output $@
 
-deliverables/_shared/tables/tab_venues.md: scripts/export_tab_venues.py scripts/utils.py $(REFINED) $(DERIVED)/tab_pole_papers.csv
+deliverables/_shared/tables/tab_venues.md: scripts/figures/export_tab_venues.py scripts/utils.py $(REFINED) $(DERIVED)/tab_pole_papers.csv
 	$(PYTHON) $< --output $@ --pole-papers $(DERIVED)/tab_pole_papers.csv
 
-deliverables/_shared/tables/tab_corpus_sources.csv deliverables/_shared/tables/tab_corpus_sources.md &: scripts/export_corpus_table.py scripts/utils.py $(REFINED)
+deliverables/_shared/tables/tab_corpus_sources.csv deliverables/_shared/tables/tab_corpus_sources.md &: scripts/figures/export_corpus_table.py scripts/utils.py $(REFINED)
 	$(PYTHON) $< --output $@
 
-deliverables/_shared/tables/tab_languages.md: scripts/export_language_table.py scripts/utils.py $(ENRICHED)
+deliverables/_shared/tables/tab_languages.md: scripts/figures/export_language_table.py scripts/utils.py $(ENRICHED)
 	$(PYTHON) $< --output $@
 
 corpus-tables: deliverables/_shared/tables/tab_corpus_sources.csv deliverables/_shared/tables/tab_corpus_sources.md \
@@ -285,27 +285,27 @@ stats: $(COMPUTED_STATS)
 $(MOSTCITED): scripts/analysis/build_het_core.py scripts/utils.py $(REFINED) $(REFINED_CIT)
 	$(PYTHON) $< --output $@
 
-deliverables/_shared/tables/tab_core_venues_top10.md: scripts/export_core_venues_markdown.py scripts/analysis/summarize_core_venues.py scripts/utils.py $(MOSTCITED)
+deliverables/_shared/tables/tab_core_venues_top10.md: scripts/figures/export_core_venues_markdown.py scripts/analysis/summarize_core_venues.py scripts/utils.py $(MOSTCITED)
 	$(PYTHON) $< --output $@
 
 # ── Figures ──────────────────────────────────────────────
 
 # -- Manuscript (Oeconomia article) --
 # Fig 1 (bars): corpus growth per year
-deliverables/_shared/figures/fig_bars.png: scripts/plot_fig1_bars.py scripts/plot_style.py scripts/utils.py $(CONFIG) $(REFINED)
+deliverables/_shared/figures/fig_bars.png: scripts/figures/plot_fig1_bars.py scripts/plot_style.py scripts/utils.py $(CONFIG) $(REFINED)
 	$(PYTHON) $< --output $@
 
 # Fig 1 v1 variant: restricted to submission corpus for manuscript stability
-deliverables/_shared/figures/fig_bars_v1.png: scripts/plot_fig1_bars.py scripts/plot_style.py scripts/utils.py $(CONFIG) $(REFINED)
+deliverables/_shared/figures/fig_bars_v1.png: scripts/figures/plot_fig1_bars.py scripts/plot_style.py scripts/utils.py $(CONFIG) $(REFINED)
 	$(PYTHON) $< --output $@ --v1-only
 
 # Fig 2 (composition): frozen v1 archive data + corrected labels
-deliverables/_shared/figures/fig_composition.png: scripts/plot_fig2_composition.py scripts/plot_style.py scripts/utils.py $(CONFIG) \
+deliverables/_shared/figures/fig_composition.png: scripts/figures/plot_fig2_composition.py scripts/plot_style.py scripts/utils.py $(CONFIG) \
 		config/v1_tab_alluvial.csv config/v1_cluster_labels.json
 	$(PYTHON) $< --output $@ --input config/v1_tab_alluvial.csv --labels config/v1_cluster_labels.json
 
 # Fig 2 wide variant (2x3 landscape) for slides — same frozen data, --wide layout
-deliverables/_shared/figures/fig_composition_wide.png: scripts/plot_fig2_composition.py scripts/plot_style.py scripts/utils.py $(CONFIG) \
+deliverables/_shared/figures/fig_composition_wide.png: scripts/figures/plot_fig2_composition.py scripts/plot_style.py scripts/utils.py $(CONFIG) \
 		config/v1_tab_alluvial.csv config/v1_cluster_labels.json
 	$(PYTHON) $< --wide --output $@ --input config/v1_tab_alluvial.csv --labels config/v1_cluster_labels.json
 
@@ -317,13 +317,13 @@ $(SEMANTIC_CLUSTERS): scripts/analysis/analyze_embeddings.py scripts/utils.py $(
 	$(PYTHON) $< --output $@
 
 # Semantic UMAP maps (one parameterized plot script, 3 invocations)
-deliverables/_shared/figures/fig_semantic.png: scripts/plot_semantic.py scripts/utils.py $(SEMANTIC_CLUSTERS)
+deliverables/_shared/figures/fig_semantic.png: scripts/figures/plot_semantic.py scripts/utils.py $(SEMANTIC_CLUSTERS)
 	$(PYTHON) $< --color-by cluster --output $@
 
-deliverables/_shared/figures/fig_semantic_lang.png: scripts/plot_semantic.py scripts/utils.py $(SEMANTIC_CLUSTERS)
+deliverables/_shared/figures/fig_semantic_lang.png: scripts/figures/plot_semantic.py scripts/utils.py $(SEMANTIC_CLUSTERS)
 	$(PYTHON) $< --color-by language --output $@
 
-deliverables/_shared/figures/fig_semantic_period.png: scripts/plot_semantic.py scripts/utils.py $(SEMANTIC_CLUSTERS)
+deliverables/_shared/figures/fig_semantic_period.png: scripts/figures/plot_semantic.py scripts/utils.py $(SEMANTIC_CLUSTERS)
 	$(PYTHON) $< --color-by period --output $@
 
 # -- Companion paper (quantitative) --
@@ -348,25 +348,25 @@ $(DERIVED)/tab_core_shares.csv &: \
 
 # Breakpoints figure
 deliverables/_shared/figures/fig_breakpoints.png: \
-		scripts/plot_fig_breakpoints.py scripts/utils.py $(CONFIG) \
+		scripts/figures/plot_fig_breakpoints.py scripts/utils.py $(CONFIG) \
 		$(DERIVED)/tab_breakpoints.csv $(DERIVED)/tab_breakpoint_robustness.csv \
 		$(DERIVED)/tab_alluvial.csv
 	$(PYTHON) $< --output $@ --input $(DERIVED)/tab_breakpoints.csv $(DERIVED)/tab_breakpoint_robustness.csv $(DERIVED)/tab_alluvial.csv
 
 # Alluvial figure (static PNG)
 deliverables/_shared/figures/fig_alluvial.png: \
-		scripts/plot_fig_alluvial.py scripts/utils.py $(CONFIG) \
+		scripts/figures/plot_fig_alluvial.py scripts/utils.py $(CONFIG) \
 		$(DERIVED)/tab_alluvial.csv $(DERIVED)/cluster_labels.json
 	$(PYTHON) $< --output $@ --input $(DERIVED)/tab_alluvial.csv
 
 # Alluvial figure (interactive HTML)
 deliverables/_shared/figures/fig_alluvial.html: \
-		scripts/plot_alluvial_html.py scripts/utils.py $(CONFIG) \
+		scripts/figures/plot_alluvial_html.py scripts/utils.py $(CONFIG) \
 		$(DERIVED)/tab_alluvial.csv $(DERIVED)/cluster_labels.json
 	$(PYTHON) $< --output $@
 
 # Period divergence curves
-deliverables/_shared/figures/fig_breaks.png: scripts/plot_fig2_breaks.py scripts/plot_style.py scripts/utils.py $(CONFIG) \
+deliverables/_shared/figures/fig_breaks.png: scripts/figures/plot_fig2_breaks.py scripts/plot_style.py scripts/utils.py $(CONFIG) \
 		$(DERIVED)/tab_breakpoints.csv
 	$(PYTHON) $< --output $@ --input $(DERIVED)/tab_breakpoints.csv
 
@@ -377,24 +377,24 @@ $(DERIVED)/tab_pole_papers.csv &: \
 	$(PYTHON) $< --output $(DERIVED)/tab_bimodality.csv
 
 # Bimodality figures (each reads tab_pole_papers.csv)
-deliverables/_shared/figures/fig_bimodality.png: scripts/plot_bimodality.py scripts/utils.py \
+deliverables/_shared/figures/fig_bimodality.png: scripts/figures/plot_bimodality.py scripts/utils.py \
 		$(DERIVED)/tab_pole_papers.csv
 	$(PYTHON) $< --output $@
 
-deliverables/_shared/figures/fig_bimodality_lexical.png: scripts/plot_bimodality_lexical.py scripts/utils.py \
+deliverables/_shared/figures/fig_bimodality_lexical.png: scripts/figures/plot_bimodality_lexical.py scripts/utils.py \
 		$(DERIVED)/tab_pole_papers.csv
 	$(PYTHON) $< --output $@
 
-deliverables/_shared/figures/fig_bimodality_keywords.png: scripts/plot_bimodality_keywords.py scripts/utils.py \
+deliverables/_shared/figures/fig_bimodality_keywords.png: scripts/figures/plot_bimodality_keywords.py scripts/utils.py \
 		$(DERIVED)/tab_pole_papers.csv
 	$(PYTHON) $< --output $@
 
 # Seed-axis violin (core, manuscript figure)
-deliverables/_shared/figures/fig_seed_axis_core.png: scripts/plot_fig_seed_axis.py scripts/plot_style.py scripts/utils.py $(CONFIG) $(REFINED)
+deliverables/_shared/figures/fig_seed_axis_core.png: scripts/figures/plot_fig_seed_axis.py scripts/plot_style.py scripts/utils.py $(CONFIG) $(REFINED)
 	$(PYTHON) $< --output $@
 
 # PCA scatter (unsupervised)
-deliverables/_shared/figures/fig_pca_scatter.png: scripts/plot_fig45_pca_scatter.py scripts/utils.py $(CONFIG) $(REFINED)
+deliverables/_shared/figures/fig_pca_scatter.png: scripts/figures/plot_fig45_pca_scatter.py scripts/utils.py $(CONFIG) $(REFINED)
 	$(PYTHON) $< --output $@
 
 # Citation genealogy: model (lineage table) then renderers
@@ -402,11 +402,11 @@ $(DERIVED)/tab_lineages.csv: scripts/analysis/analyze_genealogy.py scripts/utils
 		$(REFINED) $(REFINED_CIT) $(DERIVED)/tab_pole_papers.csv $(SEMANTIC_CLUSTERS)
 	$(PYTHON) $< --output $@
 
-deliverables/_shared/figures/fig_genealogy.png: scripts/plot_genealogy.py scripts/utils.py $(CONFIG) \
+deliverables/_shared/figures/fig_genealogy.png: scripts/figures/plot_genealogy.py scripts/utils.py $(CONFIG) \
 		$(DERIVED)/tab_lineages.csv $(REFINED_CIT)
 	$(PYTHON) $< --output $@
 
-deliverables/_shared/figures/fig_genealogy.html: scripts/plot_genealogy_html.py scripts/utils.py $(CONFIG) \
+deliverables/_shared/figures/fig_genealogy.html: scripts/figures/plot_genealogy_html.py scripts/utils.py $(CONFIG) \
 		$(DERIVED)/tab_lineages.csv $(REFINED_CIT)
 	$(PYTHON) $< --output $@
 
@@ -425,13 +425,13 @@ $(DERIVED)/tab_alluvial_core.csv $(DERIVED)/cluster_labels_core.json &: \
 
 # Core-only figures
 deliverables/_shared/figures/fig_breakpoints_core.png: \
-		scripts/plot_fig_breakpoints.py scripts/utils.py $(CONFIG) \
+		scripts/figures/plot_fig_breakpoints.py scripts/utils.py $(CONFIG) \
 		$(DERIVED)/tab_breakpoints_core.csv $(DERIVED)/tab_breakpoint_robustness_core.csv \
 		$(DERIVED)/tab_alluvial_core.csv
 	$(PYTHON) $< --output $@ --core-only --input $(DERIVED)/tab_breakpoints_core.csv $(DERIVED)/tab_breakpoint_robustness_core.csv $(DERIVED)/tab_alluvial_core.csv
 
 deliverables/_shared/figures/fig_alluvial_core.png: \
-		scripts/plot_fig_alluvial.py scripts/utils.py $(CONFIG) \
+		scripts/figures/plot_fig_alluvial.py scripts/utils.py $(CONFIG) \
 		$(DERIVED)/tab_alluvial_core.csv $(DERIVED)/cluster_labels_core.json
 	$(PYTHON) $< --output $@ --core-only --input $(DERIVED)/tab_alluvial_core.csv
 
@@ -442,20 +442,20 @@ $(DERIVED)/tab_pole_papers_core.csv &: \
 	$(PYTHON) $< --output $(DERIVED)/tab_bimodality_core.csv --core-only
 
 # Bimodality core variant figures
-deliverables/_shared/figures/fig_bimodality_core.png: scripts/plot_bimodality.py scripts/utils.py \
+deliverables/_shared/figures/fig_bimodality_core.png: scripts/figures/plot_bimodality.py scripts/utils.py \
 		$(DERIVED)/tab_pole_papers_core.csv
 	$(PYTHON) $< --core-only --output $@
 
-deliverables/_shared/figures/fig_bimodality_lexical_core.png: scripts/plot_bimodality_lexical.py scripts/utils.py \
+deliverables/_shared/figures/fig_bimodality_lexical_core.png: scripts/figures/plot_bimodality_lexical.py scripts/utils.py \
 		$(DERIVED)/tab_pole_papers_core.csv
 	$(PYTHON) $< --core-only --output $@
 
-deliverables/_shared/figures/fig_bimodality_keywords_core.png: scripts/plot_bimodality_keywords.py scripts/utils.py \
+deliverables/_shared/figures/fig_bimodality_keywords_core.png: scripts/figures/plot_bimodality_keywords.py scripts/utils.py \
 		$(DERIVED)/tab_pole_papers_core.csv
 	$(PYTHON) $< --core-only --output $@
 
 # Pre-2007 co-citation traditions network
-deliverables/_shared/figures/fig_traditions.png: scripts/plot_fig_traditions.py scripts/plot_style.py scripts/utils.py $(CONFIG) $(REFINED) $(REFINED_CIT)
+deliverables/_shared/figures/fig_traditions.png: scripts/figures/plot_fig_traditions.py scripts/plot_style.py scripts/utils.py $(CONFIG) $(REFINED) $(REFINED_CIT)
 	$(PYTHON) $< --output $@
 
 # Co-citation communities (compute: community assignments + summary table)
@@ -464,11 +464,11 @@ $(COMMUNITIES): scripts/analysis/analyze_cocitation.py scripts/utils.py $(REFINE
 	$(PYTHON) $< --output $@
 
 # Co-citation communities (plot: network figure)
-deliverables/_shared/figures/fig_communities.png: scripts/plot_cocitation.py scripts/utils.py $(COMMUNITIES) $(REFINED_CIT)
+deliverables/_shared/figures/fig_communities.png: scripts/figures/plot_cocitation.py scripts/utils.py $(COMMUNITIES) $(REFINED_CIT)
 	$(PYTHON) $< --output $@ --input $(COMMUNITIES)
 
 # KDE supplementary
-deliverables/_shared/figures/fig_kde.png: scripts/plot_figS_kde.py scripts/plot_style.py scripts/utils.py $(CONFIG) \
+deliverables/_shared/figures/fig_kde.png: scripts/figures/plot_figS_kde.py scripts/plot_style.py scripts/utils.py $(CONFIG) \
 		$(DERIVED)/tab_pole_papers.csv
 	$(PYTHON) $< --output $@
 
@@ -487,18 +487,18 @@ $(DERIVED)/tab_k_sensitivity.csv: scripts/analysis/compute_breakpoints.py script
 	$(PYTHON) $< --output $@ --k-sensitivity
 
 # K-sensitivity figure
-deliverables/_shared/figures/fig_k_sensitivity.png: scripts/plot_fig_k_sensitivity.py $(CONFIG) \
+deliverables/_shared/figures/fig_k_sensitivity.png: scripts/figures/plot_fig_k_sensitivity.py $(CONFIG) \
 		$(DERIVED)/tab_k_sensitivity.csv
 	$(PYTHON) $< --output $@
 
 # Lexical TF-IDF figures (one per detected break year; output filenames are
 # dynamic, so we use a sentinel file to track freshness).
-.lexical_tfidf.stamp: scripts/plot_fig_lexical_tfidf.py scripts/plot_style.py $(CONFIG) \
+.lexical_tfidf.stamp: scripts/figures/plot_fig_lexical_tfidf.py scripts/plot_style.py $(CONFIG) \
 		$(DERIVED)/tab_lexical_tfidf.csv
 	$(PYTHON) $< --output $@ --input $(DERIVED)/tab_lexical_tfidf.csv
 
 # DVC pipeline DAG (data paper)
-deliverables/_shared/figures/fig_dag.png: scripts/plot_fig_dag.py scripts/plot_style.py $(CONFIG) dvc.yaml
+deliverables/_shared/figures/fig_dag.png: scripts/figures/plot_fig_dag.py scripts/plot_style.py $(CONFIG) dvc.yaml
 	$(PYTHON) $< --output $@
 
 # -- NCC Analysis (Nature Climate Change) --
@@ -512,7 +512,7 @@ $(DERIVED)/tab_breakpoint_robustness_censor2.csv: scripts/analysis/compute_break
 
 # NCC Figure (a): Divergence with 2009 peak (baseline vs censor-gap k=2)
 deliverables/_shared/figures/fig_ncc_divergence.png: \
-		scripts/plot_ncc_divergence.py scripts/utils.py $(CONFIG) \
+		scripts/figures/plot_ncc_divergence.py scripts/utils.py $(CONFIG) \
 		$(DERIVED)/tab_breakpoints.csv \
 		$(DERIVED)/tab_breakpoints_censor2.csv \
 		$(DERIVED)/tab_breakpoint_robustness_censor2.csv
@@ -520,7 +520,7 @@ deliverables/_shared/figures/fig_ncc_divergence.png: \
 
 # NCC Figure (b): Core vs full corpus comparison panel
 deliverables/_shared/figures/fig_ncc_core_comparison.png: \
-		scripts/plot_ncc_core_comparison.py scripts/utils.py $(CONFIG) \
+		scripts/figures/plot_ncc_core_comparison.py scripts/utils.py $(CONFIG) \
 		$(DERIVED)/tab_breakpoints.csv $(DERIVED)/tab_breakpoint_robustness.csv \
 		$(DERIVED)/tab_alluvial.csv \
 		$(DERIVED)/tab_breakpoints_core.csv $(DERIVED)/tab_breakpoint_robustness_core.csv \
@@ -529,13 +529,13 @@ deliverables/_shared/figures/fig_ncc_core_comparison.png: \
 
 # NCC Figure (c): Bimodality KDE with period decomposition
 deliverables/_shared/figures/fig_ncc_bimodality.png: \
-		scripts/plot_ncc_bimodality.py scripts/utils.py $(CONFIG) \
+		scripts/figures/plot_ncc_bimodality.py scripts/utils.py $(CONFIG) \
 		$(DERIVED)/tab_pole_papers.csv
 	$(PYTHON) $< --output $@
 
 # NCC Figure (d): Alluvial diagram (NCC format)
 deliverables/_shared/figures/fig_ncc_alluvial.png: \
-		scripts/plot_ncc_alluvial.py scripts/utils.py $(CONFIG) \
+		scripts/figures/plot_ncc_alluvial.py scripts/utils.py $(CONFIG) \
 		$(DERIVED)/tab_alluvial.csv $(DERIVED)/cluster_labels.json
 	$(PYTHON) $< --output $@ --input $(DERIVED)/tab_alluvial.csv
 
@@ -715,7 +715,7 @@ benchmark: check-corpus
 	$(BENCH) compute_breakpoints $(BENCH_OUT) $(PYTHON) scripts/analysis/compute_breakpoints.py --output $(DERIVED)/tab_breakpoints.csv
 	$(BENCH) compute_clusters $(BENCH_OUT) $(PYTHON) scripts/analysis/compute_clusters.py --output $(DERIVED)/tab_alluvial.csv
 	$(BENCH) analyze_bimodality $(BENCH_OUT) $(PYTHON) scripts/analysis/analyze_bimodality.py --output $(DERIVED)/tab_bimodality.csv
-	$(BENCH) plot_fig1_bars $(BENCH_OUT) $(PYTHON) scripts/plot_fig1_bars.py
+	$(BENCH) plot_fig1_bars $(BENCH_OUT) $(PYTHON) scripts/figures/plot_fig1_bars.py
 	@echo "Benchmark results: $(BENCH_OUT)"
 
 # ── Setup (run once after cloning) ───────────────────────
