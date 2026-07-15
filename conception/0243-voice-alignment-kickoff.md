@@ -7,7 +7,30 @@ manuscript comparative pairs) and `conception/0243-sample-rewrites.md` (three
 short before/after samples for your arbitration). Nothing in the manuscript has
 been touched.
 
-## Decisions to settle
+## Decisions — SETTLED (author, 2026-07-15)
+
+- **D1 — (d) reader-inclusion split.** "I" when the author speaks for himself,
+  "we" when the reader is included in the claim (not the historical
+  procedure/conviction split proposed below — a new criterion). Additional
+  guard, applies to the whole pass: **the final text must carry no generation
+  scaffolding** — no meta-commentary whose purpose is to guide generation
+  rather than make the argument (the author was explicit: the model writing
+  the pass is neither "I" nor "we" in the text).
+- **D2 — (b) Oxford British** (-ize/-ization). ~60 changes: mobilisation →
+  mobilization and the -ise family; crystallization/periodization unchanged.
+- **D3 — restrained throughout, no dial.** Adjudicated against three concrete
+  instances (manuscript.qmd lines 78, 194, 220) — restrained chosen for all
+  three. Author's reasoning: the anchors' dry irony and one-line zingers are
+  essay-register, not academic-register; the manuscript's evidentiary prose
+  calls for plain verbs and single hedges regardless of voice. This narrows
+  the anchor calibration in `0243-fewshot-set.md` — treat the essay anchors
+  (2009, 2001) as illustrating word-level habits (plain verbs, no
+  formal-cliché verbs) but not as a register/tone model for this pass.
+- **D4 — rhetorical devices allowed**, sparing use per the original proposal
+  (question-close candidates: end of @sec-controverses, end of the Türkiye
+  subsection).
+
+## Decisions to settle (superseded — kept for the calibration record below)
 
 ### D1 — Person: authorial "we" or first-person "I"?
 
