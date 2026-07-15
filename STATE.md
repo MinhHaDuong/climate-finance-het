@@ -1,6 +1,6 @@
 # State
 
-Last updated: 2026-07-15T11:00Z (housekeeping sweep — no findings)
+Last updated: 2026-07-15T15:03Z
 
 ## Current goal
 
@@ -11,18 +11,19 @@ until resubmitted.
 
 ### Also open (details live in the tickets)
 - **0243** voice alignment — author decisions on draft PR #1016.
-- **0244** AI-generated includes — author marker review.
 - **0262/0263** lair-filed: regression harness break, slow-tier triage.
 - Harness PR #472 (reuse gate + supervisor doctrine) awaits author review.
 
 ## Status
-<!-- generated 2026-07-15T00:00Z -->
+<!-- generated 2026-07-15T15:03Z · as of 741a059a -->
 
-**Tickets:** 5 ready · 37 blocked — `erg ready tickets/` for full list
-**Recent commits:**
-  1c3ee594 Merge pull request #1040 from MinhHaDuong/t-lair-check-failures
-  67a60aa5 tickets(lair): file 0262 (0240 broke regression harness) + 0263 (slow-tier triage)
-  315be9e1 Merge pull request #1039 from MinhHaDuong/housekeeping-state-2026-07-11
+**Tickets:** 4 ready · 38 blocked — `erg ready tickets/` for full list
+  next: 0152 response to reviewers letter + per-remark trace… · 0243 Fable-led manuscript style alignment on the aut…
+**In flight:** no open PRs
+**Recent (first-parent):**
+  741a059a Merge pull request #1047 from MinhHaDuong/t263-defer-label
+  0397f119 Merge pull request #1054 from MinhHaDuong/t266-file-jargon-ticket
+  cf08996d Merge pull request #1053 from MinhHaDuong/t243-sample3-refresh
 
 ## Corpus (v1.1.1)
 
@@ -36,4 +37,4 @@ pointers dropped, 4 dead branches removed).
 
 ## Next actions
 
-- **HITL Monday:** 0152 · 0244 · 0243 — the tickets carry the work.
+- **HITL Monday:** 0152 · 0243 — the tickets carry the work.
