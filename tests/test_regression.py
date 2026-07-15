@@ -160,6 +160,21 @@ class TestRegressionInfra:
             "remove it along with _stage_intermediates"
         )
 
+    def test_registry_script_paths_exist(self):
+        """Every REGISTRY script must resolve on disk under SCRIPTS_DIR.
+
+        Guards against silent registry-path rot when scripts/ is reorganized
+        (ticket 0262: the 0240 scripts/ reorg moved every registered script
+        into a subdirectory, but REGISTRY kept flat pre-reorg basenames)."""
+        from compute_regression_hashes import SCRIPTS_DIR
+        missing = [
+            entry["name"] for entry in REGISTRY
+            if not (SCRIPTS_DIR / entry["script"]).exists()
+        ]
+        assert not missing, (
+            f"REGISTRY scripts not found under {SCRIPTS_DIR}: {missing}"
+        )
+
     def test_wave2_registry_entries_have_input_args(self):
         """Wave 2 scripts (with deps) must pass --input in their REGISTRY args,
         so the harness can point them at the tmp directory directly."""

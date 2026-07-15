@@ -34,7 +34,7 @@ log = get_logger("compute_regression_hashes")
 # Paths
 # ---------------------------------------------------------------------------
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parent.parent.parent
 FIXTURE_DIR = ROOT / "tests" / "fixtures" / "smoke"
 GOLDEN_PATH = FIXTURE_DIR / "golden_hashes.json"
 SCRIPTS_DIR = ROOT / "scripts"
@@ -50,7 +50,7 @@ REGISTRY: list[dict] = [
     # --- Wave 1: independent (no deps, run in parallel) ---
     {
         "name": "compute_breakpoints",
-        "script": "compute_breakpoints.py",
+        "script": "analysis/compute_breakpoints.py",
         "args": ["--output", "data/derived/tables/tab_breakpoints.csv"],
         "deps": [],
         "outputs": [
@@ -59,7 +59,7 @@ REGISTRY: list[dict] = [
     },
     {
         "name": "compute_breakpoint_robustness",
-        "script": "compute_breakpoints.py",
+        "script": "analysis/compute_breakpoints.py",
         "args": ["--output", "data/derived/tables/tab_breakpoint_robustness.csv",
                  "--robustness"],
         "deps": [],
@@ -69,7 +69,7 @@ REGISTRY: list[dict] = [
     },
     {
         "name": "compute_clusters",
-        "script": "compute_clusters.py",
+        "script": "analysis/compute_clusters.py",
         "args": ["--output", "data/derived/tables/tab_alluvial.csv"],
         "deps": [],
         "outputs": [
@@ -79,7 +79,7 @@ REGISTRY: list[dict] = [
     },
     {
         "name": "plot_fig1_bars",
-        "script": "plot_fig1_bars.py",
+        "script": "figures/plot_fig1_bars.py",
         "args": ["--output", "deliverables/_shared/figures/fig_bars.png"],
         "deps": [],
         "outputs": [
@@ -88,7 +88,7 @@ REGISTRY: list[dict] = [
     },
     {
         "name": "plot_fig1_bars_v1",
-        "script": "plot_fig1_bars.py",
+        "script": "figures/plot_fig1_bars.py",
         "args": [
             "--output", "deliverables/_shared/figures/fig_bars_v1.png",
             "--v1-only",
@@ -100,7 +100,7 @@ REGISTRY: list[dict] = [
     },
     {
         "name": "build_het_core",
-        "script": "build_het_core.py",
+        "script": "analysis/build_het_core.py",
         "args": ["--output", "tests/fixtures/smoke/catalogs/het_mostcited_50.csv"],
         "deps": [],
         "outputs": [
@@ -113,7 +113,7 @@ REGISTRY: list[dict] = [
     # harness never touches real deliverables/.
     {
         "name": "plot_fig2_breaks",
-        "script": "plot_fig2_breaks.py",
+        "script": "figures/plot_fig2_breaks.py",
         "args": ["--output", "deliverables/_shared/figures/fig_breaks.png",
                  "--input", "data/derived/tables/tab_breakpoints.csv"],
         "deps": ["compute_breakpoints"],
@@ -123,7 +123,7 @@ REGISTRY: list[dict] = [
     },
     {
         "name": "plot_fig2_composition",
-        "script": "plot_fig2_composition.py",
+        "script": "figures/plot_fig2_composition.py",
         "args": [
             "--output", "deliverables/_shared/figures/fig_composition.png",
             "--input", "data/derived/tables/tab_alluvial.csv",
@@ -135,7 +135,7 @@ REGISTRY: list[dict] = [
     },
     {
         "name": "plot_fig_alluvial",
-        "script": "plot_fig_alluvial.py",
+        "script": "figures/plot_fig_alluvial.py",
         "args": ["--output", "deliverables/_shared/figures/fig_alluvial.png",
                  "--input", "data/derived/tables/tab_alluvial.csv"],
         "deps": ["compute_clusters"],
@@ -145,7 +145,7 @@ REGISTRY: list[dict] = [
     },
     {
         "name": "plot_fig_breakpoints",
-        "script": "plot_fig_breakpoints.py",
+        "script": "figures/plot_fig_breakpoints.py",
         "args": ["--output", "deliverables/_shared/figures/fig_breakpoints.png",
                  "--input", "data/derived/tables/tab_breakpoints.csv",
                  "data/derived/tables/tab_breakpoint_robustness.csv",
@@ -169,12 +169,20 @@ REGISTRY: list[dict] = [
 
 def _smoke_env() -> dict[str, str]:
     """Environment dict for deterministic smoke runs."""
+    source_roots = os.pathsep.join([
+        str(SCRIPTS_DIR),
+        str(ROOT / "libs" / "openalex-corpus" / "src"),
+    ])
     return {
         **os.environ,
         "CLIMATE_FINANCE_DATA": str(FIXTURE_DIR),
         "PYTHONHASHSEED": "0",
         "SOURCE_DATE_EPOCH": "0",
         "MPLBACKEND": "Agg",
+        "PYTHONPATH": os.pathsep.join(
+            [source_roots, os.environ["PYTHONPATH"]]
+            if os.environ.get("PYTHONPATH") else [source_roots]
+        ),
     }
 
 

@@ -187,17 +187,21 @@ def main():
         label_file = "cluster_labels.json"
 
     # --- Load tables ---
-    # --input takes precedence over default path for the alluvial CSV
+    # --input takes precedence over default path for the alluvial CSV; the
+    # cluster labels file lives alongside it (both written by compute_clusters
+    # to the same --output directory), so derive its path the same way.
     if io_args.input:
         alluvial_data = pd.read_csv(io_args.input[0], index_col=0)
+        labels_dir = os.path.dirname(io_args.input[0])
     else:
         alluvial_data = pd.read_csv(os.path.join(DERIVED_TABLES_DIR, tab_al), index_col=0)
+        labels_dir = DERIVED_TABLES_DIR
     alluvial_data.columns = alluvial_data.columns.astype(int)
     period_labels = alluvial_data.index.tolist()
     n_periods = len(period_labels)
     n_clusters = len(alluvial_data.columns)
 
-    with open(os.path.join(DERIVED_TABLES_DIR, label_file)) as f:
+    with open(os.path.join(labels_dir, label_file)) as f:
         cluster_labels_raw = json.load(f)
     cluster_labels = {int(k): v for k, v in cluster_labels_raw.items()}
 

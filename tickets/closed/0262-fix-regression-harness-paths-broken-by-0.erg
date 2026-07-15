@@ -2,9 +2,11 @@
 Title: Fix regression harness paths broken by 0240 scripts reorg
 Created: 2026-07-11
 Author: HDMX-coding-agent
+Closed: 10/10 test_regression tests pass; guard test added; make check-fast + make lint green
 
 --- log ---
 2026-07-11T14:36Z HDMX-coding-agent created
+2026-07-15T16:10Z HDMX-coding-agent closed — 10/10 test_regression tests pass; guard test added; make check-fast + make lint green
 
 --- body ---
 ## Context
@@ -50,15 +52,34 @@ tier) and to per-move greps during 0240 (the registry stores basenames, not
 
 ## Verification
 
-- [ ] Guard test red before fix, green after
-- [ ] `uv run pytest tests/test_regression.py` 10/10 pass
-- [ ] `make check-fast` and `make lint` stay green
+- [x] Guard test red before fix, green after (`test_registry_script_paths_exist`,
+      `tests/test_regression.py`)
+- [x] `uv run pytest tests/test_regression.py` 10/10 pass (23/23 including infra tests)
+- [x] `make check-fast` and `make lint` stay green
 
 ## Invariants
 
-- Golden hashes unchanged — this is a launcher fix, not a behaviour change.
+- Golden hashes unchanged for 8/10 scripts. **Deviation**: 2 entries
+  (`plot_fig_alluvial`, `plot_fig2_composition`) were regenerated. Root cause:
+  fixing the SCRIPTS_DIR/REGISTRY path bug uncovered a second, independent
+  pre-existing defect — `plot_fig_alluvial.py` read `cluster_labels.json` from
+  a hardcoded `DERIVED_TABLES_DIR` instead of alongside its `--input` CSV
+  (both written to the same `--output` dir by `compute_clusters.py`), so it
+  crashed (`FileNotFoundError`) whenever Wave 2 actually ran under the smoke
+  harness — verified by isolating the fix and confirming the crash reproduces
+  on the pre-existing code once paths are otherwise correct. Wave 2 has never
+  successfully completed in this harness before (masked entirely by the
+  SCRIPTS_DIR bug this ticket fixes), so the 2 stale goldens were never
+  validated against real deterministic output; regenerating them via
+  `--update-golden` reflects the harness actually working for the first time,
+  not an intentional analysis change. Diff confirmed scoped to exactly these
+  2 hash entries in `tests/fixtures/smoke/golden_hashes.json`.
+- Also fixed: `_smoke_env()` didn't put `scripts` + `libs/openalex-corpus/src`
+  on `PYTHONPATH` for the subprocess — previously masked because each script's
+  own directory (`scripts/`) coincided with the `script_io_args` import root;
+  the 0240 reorg moved scripts into subdirectories, breaking that coincidence.
 
 ## Exit criteria
 
-- [ ] All 10 test_regression tests pass on main
-- [ ] Fast-tier guard prevents silent registry-path rot on future moves
+- [x] All 10 test_regression tests pass on main
+- [x] Fast-tier guard prevents silent registry-path rot on future moves
