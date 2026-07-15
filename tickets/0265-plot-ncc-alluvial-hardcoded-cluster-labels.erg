@@ -1,0 +1,87 @@
+%erg 0.1
+Title: plot_ncc_alluvial.py reads cluster_labels.json from hardcoded DERIVED_TABLES_DIR, ignoring --input
+Created: 2026-07-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-15T16:40Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Ticket 0262's PR #1049 fixed the same bug shape in `plot_fig_alluvial.py` and
+`plot_fig2_composition.py`: both properly redirect their primary CSV read to
+`--input` when given, but read a secondary file (`cluster_labels.json`) from a
+module-level `DERIVED_TABLES_DIR` constant unconditionally — so when `--input`
+points somewhere else (e.g., a test harness redirecting output to a tmp
+directory), the labels file is looked up in the wrong place. The `roar`
+sweep after that PR found a third, un-fixed instance in the sibling script
+`scripts/figures/plot_ncc_alluvial.py` (lines ~219-231):
+
+```python
+if io_args.input:
+    alluvial_data = pd.read_csv(io_args.input[0], index_col=0)
+else:
+    alluvial_data = pd.read_csv(
+        os.path.join(DERIVED_TABLES_DIR, "tab_alluvial.csv"), index_col=0,
+    )
+...
+with open(os.path.join(DERIVED_TABLES_DIR, "cluster_labels.json")) as f:
+    cluster_labels_raw = json.load(f)
+```
+
+`plot_ncc_alluvial.py` is not in `compute_regression_hashes.py`'s `REGISTRY`
+(not exercised by `tests/test_regression.py`), so this instance was invisible
+to the regression suite — it is still wired into the real build
+(`Makefile:538`) and would break if ever run with `--input` pointing outside
+`DERIVED_TABLES_DIR` (e.g. a future smoke-test harness entry, or a companion
+paper variant redirecting output).
+
+A grep sweep of `scripts/figures/*.py` for scripts that both accept
+`--input` and reference `DERIVED_TABLES_DIR` found this is the only remaining
+instance of the exact shape (primary read properly gated on `--input`,
+secondary read unconditionally hardcoded) — other scripts checked
+(`plot_bimodality*.py`, `plot_divergence.py`, `plot_fig_lexical_tfidf.py`,
+`plot_ncc_bimodality.py`, `plot_ncc_core_comparison.py`,
+`plot_ncc_divergence.py`, `plot_venue_concentration.py`) all gate every
+`DERIVED_TABLES_DIR` fallback on the same `if io_args.input: ... else: ...`
+pattern for a single file, which is correct.
+
+## Relevant files
+
+- `scripts/figures/plot_ncc_alluvial.py` — lines ~219-231 (cluster labels read)
+- `scripts/figures/plot_fig_alluvial.py` — reference fix from ticket 0262 (PR #1049)
+
+## Actions
+
+1. Apply the same fix as `plot_fig_alluvial.py`: when `--input` is given,
+   derive the cluster-labels path from `os.path.dirname(io_args.input[0])`
+   instead of `DERIVED_TABLES_DIR`.
+2. Consider whether `plot_ncc_alluvial.py` (or a smoke fixture covering it)
+   should be added to `compute_regression_hashes.py`'s `REGISTRY`, so this
+   class of bug is caught by the regression harness going forward rather than
+   only by manual sweep.
+
+## Test
+
+- A unit or regression-harness test that runs `plot_ncc_alluvial.py` with
+  `--input` pointing at a tmp directory containing both `tab_alluvial.csv`
+  and `cluster_labels.json`, asserting it does not raise and does not fall
+  back to a different (real) `DERIVED_TABLES_DIR` location.
+
+## Verification
+
+- [ ] Fix applied and confirmed against a redirected `--input` directory
+- [ ] `make check-fast` and `make lint` stay green
+
+## Invariants
+
+- No behavior change for the default (no `--input`) invocation path used by
+  the real `make` build — `DERIVED_TABLES_DIR` remains the fallback.
+
+## Exit criteria
+
+- [ ] `plot_ncc_alluvial.py` reads `cluster_labels.json` alongside its
+      `--input` CSV when `--input` is given
+- [ ] Regression coverage exists (added to `REGISTRY` or a standalone test)
+      so this bug class cannot silently reappear here
