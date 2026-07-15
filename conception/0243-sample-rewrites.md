@@ -1,12 +1,17 @@
 # Ticket 0243 — Three sample rewrites (approval anchors)
 
-**Status: PROPOSALS for the author's arbitration — nothing applied.** Per the
-anchor-first protocol (AEDIST 0522), the full pass runs only after you accept,
-amend, or reject each sample; the accepted versions become the binding
-calibration. Constraints observed in every AFTER: no factual, numerical,
-citation or structural change; no new em-dashes (the ratchet is at ceiling);
-no strengthening of the periodization claims; spellings left as they stand
-pending decision D2; "we" left as it stands pending decision D1.
+**Status (2026-07-15): arbitrated.**
+
+- **Sample 1 — MOOT.** Superseded by the full voice-critique pass (PR #1045,
+  merged); the L70 paragraph no longer matches this sample's BEFORE.
+- **Sample 2 — ACCEPTED**, applied with an additional author-directed
+  content fix (the paragraph's $340-650bn figure was compared to the $100bn
+  Copenhagen pledge as if commensurable; corrected with a verified,
+  genuinely comparable OECD 2015 figure). See below for the accepted text.
+- **Sample 3 — pending refresh**: D1 (person) already applied to this
+  paragraph elsewhere; the sample's own AFTER draft needs updating before
+  arbitration (still says "we search", should be "I search" under the
+  settled rule).
 
 ---
 
