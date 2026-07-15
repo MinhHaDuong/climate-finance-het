@@ -38,6 +38,30 @@ blacklisted_phrases:
   - "offers a lens through which"
   - "it is worth noting"
   - "cannot be overstated"
+  # Formal-academic hedges (ticket 0243 D3: restrained register, plain verbs,
+  # one hedge at a time — these stack a hedge onto a hedge or dress a claim in
+  # passive throat-clearing instead of stating it).
+  - "it is thus possible that"
+  - "it could be argued that"
+  - "it may be suggested that"
+  - "it is not unreasonable to"
+  - "would seem to suggest"
+  - "may be said to"
+  - "the reading proposed here"
+  - "seemed useful to us"
+  # Generation scaffolding (ticket 0243 D1: the final text carries no
+  # meta-commentary about the editing/generation process itself — the model
+  # writing a pass is neither "I" nor "we" in the manuscript). Deliberately
+  # narrow: broader candidates like "this section shows/demonstrates" were
+  # tried and dropped — they collide with legitimate academic signposting
+  # (manuscript.qmd l.94 already uses "This section shows why...").
+  - "as requested"
+  - "as instructed"
+  - "note to the reviewer"
+  - "note for the reviewer"
+  - "in this revised version"
+  - "as mentioned earlier"
+  - "as mentioned above"
 
 density_limits:
   contrast_farming:
