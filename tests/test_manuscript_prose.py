@@ -130,6 +130,29 @@ EMPTY_CLOSER = [
     r"\bthis is the central claim\.",
 ]
 
+# Cambridge British -ise/-isation spelling variants (ticket 0243 D2: this
+# manuscript uses Oxford British throughout — -ize/-ization). Manuscript-scoped
+# deliberately: other deliverables may keep their own spelling convention, and
+# ai-tells.yml's blacklisted_words also feeds the cross-document reduction
+# guard (qa_llm_judge_guards.py), which is the wrong scope for a per-document
+# house-style choice. Root -ise words that are NOT part of this suffix family
+# (precise, promise, surprise, otherwise, compromise, expertise, exercise,
+# arise, rise, raise, devise, disguise, supervise) are deliberately absent —
+# they never had an -ize form to ratchet.
+BRITISH_ISE_SPELLING = [
+    r"\bmobilisation\b", r"\bmobilised\b", r"\bmobilise\b", r"\bmobilising\b",
+    r"\boptimisation\b", r"\boptimised\b",
+    r"\bstabilised\b", r"\bstabilise\b", r"\bstabilises\b",
+    r"\beconomisation\b", r"\bindustrialised\b",
+    r"\borganisation\b", r"\borganisations\b", r"\borganised\b", r"\borganise\b",
+    r"\bemphasised\b", r"\bpolarisation\b",
+    r"\bcrystallised\b", r"\bcrystallise\b",
+    r"\brecognised\b", r"\brecognise\b", r"\bcharacterise\b",
+    r"\bnormalised\b", r"\bstandardised\b", r"\bstandardise\b",
+    r"\bspecialised\b", r"\binternalising\b", r"\boperationalised\b",
+    r"\broutinisation\b", r"\bmodernise\b", r"\bmaximising\b", r"\bmetabolises\b",
+]
+
 
 # --------------------------------------------------------------------------- #
 # Density metrics
@@ -253,6 +276,11 @@ def test_no_hedging_stack():
 def test_no_empty_paragraph_closer():
     hits = find_patterns(body(), EMPTY_CLOSER)
     assert not hits, f"empty paragraph-closers in manuscript prose: {hits}"
+
+
+def test_no_ise_spelling_variants():
+    hits = find_patterns(body(), BRITISH_ISE_SPELLING)
+    assert not hits, f"Cambridge British -ise/-isation spellings (ticket 0243 D2 is Oxford): {hits}"
 
 
 def _prose_paragraphs() -> list[str]:
@@ -630,6 +658,10 @@ def test_fang_hedging_stack():
 
 def test_fang_empty_closer():
     assert find_patterns("The break occurs in 2007. This is significant.", EMPTY_CLOSER)
+
+
+def test_fang_ise_spelling_variants():
+    assert find_patterns("Donors mobilised finance through the organisation.", BRITISH_ISE_SPELLING)
 
 
 def test_fang_define_by_negation():
