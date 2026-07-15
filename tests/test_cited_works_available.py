@@ -16,7 +16,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 BIB = ROOT / "deliverables" / "_shared" / "bibliography" / "main.bib"
 ALLOWLIST = ROOT / "config" / "no-fulltext-allowlist.txt"
-QMD_GLOBS = ["deliverables/*/*.qmd", "deliverables/**/*.qmd"]
+QMD_GLOBS = [
+    "deliverables/*/*.qmd",
+    "deliverables/**/*.qmd",
+    "deliverables/_shared/_includes/**/*.md",
+]
 
 # pandoc citation key: @ at a word boundary, then key chars (Better BibTeX set).
 CITE = re.compile(r"(?<!\w)@([\w][\w:.\-+/]*)")
