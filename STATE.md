@@ -1,6 +1,6 @@
 # State
 
-Last updated: 2026-07-11T14:10Z
+Last updated: 2026-07-15T00:00Z
 
 ## Current goal
 
@@ -12,18 +12,17 @@ until resubmitted.
 ### Also open (details live in the tickets)
 - **0243** voice alignment — author decisions on draft PR #1016.
 - **0244** AI-generated includes — author marker review.
+- **0262/0263** lair-filed: regression harness break, slow-tier triage.
 - Harness PR #472 (reuse gate + supervisor doctrine) awaits author review.
 
 ## Status
-<!-- generated 2026-07-11T14:10Z -->
+<!-- generated 2026-07-15T00:00Z -->
 
-**Tickets:** 3 ready · 37 blocked — `erg ready tickets/` for full list
+**Tickets:** 5 ready · 37 blocked — `erg ready tickets/` for full list
 **Recent commits:**
-  0b97e620 Merge pull request #1038 from MinhHaDuong/t252-hygiene-dvc-pointers
-  e0800ca0 ticket(0252): close and archive — PR #1038
-  25fdf157 test(0252): mark symlink guard integration — subprocess tier rule
-  7623c744 ticket(0252): log extended branch-sweep decisions
-  32688f21 ticket(0252): log author decisions — branch deleted, orphan pointers kept
+  1c3ee594 Merge pull request #1040 from MinhHaDuong/t-lair-check-failures
+  67a60aa5 tickets(lair): file 0262 (0240 broke regression harness) + 0263 (slow-tier triage)
+  315be9e1 Merge pull request #1039 from MinhHaDuong/housekeeping-state-2026-07-11
 
 ## Corpus (v1.1.1)
 
