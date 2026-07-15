@@ -48,6 +48,26 @@ def _format_tfidf_line(terms_str, max_terms=9, line_width=35):
     return textwrap.fill(flat, width=line_width, max_lines=2, placeholder="…")
 
 
+def _resolve_cluster_labels(labels_arg, csv_path, has_input):
+    """Load cluster labels: --labels, then alongside --input, then default.
+
+    cluster_labels.json is written by compute_clusters.py to the same
+    --output dir as the alluvial CSV, so when --input is given (and no
+    explicit --labels) look there before falling back to the module-level
+    default location.
+    """
+    labels_path = labels_arg
+    if labels_path is None and has_input:
+        candidate = os.path.join(os.path.dirname(csv_path), "cluster_labels.json")
+        if os.path.exists(candidate):
+            labels_path = candidate
+    if labels_path:
+        import json
+        with open(labels_path) as f:
+            return {int(k): v for k, v in json.load(f).items()}
+    return load_cluster_labels()
+
+
 def main():
     io_args, extra = parse_io_args()
     validate_io(output=io_args.output)
@@ -75,12 +95,7 @@ def main():
     pct = df.div(totals, axis=0) * 100
 
     # Load TF-IDF labels for subtitles
-    if args.labels:
-        import json
-        with open(args.labels) as f:
-            raw_labels = {int(k): v for k, v in json.load(f).items()}
-    else:
-        raw_labels = load_cluster_labels()
+    raw_labels = _resolve_cluster_labels(args.labels, csv_path, bool(io_args.input))
 
     # Order clusters: declining first (top-left), growing last (bottom-right)
     share_change = pct.iloc[-1] - pct.iloc[0]

@@ -62,12 +62,15 @@ tier) and to per-move greps during 0240 (the registry stores basenames, not
 - Golden hashes unchanged for 8/10 scripts. **Deviation**: 2 entries
   (`plot_fig_alluvial`, `plot_fig2_composition`) were regenerated. Root cause:
   fixing the SCRIPTS_DIR/REGISTRY path bug uncovered a second, independent
-  pre-existing defect — `plot_fig_alluvial.py` read `cluster_labels.json` from
-  a hardcoded `DERIVED_TABLES_DIR` instead of alongside its `--input` CSV
-  (both written to the same `--output` dir by `compute_clusters.py`), so it
-  crashed (`FileNotFoundError`) whenever Wave 2 actually ran under the smoke
-  harness — verified by isolating the fix and confirming the crash reproduces
-  on the pre-existing code once paths are otherwise correct. Wave 2 has never
+  pre-existing defect — both `plot_fig_alluvial.py` and
+  `plot_fig2_composition.py` resolved `cluster_labels.json` from a hardcoded
+  `DERIVED_TABLES_DIR` instead of alongside their `--input` CSV (both written
+  to the same `--output` dir by `compute_clusters.py`). The former crashed
+  (`FileNotFoundError`) whenever Wave 2 actually ran under the smoke harness;
+  the latter silently fell back to placeholder `"Cluster N"` labels via
+  `load_cluster_labels()`'s warn-and-fallback path — caught in `/review-pr`'s
+  red-team pass, independently reproduced, and fixed the same way (derive the
+  labels path from `--input`'s directory when given). Wave 2 has never
   successfully completed in this harness before (masked entirely by the
   SCRIPTS_DIR bug this ticket fixes), so the 2 stale goldens were never
   validated against real deterministic output; regenerating them via
