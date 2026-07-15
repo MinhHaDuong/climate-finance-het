@@ -38,6 +38,17 @@ blacklisted_phrases:
   - "offers a lens through which"
   - "it is worth noting"
   - "cannot be overstated"
+  # Formal-academic hedges (ticket 0243 D3: restrained register, plain verbs,
+  # one hedge at a time — these stack a hedge onto a hedge or dress a claim in
+  # passive throat-clearing instead of stating it).
+  - "it is thus possible that"
+  - "it could be argued that"
+  - "it may be suggested that"
+  - "it is not unreasonable to"
+  - "would seem to suggest"
+  - "may be said to"
+  - "the reading proposed here"
+  - "seemed useful to us"
 
 density_limits:
   contrast_farming:
