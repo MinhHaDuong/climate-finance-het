@@ -1,0 +1,61 @@
+%erg 0.1
+Title: Gloss undefined statistical jargon in Appendix A.3 (silhouette, adjusted Rand index)
+Created: 2026-07-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-15T14:49Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+During ticket 0243's Sample 3 arbitration (PR #1053), the author flagged
+"z-score" as undefined jargon in Appendix A.4 and asked for a gloss
+("standard deviations from the mean"). A roar-step-3 sweep for the same
+anti-pattern elsewhere in the appendix found two more instances, same
+class, not yet fixed:
+
+- **"silhouette"** (@fig scores, A.3, three uses: "silhouette scores stay
+  near zero at every candidate number of groups, at 0.025 for six", plus
+  two more) — never defined. A general HET/STS reader has no way to know
+  what the metric measures or what "near zero" means for it.
+- **"adjusted Rand index"** (A.3, three uses: 0.59, 0.98, 0.06 to 0.22
+  across different comparisons) — never defined. Same problem: no reader
+  cue for what the metric is or how to read the range (0 = chance
+  agreement, 1 = identical partitions).
+
+## Relevant files
+
+- `deliverables/manuscript/manuscript.qmd` — Appendix A.3, "What is
+  embedded, and how the texts are grouped" section (search "silhouette",
+  "Rand index")
+
+## Actions
+
+1. Author decides the gloss wording for each term (matching the "z-score"
+   precedent: short parenthetical, plain language, no dash — see PR #1053
+   commit message for the pattern).
+2. Apply via the same author-arbitrated, primary-source-verified process
+   used throughout ticket 0243 (no autonomous rewrite of manuscript prose).
+
+## Test
+
+- No red step — this is prose, not code. Guard: `make check-fast` +
+  `tests/test_manuscript_prose.py` stay green; no factual/numerical/citation
+  change; em-dash ratchet does not rise.
+
+## Verification
+
+- [ ] Both terms read as self-explanatory to a non-specialist on first
+      encounter (author's own judgment call)
+
+## Invariants
+
+- No factual, numerical, or citation change.
+- No new em-dashes.
+
+## Exit criteria
+
+- [ ] "silhouette" glossed in Appendix A.3
+- [ ] "adjusted Rand index" glossed in Appendix A.3
