@@ -8,10 +8,15 @@
   content fix (the paragraph's $340-650bn figure was compared to the $100bn
   Copenhagen pledge as if commensurable; corrected with a verified,
   genuinely comparable OECD 2015 figure). See below for the accepted text.
-- **Sample 3 — pending refresh**: D1 (person) already applied to this
-  paragraph elsewhere; the sample's own AFTER draft needs updating before
-  arbitration (still says "we search", should be "I search" under the
-  settled rule).
+- **Sample 3 — AMENDED and applied.** Refreshed for D1, then amended
+  through several rounds: dropped the "I search" duplication (one "I" per
+  paragraph is enough), replaced the "whisper the answer" image with plain
+  "presuppose the answer", removed the opening sentence's aside em-dashes
+  (parentheses instead), replaced "I compare" with a passive construction
+  pointing to the actual evidence (@fig-breaks — the next paragraph already
+  reports its results), fixed "along two complementary measures" (incorrect
+  preposition) to "using", and glossed "z-score" (undefined jargon) as
+  "standard deviations from the mean".
 
 ---
 
