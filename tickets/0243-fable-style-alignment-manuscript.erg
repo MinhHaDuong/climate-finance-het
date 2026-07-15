@@ -6,6 +6,8 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-10T23:30Z HDMX-coding-agent created
 2026-07-11T00:30Z HDMX-coding-agent note Preparation phase delivered (draft PR): kickoff note with decisions D1-D4 (person, spelling, hedging, question-closings), few-shot comparative set (sole-author weighted), 3 sample rewrites for author arbitration — conception/0243-*.md. Manuscript untouched; full pass blocked on author's kickoff decisions.
+2026-07-15T00:00Z HDMX-coding-agent note bump verify-reroll — round 1: invariant "No factual, numerical, or citation changes — style only" violated (new citekeys @maria_etal2023/@shang_jin2023/@unfccc2007bali + new numeric claims at manuscript.qmd:60,71,96, confirmed independently) and exit criterion "Author signs off the aligned manuscript" has no evidence in this PR (no reviews, no ticket-log entry recording sign-off on branch t243-full-voice-pass).
+2026-07-15T00:00Z HDMX-coding-agent note verify-gate round 2 (final, commit bb0a9be7): content-drift revert independently confirmed clean — zero net citekey delta, zero "we"/"our" remaining, both hedge phrases restored, manuscript.qmd:60/71/96 byte-identical to origin/main except approved pronoun conversions; 45/45 prose tests + full adherence suite (169 passed, 5 skipped) green. "Author signs off" exit criterion still MISSING — gh pr view 1045 reviews=[] confirms no human review landed since round 1. Verdict: ESCALATE (round 3 forbidden) — remaining gap is a human action, not a fixable defect.
 
 --- body ---
 ## Context
