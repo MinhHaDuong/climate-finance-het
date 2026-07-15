@@ -34,11 +34,3 @@ iterative2024dvc
 # bara2025aibibliometric: fetched a different paper; entry may be mis-attributed
 bara2025aibibliometric
 marcussen2009
-
-# --- paywalled classic methods papers, no OA edition (ticket 0244) ---
-# DOI-verified against Crossref, correctly attributed; tried Crossref,
-# Unpaywall, HAL, ISTEX (2026-07-15) — none hold fulltext. Sci-Hub
-# unreachable from this sandbox; retry from a host with open network access
-# before giving up permanently.
-freeman1977set
-min2021measuring
