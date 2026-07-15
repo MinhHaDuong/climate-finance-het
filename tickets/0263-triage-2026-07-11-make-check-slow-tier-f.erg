@@ -2,10 +2,12 @@
 Title: Triage 2026-07-11 make-check slow-tier failures on doudou
 Created: 2026-07-11
 Author: HDMX-coding-agent
+Label: deferred
 
 --- log ---
 2026-07-11T14:36Z HDMX-coding-agent created
 
+2026-07-15T13:58Z HDMX-coding-agent label deferred
 --- body ---
 ## Context
 
