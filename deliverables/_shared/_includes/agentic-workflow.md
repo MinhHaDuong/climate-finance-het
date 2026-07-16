@@ -40,7 +40,7 @@ Git worktrees allow multiple branches to be checked out simultaneously in separa
 
 ### Pre-commit hooks as quality gates
 
-The `hooks/` directory contains git hooks that enforce project invariants at commit time:
+The `.githooks/` directory contains git hooks that enforce project invariants at commit time:
 
 - **No commits on main.** All work happens on feature branches; main is updated only via merge.
 - **CLAUDE.md is locked.** The agent specification entry point cannot be modified accidentally.

@@ -720,8 +720,8 @@ benchmark: check-corpus
 
 # ── Setup (run once after cloning) ───────────────────────
 setup:
-	git config core.hooksPath hooks
-	@echo "Hooks activated (hooks/pre-commit, hooks/post-checkout)"
+	git config core.hooksPath .githooks
+	@echo "Hooks activated (.githooks/pre-commit, .githooks/post-checkout)"
 
 # ── Housekeeping ─────────────────────────────────────────
 clean:

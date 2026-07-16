@@ -9,7 +9,7 @@ Load `.env`, set agent identity, and activate hooks:
 set -a && source .env && set +a
 git config user.name  "$AGENT_GIT_NAME"
 git config user.email "$AGENT_GIT_EMAIL"
-git config core.hooksPath hooks
+git config core.hooksPath .githooks
 export GH_TOKEN="$AGENT_GH_TOKEN"
 ```
 ## 2. Orient
