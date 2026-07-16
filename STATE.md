@@ -1,6 +1,6 @@
 # State
 
-Last updated: 2026-07-15T15:03Z
+Last updated: 2026-07-16T18:40Z
 
 ## Current goal
 
@@ -15,15 +15,15 @@ until resubmitted.
 - Harness PR #472 (reuse gate + supervisor doctrine) awaits author review.
 
 ## Status
-<!-- generated 2026-07-15T15:03Z · as of 741a059a -->
+<!-- generated 2026-07-16T18:40Z · as of 4deeefa9 -->
 
-**Tickets:** 4 ready · 38 blocked — `erg ready tickets/` for full list
+**Tickets:** 5 ready · 38 blocked — `erg ready tickets/` for full list
   next: 0152 response to reviewers letter + per-remark trace… · 0243 Fable-led manuscript style alignment on the aut…
 **In flight:** no open PRs
 **Recent (first-parent):**
-  741a059a Merge pull request #1047 from MinhHaDuong/t263-defer-label
-  0397f119 Merge pull request #1054 from MinhHaDuong/t266-file-jargon-ticket
-  cf08996d Merge pull request #1053 from MinhHaDuong/t243-sample3-refresh
+  4deeefa9 Merge pull request #1056 from MinhHaDuong/worktree-manuscript-checkpoint
+  3dc4e5b5 chore(0243): seed voice-corpus scout pairs, colocate few-shot set with manuscript
+  c980388a chore: fold conception/ into ticket 0243, drop the ad hoc directory
 
 ## Corpus (v1.1.1)
 
