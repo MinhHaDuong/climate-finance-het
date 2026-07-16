@@ -8,6 +8,7 @@ Author: HDMX-coding-agent
 2026-07-11T00:30Z HDMX-coding-agent note Preparation phase delivered (draft PR): kickoff note with decisions D1-D4 (person, spelling, hedging, question-closings), few-shot comparative set (sole-author weighted), 3 sample rewrites for author arbitration — conception/0243-*.md. Manuscript untouched; full pass blocked on author's kickoff decisions.
 2026-07-15T00:00Z HDMX-coding-agent note bump verify-reroll — round 1: invariant "No factual, numerical, or citation changes — style only" violated (new citekeys @maria_etal2023/@shang_jin2023/@unfccc2007bali + new numeric claims at manuscript.qmd:60,71,96, confirmed independently) and exit criterion "Author signs off the aligned manuscript" has no evidence in this PR (no reviews, no ticket-log entry recording sign-off on branch t243-full-voice-pass).
 2026-07-15T00:00Z HDMX-coding-agent note verify-gate round 2 (final, commit bb0a9be7): content-drift revert independently confirmed clean — zero net citekey delta, zero "we"/"our" remaining, both hedge phrases restored, manuscript.qmd:60/71/96 byte-identical to origin/main except approved pronoun conversions; 45/45 prose tests + full adherence suite (169 passed, 5 skipped) green. "Author signs off" exit criterion still MISSING — gh pr view 1045 reviews=[] confirms no human review landed since round 1. Verdict: ESCALATE (round 3 forbidden) — remaining gap is a human action, not a fixable defect.
+2026-07-16T00:00Z HDMX-coding-agent note folded conception/0243-*.md (kickoff note, few-shot set, sample rewrites) into this ticket's body — the ad hoc top-level conception/ directory was undiscussed and unreferenced by any other ticket; deleted.
 
 --- body ---
 ## Context
@@ -55,3 +56,527 @@ the voice/person question is settled with the author at kickoff, not assumed.
 ## Exit criteria
 - [ ] Author signs off the aligned manuscript
 - [ ] Full prose + adherence suites green
+
+## Conception notes (folded in from conception/, 2026-07-16)
+
+`conception/` was an ad hoc, undiscussed top-level directory created for this
+ticket alone on 2026-07-11. It held no standing project convention — folded
+back into this ticket, its only owner, and the directory removed.
+
+### Voice-alignment kickoff note
+
+**For the author.** This note asks you to settle four voice decisions before the
+full style pass runs, and proposes the protocol for that pass. The companion
+material is folded in below: the comparative few-shot pairs and the three
+sample rewrites for arbitration. Nothing in the manuscript has been touched at
+the time this note was written.
+
+#### Decisions — SETTLED (author, 2026-07-15)
+
+- **D1 — (d) reader-inclusion split.** "I" when the author speaks for himself,
+  "we" when the reader is included in the claim (not the historical
+  procedure/conviction split proposed below — a new criterion). Additional
+  guard, applies to the whole pass: **the final text must carry no generation
+  scaffolding** — no meta-commentary whose purpose is to guide generation
+  rather than make the argument (the author was explicit: the model writing
+  the pass is neither "I" nor "we" in the text).
+- **D2 — (b) Oxford British** (-ize/-ization). ~60 changes: mobilisation →
+  mobilization and the -ise family; crystallization/periodization unchanged.
+- **D3 — restrained throughout, no dial.** Adjudicated against three concrete
+  instances (manuscript.qmd lines 78, 194, 220) — restrained chosen for all
+  three. Author's reasoning: the anchors' dry irony and one-line zingers are
+  essay-register, not academic-register; the manuscript's evidentiary prose
+  calls for plain verbs and single hedges regardless of voice. This narrows
+  the anchor calibration in the few-shot set below — treat the essay anchors
+  (2009, 2001) as illustrating word-level habits (plain verbs, no
+  formal-cliché verbs) but not as a register/tone model for this pass.
+- **D4 — rhetorical devices allowed**, sparing use per the original proposal
+  (question-close candidates: end of @sec-controverses, end of the Türkiye
+  subsection).
+
+#### Decisions to settle (superseded — kept for the calibration record below)
+
+##### D1 — Person: authorial "we" or first-person "I"?
+
+The manuscript uses "we / our / us" 21 times and first-person singular zero
+times (the only "I" in the file is "Annex I"). The response letter was
+converted to first-person singular on 2026-07-10 (ticket 0152 log), with
+manuscript quotes deliberately left in "we" until the manuscript itself is
+revised — that is this decision.
+
+Your own pre-AI sole-author practice runs both ways. "What is the Price of
+Carbon?" (2009) uses "we feel that it would be more informative to clarify";
+"Transparency and control" (2001) uses "I find no reason to be satisfied with
+potential transparency". The historical pattern is roughly: "we" for procedure,
+"I" for conviction.
+
+Options:
+
+- **(a) Keep "we" throughout.** Least churn; standard HET editorial "we"; the
+  abstract and method statements read naturally.
+- **(b) Switch to "I".** Consistent with the response letter and with sole
+  authorship; Œconomia publishes single-author "I" papers; matches the 2001
+  register.
+- **(c) Your historical mix** — "we" in method prose, "I" at moments of
+  judgment. Closest to the anchors, hardest to apply mechanically; the full
+  pass would flag each occurrence for a case-by-case call.
+
+##### D2 — Spelling: the manuscript currently mixes varieties
+
+Counts from `deliverables/manuscript/manuscript.qmd`: **-ization nouns**
+crystallization ×12, periodization ×6; **-isation/-ise forms** mobilisation
+×18, mobilised ×16, optimisation ×6, economisation ×4, stabilised, standardised,
+operationalised, and the verbs crystallise/crystallised — the same lemma spelt
+both ways (plus one stray "crystallized"). "Scientization" (Marcussen's term)
+and "ghettoization" (quoted from Carè & Weber) are quoted terms of art and stay
+as their sources spell them, whatever you decide.
+
+The style anchor's language policy (docs/style-anchor-v205.md, decision (a),
+2026-07-08) is British English. British has two legitimate conventions:
+
+- **(a) Cambridge British (-ise/-isation everywhere):** crystallisation,
+  periodisation, mobilisation. Touches the paper's key term in 14 places,
+  including the section title.
+- **(b) Oxford British (-ize/-ization):** keeps crystallization and
+  periodization as they stand; changes mobilisation → mobilization and the
+  whole -ise family (~60 changes). Recognised British (OUP, Nature); reads as
+  American to some referees.
+- **(c) Pin the status quo as a deliberate convention** (nouns of art in
+  -ization, everything else -ise). Defensible only if stated; fragile under
+  copy-editing.
+
+Either (a) or (b) satisfies the one-variety rule; (a) is the smaller diff.
+
+##### D3 — Hedging register: how far toward your dry understatement?
+
+Current manuscript hedges are formal-academic: "It is thus possible that",
+"may record", "the reading proposed here", "seemed useful to us". Your
+anchored hedging is lighter and drier: "we suggest", "in our view", "it might
+not be a bad idea" — one hedge at a time, often with understatement ("Recent
+macroeconomic developments remind that this is not sustainable").
+
+The dial to set: full anchor register (dry, occasionally ironic — the "touch
+of sarcasm" of the 2009 essay), or a restrained version (plain verbs, single
+hedges, no irony)? Two constraints bound the upper end: the no-oversell norms
+on the periodization are untouchable in either direction — understatement must
+not shade into coyness about what the corpus does and does not show — and
+Œconomia's HPS readership tolerates light irony but not glibness.
+
+##### D4 — Question-closings: use your device or not?
+
+Your anchors close arguments with a question ("Is not this the essence of the
+precautionary principle?" — 2003 ozone paper, conclusion). The manuscript
+already uses question volleys mid-argument ("Additional to what? To existing
+ODA? To the target of 0.7% of GNI?") but every section closes declaratively.
+
+Options: adopt the question-close at one or two section ends where the question
+genuinely is the point (candidates: end of @sec-controverses, end of the
+Türkiye subsection); or keep all closes declarative. Sparing use recommended if
+adopted — the device marks your voice precisely because it is rare.
+
+#### Protocol proposal (anchor-first, per AEDIST 0522)
+
+The direct precedent is AEDIST ticket 0522 (tactical editorial round,
+2026-06-10): author-articulated intent first, voice calibrated from your real
+texts with concrete reproduction patterns rather than a vague gloss, and 2–3
+anchor passages author-approved in session **before** the full pass. It worked;
+this ticket reuses it.
+
+1. **You settle D1–D4** (this note) and **arbitrate the three samples** below:
+   accept, amend, or reject each. Amended samples become the binding
+   calibration.
+2. **Full pass, section by section**, driven by the approved samples plus the
+   comparative pairs in the few-shot set below. One PR, one commit per
+   manuscript section, so you can accept or bounce sections independently.
+   Manuscript prose is a prose workpackage: the autonomous pass goes through
+   branch + PR for your arbitration, never in place.
+3. **Guards on every commit:** prose suite green (`tests/test_manuscript_prose.py`);
+   ratchet ceilings may tighten, never rise (the em-dash ratchet is at ceiling,
+   so the pass must not add a single em-dash); content-drift grep — citation
+   keys, numbers, figure/table references byte-identical before and after;
+   AI-tells auditor clean on the diff.
+4. **Review interface:** the recompiled PDF and the PR diff; you accept or
+   reject per section (Action 4 above).
+
+#### Cross-project voice rules folded in
+
+1. **Anchor-first** (AEDIST 0522): no full pass before you bless the anchors.
+2. **Plain verbs** (AEDIST voice memory): you never write formal-cliché verbs —
+   "accord with", "align with", "serves to underscore" are out; "matches",
+   "bears this out", "shows" are in.
+3. **Sole-author weighting** (chemin-de-voix corpus rule): co-authored texts
+   carry a mixed-voice signal, so the few-shot set weights your sole-author
+   passages highest — Ha-Duong 2009 "What is the Price of Carbon?" and
+   Ha-Duong 2001 "Transparency and control" — with the first-author co-authored
+   anchors (2009 leakage, 2003 ozone, 2007 IPCC, 2004 bounding) as secondary
+   evidence.
+
+### Few-shot comparative set
+
+Calibration pairs for the voice-alignment pass: for each manuscript section,
+an anchor passage from `docs/style-anchor-v205.md` set against a current
+manuscript passage, with a one-line note on the gap. Anchor numbering follows
+the style-anchor file; per the sole-author weighting rule, anchors #3 (2009,
+"What is the Price of Carbon?") and #5 (2001, "Transparency and control")
+carry the most weight, the first-author co-authored anchors (#1, #2, #4, #6)
+are secondary. Manuscript passages are cited by section and first words; line
+numbers refer to `deliverables/manuscript/manuscript.qmd` at commit time.
+
+#### Introduction (@sec-intro)
+
+**Pair 1a — anchor #3, passage 1 (sole author, 2009):**
+
+> The scope of this range—from 5 to 80—gives reasonable cause for scepticism,
+> or even a touch of sarcasm regarding the claims of models that they can
+> provide insight into a future fraught with controversy. In fact, since
+> information in this domain is in a state of considerable confusion, we feel
+> that it would be more informative to clarify what is meant exactly by cost,
+> price or value of carbon.
+
+**× manuscript, "This paradox is what makes climate finance an interesting
+object..." (l. 60):** the passage announces the object's interest in abstract
+terms ("Yet its perimeter remains disputed") where the anchor earns the same
+move with a concrete number range and one dry aside.
+
+*Gap: concreteness and the licensed dry aside; the manuscript states the
+paradox, the anchor lets the reader feel it.*
+
+**Pair 1b — anchor #1, passage 1 (first author, 2009):**
+
+> With leakage, storing carbon in the ground is like taking a loan at the
+> bank. One gets a benefit today. Then one pays back in a sequence of small
+> installments. Payments sum up to more than the borrowed amount.
+
+**× manuscript, "Two operations run through this history. Commensuration
+makes heterogeneous flows comparable..." (l. 70):** the two framework concepts
+are introduced in definition-first academic cadence, without an image and
+without a short sentence anywhere in the paragraph.
+
+*Gap: sentence length and concreteness — the anchor explains an abstraction in
+four sentences averaging nine words; the manuscript paragraph has none under
+twenty.*
+
+#### Method
+
+**Pair 2a — anchor #5, passage 2 (sole author, 2001):**
+
+> Potential transparency remains, since anybody can get the model simply by
+> asking. However, I find no reason to be satisfied with potential
+> transparency when models source code can be published at low cost with
+> today's information technology.
+
+**× manuscript, "The proposed periodization follows from our reading of the
+texts..." (l. 78):** the method is owned ("our reading", "seemed useful to
+us") but the conviction is buried mid-sentence; the anchor states position
+("I find no reason...") in main-clause position.
+
+*Gap: person and placement of conviction — pending decision D1; the anchor
+puts the judgment in the stressed slot, the manuscript tucks it into
+qualifiers.*
+
+**Pair 2b — anchor #6, passage 1 (first author, 2004):**
+
+> However, when there are several risk factors and the uncertainty about some
+> of them is large, such a procedure can lead to estimates for the numbers of
+> cases attributable to the various factors that, summed, exceed the total
+> number of cases actually observed.
+
+**× manuscript, "This way of doing intellectual history may surprise. The
+discipline usually reads a small number of canonical texts closely. Yet
+climate finance has no canon." (l. 80):** already close to the anchored voice
+— short declaratives, blunt reframing. Kept as a positive reference point: the
+full pass should converge on this register, not flatten it.
+
+*Gap: none to speak of — this is the in-voice calibration point for the
+Method register.*
+
+#### Before climate finance (@sec-before)
+
+**Pair 3a — anchor #4, passage 1 (first author, 2003):**
+
+> The worldwide control on substances depleting the stratospheric ozone layer
+> is often regarded as an exemplary success of global environmental policy. We
+> would like to qualify this point of view, by observing that while scientific
+> warning came as early as the mid seventies, corrective action came too late
+> to prevent the infamous 'hole' over the antarctic.
+
+**× manuscript, "The Clean Development Mechanism came closest to bridging the
+gap..." (l. 102):** the narrative content is strong but the paragraph runs
+~340 words with several 40+-word sentences; the anchor advances a contrarian
+narrative in two readable moves.
+
+*Gap: sentence length and paragraph budget — the CDM story wants shorter
+sentences and a landing, not more matter.*
+
+**Pair 3b — anchor #2, passage 2 (first author, 2007):**
+
+> While these differences across WGs may be confusing to readers, they are in
+> fact both legitimate and appropriate. A one-size-fits-all approach would
+> obscure important differences in the type of uncertainties and in the
+> methods.
+
+**× manuscript, "Before 2007, then, the pieces exist but the object is not
+assembled." (l. 116):** the section close is already declarative and
+well-landed; what precedes it (the three-traditions synthesis) hedges less
+crisply than the anchor's "they are in fact both legitimate and appropriate".
+
+*Gap: the anchor takes a side plainly after conceding the confusion; the
+manuscript's synthesis sentences concede and affirm in the same breath.*
+
+#### Crystallization (@sec-crystallization)
+
+**Pair 4a — anchor #2, passage 1 (first author, 2007):**
+
+> Looking back over three and a half Assessment Reports, we see that the
+> Intergovernmental Panel on Climate Change (IPCC) has given increasing
+> attention to the management and reporting of uncertainties, but coordination
+> across working groups (WGs) has remained an issue. We argue that there are
+> good reasons for working groups to use different methods to assess
+> uncertainty...
+
+**× manuscript, "It is in this limited sense that the Copenhagen commitment is
+performative [@callon1998]..." (l. 128):** the theoretical claim is advanced
+impersonally ("Calling this *institutional* performativity keeps MacKenzie's
+insight...") where the anchor announces the claim as the authors' own ("We
+argue that...").
+
+*Gap: ownership of the thesis — pending D1; the anchor's claim-holder is
+visible, the manuscript's is grammatically absent.*
+
+**Pair 4b — anchor #3, passage 2 (sole author, 2009):**
+
+> Even if it cannot be measured in the same way, as for instance, sea levels,
+> stating that carbon does have a strictly positive social value is, in
+> itself, an important step forward. It means that there is agreement on the
+> fact that climate change is a real problem and that greenhouse gas emissions
+> must be curbed.
+
+**× manuscript, "The figure was not derived from an economic model or from an
+estimate of needs; it emerged from last-minute diplomatic bargaining." (l. 126):**
+close to the anchored voice already — plain claim about what a number socially
+means. Second positive calibration point.
+
+*Gap: minimal — the pass should preserve sentences like this verbatim.*
+
+#### Controversies and the Türkiye case (@sec-controverses)
+
+**Pair 5a — anchor #1, passage 2 (first author, 2009):**
+
+> From economic perspective, when CCS with leakage is assimilated to a carbon
+> loan, accepting leaking systems is like taking increasing amounts of
+> financial debt. Recent macroeconomic developments remind that this is not
+> sustainable.
+
+**× manuscript, "The difference is not technical in the weak sense: it decides
+whether one is talking about a volume of financing or a net transfer." (l. 188):**
+the manuscript lands its point but in negated form ("is not technical in the
+weak sense"); the anchor lands positively and then stops.
+
+*Gap: positive form and the hard stop — the anchor's two-sentence close is the
+model for how each controversy paragraph should end.*
+
+**Pair 5b — anchor #4, passage 2 (first author, 2003):**
+
+> The early action scenario could also have been a rational choice. Is not
+> this the essence of the precautionary principle? Our conclusion is that the
+> Montreal Protocol was only a partially successful application of precaution.
+> It might not be a bad idea to regulate global atmospheric environmental
+> issues before surprising non-linearities occur.
+
+**× manuscript, "Each of these debates reopens the boundary of the object."
+(l. 214, section-final):** declarative close where the author's device would
+plant a question; whether to use it is decision D4.
+
+*Gap: the question-closing device — present in the anchors, absent from every
+manuscript section ending.*
+
+#### Conclusion (@sec-conclusion)
+
+**Pair 6 — anchor #5, passage 2 (sole author, 2001):**
+
+> However, I find no reason to be satisfied with potential transparency when
+> models source code can be published at low cost with today's information
+> technology.
+
+**× manuscript, "One might file all this under a familiar heading. ... The
+description fits, and it is worth conceding. Yet it stops short of what this
+history shows." (l. 236):** the concession-then-refusal move matches the
+author's posture exactly, but the agent is "One might" where the anchor says
+"I find".
+
+*Gap: person under D1 — the argumentative shape is already the author's; only
+the grammatical owner differs.*
+
+#### Appendix (methods register)
+
+**Pair 7 — anchor #6, passage 2 (first author, 2004):**
+
+> In this paper we have applied the Smets' Transferable Belief Model to
+> estimate an upper bound on the fraction of lung cancers caused annually by
+> the group of causes for which comprehensive longitudinal studies are
+> lacking. Such a result is interesting from a risk management perspective.
+> For example it might be used to infer the level of control effort these
+> pollutants deserve.
+
+**× manuscript, "To compare works by their meaning, and not by their exact
+words alone, each title, abstract and keyword list is turned into a point in a
+'space of meaning'..." (l. 270):** the appendix explains method in long
+passive-leaning periods; the anchor reports method in short active sentences
+and closes on the modest use of the result.
+
+*Gap: sentence length and voice in methods prose — active constructions, one
+idea per sentence, a plain so-what at the end.*
+
+### Three sample rewrites (approval anchors)
+
+**Status (2026-07-15): arbitrated.**
+
+- **Sample 1 — MOOT.** Superseded by the full voice-critique pass (PR #1045,
+  merged); the L70 paragraph no longer matches this sample's BEFORE.
+- **Sample 2 — ACCEPTED**, applied with an additional author-directed
+  content fix (the paragraph's $340-650bn figure was compared to the $100bn
+  Copenhagen pledge as if commensurable; corrected with a verified,
+  genuinely comparable OECD 2015 figure). See below for the accepted text.
+- **Sample 3 — AMENDED and applied.** Refreshed for D1, then amended
+  through several rounds: dropped the "I search" duplication (one "I" per
+  paragraph is enough), replaced the "whisper the answer" image with plain
+  "presuppose the answer", removed the opening sentence's aside em-dashes
+  (parentheses instead), replaced "I compare" with a passive construction
+  pointing to the actual evidence (@fig-breaks — the next paragraph already
+  reports its results), fixed "along two complementary measures" (incorrect
+  preposition) to "using", and glossed "z-score" (undefined jargon) as
+  "standard deviations from the mean".
+
+#### Sample 1 — argument register (Introduction, @sec-intro)
+
+**Location:** l. 70, "Two operations run through this history..."
+
+**BEFORE:**
+
+> Two operations run through this history. Commensuration makes heterogeneous
+> flows comparable on a common metric -- a grant-equivalent percentage, a
+> marker coefficient, a dollar total [@espeland_stevens1998]. Economisation is
+> the further step by which the resulting quantity becomes an economic object
+> in its own right: given a perimeter and a target, made to grow, and governed
+> by the reasoning of leverage and mobilisation [@caliskan_callon2009]. The
+> same device often performs both, the second move riding on the first. That
+> passage, traced period by period, is the thread running through the rest of
+> this article.
+
+**AFTER:**
+
+> Two operations run through this history. The first is commensuration:
+> putting unlike flows on one scale, a grant-equivalent percentage, a marker
+> coefficient, a dollar total [@espeland_stevens1998]. The second is
+> economisation: the quantity so produced becomes an economic object in its
+> own right, with a perimeter, a target, and a doctrine of leverage and
+> mobilisation to make it grow [@caliskan_callon2009]. One device often does
+> both jobs, the second riding on the first. The rest of this article follows
+> that passage, period by period.
+
+**What changed and why:** definition-first cadence replaced by two parallel
+"The first is / The second is" moves (the anchors introduce abstractions by
+enumeration, not by textbook definition); the sentence dash dropped for a
+colon; the closing sentence shortened so the paragraph lands on the plan, in
+the stressed final slot. Both citation keys unchanged and in place.
+
+#### Sample 2 — historical-narrative register (Crystallization, @sec-crystallization)
+
+**Location:** l. 134, "A parallel infrastructure emerged within the UNFCCC
+process..."
+
+**BEFORE:**
+
+> A parallel infrastructure emerged within the UNFCCC process. The Standing
+> Committee on Finance, established at COP16 in Cancún (2010), was tasked with
+> producing biennial assessments of climate finance flows. Where the DAC
+> system was designed by and for donors, reporting what they had *provided*,
+> the UNFCCC process was also accountable to recipient countries, which
+> reported what they had *received*, and the two figures rarely agreed. The
+> first Biennial Assessment (2014) estimated total flows for 2011--2012 at
+> $340--650 billion per year, and allowed they might be higher still -- a
+> range so wide that it illustrated the problem more than it resolved it
+> [@unfccc2014biennial]. Two measurement regimes, each embedded in a different
+> political constituency, were producing different numbers from the same
+> underlying reality. In this battle for the operational definition, the
+> OECD's figures became the *de facto* reference for assessing progress
+> towards the $100 billion target, because the DAC produced data that was more
+> standardised and more timely. The development-economics categories embedded
+> in the DAC system won the definitional contest through infrastructural
+> incumbency, not intellectual superiority.
+
+**AFTER:**
+
+> A parallel infrastructure emerged within the UNFCCC process. The Standing
+> Committee on Finance, established at COP16 in Cancún (2010), was tasked with
+> producing biennial assessments of climate finance flows. The DAC system was
+> built by and for donors: it counted what they had *provided*. The UNFCCC
+> process also answered to recipient countries, which counted what they had
+> *received*. The two figures rarely agreed. The first Biennial Assessment
+> (2014) put total flows for 2011--2012 at $340--650 billion per year, and
+> allowed they might be higher still; a range that wide illustrated the
+> problem more than it resolved it [@unfccc2014biennial]. Two measurement
+> regimes, each answering to its own constituency, produced different numbers
+> from the same reality. The OECD's figures became the *de facto* reference
+> for progress towards the $100 billion target, because the DAC delivered data
+> that was more standardised and more timely. The development-economics
+> categories embedded in the DAC system won the definitional contest the way
+> incumbents usually do: the machinery was already running.
+
+**What changed and why:** the 44-word third sentence split into three short
+declaratives ending on the blunt "The two figures rarely agreed." (the
+anchors' short-sentence rhythm); the sentence dash before "a range so wide"
+replaced by a semicolon, so the paragraph's em-dash count falls by one; the
+closing "through X, not Y" antithesis recast as a dry positive close, the
+anchors' understatement device ("Recent macroeconomic developments remind that
+this is not sustainable"). All figures, dates, italics and the citation key
+unchanged.
+
+#### Sample 3 — appendix-methods register (Appendix A.4)
+
+**Location:** l. 280, "The periodization -- 1990--2006, 2007--2014,
+2015--2024 -- rests first on institutional history..."
+
+**BEFORE:**
+
+> The periodization -- 1990--2006, 2007--2014, 2015--2024 -- rests first on
+> institutional history: before Bali and Copenhagen the category is not yet
+> settled; between 2007 and 2014 the counting devices crystallise; after Paris
+> the controversies unfold within an established frame. To test it without
+> whispering the answer, the break years are sought while ignoring the
+> calendar of the COPs. For each candidate year between 2005 and 2023 we
+> compare the thematic composition of the years just before and just after,
+> along two complementary measures: the Jensen--Shannon divergence between the
+> theme-share vectors, which catches redistribution across themes, and the
+> cosine distance between mean embeddings, which catches drift in the
+> continuous space of meaning. Each year's score is expressed as a z-score, so
+> that the two measures share one scale, and the comparison is run at three
+> window widths of two, three and four years.
+
+**AFTER:**
+
+> The periodization -- 1990--2006, 2007--2014, 2015--2024 -- rests first on
+> institutional history: before Bali and Copenhagen the category is not yet
+> settled; between 2007 and 2014 the counting devices crystallise; after Paris
+> the controversies unfold within an established frame. The test must not
+> whisper the answer, so we search for the break years while ignoring the
+> calendar of the COPs. For each candidate year between 2005 and 2023 we
+> compare the thematic composition of the years just before and just after.
+> Two measures complement each other: the Jensen--Shannon divergence between
+> theme-share vectors catches redistribution across themes; the cosine
+> distance between mean embeddings catches drift in the continuous space of
+> meaning. Each year's score is expressed as a z-score, so the two measures
+> share one scale, and the comparison is run at three window widths of two,
+> three and four years.
+
+**What changed and why:** the passive "the break years are sought" given an
+agent ("we search" — "we" pending D1); the 55-word measures sentence split so
+each measure gets its own clause, one idea per sentence, as in the 2004
+bounding paper's methods prose. The opening sentence, with its paired dashes
+and the periodization statement, is untouched: the periodization claims and
+the em-dash count must not move. All years, window widths and measure names
+unchanged.
+
+**Arbitration requested (historical — see Status above):** for each sample,
+accept / amend / reject. Accepted or amended AFTERs became the few-shot
+calibration for the full section-by-section pass.
