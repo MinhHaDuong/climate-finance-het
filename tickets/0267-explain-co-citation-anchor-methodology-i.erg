@@ -1,0 +1,77 @@
+%erg 0.1
+Title: Explain co-citation anchor methodology in tbl-traditions caption and appendix
+Created: 2026-07-16
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-16T16:20Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+`@tbl-traditions` in `deliverables/manuscript/manuscript.qmd` (section
+"Before climate finance: three disjoint traditions") has a column
+"Co-citation anchors (pre-2007)" listing, per tradition, the papers the
+table caption calls "the most-connected papers in the algorithmically
+detected community". This phrase is a placeholder — it doesn't say what
+"most-connected" means (degree? PageRank? betweenness?) or how the
+"algorithmically detected community" was built (network construction,
+detection algorithm, resolution/seed parameters, how detected communities
+were matched to the three named traditions).
+
+Under this project's provenance norm (cite only pipeline numbers
+traceable to an archived output — `feedback_manuscript_number_provenance.md`),
+the caption and the methodological appendix both need to name the actual
+metric and procedure the analysis code computed, not a vague gloss.
+
+This ticket was spun off during a manuscript restructuring pass (2026-07-16)
+rather than resolved inline, because closing it requires reading the
+analysis code/output, not just editing prose.
+
+## Relevant files
+
+- `deliverables/manuscript/manuscript.qmd` — `@tbl-traditions` and its
+  caption (search `tbl-traditions`); appendix section A.5 "Second question:
+  the citation lineages" is the likely home for the fuller explanation
+- the analysis script(s) that produced the pre-2007 co-citation communities
+  and their anchor works (not yet identified — first action below)
+
+## Actions
+
+1. Find the script/notebook that computes the pre-2007 co-citation
+   communities and anchor works feeding `@tbl-traditions`.
+2. Confirm the exact anchor-selection metric (e.g. "the three highest-degree
+   nodes within each detected community") and the community-detection
+   algorithm + parameters used.
+3. Update the table caption to name the metric precisely instead of
+   "most-connected".
+4. Add a short paragraph to appendix A.5 describing network construction
+   (nodes, edge/co-citation threshold), the detection algorithm, and how
+   detected communities were matched to the three named traditions (if
+   manual, say so).
+5. Point the appendix paragraph at the producing script / archived output.
+
+## Test
+
+No code test — this is a documentation-accuracy ticket. Verification is
+manual: the caption and appendix text must match what the code actually
+did (traceability check).
+
+## Verification
+
+- [ ] Caption names the real anchor-selection metric
+- [ ] Appendix A.5 describes network construction, algorithm, and
+      community-to-tradition matching
+- [ ] Both point to the producing script/output
+
+## Invariants
+
+- No change to the analysis code or its outputs — this is a prose/caption
+  accuracy fix only.
+- `make check` / prose adherence tests continue to pass.
+
+## Exit criteria
+
+- `@tbl-traditions`'s caption and appendix A.5 accurately and specifically
+  describe how the co-citation anchors were computed, with no placeholder
+  language remaining.
