@@ -16,7 +16,7 @@ from pathlib import Path
 import pytest
 
 REPO = Path(__file__).resolve().parents[1]
-HOOK = REPO / "hooks" / "post-checkout"
+HOOK = REPO / ".githooks" / "post-checkout"
 WORKTREEINCLUDE = REPO / ".worktreeinclude"
 MAKEFILE = REPO / "Makefile"
 
