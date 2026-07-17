@@ -1,0 +1,97 @@
+%erg 0.1
+Title: verify @tbl-traditions co-citation anchor citekeys trace to the pipeline
+Created: 2026-07-17
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-17T00:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+Author reread `manuscript.qmd` and asked how the code determines the
+"co-citation anchors" in `@tbl-traditions` (the pre-2007 traditions table,
+manuscript.qmd:115-118). The table caption states: "*co-citation anchors* are
+the most-connected papers in the algorithmically detected community" — but
+the three citekeys per row (`@weitzman1974; @barrett1994; @carraro1993` /
+`@michaelowa2003; @sutter2007` / `@north1990; @dimaggio1983; @finnemore1998`)
+are typed directly into the manuscript table, not read from a generated
+include. A grep for these citekeys across `scripts/`, `deliverables/_shared/_includes/`,
+and `docs/` returns zero hits — nothing in the pipeline currently emits them.
+
+The actual anchor-selection logic exists but isn't wired to the table:
+`scripts/_pre2007_traditions.py::_assign_traditions()` maps each Louvain
+community to a tradition by author-name matching against `TRADITION_ANCHORS`
+(a different, coarser list — surnames only, used for community labeling, not
+per-work selection). `scripts/figures/plot_fig_traditions.py::_draw_labels()`
+separately ranks each community's nodes by `-ref_counts.get(d, 0)` (citation
+count) to choose figure labels — this is the closest existing code to "most-
+connected," though it ranks by citation count, not co-citation degree/edge
+weight, which is a different notion of "connected" than the caption claims.
+
+This is a provenance gap of the kind `feedback_manuscript_number_provenance`
+(memory) flags: a claim in the manuscript ("empirically determined
+co-citation anchors") should trace to a committed, reproducible pipeline
+output, per the `docs/oeconomia-style.md` / `architecture.md` Phase-2
+discipline already applied to the sibling A.5 table in ticket 0195
+(`tab_null_separation_pre2007.csv`).
+
+Two ways this resolves, TBD by what the check finds:
+- **If the hardcoded citekeys match** what the pipeline would actually rank
+  top per community (by whichever metric is chosen — citation count within
+  community, or in-community co-citation degree): tighten the caption's
+  method claim to match precisely, and add a committed CSV + test so future
+  corpus updates can't silently drift the table without failing CI.
+- **If they don't match**: the table needs correcting to the real top-ranked
+  works per community, or the claim needs softening to "illustrative
+  examples" rather than "the co-citation anchors."
+
+## Relevant files
+- `deliverables/manuscript/manuscript.qmd:110-118` — the table and its prose claim
+- `scripts/_pre2007_traditions.py` — `build_pre2007_traditions()`, `_assign_traditions()`
+- `scripts/figures/plot_fig_traditions.py` — `_draw_labels()` (existing ranking-by-citation-count logic)
+- `scripts/analysis/compute_pre2007_coverage.py`, `tests/test_separation_provenance.py` — sibling A.5 provenance pattern from ticket 0195, reuse the same discipline
+
+## Actions
+1. Run `build_pre2007_traditions()` on the current corpus; for each of the
+   three traditions' assigned community (`trad_to_comm`), rank its nodes
+   (`comm_to_nodes[c]`) by in-community co-citation degree (sum of edge
+   weights to other nodes in the same community, not raw `ref_counts`) —
+   that is the metric the caption's word "most-connected" actually names.
+   Compare the top 3 per tradition against the three citekeys currently in
+   the manuscript table.
+2. Resolve any DOI → citekey mapping needed to compare (`doi_meta` in
+   `_pre2007_traditions.py` carries title/author/year, not the bib citekey;
+   cross-reference against `refs.bib`).
+3. Depending on result: either (a) add a small Phase-2 script/export that
+   writes the ranked top-3-per-tradition citekeys to a committed CSV
+   (`deliverables/_shared/tables/tab_traditions_anchors.csv`) consumed by the
+   manuscript table cells, with a test pinning the citekeys match the CSV
+   (mirrors `test_separation_provenance.py`); or (b) correct the three
+   citekeys/caption wording to what the code actually supports, with author
+   sign-off on the change since it touches manuscript prose.
+4. Update `@tbl-traditions`'s caption if the metric named ("most-connected")
+   needs to be made precise (e.g. "highest in-community co-citation degree").
+
+## Test
+- Red first: a test asserting the three co-citation-anchor citekeys per
+  tradition row in `manuscript.qmd` are present in the ranked output of
+  `build_pre2007_traditions()` for that tradition's community — expected to
+  FAIL initially (citekeys currently untraceable), passes once action 3 lands.
+
+## Verification
+- [ ] Top-3-per-tradition ranking computed and compared against current table
+- [ ] Either a committed CSV backs the table cells, or the table is corrected
+      to match verified output
+- [ ] Caption wording matches the actual selection metric
+
+## Invariants
+- Do not re-baseline `@fig-traditions` (the companion figure) — this ticket
+  only concerns the table's citekeys and caption.
+- No hand-curated Phase-2 data: any new anchor list is pipeline-generated
+  and committed, not typed by hand into the include/manuscript.
+- Author sign-off required before any manuscript prose/table cell changes
+  (writing.md discipline — this is content, not a mechanical fix).
+
+## Exit criteria
+- `@tbl-traditions` co-citation-anchor citekeys are traceable to a committed,
+  reproducible pipeline output, and the caption's method claim is accurate.
