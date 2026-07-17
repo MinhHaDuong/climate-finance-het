@@ -22,5 +22,8 @@ amstutz2016cwl
 cognition2024devin
 iterative2024dvc
 
+# --- web source behind an access barrier (Cloudflare bot-challenge), not paywalled per se ---
+iisd2009enb
+
 # --- needs author verification: entry metadata questioned (see ticket 0188) ---
 marcussen2009
