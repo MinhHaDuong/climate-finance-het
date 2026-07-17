@@ -2,10 +2,12 @@
 Title: verify @tbl-traditions co-citation anchor citekeys trace to the pipeline
 Created: 2026-07-17
 Author: HDMX-coding-agent
+Closed: duplicate of 0267 (filed 2026-07-16, same table/same problem) — findings folded into 0267
 
 --- log ---
 2026-07-17T00:00Z HDMX-coding-agent created
 
+2026-07-17T08:52Z HDMX-coding-agent closed — duplicate of 0267 (filed 2026-07-16, same table/same problem) — findings folded into 0267
 --- body ---
 ## Context
 Author reread `manuscript.qmd` and asked how the code determines the
