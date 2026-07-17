@@ -1,0 +1,65 @@
+%erg 0.1
+Title: Extract shared derive_companion_path() helper for --input-relative secondary-file reads
+Created: 2026-07-17
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-17T14:01Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Ticket 0262 (PR #1049) fixed `plot_fig_alluvial.py` and `plot_fig2_composition.py`
+so that a secondary file read (`cluster_labels.json`) is derived relative to
+`--input` rather than hardcoded to `DERIVED_TABLES_DIR`. Ticket 0265 (PR #1063)
+applied the identical fix to `plot_ncc_alluvial.py`. The `/gaze` review on
+PR #1063 (two independent cleanup agents — reuse and altitude — converged on
+this) flagged that the pattern is now a verbatim triplicate:
+
+```python
+if io_args.input:
+    labels_dir = os.path.dirname(io_args.input[0])
+else:
+    labels_dir = DERIVED_TABLES_DIR
+```
+
+repeated across `scripts/figures/plot_fig_alluvial.py`,
+`scripts/figures/plot_fig2_composition.py`, and
+`scripts/figures/plot_ncc_alluvial.py`.
+
+## Relevant files
+
+- `scripts/figures/plot_fig_alluvial.py`
+- `scripts/figures/plot_fig2_composition.py`
+- `scripts/figures/plot_ncc_alluvial.py`
+- `scripts/script_io_args.py` (or `scripts/utils.py`) — natural home for a
+  shared helper
+
+## Actions
+
+1. Add a `derive_companion_path(io_args, default_dir)` (or similar) helper to
+   the shared I/O module.
+2. Replace the three verbatim copies with calls to the helper.
+3. No behavior change — same fallback semantics in every call site.
+
+## Test
+
+- Existing tests for the three call sites (including
+  `tests/test_ncc_alluvial_labels_path.py` from ticket 0265) must continue to
+  pass unchanged — this is a pure refactor.
+- Add a small unit test for the helper itself.
+
+## Verification
+
+- [ ] Helper extracted and used by all three call sites
+- [ ] `make check-fast` and `make lint` stay green
+
+## Invariants
+
+- Pure refactor — no output-path or fallback-behavior change for any of the
+  three scripts.
+
+## Exit criteria
+
+- [ ] One shared helper, three call sites reduced to a one-line call each
+- [ ] All pre-existing tests for the three scripts still pass
