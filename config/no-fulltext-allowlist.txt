@@ -13,8 +13,6 @@
 
 # --- copyrighted books, no legitimate open-access edition ---
 pottier2016
-power1997
-stodden2014implementing
 
 # --- deferred by author (available, e.g. via Anna's Archive, not yet fetched) ---
 lee2004trust
