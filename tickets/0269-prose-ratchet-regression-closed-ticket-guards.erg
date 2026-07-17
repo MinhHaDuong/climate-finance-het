@@ -1,0 +1,74 @@
+%erg 0.1
+Title: 7 prose-adherence tests regress guards from closed tickets 0138/0171/0189/0190/0194
+Created: 2026-07-17
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-17T00:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+Running `tests/test_manuscript_prose.py` on current main (verified with a
+before/after stash check, isolating from unrelated same-session edits — the
+failures are identical with or without those edits, so this predates and is
+unrelated to this session's Türkiye-case changes) surfaces 7 failures, all
+regression pins written to guard content landed by CLOSED tickets:
+
+- `test_mitchell_object_and_aid_apparatus_cited` (ticket 0189 lineage — R2.30)
+- `test_article43_to_bali_shift_is_concrete` (ticket 0189 — R2p/R2w, IPCC AR4 trigger)
+- `test_cdm_functioning_named` (ticket 0190 — CDM Executive Board)
+- `test_turkiye_case_maps_to_four_controversies` (ticket 0194 — explicit mapping)
+- `test_loss_and_damage_is_a_bounded_thesis_limit` (ticket 0138 — R1.4)
+- `test_loss_and_damage_is_the_falsifiable_test_in_the_conclusion` (ticket 0171, action 3b)
+- `test_conclusion_chantiers_migrated_leaving_one_limit` (ticket 0171, action 6)
+
+All seven tickets are closed (0134-0143, 0171 per tracker 0156). This means
+content required by their exit criteria has since drifted out of the
+manuscript — most likely during a later rewrite pass (candidates logged in
+0152: the 2026-07-11 deletion of the false pre-2007 co-citation paragraph,
+the 2026-07-10/11 voice/scientization/green-finance edits, or an
+uninvestigated intermediate commit) — without re-running this test file to
+catch the regression.
+
+This directly threatens the 0153 (resubmission rebuild) exit criterion
+"Clean build + green ratchet." Not investigated further in this session —
+found incidentally while adding the Türkiye-case concessionality-range
+passage (this session's actual task), out of scope to fix here.
+
+## Relevant files
+- `tests/test_manuscript_prose.py` — the 7 failing tests (see grep for exact
+  names above), each docstring names its origin ticket and what content it pins
+- `deliverables/manuscript/manuscript.qmd` — sections: intro (Mitchell), Article
+  4.3/Bali, CDM, Türkiye case (`@sec-transaction`), Loss & damage subsection,
+  Conclusion (`@sec-conclusion`)
+- `git log -p -- deliverables/manuscript/manuscript.qmd` since ~2026-07-09
+  (tickets 0134-0143/0171 landed) to find when each guard broke
+
+## Actions
+1. `git bisect` or targeted `git log -S` on each failing assertion's target
+   phrase to find the commit that dropped it.
+2. For each of the 7: decide whether the dropped content should be restored
+   (if removed accidentally during an unrelated rewrite) or the test updated
+   (if the manuscript legitimately evolved past what the old ticket pinned —
+   requires author sign-off, since these are content decisions).
+3. Re-run `tests/test_manuscript_prose.py` full suite until green.
+
+## Test
+- `uv run python3 -m pytest tests/test_manuscript_prose.py -q` — currently
+  7 failed, 38 passed; red until action 3.
+
+## Verification
+- [ ] Each of the 7 failures root-caused to a specific commit/rewrite
+- [ ] Each resolved either by restoring pinned content or updating the test
+      with author sign-off
+- [ ] Full prose adherence suite green
+
+## Invariants
+- Do not weaken a guard just to make it pass — each pin traces to a referee
+  remark or an author directive (see docstrings); removing one needs the same
+  sign-off as removing the original manuscript content it protects.
+
+## Exit criteria
+- `tests/test_manuscript_prose.py` fully green, with each of the 7 prior
+  failures either fixed-forward (content restored) or explicitly re-pinned
+  on author-approved current content.
