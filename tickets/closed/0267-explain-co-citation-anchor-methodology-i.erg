@@ -2,10 +2,13 @@
 Title: Explain co-citation anchor methodology in tbl-traditions caption and appendix
 Created: 2026-07-16
 Author: HDMX-coding-agent
+Closed: resolved: caption and appendix A.5 now name the real anchor-selection metric and community-matching procedure
 
 --- log ---
 2026-07-16T16:20Z HDMX-coding-agent created
+2026-07-17T00:00Z HDMX-coding-agent note traced anchor selection to scripts/_pre2007_traditions.py (network + Louvain partition + tradition assignment) and scripts/figures/plot_fig_traditions.py (top-3 per-tradition anchor selection); confirmed the caption's "most-connected" was inaccurate -- the code ranks by pre-2007 corpus citation count, not co-citation-graph degree. Updated tbl-traditions caption and added a methodology paragraph to appendix A.5 covering community-to-tradition anchor-author matching and the anchor-selection metric. make check-fast passes except test_cited_works_have_local_fulltext, confirmed pre-existing (fails identically with these changes stashed out).
 
+2026-07-17T11:10Z HDMX-coding-agent closed — resolved: caption and appendix A.5 now name the real anchor-selection metric and community-matching procedure
 --- body ---
 ## Context
 
