@@ -394,17 +394,27 @@ def test_100bn_legal_standing_and_baku_gap_visible():
 
 def test_article43_to_bali_shift_is_concrete():
     """Ticket 0189 (R2p, R2w): the Article 4.3 obligation must name the Annex II /
-    GEF machinery behind it, and the Bali shift must name its concrete trigger
-    (IPCC AR4) and the mechanism behind the move to a broader category
-    (adaptation's local benefit vs mitigation's global-benefit increment) — not
-    just assert that a shift happened. Mechanical presence, no phrasing pinned."""
+    GEF machinery behind it, and the Bali shift must name the policy gap that
+    drove the move to a broader category (the GEF's incremental-cost logic
+    proving insufficient for adaptation) — not just assert that a shift
+    happened. Mechanical presence, no phrasing pinned.
+
+    An earlier version of this guard also pinned a single named trigger (the
+    IPCC's Fourth Assessment Report) for the Bali shift. The author dropped
+    that attribution on reread (2026-07-17): reducing a multicausal diplomatic
+    conjuncture to one report overstates what it can explain (R2.12/R2.19 in
+    ticket 0152's traceability ledger carry the full reasoning). The guard no
+    longer requires a single-trigger claim.
+    """
     before = section("three disjoint traditions")
     assert "Annex II" in before, "Article 4.3 obligation not tied to Annex II"
     assert "Global Environment Facility" in before, (
         "incremental-cost mechanism (GEF) not named in the Article 4.3 passage"
     )
     cryst = section("Crystallization")
-    assert "Fourth Assessment Report" in cryst, "Bali's own trigger (IPCC AR4) not named"
+    assert "Global Environment Facility" in cryst, (
+        "GEF/adaptation policy gap not named as the driver of the Bali shift"
+    )
     assert "adaptation" in cryst.lower(), (
         "mitigation/adaptation incremental-cost asymmetry not stated as the mechanism"
     )

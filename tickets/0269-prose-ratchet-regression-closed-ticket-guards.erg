@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-17T00:00Z HDMX-coding-agent created
 
+2026-07-17T14:03Z HDMX-coding-agent note 1 of 7 resolved: test_article43_to_bali_shift_is_concrete's AR4-trigger pin was not drift, it was the author's own deliberate content decision (2026-07-17 reread: attributing Bali's shift to a single report overstates a multicausal diplomatic conjuncture) that hadn't propagated to this guard yet. Updated the test to assert the GEF/adaptation policy-gap mechanism instead of the AR4 claim; green. 6 of 7 remain open.
 --- body ---
 ## Context
 Running `tests/test_manuscript_prose.py` on current main (verified with a
