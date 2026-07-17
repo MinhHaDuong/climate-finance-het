@@ -216,18 +216,23 @@ def main():
     _apply_ncc_style()
 
     # --- Load data ---
+    # --input takes precedence for the alluvial CSV; cluster_labels.json is
+    # written by compute_clusters to the same directory, so derive its path the
+    # same way rather than hardcoding DERIVED_TABLES_DIR (ticket 0265).
     if io_args.input:
         alluvial_data = pd.read_csv(io_args.input[0], index_col=0)
+        labels_dir = os.path.dirname(io_args.input[0])
     else:
         alluvial_data = pd.read_csv(
             os.path.join(DERIVED_TABLES_DIR, "tab_alluvial.csv"), index_col=0,
         )
+        labels_dir = DERIVED_TABLES_DIR
     alluvial_data.columns = alluvial_data.columns.astype(int)
     period_labels = alluvial_data.index.tolist()
     n_periods = len(period_labels)
     n_clusters = len(alluvial_data.columns)
 
-    with open(os.path.join(DERIVED_TABLES_DIR, "cluster_labels.json")) as f:
+    with open(os.path.join(labels_dir, "cluster_labels.json")) as f:
         cluster_labels_raw = json.load(f)
     cluster_labels = {int(k): v for k, v in cluster_labels_raw.items()}
 

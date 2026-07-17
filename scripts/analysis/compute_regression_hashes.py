@@ -144,6 +144,19 @@ REGISTRY: list[dict] = [
         ],
     },
     {
+        # NCC-format alluvial variant. Registered so the cluster_labels.json
+        # path bug (ticket 0265 — read from --input dir, not DERIVED_TABLES_DIR)
+        # stays caught by the harness, like its plot_fig_alluvial sibling.
+        "name": "plot_ncc_alluvial",
+        "script": "figures/plot_ncc_alluvial.py",
+        "args": ["--output", "deliverables/_shared/figures/fig_ncc_alluvial.png",
+                 "--input", "data/derived/tables/tab_alluvial.csv"],
+        "deps": ["compute_clusters"],
+        "outputs": [
+            "deliverables/_shared/figures/fig_ncc_alluvial.png",
+        ],
+    },
+    {
         "name": "plot_fig_breakpoints",
         "script": "figures/plot_fig_breakpoints.py",
         "args": ["--output", "deliverables/_shared/figures/fig_breakpoints.png",
