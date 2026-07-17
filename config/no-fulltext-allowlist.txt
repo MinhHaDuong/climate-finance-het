@@ -12,11 +12,6 @@
 # paywalled books/articles needs bibCNRS/ISTEX access, not a swarm.
 
 # --- copyrighted books, no legitimate open-access edition ---
-aykut_dahan2015
-callon1998
-mackenzie2006
-merry2016
-north1990
 porter1995
 pottier2016
 power1997
