@@ -2,10 +2,13 @@
 Title: Gloss 'degree-preserving configuration-model null' in Appendix A.5
 Created: 2026-07-17
 Author: HDMX-coding-agent
+Closed: resolved: author-chosen gloss added at first use in appendix A.5
 
 --- log ---
 2026-07-17T13:19Z HDMX-coding-agent created
+2026-07-17T00:00Z HDMX-coding-agent note author chose gloss wording via AskUserQuestion: "(a randomized baseline network with the same node degrees, but random connections)" at first use (A.5, "Co-citation community separation" bullet). First-use-only placement, matching the pattern established in tickets 0243/0266. make check-fast: two pre-existing, unrelated failures confirmed via stash-diff (test_cited_works_have_local_fulltext / michalopoulos2017; test_yaml_path_is_data_dir). Em-dash ratchet/paragraph-cap tests pass; no new em-dashes.
 
+2026-07-17T13:30Z HDMX-coding-agent closed — resolved: author-chosen gloss added at first use in appendix A.5
 --- body ---
 
 ## Context
@@ -47,7 +50,7 @@ which references get co-cited together).
 
 ## Verification
 
-- [ ] The term reads as self-explanatory to a non-specialist on first
+- [x] The term reads as self-explanatory to a non-specialist on first
       encounter (author's own judgment call)
 
 ## Invariants
@@ -57,4 +60,4 @@ which references get co-cited together).
 
 ## Exit criteria
 
-- [ ] "degree-preserving configuration-model null" glossed in Appendix A.5
+- [x] "degree-preserving configuration-model null" glossed in Appendix A.5
