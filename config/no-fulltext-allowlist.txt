@@ -14,6 +14,11 @@
 # --- copyrighted books, no legitimate open-access edition ---
 pottier2016
 
+# --- paywalled journal articles, cited for corpus-provenance fact (citation-network
+# position), not for their argument, so not read in full before citing ---
+barrett2003participation
+barrett2006breakthrough
+
 # --- deferred by author (available, e.g. via Anna's Archive, not yet fetched) ---
 lee2004trust
 
