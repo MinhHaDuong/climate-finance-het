@@ -12,7 +12,6 @@
 # paywalled books/articles needs bibCNRS/ISTEX access, not a swarm.
 
 # --- copyrighted books, no legitimate open-access edition ---
-porter1995
 pottier2016
 power1997
 stodden2014implementing
