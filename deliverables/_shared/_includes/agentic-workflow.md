@@ -6,7 +6,7 @@ This part documents the human--AI collaboration framework used to build the pipe
 
 ### Dragon Dreaming for AI agents
 
-The project adopted Dragon Dreaming --- a participatory project management methodology originally designed for community projects [@villanueva2018dragon] --- as the organizing metaphor for human--AI collaboration. Its four-phase cycle (Dreaming, Planning, Doing, Celebrating) maps naturally onto the asymmetric capabilities of human--AI pairs: the human excels at vision and judgment (Dreaming, Planning), while the agent excels at disciplined execution (Doing). The explicit Celebrating phase, often absent from engineering methodologies like Scrum or Kanban, serves a specific function for AI agents: it forces reflection and memory consolidation before the context window is discarded. Every task passes through four phases:
+The project adopted Dragon Dreaming --- a participatory project management methodology originally designed for community projects [@croft2016dragondreaming] --- as the organizing metaphor for human--AI collaboration. Its four-phase cycle (Dreaming, Planning, Doing, Celebrating) maps naturally onto the asymmetric capabilities of human--AI pairs: the human excels at vision and judgment (Dreaming, Planning), while the agent excels at disciplined execution (Doing). The explicit Celebrating phase, often absent from engineering methodologies like Scrum or Kanban, serves a specific function for AI agents: it forces reflection and memory consolidation before the context window is discarded. Every task passes through four phases:
 
 1. **Dreaming.** Interactive discussion between human and agent. The human surfaces motivations, explores what success looks like, and brainstorms freely. No code, no commits. The deliverable is a shared vision.
 
@@ -64,7 +64,7 @@ The agent operates under a dedicated GitHub account (`HDMX-coding-agent`) with i
 
 ### Quantitative portrait
 
-Statistics in this section are computed from the repository at commit `817061c` (2026-03-16). The git history provides a quantitative picture of the collaboration. A growing literature examines AI-assisted research workflows [see @bara2025ai on AI-augmented systematic reviews; @lu2025sciscigpt on LLM agents for science-of-science], but few projects report granular commit-level data. We offer ours as a case study:
+Statistics in this section are computed from the repository at commit `817061c` (2026-03-16). The git history provides a quantitative picture of the collaboration. A growing literature examines AI-assisted research workflows [see @bara2025aibibliometric on AI-augmented systematic reviews; @shao2025sciscigpt on LLM agents for science-of-science], but few projects report granular commit-level data. We offer ours as a case study:
 
 - **472 commits** over 27 days. Of these, 344 (73%) were by the human author, 95 (20%) by the primary AI agent (`HDMX-coding-agent`), and 10 by a secondary AI tool (`copilot-swe-agent[bot]`, used briefly for triage). A further 23 were merge commits.
 - **305 commits (64%) carry a `Co-Authored-By` trailer**, indicating collaborative work where the human directed and the agent implemented. Only 28 agent commits (6%) were fully autonomous (no human co-authorship trailer). The dominant mode was collaboration, not delegation.
