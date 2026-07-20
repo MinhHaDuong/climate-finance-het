@@ -2,9 +2,11 @@
 Title: Data paper: deduplication weaknesses and per-procedure removal counts
 Created: 2026-07-20
 Author: HDMX-coding-agent
+Blocked-by: 0284
 
 --- log ---
 2026-07-20T09:00Z HDMX-coding-agent created
+2026-07-20T10:00Z HDMX-coding-agent note split counts-extraction into 0284; this ticket is prose only
 
 --- body ---
 ## Context
@@ -15,31 +17,28 @@ title+year dedup misses them too (dates and sometimes titles differ). Suggests
 incorporating the author variable. Asks for the number of duplicates removed
 by each procedure: (1) DOI-based, (2) title+year matching.
 
+The counts themselves are produced by ticket 0284 (pipeline artifact, possibly
+padme-side); this ticket is the manuscript revision that cites them.
+
 ## Relevant files
 
 - `deliverables/data-paper/data-paper.qmd` — Method section, dedup paragraph
-- Phase-1 dedup implementation in `scripts/` (locate the actual dedup step;
-  do not describe from memory)
-- `data/catalogs/run_reports/` — may already hold per-step counts
+- 0284's counts artifact (path recorded in that ticket on close)
 
 ## Actions
 
-1. Extract or instrument per-procedure dedup counts from the Phase-1 pipeline
-   (pipeline-traceable numbers only, per the manuscript-number-provenance
-   norm; if a Phase-1 rerun is needed, coordinate with the author — it runs
-   on padme).
-2. Add the counts and an honest discussion of WP-vs-published residual
-   duplicates to the paper.
-3. Evaluate (possibly as future work rather than implementation) author-aware
+1. Add the per-procedure counts (from 0284's artifact) and an honest
+   discussion of WP-vs-published residual duplicates to the paper.
+2. Evaluate (possibly as future work rather than implementation) author-aware
    dedup; state the decision and its rationale in the text or response letter.
 
 ## Test
 
-- The two counts quoted in the paper match an archived pipeline output.
+- The two counts quoted in the paper match 0284's archived artifact.
 
 ## Verification
 
-- [ ] Counts traceable to an archived run report or regenerated artifact
+- [ ] Counts traceable to 0284's artifact
 
 ## Invariants
 

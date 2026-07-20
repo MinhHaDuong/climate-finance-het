@@ -5,6 +5,7 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-07-20T09:00Z HDMX-coding-agent created
+2026-07-20T10:00Z HDMX-coding-agent note atomicity split: 0284/0285 (artifacts out of 0276/0277), 0286/0287 (author decisions out of 0277/0279)
 
 --- body ---
 ## Context
@@ -26,14 +27,18 @@ remarks; coverage check clean at filing time).
 ## Children
 
 - 0275 — OpenAlex limitations and pipeline robustness discussion (ED-01, R1-11, R1-16b)
-- 0276 — deduplication: discussion, WP-vs-published weakness, per-procedure counts (ED-01, R1-12)
-- 0277 — citation data quality: reference counts, GROBID, citation-network demonstration (R1-13, R1-14)
+- 0276 — deduplication discussion prose, cites 0284's counts (ED-01, R1-12)
+- 0277 — citation-quality prose + GROBID stance, cites 0285's counts (R1-13)
 - 0278 — added value and research directions in the conclusion (ED-02, R1-18)
-- 0279 — variables table and corpus CSV usability (ED-03, R1-19)
+- 0279 — generated variables-description table (ED-03)
 - 0280 — Zenodo package restructuring (ED-04)
 - 0281 — grey literature from national institutions (R1-06)
 - 0282 — minor wording fixes: WP series, non-English claim (R1-16a, R1-16c)
 - 0283 — response letter: point-by-point reply and summary of revisions (ED-05)
+- 0284 — per-procedure dedup removal counts artifact (R1-12)
+- 0285 — per-document reference-count distribution artifact (R1-13)
+- 0286 — citation-network figure: author decision, implement or decline (R1-14) [needs-human]
+- 0287 — corpus CSV layout: restructure or document, author decision (R1-19) [needs-human]
 
 ## Exit criteria
 

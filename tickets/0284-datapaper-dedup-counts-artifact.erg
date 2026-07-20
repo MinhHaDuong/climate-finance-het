@@ -1,0 +1,50 @@
+%erg 0.1
+Title: Data paper: extract per-procedure dedup removal counts as a pipeline artifact
+Created: 2026-07-20
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-20T10:00Z HDMX-coding-agent created split from 0276
+
+--- body ---
+## Context
+
+Split from 0276 (RDJ-26561 R&R, tracker 0274, remark R1-12): the referee asks
+how many duplicates each procedure removes — (1) DOI-based, (2) title+year
+matching. This ticket produces the *numbers* as a traceable artifact; 0276
+writes the prose that cites them. Split because obtaining the counts may
+touch Phase-1 instrumentation (padme, API-dependent, author-coordinated)
+while the prose is an ordinary manuscript PR.
+
+## Relevant files
+
+- Phase-1 dedup implementation in `scripts/` (locate the actual dedup step)
+- `data/catalogs/run_reports/` — counts may already exist there; check first
+- `scripts/schemas.py` — schema if a new CSV artifact is added
+
+## Actions
+
+1. Check existing run reports for per-procedure dedup counts.
+2. If absent, instrument the dedup step to log/emit them (per-procedure
+   breakdown), coordinating any Phase-1 rerun with the author — never
+   triggered from the manuscript build (phase separation).
+3. Land the counts as an archived artifact the paper can cite (run report or
+   small derived table with a Make target).
+
+## Test
+
+- The artifact regenerates deterministically given the same inputs; counts
+  sum consistently with total duplicates removed.
+
+## Verification
+
+- [ ] Counts artifact archived and referenced by path
+
+## Invariants
+
+- Phase separation; no hand-curated numbers.
+
+## Exit criteria
+
+- [ ] Per-procedure dedup counts exist as a pipeline-traceable artifact
+- [ ] 0276 unblocked with the artifact path recorded in its body or log
