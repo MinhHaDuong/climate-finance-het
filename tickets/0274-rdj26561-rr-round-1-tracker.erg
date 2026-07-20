@@ -1,0 +1,43 @@
+%erg 0.1
+Title: RDJ-26561 data paper revise-and-resubmit round 1 — tracker
+Created: 2026-07-20
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-20T09:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+The Research Data Journal for HSS returned a revise-and-resubmit decision on
+manuscript RDJ-26561, "A Curated Corpus of Climate Finance Literature,
+1990–2024" (`deliverables/data-paper/data-paper.qmd`). Coeditor Cédric Chambru,
+one referee report (two other invited referees never delivered). Editor:
+"close to being suitable for publication"; deadline **three months from the
+decision letter** — treat as due ~2026-10-20, email the editor if slipping.
+
+Sources are archived with text sidecars at
+`~/CNRS/papiers/sent/RDJ4HSS_Curated_Corpus_Climate_Finance/2026-07-20 decision/`
+(decision letter `rdj_26561_DLTR`, referee report `rdj_26561_report_1`).
+The remark ledger mapping every remark to a child ticket is
+`deliverables/data-paper/revision-rdj26561/ledger.dedup.jsonl` (15 distinct
+remarks; coverage check clean at filing time).
+
+## Children
+
+- 0275 — OpenAlex limitations and pipeline robustness discussion (ED-01, R1-11, R1-16b)
+- 0276 — deduplication: discussion, WP-vs-published weakness, per-procedure counts (ED-01, R1-12)
+- 0277 — citation data quality: reference counts, GROBID, citation-network demonstration (R1-13, R1-14)
+- 0278 — added value and research directions in the conclusion (ED-02, R1-18)
+- 0279 — variables table and corpus CSV usability (ED-03, R1-19)
+- 0280 — Zenodo package restructuring (ED-04)
+- 0281 — grey literature from national institutions (R1-06)
+- 0282 — minor wording fixes: WP series, non-English claim (R1-16a, R1-16c)
+- 0283 — response letter: point-by-point reply and summary of revisions (ED-05)
+
+## Exit criteria
+
+- [ ] All children closed
+- [ ] Revised manuscript + response letter resubmitted to RDJHSS before the deadline
+- [ ] Integration review: re-read the ledger, confirm every remark's covering
+      change actually landed in the resubmitted version

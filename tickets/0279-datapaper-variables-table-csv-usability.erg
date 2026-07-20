@@ -1,0 +1,53 @@
+%erg 0.1
+Title: Data paper: variables-description table and corpus CSV usability
+Created: 2026-07-20
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-20T09:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+RDJ-26561 R&R (tracker 0274), remarks ED-03, R1-19. Editor: add a table
+describing the variables of `climate_finance_corpus.csv`, placed after the
+dataset is described in the main text. Referee (R1-19): the CSV's layout — one
+main-information column followed by unstructured columns — makes manual
+exploration unpleasant; consider restructuring or at least documenting.
+
+## Relevant files
+
+- `deliverables/data-paper/data-paper.qmd` — Data section
+- `climate_finance_corpus.csv` production script (Phase 1/export) — column
+  ground truth; `scripts/schemas.py` if a Pandera schema exists
+- `deliverables/_shared/tables/` — where a generated table would land
+
+## Actions
+
+1. Generate the variables table from the CSV/schema itself (Make target +
+   script per Phase-2 rules — no hand-curated table), one row per column:
+   name, type, description, source.
+2. Insert it in data-paper.qmd after the dataset description.
+3. Decide on R1-19: restructure the CSV columns for human browsing vs keep
+   layout and document it via the table + a codebook in the Zenodo package
+   (coordinate with 0280). Restructuring changes the shipped data product —
+   author call.
+
+## Test
+
+- Table columns match the actual CSV header (a test comparing generated table
+  to the artifact).
+
+## Verification
+
+- [ ] Table regenerates from the pipeline; no drift from the shipped CSV
+
+## Invariants
+
+- No hand-curated data in the pipeline (Make rule).
+
+## Exit criteria
+
+- [ ] Variables table present in data-paper.qmd, generated not hand-written
+- [ ] R1-19 usability point answered (restructure or documented rationale)
+- [ ] Response-letter bullet drafted (feeds 0283)

@@ -1,0 +1,60 @@
+%erg 0.1
+Title: Data paper: OpenAlex limitations and how the pipeline addresses each
+Created: 2026-07-20
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-20T09:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+RDJ-26561 R&R (tracker 0274), remarks ED-01, R1-11 (with folded R1-07/R1-10),
+R1-16b. The referee: OpenAlex sources 95% of the corpus and carries metadata
+inconsistencies — incorrect citation assignments, missing abstracts,
+duplicates, missing full-text, query false positives. Both editor and referee
+ask for (a) a clear exposition of OpenAlex's limitations and (b) a mapping
+showing how each pipeline step addresses each limitation. The editor adds:
+name a concrete example of a "regional database" that could complement the
+corpus. R1-16b: OpenAlex sometimes stores full text or first sections in the
+abstract field, potentially biasing Figure 1 — say how this was handled
+(`is_boilerplate_abstract` and friends in `libs/openalex-corpus` are the
+likely existing answer; verify before claiming).
+
+## Relevant files
+
+- `deliverables/data-paper/data-paper.qmd` — Method / Quality-Biases sections
+- `deliverables/data-paper/revision-rdj26561/ledger.dedup.jsonl` — remark text
+- `libs/openalex-corpus/src/` — existing abstract-boilerplate handling
+- `scripts/` Phase-1 pipeline (`corpus_*`, `enrich_*`, `qa_*`) — ground truth
+  for what the pipeline actually does per limitation
+
+## Actions
+
+1. Draft a limitations-vs-mitigations exposition (prose or small table):
+   each known OpenAlex flaw → the pipeline step that mitigates it, or an
+   honest "not mitigated, affects X".
+2. Name one or two concrete regional/complementary databases (e.g. SciELO,
+   Garuda, CNKI — pick ones defensible for climate finance coverage).
+3. Address the abstract-field contamination point and its bearing on Figure 1.
+4. Stay within the 2,500-word body budget — trim elsewhere if needed.
+
+## Test
+
+- Every mitigation claimed in the new text is traceable to an actual pipeline
+  step (cite script/step names accurately).
+
+## Verification
+
+- [ ] Draft reviewed against remarks ED-01/R1-11/R1-16b point by point
+
+## Invariants
+
+- Methodological honesty norm: describe only what the pipeline actually does.
+
+## Exit criteria
+
+- [ ] data-paper.qmd discusses OpenAlex limitations and per-limitation
+      pipeline responses, names a regional-database example, and addresses
+      the abstract-contamination/Figure-1 point
+- [ ] Response-letter bullet drafted for these remarks (feeds 0283)

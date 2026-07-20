@@ -1,0 +1,63 @@
+%erg 0.1
+Title: Data paper: response letter, summary of revisions, resubmission package
+Created: 2026-07-20
+Author: HDMX-coding-agent
+Blocked-by: 0275
+Blocked-by: 0276
+Blocked-by: 0277
+Blocked-by: 0278
+Blocked-by: 0279
+Blocked-by: 0280
+Blocked-by: 0281
+Blocked-by: 0282
+
+--- log ---
+2026-07-20T09:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+RDJ-26561 R&R (tracker 0274), remark ED-05. The editor requires, with the
+revised paper: a summary of the main revisions and a point-by-point reply to
+the referee report and to the editor's own letter. Deadline three months from
+the decision (~2026-10-20); email Cédric Chambru if slipping. The paper will
+not necessarily return to the referees.
+
+## Relevant files
+
+- `deliverables/data-paper/revision-rdj26561/ledger.dedup.jsonl` — the
+  point-by-point skeleton (one reply per distinct remark)
+- Sibling tickets 0275–0282 — each drafts its response-letter bullet on close
+- Œconomia response-letter machinery (ticket 0152 lineage) — reuse the format
+- `~/CNRS/papiers/sent/RDJ4HSS_Curated_Corpus_Climate_Finance/` — where the
+  final letter and resubmission record file
+
+## Actions
+
+1. Assemble the point-by-point reply from the ledger: every distinct remark
+   gets a reply citing the revision that answers it (or a reasoned decline).
+2. Write the summary of main revisions.
+3. Voice: first person singular, aligned before showing the author
+   (letter-voice norm).
+4. Package the resubmission (revised PDF, reply, summary) and hand to the
+   author for submission via the journal platform; file records in the
+   papiers/ track folder.
+
+## Test
+
+- Coverage-style check: no ledger remark without a reply paragraph.
+
+## Verification
+
+- [ ] Point-by-point reply covers all 15 distinct remarks
+- [ ] Author reviewed and approved the letter before submission
+
+## Invariants
+
+- Letters are the author's voice; nothing submitted without author sign-off.
+
+## Exit criteria
+
+- [ ] Response letter + summary of revisions finalized
+- [ ] Resubmission package delivered to the author before the deadline
+- [ ] Submission record filed under papiers/sent/ track folder

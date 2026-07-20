@@ -1,0 +1,65 @@
+%erg 0.1
+Title: Data paper: citation data quality — reference counts, GROBID stance, network demonstration
+Created: 2026-07-20
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-20T09:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+RDJ-26561 R&R (tracker 0274), remarks R1-13, R1-14. The referee: OpenAlex
+citation assignments are often wrong (book citations attributed to reviews;
+reference lists empty or aberrant). Asks: did the author record the number of
+references cited by each document? How is the issue addressed? Deems the
+paper's own suggestion of full-text reference parsing (GROBID) "necessary".
+Also suggests (R1-14) presenting a citation network drawn from the database to
+demonstrate its potential and limitations.
+
+Arbitration note: the editor explicitly softened this — "I am not asking you
+to conduct these analyses" — and offered institution/co-author networks, text
+analysis, or a companion-paper reference as alternatives (see ED-02 → ticket
+0278). So a citation-network figure is one option, not an obligation; the
+non-negotiable core here is the citation-quality discussion and the
+per-document reference-count question.
+
+## Relevant files
+
+- `deliverables/data-paper/data-paper.qmd` — Quality/Biases + Data sections
+- `refined_citations.csv` contract + its producing scripts — what citation
+  data we actually ship
+- `deliverables/data-paper/revision-rdj26561/ledger.dedup.jsonl`
+
+## Actions
+
+1. Compute the per-document reference-count distribution from the shipped
+   citation data (Phase-2 style, deterministic) and report it, flagging the
+   empty/aberrant tails the referee predicts.
+2. Write the citation-quality discussion: what OpenAlex citation errors mean
+   for users of `citations.csv`.
+3. Decide GROBID stance: implemented now vs documented as necessary future
+   work — with rationale (author call if implementing; it is a large scope
+   increase for a data-paper revision).
+4. Decide whether to include a citation-network (or alternative) figure here
+   or leave the demonstration to 0278's conclusion text; coordinate to avoid
+   double-covering ED-02.
+
+## Test
+
+- Reference-count numbers traceable to a pipeline artifact.
+
+## Verification
+
+- [ ] Numbers regenerate deterministically from the contract files
+
+## Invariants
+
+- Phase separation; no hand-curated numbers.
+
+## Exit criteria
+
+- [ ] data-paper.qmd addresses citation-assignment quality and reports
+      per-document reference counts
+- [ ] GROBID stance stated explicitly in paper or response letter
+- [ ] Response-letter bullet drafted (feeds 0283)
