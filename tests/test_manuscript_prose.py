@@ -360,7 +360,7 @@ def test_mitchell_object_and_aid_apparatus_cited():
     assert "@mitchell1998" in section("a precise number"), (
         "Mitchell 1998 not cited in the introduction thesis"
     )
-    assert "@mitchell2002" in section("three disjoint traditions"), (
+    assert "@mitchell2002" in section("three separate traditions"), (
         "Mitchell 2002 not cited in the development-economics passage"
     )
 
@@ -406,7 +406,7 @@ def test_article43_to_bali_shift_is_concrete():
     ticket 0152's traceability ledger carry the full reasoning). The guard no
     longer requires a single-trigger claim.
     """
-    before = section("three disjoint traditions")
+    before = section("three separate traditions")
     assert "Annex II" in before, "Article 4.3 obligation not tied to Annex II"
     assert "Global Environment Facility" in before, (
         "incremental-cost mechanism (GEF) not named in the Article 4.3 passage"
@@ -425,7 +425,7 @@ def test_cdm_functioning_named():
     registering body (Executive Board) and the source of post-2012 demand (the
     EU ETS) — beyond the already-present CER / additionality / price-collapse
     detail. Presence check, survives rewrites."""
-    before = section("three disjoint traditions")
+    before = section("three separate traditions")
     assert "Executive Board" in before, "CDM Executive Board (registering body) not named"
     assert "Emissions Trading System" in before, (
         "post-2012 demand source (EU ETS) not named"

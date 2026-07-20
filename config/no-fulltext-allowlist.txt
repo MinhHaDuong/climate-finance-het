@@ -32,3 +32,6 @@ iisd2009enb
 
 # --- needs author verification: entry metadata questioned (see ticket 0188) ---
 marcussen2009
+
+# --- MIT Press book, no legal OA fulltext (checked MIT Press, OpenLibrary, OSTI, EPRI, S2 — 2026-07-20); the 1991 Energy Policy precursor article is paywalled ---
+manne_richels1992
