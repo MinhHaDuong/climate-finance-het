@@ -1,0 +1,86 @@
+%erg 0.1
+Title: Corpus v2: curated UN-system grey-literature layer (COP and pre-COP key documents)
+Created: 2026-07-20
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-20T11:00Z HDMX-coding-agent created author approved expansion within the UN-system frame (session 2026-07-20)
+
+--- body ---
+## Context
+
+RDJ-26561 R&R (tracker 0274), remark R1-06. Instead of only defending the
+grey-literature boundary (ticket 0281), the author decided to extend it
+within the existing international-institution frame: a curated layer of
+UN-system key documents. Candidate classes: COP/CMP/CMA decisions bearing on
+finance (Copenhagen $100bn, Paris Article 9 package, NCQG), Standing
+Committee on Finance reports — especially the Biennial Assessments, which
+define climate finance accounting — GCF/GEF/Adaptation Fund reports to COP,
+and pre-1995 INC negotiation documents. Order of magnitude 150–300 documents.
+
+Known data properties (assessed 2026-07-20, verify at harvest):
+- **No native abstracts** — derive abstract-equivalents (executive summaries,
+  decision preambles) via the existing abstract-reconstruction pathway,
+  flagged as reconstructed.
+- **Fulltext**: open PDFs from the UNFCCC document portal, six official
+  languages; no clean public API (expect scraping or manual bulk export).
+  Early material (INC, first COPs) is often scanned — OCR needed precisely
+  for the pre-2007 period the history cares about.
+- **No DOIs, no reference lists** — the layer joins the text/embedding layer
+  but stays outside citations.csv; disclose in the paper's bias section.
+- **No redistribution restriction** — derived text can ship in the deposit,
+  unlike publisher-restricted academic abstracts.
+- UN symbol (e.g. FCCC/CP/2009/11/Add.1) is the natural identifier.
+
+Sequencing warning: this is the largest work item of the revision and blocks
+the final corpus numbers (every {{< meta >}} count refreshes). Start early;
+prose tickets can draft against v1 numbers but the final render waits for
+this. The `in_v1` flag preserves v1 reproducibility for the Œconomia
+companion; the new corpus ships in 0280's new Zenodo version.
+
+## Relevant files
+
+- `scripts/catalog_*` — existing source harvesters, pattern for a new one
+- Grey-literature seed mechanism (16 curated reports + World Bank API) —
+  the layer extends this source, `from_grey` provenance flag
+- `scripts/enrich_*` — abstract-reconstruction pathway to extend
+- `config/` keyword taxonomy — finance-relevance rule for COP decisions
+- Ticket 0280 — the deposit version this layer ships in
+
+## Actions
+
+1. Freeze the inclusion rule (proposal: decisions and official reports
+   addressed to or produced by the COP bearing on climate finance) and the
+   key-document list; author validates both BEFORE harvesting.
+2. Build the harvester/curated importer: metadata (UN symbol, title, year,
+   language, body), PDF retrieval, text extraction with OCR fallback.
+3. Derive abstract-equivalents, flagged as reconstructed; embed via the
+   standard multilingual pipeline.
+4. Integrate as a Phase-1 source (provenance flag, dedup against existing
+   grey seeds — some of the 16 are likely UNFCCC documents), rerun Phase 1
+   on padme (coordinate with author; data flows padme→doudou).
+5. Refresh corpus numbers and the paper's source/bias sections; update
+   @tbl-sources and @tbl-quality.
+
+## Test
+
+- Harvester unit-tested on fixture metadata; dedup test proves an existing
+  UNFCCC seed report is not duplicated by the new layer.
+
+## Verification
+
+- [ ] Inclusion rule and document list validated by the author
+- [ ] Layer present in the regenerated corpus with correct provenance flags
+- [ ] v1 subset reproducible via `in_v1` after the rerun
+
+## Invariants
+
+- Phase separation (manuscript build never triggers Phase 1); `in_v1`
+  reproducibility; no hand-curated numbers in the paper.
+
+## Exit criteria
+
+- [ ] UN-system layer in the v2 corpus, counts refreshed in data-paper.qmd
+- [ ] Citation-network exclusion of the layer disclosed in the bias section
+- [ ] Response-letter bullet drafted: R1-06 answered by extension within the
+      frame + 0281's boundary rationale for national institutions
