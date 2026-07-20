@@ -40,7 +40,7 @@ remarks; coverage check clean at filing time).
 - 0285 — per-document reference-count distribution artifact (R1-13)
 - 0286 — citation-network figure: author decision, implement or decline (R1-14) [needs-human]
 - 0287 — corpus CSV layout: restructure or document, author decision (R1-19) [needs-human]
-- 0288 — corpus v2: curated UN-system grey-literature layer, COP/pre-COP key documents (R1-06) — critical path: blocks final corpus numbers
+- 0288 — corpus v2: curated international-institution key-documents layer, UNFCCC + OECD DAC sub-lists (R1-06) — critical path: blocks final corpus numbers
 
 ## Exit criteria
 

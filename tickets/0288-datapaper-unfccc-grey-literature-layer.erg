@@ -1,10 +1,11 @@
 %erg 0.1
-Title: Corpus v2: curated UN-system grey-literature layer (COP and pre-COP key documents)
+Title: Corpus v2: curated international-institution key-documents layer (UNFCCC + OECD DAC)
 Created: 2026-07-20
 Author: HDMX-coding-agent
 
 --- log ---
 2026-07-20T11:00Z HDMX-coding-agent created author approved expansion within the UN-system frame (session 2026-07-20)
+2026-07-20T12:00Z HDMX-coding-agent note broadened to include OECD DAC sub-list after corpus probe (author asked "harvest OECD too"); wholesale OECD harvest rejected as redundant
 
 --- body ---
 ## Context
@@ -12,25 +13,43 @@ Author: HDMX-coding-agent
 RDJ-26561 R&R (tracker 0274), remark R1-06. Instead of only defending the
 grey-literature boundary (ticket 0281), the author decided to extend it
 within the existing international-institution frame: a curated layer of
-UN-system key documents. Candidate classes: COP/CMP/CMA decisions bearing on
-finance (Copenhagen $100bn, Paris Article 9 package, NCQG), Standing
-Committee on Finance reports — especially the Biennial Assessments, which
-define climate finance accounting — GCF/GEF/Adaptation Fund reports to COP,
-and pre-1995 INC negotiation documents. Order of magnitude 150–300 documents.
+key documents in two sub-lists.
+
+**UNFCCC sub-list.** COP/CMP/CMA decisions bearing on finance (Copenhagen
+$100bn, Paris Article 9 package, NCQG), Standing Committee on Finance
+reports — especially the Biennial Assessments, which define climate finance
+accounting — GCF/GEF/Adaptation Fund reports to COP, and pre-1995 INC
+negotiation documents. Order of magnitude 150–300 documents.
+
+**OECD DAC sub-list** (added 2026-07-20 after a corpus probe). The refined
+corpus already holds 310 OECD-DOI (10.1787) works via OpenAlex, including
+the flagship accounting series (USD 100 Billion Goal 2015; Provided and
+Mobilised aggregate trends; DAC blended-finance guidance) and the Oxfam
+Shadow Report counter-literature — so NO wholesale OECD harvest. The gaps
+are the founding documents outside the DOI system: the DAC Statistical
+Reporting Directives establishing the Rio markers (1998 onwards — zero
+source directives in corpus, one academic paper about them), Development
+Co-operation Reports (zero hits), and early DAC/WP-STAT/ENVIRONET documents
+(corpus OECD-DOI coverage starts at 2000). Order of magnitude a few dozen
+documents, from the OECD OLIS/One archive.
 
 Known data properties (assessed 2026-07-20, verify at harvest):
 - **No native abstracts** — derive abstract-equivalents (executive summaries,
   decision preambles) via the existing abstract-reconstruction pathway,
   flagged as reconstructed.
-- **Fulltext**: open PDFs from the UNFCCC document portal, six official
-  languages; no clean public API (expect scraping or manual bulk export).
-  Early material (INC, first COPs) is often scanned — OCR needed precisely
-  for the pre-2007 period the history cares about.
+- **Fulltext**: open PDFs from the UNFCCC document portal (six official
+  languages) and OECD OLIS/One; no clean public API on either (expect
+  scraping or manual bulk export). Early material (INC, first COPs, 1990s
+  DAC directives) is often scanned — OCR needed precisely for the pre-2007
+  period the history cares about.
 - **No DOIs, no reference lists** — the layer joins the text/embedding layer
   but stays outside citations.csv; disclose in the paper's bias section.
+  (Recent OECD publications DO carry 10.1787 DOIs and are already in via
+  OpenAlex — the dedup test below guards against re-adding them.)
 - **No redistribution restriction** — derived text can ship in the deposit,
   unlike publisher-restricted academic abstracts.
-- UN symbol (e.g. FCCC/CP/2009/11/Add.1) is the natural identifier.
+- Document symbols (e.g. FCCC/CP/2009/11/Add.1, DCD/DAC(2016)3/FINAL) are
+  the natural identifiers.
 
 Sequencing warning: this is the largest work item of the revision and blocks
 the final corpus numbers (every {{< meta >}} count refreshes). Start early;
@@ -49,9 +68,10 @@ companion; the new corpus ships in 0280's new Zenodo version.
 
 ## Actions
 
-1. Freeze the inclusion rule (proposal: decisions and official reports
-   addressed to or produced by the COP bearing on climate finance) and the
-   key-document list; author validates both BEFORE harvesting.
+1. Freeze the inclusion rule (proposal: official documents produced by or
+   addressed to the COP or the OECD DAC that define, account for, or govern
+   climate finance) and the two key-document sub-lists; author validates
+   both BEFORE harvesting.
 2. Build the harvester/curated importer: metadata (UN symbol, title, year,
    language, body), PDF retrieval, text extraction with OCR fallback.
 3. Derive abstract-equivalents, flagged as reconstructed; embed via the
@@ -65,7 +85,8 @@ companion; the new corpus ships in 0280's new Zenodo version.
 ## Test
 
 - Harvester unit-tested on fixture metadata; dedup test proves an existing
-  UNFCCC seed report is not duplicated by the new layer.
+  UNFCCC seed report is not duplicated by the new layer, and that an
+  OECD work already present via its 10.1787 DOI is not re-added.
 
 ## Verification
 
@@ -80,7 +101,8 @@ companion; the new corpus ships in 0280's new Zenodo version.
 
 ## Exit criteria
 
-- [ ] UN-system layer in the v2 corpus, counts refreshed in data-paper.qmd
+- [ ] UNFCCC + OECD DAC layer in the v2 corpus, counts refreshed in
+      data-paper.qmd
 - [ ] Citation-network exclusion of the layer disclosed in the bias section
 - [ ] Response-letter bullet drafted: R1-06 answered by extension within the
       frame + 0281's boundary rationale for national institutions
