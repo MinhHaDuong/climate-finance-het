@@ -2,11 +2,13 @@
 Title: 7 prose-adherence tests regress guards from closed tickets 0138/0171/0189/0190/0194
 Created: 2026-07-17
 Author: HDMX-coding-agent
+Closed: author decision 2026-07-21: the six closed-ticket content pins are retired — per-remark verification of the response letter (ticket 0152 ledger, 61 rows author-signed, panel conformance audit) is the binding gate; positive content pins on old phrasings are not
 
 --- log ---
 2026-07-17T00:00Z HDMX-coding-agent created
 
 2026-07-17T14:03Z HDMX-coding-agent note 1 of 7 resolved: test_article43_to_bali_shift_is_concrete's AR4-trigger pin was not drift, it was the author's own deliberate content decision (2026-07-17 reread: attributing Bali's shift to a single report overstates a multicausal diplomatic conjuncture) that hadn't propagated to this guard yet. Updated the test to assert the GEF/adaptation policy-gap mechanism instead of the AR4 claim; green. 6 of 7 remain open.
+2026-07-21T11:46Z HDMX-coding-agent closed — author decision 2026-07-21: the six closed-ticket content pins are retired — per-remark verification of the response letter (ticket 0152 ledger, 61 rows author-signed, panel conformance audit) is the binding gate; positive content pins on old phrasings are not
 --- body ---
 ## Context
 Running `tests/test_manuscript_prose.py` on current main (verified with a

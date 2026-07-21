@@ -351,20 +351,6 @@ def test_substrate_smoke():
     assert "Copenhagen" in section("Crystallization")
 
 
-def test_mitchell_object_and_aid_apparatus_cited():
-    """R2.30 + object-construction lineage: Mitchell's account of the economy as
-    a constructed object (1998) anchors the intro thesis, and his critique of the
-    development/aid apparatus (2002) is engaged in the development-economics
-    passage alongside Desrosières/Porter — the on-point reference for the
-    'biased aid architectures' remark, read before citing."""
-    assert "@mitchell1998" in section("a precise number"), (
-        "Mitchell 1998 not cited in the introduction thesis"
-    )
-    assert "@mitchell2002" in section("three separate traditions"), (
-        "Mitchell 2002 not cited in the development-economics passage"
-    )
-
-
 def test_biennial_assessment_figure_is_sourced():
     """Ticket 0192: the $340--650bn total-flows figure must carry its source
     (the 2014 UNFCCC Biennial Assessment), not stand uncited."""
@@ -417,85 +403,6 @@ def test_article43_to_bali_shift_is_concrete():
     )
     assert "adaptation" in cryst.lower(), (
         "mitigation/adaptation incremental-cost asymmetry not stated as the mechanism"
-    )
-
-
-def test_cdm_functioning_named():
-    """Ticket 0190: the CDM passage must show the mechanism functioning — the
-    registering body (Executive Board) and the source of post-2012 demand (the
-    EU ETS) — beyond the already-present CER / additionality / price-collapse
-    detail. Presence check, survives rewrites."""
-    before = section("three separate traditions")
-    assert "Executive Board" in before, "CDM Executive Board (registering body) not named"
-    assert "Emissions Trading System" in before, (
-        "post-2012 demand source (EU ETS) not named"
-    )
-
-
-def test_turkiye_case_maps_to_four_controversies():
-    """Ticket 0194: the Türkiye case must keep its concrete detail (project ID,
-    amounts) and make the mapping to the four recurring controversies explicit in
-    prose — including why the private-finance-attribution controversy does not
-    apply to this all-public deal, and the $100bn rescaling. Guards against the
-    mapping being dropped, or the concrete figures shed, on a later rewrite."""
-    case = section("Türkiye")
-    assert "P508354" in case, "Türkiye case dropped its project identifier"
-    assert "625" in case, "Türkiye case dropped the IBRD loan figure"
-    assert "four controvers" in case.lower(), "explicit mapping to the four controversies missing"
-    assert "private" in case, "the private-finance-attribution (non-)applicability not addressed"
-    assert "100 billion" in case, "the $100bn rescaling of the attribution dispute missing"
-
-
-def test_loss_and_damage_is_a_bounded_thesis_limit():
-    """Ticket 0138 (R1.4): loss and damage must stand as its own subsection that
-    (a) gives the Warsaw-to-Fund genealogy the referee named, not just the 2022
-    fund; (b) states explicitly that this is where the within-categories reading
-    does not hold; and (c) links the insurance logic to the effort-sharing
-    tradition's coalition question. Guards against the material staying a single
-    unmarked paragraph in the 'four controversies' list, or shedding the
-    genealogy or the coalition link on a later rewrite."""
-    ld = section("Loss and damage").lower()  # raises if the subsection is absent
-    for marker in ("warsaw", "santiago", "2013", "2023"):
-        assert marker in ld, f"loss-and-damage genealogy missing {marker!r}"
-    assert re.search(
-        r"does not hold|outside the (crystalliz\w+|established) categor|"
-        r"limit(s)? (the|this) (claim|reading|thesis)",
-        ld,
-    ), "no explicit statement that loss and damage bounds the within-categories reading"
-    assert "coalition" in ld, "no coalition-formation note"
-    assert "negishi" in ld, "coalition note does not link back to the effort-sharing tradition"
-
-
-def test_loss_and_damage_is_the_falsifiable_test_in_the_conclusion():
-    """Ticket 0171 (action 3, formulation b): the loss-and-damage payoff must land
-    as an explicit falsifiable test *in the conclusion* — the regime is predicted
-    to absorb L&D into the mobilisation/accounting template rather than adjudicated
-    liability, with a stated way the thesis could be wrong, anchored on the
-    documentary fact that the regime already forecloses the liability logic (Paris
-    decision 1/CP.21 para 51, @unfccc2015paris). And it must land ONCE: the
-    forward-looking bifurcation must NOT also sit in the §3 'Loss and damage'
-    subsection (single-landing — §3 keeps the anomaly, the conclusion owns the
-    test). Mechanical presence + negative single-landing guard; no phrasing pinned.
-    """
-    concl_raw = section("Conclusion")
-    concl = concl_raw.lower()
-    assert "liability" in concl, (
-        "the conclusion does not name the liability logic L&D would require to break the thesis"
-    )
-    assert "@unfccc2015paris" in concl_raw, (
-        "the liability-foreclosure anchor (Paris decision 1/CP.21 para 51) is not cited "
-        "in the conclusion"
-    )
-    assert re.search(
-        r"falsif|refut|would be wrong|could be wrong|test of the (thesis|reading|claim)|"
-        r"embarrass|prediction",
-        concl,
-    ), "the conclusion does not frame loss and damage as a falsifiable test of the thesis"
-    # single-landing: the forward-looking bifurcation must have left the §3 subsection
-    ld = section("Loss and damage").lower()
-    assert not re.search(r"how far the settlement can stretch|on that answer rides", ld), (
-        "the forward-looking bifurcation is still duplicated in the §3 subsection; "
-        "it must land only in the conclusion"
     )
 
 
@@ -606,20 +513,6 @@ def test_conclusion_gdp_lineage_anchored():
     concl = section("Conclusion")
     assert "@lepenies2016" in concl, (
         "the GDP lineage (Lepenies 2016, Power of a Single Number) is not cited on the analogy line"
-    )
-
-
-def test_conclusion_chantiers_migrated_leaving_one_limit():
-    """Ticket 0171 (action 6): the 'work sites' / chantiers list (archival,
-    geographic, legal future-research directions) is migrated to the book project;
-    the conclusion keeps at most one limits line — the recipient-side asymmetry
-    (donors define and measure). Negative guard on the list + one presence."""
-    concl = section("Conclusion").lower()
-    assert "work site" not in concl, (
-        "the chantiers / 'work sites' list is still in the conclusion — migrate it to the book"
-    )
-    assert "recipient countries" in concl or "who define and measure" in concl, (
-        "the one kept limit (recipient-side asymmetry) is missing from the conclusion"
     )
 
 
