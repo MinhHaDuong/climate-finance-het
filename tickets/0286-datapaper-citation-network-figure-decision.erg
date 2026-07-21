@@ -1,56 +1,77 @@
 %erg 0.1
-Title: Data paper: citation-network figure — author decision, then implement or decline
+Title: Data paper: citation-network figure — showcase the traditions co-citation result
 Created: 2026-07-20
 Author: HDMX-coding-agent
-Label: needs-human
 
 --- log ---
 2026-07-20T10:00Z HDMX-coding-agent created split from 0277
+2026-07-21T09:00Z HDMX-coding-agent note author decided (session 2026-07-21): implement — reuse the traditions co-citation figure as a worked example; needs-human label removed
 
 --- body ---
 ## Context
 
 Split from 0277 (RDJ-26561 R&R, tracker 0274, remark R1-14): the referee
 suggests presenting a citation network drawn from the database "to
-demonstrate its potential and/or limitations". The editor explicitly
-softened this (ED-02): "I am not asking you to conduct these analyses" —
-alternatives include institution/co-author networks or simply expanding the
-conclusion (ticket 0278). Whether to add a figure at all is the author's
-call, hence needs-human.
+demonstrate its potential and/or limitations". The editor softened this
+(ED-02) but the author DECIDED to implement it, by presenting the Œconomia
+companion's co-citation analysis as a worked example of what the corpus
+enables. The pipeline already exists: `scripts/figures/plot_fig_traditions.py`
+renders `deliverables/_shared/figures/fig_traditions.png` (top-250 pre-2007
+references, Louvain communities, anchor-author matching; manuscript
+appendix A.5), backed by `scripts/_pre2007_traditions.py`.
 
-If declined, the response letter (0283) cites the editor's own alternative
-and points to the 0278 conclusion expansion — a reasoned decline closes this
-ticket; R1-14 stays covered.
+The finding to feature (author's framing, grounded in manuscript.qmd
+~line 114): the third intellectual tradition (international governance)
+shows a gap between narrative and citation practice. Negishi — the
+narrative anchor for welfare-weights burden-sharing — is absent from the
+top-250 pre-2007 references. The community the algorithm detects is
+anchored instead by North, DiMaggio and Finnemore, institutionalist and
+constructivist literature. And the economists of treaty design who ARE
+present (Barrett) co-cite with the FIRST tradition's carbon-pricing
+cluster, not with the institutionalists — a division of intellectual
+labour the network makes visible. This demonstrates both the corpus's
+potential (the finding) and its limitations (pre-2007 sparsity, <50
+works/year — the manuscript's own caveat), exactly what R1-14 asks for.
 
 ## Relevant files
 
 - `deliverables/data-paper/data-paper.qmd`
-- `refined_citations.csv` via `load_refined_citations()`
-- `scripts/figures/` — plot-script conventions, `save_figure()` mandatory
-- 0285's reference-count artifact — evidence for the potential/limitations
-  framing either way
+- `scripts/figures/plot_fig_traditions.py`, `scripts/_pre2007_traditions.py`
+  — existing producer; reuse as-is or a light data-paper variant
+- `deliverables/manuscript/manuscript.qmd` ~114 and appendix A.5 — the
+  source prose for the finding and the method summary
+- 0285's reference-count artifact — evidence for the limitations framing
 
 ## Actions
 
-1. Author decides: citation-network figure / alternative network / decline
-   with conclusion-only coverage.
-2. If a figure: Phase-2 compute+plot pair (separate scripts per rule 4),
-   Make-wired, seeded from config; insert with a takeaway caption.
-3. If declined: draft the decline rationale for the response letter.
+1. Reuse `fig_traditions.png` in the data paper (shared figures dir — no
+   new compute unless a variant is needed; if one is, keep the Phase-2
+   compute/plot separation and Make wiring).
+2. Write the surrounding data-paper prose: the figure as a general example
+   of corpus use; the Negishi-absent / North-anchored / Barrett-with-first-
+   tradition finding, condensed from the manuscript without duplicating it;
+   cite the Œconomia companion (links to 0278's added-value discussion).
+3. Takeaway caption; sparsity caveat stated with the figure.
+4. Draft the R1-14 response bullet (feeds 0283).
 
 ## Test
 
-- If implemented: plot script tested per existing figure-test conventions.
+- Figure referenced from data-paper.qmd resolves at render; if a variant
+  script is added, it is tested per existing figure-test conventions.
 
 ## Verification
 
-- [ ] Decision recorded in the log with the author's rationale
+- [ ] Figure and finding prose present in data-paper.qmd; render clean
+- [ ] Finding text matches the manuscript's A.5 result (no overclaim; the
+      pre-2007 sparsity caveat stated)
 
 ## Invariants
 
-- Compute/plot separation; `save_figure()`; config-driven parameters.
+- Compute/plot separation; `save_figure()`; config-driven parameters;
+  no hand-curated numbers.
 
 ## Exit criteria
 
-- [ ] Decision made and either the figure landed or the decline rationale
-      drafted for 0283
+- [ ] Citation-network figure landed in data-paper.qmd with the
+      traditions finding as worked example
+- [ ] R1-14 response bullet drafted (feeds 0283)
