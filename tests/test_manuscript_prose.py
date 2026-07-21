@@ -520,8 +520,11 @@ def test_title_and_abstract_lead_with_aggregate_birth():
     assert re.search(r"infrastructure|development-aid accounts|already (standing|in place)", ab), (
         "condition 2 (a pre-existing statistical infrastructure) missing from the abstract"
     )
-    assert "constraint" in ab, (
-        "condition 3 (economists under constraint) missing from the abstract"
+    # Condition 3 dropped the word "constraint" by author decision (2026-07-21:
+    # "working under constraint" was a wink to the Vannes conference title);
+    # the abstract now states the ingredient as economists supplying the devices.
+    assert "economists" in ab and re.search(r"devices|markers", ab), (
+        "condition 3 (economists supplying the counting devices) missing from the abstract"
     )
 
 
