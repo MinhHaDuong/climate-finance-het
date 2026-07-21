@@ -1,0 +1,53 @@
+%erg 0.1
+Title: Data paper: corpus CSV column layout — restructure or document, author decision
+Created: 2026-07-20
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-07-20T10:00Z HDMX-coding-agent created split from 0279
+
+--- body ---
+## Context
+
+Split from 0279 (RDJ-26561 R&R, tracker 0274, remark R1-19): the referee
+finds `climate_finance_corpus.csv` — one main-information column followed by
+unstructured columns — unpleasant to explore manually. Restructuring changes
+the shipped data product (column order/shape of a published Zenodo artifact
+and every downstream consumer), so it is an author decision, hence
+needs-human. 0279 delivers the variables table either way; this ticket
+settles whether the CSV itself changes.
+
+## Relevant files
+
+- `climate_finance_corpus.csv` producing script (Phase-1 export; locate it)
+- `scripts/schemas.py` — schema to update if columns change
+- Downstream consumers of the CSV (grep before deciding blast radius)
+- Ticket 0280 — Zenodo restructure; a new CSV shape must ship in the same
+  new deposit version
+
+## Actions
+
+1. Enumerate consumers and the blast radius of a column reorder/rename.
+2. Author decides: restructure (then implement, update schema + consumers +
+   tests, coordinate with 0280's deposit) or keep layout and answer R1-19
+   via the variables table + codebook, with the rationale in the response
+   letter.
+
+## Test
+
+- If restructured: schema validation + downstream tests green;
+  byte/content-level check of the regenerated CSV against expectations.
+
+## Verification
+
+- [ ] Decision recorded in the log with rationale
+
+## Invariants
+
+- Concept DOI stability on Zenodo; downstream pipeline unbroken.
+
+## Exit criteria
+
+- [ ] Decision made; either restructured CSV landed and shipped via 0280, or
+      documented-layout rationale drafted for 0283

@@ -1,0 +1,52 @@
+%erg 0.1
+Title: Data paper: restructure Zenodo package — raw inputs vs final data products
+Created: 2026-07-20
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-20T09:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+RDJ-26561 R&R (tracker 0274), remark ED-04. Editor: give the Zenodo package
+more structure so readers can distinguish raw data inputs (e.g.
+`bibcnrs_works.csv`) from the final data products of this paper
+(`climate_finance_corpus.csv`, `embeddings.npz`, `citations.csv`).
+
+## Relevant files
+
+- `build/` archive scripts (`build_*_archive.sh`) and `build/templates/` —
+  Phase-4 packaging that produces the deposit
+- Zenodo deposit record (see track folder
+  `~/CNRS/papiers/sent/RDJ4HSS_Curated_Corpus_Climate_Finance/2026-03-26 Zenodo/`)
+- `deliverables/data-paper/data-paper.qmd` — Related dataset / Data sections
+  referencing the DOI and package layout
+
+## Actions
+
+1. Restructure the package layout (e.g. `inputs/` vs `products/`
+   subdirectories, or clearly sectioned README + manifest) in the Phase-4
+   build scripts, so the structure is reproducible, not hand-arranged.
+2. Publish a new Zenodo version (new version DOI; concept DOI stable) —
+   uploading is the author's call; prepare everything up to the upload.
+3. Update the package description/README and the paper's references to the
+   package layout accordingly (coordinate with 0279's codebook decision).
+
+## Test
+
+- Archive build script produces the new layout deterministically.
+
+## Verification
+
+- [ ] Rebuilt package tree shows the raw-vs-product split
+- [ ] Paper text matches the new layout
+
+## Invariants
+
+- Phase 4 reads Phase 2/3 outputs only; deposit content stays pipeline-traceable.
+
+## Exit criteria
+
+- [ ] New package structure built and staged for Zenodo versioning
+- [ ] Response-letter bullet drafted (feeds 0283)

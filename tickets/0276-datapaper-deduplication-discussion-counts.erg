@@ -1,0 +1,52 @@
+%erg 0.1
+Title: Data paper: deduplication weaknesses and per-procedure removal counts
+Created: 2026-07-20
+Author: HDMX-coding-agent
+Blocked-by: 0284
+
+--- log ---
+2026-07-20T09:00Z HDMX-coding-agent created
+2026-07-20T10:00Z HDMX-coding-agent note split counts-extraction into 0284; this ticket is prose only
+
+--- body ---
+## Context
+
+RDJ-26561 R&R (tracker 0274), remarks ED-01 (dedup part), R1-12. The referee:
+DOI-based dedup misses WP-vs-published pairs (different or absent DOIs);
+title+year dedup misses them too (dates and sometimes titles differ). Suggests
+incorporating the author variable. Asks for the number of duplicates removed
+by each procedure: (1) DOI-based, (2) title+year matching.
+
+The counts themselves are produced by ticket 0284 (pipeline artifact, possibly
+padme-side); this ticket is the manuscript revision that cites them.
+
+## Relevant files
+
+- `deliverables/data-paper/data-paper.qmd` — Method section, dedup paragraph
+- 0284's counts artifact (path recorded in that ticket on close)
+
+## Actions
+
+1. Add the per-procedure counts (from 0284's artifact) and an honest
+   discussion of WP-vs-published residual duplicates to the paper.
+2. Evaluate (possibly as future work rather than implementation) author-aware
+   dedup; state the decision and its rationale in the text or response letter.
+
+## Test
+
+- The two counts quoted in the paper match 0284's archived artifact.
+
+## Verification
+
+- [ ] Counts traceable to 0284's artifact
+
+## Invariants
+
+- No hand-curated numbers; Phase separation (manuscript build never triggers
+  Phase 1).
+
+## Exit criteria
+
+- [ ] data-paper.qmd states duplicates removed by DOI-based and title+year
+      procedures and discusses the WP-vs-published limitation
+- [ ] Response-letter bullet drafted (feeds 0283)

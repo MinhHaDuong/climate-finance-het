@@ -1,0 +1,55 @@
+%erg 0.1
+Title: Data paper: grey literature from national institutions — justify or scope
+Created: 2026-07-20
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-20T09:00Z HDMX-coding-agent created
+2026-07-20T11:00Z HDMX-coding-agent note scope sharpened: the UN-system extension is 0288; this ticket defends the national-institution boundary specifically
+
+--- body ---
+## Context
+
+RDJ-26561 R&R (tracker 0274), remark R1-06 (with folded footnote R1-08). The
+referee: the corpus's grey literature apparently excludes documents from
+national institutions — government and parliamentary reports, economic
+analysis councils, central bank communications (cites Campiglio, Deyris,
+Romelli & Scalisi 2025, "Warning words in a warming world", European Economic
+Review, on central bank communication). Why? What is the justification? Was
+incorporating them considered, to broaden coverage and multilingual scope?
+
+## Relevant files
+
+- `deliverables/data-paper/data-paper.qmd` — Sources (2.1) and Quality/Biases
+  sections
+- Phase-1 source scripts (`catalog_*`) — the actual source-inclusion decisions
+- `docs/braindump-2026-03-18.md` — may hold prior scoping reasoning
+
+## Actions
+
+1. Reconstruct the actual scoping rationale for grey-literature sources (what
+   was included, why national-institution documents fall outside).
+2. Write the justification into the paper's sources/limitations discussion —
+   scope boundary stated as a design decision, with the extension path named
+   as future work (incorporating them for real is a major corpus expansion;
+   author call, likely out of scope for this revision).
+3. Consider citing the referee's central-bank-communication example as the
+   pointer for that future direction. Read-before-cite norm applies.
+
+## Test
+
+- n/a (prose); prose suite stays green.
+
+## Verification
+
+- [ ] Justification matches what Phase 1 actually ingests
+
+## Invariants
+
+- Methodological honesty; no claim of coverage the pipeline does not have.
+
+## Exit criteria
+
+- [ ] data-paper.qmd states and justifies the national-institution boundary
+      and names the extension path
+- [ ] Response-letter bullet drafted (feeds 0283)

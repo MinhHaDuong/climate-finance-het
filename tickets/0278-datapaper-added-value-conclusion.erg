@@ -1,0 +1,53 @@
+%erg 0.1
+Title: Data paper: added-value and research-directions discussion in the conclusion
+Created: 2026-07-20
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-20T09:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+RDJ-26561 R&R (tracker 0274), remarks ED-02, R1-18. Editor: expand the
+conclusion to state the dataset's added value and the research directions it
+enables — options include citation/institution/co-author networks, text
+analysis and content classification of the field's shifting focus, or a brief
+reference to the research questions of the Œconomia companion paper. No new
+analyses required. Referee (R1-18): without a focused research question the
+HET potential is hard to assess; the dataset is a good starting point but
+needs further cleaning before credible use — respond to this candidly.
+
+## Relevant files
+
+- `deliverables/data-paper/data-paper.qmd` — Concluding Remarks section
+- `deliverables/manuscript/manuscript.qmd` — companion paper's research
+  questions to reference
+- `deliverables/data-paper/revision-rdj26561/ledger.dedup.jsonl`
+
+## Actions
+
+1. Rewrite/extend the conclusion: concrete research directions the corpus
+   enables, anchored in the companion Œconomia paper's questions (three-act
+   periodization, crystallization of climate finance as an economic object).
+2. Acknowledge R1-18's point about task-specific cleaning honestly — added
+   value framed as reusable infrastructure, not a finished analysis.
+3. Hold the 2,500-word budget.
+
+## Test
+
+- Prose suite (`tests/test_manuscript_prose.py` guards where applicable) and
+  `make check-fast` stay green.
+
+## Verification
+
+- [ ] Conclusion covers added value + directions + companion-paper reference
+
+## Invariants
+
+- Corroboration framing: computation corroborates history, never the reverse.
+
+## Exit criteria
+
+- [ ] data-paper.qmd conclusion addresses ED-02 and R1-18
+- [ ] Response-letter bullet drafted (feeds 0283)

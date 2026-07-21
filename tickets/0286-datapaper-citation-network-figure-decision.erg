@@ -1,0 +1,56 @@
+%erg 0.1
+Title: Data paper: citation-network figure — author decision, then implement or decline
+Created: 2026-07-20
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-07-20T10:00Z HDMX-coding-agent created split from 0277
+
+--- body ---
+## Context
+
+Split from 0277 (RDJ-26561 R&R, tracker 0274, remark R1-14): the referee
+suggests presenting a citation network drawn from the database "to
+demonstrate its potential and/or limitations". The editor explicitly
+softened this (ED-02): "I am not asking you to conduct these analyses" —
+alternatives include institution/co-author networks or simply expanding the
+conclusion (ticket 0278). Whether to add a figure at all is the author's
+call, hence needs-human.
+
+If declined, the response letter (0283) cites the editor's own alternative
+and points to the 0278 conclusion expansion — a reasoned decline closes this
+ticket; R1-14 stays covered.
+
+## Relevant files
+
+- `deliverables/data-paper/data-paper.qmd`
+- `refined_citations.csv` via `load_refined_citations()`
+- `scripts/figures/` — plot-script conventions, `save_figure()` mandatory
+- 0285's reference-count artifact — evidence for the potential/limitations
+  framing either way
+
+## Actions
+
+1. Author decides: citation-network figure / alternative network / decline
+   with conclusion-only coverage.
+2. If a figure: Phase-2 compute+plot pair (separate scripts per rule 4),
+   Make-wired, seeded from config; insert with a takeaway caption.
+3. If declined: draft the decline rationale for the response letter.
+
+## Test
+
+- If implemented: plot script tested per existing figure-test conventions.
+
+## Verification
+
+- [ ] Decision recorded in the log with the author's rationale
+
+## Invariants
+
+- Compute/plot separation; `save_figure()`; config-driven parameters.
+
+## Exit criteria
+
+- [ ] Decision made and either the figure landed or the decline rationale
+      drafted for 0283
