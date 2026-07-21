@@ -1,0 +1,41 @@
+%erg 0.1
+Title: Türkiye case — CTF/IBRD concessionality as a range of real reference rates
+Created: 2026-07-17
+Author: HDMX-coding-agent
+Closed: author-directed reread revision, landed and sign-off given interactively this session
+
+--- log ---
+2026-07-17T00:00Z HDMX-coding-agent created
+2026-07-17T00:00Z HDMX-coding-agent note Author reread manuscript.qmd and proposed evaluating the CTF loan's grant element as a range bounded by two real reference rates (Türkiye's market rate 7.2-7.75% and IBRD's own ~3% rate) instead of the single OECD/DAC 6% convention. Computed precisely on CIF's documented standard concessional-loan terms (40yr maturity, 10yr grace, 0.25% service charge): grant element ~78% at market rate, ~47% at IBRD's own rate, ~71% at OECD 6% (which sits inside the range). Landed in manuscript.qmd @sec-transaction: IBRD/IDA acronyms defined at first use, CTF-loan paragraph rewritten with the range + footnote, climate-contribution paragraph extended with IBRD's no-dividends/IDA-transfer policy, preferred-creditor status, and reserve-growth facts (sourced via two research passes: IBRD Treasury/FY2025 Financial Statements, Landers/CGD Jan 2026). All text author-reviewed and amended across three rounds before landing. Summary table (@tbl-turkiye) CTF-loan cell updated from a single "three-quarters" figure to the 47-78% range.
+2026-07-17T00:00Z HDMX-coding-agent closed — content landed and confirmed with the author interactively across three revision rounds this session; no further action needed.
+--- body ---
+## Context
+Author's own reread of the near-final manuscript (2026-07-17, ahead of resubmission)
+flagged that the CTF loan's concessionality is evaluated against a single OECD/DAC
+reference rate, which sits awkwardly for a multilateral (World Bank) blend rather than
+bilateral aid. Proposed evaluating it as a range against two more concrete counterfactuals.
+
+## Relevant files
+- `deliverables/manuscript/manuscript.qmd` — `@sec-transaction` (Türkiye case), lines ~181-198
+
+## Actions
+Done — see log. No follow-up required; this ticket documents the change for traceability
+(git.md requires a `**Ticket:**` line on the PR, and content changes need a record of the
+author sign-off that authorized them).
+
+## Test
+No code test — prose-content change. `tests/test_manuscript_prose.py` run before/after
+(stash-isolated) confirms no new adherence failures introduced (7 pre-existing unrelated
+failures tracked separately in ticket 0269).
+
+## Verification
+- [x] Grant-element range computed on documented CIF loan terms, not guessed
+- [x] IBRD/IDA acronyms defined at first use
+- [x] Author reviewed and approved final text across three rounds
+
+## Invariants
+- No change to the IBRD-loan footnote/paragraph at line 194 (author's ask was scoped
+  to the CTF loan specifically, confirmed after an initial misread).
+
+## Exit criteria
+- Manuscript content lands with author sign-off (done).

@@ -58,13 +58,22 @@ def strip_comments(text: str) -> str:
 
 
 def clean(text: str) -> str:
-    """Reduce raw .qmd to authored prose (see module docstring)."""
+    """Reduce raw .qmd to authored prose (see module docstring).
+
+    French front matter (the Résumé paragraph and the Mots-clés line, required
+    by the Œconomia title page) is excluded: the prose guards encode
+    English-language rules, and French legitimately uses words ("mobilisation",
+    "organisations") and typography they forbid.
+    """
     text = strip_frontmatter(text)
     text = strip_comments(text)
     text = _FENCED_CODE_RE.sub("", text)
     text = _SHORTCODE_RE.sub("", text)
     return "\n".join(
-        line for line in text.splitlines() if not _NON_PROSE_LINE_RE.match(line)
+        line
+        for line in text.splitlines()
+        if not _NON_PROSE_LINE_RE.match(line)
+        and not line.startswith(("**Résumé.**", "**Mots-clés"))
     )
 
 
