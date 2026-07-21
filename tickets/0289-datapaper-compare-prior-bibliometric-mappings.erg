@@ -1,0 +1,74 @@
+%erg 0.1
+Title: Verify and strengthen the comparison to prior bibliometric mappings
+Created: 2026-07-21
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-21T08:00Z HDMX-coding-agent created author request: "Comparer/vérifier la comparaison de notre collection aux autres mappings"
+
+--- body ---
+## Context
+
+The manuscripts claim: "Bibliometric mappings of the climate and green
+finance literature exist, built on corpora of 315 to about 3,300 documents
+(Carè and Weber, 2023; Maria et al., 2023; Shang and Jin, 2023)". The
+supporting material lives in
+`deliverables/_shared/_includes/bibliometric-context.md`, which still
+carries the "AI-generated, not human-reviewed" marker. Ticket 0152
+web-verified the attributions (DOIs, corpus sizes, one phantom reference
+replaced), but the comparison itself was never checked empirically: we
+assert our ~31,000-work corpus is 10–100× larger and better validated
+without testing whether it actually CONTAINS what the prior mappings
+mapped.
+
+The check strengthens the added-value case the RDJ-26561 revision needs
+(editor ED-02, referee R1-18, tickets 0278/0283): "our corpus subsumes the
+prior mappings' source populations" is a verifiable claim, stronger than a
+size ratio.
+
+## Relevant files
+
+- `deliverables/_shared/_includes/bibliometric-context.md` — the comparison
+  text; goal includes clearing its unreviewed-by-design marker
+- `deliverables/data-paper/data-paper.qmd` and
+  `deliverables/manuscript/manuscript.qmd` — where the sentence is cited
+- `data/catalogs/refined_works.csv` via `pipeline_loaders` — our corpus
+- Prior-mapping corpora: Carè & Weber 2023 (315 papers, WoS 2004–2021),
+  Shang & Jin 2023 (2,311 WoS papers 2001–2022), Reis Maria et al. 2023
+  (3,275 RePEc articles, STM), Deb & Chen 2024 (621 WoS), Singhania et
+  al. 2023 (657 WoS)
+
+## Actions
+
+1. Verify each factual claim in bibliometric-context.md against the local
+   PDFs (read-before-cite norm; PDFs staged per ticket 0152).
+2. Empirical overlap check where feasible: reconstruct each study's query
+   (they publish their WoS/Scopus search strings) and estimate what share
+   of their corpus population our refined corpus covers — at minimum
+   replicate the query against OpenAlex and match DOIs into
+   refined_works. Report per-study coverage.
+3. Write the result into the include (and vars if a number is cited);
+   remove the unreviewed marker once human/author review done.
+4. Draft the response-letter line for the added-value reply (feeds 0278/0283).
+
+## Test
+
+- Overlap-check script (if built) unit-tested on fixture DOI lists;
+  numbers wired through the pipeline, not hand-pasted (provenance norm).
+
+## Verification
+
+- [ ] Every claim in bibliometric-context.md traced to a read source
+- [ ] Overlap coverage numbers reproducible from an archived script output
+
+## Invariants
+
+- Methodological honesty; no hand-curated numbers in the papers;
+  prose suite stays green.
+
+## Exit criteria
+
+- [ ] bibliometric-context.md verified, marker cleared after author review
+- [ ] Per-study coverage/overlap result available and cited where the
+      comparison is made
+- [ ] Response-letter bullet drafted (feeds 0283)
