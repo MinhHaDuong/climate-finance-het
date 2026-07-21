@@ -15,10 +15,17 @@ suggests presenting a citation network drawn from the database "to
 demonstrate its potential and/or limitations". The editor softened this
 (ED-02) but the author DECIDED to implement it, by presenting the Œconomia
 companion's co-citation analysis as a worked example of what the corpus
-enables. The pipeline already exists: `scripts/figures/plot_fig_traditions.py`
-renders `deliverables/_shared/figures/fig_traditions.png` (top-250 pre-2007
-references, Louvain communities, anchor-author matching; manuscript
-appendix A.5), backed by `scripts/_pre2007_traditions.py`.
+enables. The compute/plot pipeline already exists —
+`scripts/figures/plot_fig_traditions.py` (Make target
+`deliverables/_shared/figures/fig_traditions.png`, Makefile:458), backed by
+`scripts/_pre2007_traditions.py`: top-250 pre-2007 references, Louvain
+communities, anchor-author matching (method described in manuscript
+appendix A.5). CAUTION (verified 2026-07-21): the PNG has never been
+generated or committed, and no deliverable embeds it — the submitted
+manuscript carries only @tbl-traditions; the sole embed is the ORPHANED
+include `deliverables/_shared/_includes/cocitation-communities.md`
+("Electronic Supplement figure" that never shipped). First render may
+need layout fixes; eyeball before embedding (visual-verify norm).
 
 The finding to feature (author's framing, grounded in manuscript.qmd
 ~line 114): the third intellectual tradition (international governance)
@@ -44,9 +51,11 @@ works/year — the manuscript's own caveat), exactly what R1-14 asks for.
 
 ## Actions
 
-1. Reuse `fig_traditions.png` in the data paper (shared figures dir — no
-   new compute unless a variant is needed; if one is, keep the Phase-2
-   compute/plot separation and Make wiring).
+1. Generate the figure (`make deliverables/_shared/figures/fig_traditions.png`,
+   Phase 2, reads contract files), eyeball it, fix the plot script if the
+   first-ever render needs it, commit the artifact (handoff-artifact rule).
+   Decide the fate of the orphaned `cocitation-communities.md` include
+   (embed it somewhere, repurpose for the data paper, or delete).
 2. Write the surrounding data-paper prose: the figure as a general example
    of corpus use; the Negishi-absent / North-anchored / Barrett-with-first-
    tradition finding, condensed from the manuscript without duplicating it;
