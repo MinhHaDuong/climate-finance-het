@@ -2,6 +2,7 @@
 Title: resubmission rebuild verify version-bump and Zenodo HAL deposit
 Created: 2026-06-18
 Author: HDMX-coding-agent
+Closed: all actions done 2026-07-21: re-anon confirmed, make check green, Zenodo new version 10.5281/zenodo.21476165, HAL hal-05558422v2 SWORD-accepted (moderation pending), tag v1.1-oeconomia-revised pushed, author resubmitted on the Oeconomia platform
 
 --- log ---
 2026-06-18T08:50Z HDMX-coding-agent created
@@ -11,6 +12,7 @@ Author: HDMX-coding-agent
 2026-07-08T09:00Z HDMX-coding-agent note Blocked-by 0152 + 0162 restored: removing 0155 left the final step unblocked, visible as ready to autonomous sweeps. 0162 transitively carries 0134→0171→0172; 0152 must accompany the deposit.
 2026-07-09T13:01Z HDMX-coding-agent note blocker 0162 closed — Blocked-by removed.
 2026-07-20T13:31Z HDMX-coding-agent note blocker 0152 closed — Blocked-by removed.
+2026-07-21T15:23Z HDMX-coding-agent closed — all actions done 2026-07-21: re-anon confirmed, make check green, Zenodo new version 10.5281/zenodo.21476165, HAL hal-05558422v2 SWORD-accepted (moderation pending), tag v1.1-oeconomia-revised pushed, author resubmitted on the Oeconomia platform
 --- body ---
 ## Context
 v2.0.5 final step. Package and deposit the revised manuscript.
