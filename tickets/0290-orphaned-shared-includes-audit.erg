@@ -1,0 +1,54 @@
+%erg 0.1
+Title: Audit and settle the 17 orphaned includes in deliverables/_shared/_includes/
+Created: 2026-07-21
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-21T10:00Z HDMX-coding-agent created roar sweep after the 0286 false-premise fix
+
+--- body ---
+## Context
+
+While recording the 0286 decision, `cocitation-communities.md` turned out to
+be an orphaned include — embedded in no deliverable — and its figure
+reference misled a session into believing the manuscript carried a figure
+it never had. A sweep found the pattern is class-wide: every TOP-LEVEL file
+in `deliverables/_shared/_includes/` (17 files) is referenced by no
+deliverable; the technical report now composes only `_includes/techrep/`
+files. These are leftovers of the techrep rewrite/split. The set includes
+the AI-generated, never-human-reviewed includes flagged in ticket 0244.
+
+Orphans: agentic-workflow, alluvial-diagram, bibliometric-context,
+bimodality-analysis, changepoint-analysis, citation-genealogy,
+clustering-comparison, cocitation-communities, cop-topic-structure,
+core-vs-full-analysis, core-vs-full, embedding-generation, pca-scatter,
+structural-breaks, tab2_poles, tab_traditions, temporal-structure (.md).
+
+Already spoken for: `bibliometric-context.md` (ticket 0289 verifies it),
+`cocitation-communities.md` (ticket 0286 settles it) — exclude both here.
+
+## Actions
+
+1. For each remaining orphan: check git history for when it fell out of
+   use; decide keep-and-re-embed, move to conception/ as a note, or delete
+   (git history preserves content).
+2. Author arbitrates any include whose content is not clearly superseded
+   by the techrep/ set.
+3. Consider a hygiene guard: a test that every file in
+   `deliverables/_shared/_includes/` (non-recursive) is referenced by at
+   least one deliverable, so future orphans surface at CI time.
+
+## Verification
+
+- [ ] No unreferenced top-level include remains without an explicit
+      disposition decision
+
+## Invariants
+
+- Citation guard on _includes/ (0244) stays green; no deliverable render
+  breaks.
+
+## Exit criteria
+
+- [ ] Each orphan deleted, relocated, or re-embedded per decision
+- [ ] Guard added or explicitly declined in the log
