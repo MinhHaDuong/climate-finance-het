@@ -1,0 +1,63 @@
+%erg 0.1
+Title: Gloss 'degree-preserving configuration-model null' in Appendix A.5
+Created: 2026-07-17
+Author: HDMX-coding-agent
+Closed: resolved: author-chosen gloss added at first use in appendix A.5
+
+--- log ---
+2026-07-17T13:19Z HDMX-coding-agent created
+2026-07-17T00:00Z HDMX-coding-agent note author chose gloss wording via AskUserQuestion: "(a randomized baseline network with the same node degrees, but random connections)" at first use (A.5, "Co-citation community separation" bullet). First-use-only placement, matching the pattern established in tickets 0243/0266. make check-fast: two pre-existing, unrelated failures confirmed via stash-diff (test_cited_works_have_local_fulltext / michalopoulos2017; test_yaml_path_is_data_dir). Em-dash ratchet/paragraph-cap tests pass; no new em-dashes.
+
+2026-07-17T13:30Z HDMX-coding-agent closed — resolved: author-chosen gloss added at first use in appendix A.5
+--- body ---
+
+## Context
+
+During ticket 0266's roar-step-3 sweep (following the "z-score" gloss
+precedent from ticket 0243 / PR #1053), one more instance of the same
+anti-pattern turned up in appendix A.5, "Second question: the citation
+lineages": **"degree-preserving configuration-model null"**, used twice
+(lines ~315-316 as of PR #1059):
+
+> within-tradition co-citation share 0.89 against a degree-preserving
+> configuration-model null of 0.37 (z ~ 25, N = 1000 permutations)
+
+and again in the "Sparsity-conditioned null" bullet just below. The term
+is never defined in plain language. A general HET/STS reader has no cue
+for what a "configuration-model null" is, or why "degree-preserving"
+matters (it holds each reference's citation count fixed while randomizing
+which references get co-cited together).
+
+## Relevant files
+
+- `deliverables/manuscript/manuscript.qmd` — Appendix A.5, "Second
+  question: the citation lineages" (search "configuration-model")
+
+## Actions
+
+1. Author decides the gloss wording (matching the "z-score" precedent:
+   short parenthetical, plain language, no dash — see PR #1053 commit
+   message and PR #1059 for the pattern established on this same class
+   of finding).
+2. Apply via the same author-arbitrated process used in tickets 0243 and
+   0266 (no autonomous rewrite of manuscript prose).
+
+## Test
+
+- No red step — this is prose, not code. Guard: `make check-fast` +
+  `tests/test_manuscript_prose.py` stay green; no factual/numerical/
+  citation change; em-dash ratchet does not rise.
+
+## Verification
+
+- [x] The term reads as self-explanatory to a non-specialist on first
+      encounter (author's own judgment call)
+
+## Invariants
+
+- No factual, numerical, or citation change.
+- No new em-dashes.
+
+## Exit criteria
+
+- [x] "degree-preserving configuration-model null" glossed in Appendix A.5

@@ -29,5 +29,8 @@
   },
   "plot_fig_breakpoints": {
     "deliverables/_shared/figures/fig_breakpoints.png": "1883b4db7f5a77b058bc6ccef7a81a13889796ccaa06006b3fe945e3ee26608e"
+  },
+  "plot_ncc_alluvial": {
+    "deliverables/_shared/figures/fig_ncc_alluvial.png": "e334214390a7bebd2f140c6f2e9f5523db1c53588bcdaed5ed10d958e5da9696"
   }
 }

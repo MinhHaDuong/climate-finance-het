@@ -1,0 +1,68 @@
+%erg 0.1
+Title: load_cluster_labels() ignores --input, reads cluster_labels.json from fixed path
+Created: 2026-07-17
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-17T14:02Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Ticket 0262 (PR #1049) and ticket 0265 (PR #1063) fixed the same bug shape
+(secondary file `cluster_labels.json` hardcoded to `DERIVED_TABLES_DIR`,
+ignoring `--input`) in three inline call sites: `plot_fig_alluvial.py`,
+`plot_fig2_composition.py`, `plot_ncc_alluvial.py`. The `/gaze` altitude
+review on PR #1063 flagged a fourth, structurally different instance:
+`load_cluster_labels()` in `scripts/pipeline_loaders.py:230` reads from a
+fixed module-level `_CLUSTER_LABELS_PATH` constant unconditionally — no
+`io_args`/`--input` parameter at all — and is called by
+`scripts/figures/plot_heatmap_communities_clusters.py`.
+
+Unlike the three fixed instances, this one does not raise on a miss: it
+`warnings.warn`s and silently falls back to generic `"Cluster N"` labels.
+That makes it a worse instance of the bug class in one sense (wrong output
+with no error, not a crash) even though it is invisible to a naive
+"does it raise" test.
+
+## Relevant files
+
+- `scripts/pipeline_loaders.py` — `load_cluster_labels()`, ~line 230
+- `scripts/figures/plot_heatmap_communities_clusters.py` — sole call site,
+  ~line 255 (`cluster_short = load_cluster_labels()`)
+- `scripts/figures/plot_ncc_alluvial.py` — reference fix pattern (ticket 0265)
+
+## Actions
+
+1. Give `load_cluster_labels()` an optional path/labels-dir parameter so
+   callers with a redirected `--input` can pass the companion directory,
+   mirroring the `labels_dir` pattern from ticket 0265.
+2. Update `plot_heatmap_communities_clusters.py` to pass its `--input`-derived
+   directory through.
+3. Consider whether the silent generic-label fallback should stay a warning
+   or become a hard error when `--input` is explicitly given (a test harness
+   redirecting `--input` almost certainly expects the labels to be found,
+   not silently swapped for placeholders).
+
+## Test
+
+- A test that calls `load_cluster_labels()` (or runs
+  `plot_heatmap_communities_clusters.py`) with `--input` pointing at a tmp
+  directory containing `cluster_labels.json`, asserting the real labels are
+  used, not the generic `"Cluster N"` fallback.
+
+## Verification
+
+- [ ] Fix applied and confirmed against a redirected `--input` directory
+- [ ] `make check-fast` and `make lint` stay green
+
+## Invariants
+
+- No behavior change for the default (no `--input`) invocation path.
+
+## Exit criteria
+
+- [ ] `load_cluster_labels()` (or its caller) resolves `cluster_labels.json`
+      relative to `--input` when given
+- [ ] Regression coverage exists so this bug class cannot silently reappear
+      here

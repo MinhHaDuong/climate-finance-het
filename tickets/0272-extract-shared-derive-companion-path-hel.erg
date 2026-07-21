@@ -1,0 +1,77 @@
+%erg 0.1
+Title: Extract shared derive_companion_path() helper for --input-relative secondary-file reads
+Created: 2026-07-17
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-17T14:01Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Ticket 0262 (PR #1049) fixed `plot_fig_alluvial.py` and `plot_fig2_composition.py`
+so that a secondary file read (`cluster_labels.json`) is derived relative to
+`--input` rather than hardcoded to `DERIVED_TABLES_DIR`. Ticket 0265 (PR #1063)
+applied the identical fix to `plot_ncc_alluvial.py`. The `/gaze` review on
+PR #1063 (two independent cleanup agents — reuse and altitude — converged on
+this) flagged that the pattern is now a verbatim duplicate between two of the
+three fixed call sites:
+
+```python
+if io_args.input:
+    labels_dir = os.path.dirname(io_args.input[0])
+else:
+    labels_dir = DERIVED_TABLES_DIR
+```
+
+repeated verbatim in `scripts/figures/plot_fig_alluvial.py` and
+`scripts/figures/plot_ncc_alluvial.py`. `scripts/figures/plot_fig2_composition.py`
+is the third fixed call site but is differently shaped: it resolves labels via
+its own `_resolve_cluster_labels(labels_arg, csv_path, has_input)` helper (a
+three-way `--labels` / `--input`-relative / fixed-default chain that falls
+through to `load_cluster_labels()` — the ticket-0273 target function — as its
+final default), not the two-way `if/else` above. **This ticket's scope is the
+two verbatim call sites; `plot_fig2_composition.py`'s `_resolve_cluster_labels`
+is out of scope for the shared-helper extraction** (its resolution order and
+`--labels` override are not one-line-reducible to `derive_companion_path()`
+without changing behavior) — note it here only as adjacent context, not a
+third extraction target. (Corrected 2026-07-17, `/gaze` PR #1064 review: the
+original "verbatim triplicate" framing was inaccurate for this file.)
+
+## Relevant files
+
+- `scripts/figures/plot_fig_alluvial.py`
+- `scripts/figures/plot_ncc_alluvial.py`
+- `scripts/figures/plot_fig2_composition.py` — adjacent, out of scope (see Context)
+- `scripts/script_io_args.py` (or `scripts/utils.py`) — natural home for a
+  shared helper
+
+## Actions
+
+1. Add a `derive_companion_path(io_args, default_dir)` (or similar) helper to
+   the shared I/O module.
+2. Replace the two verbatim copies (`plot_fig_alluvial.py`,
+   `plot_ncc_alluvial.py`) with calls to the helper.
+3. No behavior change — same fallback semantics in every call site.
+
+## Test
+
+- Existing tests for the two call sites (including
+  `tests/test_ncc_alluvial_labels_path.py` from ticket 0265) must continue to
+  pass unchanged — this is a pure refactor.
+- Add a small unit test for the helper itself.
+
+## Verification
+
+- [ ] Helper extracted and used by both call sites
+- [ ] `make check-fast` and `make lint` stay green
+
+## Invariants
+
+- Pure refactor — no output-path or fallback-behavior change for either
+  script.
+
+## Exit criteria
+
+- [ ] One shared helper, two call sites reduced to a one-line call each
+- [ ] All pre-existing tests for the two scripts still pass

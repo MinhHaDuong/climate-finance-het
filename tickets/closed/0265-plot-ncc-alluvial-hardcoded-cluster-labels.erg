@@ -2,10 +2,12 @@
 Title: plot_ncc_alluvial.py reads cluster_labels.json from hardcoded DERIVED_TABLES_DIR, ignoring --input
 Created: 2026-07-15
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1063
 
 --- log ---
 2026-07-15T16:40Z HDMX-coding-agent created
 
+2026-07-17T13:53Z HDMX-coding-agent closed — autoclosed — PR #1063
 --- body ---
 ## Context
 
