@@ -1,0 +1,44 @@
+%erg 0.1
+Title: Extend argparse/io hygiene sweep to deliverables/**/ entry points
+Created: 2026-07-22
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-22T14:40Z HDMX-coding-agent created from 0289 adherence pass suggested_test
+
+--- body ---
+## Context
+
+`tests/test_script_hygiene.py` pins its enumeration to `scripts/`, so
+entry-point `.py` files under `deliverables/**/` (probe scripts such as
+`revision-rdj26561/probe_bib_vs_corpus.py` and
+`probe_prior_mappings_overlap.py`) escape the argparse/io-discipline sweep.
+They currently comply voluntarily; the rule is untested there. Surfaced by
+the 0289 `/verify-adherence` pass.
+
+## Relevant files
+
+- `tests/test_script_hygiene.py` — enumeration pinned to `SCRIPTS_DIR`
+- `deliverables/data-paper/revision-rdj26561/*.py` — the escaping scripts
+
+## Actions
+
+1. Add an adherence test enumerating `deliverables/**/*.py` entry points
+   (`__name__ == "__main__"` present) and asserting `ArgumentParser` use.
+
+## Test
+
+- The new adherence test itself; prove its teeth by feeding it a fixture
+  (or temporarily mutated probe) without argparse.
+
+## Verification
+
+- [ ] `make lint` green; mutation of a probe's argparse trips the test
+
+## Invariants
+
+- Existing hygiene tests unchanged; fast tier stays pure.
+
+## Exit criteria
+
+- [ ] deliverables/**/ entry points are inside the mechanical hygiene gate

@@ -1,0 +1,64 @@
+%erg 0.1
+Title: Capture process — cadence incremental harvest, add discovery-recall gate
+Created: 2026-07-22
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-22T17:30Z HDMX-coding-agent created from 0289 miss diagnosis, author request: improve capture, not just the result list
+
+--- body ---
+## Context
+
+The 0289 overlap probe found 11 unique climate finance works never captured
+by any source. Diagnosis (`deliverables/data-paper/revision-rdj26561/
+prior-mappings-overlap.md`, section "Why the never-captured escaped"): 7 of
+11 entered OpenAlex after our last harvest (2026-03-22) via retroactive
+repository backfills; the other 4 were indexed but invisible at harvest
+time (metadata backfilled later, or tier filtering at extraction). The
+snapshot decays even for its own period; the fix is process, not a
+hand-completed result list.
+
+## Relevant files
+
+- `scripts/harvest/catalog_openalex.py` — incremental machinery exists
+  (`from_created_date`, per-query state in
+  `data/pool/openalex/_query_dates.json`)
+- `deliverables/data-paper/revision-rdj26561/probe_prior_mappings_overlap.py`
+  — the recall probe to institutionalize
+- `tests/test_corpus_acceptance.py` — where a recall gate would live
+- Tracker 0274 / corpus-v2 track (0288) — process home
+
+## Actions
+
+1. Cadence the incremental OpenAlex harvest in the v2 runbook (quarterly
+   or per corpus rebuild), using the existing `from_created_date` state.
+2. Add a periodic `from_updated_date` catch-up pass: `from_created_date`
+   alone misses works whose metadata (abstract) was enriched after our
+   pull — one of the two observed escape channels.
+3. Promote the 0289 probe to a corpus-validate acceptance metric:
+   discovery recall >= 95% against the prior mappings' published queries
+   (external ground truth, independent of our vocabulary). Threshold in
+   config, not hardcoded.
+4. Do NOT inject the 11 missed DOIs directly; they re-enter through the
+   normal harvest + filter funnel (part of the tail is noise: duplicated
+   backdated Zenodo deposits).
+
+## Test
+
+- Recall-gate test on fixture populations (already unit-tested matching in
+  tests/test_prior_mappings_probe.py; add the threshold logic test).
+
+## Verification
+
+- [ ] v2 runbook names the harvest cadence and the updated-date pass
+- [ ] corpus-validate includes the discovery-recall metric
+
+## Invariants
+
+- Phase separation (no API calls from Phase 2+); make corpus/corpus-sync
+  only; acceptance thresholds never weakened silently.
+
+## Exit criteria
+
+- [ ] Incremental harvest cadence documented and applied to the v2 build
+- [ ] Discovery-recall gate active in corpus acceptance
