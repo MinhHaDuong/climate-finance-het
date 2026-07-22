@@ -1,6 +1,6 @@
 ---
 title: "Corpus Construction and Data Quality"
-subtitle: "Companion to 'Inventing Climate Finance' (submitted to *Oeconomia*)"
+subtitle: "Companion to 'Climate Finance: Birth of an Economic Aggregate' (revised and resubmitted to *Oeconomia*)"
 author: "Minh Ha-Duong"
 date: "2026-04-14"
 metadata-files: [../_shared/technical-report-vars.yml]
