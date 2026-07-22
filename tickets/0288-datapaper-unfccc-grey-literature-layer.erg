@@ -9,7 +9,7 @@ Author: HDMX-coding-agent
 2026-07-22T09:00Z HDMX-coding-agent note author angle: manuscript-bibliography coverage probe run — empirical basis for the inclusion rule; see body § Empirical basis
 2026-07-22T10:00Z HDMX-coding-agent note author decided (session 2026-07-22): party/bloc submissions AND negotiation-record commentary INCLUDED in the layer; carbon markets and ESG are deliberate corpus-scope exclusions — MacKenzie 2009 and Golka 2024 verified out-of-scope on the documents (not gaps)
 2026-07-22T11:00Z HDMX-coding-agent note author VALIDATED the amended inclusion rule and both sub-lists (class level). Framing constraint: these are new SOURCES added to the data pipeline — reproducible Phase-1 harvesters/importers with provenance and tests — NOT a one-shot harvest
-2026-07-22T23:00Z HDMX-coding-agent note BUILD phase implemented on branch t288-corpus-v2-layer: catalog_keydocs harvester, starter seed lists (47 UNFCCC + 14 OECD), merge/protection/disclosure wiring, dvc stages. Document-level enumeration completion + padme harvest split to child ticket 0293
+2026-07-22T23:00Z HDMX-coding-agent note BUILD phase implemented on branch t288-corpus-v2-layer: catalog_keydocs harvester, starter seed lists (47 UNFCCC + 14 OECD), merge/protection/disclosure wiring, dvc stages. Document-level enumeration completion + padme harvest split to child ticket 0304
 
 --- body ---
 ## Context
