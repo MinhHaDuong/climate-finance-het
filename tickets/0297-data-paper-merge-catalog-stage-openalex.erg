@@ -72,6 +72,12 @@ empty `ref_doi`).
 
 - Phase separation (no Phase-1 trigger from manuscript build); rule 9 loaders;
   `make check` green.
+- **Intra-corpus citation graph unchanged**: the added catalog-stage edges
+  carry an empty `ref_doi`, so the edge set {(source_doi, ref_doi) :
+  ref_doi ∈ corpus} used by the citation-layer analyses (divergence G*,
+  communities, genealogy) must be byte-identical before/after. Verify
+  explicitly — this is what keeps the fix a *counting* correction that does
+  not touch the frozen v1 analysis results (Œconomia v2.0.5 resubmitted).
 
 ## Exit criteria
 

@@ -1,0 +1,58 @@
+%erg 0.1
+Title: Corpus v2: dedup hardening — DOI-collision guard, non-empty-year key, author-aware WP/published matching
+Created: 2026-07-22
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-22T14:33Z HDMX-coding-agent created from dedup triage (v1 frozen during R&R; fixes deferred to v2, estimates in 0298)
+
+--- body ---
+## Context
+
+Triage outcome of the 2026-07-22 dedup error-rate diagnosis (session
+f373ecb2; estimates in 0298): three dedup defects are real but must NOT be
+fixed on corpus v1 — any change to catalog_merge's dedup logic alters
+unified_works and cascades into every archived artifact the R&R papers cite.
+They are quantified and *reported in the text* now (0276/0277 prose), and
+*fixed* in the corpus v2 rebuild (0288 lineage), where a full re-run is
+planned anyway.
+
+## Actions
+
+1. **DOI-collision guard** (FP, ~40 groups, ~5% of DOI removals): in the DOI
+   pass, refuse to merge same-DOI records whose normalized-title overlap is
+   near zero (threshold from config); keep both and flag for review. These
+   are OpenAlex DOI collisions between unrelated works.
+2. **Non-empty-year key** (FP, ~5-10 wrong merges): the title+year pass
+   currently merges records with EMPTY year across all unknown years
+   ("climate finance|" collapsed 6 distinct no-DOI works). Require a
+   non-empty year for the composite key, or add a same-author condition for
+   empty-year groups.
+3. **Author-aware WP/published matching** (FN, referee R1-12 suggestion):
+   third pass — exact-or-fuzzy title + normalized author lastname + year gap
+   <= 5 merges preprint/WP with the published version (~315 pairs, ~0.5% of
+   v1 corpus). Requires author-name normalization first: v1 metadata swaps
+   given/family names between sources (0298's C-finding). Decide and document
+   the canonical-version policy (keep published, redirect citations).
+4. Re-run the byte-compare discipline against v1 to enumerate exactly which
+   records each change adds/removes; archive the delta as a run report.
+
+## Test
+
+- Fixture triple: a DOI collision (same DOI, unrelated titles) stays split;
+  an empty-year generic-title pair stays split; a WP/published pair with
+  swapped author-name order merges.
+
+## Verification
+
+- [ ] Per-change delta counts in a run report, reconciling with 0298's
+      estimates (~40 / ~10 / ~315)
+
+## Invariants
+
+- v1 artifacts untouched — this lands only in the v2 lineage (0288).
+
+## Exit criteria
+
+- [ ] Three hardening changes implemented behind the v2 build
+- [ ] Delta vs v1 archived and cited in the data paper's revision notes
