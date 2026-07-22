@@ -8,6 +8,7 @@ Author: HDMX-coding-agent
 2026-07-20T12:00Z HDMX-coding-agent note broadened to include OECD DAC sub-list after corpus probe (author asked "harvest OECD too"); wholesale OECD harvest rejected as redundant
 2026-07-22T09:00Z HDMX-coding-agent note author angle: manuscript-bibliography coverage probe run — empirical basis for the inclusion rule; see body § Empirical basis
 2026-07-22T10:00Z HDMX-coding-agent note author decided (session 2026-07-22): party/bloc submissions AND negotiation-record commentary INCLUDED in the layer; carbon markets and ESG are deliberate corpus-scope exclusions — MacKenzie 2009 and Golka 2024 verified out-of-scope on the documents (not gaps)
+2026-07-22T11:00Z HDMX-coding-agent note author VALIDATED the amended inclusion rule and both sub-lists (class level). Framing constraint: these are new SOURCES added to the data pipeline — reproducible Phase-1 harvesters/importers with provenance and tests — NOT a one-shot harvest
 
 --- body ---
 ## Context
@@ -122,7 +123,9 @@ companion; the new corpus ships in 0280's new Zenodo version.
 
 ## Verification
 
-- [ ] Inclusion rule and document list validated by the author
+- [x] Inclusion rule and document list validated by the author (2026-07-22:
+      amended rule + both sub-lists at class level; the document-level list
+      materializes at harvest within the validated classes)
 - [ ] Layer present in the regenerated corpus with correct provenance flags
 - [ ] v1 subset reproducible via `in_v1` after the rerun
 
@@ -130,6 +133,9 @@ companion; the new corpus ships in 0280's new Zenodo version.
 
 - Phase separation (manuscript build never triggers Phase 1); `in_v1`
   reproducibility; no hand-curated numbers in the paper.
+- The layer enters as a durable pipeline source (author constraint,
+  2026-07-22): `catalog_*`-style harvesters/importers, rerunnable, with
+  provenance flags and tests — never a one-shot manual dump into the corpus.
 
 ## Exit criteria
 

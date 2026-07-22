@@ -6,6 +6,7 @@ Label: needs-human
 
 --- log ---
 2026-07-20T10:00Z HDMX-coding-agent created split from 0279
+2026-07-22T11:00Z HDMX-coding-agent note author deferred the decision (session 2026-07-22, batched decision round) — stays needs-human; blocks neither 0288 nor 0279 (variables table lands either way), but 0280's deposit should wait for it to avoid a double Zenodo version bump
 
 --- body ---
 ## Context
