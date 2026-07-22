@@ -1,0 +1,81 @@
+%erg 0.1
+Title: Data paper: merge catalog-stage OpenAlex references into citations.csv — 4519 docs falsely zero-reference
+Created: 2026-07-22
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-22T14:20Z HDMX-coding-agent created from zero-reference diagnosis (session f373ecb2, R1-13 follow-up)
+
+--- body ---
+## Context
+
+Diagnosing the 41.5% zero-reference headline (0285's artifact, remark R1-13)
+exposed a pipeline gap: `corpus_merge_citations.py` builds `citations.csv`
+from the enrich caches only (`crossref_refs.csv`, `openalex_refs.csv`, GROBID
+parses, `ref_matches.csv`), while the enrich harvester
+(`enrich_citations_openalex.py`) treats a DOI as *done* if it already appears
+as `source_doi` in `openalex_citations.csv` — the catalog-stage harvest. The
+two rules disagree: a DOI covered only at catalog stage is never re-queried
+AND never merged. Measured on current artifacts (doudou, 2026-07-22):
+
+- 4,519 of the 9,671 zero-reference DOI-bearing docs (46.7%) have reference
+  edges in `openalex_citations.csv` (171,981 edges, median 21 refs/doc) that
+  never reach `citations.csv` → `refined_citations.csv`.
+- Corrected headline if merged: zero-reference share drops 41.5% → 22.1%;
+  median refs 18 → 32, mean 36.2 → 44.0.
+- The remaining 5,152 true zeros (22.1%) concentrate in 2020–25 (4,526 of
+  5,152), grey/report genres, and non-English strata — a genuine OpenAlex
+  coverage phenomenon, correctly discussed under R1-13.
+
+`openalex_citations.csv` rows carry `ref_oa_id` only (no ref_doi/metadata).
+For *reference counting* they suffice as-is: `compute_reference_counts.py`
+counts edge rows regardless of `ref_doi` (335k shipped rows already have an
+empty `ref_doi`).
+
+## Relevant files
+
+- `scripts/corpus_merge_citations.py` — the merge that drops the layer
+- `scripts/harvest/enrich_citations_openalex.py` — done-check that skips it
+- `data/catalogs/openalex_citations.csv` — the orphaned harvest layer
+- `scripts/analysis/compute_reference_counts.py` + `deliverables/_shared/tables/tab_reference_counts.csv` — downstream artifact to regenerate
+- `tickets/0277-*.erg` — prose ticket that quotes the headline
+
+## Actions
+
+1. Map `openalex_citations.csv` into REFS_COLUMNS in `corpus_merge_citations.py`
+   (`ref_oa_id` → `source_id` as `openalex:<id>`, ref fields empty), concat,
+   dedup on (source_doi, source_id/ref_doi) so already-resolved edges are not
+   double-counted.
+2. Regenerate `citations.csv` → `refined_citations.csv` (corpus_align) →
+   `tab_reference_counts.csv`; DVC-commit (padme or dvc-capable session, with
+   0294's pending run_reports archival).
+3. Optionally (author call, API budget): resolve the ~172k `ref_oa_id`s to
+   DOIs/metadata via the enrich phase-2 path so the edges also serve the
+   citation graph, not just the counts.
+4. Update 0277's log with the corrected numbers before its prose PR quotes
+   the stale 41.5%.
+
+## Test
+
+- Unit test on `merge_citations`: a source present only in a catalog-stage
+  fixture appears in the merged output; an edge present in both caches is not
+  duplicated.
+
+## Verification
+
+- [ ] `tab_reference_counts.csv` regenerated; zero-share ≈ 22% and
+      n_zero_references ≈ 5,152 (exact values from the run)
+- [ ] Dedup guard: merged edge count ≤ sum of layer edge counts; no
+      (source_doi, source_id) pair duplicated
+
+## Invariants
+
+- Phase separation (no Phase-1 trigger from manuscript build); rule 9 loaders;
+  `make check` green.
+
+## Exit criteria
+
+- [ ] catalog-stage OpenAlex references flow into `citations.csv`
+- [ ] `tab_reference_counts.csv` regenerated from the corrected edge list
+- [ ] 0277 log updated with corrected numbers (R1-13 prose must not quote
+      41.5% uncorrected)
