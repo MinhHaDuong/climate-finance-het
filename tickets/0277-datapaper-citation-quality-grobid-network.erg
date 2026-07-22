@@ -9,6 +9,8 @@ Author: HDMX-coding-agent
 2026-07-22T13:50Z HDMX-coding-agent note 0285 delivered reference-count artifact at deliverables/_shared/tables/tab_reference_counts.csv (long metric/value; 41.5% of DOI-bearing docs have 0 refs, median 18, max 1536) — prose can quote it
 
 2026-07-22T12:28Z HDMX-coding-agent note blocker 0285 closed — Blocked-by removed.
+2026-07-22T14:25Z HDMX-coding-agent note CAUTION: 41.5% zero-ref headline is stale — 0300 found 4,519 of the 9,671 zeros have catalog-stage OpenAlex refs never merged into citations.csv; corrected share ~22.1%, median 32. Do not quote 41.5% until 0300 regenerates the artifact.
+
 --- body ---
 ## Context
 
