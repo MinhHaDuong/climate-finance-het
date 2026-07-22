@@ -1,0 +1,42 @@
+%erg 0.1
+Title: Phase-1 run-report coverage map: counts logged but not persisted (class ticket, instrument on demand)
+Created: 2026-07-22
+Author: HDMX-coding-agent
+Label: deferred
+
+--- log ---
+2026-07-22T12:37Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Roar sweep after PR #1082 (ticket 0284): the referee asked for dedup counts
+that existed only in `log.info` lines, forcing instrumentation + a stage
+rerun mid-R&R. The same latent shape exists in 16 Phase-1 scripts — they log
+row/removal counts but never call `save_run_report`, so their numbers are
+not pipeline-traceable if a manuscript ever needs them:
+
+catalog_bibcnrs, catalog_grey, catalog_istex, catalog_openalex,
+catalog_scispace, catalog_scopus, catalog_semanticscholar, corpus_filter,
+corpus_migrate_citations_cache, corpus_ref_match, enrich_embeddings,
+enrich_join, enrich_openalex_keywords (scripts/harvest/);
+corpus_merge_citations, enrich_dois, qa_near_duplicates (scripts/).
+
+This is deliberately NOT "instrument all 16 now" — that is speculative
+(YAGNI). It is the coverage map so the next referee/prose need for a
+Phase-1 number starts here instead of rediscovering the gap.
+
+## Actions (on demand, per script actually needed)
+
+1. When a manuscript or response letter needs a number from one of these
+   scripts, instrument that script only, per the catalog_merge pattern
+   (flat counters dict + save_run_report; PR #1082).
+2. Rerun offline where inputs are archived (byte-compare the data output
+   to prove reporting-only), else coordinate a padme run.
+
+## Exit criteria
+
+- [ ] Every Phase-1 number cited in a deliverable traces to an archived
+      run report (checked per need, not en masse); ticket closes when the
+      R&R cycle ends with no uncovered need remaining
