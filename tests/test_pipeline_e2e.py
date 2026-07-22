@@ -34,21 +34,30 @@ from utils import FROM_COLS, WORKS_COLUMNS, normalize_doi
 def _patched_merge_dirs(workspace):
     """Temporarily redirect catalog_merge and utils paths to a test workspace.
 
-    Patches BASE_DIR and CATALOGS_DIR on both catalog_merge and utils modules,
-    restoring originals on exit (even if the test raises).
+    Patches BASE_DIR and CATALOGS_DIR on catalog_merge, utils, and
+    pipeline_loaders, restoring originals on exit (even if the test raises).
+
+    pipeline_loaders must be patched too: ``save_run_report`` (called by
+    ``catalog_merge.main`` to persist the dedup run report) re-imports
+    ``CATALOGS_DIR`` from ``pipeline_loaders`` at call time, so without this the
+    report would leak into the real DVC-tracked ``data/catalogs/run_reports/``.
     """
     import catalog_merge as cm
+    import pipeline_loaders as pl
     import utils
     catalogs_dir = str(workspace / "data" / "catalogs")
-    orig = (cm.BASE_DIR, cm.CATALOGS_DIR, utils.BASE_DIR, utils.CATALOGS_DIR)
+    orig = (cm.BASE_DIR, cm.CATALOGS_DIR, utils.BASE_DIR, utils.CATALOGS_DIR,
+            pl.CATALOGS_DIR)
     cm.BASE_DIR = str(workspace)
     cm.CATALOGS_DIR = catalogs_dir
     utils.BASE_DIR = str(workspace)
     utils.CATALOGS_DIR = catalogs_dir
+    pl.CATALOGS_DIR = catalogs_dir
     try:
         yield catalogs_dir
     finally:
-        cm.BASE_DIR, cm.CATALOGS_DIR, utils.BASE_DIR, utils.CATALOGS_DIR = orig
+        (cm.BASE_DIR, cm.CATALOGS_DIR, utils.BASE_DIR, utils.CATALOGS_DIR,
+         pl.CATALOGS_DIR) = orig
 
 
 def _run_merge(workspace):

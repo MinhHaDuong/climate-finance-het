@@ -1,0 +1,85 @@
+%erg 0.1
+Title: Data paper: extract per-procedure dedup removal counts as a pipeline artifact
+Created: 2026-07-20
+Author: HDMX-coding-agent
+Closed: autoclosed — PR #1082
+
+--- log ---
+2026-07-20T10:00Z HDMX-coding-agent created split from 0276
+2026-07-22T11:38Z HDMX-coding-agent note raid Imagine/Plan: PASS — offline path confirmed, no padme rerun needed; plan appended
+2026-07-22T14:05Z HDMX-coding-agent note instrumented catalog_merge.py with deduplicate() returning per-procedure counters; run report catalog_merge__<run_id>.json emitted via save_run_report. Counters reconcile (records_total - doi_removed - title_year_removed - dropped_empty == records_unified). Byte-compare PASS: unified_works.csv md5 4b3c9c4bf0a54be5988017921350980f, identical to dvc.lock archived output on md5-verified inputs — dedup logic unchanged, reporting only.
+2026-07-22T14:05Z HDMX-coding-agent note DVC-commit deferral: run_reports/ is DVC-tracked; dvc is absent from the current offline env and the shared uv env cannot be synced mid-raid (active sibling worktrees). The artifact is regenerated deterministically by dvc repro catalog_merge on the next dvc-capable/padme session, which updates run_reports.dvc + dvc.lock. Values recorded in 0276 log for immediate prose use.
+
+2026-07-22T12:24Z HDMX-coding-agent note verify-gate REROLL cured: deferred DVC archival ticketed as 0294; test-hygiene leak ticketed as 0295
+2026-07-22T12:31Z HDMX-coding-agent closed — autoclosed — PR #1082
+--- body ---
+## Context
+
+Split from 0276 (RDJ-26561 R&R, tracker 0274, remark R1-12): the referee asks
+how many duplicates each procedure removes — (1) DOI-based, (2) title+year
+matching. This ticket produces the *numbers* as a traceable artifact; 0276
+writes the prose that cites them. Split because obtaining the counts may
+touch Phase-1 instrumentation (padme, API-dependent, author-coordinated)
+while the prose is an ordinary manuscript PR.
+
+## Relevant files
+
+- Phase-1 dedup implementation in `scripts/` (locate the actual dedup step)
+- `data/catalogs/run_reports/` — counts may already exist there; check first
+- `scripts/schemas.py` — schema if a new CSV artifact is added
+
+## Actions
+
+1. Check existing run reports for per-procedure dedup counts.
+2. If absent, instrument the dedup step to log/emit them (per-procedure
+   breakdown), coordinating any Phase-1 rerun with the author — never
+   triggered from the manuscript build (phase separation).
+3. Land the counts as an archived artifact the paper can cite (run report or
+   small derived table with a Make target).
+
+## Test
+
+- The artifact regenerates deterministically given the same inputs; counts
+  sum consistently with total duplicates removed.
+
+## Verification
+
+- [ ] Counts artifact archived and referenced by path
+
+## Invariants
+
+- Phase separation; no hand-curated numbers.
+
+## Exit criteria
+
+- [ ] Per-procedure dedup counts exist as a pipeline-traceable artifact
+- [ ] 0276 unblocked with the artifact path recorded in its body or log
+
+## Plan (raid 2026-07-22, Imagine findings)
+
+Dedup lives in `scripts/harvest/catalog_merge.py` (Phase-1 corpus-discover):
+DOI pass at lines ~188-196, title+year pass at ~198-202 via
+`_dedup_no_doi_records()`. Counts currently go only to `log.info` — never
+persisted; no `catalog_merge__*.json` exists in `data/catalogs/run_reports/`.
+
+Simplest path — no padme, no API, no author-coordinated rerun: the stage's
+dvc.yaml deps are the six already-archived per-source catalog CSVs (all local).
+
+1. Instrument `catalog_merge.py` with a flat `counters` dict (records before
+   dedup, with/without DOI split, doi_duplicates_removed,
+   title_year_duplicates_removed, dropped_empty_title, final total) and call
+   `save_run_report(counters, run_id, script_name)` per the `corpus_align.py`
+   pattern (`pipeline_io.py:142-169`). No new CSV, no Pandera schema, no new
+   Make target — the JSON run-report convention is the house artifact shape
+   (a new CSV+schema here would be premature abstraction).
+2. Rerun only this stage offline: `make corpus-discover` (wraps
+   `dvc repro catalog_merge`; never bare `dvc repro`).
+3. Byte-compare new `unified_works.csv` against the archived one — dedup
+   logic must be unchanged, only reporting added.
+4. Commit `run_reports/catalog_merge__*.json` + `run_reports.dvc` pointer +
+   `dvc.lock` stage-hash bump; record the artifact path in 0276's log.
+
+First test (red): unit test on a small synthetic frame through the dedup
+helpers asserting the counters sum: rows_in - doi_removed - title_year_removed
+- dropped_empty_title == rows_out, and that the run report carries the
+per-procedure keys.

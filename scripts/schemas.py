@@ -346,3 +346,21 @@ VenueConcentrationSchema = DataFrameSchema(
     strict=True,
     coerce=True,
 )
+
+# ---------------------------------------------------------------------------
+# Per-document reference-count distribution CSV (ticket 0285)
+# ---------------------------------------------------------------------------
+# Long format: one (metric, value) row per distribution statistic. Answers the
+# RDJ-26561 referee (R1-13) on empty/aberrant OpenAlex reference lists — bucket
+# counts (0, 1-5, 6-20, 21-50, 51-100, 100+) partition the DOI universe, plus
+# the zero-reference headline, the no-DOI exclusion count, and tail statistics
+# (median/mean/p5/p95/max). Mirrors the Pre2007CoverageSchema metric/value idiom.
+
+ReferenceCountsSchema = DataFrameSchema(
+    columns={
+        "metric": Column(str),
+        "value": Column(float, nullable=True),
+    },
+    strict=True,
+    coerce=True,
+)

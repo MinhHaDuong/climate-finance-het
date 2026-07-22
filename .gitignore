@@ -46,6 +46,10 @@ deliverables/_shared/tables/*
 # tables dir, not evicted to $(DERIVED) — declared here so the class guard treats
 # it as a deliverable, not a Phase-2 intermediate (ticket 0218).
 !deliverables/_shared/tables/tab_corpus_sources.csv
+# Per-document reference-count distribution is cited number-by-number in the
+# data paper (RDJ-26561 referee remark R1-13); commit its generator output so
+# every quoted value has an archived record (ticket 0285).
+!deliverables/_shared/tables/tab_reference_counts.csv
 # Generated -vars.yml, each in its deliverable folder (ticket 0226); the
 # manuscript's is pinned to v1.0 values and stays git-tracked.
 deliverables/_shared/technical-report-vars.yml

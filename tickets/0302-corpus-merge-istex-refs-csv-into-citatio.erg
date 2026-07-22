@@ -1,0 +1,40 @@
+%erg 0.1
+Title: Corpus: merge istex_refs.csv into citations.csv or declare it out-of-scope
+Created: 2026-07-22
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-22T16:39Z HDMX-coding-agent created from roar sweep of 0300's class (dropped harvest layer)
+
+--- body ---
+## Context
+
+Roar sweep after PR #1086 (ticket 0300: catalog-stage OpenAlex references
+never merged into citations.csv) looked for the same class — a harvested
+reference layer no merge consumes. One sibling found: `catalog_istex.py`
+writes `data/catalogs/istex_refs.csv` (15.5 MB, "cited references with
+DOIs", declared in dvc.yaml), and nothing reads it — `corpus_merge_citations.py`
+merges only the enrich caches (crossref, openalex, GROBID, ref_matches).
+
+Mitigating fact: ISTEX-sourced docs show only 5.2% zero-references (their
+refs arrive via the OpenAlex/Crossref path), so the impact is enrichment
+(possibly richer DOI'd edges), not a counting hole like 0300. It may also be
+legitimate to declare the layer out-of-scope — decide, don't let it dangle.
+
+## Actions
+
+1. Compare a sample of istex_refs edges against the merged citations.csv for
+   the same source DOIs: measure incremental edges.
+2. If material: map istex_refs into REFS_COLUMNS in corpus_merge_citations.py
+   (with dedup on (source_doi, ref_doi)) alongside 0300's fix.
+3. If immaterial: document the out-of-scope decision in the script docstring
+   and in 0303's contract-test allowlist.
+
+## Test
+
+- Covered by 0303's contract test once the decision is recorded.
+
+## Exit criteria
+
+- [ ] istex_refs.csv is either merged or explicitly declared out-of-scope
+      with the incremental-edge measurement recorded here

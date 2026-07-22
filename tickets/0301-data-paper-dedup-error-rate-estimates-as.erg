@@ -1,0 +1,80 @@
+%erg 0.1
+Title: Data paper: dedup error-rate estimates as citable artifact (R1-12 discussion)
+Created: 2026-07-22
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-22T14:20Z HDMX-coding-agent created from dedup error-rate pilot (session f373ecb2, R1-12 follow-up)
+
+--- body ---
+## Context
+
+Remark R1-12's core concern is not the removal counts (0284 delivered those)
+but the *errors* of the two exact dedup passes — WP-vs-published pairs that
+escape both. 0276 writes that discussion; per the number-provenance norm it
+can only quote pipeline-traceable numbers. A read-only pilot (2026-07-22,
+doudou, current catalogs) validated the design and produced these estimates:
+
+**False negatives (residual duplicates in refined_works, 30,987 docs):**
+- Exact-title + same first-author-lastname + different year (gap ≤5): 315
+  pairs. Sampled composition: ~half COP27 multi-journal editorial variants,
+  ~half genuine version pairs (SSRN/NBER/preprint → journal, dataset/chapter
+  editions) — the referee's predicted class, ≈0.5% of the corpus.
+- Adding fuzzy-title (Jaccard ≥0.7) same-author pairs: 927 distinct docs
+  (3.0%) in any candidate family — upper bound; the fuzzy tier is dominated
+  by the COP27 cluster (137 docs, already flagged in `near_duplicate_group`)
+  and by report series/editions that are NOT duplicates (OECD annual series,
+  World Bank country reports).
+- Author-aware dedup (referee's suggestion) would target the 315-pair tier;
+  the C-finding below shows first-author metadata is noisy (name-order swaps
+  across sources), so it needs normalized author matching.
+
+**False positives:**
+- DOI pass (833 removals): 113 of 797 groups have divergent titles; most are
+  benign (subtitle truncation, book/chapter, translations). ~40 groups with
+  near-zero title overlap are OpenAlex DOI collisions between unrelated works
+  (~5% of removals, ~0.13% of corpus).
+- Title+year pass (154 removals): 33 of 129 groups carry different author
+  lastnames, but most are name-order artifacts (e.g. given/family swapped);
+  genuine wrong merges ≈5–10 groups, concentrated where the key degrades:
+  generic titles with EMPTY year ("climate finance|" merged 6 distinct
+  works). The empty-year key merges same-title works across all unknown
+  years — identifiable weakness worth fixing or footnoting.
+
+## Relevant files
+
+- `scripts/harvest/catalog_merge.py` — the two passes under estimate
+- `scripts/qa_near_duplicates.py` — existing near-dup flag (refined stage)
+- `tickets/0276-datapaper-deduplication-discussion-counts.erg` — consumer
+
+## Actions
+
+1. Write `scripts/analysis/compute_dedup_error_estimates.py` (Phase-2,
+   parse_io_args, Pandera schema) reproducing the pilot: D1 exact-title
+   pairs, candidate-family doc count, DOI-collision group count, title+year
+   author-conflict count, with config-driven thresholds.
+2. Make target → `deliverables/_shared/tables/tab_dedup_error_estimates.csv`
+   (long metric/value, committed artifact).
+3. Record the artifact path + headline numbers in 0276's log.
+4. Author call (0276 prose): quote point estimates with the upper bound, and
+   decide whether the empty-year key fix lands now or as future work.
+
+## Test
+
+- Fixture with a known WP/published pair, a DOI collision, and an empty-year
+  generic-title merge; assert each counter picks up exactly its case.
+
+## Verification
+
+- [ ] Artifact regenerates deterministically from current catalogs
+- [ ] Numbers within ±10% of the pilot values above (data unchanged)
+
+## Invariants
+
+- Read-only over catalogs (no Phase-1 trigger); rule 9 loaders where contract
+  files are read; `make check` green.
+
+## Exit criteria
+
+- [ ] `tab_dedup_error_estimates.csv` exists with the FN/FP counters
+- [ ] 0276 unblocked with artifact path in its log
