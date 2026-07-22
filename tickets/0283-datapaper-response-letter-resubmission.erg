@@ -9,9 +9,7 @@ Blocked-by: 0278
 Blocked-by: 0279
 Blocked-by: 0280
 Blocked-by: 0281
-Blocked-by: 0282
 Blocked-by: 0284
-Blocked-by: 0285
 Blocked-by: 0286
 Blocked-by: 0287
 Blocked-by: 0288
@@ -22,6 +20,8 @@ Blocked-by: 0289
 2026-07-20T10:00Z HDMX-coding-agent note added blockers 0284-0287 from the atomicity split
 2026-07-20T11:00Z HDMX-coding-agent note added blocker 0288 (UN-system corpus layer refreshes final numbers)
 
+2026-07-22T12:27Z HDMX-coding-agent note blocker 0282 closed — Blocked-by removed.
+2026-07-22T12:28Z HDMX-coding-agent note blocker 0285 closed — Blocked-by removed.
 --- body ---
 ## Context
 

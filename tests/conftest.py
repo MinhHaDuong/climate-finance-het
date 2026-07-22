@@ -32,6 +32,14 @@ GOLDEN_DIR = os.path.join(FIXTURES_DIR, "golden")
 # path-injection hack is retired. SCRIPTS_DIR remains for run_compute() below,
 # which builds an absolute path to a script it launches as a subprocess.
 
+# Class-level guard (ticket 0263): put the source roots on this process's own
+# PYTHONPATH so every subprocess a test spawns inherits them, exactly as under
+# make's export. Retiring the stale openalex-corpus wheel (0253) revealed 38
+# tests across 9 files whose subprocess env forgot source_root_env(); this one
+# line closes the class instead of patching each call site — per-call
+# source_root_env() remains correct and takes precedence where used.
+os.environ["PYTHONPATH"] = source_root_env()["PYTHONPATH"]
+
 
 # ---------------------------------------------------------------------------
 # Fast-path tier guards (ticket 0216)

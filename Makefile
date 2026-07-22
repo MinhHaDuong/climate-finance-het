@@ -246,6 +246,9 @@ corpus-validate: $(REFINED)
 deliverables/_shared/tables/tab_citation_coverage.md: scripts/figures/export_citation_coverage.py scripts/utils.py $(REFINED)
 	$(PYTHON) $< --output $@
 
+deliverables/_shared/tables/tab_reference_counts.csv: scripts/analysis/compute_reference_counts.py scripts/utils.py $(REFINED) $(REFINED_CIT)
+	$(PYTHON) $< --output $@
+
 deliverables/_shared/tables/tab_venues.md: scripts/figures/export_tab_venues.py scripts/utils.py $(REFINED) $(DERIVED)/tab_pole_papers.csv
 	$(PYTHON) $< --output $@ --pole-papers $(DERIVED)/tab_pole_papers.csv
 
@@ -257,6 +260,7 @@ deliverables/_shared/tables/tab_languages.md: scripts/figures/export_language_ta
 
 corpus-tables: deliverables/_shared/tables/tab_corpus_sources.csv deliverables/_shared/tables/tab_corpus_sources.md \
                deliverables/_shared/tables/tab_citation_coverage.md \
+               deliverables/_shared/tables/tab_reference_counts.csv \
                deliverables/_shared/tables/tab_languages.md
 
 # ── Statistics (computed from pipeline outputs) ──────────
