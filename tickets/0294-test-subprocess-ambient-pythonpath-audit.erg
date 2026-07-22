@@ -1,0 +1,54 @@
+%erg 0.1
+Title: Audit test subprocesses for ambient-PYTHONPATH assumption
+Created: 2026-07-22
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-22T14:55Z HDMX-coding-agent created after fixing test_parameterize_works_paths (0289 gate)
+
+--- body ---
+## Context
+
+`test_parameterize_works_paths.py::test_dry_run_uses_custom_input` launched a
+script subprocess with `cwd=tmp_path` and no `source_root_env()`, so
+`import openalex_corpus` only resolved through a leftover wheel in the shared
+primary venv — a fresh worktree venv exposed the failure (0289 make check
+gate, fixed inline on that branch). Rule 0253 says source roots are never
+assumed ambient; other test files launch subprocesses without
+`source_root_env()` and may carry the same latent defect, masked the same
+way. The defect class needs: subprocess runs a `scripts/*.py` with cwd away
+from the repo root, and the script transitively imports `openalex_corpus`.
+
+## Relevant files
+
+- `tests/_source_roots.py` — the helper subprocess launches must use
+- `tests/test_io_discipline.py`, `tests/test_pipeline_e2e.py`,
+  `tests/test_bias_flag.py`, and ~25 other files with `subprocess.run`
+  and no `source_root_env` import
+
+## Actions
+
+1. Enumerate test subprocess launches of `scripts/*.py`; classify by cwd and
+   env handling.
+2. Pass `env=source_root_env()` where missing; leave non-Python launches
+   (ruff, make, git hooks) alone.
+3. Consider an adherence guard: a grep test failing on
+   `subprocess.run([PYTHON, .*scripts` without `source_root_env` in the
+   same file.
+
+## Test
+
+- Run the touched integration tests from a venv without the openalex-corpus
+  wheel (any fresh worktree env) — they must pass.
+
+## Verification
+
+- [ ] Touched tests green in a fresh worktree venv
+
+## Invariants
+
+- No test semantics change; only subprocess env plumbing.
+
+## Exit criteria
+
+- [ ] No test subprocess relies on ambient PYTHONPATH or a leftover wheel

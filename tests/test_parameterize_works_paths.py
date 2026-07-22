@@ -17,6 +17,8 @@ import sys
 
 import pytest
 
+from _source_roots import source_root_env
+
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 PYTHON = sys.executable
 
@@ -61,7 +63,8 @@ class TestEnrichDoisCLI:
         result = subprocess.run(
             [PYTHON, os.path.join(SCRIPTS_DIR, "enrich_dois.py"),
              "--dry-run", "--works-input", str(csv)],
-            capture_output=True, text=True, cwd=tmp_path
+            capture_output=True, text=True, cwd=tmp_path,
+            env=source_root_env(),
         )
         combined = result.stdout + result.stderr
         assert "custom_input.csv" in combined or "1 works" in combined or \
