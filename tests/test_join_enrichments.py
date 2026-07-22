@@ -357,3 +357,39 @@ def test_join_row_count_unchanged(enrichment_dir):
     base = pd.read_csv(enrichment_dir / "unified_works.csv")
     result = pd.read_csv(output_path)
     assert len(result) == len(base)
+
+
+def test_reconstructed_abstract_status(tmp_path):
+    """Ticket 0288: rows whose abstract_provenance marks a reconstructed
+    abstract-equivalent get abstract_status='reconstructed', not 'original' —
+    the disclosure flag the data paper's quality section relies on. Curated
+    hand-written abstracts stay 'original'."""
+    from enrich_join import join_enrichments
+
+    unified = pd.DataFrame([
+        {"source": "unfccc", "source_id": "FCCC/CP/2009/11/Add.1", "doi": "",
+         "title": "COP15 decisions", "year": "2009",
+         "language": "en", "abstract": "Takes note of the Copenhagen Accord.",
+         "abstract_provenance": "reconstructed:lead"},
+        {"source": "unfccc", "source_id": "ENB/12/459", "doi": "",
+         "title": "ENB COP15 summary", "year": "2009",
+         "language": "en", "abstract": "Hand-curated abstract.",
+         "abstract_provenance": "curated"},
+        {"source": "openalex", "source_id": "W1", "doi": "10.1234/a",
+         "title": "A paper", "year": "2020",
+         "language": "en", "abstract": "A normal academic abstract.",
+         "abstract_provenance": ""},
+    ])
+    unified_path = tmp_path / "unified_works.csv"
+    unified.to_csv(unified_path, index=False)
+    cache_dir = tmp_path / "enrich_cache"
+    cache_dir.mkdir()
+    (cache_dir / "abstract_summaries_cache.jsonl").write_text("")
+
+    out = tmp_path / "enriched_works.csv"
+    join_enrichments(unified_path=str(unified_path), output_path=str(out),
+                     cache_dir=str(cache_dir))
+    result = pd.read_csv(out).set_index("source_id")
+    assert result.loc["FCCC/CP/2009/11/Add.1", "abstract_status"] == "reconstructed"
+    assert result.loc["ENB/12/459", "abstract_status"] == "original"
+    assert result.loc["W1", "abstract_status"] == "original"
