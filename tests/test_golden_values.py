@@ -32,6 +32,18 @@ ALL_METHODS = sorted(METHODS.keys())
 # intentionally padme-only (@pytest.mark.slow). See ticket 0123 for investigation.
 ATOL = 1e-6
 
+# S3/S4 follow the torch backend, so their goldens only reproduce on GPU.
+# Measured on doudou (CPU, 2026-07-22, ticket 0263): S3 shifts every value
+# by up to 1.8e-3 (random-projection path), S4 drifts 2/32 values by ~6e-6.
+# Environmental, not code drift — skip on CPU instead of failing forever.
+GPU_SENSITIVE_METHODS = {"S3_sliced_wasserstein", "S4_frechet"}
+try:
+    import torch
+
+    GPU_AVAILABLE = torch.cuda.is_available()
+except ImportError:
+    GPU_AVAILABLE = False
+
 from conftest import run_compute as _run_compute
 
 
@@ -41,6 +53,12 @@ class TestGoldenValues:
 
     @pytest.mark.parametrize("method", ALL_METHODS)
     def test_method_matches_golden(self, method, tmp_path):
+        if method in GPU_SENSITIVE_METHODS and not GPU_AVAILABLE:
+            pytest.skip(
+                f"{method}: goldens are padme GPU outputs; CPU deviates "
+                "(tickets 0123, 0263)"
+            )
+
         golden_path = os.path.join(GOLDEN_DIR, f"tab_div_{method}.csv")
         if not os.path.exists(golden_path):
             pytest.skip(f"Golden CSV not found: {golden_path}")
