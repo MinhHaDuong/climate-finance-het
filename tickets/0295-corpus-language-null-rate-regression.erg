@@ -1,0 +1,51 @@
+%erg 0.1
+Title: Corpus language null rate at 4.1% — acceptance test red for weeks
+Created: 2026-07-22
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-22T16:40Z HDMX-coding-agent created author request during 0289 review (failure known for weeks, now tracked)
+
+--- body ---
+## Context
+
+`tests/test_corpus_acceptance.py::test_language_null_rate_below_2_percent`
+fails on main against the current corpus: 4.1% null language (1,743 of
+42,916 rows), contract is < 2%. Reproduced identically in the primary
+checkout and through the 0289 worktree run (PR #1083). The 42,916-row count
+is the in-progress v2 extension state, so the regression likely entered
+with newly ingested sources whose records carry no language field.
+
+## Relevant files
+
+- `tests/test_corpus_acceptance.py` — the contract (< 2%)
+- `data/catalogs/refined_works.csv` — 'language' column
+- Phase-1 enrichment scripts that populate language (harvest/enrich_*)
+
+## Actions
+
+1. Localize the nulls: group the 1,743 null-language rows by source
+   (from_* flags) and ingestion batch; identify which source skips
+   language detection.
+2. Backfill: language detection on title+abstract for the null rows
+   (langdetect or the pipeline's existing detector), or fetch the field
+   from the source API where available.
+3. Rerun the acceptance test; corpus back under 2%.
+
+## Test
+
+- The existing acceptance test is the red test; add a unit test for the
+  backfill step on fixture rows if a new script is written.
+
+## Verification
+
+- [ ] test_language_null_rate_below_2_percent green on main data
+
+## Invariants
+
+- No weakening of the acceptance threshold; make corpus/corpus-sync only,
+  never bare dvc repro; padme->doudou data direction.
+
+## Exit criteria
+
+- [ ] Language null rate < 2% on the current corpus, test green
