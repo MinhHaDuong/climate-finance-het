@@ -14,6 +14,7 @@ import sys
 import numpy as np
 import pandas as pd
 import pytest
+from _source_roots import source_root_env
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 sys.path.insert(0, SCRIPTS_DIR)
@@ -197,6 +198,7 @@ class TestVenueConcentrationSubprocess:
             capture_output=True,
             text=True,
             cwd=os.path.join(os.path.dirname(__file__), ".."),
+            env=source_root_env(),  # source roots on PYTHONPATH (tickets 0253, 0263)
         )
         assert result.returncode == 0, f"Script failed:\n{result.stderr}"
         assert output_csv.exists()

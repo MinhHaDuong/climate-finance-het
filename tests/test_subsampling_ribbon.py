@@ -13,6 +13,7 @@ import sys
 import numpy as np
 import pandas as pd
 import pytest
+from _source_roots import source_root_env
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 FIXTURES_DIR = os.path.join(os.path.dirname(__file__), "fixtures", "smoke")
@@ -28,8 +29,11 @@ sys.path.insert(0, os.path.join(SCRIPTS_DIR, "figures"))  # 0255: moved figures 
 
 
 def _smoke_env():
+    # source_root_env puts scripts/ + libs on the child's PYTHONPATH (ticket
+    # 0253) — without it the subprocess only works when make's exported
+    # PYTHONPATH happens to be inherited (ticket 0263, bare-pytest failure).
     return {
-        **os.environ,
+        **source_root_env(),
         "CLIMATE_FINANCE_DATA": FIXTURES_DIR,
         "PYTHONHASHSEED": "0",
         "SOURCE_DATE_EPOCH": "0",
