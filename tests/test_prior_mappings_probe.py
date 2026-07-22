@@ -41,10 +41,11 @@ def test_norm_doi_variants_collapse():
 def test_match_records_doi_then_title_then_miss():
     m = _load()
     corpus_dois = {"10.1000/a", "10.1000/b"}
-    corpus_titles = {m.norm_title("Climate Finance: A Review")}
+    corpus_titles = {m.norm_title("Climate Finance: A Review"): {2020}}
     records = [
         {"doi": "https://doi.org/10.1000/A", "title": "irrelevant"},
-        {"doi": None, "title": "Climate finance — a review!"},
+        {"doi": None, "title": "Climate finance — a review!",
+         "publication_year": 2020},
         {"doi": "10.9999/miss", "title": "Nothing like the corpus"},
         {"doi": None, "title": None},
     ]
@@ -52,16 +53,29 @@ def test_match_records_doi_then_title_then_miss():
     assert how == ["doi", "title", None, None]
 
 
+def test_title_match_is_year_constrained():
+    """A title collision across distant years must not count as a match."""
+    m = _load()
+    corpus_titles = {m.norm_title("Climate finance"): {2005}}
+    far = {"doi": None, "title": "Climate finance", "publication_year": 2019}
+    near = {"doi": None, "title": "Climate finance", "publication_year": 2006}
+    no_year = {"doi": None, "title": "Climate finance"}
+    assert m.match_record(far, set(), corpus_titles) is None
+    assert m.match_record(near, set(), corpus_titles) == "title"
+    assert m.match_record(no_year, set(), corpus_titles) == "title"
+
+
 def test_summarize_coverage_counts():
     m = _load()
     rows = [
         {"doi": "10.1000/a", "title": "x"},  # doi hit
-        {"doi": None, "title": "climate finance a review"},  # title hit
+        {"doi": None, "title": "climate finance a review",
+         "publication_year": 2021},  # title hit
         {"doi": "10.9999/miss", "title": "zzz"},  # miss
         {"doi": None, "title": None},  # unmatchable
     ]
     corpus_dois = {"10.1000/a"}
-    corpus_titles = {m.norm_title("climate finance a review")}
+    corpus_titles = {m.norm_title("climate finance a review"): {2021}}
     s = m.summarize("test_study", rows, corpus_dois, corpus_titles)
     assert s["study"] == "test_study"
     assert s["retrieved"] == 4

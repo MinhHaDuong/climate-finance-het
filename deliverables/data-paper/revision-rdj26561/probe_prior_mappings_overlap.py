@@ -125,19 +125,29 @@ def norm_doi(d: str) -> str:
 
 
 def match_record(record: dict, corpus_dois: set[str],
-                 corpus_titles: set[str]) -> str | None:
-    """Return 'doi', 'title', or None for one retrieved work."""
+                 corpus_titles: dict[str, set[int]]) -> str | None:
+    """Return 'doi', 'title', or None for one retrieved work.
+
+    A title match is year-constrained (±1 year against the corpus rows
+    carrying that title) so cross-decade title collisions cannot inflate
+    coverage; a record without publication year falls back to title-only.
+    """
     doi = record.get("doi")
     if doi and norm_doi(doi) in corpus_dois:
         return "doi"
     title = record.get("title")
-    if title and norm_title(title) in corpus_titles:
-        return "title"
+    if title:
+        years = corpus_titles.get(norm_title(title))
+        if years is not None:
+            rec_year = record.get("publication_year")
+            if rec_year is None or not years or any(abs(int(rec_year) - y) <= 1
+                                                    for y in years):
+                return "title"
     return None
 
 
 def summarize(key: str, rows: list[dict], corpus_dois: set[str],
-              corpus_titles: set[str]) -> dict:
+              corpus_titles: dict[str, set[int]]) -> dict:
     """Coverage summary for one study's retrieved population."""
     matched_doi = matched_title = 0
     with_doi = 0
@@ -204,16 +214,20 @@ def fetch_study(study: dict, mailto: str | None, api_key: str | None,
     return rows
 
 
-def load_corpus(path: str) -> tuple[set[str], set[str]]:
+def load_corpus(path: str) -> tuple[set[str], dict[str, set[int]]]:
     csv.field_size_limit(sys.maxsize)
     dois: set[str] = set()
-    titles: set[str] = set()
+    titles: dict[str, set[int]] = {}
     with open(path, newline="", encoding="utf-8") as f:
         for row in csv.DictReader(f):
             if row.get("doi"):
                 dois.add(norm_doi(row["doi"]))
             if row.get("title"):
-                titles.add(norm_title(row["title"]))
+                years = titles.setdefault(norm_title(row["title"]), set())
+                try:
+                    years.add(int(float(row.get("year") or "")))
+                except ValueError:
+                    pass
     log.info("corpus: %d dois, %d titles", len(dois), len(titles))
     return dois, titles
 

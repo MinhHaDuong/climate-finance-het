@@ -17,8 +17,10 @@ For each prior mapping, the published search query was transcribed from the
 local PDF (`docs/articles/`, read-before-cite norm) and replicated against
 OpenAlex (`title_and_abstract.search`, plus the study's date, type, and
 language limits). Each retrieved work was matched into `refined_works.csv`
-by normalized DOI, then by normalized title for works without a DOI match.
-Coverage = matched / retrieved.
+by normalized DOI, then by normalized title for works without a DOI match;
+a title match must also agree on publication year (±1) with the corpus row,
+so cross-decade title collisions cannot inflate coverage. Coverage =
+matched / retrieved.
 
 The replication approximates the *query surface*, not the exact final
 corpus: WoS "topic" search also scans Keywords Plus, Scopus subject-area
@@ -31,13 +33,13 @@ source population.
 
 | Study | DB | Reported n | Replicated query | Retrieved | Matched | Coverage |
 |---|---|---|---|---|---|---|
-| Carè & Weber 2023 | Scopus | 315 | "climate finance", 2004–2021, en, ar/re | 849 | 765 | 90.1% |
-| Shang & Jin 2023 | WoS | 2,311 | "climate finance", 2001–2022, en, ar/re | 1,072 | 982 | 91.6% |
-| Rusydiana 2023 | Scopus | 1,051 | "climate finance", ≤ Oct 2023, ar | 1,264 | 1,160 | 91.8% |
-| Reis Maria et al. 2023 | Scopus | 3,275 | "green/climate/carbon/sustainable finance", ≤ Sep 2021 | 4,034 | 1,653 | 41.0% |
+| Carè & Weber 2023 | Scopus | 315 | "climate finance", 2004–2021, en, ar/re | 849 | 758 | 89.3% |
+| Shang & Jin 2023 | WoS | 2,311 | "climate finance", 2001–2022, en, ar/re | 1,072 | 975 | 91.0% |
+| Rusydiana 2023 | Scopus | 1,051 | "climate finance", ≤ Oct 2023, ar | 1,264 | 1,152 | 91.1% |
+| Reis Maria et al. 2023 | Scopus | 3,275 | "green/climate/carbon/sustainable finance", ≤ Sep 2021 | 4,034 | 1,618 | 40.1% |
 
 Reading: the three mappings whose object is climate finance draw on source
-populations that our corpus covers at 90–92%. The one mapping with a
+populations that our corpus covers at 89–91%. The one mapping with a
 deliberately broader object — Reis Maria et al. map green finance at large,
 of which climate finance is one strand — is covered at 41%, consistent with
 our corpus's boundary: green and sustainable finance beyond the climate
@@ -78,12 +80,15 @@ papers, checked against the local PDFs on 2026-07-22:
 > The revision strengthens the comparison to prior bibliometric mappings
 > beyond the corpus-size ratio. We replicated each study's published search
 > query against OpenAlex and matched the retrieved works into our corpus by
-> DOI and title: 90–92% of the works retrieved for the climate finance
-> queries of Carè and Weber (2023) and Shang and Jin (2023) are present in
-> our dataset. Coverage falls to 41% for Reis Maria et al. (2023), whose
-> green finance query deliberately spans a broader field than climate
-> finance. Our corpus thus contains most of the source populations the
-> prior mappings drew on, while adding the multilingual and grey-literature
-> layers that no prior mapping covers and publishing the dataset they do
-> not release. Script and per-study results are archived in the revision
-> folder (`probe_prior_mappings_overlap.py`, `prior-mappings-overlap.csv`).
+> DOI and year-constrained title: 89.3% of the works retrieved for the
+> query of Carè and Weber (2023) and 91.0% for that of Shang and Jin
+> (2023) are present in our dataset. Coverage falls to 40.1% for Reis
+> Maria et al. (2023), whose green finance query deliberately spans a
+> broader field than climate finance. The replication covers each study's
+> published query surface as OpenAlex resolves it, not its manually pruned
+> final corpus; on that measure, our corpus contains most of the source
+> populations the prior mappings drew on, while adding the multilingual
+> and grey-literature layers that no prior mapping covers and publishing
+> the dataset they do not release. Script and per-study results are
+> archived in the revision folder (`probe_prior_mappings_overlap.py`,
+> `prior-mappings-overlap.csv`).
