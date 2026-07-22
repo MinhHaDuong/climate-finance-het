@@ -4,13 +4,13 @@ Created: 2026-07-22
 Author: HDMX-coding-agent
 
 --- log ---
-2026-07-22T14:33Z HDMX-coding-agent created from dedup triage (v1 frozen during R&R; fixes deferred to v2, estimates in 0298)
+2026-07-22T14:33Z HDMX-coding-agent created from dedup triage (v1 frozen during R&R; fixes deferred to v2, estimates in 0301)
 
 --- body ---
 ## Context
 
 Triage outcome of the 2026-07-22 dedup error-rate diagnosis (session
-f373ecb2; estimates in 0298): three dedup defects are real but must NOT be
+f373ecb2; estimates in 0301): three dedup defects are real but must NOT be
 fixed on corpus v1 — any change to catalog_merge's dedup logic alters
 unified_works and cascades into every archived artifact the R&R papers cite.
 They are quantified and *reported in the text* now (0276/0277 prose), and
@@ -32,7 +32,7 @@ planned anyway.
    third pass — exact-or-fuzzy title + normalized author lastname + year gap
    <= 5 merges preprint/WP with the published version (~315 pairs, ~0.5% of
    v1 corpus). Requires author-name normalization first: v1 metadata swaps
-   given/family names between sources (0298's C-finding). Decide and document
+   given/family names between sources (0301's C-finding). Decide and document
    the canonical-version policy (keep published, redirect citations).
 4. Re-run the byte-compare discipline against v1 to enumerate exactly which
    records each change adds/removes; archive the delta as a run report.
@@ -45,7 +45,7 @@ planned anyway.
 
 ## Verification
 
-- [ ] Per-change delta counts in a run report, reconciling with 0298's
+- [ ] Per-change delta counts in a run report, reconciling with 0301's
       estimates (~40 / ~10 / ~315)
 
 ## Invariants
