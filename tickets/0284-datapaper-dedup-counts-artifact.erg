@@ -5,6 +5,7 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-07-20T10:00Z HDMX-coding-agent created split from 0276
+2026-07-22T11:38Z HDMX-coding-agent note raid Imagine/Plan: PASS — offline path confirmed, no padme rerun needed; plan appended
 
 --- body ---
 ## Context
@@ -48,3 +49,32 @@ while the prose is an ordinary manuscript PR.
 
 - [ ] Per-procedure dedup counts exist as a pipeline-traceable artifact
 - [ ] 0276 unblocked with the artifact path recorded in its body or log
+
+## Plan (raid 2026-07-22, Imagine findings)
+
+Dedup lives in `scripts/harvest/catalog_merge.py` (Phase-1 corpus-discover):
+DOI pass at lines ~188-196, title+year pass at ~198-202 via
+`_dedup_no_doi_records()`. Counts currently go only to `log.info` — never
+persisted; no `catalog_merge__*.json` exists in `data/catalogs/run_reports/`.
+
+Simplest path — no padme, no API, no author-coordinated rerun: the stage's
+dvc.yaml deps are the six already-archived per-source catalog CSVs (all local).
+
+1. Instrument `catalog_merge.py` with a flat `counters` dict (records before
+   dedup, with/without DOI split, doi_duplicates_removed,
+   title_year_duplicates_removed, dropped_empty_title, final total) and call
+   `save_run_report(counters, run_id, script_name)` per the `corpus_align.py`
+   pattern (`pipeline_io.py:142-169`). No new CSV, no Pandera schema, no new
+   Make target — the JSON run-report convention is the house artifact shape
+   (a new CSV+schema here would be premature abstraction).
+2. Rerun only this stage offline: `make corpus-discover` (wraps
+   `dvc repro catalog_merge`; never bare `dvc repro`).
+3. Byte-compare new `unified_works.csv` against the archived one — dedup
+   logic must be unchanged, only reporting added.
+4. Commit `run_reports/catalog_merge__*.json` + `run_reports.dvc` pointer +
+   `dvc.lock` stage-hash bump; record the artifact path in 0276's log.
+
+First test (red): unit test on a small synthetic frame through the dedup
+helpers asserting the counters sum: rows_in - doi_removed - title_year_removed
+- dropped_empty_title == rows_out, and that the run report carries the
+per-procedure keys.
