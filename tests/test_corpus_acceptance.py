@@ -708,8 +708,24 @@ class TestContentQuality:
             )
 
     def test_from_cols_present(self, refined):
-        """All from_* boolean provenance columns must be present."""
-        missing = [c for c in FROM_COLS if c not in refined.columns]
+        """All from_* boolean provenance columns must be present.
+
+        Sources added to SOURCE_NAMES ahead of their corpus rebuild (the
+        unfccc/oecd key-documents layer, ticket 0288) are required only once
+        the data actually contains rows from that source — a corpus built
+        before the layer landed keeps validating, but a post-layer rebuild
+        that drops the provenance columns still fails.
+        """
+        sources_in_data = set(refined["source"].dropna().unique())
+        missing = [
+            c for c in FROM_COLS
+            if c not in refined.columns
+            and c.removeprefix("from_") in sources_in_data
+        ]
+        legacy = ["from_openalex", "from_istex", "from_bibcnrs",
+                  "from_scispace", "from_grey", "from_teaching"]
+        missing += [c for c in legacy
+                    if c not in refined.columns and c not in missing]
         assert not missing, \
             f"Missing from_* columns: {missing}" + _diagnosis(
                 "catalog_merge.py was not updated to produce from_* columns",
