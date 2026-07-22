@@ -1,0 +1,38 @@
+%erg 0.1
+Title: Test hygiene: test_pipeline_io leaks stray run-report files into data/catalogs/run_reports
+Created: 2026-07-22
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-22T12:23Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Surfaced during PR #1082 review (ticket 0284): the e2e suite leaked
+`catalog_merge__*.json` into the real DVC-tracked `data/catalogs/run_reports/`
+because `save_run_report` resolves `CATALOGS_DIR` from `pipeline_loaders` at
+call time. PR #1082 fixed the leak for `tests/test_pipeline_e2e.py` (patching
+`pipeline_loaders.CATALOGS_DIR` in the `_patched_merge_dirs` fixture), but
+`tests/test_pipeline_io.py` has the same defect shape and four pre-existing
+stray run-report files were observed in the real `run_reports/` directory.
+
+## Actions
+
+1. Patch `pipeline_loaders.CATALOGS_DIR` (not just the `utils` re-export) in
+   `test_pipeline_io.py` fixtures, mirroring the `_patched_merge_dirs` fix.
+2. Identify and remove the stray test-generated `run_reports/*.json` files
+   from the primary checkout (verify they are test fixtures, not real run
+   reports, before deleting — check filenames/content against known runs).
+3. Sweep other test modules calling `save_run_report` for the same
+   patch-the-wrong-module shape (grep-before-commit rule).
+
+## Test
+
+- After the fix, running the full suite leaves `data/catalogs/run_reports/`
+  byte-identical to its pre-suite state.
+
+## Exit criteria
+
+- [ ] No test writes into the real run_reports directory
+- [ ] Stray files removed (or justified and kept)

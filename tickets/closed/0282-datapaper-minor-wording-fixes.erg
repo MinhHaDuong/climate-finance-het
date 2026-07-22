@@ -1,0 +1,103 @@
+%erg 0.1
+Title: Data paper: minor wording fixes — WP series list, non-English coverage claim
+Created: 2026-07-20
+Author: HDMX-coding-agent
+Closed: autoclosed — PR #1079
+
+--- log ---
+2026-07-20T09:00Z HDMX-coding-agent created
+2026-07-22T11:38Z HDMX-coding-agent note raid Imagine/Plan: PASS — passages located, rewordings drafted, plan appended
+2026-07-22T12:10Z HDMX-coding-agent note R1-16a reworded (qmd:68): named RePEc, NBER, MPRA, other repositories
+2026-07-22T12:10Z HDMX-coding-agent note R1-16c reworded (qmd:88) + conclusion echo (qmd:118): incremental-coverage claim, exclusivity dropped
+2026-07-22T12:10Z HDMX-coding-agent note response-letter bullet drafted in body for 0283
+
+2026-07-22T12:27Z HDMX-coding-agent closed — autoclosed — PR #1079
+--- body ---
+## Context
+
+RDJ-26561 R&R (tracker 0274), remarks R1-16a, R1-16c. Two localized wording
+fixes:
+
+1. (R1-16a) The paper says OpenAlex indexes RePEc; it also indexes other
+   economics working-paper series (NBER, MPRA, …) — say so up front for the
+   uninformed reader.
+2. (R1-16c) "the five smaller sources add non-English, institutional, and
+   pedagogical coverage that OpenAlex alone does not provide" misleads:
+   OpenAlex does include non-English sources. Reword to claim only the
+   *incremental* coverage the smaller sources add.
+
+## Relevant files
+
+- `deliverables/data-paper/data-paper.qmd` — locate both passages by grep
+
+## Actions
+
+1. Fix both passages; verify the reworded claims against what the sources
+   actually contribute (language distribution numbers if available).
+
+## Test
+
+- Prose suite green; no other occurrences of the misleading claim elsewhere
+  in the deliverables (grep before commit).
+
+## Verification
+
+- [x] Both passages reworded and factually checked
+
+## Invariants
+
+- One spelling variety; claims match pipeline reality.
+
+## Exit criteria
+
+- [x] R1-16a and R1-16c passages fixed in data-paper.qmd (plus the
+      conclusion echo at qmd:118)
+- [x] Response-letter bullet drafted (feeds 0283)
+
+## Plan (raid 2026-07-22, Imagine findings)
+
+Passages located:
+- R1-16a: `deliverables/data-paper/data-paper.qmd:68` — "OpenAlex indexes
+  RePEc, so economics working papers are covered without a separate harvest."
+- R1-16c: `data-paper.qmd:88` — "…the five smaller sources add non-English,
+  institutional, and pedagogical coverage that OpenAlex alone does not
+  provide."
+- Same-shape echo at `data-paper.qmd:118` (conclusion): "…absent from
+  single-database corpora." Reword in the same pass — the ticket's own test
+  says no other occurrence of the misleading claim in deliverables.
+
+Draft rewordings (UK spelling — file is consistently UK):
+1. Line 68: "OpenAlex indexes RePEc as well as other economics
+   working-paper series (e.g. NBER, MPRA), so working papers in economics
+   are covered without a separate harvest."
+2. Line 88: keep the openalex_pct sentence; claim only incremental
+   coverage, e.g. "…the five smaller sources add to this base, increasing
+   non-English, institutional, and pedagogical coverage beyond what
+   OpenAlex alone supplies."
+
+Factual backing: per-source %non-EN column computed in
+`scripts/figures/export_corpus_table.py:145` feeding tbl-quality — the
+incremental-coverage wording leans on this without asserting new numbers.
+Do not add specific percentages (would need a make run to regenerate).
+
+Response-letter bullet: remarks live at
+`deliverables/data-paper/revision-rdj26561/ledger.dedup.jsonl` (R1-16a,
+R1-16c entries, tickets:["0282"]). Draft the reply bullet(s) as a note in
+this ticket's log or beside the ledger per 0283's convention — 0283
+assembles the point-by-point letter later.
+
+No other occurrences elsewhere in deliverables (grep swept). Prose suite
+must stay green.
+
+## Response-letter bullet (drafted for 0283)
+
+- **R1-16a** — We thank the reviewer. Section 2.1 now names the working-paper
+  series OpenAlex indexes rather than RePEc alone: "OpenAlex indexes economics
+  working papers from RePEc, NBER, MPRA, and other repositories, so no separate
+  harvest is needed."
+- **R1-16c** — The reviewer is correct that OpenAlex includes non-English
+  sources, so the earlier wording overstated. Section 2.3 now claims only the
+  incremental coverage the smaller sources add: "the five smaller sources
+  increase the corpus's non-English, institutional, and pedagogical coverage."
+  The parallel exclusivity phrasing in the conclusion ("absent from
+  single-database corpora") was removed in the same pass.
