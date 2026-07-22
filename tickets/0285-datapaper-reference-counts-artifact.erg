@@ -39,8 +39,8 @@ as a Phase-2 artifact; 0277 writes the prose interpreting it.
 
 ## Verification
 
-- [ ] Table regenerates deterministically from the contract files
-- [ ] `make check-fast` and `make lint` green
+- [x] Table regenerates deterministically from the contract files
+- [x] `make check-fast` and `make lint` green
 
 ## Invariants
 
@@ -49,8 +49,8 @@ as a Phase-2 artifact; 0277 writes the prose interpreting it.
 
 ## Exit criteria
 
-- [ ] Reference-count distribution artifact produced by a Make-wired script
-- [ ] 0277 unblocked with the artifact path recorded
+- [x] Reference-count distribution artifact produced by a Make-wired script
+- [x] 0277 unblocked with the artifact path recorded
 
 ## Plan (raid 2026-07-22, Imagine findings)
 

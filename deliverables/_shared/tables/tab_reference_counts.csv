@@ -1,0 +1,17 @@
+metric,value
+n_documents_total,30987.0
+n_documents_with_doi,23309.0
+n_documents_no_doi,7678.0
+n_zero_references,9671.0
+share_zero_references,0.41490411429061735
+bucket_0,9671.0
+bucket_1_5,488.0
+bucket_6_20,1828.0
+bucket_21_50,4208.0
+bucket_51_100,5203.0
+bucket_100_plus,1911.0
+ref_count_median,18.0
+ref_count_mean,36.18014500836587
+ref_count_p5,0.0
+ref_count_p95,118.0
+ref_count_max,1536.0
