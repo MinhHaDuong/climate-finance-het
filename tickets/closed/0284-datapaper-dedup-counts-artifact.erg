@@ -2,6 +2,7 @@
 Title: Data paper: extract per-procedure dedup removal counts as a pipeline artifact
 Created: 2026-07-20
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1082
 
 --- log ---
 2026-07-20T10:00Z HDMX-coding-agent created split from 0276
@@ -10,6 +11,7 @@ Author: HDMX-coding-agent
 2026-07-22T14:05Z HDMX-coding-agent note DVC-commit deferral: run_reports/ is DVC-tracked; dvc is absent from the current offline env and the shared uv env cannot be synced mid-raid (active sibling worktrees). The artifact is regenerated deterministically by dvc repro catalog_merge on the next dvc-capable/padme session, which updates run_reports.dvc + dvc.lock. Values recorded in 0276 log for immediate prose use.
 
 2026-07-22T12:24Z HDMX-coding-agent note verify-gate REROLL cured: deferred DVC archival ticketed as 0294; test-hygiene leak ticketed as 0295
+2026-07-22T12:31Z HDMX-coding-agent closed — autoclosed — PR #1082
 --- body ---
 ## Context
 
