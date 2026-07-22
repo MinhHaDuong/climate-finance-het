@@ -2,6 +2,7 @@
 Title: Verify and strengthen the comparison to prior bibliometric mappings
 Created: 2026-07-21
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1083
 
 --- log ---
 2026-07-21T08:00Z HDMX-coding-agent created author request: "Comparer/vérifier la comparaison de notre collection aux autres mappings"
@@ -10,6 +11,7 @@ Author: HDMX-coding-agent
 2026-07-22T15:20Z HDMX-coding-agent note marker in bibliometric-context.md intentionally retained: clearing is the author's call after reviewing the include diff (PR review = that review); one-line edit on request
 2026-07-22T18:05Z HDMX-coding-agent note author read the PDF draft and cleared the AI-generated marker on both halves; file split into prior-mappings.md (A, staged for 0278/0283) + bibliometric-context.md (B, clustering validity)
 
+2026-07-22T14:35Z HDMX-coding-agent closed — autoclosed — PR #1083
 --- body ---
 ## Context
 
