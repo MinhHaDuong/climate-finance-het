@@ -15,7 +15,7 @@ import pandas as pd
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 sys.path.insert(0, os.path.join(SCRIPTS_DIR, "harvest"))
 
-from catalog_merge import _dedup_vectorized, _load_and_tag
+from catalog_merge import _dedup_vectorized, _load_and_tag, deduplicate
 from utils import FROM_COLS, WORKS_COLUMNS
 
 
@@ -106,3 +106,69 @@ class TestFromScispaceFlagSet:
             "from_scispace must survive DOI dedup (max aggregation)"
         assert result["from_openalex"].iloc[0] == 1, \
             "from_openalex must survive DOI dedup (max aggregation)"
+
+
+def _prepared_frame(rows):
+    """Build a combined frame ready for deduplicate(): WORKS_COLUMNS + source,
+    with _doi_norm and from_* provenance columns set as main() would set them."""
+    records = []
+    for r in rows:
+        rec = {c: "" for c in WORKS_COLUMNS}
+        rec.update(r)
+        records.append(rec)
+    df = pd.DataFrame(records)
+    df["_doi_norm"] = df["doi"].str.lower().str.strip()
+    for col in FROM_COLS:
+        src_name = col.replace("from_", "")
+        df[col] = (df["source"] == src_name).astype(int)
+    return df
+
+
+class TestDeduplicateCounters:
+    """deduplicate() must return per-procedure removal counts that reconcile
+    with the row totals (ticket 0284, R1-12): the referee asks how many
+    duplicates the DOI pass and the title+year pass each remove."""
+
+    def test_counters_reconcile_and_carry_per_procedure_keys(self):
+        # Two records share a DOI (1 DOI duplicate).
+        # Two records without a DOI share title+year (1 title+year duplicate).
+        # One record without a DOI has an empty title (dropped_empty_title).
+        # One record without a DOI has a unique title (survives).
+        rows = [
+            {"source": "openalex", "doi": "10.1/shared", "title": "A", "year": "2020"},
+            {"source": "istex", "doi": "10.1/shared", "title": "A", "year": "2020"},
+            {"source": "openalex", "doi": "", "title": "Same title", "year": "2019"},
+            {"source": "grey", "doi": "", "title": "Same title", "year": "2019"},
+            {"source": "grey", "doi": "", "title": "", "year": "2018"},
+            {"source": "teaching", "doi": "", "title": "Unique title", "year": "2017"},
+        ]
+        combined = _prepared_frame(rows)
+        result, counters = deduplicate(combined)
+
+        per_procedure_keys = {
+            "records_total", "records_with_doi", "records_without_doi",
+            "doi_duplicates_removed", "records_without_doi_titled",
+            "dropped_empty_title", "title_year_duplicates_removed",
+            "records_unified",
+        }
+        assert per_procedure_keys <= set(counters), \
+            f"run report must carry per-procedure keys; missing: {per_procedure_keys - set(counters)}"
+
+        # The counters must reconcile the row accounting exactly.
+        assert (
+            counters["records_total"]
+            - counters["doi_duplicates_removed"]
+            - counters["title_year_duplicates_removed"]
+            - counters["dropped_empty_title"]
+            == counters["records_unified"]
+        ), f"counters do not reconcile: {counters}"
+        assert counters["records_unified"] == len(result)
+
+        # Concrete per-procedure expectations for this fixture.
+        assert counters["records_total"] == 6
+        assert counters["records_with_doi"] == 2
+        assert counters["records_without_doi"] == 4
+        assert counters["doi_duplicates_removed"] == 1
+        assert counters["dropped_empty_title"] == 1
+        assert counters["title_year_duplicates_removed"] == 1
+        assert counters["records_unified"] == 3
