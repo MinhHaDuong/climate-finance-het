@@ -6,6 +6,9 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-20T11:00Z HDMX-coding-agent created author approved expansion within the UN-system frame (session 2026-07-20)
 2026-07-20T12:00Z HDMX-coding-agent note broadened to include OECD DAC sub-list after corpus probe (author asked "harvest OECD too"); wholesale OECD harvest rejected as redundant
+2026-07-22T09:00Z HDMX-coding-agent note author angle: manuscript-bibliography coverage probe run — empirical basis for the inclusion rule; see body § Empirical basis
+2026-07-22T10:00Z HDMX-coding-agent note author decided (session 2026-07-22): party/bloc submissions AND negotiation-record commentary INCLUDED in the layer; carbon markets and ESG are deliberate corpus-scope exclusions — MacKenzie 2009 and Golka 2024 verified out-of-scope on the documents (not gaps)
+2026-07-22T11:00Z HDMX-coding-agent note author VALIDATED the amended inclusion rule and both sub-lists (class level). Framing constraint: these are new SOURCES added to the data pipeline — reproducible Phase-1 harvesters/importers with provenance and tests — NOT a one-shot harvest
 
 --- body ---
 ## Context
@@ -51,6 +54,32 @@ Known data properties (assessed 2026-07-20, verify at harvest):
 - Document symbols (e.g. FCCC/CP/2009/11/Add.1, DCD/DAC(2016)3/FINAL) are
   the natural identifiers.
 
+## Empirical basis (added 2026-07-22, author's angle)
+
+The extension is bounded empirically, not by an a priori institution list:
+cross the resubmitted Œconomia manuscript's bibliography against the v1
+corpus and let the classes of absent-but-needed documents define the harvest.
+Probe result (81 works cited, 31 in corpus; script and full class analysis in
+`deliverables/data-paper/revision-rdj26561/biblio-vs-corpus-probe.md`):
+
+- The only absent classes the manuscript actually needed are the official
+  international-institution documents already targeted — UNFCCC decisions and
+  the Biennial Assessment series (the corpus holds the 5th BA but not the
+  2014 first edition, and commentary about Bali/Copenhagen/Cancún rather
+  than the decisions themselves), plus GEF-type reports. The sub-lists above
+  are confirmed; no open-ended new class emerges.
+- Boundary decisions SETTLED by the author (2026-07-22): party/negotiating-
+  bloc submissions (e.g. AOSIS on the NCQG) and negotiation-record commentary
+  (IISD Earth Negotiations Bulletin summaries, statements at COPs) are
+  INCLUDED — both sub-lists extend accordingly. Carbon markets and ESG stay
+  DELIBERATE corpus-scope exclusions, to be stated in the paper's scope/bias
+  section: MacKenzie 2009 (CDM/HFC-23 commensuration) and Golka 2024
+  (ESG/impact-investing epistemics, zero climate-finance occurrence in
+  abstract/keywords/intro) were verified on the documents — their absence is
+  by design, not a query gap.
+- Regression check: rerun the probe against corpus v2 after the harvest —
+  classes A and B in the probe note should then match.
+
 Sequencing warning: this is the largest work item of the revision and blocks
 the final corpus numbers (every {{< meta >}} count refreshes). Start early;
 prose tickets can draft against v1 numbers but the final render waits for
@@ -68,10 +97,14 @@ companion; the new corpus ships in 0280's new Zenodo version.
 
 ## Actions
 
-1. Freeze the inclusion rule (proposal: official documents produced by or
-   addressed to the COP or the OECD DAC that define, account for, or govern
-   climate finance) and the two key-document sub-lists; author validates
-   both BEFORE harvesting.
+1. Freeze the inclusion rule (proposal, amended per the 2026-07-22 decisions:
+   official documents produced by or addressed to the COP or the OECD DAC
+   that define, account for, or govern climate finance — including party/bloc
+   submissions — plus the negotiation record around those decisions: session
+   summaries such as the IISD Earth Negotiations Bulletin and statements
+   delivered at COPs) and the two key-document sub-lists; author validates
+   both BEFORE harvesting. Carbon markets and ESG remain outside corpus
+   scope by design.
 2. Build the harvester/curated importer: metadata (UN symbol, title, year,
    language, body), PDF retrieval, text extraction with OCR fallback.
 3. Derive abstract-equivalents, flagged as reconstructed; embed via the
@@ -90,7 +123,9 @@ companion; the new corpus ships in 0280's new Zenodo version.
 
 ## Verification
 
-- [ ] Inclusion rule and document list validated by the author
+- [x] Inclusion rule and document list validated by the author (2026-07-22:
+      amended rule + both sub-lists at class level; the document-level list
+      materializes at harvest within the validated classes)
 - [ ] Layer present in the regenerated corpus with correct provenance flags
 - [ ] v1 subset reproducible via `in_v1` after the rerun
 
@@ -98,6 +133,9 @@ companion; the new corpus ships in 0280's new Zenodo version.
 
 - Phase separation (manuscript build never triggers Phase 1); `in_v1`
   reproducibility; no hand-curated numbers in the paper.
+- The layer enters as a durable pipeline source (author constraint,
+  2026-07-22): `catalog_*`-style harvesters/importers, rerunnable, with
+  provenance flags and tests — never a one-shot manual dump into the corpus.
 
 ## Exit criteria
 
