@@ -7,6 +7,7 @@ Author: HDMX-coding-agent
 2026-07-20T11:00Z HDMX-coding-agent created author approved expansion within the UN-system frame (session 2026-07-20)
 2026-07-20T12:00Z HDMX-coding-agent note broadened to include OECD DAC sub-list after corpus probe (author asked "harvest OECD too"); wholesale OECD harvest rejected as redundant
 2026-07-22T09:00Z HDMX-coding-agent note author angle: manuscript-bibliography coverage probe run — empirical basis for the inclusion rule; see body § Empirical basis
+2026-07-22T10:00Z HDMX-coding-agent note author decided (session 2026-07-22): party/bloc submissions AND negotiation-record commentary INCLUDED in the layer; carbon markets and ESG are deliberate corpus-scope exclusions — MacKenzie 2009 and Golka 2024 verified out-of-scope on the documents (not gaps)
 
 --- body ---
 ## Context
@@ -66,11 +67,15 @@ Probe result (81 works cited, 31 in corpus; script and full class analysis in
   2014 first edition, and commentary about Bali/Copenhagen/Cancún rather
   than the decisions themselves), plus GEF-type reports. The sub-lists above
   are confirmed; no open-ended new class emerges.
-- Two boundary decisions for the author, to settle with the inclusion rule:
-  party/negotiating-bloc submissions (e.g. AOSIS on the NCQG — "addressed to
-  the COP" arguably covers them) in or out; the negotiation record (IISD
-  Earth Negotiations Bulletin, political speeches) presumably out, stated
-  explicitly in the bias section.
+- Boundary decisions SETTLED by the author (2026-07-22): party/negotiating-
+  bloc submissions (e.g. AOSIS on the NCQG) and negotiation-record commentary
+  (IISD Earth Negotiations Bulletin summaries, statements at COPs) are
+  INCLUDED — both sub-lists extend accordingly. Carbon markets and ESG stay
+  DELIBERATE corpus-scope exclusions, to be stated in the paper's scope/bias
+  section: MacKenzie 2009 (CDM/HFC-23 commensuration) and Golka 2024
+  (ESG/impact-investing epistemics, zero climate-finance occurrence in
+  abstract/keywords/intro) were verified on the documents — their absence is
+  by design, not a query gap.
 - Regression check: rerun the probe against corpus v2 after the harvest —
   classes A and B in the probe note should then match.
 
@@ -91,10 +96,14 @@ companion; the new corpus ships in 0280's new Zenodo version.
 
 ## Actions
 
-1. Freeze the inclusion rule (proposal: official documents produced by or
-   addressed to the COP or the OECD DAC that define, account for, or govern
-   climate finance) and the two key-document sub-lists; author validates
-   both BEFORE harvesting.
+1. Freeze the inclusion rule (proposal, amended per the 2026-07-22 decisions:
+   official documents produced by or addressed to the COP or the OECD DAC
+   that define, account for, or govern climate finance — including party/bloc
+   submissions — plus the negotiation record around those decisions: session
+   summaries such as the IISD Earth Negotiations Bulletin and statements
+   delivered at COPs) and the two key-document sub-lists; author validates
+   both BEFORE harvesting. Carbon markets and ESG remain outside corpus
+   scope by design.
 2. Build the harvester/curated importer: metadata (UN symbol, title, year,
    language, body), PDF retrieval, text extraction with OCR fallback.
 3. Derive abstract-equivalents, flagged as reconstructed; embed via the

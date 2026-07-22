@@ -33,15 +33,14 @@ sub-list in ticket 0288, including its emphasis on the BA series.
 **B. Other international-institution documents (2).** GEF Evaluation Office
 report (*Evaluation of Incremental Cost Assessment*, 2007) — inside 0288's
 frame (GCF/GEF/AF reports to COP). AOSIS submission on the NCQG (2024) —
-a **party/negotiating-bloc submission**, a sub-class 0288 does not currently
-name; the inclusion rule ("produced by or addressed to the COP") arguably
-covers it. Decision needed: submissions in or out.
+a **party/negotiating-bloc submission**, a sub-class 0288 did not initially
+name. Decision (author, 2026-07-22): submissions are INCLUDED.
 
 **C. Negotiation record (2).** IISD *Earth Negotiations Bulletin* summary
-(COP15) and a political speech (Clinton at Copenhagen). Independent negotiation
-reporting and political statements are sources for the historian, not part of
-climate-finance scholarship; likely out — but the boundary decision should be
-recorded explicitly rather than left implicit.
+(COP15) and a political speech (Clinton at Copenhagen). Decision (author,
+2026-07-22): negotiation-record commentary is INCLUDED — session summaries and
+statements delivered at COPs join the layer alongside the decisions they
+surround.
 
 **D. Pre-crystallization economics ancestry (~11).** Negishi 1960, Weitzman
 1974, Ayres–Kneese 1969, Nordhaus 1992, Manne–Richels 1992, Carraro–Siniscalco
@@ -56,21 +55,26 @@ Desrosières, Porter, Power, Merry, Espeland–Stevens, Star, Gieryn, Mitchell,
 Escobar, DiMaggio–Powell, North, Finnemore–Sikkink, Marcussen, Claveau–Dion,
 Goutsmedt et al., Acosta et al., Lepenies, Cassen–Cointe, Aykut–Dahan, Pottier,
 Michalopoulos, and others. The historiographic toolkit of the paper, not the
-object of study. Correctly outside the corpus; no harvest class. Two borderline
-works sit at the scope edge and are worth a query-coverage look (separate issue
-from grey literature): MacKenzie 2009 (*Making Things the Same*, carbon
-markets) and Golka 2024 (*Epistemic gerrymandering*, ESG/impact investing) are
-field-relevant academic articles with DOIs, absent from the corpus.
+object of study. Correctly outside the corpus; no harvest class. The two apparent
+borderline cases were verified on the documents (2026-07-22) and resolved:
+MacKenzie 2009 (*Making Things the Same*) treats commensuration in carbon
+markets (the manuscript cites it for the CDM HFC-23 projects), and Golka 2024
+(*Epistemic gerrymandering*) treats ESG and impact investing, with no
+occurrence of "climate finance" in abstract, keywords, or introduction. Carbon
+markets and ESG are deliberate corpus-scope exclusions, so both absences are
+by design, not query gaps — the exclusions belong in the paper's scope/bias
+section.
 
 ## Implication for the 0288 inclusion rule
 
 The probe supports the extension as framed and bounds it: the only document
 classes the manuscript actually needed and the corpus lacks are the official
-international-institution documents already targeted (A, B). No open-ended new
-class emerges — ancestry (D) and apparatus (E) are correctly out of scope, and
-the negotiation record (C) is a deliberate exclusion to state in the bias
-section. Two explicit author decisions remain: party submissions (B) and the
-negotiation record (C).
+international-institution documents (A, B) plus the negotiation record (C),
+which the author folded into the layer (decisions of 2026-07-22: submissions
+and negotiation-record commentary included). No open-ended new class emerges —
+ancestry (D) and apparatus (E) are correctly out of scope, and carbon markets
+and ESG stay deliberate scope exclusions to state in the bias section. The
+amended inclusion rule sits in ticket 0288, Action 1.
 
 Caveats: the manuscript bibliography is one author-curated document of 81 works
 — a revealed-demand lower bound, not an exhaustive gap analysis; matching is
