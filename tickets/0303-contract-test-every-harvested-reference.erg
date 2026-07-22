@@ -1,0 +1,38 @@
+%erg 0.1
+Title: Contract test: every harvested reference layer feeds corpus_merge_citations or is declared out-of-scope
+Created: 2026-07-22
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-22T16:39Z HDMX-coding-agent created from roar step 4 (class guard: two dropped-layer instances, 0300 + 0302)
+
+--- body ---
+## Context
+
+The class now has two instances: 0300 (openalex_citations.csv harvested at
+catalog stage, skipped by the enrich done-check, never merged) and 0302
+(istex_refs.csv produced and never read). The shape: a reference-edge
+producer writes a layer that corpus_merge_citations.py does not consume, and
+nothing fails. A per-PR gate cannot catch this — the defect is a MISSING
+consumption edge in the pipeline graph, visible only repo-wide.
+
+## Actions
+
+1. Add an adherence-tier contract test: enumerate reference-layer artifacts
+   (producers writing `*_refs.csv` / `*_citations.csv` under CATALOGS_DIR,
+   plus the enrich caches) and assert each is either (a) an input of
+   corpus_merge_citations.py, (b) the merged output itself, or (c) named in
+   an explicit out-of-scope allowlist with a reason string.
+2. Seed the allowlist with the 0302 decision if istex_refs stays out.
+3. Same test asserts the enrich done-check sources (files that mark a DOI
+   "done") are a subset of the merge inputs — the 0300 mechanism, pinned.
+
+## Test
+
+- The contract test itself; prove its teeth by temporarily removing a merge
+  input from the consumption list (mutation check, then revert).
+
+## Exit criteria
+
+- [ ] Adherence test in tests/, green on main, teeth proven by mutation
+- [ ] Done-check/merge-input subset relation pinned
