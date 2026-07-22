@@ -11,10 +11,10 @@ Update the author's BibTeX database and archive on HAL. Covers all scientific pr
 
 ## Source of truth
 
-- **BibTeX file**: `~/CNRS/html/src/Ha-Duong.bib`
-- **Build**: `make` in `~/CNRS/html/src` (generates `index.html`)
-- **Deploy**: `make sync` in `~/CNRS/html` (FTP to ouvaton.coop)
-- Not a git repo — edits are direct.
+- **BibTeX file**: `~/CNRS/html/Ha-Duong.bib` (repo root, not `src/`)
+- **Build**: `make` in `~/CNRS/html/src` (generates `../index.html`)
+- **Deploy**: `make sync` in `~/CNRS/html` (validates HTML, then FTP to ouvaton.coop)
+- `~/CNRS/html` IS a git repo: commit directly on its main, one commit per logical change; `index.html` is gitignored. Check `git status` before editing — the author may have uncommitted changes in `Ha-Duong.bib`; keep his hunks and yours in separate commits (stage per hunk if needed).
 
 ## BibTeX entry type rules
 
