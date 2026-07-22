@@ -1,0 +1,47 @@
+%erg 0.1
+Title: Archive catalog_merge dedup-counts run report via DVC (0284 deferred step)
+Created: 2026-07-22
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-22T12:23Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Ticket 0284 (PR #1082) instrumented `scripts/harvest/catalog_merge.py` to emit
+per-procedure dedup counts via `save_run_report` (referee remark R1-12). The
+counts were reproduced offline and byte-verified (output md5 identical to the
+`dvc.lock` archived hash), but `dvc` was absent from the shared env — which
+cannot be synced mid-raid — so the run-report JSON was never archived: no
+`catalog_merge__*.json` exists on disk, and `run_reports.dvc` / `dvc.lock`
+were not bumped. This ticket carries 0284's deferred step 4 so the parent
+could close (follow-up-lets-parent-close convention).
+
+Reference numbers (recorded in 0276's log and PR #1082 body):
+records_total=43906, doi_duplicates_removed=833,
+title_year_duplicates_removed=154, dropped_empty_title=3,
+records_unified=42916.
+
+## Actions
+
+1. On a dvc-capable environment (padme or after a safe `uv sync`), run
+   `make corpus-discover` (never bare `dvc repro`).
+2. Confirm `unified_works.csv` md5 unchanged
+   (4b3c9c4bf0a54be5988017921350980f) and the emitted
+   `data/catalogs/run_reports/catalog_merge__<run_id>.json` carries the
+   reference numbers above.
+3. Commit `run_reports.dvc` pointer + `dvc.lock` stage-hash bump; push DVC
+   cache per the usual `make corpus-sync` flow.
+4. Note the archived artifact path in 0276's log (0276 cites the counts).
+
+## Invariants
+
+- No hand-curated numbers: the archived JSON must come from the rerun, not
+  be written by hand.
+- Never `uv sync` the shared env while sibling agents are mid-run.
+
+## Exit criteria
+
+- [ ] `catalog_merge__*.json` archived under DVC-tracked run_reports
+- [ ] Counts in the archived JSON match the reference numbers above

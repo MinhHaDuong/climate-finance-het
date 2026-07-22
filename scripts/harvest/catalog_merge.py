@@ -26,9 +26,11 @@ from utils import (
     FROM_COLS,
     WORKS_COLUMNS,
     get_logger,
+    make_run_id,
     normalize_doi,
     normalize_title,
     save_csv,
+    save_run_report,
 )
 
 log = get_logger("catalog_merge")
@@ -109,23 +111,81 @@ def catalog_files_from_dvc():
     return [d for d in deps if d.endswith("_works.csv")]
 
 
-def _dedup_no_doi_records(no_doi: pd.DataFrame) -> pd.DataFrame | None:
+def _dedup_no_doi_records(no_doi: pd.DataFrame) -> tuple[pd.DataFrame | None, int]:
     """Deduplicate records without a DOI using normalized title + year.
 
-    Returns the deduplicated DataFrame, or None if nothing survives filtering.
+    Returns ``(deduplicated DataFrame or None if nothing survives filtering,
+    n_titled)`` where ``n_titled`` is the number of records that carried a
+    non-empty normalized title and therefore entered the title+year pass
+    (records with an empty title are dropped before it). The caller uses
+    ``n_titled`` to split the no-DOI removals into ``dropped_empty_title`` and
+    ``title_year_duplicates_removed``.
     """
     no_doi = no_doi.copy()
     no_doi["_title_norm"] = no_doi["title"].apply(normalize_title)
     no_doi["_year"] = no_doi["year"].astype(str).str[:4]
     # Drop empty titles
     no_doi = no_doi[no_doi["_title_norm"] != ""]
-    if len(no_doi) == 0:
-        return None
+    n_titled = len(no_doi)
+    if n_titled == 0:
+        return None, 0
     # Composite key for groupby
     no_doi["_title_year"] = no_doi["_title_norm"] + "|" + no_doi["_year"]
     result = _dedup_vectorized(no_doi, "_title_year")
     log.info("  After title dedup: %d", len(result))
-    return result
+    return result, n_titled
+
+
+def deduplicate(combined: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, int]]:
+    """Run both dedup passes and return the unified frame plus removal counts.
+
+    Expects ``combined`` to already carry ``_doi_norm`` and the ``from_*``
+    provenance columns (set by ``main`` before this call). Pass 1 deduplicates
+    records with a DOI on the normalized DOI; pass 2 deduplicates records
+    without a DOI on normalized title+year, after dropping empty titles.
+
+    The returned counters give the per-procedure breakdown the data-paper
+    referee asked for (ticket 0284, R1-12) and reconcile exactly::
+
+        records_total
+            - doi_duplicates_removed
+            - title_year_duplicates_removed
+            - dropped_empty_title
+            == records_unified
+    """
+    has_doi = combined[combined["_doi_norm"] != ""]
+    no_doi = combined[combined["_doi_norm"] == ""]
+    log.info("  With DOI: %d, without DOI: %d", len(has_doi), len(no_doi))
+
+    parts = []
+    doi_unified = 0
+    if len(has_doi) > 0:
+        deduped_doi = _dedup_vectorized(has_doi, "_doi_norm")
+        doi_unified = len(deduped_doi)
+        parts.append(deduped_doi)
+        log.info("  After DOI dedup: %d", doi_unified)
+
+    title_unified = 0
+    n_titled = 0
+    if len(no_doi) > 0:
+        deduped_no_doi, n_titled = _dedup_no_doi_records(no_doi)
+        if deduped_no_doi is not None:
+            title_unified = len(deduped_no_doi)
+            parts.append(deduped_no_doi)
+
+    result = pd.concat(parts, ignore_index=True) if parts else pd.DataFrame()
+
+    counters = {
+        "records_total": len(combined),
+        "records_with_doi": len(has_doi),
+        "records_without_doi": len(no_doi),
+        "doi_duplicates_removed": len(has_doi) - doi_unified,
+        "records_without_doi_titled": n_titled,
+        "dropped_empty_title": len(no_doi) - n_titled,
+        "title_year_duplicates_removed": n_titled - title_unified,
+        "records_unified": len(result),
+    }
+    return result, counters
 
 
 def _load_combined(files: list[str]) -> pd.DataFrame | None:
@@ -161,7 +221,9 @@ def _load_combined(files: list[str]) -> pd.DataFrame | None:
     return combined
 
 
-def main():
+def main(run_id: str | None = None):
+    run_id = run_id or make_run_id()
+
     # Load only the catalogs declared as deps in dvc.yaml
     catalog_deps = catalog_files_from_dvc()
     files = [os.path.join(BASE_DIR, d) for d in catalog_deps]
@@ -185,23 +247,9 @@ def main():
         src_name = col.replace("from_", "")
         combined[col] = (combined["source"] == src_name).astype(int)
 
-    # Pass 1: DOI-based dedup (vectorized)
-    has_doi = combined[combined["_doi_norm"] != ""]
-    no_doi = combined[combined["_doi_norm"] == ""]
-    log.info("  With DOI: %d, without DOI: %d", len(has_doi), len(no_doi))
-
-    parts = []
-    if len(has_doi) > 0:
-        parts.append(_dedup_vectorized(has_doi, "_doi_norm"))
-        log.info("  After DOI dedup: %d", len(parts[-1]))
-
-    # Pass 2: title+year dedup for records without DOI (vectorized)
-    if len(no_doi) > 0:
-        deduped = _dedup_no_doi_records(no_doi)
-        if deduped is not None:
-            parts.append(deduped)
-
-    result = pd.concat(parts, ignore_index=True) if parts else pd.DataFrame()
+    # Deduplicate (DOI pass, then title+year pass) and capture per-procedure
+    # removal counts for the run report.
+    result, dedup_counters = deduplicate(combined)
 
     # Ensure all expected columns
     for col in WORKS_COLUMNS:
@@ -224,9 +272,22 @@ def main():
 
     save_csv(result, os.path.join(CATALOGS_DIR, "unified_works.csv"))
 
+    # Persist the per-procedure dedup counts as a pipeline-traceable artifact
+    # (ticket 0284): the data-paper referee asks how many duplicates each
+    # procedure removes. multi_source_works is added here (post-column build)
+    # rather than in deduplicate(), which sees no source_count column.
+    report = {**dedup_counters,
+              "multi_source_works": int((result["source_count"] > 1).sum())}
+    report_path = save_run_report(report, run_id, "catalog_merge")
+
     log.info("Summary:")
     log.info("  Unified works: %d", len(result))
     log.info("  Multi-source works: %d", (result['source_count'] > 1).sum())
+    log.info("  DOI duplicates removed: %d", dedup_counters["doi_duplicates_removed"])
+    log.info("  Title+year duplicates removed: %d",
+             dedup_counters["title_year_duplicates_removed"])
+    log.info("  Dropped empty title: %d", dedup_counters["dropped_empty_title"])
+    log.info("  Run report: %s", report_path)
     log.info("  Source distribution:")
     for col in FROM_COLS:
         src_name = col.replace("from_", "")
@@ -237,5 +298,8 @@ def main():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.parse_args()
-    main()
+    parser.add_argument("--run-id", default=None,
+                        help="Run identifier for the run report filename "
+                             "(default: UTC timestamp).")
+    args = parser.parse_args()
+    main(run_id=args.run_id)
