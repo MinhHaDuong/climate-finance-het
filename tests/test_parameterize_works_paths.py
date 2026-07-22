@@ -16,7 +16,6 @@ import subprocess
 import sys
 
 import pytest
-
 from _source_roots import source_root_env
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
