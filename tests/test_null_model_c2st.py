@@ -16,6 +16,18 @@ import pytest
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 sys.path.insert(0, SCRIPTS_DIR)
 
+# The C2ST subprocess smoke budget (300 s) is sized for GPU permutation
+# batching; on CPU-only machines it times out (ticket 0263, cluster 4 —
+# measured on doudou 2026-07-11 and 2026-07-22). Skip there, like the
+# golden S3/S4 tests, rather than triple a budget that would still be
+# machine-dependent.
+try:
+    import torch
+
+    GPU_AVAILABLE = torch.cuda.is_available()
+except ImportError:
+    GPU_AVAILABLE = False
+
 
 # ---------------------------------------------------------------------------
 # Shared synthetic data builders
@@ -303,6 +315,10 @@ class TestC2STLexicalNullModel:
 
 
 @pytest.mark.integration
+@pytest.mark.skipif(
+    not GPU_AVAILABLE,
+    reason="C2ST smoke subprocess exceeds its 300s budget on CPU (ticket 0263)",
+)
 class TestC2STNullModelSmoke:
     """Smoke tests that invoke compute_null_model.py via subprocess."""
 

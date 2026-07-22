@@ -22,8 +22,14 @@ CSV_PATH = os.path.join(TABLES_DIR, "tab_corpus_sources.csv")
 
 @pytest.fixture
 def corpus_table():
-    """Load the exported corpus sources table."""
-    assert os.path.exists(CSV_PATH), f"Missing {CSV_PATH} — run export_corpus_table.py first"
+    """Load the exported corpus sources table.
+
+    The CSV is a Make-generated, untracked artifact (`make corpus-tables`);
+    on a machine that has not built it the tests skip rather than error
+    (ticket 0263, cluster 1 — data-complete machines still validate it).
+    """
+    if not os.path.exists(CSV_PATH):
+        pytest.skip(f"{CSV_PATH} not built here — run make corpus-tables (ticket 0263)")
     return pd.read_csv(CSV_PATH)
 
 
