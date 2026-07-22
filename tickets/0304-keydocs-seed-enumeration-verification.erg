@@ -1,0 +1,102 @@
+%erg 0.1
+Title: Corpus v2: complete and verify the key-documents seed enumeration (UNFCCC + OECD DAC)
+Created: 2026-07-22
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-22T23:00Z HDMX-coding-agent created child of 0288 — BUILD PR lands harvester + starter seeds; this ticket completes the document-level lists
+2026-07-22T23:30Z HDMX-coding-agent note author decision (2026-07-22): UNFCCC enumeration goes through a facet-crawl discovery script — unfccc.int/documents exposes stable Drupal facets (Topic="Climate finance" x Type x Body x Session/Year); Action 1 amended, alignment notes with grey/teaching added
+2026-07-22T23:45Z HDMX-coding-agent note renumbered 0293 -> 0304: seat taken on main by PR #1083's renumber chain (optimistic-ID protocol, 0299-0303 all taken today)
+
+--- body ---
+## Context
+
+Ticket 0288's BUILD phase landed the catalog_keydocs harvester, the merge/
+filter/enrichment wiring, and curated STARTER seed lists (47 UNFCCC + 14 OECD
+DAC entries in config/unfccc_sources.yaml and config/oecd_dac_sources.yaml).
+The lists cover every document the manuscript cites (probe classes A/B/C) plus
+the systematically enumerable series anchors, but the validated classes are
+larger (UNFCCC order of magnitude 150-300), several entries carry provisional
+symbols or empty URLs ("resolve at harvest" in provenance), and OECD One
+returns 403 to robots so its PDFs need a manual bulk export.
+
+Prerequisite: the 0288 BUILD PR (branch t288-corpus-v2-layer) must be merged.
+This runs on/with padme: the full fetch sweep is a Phase-1 network operation,
+coordinated with the author (data flows padme->doudou only).
+
+## Relevant files
+
+- `config/unfccc_sources.yaml`, `config/oecd_dac_sources.yaml` — seed lists to complete
+- `scripts/harvest/catalog_keydocs.py` — harvester (metadata-only vs --fetch)
+- `deliverables/data-paper/revision-rdj26561/biblio-vs-corpus-probe.md` — regression probe to rerun against corpus v2
+
+## Actions
+
+1. Enumerate the remaining documents within the author-validated classes,
+   driven by a discovery script on the UNFCCC side (author decision,
+   2026-07-22): unfccc.int/documents is a Drupal facet search with stable
+   URL parameters (Topic="Climate finance" x Type=official documents/
+   decisions x Body=SCF x Session/Year, verified 2026-07-22). Crawl it
+   politely (pipeline_io.polite_get) to emit CANDIDATE entries as JSONL
+   under data/ — teaching-style — then the author-validated candidates are
+   appended to config/unfccc_sources.yaml, so the curation act stays a
+   reviewable git diff. Coverage: full COP/CMP/CMA finance-decision series,
+   all GCF/GEF/Adaptation Fund reports to COP/CMP, INC 1991-1995 session
+   documents, party/bloc submissions sweep (NCQG, long-term finance), and
+   ENB per-COP summaries (ENB lives on enb.iisd.org, not the UNFCCC portal
+   — enumerate its own per-COP index, same candidates→validation flow).
+2. Verify every provisional symbol and URL flagged "resolve/verify at
+   harvest" in the seed provenance fields; fix titles to official form.
+3. OECD: identify OLIS symbols for the 1998 Rio-marker directives and early
+   DAC/WP-STAT/ENVIRONET documents; obtain PDFs via manual export where
+   one.oecd.org blocks robots, pre-placing them in data/pool/keydocs/oecd/.
+4. Run the full --fetch harvest on padme; check OCR coverage of pre-2007
+   scanned material (ocrmypdf required on padme); review needs_ocr leftovers.
+5. Rerun Phase 1 (make corpus on padme) and the bibliography-coverage probe:
+   probe classes A and B must now match (regression check from 0288).
+
+## Alignment with grey and teaching (design notes, 2026-07-22)
+
+The layer reuses the repo's two existing seed idioms instead of inventing a
+third; keep these alignments when building the discovery script:
+
+- Discovery → candidates → validated YAML mirrors the teaching source
+  (catalog_syllabi.py stages → build_teaching_yaml.py →
+  data/teaching_sources.yaml): scripted-discovery output lands in data/
+  (regenerable, DVC), validated seeds live in config/ (committed, curated) —
+  the same split grey_sources.yaml already uses on the config side.
+- Shared plumbing, no new framework: pipeline_io.polite_get for network,
+  checkpointed/resumable stages a la syllabi if the crawl grows, pool caching
+  as already wired in catalog_keydocs.
+- Add a shared seed-YAML validation guard: one test sweeping
+  config/*_sources.yaml for required fields, symbol/title uniqueness, and DOI
+  polarity (grey entries MAY carry DOIs; keydocs entries MUST NOT — that
+  polarity is the dedup boundary with the academic path).
+- Explicit non-goals: do NOT merge catalog_grey and catalog_keydocs (different
+  identifier regimes — DOI-joined + WB API vs symbol-joined curated — a common
+  framework for three scripts is abstraction without payoff), and do NOT move
+  grey's OECD-DOI seeds into the keydocs lists (the DOI polarity IS the
+  boundary).
+
+## Test
+
+- Seed validation tests in tests/test_catalog_keydocs.py already gate list
+  format; extend TestRealSeeds count floors as the lists grow.
+
+## Verification
+
+- [ ] No seed entry retains "resolve at harvest"/"to confirm at harvest" for symbol or URL
+- [ ] Harvest run report: fetch/text status counts, zero unexplained failures
+- [ ] Probe rerun against corpus v2: classes A and B matched
+
+## Invariants
+
+- Phase separation; in_v1 reproducibility; no one-shot manual dumps — every
+  document enters via the seed lists + harvester.
+- Small spot-fetches on doudou only; sweeps on padme.
+
+## Exit criteria
+
+- [ ] Both seed lists complete within the validated classes (UNFCCC ~150-300, OECD a few dozen)
+- [ ] Full harvest completed on padme; unfccc_works.csv / oecd_works.csv populated
+- [ ] Corpus v2 rebuilt with the layer present and correctly flagged (hands back to 0288 for counts/prose)

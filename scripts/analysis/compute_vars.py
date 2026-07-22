@@ -146,6 +146,18 @@ def _read_json(filename, directory=TABLES_DIR):
         return json.load(f)
 
 
+def count_sources(df) -> int:
+    """Number of corpus sources present in the data.
+
+    Counts the from_* provenance columns actually carried by refined_works,
+    so a source added to SOURCE_NAMES ahead of its corpus rebuild (unfccc/
+    oecd, ticket 0288) does not inflate the prose claim. Falls back to
+    len(SOURCE_NAMES) for frames without provenance columns.
+    """
+    present = [s for s in SOURCE_NAMES if f"from_{s}" in df.columns]
+    return len(present) if present else len(SOURCE_NAMES)
+
+
 # ── Collectors ───────────────────────────────────────────────
 
 
@@ -179,7 +191,7 @@ def corpus_stats(v):
         en_count = lang.str.lower().isin(["en", "english"]).sum()
         v["lang_english_pct"] = _pct(100 * en_count / n)
 
-    v["corpus_sources"] = str(len(SOURCE_NAMES))
+    v["corpus_sources"] = str(count_sources(df))
 
     # OpenAlex share of refined works
     if "from_openalex" in df.columns:

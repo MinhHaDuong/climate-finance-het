@@ -82,7 +82,10 @@ WORKS_COLUMNS = [
 
 # Source provenance — boolean columns indicating which sources contributed each work.
 # These replace the old pipe-separated `source` column for multi-source tracking.
-SOURCE_NAMES = ["openalex", "istex", "bibcnrs", "scispace", "grey", "teaching"]
+# "unfccc" and "oecd" are the curated key-documents layer (ticket 0288,
+# corpus v2): non-DOI official documents harvested by catalog_keydocs.py.
+SOURCE_NAMES = ["openalex", "istex", "bibcnrs", "scispace", "grey", "teaching",
+                "unfccc", "oecd"]
 FROM_COLS = [f"from_{s}" for s in SOURCE_NAMES]
 
 REFS_COLUMNS = [

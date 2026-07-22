@@ -46,9 +46,34 @@ SOURCE_META = {
         "label": "Teaching canon",
         "query": "Syllabi from 15 programmes (doctoral, MBA, professional, MOOC)",
     },
+    # Curated key-documents layer (ticket 0288, corpus v2)
+    "unfccc": {
+        "label": "UNFCCC key documents",
+        "query": "Curated COP/CMP/CMA decisions, SCF Biennial Assessments, fund"
+                 " reports, INC records, submissions, ENB summaries"
+                 " (config/unfccc_sources.yaml)",
+    },
+    "oecd": {
+        "label": "OECD DAC key documents",
+        "query": "Curated non-DOI founding documents: Rio-marker Statistical"
+                 " Reporting Directives, pre-DOI Development Co-operation"
+                 " Reports, early DAC/WP-STAT/ENVIRONET"
+                 " (config/oecd_dac_sources.yaml)",
+    },
 }
 
 PRIMARY_SOURCES = list(SOURCE_META.keys())
+
+
+def sources_present(unified_cols, refined_cols) -> list[str]:
+    """PRIMARY_SOURCES whose from_* column exists in either frame.
+
+    A source absent from both (e.g. unfccc/oecd on pre-v2 data) is skipped so
+    Phase-2 tables stay byte-stable until the corpus that carries the layer
+    is actually built (ticket 0288).
+    """
+    cols = set(unified_cols) | set(refined_cols)
+    return [s for s in PRIMARY_SOURCES if f"from_{s}" in cols]
 
 CAPTION = (
     ": Corpus sources. *Raw*: records with `from_*` provenance flag before"
@@ -121,7 +146,7 @@ def main():
 
     # Compute per-source statistics
     rows = []
-    for src in PRIMARY_SOURCES:
+    for src in sources_present(unified.columns, df.columns):
         from_col = f"from_{src}"
         mask_u = unified[from_col] == 1 if from_col in unified.columns else unified["source"].str.contains(src, na=False)
         mask_r = df[from_col] == 1 if from_col in df.columns else df["source"].str.contains(src, na=False)

@@ -12,6 +12,7 @@ import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "figures"))  # 0255: moved figures entry points
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "analysis"))  # 0288: compute_vars data-driven source count
 
 TABLES_DIR = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
@@ -86,3 +87,40 @@ def test_source_meta_matches_source_names():
         f"SOURCE_META keys {set(SOURCE_META.keys())} != "
         f"SOURCE_NAMES {set(SOURCE_NAMES)}"
     )
+
+
+class TestKeydocsSourcesPreV2Data:
+    """Ticket 0288: unfccc/oecd join SOURCE_NAMES before the v2 corpus is
+    rebuilt. Phase-2 renders on v1 data must not change: a source whose
+    from_* column is absent from BOTH unified and refined frames is skipped,
+    and the corpus_sources var counts columns present in the data, not the
+    forward-looking SOURCE_NAMES constant."""
+
+    def test_sources_present_skips_absent_layer(self):
+        from export_corpus_table import sources_present
+
+        v1_cols = ["source", "from_openalex", "from_istex", "from_bibcnrs",
+                   "from_scispace", "from_grey", "from_teaching"]
+        present = sources_present(v1_cols, v1_cols)
+        assert "unfccc" not in present
+        assert "oecd" not in present
+        assert "openalex" in present and "grey" in present
+
+    def test_sources_present_includes_layer_when_column_exists(self):
+        from export_corpus_table import sources_present
+
+        v2_cols = ["source", "from_openalex", "from_unfccc", "from_oecd"]
+        present = sources_present(v2_cols, [])
+        assert "unfccc" in present
+        assert "oecd" in present
+
+    def test_count_sources_is_data_driven(self):
+        import pandas as pd
+        from compute_vars import count_sources
+
+        v1 = pd.DataFrame(columns=["title", "from_openalex", "from_istex",
+                                   "from_bibcnrs", "from_scispace",
+                                   "from_grey", "from_teaching"])
+        assert count_sources(v1) == 6
+        v2 = pd.DataFrame(columns=list(v1.columns) + ["from_unfccc", "from_oecd"])
+        assert count_sources(v2) == 8

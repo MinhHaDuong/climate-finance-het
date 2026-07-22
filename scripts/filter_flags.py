@@ -272,7 +272,16 @@ def compute_protection(df, config, *, citations_df):
 
     in_teaching = _is_from_teaching(df)
 
-    protected = high_cites | multi_src | cited_in_corpus | in_teaching
+    # Curated key-documents layer (ticket 0288): official documents carry no
+    # citation counts and one source, so every other channel misses them.
+    curated = pd.Series(False, index=df.index)
+    for src in prot_cfg.get("curated_sources", []):
+        col = f"from_{src}"
+        if col in df.columns:
+            hit = pd.to_numeric(df[col], errors="coerce").fillna(0).astype(bool)
+            curated |= hit
+
+    protected = high_cites | multi_src | cited_in_corpus | in_teaching | curated
 
     # Build reason strings
     reasons = pd.Series("", index=df.index)
@@ -286,6 +295,8 @@ def compute_protection(df, config, *, citations_df):
             r.append("cited_in_corpus")
         if in_teaching.at[i]:
             r.append("from_teaching")
+        if curated.at[i]:
+            r.append("curated_source")
         reasons.at[i] = "; ".join(r)
 
     return protected, reasons

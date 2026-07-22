@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 """Merge all source catalogs into a unified, deduplicated catalog.
 
-Reads the 6 declared per-source catalogs from data/catalogs/ and produces:
+Reads the per-source catalogs declared as catalog_merge deps in dvc.yaml
+(8 with the ticket-0288 key-documents layer: bibcnrs, istex, openalex, grey,
+teaching, scispace, unfccc, oecd) and produces:
   data/catalogs/unified_works.csv
-
-Only these files are loaded (matching dvc.yaml catalog_merge deps):
-  bibcnrs, istex, openalex, grey, teaching, scispace
 
 Deduplication: DOI-based (primary), then normalized title+year match (fallback).
 Priority for field values follows SOURCE_PRIORITY list.
@@ -35,7 +34,17 @@ from utils import (
 
 log = get_logger("catalog_merge")
 
-SOURCE_PRIORITY = ["openalex", "scopus", "istex", "bibcnrs", "scispace", "grey", "teaching"]
+# unfccc/oecd (curated key-documents layer, ticket 0288) rank LAST on
+# purpose: on rows merged with an existing grey seed, the grey source_id
+# must keep winning — in_v1 provenance (#283) matches no-DOI rows by
+# source_id, so letting the layer override it would silently evict the
+# row from the reproducible v1 subset.
+SOURCE_PRIORITY = ["openalex", "scopus", "istex", "bibcnrs", "scispace", "grey",
+                   "teaching", "unfccc", "oecd"]
+
+# Optional per-catalog columns carried through the merge when present
+# (first non-empty by source priority; empty string elsewhere).
+EXTRA_CARRY_COLS = ["abstract_provenance", "keywords_provenance"]
 
 
 SOURCE_RANK = {s: i for i, s in enumerate(SOURCE_PRIORITY)}
@@ -72,6 +81,7 @@ def _dedup_vectorized(df, group_col):
 
     # Replace empty strings with NaN so first() skips them
     text_cols = [c for c in WORKS_COLUMNS if c != "cited_by_count"]
+    text_cols += [c for c in EXTRA_CARRY_COLS if c in df.columns]
     df[text_cols] = df[text_cols].replace("", pd.NA)
 
     # Build aggregation: first() for text, max() for citations, max() for from_*
@@ -140,7 +150,7 @@ def deduplicate(combined: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, int]]:
     """Run both dedup passes and return the unified frame plus removal counts.
 
     Expects ``combined`` to already carry ``_doi_norm`` and the ``from_*``
-    provenance columns (set by ``main`` before this call). Pass 1 deduplicates
+    provenance columns (set by ``merge_catalogs`` before this call). Pass 1 deduplicates
     records with a DOI on the normalized DOI; pass 2 deduplicates records
     without a DOI on normalized title+year, after dropping empty titles.
 
@@ -221,16 +231,12 @@ def _load_combined(files: list[str]) -> pd.DataFrame | None:
     return combined
 
 
-def main(run_id: str | None = None):
-    run_id = run_id or make_run_id()
-
-    # Load only the catalogs declared as deps in dvc.yaml
-    catalog_deps = catalog_files_from_dvc()
-    files = [os.path.join(BASE_DIR, d) for d in catalog_deps]
-    combined = _load_combined(files)
-    if combined is None:
-        return
-
+def merge_catalogs(
+        combined: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, int]]:
+    """Normalize, set provenance flags, and deduplicate a concatenated
+    catalog frame. Extracted from main() so the dedup guards (ticket 0288)
+    can exercise the real merge path on fixtures. Returns the unified frame
+    plus the per-procedure removal counters for the run report (R1-12)."""
     # Normalize text fields — fix encoding artifacts from upstream aggregators
     text_fields = ["title", "abstract", "first_author", "all_authors",
                    "journal", "keywords"]
@@ -251,17 +257,33 @@ def main(run_id: str | None = None):
     # removal counts for the run report.
     result, dedup_counters = deduplicate(combined)
 
-    # Ensure all expected columns
-    for col in WORKS_COLUMNS:
+    # Ensure all expected columns (extras always present so unified_works
+    # has a stable schema whether or not the key-documents layer ran)
+    for col in WORKS_COLUMNS + EXTRA_CARRY_COLS:
         if col not in result.columns:
             result[col] = ""
+    result[EXTRA_CARRY_COLS] = result[EXTRA_CARRY_COLS].fillna("")
     for col in FROM_COLS:
         if col not in result.columns:
             result[col] = 0
-    result = result[WORKS_COLUMNS + FROM_COLS]
+    result = result[WORKS_COLUMNS + FROM_COLS + EXTRA_CARRY_COLS]
 
     # Add source_count
     result["source_count"] = result[FROM_COLS].sum(axis=1).astype(int)
+    return result, dedup_counters
+
+
+def main(run_id: str | None = None):
+    run_id = run_id or make_run_id()
+
+    # Load only the catalogs declared as deps in dvc.yaml
+    catalog_deps = catalog_files_from_dvc()
+    files = [os.path.join(BASE_DIR, d) for d in catalog_deps]
+    combined = _load_combined(files)
+    if combined is None:
+        return
+
+    result, dedup_counters = merge_catalogs(combined)
 
     # Sort by year desc, then cited_by_count desc
     result["_year_sort"] = pd.to_numeric(result["year"], errors="coerce")

@@ -1,0 +1,469 @@
+# UNFCCC key-documents sub-list — corpus v2 curated layer (ticket 0288).
+#
+# Inclusion rule (author-validated 2026-07-22, class level): official documents
+# produced by or addressed to the COP that define, account for, or govern
+# climate finance — including party/bloc submissions — plus the negotiation
+# record around those decisions (session summaries such as the IISD Earth
+# Negotiations Bulletin and statements delivered at COPs).
+#
+# Document classes (doc_class):
+#   decision            COP/CMP/CMA decision addenda bearing on finance
+#   biennial_assessment SCF Biennial Assessment series (defines CF accounting)
+#   fund_report         GCF/GEF/Adaptation Fund reports to COP/CMP
+#   inc                 pre-1995 INC negotiation documents
+#   submission          party/negotiating-bloc submissions
+#   negotiation_record  ENB-type session summaries, statements at COPs
+#
+# Identifier: the UN document symbol (source_id downstream). Entries without a
+# native symbol (ENB, speeches) use a stable constructed id.
+# No entry may carry a `doi:` key — DOI'd works enter via OpenAlex; the
+# harvester rejects seeds with DOIs (dedup by design, see
+# tests/test_catalog_keydocs.py).
+#
+# `url` points at the PDF when known. Fetch-validated URLs are marked
+# "URL spot-verified" in provenance; "URL follows verified pattern" entries
+# use the unfccc.int /resource/docs layout confirmed on the spot-verified
+# ones; "resolve URL at harvest" entries are completed by the enumeration
+# child ticket. This list is a curated starter set — the document-level
+# enumeration within the validated classes is completed at harvest
+# (see ticket 0288 and its enumeration child ticket).
+
+documents:
+  # ── COP decision addenda (finance decisions) ─────────────────────────
+  - symbol: "FCCC/CP/1995/7/Add.1"
+    title: "Report of the Conference of the Parties on its first session, held at Berlin from 28 March to 7 April 1995. Addendum. Part two: Action taken by the Conference of the Parties at its first session"
+    short_title: "COP1 Berlin decisions (Berlin Mandate; initial guidance to the financial mechanism, Decision 11/CP.1)"
+    year: 1995
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/cop1/07a01.pdf"
+    provenance: "Series enumeration: first COP; Decision 11/CP.1 initial guidance on eligibility criteria to the operating entity. URL follows verified pattern."
+  - symbol: "FCCC/CP/1996/15/Add.1"
+    title: "Report of the Conference of the Parties on its second session, held at Geneva from 8 to 19 July 1996. Addendum. Part two: Action taken by the Conference of the Parties at its second session"
+    short_title: "COP2 Geneva decisions (guidance to GEF)"
+    year: 1996
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/cop2/15a01.pdf"
+    provenance: "Series enumeration: financial-mechanism guidance decisions. URL follows verified pattern."
+  - symbol: "FCCC/CP/1997/7/Add.1"
+    title: "Report of the Conference of the Parties on its third session, held at Kyoto from 1 to 11 December 1997. Addendum. Part two: Action taken by the Conference of the Parties at its third session"
+    short_title: "COP3 Kyoto decisions (Kyoto Protocol adoption, Decision 1/CP.3)"
+    year: 1997
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/cop3/07a01.pdf"
+    provenance: "Kyoto Protocol Art. 11 financial provisions; CDM origin. URL follows verified pattern."
+  - symbol: "FCCC/CP/1998/16/Add.1"
+    title: "Report of the Conference of the Parties on its fourth session, held at Buenos Aires from 2 to 14 November 1998. Addendum. Part two: Action taken by the Conference of the Parties at its fourth session"
+    short_title: "COP4 decisions (Buenos Aires Plan of Action)"
+    year: 1998
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/cop4/16a01.pdf"
+    provenance: "Buenos Aires Plan of Action: financial mechanism review track. URL follows verified pattern."
+  - symbol: "FCCC/CP/2001/13/Add.1"
+    title: "Report of the Conference of the Parties on its seventh session, held at Marrakesh from 29 October to 10 November 2001. Addendum. Part two: Action taken by the Conference of the Parties. Volume I"
+    short_title: "COP7 Marrakesh Accords (LDCF, SCCF, Adaptation Fund established)"
+    year: 2001
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/cop7/13a01.pdf"
+    provenance: "Marrakesh Accords: creation of the three funds (Decisions 7/CP.7, 10/CP.7). URL follows verified pattern."
+  - symbol: "FCCC/CP/2005/5/Add.1"
+    title: "Report of the Conference of the Parties on its eleventh session, held at Montreal from 28 November to 10 December 2005. Addendum. Part two: Action taken by the Conference of the Parties at its eleventh session"
+    short_title: "COP11 Montreal decisions"
+    year: 2005
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2005/cop11/eng/05a01.pdf"
+    provenance: "Series enumeration; Montreal launch of Adaptation Fund operationalization track. URL follows verified pattern."
+  - symbol: "FCCC/KP/CMP/2005/8/Add.1"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol on its first session, held at Montreal from 28 November to 10 December 2005. Addendum. Part two: Action taken"
+    short_title: "CMP1 decisions (Adaptation Fund, Decision 28/CMP.1)"
+    year: 2005
+    body: "UNFCCC CMP"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2005/cmp1/eng/08a01.pdf"
+    provenance: "Adaptation Fund initial guidance (28/CMP.1); share-of-proceeds financing model. URL follows verified pattern."
+  - symbol: "FCCC/CP/2007/6/Add.1"
+    title: "Report of the Conference of the Parties on its thirteenth session, held in Bali from 3 to 15 December 2007. Addendum. Part two: Action taken by the Conference of the Parties at its thirteenth session"
+    short_title: "COP13 decisions (Bali Action Plan, Decision 1/CP.13)"
+    year: 2007
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2007/cop13/eng/06a01.pdf"
+    provenance: "Cited in manuscript v2.0.5 (probe class A). Bali Action Plan finance pillar. URL follows verified pattern."
+  - symbol: "FCCC/KP/CMP/2007/9/Add.1"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol on its third session, held in Bali from 3 to 15 December 2007. Addendum. Part two: Action taken"
+    short_title: "CMP3 decisions (Adaptation Fund operationalized, Decision 1/CMP.3)"
+    year: 2007
+    body: "UNFCCC CMP"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2007/cmp3/eng/09a01.pdf"
+    provenance: "Adaptation Fund governance settled (1/CMP.3). URL follows verified pattern."
+  - symbol: "FCCC/CP/2008/7/Add.1"
+    title: "Report of the Conference of the Parties on its fourteenth session, held in Poznan from 1 to 12 December 2008. Addendum. Part two: Action taken by the Conference of the Parties at its fourteenth session"
+    short_title: "COP14 Poznan decisions"
+    year: 2008
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2008/cop14/eng/07a01.pdf"
+    provenance: "Series enumeration. URL follows verified pattern."
+  - symbol: "FCCC/CP/2009/11/Add.1"
+    title: "Report of the Conference of the Parties on its fifteenth session, held in Copenhagen from 7 to 19 December 2009. Addendum. Part two: Action taken by the Conference of the Parties at its fifteenth session"
+    short_title: "COP15 decisions (Copenhagen Accord, Decision 2/CP.15 — USD 100bn)"
+    year: 2009
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2009/cop15/eng/11a01.pdf"
+    provenance: "Cited in manuscript v2.0.5 (probe class A). Copenhagen Accord USD 100bn commitment. URL spot-verified 2026-07-22."
+  - symbol: "FCCC/CP/2010/7/Add.1"
+    title: "Report of the Conference of the Parties on its sixteenth session, held in Cancun from 29 November to 10 December 2010. Addendum. Part two: Action taken by the Conference of the Parties at its sixteenth session"
+    short_title: "COP16 decisions (Cancun Agreements, Decision 1/CP.16 — GCF established)"
+    year: 2010
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2010/cop16/eng/07a01.pdf"
+    provenance: "Cited in manuscript v2.0.5 (probe class A). Cancun Agreements; Green Climate Fund established. URL follows verified pattern."
+  - symbol: "FCCC/CP/2011/9/Add.1"
+    title: "Report of the Conference of the Parties on its seventeenth session, held in Durban from 28 November to 11 December 2011. Addendum. Part two: Action taken by the Conference of the Parties at its seventeenth session"
+    short_title: "COP17 decisions (GCF governing instrument, Decision 3/CP.17)"
+    year: 2011
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2011/cop17/eng/09a01.pdf"
+    provenance: "GCF governing instrument adopted. URL follows verified pattern."
+  - symbol: "FCCC/CP/2012/8/Add.1"
+    title: "Report of the Conference of the Parties on its eighteenth session, held in Doha from 26 November to 8 December 2012. Addendum. Part two: Action taken by the Conference of the Parties at its eighteenth session"
+    short_title: "COP18 Doha decisions (long-term finance work programme)"
+    year: 2012
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2012/cop18/eng/08a01.pdf"
+    provenance: "Long-term finance work programme extension. URL follows verified pattern."
+  - symbol: "FCCC/CP/2013/10/Add.1"
+    title: "Report of the Conference of the Parties on its nineteenth session, held in Warsaw from 11 to 23 November 2013. Addendum. Part two: Action taken by the Conference of the Parties at its nineteenth session"
+    short_title: "COP19 Warsaw decisions (long-term finance, Decision 3/CP.19)"
+    year: 2013
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2013/cop19/eng/10a01.pdf"
+    provenance: "Long-term climate finance pathway decision; coincides with the corpus JS structural break at 2013. URL follows verified pattern."
+  - symbol: "FCCC/CP/2014/10/Add.1"
+    title: "Report of the Conference of the Parties on its twentieth session, held in Lima from 1 to 14 December 2014. Addendum. Part two: Action taken by the Conference of the Parties at its twentieth session"
+    short_title: "COP20 Lima decisions"
+    year: 2014
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2014/cop20/eng/10a01.pdf"
+    provenance: "Series enumeration. URL follows verified pattern."
+  - symbol: "FCCC/CP/2015/10/Add.1"
+    title: "Report of the Conference of the Parties on its twenty-first session, held in Paris from 30 November to 13 December 2015. Addendum. Part two: Action taken by the Conference of the Parties at its twenty-first session"
+    short_title: "COP21 decisions (Paris Agreement adoption, Decision 1/CP.21 — Article 9 finance package)"
+    year: 2015
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2015/cop21/eng/10a01.pdf"
+    provenance: "Paris Article 9 package; USD 100bn floor extended to 2025. URL follows verified pattern."
+  - symbol: "FCCC/CP/2016/10/Add.1"
+    title: "Report of the Conference of the Parties on its twenty-second session, held in Marrakech from 7 to 18 November 2016. Addendum. Part two: Action taken by the Conference of the Parties at its twenty-second session"
+    short_title: "COP22 Marrakech decisions (long-term finance)"
+    year: 2016
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2016/cop22/eng/10a01.pdf"
+    provenance: "Series enumeration. URL follows verified pattern."
+  - symbol: "FCCC/CP/2018/10/Add.1"
+    title: "Report of the Conference of the Parties on its twenty-fourth session, held in Katowice from 2 to 15 December 2018. Addendum. Part two: Action taken by the Conference of the Parties at its twenty-fourth session"
+    short_title: "COP24 Katowice decisions"
+    year: 2018
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: ""
+    provenance: "Katowice package COP-track decisions. Resolve URL at harvest (post-2017 file naming varies)."
+  - symbol: "FCCC/PA/CMA/2018/3/Add.2"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Paris Agreement on the third part of its first session, held in Katowice from 2 to 15 December 2018. Addendum 2"
+    short_title: "CMA1.3 Katowice rulebook (Article 9.5 and 9.7 finance modalities)"
+    year: 2018
+    body: "UNFCCC CMA"
+    doc_class: decision
+    language: en
+    url: ""
+    provenance: "Katowice rulebook finance accounting modalities (Decisions 12-14/CMA.1). Resolve URL at harvest."
+  - symbol: "FCCC/PA/CMA/2021/10/Add.1"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Paris Agreement on its third session, held in Glasgow from 31 October to 13 November 2021. Addendum. Part two"
+    short_title: "CMA3 decisions (Glasgow Climate Pact, Decision 1/CMA.3)"
+    year: 2021
+    body: "UNFCCC CMA"
+    doc_class: decision
+    language: en
+    url: ""
+    provenance: "Glasgow Climate Pact: adaptation-finance doubling; USD 100bn delivery. Resolve URL at harvest."
+  - symbol: "FCCC/PA/CMA/2022/10/Add.1"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Paris Agreement on its fourth session, held in Sharm el-Sheikh from 6 to 20 November 2022. Addendum. Part two"
+    short_title: "CMA4 decisions (loss and damage funding arrangements, Decision 2/CMA.4)"
+    year: 2022
+    body: "UNFCCC CMA"
+    doc_class: decision
+    language: en
+    url: ""
+    provenance: "Loss and damage fund establishment (with 2/CP.27). Resolve URL at harvest."
+  - symbol: "FCCC/PA/CMA/2023/16/Add.1"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Paris Agreement on its fifth session, held in the United Arab Emirates from 30 November to 13 December 2023. Addendum. Part two"
+    short_title: "CMA5 decisions (first global stocktake, Decision 1/CMA.5)"
+    year: 2023
+    body: "UNFCCC CMA"
+    doc_class: decision
+    language: en
+    url: ""
+    provenance: "Global stocktake finance paragraphs; NCQG runway. Symbol and URL to confirm at harvest."
+  - symbol: "FCCC/PA/CMA/2024/17/Add.1"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Paris Agreement on its sixth session, held in Baku from 11 to 24 November 2024. Addendum. Part two"
+    short_title: "CMA6 decisions (New Collective Quantified Goal on climate finance, Decision 1/CMA.6)"
+    year: 2024
+    body: "UNFCCC CMA"
+    doc_class: decision
+    language: en
+    url: ""
+    provenance: "NCQG decision (USD 300bn/1.3tn). Symbol and URL to confirm at harvest."
+
+  # ── SCF Biennial Assessment series ───────────────────────────────────
+  # The five titles below that already exist in config/grey_sources.yaml are
+  # repeated VERBATIM so catalog_merge title+year dedup collapses them into a
+  # single row carrying both from_grey and from_unfccc (dedup guard, see
+  # tests). The 2014 full report and the 6th BA are new to the corpus.
+  - symbol: "UNFCCC/SCF/BA/2014"
+    title: "2014 Biennial Assessment and Overview of Climate Finance Flows Report"
+    short_title: "First Biennial Assessment (2014) — full report"
+    year: 2014
+    body: "UNFCCC Standing Committee on Finance"
+    doc_class: biennial_assessment
+    language: en
+    url: ""
+    provenance: "Cited in manuscript v2.0.5 (probe class A): first BA, defines climate finance accounting; absent from corpus v1. Resolve URL at harvest."
+  - symbol: "UNFCCC/SCF/BA/2014/SUMMARY"
+    title: "Summary and recommendations by the Standing Committee on Finance on the 2014 Biennial Assessment and Overview of Climate Finance Flows"
+    short_title: "First BA (2014) — SCF summary and recommendations"
+    year: 2014
+    body: "UNFCCC Standing Committee on Finance"
+    doc_class: biennial_assessment
+    language: en
+    url: "https://unfccc.int/topics/climate-finance/resources/biennial-assessment-of-climate-finance"
+    provenance: "Also a grey_sources.yaml seed — identical title/year by design, merge dedup collapses (from_grey + from_unfccc)."
+  - symbol: "UNFCCC/SCF/BA/2016/SUMMARY"
+    title: "Summary and recommendations by the Standing Committee on Finance on the 2016 Biennial Assessment and Overview of Climate Finance Flows"
+    short_title: "Second BA (2016) — SCF summary and recommendations"
+    year: 2016
+    body: "UNFCCC Standing Committee on Finance"
+    doc_class: biennial_assessment
+    language: en
+    url: ""
+    provenance: "Also a grey_sources.yaml seed — identical title/year by design. Resolve URL at harvest."
+  - symbol: "UNFCCC/SCF/BA/2018/SUMMARY"
+    title: "Summary and recommendations by the Standing Committee on Finance on the 2018 Biennial Assessment and Overview of Climate Finance Flows"
+    short_title: "Third BA (2018) — SCF summary and recommendations"
+    year: 2018
+    body: "UNFCCC Standing Committee on Finance"
+    doc_class: biennial_assessment
+    language: en
+    url: ""
+    provenance: "Also a grey_sources.yaml seed — identical title/year by design. Resolve URL at harvest."
+  - symbol: "UNFCCC/SCF/BA/2020"
+    title: "Fourth Biennial Assessment and Overview of Climate Finance Flows"
+    short_title: "Fourth Biennial Assessment (2020)"
+    year: 2020
+    body: "UNFCCC Standing Committee on Finance"
+    doc_class: biennial_assessment
+    language: en
+    url: ""
+    provenance: "Also a grey_sources.yaml seed — identical title/year by design. Resolve URL at harvest."
+  - symbol: "UNFCCC/SCF/BA/2022"
+    title: "Fifth Biennial Assessment and Overview of Climate Finance Flows"
+    short_title: "Fifth Biennial Assessment (2022)"
+    year: 2022
+    body: "UNFCCC Standing Committee on Finance"
+    doc_class: biennial_assessment
+    language: en
+    url: ""
+    provenance: "Also a grey_sources.yaml seed — identical title/year by design. Resolve URL at harvest."
+  - symbol: "UNFCCC/SCF/BA/2024"
+    title: "Sixth Biennial Assessment and Overview of Climate Finance Flows"
+    short_title: "Sixth Biennial Assessment (2024)"
+    year: 2024
+    body: "UNFCCC Standing Committee on Finance"
+    doc_class: biennial_assessment
+    language: en
+    url: ""
+    provenance: "Series enumeration; latest BA. Resolve URL at harvest."
+
+  # ── Fund reports to COP / CMP ────────────────────────────────────────
+  - symbol: "FCCC/CP/2015/3"
+    title: "Report of the Green Climate Fund to the Conference of the Parties"
+    short_title: "GCF report to COP21 (2015)"
+    year: 2015
+    body: "Green Climate Fund"
+    doc_class: fund_report
+    language: en
+    url: ""
+    provenance: "GCF first funding decisions year. Symbol number to confirm at harvest (annual series; full enumeration in child ticket)."
+  - symbol: "FCCC/CP/2020/2"
+    title: "Report of the Green Climate Fund to the Conference of the Parties (2020)"
+    short_title: "GCF report to COP26 (GCF-1 period)"
+    year: 2020
+    body: "Green Climate Fund"
+    doc_class: fund_report
+    language: en
+    url: ""
+    provenance: "Series anchor. Symbol to confirm at harvest."
+  - symbol: "FCCC/CP/1997/3"
+    title: "Report of the Global Environment Facility to the Conference of the Parties"
+    short_title: "GEF report to COP3 (1997)"
+    year: 1997
+    body: "Global Environment Facility"
+    doc_class: fund_report
+    language: en
+    url: ""
+    provenance: "Early GEF reporting on the interim financial mechanism. Symbol to confirm at harvest (annual series; enumeration in child ticket)."
+  - symbol: "GEF/EO/2007/INCREMENTAL-COST"
+    title: "Evaluation of Incremental Cost Assessment"
+    short_title: "GEF Evaluation Office: incremental cost assessment (2007)"
+    year: 2007
+    body: "GEF Evaluation Office"
+    doc_class: fund_report
+    language: en
+    url: ""
+    provenance: "Cited in manuscript v2.0.5 (probe class B). Incremental-cost accounting doctrine. Resolve URL at harvest (gefieo.org)."
+  - symbol: "UNFCCC/CDM/2018/ACHIEVEMENTS"
+    title: "Achievements of the Clean Development Mechanism"
+    short_title: "CDM achievements report (2018)"
+    year: 2018
+    body: "UNFCCC"
+    doc_class: fund_report
+    language: en
+    url: ""
+    provenance: "Cited in manuscript v2.0.5 (probe class A). CDM finance-flows record. Resolve URL at harvest."
+  - symbol: "AFB/EFC/2010/REPORT"
+    title: "Report of the Adaptation Fund Board to the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol"
+    short_title: "Adaptation Fund Board report to CMP (2010, first monetization period)"
+    year: 2010
+    body: "Adaptation Fund Board"
+    doc_class: fund_report
+    language: en
+    url: ""
+    provenance: "Series anchor: CER-monetization financing model. Symbol to confirm at harvest (annual series; enumeration in child ticket)."
+
+  # ── Pre-1995 INC documents ───────────────────────────────────────────
+  - symbol: "A/AC.237/18 (Part II)/Add.1"
+    title: "Report of the Intergovernmental Negotiating Committee for a Framework Convention on Climate Change on the work of the second part of its fifth session. Addendum"
+    short_title: "INC5-II report addendum (adopted Convention text, May 1992)"
+    year: 1992
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/18p2a01.pdf"
+    provenance: "Convention text as adopted, incl. Art. 4.3-4.4 and Art. 11 financial mechanism. Scanned — OCR path. URL spot-verified 2026-07-22."
+  - symbol: "A/AC.237/15"
+    title: "Report of the Intergovernmental Negotiating Committee for a Framework Convention on Climate Change on the work of the fourth session"
+    short_title: "INC4 report (December 1991 — finance article negotiations)"
+    year: 1991
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/15.pdf"
+    provenance: "North-South finance negotiation record pre-Rio. Scanned — OCR path. URL follows /resource/docs/a/ pattern, verify at harvest."
+  - symbol: "A/AC.237/91/Add.1"
+    title: "Report of the Intergovernmental Negotiating Committee for a Framework Convention on Climate Change on the work of its eleventh session. Addendum. Recommendations to the Conference of the Parties"
+    short_title: "INC11 recommendations to COP1 (1995 — financial mechanism arrangements)"
+    year: 1995
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/91a01.pdf"
+    provenance: "INC handover recommendations incl. GEF interim arrangements. Verify URL at harvest."
+
+  # ── Party / bloc submissions ─────────────────────────────────────────
+  - symbol: "AOSIS/SUBMISSION/NCQG/2024"
+    title: "Submission by the Alliance of Small Island States on the New Collective Quantified Goal on Climate Finance"
+    short_title: "AOSIS submission on the NCQG (2024)"
+    year: 2024
+    body: "Alliance of Small Island States"
+    doc_class: submission
+    language: en
+    url: ""
+    provenance: "Cited in manuscript v2.0.5 (probe class B); author decision 2026-07-22 includes submissions. Resolve URL at harvest (UNFCCC submission portal); submissions sweep in child ticket."
+  - symbol: "G77/SUBMISSION/LTF/2012"
+    title: "Submission by the Group of 77 and China on long-term climate finance"
+    short_title: "G77+China submission on long-term finance (2012)"
+    year: 2012
+    body: "Group of 77 and China"
+    doc_class: submission
+    language: en
+    url: ""
+    provenance: "Bloc position anchor for the USD 100bn accounting dispute. Identify exact document at harvest; submissions sweep in child ticket."
+
+  # ── Negotiation record (ENB, statements) ─────────────────────────────
+  - symbol: "ENB/12/459"
+    title: "Summary of the Copenhagen Climate Change Conference: 7-19 December 2009"
+    short_title: "Earth Negotiations Bulletin COP15 summary"
+    year: 2009
+    body: "IISD Earth Negotiations Bulletin"
+    doc_class: negotiation_record
+    language: en
+    url: "https://enb.iisd.org/download/pdf/enb12459e.pdf"
+    provenance: "Cited in manuscript v2.0.5 (probe class C); author decision 2026-07-22 includes negotiation record. URL follows enb pattern, verify at harvest."
+  - symbol: "ENB/12/354"
+    title: "Summary of the Thirteenth Conference of Parties to the UN Framework Convention on Climate Change: 3-15 December 2007"
+    short_title: "Earth Negotiations Bulletin COP13 (Bali) summary"
+    year: 2007
+    body: "IISD Earth Negotiations Bulletin"
+    doc_class: negotiation_record
+    language: en
+    url: "https://enb.iisd.org/download/pdf/enb12354e.pdf"
+    provenance: "Bali Action Plan negotiation record. Issue number and URL to verify at harvest; per-COP enumeration in child ticket."
+  - symbol: "ENB/12/498"
+    title: "Summary of the Cancun Climate Change Conference: 29 November - 11 December 2010"
+    short_title: "Earth Negotiations Bulletin COP16 (Cancun) summary"
+    year: 2010
+    body: "IISD Earth Negotiations Bulletin"
+    doc_class: negotiation_record
+    language: en
+    url: "https://enb.iisd.org/download/pdf/enb12498e.pdf"
+    provenance: "GCF establishment negotiation record. Issue number and URL to verify at harvest."
+  - symbol: "ENB/12/663"
+    title: "Summary of the Paris Climate Change Conference: 29 November - 13 December 2015"
+    short_title: "Earth Negotiations Bulletin COP21 (Paris) summary"
+    year: 2015
+    body: "IISD Earth Negotiations Bulletin"
+    doc_class: negotiation_record
+    language: en
+    url: "https://enb.iisd.org/download/pdf/enb12663e.pdf"
+    provenance: "Article 9 negotiation record. Issue number and URL to verify at harvest."
+  - symbol: "US/STATE/CLINTON/COP15/2009"
+    title: "Remarks by Secretary of State Hillary Rodham Clinton at the United Nations Framework Convention on Climate Change, Copenhagen"
+    short_title: "Clinton statement at COP15 (USD 100bn announcement, 17 December 2009)"
+    year: 2009
+    body: "United States Department of State"
+    doc_class: negotiation_record
+    language: en
+    url: ""
+    provenance: "Cited in manuscript v2.0.5 (probe class C): the USD 100bn announcement statement. Resolve URL at harvest (State Dept archive)."

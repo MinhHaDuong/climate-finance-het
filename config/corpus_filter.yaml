@@ -143,6 +143,11 @@ llm_relevance:
 protection:
   min_cited_by: 50
   min_source_count: 2
+  # Curated key-documents layer (ticket 0288): protected regardless of
+  # citations/source count — official documents have neither.
+  curated_sources:
+    - unfccc
+    - oecd
 
 audit:
   model: google/gemma-2-27b-it

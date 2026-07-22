@@ -192,6 +192,18 @@ def _apply_summaries(df, cache_dir):
             statuses.append("original")
 
     df["abstract_status"] = statuses
+
+    # Key-documents layer (ticket 0288): abstract-equivalents derived from
+    # document text are disclosed as 'reconstructed', never passed off as
+    # native abstracts. Curated hand-written abstracts stay 'original'.
+    if "abstract_provenance" in df.columns:
+        recon = (
+            df["abstract_provenance"].fillna("").astype(str)
+            .str.startswith("reconstructed")
+            & (df["abstract_status"] == "original")
+        )
+        df.loc[recon, "abstract_status"] = "reconstructed"
+
     status_counts = df["abstract_status"].value_counts().to_dict()
     log.info("Abstract status: %s", status_counts)
 

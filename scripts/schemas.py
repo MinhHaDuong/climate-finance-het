@@ -49,6 +49,13 @@ RefinedWorksSchema = DataFrameSchema(
         "from_scispace": Column(str, nullable=True),
         "from_grey": Column(str, nullable=True),
         "from_teaching": Column(str, nullable=True),
+        # Curated key-documents layer (ticket 0288, corpus v2). required=False
+        # until the v2 corpus lands: the v1 refined_works.csv on disk predates
+        # these columns and must keep validating.
+        "from_unfccc": Column(str, nullable=True, required=False),
+        "from_oecd": Column(str, nullable=True, required=False),
+        "abstract_provenance": Column(str, nullable=True, required=False),
+        "keywords_provenance": Column(str, nullable=True, required=False),
         "source_count": Column(str, nullable=True),
         "abstract_status": Column(str, nullable=True),
         "near_duplicate_group": Column(str, nullable=True),

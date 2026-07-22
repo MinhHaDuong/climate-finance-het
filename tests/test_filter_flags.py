@@ -451,3 +451,46 @@ class TestApplyGates:
         args = SimpleNamespace(skip_citation_flag=True, skip_llm=True)
         expected = expected_flag_columns(args, has_embeddings=False)
         assert expected == ["missing_metadata", "no_abstract_irrelevant", "title_blacklist"]
+
+
+class TestCuratedSourceProtection:
+    """Ticket 0288: rows from the curated key-documents layer (from_unfccc /
+    from_oecd) are protected from removal — official documents have no
+    citation counts and a single source, so every other protection channel
+    misses them (the 2014 BA grey seed was lost from v1 exactly this way)."""
+
+    def _keydoc_df(self):
+        return pd.DataFrame([{
+            "doi": "", "doi_norm": "",
+            "title": "Fifth Biennial Assessment and Overview of Climate Finance Flows",
+            "year": 2022, "abstract": "", "cited_by_count": "",
+            "source_count": 1, "journal": "UNFCCC Standing Committee on Finance",
+            "source": "unfccc", "source_id": "UNFCCC/SCF/BA/2022",
+            "from_unfccc": 1,
+        }])
+
+    def test_curated_source_protected(self, config):
+        config = dict(config)
+        config["protection"] = dict(config["protection"])
+        config["protection"]["curated_sources"] = ["unfccc", "oecd"]
+        citations_df = pd.DataFrame({"source_doi": [], "ref_doi": []})
+        protected, reasons = compute_protection(
+            self._keydoc_df(), config, citations_df=citations_df)
+        assert protected.iloc[0] == True
+        assert "curated_source" in reasons.iloc[0]
+
+    def test_without_config_key_unprotected(self, config):
+        """Absent config key -> old behavior, no crash."""
+        citations_df = pd.DataFrame({"source_doi": [], "ref_doi": []})
+        protected, _ = compute_protection(
+            self._keydoc_df(), config, citations_df=citations_df)
+        assert protected.iloc[0] == False
+
+    def test_project_config_lists_layer_sources(self):
+        """The live corpus_filter.yaml must protect the layer."""
+        import yaml as _yaml
+        base = os.path.join(os.path.dirname(__file__), "..")
+        cfg = _yaml.safe_load(open(os.path.join(base, "config",
+                                                "corpus_filter.yaml")))
+        assert set(cfg["protection"].get("curated_sources", [])) >= \
+            {"unfccc", "oecd"}

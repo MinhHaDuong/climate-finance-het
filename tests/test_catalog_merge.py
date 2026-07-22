@@ -108,6 +108,113 @@ class TestFromScispaceFlagSet:
             "from_openalex must survive DOI dedup (max aggregation)"
 
 
+class TestKeydocsLayerMerge:
+    """Ticket 0288: the curated UNFCCC/OECD key-documents layer must merge
+    without duplicating existing records, and its abstract_provenance flag
+    must survive the merge."""
+
+    def test_source_names_include_keydocs_layer(self):
+        from utils import SOURCE_NAMES
+        assert "unfccc" in SOURCE_NAMES
+        assert "oecd" in SOURCE_NAMES
+
+    def test_unfccc_grey_same_title_year_collapses(self):
+        """An existing UNFCCC grey seed (2014 BA summary) is NOT duplicated:
+        the unfccc layer entry with identical title+year collapses into one
+        row carrying both provenance flags."""
+        from catalog_merge import merge_catalogs
+
+        title = ("Summary and recommendations by the Standing Committee on "
+                 "Finance on the 2014 Biennial Assessment and Overview of "
+                 "Climate Finance Flows")
+        grey = _make_catalog(
+            [{"title": title, "year": "2014",
+              "source_id": "https://unfccc.int/topics/climate-finance",
+              "first_author": "UNFCCC Standing Committee on Finance"}],
+            source_name="grey")
+        unfccc = _make_catalog(
+            [{"title": title, "year": "2014",
+              "source_id": "UNFCCC/SCF/BA/2014/SUMMARY",
+              "first_author": "UNFCCC Standing Committee on Finance"}],
+            source_name="unfccc")
+        combined = pd.concat([grey, unfccc], ignore_index=True)
+
+        result, _ = merge_catalogs(combined)
+        assert len(result) == 1, "same title+year must collapse to one row"
+        row = result.iloc[0]
+        assert row["from_grey"] == 1
+        assert row["from_unfccc"] == 1
+        assert row["source_count"] == 2
+        # grey outranks the layer, so the v1 identifier (source_id) survives
+        # — required for in_v1 provenance matching (#283)
+        assert row["source_id"] == "https://unfccc.int/topics/climate-finance"
+
+    def test_oecd_doi_shared_with_openalex_collapses(self):
+        """An OECD work already present via its 10.1787 DOI is not re-added:
+        DOI dedup collapses it (defense in depth behind the seed no-DOI
+        guard in test_catalog_keydocs)."""
+        from catalog_merge import merge_catalogs
+
+        doi = "10.1787/9789264249424-en"
+        openalex = _make_catalog(
+            [{"doi": doi, "title": "Climate Finance and the USD 100 Billion Goal",
+              "year": "2015"}], source_name="openalex")
+        oecd = _make_catalog(
+            [{"doi": doi, "title": "Climate Finance in 2013-14 (100 Billion Goal)",
+              "year": "2015", "source_id": "OECD/HYPOTHETICAL"}],
+            source_name="oecd")
+        combined = pd.concat([openalex, oecd], ignore_index=True)
+
+        result, _ = merge_catalogs(combined)
+        assert len(result) == 1, "shared DOI must collapse to one row"
+        row = result.iloc[0]
+        assert row["from_openalex"] == 1
+        assert row["from_oecd"] == 1
+
+    def test_keywords_provenance_survives_merge(self):
+        """The keywords disclosure flag is carried like abstract_provenance."""
+        from catalog_merge import merge_catalogs
+
+        unfccc = _make_catalog(
+            [{"title": "COP15 decisions", "year": "2009",
+              "source_id": "FCCC/CP/2009/11/Add.1"}],
+            source_name="unfccc")
+        unfccc["keywords_provenance"] = "generated:lexicon"
+        openalex = _make_catalog(
+            [{"doi": "10.1234/x", "title": "A paper", "year": "2020"}],
+            source_name="openalex")
+        combined = pd.concat([openalex, unfccc], ignore_index=True)
+
+        result, _ = merge_catalogs(combined)
+        assert "keywords_provenance" in result.columns
+        by_id = result.set_index("source_id")
+        assert by_id.loc["FCCC/CP/2009/11/Add.1",
+                         "keywords_provenance"] == "generated:lexicon"
+
+    def test_abstract_provenance_survives_merge(self):
+        """The layer's reconstructed-abstract flag is carried into
+        unified_works.csv (empty for rows from other sources)."""
+        from catalog_merge import merge_catalogs
+
+        unfccc = _make_catalog(
+            [{"title": "COP15 decisions", "year": "2009",
+              "source_id": "FCCC/CP/2009/11/Add.1",
+              "abstract": "Takes note of the Copenhagen Accord."}],
+            source_name="unfccc")
+        unfccc["abstract_provenance"] = "reconstructed:lead"
+        openalex = _make_catalog(
+            [{"doi": "10.1234/x", "title": "A paper", "year": "2020"}],
+            source_name="openalex")
+        combined = pd.concat([openalex, unfccc], ignore_index=True)
+
+        result, _ = merge_catalogs(combined)
+        assert "abstract_provenance" in result.columns
+        by_id = result.set_index("source_id")
+        assert by_id.loc["FCCC/CP/2009/11/Add.1", "abstract_provenance"] == \
+            "reconstructed:lead"
+        assert by_id.loc["", "abstract_provenance"] == "" if "" in by_id.index \
+            else (result["abstract_provenance"] == "").sum() == 1
+
 def _prepared_frame(rows):
     """Build a combined frame ready for deduplicate(): WORKS_COLUMNS + source,
     with _doi_norm and from_* provenance columns set as main() would set them."""
