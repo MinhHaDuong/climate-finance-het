@@ -1,0 +1,66 @@
+%erg 0.1
+Title: Phase-4 archive scripts still build the pre-0226 content/ layout; manuscript one is broken
+Created: 2026-07-22
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-22T10:05Z HDMX-coding-agent created
+
+--- body ---
+## Context
+During the 0153 resubmission deposit (2026-07-21), `bash
+build/build_manuscript_archive.sh` failed outright: it copies a root
+`_quarto.yml` retired by the 0226 deliverables/ reorg, assembles the old
+`content/` tree the current manuscript.qmd's `../_shared/` relative paths
+cannot resolve, and omits fig_breaks.png (a manuscript input since v2.0.x).
+The Zenodo v2 manuscript archive was hand-assembled instead (correct
+deliverables/ mirror layout, clean-room render verified byte-identical —
+recipe in the session transcript and the resulting tarball on Zenodo
+10.5281/zenodo.21476165 and GitHub release v1.1-oeconomia-revised).
+
+Roar sweep (2026-07-22): the class covers 8 files — all three
+build/build_*_archive.sh and all build/templates/{Makefile,README}-*
+still reference the content/ layout. build_analysis_archive.sh ran, but
+only because its own tree layout is self-contained; the datapaper script
+shares the stale references. `tests/test_archive_script_paths` guards
+only the analysis script's cp sources, which is why the manuscript
+breakage went unseen.
+
+## Relevant files
+- `build/build_manuscript_archive.sh` — broken (root _quarto.yml, content/ tree, missing fig_breaks)
+- `build/build_datapaper_archive.sh`, `build/build_analysis_archive.sh` — same layout class
+- `build/templates/Makefile.manuscript`, `Makefile.datapaper`, `Makefile.analysis-manuscript`,
+  `README-manuscript.md`, `README-datapaper.md` — content/ paths in recipes and prose
+- `tests/test_archive_script_paths.py` — guard to widen
+- Reference: the hand-assembled v2 manuscript archive (Zenodo 21476165) shows the target layout
+
+## Actions
+1. Rewrite build_manuscript_archive.sh on the deliverables/ mirror layout
+   (deliverables/manuscript/ + deliverables/_shared/{figures,tables,bibliography}),
+   with the deliverable-local _quarto.yml and all three figures; adopt the
+   hand-assembled v2 archive as the specification.
+2. Same modernization for the datapaper script and the three template
+   Makefiles + two READMEs.
+3. Widen tests/test_archive_script_paths to cover every cp source in all
+   three scripts.
+4. Regression guard for the class: a smoke test that builds the manuscript
+   archive and renders it in a clean tmp dir (integration tier) — a path
+   test cannot catch a layout that assembles but does not render.
+
+## Test
+- Red first: assert `bash build/build_manuscript_archive.sh` exits 0 and the
+  tarball's `make` renders (currently fails at the _quarto.yml cp).
+
+## Verification
+- [ ] All three archive scripts build from a clean checkout
+- [ ] Manuscript archive clean-room render byte-identical to shipped PDF
+      (SOURCE_DATE_EPOCH=0)
+- [ ] Widened path guard red-tested by mutating one cp source
+
+## Invariants
+- Archive layout mirrors the repo (deliverables/), per the 0226 architecture.
+- make check stays green.
+
+## Exit criteria
+- The three Phase-4 archive scripts and their templates build and render on
+  the current layout, with the widened guard and the render smoke test green.
