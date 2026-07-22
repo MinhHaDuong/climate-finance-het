@@ -6,6 +6,8 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-20T10:00Z HDMX-coding-agent created split from 0276
 2026-07-22T11:38Z HDMX-coding-agent note raid Imagine/Plan: PASS — offline path confirmed, no padme rerun needed; plan appended
+2026-07-22T14:05Z HDMX-coding-agent note instrumented catalog_merge.py with deduplicate() returning per-procedure counters; run report catalog_merge__<run_id>.json emitted via save_run_report. Counters reconcile (records_total - doi_removed - title_year_removed - dropped_empty == records_unified). Byte-compare PASS: unified_works.csv md5 4b3c9c4bf0a54be5988017921350980f, identical to dvc.lock archived output on md5-verified inputs — dedup logic unchanged, reporting only.
+2026-07-22T14:05Z HDMX-coding-agent note DVC-commit deferral: run_reports/ is DVC-tracked; dvc is absent from the current offline env and the shared uv env cannot be synced mid-raid (active sibling worktrees). The artifact is regenerated deterministically by dvc repro catalog_merge on the next dvc-capable/padme session, which updates run_reports.dvc + dvc.lock. Values recorded in 0276 log for immediate prose use.
 
 --- body ---
 ## Context
