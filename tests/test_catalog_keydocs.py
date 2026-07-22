@@ -138,6 +138,28 @@ class TestDeriveAbstract:
         assert method == "reconstructed:lead"
         assert len(abstract.split()) <= ck.ABSTRACT_MAX_WORDS
 
+    def test_masthead_boilerplate_stripped_from_lead(self):
+        """UN document cover-page lines (UNITED NATIONS / Distr. GENERAL /
+        symbol / date / Original: ENGLISH) must not pollute the
+        abstract-equivalent — seen on the COP15 e2e run."""
+        text = (
+            "UNITED NATIONS\n"
+            "Distr.\nGENERAL\n"
+            "FCCC/CP/2009/11/Add.1\n"
+            "30 March 2010\n"
+            "Original: ENGLISH\n"
+            "CONFERENCE OF THE PARTIES\n"
+            + ("Report of the Conference of the Parties on its fifteenth "
+               "session. The Conference of the Parties adopted the following "
+               "decisions on long-term cooperative action and finance. " * 10)
+        )
+        abstract, method = ck.derive_abstract(text)
+        assert method == "reconstructed:lead"
+        assert not abstract.startswith("UNITED NATIONS")
+        assert "Distr." not in abstract
+        assert "Original: ENGLISH" not in abstract
+        assert abstract.startswith("Report of the Conference")
+
     def test_empty_text_gives_no_abstract(self):
         abstract, method = ck.derive_abstract("")
         assert abstract == ""

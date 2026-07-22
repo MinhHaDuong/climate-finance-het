@@ -68,6 +68,24 @@ SUMMARY_HEADINGS = re.compile(
 # scanned and routed to OCR.
 MIN_TEXT_CHARS = 200
 
+# UN/OECD cover-page masthead lines to drop before deriving a lead abstract:
+# organisation banners, distribution notices, document symbols, dates,
+# language notices, session headers, page markers.
+BOILERPLATE_LINE = re.compile(
+    r"^\s*("
+    r"united(\s*\|)?\s+nations.*"
+    r"|general assembly"
+    r"|distr\.?\s*(:)?\s*(general|limited)?"
+    r"|general|limited"
+    r"|original\s*:.*"
+    r"|(fccc|dcd|a/ac)\S*.*"
+    r"|\d{1,2}\s+\w+\s+\d{4}"
+    r"|page\s+\d+"
+    r"|[A-Z][A-Z /,'()-]+"
+    r")\s*$",
+    re.IGNORECASE,
+)
+
 OCR_TIMEOUT_S = 1800
 
 
@@ -207,8 +225,28 @@ def derive_abstract(text: str) -> tuple[str, str]:
         words = section.split()
         return " ".join(words[:ABSTRACT_MAX_WORDS]), "reconstructed:exec_summary"
 
-    words = text.split()
+    words = _strip_masthead(text).split()
     return " ".join(words[:ABSTRACT_MAX_WORDS]), "reconstructed:lead"
+
+
+def _strip_masthead(text: str) -> str:
+    """Drop cover-page boilerplate lines from the head of a document.
+
+    Stops filtering at the first line of running prose so only the masthead
+    is affected; falls back to the raw text if everything matched.
+    """
+    lines = text.splitlines()
+    start = 0
+    for i, line in enumerate(lines):
+        if not line.strip():
+            start = i + 1
+            continue
+        if BOILERPLATE_LINE.match(line.strip()):
+            start = i + 1
+            continue
+        break
+    remainder = "\n".join(lines[start:]).strip()
+    return remainder or text
 
 
 def build_record(entry: dict, source_name: str, abstract: str | None,
