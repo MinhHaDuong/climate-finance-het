@@ -1,29 +1,28 @@
 # State
 
-Last updated: 2026-07-22T08:31Z
+Last updated: 2026-07-22T18:27Z
 
 ## Current goal
 
 **RDJ-26561 (data paper) R&R round 1.** Tracker **0274**, deadline
-~2026-10-20. Critical path: **0288** grey-literature layer → content
-tickets 0275–0282, 0284–0287, 0289 → **0283** response letter +
-resubmission. Œconomia: v2.0.5 resubmitted 2026-07-21 (trackers
-0133/0153/0156 closed) — awaiting editor.
+~2026-10-20. 0288 BUILD merged (PR #1085, corpus-v2 keydocs layer);
+critical path now **0304** seed enumeration + harvest on padme →
+counts/prose (0275–0281, 0286) → **0283** response letter. Œconomia:
+v2.0.5 resubmitted 2026-07-21 — awaiting editor.
 
 ### Also open (details live in the tickets)
-- **0263** slow-tier `make check` triage (two machines).
 - **0290/0291/0292** roar-filed: includes audit, Zotero pass, archive scripts.
 
 ## Status
-<!-- generated 2026-07-22T08:31Z · as of 9973559c -->
+<!-- generated 2026-07-22T18:27Z · as of 4950a8f2 -->
 
-**Tickets:** 17 ready · 39 blocked · 1 awaiting author — `erg ready tickets/` for full list
+**Tickets:** 26 ready · 37 blocked · 1 awaiting author — `erg ready tickets/` for full list
   next: 0272 Extract shared derive_companion_path() helper f… · 0273 load_cluster_labels() ignores --input, reads cl…
-**In flight:** no open PRs
+**In flight:** 1 open PR, oldest #1089 0d
 **Recent (first-parent):**
-  9973559c chore: housekeeping fixes (sweep)
-  6b98f456 Merge pull request #1072 from MinhHaDuong/close-rr-trackers
-  498ec357 Merge pull request #1071 from MinhHaDuong/t0292-archive-scripts
+  4950a8f2 Merge pull request #1085 from MinhHaDuong/t288-corpus-v2-layer
+  0de85857 Merge pull request #1088 from MinhHaDuong/worktree-roar-followups-1086
+  f12587f9 Merge pull request #1087 from MinhHaDuong/t0263-close-language-null-residual
 
 ## Corpus (v1.1.1)
 
@@ -32,10 +31,10 @@ resubmission. Œconomia: v2.0.5 resubmitted 2026-07-21 (trackers
 
 ## Health
 
-check-fast 25 + lint 154 green. Housekeeping sweep 2026-07-22T08:30Z:
-2 merged branches deleted, stale tab_venues.md caption committed.
-Full `make check` verdict pending at wrap-up; slow-tier triage: 0263.
+check-fast 1003 + lint 154 green. Full check on PR #1085 branch: 1
+known failure (language-null residual → 0297). Housekeeping sweep
+2026-07-22T18:30Z: 4 stale worktrees GC'd, 5 merged branches deleted.
 
 ## Next actions
 
-- **RDJ wave 1:** 0288 (critical path) + ready data-paper tickets.
+- **0304** (padme, with author) + prose tickets 0275/0278/0281 (sequence).
