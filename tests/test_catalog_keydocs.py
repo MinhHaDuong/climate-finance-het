@@ -265,3 +265,34 @@ class TestRealSeeds:
                 f"{e['symbol']} claims grey overlap but its normalized "
                 f"title+year does not match any grey UNFCCC seed: {key}"
             )
+
+
+class TestDvcWiring:
+    """The layer is a durable Phase-1 source: dvc stages produce the two
+    per-source catalogs into data/catalogs/ and catalog_merge consumes them
+    (catalog_files_from_dvc reads merge deps, so the merge picks them up
+    with no code change)."""
+
+    def _dvc(self):
+        return yaml.safe_load(open(os.path.join(BASE, "dvc.yaml")))
+
+    def test_stages_exist_and_write_to_catalogs(self):
+        stages = self._dvc()["stages"]
+        for stage, seed, out in [
+            ("catalog_unfccc", "config/unfccc_sources.yaml",
+             "data/catalogs/unfccc_works.csv"),
+            ("catalog_oecd", "config/oecd_dac_sources.yaml",
+             "data/catalogs/oecd_works.csv"),
+        ]:
+            assert stage in stages, f"missing dvc stage {stage}"
+            st = stages[stage]
+            assert seed in st["deps"], f"{stage} must depend on its seed list"
+            assert "scripts/harvest/catalog_keydocs.py" in st["deps"]
+            assert out in st["outs"], f"{stage} must produce {out} (Phase 1)"
+            assert "--fetch" in st["cmd"], \
+                f"{stage} runs the full harvest on padme"
+
+    def test_merge_consumes_both_catalogs(self):
+        deps = self._dvc()["stages"]["catalog_merge"]["deps"]
+        assert "data/catalogs/unfccc_works.csv" in deps
+        assert "data/catalogs/oecd_works.csv" in deps

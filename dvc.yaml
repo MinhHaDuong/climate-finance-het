@@ -81,6 +81,40 @@ stages:
     outs:
       - data/catalogs/grey_works.csv
 
+  # Curated key-documents layer (ticket 0288, corpus v2): UNFCCC + OECD DAC
+  # official documents. Fetch + OCR runs on padme; PDFs/text cache under
+  # data/pool/keydocs/ (incremental, accepts pre-placed manual exports for
+  # robot-blocking portals like OECD One).
+  catalog_unfccc:
+    cmd: uv run --env-file .env python scripts/harvest/catalog_keydocs.py
+      --input config/unfccc_sources.yaml --source-name unfccc --fetch
+      --output data/catalogs/unfccc_works.csv
+    deps:
+      - scripts/harvest/catalog_keydocs.py
+      - scripts/utils.py
+      - scripts/pipeline_io.py
+      - scripts/pipeline_loaders.py
+      - scripts/pipeline_progress.py
+      - scripts/pipeline_text.py
+      - config/unfccc_sources.yaml
+    outs:
+      - data/catalogs/unfccc_works.csv
+
+  catalog_oecd:
+    cmd: uv run --env-file .env python scripts/harvest/catalog_keydocs.py
+      --input config/oecd_dac_sources.yaml --source-name oecd --fetch
+      --output data/catalogs/oecd_works.csv
+    deps:
+      - scripts/harvest/catalog_keydocs.py
+      - scripts/utils.py
+      - scripts/pipeline_io.py
+      - scripts/pipeline_loaders.py
+      - scripts/pipeline_progress.py
+      - scripts/pipeline_text.py
+      - config/oecd_dac_sources.yaml
+    outs:
+      - data/catalogs/oecd_works.csv
+
   catalog_teaching:
     cmd: >-
       uv run --env-file .env python scripts/harvest/build_teaching_yaml.py &&
@@ -112,6 +146,8 @@ stages:
       - data/catalogs/openalex_works.csv
       - data/catalogs/grey_works.csv
       - data/catalogs/teaching_works.csv
+      - data/catalogs/unfccc_works.csv
+      - data/catalogs/oecd_works.csv
       # Hand-curated input (pre-placed, not produced by pipeline)
       - data/catalogs/scispace_works.csv
     outs:
