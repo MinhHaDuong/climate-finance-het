@@ -2,11 +2,13 @@
 Title: Data paper: per-document reference-count distribution artifact
 Created: 2026-07-20
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1080
 
 --- log ---
 2026-07-20T10:00Z HDMX-coding-agent created split from 0277
 2026-07-22T11:38Z HDMX-coding-agent note raid Imagine/Plan: PASS — edge-list semantics confirmed, design sketch appended
 
+2026-07-22T12:28Z HDMX-coding-agent closed — autoclosed — PR #1080
 --- body ---
 ## Context
 
