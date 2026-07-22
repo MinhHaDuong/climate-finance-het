@@ -1,0 +1,163 @@
+# OECD DAC key-documents sub-list — corpus v2 curated layer (ticket 0288).
+#
+# Inclusion rule (author-validated 2026-07-22, class level): official documents
+# produced by or addressed to the OECD DAC that define, account for, or govern
+# climate finance. NON-DOI FOUNDING DOCUMENTS ONLY: the refined corpus already
+# holds 310 OECD works via their 10.1787 DOIs through OpenAlex (flagship
+# accounting series, blended-finance guidance, Oxfam counter-literature), so a
+# wholesale OECD harvest was rejected (ticket 0288, log 2026-07-20). The gaps
+# are the founding documents outside the DOI system: the DAC Statistical
+# Reporting Directives establishing and revising the Rio markers (1998
+# onwards), pre-DOI-era Development Co-operation Reports, and early
+# DAC/WP-STAT/ENVIRONET documents from the OECD OLIS/One archive.
+#
+# Document classes (doc_class):
+#   statistical_directive           DAC Statistical Reporting Directives (Rio markers)
+#   development_cooperation_report  pre-DOI Development Co-operation Reports
+#   dac_document                    early DAC/WP-STAT/ENVIRONET documents
+#
+# Identifier: the OECD document symbol (e.g. DCD/DAC(2016)3/FINAL) when known;
+# stable constructed ids otherwise ("OLIS symbol to identify at harvest" in
+# provenance). No entry may carry a `doi:` key — the harvester rejects seeds
+# with DOIs so an OECD work already present via its 10.1787 DOI cannot be
+# re-added through this layer (dedup by design, see
+# tests/test_catalog_keydocs.py).
+#
+# URL note: one.oecd.org serves documents at
+# https://one.oecd.org/document/<symbol>/en/pdf but returns 403 to
+# non-browser clients (checked 2026-07-22). The harvester records the URL,
+# tolerates the failure, and accepts pre-placed PDFs in the pool directory
+# (manual bulk export path anticipated by ticket 0288).
+
+documents:
+  # ── DAC Statistical Reporting Directives (Rio markers) ───────────────
+  - symbol: "OECD/DAC/SRD/1998"
+    title: "DAC Statistical Reporting Directives: 1998 revision introducing the Rio markers"
+    short_title: "Rio markers established (WP-STAT, 1998)"
+    year: 1998
+    body: "OECD DAC Working Party on Statistics"
+    doc_class: statistical_directive
+    language: en
+    url: ""
+    provenance: "Founding document of Rio-marker climate reporting; zero source directives in corpus v1 (ticket 0288). OLIS symbol to identify at harvest."
+  - symbol: "DCD/DAC(2000)10"
+    title: "DAC Statistical Reporting Directives (2000)"
+    short_title: "Statistical Reporting Directives, 2000 edition"
+    year: 2000
+    body: "OECD Development Assistance Committee"
+    doc_class: statistical_directive
+    language: en
+    url: "https://one.oecd.org/document/DCD/DAC(2000)10/en/pdf"
+    provenance: "First consolidated directives with Rio markers in the CRS. Symbol to confirm at harvest."
+  - symbol: "DCD/DAC(2007)34"
+    title: "DAC Statistical Reporting Directives (2007)"
+    short_title: "Statistical Reporting Directives, 2007 edition"
+    year: 2007
+    body: "OECD Development Assistance Committee"
+    doc_class: statistical_directive
+    language: en
+    url: "https://one.oecd.org/document/DCD/DAC(2007)34/en/pdf"
+    provenance: "Directives in force when the mitigation marker became reportable to the CRS. Symbol to confirm at harvest."
+  - symbol: "DCD/DAC(2010)40/REV1"
+    title: "DAC Statistical Reporting Directives (2010, revision 1)"
+    short_title: "Statistical Reporting Directives, 2010 revision (adaptation marker added)"
+    year: 2010
+    body: "OECD Development Assistance Committee"
+    doc_class: statistical_directive
+    language: en
+    url: "https://one.oecd.org/document/DCD/DAC(2010)40/REV1/en/pdf"
+    provenance: "Adaptation Rio marker introduced (2010 flows). Symbol to confirm at harvest."
+  - symbol: "DCD/DAC(2013)15/FINAL"
+    title: "Converged Statistical Reporting Directives for the Creditor Reporting System (CRS) and the Annual DAC Questionnaire"
+    short_title: "Converged Statistical Reporting Directives (2013)"
+    year: 2013
+    body: "OECD Development Assistance Committee"
+    doc_class: statistical_directive
+    language: en
+    url: "https://one.oecd.org/document/DCD/DAC(2013)15/FINAL/en/pdf"
+    provenance: "CRS/DAC questionnaire convergence; Rio-marker chapter. Symbol to confirm at harvest."
+  - symbol: "DCD/DAC(2016)3/FINAL"
+    title: "Converged Statistical Reporting Directives for the Creditor Reporting System (CRS) and the Annual DAC Questionnaire: Chapters 1-6"
+    short_title: "Converged Statistical Reporting Directives (2016)"
+    year: 2016
+    body: "OECD Development Assistance Committee"
+    doc_class: statistical_directive
+    language: en
+    url: "https://one.oecd.org/document/DCD/DAC(2016)3/FINAL/en/pdf"
+    provenance: "Reference edition for Rio-marker definitions in the USD 100bn accounting dispute. URL pattern checked 2026-07-22 (403 to robots — manual export path)."
+  - symbol: "DCD/DAC/STAT(2018)9/FINAL"
+    title: "Converged Statistical Reporting Directives for the Creditor Reporting System (CRS) and the Annual DAC Questionnaire (2018)"
+    short_title: "Converged Statistical Reporting Directives (2018, grant-equivalent reform)"
+    year: 2018
+    body: "OECD DAC Working Party on Development Finance Statistics"
+    doc_class: statistical_directive
+    language: en
+    url: ""
+    provenance: "Grant-equivalent measurement reform. Symbol to confirm at harvest."
+  - symbol: "DCD/DAC/STAT(2020)44/FINAL"
+    title: "Converged Statistical Reporting Directives for the Creditor Reporting System (CRS) and the Annual DAC Questionnaire (2020)"
+    short_title: "Converged Statistical Reporting Directives (2020)"
+    year: 2020
+    body: "OECD DAC Working Party on Development Finance Statistics"
+    doc_class: statistical_directive
+    language: en
+    url: ""
+    provenance: "Current-generation directives. Symbol to confirm at harvest."
+
+  # ── Development Co-operation Reports (pre-DOI era) ───────────────────
+  - symbol: "OECD/DCR/1992"
+    title: "Development Co-operation: 1992 Report"
+    short_title: "DAC Chairman's report 1992 (post-Rio response)"
+    year: 1992
+    body: "OECD Development Assistance Committee"
+    doc_class: development_cooperation_report
+    language: en
+    url: ""
+    provenance: "First DCR integrating the Rio Conventions into aid doctrine; zero DCR hits in corpus v1 (ticket 0288). Pre-DOI era. Locate in OECD iLibrary archive at harvest."
+  - symbol: "OECD/DCR/1995"
+    title: "Development Co-operation: 1995 Report"
+    short_title: "DAC Chairman's report 1995"
+    year: 1995
+    body: "OECD Development Assistance Committee"
+    doc_class: development_cooperation_report
+    language: en
+    url: ""
+    provenance: "Mid-decade environment-and-aid doctrine anchor. Pre-DOI era. Locate at harvest."
+  - symbol: "OECD/DCR/1998"
+    title: "Development Co-operation: 1998 Report"
+    short_title: "DAC Chairman's report 1998 (Rio-marker introduction year)"
+    year: 1998
+    body: "OECD Development Assistance Committee"
+    doc_class: development_cooperation_report
+    language: en
+    url: ""
+    provenance: "Contemporary record of the Rio-marker decision. Pre-DOI era. Locate at harvest."
+
+  # ── Early DAC / WP-STAT / ENVIRONET documents ────────────────────────
+  - symbol: "OECD/GD(92)-AID-ENV"
+    title: "Guidelines on Aid and Environment"
+    short_title: "DAC Guidelines on Aid and Environment (1992)"
+    year: 1992
+    body: "OECD Development Assistance Committee"
+    doc_class: dac_document
+    language: en
+    url: ""
+    provenance: "Pre-Rio-marker environment screening doctrine; corpus OECD-DOI coverage starts at 2000 (ticket 0288). OLIS symbol to identify at harvest."
+  - symbol: "OECD/DAC/RIO-REPORT/2002"
+    title: "Aid Targeting the Objectives of the Rio Conventions 1998-2000: A Contribution by the DAC Secretariat"
+    short_title: "First Rio-marker statistical report (2002)"
+    year: 2002
+    body: "OECD DAC Secretariat"
+    doc_class: dac_document
+    language: en
+    url: ""
+    provenance: "First published Rio-marker aggregates — the statistical series later contested in the USD 100bn dispute. OLIS symbol to identify at harvest."
+  - symbol: "OECD/ENVIRONET/1990s"
+    title: "Working Party on Development Assistance and Environment: early session documents"
+    short_title: "ENVIRONET predecessor working-party records (1990s)"
+    year: 1993
+    body: "OECD DAC Working Party on Development Assistance and Environment"
+    doc_class: dac_document
+    language: en
+    url: ""
+    provenance: "Placeholder anchor for the early working-party layer; concrete documents identified from OLIS at harvest (enumeration child ticket)."
