@@ -72,7 +72,7 @@ def test_a5_prose_matches_committed_csv():
     """Every figure the A.5 bullet cites equals the committed CSV value.
 
     Node and edge counts exact; share and null mean at two decimals; z to
-    the nearest integer (the prose writes 'z ≈ N'); permutation count exact.
+    the nearest integer (the prose writes '$z \approx N$'); permutation count exact.
     """
     row = _louvain_share_row()
     bullet = _a5_bullet()
@@ -93,7 +93,7 @@ def test_a5_prose_matches_committed_csv():
         f"{n_edges} edges",
         f"share {observed:.2f}",
         f"null of {null_mean:.2f}",
-        f"z ≈ {round(z_score)},",
+        f"$z \\approx {round(z_score)}$,",
         f"N = {n_perm} permutations",
     ]
     for needle in checks:
