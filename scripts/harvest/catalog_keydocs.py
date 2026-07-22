@@ -73,6 +73,7 @@ MIN_TEXT_CHARS = 200
 # language notices, session headers, page markers.
 BOILERPLATE_LINE = re.compile(
     r"^\s*("
+    r"(?i:"
     r"united(\s*\|)?\s+nations.*"
     r"|general assembly"
     r"|distr\.?\s*(:)?\s*(general|limited)?"
@@ -81,9 +82,12 @@ BOILERPLATE_LINE = re.compile(
     r"|(fccc|dcd|a/ac)\S*.*"
     r"|\d{1,2}\s+\w+\s+\d{4}"
     r"|page\s+\d+"
+    r")"
+    # The ALL-CAPS banner branch stays OUTSIDE the (?i:) scope: made
+    # case-insensitive it matches any prose line without digits or
+    # periods, eating decision titles and preambles (PR #1085 review).
     r"|[A-Z][A-Z /,'()-]+"
-    r")\s*$",
-    re.IGNORECASE,
+    r")\s*$"
 )
 
 OCR_TIMEOUT_S = 1800
@@ -199,6 +203,11 @@ def get_document_text(pdf_path: str, txt_cache_path: str) -> tuple[str, str]:
     ocred = ocr_text(pdf_path, txt_cache_path)
     if ocred and len(ocred.strip()) >= MIN_TEXT_CHARS:
         return ocred, "ocr"
+    # ocrmypdf writes its sidecar to the cache path unconditionally; an
+    # under-threshold stub left behind would be served as "cached" on the
+    # next run instead of retrying the OCR.
+    if os.path.exists(txt_cache_path):
+        os.remove(txt_cache_path)
     return "", "needs_ocr"
 
 

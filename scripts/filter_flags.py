@@ -275,13 +275,11 @@ def compute_protection(df, config, *, citations_df):
     # Curated key-documents layer (ticket 0288): official documents carry no
     # citation counts and one source, so every other channel misses them.
     curated = pd.Series(False, index=df.index)
-    curated_names = []
     for src in prot_cfg.get("curated_sources", []):
         col = f"from_{src}"
         if col in df.columns:
             hit = pd.to_numeric(df[col], errors="coerce").fillna(0).astype(bool)
             curated |= hit
-            curated_names.append(src)
 
     protected = high_cites | multi_src | cited_in_corpus | in_teaching | curated
 

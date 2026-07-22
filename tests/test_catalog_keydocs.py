@@ -165,6 +165,23 @@ class TestDeriveAbstract:
         assert abstract == ""
         assert method == ""
 
+    def test_mixed_case_prose_survives_masthead_strip(self):
+        """The ALL-CAPS masthead branch must be case-sensitive (PR #1085
+        review): under re.IGNORECASE it matched any prose line without
+        digits or periods and ate decision titles and preambles."""
+        text = (
+            "UNITED NATIONS\n"
+            "FCCC/CP/2009/11/Add.1\n"
+            "Report of the Conference of the Parties\n"
+            "Recalling the relevant provisions of the Convention\n"
+            + "The Conference of the Parties adopted decisions on "
+              "long-term finance. " * 20
+        )
+        abstract, method = ck.derive_abstract(text)
+        assert method == "reconstructed:lead"
+        assert abstract.startswith("Report of the Conference of the Parties")
+        assert "Recalling the relevant provisions" in abstract
+
 
 class TestGetDocumentText:
     def test_text_layer_used_when_present(self, tmp_path, monkeypatch):
@@ -208,6 +225,27 @@ class TestGetDocumentText:
         text, status = ck.get_document_text(str(pdf), str(txt))
         assert status == "cached"
         assert text == "cached text from a previous run"
+
+    def test_short_ocr_sidecar_does_not_poison_cache(self, tmp_path, monkeypatch):
+        """ocrmypdf writes its sidecar to the cache path even when the OCR
+        text is under MIN_TEXT_CHARS; a rerun must not serve that stub as
+        'cached' (PR #1085 review — incremental 0304 harvest safety)."""
+        pdf = tmp_path / "doc.pdf"
+        pdf.write_bytes(b"%PDF-fake")
+        txt = tmp_path / "doc.txt"
+        monkeypatch.setattr(ck, "extract_text", lambda p: "")
+
+        def stub_ocr(p, t):
+            with open(t, "w", encoding="utf-8") as f:
+                f.write("COVER PAGE ONLY")
+            return "COVER PAGE ONLY"
+
+        monkeypatch.setattr(ck, "ocr_text", stub_ocr)
+        text, status = ck.get_document_text(str(pdf), str(txt))
+        assert status == "needs_ocr"
+        assert not txt.exists(), "under-threshold sidecar must be removed"
+        text2, status2 = ck.get_document_text(str(pdf), str(txt))
+        assert status2 == "needs_ocr", "rerun must retry OCR, not serve the stub"
 
 
 class TestOcrTextUnavailable:
