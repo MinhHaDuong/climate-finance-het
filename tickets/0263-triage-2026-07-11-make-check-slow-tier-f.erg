@@ -8,6 +8,7 @@ Label: deferred
 2026-07-11T14:36Z HDMX-coding-agent created
 
 2026-07-15T13:58Z HDMX-coding-agent label deferred
+2026-07-22T09:10Z HDMX-coding-agent note lair full-suite run on doudou: 59 failed, 4 errors, 1507 passed (27m38s); clusters seen include missing derived artifacts (test_corpus_table_export) and subprocess script failures (subsampling ribbon, venue concentration) — still in this ticket's scope
 --- body ---
 ## Context
 
