@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-20T11:00Z HDMX-coding-agent created author approved expansion within the UN-system frame (session 2026-07-20)
 2026-07-20T12:00Z HDMX-coding-agent note broadened to include OECD DAC sub-list after corpus probe (author asked "harvest OECD too"); wholesale OECD harvest rejected as redundant
+2026-07-22T09:00Z HDMX-coding-agent note author angle: manuscript-bibliography coverage probe run — empirical basis for the inclusion rule; see body § Empirical basis
 
 --- body ---
 ## Context
@@ -50,6 +51,28 @@ Known data properties (assessed 2026-07-20, verify at harvest):
   unlike publisher-restricted academic abstracts.
 - Document symbols (e.g. FCCC/CP/2009/11/Add.1, DCD/DAC(2016)3/FINAL) are
   the natural identifiers.
+
+## Empirical basis (added 2026-07-22, author's angle)
+
+The extension is bounded empirically, not by an a priori institution list:
+cross the resubmitted Œconomia manuscript's bibliography against the v1
+corpus and let the classes of absent-but-needed documents define the harvest.
+Probe result (81 works cited, 31 in corpus; script and full class analysis in
+`deliverables/data-paper/revision-rdj26561/biblio-vs-corpus-probe.md`):
+
+- The only absent classes the manuscript actually needed are the official
+  international-institution documents already targeted — UNFCCC decisions and
+  the Biennial Assessment series (the corpus holds the 5th BA but not the
+  2014 first edition, and commentary about Bali/Copenhagen/Cancún rather
+  than the decisions themselves), plus GEF-type reports. The sub-lists above
+  are confirmed; no open-ended new class emerges.
+- Two boundary decisions for the author, to settle with the inclusion rule:
+  party/negotiating-bloc submissions (e.g. AOSIS on the NCQG — "addressed to
+  the COP" arguably covers them) in or out; the negotiation record (IISD
+  Earth Negotiations Bulletin, political speeches) presumably out, stated
+  explicitly in the bias section.
+- Regression check: rerun the probe against corpus v2 after the harvest —
+  classes A and B in the probe note should then match.
 
 Sequencing warning: this is the largest work item of the revision and blocks
 the final corpus numbers (every {{< meta >}} count refreshes). Start early;
