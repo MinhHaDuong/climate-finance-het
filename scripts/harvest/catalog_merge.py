@@ -33,7 +33,17 @@ from utils import (
 
 log = get_logger("catalog_merge")
 
-SOURCE_PRIORITY = ["openalex", "scopus", "istex", "bibcnrs", "scispace", "grey", "teaching"]
+# unfccc/oecd (curated key-documents layer, ticket 0288) rank LAST on
+# purpose: on rows merged with an existing grey seed, the grey source_id
+# must keep winning — in_v1 provenance (#283) matches no-DOI rows by
+# source_id, so letting the layer override it would silently evict the
+# row from the reproducible v1 subset.
+SOURCE_PRIORITY = ["openalex", "scopus", "istex", "bibcnrs", "scispace", "grey",
+                   "teaching", "unfccc", "oecd"]
+
+# Optional per-catalog columns carried through the merge when present
+# (first non-empty by source priority; empty string elsewhere).
+EXTRA_CARRY_COLS = ["abstract_provenance"]
 
 
 SOURCE_RANK = {s: i for i, s in enumerate(SOURCE_PRIORITY)}
@@ -70,6 +80,7 @@ def _dedup_vectorized(df, group_col):
 
     # Replace empty strings with NaN so first() skips them
     text_cols = [c for c in WORKS_COLUMNS if c != "cited_by_count"]
+    text_cols += [c for c in EXTRA_CARRY_COLS if c in df.columns]
     df[text_cols] = df[text_cols].replace("", pd.NA)
 
     # Build aggregation: first() for text, max() for citations, max() for from_*
@@ -161,14 +172,10 @@ def _load_combined(files: list[str]) -> pd.DataFrame | None:
     return combined
 
 
-def main():
-    # Load only the catalogs declared as deps in dvc.yaml
-    catalog_deps = catalog_files_from_dvc()
-    files = [os.path.join(BASE_DIR, d) for d in catalog_deps]
-    combined = _load_combined(files)
-    if combined is None:
-        return
-
+def merge_catalogs(combined: pd.DataFrame) -> pd.DataFrame:
+    """Normalize, set provenance flags, and deduplicate a concatenated
+    catalog frame. Extracted from main() so the dedup guards (ticket 0288)
+    can exercise the real merge path on fixtures."""
     # Normalize text fields — fix encoding artifacts from upstream aggregators
     text_fields = ["title", "abstract", "first_author", "all_authors",
                    "journal", "keywords"]
@@ -203,17 +210,31 @@ def main():
 
     result = pd.concat(parts, ignore_index=True) if parts else pd.DataFrame()
 
-    # Ensure all expected columns
-    for col in WORKS_COLUMNS:
+    # Ensure all expected columns (extras always present so unified_works
+    # has a stable schema whether or not the key-documents layer ran)
+    for col in WORKS_COLUMNS + EXTRA_CARRY_COLS:
         if col not in result.columns:
             result[col] = ""
+    result[EXTRA_CARRY_COLS] = result[EXTRA_CARRY_COLS].fillna("")
     for col in FROM_COLS:
         if col not in result.columns:
             result[col] = 0
-    result = result[WORKS_COLUMNS + FROM_COLS]
+    result = result[WORKS_COLUMNS + FROM_COLS + EXTRA_CARRY_COLS]
 
     # Add source_count
     result["source_count"] = result[FROM_COLS].sum(axis=1).astype(int)
+    return result
+
+
+def main():
+    # Load only the catalogs declared as deps in dvc.yaml
+    catalog_deps = catalog_files_from_dvc()
+    files = [os.path.join(BASE_DIR, d) for d in catalog_deps]
+    combined = _load_combined(files)
+    if combined is None:
+        return
+
+    result = merge_catalogs(combined)
 
     # Sort by year desc, then cited_by_count desc
     result["_year_sort"] = pd.to_numeric(result["year"], errors="coerce")
