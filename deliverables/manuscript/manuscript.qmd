@@ -187,9 +187,9 @@ In 2025, the World Bank -- through its non-concessional lending arm, the Interna
 | Instrument | Amount | Price of capital | Possible way of counting | Controversy revealed |
 |---|---:|---:|---|---|
 | IBRD loan | €625M | About 3% | Near-full amount as mitigation climate finance | Concessionality issued from the Bank's AAA balance sheet, not from a budgetary subsidy |
-| CTF loan | €32.8M / $38M | 0.25% | Face value, or a grant equivalent of 47--79% of the amount depending on the reference rate | Gap between money lent and real transfer |
+| CTF loan | €32.8M | 0.25% | Face value, or a grant equivalent of 47--79% of the amount depending on the reference rate | Gap between money lent and real transfer |
 | CTF grant | $2M | No repayment | Full amount | Simple case, but marginal in the total |
-| Grid project | The whole operation | General infrastructure | "Principal" climate marker or mitigation co-benefit | Additionality and climate specificity debatable |
+| Grid project | All of it | Infrastructure | "Principal" climate marker or mitigation co-benefit | Additionality and climate specificity debatable |
 
 : One operation, several counting conventions {#tbl-turkiye}
 
