@@ -14,6 +14,13 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+# The harvest fetch stage needs beautifulsoup4, a `corpus` dependency-group
+# package (Phase-1 machines only). Without it every worker degrades to an
+# unhandled-error log line and no pages.jsonl is written, so downstream
+# assertions fail with FileNotFoundError (ticket 0263, cluster 5). Skip on
+# machines whose env omits the corpus group instead.
+pytest.importorskip("bs4", reason="corpus dependency group not installed (uv sync --group corpus)")
+
 pytestmark = pytest.mark.integration
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "harvest"))

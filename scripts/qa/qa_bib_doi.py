@@ -53,8 +53,8 @@ TITLE_THRESHOLD = 0.60  # SequenceMatcher ratio below which titles are "differen
 CROSSREF_WORKS = "https://api.crossref.org/works/"
 MAILTO = "minh.haduong@gmail.com"  # Crossref polite pool
 
-# Default bib path, relative to this file (scripts/ -> repo root -> deliverables/…).
-_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# Default bib path, relative to this file (scripts/qa/ -> repo root -> deliverables/…).
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DEFAULT_BIB = os.path.join(_REPO_ROOT, "deliverables", "_shared", "bibliography", "main.bib")
 
 
