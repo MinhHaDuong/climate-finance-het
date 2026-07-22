@@ -5,6 +5,7 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-07-20T10:00Z HDMX-coding-agent created split from 0277
+2026-07-22T11:38Z HDMX-coding-agent note raid Imagine/Plan: PASS — edge-list semantics confirmed, design sketch appended
 
 --- body ---
 ## Context
@@ -50,3 +51,43 @@ as a Phase-2 artifact; 0277 writes the prose interpreting it.
 
 - [ ] Reference-count distribution artifact produced by a Make-wired script
 - [ ] 0277 unblocked with the artifact path recorded
+
+## Plan (raid 2026-07-22, Imagine findings)
+
+`refined_citations.csv` is an edge list (one row per reference;
+`RefinedCitationsSchema`, `scripts/schemas.py:65-78`); zero-reference
+documents have NO rows, and sentinel rows are stripped at merge
+(`corpus_merge_citations.py:113-116`). So:
+
+- Outer-join `citations.groupby("source_doi").size()` onto the full DOI
+  universe from `load_refined_works()`, `fillna(0)`.
+- Documents with no DOI at all cannot be `source_doi`: report them
+  separately as "excluded from the citation graph" — never fold into
+  "zero references" (methodological honesty).
+
+Design:
+- Script `scripts/analysis/compute_reference_counts.py` — single purpose, no
+  dispatcher. Model on `compute_venue_concentration.py` (loaders +
+  `parse_io_args`/`validate_io` + Pandera validate-at-write + `save_csv`).
+  Do NOT copy `export_citation_coverage.py`'s direct `pd.read_csv` (legacy,
+  rule-9 violation).
+- Output `deliverables/_shared/tables/tab_reference_counts.csv` (paper cites
+  it → writing artifact, not data/derived). Long-format or bucketed
+  distribution (0, 1-5, 6-20, 21-50, 51-100, 100+) + summary metrics
+  (median/mean/p5/p95/max) — exact layout is an Execute-phase detail; keep
+  `strict=True` schema clean. Percentile-based tail flags, no bespoke magic
+  threshold (config-driven rule 6).
+- New schema in `scripts/schemas.py` (`strict=True, coerce=True`).
+- Make target in the Makefile "Corpus reporting" section (~line 248),
+  pattern-matched on `tab_citation_coverage.md`'s rule, folded into
+  `corpus-tables` — no new .mk for a single table.
+- Scalar vars for prose (`data-paper-vars.yml`) stay with 0277, not here
+  (atomic tickets).
+
+First test (red): synthetic works (some DOIs, one no-DOI) + synthetic
+citation edges (source_dois with 0/1/many edges, one absent entirely) →
+zero-count document appears with count 0; no-DOI document excluded/flagged
+separately; bucket totals sum to len(works_with_doi).
+
+Note: artifact reflects shipped v1.1.1 citation data; regenerate if v1.1.2
+(GROBID) lands before 0277 quotes numbers.
