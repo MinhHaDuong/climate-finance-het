@@ -1,0 +1,5 @@
+study,db,reported_n,retrieved,with_doi,matched_doi,matched_title,matched,coverage_pct,missed_filtered,missed_not_captured,notes
+care_weber2023,Scopus,315,849,552,479,279,758,89.3,87,4,SUBJAREA SOCI/ECON/BUSI limit not replicable in OpenAlex
+shang_jin2023,Web of Science,2311,1072,772,692,283,975,91.0,91,6,WoS topic search; manual pruning of 572 off-topic works not replicated
+maria_etal2023,Scopus,3275,4034,2778,962,656,1618,40.1,211,2205,W/3 proximity approximated by the four core phrases (subset)
+rusydiana2023,Scopus,1051,1264,936,844,308,1152,91.1,101,11,query reported only as the phrase; access date approximated

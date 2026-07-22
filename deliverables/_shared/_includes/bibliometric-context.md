@@ -1,21 +1,15 @@
-## 11. Bibliometric Context: Positioning in the Literature
-<!-- WARNING: AI-generated, not human-reviewed -->
-<!-- Literature attributions verified & corrected 2026-07-10 (ticket 0152, web-verified DOIs + local PDFs):
-     Deb -> Deb & Chen 2024 JSFI 15(1) doi:10.1080/20430795.2024.2441195 (paywalled);
-     "Baran et al. 2024" was a phantom -> real paper is Rusydiana 2023, Text Analytics in Economics 1(1), doi:10.58968/tae.v1i1.451 (OA, PDF held);
-     Alonso-Robisco: published version has 5 authors + different title, JSFI 15(2) doi:10.1080/20430795.2024.2370325 (green OA, PDF held);
-     Singhania et al. 2023 ESPR doi:10.1007/s11356-023-27828-y confirmed real & distinct from Shang & Jin 2023 ESPR doi:10.1007/s11356-023-31006-5 (2,311 WoS papers), which this section previously omitted;
-     "None report validity metrics" was FALSE (CiteSpace studies report Q + mean silhouette) — corrected below. -->
-
-### Prior bibliometric studies of climate finance
-
-Several studies have mapped the climate finance literature bibliometrically. Our study differs from these in scope, methods, and — crucially — in reporting cluster validity.
-
-**Direct climate finance bibliometrics.** Carè and Weber (2023, *Research in International Business and Finance*) analyze 315 papers (2004--2021) using co-word analysis and VOSviewer, identifying 7 clusters and finding the field "not finance-based" — top finance journals are largely absent. Deb and Chen (2024, *Journal of Sustainable Finance & Investment* 15(1)) apply co-citation and bibliographic coupling to 621 Web of Science papers, finding research took off around 2010 with China, US, and UK dominant. Shang and Jin (2023, *Environmental Science and Pollution Research*) run CiteSpace on 2,311 WoS papers, 2001--2022. Singhania et al. (2023, also *Environmental Science and Pollution Research*, a distinct study on climate-change research in finance and accounting) map 657 WoS papers (1995--2020) with CiteSpace. Rusydiana (2023, *Text Analytics in Economics* 1(1)) classifies 1,051 Scopus articles into 5 clusters: economic effects, governance, implementation, financing issues, and city-level finance. Validity reporting is thin: the CiteSpace studies carry the toolchain's default indicators computed on the cited-reference network (Shang and Jin: Q = 0.392, mean silhouette S = 0.74); the others present cluster visualizations without validity metrics. None asks whether the document population itself separates.
-
-**Topic modeling on adjacent fields.** Alonso-Robisco, Bas, Carbó, de Juan and Marqués (2024, *Journal of Sustainable Finance & Investment* 15(2), "Where and how machine learning plays a role in climate finance research") apply LDA to 217 ML-for-climate-finance papers, extracting 7 topics (natural hazards, carbon markets, ESG, energy economics, etc.). Reis Maria, Ballini, and Fraga Souza (2023, *Sustainability*) use Structural Topic Modeling on 3,275 RePec articles, finding 3 groups (international/UNFCCC framing, climate risk/green bonds, energy-emissions-economics models) with a temporal shift from international to national framing. This is methodologically the closest to our approach.
-
-**Corpus sizes in context.** Our corpus of ~31,000 works is 10--100× larger than any previous climate finance bibliometric study (315--3,275 papers). This matters: small corpora may produce artificially well-separated clusters by undersampling the boundary-spanning works that create continuity.
+## Clustering validity: positioning in the bibliometric literature
+<!-- Split (ticket 0289, 2026-07-22): part B of the former §11 fragment,
+     written 2026-03 for the technical report but never wired into any
+     document (orphan — see ticket 0290). Part A (prior-mappings review)
+     moved to prior-mappings.md, staged for the data paper. Author-reviewed
+     2026-07-22 (PDF draft read; AI-generated marker cleared per author
+     decision). -->
+<!-- 0152 correction retained: "None report validity metrics" was FALSE
+     (CiteSpace studies report Q + mean silhouette) — corrected below. -->
+<!-- STALE CROSS-REFS: "Section 7.8" and "Section 9" below refer to the
+     technical report's pre-restructure numbering; fix them when this file
+     is wired into a host document. -->
 
 ### How our approach differs
 
