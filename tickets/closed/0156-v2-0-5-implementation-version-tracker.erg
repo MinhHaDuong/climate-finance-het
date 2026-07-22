@@ -2,6 +2,7 @@
 Title: v2.0.5 implementation — version tracker
 Created: 2026-06-18
 Author: HDMX-coding-agent
+Closed: integration review done 2026-07-22: all children closed (0134-0143, 0152, 0153, 0162, 0171, 0172), resubmitted to Oeconomia 2026-07-21, make check green on merged main, nine-member panel + gaze APPROVED on the final PR, union sweep fixed the corpus-report companion subtitle
 
 --- log ---
 2026-06-18T08:50Z HDMX-coding-agent created
@@ -24,6 +25,7 @@ Author: HDMX-coding-agent
 2026-07-09T13:01Z HDMX-coding-agent note blocker 0162 closed — Blocked-by removed.
 2026-07-20T13:31Z HDMX-coding-agent note blocker 0152 closed — Blocked-by removed.
 2026-07-21T15:23Z HDMX-coding-agent note blocker 0153 closed — Blocked-by removed.
+2026-07-22T08:07Z HDMX-coding-agent closed — integration review done 2026-07-22: all children closed (0134-0143, 0152, 0153, 0162, 0171, 0172), resubmitted to Oeconomia 2026-07-21, make check green on merged main, nine-member panel + gaze APPROVED on the final PR, union sweep fixed the corpus-report companion subtitle
 --- body ---
 ## Context
 Version-milestone tracker for **v2.0.5 — implementation** (research → writing →
