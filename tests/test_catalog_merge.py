@@ -171,6 +171,26 @@ class TestKeydocsLayerMerge:
         assert row["from_openalex"] == 1
         assert row["from_oecd"] == 1
 
+    def test_keywords_provenance_survives_merge(self):
+        """The keywords disclosure flag is carried like abstract_provenance."""
+        from catalog_merge import merge_catalogs
+
+        unfccc = _make_catalog(
+            [{"title": "COP15 decisions", "year": "2009",
+              "source_id": "FCCC/CP/2009/11/Add.1"}],
+            source_name="unfccc")
+        unfccc["keywords_provenance"] = "generated:lexicon"
+        openalex = _make_catalog(
+            [{"doi": "10.1234/x", "title": "A paper", "year": "2020"}],
+            source_name="openalex")
+        combined = pd.concat([openalex, unfccc], ignore_index=True)
+
+        result, _ = merge_catalogs(combined)
+        assert "keywords_provenance" in result.columns
+        by_id = result.set_index("source_id")
+        assert by_id.loc["FCCC/CP/2009/11/Add.1",
+                         "keywords_provenance"] == "generated:lexicon"
+
     def test_abstract_provenance_survives_merge(self):
         """The layer's reconstructed-abstract flag is carried into
         unified_works.csv (empty for rows from other sources)."""

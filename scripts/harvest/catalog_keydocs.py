@@ -92,6 +92,40 @@ BOILERPLATE_LINE = re.compile(
 
 OCR_TIMEOUT_S = 1800
 
+# Keywords rule (author decision, 2026-07-22): never faked from titles.
+# An explicit keywords block on the first page is used verbatim; otherwise
+# lexicon terms found in the text are joined; otherwise keywords stay empty.
+# Disclosure travels in keywords_provenance ("extracted" / "generated:lexicon"),
+# mirroring abstract_provenance.
+FIRST_PAGE_CHARS = 3500
+
+KEYWORDS_BLOCK = re.compile(
+    r"^\s*(?:keywords?|mots[- ]cl[e\u00e9]s)\s*[:\uff1a]\s*(.+)$",
+    re.IGNORECASE | re.MULTILINE,
+)
+
+# Deterministic generation vocabulary, matched case-insensitively against the
+# extracted text. Curated with the seed lists; promote to config/ if ticket
+# 0304 grows it beyond a screenful.
+KEYWORD_LEXICON = [
+    "climate finance",
+    "climate change",
+    "adaptation",
+    "mitigation",
+    "loss and damage",
+    "financial mechanism",
+    "Green Climate Fund",
+    "Global Environment Facility",
+    "Adaptation Fund",
+    "long-term finance",
+    "biennial assessment",
+    "official development assistance",
+    "Rio markers",
+    "blended finance",
+    "capacity-building",
+    "technology transfer",
+]
+
 
 def load_seed(path: str, source_name: str) -> list[dict]:
     """Load and validate a curated seed list. Fails loud on invalid entries."""
@@ -104,6 +138,7 @@ def load_seed(path: str, source_name: str) -> list[dict]:
 
     valid_classes = DOC_CLASSES[source_name]
     seen = set()
+    stems: dict[str, str] = {}
     for e in entries:
         for field in REQUIRED_FIELDS:
             if not e.get(field):
@@ -121,6 +156,13 @@ def load_seed(path: str, source_name: str) -> list[dict]:
         if e["symbol"] in seen:
             raise ValueError(f"Duplicate symbol in seed: {e['symbol']}")
         seen.add(e["symbol"])
+        stem = safe_filename(e["symbol"])
+        if stem in stems:
+            raise ValueError(
+                f"Seed symbols {stems[stem]!r} and {e['symbol']!r} collapse to "
+                f"the same pool filename stem {stem!r} — their cached PDFs "
+                "would silently collide; disambiguate the symbols")
+        stems[stem] = e["symbol"]
     log.info("Loaded %d validated seed entries from %s", len(entries), path)
     return entries
 
@@ -258,9 +300,31 @@ def _strip_masthead(text: str) -> str:
     return remainder or text
 
 
+def derive_keywords(text: str) -> tuple[str, str]:
+    """Derive (keywords, provenance) from extracted document text.
+
+    First-page explicit keywords block wins ("extracted"); else lexicon terms
+    present in the text ("generated:lexicon"); else empty — no text, no
+    keywords (author rule, 2026-07-22).
+    """
+    if not text:
+        return "", ""
+    m = KEYWORDS_BLOCK.search(text[:FIRST_PAGE_CHARS])
+    if m:
+        return m.group(1).strip(), "extracted"
+    low = text.lower()
+    found = [term for term in KEYWORD_LEXICON if term.lower() in low]
+    if found:
+        return "; ".join(found), "generated:lexicon"
+    return "", ""
+
+
 def build_record(entry: dict, source_name: str, abstract: str | None,
-                 abstract_provenance: str | None) -> dict:
-    """Map a seed entry (+ derived abstract) onto the works-catalog schema."""
+                 abstract_provenance: str | None,
+                 keywords: str | None = None,
+                 keywords_provenance: str | None = None) -> dict:
+    """Map a seed entry (+ derived abstract/keywords) onto the works-catalog
+    schema."""
     if entry.get("abstract"):
         abstract = entry["abstract"]
         abstract_provenance = "curated"
@@ -275,18 +339,24 @@ def build_record(entry: dict, source_name: str, abstract: str | None,
         "journal": entry["body"],
         "abstract": abstract or "",
         "language": entry.get("language", "en"),
-        "keywords": entry.get("short_title", ""),
+        "keywords": keywords or "",
         "categories": f"key documents; {entry['doc_class']}",
         "cited_by_count": "",
         "affiliations": entry["body"],
         "abstract_provenance": abstract_provenance or "",
+        "keywords_provenance": keywords_provenance or "",
     }
 
 
 def harvest_entry(entry: dict, source_name: str, pool_dir: str,
                   fetch: bool) -> dict:
-    """Process one seed entry: optional fetch + extract + derive, then map."""
+    """Process one seed entry: optional fetch + extract + derive, then map.
+
+    Contract: entries must come from load_seed() — schema fields are indexed
+    directly, so a dict that skipped validation dies on a bare KeyError.
+    """
     abstract, provenance = None, None
+    keywords, kw_provenance = None, None
     if fetch and not entry.get("abstract"):
         stem = safe_filename(entry["symbol"])
         pdf_path = os.path.join(pool_dir, stem + ".pdf")
@@ -295,12 +365,14 @@ def harvest_entry(entry: dict, source_name: str, pool_dir: str,
         if status in ("cached", "fetched"):
             text, text_status = get_document_text(pdf_path, txt_path)
             abstract, provenance = derive_abstract(text)
+            keywords, kw_provenance = derive_keywords(text)
             log.info("  %s: fetch=%s text=%s abstract=%s",
                      entry["symbol"], status, text_status,
                      provenance or "none")
         else:
             log.info("  %s: fetch=%s (no text)", entry["symbol"], status)
-    return build_record(entry, source_name, abstract, provenance)
+    return build_record(entry, source_name, abstract, provenance,
+                        keywords, kw_provenance)
 
 
 def main(argv=None):

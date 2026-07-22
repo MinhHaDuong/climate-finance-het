@@ -44,7 +44,7 @@ SOURCE_PRIORITY = ["openalex", "scopus", "istex", "bibcnrs", "scispace", "grey",
 
 # Optional per-catalog columns carried through the merge when present
 # (first non-empty by source priority; empty string elsewhere).
-EXTRA_CARRY_COLS = ["abstract_provenance"]
+EXTRA_CARRY_COLS = ["abstract_provenance", "keywords_provenance"]
 
 
 SOURCE_RANK = {s: i for i, s in enumerate(SOURCE_PRIORITY)}

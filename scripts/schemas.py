@@ -55,6 +55,7 @@ RefinedWorksSchema = DataFrameSchema(
         "from_unfccc": Column(str, nullable=True, required=False),
         "from_oecd": Column(str, nullable=True, required=False),
         "abstract_provenance": Column(str, nullable=True, required=False),
+        "keywords_provenance": Column(str, nullable=True, required=False),
         "source_count": Column(str, nullable=True),
         "abstract_status": Column(str, nullable=True),
         "near_duplicate_group": Column(str, nullable=True),

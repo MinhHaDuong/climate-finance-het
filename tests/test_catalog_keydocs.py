@@ -117,6 +117,57 @@ class TestBuildRecord:
         assert rec["abstract"] == "Hand-written summary."
         assert rec["abstract_provenance"] == "curated"
 
+    def test_keywords_not_hijacked_by_short_title(self):
+        """Author rule (2026-07-22): keywords are never faked from titles —
+        metadata-only records carry empty keywords, not the short_title."""
+        rec = ck.build_record(
+            _entry(), "unfccc", abstract=None, abstract_provenance=None)
+        assert rec["keywords"] == ""
+        assert rec["keywords_provenance"] == ""
+
+    def test_keywords_carried_with_provenance(self):
+        rec = ck.build_record(
+            _entry(), "unfccc", abstract=None, abstract_provenance=None,
+            keywords="climate finance; adaptation",
+            keywords_provenance="generated:lexicon")
+        assert rec["keywords"] == "climate finance; adaptation"
+        assert rec["keywords_provenance"] == "generated:lexicon"
+
+
+class TestDeriveKeywords:
+    def test_extracted_from_first_page_block(self):
+        text = (
+            "OECD DEVELOPMENT CO-OPERATION DIRECTORATE\n"
+            "Keywords: climate finance, Rio markers, ODA\n"
+            + "Body text follows here at some length. " * 100
+        )
+        kw, prov = ck.derive_keywords(text)
+        assert kw == "climate finance, Rio markers, ODA"
+        assert prov == "extracted"
+
+    def test_generated_from_lexicon_when_no_block(self):
+        text = (
+            "The Conference of the Parties decides that adaptation and "
+            "long-term climate finance through the Green Climate Fund "
+            "shall be scaled up. " * 30
+        )
+        kw, prov = ck.derive_keywords(text)
+        assert prov == "generated:lexicon"
+        low = kw.lower()
+        assert "climate finance" in low
+        assert "adaptation" in low
+        assert "green climate fund" in low
+
+    def test_keywords_block_beyond_first_page_ignored(self):
+        """A 'Keywords:' line deep in the body is content, not metadata."""
+        text = ("Plain opening text without lexicon terms. " * 200
+                + "\nKeywords: not metadata\n")
+        kw, prov = ck.derive_keywords(text)
+        assert prov != "extracted"
+
+    def test_empty_without_text(self):
+        assert ck.derive_keywords("") == ("", "")
+
 
 class TestDeriveAbstract:
     def test_executive_summary_section_preferred(self):
@@ -356,3 +407,17 @@ class TestDvcWiring:
         deps = self._dvc()["stages"]["catalog_merge"]["deps"]
         assert "data/catalogs/unfccc_works.csv" in deps
         assert "data/catalogs/oecd_works.csv" in deps
+
+
+class TestStemCollision:
+    def test_stem_collision_rejected(self, tmp_path):
+        """Two symbols that collapse to the same pool filename would silently
+        share one cached PDF (PR #1085 review) — rejected at validation."""
+        import yaml as _yaml
+        e1 = _entry()
+        e2 = _entry()
+        e2["symbol"] = "FCCC/CP/2009/11+Add.1"  # same stem as e1 after safe_filename
+        path = tmp_path / "seed.yaml"
+        path.write_text(_yaml.safe_dump([e1, e2]))
+        with pytest.raises(ValueError, match="stem"):
+            ck.load_seed(str(path), "unfccc")
