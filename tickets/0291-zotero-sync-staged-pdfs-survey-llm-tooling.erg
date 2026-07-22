@@ -1,0 +1,64 @@
+%erg 0.1
+Title: Zotero pass for ~22 staged PDFs — survey the LLM-Zotero tooling landscape before building
+Created: 2026-07-22
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-22T09:30Z HDMX-coding-agent created
+
+--- body ---
+## Context
+The Œconomia R&R final stretch (2026-07-17 → 2026-07-22) staged ~22 new PDFs in
+docs/articles/ (michalopoulos2017, aykut_dahan2015, callon1998, mackenzie2006,
+merry2016, north1990, porter1995, power1997, stodden2014implementing,
+bara2025aibibliometric, shao2025sciscigpt, dragondreaminginstitute2016,
+clinton2009copenhagen, mackenzie2009, michaelowa2011, stern2007-review,
+gef2007incremental, unfccc2018cdm, unfccc2006sbi07gefreport, gef2004ccpstudy,
+cassen_cointe2022 and siblings — inventory from `git status docs/` and the
+file= fields in main.bib). EDM discipline (rules/edm.md): docs/ is git-ignored
+staging; Zotero is the system of record; a sync + purge pass is owed.
+
+Author intuition (2026-07-22): the pass is worth tooling, but the LLM-Zotero
+tooling landscape moves fast (MCP servers for Zotero, Better BibTeX
+automation, zotero-py agents, metadata scrapers). INVESTIGATE FIRST — do not
+reinvent the wheel. The existing project skills (zotero-import for PDFs,
+index-source for URLs) are the baseline to compare against, not necessarily
+the vehicle.
+
+## Relevant files
+- `docs/articles/*.pdf` — the staged fulltexts (primary checkout)
+- `deliverables/_shared/bibliography/main.bib` — file= fields to reconcile
+- `config/no-fulltext-allowlist.txt` — allowlisted works (must stay consistent)
+- `~/.claude/skills/zotero-import/`, `~/.claude/skills/index-source/` — existing tooling
+- Memory: reference_zotero.md (userID 95318, API keys, collection T4X7ZNQL)
+
+## Actions
+1. SURVEY (before any code): state of LLM-Zotero tooling as of mid-2026 —
+   Zotero MCP servers, pyzotero-based agents, Better BibTeX automation,
+   AI metadata extractors; what the community uses to bulk-import PDFs with
+   verified metadata. Deliverable: a short comparison note in conception/
+   with a build-vs-adopt recommendation.
+2. DECIDE with the author: adopt / extend zotero-import / build thin glue.
+3. EXECUTE the pass: for each staged PDF, correct item type, real
+   author/date/pagination metadata, file attached, filed in the project
+   collection; reports carry numPages.
+4. Reconcile main.bib file= fields and the allowlist; purge nothing yet
+   (purge happens at archival, post-publication).
+
+## Test
+- Spot-check via Zotero API: N staged citekeys resolve to items with
+  attachments in collection T4X7ZNQL.
+
+## Verification
+- [ ] Survey note exists in conception/ with a recommendation
+- [ ] Author decision recorded (adopt/extend/build)
+- [ ] All staged PDFs present in Zotero with correct metadata + attachment
+- [ ] cited-works-availability test still green
+
+## Invariants
+- Zotero is the system of record; docs/ stays git-ignored staging.
+- No purge before publication archival.
+
+## Exit criteria
+- Survey note + author-arbitrated tooling decision + the ~22 PDFs archived
+  in Zotero with verified metadata.
