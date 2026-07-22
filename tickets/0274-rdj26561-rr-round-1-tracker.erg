@@ -9,6 +9,8 @@ Author: HDMX-coding-agent
 2026-07-20T11:00Z HDMX-coding-agent note author approved UN-system corpus expansion — added 0288, R1-06 now covered by 0281+0288
 2026-07-21T08:00Z HDMX-coding-agent note added 0289 (author request): verify comparison to prior bibliometric mappings
 
+2026-07-22T15:05Z HDMX-coding-agent note children 0300/0301 filed (PR #1086): artifact corrections for R1-13/R1-12; 0277/0276 log notes carry the corrected numbers
+
 --- body ---
 ## Context
 
@@ -39,6 +41,8 @@ remarks; coverage check clean at filing time).
 - 0283 — response letter: point-by-point reply and summary of revisions (ED-05)
 - 0284 — per-procedure dedup removal counts artifact (R1-12)
 - 0285 — per-document reference-count distribution artifact (R1-13)
+- 0300 — merge catalog-stage OpenAlex refs; corrects 0285's zero-ref headline 41.5% -> ~22.1% (R1-13)
+- 0301 — dedup error-rate estimates as citable artifact (R1-12)
 - 0286 — citation-network figure: author decision, implement or decline (R1-14) [needs-human]
 - 0287 — corpus CSV layout: restructure or document, author decision (R1-19) [needs-human]
 - 0288 — corpus v2: curated international-institution key-documents layer, UNFCCC + OECD DAC sub-lists (R1-06) — critical path: blocks final corpus numbers
