@@ -45,6 +45,62 @@ of which climate finance is one strand — is covered at 41%, consistent with
 our corpus's boundary: green and sustainable finance beyond the climate
 strand are out of scope by design.
 
+## Decomposition of the misses (run 2026-07-22, `prior-mappings-misses.csv`)
+
+Crossing each miss against `extended_works.csv` (the pre-filter corpus) and
+`corpus_audit.csv` splits the gap into two very unequal classes:
+
+| Study | Misses | Filtered out by our policy | Never captured | Discovery coverage |
+|---|---|---|---|---|
+| Carè & Weber 2023 | 91 | 87 | 4 | 99.5% |
+| Shang & Jin 2023 | 97 | 91 | 6 | 99.4% |
+| Rusydiana 2023 | 112 | 101 | 11 | 99.1% |
+| Reis Maria et al. 2023 | 2,416 | 211 | 2,205 | 45.3% |
+
+Discovery coverage (captured by at least one source, before filtering) of
+the climate finance populations is above 99%. The headline 89–91% is our
+own curation: the removed works carry the flags `citation_isolated_old`
+(66 of 76 audited unique works), `no_abstract_irrelevant` (8), or
+`llm_irrelevant` (1), with a median of 1 citation and none at 50 or more.
+The prior mappings included them because a raw query does not curate. For
+Reis Maria et al. the decomposition quantifies the boundary instead: only
+211 of their 2,416 misses were ever candidates (seen then excluded); 2,205
+never matched our climate finance vocabulary at all.
+
+## Why the never-captured escaped — and what to change in the process
+
+Full OpenAlex records of the 11 unique climate finance never-captured works
+(fetched 2026-07-22), against our last harvest date (2026-03-22, per-query
+`_query_dates.json`):
+
+- **7 of 11 entered OpenAlex after our harvest** (`created_date` between
+  2026-03-27 and 2026-05-17): retroactive index growth — repository
+  backfills (IRDB Japan, Zenodo, unattributed venues), not works newly
+  published. A snapshot corpus decays even for its own period.
+- **4 of 11 were in the index at harvest time but invisible to it**
+  (created 2019–2025): the plausible channels are retroactive metadata
+  enrichment (an abstract added after our pull makes the work findable
+  today but not then) and tier-based relevance filtering at extraction.
+- The tail is partly noise OpenAlex itself acquired late: a duplicated
+  Zenodo deposit pair backdated to 2015 (created 2026-05), an IMF country
+  report titled "Kenya", workshop notices.
+
+Process implications (over completing the result list by hand):
+
+1. **Cadence the incremental harvest.** The engine already tracks
+   per-query `from_created_date` state; what is missing is a schedule
+   (e.g. quarterly) in the v2 process. `from_created_date` alone misses
+   the metadata-enrichment channel — a periodic `from_updated_date`
+   catch-up pass covers it.
+2. **Institutionalize this probe as a recall gate.** The prior mappings'
+   published queries are free external ground truth, independent of our
+   own vocabulary. A corpus-validate acceptance metric — discovery recall
+   ≥ 95% against reference populations — would catch silent snapshot
+   decay at each corpus rebuild.
+3. **Do not inject the 11 DOIs directly.** The correct loop is
+   re-harvest → normal filter funnel, which will also discard the noisy
+   tail (the duplicated Zenodo deposits would not survive curation).
+
 Not replicable from local sources: Deb & Chen 2024 (local PDF is an
 image-only scan; corpus size and attributions were web-verified under
 ticket 0152) and Singhania et al. 2023 (no local fulltext; DOI verified

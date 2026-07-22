@@ -172,6 +172,37 @@ def summarize(key: str, rows: list[dict], corpus_dois: set[str],
     }
 
 
+def classify_miss(record: dict, ext_dois: set[str],
+                  ext_titles: dict[str, set[int]],
+                  audit: dict[str, dict]) -> dict:
+    """Classify one missed work: dropped by our filter, or never captured.
+
+    'filtered_out' means the work is present in extended_works (captured by
+    a source, then removed by the corpus-filter policy); 'not_captured'
+    means no source ever retrieved it. Audit fields are joined by DOI when
+    available.
+    """
+    status = ("filtered_out"
+              if match_record(record, ext_dois, ext_titles) else "not_captured")
+    a = audit.get(norm_doi(record.get("doi") or "")) if record.get("doi") else None
+    return {
+        "status": status,
+        "audit_action": (a or {}).get("action", ""),
+        "audit_flags": (a or {}).get("flags", ""),
+        "cited_by_count": (a or {}).get("cited_by_count", ""),
+    }
+
+
+def load_audit(path: str) -> dict[str, dict]:
+    csv.field_size_limit(sys.maxsize)
+    audit: dict[str, dict] = {}
+    with open(path, newline="", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            if row.get("doi"):
+                audit[norm_doi(row["doi"])] = row
+    return audit
+
+
 def build_filter(study: dict) -> str:
     parts = [f"title_and_abstract.search:{study['search']}"]
     if study.get("from_date"):
@@ -261,14 +292,29 @@ def main() -> None:
                     help="directory for per-study JSONL pulls (reused on rerun)")
     ap.add_argument("--study", default=None,
                     help="restrict to one study key")
+    ap.add_argument("--extended", default=None,
+                    help="extended_works.csv (pre-filter corpus) — enables "
+                         "miss decomposition: filtered_out vs not_captured")
+    ap.add_argument("--audit", default=None,
+                    help="corpus_audit.csv — joins removal action/flags "
+                         "onto filtered misses")
+    ap.add_argument("--misses-output", default=None,
+                    help="CSV of missed works with decomposition status "
+                         "(requires --extended)")
     args = ap.parse_args()
 
     mailto = os.environ.get("MAILTO") or os.environ.get("OPENALEX_MAILTO")
     api_key = os.environ.get("OPENALEX_API_KEY")
 
     corpus_dois, corpus_titles = load_corpus(args.corpus)
+    ext_dois: set[str] = set()
+    ext_titles: dict[str, set[int]] = {}
+    if args.extended:
+        ext_dois, ext_titles = load_corpus(args.extended)
+    audit = load_audit(args.audit) if args.audit else {}
 
     summaries = []
+    miss_rows: list[dict] = []
     for study in STUDIES:
         if args.study and study["key"] != args.study:
             continue
@@ -279,14 +325,44 @@ def main() -> None:
         s["db"] = study["db"]
         s["reported_n"] = study["reported_n"]
         s["notes"] = study["notes"]
+        s["missed_filtered"] = s["missed_not_captured"] = ""
+        if args.extended:
+            n_filtered = n_uncaptured = 0
+            for r in rows:
+                if match_record(r, corpus_dois, corpus_titles):
+                    continue
+                c = classify_miss(r, ext_dois, ext_titles, audit)
+                if c["status"] == "filtered_out":
+                    n_filtered += 1
+                else:
+                    n_uncaptured += 1
+                miss_rows.append({
+                    "study": study["key"], "openalex_id": r.get("id", ""),
+                    "doi": r.get("doi") or "", "title": r.get("title") or "",
+                    "year": r.get("publication_year") or "", **c,
+                })
+            s["missed_filtered"] = n_filtered
+            s["missed_not_captured"] = n_uncaptured
+            log.info("  misses: %d filtered_out, %d not_captured",
+                     n_filtered, n_uncaptured)
         summaries.append(s)
         log.info("  matched %d/%d (%.1f%%; doi %d, title %d)",
                  s["matched"], s["retrieved"], s["coverage_pct"],
                  s["matched_doi"], s["matched_title"])
 
+    if args.misses_output and miss_rows:
+        mf = ["study", "openalex_id", "doi", "title", "year", "status",
+              "audit_action", "audit_flags", "cited_by_count"]
+        with open(args.misses_output, "w", newline="", encoding="utf-8") as f:
+            w = csv.DictWriter(f, fieldnames=mf)
+            w.writeheader()
+            w.writerows(miss_rows)
+        log.info("wrote %s (%d missed works)", args.misses_output,
+                 len(miss_rows))
+
     fieldnames = ["study", "db", "reported_n", "retrieved", "with_doi",
                   "matched_doi", "matched_title", "matched", "coverage_pct",
-                  "notes"]
+                  "missed_filtered", "missed_not_captured", "notes"]
     with open(args.output, "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=fieldnames)
         w.writeheader()

@@ -85,6 +85,25 @@ def test_summarize_coverage_counts():
     assert s["coverage_pct"] == 50.0
 
 
+def test_classify_miss_filtered_vs_not_captured():
+    """A miss found in the extended (pre-filter) corpus is 'filtered_out';
+    one absent from it was never captured by any source."""
+    m = _load()
+    ext_dois = {"10.1000/dropped"}
+    ext_titles = {m.norm_title("Dropped by policy"): {2019}}
+    audit = {"10.1000/dropped": {"action": "remove",
+                                 "flags": "citation_isolated_old",
+                                 "cited_by_count": "3"}}
+    dropped = {"doi": "10.1000/dropped", "title": "x"}
+    unseen = {"doi": "10.2000/unseen", "title": "Never retrieved"}
+    a = m.classify_miss(dropped, ext_dois, ext_titles, audit)
+    b = m.classify_miss(unseen, ext_dois, ext_titles, audit)
+    assert a["status"] == "filtered_out"
+    assert a["audit_flags"] == "citation_isolated_old"
+    assert b["status"] == "not_captured"
+    assert b["audit_flags"] == ""
+
+
 def test_studies_cover_the_three_cited_mappings():
     m = _load()
     keys = {s["key"] for s in m.STUDIES}
