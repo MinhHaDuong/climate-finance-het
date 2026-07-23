@@ -17,9 +17,9 @@ sys.path.insert(0, os.path.join(SCRIPTS_DIR, "analysis"))  # 0257: analysis entr
 
 from compute_dedup_error_estimates import (
     DEFAULT_THRESHOLDS,
+    compute_dedup_error_estimates,
     compute_false_negatives,
     compute_false_positives,
-    compute_dedup_error_estimates,
 )
 
 
