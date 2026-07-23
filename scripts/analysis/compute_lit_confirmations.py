@@ -29,6 +29,7 @@ import os
 import community as community_louvain
 import pandas as pd
 import yaml
+from _global_map_graph import direct_graph, load_data
 from _lit_confirmations import (
     adaptation_binomial,
     adaptation_mitigation_counts,
@@ -41,7 +42,6 @@ from _null_separation import (
     null_separation_test,
     within_tradition_share,
 )
-from analyze_global_map import direct_graph, load_data
 from pipeline_loaders import load_analysis_config, load_refined_works
 from schemas import LitConfirmationsSchema
 from script_io_args import parse_io_args, validate_io

@@ -132,9 +132,24 @@ def test_compute_script_cli_contract():
 
 def test_makefile_wires_target():
     mk = open(os.path.join(SCRIPTS, "analysis", "lit-confirmations.mk")).read()
-    assert "tab_lit_confirmations.csv" in mk
+    for t in ("tab_lit_confirmations.csv", "tab_sem6_assignments.csv",
+              "tab_semantic_robustness.csv", "tab_sem_composition.csv",
+              "fig_sem_composition.png"):
+        assert t in mk, t
     top = open(os.path.join(BASE, "Makefile")).read()
     assert "lit-confirmations.mk" in top
+
+
+def test_sem_composition_figure_artifacts_committed():
+    """Figure + backing table exist and agree on period rows."""
+    fig = os.path.join(BASE, "deliverables", "_shared", "figures",
+                       "fig_sem_composition.png")
+    tab = os.path.join(BASE, "deliverables", "_shared", "tables",
+                       "tab_sem_composition.csv")
+    assert os.path.exists(fig)
+    df = pd.read_csv(tab, index_col=0)
+    assert len(df) == 3          # three periods
+    assert df.shape[1] == 6      # six clusters
 
 
 def test_compute_vars_exports_lit_variables():
@@ -195,10 +210,11 @@ def test_no_hardcoded_p_values_in_prose_bullets():
 
     qmd = open(os.path.join(
         BASE, "deliverables", "data-paper", "data-paper.qmd")).read()
-    # Find the confirmations block (bulleted list quoting lit_ variables).
+    # Find the confirmations block: bullets quoting lit_ variables (results
+    # 1-5) plus the figure-based item 6 (no number by design).
     bullets = [ln for ln in qmd.splitlines()
-               if ln.lstrip().startswith("-") and "lit_" in ln]
+               if ln.lstrip().startswith("-")
+               and ("lit_" in ln or "@fig-sem-composition" in ln)]
     assert len(bullets) == 6, "expected exactly six confirmation bullets"
     for ln in bullets:
-        assert not re.search(r"[=<]\s*0?\.\d", ln.replace("0.06--0.22", "")), (
-            f"hardcoded number: {ln}")
+        assert not re.search(r"[=<]\s*0?\.\d", ln), f"hardcoded number: {ln}"

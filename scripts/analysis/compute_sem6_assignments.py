@@ -22,7 +22,7 @@ import os
 import community as community_louvain
 import numpy as np
 import pandas as pd
-from analyze_global_map import direct_graph, load_data
+from _global_map_graph import direct_graph, load_data
 from pipeline_loaders import (
     load_analysis_config,
     load_refined_embeddings,

@@ -91,8 +91,6 @@ DOC_VARS = {
         "lit_adapt_n",
         "lit_adapt_p",
         "lit_adapt_share_pct",
-        "lit_citsem_ari",
-        "lit_citsem_nmi",
         "lit_sem6_ari",
         "lit_sem6_n",
         "lit_finshare_chi2",
@@ -102,7 +100,6 @@ DOC_VARS = {
         "lit_growth_f",
         "lit_growth_p",
         "lit_growth_post_pct",
-        "lit_growth_pre_pct",
         "lit_mitig_n",
         "lit_poles_cross_null_pct",
         "lit_poles_cross_pct",
@@ -524,8 +521,6 @@ def lit_confirmations_stats(v):
     s = pd.read_csv(sem_path).set_index("metric")["value"]
     v["lit_sem6_ari"] = f"{s['sem6_ari_min_variant']:.3f}"
     v["lit_sem6_n"] = _int(s["sem6_n_works"])
-    v["lit_citsem_ari"] = f"{s['citsem_ari']:.3f}"
-    v["lit_citsem_nmi"] = f"{s['citsem_nmi']:.3f}"
 
 
 def global_map_stats(v):

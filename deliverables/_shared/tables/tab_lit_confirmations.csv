@@ -7,10 +7,10 @@ finshare_pre_pct,0.012963443090484833
 finshare_post_pct,0.29648090061444593
 finshare_chi2,19.423414406086657
 finshare_p_value,1.0471534861744604e-05
-growth_f_stat,4.650851562298061
-growth_p_value,0.01395196071739597
-growth_pre_pct,17.434473539833007
-growth_post_pct,-16.92772044922659
+growth_f_stat,15.172123818356145
+growth_p_value,2.5445539693345045e-05
+growth_pre_pct,34.898049873915625
+growth_post_pct,19.9014164010245
 poles_n_nodes,6809.0
 poles_n_edges,24089.0
 poles_cross_edges,2090.0
