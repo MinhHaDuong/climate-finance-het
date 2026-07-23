@@ -235,8 +235,10 @@ def render(res, out_stem):
         f"figure uses all citers), Louvain community detection with fixed "
         f"seed, {res['n_comm']} communities, weighted modularity = "
         f"{res['modularity']:.2f}.  Layout: force-directed spring embedding "
-        "(distances are indicative only).  Names and colors follow the "
-        "shared community registry (config/community_registry.yml).")
+        "(distances are indicative only)."
+        + ("  Names and colors follow the shared community registry "
+           "(config/community_registry.yml)."
+           if os.path.exists(REGISTRY_PATH) else ""))
     fig.text(0.02, 0.01, caption, fontsize=5.8, color=DARK,
              ha="left", va="bottom", wrap=True)
     plt.tight_layout(rect=(0, 0.13, 1, 1), pad=0.5)
