@@ -365,3 +365,23 @@ ReferenceCountsSchema = DataFrameSchema(
     strict=True,
     coerce=True,
 )
+
+
+# ---------------------------------------------------------------------------
+# Dedup error-rate estimates CSV (ticket 0301)
+# ---------------------------------------------------------------------------
+# Long format: one (metric, value) row per estimate. Answers RDJ-26561 R1-12
+# on the errors of the two exact dedup passes — false-negative residual
+# duplicates in refined_works (exact-title pairs, fuzzy candidate families)
+# and false-positive wrong merges in the combined catalogs (DOI collisions,
+# title+year author conflicts, empty-year key merges), plus the thresholds
+# used. Mirrors the ReferenceCountsSchema metric/value idiom.
+
+DedupErrorEstimatesSchema = DataFrameSchema(
+    columns={
+        "metric": Column(str),
+        "value": Column(float, nullable=True),
+    },
+    strict=True,
+    coerce=True,
+)
