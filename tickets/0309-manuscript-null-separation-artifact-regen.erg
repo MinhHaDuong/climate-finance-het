@@ -1,0 +1,42 @@
+%erg 0.1
+Title: Manuscript A.5: arbitrate regeneration of tab_null_separation_pre2007.csv after determinism fix
+Created: 2026-07-23
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-07-23T21:10Z HDMX-coding-agent created follow-up from PR #1103 round-2 fix (0286)
+
+--- body ---
+## Context
+
+PR #1103 made `scripts/_null_separation.py` deterministic by construction
+(canonical sorted graph copy before `double_edge_swap`): the rewiring null
+previously varied with PYTHONHASHSEED insertion order (observed z spread
+8.57 vs 7.60 on the same data). `tab_null_separation_pre2007.csv` (ticket
+0182) was produced by the old non-deterministic path and its committed
+values are quoted number-by-number in the Œconomia manuscript appendix A.5
+(v2.0.5 resubmitted, under review). Regenerating it with the fixed code
+will shift those values; the qualitative conclusion (p < 0.01) is expected
+to hold.
+
+## Actions
+
+1. Regenerate the artifact with the deterministic code; diff old vs new.
+2. Author arbitrates: update manuscript A.5 numbers (fold into the next
+   Œconomia revision round, coordinate with ticket 0306) or document the
+   pre-fix provenance.
+
+## Verification
+
+- [ ] Decision recorded; artifact and manuscript consistent (or divergence
+      explicitly documented)
+
+## Invariants
+
+- No silent edit to a submitted manuscript (prose workpackage rules).
+
+## Exit criteria
+
+- [ ] A.5 numbers and the committed artifact are reconciled under the
+      deterministic code path
