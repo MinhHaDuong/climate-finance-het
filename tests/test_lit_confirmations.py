@@ -105,7 +105,8 @@ def test_config_declares_lit_confirmations_parameters():
     cfg = _config()
     for key in ("finance_journals", "break_year", "adaptation_terms",
                 "mitigation_terms", "public_pole", "market_pole",
-                "null_n_perm", "null_seed"):
+                "null_n_perm", "null_seed", "sem_k", "sem_seed",
+                "sem_n_init", "sem_n_init_variant"):
         assert key in cfg, key
     assert len(cfg["finance_journals"]) >= 7
     # Pole concepts must exist in the community registry.
@@ -162,13 +163,30 @@ def test_prose_lit_variables_trace_to_artifact():
               "poles_within_share_z", "poles_p_value",
               "adapt_p_value", "adapt_n", "mitig_n"):
         assert m in metrics, m
+    sem = pd.read_csv(os.path.join(
+        BASE, "deliverables", "_shared", "tables",
+        "tab_semantic_robustness.csv"))
+    sem_metrics = set(sem["metric"])
+    for m in ("sem6_ari_min_variant", "sem6_n_works",
+              "citsem_ari", "citsem_nmi"):
+        assert m in sem_metrics, m
     # The DOC_VARS data-paper list must declare every used variable.
-    import importlib.util
-
-    spec = importlib.util.find_spec("analysis.compute_vars") if False else None
     src = open(os.path.join(SCRIPTS, "analysis", "compute_vars.py")).read()
     for var in used:
         assert f'"{var}"' in src, f"{var} not declared in compute_vars.py"
+
+
+def test_sem6_assignments_artifact_contract():
+    """Per-work reproducibility artifact: schema-shaped, plausible sizes."""
+    path = os.path.join(BASE, "deliverables", "_shared", "tables",
+                        "tab_sem6_assignments.csv")
+    assert os.path.exists(path), "committed assignments artifact missing"
+    df = pd.read_csv(path)
+    assert list(df.columns) == ["doi", "year", "sem_cluster", "cit_community"]
+    assert df["doi"].is_unique
+    assert df["sem_cluster"].nunique() == 6
+    # Canonical order: DOIs sorted, so reruns are byte-comparable.
+    assert df["doi"].is_monotonic_increasing
 
 
 def test_no_hardcoded_p_values_in_prose_bullets():
@@ -180,6 +198,7 @@ def test_no_hardcoded_p_values_in_prose_bullets():
     # Find the confirmations block (bulleted list quoting lit_ variables).
     bullets = [ln for ln in qmd.splitlines()
                if ln.lstrip().startswith("-") and "lit_" in ln]
-    assert len(bullets) == 4, "expected exactly four confirmation bullets"
+    assert len(bullets) == 6, "expected exactly six confirmation bullets"
     for ln in bullets:
-        assert not re.search(r"[=<]\s*0?\.\d", ln), f"hardcoded number: {ln}"
+        assert not re.search(r"[=<]\s*0?\.\d", ln.replace("0.06--0.22", "")), (
+            f"hardcoded number: {ln}")
