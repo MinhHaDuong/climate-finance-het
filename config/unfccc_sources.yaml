@@ -358,7 +358,7 @@ documents:
     url: "https://www.gefieo.org/content/dam/partners/ieo/docs/mgr/learnings/incremental-cost-assessment-2007-eng.pdf"
     provenance: "Cited in manuscript v2.0.5 (probe class B). Incremental-cost accounting doctrine. URL spot-verified 2026-07-23 (HTTP 200, %PDF)."
   - symbol: "UNFCCC/CDM/2018/ACHIEVEMENTS"
-    title: "Achievements of the Clean Development Mechanism 2001-2018: Harnessing Incentive for Climate Action"
+    title: "Achievements of the Clean Development Mechanism: Harnessing Incentive for Climate Action, 2001-2018"
     short_title: "CDM achievements report (2018)"
     year: 2018
     body: "UNFCCC"
@@ -406,15 +406,25 @@ documents:
     provenance: "INC handover recommendations incl. GEF interim arrangements. Verify URL at harvest."
 
   # ── Party / bloc submissions ─────────────────────────────────────────
-  - symbol: "AOSIS/SUBMISSION/NCQG/2024"
-    title: "Submission by the Alliance of Small Island States on the New Collective Quantified Goal on Climate Finance"
-    short_title: "AOSIS submission on the NCQG (2024)"
+  - symbol: "AOSIS/NCQG/2024/REACTION"
+    title: "Reaction to COP29 Draft NCQG Text"
+    short_title: "AOSIS reaction to the COP29 draft NCQG text (Baku, 22 November 2024)"
+    year: 2024
+    body: "Alliance of Small Island States"
+    doc_class: submission
+    language: en
+    url: ""
+    abstract: "Statement by the Alliance of Small Island States reacting to the COP29 draft text on the New Collective Quantified Goal on climate finance, Baku, 22 November 2024, demanding minimum allocation floors of USD 39 billion for small island developing States and USD 220 billion for least developed countries within the new goal."
+    provenance: "Cited in manuscript v2.0.5 (probe class B, bib key aosis2024ncqg); author decision 2026-07-22 includes submissions. The cited document is the AOSIS web statement https://www.aosis.org/aosis-reaction-to-cop29-draft-ncqg-text/ (HTML, no PDF — curated abstract from the bib note), not the June 2024 LDC-AOSIS joint submission."
+  - symbol: "LDC-AOSIS/SUBMISSION/NCQG/2024"
+    title: "Joint Submission by the Least Developed Countries and Alliance of Small Island Developing States Groups on the New Collective Quantified Goal on Climate Finance"
+    short_title: "LDC-AOSIS joint NCQG submission (June 2024)"
     year: 2024
     body: "Alliance of Small Island States"
     doc_class: submission
     language: en
     url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/LDC_AOSIS_NCQG_Submission_Joint%20Submission.pdf"
-    provenance: "Cited in manuscript v2.0.5 (probe class B); author decision 2026-07-22 includes submissions. Located 2026-07-23: the June 2024 LDC-AOSIS joint NCQG submission (unfccc.int submission portal); AUTHOR CHECK batched — confirm this joint submission is the cited AOSIS document. Origin bot-challenged; Wayback snapshot URL."
+    provenance: "Submissions-sweep anchor (ticket 0304): the June 2024 LDC-AOSIS joint NCQG submission from the UNFCCC submission portal. Origin bot-challenged; Wayback snapshot URL, content-verified at harvest fetch."
   - symbol: "G77/SUBMISSION/LTF/2012"
     title: "Submission by the Group of 77 and China on long-term climate finance"
     short_title: "G77+China submission on long-term finance (2012)"
