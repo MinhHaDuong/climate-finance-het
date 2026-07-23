@@ -272,8 +272,8 @@ documents:
     body: "UNFCCC Standing Committee on Finance"
     doc_class: biennial_assessment
     language: en
-    url: "https://unfccc.int/topics/climate-finance/resources/biennial-assessment-of-climate-finance"
-    provenance: "Also a grey_sources.yaml seed — identical title/year by design, merge dedup collapses (from_grey + from_unfccc)."
+    url: "https://unfccc.int/resource/docs/2014/cop20/eng/05.pdf"
+    provenance: "Also a grey_sources.yaml seed — identical title/year by design, merge dedup collapses (from_grey + from_unfccc). Summary and recommendations annexed to the SCF report to COP20 (FCCC/CP/2014/5); open /resource/docs URL, resolved 2026-07-23."
   - symbol: "UNFCCC/SCF/BA/2016/SUMMARY"
     title: "Summary and recommendations by the Standing Committee on Finance on the 2016 Biennial Assessment and Overview of Climate Finance Flows"
     short_title: "Second BA (2016) — SCF summary and recommendations"
@@ -281,8 +281,8 @@ documents:
     body: "UNFCCC Standing Committee on Finance"
     doc_class: biennial_assessment
     language: en
-    url: ""
-    provenance: "Also a grey_sources.yaml seed — identical title/year by design. URL resolved 2026-07-23 via CDX discovery; origin bot-challenged — Wayback snapshot, content-verified at harvest fetch."
+    url: "https://unfccc.int/resource/docs/2016/cop22/eng/08.pdf"
+    provenance: "Also a grey_sources.yaml seed — identical title/year by design. Summary and recommendations annexed to the SCF report to COP22 (FCCC/CP/2016/8, cf. decision 8/CP.22); open /resource/docs URL, resolved 2026-07-23."
   - symbol: "UNFCCC/SCF/BA/2018/SUMMARY"
     title: "Summary and recommendations by the Standing Committee on Finance on the 2018 Biennial Assessment and Overview of Climate Finance Flows"
     short_title: "Third BA (2018) — SCF summary and recommendations"
@@ -290,8 +290,8 @@ documents:
     body: "UNFCCC Standing Committee on Finance"
     doc_class: biennial_assessment
     language: en
-    url: ""
-    provenance: "Also a grey_sources.yaml seed — identical title/year by design. URL resolved 2026-07-23 via CDX discovery; origin bot-challenged — Wayback snapshot, content-verified at harvest fetch."
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/2018%20BA%20Technical%20Report%20Final.pdf"
+    provenance: "Also a grey_sources.yaml seed — identical title/year by design. URL points at the 2018 BA technical report (carries the summary; the annexed summary sits in the SCF report to COP24, no stable file URL located). Origin bot-challenged; Wayback snapshot, resolved 2026-07-23."
   - symbol: "UNFCCC/SCF/BA/2020"
     title: "Fourth Biennial Assessment and Overview of Climate Finance Flows"
     short_title: "Fourth Biennial Assessment (2020)"
@@ -299,8 +299,8 @@ documents:
     body: "UNFCCC Standing Committee on Finance"
     doc_class: biennial_assessment
     language: en
-    url: ""
-    provenance: "Also a grey_sources.yaml seed — identical title/year by design. URL resolved 2026-07-23 via CDX discovery; origin bot-challenged — Wayback snapshot, content-verified at harvest fetch."
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/Fourth_BA_2020_technical_report-V21.pdf"
+    provenance: "Also a grey_sources.yaml seed — identical title/year by design. Fourth BA technical report; origin bot-challenged — Wayback snapshot URL, resolved 2026-07-23."
   - symbol: "UNFCCC/SCF/BA/2022"
     title: "Fifth Biennial Assessment and Overview of Climate Finance Flows"
     short_title: "Fifth Biennial Assessment (2022)"
@@ -317,8 +317,8 @@ documents:
     body: "UNFCCC Standing Committee on Finance"
     doc_class: biennial_assessment
     language: en
-    url: ""
-    provenance: "Series enumeration; latest BA. URL resolved 2026-07-23 via CDX discovery; origin bot-challenged — Wayback snapshot, content-verified at harvest fetch."
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/UNFCCC_BA6_Report_Web_Apr2025.pdf"
+    provenance: "Series enumeration; latest BA. Sixth BA technical report (published April 2025); origin bot-challenged — Wayback snapshot URL, resolved 2026-07-23."
 
   # ── Fund reports to COP / CMP ────────────────────────────────────────
   - symbol: "FCCC/CP/2015/3"
