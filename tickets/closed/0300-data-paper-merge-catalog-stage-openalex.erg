@@ -2,10 +2,13 @@
 Title: Data paper: merge catalog-stage OpenAlex references into citations.csv — 4519 docs falsely zero-reference
 Created: 2026-07-22
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1093
 
 --- log ---
 2026-07-22T14:20Z HDMX-coding-agent created from zero-reference diagnosis (session f373ecb2, R1-13 follow-up)
+2026-07-23T13:45Z HDMX-coding-agent note implemented: fallback merge + padme regeneration; zero-share 22.10% (5,152), median 31, mean 43.7; intra-corpus edge set byte-identical
 
+2026-07-23T13:59Z HDMX-coding-agent closed — autoclosed — PR #1093
 --- body ---
 ## Context
 
@@ -63,10 +66,10 @@ empty `ref_doi`).
 
 ## Verification
 
-- [ ] `tab_reference_counts.csv` regenerated; zero-share ≈ 22% and
-      n_zero_references ≈ 5,152 (exact values from the run)
-- [ ] Dedup guard: merged edge count ≤ sum of layer edge counts; no
-      (source_doi, source_id) pair duplicated
+- [x] `tab_reference_counts.csv` regenerated; zero-share = 22.10% and
+      n_zero_references = 5,152 (median 31, mean 43.7)
+- [x] Dedup guard: merged 1,374,762 rows ≤ 2,499,041 layer sum; 0
+      duplicated (source_doi, source_id) and (source_doi, ref_doi) pairs
 
 ## Invariants
 
@@ -81,7 +84,7 @@ empty `ref_doi`).
 
 ## Exit criteria
 
-- [ ] catalog-stage OpenAlex references flow into `citations.csv`
-- [ ] `tab_reference_counts.csv` regenerated from the corrected edge list
-- [ ] 0277 log updated with corrected numbers (R1-13 prose must not quote
+- [x] catalog-stage OpenAlex references flow into `citations.csv`
+- [x] `tab_reference_counts.csv` regenerated from the corrected edge list
+- [x] 0277 log updated with corrected numbers (R1-13 prose must not quote
       41.5% uncorrected)

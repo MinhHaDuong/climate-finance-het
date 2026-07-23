@@ -1,0 +1,71 @@
+%erg 0.1
+Title: Manuscript: qualify the three-traditions claim for 1990-2007 after contemporaneous-citers check
+Created: 2026-07-23
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-07-23T16:35Z HDMX-coding-agent created author request (session 2026-07-23) — correction of the already-submitted paper
+
+--- body ---
+## Context
+
+The Œconomia manuscript (v2.0.5 resubmitted 2026-07-21, awaiting editor)
+states that three intellectual traditions exist in the 1990-2007 period,
+supported by the co-citation figure/appendix A.5. Exploration during the
+RDJ-26561 revision (session 2026-07-23) showed the canonical analysis uses
+pre-2007 REFERENCES cited by the FULL 1990-2024 corpus. Restricting citing
+documents to <= 2007 (480 citers, 6,155 pairs), only two traditions
+separate (pricing; CDM); no community contains the institutionalist anchors
+(North, DiMaggio, Finnemore). The third tradition's co-citation signature
+appears retrospective — post-crystallization literature rereading the
+UNFCCC period — which nuances the claim but arguably strengthens the
+thesis (retrospective construction of the object).
+
+Pending input before drafting: the figure-exploration report on (a) the
+<= 2008 variant, (b) inspection of burden-sharing literature in unlabeled
+communities (the absence may reflect badly chosen anchors, not absent
+literature — check Ringius, Rose, Tol, Grubb, den Elzen, Meyer, etc.),
+(c) projection of canonical communities onto the contemporaneous graph.
+
+## Relevant files
+
+- `deliverables/manuscript/manuscript.qmd` ~line 114 and appendix A.5
+- `scripts/_pre2007_traditions.py` — canonical method (full-corpus citers)
+- Exploration scripts/figures in the 0286 exploration worktree (to be
+  archived or re-derived): fig_traditions_pre2007_citers.png and pre-2008
+  variants
+
+## Actions
+
+1. Wait for the exploration report (anchors check, pre-2008 variant,
+   projection); author arbitrates the interpretation.
+2. Draft the manuscript correction: state explicitly that the co-citation
+   evidence identifies pre-2007 references as seen by the full corpus, and
+   qualify the contemporaneous existence of the third tradition (practice
+   vs citation signature), with the sparsity caveat.
+3. Route: autonomous prose change to a submitted manuscript goes through
+   branch + PR for author arbitration (rules/git.md prose workpackages).
+   Coordinate timing with the editor process (v2.0.5 under review — the
+   correction may wait for the next revision round unless author decides
+   otherwise).
+
+## Test
+
+- Prose adherence tests stay green; no positive-phrasing pins (CI polarity
+  rule).
+
+## Verification
+
+- [ ] Corrected claim consistent with the corroboration framing
+      (writing.md: detection corroborates, never discovers)
+
+## Invariants
+
+- Do not overclaim in the other direction either: absence in the sparse
+  contemporaneous graph is not proof of absence (480 citers).
+
+## Exit criteria
+
+- [ ] Author-approved wording landed on a manuscript branch/PR, or an
+      explicit decision to fold it into the next Œconomia revision round
