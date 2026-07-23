@@ -13,8 +13,11 @@ import pandas as pd
 import pytest
 from _deposit_variables import (
     DEPOSIT_VARIABLES,
+    GROUPS,
     check_columns,
+    compute_missingness,
     contract_names,
+    render_codebook,
     render_markdown_table,
     transform,
 )
@@ -104,6 +107,68 @@ class TestContract:
         optional = [v.name for v in DEPOSIT_VARIABLES if not v.required]
         cols = [c for c in contract_names() if c not in optional]
         assert check_columns(cols) == []
+
+
+class TestDataDictionary:
+    """Ticket 0287: formal data dictionary — group, allowed values, missingness."""
+
+    def test_four_groups_declared_in_order(self):
+        assert GROUPS == [
+            "Record identity",
+            "Bibliographic metadata",
+            "Provenance flags",
+            "Curation metadata",
+        ]
+
+    def test_every_variable_has_a_declared_group(self):
+        for v in DEPOSIT_VARIABLES:
+            assert v.group in GROUPS, f"{v.name}: group {v.group!r} not in GROUPS"
+
+    def test_groups_are_contiguous_in_contract_order(self):
+        seen = [v.group for v in DEPOSIT_VARIABLES]
+        order = [g for i, g in enumerate(seen) if i == 0 or g != seen[i - 1]]
+        assert order == [g for g in GROUPS if g in seen], \
+            "contract order must follow the four logical groups without interleaving"
+
+    def test_enumerated_columns_declare_allowed_values(self):
+        by_name = {v.name: v for v in DEPOSIT_VARIABLES}
+        assert "original" in by_name["abstract_status"].allowed_values
+        assert "curated" in by_name["abstract_provenance"].allowed_values
+        assert "extracted" in by_name["keywords_provenance"].allowed_values
+        assert "openalex" in by_name["source"].allowed_values
+        for v in DEPOSIT_VARIABLES:
+            if v.type.startswith("boolean"):
+                assert v.allowed_values, f"boolean {v.name} needs allowed_values"
+
+    def test_compute_missingness_counts_nan_and_empty(self):
+        df = pd.DataFrame({
+            "doi": ["10.1/x", None, ""],
+            "title": ["a", "b", "c"],
+            "not_in_contract": [1, 2, 3],
+        })
+        miss = compute_missingness(df)
+        assert miss["doi"] == pytest.approx(2 / 3)
+        assert miss["title"] == 0.0
+        assert "not_in_contract" not in miss
+
+    def test_render_codebook_grouped_and_complete(self):
+        miss = {"doi": 0.123, "title": 0.0}
+        md = render_codebook(miss, n_rows=42)
+        for g in GROUPS:
+            assert f"## {g}" in md
+        for name in contract_names():
+            assert f"`{name}`" in md
+        assert "12.3%" in md and "42" in md
+
+    def test_render_codebook_marks_absent_optional_columns(self):
+        md = render_codebook({"doi": 0.0}, n_rows=1)
+        assert "n/a" in md, "columns absent from the measured build show n/a"
+
+    def test_variables_table_carries_group_column(self):
+        md = render_markdown_table()
+        header = md.splitlines()[0]
+        assert "Group" in header
+        assert "Record identity" in md
 
 
 class TestDepositTransformMatchesContract:
