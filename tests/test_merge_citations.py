@@ -51,6 +51,14 @@ def _write_openalex(cache_dir, rows):
     df.to_csv(cache_dir / "openalex_refs.csv", index=False)
 
 
+CATALOG_COLS = ["source_doi", "source_id", "ref_oa_id"]
+
+
+def _write_catalog(path, rows):
+    df = pd.DataFrame(rows, columns=CATALOG_COLS)
+    df.to_csv(path, index=False)
+
+
 # ---------------------------------------------------------------------------
 # Tests
 # ---------------------------------------------------------------------------
@@ -146,6 +154,68 @@ class TestMergeCitations:
         result = pd.read_csv(out)
         assert len(result) == 1, \
             f"Expected 1 row (deduped no-DOI ref), got {len(result)}"
+
+    def test_catalog_stage_source_included(self, tmp_path, cache_dir):
+        """A source covered only at catalog stage flows into the merge (0300).
+
+        Each distinct ref_oa_id is one edge row; empty titles must not
+        collapse them via the no-DOI title dedup.
+        """
+        _write_crossref(cache_dir, [])
+        _write_openalex(cache_dir, [])
+        catalog = tmp_path / "openalex_citations.csv"
+        _write_catalog(catalog, [
+            ["10.1/cat", "W111", "W201"],
+            ["10.1/cat", "W111", "W202"],
+            ["10.1/cat", "W111", "W202"],  # in-file duplicate
+        ])
+        out = tmp_path / "citations.csv"
+
+        from corpus_merge_citations import merge_citations
+        merge_citations(cache_dir=str(cache_dir), output_path=str(out),
+                        catalog_path=str(catalog))
+
+        result = pd.read_csv(out, dtype=str, keep_default_na=False)
+        assert len(result) == 2
+        assert set(result["source_id"]) == {"openalex:W201", "openalex:W202"}
+        assert set(result["source_doi"]) == {"10.1/cat"}
+        assert set(result["ref_doi"]) == {""}
+
+    def test_catalog_edge_deduped_against_enrich_cache(self, tmp_path, cache_dir):
+        """An edge resolved in the enrich cache is not double-counted from the
+        catalog layer; the resolved row (with ref_doi) wins."""
+        _write_crossref(cache_dir, [])
+        _write_openalex(cache_dir, [
+            ["10.1/a", "W123", "10.2/x", "Title X", "Smith", "2020", "Nature"],
+        ])
+        catalog = tmp_path / "openalex_citations.csv"
+        _write_catalog(catalog, [
+            ["10.1/a", "W999", "W123"],
+        ])
+        out = tmp_path / "citations.csv"
+
+        from corpus_merge_citations import merge_citations
+        merge_citations(cache_dir=str(cache_dir), output_path=str(out),
+                        catalog_path=str(catalog))
+
+        result = pd.read_csv(out, dtype=str, keep_default_na=False)
+        assert len(result) == 1
+        assert result.iloc[0]["ref_doi"] == "10.2/x"
+        assert result.iloc[0]["source_id"] == "openalex:W123"
+
+    def test_missing_catalog_file_ok(self, tmp_path, cache_dir):
+        """Merge still works when the catalog-stage file is absent."""
+        _write_crossref(cache_dir, [
+            ["10.1/a", "", "10.2/x", "Title X", "Smith", "2020", "Nature", "{}"],
+        ])
+        out = tmp_path / "citations.csv"
+
+        from corpus_merge_citations import merge_citations
+        merge_citations(cache_dir=str(cache_dir), output_path=str(out),
+                        catalog_path=str(tmp_path / "absent.csv"))
+
+        result = pd.read_csv(out)
+        assert len(result) == 1
 
     def test_output_columns(self, tmp_path, cache_dir):
         """Output should have the standard REFS_COLUMNS schema."""
