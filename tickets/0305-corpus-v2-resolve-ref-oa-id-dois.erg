@@ -1,0 +1,61 @@
+%erg 0.1
+Title: Corpus v2: resolve catalog-stage ref_oa_id references to DOIs via OpenAlex API
+Created: 2026-07-23
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-23T16:30Z HDMX-coding-agent created author decision (session 2026-07-23): do it in corpus v2, not v1.1.x
+
+--- body ---
+## Context
+
+Ticket 0300 (PR #1093) merged the catalog-stage OpenAlex references into
+citations.csv as a fallback layer. Those ~172k edges carry a `ref_oa_id`
+(OpenAlex work ID) but an empty `ref_doi`, so they count in per-document
+reference totals yet stay invisible to every DOI-joined analysis
+(co-citation, refined_citations, the traditions figure). 0300 deliberately
+preserved the intra-corpus (source_doi, ref_doi) edge set byte-identical so
+v1-frozen analyses remain valid — resolving DOIs breaks that freeze, which
+is why the author scoped this to corpus v2, where numbers are re-baselined
+anyway (keydocs layer 0304, GROBID v1.1.2).
+
+Cost is modest: OpenAlex API is free, ~50 IDs per batch request → ~3,500
+calls, well under the polite-pool daily quota. Many refs will have no DOI
+(reports, chapters, old literature) — that residue is expected, not a
+failure.
+
+## Relevant files
+
+- `scripts/corpus_merge_citations.py` — where catalog-stage edges enter
+- `data/catalogs/openalex_citations.csv` — the ref_oa_id-bearing layer
+- `scripts/harvest/` enrich-cache idioms — reuse caching + polite_get
+
+## Actions
+
+1. Batch-resolve distinct ref_oa_id values via the OpenAlex works endpoint
+   (~50 per call), cached as JSONL (resumable, like other enrich caches).
+2. Fill ref_doi on catalog-stage rows where a DOI exists; leave others.
+3. Re-run the merge + align stages; record before/after counts (edges
+   entering the DOI-joined graph).
+4. Runs AFTER the 0304 harvest, BEFORE the final data-paper corpus numbers.
+
+## Test
+
+- Red first: a resolution-cache unit test (mapping applied, missing DOIs
+  left empty, dedup against existing (source_doi, ref_doi) pairs).
+
+## Verification
+
+- [ ] Resolution cache committed via DVC; run report saved
+- [ ] Before/after edge counts reported; no duplicate (source_doi, ref_doi)
+
+## Invariants
+
+- v1 analyses stay frozen: this lands in the corpus-v2 lineage only.
+- No hand-curated data; polite API use.
+
+## Exit criteria
+
+- [ ] ref_oa_id references resolved where a DOI exists; citations.csv v2
+      carries them with ref_doi filled
+- [ ] Corpus-v2 analytic graph includes the resolved edges
