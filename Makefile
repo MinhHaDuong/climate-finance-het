@@ -249,6 +249,12 @@ deliverables/_shared/tables/tab_citation_coverage.md: scripts/figures/export_cit
 deliverables/_shared/tables/tab_reference_counts.csv: scripts/analysis/compute_reference_counts.py scripts/utils.py $(REFINED) $(REFINED_CIT)
 	$(PYTHON) $< --output $@
 
+# Also reads the catalog_merge source catalogs discovered from dvc.yaml
+# (read-only; not listed as prerequisites so a Phase-2 build never triggers
+# Phase 1 — the catalogs are DVC-managed).
+deliverables/_shared/tables/tab_dedup_error_estimates.csv: scripts/analysis/compute_dedup_error_estimates.py scripts/utils.py $(CONFIG) $(REFINED)
+	$(PYTHON) $< --output $@
+
 deliverables/_shared/tables/tab_venues.md: scripts/figures/export_tab_venues.py scripts/utils.py $(REFINED) $(DERIVED)/tab_pole_papers.csv
 	$(PYTHON) $< --output $@ --pole-papers $(DERIVED)/tab_pole_papers.csv
 

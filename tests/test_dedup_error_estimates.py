@@ -124,11 +124,12 @@ def test_false_negative_year_gap_bound(refined_fixture):
 
 def test_false_positives(combined_fixture):
     fp = compute_false_positives(combined_fixture, DEFAULT_THRESHOLDS)
-    # DOI pass: 2 groups, 4 rows, 2 removals; both groups have divergent
-    # titles but only the collision has near-zero token overlap.
+    # DOI pass: 2 groups, 4 rows, 2 removals. The subtitle-truncation group
+    # keeps token Jaccard >= the divergent threshold (benign), so only the
+    # collision group counts as divergent — and it alone is near-zero.
     assert fp["fp_doi_removals"] == 2
     assert fp["fp_doi_groups"] == 2
-    assert fp["fp_doi_groups_divergent_title"] == 2
+    assert fp["fp_doi_groups_divergent_title"] == 1
     assert fp["fp_doi_groups_near_zero_overlap"] == 1
     # Title+year pass: empty-year group (3 rows) + author-conflict group (2 rows)
     assert fp["fp_titleyear_removals"] == 3

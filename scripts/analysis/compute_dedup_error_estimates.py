@@ -59,25 +59,31 @@ log = get_logger("compute_dedup_error_estimates")
 DEFAULT_THRESHOLDS = {
     "year_gap_max": 5,
     "fuzzy_jaccard_threshold": 0.7,
-    "collision_jaccard_threshold": 0.1,
+    "divergent_jaccard_threshold": 0.5,
+    "collision_jaccard_threshold": 0.02,
 }
 
 
-def _author_tokens(name: str | None) -> frozenset[str]:
-    """Name parts (lowercase, length >= 2) as an order-free set.
-
-    First-author metadata is noisy across sources — given/family name order
-    swaps are common — so 'Jane Doe' and 'Doe, Jane' must compare equal.
-    """
+def _author_tokens(name: str | None) -> tuple[str, ...]:
+    """Name parts (lowercase, length >= 2), in order."""
     if not name or not isinstance(name, str):
-        return frozenset()
-    return frozenset(
+        return ()
+    return tuple(
         t for t in re.split(r"[^\w]+", name.lower()) if len(t) >= 2
     )
 
 
-def _same_author(a: frozenset[str], b: frozenset[str]) -> bool:
-    return bool(a) and bool(b) and bool(a & b)
+def _same_author(a: tuple[str, ...], b: tuple[str, ...]) -> bool:
+    """Same first author, robust to given/family name-order swaps.
+
+    First-author metadata is noisy across sources, so 'Jane Doe' and
+    'Doe, Jane' must compare equal: match when either name's LAST token
+    (the usual family-name slot) appears anywhere in the other name.
+    A shared given name alone ('John Smith' vs 'John Doe') is not a match.
+    """
+    if not a or not b:
+        return False
+    return a[-1] in b or b[-1] in a
 
 
 def _title_tokens(title_norm: str) -> frozenset[str]:
@@ -179,17 +185,29 @@ def compute_false_negatives(works: pd.DataFrame, thresholds: dict) -> dict:
     }
 
 
-def _doi_group_flags(titles: pd.Series, collision_thr: float) -> tuple[bool, bool]:
-    """(divergent_title, near_zero_overlap) for one DOI group's titles."""
-    norm = [normalize_title(t) for t in titles]
-    divergent = len(set(norm)) > 1
-    near_zero = False
-    if divergent:
-        toks = [_title_tokens(t) for t in norm]
-        near_zero = any(
-            _jaccard(a, b) < collision_thr
-            for a, b in itertools.combinations(toks, 2)
-        )
+def _doi_group_flags(
+    titles: pd.Series, divergent_thr: float, collision_thr: float
+) -> tuple[bool, bool]:
+    """(divergent_title, near_zero_overlap) for one DOI group's titles.
+
+    Divergent means some pair of titles has token Jaccard below
+    ``divergent_thr`` — benign subtitle truncations and near-identical
+    variants stay above it. Near-zero (below ``collision_thr``) marks the
+    OpenAlex DOI collisions between unrelated works. Empty titles say
+    nothing about a wrong merge, so only non-empty normalized titles enter
+    the comparison (an empty title would otherwise register as zero overlap
+    against everything).
+    """
+    toks = [
+        _title_tokens(t)
+        for t in (normalize_title(t) for t in titles)
+        if t != ""
+    ]
+    jaccards = [
+        _jaccard(a, b) for a, b in itertools.combinations(toks, 2)
+    ]
+    divergent = any(j < divergent_thr for j in jaccards)
+    near_zero = any(j < collision_thr for j in jaccards)
     return divergent, near_zero
 
 
@@ -200,6 +218,7 @@ def compute_false_positives(combined: pd.DataFrame, thresholds: dict) -> dict:
     DOI, then normalized title + year[:4] for no-DOI rows — and flags the
     groups where the key visibly degrades.
     """
+    divergent_thr = thresholds["divergent_jaccard_threshold"]
     collision_thr = thresholds["collision_jaccard_threshold"]
 
     df = combined.copy()
@@ -215,7 +234,9 @@ def compute_false_positives(combined: pd.DataFrame, thresholds: dict) -> dict:
             continue
         fp_doi_groups += 1
         fp_doi_removals += len(grp) - 1
-        divergent, near_zero = _doi_group_flags(grp["title"], collision_thr)
+        divergent, near_zero = _doi_group_flags(
+            grp["title"], divergent_thr, collision_thr
+        )
         fp_doi_divergent += int(divergent)
         fp_doi_near_zero += int(near_zero)
 
@@ -235,12 +256,13 @@ def compute_false_positives(combined: pd.DataFrame, thresholds: dict) -> dict:
             continue
         fp_ty_groups += 1
         fp_ty_removals += len(grp) - 1
-        author_sets = [
-            _author_tokens(a) for a in grp["first_author"]
+        nonempty = [
+            toks for toks in (_author_tokens(a) for a in grp["first_author"])
+            if toks
         ]
-        nonempty = [s for s in author_sets if s]
         conflict = any(
-            not (a & b) for a, b in itertools.combinations(nonempty, 2)
+            not _same_author(a, b)
+            for a, b in itertools.combinations(nonempty, 2)
         )
         fp_ty_author_conflict += int(conflict)
         if year4 == "":
@@ -273,6 +295,9 @@ def compute_dedup_error_estimates(
         {
             "threshold_year_gap_max": thresholds["year_gap_max"],
             "threshold_fuzzy_jaccard": thresholds["fuzzy_jaccard_threshold"],
+            "threshold_divergent_jaccard": thresholds[
+                "divergent_jaccard_threshold"
+            ],
             "threshold_collision_jaccard": thresholds[
                 "collision_jaccard_threshold"
             ],

@@ -50,6 +50,9 @@ deliverables/_shared/tables/*
 # data paper (RDJ-26561 referee remark R1-13); commit its generator output so
 # every quoted value has an archived record (ticket 0285).
 !deliverables/_shared/tables/tab_reference_counts.csv
+# Dedup error-rate estimates are quoted in the data paper's dedup discussion
+# (R1-12, ticket 0301 → 0276); commit the artifact for the same reason.
+!deliverables/_shared/tables/tab_dedup_error_estimates.csv
 # Generated -vars.yml, each in its deliverable folder (ticket 0226); the
 # manuscript's is pinned to v1.0 values and stays git-tracked.
 deliverables/_shared/technical-report-vars.yml
