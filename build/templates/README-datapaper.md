@@ -17,12 +17,19 @@ climate-finance-datapaper/
     config/                # Query taxonomy, source configuration
     dvc.yaml, dvc.lock     # Pipeline definitions
     checksums-data.md5     # Reference checksums for data/
-  data/                    # Deposit files
-    climate_finance_corpus.csv   # 42,922 works (abstracts stripped)
-    embeddings.npz               # 38,479 multilingual vectors (1024-dim)
-    citations.csv                # 968,871 citation pairs
-    *_works.csv                  # Per-source catalogs (6 files)
+  data/
+    inputs/                # Raw data inputs: per-source catalogs, pre-merge
+      *_works.csv                # openalex, istex, bibcnrs, scispace, grey, teaching
+    products/              # Final data products of this paper
+      climate_finance_corpus.csv # 42,922 works (abstracts stripped)
+      codebook.md                # Data dictionary: per-column type, values, missingness
+      embeddings.npz             # 38,479 multilingual vectors (1024-dim)
+      citations.csv              # 968,871 citation pairs
 ```
+
+`data/inputs/` holds the raw harvests as retrieved from each source, before
+merge and deduplication — the provenance trail. `data/products/` holds the
+curated outputs this paper describes; most users need only `products/`.
 
 ## Prerequisites
 
