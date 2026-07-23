@@ -337,7 +337,9 @@ class TestRealSeeds:
 
     def test_unfccc_seed_valid(self):
         entries = ck.load_seed(UNFCCC_SEED, "unfccc")
-        assert len(entries) >= 40
+        # 47 starter seeds + the 0304 enumeration (decisions completion,
+        # INC sweep, ENB per-COP summaries) — floor ratchets with the list
+        assert len(entries) >= 200
 
     def test_oecd_seed_valid(self):
         entries = ck.load_seed(OECD_SEED, "oecd")

@@ -30,6 +30,24 @@ def norm_doi(d: str) -> str:
     return d.strip("/ ")
 
 
+SYMBOL_RX = re.compile(r"\b((?:FCCC|A/AC\.237)[A-Za-z0-9/().]*[A-Za-z0-9])")
+ENB_RX = re.compile(r"[Vv]ol\.?\s*12,?\s*no\.?\s*(\d+)")
+
+
+def bib_symbols(entry: dict) -> set[str]:
+    """Document symbols cited in an entry's note/howpublished/url fields.
+
+    The key-documents layer identifies works by UN document symbol
+    (source_id), so a bib entry citing a decision by its common name
+    (e.g. Bali Action Plan = Decision 1/CP.13 in FCCC/CP/2007/6/Add.1)
+    matches through the symbol its note carries (ticket 0304).
+    """
+    text = " ".join(entry.get(f, "") for f in ("note", "howpublished", "url"))
+    syms = set(SYMBOL_RX.findall(text))
+    syms |= {f"ENB/12/{m}" for m in ENB_RX.findall(text)}
+    return syms
+
+
 def parse_bib(path: str) -> dict[str, dict]:
     text = open(path, encoding="utf-8").read()
     entries = {}
@@ -94,18 +112,22 @@ def main() -> None:
 
     corpus_dois: set[str] = set()
     corpus_titles: set[str] = set()
+    corpus_symbols: set[str] = set()
     csv.field_size_limit(sys.maxsize)
     with open(args.corpus, newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         cols = reader.fieldnames or []
         doi_col = next((c for c in cols if c.lower() == "doi"), None)
         title_col = next((c for c in cols if c.lower() in ("title", "display_name")), None)
+        sid_col = next((c for c in cols if c.lower() == "source_id"), None)
         log.info("corpus columns used: doi=%s title=%s (of %d cols)", doi_col, title_col, len(cols))
         for row in reader:
             if doi_col and row.get(doi_col):
                 corpus_dois.add(norm_doi(row[doi_col]))
             if title_col and row.get(title_col):
                 corpus_titles.add(norm_title(row[title_col]))
+            if sid_col and row.get(sid_col):
+                corpus_symbols.add(row[sid_col].strip())
     log.info("corpus: %d dois, %d titles", len(corpus_dois), len(corpus_titles))
 
     hits, misses = [], []
@@ -117,6 +139,8 @@ def main() -> None:
             how = "doi"
         elif title and title in corpus_titles:
             how = "title"
+        elif corpus_symbols & bib_symbols(e):
+            how = "symbol"
         (hits if how else misses).append((key, e, how))
 
     log.info("\n=== IN CORPUS: %d ===", len(hits))
