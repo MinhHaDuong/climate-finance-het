@@ -1,0 +1,58 @@
+%erg 0.1
+Title: Global map: fail loudly on Louvain-id/registry misalignment instead of silent grey fallback
+Created: 2026-07-23
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-23T19:40Z HDMX-coding-agent created verify finding on PR #1104 (0307), filed per science-repo severity rules
+
+--- body ---
+## Context
+
+PR #1104 (ticket 0307) landed the global citation map. Verification finding:
+`scripts/figures/plot_fig_global_map.py` (~lines 79-82) falls back silently
+to grey `#DDDDDD` + author-year label for any Louvain community id absent
+from `config/community_registry.yml`'s figure mapping. Today the computed
+ids [0,1,4,6,7,12,24,44] match the registry exactly; but Louvain ids are
+not stable across data changes, and the corpus-v2 rebuild (ticket 0304, in
+flight) WILL renumber them. The paper figure would then render silently
+wrong (major communities grey/unnamed) with green tests.
+
+The only registry test checks the forward direction (mapped id → known
+concept), never the reverse (every major community produced by the data is
+registered), nor sizes.
+
+## Relevant files
+
+- `scripts/figures/plot_fig_global_map.py` — the silent fallback
+- `scripts/figures/_community_registry.py`, `config/community_registry.yml`
+- `tests/test_global_map.py`
+
+## Actions
+
+1. At render time: assert every community >= the 2% threshold in the input
+   JSON has a registry mapping; fail with a message naming the unmapped id
+   and its top-cited members (to ease re-mapping). Grey fallback stays legal
+   only for sub-threshold communities.
+2. Optional hardening: registry stores expected approximate sizes; warn on
+   gross mismatch (renumbering symptom even when ids collide).
+
+## Test
+
+- Red first: feed a meta-graph JSON with an unmapped >= 2% community;
+  render must raise, naming the id.
+
+## Verification
+
+- [ ] Mutation check: renumbering a mapped id in a fixture JSON makes the
+      render fail loudly
+
+## Invariants
+
+- Current figure output unchanged (ids aligned today) — guard only.
+
+## Exit criteria
+
+- [ ] Unmapped major community fails the render with an actionable message
+- [ ] Runs before the corpus-v2 figure regeneration (blocks 0288 counts
+      hand-back becoming a silent-grey map)
