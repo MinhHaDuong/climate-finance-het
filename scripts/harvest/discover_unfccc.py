@@ -178,14 +178,16 @@ def decision_candidate(series: str, session: int, year: int,
 def discover_decisions() -> list[dict]:
     out = []
     for series, session, year in COP_SESSIONS + CMP_SESSIONS + CMA_SESSIONS:
-        if year <= 2016:
+        if year <= 2017:  # /resource/docs old-style paths persist through 2017
             paths = ([f"unfccc.int/resource/docs/{year}/{series}{session}/eng/"]
                      if year >= 2005 else
                      [f"unfccc.int/resource/docs/{series}{session}/"])
             pattern = OLD_DECISION_FILE
         else:
+            # post-2017 file names use "cp", not "cop" (e.g. cp2018_10a01E.pdf)
+            tag = "cp" if series == "cop" else series
             paths = [f"unfccc.int/sites/default/files/resource/"
-                     f"{series}{year}_"]
+                     f"{tag}{year}_"]
             pattern = NEW_DECISION_FILE
         for path in paths:
             rows = cdx_urls(path)
