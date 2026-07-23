@@ -24,7 +24,7 @@
 # "URL spot-verified" in provenance; "URL follows verified pattern" entries
 # use the unfccc.int /resource/docs layout confirmed on the spot-verified
 # ones. Document-level enumeration completed 2026-07-23 (ticket 0304) via
-# CDX discovery (scripts/harvest/discover_unfccc.py — the unfccc.int Drupal
+# CDX discovery (scripts/harvest/build_unfccc_candidates.py — the unfccc.int Drupal
 # facet search and enb.iisd.org HTML sit behind bot walls, so the Wayback
 # CDX index over the stable URL patterns is the discovery source; candidates
 # in data/raw/unfccc_candidates.jsonl, this file is the curated append).

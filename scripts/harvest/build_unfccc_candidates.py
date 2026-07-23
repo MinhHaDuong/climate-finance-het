@@ -22,7 +22,7 @@ Series covered:
              summary selection happens at curation)
 
 Usage:
-    python scripts/harvest/discover_unfccc.py \
+    python scripts/harvest/build_unfccc_candidates.py \
         --output data/raw/unfccc_candidates.jsonl [--series decisions inc enb]
 """
 
@@ -35,7 +35,7 @@ import time
 from script_io_args import parse_io_args
 from utils import get_logger, polite_get
 
-log = get_logger("discover_unfccc")
+log = get_logger("build_unfccc_candidates")
 
 CDX_ENDPOINT = "https://web.archive.org/cdx/search/cdx"
 CDX_DELAY_S = 4.0

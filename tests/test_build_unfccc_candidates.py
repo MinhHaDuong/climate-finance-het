@@ -1,4 +1,4 @@
-"""Tests for discover_unfccc.py — CDX-based candidate discovery for the
+"""Tests for build_unfccc_candidates.py — CDX-based candidate discovery for the
 UNFCCC key-documents layer (ticket 0304).
 
 The discovery script enumerates candidate documents from the Wayback CDX
@@ -17,7 +17,7 @@ import sys
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 sys.path.insert(0, os.path.join(SCRIPTS_DIR, "harvest"))
 
-import discover_unfccc as du
+import build_unfccc_candidates as du
 
 
 class TestSymbolConstruction:
