@@ -182,7 +182,21 @@ def fetch_pdf(url: str, dest: str) -> str:
         # 3s delay: unfccc.int rate-arms its Incapsula wall against faster
         # crawls (observed 2026-07-23 — /resource/docs began serving challenge
         # pages mid-harvest at 1s delay with a concurrent classifier).
-        resp = polite_get(url, delay=3.0)
+        # Wayback id_ snapshot URLs must be fetched verbatim: the pipeline's
+        # mailto-param injection changes the snapshot URL key and turns an
+        # existing capture into a 404 (observed 2026-07-23).
+        if url.startswith("https://web.archive.org/"):
+            import time as _time
+
+            import requests as _requests
+            _time.sleep(3.0)
+            resp = _requests.get(
+                url, timeout=120, headers={
+                    "User-Agent": "ClimateFinancePipeline/1.0 "
+                                  "(mailto:minh.haduong@gmail.com)"})
+            resp.raise_for_status()
+        else:
+            resp = polite_get(url, delay=3.0)
     except Exception as e:
         log.warning("  fetch failed for %s: %s", url, e)
         return "failed"
