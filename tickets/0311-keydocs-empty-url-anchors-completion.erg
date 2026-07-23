@@ -1,0 +1,42 @@
+%erg 0.1
+Title: Keydocs: resolve the empty-URL series anchors before the corpus-v2 rebuild counts them out
+Created: 2026-07-23
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-23T23:30Z HDMX-coding-agent created child of 0288, from PR #1107 verify recommendation
+
+--- body ---
+## Context
+
+PR #1107 (ticket 0304) landed 232 UNFCCC + 14 OECD seeds. Eight entries
+carry an empty URL and seven provenance strings still say "to confirm at
+harvest": curated no-PDF works (Clinton COP15 statement, AOSIS reaction,
+G77 LTF submission) and annual-series anchors (GCF 2015/2020, GEF 1997,
+Adaptation Fund 2010, CMA4 Add.1) whose full enumeration was deferred.
+They harvest as no_url (safe, counted), but the corpus-v2 rebuild for the
+data paper (parent 0288) would silently ship without their fulltexts.
+Also open from 0304's report: ENB COP22-29 summaries (not in the archived
+vol-12 index) and ~12 Incapsula wall bounces to retry cold.
+
+## Actions
+
+1. Cold re-run of the mop-up harvest (wall bounces should clear).
+2. Resolve the fund-series anchors (GCF/GEF/AFB/CMA4) to concrete document
+   URLs or Wayback captures; enumerate ENB COP22-29 from enb.iisd.org
+   (or its Wayback captures).
+3. Leave the genuinely no-PDF curated works as documented no_url entries.
+
+## Verification
+
+- [ ] No seed entry retains "to confirm at harvest"; empty-URL entries are
+      an explicit, documented curated-no-PDF list
+
+## Invariants
+
+- Seed guard stays green; no catalog_grey coupling.
+
+## Exit criteria
+
+- [ ] Harvest statuses final (cached/no_url only, each no_url justified)
+      before 0288's corpus-v2 rebuild

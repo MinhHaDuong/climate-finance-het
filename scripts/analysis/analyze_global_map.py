@@ -27,15 +27,13 @@ from collections import Counter
 import community as community_louvain
 import networkx as nx
 import numpy as np
-from pipeline_loaders import load_analysis_config, load_refined_works
+from _global_map_graph import direct_graph, load_data
+from pipeline_loaders import load_analysis_config
 from scipy.sparse import csr_matrix
 from script_io_args import parse_io_args, validate_io
-from utils import get_logger, load_refined_citations, normalize_doi
+from utils import get_logger
 
 log = get_logger("analyze_global_map")
-
-BAD_DOIS = {"", "nan", "none"}
-
 
 def load_config():
     """Global-map parameters + the shared Louvain seed from config/analysis.yaml."""
@@ -43,40 +41,6 @@ def load_config():
     gm = cfg["global_map"]
     seed = int(cfg["pre2007_traditions"]["louvain_seed"])
     return gm, seed
-
-
-def load_data():
-    """Load cleaned citation pairs, corpus works, and a DOI metadata lookup."""
-    cit = load_refined_citations()
-    cit["source_doi"] = cit["source_doi"].apply(normalize_doi)
-    cit["ref_doi"] = cit["ref_doi"].apply(normalize_doi)
-    cit = cit[~cit["source_doi"].isin(BAD_DOIS) & ~cit["ref_doi"].isin(BAD_DOIS)]
-    works = load_refined_works()
-    works["doi_norm"] = works["doi"].apply(normalize_doi)
-    works = works[~works["doi_norm"].isin(BAD_DOIS)]
-    meta = works.set_index("doi_norm")[["first_author", "year"]].to_dict("index")
-    # Reference-side fallback for references outside the corpus (cocitation)
-    if "ref_first_author" in cit.columns:
-        sub = cit.drop_duplicates("ref_doi")
-        for d, au, yr in zip(sub["ref_doi"], sub.get("ref_first_author", ""),
-                             sub.get("ref_year", "")):
-            if d not in meta:
-                meta[d] = {"first_author": au, "year": yr}
-    return cit, works, meta
-
-
-def direct_graph(cit, works):
-    """Undirected graph of direct citations between corpus documents."""
-    corpus = set(works["doi_norm"])
-    sub = cit[cit["source_doi"].isin(corpus) & cit["ref_doi"].isin(corpus)]
-    sub = sub[sub["source_doi"] != sub["ref_doi"]]
-    G = nx.Graph()
-    G.add_edges_from(
-        sub[["source_doi", "ref_doi"]].drop_duplicates().itertuples(
-            index=False, name=None))
-    G.remove_nodes_from(list(nx.isolates(G)))
-    rank = sub.groupby("ref_doi").size().to_dict()
-    return G, rank
 
 
 def cocitation_graph(cit, top_k, min_cocit):

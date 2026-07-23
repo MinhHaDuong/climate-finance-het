@@ -47,17 +47,17 @@ documents:
     body: "OECD Development Assistance Committee"
     doc_class: statistical_directive
     language: en
-    url: "https://one.oecd.org/document/DCD/DAC(2000)10/en/pdf"
+    url: "https://web.archive.org/web/2024id_/https://one.oecd.org/document/DCD/DAC(2000)10/en/pdf"
     provenance: "First consolidated directives with Rio markers in the CRS. Symbol to confirm at harvest."
-  - symbol: "DCD/DAC(2007)34"
+  - symbol: "DCD/DAC(2007)39/FINAL"
     title: "DAC Statistical Reporting Directives (2007)"
     short_title: "Statistical Reporting Directives, 2007 edition"
     year: 2007
     body: "OECD Development Assistance Committee"
     doc_class: statistical_directive
     language: en
-    url: "https://one.oecd.org/document/DCD/DAC(2007)34/en/pdf"
-    provenance: "Directives in force when the mitigation marker became reportable to the CRS. Symbol to confirm at harvest."
+    url: "https://www.cbd.int/financial/doc/oecd-crs-reportingdirectives-en.pdf"
+    provenance: "Directives in force when the mitigation marker became reportable to the CRS. Symbol corrected 2026-07-23 (was a provisional DCD/DAC(2007)34): DCD/DAC(2007)39/FINAL confirmed via the CBD mirror of the OLIS document, which also serves an open PDF."
   - symbol: "DCD/DAC(2010)40/REV1"
     title: "DAC Statistical Reporting Directives (2010, revision 1)"
     short_title: "Statistical Reporting Directives, 2010 revision (adaptation marker added)"
@@ -65,7 +65,7 @@ documents:
     body: "OECD Development Assistance Committee"
     doc_class: statistical_directive
     language: en
-    url: "https://one.oecd.org/document/DCD/DAC(2010)40/REV1/en/pdf"
+    url: "https://web.archive.org/web/2024id_/https://one.oecd.org/document/DCD/DAC(2010)40/REV1/en/pdf"
     provenance: "Adaptation Rio marker introduced (2010 flows). Symbol to confirm at harvest."
   - symbol: "DCD/DAC(2013)15/FINAL"
     title: "Converged Statistical Reporting Directives for the Creditor Reporting System (CRS) and the Annual DAC Questionnaire"
@@ -74,7 +74,7 @@ documents:
     body: "OECD Development Assistance Committee"
     doc_class: statistical_directive
     language: en
-    url: "https://one.oecd.org/document/DCD/DAC(2013)15/FINAL/en/pdf"
+    url: "https://web.archive.org/web/2024id_/https://one.oecd.org/document/DCD/DAC(2013)15/FINAL/en/pdf"
     provenance: "CRS/DAC questionnaire convergence; Rio-marker chapter. Symbol to confirm at harvest."
   - symbol: "DCD/DAC(2016)3/FINAL"
     title: "Converged Statistical Reporting Directives for the Creditor Reporting System (CRS) and the Annual DAC Questionnaire: Chapters 1-6"
@@ -83,7 +83,7 @@ documents:
     body: "OECD Development Assistance Committee"
     doc_class: statistical_directive
     language: en
-    url: "https://one.oecd.org/document/DCD/DAC(2016)3/FINAL/en/pdf"
+    url: "https://web.archive.org/web/2024id_/https://one.oecd.org/document/DCD/DAC(2016)3/FINAL/en/pdf"
     provenance: "Reference edition for Rio-marker definitions in the USD 100bn accounting dispute. URL pattern checked 2026-07-22 (403 to robots — manual export path)."
   - symbol: "DCD/DAC/STAT(2018)9/FINAL"
     title: "Converged Statistical Reporting Directives for the Creditor Reporting System (CRS) and the Annual DAC Questionnaire (2018)"
@@ -92,8 +92,8 @@ documents:
     body: "OECD DAC Working Party on Development Finance Statistics"
     doc_class: statistical_directive
     language: en
-    url: ""
-    provenance: "Grant-equivalent measurement reform. Symbol to confirm at harvest."
+    url: "https://web.archive.org/web/2024id_/https://one.oecd.org/document/DCD/DAC/STAT(2018)9/FINAL/en/pdf"
+    provenance: "Grant-equivalent measurement reform. Symbol DCD/DAC/STAT(2018)9/FINAL confirmed 2026-07-23 (one.oecd.org listing); origin 403 to robots — Wayback snapshot URL, verified at harvest fetch."
   - symbol: "DCD/DAC/STAT(2020)44/FINAL"
     title: "Converged Statistical Reporting Directives for the Creditor Reporting System (CRS) and the Annual DAC Questionnaire (2020)"
     short_title: "Converged Statistical Reporting Directives (2020)"
@@ -101,8 +101,8 @@ documents:
     body: "OECD DAC Working Party on Development Finance Statistics"
     doc_class: statistical_directive
     language: en
-    url: ""
-    provenance: "Current-generation directives. Symbol to confirm at harvest."
+    url: "https://web.archive.org/web/2024id_/https://one.oecd.org/document/DCD/DAC/STAT(2020)44/FINAL/en/pdf"
+    provenance: "Directives approved under written procedure on 9 April 2021. Symbol DCD/DAC/STAT(2020)44/FINAL confirmed 2026-07-23 (one.oecd.org listing); origin 403 to robots — Wayback snapshot URL, verified at harvest fetch."
 
   # ── Development Co-operation Reports (pre-DOI era) ───────────────────
   - symbol: "OECD/DCR/1992"

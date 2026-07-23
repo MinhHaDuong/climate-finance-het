@@ -23,10 +23,14 @@
 # `url` points at the PDF when known. Fetch-validated URLs are marked
 # "URL spot-verified" in provenance; "URL follows verified pattern" entries
 # use the unfccc.int /resource/docs layout confirmed on the spot-verified
-# ones; "resolve URL at harvest" entries are completed by the enumeration
-# child ticket. This list is a curated starter set — the document-level
-# enumeration within the validated classes is completed at harvest
-# (see ticket 0288 and its enumeration child ticket).
+# ones. Document-level enumeration completed 2026-07-23 (ticket 0304) via
+# CDX discovery (scripts/harvest/build_unfccc_candidates.py — the unfccc.int Drupal
+# facet search and enb.iisd.org HTML sit behind bot walls, so the Wayback
+# CDX index over the stable URL patterns is the discovery source; candidates
+# in data/raw/unfccc_candidates.jsonl, this file is the curated append).
+# Origins that challenge non-browser clients (unfccc.int /sites/default/files
+# and /files paths) are fetched through Wayback id_ snapshot URLs, disclosed
+# per entry.
 
 documents:
   # ── COP decision addenda (finance decisions) ─────────────────────────
@@ -199,8 +203,8 @@ documents:
     body: "UNFCCC Conference of the Parties"
     doc_class: decision
     language: en
-    url: ""
-    provenance: "Katowice package COP-track decisions. Resolve URL at harvest (post-2017 file naming varies)."
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/cp2018_10_add1_advance_0.pdf"
+    provenance: "Katowice package COP-track decisions. URL resolved 2026-07-23 via CDX discovery; origin bot-challenged — Wayback snapshot, content-verified at harvest fetch."
   - symbol: "FCCC/PA/CMA/2018/3/Add.2"
     title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Paris Agreement on the third part of its first session, held in Katowice from 2 to 15 December 2018. Addendum 2"
     short_title: "CMA1.3 Katowice rulebook (Article 9.5 and 9.7 finance modalities)"
@@ -208,8 +212,8 @@ documents:
     body: "UNFCCC CMA"
     doc_class: decision
     language: en
-    url: ""
-    provenance: "Katowice rulebook finance accounting modalities (Decisions 12-14/CMA.1). Resolve URL at harvest."
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/cma2018_3_add2_new_advance.pdf"
+    provenance: "Katowice rulebook finance accounting modalities (Decisions 12-14/CMA.1). URL resolved 2026-07-23 via CDX discovery; origin bot-challenged — Wayback snapshot, content-verified at harvest fetch."
   - symbol: "FCCC/PA/CMA/2021/10/Add.1"
     title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Paris Agreement on its third session, held in Glasgow from 31 October to 13 November 2021. Addendum. Part two"
     short_title: "CMA3 decisions (Glasgow Climate Pact, Decision 1/CMA.3)"
@@ -217,8 +221,8 @@ documents:
     body: "UNFCCC CMA"
     doc_class: decision
     language: en
-    url: ""
-    provenance: "Glasgow Climate Pact: adaptation-finance doubling; USD 100bn delivery. Resolve URL at harvest."
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/cma2021_10a01E.pdf"
+    provenance: "Glasgow Climate Pact: adaptation-finance doubling; USD 100bn delivery. URL resolved 2026-07-23 via CDX discovery; origin bot-challenged — Wayback snapshot, content-verified at harvest fetch."
   - symbol: "FCCC/PA/CMA/2022/10/Add.1"
     title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Paris Agreement on its fourth session, held in Sharm el-Sheikh from 6 to 20 November 2022. Addendum. Part two"
     short_title: "CMA4 decisions (loss and damage funding arrangements, Decision 2/CMA.4)"
@@ -227,7 +231,7 @@ documents:
     doc_class: decision
     language: en
     url: ""
-    provenance: "Loss and damage fund establishment (with 2/CP.27). Resolve URL at harvest."
+    provenance: "Loss and damage fund establishment (with 2/CP.27). URL resolved 2026-07-23 via CDX discovery; origin bot-challenged — Wayback snapshot, content-verified at harvest fetch."
   - symbol: "FCCC/PA/CMA/2023/16/Add.1"
     title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Paris Agreement on its fifth session, held in the United Arab Emirates from 30 November to 13 December 2023. Addendum. Part two"
     short_title: "CMA5 decisions (first global stocktake, Decision 1/CMA.5)"
@@ -235,8 +239,8 @@ documents:
     body: "UNFCCC CMA"
     doc_class: decision
     language: en
-    url: ""
-    provenance: "Global stocktake finance paragraphs; NCQG runway. Symbol and URL to confirm at harvest."
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/cma2023_16a01E.pdf"
+    provenance: "Global stocktake finance paragraphs; NCQG runway. Symbol confirmed and URL resolved 2026-07-23 via CDX discovery; origin bot-challenged — Wayback snapshot, content-verified at harvest fetch."
   - symbol: "FCCC/PA/CMA/2024/17/Add.1"
     title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Paris Agreement on its sixth session, held in Baku from 11 to 24 November 2024. Addendum. Part two"
     short_title: "CMA6 decisions (New Collective Quantified Goal on climate finance, Decision 1/CMA.6)"
@@ -244,8 +248,8 @@ documents:
     body: "UNFCCC CMA"
     doc_class: decision
     language: en
-    url: ""
-    provenance: "NCQG decision (USD 300bn/1.3tn). Symbol and URL to confirm at harvest."
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/cma2024_17a01E.pdf"
+    provenance: "NCQG decision (USD 300bn/1.3tn). Symbol confirmed and URL resolved 2026-07-23 via CDX discovery; origin bot-challenged — Wayback snapshot, content-verified at harvest fetch."
 
   # ── SCF Biennial Assessment series ───────────────────────────────────
   # The five titles below that already exist in config/grey_sources.yaml are
@@ -259,8 +263,8 @@ documents:
     body: "UNFCCC Standing Committee on Finance"
     doc_class: biennial_assessment
     language: en
-    url: ""
-    provenance: "Cited in manuscript v2.0.5 (probe class A): first BA, defines climate finance accounting; absent from corpus v1. Resolve URL at harvest."
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/files/cooperation_and_support/financial_mechanism/standing_committee/application/pdf/2014_biennial_assessment_and_overview_of_climate_finance_flows_report_web.pdf"
+    provenance: "Cited in manuscript v2.0.5 (probe class A): first BA, defines climate finance accounting; absent from corpus v1. Origin URL bot-challenged (Incapsula, checked 2026-07-23); Wayback snapshot URL, content-verified at harvest fetch."
   - symbol: "UNFCCC/SCF/BA/2014/SUMMARY"
     title: "Summary and recommendations by the Standing Committee on Finance on the 2014 Biennial Assessment and Overview of Climate Finance Flows"
     short_title: "First BA (2014) — SCF summary and recommendations"
@@ -268,8 +272,8 @@ documents:
     body: "UNFCCC Standing Committee on Finance"
     doc_class: biennial_assessment
     language: en
-    url: "https://unfccc.int/topics/climate-finance/resources/biennial-assessment-of-climate-finance"
-    provenance: "Also a grey_sources.yaml seed — identical title/year by design, merge dedup collapses (from_grey + from_unfccc)."
+    url: "https://unfccc.int/resource/docs/2014/cop20/eng/05.pdf"
+    provenance: "Also a grey_sources.yaml seed — identical title/year by design, merge dedup collapses (from_grey + from_unfccc). Summary and recommendations annexed to the SCF report to COP20 (FCCC/CP/2014/5); open /resource/docs URL, resolved 2026-07-23."
   - symbol: "UNFCCC/SCF/BA/2016/SUMMARY"
     title: "Summary and recommendations by the Standing Committee on Finance on the 2016 Biennial Assessment and Overview of Climate Finance Flows"
     short_title: "Second BA (2016) — SCF summary and recommendations"
@@ -277,8 +281,8 @@ documents:
     body: "UNFCCC Standing Committee on Finance"
     doc_class: biennial_assessment
     language: en
-    url: ""
-    provenance: "Also a grey_sources.yaml seed — identical title/year by design. Resolve URL at harvest."
+    url: "https://unfccc.int/resource/docs/2016/cop22/eng/08.pdf"
+    provenance: "Also a grey_sources.yaml seed — identical title/year by design. Summary and recommendations annexed to the SCF report to COP22 (FCCC/CP/2016/8, cf. decision 8/CP.22); open /resource/docs URL, resolved 2026-07-23."
   - symbol: "UNFCCC/SCF/BA/2018/SUMMARY"
     title: "Summary and recommendations by the Standing Committee on Finance on the 2018 Biennial Assessment and Overview of Climate Finance Flows"
     short_title: "Third BA (2018) — SCF summary and recommendations"
@@ -286,8 +290,8 @@ documents:
     body: "UNFCCC Standing Committee on Finance"
     doc_class: biennial_assessment
     language: en
-    url: ""
-    provenance: "Also a grey_sources.yaml seed — identical title/year by design. Resolve URL at harvest."
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/2018%20BA%20Technical%20Report%20Final.pdf"
+    provenance: "Also a grey_sources.yaml seed — identical title/year by design. URL points at the 2018 BA technical report (carries the summary; the annexed summary sits in the SCF report to COP24, no stable file URL located). Origin bot-challenged; Wayback snapshot, resolved 2026-07-23."
   - symbol: "UNFCCC/SCF/BA/2020"
     title: "Fourth Biennial Assessment and Overview of Climate Finance Flows"
     short_title: "Fourth Biennial Assessment (2020)"
@@ -295,8 +299,8 @@ documents:
     body: "UNFCCC Standing Committee on Finance"
     doc_class: biennial_assessment
     language: en
-    url: ""
-    provenance: "Also a grey_sources.yaml seed — identical title/year by design. Resolve URL at harvest."
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/Fourth_BA_2020_technical_report-V21.pdf"
+    provenance: "Also a grey_sources.yaml seed — identical title/year by design. Fourth BA technical report; origin bot-challenged — Wayback snapshot URL, resolved 2026-07-23."
   - symbol: "UNFCCC/SCF/BA/2022"
     title: "Fifth Biennial Assessment and Overview of Climate Finance Flows"
     short_title: "Fifth Biennial Assessment (2022)"
@@ -304,8 +308,8 @@ documents:
     body: "UNFCCC Standing Committee on Finance"
     doc_class: biennial_assessment
     language: en
-    url: ""
-    provenance: "Also a grey_sources.yaml seed — identical title/year by design. Resolve URL at harvest."
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/J0156_UNFCCC%20BA5_2022_Report_v4%5B52%5D.pdf"
+    provenance: "Also a grey_sources.yaml seed — identical title/year by design. Origin bot-challenged; Wayback snapshot URL (PDF spot-verified 2026-07-23)."
   - symbol: "UNFCCC/SCF/BA/2024"
     title: "Sixth Biennial Assessment and Overview of Climate Finance Flows"
     short_title: "Sixth Biennial Assessment (2024)"
@@ -313,8 +317,8 @@ documents:
     body: "UNFCCC Standing Committee on Finance"
     doc_class: biennial_assessment
     language: en
-    url: ""
-    provenance: "Series enumeration; latest BA. Resolve URL at harvest."
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/UNFCCC_BA6_Report_Web_Apr2025.pdf"
+    provenance: "Series enumeration; latest BA. Sixth BA technical report (published April 2025); origin bot-challenged — Wayback snapshot URL, resolved 2026-07-23."
 
   # ── Fund reports to COP / CMP ────────────────────────────────────────
   - symbol: "FCCC/CP/2015/3"
@@ -351,17 +355,17 @@ documents:
     body: "GEF Evaluation Office"
     doc_class: fund_report
     language: en
-    url: ""
-    provenance: "Cited in manuscript v2.0.5 (probe class B). Incremental-cost accounting doctrine. Resolve URL at harvest (gefieo.org)."
+    url: "https://www.gefieo.org/content/dam/partners/ieo/docs/mgr/learnings/incremental-cost-assessment-2007-eng.pdf"
+    provenance: "Cited in manuscript v2.0.5 (probe class B). Incremental-cost accounting doctrine. URL spot-verified 2026-07-23 (HTTP 200, %PDF)."
   - symbol: "UNFCCC/CDM/2018/ACHIEVEMENTS"
-    title: "Achievements of the Clean Development Mechanism"
+    title: "Achievements of the Clean Development Mechanism: Harnessing Incentive for Climate Action, 2001-2018"
     short_title: "CDM achievements report (2018)"
     year: 2018
     body: "UNFCCC"
     doc_class: fund_report
     language: en
-    url: ""
-    provenance: "Cited in manuscript v2.0.5 (probe class A). CDM finance-flows record. Resolve URL at harvest."
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/UNFCCC_CDM_report_2018.pdf"
+    provenance: "Cited in manuscript v2.0.5 (probe class A). CDM finance-flows record. Official title: Achievements of the Clean Development Mechanism: Harnessing Incentive for Climate Action 2001-2018. Origin bot-challenged; Wayback snapshot URL (PDF magic spot-checked 2026-07-23)."
   - symbol: "AFB/EFC/2010/REPORT"
     title: "Report of the Adaptation Fund Board to the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol"
     short_title: "Adaptation Fund Board report to CMP (2010, first monetization period)"
@@ -402,15 +406,25 @@ documents:
     provenance: "INC handover recommendations incl. GEF interim arrangements. Verify URL at harvest."
 
   # ── Party / bloc submissions ─────────────────────────────────────────
-  - symbol: "AOSIS/SUBMISSION/NCQG/2024"
-    title: "Submission by the Alliance of Small Island States on the New Collective Quantified Goal on Climate Finance"
-    short_title: "AOSIS submission on the NCQG (2024)"
+  - symbol: "AOSIS/NCQG/2024/REACTION"
+    title: "Reaction to COP29 Draft NCQG Text"
+    short_title: "AOSIS reaction to the COP29 draft NCQG text (Baku, 22 November 2024)"
     year: 2024
     body: "Alliance of Small Island States"
     doc_class: submission
     language: en
     url: ""
-    provenance: "Cited in manuscript v2.0.5 (probe class B); author decision 2026-07-22 includes submissions. Resolve URL at harvest (UNFCCC submission portal); submissions sweep in child ticket."
+    abstract: "Statement by the Alliance of Small Island States reacting to the COP29 draft text on the New Collective Quantified Goal on climate finance, Baku, 22 November 2024, demanding minimum allocation floors of USD 39 billion for small island developing States and USD 220 billion for least developed countries within the new goal."
+    provenance: "Cited in manuscript v2.0.5 (probe class B, bib key aosis2024ncqg); author decision 2026-07-22 includes submissions. The cited document is the AOSIS web statement https://www.aosis.org/aosis-reaction-to-cop29-draft-ncqg-text/ (HTML, no PDF — curated abstract from the bib note), not the June 2024 LDC-AOSIS joint submission."
+  - symbol: "LDC-AOSIS/SUBMISSION/NCQG/2024"
+    title: "Joint Submission by the Least Developed Countries and Alliance of Small Island Developing States Groups on the New Collective Quantified Goal on Climate Finance"
+    short_title: "LDC-AOSIS joint NCQG submission (June 2024)"
+    year: 2024
+    body: "Alliance of Small Island States"
+    doc_class: submission
+    language: en
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/LDC_AOSIS_NCQG_Submission_Joint%20Submission.pdf"
+    provenance: "Submissions-sweep anchor (ticket 0304): the June 2024 LDC-AOSIS joint NCQG submission from the UNFCCC submission portal. Origin bot-challenged; Wayback snapshot URL, content-verified at harvest fetch."
   - symbol: "G77/SUBMISSION/LTF/2012"
     title: "Submission by the Group of 77 and China on long-term climate finance"
     short_title: "G77+China submission on long-term finance (2012)"
@@ -466,4 +480,1669 @@ documents:
     doc_class: negotiation_record
     language: en
     url: ""
-    provenance: "Cited in manuscript v2.0.5 (probe class C): the USD 100bn announcement statement. Resolve URL at harvest (State Dept archive)."
+    abstract: "Remarks delivered by US Secretary of State Hillary Rodham Clinton at the Copenhagen climate conference on 17 December 2009, announcing that, in the context of a strong accord with meaningful mitigation actions and full transparency, the United States was prepared to work with other countries toward a goal of jointly mobilizing USD 100 billion a year by 2020 to address the climate change needs of developing countries, drawing on a wide variety of sources, public and private, bilateral and multilateral, including alternative sources of finance."
+    provenance: "Cited in manuscript v2.0.5 (probe class C): the USD 100bn announcement statement. Source is an HTML page, not a PDF: https://2009-2017.state.gov/secretary/20092013clinton/rm/2009a/12/133734.htm (located 2026-07-23) — curated abstract from the archived transcript; no fetchable PDF, so url stays empty by design."
+
+  # ── Decision addenda completion — CDX discovery, ticket 0304 ─────────
+  - symbol: "FCCC/PA/CMA/2018/3/Add.1"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Paris Agreement on its first session. Addendum. Part two: Action taken by the Conference of the Parties serving as the meeting of the Parties to the Paris Agreement at its first session"
+    short_title: "CMA1 decisions, Add.1 (2018)"
+    year: 2018
+    body: "UNFCCC CMA"
+    doc_class: decision
+    language: en
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/cma2018_03a01E.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. Origin path bot-challenged (Incapsula, 2026-07-23); Wayback snapshot URL, content-verified at harvest fetch."
+  - symbol: "FCCC/PA/CMA/2019/6/Add.1"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Paris Agreement on its second session. Addendum. Part two: Action taken by the Conference of the Parties serving as the meeting of the Parties to the Paris Agreement at its second session"
+    short_title: "CMA2 decisions, Add.1 (2019)"
+    year: 2019
+    body: "UNFCCC CMA"
+    doc_class: decision
+    language: en
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/cma2019_06a01E.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. Origin path bot-challenged (Incapsula, 2026-07-23); Wayback snapshot URL, content-verified at harvest fetch."
+  - symbol: "FCCC/PA/CMA/2022/10/Add.3"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Paris Agreement on its fourth session. Addendum. Part two: Action taken by the Conference of the Parties serving as the meeting of the Parties to the Paris Agreement at its fourth session (volume 3)"
+    short_title: "CMA4 decisions, Add.3 (2022)"
+    year: 2022
+    body: "UNFCCC CMA"
+    doc_class: decision
+    language: en
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/cma2022_10a03E.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. Origin path bot-challenged (Incapsula, 2026-07-23); Wayback snapshot URL, content-verified at harvest fetch."
+  - symbol: "FCCC/PA/CMA/2023/16/Add.2"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Paris Agreement on its fifth session. Addendum. Part two: Action taken by the Conference of the Parties serving as the meeting of the Parties to the Paris Agreement at its fifth session (volume 2)"
+    short_title: "CMA5 decisions, Add.2 (2023)"
+    year: 2023
+    body: "UNFCCC CMA"
+    doc_class: decision
+    language: en
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/cma2023_16a02E.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. Origin path bot-challenged (Incapsula, 2026-07-23); Wayback snapshot URL, content-verified at harvest fetch."
+  - symbol: "FCCC/PA/CMA/2023/16/Add.3"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Paris Agreement on its fifth session. Addendum. Part two: Action taken by the Conference of the Parties serving as the meeting of the Parties to the Paris Agreement at its fifth session (volume 3)"
+    short_title: "CMA5 decisions, Add.3 (2023)"
+    year: 2023
+    body: "UNFCCC CMA"
+    doc_class: decision
+    language: en
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/cma2023_16a03E.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. Origin path bot-challenged (Incapsula, 2026-07-23); Wayback snapshot URL, content-verified at harvest fetch."
+  - symbol: "FCCC/PA/CMA/2024/17/Add.2"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Paris Agreement on its sixth session. Addendum. Part two: Action taken by the Conference of the Parties serving as the meeting of the Parties to the Paris Agreement at its sixth session (volume 2)"
+    short_title: "CMA6 decisions, Add.2 (2024)"
+    year: 2024
+    body: "UNFCCC CMA"
+    doc_class: decision
+    language: en
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/cma2024_17a02E.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. Origin path bot-challenged (Incapsula, 2026-07-23); Wayback snapshot URL, content-verified at harvest fetch."
+  - symbol: "FCCC/PA/CMA/2024/17/Add.3"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Paris Agreement on its sixth session. Addendum. Part two: Action taken by the Conference of the Parties serving as the meeting of the Parties to the Paris Agreement at its sixth session (volume 3)"
+    short_title: "CMA6 decisions, Add.3 (2024)"
+    year: 2024
+    body: "UNFCCC CMA"
+    doc_class: decision
+    language: en
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/cma2024_17a03E.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. Origin path bot-challenged (Incapsula, 2026-07-23); Wayback snapshot URL, content-verified at harvest fetch."
+  - symbol: "FCCC/KP/CMP/2005/8/Add.2"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol on its first session. Addendum. Part two: Action taken by the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol at its first session (volume 2)"
+    short_title: "CMP1 decisions, Add.2 (2005)"
+    year: 2005
+    body: "UNFCCC CMP"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2005/cmp1/eng/08a02.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/KP/CMP/2005/8/Add.3"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol on its first session. Addendum. Part two: Action taken by the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol at its first session (volume 3)"
+    short_title: "CMP1 decisions, Add.3 (2005)"
+    year: 2005
+    body: "UNFCCC CMP"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2005/cmp1/eng/08a03.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/KP/CMP/2005/8/Add.4"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol on its first session. Addendum. Part two: Action taken by the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol at its first session (volume 4)"
+    short_title: "CMP1 decisions, Add.4 (2005)"
+    year: 2005
+    body: "UNFCCC CMP"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2005/cmp1/eng/08a04.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/KP/CMP/2006/10/Add.1"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol on its second session. Addendum. Part two: Action taken by the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol at its second session"
+    short_title: "CMP2 decisions, Add.1 (2006)"
+    year: 2006
+    body: "UNFCCC CMP"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2006/cmp2/eng/10a01.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/KP/CMP/2007/9/Add.2"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol on its third session. Addendum. Part two: Action taken by the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol at its third session (volume 2)"
+    short_title: "CMP3 decisions, Add.2 (2007)"
+    year: 2007
+    body: "UNFCCC CMP"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2007/cmp3/eng/09a02.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/KP/CMP/2008/11/Add.1"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol on its fourth session. Addendum. Part two: Action taken by the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol at its fourth session"
+    short_title: "CMP4 decisions, Add.1 (2008)"
+    year: 2008
+    body: "UNFCCC CMP"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2008/cmp4/eng/11a01.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/KP/CMP/2008/11/Add.2"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol on its fourth session. Addendum. Part two: Action taken by the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol at its fourth session (volume 2)"
+    short_title: "CMP4 decisions, Add.2 (2008)"
+    year: 2008
+    body: "UNFCCC CMP"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2008/cmp4/eng/11a02.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/KP/CMP/2009/21/Add.1"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol on its fifth session. Addendum. Part two: Action taken by the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol at its fifth session"
+    short_title: "CMP5 decisions, Add.1 (2009)"
+    year: 2009
+    body: "UNFCCC CMP"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2009/cmp5/eng/21a01.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/KP/CMP/2010/12/Add.1"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol on its sixth session. Addendum. Part two: Action taken by the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol at its sixth session"
+    short_title: "CMP6 decisions, Add.1 (2010)"
+    year: 2010
+    body: "UNFCCC CMP"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2010/cmp6/eng/12a01.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/KP/CMP/2010/12/Add.2"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol on its sixth session. Addendum. Part two: Action taken by the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol at its sixth session (volume 2)"
+    short_title: "CMP6 decisions, Add.2 (2010)"
+    year: 2010
+    body: "UNFCCC CMP"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2010/cmp6/eng/12a02.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/KP/CMP/2011/10/Add.1"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol on its seventh session. Addendum. Part two: Action taken by the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol at its seventh session"
+    short_title: "CMP7 decisions, Add.1 (2011)"
+    year: 2011
+    body: "UNFCCC CMP"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2011/cmp7/eng/10a01.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/KP/CMP/2011/10/Add.2"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol on its seventh session. Addendum. Part two: Action taken by the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol at its seventh session (volume 2)"
+    short_title: "CMP7 decisions, Add.2 (2011)"
+    year: 2011
+    body: "UNFCCC CMP"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2011/cmp7/eng/10a02.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/KP/CMP/2012/13/Add.1"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol on its eighth session. Addendum. Part two: Action taken by the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol at its eighth session"
+    short_title: "CMP8 decisions, Add.1 (2012)"
+    year: 2012
+    body: "UNFCCC CMP"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2012/cmp8/eng/13a01.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/KP/CMP/2012/13/Add.2"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol on its eighth session. Addendum. Part two: Action taken by the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol at its eighth session (volume 2)"
+    short_title: "CMP8 decisions, Add.2 (2012)"
+    year: 2012
+    body: "UNFCCC CMP"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2012/cmp8/eng/13a02.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/KP/CMP/2013/9/Add.1"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol on its ninth session. Addendum. Part two: Action taken by the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol at its ninth session"
+    short_title: "CMP9 decisions, Add.1 (2013)"
+    year: 2013
+    body: "UNFCCC CMP"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2013/cmp9/eng/09a01.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/KP/CMP/2014/9/Add.1"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol on its tenth session. Addendum. Part two: Action taken by the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol at its tenth session"
+    short_title: "CMP10 decisions, Add.1 (2014)"
+    year: 2014
+    body: "UNFCCC CMP"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2014/cmp10/eng/09a01.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/KP/CMP/2015/8/Add.1"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol on its eleventh session. Addendum. Part two: Action taken by the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol at its eleventh session"
+    short_title: "CMP11 decisions, Add.1 (2015)"
+    year: 2015
+    body: "UNFCCC CMP"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2015/cmp11/eng/08a01.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/KP/CMP/2015/8/Add.2"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol on its eleventh session. Addendum. Part two: Action taken by the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol at its eleventh session (volume 2)"
+    short_title: "CMP11 decisions, Add.2 (2015)"
+    year: 2015
+    body: "UNFCCC CMP"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2015/cmp11/eng/08a02.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/KP/CMP/2016/8/Add.1"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol on its twelfth session. Addendum. Part two: Action taken by the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol at its twelfth session"
+    short_title: "CMP12 decisions, Add.1 (2016)"
+    year: 2016
+    body: "UNFCCC CMP"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2016/cmp12/eng/08a01.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/KP/CMP/2017/7/Add.1"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol on its thirteenth session. Addendum. Part two: Action taken by the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol at its thirteenth session"
+    short_title: "CMP13 decisions, Add.1 (2017)"
+    year: 2017
+    body: "UNFCCC CMP"
+    doc_class: decision
+    language: en
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/07a01.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. Origin path bot-challenged (Incapsula, 2026-07-23); Wayback snapshot URL, content-verified at harvest fetch."
+  - symbol: "FCCC/KP/CMP/2019/8/Add.1"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol on its fifteenth session. Addendum. Part two: Action taken by the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol at its fifteenth session"
+    short_title: "CMP15 decisions, Add.1 (2019)"
+    year: 2019
+    body: "UNFCCC CMP"
+    doc_class: decision
+    language: en
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/cmp2019_08a01E.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. Origin path bot-challenged (Incapsula, 2026-07-23); Wayback snapshot URL, content-verified at harvest fetch."
+  - symbol: "FCCC/KP/CMP/2021/1/Add.1"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol on its sixteenth session. Addendum. Part two: Action taken by the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol at its sixteenth session"
+    short_title: "CMP16 decisions, Add.1 (2021)"
+    year: 2021
+    body: "UNFCCC CMP"
+    doc_class: decision
+    language: en
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/cmp2021_01a01E.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. Origin path bot-challenged (Incapsula, 2026-07-23); Wayback snapshot URL, content-verified at harvest fetch."
+  - symbol: "FCCC/KP/CMP/2022/9/Add.1"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol on its seventeenth session. Addendum. Part two: Action taken by the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol at its seventeenth session"
+    short_title: "CMP17 decisions, Add.1 (2022)"
+    year: 2022
+    body: "UNFCCC CMP"
+    doc_class: decision
+    language: en
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/cmp2022_09a01E.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. Origin path bot-challenged (Incapsula, 2026-07-23); Wayback snapshot URL, content-verified at harvest fetch."
+  - symbol: "FCCC/KP/CMP/2023/9/Add.1"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol on its eighteenth session. Addendum. Part two: Action taken by the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol at its eighteenth session"
+    short_title: "CMP18 decisions, Add.1 (2023)"
+    year: 2023
+    body: "UNFCCC CMP"
+    doc_class: decision
+    language: en
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/cmp2023_09a01E.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. Origin path bot-challenged (Incapsula, 2026-07-23); Wayback snapshot URL, content-verified at harvest fetch."
+  - symbol: "FCCC/KP/CMP/2024/7/Add.1"
+    title: "Report of the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol on its nineteenth session. Addendum. Part two: Action taken by the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol at its nineteenth session"
+    short_title: "CMP19 decisions, Add.1 (2024)"
+    year: 2024
+    body: "UNFCCC CMP"
+    doc_class: decision
+    language: en
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/cmp2024_07a01E.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. Origin path bot-challenged (Incapsula, 2026-07-23); Wayback snapshot URL, content-verified at harvest fetch."
+  - symbol: "FCCC/CP/1999/6/Add.1"
+    title: "Report of the Conference of the Parties on its fifth session. Addendum. Part two: Action taken by the Conference of the Parties at its fifth session"
+    short_title: "COP5 decisions, Add.1 (1999)"
+    year: 1999
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/cop5/06a01.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/CP/2000/5/Add.1"
+    title: "Report of the Conference of the Parties on its sixth session. Addendum. Part two: Action taken by the Conference of the Parties at its sixth session"
+    short_title: "COP6 decisions, Add.1 (2000)"
+    year: 2000
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/cop6/05a01.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/CP/2000/5/Add.2"
+    title: "Report of the Conference of the Parties on its sixth session. Addendum. Part two: Action taken by the Conference of the Parties at its sixth session (volume 2)"
+    short_title: "COP6 decisions, Add.2 (2000)"
+    year: 2000
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/cop6/05a02.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/CP/2001/13/Add.2"
+    title: "Report of the Conference of the Parties on its seventh session. Addendum. Part two: Action taken by the Conference of the Parties at its seventh session (volume 2)"
+    short_title: "COP7 decisions, Add.2 (2001)"
+    year: 2001
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/cop7/13a02.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/CP/2001/13/Add.3"
+    title: "Report of the Conference of the Parties on its seventh session. Addendum. Part two: Action taken by the Conference of the Parties at its seventh session (volume 3)"
+    short_title: "COP7 decisions, Add.3 (2001)"
+    year: 2001
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/cop7/13a03.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/CP/2001/13/Add.4"
+    title: "Report of the Conference of the Parties on its seventh session. Addendum. Part two: Action taken by the Conference of the Parties at its seventh session (volume 4)"
+    short_title: "COP7 decisions, Add.4 (2001)"
+    year: 2001
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/cop7/13a04.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/CP/2002/7/Add.1"
+    title: "Report of the Conference of the Parties on its eighth session. Addendum. Part two: Action taken by the Conference of the Parties at its eighth session"
+    short_title: "COP8 decisions, Add.1 (2002)"
+    year: 2002
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/cop8/07a01.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/CP/2002/7/Add.2"
+    title: "Report of the Conference of the Parties on its eighth session. Addendum. Part two: Action taken by the Conference of the Parties at its eighth session (volume 2)"
+    short_title: "COP8 decisions, Add.2 (2002)"
+    year: 2002
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/cop8/07a02.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/CP/2002/7/Add.3"
+    title: "Report of the Conference of the Parties on its eighth session. Addendum. Part two: Action taken by the Conference of the Parties at its eighth session (volume 3)"
+    short_title: "COP8 decisions, Add.3 (2002)"
+    year: 2002
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/cop8/07a03.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/CP/2003/6/Add.1"
+    title: "Report of the Conference of the Parties on its ninth session. Addendum. Part two: Action taken by the Conference of the Parties at its ninth session"
+    short_title: "COP9 decisions, Add.1 (2003)"
+    year: 2003
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/cop9/06a01.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/CP/2003/6/Add.2"
+    title: "Report of the Conference of the Parties on its ninth session. Addendum. Part two: Action taken by the Conference of the Parties at its ninth session (volume 2)"
+    short_title: "COP9 decisions, Add.2 (2003)"
+    year: 2003
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/cop9/06a02.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/CP/2004/10/Add.1"
+    title: "Report of the Conference of the Parties on its tenth session. Addendum. Part two: Action taken by the Conference of the Parties at its tenth session"
+    short_title: "COP10 decisions, Add.1 (2004)"
+    year: 2004
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/cop10/10a01.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/CP/2004/10/Add.2"
+    title: "Report of the Conference of the Parties on its tenth session. Addendum. Part two: Action taken by the Conference of the Parties at its tenth session (volume 2)"
+    short_title: "COP10 decisions, Add.2 (2004)"
+    year: 2004
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/cop10/10a02.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/CP/2005/5/Add.2"
+    title: "Report of the Conference of the Parties on its eleventh session. Addendum. Part two: Action taken by the Conference of the Parties at its eleventh session (volume 2)"
+    short_title: "COP11 decisions, Add.2 (2005)"
+    year: 2005
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2005/cop11/eng/05a02.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/CP/2006/5/Add.1"
+    title: "Report of the Conference of the Parties on its twelfth session. Addendum. Part two: Action taken by the Conference of the Parties at its twelfth session"
+    short_title: "COP12 decisions, Add.1 (2006)"
+    year: 2006
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2006/cop12/eng/05a01.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/CP/2007/6/Add.2"
+    title: "Report of the Conference of the Parties on its thirteenth session. Addendum. Part two: Action taken by the Conference of the Parties at its thirteenth session (volume 2)"
+    short_title: "COP13 decisions, Add.2 (2007)"
+    year: 2007
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2007/cop13/eng/06a02.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/CP/2010/7/Add.2"
+    title: "Report of the Conference of the Parties on its sixteenth session. Addendum. Part two: Action taken by the Conference of the Parties at its sixteenth session (volume 2)"
+    short_title: "COP16 decisions, Add.2 (2010)"
+    year: 2010
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2010/cop16/eng/07a02.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/CP/2011/9/Add.2"
+    title: "Report of the Conference of the Parties on its seventeenth session. Addendum. Part two: Action taken by the Conference of the Parties at its seventeenth session (volume 2)"
+    short_title: "COP17 decisions, Add.2 (2011)"
+    year: 2011
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2011/cop17/eng/09a02.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/CP/2012/8/Add.2"
+    title: "Report of the Conference of the Parties on its eighteenth session. Addendum. Part two: Action taken by the Conference of the Parties at its eighteenth session (volume 2)"
+    short_title: "COP18 decisions, Add.2 (2012)"
+    year: 2012
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2012/cop18/eng/08a02.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/CP/2012/8/Add.3"
+    title: "Report of the Conference of the Parties on its eighteenth session. Addendum. Part two: Action taken by the Conference of the Parties at its eighteenth session (volume 3)"
+    short_title: "COP18 decisions, Add.3 (2012)"
+    year: 2012
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2012/cop18/eng/08a03.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/CP/2013/10/Add.2"
+    title: "Report of the Conference of the Parties on its nineteenth session. Addendum. Part two: Action taken by the Conference of the Parties at its nineteenth session (volume 2)"
+    short_title: "COP19 decisions, Add.2 (2013)"
+    year: 2013
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2013/cop19/eng/10a02.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/CP/2013/10/Add.3"
+    title: "Report of the Conference of the Parties on its nineteenth session. Addendum. Part two: Action taken by the Conference of the Parties at its nineteenth session (volume 3)"
+    short_title: "COP19 decisions, Add.3 (2013)"
+    year: 2013
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2013/cop19/eng/10a03.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/CP/2014/10/Add.2"
+    title: "Report of the Conference of the Parties on its twentieth session. Addendum. Part two: Action taken by the Conference of the Parties at its twentieth session (volume 2)"
+    short_title: "COP20 decisions, Add.2 (2014)"
+    year: 2014
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2014/cop20/eng/10a02.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/CP/2014/10/Add.3"
+    title: "Report of the Conference of the Parties on its twentieth session. Addendum. Part two: Action taken by the Conference of the Parties at its twentieth session (volume 3)"
+    short_title: "COP20 decisions, Add.3 (2014)"
+    year: 2014
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2014/cop20/eng/10a03.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/CP/2015/10/Add.2"
+    title: "Report of the Conference of the Parties on its twenty-first session. Addendum. Part two: Action taken by the Conference of the Parties at its twenty-first session (volume 2)"
+    short_title: "COP21 decisions, Add.2 (2015)"
+    year: 2015
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2015/cop21/eng/10a02.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/CP/2015/10/Add.3"
+    title: "Report of the Conference of the Parties on its twenty-first session. Addendum. Part two: Action taken by the Conference of the Parties at its twenty-first session (volume 3)"
+    short_title: "COP21 decisions, Add.3 (2015)"
+    year: 2015
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2015/cop21/eng/10a03.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/CP/2016/10/Add.2"
+    title: "Report of the Conference of the Parties on its twenty-second session. Addendum. Part two: Action taken by the Conference of the Parties at its twenty-second session (volume 2)"
+    short_title: "COP22 decisions, Add.2 (2016)"
+    year: 2016
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://unfccc.int/resource/docs/2016/cop22/eng/10a02.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. URL from the open /resource/docs archive, verified at harvest fetch."
+  - symbol: "FCCC/CP/2017/11/Add.1"
+    title: "Report of the Conference of the Parties on its twenty-third session. Addendum. Part two: Action taken by the Conference of the Parties at its twenty-third session"
+    short_title: "COP23 decisions, Add.1 (2017)"
+    year: 2017
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/11a01.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. Origin path bot-challenged (Incapsula, 2026-07-23); Wayback snapshot URL, content-verified at harvest fetch."
+  - symbol: "FCCC/CP/2017/11/Add.2"
+    title: "Report of the Conference of the Parties on its twenty-third session. Addendum. Part two: Action taken by the Conference of the Parties at its twenty-third session (volume 2)"
+    short_title: "COP23 decisions, Add.2 (2017)"
+    year: 2017
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/11a02.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. Origin path bot-challenged (Incapsula, 2026-07-23); Wayback snapshot URL, content-verified at harvest fetch."
+  - symbol: "FCCC/CP/2019/13/Add.1"
+    title: "Report of the Conference of the Parties on its twenty-fifth session. Addendum. Part two: Action taken by the Conference of the Parties at its twenty-fifth session"
+    short_title: "COP25 decisions, Add.1 (2019)"
+    year: 2019
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/cp2019_13a01E.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. Origin path bot-challenged (Incapsula, 2026-07-23); Wayback snapshot URL, content-verified at harvest fetch."
+  - symbol: "FCCC/CP/2021/12/Add.2"
+    title: "Report of the Conference of the Parties on its twenty-sixth session. Addendum. Part two: Action taken by the Conference of the Parties at its twenty-sixth session (volume 2)"
+    short_title: "COP26 decisions, Add.2 (2021)"
+    year: 2021
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/cp2021_12a02E.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. Origin path bot-challenged (Incapsula, 2026-07-23); Wayback snapshot URL, content-verified at harvest fetch."
+  - symbol: "FCCC/CP/2022/10/Add.1"
+    title: "Report of the Conference of the Parties on its twenty-seventh session. Addendum. Part two: Action taken by the Conference of the Parties at its twenty-seventh session"
+    short_title: "COP27 decisions, Add.1 (2022)"
+    year: 2022
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/cp2022_10a01E.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. Origin path bot-challenged (Incapsula, 2026-07-23); Wayback snapshot URL, content-verified at harvest fetch."
+  - symbol: "FCCC/CP/2022/10/Add.2"
+    title: "Report of the Conference of the Parties on its twenty-seventh session. Addendum. Part two: Action taken by the Conference of the Parties at its twenty-seventh session (volume 2)"
+    short_title: "COP27 decisions, Add.2 (2022)"
+    year: 2022
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/cp2022_10a02E.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. Origin path bot-challenged (Incapsula, 2026-07-23); Wayback snapshot URL, content-verified at harvest fetch."
+  - symbol: "FCCC/CP/2022/10/Add.3"
+    title: "Report of the Conference of the Parties on its twenty-seventh session. Addendum. Part two: Action taken by the Conference of the Parties at its twenty-seventh session (volume 3)"
+    short_title: "COP27 decisions, Add.3 (2022)"
+    year: 2022
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/cp2022_10a03E.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. Origin path bot-challenged (Incapsula, 2026-07-23); Wayback snapshot URL, content-verified at harvest fetch."
+  - symbol: "FCCC/CP/2023/11/Add.1"
+    title: "Report of the Conference of the Parties on its twenty-eighth session. Addendum. Part two: Action taken by the Conference of the Parties at its twenty-eighth session"
+    short_title: "COP28 decisions, Add.1 (2023)"
+    year: 2023
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/cp2023_11a01E.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. Origin path bot-challenged (Incapsula, 2026-07-23); Wayback snapshot URL, content-verified at harvest fetch."
+  - symbol: "FCCC/CP/2023/11/Add.2"
+    title: "Report of the Conference of the Parties on its twenty-eighth session. Addendum. Part two: Action taken by the Conference of the Parties at its twenty-eighth session (volume 2)"
+    short_title: "COP28 decisions, Add.2 (2023)"
+    year: 2023
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/cp2023_11a02E.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. Origin path bot-challenged (Incapsula, 2026-07-23); Wayback snapshot URL, content-verified at harvest fetch."
+  - symbol: "FCCC/CP/2024/11/Add.1"
+    title: "Report of the Conference of the Parties on its twenty-ninth session. Addendum. Part two: Action taken by the Conference of the Parties at its twenty-ninth session"
+    short_title: "COP29 decisions, Add.1 (2024)"
+    year: 2024
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/cp2024_11a01E.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. Origin path bot-challenged (Incapsula, 2026-07-23); Wayback snapshot URL, content-verified at harvest fetch."
+  - symbol: "FCCC/CP/2024/11/Add.2"
+    title: "Report of the Conference of the Parties on its twenty-ninth session. Addendum. Part two: Action taken by the Conference of the Parties at its twenty-ninth session (volume 2)"
+    short_title: "COP29 decisions, Add.2 (2024)"
+    year: 2024
+    body: "UNFCCC Conference of the Parties"
+    doc_class: decision
+    language: en
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/cp2024_11a02E.pdf"
+    provenance: "Series completion via CDX discovery (ticket 0304); title in standard series form without the session venue clause. Origin path bot-challenged (Incapsula, 2026-07-23); Wayback snapshot URL, content-verified at harvest fetch."
+
+  # ── INC session documents sweep (A/AC.237, 1991-1995) — ticket 0304 ──
+  - symbol: "A/AC.237/1"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/1"
+    short_title: "INC document A/AC.237/1 (1991)"
+    year: 1991
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/01.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/1/Add.1"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/1/Add.1"
+    short_title: "INC document A/AC.237/1/Add.1 (1991)"
+    year: 1991
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/01a01.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/6"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/6"
+    short_title: "INC document A/AC.237/6 (1991)"
+    year: 1991
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/06.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/7"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/7"
+    short_title: "INC document A/AC.237/7 (1991)"
+    year: 1991
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/07.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/9"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/9"
+    short_title: "INC document A/AC.237/9 (1991)"
+    year: 1991
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/09.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/10"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/10"
+    short_title: "INC document A/AC.237/10 (1991)"
+    year: 1991
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/10.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/12"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/12"
+    short_title: "INC document A/AC.237/12 (1991)"
+    year: 1991
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/12.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/13"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/13"
+    short_title: "INC document A/AC.237/13 (1992)"
+    year: 1992
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/13.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/16"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/16"
+    short_title: "INC document A/AC.237/16 (1992)"
+    year: 1992
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/16.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/18 (Part I)"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/18 (Part I)"
+    short_title: "INC document A/AC.237/18 (Part I) (1992)"
+    year: 1992
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/18p1.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/18 (Part II)"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/18 (Part II)"
+    short_title: "INC document A/AC.237/18 (Part II) (1992)"
+    year: 1992
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/18p2.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/21"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/21"
+    short_title: "INC document A/AC.237/21 (1992)"
+    year: 1992
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/21.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/23"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/23"
+    short_title: "INC document A/AC.237/23 (1992)"
+    year: 1992
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/23.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/24"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/24"
+    short_title: "INC document A/AC.237/24 (1992)"
+    year: 1992
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/24.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/25"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/25"
+    short_title: "INC document A/AC.237/25 (1993)"
+    year: 1993
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/25.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/27"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/27"
+    short_title: "INC document A/AC.237/27 (1993)"
+    year: 1993
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/27.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/29"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/29"
+    short_title: "INC document A/AC.237/29 (1993)"
+    year: 1993
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/29.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/31"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/31"
+    short_title: "INC document A/AC.237/31 (1993)"
+    year: 1993
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/31.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/32"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/32"
+    short_title: "INC document A/AC.237/32 (1993)"
+    year: 1993
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/32.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/33"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/33"
+    short_title: "INC document A/AC.237/33 (1993)"
+    year: 1993
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/33.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/34"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/34"
+    short_title: "INC document A/AC.237/34 (1993)"
+    year: 1993
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/34.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/35"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/35"
+    short_title: "INC document A/AC.237/35 (1993)"
+    year: 1993
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/35.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/36"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/36"
+    short_title: "INC document A/AC.237/36 (1993)"
+    year: 1993
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/36.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/37"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/37"
+    short_title: "INC document A/AC.237/37 (1993)"
+    year: 1993
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/37.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/38"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/38"
+    short_title: "INC document A/AC.237/38 (1993)"
+    year: 1993
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/38.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/39"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/39"
+    short_title: "INC document A/AC.237/39 (1993)"
+    year: 1993
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/39.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/40"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/40"
+    short_title: "INC document A/AC.237/40 (1993)"
+    year: 1993
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/40.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/41"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/41"
+    short_title: "INC document A/AC.237/41 (1993)"
+    year: 1993
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/41.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/42"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/42"
+    short_title: "INC document A/AC.237/42 (1993)"
+    year: 1993
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/42.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/43"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/43"
+    short_title: "INC document A/AC.237/43 (1993)"
+    year: 1993
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/43.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/44"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/44"
+    short_title: "INC document A/AC.237/44 (1993)"
+    year: 1993
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/44.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/45"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/45"
+    short_title: "INC document A/AC.237/45 (1993)"
+    year: 1993
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/45.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/46"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/46"
+    short_title: "INC document A/AC.237/46 (1993)"
+    year: 1993
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/46.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/47"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/47"
+    short_title: "INC document A/AC.237/47 (1993)"
+    year: 1993
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/47.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/48"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/48"
+    short_title: "INC document A/AC.237/48 (1993)"
+    year: 1993
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/48.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/49"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/49"
+    short_title: "INC document A/AC.237/49 (1993)"
+    year: 1993
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/49.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/50"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/50"
+    short_title: "INC document A/AC.237/50 (1993)"
+    year: 1993
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/50.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/51"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/51"
+    short_title: "INC document A/AC.237/51 (1993)"
+    year: 1993
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/51.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/52"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/52"
+    short_title: "INC document A/AC.237/52 (1993)"
+    year: 1993
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/52.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/53"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/53"
+    short_title: "INC document A/AC.237/53 (1993)"
+    year: 1993
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/53.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/54"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/54"
+    short_title: "INC document A/AC.237/54 (1993)"
+    year: 1993
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/54.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/55"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/55"
+    short_title: "INC document A/AC.237/55 (1993)"
+    year: 1993
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/55.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/56"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/56"
+    short_title: "INC document A/AC.237/56 (1994)"
+    year: 1994
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/56.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/57"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/57"
+    short_title: "INC document A/AC.237/57 (1994)"
+    year: 1994
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/57.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/58"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/58"
+    short_title: "INC document A/AC.237/58 (1994)"
+    year: 1994
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/58.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/59"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/59"
+    short_title: "INC document A/AC.237/59 (1994)"
+    year: 1994
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/59.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/60"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/60"
+    short_title: "INC document A/AC.237/60 (1994)"
+    year: 1994
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/60.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/61"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/61"
+    short_title: "INC document A/AC.237/61 (1994)"
+    year: 1994
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/61.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/62"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/62"
+    short_title: "INC document A/AC.237/62 (1994)"
+    year: 1994
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/62.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/63"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/63"
+    short_title: "INC document A/AC.237/63 (1994)"
+    year: 1994
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/63.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/64"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/64"
+    short_title: "INC document A/AC.237/64 (1994)"
+    year: 1994
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/64.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/65"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/65"
+    short_title: "INC document A/AC.237/65 (1994)"
+    year: 1994
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/65.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/66"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/66"
+    short_title: "INC document A/AC.237/66 (1994)"
+    year: 1994
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/66.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/67"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/67"
+    short_title: "INC document A/AC.237/67 (1994)"
+    year: 1994
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/67.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/68"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/68"
+    short_title: "INC document A/AC.237/68 (1994)"
+    year: 1994
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/68.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/69"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/69"
+    short_title: "INC document A/AC.237/69 (1994)"
+    year: 1994
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/69.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/70"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/70"
+    short_title: "INC document A/AC.237/70 (1994)"
+    year: 1994
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/70.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/71"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/71"
+    short_title: "INC document A/AC.237/71 (1994)"
+    year: 1994
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/71.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/72"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/72"
+    short_title: "INC document A/AC.237/72 (1994)"
+    year: 1994
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/72.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/73"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/73"
+    short_title: "INC document A/AC.237/73 (1994)"
+    year: 1994
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/73.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/74"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/74"
+    short_title: "INC document A/AC.237/74 (1994)"
+    year: 1994
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/74.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/75"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/75"
+    short_title: "INC document A/AC.237/75 (1994)"
+    year: 1994
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/75.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/76"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/76"
+    short_title: "INC document A/AC.237/76 (1994)"
+    year: 1994
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/76.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/77"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/77"
+    short_title: "INC document A/AC.237/77 (1995)"
+    year: 1995
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/77.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/78"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/78"
+    short_title: "INC document A/AC.237/78 (1995)"
+    year: 1995
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/78.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/79"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/79"
+    short_title: "INC document A/AC.237/79 (1995)"
+    year: 1995
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/79.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/80"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/80"
+    short_title: "INC document A/AC.237/80 (1995)"
+    year: 1995
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/80.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/81"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/81"
+    short_title: "INC document A/AC.237/81 (1995)"
+    year: 1995
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/81.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/82"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/82"
+    short_title: "INC document A/AC.237/82 (1995)"
+    year: 1995
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/82.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/83"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/83"
+    short_title: "INC document A/AC.237/83 (1995)"
+    year: 1995
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/83.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/84"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/84"
+    short_title: "INC document A/AC.237/84 (1995)"
+    year: 1995
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/84.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/85"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/85"
+    short_title: "INC document A/AC.237/85 (1995)"
+    year: 1995
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/85.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/86"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/86"
+    short_title: "INC document A/AC.237/86 (1995)"
+    year: 1995
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/86.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/87"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/87"
+    short_title: "INC document A/AC.237/87 (1995)"
+    year: 1995
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/87.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/88"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/88"
+    short_title: "INC document A/AC.237/88 (1995)"
+    year: 1995
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/88.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/89"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/89"
+    short_title: "INC document A/AC.237/89 (1995)"
+    year: 1995
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/89.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/90"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/90"
+    short_title: "INC document A/AC.237/90 (1995)"
+    year: 1995
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/90.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+  - symbol: "A/AC.237/91"
+    title: "Intergovernmental Negotiating Committee for a Framework Convention on Climate Change: document A/AC.237/91"
+    short_title: "INC document A/AC.237/91 (1995)"
+    year: 1995
+    body: "Intergovernmental Negotiating Committee"
+    doc_class: inc
+    language: en
+    url: "https://unfccc.int/resource/docs/a/91.pdf"
+    provenance: "INC sweep via CDX discovery (ticket 0304); year inferred from document number range, official title recoverable from the (often scanned, OCR-path) document text at harvest. URL from the open /resource/docs/a/ archive, verified at harvest fetch."
+
+  # ── ENB per-COP summaries 1995-2014 (archived vol-12 index) — 0304 ───
+  - symbol: "ENB/12/21"
+    title: "Earth Negotiations Bulletin Vol. 12 No. 21: summary of the first Conference of the Parties (Berlin, Germany, March 28 - April 07, 1995)"
+    short_title: "Earth Negotiations Bulletin COP1 summary"
+    year: 1995
+    body: "IISD Earth Negotiations Bulletin"
+    doc_class: negotiation_record
+    language: en
+    url: "https://enb.iisd.org/download/pdf/enb1221e.pdf"
+    provenance: "Per-COP summary issue from the archived ENB vol-12 index (Wayback snapshot 2024-11-12, ticket 0304); title in series form. Origin PDF open; verified at harvest fetch."
+  - symbol: "ENB/12/38"
+    title: "Earth Negotiations Bulletin Vol. 12 No. 38: summary of the second Conference of the Parties (Geneva, Switzerland, July 08 - 19, 1996)"
+    short_title: "Earth Negotiations Bulletin COP2 summary"
+    year: 1996
+    body: "IISD Earth Negotiations Bulletin"
+    doc_class: negotiation_record
+    language: en
+    url: "https://enb.iisd.org/download/pdf/enb1238e.pdf"
+    provenance: "Per-COP summary issue from the archived ENB vol-12 index (Wayback snapshot 2024-11-12, ticket 0304); title in series form. Origin PDF open; verified at harvest fetch."
+  - symbol: "ENB/12/76"
+    title: "Earth Negotiations Bulletin Vol. 12 No. 76: summary of the third Conference of the Parties (Kyoto, Japan, December 1 - 11, 1997)"
+    short_title: "Earth Negotiations Bulletin COP3 summary"
+    year: 1997
+    body: "IISD Earth Negotiations Bulletin"
+    doc_class: negotiation_record
+    language: en
+    url: "https://enb.iisd.org/download/pdf/enb1276e.pdf"
+    provenance: "Per-COP summary issue from the archived ENB vol-12 index (Wayback snapshot 2024-11-12, ticket 0304); title in series form. Origin PDF open; verified at harvest fetch."
+  - symbol: "ENB/12/97"
+    title: "Earth Negotiations Bulletin Vol. 12 No. 97: summary of the fourth Conference of the Parties (Buenos Aires, Argentina, November 02 - 13, 1998)"
+    short_title: "Earth Negotiations Bulletin COP4 summary"
+    year: 1998
+    body: "IISD Earth Negotiations Bulletin"
+    doc_class: negotiation_record
+    language: en
+    url: "https://enb.iisd.org/download/pdf/enb1297e.pdf"
+    provenance: "Per-COP summary issue from the archived ENB vol-12 index (Wayback snapshot 2024-11-12, ticket 0304); title in series form. Origin PDF open; verified at harvest fetch."
+  - symbol: "ENB/12/123"
+    title: "Earth Negotiations Bulletin Vol. 12 No. 123: summary of the fifth Conference of the Parties (Bonn, Germany, November 8, 1999)"
+    short_title: "Earth Negotiations Bulletin COP5 summary"
+    year: 1999
+    body: "IISD Earth Negotiations Bulletin"
+    doc_class: negotiation_record
+    language: en
+    url: "https://enb.iisd.org/download/pdf/enb12123e.pdf"
+    provenance: "Per-COP summary issue from the archived ENB vol-12 index (Wayback snapshot 2024-11-12, ticket 0304); title in series form. Origin PDF open; verified at harvest fetch."
+  - symbol: "ENB/12/163"
+    title: "Earth Negotiations Bulletin Vol. 12 No. 163: summary of the sixth Conference of the Parties"
+    short_title: "Earth Negotiations Bulletin COP6 summary"
+    year: 2000
+    body: "IISD Earth Negotiations Bulletin"
+    doc_class: negotiation_record
+    language: en
+    url: "https://enb.iisd.org/download/pdf/enb12163e.pdf"
+    provenance: "Per-COP summary issue from the archived ENB vol-12 index (Wayback snapshot 2024-11-12, ticket 0304); title in series form. Origin PDF open; verified at harvest fetch."
+  - symbol: "ENB/12/176"
+    title: "Earth Negotiations Bulletin Vol. 12 No. 176: summary of the sixth Conference of the Parties"
+    short_title: "Earth Negotiations Bulletin COP6-bis (Bonn, July 2001) summary"
+    year: 2001
+    body: "IISD Earth Negotiations Bulletin"
+    doc_class: negotiation_record
+    language: en
+    url: "https://enb.iisd.org/download/pdf/enb12176e.pdf"
+    provenance: "Per-COP summary issue from the archived ENB vol-12 index (Wayback snapshot 2024-11-12, ticket 0304); title in series form. Origin PDF open; verified at harvest fetch."
+  - symbol: "ENB/12/189"
+    title: "Earth Negotiations Bulletin Vol. 12 No. 189: summary of the seventh Conference of the Parties"
+    short_title: "Earth Negotiations Bulletin COP7 summary"
+    year: 2001
+    body: "IISD Earth Negotiations Bulletin"
+    doc_class: negotiation_record
+    language: en
+    url: "https://enb.iisd.org/download/pdf/enb12189e.pdf"
+    provenance: "Per-COP summary issue from the archived ENB vol-12 index (Wayback snapshot 2024-11-12, ticket 0304); title in series form. Origin PDF open; verified at harvest fetch."
+  - symbol: "ENB/12/209"
+    title: "Earth Negotiations Bulletin Vol. 12 No. 209: summary of the eighth Conference of the Parties"
+    short_title: "Earth Negotiations Bulletin COP8 summary"
+    year: 2002
+    body: "IISD Earth Negotiations Bulletin"
+    doc_class: negotiation_record
+    language: en
+    url: "https://enb.iisd.org/download/pdf/enb12209e.pdf"
+    provenance: "Per-COP summary issue from the archived ENB vol-12 index (Wayback snapshot 2024-11-12, ticket 0304); title in series form. Origin PDF open; verified at harvest fetch."
+  - symbol: "ENB/12/231"
+    title: "Earth Negotiations Bulletin Vol. 12 No. 231: summary of the ninth Conference of the Parties"
+    short_title: "Earth Negotiations Bulletin COP9 summary"
+    year: 2003
+    body: "IISD Earth Negotiations Bulletin"
+    doc_class: negotiation_record
+    language: en
+    url: "https://enb.iisd.org/download/pdf/enb12231e.pdf"
+    provenance: "Per-COP summary issue from the archived ENB vol-12 index (Wayback snapshot 2024-11-12, ticket 0304); title in series form. Origin PDF open; verified at harvest fetch."
+  - symbol: "ENB/12/260"
+    title: "Earth Negotiations Bulletin Vol. 12 No. 260: summary of the tenth Conference of the Parties"
+    short_title: "Earth Negotiations Bulletin COP10 summary"
+    year: 2004
+    body: "IISD Earth Negotiations Bulletin"
+    doc_class: negotiation_record
+    language: en
+    url: "https://enb.iisd.org/download/pdf/enb12260e.pdf"
+    provenance: "Per-COP summary issue from the archived ENB vol-12 index (Wayback snapshot 2024-11-12, ticket 0304); title in series form. Origin PDF open; verified at harvest fetch."
+  - symbol: "ENB/12/291"
+    title: "Earth Negotiations Bulletin Vol. 12 No. 291: summary of the eleventh Conference of the Parties (Montréal, Canada, 28 November - 9 December 2005)"
+    short_title: "Earth Negotiations Bulletin COP11 summary"
+    year: 2005
+    body: "IISD Earth Negotiations Bulletin"
+    doc_class: negotiation_record
+    language: en
+    url: "https://enb.iisd.org/download/pdf/enb12291e.pdf"
+    provenance: "Per-COP summary issue from the archived ENB vol-12 index (Wayback snapshot 2024-11-12, ticket 0304); title in series form. Origin PDF open; verified at harvest fetch."
+  - symbol: "ENB/12/318"
+    title: "Earth Negotiations Bulletin Vol. 12 No. 318: summary of the twelfth Conference of the Parties (Nairobi, Kenya, 6-17 November 2006)"
+    short_title: "Earth Negotiations Bulletin COP12 summary"
+    year: 2006
+    body: "IISD Earth Negotiations Bulletin"
+    doc_class: negotiation_record
+    language: en
+    url: "https://enb.iisd.org/download/pdf/enb12318e.pdf"
+    provenance: "Per-COP summary issue from the archived ENB vol-12 index (Wayback snapshot 2024-11-12, ticket 0304); title in series form. Origin PDF open; verified at harvest fetch."
+  - symbol: "ENB/12/395"
+    title: "Earth Negotiations Bulletin Vol. 12 No. 395: summary of the fourteenth Conference of the Parties (Poznań, Poland, 1-12 December 2008)"
+    short_title: "Earth Negotiations Bulletin COP14 summary"
+    year: 2008
+    body: "IISD Earth Negotiations Bulletin"
+    doc_class: negotiation_record
+    language: en
+    url: "https://enb.iisd.org/download/pdf/enb12395e.pdf"
+    provenance: "Per-COP summary issue from the archived ENB vol-12 index (Wayback snapshot 2024-11-12, ticket 0304); title in series form. Origin PDF open; verified at harvest fetch."
+  - symbol: "ENB/12/534"
+    title: "Earth Negotiations Bulletin Vol. 12 No. 534: summary of the seventeenth Conference of the Parties (Durban, South Africa, 28 November - 9 December 2011)"
+    short_title: "Earth Negotiations Bulletin COP17 summary"
+    year: 2011
+    body: "IISD Earth Negotiations Bulletin"
+    doc_class: negotiation_record
+    language: en
+    url: "https://enb.iisd.org/download/pdf/enb12534e.pdf"
+    provenance: "Per-COP summary issue from the archived ENB vol-12 index (Wayback snapshot 2024-11-12, ticket 0304); title in series form. Origin PDF open; verified at harvest fetch."
+  - symbol: "ENB/12/567"
+    title: "Earth Negotiations Bulletin Vol. 12 No. 567: summary of the eighteenth Conference of the Parties (Doha, Qatar, 26 November - 8 December 2012)"
+    short_title: "Earth Negotiations Bulletin COP18 summary"
+    year: 2012
+    body: "IISD Earth Negotiations Bulletin"
+    doc_class: negotiation_record
+    language: en
+    url: "https://enb.iisd.org/download/pdf/enb12567e.pdf"
+    provenance: "Per-COP summary issue from the archived ENB vol-12 index (Wayback snapshot 2024-11-12, ticket 0304); title in series form. Origin PDF open; verified at harvest fetch."
+  - symbol: "ENB/12/594"
+    title: "Earth Negotiations Bulletin Vol. 12 No. 594: summary of the nineteenth Conference of the Parties (Warsaw, Poland, 11-23 November 2013)"
+    short_title: "Earth Negotiations Bulletin COP19 summary"
+    year: 2013
+    body: "IISD Earth Negotiations Bulletin"
+    doc_class: negotiation_record
+    language: en
+    url: "https://enb.iisd.org/download/pdf/enb12594e.pdf"
+    provenance: "Per-COP summary issue from the archived ENB vol-12 index (Wayback snapshot 2024-11-12, ticket 0304); title in series form. Origin PDF open; verified at harvest fetch."
+  - symbol: "ENB/12/619"
+    title: "Earth Negotiations Bulletin Vol. 12 No. 619: summary of the twentieth Conference of the Parties (Lima, Peru, 1-14 December 2014)"
+    short_title: "Earth Negotiations Bulletin COP20 summary"
+    year: 2014
+    body: "IISD Earth Negotiations Bulletin"
+    doc_class: negotiation_record
+    language: en
+    url: "https://enb.iisd.org/download/pdf/enb12619e.pdf"
+    provenance: "Per-COP summary issue from the archived ENB vol-12 index (Wayback snapshot 2024-11-12, ticket 0304); title in series form. Origin PDF open; verified at harvest fetch."
+
+  # ── Fund / SCF reports identified by first-page classification (0304) ─
+  - symbol: "FCCC/KP/CMP/2008/1"
+    title: "Report of the Adaptation Fund Board to the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol (2008)"
+    short_title: "Adaptation Fund Board report, CMP4 (2008)"
+    year: 2008
+    body: "Adaptation Fund Board"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/2008/cmp4/eng/01.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/KP/CMP/2008/2"
+    title: "Report of the Adaptation Fund Board to the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol (2008/2, 2008)"
+    short_title: "Adaptation Fund Board report, CMP4 (2008)"
+    year: 2008
+    body: "Adaptation Fund Board"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/2008/cmp4/eng/02.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/KP/CMP/2012/10"
+    title: "Report of the Adaptation Fund Board to the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol (2012)"
+    short_title: "Adaptation Fund Board report, CMP8 (2012)"
+    year: 2012
+    body: "Adaptation Fund Board"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/2012/cmp8/eng/10.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/KP/CMP/2014/6"
+    title: "Report of the Adaptation Fund Board to the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol (2014)"
+    short_title: "Adaptation Fund Board report, CMP10 (2014)"
+    year: 2014
+    body: "Adaptation Fund Board"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/2014/cmp10/eng/06.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/KP/CMP/2015/2"
+    title: "Report of the Adaptation Fund Board to the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol (2015)"
+    short_title: "Adaptation Fund Board report, CMP11 (2015)"
+    year: 2015
+    body: "Adaptation Fund Board"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/2015/cmp11/eng/02.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/KP/CMP/2016/2"
+    title: "Report of the Adaptation Fund Board to the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol (2016)"
+    short_title: "Adaptation Fund Board report, CMP12 (2016)"
+    year: 2016
+    body: "Adaptation Fund Board"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/2016/cmp12/eng/02.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/KP/CMP/2017/1"
+    title: "Report of the Adaptation Fund Board to the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol (2017)"
+    short_title: "Adaptation Fund Board report, CMP13 (2017)"
+    year: 2017
+    body: "Adaptation Fund Board"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/2017/cmp13/eng/01.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/KP/CMP/2017/6"
+    title: "Report of the Adaptation Fund Board to the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol (2017/6, 2017)"
+    short_title: "Adaptation Fund Board report, CMP13 (2017)"
+    year: 2017
+    body: "Adaptation Fund Board"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/2017/cmp13/eng/06.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/CP/1996/8"
+    title: "Report of the Global Environment Facility to the Conference of the Parties (1996)"
+    short_title: "Global Environment Facility report, COP2 (1996)"
+    year: 1996
+    body: "Global Environment Facility"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/cop2/08.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/CP/1998/12"
+    title: "Report of the Global Environment Facility to the Conference of the Parties (1998)"
+    short_title: "Global Environment Facility report, COP4 (1998)"
+    year: 1998
+    body: "Global Environment Facility"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/cop4/12.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/CP/2003/3"
+    title: "Report of the Global Environment Facility to the Conference of the Parties (2003)"
+    short_title: "Global Environment Facility report, COP9 (2003)"
+    year: 2003
+    body: "Global Environment Facility"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/cop9/03.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/CP/2004/6"
+    title: "Report of the Global Environment Facility to the Conference of the Parties (2004)"
+    short_title: "Global Environment Facility report, COP10 (2004)"
+    year: 2004
+    body: "Global Environment Facility"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/cop10/06.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/CP/2015/4"
+    title: "Report of the Global Environment Facility to the Conference of the Parties (2015)"
+    short_title: "Global Environment Facility report, COP21 (2015)"
+    year: 2015
+    body: "Global Environment Facility"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/2015/cop21/eng/04.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/CP/2016/6"
+    title: "Report of the Global Environment Facility to the Conference of the Parties (2016)"
+    short_title: "Global Environment Facility report, COP22 (2016)"
+    year: 2016
+    body: "Global Environment Facility"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/2016/cop22/eng/06.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/CP/2017/7"
+    title: "Report of the Global Environment Facility to the Conference of the Parties (2017)"
+    short_title: "Global Environment Facility report, COP23 (2017)"
+    year: 2017
+    body: "Global Environment Facility"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/2017/cop23/eng/07.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/CP/2014/8"
+    title: "Report of the Green Climate Fund to the Conference of the Parties (2014)"
+    short_title: "Green Climate Fund report, COP20 (2014)"
+    year: 2014
+    body: "Green Climate Fund"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/2014/cop20/eng/08.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/CP/2017/5"
+    title: "Report of the Green Climate Fund to the Conference of the Parties (2017)"
+    short_title: "Green Climate Fund report, COP23 (2017)"
+    year: 2017
+    body: "Green Climate Fund"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/2017/cop23/eng/05.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/CP/2015/8"
+    title: "Report of the Standing Committee on Finance to the Conference of the Parties (2015)"
+    short_title: "UNFCCC Standing Committee on Finance report, COP21 (2015)"
+    year: 2015
+    body: "UNFCCC Standing Committee on Finance"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/2015/cop21/eng/08.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."

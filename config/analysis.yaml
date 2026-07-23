@@ -233,3 +233,54 @@ dedup_error_estimates:
   fuzzy_jaccard_threshold: 0.7      # title token Jaccard for the fuzzy FN tier
   divergent_jaccard_threshold: 0.5  # below = divergent titles in a DOI group
   collision_jaccard_threshold: 0.02 # below = near-zero overlap (DOI collision)
+
+# ── Literature-result confirmations (ticket 0310, ED-02/R1-18) ──────────
+# compute_lit_confirmations.py reads this block via load_analysis_config().
+# Four published results confirmed on the corpus, one statistic each, quoted
+# in the data paper's literature review via lit_* Quarto variables.
+lit_confirmations:
+  # 1. Diaz-Rainey et al. 2017: climate finance nearly absent from leading
+  #    finance journals. Explicit journal-name list, matched on the corpus
+  #    `journal` column after lowercasing and "&" -> "and" normalisation.
+  finance_journals:
+    - journal of finance
+    - journal of financial economics
+    - review of financial studies
+    - journal of financial and quantitative analysis
+    - review of finance
+    - journal of banking and finance
+    - finance research letters
+    - journal of corporate finance
+    - journal of financial intermediation
+    - journal of empirical finance
+    - journal of financial markets
+    - journal of international money and finance
+    - financial management
+    - financial analysts journal
+    - journal of portfolio management
+    - journal of risk and insurance
+    - quantitative finance
+    - journal of financial research
+    - journal of futures markets
+    - journal of business finance and accounting
+    - journal of financial stability
+  # 2/1. Pre/post proportion and trend-break year (Paris Agreement).
+  break_year: 2015
+  # 3. "Two literatures" poles: community_registry.yml concept keys, mapped
+  #    through figures.fig_global_map_direct Louvain ids (shared seed).
+  public_pole: [north-south, governance, health]
+  market_pole: [climate-risk, green-finance, innovation]
+  null_n_perm: 100     # degree-preserving rewiring replicates
+  null_seed: 42        # permutation RNG seed
+  # 4. Adaptation vs mitigation attention (UNEP Adaptation Gap Report).
+  #    Works mentioning exactly one of the two term families (title+abstract).
+  adaptation_terms: [adaptation]
+  mitigation_terms: [mitigation]
+  # 5/6. Semantic-cluster robustness and citation-vs-semantic structure
+  #      (companion paper): k-means on the refined embeddings, baseline in
+  #      raw space with sem_n_init restarts; variants (normalised space,
+  #      sem_n_init_variant restarts) probe partition stability (ARI).
+  sem_k: 6              # companion paper's cluster count
+  sem_seed: 42          # KMeans random_state (shared project seed)
+  sem_n_init: 20        # baseline restarts (compute_clusters.py geometry)
+  sem_n_init_variant: 10  # variant restarts for the stability check
