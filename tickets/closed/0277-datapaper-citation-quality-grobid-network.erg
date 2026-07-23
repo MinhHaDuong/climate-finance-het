@@ -2,6 +2,7 @@
 Title: Data paper: citation data quality — reference counts, GROBID stance, network demonstration
 Created: 2026-07-20
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1112
 
 --- log ---
 2026-07-20T09:00Z HDMX-coding-agent created
@@ -14,6 +15,7 @@ Author: HDMX-coding-agent
 
 2026-07-23T15:30Z HDMX-coding-agent note prose landed: Sec 2.3 reference-count distribution via refs_* Quarto vars (compute_vars.py reads tab_reference_counts.csv), Sec 3 GROBID stance (implemented at reference-string level over the whole corpus; no PDF full-text parsing, full texts not held), new tbl-openalex-limits row; response bullet in revision-rdj26561/citation-quality-response.md; R1-14 by renvoi to 0286/0307
 
+2026-07-23T19:40Z HDMX-coding-agent closed — autoclosed — PR #1112
 --- body ---
 ## Context
 
