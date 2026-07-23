@@ -2,11 +2,13 @@
 Title: Data paper: merge catalog-stage OpenAlex references into citations.csv — 4519 docs falsely zero-reference
 Created: 2026-07-22
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1093
 
 --- log ---
 2026-07-22T14:20Z HDMX-coding-agent created from zero-reference diagnosis (session f373ecb2, R1-13 follow-up)
 2026-07-23T13:45Z HDMX-coding-agent note implemented: fallback merge + padme regeneration; zero-share 22.10% (5,152), median 31, mean 43.7; intra-corpus edge set byte-identical
 
+2026-07-23T13:59Z HDMX-coding-agent closed — autoclosed — PR #1093
 --- body ---
 ## Context
 
