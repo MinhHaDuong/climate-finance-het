@@ -162,6 +162,16 @@ sensitivity:
 pre2007_traditions:
   louvain_seed: 42     # Louvain partition random_state (was RANDOM_STATE=42)
 
+# ── Global citation-network map (ticket 0307, R1-14) ─────────────────────
+# analyze_global_map.py builds the full-corpus community meta-graph; the
+# Louvain seed is shared with pre2007_traditions.louvain_seed so all network
+# figures use one seed. Community names/colors: config/community_registry.yml.
+global_map:
+  cocitation_top_k: 5000    # co-citation variant: most-cited references kept
+  cocitation_min_cocit: 5   # co-citation variant: minimum co-citation weight
+  min_share: 0.02           # meta-graph keeps communities >= this node share
+  top_members: 8            # most-cited members recorded per community
+
 # ── Pre-2007 tradition-separation null model (ticket 0182) ───────────────
 # compute_null_separation.py degree-preserving-rewiring null for the
 # separation of the three pre-2007 intellectual traditions. The graph-
