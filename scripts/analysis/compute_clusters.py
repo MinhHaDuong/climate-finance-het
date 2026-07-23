@@ -27,6 +27,7 @@ import warnings
 
 import numpy as np
 import pandas as pd
+from openalex_corpus.embedding import is_boilerplate_abstract
 from script_io_args import parse_io_args, validate_io
 from sklearn.cluster import KMeans
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -312,6 +313,11 @@ def main():
                         help="Comma-separated period break years (default: from config/analysis.yaml)")
     parser.add_argument("--v1-only", action="store_true",
                         help="Restrict to v1.0-submission corpus (in_v1==1)")
+    parser.add_argument("--exclude-boilerplate", action="store_true",
+                        help="Drop works whose abstract is boilerplate/stub or "
+                             "missing (is_boilerplate_abstract) before "
+                             "clustering — a data-quality artifact is not a "
+                             "theme of the field (ticket 0310 follow-up)")
     args = parser.parse_args(extra)
 
     # Derive companion file paths from --output
@@ -328,6 +334,17 @@ def main():
     df, embeddings = load_analysis_corpus(core_only=args.core_only,
                                           v1_only=args.v1_only)
     log.info("Loaded %d works, embeddings shape: %s", len(df), embeddings.shape)
+
+    if args.exclude_boilerplate:
+        clean = ~df.apply(
+            lambda r: is_boilerplate_abstract(r["abstract"], title=r["title"]),
+            axis=1,
+        ).values
+        n_excluded = int((~clean).sum())
+        df = df[clean].reset_index(drop=True)
+        embeddings = embeddings[clean]
+        log.info("--exclude-boilerplate: dropped %d works with boilerplate/"
+                 "stub/missing abstracts; %d remain", n_excluded, len(df))
 
     # ── Step 2: Global KMeans clustering (k=6, fit once) ──
     _cfg = load_analysis_config()

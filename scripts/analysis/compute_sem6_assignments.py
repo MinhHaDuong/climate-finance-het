@@ -23,6 +23,7 @@ import community as community_louvain
 import numpy as np
 import pandas as pd
 from _global_map_graph import direct_graph, load_data
+from openalex_corpus.embedding import is_boilerplate_abstract
 from pipeline_loaders import (
     load_analysis_config,
     load_refined_embeddings,
@@ -57,7 +58,15 @@ def analysis_set():
     all_works = load_refined_works().reset_index(drop=True)
     assert len(emb) == len(all_works), (len(emb), len(all_works))
     all_works["doi_norm"] = all_works["doi"].apply(normalize_doi)
-    keep = ~all_works["doi_norm"].isin(BAD_DOIS)
+    # Boilerplate/stub/missing abstracts are a data-quality artifact, not a
+    # theme: exclude them from the semantic-clustering input (0310 follow-up).
+    not_stub = ~all_works.apply(
+        lambda r: is_boilerplate_abstract(r["abstract"], title=r["title"]),
+        axis=1,
+    )
+    log.info("excluding %d works with boilerplate/stub/missing abstracts",
+             int((~not_stub).sum()))
+    keep = ~all_works["doi_norm"].isin(BAD_DOIS) & not_stub
     doi2row, doi2year = {}, {}
     for i, d, y in zip(all_works.index[keep], all_works.loc[keep, "doi_norm"],
                        all_works.loc[keep, "year"]):
