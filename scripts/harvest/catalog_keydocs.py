@@ -189,11 +189,14 @@ def fetch_pdf(url: str, dest: str) -> str:
             import time as _time
 
             import requests as _requests
-            _time.sleep(3.0)
-            resp = _requests.get(
-                url, timeout=120, headers={
-                    "User-Agent": "ClimateFinancePipeline/1.0 "
-                                  "(mailto:minh.haduong@gmail.com)"})
+            headers = {"User-Agent": "ClimateFinancePipeline/1.0 "
+                                     "(mailto:minh.haduong@gmail.com)"}
+            resp = None
+            for attempt in range(4):
+                _time.sleep(3.0 + attempt * 60.0)  # wayback throttles hard
+                resp = _requests.get(url, timeout=180, headers=headers)
+                if resp.status_code not in (429, 503):
+                    break
             resp.raise_for_status()
         else:
             resp = polite_get(url, delay=3.0)
