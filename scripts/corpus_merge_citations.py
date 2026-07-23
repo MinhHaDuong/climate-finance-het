@@ -114,12 +114,27 @@ def merge_citations(cache_dir=None, output_path=None, catalog_path=None):
         log.info("No ref matches cache at %s", ref_matches_path)
 
     # Read catalog-stage OpenAlex harvest (0300) — edge list with ref_oa_id
-    # only (no ref metadata). Appended LAST so the (source_doi, source_id)
-    # dedup below keeps the enrich-cache twin (which may carry a ref_doi).
+    # only (no ref metadata). FALLBACK layer: applied only to sources with
+    # no resolved (non-sentinel) reference row in the caches above. Catalog
+    # rows carry no ref_doi/title, so nothing could dedup them against a
+    # Crossref-resolved twin — a plain union would double-count every
+    # reference of a Crossref-covered source. Appended LAST so the
+    # (source_doi, source_id) dedup below keeps a resolved twin.
     if os.path.exists(catalog_path):
         cat = pd.read_csv(catalog_path, dtype=str, keep_default_na=False,
                           on_bad_lines="warn")
         log.info("Catalog-stage OpenAlex layer: %d rows", len(cat))
+        if frames:
+            cached = pd.concat(frames, ignore_index=True)
+            covered = set(
+                cached.loc[cached["ref_doi"] != SENTINEL_REF_DOI, "source_doi"]
+                .apply(lambda x: normalize_doi(x) if x else ""))
+            covered.discard("")
+        else:
+            covered = set()
+        cat = cat[~cat["source_doi"].apply(
+            lambda x: normalize_doi(x) if x else "").isin(covered)]
+        log.info("Catalog-stage rows kept (uncovered sources): %d", len(cat))
         cat_mapped = pd.DataFrame({
             "source_doi": cat["source_doi"],
             "source_id": cat["ref_oa_id"].apply(
