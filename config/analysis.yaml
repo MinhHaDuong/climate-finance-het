@@ -200,3 +200,11 @@ pre2007_separation:
   anchor_works:
     development:    [10.1007/s10584-007-9270-3]  # michaelowa2007
     burden_sharing: [10.1002/wcc.613]            # michaelowa2019
+
+# ── Dedup error-rate estimates (ticket 0301, R1-12) ─────────────────────
+# compute_dedup_error_estimates.py reads this block via load_analysis_config().
+# Thresholds mirror the 2026-07-22 read-only pilot.
+dedup_error_estimates:
+  year_gap_max: 5                  # max |year gap| for a WP/published pair
+  fuzzy_jaccard_threshold: 0.7     # title token Jaccard for the fuzzy FN tier
+  collision_jaccard_threshold: 0.1 # below = near-zero overlap (DOI collision)

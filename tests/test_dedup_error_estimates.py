@@ -133,7 +133,10 @@ def test_false_positives(combined_fixture):
     # Title+year pass: empty-year group (3 rows) + author-conflict group (2 rows)
     assert fp["fp_titleyear_removals"] == 3
     assert fp["fp_titleyear_groups"] == 2
-    assert fp["fp_titleyear_groups_author_conflict"] == 1
+    # Both merged groups mix distinct authors: the dedicated conflict group
+    # AND the empty-year group (three distinct authors merged by the
+    # degenerate key) — the counters overlap by design.
+    assert fp["fp_titleyear_groups_author_conflict"] == 2
     assert fp["fp_empty_year_groups"] == 1
     assert fp["fp_empty_year_docs_merged"] == 3
     assert fp["fp_empty_year_max_group_size"] == 3
