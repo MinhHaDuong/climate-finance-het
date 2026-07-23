@@ -259,8 +259,8 @@ documents:
     body: "UNFCCC Standing Committee on Finance"
     doc_class: biennial_assessment
     language: en
-    url: ""
-    provenance: "Cited in manuscript v2.0.5 (probe class A): first BA, defines climate finance accounting; absent from corpus v1. Resolve URL at harvest."
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/files/cooperation_and_support/financial_mechanism/standing_committee/application/pdf/2014_biennial_assessment_and_overview_of_climate_finance_flows_report_web.pdf"
+    provenance: "Cited in manuscript v2.0.5 (probe class A): first BA, defines climate finance accounting; absent from corpus v1. Origin URL bot-challenged (Incapsula, checked 2026-07-23); Wayback snapshot URL, content-verified at harvest fetch."
   - symbol: "UNFCCC/SCF/BA/2014/SUMMARY"
     title: "Summary and recommendations by the Standing Committee on Finance on the 2014 Biennial Assessment and Overview of Climate Finance Flows"
     short_title: "First BA (2014) — SCF summary and recommendations"
@@ -304,8 +304,8 @@ documents:
     body: "UNFCCC Standing Committee on Finance"
     doc_class: biennial_assessment
     language: en
-    url: ""
-    provenance: "Also a grey_sources.yaml seed — identical title/year by design. Resolve URL at harvest."
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/J0156_UNFCCC%20BA5_2022_Report_v4%5B52%5D.pdf"
+    provenance: "Also a grey_sources.yaml seed — identical title/year by design. Origin bot-challenged; Wayback snapshot URL (PDF spot-verified 2026-07-23)."
   - symbol: "UNFCCC/SCF/BA/2024"
     title: "Sixth Biennial Assessment and Overview of Climate Finance Flows"
     short_title: "Sixth Biennial Assessment (2024)"
@@ -351,17 +351,17 @@ documents:
     body: "GEF Evaluation Office"
     doc_class: fund_report
     language: en
-    url: ""
-    provenance: "Cited in manuscript v2.0.5 (probe class B). Incremental-cost accounting doctrine. Resolve URL at harvest (gefieo.org)."
+    url: "https://www.gefieo.org/content/dam/partners/ieo/docs/mgr/learnings/incremental-cost-assessment-2007-eng.pdf"
+    provenance: "Cited in manuscript v2.0.5 (probe class B). Incremental-cost accounting doctrine. URL spot-verified 2026-07-23 (HTTP 200, %PDF)."
   - symbol: "UNFCCC/CDM/2018/ACHIEVEMENTS"
-    title: "Achievements of the Clean Development Mechanism"
+    title: "Achievements of the Clean Development Mechanism 2001-2018: Harnessing Incentive for Climate Action"
     short_title: "CDM achievements report (2018)"
     year: 2018
     body: "UNFCCC"
     doc_class: fund_report
     language: en
-    url: ""
-    provenance: "Cited in manuscript v2.0.5 (probe class A). CDM finance-flows record. Resolve URL at harvest."
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/UNFCCC_CDM_report_2018.pdf"
+    provenance: "Cited in manuscript v2.0.5 (probe class A). CDM finance-flows record. Official title: Achievements of the Clean Development Mechanism: Harnessing Incentive for Climate Action 2001-2018. Origin bot-challenged; Wayback snapshot URL (PDF magic spot-checked 2026-07-23)."
   - symbol: "AFB/EFC/2010/REPORT"
     title: "Report of the Adaptation Fund Board to the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol"
     short_title: "Adaptation Fund Board report to CMP (2010, first monetization period)"
@@ -409,8 +409,8 @@ documents:
     body: "Alliance of Small Island States"
     doc_class: submission
     language: en
-    url: ""
-    provenance: "Cited in manuscript v2.0.5 (probe class B); author decision 2026-07-22 includes submissions. Resolve URL at harvest (UNFCCC submission portal); submissions sweep in child ticket."
+    url: "https://web.archive.org/web/2024id_/https://unfccc.int/sites/default/files/resource/LDC_AOSIS_NCQG_Submission_Joint%20Submission.pdf"
+    provenance: "Cited in manuscript v2.0.5 (probe class B); author decision 2026-07-22 includes submissions. Located 2026-07-23: the June 2024 LDC-AOSIS joint NCQG submission (unfccc.int submission portal); AUTHOR CHECK batched — confirm this joint submission is the cited AOSIS document. Origin bot-challenged; Wayback snapshot URL."
   - symbol: "G77/SUBMISSION/LTF/2012"
     title: "Submission by the Group of 77 and China on long-term climate finance"
     short_title: "G77+China submission on long-term finance (2012)"
@@ -466,4 +466,5 @@ documents:
     doc_class: negotiation_record
     language: en
     url: ""
-    provenance: "Cited in manuscript v2.0.5 (probe class C): the USD 100bn announcement statement. Resolve URL at harvest (State Dept archive)."
+    abstract: "Remarks delivered by US Secretary of State Hillary Rodham Clinton at the Copenhagen climate conference on 17 December 2009, announcing that, in the context of a strong accord with meaningful mitigation actions and full transparency, the United States was prepared to work with other countries toward a goal of jointly mobilizing USD 100 billion a year by 2020 to address the climate change needs of developing countries, drawing on a wide variety of sources, public and private, bilateral and multilateral, including alternative sources of finance."
+    provenance: "Cited in manuscript v2.0.5 (probe class C): the USD 100bn announcement statement. Source is an HTML page, not a PDF: https://2009-2017.state.gov/secretary/20092013clinton/rm/2009a/12/133734.htm (located 2026-07-23) — curated abstract from the archived transcript; no fetchable PDF, so url stays empty by design."
