@@ -105,6 +105,7 @@ endif
 -include scripts/analysis/venues.mk
 -include scripts/analysis/separation.mk
 -include scripts/analysis/network-limitations.mk
+-include scripts/analysis/lit-confirmations.mk
 
 # ── Quarto ───────────────────────────────────────────────
 # The per-document include sets (*_INCLUDES) and figure sets (*_FIGS) live in
@@ -297,6 +298,8 @@ $(COMPUTED_STATS) &: scripts/analysis/compute_vars.py scripts/utils.py $(REFINED
 		$(wildcard $(DATA_DIR)/citations.csv) \
 		$(wildcard $(REFINED_CIT)) \
 		$(wildcard deliverables/_shared/tables/qa_citations_report.json) \
+		$(wildcard deliverables/_shared/tables/tab_lit_confirmations.csv) \
+		$(wildcard deliverables/_shared/tables/tab_semantic_robustness.csv) \
 		$(DERIVED)/global_map_direct.json
 	$(PYTHON) $< --output $@
 

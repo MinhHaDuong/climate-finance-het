@@ -1,0 +1,91 @@
+%erg 0.1
+Title: Data paper: four literature-result confirmations with one clear statistical test each
+Created: 2026-07-23
+Author: haduong
+Closed: autoclosed — PR #1109
+
+--- log ---
+2026-07-23T09:00Z agent created
+2026-07-23T18:30Z agent note Author extended scope from 4 to 6 items: semantic-cluster robustness (ARI across k-means variants, per-work assignments artifact) and citation-vs-semantic near-independence (ARI within the companion's 0.06-0.22 range), industrialised from sibling-worktree explorations
+2026-07-23T19:10Z agent note Author final decision on item 6: no ARI statistic; instead the manuscript's thematic-composition figure recomputed on the current corpus (fig_sem_composition.png) plus one no-number sentence on the non-bijective citation/semantic correspondence. Recomputed clustering surfaces a stub-abstract cluster, labelled honestly and tied to the OpenAlex-limitations section
+
+2026-07-23T18:50Z HDMX-coding-agent closed — autoclosed — PR #1109
+--- body ---
+## Context
+
+Author decision (session 2026-07-23): strengthen the data paper's literature
+review (deliverables/data-paper/data-paper.qmd) with four confirmations of
+published results, each backed by ONE clear statistical test on our corpus,
+NO figures. Presentation: an itemized (bulleted) list, one item per result,
+following the pattern "X found A; we confirm: [statistic], p = Y", with at
+most one introductory sentence. Reinforces revision remarks ED-02/R1-18
+(added value of the corpus).
+
+The four results:
+1. Diaz-Rainey et al. 2017 (Climate Policy): climate finance nearly absent
+   from leading finance journals. Confirm and date the turn: annual share of
+   corpus works in an explicit finance-journal list (config), pre/post-2015
+   proportion test (chi-squared / exact).
+2. Green-finance bibliometrics (e.g. Zhang/Managi): explosive post-2015
+   growth. Trend-break test on annual counts (Chow on log-counts or
+   Poisson with break), p reported.
+3. "Two literatures that do not talk" (policy vs market finance): citation
+   edges between the public pole (North-South allocation, governance,
+   health) and the market pole (climate risk, green bonds, innovation) are
+   under-dense vs a degree-preserving rewiring null. Reuse
+   scripts/_null_separation.py (deterministic since PR #1103) and the
+   Louvain communities of scripts/analysis/analyze_global_map.py
+   (config/community_registry.yml mapping). Report z and empirical p.
+4. Adaptation understudied vs mitigation (Berrang-Ford et al. / UNEP
+   Adaptation Gap Reports): proportion test (adaptation vs mitigation share
+   in the corpus), exact p.
+
+## Relevant files
+- `deliverables/data-paper/data-paper.qmd` — literature review prose (bulleted list)
+- `scripts/analysis/compute_lit_confirmations.py` — new compute script (one CSV out)
+- `scripts/analysis/lit-confirmations.mk` — Make wiring
+- `deliverables/_shared/tables/tab_lit_confirmations.csv` — committed artifact
+- `scripts/schemas.py` — LitConfirmationsSchema (Pandera, strict, coerce)
+- `config/analysis.yaml` — lit_confirmations block (journal list, break year, terms, seed, n_perm)
+- `scripts/analysis/compute_vars.py` — lit_* Quarto variables for data-paper-vars.yml
+- `tests/test_lit_confirmations.py` — logic + contract + traceability tests
+- `deliverables/_shared/bibliography/main.bib` + `docs/articles/` — cited works with fulltext
+- `deliverables/data-paper/revision-rdj26561/literature-confirmations.md` — response-letter bullet
+
+## Actions
+1. Config block + schema + failing tests (red).
+2. Compute script: four metrics families, deterministic (fixed seeds,
+   _canonical_copy path for rewiring), Pandera-validated CSV.
+3. Make wiring; compute_vars.py reads the CSV into data-paper vars.
+4. Read each cited source (pdftotext) and verify the attributed claims;
+   bib entries with file= fulltext (allowlist only if unattainable).
+5. Prose: one intro sentence + four bullets in data-paper.qmd, numbers via
+   {{< meta lit_* >}} only. Response-letter bullet file.
+6. Determinism check: two make runs byte-identical CSV.
+
+## Test
+- tests/test_lit_confirmations.py: pure-logic tests on synthetic data
+  (proportion test wiring, Chow break, pole partition), config-declared
+  parameters, CLI/Makefile contract by source inspection, and a
+  traceability test asserting every lit_* variable quoted in the prose
+  exists in tab_lit_confirmations.csv (idiom of
+  test_network_limitations.py::test_response_letter_numbers_trace_to_artifact).
+
+## Verification
+- [ ] make check passes
+- [ ] tab_lit_confirmations.csv regenerates byte-identically across two runs
+- [ ] cited-works-availability test passes (fulltexts staged or allowlisted)
+- [ ] No hardcoded statistic in the prose (all via Quarto variables)
+
+## Invariants
+- No figure added; other tickets' prose untouched
+- Phase layout: artifact in deliverables/_shared/tables/ (writing deliverable)
+- No hardcoded paths or seeds; all parameters in config/analysis.yaml
+
+## Exit criteria
+- [ ] Four bulleted confirmations in the data-paper literature review, each
+      with one named statistic and a p-value, pattern "X found A; we confirm"
+- [ ] One committed, schema-validated, deterministic CSV artifact backing them
+- [ ] Cited sources actually read and accurately characterised, fulltexts archived
+- [ ] Response-letter bullet in revision-rdj26561/literature-confirmations.md
+- [ ] PR opened with **Ticket:** line; make check green

@@ -105,7 +105,8 @@ MANUSCRIPT_FIGS := deliverables/_shared/figures/fig_bars_v1.png deliverables/_sh
 
 DATAPAPER_FIGS  := deliverables/_shared/figures/fig_bars.png deliverables/_shared/figures/fig_dag.png \
                    deliverables/_shared/figures/fig_global_map_direct.png \
-                   deliverables/_shared/figures/fig_global_map_cocitation.png
+                   deliverables/_shared/figures/fig_global_map_cocitation.png \
+                   deliverables/_shared/figures/fig_sem_composition.png
 
 MULTILAYER_FIGS  := deliverables/_shared/figures/fig_breakpoints.png deliverables/_shared/figures/fig_alluvial.png \
                    deliverables/_shared/figures/fig_breaks.png \

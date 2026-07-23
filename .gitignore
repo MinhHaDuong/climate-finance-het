@@ -39,6 +39,9 @@ deliverables/_shared/figures/*
 # Companion artifact of the data-paper global map (ticket 0307): produced by
 # make, committed for reference, NOT embedded in any deliverable.
 !deliverables/_shared/figures/fig_global_map_cocitation.png
+# Data-paper semantic-composition figure (ticket 0310): the manuscript's
+# thematic-recomposition figure recomputed on the current corpus.
+!deliverables/_shared/figures/fig_sem_composition.png
 deliverables/_shared/tables/*
 !deliverables/_shared/tables/tab_variables.md
 !deliverables/_shared/tables/codebook.md
@@ -65,6 +68,13 @@ deliverables/_shared/tables/*
 # Dedup error-rate estimates are quoted in the data paper's dedup discussion
 # (R1-12, ticket 0301 → 0276); commit the artifact for the same reason.
 !deliverables/_shared/tables/tab_dedup_error_estimates.csv
+# Literature confirmations quoted in the data paper's review bullets
+# (ED-02/R1-18, ticket 0310); commit the artifacts so every quoted statistic
+# has an archived, deterministic record.
+!deliverables/_shared/tables/tab_lit_confirmations.csv
+!deliverables/_shared/tables/tab_semantic_robustness.csv
+!deliverables/_shared/tables/tab_sem6_assignments.csv
+!deliverables/_shared/tables/tab_sem_composition.csv
 # Generated -vars.yml, each in its deliverable folder (ticket 0226); the
 # manuscript's is pinned to v1.0 values and stays git-tracked.
 deliverables/_shared/technical-report-vars.yml

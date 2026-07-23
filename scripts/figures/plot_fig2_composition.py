@@ -81,7 +81,17 @@ def main():
                         help="Path to cluster labels JSON (default: cluster_labels.json)")
     parser.add_argument("--wide", action="store_true",
                         help="Landscape 2x3 layout for slides (default is tall 3x2 for the manuscript)")
+    parser.add_argument("--short-labels", type=str, default=None,
+                        help="JSON file of {cluster_id: panel title} overriding "
+                             "the module-level v1 SHORT_LABELS (needed when the "
+                             "input is a re-clustered corpus whose ids differ)")
     args = parser.parse_args(extra)
+
+    short_labels = SHORT_LABELS
+    if args.short_labels:
+        import json
+        with open(args.short_labels) as f:
+            short_labels = {str(k): v for k, v in json.load(f).items()}
 
     # Load data — --input takes precedence, then --alluvial, then default
     if io_args.input:
@@ -145,7 +155,7 @@ def main():
             )
 
         # Panel title (bold) + TF-IDF subtitle (italic, smaller; omitted in --wide)
-        short = SHORT_LABELS.get(col, f"Cluster {col}")
+        short = short_labels.get(str(col), f"Cluster {col}")
         # Wide: center titles and break two-part labels at "&" onto two lines.
         title_x, title_ha = (0.5, "center") if args.wide else (0, "left")
         title_y = 1.18 if args.wide else 1.24

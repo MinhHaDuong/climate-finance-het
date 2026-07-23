@@ -1,0 +1,8 @@
+metric,value
+sem6_n_works,9470.0
+sem6_k,6.0
+sem6_ari_norm_variant,0.9859584754036623
+sem6_ari_ninit_variant,1.0
+sem6_ari_min_variant,0.9859584754036623
+citsem_ari,0.12053128893696316
+citsem_nmi,0.17737088441345333

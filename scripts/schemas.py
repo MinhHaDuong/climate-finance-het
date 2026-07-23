@@ -400,3 +400,32 @@ DedupErrorEstimatesSchema = DataFrameSchema(
     strict=True,
     coerce=True,
 )
+
+# ---------------------------------------------------------------------------
+# Literature-result confirmations CSV (ticket 0310)
+# ---------------------------------------------------------------------------
+# Long-format metric/value artifact backing the data paper's four
+# literature confirmations (lit_* Quarto variables).
+
+LitConfirmationsSchema = DataFrameSchema(
+    columns={
+        "metric": Column(str),
+        "value": Column(float, nullable=True),
+    },
+    strict=True,
+    coerce=True,
+)
+
+# Per-work semantic-cluster / citation-community assignments (ticket 0310):
+# the reproducibility artifact behind the semantic-robustness confirmations.
+
+Sem6AssignmentsSchema = DataFrameSchema(
+    columns={
+        "doi": Column(str, unique=True),
+        "year": Column(float, nullable=True),
+        "sem_cluster": Column(int),
+        "cit_community": Column(int),
+    },
+    strict=True,
+    coerce=True,
+)

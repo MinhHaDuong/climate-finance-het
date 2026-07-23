@@ -88,6 +88,23 @@ DOC_VARS = {
         "gm_modularity",
         "gm_n_connected",
         "lang_english_pct",
+        "lit_adapt_n",
+        "lit_adapt_p",
+        "lit_adapt_share_pct",
+        "lit_sem6_ari",
+        "lit_sem6_n",
+        "lit_finshare_chi2",
+        "lit_finshare_p",
+        "lit_finshare_post_pct",
+        "lit_finshare_pre_pct",
+        "lit_growth_f",
+        "lit_growth_p",
+        "lit_growth_post_pct",
+        "lit_mitig_n",
+        "lit_poles_cross_null_pct",
+        "lit_poles_cross_pct",
+        "lit_poles_p",
+        "lit_poles_z",
         "openalex_pct",
     ],
     "multilayer-detection": [
@@ -460,6 +477,52 @@ def citation_stats(v):
                 )
 
 
+def _fmt_p(p):
+    """p-value with its comparator: '= 0.0099' down to 0.0001, else '< 0.0001'.
+
+    The comparator travels with the value so the prose can write
+    'p {{< meta lit_x_p >}}' and stay valid in both regimes.
+    """
+    if p >= 0.0001:
+        return f"= {p:.4f}"
+    return "< 0.0001"
+
+
+def lit_confirmations_stats(v):
+    """Literature-confirmation stats from tab_lit_confirmations.csv (0310).
+
+    Produced by scripts/analysis/compute_lit_confirmations.py; feeds the
+    data-paper literature-review bullets so no statistic is hand-typed.
+    """
+    path = os.path.join(TABLES_DIR, "tab_lit_confirmations.csv")
+    if not os.path.isfile(path):
+        return
+    m = pd.read_csv(path).set_index("metric")["value"]
+    v["lit_finshare_pre_pct"] = f"{m['finshare_pre_pct']:.2f}"
+    v["lit_finshare_post_pct"] = f"{m['finshare_post_pct']:.2f}"
+    v["lit_finshare_chi2"] = f"{m['finshare_chi2']:.0f}"
+    v["lit_finshare_p"] = _fmt_p(m["finshare_p_value"])
+    v["lit_growth_pre_pct"] = f"{m['growth_pre_pct']:.0f}"
+    v["lit_growth_post_pct"] = f"{m['growth_post_pct']:.0f}"
+    v["lit_growth_f"] = f"{m['growth_f_stat']:.0f}"
+    v["lit_growth_p"] = _fmt_p(m["growth_p_value"])
+    v["lit_poles_cross_pct"] = f"{m['poles_cross_share_pct']:.1f}"
+    v["lit_poles_cross_null_pct"] = f"{m['poles_cross_share_null_pct']:.1f}"
+    v["lit_poles_z"] = f"{m['poles_within_share_z']:.0f}"
+    v["lit_poles_p"] = _fmt_p(m["poles_p_value"])
+    v["lit_adapt_n"] = _int(m["adapt_n"])
+    v["lit_mitig_n"] = _int(m["mitig_n"])
+    v["lit_adapt_share_pct"] = f"{m['adapt_share_pct']:.0f}"
+    v["lit_adapt_p"] = _fmt_p(m["adapt_p_value"])
+
+    sem_path = os.path.join(TABLES_DIR, "tab_semantic_robustness.csv")
+    if not os.path.isfile(sem_path):
+        return
+    s = pd.read_csv(sem_path).set_index("metric")["value"]
+    v["lit_sem6_ari"] = f"{s['sem6_ari_min_variant']:.3f}"
+    v["lit_sem6_n"] = _int(s["sem6_n_works"])
+
+
 def global_map_stats(v):
     """Global citation-network map stats from global_map_direct.json (0307).
 
@@ -504,6 +567,7 @@ def main():
     filter_stats(v)
     dedup_stats(v)
     global_map_stats(v)
+    lit_confirmations_stats(v)
 
     # Dedup vars fall back to MISSING while their artifacts are pending:
     # the catalog_merge run report awaits a dvc-capable full-data session
