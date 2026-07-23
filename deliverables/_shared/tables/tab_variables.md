@@ -33,4 +33,4 @@
 | `is_protected` | boolean | Protection from removal (key papers kept despite flags) | quality filtering (corpus_filter.py) |
 | `protection_reason` | string, nullable | Why the work is protected (citation count, seed list, ...) (absent from corpus builds predating this pipeline stage) | quality filtering (corpus_filter.py) |
 
-: Variables of `climate_finance_corpus.csv`. The table is generated from the deposit column contract (`scripts/deposit_variables.py`), which the export script enforces at write time. {#tbl-variables}
+: Variables of `climate_finance_corpus.csv`. The table is generated from the deposit column contract (`scripts/_deposit_variables.py`), which the export script enforces at write time. {#tbl-variables}
