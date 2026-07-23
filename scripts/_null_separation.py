@@ -129,6 +129,26 @@ def partition_modularity(G, node_to_tradition):
     return nx.community.modularity(H, communities.values(), weight=None)
 
 
+def _canonical_copy(G):
+    """Rebuild ``G`` with nodes and edges inserted in sorted order.
+
+    ``double_edge_swap`` draws edges through the graph's internal adjacency
+    order, which follows *insertion* order — itself downstream of set/dict
+    iteration in the graph construction and therefore of ``PYTHONHASHSEED``.
+    Two ``make`` invocations of the same seeded null test could thus disagree
+    (observed drift: null_mean 0.4309 vs 0.4375 on the 0286 bipartition).
+    Rebuilding from sorted node and edge lists makes the rewiring
+    deterministic BY CONSTRUCTION: same graph + same seed -> same null draw,
+    in any process. Node/edge data attributes are preserved.
+    """
+    H = nx.Graph()
+    for n in sorted(G.nodes()):
+        H.add_node(n, **G.nodes[n])
+    for u, v in sorted(tuple(sorted((u, v))) for u, v in G.edges()):
+        H.add_edge(u, v, **G.edges[u, v])
+    return H
+
+
 def rewire_degree_preserving(G, seed, n_swaps_factor=10):
     """Return a degree-preserving rewiring of ``G`` (configuration model).
 
@@ -147,7 +167,7 @@ def rewire_degree_preserving(G, seed, n_swaps_factor=10):
         truncated replicate as a fully mixed configuration-model draw.
 
     """
-    H = G.copy()
+    H = _canonical_copy(G)
     m = H.number_of_edges()
     if m < 2 or H.number_of_nodes() < 4:
         return H, False

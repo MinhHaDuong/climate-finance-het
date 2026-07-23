@@ -281,3 +281,61 @@ def test_load_data_reads_works_through_loader(monkeypatch):
 
     assert calls["works"] == 1, "works must be read through load_refined_works()"
     assert "10.1/a" in doi_meta
+
+
+def _shuffled_insertion_copy(G, order_seed):
+    """Same graph, different node/edge insertion order (hash-seed proxy)."""
+    import random
+
+    import networkx as nx
+
+    rng = random.Random(order_seed)
+    H = nx.Graph()
+    nodes = list(G.nodes())
+    rng.shuffle(nodes)
+    H.add_nodes_from(nodes)
+    edges = list(G.edges())
+    rng.shuffle(edges)
+    H.add_edges_from((v, u) if rng.random() < 0.5 else (u, v)
+                     for u, v in edges)
+    return H
+
+
+def test_null_test_invariant_to_insertion_order():
+    """Rewiring null is deterministic BY CONSTRUCTION (ticket 0286 REROLL).
+
+    double_edge_swap draws edges through adjacency (insertion) order, which
+    varies with PYTHONHASHSEED across processes. The canonical sorted rebuild
+    must make the null identical for any insertion order of the same graph.
+    """
+    from _null_separation import null_separation_test, within_tradition_share
+
+    G, node_to_tradition = _three_cliques()
+    G.remove_edge(0, 1)  # break symmetry a little
+    results = []
+    for order_seed in (1, 2, 3):
+        H = _shuffled_insertion_copy(G, order_seed)
+        res = null_separation_test(
+            H, node_to_tradition, within_tradition_share, n_perm=30, seed=42)
+        results.append((res["null_mean"], res["null_std"], res["z_score"]))
+    assert results[0] == results[1] == results[2]
+
+
+def test_null_test_repeatable_in_process_and_canonical_value():
+    """Two runs agree exactly, and match the pinned canonical fixture value.
+
+    The pin guards cross-process reproducibility (a PYTHONHASHSEED-dependent
+    code path would break it). networkx is uv.lock-pinned, so the canonical
+    number is machine-independent.
+    """
+    from _null_separation import null_separation_test, within_tradition_share
+
+    G, node_to_tradition = _three_cliques()
+    r1 = null_separation_test(
+        G, node_to_tradition, within_tradition_share, n_perm=50, seed=42)
+    r2 = null_separation_test(
+        G, node_to_tradition, within_tradition_share, n_perm=50, seed=42)
+    assert (r1["null_mean"], r1["null_std"]) == (r2["null_mean"], r2["null_std"])
+    # Canonical fixture value, pinned by running once with the sorted
+    # rebuild (three 6-cliques, n_perm=50, seed=42; networkx uv.lock-pinned).
+    assert r1["null_mean"] == pytest.approx(0.29333333333333333, abs=1e-12)
