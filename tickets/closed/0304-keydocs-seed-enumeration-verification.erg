@@ -2,12 +2,14 @@
 Title: Corpus v2: complete and verify the key-documents seed enumeration (UNFCCC + OECD DAC)
 Created: 2026-07-22
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1107
 
 --- log ---
 2026-07-22T23:00Z HDMX-coding-agent created child of 0288 — BUILD PR lands harvester + starter seeds; this ticket completes the document-level lists
 2026-07-22T23:30Z HDMX-coding-agent note author decision (2026-07-22): UNFCCC enumeration goes through a facet-crawl discovery script — unfccc.int/documents exposes stable Drupal facets (Topic="Climate finance" x Type x Body x Session/Year); Action 1 amended, alignment notes with grey/teaching added
 2026-07-22T23:45Z HDMX-coding-agent note renumbered 0293 -> 0304: seat taken on main by PR #1083's renumber chain (optimistic-ID protocol, 0299-0303 all taken today)
 
+2026-07-23T18:44Z HDMX-coding-agent closed — autoclosed — PR #1107
 --- body ---
 ## Context
 
