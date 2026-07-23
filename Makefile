@@ -260,7 +260,7 @@ deliverables/_shared/tables/tab_languages.md: scripts/figures/export_language_ta
 
 # Variables table for the data paper (ticket 0279) — rendered from the deposit
 # column contract, no corpus data needed.
-deliverables/_shared/tables/tab_variables.md: scripts/figures/export_variables_table.py scripts/deposit_variables.py
+deliverables/_shared/tables/tab_variables.md: scripts/figures/export_variables_table.py scripts/_deposit_variables.py
 	$(PYTHON) $< --output $@
 
 corpus-tables: deliverables/_shared/tables/tab_corpus_sources.csv deliverables/_shared/tables/tab_corpus_sources.md \

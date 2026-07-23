@@ -194,7 +194,7 @@ def render_markdown_table() -> str:
     lines += [
         "",
         ": Variables of `climate_finance_corpus.csv`. The table is generated "
-        "from the deposit column contract (`scripts/deposit_variables.py`), "
+        "from the deposit column contract (`scripts/_deposit_variables.py`), "
         "which the export script enforces at write time. {#tbl-variables}",
     ]
     return "\n".join(lines) + "\n"

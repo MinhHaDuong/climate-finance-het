@@ -3,7 +3,7 @@
 Remark ED-03 (tracker 0274): the data paper must carry a table describing the
 variables of climate_finance_corpus.csv, generated from a single declared
 contract — not hand-written prose. The contract lives in
-scripts/deposit_variables.py; export_deposit.py enforces it at write time, so
+scripts/_deposit_variables.py; export_deposit.py enforces it at write time, so
 the table cannot drift from the shipped CSV.
 """
 
@@ -11,8 +11,7 @@ import os
 
 import pandas as pd
 import pytest
-
-from deposit_variables import (
+from _deposit_variables import (
     DEPOSIT_VARIABLES,
     check_columns,
     contract_names,

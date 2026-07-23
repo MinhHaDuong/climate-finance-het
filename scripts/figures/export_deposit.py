@@ -8,7 +8,7 @@ climate_finance_corpus.csv with:
 - Intermediate columns (doi_norm, etc.) dropped
 
 The column transform and the variables contract live in
-scripts/deposit_variables.py (ticket 0279); the output is checked against the
+scripts/_deposit_variables.py (ticket 0279); the output is checked against the
 contract at write time so the data paper's variables table cannot drift from
 the shipped CSV.
 
@@ -20,7 +20,7 @@ import os
 import sys
 
 import pandas as pd
-from deposit_variables import check_columns, transform
+from _deposit_variables import check_columns, transform
 from script_io_args import parse_io_args, validate_io
 from utils import CATALOGS_DIR, get_logger
 
@@ -64,7 +64,7 @@ def main():
     if errors:
         for e in errors:
             log.error(e)
-        log.error("Deposit columns drifted from scripts/deposit_variables.py — "
+        log.error("Deposit columns drifted from scripts/_deposit_variables.py — "
                   "update the contract (and the data paper table regenerates).")
         sys.exit(1)
 
