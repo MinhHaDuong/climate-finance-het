@@ -1,0 +1,67 @@
+%erg 0.1
+Title: Data paper: global co-citation community map of the full corpus (R1-14 literal response)
+Created: 2026-07-23
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-23T17:20Z HDMX-coding-agent created author decision (session 2026-07-23): two-level response to R1-14 — global map as the paper figure, pre-2008 traditions analysis compressed into the response letter
+
+--- body ---
+## Context
+
+RDJ-26561 R&R (tracker 0274, remark R1-14): the referee asks for "a network
+of citations drawn from this database ... to demonstrate its potential
+and/or limitations". Author decision (2026-07-23): answer literally with a
+GLOBAL map — Louvain communities on the full intra-corpus citation graph
+(~31,7k works, ~508k intra-corpus pairs on current data), communities
+counted and NAMED — while the pre-2008 traditions analysis (ticket 0286
+exploration: separation test z=9.4, bootstrap 8% / 93-99%) moves to the
+response letter as the limitations demonstration. Exploration found at
+least one well-formed community the traditions analysis leaves unlabeled
+(corporate finance / theory of the firm: Jensen-Meckling, Fama-French,
+Myers, Porter, Heinkel) — the field structuration result the author hopes
+for ("quasiment un résultat publiable").
+
+## Relevant files
+
+- `scripts/_pre2007_traditions.py` — method idioms to reuse (compute/plot
+  separation, config seeds, anchor labeling)
+- `scripts/figures/plot_fig_traditions.py` — plot conventions
+- Exploration scripts in the 0286 worktree/scratchpad (robustness_2008.py)
+- `deliverables/data-paper/data-paper.qmd` — embed target
+
+## Actions
+
+1. Compute: co-citation (or direct-citation — justify the choice) graph on
+   the full refined corpus, current data (post-PR #1093); Louvain with
+   config seed; count communities, size distribution.
+2. Name communities from their top-cited members; flag the unnameable rest
+   honestly (limitations part of R1-14).
+3. Render at community granularity (aggregate or top-N nodes per
+   community) — must stay legible; node-level render of 31k works is not
+   the goal.
+4. Compute/plot separation, config-driven, Make target, tested; figure
+   embedded in data-paper.qmd with takeaway caption.
+5. R1-14 response bullet: global map = potential; pre-2008 stats (from
+   0286 material) = limitations.
+
+## Test
+
+- Figure target renders from contract files; seeds fixed; tests per
+  existing figure-test conventions.
+
+## Verification
+
+- [ ] Community count and names traceable to a generated artifact (no
+      hand-curated numbers in prose)
+
+## Invariants
+
+- Phase separation; save_figure(); config-driven parameters.
+
+## Exit criteria
+
+- [ ] Global community map landed in data-paper.qmd, communities named
+- [ ] R1-14 response bullet drafted (feeds 0283)
+- [ ] Coordinated with 0286 (which now scopes to the response-letter
+      material and the manuscript-side finding)
