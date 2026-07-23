@@ -2,12 +2,14 @@
 Title: Data paper: four literature-result confirmations with one clear statistical test each
 Created: 2026-07-23
 Author: haduong
+Closed: autoclosed — PR #1109
 
 --- log ---
 2026-07-23T09:00Z agent created
 2026-07-23T18:30Z agent note Author extended scope from 4 to 6 items: semantic-cluster robustness (ARI across k-means variants, per-work assignments artifact) and citation-vs-semantic near-independence (ARI within the companion's 0.06-0.22 range), industrialised from sibling-worktree explorations
 2026-07-23T19:10Z agent note Author final decision on item 6: no ARI statistic; instead the manuscript's thematic-composition figure recomputed on the current corpus (fig_sem_composition.png) plus one no-number sentence on the non-bijective citation/semantic correspondence. Recomputed clustering surfaces a stub-abstract cluster, labelled honestly and tied to the OpenAlex-limitations section
 
+2026-07-23T18:50Z HDMX-coding-agent closed — autoclosed — PR #1109
 --- body ---
 ## Context
 
