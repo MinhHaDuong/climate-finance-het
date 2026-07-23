@@ -8,6 +8,8 @@ Author: HDMX-coding-agent
 2026-07-20T10:00Z HDMX-coding-agent note split the R1-19 CSV-restructure decision into 0287; this ticket delivers the variables table (ED-03)
 2026-07-23T00:30Z HDMX-coding-agent note corpus-v2 layer merged (PR #1085): the variables table must cover 4 new refined_works columns — from_unfccc, from_oecd, abstract_provenance (values: curated / reconstructed:lead / reconstructed:exec_summary), keywords_provenance (extracted / generated:lexicon) — and the abstract_status value 'reconstructed'
 
+2026-07-23T15:55Z HDMX-coding-agent note response-letter bullet drafted in deliverables/data-paper/revision-rdj26561/ed03-variables-table.md
+
 --- body ---
 ## Context
 
