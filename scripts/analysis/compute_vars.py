@@ -106,6 +106,13 @@ DOC_VARS = {
         "lit_poles_p",
         "lit_poles_z",
         "openalex_pct",
+        "refs_doi_docs",
+        "refs_max",
+        "refs_mean",
+        "refs_median",
+        "refs_p95",
+        "refs_zero_n",
+        "refs_zero_share_pct",
     ],
     "multilayer-detection": [
         "bim_corr",
@@ -477,6 +484,25 @@ def citation_stats(v):
                 )
 
 
+def reference_count_stats(v):
+    """Per-document reference-count distribution from tab_reference_counts.csv.
+
+    0285's Phase-2 artifact (long metric/value format), quoted by the data
+    paper's citation-quality discussion (ticket 0277, remark R1-13).
+    """
+    df = _read_csv("tab_reference_counts.csv")
+    if df is None:
+        return
+    m = dict(zip(df["metric"], df["value"]))
+    v["refs_doi_docs"] = _int(m["n_documents_with_doi"])
+    v["refs_zero_n"] = _int(m["n_zero_references"])
+    v["refs_zero_share_pct"] = _pct(100 * m["share_zero_references"])
+    v["refs_median"] = _int(m["ref_count_median"])
+    v["refs_mean"] = _pct(m["ref_count_mean"])
+    v["refs_p95"] = _int(m["ref_count_p95"])
+    v["refs_max"] = _int(m["ref_count_max"])
+
+
 def _fmt_p(p):
     """p-value with its comparator: '= 0.0099' down to 0.0001, else '< 0.0001'.
 
@@ -565,6 +591,7 @@ def main():
     pca_stats(v)
     citation_stats(v)
     filter_stats(v)
+    reference_count_stats(v)
     dedup_stats(v)
     global_map_stats(v)
     lit_confirmations_stats(v)
