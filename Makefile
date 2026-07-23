@@ -263,6 +263,11 @@ deliverables/_shared/tables/tab_languages.md: scripts/figures/export_language_ta
 deliverables/_shared/tables/tab_variables.md: scripts/figures/export_variables_table.py scripts/_deposit_variables.py
 	$(PYTHON) $< --output $@
 
+# Codebook / data dictionary for the Zenodo package (ticket 0287, R1-19) —
+# missingness is measured on the real corpus, so this needs Phase-1 data.
+deliverables/_shared/tables/codebook.md: scripts/figures/export_codebook.py scripts/_deposit_variables.py $(EXTENDED)
+	$(PYTHON) $< --output $@
+
 corpus-tables: deliverables/_shared/tables/tab_corpus_sources.csv deliverables/_shared/tables/tab_corpus_sources.md \
                deliverables/_shared/tables/tab_citation_coverage.md \
                deliverables/_shared/tables/tab_reference_counts.csv \

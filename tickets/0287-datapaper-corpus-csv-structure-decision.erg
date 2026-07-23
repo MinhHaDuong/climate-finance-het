@@ -8,6 +8,9 @@ Label: needs-human
 2026-07-20T10:00Z HDMX-coding-agent created split from 0279
 2026-07-22T11:00Z HDMX-coding-agent note author deferred the decision (session 2026-07-22, batched decision round) — stays needs-human; blocks neither 0288 nor 0279 (variables table lands either way), but 0280's deposit should wait for it to avoid a double Zenodo version bump
 
+2026-07-23T14:00Z haduong decision AUTHOR DECISION: do NOT restructure the CSV. The file is formally correct (pandas-loadable, rectangular, 26 columns, no duplicates) and already organised in 4 logical groups (Record identity, Bibliographic metadata, Provenance flags, Curation metadata); R1-19 is a viewer-ergonomics concern. Answer: a formal data dictionary — column, type, allowed values, missingness measured on the real data — extending the 0279 contract; codebook ships in the Zenodo package (coordinated with 0280, deposit not performed here); rationale paragraph drafted for the response letter (feeds 0283).
+2026-07-23T14:05Z HDMX-coding-agent note implemented: contract extended (group, allowed_values, compute_missingness, render_codebook in scripts/_deposit_variables.py), scripts/figures/export_codebook.py, tab_variables.md regenerated with group column, codebook.md generated from real data (42916 rows), r1-19-csv-structure.md response bullet, 0280 log noted for package inclusion
+
 --- body ---
 ## Context
 
@@ -42,7 +45,7 @@ settles whether the CSV itself changes.
 
 ## Verification
 
-- [ ] Decision recorded in the log with rationale
+- [x] Decision recorded in the log with rationale (2026-07-23 author decision)
 
 ## Invariants
 
@@ -50,5 +53,5 @@ settles whether the CSV itself changes.
 
 ## Exit criteria
 
-- [ ] Decision made; either restructured CSV landed and shipped via 0280, or
+- [x] Decision made; either restructured CSV landed and shipped via 0280, or
       documented-layout rationale drafted for 0283
