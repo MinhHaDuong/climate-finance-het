@@ -87,6 +87,45 @@ def build_variant(citer_cutoff, works_path=None, cit_path=None):
                 cutoff_year=cutoff_year, citer_cutoff=citer_cutoff)
 
 
+def _draw_labels(ax, res, pos, barrett_nodes):
+    """Top-4 labels per tradition + Barrett nodes, deduped, anti-collision."""
+    G = res["graph"]
+    ref_counts = res["ref_counts"]
+    label_nodes = set(barrett_nodes)
+    for c in res["trad_to_comm"].values():
+        label_nodes.update(sorted(
+            res["comm_to_nodes"][c], key=lambda d: -ref_counts.get(d, 0))[:4])
+    candidates = sorted(label_nodes, key=lambda d: -ref_counts.get(d, 0))
+    labels, seen = {}, set()
+    for n in candidates:
+        t = G.nodes[n]["label"]
+        if " " not in t or t.startswith("10."):
+            continue
+        year = t.split()[-1][:4]
+        if year.isdigit() and int(year) > res["cutoff_year"] + 1:
+            log.warning("Anachronistic label year (metadata defect), "
+                        "skipping label: %s (%s)", t, n)
+            continue
+        if t in seen and n not in barrett_nodes:
+            continue
+        seen.add(t)
+        labels[n] = t
+    placed = []
+    for n, text in sorted(labels.items(), key=lambda kv: pos[kv[0]][1],
+                          reverse=True):
+        x, y = pos[n]
+        ly = y + 0.05
+        while any(abs(x - px) < 0.30 and abs(ly - py) < 0.06
+                  for px, py in placed):
+            ly += 0.06
+        placed.append((x, ly))
+        weight = "bold" if n in barrett_nodes else "normal"
+        ax.text(x, ly, text, fontsize=6, color=DARK, ha="center",
+                va="bottom", fontweight=weight,
+                bbox=dict(boxstyle="round,pad=0.15", fc="white",
+                          ec="none", alpha=0.75))
+
+
 def render(res, out_stem):
     """Render the network with tradition coloring and Barrett highlighted."""
     G = res["graph"]
@@ -94,7 +133,6 @@ def render(res, out_stem):
     comm_to_tradition = res["comm_to_tradition"]
     trad_to_comm = res["trad_to_comm"]
     comm_to_nodes = res["comm_to_nodes"]
-    ref_counts = res["ref_counts"]
     labels_by_trad, colors_by_trad = tradition_style()
 
     fig_w = FIGWIDTH * 1.6
@@ -157,40 +195,7 @@ def render(res, out_stem):
         node_size=[s * 2.2 for s in sizes(barrett_nodes)],
         edgecolors=DARK, linewidths=1.6, alpha=1.0)
 
-    # Labels: top-4 per tradition + Barrett nodes, deduped, anti-collision.
-    label_nodes = set(barrett_nodes)
-    for c in trad_to_comm.values():
-        label_nodes.update(sorted(
-            comm_to_nodes[c], key=lambda d: -ref_counts.get(d, 0))[:4])
-    candidates = sorted(label_nodes, key=lambda d: -ref_counts.get(d, 0))
-    labels, seen = {}, set()
-    for n in candidates:
-        t = G.nodes[n]["label"]
-        if " " not in t or t.startswith("10."):
-            continue
-        year = t.split()[-1][:4]
-        if year.isdigit() and int(year) > res["cutoff_year"] + 1:
-            log.warning("Anachronistic label year (metadata defect), "
-                        "skipping label: %s (%s)", t, n)
-            continue
-        if t in seen and n not in barrett_nodes:
-            continue
-        seen.add(t)
-        labels[n] = t
-    placed = []
-    for n, text in sorted(labels.items(), key=lambda kv: pos[kv[0]][1],
-                          reverse=True):
-        x, y = pos[n]
-        ly = y + 0.05
-        while any(abs(x - px) < 0.30 and abs(ly - py) < 0.06
-                  for px, py in placed):
-            ly += 0.06
-        placed.append((x, ly))
-        weight = "bold" if n in barrett_nodes else "normal"
-        ax.text(x, ly, text, fontsize=6, color=DARK, ha="center",
-                va="bottom", fontweight=weight,
-                bbox=dict(boxstyle="round,pad=0.15", fc="white",
-                          ec="none", alpha=0.75))
+    _draw_labels(ax, res, pos, barrett_nodes)
 
     handles = []
     for trad, c in trad_to_comm.items():

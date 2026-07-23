@@ -9,7 +9,6 @@ fast tier).
 """
 
 import os
-import re
 
 import networkx as nx
 import yaml
