@@ -7,6 +7,8 @@ Label: needs-human
 --- log ---
 2026-07-23T16:35Z HDMX-coding-agent created author request (session 2026-07-23) — correction of the already-submitted paper
 
+2026-07-23T22:30Z HDMX-coding-agent note author session: manuscript.qmd l.305 clause "citation ties carry about three times more group structure than topical similarity" has NO named metric behind it — author does not assume the wording. Next round: either name and compute the metric (likely a modularity ratio) as a committed artifact, or drop the clause and let the ARI range carry the argument.
+
 --- body ---
 ## Context
 
