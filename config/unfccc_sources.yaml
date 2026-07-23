@@ -1982,3 +1982,167 @@ documents:
     language: en
     url: "https://enb.iisd.org/download/pdf/enb12619e.pdf"
     provenance: "Per-COP summary issue from the archived ENB vol-12 index (Wayback snapshot 2024-11-12, ticket 0304); title in series form. Origin PDF open; verified at harvest fetch."
+
+  # ── Fund / SCF reports identified by first-page classification (0304) ─
+  - symbol: "FCCC/KP/CMP/2008/1"
+    title: "Report of the Adaptation Fund Board to the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol (2008)"
+    short_title: "Adaptation Fund Board report, CMP4 (2008)"
+    year: 2008
+    body: "Adaptation Fund Board"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/2008/cmp4/eng/01.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/KP/CMP/2008/2"
+    title: "Report of the Adaptation Fund Board to the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol (2008/2, 2008)"
+    short_title: "Adaptation Fund Board report, CMP4 (2008)"
+    year: 2008
+    body: "Adaptation Fund Board"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/2008/cmp4/eng/02.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/KP/CMP/2012/10"
+    title: "Report of the Adaptation Fund Board to the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol (2012)"
+    short_title: "Adaptation Fund Board report, CMP8 (2012)"
+    year: 2012
+    body: "Adaptation Fund Board"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/2012/cmp8/eng/10.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/KP/CMP/2014/6"
+    title: "Report of the Adaptation Fund Board to the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol (2014)"
+    short_title: "Adaptation Fund Board report, CMP10 (2014)"
+    year: 2014
+    body: "Adaptation Fund Board"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/2014/cmp10/eng/06.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/KP/CMP/2015/2"
+    title: "Report of the Adaptation Fund Board to the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol (2015)"
+    short_title: "Adaptation Fund Board report, CMP11 (2015)"
+    year: 2015
+    body: "Adaptation Fund Board"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/2015/cmp11/eng/02.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/KP/CMP/2016/2"
+    title: "Report of the Adaptation Fund Board to the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol (2016)"
+    short_title: "Adaptation Fund Board report, CMP12 (2016)"
+    year: 2016
+    body: "Adaptation Fund Board"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/2016/cmp12/eng/02.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/KP/CMP/2017/1"
+    title: "Report of the Adaptation Fund Board to the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol (2017)"
+    short_title: "Adaptation Fund Board report, CMP13 (2017)"
+    year: 2017
+    body: "Adaptation Fund Board"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/2017/cmp13/eng/01.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/KP/CMP/2017/6"
+    title: "Report of the Adaptation Fund Board to the Conference of the Parties serving as the meeting of the Parties to the Kyoto Protocol (2017/6, 2017)"
+    short_title: "Adaptation Fund Board report, CMP13 (2017)"
+    year: 2017
+    body: "Adaptation Fund Board"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/2017/cmp13/eng/06.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/CP/1996/8"
+    title: "Report of the Global Environment Facility to the Conference of the Parties (1996)"
+    short_title: "Global Environment Facility report, COP2 (1996)"
+    year: 1996
+    body: "Global Environment Facility"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/cop2/08.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/CP/1998/12"
+    title: "Report of the Global Environment Facility to the Conference of the Parties (1998)"
+    short_title: "Global Environment Facility report, COP4 (1998)"
+    year: 1998
+    body: "Global Environment Facility"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/cop4/12.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/CP/2003/3"
+    title: "Report of the Global Environment Facility to the Conference of the Parties (2003)"
+    short_title: "Global Environment Facility report, COP9 (2003)"
+    year: 2003
+    body: "Global Environment Facility"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/cop9/03.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/CP/2004/6"
+    title: "Report of the Global Environment Facility to the Conference of the Parties (2004)"
+    short_title: "Global Environment Facility report, COP10 (2004)"
+    year: 2004
+    body: "Global Environment Facility"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/cop10/06.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/CP/2015/4"
+    title: "Report of the Global Environment Facility to the Conference of the Parties (2015)"
+    short_title: "Global Environment Facility report, COP21 (2015)"
+    year: 2015
+    body: "Global Environment Facility"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/2015/cop21/eng/04.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/CP/2016/6"
+    title: "Report of the Global Environment Facility to the Conference of the Parties (2016)"
+    short_title: "Global Environment Facility report, COP22 (2016)"
+    year: 2016
+    body: "Global Environment Facility"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/2016/cop22/eng/06.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/CP/2017/7"
+    title: "Report of the Global Environment Facility to the Conference of the Parties (2017)"
+    short_title: "Global Environment Facility report, COP23 (2017)"
+    year: 2017
+    body: "Global Environment Facility"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/2017/cop23/eng/07.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/CP/2014/8"
+    title: "Report of the Green Climate Fund to the Conference of the Parties (2014)"
+    short_title: "Green Climate Fund report, COP20 (2014)"
+    year: 2014
+    body: "Green Climate Fund"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/2014/cop20/eng/08.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/CP/2017/5"
+    title: "Report of the Green Climate Fund to the Conference of the Parties (2017)"
+    short_title: "Green Climate Fund report, COP23 (2017)"
+    year: 2017
+    body: "Green Climate Fund"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/2017/cop23/eng/05.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
+  - symbol: "FCCC/CP/2015/8"
+    title: "Report of the Standing Committee on Finance to the Conference of the Parties (2015)"
+    short_title: "UNFCCC Standing Committee on Finance report, COP21 (2015)"
+    year: 2015
+    body: "UNFCCC Standing Committee on Finance"
+    doc_class: fund_report
+    language: en
+    url: "https://unfccc.int/resource/docs/2015/cop21/eng/08.pdf"
+    provenance: "Identified 2026-07-23 by first-page classification of plain session documents (CDX-enumerated, open /resource/docs origin); first page names the report and symbol. Coverage partial where the portal wall flapped - series completion tracked in the 0304 report."
