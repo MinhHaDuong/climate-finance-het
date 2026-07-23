@@ -134,8 +134,16 @@ def test_makefile_wires_target():
     mk = open(os.path.join(SCRIPTS, "analysis", "lit-confirmations.mk")).read()
     for t in ("tab_lit_confirmations.csv", "tab_sem6_assignments.csv",
               "tab_semantic_robustness.csv", "tab_sem_composition.csv",
-              "fig_sem_composition.png"):
+              "fig_sem_composition.png",
+              # 0310 follow-up: the composition figure clusters the CLEAN
+              # input (boilerplate/stub abstracts excluded).
+              "tab_alluvial_clean.csv", "--exclude-boilerplate"):
         assert t in mk, t
+    # The exclusion is implemented in both semantic-input producers.
+    for script in ("analysis/compute_clusters.py",
+                   "analysis/compute_sem6_assignments.py"):
+        src = open(os.path.join(SCRIPTS, script)).read()
+        assert "is_boilerplate_abstract" in src, script
     top = open(os.path.join(BASE, "Makefile")).read()
     assert "lit-confirmations.mk" in top
 

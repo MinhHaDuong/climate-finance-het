@@ -33,20 +33,29 @@ $(SEM6_ROBUST): scripts/analysis/compute_semantic_robustness.py \
 	$(PYTHON) $< --input $(SEM6_ASSIGN) --output $@
 
 # Semantic-composition figure for the data paper (author decision 2026-07-23):
-# manuscript appendix Figure 2 recomputed on the current corpus. The alluvial
-# table is copied into the shared tables dir as the committed backing record.
+# manuscript appendix Figure 2 recomputed on the current corpus. Follow-up to
+# PR #1109 (author arbitration): the clustering input EXCLUDES works with
+# boilerplate/stub/missing abstracts (is_boilerplate_abstract) — a data-quality
+# artifact is not a theme of the field — via the _clean alluvial variant.
+# The alluvial table is copied into the shared tables dir as the committed
+# backing record.
 SEM_COMPO_TAB := deliverables/_shared/tables/tab_sem_composition.csv
 SEM_COMPO_FIG := deliverables/_shared/figures/fig_sem_composition.png
 
-$(SEM_COMPO_TAB): $(DERIVED)/tab_alluvial.csv
+$(DERIVED)/tab_alluvial_clean.csv $(DERIVED)/cluster_labels_clean.json \
+$(DERIVED)/tab_core_shares_clean.csv &: \
+		scripts/analysis/compute_clusters.py scripts/utils.py $(CONFIG) $(REFINED)
+	$(PYTHON) $< --output $(DERIVED)/tab_alluvial_clean.csv --exclude-boilerplate
+
+$(SEM_COMPO_TAB): $(DERIVED)/tab_alluvial_clean.csv
 	cp $< $@
 
 $(SEM_COMPO_FIG): scripts/figures/plot_fig2_composition.py \
 		scripts/plot_style.py scripts/utils.py $(CONFIG) \
-		$(DERIVED)/tab_alluvial.csv $(DERIVED)/cluster_labels.json \
+		$(DERIVED)/tab_alluvial_clean.csv $(DERIVED)/cluster_labels_clean.json \
 		config/datapaper_cluster_short_labels.json
-	$(PYTHON) $< --output $@ --input $(DERIVED)/tab_alluvial.csv \
-		--labels $(DERIVED)/cluster_labels.json \
+	$(PYTHON) $< --output $@ --input $(DERIVED)/tab_alluvial_clean.csv \
+		--labels $(DERIVED)/cluster_labels_clean.json \
 		--short-labels config/datapaper_cluster_short_labels.json
 
 .PHONY: lit-confirmations
