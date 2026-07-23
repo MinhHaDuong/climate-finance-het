@@ -75,6 +75,13 @@ DOC_VARS = {
         "filter_title_blacklist",
         "lang_english_pct",
         "openalex_pct",
+        "refs_doi_docs",
+        "refs_max",
+        "refs_mean",
+        "refs_median",
+        "refs_p95",
+        "refs_zero_n",
+        "refs_zero_share_pct",
     ],
     "multilayer-detection": [
         "bim_corr",
@@ -416,6 +423,25 @@ def citation_stats(v):
                 )
 
 
+def reference_count_stats(v):
+    """Per-document reference-count distribution from tab_reference_counts.csv.
+
+    0285's Phase-2 artifact (long metric/value format), quoted by the data
+    paper's citation-quality discussion (ticket 0277, remark R1-13).
+    """
+    df = _read_csv("tab_reference_counts.csv")
+    if df is None:
+        return
+    m = dict(zip(df["metric"], df["value"]))
+    v["refs_doi_docs"] = _int(m["n_documents_with_doi"])
+    v["refs_zero_n"] = _int(m["n_zero_references"])
+    v["refs_zero_share_pct"] = _pct(100 * m["share_zero_references"])
+    v["refs_median"] = _int(m["ref_count_median"])
+    v["refs_mean"] = _pct(m["ref_count_mean"])
+    v["refs_p95"] = _int(m["ref_count_p95"])
+    v["refs_max"] = _int(m["ref_count_max"])
+
+
 # ── Write YAML ───────────────────────────────────────────────
 
 
@@ -443,6 +469,7 @@ def main():
     pca_stats(v)
     citation_stats(v)
     filter_stats(v)
+    reference_count_stats(v)
 
     # Companion Z-series vars — require tab_summary_*.csv (not yet generated)
     for _k in (
