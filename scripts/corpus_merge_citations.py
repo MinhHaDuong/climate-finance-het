@@ -185,9 +185,11 @@ def merge_citations(cache_dir=None, output_path=None, catalog_path=None):
     # (source_doi, ref_title, ref_first_author, ref_year) to catch
     # the same book reference from both Crossref and OpenAlex.
     # Normalize title/author to lowercase for case-insensitive matching.
-    # Metadata-less rows (catalog-stage edges: empty title AND author) are
-    # exempt from the title key — it would collapse every catalog edge of a
-    # source into one row; they are already deduplicated on source_id above.
+    # Metadata-less rows WITH a source_id (catalog-stage edges: empty title
+    # AND author, identified by ref_oa_id) are exempt from the title key —
+    # it would collapse every catalog edge of a source into one row; they
+    # are already deduplicated on source_id above. Metadata-less rows
+    # WITHOUT a source_id keep the historical collapse.
     has_ref_doi = combined["_ref_norm"] != ""
     with_doi = combined[has_ref_doi].drop_duplicates(
         subset=["_src_norm", "_ref_norm"], keep="first")
@@ -195,8 +197,9 @@ def merge_citations(cache_dir=None, output_path=None, catalog_path=None):
     without_doi["_title_norm"] = without_doi["ref_title"].str.lower().str.strip()
     without_doi["_author_norm"] = without_doi["ref_first_author"].str.lower().str.strip()
     has_meta = (without_doi["_title_norm"] != "") | (without_doi["_author_norm"] != "")
-    no_meta = without_doi[~has_meta]
-    without_doi = without_doi[has_meta].drop_duplicates(
+    exempt = ~has_meta & (without_doi["source_id"] != "")
+    no_meta = without_doi[exempt]
+    without_doi = without_doi[~exempt].drop_duplicates(
         subset=["_src_norm", "_title_norm", "_author_norm", "ref_year"],
         keep="first")
     without_doi = pd.concat([without_doi, no_meta], ignore_index=True)
