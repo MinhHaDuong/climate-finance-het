@@ -42,7 +42,6 @@ TECHREP_INCLUDES := deliverables/_shared/_includes/corpus-construction.md \
 		deliverables/_shared/_includes/bimodality-analysis.md \
 		deliverables/_shared/_includes/pca-scatter.md \
 		deliverables/_shared/_includes/citation-genealogy.md \
-		deliverables/_shared/_includes/cocitation-communities.md \
 		deliverables/_shared/_includes/citation-quality.md \
 		deliverables/_shared/_includes/reproducibility.md \
 		deliverables/_shared/tables/tab_citation_coverage.md

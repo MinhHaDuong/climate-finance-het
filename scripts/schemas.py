@@ -191,6 +191,21 @@ NullSeparationSchema = DataFrameSchema(
 )
 
 # ---------------------------------------------------------------------------
+# Citer-limited network limitations CSV (ticket 0286)
+# ---------------------------------------------------------------------------
+# Long format, one row per named statistic of the R1-14 limitations
+# demonstration (compute_network_limitations.py).
+
+NetworkLimitationsSchema = DataFrameSchema(
+    columns={
+        "metric": Column(str),
+        "value": Column(float, nullable=True),
+    },
+    strict=True,
+    coerce=True,
+)
+
+# ---------------------------------------------------------------------------
 # Bootstrap replicates CSV (ticket 0047)
 # ---------------------------------------------------------------------------
 

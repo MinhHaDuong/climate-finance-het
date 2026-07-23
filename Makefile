@@ -104,6 +104,7 @@ endif
 -include scripts/analysis/zoo-figures.mk
 -include scripts/analysis/venues.mk
 -include scripts/analysis/separation.mk
+-include scripts/analysis/network-limitations.mk
 
 # ── Quarto ───────────────────────────────────────────────
 # The per-document include sets (*_INCLUDES) and figure sets (*_FIGS) live in
