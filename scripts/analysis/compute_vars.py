@@ -83,6 +83,10 @@ DOC_VARS = {
         "dedup_fp_empty_year_docs",
         "dedup_fp_empty_year_groups",
         "dedup_titleyear_removed",
+        "gm_communities",
+        "gm_coverage_pct",
+        "gm_modularity",
+        "gm_n_connected",
         "lang_english_pct",
         "openalex_pct",
     ],
@@ -456,6 +460,21 @@ def citation_stats(v):
                 )
 
 
+def global_map_stats(v):
+    """Global citation-network map stats from global_map_direct.json (0307).
+
+    Produced by scripts/analysis/analyze_global_map.py; feeds the data-paper
+    figure prose so no community count, coverage, or modularity is hand-typed.
+    """
+    summary = _read_json("global_map_direct.json", directory=DERIVED_TABLES_DIR)
+    if summary is None:
+        return
+    v["gm_communities"] = str(summary["n_communities_major"])
+    v["gm_coverage_pct"] = _pct(100 * summary["coverage_share"], 0)
+    v["gm_n_connected"] = _int(summary["n_nodes"])
+    v["gm_modularity"] = f"{summary['modularity']:.2f}"
+
+
 # ── Write YAML ───────────────────────────────────────────────
 
 
@@ -484,6 +503,7 @@ def main():
     citation_stats(v)
     filter_stats(v)
     dedup_stats(v)
+    global_map_stats(v)
 
     # Dedup vars fall back to MISSING while their artifacts are pending:
     # the catalog_merge run report awaits a dvc-capable full-data session

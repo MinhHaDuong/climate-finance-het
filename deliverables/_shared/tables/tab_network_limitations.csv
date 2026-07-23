@@ -9,9 +9,9 @@ econ_subgraph_n_nodes,31.0
 econ_subgraph_n_edges,55.0
 econ_cross_cluster_edges_observed,0.0
 econ_within_share_observed,1.0
-econ_cross_share_null_mean,0.4345454545454547
-econ_cross_share_null_std,0.0496754640023631
-econ_within_share_z,8.747687883192858
+econ_cross_share_null_mean,0.43745454545454554
+econ_cross_share_null_std,0.05102309156428451
+econ_within_share_z,8.573658162273295
 econ_within_share_p,0.009900990099009901
 econ_null_n_perm,100.0
 burden_candidates,16.0

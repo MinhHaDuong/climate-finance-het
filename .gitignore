@@ -36,6 +36,9 @@ deliverables/_shared/figures/*
 # Citer-limited traditions network: potential electronic supplement of the
 # data paper (R1-14, ticket 0286) — committed artifact, not embedded in a doc.
 !deliverables/_shared/figures/fig_traditions_pre2008_citers.png
+# Companion artifact of the data-paper global map (ticket 0307): produced by
+# make, committed for reference, NOT embedded in any deliverable.
+!deliverables/_shared/figures/fig_global_map_cocitation.png
 deliverables/_shared/tables/*
 !deliverables/_shared/tables/tab_variables.md
 !deliverables/_shared/tables/codebook.md

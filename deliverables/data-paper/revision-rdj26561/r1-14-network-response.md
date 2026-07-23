@@ -1,14 +1,34 @@
-# R1-14 — Citation network: demonstration of potential and limitations
+# R1-14 — Citation network: potential and limitations (tickets 0307 + 0286, feeds 0283)
 
-**Remark (R1-14).** The referee suggests presenting a citation network drawn
-from the database "to demonstrate its potential and/or limitations"; the
-editor softened this (ED-02).
+Remarks covered: R1-14 (the referee suggests presenting a citation network
+drawn from the database "to demonstrate its potential and/or limitations";
+the editor softened this, ED-02).
 
-**Response.** The revised data paper presents the global co-citation
-community map as the corpus-potential demonstration (ticket 0307). The
-paragraph below is the limitations demonstration for the response letter:
-what the citation layer sustains on its hardest case, the sparse early
-period. Every number traces to
+## Response bullet — potential (global map, ticket 0307)
+
+**R1-14 (present a network of citations to demonstrate potential and/or
+limitations).** We answer both halves. *Potential*: the revised Section 3
+adds a global map of the corpus citation network (new figure
+`fig_global_map_direct`) --- Louvain community detection on the intra-corpus
+direct-citation graph, rendered at community granularity. The major
+communities (those holding at least 2% of the connected works; counts,
+coverage, and modularity are drawn from the generated artifact
+`global_map_direct.json`, not hand-typed) correspond to recognisable
+research programmes: international climate governance, CDM and carbon
+markets, North--South allocation, green bonds and sustainable finance,
+financial economics of climate risk, among others. *Limitations*: the same
+network is too thin before 2008 for inferential use. Our tradition-separation
+analysis of the pre-2008 subgraph --- the paragraph below --- finds that
+while the economic-cluster separation is significant against a
+degree-preserving null (z = 8.7), the pre-2008 citer subgraph covers only
+about 8% of early works, and bootstrap community assignments are stable for
+just the best-connected references (93--100% for anchors). The paper states
+the early-period undercount as a usage caveat; the figure demonstrates what
+the network supports at full-corpus scale.
+
+## Response paragraph — limitations (citer-limited network, ticket 0286)
+
+Every number below traces to
 `deliverables/_shared/tables/tab_network_limitations.csv`
 (`make network-limitations`, script
 `scripts/analysis/compute_network_limitations.py`) and the edge spot-check
@@ -17,8 +37,6 @@ to `deliverables/_shared/tables/qa_cocitation_edges_report.json`
 as a potential electronic supplement
 (`deliverables/_shared/figures/fig_traditions_pre2008_citers.png`), not
 embedded in the paper.
-
-## Response paragraph
 
 > A curated corpus earns its keep if its citation layer sustains
 > substantive claims about the field's structure, not merely descriptive

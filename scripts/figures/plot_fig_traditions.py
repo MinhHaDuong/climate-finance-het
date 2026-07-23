@@ -21,6 +21,12 @@ import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
+from _community_registry import (
+    override_label,
+    short_label,
+    surname_label,
+    tradition_concepts,
+)
 from _pre2007_traditions import (
     RANDOM_STATE,
     TRADITION_ANCHORS,
@@ -33,13 +39,14 @@ from utils import get_logger
 
 log = get_logger("plot_fig_traditions")
 
-# Shared with the citer-limited variant via the neutral style module
-# (Tier-2 surface rule, ticket 0286); names re-exported here unchanged.
-from _tradition_style import (
-    TRADITION_COLORS,
-    TRADITION_EDGE_COLORS,
-    TRADITION_LABELS,
-)
+
+_TRAD = tradition_concepts()
+TRADITION_LABELS = {t: lab for t, (lab, _) in _TRAD.items()}
+TRADITION_LABELS["other"] = None
+TRADITION_COLORS = {t: col for t, (_, col) in _TRAD.items()}
+TRADITION_COLORS["other"] = "#DDDDDD"
+TRADITION_EDGE_COLORS = dict(TRADITION_COLORS)
+TRADITION_EDGE_COLORS["other"] = "#CCCCCC"
 
 
 def _render_traditions(G, partition, pos, comm_to_tradition,
@@ -81,25 +88,42 @@ def _render_traditions(G, partition, pos, comm_to_tradition,
                            linewidths=0.4, alpha=0.9)
 
     # Labels
-    _draw_labels(ax, G, pos, trad_to_comm, comm_to_nodes, ref_counts)
+    _draw_labels(ax, G, pos, trad_to_comm, comm_to_nodes, ref_counts,
+                 cutoff_year)
 
     # Legend
     _draw_legend(ax, trad_to_comm, comm_to_nodes, comm_to_tradition)
 
     ax.set_title(
-        f"Co-citation communities in pre-{cutoff_year + 1} "
-        f"climate finance scholarship\n"
-        f"(top {actual_top_n} most-cited references, "
-        f"{n_comm} communities, modularity={modularity:.2f})",
-        fontsize=7, pad=8)
+        f"Three intellectual traditions before climate finance\n"
+        f"(co-citation communities among pre-{cutoff_year + 1} references "
+        f"of the climate finance corpus)",
+        fontsize=8, pad=8)
     ax.axis("off")
-    plt.tight_layout(pad=0.5)
+    caption = (
+        "Reading guide.  Each circle is one CITED REFERENCE published before "
+        f"{cutoff_year + 1}; circle area grows with its citation count in the corpus, "
+        "edges link references frequently cited together (co-citation), edge width "
+        "with co-citation strength.  Colored communities are the three traditions "
+        "identified by anchor authors; grey nodes belong to other communities "
+        "(largest ones labeled, surname + year).\n"
+        f"Method: co-citation graph of the top {actual_top_n} most-cited "
+        f"pre-{cutoff_year + 1} references (citing side: the whole 1990-2025 corpus), "
+        f"Louvain community detection with fixed seed, {n_comm} communities, "
+        f"weighted modularity = {modularity:.2f}.  Layout: force-directed spring "
+        "embedding (distances are indicative only).  Names and colors follow the "
+        "shared community registry (config/community_registry.yml); same concept = "
+        "same name and color across all corpus network figures.")
+    fig.text(0.02, 0.01, caption, fontsize=5.8, color=DARK,
+             ha="left", va="bottom", wrap=True)
+    plt.tight_layout(rect=(0, 0.12, 1, 1), pad=0.5)
 
     save_figure(fig, out_stem, pdf=pdf, dpi=DPI)
     plt.close()
 
 
-def _draw_labels(ax, G, pos, trad_to_comm, comm_to_nodes, ref_counts):
+def _draw_labels(ax, G, pos, trad_to_comm, comm_to_nodes, ref_counts,
+                 cutoff_year):
     """Draw node labels for top-cited nodes per tradition."""
     label_nodes = set()
     for c in trad_to_comm.values():
@@ -114,17 +138,53 @@ def _draw_labels(ax, G, pos, trad_to_comm, comm_to_nodes, ref_counts):
                        for t in TRADITION_ANCHORS]
                       for n in s}],
         key=lambda d: -ref_counts.get(d, 0))
-    label_nodes.update(other_nodes[:4])
+    # Label the biggest grey (non-tradition) nodes so the reader sees what
+    # the colored traditions are NOT. Surname-only format ("Nordhaus 2015").
+    grey_label_nodes = set(other_nodes[:4])
+    label_nodes.update(grey_label_nodes)
 
-    labels = {
-        n: G.nodes[n]["label"] for n in label_nodes
-        if n in G.nodes() and " " in G.nodes[n]["label"]
-        and not G.nodes[n]["label"].startswith("10.")
-    }
-    nx.draw_networkx_labels(
-        G, pos, labels, ax=ax, font_size=5.5, font_color=DARK,
-        bbox=dict(boxstyle="round,pad=0.15", fc="white",
-                  ec="none", alpha=0.7))
+    # Keep readable labels only; dedupe identical label texts
+    # (e.g. two distinct references both rendered "Axel Michaelowa 2003"),
+    # keeping the most-cited node.
+    candidates = sorted(label_nodes, key=lambda d: -ref_counts.get(d, 0))
+    labels, seen_texts = {}, set()
+    for n in candidates:
+        text = G.nodes[n]["label"]
+        if " " not in text or text.startswith("10."):
+            continue
+        if n in grey_label_nodes:
+            # "William D. Nordhaus 2015" -> "Nordhaus 2015"
+            text = surname_label(text)
+        else:
+            # "Axel Michaelowa 2003" -> "A. Michaelowa 2003"
+            text = short_label(text)
+        text = override_label(text)  # registry fixes for broken metadata
+        year = text.split()[-1][:4]
+        if year.isdigit() and int(year) > cutoff_year + 1:
+            log.warning("Anachronistic label year (metadata defect), "
+                        "skipping label: %s (%s)", text, n)
+            continue
+        if text in seen_texts:
+            continue
+        seen_texts.add(text)
+        labels[n] = text
+
+    # Place labels above their node, then greedily nudge apart any pair
+    # that would overlap (simple vertical stacking — no extra dependency).
+    dy = 0.045
+    placed = []  # (x, y) of placed label centres
+    for n, text in sorted(labels.items(), key=lambda kv: pos[kv[0]][1],
+                          reverse=True):
+        x, y = pos[n]
+        ly = y + dy
+        while any(abs(x - px) < 0.28 and abs(ly - py) < 0.055
+                  for px, py in placed):
+            ly += 0.055
+        placed.append((x, ly))
+        ax.text(x, ly, text, fontsize=5.5, color=DARK,
+                ha="center", va="bottom",
+                bbox=dict(boxstyle="round,pad=0.15", fc="white",
+                          ec="none", alpha=0.75))
 
 
 def _draw_legend(ax, trad_to_comm, comm_to_nodes, comm_to_tradition):
