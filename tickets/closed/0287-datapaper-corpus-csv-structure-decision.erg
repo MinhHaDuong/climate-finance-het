@@ -3,6 +3,7 @@ Title: Data paper: corpus CSV column layout — restructure or document, author 
 Created: 2026-07-20
 Author: HDMX-coding-agent
 Label: needs-human
+Closed: autoclosed — PR #1094
 
 --- log ---
 2026-07-20T10:00Z HDMX-coding-agent created split from 0279
@@ -11,6 +12,7 @@ Label: needs-human
 2026-07-23T14:00Z haduong decision AUTHOR DECISION: do NOT restructure the CSV. The file is formally correct (pandas-loadable, rectangular, 26 columns, no duplicates) and already organised in 4 logical groups (Record identity, Bibliographic metadata, Provenance flags, Curation metadata); R1-19 is a viewer-ergonomics concern. Answer: a formal data dictionary — column, type, allowed values, missingness measured on the real data — extending the 0279 contract; codebook ships in the Zenodo package (coordinated with 0280, deposit not performed here); rationale paragraph drafted for the response letter (feeds 0283).
 2026-07-23T14:05Z HDMX-coding-agent note implemented: contract extended (group, allowed_values, compute_missingness, render_codebook in scripts/_deposit_variables.py), scripts/figures/export_codebook.py, tab_variables.md regenerated with group column, codebook.md generated from real data (42916 rows), r1-19-csv-structure.md response bullet, 0280 log noted for package inclusion
 
+2026-07-23T14:27Z HDMX-coding-agent closed — autoclosed — PR #1094
 --- body ---
 ## Context
 
