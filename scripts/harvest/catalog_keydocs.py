@@ -179,7 +179,10 @@ def fetch_pdf(url: str, dest: str) -> str:
     if not url:
         return "no_url"
     try:
-        resp = polite_get(url, delay=1.0)
+        # 3s delay: unfccc.int rate-arms its Incapsula wall against faster
+        # crawls (observed 2026-07-23 — /resource/docs began serving challenge
+        # pages mid-harvest at 1s delay with a concurrent classifier).
+        resp = polite_get(url, delay=3.0)
     except Exception as e:
         log.warning("  fetch failed for %s: %s", url, e)
         return "failed"

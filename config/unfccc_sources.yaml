@@ -23,10 +23,14 @@
 # `url` points at the PDF when known. Fetch-validated URLs are marked
 # "URL spot-verified" in provenance; "URL follows verified pattern" entries
 # use the unfccc.int /resource/docs layout confirmed on the spot-verified
-# ones; "resolve URL at harvest" entries are completed by the enumeration
-# child ticket. This list is a curated starter set — the document-level
-# enumeration within the validated classes is completed at harvest
-# (see ticket 0288 and its enumeration child ticket).
+# ones. Document-level enumeration completed 2026-07-23 (ticket 0304) via
+# CDX discovery (scripts/harvest/discover_unfccc.py — the unfccc.int Drupal
+# facet search and enb.iisd.org HTML sit behind bot walls, so the Wayback
+# CDX index over the stable URL patterns is the discovery source; candidates
+# in data/raw/unfccc_candidates.jsonl, this file is the curated append).
+# Origins that challenge non-browser clients (unfccc.int /sites/default/files
+# and /files paths) are fetched through Wayback id_ snapshot URLs, disclosed
+# per entry.
 
 documents:
   # ── COP decision addenda (finance decisions) ─────────────────────────
