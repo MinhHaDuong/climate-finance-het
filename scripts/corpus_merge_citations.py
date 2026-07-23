@@ -7,6 +7,11 @@ Reads source-specific cache files from enrich_cache/:
   - ref_parsed.csv      (GROBID-parsed unstructured refs, REFS_COLUMNS schema)
   - ref_matches.csv     (fuzzy-matched refs with discovered DOIs, #539)
 
+Plus the catalog-stage OpenAlex harvest (ticket 0300):
+  - data/catalogs/openalex_citations.csv  (source_doi, source_id, ref_oa_id)
+    DOIs covered at catalog stage are treated as done by the enrich
+    harvester and never re-queried, so their edges exist only here.
+
 Produces citations.csv with REFS_COLUMNS schema, deduplicated on
 (source_doi, ref_doi). Sentinel rows are excluded.
 
@@ -31,15 +36,20 @@ CACHE_DIR = os.path.join(CATALOGS_DIR, "enrich_cache")
 CROSSREF_CACHE = os.path.join(CACHE_DIR, "crossref_refs.csv")
 OPENALEX_CACHE = os.path.join(CACHE_DIR, "openalex_refs.csv")
 OUTPUT_PATH = os.path.join(CATALOGS_DIR, "citations.csv")
+CATALOG_CITATIONS_PATH = os.path.join(CATALOGS_DIR, "openalex_citations.csv")
 SENTINEL_REF_DOI = "__NO_REFS__"
 
 
-def merge_citations(cache_dir=None, output_path=None):
+def merge_citations(cache_dir=None, output_path=None, catalog_path=None):
     """Merge crossref + openalex caches into a single citations.csv.
 
     Args:
         cache_dir: Path to enrich_cache/ directory (default: CACHE_DIR)
         output_path: Path for output citations.csv (default: OUTPUT_PATH)
+        catalog_path: Path to the catalog-stage openalex_citations.csv
+            (default: CATALOG_CITATIONS_PATH). Ticket 0300: DOIs harvested
+            at catalog stage are skipped by the enrich harvester, so their
+            edges must be merged from this layer or they are lost.
 
     Returns:
         Number of rows written.
@@ -47,6 +57,7 @@ def merge_citations(cache_dir=None, output_path=None):
     """
     cache_dir = cache_dir or CACHE_DIR
     output_path = output_path or OUTPUT_PATH
+    catalog_path = catalog_path or CATALOG_CITATIONS_PATH
 
     crossref_path = os.path.join(cache_dir, "crossref_refs.csv")
     openalex_path = os.path.join(cache_dir, "openalex_refs.csv")
@@ -102,6 +113,28 @@ def merge_citations(cache_dir=None, output_path=None):
     else:
         log.info("No ref matches cache at %s", ref_matches_path)
 
+    # Read catalog-stage OpenAlex harvest (0300) — edge list with ref_oa_id
+    # only (no ref metadata). Appended LAST so the (source_doi, source_id)
+    # dedup below keeps the enrich-cache twin (which may carry a ref_doi).
+    if os.path.exists(catalog_path):
+        cat = pd.read_csv(catalog_path, dtype=str, keep_default_na=False,
+                          on_bad_lines="warn")
+        log.info("Catalog-stage OpenAlex layer: %d rows", len(cat))
+        cat_mapped = pd.DataFrame({
+            "source_doi": cat["source_doi"],
+            "source_id": cat["ref_oa_id"].apply(
+                lambda x: f"openalex:{x}" if x else ""),
+            "ref_doi": "",
+            "ref_title": "",
+            "ref_first_author": "",
+            "ref_year": "",
+            "ref_journal": "",
+            "ref_raw": "",
+        })
+        frames.append(cat_mapped)
+    else:
+        log.info("No catalog-stage OpenAlex layer at %s", catalog_path)
+
     if not frames:
         log.info("No cache files found — writing empty citations.csv")
         empty = pd.DataFrame({c: pd.Series(dtype=str) for c in REFS_COLUMNS})
@@ -121,20 +154,37 @@ def merge_citations(cache_dir=None, output_path=None):
     combined["_ref_norm"] = combined["ref_doi"].apply(
         lambda x: normalize_doi(x) if x else "")
 
+    # Cross-layer dedup on (source_doi, source_id): the same OpenAlex edge
+    # may appear both in the enrich cache (resolved, with ref_doi/metadata)
+    # and in the catalog-stage layer (bare ref_oa_id). keep="first" keeps
+    # the resolved row because the catalog layer is concatenated last (0300).
+    has_source_id = combined["source_id"] != ""
+    combined = pd.concat([
+        combined[has_source_id].drop_duplicates(
+            subset=["_src_norm", "source_id"], keep="first"),
+        combined[~has_source_id],
+    ], ignore_index=True)
+
     # Dedup: for rows with ref_doi, dedup on (source_doi, ref_doi).
     # For rows without ref_doi (books/reports), dedup on
     # (source_doi, ref_title, ref_first_author, ref_year) to catch
     # the same book reference from both Crossref and OpenAlex.
     # Normalize title/author to lowercase for case-insensitive matching.
+    # Metadata-less rows (catalog-stage edges: empty title AND author) are
+    # exempt from the title key — it would collapse every catalog edge of a
+    # source into one row; they are already deduplicated on source_id above.
     has_ref_doi = combined["_ref_norm"] != ""
     with_doi = combined[has_ref_doi].drop_duplicates(
         subset=["_src_norm", "_ref_norm"], keep="first")
     without_doi = combined[~has_ref_doi].copy()
     without_doi["_title_norm"] = without_doi["ref_title"].str.lower().str.strip()
     without_doi["_author_norm"] = without_doi["ref_first_author"].str.lower().str.strip()
-    without_doi = without_doi.drop_duplicates(
+    has_meta = (without_doi["_title_norm"] != "") | (without_doi["_author_norm"] != "")
+    no_meta = without_doi[~has_meta]
+    without_doi = without_doi[has_meta].drop_duplicates(
         subset=["_src_norm", "_title_norm", "_author_norm", "ref_year"],
         keep="first")
+    without_doi = pd.concat([without_doi, no_meta], ignore_index=True)
     without_doi = without_doi.drop(columns=["_title_norm", "_author_norm"])
 
     result = pd.concat([with_doi, without_doi], ignore_index=True)
@@ -156,9 +206,12 @@ def main():
                         help="Path to enrich_cache/ directory")
     parser.add_argument("--output", default=OUTPUT_PATH,
                         help="Output path for merged citations.csv")
+    parser.add_argument("--catalog-path", default=CATALOG_CITATIONS_PATH,
+                        help="Path to catalog-stage openalex_citations.csv")
     args = parser.parse_args()
 
-    merge_citations(cache_dir=args.cache_dir, output_path=args.output)
+    merge_citations(cache_dir=args.cache_dir, output_path=args.output,
+                    catalog_path=args.catalog_path)
 
 
 if __name__ == "__main__":

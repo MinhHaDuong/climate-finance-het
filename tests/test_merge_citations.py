@@ -75,7 +75,8 @@ class TestMergeCitations:
         out = tmp_path / "citations.csv"
 
         from corpus_merge_citations import merge_citations
-        merge_citations(cache_dir=str(cache_dir), output_path=str(out))
+        merge_citations(cache_dir=str(cache_dir), output_path=str(out),
+                        catalog_path=str(tmp_path / "no_catalog.csv"))
 
         result = pd.read_csv(out)
         assert len(result) == 2
@@ -92,7 +93,8 @@ class TestMergeCitations:
         out = tmp_path / "citations.csv"
 
         from corpus_merge_citations import merge_citations
-        merge_citations(cache_dir=str(cache_dir), output_path=str(out))
+        merge_citations(cache_dir=str(cache_dir), output_path=str(out),
+                        catalog_path=str(tmp_path / "no_catalog.csv"))
 
         result = pd.read_csv(out)
         assert len(result) == 1
@@ -107,7 +109,8 @@ class TestMergeCitations:
         out = tmp_path / "citations.csv"
 
         from corpus_merge_citations import merge_citations
-        merge_citations(cache_dir=str(cache_dir), output_path=str(out))
+        merge_citations(cache_dir=str(cache_dir), output_path=str(out),
+                        catalog_path=str(tmp_path / "no_catalog.csv"))
 
         result = pd.read_csv(out)
         assert len(result) == 1
@@ -122,7 +125,8 @@ class TestMergeCitations:
         out = tmp_path / "citations.csv"
 
         from corpus_merge_citations import merge_citations
-        merge_citations(cache_dir=str(cache_dir), output_path=str(out))
+        merge_citations(cache_dir=str(cache_dir), output_path=str(out),
+                        catalog_path=str(tmp_path / "no_catalog.csv"))
 
         result = pd.read_csv(out)
         assert len(result) == 1
@@ -133,7 +137,8 @@ class TestMergeCitations:
         out = tmp_path / "citations.csv"
 
         from corpus_merge_citations import merge_citations
-        merge_citations(cache_dir=str(cache_dir), output_path=str(out))
+        merge_citations(cache_dir=str(cache_dir), output_path=str(out),
+                        catalog_path=str(tmp_path / "no_catalog.csv"))
 
         result = pd.read_csv(out)
         assert len(result) == 0
@@ -149,7 +154,8 @@ class TestMergeCitations:
         out = tmp_path / "citations.csv"
 
         from corpus_merge_citations import merge_citations
-        merge_citations(cache_dir=str(cache_dir), output_path=str(out))
+        merge_citations(cache_dir=str(cache_dir), output_path=str(out),
+                        catalog_path=str(tmp_path / "no_catalog.csv"))
 
         result = pd.read_csv(out)
         assert len(result) == 1, \
@@ -228,7 +234,8 @@ class TestMergeCitations:
         out = tmp_path / "citations.csv"
 
         from corpus_merge_citations import merge_citations
-        merge_citations(cache_dir=str(cache_dir), output_path=str(out))
+        merge_citations(cache_dir=str(cache_dir), output_path=str(out),
+                        catalog_path=str(tmp_path / "no_catalog.csv"))
 
         result = pd.read_csv(out)
         expected_cols = [
