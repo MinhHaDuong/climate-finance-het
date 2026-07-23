@@ -10,6 +10,7 @@ Author: HDMX-coding-agent
 
 2026-07-22T12:28Z HDMX-coding-agent note blocker 0285 closed — Blocked-by removed.
 2026-07-22T14:25Z HDMX-coding-agent note CAUTION: 41.5% zero-ref headline is stale — 0300 found 4,519 of the 9,671 zeros have catalog-stage OpenAlex refs never merged into citations.csv; corrected share ~22.1%, median 32. Do not quote 41.5% until 0300 regenerates the artifact.
+2026-07-23T13:45Z HDMX-coding-agent note 0300 landed: tab_reference_counts.csv regenerated on padme. Corrected numbers to quote: zero-reference share 22.1% (n=5,152 of 23,309 DOI-bearing docs), median refs 31, mean 43.7, p95 127, max 1536. Intra-corpus citation graph unchanged (edge set byte-identical).
 
 --- body ---
 ## Context

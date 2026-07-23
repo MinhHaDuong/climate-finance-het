@@ -352,6 +352,7 @@ stages:
       - scripts/pipeline_io.py
       - scripts/pipeline_text.py
       - data/catalogs/refined_works.csv
+      - data/catalogs/openalex_citations.csv
     outs:
       - data/catalogs/citations.csv
 
