@@ -104,6 +104,7 @@ endif
 -include scripts/analysis/zoo-figures.mk
 -include scripts/analysis/venues.mk
 -include scripts/analysis/separation.mk
+-include scripts/analysis/network-limitations.mk
 
 # ── Quarto ───────────────────────────────────────────────
 # The per-document include sets (*_INCLUDES) and figure sets (*_FIGS) live in
@@ -200,7 +201,7 @@ deploy-corpus:
 	$(UV_RUN) dvc push
 
 # ── Corpus diagnostics (Phase 1 — reads enrichment caches) ──
-deliverables/_shared/tables/qa_citations_report.json: scripts/qa/qa_citations.py scripts/utils.py \
+deliverables/_shared/tables/qa_citations_report.json: scripts/qa/qa_citations.py scripts/qa/_crossref_qa.py scripts/utils.py \
 		$(DATA_DIR)/citations.csv
 	$(PYTHON) $< --output $@
 

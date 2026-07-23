@@ -273,6 +273,7 @@ stages:
     cmd: uv run --env-file .env python scripts/qa/qa_citations.py --output content/tables/qa_citations_report.json --works-input data/catalogs/enriched_works.csv
     deps:
       - scripts/qa/qa_citations.py
+      - scripts/qa/_crossref_qa.py
       - scripts/utils.py
       - scripts/pipeline_io.py
       - scripts/pipeline_loaders.py

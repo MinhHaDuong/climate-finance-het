@@ -1,0 +1,417 @@
+{
+ "citer_cutoff": 2008,
+ "ref_cutoff_year": 2006,
+ "n_nodes": 132,
+ "n_edges": 222,
+ "summary": {
+  "n_sampled": 50,
+  "n_checked": 50,
+  "n_confirmed": 49,
+  "n_unresolvable": 0,
+  "concordance": 0.98,
+  "ci95_low": 0.895043,
+  "ci95_high": 0.996461
+ },
+ "edges": [
+  {
+   "ref_a": "10.1007/s002670010087",
+   "ref_b": "10.1007/bf02437209",
+   "witness": "10.1023/a:1009685323704",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.1007/s002670010087",
+   "ref_b": "10.1016/s0959-3780(00)00033-9",
+   "witness": "10.1007/s00267-005-0275-2",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.1007/s002670010087",
+   "ref_b": "10.1111/j.1475-4959.2005.00173.x",
+   "witness": "10.1007/s00267-005-0275-2",
+   "weight": 4.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.1007/s003820050224",
+   "ref_b": "10.1029/97jd03465",
+   "witness": "10.1007/s10584-008-9406-0",
+   "weight": 4.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.1007/s10584-005-8074-6",
+   "ref_b": "10.1007/s002670010087",
+   "witness": "10.1007/s00267-005-0275-2",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.1016/0047-2727(93)90037-t",
+   "ref_b": "10.1007/bf00338240",
+   "witness": "10.1007/s11127-004-2683-x",
+   "weight": 5.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.1016/0961-9534(95)00024-0",
+   "ref_b": "10.1016/s0921-8009(96)00066-3",
+   "witness": "10.1016/s0921-8009(01)00225-7",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.1016/0961-9534(95)00024-0",
+   "ref_b": "10.1023/a:1013331220083",
+   "witness": "10.1016/j.envsci.2005.01.001",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.1016/j.enpol.2003.08.016",
+   "ref_b": "10.1086/466560",
+   "witness": "10.1002/pad.515",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.1016/j.rser.2004.07.002",
+   "ref_b": "10.1016/s0040-1625(02)00375-x",
+   "witness": "10.1007/s11027-006-9078-x",
+   "weight": 8.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.1016/s0140-9883(02)00103-2",
+   "ref_b": "10.1016/s0928-7655(99)00009-3",
+   "witness": "10.1016/j.enpol.2004.10.006",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.1016/s0301-4215(01)00054-4",
+   "ref_b": "10.1016/s0301-4215(97)00155-9",
+   "witness": "10.1016/j.enpol.2003.08.010",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.1016/s0301-4215(02)00076-9",
+   "ref_b": "10.1016/0360-5442(92)90030-4",
+   "witness": "10.1007/s11027-006-9078-x",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.1016/s0301-4215(02)00076-9",
+   "ref_b": "10.3763/cpol.2001.0107",
+   "witness": "10.1080/14693062.2005.9685552",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.1016/s0921-8009(00)00264-0",
+   "ref_b": "10.1016/j.jpolmod.2003.11.005",
+   "witness": "10.1016/j.enpol.2005.08.014",
+   "weight": 4.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.1016/s0921-8009(00)00264-0",
+   "ref_b": "10.2139/ssrn.200073",
+   "witness": "10.1007/978-3-642-57415-3_7",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.1016/s0921-8009(99)00162-7",
+   "ref_b": "10.2307/3146763",
+   "witness": "10.1016/j.envsci.2005.01.001",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.1016/s0959-3780(00)00033-9",
+   "ref_b": "10.1016/s0959-3780(02)00088-2",
+   "witness": "10.1007/s00267-005-0275-2",
+   "weight": 4.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.1016/s0959-3780(00)00033-9",
+   "ref_b": "10.1111/j.1475-4959.2005.00173.x",
+   "witness": "10.1007/s00267-005-0275-2",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.1023/a:1013331220083",
+   "ref_b": "10.1023/a:1013398002336",
+   "witness": "10.1016/j.apgeog.2008.05.002",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.1111/1467-8489.00208",
+   "ref_b": "10.1079/ajaa200116",
+   "witness": "10.1007/s10457-004-3938-8",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.1257/aer.89.4.994",
+   "ref_b": "10.1016/s0921-8009(99)00162-7",
+   "witness": "10.1016/j.envsci.2005.01.001",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.1257/aer.89.4.994",
+   "ref_b": "10.1111/j.1465-7287.1990.tb00642.x",
+   "witness": "10.1016/j.envsci.2005.01.001",
+   "weight": 4.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.1257/jep.12.3.69",
+   "ref_b": "10.1007/bf00877495",
+   "witness": "10.1093/0199286094.003.0015",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.1257/jep.12.3.69",
+   "ref_b": "10.1257/jep.12.3.53",
+   "witness": "10.1007/978-1-4757-5196-3_10",
+   "weight": 5.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.1596/0-8213-6117-1",
+   "ref_b": "10.1016/j.jpolmod.2003.11.005",
+   "witness": "10.2139/ssrn.1285618",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.2139/ssrn.897867",
+   "ref_b": "10.2139/ssrn.896669",
+   "witness": "10.2139/ssrn.929058",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.2139/ssrn.897902",
+   "ref_b": "10.2139/ssrn.896669",
+   "witness": "10.2139/ssrn.929058",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.2139/ssrn.897902",
+   "ref_b": "10.2139/ssrn.907454",
+   "witness": "10.2139/ssrn.929058",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.2139/ssrn.897902",
+   "ref_b": "10.2139/ssrn.927437",
+   "witness": "10.2139/ssrn.929058",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.2139/ssrn.927437",
+   "ref_b": "10.2139/ssrn.897866",
+   "witness": "10.2139/ssrn.929058",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.2139/ssrn.927437",
+   "ref_b": "10.2139/ssrn.907454",
+   "witness": "10.2139/ssrn.929058",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.2307/1244326",
+   "ref_b": "10.1007/bf00420425",
+   "witness": "10.1016/j.envsci.2005.01.001",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.2307/1244326",
+   "ref_b": "10.1016/s0921-8009(99)00162-7",
+   "witness": "10.1016/j.envsci.2005.01.001",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.2307/1244326",
+   "ref_b": "10.2307/3146763",
+   "witness": "10.1016/j.envsci.2005.01.001",
+   "weight": 4.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.2307/3146763",
+   "ref_b": "10.1111/j.1465-7287.1990.tb00642.x",
+   "witness": "10.1016/j.envsci.2005.01.001",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.2307/3146763",
+   "ref_b": "10.5962/bhl.title.94273",
+   "witness": "10.1016/j.envsci.2005.01.001",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.3763/cpol.2002.0219",
+   "ref_b": "10.1016/j.jinteco.2004.01.003",
+   "witness": "10.1016/j.ecolecon.2007.09.003",
+   "weight": 4.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.3763/cpol.2002.0219",
+   "ref_b": "10.1016/s0140-9883(02)00103-2",
+   "witness": "10.1016/j.enpol.2003.08.016",
+   "weight": 4.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.3763/cpol.2002.0219",
+   "ref_b": "10.1016/s0301-4215(02)00122-2",
+   "witness": "10.1016/j.enpol.2004.05.012",
+   "weight": 5.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.3763/cpol.2002.0219",
+   "ref_b": "10.1016/s0921-8009(02)00181-7",
+   "witness": "10.1016/j.enpol.2003.08.016",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.3763/cpol.2002.0219",
+   "ref_b": "10.1023/a:1013398002336",
+   "witness": "10.1016/j.envsci.2005.01.001",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.3763/cpol.2002.0219",
+   "ref_b": "10.5547/issn0195-6574-ej-vol20-nosi-2",
+   "witness": "10.1016/j.enpol.2007.02.013",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.3763/cpol.2002.0219",
+   "ref_b": "10.5547/issn0195-6574-ej-vol26-no3-2",
+   "witness": "10.1016/j.ecolecon.2007.09.003",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.3763/cpol.2003.0332",
+   "ref_b": "10.1016/j.jinteco.2004.01.003",
+   "witness": "10.1016/j.ecolecon.2007.09.003",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.5547/issn0195-6574-ej-vol12-no1-4",
+   "ref_b": "10.1007/bf00420425",
+   "witness": "10.1016/j.envsci.2005.01.001",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.5547/issn0195-6574-ej-vol12-no1-4",
+   "ref_b": "10.2307/3146763",
+   "witness": "10.1016/j.envsci.2005.01.001",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.5547/issn0195-6574-ej-vol20-nosi-12",
+   "ref_b": "10.5547/issn0195-6574-ej-vol20-nosi-4",
+   "witness": "10.1504/ijgenvi.2004.005287",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": false
+  },
+  {
+   "ref_a": "10.5547/issn0195-6574-ej-vol20-nosi-2",
+   "ref_b": "10.1016/j.jinteco.2004.01.003",
+   "witness": "10.1016/j.enpol.2007.02.013",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  },
+  {
+   "ref_a": "10.5547/issn0195-6574-ej-vol21-no4-2",
+   "ref_b": "10.1016/s0921-8009(02)00181-7",
+   "witness": "10.1016/j.ecolecon.2010.04.020",
+   "weight": 3.0,
+   "status": "ok",
+   "confirmed": true
+  }
+ ]
+}

@@ -162,6 +162,20 @@ sensitivity:
 pre2007_traditions:
   louvain_seed: 42     # Louvain partition random_state (was RANDOM_STATE=42)
 
+# ── Citer-limited network limitations demonstration (ticket 0286) ────────
+# compute_network_limitations.py restricts the CITING side of the pre-2007
+# co-citation build to corpus documents published <= citer_cutoff — the
+# sparse early period — for the R1-14 limitations demonstration in the data
+# paper's response letter. plot_fig_traditions_pre2008_citers.py renders the
+# same citer-limited network as a potential electronic supplement.
+network_limitations:
+  citer_cutoff: 2008   # citing documents published <= this year
+  n_perm: 100          # degree-preserving rewiring replicates (null test)
+  n_boot: 200          # bootstrap replicates over citing documents
+  seed: 42             # RNG seed for rewiring and bootstrap
+  edge_sample_n: 50    # co-citation edges spot-checked against Crossref
+  edge_sample_seed: 42 # RNG seed for the edge sample
+
 # ── Global citation-network map (ticket 0307, R1-14) ─────────────────────
 # analyze_global_map.py builds the full-corpus community meta-graph; the
 # Louvain seed is shared with pre2007_traditions.louvain_seed so all network
