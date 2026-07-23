@@ -2,11 +2,14 @@
 Title: Data paper: citation-network figure — showcase the traditions co-citation result
 Created: 2026-07-20
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1103
 
 --- log ---
 2026-07-20T10:00Z HDMX-coding-agent created split from 0277
 2026-07-21T09:00Z HDMX-coding-agent note author decided (session 2026-07-21): implement — reuse the traditions co-citation figure as a worked example; needs-human label removed
+2026-07-23T16:42Z HDMX-coding-agent note author RESCOPE (2026-07-23): the data-paper figure is now the global map (ticket 0307, parallel agent — this ticket does not touch data-paper.qmd). This ticket delivers the LIMITATIONS demonstration for the response letter: (1) r1-14-network-response.md with the author-validated paragraph, numbers recomputed on current (post-PR#1093) data and industrialized (compute_network_limitations.py, tab_network_limitations.csv, Make target); (2) Crossref spot-check of ~50 pre-2007 co-citation edges (qa_cocitation_edges.py); (3) fig_traditions_pre2008_citers as potential electronic supplement (committed artifact, NOT embedded); (4) orphaned include cocitation-communities.md deleted (stale hand-curated numbers)
 
+2026-07-23T17:40Z HDMX-coding-agent closed — autoclosed — PR #1103
 --- body ---
 ## Context
 

@@ -1,0 +1,92 @@
+# Central registry of community/tradition names and colors for network figures
+# (ticket 0307 — one concept = one exact English label and one color across
+# all figures).
+#
+# Rules encoded here:
+# - "CDM & carbon markets" is ONE concept: the pre-2007 CDM tradition and the
+#   present-day CDM communities on both global maps share label and color.
+# - "Carbon pricing & emissions trading" likewise unifies the pre-2007 pricing
+#   tradition with the co-citation permit-markets/carbon-price community.
+# - "Burden-sharing (UNFCCC & institutions)" (retrospective pre-2007 tradition)
+#   is DISTINCT from "International climate governance" (present-day field
+#   community): different concepts, different names, different colors.
+#
+# Community ids are Louvain labels under the fixed seed (config/analysis.yaml
+# pre2007_traditions.louvain_seed); they are stable only for that seed.
+
+concepts:
+  carbon-pricing:
+    label: "Carbon pricing & emissions trading"
+    color: "#1a6496"
+  cdm:
+    label: "CDM & carbon markets"
+    color: "#e07b39"
+  burden-sharing:
+    label: "Burden-sharing (UNFCCC & institutions)"
+    color: "#4a9e6b"
+  governance:
+    label: "International climate governance"
+    color: "#8c6bb1"
+  climate-risk:
+    label: "Financial economics of climate risk"
+    color: "#b2182b"
+  north-south:
+    label: "North-South climate finance allocation"
+    color: "#c8a227"
+  adaptation:
+    label: "Adaptation & vulnerability"
+    color: "#35978f"
+  climate-science:
+    label: "Climate science & land-based mitigation"
+    color: "#6a8f3c"
+  green-finance:
+    label: "Green bonds & sustainable finance"
+    color: "#de77ae"
+  innovation:
+    label: "Energy innovation finance & de-risking"
+    color: "#8c564b"
+  health:
+    label: "Health, inequality & loss-and-damage"
+    color: "#17becf"
+  econometrics:
+    label: "Panel econometrics toolbox"
+    color: "#7f7f7f"
+  other:
+    label: "Other communities"
+    color: "#DDDDDD"
+
+# Label overrides for broken bibliographic metadata (ticket 0307): applied by
+# the render pass AFTER author-year formatting, keyed on the formatted label
+# text. Fixes upstream metadata defects without touching the corpus files.
+label_overrides:
+  "O. C. Future 1987": "Our Common Future 1987"
+  "theory justice original": "Rawls 1971"
+  "Nations 1992": "United Nations 1992"
+
+# Tradition keys used by _pre2007_traditions anchors -> concepts
+traditions:
+  pricing: carbon-pricing
+  cdm: cdm
+  unfccc: burden-sharing
+
+# Per-figure mapping: Louvain community id -> concept key
+figures:
+  fig_global_map_direct:
+    "6": cdm
+    "7": north-south          # policy & adaptation finance merged in this partition
+    "4": climate-science
+    "0": climate-risk
+    "1": governance
+    "12": green-finance
+    "44": innovation
+    "24": health
+  fig_global_map_cocitation:
+    "13": climate-science
+    "11": climate-risk
+    "25": adaptation
+    "21": green-finance
+    "10": cdm
+    "24": governance
+    "8": north-south
+    "6": carbon-pricing
+    "9": econometrics

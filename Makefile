@@ -104,6 +104,7 @@ endif
 -include scripts/analysis/zoo-figures.mk
 -include scripts/analysis/venues.mk
 -include scripts/analysis/separation.mk
+-include scripts/analysis/network-limitations.mk
 
 # ── Quarto ───────────────────────────────────────────────
 # The per-document include sets (*_INCLUDES) and figure sets (*_FIGS) live in
@@ -200,7 +201,7 @@ deploy-corpus:
 	$(UV_RUN) dvc push
 
 # ── Corpus diagnostics (Phase 1 — reads enrichment caches) ──
-deliverables/_shared/tables/qa_citations_report.json: scripts/qa/qa_citations.py scripts/utils.py \
+deliverables/_shared/tables/qa_citations_report.json: scripts/qa/qa_citations.py scripts/qa/_crossref_qa.py scripts/utils.py \
 		$(DATA_DIR)/citations.csv
 	$(PYTHON) $< --output $@
 
@@ -249,6 +250,12 @@ deliverables/_shared/tables/tab_citation_coverage.md: scripts/figures/export_cit
 deliverables/_shared/tables/tab_reference_counts.csv: scripts/analysis/compute_reference_counts.py scripts/utils.py $(REFINED) $(REFINED_CIT)
 	$(PYTHON) $< --output $@
 
+# Also reads the catalog_merge source catalogs discovered from dvc.yaml
+# (read-only; not listed as prerequisites so a Phase-2 build never triggers
+# Phase 1 — the catalogs are DVC-managed).
+deliverables/_shared/tables/tab_dedup_error_estimates.csv: scripts/analysis/compute_dedup_error_estimates.py scripts/utils.py $(CONFIG) $(REFINED)
+	$(PYTHON) $< --output $@
+
 deliverables/_shared/tables/tab_venues.md: scripts/figures/export_tab_venues.py scripts/utils.py $(REFINED) $(DERIVED)/tab_pole_papers.csv
 	$(PYTHON) $< --output $@ --pole-papers $(DERIVED)/tab_pole_papers.csv
 
@@ -289,7 +296,8 @@ $(COMPUTED_STATS) &: scripts/analysis/compute_vars.py scripts/utils.py $(REFINED
 		$(wildcard $(REFINED_EMB)) \
 		$(wildcard $(DATA_DIR)/citations.csv) \
 		$(wildcard $(REFINED_CIT)) \
-		$(wildcard deliverables/_shared/tables/qa_citations_report.json)
+		$(wildcard deliverables/_shared/tables/qa_citations_report.json) \
+		$(DERIVED)/global_map_direct.json
 	$(PYTHON) $< --output $@
 
 stats: $(COMPUTED_STATS)
@@ -472,6 +480,26 @@ deliverables/_shared/figures/fig_bimodality_keywords_core.png: scripts/figures/p
 # Pre-2007 co-citation traditions network
 deliverables/_shared/figures/fig_traditions.png: scripts/figures/plot_fig_traditions.py scripts/plot_style.py scripts/utils.py $(CONFIG) $(REFINED) $(REFINED_CIT)
 	$(PYTHON) $< --output $@
+
+# Global citation-network map (ticket 0307, R1-14): compute meta-graph JSON,
+# then render. Direct map = data-paper figure; co-citation map = companion
+# artifact (committed, not embedded).
+GLOBAL_MAP_DIRECT := $(DERIVED)/global_map_direct.json
+GLOBAL_MAP_COCIT  := $(DERIVED)/global_map_cocitation.json
+
+$(GLOBAL_MAP_DIRECT): scripts/analysis/analyze_global_map.py scripts/utils.py $(CONFIG) $(REFINED) $(REFINED_CIT)
+	$(PYTHON) $< --method direct --output $@
+
+$(GLOBAL_MAP_COCIT): scripts/analysis/analyze_global_map.py scripts/utils.py $(CONFIG) $(REFINED) $(REFINED_CIT)
+	$(PYTHON) $< --method cocitation --output $@
+
+deliverables/_shared/figures/fig_global_map_direct.png: scripts/figures/plot_fig_global_map.py \
+		scripts/figures/_community_registry.py scripts/plot_style.py config/community_registry.yml $(GLOBAL_MAP_DIRECT)
+	$(PYTHON) $< --input $(GLOBAL_MAP_DIRECT) --output $@
+
+deliverables/_shared/figures/fig_global_map_cocitation.png: scripts/figures/plot_fig_global_map.py \
+		scripts/figures/_community_registry.py scripts/plot_style.py config/community_registry.yml $(GLOBAL_MAP_COCIT)
+	$(PYTHON) $< --input $(GLOBAL_MAP_COCIT) --output $@
 
 # Co-citation communities (compute: community assignments + summary table)
 COMMUNITIES := $(DERIVED)/communities.csv

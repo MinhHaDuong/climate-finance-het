@@ -42,7 +42,6 @@ TECHREP_INCLUDES := deliverables/_shared/_includes/corpus-construction.md \
 		deliverables/_shared/_includes/bimodality-analysis.md \
 		deliverables/_shared/_includes/pca-scatter.md \
 		deliverables/_shared/_includes/citation-genealogy.md \
-		deliverables/_shared/_includes/cocitation-communities.md \
 		deliverables/_shared/_includes/citation-quality.md \
 		deliverables/_shared/_includes/reproducibility.md \
 		deliverables/_shared/tables/tab_citation_coverage.md
@@ -104,7 +103,9 @@ ZOO_INCLUDES := deliverables/_shared/_includes/techrep/overview.md \
 # Phase-2 rules that PRODUCE them live in the concern .mk (root), not here.
 MANUSCRIPT_FIGS := deliverables/_shared/figures/fig_bars_v1.png deliverables/_shared/figures/fig_composition.png deliverables/_shared/figures/fig_breaks.png
 
-DATAPAPER_FIGS  := deliverables/_shared/figures/fig_bars.png deliverables/_shared/figures/fig_dag.png
+DATAPAPER_FIGS  := deliverables/_shared/figures/fig_bars.png deliverables/_shared/figures/fig_dag.png \
+                   deliverables/_shared/figures/fig_global_map_direct.png \
+                   deliverables/_shared/figures/fig_global_map_cocitation.png
 
 MULTILAYER_FIGS  := deliverables/_shared/figures/fig_breakpoints.png deliverables/_shared/figures/fig_alluvial.png \
                    deliverables/_shared/figures/fig_breaks.png \

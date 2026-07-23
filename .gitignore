@@ -33,8 +33,15 @@ deliverables/_shared/figures/*
 !deliverables/_shared/figures/fig_bars_v1.png
 !deliverables/_shared/figures/fig_composition.png
 !deliverables/_shared/figures/fig_breaks.png
+# Citer-limited traditions network: potential electronic supplement of the
+# data paper (R1-14, ticket 0286) — committed artifact, not embedded in a doc.
+!deliverables/_shared/figures/fig_traditions_pre2008_citers.png
+# Companion artifact of the data-paper global map (ticket 0307): produced by
+# make, committed for reference, NOT embedded in any deliverable.
+!deliverables/_shared/figures/fig_global_map_cocitation.png
 deliverables/_shared/tables/*
 !deliverables/_shared/tables/tab_variables.md
+!deliverables/_shared/tables/codebook.md
 !deliverables/_shared/tables/tab_venues.md
 !deliverables/_shared/tables/tab_venues_fr.md
 !deliverables/_shared/tables/tab_venues_fr_caption.md
@@ -51,6 +58,13 @@ deliverables/_shared/tables/*
 # data paper (RDJ-26561 referee remark R1-13); commit its generator output so
 # every quoted value has an archived record (ticket 0285).
 !deliverables/_shared/tables/tab_reference_counts.csv
+# R1-14 limitations demonstration: every number in the response letter's
+# network paragraph traces to these artifacts (ticket 0286).
+!deliverables/_shared/tables/tab_network_limitations.csv
+!deliverables/_shared/tables/qa_cocitation_edges_report.json
+# Dedup error-rate estimates are quoted in the data paper's dedup discussion
+# (R1-12, ticket 0301 → 0276); commit the artifact for the same reason.
+!deliverables/_shared/tables/tab_dedup_error_estimates.csv
 # Generated -vars.yml, each in its deliverable folder (ticket 0226); the
 # manuscript's is pinned to v1.0 values and stays git-tracked.
 deliverables/_shared/technical-report-vars.yml

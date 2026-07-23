@@ -8,6 +8,7 @@ Usage:
     uv run python scripts/analysis/compute_vars.py
 """
 
+import glob
 import json
 import os
 import sys
@@ -73,6 +74,19 @@ DOC_VARS = {
         "filter_no_abstract",
         "filter_protected",
         "filter_title_blacklist",
+        "dedup_doi_removed",
+        "dedup_fn_pairs",
+        "dedup_fn_pairs_pct",
+        "dedup_fn_upper_docs",
+        "dedup_fn_upper_pct",
+        "dedup_fp_doi_collision_groups",
+        "dedup_fp_empty_year_docs",
+        "dedup_fp_empty_year_groups",
+        "dedup_titleyear_removed",
+        "gm_communities",
+        "gm_coverage_pct",
+        "gm_modularity",
+        "gm_n_connected",
         "lang_english_pct",
         "openalex_pct",
         "refs_doi_docs",
@@ -244,6 +258,36 @@ def filter_stats(v):
 
     # Net removals
     v["filter_net_removals"] = _int((audit["action"] == "remove").sum())
+
+
+def dedup_stats(v):
+    """Merge-stage dedup counters and error estimates for the data paper.
+
+    Counts come from the latest catalog_merge run report (ticket 0284);
+    error estimates from tab_dedup_error_estimates.csv (ticket 0301).
+    Both are pipeline artifacts — no hand-curated numbers.
+    """
+    reports = sorted(
+        glob.glob(os.path.join(CATALOGS_DIR, "run_reports", "catalog_merge__*.json"))
+    )
+    if reports:
+        with open(reports[-1]) as f:
+            rep = json.load(f)
+        v["dedup_doi_removed"] = _int(rep["doi_duplicates_removed"])
+        v["dedup_titleyear_removed"] = _int(rep["title_year_duplicates_removed"])
+    else:
+        warnings.warn("Missing: catalog_merge run report (dvc repro catalog_merge)")
+
+    df = _read_csv("tab_dedup_error_estimates.csv", directory=TABLES_DIR)
+    if df is not None:
+        m = dict(zip(df["metric"], df["value"]))
+        v["dedup_fn_pairs"] = _int(m["fn_exact_title_pairs"])
+        v["dedup_fn_pairs_pct"] = _pct(100 * m["fn_exact_title_pairs_share"])
+        v["dedup_fn_upper_docs"] = _int(m["fn_candidate_family_docs"])
+        v["dedup_fn_upper_pct"] = _pct(100 * m["fn_candidate_family_docs_share"])
+        v["dedup_fp_doi_collision_groups"] = _int(m["fp_doi_groups_near_zero_overlap"])
+        v["dedup_fp_empty_year_groups"] = _int(m["fp_empty_year_groups"])
+        v["dedup_fp_empty_year_docs"] = _int(m["fp_empty_year_docs_merged"])
 
 
 def embedding_stats(v):
@@ -442,6 +486,21 @@ def reference_count_stats(v):
     v["refs_max"] = _int(m["ref_count_max"])
 
 
+def global_map_stats(v):
+    """Global citation-network map stats from global_map_direct.json (0307).
+
+    Produced by scripts/analysis/analyze_global_map.py; feeds the data-paper
+    figure prose so no community count, coverage, or modularity is hand-typed.
+    """
+    summary = _read_json("global_map_direct.json", directory=DERIVED_TABLES_DIR)
+    if summary is None:
+        return
+    v["gm_communities"] = str(summary["n_communities_major"])
+    v["gm_coverage_pct"] = _pct(100 * summary["coverage_share"], 0)
+    v["gm_n_connected"] = _int(summary["n_nodes"])
+    v["gm_modularity"] = f"{summary['modularity']:.2f}"
+
+
 # ── Write YAML ───────────────────────────────────────────────
 
 
@@ -470,6 +529,24 @@ def main():
     citation_stats(v)
     filter_stats(v)
     reference_count_stats(v)
+    dedup_stats(v)
+    global_map_stats(v)
+
+    # Dedup vars fall back to MISSING while their artifacts are pending:
+    # the catalog_merge run report awaits a dvc-capable full-data session
+    # (ticket 0284) and tab_dedup_error_estimates.csv lands with ticket 0301.
+    for _k in (
+        "dedup_doi_removed",
+        "dedup_titleyear_removed",
+        "dedup_fn_pairs",
+        "dedup_fn_pairs_pct",
+        "dedup_fn_upper_docs",
+        "dedup_fn_upper_pct",
+        "dedup_fp_doi_collision_groups",
+        "dedup_fp_empty_year_groups",
+        "dedup_fp_empty_year_docs",
+    ):
+        v.setdefault(_k, MISSING)
 
     # Companion Z-series vars — require tab_summary_*.csv (not yet generated)
     for _k in (
