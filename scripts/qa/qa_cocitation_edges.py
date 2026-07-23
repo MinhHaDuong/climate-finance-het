@@ -27,8 +27,8 @@ from _citer_limited_traditions import (
     citer_limited_cutoff,
     load_citer_limited,
 )
+from _crossref_qa import fetch_crossref_refs, wilson_ci
 from pipeline_loaders import load_analysis_config
-from qa_citations import fetch_crossref_refs, wilson_ci
 from script_io_args import parse_io_args, validate_io
 from utils import get_logger
 

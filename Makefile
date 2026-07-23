@@ -201,7 +201,7 @@ deploy-corpus:
 	$(UV_RUN) dvc push
 
 # ── Corpus diagnostics (Phase 1 — reads enrichment caches) ──
-deliverables/_shared/tables/qa_citations_report.json: scripts/qa/qa_citations.py scripts/utils.py \
+deliverables/_shared/tables/qa_citations_report.json: scripts/qa/qa_citations.py scripts/qa/_crossref_qa.py scripts/utils.py \
 		$(DATA_DIR)/citations.csv
 	$(PYTHON) $< --output $@
 

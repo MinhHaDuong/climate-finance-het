@@ -124,7 +124,7 @@ def test_plot_script_reads_registry_with_fallback():
 
 def test_qa_script_reuses_crossref_idiom():
     src = open(os.path.join(SCRIPTS, "qa", "qa_cocitation_edges.py")).read()
-    assert "from qa_citations import fetch_crossref_refs, wilson_ci" in src
+    assert "from _crossref_qa import fetch_crossref_refs, wilson_ci" in src
     assert "--sample-n" in src
 
 

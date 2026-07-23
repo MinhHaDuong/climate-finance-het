@@ -33,7 +33,7 @@ $(NETLIM_FIG): scripts/figures/plot_fig_traditions_pre2008_citers.py \
 
 # Network access (Crossref); run deliberately, artifact is committed.
 $(NETLIM_QA): scripts/qa/qa_cocitation_edges.py \
-		scripts/_citer_limited_traditions.py scripts/qa/qa_citations.py \
+		scripts/_citer_limited_traditions.py scripts/qa/_crossref_qa.py \
 		scripts/utils.py scripts/pipeline_loaders.py $(CONFIG) \
 		$(REFINED) $(REFINED_CIT)
 	$(PYTHON) $< --output $@

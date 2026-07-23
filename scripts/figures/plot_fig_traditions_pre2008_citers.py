@@ -58,7 +58,7 @@ def tradition_style():
         colors["other"] = concepts.get("other", {}).get("color", "#DDDDDD")
         log.info("Using community registry: %s", REGISTRY_PATH)
     else:
-        from plot_fig_traditions import TRADITION_COLORS, TRADITION_LABELS
+        from _tradition_style import TRADITION_COLORS, TRADITION_LABELS
         labels = {t: (v or "").replace("\n", " ")
                   for t, v in TRADITION_LABELS.items() if v}
         colors = dict(TRADITION_COLORS)
