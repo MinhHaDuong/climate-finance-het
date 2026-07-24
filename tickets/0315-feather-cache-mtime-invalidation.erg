@@ -1,0 +1,37 @@
+%erg 0.1
+Title: pipeline_loaders: Feather cache must invalidate on CSV mtime
+Created: 2026-07-24
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-24T16:20Z HDMX-coding-agent created from corpus-v2 rebuild incident (bit twice on 2026-07-24)
+
+--- body ---
+## Context
+
+The corpus loaders accelerate CSV reads via Feather sidecars but never
+compare their mtime to the source CSV. During the 2026-07-24 corpus-v2
+rebuild, April-dated Feather caches shadowed the freshly rebuilt CSVs and
+crashed the sem6 build with inconsistent data; the fix (manual cache
+rebuild via the Make feather targets) had to be re-discovered mid-run —
+and the same trap had already bitten earlier the same day. Any analysis
+run between a corpus rebuild and a manual cache refresh silently reads
+the OLD corpus.
+
+## Actions
+
+1. In pipeline_loaders, when a Feather sidecar is older than its source
+   CSV, ignore it and regenerate (or fail with a clear message if
+   regeneration is not possible in context).
+2. Cover load_refined_works / load_refined_citations / any loader with a
+   Feather fast path.
+
+## Test
+
+- Unit: touch the CSV newer than the Feather; loader returns CSV content
+  (or regenerates), never the stale Feather.
+
+## Exit criteria
+
+- [ ] A rebuilt CSV can never be shadowed by an older Feather sidecar
+- [ ] make check green

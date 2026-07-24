@@ -1,0 +1,38 @@
+%erg 0.1
+Title: Filter stage: hard-fail when Flag 6 (semantic relevance) cannot run
+Created: 2026-07-24
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-24T16:20Z HDMX-coding-agent created from corpus-v2 rebuild incident
+
+--- body ---
+## Context
+
+During the 2026-07-24 corpus-v2 rebuild, the filter stage ran in an env
+without torch/sentence-transformers. Flag 6 (semantic relevance) logged
+"Flag 6 skipped … no candidates scored" as a WARNING and the stage exited 0,
+shipping a refined corpus inflated by 5,840 wrongly-retained works
+(38,166 instead of 33,344). The defect was caught only because the number
+swung between passes and was chased by hand (PR #1116 diagnosis).
+
+A silently-degraded corpus is worse than a failed build: every downstream
+number (paper, letter, deposit) inherits the inflation unnoticed.
+
+## Actions
+
+1. In the filter script, make an unrunnable Flag 6 a hard error (exit
+   non-zero), with the remediation in the message (uv sync --group corpus
+   --extra cpu|cu130; PYTHONPATH via make).
+2. Audit sibling flags for the same skip-and-continue pattern; same
+   treatment for any flag whose absence changes corpus membership.
+
+## Test
+
+- Unit: filter invoked with torch unavailable (mock import failure) exits
+  non-zero and names Flag 6 in the error.
+
+## Exit criteria
+
+- [ ] Filter cannot exit 0 with a membership-affecting flag skipped
+- [ ] make check green
