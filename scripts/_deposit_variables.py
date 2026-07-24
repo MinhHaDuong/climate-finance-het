@@ -73,7 +73,7 @@ DEPOSIT_VARIABLES: list[Variable] = [
     Variable("source", "string",
              "Primary source catalog for the record's metadata (highest-priority "
              "contributing source)", _MERGE, group=_IDENTITY,
-             allowed_values="openalex, istex, bibcnrs, scispace, grey, teaching"),
+             allowed_values="openalex, istex, bibcnrs, scispace, grey, teaching, unfccc, oecd"),
     Variable("source_id", "string",
              "Identifier in the primary source (e.g. OpenAlex work ID)", _MERGE,
              group=_IDENTITY),
@@ -246,6 +246,11 @@ def render_markdown_table() -> str:
         r"\toprule",
         r"Variable & Type & Description \\",
         r"\midrule",
+        r"\endfirsthead",
+        r"\toprule",
+        r"Variable & Type & Description \\",
+        r"\midrule",
+        r"\endhead",
     ]
     prev_group = None
     groups: list[str] = []

@@ -4,6 +4,11 @@
 \toprule
 Variable & Type & Description \\
 \midrule
+\endfirsthead
+\toprule
+Variable & Type & Description \\
+\midrule
+\endhead
 \texttt{source} & string & Primary source catalog for the record's metadata (highest-priority contributing source) \\
 \texttt{source\_id} & string & Identifier in the primary source (e.g. OpenAlex work ID) \\
 \texttt{doi} & string, nullable & Digital Object Identifier, when available \\
