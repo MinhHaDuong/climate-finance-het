@@ -263,3 +263,12 @@ documents:
     language: en
     url: ""
     provenance: "Author fetch 2026-07-24: Aid and Environment guidelines series No. 9 (sustainable use of wetlands); year to confirm at 0313. Pooled with sidecar."
+  - symbol: "DCD/DAC/STAT(2020)27"
+    title: "Assessing the Policy Objectives of Development Co-operation Activities: Review of the Reporting Status, Use and Relevance of Rio and Policy Markers - Conclusions and Recommendations"
+    short_title: "WP-STAT review of Rio and policy markers (2020)"
+    year: 2020
+    body: "OECD DAC Working Party on Development Finance Statistics"
+    doc_class: statistical_directive
+    language: en
+    url: ""
+    provenance: "Author OLIS fetch 2026-07-24: the 2020 internal review of Rio-marker reporting status, use and relevance — evidence layer for the marker-reliability dispute. Pooled with sidecar."
