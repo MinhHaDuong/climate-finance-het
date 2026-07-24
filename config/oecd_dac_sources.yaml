@@ -209,3 +209,12 @@ documents:
     language: en
     url: "https://www.oecd.org/en/publications/shaping-the-21st-century-the-contribution-of-development-co-operation_da2d4165-en.html"
     provenance: "Author addition 2026-07-24: the 1996 DAC strategy that seeded the International Development Goals (precursor to the MDGs), environmental sustainability among them; absent from corpus (checked refined_works). PDF fetched by author, pooled with sidecar."
+  - symbol: "OECD/DAC/MFSDR-PRINCIPLES/2019"
+    title: "OECD DAC Guiding Principles on Managing for Sustainable Development Results"
+    short_title: "DAC Guiding Principles on Managing for Sustainable Development Results (2019)"
+    year: 2019
+    body: "OECD Development Assistance Committee"
+    doc_class: dac_document
+    language: en
+    url: "https://www.oecd.org/en/publications/managing-for-sustainable-development-results_44a288bc-en.html"
+    provenance: "Author addition 2026-07-24: DAC results-management doctrine in the guidance series lineage; absent from corpus (checked refined_works). PDF fetched by author, pooled with sidecar."
