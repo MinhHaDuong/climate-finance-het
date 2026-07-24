@@ -6,6 +6,8 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-22T10:05Z HDMX-coding-agent created
 
+2026-07-24T21:20Z HDMX-coding-agent note pulled into the RDJ-26561 resubmission lane (tracker 0274): the Zenodo repack (0280 kit + cut-plan supplement files) depends on these scripts building the current layout. Evidence found today: stray pre-reorg output/ tree with stale PDFs (companion-paper.pdf) in the primary checkout, trashed during tidy-up.
+
 --- body ---
 ## Context
 During the 0153 resubmission deposit (2026-07-21), `bash
