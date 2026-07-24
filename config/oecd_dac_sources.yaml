@@ -226,7 +226,7 @@ documents:
     doc_class: dac_document
     language: en
     url: "https://www.oecd.org/en/publications/development-assistance-manual-dac_g2gh14fb-en.html"
-    provenance: "Author addition 2026-07-24: consolidated 1992 DAC principles manual (131 pp scan); absent from corpus. IMAGE-ONLY PDF — no text layer; needs OCR before fulltext counts (sidecar currently near-empty)."
+    provenance: "Author addition 2026-07-24: consolidated 1992 DAC principles manual; absent from corpus. ISBN 92-64-13779-3, OECD code (43 92 06 1), catalogued at 142 pp — our scan has 131 pp, completeness to verify at 0313. IMAGE-ONLY PDF — needs OCR before fulltext counts."
   - symbol: "OECD/DAC/HARMONISING-DONOR-PRACTICES/2003"
     title: "Harmonising Donor Practices for Effective Aid Delivery"
     short_title: "DAC Guidelines on Harmonising Donor Practices (2003)"
