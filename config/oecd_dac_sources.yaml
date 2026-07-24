@@ -236,3 +236,12 @@ documents:
     language: en
     url: "https://www.oecd.org/en/publications/harmonising-donor-practices-for-effective-aid-delivery_9789264199835-en.html"
     provenance: "Author addition 2026-07-24: DAC Guidelines and Reference Series volume on aid-delivery harmonisation (pre-Paris Declaration doctrine); absent from corpus (checked refined_works). PDF fetched by author, pooled with sidecar. Year to confirm against the landing page's Cite widget (0313 enrichment pass)."
+  - symbol: "OCDE/GD(91)200"
+    title: "Guidelines on Environment and Aid No. 1: Good Practices for Environmental Impact Assessment of Development Projects"
+    short_title: "DAC Good Practices for EIA of Development Projects (1991)"
+    year: 1991
+    body: "OECD DAC Working Party on Development Assistance and Environment"
+    doc_class: dac_document
+    language: en
+    url: ""
+    provenance: "Author fetch 2026-07-24 (OLIS): first of the derestricted Environment and Aid guidelines series; concrete document for the ENVIRONET-predecessor working-party anchor (OECD/ENVIRONET/1990s). Scan with usable text layer."
