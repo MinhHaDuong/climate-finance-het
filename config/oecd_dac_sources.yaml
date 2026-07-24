@@ -29,6 +29,18 @@
 # tolerates the failure, and accepts pre-placed PDFs in the pool directory
 # (manual bulk export path anticipated by ticket 0288).
 
+# Series lineage note (author, 2026-07-24): the DAC guidance series is one
+# continuous lineage under three successive names —
+#   "The DAC Guidelines" (ISSN 19900864,
+#     https://www.oecd.org/en/publications/the-dac-guidelines_19900864.html),
+#   "DAC Guidelines and Reference Series" (ISSN 19900988,
+#     https://www.oecd.org/en/publications/dac-guidelines-and-reference-series_19900988.html),
+#   "Best Practices in Development Co-operation" (
+#     https://www.oecd.org/en/publications/best-practices-in-development-co-operation_d571f17c-en.html).
+# Treat them as one methodological series when curating doctrine documents;
+# the 2001/2002 Guidelines seeds belong to the first name, the 2021/2025
+# Blended Finance Guidance to the third.
+
 documents:
   # ── DAC Statistical Reporting Directives (Rio markers) ───────────────
   - symbol: "OECD/DAC/SRD/1998"
@@ -134,15 +146,10 @@ documents:
     provenance: "Contemporary record of the Rio-marker decision. Pre-DOI era. Locate at harvest."
 
   # ── Early DAC / WP-STAT / ENVIRONET documents ────────────────────────
-  - symbol: "OECD/GD(92)-AID-ENV"
-    title: "Guidelines on Aid and Environment"
-    short_title: "DAC Guidelines on Aid and Environment (1992)"
-    year: 1992
-    body: "OECD Development Assistance Committee"
-    doc_class: dac_document
-    language: en
-    url: ""
-    provenance: "Pre-Rio-marker environment screening doctrine; corpus OECD-DOI coverage starts at 2000 (ticket 0288). OLIS symbol to identify at harvest."
+  # RETIRED 2026-07-24 (0313 web-hunt): "OECD/GD(92)-AID-ENV Guidelines on
+  # Aid and Environment (1992)" was a phantom — no consolidated volume exists.
+  # The series is nine numbered pamphlets, seeded individually below
+  # (AID-ENV Nos. 1-9; No. 1 = OCDE/GD(91)200).
   - symbol: "OECD/DAC/RIO-REPORT/2002"
     title: "Aid Targeting the Objectives of the Rio Conventions 1998-2000: A Contribution by the DAC Secretariat"
     short_title: "First Rio-marker statistical report (2002)"
@@ -161,3 +168,202 @@ documents:
     language: en
     url: ""
     provenance: "Placeholder anchor for the early working-party layer; concrete documents identified from OLIS at harvest (enumeration child ticket)."
+  - symbol: "OECD/DAC/BLENDED-FINANCE-PRINCIPLES/2018"
+    title: "OECD DAC Blended Finance Principles for Unlocking Commercial Finance for the Sustainable Development Goals"
+    short_title: "DAC Blended Finance Principles (2018)"
+    year: 2018
+    body: "OECD Development Assistance Committee"
+    doc_class: dac_document
+    language: en
+    url: "https://www.oecd.org/content/dam/oecd/en/publications/reports/2018/12/oecd-dac-blended-finance-principles_898d3549/dc66bd9c-en.pdf"
+    provenance: "Author addition 2026-07-24: founding Principles absent from corpus (only the 2021 Guidance and 2022 clean-energy guidance are present via their iLibrary DOIs), so the class exclusion does not apply. PDF fetched by author, pooled with sidecar."
+  - symbol: "OECD/DAC/GUIDELINES-SSD/2001"
+    title: "The DAC Guidelines: Strategies for Sustainable Development"
+    short_title: "DAC Guidelines on Strategies for Sustainable Development (2001)"
+    year: 2001
+    body: "OECD Development Assistance Committee"
+    doc_class: dac_document
+    language: en
+    url: "https://www.oecd.org/en/publications/strategies-for-sustainable-development_9789264194762-en.html"
+    provenance: "Author addition 2026-07-24: DAC sustainable-development doctrine between the 1992 Aid & Environment guidelines and the Rio-marker statistical series; absent from corpus (checked refined_works). PDF fetched by author, pooled with sidecar."
+  - symbol: "OECD/DAC/GUIDELINES-RIO/2002"
+    title: "The DAC Guidelines: Integrating the Rio Conventions into Development Co-operation"
+    short_title: "DAC Guidelines on Integrating the Rio Conventions (2002)"
+    year: 2002
+    body: "OECD Development Assistance Committee"
+    doc_class: dac_document
+    language: en
+    url: "https://www.oecd.org/en/publications/integrating-the-rio-conventions-into-development-co-operation_9789264176065-en.html"
+    provenance: "Author addition 2026-07-24: DAC doctrine on integrating the Rio Conventions into aid — companion to the 2002 Rio-marker statistical report already listed; absent from corpus (checked refined_works). PDF fetched by author, pooled with sidecar."
+  - symbol: "OECD/DAC/SHAPING-21ST-CENTURY/1996"
+    title: "Shaping the 21st Century: The Contribution of Development Co-operation"
+    short_title: "Shaping the 21st Century (DAC, 1996)"
+    year: 1996
+    body: "OECD Development Assistance Committee"
+    doc_class: dac_document
+    language: en
+    url: "https://www.oecd.org/en/publications/shaping-the-21st-century-the-contribution-of-development-co-operation_da2d4165-en.html"
+    provenance: "Author addition 2026-07-24: the 1996 DAC strategy that seeded the International Development Goals (precursor to the MDGs), environmental sustainability among them; absent from corpus (checked refined_works). PDF fetched by author, pooled with sidecar."
+  - symbol: "OECD/DAC/MFSDR-PRINCIPLES/2019"
+    title: "OECD DAC Guiding Principles on Managing for Sustainable Development Results"
+    short_title: "DAC Guiding Principles on Managing for Sustainable Development Results (2019)"
+    year: 2019
+    body: "OECD Development Assistance Committee"
+    doc_class: dac_document
+    language: en
+    url: "https://www.oecd.org/en/publications/managing-for-sustainable-development-results_44a288bc-en.html"
+    provenance: "Author addition 2026-07-24: DAC results-management doctrine in the guidance series lineage; absent from corpus (checked refined_works). PDF fetched by author, pooled with sidecar."
+  - symbol: "OECD/DAC/ASSISTANCE-MANUAL/1992"
+    title: "Development Assistance Manual: DAC Principles for Effective Aid"
+    short_title: "DAC Development Assistance Manual (1992)"
+    year: 1992
+    body: "OECD Development Assistance Committee"
+    doc_class: dac_document
+    language: en
+    url: "https://www.oecd.org/en/publications/development-assistance-manual-dac_g2gh14fb-en.html"
+    provenance: "Author addition 2026-07-24: consolidated 1992 DAC principles manual; absent from corpus. ISBN 92-64-13779-3, OECD code (43 92 06 1), catalogued at 142 pp — our scan has 131 pp, completeness to verify at 0313. IMAGE-ONLY PDF — needs OCR before fulltext counts."
+  - symbol: "OECD/DAC/HARMONISING-DONOR-PRACTICES/2003"
+    title: "Harmonising Donor Practices for Effective Aid Delivery"
+    short_title: "DAC Guidelines on Harmonising Donor Practices (2003)"
+    year: 2003
+    body: "OECD Development Assistance Committee"
+    doc_class: dac_document
+    language: en
+    url: "https://www.oecd.org/en/publications/harmonising-donor-practices-for-effective-aid-delivery_9789264199835-en.html"
+    provenance: "Author addition 2026-07-24: DAC Guidelines and Reference Series volume on aid-delivery harmonisation (pre-Paris Declaration doctrine); absent from corpus (checked refined_works). PDF fetched by author, pooled with sidecar. Year to confirm against the landing page's Cite widget (0313 enrichment pass)."
+  - symbol: "OCDE/GD(91)200"
+    title: "Guidelines on Environment and Aid No. 1: Good Practices for Environmental Impact Assessment of Development Projects"
+    short_title: "DAC Good Practices for EIA of Development Projects (1991)"
+    year: 1991
+    body: "OECD DAC Working Party on Development Assistance and Environment"
+    doc_class: dac_document
+    language: en
+    url: ""
+    provenance: "Author fetch 2026-07-24 (OLIS): first of the derestricted Environment and Aid guidelines series; concrete document for the ENVIRONET-predecessor working-party anchor (OECD/ENVIRONET/1990s). Scan with usable text layer."
+  - symbol: "OECD/DAC/AID-ENV-3/1992"
+    title: "Guidelines on Aid and Environment No. 3: Guidelines for Aid Agencies on Involuntary Displacement and Resettlement in Development Projects"
+    short_title: "DAC Aid and Environment Guidelines No. 3 — Displacement and Resettlement (1992)"
+    year: 1992
+    body: "OECD DAC Working Party on Development Assistance and Environment"
+    doc_class: dac_document
+    language: en
+    url: "https://reliefweb.int/report/world/guidelines-aid-and-environment"
+    provenance: "Author fetch 2026-07-24 via ReliefWeb (legacy attachment): Aid and Environment guidelines series No. 3; early working-party layer (ENVIRONET anchor). Pooled with sidecar."
+  - symbol: "OECD/DAC/AID-ENV-9/1996"
+    title: "Guidelines on Aid and Environment No. 9: Guidelines for Aid Agencies for Improved Conservation and Sustainable Use of Tropical and Sub-Tropical Wetlands"
+    short_title: "DAC Aid and Environment Guidelines No. 9 — Wetlands (1996)"
+    year: 1996
+    body: "OECD DAC Working Party on Development Assistance and Environment"
+    doc_class: dac_document
+    language: en
+    url: ""
+    provenance: "Author fetch 2026-07-24: Aid and Environment guidelines series No. 9 (sustainable use of wetlands); year to confirm at 0313. Pooled with sidecar."
+  - symbol: "DCD/DAC/STAT(2020)27"
+    title: "Assessing the Policy Objectives of Development Co-operation Activities: Review of the Reporting Status, Use and Relevance of Rio and Policy Markers - Conclusions and Recommendations"
+    short_title: "WP-STAT review of Rio and policy markers (2020)"
+    year: 2020
+    body: "OECD DAC Working Party on Development Finance Statistics"
+    doc_class: statistical_directive
+    language: en
+    url: ""
+    provenance: "Author OLIS fetch 2026-07-24: the 2020 internal review of Rio-marker reporting status, use and relevance — evidence layer for the marker-reliability dispute. Pooled with sidecar."
+  - symbol: "OCDE/GD(94)12"
+    title: "Effective Technology Transfer, Co-operation and Capacity Building for Sustainable Development: Common Reference Paper"
+    short_title: "DAC common reference paper on technology transfer and capacity building (1994)"
+    year: 1994
+    body: "OECD Development Assistance Committee"
+    doc_class: dac_document
+    language: en
+    url: ""
+    provenance: "Author OLIS fetch 2026-07-24: implements the Dec 1991 environment-development ministers mandate; early working-party layer (ENVIRONET anchor). Pooled with sidecar."
+  - symbol: "DCD/DAC/STAT(2023)9/FINAL"
+    title: "Converged Statistical Reporting Directives for the Creditor Reporting System (CRS) and the Annual DAC Questionnaire (2023): Chapters 1-6"
+    short_title: "Converged Statistical Reporting Directives (2023)"
+    year: 2023
+    body: "OECD DAC Working Party on Development Finance Statistics"
+    doc_class: statistical_directive
+    language: en
+    url: "https://one.oecd.org/document/DCD/DAC/STAT(2023)9/FINAL/en/pdf"
+    provenance: "Author OLIS fetch 2026-07-24: directives approved by WP-STAT 12 April 2023 — extends the directive series to the last in-range edition. Pooled with sidecar."
+  - symbol: "DCD/DAC/STAT(2023)9/ADD2/FINAL"
+    title: "Converged Statistical Reporting Directives for the Creditor Reporting System (CRS) and the Annual DAC Questionnaire (2023): Addendum 2 (Annexes)"
+    short_title: "Converged Statistical Reporting Directives 2023 — Addendum 2"
+    year: 2023
+    body: "OECD DAC Working Party on Development Finance Statistics"
+    doc_class: statistical_directive
+    language: en
+    url: "https://one.oecd.org/document/DCD/DAC/STAT(2023)9/ADD2/FINAL/en/pdf"
+    provenance: "Author OLIS fetch 2026-07-24: annexes addendum to the 2023 directives (115 pp — carries the Rio-marker annex material). Pooled with sidecar."
+  - symbol: "DCD/DAC(2014)37/FINAL"
+    title: "Revised DAC Recommendation on Untying Official Development Assistance to the Least Developed Countries and Heavily Indebted Poor Countries"
+    short_title: "Revised DAC Recommendation on Untying ODA (2014)"
+    year: 2014
+    body: "OECD Development Assistance Committee"
+    doc_class: dac_document
+    language: en
+    url: "https://one.oecd.org/document/DCD/DAC(2014)37/FINAL/en/pdf"
+    provenance: "Author OLIS fetch 2026-07-24: untying recommendation as approved 21 July 2014. Pooled with sidecar."
+  - symbol: "DCD/DAC/STAT(2018)9/ADD2/FINAL"
+    title: "Converged Statistical Reporting Directives for the Creditor Reporting System (CRS) and the Annual DAC Questionnaire (2018): Addendum 2 (Annexes)"
+    short_title: "Converged Statistical Reporting Directives 2018 — Addendum 2"
+    year: 2018
+    body: "OECD DAC Working Party on Development Finance Statistics"
+    doc_class: statistical_directive
+    language: en
+    url: "https://one.oecd.org/document/DCD/DAC/STAT(2018)9/ADD2/FINAL/en/pdf"
+    provenance: "Author OLIS fetch 2026-07-24: annexes addendum to the 2018 directives (83 pp, marker annexes). Pooled with sidecar."
+
+  - symbol: "OECD/DAC/AID-ENV-2/1992"
+    title: "Guidelines on Aid and Environment No. 2: Good Practices for Country Environmental Surveys and Strategies"
+    short_title: "DAC Aid and Environment Guidelines No. 2 (1992)"
+    year: 1992
+    body: "OECD DAC Working Party on Development Assistance and Environment"
+    doc_class: dac_document
+    language: en
+    url: "https://web.archive.org/web/20150907190658id_/http://www.oecd.org/dac/environment-development/1887600.pdf"
+    provenance: "Web-hunt fan-out 2026-07-24: Wayback capture of the oecd.org numeric-ID series. Endorsed Dec 1991 (first set of four). Pooled with sidecar."
+  - symbol: "OECD/DAC/AID-ENV-4/1992"
+    title: "Guidelines on Aid and Environment No. 4: Guidelines for Aid Agencies on Global Environmental Problems"
+    short_title: "DAC Aid and Environment Guidelines No. 4 — Global Environmental Problems (1992)"
+    year: 1992
+    body: "OECD DAC Working Party on Development Assistance and Environment"
+    doc_class: dac_document
+    language: en
+    url: "https://www.cbd.int/doc/guidelines/fin-oecd-gd-lns-global-en.pdf"
+    provenance: "Web-hunt fan-out 2026-07-24, CBD mirror: THE climate number of the series — aid doctrine on global environmental problems, endorsed Dec 1991. Pooled with sidecar."
+  - symbol: "OECD/DAC/AID-ENV-5/1993"
+    title: "Guidelines on Aid and Environment No. 5: Guidelines for Aid Agencies on Chemicals Management"
+    short_title: "DAC Aid and Environment Guidelines No. 5 — Chemicals (1993)"
+    year: 1993
+    body: "OECD DAC Working Party on Development Assistance and Environment"
+    doc_class: dac_document
+    language: en
+    url: "https://web.archive.org/web/20150907190658id_/http://www.oecd.org/dac/environment-development/1887724.pdf"
+    provenance: "Web-hunt fan-out 2026-07-24: Wayback capture of the oecd.org numeric-ID series. Pooled with sidecar."
+  - symbol: "OECD/DAC/AID-ENV-6/1994"
+    title: "Guidelines on Aid and Environment No. 6: Guidelines for Aid Agencies on Pest and Pesticide Management"
+    short_title: "DAC Aid and Environment Guidelines No. 6 — Pest Management (1994)"
+    year: 1994
+    body: "OECD DAC Working Party on Development Assistance and Environment"
+    doc_class: dac_document
+    language: en
+    url: "https://web.archive.org/web/20150907190658id_/http://www.oecd.org/dac/environment-development/1887732.pdf"
+    provenance: "Web-hunt fan-out 2026-07-24: Wayback capture of the oecd.org numeric-ID series. Pooled with sidecar."
+  - symbol: "OECD/DAC/AID-ENV-7/1994"
+    title: "Guidelines on Aid and Environment No. 7: Guidelines for Aid Agencies on Disaster Mitigation"
+    short_title: "DAC Aid and Environment Guidelines No. 7 — Disaster Mitigation (1994)"
+    year: 1994
+    body: "OECD DAC Working Party on Development Assistance and Environment"
+    doc_class: dac_document
+    language: en
+    url: "https://web-archive-storage.oecd.org/aemint-web-archive-prod/web-archive/f8/f8b631a5e2609024c39aafc540e852beedd031358298ee2b0c03530faecda823.pdf"
+    provenance: "Web-hunt fan-out 2026-07-24: OECD web-archive-storage host. Pooled with sidecar."
+  - symbol: "OECD/DAC/AID-ENV-8/1992"
+    title: "Guidelines on Aid and Environment No. 8: Global and Regional Aspects of the Development and Protection of the Marine and Coastal Environment"
+    short_title: "DAC Aid and Environment Guidelines No. 8 — Marine and Coastal (1992)"
+    year: 1992
+    body: "OECD DAC Working Party on Development Assistance and Environment"
+    doc_class: dac_document
+    language: en
+    url: "https://www.cbd.int/doc/guidelines/fin-oecd-gd-lns-mar-en.pdf"
+    provenance: "Web-hunt fan-out 2026-07-24, CBD mirror: cover imprint 1992, adopted after Nos. 7/9 per text — year to confirm at 0313. Pooled with sidecar."

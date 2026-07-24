@@ -1,0 +1,42 @@
+%erg 0.1
+Title: Keydocs fetch: cold mop-up harvest re-run and manual OECD PDF intake
+Created: 2026-07-24
+Author: HDMX-coding-agent
+Blocked-by: 0313
+
+--- log ---
+2026-07-24T08:30Z HDMX-coding-agent created split from 0311 (fetch lane)
+
+--- body ---
+## Context
+
+Split from 0311 (parent 0288). The fetch lane: actually acquiring the
+fulltexts once URLs are known. Separated from the verify-and-fill lane
+(0313) so the URL-resolution research and the mechanical harvest re-run
+can be reviewed independently. Blocked-by 0313 only for the seeds whose
+URLs 0313 resolves; the wall-bounce retries and the manual OECD intake
+can start immediately.
+
+## Actions
+
+1. Cold re-run of the mop-up harvest (`catalog_keydocs.py`) — the ~12
+   Incapsula wall bounces from 0304's report should clear.
+2. Manual OECD intake: 11 PDFs fetched by the author in a browser
+   (one.oecd.org 403s robots), placed as
+   `data/pool/keydocs/oecd/<safe_filename(symbol)>.pdf`. Already cached:
+   DCD_DAC_2007_39_FINAL, DCD_DAC_2016_3_FINAL, DCD_DAC_STAT_2018_9_FINAL.
+3. Re-run harvest after 0313 lands its URLs; `dvc commit` the pool.
+
+## Verification
+
+- [ ] Every OECD/UNFCCC seed entry status is cached or documented no_url
+- [ ] Pool sidecar .txt extracted for each new PDF
+
+## Invariants
+
+- Seed guard stays green; harvester still rejects DOI-bearing seeds.
+
+## Exit criteria
+
+- [ ] Harvest statuses final (cached/no_url only) — 0288's corpus-v2
+      rebuild can count fulltexts
