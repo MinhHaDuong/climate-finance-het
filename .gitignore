@@ -39,6 +39,8 @@ deliverables/_shared/figures/*
 # Companion artifact of the data-paper global map (ticket 0307): produced by
 # make, committed for reference, NOT embedded in any deliverable.
 !deliverables/_shared/figures/fig_global_map_cocitation.png
+# Data-paper global map (0274): embedded in data-paper.qmd, TF-IDF labels.
+!deliverables/_shared/figures/fig_global_map_direct.png
 # Data-paper semantic-composition figure (ticket 0310): the manuscript's
 # thematic-recomposition figure recomputed on the current corpus.
 !deliverables/_shared/figures/fig_sem_composition.png

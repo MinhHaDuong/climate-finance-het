@@ -223,6 +223,9 @@ def test_no_hardcoded_p_values_in_prose_bullets():
     bullets = [ln for ln in qmd.splitlines()
                if ln.lstrip().startswith("-")
                and ("lit_" in ln or "@fig-sem-composition" in ln)]
-    assert len(bullets) == 6, "expected exactly six confirmation bullets"
+    # Author copyedit 2026-07-24 reduced the block from six bullets to a
+    # short list; the guard is negative-polarity — no literal p-values —
+    # so it only needs the block to exist, not a fixed count.
+    assert len(bullets) >= 2, "expected the confirmation bullets block"
     for ln in bullets:
         assert not re.search(r"[=<]\s*0?\.\d", ln), f"hardcoded number: {ln}"

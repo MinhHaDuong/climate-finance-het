@@ -164,11 +164,12 @@ class TestDataDictionary:
         md = render_codebook({"doi": 0.0}, n_rows=1)
         assert "n/a" in md, "columns absent from the measured build show n/a"
 
-    def test_variables_table_carries_group_column(self):
+    def test_variables_table_names_groups_in_caption(self):
+        # Groups moved from a column to caption-only naming, with
+        # \midrule separators (author decision 2026-07-24).
         md = render_markdown_table()
-        header = md.splitlines()[0]
-        assert "Group" in header
-        assert "Record identity" in md
+        assert "record identity" in md
+        assert md.count("\\midrule") >= 4
 
 
 class TestDepositTransformMatchesContract:
@@ -188,13 +189,13 @@ class TestMarkdownTable:
     def test_render_contains_every_variable(self):
         md = render_markdown_table()
         for name in contract_names():
-            assert f"`{name}`" in md
+            assert name.replace("_", "\\_") in md
 
     def test_render_has_quarto_label_and_caption(self):
         md = render_markdown_table()
         assert "{#tbl-variables}" in md
-        assert md.strip().splitlines()[-1].startswith(":"), \
-            "last line must be the Quarto table caption"
+        assert md.strip().splitlines()[-1] == ":::", \
+            "table is a crossref div; caption is its closing paragraph"
 
     def test_export_script_exists(self):
         assert os.path.isfile(SCRIPT)

@@ -73,7 +73,7 @@ DEPOSIT_VARIABLES: list[Variable] = [
     Variable("source", "string",
              "Primary source catalog for the record's metadata (highest-priority "
              "contributing source)", _MERGE, group=_IDENTITY,
-             allowed_values="openalex, istex, bibcnrs, scispace, grey, teaching"),
+             allowed_values="openalex, istex, bibcnrs, scispace, grey, teaching, unfccc, oecd"),
     Variable("source_id", "string",
              "Identifier in the primary source (e.g. OpenAlex work ID)", _MERGE,
              group=_IDENTITY),
@@ -226,25 +226,55 @@ def transform(df):
 
 
 def render_markdown_table() -> str:
-    """Render the contract as a Quarto pipe table with caption and label."""
+    """Render the contract as a cross-referenceable LaTeX table.
+
+    Emitted as a Quarto div (#tbl-variables) wrapping raw LaTeX: pipe tables
+    cannot draw the horizontal rules that separate the four logical groups,
+    so the paper's PDF build gets a longtable with \midrule at each group
+    boundary. Group names appear in the caption only (author decision,
+    2026-07-24)."""
+
+    def esc(t: str) -> str:
+        for a, b in [("&", "\\&"), ("%", "\\%"), ("#", "\\#"), ("_", "\\_")]:
+            t = t.replace(a, b)
+        return t
+
     lines = [
-        "| Group | Variable | Type | Description |",
-        "|:----|:------|:----|:-------------------------------|",
+        "::: {#tbl-variables}",
+        "```{=latex}",
+        r"\begin{longtable}{@{}l l p{8.2cm}@{}}",
+        r"\toprule",
+        r"Variable & Type & Description \\",
+        r"\midrule",
+        r"\endfirsthead",
+        r"\toprule",
+        r"Variable & Type & Description \\",
+        r"\midrule",
+        r"\endhead",
     ]
     prev_group = None
+    groups: list[str] = []
     for v in DEPOSIT_VARIABLES:
         desc = v.description if v.required else v.description + \
             " (absent from corpus builds predating this pipeline stage)"
-        group = v.group if v.group != prev_group else ""
+        if prev_group is not None and v.group != prev_group:
+            lines.append(r"\midrule")
+        if v.group != prev_group:
+            groups.append(v.group.lower())
         prev_group = v.group
-        lines.append(f"| {group} | `{v.name}` | {v.type} | {desc} |")
+        lines.append(
+            rf"\texttt{{{esc(v.name)}}} & {esc(v.type)} & {esc(desc)} \\")
     lines += [
+        r"\bottomrule",
+        r"\end{longtable}",
+        "```",
         "",
-        ": Variables of `climate_finance_corpus.csv`, by logical group. "
-        "Generated from the deposit column contract "
-        "(`scripts/_deposit_variables.py`); per-source provenance, allowed "
-        "values, and missingness are in the deposited codebook. "
-        "{#tbl-variables}",
+        "Variables of `climate_finance_corpus.csv`. Horizontal rules separate "
+        "the four logical groups: " + ", ".join(groups) + ". Generated from "
+        "the deposit column contract (`scripts/_deposit_variables.py`); "
+        "per-source provenance, allowed values, and missingness are in the "
+        "deposited codebook.",
+        ":::",
     ]
     return "\n".join(lines) + "\n"
 

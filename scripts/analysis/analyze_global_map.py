@@ -22,12 +22,16 @@ Usage:
 import argparse
 import json
 import os
+import re
 from collections import Counter
 
 import community as community_louvain
 import networkx as nx
 import numpy as np
 from _global_map_graph import direct_graph, load_data
+from compute_clusters import LABEL_STOPWORDS, _collapse_acronyms
+from openalex_corpus.embedding import is_boilerplate_abstract
+from sklearn.feature_extraction.text import TfidfVectorizer
 from pipeline_loaders import load_analysis_config
 from scipy.sparse import csr_matrix
 from script_io_args import parse_io_args, validate_io
@@ -117,6 +121,65 @@ def summarize(G, partition, rank, meta, min_share, top_members):
     }
 
 
+def _member_text(row):
+    """Labelling text for one work: title + keywords + clean abstract.
+
+    Mirrors the sem-composition labelling input (compute_clusters): abstracts
+    are included, but boilerplate/stub abstracts are dropped
+    (is_boilerplate_abstract), and known expansions collapse to acronyms.
+    """
+    def _clean(v):
+        s = str(v or "")
+        return "" if s.lower() in ("nan", "none") else s
+
+    title = _clean(row.get("title"))
+    # Keywords carry concept-disambiguation parentheticals — "Adaptation
+    # (eye)", "Vulnerability (computing)" — that are noise, not content.
+    keywords = re.sub(r"\([^)]*\)", " ", _clean(row.get("keywords")))
+    abstract = _clean(row.get("abstract"))
+    if is_boilerplate_abstract(abstract, title=title):
+        abstract = ""
+    return _collapse_acronyms(" ".join(p for p in (title, keywords, abstract) if p))
+
+
+def add_top_terms(summary, partition, works, n_terms=3):
+    """Attach top-N TF-IDF distinctive terms to each major community.
+
+    Same method as the sem-composition panel subtitles (compute_clusters):
+    TF-IDF over member texts, distinctiveness = community mean - corpus mean,
+    shared LABEL_STOPWORDS filter. Terms are deduplicated by token stem.
+    """
+    major = {c["id"] for c in summary["communities"]}
+    w = works.drop_duplicates("doi_norm").set_index("doi_norm")
+    docs, comm_of = [], []
+    for doi, c in partition.items():
+        if c in major and doi in w.index:
+            docs.append(_member_text(w.loc[doi]))
+            comm_of.append(c)
+    vectorizer = TfidfVectorizer(
+        ngram_range=(1, 2), max_features=8000, sublinear_tf=True,
+        stop_words="english", min_df=5, max_df=0.8)
+    X = vectorizer.fit_transform(docs)
+    features = np.array(vectorizer.get_feature_names_out())
+    corpus_mean = np.asarray(X.mean(axis=0)).flatten()
+    comm_arr = np.array(comm_of)
+    for comm in summary["communities"]:
+        mask = comm_arr == comm["id"]
+        dist = np.asarray(X[mask].mean(axis=0)).flatten() - corpus_mean
+        terms, used_stems = [], set()
+        for i in np.argsort(dist)[::-1]:
+            if dist[i] <= 0 or len(terms) >= n_terms:
+                break
+            tokens = features[i].split()
+            stems = {t.rstrip("s") for t in tokens}
+            if any(t in LABEL_STOPWORDS for t in tokens) or stems & used_stems:
+                continue
+            terms.append(str(features[i]))
+            used_stems |= stems
+        comm["top_terms"] = terms
+    return summary
+
+
 def main():
     io_args, extra = parse_io_args()
     os.makedirs(os.path.dirname(io_args.output) or ".", exist_ok=True)
@@ -142,6 +205,11 @@ def main():
         G, weight="weight", random_state=seed)
     summary = summarize(G, partition, rank, meta,
                         float(gm["min_share"]), int(gm["top_members"]))
+    if args.method == "direct":
+        # Direct-map communities are labelled by their top TF-IDF terms
+        # (author directive 2026-07-24); cocitation nodes are references,
+        # often outside the corpus, so no member texts exist for them.
+        add_top_terms(summary, partition, works)
     summary["method"] = args.method
     summary["louvain_seed"] = seed
 
