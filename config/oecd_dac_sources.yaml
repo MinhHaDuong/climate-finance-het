@@ -227,3 +227,12 @@ documents:
     language: en
     url: "https://www.oecd.org/en/publications/development-assistance-manual-dac_g2gh14fb-en.html"
     provenance: "Author addition 2026-07-24: consolidated 1992 DAC principles manual (131 pp scan); absent from corpus. IMAGE-ONLY PDF — no text layer; needs OCR before fulltext counts (sidecar currently near-empty)."
+  - symbol: "OECD/DAC/HARMONISING-DONOR-PRACTICES/2003"
+    title: "Harmonising Donor Practices for Effective Aid Delivery"
+    short_title: "DAC Guidelines on Harmonising Donor Practices (2003)"
+    year: 2003
+    body: "OECD Development Assistance Committee"
+    doc_class: dac_document
+    language: en
+    url: "https://www.oecd.org/en/publications/harmonising-donor-practices-for-effective-aid-delivery_9789264199835-en.html"
+    provenance: "Author addition 2026-07-24: DAC Guidelines and Reference Series volume on aid-delivery harmonisation (pre-Paris Declaration doctrine); absent from corpus (checked refined_works). PDF fetched by author, pooled with sidecar. Year to confirm against the landing page's Cite widget (0313 enrichment pass)."
