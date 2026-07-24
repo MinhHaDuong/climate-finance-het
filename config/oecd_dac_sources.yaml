@@ -281,3 +281,12 @@ documents:
     language: en
     url: ""
     provenance: "Author OLIS fetch 2026-07-24: implements the Dec 1991 environment-development ministers mandate; early working-party layer (ENVIRONET anchor). Pooled with sidecar."
+  - symbol: "DCD/DAC/STAT(2023)9/FINAL"
+    title: "Converged Statistical Reporting Directives for the Creditor Reporting System (CRS) and the Annual DAC Questionnaire (2023): Chapters 1-6"
+    short_title: "Converged Statistical Reporting Directives (2023)"
+    year: 2023
+    body: "OECD DAC Working Party on Development Finance Statistics"
+    doc_class: statistical_directive
+    language: en
+    url: "https://one.oecd.org/document/DCD/DAC/STAT(2023)9/FINAL/en/pdf"
+    provenance: "Author OLIS fetch 2026-07-24: directives approved by WP-STAT 12 April 2023 — extends the directive series to the last in-range edition. Pooled with sidecar."
