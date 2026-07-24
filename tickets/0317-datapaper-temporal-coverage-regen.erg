@@ -1,0 +1,32 @@
+%erg 0.1
+Title: Data paper: regenerate the temporal citation-coverage figures on corpus v2
+Created: 2026-07-24
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-24T21:20Z HDMX-coding-agent created child of 0274 (checkpoint TODO)
+
+--- body ---
+## Context
+
+The paper's §4 states citation coverage "approximately 27% before 2007
+versus 47% post-2015" — v1.0 figures. On corpus v2 a quick recomputation
+(share of DOI-bearing refined works appearing as citing source in
+refined_citations) gives ~86% / ~77%: the GROBID and catalog-stage
+reference layers lifted early-period coverage so much the gradient may
+have inverted. A TODO comment marks the paragraph
+(deliverables/data-paper/data-paper.qmd, §4 Descriptive statistics).
+
+## Actions
+
+1. Define the canonical metric (script under scripts/analysis/, vars via
+   compute_vars.py — no hand prose numbers), consistent with
+   cite_refined_coverage_pct definitions.
+2. Regenerate on v2; rewrite the paragraph including the direction of the
+   gradient and its cause (reference-layer coverage, not field size).
+3. Remove the TODO comment.
+
+## Exit criteria
+
+- [ ] Coverage figures vars-driven and current; paragraph rewritten;
+      TODO gone before resubmission

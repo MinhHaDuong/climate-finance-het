@@ -6,6 +6,8 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-22T12:23Z HDMX-coding-agent created
 
+2026-07-24T21:20Z HDMX-coding-agent note leak reproduced in the wild: data/run_reports/ (repo root, wrong dir) held four test artifacts (my_script__test-run-001.json etc.); trashed during tidy-up.
+
 --- body ---
 ## Context
 
