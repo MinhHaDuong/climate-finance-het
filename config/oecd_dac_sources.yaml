@@ -218,3 +218,12 @@ documents:
     language: en
     url: "https://www.oecd.org/en/publications/managing-for-sustainable-development-results_44a288bc-en.html"
     provenance: "Author addition 2026-07-24: DAC results-management doctrine in the guidance series lineage; absent from corpus (checked refined_works). PDF fetched by author, pooled with sidecar."
+  - symbol: "OECD/DAC/ASSISTANCE-MANUAL/1992"
+    title: "Development Assistance Manual: DAC Principles for Effective Aid"
+    short_title: "DAC Development Assistance Manual (1992)"
+    year: 1992
+    body: "OECD Development Assistance Committee"
+    doc_class: dac_document
+    language: en
+    url: "https://www.oecd.org/en/publications/development-assistance-manual-dac_g2gh14fb-en.html"
+    provenance: "Author addition 2026-07-24: consolidated 1992 DAC principles manual (131 pp scan); absent from corpus. IMAGE-ONLY PDF — no text layer; needs OCR before fulltext counts (sidecar currently near-empty)."
