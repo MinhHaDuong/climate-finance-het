@@ -1,28 +1,32 @@
 # State
 
-Last updated: 2026-07-24T21:30Z
+Last updated: 2026-07-24T20:25Z
 
 ## Current goal
 
 **RDJ-26561 R&R — corpus v2 built, prose in final review.** Tracker 0274,
 due ~2026-10-20. 2026-07-24: author OECD fetch run → 35 keydoc seeds (31
 pooled, Aid-Env series 1-9 complete; 4 archive-request stragglers in 0313);
-corpus v2 rebuilt (Flag-6 silent skip caught → guard ticket 0314). Author
-verdicts pending: **PR #1120** (restructure + referee pass, ~3,300 words vs
-2,500 prose-only target) then **PR #1116** (corpus integration, closes 0294;
-letter DRAFTs — reconcile with #1120 after merge). #1115 cut pass rejected —
-author copyedits by hand. Then: 0313→0312 wrap, 0317 (27%/47% coverage is
+corpus v2 rebuilt (Flag-6 silent skip caught → guard ticket 0314). #1120 (restructure,
+TF-IDF map, count-free title) and #1116 (corpus integration, 0294 closed,
+letter DRAFTs) merged provisionally 2026-07-24 evening. Monday: 0283 letter
+reconciliation (list in ticket log — cleaning concession, Negishi/Barrett,
+Campiglio, stale refs, title line), then: 0313→0312 wrap, 0317 (27%/47% coverage is
 stale v1 — gradient may have inverted), 0292 (blocks Zenodo repack), 0283
 letter sign-off + deposit + resubmission. Œconomia: awaiting editor;
-0306/0309 parked. Secrets policy 0316: project .env = config only.
-Title call open: "Eight Sources" keep-or-justify. Worktree GC left 2
-uncommitted exploration worktrees (agent-a01d…, a47c…) for author.
+0306/0309 parked. Secrets policy 0316: project .env = config only. Pre-resub
+dress rehearsal available: wide panel + external referees (key fixed).
 
 ## Status
-<!-- refreshed 2026-07-24T21:30Z -->
-**Tickets:** ~23 ready · ~36 blocked — `erg ready tickets/` for full list
-**In flight:** PR #1120 (prose restructure) · PR #1116 (corpus + letter)
-**Merged today:** #1114 #1117 #1118 #1119 #1121 #1122 · #1115 closed-rejected
+<!-- generated 2026-07-24T20:25Z · as of 5d7e25e3 -->
+
+**Tickets:** 23 ready · 39 blocked · 2 awaiting author — `erg ready tickets/` for full list
+  next: 0272 Extract shared derive_companion_path() helper f… · 0273 load_cluster_labels() ignores --input, reads cl…
+**In flight:** no open PRs
+**Recent (first-parent):**
+  5d7e25e3 chore: housekeeping fixes (sweep)
+  e6665dda Merge pull request #1125 from MinhHaDuong/t0318-secref-guard
+  d71e7c8b Merge pull request #1116 from MinhHaDuong/corpus-v2-integration
 
 ## Submissions
 
