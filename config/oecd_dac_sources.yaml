@@ -308,3 +308,12 @@ documents:
     language: en
     url: "https://one.oecd.org/document/DCD/DAC(2014)37/FINAL/en/pdf"
     provenance: "Author OLIS fetch 2026-07-24: untying recommendation as approved 21 July 2014. Pooled with sidecar."
+  - symbol: "DCD/DAC/STAT(2018)9/ADD2/FINAL"
+    title: "Converged Statistical Reporting Directives for the Creditor Reporting System (CRS) and the Annual DAC Questionnaire (2018): Addendum 2 (Annexes)"
+    short_title: "Converged Statistical Reporting Directives 2018 — Addendum 2"
+    year: 2018
+    body: "OECD DAC Working Party on Development Finance Statistics"
+    doc_class: statistical_directive
+    language: en
+    url: "https://one.oecd.org/document/DCD/DAC/STAT(2018)9/ADD2/FINAL/en/pdf"
+    provenance: "Author OLIS fetch 2026-07-24: annexes addendum to the 2018 directives (83 pp, marker annexes). Pooled with sidecar."
