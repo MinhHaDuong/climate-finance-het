@@ -200,3 +200,12 @@ documents:
     language: en
     url: "https://www.oecd.org/en/publications/integrating-the-rio-conventions-into-development-co-operation_9789264176065-en.html"
     provenance: "Author addition 2026-07-24: DAC doctrine on integrating the Rio Conventions into aid — companion to the 2002 Rio-marker statistical report already listed; absent from corpus (checked refined_works). PDF fetched by author, pooled with sidecar."
+  - symbol: "OECD/DAC/SHAPING-21ST-CENTURY/1996"
+    title: "Shaping the 21st Century: The Contribution of Development Co-operation"
+    short_title: "Shaping the 21st Century (DAC, 1996)"
+    year: 1996
+    body: "OECD Development Assistance Committee"
+    doc_class: dac_document
+    language: en
+    url: "https://www.oecd.org/en/publications/shaping-the-21st-century-the-contribution-of-development-co-operation_da2d4165-en.html"
+    provenance: "Author addition 2026-07-24: the 1996 DAC strategy that seeded the International Development Goals (precursor to the MDGs), environmental sustainability among them; absent from corpus (checked refined_works). PDF fetched by author, pooled with sidecar."
