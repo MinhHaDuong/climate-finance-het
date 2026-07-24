@@ -290,3 +290,12 @@ documents:
     language: en
     url: "https://one.oecd.org/document/DCD/DAC/STAT(2023)9/FINAL/en/pdf"
     provenance: "Author OLIS fetch 2026-07-24: directives approved by WP-STAT 12 April 2023 — extends the directive series to the last in-range edition. Pooled with sidecar."
+  - symbol: "DCD/DAC/STAT(2023)9/ADD2/FINAL"
+    title: "Converged Statistical Reporting Directives for the Creditor Reporting System (CRS) and the Annual DAC Questionnaire (2023): Addendum 2 (Annexes)"
+    short_title: "Converged Statistical Reporting Directives 2023 — Addendum 2"
+    year: 2023
+    body: "OECD DAC Working Party on Development Finance Statistics"
+    doc_class: statistical_directive
+    language: en
+    url: "https://one.oecd.org/document/DCD/DAC/STAT(2023)9/ADD2/FINAL/en/pdf"
+    provenance: "Author OLIS fetch 2026-07-24: annexes addendum to the 2023 directives (115 pp — carries the Rio-marker annex material). Pooled with sidecar."
