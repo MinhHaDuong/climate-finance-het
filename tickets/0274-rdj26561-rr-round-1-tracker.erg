@@ -10,6 +10,7 @@ Author: HDMX-coding-agent
 2026-07-21T08:00Z HDMX-coding-agent note added 0289 (author request): verify comparison to prior bibliometric mappings
 
 2026-07-22T15:05Z HDMX-coding-agent note children 0300/0301 filed (PR #1086): artifact corrections for R1-13/R1-12; 0277/0276 log notes carry the corrected numbers
+2026-07-24T12:30Z HDMX-coding-agent note corpus-v2 rebuild archived (0294): catalog_merge__20260724T112050Z.json — 43,157 unified works (was 42,916); dedup procedures unchanged, totals moved with the 0288 seed expansion (doi dups 833, title-year dups 159, empty-title 3)
 
 --- body ---
 ## Context
