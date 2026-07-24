@@ -1,49 +1,37 @@
 # State
 
-Last updated: 2026-07-23T19:43Z
+Last updated: 2026-07-24T21:30Z
 
 ## Current goal
 
-**RDJ-26561 (data paper) R&R round 1 — prose complete.** Tracker **0274**,
-deadline ~2026-10-20. Session 2026-07-23: 16 PRs merged, 14 tickets closed
-(0275-0281, 0286, 0287, 0300, 0301, 0304, 0307, 0310). All referee/editor
-remarks covered in paper or letter material. Remaining: corpus-v2 rebuild
-(`make corpus` on padme, with author → 0288 counts), author OECD browser
-session (11 docs, ticket 0311 context), 0294 run report, **word-budget cut
-pass ~4,100 → 2,500**, then **0283** response letter + Zenodo deposit (kit
-ed04 ready) + resubmission. Œconomia: v2.0.5 resubmitted 2026-07-21 —
-awaiting editor; next round folds in 0306/0309 (three-traditions claim,
-null-artifact regen, l.305 metric).
-
-### Also open (details live in the tickets)
-- **0290/0291/0292** roar-filed: includes audit, Zotero pass, archive scripts.
+**RDJ-26561 R&R — corpus v2 built, prose in final review.** Tracker 0274,
+due ~2026-10-20. 2026-07-24: author OECD fetch run → 35 keydoc seeds (31
+pooled, Aid-Env series 1-9 complete; 4 archive-request stragglers in 0313);
+corpus v2 rebuilt (Flag-6 silent skip caught → guard ticket 0314). Author
+verdicts pending: **PR #1120** (restructure + referee pass, ~3,300 words vs
+2,500 prose-only target) then **PR #1116** (corpus integration, closes 0294;
+letter DRAFTs — reconcile with #1120 after merge). #1115 cut pass rejected —
+author copyedits by hand. Then: 0313→0312 wrap, 0317 (27%/47% coverage is
+stale v1 — gradient may have inverted), 0292 (blocks Zenodo repack), 0283
+letter sign-off + deposit + resubmission. Œconomia: awaiting editor;
+0306/0309 parked. Secrets policy 0316: project .env = config only.
+Title call open: "Eight Sources" keep-or-justify. Worktree GC left 2
+uncommitted exploration worktrees (agent-a01d…, a47c…) for author.
 
 ## Status
-<!-- generated 2026-07-23T19:43Z · as of 38a466a4 -->
+<!-- refreshed 2026-07-24T21:30Z -->
+**Tickets:** ~23 ready · ~36 blocked — `erg ready tickets/` for full list
+**In flight:** PR #1120 (prose restructure) · PR #1116 (corpus + letter)
+**Merged today:** #1114 #1117 #1118 #1119 #1121 #1122 · #1115 closed-rejected
 
-**Tickets:** 18 ready · 38 blocked · 2 awaiting author — `erg ready tickets/` for full list
-  next: 0272 Extract shared derive_companion_path() helper f… · 0273 load_cluster_labels() ignores --input, reads cl…
-**In flight:** no open PRs
-**Recent (first-parent):**
-  38a466a4 Merge pull request #1112 from MinhHaDuong/t277-cite-quality
-  096a3ff8 Merge pull request #1111 from MinhHaDuong/t310-fix-stub-cluster
-  4ac529b2 Merge pull request #1109 from MinhHaDuong/t310-lit-confirmations
+## Submissions
 
-## Corpus (v1.1.1)
+- RDJ-26561 (RDJ4HSS data paper): R&R round 1, due ~2026-10-20
+- Œconomia manuscript v2.0.5: resubmitted 2026-07-21, awaiting editor
 
-- 6 sources; 42,922 raw → 31,713 refined works, 38,479 embeddings, 968,871 citations
-- v1.1.2 being re-generated on padme (GROBID reference extraction + DOI matching)
+## Corpus (v2, 2026-07-24)
 
-## Health
-
-check-fast 1081+ / lint 165 green on merged branches. Known real-data
-failures: language-null 4.1% (0297, amplified by 0304 harvest),
-test_bias_flag flaky under xdist, divergence S2_energy. 16 agent worktrees
-(merged branches) awaiting next /molt GC. data/catalogs/{unfccc,oecd}_works.csv
-untracked pending 0288 rebuild + dvc commit.
-
-## Next actions
-
-- Corpus-v2 rebuild on padme (author + 0288); then 0311 anchors, 0305 DOI
-  resolution, 0294 run report.
-- Cut pass + **0283** response letter; author: OECD exports, Zenodo deposit.
+- 8 sources; 43,179 unified → 33,344 refined; 38,166×1024 embeddings;
+  1,087,209 refined citations; core (≥50 cites) 2,644
+- Keydocs: UNFCCC 225 + OECD 33; pools DVC-pushed; 1992 Manual OCRed
+- data/book/riomarkers/: 6 CRS zips (503 MB) — book chapter, NOT the paper
