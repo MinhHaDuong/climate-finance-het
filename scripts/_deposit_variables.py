@@ -228,8 +228,8 @@ def transform(df):
 def render_markdown_table() -> str:
     """Render the contract as a Quarto pipe table with caption and label."""
     lines = [
-        "| Group | Variable | Type | Description | Source |",
-        "|:----|:------|:----|:-------------------------|:---------|",
+        "| Group | Variable | Type | Description |",
+        "|:----|:------|:----|:-------------------------------|",
     ]
     prev_group = None
     for v in DEPOSIT_VARIABLES:
@@ -237,13 +237,14 @@ def render_markdown_table() -> str:
             " (absent from corpus builds predating this pipeline stage)"
         group = v.group if v.group != prev_group else ""
         prev_group = v.group
-        lines.append(f"| {group} | `{v.name}` | {v.type} | {desc} | {v.source} |")
+        lines.append(f"| {group} | `{v.name}` | {v.type} | {desc} |")
     lines += [
         "",
-        ": Variables of `climate_finance_corpus.csv`, by logical group. The "
-        "table is generated from the deposit column contract "
-        "(`scripts/_deposit_variables.py`), which the export script enforces "
-        "at write time. {#tbl-variables}",
+        ": Variables of `climate_finance_corpus.csv`, by logical group. "
+        "Generated from the deposit column contract "
+        "(`scripts/_deposit_variables.py`); per-source provenance, allowed "
+        "values, and missingness are in the deposited codebook. "
+        "{#tbl-variables}",
     ]
     return "\n".join(lines) + "\n"
 
