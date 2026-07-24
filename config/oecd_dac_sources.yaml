@@ -272,3 +272,12 @@ documents:
     language: en
     url: ""
     provenance: "Author OLIS fetch 2026-07-24: the 2020 internal review of Rio-marker reporting status, use and relevance — evidence layer for the marker-reliability dispute. Pooled with sidecar."
+  - symbol: "OCDE/GD(94)12"
+    title: "Effective Technology Transfer, Co-operation and Capacity Building for Sustainable Development: Common Reference Paper"
+    short_title: "DAC common reference paper on technology transfer and capacity building (1994)"
+    year: 1994
+    body: "OECD Development Assistance Committee"
+    doc_class: dac_document
+    language: en
+    url: ""
+    provenance: "Author OLIS fetch 2026-07-24: implements the Dec 1991 environment-development ministers mandate; early working-party layer (ENVIRONET anchor). Pooled with sidecar."
