@@ -170,3 +170,12 @@ documents:
     language: en
     url: "https://www.oecd.org/content/dam/oecd/en/publications/reports/2018/12/oecd-dac-blended-finance-principles_898d3549/dc66bd9c-en.pdf"
     provenance: "Author addition 2026-07-24: founding Principles absent from corpus (only the 2021 Guidance 10.1787/ded656b4-en and 2022 clean-energy guidance are present via DOI), so the class exclusion does not apply. PDF fetched by author, pooled with sidecar."
+  - symbol: "OECD/DAC/GUIDELINES-SSD/2001"
+    title: "The DAC Guidelines: Strategies for Sustainable Development"
+    short_title: "DAC Guidelines on Strategies for Sustainable Development (2001)"
+    year: 2001
+    body: "OECD Development Assistance Committee"
+    doc_class: dac_document
+    language: en
+    url: "https://www.oecd.org/en/publications/strategies-for-sustainable-development_9789264194762-en.html"
+    provenance: "Author addition 2026-07-24: DAC sustainable-development doctrine between the 1992 Aid & Environment guidelines and the Rio-marker statistical series; absent from corpus (checked refined_works). PDF fetched by author, pooled with sidecar."
