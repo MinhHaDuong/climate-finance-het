@@ -179,3 +179,12 @@ documents:
     language: en
     url: "https://www.oecd.org/en/publications/strategies-for-sustainable-development_9789264194762-en.html"
     provenance: "Author addition 2026-07-24: DAC sustainable-development doctrine between the 1992 Aid & Environment guidelines and the Rio-marker statistical series; absent from corpus (checked refined_works). PDF fetched by author, pooled with sidecar."
+  - symbol: "OECD/DAC/GUIDELINES-RIO/2002"
+    title: "The DAC Guidelines: Integrating the Rio Conventions into Development Co-operation"
+    short_title: "DAC Guidelines on Integrating the Rio Conventions (2002)"
+    year: 2002
+    body: "OECD Development Assistance Committee"
+    doc_class: dac_document
+    language: en
+    url: "https://www.oecd.org/en/publications/integrating-the-rio-conventions-into-development-co-operation_9789264176065-en.html"
+    provenance: "Author addition 2026-07-24: DAC doctrine on integrating the Rio Conventions into aid — companion to the 2002 Rio-marker statistical report already listed; absent from corpus (checked refined_works). PDF fetched by author, pooled with sidecar."
