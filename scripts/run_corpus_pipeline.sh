@@ -28,6 +28,27 @@ if ! uv run --env-file .env dvc version >/dev/null 2>&1; then
     exit 1
 fi
 
+# --- Guard: GROBID reachable (start the container if not) ---
+# The GROBID parse step degrades silently to cached parses when the service
+# is down (2026-07-24: container had been exited for 3 months; the new
+# keydoc fulltexts got no reference extraction until a forced re-run).
+if ! curl -sf http://localhost:8070/api/isalive >/dev/null 2>&1; then
+    echo "GROBID not reachable — starting the podman container..."
+    podman start grobid || {
+        echo "error: could not start the grobid container (podman start grobid)."
+        exit 1
+    }
+    for _ in $(seq 1 30); do
+        curl -sf http://localhost:8070/api/isalive >/dev/null 2>&1 && break
+        sleep 2
+    done
+    if ! curl -sf http://localhost:8070/api/isalive >/dev/null 2>&1; then
+        echo "error: GROBID container started but not answering on :8070."
+        exit 1
+    fi
+    echo "GROBID up."
+fi
+
 # --- Guard: must be on main ---
 current_branch="$(git rev-parse --abbrev-ref HEAD)"
 if [ "$current_branch" != "main" ]; then
