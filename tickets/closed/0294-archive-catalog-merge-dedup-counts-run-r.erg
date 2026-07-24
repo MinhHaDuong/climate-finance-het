@@ -2,12 +2,14 @@
 Title: Archive catalog_merge dedup-counts run report via DVC (0284 deferred step)
 Created: 2026-07-22
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1116
 
 --- log ---
 2026-07-22T12:23Z HDMX-coding-agent created
 2026-07-24T12:30Z HDMX-coding-agent note archived data/catalogs/run_reports/catalog_merge__20260724T112050Z.json via dvc commit+push; run_reports.dvc bumped (md5 2e7d3f3e, 120 files). Counts differ from the ticket's reference numbers because the author expanded the seeds today (0288 lane, PR #1114) before this rerun: records_total=44152 (ref 43906), doi_duplicates_removed=833 (unchanged), title_year_duplicates_removed=159 (ref 154), dropped_empty_title=3 (unchanged), records_unified=43157 (ref 42916). Procedures unchanged — the deltas are corpus-expansion effects, not procedure drift. Note logged to 0274 tracker instead of closed 0276 archive.
 2026-07-24T16:00Z HDMX-coding-agent note superseded by two later rebuilds: (a) full 35-seed OECD config + ECDPM grey entry (they were missing from the 112050Z pass — primary main was 26 commits stale), (b) forced GROBID re-parse with PYTHONPATH set. Current archived report catalog_merge__20260724T132552Z.json: records_total=44174, records_unified=43179 (doi dups 833, title-year 159, empty-title 3 — all unchanged). Merge procedures still unchanged; the +22 unified vs 112050Z is the extra OECD/ECDPM seeds. Refined dropped 38,166 -> 33,344 between passes: DIAGNOSED as a filter-stage defect in the 112050Z pass, not a data change — its Flag 6 (semantic relevance, sentence-transformers) logged "Flag 6 skipped: torch/sentence-transformers not installed -> no candidates scored", flagging 0 llm_irrelevant; the 132552Z pass had torch on PYTHONPATH, ran Flag 6, flagged 5,840 llm_irrelevant. The 33,344 corpus is the correct one; PR #1116's 38,166 was inflated by a silently-skipped filter. run_reports.dvc re-bumped after dvc commit+push of the 132552Z-pass reports.
 
+2026-07-24T20:12Z HDMX-coding-agent closed — autoclosed — PR #1116
 --- body ---
 ## Context
 
