@@ -252,8 +252,8 @@ documents:
     body: "OECD DAC Working Party on Development Assistance and Environment"
     doc_class: dac_document
     language: en
-    url: ""
-    provenance: "Author fetch 2026-07-24: Aid and Environment guidelines series No. 3; early working-party layer (ENVIRONET anchor). Pooled with sidecar."
+    url: "https://reliefweb.int/report/world/guidelines-aid-and-environment"
+    provenance: "Author fetch 2026-07-24 via ReliefWeb (legacy attachment): Aid and Environment guidelines series No. 3; early working-party layer (ENVIRONET anchor). Pooled with sidecar."
   - symbol: "OECD/DAC/AID-ENV-9/1996"
     title: "Guidelines on Aid and Environment No. 9: Guidelines for Aid Agencies for Improved Conservation and Sustainable Use of Tropical and Sub-Tropical Wetlands"
     short_title: "DAC Aid and Environment Guidelines No. 9 — Wetlands (1996)"
