@@ -6,7 +6,7 @@ author:
     affiliation:
       - name: "CIRED"
       - name: "CNRS"
-date: "2026-03-26"
+date: today
 metadata-files: [data-paper-vars.yml]
 bibliography: ../_shared/bibliography/main.bib
 abstract: |
@@ -95,7 +95,7 @@ Relevance filtering (flag 6) uses a cross-encoder reranker (BAAI/bge-reranker-v2
 
 {{< include ../_shared/tables/tab_languages.md >}}
 
-Users should be aware of several potential biases. The corpus is strongest on the academic pool and weakest on policy discourse and media, partially captured through the grey-literature and bibCNRS sources. Non-English coverage remains limited (@tbl-languages): English accounts for {{< meta lang_english_pct >}}% of refined works despite targeting eight languages, reflecting structural biases in indexing systems. Citation counts reflect OpenAlex data as of 2026-03-26 and favour older, English-language works; the teaching canon is biased toward institutions with publicly accessible syllabi.
+Users should be aware of several potential biases. The corpus is strongest on the academic pool and weakest on policy discourse and media, partially captured through the grey-literature and bibCNRS sources. Non-English coverage remains limited (@tbl-languages): English accounts for {{< meta lang_english_pct >}}% of refined works despite targeting eight languages, reflecting structural biases in indexing systems. Citation counts reflect OpenAlex data as of 2026-07-24 and favour older, English-language works; the teaching canon is biased toward institutions with publicly accessible syllabi.
 
 The grey-literature source is scoped to international institutions (the UNFCCC system, the OECD, the World Bank, transnational think tanks) and deliberately excludes documents from national institutions: government reports, economic analysis councils, central bank communications. The boundary follows the research object --- climate finance as a category of international economic governance, constituted in the UNFCCC and OECD arenas --- and tractability: each national document class is a corpus of its own, as when @campiglio_etal2025 assemble 35,487 speeches from 131 central banks for that single class. The exclusion costs institutional and multilingual coverage, a cost we acknowledge. The provenance architecture (@sec-data-structure) accepts such a layer without reprocessing existing sources, and central bank communication, where curated open datasets now exist [@campiglio_etal2025], is the natural first extension.
 
