@@ -170,14 +170,17 @@ def test_compute_vars_exports_lit_variables():
 
 
 def test_prose_lit_variables_trace_to_artifact():
-    """Every lit_* Quarto variable used in the prose is derivable from the
-    committed CSV: the compute_vars mapping only reads artifact metrics."""
+    """The cut pass (ticket-ref 0274) replaced the six confirmation bullets
+    with a pointer to the deposited artifacts; the prose must keep that
+    pointer, quote no lit_* variable, and the artifacts stay committed."""
     import re
 
     qmd = open(os.path.join(
         BASE, "deliverables", "data-paper", "data-paper.qmd")).read()
     used = set(re.findall(r"{{<\s*meta\s+(lit_\w+)\s*>}}", qmd))
-    assert used, "the data paper quotes no lit_* variable"
+    assert not used, f"lit_* variables re-entered the prose: {sorted(used)}"
+    assert "tab_lit_confirmations.csv" in qmd, "pointer sentence missing"
+    assert "tab_semantic_robustness.csv" in qmd, "pointer sentence missing"
     assert os.path.exists(CSV_PATH), "committed artifact missing"
     df = pd.read_csv(CSV_PATH)
     assert set(df.columns) == {"metric", "value"}
@@ -212,17 +215,11 @@ def test_sem6_assignments_artifact_contract():
     assert df["doi"].is_monotonic_increasing
 
 
-def test_no_hardcoded_p_values_in_prose_bullets():
-    """The confirmation bullets carry no literal p = 0.x digits."""
-    import re
-
+def test_no_confirmation_bullets_in_prose():
+    """The cut pass (ticket-ref 0274) removed the six confirmation bullets;
+    none may creep back (their statistics live in the deposited CSVs)."""
     qmd = open(os.path.join(
         BASE, "deliverables", "data-paper", "data-paper.qmd")).read()
-    # Find the confirmations block: bullets quoting lit_ variables (results
-    # 1-5) plus the figure-based item 6 (no number by design).
     bullets = [ln for ln in qmd.splitlines()
-               if ln.lstrip().startswith("-")
-               and ("lit_" in ln or "@fig-sem-composition" in ln)]
-    assert len(bullets) == 6, "expected exactly six confirmation bullets"
-    for ln in bullets:
-        assert not re.search(r"[=<]\s*0?\.\d", ln), f"hardcoded number: {ln}"
+               if ln.lstrip().startswith("-") and "lit_" in ln]
+    assert not bullets, f"confirmation bullets re-entered the prose: {bullets}"
