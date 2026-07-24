@@ -29,6 +29,18 @@
 # tolerates the failure, and accepts pre-placed PDFs in the pool directory
 # (manual bulk export path anticipated by ticket 0288).
 
+# Series lineage note (author, 2026-07-24): the DAC guidance series is one
+# continuous lineage under three successive names —
+#   "The DAC Guidelines" (ISSN 19900864,
+#     https://www.oecd.org/en/publications/the-dac-guidelines_19900864.html),
+#   "DAC Guidelines and Reference Series" (ISSN 19900988,
+#     https://www.oecd.org/en/publications/dac-guidelines-and-reference-series_19900988.html),
+#   "Best Practices in Development Co-operation" (
+#     https://www.oecd.org/en/publications/best-practices-in-development-co-operation_d571f17c-en.html).
+# Treat them as one methodological series when curating doctrine documents;
+# the 2001/2002 Guidelines seeds belong to the first name, the 2021/2025
+# Blended Finance Guidance to the third.
+
 documents:
   # ── DAC Statistical Reporting Directives (Rio markers) ───────────────
   - symbol: "OECD/DAC/SRD/1998"
