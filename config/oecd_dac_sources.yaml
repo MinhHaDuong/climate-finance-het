@@ -299,3 +299,12 @@ documents:
     language: en
     url: "https://one.oecd.org/document/DCD/DAC/STAT(2023)9/ADD2/FINAL/en/pdf"
     provenance: "Author OLIS fetch 2026-07-24: annexes addendum to the 2023 directives (115 pp — carries the Rio-marker annex material). Pooled with sidecar."
+  - symbol: "DCD/DAC(2014)37/FINAL"
+    title: "Revised DAC Recommendation on Untying Official Development Assistance to the Least Developed Countries and Heavily Indebted Poor Countries"
+    short_title: "Revised DAC Recommendation on Untying ODA (2014)"
+    year: 2014
+    body: "OECD Development Assistance Committee"
+    doc_class: dac_document
+    language: en
+    url: "https://one.oecd.org/document/DCD/DAC(2014)37/FINAL/en/pdf"
+    provenance: "Author OLIS fetch 2026-07-24: untying recommendation as approved 21 July 2014. Pooled with sidecar."
