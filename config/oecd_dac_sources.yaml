@@ -245,3 +245,21 @@ documents:
     language: en
     url: ""
     provenance: "Author fetch 2026-07-24 (OLIS): first of the derestricted Environment and Aid guidelines series; concrete document for the ENVIRONET-predecessor working-party anchor (OECD/ENVIRONET/1990s). Scan with usable text layer."
+  - symbol: "OECD/DAC/AID-ENV-3/1992"
+    title: "Guidelines on Aid and Environment No. 3: Guidelines for Aid Agencies on Involuntary Displacement and Resettlement in Development Projects"
+    short_title: "DAC Aid and Environment Guidelines No. 3 — Displacement and Resettlement (1992)"
+    year: 1992
+    body: "OECD DAC Working Party on Development Assistance and Environment"
+    doc_class: dac_document
+    language: en
+    url: ""
+    provenance: "Author fetch 2026-07-24: Aid and Environment guidelines series No. 3; early working-party layer (ENVIRONET anchor). Pooled with sidecar."
+  - symbol: "OECD/DAC/AID-ENV-9/1996"
+    title: "Guidelines on Aid and Environment No. 9: Guidelines for Aid Agencies for Improved Conservation and Sustainable Use of Tropical and Sub-Tropical Wetlands"
+    short_title: "DAC Aid and Environment Guidelines No. 9 — Wetlands (1996)"
+    year: 1996
+    body: "OECD DAC Working Party on Development Assistance and Environment"
+    doc_class: dac_document
+    language: en
+    url: ""
+    provenance: "Author fetch 2026-07-24: Aid and Environment guidelines series No. 9 (sustainable use of wetlands); year to confirm at 0313. Pooled with sidecar."
