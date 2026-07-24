@@ -1,9 +1,9 @@
 metric,value
-n_refined_docs,38166.0
-fn_exact_title_pairs,400.0
-fn_exact_title_pairs_share,0.01048053241104648
-fn_candidate_family_docs,1509.0
-fn_candidate_family_docs_share,0.03953780852067285
+n_refined_docs,33344.0
+fn_exact_title_pairs,344.0
+fn_exact_title_pairs_share,0.010316698656429943
+fn_candidate_family_docs,1329.0
+fn_candidate_family_docs_share,0.03985724568138196
 fp_doi_groups,797.0
 fp_doi_removals,833.0
 fp_doi_groups_divergent_title,113.0

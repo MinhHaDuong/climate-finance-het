@@ -6,8 +6,8 @@ Manuscript RDJ-26561, "A Curated Corpus of Climate Finance Literature,
 1. **Corpus extended (v2).** A curated layer of UNFCCC and OECD DAC key
    documents (COP decisions on finance, Biennial Assessments, Rio-marker
    reporting directives) joins the grey literature as a durable pipeline
-   source with provenance flags. The corpus grows from 42,916 to 43,157
-   unified works; all statistics, tables, and figures were regenerated from
+   source with provenance flags. The corpus grows from 42,916 to 43,179
+   unified works (30,987 to 33,344 after filtering); all statistics, tables, and figures were regenerated from
    the v2 corpus by the deposited pipeline. (R1-06)
 
 2. **New Section 2.4, "OpenAlex limitations and pipeline responses."** A
