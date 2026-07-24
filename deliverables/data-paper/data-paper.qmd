@@ -1,5 +1,5 @@
 ---
-title: "A Curated Corpus of Climate Finance Literature, 1990--2024: Eight Sources, Multilingual Retrieval, and Grey Literature"
+title: "A Curated Multi-Source Corpus of Climate Finance Literature, 1990--2024: Multilingual Retrieval and Grey Literature"
 author:
   - name: "Minh Ha-Duong\\thanks{Directeur de recherche, CIRED, CNRS. Correspondence: minh.ha-duong@cnrs.fr}"
     orcid: "0000-0001-9988-2100"
