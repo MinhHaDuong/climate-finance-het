@@ -1,0 +1,30 @@
+%erg 0.1
+Title: Fix @sec crossref in multilayer-detection.qmd; guard the class (hand-numbered headings render @sec empty)
+Created: 2026-07-24
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-24T22:40Z HDMX-coding-agent created from roar sweep (PR #1120 fix class)
+
+--- body ---
+## Context
+
+Quarto section crossrefs (@sec-xxx) render as an EMPTY "Section " when the
+document's headings are hand-numbered ("### 2.3 Quality...") — there is no
+section counter to resolve against. The data paper had six such broken refs
+(all fixed in PR #1120 by literal "Section N.M" text). Roar sweep found one
+more live instance: deliverables/multilayer/multilayer-detection.qmd
+(1 @sec ref, 28 hand-numbered headings).
+
+## Actions
+
+1. Fix the multilayer @sec ref (literal section number, matching the
+   data-paper resolution).
+2. Class guard: a prose-adherence test — any deliverable qmd with
+   hand-numbered headings (^#+ [0-9]+\.) must contain no @sec- crossrefs.
+   Negative polarity, cheap grep; add to tests/test_manuscript_prose.py.
+
+## Exit criteria
+
+- [ ] No deliverable renders an empty "Section " crossref
+- [ ] Guard test red on reintroduction, green on the fixed tree
