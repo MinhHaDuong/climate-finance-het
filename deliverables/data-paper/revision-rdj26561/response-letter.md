@@ -11,7 +11,7 @@ Thank you for the decision letter and for the referee's careful report. I
 have revised the paper on every point raised. The revision also extends the
 corpus itself: a curated layer of UNFCCC and OECD DAC key documents joins the
 grey literature (referee remark R1-06), so the corpus grows from 42,916 to
-43,157 unified works ({{REFINED_OLD}} to {{REFINED_NEW}} after filtering). All
+43,157 unified works (30,987 to 38,166 after filtering). All
 figures, tables, and in-text statistics were regenerated from the v2 corpus by
 the deposited pipeline; no number in the paper is hand-typed. Below I reply
 point by point, first to your letter, then to the referee report.
@@ -98,7 +98,7 @@ the first curated open dataset to plug in. Within the international frame,
 however, I did extend coverage in this revision: a curated layer of UNFCCC
 and OECD DAC key documents (COP decisions on finance, Biennial Assessments,
 Rio-marker reporting directives) now enters the corpus as a durable pipeline
-source with its own provenance flags ({{UNFCCC_N}} UNFCCC and {{OECD_N}} OECD
+source with its own provenance flags (231 UNFCCC and 12 OECD
 works after deduplication). The corpus totals, source table, and bias
 discussion were refreshed accordingly, and the exclusion of this layer from
 the citation network is disclosed in the bias section.
@@ -117,14 +117,14 @@ Section 2.4 adds a quantified discussion of the residual weakness the referee
 identifies. An audit of the refined corpus (script and output
 `tab_dedup_error_estimates.csv` in the deposited code) screens for
 exact-title, same-first-author pairs published up to five years apart:
-{{DEDUP_FN_PAIRS}} candidate pairs ({{DEDUP_FN_PAIRS_PCT}} of works), of
+400 candidate pairs (1.0% of works), of
 which about half are coordinated multi-journal editorials already flagged in
 `near_duplicate_group` and half are genuine working-paper/published-version
 pairs — the class the referee predicted. A fuzzy title match raises the upper
-bound to {{DEDUP_FN_UPPER}} works ({{DEDUP_FN_UPPER_PCT}}), though that tier
+bound to 1,509 works (4.0%), though that tier
 is dominated by report series and successive editions that are distinct
-works. The audit also quantifies over-merging: {{DEDUP_FP_GROUPS}} DOI groups
-joining unrelated works (OpenAlex DOI collisions) and {{DEDUP_FP_EY_GROUPS}}
+works. The audit also quantifies over-merging: 38 DOI groups
+joining unrelated works (OpenAlex DOI collisions) and 7
 degenerate empty-year groups. On the author variable: I agree it is the
 natural refinement, and the audit uses it as a screen. Implementing it as a
 merge pass requires author-name normalisation first — the audit found
@@ -135,9 +135,9 @@ shipping a pass that would over-merge on noisy names.
 **R1-13 (incorrect citation assignments; reference counts; GROBID).** Yes, I
 recorded the number of references each document contributes to the citation
 graph, and the revised Section 2.3 reports the distribution: among
-DOI-bearing works, the median reference count is {{REF_MEDIAN}} (mean
-{{REF_MEAN}}, 95th percentile {{REF_P95}}, maximum {{REF_MAX}}), and
-{{ZEROREF_PCT}} ({{ZEROREF_N}} works) contribute no reference at all — a gap
+DOI-bearing works, the median reference count is 28 (mean
+42.5, 95th percentile 126, maximum 1,536), and
+20.1% (6,074 works) contribute no reference at all — a gap
 concentrated in books, book reviews, editorials, and grey literature, where
 indexers hold the record but not its reference list. The revision flags both
 tails as screening variables for users. On GROBID: I agree it is necessary,

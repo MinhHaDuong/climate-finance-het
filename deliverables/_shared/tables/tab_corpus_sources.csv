@@ -1,0 +1,10 @@
+Source,Query,Raw,Refined,Unique,%non-EN,%Journal,%DOI,%Refs,%Abstract
+OpenAlex,"4-tier keyword taxonomy, 9 languages (default.search on title+abstract+fulltext)",41138,36335,35603,8%,85%,80%,64%,90%
+ISTEX,"""climate finance"" OR ""finance climat*"" on French institutional archive",748,671,479,2%,100%,100%,96%,97%
+bibCNRS,"FR, ZH, JA, DE queries via Gale/Wanfang/NewsBank (CNRS legacy portal)",233,222,202,8%,85%,11%,2%,5%
+SciSpace,AI-curated systematic review (RIS + CSV exports),663,630,249,2%,77%,83%,67%,91%
+Grey literature,"World Bank Open Knowledge Repository API + curated YAML (OECD, UNFCCC, CPI)",280,213,106,0%,100%,95%,32%,97%
+Teaching canon,"Syllabi from 15 programmes (doctoral, MBA, professional, MOOC)",622,617,548,8%,8%,100%,55%,31%
+UNFCCC key documents,"Curated COP/CMP/CMA decisions, SCF Biennial Assessments, fund reports, INC records, submissions, ENB summaries (config/unfccc_sources.yaml)",232,231,226,0%,100%,0%,0%,94%
+OECD DAC key documents,"Curated non-DOI founding documents: Rio-marker Statistical Reporting Directives, pre-DOI Development Co-operation Reports, early DAC/WP-STAT/ENVIRONET (config/oecd_dac_sources.yaml)",14,12,12,0%,100%,8%,8%,75%
+TOTAL,,43157,38166,37425,8%,84%,79%,63%,88%

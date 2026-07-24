@@ -120,7 +120,7 @@ def clean_doi(raw: str | None) -> str:
 
 def normalize_title(title: str | None) -> str:
     """Normalize a title for fuzzy dedup: lowercase, strip punctuation, collapse spaces."""
-    if not title:
+    if not isinstance(title, str) or not title:
         return ""
     t = title.lower()
     t = re.sub(r"[^\w\s]", "", t)
