@@ -64,7 +64,7 @@ LANGUAGE_NAMES = {
 }
 
 # Minimum count to show individually (otherwise grouped as "Other")
-MIN_COUNT = 20
+MIN_COUNT = 200
 
 
 def normalise_language(code: str) -> str:
@@ -152,7 +152,7 @@ def main() -> None:
         lines.append(f"| {' | '.join(str(v) for v in row)} |")
 
     lines.append("")
-    lines.append(": Language distribution in the enriched corpus. {#tbl-languages}")
+    lines.append(": Language distribution in the refined corpus. {#tbl-languages}")
 
     md = "\n".join(lines) + "\n"
     with open(OUTPUT_MD, "w", encoding="utf-8") as f:
