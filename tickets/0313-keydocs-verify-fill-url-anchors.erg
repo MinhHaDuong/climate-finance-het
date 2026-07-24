@@ -1,0 +1,40 @@
+%erg 0.1
+Title: Keydocs verify-and-fill: resolve series anchors and empty-URL entries
+Created: 2026-07-24
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-24T08:30Z HDMX-coding-agent created split from 0311 (verify-and-fill lane)
+
+--- body ---
+## Context
+
+Split from 0311 (parent 0288). The research lane: resolving every seed
+entry that still lacks a concrete URL or carries a "to confirm at
+harvest" provenance, so the fetch lane (0312) has final targets.
+
+## Actions
+
+1. Resolve the fund-series anchors (GCF 2015/2020, GEF 1997, Adaptation
+   Fund 2010, CMA4 Add.1) to concrete document URLs or Wayback captures.
+2. Enumerate ENB COP22-29 summaries from enb.iisd.org or Wayback.
+3. Resolve the OECD entries with empty URLs (SRD/1998 OLIS symbol, DCR
+   1992/1995/1998, GD(92) Aid & Environment, Rio report 2002, ENVIRONET
+   1990s enumeration) to symbols + URLs where they exist.
+4. Confirm the seven "to confirm at harvest" symbols.
+5. Leave genuinely no-PDF curated works (Clinton COP15 statement, AOSIS
+   reaction, G77 LTF submission) as documented no_url entries.
+
+## Verification
+
+- [ ] No seed entry retains "to confirm at harvest"
+- [ ] Empty-URL entries form an explicit, documented curated-no-PDF list
+
+## Invariants
+
+- Seed guard stays green; no catalog_grey coupling; no `doi:` keys.
+
+## Exit criteria
+
+- [ ] Every seed has either a final URL/symbol or a documented no_url
+      justification — 0312 can harvest to completion

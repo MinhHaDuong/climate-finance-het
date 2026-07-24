@@ -6,6 +6,8 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-23T23:30Z HDMX-coding-agent created child of 0288, from PR #1107 verify recommendation
 
+2026-07-24T08:30Z HDMX-coding-agent note split into 0312 (fetch: mop-up harvest + manual OECD intake) and 0313 (verify-and-fill: URL/symbol resolution); this ticket becomes the tracker
+
 --- body ---
 ## Context
 
@@ -19,7 +21,12 @@ data paper (parent 0288) would silently ship without their fulltexts.
 Also open from 0304's report: ENB COP22-29 summaries (not in the archived
 vol-12 index) and ~12 Incapsula wall bounces to retry cold.
 
-## Actions
+## Children
+
+- 0313 — verify-and-fill: resolve series anchors, enumerate ENB, confirm symbols
+- 0312 — fetch: cold mop-up re-run, manual OECD PDF intake, dvc commit (blocked-by 0313)
+
+## Actions (superseded by the split above)
 
 1. Cold re-run of the mop-up harvest (wall bounces should clear).
 2. Resolve the fund-series anchors (GCF/GEF/AFB/CMA4) to concrete document
