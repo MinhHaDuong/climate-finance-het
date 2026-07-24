@@ -9,10 +9,12 @@ The reading guide is NOT embedded in the PNG — it lives in the Quarto figure
 caption (deliverables/data-paper/data-paper.qmd). The PNG carries the map,
 a short title, and a one-line method subtitle only.
 
-Community names and colors come from config/community_registry.yml (one
-concept = one name = one color across all corpus network figures); unmapped
-communities fall back to grey with an auto author-year label. Broken-metadata
-labels are fixed by the registry's label_overrides at render time.
+Direct-map communities are labelled by their top TF-IDF terms carried in the
+JSON (`top_terms`, computed by analyze_global_map.add_top_terms with the same
+method as the sem-composition panel subtitles), drawn in a neutral single hue.
+The cocitation variant keeps config/community_registry.yml names and colors
+(one concept = one name = one color); unmapped communities fall back to grey
+with an auto author-year label, with label_overrides fixing broken metadata.
 
 Usage:
     python scripts/figures/plot_fig_global_map.py \
@@ -50,10 +52,21 @@ def auto_label(comm):
     return " / ".join(override_label(t) for t in tops)
 
 
+def term_label(comm):
+    """Two-line label from a community's top TF-IDF terms."""
+    terms = comm["top_terms"]
+    if not terms:
+        return f"community {comm['id']}"
+    if len(terms) == 1:
+        return terms[0]
+    return f"{terms[0]},\n" + ", ".join(terms[1:])
+
+
 def render(summary, out_path):
     """Render the community meta-graph PNG."""
     figure_name = f"fig_global_map_{summary['method']}"
-    reg = figure_communities(figure_name)
+    use_terms = all("top_terms" in c for c in summary["communities"])
+    reg = {} if use_terms else figure_communities(figure_name)
     seed = int(load_analysis_config()["pre2007_traditions"]["louvain_seed"])
 
     M = nx.Graph()
@@ -76,10 +89,14 @@ def render(summary, out_path):
     nx.draw_networkx_nodes(
         M, pos, ax=ax,
         node_size=[300 + 4200 * M.nodes[c]["size"] / maxs for c in M.nodes()],
-        node_color=[reg[c][1] if c in reg else "#DDDDDD" for c in M.nodes()],
+        node_color=["#A8C4DC" if use_terms else
+                    (reg[c][1] if c in reg else "#DDDDDD") for c in M.nodes()],
         edgecolors="white", linewidths=1.0, alpha=0.9)
     for c in M.nodes():
-        lab = reg[c][0] if c in reg else auto_label(comms[c])
+        if use_terms:
+            lab = term_label(comms[c])
+        else:
+            lab = reg[c][0] if c in reg else auto_label(comms[c])
         x, y = pos[c]
         ax.text(x, y + 0.09, f"{lab}\n(n={M.nodes[c]['size']:,})",
                 ha="center", va="bottom", fontsize=6, color=DARK,
