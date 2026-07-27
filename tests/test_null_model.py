@@ -1059,3 +1059,39 @@ class TestBackendComparison:
         assert z_gpu == pytest.approx(z_cpu, rel=0.5), (
             f"Z-scores differ by >50%%: CPU={z_cpu:.2f}, GPU={z_gpu:.2f}"
         )
+
+
+# ---------------------------------------------------------------------------
+# --n-perm override (ticket 0326)
+# ---------------------------------------------------------------------------
+
+
+class TestNPermOverride:
+    """A smoke test must be able to prove the contract without production cost.
+
+    Measured 2026-07-27: the two C2ST smoke tests in test_null_model_c2st.py
+    were 462s of a 1,037s serial suite — 45% — because they invoke
+    compute_null_model.py with no way to lower n_perm, so a fixture-sized run
+    still trains a classifier 500 times per window. The statistical properties
+    are already covered by the cheap unit tests in that file; the smoke test's
+    job is only that the script runs end-to-end and writes a valid artifact.
+    """
+
+    def test_cli_exposes_n_perm(self):
+        """The override exists and mirrors the --n-jobs pattern."""
+        path = os.path.join(SCRIPTS_DIR, "compute_null_model.py")
+        with open(path) as fh:
+            src = fh.read()
+        assert '"--n-perm"' in src, "compute_null_model.py must expose --n-perm"
+
+    def test_n_perm_defaults_to_config_when_absent(self):
+        """Omitting the flag must leave the configured value untouched — a
+        production run may never silently use a test-sized permutation count."""
+        path = os.path.join(SCRIPTS_DIR, "compute_null_model.py")
+        with open(path) as fh:
+            src = fh.read()
+        assert "default=None" in src
+        assert "args.n_perm is not None" in src, (
+            "the override must be conditional, so the config default stands "
+            "whenever the flag is not passed"
+        )

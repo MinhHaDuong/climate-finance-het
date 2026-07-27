@@ -343,6 +343,15 @@ class TestC2STNullModelSmoke:
             str(null_out),
             "--div-csv",
             str(div_out),
+            # A smoke test asks "does the script run end-to-end and write a
+            # valid artifact", not "is this null distribution publishable".
+            # At the configured n_perm=500 these two tests trained a C2ST
+            # classifier 500 times per window and cost 462s — 45% of the whole
+            # serial suite (measured 2026-07-27, ticket 0326). The statistical
+            # properties are covered by the unit tests above, which use the
+            # backends directly.
+            "--n-perm",
+            "3",
         ]
         res = subprocess.run(
             cmd,
