@@ -333,6 +333,23 @@ def test_markdown_rows_are_not_ragged():
         )
 
 
+def test_export_writes_both_group_members_from_either_path(tmp_path):
+    """Make passes whichever grouped-target member went stale as ``$@``.
+
+    Writing only the file named by ``--output`` would leave the CSV absent
+    (or holding markdown) while Make counted the whole group as built.
+    """
+    from export_retrieval_protocol import main
+
+    for requested in ("tab.csv", "tab.md"):
+        out = tmp_path / requested
+        main(str(out))
+        assert (tmp_path / "tab.csv").read_text(encoding="utf-8").startswith("Source,")
+        assert (tmp_path / "tab.md").read_text(encoding="utf-8").startswith("## Retrieval")
+        (tmp_path / "tab.csv").unlink()
+        (tmp_path / "tab.md").unlink()
+
+
 def test_markdown_escapes_a_pipe_in_a_cell():
     """The fang: an unescaped pipe in a title must not survive into a row."""
     from export_retrieval_protocol import _escape
