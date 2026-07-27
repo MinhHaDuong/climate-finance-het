@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-27T11:00Z HDMX-coding-agent created
 2026-07-27T11:00Z HDMX-coding-agent note child of 0274. Raised by 2 of 4 external panel reviewers (openai/gpt-5.5 both personas), independently verified against our own vars. Also answers referee remark R1-12, which asked for the dedup accounting.
+2026-07-27T12:05Z HDMX-coding-agent note declared the word-budget interdependency with 0332, which was implicit in the filing and invisible to a cold executor: this ticket adds a flow table, 0332 owns the 2,500-word guard and frees the space. Sequencing note only, no Blocked-by — the tracing and the flow-table script do not depend on 0332. Added a mechanically checkable word-count exit criterion.
 
 --- body ---
 ## Context
@@ -40,6 +41,18 @@ versioning artifact that survived the v2 rebuild.
 
 For a data paper, the construction ledger *is* the contribution. A reviewer
 who cannot make the corpus size add up will not trust anything downstream.
+
+**Word-budget interdependency with 0332.** Action 2's flow table *adds* text
+to a document that is already over the RDJ4HSS 2,500-word target. 0332 is the
+sole owner of that budget: it proposes removing §4 whole and carries the
+word-count guard. Per the cutting rule — remove whole before you condense —
+**0332's removal runs first**, so this table lands in a document already at or
+under target instead of forcing a condensation pass on prose 0332 was about to
+delete. This is a sequencing note, not a hard block: the tracing work in
+Action 1 and the flow-table script in Action 3 are independent of it, and only
+the prose insertion should wait. If this ticket is executed alone, check the
+budget after the table lands (exit criteria) and hand any overshoot to 0332
+rather than condensing §2 to pay for it.
 
 ## Relevant files
 
@@ -95,3 +108,9 @@ who cannot make the corpus size add up will not trust anything downstream.
 
 - [ ] Every count in §2 reconciles arithmetically from a single generated table
 - [ ] R1-12's dedup accounting is answered by that table in the response letter
+- [ ] With the flow table rendered, the document is at or under the 2,500-word
+      RDJ4HSS target: `uv run python scripts/qa/qa_word_count.py
+      deliverables/data-paper/data-paper.pdf` reports a total ≤ 2500 — or
+      0332's word-count guard passes, once that guard exists. If it is over,
+      the overshoot is recorded here and handed to 0332; it is not paid for by
+      condensing §2.
