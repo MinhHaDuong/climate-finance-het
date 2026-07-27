@@ -86,6 +86,14 @@ export PYTHONPATH := scripts:libs/openalex-corpus/src$(if $(PYTHONPATH),:$(PYTHO
 # clean-room checkout, a reproducibility archive, a container — it expands to
 # empty, bash ignores an empty BASH_ENV, and recipes fall back to whatever
 # credentials the ambient environment already carries.
+#
+# Consequence worth knowing: the loader re-applies .env at the start of each
+# recipe shell, so `CLIMATE_FINANCE_DATA=/other make corpus` is ignored — the
+# recipe sees .env's value, not the one on the command line. Change a .env
+# variable in .env, which is the mechanism .claude/rules/architecture.md
+# documents for relocating the data root anyway. Command-line overrides still
+# work on a leaf process (`CLIMATE_FINANCE_DATA=/other uv run python …`),
+# because there the assignment happens after the shell has started.
 SHELL           := /bin/bash
 KEYSTORE_LOADER ?= $(HOME)/.claude/scripts/bash-env.sh
 export BASH_ENV := $(wildcard $(KEYSTORE_LOADER))
