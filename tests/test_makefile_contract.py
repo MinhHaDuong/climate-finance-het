@@ -238,9 +238,10 @@ class TestPerDeliverableIncludes:
 
     This class checks the *structure* — which file owns which rule, and that the
     union model stays retired. Whether each set holds the right files is checked
-    by the two closure oracles, tests/test_include_graph.py and
-    tests/test_deliverable_artifacts.py, which recompute every document's include
-    closure from its .qmd and compare in both directions. Named-file pins are
+    by the closure oracle, tests/test_deliverable_artifacts.py, which recomputes
+    every document's include closure from its .qmd and compares in both
+    directions. 0290 landed a second oracle in parallel with 0359's; they were
+    merged into that one file rather than left as two. Named-file pins are
     what those checks replace — do not add another. The one below is the
     surviving exception: it names the transitive case, and it survived only by
     being retargeted, which is the argument against its shape. It pinned

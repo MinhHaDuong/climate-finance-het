@@ -349,6 +349,28 @@ def test_every_include_variable_is_accounted_for():
 
 
 @pytest.mark.adherence
+def test_every_document_with_includes_has_a_variable():
+    """The other direction: a document cannot escape by having no variable.
+
+    The check above catches a *variable* nobody mapped. This catches a
+    *document* nobody declared: it composes includes, so its render rule needs
+    them as prerequisites, but no `*_INCLUDES` list names it and both include
+    checks skip it silently. A document that composes nothing (the agentic
+    paper, the slide decks) needs no list, and the check starts applying the
+    moment it gains its first include. Ported from ticket 0290's guard, the one
+    direction this file did not already cover.
+    """
+    mapped = {root for roots in INCLUDE_VAR_ROOTS.values() for root in roots}
+    unmapped = sorted(q for q, (refs, _) in CLOSURES.items()
+                      if refs and q not in mapped)
+    assert not unmapped, (
+        f"Document(s) composing includes that no paths.mk list declares: "
+        f"{unmapped}. Add a *_INCLUDES variable and map it in "
+        f"INCLUDE_VAR_ROOTS — otherwise the render rule misses them."
+    )
+
+
+@pytest.mark.adherence
 def test_not_embedded_markers_are_earned():
     """A marker names a declared figure that is still embedded nowhere."""
     declared = {f for figs in FIG_VARS.values() for f in figs}

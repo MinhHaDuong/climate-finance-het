@@ -28,9 +28,10 @@ CSL := deliverables/_shared/bibliography/oeconomia.csl
 # dependency and rebuild on a file the doc stopped including. Ticket 0359 found
 # every list but MANUSCRIPT/MULTILAYER_TECHREP/ZOO drifted: the technical report
 # declared eleven includes it had dropped and none of the 23 it composes.
-# Two tests recompute every closure from the .qmd files and fail on mismatch, in
-# both directions: tests/test_deliverable_artifacts.py and
-# tests/test_include_graph.py.
+# tests/test_deliverable_artifacts.py recomputes every closure from the .qmd
+# files and fails on mismatch in both directions. Ticket 0290 landed a second
+# guard of its own in parallel; the two were merged into that one file rather
+# than left as two answers to one question.
 MANUSCRIPT_INCLUDES := deliverables/_shared/tables/tab_venues.md
 
 GIDE_INCLUDES := deliverables/_shared/tables/tab_venues_fr.md

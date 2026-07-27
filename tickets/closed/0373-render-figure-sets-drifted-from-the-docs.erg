@@ -2,10 +2,13 @@
 Title: Render figure sets in paths.mk drifted from what the documents reference
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: superseded — ticket 0359 delivered every exit criterion in parallel
 
 --- log ---
 2026-07-27T18:30Z HDMX-coding-agent created found while settling 0290: the include sets were stale in the same way, and fixing those exposed the figure sets
+2026-07-27T21:15Z HDMX-coding-agent note 0359 landed while this sat open and covers all four exit criteria — verified against the tree, not taken on trust: CORPUS_REPORT_FIGS and SLIDES_FIGS added for the documents that had no set (EC2); fig_companion_sensitivity.png now declared, the one genuine missing prerequisite this ticket found (EC1); ORPHANED_FIGS records the nine figures with no consumer (EC4); test_deliverable_artifacts.py checks declared-to-rendered and rendered-to-declared, with a stale-marker check (EC3). Filed and superseded the same day — two sessions found the same defect from opposite ends.
 
+2026-07-27T19:14Z HDMX-coding-agent closed — superseded — ticket 0359 delivered every exit criterion in parallel
 --- body ---
 ## Context
 
