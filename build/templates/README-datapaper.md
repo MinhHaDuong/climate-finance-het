@@ -22,10 +22,10 @@ climate-finance-datapaper/
       *_works.csv                # openalex, istex, bibcnrs, scispace, grey,
                                  # teaching, unfccc, oecd
     products/              # Final data products of this paper
-      climate_finance_corpus.csv # 42,922 works (abstracts stripped)
+      climate_finance_corpus.csv # 43,179 works (abstracts stripped)
       codebook.md                # Data dictionary: per-column type, values, missingness
-      embeddings.npz             # 38,479 multilingual vectors (1024-dim)
-      citations.csv              # 968,871 citation pairs
+      embeddings.npz             # 38,736 multilingual vectors (1024-dim)
+      citations.csv              # 1,375,310 citation pairs
 ```
 
 `data/inputs/` holds the raw harvests as retrieved from each source, before

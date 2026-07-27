@@ -24,8 +24,8 @@ the latest version.
    curated UNFCCC and OECD DAC layers, and the paper's related-dataset entry
    and suggested citation now carry the eight-source title. Authors, license
    (data CC BY 4.0, code MIT), and keywords stay unchanged.
-4. Set the version field (suggested: `v1.1.1` — same data, restructured
-   packaging + codebook) and publish.
+4. Set the version field (suggested: `v2.0` — new corpus harvest, eight
+   sources, restructured packaging + codebook) and publish.
 5. Check that the paper's cited DOI still resolves; the paper cites
    10.5281/zenodo.19236130 — if the journal prefers, switch the citation to
    the concept DOI or the new version DOI at proof stage.
@@ -48,16 +48,18 @@ The archive is structured in three parts:
   `unfccc_works.csv`, `oecd_works.csv`) as harvested, before merge and
   deduplication — the provenance trail.
 - `data/products/` — final data products of the paper:
-  `climate_finance_corpus.csv` (42,916 deduplicated works, abstracts stripped
+  `climate_finance_corpus.csv` (43,179 deduplicated works, abstracts stripped
   for redistribution reasons), `codebook.md` (data dictionary: per-column
-  type, allowed values, and measured missingness), `embeddings.npz` (38,473
+  type, allowed values, and measured missingness), `embeddings.npz` (38,736
   multilingual 1024-dim vectors, BAAI/bge-m3), and `citations.csv`
   (citation pairs, normalised DOIs).
 
 Changes in this version: package restructured to separate raw inputs from
 final products (editorial remark ED-04); added `codebook.md`, the formal data
-dictionary for `climate_finance_corpus.csv` (reviewer remark R1-19). Data
-files are unchanged from the previous version.
+dictionary for `climate_finance_corpus.csv` (reviewer remark R1-19); the
+corpus is rebuilt on the v2 harvest, which adds the curated UNFCCC and OECD
+DAC key-document layers, so `data/inputs/` carries eight per-source catalogs
+and the data files change with it.
 
 Code: MIT. Data: CC BY 4.0.
 

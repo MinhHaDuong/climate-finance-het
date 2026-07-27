@@ -123,6 +123,51 @@ class TestSourceCardinality:
         )
 
 
+class TestDepositCountsTrackTheCorpus:
+    """The deposit's prose is the one place the project's vars-driven-prose
+    rule cannot reach: the archive README and the Zenodo record description
+    are pasted by hand, so their counts are literals. Five of them had drifted
+    (two by ~260 works, and the two files disagreed with each other by 6),
+    which is the same defect class as ticket 0327 one layer out. Pin them to
+    the generated vars instead of leaving them unwatched."""
+
+    ED04 = os.path.join(
+        REPO, "deliverables", "data-paper", "revision-rdj26561",
+        "ed04-zenodo-restructure-upload.md",
+    )
+
+    def _vars(self):
+        path = os.path.join(REPO, "deliverables", "data-paper", "data-paper-vars.yml")
+        if not os.path.isfile(path):
+            pytest.skip("data-paper-vars.yml not built here — run make stats")
+        values = {}
+        for line in _read(path).splitlines():
+            key, _, value = line.partition(":")
+            values[key.strip()] = value.strip().strip('"')
+        return values
+
+    @pytest.mark.parametrize(
+        ("path", "keys"),
+        [
+            (README, ("corpus_raw", "corpus_with_embeddings", "cite_total_rows")),
+            (ED04, ("corpus_raw", "corpus_with_embeddings")),
+        ],
+    )
+    def test_quoted_counts_match_the_generated_vars(self, path, keys):
+        values = self._vars()
+        text = _read(path)
+        for key in keys:
+            assert values[key] in text, (
+                f"{os.path.basename(path)} does not quote the current "
+                f"{key} ({values[key]}); a stale count ships to the deposit"
+            )
+
+    def test_record_description_does_not_claim_unchanged_data(self):
+        """The v2 harvest adds two source layers, so the archive's data files
+        do change; the runbook must not tell the author otherwise."""
+        assert "unchanged from the previous version" not in _read(self.ED04)
+
+
 class TestGitignoreCodebookNegation:
     def test_codebook_unignored(self):
         gi = _read(GITIGNORE)
