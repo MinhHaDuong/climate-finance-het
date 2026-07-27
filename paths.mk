@@ -74,6 +74,7 @@ TECHREP_INCLUDES := deliverables/_shared/_includes/techrep/overview.md \
 		$(ZOO_TREE)
 
 DATAPAPER_INCLUDES := deliverables/_shared/tables/tab_corpus_sources.md \
+		deliverables/_shared/tables/tab_corpus_flow.md \
 		deliverables/_shared/tables/tab_languages.md \
 		deliverables/_shared/tables/tab_variables.md
 

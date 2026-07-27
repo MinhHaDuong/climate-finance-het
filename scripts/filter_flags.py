@@ -14,7 +14,7 @@ import re
 import numpy as np
 import pandas as pd
 import yaml
-from utils import CONFIG_DIR, get_logger, normalize_doi_safe
+from utils import CONFIG_DIR, get_logger, normalize_doi_safe, work_key
 
 log = get_logger("filter_flags")
 
@@ -34,6 +34,24 @@ def _load_config(path=None):
 # ============================================================
 # Private helpers
 # ============================================================
+
+def work_keys(frame):
+    """work_key() for every row, tolerating frames that lack the fallback columns.
+
+    work_key reads doi, then source_id, then a hash of title. Test frames and
+    slim intermediates carry only some of those, so fill the absent ones rather
+    than making every caller build a full frame.
+    """
+    filled = frame
+    missing = [c for c in ("doi", "source_id", "title") if c not in frame.columns]
+    if missing:
+        filled = frame.copy()
+        for col in missing:
+            filled[col] = None
+    if len(filled) == 0:
+        return pd.Series([], dtype=object, index=frame.index)
+    return filled.apply(work_key, axis=1)
+
 
 def _has_safe_words(title, safe_words):
     """Check if title contains any safe/relevant words."""
@@ -199,12 +217,6 @@ def flag_semantic_outlier(df, config, *, embeddings, emb_df):
 
     sigma = config["semantic_outlier"]["sigma"]
 
-    # Ensure doi_norm exists
-    if "doi_norm" not in df.columns:
-        doi_norm = df["doi"].apply(normalize_doi_safe)
-    else:
-        doi_norm = df["doi_norm"]
-
     centroid = embeddings.mean(axis=0)
     norms = np.linalg.norm(embeddings, axis=1, keepdims=True)
     norms[norms == 0] = 1
@@ -217,13 +229,23 @@ def flag_semantic_outlier(df, config, *, embeddings, emb_df):
     std_dist = cos_dist.std()
     threshold = mean_dist + sigma * std_dist
 
-    # Build DOI -> distance mapping
-    emb_dois = emb_df["doi"].apply(normalize_doi_safe)
-    emb_doi_to_dist = dict(zip(emb_dois, cos_dist))
-    emb_doi_to_dist.pop("", None)
+    # Put each distance back on the row it was computed for, by index. emb_df
+    # is a slice of df carrying df's own index, so membership needs no
+    # re-derivation — and re-deriving it is what kept going wrong: a DOI-keyed
+    # map dropped every DOI-less work's distance while that work still set the
+    # centroid, then a normalised-DOI map and finally an exact-work_key map
+    # each handed a candidate's distance to whatever non-candidate happened to
+    # share the key (ticket 0336, review rounds 1-3). Index membership cannot
+    # collide, so the class closes here rather than shrinking again.
+    unknown = emb_df.index.difference(df.index)
+    if len(unknown):
+        raise ValueError(
+            f"emb_df has {len(unknown)} rows absent from df — it must be a "
+            "slice of df so distances can be assigned by index"
+        )
+    outlier_dists = pd.Series(np.nan, index=df.index, dtype=float)
+    outlier_dists.loc[emb_df.index] = np.asarray(cos_dist, dtype=float)
 
-    # Map to main df
-    outlier_dists = doi_norm.map(emb_doi_to_dist)
     flag_mask = outlier_dists.notna() & (outlier_dists > threshold)
 
     return flag_mask, outlier_dists

@@ -2,13 +2,23 @@
 Title: The retrieval protocol is not reconstructible from the paper: eight languages never listed, thresholds never stated
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1162
 
 --- log ---
 2026-07-27T11:00Z HDMX-coding-agent created
 2026-07-27T11:00Z HDMX-coding-agent note child of 0274. Raised by 4 of 4 external panel reviewers. Cheapest of the four unanimous findings — most of it is a table and three numbers.
+2026-07-27T15:00Z HDMX-coding-agent note Action 4 dropped: a flat CSV of the taxonomy would flatten the Tier 3/4 co-occurrence semantics and become the drifting copy the Invariants forbid. Replaced by a §2.1 pointer naming the deposited YAML (openalex_queries.yaml, corpus_filter.yaml, grey_sources.yaml), which already ship in the deposit's code/ directory.
+2026-07-27T15:00Z HDMX-coding-agent note Action 3 table shipped WITHOUT the harvest-date and records-returned/retained columns: neither has a machine-readable source, and hand-typing them would recreate the very defect this ticket fixes. Emitted as a new tab_retrieval_protocol.{csv,md} rather than extending tab_corpus_sources.*, which 0327 owns.
+2026-07-27T15:00Z HDMX-coding-agent note WORD BUDGET, handed to 0332 (still open). Re-measured after rebasing onto 0332's landed §4 cut: source-level body count is 3,114 on main against 3,381 on this branch, so these additions cost +267 words (language list, key-document rule, config pointer, threshold sentences). The document sits ~881 over the 2,500 target with or without this ticket; no section was condensed to pay for the additions, per 0332 owning the whole-removal pass. Measured at source level, not from the PDF — qa_word_count.py needs a rendered PDF, and rendering needs a full Phase-2 vars build this worktree has no data for.
+2026-07-27T15:00Z HDMX-coding-agent note Adjacent defect found, NOT fixed here (0327's file): scripts/figures/export_corpus_table.py:27 hand-types "9 languages" for OpenAlex, contradicting the config's eight and the paper's claim. Left alone to avoid a merge collision with 0327.
+2026-07-27T16:15Z HDMX-coding-agent note Correction to the note above: the review panel checked, and 0327 does NOT track the "9 languages" defect — the deferral had no target. Predates this branch (main already said "eight languages" in §2.1), so it is a follow-up, not a regression here.
+2026-07-27T16:15Z HDMX-coding-agent note Second deferral: the reranker threshold 0.002 is still hand-typed in deliverables/_shared/_includes/corpus-filtering.md and annex-crossencoder.md. Those feed corpus-report.qmd, which reads technical-report-vars.yml but is absent from compute_vars' DOC_VARS registry, so declaring the var there trips test_doc_vars_no_extras. Converting the literals means wiring corpus-report into the registry — another deliverable's contract, out of scope here. Values currently agree with config, so this is drift risk, not a live error.
+2026-07-27T17:05Z HDMX-coding-agent note Review round 3 residue, NOT fixed here. (a) There is no automated render oracle for {{< meta >}} anywhere in the suite — quarto exits 0 on an undeclared key and writes a literal "?meta:key" into the output. This PR moves 15 facts behind macros and their gate stays manual (a hand-run render probe, done and clean). Bigger than this ticket; needs its own. (b) corpus-construction.md's Tier-2 paragraph truncates config terms ("adaptation financing" for "adaptation financing climate", "stranded assets" for "stranded assets climate"). The new quoted-term guard covers Tier 1 only, where the terms are quoted exactly and carry the eight-language claim; extending it to Tier 2 means deciding whether a prose summary may abbreviate. (c) Filing 0356/0357 on this feature branch runs against feedback_scope_discipline; kept anyway, because round 2 flagged the alternative — a deferral naming no ticket — as the worse defect.
+2026-07-27T16:35Z HDMX-coding-agent note Both deferrals now have owners, filed with this PR since they are this ticket's own residue rather than an unrelated sweep: 0356 (the "9 languages" literal) and 0357 (corpus-report outside the vars registry). IDs checked against main and every open PR at allocation — main reaches 0354 and PR #1170 claims 0355; re-check at the merge gate, a sibling can renumber onto these seats.
 
 2026-07-27T12:35Z HDMX-coding-agent note raid Imagine complete. All holes reproduce; authoritative sources located: eight languages config/openalex_queries.yaml:74-92 (English, French, German, Spanish, Portuguese, Arabic, Chinese, Japanese); cross-encoder reranker_threshold 0.002 config/corpus_filter.yaml:125 (BAAI/bge-reranker-v2-m3); semantic outlier is GLOBAL not stratified (scripts/filter_flags.py:186-230, single corpus-wide centroid, sigma 2 at corpus_filter.yaml:116-117); near-duplicate thresholds are hardcoded Python constants at scripts/qa_near_duplicates.py:35-41, NOT config — the one genuine read-the-code hole; 17 grey reports enumerated in config/grey_sources.yaml; Tier 3/4 co-occurrence via min_concept_groups 2 and 3; key-documents rule recorded in ticket 0288, never reached prose.
 2026-07-27T12:35Z HDMX-coding-agent note raid narrowings: drop original Action 4 (flat taxonomy CSV) — it would be a lossy mirror of already-deposited config/openalex_queries.yaml and violates the ticket's own no-drifting-copy invariant; point at the deposited YAML instead. KEEP Action 3's appendix table (Verification requires it) but drop the harvest-date and records-returned columns — no machine source exists (harvest date is a hand-typed literal at data-paper.qmd:110), and hand-typing them recreates the defect the ticket exists to fix. Move the four near-dup constants into config/corpus_filter.yaml so 'emit thresholds from config' is honest.
+2026-07-27T18:04Z HDMX-coding-agent closed — autoclosed — PR #1162
 --- body ---
 ## Context
 
@@ -81,9 +91,16 @@ deposited appendix table, which is what a data-paper referee actually wants.
 
 ## Verification
 
-- [ ] The eight languages appear by name in §2.1
-- [ ] Cross-encoder, semantic-outlier, and near-duplicate thresholds stated
-- [ ] Appendix table deposited and cited; a reader can reconstruct the query
+- [x] The eight languages appear by name in §2.1
+      (data-paper.qmd §2.1; guarded against config by
+      tests/test_retrieval_protocol.py::test_paper_names_every_target_language)
+- [x] Cross-encoder, semantic-outlier, and near-duplicate thresholds stated
+      (§2.2, all as {{< meta >}} macros fed from config/corpus_filter.yaml;
+      test_threshold_cited_as_macro, test_threshold_not_hand_typed)
+- [x] Appendix table deposited and cited; a reader can reconstruct the query
+      (deliverables/_shared/tables/tab_retrieval_protocol.{csv,md}, staged into
+      the Zenodo data/products/ by build/build_datapaper_archive.sh;
+      test_protocol_rows_count_the_config_terms)
 
 ## Invariants
 

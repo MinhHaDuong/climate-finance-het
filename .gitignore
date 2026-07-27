@@ -47,6 +47,11 @@ deliverables/_shared/figures/*
 deliverables/_shared/tables/*
 !deliverables/_shared/tables/tab_variables.md
 !deliverables/_shared/tables/codebook.md
+# Retrieval-protocol appendix (ticket 0329): rendered from the harvest config,
+# deposited so a referee can reconstruct the query without reading the code.
+# Committed like its table twins — it needs no Phase-1 data to regenerate.
+!deliverables/_shared/tables/tab_retrieval_protocol.csv
+!deliverables/_shared/tables/tab_retrieval_protocol.md
 !deliverables/_shared/tables/tab_venues.md
 !deliverables/_shared/tables/tab_venues_fr.md
 !deliverables/_shared/tables/tab_venues_fr_caption.md
@@ -85,6 +90,11 @@ deliverables/_shared/tables/*
 !deliverables/_shared/tables/tab_semantic_robustness.csv
 !deliverables/_shared/tables/tab_sem6_assignments.csv
 !deliverables/_shared/tables/tab_sem_composition.csv
+# Corpus construction ledger (ticket 0327): the data paper's section 2.3
+# arithmetic reconciles entirely from this table, so commit the artifact for
+# the same reason as the tables above — an archived record for every
+# published number.
+!deliverables/_shared/tables/tab_corpus_flow.csv
 # Phase-2 vars files are handoff artifacts and are TRACKED (ticket 0348):
 # the writing workpackage must build from artifacts alone, with no uv and
 # no corpus. Nothing to ignore here — this note exists so the next reader
