@@ -138,7 +138,7 @@ def scan(text: str) -> tuple[list[tuple[int, list[str], list[tuple[int, list[str
 
     Hand-authored prose does not satisfy that contract: five ``_includes/*.md``
     carry an ordinary sentence or an HTML comment with a pipe in it. That is
-    the evidence ticket 0362's third action needs before extending the sweep
+    the evidence ticket 0368's third action needs before extending the sweep
     to them.
     """
     lines = text.splitlines()
