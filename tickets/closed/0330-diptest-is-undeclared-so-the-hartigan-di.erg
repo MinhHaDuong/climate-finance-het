@@ -2,6 +2,7 @@
 Title: diptest is undeclared so the Hartigan dip test never runs
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: Option 1 implemented: diptest declared and locked, import hard-guarded, dip test runs. Result: unimodality not rejected (p=1.0); §5.3 rewrite tracked as 0345
 
 --- log ---
 2026-07-27T11:02Z HDMX-coding-agent created
@@ -10,6 +11,7 @@ Author: HDMX-coding-agent
 2026-07-27T14:05Z HDMX-coding-agent note Statistical stakes recorded below under "Why option 1"; the per-period delta-BIC/n confound found while explaining them is out of scope here
 2026-07-27T14:16Z HDMX-coding-agent note Dip test ran for the first time: p=1.0000 overall, 0.9943/0.9942/1.0000 per period. The falsification risk landed. Result section below; manuscript arbitration is the author's, not this ticket's
 
+2026-07-27T12:47Z HDMX-coding-agent closed — Option 1 implemented: diptest declared and locked, import hard-guarded, dip test runs. Result: unimodality not rejected (p=1.0); §5.3 rewrite tracked as 0345
 --- body ---
 ## Context
 
