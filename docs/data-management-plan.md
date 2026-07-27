@@ -89,7 +89,7 @@ deposit to ensure reproducibility.
 - `~/.config/keys/<provider>.env` (mode 0600, outside the repo): the API keys and agent token themselves — never written as literals in `.env`, so the repository directory holds no credential and only the keys named on the `KEYS=` line enter the environment
 - CNRS Janus credentials: personal, not shared — pre-harvested exports included instead
 - Agent commit identity (`HDMX-coding-agent`): a git author name that separates agent from human commits in the history. It is not a separate GitHub account: the project has a single forge identity, and the agent acts under the repository owner's token. Separation of privilege is by token scope, not by account
-- Merge gate (`.claude/hooks/check-reviews.sh`): blocks a merge until the review pass has posted its findings on the pull request. Because there is one forge identity, this records that review happened, not that an independent party approved. The substantive gate is local — the full test suite plus a structured verification pass — and the repository runs no continuous-integration service
+- Merge gate (`.claude/hooks/check-reviews.sh`): blocks a merge until the review pass has posted its findings on the pull request. Because there is one forge identity, this records that review happened, not that an independent party approved. The substantive gate is local: the full test suite plus a structured verification pass. The repository runs no continuous-integration service
 
 ## 4. Legal and ethical requirements, codes of conduct
 

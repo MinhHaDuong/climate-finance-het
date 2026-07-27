@@ -88,10 +88,34 @@ genuinely independent reviewer already active on this repo and was missing from
 `AGENT_LOGINS`; and the script's `REPO` was the pre-rename slug, which resolved
 by redirect and so failed quietly rather than loudly.
 
-Honesty caveat: live hook firing cannot be confirmed from the session that made
-the change — settings load at session start. The new tests check registration
-*shape* against the documented semantics; the first merge in a later session is
-the behavioural proof.
+## What the session then observed, which revises the above
+
+The caveat below was overtaken by evidence. Editing `.claude/settings.json`
+reloaded it mid-session, and the repaired git-commit **prompt** hook fired twice
+on commands containing no `git commit` — blocking the session. So the matcher
+repair works (the hook fired at all, which it never did before), but its `if`
+filter did **not** narrow. Observation only; the cause is not established. The
+handler is `"type": "prompt"`, so `if` may be unsupported there, or unsupported
+generally.
+
+The prompt hook is therefore **deleted rather than repaired**. It sat inert for
+months and nothing missed it; a guard that cannot be verified and taxes every
+command is worse than no guard (harness policy: prefer deleting a guard to
+growing it).
+
+The merge gate stays, on an asymmetry rather than a guess: even if its `if` is
+equally inert, that handler exits early with *allow* whenever it cannot extract
+a PR number, so the worst case is a process spawn per Bash call and it can only
+ever deny a real `gh pr merge`. The prompt hook's worst case was a hard block on
+every command. Same uncertainty, opposite blast radius.
+
+`test_merge_gate_narrows_to_merge_commands` is retained deliberately. It pins
+intent — the registration must carry the filter — even though this session
+proved the runtime may ignore it. If `if` turns out to be inert for command
+handlers too, the gate should be re-cut to filter inside the script.
+
+Superseded caveat, kept for the record: live hook firing cannot be confirmed
+from the session that made the change — settings load at session start.
 
 ## Relevant files
 

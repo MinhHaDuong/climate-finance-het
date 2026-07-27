@@ -10,6 +10,8 @@ import re
 import subprocess
 from pathlib import Path
 
+import pytest
+
 HOOK_SCRIPT = Path(__file__).parent.parent / ".claude" / "hooks" / "check-reviews.sh"
 
 
@@ -93,6 +95,7 @@ def make_mcp_input(pull_number: int) -> str:
 # --- Core gate logic ---
 
 
+@pytest.mark.integration
 class TestMergeGate:
     """Merge gate blocks or allows based on review count vs. threshold."""
 
@@ -228,6 +231,7 @@ class TestMergeGate:
 # --- PR number extraction ---
 
 
+@pytest.mark.integration
 class TestPRNumberExtraction:
     """Hook extracts PR number from various tool input formats."""
 
@@ -347,6 +351,29 @@ class TestHookRegistration:
             f"No matcher fires on the Bash tool: {matchers}. "
             "PreToolUse matchers match the tool name; narrow by command with "
             "an `if` field on the handler."
+        )
+
+    def test_merge_gate_narrows_to_merge_commands(self):
+        """The Bash-matcher registration carries an `if` filter for the merge command.
+
+        The matcher fires on every Bash call, so the `if` field is what makes
+        this a merge gate rather than a tax on the whole session. Dropping or
+        misspelling it satisfies the two tests around this one — the matcher is
+        still `Bash`, still free of permission-rule syntax — while the hook
+        shells out to the forge API before every command the agent runs.
+        """
+        handlers = [
+            h
+            for entry in pretooluse_entries()
+            if matches_tool(entry.get("matcher", ""), "Bash")
+            for h in entry.get("hooks", [])
+            if "check-reviews.sh" in h.get("command", "")
+        ]
+        assert handlers, "the gate is not registered under a matcher firing on Bash"
+        unfiltered = [h for h in handlers if "gh pr merge" not in h.get("if", "")]
+        assert not unfiltered, (
+            "A Bash-matcher gate with no `if` filter for 'gh pr merge' runs on "
+            f"every Bash call: {unfiltered}"
         )
 
     def test_no_matcher_uses_permission_rule_syntax(self):
