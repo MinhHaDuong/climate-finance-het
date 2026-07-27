@@ -47,7 +47,10 @@ cp -L "$DATA_DIR/citations.csv" "$TMP/data/products/"
 cp "$PROJ_ROOT/deliverables/_shared/tables/codebook.md" "$TMP/data/products/"
 
 echo "  Copying raw inputs (per-source catalogs)..."
-for src in openalex istex bibcnrs scispace grey teaching; do
+# One catalog per corpus source (utils.SOURCE_NAMES). Pinned by
+# test_datapaper_archive_layout.py so the deposit never ships fewer catalogs
+# than the paper claims sources (ticket 0327).
+for src in openalex istex bibcnrs scispace grey teaching unfccc oecd; do
     cp -L "$DATA_DIR/${src}_works.csv" "$TMP/data/inputs/" 2>/dev/null || true
 done
 

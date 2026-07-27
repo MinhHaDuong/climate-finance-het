@@ -19,8 +19,11 @@ the latest version.
    `data/products/`; codebook.md in `data/products/`).
 2. Zenodo → record 19236130 → **New version**. Remove the old tarball, upload
    the new one.
-3. Replace the record description with the text below; keep title, authors,
-   license (data CC BY 4.0, code MIT), and keywords unchanged.
+3. Replace the record description with the text below. Retitle the record
+   "Six Sources" → "**Eight Sources**" (ticket 0327): the v2 corpus adds the
+   curated UNFCCC and OECD DAC layers, and the paper's related-dataset entry
+   and suggested citation now carry the eight-source title. Authors, license
+   (data CC BY 4.0, code MIT), and keywords stay unchanged.
 4. Set the version field (suggested: `v1.1.1` — same data, restructured
    packaging + codebook) and publish.
 5. Check that the paper's cited DOI still resolves; the paper cites
@@ -30,8 +33,8 @@ the latest version.
 ## Record description (new version)
 
 Reproducibility archive for "A Curated Corpus of Climate Finance Literature,
-1990–2024: Six Sources, Multilingual Retrieval, and Grey Literature" (Research
-Data Journal for the Humanities and Social Sciences).
+1990–2024: Eight Sources, Multilingual Retrieval, and Grey Literature"
+(Research Data Journal for the Humanities and Social Sciences).
 
 The archive is structured in three parts:
 
@@ -39,10 +42,11 @@ The archive is structured in three parts:
   scripts, configuration, and DVC pipeline definitions, with a Makefile
   offering `verify` (checksums), `papers` (render the data paper), and
   `corpus` (full rebuild) targets.
-- `data/inputs/` — raw data inputs: the six per-source catalogs
+- `data/inputs/` — raw data inputs: the eight per-source catalogs
   (`openalex_works.csv`, `istex_works.csv`, `bibcnrs_works.csv`,
-  `scispace_works.csv`, `grey_works.csv`, `teaching_works.csv`) as harvested,
-  before merge and deduplication — the provenance trail.
+  `scispace_works.csv`, `grey_works.csv`, `teaching_works.csv`,
+  `unfccc_works.csv`, `oecd_works.csv`) as harvested, before merge and
+  deduplication — the provenance trail.
 - `data/products/` — final data products of the paper:
   `climate_finance_corpus.csv` (42,916 deduplicated works, abstracts stripped
   for redistribution reasons), `codebook.md` (data dictionary: per-column
@@ -61,7 +65,7 @@ Code: MIT. Data: CC BY 4.0.
 
 > **ED-04 (Zenodo package structure).** We restructured the Zenodo package to
 > separate raw data inputs from final data products. The new version of the
-> deposit (same concept DOI) contains `data/inputs/` with the six per-source
+> deposit (same concept DOI) contains `data/inputs/` with the eight per-source
 > catalogs as harvested, and `data/products/` with the paper's outputs
 > (`climate_finance_corpus.csv`, `codebook.md`, `embeddings.npz`,
 > `citations.csv`); `code/` holds the pipeline source. The archive README and
