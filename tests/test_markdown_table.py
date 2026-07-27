@@ -9,8 +9,18 @@ codebook contract it serves. What is pinned here is the plain-text sibling and,
 above all, the boundary between the two — the reason there are two functions.
 """
 
+import os
+
 import pytest
 from _markdown_table import markdown_cell, markdown_text_cell
+
+SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
+
+# (emitter, the expression it interpolates as a free-text cell)
+EMITTERS = [
+    ("figures/export_tab_venues.py", "r['journal']"),
+    ("figures/export_core_venues_markdown.py", "venue"),
+]
 
 
 class TestPlainTextEscaping:
@@ -75,3 +85,36 @@ class TestContractBoundary:
         payload = "a `b | c` d"
         assert markdown_cell(payload) == r"a `b \| c` d"
         assert markdown_text_cell(payload) == r"a \`b \| c\` d"
+
+
+class TestLineBreaks:
+    """A newline cannot be escaped — a pipe-table row is line-delimited."""
+
+    def test_newline_is_folded_to_a_space(self):
+        assert markdown_text_cell("Revue\ninternationale") == "Revue internationale"
+        assert markdown_text_cell("Revue\r\ninternationale") == "Revue  internationale"
+
+    def test_ordinary_whitespace_runs_survive(self):
+        """Only line breaks are touched; collapsing runs would churn shipped rows."""
+        assert markdown_text_cell("A  B\tC") == "A  B\tC"
+
+
+@pytest.mark.parametrize("script,expression", EMITTERS)
+def test_emitter_escapes_its_free_text_cell(script, expression):
+    """Fast-tier backstop for the rendered oracles, which need pandoc.
+
+    `test_rendered_venue_table_fidelity.py` is the real proof, but it is
+    `integration`-tiered and skips wholesale where pandoc is absent — leaving
+    this escaping with no coverage at all on such a machine, in a repo with no
+    CI. Source inspection needs nothing installed, so it still fails if an
+    emitter interpolates the venue raw again.
+    """
+    with open(os.path.join(SCRIPTS_DIR, script), encoding="utf-8") as handle:
+        source = handle.read()
+    rows = [line for line in source.splitlines()
+            if not line.strip().startswith("#")
+            and "|" in line and expression in line]
+    assert rows, f"{script}: no table row interpolating {expression} — has it moved?"
+    for line in rows:
+        assert f"markdown_text_cell({expression})" in line, \
+            f"{script}: free-text cell interpolated unescaped:\n{line}"

@@ -67,6 +67,14 @@ SCRIPTS=(
     scripts/figures/export_core_venues_markdown.py
     scripts/analysis/summarize_core_venues.py
     scripts/figures/export_tab_venues.py
+    # Shared helpers the two venue emitters import. Keep this array free of
+    # parentheses — the archive guard parses it with a non-greedy regex that
+    # stops at the first closing paren, silently truncating the list.
+    # _venue_naming.py was already missing, so the archived
+    # export_core_venues_markdown.py could not import it; ticket 0339 surfaced
+    # that through the Makefile prerequisite the escaper added.
+    scripts/_venue_naming.py
+    scripts/_markdown_table.py
     scripts/figures/export_citation_coverage.py
     scripts/analysis/analyze_bimodality.py
     scripts/figures/plot_bimodality.py

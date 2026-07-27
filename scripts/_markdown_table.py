@@ -38,7 +38,13 @@ _GFM_CODE = str.maketrans({"|": r"\|"})
 # rendering on their own; emphasis and link syntax need a matched pair and are
 # deliberately left alone, so an ordinary venue name keeps its punctuation and
 # regenerating a shipped table stays a no-op.
-_GFM_LITERAL = str.maketrans({"\\": r"\\", "|": r"\|", "`": r"\`"})
+#
+# CR and LF are folded to a space, not escaped: a pipe-table row is
+# line-delimited, so a raw newline ends the row and no backslash can hold it.
+# Only line breaks are touched — collapsing runs of ordinary whitespace would
+# churn shipped rows for a defect that does not exist.
+_GFM_LITERAL = str.maketrans(
+    {"\\": r"\\", "|": r"\|", "`": r"\`", "\n": " ", "\r": " "})
 
 # Translation is single-pass: a sequential replace loop would re-escape the
 # backslashes its own earlier substitutions introduced.
@@ -80,6 +86,11 @@ def markdown_text_cell(text: str) -> str:
     ``refined_works.csv``, where ten entries are bilingual names joined with a
     literal ``|``. Every escapable character is escaped uniformly, including
     the backtick, so nothing in the value is read as syntax.
+
+    A newline is folded to a space rather than escaped: a pipe-table row is
+    line-delimited, so a raw newline ends the row outright and no backslash can
+    hold it. A quoted CSV field can carry one, so this is the same defect class
+    as the pipe, one level below the escaper.
 
     Never raises. These emitters feed a rendered manuscript, and a bibliographic
     string is not a contract the build may reject: inheriting ``markdown_cell``'s
