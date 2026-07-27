@@ -226,7 +226,8 @@ class TestScriptsArrayParser:
             "the parser is reading only part of the SCRIPTS array"
         )
 
-    def test_a_path_is_not_matched_inside_a_longer_path(self):
+    @pytest.mark.parametrize("bad", ["../scripts/utils.py", "old_scripts/utils.py"])
+    def test_a_path_is_not_matched_inside_a_longer_path(self, bad):
         """A near-miss entry must not resolve against the real file it contains.
 
         `../scripts/utils.py` and `old_scripts/utils.py` are paths the archive
@@ -234,10 +235,9 @@ class TestScriptsArrayParser:
         `scripts/utils.py` out of both — the guard would then check a file the
         array never named. Same silent-subset class as the truncating parse.
         """
-        for bad in ("../scripts/utils.py", "old_scripts/utils.py"):
-            fixture = f"SCRIPTS=(\n    {bad}\n)\n"
-            with pytest.raises(AssertionError):
-                _parse_scripts_array(fixture)
+        fixture = f"SCRIPTS=(\n    {bad}\n)\n"
+        with pytest.raises(AssertionError):
+            _parse_scripts_array(fixture)
 
     @pytest.mark.parametrize("bad", ["scripts/utils.pyc", "scripts/utils.py.bak"])
     def test_a_py_path_is_not_matched_inside_a_longer_extension(self, bad):
@@ -267,7 +267,7 @@ class TestScriptsArrayParser:
 
     def test_real_array_includes_the_shared_venue_helpers(self):
         """Both helpers sit below the comment that used to truncate the parse."""
-        paths = _parse_scripts_array(_read(BUILD_SCRIPT))
+        paths = _archive_script_paths()
         for helper in ("scripts/_venue_naming.py", "scripts/_markdown_table.py"):
             assert helper in paths, (
                 f"{helper} is imported by the archived venue emitters but the "
