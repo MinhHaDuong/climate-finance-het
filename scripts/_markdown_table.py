@@ -19,7 +19,9 @@ Two functions, because the callers hold two different input contracts:
     backticks are intentional code spans. Used by the deposit codebook.
 ``markdown_text_cell``
     The input is plain text with no markup intent — a journal name out of the
-    bibliographic corpus. Used by the venue-table emitters.
+    bibliographic corpus, a source label edited by hand, a language code the
+    normaliser passed through unchanged. Used by the venue-table emitters, the
+    corpus-sources table and the language table (ticket 0367).
 
 Collapsing them into one function is the trap this split avoids: a journal name
 that happens to contain two backticks is not a code span, and applying the

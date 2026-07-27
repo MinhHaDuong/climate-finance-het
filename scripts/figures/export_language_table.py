@@ -128,8 +128,9 @@ def main() -> None:
             "Share (%)": f"{100 * unknown_count / total:.1f}",
         })
 
+    # Stored unemphasised; the `**…**` is added after escaping, below.
     rows.append({
-        "Language": "**Total**",
+        "Language": "Total",
         "Code": "",
         "Works": total,
         "Share (%)": "100.0",
@@ -147,10 +148,19 @@ def main() -> None:
     # upper-cased form whenever LANGUAGE_NAMES has no entry — `normalize_lang`
     # returns any two-character string unchanged, so neither column is curated
     # in-repo. Same defect class as the corpus-sources table (ticket 0367).
-    # `**Total**` survives: the escaper touches the backslash, the pipe and the
-    # backtick, never the asterisk.
-    for _, row in table.iterrows():
-        lines.append("| " + " | ".join(markdown_text_cell(v) for v in row) + " |")
+    #
+    # The Total row's emphasis is applied after escaping, the same
+    # escape-then-wrap order as export_corpus_table.py. Leaving `**Total**` in
+    # the data and escaping it whole would work only because `*` is outside the
+    # escaper's character set today — that makes the emphasis hostage to a later
+    # widening of the set, in a file that would never be re-read for it.
+    label_col = table.columns.get_loc("Language")
+    total_row = len(table) - 1
+    for i, (_, row) in enumerate(table.iterrows()):
+        cells = [markdown_text_cell(v) for v in row]
+        if i == total_row:
+            cells[label_col] = f"**{cells[label_col]}**"
+        lines.append("| " + " | ".join(cells) + " |")
 
     lines.append("")
     lines.append(": Language distribution in the refined corpus. {#tbl-languages}")

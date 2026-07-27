@@ -180,3 +180,41 @@ def test_total_row_keeps_its_emphasis(tmp_path):
     assert cell_texts(row) == ["Total", "", f"{ENOUGH_ROWS}", "100.0"], (
         f"the Total row lost a cell:\n{row}"
     )
+
+
+@pytest.mark.integration
+def test_shipped_language_names_are_untouched_by_the_escaper(tmp_path):
+    """Escaping must be a no-op on every name the table actually emits.
+
+    The sibling pin for the corpus-sources table (ticket 0367). A fix that
+    churns `tab_languages.md` on the next regeneration is a failed fix: a diff
+    on every row hides the one row that changed for a real reason. No
+    `LANGUAGE_NAMES` value carries an escapable character today, so the emitted
+    table must carry no backslash at all — and the Total row's `**` must be the
+    only asterisks in it.
+    """
+    require_pandoc()
+    from export_language_table import LANGUAGE_NAMES
+
+    enriched = tmp_path / "enriched_works.csv"
+    enriched.write_text(
+        "language\n" + "".join(f"{code}\n" * ENOUGH_ROWS for code in LANGUAGE_NAMES),
+        encoding="utf-8")
+    output = tmp_path / "tab_languages.md"
+
+    subprocess.run(
+        [sys.executable, SCRIPT, "--input", str(enriched), "--output", str(output)],
+        cwd=REPO_ROOT, env=source_root_env(), capture_output=True,
+        text=True, check=True)
+
+    emitted = output.read_text(encoding="utf-8")
+
+    assert "\\" not in emitted, (
+        "escaping churned a shipped language name — regenerating the table "
+        f"would rewrite rows that did not change:\n{emitted}"
+    )
+    assert emitted.count("*") == 4, (
+        "the only emphasis in the table is the Total row's `**…**`:\n{}".format(emitted)
+    )
+    for name in LANGUAGE_NAMES.values():
+        assert f"| {name} |" in emitted, f"name {name!r} was rewritten by the escaper"
