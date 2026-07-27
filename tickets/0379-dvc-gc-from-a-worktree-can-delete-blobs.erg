@@ -53,6 +53,14 @@ which lowers the severity — it does not make it a non-event.
 3. Point the architecture.md note at it, so the prose describes a mechanism
    rather than asking for care.
 
+## Known limit of the Makefile-refusal design
+
+`.dvc/tmp/lock` is per-worktree, so it does not serialize across checkouts. A
+`make gc` refusal catches the sequential wrong-cwd case, which is the one
+actually observed, but not a live `dvc gc` racing a sibling worktree's reader.
+Raised by the review panel on PR #1179. If the cheap guard is chosen, say so
+here rather than implying full coverage.
+
 ## Test
 
 Integration, and it must assert the refusal rather than the wording:

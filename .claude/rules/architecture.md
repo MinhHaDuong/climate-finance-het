@@ -162,11 +162,17 @@ flagged `shared` for workspace file and cache blob, and free space was unchanged
 On a filesystem without reflink DVC falls back to a real copy, and there the same
 checkout costs the full 2.2 GB.
 
-Leave `cache.type` unset. Reflink is safe here precisely because a write breaks
-the sharing, which is what keeps Phase-1's in-place rewrites of
-`data/catalogs/*.csv` off the cache blob. Setting `hardlink` would remove that
-protection: hardlinked files share one inode, so a single rewrite would corrupt
-the cache for every checkout at once.
+Leave `cache.type` unset, and never set `hardlink` or `symlink`. Reflink is
+safe because a write breaks the sharing; hardlinked files share one inode, so a
+writer that opens the target in place writes straight into the cache blob and
+corrupts it for every checkout at once. Phase 1 has both kinds of writer:
+`pipeline_io.save_csv()` writes a temp file and `os.replace()`s it, an atomic
+rename onto a fresh inode that would survive even a hardlinked cache, but
+`np.savez_compressed(path, …)` in `enrich_embeddings` and `corpus_align` opens
+the embeddings `.npz` directly and truncates it. One in-place writer is enough.
+`tests/test_post_checkout_hook.py::test_dvc_cache_type_is_not_an_aliasing_type`
+enforces this, because the setting can live in the gitignored
+`.dvc/config.local` where no diff would show it.
 
 **One cache, every checkout: think before `dvc gc`.** Sharing the cache widens
 that command's blast radius. It prunes by reachability computed from whichever

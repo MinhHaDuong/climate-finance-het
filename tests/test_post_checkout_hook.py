@@ -117,8 +117,9 @@ def test_hook_points_dvc_cache_at_the_shared_cache():
     reflink-capable filesystem it is nearly free: cache.type is unset, so DVC
     tries reflink before copy, and a reflinked checkout shares extents with the
     cache blob until something writes. cache.type must stay unset — `hardlink`
-    would share one inode instead, and Phase-1 rewrites data/catalogs/*.csv in
-    place, so a single rewrite would corrupt the cache for every checkout."""
+    shares one inode instead, and Phase 1 has a writer that opens its target in
+    place (np.savez_compressed on the embeddings .npz), which would then write
+    into the cache blob itself. See test_dvc_cache_type_is_not_an_aliasing_type."""
     source = HOOK.read_text()
     assert ".dvc/cache" in source
     # The path must be derived from the repo, not hard-coded, so the fix
@@ -145,6 +146,40 @@ def test_hook_replaces_stale_dvc_cache_symlink():
     dvc_block = _dvc_block(HOOK.read_text())
     assert "ln -sfn" in dvc_block
     assert "-L .dvc/cache" in dvc_block
+
+
+def test_dvc_cache_type_is_not_an_aliasing_type():
+    """cache.type must never be `hardlink` or `symlink` on a shared cache.
+
+    The hook points every worktree at one 19 GB cache, and the safety of that
+    rests entirely on checkouts not aliasing the cache blob's inode. Reflink
+    (DVC's first default) and copy both break sharing on write; a hardlink or a
+    symlink do not, so a writer that opens its target in place writes straight
+    into the cache. Phase 1 has exactly such a writer — np.savez_compressed()
+    truncates the embeddings .npz directly, unlike pipeline_io.save_csv(), which
+    is an atomic write-then-rename onto a fresh inode.
+
+    Checked here rather than left to prose because the setting can be made with
+    `dvc config --local cache.type hardlink`, which lands in the gitignored
+    .dvc/config.local — invisible to every diff and to code review."""
+    forbidden = {"hardlink", "symlink"}
+    for name in (".dvc/config", ".dvc/config.local"):
+        cfg = REPO / name
+        if not cfg.exists():
+            continue
+        in_cache_section = False
+        for raw in cfg.read_text().splitlines():
+            line = raw.split("#", 1)[0].strip()
+            if line.startswith("["):
+                in_cache_section = line.lower().replace(" ", "").startswith("[cache]")
+                continue
+            if in_cache_section and line.lower().replace(" ", "").startswith("type="):
+                types = {t.strip().lower() for t in line.split("=", 1)[1].split(",")}
+                assert not (types & forbidden), (
+                    f"{name} sets cache.type={sorted(types)}; hardlink/symlink alias "
+                    "the cache blob's inode, so an in-place writer (the embeddings "
+                    ".npz) would corrupt the cache shared by every worktree."
+                )
 
 
 def _tree_size_mb(root: Path) -> float:

@@ -55,10 +55,13 @@ fi
 # tell reflink from copy. Where the filesystem has no reflink, DVC falls back to
 # a real copy and a worktree that runs `make data` spends ~2.2 GB.
 #
-# Leave cache.type unset. Reflink is safe exactly because a write breaks the
-# sharing, which keeps Phase-1's in-place rewrites of data/catalogs/*.csv away
-# from the cache blob. `hardlink` would drop that protection — one shared inode,
-# so a single rewrite would corrupt the cache for every checkout at once.
+# Leave cache.type unset, and never set hardlink or symlink. Reflink is safe
+# because a write breaks the sharing; a hardlink shares one inode, so any writer
+# that opens the target in place writes into the cache blob itself. Phase 1 has
+# such a writer: np.savez_compressed() truncates the embeddings .npz directly.
+# (The CSV path is safe either way — pipeline_io.save_csv writes a temp file and
+# os.replace()s it onto a fresh inode.) A test enforces this, since the setting
+# can hide in the gitignored .dvc/config.local.
 #
 # One consequence to know about: `dvc gc` now reaches every checkout at once. It
 # prunes by reachability computed from whichever checkout invokes it, so a stale
