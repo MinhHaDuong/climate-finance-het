@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-27T12:09Z HDMX-coding-agent created
 2026-07-27T12:15Z HDMX-coding-agent note found by the 0325 roar sweep for the same defect class. Latent, not currently firing: every row in the shipped tab_venues.md carries its five cells, because no pipe-bearing venue sits in today's top-N.
+2026-07-27T12:40Z HDMX-coding-agent note codebook.md is a contended file — several open PRs regenerate it from their own base. #1141 merged carrying a copy whose is_flagged row had no `\|` escape; a merge-tree trial predicted the escape would survive because that branch only touched the `language` row, and the merged main confirmed it (escape present, five cells, 33 rows). It survived by luck of line disjointness, not by anything protecting it. Re-grep the merged file for the escape after every sibling merge until 0340's guard exists.
 
 --- body ---
 ## Context
