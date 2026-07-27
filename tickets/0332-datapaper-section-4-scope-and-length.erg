@@ -11,6 +11,7 @@ Label: needs-human
 2026-07-27T15:10Z HDMX-coding-agent note the cut orphaned six vars that test_doc_vars_completeness caught (four cite_*_of_doi/cite_doi_*, two lit_sem6_*); dropped from DOC_VARS with a comment. compute_citation_coverage.py and the sem6 pipeline still emit them — other deliverables consume them, and this is prose scope only.
 2026-07-27T12:05Z HDMX-coding-agent note Action 2 corrected: the field-history statistics (Chow break, 17% growth, cross-pole z) are in §1's replication bullets (data-paper.qmd:57-59), not §4, so the §4 cut does not free them. Split into 2(i) §4 and 2(ii) §1, and the budget rationale no longer credits the §4 cut with §1's words. Added the 0327 sequencing note — §4 removal precedes 0327's table, per the remove-whole-before-condensing rule.
 
+2026-07-27T17:20Z HDMX-coding-agent note AUTHOR DIRECTION on the remaining overage: sections 2.3, 1 and 2.4 grew answering R1 remarks, and much of that answer belongs in the reply letter rather than in the paper permanently. Condense there, move the displaced text to the letter. See "Where the remaining words are" below.
 --- body ---
 ## Context
 
@@ -68,6 +69,56 @@ mechanism) and part of 0320's verification macros. Those were the right fixes
 exist in a data paper. Sunk cost is not a reason to keep it. The scripts and
 generated tables stay regardless — only the prose is at stake, and the
 numbers remain available for the companion work.
+
+## Where the remaining words are (2026-07-27, post-render)
+
+The section-4 cut landed and the budget is still missed: **3,708 words against
+2,500**, measured on the rendered PDF by `scripts/qa/qa_word_count.py`.
+Section 4 is now the smallest section in the paper at 186 words, so it was
+never where the weight sat.
+
+| Section | Words |
+|---|---|
+| 3. Data description | 924 (596 of it the generated variables table) |
+| 2.3 Quality, completeness, biases | 634 |
+| 1. Introduction | 442 |
+| 2.4 OpenAlex limitations | 375 |
+| 2.1 / 2.2 | 293 / 291 |
+| References | 238 |
+| 5. Concluding remarks | 166 |
+| 4. Descriptive statistics | 186 |
+
+Section 3 is not the target: the editor asked for the variables list (ED-03),
+and trimming its repetition returned only 28 words (PR #1158). What remains
+after that is 33 variable names and 33 type strings, which is the content the
+request was for.
+
+**The author's reading, and the way in:** sections 2.3, 1 and 2.4 are large
+because they grew answering round-1 remarks. A remark answered *in the paper*
+costs words forever; the same remark answered *in the reply letter* costs
+none. So condense those three and move the displaced text to the letter.
+
+The discriminator is who needs the passage:
+
+- A passage a **future reader** needs to use the dataset stays, condensed.
+- A passage that exists to show a **reviewer** we considered something moves
+  to the letter, which is where "yes, we checked, here is how" belongs.
+
+Section 2.4 is the clearest case — 375 words on one upstream database's
+limitations, written for ED-01/R1-11/R1-16b. A dataset user needs to know the
+limitations bite; they do not need the full pipeline-response narrative.
+
+**The risk, and the guard.** A second-round reviewer can read a remark as
+unaddressed if its answer lives only in the letter. So each move is checked
+against `revision-rdj26561/ledger.dedup.jsonl`: a remark may lose its
+*elaboration* to the letter, never its *only* trace in the paper. Where a
+remark needs a paper-side anchor, leave one sentence and put the argument in
+the letter.
+
+Order of work, per the cutting rule: whole removal first (which passages
+serve no reader and no remark at all), then condense the survivors, then
+stop. Displaced is not deleted — it lands in the reply letter (0283) or the
+deposit, with a pointer left behind.
 
 ## Relevant files
 
