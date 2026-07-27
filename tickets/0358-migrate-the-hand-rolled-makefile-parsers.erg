@@ -6,24 +6,29 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-27T14:33Z HDMX-coding-agent created
 2026-07-27T14:40Z HDMX-coding-agent note filed by the 0340 adherence self-gate, round 2. Both of its residual nits close with this one change.
+2026-07-27T15:05Z HDMX-coding-agent note corrected: the 0340 review panel found test_arch_compliance.py has no Makefile parser at all — its _ASSIGN is a Python-source regex for architecture rule 9. Two copies, not three.
 
 --- body ---
 ## Context
 
 Ticket 0340 added the canonical Makefile parser to `tests/_mk_discovery.py`
-(`makefile_constants`, `expand_vars`, `rule_targets`). Three hand-rolled copies
-remain, and they are each strictly narrower than the shared one:
+(`makefile_constants`, `expand_vars`, `rule_targets`). Two hand-rolled copies
+remain:
 
-- `tests/test_phase_layout.py:46` — matches only `NAME := value` at column
-  zero, so it misses the six `export NAME :=` assignments, and it reads
-  *physical* lines, so it misses continued target lists. Concretely:
-  `Makefile:380-382` declares three Phase-2 targets built by
-  `scripts/analysis/compute_clusters.py` across a `\` continuation, and the
-  guard matches no rule there — it silently skips all three.
-- `tests/test_arch_compliance.py:380` and
-  `tests/test_evict_analysis_intermediates.py:180` — two more variants, with
-  divergent semantics (the new helper is first-definition-wins, the evict one
-  is last-wins).
+- `tests/test_phase_layout.py:46` — strictly narrower than the shared one. It
+  matches only `NAME := value` at column zero, so it misses the five
+  `export NAME :=` assignments, and it reads *physical* lines, so it misses
+  continued target lists. Concretely: `Makefile:380-382` declares three Phase-2
+  targets built by `scripts/analysis/compute_clusters.py` across a `\`
+  continuation, and the guard matches no rule there — it silently skips all
+  three.
+- `tests/test_evict_analysis_intermediates.py:174-181` — a second full parser,
+  complete with its own continuation joiner, and with the opposite resolution
+  rule: last assignment wins, where the shared helper is first-wins.
+
+Not a third copy, though a first pass of this ticket claimed one:
+`tests/test_arch_compliance.py:380` does no Makefile parsing at all — its
+`_ASSIGN` is a Python-source regex serving architecture rule 9.
 
 This is the failure mode ticket 0248 was filed against — a guard that keeps
 passing over fewer files rather than because its contract still holds — one
@@ -39,17 +44,17 @@ parameter is dead surface and its docstring names a caller that does not exist.
 - `tests/_mk_discovery.py` — the shared parser; `files=` is the migration seam
 - `tests/test_phase_layout.py` — narrowest copy, and the one demonstrably
   skipping real targets
-- `tests/test_arch_compliance.py` — second copy
-- `tests/test_evict_analysis_intermediates.py` — third copy, last-wins semantics
+- `tests/test_evict_analysis_intermediates.py` — second copy, last-wins semantics
 - `tests/test_mk_discovery_unified.py` — the 0248 meta-guard to extend
 
 ## Actions
 
 1. Migrate `test_phase_layout.py` to `makefile_constants(files=[MAKEFILE])` and
    `rule_targets()`, keeping its constant scope narrow on purpose.
-2. Migrate the other two copies, deciding explicitly whether each wants
-   first-wins or last-wins and stating why in a comment — the divergence today
-   is accidental, not designed.
+2. Migrate `test_evict_analysis_intermediates.py`, deciding explicitly whether
+   it wants first-wins or last-wins and stating why in a comment — the
+   divergence today is accidental, not designed. Its own continuation joiner
+   retires with it.
 3. Extend `test_mk_discovery_unified.py` from `.mk` *enumeration* to Make
    *parsing*: no test outside `_mk_discovery.py` may hand-roll a Make
    assignment or rule-line regex, with the same `_ALLOWLIST` mechanism.
@@ -66,8 +71,8 @@ def test_phase_layout_sees_continued_target_lists():
     assert "data/derived/tables/tab_alluvial.csv" in rule_targets()
 ```
 
-Then extend the meta-guard and confirm it goes red against the three
-un-migrated copies before migrating them.
+Then extend the meta-guard and confirm it goes red against both un-migrated
+copies before migrating them.
 
 ## Verification
 

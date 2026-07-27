@@ -88,56 +88,99 @@ def _is_separator(cells: list[str]) -> bool:
     return bool(cells) and all(_SEPARATOR_CELL.match(c.strip()) for c in cells)
 
 
-def pipe_tables(text: str) -> list[tuple[int, list[str], list[tuple[int, list[str]]]]]:
-    """Every pipe table in `text` as ``(header line, header cells, rows)``.
+def scan(text: str) -> tuple[list[tuple[int, list[str], list[tuple[int, list[str]]]]],
+                             list[int], int | None]:
+    """`(tables, orphan row lines, unclosed fence line)`.
 
     A table is a pipe row immediately followed by a delimiter row, which is the
     rule GFM itself applies. Fenced blocks are skipped: ``tab_variables.md``
     ships a raw-LaTeX ``longtable`` inside a ``` fence, and its column
     specifications are not Markdown.
 
-    ``rows`` carries the delimiter row first, then the body rows. The delimiter
-    is included deliberately — GFM requires it to declare the same column count
-    as the header, so a mismatch there is the same defect one line higher.
+    Each table's ``rows`` carries the delimiter row first, then the body rows.
+    The delimiter is included deliberately — GFM requires it to declare the same
+    column count as the header, so a mismatch there is the same defect one line
+    higher.
+
+    The other two return values exist because a *silent* end-of-table is the
+    way this parser could be blind to exactly the defect it hunts:
+
+    - **Orphans.** A raw newline inside a value ends the table at that line, so
+      every row below it belongs to no table and would never be width-checked.
+      ``markdown_text_cell`` folds a newline to a space, but ``markdown_cell``
+      — the codebook path — does not, so the hole is reachable from a shipped
+      emitter. Any line that opens with ``|`` and no table claimed is reported.
+    - **Unclosed fence.** One stray fence swallows the rest of the file, and
+      the sweep would read it as clean.
     """
     lines = text.splitlines()
-    tables = []
-    fenced = False
+    tables: list[tuple[int, list[str], list[tuple[int, list[str]]]]] = []
+    claimed: set[int] = set()
+    row_shaped: list[int] = []
+    fence_opened_at: int | None = None
     i = 0
     while i < len(lines):
         stripped = lines[i].strip()
-        if stripped.startswith("```") or stripped.startswith("~~~"):
-            fenced = not fenced
+        if stripped.startswith(("```", "~~~")):
+            fence_opened_at = None if fence_opened_at else i + 1
             i += 1
             continue
-        if fenced or "|" not in stripped:
+        if fence_opened_at is not None:
             i += 1
             continue
-        if i + 1 >= len(lines) or not _is_separator(split_row(lines[i + 1])):
+        if stripped.startswith("|"):
+            row_shaped.append(i + 1)
+        if ("|" not in stripped or i + 1 >= len(lines)
+                or not _is_separator(split_row(lines[i + 1]))):
             i += 1
             continue
         header = split_row(stripped)
         rows = [(i + 2, split_row(lines[i + 1]))]
+        claimed |= {i + 1, i + 2}
         j = i + 2
         while j < len(lines) and lines[j].strip() and "|" in lines[j]:
             if lines[j].strip().startswith(("```", "~~~")):
                 break
             rows.append((j + 1, split_row(lines[j])))
+            claimed.add(j + 1)
             j += 1
         tables.append((i + 1, header, rows))
         i = j
-    return tables
+    return tables, sorted(set(row_shaped) - claimed), fence_opened_at
+
+
+def pipe_tables(text: str) -> list[tuple[int, list[str], list[tuple[int, list[str]]]]]:
+    """The tables :func:`scan` found. See it for the parsing rule."""
+    return scan(text)[0]
 
 
 def malformed_rows(text: str) -> list[str]:
-    """Rows whose cell count differs from their table's header. Empty is clean."""
-    return [
+    """Everything wrong with `text`'s pipe tables. Empty is clean.
+
+    Three defects, not one. A width mismatch is the shipped one; an orphan row
+    and an unclosed fence are the two ways this parser could report a clean
+    file while never looking at the rows that matter.
+    """
+    tables, orphans, unclosed = scan(text)
+    problems = [
         f"line {lineno}: {len(cells)} cells, header at line {header_line} "
         f"declares {len(header)} — {'|'.join(cells)[:120]}"
-        for header_line, header, rows in pipe_tables(text)
+        for header_line, header, rows in tables
         for lineno, cells in rows
         if len(cells) != len(header)
     ]
+    problems += [
+        f"line {lineno}: a table row belonging to no table — the table above it "
+        "ended early, most likely on a raw newline inside a value, leaving every "
+        "row below unchecked"
+        for lineno in orphans
+    ]
+    if unclosed is not None:
+        problems.append(
+            f"line {unclosed}: unclosed code fence — the parser sees no table "
+            "below it, so the rest of the file would pass unread"
+        )
+    return problems
 
 
 # ---------------------------------------------------------------------------
@@ -166,6 +209,43 @@ def test_parser_flags_an_unescaped_pipe():
 def test_parser_accepts_the_escaped_form():
     """Green case: the fix ticket 0325 shipped must read as a whole row."""
     assert not malformed_rows(_ESCAPED)
+
+
+def test_parser_flags_a_delimiter_row_of_the_wrong_width():
+    """The delimiter is width-checked, not merely used to recognise the table.
+
+    Without this the `rows` docstring's promise is untested: deleting the
+    delimiter from the checked rows leaves every other assertion green.
+    """
+    offenders = malformed_rows(
+        "| A | B | C |\n|:--|:--|\n| 1 | 2 | 3 |\n")
+    assert offenders and "line 2" in offenders[0], offenders
+
+
+def test_parser_flags_rows_orphaned_by_a_raw_newline():
+    """A newline inside a value ends the table; the rows below must not vanish.
+
+    `markdown_cell` — the codebook path — does not fold newlines, so this hole
+    is reachable from a shipped emitter. The malformed row here is two lines
+    past the break: before orphan reporting, this document read as clean.
+    """
+    document = (
+        "| A | B |\n"
+        "|:--|:--|\n"
+        "| ok | first\n"
+        "second\n"
+        "| x | y | z |\n"
+    )
+    offenders = malformed_rows(document)
+    assert offenders, "every row below the break went unchecked"
+    assert "line 5" in " ".join(offenders), offenders
+
+
+def test_parser_flags_an_unclosed_fence():
+    """One stray fence swallows the rest of the file, tables included."""
+    offenders = malformed_rows(
+        "```\nnot markdown\n\n| A | B |\n|:--|:--|\n| 1 | 2 | 3 |\n")
+    assert offenders and "unclosed code fence" in offenders[0], offenders
 
 
 @pytest.mark.parametrize("payload", [
@@ -257,7 +337,7 @@ def test_rule_targets_reads_a_continued_target_list():
 
 
 def test_makefile_constants_reads_exported_assignments():
-    """`export NAME := value` is an assignment, and six of them exist here.
+    """`export NAME := value` is an assignment, and five of them exist here.
 
     Missing one is worse than it looks: a target referencing it resolves to a
     literal `$(NAME)/…` path, which is never on disk — so the sweep skips it
@@ -295,17 +375,23 @@ def test_the_sweep_actually_parsed_rows():
     four git-tracked ones), or the table detector could fail to recognise a
     table and report no rows at all. Both read as green above.
     """
-    present = [a for a in sorted(GENERATED) if (REPO_ROOT / a).is_file()]
-    assert len(present) >= 3, (
-        "fewer than three generated Markdown artifacts on disk; the git-tracked "
-        f"ones should always be present: {present}"
+    rows_per_artifact = {
+        artifact: sum(len(rows) for _, _, rows in pipe_tables(path.read_text(encoding="utf-8")))
+        for artifact in sorted(GENERATED)
+        for path in [REPO_ROOT / artifact]
+        if path.is_file()
+    }
+    # Counted on artifacts that actually *contain* a pipe table, not merely on
+    # artifacts present. `tab_variables.md` ships a raw-LaTeX longtable and
+    # parses to zero tables by design; letting it satisfy a headcount would
+    # leave one of three units inert and the floor softer than it reads.
+    with_tables = {a: n for a, n in rows_per_artifact.items() if n}
+    assert len(with_tables) >= 3, (
+        "fewer than three generated pipe-table artifacts parsed; codebook.md, "
+        "tab_venues.md and tab_venues_fr.md are git-tracked and should always "
+        f"be present and parsed. Parsed: {rows_per_artifact}"
     )
-    parsed = [
-        (a, len(rows))
-        for a in present
-        for _, _, rows in pipe_tables((REPO_ROOT / a).read_text(encoding="utf-8"))
-    ]
-    assert sum(n for _, n in parsed) >= 30, (
-        f"the sweep parsed only {sum(n for _, n in parsed)} table rows across "
-        f"{len(present)} artifacts — the table detector is not seeing them: {parsed}"
+    assert sum(with_tables.values()) >= 30, (
+        f"the sweep parsed only {sum(with_tables.values())} table rows — the "
+        f"table detector is not seeing them: {rows_per_artifact}"
     )

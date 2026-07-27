@@ -19,9 +19,11 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 # alone — they only appear in recipes, which this module never reads.
 _VAR = re.compile(r"\$[({]([A-Za-z_][A-Za-z0-9_]*)[)}]")
 # `NAME := value` and its `=`, `?=`, `+=` siblings, at column zero. The optional
-# `export`/`override` prefix is not decoration: six assignments in this build
-# carry it, and without it those names resolve to a literal `$(NAME)` — a path
-# that then reads as "artifact merely absent", which callers skip silently.
+# `export`/`override` prefix is not decoration: five assignments in this build
+# carry it (Makefile:60,61,72,86 and manuscript.mk:25 — Makefile:96 is a bare
+# re-export with no value and is correctly not an assignment), and without it
+# those names resolve to a literal `$(NAME)` — a path that then reads as
+# "artifact merely absent", which callers skip silently.
 _ASSIGN = re.compile(
     r"^(?:export\s+|override\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*(?::=|\?=|\+=|=)\s*(.*?)\s*$")
 # A rule line `target [target…]: prereqs`, at column zero (recipes are indented).
