@@ -141,8 +141,17 @@ DOC_VARS = {
         "bim_dbic_post2015",
         "bim_dbic_pre2007",
         "bim_dbic_tfidf",
+        "bim_dip_p_2007_2014",
+        "bim_dip_p_embedding",
+        "bim_dip_p_post2015",
+        "bim_dip_p_pre2007",
+        "bim_gmm_modes",
+        "bim_gmm_separation",
+        "bim_n_2007_2014",
         "bim_n_accountability",
         "bim_n_efficiency",
+        "bim_n_post2015",
+        "bim_n_pre2007",
         "corpus_core",
         "corpus_core_threshold",
         "corpus_sources",
@@ -183,6 +192,29 @@ def _signed_int(value):
     if v < 0:
         return f"\u2212{abs(v):,}"  # Unicode minus
     return f"{v:,}"
+
+
+def _dip_p(value):
+    """Format a dip-test p-value, never rounding a rejection up to 1.00.
+
+    The dip p-values here sit at the ceiling, and "1.00" is the honest reading
+    of a statistic six times below its null scale. But a future corpus could
+    land at 0.9996, where rounding to 1.00 would erase a distinction the reader
+    needs, so cap the display just below unity instead (ticket 0345).
+    """
+    if pd.isna(value):
+        return "[MISSING]"
+    p = float(value)
+    if p >= 0.9995:
+        return "1.00" if p >= 1.0 else "> 0.99"
+    return f"{p:.2f}"
+
+
+def _sigma(value):
+    """Format a standardised separation in sigma units."""
+    if pd.isna(value):
+        return "[MISSING]"
+    return f"{float(value):.2f}"
 
 
 def _read_csv(filename, directory=TABLES_DIR):
@@ -406,6 +438,13 @@ def bimodality_stats(v):
         v["bim_bic2"] = _signed_int(row["bic_2comp"])
         v["bim_corr"] = f"{row['embedding_lexical_corr']:.2f}"
         v["bim_var_pct"] = _pct(100 * row["explained_variance"])
+        # Dip and mixture shape (ticket 0345). delta_bic alone cannot tell a
+        # two-humped distribution from a skewed one-humped distribution that a
+        # second Gaussian happens to fit; §5.3 quotes these to make the
+        # distinction rather than leaving the reader to infer it.
+        v["bim_dip_p_embedding"] = _dip_p(row.get("dip_pvalue"))
+        v["bim_gmm_separation"] = _sigma(row.get("gmm_separation_sigma"))
+        v["bim_gmm_modes"] = _int(row.get("gmm_n_modes"))
 
     # Full corpus — TF-IDF row
     tfidf = df[df["method"] == "tfidf_lexical"]
@@ -419,6 +458,7 @@ def bimodality_stats(v):
             row = period.iloc[0]
             v[f"bim_dbic_{key}"] = _signed_int(row["delta_bic"])
             v[f"bim_n_{key}"] = _int(row["n_papers"])
+            v[f"bim_dip_p_{key}"] = _dip_p(row.get("dip_pvalue"))
 
     # Core
     core = _read_csv("tab_bimodality_core.csv", directory=DERIVED_TABLES_DIR)
