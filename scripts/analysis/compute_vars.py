@@ -15,6 +15,7 @@ import warnings
 
 import numpy as np
 import pandas as pd
+from _vars_retrieval import RETRIEVAL_VARS, retrieval_protocol_stats
 from pipeline_io import latest_run_report
 from pipeline_loaders import load_refined_citations, load_refined_works
 from script_io_args import parse_io_args, validate_io
@@ -89,6 +90,7 @@ DOC_VARS = {
         "filter_no_abstract",
         "filter_protected",
         "filter_title_blacklist",
+        *RETRIEVAL_VARS,  # §2.2 thresholds, read from config (ticket 0329)
         "dedup_doi_removed",
         "dedup_fn_pairs",
         "dedup_fn_pairs_pct",
@@ -717,6 +719,7 @@ def write_yaml(v, path):
 def main():
     v = {}
     corpus_stats(v)
+    retrieval_protocol_stats(v)
     embedding_stats(v)
     bimodality_stats(v)
     pca_stats(v)
