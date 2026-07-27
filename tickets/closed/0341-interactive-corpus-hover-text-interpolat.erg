@@ -2,6 +2,7 @@
 Title: Interactive corpus hover text interpolates title and journal into raw HTML unescaped
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1149
 
 --- log ---
 2026-07-27T12:09Z HDMX-coding-agent created
@@ -9,6 +10,7 @@ Author: HDMX-coding-agent
 2026-07-27T15:40Z HDMX-coding-agent note arbitration: "the same way" as the siblings is WRONG here and the exit criterion below is amended. They feed innerHTML, so html.escape's default quote=True is right for them. Plotly parses neither hover text nor trace names as HTML — it runs its own convertEntities over an eight-name table (mu amp lt gt nbsp times plusmn deg) plus a numeric branch. quot is absent, so quote=True renders a literal &quot; in 23 of 2,644 core titles. This script escapes with quote=False. Same intent, deliberately different call.
 2026-07-27T15:44Z HDMX-coding-agent note accepted cost: 24 of 2,644 core titles carry markup Plotly's hover renderer whitelists (mostly <sub> from OpenAlex, e.g. "Outsourcing CO <sub>2</sub> within China"). Those now show the literal tag instead of a subscript. Net is 135 rows repaired against 24 flattened, and escaping data-borne tags uniformly beats rendering whichever ones a source happens to emit. Restoring subscripts would mean selectively unescaping a tag whitelist after the fact — a separate feature, not filed.
 
+2026-07-27T14:18Z HDMX-coding-agent closed — autoclosed — PR #1149
 --- body ---
 ## Context
 
