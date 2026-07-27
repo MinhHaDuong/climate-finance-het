@@ -16,13 +16,12 @@ helper would pass even if an emitter stopped calling it.
 """
 
 import os
-import re
-import shutil
 import subprocess
 import sys
 from html import escape
 
 import pytest
+from _gfm_render import cell_texts, render_gfm, require_pandoc, row_with
 from _source_roots import source_root_env
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -46,48 +45,15 @@ def _run_emitter(script: str, output: str, extra: list[str]) -> str:
         return handle.read()
 
 
-def _render_row(markdown: str, needle: str, tmp_path) -> str:
-    """Render `markdown` as GFM and return the flattened <tr> holding `needle`."""
-    source = tmp_path / "table.md"
-    source.write_text(markdown, encoding="utf-8")
-    html = subprocess.run(
-        ["pandoc", "-f", "gfm", "-t", "html", str(source)],
-        capture_output=True, text=True, check=True).stdout
-    # pandoc wraps its output, so rows are found in the flattened document.
-    flat = re.sub(r"\s+", " ", html)
-    rows = re.findall(r"<tr[^>]*>.*?</tr>", flat)
-    matching = [r for r in rows if needle in r]
-    assert matching, f"no rendered row carries {needle!r}:\n{flat}"
-    return matching[0]
-
-
-def _cells(row: str) -> list[str]:
-    """The row's cells as plain text.
-
-    Asserting on the whole tuple rather than on `row.count("<td")`: GFM
-    truncates an overflowing row to the header's declared column count, so the
-    count is right either way and cannot tell the two apart. What the split
-    actually does is shift every later value one column left and drop the last
-    — visible only by reading the values back.
-    """
-    return [re.sub(r"<[^>]+>", "", cell).strip()
-            for cell in re.findall(r"<td[^>]*>(.*?)</td>", row)]
-
-
-@pytest.fixture(scope="module")
-def pandoc():
-    if shutil.which("pandoc") is None:
-        pytest.skip("pandoc not available on this machine")
-
-
 @pytest.mark.integration
-def test_manuscript_venue_table_keeps_a_pipe_bearing_venue_whole(pandoc, tmp_path):
+def test_manuscript_venue_table_keeps_a_pipe_bearing_venue_whole(tmp_path):
     """`export_tab_venues.py` feeds @tbl-venues in the rendered manuscript.
 
     Its journal column is raw `refined_works.csv` text with no canonicalisation,
     so an unescaped pipe splits the row and GFM drops the overflow — the table
     then publishes a truncated venue name against the wrong numbers.
     """
+    require_pandoc()
     works = tmp_path / "refined_works.csv"
     works.write_text(
         "doi,journal,cited_by_count\n"
@@ -107,19 +73,20 @@ def test_manuscript_venue_table_keeps_a_pipe_bearing_venue_whole(pandoc, tmp_pat
         ["--refined-works", str(works), "--pole-papers", str(poles),
          "--min-papers", "1"])
 
-    row = _render_row(markdown, NEEDLE, tmp_path)
-    assert _cells(row) == [
+    row = row_with(render_gfm(markdown, tmp_path), NEEDLE)
+    assert cell_texts(row) == [
         "Efficiency", escape(PIPE_VENUE, quote=False), "2", "0", "2",
     ], f"the venue split the row:\n{row}"
 
 
 @pytest.mark.integration
-def test_core_venue_table_keeps_a_pipe_bearing_venue_whole(pandoc, tmp_path):
+def test_core_venue_table_keeps_a_pipe_bearing_venue_whole(tmp_path):
     """`export_core_venues_markdown.py` has the same shape one layer down.
 
     `canonical_venue()` returns the raw journal string when no curation rule
     matches, so an uncurated bilingual name reaches the cell unchanged.
     """
+    require_pandoc()
     core = tmp_path / "het_mostcited_50.csv"
     core.write_text(
         "journal\n"
@@ -131,7 +98,7 @@ def test_core_venue_table_keeps_a_pipe_bearing_venue_whole(pandoc, tmp_path):
     markdown = _run_emitter(
         "export_core_venues_markdown.py", output, ["--core", str(core)])
 
-    row = _render_row(markdown, NEEDLE, tmp_path)
-    assert _cells(row) == [
+    row = row_with(render_gfm(markdown, tmp_path), NEEDLE)
+    assert cell_texts(row) == [
         escape(PIPE_VENUE, quote=False), "2", "Journal",
     ], f"the venue split the row:\n{row}"
