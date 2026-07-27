@@ -113,11 +113,32 @@ year_floor: 1960
 citation_isolation:
   max_year: 2019
 
-# Distance to the corpus centroid is compared against a mean and standard
-# deviation taken over the WHOLE corpus — one global centroid, one global
-# mean/SD, no language, source, or year strata (see flag_semantic_outlier).
+# Flag 5 annotates, it does not remove (ticket 0361). The distance is a useful
+# inspection signal — docs/research-note-multilingual.md reads it as a
+# dependent variable — but it is unsound as a threshold: the distribution is
+# skewed and heavy-tailed, so mean + k*SD carries no probabilistic meaning, and
+# the one human validation of a cut on it found no discrimination. There is
+# deliberately no `sigma` here: the old `sigma: 2` was calibrated on a smaller
+# corpus under MiniLM, the embedding model was swapped to BGE-M3 15 days after
+# the flag silently died, and it would have removed 361 works on a threshold no
+# human had ever seen produce output. `mode: filter` still works but demands an
+# explicit, calibrated sigma.
 semantic_outlier:
-  sigma: 2
+  # diagnostic = compute and publish the distance, flag nothing.
+  # filter = flag beyond mean + sigma*SD of the work's own stratum.
+  mode: diagnostic
+  # per_language = measure each work against the centroid of its own language;
+  # global = one corpus-wide centroid. The centroid, not sigma, is the lever on
+  # the language gradient: a centroid built from a 91.6%-English corpus partly
+  # measures "not written in English", so its extreme tail is almost entirely
+  # non-English and raising sigma makes the bias worse (global sigma=2 removed
+  # Spanish works at 4.1x and Portuguese at 3.0x the baseline rate; sigma=4 at
+  # 14.7x and 10.9x; per-language sigma=2 at 1.1x and 0.4x). Per-language
+  # mean-centring is the documented correction (arXiv:1911.03310).
+  centroid: per_language
+  # Works in a language, below which it cannot locate its own centroid and
+  # falls back to the corpus centroid. Same refusal as min_coverage below.
+  min_language_count: 30
   # Fraction of Flag 5 candidates that must resolve to an embedding vector.
   # Below it the flag is scoring a rump of the corpus against a centroid built
   # from that same rump, which is a dead flag with a number attached — so it is

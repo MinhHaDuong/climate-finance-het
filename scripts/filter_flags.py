@@ -201,11 +201,87 @@ def flag_citation_isolated(df, config, *, citations_df):
 # Flag 5: Semantic outlier
 # ============================================================
 
+# Below this many works a language cannot locate its own centroid: the mean of
+# a handful of vectors is dominated by whichever few works happen to be there,
+# and every one of them then reports as typical. Such a language falls back to
+# the corpus centroid — the same refusal as ``min_coverage``, which will not
+# score a rump of the corpus against a centroid built from that rump.
+DEFAULT_MIN_LANGUAGE_COUNT = 30
+
+# Diagnostic, not filter, is the fallback when config states no mode. Flag 5's
+# only threshold (`sigma: 2`) was calibrated on a smaller corpus under a
+# different embedding model and was never validated against anything it
+# produced, so an absent key must not resurrect 361 removals (ticket 0361).
+DEFAULT_SEMANTIC_MODE = "diagnostic"
+DEFAULT_SEMANTIC_CENTROID = "per_language"
+
+SEMANTIC_MODES = ("diagnostic", "filter")
+SEMANTIC_CENTROIDS = ("global", "per_language")
+
+
+def _centroid_distances(embeddings, rows):
+    """Cosine distance from each row in ``rows`` to the centroid of ``rows``.
+
+    ``rows`` is an array of positional indices into ``embeddings``; the return
+    value is aligned with it, not with ``embeddings``.
+    """
+    block = embeddings[rows]
+    centroid = block.mean(axis=0)
+    norms = np.linalg.norm(block, axis=1, keepdims=True)
+    norms = np.where(norms == 0, 1, norms)
+    normed = block / norms
+    centroid_normed = centroid / max(np.linalg.norm(centroid), 1e-10)
+    return 1 - (normed @ centroid_normed)
+
+
+def _language_strata(emb_df, min_count):
+    """Positional row groups for languages large enough to own a centroid.
+
+    Returns ``{language: positional index array}``. A frame with no
+    ``language`` column yields nothing, so the caller degrades to the global
+    centroid rather than failing — test fixtures and slim intermediates
+    predate the column.
+    """
+    if "language" not in emb_df.columns:
+        log.warning("  Flag 5: no 'language' column — the per-language "
+                    "centroid degrades to the global one for every work")
+        return {}
+    codes = emb_df["language"].fillna("").astype(str).str.strip().str.lower()
+    positions = np.arange(len(emb_df))
+    strata = {}
+    for lang, rows in pd.Series(positions).groupby(codes.to_numpy()):
+        if lang and len(rows) >= min_count:
+            strata[lang] = rows.to_numpy()
+    return strata
+
+
 def flag_semantic_outlier(df, config, *, embeddings, emb_df):
-    """Flag papers whose embedding is >sigma*std from centroid.
+    """Score each candidate's distance from its semantic centroid.
+
+    Two config keys under ``semantic_outlier`` decide what that means:
+
+    ``mode``
+        ``diagnostic`` (default) computes and returns the distances but flags
+        nothing — the mask is all-False. ``filter`` compares each distance
+        against ``mean + sigma * std`` of its own stratum and flags what
+        exceeds it; it requires an explicit ``sigma``.
+    ``centroid``
+        ``per_language`` (default) measures each work against the centroid of
+        its own language, falling back to the corpus centroid below
+        ``min_language_count`` works. ``global`` uses one corpus-wide centroid.
+
+    The per-language centroid is the lever on the language gradient, and sigma
+    is not: a corpus that is 91.6% English builds a centroid whose distance
+    partly measures *not written in English*, so the extreme tail of that
+    distribution is almost entirely non-English and raising sigma makes the
+    bias worse (global sigma=4 removed Spanish works at 14.7x the baseline
+    rate, sigma=2 at 4.1x; per-language sigma=2 at 1.1x). Mean-centring within
+    language is the documented correction for this embedding geometry
+    (Libovicky et al., arXiv:1911.03310).
 
     Returns (pd.Series[bool], pd.Series[float]) aligned with df.index.
-    Raises ValueError if embeddings or emb_df is None or size mismatch.
+    Raises ValueError if embeddings or emb_df is None, on a size mismatch, or
+    on an unreadable config setting.
     """
     if embeddings is None or emb_df is None:
         raise ValueError("embeddings and emb_df are required for semantic outlier flag")
@@ -215,19 +291,34 @@ def flag_semantic_outlier(df, config, *, embeddings, emb_df):
             f"embedding size mismatch ({len(embeddings)} vs {len(emb_df)})"
         )
 
-    sigma = config["semantic_outlier"]["sigma"]
+    cfg = config["semantic_outlier"]
+    mode = cfg.get("mode", DEFAULT_SEMANTIC_MODE)
+    if mode not in SEMANTIC_MODES:
+        raise ValueError(
+            f"semantic_outlier.mode is {mode!r}; expected one of {SEMANTIC_MODES}"
+        )
+    scope = cfg.get("centroid", DEFAULT_SEMANTIC_CENTROID)
+    if scope not in SEMANTIC_CENTROIDS:
+        raise ValueError(
+            f"semantic_outlier.centroid is {scope!r}; expected one of "
+            f"{SEMANTIC_CENTROIDS}"
+        )
 
-    centroid = embeddings.mean(axis=0)
-    norms = np.linalg.norm(embeddings, axis=1, keepdims=True)
-    norms[norms == 0] = 1
-    normed = embeddings / norms
-    centroid_normed = centroid / max(np.linalg.norm(centroid), 1e-10)
-    cos_sim = normed @ centroid_normed
-    cos_dist = 1 - cos_sim
+    all_rows = np.arange(len(embeddings))
+    global_dist = _centroid_distances(embeddings, all_rows)
+    cos_dist = np.array(global_dist, dtype=float)
 
-    mean_dist = cos_dist.mean()
-    std_dist = cos_dist.std()
-    threshold = mean_dist + sigma * std_dist
+    strata = {}
+    if scope == "per_language":
+        min_count = cfg.get("min_language_count", DEFAULT_MIN_LANGUAGE_COUNT)
+        strata = _language_strata(emb_df, min_count)
+        for rows in strata.values():
+            cos_dist[rows] = _centroid_distances(embeddings, rows)
+        n_own = sum(len(rows) for rows in strata.values())
+        log.info("  Flag 5 centroid: per-language for %d of %d candidates in "
+                 "%d language(s) with >= %d works; corpus centroid for the "
+                 "remaining %d", n_own, len(emb_df), len(strata), min_count,
+                 len(emb_df) - n_own)
 
     # Put each distance back on the row it was computed for, by index. emb_df
     # is a slice of df carrying df's own index, so membership needs no
@@ -244,9 +335,36 @@ def flag_semantic_outlier(df, config, *, embeddings, emb_df):
             "slice of df so distances can be assigned by index"
         )
     outlier_dists = pd.Series(np.nan, index=df.index, dtype=float)
-    outlier_dists.loc[emb_df.index] = np.asarray(cos_dist, dtype=float)
+    outlier_dists.loc[emb_df.index] = cos_dist
 
-    flag_mask = outlier_dists.notna() & (outlier_dists > threshold)
+    if mode == "diagnostic":
+        # The distance ships; the removals do not. Returning a real
+        # measurement next to an empty mask is the point of the mode, so this
+        # early return sits after the computation, never in place of it.
+        return pd.Series(False, index=df.index), outlier_dists
+
+    if "sigma" not in cfg:
+        raise ValueError(
+            "semantic_outlier.mode is 'filter' but no sigma is configured. "
+            "Flag 5 will not invent a threshold: set semantic_outlier.sigma "
+            "to a value calibrated against this corpus and this embedding "
+            "model, or leave the flag in diagnostic mode (ticket 0361)."
+        )
+    sigma = cfg["sigma"]
+
+    # Each stratum is judged against its own moments. Sharing one corpus-wide
+    # mean and SD would put the whole per-language correction back: a language
+    # sitting off the corpus centre would clear the global threshold wholesale
+    # however well its own works agree with each other.
+    thresholds = np.full(
+        len(embeddings), global_dist.mean() + sigma * global_dist.std())
+    for rows in strata.values():
+        block = cos_dist[rows]
+        thresholds[rows] = block.mean() + sigma * block.std()
+
+    over = pd.Series(np.nan, index=df.index, dtype=float)
+    over.loc[emb_df.index] = cos_dist - thresholds
+    flag_mask = over.notna() & (over > 0)
 
     return flag_mask, outlier_dists
 
