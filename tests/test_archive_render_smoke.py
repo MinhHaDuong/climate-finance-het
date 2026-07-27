@@ -72,7 +72,15 @@ def test_manuscript_archive_renders_in_clean_room(tmp_path):
         cleanroom = tmp_path / "cleanroom"
         cleanroom.mkdir()
         with tarfile.open(TARBALL) as tar:
-            tar.extractall(cleanroom, filter="data")
+            # `filter=` landed in 3.12 and was backported to 3.10.12 / 3.11.4,
+            # so a version comparison would be wrong on a patched 3.10. The
+            # project declares requires-python >=3.10, and on 3.10.0-3.10.11
+            # passing it raises TypeError — turning this guard into a hard
+            # error. Key off the feature instead, per PEP 706.
+            if hasattr(tarfile, "data_filter"):
+                tar.extractall(cleanroom, filter="data")
+            else:
+                tar.extractall(cleanroom)
         root = cleanroom / "climate-finance-manuscript"
         assert root.is_dir(), f"unexpected archive top level: {os.listdir(cleanroom)}"
 
