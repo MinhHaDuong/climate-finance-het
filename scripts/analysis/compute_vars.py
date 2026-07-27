@@ -125,11 +125,9 @@ DOC_VARS = {
         "refs_zero_share_pct",
         "verify_ci_lower_pct",
         "verify_ci_upper_pct",
-        "verify_confirmed_n",
         "verify_confirmed_pct",
         "verify_sample_n",
         "verify_unconfirmed_n",
-        "verify_unconfirmed_pct",
     ],
     "multilayer-detection": [
         "bim_corr",
@@ -514,10 +512,8 @@ def citation_verification_stats(v):
         return
     m = dict(zip(df["metric"], df["value"]))
     v["verify_sample_n"] = _int(m["verify_sample_n"])
-    v["verify_confirmed_n"] = _int(m["verify_confirmed_n"])
     v["verify_unconfirmed_n"] = _int(m["verify_unconfirmed_n"])
     v["verify_confirmed_pct"] = _pct(m["verify_confirmed_pct"])
-    v["verify_unconfirmed_pct"] = _pct(m["verify_unconfirmed_pct"])
     v["verify_ci_lower_pct"] = _pct(m["verify_ci_lower_pct"])
     v["verify_ci_upper_pct"] = _pct(m["verify_ci_upper_pct"])
     if "complete_captured_pct" in m:
