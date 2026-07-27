@@ -113,6 +113,12 @@ OpenAlex limitation, and the pipeline step that addresses it or an explicit
 variable).** Section 2.2 now states how many duplicates each procedure
 removes, with counts drawn from the pipeline's merge run report: on the v2
 corpus, the DOI-based pass removes 833 records and the title+year pass 159.
+The revision also adds Table 3, a stage-by-stage construction ledger
+reconciling the 44,174 pooled source records to the 33,344 refined works with
+no residue. Every removal in the pipeline now carries its own row, including
+a third DOI pass that runs after enrichment and drops 399 records, which the
+submitted version omitted from its arithmetic. The table is generated from
+the pipeline's audit trail rather than typed.
 Section 2.4 adds a quantified discussion of the residual weakness the referee
 identifies. An audit of the refined corpus (script and output
 `tab_dedup_error_estimates.csv` in the deposited code) screens for
