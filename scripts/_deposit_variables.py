@@ -71,8 +71,8 @@ _KEYDOCS = "curated key-documents layer (catalog_keydocs.py, corpus v2)"
 
 DEPOSIT_VARIABLES: list[Variable] = [
     Variable("source", "string",
-             "Primary source catalog for the record's metadata (highest-priority "
-             "contributing source)", _MERGE, group=_IDENTITY,
+             "Primary source catalog for the record's metadata", _MERGE,
+             group=_IDENTITY,
              allowed_values="openalex, istex, bibcnrs, scispace, grey, teaching, unfccc, oecd"),
     Variable("source_id", "string",
              "Identifier in the primary source (e.g. OpenAlex work ID)", _MERGE,
@@ -123,41 +123,37 @@ DEPOSIT_VARIABLES: list[Variable] = [
              "Provenance flag: curated OECD key document", _KEYDOCS,
              required=False, group=_PROV, allowed_values=_BOOL01),
     Variable("abstract_provenance", "string, nullable",
-             "Provenance of the abstract text for curated key documents: "
-             "`curated`, `reconstructed:lead`, or `reconstructed:exec_summary`; "
-             "empty elsewhere", _KEYDOCS, required=False, group=_PROV,
+             "Provenance of the abstract text, for curated key documents only",
+             _KEYDOCS, required=False, group=_PROV,
              allowed_values="curated, reconstructed:lead, "
              "reconstructed:exec_summary, empty"),
     Variable("keywords_provenance", "string, nullable",
-             "Provenance of the keywords for curated key documents: `extracted` "
-             "or `generated:lexicon`; empty elsewhere", _KEYDOCS,
-             required=False, group=_PROV,
+             "Provenance of the keywords, for curated key documents only",
+             _KEYDOCS, required=False, group=_PROV,
              allowed_values="extracted, generated:lexicon, empty"),
     Variable("language_provenance", "string, nullable",
-             "How the language code was obtained: `source` (carried by the "
-             "source catalog), `openalex` (backfilled from the OpenAlex API), "
-             "or `detected:langdetect` (inferred from title and abstract); "
-             "empty where no language could be established", _ENRICH,
+             "How the language code was obtained: carried by the source "
+             "catalog, backfilled from OpenAlex, or inferred from title and "
+             "abstract", _ENRICH,
              required=False, group=_PROV,
              allowed_values="source, openalex, detected:langdetect, empty"),
     Variable("source_count", "integer",
-             "Number of sources that contributed the record (sum of the "
-             "provenance flags)", _MERGE, group=_PROV,
+             "Number of sources that contributed the record", _MERGE,
+             group=_PROV,
              allowed_values="1–8"),
     Variable("abstract_status", "string",
-             "Status of the (undistributed) abstract: `original`, "
-             "`reconstructed` (from OpenAlex inverted index or ISTEX fulltext), "
-             "`generated` (LLM summary of an oversized abstract), `too_long`, "
-             "or `missing`", _ENRICH, group=_CURATION,
+             "Whether the undistributed abstract was original, reconstructed "
+             "from an inverted index or fulltext, LLM-summarised, oversized, "
+             "or missing", _ENRICH, group=_CURATION,
              allowed_values="original, reconstructed, generated, too_long, "
              "missing"),
     Variable("near_duplicate_group", "integer, nullable",
              "Group identifier for near-identical content published under "
-             "several DOIs; null for ungrouped works", _FILTER,
+             "several DOIs", _FILTER,
              group=_CURATION),
     Variable("semantic_outlier_dist", "float, nullable",
-             "Distance to the corpus embedding centroid, computed for the "
-             "semantic-outlier flag", _FILTER, required=False,
+             "Distance to the corpus embedding centroid", _FILTER,
+             required=False,
              group=_CURATION),
     Variable("in_v1", "boolean",
              "Version tracking: work present in the v1.0 submission corpus",
@@ -210,12 +206,19 @@ _GFM_TEXT = str.maketrans({"\\": r"\\", "|": r"\|"})
 _GFM_CODE = str.maketrans({"|": r"\|"})
 
 
+OPTIONAL_MARK = "†"
+
+
 def describe(v: Variable) -> str:
-    """The variable's description as published, in Markdown."""
-    if v.required:
-        return v.description
-    return v.description + \
-        " (absent from corpus builds predating this pipeline stage)"
+    """The variable's description as published, in Markdown.
+
+    Optionality is marked on the variable name, not spelled out per row. Eight
+    of the 33 variables are optional, so the old per-row sentence spent 64
+    words — a quarter of all description text in the table — repeating one
+    fact eight times. The caption states it once and the name carries a dagger
+    (ticket 0332, word budget).
+    """
+    return v.description
 
 
 def latex_inline(text: str) -> str:
@@ -344,8 +347,9 @@ def render_markdown_table() -> str:
         if v.group != prev_group:
             groups.append(v.group.lower())
         prev_group = v.group
+        mark = "" if v.required else OPTIONAL_MARK
         lines.append(
-            rf"\texttt{{{v.name.translate(_LATEX_CODE)}}}"
+            rf"\texttt{{{v.name.translate(_LATEX_CODE)}}}{mark}"
             rf" & {latex_inline(v.type)}"
             rf" & {latex_inline(describe(v))} \\")
     lines += [
@@ -354,10 +358,11 @@ def render_markdown_table() -> str:
         "```",
         "",
         "Variables of `climate_finance_corpus.csv`. Horizontal rules separate "
-        "the four logical groups: " + ", ".join(groups) + ". Generated from "
-        "the deposit column contract (`scripts/_deposit_variables.py`); "
-        "per-source provenance, allowed values, and missingness are in the "
-        "deposited codebook.",
+        "the four logical groups: " + ", ".join(groups) + ". " + OPTIONAL_MARK +
+        " marks a variable absent from corpus builds predating its pipeline "
+        "stage. Generated from the deposit column contract "
+        "(`scripts/_deposit_variables.py`); per-source provenance, allowed "
+        "values, and missingness are in the deposited codebook.",
         ":::",
     ]
     return "\n".join(lines) + "\n"
