@@ -111,16 +111,9 @@ MANUSCRIPT_FIGS := deliverables/_shared/figures/fig_bars_v1.png deliverables/_sh
 # not-embedded: fig_global_map_cocitation.png — co-citation companion to the
 #   direct map, built for comparison and deliberately embedded in no document;
 #   pinned by tests/test_global_map.py::test_datapaper_prose_uses_generated_vars
-# not-embedded: fig_sem_composition.png — the companion study's thematic
-#   composition recomputed on the current corpus, backing the ED-02/R1-18
-#   response bullet (deliverables/data-paper/revision-rdj26561/
-#   literature-confirmations.md), which cites the artifact and adds no figure;
-#   kept committed by tests/test_lit_confirmations.py (ticket 0332 cut the §4
-#   paragraph that used to embed it)
 DATAPAPER_FIGS  := deliverables/_shared/figures/fig_bars.png \
                    deliverables/_shared/figures/fig_global_map_direct.png \
-                   deliverables/_shared/figures/fig_global_map_cocitation.png \
-                   deliverables/_shared/figures/fig_sem_composition.png
+                   deliverables/_shared/figures/fig_global_map_cocitation.png
 
 # fig_bars is shared with the data paper; fig_dag and the three semantic-space
 # panels were filed under DATAPAPER_FIGS / TECHREP_FIGS until 0359 — the corpus

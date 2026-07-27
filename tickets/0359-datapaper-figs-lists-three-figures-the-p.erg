@@ -9,6 +9,8 @@ Author: HDMX-coding-agent
 
 2026-07-27T17:40Z HDMX-coding-agent note widened after a roar reachability sweep: this is not three figures in one variable, it is 17 includes, 2 tables and 5 figures across the whole build graph. Retitled. The sweep also found the trap the guard must avoid — see Test.
 
+2026-07-27T18:45Z HDMX-coding-agent note author decision on Action 1: delete fig_sem_composition.png, its two .mk rules, its _clean clustering chain, config/datapaper_cluster_short_labels.json and tab_sem_composition.csv — git keeps the content. History: born 2026-07-23 (0310 item 6) as the companion study's composition figure recomputed on the current corpus; orphaned 2026-07-27 by 0332's §4 whole-removal cut, which said the label question "belongs to whatever deliverable keeps the figure" — none did; the label objection was then refuted the same day by 0328 (cluster 1 runs 41.4->20.8->2.1%, the reviewer had read cluster 3). Deleted for scope, not for error. Consequence to flag: the ED-02/R1-18 response bullet loses its non-bijective-structuration clause, whose only support was the deleted figure.
+
 2026-07-27T19:30Z HDMX-coding-agent note the *_FIGS lists were half the defect. The *_INCLUDES lists — which are render-rule prerequisites, not just documentation — had drifted further: TECHREP_INCLUDES named eleven includes the report had dropped and none of the 23 it composes; DATAPAPER four; MULTILAYER all six. Three render rules named no figure at all, so `make multilayer-detection.pdf` on main renders happily with none of its five figures on disk. Fixed both contracts, wired the missing figure prerequisites, and widened the guard to includes and tables. tab_venues_fr_caption.md is not dead: manuscript.mk concatenates it into the Gide venues table. Two figures nobody declared (fig_companion_sensitivity, fig_composition_wide) gained homes; ALL_FIGS loses nothing and gains exactly those two.
 --- body ---
 ## Context
@@ -78,11 +80,15 @@ Nothing is broken; `make` is doing work and the maintenance burden is real.
 
 ## Actions
 
-1. Decide `fig_sem_composition`'s fate — the only real question here. Either
-   it stays a maintained analysis artifact (say where it is consumed, and by
-   what), or the figure, its `.mk` rules, and `tab_sem_composition.csv` go
-   together. The clustering itself stays either way: `tab_sem6_assignments.csv`
-   backs §1's literature-confirmation bullet.
+1. ~~Decide `fig_sem_composition`'s fate~~ — **settled 2026-07-27 (author):
+   they go together.** Deleted: the figure, its two rules in
+   `lit-confirmations.mk`, the `_clean` clustering chain that fed only them,
+   `config/datapaper_cluster_short_labels.json`, and
+   `tab_sem_composition.csv`. Git keeps the content, and 0328 recorded the
+   six-cluster period table in its own body — which is what a later reader
+   would come back for. The clustering itself stays:
+   `tab_sem6_assignments.csv` has its own producer and still backs §1's
+   literature-confirmation bullet.
 2. Add `CORPUSREPORT_FIGS` and move `fig_dag` into it, so `ALL_FIGS` is
    unchanged but each variable names its own deliverable's figures.
 3. Comment the cocitation map's built-not-embedded status in `paths.mk`,
@@ -118,10 +124,11 @@ Nothing is broken; `make` is doing work and the maintenance burden is real.
       `test_declared_figures_are_rendered` (8 variables), with the two
       `# not-embedded:` markers in `paths.mk` covering the exceptions
 - [x] `make figures` builds the same set as before, or the difference is
-      deliberate and stated — nothing removed; added
+      deliberate and stated — 34 -> 35, three deliberate moves. Added
       `fig_companion_sensitivity.png` (multilayer embeds it) and
       `fig_composition_wide.png` (the Gide deck embeds it), neither previously
-      declared by any variable
+      declared by any variable. Removed `fig_sem_composition.png` on the
+      author's Action-1 decision, with its rules and backing table.
 - [x] `ALL_FIGS` unchanged by the `fig_dag` move — `fig_dag` moved from
       `DATAPAPER_FIGS` to the new `CORPUS_REPORT_FIGS` (spelled to match its
       sibling `CORPUS_REPORT_INCLUDES`, not the ticket's `CORPUSREPORT_FIGS`),
