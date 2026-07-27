@@ -20,12 +20,10 @@ Usage:
         --output deliverables/_shared/tables/tab_corpus_flow.csv
 """
 
-import glob
-import json
 import os
 
 import pandas as pd
-from pipeline_loaders import REFINED_WORKS_PATH
+from pipeline_loaders import REFINED_WORKS_PATH, load_latest_run_report
 from schemas import CorpusFlowSchema
 from script_io_args import parse_io_args, validate_io
 from utils import CATALOGS_DIR, get_logger, save_csv
@@ -131,22 +129,21 @@ def build_flow(
 
 
 def latest_merge_report(catalogs_dir: str = CATALOGS_DIR) -> dict:
-    """Read the most recent catalog_merge run report.
+    """Read the most recent catalog_merge run report, or fail loudly.
 
-    Run IDs are ISO-8601 UTC stamps (catalog_merge__20260724T132552Z.json), a
-    fixed-width format whose lexicographic order is its chronological order, so
-    a plain sort picks the latest. Same idiom as compute_vars.dedup_stats.
+    Delegates the lookup to pipeline_loaders.load_latest_run_report, which
+    returns None on a missing report; that is fine for compute_vars.dedup_stats
+    (an optional field, warned and skipped) but not here — the ledger cannot be
+    built without it, so a missing report is fatal in this caller.
     """
-    pattern = os.path.join(catalogs_dir, "run_reports", "catalog_merge__*.json")
-    reports = sorted(glob.glob(pattern))
-    if not reports:
+    report = load_latest_run_report("catalog_merge", catalogs_dir)
+    if report is None:
+        pattern = os.path.join(catalogs_dir, "run_reports", "catalog_merge__*.json")
         raise FileNotFoundError(
             f"No catalog_merge run report under {pattern} "
             "(run `dvc repro catalog_merge`)"
         )
-    log.info("Merge run report: %s", reports[-1])
-    with open(reports[-1]) as f:
-        return json.load(f)
+    return report
 
 
 def main(output_csv: str) -> None:

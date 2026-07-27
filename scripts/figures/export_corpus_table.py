@@ -119,6 +119,11 @@ def membership_overlap(frame: pd.DataFrame, from_cols: list[str]) -> tuple[int, 
     )
 
 
+def _from_cols(frame: pd.DataFrame, sources: list[str]) -> list[str]:
+    """`from_*` columns actually present in `frame`, for the given sources."""
+    return [f"from_{s}" for s in sources if f"from_{s}" in frame.columns]
+
+
 def _write_md_table(summary: pd.DataFrame, path: str, caption: str) -> None:
     """Write a Quarto-includable markdown table with selected columns."""
     cols = ["Source", "Raw", "Refined", "Unique", "%non-EN", "%DOI", "%Abstract", "%Refs"]
@@ -240,11 +245,9 @@ def main():
 
     # Provenance overlap: what separates each column's sum from its TOTAL.
     raw_multi, raw_extra, raw_triple = membership_overlap(
-        unified, [f"from_{s}" for s in present if f"from_{s}" in unified.columns]
+        unified, _from_cols(unified, present)
     )
-    ref_multi, ref_extra, ref_triple = membership_overlap(
-        df, [f"from_{s}" for s in present if f"from_{s}" in df.columns]
-    )
+    ref_multi, ref_extra, ref_triple = membership_overlap(df, _from_cols(df, present))
     caption = build_caption(
         raw_multi=raw_multi,
         raw_extra=raw_extra,

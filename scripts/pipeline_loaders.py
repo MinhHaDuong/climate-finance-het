@@ -31,8 +31,11 @@ load_refined_citations
     Load citation edges restricted to refined_works.csv source DOIs.
 load_analysis_corpus
     Load refined_works.csv with standard filtering + optional embeddings.
+load_latest_run_report
+    Load the most recent run_reports/<stage>__*.json report, or None.
 """
 
+import glob
 import json
 import logging
 import os
@@ -98,6 +101,26 @@ EMBEDDINGS_CACHE_PATH = os.path.join(EMBEDDINGS_CACHE_DIR, "embeddings_cache.npz
 REFINED_WORKS_PATH = os.path.join(CATALOGS_DIR, "refined_works.csv")
 REFINED_EMBEDDINGS_PATH = os.path.join(CATALOGS_DIR, "refined_embeddings.npz")
 REFINED_CITATIONS_PATH = os.path.join(CATALOGS_DIR, "refined_citations.csv")
+
+
+def load_latest_run_report(stage: str, catalogs_dir: str = CATALOGS_DIR) -> dict | None:
+    """Load the most recent `run_reports/<stage>__*.json` report, or None.
+
+    Run IDs are ISO-8601 UTC stamps (e.g. catalog_merge__20260724T132552Z.json),
+    a fixed-width format whose lexicographic order is its chronological order,
+    so a plain sort picks the latest. Returns None rather than raising when no
+    report exists — callers differ on whether a missing report is fatal
+    (compute_corpus_flow.latest_merge_report) or an optional field to warn
+    about and skip (compute_vars.dedup_stats); the policy stays with the caller.
+    """
+    pattern = os.path.join(catalogs_dir, "run_reports", f"{stage}__*.json")
+    reports = sorted(glob.glob(pattern))
+    if not reports:
+        return None
+    _log.info("Latest %s run report: %s", stage, reports[-1])
+    with open(reports[-1]) as f:
+        return json.load(f)
+
 
 # Phase 2 reads Feather for speed (20–50× faster than CSV). The Makefile
 # handoff target converts CSV → Feather; loaders fall back to CSV if missing.
