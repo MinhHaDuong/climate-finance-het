@@ -22,9 +22,12 @@ remain:
   targets built by `scripts/analysis/compute_clusters.py` across a `\`
   continuation, and the guard matches no rule there — it silently skips all
   three.
-- `tests/test_evict_analysis_intermediates.py:174-181` — a second full parser,
+- `tests/test_evict_analysis_intermediates.py:159-246` — a second full parser,
   complete with its own continuation joiner, and with the opposite resolution
-  rule: last assignment wins, where the shared helper is first-wins.
+  rule: last assignment wins, where the shared helper is first-wins for every
+  operator but `+=`, which appends. That semantic divergence is the load-bearing
+  part of this migration: it is a behaviour choice neither parser documents, so
+  whichever survives must state which rule it implements and why.
 
 Not a third copy, though a first pass of this ticket claimed one:
 `tests/test_arch_compliance.py:380` does no Makefile parsing at all — its

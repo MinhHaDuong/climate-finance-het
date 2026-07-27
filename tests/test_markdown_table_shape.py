@@ -125,34 +125,50 @@ def scan(text: str) -> tuple[list[tuple[int, list[str], list[tuple[int, list[str
     - **Orphans.** A raw newline inside a value ends the table at that line, so
       every row below it belongs to no table and would never be width-checked.
       ``markdown_text_cell`` folds a newline to a space, but ``markdown_cell``
-      — the codebook path — does not, so the hole is reachable from a shipped
-      emitter. Any line that opens with ``|`` and no table claimed is reported.
+      (the codebook path) does not, so the hole is reachable from a shipped
+      emitter. Any line outside a fence that carries an unescaped ``|`` and no
+      table claimed is reported.
     - **Unclosed fence.** One stray fence swallows the rest of the file, and
       the sweep would read it as clean.
+
+    The orphan rule is a contract on *generated* output, where every pipe is a
+    delimiter an emitter wrote. It reads a whole line rather than only a line
+    opening with ``|``, since GFM's outer pipes are optional and a row that
+    dropped them would otherwise be invisible to both checks at once.
+
+    Hand-authored prose does not satisfy that contract: five ``_includes/*.md``
+    carry an ordinary sentence or an HTML comment with a pipe in it. That is
+    the evidence ticket 0362's third action needs before extending the sweep
+    to them.
     """
     lines = text.splitlines()
     tables: list[tuple[int, list[str], list[tuple[int, list[str]]]]] = []
     claimed: set[int] = set()
     row_shaped: list[int] = []
     fence_opened_at: int | None = None
-    fence_marker = ""
+    fence: tuple[str, int] = ("", 0)
     i = 0
     while i < len(lines):
         stripped = lines[i].strip()
-        # CommonMark closes a fence only with its own marker, so the two are
-        # tracked together. Sharing one toggle would let a ``` inside a ~~~
-        # block reopen the document — both a missed table and a false orphan.
+        # CommonMark closes a fence only with its own character *and* a run at
+        # least as long as the opener's. Both halves are load-bearing: one
+        # shared toggle lets a ``` inside a ~~~ block reopen the document, and
+        # a fixed length of three lets a ``` close a ```` one. Either way the
+        # parser resumes mid-code-block, which is silent in both directions:
+        # a table it never sees, and prose it reports as an orphan.
         if stripped.startswith(("```", "~~~")):
+            char = stripped[0]
+            run = len(stripped) - len(stripped.lstrip(char))
             if fence_opened_at is None:
-                fence_opened_at, fence_marker = i + 1, stripped[:3]
-            elif stripped.startswith(fence_marker):
-                fence_opened_at, fence_marker = None, ""
+                fence_opened_at, fence = i + 1, (char, run)
+            elif char == fence[0] and run >= fence[1]:
+                fence_opened_at, fence = None, ("", 0)
             i += 1
             continue
         if fence_opened_at is not None:
             i += 1
             continue
-        if stripped.startswith("|"):
+        if len(split_row(stripped)) > 1:
             row_shaped.append(i + 1)
         if ("|" not in stripped or i + 1 >= len(lines)
                 or not _is_separator(split_row(lines[i + 1]))):
@@ -291,6 +307,46 @@ def test_a_fence_closes_only_on_its_own_marker():
     offenders = malformed_rows(document)
     assert len(offenders) == 1, offenders
     assert "line 7" in offenders[0], offenders
+
+
+def test_a_shorter_run_does_not_close_a_longer_fence():
+    """```` opens a block that ``` cannot close; the table below it is real.
+
+    The balanced form is the dangerous one: the fence closes early, the parser
+    resumes inside the block, and it reports nothing at all — no table, no
+    orphan, no unclosed fence. A length-blind marker match reads this document
+    as clean while its one table is malformed.
+    """
+    document = (
+        "````\n"
+        "```\n"
+        "````\n"
+        "| A | B |\n"
+        "|:--|:--|\n"
+        "| 1 | 2 | 3 |\n"
+    )
+    offenders = malformed_rows(document)
+    assert len(offenders) == 1, offenders
+    assert "line 6" in offenders[0], offenders
+
+
+def test_a_row_without_outer_pipes_is_not_invisible():
+    """GFM's outer pipes are optional, so a row that drops them still counts.
+
+    This is the hole where the parser's two checks miss each other: table
+    detection needs only a `|` somewhere, while orphan detection used to need a
+    *leading* `|`. A row between those two rules belonged to no table and
+    entered no orphan set, so the document read as clean.
+    """
+    document = (
+        "| A | B |\n"
+        "|:--|:--|\n"
+        "| ok | fine\n"
+        "\n"
+        "x | y | z\n"
+    )
+    offenders = malformed_rows(document)
+    assert offenders and "line 5" in " ".join(offenders), offenders
 
 
 @pytest.mark.parametrize("payload", [
@@ -445,6 +501,27 @@ def test_makefile_constants_reads_exported_assignments():
     """
     constants = makefile_constants()
     assert "SOURCE_DATE_EPOCH" in constants, sorted(constants)[:20]
+
+
+def test_makefile_constants_appends_on_plus_equals(tmp_path):
+    """`+=` appends; first-wins would silently drop half the value.
+
+    The build uses no `+=` today, so this is pinned on a synthetic fragment
+    through the `files=` parameter rather than against the tree — which is also
+    that parameter's first real caller. Every other operator keeps first-wins,
+    the conservative reading when two fragments disagree.
+    """
+    fragment = tmp_path / "probe.mk"
+    fragment.write_text(
+        "TABLES := a.md\n"
+        "TABLES += b.md\n"
+        "PINNED := first\n"
+        "PINNED := second\n",
+        encoding="utf-8",
+    )
+    constants = makefile_constants(files=[fragment])
+    assert constants["TABLES"] == "a.md b.md"
+    assert constants["PINNED"] == "first"
 
 
 @pytest.mark.parametrize("artifact", sorted(GENERATED))

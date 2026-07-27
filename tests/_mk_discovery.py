@@ -15,8 +15,8 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
-# `$(NAME)` or `${NAME}`; automatic variables ($@, $<) are deliberately left
-# alone — they only appear in recipes, which this module never reads.
+# `$(NAME)` or `${NAME}`. Automatic variables ($@, $<) are deliberately left
+# alone: they only appear in recipes, which this module never reads.
 _VAR = re.compile(r"\$[({]([A-Za-z_][A-Za-z0-9_]*)[)}]")
 # `NAME := value` and its `=`, `?=`, `+=` siblings, at column zero. The optional
 # `export`/`override` prefix is not decoration: five assignments in this build
@@ -25,7 +25,7 @@ _VAR = re.compile(r"\$[({]([A-Za-z_][A-Za-z0-9_]*)[)}]")
 # those names resolve to a literal `$(NAME)` — a path that then reads as
 # "artifact merely absent", which callers skip silently.
 _ASSIGN = re.compile(
-    r"^(?:export\s+|override\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*(?::=|\?=|\+=|=)\s*(.*?)\s*$")
+    r"^(?:export\s+|override\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*(:=|\?=|\+=|=)\s*(.*?)\s*$")
 # A rule line `target [target…]: prereqs`, at column zero (recipes are indented).
 # The `(?!=)` lookahead is what separates `target:` from an `NAME :=` assignment.
 _RULE = re.compile(r"^([^\s#][^:=]*):(?!=)")
@@ -98,16 +98,27 @@ def makefile_constants(files: list[Path] | None = None) -> dict[str, str]:
     `files` is a parameter rather than a fixed union because the right scope is
     the caller's, and one caller will want a narrow one: `test_phase_layout.py`
     reads the main Makefile alone, since widening its constant set would widen
-    what it flags. It still hand-rolls its own parser today — migrating it onto
-    `files=[MAKEFILE]` is ticket 0358, which is where this parameter gets its
-    first caller.
+    what it flags. It still hand-rolls its own parser today; migrating it onto
+    `files=[MAKEFILE]` is ticket 0358.
+
+    `+=` appends, where first-wins would drop the addition outright. Every
+    other operator keeps first-wins: the conservative reading when two
+    fragments disagree, with `all_makefiles()` putting the main Makefile first.
     """
     raw: dict[str, str] = {}
     for path in all_makefiles() if files is None else files:
         for _, line in _logical_lines(path.read_text(encoding="utf-8")):
             assignment = _ASSIGN.match(line)
-            if assignment:
-                raw.setdefault(assignment.group(1), assignment.group(2))
+            if not assignment:
+                continue
+            name, operator, value = assignment.groups()
+            # `+=` appends where first-wins would drop the addition outright —
+            # the one operator for which "first definition wins" is not a
+            # conservative approximation but a silent loss of half the value.
+            if operator == "+=" and name in raw:
+                raw[name] = f"{raw[name]} {value}".strip()
+            else:
+                raw.setdefault(name, value)
 
     def expand(value: str, seen: frozenset[str]) -> str:
         def repl(match: re.Match) -> str:
