@@ -147,7 +147,7 @@ def main() -> None:
     # `Code` is the corpus `language` value itself and `Language` its
     # upper-cased form whenever LANGUAGE_NAMES has no entry — `normalize_lang`
     # returns any two-character string unchanged, so neither column is curated
-    # in-repo. Same defect class as the corpus-sources table (ticket 0367).
+    # in-repo. Same defect class as the corpus-sources table (ticket 0370).
     #
     # The Total row's emphasis is applied after escaping, the same
     # escape-then-wrap order as export_corpus_table.py. Leaving `**Total**` in

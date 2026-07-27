@@ -99,7 +99,7 @@ def _write_md_table(summary: pd.DataFrame, path: str) -> None:
     ]
     # Every cell is escaped, not just `Source`: the point of the helper is that
     # no emitter has to know which column happens to carry a `|` today (tickets
-    # 0325, 0339, 0367). Escaping runs *before* the TOTAL row's emphasis markers
+    # 0325, 0339, 0370). Escaping runs *before* the TOTAL row's emphasis markers
     # are added, so the `**` stay markup and only the value is treated as text.
     for _, row in summary.iterrows():
         is_total = "TOTAL" in str(row["Source"])

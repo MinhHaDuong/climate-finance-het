@@ -1,10 +1,10 @@
-"""Tests for export_language_table.py — ticket #402, 0367.
+"""Tests for export_language_table.py — ticket #402, 0370.
 
 Verifies that:
 - normalise_language handles common edge cases correctly
 - the data paper includes the language table
 - the script is importable and the normalise function works
-- a pipe-bearing language code survives rendering (ticket 0367 sweep)
+- a pipe-bearing language code survives rendering (ticket 0370 sweep)
 """
 
 import os
@@ -118,7 +118,7 @@ def test_script_exists():
     assert os.path.isfile(SCRIPT), f"Missing script: {SCRIPT}"
 
 
-# --- Ticket 0367 sweep: the language table has the same interpolation shape ---
+# --- Ticket 0370 sweep: the language table has the same interpolation shape ---
 
 # `normalize_lang` returns any two-character value unchanged, so a malformed
 # `language` field in the corpus reaches both the Code column raw and the
@@ -157,11 +157,11 @@ def test_pipe_bearing_language_code_keeps_its_four_cells(tmp_path):
 
 @pytest.mark.integration
 def test_total_row_keeps_its_emphasis(tmp_path):
-    """`**Total**` is authored markup, not corpus text — escaping must spare it.
+    """`**Total**` is authored markup, not corpus text — it must reach the page.
 
-    The escaper touches the backslash, the pipe and the backtick; the asterisk
-    carries no meaning on its own. Pinning this is what stops a later widening
-    of the character set from publishing a literal `\\*\\*Total\\*\\*`.
+    The emitter escapes the label and wraps it in `**…**` afterwards, so the
+    markers never pass through the escaper. Pinning the rendered `<strong>` is
+    what would catch a reordering that hands them to it.
     """
     require_pandoc()
     enriched = tmp_path / "enriched_works.csv"
@@ -186,7 +186,7 @@ def test_total_row_keeps_its_emphasis(tmp_path):
 def test_shipped_language_names_are_untouched_by_the_escaper(tmp_path):
     """Escaping must be a no-op on every name the table actually emits.
 
-    The sibling pin for the corpus-sources table (ticket 0367). A fix that
+    The sibling pin for the corpus-sources table (ticket 0370). A fix that
     churns `tab_languages.md` on the next regeneration is a failed fix: a diff
     on every row hides the one row that changed for a real reason. No
     `LANGUAGE_NAMES` value carries an escapable character today, so the emitted

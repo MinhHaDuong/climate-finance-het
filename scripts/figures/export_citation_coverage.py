@@ -39,7 +39,7 @@ def render_table(metrics):
 
     No cell needs escaping: every value below is coerced through `int` or a
     numeric format before it reaches the row, so none can carry a `|` (the
-    ticket-0367 sweep of the Markdown emitters). Escaping them anyway would
+    ticket-0370 sweep of the Markdown emitters). Escaping them anyway would
     only add noise to the artifact.
     """
     lines = [

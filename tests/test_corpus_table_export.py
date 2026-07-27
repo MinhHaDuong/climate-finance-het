@@ -1,8 +1,8 @@
-"""Tests for export_corpus_table.py — ticket #252, #270, 0367.
+"""Tests for export_corpus_table.py — ticket #252, #270, 0370.
 
 Verifies that the exported CSV has correct columns, that Raw counts use
 from_* columns (not the source column fallback), and that the Markdown
-sibling survives rendering with a pipe-bearing value (ticket 0367).
+sibling survives rendering with a pipe-bearing value (ticket 0370).
 """
 
 import os
@@ -129,7 +129,7 @@ class TestKeydocsSourcesPreV2Data:
         assert count_sources(v2) == 8
 
 
-# --- Ticket 0367: the Markdown sibling must survive rendering ---
+# --- Ticket 0370: the Markdown sibling must survive rendering ---
 
 # A pipe in a source label is not a hypothetical the emitter gets to rule out:
 # `SOURCE_META` is edited by hand and its labels are free text. The shape is the
