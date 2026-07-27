@@ -1,0 +1,123 @@
+%erg 0.1
+Title: Two guards hand-roll scripts/ discovery and enforce over archive_traditions
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T18:53Z HDMX-coding-agent created
+2026-07-27T18:58Z HDMX-coding-agent note Found by the 0346 roar sweep; the divergence is already visible in make lint output
+2026-07-27T19:12Z HDMX-coding-agent note Renumbered 0385 -> 0388: the 0384 renumber landed on a seat 0385 had already taken on main, leaving a duplicate id that failed erg check for every branch. Found by the 0364 wrap-up sweep.
+
+--- body ---
+## Context
+
+Ticket 0260 established `tests/_script_discovery.all_script_files()` as the one
+sanctioned enumeration of `scripts/`, precisely so a guard cannot silently
+diverge from the set it believes it covers. Two guards still hand-roll their
+own walk, and both diverge from it today — not by narrowing, but by
+over-including.
+
+`_is_excluded` in the helper excludes any directory component that
+`startswith("archive")`, which covers `scripts/archive/` **and**
+`scripts/archive_traditions/`. Both hand-rolled walkers test for the literal
+name `archive` instead:
+
+- `tests/test_script_hygiene.py:59` (`_active_scripts`) —
+  `rel_dir == "archive" or rel_dir.startswith("archive" + os.sep)`
+- `tests/test_import_path_model.py:148` (`_main_guard_scripts`) —
+  `rel_parts[0] == "archive"`
+
+Neither matches `archive_traditions`, so five frozen scripts are enforced as
+active code:
+
+    scripts/archive_traditions/detect_traditions_pre2015.py
+    scripts/archive_traditions/detect_traditions_pre2020.py
+    scripts/archive_traditions/detect_traditions_v1.py
+    scripts/archive_traditions/detect_traditions_v2.py
+    scripts/archive_traditions/detect_traditions_v3.py
+
+This is not hypothetical. Every `make lint` run already prints the evidence:
+
+    UserWarning: 8 scripts exceed 500 lines (consider splitting): ...
+    archive_traditions/detect_traditions_v3.py (515L), ...
+
+A superseded experimental script is being told to split. The noise is minor;
+the divergence is the finding. A guard that enumerates its own file set is one
+refactor away from enforcing over the wrong set in the other direction, which
+is the whole reason 0260 centralised this.
+
+## Why it matters beyond the warning
+
+The defect class is *hand-rolled enumeration diverging from the sanctioned
+one*, and it recurs because nothing stops it. Ticket 0248 fixed it for `.mk`
+discovery, 0260 for `scripts/`, and it reappeared in 0346's own guard, which
+shipped an `os.walk(SCRIPTS_DIR)` that scanned `archive*/` — caught in review,
+not by a test. Three occurrences of one class, each found by a human reading
+the diff. A standing guard is what catches the fourth.
+
+## Relevant files
+
+- `tests/_script_discovery.py` — the sanctioned enumeration (`all_script_files`)
+- `tests/test_script_hygiene.py:59` — `_active_scripts`, hand-rolled `os.walk`
+- `tests/test_import_path_model.py:148` — `_main_guard_scripts`, hand-rolled `rglob`
+- `tests/test_run_report_isolation.py` — migrated to the helper in 0346, the pattern to copy
+
+## Actions
+
+1. Migrate both walkers to `all_script_files()`. Expect the enforced set to
+   shrink by the five `archive_traditions/` scripts; confirm no other test
+   depended on their inclusion.
+2. Add a standing adherence guard: no test module may enumerate `scripts/`
+   except through `_script_discovery`. AST or lexical — flag `os.walk`,
+   `rglob`, `glob`, or `listdir` applied to a `scripts/`-rooted path in
+   `tests/**`, with `_script_discovery.py` itself exempt.
+3. Consider the same for `tests/` enumeration. Four sites in
+   `test_script_hygiene.py` (:820, :853, :936, :1405) use a flat
+   `os.listdir(TESTS_DIR)`, which misses `conftest.py` and any nested test
+   directory — 0346 hit exactly this and fixed it locally in one module rather
+   than centrally. A second sanctioned helper (`all_test_files()`) would close
+   it, but scope that decision here rather than assuming it.
+
+## Test
+
+Red step — the guard must fail on the code as it stands today:
+
+    @pytest.mark.adherence
+    def test_no_test_hand_rolls_scripts_discovery():
+        """Ticket 0260: one sanctioned scripts/ enumeration, no second opinion."""
+        offenders = _hand_rolled_scripts_walks()
+        assert not offenders, (
+            "these enumerate scripts/ without _script_discovery, so their file "
+            "set drifts from every other guard's: " + ", ".join(offenders)
+        )
+
+Fails today naming `test_script_hygiene.py` and `test_import_path_model.py`.
+Green once action 1 lands. Write the guard first so the migration is verified
+by it rather than by inspection.
+
+## Verification
+
+- [ ] `all_script_files()` is the only `scripts/` enumeration in `tests/`
+- [ ] `make lint` no longer names any `archive_traditions/` script
+- [ ] The new guard is red before the migration, green after
+
+## Invariants
+
+- `scripts/archive/` and `scripts/archive_traditions/` stay excluded from every
+  active-code guard.
+- No active script silently drops out of hygiene enforcement — compare the
+  enforced set before and after and account for every difference, rather than
+  trusting that a shrink is only the five archived files.
+
+## Exit criteria
+
+- [ ] Both hand-rolled walkers route through `all_script_files()`
+- [ ] A standing adherence guard prevents a fourth occurrence of the class
+- [ ] The `tests/` enumeration question (action 3) is decided and recorded here
+
+## See also
+
+- 0260 — established `_script_discovery` as the sanctioned enumeration
+- 0248 — the same defect class for `.mk` discovery
+- 0346 — its guard shipped a hand-rolled walk; caught in review, which is what
+  this ticket makes mechanical
