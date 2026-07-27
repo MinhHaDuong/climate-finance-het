@@ -1,0 +1,126 @@
+%erg 0.1
+Title: Rewrite multilayer §5.3 — the axis is a continuum, not two camps
+Created: 2026-07-27
+Author: HDMX-coding-agent
+Blocked-by: 0330
+
+--- log ---
+2026-07-27T15:05Z HDMX-coding-agent created
+2026-07-27T15:05Z minh decision Rewrite accepted as drafted; apply it
+
+--- body ---
+## Context
+
+Ticket 0330 made the Hartigan dip test run for the first time. It does not
+reject unimodality anywhere: p=1.0000 on the full corpus (n=29,675) and 0.99 or
+above in each period, with a dip statistic of 0.00098 — roughly six times below
+the 1/sqrt(n) null scale. The diagnostic explains the disagreement with
+delta_bic: the axis score is skewed (0.59) and leptokurtic (excess 1.11), and
+the two-component GMM that wins delta_bic=1355 has its components 0.84 sigma
+apart, giving one mode in the fitted density. A two-Gaussian mixture needs about
+2 sigma of separation to have two humps.
+
+Section 5.3 of `deliverables/multilayer/multilayer-detection.qmd` currently
+opens "The embedding layer reveals a bimodal structure in the post-2015
+corpus." That is the claim the dip test does not support.
+
+The finding is narrower than "the poles do not exist", and more interesting:
+the two vocabularies are real and separable, but the literature is a continuum
+along them rather than two camps. That is consistent with the venue
+concentration, with the embedding/lexical agreement at r=0.77, and with the
+Œconomia manuscript's own line that the poles "are not external to each other.
+They use the same categories but interpret them differently."
+
+The Œconomia manuscript was checked and is not exposed: it quotes no `bim_*`
+variable, its two-pole material is historical, and A.6 validates the axis by
+venue ecology rather than by any distributional claim. The multilayer paper is
+not on a live publication track either (STATE.md lists only RDJ-26561 and
+Œconomia). So this is a correctness fix to a dormant deliverable, not an
+erratum.
+
+## Why this is not a one-line prose edit
+
+The accepted rewrite states a dip p-value, a component separation and a mode
+count. None of the three exists as a pipeline variable:
+
+- `compute_vars.py::bimodality_stats` never reads `dip_pvalue`, so no
+  `bim_dip_*` variable exists.
+- Nothing computes the separation or the mode count of the fitted mixture. They
+  came from a throwaway diagnostic during 0330.
+
+Hardcoding them into the prose would break the project rule that numbers in
+prose are vars-driven — the rule that already cost this project the 28%→24% and
+27%/47% rot. So the pipeline emits them first, and the prose reads them.
+
+## Relevant files
+
+- `scripts/analysis/analyze_bimodality.py` — must emit separation and mode count
+- `scripts/analysis/compute_vars.py::bimodality_stats` — must expose dip and
+  shape variables
+- `deliverables/multilayer/multilayer-detection.qmd` — §5.3, and the §5.4
+  closing clause that leans on it
+- `tests/test_multilayer_detection_pca.py` — pins §5.3 by heading text and
+  asserts positive phrasings
+
+## Actions
+
+1. `_gmm_delta_bic` returns the fitted 2-component model's shape as well:
+   standardised separation between component means, and the number of modes in
+   the fitted density counted on a fine grid. New columns
+   `gmm_separation_sigma` and `gmm_n_modes` on the embedding and per-period rows
+   of `tab_bimodality.csv`.
+2. `bimodality_stats` exposes `bim_dip_p_embedding`, the three per-period dip
+   p-values, `bim_gmm_separation` and `bim_gmm_modes`.
+3. Rewrite §5.3 to the accepted text, every number a `{{< meta >}}` reference.
+   Retitle it: "polarization" overclaims what the section can now support.
+4. Fix the §5.4 closing clause — "the polarisation identified in §5.3" becomes
+   the axis, since PC2's own delta_bic=118 carries the same caveat.
+5. Repair `tests/test_multilayer_detection_pca.py`. It pins the old heading, so
+   the retitle alone would break four tests with "heading not found". Its
+   `test_mentions_dbic` also asserts a positive phrasing, which the project's
+   own CI polarity rule forbids: positive pins break on every legitimate
+   rewrite. Convert to a placeholder check plus a negative guard against
+   re-asserting bimodality.
+
+## Test
+
+Red step — a negative guard, per the polarity rule:
+
+    def test_53_does_not_claim_bimodality():
+        """Ticket 0345. Dip p=1.0; §5.3 must not assert two modes."""
+        section = extract_section(read(COMPANION), SECTION_53)
+        assert not re.search(r"bimodal|two camps|two clusters", section, re.I), (
+            "§5.3 asserts a bimodal structure the dip test does not support"
+        )
+
+Fails today on "reveals a bimodal structure".
+
+## Verification
+
+- [ ] `bim_dip_p_embedding` and the shape variables appear in
+      `multilayer-detection-vars.yml` after a rebuild
+- [ ] No hardcoded statistic in the new §5.3 — every number is a meta reference
+- [ ] `tests/test_multilayer_detection_pca.py` passes, positive pins removed
+- [ ] The rendered PDF shows resolved values, not `[MISSING]`
+
+## Invariants
+
+- No variable that any *other* document quotes changes value. This ticket adds
+  variables; it does not alter existing ones.
+- The Œconomia manuscript is untouched. It was verified unexposed and its
+  `manuscript-vars.yml` is pinned to v1.0 by decision.
+- `make check` and `make lint` stay green.
+
+## Exit criteria
+
+- [ ] §5.3 states a continuum along a validated axis, with no bimodality claim
+- [ ] Every statistic in §5.3 and §5.4 is vars-driven
+- [ ] The prose tests guard the new claim negatively rather than pinning the old
+      one positively
+
+## See also
+
+- 0330 — made the dip test run; this ticket acts on what it found
+- 0344 — Phase-2 tables stale against the corpus; the delta_bic values §5.3
+  quotes will shift (1,350 → 1,355) when that rebuild lands. Independent of the
+  wording, which is why it is not a blocker.
