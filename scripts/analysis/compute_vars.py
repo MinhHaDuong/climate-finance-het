@@ -100,7 +100,10 @@ DOC_VARS = {
         "gm_coverage_pct",
         "gm_modularity",
         "gm_n_connected",
+        "lang_detected_n",
+        "lang_detected_pct",
         "lang_english_pct",
+        "lang_non_english_n",
         # The adaptation-share and chi-square/p details left the paper with
         # PR #1120's cut pass; only the two finance-journal shares survive in
         # the literature-confirmation bullet (§1). Re-add here if the bullet
@@ -244,6 +247,23 @@ def corpus_stats(v):
         lang = df["language"].fillna("unknown")
         en_count = lang.str.lower().isin(["en", "english"]).sum()
         v["lang_english_pct"] = _pct(100 * en_count / n)
+        # The non-English *layer* excludes the unclassified rows, matching the
+        # separate "Unclassified" line of @tbl-languages. Hand-typed in the
+        # paper until 0323, where it had rotted to an enriched-corpus figure
+        # (3,381) inside a refined-corpus sentence.
+        non_en = (~lang.str.lower().isin(["en", "english", "unknown"])).sum()
+        v["lang_non_english_n"] = _int(non_en)
+
+    # Language provenance (ticket 0323). A share of the deposited language
+    # tags is inferred by langdetect from title and abstract rather than
+    # carried by the source catalog, so the data paper narrates the derivation
+    # the way it already narrates abstract reconstruction. Prefix match, not
+    # equality: `detected:langdetect` names the detector, and a second
+    # detector would extend the value rather than replace it.
+    if "language_provenance" in df.columns:
+        detected = df["language_provenance"].fillna("").str.startswith("detected").sum()
+        v["lang_detected_n"] = _int(detected)
+        v["lang_detected_pct"] = _pct(100 * detected / n)
 
     v["corpus_sources"] = str(count_sources(df))
 
