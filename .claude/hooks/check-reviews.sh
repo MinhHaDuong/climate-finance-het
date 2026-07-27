@@ -70,16 +70,16 @@ fi
 
 # Count reviews by any accepted reviewer on this PR.
 #
-# What this gate asserts: that the review pass ran and posted its findings on
-# the PR. It is a *procedural* check, not an independence check — the project
-# has one forge identity, so the reviews it counts are authored by the same
-# account that opened the PR (ticket 0365, option 3b). Independence would mean
-# requiring a reviewer other than the PR author, which would stop autonomous
-# waves from merging unattended; that trade was declined deliberately.
-#
-# The substantive merge gate is local: `make check` plus /verify. This hook
-# only stops a merge that skipped the review step entirely.
-#
+# What this gate asserts: that enough review cycles have been posted on the PR:
+#   - label "review:trivial"  → 1 review cycle minimum
+#   - default                 → 2 review cycles minimum
+# It is a *procedural* check, not an independence check — the project has one
+# forge identity, so these reviews may be authored by the same account that
+# opened the PR (ticket 0365, option 3b). Independence would mean requiring a
+# reviewer other than the PR author, which would stop autonomous waves from
+# merging unattended; that trade was declined deliberately.
+# The substantive merge gate is local: `make check` plus /verify; this hook only
+# stops a merge that skipped the review step entirely.
 # MinhHaDuong: the single forge identity — the agent token and the web MCP
 #   token both authenticate as it, and it is also the PR author.
 #   `HDMX-coding-agent` is a git author name, not a forge account
