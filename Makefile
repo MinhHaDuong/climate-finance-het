@@ -275,6 +275,14 @@ deliverables/_shared/tables/tab_venues.md: scripts/figures/export_tab_venues.py 
 deliverables/_shared/tables/tab_corpus_sources.csv deliverables/_shared/tables/tab_corpus_sources.md &: scripts/figures/export_corpus_table.py scripts/utils.py $(REFINED)
 	$(PYTHON) $< --output $@
 
+# Corpus construction ledger (ticket 0327). Reads corpus_audit.csv and the
+# latest catalog_merge run report — both Phase-1 artifacts under $(DATA_DIR),
+# wildcarded like the compute_vars prerequisites so a Phase-2 build never
+# triggers Phase 1.
+deliverables/_shared/tables/tab_corpus_flow.csv deliverables/_shared/tables/tab_corpus_flow.md &: scripts/analysis/compute_corpus_flow.py scripts/utils.py \
+		$(wildcard $(DATA_DIR)/corpus_audit.csv)
+	$(PYTHON) $< --output $@
+
 deliverables/_shared/tables/tab_languages.md: scripts/figures/export_language_table.py scripts/utils.py $(REFINED)
 	$(PYTHON) $< --input $(REFINED) --output $@
 
@@ -289,6 +297,7 @@ deliverables/_shared/tables/codebook.md: scripts/figures/export_codebook.py scri
 	$(PYTHON) $< --output $@
 
 corpus-tables: deliverables/_shared/tables/tab_corpus_sources.csv deliverables/_shared/tables/tab_corpus_sources.md \
+               deliverables/_shared/tables/tab_corpus_flow.csv deliverables/_shared/tables/tab_corpus_flow.md \
                deliverables/_shared/tables/tab_citation_coverage_periods.csv \
                deliverables/_shared/tables/tab_citation_verification.csv \
                deliverables/_shared/tables/tab_citation_coverage.md \

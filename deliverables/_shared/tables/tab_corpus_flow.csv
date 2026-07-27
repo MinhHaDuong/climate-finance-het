@@ -1,0 +1,6 @@
+Stage,In,Removed,Out
+DOI deduplication at merge,44174,833,43341
+Records without a title dropped,43341,3,43338
+Title and year deduplication at merge,43338,159,43179
+"Quality filtering, protection criteria applied",43179,9436,33743
+Duplicate-DOI records dropped after enrichment,33743,399,33344
