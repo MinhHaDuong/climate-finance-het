@@ -49,7 +49,7 @@ Formal data dictionary for the deposited corpus file. Columns are organised in f
 | `near_duplicate_group` | integer, nullable | free | 98.8% | Group identifier for near-identical content published under several DOIs; null for ungrouped works |
 | `semantic_outlier_dist` | float, nullable | free | n/a | Distance to the corpus embedding centroid, computed for the semantic-outlier flag |
 | `in_v1` | boolean | true, false | n/a | Version tracking: work present in the v1.0 submission corpus |
-| `is_flagged` | boolean | true, false | 0.0% | Any quality flag raised; the refined subset is `df[~df['is_flagged'] | df['is_protected']]` |
+| `is_flagged` | boolean | true, false | 0.0% | Any quality flag raised; the refined subset is `df[~df['is_flagged'] \| df['is_protected']]` |
 | `flag_reason` | string | comma-joined subset of the six flag names, or empty | 74.0% | Comma-separated list of raised quality flags (missing_metadata, no_abstract_irrelevant, title_blacklist, citation_isolated_old, semantic_outlier, llm_irrelevant); empty when unflagged |
 | `is_protected` | boolean | true, false | 0.0% | Protection from removal (key papers kept despite flags) |
 | `protection_reason` | string, nullable | free | 76.5% | Why the work is protected (citation count, seed list, ...) |

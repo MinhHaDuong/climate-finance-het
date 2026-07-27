@@ -32,18 +32,18 @@ Variable & Type & Description \\
 \texttt{from\_teaching} & boolean & Provenance flag: teaching canon (syllabi) \\
 \texttt{from\_unfccc} & boolean & Provenance flag: curated UNFCCC key document (absent from corpus builds predating this pipeline stage) \\
 \texttt{from\_oecd} & boolean & Provenance flag: curated OECD key document (absent from corpus builds predating this pipeline stage) \\
-\texttt{abstract\_provenance} & string, nullable & Provenance of the abstract text for curated key documents: `curated`, `reconstructed:lead`, or `reconstructed:exec\_summary`; empty elsewhere (absent from corpus builds predating this pipeline stage) \\
-\texttt{keywords\_provenance} & string, nullable & Provenance of the keywords for curated key documents: `extracted` or `generated:lexicon`; empty elsewhere (absent from corpus builds predating this pipeline stage) \\
+\texttt{abstract\_provenance} & string, nullable & Provenance of the abstract text for curated key documents: \texttt{curated}, \texttt{reconstructed:lead}, or \texttt{reconstructed:exec\_summary}; empty elsewhere (absent from corpus builds predating this pipeline stage) \\
+\texttt{keywords\_provenance} & string, nullable & Provenance of the keywords for curated key documents: \texttt{extracted} or \texttt{generated:lexicon}; empty elsewhere (absent from corpus builds predating this pipeline stage) \\
 \texttt{source\_count} & integer & Number of sources that contributed the record (sum of the provenance flags) \\
 \midrule
-\texttt{abstract\_status} & string & Status of the (undistributed) abstract: `original`, `reconstructed` (from OpenAlex inverted index or ISTEX fulltext), `generated` (LLM summary of an oversized abstract), `too\_long`, or `missing` \\
+\texttt{abstract\_status} & string & Status of the (undistributed) abstract: \texttt{original}, \texttt{reconstructed} (from OpenAlex inverted index or ISTEX fulltext), \texttt{generated} (LLM summary of an oversized abstract), \texttt{too\_long}, or \texttt{missing} \\
 \texttt{near\_duplicate\_group} & integer, nullable & Group identifier for near-identical content published under several DOIs; null for ungrouped works \\
 \texttt{semantic\_outlier\_dist} & float, nullable & Distance to the corpus embedding centroid, computed for the semantic-outlier flag (absent from corpus builds predating this pipeline stage) \\
 \texttt{in\_v1} & boolean & Version tracking: work present in the v1.0 submission corpus (absent from corpus builds predating this pipeline stage) \\
-\texttt{is\_flagged} & boolean & Any quality flag raised; the refined subset is `df[~df['is\_flagged'] | df['is\_protected']]` \\
+\texttt{is\_flagged} & boolean & Any quality flag raised; the refined subset is \texttt{df[\textasciitilde{}df[\textquotesingle{}is\_flagged\textquotesingle{}] \textbar{} df[\textquotesingle{}is\_protected\textquotesingle{}]]} \\
 \texttt{flag\_reason} & string & Comma-separated list of raised quality flags (missing\_metadata, no\_abstract\_irrelevant, title\_blacklist, citation\_isolated\_old, semantic\_outlier, llm\_irrelevant); empty when unflagged \\
 \texttt{is\_protected} & boolean & Protection from removal (key papers kept despite flags) \\
-\texttt{protection\_reason} & string, nullable & Why the work is protected (citation count, seed list, ...) (absent from corpus builds predating this pipeline stage) \\
+\texttt{protection\_reason} & string, nullable & Why the work is protected (citation count, seed list, \ldots{}) (absent from corpus builds predating this pipeline stage) \\
 \bottomrule
 \end{longtable}
 ```
