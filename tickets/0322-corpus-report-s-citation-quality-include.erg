@@ -7,6 +7,7 @@ Author: HDMX-coding-agent
 2026-07-27T09:52Z HDMX-coding-agent created
 2026-07-27T09:55Z HDMX-coding-agent note surfaced by the independent review of PR #1131 (ticket 0320), which flagged it as out-of-scope but real. Not on the RDJ resubmission path — corpus-report is not the submitted document — so this is deliberately NOT bundled into 0320.
 
+2026-07-27T10:13Z HDMX-coding-agent note independent review of #1129 surfaced a second hand-typed literal in the same document: corpus-report.qmd:67 states the corpus spans '47 languages' as a bare number (last touched 2026-04-22). It moves once 0297's langdetect backfill recovers ~1,500 language tags, and it rots by the same mechanism as the audit figures already in this ticket. Fold it into the same fix: whatever is decided on pinned-v1 vs live, this number follows it.
 --- body ---
 ## Context
 
