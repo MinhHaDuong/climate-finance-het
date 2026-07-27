@@ -37,9 +37,12 @@ def _read(path):
         return f.read()
 
 
-def _archive_script_paths():
-    """Repo-relative scripts/ paths inside the build script's SCRIPTS=( ... ) array."""
-    content = _read(BUILD_SCRIPT)
+def _parse_scripts_array(content):
+    """Repo-relative scripts/ paths inside a shell SCRIPTS=( ... ) array.
+
+    Takes the build script's *content* rather than reading it, so the parser can
+    be exercised against fixtures independently of the real array.
+    """
     m = re.search(r"SCRIPTS=\((.*?)\)", content, re.DOTALL)
     assert m, (
         "build_analysis_archive.sh must declare a SCRIPTS=( ... ) array of the "
@@ -48,6 +51,11 @@ def _archive_script_paths():
     paths = SCRIPT_PATH_RE.findall(m.group(1))
     assert paths, "SCRIPTS=( ... ) array holds no scripts/*.py paths"
     return paths
+
+
+def _archive_script_paths():
+    """Repo-relative scripts/ paths the build script copies into the archive."""
+    return _parse_scripts_array(_read(BUILD_SCRIPT))
 
 
 def _makefile_script_paths():
