@@ -34,6 +34,7 @@ Variable & Type & Description \\
 \texttt{from\_oecd} & boolean & Provenance flag: curated OECD key document (absent from corpus builds predating this pipeline stage) \\
 \texttt{abstract\_provenance} & string, nullable & Provenance of the abstract text for curated key documents: \texttt{curated}, \texttt{reconstructed:lead}, or \texttt{reconstructed:exec\_summary}; empty elsewhere (absent from corpus builds predating this pipeline stage) \\
 \texttt{keywords\_provenance} & string, nullable & Provenance of the keywords for curated key documents: \texttt{extracted} or \texttt{generated:lexicon}; empty elsewhere (absent from corpus builds predating this pipeline stage) \\
+\texttt{language\_provenance} & string, nullable & How the language code was obtained: \texttt{source} (carried by the source catalog), \texttt{openalex} (backfilled from the OpenAlex API), or \texttt{detected:langdetect} (inferred from title and abstract); empty where no language could be established (absent from corpus builds predating this pipeline stage) \\
 \texttt{source\_count} & integer & Number of sources that contributed the record (sum of the provenance flags) \\
 \midrule
 \texttt{abstract\_status} & string & Status of the (undistributed) abstract: \texttt{original}, \texttt{reconstructed} (from OpenAlex inverted index or ISTEX fulltext), \texttt{generated} (LLM summary of an oversized abstract), \texttt{too\_long}, or \texttt{missing} \\
