@@ -1,0 +1,142 @@
+"""Tests for the periodised citation-coverage metric (ticket 0317).
+
+The data paper's §4 quotes citation coverage per period. The v1.0 prose gave
+27% pre-2007 vs 47% post-2015; on corpus v2 the numbers move, and a competing
+denominator (works *carrying a DOI* rather than all works) reverses the
+apparent gradient. These tests pin the denominator so the prose cannot drift
+back onto the wrong one.
+"""
+
+import os
+import sys
+
+import pandas as pd
+import pytest
+
+SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
+sys.path.insert(0, SCRIPTS_DIR)
+sys.path.insert(0, os.path.join(SCRIPTS_DIR, "analysis"))  # 0257: analysis entry points
+
+from compute_citation_coverage import compute_citation_coverage
+
+
+def _works():
+    """Six works over three periods, with a deliberate DOI-carriage gradient.
+
+    Pre-2007: 2 works, 1 with a DOI, and that one is covered.
+        -> all-works share 1/2 = 50%, DOI-bearing share 1/1 = 100%
+    2007-2014: 2 works, 2 with DOIs, 1 covered -> 50% and 50%
+    2015-2024: 2 works, 2 with DOIs, 1 covered -> 50% and 50%
+    """
+    return pd.DataFrame(
+        {
+            "doi": ["10.1/a", None, "10.1/c", "10.1/d", "10.1/e", "10.1/f"],
+            "year": [1998, 2001, 2010, 2012, 2018, 2020],
+            "cited_by_count": [80, 0, 10, 0, 60, 0],
+        }
+    )
+
+
+def _citations():
+    """Edge list: a, c and e appear as citing sources."""
+    return pd.DataFrame(
+        {
+            "source_doi": ["10.1/a", "10.1/a", "10.1/c", "10.1/e"],
+            "ref_doi": ["10.9/x", "10.9/y", "10.9/z", "10.9/w"],
+        }
+    )
+
+
+@pytest.fixture
+def metrics():
+    df = compute_citation_coverage(_works(), _citations(), core_threshold=50)
+    return dict(zip(df["metric"], df["value"]))
+
+
+def test_output_is_long_metric_value(metrics):
+    df = compute_citation_coverage(_works(), _citations(), core_threshold=50)
+    assert list(df.columns) == ["metric", "value"]
+    assert df["metric"].is_unique
+
+
+def test_period_boundaries_are_emitted(metrics):
+    """Labels are reconstructable from the CSV alone (floats-only schema)."""
+    assert metrics["p1_year_min"] == 1990
+    assert metrics["p1_year_max"] == 2006
+    assert metrics["p3_year_min"] == 2015
+    assert metrics["p3_year_max"] == 2024
+
+
+def test_all_works_denominator_counts_works_without_a_doi(metrics):
+    """The headline share divides by ALL works in the period, not by the
+    DOI-bearing subset. A no-DOI work can never be a citing source, and
+    hiding it in the denominator is what inverts the gradient."""
+    assert metrics["p1_n_works"] == 2
+    assert metrics["p1_n_covered"] == 1
+    assert metrics["p1_share_covered"] == pytest.approx(50.0)
+
+
+def test_doi_bearing_denominator_is_reported_separately(metrics):
+    """Both denominators ship, so the prose can name the mechanism without
+    recomputing anything by hand."""
+    assert metrics["p1_n_with_doi"] == 1
+    assert metrics["p1_share_covered_of_doi"] == pytest.approx(100.0)
+    assert metrics["p1_share_with_doi"] == pytest.approx(50.0)
+
+
+def test_the_two_denominators_can_disagree_in_direction(metrics):
+    """Regression guard for the 0317 misreading: on this fixture the
+    all-works share is flat across periods while the DOI-bearing share
+    falls. Whichever way real data points, the artifact must expose both."""
+    all_works = [metrics[f"p{i}_share_covered"] for i in (1, 2, 3)]
+    of_doi = [metrics[f"p{i}_share_covered_of_doi"] for i in (1, 2, 3)]
+    assert all_works == pytest.approx([50.0, 50.0, 50.0])
+    assert of_doi[0] > of_doi[2]
+
+
+def test_core_subset_uses_the_configured_threshold(metrics):
+    """cited_by_count >= threshold; a, e qualify and both are covered."""
+    assert metrics["core_threshold"] == 50
+    assert metrics["core_n"] == 2
+    assert metrics["core_n_covered"] == 2
+    assert metrics["core_share_covered"] == pytest.approx(100.0)
+
+
+def test_corpus_totals_are_emitted(metrics):
+    assert metrics["all_n_works"] == 6
+    assert metrics["all_n_covered"] == 3
+    assert metrics["all_share_covered"] == pytest.approx(50.0)
+
+
+def test_works_outside_every_period_are_excluded_from_period_rows():
+    """A work dated outside 1990-2024 belongs to no period; it must not be
+    silently folded into the nearest one."""
+    works = _works()
+    works.loc[len(works)] = {"doi": "10.1/z", "year": 2030, "cited_by_count": 0}
+    df = compute_citation_coverage(works, _citations(), core_threshold=50)
+    m = dict(zip(df["metric"], df["value"]))
+    assert m["p3_n_works"] == 2
+    assert m["all_n_works"] == 7
+
+
+def test_missing_year_does_not_crash_and_is_excluded():
+    works = _works()
+    works.loc[len(works)] = {"doi": "10.1/q", "year": None, "cited_by_count": 0}
+    df = compute_citation_coverage(works, _citations(), core_threshold=50)
+    m = dict(zip(df["metric"], df["value"]))
+    assert sum(m[f"p{i}_n_works"] for i in (1, 2, 3)) == 6
+
+
+def test_doi_matching_is_normalised():
+    """Coverage must survive case and https://doi.org/ prefixes on either
+    side of the join."""
+    works = pd.DataFrame(
+        {
+            "doi": ["https://doi.org/10.1/A"],
+            "year": [2018],
+            "cited_by_count": [0],
+        }
+    )
+    cit = pd.DataFrame({"source_doi": ["10.1/a"], "ref_doi": ["10.9/x"]})
+    m = dict(zip(*compute_citation_coverage(works, cit, core_threshold=50).values.T))
+    assert m["p3_n_covered"] == 1
