@@ -68,6 +68,15 @@ class TestAuditBuckets:
         with pytest.raises(ValueError, match="quarantined"):
             compute_corpus_flow.audit_buckets(audit)
 
+    def test_dry_run_audit_says_rerun_the_filter(self):
+        """corpus_filter's dry-run path writes `would_remove` to the same
+        corpus_audit.csv and performs no deduplication, so the ledger is not
+        buildable from it. The error must send the reader to rerun the filter,
+        not to add a stage that does not exist."""
+        audit = pd.DataFrame({"action": ["keep", "would_remove", "keep"]})
+        with pytest.raises(ValueError, match="dry-run"):
+            compute_corpus_flow.audit_buckets(audit)
+
 
 class TestBuildFlow:
     def test_stage_arithmetic_closes(self):

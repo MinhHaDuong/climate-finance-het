@@ -80,7 +80,7 @@ cp deliverables/_shared/figures/fig_bars.png "$TMP/code/content/figures/"
 # {{< include >}} directives. The hand-kept list had already gone stale
 # (tab_variables.md was missing) and would have gone stale again with
 # tab_corpus_flow.md (ticket 0327).
-grep -o '{{< include [^ ]*tables/[a-z0-9_]*\.md' deliverables/data-paper/data-paper.qmd \
+grep -o '{{< include [^ ]*tables/[^ ]*\.md' deliverables/data-paper/data-paper.qmd \
   | sed 's|.*tables/||' | sort -u | while read -r tbl; do
     cp "deliverables/_shared/tables/$tbl" "$TMP/code/content/tables/"
 done

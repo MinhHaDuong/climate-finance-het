@@ -97,7 +97,7 @@ The pipeline removes flagged works unless they meet one of four protection crite
 
 {{< include ../_shared/tables/tab_corpus_sources.md >}}
 
-@tbl-flow traces the corpus from the pooled source records to the {{< meta corpus_total >}} refined works, one row per stage. Of the {{< meta filter_flagged >}} works flagged (counts are non-exclusive: a single work may trigger multiple flags), citation isolation ({{< meta filter_citation_isolated >}}) and cross-encoder relevance scoring ({{< meta filter_llm_irrelevant >}}) are the most common, followed by absent abstracts with irrelevant titles ({{< meta filter_no_abstract >}}), missing metadata ({{< meta filter_missing_metadata >}}), and title blacklist matches ({{< meta filter_title_blacklist >}}); {{< meta filter_protected >}} of them meet a protection criterion and stay.
+@tbl-flow traces the corpus from the pooled source records to the {{< meta corpus_total >}} refined works, one row per stage. Of the {{< meta filter_flagged >}} works flagged (counts are non-exclusive: a single work may trigger multiple flags), citation isolation ({{< meta filter_citation_isolated >}}) and cross-encoder relevance scoring ({{< meta filter_llm_irrelevant >}}) are the most common, followed by absent abstracts with irrelevant titles ({{< meta filter_no_abstract >}}), missing metadata ({{< meta filter_missing_metadata >}}), and title blacklist matches ({{< meta filter_title_blacklist >}}); {{< meta filter_protected >}} of them meet a protection criterion and survive the filter.
 
 {{< include ../_shared/tables/tab_corpus_flow.md >}}
 

@@ -14,6 +14,7 @@ corpus data.
 
 import os
 import re
+import subprocess
 import sys
 
 import pytest
@@ -50,6 +51,32 @@ class TestBuildScriptLayout:
             assert name in sh, f"{name} missing from build script"
             line = next(ln for ln in sh.splitlines() if name in ln and ("cp " in ln or "--output" in ln))
             assert "data/products" in line, f"{name} must be staged under data/products/: {line!r}"
+
+    @pytest.mark.integration
+    def test_table_discovery_finds_every_include(self):
+        """Run the script's own discovery pipeline, don't just grep for it.
+
+        The staged table list is derived from the paper's `{{< include >}}`
+        directives, so the guard has to execute that derivation: a regex that
+        silently misses a filename would read fine in the source and ship an
+        archive that cannot render.
+        """
+        sh = _read(BUILD_SCRIPT)
+        pipeline = next(
+            ln for ln in sh.splitlines() if "grep -o" in ln and "include" in ln
+        )
+        # Reproduce the recipe verbatim, minus the trailing line-continuation.
+        cmd = pipeline.rstrip("\\").strip() + " | sed 's|.*tables/||' | sort -u"
+        found = subprocess.run(
+            ["bash", "-c", cmd], cwd=REPO, capture_output=True, text=True, check=True
+        ).stdout.split()
+
+        expected = sorted(set(re.findall(
+            r"\{\{<\s*include\s+\S*tables/(\S+\.md)\s*>\}\}", _read(QMD)
+        )))
+        assert found == expected, (
+            f"discovery pipeline yields {found}, paper includes {expected}"
+        )
 
     def test_source_catalogs_go_to_inputs_dir(self):
         sh = _read(BUILD_SCRIPT)

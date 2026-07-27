@@ -278,9 +278,13 @@ deliverables/_shared/tables/tab_corpus_sources.csv deliverables/_shared/tables/t
 	$(PYTHON) $< --output deliverables/_shared/tables/tab_corpus_sources.csv
 
 # Corpus construction ledger (ticket 0327). Reads corpus_audit.csv and the
-# latest catalog_merge run report — both Phase-1 artifacts under $(DATA_DIR),
-# wildcarded like the compute_vars prerequisites so a Phase-2 build never
-# triggers Phase 1.
+# latest catalog_merge run report, both Phase-1 artifacts under $(DATA_DIR).
+# They are $(wildcard)ed like the compute_vars prerequisites, which keeps a
+# Phase-2 build from triggering Phase 1 but is NOT a freshness guarantee: on a
+# checkout without corpus data the list expands empty, so make can report the
+# committed table up to date without ever reading the corpus. The script fails
+# loudly when either input is missing; a stale-vs-corpus table is ticket 0344's
+# problem, not something this rule detects.
 #
 # --output names the .csv explicitly, never $@: under a grouped target $@ binds
 # to whichever member make was asked for, so `make …tab_corpus_flow.md` would

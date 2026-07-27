@@ -32,6 +32,12 @@ log = get_logger("compute_corpus_flow")
 # Every action value corpus_filter.apply_filter can write to the audit.
 AUDIT_ACTIONS = ("keep", "remove", "deduped")
 
+# corpus_filter.save_dry_run_audit writes to the SAME corpus_audit.csv with a
+# "would_remove" action and no deduplication pass. Such an audit describes a
+# filter that never ran, so no ledger can be built from it — the remedy is to
+# rerun the filter for real, not to add a stage.
+DRY_RUN_ACTION = "would_remove"
+
 CAPTION = (
     ": Corpus construction ledger. Each stage starts where the previous one"
     " ended; *In* less *Removed* equals *Out* on every row. The first *In* is"
@@ -47,6 +53,13 @@ def audit_buckets(audit: pd.DataFrame) -> dict[str, int]:
     being folded into an existing one or silently dropped.
     """
     counts = audit["action"].value_counts()
+    if DRY_RUN_ACTION in counts.index:
+        raise ValueError(
+            f"corpus_audit.csv carries {DRY_RUN_ACTION!r}: it is a dry-run "
+            "audit, which records no actual removals and no deduplication "
+            "pass. Rerun corpus_filter without --dry-run before building the "
+            "ledger."
+        )
     unknown = sorted(set(counts.index) - set(AUDIT_ACTIONS))
     if unknown:
         raise ValueError(
@@ -142,6 +155,11 @@ def main(output_csv: str) -> None:
         )
 
     audit_path = os.path.join(CATALOGS_DIR, "corpus_audit.csv")
+    if not os.path.isfile(audit_path):
+        raise FileNotFoundError(
+            f"{audit_path} not found — the ledger is built from Phase-1 "
+            "outputs (run `dvc repro corpus_filter`)"
+        )
     audit = pd.read_csv(audit_path, usecols=["action"])
     log.info("Loaded %d audit rows from %s", len(audit), audit_path)
 
