@@ -1,0 +1,126 @@
+%erg 0.1
+Title: Repopulate keywords_provenance for the 263 curated key documents
+Created: 2026-07-27
+Author: HDMX-coding-agent
+Label: needs-human
+Closed: autoclosed — PR #1161
+
+--- log ---
+2026-07-27T13:07Z HDMX-coding-agent created
+2026-07-27T13:10Z HDMX-coding-agent note child of 0288, found while verifying it for closure. The code fix and its test ship with 0288's closing PR; only the data repopulation is left, and it is a Phase-1 rerun on a corpus the author froze on 2026-07-27 — hence needs-human.
+
+2026-07-27T13:33Z HDMX-coding-agent note AUTHOR ACCEPTED THE UNFREEZE (2026-07-27). Option 1 executed. Chain run offline from the main checkout where DATA_DIR resolves to the real corpus: catalog_keydocs (unfccc, oecd) -> catalog_merge -> enrich_join -> corpus_filter --extend -> corpus_filter --filter, then make corpus-handoff to refresh the Feather layer. Network forced closed via a dead proxy plus HF_HUB_OFFLINE, so the 19 seed documents without a pooled PDF could not gain new abstracts and shift Flag 2; both harvests ran fully from the warm pool (217 unfccc + 31 oecd cached PDFs). Backup of all 8 affected artifacts with SHA256SUMS at data/raw/0347-preunfreeze-backup/ (340 MB) before the first write.
+2026-07-27T13:33Z HDMX-coding-agent note BYTE-COMPARE RESULT — additive-only holds at every stage. unified_works.csv 43,179 rows: only keywords_provenance changed (245 cells). enriched_works.csv: same 245. extended_works.csv: same 245 — every quality flag identical, including llm_irrelevant for the 2,688 works Flag 6 rescores from scratch each run. corpus_audit.csv: NO change at all. refined_works.csv 33,344 rows: only keywords_provenance (242 cells), 0 leakage onto non-keydoc rows, 0 keydocs left with keywords but no provenance. Headline counts reproduced exactly: 43,179 unified, 833/159/3 dedup removals, 33,344 refined, in_v1 28,976, 399 duplicate-DOI drops. codebook.md: exactly one line changed, missingness 100.0% -> 99.4%. All values are generated:lexicon; no document carried a first-page keywords block, so 'extracted' remains an unused-but-valid enum value. Phase 2 was deliberately NOT rebuilt and needs no rebuild: no analysis or figure script reads keywords_provenance (grep of scripts/analysis and scripts/figures is empty), so no Phase-2 artifact can move. 0344's staleness is a separate, pre-existing matter.
+2026-07-27T13:33Z HDMX-coding-agent note two findings from the rerun, both filed rather than absorbed. (1) The rerun could not start: corpus_filter --extend died at CrossEncoder.__init__ because protobuf was absent from the venv — an undeclared transitive of the sentencepiece tokenizer conversion, so a corpus rebuild was simply impossible on this machine until installed. Declared in pyproject's corpus group and locked here; uv lock adds protobuf 7.35.1 and moves no other package (17-line lock diff). (2) The premise I wrote into this ticket — 'no count moves' — was NOT self-evident: Flag 6's relevance cache is DOI-keyed, so 1,908 no-DOI works can never be cached and 2,688 candidates are rescored by the cross-encoder on every rebuild. Had the model or its libraries drifted, llm_irrelevant could have moved and taken the refined row count with it. The byte-compare shows it did not drift, so the corpus is intact — but the exposure is real and is filed as 0350. My original claim was safe by luck of a stable environment, not by design.
+2026-07-27T13:50Z HDMX-coding-agent closed — autoclosed — PR #1161
+--- body ---
+## Context
+
+Verifying 0288 for closure found `keywords_provenance` empty for all 33,344
+rows of `refined_works.csv`, while 242 of the 263 curated key documents carry
+lexicon-generated or extracted keywords. The author's rule of 2026-07-22 —
+keywords are never faked from a short title; they are extracted from a
+first-page keywords block, else generated from a deterministic lexicon, and
+either way **disclosed via `keywords_provenance`** — is half-shipped: the
+honest derivation runs, the disclosure does not reach the corpus.
+
+Cause, isolated to one line of `catalog_keydocs.main()`:
+
+    df = pd.DataFrame(records, columns=WORKS_COLUMNS + ["abstract_provenance"])
+
+`pd.DataFrame(records, columns=[...])` *selects* the named columns, so
+`build_record`'s `keywords_provenance` was dropped one line after being
+computed. `unfccc_works.csv` and `oecd_works.csv` therefore have no such
+column, and `catalog_merge`'s `EXTRA_CARRY_COLS` created it empty downstream.
+
+The code fix (one line) and the test that catches it landed with 0288's
+closing PR. The 41 tests that passed over the bug asserted on `build_record`'s
+returned dict and on a synthetic DataFrame that already had the column — never
+on the emitted CSV. The new test drives `main()` and reads the artifact back.
+
+What remains is the **data**: the frozen v2 corpus still carries the empty
+column.
+
+## Why it matters
+
+`codebook.md` is not wrong — it truthfully reports `keywords_provenance` as
+100% missing while describing it as taking `extracted` / `generated:lexicon`
+"for curated key documents". So the Zenodo deposit ships a documented column
+that is never filled, for exactly the records its description names. A user
+who wants to know whether a key document's keywords came from the document or
+from our lexicon cannot tell.
+
+## The author decision
+
+Repopulating requires re-running the keydocs harvest and the merge/filter
+chain. Cost and blast radius:
+
+- The harvest is **offline**: `fetch_pdf` returns `cached` for the warm pool
+  in `data/pool/keydocs/`, so no network and no refetch.
+- The change is **additive metadata only** — it fills a column that is
+  currently empty end to end. No count, share, or statistic in any deliverable
+  moves.
+- But it is a Phase-1 rerun (`catalog_keydocs` → `catalog_merge` →
+  `corpus_filter`), which regenerates `refined_works.csv` on a corpus the
+  author froze on 2026-07-27.
+
+Options:
+
+1. **Fold it into 0344's Phase-2 rebuild** (recommended). 0344 already
+   establishes that the derived tables must be rebuilt against the current
+   corpus; doing the keydocs re-harvest immediately before it means one
+   regeneration pass, not two.
+2. **Ship the column empty** and correct the codebook description instead, so
+   the deposit documents what it actually contains.
+3. Defer past resubmission — the column is empty in the v1 deposit too, so
+   this is not a regression the referee can see.
+
+## Relevant files
+
+- `scripts/harvest/catalog_keydocs.py` — fixed emitter (0288's PR)
+- `tests/test_catalog_keydocs.py` —
+  `TestMainEndToEnd::test_keywords_provenance_reaches_the_written_catalog`
+- `data/catalogs/{unfccc,oecd}_works.csv` — lack the column
+- `data/catalogs/refined_works.csv` — column present, 0/33,344 populated
+- `deliverables/_shared/tables/codebook.md:41` — documents it at 100% missing
+- `scripts/_deposit_variables.py:131` — the deposit column contract
+- `data/pool/keydocs/` — warm PDF/text pool, makes the re-harvest offline
+
+## Test
+
+The regression guard already exists (0288's PR). The rerun needs an assertion
+on the real artifact, not a fixture: after regeneration, at least the 242
+keyword-bearing key documents carry a non-empty `keywords_provenance` in
+`refined_works.csv`, and every value is one of `extracted` /
+`generated:lexicon`.
+
+## Verification
+
+- [x] `unfccc_works.csv` and `oecd_works.csv` carry a populated
+      `keywords_provenance` column after the re-harvest (216 + 29 = 245
+      `generated:lexicon`; every other column byte-identical)
+- [x] `refined_works.csv`: non-empty for the keyword-bearing key documents,
+      empty elsewhere (242 of 242, zero leakage, zero mismatches)
+- [x] `codebook.md` regenerated; its missingness figure for the column drops
+      from 100% to roughly 99.3% (actual: 99.4%, and it is the only line in
+      the file that changed)
+- [x] No other number in any deliverable moves — byte-compare the derived
+      tables before and after, per the refactor-validation rule (all four
+      Phase-1 artifacts differ only in this column; `corpus_audit.csv`
+      unchanged; Phase 2 provably unaffected — no analysis or figure script
+      reads the column)
+
+## Invariants
+
+- Additive only: no count, share, or statistic in any deliverable changes.
+- Phase separation: the manuscript build never triggers Phase 1.
+- `in_v1` reproducibility is preserved.
+
+## Exit criteria
+
+- [x] Author picks option 1, 2, or 3 (author accepted the unfreeze
+      2026-07-27 — option 1)
+- [x] If 1: the layer's keywords carry their provenance in the corpus, and the
+      codebook reflects it
+- [x] If 2: n/a — option 1 taken, so the codebook now describes values the
+      deposit actually carries

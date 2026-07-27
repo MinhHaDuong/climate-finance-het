@@ -27,6 +27,7 @@ dependencies = [
     "rapidfuzz",
     "pot>=0.9.0",
     "dcor>=0.6.1",
+    "diptest>=0.10.0",
     "ruptures>=1.1.9",
     "pybursts>=0.1.1",
     "python-louvain",
@@ -49,6 +50,11 @@ corpus = [
     "dvc>=3.67.0",
     "dvc-ssh>=4.2.2",
     "sentence-transformers",
+    # Required by the bge-reranker tokenizer (Flag 6). transformers imports it
+    # lazily when converting a sentencepiece tokenizer, so its absence is
+    # invisible until a corpus rebuild reaches the reranker and dies there —
+    # which is how it was found (ticket 0347, 2026-07-27).
+    "protobuf",
     "umap-learn",
     "python-louvain",
     "beautifulsoup4",

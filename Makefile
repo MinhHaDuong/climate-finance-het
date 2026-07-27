@@ -292,7 +292,7 @@ deliverables/_shared/tables/tab_reference_counts.csv: scripts/analysis/compute_r
 deliverables/_shared/tables/tab_dedup_error_estimates.csv: scripts/analysis/compute_dedup_error_estimates.py scripts/utils.py $(CONFIG) $(REFINED)
 	$(PYTHON) $< --output $@
 
-deliverables/_shared/tables/tab_venues.md: scripts/figures/export_tab_venues.py scripts/utils.py $(REFINED) $(DERIVED)/tab_pole_papers.csv
+deliverables/_shared/tables/tab_venues.md: scripts/figures/export_tab_venues.py scripts/_markdown_table.py scripts/utils.py $(REFINED) $(DERIVED)/tab_pole_papers.csv
 	$(PYTHON) $< --output $@ --pole-papers $(DERIVED)/tab_pole_papers.csv
 
 deliverables/_shared/tables/tab_corpus_sources.csv deliverables/_shared/tables/tab_corpus_sources.md &: scripts/figures/export_corpus_table.py scripts/utils.py $(REFINED)
@@ -303,12 +303,12 @@ deliverables/_shared/tables/tab_languages.md: scripts/figures/export_language_ta
 
 # Variables table for the data paper (ticket 0279) — rendered from the deposit
 # column contract, no corpus data needed.
-deliverables/_shared/tables/tab_variables.md: scripts/figures/export_variables_table.py scripts/_deposit_variables.py
+deliverables/_shared/tables/tab_variables.md: scripts/figures/export_variables_table.py scripts/_deposit_variables.py scripts/_markdown_table.py
 	$(PYTHON) $< --output $@
 
 # Codebook / data dictionary for the Zenodo package (ticket 0287, R1-19) —
 # missingness is measured on the real corpus, so this needs Phase-1 data.
-deliverables/_shared/tables/codebook.md: scripts/figures/export_codebook.py scripts/_deposit_variables.py $(EXTENDED)
+deliverables/_shared/tables/codebook.md: scripts/figures/export_codebook.py scripts/_deposit_variables.py scripts/_markdown_table.py $(EXTENDED)
 	$(PYTHON) $< --output $@
 
 corpus-tables: deliverables/_shared/tables/tab_corpus_sources.csv deliverables/_shared/tables/tab_corpus_sources.md \
@@ -350,7 +350,7 @@ stats: $(COMPUTED_STATS)
 $(MOSTCITED): scripts/analysis/build_het_core.py scripts/utils.py $(REFINED) $(REFINED_CIT)
 	$(PYTHON) $< --output $@
 
-deliverables/_shared/tables/tab_core_venues_top10.md: scripts/figures/export_core_venues_markdown.py scripts/analysis/summarize_core_venues.py scripts/utils.py $(MOSTCITED)
+deliverables/_shared/tables/tab_core_venues_top10.md: scripts/figures/export_core_venues_markdown.py scripts/_markdown_table.py scripts/_venue_naming.py scripts/analysis/summarize_core_venues.py scripts/utils.py $(MOSTCITED)
 	$(PYTHON) $< --output $@
 
 # ── Figures ──────────────────────────────────────────────

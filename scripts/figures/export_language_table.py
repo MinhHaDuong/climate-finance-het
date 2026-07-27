@@ -11,7 +11,7 @@ import os
 
 import pandas as pd
 from script_io_args import parse_io_args, validate_io
-from utils import BASE_DIR, CATALOGS_DIR, get_logger, normalize_lang
+from utils import BASE_DIR, CATALOGS_DIR, get_logger, normalize_lang_display
 
 log = get_logger("export_language_table")
 
@@ -68,19 +68,13 @@ MIN_COUNT = 200
 
 
 def normalise_language(code: str) -> str:
-    """Normalise language codes using the shared normalize_lang from utils.
+    """Local name for the shared display normaliser.
 
-    Maps NaN/None to "unknown" for table display (normalize_lang returns None).
-    Also handles hyphenated codes (zh-CN) not covered by normalize_lang.
+    The body moved to `pipeline_text.normalize_lang_display` so the prose
+    counts in `compute_vars.py` bucket codes exactly as this table does; they
+    diverged on `arz` and `sco` while each held its own copy (PR #1141).
     """
-    if pd.isna(code):
-        return "unknown"
-    # Handle hyphenated locale codes (zh-CN → zh) before normalize_lang
-    code_str = str(code).strip()
-    if "-" in code_str:
-        code_str = code_str.split("-")[0]
-    result = normalize_lang(code_str)
-    return result if result else "unknown"
+    return normalize_lang_display(code)
 
 
 def main() -> None:

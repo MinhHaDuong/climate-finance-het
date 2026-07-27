@@ -2,7 +2,6 @@
 Title: Data paper: response letter, summary of revisions, resubmission package
 Created: 2026-07-20
 Author: HDMX-coding-agent
-Blocked-by: 0288
 
 --- log ---
 2026-07-20T09:00Z HDMX-coding-agent created
@@ -26,6 +25,7 @@ Blocked-by: 0288
 2026-07-24T22:10Z HDMX-coding-agent note MONDAY RECONCILIATION (author merged #1116 as provisional): the letter drafts predate PR #1120's restructure. Must carry material now absent from the paper: (a) the task-specific-cleaning concession (referee candid reply), (b) the Negishi/Barrett pre-2007 example, (c) the Campiglio central-bank-corpus rationale for the national-institutions boundary (author decision: letter, not paper), (d) fix stale references to the dissolved Table 4 (now prose Section 2.4) and to section numbers changed by the Data split; (e) title-change line: count-free retitle, cite the multi-source design.
 
 2026-07-27T09:52Z HDMX-coding-agent note ADD TO THE MONDAY RECONCILIATION LIST — the letter quotes a number that is now wrong. response-letter.md:154-155 and summary-of-revisions.md:29 and citation-quality-response.md:31 all state the Crossref audit as '99.0% confirmed, 95% CI [97.1%, 99.7%]'. Those are corpus-v1 figures; on the frozen v2 corpus qa_citations_report.json gives 97.0%, CI [94.4%, 98.4%], 9 unconfirmed of 300. The claimed point estimate falls outside the current interval. The paper itself is fixed and vars-driven in PR #1131 (ticket 0320); the letter is not, and it is the document the editor reads. Also worth adding to the letter: the completeness test (98.3% of Crossref-held reference DOIs captured, CI [98.0, 98.6]) which strengthens the R1-13 answer and was never quoted.
+2026-07-27T13:15Z HDMX-coding-agent note blocker 0288 closed — Blocked-by removed.
 --- body ---
 ## Context
 

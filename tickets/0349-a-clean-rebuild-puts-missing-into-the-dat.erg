@@ -1,0 +1,182 @@
+%erg 0.1
+Title: catalog_merge's run report is an undeclared side-effect output
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T15:15Z HDMX-coding-agent created
+2026-07-27T15:15Z HDMX-coding-agent note Found by the 0344 make pass; ticket 0284 was closed by PR #1082 without its artifact landing
+2026-07-27T15:40Z HDMX-coding-agent note Renumbered 0347 -> 0349: a sibling session allocated 0347 at 15:11 and its ticket is cross-referenced from 0288, so this one moves
+2026-07-27T15:52Z HDMX-coding-agent correction The [MISSING] was my artifact, not a defect. Ticket rescoped and downgraded; see the correction section. needs-human removed
+
+2026-07-27T13:36Z HDMX-coding-agent note observation from 0347's corpus rerun, not a fix of this ticket. catalog_merge ran on 2026-07-27 and wrote data/catalogs/run_reports/catalog_merge__20260727T132143Z.json carrying doi_duplicates_removed=833 and title_year_duplicates_removed=159 — the two values already in the author's vars file, so those numbers reproduce from the pipeline and are not stale survivors. Note also that reports from the 07-24 build were already on disk in the main checkout (catalog_merge__20260724T132552Z.json, same two keys). That makes the 'artifact was never generated' premise worth re-checking before acting: a clean 'make stats' run inside a git worktree sees an empty data/ (only .dvc pointers, no run_reports) unless the DVC data is pulled, which would produce the same [MISSING] fallback with the artifact present all along. I have not isolated which of the two it is — reporting the observation, not the cause. Cheap discriminator: re-run the make pass in the main checkout where data/ is populated.
+--- body ---
+## Correction (2026-07-27): the premise was wrong
+
+The `[MISSING]` I reported was an artifact of my own worktree, not a pipeline
+defect. `data/catalogs/run_reports/` in that worktree was an empty real
+directory that my corpus-symlink loop skipped, so `compute_vars` globbed for
+`catalog_merge__*.json` and found nothing. The author's checkout has three of
+them, including `catalog_merge__20260727T132143Z.json` written by today's
+corpus run, carrying exactly:
+
+    "doi_duplicates_removed": 833
+    "title_year_duplicates_removed": 159
+
+Re-running with the reports visible restores both numbers and emits no warning.
+Ticket 0284 did land its artifact after all; my claim that it closed without
+one was wrong, and the claim that this blocks resubmission of RDJ-26561 is
+withdrawn.
+
+**Are we wired?** Yes. In phase terms: `catalog_merge` is a Phase-1 stage; it
+calls `save_run_report` on every run, so the counts are recomputed from the
+sources each time the corpus is built. `compute_vars` (Phase 2) reads the
+lexicographically last report, and the run ids are UTC timestamps, so "last"
+means "newest". A full remake regenerates the report and the numbers follow the
+corpus. Nothing is fossilised, and a dress rehearsal will produce correct
+counts.
+
+## What remains: an undeclared side-effect output
+
+The residual defect is small and worth fixing on its own terms. The
+`catalog_merge` DVC stage declares one output:
+
+    outs:
+      - data/catalogs/unified_works.csv
+
+The run report is not among them. It lands in `data/catalogs/run_reports/`,
+which is tracked by a *separate*, manually added `run_reports.dvc` rather than
+as a product of the stage that writes it. Two consequences:
+
+- It violates the Phase-2 rule the architecture states for the pipeline: one
+  invocation, one declared output, no side-effect outputs.
+- DVC cannot reason about the report's freshness. If `unified_works.csv` is
+  cache-hit, `dvc repro catalog_merge` skips the stage and the report stays at
+  whatever run last wrote it, while `compute_vars` still reads it as current.
+  The numbers would then describe an older merge than the corpus in hand — the
+  same stale-artifact class as ticket 0344, one layer earlier.
+
+Severity is low: the report is small, regenerated on every real corpus build,
+and the dress-rehearsal-before-shipping practice covers the shipping risk.
+
+## Original context, retained for the record
+
+## Context
+
+`data-paper.qmd` renders `dedup_doi_removed` and `dedup_titleyear_removed`.
+They show 833 and 159 in the author's checkout. A clean `make stats` against
+the current corpus produces `[MISSING]` for both.
+
+The vars are not computed from a table. `compute_vars.py` reads them from the
+`catalog_merge` run report, and when that report is absent it falls back:
+
+    for _k in ("dedup_doi_removed", "dedup_titleyear_removed", ...):
+        v.setdefault(_k, MISSING)
+
+with the comment that the report "awaits a dvc-capable full-data session
+(ticket 0284)". The run emits `UserWarning: Missing: catalog_merge run report
+(dvc repro catalog_merge)` and continues to exit 0.
+
+Ticket 0284 was closed by PR #1082. The artifact it was supposed to produce was
+never generated, so the two numbers currently in the author's vars file are
+survivors of an older build rather than something the pipeline can reproduce.
+
+## Why this is urgent rather than tidy
+
+RDJ-26561 is in Revise-and-Resubmit, due ~2026-10-20. The failure mode is
+silent in the direction that matters: `make stats` exits 0, the warning is one
+line in a long log, and the placeholder only becomes visible in the rendered
+PDF. A rebuild on a fresh machine — a clean-room reproducibility check, a
+co-author's checkout, the Zenodo archive build — would render the deposited
+data paper with `[MISSING]` where two deduplication counts belong.
+
+The reproducibility archive is the sharpest case: the whole point of that
+artifact is that a stranger can rebuild the paper. Today a stranger rebuilds it
+worse than the author can.
+
+## Relevant files
+
+- `scripts/analysis/compute_vars.py` — the `setdefault(..., MISSING)` fallback
+  block and the `catalog_merge` reader above it
+- `deliverables/data-paper/data-paper.qmd` — renders both variables
+- `dvc.yaml` — the `catalog_merge` stage that would emit the run report
+- `tickets/closed/0284-datapaper-dedup-counts-artifact.erg` — closed, artifact
+  never landed
+
+## Why it is not already declared
+
+A DVC `outs:` entry is a fixed path. The run report is
+`catalog_merge__<UTC timestamp>.json`, so it cannot be named as an output as
+things stand — which is very likely why it never was, rather than an oversight.
+
+The repo already solves this shape elsewhere. The enrichment stages write a
+`.stamp` file as their declared output precisely because their real product
+(`enrich_cache/`) has data-dependent contents, and the architecture rule says
+so: "Sentinel stamps for dynamic outputs. Use a stamp file when a script
+produces data-dependent filenames."
+
+Declaring the whole `run_reports/` directory is not an option: several scripts
+write into it, and DVC forbids two stages owning one output.
+
+## Actions
+
+1. Have `catalog_merge` write a stable-named report alongside the timestamped
+   one — `data/catalogs/run_reports/catalog_merge.json`, overwritten each run —
+   and declare that path in the stage's `outs:`. The timestamped files stay as
+   an unversioned history, which is what they are useful for.
+2. Point `compute_vars.dedup_stats` at the stable name instead of
+   `sorted(glob(...))[-1]`. This also removes the latent collision recorded in
+   ticket 0346: the glob takes the lexicographically last match, and any leaked
+   fixture named `catalog_merge__test*.json` sorts after every timestamped
+   report, so it would silently become the source of two published numbers.
+3. Check whether any other stage has the same undeclared side-effect. Every
+   caller of `save_run_report` that runs inside a DVC stage is a candidate.
+
+Do 2 even if 1 is judged not worth it — the glob is the sharper of the two
+problems and the fix is one line.
+
+## Test
+
+Red step, on the wiring rather than on the values:
+
+    def test_catalog_merge_declares_its_run_report():
+        """Ticket 0349. A stage's artifacts must be declared, not side effects."""
+        stage = yaml.safe_load(open("dvc.yaml"))["stages"]["catalog_merge"]
+        outs = [list(o)[0] if isinstance(o, dict) else o for o in stage["outs"]]
+        assert any("run_reports" in o for o in outs), (
+            "catalog_merge writes a run report that compute_vars reads, but "
+            "declares only unified_works.csv - dvc cannot tell when the report "
+            "is stale"
+        )
+
+Fails today. A companion test should assert `dedup_stats` reads a fixed
+filename rather than globbing, so action 2 cannot regress.
+
+## Verification
+
+- [ ] Both tests above are red before, green after
+- [ ] `dvc repro catalog_merge` on an unchanged corpus is a no-op; on a changed
+      one it rewrites `catalog_merge.json`
+- [ ] `dedup_doi_removed` and `dedup_titleyear_removed` still resolve to 833
+      and 159 on the current corpus — this ticket must not move a number
+- [ ] A file named `catalog_merge__zzz.json` dropped into `run_reports/` no
+      longer changes the vars output
+
+## Invariants
+
+- No published number changes. The counts are correct today; this is about how
+  the artifact carrying them is declared.
+- The timestamped reports keep being written. They are the run history and
+  other tooling may read them.
+
+## Exit criteria
+
+- [ ] `catalog_merge`'s run report is a declared output of its DVC stage, or a
+      recorded decision that a stamp is not worth it
+- [ ] `compute_vars` reads a fixed filename, not the last glob match
+- [ ] The audit of other `save_run_report` callers inside DVC stages is recorded
+
+## See also
+
+- 0344 — the make pass that surfaced this
+- 0284 (closed, PR #1082) — closed without producing the artifact it was about

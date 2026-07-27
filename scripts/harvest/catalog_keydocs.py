@@ -420,7 +420,8 @@ def main(argv=None):
     records = [harvest_entry(e, args.source_name, pool_dir, args.fetch)
                for e in entries]
 
-    df = pd.DataFrame(records, columns=WORKS_COLUMNS + ["abstract_provenance"])
+    df = pd.DataFrame(records, columns=WORKS_COLUMNS + ["abstract_provenance",
+                                                       "keywords_provenance"])
     save_csv(df, io_args.output)
     n_abs = (df["abstract"] != "").sum()
     log.info("Summary: %d %s key documents (%d with abstract-equivalent)",

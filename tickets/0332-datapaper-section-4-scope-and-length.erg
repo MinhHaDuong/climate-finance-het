@@ -7,6 +7,8 @@ Label: needs-human
 --- log ---
 2026-07-27T11:00Z HDMX-coding-agent created
 2026-07-27T11:00Z HDMX-coding-agent note child of 0274. Raised by 3 of 4 external panel reviewers. Marked needs-human: cutting §4 is an author call, and it deletes work landed earlier today (0317's periodised coverage paragraph, 0320's verification numbers).
+2026-07-27T15:10Z HDMX-coding-agent note AUTHOR DECISION: cut, in two pieces. (1) The semantic-cluster paragraph and its composition figure, whole — a finding rather than a dataset property, and it needed an under-review companion paper to interpret. (2) The DOI-carriage mechanism sentences from the coverage paragraph, keeping the three period percentages and a one-line limitation. The author revised my first proposal here: I had marked the whole second half for removal, and the closing clause is a limitation disclosure 0333 wants MORE of, so it survives compressed. -227 words.
+2026-07-27T15:10Z HDMX-coding-agent note the cut orphaned six vars that test_doc_vars_completeness caught (four cite_*_of_doi/cite_doi_*, two lit_sem6_*); dropped from DOC_VARS with a comment. compute_citation_coverage.py and the sem6 pipeline still emit them — other deliverables consume them, and this is prose scope only.
 2026-07-27T12:05Z HDMX-coding-agent note Action 2 corrected: the field-history statistics (Chow break, 17% growth, cross-pole z) are in §1's replication bullets (data-paper.qmd:57-59), not §4, so the §4 cut does not free them. Split into 2(i) §4 and 2(ii) §1, and the budget rationale no longer credits the §4 cut with §1's words. Added the 0327 sequencing note — §4 removal precedes 0327's table, per the remove-whole-before-condensing rule.
 
 --- body ---

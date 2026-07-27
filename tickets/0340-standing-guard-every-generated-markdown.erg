@@ -2,12 +2,12 @@
 Title: Standing guard: every generated Markdown table row has its declared cell count
 Created: 2026-07-27
 Author: HDMX-coding-agent
-Blocked-by: 0339
 
 --- log ---
 2026-07-27T12:09Z HDMX-coding-agent created
 2026-07-27T12:16Z HDMX-coding-agent note filed by the 0325 roar sweep. The class has now produced three instances (0325's codebook, and both emitters in 0339), which is what earns a standing test rather than a third point fix.
 
+2026-07-27T14:02Z HDMX-coding-agent note blocker 0339 closed — Blocked-by removed.
 --- body ---
 ## Context
 

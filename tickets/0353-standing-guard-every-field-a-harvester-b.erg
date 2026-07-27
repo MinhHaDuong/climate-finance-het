@@ -1,0 +1,113 @@
+%erg 0.1
+Title: Standing guard: every field a harvester builds must survive to its CSV
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T14:00Z HDMX-coding-agent created
+2026-07-27T14:05Z HDMX-coding-agent note filed from 0347's roar sweep. The sweep found no live sibling — catalog_keydocs was the only source emitting fields outside WORKS_COLUMNS — so this is a class guard against recurrence, not a fix for a second instance.
+
+--- body ---
+## Context
+
+Ticket 0288 shipped a harvester that computed `keywords_provenance` and then
+dropped it:
+
+    df = pd.DataFrame(records, columns=WORKS_COLUMNS + ["abstract_provenance"])
+
+`pd.DataFrame(records, columns=[...])` *selects*. A key present in every record
+but absent from that list is discarded with no error. The field was empty for
+all 33,344 refined rows for five days, and the Zenodo codebook honestly
+documented a column the deposit never filled.
+
+The roar sweep looked for siblings. Four other harvesters use the identical
+construction — `build_teaching_canon.py:92`, `catalog_bibcnrs.py:162`,
+`catalog_grey.py:267`, `catalog_istex.py:285` — and **none is currently bitten**,
+because none computes a field outside `WORKS_COLUMNS`. So there is no second
+defect to fix. What there is, is a shape that will bite the next person who adds
+a per-source field, and two coupled allowlists that must agree with nothing
+enforcing it.
+
+## Why a standing test rather than a review note
+
+The defect is invisible to everything the project already runs:
+
+- 41 unit tests passed over it. They assert on `build_record()`'s returned
+  dict (`test_catalog_keydocs.py`) and on a synthetic DataFrame that already
+  has the column (`test_catalog_merge.py::test_keywords_provenance_survives_merge`).
+  Neither reads the CSV the harvester writes.
+- `make check` was green. `erg check` was green. There is no CI.
+- Pandera schemas do not catch it: `keywords_provenance` is
+  `required=False` in `scripts/schemas.py:58`, so an absent column validates.
+- It was found only by auditing 0288 against the corpus for closure — i.e. by
+  a human-directed audit, eight days before a resubmission deadline.
+
+A per-PR review gate cannot cover a field nobody thought to look at. A standing
+test can.
+
+## The two coupled allowlists
+
+A new per-source field must be added in both places or it vanishes at whichever
+layer forgot:
+
+1. the harvester's own `columns=` argument, and
+2. `catalog_merge.EXTRA_CARRY_COLS` (`scripts/harvest/catalog_merge.py:47`),
+   which is what carries non-`WORKS_COLUMNS` fields through the merge.
+
+`abstract_provenance` and `keywords_provenance` are both in (2); only the first
+was in (1). The guard should cover the pair, not just one side.
+
+## Relevant files
+
+- `scripts/harvest/catalog_keydocs.py` — the fixed instance (PR #1156)
+- `scripts/harvest/{catalog_bibcnrs,catalog_grey,catalog_istex,build_teaching_canon}.py`
+  — same construction, no extras today
+- `scripts/harvest/catalog_merge.py:47` — `EXTRA_CARRY_COLS`
+- `scripts/utils.py:77` — `WORKS_COLUMNS`
+- `scripts/schemas.py:58` — why the schema does not catch it
+- `tests/test_catalog_keydocs.py` —
+  `TestMainEndToEnd::test_keywords_provenance_reaches_the_written_catalog` is
+  the per-instance version of this guard, written in PR #1156
+
+## Actions
+
+1. Add an adherence test that, for each `catalog_*` / `build_*` harvester,
+   compares the keys its record builder returns against the columns its
+   `main()` passes to `pd.DataFrame(...)`, and fails on any key that would be
+   dropped. Static comparison (AST or source inspection) keeps it in the
+   `adherence` tier — no corpus, no network, no fixtures.
+2. Assert the other half: every field name in a harvester's record builder that
+   is not in `WORKS_COLUMNS` appears in `catalog_merge.EXTRA_CARRY_COLS`.
+3. Prefer deleting the coupling over guarding it if step 1 proves awkward:
+   have the harvesters write `pd.DataFrame(records)` and let the column order
+   come from a single declared contract, so there is one list instead of two.
+   Note the trade-off — the explicit `columns=` also pins column *order*, which
+   the CSVs and the deposit rely on, so this is not a free simplification.
+
+## Test
+
+This ticket *is* a test. Its own red step: temporarily drop
+`"keywords_provenance"` from `catalog_keydocs.main()`'s column list and confirm
+the new guard fails; restore and confirm it passes. Do the same for
+`EXTRA_CARRY_COLS` to exercise action 2.
+
+## Verification
+
+- [ ] Guard fails when a computed field is missing from a harvester's
+      `columns=` list
+- [ ] Guard fails when a non-`WORKS_COLUMNS` field is missing from
+      `EXTRA_CARRY_COLS`
+- [ ] Guard passes on the current tree (all five harvesters)
+- [ ] Runs in the `adherence` tier — no corpus data, no network
+
+## Invariants
+
+- No change to any harvester's output: the guard is a test, not a refactor.
+  If action 3 is taken instead, byte-compare each source catalog before and
+  after, per the refactor-validation rule.
+
+## Exit criteria
+
+- [ ] A standing test covers the class, in the `adherence` tier
+- [ ] Both coupled allowlists are checked
+- [ ] Red step demonstrated and recorded in the ticket log

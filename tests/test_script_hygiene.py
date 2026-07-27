@@ -728,6 +728,7 @@ class TestTypingCoreModules:
         "pipeline_io.py",
         "pipeline_progress.py",
         "enrich_dois.py",
+        "_markdown_table.py",
     ]
 
     @pytest.mark.skipif(not _MYPY_AVAILABLE, reason="mypy not available")
