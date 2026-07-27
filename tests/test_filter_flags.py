@@ -2,6 +2,7 @@
 
 import os
 import sys
+from statistics import NormalDist
 
 import numpy as np
 import pandas as pd
@@ -36,6 +37,22 @@ def config():
 def fixture_df():
     """~20 rows covering every flag and protection case."""
     return pd.read_csv(os.path.join(FIXTURE_DIR, "filter_fixture.csv"))
+
+
+def sem_config(config, **overrides):
+    """`config` with the semantic_outlier block overridden key by key."""
+    block = dict(config["semantic_outlier"], **overrides)
+    return dict(config, semantic_outlier=block)
+
+
+@pytest.fixture
+def filter_config(config):
+    """Flag 5 in filter mode.
+
+    Diagnostic mode is the shipped default (ticket 0361), so a test about
+    *which row gets which distance* has to ask for a mask that can raise.
+    """
+    return sem_config(config, mode="filter")
 
 
 @pytest.fixture
@@ -270,7 +287,7 @@ class TestFlagCitationIsolated:
 # ============================================================
 
 class TestFlagSemanticOutlier:
-    def test_outlier_detected(self, config):
+    def test_outlier_detected(self, filter_config):
         """Synthetic test: one extreme embedding flagged as outlier."""
         rng = np.random.default_rng(42)
         n_papers = 20
@@ -287,12 +304,12 @@ class TestFlagSemanticOutlier:
         emb_df = df.copy()
 
         flag_mask, dists = flag_semantic_outlier(
-            df, config, embeddings=embeddings, emb_df=emb_df
+            df, filter_config, embeddings=embeddings, emb_df=emb_df
         )
         assert flag_mask.iloc[7] == True
         assert dists.iloc[7] > 0
 
-    def test_doi_less_outlier_is_flaggable(self, config):
+    def test_doi_less_outlier_is_flaggable(self, filter_config):
         """A DOI-less work counts toward the centroid, so it must be scorable.
 
         The distances used to be remapped onto df by normalised DOI, with the
@@ -318,7 +335,7 @@ class TestFlagSemanticOutlier:
         emb_df = df.copy()
 
         flag_mask, dists = flag_semantic_outlier(
-            df, config, embeddings=embeddings, emb_df=emb_df
+            df, filter_config, embeddings=embeddings, emb_df=emb_df
         )
         assert pd.notna(dists.iloc[3]), "the DOI-less work got no distance"
         assert flag_mask.iloc[3] == True, "the DOI-less outlier escaped Flag 5"
@@ -336,7 +353,8 @@ class TestFlagSemanticOutlier:
         ("https://doi.org/10.1000/P0", "differs only in case and DOI prefix"),
         ("10.1000/p0", "is an exact work_key duplicate"),
     ])
-    def test_non_candidates_get_no_distance(self, config, non_candidate_doi, why):
+    def test_non_candidates_get_no_distance(self, filter_config, non_candidate_doi,
+                                            why):
         """Only rows the caller put in emb_df may be scored.
 
         Two remaps were tried and removed in review — normalised DOI, then the
@@ -362,7 +380,7 @@ class TestFlagSemanticOutlier:
         })], ignore_index=True)
 
         flag_mask, dists = flag_semantic_outlier(
-            df, config, embeddings=self._one_outlier(n), emb_df=emb_df
+            df, filter_config, embeddings=self._one_outlier(n), emb_df=emb_df
         )
         assert flag_mask.iloc[0] == True, "the planted candidate outlier"
         assert pd.isna(dists.iloc[n]), (
@@ -420,6 +438,270 @@ class TestFlagSemanticOutlier:
         embeddings = np.zeros((3, 8))  # 3 != 2
         with pytest.raises(ValueError, match="mismatch"):
             flag_semantic_outlier(df, config, embeddings=embeddings, emb_df=emb_df)
+
+
+# ============================================================
+# Flag 5: diagnostic mode and the per-language centroid (ticket 0361)
+# ============================================================
+
+def _language_corpus(sizes, spread=0.25, dim=8):
+    """Works frame + embeddings for a language-stratified synthetic corpus.
+
+    Each language occupies its own plane: mean direction ``m`` and a
+    perpendicular axis chosen orthogonal to every other language's mean, so a
+    work's angle within its language never carries it toward another language's
+    centroid. Angles are the exact normal quantiles of ``N(0, spread**2)``, so
+    every language has the *same* standardised within-language shape whatever
+    its size — a mean-plus-k-sigma cut therefore removes the same fraction of
+    each, and any surviving per-language rate difference is the geometry of the
+    centroid, not sampling noise.
+
+    ``sizes`` maps a language code to a row count. The first language is the
+    dominant one and lies on axis 0; the others tilt away from it.
+    """
+    normal = NormalDist()
+    axes = {}
+    vectors, langs = [], []
+    for slot, (lang, n) in enumerate(sizes.items()):
+        # Mean direction: the dominant language on axis 0, the others rotated
+        # 53 degrees off it into their own dimension (cosine 0.6).
+        mean = np.zeros(dim)
+        if slot == 0:
+            mean[0] = 1.0
+        else:
+            mean[0], mean[2 * slot] = 0.6, 0.8
+        # Spread axis: a dimension no mean direction uses, so the within-
+        # language rotation is orthogonal to every centroid.
+        perp = np.zeros(dim)
+        perp[2 * slot + 1] = 1.0
+        axes[lang] = (mean, perp)
+        for j in range(n):
+            theta = spread * normal.inv_cdf((j + 0.5) / n)
+            vectors.append(np.cos(theta) * mean + np.sin(theta) * perp)
+            langs.append(lang)
+
+    embeddings = np.stack(vectors).astype(np.float32)
+    n_rows = len(langs)
+    df = pd.DataFrame({
+        "doi": [f"10.1000/w{i}" for i in range(n_rows)],
+        "source_id": [f"W{i}" for i in range(n_rows)],
+        "title": [f"Work {i}" for i in range(n_rows)],
+        "language": langs,
+    })
+    return df, embeddings
+
+
+def _rate_by_language(df, mask):
+    """Flag rate per language — the view a count assertion cannot show."""
+    return {
+        lang: float(mask[df["language"] == lang].mean())
+        for lang in df["language"].unique()
+    }
+
+
+class TestFlag5DiagnosticMode:
+    """Diagnostic mode: the distance still ships, the mask never removes.
+
+    The statistic is unsound as a threshold — the distance distribution is
+    skewed and heavy-tailed, so `mean + k*sigma` carries no probabilistic
+    reading, and the one human validation of a cut on it found no
+    discrimination. The distance itself is a useful inspection signal and
+    `docs/research-note-multilingual.md` uses it as a dependent variable, so it
+    is computed and published; it just deletes nothing (ticket 0361).
+    """
+
+    def test_diagnostic_mode_flags_nothing(self, config):
+        df, embeddings = _language_corpus({"en": 60})
+        mask, _dists = flag_semantic_outlier(
+            df, sem_config(config, mode="diagnostic"),
+            embeddings=embeddings, emb_df=df)
+
+        assert not mask.any(), (
+            "diagnostic mode removed works — the mask must be all-False"
+        )
+        assert mask.dtype == bool, "the mask must stay a boolean series"
+
+    def test_diagnostic_mode_still_computes_real_distances(self, config):
+        """Not a stub: the distances are the whole point of keeping the flag."""
+        df, embeddings = _language_corpus({"en": 60})
+        _mask, dists = flag_semantic_outlier(
+            df, sem_config(config, mode="diagnostic"),
+            embeddings=embeddings, emb_df=df)
+
+        assert dists.notna().all(), "a candidate got no distance"
+        assert dists.min() >= 0, "cosine distance cannot be negative"
+        assert dists.max() > dists.median() * 2, (
+            "every distance is near-identical — the flag is returning a "
+            "constant, not a measurement"
+        )
+        # Row 0 and row -1 are the extreme angle quantiles; the middle rows sit
+        # on the centroid. A stub returning zeros or a copy of one value fails.
+        assert dists.iloc[0] > dists.iloc[len(df) // 2]
+
+    def test_diagnostic_mode_is_the_default(self, config):
+        """An absent `mode` must not delete works.
+
+        The shipped config states `mode: diagnostic` explicitly; this pins the
+        fallback so a caller with an older config block cannot silently get a
+        filtering Flag 5 back.
+        """
+        df, embeddings = _language_corpus({"en": 60})
+        block = {k: v for k, v in config["semantic_outlier"].items()
+                 if k != "mode"}
+        mask, _dists = flag_semantic_outlier(
+            df, dict(config, semantic_outlier=block),
+            embeddings=embeddings, emb_df=df)
+        assert not mask.any()
+
+    def test_filter_mode_still_filters(self, config):
+        """The capability is not destroyed, only switched off by default."""
+        df, embeddings = _language_corpus({"en": 300})
+        mask, _dists = flag_semantic_outlier(
+            df, sem_config(config, mode="filter", sigma=2),
+            embeddings=embeddings, emb_df=df)
+        assert mask.any(), "filter mode flagged nothing on a corpus with a tail"
+
+    def test_filter_mode_without_sigma_raises(self, config):
+        """A filter with no threshold must say so rather than pick one."""
+        df, embeddings = _language_corpus({"en": 60})
+        block = {k: v for k, v in config["semantic_outlier"].items()
+                 if k != "sigma"}
+        block["mode"] = "filter"
+        with pytest.raises(ValueError, match="(?i)sigma"):
+            flag_semantic_outlier(
+                df, dict(config, semantic_outlier=block),
+                embeddings=embeddings, emb_df=df)
+
+    @pytest.mark.parametrize("key, value", [
+        ("mode", "sometimes"),
+        ("centroid", "per_country"),
+    ])
+    def test_unknown_setting_raises(self, config, key, value):
+        df, embeddings = _language_corpus({"en": 60})
+        with pytest.raises(ValueError, match=key):
+            flag_semantic_outlier(
+                df, sem_config(config, **{key: value, "mode": "filter"}),
+                embeddings=embeddings, emb_df=df)
+
+
+class TestFlag5PerLanguageCentroid:
+    """The centroid is the lever on the language gradient, not sigma.
+
+    A corpus that is 91.6% English builds a centroid that partly measures
+    *not written in English*; raising sigma against it makes the bias worse,
+    because the extreme tail of that distribution is almost entirely
+    non-English. Mean-centring per language is the documented correction
+    (Libovicky et al., arXiv:1911.03310).
+    """
+
+    def test_distance_is_measured_against_the_own_language_centroid(self, config):
+        """A minority work's distance must come from its own language.
+
+        Under a global centroid a Spanish work sits ~0.29 away by virtue of
+        being Spanish; under its own centroid it sits where its content puts
+        it. The two numbers differ by an order of magnitude, so a swapped
+        centroid cannot hide.
+        """
+        df, embeddings = _language_corpus({"en": 300, "es": 60})
+        is_es = (df["language"] == "es").to_numpy()
+
+        _m, per_lang = flag_semantic_outlier(
+            df, sem_config(config, centroid="per_language", mode="diagnostic"),
+            embeddings=embeddings, emb_df=df)
+        _m, glob = flag_semantic_outlier(
+            df, sem_config(config, centroid="global", mode="diagnostic"),
+            embeddings=embeddings, emb_df=df)
+
+        assert per_lang[is_es].max() < glob[is_es].min(), (
+            "Spanish works kept their global-centroid distances — the "
+            "per-language centroid is not being used"
+        )
+        # English is the dominant language, so its own centroid and the global
+        # one nearly coincide: the correction must not move English much.
+        assert per_lang[~is_es].mean() == pytest.approx(
+            glob[~is_es].mean(), rel=0.15)
+
+    def test_small_language_falls_back_to_the_global_centroid(self, config):
+        """Below the floor a language has no usable own centroid.
+
+        Ten works cannot locate a centre; scoring them against their own mean
+        would report every one of them as typical. They take the corpus
+        centroid, exactly as `min_coverage` refuses to score a rump of the
+        corpus against a centroid built from that rump.
+        """
+        df, embeddings = _language_corpus({"en": 300, "es": 60, "ko": 10})
+        cfg = sem_config(config, centroid="per_language", mode="diagnostic",
+                         min_language_count=30)
+        _m, per_lang = flag_semantic_outlier(
+            df, cfg, embeddings=embeddings, emb_df=df)
+        _m, glob = flag_semantic_outlier(
+            df, sem_config(config, centroid="global", mode="diagnostic"),
+            embeddings=embeddings, emb_df=df)
+
+        is_ko = (df["language"] == "ko").to_numpy()
+        is_es = (df["language"] == "es").to_numpy()
+        np.testing.assert_allclose(
+            per_lang[is_ko].to_numpy(), glob[is_ko].to_numpy(), rtol=1e-6,
+            err_msg="a 10-work language was scored against its own centroid")
+        assert per_lang[is_es].max() < glob[is_es].min(), (
+            "the 60-work language is above the floor and must use its own "
+            "centroid — the fallback swallowed it too"
+        )
+
+    def test_absent_language_column_degrades_to_the_global_centroid(self, config):
+        """No language column, no strata: identical to the global arm.
+
+        Keeps the frames that predate the column (test fixtures, slim
+        intermediates) scoring exactly as before rather than erroring.
+        """
+        df, embeddings = _language_corpus({"en": 60})
+        df = df.drop(columns=["language"])
+        _m, per_lang = flag_semantic_outlier(
+            df, sem_config(config, centroid="per_language", mode="diagnostic"),
+            embeddings=embeddings, emb_df=df)
+        _m, glob = flag_semantic_outlier(
+            df, sem_config(config, centroid="global", mode="diagnostic"),
+            embeddings=embeddings, emb_df=df)
+        np.testing.assert_allclose(
+            per_lang.to_numpy(), glob.to_numpy(), rtol=1e-6)
+
+
+class TestFlag5LanguageGradient:
+    """The band test: the defect is invisible to any count assertion.
+
+    On the real corpus the shipped global-centroid setting removed Spanish
+    works at 4.1x and Portuguese at 3.0x the baseline rate, while the headline
+    removal count looked unremarkable. Only a per-language rate comparison sees
+    it, so that comparison is what gets pinned.
+    """
+
+    SIZES = {"en": 300, "es": 60}
+
+    def _rates(self, config, centroid):
+        df, embeddings = _language_corpus(self.SIZES)
+        mask, _d = flag_semantic_outlier(
+            df, sem_config(config, mode="filter", sigma=2, centroid=centroid,
+                           min_language_count=30),
+            embeddings=embeddings, emb_df=df)
+        return _rate_by_language(df, mask)
+
+    def test_global_centroid_shows_the_gradient(self, config):
+        """The control: without this the band test below proves nothing."""
+        rates = self._rates(config, "global")
+        assert rates["es"] > 0.20, (
+            "the fixture no longer reproduces the language gradient, so the "
+            f"band test has nothing to catch: {rates}"
+        )
+        assert rates["en"] < 0.02, f"English should be spared: {rates}"
+
+    def test_per_language_centroid_flattens_the_gradient(self, config):
+        rates = self._rates(config, "per_language")
+        assert rates["en"] > 0, f"no English work flagged at all: {rates}"
+        ratio = rates["es"] / rates["en"]
+        assert 0.5 <= ratio <= 2.0, (
+            f"minority-language removal rate is {ratio:.1f}x the English rate "
+            f"({rates}); the centroid is reintroducing a language gradient"
+        )
 
 
 # ============================================================

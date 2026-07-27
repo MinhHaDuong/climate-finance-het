@@ -146,7 +146,7 @@ def test_paper_names_no_language_it_did_not_query():
 # --------------------------------------------------------------------------- #
 # Every threshold §2.2 quotes, with the config path it must come from.
 THRESHOLD_VARS = {
-    "filter_outlier_sigma": ("semantic_outlier", "sigma"),
+    "filter_outlier_min_lang": ("semantic_outlier", "min_language_count"),
     "filter_reranker_threshold": ("llm_relevance", "reranker_threshold"),
     "neardup_prefix_chars": ("near_duplicate", "prefix_length"),
     "neardup_min_group_size": ("near_duplicate", "min_group_size"),
@@ -570,9 +570,35 @@ def test_paper_states_the_key_document_selection_rule():
         assert token in sources, f"§2.1 key-document rule missing {token!r}"
 
 
-def test_paper_states_the_outlier_rule_is_global():
-    """The reviewers' actual question was global or stratified."""
+def test_paper_states_the_outlier_centroid_scope():
+    """The reviewers' actual question was global or stratified — answer it from
+    config, so the prose cannot outlive the setting it describes."""
+    scope = _load(FILTER_YAML)["semantic_outlier"].get("centroid", "global")
     pipeline = _section(_qmd_text(), "2.2")
-    assert "global" in pipeline.lower(), (
-        "§2.2 must say the semantic-outlier mean and SD are computed globally"
+    if scope == "per_language":
+        assert "own language" in pipeline, (
+            "config computes the outlier centroid within language; §2.2 must "
+            "say so"
+        )
+        assert "computed globally" not in pipeline, (
+            "§2.2 still claims a global centroid the pipeline stopped using"
+        )
+    else:
+        assert "global" in pipeline.lower(), (
+            "§2.2 must say the semantic-outlier mean and SD are computed "
+            "globally"
+        )
+
+
+def test_paper_says_the_outlier_flag_removes_nothing():
+    """Diagnostic mode is a claim about the corpus, not an implementation note.
+
+    A reader counting flags in §2.2 and removals in @tbl-flow has to be able to
+    tell that one of the six annotates without deleting (ticket 0361).
+    """
+    if _load(FILTER_YAML)["semantic_outlier"].get("mode") != "diagnostic":
+        pytest.skip("Flag 5 is configured as a filter")
+    pipeline = _section(_qmd_text(), "2.2")
+    assert "removes nothing" in pipeline or "removes no work" in pipeline, (
+        "§2.2 must state that the semantic-distance flag removes no work"
     )
