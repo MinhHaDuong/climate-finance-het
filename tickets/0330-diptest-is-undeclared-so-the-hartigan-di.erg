@@ -8,6 +8,7 @@ Author: HDMX-coding-agent
 2026-07-27T11:10Z HDMX-coding-agent note Found by the roar sweep after PR #1127 (ticket 0314) hard-guarded the same class at Flag 6
 2026-07-27T14:05Z minh decision Option 1 (declare and enforce). Option 2 rejected: dropping the column hides the question instead of answering it, leaving the two-communities claim resting on delta-BIC alone
 2026-07-27T14:05Z HDMX-coding-agent note Statistical stakes recorded below under "Why option 1"; the per-period delta-BIC/n confound found while explaining them is out of scope here
+2026-07-27T14:16Z HDMX-coding-agent note Dip test ran for the first time: p=1.0000 overall, 0.9943/0.9942/1.0000 per period. The falsification risk landed. Result section below; manuscript arbitration is the author's, not this ticket's
 
 --- body ---
 ## Context
@@ -108,6 +109,39 @@ real power, so a non-rejection would be a finding: it would mean delta_bic=1350
 was detecting non-Gaussianity rather than two modes, and section 5.3 of
 multilayer-detection.qmd would need rewriting. That possibility is the reason to
 run it, not a reason to drop the column.
+
+## Result (2026-07-27)
+
+The dip test ran for the first time. It does not reject unimodality anywhere:
+
+    method                | n      | delta_bic | dip p
+    embedding (overall)   | 29675  |      1355 | 1.0000
+    embedding_1990–2006   |  1613  |        20 | 0.9943
+    embedding_2007–2014   |  7399  |       -60 | 0.9942
+    embedding_2015–2024   | 20663  |      1119 | 1.0000
+
+The dip statistic is 0.00098, roughly six times *below* the 1/sqrt(n) scale of
+the null reference, so this is not a borderline non-rejection at low power.
+
+Diagnostic run on the same axis scores explains the disagreement, and it is the
+failure mode named in the decision above rather than a surprise:
+
+    axis_score:  n=29675  skew=0.591  excess kurtosis=1.114
+    fitted 2-component GMM (the model delta_bic prefers):
+      comp A: w=0.617  mu=-0.0271  sd=0.0751
+      comp B: w=0.383  mu=+0.0546  sd=0.1154
+      standardised separation = 0.839 sigma  (two humps need ~2)
+      modes in the fitted mixture density = 1
+
+The two-component mixture that wins the BIC comparison is itself unimodal. It
+wins because the axis score is skewed and leptokurtic, and a second Gaussian
+absorbs that better than one Gaussian does. delta_bic=1355 is measuring
+departure from normality, not two communities.
+
+This bears on section 5.3 of deliverables/multilayer/multilayer-detection.qmd,
+which reads the same numbers as a bimodal structure. That is manuscript prose
+and therefore the author's arbitration, not this ticket's: no prose was
+touched here. See the follow-up ticket for the arbitration.
 
 ## Test
 
