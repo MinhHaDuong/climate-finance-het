@@ -153,20 +153,20 @@ stages:
       size: 4000
     - path: data/catalogs/enriched_works.csv
       hash: md5
-      md5: a304a5325e46e1d6fbb937cd006258ba
-      size: 82113467
+      md5: c31a5e3545eb24eb05e11898fbd24018
+      size: 82435343
     - path: scripts/filter_flags.py
       hash: md5
       md5: 7da9109621e262aca2bab96c441e3c0f
       size: 10502
     - path: scripts/filter_flags_llm.py
       hash: md5
-      md5: 41af57f28f25c8c477540ee5116f1513
-      size: 17809
+      md5: 0a6a29c46be84752c162fbc1d11df675
+      size: 18627
     - path: scripts/harvest/corpus_filter.py
       hash: md5
-      md5: 7c9891f2aab0e097938c4182095d6809
-      size: 26965
+      md5: 73d542190221fb09bc75d81444ac32b9
+      size: 27291
     - path: scripts/pipeline_io.py
       hash: md5
       md5: 1fc4027a375337e94172349200eed9fa
@@ -190,8 +190,8 @@ stages:
     outs:
     - path: data/catalogs/extended_works.csv
       hash: md5
-      md5: ceff029c269749b4c97701bc7b7d567b
-      size: 84921207
+      md5: a4595cd619138d31231d260ec42dce8b
+      size: 85412413
   filter:
     cmd: uv run --env-file .env python scripts/harvest/corpus_filter.py --filter
       --works-input data/catalogs/extended_works.csv --works-output 
@@ -207,20 +207,20 @@ stages:
       size: 186713
     - path: data/catalogs/extended_works.csv
       hash: md5
-      md5: ceff029c269749b4c97701bc7b7d567b
-      size: 84921207
+      md5: a4595cd619138d31231d260ec42dce8b
+      size: 85412413
     - path: scripts/filter_flags.py
       hash: md5
       md5: 7da9109621e262aca2bab96c441e3c0f
       size: 10502
     - path: scripts/filter_flags_llm.py
       hash: md5
-      md5: 41af57f28f25c8c477540ee5116f1513
-      size: 17809
+      md5: 0a6a29c46be84752c162fbc1d11df675
+      size: 18627
     - path: scripts/harvest/corpus_filter.py
       hash: md5
-      md5: 7c9891f2aab0e097938c4182095d6809
-      size: 26965
+      md5: 73d542190221fb09bc75d81444ac32b9
+      size: 27291
     - path: scripts/pipeline_io.py
       hash: md5
       md5: 1fc4027a375337e94172349200eed9fa
@@ -248,8 +248,8 @@ stages:
       size: 6325697
     - path: data/catalogs/refined_works.csv
       hash: md5
-      md5: 0f0d605698745b0f738e8969905ca59c
-      size: 66147227
+      md5: 1dbfa07c6c610cfccfea3b798f86fbd7
+      size: 66395965
   align:
     cmd: uv run --env-file .env python scripts/harvest/corpus_align.py
     deps:
@@ -259,12 +259,12 @@ stages:
       size: 404798417
     - path: data/catalogs/embeddings.npz
       hash: md5
-      md5: f0e917fb428621e81ea1f7eec60e1b31
-      size: 93753275
+      md5: 6f1cb2131b23f13e1b750a224ad94544
+      size: 93753009
     - path: data/catalogs/refined_works.csv
       hash: md5
-      md5: 0f0d605698745b0f738e8969905ca59c
-      size: 66147227
+      md5: 1dbfa07c6c610cfccfea3b798f86fbd7
+      size: 66395965
     - path: scripts/harvest/corpus_align.py
       hash: md5
       md5: 05f2e24e9f8f7d6099a6a7451bb64f11
@@ -296,8 +296,8 @@ stages:
       size: 344164362
     - path: data/catalogs/refined_embeddings.npz
       hash: md5
-      md5: 03fbdffe886932e8ffd332379af9bbbd
-      size: 71553480
+      md5: 3935215f5cd936dbb05b35b8df69de62
+      size: 71553531
   catalog_bibcnrs:
     cmd: uv run --env-file .env python scripts/harvest/catalog_bibcnrs.py
     deps:
@@ -640,8 +640,8 @@ stages:
     deps:
     - path: data/catalogs/enriched_works.csv
       hash: md5
-      md5: a304a5325e46e1d6fbb937cd006258ba
-      size: 82113467
+      md5: c31a5e3545eb24eb05e11898fbd24018
+      size: 82435343
     - path: scripts/harvest/corpus_parse_citations_grobid.py
       hash: md5
       md5: f05079a664f1770f8ae002ae4334ddf6
@@ -701,8 +701,8 @@ stages:
     deps:
     - path: data/catalogs/enriched_works.csv
       hash: md5
-      md5: a304a5325e46e1d6fbb937cd006258ba
-      size: 82113467
+      md5: c31a5e3545eb24eb05e11898fbd24018
+      size: 82435343
     - path: scripts/harvest/enrich_embeddings.py
       hash: md5
       md5: d8ff418ac1136dbbb7b6809125f2344e
@@ -730,8 +730,8 @@ stages:
     outs:
     - path: data/catalogs/embeddings.npz
       hash: md5
-      md5: f0e917fb428621e81ea1f7eec60e1b31
-      size: 93753275
+      md5: 6f1cb2131b23f13e1b750a224ad94544
+      size: 93753009
   qa_citations:
     cmd: uv run --env-file .env python scripts/qa/qa_citations.py --output 
       deliverables/_shared/tables/qa_citations_report.json --works-input 
@@ -743,8 +743,8 @@ stages:
       size: 404798417
     - path: data/catalogs/enriched_works.csv
       hash: md5
-      md5: a304a5325e46e1d6fbb937cd006258ba
-      size: 82113467
+      md5: c31a5e3545eb24eb05e11898fbd24018
+      size: 82435343
     - path: scripts/pipeline_io.py
       hash: md5
       md5: 1fc4027a375337e94172349200eed9fa
@@ -784,8 +784,8 @@ stages:
       size: 81930431
     - path: scripts/harvest/enrich_language.py
       hash: md5
-      md5: 23ed6d36d7fd76b54e1485861dbf04c7
-      size: 14866
+      md5: d7a6c704908cd1e547b16e41eb6df89d
+      size: 16500
     - path: scripts/pipeline_io.py
       hash: md5
       md5: 1fc4027a375337e94172349200eed9fa
@@ -801,7 +801,7 @@ stages:
     outs:
     - path: data/catalogs/enrich_cache/.language.stamp
       hash: md5
-      md5: 2f91721e6937c50846776e59e75d32eb
+      md5: afc0d02e61326af64953f4bf133a8fab
       size: 25
   enrich_dois:
     cmd: uv run --env-file .env python scripts/enrich_dois.py --works-input 
@@ -910,7 +910,7 @@ stages:
       size: 25
     - path: data/catalogs/enrich_cache/.language.stamp
       hash: md5
-      md5: 2f91721e6937c50846776e59e75d32eb
+      md5: afc0d02e61326af64953f4bf133a8fab
       size: 25
     - path: data/catalogs/enrich_cache/.summaries.stamp
       hash: md5
@@ -922,8 +922,8 @@ stages:
       size: 81930431
     - path: scripts/harvest/enrich_join.py
       hash: md5
-      md5: f92e69a9dc2e183c0e0b78136d4679af
-      size: 8458
+      md5: 65c2e6ef588c912613cc975e520d6dda
+      size: 10285
     - path: scripts/pipeline_io.py
       hash: md5
       md5: 1fc4027a375337e94172349200eed9fa
@@ -939,8 +939,8 @@ stages:
     outs:
     - path: data/catalogs/enriched_works.csv
       hash: md5
-      md5: a304a5325e46e1d6fbb937cd006258ba
-      size: 82113467
+      md5: c31a5e3545eb24eb05e11898fbd24018
+      size: 82435343
   ref_match:
     cmd: uv run --env-file .env python scripts/harvest/corpus_ref_match.py && uv
       run --env-file .env python scripts/corpus_merge_citations.py
@@ -951,8 +951,8 @@ stages:
       size: 51497696
     - path: data/catalogs/refined_works.csv
       hash: md5
-      md5: 0f0d605698745b0f738e8969905ca59c
-      size: 66147227
+      md5: 1dbfa07c6c610cfccfea3b798f86fbd7
+      size: 66395965
     - path: scripts/corpus_merge_citations.py
       hash: md5
       md5: 66392d9fa594e9cfe82983ccfead922f
