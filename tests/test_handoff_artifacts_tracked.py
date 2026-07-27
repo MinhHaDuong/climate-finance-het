@@ -16,7 +16,9 @@ import re
 import subprocess
 
 import pytest
+import yaml
 from _mk_discovery import mk_fragments
+from compute_vars import DOC_OUTPUT_DIR, DOC_VARS
 from utils import BASE_DIR
 
 # Paths a render rule can name. Deliberately excludes the rendered PDF/DOCX,
@@ -59,6 +61,32 @@ def test_vars_files_are_tracked():
     assert not untracked, (
         "handoff artifacts consumed by a writing-side Makefile are not tracked, "
         "so a fresh clone cannot render: " + "; ".join(untracked)
+    )
+
+
+@pytest.mark.adherence
+@pytest.mark.parametrize("doc", sorted(DOC_VARS))
+def test_tracked_vars_file_carries_every_declared_variable(doc):
+    """Tracking the file is not enough — it must hold what the prose asks for.
+
+    Now that the writing workpackage renders from the committed `*-vars.yml`
+    rather than regenerating it, a variable added to DOC_VARS and to the prose
+    but never written back to the artifact renders as an empty macro on a
+    clean clone. Nothing else catches that: `test_doc_vars_complete` compares
+    prose against DOC_VARS, and the tracking guard above only checks that the
+    file exists in git (ticket 0329, after 0348 made these files handoff
+    artifacts).
+    """
+    path = os.path.join(DOC_OUTPUT_DIR[doc], f"{doc}-vars.yml")
+    if not os.path.isfile(path):
+        pytest.skip(f"{path} not built here")
+    with open(path, encoding="utf-8") as fh:
+        present = yaml.safe_load(fh) or {}
+    missing = [k for k in DOC_VARS[doc] if k not in present]
+    assert not missing, (
+        f"{doc}-vars.yml is missing {len(missing)} declared variable(s): "
+        f"{missing}. Regenerate it with `make stats` and commit the result — "
+        "the render reads this file, not compute_vars.py."
     )
 
 

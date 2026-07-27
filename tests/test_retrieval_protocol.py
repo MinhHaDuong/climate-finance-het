@@ -318,6 +318,11 @@ def test_grey_enumeration_lists_every_curated_report():
     assert {r["Title"] for r in rows} == {e["title"] for e in grey}
 
 
+def _separators(line: str) -> int:
+    """Cell separators in a pipe-table row — escaped pipes are content."""
+    return line.replace("\\|", "").count("|")
+
+
 def _pipe_tables(md: str) -> list[list[str]]:
     """Consecutive runs of pipe rows — one run per markdown table."""
     tables, current = [], []
@@ -345,10 +350,10 @@ def test_markdown_rows_are_not_ragged():
     assert len(tables) == 2, f"expected the protocol and grey tables, got {len(tables)}"
     for table in tables:
         header, *rest = table
-        width = header.count("|")
-        ragged = [ln for ln in rest if ln.count("|") != width]
+        width = _separators(header)
+        ragged = [ln for ln in rest if _separators(ln) != width]
         assert not ragged, (
-            f"rows disagree with their header's {width} pipes: {ragged[:2]}"
+            f"rows disagree with their header's {width} separators: {ragged[:2]}"
         )
 
 
@@ -370,10 +375,17 @@ def test_export_writes_both_group_members_from_either_path(tmp_path):
 
 
 def test_markdown_escapes_a_pipe_in_a_cell():
-    """The fang: an unescaped pipe in a title must not survive into a row."""
-    from export_retrieval_protocol import _escape
+    """The fang: a pipe inside a cell must stop acting as a separator.
 
-    assert "|" not in _escape("Climate | Finance").replace("\\|", "")
+    Counting raw pipes would read the escaped form as ragged and the
+    unescaped form as fine — precisely backwards — so the guard above counts
+    separators, and this pins that distinction.
+    """
+    from export_retrieval_protocol import _cell
+
+    cell = _cell("Climate | Finance")
+    assert _separators(cell) == 0, f"pipe left acting as a separator in {cell!r}"
+    assert "|" in cell, "the pipe itself must survive into the published cell"
 
 
 def test_paper_points_at_the_deposited_protocol():

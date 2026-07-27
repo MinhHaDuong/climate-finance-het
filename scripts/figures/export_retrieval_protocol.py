@@ -25,6 +25,7 @@ import os
 
 import pandas as pd
 import yaml
+from _deposit_variables import markdown_cell
 from script_io_args import parse_io_args, validate_io
 from utils import CONFIG_DIR, get_logger, save_csv
 
@@ -55,9 +56,16 @@ def _load(name):
         return yaml.safe_load(fh)
 
 
-def _escape(value) -> str:
-    """Make a cell safe for a pipe table: a bare pipe would split the row."""
-    return str(value).replace("|", "\\|").replace("\n", " ").strip()
+def _cell(value) -> str:
+    """Make a value safe for a pipe-table cell.
+
+    Delegates the escaping to the codebook's ``markdown_cell``, which already
+    knows that a raw ``|`` ends a cell and that GFM honours ``\\|`` inside a
+    code span too. Ticket 0339 tracks the private copies of this rule; this
+    emitter does not add a fifth. Newlines are collapsed first — a YAML
+    folded title would otherwise break the row before escaping ran.
+    """
+    return markdown_cell(" ".join(str(value).split()))
 
 
 def target_languages(queries: dict) -> list[str]:
@@ -176,7 +184,7 @@ def _pipe_table(rows: list[dict], columns: list[str], caption: str) -> list[str]
         "|" + "|".join([":---"] * len(columns)) + "|",
     ]
     for row in rows:
-        lines.append("| " + " | ".join(_escape(row[c]) for c in columns) + " |")
+        lines.append("| " + " | ".join(_cell(row[c]) for c in columns) + " |")
     lines += ["", caption, ""]
     return lines
 
