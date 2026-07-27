@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-27T15:35Z HDMX-coding-agent created
 2026-07-27T15:35Z HDMX-coding-agent note found by the 0340 review panel — the fourth instance of the 0325/0339 class, and the first one found by looking rather than by a reader noticing.
+2026-07-27T21:10Z HDMX-coding-agent note action 3 done by the PR #1172 round-2 gate: the sweep finds three more instances, listed in the body. All four artifacts are corpus-gated and absent on a fresh checkout, so the 0340 sweep skips every one of them.
 
 --- body ---
 ## Context
@@ -42,7 +43,24 @@ turns on — the point of the escaper is that no emitter has to know.
    then wrap in the emphasis markers, not the reverse.
 2. Check the caption constant on the same path.
 3. Sweep the other `export_*` emitters for the same shape — this ticket was
-   found by reading one of them, so the read should be finished.
+   found by reading one of them, so the read should be finished. **Done** (PR
+   #1172 round-2 gate); the sweep found three more, so the fix is four files,
+   not one:
+
+   | emitter | artifact | shape |
+   |:--|:--|:--|
+   | `export_corpus_table.py` | `tab_corpus_sources.md` | `str(v)` for every column |
+   | `export_language_table.py` | `tab_languages.md` | `str(v)` for every column *and* the header row |
+   | `export_citation_coverage.py` | `tab_citation_coverage.md` | raw `{label}` |
+   | `export_corpus_flow.py` | `tab_corpus_flow.md` | raw `{row['Stage']}` |
+
+   `export_corpus_flow.py` arrived from main (ticket 0327) after this ticket was
+   filed, which is the argument for the generic exit criterion below rather than
+   a per-file one. The other five emitters are clean: `export_tab_venues.py`,
+   `export_core_venues_markdown.py`, `export_retrieval_protocol.py` and
+   `_deposit_variables.py` route every free-text column through
+   `markdown_text_cell` / `markdown_cell`, and `export_variables_table.py` and
+   `export_codebook.py` interpolate nothing.
 
 ## Test
 
