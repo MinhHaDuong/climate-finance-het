@@ -365,7 +365,6 @@ class TestCorpusThroughLoaders:
         "figures/export_tab_venues.py",
         "figures/plot_alluvial_html.py",
         "figures/plot_fig_seed_axis.py",
-        "figures/plot_interactive_corpus.py",
     }
 
     _CONTRACT_FILES = re.compile(r"refined_works|refined_citations|refined_embeddings")

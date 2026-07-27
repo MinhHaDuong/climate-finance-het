@@ -2,10 +2,12 @@
 Title: No render oracle for Quarto meta macros: an undeclared key renders as a literal ?meta:key and no test can see it
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1188
 
 --- log ---
 2026-07-27T15:41Z HDMX-coding-agent created
 
+2026-07-27T19:11Z HDMX-coding-agent closed — autoclosed — PR #1188
 --- body ---
 
 ## Context

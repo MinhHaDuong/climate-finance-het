@@ -8,6 +8,7 @@ Label: deferred
 2026-04-15T12:00Z claude created
 2026-04-27T02:07Z claude note sweep-assess: not picked
 2026-07-09T13:27Z HDMX-coding-agent label deferred
+2026-07-27T19:08Z HDMX-coding-agent note dropped plot_interactive_corpus.py from the migration list — the script is retired under ticket 0351 (nothing consumed its output). One fewer call site to migrate.
 --- body ---
 ## Context
 
@@ -38,7 +39,6 @@ Migrate each script to use the appropriate loader. Group by severity:
 - `analyze_genealogy.py` — line 54
 - `compute_temporal_communities.py` — line 55
 - `analyze_communities_clusters.py` — line 44
-- `plot_interactive_corpus.py` — line 76
 - `analyze_cocitation.py` — line 55
 - `analyze_bimodality.py` — line 148
 - `export_tab_venues.py` — line 41
