@@ -8,6 +8,7 @@ the table cannot drift from the shipped CSV.
 """
 
 import os
+import re
 
 import pandas as pd
 import pytest
@@ -17,6 +18,8 @@ from _deposit_variables import (
     check_columns,
     compute_missingness,
     contract_names,
+    describe,
+    latex_inline,
     render_codebook,
     render_markdown_table,
     transform,
@@ -26,6 +29,11 @@ from utils import FROM_COLS, WORKS_COLUMNS
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 DATA_PAPER = os.path.join(ROOT, "deliverables", "data-paper", "data-paper.qmd")
 SCRIPT = os.path.join(ROOT, "scripts", "figures", "export_variables_table.py")
+
+# The reconstruction recipe the data paper prints twice: once in §3 prose, once
+# in the variables table. Ticket 0325 — LaTeX ate the tilde in the table copy,
+# publishing the complement of the advertised subset.
+RECIPE = "df[~df['is_flagged'] | df['is_protected']]"
 
 # extended_works.csv column layout, mirroring the pipeline: WORKS_COLUMNS +
 # provenance flags + carry columns (catalog_merge), abstract_status
@@ -199,6 +207,116 @@ class TestMarkdownTable:
 
     def test_export_script_exists(self):
         assert os.path.isfile(SCRIPT)
+
+
+def latex_block(md: str) -> str:
+    """The raw-LaTeX payload of the rendered table div."""
+    body = md.split("```{=latex}", 1)[1]
+    return body.split("```", 1)[0]
+
+
+def plain_text(cell: str) -> str:
+    """Recover the source text from an emitted LaTeX cell.
+
+    Round-tripping is what keeps the assertions below non-tautological: they
+    compare recovered text against the contract's own strings, never against a
+    second copy of the escaping table.
+    """
+    for seq, char in [
+        (r"\textbackslash{}", "\\"), (r"\textasciitilde{}", "~"),
+        (r"\textasciicircum{}", "^"), (r"\textbar{}", "|"),
+        (r"\textless{}", "<"), (r"\textgreater{}", ">"),
+        (r"\textquotesingle{}", "'"), (r"\ldots{}", "..."),
+        (r"\&", "&"), (r"\%", "%"), (r"\#", "#"), (r"\_", "_"),
+        (r"\$", "$"), (r"\{", "{"), (r"\}", "}"),
+    ]:
+        cell = cell.replace(seq, char)
+    # Unescaping consumed every brace an escape sequence introduced, so what
+    # remains inside a code span is brace-free text.
+    return re.sub(r"\\texttt\{([^}]*)\}", r"\1", cell)
+
+
+def table_rows(md: str) -> dict[str, tuple[str, str]]:
+    """{variable: (type cell, description cell)} from the emitted LaTeX."""
+    rows = {}
+    for line in latex_block(md).splitlines():
+        if not line.startswith(r"\texttt{"):
+            continue
+        cells = line.rsplit(r" \\", 1)[0].split(" & ")
+        rows[plain_text(cells[0])] = (cells[1], cells[2])
+    return rows
+
+
+class TestLatexEscaping:
+    """Ticket 0325: the emitter writes raw LaTeX, so it owns the escaping.
+
+    `~` is a non-breaking space and a backtick is an opening quote in LaTeX;
+    both passed through unescaped, which turned the published reconstruction
+    recipe into its own complement.
+    """
+
+    def test_recipe_is_declared_once_and_reaches_both_copies(self):
+        """§3 prose and the contract carry the same expression, character for
+        character — the precondition for the rendered copies agreeing."""
+        with open(DATA_PAPER) as f:
+            paper = f.read()
+        assert f"`{RECIPE}`" in paper, "data-paper §3 no longer prints this recipe"
+        by_name = {v.name: v for v in DEPOSIT_VARIABLES}
+        assert f"`{RECIPE}`" in by_name["is_flagged"].description
+
+    def test_recipe_survives_latex_escaping(self):
+        """The tilde reaches the table as a tilde, not a non-breaking space."""
+        _, desc = table_rows(render_markdown_table())["is_flagged"]
+        assert RECIPE in plain_text(desc), \
+            f"recipe corrupted by the LaTeX emitter:\n{desc}"
+
+    def test_every_description_survives_unaltered(self):
+        """Exit criterion: no description loses or gains a character in transit."""
+        rows = table_rows(render_markdown_table())
+        for v in DEPOSIT_VARIABLES:
+            type_cell, desc_cell = rows[v.name]
+            assert plain_text(type_cell) == v.type
+            assert plain_text(desc_cell) == describe(v).replace("`", "")
+
+    def test_no_live_special_reaches_the_pdf(self):
+        """A bare `~` or backtick in raw LaTeX is markup, not a character."""
+        block = latex_block(render_markdown_table())
+        assert "`" not in block, "a backtick in raw LaTeX renders as an opening quote"
+        assert not re.search(r"(?<!\\text)~", block.replace(r"\textasciitilde{}", "")), \
+            "a bare tilde in raw LaTeX is a non-breaking space"
+
+    def test_code_spans_set_as_code(self):
+        block = latex_block(render_markdown_table())
+        assert r"\texttt{original}" in block, \
+            "abstract_status enumerates code literals; they must set as code"
+
+    def test_unbalanced_backtick_is_a_build_error(self):
+        """A malformed contract description fails loudly, not silently."""
+        with pytest.raises(ValueError, match="backtick"):
+            latex_inline("a `dangling span")
+
+
+class TestCodebookEscaping:
+    """The codebook is a Markdown pipe table; `|` in a cell splits the cell.
+
+    Same defect class as the LaTeX one — a delimiter in payload text — in the
+    other markup language the contract renders into. The shipped codebook cut
+    the recipe in half at the `|`.
+    """
+
+    def test_every_row_has_exactly_five_cells(self):
+        md = render_codebook({"doi": 0.0}, n_rows=1)
+        for line in md.splitlines():
+            if not line.startswith("|"):
+                continue
+            cells = re.split(r"(?<!\\)\|", line)
+            assert len(cells) == 7, f"row splits into the wrong cell count: {line}"
+
+    def test_recipe_survives_the_pipe_table(self):
+        md = render_codebook({}, n_rows=1)
+        row = next(ln for ln in md.splitlines() if ln.startswith("| `is_flagged`"))
+        assert row.replace("\\|", "|").count(RECIPE) == 1, \
+            f"recipe corrupted in the codebook:\n{row}"
 
 
 class TestDataPaperIntegration:
