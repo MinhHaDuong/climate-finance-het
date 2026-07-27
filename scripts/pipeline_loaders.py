@@ -298,6 +298,38 @@ def load_refined_embeddings():
     return np.load(REFINED_EMBEDDINGS_PATH)["vectors"]
 
 
+def _handoff_cache_is_current(feather_path, csv_path):
+    """True when the Feather handoff cache may stand in for its CSV.
+
+    The cache is a speed layer, not a source of truth: the Makefile rebuilds
+    it from the CSV (``make corpus-handoff``) whenever the CSV is newer. Any
+    invocation that skips that dependency — a script run directly, as the
+    module docstrings advertise — used to read the cache on mere existence,
+    and so silently served the previous corpus.
+
+    That is not hypothetical. After the 2026-07-27 rebuild the cache was three
+    days old: it had no ``language_provenance`` column at all and still
+    carried the pre-0297 ``language`` values, leaving 1,350 rows disagreeing
+    with the corpus and ``lang_english_pct`` at 89.86 against a measured 93.79
+    (ticket 0323). A rebuild that does not move the numbers defeats the whole
+    point of driving prose from vars.
+
+    An absent CSV is not staleness — reproducibility archives may ship either
+    file — so the cache is trusted when there is nothing to compare it to.
+    """
+    if not os.path.exists(csv_path):
+        return True
+    if os.path.getmtime(feather_path) >= os.path.getmtime(csv_path):
+        return True
+    _log.warning(
+        "%s is older than %s — reading the CSV instead. Run `make "
+        "corpus-handoff` to refresh the cache.",
+        os.path.basename(feather_path),
+        os.path.basename(csv_path),
+    )
+    return False
+
+
 def load_refined_works():
     """Load refined_works.csv (Feather-first) with standard type coercion.
 
@@ -306,7 +338,9 @@ def load_refined_works():
 
     Use ``load_analysis_corpus()`` when you need year-range or core filtering.
     """
-    if os.path.exists(REFINED_WORKS_FEATHER):
+    if os.path.exists(REFINED_WORKS_FEATHER) and _handoff_cache_is_current(
+        REFINED_WORKS_FEATHER, REFINED_WORKS_PATH
+    ):
         works = pd.read_feather(REFINED_WORKS_FEATHER)
     else:
         if not os.path.exists(REFINED_WORKS_PATH):
@@ -315,7 +349,7 @@ def load_refined_works():
                 f"{REFINED_WORKS_PATH}. "
                 "Run: make corpus-handoff"
             )
-        works = pd.read_csv(REFINED_WORKS_PATH)
+        works = pd.read_csv(REFINED_WORKS_PATH, low_memory=False)
     works["year"] = pd.to_numeric(works["year"], errors="coerce")
     works["cited_by_count"] = pd.to_numeric(
         works["cited_by_count"], errors="coerce"
@@ -332,7 +366,9 @@ def load_refined_citations():
     Run ``make corpus-align`` (or ``uv run python scripts/harvest/corpus_align.py``)
     to produce this file.
     """
-    if os.path.exists(REFINED_CITATIONS_FEATHER):
+    if os.path.exists(REFINED_CITATIONS_FEATHER) and _handoff_cache_is_current(
+        REFINED_CITATIONS_FEATHER, REFINED_CITATIONS_PATH
+    ):
         return pd.read_feather(REFINED_CITATIONS_FEATHER)
     if not os.path.exists(REFINED_CITATIONS_PATH):
         raise FileNotFoundError(

@@ -169,5 +169,6 @@ from pipeline_text import (
     is_valid_iso639_1,
     normalize_doi_safe,
     normalize_lang,
+    normalize_lang_display,
     normalize_title,
 )
