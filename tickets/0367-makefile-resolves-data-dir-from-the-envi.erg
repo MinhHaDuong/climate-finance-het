@@ -1,0 +1,99 @@
+%erg 0.1
+Title: Makefile resolves DATA_DIR from the environment like the Python side
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T15:52Z HDMX-coding-agent created
+2026-07-27T15:55Z HDMX-coding-agent note Found while wiring ticket 0354's deposit gate: make could not reach a corpus the Python scripts read fine
+
+--- body ---
+## Context
+
+`DATA_DIR` is machine-dependent — the corpus lives on a separate disk on
+padme, and a worktree has no corpus of its own — but the Makefile hardcodes it:
+
+```make
+DATA_DIR     := data/catalogs      # Makefile:37
+```
+
+Python resolves the same location from the environment
+(`pipeline_loaders.py`: `os.environ.get("CLIMATE_FINANCE_DATA")`, falling back
+to `<repo>/data`), and `build/build_datapaper_archive.sh:27` honours the same
+override:
+
+```bash
+DATA_DIR="${CLIMATE_FINANCE_DATA:-$PROJ_ROOT/data}/catalogs"
+```
+
+Two of the three entry points respect the override; `make` does not. The
+Makefile's own comment claims otherwise — "Python scripts resolve the same
+paths via utils.py" (line 35) — which holds only while the variable is unset.
+
+The symptom is a prerequisite `make` believes is unbuildable while the script
+it would run reads the file perfectly well:
+
+```
+make: *** No rule to make target 'data/catalogs/extended_works.csv',
+      needed by 'data/derived/deposit/climate_finance_corpus.csv'.
+```
+
+Found while wiring ticket 0354's deposit gate from a worktree. The workaround
+was symlinking 35 corpus files into the worktree — throwaway scaffolding for
+what should be a one-line fix.
+
+## Relevant files
+
+- `Makefile:37` — the hardcoded `DATA_DIR`; line 35's comment overstates the
+  agreement with Python.
+- `scripts/pipeline_loaders.py:56-58` — the `CLIMATE_FINANCE_DATA` override
+  Python honours.
+- `build/build_datapaper_archive.sh:27` — the shell precedent for the same
+  override.
+- `.claude/rules/architecture.md` § Data location — documents the override as
+  the way to relocate data, so the Makefile is the exception to its own rule.
+
+## Actions
+
+1. Resolve `DATA_DIR` from the environment with the repo-local default:
+   `DATA_DIR ?= $(if $(CLIMATE_FINANCE_DATA),$(CLIMATE_FINANCE_DATA),data)/catalogs`.
+2. Correct the line-35 comment to say all three entry points — make, Python,
+   and the archive scripts — read one override.
+3. Check the other data-root-derived Make variables (`DERIVED` in `paths.mk`,
+   and any reference to `pool/`, `exports/`, `syllabi/`) for the same
+   hardcoding and fix them in the same commit — one logical unit, per the
+   rename-sweep rule.
+
+## Test
+
+An adherence test asserting the Makefile does not hardcode the data root: grep
+the Makefile and `paths.mk` for an assignment of a data path that does not
+reference `CLIMATE_FINANCE_DATA`, and fail on a match. Source inspection, no
+subprocess — the shape `tests/test_phase_layout.py` already uses to parse the
+Makefile for path discipline.
+
+Red first: the test fails on today's `DATA_DIR := data/catalogs`.
+
+## Verification
+
+- [ ] `CLIMATE_FINANCE_DATA=/abs/path make check-corpus` succeeds with no
+      corpus in the worktree and no symlinks
+- [ ] Unset, `make` resolves `data/catalogs` exactly as now
+- [ ] `make deposit-validate` runs in a fresh worktree given only the override
+
+## Invariants
+
+- The no-override default is unchanged, so nothing moves on a machine that
+  keeps data in-repo.
+- `tests/test_phase_layout.py` keeps passing: it reads Make variables to check
+  that no Phase-2 output lands under `data/catalogs/`, so a variable expanded
+  through an environment lookup must still parse for it.
+- No script gains a second way to find the corpus — this removes a divergence
+  rather than adding a mechanism.
+
+## Exit criteria
+
+- [ ] `make` honours `CLIMATE_FINANCE_DATA` for every data-root path
+- [ ] Adherence test fails on a hardcoded data root (red→green)
+- [ ] Makefile comment describes the actual behaviour
+- [ ] `make check` passes

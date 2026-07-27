@@ -5,6 +5,7 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-07-27T19:05Z HDMX-coding-agent created
+2026-07-27T19:25Z HDMX-coding-agent note Renumbered 0386 -> 0388: PR #1215 renumbered another ticket onto 0386 minutes before #1216 merged. Both PRs were fixing the same duplicate 0385, independently, to different target ids.
 
 --- body ---
 ## Context

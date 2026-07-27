@@ -8,6 +8,7 @@ Closed: regenerated: rebuild had completed; bimodality tables rebuilt with dipte
 2026-07-27T15:45Z HDMX-coding-agent created
 
 2026-07-27T16:01Z HDMX-coding-agent closed — regenerated: rebuild had completed; bimodality tables rebuilt with diptest
+2026-07-27T18:01Z HDMX-coding-agent note the Invariants' 'run from the primary checkout' advice is obsoleted for the empty-data half by 0360: post-checkout now shares the DVC cache, so 'make data' populates a worktree
 --- body ---
 ## Context
 

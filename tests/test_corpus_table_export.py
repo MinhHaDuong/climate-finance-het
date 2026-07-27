@@ -1,14 +1,17 @@
-"""Tests for export_corpus_table.py — ticket #252, #270.
+"""Tests for export_corpus_table.py — ticket #252, #270, 0370.
 
-Verifies that the exported CSV has correct columns and that Raw counts
-use from_* columns (not the source column fallback).
+Verifies that the exported CSV has correct columns, that Raw counts use
+from_* columns (not the source column fallback), and that the Markdown
+sibling survives rendering with a pipe-bearing value (ticket 0370).
 """
 
 import os
 import sys
+from html import escape
 
 import pandas as pd
 import pytest
+from _gfm_render import cell_texts, render_gfm, require_pandoc, row_with
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "figures"))  # 0255: moved figures entry points
@@ -194,3 +197,107 @@ class TestKeydocsSourcesPreV2Data:
         assert count_sources(v1) == 6
         v2 = pd.DataFrame(columns=list(v1.columns) + ["from_unfccc", "from_oecd"])
         assert count_sources(v2) == 8
+
+
+# --- Ticket 0370: the Markdown sibling must survive rendering ---
+
+# A pipe in a source label is not a hypothetical the emitter gets to rule out:
+# `SOURCE_META` is edited by hand and its labels are free text. The shape is the
+# one that already shipped twice — 0325 in the deposit codebook, 0339 in both
+# venue tables — where a raw `|` ends the cell and GFM drops the overflow
+# instead of erroring.
+PIPE_SOURCE = "OECD DAC | CRS key documents"
+PIPE_TOTAL = "TOTAL | all sources"
+
+_MD_COLUMNS = ["Source", "Raw", "Refined", "Unique",
+               "%non-EN", "%DOI", "%Abstract", "%Refs"]
+
+
+def _summary_row(source: str) -> dict:
+    return {
+        "Source": source, "Raw": 1200, "Refined": 900, "Unique": 300,
+        "%non-EN": "12%", "%DOI": "88%", "%Abstract": "77%", "%Refs": "66%",
+    }
+
+
+# The caption is a paragraph below the table, not a row, so its content cannot
+# split a cell — any placeholder does here. Kept out of the rows deliberately:
+# these tests are about the row values, and a caption carrying a `|` would only
+# muddy which side of the table an assertion is talking about.
+_CAPTION = ": Corpus sources. {#tbl-quality}"
+
+
+def _render(summary: pd.DataFrame, tmp_path) -> str:
+    """Run the real emitter, then read its output back through pandoc."""
+    from export_corpus_table import _write_md_table
+
+    output = tmp_path / "tab_corpus_sources.md"
+    _write_md_table(summary, str(output), _CAPTION)
+    return render_gfm(output.read_text(encoding="utf-8"), tmp_path)
+
+
+@pytest.mark.integration
+def test_pipe_bearing_source_keeps_its_eight_cells(tmp_path):
+    """A `|` in a source label must not shift the row's numbers one column left.
+
+    Asserted on the rendered page, not on the emitted source: the renderer is
+    the only thing that sees the split, and it reports it by silently dropping
+    the overflow (ticket 0325).
+    """
+    require_pandoc()
+    summary = pd.DataFrame([_summary_row(PIPE_SOURCE)], columns=_MD_COLUMNS)
+
+    row = row_with(_render(summary, tmp_path), "OECD DAC")
+
+    assert cell_texts(row) == [
+        escape(PIPE_SOURCE, quote=False),
+        "1,200", "900", "300", "12%", "88%", "77%", "66%",
+    ], f"the source label split the row:\n{row}"
+
+
+@pytest.mark.integration
+def test_total_row_stays_bold_around_an_escaped_value(tmp_path):
+    """The TOTAL branch wraps its value in `**…**` — escape first, wrap second.
+
+    Wrapping first would put the emphasis markers where the escaper cannot see
+    them, and escaping the whole `**value**` string is what a later edit to the
+    helper's character set would turn into a literal `\\*\\*`.
+    """
+    require_pandoc()
+    summary = pd.DataFrame([_summary_row(PIPE_TOTAL)], columns=_MD_COLUMNS)
+
+    row = row_with(_render(summary, tmp_path), "TOTAL")
+
+    assert "<strong>" in row, f"the TOTAL row lost its emphasis:\n{row}"
+    assert cell_texts(row) == [
+        escape(PIPE_TOTAL, quote=False),
+        "1,200", "900", "300", "12%", "88%", "77%", "66%",
+    ], f"the TOTAL label split the row:\n{row}"
+
+
+def test_shipped_labels_are_untouched_by_the_escaper(tmp_path):
+    """Escaping must be a no-op on every label the corpus build actually emits.
+
+    The fix is worthless if it churns `tab_corpus_sources.md` on the next
+    regeneration: a diff on every row would hide the one row that changed for a
+    real reason. No `SOURCE_META` label carries an escapable character today,
+    so the emitted table must carry no backslash at all.
+    """
+    from export_corpus_table import SOURCE_META, _write_md_table
+
+    summary = pd.DataFrame(
+        [_summary_row(meta["label"]) for meta in SOURCE_META.values()],
+        columns=_MD_COLUMNS,
+    )
+    output = tmp_path / "tab_corpus_sources.md"
+    _write_md_table(summary, str(output), _CAPTION)
+    emitted = output.read_text(encoding="utf-8")
+
+    assert "\\" not in emitted, (
+        "escaping churned a shipped label — regenerating the table would "
+        f"rewrite rows that did not change:\n{emitted}"
+    )
+    for meta in SOURCE_META.values():
+        assert f"| {meta['label']} |" in emitted, (
+            f"label {meta['label']!r} was rewritten by the escaper"
+        )

@@ -43,7 +43,6 @@ deliverables/_shared/figures/*
 !deliverables/_shared/figures/fig_global_map_direct.png
 deliverables/_shared/tables/*
 !deliverables/_shared/tables/tab_variables.md
-!deliverables/_shared/tables/codebook.md
 # Retrieval-protocol appendix (ticket 0329): rendered from the harvest config,
 # deposited so a referee can reconstruct the query without reading the code.
 # Committed like its table twins — it needs no Phase-1 data to regenerate.

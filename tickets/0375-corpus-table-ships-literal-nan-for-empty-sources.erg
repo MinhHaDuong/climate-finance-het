@@ -1,0 +1,80 @@
+%erg 0.1
+Title: export_corpus_table ships a literal "nan" when a source refines to zero works
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T18:25Z HDMX-coding-agent created
+2026-07-27T18:25Z HDMX-coding-agent note found by the #1191 review panel while reading the escaping fix; pre-existing, not introduced by ticket 0370
+
+--- body ---
+## Context
+
+`scripts/figures/export_corpus_table.py:167-172` builds the row for a source
+whose refined count is zero with five of the eight dict keys — `Source`,
+`Query`, `Raw`, `Refined`, `Unique` — and skips the four percentage columns.
+`pd.DataFrame(rows)` then fills those columns with `NaN` for that row.
+
+`_write_md_table` reads each cell with `row.get(c, "")`. The key *is* present
+in the Series, holding `NaN`, so the `""` default never fires: the cell becomes
+`str(float('nan'))`. The shipped table gets the literal string `nan` in four
+columns, and the `.csv` sibling gets the same.
+
+Pre-existing — the code did this before ticket 0370 touched the line, and 0370
+deliberately did not widen its scope to cover it. It is latent rather than
+live: it needs a source present in `unified_works.csv` whose every record is
+dropped by the six-flag quality filter. The `unfccc` and `oecd` key-document
+layers are the plausible candidates, since `sources_present` admits a source as
+soon as its `from_*` column exists in either frame.
+
+An empty cell is the right output. A dash would also be defensible; `nan` is
+not, in a published data paper's quality table.
+
+## Relevant files
+
+- `scripts/figures/export_corpus_table.py:167-172` — the five-key row
+- `scripts/figures/export_corpus_table.py:104-113` — `_write_md_table`, where
+  `row.get(c, "")` fails to catch it
+- `tests/test_corpus_table_export.py` — where the regression test belongs;
+  ticket 0370's `_summary_row` helper and `_render` oracle are already there
+
+## Actions
+
+1. Decide where to fix it. Filling the missing keys at the row-building site is
+   the narrower change and keeps the `.csv` correct too; coercing `NaN` to `""`
+   in `_write_md_table` fixes only the Markdown side. Prefer the row-building
+   site, and state the choice in the commit.
+2. Check the TOTAL row cannot reach the same shape.
+3. Confirm the `.csv` sibling carries an empty field, not the string `nan` —
+   the invariant in 0370 was that escaping is a Markdown concern; this one is
+   not, and touches both outputs.
+
+## Test
+
+Red first, in `tests/test_corpus_table_export.py`: build a summary from a rows
+list where one source dict carries only the five keys, run it through
+`_write_md_table`, and assert on the rendered row (via `tests/_gfm_render.py`,
+the oracle 0325 established) that the four percentage cells are empty. Assert
+on the render, not on the emitted source.
+
+Cover the `.csv` path in the same ticket: drive the write and read the file
+back rather than asserting on the in-memory frame — a `columns=` allowlist has
+dropped a computed field before.
+
+## Verification
+
+- [ ] A zero-refined source renders four empty cells, not `nan`
+- [ ] The `.csv` row carries empty fields for the same four columns
+- [ ] Sources with a non-zero refined count are byte-unchanged
+- [ ] `make lint` and `make check-fast` hold
+
+## Invariants
+
+- No change to the shipped table on today's corpus — no source refines to zero
+  in the current build, so this must be a no-op there.
+- The escaping added in 0370 stays: whatever replaces `NaN` still routes
+  through `markdown_text_cell`.
+
+## Exit criteria
+
+- [ ] No `nan` can reach `tab_corpus_sources.md` or `tab_corpus_sources.csv`

@@ -205,11 +205,14 @@ KernelCPD) lives only in `compute_changepoints.py` — no inlined duplicate rema
   entry points match no listed prefix: `build_teaching_yaml`, `build_teaching_canon`
   (→ harvest, above) and `build_smoke_fixture` (→ analysis). Route them by phase,
   not prefix.
-- **Unwired orphans (4).** `analyze_alluvial`, `analyze_communities_clusters`,
-  `compute_temporal_communities`, `plot_interactive_corpus` have no `__main__`
-  guard and no Make target — they run at module top level and nothing invokes
-  them. Classified Tier-3 (not library surface), but they are dead-code
-  candidates: verify before moving, or triage separately. Out of 0254 scope.
+- **Unwired orphans (3).** `analyze_alluvial`, `analyze_communities_clusters`,
+  `compute_temporal_communities` have no `__main__` guard and no Make target —
+  they run at module top level and nothing invokes them. Classified Tier-3 (not
+  library surface), but they are dead-code candidates: verify before moving, or
+  triage separately. Out of 0254 scope. A fourth, `plot_interactive_corpus`,
+  was retired under ticket 0351 rather than triaged: nothing consumed its
+  output, and wiring it in would have meant regenerating a DVC-untracked input
+  for a figure in no deliverable.
 
 ## Ordered moves (risk ascending)
 

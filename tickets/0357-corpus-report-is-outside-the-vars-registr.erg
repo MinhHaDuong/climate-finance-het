@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-27T16:35Z HDMX-coding-agent created split out of 0329, which converted the data paper's thresholds but could not reach corpus-report's
 
+2026-07-27T18:52Z HDMX-coding-agent note live error, not drift risk: corpus-report renders 12 distinct unresolved keys (22 occurrences) as ?meta: placeholders today, confirmed by a real quarto render while building 0363's render oracle. That guard pins the exact set in tests/test_meta_macro_resolution.py KNOWN_UNRESOLVED and fails when this ticket's fix empties it.
 --- body ---
 ## Context
 

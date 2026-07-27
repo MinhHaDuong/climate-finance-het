@@ -9,7 +9,6 @@
 # The reason is load-bearing, not decoration: a redundancy check fails the suite
 # when an entry becomes reachable, so this file cannot rot into a mute skip-list.
 
-deliverables/_shared/tables/codebook.md — data dictionary for the Zenodo deposit (per-column allowed values and measured missingness), not a paper float; data-paper.qmd §3 points readers to it by name
 
 deliverables/_shared/tables/tab_retrieval_protocol.md — deposited in the Zenodo package (build_datapaper_archive.sh copies it to data/products/), not a paper float; data-paper.qmd §2 points readers to it by name for the full per-source protocol and grey-literature seed list (ticket 0329)
 

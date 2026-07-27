@@ -1,0 +1,92 @@
+%erg 0.1
+Title: dvc gc from a worktree can delete blobs the primary checkout still needs
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T18:32Z HDMX-coding-agent created
+2026-07-27T18:36Z HDMX-coding-agent note raised by the review-pr panel on PR #1179 and reproduced there; filed rather than fixed in that PR because a guard is a different change from the hook fix
+
+--- body ---
+## Context
+
+Ticket 0360 pointed every worktree's `.dvc/cache` at the primary checkout's, so
+`make data` can work in a worktree. That is the right fix, and it widens the
+blast radius of exactly one command.
+
+`dvc gc` prunes by reachability computed from **whichever checkout invokes
+it**. Before 0360 a worktree's cache was private and empty, so running it there
+was near-harmless. Now a single 19 GB cache sits behind every checkout, and a
+worktree pinned to an old `dvc.lock`, or one mid-rebuild that has not pushed,
+computes a smaller reachable set than the primary's and deletes the difference.
+The review panel on PR #1179 reproduced this, sequentially, with no race
+involved.
+
+The repo has already paid for this lesson once in a narrower form:
+`tickets/closed/0252-*.erg` names "the dvc gc caveat" as the reason 8 orphan
+pointers were deliberately kept.
+
+## Why prose is not enough
+
+0360 documented the hazard in `.claude/rules/architecture.md` § Data location
+and in the hook comment. That is the right place for the explanation, but a
+comment does not stop a data-destroying command, and the loss is silent until
+someone needs a blob that is gone. The remote (`padme`) makes it recoverable,
+which lowers the severity — it does not make it a non-event.
+
+## Relevant files
+
+- `.githooks/post-checkout` — creates the shared-cache symlink
+- `.claude/rules/architecture.md` § Data location — where the hazard is written down
+- `Makefile` — where a wrapper target would live
+- `tickets/closed/0252-*.erg` — the earlier encounter with the caveat
+
+## Actions
+
+1. Decide the mechanism. Options, cheapest first:
+   - a `gc:` Make target that refuses to run when the invoking checkout is a
+     worktree (`git rev-parse --git-common-dir` differs from `.git`), telling
+     the caller to run it from the primary checkout;
+   - the same check as a guard script, so it also catches a bare `dvc gc`;
+   - `--workspace` scoping conventions documented and enforced in the target.
+2. Implement the chosen guard.
+3. Point the architecture.md note at it, so the prose describes a mechanism
+   rather than asking for care.
+
+## Known limit of the Makefile-refusal design
+
+`.dvc/tmp/lock` is per-worktree, so it does not serialize across checkouts. A
+`make gc` refusal catches the sequential wrong-cwd case, which is the one
+actually observed, but not a live `dvc gc` racing a sibling worktree's reader.
+Raised by the review panel on PR #1179. If the cheap guard is chosen, say so
+here rather than implying full coverage.
+
+## Test
+
+Integration, and it must assert the refusal rather than the wording:
+
+    # from a worktree
+    make gc            # exits non-zero, cache untouched, message names the primary
+    # from the primary checkout
+    make gc            # proceeds
+
+Assert the cache is unchanged after the refused run (entry count, or a sentinel
+blob that must survive).
+
+## Verification
+
+- [ ] `dvc gc` (or the wrapping target) refuses from a worktree
+- [ ] It still works from the primary checkout
+- [ ] A refused invocation leaves the cache byte-identical
+
+## Invariants
+
+- The 0360 sharing stays — this ticket guards the hazard, it does not undo the
+  fix by giving worktrees private caches again.
+- No guard may make an ordinary `make data` slower or interactive.
+
+## Exit criteria
+
+- [ ] A worktree cannot prune the shared cache without an explicit, deliberate
+      override, and the architecture.md note points at the mechanism instead of
+      asking the reader to remember.

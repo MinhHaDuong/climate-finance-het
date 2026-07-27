@@ -2,15 +2,16 @@
 Title: Standing guard — tracked prose must not name a script path that does not exist
 Created: 2026-07-27
 Author: HDMX-coding-agent
-Blocked-by: 0386
+Blocked-by: 0388
 
 --- log ---
 2026-07-27T19:06Z HDMX-coding-agent created
+2026-07-27T19:25Z HDMX-coding-agent note Blocker repointed 0386 -> 0388: a parallel session's renumber took 0386 first.
 
 --- body ---
 ## Context
 
-Companion to ticket 0386, which fixes the instances. This one stops the class
+Companion to ticket 0388, which fixes the instances. This one stops the class
 coming back.
 
 The class has now been fixed twice and returned twice. Ticket 0235 ("stale
@@ -65,9 +66,9 @@ follow. Scope it there and the false-positive rate goes to zero.
 
 ## Test
 
-The guard *is* the deliverable. Its own red step: with 0386 reverted, the test
+The guard *is* the deliverable. Its own red step: with 0388 reverted, the test
 names `deliverables/_shared/_includes/alluvial-diagram.md` and
-`structural-breaks.md` and fails. With 0386 applied, green. Assert on the
+`structural-breaks.md` and fails. With 0388 applied, green. Assert on the
 message content too — a guard that fails without naming the offending file
 and path costs more than it saves.
 
@@ -76,7 +77,7 @@ that does exist, and confirm the test rejects the redundant entry.
 
 ## Verification
 
-- [ ] Red before 0386's fix, green after, on the real files
+- [ ] Red before 0388's fix, green after, on the real files
 - [ ] Failure message names file, line, and the unresolved path
 - [ ] A redundant allowlist entry fails the test
 - [ ] `make lint` green; the test is `adherence`-marked, not in the fast tier

@@ -3,8 +3,8 @@
 The editor asked that the Zenodo package distinguish raw data inputs (the
 per-source catalogs such as ``bibcnrs_works.csv``) from the final data
 products of the paper (``climate_finance_corpus.csv``, ``embeddings.npz``,
-``citations.csv``, ``codebook.md``). The build script must stage that split
-reproducibly — ``data/inputs/`` vs ``data/products/`` — and the README
+``citations.csv``, and the descriptor ``datapackage.json``). The build script
+must stage that split reproducibly — ``data/inputs/`` vs ``data/products/`` — and the README
 template and paper text must describe the same layout.
 
 Mechanical greps in the spirit of test_archive_script_paths.py: they pin the
@@ -25,11 +25,11 @@ REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 BUILD_SCRIPT = os.path.join(REPO, "build", "build_datapaper_archive.sh")
 README = os.path.join(REPO, "build", "templates", "README-datapaper.md")
 QMD = os.path.join(REPO, "deliverables", "data-paper", "data-paper.qmd")
-GITIGNORE = os.path.join(REPO, ".gitignore")
-CODEBOOK = os.path.join(REPO, "deliverables", "_shared", "tables", "codebook.md")
+MAKEFILE_DATAPAPER = os.path.join(REPO, "build", "templates", "Makefile.datapaper")
 
 PRODUCTS = [
-    "climate_finance_corpus.csv", "embeddings.npz", "citations.csv", "codebook.md",
+    "climate_finance_corpus.csv", "embeddings.npz", "citations.csv",
+    "datapackage.json",
     # The retrieval-protocol appendix §2.1 points referees at (ticket 0329).
     "tab_retrieval_protocol.csv", "tab_retrieval_protocol.md",
 ]
@@ -38,6 +38,43 @@ PRODUCTS = [
 def _read(path):
     with open(path) as f:
         return f.read()
+
+
+class TestRenderRuleTracksTheIncludeClosure:
+    """The archived render rule's shared tables must equal the tables the paper
+    includes (ticket 0384, gap 5).
+
+    The build script stages tables by discovering the paper's own
+    `{{< include >}}` directives, so staging cannot go stale. The Makefile's
+    prerequisite list is hand-kept and did: it named four tables where the
+    paper includes five, so editing `tab_corpus_flow.md` gave Make no reason to
+    re-render. The archive still shipped the file, which is why nothing failed
+    — only staleness detection broke.
+    """
+
+    def _included_tables(self):
+        return set(
+            re.findall(r"\{\{<\s*include\s+\S*tables/(\S+\.md)", _read(QMD))
+        )
+
+    def _render_rule_tables(self):
+        return set(
+            re.findall(r"\$\(SHARED\)/tables/(\S+\.md)", _read(MAKEFILE_DATAPAPER))
+        )
+
+    def test_render_rule_lists_every_included_table(self):
+        missing = self._included_tables() - self._render_rule_tables()
+        assert not missing, (
+            "Makefile.datapaper's render rule omits tables data-paper.qmd "
+            f"includes, so Make cannot see them go stale: {sorted(missing)}"
+        )
+
+    def test_render_rule_lists_no_table_the_paper_dropped(self):
+        extra = self._render_rule_tables() - self._included_tables()
+        assert not extra, (
+            "Makefile.datapaper's render rule requires tables the paper no "
+            f"longer includes, forcing needless rebuilds: {sorted(extra)}"
+        )
 
 
 class TestBuildScriptLayout:
@@ -95,11 +132,18 @@ class TestBuildScriptLayout:
             f"checksum generation must recurse into inputs/ and products/: {line!r}"
         )
 
-    def test_codebook_source_exists(self):
-        """codebook.md is a committed deliverable (ticket 0287) the build cp's."""
-        assert os.path.isfile(CODEBOOK), (
-            "deliverables/_shared/tables/codebook.md must exist (make corpus-tables "
-            "generates it; it is committed like its table twins)"
+    def test_descriptors_are_emitted_then_validated(self):
+        """The descriptors are generated into products/, not copied in.
+
+        Order is the guarantee: emitted from the CSV just written, then
+        validated against it, before anything is packaged (ticket 0354).
+        """
+        sh = _read(BUILD_SCRIPT)
+        emit = sh.index("export_datapackage.py")
+        validate = sh.index("frictionless validate")
+        tar = sh.index("tar czf")
+        assert emit < validate < tar, (
+            "emit -> validate -> package, so an invalid deposit cannot be shipped"
         )
 
 
@@ -215,9 +259,3 @@ class TestDepositCountsTrackTheCorpus:
         """The v2 harvest adds two source layers, so the archive's data files
         do change; the runbook must not tell the author otherwise."""
         assert "unchanged from the previous version" not in _read(self.ED04)
-
-
-class TestGitignoreCodebookNegation:
-    def test_codebook_unignored(self):
-        gi = _read(GITIGNORE)
-        assert "!deliverables/_shared/tables/codebook.md" in gi

@@ -40,15 +40,18 @@ Manuscript RDJ-26561, "A Curated Corpus of Climate Finance Literature,
    corpus; a replication of prior mappings' published queries shows 89–91%
    coverage of the climate finance populations they drew on. (ED-02, R1-18)
 
-7. **Variables table and codebook.** Section 3 adds a generated table
+7. **Variables table and data dictionary.** Section 3 adds a generated table
    describing every variable of `climate_finance_corpus.csv`; the Zenodo
-   deposit ships a formal data dictionary (`codebook.md`) with per-column
-   type, allowed values, and measured missingness. (ED-03, R1-19)
+   deposit ships a machine-readable data dictionary (`datapackage.json`, a
+   Frictionless Table Schema) with per-column storage type, allowed values,
+   ranges, and measured missingness. It is executable, so a reader can check
+   the deposited file against it rather than trust the documentation.
+   (ED-03, R1-19)
 
 8. **Zenodo package restructured.** The deposit (same concept DOI) now
    separates `data/inputs/` (per-source catalogs) from `data/products/`
-   (final corpus, embeddings, citations, codebook), with `code/` holding the
-   pipeline. (ED-04)
+   (final corpus, embeddings, citations, `datapackage.json`), with `code/`
+   holding the pipeline. (ED-04)
 
 9. **Wording fixes.** Working-paper series named beyond RePEc (NBER, MPRA);
    the non-English coverage claim reworded to incremental coverage only.

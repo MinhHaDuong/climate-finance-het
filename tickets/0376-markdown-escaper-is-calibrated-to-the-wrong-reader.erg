@@ -1,0 +1,108 @@
+%erg 0.1
+Title: The Markdown cell escaper is calibrated to GFM, but the manuscript renders through pandoc-markdown
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T19:05Z HDMX-coding-agent created
+2026-07-27T19:05Z HDMX-coding-agent note raised by the #1191 red-team agent, re-triaged from blocker to its own ticket, and reproduced independently before filing
+
+--- body ---
+## Context
+
+`scripts/_markdown_table.py` escapes three characters — `\`, `|`, `` ` `` — and
+the render oracle that validates it, `tests/_gfm_render.py`, runs
+`pandoc -f gfm`. Both are calibrated to GitHub-Flavored Markdown.
+
+Quarto does not read GFM. It renders through pandoc's `markdown` reader, where
+several more characters are live syntax. Reproduced on this machine:
+
+    | A | B |
+    |---|---|
+    | Grey lit @smith2020 set | x |
+    | Tilde ~sub~ and ^sup^   | y |
+
+Under `-f gfm` all three render literally. Under `-f markdown`, `@smith2020`
+becomes `<span class="citation">` and the tildes and carets become `<sub>` and
+`<sup>`. `deliverables/data-paper/data-paper.qmd:11` and
+`deliverables/corpus-report/corpus-report.qmd:7` both set `bibliography:`, so
+citeproc runs: a cell value carrying an `@` that collides with a real
+bibliography key renders a wrong citation, silently, in a published table.
+
+Two consequences, and the second is the reason this is filed rather than
+folded into 0370:
+
+1. The escaper's character set is too narrow for the reader that actually
+   renders the tables.
+2. **The oracle cannot see it.** Every test written for 0325, 0339 and 0370
+   asserts through `-f gfm`, so all of them would stay green while the rendered
+   manuscript carried the defect. That is the same failure the render-oracle
+   discipline was introduced to prevent, one reader-flag deeper.
+
+## Scope — this predates 0370 and is wider than it
+
+The gap lives in the shared helper, so it reaches every caller: the deposit
+codebook (0325), both venue tables and the core-venues table (0339), and the
+corpus-sources and language tables (0370). The venue emitters are the most
+plausible carrier by a wide margin — they interpolate *journal names straight
+out of the bibliographic corpus*, where an `@` is far likelier than in a
+hand-edited source label. Those emitters are already merged.
+
+So this is not a regression from 0370 and 0370 does not worsen it. One fix in
+the helper plus one fix in the oracle covers six emitters at once, which is
+why it is worth its own ticket rather than a sixth item on a fix-the-emitter PR.
+
+## Relevant files
+
+- `scripts/_markdown_table.py` — `_GFM_LITERAL`, the three-character map; the
+  module docstring's rationale for the scope needs revising with it
+- `tests/_gfm_render.py` — `render_gfm`, the `-f gfm` oracle used by every
+  escaping test
+- `tests/test_markdown_table.py`, `tests/test_rendered_venue_table_fidelity.py`,
+  `tests/test_corpus_table_export.py`, `tests/test_language_table.py` — the
+  callers of that oracle
+- `deliverables/data-paper/data-paper.qmd`,
+  `deliverables/corpus-report/corpus-report.qmd` — `bibliography:` set
+
+## Actions
+
+1. Establish which reader Quarto invokes for these documents, and with which
+   extensions. Do not assume plain `markdown`; read it off a real Quarto run
+   rather than off the docs, and record the answer in the module docstring.
+2. Switch the oracle to that reader. This is the load-bearing step — do it
+   first, so the character-set change lands against a test that can fail.
+3. Widen `_GFM_LITERAL` to whatever the reader makes live in a table cell
+   (`@`, `~`, `^` at minimum), keeping the existing rule that constructs
+   needing a matched pair are left alone so shipped tables do not churn.
+4. Re-check the no-churn pins in all six emitters. If widening the set rewrites
+   a currently-shipped value, that is a finding, not a nuisance — report it
+   before suppressing it.
+
+## Test
+
+Red first, in `tests/test_markdown_table.py`: feed `markdown_text_cell` a value
+containing `@smith2020`, render through the **Quarto reader** with a
+bibliography in scope, and assert the cell text is the literal string — no
+`<span class="citation">`. It must fail today, and it will only fail once
+action 2 has landed, which is the point of that ordering.
+
+Add the same shape for `~` and `^`.
+
+## Verification
+
+- [ ] The new test fails under the current three-character map and passes after
+- [ ] Every existing escaping test still passes against the new oracle
+- [ ] Regenerating all six tables on a corpus machine is a no-op, or each
+      changed value is explained
+- [ ] `make lint` and `make check-fast` hold
+
+## Invariants
+
+- The two-function split (`markdown_cell` vs `markdown_text_cell`) is unchanged
+  — this widens a character set, it does not merge the contracts.
+- `markdown_text_cell` still never raises.
+
+## Exit criteria
+
+- [ ] The escaper's character set matches the reader that renders the tables
+- [ ] No escaping test asserts through a reader the build does not use

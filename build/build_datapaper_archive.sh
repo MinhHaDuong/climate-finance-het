@@ -6,8 +6,11 @@
 #                     all at their repo paths so deliverables/ works as it does here
 #   data/inputs/    — raw data inputs (per-source catalogs, pre-merge)
 #   data/products/  — final data products of the paper (corpus CSV without
-#                     abstracts, embeddings, citations, codebook)
+#                     abstracts, embeddings, citations, and the
+#                     machine-readable descriptor datapackage.json)
 # Raw-vs-product split per RDJ-26561 remark ED-04 (ticket 0280).
+# The build validates the deposited CSV against its own datapackage.json and
+# aborts on any violation (ticket 0354).
 #
 # Prerequisites: make check-corpus corpus-tables figures-datapaper
 # Usage: bash build/build_datapaper_archive.sh
@@ -55,10 +58,23 @@ cd "$PROJ_ROOT"
 PYTHONPATH="scripts:libs/openalex-corpus/src${PYTHONPATH:+:$PYTHONPATH}" \
     uv run --env-file .env python scripts/figures/export_deposit.py --output "$TMP/data/products/climate_finance_corpus.csv"
 
-echo "  Copying final products (embeddings, citations, codebook)..."
+# Machine-readable descriptor of the CSV just written, emitted beside it and
+# then enforced against it (ticket 0354). The gate is deliberately here rather
+# than only in `make deposit-validate`: the archive must not be packageable
+# while the deposited bytes contradict the schema it publishes. `set -e` aborts
+# the build on a non-zero validate.
+echo "  Emitting the deposit descriptor (datapackage.json)..."
+PYTHONPATH="scripts:libs/openalex-corpus/src${PYTHONPATH:+:$PYTHONPATH}" \
+    uv run --env-file .env python scripts/figures/export_datapackage.py \
+        --input "$TMP/data/products/climate_finance_corpus.csv" \
+        --output "$TMP/data/products/datapackage.json"
+
+echo "  Validating the deposited CSV against its own datapackage.json..."
+uv run --env-file .env frictionless validate "$TMP/data/products/datapackage.json"
+
+echo "  Copying final products (embeddings, citations)..."
 cp -L "$DATA_DIR/embeddings.npz" "$TMP/data/products/"
 cp -L "$DATA_DIR/citations.csv" "$TMP/data/products/"
-cp "$PROJ_ROOT/deliverables/_shared/tables/codebook.md" "$TMP/data/products/"
 # Retrieval-protocol appendix (ticket 0329): the paper points referees here for
 # the query fields, per-tier term counts, and the grey-literature enumeration.
 cp "$PROJ_ROOT/deliverables/_shared/tables/tab_retrieval_protocol.csv" "$TMP/data/products/"

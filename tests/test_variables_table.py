@@ -21,11 +21,10 @@ from _deposit_variables import (
     contract_names,
     describe,
     latex_inline,
-    markdown_cell,
-    render_codebook,
     render_markdown_table,
     transform,
 )
+from _markdown_table import markdown_cell
 from utils import FROM_COLS, WORKS_COLUMNS
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
@@ -85,7 +84,7 @@ class TestContract:
     def test_contract_nonempty_rows_well_formed(self):
         assert len(DEPOSIT_VARIABLES) > 20
         for var in DEPOSIT_VARIABLES:
-            assert var.name and var.type and var.description and var.source
+            assert var.name and var.dtype and var.description and var.source
 
     def test_v2_provenance_columns_documented(self):
         names = contract_names()
@@ -140,15 +139,13 @@ class TestDataDictionary:
         assert order == [g for g in GROUPS if g in seen], \
             "contract order must follow the four logical groups without interleaving"
 
-    def test_enumerated_columns_declare_allowed_values(self):
+    def test_enumerated_columns_declare_their_value_set(self):
+        """Closed value sets live in `enum`, which the descriptor enforces."""
         by_name = {v.name: v for v in DEPOSIT_VARIABLES}
-        assert "original" in by_name["abstract_status"].allowed_values
-        assert "curated" in by_name["abstract_provenance"].allowed_values
-        assert "extracted" in by_name["keywords_provenance"].allowed_values
-        assert "openalex" in by_name["source"].allowed_values
-        for v in DEPOSIT_VARIABLES:
-            if v.type.startswith("boolean"):
-                assert v.allowed_values, f"boolean {v.name} needs allowed_values"
+        assert "original" in by_name["abstract_status"].enum
+        assert "curated" in by_name["abstract_provenance"].enum
+        assert "extracted" in by_name["keywords_provenance"].enum
+        assert "openalex" in by_name["source"].enum
 
     def test_compute_missingness_counts_nan_and_empty(self):
         df = pd.DataFrame({
@@ -160,19 +157,6 @@ class TestDataDictionary:
         assert miss["doi"] == pytest.approx(2 / 3)
         assert miss["title"] == 0.0
         assert "not_in_contract" not in miss
-
-    def test_render_codebook_grouped_and_complete(self):
-        miss = {"doi": 0.123, "title": 0.0}
-        md = render_codebook(miss, n_rows=42)
-        for g in GROUPS:
-            assert f"## {g}" in md
-        for name in contract_names():
-            assert f"`{name}`" in md
-        assert "12.3%" in md and "42" in md
-
-    def test_render_codebook_marks_absent_optional_columns(self):
-        md = render_codebook({"doi": 0.0}, n_rows=1)
-        assert "n/a" in md, "columns absent from the measured build show n/a"
 
     def test_variables_table_names_groups_in_caption(self):
         # Groups moved from a column to caption-only naming, with
@@ -238,8 +222,12 @@ def plain_text(cell: str) -> str:
     return re.sub(r"\\texttt\{([^}]*)\}", r"\1", cell)
 
 
-def table_rows(md: str) -> dict[str, tuple[str, str]]:
-    """{variable: (type cell, description cell)} from the emitted LaTeX."""
+def table_rows(md: str) -> dict[str, str]:
+    """{variable: description cell} from the emitted LaTeX.
+
+    Two columns since ticket 0354 dropped the Type column: storage types are
+    technical detail for the descriptor, not the paper (author, 2026-07-27).
+    """
     rows = {}
     for line in latex_block(md).splitlines():
         if not line.startswith(r"\texttt{"):
@@ -248,7 +236,7 @@ def table_rows(md: str) -> dict[str, tuple[str, str]]:
         # Optional variables carry OPTIONAL_MARK after the name (ticket 0332);
         # key the row on the variable itself.
         name = plain_text(cells[0]).removesuffix(OPTIONAL_MARK)
-        rows[name] = (cells[1], cells[2])
+        rows[name] = cells[1]
     return rows
 
 
@@ -271,7 +259,7 @@ class TestLatexEscaping:
 
     def test_recipe_survives_latex_escaping(self):
         """The tilde reaches the table as a tilde, not a non-breaking space."""
-        _, desc = table_rows(render_markdown_table())["is_flagged"]
+        desc = table_rows(render_markdown_table())["is_flagged"]
         assert RECIPE in plain_text(desc), \
             f"recipe corrupted by the LaTeX emitter:\n{desc}"
 
@@ -279,9 +267,7 @@ class TestLatexEscaping:
         """Exit criterion: no description loses or gains a character in transit."""
         rows = table_rows(render_markdown_table())
         for v in DEPOSIT_VARIABLES:
-            type_cell, desc_cell = rows[v.name]
-            assert plain_text(type_cell) == v.type
-            assert plain_text(desc_cell) == describe(v).replace("`", "")
+            assert plain_text(rows[v.name]) == describe(v).replace("`", "")
 
     def test_no_live_special_reaches_the_pdf(self):
         """A bare `~` or backtick in raw LaTeX is markup, not a character."""
@@ -308,21 +294,14 @@ class TestLatexEscaping:
             latex_inline("a `dangling span")
 
 
-class TestCodebookEscaping:
-    """The codebook is a Markdown pipe table; `|` in a cell splits the cell.
+class TestMarkdownCellEscaping:
+    """A raw `|` ends a pipe-table cell, so payload text must escape it.
 
-    Same defect class as the LaTeX one — a delimiter in payload text — in the
-    other markup language the contract renders into. The shipped codebook cut
-    the recipe in half at the `|`.
+    Same defect class as the LaTeX one — a delimiter inside payload — in the
+    other markup language the contract's descriptions render into. The retired
+    codebook published the recipe cut in half at the `|`; these rules are what
+    kept the remaining Markdown table emitters from repeating it.
     """
-
-    def test_every_row_has_exactly_five_cells(self):
-        md = render_codebook({"doi": 0.0}, n_rows=1)
-        for line in md.splitlines():
-            if not line.startswith("|"):
-                continue
-            cells = re.split(r"(?<!\\)\|", line)
-            assert len(cells) == 7, f"row splits into the wrong cell count: {line}"
 
     def test_backslash_is_escaped_only_where_markdown_reads_it(self):
         """Prose and code disagree on what a backslash means, so the cell
@@ -337,12 +316,6 @@ class TestCodebookEscaping:
     def test_pipe_is_escaped_on_both_sides_of_a_span(self):
         assert markdown_cell("a | b") == r"a \| b"
         assert markdown_cell("a `x | y` b") == r"a `x \| y` b"
-
-    def test_recipe_survives_the_pipe_table(self):
-        md = render_codebook({}, n_rows=1)
-        row = next(ln for ln in md.splitlines() if ln.startswith("| `is_flagged`"))
-        assert row.replace("\\|", "|").count(RECIPE) == 1, \
-            f"recipe corrupted in the codebook:\n{row}"
 
 
 class TestDataPaperIntegration:
