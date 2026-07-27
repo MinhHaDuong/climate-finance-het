@@ -263,21 +263,52 @@ def test_parser_flags_a_delimiter_row_of_the_wrong_width():
 
 
 def test_parser_flags_rows_orphaned_by_a_raw_newline():
-    """A newline inside a value ends the table; the rows below must not vanish.
+    """A newline inside a value ends the table; the break itself must be named.
 
     `markdown_cell` — the codebook path — does not fold newlines, so this hole
-    is reachable from a shipped emitter. The malformed row here is two lines
-    past the break: before orphan reporting, this document read as clean.
+    is reachable from a shipped emitter. Both documents below carry the same
+    defect, and the short one is why this test asserts twice. It used to append
+    the synthetic `| x | y | z |` row and assert only on that, so it passed for
+    a reason unrelated to its name: strip the trailing row and the same broken
+    input read as clean. A newline landing in the *last* column leaves a
+    remainder carrying no delimiter at all — one cell, claimed by no table and
+    shaped like no row, so it entered neither the width check nor the orphan
+    set. Pinning the break line makes the trailing row optional evidence.
     """
-    document = (
+    torn = (
         "| A | B |\n"
         "|:--|:--|\n"
         "| ok | first\n"
         "second\n"
-        "| x | y | z |\n"
     )
-    offenders = malformed_rows(document)
-    assert offenders, "every row below the break went unchecked"
+    offenders = malformed_rows(torn)
+    assert offenders, "the last column's newline tore the row and nothing fired"
+    assert "line 4" in " ".join(offenders), offenders
+
+    below = malformed_rows(torn + "| x | y | z |\n")
+    assert "line 4" in " ".join(below), below
+    assert "line 5" in " ".join(below), below
+
+
+def test_a_torn_last_cell_is_caught_across_a_blank_line():
+    """The shipped shape: `markdown_cell` passes a paragraph break straight through.
+
+    `scripts/_deposit_variables.py:402` routes every codebook Description — free
+    Markdown prose, and the table's last column — through `markdown_cell`, which
+    folds nothing. A paragraph break in one description emits a blank line
+    mid-table: the row above it still counts its declared cells and passes, the
+    table ends on the blank, and the tail of the description lands below as
+    prose carrying the row's closing pipe. That remainder is a single cell,
+    which is precisely what a width check cannot see.
+    """
+    description = "first para\n\nsecond para"
+    doc = (
+        "| Variable | Description |\n"
+        "|:--|:--|\n"
+        f"| `x` | {markdown_cell(description)} |\n"
+    )
+    offenders = malformed_rows(doc)
+    assert offenders, "a paragraph break inside the last cell read as clean"
     assert "line 5" in " ".join(offenders), offenders
 
 
@@ -452,6 +483,7 @@ def test_no_markdown_target_escapes_as_an_unresolved_path():
     ("deliverables/_shared/tables/,a.md", True),            # $(addprefix …) head
     ("b.md)", True),                                        # $(addprefix …) tail
     ("deliverables/_shared/tables/%.md", True),             # a pattern rule
+    ("a.md b.md c.md", True),                               # $(VAR) holding a list
     ("data/derived/tables/tab_div_$(m).csv", False),        # not markdown, not ours
 ])
 def test_unresolved_markdown_predicate(target, escapes):
@@ -489,6 +521,36 @@ def test_rule_targets_reads_a_continued_target_list():
     assert "data/derived/tables/tab_alluvial.csv" in targets, (
         "Makefile:380 declares this target before a line continuation; "
         "rule_targets() dropped it"
+    )
+
+
+def test_rule_targets_splits_a_variable_holding_several_paths():
+    """`$(VAR):` where VAR holds a list is several targets, not one long name.
+
+    Splitting the target list before expanding it collapses the whole value into
+    one space-joined key — `Makefile:328` declares three `-vars.yml` files behind
+    `$(COMPUTED_STATS)` and used to yield a single 130-character path. Nothing
+    fails: the bogus key ends in `.yml`, so the Markdown sweep never looks at it.
+    Written with `.md` it is worse than silent, it is *actively* reassuring —
+    the key still ends in `.md`, so the unresolved-target ratchet passes, and
+    `is_file()` then fails on a path that cannot exist, skipping every artifact
+    behind that variable as "not built on this machine". Make expands first and
+    splits after; so must this.
+    """
+    targets = rule_targets()
+    for member in ("deliverables/_shared/technical-report-vars.yml",
+                   "deliverables/data-paper/data-paper-vars.yml",
+                   "deliverables/multilayer/multilayer-detection-vars.yml"):
+        assert member in targets, (
+            f"{member} is declared through $(COMPUTED_STATS) at Makefile:328; "
+            "rule_targets() split the target list before expanding it, so all "
+            "three collapsed into one space-joined key"
+        )
+    joined = sorted(t for t in targets if t.split() != [t])
+    assert not joined, (
+        "Make target(s) carrying whitespace — a variable holding several paths "
+        "was expanded after the split, so it reads as one impossible path:\n  "
+        + "\n  ".join(joined)
     )
 
 
