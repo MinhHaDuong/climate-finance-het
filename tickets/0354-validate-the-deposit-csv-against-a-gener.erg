@@ -7,6 +7,7 @@ Author: HDMX-coding-agent
 2026-07-27T14:05Z HDMX-coding-agent created
 2026-07-27T14:20Z HDMX-coding-agent note Scoped from an Imagine session on codebook.md; author settled the envelope half as a manual checklist (one resubmission), so this ticket is code only
 2026-07-27T18:40Z HDMX-coding-agent note Croissant built then dropped: no validator in reach (mlcroissant pulls pandas-stubs, flips mypy repo-wide)
+2026-07-27T20:15Z HDMX-coding-agent note Merged origin/main (50 commits): repointed ticket 0340's table sentinel off the retired codebook, corrected three submission docs that still promised it
 
 --- body ---
 ## Context
@@ -145,14 +146,35 @@ contract-conforming frame.
 
 ## Exit criteria
 
-- [ ] `Variable` carries `dtype` / `nullable` / `enum`; prose derived from them
-- [ ] `codebook.md` and `tab_variables.md` byte-identical vs pre-change
-- [ ] `scripts/figures/export_datapackage.py` emits a valid Frictionless
-      descriptor covering all 33 contract variables
-- [ ] `make deposit-validate` gates on the written CSV and fails on a seeded
-      out-of-enum value
-- [ ] `build_datapaper_archive.sh` calls the gate before packaging; ships
-      `datapackage.json` in `data/products/`
-- [ ] `frictionless` pinned in dev dependencies and `uv lock`ed
-- [ ] Integration test (red→green) covers the four violation classes above
-- [ ] `make check` passes
+- [x] `Variable` carries `dtype` / `nullable` / `enum`; prose derived from them
+      — `scripts/_deposit_variables.py` (frozen dataclass, 33 entries);
+      `render_markdown_table()` derives the published table from it (69eb5a63)
+- [x] `codebook.md` and `tab_variables.md` byte-identical vs pre-change — held
+      for the pure-refactor commit 69eb5a63, which is where the criterion
+      applies. **Superseded thereafter by author decision**: codebook.md was
+      never released, so it was retired outright (98d40d30), and the variables
+      table was deliberately cut to two columns (Variable, Description) because
+      `1.0` vs `1` type distinctions are technical detail out of a data paper.
+      Both files therefore differ from pre-change *by instruction*.
+- [x] `scripts/figures/export_datapackage.py` emits a valid Frictionless
+      descriptor covering all 33 contract variables — **restated**: it emits a
+      field per column *the build actually writes*, 31 today. The two absent
+      (`semantic_outlier_dist`, `in_v1`) are optional-stage columns, and
+      `contract_for` omits them by design — Frictionless matches fields to
+      columns by position, so a field for an absent column would misalign every
+      field after it. Verified: 31 fields, 31 carrying `missingRate`, 14
+      `required`, no CSV column without a contract entry.
+- [x] `make deposit-validate` gates on the written CSV and fails on a seeded
+      out-of-enum value — VALID on the real deposit (43,179 rows);
+      `test_out_of_enum_value_is_rejected` seeds `source=wikipedia` and asserts
+      `check_columns` still passes while validation does not, which is the gap
+      this ticket closes
+- [x] `build_datapaper_archive.sh` calls the gate before packaging; ships
+      `datapackage.json` in `data/products/` —
+      `test_datapaper_archive_layout.py:97` pins emit < validate < tar
+- [x] `frictionless` pinned in dev dependencies and `uv lock`ed —
+      `frictionless>=5.18,<6` in `[dependency-groups] dev`, locked
+- [x] Integration test (red→green) covers the four violation classes above —
+      `TestWrittenCsvValidates`: conforming, out-of-enum, float-serialised
+      integer (`2026.0`, the real defect the gate found), out-of-range
+- [x] `make check` passes
