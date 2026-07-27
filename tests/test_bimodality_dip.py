@@ -16,6 +16,7 @@ Two guards, deliberately split:
 Same class as ticket 0314 (Flag 6 without torch), which PR #1127 hard-guarded.
 """
 
+import ast
 import os
 import re
 
@@ -39,6 +40,25 @@ def test_diptest_is_a_declared_dependency():
     )
 
 
+def _swallowing_import_handlers(source):
+    """Yield line numbers of `except ImportError` blocks that do not re-raise.
+
+    Catching ImportError is legitimate — the ticket-0314 idiom does it to
+    replace a bare ModuleNotFoundError with an actionable message. What is not
+    legitimate is a handler that returns control to the caller, because the run
+    then continues with a degraded result. So the guard is on the *swallow*,
+    not on the catch.
+    """
+    for node in ast.walk(ast.parse(source)):
+        if not isinstance(node, ast.ExceptHandler):
+            continue
+        caught = ast.dump(node.type) if node.type is not None else "bare"
+        if node.type is not None and "ImportError" not in caught:
+            continue
+        if not any(isinstance(child, ast.Raise) for child in ast.walk(node)):
+            yield node.lineno
+
+
 @pytest.mark.adherence
 def test_diptest_import_failure_is_a_hard_error():
     """A missing dependency must stop the run, not downgrade the output.
@@ -52,9 +72,11 @@ def test_diptest_import_failure_is_a_hard_error():
     assert "import diptest" in source, (
         "test is stale: analyze_bimodality.py no longer imports diptest"
     )
-    assert not re.search(r"except\s+ImportError", source), (
-        "analyze_bimodality.py swallows an ImportError - a missing diptest "
-        "must raise, not log and continue with an empty dip_pvalue column"
+    swallowed = list(_swallowing_import_handlers(source))
+    assert not swallowed, (
+        f"analyze_bimodality.py swallows an ImportError at line(s) {swallowed} "
+        "- a missing diptest must raise, not log and continue with an empty "
+        "dip_pvalue column"
     )
     assert not re.search(r"log\.\w+\([^)]*not available", source), (
         "analyze_bimodality.py announces a missing dependency at log level and "

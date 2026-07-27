@@ -4,11 +4,12 @@ Method:
 - Define efficiency and accountability pole vocabularies
 - Compute pole centroids in embedding space
 - Project all papers onto efficiency↔accountability axis
-- Test bimodality (GMM BIC, dip test if available, KDE)
+- Test bimodality (GMM BIC, Hartigan's dip test, KDE)
 - Validate with TF-IDF and keyword co-occurrence
 
 Produces:
-- data/derived/tables/tab_bimodality.csv: Dip test p-values, GMM BIC, pole paper counts
+- data/derived/tables/tab_bimodality.csv: Dip test p-values (embedding axis,
+  overall and per period), GMM BIC, pole paper counts
 - <derived>/tab_pole_papers.csv: Per-paper score and pole assignment (analysis intermediate)
 - data/derived/tables/tab_axis_detection.csv: Unsupervised TF-IDF components and alignment to pole axis
 
@@ -355,18 +356,39 @@ def _gmm_delta_bic(scores):
 
 
 def _test_bimodality(df, periods):
-    """Step 4: GMM BIC + optional dip test, overall and per-period."""
+    """Step 4: GMM BIC + Hartigan's dip test, overall and per-period.
+
+    Both statistics are mandatory. They are not redundant: delta-BIC asks
+    whether one Gaussian fits badly, which a skewed unimodal distribution
+    answers "yes" to just as readily as a two-humped one, and it grows with n.
+    The dip statistic tests unimodality itself, nonparametrically, on a scale
+    that does not inflate with n. Dropping either one leaves the
+    two-communities claim resting on a proxy (ticket 0330).
+    """
     scores = df["axis_score"].values
     bic1, bic2, delta_bic = _gmm_delta_bic(scores)
     log.info("GMM BIC: 1-component=%.0f, 2-component=%.0f, dBIC=%.0f", bic1, bic2, delta_bic)
 
-    dip_pvalue = None
     try:
         import diptest
-        dip_stat, dip_pvalue = diptest.diptest(scores)
-        log.info("Hartigan's dip test: statistic=%.4f, p=%.4f", dip_stat, dip_pvalue)
-    except ImportError:
-        log.info("diptest package not available, skipping Hartigan's dip test")
+    except ImportError as exc:
+        # Hard error, not a warning (tickets 0314, 0330). This branch used to
+        # log "not available" and continue, shipping a tab_bimodality.csv whose
+        # dip_pvalue column was empty in every row while the module docstring
+        # advertised dip p-values. A failed build is recoverable; a table that
+        # quietly under-reports its own evidence is not. No opt-out flag here,
+        # unlike Flag 6's --skip-llm: diptest is a small pure wheel with no
+        # install burden to escape, so skipping it would never be deliberate.
+        raise RuntimeError(
+            "Hartigan's dip test cannot run: diptest is not importable. "
+            "Refusing to continue, because skipping it silently ships an empty "
+            "dip_pvalue column next to a docstring that promises one. Install "
+            "it with `uv sync`, and make sure the source roots are on "
+            "PYTHONPATH - `make` exports them, a bare shell does not."
+        ) from exc
+
+    dip_stat, dip_pvalue = diptest.diptest(scores)
+    log.info("Hartigan's dip test: statistic=%.4f, p=%.4f", dip_stat, dip_pvalue)
 
     period_stats = []
     for period_label, (y_start, y_end) in periods.items():
@@ -377,16 +399,13 @@ def _test_bimodality(df, periods):
                                  "delta_bic": None, "dip_p": None})
             continue
         _, _, dbic = _gmm_delta_bic(pscores)
-        dp = None
-        if dip_pvalue is not None:
-            try:
-                _, dp = diptest.diptest(pscores)
-            except (ValueError, RuntimeError):
-                pass
+        # No try/except around the per-period call. The n >= 20 guard above
+        # already covers the degenerate inputs diptest rejects, so a raise here
+        # is a real defect and must surface rather than blank one period.
+        _, dp = diptest.diptest(pscores)
         period_stats.append({"period": period_label, "n": len(pscores),
                              "delta_bic": dbic, "dip_p": dp})
-        log.info("%s (n=%d): dBIC=%.0f%s", period_label, len(pscores), dbic,
-                 (", dip p=%.4f" % dp) if dp is not None else "")
+        log.info("%s (n=%d): dBIC=%.0f, dip p=%.4f", period_label, len(pscores), dbic, dp)
 
     return bic1, bic2, delta_bic, dip_pvalue, period_stats
 
