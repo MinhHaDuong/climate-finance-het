@@ -1,0 +1,163 @@
+%erg 0.1
+Title: vars.yml are handoff artifacts but gitignored, which defeats the clean-room writing build
+Created: 2026-07-27
+Author: HDMX-coding-agent
+Label: needs-human
+Closed: Option 1 implemented: three vars files tracked, gitignore lines removed, guard added in tests/test_handoff_artifacts_tracked.py
+
+--- log ---
+2026-07-27T15:25Z HDMX-coding-agent created
+2026-07-27T15:25Z minh question Asked whether *-vars.yml are phase deliverables; they are, and the repo contradicts itself
+2026-07-27T15:30Z minh decision Option 1. Policy: phase outputs are tracked so that the next phase can build
+2026-07-27T15:32Z HDMX-coding-agent note Implemented. Committed the FRESH vars, not the author's checkout copies — see the note below, this makes two data-paper numbers move
+
+2026-07-27T13:27Z HDMX-coding-agent closed — Option 1 implemented: three vars files tracked, gitignore lines removed, guard added in tests/test_handoff_artifacts_tracked.py
+--- body ---
+## Context
+
+`deliverables/_shared/technical-report-vars.yml`,
+`deliverables/data-paper/data-paper-vars.yml` and
+`deliverables/multilayer/multilayer-detection-vars.yml` are gitignored.
+`deliverables/manuscript/manuscript-vars.yml` is whitelisted back in because it
+is pinned to v1.0 values.
+
+Three independent sources say the ignored three are Phase-2 handoff artifacts
+that should be tracked:
+
+1. `.claude/rules/architecture.md`, artifact-homes table: Phase 2 produces
+   "writing deliverables" at `deliverables/_shared/{figures,tables,_includes}/`
+   **and `deliverables/<x>/*-vars.yml`**.
+2. The harness git rule: "Don't gitignore handoff artifacts. Generated files
+   that a downstream workpackage consumes are durable state — commit them."
+3. Every sibling class in that same list *is* committed — 9 figures, 18 tables,
+   50 includes. The vars files are the only exception.
+
+Six writing-side Makefiles list them as prerequisites of a render target
+(`corpus-report.mk`, `data-paper.mk`, `multilayer.mk` twice,
+`technical-report.mk`, `zoo.mk`).
+
+## The contradiction
+
+`multilayer.mk` states the design intent in its own header:
+
+    Render-only: ... rendered from handoff artifacts on disk (includes,
+    bibliography, vars) produced by a prior `make analysis` (Phase 2).
+    No uv, no corpus data, no compute rules.
+    Toolchain: Quarto + a LaTeX engine only.
+
+That is the clean-room property the harness rule calls for: the writing
+workpackage builds from artifacts alone. But a fresh clone does not have the
+vars files, so the render cannot run without first executing Phase 2 — which
+needs uv *and* the DVC corpus. The writing build is clean-room by design and
+not clean-room in fact, and the gitignore is the only reason.
+
+## Why it matters beyond tidiness
+
+Confirmed consequences, all observed on 2026-07-27:
+
+- A fresh worktree cannot render any of the three documents.
+- Ticket 0344 was filed against a wrong premise — that the vars were committed
+  and quoting stale numbers — because the architecture doc says they are
+  handoff artifacts. The correction cost a round trip.
+- **Detection.** Ticket 0349 found that a clean rebuild silently turns
+  `dedup_doi_removed` from 833 into `[MISSING]` in a data paper under R&R. If
+  the vars were tracked, that regression would arrive as a one-line diff in a
+  PR instead of materialising at build time behind a `UserWarning`. Tracking
+  these files converts a silent numeric regression into a reviewable one.
+
+The last point is the strongest argument and the reason to treat this as more
+than a consistency clean-up.
+
+## Decision required
+
+The author picks. This changes a standing policy, so it is not an agent call.
+
+1. **Track them** (recommended). Remove the three gitignore lines, commit the
+   current generated files, and let every Phase-2 rerun surface its numeric
+   diff in review. Restores the clean-room render, aligns the repo with its own
+   architecture doc, and gives 0349's failure class a detector for free.
+   Cost: every `make stats` dirties the tree, and vars diffs add noise to
+   unrelated PRs. That noise is the signal — but it is real noise, and on a
+   busy day it means a rebase conflict in a generated file.
+2. **Keep them ignored and fix the docs.** Strike `*-vars.yml` from the
+   architecture doc's Phase-2 artifact list, and drop or qualify the clean-room
+   claim in the writing-side Makefile headers, since it would then be false.
+   Cost: no clean-room render, and 0349's class stays undetectable by diff.
+
+Option 2 is worth stating plainly because it is defensible — churn in generated
+files is a genuine cost — but it means giving up a property the architecture
+currently advertises.
+
+## Implementation note: which content was committed (2026-07-27)
+
+The obvious-looking choice was to commit the author's existing checkout copies,
+which carry the good dedup counts (833 / 159) and the pre-backfill
+`lang_english_pct` of 89.9. That would have been wrong. `data-paper.qmd`
+references `lang_detected_n`, `lang_detected_pct` and `lang_non_english_n`,
+three variables the author's file does not contain — it predates the source it
+is supposed to feed, and cannot render it.
+
+The policy is that a phase output is tracked so the next phase can build. Only
+the freshly generated file satisfies that, so the fresh files were committed.
+Two consequences land in a paper under R&R, both visible in the diff rather
+than hidden, which is the point of tracking:
+
+    dedup_doi_removed        833  -> [MISSING]   (ticket 0349)
+    dedup_titleyear_removed  159  -> [MISSING]   (ticket 0349)
+    lang_english_pct         89.9 -> 93.8        (0297 backfill, already in the corpus)
+
+Neither is caused by this ticket. Tracking makes them reviewable; it does not
+create them. 0349 should be treated as a resubmission blocker for RDJ-26561.
+
+## Relevant files
+
+- `.gitignore` lines 88--93 — the three ignores and the manuscript whitelist
+- `.claude/rules/architecture.md` — the artifact-homes table listing vars under
+  Phase 2
+- `deliverables/*/*.mk` — six render targets taking vars as prerequisites
+- `deliverables/multilayer/multilayer.mk` — the clean-room claim in its header
+
+## Test
+
+Red step under option 1 — assert the property the Makefile header claims:
+
+    @pytest.mark.integration
+    def test_writing_build_needs_no_phase2_artifacts_from_git():
+        """Ticket 0348. Every render prerequisite must be tracked."""
+        for mk in glob("deliverables/*/*.mk"):
+            for prereq in render_prerequisites(mk):
+                assert is_tracked(prereq), (
+                    f"{mk} renders from {prereq}, which git does not carry - "
+                    "a fresh clone cannot build this document"
+                )
+
+Fails today on all six render targets. Guards the class rather than the three
+filenames: any future handoff artifact that gets gitignored trips it.
+
+## Verification
+
+- [ ] The test above is red before, green after
+- [ ] A render succeeds from a clean clone with no `uv` and no `dvc pull`
+      (the real check — run it, do not infer it)
+- [ ] Under option 2 instead: no doc or Makefile header still claims a
+      clean-room writing build
+
+## Invariants
+
+- `manuscript-vars.yml` stays pinned to v1.0 and is not swept into any
+  regeneration.
+- No variable's *value* changes under this ticket. It moves files across the
+  git boundary; it does not recompute anything.
+
+## Exit criteria
+
+- [ ] The choice between option 1 and option 2 is recorded in this log
+- [ ] The chosen option is implemented
+- [ ] The repo no longer contradicts itself: either the vars are tracked as the
+      architecture doc says, or the doc and the Makefile headers stop saying it
+
+## See also
+
+- 0344 — filed against the wrong premise because of this
+- 0349 — the silent `[MISSING]` regression that tracking would have exposed
+- 0226 — introduced the per-deliverable vars layout the gitignore comment cites

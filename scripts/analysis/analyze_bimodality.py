@@ -4,11 +4,12 @@ Method:
 - Define efficiency and accountability pole vocabularies
 - Compute pole centroids in embedding space
 - Project all papers onto efficiency↔accountability axis
-- Test bimodality (GMM BIC, dip test if available, KDE)
+- Test bimodality (GMM BIC, Hartigan's dip test, KDE)
 - Validate with TF-IDF and keyword co-occurrence
 
 Produces:
-- data/derived/tables/tab_bimodality.csv: Dip test p-values, GMM BIC, pole paper counts
+- data/derived/tables/tab_bimodality.csv: Dip test p-values (embedding axis,
+  overall and per period), GMM BIC, pole paper counts
 - <derived>/tab_pole_papers.csv: Per-paper score and pole assignment (analysis intermediate)
 - data/derived/tables/tab_axis_detection.csv: Unsupervised TF-IDF components and alignment to pole axis
 
@@ -172,7 +173,7 @@ def _load_bimodality_data(core_only):
 
 
 def _save_all_tables(*, df, n_eff, n_acc, n_both, bic1, bic2, delta_bic,
-                     dip_pvalue, explained_frac, corr, lg1, lg2, lex_vals,
+                     dip_pvalue, separation, n_modes, explained_frac, corr, lg1, lg2, lex_vals,
                      lex_dbic, main_axis_label, best_corr, best_dbic,
                      best_idx, explained, period_stats, component_rows,
                      emb_component_rows, output_path,
@@ -193,6 +194,7 @@ def _save_all_tables(*, df, n_eff, n_acc, n_both, bic1, bic2, delta_bic,
         "bic_1comp": bic1, "bic_2comp": bic2, "delta_bic": delta_bic,
         "dip_pvalue": dip_pvalue, "explained_variance": explained_frac,
         "embedding_lexical_corr": corr,
+        "gmm_separation_sigma": separation, "gmm_n_modes": n_modes,
     }, {
         "method": "tfidf_lexical",
         "n_papers": len(df),
@@ -220,15 +222,20 @@ def _save_all_tables(*, df, n_eff, n_acc, n_both, bic1, bic2, delta_bic,
             "n_papers": ps["n"],
             "delta_bic": ps["delta_bic"],
             "dip_pvalue": ps["dip_p"],
+            "gmm_separation_sigma": ps.get("separation"),
+            "gmm_n_modes": ps.get("n_modes"),
         })
 
     tab5 = pd.DataFrame(summary_rows)
     for col in ["bic_1comp", "bic_2comp", "delta_bic"]:
         if col in tab5.columns:
             tab5[col] = pd.to_numeric(tab5[col], errors="coerce").round(0).astype("Int64")
-    for col in ["explained_variance", "embedding_lexical_corr", "dip_pvalue"]:
+    for col in ["explained_variance", "embedding_lexical_corr", "dip_pvalue",
+                "gmm_separation_sigma"]:
         if col in tab5.columns:
             tab5[col] = pd.to_numeric(tab5[col], errors="coerce").round(4)
+    if "gmm_n_modes" in tab5.columns:
+        tab5["gmm_n_modes"] = pd.to_numeric(tab5["gmm_n_modes"], errors="coerce").astype("Int64")
     tab5.to_csv(output_path, index=False)
     log.info("Saved -> %s", output_path)
 
@@ -346,27 +353,75 @@ def _compute_seed_axis(embeddings, eff_mask, acc_mask):
     return axis, projections, explained_frac
 
 
+def _mixture_shape(g2, scores):
+    """Return (standardised separation, mode count) of a fitted 2-component GMM.
+
+    delta_bic says a two-component mixture fits better; it does not say the
+    fitted density has two humps. It usually does not: a mixture is bimodal only
+    when its means separate by roughly 2 sigma, and below that the second
+    component is absorbing skew and heavy tails rather than a second population.
+    These two numbers make that distinction visible in the table instead of
+    leaving the reader to assume it (ticket 0345).
+    """
+    mu = g2.means_.ravel()
+    sd = np.sqrt(g2.covariances_.ravel())
+    w = g2.weights_.ravel()
+    separation = abs(mu[1] - mu[0]) / np.sqrt((sd[0] ** 2 + sd[1] ** 2) / 2)
+
+    grid = np.linspace(scores.min(), scores.max(), 20001)
+    density = sum(
+        wi * np.exp(-0.5 * ((grid - mi) / si) ** 2) / (si * np.sqrt(2 * np.pi))
+        for wi, mi, si in zip(w, mu, sd)
+    )
+    interior = density[1:-1]
+    n_modes = int(((interior > density[:-2]) & (interior > density[2:])).sum())
+    return separation, n_modes
+
+
 def _gmm_delta_bic(scores):
-    """Fit 1- and 2-component GMMs, return (bic1, bic2, delta_bic)."""
+    """Fit 1- and 2-component GMMs, return (bic1, bic2, delta_bic, sep, n_modes)."""
     col = scores.reshape(-1, 1)
     g1 = GaussianMixture(n_components=1, random_state=42).fit(col)
     g2 = GaussianMixture(n_components=2, random_state=42).fit(col)
-    return g1.bic(col), g2.bic(col), g1.bic(col) - g2.bic(col)
+    separation, n_modes = _mixture_shape(g2, scores)
+    return g1.bic(col), g2.bic(col), g1.bic(col) - g2.bic(col), separation, n_modes
 
 
 def _test_bimodality(df, periods):
-    """Step 4: GMM BIC + optional dip test, overall and per-period."""
-    scores = df["axis_score"].values
-    bic1, bic2, delta_bic = _gmm_delta_bic(scores)
-    log.info("GMM BIC: 1-component=%.0f, 2-component=%.0f, dBIC=%.0f", bic1, bic2, delta_bic)
+    """Step 4: GMM BIC + Hartigan's dip test, overall and per-period.
 
-    dip_pvalue = None
+    Both statistics are mandatory. They are not redundant: delta-BIC asks
+    whether one Gaussian fits badly, which a skewed unimodal distribution
+    answers "yes" to just as readily as a two-humped one, and it grows with n.
+    The dip statistic tests unimodality itself, nonparametrically, on a scale
+    that does not inflate with n. Dropping either one leaves the
+    two-communities claim resting on a proxy (ticket 0330).
+    """
+    scores = df["axis_score"].values
+    bic1, bic2, delta_bic, separation, n_modes = _gmm_delta_bic(scores)
+    log.info("GMM BIC: 1-component=%.0f, 2-component=%.0f, dBIC=%.0f", bic1, bic2, delta_bic)
+    log.info("Fitted 2-component mixture: separation=%.2f sigma, modes=%d", separation, n_modes)
+
     try:
         import diptest
-        dip_stat, dip_pvalue = diptest.diptest(scores)
-        log.info("Hartigan's dip test: statistic=%.4f, p=%.4f", dip_stat, dip_pvalue)
-    except ImportError:
-        log.info("diptest package not available, skipping Hartigan's dip test")
+    except ImportError as exc:
+        # Hard error, not a warning (tickets 0314, 0330). This branch used to
+        # log "not available" and continue, shipping a tab_bimodality.csv whose
+        # dip_pvalue column was empty in every row while the module docstring
+        # advertised dip p-values. A failed build is recoverable; a table that
+        # quietly under-reports its own evidence is not. No opt-out flag here,
+        # unlike Flag 6's --skip-llm: diptest is a small pure wheel with no
+        # install burden to escape, so skipping it would never be deliberate.
+        raise RuntimeError(
+            "Hartigan's dip test cannot run: diptest is not importable. "
+            "Refusing to continue, because skipping it silently ships an empty "
+            "dip_pvalue column next to a docstring that promises one. Install "
+            "it with `uv sync`, and make sure the source roots are on "
+            "PYTHONPATH - `make` exports them, a bare shell does not."
+        ) from exc
+
+    dip_stat, dip_pvalue = diptest.diptest(scores)
+    log.info("Hartigan's dip test: statistic=%.4f, p=%.4f", dip_stat, dip_pvalue)
 
     period_stats = []
     for period_label, (y_start, y_end) in periods.items():
@@ -376,19 +431,18 @@ def _test_bimodality(df, periods):
             period_stats.append({"period": period_label, "n": len(pscores),
                                  "delta_bic": None, "dip_p": None})
             continue
-        _, _, dbic = _gmm_delta_bic(pscores)
-        dp = None
-        if dip_pvalue is not None:
-            try:
-                _, dp = diptest.diptest(pscores)
-            except (ValueError, RuntimeError):
-                pass
+        _, _, dbic, psep, pmodes = _gmm_delta_bic(pscores)
+        # No try/except around the per-period call. The n >= 20 guard above
+        # already covers the degenerate inputs diptest rejects, so a raise here
+        # is a real defect and must surface rather than blank one period.
+        _, dp = diptest.diptest(pscores)
         period_stats.append({"period": period_label, "n": len(pscores),
-                             "delta_bic": dbic, "dip_p": dp})
-        log.info("%s (n=%d): dBIC=%.0f%s", period_label, len(pscores), dbic,
-                 (", dip p=%.4f" % dp) if dp is not None else "")
+                             "delta_bic": dbic, "dip_p": dp,
+                             "separation": psep, "n_modes": pmodes})
+        log.info("%s (n=%d): dBIC=%.0f, dip p=%.4f, sep=%.2f sigma, modes=%d",
+                 period_label, len(pscores), dbic, dp, psep, pmodes)
 
-    return bic1, bic2, delta_bic, dip_pvalue, period_stats
+    return bic1, bic2, delta_bic, dip_pvalue, period_stats, separation, n_modes
 
 
 def _compute_tfidf_axis(df, eff_mask, acc_mask):
@@ -450,7 +504,8 @@ def main():
 
     df["axis_score"] = projections - np.median(projections)
 
-    bic1, bic2, delta_bic, dip_pvalue, period_stats = _test_bimodality(df, periods)
+    bic1, bic2, delta_bic, dip_pvalue, period_stats, separation, n_modes = \
+        _test_bimodality(df, periods)
     tfidf, X_tfidf, lg1, lg2, lex_vals, lex_dbic, corr = _compute_tfidf_axis(df, eff_mask, acc_mask)
 
     component_rows, main_axis_label, best_corr, best_dbic, best_idx, explained = \
@@ -462,6 +517,7 @@ def main():
         df=df, n_eff=eff_mask.sum(), n_acc=acc_mask.sum(),
         n_both=(eff_mask & acc_mask).sum(),
         bic1=bic1, bic2=bic2, delta_bic=delta_bic, dip_pvalue=dip_pvalue,
+        separation=separation, n_modes=n_modes,
         explained_frac=explained_frac, corr=corr, lg1=lg1, lg2=lg2,
         lex_vals=lex_vals, lex_dbic=lex_dbic,
         main_axis_label=main_axis_label, best_corr=best_corr,

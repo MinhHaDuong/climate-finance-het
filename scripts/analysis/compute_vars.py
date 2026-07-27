@@ -25,6 +25,7 @@ from utils import (
     SOURCE_NAMES,
     get_logger,
     load_analysis_periods,
+    normalize_lang_display,
 )
 
 log = get_logger("compute_vars")
@@ -54,12 +55,13 @@ DOC_VARS = {
         #   embedding-generation
         "cite_coverage_core_pct",
         "cite_cov_cryst_pct",
-        "cite_cov_post2015_of_doi_pct",
         "cite_cov_post2015_pct",
-        "cite_cov_pre2007_of_doi_pct",
         "cite_cov_pre2007_pct",
-        "cite_doi_post2015_pct",
-        "cite_doi_pre2007_pct",
+        # The four DOI-carriage vars (cite_doi_{pre2007,post2015}_pct and
+        # cite_cov_{pre2007,post2015}_of_doi_pct) left with 0332's cut of the
+        # gradient-mechanism sentences; the three period coverages above stay.
+        # compute_citation_coverage.py still emits all seven — re-add here if
+        # the mechanism argument returns.
         "cite_refined_coverage_pct",
         "cite_refined_rows",
         "cite_total_rows",
@@ -100,13 +102,16 @@ DOC_VARS = {
         "gm_coverage_pct",
         "gm_modularity",
         "gm_n_connected",
+        "lang_detected_n",
+        "lang_detected_pct",
         "lang_english_pct",
-        # The adaptation-share and chi-square/p details left the paper with
-        # PR #1120's cut pass; only the two finance-journal shares survive in
-        # the literature-confirmation bullet (§1). Re-add here if the bullet
-        # ever regains its test statistics.
-        "lit_sem6_ari",
-        "lit_sem6_n",
+        "lang_non_english_n",
+        # Two earlier cuts orphaned lit_* vars, both still emitted upstream:
+        # the adaptation-share and chi-square/p details went with PR #1120,
+        # leaving only the two finance-journal shares in the
+        # literature-confirmation bullet (§1); lit_sem6_ari and lit_sem6_n went
+        # with 0332's §4 cut, since the semantic-cluster paragraph they served
+        # needed an under-review companion paper to interpret.
         "lit_finshare_post_pct",
         "lit_finshare_pre_pct",
         "lit_growth_f",
@@ -137,8 +142,17 @@ DOC_VARS = {
         "bim_dbic_post2015",
         "bim_dbic_pre2007",
         "bim_dbic_tfidf",
+        "bim_dip_p_2007_2014",
+        "bim_dip_p_embedding",
+        "bim_dip_p_post2015",
+        "bim_dip_p_pre2007",
+        "bim_gmm_modes",
+        "bim_gmm_separation",
+        "bim_n_2007_2014",
         "bim_n_accountability",
         "bim_n_efficiency",
+        "bim_n_post2015",
+        "bim_n_pre2007",
         "corpus_core",
         "corpus_core_threshold",
         "corpus_sources",
@@ -179,6 +193,29 @@ def _signed_int(value):
     if v < 0:
         return f"\u2212{abs(v):,}"  # Unicode minus
     return f"{v:,}"
+
+
+def _dip_p(value):
+    """Format a dip-test p-value, never rounding a rejection up to 1.00.
+
+    The dip p-values here sit at the ceiling, and "1.00" is the honest reading
+    of a statistic six times below its null scale. But a future corpus could
+    land at 0.9996, where rounding to 1.00 would erase a distinction the reader
+    needs, so cap the display just below unity instead (ticket 0345).
+    """
+    if pd.isna(value):
+        return "[MISSING]"
+    p = float(value)
+    if p >= 0.9995:
+        return "1.00" if p >= 1.0 else "> 0.99"
+    return f"{p:.2f}"
+
+
+def _sigma(value):
+    """Format a standardised separation in sigma units."""
+    if pd.isna(value):
+        return "[MISSING]"
+    return f"{float(value):.2f}"
 
 
 def _read_csv(filename, directory=TABLES_DIR):
@@ -239,11 +276,31 @@ def corpus_stats(v):
         v["corpus_multi_source"] = _int(multi)
         v["corpus_multi_source_pct"] = _pct(100 * multi / n)
 
-    # Language
+    # Language. Bucketed through the same normaliser @tbl-languages uses, so a
+    # count printed in the prose sums with the table beside it: `arz` and `sco`
+    # are ISO 639-3 codes with no ISO 639-1 equivalent, and the table files
+    # them under Unclassified rather than non-English (PR #1141 review).
     if "language" in df.columns:
-        lang = df["language"].fillna("unknown")
-        en_count = lang.str.lower().isin(["en", "english"]).sum()
+        lang = df["language"].apply(normalize_lang_display)
+        en_count = (lang == "en").sum()
         v["lang_english_pct"] = _pct(100 * en_count / n)
+        # The non-English *layer* excludes the unclassified rows, matching the
+        # separate "Unclassified" line of @tbl-languages. Hand-typed in the
+        # paper until 0323, where it had rotted to an enriched-corpus figure
+        # (3,381) inside a refined-corpus sentence.
+        non_en = ((lang != "en") & (lang != "unknown")).sum()
+        v["lang_non_english_n"] = _int(non_en)
+
+    # Language provenance (ticket 0323). A share of the deposited language
+    # tags is inferred by langdetect from title and abstract rather than
+    # carried by the source catalog, so the data paper narrates the derivation
+    # the way it already narrates abstract reconstruction. Prefix match, not
+    # equality: `detected:langdetect` names the detector, and a second
+    # detector would extend the value rather than replace it.
+    if "language_provenance" in df.columns:
+        detected = df["language_provenance"].fillna("").str.startswith("detected").sum()
+        v["lang_detected_n"] = _int(detected)
+        v["lang_detected_pct"] = _pct(100 * detected / n)
 
     v["corpus_sources"] = str(count_sources(df))
 
@@ -382,6 +439,13 @@ def bimodality_stats(v):
         v["bim_bic2"] = _signed_int(row["bic_2comp"])
         v["bim_corr"] = f"{row['embedding_lexical_corr']:.2f}"
         v["bim_var_pct"] = _pct(100 * row["explained_variance"])
+        # Dip and mixture shape (ticket 0345). delta_bic alone cannot tell a
+        # two-humped distribution from a skewed one-humped distribution that a
+        # second Gaussian happens to fit; §5.3 quotes these to make the
+        # distinction rather than leaving the reader to infer it.
+        v["bim_dip_p_embedding"] = _dip_p(row.get("dip_pvalue"))
+        v["bim_gmm_separation"] = _sigma(row.get("gmm_separation_sigma"))
+        v["bim_gmm_modes"] = _int(row.get("gmm_n_modes"))
 
     # Full corpus — TF-IDF row
     tfidf = df[df["method"] == "tfidf_lexical"]
@@ -395,6 +459,7 @@ def bimodality_stats(v):
             row = period.iloc[0]
             v[f"bim_dbic_{key}"] = _signed_int(row["delta_bic"])
             v[f"bim_n_{key}"] = _int(row["n_papers"])
+            v[f"bim_dip_p_{key}"] = _dip_p(row.get("dip_pvalue"))
 
     # Core
     core = _read_csv("tab_bimodality_core.csv", directory=DERIVED_TABLES_DIR)

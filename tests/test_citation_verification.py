@@ -106,6 +106,13 @@ _ALLOWED_LITERALS = {
 }
 
 
+# Plain integers in §2-§3 that are NOT corpus measurements. Same contract as
+# _ALLOWED_LITERALS: each needs a reason, anything else must be a macro.
+_ALLOWED_COUNTS = {
+    "8192": "the embedding model's context window, a model parameter",
+}
+
+
 def _measurable_literals(section):
     """Bare percentages in a section, minus macros and non-measurements."""
     text = re.sub(r"<!--.*?-->", "", section, flags=re.S)      # HTML comments
@@ -114,6 +121,37 @@ def _measurable_literals(section):
     text = re.sub(r"\b95\s*%\s*CI", "CI", text)                # confidence LEVEL
     return [h for h in re.findall(r"\d+\.?\d*\s*%", text)
             if h.replace(" ", "") not in _ALLOWED_LITERALS]
+
+
+def _measurable_counts(section):
+    """Bare thousand-scale counts in a section, minus macros and identifiers.
+
+    The percentage guard cannot see a count. `compute_vars._int` formats every
+    corpus count as `f"{n:,}"`, so a hand-typed one reads the same way — and
+    one did: "the non-English layer counts 3,381 works" was an enriched-corpus
+    figure typed into a refined-corpus sentence, still there after the rebuild
+    moved the refined layer to 2,063 (ticket 0323).
+
+    Matches comma-grouped thousands and bare integers of four digits or more.
+    Years, DOIs, URLs, and inline code are stripped first. A corpus count below
+    1,000 typed without a separator still escapes; the shape guarded here is
+    the one the vars formatter emits.
+    """
+    text = re.sub(r"<!--.*?-->", "", section, flags=re.S)      # HTML comments
+    text = re.sub(r"\{\{<[^>]*>\}\}", "", text)                # macros
+    text = re.sub(r"`[^`]*`", "", text)                        # inline code
+    text = re.sub(r"https?://\S+", "", text)                   # URLs
+    text = re.sub(r"10\.\d{4,}/\S+", "", text)                 # DOIs
+    text = re.sub(r"\b(?:19|20)\d{2}\b", "", text)             # years
+    return [h for h in re.findall(r"\b\d{1,3}(?:,\d{3})+\b|\b\d{4,}\b", text)
+            if h not in _ALLOWED_COUNTS]
+
+
+def _method_and_data_sections():
+    """The §2-§3 span of the data paper, the scope both guards below share."""
+    with open(DATA_PAPER) as fh:
+        text = fh.read()
+    return text[text.index("## 2. Method"):text.index("## 4. Descriptive statistics")]
 
 
 def test_method_and_data_sections_carry_no_hand_typed_statistic():
@@ -126,16 +164,29 @@ def test_method_and_data_sections_carry_no_hand_typed_statistic():
     same section, and the no-DOI share sat hand-typed in two more places. A
     guard shaped around the defect you already found is not a guard.
     """
-    with open(DATA_PAPER) as fh:
-        text = fh.read()
-
-    start = text.index("## 2. Method")
-    end = text.index("## 4. Descriptive statistics")
-    literals = _measurable_literals(text[start:end])
+    literals = _measurable_literals(_method_and_data_sections())
 
     assert not literals, (
         f"hand-typed statistic(s) {literals} in §2-§3 — every corpus number "
         f"there must arrive as a {{{{< meta >}}}} macro so the next rebuild "
         f"moves the prose (ticket 0320). If a value genuinely cannot rot, add "
         f"it to _ALLOWED_LITERALS with the reason."
+    )
+
+
+def test_method_and_data_sections_carry_no_hand_typed_count():
+    """The percentage guard's blind spot: a count, not a share.
+
+    Percentages were pinned after 99.0% outlived its own rebuild; the same
+    section still carried a thousand-scale count typed by hand, which then
+    rotted the same way and by more (3,381 against a measured 2,063). Counts
+    and shares rot on the same event, so they need the same guard.
+    """
+    counts = _measurable_counts(_method_and_data_sections())
+
+    assert not counts, (
+        f"hand-typed count(s) {counts} in §2-§3 — every corpus number there "
+        f"must arrive as a {{{{< meta >}}}} macro so the next rebuild moves "
+        f"the prose (ticket 0323). If a value genuinely cannot rot, add it to "
+        f"_ALLOWED_COUNTS with the reason."
     )
