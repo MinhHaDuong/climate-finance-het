@@ -6,12 +6,15 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-27T18:20Z HDMX-coding-agent created
 2026-07-27T18:20Z HDMX-coding-agent note found by the /verify-adherence gate on PR #1191 (ticket 0370) and confirmed independently by two agents of its review panel
+2026-07-27T20:45Z HDMX-coding-agent note reimagine: premise strengthened — paths.mk's *_INCLUDES list these tables as prerequisites of two render-only .mk files that declare "no corpus data". Scope narrows: extend tests/test_deliverable_artifacts.py, do not write the sketched parser.
 2026-07-27T20:10Z HDMX-coding-agent note widened from two tables to five — the #1191 round-4 panel caught the undercount; the real set comes from git check-ignore over the 0340 discovery list, not from the diff that surfaced it
 
 --- body ---
 ## Context
 
-Five of the ten generated Markdown tables are gitignored:
+Five of the **nine** generated Markdown tables are gitignored (the
+denominator was ten when this was filed; ticket 0354 has since retired
+`codebook.md`, and the ignored five are unchanged name for name):
 
     tab_citation_coverage.md   tab_core_venues_top10.md   tab_corpus_flow.md
     tab_corpus_sources.md      tab_languages.md
@@ -28,12 +31,35 @@ panel caught the undercount; running the ignore check over the discovery list
 instead of over the diff is what produced the real number, and it is the method
 the fix should use.
 
-The other five — `codebook.md`, `tab_retrieval_protocol.md`,
-`tab_variables.md`, `tab_venues.md`, `tab_venues_fr.md` — are tracked by
-explicit negations in the same file. Nothing distinguishes the two groups: the
-`.gitignore` comment around line 57 even says `tab_corpus_sources.csv` is
-"grouped with tab_corpus_sources.md", then negates only the `.csv`. The split
-reads as accretion, not a decision.
+The other four — `tab_retrieval_protocol.md`, `tab_variables.md`,
+`tab_venues.md`, `tab_venues_fr.md` — are tracked by explicit negations in the
+same file. Nothing distinguishes the two groups: the `.gitignore` comment
+around line 57 even says `tab_corpus_sources.csv` is "grouped with
+tab_corpus_sources.md", then negates only the `.csv`. The split reads as
+accretion, not a decision.
+
+**The steelman fails on its own evidence.** The obvious defence — "tracked
+means corpus-free, ignored means corpus-derived, so this is a coherent rule" —
+is refuted by `tab_venues.md`, which is tracked *and* takes `$(REFINED)` as a
+prerequisite. No such rule is in force.
+
+**What is in force, and what these five violate.** `deliverables/data-paper/data-paper.mk`
+and `deliverables/corpus-report/corpus-report.mk` (ticket 0237) each declare in
+their own header: "Render-only: produces … from handoff artifacts on disk …
+**No uv, no corpus data, no compute rules**." Their render targets take
+`$(DATAPAPER_INCLUDES)` / `$(CORPUS_REPORT_INCLUDES)` as prerequisites, and
+`paths.mk:31-48` expands those to include `tab_corpus_sources.md`,
+`tab_corpus_flow.md`, `tab_languages.md` and `tab_citation_coverage.md`. So
+both Makefiles declare a clean-room contract they cannot honour on a fresh
+clone: four declared prerequisites are gitignored and producible only from
+corpus data, which the render-only rule says must never be needed. This is the
+defect class ticket 0348 already fixed for `-vars.yml`
+(`tests/test_handoff_artifacts_tracked.py`), never extended to tables.
+
+Ticket 0207 was closed partly on the premise that the data paper was "frozen
+externally on Zenodo"; ticket 0237 superseded that a day later, and STATE.md
+now has the data paper under active R&R (RDJ-26561). Whatever residual case
+existed for leaving these ungoverned has expired twice over.
 
 The concrete cost is a blind spot in a standing guard. Ticket 0340's
 `tests/test_markdown_table_shape.py` sweeps generated Markdown artifacts for
@@ -61,25 +87,30 @@ ten targets, the guard is blind to half its own surface.
 2. Commit the five artifacts as currently generated on a corpus machine. Verify
    first that regenerating them is a no-op — 0370's no-churn pins say it should
    be, but the check belongs here, not in the PR that added the escaper.
-3. Decide the general rule rather than case by case: every `.md` under
-   `deliverables/_shared/tables/` that a `.qmd` includes is tracked. Encode it
-   as the test below so the next added table cannot silently fall out.
+
+   A worktree does not see the corpus by default: its `.dvc/cache` symlink to
+   the primary checkout's cache is created by `.githooks/post-checkout` and is
+   absent on at least some worktrees, which is what makes `data/catalogs/` look
+   empty. Re-link it (`ln -sfn <primary>/.dvc/cache .dvc/cache`), then
+   `make data` (a local `dvc checkout`, no network), then `make corpus-tables`.
+   This is environmental setup, not a blocker, and not a reason to generate the
+   artifacts anywhere but a worktree.
+3. Encode the rule so the next added table cannot silently fall out: every
+   `.md` a deliverable's include closure reaches is tracked.
 
 ## Test
 
-Red first, an `adherence` test: parse every `deliverables/**/*.qmd` for
-`{{< include ../_shared/(tables/…\.md) >}}`, and assert each resolved path
-appears in `git ls-files`. It fails today on exactly these five.
+Red first, in `tests/test_deliverable_artifacts.py` — **extend it, do not
+write a new parser.** That module already has a correct include-closure
+resolver that carries the root document's directory as base through every level
+of recursion, which is exactly the hazard the architecture rule warns about and
+which produced 13 false positives when done naively. It already computes the
+reached set and has a `git ls-files` helper.
 
-```python
-@pytest.mark.adherence
-def test_included_shared_tables_are_tracked():
-    """Every table a deliverable includes is a handoff artifact."""
-```
-
-Prefer deriving the include set from the same resolver the orphan sweep uses
-if one exists by then — note the architecture rule that a nested include
-resolves against the *root document's* directory, not its own.
+The existing guard checks tracked → reachable (orphan detection). This ticket
+needs the other direction: reachable → tracked, over the `.md` members of the
+reached set. One new test function reusing both helpers. It fails today on
+exactly these five.
 
 ## Verification
 
