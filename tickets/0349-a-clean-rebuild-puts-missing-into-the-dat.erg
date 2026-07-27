@@ -7,6 +7,7 @@ Label: needs-human
 --- log ---
 2026-07-27T15:15Z HDMX-coding-agent created
 2026-07-27T15:15Z HDMX-coding-agent note Found by the 0344 make pass; ticket 0284 was closed by PR #1082 without its artifact landing
+2026-07-27T15:40Z HDMX-coding-agent note Renumbered 0347 -> 0349: a sibling session allocated 0347 at 15:11 and its ticket is cross-referenced from 0288, so this one moves
 
 --- body ---
 ## Context
@@ -84,7 +85,7 @@ Whichever is chosen, the fallback must stop being silent — see Actions.
 Red step:
 
     def test_no_rendered_variable_is_missing():
-        """Ticket 0347. A placeholder in a rendered var must fail the build."""
+        """Ticket 0349. A placeholder in a rendered var must fail the build."""
         for doc, path in VARS_FILES.items():
             v = yaml.safe_load(open(path))
             rendered = meta_refs_in(DOC_SOURCES[doc])
