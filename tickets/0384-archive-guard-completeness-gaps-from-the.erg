@@ -1,0 +1,113 @@
+%erg 0.1
+Title: Close three completeness gaps the 0292 review panel found in the archive guards
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T21:00Z HDMX-coding-agent created from the five-perspective panel on PR #1199; red team reproduced each gap. None is a live defect in the shipped scripts — all three are holes in the guards 0292 added.
+
+--- body ---
+## Context
+
+PR #1199 (ticket 0292) rebuilt the three Phase-4 archive scripts and added two
+guards: a widened path guard (`tests/test_archive_script_paths.py`) and a
+clean-room render smoke test (`tests/test_archive_render_smoke.py`). The review
+panel verified the shipped scripts are correct — the manuscript archive renders
+byte-identical, the analysis Makefile dry-run agrees with
+`expected_outputs.md5` — and then found three gaps in the guards themselves.
+
+None is a live defect today. Each is a way the guards could stay green while
+the class they exist for reappears.
+
+### Gap 1 — the path guard is not scoped per archive
+
+`_named_by_make()` checks a declared input against the concatenation of *every*
+Makefile in the repo, so any archive may name any archive's artifact:
+
+```
+>>> _named_by_make("deliverables/_shared/figures/fig_bars.png", _makefile_text())
+True     # the datapaper's figure, but the manuscript array would pass too
+```
+
+`fig_bars.png` and `fig_bars_v1.png` differ by four characters and belong to
+different papers, which is a plausible copy/paste slip.
+
+Note what already covers this and what does not. The *render* smoke test does
+catch the substitution — the archive Makefile lists `fig_bars_v1.png` as a
+prerequisite, so `make` fails "No rule to make target". The *path* guard does
+not, and its docstring claims an invariant ("every declared archive input
+either exists on disk or is named by a Make rule") that reads stronger than
+what it delivers. So this is a scoping fix plus an honest docstring, not a
+missing check — and it matters mainly because gap 2 makes the render test the
+weaker line of defence than it looks.
+
+### Gap 2 — the render smoke test skips in the state most sessions start in
+
+The test needs a pre-built `deliverables/manuscript/manuscript.pdf`, because
+the build script copies it as `expected-manuscript.pdf`. A fresh
+`EnterWorktree` session has no PDF, so the one guard written specifically to
+catch "assembles but does not render" reports a skip rather than a pass exactly
+where this project's sessions are born. It is correctly collected by
+`make check` — no marker filtering excludes it — so this is not a tier bug.
+
+Options: have the test build the PDF itself when absent (about 20 s more, and
+every input is tracked, so it is self-sufficient), or split a cheap structural
+assertion that runs unconditionally from the full render that needs the PDF.
+
+### Gap 3 — `$VAR`-prefixed cp sources are unchecked
+
+`_literal_cp_sources()` skips any token containing `$`, since it resolves at
+run time. That is right for `"$DATA_DIR/..."`, but it also drops
+`"$PROJ_ROOT/deliverables/_shared/tables/tab_retrieval_protocol.{csv,md}"` in
+`build_datapaper_archive.sh` — tracked, non-generated files. Their only current
+guard checks that the *string* appears in README/QMD prose, never that the file
+exists. Renaming either breaks nothing in the suite.
+
+A `$PROJ_ROOT/`-prefixed token is statically resolvable: strip the known prefix
+and check the remainder like any other repo-relative path.
+
+## Relevant files
+
+- `tests/test_archive_script_paths.py` — gaps 1 and 3
+- `tests/test_archive_render_smoke.py` — gap 2
+- `tests/test_datapaper_archive_layout.py` — the prose-only check named in gap 3
+- `build/build_datapaper_archive.sh` — the `$PROJ_ROOT/` cp sources
+
+## Actions
+
+1. Scope the path guard per archive: resolve each declared input against the
+   Makefiles that actually build that archive's inputs, and reword the
+   docstring to claim only what it checks.
+2. Make the render smoke test run rather than skip on a fresh worktree —
+   build the PDF when absent, or split the structural half out.
+3. Resolve `$PROJ_ROOT/`-prefixed cp sources statically and check them for
+   existence.
+4. Consider extending a render or dry-run check to the datapaper and analysis
+   archives; today only the manuscript has one.
+
+## Test
+
+Red first, one per gap:
+
+- Point `MANUSCRIPT_FILES` at `fig_bars.png` and assert the path guard fails
+  (it passes today).
+- Run the smoke test in a worktree with no manuscript PDF and assert it does
+  not skip (it skips today).
+- Rename `tab_retrieval_protocol.md` and assert some test fails (none does).
+
+## Verification
+
+- [ ] Each of the three red tests above fails before the fix and passes after
+- [ ] The path guard's docstring claims exactly what it checks
+- [ ] `make check` stays green
+
+## Invariants
+
+- Guards may not get slower than the tier they sit in allows: the path guard
+  stays `adherence`, the render test stays `integration`.
+- No guard is weakened to make it pass.
+
+## Exit criteria
+
+- All three gaps closed, each with a red-tested guard, and the path guard's
+  documented invariant matches its behaviour.
