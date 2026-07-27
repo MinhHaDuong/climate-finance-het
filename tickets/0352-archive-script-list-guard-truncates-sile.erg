@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-27T13:22Z HDMX-coding-agent created
 2026-07-27T13:30Z HDMX-coding-agent note surfaced by ticket 0339, which had to add two helpers to the SCRIPTS array and found the guard reads only a prefix of it. Filed as a follow-up rather than fixed in that PR: the guard is a different concern from Markdown escaping.
+2026-07-27T14:40Z HDMX-coding-agent note fixed by line-anchored parse; the rewritten build-script comment uses parens deliberately, so the real array is now a live witness against the old regex — 20 paths read vs 13.
 
 --- body ---
 ## Context
@@ -79,10 +80,13 @@ length alone would not distinguish a fixed parser from a lucky one.
 
 ## Verification
 
-- [ ] The fixture above fails on the current parser and passes on the fixed one
-- [ ] The real array parses to its full length, `_markdown_table.py` and
-      `_venue_naming.py` included
-- [ ] `build/build_analysis_archive.sh` no longer carries the paren warning
+- [x] The fixture above fails on the current parser and passes on the fixed one
+      — `FIXTURE_PAREN_COMMENT`, red on the extracted-but-unfixed parser
+      (3 failures at commit 1), green after the fix
+- [x] The real array parses to its full length, `_markdown_table.py` and
+      `_venue_naming.py` included — 20/20 entries; the pre-fix regex reads 13
+      against the current file and drops both helpers
+- [x] `build/build_analysis_archive.sh` no longer carries the paren warning
 
 ## Invariants
 
@@ -92,5 +96,5 @@ length alone would not distinguish a fixed parser from a lucky one.
 
 ## Exit criteria
 
-- [ ] The guard reads the entire SCRIPTS array regardless of punctuation in it
-- [ ] A path added below a parenthesis-bearing comment is still resolved
+- [x] The guard reads the entire SCRIPTS array regardless of punctuation in it
+- [x] A path added below a parenthesis-bearing comment is still resolved
