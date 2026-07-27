@@ -10,7 +10,11 @@ step. Three consumers keep it honest:
 - scripts/figures/export_variables_table.py — renders the data paper's
   variables table (``render_markdown_table()``), so the published table
   cannot drift from the shipped CSV;
-- tests/test_variables_table.py — pins contract/transform agreement.
+- tests/test_variables_table.py — pins contract/transform agreement;
+- scripts/_deposit_schema.py — renders the machine-readable descriptors
+  (`datapackage.json`, `croissant.json`) whose constraints ``frictionless
+  validate`` enforces against the written CSV, so the value-level claims below
+  are checked and not merely published (ticket 0354).
 
 Columns marked ``required=False`` depend on optional pipeline stages
 (embeddings for the outlier distance, the v1 identifier file, the corpus-v2
@@ -41,15 +45,64 @@ COLUMNS_TO_DROP = [
 DEPOSIT_RENAMES = {"from_scispsace": "from_scispace"}
 
 
+# Frictionless Table Schema type → the word the codebook and paper publish.
+# The contract stores the machine type and derives the prose; parsing prose back
+# into constraints is exactly what this direction removes.
+_PUBLISHED_TYPE = {
+    "string": "string",
+    "integer": "integer",
+    "number": "float",
+    "boolean": "boolean",
+}
+
+
 @dataclass(frozen=True)
 class Variable:
+    """One deposited column: machine constraints, with the prose derived.
+
+    ``dtype`` / ``nullable`` / ``enum`` / ``minimum`` / ``maximum`` are what
+    ``export_datapackage.py`` publishes as a Frictionless field. ``type`` and
+    ``allowed_values`` are properties rendering the same facts as the prose the
+    codebook and the paper's variables table have always shown, so a claim
+    cannot be enforced in one place and printed differently in the other.
+
+    Two encodings are deliberate. ``enum`` never carries the empty sentinel:
+    Frictionless treats an empty cell as a missing value and skips enum checks
+    on it, so ``enum_allows_empty`` adds ``empty`` to the prose without putting
+    an unmatchable member in the schema. And a boolean field gets no enum at
+    all — the type already restricts it, and the deposit writes two different
+    token pairs (``0``/``1`` for the provenance flags, ``True``/``False`` for
+    the curation ones), both of which Frictionless accepts natively.
+    """
+
     name: str
-    type: str
+    dtype: str
     description: str
     source: str
     required: bool = True
     group: str = ""
-    allowed_values: str = ""
+    nullable: bool = False
+    enum: tuple[str, ...] = ()
+    enum_allows_empty: bool = False
+    minimum: int | None = None
+    maximum: int | None = None
+    values_note: str = ""
+
+    @property
+    def type(self) -> str:
+        """The published type word, e.g. ``string`` or ``float, nullable``."""
+        base = _PUBLISHED_TYPE[self.dtype]
+        return f"{base}, nullable" if self.nullable else base
+
+    @property
+    def allowed_values(self) -> str:
+        """The published allowed-values cell; empty means unconstrained."""
+        if self.enum:
+            listed = ", ".join(self.enum)
+            return f"{listed}, empty" if self.enum_allows_empty else listed
+        if self.minimum is not None and self.maximum is not None:
+            return f"{self.minimum}–{self.maximum}"
+        return self.values_note
 
 
 # The four logical groups of the deposit layout (ticket 0287, remark R1-19).
@@ -75,107 +128,112 @@ DEPOSIT_VARIABLES: list[Variable] = [
     Variable("source", "string",
              "Primary source catalog for the record's metadata", _MERGE,
              group=_IDENTITY,
-             allowed_values="openalex, istex, bibcnrs, scispace, grey, teaching, unfccc, oecd"),
+             enum=("openalex", "istex", "bibcnrs", "scispace", "grey",
+                   "teaching", "unfccc", "oecd")),
     Variable("source_id", "string",
              "Identifier in the primary source (e.g. OpenAlex work ID)", _MERGE,
              group=_IDENTITY),
-    Variable("doi", "string, nullable",
+    Variable("doi", "string",
              "Digital Object Identifier, when available", _MERGE,
-             group=_IDENTITY),
+             group=_IDENTITY, nullable=True),
     Variable("title", "string", "Title of the work", _MERGE, group=_BIBLIO),
-    Variable("first_author", "string, nullable", "First author name", _MERGE,
-             group=_BIBLIO),
-    Variable("all_authors", "string, nullable",
-             "Full author list, separator-joined", _MERGE, group=_BIBLIO),
+    Variable("first_author", "string", "First author name", _MERGE,
+             group=_BIBLIO, nullable=True),
+    Variable("all_authors", "string",
+             "Full author list, separator-joined", _MERGE, group=_BIBLIO,
+             nullable=True),
     Variable("year", "integer", "Publication year", _MERGE, group=_BIBLIO),
-    Variable("journal", "string, nullable",
+    Variable("journal", "string",
              "Publication venue (journal, publisher, or repository)", _MERGE,
-             group=_BIBLIO),
-    Variable("language", "string, nullable",
+             group=_BIBLIO, nullable=True),
+    Variable("language", "string",
              "Language code (ISO 639-1), detected and normalised", _ENRICH,
-             group=_BIBLIO),
-    Variable("keywords", "string, nullable",
-             "Keywords, semicolon-separated", _MERGE, group=_BIBLIO),
-    Variable("categories", "string, nullable",
+             group=_BIBLIO, nullable=True),
+    Variable("keywords", "string",
+             "Keywords, semicolon-separated", _MERGE, group=_BIBLIO,
+             nullable=True),
+    Variable("categories", "string",
              "Subject categories / concepts from the source catalog", _MERGE,
-             group=_BIBLIO),
+             group=_BIBLIO, nullable=True),
     Variable("cited_by_count", "integer",
              "Citation count (OpenAlex, as of the collection date)", _MERGE,
              group=_BIBLIO),
-    Variable("affiliations", "string, nullable",
-             "Author affiliations, when available", _MERGE, group=_BIBLIO),
+    Variable("affiliations", "string",
+             "Author affiliations, when available", _MERGE, group=_BIBLIO,
+             nullable=True),
     Variable("from_openalex", "boolean", "Provenance flag: found in OpenAlex",
-             _MERGE, group=_PROV, allowed_values=_BOOL01),
+             _MERGE, group=_PROV, values_note=_BOOL01),
     Variable("from_istex", "boolean", "Provenance flag: found in ISTEX",
-             _MERGE, group=_PROV, allowed_values=_BOOL01),
+             _MERGE, group=_PROV, values_note=_BOOL01),
     Variable("from_bibcnrs", "boolean", "Provenance flag: found in bibCNRS",
-             _MERGE, group=_PROV, allowed_values=_BOOL01),
+             _MERGE, group=_PROV, values_note=_BOOL01),
     Variable("from_scispace", "boolean", "Provenance flag: found via SciSpace",
-             _MERGE, group=_PROV, allowed_values=_BOOL01),
+             _MERGE, group=_PROV, values_note=_BOOL01),
     Variable("from_grey", "boolean",
              "Provenance flag: grey-literature source", _MERGE, group=_PROV,
-             allowed_values=_BOOL01),
+             values_note=_BOOL01),
     Variable("from_teaching", "boolean",
              "Provenance flag: teaching canon (syllabi)", _MERGE, group=_PROV,
-             allowed_values=_BOOL01),
+             values_note=_BOOL01),
     Variable("from_unfccc", "boolean",
              "Provenance flag: curated UNFCCC key document", _KEYDOCS,
-             required=False, group=_PROV, allowed_values=_BOOL01),
+             required=False, group=_PROV, values_note=_BOOL01),
     Variable("from_oecd", "boolean",
              "Provenance flag: curated OECD key document", _KEYDOCS,
-             required=False, group=_PROV, allowed_values=_BOOL01),
-    Variable("abstract_provenance", "string, nullable",
+             required=False, group=_PROV, values_note=_BOOL01),
+    Variable("abstract_provenance", "string",
              "Provenance of the abstract text, for curated key documents only",
-             _KEYDOCS, required=False, group=_PROV,
-             allowed_values="curated, reconstructed:lead, "
-             "reconstructed:exec_summary, empty"),
-    Variable("keywords_provenance", "string, nullable",
+             _KEYDOCS, required=False, group=_PROV, nullable=True,
+             enum=("curated", "reconstructed:lead",
+                   "reconstructed:exec_summary"), enum_allows_empty=True),
+    Variable("keywords_provenance", "string",
              "Provenance of the keywords, for curated key documents only",
-             _KEYDOCS, required=False, group=_PROV,
-             allowed_values="extracted, generated:lexicon, empty"),
-    Variable("language_provenance", "string, nullable",
+             _KEYDOCS, required=False, group=_PROV, nullable=True,
+             enum=("extracted", "generated:lexicon"), enum_allows_empty=True),
+    Variable("language_provenance", "string",
              "How the language code was obtained: carried by the source "
              "catalog, backfilled from OpenAlex, or inferred from title and "
              "abstract", _ENRICH,
-             required=False, group=_PROV,
-             allowed_values="source, openalex, detected:langdetect, empty"),
+             required=False, group=_PROV, nullable=True,
+             enum=("source", "openalex", "detected:langdetect"),
+             enum_allows_empty=True),
     Variable("source_count", "integer",
              "Number of sources that contributed the record", _MERGE,
              group=_PROV,
-             allowed_values="1–8"),
+             minimum=1, maximum=8),
     Variable("abstract_status", "string",
              "Whether the undistributed abstract was original, reconstructed "
              "from an inverted index or fulltext, LLM-summarised, oversized, "
              "or missing", _ENRICH, group=_CURATION,
-             allowed_values="original, reconstructed, generated, too_long, "
-             "missing"),
-    Variable("near_duplicate_group", "integer, nullable",
+             enum=("original", "reconstructed", "generated", "too_long",
+                   "missing")),
+    Variable("near_duplicate_group", "integer",
              "Group identifier for near-identical content published under "
              "several DOIs", _FILTER,
-             group=_CURATION),
-    Variable("semantic_outlier_dist", "float, nullable",
+             group=_CURATION, nullable=True),
+    Variable("semantic_outlier_dist", "number",
              "Distance to the corpus embedding centroid", _FILTER,
              required=False,
-             group=_CURATION),
+             group=_CURATION, nullable=True),
     Variable("in_v1", "boolean",
              "Version tracking: work present in the v1.0 submission corpus",
-             _FILTER, required=False, group=_CURATION, allowed_values=_BOOLTF),
+             _FILTER, required=False, group=_CURATION, values_note=_BOOLTF),
     Variable("is_flagged", "boolean",
              "Any quality flag raised; the refined subset is "
              "`df[~df['is_flagged'] | df['is_protected']]`", _FILTER,
-             group=_CURATION, allowed_values=_BOOLTF),
+             group=_CURATION, values_note=_BOOLTF),
     Variable("flag_reason", "string",
              "Comma-separated list of raised quality flags "
              f"({', '.join(FLAG_COLUMNS)}); empty when unflagged", _FILTER,
              group=_CURATION,
-             allowed_values="comma-joined subset of the six flag names, or "
+             values_note="comma-joined subset of the six flag names, or "
              "empty"),
     Variable("is_protected", "boolean",
              "Protection from removal (key papers kept despite flags)", _FILTER,
-             group=_CURATION, allowed_values=_BOOLTF),
-    Variable("protection_reason", "string, nullable",
+             group=_CURATION, values_note=_BOOLTF),
+    Variable("protection_reason", "string",
              "Why the work is protected (citation count, seed list, ...)",
-             _FILTER, required=False, group=_CURATION),
+             _FILTER, required=False, group=_CURATION, nullable=True),
 ]
 
 
