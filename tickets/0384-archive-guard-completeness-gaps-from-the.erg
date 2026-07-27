@@ -6,6 +6,8 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-27T21:00Z HDMX-coding-agent created from the five-perspective panel on PR #1199; red team reproduced each gap. None is a live defect in the shipped scripts — all three are holes in the guards 0292 added.
 
+2026-07-27T21:20Z HDMX-coding-agent note the /gaze gate finished after #1199 had already merged and returned ESCALATE on that timing: the merge landed ~100s after the panel comment, so no gate was applied. Its post-hoc audit added two findings that ARE live defects on main, now gaps 4 and 5 below, plus two documentation items. Correction to the audit: it reported "no passing run of the render smoke test exists anywhere" — the test ran green three times during the 0292 session, where manuscript.pdf had been built. The defect is that it skips by default, which is gap 2, not that it never passes.
+
 --- body ---
 ## Context
 
@@ -66,6 +68,70 @@ exists. Renaming either breaks nothing in the suite.
 A `$PROJ_ROOT/`-prefixed token is statically resolvable: strip the known prefix
 and check the remainder like any other repo-relative path.
 
+### Gap 4 — `tarfile.extractall(filter="data")` is not valid on every supported interpreter
+
+`tests/test_archive_render_smoke.py` passes `filter="data"`. That parameter
+arrived in 3.12 and was backported only to 3.10.12 / 3.11.4; `pyproject.toml`
+declares `requires-python = ">=3.10"`. On 3.10.0–3.10.11 the call raises
+`TypeError`, turning the guard into a hard error rather than a skip. Verified:
+this machine runs 3.12.3, which is why it went unnoticed.
+
+The PEP 706 idiom keys off the feature, not the version, since the backports
+make a version comparison wrong:
+
+```python
+if hasattr(tarfile, "data_filter"):
+    tar.extractall(cleanroom, filter="data")
+else:
+    tar.extractall(cleanroom)
+```
+
+Found by the forge review bot on #1199 and not acted on before the merge.
+
+### Gap 5 — `Makefile.datapaper` omits `tab_corpus_flow.md` from its prerequisites
+
+The render rule lists four shared tables; `data-paper.qmd` includes five.
+Verified against `origin/main`:
+
+```
+$ git show origin/main:build/templates/Makefile.datapaper | grep -c tab_corpus_flow
+0
+$ git show origin/main:deliverables/data-paper/data-paper.qmd \
+    | grep -oE '\{\{< include [^>]*tables/[^ ]*\.md' | sed 's|.*tables/||' | sort -u
+tab_corpus_flow.md
+tab_corpus_sources.md
+tab_languages.md
+tab_variables.md
+```
+
+The archive still *ships* the file — the build script discovers tables from the
+paper's own include directives — so the PDF renders. What breaks is staleness
+detection: edit `tab_corpus_flow.md` and Make sees no reason to re-render. This
+is the same defect class ticket 0327 fixed on the staging side, reintroduced on
+the prerequisite side, and it argues for deriving both lists from the include
+closure rather than hand-keeping either.
+
+## Documentation items
+
+- `build/templates/Makefile.analysis-manuscript` dropped the
+  `$(DATA)/het_mostcited_50.csv` target in #1199. Defensible — it is not one of
+  the nine checksummed outputs and `build_het_core.py` still produces it in
+  Phase 2 — but undocumented.
+- `build/build_analysis_archive.sh:3` still reads "Extracted from Makefile
+  archive-analysis recipe"; the twin line was dropped from the manuscript
+  script.
+
+## Simplification items, unapplied
+
+Surfaced after the merge, so never applied:
+
+- The `cp --parents` loop is copy-pasted three ways with no shared helper.
+- The nine-path output list is hand-synced across `Makefile`,
+  `build_analysis_archive.sh` and `Makefile.analysis-manuscript`, guarded only
+  by a comment. Deriving it once would close the drift class.
+- `_makefile_text()` re-reads ~107 KB six times per run; `lru_cache(maxsize=1)`
+  is the fix, and the idiom is already used at `tests/manuscript_source_qmd.py:80`.
+
 ## Relevant files
 
 - `tests/test_archive_script_paths.py` — gaps 1 and 3
@@ -84,6 +150,12 @@ and check the remainder like any other repo-relative path.
    existence.
 4. Consider extending a render or dry-run check to the datapaper and analysis
    archives; today only the manuscript has one.
+5. Guard the `filter="data"` call with `hasattr(tarfile, "data_filter")`, or
+   raise `requires-python` if 3.10.0–3.10.11 is not actually supported. Gaps 4
+   and 5 are live on main and should land before the rest.
+6. Derive `Makefile.datapaper`'s shared-table prerequisites from the paper's
+   `{{< include >}}` closure, the way the build script already stages them, so
+   the two cannot disagree again.
 
 ## Test
 
@@ -94,11 +166,16 @@ Red first, one per gap:
 - Run the smoke test in a worktree with no manuscript PDF and assert it does
   not skip (it skips today).
 - Rename `tab_retrieval_protocol.md` and assert some test fails (none does).
+- Assert `Makefile.datapaper`'s shared-table prerequisites equal the set of
+  tables `data-paper.qmd` includes (they differ by `tab_corpus_flow.md` today).
+- For gap 4, no red test is practical without a 3.10.11 interpreter; the
+  `hasattr` guard is the fix and a comment naming the backport is the record.
 
 ## Verification
 
-- [ ] Each of the three red tests above fails before the fix and passes after
+- [ ] Each red test above fails before the fix and passes after
 - [ ] The path guard's docstring claims exactly what it checks
+- [ ] The datapaper render rule and the paper's include closure agree
 - [ ] `make check` stays green
 
 ## Invariants
