@@ -99,62 +99,37 @@ class TestUtilsHelpers:
         # Allow duplicates in fast test envs but at least one call succeeds
         assert len(ids) >= 1
 
-    def test_save_run_report_creates_file(self, tmp_path):
-        # Patch CATALOGS_DIR to tmp_path for isolation
-        import utils
+    def test_save_run_report_creates_file(self, tmp_path, monkeypatch):
         from utils import save_run_report
 
-        orig = utils.CATALOGS_DIR
-        orig_pl = pipeline_loaders.CATALOGS_DIR
-        utils.CATALOGS_DIR = str(tmp_path)
-        pipeline_loaders.CATALOGS_DIR = str(tmp_path)
-        try:
-            data = {"elapsed_seconds": 1.5, "rows_written": 42}
-            path = save_run_report(data, "test-run-001", "my_script")
-            assert os.path.isfile(path)
-        finally:
-            utils.CATALOGS_DIR = orig
-            pipeline_loaders.CATALOGS_DIR = orig_pl
+        monkeypatch.setattr(pipeline_loaders, "CATALOGS_DIR", str(tmp_path))
+        data = {"elapsed_seconds": 1.5, "rows_written": 42}
+        path = save_run_report(data, "test-run-001", "my_script")
+        assert os.path.isfile(path)
 
-    def test_save_run_report_json_schema(self, tmp_path):
-        import utils
+    def test_save_run_report_json_schema(self, tmp_path, monkeypatch):
         from utils import save_run_report
 
-        orig = utils.CATALOGS_DIR
-        orig_pl = pipeline_loaders.CATALOGS_DIR
-        utils.CATALOGS_DIR = str(tmp_path)
-        pipeline_loaders.CATALOGS_DIR = str(tmp_path)
-        try:
-            data = {"counter_a": 10, "counter_b": 5, "elapsed_seconds": 2.0}
-            path = save_run_report(data, "run-xyz", "test_script")
-            with open(path) as f:
-                payload = json.load(f)
-            assert payload["script"] == "test_script"
-            assert payload["run_id"] == "run-xyz"
-            assert payload["counter_a"] == 10
-            assert payload["elapsed_seconds"] == 2.0
-        finally:
-            utils.CATALOGS_DIR = orig
-            pipeline_loaders.CATALOGS_DIR = orig_pl
+        monkeypatch.setattr(pipeline_loaders, "CATALOGS_DIR", str(tmp_path))
+        data = {"counter_a": 10, "counter_b": 5, "elapsed_seconds": 2.0}
+        path = save_run_report(data, "run-xyz", "test_script")
+        with open(path) as f:
+            payload = json.load(f)
+        assert payload["script"] == "test_script"
+        assert payload["run_id"] == "run-xyz"
+        assert payload["counter_a"] == 10
+        assert payload["elapsed_seconds"] == 2.0
 
-    def test_save_run_report_sanitizes_run_id(self, tmp_path):
-        import utils
+    def test_save_run_report_sanitizes_run_id(self, tmp_path, monkeypatch):
         from utils import save_run_report
 
-        orig = utils.CATALOGS_DIR
-        orig_pl = pipeline_loaders.CATALOGS_DIR
-        utils.CATALOGS_DIR = str(tmp_path)
-        pipeline_loaders.CATALOGS_DIR = str(tmp_path)
-        try:
-            path = save_run_report({}, "run id/with spaces&special!", "script")
-            assert os.path.isfile(path)
-            # filename should not contain spaces or slashes
-            basename = os.path.basename(path)
-            assert " " not in basename
-            assert "/" not in basename
-        finally:
-            utils.CATALOGS_DIR = orig
-            pipeline_loaders.CATALOGS_DIR = orig_pl
+        monkeypatch.setattr(pipeline_loaders, "CATALOGS_DIR", str(tmp_path))
+        path = save_run_report({}, "run id/with spaces&special!", "script")
+        assert os.path.isfile(path)
+        # filename should not contain spaces or slashes
+        basename = os.path.basename(path)
+        assert " " not in basename
+        assert "/" not in basename
 
     def test_retry_get_importable(self):
         from utils import retry_get
@@ -449,36 +424,28 @@ class TestRunReport:
             reports = os.listdir(reports_dir)
             assert not any("enrich_abstracts" in r for r in reports)
 
-    def test_save_run_report_counter_consistency(self, tmp_path):
+    def test_save_run_report_counter_consistency(self, tmp_path, monkeypatch):
         """Manually verify that the report structure is consistent."""
-        import utils
         from utils import save_run_report
 
-        orig = utils.CATALOGS_DIR
-        orig_pl = pipeline_loaders.CATALOGS_DIR
-        utils.CATALOGS_DIR = str(tmp_path)
-        pipeline_loaders.CATALOGS_DIR = str(tmp_path)
-        try:
-            missing_before = 10
-            missing_after = 3
-            total_filled = missing_before - missing_after
-            data = {
-                "missing_before": missing_before,
-                "missing_after": missing_after,
-                "total_filled": total_filled,
-                "elapsed_seconds": 5.0,
-            }
-            path = save_run_report(data, "consistency-test", "enrich_abstracts")
-            with open(path) as f:
-                payload = json.load(f)
-            assert (
-                payload["missing_before"] - payload["missing_after"]
-                == payload["total_filled"]
-            )
-            assert payload["elapsed_seconds"] > 0
-        finally:
-            utils.CATALOGS_DIR = orig
-            pipeline_loaders.CATALOGS_DIR = orig_pl
+        monkeypatch.setattr(pipeline_loaders, "CATALOGS_DIR", str(tmp_path))
+        missing_before = 10
+        missing_after = 3
+        total_filled = missing_before - missing_after
+        data = {
+            "missing_before": missing_before,
+            "missing_after": missing_after,
+            "total_filled": total_filled,
+            "elapsed_seconds": 5.0,
+        }
+        path = save_run_report(data, "consistency-test", "enrich_abstracts")
+        with open(path) as f:
+            payload = json.load(f)
+        assert (
+            payload["missing_before"] - payload["missing_after"]
+            == payload["total_filled"]
+        )
+        assert payload["elapsed_seconds"] > 0
 
 
 # ---------------------------------------------------------------------------

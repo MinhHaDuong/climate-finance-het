@@ -23,6 +23,12 @@ import pytest
 from utils import BASE_DIR
 
 TESTS_DIR = os.path.join(BASE_DIR, "tests")
+SCRIPTS_DIR = os.path.join(BASE_DIR, "scripts")
+
+#: The module that defines the path constants. ``utils`` only re-exports them.
+DEFINING_MODULE = "pipeline_loaders"
+#: The pure re-export facade. Rebinding a constant here redirects nothing.
+FACADE_MODULE = "utils"
 
 
 def _test_sources():
@@ -33,30 +39,116 @@ def _test_sources():
                 yield name, fh.read()
 
 
-@pytest.mark.adherence
-def test_no_test_patches_catalogs_dir_on_the_facade():
-    """Patch the module that defines the constant, not a re-export of it.
+def call_time_constants():
+    """Return the constants a ``scripts/`` function re-imports at call time.
 
-    ``scripts/utils.py`` re-exports ``CATALOGS_DIR`` from ``pipeline_loaders``.
-    Rebinding the re-export leaves the definition site untouched, so anything
-    reading it at call time — ``save_run_report`` does — still sees the real
-    corpus directory.
+    A function-local ``from pipeline_loaders import X`` re-reads the definition
+    site on every call, so rebinding X anywhere else — the ``utils`` facade, the
+    calling module's own namespace — does not redirect it. That is the ticket
+    0346 mechanism, and it is a property of the source, not of a name we
+    happened to notice: discovering the set by AST keeps the guard correct when
+    a new constant joins.
+
+    Today this finds ``CATALOGS_DIR`` (``save_run_report``, ``latest_run_report``)
+    and ``POOL_DIR`` (``pool_path``, ``load_pool_ids``, ``load_pool_records``).
+    """
+    found = set()
+    for root, _dirs, files in os.walk(SCRIPTS_DIR):
+        for fname in files:
+            if not fname.endswith(".py"):
+                continue
+            with open(os.path.join(root, fname), encoding="utf-8") as fh:
+                tree = ast.parse(fh.read())
+            for func in ast.walk(tree):
+                if not isinstance(func, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                    continue
+                for node in ast.walk(func):
+                    if isinstance(node, ast.ImportFrom) and node.module == DEFINING_MODULE:
+                        found.update(a.name for a in node.names if a.name.isupper())
+    return found
+
+
+def _module_aliases(tree):
+    """Names by which this file refers to the defining module."""
+    aliases = {DEFINING_MODULE}
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for a in node.names:
+                if a.name == DEFINING_MODULE and a.asname:
+                    aliases.add(a.asname)
+    return aliases
+
+
+def _rebinds(tree, constants):
+    """Yield ``(module_name, constant)`` for every rebinding in the file.
+
+    Three shapes, all in use in this suite: bare attribute assignment
+    (``utils.CATALOGS_DIR = x``), the ``monkeypatch.setattr`` string target
+    (``setattr("pipeline_loaders.CATALOGS_DIR", x)``), and the two-argument
+    object form (``setattr(pl, "CATALOGS_DIR", x)``).
+    """
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Assign):
+            for tgt in node.targets:
+                if (isinstance(tgt, ast.Attribute) and tgt.attr in constants
+                        and isinstance(tgt.value, ast.Name)):
+                    yield tgt.value.id, tgt.attr
+        elif isinstance(node, ast.Call) and getattr(node.func, "attr", None) == "setattr" \
+                or isinstance(node, ast.Call) and getattr(node.func, "id", None) == "setattr":
+            args = node.args
+            if len(args) >= 2 and isinstance(args[0], ast.Constant) \
+                    and isinstance(args[0].value, str) and "." in args[0].value:
+                mod, _, const = args[0].value.rpartition(".")
+                if const in constants:
+                    yield mod, const
+            elif len(args) >= 3 and isinstance(args[0], ast.Name) \
+                    and isinstance(args[1], ast.Constant) and args[1].value in constants:
+                yield args[0].id, args[1].value
+
+
+def _facade_patch_offenders(sources):
+    """Return ``"file: CONST"`` for each constant rebound on the facade alone.
+
+    Scoped to the ``utils`` facade on purpose. Rebinding the constant on the
+    *consuming* module is the correct idiom (ticket 0249) and must not be
+    flagged: ``test_dedup_vars`` patches ``compute_vars.CATALOGS_DIR`` and does
+    redirect its target, because ``dedup_stats`` passes the directory to
+    ``latest_run_report`` as an argument rather than letting it re-import
+    (ticket 0349 made that parameter injectable for exactly this reason). Only
+    ``utils`` is a pure re-export with no reader of its own, so only a rebind
+    there is unambiguously a no-op.
+
+    Patching the facade *as well* is fine — code reading the re-export needs it.
+    What is not fine is patching only the facade.
     """
     offenders = []
-    for name, src in _test_sources():
-        patches_facade = re.search(r"^\s*utils\.CATALOGS_DIR\s*=", src, re.M)
-        if not patches_facade:
-            continue
-        # Patching the facade as well is fine — other code reads the re-export.
-        # What is not fine is patching *only* the facade.
-        patches_source = re.search(r"^\s*(?:pl|pipeline_loaders)\.CATALOGS_DIR\s*=", src, re.M) \
-            or 'setattr("pipeline_loaders.CATALOGS_DIR"' in src
-        if not patches_source:
-            offenders.append(name)
+    constants = call_time_constants()
+    for name, src in sources:
+        tree = ast.parse(src)
+        aliases = _module_aliases(tree)
+        rebinds = list(_rebinds(tree, constants))
+        patched_at_source = {c for m, c in rebinds if m in aliases}
+        for const in sorted({c for m, c in rebinds if m == FACADE_MODULE}):
+            if const not in patched_at_source:
+                offenders.append(f"{name}: {const}")
+    return offenders
+
+
+@pytest.mark.adherence
+def test_no_test_patches_a_call_time_constant_off_the_definition_site():
+    """Patch the module that defines the constant, not a re-export of it.
+
+    ``scripts/utils.py`` re-exports these constants from ``pipeline_loaders``.
+    Rebinding the re-export leaves the definition site untouched, so anything
+    reading it at call time — ``save_run_report`` does — still sees the real
+    corpus directory, and the test reports green while writing there.
+    """
+    offenders = _facade_patch_offenders(_test_sources())
     assert not offenders, (
-        "tests rebind utils.CATALOGS_DIR, which does not redirect "
-        "save_run_report: " + ", ".join(offenders) +
-        " - patch pipeline_loaders.CATALOGS_DIR instead"
+        "tests rebind a constant that its consumer re-imports from "
+        f"{DEFINING_MODULE} at call time, so the patch does not redirect it: "
+        + ", ".join(offenders)
+        + f" - patch {DEFINING_MODULE}.<CONST> too"
     )
 
 
@@ -111,6 +203,78 @@ def test_no_test_spawns_a_repo_script_without_redirecting_data():
         + ", ".join(offenders) +
         " - pass env={**os.environ, 'CLIMATE_FINANCE_DATA': str(tmp_path)}"
     )
+
+
+SAMPLE_POOL_OFFENDER = """
+import utils
+
+def test_something(tmp_path):
+    utils.POOL_DIR = str(tmp_path)
+    from utils import pool_path
+    pool_path("openalex", "probe")
+"""
+
+SAMPLE_POOL_CLEAN = """
+import pipeline_loaders
+import utils
+
+def test_something(tmp_path, monkeypatch):
+    monkeypatch.setattr("pipeline_loaders.POOL_DIR", str(tmp_path))
+    from utils import pool_path
+    pool_path("openalex", "probe")
+"""
+
+
+SAMPLE_CONSUMER_PATCH = """
+import compute_vars
+
+def test_something(tmp_path, monkeypatch):
+    monkeypatch.setattr(compute_vars, "CATALOGS_DIR", str(tmp_path))
+    compute_vars.dedup_stats({})
+"""
+
+
+@pytest.mark.adherence
+def test_discovery_is_not_vacuous():
+    """A guard driven by discovery passes trivially if discovery finds nothing.
+
+    ``CATALOGS_DIR`` is pinned because the ticket-0346 invariant keeps the
+    function-local import that puts it here — it breaks a circular import. If
+    that ever changes, this fails and the guard gets re-derived deliberately
+    rather than quietly protecting nothing.
+    """
+    constants = call_time_constants()
+    assert "CATALOGS_DIR" in constants, (
+        "pipeline_io no longer re-imports CATALOGS_DIR at call time; "
+        "re-derive this guard instead of letting it pass vacuously"
+    )
+
+
+@pytest.mark.adherence
+def test_facade_guard_detects_a_constant_it_was_never_told_about():
+    """The guard must cover the mechanism, not the one constant that bit us.
+
+    ``POOL_DIR`` has exactly the shape ``CATALOGS_DIR`` had: ``pipeline_io``
+    re-imports it from ``pipeline_loaders`` inside ``pool_path`` and friends, so
+    rebinding it on the ``utils`` facade is a no-op — and ``pool_path`` calls
+    ``os.makedirs``, so the leak would create directories inside the DVC-tracked
+    ``data/pool/``. No test exercises the pool helpers today, which is precisely
+    why a name-based guard would not notice when one does.
+    """
+    assert _facade_patch_offenders([("sample_offender.py", SAMPLE_POOL_OFFENDER)])
+    assert not _facade_patch_offenders([("sample_clean.py", SAMPLE_POOL_CLEAN)])
+
+
+@pytest.mark.adherence
+def test_facade_guard_leaves_the_consuming_module_idiom_alone():
+    """Patching the consumer is the recommended idiom, not the defect.
+
+    The first draft of this guard flagged ``test_dedup_vars`` for patching
+    ``compute_vars.CATALOGS_DIR``. That is a false positive: ``dedup_stats``
+    hands the directory to ``latest_run_report`` as an argument, so the patch
+    does reach it. Flagging it would push authors toward the wrong fix.
+    """
+    assert not _facade_patch_offenders([("sample_consumer.py", SAMPLE_CONSUMER_PATCH)])
 
 
 def test_save_run_report_honours_the_patched_definition_site(tmp_path, monkeypatch):
