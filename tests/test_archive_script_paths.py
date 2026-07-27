@@ -12,6 +12,13 @@ These guards have teeth: they resolve every script path the archive tooling will
 actually `cp`/invoke to a real file on disk. Point any listed path at a moved or
 missing file and the guard fails — so the next mover cannot silently strand the
 archive.
+
+"Every" is load-bearing, and was once only nearly true: until ticket 0352 the
+SCRIPTS array was captured with a non-greedy `SCRIPTS=\\((.*?)\\)`, which ended
+at the first `)` in the block — a parenthesis in an ordinary comment truncated
+the list and the guard stayed green over the prefix it had read. The array is
+now delimited by a line-anchored `)`, and the parser asserts one path per entry
+line so a regression cannot quietly shrink it again.
 """
 
 import os
