@@ -60,13 +60,18 @@ def front_matter(qmd: Path) -> dict:
 def source_files(qmd: Path) -> tuple[list[Path], list[str]]:
     """Return (the document and every file it includes, unresolvable includes).
 
-    Includes are followed transitively, resolved against the top rendering
-    document first and the including file second — the two conventions differ
-    only for a nested include, and accepting both keeps the scan a superset of
-    whatever Quarto picks. Generated tables under `_shared/tables/` are
-    gitignored, so in a fresh worktree some includes are legitimately absent;
-    they are returned rather than raised so the caller decides.
+    Includes are followed transitively and every path — nested ones included —
+    resolves against the **root document's** directory, not against the file
+    that contains it. Joining each include against its own directory is the
+    natural implementation and it is wrong: it misses every nested include
+    (`.claude/rules/architecture.md`, ticket 0359, where writing it that way
+    produced 13 confident false positives).
+
+    Generated tables under `_shared/tables/` are gitignored, so a fresh
+    worktree legitimately lacks some includes. Those are returned rather than
+    raised, so the caller decides whether a partial scan is good enough.
     """
+    base = qmd.parent
     found: list[Path] = []
     unresolved: list[str] = []
     seen: set[Path] = set()
@@ -78,10 +83,9 @@ def source_files(qmd: Path) -> tuple[list[Path], list[str]]:
         seen.add(current)
         found.append(current)
         for spec in INCLUDE_RE.findall(_read(current)):
-            for candidate in (qmd.parent / spec, current.parent / spec):
-                if candidate.is_file():
-                    queue.append(candidate.resolve())
-                    break
+            candidate = base / spec
+            if candidate.is_file():
+                queue.append(candidate.resolve())
             else:
                 unresolved.append(spec)
     return found, unresolved
