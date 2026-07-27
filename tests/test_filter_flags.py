@@ -292,6 +292,38 @@ class TestFlagSemanticOutlier:
         assert flag_mask.iloc[7] == True
         assert dists.iloc[7] > 0
 
+    def test_doi_less_outlier_is_flaggable(self, config):
+        """A DOI-less work counts toward the centroid, so it must be scorable.
+
+        The distances used to be remapped onto df by normalised DOI, with the
+        empty-DOI bucket dropped. A DOI-less work therefore joined, pulled the
+        centroid its way, and then had its own distance discarded: unflaggable
+        while warping every neighbour's score (review of ticket 0336).
+        """
+        rng = np.random.default_rng(7)
+        n_papers = 20
+        emb_dim = 8
+        embeddings = rng.normal(
+            loc=1.0, scale=0.1, size=(n_papers, emb_dim)).astype(np.float32)
+        embeddings[3] = -10.0 * np.ones(emb_dim, dtype=np.float32)
+
+        df = pd.DataFrame({
+            "doi": [f"10.1000/paper{i}" for i in range(n_papers)],
+            "source_id": [f"W{i:04d}" for i in range(n_papers)],
+            "title": [f"Paper {i}" for i in range(n_papers)],
+        })
+        # Row 3 — the planted outlier — has no DOI, only a source_id.
+        df.loc[3, "doi"] = None
+        df["doi_norm"] = df["doi"].fillna("")
+        emb_df = df.copy()
+
+        flag_mask, dists = flag_semantic_outlier(
+            df, config, embeddings=embeddings, emb_df=emb_df
+        )
+        assert pd.notna(dists.iloc[3]), "the DOI-less work got no distance"
+        assert flag_mask.iloc[3] == True, "the DOI-less outlier escaped Flag 5"
+        assert flag_mask.sum() == 1, "a DOI-bearing neighbour was flagged instead"
+
     def test_missing_embeddings_raises(self, config):
         df = pd.DataFrame({"doi": ["10.1000/a"]})
         with pytest.raises(ValueError, match="embeddings and emb_df are required"):

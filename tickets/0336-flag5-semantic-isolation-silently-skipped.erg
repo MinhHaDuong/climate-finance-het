@@ -7,6 +7,7 @@ Author: HDMX-coding-agent
 2026-07-27T11:30Z HDMX-coding-agent created found during the 0297 corpus regeneration on padme
 
 2026-07-27T11:47Z HDMX-coding-agent measured dry run (read-only, frozen corpus 2026-07-27): key join lives, 33057 Flag 5 candidates, 32938 joined against 38736 vectors, 119 unembedded. Flag 5 flags 1075 works: 885 already flagged by another flag, 93 protected, 161 net new removals. refined_works.csv would go 33344 to ~33183. Row-count change NOT landed, awaits author sign-off.
+2026-07-27T12:22Z HDMX-coding-agent corrected review round 1 found the distance remap in flag_semantic_outlier was DOI-keyed, so 6544 DOI-less candidates were un-flaggable while still setting the centroid. Remapped by work key. Corrected dry run: Flag 5 flags 1277 works (was 1075), 887 already flagged, 93 protected, 361 net new removals (was 161). refined_works.csv would go 33344 to ~32983. Still NOT landed, awaits author sign-off.
 --- body ---
 ## Context
 

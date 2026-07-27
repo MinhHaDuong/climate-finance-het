@@ -29,6 +29,7 @@ from filter_flags import (
     flag_no_abstract,
     flag_semantic_outlier,
     flag_title_blacklist,
+    work_keys,
 )
 from qa_near_duplicates import detect_near_duplicate_groups
 from utils import (
@@ -40,7 +41,6 @@ from utils import (
     normalize_doi,
     normalize_doi_safe,
     save_csv,
-    work_key,
 )
 
 log = get_logger("corpus_filter")
@@ -428,16 +428,26 @@ def load_citations(cheap=False):
 
 
 def _flag5_subset(df):
-    """Rows Flag 5 scores: abstract-bearing, inside the periodization window."""
-    sub = df[df["abstract"].notna() & (df["abstract"].str.len() > 50)].copy()
-    sub["year_num"] = pd.to_numeric(sub["year"], errors="coerce")
+    """Rows Flag 5 scores, in two stages.
+
+    Returns (abstract_bearing, in_window). The stages are reported separately
+    because an empty result means different things: no abstract-bearing work at
+    all is a corpus with nothing to score, whereas abstract-bearing works that
+    all fall outside the periodization window points at an unusable ``year``
+    column — and that one used to read as "no embeddings".
+    """
+    abstract_bearing = df[
+        df["abstract"].notna() & (df["abstract"].str.len() > 50)].copy()
+    abstract_bearing["year_num"] = pd.to_numeric(
+        abstract_bearing["year"], errors="coerce")
     periodization = load_analysis_config()["periodization"]
-    sub = sub[(sub["year_num"] >= periodization["year_min"])
-              & (sub["year_num"] <= periodization["year_max"])]
-    return sub.reset_index(drop=True)
+    in_window = abstract_bearing[
+        (abstract_bearing["year_num"] >= periodization["year_min"])
+        & (abstract_bearing["year_num"] <= periodization["year_max"])]
+    return abstract_bearing, in_window.reset_index(drop=True)
 
 
-def load_embeddings(df, cheap=False, embeddings_path=None):
+def load_embeddings(df, cheap=False, embeddings_path=None, skip=False):
     """Return (embeddings, emb_df, has_embeddings) for Flag 5.
 
     The vectors are matched to works through the ``keys`` array written by
@@ -448,38 +458,52 @@ def load_embeddings(df, cheap=False, embeddings_path=None):
     the day the row sets diverged, the length check turned Flag 5 off on every
     run behind a log.warning (ticket 0336).
 
-    Returns ``(None, None, False)`` only for a genuine absence: ``--cheap``, no
-    cache file, or a works frame with no Flag 5 candidate at all. A cache that
-    exists and holds vectors either yields them or raises.
+    ``(None, None, False)`` is returned only when Flag 5 is genuinely absent:
+    ``--cheap``, ``--skip-semantic-flag``, no cache file, or a corpus with no
+    abstract-bearing work. Otherwise the cache either yields its vectors or
+    raises — turning the flag off has to be asked for.
     """
     path = embeddings_path or EMBEDDINGS_PATH
-    if cheap or not os.path.exists(path):
+    if cheap or skip or not os.path.exists(path):
+        return None, None, False
+
+    abstract_bearing, emb_df = _flag5_subset(df)
+    if abstract_bearing.empty:
+        log.warning("  No abstract-bearing work in the corpus: Flag 5 has "
+                    "nothing to score.")
         return None, None, False
 
     cache = np.load(path, allow_pickle=True)
-    vectors = cache["vectors"] if "vectors" in cache.files else cache
-    if "keys" not in cache.files:
+    missing = [name for name in ("vectors", "keys") if name not in cache.files]
+    if missing:
         raise RuntimeError(
-            f"{path} carries no 'keys' array, so its {len(vectors)} vectors "
-            "cannot be matched to works. Re-run: make corpus-enrich"
+            f"{path} is missing {missing} — it holds {sorted(cache.files)}. "
+            "Flag 5 cannot match vectors to works without both. Re-run "
+            "'make corpus-enrich', or pass --skip-semantic-flag to filter "
+            "without Flag 5 on purpose."
         )
+    vectors = cache["vectors"]
     key_to_row = {str(k): i for i, k in enumerate(cache["keys"])}
 
-    emb_df = _flag5_subset(df)
     if emb_df.empty:
-        log.warning("  No abstract-bearing work inside the periodization "
-                    "window: Flag 5 has nothing to score.")
-        return None, None, False
+        periodization = load_analysis_config()["periodization"]
+        raise RuntimeError(
+            f"{len(abstract_bearing)} abstract-bearing works, none with a year "
+            f"in {periodization['year_min']}-{periodization['year_max']}. The "
+            "'year' column is unusable, so Flag 5 has no candidates. Fix the "
+            "column, or pass --skip-semantic-flag."
+        )
 
-    rows = emb_df.apply(work_key, axis=1).map(key_to_row)
+    rows = work_keys(emb_df).map(key_to_row)
     matched = rows.notna()
     n_matched = int(matched.sum())
     if n_matched == 0:
         raise RuntimeError(
             f"{path} holds {len(vectors)} vectors and the corpus has "
             f"{len(emb_df)} Flag 5 candidates, but the two have no work in "
-            "common. The embeddings are stale or keyed differently. "
-            "Re-run: make corpus-enrich"
+            "common. The embeddings are stale or keyed differently. Re-run "
+            "'make corpus-enrich', or pass --skip-semantic-flag to filter "
+            "without Flag 5 on purpose."
         )
     if n_matched < len(emb_df):
         log.warning("  Flag 5 embedding coverage: %d / %d candidates "
@@ -521,15 +545,18 @@ def run_flagging(df, args, config, citations_df, embeddings, emb_df, has_embeddi
             log.warning("  Flag 4 skipped: %s", e)
 
     if has_embeddings:
-        try:
-            df["semantic_outlier"], df["semantic_outlier_dist"] = flag_semantic_outlier(
-                df, config, embeddings=embeddings, emb_df=emb_df)
-            log.info("  Flag 5 (semantic outlier): %d", df["semantic_outlier"].sum())
-        except ValueError as e:
-            log.warning("  Flag 5 skipped: %s", e)
-            has_embeddings = False
+        # No except ValueError here. flag_semantic_outlier raises on a None or
+        # misaligned input, and load_embeddings now returns neither; swallowing
+        # it was how a dead Flag 5 stayed quiet for months (ticket 0336).
+        df["semantic_outlier"], df["semantic_outlier_dist"] = flag_semantic_outlier(
+            df, config, embeddings=embeddings, emb_df=emb_df)
+        log.info("  Flag 5 (semantic outlier): %d", df["semantic_outlier"].sum())
+    elif getattr(args, "skip_semantic_flag", False):
+        log.info("  Flag 5: skipped (--skip-semantic-flag)")
+    elif cheap:
+        log.info("  Flag 5: skipped (--cheap)")
     else:
-        log.info("  Flag 5: skipped (no embeddings)")
+        log.info("  Flag 5: skipped (no embeddings cache)")
 
     skip_llm = getattr(args, "skip_llm", False)
     if not skip_llm:
@@ -610,6 +637,10 @@ def main():
                         help="Skip LLM scoring + audit step")
     parser.add_argument("--skip-citation-flag", action="store_true",
                         help="Skip citation isolation flag")
+    parser.add_argument("--skip-semantic-flag", action="store_true",
+                        help=("Skip the semantic isolation flag (Flag 5). "
+                              "Without it, an unusable embeddings cache is a "
+                              "hard error rather than a silent five-flag run."))
     parser.add_argument("--cheap", action="store_true",
                         help="Cheap filter: only flags 1-3 (metadata, no-abstract, blacklist)")
     parser.add_argument("--v1-identifiers", default=None,
@@ -621,6 +652,7 @@ def main():
     if args.cheap:
         args.skip_llm = True
         args.skip_citation_flag = True
+        args.skip_semantic_flag = True
 
     # ── Resolve defaults ───────────────────────────────────────────────────
     if args.extend:
@@ -657,7 +689,8 @@ def main():
     df = load_input_works(works_input)
     citations_df = load_citations(cheap=getattr(args, "cheap", False))
     embeddings, emb_df, has_embeddings = load_embeddings(
-        df, cheap=getattr(args, "cheap", False))
+        df, cheap=getattr(args, "cheap", False),
+        skip=getattr(args, "skip_semantic_flag", False))
 
     df, has_embeddings = run_flagging(
         df, args, config, citations_df, embeddings, emb_df, has_embeddings)

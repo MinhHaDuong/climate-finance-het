@@ -14,7 +14,7 @@ import re
 import numpy as np
 import pandas as pd
 import yaml
-from utils import CONFIG_DIR, get_logger, normalize_doi_safe
+from utils import CONFIG_DIR, get_logger, normalize_doi_safe, work_key
 
 log = get_logger("filter_flags")
 
@@ -34,6 +34,24 @@ def _load_config(path=None):
 # ============================================================
 # Private helpers
 # ============================================================
+
+def work_keys(frame):
+    """work_key() for every row, tolerating frames that lack the fallback columns.
+
+    work_key reads doi, then source_id, then a hash of title. Test frames and
+    slim intermediates carry only some of those, so fill the absent ones rather
+    than making every caller build a full frame.
+    """
+    filled = frame
+    missing = [c for c in ("doi", "source_id", "title") if c not in frame.columns]
+    if missing:
+        filled = frame.copy()
+        for col in missing:
+            filled[col] = None
+    if len(filled) == 0:
+        return pd.Series([], dtype=object, index=frame.index)
+    return filled.apply(work_key, axis=1)
+
 
 def _has_safe_words(title, safe_words):
     """Check if title contains any safe/relevant words."""
@@ -199,12 +217,6 @@ def flag_semantic_outlier(df, config, *, embeddings, emb_df):
 
     sigma = config["semantic_outlier"]["sigma"]
 
-    # Ensure doi_norm exists
-    if "doi_norm" not in df.columns:
-        doi_norm = df["doi"].apply(normalize_doi_safe)
-    else:
-        doi_norm = df["doi_norm"]
-
     centroid = embeddings.mean(axis=0)
     norms = np.linalg.norm(embeddings, axis=1, keepdims=True)
     norms[norms == 0] = 1
@@ -217,13 +229,27 @@ def flag_semantic_outlier(df, config, *, embeddings, emb_df):
     std_dist = cos_dist.std()
     threshold = mean_dist + sigma * std_dist
 
-    # Build DOI -> distance mapping
-    emb_dois = emb_df["doi"].apply(normalize_doi_safe)
-    emb_doi_to_dist = dict(zip(emb_dois, cos_dist))
-    emb_doi_to_dist.pop("", None)
+    # Map distances back onto df by work key, not by DOI. A DOI-keyed map
+    # discards the distance of every DOI-less work — while that work still
+    # counts toward the centroid — so it is unflaggable and warps everyone
+    # else's score (found in review of ticket 0336). work_key is what the
+    # embeddings are keyed on upstream, so the same key carries the result back.
+    dist_by_key = dict(zip(work_keys(emb_df), cos_dist))
+    dist_by_key.pop("", None)
+    outlier_dists = work_keys(df).map(dist_by_key)
 
-    # Map to main df
-    outlier_dists = doi_norm.map(emb_doi_to_dist)
+    # Normalized DOI as a second chance: emb_df is a slice of df in this
+    # pipeline, but a caller passing an independently-loaded frame can differ
+    # in DOI casing or prefix, which work_key does not normalize.
+    unmatched = outlier_dists.isna()
+    if unmatched.any() and "doi" in df.columns and "doi" in emb_df.columns:
+        emb_dois = emb_df["doi"].apply(normalize_doi_safe)
+        dist_by_doi = dict(zip(emb_dois, cos_dist))
+        dist_by_doi.pop("", None)
+        doi_norm = (df["doi_norm"] if "doi_norm" in df.columns
+                    else df["doi"].apply(normalize_doi_safe))
+        outlier_dists = outlier_dists.fillna(doi_norm.map(dist_by_doi))
+
     flag_mask = outlier_dists.notna() & (outlier_dists > threshold)
 
     return flag_mask, outlier_dists

@@ -485,6 +485,22 @@ class TestFlag5NeverSilentlyDead:
         with pytest.raises(RuntimeError, match="keys"):
             cf.load_embeddings(df, embeddings_path=str(path))
 
+    def test_unusable_year_column_raises_instead_of_emptying_the_subset(
+        self, tmp_path
+    ):
+        """Abstract-bearing works whose years all coerce to NaN.
+
+        The subset empties, which used to read as "nothing to score" — the same
+        silence by a different route.
+        """
+        cf = _import_corpus_filter()
+        df = _works_frame(n=3)
+        df["year"] = "n/a"
+        path, _ = _write_npz(tmp_path, ["10.1/work0", "10.1/work1"])
+
+        with pytest.raises(RuntimeError, match="(?i)year"):
+            cf.load_embeddings(df, embeddings_path=path)
+
     def test_missing_cache_is_still_a_legitimate_skip(self, tmp_path):
         cf = _import_corpus_filter()
         df = _works_frame(n=3)
@@ -498,6 +514,63 @@ class TestFlag5NeverSilentlyDead:
         path, _ = _write_npz(tmp_path, ["10.1/work0"])
         result = cf.load_embeddings(df, cheap=True, embeddings_path=path)
         assert result == (None, None, False)
+
+    def test_explicit_skip_is_a_legitimate_skip(self, tmp_path):
+        """The escape hatch: turning Flag 5 off has to be asked for.
+
+        Without it, an unusable cache would leave an operator no way to filter
+        at all — with it, the only quiet five-flag run is a requested one.
+        """
+        cf = _import_corpus_filter()
+        df = _works_frame(n=3)
+        path = tmp_path / "keyless.npz"
+        np.savez_compressed(path, vectors=np.zeros((5, 8), dtype=np.float32))
+        result = cf.load_embeddings(df, skip=True, embeddings_path=str(path))
+        assert result == (None, None, False)
+
+    def test_abstractless_corpus_is_a_legitimate_skip(self, tmp_path):
+        """No abstract anywhere: Flag 5 genuinely has nothing to score."""
+        cf = _import_corpus_filter()
+        df = _works_frame(n=3)
+        df["abstract"] = None
+        path, _ = _write_npz(tmp_path, ["10.1/work0"])
+        result = cf.load_embeddings(df, embeddings_path=path)
+        assert result == (None, None, False)
+
+
+class TestSkipSemanticFlagCLI:
+    """`--skip-semantic-flag` is the only sanctioned way to run five flags."""
+
+    def test_flag_is_declared(self):
+        with open(os.path.join(HARVEST_DIR, "corpus_filter.py")) as f:
+            src = f.read()
+        assert '"--skip-semantic-flag"' in src
+
+    def test_cheap_mode_implies_it(self):
+        with open(os.path.join(HARVEST_DIR, "corpus_filter.py")) as f:
+            src = f.read()
+        assert "args.skip_semantic_flag = True" in src, (
+            "--cheap must imply --skip-semantic-flag, or a cheap run reports "
+            "'no embeddings cache' for a cache it never looked at"
+        )
+
+    def test_flag5_failure_is_not_swallowed_by_run_flagging(self):
+        """run_flagging must not catch the semantic flag's own exception.
+
+        The `except ValueError: log.warning` around Flag 5 was a second silent
+        path, independent of the loader's.
+        """
+        import re
+
+        with open(os.path.join(HARVEST_DIR, "corpus_filter.py")) as f:
+            src = f.read()
+        body = src[src.index("def run_flagging"):src.index("def main(")]
+        flag5 = body[body.index("if has_embeddings:"):body.index("skip_llm =")]
+        code = "\n".join(line for line in flag5.splitlines()
+                         if not line.lstrip().startswith("#"))
+        assert not re.search(r"except\s+\w*Error", code), (
+            "Flag 5's call site swallows an exception again"
+        )
 
 
 class TestExtendDeclaresEmbeddingsDep:
