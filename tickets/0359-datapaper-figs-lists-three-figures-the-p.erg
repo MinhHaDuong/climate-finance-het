@@ -8,6 +8,8 @@ Author: HDMX-coding-agent
 2026-07-27T16:45Z HDMX-coding-agent note found while verifying 0328's cluster labels. One of the three orphans was created today by 0332's §4 cut; the other two predate it.
 
 2026-07-27T17:40Z HDMX-coding-agent note widened after a roar reachability sweep: this is not three figures in one variable, it is 17 includes, 2 tables and 5 figures across the whole build graph. Retitled. The sweep also found the trap the guard must avoid — see Test.
+
+2026-07-27T19:30Z HDMX-coding-agent note the *_FIGS lists were half the defect. The *_INCLUDES lists — which are render-rule prerequisites, not just documentation — had drifted further: TECHREP_INCLUDES named eleven includes the report had dropped and none of the 23 it composes; DATAPAPER four; MULTILAYER all six. Three render rules named no figure at all, so `make multilayer-detection.pdf` on main renders happily with none of its five figures on disk. Fixed both contracts, wired the missing figure prerequisites, and widened the guard to includes and tables. tab_venues_fr_caption.md is not dead: manuscript.mk concatenates it into the Gide venues table. Two figures nobody declared (fig_companion_sensitivity, fig_composition_wide) gained homes; ALL_FIGS loses nothing and gains exactly those two.
 --- body ---
 ## Context
 
@@ -111,11 +113,17 @@ Nothing is broken; `make` is doing work and the maintenance burden is real.
 
 ## Verification
 
-- [ ] Every entry in every `*_FIGS` variable is either rendered by that
-      deliverable or on the commented allowlist
-- [ ] `make figures` builds the same set as before, or the difference is
-      deliberate and stated
-- [ ] `ALL_FIGS` unchanged by the `fig_dag` move
+- [x] Every entry in every `*_FIGS` variable is either rendered by that
+      deliverable or on the commented allowlist —
+      `test_declared_figures_are_rendered` (8 variables), with the two
+      `# not-embedded:` markers in `paths.mk` covering the exceptions
+- [x] `make figures` builds the same set as before, or the difference is
+      deliberate and stated — nothing removed; added
+      `fig_companion_sensitivity.png` (multilayer embeds it) and
+      `fig_composition_wide.png` (the Gide deck embeds it), neither previously
+      declared by any variable
+- [x] `ALL_FIGS` unchanged by the `fig_dag` move — `fig_dag` moved from
+      `DATAPAPER_FIGS` to the new `CORPUSREPORT_FIGS`, still in `ALL_FIGS`
 
 ## Invariants
 
@@ -125,8 +133,22 @@ Nothing is broken; `make` is doing work and the maintenance burden is real.
 
 ## Exit criteria
 
-- [ ] Every generated artifact is reachable from a deliverable, or on the
-      commented allowlist with its reason
-- [ ] The 17 flat includes are deleted, revived, or explained
-- [ ] `paths.mk` answers "which artifacts does this deliverable need?" correctly
-- [ ] A guard fails when the next prose cut orphans an artifact
+- [x] Every generated artifact is reachable from a deliverable, or on the
+      commented allowlist with its reason —
+      `test_shared_artifacts_are_reachable` over the tracked Markdown in
+      `_shared/{_includes,tables}`, plus the figure checks; exceptions carry a
+      reason in `config/unrendered-artifacts.txt` or a `# not-embedded:` marker
+- [x] The 17 flat includes are deleted, revived, or explained — explained:
+      each is listed with "disposition pending ticket 0290", whose Action 2 is
+      the author's content call, and all seven that were posing as live render
+      prerequisites were removed from the `*_INCLUDES` lists
+- [x] `paths.mk` answers "which artifacts does this deliverable need?"
+      correctly — both contracts fixed and pinned in both directions:
+      `test_declared_includes_match_the_document` (7 lists) and the two figure
+      tests; `test_render_rules_depend_on_their_figures` adds the three missing
+      figure prerequisites the lists had never been wired to
+- [x] A guard fails when the next prose cut orphans an artifact —
+      `tests/test_deliverable_artifacts.py`, 39 tests, mutation-checked six
+      ways (drop an allowlist entry, allowlist a reachable file, declare a dead
+      include, orphan a figure, orphan an include, unwire a render rule); each
+      mutation fails and the baseline is green
