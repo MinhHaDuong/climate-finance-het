@@ -91,11 +91,17 @@ Red step:
             bad = sorted(k for k in rendered if v.get(k) == "[MISSING]")
             assert not bad, f"{doc} renders placeholder(s): {bad}"
 
-Fails today on the data paper for the two dedup counts. Written against
-*rendered* variables rather than all variables, so the genuinely pending
-companion Z-series placeholders (`zone_1_start`, `s2_peak_year_w3`) do not
-force unrelated work — they are in the vars file but not yet referenced by a
-document.
+Fails today on the data paper for the two dedup counts.
+
+Correction to an earlier claim in this ticket: the companion Z-series
+placeholders (`zone_1_start`, `zone_1_end`, `s2_peak_year_w3`,
+`l1_peak_year_w3`, `g9_peak_year_w3`) were described as "not yet referenced by
+a document". They are — `multilayer-detection.qmd` renders all five, so that
+paper currently prints `[MISSING]` five times. A rendered-variable guard will
+therefore fail on multilayer too, which is correct but wider than this ticket.
+Either scope the guard to the data paper first and widen it once the Z-series
+lands, or fix both together. Do not narrow the guard to hide the multilayer
+case.
 
 ## Verification
 
