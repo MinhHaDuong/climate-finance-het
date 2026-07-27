@@ -130,19 +130,23 @@ def _measurable_counts(section):
     corpus count as `f"{n:,}"`, so a hand-typed one reads the same way — and
     one did: "the non-English layer counts 3,381 works" was an enriched-corpus
     figure typed into a refined-corpus sentence, still there after the rebuild
-    moved the refined layer to 2,063 (ticket 0323).
+    moved the refined layer to 2,061 (ticket 0323).
 
     Matches comma-grouped thousands and bare integers of four digits or more.
-    Years, DOIs, URLs, and inline code are stripped first. A corpus count below
-    1,000 typed without a separator still escapes; the shape guarded here is
-    the one the vars formatter emits.
+    DOIs, URLs, inline code, and any 1000--2999 four-digit number are stripped
+    first. That year range is deliberately wide: a climate paper naming an SSP
+    horizon (2100) or a scenario year would otherwise break CI on a number that
+    cannot rot. It costs little, because `_int` puts a separator in every
+    four-digit corpus count it formats, so the comma branch is the real net;
+    what escapes is a count typed by hand with no separator, and a count below
+    1,000, both noted here rather than papered over.
     """
     text = re.sub(r"<!--.*?-->", "", section, flags=re.S)      # HTML comments
     text = re.sub(r"\{\{<[^>]*>\}\}", "", text)                # macros
     text = re.sub(r"`[^`]*`", "", text)                        # inline code
     text = re.sub(r"https?://\S+", "", text)                   # URLs
     text = re.sub(r"10\.\d{4,}/\S+", "", text)                 # DOIs
-    text = re.sub(r"\b(?:19|20)\d{2}\b", "", text)             # years
+    text = re.sub(r"\b[12]\d{3}\b", "", text)                  # years, scenarios
     return [h for h in re.findall(r"\b\d{1,3}(?:,\d{3})+\b|\b\d{4,}\b", text)
             if h not in _ALLOWED_COUNTS]
 
@@ -179,7 +183,7 @@ def test_method_and_data_sections_carry_no_hand_typed_count():
 
     Percentages were pinned after 99.0% outlived its own rebuild; the same
     section still carried a thousand-scale count typed by hand, which then
-    rotted the same way and by more (3,381 against a measured 2,063). Counts
+    rotted the same way and by more (3,381 against a measured 2,061). Counts
     and shares rot on the same event, so they need the same guard.
     """
     counts = _measurable_counts(_method_and_data_sections())
