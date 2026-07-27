@@ -1,0 +1,61 @@
+%erg 0.1
+Title: Standing guard: every generated Markdown table row has its declared cell count
+Created: 2026-07-27
+Author: HDMX-coding-agent
+Blocked-by: 0339
+
+--- log ---
+2026-07-27T12:09Z HDMX-coding-agent created
+2026-07-27T12:16Z HDMX-coding-agent note filed by the 0325 roar sweep. The class has now produced three instances (0325's codebook, and both emitters in 0339), which is what earns a standing test rather than a third point fix.
+
+--- body ---
+## Context
+
+Three emitters have now shipped the same defect: a free-text value carrying a
+`|` interpolated into a Markdown pipe table, where the renderer silently drops
+the overflowing cell. 0325 fixed one in the deposited codebook; 0339 fixes two
+more. Each was caught by a human or an agent reading output, never by a test.
+
+A per-PR review gate cannot catch the fourth. The class needs a standing test
+that fails when *any* generated table in the tree has a malformed row —
+including one produced by an emitter nobody thought to check.
+
+This ticket is deliberately separate from 0339 (roar step 4: a regression
+guard for a class is not bundled into the fix PR).
+
+## Actions
+
+1. Discover the generated Markdown tables from the Makefile rather than a
+   hardcoded list — a hardcoded list is exactly what lets the next emitter
+   escape. `tests/test_phase_layout.py` already parses Make targets; reuse
+   that approach. See memory `feedback_autodiscovery_class_guard`.
+2. For each such artifact on disk, parse its pipe tables and assert every body
+   row splits into the same number of cells as its header, honouring `\|`
+   escapes.
+3. Skip artifacts absent on the machine (DVC-gated) rather than failing —
+   several tables need corpus data.
+
+## Test
+
+The guard *is* the test. Make it red first by pointing it at a fixture table
+containing an unescaped `|` in a cell and confirming it fails, then at the
+escaped version and confirming it passes. Without that step the guard can pass
+vacuously — e.g. by finding no files.
+
+## Verification
+
+- [ ] The guard fails on a deliberately malformed fixture
+- [ ] It passes on the current tree
+- [ ] It discovers tables from the Makefile, so a new emitter is covered
+      without editing the test
+- [ ] Marked `adherence` or fast — it reads files, runs nothing
+
+## Invariants
+
+- No corpus data required; skips cleanly where artifacts are absent.
+- `make check-fast` stays under its budget.
+
+## Exit criteria
+
+- [ ] A single test covers every generated Markdown table in the tree
+- [ ] Adding an emitter without escaping fails that test
