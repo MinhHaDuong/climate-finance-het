@@ -49,6 +49,12 @@ def _qmd_text():
         return fh.read()
 
 
+def _include_text(name):
+    path = os.path.join(REPO, "deliverables", "_shared", "_includes", name)
+    with open(path, encoding="utf-8") as fh:
+        return fh.read()
+
+
 def _section(text, heading_prefix):
     """Body of the ``### <heading_prefix> ...`` section, up to the next heading."""
     lines = text.splitlines()
@@ -590,15 +596,61 @@ def test_paper_states_the_outlier_centroid_scope():
         )
 
 
-def test_paper_says_the_outlier_flag_removes_nothing():
-    """Diagnostic mode is a claim about the corpus, not an implementation note.
+def test_paper_does_not_advertise_a_six_flag_filter():
+    """Negative guard: the defect is lexically stable, the fix is not.
 
-    A reader counting flags in §2.2 and removals in @tbl-flow has to be able to
-    tell that one of the six annotates without deleting (ticket 0361).
+    "six-flag filter" is how the paper described the pipeline while one of the
+    six removed nothing. Pinning the *absence* of that phrase survives any
+    rewrite of the replacement prose, which a positive phrase pin would not
+    (project rule: prose guards are negative or mechanical).
+
+    Only the hyphenated attributive form is banned: "six flags annotate every
+    work" is the true statement, and the count of flags is not the defect —
+    calling all six of them a filter is.
+    """
+    if _load(FILTER_YAML)["semantic_outlier"].get("mode") != "diagnostic":
+        pytest.skip("Flag 5 is configured as a filter")
+    for label, text in (
+        ("data-paper.qmd", _qmd_text()),
+        ("corpus-filtering.md", _include_text("corpus-filtering.md")),
+    ):
+        assert "six-flag" not in text.lower(), (
+            f"{label} still advertises a six-flag filter while Flag 5 "
+            "removes nothing"
+        )
+
+
+def test_no_generated_caption_advertises_a_six_flag_filter():
+    """The caption emitters are prose too, and their output is gitignored.
+
+    `tab_corpus_sources.md` is included into both the data paper and the corpus
+    report, so a stale flag count there reaches the rendered PDF while never
+    appearing in a diff — the one site in this sweep that no prose review of
+    the tracked files could have caught.
+    """
+    if _load(FILTER_YAML)["semantic_outlier"].get("mode") != "diagnostic":
+        pytest.skip("Flag 5 is configured as a filter")
+    figures = os.path.join(REPO, "scripts", "figures")
+    for name in sorted(os.listdir(figures)):
+        if not name.endswith(".py"):
+            continue
+        with open(os.path.join(figures, name), encoding="utf-8") as fh:
+            src = fh.read()
+        assert "six-flag" not in src.lower(), (
+            f"scripts/figures/{name} emits a six-flag claim into a generated "
+            "caption while Flag 5 removes nothing"
+        )
+
+
+def test_paper_names_the_outlier_flag_as_a_diagnostic():
+    """One token, not a phrasing: "diagnostic" is this pipeline's term of art.
+
+    A reader counting flags in §2.2 against removals in @tbl-flow has to be
+    able to tell that one of the six annotates without deleting (ticket 0361).
     """
     if _load(FILTER_YAML)["semantic_outlier"].get("mode") != "diagnostic":
         pytest.skip("Flag 5 is configured as a filter")
     pipeline = _section(_qmd_text(), "2.2")
-    assert "removes nothing" in pipeline or "removes no work" in pipeline, (
-        "§2.2 must state that the semantic-distance flag removes no work"
+    assert "diagnostic" in pipeline.lower(), (
+        "§2.2 must name the semantic-distance flag as a diagnostic"
     )

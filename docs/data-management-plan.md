@@ -56,9 +56,11 @@ deposit to ensure reproducibility.
 
 ### 2.2 What quality controls are applied?
 
-1. **Six-flag filtering pipeline** with full audit trail:
+1. **Five-flag filtering pipeline** with full audit trail:
    - Missing metadata, absent abstract + irrelevant title, title blacklist,
-     citation isolation, semantic outlier, cross-encoder relevance scoring
+     citation isolation, cross-encoder relevance scoring
+   - A sixth flag, semantic distance from the work's own language centroid, is
+     computed and published as a diagnostic column; it removes no work
 2. **Protection criteria** override flags: citation count ≥50, multi-source presence,
    within-corpus citations, teaching syllabus appearance
 3. **Cross-validation**: citation accuracy 99.0% (n=300), completeness 100% (n=300); metadata title match 99.0% (n=100); embedding validity Cohen's d=0.51 (p<0.001)

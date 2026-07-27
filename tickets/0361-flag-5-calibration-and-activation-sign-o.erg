@@ -113,8 +113,13 @@ correct its geometry, drop the removals:
   calibrated sigma; an unread threshold left in config is a landmine.
 
 Why not A: it filters on a cut no human validation supports. Why not B: it
-destroys a signal worth publishing, which
-`docs/research-note-multilingual.md` already reads as a dependent variable.
+destroys an isolation signal worth publishing with the deposit, and the
+removals it kept would go on thinning the multilingual tail
+`docs/research-note-multilingual.md` exists to study. (Correction to the
+first draft of this rationale: that note computes its own k-NN isolation
+score against EN-North neighbours, §4.1 — it does not read
+`semantic_outlier_dist`. What Flag 5 threatened was the note's *population*,
+not its statistic. Verified against the note, 2026-07-27.)
 The options below are kept as the calibration record they were.
 
 ## Options (as put to the author)
