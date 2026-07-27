@@ -63,9 +63,16 @@ why it is worth its own ticket rather than a sixth item on a fix-the-emitter PR.
   module docstring's rationale for the scope needs revising with it
 - `tests/_gfm_render.py` — `render_gfm`, the `-f gfm` oracle used by every
   escaping test
-- `tests/test_markdown_table.py`, `tests/test_rendered_venue_table_fidelity.py`,
-  `tests/test_corpus_table_export.py`, `tests/test_language_table.py` — the
-  callers of that oracle
+- `tests/test_corpus_flow.py`, `tests/test_corpus_table_export.py`,
+  `tests/test_language_table.py`, `tests/test_rendered_venue_table_fidelity.py`
+  — the four callers of that oracle. (This list named
+  `tests/test_markdown_table.py` until the feasibility pass; that module
+  deliberately defers render assertions and never imports `_gfm_render`, while
+  `test_corpus_flow.py` was missing.) `render_gfm` is called positionally with
+  two arguments by all four, so an optional `bibliography=` third parameter is
+  backward-compatible.
+- `deliverables/_shared/bibliography/main.bib` — a real tracked bibliography;
+  the `@key` test needs no synthesized fixture
 - `deliverables/data-paper/data-paper.qmd`,
   `deliverables/corpus-report/corpus-report.qmd` — `bibliography:` set
 
