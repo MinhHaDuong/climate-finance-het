@@ -164,13 +164,16 @@ required; the flat classification already makes every mover import-leaf.
 
 Nine files were entry-point-AND-imported. Three had a genuine helper leaked from
 an output-producing entry point → **extracted to a neutral flat `_`-module (the
-0250 pattern), byte-identical by construction**, freeing the entry point to move:
+0250 pattern), byte-identical by construction**, freeing the entry point to move.
+A fourth case (0321) arrived later by the same route and took the same
+resolution — the pattern is the standing answer, not a one-off audit result:
 
 | Entry point (now Tier-3) | Extracted helper(s) → flat module | Repointed importer(s) |
 |---|---|---|
 | `summarize_core_venues` | `canonical_venue`/`venue_type`/`institution_group` → `_venue_naming.py` | `compute_venue_concentration`, `export_core_venues_markdown` |
 | `build_het_core` | `is_global_south`/`is_non_english` → `_corpus_predicates.py` | `analyze_multilingual` |
 | `build_teaching_yaml` | `_dedup_course_names` → `_course_dedup.py` | `analyze_syllabi` |
+| `compute_clusters` | `LABEL_STOPWORDS`/`ACRONYM_EXPANSIONS`/`collapse_acronyms` → `_label_vocabulary.py` | `analyze_global_map` (ticket 0321) |
 
 The other six were **reclassified Tier-2** (see above). One correction to the old
 audit: `qa_near_duplicates` has no `__main__` and its docstring documents a
