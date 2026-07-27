@@ -1,17 +1,25 @@
-"""Tests for export_language_table.py — ticket #402.
+"""Tests for export_language_table.py — ticket #402, 0370.
 
 Verifies that:
 - normalise_language handles common edge cases correctly
 - the data paper includes the language table
 - the script is importable and the normalise function works
+- a pipe-bearing language code survives rendering (ticket 0370 sweep)
 """
 
 import os
+import subprocess
 import sys
+from html import escape
+
+import pytest
+from _gfm_render import cell_texts, render_gfm, require_pandoc, row_with
+from _source_roots import source_root_env
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "figures"))  # 0255: moved figures entry points
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
+REPO_ROOT = os.path.abspath(ROOT)
 DATA_PAPER = os.path.join(ROOT, "deliverables", "data-paper", "data-paper.qmd")
 SCRIPT = os.path.join(ROOT, "scripts", "figures", "export_language_table.py")
 
@@ -108,3 +116,108 @@ def test_data_paper_references_tbl_languages():
 
 def test_script_exists():
     assert os.path.isfile(SCRIPT), f"Missing script: {SCRIPT}"
+
+
+# --- Ticket 0370 sweep: the language table has the same interpolation shape ---
+
+# `normalize_lang` returns any two-character value unchanged, so a malformed
+# `language` field in the corpus reaches both the Code column raw and the
+# Language column upper-cased. Neither is curated in-repo, which is what makes
+# this the same defect class as the corpus-sources table.
+PIPE_CODE = "a|"
+# MIN_COUNT in the emitter: below it a language is folded into the "Other" row
+# and never gets a cell of its own.
+ENOUGH_ROWS = 250
+
+
+@pytest.mark.integration
+def test_pipe_bearing_language_code_keeps_its_four_cells(tmp_path):
+    """A malformed two-letter code must not shift the counts one column left."""
+    require_pandoc()
+    enriched = tmp_path / "enriched_works.csv"
+    enriched.write_text(
+        "language\n" + f'"{PIPE_CODE}"\n' * ENOUGH_ROWS, encoding="utf-8")
+    output = tmp_path / "tab_languages.md"
+
+    subprocess.run(
+        [sys.executable, SCRIPT, "--input", str(enriched), "--output", str(output)],
+        cwd=REPO_ROOT, env=source_root_env(), capture_output=True,
+        text=True, check=True)
+
+    flat = render_gfm(output.read_text(encoding="utf-8"), tmp_path)
+    row = row_with(flat, escape(PIPE_CODE.upper(), quote=False))
+
+    assert cell_texts(row) == [
+        escape(PIPE_CODE.upper(), quote=False),
+        escape(PIPE_CODE, quote=False),
+        f"{ENOUGH_ROWS}",
+        "100.0",
+    ], f"the language code split the row:\n{row}"
+
+
+@pytest.mark.integration
+def test_total_row_keeps_its_emphasis(tmp_path):
+    """`**Total**` is authored markup, not corpus text — it must reach the page.
+
+    The emitter escapes the label and wraps it in `**…**` afterwards, so the
+    markers never pass through the escaper. Pinning the rendered `<strong>` is
+    what would catch a reordering that hands them to it.
+    """
+    require_pandoc()
+    enriched = tmp_path / "enriched_works.csv"
+    enriched.write_text("language\n" + "en\n" * ENOUGH_ROWS, encoding="utf-8")
+    output = tmp_path / "tab_languages.md"
+
+    subprocess.run(
+        [sys.executable, SCRIPT, "--input", str(enriched), "--output", str(output)],
+        cwd=REPO_ROOT, env=source_root_env(), capture_output=True,
+        text=True, check=True)
+
+    flat = render_gfm(output.read_text(encoding="utf-8"), tmp_path)
+    row = row_with(flat, "Total")
+
+    assert "<strong>" in row, f"the Total row lost its emphasis:\n{row}"
+    assert cell_texts(row) == ["Total", "", f"{ENOUGH_ROWS}", "100.0"], (
+        f"the Total row lost a cell:\n{row}"
+    )
+
+
+@pytest.mark.integration
+def test_shipped_language_names_are_untouched_by_the_escaper(tmp_path):
+    """Escaping must be a no-op on every name the table actually emits.
+
+    The sibling pin for the corpus-sources table (ticket 0370). A fix that
+    churns `tab_languages.md` on the next regeneration is a failed fix: a diff
+    on every row hides the one row that changed for a real reason. No
+    `LANGUAGE_NAMES` value carries an escapable character today, so the emitted
+    table must carry no backslash at all — and the Total row's `**` must be the
+    only asterisks in it.
+
+    No `require_pandoc()`: this pin reads the emitted bytes, so gating it on a
+    renderer it never invokes would only make it skip where its sibling in
+    `test_corpus_table_export.py` runs.
+    """
+    from export_language_table import LANGUAGE_NAMES
+
+    enriched = tmp_path / "enriched_works.csv"
+    enriched.write_text(
+        "language\n" + "".join(f"{code}\n" * ENOUGH_ROWS for code in LANGUAGE_NAMES),
+        encoding="utf-8")
+    output = tmp_path / "tab_languages.md"
+
+    subprocess.run(
+        [sys.executable, SCRIPT, "--input", str(enriched), "--output", str(output)],
+        cwd=REPO_ROOT, env=source_root_env(), capture_output=True,
+        text=True, check=True)
+
+    emitted = output.read_text(encoding="utf-8")
+
+    assert "\\" not in emitted, (
+        "escaping churned a shipped language name — regenerating the table "
+        f"would rewrite rows that did not change:\n{emitted}"
+    )
+    assert emitted.count("*") == 4, (
+        "the only emphasis in the table is the Total row's `**…**`:\n{}".format(emitted)
+    )
+    for name in LANGUAGE_NAMES.values():
+        assert f"| {name} |" in emitted, f"name {name!r} was rewritten by the escaper"

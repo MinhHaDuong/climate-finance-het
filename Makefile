@@ -299,7 +299,7 @@ deliverables/_shared/tables/tab_venues.md: scripts/figures/export_tab_venues.py 
 
 # --output names the .csv, not $@ — see the tab_corpus_flow rule below for why
 # a bare $@ under a grouped target writes both members to one path.
-deliverables/_shared/tables/tab_corpus_sources.csv deliverables/_shared/tables/tab_corpus_sources.md &: scripts/figures/export_corpus_table.py scripts/utils.py $(REFINED)
+deliverables/_shared/tables/tab_corpus_sources.csv deliverables/_shared/tables/tab_corpus_sources.md &: scripts/figures/export_corpus_table.py scripts/_markdown_table.py scripts/utils.py $(REFINED)
 	$(PYTHON) $< --output deliverables/_shared/tables/tab_corpus_sources.csv
 
 # Corpus construction ledger (ticket 0327). Compute and render are separate
@@ -317,10 +317,10 @@ deliverables/_shared/tables/tab_corpus_flow.csv: scripts/analysis/compute_corpus
 		$(wildcard $(DATA_DIR)/run_reports/catalog_merge__*.json)
 	$(PYTHON) $< --output $@
 
-deliverables/_shared/tables/tab_corpus_flow.md: scripts/figures/export_corpus_flow.py scripts/utils.py deliverables/_shared/tables/tab_corpus_flow.csv
+deliverables/_shared/tables/tab_corpus_flow.md: scripts/figures/export_corpus_flow.py scripts/_markdown_table.py scripts/utils.py deliverables/_shared/tables/tab_corpus_flow.csv
 	$(PYTHON) $< --input deliverables/_shared/tables/tab_corpus_flow.csv --output $@
 
-deliverables/_shared/tables/tab_languages.md: scripts/figures/export_language_table.py scripts/utils.py $(REFINED)
+deliverables/_shared/tables/tab_languages.md: scripts/figures/export_language_table.py scripts/_markdown_table.py scripts/utils.py $(REFINED)
 	$(PYTHON) $< --input $(REFINED) --output $@
 
 # Variables table for the data paper (ticket 0279) — rendered from the deposit

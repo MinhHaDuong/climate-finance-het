@@ -148,6 +148,49 @@ class TestRenderTable:
         assert "1,000" in md
         assert md.count("\n|") >= len(flow)
 
+    @pytest.mark.integration
+    def test_a_piped_stage_label_keeps_its_four_cells(self, tmp_path):
+        """A `|` in a stage label must not drop the row's last count.
+
+        `Stage` is prose authored by hand in `compute_corpus_flow`, so it is
+        the same free-text-into-a-pipe-table shape as the corpus-sources table
+        (ticket 0370). Asserted on the rendered page: the renderer is the only
+        thing that sees the split, and it reports it by silently dropping the
+        overflow rather than erroring.
+        """
+        import export_corpus_flow
+        from _gfm_render import cell_texts, render_gfm, require_pandoc, row_with
+
+        require_pandoc()
+        label = "Quality filtering | protection criteria applied"
+        flow = pd.DataFrame(
+            [{"Stage": label, "In": 1000, "Removed": 40, "Out": 960}]
+        )
+
+        row = row_with(
+            render_gfm(export_corpus_flow.render_table(flow), tmp_path),
+            "Quality filtering",
+        )
+
+        assert cell_texts(row) == [label, "1,000", "40", "960"], (
+            f"the stage label split the row:\n{row}"
+        )
+
+    def test_shipped_stage_labels_are_untouched_by_the_escaper(self):
+        """Escaping must be a no-op on the labels the ledger actually emits.
+
+        A fix that churns `tab_corpus_flow.md` on the next regeneration would
+        put a diff on every row and hide the one that changed for a reason.
+        """
+        import export_corpus_flow
+
+        flow = compute_corpus_flow.build_flow(MERGE_REPORT, BUCKETS, REFINED_N)
+        md = export_corpus_flow.render_table(flow)
+
+        assert "\\" not in md, f"escaping churned a shipped stage label:\n{md}"
+        for label in flow["Stage"]:
+            assert f"| {label} |" in md, f"label {label!r} was rewritten"
+
 
 def _logical_lines(text: str):
     """Makefile lines with backslash continuations joined, keeping the line

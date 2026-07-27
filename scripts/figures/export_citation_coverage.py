@@ -35,7 +35,14 @@ def _period_count(metrics):
 
 
 def render_table(metrics):
-    """Render the coverage markdown from the long (metric, value) mapping."""
+    """Render the coverage markdown from the long (metric, value) mapping.
+
+    No cell needs escaping: every component of every cell passes through `int`
+    or a numeric format before it reaches the row — the Period label composes
+    two of them around a literal en-dash — so no cell can carry a `|` (the
+    ticket-0370 sweep of the Markdown emitters). Escaping them anyway would
+    only add noise to the artifact.
+    """
     lines = [
         "| Period | Total works | With citation data | Coverage |",
         "|--------|------------:|-------------------:|---------:|",

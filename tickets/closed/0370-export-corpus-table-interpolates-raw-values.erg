@@ -2,12 +2,14 @@
 Title: export_corpus_table interpolates raw values into a pipe table
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: escaping landed in PR #1191; three emitters fixed, all 10 generated Markdown targets swept
 
 --- log ---
 2026-07-27T15:35Z HDMX-coding-agent created
 2026-07-27T15:35Z HDMX-coding-agent note found by the 0340 review panel — the fourth instance of the 0325/0339 class, and the first one found by looking rather than by a reader noticing.
 2026-07-27T21:10Z HDMX-coding-agent note action 3 done by the PR #1172 round-2 gate: the sweep finds three more instances, listed in the body. All four artifacts are corpus-gated and absent on a fresh checkout, so the 0340 sweep skips every one of them.
 
+2026-07-27T19:15Z HDMX-coding-agent closed — escaping landed in PR #1191; three emitters fixed, all 10 generated Markdown targets swept
 --- body ---
 ## Context
 

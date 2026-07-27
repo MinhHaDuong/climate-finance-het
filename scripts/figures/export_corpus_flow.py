@@ -18,6 +18,7 @@ Usage:
 import os
 
 import pandas as pd
+from _markdown_table import markdown_text_cell
 from script_io_args import parse_io_args, validate_io
 from utils import BASE_DIR, get_logger
 
@@ -40,9 +41,14 @@ def render_table(flow: pd.DataFrame, caption: str = CAPTION) -> str:
         "| Stage | In | Removed | Out |",
         "|:------|---:|--------:|----:|",
     ]
+    # `Stage` is prose — the removal labels `compute_corpus_flow` authors by
+    # hand. The counts are `int`-formatted and cannot carry a `|`, but the
+    # label can, and a raw one would end its cell and drop the last count
+    # (ticket 0370). Whether a label happens to contain one today is not the
+    # question: the escaper exists so no emitter has to know.
     for _, row in flow.iterrows():
         lines.append(
-            f"| {row['Stage']} | {int(row['In']):,} | "
+            f"| {markdown_text_cell(row['Stage'])} | {int(row['In']):,} | "
             f"{int(row['Removed']):,} | {int(row['Out']):,} |"
         )
     lines += ["", caption, ""]
