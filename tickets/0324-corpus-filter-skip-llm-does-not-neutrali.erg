@@ -1,0 +1,73 @@
+%erg 0.1
+Title: corpus_filter --skip-llm does not neutralise an inherited llm_irrelevant column
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T10:12Z HDMX-coding-agent created
+2026-07-27T10:22Z HDMX-coding-agent note from the independent review of PR #1127 (ticket 0314, verdict APPROVED); the reviewer found this beyond the four challenge points it was given.
+
+--- body ---
+## Context
+
+Ticket 0314 closed the 2026-07-24 incident: Flag 6 could be skipped silently
+and ship an under-filtered corpus. The fix makes an unrunnable Flag 6 raise,
+and makes `run_flagging` seed `llm_irrelevant` from the current run rather
+than inheriting it from `extended_works.csv`.
+
+That guarantees freshness **when Flag 6 runs**. It does not cover the other
+path. `is_flagged` in the apply/audit functions (`scripts/harvest/
+corpus_filter.py`, around lines 233, 273 and 377) computes membership from
+whatever `FLAG_COLUMNS` are present in the frame, with no reference to
+`--skip-llm`. So a run with `--skip-llm`, over an input that already carries
+an `llm_irrelevant` column from a previous pass, lets that stale column drive
+removal decisions.
+
+The failure direction is opposite to the original incident: stale
+**over**-removal rather than silent under-removal. It is also arguably the
+intended semantics — "skip" plausibly means "do not recompute", not "do not
+use". What it is not is *stated*: nothing in the CLI help, the code, or
+0314's exit criteria says which reading applies, and the two readings produce
+different corpora from the same command.
+
+## Relevant files
+
+- `scripts/harvest/corpus_filter.py` — `is_flagged` in the apply/audit paths;
+  `expected_flag_columns()` already knows about `--skip-llm` and is the
+  natural place for the decision to live
+- `tests/test_corpus_filter.py` — `TestFlag6NotCarriedOver` covers the
+  Flag-6-runs path; the `--skip-llm` path has no equivalent
+
+## Actions
+
+1. Decide the semantics first, and write it down: does `--skip-llm` mean
+   "reuse whatever is there" or "this run makes no llm_irrelevant claim"?
+   Do not change behaviour before answering — both readings are defensible
+   and the current code picks one silently.
+2. Implement the chosen reading explicitly rather than by omission. If
+   "reuse", say so in the CLI help and log which pass the column came from.
+   If "ignore", drop the column from the membership computation under
+   `--skip-llm`.
+3. Either way the log line should state what happened, in the spirit of the
+   0314 fix: a corpus built with a reused flag column is fine if it is known.
+
+## Test
+
+- Red first: run the filter with `--skip-llm` over a fixture carrying a
+  populated `llm_irrelevant` column, and assert the chosen semantics on the
+  refined output row count.
+
+## Verification
+
+- [ ] `--skip-llm` semantics stated in one place and enforced by a test
+- [ ] The run log names which pass any reused flag column came from
+
+## Invariants
+
+- Do not weaken 0314: an unrunnable Flag 6 must still be a hard error.
+- No silent change of corpus membership between runs with identical flags.
+
+## Exit criteria
+
+- [ ] The two readings can no longer produce different corpora from the same
+      command without the log saying so

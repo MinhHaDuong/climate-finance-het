@@ -91,8 +91,13 @@ def compute_citation_coverage(works, citations, core_threshold, periods=None):
         normalize_doi(d) for d in citations["source_doi"].dropna().unique()
     } - _EMPTY_DOI
     # A work counts as covered only if it carries a DOI *and* that DOI appears
-    # as a citing source. The conjunction matters: normalize_doi_safe maps a
-    # missing DOI to "", which would otherwise match an empty source_doi.
+    # as a citing source. Belt and braces, deliberately: empty keys are already
+    # stripped from source_dois above, so either guard alone would do. Both are
+    # kept because a work with no DOI being counted as covered would invert the
+    # coverage gradient this artifact exists to report, and normalize_doi_safe
+    # maps several junk forms ("", "nan", "none") onto keys that a future change
+    # to either side could reintroduce. The contract — not the mechanism — is
+    # pinned by test_a_work_without_a_doi_is_never_counted_as_covered.
     covered = has_doi & works["doi_norm"].isin(source_dois)
 
     year = pd.to_numeric(works["year"], errors="coerce")

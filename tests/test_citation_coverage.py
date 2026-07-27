@@ -143,3 +143,40 @@ def test_doi_matching_is_normalised():
     cit = pd.DataFrame({"source_doi": ["10.1/a"], "ref_doi": ["10.9/x"]})
     m = dict(zip(*compute_citation_coverage(works, cit, core_threshold=50).values.T))
     assert m["p3_n_covered"] == 1
+
+
+def test_a_work_without_a_doi_is_never_counted_as_covered():
+    """Contract: no DOI means no coverage, whatever junk is in either column.
+
+    A work with no DOI cannot be matched as a citing source at all — that is
+    the whole mechanism behind the coverage gradient the paper reports. Two
+    independent guards enforce it (empty keys are stripped from the source
+    set, AND the covered mask requires has_doi), which is why mutating either
+    one alone leaves the other 10 tests green. This pins the observable
+    contract, so losing both is caught even though losing one is not.
+    """
+    works = pd.DataFrame(
+        {
+            "doi": [None, "", "  ", "nan", "none"],
+            "year": [1998, 2005, 2010, 2018, 2020],
+            "cited_by_count": [0, 0, 0, 0, 0],
+        }
+    )
+    # Citation rows whose source_doi degenerates to the same junk forms.
+    cit = pd.DataFrame(
+        {
+            "source_doi": ["", "  ", "nan", "none", "10.1/real"],
+            "ref_doi": ["10.9/a"] * 5,
+        }
+    )
+    df = compute_citation_coverage(works, cit, core_threshold=50)
+    m = dict(zip(df["metric"], df["value"]))
+
+    assert m["all_n_works"] == 5
+    assert m["all_n_with_doi"] == 0
+    assert m["all_n_covered"] == 0, (
+        "a work with no usable DOI was counted as covered — the empty-key "
+        "guard and the has_doi conjunction have both been lost"
+    )
+    for i in (1, 2, 3):
+        assert m[f"p{i}_n_covered"] == 0
