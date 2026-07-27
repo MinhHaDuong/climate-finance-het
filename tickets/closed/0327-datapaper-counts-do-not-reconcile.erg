@@ -13,6 +13,7 @@ Closed: flow table closes 44,174 to 33,344; Table 2 union labelled; six-sources 
 2026-07-27T13:06Z author action carried by ed04-zenodo-restructure-upload.md: the Zenodo record itself must be retitled Six -> Eight Sources at the pending New-version upload. The repo side (paper, README, build script, runbook) is done; the live record is not something an agent can change.
 2026-07-27T13:45Z make check on this branch: 1829 passed, 2 failed. Both failures are TestCorpusAlign freshness assertions in the shared checkout (refined_works.csv mtime moved to 15:29 by a concurrent process, mode 600 vs siblings' 664; content unchanged at 33,344 rows). Read-only branch, not caused here.
 2026-07-27T13:45Z HDMX-coding-agent closed — flow table closes 44,174 to 33,344; Table 2 union labelled; six-sources residue cleared
+2026-07-27T13:54Z post-rebase onto origin/main (0332's section-4 cut landed): document renders at 3,921 words against the 2,500 target, of which this branch adds about 110. Overshoot still owned by 0332; no word-count guard exists yet, so the exit criterion's fallback applies.
 --- body ---
 ## Context
 
