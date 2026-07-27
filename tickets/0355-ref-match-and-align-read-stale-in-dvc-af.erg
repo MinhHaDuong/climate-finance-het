@@ -1,0 +1,101 @@
+%erg 0.1
+Title: ref_match and align read stale in DVC after the corpus repopulation
+Created: 2026-07-27
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-07-27T14:12Z HDMX-coding-agent created
+2026-07-27T14:15Z HDMX-coding-agent note deliberate residual of 0347, not an oversight. I could have silenced it with `dvc commit ref_match align`, which would assert those outputs correspond to the new refined_works.csv — a claim I cannot verify without running them, and running `align` rebuilds refined_embeddings.npz and refined_citations.csv, which feed the paper's citation statistics. Left stale on purpose: a truthful "may need re-running" beats a false "current".
+
+--- body ---
+## Context
+
+0347 repopulated `keywords_provenance` and recorded the six changed Phase-1
+outs in `dvc.lock`. Two downstream stages take `refined_works.csv` as a
+dependency and were **not** re-run, so their recorded dep hash still names the
+pre-repopulation file:
+
+| stage | outs |
+|---|---|
+| `ref_match` | `data/catalogs/citations.csv` |
+| `align` | `data/catalogs/refined_embeddings.npz`, `data/catalogs/refined_citations.csv` |
+
+`dvc status` therefore reports both as changed. That report is accurate — the
+dependency really did change — but it is also almost certainly a false alarm
+about the *outputs*: the only difference in the input is one inert metadata
+column, and neither script is expected to read it.
+
+## Why it was left stale rather than committed
+
+`dvc commit ref_match align` would record the new dep hash without re-running,
+which asserts "these outputs are what these inputs produce". I could not verify
+that assertion cheaply:
+
+- `corpus_ref_match.py:55` and `corpus_align.py:189` both read the corpus with a
+  bare `pd.read_csv(..., dtype=str, keep_default_na=False)` — no `usecols`. The
+  new column is therefore present in their DataFrames. Nothing suggests they use
+  it, but "nothing suggests" is not verification.
+- The cheap way to verify is to run them and byte-compare. `align` rebuilds
+  `refined_embeddings.npz` (GPU, heavy) and `refined_citations.csv`, and
+  `refined_citations.csv` feeds the citation statistics the data paper renders.
+  Running it to settle a bookkeeping question risks disturbing frozen numbers
+  eight days before a resubmission.
+
+So the choice was between a truthful stale marker and an unverified currency
+claim. Stale wins: `dvc status` complaining is recoverable, a `dvc.lock` that
+lies is not.
+
+## The trap this leaves armed
+
+Anyone running a bare `dvc repro` will now re-run both stages. That is not
+harmless: it regenerates two Phase-1 → Phase-2 contract artifacts, and if the
+regeneration is not bit-identical, corpus statistics move with no one having
+asked for it. Whoever resolves this should do so deliberately, not as a side
+effect of a repro.
+
+## Relevant files
+
+- `dvc.yaml` — `ref_match`, `align` stage definitions
+- `dvc.lock` — the two stale `deps` entries for `data/catalogs/refined_works.csv`
+- `scripts/harvest/corpus_ref_match.py`, `scripts/harvest/corpus_align.py`
+- `data/catalogs/{citations,refined_citations}.csv`,
+  `data/catalogs/refined_embeddings.npz`
+
+## Actions
+
+Pick one, deliberately:
+
+1. **Verify then commit** (recommended, and the only one that ends with a
+   defensible lock file). Re-run `ref_match` and `align` against the current
+   corpus, byte-compare all three outputs against what is on disk now. Identical
+   → `dvc commit` both stages and the graph is honestly current. Different →
+   that is a finding in itself and needs its own investigation before anything
+   is committed.
+2. **Commit without verifying.** Cheapest, and records a claim nobody checked.
+   Acceptable only if someone confirms by reading the two scripts that the
+   corpus columns they touch are enumerated and exclude the new one.
+3. **Leave stale until the deposit repack** (0292/0280) has to rebuild anyway,
+   and resolve it there as part of a single deliberate pass.
+
+## Test
+
+Byte-compare, not a unit test: `citations.csv`, `refined_citations.csv` and
+`refined_embeddings.npz` before and after a re-run on the same corpus. Set
+`SOURCE_DATE_EPOCH` if any writer embeds a timestamp.
+
+## Verification
+
+- [ ] `dvc status` reports no change for `ref_match` and `align`
+- [ ] Whichever path was taken is recorded in this ticket's log, with the
+      byte-compare result if action 1
+
+## Invariants
+
+- No corpus statistic moves. If a re-run changes any of the three outputs, stop
+  and investigate rather than accepting the new bytes.
+
+## Exit criteria
+
+- [ ] The two stages are either verified-and-committed or consciously deferred,
+      with the decision written down

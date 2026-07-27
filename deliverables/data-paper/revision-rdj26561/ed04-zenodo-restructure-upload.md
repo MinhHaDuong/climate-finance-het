@@ -24,11 +24,35 @@ the latest version.
    curated UNFCCC and OECD DAC layers, and the paper's related-dataset entry
    and suggested citation now carry the eight-source title. Authors, license
    (data CC BY 4.0, code MIT), and keywords stay unchanged.
-4. Set the version field (suggested: `v2.0` — new corpus harvest, eight
+4. Fill the record metadata below (ORCID, funding). It persists across
+   versions, so this is a one-time pass.
+5. Set the version field (suggested: `v2.0` — new corpus harvest, eight
    sources, restructured packaging + codebook) and publish.
-5. Check that the paper's cited DOI still resolves; the paper cites
+6. Check that the paper's cited DOI still resolves; the paper cites
    10.5281/zenodo.19236130 — if the journal prefers, switch the citation to
    the concept DOI or the new version DOI at proof stage.
+
+## Record metadata (author, one pass)
+
+Typed into the Zenodo form by hand: the upload is a web click-path, so no
+repo-side metadata file is read. These three items are the whole list.
+
+- **ORCID** on the author entry: `0000-0001-9988-2100`. Already carried by the
+  paper front matter (`deliverables/data-paper/data-paper.qmd:5`); the Zenodo
+  record is the only other place it belongs.
+- **Funding**: CNRS. Zenodo's funder picker resolves either identifier —
+  ROR `https://ror.org/02feahw73`, Crossref Funder ID
+  `10.13039/501100004794` (verified against both registries 2026-07-27; the ROR
+  record carries the same fundref ID). Recurring institutional support with no
+  grant number: leave the award field empty rather than inventing one.
+- **Related identifier** — `IsSupplementTo` the journal article, added **at
+  proof stage**: RDJ4HSS has not assigned the article DOI yet, so the field
+  cannot be filled on this version. This is the relation that makes the
+  paper↔data link machine-traversable, which is what a data journal indexes on.
+
+Do **not** hand-add the version relation. Zenodo sets `IsVersionOf` /
+`HasVersion` between the concept DOI and each version DOI itself when you use
+the **New version** button; adding it manually duplicates the chain.
 
 ## Record description (new version)
 

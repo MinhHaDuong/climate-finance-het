@@ -29,7 +29,7 @@ pytestmark = pytest.mark.adherence
 # Tier-2 named libraries (no __main__; imported as a library surface).
 NAMED_LIBRARIES = {
     "clustering_methods", "filter_flags", "filter_flags_llm", "openalex_pool",
-    "pipeline_io", "pipeline_loaders", "pipeline_progress", "pipeline_text",
+    "pipeline_io", "pipeline_keystore", "pipeline_loaders", "pipeline_progress", "pipeline_text",
     "plot_style", "qa_near_duplicates", "schemas", "script_io_args",
     "syllabi_config", "syllabi_crossref", "syllabi_harvest", "syllabi_io",
     "syllabi_process", "utils",
