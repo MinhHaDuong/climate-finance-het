@@ -2,6 +2,26 @@
 
 > `CLAUDE.md` contains only `@AGENTS.md` — do not modify it (enforced by pre-commit hook).
 
+## Credentials
+
+`.env` holds no secret. It carries machine settings and a `KEYS=` line naming
+which credentials this project may load; the values live in
+`~/.config/keys/<provider>.env` (mode 0600), outside the repository. Entry forms
+are `provider`, `provider:VAR`, and `provider:SRC=DST` (rename on export), and
+selection is default-deny — an unlisted provider is never loaded, which is what
+stops a sibling project's keys from arriving here.
+
+Two mechanisms apply the selection, because no single one covers every entry
+point: the harness bash loader, which the Makefile wires into recipe shells via
+`BASH_ENV`, and `scripts/keystore.py`, which `pipeline_loaders` calls on import
+so `dvc repro` and a bare `uv run python scripts/…` resolve too. Neither
+overwrites an already-set variable. On a machine without the keystore both
+degrade quietly and scripts report the missing key themselves.
+
+Adding a credential means putting it in the right provider file and extending
+`KEYS=` — never writing it into `.env`, which `tests/test_env_has_no_secret_literals.py`
+enforces.
+
 ## Configuration
 
 | Location | Purpose |
