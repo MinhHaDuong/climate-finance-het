@@ -25,34 +25,60 @@ def extract_section(text, heading):
     return match.group(1) if match else ""
 
 
+SECTION_53 = "5.3 The efficiency--accountability axis"
+
+
 class TestSection53:
-    """§5.3 Efficiency--accountability polarization must have prose."""
+    """§5.3 must have prose, and must not re-assert the bimodality claim.
+
+    The positive pins this class used to carry ("must present ΔBIC evidence for
+    bimodality") were removed under ticket 0345. They violated the project's CI
+    polarity rule — positive phrasings break on every legitimate rewrite — and
+    in this case they pinned a claim the dip test contradicts. What remains is
+    the mechanical placeholder check plus a negative guard.
+    """
 
     def test_no_to_write_placeholder(self):
         text = read(COMPANION)
-        section = extract_section(text, "5.3 Efficiency--accountability polarization")
+        section = extract_section(text, SECTION_53)
         assert section, "§5.3 heading not found in multilayer-detection.qmd"
         assert "[TO WRITE" not in section, "§5.3 still contains [TO WRITE] placeholder"
 
-    def test_mentions_dbic(self):
+    def test_does_not_claim_bimodality(self):
+        """Ticket 0345. Dip p = 1.0 at n ~ 30k; §5.3 must not assert two modes."""
         text = read(COMPANION)
-        section = extract_section(text, "5.3 Efficiency--accountability polarization")
-        assert "BIC" in section or "ΔBIC" in section or "bim_dbic" in section, (
-            "§5.3 must present ΔBIC evidence for bimodality"
+        section = extract_section(text, SECTION_53)
+        assert section, "§5.3 heading not found in multilayer-detection.qmd"
+        # Only assertive forms. "not two camps" is the correct reading and must
+        # stay sayable, so the guard names the words a correct §5.3 cannot use
+        # rather than every word that touches the idea.
+        offender = re.search(r"bimodal|two clusters|two populations|two distinct",
+                             section, re.IGNORECASE)
+        assert not offender, (
+            f"§5.3 asserts {offender.group(0)!r}, which the dip test does not "
+            "support - the axis is a continuum (ticket 0345)"
         )
 
-    def test_mentions_cross_validation(self):
+    def test_reports_the_dip_test(self):
+        """The section's load-bearing evidence must not silently disappear."""
         text = read(COMPANION)
-        section = extract_section(text, "5.3 Efficiency--accountability polarization")
-        assert "TF-IDF" in section or "lexical" in section, (
-            "§5.3 must mention cross-validation with lexical method"
+        section = extract_section(text, SECTION_53)
+        assert "bim_dip_p_embedding" in section, (
+            "§5.3 must report the dip-test p-value; without it the section "
+            "states a negative conclusion with no evidence behind it"
         )
 
-    def test_mentions_temporal_pattern(self):
+    def test_statistics_are_vars_driven(self):
+        """No hand-typed statistic: every number resolves through a meta var."""
         text = read(COMPANION)
-        section = extract_section(text, "5.3 Efficiency--accountability polarization")
-        assert "2015" in section or "post-2015" in section or "period" in section, (
-            "§5.3 must discuss the temporal emergence of bimodality"
+        section = extract_section(text, SECTION_53)
+        body = re.sub(r"\{\{<[^>]*>\}\}", "", section)      # drop meta refs
+        body = re.sub(r"§?\d\.\d", "", body)                 # drop section numbers
+        body = re.sub(r"\b(19|20)\d{2}\b", "", body)         # drop years
+        stray = re.findall(r"\d+\.\d+|\b\d{3,}\b", body)
+        assert not stray, (
+            f"§5.3 hardcodes {stray} - statistics must come from "
+            "compute_vars.py, or they rot at the next corpus rebuild"
         )
 
 
