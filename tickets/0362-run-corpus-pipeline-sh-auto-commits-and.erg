@@ -1,0 +1,78 @@
+%erg 0.1
+Title: run_corpus_pipeline.sh auto-commits and pushes dvc.lock straight to main
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T14:40Z HDMX-coding-agent created found while scoping 0336: the sign-off invariant Flag 5 depends on is not operationalized
+
+--- body ---
+## Context
+
+`scripts/run_corpus_pipeline.sh` ends by committing and pushing `dvc.lock`
+directly to `main`:
+
+```
+Auto-committing dvc.lock...
+git add dvc.lock
+git commit -m "data: update dvc.lock after pipeline re-run"
+git push origin main
+```
+
+Two problems.
+
+**It bypasses the branch-and-PR gate.** Every other change in this repo lands
+via branch and merge request; `main` is read-only by convention. This script
+writes to it directly, so a pipeline re-run mutates `main` with no review and no
+record beyond a generic commit message. `main` is unprotected and there is no
+CI, so nothing stops it.
+
+**It removes the checkpoint that pending corpus changes rely on.** Ticket 0361
+holds Flag 5 inert behind `--skip-semantic-flag` precisely because activating it
+would remove 361 works and needs author sign-off. But any config or code change
+that alters the corpus is executed and published by the next `make corpus` with
+no confirmation step. The sign-off invariant is written in the tickets and
+nowhere in the machinery.
+
+Discovered while scoping 0336; the implementing agent flagged it and the
+behaviour was verified by reading the script.
+
+## Relevant files
+
+- `scripts/run_corpus_pipeline.sh` — the auto-commit block (around lines 59-89)
+- `Makefile` — the `corpus` target invoking it
+- `dvc.lock` — what gets pushed
+
+## Actions
+
+1. Replace the direct push with either a branch plus merge request, or a loud
+   refusal that prints the diff and exits non-zero when `dvc.lock` changed,
+   leaving the commit to a human.
+2. Keep the existing "files other than dvc.lock changed" warning path — it is
+   already the right instinct, applied to the wrong branch target.
+3. Decide whether an explicit `--publish` opt-in is warranted for the case where
+   an operator does want the lock committed in the same run.
+
+## Test
+
+- An integration test driving the script with a modified `dvc.lock` in a
+  throwaway repo, asserting that `main` is unchanged and the exit status is
+  non-zero (or that a branch was created), never that `origin/main` advanced.
+
+## Verification
+
+- [ ] A pipeline re-run that changes `dvc.lock` does not advance `main`
+- [ ] The operator gets an actionable message naming what changed
+- [ ] `make corpus` still succeeds end to end on padme
+
+## Invariants
+
+- The corpus is frozen (author, 2026-07-27) mid RDJ-26561 R&R. This ticket
+  touches the pipeline entry point, so land it when a corpus run is not in
+  flight, and do not trigger a rebuild to test it.
+- Do not weaken the existing warning path.
+
+## Exit criteria
+
+- A corpus re-run can no longer publish to `main` on its own, and a pending
+  corpus change cannot be executed without an explicit human step.

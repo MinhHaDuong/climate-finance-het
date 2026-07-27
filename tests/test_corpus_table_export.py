@@ -79,6 +79,76 @@ def test_total_row_present(corpus_table):
     assert len(total) == 1, "Missing TOTAL row"
 
 
+class TestTotalRowIsTheDeduplicatedUnion:
+    """Ticket 0327, gaps 3 and 4: the per-source columns count provenance
+    *memberships*, so they sum above the TOTAL row, which counts distinct
+    works. The table has to say so and give the overlap for both columns."""
+
+    @pytest.mark.slow
+    def test_total_is_not_the_naive_column_sum(self, corpus_table):
+        rows = corpus_table[corpus_table["Source"] != "TOTAL"]
+        total = corpus_table[corpus_table["Source"] == "TOTAL"].iloc[0]
+        for col in ("Raw", "Refined"):
+            assert rows[col].sum() > total[col], (
+                f"{col}: per-source sum should exceed the deduplicated TOTAL"
+            )
+
+    @pytest.mark.slow
+    def test_caption_reports_both_overlap_counts(self, corpus_table):
+        """The extra memberships in each column must appear in the caption,
+        so a reader can reconcile the column sum with the TOTAL."""
+        md_path = os.path.splitext(CSV_PATH)[0] + ".md"
+        if not os.path.exists(md_path):
+            pytest.skip(f"{md_path} not built here — run make corpus-tables")
+        with open(md_path) as f:
+            caption = f.read()
+
+        rows = corpus_table[corpus_table["Source"] != "TOTAL"]
+        total = corpus_table[corpus_table["Source"] == "TOTAL"].iloc[0]
+        for col in ("Raw", "Refined"):
+            extra = int(rows[col].sum() - total[col])
+            assert f"{extra:,}" in caption, (
+                f"{col}: caption must report the {extra:,} extra memberships"
+            )
+
+    @pytest.mark.slow
+    def test_caption_labels_the_total_row_as_a_union(self, corpus_table):
+        md_path = os.path.splitext(CSV_PATH)[0] + ".md"
+        if not os.path.exists(md_path):
+            pytest.skip(f"{md_path} not built here — run make corpus-tables")
+        with open(md_path) as f:
+            caption = f.read()
+        assert "TOTAL" in caption and "union" in caption.lower()
+
+    def test_overlap_counts_are_computed_not_hand_typed(self):
+        """The caption is built from the frames, so it cannot drift."""
+        from export_corpus_table import build_caption
+
+        caption = build_caption(
+            raw_multi=748, raw_extra=773, raw_triple=25,
+            refined_multi=738, refined_extra=763, refined_triple=24,
+        )
+        for token in ("748", "773", "738", "763", "25", "24"):
+            assert token in caption, token
+        assert "{#tbl-quality}" in caption
+
+    def test_caption_counts_triples_per_column(self):
+        """Each column's triple-provenance count is its own measurement — one
+        figure standing for both populations would be an unmeasured claim."""
+        from export_corpus_table import build_caption, membership_overlap
+
+        frame = pd.DataFrame(
+            {"from_a": [1, 1, 1], "from_b": [0, 1, 1], "from_c": [0, 0, 1]}
+        )
+        assert membership_overlap(frame, ["from_a", "from_b", "from_c"]) == (2, 3, 1)
+
+        caption = build_caption(
+            raw_multi=9, raw_extra=9, raw_triple=1,
+            refined_multi=8, refined_extra=8, refined_triple=7,
+        )
+        assert "1 and 7 of them carry three" in caption
+
+
 def test_source_meta_matches_source_names():
     """SOURCE_META keys must match utils.SOURCE_NAMES (single source of truth)."""
     from export_corpus_table import SOURCE_META
