@@ -36,12 +36,29 @@ MAKEFILE_ANALYSIS = os.path.join(
 
 # scripts/<optional-subdirs>/<name>.py — matches both flat (scripts/utils.py)
 # and reorg'd (scripts/figures/plot_fig1_bars.py) entry points.
-SCRIPT_PATH_RE = re.compile(r"scripts/(?:[\w-]+/)*[\w.-]+\.py")
+#
+# Both boundaries are load-bearing, and are the same defect class as ticket 0352
+# moved from the block level to the token level. Without the lookbehind,
+# `../scripts/utils.py` and `old_scripts/utils.py` both yield `scripts/utils.py`,
+# so a wrong path would resolve against the real file and the guard would pass on
+# a `cp` that cannot work. Without the lookahead, `scripts/utils.pyc` does the
+# same. Either way the guard checks something other than what the array says.
+SCRIPT_PATH_RE = re.compile(r"(?<![\w/.-])scripts/(?:[\w-]+/)*[\w.-]+\.py(?!\w)")
 
 
 def _read(path):
     with open(path) as f:
         return f.read()
+
+
+def _strip_inline_comment(line):
+    """The line's content before any `#` comment, whitespace-trimmed.
+
+    Shared by every parser here: a path named inside a comment is documentation,
+    not an entry, and reading it as one lets a commented-out path stand in for a
+    genuinely absent file.
+    """
+    return line.split("#", 1)[0].strip()
 
 
 # The array is shell source with one entry per line and its terminator alone on
@@ -65,15 +82,20 @@ def _parse_scripts_array(content):
     silently shrinking the list: a truncated parse drops entry lines and paths
     together, but any mismatch between them fails loudly here.
     """
-    m = SCRIPTS_ARRAY_RE.search(content)
-    assert m, (
+    blocks = SCRIPTS_ARRAY_RE.findall(content)
+    assert blocks, (
         "build_analysis_archive.sh must declare a SCRIPTS=( ... ) array of the "
         "scripts it copies into the archive, opened by a line `SCRIPTS=(` and "
         "closed by a line holding only `)`"
     )
+    # Otherwise a second array would be parsed by neither this nor the line scan,
+    # which both take the first match — a silent blind spot of the 0352 kind.
+    assert len(blocks) == 1, (
+        f"expected exactly one SCRIPTS=( ... ) array, found {len(blocks)}"
+    )
     paths = []
-    for line in m.group("body").splitlines():
-        entry = line.split("#", 1)[0].strip()
+    for line in blocks[0].splitlines():
+        entry = _strip_inline_comment(line)
         if not entry:
             continue
         found = SCRIPT_PATH_RE.findall(entry)
@@ -101,22 +123,18 @@ def _entry_lines_by_line_scan(content):
     lines = content.splitlines()
     start = lines.index("SCRIPTS=(")
     end = start + 1 + lines[start + 1:].index(")")
-    return [
-        ln for ln in lines[start + 1:end]
-        if ln.split("#", 1)[0].strip()
-    ]
+    return [ln for ln in lines[start + 1:end] if _strip_inline_comment(ln)]
 
 
 def _makefile_script_paths():
     """scripts/*.py paths the archived Makefile invokes as recipe prerequisites.
 
-    Comment lines are stripped first: a `# … scripts/x.py …` example must not be
-    read as a real prerequisite.
+    Comments are stripped first: a `# … scripts/x.py …` example must not be read
+    as a real prerequisite. Inline comments count — stripping only whole-line
+    ones left `foo: bar  # see scripts/x.py` readable as a prerequisite, the same
+    "documentation parsed as data" class ticket 0352 closed for the array.
     """
-    lines = [
-        ln for ln in _read(MAKEFILE_ANALYSIS).splitlines()
-        if not ln.lstrip().startswith("#")
-    ]
+    lines = [_strip_inline_comment(ln) for ln in _read(MAKEFILE_ANALYSIS).splitlines()]
     paths = SCRIPT_PATH_RE.findall("\n".join(lines))
     assert paths, "Makefile.analysis-manuscript references no scripts/*.py paths"
     return paths
@@ -192,6 +210,24 @@ class TestScriptsArrayParser:
             f"parsed {len(paths)} paths from {len(entry_lines)} entry lines — "
             "the parser is reading only part of the SCRIPTS array"
         )
+
+    def test_a_path_is_not_matched_inside_a_longer_path(self):
+        """A near-miss entry must not resolve against the real file it contains.
+
+        `../scripts/utils.py` and `old_scripts/utils.py` are paths the archive
+        `cp` cannot use, but a boundary-less `scripts/…` pattern reads the real
+        `scripts/utils.py` out of both — the guard would then check a file the
+        array never named. Same silent-subset class as the truncating parse.
+        """
+        for bad in ("../scripts/utils.py", "old_scripts/utils.py"):
+            fixture = f"SCRIPTS=(\n    {bad}\n)\n"
+            with pytest.raises(AssertionError):
+                _parse_scripts_array(fixture)
+
+    def test_a_py_path_is_not_matched_inside_a_longer_extension(self):
+        """`scripts/utils.pyc` is not `scripts/utils.py`."""
+        with pytest.raises(AssertionError):
+            _parse_scripts_array("SCRIPTS=(\n    scripts/utils.pyc\n)\n")
 
     def test_real_array_includes_the_shared_venue_helpers(self):
         """Both helpers sit below the comment that used to truncate the parse."""
