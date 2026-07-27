@@ -12,6 +12,7 @@ and abstract availability.
 import os
 
 import pandas as pd
+from _markdown_table import markdown_text_cell
 from pipeline_loaders import load_refined_works
 from script_io_args import parse_io_args, validate_io
 from utils import BASE_DIR, CATALOGS_DIR, get_logger, save_csv
@@ -75,6 +76,9 @@ def sources_present(unified_cols, refined_cols) -> list[str]:
     cols = set(unified_cols) | set(refined_cols)
     return [s for s in PRIMARY_SOURCES if f"from_{s}" in cols]
 
+# Authored Markdown, deliberately unescaped: the caption is a paragraph below
+# the table, not a row, so its backticks and emphasis are intentional markup and
+# a `|` here would end no cell.
 CAPTION = (
     ": Corpus sources. *Raw*: records with `from_*` provenance flag before"
     " filtering (a record in multiple sources is counted once per source)."
@@ -93,6 +97,10 @@ def _write_md_table(summary: pd.DataFrame, path: str) -> None:
         "| Source | Raw | Refined | Unique | %non-EN | %DOI | %Abstract | %Refs |",
         "|:-------|----:|--------:|-------:|--------:|-----:|----------:|------:|",
     ]
+    # Every cell is escaped, not just `Source`: the point of the helper is that
+    # no emitter has to know which column happens to carry a `|` today (tickets
+    # 0325, 0339, 0367). Escaping runs *before* the TOTAL row's emphasis markers
+    # are added, so the `**` stay markup and only the value is treated as text.
     for _, row in summary.iterrows():
         is_total = "TOTAL" in str(row["Source"])
         vals = []
@@ -100,7 +108,8 @@ def _write_md_table(summary: pd.DataFrame, path: str) -> None:
             v = row.get(c, "")
             if c in ("Raw", "Refined", "Unique"):
                 v = f"{int(v):,}" if pd.notna(v) else ""
-            vals.append(f"**{v}**" if is_total else str(v))
+            cell = markdown_text_cell(v)
+            vals.append(f"**{cell}**" if is_total else cell)
         lines.append("| " + " | ".join(vals) + " |")
     lines.append("")
     lines.append(CAPTION)

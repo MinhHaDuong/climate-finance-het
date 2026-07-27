@@ -10,6 +10,7 @@ normalised (e.g., en_US → en) and grouped into major languages + "Other".
 import os
 
 import pandas as pd
+from _markdown_table import markdown_text_cell
 from script_io_args import parse_io_args, validate_io
 from utils import BASE_DIR, CATALOGS_DIR, get_logger, normalize_lang_display
 
@@ -142,8 +143,14 @@ def main() -> None:
         f"| {' | '.join(table.columns)} |",
         "| :---------- | :---- | ----: | --------: |",
     ]
+    # `Code` is the corpus `language` value itself and `Language` its
+    # upper-cased form whenever LANGUAGE_NAMES has no entry — `normalize_lang`
+    # returns any two-character string unchanged, so neither column is curated
+    # in-repo. Same defect class as the corpus-sources table (ticket 0367).
+    # `**Total**` survives: the escaper touches the backslash, the pipe and the
+    # backtick, never the asterisk.
     for _, row in table.iterrows():
-        lines.append(f"| {' | '.join(str(v) for v in row)} |")
+        lines.append("| " + " | ".join(markdown_text_cell(v) for v in row) + " |")
 
     lines.append("")
     lines.append(": Language distribution in the refined corpus. {#tbl-languages}")
