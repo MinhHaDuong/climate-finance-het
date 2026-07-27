@@ -17,13 +17,16 @@ import os
 import subprocess
 import sys
 
+import numpy as np
 import pandas as pd
 import pytest
+import yaml
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 HARVEST_DIR = os.path.join(SCRIPTS_DIR, "harvest")
 PYTHON = sys.executable
 FIXTURE_DIR = os.path.join(os.path.dirname(__file__), "fixtures")
+DVC_YAML = os.path.join(os.path.dirname(__file__), "..", "dvc.yaml")
 
 
 def run_script(*args, cwd=None):
@@ -327,4 +330,337 @@ class TestFlag6NotCarriedOver:
         assert not out["llm_irrelevant"].fillna(False).any(), (
             "stale Flag 6 values from a previous pass survived a run that "
             "scored nothing"
+        )
+
+
+# ---------------------------------------------------------------------------
+# Flag 5 joins embeddings by work key, never by row position (ticket 0336)
+# ---------------------------------------------------------------------------
+
+
+def _import_corpus_filter():
+    sys.path.insert(0, SCRIPTS_DIR)
+    sys.path.insert(0, HARVEST_DIR)
+    import corpus_filter
+
+    return corpus_filter
+
+
+def _works_frame(n=4, first_year=2010):
+    """Works frame whose rows all qualify for the Flag 5 subset."""
+    return pd.DataFrame({
+        "doi": [f"10.1/work{i}" for i in range(n)],
+        "source_id": [f"W{i:04d}" for i in range(n)],
+        "title": [f"Work {i}" for i in range(n)],
+        "year": [first_year + i for i in range(n)],
+        "abstract": [f"Abstract number {i} " + "x" * 60 for i in range(n)],
+    })
+
+
+def _write_npz(tmp_path, keys, dim=8, name="embeddings.npz"):
+    """Embeddings cache keyed like enrich_embeddings.py writes it.
+
+    Vector i is filled with the constant i so a joined row can be traced back
+    to the key it came from.
+    """
+    vectors = np.stack([
+        np.full(dim, float(i), dtype=np.float32) for i in range(len(keys))
+    ])
+    path = tmp_path / name
+    np.savez_compressed(
+        path,
+        vectors=vectors,
+        keys=np.array(list(keys), dtype=object),
+        model=np.array("test-model"),
+        text_fields=np.array("title+abstract+keywords"),
+    )
+    return str(path), vectors
+
+
+class TestFlag5EmbeddingKeyJoin:
+    """Flag 5 died silently because two independently-filtered frames were
+    assumed to align by row position (ticket 0336).
+
+    ``enrich_embeddings.py`` embeds every titled work in the periodization
+    window; ``load_embeddings`` rebuilds a narrower abstract-bearing subset.
+    The row sets diverged (38,736 vectors vs 33,057 rows on the 2026-07-27
+    corpus), the length check failed, and the flag was skipped on every run
+    behind a ``log.warning``. The vectors carry a ``keys`` array, so the join
+    is available — and a join cannot go out of alignment.
+    """
+
+    def test_evaluates_when_row_sets_differ(self, tmp_path):
+        """More vectors than subset rows: the flag must still evaluate."""
+        cf = _import_corpus_filter()
+        df = _works_frame(n=3)
+        # Embed the 3 works plus 4 works that are not in this frame, in an
+        # order that does not match df — exactly the production condition.
+        keys = ["10.1/other0", "10.1/work2", "10.1/other1",
+                "10.1/work0", "10.1/other2", "10.1/work1", "10.1/other3"]
+        path, vectors = _write_npz(tmp_path, keys)
+
+        embeddings, emb_df, has_embeddings = cf.load_embeddings(
+            df, embeddings_path=path)
+
+        assert has_embeddings, (
+            "Flag 5 was skipped although every work in the frame has an "
+            "embedding — the row sets merely differ in size"
+        )
+        assert len(embeddings) == len(emb_df) == 3
+        # Each row must carry ITS OWN vector, not the one at its position.
+        for i, key in enumerate(emb_df["doi"]):
+            expected = vectors[keys.index(key)]
+            assert np.array_equal(embeddings[i], expected), (
+                f"row {i} ({key}) got the wrong vector — the join fell back "
+                "to positional alignment"
+            )
+
+    def test_partial_coverage_above_the_floor_keeps_the_covered_rows(self, tmp_path):
+        """Works without a vector are dropped, the rest still evaluate."""
+        cf = _import_corpus_filter()
+        df = _works_frame(n=4)
+        path, _ = _write_npz(tmp_path, ["10.1/work0", "10.1/work3"])
+
+        embeddings, emb_df, has_embeddings = cf.load_embeddings(
+            df, embeddings_path=path, min_coverage=0.4)
+
+        assert has_embeddings
+        assert len(embeddings) == len(emb_df) == 2
+        assert set(emb_df["doi"]) == {"10.1/work0", "10.1/work3"}
+
+    def test_empty_key_in_the_cache_is_not_handed_out(self, tmp_path):
+        """An empty key identifies nothing and would collide two works onto one
+        vector. It must not match anybody."""
+        cf = _import_corpus_filter()
+        df = _works_frame(n=2)
+        df["doi"] = ""
+        df["source_id"] = ""
+        df["title"] = ""
+        path, _ = _write_npz(tmp_path, ["", "10.1/unrelated"])
+
+        with pytest.raises(RuntimeError, match="(?i)coverage|no work in common"):
+            cf.load_embeddings(df, embeddings_path=path)
+
+    def test_falls_back_to_source_id_when_doi_is_absent(self, tmp_path):
+        """work_key() keys on source_id for DOI-less works; so must the join."""
+        cf = _import_corpus_filter()
+        df = _works_frame(n=2)
+        df.loc[0, "doi"] = None
+        path, _ = _write_npz(tmp_path, ["W0000", "10.1/work1"])
+
+        embeddings, emb_df, has_embeddings = cf.load_embeddings(
+            df, embeddings_path=path)
+
+        assert has_embeddings
+        assert len(emb_df) == 2, "the DOI-less work lost its embedding"
+
+    def test_year_window_still_bounds_the_subset(self, tmp_path):
+        """Out-of-window works stay out even when they have a vector."""
+        cf = _import_corpus_filter()
+        df = _works_frame(n=2)
+        df.loc[1, "year"] = 1789
+        path, _ = _write_npz(tmp_path, ["10.1/work0", "10.1/work1"])
+
+        _embeddings, emb_df, has_embeddings = cf.load_embeddings(
+            df, embeddings_path=path)
+
+        assert has_embeddings
+        assert list(emb_df["doi"]) == ["10.1/work0"]
+
+
+class TestFlag5NeverSilentlyDead:
+    """A ``log.warning`` swallowing a dead flag is what hid this for months.
+
+    ``load_embeddings`` may report "no embeddings" only for a genuine absence
+    (``--cheap``, no cache file). When the cache exists and holds vectors, it
+    must either return them or fail loudly.
+    """
+
+    def test_zero_key_overlap_raises_instead_of_reporting_no_embeddings(
+        self, tmp_path
+    ):
+        cf = _import_corpus_filter()
+        df = _works_frame(n=3)
+        path, _ = _write_npz(tmp_path, ["10.1/nothing-in-common"])
+
+        with pytest.raises(RuntimeError, match="(?i)no work in common|overlap"):
+            cf.load_embeddings(df, embeddings_path=path)
+
+    def test_keyless_cache_raises_instead_of_reporting_no_embeddings(
+        self, tmp_path
+    ):
+        """A legacy cache without `keys` cannot be joined — say so, loudly."""
+        cf = _import_corpus_filter()
+        df = _works_frame(n=3)
+        path = tmp_path / "keyless.npz"
+        np.savez_compressed(path, vectors=np.zeros((5, 8), dtype=np.float32))
+
+        with pytest.raises(RuntimeError, match="keys"):
+            cf.load_embeddings(df, embeddings_path=str(path))
+
+    def test_desynced_keys_and_vectors_raise_rather_than_IndexError(
+        self, tmp_path
+    ):
+        """keys and vectors are positional within the cache file.
+
+        Unequal lengths used to surface as a bare IndexError out of numpy,
+        bypassing the operator-facing message every other path here gives.
+        """
+        cf = _import_corpus_filter()
+        df = _works_frame(n=2)
+        path = tmp_path / "desynced.npz"
+        np.savez_compressed(
+            path,
+            vectors=np.zeros((1, 8), dtype=np.float32),
+            keys=np.array(["10.1/work0", "10.1/work1"], dtype=object),
+        )
+
+        with pytest.raises(RuntimeError, match="(?i)keys.*vectors|inconsistent"):
+            cf.load_embeddings(df, embeddings_path=str(path))
+
+    def test_emb_df_keeps_the_works_frame_index(self, tmp_path):
+        """The returned slice must carry df's index, not a fresh range.
+
+        flag_semantic_outlier assigns distances by index; a reset index would
+        silently put every distance on the wrong row.
+        """
+        cf = _import_corpus_filter()
+        df = _works_frame(n=4)
+        df.loc[1, "abstract"] = None          # drop row 1 from the subset
+        path, _ = _write_npz(
+            tmp_path, ["10.1/work0", "10.1/work2", "10.1/work3"])
+
+        _embeddings, emb_df, has_embeddings = cf.load_embeddings(
+            df, embeddings_path=path)
+
+        assert has_embeddings
+        assert list(emb_df.index) == [0, 2, 3]
+
+    def test_coverage_below_the_floor_raises(self, tmp_path):
+        """A 99%-dead flag is still a dead flag.
+
+        Zero overlap already raised, but one vector out of a thousand
+        candidates used to warn and proceed — scoring a rump of the corpus
+        against a centroid built from that same rump (review round 2).
+        """
+        cf = _import_corpus_filter()
+        df = _works_frame(n=10)
+        path, _ = _write_npz(tmp_path, ["10.1/work0"])
+
+        with pytest.raises(RuntimeError, match="(?i)coverage"):
+            cf.load_embeddings(df, embeddings_path=path, min_coverage=0.9)
+
+    def test_coverage_floor_comes_from_config_by_default(self):
+        """The floor is a research parameter, so it lives in the config."""
+        import yaml
+
+        cfg_path = os.path.join(
+            os.path.dirname(__file__), "..", "config", "corpus_filter.yaml")
+        with open(cfg_path) as f:
+            cfg = yaml.safe_load(f)
+        floor = cfg["semantic_outlier"]["min_coverage"]
+        assert 0 < floor <= 1, "min_coverage must be a fraction"
+
+    def test_unusable_year_column_raises_instead_of_emptying_the_subset(
+        self, tmp_path
+    ):
+        """Abstract-bearing works whose years all coerce to NaN.
+
+        The subset empties, which used to read as "nothing to score" — the same
+        silence by a different route.
+        """
+        cf = _import_corpus_filter()
+        df = _works_frame(n=3)
+        df["year"] = "n/a"
+        path, _ = _write_npz(tmp_path, ["10.1/work0", "10.1/work1"])
+
+        with pytest.raises(RuntimeError, match="(?i)year"):
+            cf.load_embeddings(df, embeddings_path=path)
+
+    def test_missing_cache_is_still_a_legitimate_skip(self, tmp_path):
+        cf = _import_corpus_filter()
+        df = _works_frame(n=3)
+        result = cf.load_embeddings(
+            df, embeddings_path=str(tmp_path / "absent.npz"))
+        assert result == (None, None, False)
+
+    def test_cheap_mode_is_still_a_legitimate_skip(self, tmp_path):
+        cf = _import_corpus_filter()
+        df = _works_frame(n=3)
+        path, _ = _write_npz(tmp_path, ["10.1/work0"])
+        result = cf.load_embeddings(df, cheap=True, embeddings_path=path)
+        assert result == (None, None, False)
+
+    def test_explicit_skip_is_a_legitimate_skip(self, tmp_path):
+        """The escape hatch: turning Flag 5 off has to be asked for.
+
+        Without it, an unusable cache would leave an operator no way to filter
+        at all — with it, the only quiet five-flag run is a requested one.
+        """
+        cf = _import_corpus_filter()
+        df = _works_frame(n=3)
+        path = tmp_path / "keyless.npz"
+        np.savez_compressed(path, vectors=np.zeros((5, 8), dtype=np.float32))
+        result = cf.load_embeddings(df, skip=True, embeddings_path=str(path))
+        assert result == (None, None, False)
+
+    def test_abstractless_corpus_is_a_legitimate_skip(self, tmp_path):
+        """No abstract anywhere: Flag 5 genuinely has nothing to score."""
+        cf = _import_corpus_filter()
+        df = _works_frame(n=3)
+        df["abstract"] = None
+        path, _ = _write_npz(tmp_path, ["10.1/work0"])
+        result = cf.load_embeddings(df, embeddings_path=path)
+        assert result == (None, None, False)
+
+
+class TestSkipSemanticFlagCLI:
+    """`--skip-semantic-flag` is the only sanctioned way to run five flags."""
+
+    def test_flag_is_declared(self):
+        with open(os.path.join(HARVEST_DIR, "corpus_filter.py")) as f:
+            src = f.read()
+        assert '"--skip-semantic-flag"' in src
+
+    def test_cheap_mode_implies_it(self):
+        with open(os.path.join(HARVEST_DIR, "corpus_filter.py")) as f:
+            src = f.read()
+        assert "args.skip_semantic_flag = True" in src, (
+            "--cheap must imply --skip-semantic-flag, or a cheap run reports "
+            "'no embeddings cache' for a cache it never looked at"
+        )
+
+    def test_flag5_failure_is_not_swallowed_by_run_flagging(self):
+        """run_flagging must not catch the semantic flag's own exception.
+
+        The `except ValueError: log.warning` around Flag 5 was a second silent
+        path, independent of the loader's.
+        """
+        import re
+
+        with open(os.path.join(HARVEST_DIR, "corpus_filter.py")) as f:
+            src = f.read()
+        body = src[src.index("def run_flagging"):src.index("def main(")]
+        flag5 = body[body.index("if has_embeddings:"):body.index("skip_llm =")]
+        code = "\n".join(line for line in flag5.splitlines()
+                         if not line.lstrip().startswith("#"))
+        assert not re.search(r"except\s+\w*Error", code), (
+            "Flag 5's call site swallows an exception again"
+        )
+
+
+class TestExtendDeclaresEmbeddingsDep:
+    """`extend` consumes embeddings.npz, so DVC must know it (ticket 0336).
+
+    Without the dep, DVC never re-runs `extend` when embeddings change, so a
+    Flag 5 result can go stale — or stay dead — without the DAG noticing.
+    """
+
+    def test_extend_stage_depends_on_embeddings_npz(self):
+        with open(DVC_YAML) as f:
+            dvc = yaml.safe_load(f)
+        deps = dvc["stages"]["extend"]["deps"]
+        assert "data/catalogs/embeddings.npz" in deps, (
+            "extend reads embeddings.npz for Flag 5 but does not declare it "
+            "as a DVC dependency"
         )

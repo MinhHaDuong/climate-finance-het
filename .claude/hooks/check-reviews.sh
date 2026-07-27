@@ -14,7 +14,9 @@ set -euo pipefail
 
 cd "$CLAUDE_PROJECT_DIR" || exit 0
 
-# Load .env for GH_TOKEN
+# .env no longer carries AGENT_GH_TOKEN (ticket 0343) — the keystore loader
+# exports it. Still sourced for the non-secret settings, and the fallback below
+# takes whichever of the two is populated, so this works either way.
 if [ -f .env ]; then
     set -a
     source .env
@@ -65,7 +67,11 @@ if [ -z "$PR_NUMBER" ]; then
 fi
 
 # Count reviews by any accepted reviewer on this PR.
-# HDMX-coding-agent: local machine user identity.
+# HDMX-coding-agent: a git author name only — no such GitHub account exists
+#   (`gh api users/HDMX-coding-agent` returns 404), so it can never appear as a
+#   review author and this half of the list matches nothing. The gate therefore
+#   rests entirely on the entry below. Left in place rather than silently
+#   dropped: whether to provision a real machine account is the author's call.
 # MinhHaDuong: personal identity used by the web MCP token (same as PR author).
 #   Accepting it enables web-agent merges at the cost of permitting self-review.
 AGENT_LOGINS="HDMX-coding-agent MinhHaDuong"

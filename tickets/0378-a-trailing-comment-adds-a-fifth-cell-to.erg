@@ -1,0 +1,93 @@
+%erg 0.1
+Title: A trailing comment adds a fifth cell to the clustering comparison table
+Created: 2026-07-27
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-07-27T18:16Z HDMX-coding-agent created
+2026-07-27T18:16Z HDMX-coding-agent note second instance of 0368's defect, found by running 0340's parser over the hand-authored includes during PR #1172's verify gate. Prose file, so filed for the author rather than edited.
+
+--- body ---
+## Context
+
+`deliverables/_shared/_includes/clustering-comparison.md:51` ends its `full`
+snapshot row with an HTML comment placed *after* the row's closing pipe:
+
+    | full | v1.1 corpus (S2 + teaching expansion) | 27,315 | All works passing year/title filters | <!-- STALE: current analysis corpus is ~27,509; needs fresh compute_clustering_comparison run -->
+
+The comment is a fifth cell against a four-column header, so the row renders
+with a stray column. This is the same defect as ticket 0368's
+`cop-topic-structure.md:38`, in a different file. Two instances make it a
+habit rather than a slip: a provenance note appended to the row it annotates
+instead of placed outside the table.
+
+The note itself is worth keeping. It records that the snapshot sizes in this
+table predate the current corpus, which is a real caveat on a rendered figure.
+It just cannot sit past the closing pipe.
+
+Found by running ticket 0340's `malformed_rows` parser over the hand-authored
+includes. That sweep covers *generated* tables only, which is why a
+hand-authored one went unnoticed until a guard was pointed at it by hand.
+
+## Relevant files
+
+- `deliverables/_shared/_includes/clustering-comparison.md:48-51` — the table
+  and the offending row
+- `deliverables/_shared/_includes/cop-topic-structure.md:38` — ticket 0368,
+  the first instance; the two should be arbitrated together
+- `tests/test_markdown_table_shape.py` — the parser that found it
+
+## Actions
+
+1. Move the STALE note out of the row: above the table, or below its last row
+   with one blank line separating it.
+2. Decide whether the note's substance still holds. It claims the table's
+   27,315 predates a ~27,509 corpus and asks for a fresh
+   `compute_clustering_comparison` run. If that run has happened, the fix is
+   to update the numbers and retire the note.
+
+## Test
+
+Red first, alongside 0368's:
+
+```python
+def test_clustering_comparison_is_one_table():
+    from test_markdown_table_shape import malformed_rows
+    text = (REPO_ROOT / "deliverables/_shared/_includes/"
+            "clustering-comparison.md").read_text(encoding="utf-8")
+    assert not [o for o in malformed_rows(text) if "cells, header" in o]
+```
+
+It reports `line 51: 5 cells, header at line 48 declares 4` today and nothing
+after the fix.
+
+The filter on `"cells, header"` is deliberate, and is itself the open question
+below: the same file also reports a line-2 orphan, which is *not* a defect.
+Line 2 is a hand-authored HTML comment containing a `|`, sitting outside every
+table. Prose may carry a pipe; a generated table row may not.
+
+## Verification
+
+- [ ] `malformed_rows` reports no cell-count mismatch for the file
+- [ ] The rendered PDF shows a two-row table with four columns, no stray cell
+- [ ] The STALE provenance note survives in the source, or is deliberately
+      retired because the numbers were refreshed
+
+## Invariants
+
+- No factual change to any snapshot size or construction description. This is
+  a layout repair unless action 2 finds the numbers genuinely stale, in which
+  case the refresh is a separate, sourced edit.
+- `tests/test_markdown_table_shape.py` keeps its generated-only scope. Nothing
+  here should make an adherence gate fail on hand-authored prose before the
+  decision below is taken.
+
+## Exit criteria
+
+- [ ] The table parses with every row at its declared width
+- [ ] Taken together with 0368: a decision recorded on whether the 0340 sweep
+      extends to `_includes/*.md`. Measured cost of extending it as-is: 9
+      findings across 28 files — 2 real cell-count mismatches (this file and
+      0368's) and 7 orphan reports, of which the line-2 ones are ordinary
+      prose pipes in HTML comments and would need an exemption, not a fix.

@@ -1,0 +1,90 @@
+%erg 0.1
+Title: export_corpus_table interpolates raw values into a pipe table
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T15:35Z HDMX-coding-agent created
+2026-07-27T15:35Z HDMX-coding-agent note found by the 0340 review panel — the fourth instance of the 0325/0339 class, and the first one found by looking rather than by a reader noticing.
+2026-07-27T21:10Z HDMX-coding-agent note action 3 done by the PR #1172 round-2 gate: the sweep finds three more instances, listed in the body. All four artifacts are corpus-gated and absent on a fresh checkout, so the 0340 sweep skips every one of them.
+
+--- body ---
+## Context
+
+`scripts/figures/export_corpus_table.py::_write_md_table` builds each row by
+`" | ".join(vals)` where `vals` carries `str(v)` straight from the summary
+DataFrame. That is exactly the shape ticket 0325 fixed in the codebook and 0339
+fixed in both venue tables: a value carrying a `|` ends its cell, and the
+renderer drops the overflow instead of erroring.
+
+The standing guard from ticket 0340 cannot catch this one today. Its target,
+`deliverables/_shared/tables/tab_corpus_sources.md`, is not git-tracked and is
+absent on a checkout without corpus data, so the sweep skips it. The defect is
+therefore live and invisible: it will surface the first time a source label or
+a formatted statistic contains a pipe, on a machine that has the corpus.
+
+Whether a *current* source label contains a pipe is not the question the fix
+turns on — the point of the escaper is that no emitter has to know.
+
+## Relevant files
+
+- `scripts/figures/export_corpus_table.py:89-107` — `_write_md_table`, the
+  unescaped interpolation
+- `scripts/_markdown_table.py` — `markdown_text_cell`, the escaper for plain
+  text with no markup intent
+- `tests/test_corpus_table_export.py` — where the regression test belongs
+- `tests/test_markdown_table_shape.py` — the 0340 sweep that will cover the
+  artifact once it is built
+
+## Actions
+
+1. Route every interpolated value in `_write_md_table` through
+   `markdown_text_cell`. Note the `**{v}**` TOTAL-row branch: escape the value,
+   then wrap in the emphasis markers, not the reverse.
+2. Check the caption constant on the same path.
+3. Sweep the other `export_*` emitters for the same shape — this ticket was
+   found by reading one of them, so the read should be finished. **Done** (PR
+   #1172 round-2 gate); the sweep found three more, so the fix is four files,
+   not one:
+
+   | emitter | artifact | shape |
+   |:--|:--|:--|
+   | `export_corpus_table.py` | `tab_corpus_sources.md` | `str(v)` for every column |
+   | `export_language_table.py` | `tab_languages.md` | `str(v)` for every column *and* the header row |
+   | `export_citation_coverage.py` | `tab_citation_coverage.md` | raw `{label}` |
+   | `export_corpus_flow.py` | `tab_corpus_flow.md` | raw `{row['Stage']}` |
+
+   `export_corpus_flow.py` arrived from main (ticket 0327) after this ticket was
+   filed, which is the argument for the generic exit criterion below rather than
+   a per-file one. The other five emitters are clean: `export_tab_venues.py`,
+   `export_core_venues_markdown.py`, `export_retrieval_protocol.py` and
+   `_deposit_variables.py` route every free-text column through
+   `markdown_text_cell` / `markdown_cell`, and `export_variables_table.py` and
+   `export_codebook.py` interpolate nothing.
+
+## Test
+
+Red first, in `tests/test_corpus_table_export.py`: feed `_write_md_table` a
+summary whose `Source` carries a literal `|`, render the result through
+`tests/_gfm_render.py`, and assert the row keeps its eight declared cells and
+the value survives intact. Assert on the *rendered* row, not on the escape —
+0325 established that asserting on the escape only restates the fix.
+
+## Verification
+
+- [ ] The rendered row keeps eight cells with a piped source label
+- [ ] The TOTAL row is still bold, and its value still escaped
+- [ ] Regenerating `tab_corpus_sources.md` on a corpus machine is a no-op for
+      every value that contains no escapable character
+- [ ] `make lint` and `make check-fast` hold
+
+## Invariants
+
+- No change to the shipped table for values that need no escaping — a
+  regeneration that churns every row is a failed fix.
+- The `.csv` sibling output is unaffected: escaping is a Markdown concern.
+
+## Exit criteria
+
+- [ ] No emitter in `scripts/figures/` interpolates unescaped free text into a
+      pipe table

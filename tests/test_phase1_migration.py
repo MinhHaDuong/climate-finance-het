@@ -43,8 +43,21 @@ def temp_catalogs(tmp_path):
     # Create empty citations
     (catalogs_dir / "citations.csv").write_text("source_doi,ref_doi,ref_title\n")
 
-    # Create dummy embeddings
-    np.savez(catalogs_dir / "embeddings.npz", embeddings=np.zeros((len(unified_df), 1024)))
+    # Dummy embeddings in the format enrich_embeddings.py writes: a `vectors`
+    # matrix plus the `keys` array Flag 5 joins on (ticket 0336). The fixture
+    # used to write a lone `embeddings` array — a shape nothing in the pipeline
+    # has produced or read since the key-cache migration, and which now cannot
+    # be joined at all.
+    sys.path.insert(0, SCRIPTS_DIR)
+    from pipeline_loaders import work_key
+
+    np.savez(
+        catalogs_dir / "embeddings.npz",
+        vectors=np.zeros((len(unified_df), 1024), dtype=np.float32),
+        keys=np.array(unified_df.apply(work_key, axis=1).tolist(), dtype=object),
+        model=np.array("fixture"),
+        text_fields=np.array("title+abstract+keywords"),
+    )
 
     return catalogs_dir
 
@@ -185,12 +198,22 @@ class TestPhase1OutputContract:
             assert col in df.columns, f"Missing core column: {col}"
 
     def test_embeddings_npz_format(self, temp_catalogs):
-        """embeddings.npz is valid numpy format."""
+        """embeddings.npz carries both arrays the pipeline consumes.
+
+        `vectors` is what corpus_align.py reads; `keys` is what Flag 5 joins on
+        (ticket 0336). Either one absent silently disabled a downstream stage,
+        so both are pinned here.
+        """
         npz_path = temp_catalogs / "embeddings.npz"
         assert npz_path.exists(), "embeddings.npz missing"
 
-        with np.load(npz_path) as data:
-            assert "embeddings" in data.files, "Missing 'embeddings' key in .npz"
-            emb = data["embeddings"]
+        with np.load(npz_path, allow_pickle=True) as data:
+            assert "vectors" in data.files, "Missing 'vectors' key in .npz"
+            assert "keys" in data.files, "Missing 'keys' key in .npz"
+            emb = data["vectors"]
             assert emb.dtype == np.float32 or emb.dtype == np.float64
-            assert len(emb.shape) == 2, f"embeddings shape should be 2D, got {emb.shape}"
+            assert len(emb.shape) == 2, f"vectors shape should be 2D, got {emb.shape}"
+            assert len(data["keys"]) == emb.shape[0], (
+                "keys and vectors must have the same length — the join is "
+                "positional inside the cache file"
+            )

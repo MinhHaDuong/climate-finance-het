@@ -72,8 +72,31 @@ export SOURCE_DATE_EPOCH := 0
 export PYTHONPATH := scripts:libs/openalex-corpus/src$(if $(PYTHONPATH),:$(PYTHONPATH),)
 
 # ── Toolchain ─────────────────────────────────────────────
-# Env policy: secrets sourced from project .env via uv --env-file;
-# never via export KEY := $(shell ...) or command-line KEY=value.
+# Env policy: .env holds no secret (ticket 0343). Credentials live in
+# ~/.config/keys/<provider>.env and are selected by the KEYS= line in .env; the
+# keystore loader applies that selection, and bash reads it via BASH_ENV at the
+# start of every recipe shell. `uv run --env-file .env` still carries the
+# non-secret settings through. Never `export KEY := $(shell ...)` and never
+# `KEY=value` on a command line — both leak the value to `ps`.
+#
+# SHELL must be bash for this to work: BASH_ENV is honoured only by
+# non-interactive bash, which is exactly what make runs a recipe in.
+#
+# The wildcard is the graceful-degradation knob. Where the loader is absent — a
+# clean-room checkout, a reproducibility archive, a container — it expands to
+# empty, bash ignores an empty BASH_ENV, and recipes fall back to whatever
+# credentials the ambient environment already carries.
+#
+# Consequence worth knowing: the loader re-applies .env at the start of each
+# recipe shell, so `CLIMATE_FINANCE_DATA=/other make corpus` is ignored — the
+# recipe sees .env's value, not the one on the command line. Change a .env
+# variable in .env, which is the mechanism .claude/rules/architecture.md
+# documents for relocating the data root anyway. Command-line overrides still
+# work on a leaf process (`CLIMATE_FINANCE_DATA=/other uv run python …`),
+# because there the assignment happens after the shell has started.
+SHELL           := /bin/bash
+KEYSTORE_LOADER ?= $(HOME)/.claude/scripts/bash-env.sh
+export BASH_ENV := $(wildcard $(KEYSTORE_LOADER))
 #
 # Named tool variables so invocations stay overridable and self-documenting.
 # PATH export covers non-interactive shells (ssh, cron, systemd) where
@@ -272,8 +295,28 @@ deliverables/_shared/tables/tab_dedup_error_estimates.csv: scripts/analysis/comp
 deliverables/_shared/tables/tab_venues.md: scripts/figures/export_tab_venues.py scripts/_markdown_table.py scripts/utils.py $(REFINED) $(DERIVED)/tab_pole_papers.csv
 	$(PYTHON) $< --output $@ --pole-papers $(DERIVED)/tab_pole_papers.csv
 
+# --output names the .csv, not $@ — see the tab_corpus_flow rule below for why
+# a bare $@ under a grouped target writes both members to one path.
 deliverables/_shared/tables/tab_corpus_sources.csv deliverables/_shared/tables/tab_corpus_sources.md &: scripts/figures/export_corpus_table.py scripts/utils.py $(REFINED)
+	$(PYTHON) $< --output deliverables/_shared/tables/tab_corpus_sources.csv
+
+# Corpus construction ledger (ticket 0327). Compute and render are separate
+# rules with one output each, so neither can be handed the other's path.
+#
+# Reads corpus_audit.csv, refined_works.csv and the latest catalog_merge run
+# report. The two Phase-1 artifacts under $(DATA_DIR) are $(wildcard)ed like
+# the compute_vars prerequisites, which keeps a Phase-2 build from triggering
+# Phase 1 but is NOT a freshness guarantee: on a checkout without corpus data
+# the list expands empty, so make can report the committed table up to date
+# without ever reading the corpus. The script fails loudly when an input is
+# missing; a stale-vs-corpus table is ticket 0344's problem, not this rule's.
+deliverables/_shared/tables/tab_corpus_flow.csv: scripts/analysis/compute_corpus_flow.py scripts/utils.py $(REFINED) \
+		$(wildcard $(DATA_DIR)/corpus_audit.csv) \
+		$(wildcard $(DATA_DIR)/run_reports/catalog_merge__*.json)
 	$(PYTHON) $< --output $@
+
+deliverables/_shared/tables/tab_corpus_flow.md: scripts/figures/export_corpus_flow.py scripts/utils.py deliverables/_shared/tables/tab_corpus_flow.csv
+	$(PYTHON) $< --input deliverables/_shared/tables/tab_corpus_flow.csv --output $@
 
 deliverables/_shared/tables/tab_languages.md: scripts/figures/export_language_table.py scripts/utils.py $(REFINED)
 	$(PYTHON) $< --input $(REFINED) --output $@
@@ -283,13 +326,28 @@ deliverables/_shared/tables/tab_languages.md: scripts/figures/export_language_ta
 deliverables/_shared/tables/tab_variables.md: scripts/figures/export_variables_table.py scripts/_deposit_variables.py scripts/_markdown_table.py
 	$(PYTHON) $< --output $@
 
+# Retrieval-protocol appendix for the data paper (ticket 0329) — rendered from
+# the harvest configuration, no corpus data needed. Grouped target (&:): one
+# invocation writes the CSV and its markdown twin.
+RETRIEVAL_CONFIG := config/openalex_queries.yaml config/corpus_collect.yaml \
+                    config/grey_sources.yaml config/unfccc_sources.yaml \
+                    config/oecd_dac_sources.yaml
+# scripts/_markdown_table.py is a real prerequisite, as it is for the sibling
+# rules above: the escaper decides the emitted bytes, so a change there must
+# rebuild this table or the deposit ships the pre-fix rendering.
+deliverables/_shared/tables/tab_retrieval_protocol.csv deliverables/_shared/tables/tab_retrieval_protocol.md &: scripts/figures/export_retrieval_protocol.py scripts/utils.py scripts/_markdown_table.py $(RETRIEVAL_CONFIG)
+	$(PYTHON) $< --output deliverables/_shared/tables/tab_retrieval_protocol.csv
+
 corpus-tables: deliverables/_shared/tables/tab_corpus_sources.csv deliverables/_shared/tables/tab_corpus_sources.md \
+               deliverables/_shared/tables/tab_corpus_flow.csv deliverables/_shared/tables/tab_corpus_flow.md \
                deliverables/_shared/tables/tab_citation_coverage_periods.csv \
                deliverables/_shared/tables/tab_citation_verification.csv \
                deliverables/_shared/tables/tab_citation_coverage.md \
                deliverables/_shared/tables/tab_reference_counts.csv \
                deliverables/_shared/tables/tab_languages.md \
-               deliverables/_shared/tables/tab_variables.md
+               deliverables/_shared/tables/tab_variables.md \
+               deliverables/_shared/tables/tab_retrieval_protocol.csv \
+               deliverables/_shared/tables/tab_retrieval_protocol.md
 
 # ── Statistics (computed from pipeline outputs) ──────────
 # manuscript-vars.yml is pinned to v1.0 values — not auto-generated by compute_vars.py.
@@ -297,7 +355,11 @@ COMPUTED_STATS := deliverables/_shared/technical-report-vars.yml \
                   deliverables/data-paper/data-paper-vars.yml deliverables/multilayer/multilayer-detection-vars.yml
 
 # Grouped target (&:) — one invocation writes all 3 files. Requires GNU Make >= 4.3.
-$(COMPUTED_STATS) &: scripts/analysis/compute_vars.py scripts/utils.py $(REFINED) \
+# config/corpus_filter.yaml is a real prerequisite (ticket 0329): compute_vars
+# reads the filtering thresholds the data paper reports straight from it, so an
+# edit to sigma or a near-duplicate threshold must rebuild the vars file.
+$(COMPUTED_STATS) &: scripts/analysis/compute_vars.py scripts/utils.py \
+		config/corpus_filter.yaml $(REFINED) \
 		$(DERIVED)/tab_bimodality.csv $(DERIVED)/tab_bimodality_core.csv \
 		$(DERIVED)/tab_axis_detection.csv \
 		deliverables/_shared/tables/tab_citation_coverage_periods.csv \
@@ -656,7 +718,6 @@ datapaper-figures: figures-datapaper
 # ── Phase 4a — analysis archive (packages Phase 2 outputs) ─
 # Data + scripts: reviewers verify figures/tables are reproducible.
 #   tar xzf archive.tar.gz && cd ... && uv sync && make
-SHELL            := /bin/bash
 ANALYSIS_OUTPUTS := deliverables/_shared/figures/fig_bars_v1.png \
                     deliverables/_shared/figures/fig_composition.png \
                     deliverables/_shared/tables/tab_venues.md \

@@ -1,7 +1,9 @@
 # DVC pipeline — Phase 1: Corpus Building
 #
-# Env policy: secrets sourced from project .env via uv --env-file;
-# never via export KEY := $(shell ...) or command-line KEY=value.
+# Env policy: .env holds no secret (ticket 0343). Credentials live in
+# ~/.config/keys/<provider>.env, are selected by the KEYS= line in .env, and
+# reach the environment through the keystore loader. Never via command-line
+# KEY=value — that leaks the value to `ps`.
 #
 # Mirrors Makefile Phase 1a–1f. Run with:
 #   dvc repro              (full pipeline)
@@ -152,6 +154,10 @@ stages:
       - data/catalogs/scispace_works.csv
     outs:
       - data/catalogs/unified_works.csv
+      # The dedup counters compute_vars publishes in the data paper. Declared so
+      # dvc can tell when they are stale; the timestamped siblings in
+      # run_reports/ are run history and stay undeclared (ticket 0349).
+      - data/catalogs/run_reports/catalog_merge.json
 
   # ── Phase 1b: Enrichment pipeline ──────────────────────────
   # Split into independent DVC stages so each step is cached separately.
@@ -300,9 +306,16 @@ stages:
   # Phase 1c: Extend → extended_works.csv
   # Adds diagnostic flags and protection columns; no rows removed.
   # corpus_filter.py loads config/corpus_filter.yaml via filter_flags.py.
+  # embeddings.npz is a real input: Flag 5 (semantic isolation) reads it. Left
+  # undeclared, DVC never re-ran extend when the embeddings changed, so a dead
+  # Flag 5 could not be told from a cached one (ticket 0336).
+  # --skip-semantic-flag holds Flag 5 (semantic isolation) inert pending
+  # calibration sign-off (ticket 0361): the fix that revived it is merged, but
+  # sigma has never been calibrated against live output and activating it would
+  # remove 361 works. Remove this flag only after the author signs off.
   extend:
     cmd: >-
-      uv run --env-file .env python scripts/harvest/corpus_filter.py --extend --works-input data/catalogs/enriched_works.csv --works-output data/catalogs/extended_works.csv
+      uv run --env-file .env python scripts/harvest/corpus_filter.py --extend --skip-semantic-flag --works-input data/catalogs/enriched_works.csv --works-output data/catalogs/extended_works.csv
     deps:
       - scripts/harvest/corpus_filter.py
       - scripts/filter_flags.py
@@ -314,6 +327,7 @@ stages:
       - scripts/pipeline_text.py
       - config/corpus_filter.yaml
       - data/catalogs/enriched_works.csv
+      - data/catalogs/embeddings.npz
     outs:
       - data/catalogs/extended_works.csv
 

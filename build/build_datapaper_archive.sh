@@ -61,9 +61,16 @@ uv run --env-file .env frictionless validate "$TMP/data/products/datapackage.jso
 echo "  Copying final products (embeddings, citations)..."
 cp -L "$DATA_DIR/embeddings.npz" "$TMP/data/products/"
 cp -L "$DATA_DIR/citations.csv" "$TMP/data/products/"
+# Retrieval-protocol appendix (ticket 0329): the paper points referees here for
+# the query fields, per-tier term counts, and the grey-literature enumeration.
+cp "$PROJ_ROOT/deliverables/_shared/tables/tab_retrieval_protocol.csv" "$TMP/data/products/"
+cp "$PROJ_ROOT/deliverables/_shared/tables/tab_retrieval_protocol.md" "$TMP/data/products/"
 
 echo "  Copying raw inputs (per-source catalogs)..."
-for src in openalex istex bibcnrs scispace grey teaching; do
+# One catalog per corpus source (utils.SOURCE_NAMES). Pinned by
+# test_datapaper_archive_layout.py so the deposit never ships fewer catalogs
+# than the paper claims sources (ticket 0327).
+for src in openalex istex bibcnrs scispace grey teaching unfccc oecd; do
     cp -L "$DATA_DIR/${src}_works.csv" "$TMP/data/inputs/" 2>/dev/null || true
 done
 
@@ -89,8 +96,14 @@ YAML
 echo "  Copying figures and tables..."
 mkdir -p "$TMP/code/content/figures" "$TMP/code/content/tables"
 cp deliverables/_shared/figures/fig_bars.png "$TMP/code/content/figures/"
-cp deliverables/_shared/tables/tab_corpus_sources.md deliverables/_shared/tables/tab_languages.md \
-   "$TMP/code/content/tables/"
+# Stage exactly the tables the paper includes, discovered from its own
+# {{< include >}} directives. The hand-kept list had already gone stale
+# (tab_variables.md was missing) and would have gone stale again with
+# tab_corpus_flow.md (ticket 0327).
+grep -o '{{< include [^ ]*tables/[^ ]*\.md' deliverables/data-paper/data-paper.qmd \
+  | sed 's|.*tables/||' | sort -u | while read -r tbl; do
+    cp "deliverables/_shared/tables/$tbl" "$TMP/code/content/tables/"
+done
 cp deliverables/data-paper/data-paper-vars.yml "$TMP/code/content/"
 
 # ── Checksums for make verify ────────────────────────────

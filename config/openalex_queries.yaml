@@ -13,6 +13,40 @@
 # (OpenAlex from_created_date filter) would skip already-fetched pages
 # and save ~70% of API budget on incremental re-runs.
 
+# --- Language tag for every Tier-1 core term ---
+# The data paper's headline claim is multilingual retrieval, so it must name
+# the languages it searched. This block is the machine-readable source for that
+# list: one entry per Tier-1 term, `null` for terms that name an institution
+# rather than a language's vocabulary. tests/test_retrieval_protocol.py checks
+# the keys here against tiers.1.terms as a bijection, so a term added or
+# removed on either side fails loudly instead of silently changing what the
+# paper claims (ticket 0329).
+term_languages:
+  # English
+  "climate finance": English
+  "carbon finance": English
+  # French
+  "finance climat": French
+  "finance climatique": French
+  # German
+  "Klimafinanzierung": German
+  # Spanish
+  "financiamiento climático": Spanish
+  "financiación climática": Spanish
+  # Portuguese
+  "financiamento climático": Portuguese
+  # Arabic
+  "تمويل المناخ": Arabic
+  # Chinese
+  "气候融资": Chinese
+  "气候金融": Chinese
+  # Japanese
+  "気候金融": Japanese
+  "グリーンファイナンス": Japanese
+  # Institution names — no language tag, they must not inflate the count
+  "green climate fund": null
+  "adaptation fund": null
+
 # --- Concept groups for relevance filtering (Tiers 3-4) ---
 concept_groups:
   climate:

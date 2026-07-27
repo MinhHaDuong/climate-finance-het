@@ -23,12 +23,15 @@ the latest version.
    passed data check.
 2. Zenodo → record 19236130 → **New version**. Remove the old tarball, upload
    the new one.
-3. Replace the record description with the text below; keep title, authors,
-   license (data CC BY 4.0, code MIT), and keywords unchanged.
+3. Replace the record description with the text below. Retitle the record
+   "Six Sources" → "**Eight Sources**" (ticket 0327): the v2 corpus adds the
+   curated UNFCCC and OECD DAC layers, and the paper's related-dataset entry
+   and suggested citation now carry the eight-source title. Authors, license
+   (data CC BY 4.0, code MIT), and keywords stay unchanged.
 4. Fill the record metadata below (ORCID, funding). It persists across
    versions, so this is a one-time pass.
-5. Set the version field (suggested: `v1.1.1` — same data, restructured
-   packaging + codebook) and publish.
+5. Set the version field (suggested: `v2.0` — new corpus harvest, eight
+   sources, restructured packaging + codebook) and publish.
 6. Check that the paper's cited DOI still resolves; the paper cites
    10.5281/zenodo.19236130 — if the journal prefers, switch the citation to
    the concept DOI or the new version DOI at proof stage.
@@ -58,8 +61,8 @@ the **New version** button; adding it manually duplicates the chain.
 ## Record description (new version)
 
 Reproducibility archive for "A Curated Corpus of Climate Finance Literature,
-1990–2024: Six Sources, Multilingual Retrieval, and Grey Literature" (Research
-Data Journal for the Humanities and Social Sciences).
+1990–2024: Eight Sources, Multilingual Retrieval, and Grey Literature"
+(Research Data Journal for the Humanities and Social Sciences).
 
 The archive is structured in three parts:
 
@@ -67,21 +70,24 @@ The archive is structured in three parts:
   scripts, configuration, and DVC pipeline definitions, with a Makefile
   offering `verify` (checksums), `papers` (render the data paper), and
   `corpus` (full rebuild) targets.
-- `data/inputs/` — raw data inputs: the six per-source catalogs
+- `data/inputs/` — raw data inputs: the eight per-source catalogs
   (`openalex_works.csv`, `istex_works.csv`, `bibcnrs_works.csv`,
-  `scispace_works.csv`, `grey_works.csv`, `teaching_works.csv`) as harvested,
-  before merge and deduplication — the provenance trail.
+  `scispace_works.csv`, `grey_works.csv`, `teaching_works.csv`,
+  `unfccc_works.csv`, `oecd_works.csv`) as harvested, before merge and
+  deduplication — the provenance trail.
 - `data/products/` — final data products of the paper:
-  `climate_finance_corpus.csv` (42,916 deduplicated works, abstracts stripped
+  `climate_finance_corpus.csv` (43,179 deduplicated works, abstracts stripped
   for redistribution reasons), `codebook.md` (data dictionary: per-column
-  type, allowed values, and measured missingness), `embeddings.npz` (38,473
+  type, allowed values, and measured missingness), `embeddings.npz` (38,736
   multilingual 1024-dim vectors, BAAI/bge-m3), and `citations.csv`
   (citation pairs, normalised DOIs).
 
 Changes in this version: package restructured to separate raw inputs from
 final products (editorial remark ED-04); added `codebook.md`, the formal data
-dictionary for `climate_finance_corpus.csv` (reviewer remark R1-19). Data
-files are unchanged from the previous version.
+dictionary for `climate_finance_corpus.csv` (reviewer remark R1-19); the
+corpus is rebuilt on the v2 harvest, which adds the curated UNFCCC and OECD
+DAC key-document layers, so `data/inputs/` carries eight per-source catalogs
+and the data files change with it.
 
 Code: MIT. Data: CC BY 4.0.
 
@@ -89,7 +95,7 @@ Code: MIT. Data: CC BY 4.0.
 
 > **ED-04 (Zenodo package structure).** We restructured the Zenodo package to
 > separate raw data inputs from final data products. The new version of the
-> deposit (same concept DOI) contains `data/inputs/` with the six per-source
+> deposit (same concept DOI) contains `data/inputs/` with the eight per-source
 > catalogs as harvested, and `data/products/` with the paper's outputs
 > (`climate_finance_corpus.csv`, `codebook.md`, `embeddings.npz`,
 > `citations.csv`); `code/` holds the pipeline source. The archive README and
