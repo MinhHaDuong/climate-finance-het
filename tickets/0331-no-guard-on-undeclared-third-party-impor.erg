@@ -121,3 +121,9 @@ scanner reading only module headers fails this test, which is the point.
   this one generalises
 - 0314 (closed, PR #1127) — the adjacent rule that a missing dependency must
   fail loudly rather than skip a stage
+- 0336 — Flag 5 silently skipped on every run (embeddings/row-subset length
+  mismatch). Out of scope for this guard, which checks imports against declared
+  dependencies and would not have caught a data-shape precondition. Listed
+  because it is the third silent skip found in one day: the wider question of
+  whether any stage may report "skipped" at INFO and let the run continue is
+  worth its own ticket, and is not settled here.

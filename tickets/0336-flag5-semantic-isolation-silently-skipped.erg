@@ -1,0 +1,104 @@
+%erg 0.1
+Title: Flag 5 (semantic isolation) is silently skipped on every corpus filter run
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T11:30Z HDMX-coding-agent created found during the 0297 corpus regeneration on padme
+
+--- body ---
+## Context
+
+`corpus_filter.py` computes six flags to decide what leaves the corpus.
+Flag 5 (semantic isolation, embedding-based) never runs: it needs the
+embeddings matrix to align positionally with the row subset it rebuilds, and
+the two have diverged.
+
+Observed during the ticket-0297 corpus regeneration (2026-07-27):
+
+```
+WARNING   Embedding size mismatch (38736 vs 33057), skipping.
+INFO        Flag 5: skipped (no embeddings)
+```
+
+Measured against the current corpus:
+
+- `enrich_embeddings` writes **38,736** vectors to `data/catalogs/embeddings.npz`
+- `_load_embeddings` in `corpus_filter.py` rebuilds its own subset —
+  `abstract` non-null and longer than 50 chars, **and** `year` within
+  `config/analysis.yaml periodization.year_min..year_max` (1990–2024) — giving
+  **33,057** rows
+- `len(embeddings) != len(emb_df)` therefore always holds, so the function
+  returns `(None, None, False)` and the caller skips the flag
+
+The abstract filter alone yields 36,476 rows; the year window removes a
+further 3,419. So the two stages disagree on both criteria, not one.
+
+This is not staleness and not a DVC ordering artifact. `extend` does not
+declare `embeddings.npz` as a dependency, so DVC never re-runs it when
+embeddings change, and re-running `extend` after `enrich_embeddings` does not
+help — the counts differ regardless of order. The corpus filter has been
+running with five of six flags for as long as the row sets have diverged.
+
+## Why it matters
+
+A skipped flag is not a neutral default: it means no paper is ever excluded
+for semantic isolation, so `refined_works.csv` retains works Flag 5 was
+designed to drop. Any count or figure derived from the refined corpus
+reflects a five-flag filter while the codebook and the data paper describe
+six. The failure is a `log.warning`, so it never breaks a build.
+
+## Relevant files
+
+- `scripts/harvest/corpus_filter.py` — `_load_embeddings()` (the mismatch and
+  the silent `return None, None, False`), and the Flag 5 call site
+- `scripts/harvest/enrich_embeddings.py` — decides which rows get embedded
+- `config/analysis.yaml` — `periodization.year_min` / `year_max`
+- `dvc.yaml` — `extend` stage deps (no `embeddings.npz`)
+
+## Actions
+
+1. Decide which row set is authoritative. Options, to be arbitrated:
+   a. Embed exactly the Flag 5 subset (add the year window to
+      `enrich_embeddings`) — narrows the embeddings used elsewhere, so check
+      every other consumer of `embeddings.npz` first.
+   b. Keep embeddings broad and have Flag 5 **join by key** (`source_id` or
+      DOI) instead of relying on positional alignment. Preferred on the face
+      of it: positional alignment between two independently-filtered frames is
+      the underlying fragility, and a join removes the whole class.
+2. Implement the chosen option.
+3. Declare `embeddings.npz` as a dep of the `extend` stage in `dvc.yaml` so
+   the flag cannot silently go stale again.
+4. Re-run `make corpus-filter-all` and record how `refined_works.csv` changes
+   — this will move the corpus row count, so it needs author sign-off before
+   any downstream figure or table is regenerated.
+
+## Test
+
+Red first: a unit test that builds a works frame plus an embeddings matrix
+whose row sets differ, and asserts Flag 5 still evaluates (rather than
+returning `skipped`) once the join replaces positional alignment. Add a guard
+test asserting `_load_embeddings` never silently returns "no embeddings" for a
+corpus that does have embeddings — a `log.warning` swallowing a dead flag is
+what hid this.
+
+## Verification
+
+- [ ] Flag 5 reports a real count in the extend log, not `skipped`
+- [ ] `embeddings.npz` is a declared dep of `extend` in `dvc.yaml`
+- [ ] The change in `refined_works.csv` row count is measured and recorded
+- [ ] `make check` passes
+
+## Invariants
+
+- No weakening of the acceptance thresholds.
+- `make corpus`/`corpus-sync` only, never bare `dvc repro`; padme->doudou
+  data direction.
+- Changing the corpus composition affects every downstream count: do not
+  regenerate figures or tables until the author has signed off on the new
+  row count.
+
+## Exit criteria
+
+- Flag 5 evaluates on every run, its effect on the corpus is measured and
+  signed off, and a guard prevents it from silently going dead again.

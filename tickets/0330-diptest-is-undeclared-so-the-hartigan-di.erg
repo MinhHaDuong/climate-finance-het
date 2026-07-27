@@ -119,5 +119,10 @@ it `slow` if it reads the real derived table.
 ## See also
 
 - 0314 (closed, PR #1127) — the same class, hard-guarded at Flag 6
+- 0336 — a third silent skip, found independently during the 0297 corpus
+  regeneration: Flag 5 returns "skipped" on every run because the embeddings
+  matrix and the row subset disagree on length. Different root cause (data-shape
+  mismatch, not a missing dependency), same failure mode — a stage that decides
+  corpus membership announces its own absence at INFO and the run continues.
 - 0331 — the standing class guard, so the next undeclared import is caught
   mechanically instead of by a post-merge sweep
