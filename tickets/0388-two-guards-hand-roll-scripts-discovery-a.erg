@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-27T18:53Z HDMX-coding-agent created
 2026-07-27T18:58Z HDMX-coding-agent note Found by the 0346 roar sweep; the divergence is already visible in make lint output
+2026-07-27T19:12Z HDMX-coding-agent note Renumbered 0385 -> 0388: the 0384 renumber landed on a seat 0385 had already taken on main, leaving a duplicate id that failed erg check for every branch. Found by the 0364 wrap-up sweep.
 
 --- body ---
 ## Context
