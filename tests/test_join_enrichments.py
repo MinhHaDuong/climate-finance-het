@@ -156,6 +156,67 @@ def test_join_applies_language_cache(enrichment_dir):
     assert bib_row["language"] == "de"
 
 
+def test_join_applies_detected_language_cache(enrichment_dir, tmp_path):
+    """The langdetect cache fills what OpenAlex could not (ticket 0297).
+
+    language_resolved.csv holds OpenAlex answers, including empty ones for
+    works OpenAlex has no language for. language_detected.csv holds the
+    local langdetect fallback. The join must consult both, or every
+    locally-detected language is silently dropped.
+    """
+    from enrich_join import join_enrichments
+
+    cache_dir = enrichment_dir / "enrich_cache"
+    # OpenAlex knows nothing about IST002's language: an empty answer.
+    pd.DataFrame({
+        "key": ["10.1234/b"],
+        "language": [""],
+    }).to_csv(cache_dir / "language_resolved.csv", index=False)
+    pd.DataFrame({
+        "key": ["10.1234/b", "BIB003"],
+        "language": ["fr", "de"],
+    }).to_csv(cache_dir / "language_detected.csv", index=False)
+
+    output_path = enrichment_dir / "enriched_works.csv"
+    join_enrichments(
+        unified_path=str(enrichment_dir / "unified_works.csv"),
+        output_path=str(output_path),
+        cache_dir=str(cache_dir),
+    )
+
+    result = pd.read_csv(output_path)
+    ist_row = result[result["source_id"] == "IST002"].iloc[0]
+    assert ist_row["language"] == "fr", "detected-language cache not applied (by DOI)"
+    bib_row = result[result["source_id"] == "BIB003"].iloc[0]
+    assert bib_row["language"] == "de", "detected-language cache not applied (by source_id)"
+
+
+def test_join_prefers_openalex_over_detection(enrichment_dir):
+    """When OpenAlex has an answer, the langdetect guess does not override it."""
+    from enrich_join import join_enrichments
+
+    cache_dir = enrichment_dir / "enrich_cache"
+    pd.DataFrame({
+        "key": ["10.1234/b"],
+        "language": ["fr"],
+    }).to_csv(cache_dir / "language_resolved.csv", index=False)
+    pd.DataFrame({
+        "key": ["10.1234/b"],
+        "language": ["es"],
+    }).to_csv(cache_dir / "language_detected.csv", index=False)
+
+    output_path = enrichment_dir / "enriched_works.csv"
+    join_enrichments(
+        unified_path=str(enrichment_dir / "unified_works.csv"),
+        output_path=str(output_path),
+        cache_dir=str(cache_dir),
+    )
+
+    result = pd.read_csv(output_path)
+    ist_row = result[result["source_id"] == "IST002"].iloc[0]
+    assert ist_row["language"] == "fr"
+
+
 def test_join_preserves_existing_values(enrichment_dir):
     """Existing non-null values are not overwritten by caches."""
     from enrich_join import join_enrichments

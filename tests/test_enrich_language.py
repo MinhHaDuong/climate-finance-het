@@ -259,6 +259,70 @@ class TestPass2LocalDetect:
         assert df.loc[0, "language"] == "en"
 
 
+# ---------- pass2 cache persistence (ticket 0297) ----------
+
+class TestPass2Persistence:
+    """pass2 detections must survive the process.
+
+    The #428 refactor made enrich_language cache-only: enrich_join applies
+    the caches to the monolith. Pass 1 saved language_resolved.csv, but
+    pass 2's langdetect results were only written to the in-memory frame
+    and discarded on exit — so 4.1% of the corpus stayed null (ticket 0297).
+    """
+
+    def test_records_detections_in_cache(self):
+        """A detection is recorded in the caller's cache dict."""
+        from enrich_language import pass2_local_detect
+        df = pd.DataFrame({
+            "doi": ["10.1234/a"],
+            "source_id": ["W001"],
+            "language": [None],
+            "title": ["Climate Finance"],
+            "abstract": ["Climate finance refers to local, national, or transnational "
+                         "financing that seeks to support mitigation and adaptation "
+                         "actions addressing climate change."],
+        })
+        cache = {}
+        filled = pass2_local_detect(df, cache)
+        assert filled == 1
+        assert cache == {"10.1234/a": "en"}
+
+    def test_cache_keyed_by_source_id_without_doi(self):
+        """Records without a DOI are keyed by source_id, as enrich_join looks up."""
+        from enrich_language import pass2_local_detect
+        df = pd.DataFrame({
+            "doi": [None],
+            "source_id": ["W002"],
+            "language": [None],
+            "title": ["Climate finance refers to local national or transnational financing"],
+            "abstract": [None],
+        })
+        cache = {}
+        pass2_local_detect(df, cache)
+        assert cache == {"W002": "en"}
+
+    def test_cache_optional(self):
+        """Existing callers that pass no cache still work."""
+        from enrich_language import pass2_local_detect
+        df = pd.DataFrame({
+            "language": [None],
+            "title": ["Climate Finance"],
+            "abstract": ["Climate finance refers to local, national, or transnational "
+                         "financing that seeks to support mitigation and adaptation."],
+        })
+        assert pass2_local_detect(df) == 1
+
+    def test_main_saves_detected_cache(self):
+        """main() persists pass-2 results to the language_detected cache."""
+        path = os.path.join(HARVEST_DIR, "enrich_language.py")
+        with open(path) as f:
+            source = f.read()
+        assert 'save_cache("language_detected"' in source, (
+            "pass-2 detections are computed but never persisted — "
+            "enrich_join cannot apply them (ticket 0297)"
+        )
+
+
 # ---------- DVC pipeline integration ----------
 
 class TestDVCStage:
