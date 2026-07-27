@@ -17,6 +17,7 @@ import subprocess
 import sys
 
 import pandas as pd
+import pipeline_loaders
 import pytest
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
@@ -104,20 +105,25 @@ class TestUtilsHelpers:
         from utils import save_run_report
 
         orig = utils.CATALOGS_DIR
+        orig_pl = pipeline_loaders.CATALOGS_DIR
         utils.CATALOGS_DIR = str(tmp_path)
+        pipeline_loaders.CATALOGS_DIR = str(tmp_path)
         try:
             data = {"elapsed_seconds": 1.5, "rows_written": 42}
             path = save_run_report(data, "test-run-001", "my_script")
             assert os.path.isfile(path)
         finally:
             utils.CATALOGS_DIR = orig
+            pipeline_loaders.CATALOGS_DIR = orig_pl
 
     def test_save_run_report_json_schema(self, tmp_path):
         import utils
         from utils import save_run_report
 
         orig = utils.CATALOGS_DIR
+        orig_pl = pipeline_loaders.CATALOGS_DIR
         utils.CATALOGS_DIR = str(tmp_path)
+        pipeline_loaders.CATALOGS_DIR = str(tmp_path)
         try:
             data = {"counter_a": 10, "counter_b": 5, "elapsed_seconds": 2.0}
             path = save_run_report(data, "run-xyz", "test_script")
@@ -129,13 +135,16 @@ class TestUtilsHelpers:
             assert payload["elapsed_seconds"] == 2.0
         finally:
             utils.CATALOGS_DIR = orig
+            pipeline_loaders.CATALOGS_DIR = orig_pl
 
     def test_save_run_report_sanitizes_run_id(self, tmp_path):
         import utils
         from utils import save_run_report
 
         orig = utils.CATALOGS_DIR
+        orig_pl = pipeline_loaders.CATALOGS_DIR
         utils.CATALOGS_DIR = str(tmp_path)
+        pipeline_loaders.CATALOGS_DIR = str(tmp_path)
         try:
             path = save_run_report({}, "run id/with spaces&special!", "script")
             assert os.path.isfile(path)
@@ -145,6 +154,7 @@ class TestUtilsHelpers:
             assert "/" not in basename
         finally:
             utils.CATALOGS_DIR = orig
+            pipeline_loaders.CATALOGS_DIR = orig_pl
 
     def test_retry_get_importable(self):
         from utils import retry_get
@@ -445,7 +455,9 @@ class TestRunReport:
         from utils import save_run_report
 
         orig = utils.CATALOGS_DIR
+        orig_pl = pipeline_loaders.CATALOGS_DIR
         utils.CATALOGS_DIR = str(tmp_path)
+        pipeline_loaders.CATALOGS_DIR = str(tmp_path)
         try:
             missing_before = 10
             missing_after = 3
@@ -466,6 +478,7 @@ class TestRunReport:
             assert payload["elapsed_seconds"] > 0
         finally:
             utils.CATALOGS_DIR = orig
+            pipeline_loaders.CATALOGS_DIR = orig_pl
 
 
 # ---------------------------------------------------------------------------
