@@ -2,6 +2,7 @@
 Title: Archive script-list guard truncates silently at the first parenthesis
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1192
 
 --- log ---
 2026-07-27T13:22Z HDMX-coding-agent created
@@ -9,6 +10,7 @@ Author: HDMX-coding-agent
 2026-07-27T14:40Z HDMX-coding-agent note fixed by line-anchored parse; the rewritten build-script comment uses parens deliberately, so the real array is now a live witness against the old regex — 20 paths read vs 13.
 
 2026-07-27T19:15Z HDMX-coding-agent note rebased onto ticket 0292, which landed meanwhile and parameterised the same non-greedy regex over three build scripts — generalising the defect rather than retiring it. Resolved by taking main's widened guard wholesale and re-layering the 0352 parser onto it; the fix now covers SCRIPTS, MANUSCRIPT_FILES and DATAPAPER_FILES. Merged-tree counts 14 -> 21 for SCRIPTS (was 13 -> 20; 0292 added script_io_args.py above the truncation point). The other two arrays hold no paren today, so their bug was latent — the stale 'keep the array free of parentheses' warnings 0292 copied into both scripts are removed and their absence is now pinned by a test.
+2026-07-27T19:24Z HDMX-coding-agent closed — autoclosed — PR #1192
 --- body ---
 ## Context
 
