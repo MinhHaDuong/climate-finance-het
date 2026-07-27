@@ -148,24 +148,40 @@ def _apply_abstract_caches(df, cache_dir):
 
 
 def _apply_language_cache(df, cache_dir):
-    """Normalize language codes and fill missing from cache."""
+    """Normalize language codes and fill missing from the two language caches.
+
+    Caches are consulted in order of authority: `language_resolved.csv` holds
+    what OpenAlex reports, `language_detected.csv` the local langdetect
+    fallback for works OpenAlex has no language for. Reading only the first
+    left every locally-detected language on the floor (ticket 0297).
+    """
     df["language"] = df["language"].apply(normalize_lang)
-    lang_cache = _load_csv_cache(
+    resolved_cache = _load_csv_cache(
         os.path.join(cache_dir, "language_resolved.csv"), "key", "language")
+    detected_cache = _load_csv_cache(
+        os.path.join(cache_dir, "language_detected.csv"), "key", "language")
 
     applied = 0
+    from_detected = 0
     for idx in df.index:
         if _is_missing(df.at[idx, "language"]):
             doi = normalize_doi(df.at[idx, "doi"])
             sid = str(df.at[idx, "source_id"])
-            lang = lang_cache.get(doi, "") if doi else ""
-            if not lang:
-                lang = lang_cache.get(sid, "")
+            lang = ""
+            for cache in (resolved_cache, detected_cache):
+                lang = cache.get(doi, "") if doi else ""
+                if not lang:
+                    lang = cache.get(sid, "")
+                if lang:
+                    if cache is detected_cache:
+                        from_detected += 1
+                    break
             if lang:
                 df.at[idx, "language"] = lang
                 applied += 1
-    log.info("Language cache: applied %d (cache has %d entries)",
-             applied, len(lang_cache))
+    log.info("Language caches: applied %d (%d from langdetect); "
+             "resolved=%d, detected=%d entries",
+             applied, from_detected, len(resolved_cache), len(detected_cache))
     return applied
 
 

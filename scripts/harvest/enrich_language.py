@@ -261,11 +261,33 @@ def pass1_apply_cache(df, cache):
 
 # --- Pass 2: local text detection ---
 
-def pass2_local_detect(df):
+def _cache_key(df, idx):
+    """Cache key for a row: normalized DOI when present, else source_id.
+
+    Mirrors the lookup order in enrich_join._apply_language_cache, which
+    tries the DOI first and falls back to source_id. Returns "" when the
+    row offers neither (nothing to key on, so nothing is cached).
+    """
+    if "doi" in df.columns and pd.notna(df.at[idx, "doi"]):
+        doi = normalize_doi(df.at[idx, "doi"])
+        if doi:
+            return doi
+    if "source_id" in df.columns and pd.notna(df.at[idx, "source_id"]):
+        return str(df.at[idx, "source_id"])
+    return ""
+
+
+def pass2_local_detect(df, cache=None):
     """Fill remaining null language values using langdetect on title+abstract.
 
     Also flags nonsensical existing values (codes not in ISO 639-1).
     Returns number of records filled.
+
+    When `cache` is a dict, each detection is also recorded in it, keyed the
+    way enrich_join looks values up: by normalized DOI when there is one,
+    else by source_id. Without this the detections die with the process —
+    the script is cache-only since #428, so an in-memory fill reaches
+    nothing (ticket 0297).
     """
     filled = 0
     for idx in df.index:
@@ -290,6 +312,10 @@ def pass2_local_detect(df):
         if detected and is_valid_iso639_1(detected):
             df.at[idx, "language"] = detected
             filled += 1
+            if cache is not None:
+                key = _cache_key(df, idx)
+                if key:
+                    cache[key] = detected
 
     return filled
 
@@ -379,10 +405,14 @@ def main():
 
     # --- Pass 2: local text detection ---
     log.info("Pass 2: local text detection (langdetect)")
-    filled_pass2 = pass2_local_detect(df)
+    detected_cache = load_cache("language_detected")
+    filled_pass2 = pass2_local_detect(df, detected_cache)
+    save_cache("language_detected", detected_cache)
     counters["pass2_filled"] = filled_pass2
+    counters["pass2_cached"] = len(detected_cache)
     null_after_pass2 = int(df["language"].isna().sum())
-    log.info("Pass 2 filled %d, remaining null: %d", filled_pass2, null_after_pass2)
+    log.info("Pass 2 filled %d, remaining null: %d (cache: %d entries)",
+             filled_pass2, null_after_pass2, len(detected_cache))
 
     # Cache-only: enrich_join.py applies caches to the monolith (#428)
 
