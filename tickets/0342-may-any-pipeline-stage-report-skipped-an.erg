@@ -1,0 +1,108 @@
+%erg 0.1
+Title: may any pipeline stage report skipped and let the run continue?
+Created: 2026-07-27
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-07-27T12:10Z HDMX-coding-agent created
+2026-07-27T12:14Z HDMX-coding-agent note tracking ticket; three instances of the family surfaced on 2026-07-27 alone (0314 fixed, 0330 and 0336 open)
+
+--- body ---
+## Context
+
+Three instances of one failure family surfaced on 2026-07-27, found by three
+different routes. None was caught by a test.
+
+- **0314** (closed, PR #1127). `filter_flags_llm.py` logged "Flag 6 skipped:
+  torch/sentence-transformers not installed" and returned. Flag 6 decides corpus
+  membership, so a skip ships a silently inflated corpus that every downstream
+  number inherits. Now raises `RuntimeError`, naming the install command and the
+  deliberate opt-out (`--skip-llm`).
+- **0330** (open). `analyze_bimodality.py` logs "diptest package not available,
+  skipping Hartigan's dip test" — and `diptest` is declared nowhere, so the test
+  has never run in the project's history. `dip_pvalue` is empty in every row of
+  a Make-wired table whose docstring advertises it.
+- **0336** (open). `corpus_filter.py` logs "Embedding size mismatch (38736 vs
+  33057), skipping" then "Flag 5: skipped (no embeddings)". Flag 5 is a second
+  corpus-membership flag, dead on every run.
+
+The root causes differ — a missing declared dependency, an undeclared one, a
+data-shape precondition. The *shape* is identical: a stage that contributes to a
+published artifact discovers it cannot run, announces that at INFO or WARNING,
+and the pipeline continues to a successful exit. The build is green, the table
+is written, the number is quoted.
+
+This ticket does not fix an instance. It asks the policy question those three
+instances raise, which no current rule answers.
+
+## The question
+
+**May a pipeline stage decline to run and let the run continue? If so, under
+what conditions, and how is that visible in the output?**
+
+Three candidate answers, in increasing strictness:
+
+1. **Status quo plus discipline.** Keep silent skips legal; rely on review to
+   catch the ones that matter. Rejected by the evidence — three instances in one
+   day, none caught by a test, one of them dead since the file was written.
+2. **Fail loudly by default, opt out explicitly.** A stage that cannot run
+   raises, unless the operator passed a flag saying so (the 0314 idiom). Skipping
+   becomes a decision someone typed, not a condition the code discovered.
+3. **Fail loudly *and* record the decision in the artifact.** As (2), plus every
+   output table carries provenance for which stages ran, so a consumer can tell a
+   real zero from an absent computation without reading the log.
+
+Option 2 is the recommendation for corpus-membership flags, where the cost of a
+wrong corpus is unbounded. Option 3 may be worth it for the Phase-2 tables that
+feed `compute_vars.py` and hence the manuscript — but it is a contract change
+across many artifacts, so it needs the author's call, not an agent's.
+
+## Complications worth settling in the answer
+
+- **Not every skip is a defect.** The 2026-07-27 sweep found ~20 `"skipping"`
+  log lines in `scripts/`. Most are legitimate data-conditional guards: too few
+  texts for TF-IDF, an empty neighborhood, no citations file. A blanket ban would
+  be wrong. The distinction that matters is whether the skipped stage's absence
+  changes a published number, not whether a skip happened.
+- **A speed fallback is not a skip.** `_divergence_backend.py` falls back from
+  torch to NumPy and produces the same numbers; `get_backend()` already raises
+  when the config demands CUDA and it is absent. That is correct behaviour and
+  the policy must not flag it.
+- **Log level is not the guard.** 0336 logged at WARNING and still went
+  unnoticed for the life of the corpus. Whatever the answer, it cannot be "use
+  WARNING instead of INFO".
+
+## Actions
+
+1. Author decides between options 2 and 3, and for which classes of stage
+   (corpus-membership flags, Phase-2 compute scripts, plot scripts).
+2. Record the decision where it will be enforced — `.claude/rules/architecture.md`
+   Phase-2 rules, alongside the existing "schema-validated" and "1 invocation =
+   1 output" rules.
+3. Only then, file the mechanical guard as a child ticket. Its shape depends
+   entirely on the answer, which is why it is not specified here.
+
+## Invariants
+
+- No production behaviour changes under this ticket. It produces a decision and
+  a rule, and spawns children.
+- The legitimate data-conditional guards keep working; whatever lands must not
+  turn "too few texts for TF-IDF" into a hard failure.
+
+## Exit criteria
+
+- [ ] The policy question is answered, in writing, in this ticket's log
+- [ ] The answer is recorded in the architecture rules
+- [ ] A child ticket exists for the mechanical guard, scoped by that answer
+- [ ] 0330 and 0336 are re-read against the decision and adjusted if it changes
+      what they should do
+
+## See also
+
+- 0314 (closed, PR #1127) — the instance that set the fail-loudly precedent
+- 0330 — diptest undeclared; the dip test has never run
+- 0336 — Flag 5 dead on every run from an embeddings/row-subset length mismatch
+- 0331 — the undeclared-import guard; catches 0330's root cause but not 0336's,
+  which is what makes the wider question necessary
+- 0324 — corpus-filter `--skip-llm` does not neutralise the flag; adjacent
