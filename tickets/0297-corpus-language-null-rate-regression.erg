@@ -7,6 +7,10 @@ Author: HDMX-coding-agent
 2026-07-22T16:40Z HDMX-coding-agent created author request during 0289 review (failure known for weeks, now tracked)
 2026-07-22T16:40Z HDMX-coding-agent note inherits cluster 2 from closed triage ticket 0263 — same 4.1% (1743/42916) on doudou AND padme, so a corpus property, not local staleness; after backfill on padme, finish with make corpus-sync on doudou
 
+2026-07-27T11:03Z HDMX-coding-agent note root cause: #428 made enrich_language cache-only but only pass 1's language_resolved.csv was wired into enrich_join; pass 2's langdetect results were filled in memory and discarded, and the stale language_detected.csv (1555 valid entries) was never read by anyone
+2026-07-27T11:03Z HDMX-coding-agent note verified on live corpus read-only: join now applies both caches, 1615 languages recovered from langdetect, null rate 4.04% -> 0.15% (65/43179)
+2026-07-27T11:04Z HDMX-coding-agent note order-insensitive: pass 2 on raw unified_works (real DVC order, 2271 detections) and on the joined frame both yield 65/43179 = 0.15%; english-majority test also improves 87.89% -> 91.56% (floor 75%)
+2026-07-27T11:04Z HDMX-coding-agent note code fix verified read-only against live corpus; remaining step is the corpus regeneration itself (make corpus-enrich on padme primary checkout, cache-warm) so ticket stays OPEN past the code PR
 --- body ---
 ## Context
 
@@ -32,6 +36,33 @@ with newly ingested sources whose records carry no language field.
    (langdetect or the pipeline's existing detector), or fetch the field
    from the source API where available.
 3. Rerun the acceptance test; corpus back under 2%.
+
+## Root cause (found 2026-07-27)
+
+Not newly-ingested sources, as the Context above guessed — the nulls are
+spread across every source (openalex 1427, bibcnrs 209, scispace 64,
+teaching 41, grey 2). The langdetect pass was silently disconnected:
+
+- `enrich_language.pass2_local_detect` filled the DataFrame in memory and
+  returned a count. The #428 refactor made the script cache-only, with
+  `enrich_join` applying caches to the monolith, but nothing ever wrote
+  pass 2's detections to a cache — they died with the process.
+- `enrich_join._apply_language_cache` read only `language_resolved.csv`
+  (pass 1, OpenAlex). So even the `language_detected.csv` sitting on disk
+  with 1,555 valid detections was read by nobody.
+
+Pass 1 alone cannot close the gap: OpenAlex returns an empty language for
+most of these works (851 of 2,347 cached keys are non-empty), which is
+precisely why the langdetect fallback exists.
+
+## Remaining step
+
+The code fix is verified read-only against the live corpus, but
+`enriched_works.csv` on disk still carries the old 4.04% until the
+pipeline re-runs. Run `make corpus-enrich` on padme's **primary
+checkout** (not a worktree — DVC data and lock live there) after the code
+PR merges; the caches are warm, so the join is the only stage with real
+work. Then `make corpus-validate`.
 
 ## Test
 
