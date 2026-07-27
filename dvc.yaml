@@ -1,7 +1,9 @@
 # DVC pipeline — Phase 1: Corpus Building
 #
-# Env policy: secrets sourced from project .env via uv --env-file;
-# never via export KEY := $(shell ...) or command-line KEY=value.
+# Env policy: .env holds no secret (ticket 0343). Credentials live in
+# ~/.config/keys/<provider>.env, are selected by the KEYS= line in .env, and
+# reach the environment through the keystore loader. Never via command-line
+# KEY=value — that leaks the value to `ps`.
 #
 # Mirrors Makefile Phase 1a–1f. Run with:
 #   dvc repro              (full pipeline)

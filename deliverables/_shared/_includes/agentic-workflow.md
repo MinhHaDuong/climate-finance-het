@@ -58,7 +58,7 @@ Longer-lived knowledge is stored in dedicated memory files (e.g., `project_dvc_i
 
 ### Agent identity
 
-The agent operates under a dedicated GitHub account (`HDMX-coding-agent`). This separates human and agent contributions in git history, making authorship auditable. The agent's git name and email are set at the start of each conversation via the `on-start` trigger, ensuring consistent attribution. Its access token is held outside the repository in a per-provider key store, which the project's configuration selects by name rather than by value; no credential is written into a file the project reads.
+The agent commits under a dedicated identity (`HDMX-coding-agent`). This separates human and agent contributions in git history, making authorship auditable. The agent's git name and email are set at the start of each conversation via the `on-start` trigger, ensuring consistent attribution. Its access token is held outside the repository in a per-provider key store, which the project's configuration selects by name rather than by value; no credential is written into a file the project reads.
 
 ## 14. Collaboration Patterns
 

@@ -28,6 +28,7 @@ defect.
 
 import os
 import re
+import subprocess
 
 import pytest
 
@@ -76,11 +77,22 @@ CREDENTIAL_PREFIXES = (
     "xox",  # Slack
 )
 
-# Shape heuristic: a long unbroken opaque string. Paths and URLs are the common
-# benign case, so a value containing a separator is exempt (CLIMATE_FINANCE_DATA
-# is a filesystem path well over the length bound).
-OPAQUE_MIN_LENGTH = 20
-PATHISH = ("/", "\\", "@", " ", "\t")
+# Shape heuristic, applied per TOKEN rather than to the whole value.
+#
+# The first version tested the value as a whole and exempted anything containing
+# a path separator or a space. Review broke it in one line: a token pasted into
+# a path (`/data/AKIA…`) or appended to the KEYS= list slipped past every check.
+# Splitting on separators removes the hiding places — a credential embedded in a
+# longer string is still a credential.
+#
+# Opaque means: a long run of letters and digits with no word separator inside.
+# Real keys look like that (`ghp_` + 36 alnum, a 40-hex S2 key, `sk-or-v1-` + 64
+# hex). Path and identifier segments that long are almost always broken up by
+# `_`, `-` or `.`, which is what keeps CLIMATE_FINANCE_DATA and the KEYS= line
+# itself from tripping the check.
+TOKEN_SPLIT = re.compile(r"[/\\:;,=\s\"']+")
+OPAQUE_MIN_LENGTH = 24
+OPAQUE_TOKEN = re.compile(r"\A(?=[A-Za-z0-9]*[A-Za-z])(?=[A-Za-z0-9]*\d)[A-Za-z0-9]+\Z")
 
 
 def _parse_env(path: str) -> list[tuple[int, str, str]]:
@@ -133,20 +145,86 @@ def test_env_assignments_are_allowlisted_or_keys() -> None:
     )
 
 
+def _credential_shaped_reason(value: str) -> str | None:
+    """Why `value` looks like it carries a credential, or None if it does not."""
+    for token in TOKEN_SPLIT.split(value):
+        if not token:
+            continue
+        if token.startswith(CREDENTIAL_PREFIXES):
+            return "known credential prefix"
+        if len(token) >= OPAQUE_MIN_LENGTH and OPAQUE_TOKEN.match(token):
+            return "long opaque token"
+    return None
+
+
 def test_env_values_do_not_look_like_credentials() -> None:
-    """No `.env` value has the shape of a credential, whatever its name."""
+    """No `.env` value carries a credential-shaped token, whatever its name.
+
+    The KEYS= line is scanned like every other value. It is the one place a
+    secret could be appended and still look like configuration, so exempting it
+    (as the first version did) left the widest hole in the whole guard.
+    """
     suspicious: list[str] = []
     for lineno, name, value in _env_entries():
-        if name == KEYS_NAME:
-            continue  # a provider/variable selection list, not a secret
-        if value.startswith(CREDENTIAL_PREFIXES):
-            suspicious.append(f".env:{lineno} {name} (known credential prefix)")
-        elif len(value) > OPAQUE_MIN_LENGTH and not any(c in value for c in PATHISH):
-            suspicious.append(f".env:{lineno} {name} (long opaque value)")
+        reason = _credential_shaped_reason(value)
+        if reason:
+            suspicious.append(f".env:{lineno} {name} ({reason})")
     assert not suspicious, (
         "`.env` holds values shaped like credentials (names only, values "
         "deliberately not shown): " + ", ".join(sorted(suspicious))
     )
+
+
+# Synthetic samples in the real formats. Never a live credential — the point is
+# to prove the heuristic bites, which a guard tested only against a clean .env
+# cannot show.
+CREDENTIAL_SAMPLES = (
+    "ghp_" + "A1b2C3d4E5f6G7h8I9j0K1l2M3n4O5p6Q7r8",
+    "github_pat_" + "11ABCDEFG0" + "a1b2c3d4e5" * 3,
+    "sk-or-v1-" + "0123456789abcdef" * 4,
+    "sk-ant-api03-" + "Zz9Yy8Xx7Ww6Vv5Uu4Tt3Ss2Rr1Qq0",
+    "AKIA" + "IOSFODNN7EXAMPLE",
+    "hf_" + "aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789",
+    "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0",  # bare 40-hex, no prefix
+)
+
+
+def test_shape_heuristic_catches_credentials_in_every_hiding_place() -> None:
+    """Each sample is caught bare, buried in a path, and appended to KEYS=."""
+    escaped: list[str] = []
+    for sample in CREDENTIAL_SAMPLES:
+        contexts = {
+            "bare": sample,
+            "inside a path": f"/home/user/data/{sample}/corpus",
+            "appended to KEYS=": f"openrouter:OPENROUTER_API_KEY,github:{sample}",
+            "quoted with spaces": f"prefix {sample} suffix",
+        }
+        for label, value in contexts.items():
+            if _credential_shaped_reason(value) is None:
+                escaped.append(f"{sample[:6]}… {label}")
+    assert not escaped, "credential-shaped tokens the heuristic missed: " + ", ".join(
+        escaped
+    )
+
+
+def test_shape_heuristic_accepts_the_real_non_secret_settings() -> None:
+    """The live `.env` non-secret values must not trip the heuristic.
+
+    Guards the other failure direction: a check that flags everything is as
+    useless as one that flags nothing, and would push the next person to weaken
+    it rather than fix a real finding.
+    """
+    benign = (
+        "data",
+        "/home/haduong/Climate_finance/data",
+        "HDMX-coding-agent",
+        "HDMX-coding-agent@users.noreply.github.com",
+        "openrouter:OPENROUTER_API_KEY_CLIMATEFINANCE=OPENROUTER_API_KEY,"
+        "github:AGENT_GH_TOKEN,openalex:OPENALEX_API_KEY,"
+        "semanticscholar:S2_API_KEY",
+    )
+    flagged = [v for v in benign if _credential_shaped_reason(v) is not None]
+    assert not flagged, f"heuristic false-positives on benign settings: {flagged}"
 
 
 def test_keys_line_selects_every_consumed_credential() -> None:
@@ -190,30 +268,48 @@ STALE_ENV_CLAIMS = (
     "not exported into every process",  # the overclaim in the other direction
 )
 
-# Docs and deliverables that describe the credential mechanism. Kept explicit:
-# a repo-wide walk would sweep .venv and the ticket archive, where these strings
-# legitimately appear as history.
-MECHANISM_DOCS = (
-    "docs/data-management-plan.md",
-    "docs/roadmap-datapaper.md",
-    "deliverables/_shared/_includes/agentic-workflow.md",
-    "deliverables/agentic/agentic-paper.qmd",
-    "scripts/pipeline_loaders.py",
-    "scripts/run_corpus_pipeline.sh",
-    "Makefile",
-    ".claude/rules/git.md",
-    ".agent/runbooks/on-start.md",
-    ".claude/hooks/check-reviews.sh",
-)
+# Files the stale-claim scan covers: every tracked text file, discovered rather
+# than listed. A hardcoded list was the first design and it failed immediately —
+# it missed the identical stale claim in dvc.yaml, on the very branch that added
+# the guard. Auto-discovery is the standing rule here for exactly this reason
+# (memory: feedback_autodiscovery_class_guard).
+#
+# `git ls-files` sees only tracked files, so .venv and other gitignored trees
+# never enter. Only tickets/ needs excluding: a closed ticket legitimately
+# records the old mechanism as history, and rewriting history to satisfy a
+# guard would be the wrong direction.
+SCAN_EXTENSIONS = (".md", ".qmd", ".py", ".sh", ".yaml", ".yml", ".mk", ".toml")
+SCAN_EXTRA_NAMES = ("Makefile", "dvc.yaml")
+SCAN_EXCLUDED_PREFIXES = ("tickets/",)
+
+
+def _tracked_text_files() -> list[str]:
+    """Every tracked file whose text could describe the credential mechanism."""
+    out = subprocess.run(
+        ["git", "ls-files", "-z"],
+        cwd=PROJECT_ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    paths = [p for p in out.stdout.split("\0") if p]
+    return [
+        p
+        for p in paths
+        if not p.startswith(SCAN_EXCLUDED_PREFIXES)
+        and (p.endswith(SCAN_EXTENSIONS) or os.path.basename(p) in SCAN_EXTRA_NAMES)
+    ]
 
 
 def test_no_doc_claims_env_supplies_credentials() -> None:
-    """No tracked doc still says `.env` holds the API keys."""
+    """No tracked file still says `.env` holds the API keys."""
     stale: list[str] = []
-    for rel in MECHANISM_DOCS:
+    for rel in _tracked_text_files():
         path = os.path.join(PROJECT_ROOT, rel)
         if not os.path.exists(path):
-            continue
+            continue  # tracked but deleted in the working tree
+        if os.path.abspath(path) == os.path.abspath(__file__):
+            continue  # this file lists the phrases in order to search for them
         with open(path, encoding="utf-8", errors="replace") as fh:
             for lineno, line in enumerate(fh, start=1):
                 for claim in STALE_ENV_CLAIMS:
