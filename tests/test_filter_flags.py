@@ -38,6 +38,31 @@ def fixture_df():
     return pd.read_csv(os.path.join(FIXTURE_DIR, "filter_fixture.csv"))
 
 
+@pytest.fixture
+def reranker_config_without_torch(config, monkeypatch):
+    """Reranker backend selected on a host where torch cannot be imported.
+
+    Reproduces the ticket-0314 condition. The module under test is imported
+    before the hook goes live, so only the reranker's own lazy import fails.
+    """
+    import builtins
+
+    import filter_flags_llm  # noqa: F401 — pre-import, before the hook bites
+
+    real_import = builtins.__import__
+
+    def no_torch(name, *args, **kwargs):
+        if name == "torch":
+            raise ImportError("No module named 'torch'")
+        return real_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "__import__", no_torch)
+    return dict(
+        config,
+        llm_relevance=dict(config["llm_relevance"], backend="reranker"),
+    )
+
+
 # ============================================================
 # Helper tests
 # ============================================================
@@ -316,56 +341,10 @@ class TestFlagLLMIrrelevant:
         assert isinstance(result, pd.Series)
         assert len(result) == len(fixture_df)
 
-    def test_unrunnable_reranker_is_a_hard_error(self, fixture_df, config, monkeypatch):
-        """Flag 6 decides corpus membership, so it may not be skipped silently.
-
-        Ticket 0314: on the 2026-07-24 rebuild the reranker backend ran without
-        torch, logged a warning, and returned no candidates. The stage exited 0
-        and shipped 38,166 refined works instead of 33,344 — 5,840 irrelevant
-        works silently retained, because the ``llm_irrelevant`` column survived
-        from the previous pass and satisfied the presence-only apply gate.
-        """
-        import builtins
-
+    @staticmethod
+    def _flag6_failure_message(fixture_df, config):
+        """Drive Flag 6 to exhaustion; return the RuntimeError it must raise."""
         import filter_flags_llm
-
-        config = dict(config)
-        config["llm_relevance"] = dict(config["llm_relevance"], backend="reranker")
-
-        real_import = builtins.__import__
-
-        def no_torch(name, *args, **kwargs):
-            if name == "torch":
-                raise ImportError("No module named 'torch'")
-            return real_import(name, *args, **kwargs)
-
-        monkeypatch.setattr(builtins, "__import__", no_torch)
-
-        already_flagged = pd.Series(False, index=fixture_df.index)
-        with pytest.raises(RuntimeError, match="Flag 6"):
-            list(
-                filter_flags_llm.flag_llm_irrelevant_streaming(
-                    fixture_df, config, already_flagged=already_flagged
-                )
-            )
-
-    def test_hard_error_names_the_remediation(self, fixture_df, config, monkeypatch):
-        """The operator must learn how to fix it from the message alone."""
-        import builtins
-
-        import filter_flags_llm
-
-        config = dict(config)
-        config["llm_relevance"] = dict(config["llm_relevance"], backend="reranker")
-
-        real_import = builtins.__import__
-
-        def no_torch(name, *args, **kwargs):
-            if name == "torch":
-                raise ImportError("No module named 'torch'")
-            return real_import(name, *args, **kwargs)
-
-        monkeypatch.setattr(builtins, "__import__", no_torch)
 
         already_flagged = pd.Series(False, index=fixture_df.index)
         with pytest.raises(RuntimeError) as excinfo:
@@ -374,7 +353,31 @@ class TestFlagLLMIrrelevant:
                     fixture_df, config, already_flagged=already_flagged
                 )
             )
-        message = str(excinfo.value)
+        return str(excinfo.value)
+
+    def test_unrunnable_reranker_is_a_hard_error(
+        self, fixture_df, reranker_config_without_torch
+    ):
+        """Flag 6 decides corpus membership, so it may not be skipped silently.
+
+        Ticket 0314: on the 2026-07-24 rebuild the reranker backend ran without
+        torch, logged a warning, and returned no candidates. The stage exited 0
+        and shipped 38,166 refined works instead of 33,344 — 5,840 irrelevant
+        works silently retained, because the ``llm_irrelevant`` column survived
+        from the previous pass and satisfied the presence-only apply gate.
+        """
+        message = self._flag6_failure_message(
+            fixture_df, reranker_config_without_torch
+        )
+        assert "Flag 6" in message
+
+    def test_hard_error_names_the_remediation(
+        self, fixture_df, reranker_config_without_torch
+    ):
+        """The operator must learn how to fix it from the message alone."""
+        message = self._flag6_failure_message(
+            fixture_df, reranker_config_without_torch
+        )
         assert "uv sync" in message
         assert "--skip-llm" in message
 

@@ -103,7 +103,9 @@ def compute_citation_coverage(works, citations, core_threshold, periods=None):
         n_works = int(in_period.sum())
         n_with_doi = int((in_period & has_doi).sum())
         n_covered = int((in_period & covered).sum())
-        n_covered_of_doi = int((in_period & has_doi & covered).sum())
+        # One numerator, two denominators: ``covered`` already implies
+        # ``has_doi`` (line above), so the DOI-conditioned share differs from
+        # the headline share only in what it divides by.
         rows += [
             (f"p{i}_year_min", float(lo)),
             (f"p{i}_year_max", float(hi)),
@@ -112,22 +114,24 @@ def compute_citation_coverage(works, citations, core_threshold, periods=None):
             (f"p{i}_n_covered", float(n_covered)),
             (f"p{i}_share_covered", _share(n_covered, n_works)),
             (f"p{i}_share_with_doi", _share(n_with_doi, n_works)),
-            (f"p{i}_share_covered_of_doi", _share(n_covered_of_doi, n_with_doi)),
+            (f"p{i}_share_covered_of_doi", _share(n_covered, n_with_doi)),
         ]
 
     core = works["cited_by_count"].fillna(0).astype(float) >= core_threshold
     n_core = int(core.sum())
     n_core_covered = int((core & covered).sum())
+    n_all = len(works)
+    n_all_covered = int(covered.sum())
 
     rows += [
         ("core_threshold", float(core_threshold)),
         ("core_n", float(n_core)),
         ("core_n_covered", float(n_core_covered)),
         ("core_share_covered", _share(n_core_covered, n_core)),
-        ("all_n_works", float(len(works))),
+        ("all_n_works", float(n_all)),
         ("all_n_with_doi", float(int(has_doi.sum()))),
-        ("all_n_covered", float(int(covered.sum()))),
-        ("all_share_covered", _share(int(covered.sum()), len(works))),
+        ("all_n_covered", float(n_all_covered)),
+        ("all_share_covered", _share(n_all_covered, n_all)),
     ]
 
     return pd.DataFrame(rows, columns=["metric", "value"])

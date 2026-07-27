@@ -48,15 +48,18 @@ def _citations():
 
 
 @pytest.fixture
-def metrics():
-    df = compute_citation_coverage(_works(), _citations(), core_threshold=50)
-    return dict(zip(df["metric"], df["value"]))
+def coverage_df():
+    return compute_citation_coverage(_works(), _citations(), core_threshold=50)
 
 
-def test_output_is_long_metric_value(metrics):
-    df = compute_citation_coverage(_works(), _citations(), core_threshold=50)
-    assert list(df.columns) == ["metric", "value"]
-    assert df["metric"].is_unique
+@pytest.fixture
+def metrics(coverage_df):
+    return dict(zip(coverage_df["metric"], coverage_df["value"]))
+
+
+def test_output_is_long_metric_value(coverage_df):
+    assert list(coverage_df.columns) == ["metric", "value"]
+    assert coverage_df["metric"].is_unique
 
 
 def test_period_boundaries_are_emitted(metrics):
