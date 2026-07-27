@@ -37,18 +37,44 @@ def _read(path):
         return f.read()
 
 
+# The array is shell source with one entry per line and its terminator alone on
+# a line, so the block is delimited by a line-anchored `)` rather than by
+# counting brackets. Simpler than bracket nesting and sufficient for this shape;
+# an unanchored `SCRIPTS=\((.*?)\)` ends the block at the first `)` *anywhere* —
+# a paren inside a comment truncated the list silently (ticket 0352).
+SCRIPTS_ARRAY_RE = re.compile(
+    r"^SCRIPTS=\([ \t]*$(?P<body>.*?)^\)[ \t]*$", re.DOTALL | re.MULTILINE
+)
+
+
 def _parse_scripts_array(content):
     """Repo-relative scripts/ paths inside a shell SCRIPTS=( ... ) array.
 
     Takes the build script's *content* rather than reading it, so the parser can
     be exercised against fixtures independently of the real array.
+
+    Every non-comment line of the block must carry exactly one scripts/*.py
+    path. That per-line invariant is what stops a future parser regression from
+    silently shrinking the list: a truncated parse drops entry lines and paths
+    together, but any mismatch between them fails loudly here.
     """
-    m = re.search(r"SCRIPTS=\((.*?)\)", content, re.DOTALL)
+    m = SCRIPTS_ARRAY_RE.search(content)
     assert m, (
         "build_analysis_archive.sh must declare a SCRIPTS=( ... ) array of the "
-        "scripts it copies into the archive"
+        "scripts it copies into the archive, opened by a line `SCRIPTS=(` and "
+        "closed by a line holding only `)`"
     )
-    paths = SCRIPT_PATH_RE.findall(m.group(1))
+    paths = []
+    for line in m.group("body").splitlines():
+        entry = line.split("#", 1)[0].strip()
+        if not entry:
+            continue
+        found = SCRIPT_PATH_RE.findall(entry)
+        assert len(found) == 1, (
+            "every entry line of the SCRIPTS array must name exactly one "
+            f"scripts/*.py path, got {found} from: {line.strip()!r}"
+        )
+        paths.append(found[0])
     assert paths, "SCRIPTS=( ... ) array holds no scripts/*.py paths"
     return paths
 
@@ -56,6 +82,22 @@ def _parse_scripts_array(content):
 def _archive_script_paths():
     """Repo-relative scripts/ paths the build script copies into the archive."""
     return _parse_scripts_array(_read(BUILD_SCRIPT))
+
+
+def _entry_lines_by_line_scan(content):
+    """Entry lines of the SCRIPTS array, counted without the parser's regex.
+
+    Deliberately a second, independent implementation: a ratchet that measured
+    the array with the very regex under test would shrink along with it and
+    report nothing.
+    """
+    lines = content.splitlines()
+    start = lines.index("SCRIPTS=(")
+    end = start + 1 + lines[start + 1:].index(")")
+    return [
+        ln for ln in lines[start + 1:end]
+        if ln.split("#", 1)[0].strip()
+    ]
 
 
 def _makefile_script_paths():
@@ -71,6 +113,87 @@ def _makefile_script_paths():
     paths = SCRIPT_PATH_RE.findall("\n".join(lines))
     assert paths, "Makefile.analysis-manuscript references no scripts/*.py paths"
     return paths
+
+
+# A SCRIPTS array shaped like the real one, except that its last entry sits
+# below a comment containing a parenthesis and names a file that does not exist.
+# A parser that stops at the first `)` never sees that entry, so the existence
+# guard passes on a list it only read the prefix of (ticket 0352).
+FIXTURE_PAREN_COMMENT = """\
+SCRIPTS=(
+    scripts/utils.py
+    # Shared helpers the two venue emitters import (added by ticket 0339).
+    scripts/no_such_helper_below_a_paren_comment.py
+)
+"""
+
+# A comment naming a path is documentation, not an entry: it must not be
+# copied into the archive, and must not stand in for a truly-listed path.
+FIXTURE_PATH_IN_COMMENT = """\
+SCRIPTS=(
+    scripts/utils.py
+    # Superseded by scripts/no_such_commented_out_helper.py — do not ship.
+)
+"""
+
+
+class TestScriptsArrayParser:
+    """The parser must read the whole array, whatever punctuation appears in it."""
+
+    def test_reads_entries_below_a_parenthesis_bearing_comment(self):
+        """An ordinary comment with a paren in it must not end the array.
+
+        Red before ticket 0352: `SCRIPTS=\\((.*?)\\)` is non-greedy, so the
+        capture stopped at the `)` of "(added by ticket 0339)" and every entry
+        below it went unread — silently, with the guard still green.
+        """
+        paths = _parse_scripts_array(FIXTURE_PAREN_COMMENT)
+        assert "scripts/no_such_helper_below_a_paren_comment.py" in paths, (
+            "the parser stopped early: entries below a comment containing a "
+            f"parenthesis were not read (got {paths})"
+        )
+
+    def test_existence_guard_catches_a_missing_path_below_such_a_comment(self):
+        """The asymmetry that makes the fixture a test: the truncating parser
+        passes it because it never sees the bad path, the correct one fails."""
+        missing = [
+            p for p in _parse_scripts_array(FIXTURE_PAREN_COMMENT)
+            if not os.path.isfile(os.path.join(REPO, p))
+        ]
+        assert missing == ["scripts/no_such_helper_below_a_paren_comment.py"], (
+            "a nonexistent script listed below a parenthesis-bearing comment "
+            f"must be reported as missing, got {missing}"
+        )
+
+    def test_paths_named_only_in_comments_are_not_entries(self):
+        """Otherwise a commented-out path could mask a genuinely absent entry."""
+        paths = _parse_scripts_array(FIXTURE_PATH_IN_COMMENT)
+        assert paths == ["scripts/utils.py"], (
+            f"comment text was parsed as an array entry: {paths}"
+        )
+
+    def test_real_array_parses_to_its_full_length(self):
+        """Every non-comment line of the real array must yield exactly one path.
+
+        Guards against a future parser regression silently shrinking the list:
+        a prefix-only parse fails this even when every path it did read exists.
+        """
+        content = _read(BUILD_SCRIPT)
+        paths = _parse_scripts_array(content)
+        entry_lines = _entry_lines_by_line_scan(content)
+        assert len(paths) == len(entry_lines), (
+            f"parsed {len(paths)} paths from {len(entry_lines)} entry lines — "
+            "the parser is reading only part of the SCRIPTS array"
+        )
+
+    def test_real_array_includes_the_shared_venue_helpers(self):
+        """Both helpers sit below the comment that used to truncate the parse."""
+        paths = _parse_scripts_array(_read(BUILD_SCRIPT))
+        for helper in ("scripts/_venue_naming.py", "scripts/_markdown_table.py"):
+            assert helper in paths, (
+                f"{helper} is imported by the archived venue emitters but the "
+                "guard does not see it in the SCRIPTS array"
+            )
 
 
 class TestArchiveScriptPathsResolve:
