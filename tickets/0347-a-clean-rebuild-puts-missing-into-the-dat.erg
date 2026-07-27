@@ -1,0 +1,125 @@
+%erg 0.1
+Title: A clean rebuild puts [MISSING] into the data paper's dedup counts
+Created: 2026-07-27
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-07-27T15:15Z HDMX-coding-agent created
+2026-07-27T15:15Z HDMX-coding-agent note Found by the 0344 make pass; ticket 0284 was closed by PR #1082 without its artifact landing
+
+--- body ---
+## Context
+
+`data-paper.qmd` renders `dedup_doi_removed` and `dedup_titleyear_removed`.
+They show 833 and 159 in the author's checkout. A clean `make stats` against
+the current corpus produces `[MISSING]` for both.
+
+The vars are not computed from a table. `compute_vars.py` reads them from the
+`catalog_merge` run report, and when that report is absent it falls back:
+
+    for _k in ("dedup_doi_removed", "dedup_titleyear_removed", ...):
+        v.setdefault(_k, MISSING)
+
+with the comment that the report "awaits a dvc-capable full-data session
+(ticket 0284)". The run emits `UserWarning: Missing: catalog_merge run report
+(dvc repro catalog_merge)` and continues to exit 0.
+
+Ticket 0284 was closed by PR #1082. The artifact it was supposed to produce was
+never generated, so the two numbers currently in the author's vars file are
+survivors of an older build rather than something the pipeline can reproduce.
+
+## Why this is urgent rather than tidy
+
+RDJ-26561 is in Revise-and-Resubmit, due ~2026-10-20. The failure mode is
+silent in the direction that matters: `make stats` exits 0, the warning is one
+line in a long log, and the placeholder only becomes visible in the rendered
+PDF. A rebuild on a fresh machine — a clean-room reproducibility check, a
+co-author's checkout, the Zenodo archive build — would render the deposited
+data paper with `[MISSING]` where two deduplication counts belong.
+
+The reproducibility archive is the sharpest case: the whole point of that
+artifact is that a stranger can rebuild the paper. Today a stranger rebuilds it
+worse than the author can.
+
+## Relevant files
+
+- `scripts/analysis/compute_vars.py` — the `setdefault(..., MISSING)` fallback
+  block and the `catalog_merge` reader above it
+- `deliverables/data-paper/data-paper.qmd` — renders both variables
+- `dvc.yaml` — the `catalog_merge` stage that would emit the run report
+- `tickets/closed/0284-datapaper-dedup-counts-artifact.erg` — closed, artifact
+  never landed
+
+## Decision required
+
+The author picks; both are defensible and the choice depends on how much
+Phase-1 time is affordable before resubmission.
+
+1. **Regenerate the artifact.** `dvc repro catalog_merge` on a full-data
+   session, so the run report exists and the two counts are reproducible. Costs
+   a Phase-1 run. This is what 0284 intended.
+2. **Source the counts from something durable.** If the dedup counts can be
+   recomputed from `refined_works.csv` and the pool rather than from a run
+   report, compute them like every other variable. Costs analysis work, removes
+   the dependency on a transient report for good.
+
+Whichever is chosen, the fallback must stop being silent — see Actions.
+
+## Actions
+
+1. Implement the chosen option above.
+2. Make the placeholder loud. A variable that a document renders must not
+   degrade to `[MISSING]` behind a `UserWarning`. Either fail the build for
+   placeholders in a *rendered* variable, or emit them at ERROR and list them
+   in the run's final summary. `compute_vars` already aborts on variables it
+   cannot compute at all; this fallback path deliberately bypasses that, and
+   the bypass is the defect.
+3. Audit the rest of the `setdefault(..., MISSING)` block the same way. It also
+   covers `dedup_fn_*` and `dedup_fp_*`; check which of those any document
+   renders.
+
+## Test
+
+Red step:
+
+    def test_no_rendered_variable_is_missing():
+        """Ticket 0347. A placeholder in a rendered var must fail the build."""
+        for doc, path in VARS_FILES.items():
+            v = yaml.safe_load(open(path))
+            rendered = meta_refs_in(DOC_SOURCES[doc])
+            bad = sorted(k for k in rendered if v.get(k) == "[MISSING]")
+            assert not bad, f"{doc} renders placeholder(s): {bad}"
+
+Fails today on the data paper for the two dedup counts. Written against
+*rendered* variables rather than all variables, so the genuinely pending
+companion Z-series placeholders (`zone_1_start`, `s2_peak_year_w3`) do not
+force unrelated work — they are in the vars file but not yet referenced by a
+document.
+
+## Verification
+
+- [ ] The test above is red before the fix, green after
+- [ ] `make stats` from an empty `data/derived/` reproduces 833 and 159, or
+      whatever the corrected values are
+- [ ] A rendered data-paper PDF contains no `[MISSING]`
+- [ ] The `dedup_fn_*` / `dedup_fp_*` audit is recorded here
+
+## Invariants
+
+- No number in the data paper changes silently. If regenerating the artifact
+  yields values other than 833 and 159, that is a finding for the author and a
+  correction to the manuscript, not a quiet substitution.
+- The Z-series placeholders stay out of scope; they are a known separate gap.
+
+## Exit criteria
+
+- [ ] The two dedup counts are reproducible from a clean checkout
+- [ ] A rendered variable can no longer degrade to a placeholder without
+      failing the build
+- [ ] The audit of the remaining fallback keys is done and recorded
+
+## See also
+
+- 0344 — the make pass that surfaced this
+- 0284 (closed, PR #1082) — closed without producing the artifact it was about

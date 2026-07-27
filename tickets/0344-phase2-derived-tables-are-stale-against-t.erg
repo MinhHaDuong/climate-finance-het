@@ -6,6 +6,8 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-27T14:30Z HDMX-coding-agent created
 2026-07-27T14:30Z HDMX-coding-agent note Found while checking ticket 0330's byte-compare invariant, not by a sweep
+2026-07-27T15:10Z HDMX-coding-agent correction Premise error: the vars files are gitignored, not committed. Action 1's "commit the vars diff" is void. Corrected below
+2026-07-27T15:12Z HDMX-coding-agent note make stats run, exit 0. Full diff below. It surfaced two R&R-relevant findings that outrank the drift this ticket was filed for
 
 --- body ---
 ## Context
@@ -52,6 +54,63 @@ whoever renders the manuscript reads committed vars rather than rebuilding.
 
 The general shape: a corpus regeneration is a Phase-1 event, and nothing
 obliges the Phase-2 artifacts committed to git to be rebuilt in the same PR.
+
+## Correction and result of the make pass (2026-07-27)
+
+**The premise above is partly wrong.** All three `*-vars.yml` files are
+gitignored, not committed. There is therefore no "committed layer quoting stale
+numbers" in git, and action 1's instruction to commit the vars diff is void —
+nothing is committable. The staleness is purely local build state in the
+author's checkout: derived tables built 2026-07-24 against a corpus that has
+since moved. Anyone who runs `make` gets the fresh numbers.
+
+The earlier claim that "the committed vars reproduce byte-clean from the
+current tables" was not evidence either: a gitignored file always shows a clean
+`git status`, whatever its content.
+
+`make stats` was run against the current corpus (exit 0). Diffing every
+variable, author's checkout vs fresh rebuild:
+
+    technical-report-vars.yml   0 changed, 0 added
+    data-paper-vars.yml         3 changed, 3 added
+    multilayer-detection-vars.yml  8 changed, 9 added
+
+    data-paper:
+      dedup_doi_removed        833   -> [MISSING]      REGRESSION
+      dedup_titleyear_removed  159   -> [MISSING]      REGRESSION
+      lang_english_pct         89.9  -> 93.8
+      + lang_detected_n 1,331 / lang_detected_pct 4.0 / lang_non_english_n 2,061
+
+    multilayer:
+      bim_dbic_embedding    1,350 -> 1,355
+      bim_dbic_tfidf       15,984 -> 15,990
+      bim_dbic_pre2007         19 -> 20
+      bim_dbic_2007_2014      −59 -> −60
+      bim_dbic_post2015     1,118 -> 1,119
+      bim_n_efficiency        875 -> 874
+      pca_emb_pc2_cosine   -0.695 -> -0.696
+      lang_english_pct       89.9 -> 93.8
+      + the nine dip/shape/period-n variables added by ticket 0345
+
+The bimodality drift this ticket was filed for is real but small, and it
+changes no qualitative claim — §5.3's rewritten wording does not depend on the
+exact delta_bic values. Two findings from the same pass matter more, and both
+touch the data paper under R&R:
+
+1. **A clean rebuild puts `[MISSING]` into the data paper.**
+   `dedup_doi_removed` and `dedup_titleyear_removed` are rendered by
+   `data-paper.qmd`. They currently show 833 and 159 only because the author's
+   vars file predates the loss; `compute_vars` now falls back to `[MISSING]`
+   because the `catalog_merge` run report is absent. Ticket 0284 was closed by
+   PR #1082 without that artifact ever landing. Filed as its own ticket.
+
+2. **`lang_english_pct` moves 89.9 → 93.8 in a paper under R&R.** The 0297
+   language backfill (PR #1129) is in the corpus — the three new `lang_*`
+   variables prove it. STATE.md recorded this as an open author call: "do it
+   before the letter or after resubmission, not between." The corpus has
+   already moved; only the stale derived layer is hiding it. This is the
+   author's decision, not an agent's, and it is the reason this pass stopped at
+   reporting rather than refreshing the author's checkout.
 
 ## Relevant files
 

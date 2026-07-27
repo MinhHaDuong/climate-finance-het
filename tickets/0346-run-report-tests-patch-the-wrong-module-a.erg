@@ -1,0 +1,119 @@
+%erg 0.1
+Title: Run-report tests patch the wrong module and write into the real corpus directory
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T15:01Z HDMX-coding-agent created
+2026-07-27T15:01Z HDMX-coding-agent note Found while investigating unexpected mtimes in data/catalogs during the 0344 make pass
+
+--- body ---
+## Context
+
+`data/catalogs/run_reports/` in the author's checkout contains five files that
+are test fixtures, not corpus artifacts:
+
+    enrich_abstracts__consistency-test.json
+    script__run_id_with_spaces_special_.json
+    test_script__run-xyz.json
+    my_script__test-run-001.json
+    corpus_align__e2e-smoke.json
+
+The names map one-to-one onto test cases in
+`tests/test_robustness_observability.py` (`test_save_run_report_creates_file`
+writes `my_script__test-run-001`, `test_save_run_report_json_schema` writes
+`test_script__run-xyz`, `test_save_run_report_sanitizes_run_id` writes the
+`run_id_with_spaces_special_` name) and `tests/test_pipeline_e2e.py`.
+
+## Root cause
+
+The tests do attempt isolation. They patch the constant:
+
+    import utils
+    utils.CATALOGS_DIR = str(tmp_path)
+
+But `save_run_report` resolves the directory from the *definition site*, inside
+its own body:
+
+    def save_run_report(data, run_id, script_name):
+        from pipeline_loaders import CATALOGS_DIR  # avoid circular import
+        reports_dir = os.path.join(CATALOGS_DIR, "run_reports")
+
+`utils.CATALOGS_DIR` is a re-export binding in a different module. Rebinding it
+does not touch `pipeline_loaders.CATALOGS_DIR`, and the function-local import
+re-reads the definition site on every call. The patch is a no-op, so every one
+of these tests writes to the real, DVC-tracked corpus directory while reporting
+green.
+
+This is the re-export facade trap the project's own coding rules describe for
+`scripts/utils.py`, landing in a test rather than in production code.
+
+## Why it matters
+
+`data/catalogs/run_reports/` is a DVC output (`run_reports.dvc`). Test fixtures
+accumulating there are candidates for being committed as corpus data, and they
+pollute the run-report series that Phase-1 QA reads. The blast radius is small
+today — five small JSON files, no numeric artifact derives from them — but the
+directory is corpus state and the tests are writing to it on every run.
+
+There is also a silent-success problem independent of the files: a test that
+believes it is isolated and is not will keep passing if the isolation breaks
+further.
+
+## Relevant files
+
+- `tests/test_robustness_observability.py` — three tests patching `utils.CATALOGS_DIR`
+- `tests/test_pipeline_e2e.py` — the e2e-smoke and consistency-test writers
+- `scripts/pipeline_io.py::save_run_report` — the function-local import
+- `data/catalogs/run_reports/` — the polluted directory (DVC output)
+
+## Actions
+
+1. Patch the definition site: `monkeypatch.setattr("pipeline_loaders.CATALOGS_DIR", str(tmp_path))`.
+   Use `monkeypatch` rather than bare assignment so the change is undone on
+   teardown — the current tests mutate a module global and restore it by hand,
+   which leaks if an assertion fails midway.
+2. Delete the five fixture files from `data/catalogs/run_reports/` and confirm
+   DVC does not carry them in a committed revision.
+3. Sweep for the same trap elsewhere: any test that patches a constant on
+   `utils` rather than on the module that defines it.
+
+## Test
+
+Red step — assert the isolation actually holds, rather than assuming it:
+
+    def test_save_run_report_honours_patched_catalogs_dir(tmp_path, monkeypatch):
+        """Ticket 0346. The patch must reach the definition site."""
+        monkeypatch.setattr("pipeline_loaders.CATALOGS_DIR", str(tmp_path))
+        path = save_run_report({"n": 1}, "isolation-probe", "probe_script")
+        assert Path(path).is_relative_to(tmp_path), (
+            f"run report escaped the tmp dir to {path}"
+        )
+
+Fails today: the returned path points into the real `data/catalogs/`. This
+guards the defect class, not just the filename — any future resolution change
+that escapes `tmp_path` trips it.
+
+## Verification
+
+- [ ] The probe test above is red before the fix, green after
+- [ ] A full `make check` leaves `data/catalogs/run_reports/` unchanged
+      (capture a directory listing before and after and compare)
+- [ ] The five existing fixture files are gone
+
+## Invariants
+
+- No production behaviour changes. `save_run_report`'s real-run path must still
+  resolve to `CATALOGS_DIR/run_reports`.
+- The function-local import stays; it exists to break a circular import.
+
+## Exit criteria
+
+- [ ] Tests patch the defining module and use `monkeypatch`
+- [ ] A test suite run provably writes nothing into `data/catalogs/`
+- [ ] The sweep for the same trap on other `utils` constants is done and its
+      result recorded here
+
+## See also
+
+- 0344 — the Phase-2 rebuild during which these files were noticed
