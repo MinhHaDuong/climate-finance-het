@@ -1,15 +1,65 @@
 %erg 0.1
-Title: A clean rebuild puts [MISSING] into the data paper's dedup counts
+Title: catalog_merge's run report is an undeclared side-effect output
 Created: 2026-07-27
 Author: HDMX-coding-agent
-Label: needs-human
 
 --- log ---
 2026-07-27T15:15Z HDMX-coding-agent created
 2026-07-27T15:15Z HDMX-coding-agent note Found by the 0344 make pass; ticket 0284 was closed by PR #1082 without its artifact landing
 2026-07-27T15:40Z HDMX-coding-agent note Renumbered 0347 -> 0349: a sibling session allocated 0347 at 15:11 and its ticket is cross-referenced from 0288, so this one moves
+2026-07-27T15:52Z HDMX-coding-agent correction The [MISSING] was my artifact, not a defect. Ticket rescoped and downgraded; see the correction section. needs-human removed
 
 --- body ---
+## Correction (2026-07-27): the premise was wrong
+
+The `[MISSING]` I reported was an artifact of my own worktree, not a pipeline
+defect. `data/catalogs/run_reports/` in that worktree was an empty real
+directory that my corpus-symlink loop skipped, so `compute_vars` globbed for
+`catalog_merge__*.json` and found nothing. The author's checkout has three of
+them, including `catalog_merge__20260727T132143Z.json` written by today's
+corpus run, carrying exactly:
+
+    "doi_duplicates_removed": 833
+    "title_year_duplicates_removed": 159
+
+Re-running with the reports visible restores both numbers and emits no warning.
+Ticket 0284 did land its artifact after all; my claim that it closed without
+one was wrong, and the claim that this blocks resubmission of RDJ-26561 is
+withdrawn.
+
+**Are we wired?** Yes. In phase terms: `catalog_merge` is a Phase-1 stage; it
+calls `save_run_report` on every run, so the counts are recomputed from the
+sources each time the corpus is built. `compute_vars` (Phase 2) reads the
+lexicographically last report, and the run ids are UTC timestamps, so "last"
+means "newest". A full remake regenerates the report and the numbers follow the
+corpus. Nothing is fossilised, and a dress rehearsal will produce correct
+counts.
+
+## What remains: an undeclared side-effect output
+
+The residual defect is small and worth fixing on its own terms. The
+`catalog_merge` DVC stage declares one output:
+
+    outs:
+      - data/catalogs/unified_works.csv
+
+The run report is not among them. It lands in `data/catalogs/run_reports/`,
+which is tracked by a *separate*, manually added `run_reports.dvc` rather than
+as a product of the stage that writes it. Two consequences:
+
+- It violates the Phase-2 rule the architecture states for the pipeline: one
+  invocation, one declared output, no side-effect outputs.
+- DVC cannot reason about the report's freshness. If `unified_works.csv` is
+  cache-hit, `dvc repro catalog_merge` skips the stage and the report stays at
+  whatever run last wrote it, while `compute_vars` still reads it as current.
+  The numbers would then describe an older merge than the corpus in hand — the
+  same stale-artifact class as ticket 0344, one layer earlier.
+
+Severity is low: the report is small, regenerated on every real corpus build,
+and the dress-rehearsal-before-shipping practice covers the shipping risk.
+
+## Original context, retained for the record
+
 ## Context
 
 `data-paper.qmd` renders `dedup_doi_removed` and `dedup_titleyear_removed`.
