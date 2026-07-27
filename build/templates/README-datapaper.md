@@ -1,8 +1,8 @@
 # Data paper reproducibility archive
 
-Companion to: Ha-Duong M. (2026) "A Curated Corpus of Climate Finance
-Literature, 1990–2024: Eight Sources, Multilingual Retrieval, and Grey
-Literature", Research Data Journal for the Humanities and Social Sciences.
+Companion to: Ha-Duong M. (2026) "A Curated Multi-Source Corpus of Climate
+Finance Literature, 1990–2024: Multilingual Retrieval and Grey Literature",
+Research Data Journal for the Humanities and Social Sciences.
 
 Dataset DOI: [10.5281/zenodo.19236130](https://doi.org/10.5281/zenodo.19236130)
 
