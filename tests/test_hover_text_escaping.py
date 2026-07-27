@@ -172,12 +172,18 @@ class TestStructure:
 
 
 class TestAllHtmlFigureScriptsEscape:
-    """Exit criterion 0341: all three HTML-emitting figure scripts escape free text.
+    """Source-level ratchet against the three defect sites returning verbatim.
 
-    A negative ratchet, not a positive phrasing pin: each script either escapes
-    in its own source (`html_mod.escape`, the convention the two siblings
-    established) or delegates to the escaping builder. Stripping escaping from
-    any of the three fails this test.
+    Scope, stated precisely because the class name is broader than what these
+    greps can prove: they check that each HTML-emitting figure script *reaches*
+    an escaping path, and that the exact interpolations this ticket removed are
+    absent. They do not prove any script escapes every sink — a grep cannot.
+    A regression reformatted on the way back in (`row.title_short`, or the
+    field hoisted to a local) would slip past them.
+
+    The behavioural guarantee lives in `TestEscaping` and `TestStructure`,
+    which exercise the shipped builder. This class only stops a verbatim
+    revert, which is the cheap failure mode worth a mechanical guard.
     """
 
     HTML_FIGURE_SCRIPTS = (

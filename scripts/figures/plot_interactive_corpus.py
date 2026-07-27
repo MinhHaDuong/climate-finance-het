@@ -10,7 +10,7 @@ Produces a standalone Plotly scatter plot of the ~1,176 core papers
   - Highlighted: papers cited in bibliography/main.bib (star markers)
   - ISTEX papers: PDF link in tooltip
 
-Output: figures/interactive_core_corpus.html
+Output: deliverables/_shared/figures/interactive_core_corpus.html
 
 Usage:
     uv run python scripts/figures/plot_interactive_corpus.py
