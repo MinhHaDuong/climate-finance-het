@@ -13,10 +13,19 @@ stops a sibling project's keys from arriving here.
 
 Two mechanisms apply the selection, because no single one covers every entry
 point: the harness bash loader, which the Makefile wires into recipe shells via
-`BASH_ENV`, and `scripts/keystore.py`, which `pipeline_loaders` calls on import
-so `dvc repro` and a bare `uv run python scripts/…` resolve too. Neither
+`BASH_ENV`, and `scripts/pipeline_keystore.py`, which `pipeline_loaders` calls on
+import so `dvc repro` and a bare `uv run python scripts/…` resolve too. Neither
 overwrites an already-set variable. On a machine without the keystore both
 degrade quietly and scripts report the missing key themselves.
+
+This `KEYS=` line **overrides** the harness one; it does not add to it. The bash
+loader exports every project-`.env` key verbatim, `KEYS` included, so whatever
+starts with this directory as its cwd sees this selection and only this one —
+including tools that have no code here, such as the harness `update-publist`
+skill. A credential this repo never imports can still need naming here, which is
+why `REQUIRED_KEYS_EXPORTS` in `tests/test_env_has_no_secret_literals.py` reads
+"must resolve for work started in this repo" rather than "is read by code in this
+repo" (ticket 0364).
 
 Adding a credential means putting it in the right provider file and extending
 `KEYS=` — never writing it into `.env`, which `tests/test_env_has_no_secret_literals.py`
@@ -30,7 +39,7 @@ enforces.
 | `~/.claude/skills/` | Generic skills (celebrate, review-pr, memory, etc.) |
 | `~/.claude/hooks/` | Generic hooks (on-start identity setup) |
 | `.claude/rules/` | Project-specific rules (writing, architecture, oeconomia-style, etc.) |
-| `.claude/skills/` | Project-specific skills (submission-branch, submission-readiness, update-publist) |
+| `.claude/skills/` | Project-specific skills (submission-branch, submission-readiness) |
 | `.claude/hooks/` | Project-specific hooks (merge gate review check) |
 | `.claude/settings.json` | Project permissions and hooks |
 | `.githooks/` | Git hooks (pre-commit, pre-push, post-checkout) |
@@ -108,7 +117,6 @@ The agent must always know and declare its current phase.
 | `/autonomous` | Unsupervised autonomous session | Imperial Dragon cycles with 60/40 balance |
 | `/submission-branch` | Creating a submission branch | Sprout, freeze, revision lifecycle |
 | `/submission-readiness` | Pre-submission gate | Checklist before sprouting |
-| `/update-publist` | Adding/updating a publication | Edit Ha-Duong.bib, deposit on HAL via SWORD |
 
 ## Autonomous workflow
 

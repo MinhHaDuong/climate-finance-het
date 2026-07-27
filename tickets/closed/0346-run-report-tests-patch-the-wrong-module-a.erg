@@ -2,6 +2,7 @@
 Title: Run-report tests patch the wrong module and write into the real corpus directory
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1207
 
 --- log ---
 2026-07-27T15:01Z HDMX-coding-agent created
@@ -9,7 +10,11 @@ Author: HDMX-coding-agent
 2026-07-27T16:05Z HDMX-coding-agent note Read-only follow-up: TWO leak mechanisms, not one; 4.5 months old; fixtures are inside committed DVC snapshots; and a latent glob collision that would silently replace a data-paper number
 2026-07-27T16:45Z HDMX-coding-agent correction Two claims in the read-only pass were wrong: load_dotenv does NOT override an exported var, and test_phase1_contract was never a culprit. Corrected below
 2026-07-27T16:48Z HDMX-coding-agent note Leak fixed and proven by mtime. Deletion of the 8 files deliberately deferred — see the last section
+2026-07-27T18:30Z HDMX-coding-agent note Sweep done and recorded: POOL_DIR is the same latent defect, the 0251 guard exempts bare assignment on a rationale this ticket falsifies, and the consuming-module patch is not the defect. Guard now AST-driven, not name-keyed
+2026-07-27T19:20Z HDMX-coding-agent note Guard merged as #1193 (7dbd16ce). Fixtures deleted, 141 -> 133; the recorded dvc add recipe was stale (0349's stage output overlaps the dir), dvc commit is the right tool
+2026-07-27T18:35Z HDMX-coding-agent note Exit criteria 1-3 discharged. Full suite (1846 passed, 7 known corpus-absent failures) left all 224 data/catalogs mtimes untouched. Fixture deletion remains the one open post-merge step
 
+2026-07-27T18:50Z HDMX-coding-agent closed — autoclosed — PR #1207
 --- body ---
 ## Context
 
@@ -111,15 +116,24 @@ fixtures, all rewritten within minutes of each other on every suite run:
 ## What was fixed
 
 - `test_robustness_observability.py` now patches `pipeline_loaders.CATALOGS_DIR`
-  alongside the `utils` facade, in all four save/restore blocks.
+  in all four blocks, via `monkeypatch` rather than hand-rolled save/restore, so
+  the rebinding is undone on teardown even when an assertion fails midway. The
+  facade patch is gone rather than kept alongside: `save_run_report` resolves
+  the definition site at call time and never reads `utils`, so patching it was
+  dead weight — and `monkeypatch.setattr(utils, ...)` is what the 0251 guard
+  forbids. Dropping it satisfies both. The module no longer imports `utils`.
 - `test_pipeline_e2e.py` gains one autouse fixture setting
   `CLIMATE_FINANCE_DATA` for the whole module, rather than an `env=` argument at
   each of its twelve spawn sites. Child processes inherit it, so a subprocess
   call added later cannot forget the redirect.
 - Two adherence guards on the mechanisms, not the filenames: no test may patch
-  `utils.CATALOGS_DIR` without also patching the defining module, and no test
-  may spawn a pipeline script with `cwd=REPO_ROOT` unless it passes `env=` or
-  sets the variable in an autouse fixture.
+  a call-time constant on the `utils` facade without also patching the defining
+  module, and no test may spawn a pipeline script with `cwd=REPO_ROOT` unless it
+  passes `env=` or sets the variable in an autouse fixture. The first guard is
+  driven by AST discovery rather than a list of names, so it covers `POOL_DIR`
+  and anything added later; three meta-tests pin that discovery is non-vacuous,
+  that it catches a constant it was never told about, and that it leaves the
+  consuming-module idiom alone.
 
 Proven rather than assumed: with the fix in place, running both suites leaves
 the mtimes of the real fixtures untouched. An earlier check compared file
@@ -146,11 +160,88 @@ The eight are exactly the files whose run id is not a UTC timestamp — the same
 criterion `latest_run_report` now uses to ignore them, so nothing reads them
 even while they sit there.
 
+Deferred while the guard PR was open, then run once it merged (#1193, merge
+commit `7dbd16ce`), on the author's instruction. 141 files → 133.
+
+**The recipe above was stale, and `dvc add` refuses to run it.** Ticket 0349
+declared `data/catalogs/run_reports/catalog_merge.json` as an output of the
+`catalog_merge` stage in `dvc.yaml`, so the directory is now tracked by
+`run_reports.dvc` *and* contains a pipeline-stage output. `dvc add` rejects the
+overlap outright:
+
+    ERROR: The output paths:
+    'data/catalogs/run_reports'('data/catalogs/run_reports.dvc')
+    'data/catalogs/run_reports/catalog_merge.json'('catalog_merge')
+    overlap and are thus in the same tracked directory.
+
+`dvc commit -f data/catalogs/run_reports.dvc` is the correct tool: it records
+the current workspace state into the existing `.dvc` without re-declaring the
+output, leaving the overlap untouched. `a4ae94be…dir` (141 files, 60,681 B) →
+`6bfb855b…dir` (133 files, 58,985 B), pushed to the `padme` remote, `dvc
+status` clean.
+
+Deleting was verified rather than trusted: the eight are *exactly* the files
+whose run id fails `RUN_ID_TIMESTAMP` (`^\d{8}T\d{6}Z$`) — checked by running
+that regex over all 141, not by re-reading the list above. The same regex is
+what `latest_run_report` filters on, so nothing read them. A copy of the eight
+was taken before deletion.
+
+Five of them carried mtimes from 17:24 that day — a sibling worktree on pre-fix
+`tests/` rewrote them while this ticket's own branch was in review, which is
+the recreation risk that justified the deferral. The guard is on main now, so a
+sibling recreating them fails its own suite instead of leaking silently.
+
 Not fixable by deletion: the fixtures are inside four committed DVC snapshots,
 one of which is the hash `run_reports.dvc` points at. Removing them from
 history would mean rewriting DVC state; leaving them is harmless now that no
 consumer selects a non-timestamp report. That is an author call, recorded here
 rather than taken.
+
+## Sweep result (exit criterion 3)
+
+The sweep was run as code, not as a one-off grep: `call_time_constants()` in
+`tests/test_run_report_isolation.py` walks the `scripts/` AST for every
+function-local `from pipeline_loaders import <CONST>` and derives the guarded
+set from the source. Four findings.
+
+**`POOL_DIR` is the same defect, one call site short of firing.**
+`pipeline_io.pool_path`, `load_pool_ids` and `load_pool_records` re-import
+`POOL_DIR` from `pipeline_loaders` inside their own bodies — the exact shape
+`save_run_report` had. `pool_path` then calls `os.makedirs`, so a test
+patching the `utils` facade would create directories inside DVC-tracked
+`data/pool/`. No test exercises the pool helpers today, which is precisely why
+a guard keyed on the name `CATALOGS_DIR` would not have noticed the first one
+that does. Discovery covers it now, pinned by
+`test_facade_guard_detects_a_constant_it_was_never_told_about`.
+
+**The 0251 guard has a blind spot, and its rationale for keeping it was
+false.** `TestNoWrongNamespacePatch` matches `setattr(utils, ...)` and the
+`"utils.CONST"` string form, but deliberately exempts bare attribute
+assignment — and named this ticket's own tests as one of the two legitimate
+patterns relying on it: "a test patching utils' own namespace before calling a
+function that lives in utils itself (test_robustness_observability.py
+save_run_report tests)". `save_run_report` does not live in `utils`; it lives
+in `pipeline_io` and re-imports from `pipeline_loaders`. The exemption's
+justification was wrong, and it is what let `utils.CATALOGS_DIR = str(tmp_path)`
+run unflagged for four and a half months. The docstring is corrected in this
+branch, and the new guard covers bare assignment, which 0251 does not.
+
+**Patching the *consuming* module is not this defect.** The first draft of the
+generalised guard flagged `test_dedup_vars.py` for
+`monkeypatch.setattr(compute_vars, "CATALOGS_DIR", ...)`. False positive:
+`dedup_stats` passes the directory to `latest_run_report` as an argument — 0349
+made that parameter injectable — so the patch does reach it. That is the idiom
+0249 recommends. The guard is scoped to the `utils` facade alone, the only
+module here that is a pure re-export with no reader of its own, and the
+narrowing is pinned by
+`test_facade_guard_leaves_the_consuming_module_idiom_alone` so the over-fire
+cannot come back.
+
+**One residual, left alone.** `_patched_merge_dirs` in `test_pipeline_e2e.py`
+patches `utils.BASE_DIR` alongside `cm` and `pipeline_loaders`. `BASE_DIR` is
+not re-imported at call time by anything, so that particular line is probably
+dead weight rather than a leak — out of scope here, and harmless because the
+same fixture patches the definition site too.
 
 ## Root cause
 
@@ -223,10 +314,15 @@ that escapes `tmp_path` trips it.
 
 ## Verification
 
-- [ ] The probe test above is red before the fix, green after
-- [ ] A full `make check` leaves `data/catalogs/run_reports/` unchanged
-      (capture a directory listing before and after and compare)
-- [ ] The five existing fixture files are gone
+- [x] The probe test above is red before the fix, green after
+- [x] A full `make check` leaves `data/catalogs/run_reports/` unchanged —
+      a 1,931-test run (`pytest tests/`, 10m34s) against a `%T@`-plus-path
+      listing of all 224 files under `data/catalogs/`, taken in both the
+      author's checkout and this worktree: byte-identical before and after,
+      no mtime moved. The seven failures are `test_corpus_acceptance`
+      file-existence checks, the known absent-DVC-data gap in a worktree.
+- [x] The eight existing fixture files are gone — `run_reports.dvc` now records
+      133 files (was 141), new hash `6bfb855b…dir`, pushed to the remote
 
 ## Invariants
 
@@ -236,9 +332,9 @@ that escapes `tmp_path` trips it.
 
 ## Exit criteria
 
-- [ ] Tests patch the defining module and use `monkeypatch`
-- [ ] A test suite run provably writes nothing into `data/catalogs/`
-- [ ] The sweep for the same trap on other `utils` constants is done and its
+- [x] Tests patch the defining module and use `monkeypatch`
+- [x] A test suite run provably writes nothing into `data/catalogs/`
+- [x] The sweep for the same trap on other `utils` constants is done and its
       result recorded here
 
 ## See also

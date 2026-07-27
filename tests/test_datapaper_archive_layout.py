@@ -118,24 +118,42 @@ class TestDocsMatchLayout:
 
 
 class TestSourceCardinality:
-    """Ticket 0327, gap 5: the corpus grew from six sources to eight, but the
+    """Ticket 0327, gap 5: the corpus grew from six sources to eight and the
     deposit title, the related-dataset entry, the suggested citation and §3
     kept the v1.0 wording.
+
+    Writing "eight" was the wrong repair. A count in the title goes stale at
+    every harvest, which is how "six" survived into v2 in the first place, so
+    the count left the title entirely (author, 2026-07-27): both the paper and
+    the deposit are now titled "A Curated Multi-Source Corpus…". The number
+    lives in the prose, where `{{< meta corpus_sources >}}` keeps it current.
+    This guard therefore rejects *any* spelled-out cardinality, not just the
+    stale one.
 
     Scope is deliberately the data paper and the deposit metadata only. The
     Œconomia manuscript and the Gide slides say "six sources" *correctly* —
     manuscript-vars.yml is pinned to the v1.0 corpus, which had six.
     """
 
-    STALE = ("six sources", "Six Sources", "six per-source", "Six sources")
+    COUNTED = (
+        "six sources",
+        "Six Sources",
+        "six per-source",
+        "Six sources",
+        "eight sources",
+        "Eight Sources",
+        "eight per-source",
+        "Eight sources",
+    )
 
     @pytest.mark.parametrize("path", [QMD, README])
-    def test_no_stale_source_cardinality(self, path):
+    def test_source_cardinality_is_not_spelled_out(self, path):
         text = _read(path)
-        for phrase in self.STALE:
+        for phrase in self.COUNTED:
             assert phrase not in text, (
-                f"{os.path.basename(path)} still says {phrase!r} — the corpus "
-                "has eight sources since v2 (ticket 0327)"
+                f"{os.path.basename(path)} spells out a source count "
+                f"({phrase!r}). The title carries no number; the prose gets it "
+                "from {{< meta corpus_sources >}} (ticket 0327)"
             )
 
     def test_archive_ships_every_source_catalog(self):
