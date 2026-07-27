@@ -114,10 +114,13 @@ citation_isolation:
   max_year: 2019
 
 # Flag 5 annotates, it does not remove (ticket 0361). The distance is a useful
-# inspection signal — docs/research-note-multilingual.md reads it as a
-# dependent variable — but it is unsound as a threshold: the distribution is
-# skewed and heavy-tailed, so mean + k*SD carries no probabilistic meaning, and
-# the one human validation of a cut on it found no discrimination. There is
+# inspection signal to publish with the deposit, but it is unsound as a
+# threshold: the distribution is skewed and heavy-tailed, so mean + k*SD
+# carries no probabilistic meaning, and the one human validation of a cut on it
+# found no discrimination. Filtering on it also thinned the multilingual tail
+# that docs/research-note-multilingual.md exists to study (that note computes
+# its own k-NN isolation score, not this column — the population is what Flag 5
+# was taking, not the statistic). There is
 # deliberately no `sigma` here: the old `sigma: 2` was calibrated on a smaller
 # corpus under MiniLM, the embedding model was swapped to BGE-M3 15 days after
 # the flag silently died, and it would have removed 361 works on a threshold no

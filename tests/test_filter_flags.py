@@ -505,9 +505,9 @@ class TestFlag5DiagnosticMode:
     The statistic is unsound as a threshold — the distance distribution is
     skewed and heavy-tailed, so `mean + k*sigma` carries no probabilistic
     reading, and the one human validation of a cut on it found no
-    discrimination. The distance itself is a useful inspection signal and
-    `docs/research-note-multilingual.md` uses it as a dependent variable, so it
-    is computed and published; it just deletes nothing (ticket 0361).
+    discrimination. The distance itself is worth publishing as an isolation
+    signal, so it is computed and shipped; it just deletes nothing
+    (ticket 0361).
     """
 
     def test_diagnostic_mode_flags_nothing(self, config):
