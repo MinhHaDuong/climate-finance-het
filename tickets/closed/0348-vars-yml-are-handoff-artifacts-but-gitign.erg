@@ -3,11 +3,15 @@ Title: vars.yml are handoff artifacts but gitignored, which defeats the clean-ro
 Created: 2026-07-27
 Author: HDMX-coding-agent
 Label: needs-human
+Closed: Option 1 implemented: three vars files tracked, gitignore lines removed, guard added in tests/test_handoff_artifacts_tracked.py
 
 --- log ---
 2026-07-27T15:25Z HDMX-coding-agent created
 2026-07-27T15:25Z minh question Asked whether *-vars.yml are phase deliverables; they are, and the repo contradicts itself
+2026-07-27T15:30Z minh decision Option 1. Policy: phase outputs are tracked so that the next phase can build
+2026-07-27T15:32Z HDMX-coding-agent note Implemented. Committed the FRESH vars, not the author's checkout copies — see the note below, this makes two data-paper numbers move
 
+2026-07-27T13:27Z HDMX-coding-agent closed — Option 1 implemented: three vars files tracked, gitignore lines removed, guard added in tests/test_handoff_artifacts_tracked.py
 --- body ---
 ## Context
 
@@ -55,7 +59,7 @@ Confirmed consequences, all observed on 2026-07-27:
 - Ticket 0344 was filed against a wrong premise — that the vars were committed
   and quoting stale numbers — because the architecture doc says they are
   handoff artifacts. The correction cost a round trip.
-- **Detection.** Ticket 0347 found that a clean rebuild silently turns
+- **Detection.** Ticket 0349 found that a clean rebuild silently turns
   `dedup_doi_removed` from 833 into `[MISSING]` in a data paper under R&R. If
   the vars were tracked, that regression would arrive as a one-line diff in a
   PR instead of materialising at build time behind a `UserWarning`. Tracking
@@ -71,18 +75,39 @@ The author picks. This changes a standing policy, so it is not an agent call.
 1. **Track them** (recommended). Remove the three gitignore lines, commit the
    current generated files, and let every Phase-2 rerun surface its numeric
    diff in review. Restores the clean-room render, aligns the repo with its own
-   architecture doc, and gives 0347's failure class a detector for free.
+   architecture doc, and gives 0349's failure class a detector for free.
    Cost: every `make stats` dirties the tree, and vars diffs add noise to
    unrelated PRs. That noise is the signal — but it is real noise, and on a
    busy day it means a rebase conflict in a generated file.
 2. **Keep them ignored and fix the docs.** Strike `*-vars.yml` from the
    architecture doc's Phase-2 artifact list, and drop or qualify the clean-room
    claim in the writing-side Makefile headers, since it would then be false.
-   Cost: no clean-room render, and 0347's class stays undetectable by diff.
+   Cost: no clean-room render, and 0349's class stays undetectable by diff.
 
 Option 2 is worth stating plainly because it is defensible — churn in generated
 files is a genuine cost — but it means giving up a property the architecture
 currently advertises.
+
+## Implementation note: which content was committed (2026-07-27)
+
+The obvious-looking choice was to commit the author's existing checkout copies,
+which carry the good dedup counts (833 / 159) and the pre-backfill
+`lang_english_pct` of 89.9. That would have been wrong. `data-paper.qmd`
+references `lang_detected_n`, `lang_detected_pct` and `lang_non_english_n`,
+three variables the author's file does not contain — it predates the source it
+is supposed to feed, and cannot render it.
+
+The policy is that a phase output is tracked so the next phase can build. Only
+the freshly generated file satisfies that, so the fresh files were committed.
+Two consequences land in a paper under R&R, both visible in the diff rather
+than hidden, which is the point of tracking:
+
+    dedup_doi_removed        833  -> [MISSING]   (ticket 0349)
+    dedup_titleyear_removed  159  -> [MISSING]   (ticket 0349)
+    lang_english_pct         89.9 -> 93.8        (0297 backfill, already in the corpus)
+
+Neither is caused by this ticket. Tracking makes them reviewable; it does not
+create them. 0349 should be treated as a resubmission blocker for RDJ-26561.
 
 ## Relevant files
 
@@ -134,5 +159,5 @@ filenames: any future handoff artifact that gets gitignored trips it.
 ## See also
 
 - 0344 — filed against the wrong premise because of this
-- 0347 — the silent `[MISSING]` regression that tracking would have exposed
+- 0349 — the silent `[MISSING]` regression that tracking would have exposed
 - 0226 — introduced the per-deliverable vars layout the gitignore comment cites
