@@ -578,9 +578,11 @@ class TestFlag5DiagnosticMode:
     ])
     def test_unknown_setting_raises(self, config, key, value):
         df, embeddings = _language_corpus({"en": 60})
+        overrides = {"mode": "filter", "sigma": 2}
+        overrides[key] = value
         with pytest.raises(ValueError, match=key):
             flag_semantic_outlier(
-                df, sem_config(config, **{key: value, "mode": "filter"}),
+                df, sem_config(config, **overrides),
                 embeddings=embeddings, emb_df=df)
 
 
@@ -616,10 +618,17 @@ class TestFlag5PerLanguageCentroid:
             "Spanish works kept their global-centroid distances — the "
             "per-language centroid is not being used"
         )
-        # English is the dominant language, so its own centroid and the global
-        # one nearly coincide: the correction must not move English much.
-        assert per_lang[~is_es].mean() == pytest.approx(
-            glob[~is_es].mean(), rel=0.15)
+        # The correction is supposed to be *targeted*: it moves the minority
+        # language a great deal and the dominant one, whose own centroid nearly
+        # coincides with the corpus centroid, hardly at all. A rescaling that
+        # shifted both alike would satisfy the assertion above.
+        es_shift = glob[is_es].mean() / per_lang[is_es].mean()
+        en_shift = glob[~is_es].mean() / per_lang[~is_es].mean()
+        assert es_shift > 3 * en_shift, (
+            f"the correction moved English by {en_shift:.2f}x against "
+            f"Spanish's {es_shift:.2f}x — that is a global rescaling, not a "
+            "per-language centroid"
+        )
 
     def test_small_language_falls_back_to_the_global_centroid(self, config):
         """Below the floor a language has no usable own centroid.

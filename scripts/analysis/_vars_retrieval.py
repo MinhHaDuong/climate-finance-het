@@ -1,7 +1,7 @@
 """Retrieval-protocol variables for the data paper (ticket 0329).
 
-All four RDJ-26561 external reviewers asked for the numbers the six-flag
-filter actually used. They are configuration values, not corpus measurements,
+All four RDJ-26561 external reviewers asked for the numbers the filter
+actually used. They are configuration values, not corpus measurements,
 so this collector reads `config/corpus_filter.yaml` and needs no Phase-1 data
 — which is why it lives here rather than among compute_vars' corpus readers.
 
@@ -14,7 +14,7 @@ from filter_flags import _load_config
 # The variables retrieval_protocol_stats emits. compute_vars splices this into
 # DOC_VARS, so the emitter and the registration cannot drift apart.
 RETRIEVAL_VARS = [
-    "filter_outlier_sigma",
+    "filter_outlier_min_lang",
     "filter_reranker_threshold",
     "neardup_min_group_size",
     "neardup_overlap_pct",
@@ -32,7 +32,11 @@ def _pct0(value: float) -> str:
 def retrieval_protocol_stats(v: dict) -> None:
     """Add the filtering thresholds the data paper's §2.2 quotes."""
     cfg = _load_config()
-    v["filter_outlier_sigma"] = str(cfg["semantic_outlier"]["sigma"])
+    # Flag 5 reports no sigma: it runs in diagnostic mode and removes nothing
+    # (ticket 0361). What §2.2 must state instead is the floor below which a
+    # language falls back to the corpus centroid.
+    v["filter_outlier_min_lang"] = str(
+        cfg["semantic_outlier"]["min_language_count"])
     v["filter_reranker_threshold"] = str(cfg["llm_relevance"]["reranker_threshold"])
 
     nd = cfg["near_duplicate"]

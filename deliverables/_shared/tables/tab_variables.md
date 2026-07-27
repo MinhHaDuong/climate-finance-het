@@ -39,10 +39,10 @@ Variable & Type & Description \\
 \midrule
 \texttt{abstract\_status} & string & Whether the undistributed abstract was original, reconstructed from an inverted index or fulltext, LLM-summarised, oversized, or missing \\
 \texttt{near\_duplicate\_group} & integer, nullable & Group identifier for near-identical content published under several DOIs \\
-\texttt{semantic\_outlier\_dist}† & float, nullable & Distance to the corpus embedding centroid \\
+\texttt{semantic\_outlier\_dist}† & float, nullable & Cosine distance to the embedding centroid of the work's own language, or to the corpus centroid where a language holds too few works; diagnostic only, no work is removed on it \\
 \texttt{in\_v1}† & boolean & Version tracking: work present in the v1.0 submission corpus \\
 \texttt{is\_flagged} & boolean & Any quality flag raised; the refined subset is \texttt{df[\textasciitilde{}df[\textquotesingle{}is\_flagged\textquotesingle{}] \textbar{} df[\textquotesingle{}is\_protected\textquotesingle{}]]} \\
-\texttt{flag\_reason} & string & Comma-separated list of raised quality flags (missing\_metadata, no\_abstract\_irrelevant, title\_blacklist, citation\_isolated\_old, semantic\_outlier, llm\_irrelevant); empty when unflagged \\
+\texttt{flag\_reason} & string & Comma-separated list of raised quality flags (missing\_metadata, no\_abstract\_irrelevant, title\_blacklist, citation\_isolated\_old, llm\_irrelevant); empty when unflagged. The sixth flag, \texttt{semantic\_outlier}, is diagnostic and never raised — its distance ships as \texttt{semantic\_outlier\_dist} \\
 \texttt{is\_protected} & boolean & Protection from removal (key papers kept despite flags) \\
 \texttt{protection\_reason}† & string, nullable & Why the work is protected (citation count, seed list, \ldots{}) \\
 \bottomrule

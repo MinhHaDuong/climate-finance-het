@@ -9,6 +9,9 @@ Author: HDMX-coding-agent
 
 2026-07-27T17:40Z HDMX-coding-agent note author leans option B (retire): 'Flag 5 seems better suited to detect outliers and investigate, rather than filter'. Independent Fable-model defense round commissioned on the instrument, its implementation, state of the art, and redundancy with flags 1-4/6 before the call is fixed
 2026-07-27T17:57Z HDMX-coding-agent note blocker 0336 closed — Blocked-by removed.
+2026-07-27T19:20Z HDMX-coding-agent decided author chose none of A/B/C but the diagnostic variant the independent review round recommended: repurpose Flag 5 as a diagnostic, not a filter. Keep computing the distance (mode: diagnostic), correct its geometry (centroid: per_language, floor min_language_count: 30), remove the uncalibrated sigma from config, and stop deleting works with it. Rationale: the statistic is unsound as a threshold (skewed, heavy-tailed, so mean + k*SD has no probabilistic reading) and its only human validation found no discrimination — but the distance itself is a useful inspection signal and docs/research-note-multilingual.md reads it as a dependent variable. Option A was rejected for filtering on an unvalidated cut; option B for destroying a signal that is worth publishing.
+2026-07-27T19:25Z HDMX-coding-agent note measured read-only against the frozen corpus with the shipped code. Diagnostic mode: 0 works flagged, 32,938 distances emitted (min 0.1443, median 0.2776, max 0.5946), per-language centroid used for 32,719 candidates in 16 languages, corpus centroid for 219. refined_works.csv therefore cannot change. Counterfactual filter mode at sigma 2 confirms the centroid is the lever: global gives es 14.3%, ru 15.5%, pt 9.2%, fr 7.9% against en 3.4%; per-language gives 3.8%, 7.3%, 3.6%, 4.5% against en 4.0%.
+2026-07-27T19:30Z HDMX-coding-agent note spun out 0401 — retiring Flag 5 as a filter leaves a gap Flag 6 structurally cannot close, since Flag 6 only scores works below min_concept_groups. Roughly 8 of the 45 works the best Flag 5 variant would have caught are in-scope grey-lit negotiation documents that clear the lexical gate.
 --- body ---
 ## Context
 
@@ -95,9 +98,28 @@ Caveat: at s=3 and s=4 the per-language ratios rest on 0-7 works per language,
 so those multipliers are noise (fr 23.3x at s=4 is one paper of 354). They are
 not signal.
 
-## Options
+## Decision (author, 2026-07-27)
 
-- **A. Per-language centroid at s=3** (recommended). 45 removals, flat gradient
+**Repurpose Flag 5 as a diagnostic, not a filter** — none of A/B/C below, but
+the variant the independent review round recommended. Keep the computation,
+correct its geometry, drop the removals:
+
+- `mode: diagnostic` — the distance is computed and published as
+  `semantic_outlier_dist`; the flag mask is all-False.
+- `centroid: per_language` with `min_language_count: 30` — each work is
+  measured against its own language's centroid, falling back to the corpus
+  centroid below the floor.
+- No `sigma` in config. `mode: filter` still works but demands an explicit,
+  calibrated sigma; an unread threshold left in config is a landmine.
+
+Why not A: it filters on a cut no human validation supports. Why not B: it
+destroys a signal worth publishing, which
+`docs/research-note-multilingual.md` already reads as a dependent variable.
+The options below are kept as the calibration record they were.
+
+## Options (as put to the author)
+
+- **A. Per-language centroid at s=3** (recommended at the time). 45 removals, flat gradient
   (en 1.0x, pt 1.2x, es 0x), 4 climate-vocab works culled against 45 shipped. A
   flag that filters without a language gradient.
 - **B. Retire Flag 5.** Defensible: Flag 6 (LLM relevance) already flags 11,244
@@ -118,44 +140,72 @@ threshold problem — no sigma fixes it. Handle separately or accept.
 - `config/corpus_filter.yaml` — `semantic_outlier.sigma`, `min_coverage`
 - `dvc.yaml` — `extend.cmd` carries `--skip-semantic-flag`; removing it activates
 - `docs/research-note-multilingual.md` — the note whose signal Flag 5 removes on
-- `deliverables/data-paper/data-paper.qmd` and the revision letter — both
-  describe six flags while the artifact has five
+- `deliverables/data-paper/data-paper.qmd` and the shared includes — described
+  six removal flags while the artifact has five plus a diagnostic column
+- follow-up: 0401, the Flag 6 concept-group gate this decision leaves exposed
 
 ## Actions
 
-1. Author decides A, B, or C. This is a research call, not a mechanical one.
-2. Implement it; if A, the per-language arm needs a documented floor for small
-   languages, in the shape of the existing `min_coverage`.
-3. Measure the resulting `refined_works.csv` row count and record it.
-4. Reconcile the prose: the data paper and revision letter say six flags. Either
-   activate and keep the claim true, or correct the count.
-5. Only then remove `--skip-semantic-flag` from `dvc.yaml`.
+1. ~~Author decides A, B, or C.~~ Decided above: the diagnostic variant.
+2. `config/corpus_filter.yaml` — drop `sigma`, add `mode: diagnostic`,
+   `centroid: per_language`, `min_language_count: 30`; keep `min_coverage`.
+3. `scripts/filter_flags.py::flag_semantic_outlier` — honour both keys.
+   Diagnostic mode returns an all-False mask *and* the real distances; the
+   per-language arm computes centroid and moments within language, falling
+   back to the global arm below the floor. `mode: filter` keeps working with
+   an explicit sigma, and is not the default.
+4. `dvc.yaml` — drop `--skip-semantic-flag` from `extend.cmd` (the flag is
+   inert by config now, and the CLI switch also killed the computation).
+   Keep `data/catalogs/embeddings.npz` in `extend.deps`: a diagnostic column
+   goes stale as silently as a filtering one.
+5. Prose: five removal flags plus one diagnostic column. Correct the data
+   paper (§2.2 twice), the corpus report, `corpus-filtering.md`,
+   `corpus-enrichment.md`, and the deposit contract in
+   `scripts/_deposit_variables.py`; regenerate `codebook.md` and
+   `tab_variables.md` from the generator rather than editing them.
 
 ## Test
 
 - A test asserting the language gradient stays inside a stated band after
   calibration. The defect this ticket exists for is invisible to any count
-  assertion; only a per-language rate comparison sees it.
-- If B, a test asserting the flag is absent from `FLAG_COLUMNS` and that the
-  prose count matches.
+  assertion; only a per-language rate comparison sees it. It needs a control
+  arm too: without one, the band test keeps passing on a fixture that has
+  lost the gradient.
+- Diagnostic mode yields an all-False mask *and* non-null, varying distances —
+  the pairing is what stops the mode degenerating into a stub.
+- The per-language centroid is actually used, and the small-language fallback
+  triggers below the floor.
+- `mode: filter` still filters, and refuses to run without a sigma.
 
 ## Verification
 
-- [ ] Chosen option implemented, language gradient measured afterwards
-- [ ] `refined_works.csv` row-count change measured and recorded
-- [ ] Data paper and revision letter flag count matches the artifact
-- [ ] `--skip-semantic-flag` removed from `dvc.yaml` only after sign-off
+- [x] Diagnostic variant implemented, language gradient measured afterwards
+      (global es 14.3% / ru 15.5% / pt 9.2% / fr 7.9% vs en 3.4%;
+      per-language 3.8% / 7.3% / 3.6% / 4.5% vs en 4.0%)
+- [x] `refined_works.csv` unchanged, and provably so: the flag mask is
+      all-False on the frozen corpus (0 of 32,938 candidates), so the filter
+      stage sees no Flag 5 removal at all
+- [x] Distances still emitted: 32,938 non-null, min 0.1443 / median 0.2776 /
+      max 0.5946; per-language centroid for 32,719 in 16 languages, corpus
+      centroid for the remaining 219
+- [x] Data paper and the shared includes describe five removal flags plus a
+      diagnostic column
+- [x] `--skip-semantic-flag` removed from `dvc.yaml` — safe because the flag
+      is inert by config, so this activates a computation, not a deletion
 
 ## Invariants
 
-- The corpus is frozen (author, 2026-07-27) mid RDJ-26561 R&R. No activation
-  before sign-off, and no rebuild that moves downstream counts without it.
+- The corpus is frozen (author, 2026-07-27) mid RDJ-26561 R&R. Nothing under
+  `data/` is written; the measurements above are read-only recomputations.
 - No weakening of acceptance thresholds.
-- 0362 should land before any activation: `run_corpus_pipeline.sh` auto-pushes
-  `dvc.lock` to main, so an activated flag would execute with no checkpoint.
+- 0362's checkpoint concern does not gate this change: diagnostic mode removes
+  nothing, so a rebuild cannot move a downstream count through Flag 5. It
+  still gates any future `mode: filter` activation.
 
 ## Exit criteria
 
-- Flag 5 is either calibrated with a measured, flat language gradient and
-  activated with author sign-off, or retired — and the paper's flag count
-  matches the artifact either way.
+- Flag 5 computes and publishes a per-language semantic distance and removes
+  no work; the removal path survives behind `mode: filter` with an explicit
+  sigma, and is not the default.
+- The measured language gradient is recorded, and the corpus is untouched.
+- The paper describes five removal flags plus one diagnostic column.

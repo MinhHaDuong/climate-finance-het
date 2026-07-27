@@ -1,0 +1,96 @@
+%erg 0.1
+Title: Distance-stratified human labelling to decide whether Flag 6's concept-group gate should be loosened
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T19:05Z HDMX-coding-agent created
+2026-07-27T19:10Z HDMX-coding-agent note spun out of 0361: retiring Flag 5 as a filter leaves a coverage gap Flag 6 cannot structurally close
+
+--- body ---
+## Context
+
+Ticket 0361 repurposed Flag 5 as a diagnostic: the semantic distance is still
+computed and published, and it removes nothing. The stated fallback is that
+Flag 6 (cross-encoder relevance) already does topical filtering better, so
+little coverage is lost.
+
+That fallback has a structural hole. Flag 6 only scores works with **fewer
+than `min_concept_groups` concept groups** — works that pass the lexical gate
+are never reranker-scored at all. So Flag 6 can never reach part of what Flag 5
+saw, whatever its threshold. Of the 45 works the best Flag 5 variant
+(per-language centroid, sigma 3) would have caught, roughly 8 are in-scope grey
+literature and negotiation documents that clear the concept-group gate and are
+therefore invisible to Flag 6:
+
+- Australia–Tuvalu Falepili Union Treaty
+- COP20 Lima Highlights (IISD Earth Negotiations Bulletin)
+- WIREC 2008 ministerial summary
+- Official Documents — Agreement with France for Donation to the Adaptation Fund
+
+These are the document classes the curated UNFCCC/OECD layers exist to bring
+in, so both directions of the error matter: loosening the gate could remove
+them, and leaving it could mean the corpus keeps genuine noise the gate shields.
+
+Loosening `min_concept_groups` is not a call to make from the four titles
+above. It needs a labelled sample, and the sample has to be **stratified by
+semantic distance** — that is exactly what Flag 5's new diagnostic column is
+for, and the first real use of it.
+
+## Relevant files
+
+- `config/corpus_filter.yaml` — `min_concept_groups`, `llm_relevance.*`
+- `scripts/filter_flags_llm.py` — the concept-group gate that selects Flag 6's
+  scoring population
+- `scripts/filter_flags.py` — `_text_has_concept_groups`, and Flag 5's
+  `semantic_outlier_dist`, the stratification variable
+- `data/catalogs/extended_works.csv` — carries `semantic_outlier_dist` once the
+  corpus is next rebuilt (Flag 5 was skipped on the 2026-07-27 build, so the
+  column is absent from the frozen artifact)
+- `scripts/compute_reranker_calibration.py` and
+  `data/catalogs/reranker_hitl_review.csv` — the existing human-labelling
+  apparatus to reuse rather than reinvent
+
+## Actions
+
+1. Measure the population first: how many works clear the concept-group gate
+   (so are never Flag-6 scored) yet sit in the top decile of
+   `semantic_outlier_dist`. If that set is small, the whole question is moot
+   and this ticket closes with a number.
+2. Draw a distance-stratified sample from it (equal-size strata across the
+   distance distribution, not a uniform draw — the tail is the question).
+3. Label it. Reuse the blinded protocol that produced the Flag 6 validation
+   (AUC 0.818 on 100 works); same blinding, same rubric.
+4. Report precision/recall of the concept-group gate against those labels, per
+   distance stratum, and per document class (academic vs grey vs curated).
+5. Recommend: loosen `min_concept_groups`, route high-distance gate-passers to
+   Flag 6 regardless of concept groups, or leave as is. Whichever, the
+   recommendation is a research call for the author, not a mechanical one.
+
+## Test
+
+- A test asserting the sampler's strata are equal-sized in *count* and that
+  every stratum is non-empty, so a degenerate draw cannot pass for a stratified
+  one.
+- A test asserting the labelled sample's document-class mix is reported, not
+  just the aggregate rate: the four named documents are grey/curated, and an
+  aggregate precision figure would hide a class-specific failure.
+
+## Invariants
+
+- Blocked on a corpus rebuild for the real column: `semantic_outlier_dist` is
+  absent from the frozen 2026-07-27 `extended_works.csv` because Flag 5 was
+  skipped on that run. Step 1 can be measured from a read-only recomputation
+  in the meantime (see 0361's method), but the sample should be drawn from the
+  shipped column.
+- No threshold or gate change lands from this ticket without author sign-off.
+  It produces evidence and a recommendation.
+- The corpus stays frozen while RDJ-26561 is under revise-and-resubmit.
+
+## Exit criteria
+
+- The gate-passer/high-distance population is measured and reported.
+- Either a labelled distance-stratified sample exists with per-stratum and
+  per-class precision/recall for the concept-group gate, or the population
+  measurement shows the question is moot and says so with a number.
+- A recommendation on `min_concept_groups` is on the record for the author.

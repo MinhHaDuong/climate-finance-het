@@ -31,6 +31,18 @@ FLAG_COLUMNS = [
     "llm_irrelevant",
 ]
 
+# semantic_outlier runs in diagnostic mode (config: semantic_outlier.mode,
+# ticket 0361), so the column exists in extended_works.csv and is always
+# False. It stays in FLAG_COLUMNS because transform() must still collapse and
+# drop it — dropping it from that list would leave an undocumented column in
+# the deposit — but it can never appear in flag_reason, so the published
+# vocabulary is the five removal flags. The distance it computes ships
+# separately, as semantic_outlier_dist.
+DIAGNOSTIC_FLAG_COLUMNS = ["semantic_outlier"]
+REMOVAL_FLAG_COLUMNS = [
+    c for c in FLAG_COLUMNS if c not in DIAGNOSTIC_FLAG_COLUMNS
+]
+
 # Columns dropped from the deposit (intermediate or restricted)
 COLUMNS_TO_DROP = [
     "abstract",       # publisher redistribution restrictions
@@ -154,7 +166,9 @@ DEPOSIT_VARIABLES: list[Variable] = [
              "several DOIs", _FILTER,
              group=_CURATION),
     Variable("semantic_outlier_dist", "float, nullable",
-             "Distance to the corpus embedding centroid", _FILTER,
+             "Cosine distance to the embedding centroid of the work's own "
+             "language, or to the corpus centroid where a language holds too "
+             "few works; diagnostic only, no work is removed on it", _FILTER,
              required=False,
              group=_CURATION),
     Variable("in_v1", "boolean",
@@ -166,10 +180,12 @@ DEPOSIT_VARIABLES: list[Variable] = [
              group=_CURATION, allowed_values=_BOOLTF),
     Variable("flag_reason", "string",
              "Comma-separated list of raised quality flags "
-             f"({', '.join(FLAG_COLUMNS)}); empty when unflagged", _FILTER,
+             f"({', '.join(REMOVAL_FLAG_COLUMNS)}); empty when unflagged. The "
+             "sixth flag, `semantic_outlier`, is diagnostic and never raised — "
+             "its distance ships as `semantic_outlier_dist`", _FILTER,
              group=_CURATION,
-             allowed_values="comma-joined subset of the six flag names, or "
-             "empty"),
+             allowed_values="comma-joined subset of the five removal flag "
+             "names, or empty"),
     Variable("is_protected", "boolean",
              "Protection from removal (key papers kept despite flags)", _FILTER,
              group=_CURATION, allowed_values=_BOOLTF),

@@ -53,4 +53,4 @@ Outputs:
 - `embeddings.npz`: Compressed embedding cache (vectors, DOI keys, model metadata) — Phase 1.
 - `semantic_clusters.csv`: KMeans cluster assignments with UMAP coordinates — Phase 2 (`analyze_embeddings.py`).
 
-Embeddings are needed for semantic outlier detection (flag 5 in §3) and for the alluvial and bimodality analyses. See the Corpus Contents section for UMAP visualizations of the resulting semantic space.
+Embeddings are needed for the diagnostic semantic distance (flag 5 in §3) and for the alluvial and bimodality analyses. See the Corpus Contents section for UMAP visualizations of the resulting semantic space.

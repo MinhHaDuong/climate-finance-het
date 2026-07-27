@@ -309,13 +309,16 @@ stages:
   # embeddings.npz is a real input: Flag 5 (semantic isolation) reads it. Left
   # undeclared, DVC never re-ran extend when the embeddings changed, so a dead
   # Flag 5 could not be told from a cached one (ticket 0336).
-  # --skip-semantic-flag holds Flag 5 (semantic isolation) inert pending
-  # calibration sign-off (ticket 0361): the fix that revived it is merged, but
-  # sigma has never been calibrated against live output and activating it would
-  # remove 361 works. Remove this flag only after the author signs off.
+  # Flag 5 (semantic isolation) runs in diagnostic mode by config
+  # (semantic_outlier.mode in config/corpus_filter.yaml, ticket 0361): it
+  # computes the distance to each work's own language centroid and publishes it
+  # as semantic_outlier_dist, and it removes nothing. No --skip-semantic-flag
+  # here — that switch also turned the computation off, so the diagnostic
+  # column never reached extended_works.csv. embeddings.npz stays a declared
+  # dep: a diagnostic column goes stale as silently as a filtering one.
   extend:
     cmd: >-
-      uv run --env-file .env python scripts/harvest/corpus_filter.py --extend --skip-semantic-flag --works-input data/catalogs/enriched_works.csv --works-output data/catalogs/extended_works.csv
+      uv run --env-file .env python scripts/harvest/corpus_filter.py --extend --works-input data/catalogs/enriched_works.csv --works-output data/catalogs/extended_works.csv
     deps:
       - scripts/harvest/corpus_filter.py
       - scripts/filter_flags.py

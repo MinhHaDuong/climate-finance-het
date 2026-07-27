@@ -48,9 +48,9 @@ Formal data dictionary for the deposited corpus file. Columns are organised in f
 |:------|:----|:------------|------:|:-------------------------|
 | `abstract_status` | string | original, reconstructed, generated, too_long, missing | 0.0% | Whether the undistributed abstract was original, reconstructed from an inverted index or fulltext, LLM-summarised, oversized, or missing |
 | `near_duplicate_group` | integer, nullable | free | 98.8% | Group identifier for near-identical content published under several DOIs |
-| `semantic_outlier_dist` | float, nullable | free | n/a | Distance to the corpus embedding centroid |
+| `semantic_outlier_dist` | float, nullable | free | n/a | Cosine distance to the embedding centroid of the work's own language, or to the corpus centroid where a language holds too few works; diagnostic only, no work is removed on it |
 | `in_v1` | boolean | true, false | n/a | Version tracking: work present in the v1.0 submission corpus |
 | `is_flagged` | boolean | true, false | 0.0% | Any quality flag raised; the refined subset is `df[~df['is_flagged'] \| df['is_protected']]` |
-| `flag_reason` | string | comma-joined subset of the six flag names, or empty | 74.0% | Comma-separated list of raised quality flags (missing_metadata, no_abstract_irrelevant, title_blacklist, citation_isolated_old, semantic_outlier, llm_irrelevant); empty when unflagged |
+| `flag_reason` | string | comma-joined subset of the five removal flag names, or empty | 74.0% | Comma-separated list of raised quality flags (missing_metadata, no_abstract_irrelevant, title_blacklist, citation_isolated_old, llm_irrelevant); empty when unflagged. The sixth flag, `semantic_outlier`, is diagnostic and never raised — its distance ships as `semantic_outlier_dist` |
 | `is_protected` | boolean | true, false | 0.0% | Protection from removal (key papers kept despite flags) |
 | `protection_reason` | string, nullable | free | 76.5% | Why the work is protected (citation count, seed list, ...) |
