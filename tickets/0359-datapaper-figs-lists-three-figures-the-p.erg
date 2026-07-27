@@ -8,9 +8,10 @@ Author: HDMX-coding-agent
 2026-07-27T16:45Z HDMX-coding-agent note found while verifying 0328's cluster labels. One of the three orphans was created today by 0332's §4 cut; the other two predate it.
 
 2026-07-27T17:40Z HDMX-coding-agent note widened after a roar reachability sweep: this is not three figures in one variable, it is 17 includes, 2 tables and 5 figures across the whole build graph. Retitled. The sweep also found the trap the guard must avoid — see Test.
-2026-07-27T18:04Z note scope: 0290 owns disposition of the 17 flat includes (its action 2 is author-gated), so this ticket satisfies the explained arm — they are allowlisted with a grouped reason pointing at 0290. This guard is also 0290's action 3.
-2026-07-27T18:04Z note action 1 decided conservatively: fig_sem_composition kept, not deleted. Data paper is mid-R&R and 0332's cut §4 may return in round 2; retiring a committed figure with its lit-confirmations.mk rules mid-revision is an author call. Overrule cheaply by deleting the allowlist entry, SEM_COMPO_FIG/SEM_COMPO_TAB and tab_sem_composition.csv together.
-2026-07-27T18:04Z note sweep re-run with the root-relative resolver found 32 orphans, not 22: 17 includes (as filed), 3 markdown tables (codebook, tab_venues_fr_caption, plus tab_core_venues_top10 which the filing missed), 12 declared figures. The filing's fig_lexical_tfidf_2007/2013 are outside any static universe — dynamic filenames behind .lexical_tfidf.stamp — and outside this guard.
+
+2026-07-27T18:04Z HDMX-coding-agent note scope: 0290 owns disposition of the 17 flat includes (its action 2 is author-gated), so this ticket satisfies the explained arm — they are allowlisted with a grouped reason pointing at 0290. This guard is also 0290's action 3.
+2026-07-27T18:04Z HDMX-coding-agent note action 1 decided conservatively: fig_sem_composition kept, not deleted. Data paper is mid-R&R and 0332's cut §4 may return in round 2; retiring a committed figure with its lit-confirmations.mk rules mid-revision is an author call. Overrule cheaply by deleting the allowlist entry, SEM_COMPO_FIG/SEM_COMPO_TAB and tab_sem_composition.csv together.
+2026-07-27T18:04Z HDMX-coding-agent note sweep re-run with the root-relative resolver found 32 orphans, not 22: 17 includes (as filed), 3 markdown tables (codebook, tab_venues_fr_caption, plus tab_core_venues_top10 which the filing missed), 12 declared figures. The filing's fig_lexical_tfidf_2007/2013 are outside any static universe — dynamic filenames behind .lexical_tfidf.stamp — and outside this guard.
 --- body ---
 ## Context
 

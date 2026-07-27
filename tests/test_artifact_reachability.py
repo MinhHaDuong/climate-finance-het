@@ -50,14 +50,21 @@ a guard whose verdict depends on whether `make` has run is worthless.
   are outside any static universe and outside this guard.
 - CSV and JSON artifacts are excluded: scripts read them, documents do not.
 
-Fast tier: pure-Python lexical scan, no subprocess, no heavy import.
+Adherence tier: a build-graph contract, like every other `_mk_discovery` consumer
+(`test_build_phase_separation`, `test_mk_discovery_unified`,
+`test_handoff_artifacts_tracked`). Cost is fast-tier — a pure-Python lexical scan,
+no subprocess, no heavy import — but `make lint` is the gate built to run rule
+guards, and this one is invisible there unless marked.
 """
 
 import glob
 import os
 import re
 
+import pytest
 from _mk_discovery import all_makefiles
+
+pytestmark = pytest.mark.adherence
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 DELIVERABLES = os.path.join(REPO_ROOT, "deliverables")
