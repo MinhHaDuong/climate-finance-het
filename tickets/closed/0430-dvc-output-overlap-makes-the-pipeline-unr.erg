@@ -2,11 +2,13 @@
 Title: DVC output overlap makes the whole pipeline unreproducible
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1228
 
 --- log ---
 2026-07-27T20:10Z HDMX-coding-agent created
 2026-07-27T20:10Z HDMX-coding-agent note Found while working around a stale dvc add recipe in 0346; the workaround hid how broad the failure is
 
+2026-07-27T19:32Z HDMX-coding-agent closed — autoclosed — PR #1228
 --- body ---
 ## Context
 
