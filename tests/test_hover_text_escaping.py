@@ -85,6 +85,56 @@ class TestEscaping:
         assert "<script>" not in out
         assert "&lt;script&gt;" in out
 
+    def test_double_quote_is_left_literal(self):
+        """`&quot;` would reach the tooltip verbatim — Plotly cannot decode it.
+
+        Plotly runs its own `convertEntities` over hover text rather than
+        handing it to the browser's HTML parser, and its named-entity table
+        is `mu amp lt gt nbsp times plusmn deg`. `quot` is absent, so an
+        escaped double quote renders as the six literal characters. 23 of the
+        2,644 core titles carry one (`Assessing "Dangerous Climate Change"`),
+        so escaping quotes here would be a regression, not a hardening.
+        """
+        from _hover_text import build_hover_text
+
+        out = build_hover_text(
+            title='Assessing "Dangerous Climate Change"',
+            first_author="Hansen",
+            year=2008,
+            journal="Open Atmospheric Science Journal",
+            cited_by_count=1000,
+        )
+        assert '<b>Assessing "Dangerous Climate Change"</b>' in out
+        assert "&quot;" not in out
+
+    def test_apostrophe_is_left_literal(self):
+        """Plotly *would* decode `&#x27;`, but a literal quote is simpler."""
+        from _hover_text import build_hover_text
+
+        out = build_hover_text(
+            title="The world's carbon markets",
+            first_author="O'Neill",
+            year=2015,
+            journal="Nature",
+            cited_by_count=10,
+        )
+        assert "The world's carbon markets" in out
+        assert "O'Neill" in out
+        assert "&#x27;" not in out
+
+    def test_ampersand_still_escaped_alongside_quotes(self):
+        """Relaxing `quote` must not relax the three entities Plotly decodes."""
+        from _hover_text import build_hover_text
+
+        out = build_hover_text(
+            title='"Risk" & <reward>',
+            first_author="A",
+            year=2000,
+            journal="J",
+            cited_by_count=1,
+        )
+        assert '<b>"Risk" &amp; &lt;reward&gt;</b>' in out
+
     def test_structural_tags_survive_unescaped(self):
         """The `<b>`/`<br>` template markup is intentional and must stay markup."""
         from _hover_text import build_hover_text
@@ -201,6 +251,23 @@ class TestAllHtmlFigureScriptsEscape:
         assert not offenders, (
             f"HTML-emitting figure scripts with no escaping path: {offenders}"
         )
+
+    def test_plotly_sinks_never_escape_quotes(self):
+        """`quote=False` at every Plotly sink, and only at the Plotly sinks.
+
+        Plotly's `convertEntities` cannot decode `&quot;`, so the default
+        `quote=True` would corrupt tooltips. The two sibling scripts keep the
+        default deliberately — they emit SVG for the browser's own parser —
+        so this guard covers the Plotly-fed files only.
+        """
+        for name in ("_hover_text.py", "plot_interactive_corpus.py"):
+            for lineno, line in enumerate(_read_figure_script(name).splitlines(), 1):
+                if "html_mod.escape(" not in line or line.lstrip().startswith("#"):
+                    continue
+                assert "quote=False" in line, (
+                    f"{name}:{lineno} escapes quotes; Plotly renders "
+                    f"&quot; literally (see _hover_text module docstring): {line.strip()}"
+                )
 
     def test_helper_uses_the_sibling_escape_convention(self):
         with open(os.path.join(FIGURES_DIR, "_hover_text.py"), encoding="utf-8") as f:

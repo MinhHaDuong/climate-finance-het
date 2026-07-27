@@ -1,7 +1,7 @@
 """Interactive HTML exploration of the core climate finance corpus.
 
-Produces a standalone Plotly scatter plot of the ~1,176 core papers
-(cited_by_count >= 50) with:
+Produces a standalone Plotly scatter plot of the core papers
+(cited_by_count >= 50; 2,644 in the current corpus) with:
   - X-axis: year (with jitter to reduce overplotting)
   - Y-axis: seed axis score (efficiency <-> accountability spectrum)
   - Color: KMeans semantic cluster (6 clusters)
@@ -250,9 +250,10 @@ for cid in cluster_ids:
             opacity=0.6,
             line=dict(width=0.5, color="white"),
         ),
-        # Plotly renders the trace name as HTML; the label is free text from
-        # the generated cluster_labels.json, so escape it at the sink.
-        name=f"C{cid}: {html_mod.escape(str(label))}",
+        # Plotly renders the trace name as markup; the label is free text
+        # from the generated cluster_labels.json, so escape it at the sink.
+        # quote=False for the same reason as the hover text — see _hover_text.
+        name=f"C{cid}: {html_mod.escape(str(label), quote=False)}",
         text=hover_texts,
         hoverinfo="text",
         customdata=subset["doi_url"].values,

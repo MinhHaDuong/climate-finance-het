@@ -7,12 +7,30 @@ bibliographic text, so it is escaped first — an `&` in a journal name
 corrupt the box. Same convention, same `html_mod` alias, as the sibling
 HTML figure scripts `plot_genealogy_html.py` and `plot_alluvial_html.py`.
 
+`quote=False` is load-bearing, and is where this module must NOT follow the
+siblings. They emit SVG/HTML for the browser's own parser, which knows the
+full entity set. Plotly does not hand hover `text` or a trace `name` to that
+parser; it runs its own `convertEntities`, whose named-entity table has eight
+members — `mu amp lt gt nbsp times plusmn deg` — plus a numeric `&#…;`
+branch. `quot` is not among them, so `html.escape`'s default `quote=True`
+would put a literal `&quot;` in the tooltip for every title carrying a double
+quote (23 of the 2,644 core rows, e.g. `Assessing "Dangerous Climate
+Change"`). Apostrophes are safe either way: `html.escape` emits the numeric
+`&#x27;`, which the numeric branch decodes. Leaving `"` and `'` literal is
+also safe — the strings reach the page as JSON payload values, not as HTML
+attribute values.
+
 Lives in its own module because `plot_interactive_corpus.py` runs its whole
 pipeline at module scope, so a builder defined there could not be imported
 by a test without executing that pipeline.
 """
 
 import html as html_mod
+
+
+def _esc(value) -> str:
+    """Escape `&`, `<` and `>` only — see the module docstring on `quote`."""
+    return html_mod.escape(str(value), quote=False)
 
 
 def build_hover_text(
@@ -32,13 +50,13 @@ def build_hover_text(
     rendered as integers and need no escaping.
     """
     lines = [
-        f"<b>{html_mod.escape(str(title))}</b>",
-        f"{html_mod.escape(str(first_author))} ({int(year)})",
-        html_mod.escape(str(journal)),
+        f"<b>{_esc(title)}</b>",
+        f"{_esc(first_author)} ({int(year)})",
+        _esc(journal),
         f"Cited by: {int(cited_by_count)}",
     ]
     if cited_in_manuscript:
         lines.append("<i>Cited in manuscript</i>")
     if istex_url:
-        lines.append(f"ISTEX PDF: {html_mod.escape(str(istex_url))}")
+        lines.append(f"ISTEX PDF: {_esc(istex_url)}")
     return "<br>".join(lines)
