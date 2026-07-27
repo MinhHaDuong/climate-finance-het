@@ -133,6 +133,13 @@ DEPOSIT_VARIABLES: list[Variable] = [
              "or `generated:lexicon`; empty elsewhere", _KEYDOCS,
              required=False, group=_PROV,
              allowed_values="extracted, generated:lexicon, empty"),
+    Variable("language_provenance", "string, nullable",
+             "How the language code was obtained: `source` (carried by the "
+             "source catalog), `openalex` (backfilled from the OpenAlex API), "
+             "or `detected:langdetect` (inferred from title and abstract); "
+             "empty where no language could be established", _ENRICH,
+             required=False, group=_PROV,
+             allowed_values="source, openalex, detected:langdetect, empty"),
     Variable("source_count", "integer",
              "Number of sources that contributed the record (sum of the "
              "provenance flags)", _MERGE, group=_PROV,
