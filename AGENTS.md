@@ -30,7 +30,7 @@ enforces.
 | `~/.claude/skills/` | Generic skills (celebrate, review-pr, memory, etc.) |
 | `~/.claude/hooks/` | Generic hooks (on-start identity setup) |
 | `.claude/rules/` | Project-specific rules (writing, architecture, oeconomia-style, etc.) |
-| `.claude/skills/` | Project-specific skills (submission-branch, submission-readiness, update-publist) |
+| `.claude/skills/` | Project-specific skills (submission-branch, submission-readiness) |
 | `.claude/hooks/` | Project-specific hooks (merge gate review check) |
 | `.claude/settings.json` | Project permissions and hooks |
 | `.githooks/` | Git hooks (pre-commit, pre-push, post-checkout) |
@@ -108,7 +108,6 @@ The agent must always know and declare its current phase.
 | `/autonomous` | Unsupervised autonomous session | Imperial Dragon cycles with 60/40 balance |
 | `/submission-branch` | Creating a submission branch | Sprout, freeze, revision lifecycle |
 | `/submission-readiness` | Pre-submission gate | Checklist before sprouting |
-| `/update-publist` | Adding/updating a publication | Edit Ha-Duong.bib, deposit on HAL via SWORD |
 
 ## Autonomous workflow
 

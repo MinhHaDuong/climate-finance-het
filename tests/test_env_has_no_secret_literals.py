@@ -221,7 +221,7 @@ def test_shape_heuristic_accepts_the_real_non_secret_settings() -> None:
         "HDMX-coding-agent@users.noreply.github.com",
         "openrouter:OPENROUTER_API_KEY_CLIMATEFINANCE=OPENROUTER_API_KEY,"
         "github:AGENT_GH_TOKEN,openalex:OPENALEX_API_KEY,"
-        "semanticscholar:S2_API_KEY",
+        "semanticscholar:S2_API_KEY,hal:HAL_ID,hal:HAL_PASSWORD",
     )
     flagged = [v for v in benign if _credential_shaped_reason(v) is not None]
     assert not flagged, f"heuristic false-positives on benign settings: {flagged}"
@@ -266,6 +266,18 @@ STALE_ENV_CLAIMS = (
     "secrets sourced from project .env",
     "Load .env for GH_TOKEN",
     "not exported into every process",  # the overclaim in the other direction
+    # Two phrasings of "this skill reads its credentials from .env" (ticket 0364).
+    # The project fork of update-publist carried the first and was deleted; the
+    # harness copy that supersedes it carries the second. Both are pinned so a
+    # future copy-paste from either document cannot bring the claim back.
+    #
+    # The second is anchored on the credential name rather than cut at "from the
+    # project `.env`": .env legitimately supplies non-secret settings, so the
+    # shorter form would eventually fire on a true sentence about, say,
+    # CLIMATE_FINANCE_DATA. A guard that cries wolf on correct prose gets edited
+    # out, and then it guards nothing.
+    "Credentials from `.env`",
+    "HAL_PASSWORD` from the project `.env`",
 )
 
 # Files the stale-claim scan covers: every tracked text file, discovered rather
