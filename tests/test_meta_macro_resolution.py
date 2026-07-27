@@ -22,6 +22,7 @@ is trusted on a real one — the invariant ticket 0327 paid for.
 import pytest
 from _qmd_meta import (
     PLACEHOLDER,
+    QUARTO_REFUSES,
     WARNING,
     declared_keys,
     deliverable_qmds,
@@ -38,11 +39,11 @@ from _qmd_meta import (
 #: defect it names.
 KNOWN_UNRESOLVED = {
     # corpus-report reads technical-report-vars.yml but is absent from
-    # compute_vars.DOC_VARS, so it has no vars file of its own and renders 22
-    # placeholders. Ticket 0322 action 2 owns registering its vars; ticket
-    # 0357, filed on the branch of PR #1162 and not yet on main, states the
-    # registry gap directly.
-    "corpus-report": "tickets 0322 / 0357 — corpus-report is outside the vars registry",
+    # compute_vars.DOC_VARS, so it has no vars file of its own: 12 distinct
+    # keys, 22 occurrences, all rendering as placeholders. Ticket 0357 owns the
+    # registry gap itself. (0322 is adjacent, not the fix — its action 2 covers
+    # the verify_*/complete_* vars, a different set of keys.)
+    "corpus-report": "ticket 0357 — corpus-report is outside the vars registry",
 }
 
 
@@ -162,6 +163,38 @@ def test_render_oracle_flags_an_undeclared_key(tmp_path):
     assert f"{PLACEHOLDER}absent_key" in result.stdout
     assert WARNING in result.stderr
     assert "1,234" in result.stdout, "the declared key should still resolve"
+
+
+@pytest.mark.integration
+def test_quarto_still_refuses_the_reserved_keys(tmp_path):
+    """Every key in `QUARTO_REFUSES` is one a real render still refuses.
+
+    The static resolver subtracts this set, so an entry that Quarto *started*
+    exposing would make it under-declare and report a false positive, while a
+    newly-reserved key absent from the set would let a real `?meta:` through.
+    Rendering the set is the only thing that can tell either way.
+    """
+    require_quarto()
+    keys = sorted(QUARTO_REFUSES)
+    (tmp_path / "probe-vars.yml").write_text("declared_key: ok\n", encoding="utf-8")
+    body = "\n".join(f"K{k.replace('-', '')}: {{{{< meta {k} >}}}}" for k in keys)
+    qmd = tmp_path / "reserved.qmd"
+    qmd.write_text(
+        "---\n"
+        'title: "Reserved"\n'
+        "metadata-files: [probe-vars.yml]\n"
+        "number-sections: true\n"
+        "format: html\n"
+        f"---\n\n{body}\n",
+        encoding="utf-8",
+    )
+    result = render_to_markdown(qmd)
+    assert result.returncode == 0, f"probe failed to render:\n{result.stderr}"
+    exposed = [k for k in keys if f"{PLACEHOLDER}{k}" not in result.stdout]
+    assert not exposed, (
+        f"Quarto now exposes {exposed} to a meta macro; drop them from "
+        f"QUARTO_REFUSES or the static resolver reports false positives"
+    )
 
 
 @pytest.mark.integration

@@ -34,6 +34,19 @@ PLACEHOLDER = "?meta:"
 #: The stderr line Quarto emits alongside it.
 WARNING = "Unknown meta key"
 
+#: Front-matter keys Quarto consumes as its own configuration and does not
+#: expose to a `{{< meta >}}` macro. Being present in the header is therefore
+#: not the same as being resolvable, and counting them as declared would let a
+#: macro naming one pass the static guard while rendering `?meta:`.
+#:
+#: Established by probing every front-matter key of all 11 deliverables against
+#: a real render: these three were refused in every document that carries them,
+#: and the other twelve resolved. That makes it a verified floor over the keys
+#: in use, not a transcription of Quarto's reserved list —
+#: `test_quarto_still_refuses_the_reserved_keys` re-renders it so a Quarto
+#: upgrade cannot silently change the answer.
+QUARTO_REFUSES = frozenset({"format", "metadata-files", "number-sections"})
+
 
 def deliverable_qmds() -> list[Path]:
     """Every rendering document, discovered rather than listed.
@@ -104,6 +117,10 @@ def declared_keys(qmd: Path) -> set[str]:
     Reading the generated `*-vars.yml` is the whole point — the older guard in
     `test_doc_vars_completeness.py` checks prose against the `DOC_VARS` dict in
     `compute_vars.py`, one layer above the artifact Quarto actually loads.
+
+    Keys in `QUARTO_REFUSES` are excluded wherever they come from: Quarto keeps
+    them for itself, so a header carrying `format:` does not make
+    `{{< meta format >}}` resolve.
     """
     header = front_matter(qmd)
     keys = set(header)
@@ -114,7 +131,7 @@ def declared_keys(qmd: Path) -> set[str]:
         path = qmd.parent / spec
         if path.is_file():
             keys |= set(yaml.safe_load(_read(path)) or {})
-    return keys
+    return keys - QUARTO_REFUSES
 
 
 def unresolved_meta_keys(qmd: Path) -> set[str]:
