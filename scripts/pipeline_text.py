@@ -26,6 +26,9 @@ LANG_NORMALIZE
     Dict mapping ISO 639-3 codes and full names to ISO 639-1.
 normalize_lang
     Normalise any language code or name to 2-letter ISO 639-1.
+normalize_lang_display
+    Same, but bucketing the unmappable as "unknown" instead of None, so
+    counts printed in prose and in the language table agree.
 is_valid_iso639_1
     Return True if a string is a recognised ISO 639-1 code.
 detect_language
@@ -233,6 +236,28 @@ def normalize_lang(code: object) -> str | None:
         if len(code) == 2:
             return code
     return LANG_NORMALIZE.get(code)
+
+
+def normalize_lang_display(code: object) -> str:
+    """Normalize a language code for counting and display, never returning None.
+
+    ``normalize_lang`` returns None for anything it cannot map to ISO 639-1.
+    This wrapper turns that into an explicit "unknown" bucket — the one
+    @tbl-languages prints as Unclassified — and splits hyphenated locale codes
+    (``zh-CN``) that ``normalize_lang`` leaves alone.
+
+    Every language count that reaches a reader goes through here, so a count
+    printed in the prose sums with the table beside it. The two diverged once:
+    ``arz`` and ``sco`` are ISO 639-3 codes with no ISO 639-1 equivalent, and
+    counting them as non-English while the table filed them under Unclassified
+    put 2,063 in the prose against the table's 2,061 (PR #1141 review).
+    """
+    if pd.isna(code):
+        return "unknown"
+    text = str(code).strip()
+    if "-" in text:
+        text = text.split("-")[0]
+    return normalize_lang(text) or "unknown"
 
 
 def is_valid_iso639_1(code: object) -> bool:

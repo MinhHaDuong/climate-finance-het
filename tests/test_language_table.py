@@ -56,6 +56,40 @@ def test_uppercase_lowercased():
     assert normalise_language("FR") == "fr"
 
 
+def test_iso639_3_code_with_no_two_letter_equivalent_is_unknown():
+    """`arz` (Egyptian Arabic) and `sco` (Scots) have no ISO 639-1 code. The
+    table files them under Unclassified, so the prose counts must too — while
+    each side held its own normaliser they did not, and the non-English layer
+    printed 2,063 against the table's 2,061 (PR #1141)."""
+    from export_language_table import normalise_language
+    assert normalise_language("arz") == "unknown"
+    assert normalise_language("sco") == "unknown"
+
+
+def test_prose_counts_bucket_codes_exactly_as_the_table_does():
+    """One normaliser, not two look-alikes.
+
+    The table and `compute_vars` each counted languages with their own copy of
+    the logic, and the copies drifted. Pinning the shared symbol identity is
+    what keeps a future edit to one from silently moving only one number.
+    """
+    from export_language_table import normalise_language
+    from pipeline_text import normalize_lang_display
+
+    codes = ["en", "EN", "en_US", "zh-CN", "pt", "eng", "arz", "sco", "und", ""]
+    assert [normalise_language(c) for c in codes] == [
+        normalize_lang_display(c) for c in codes
+    ]
+
+    compute_vars = read(
+        os.path.join(ROOT, "scripts", "analysis", "compute_vars.py")
+    )
+    assert "normalize_lang_display" in compute_vars, (
+        "compute_vars must bucket languages through the shared normaliser, "
+        "not a local re-implementation"
+    )
+
+
 # --- Integration: data paper includes the language table ---
 
 def test_data_paper_includes_language_table():

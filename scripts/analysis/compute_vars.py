@@ -25,6 +25,7 @@ from utils import (
     SOURCE_NAMES,
     get_logger,
     load_analysis_periods,
+    normalize_lang_display,
 )
 
 log = get_logger("compute_vars")
@@ -242,16 +243,19 @@ def corpus_stats(v):
         v["corpus_multi_source"] = _int(multi)
         v["corpus_multi_source_pct"] = _pct(100 * multi / n)
 
-    # Language
+    # Language. Bucketed through the same normaliser @tbl-languages uses, so a
+    # count printed in the prose sums with the table beside it: `arz` and `sco`
+    # are ISO 639-3 codes with no ISO 639-1 equivalent, and the table files
+    # them under Unclassified rather than non-English (PR #1141 review).
     if "language" in df.columns:
-        lang = df["language"].fillna("unknown")
-        en_count = lang.str.lower().isin(["en", "english"]).sum()
+        lang = df["language"].apply(normalize_lang_display)
+        en_count = (lang == "en").sum()
         v["lang_english_pct"] = _pct(100 * en_count / n)
         # The non-English *layer* excludes the unclassified rows, matching the
         # separate "Unclassified" line of @tbl-languages. Hand-typed in the
         # paper until 0323, where it had rotted to an enriched-corpus figure
         # (3,381) inside a refined-corpus sentence.
-        non_en = (~lang.str.lower().isin(["en", "english", "unknown"])).sum()
+        non_en = ((lang != "en") & (lang != "unknown")).sum()
         v["lang_non_english_n"] = _int(non_en)
 
     # Language provenance (ticket 0323). A share of the deposited language
