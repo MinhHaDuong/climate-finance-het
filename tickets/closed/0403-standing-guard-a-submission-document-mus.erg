@@ -7,6 +7,7 @@ Closed: tooling-lane severity floor: standing guard; the originating stale refer
 --- log ---
 2026-07-27T19:13Z HDMX-coding-agent created
 2026-07-27T19:22Z HDMX-coding-agent note Filed from the ticket-0354 roar; the class fired three times inside one merge
+2026-07-27T22:10Z HDMX-coding-agent note Guard landed; kept separate from 0387 because this authority is a closed set and needs no signal separation
 
 2026-07-27T19:45Z HDMX-coding-agent closed — tooling-lane severity floor: standing guard; the originating stale references were fixed in 0354
 --- body ---
@@ -78,10 +79,18 @@ corpus — so the adherence tier.
 
 ## Verification
 
-- [ ] Re-adding a retired filename to any of the three documents fails `make lint`
-- [ ] The current tree passes
-- [ ] The product authority is read from the build script, not duplicated
-- [ ] An allowlisted exception carries a reason and is rejected when unearned
+- [x] Re-adding a retired filename to any of the three documents fails `make lint`
+      — demonstrated on the real `response-letter.md` (guard names the document
+      and the filename), and pinned permanently by
+      `test_a_retired_product_is_caught` on a synthetic document
+- [x] The current tree passes — `make lint` 309 passed
+- [x] The product authority is read from the build script, not duplicated —
+      `shipped_products()` derives it; `PRODUCTS` is now an expectation pinned
+      to it by `test_products_list_matches_the_build_script`, which also closes
+      the previously-unchecked direction (the build shipping something the list
+      omits)
+- [x] An allowlisted exception carries a reason and is rejected when unearned —
+      `PROSE_PRODUCT_ALLOWLIST` (empty today) + `test_prose_allowlist_entries_are_earned`
 
 ## Invariants
 
@@ -92,10 +101,14 @@ corpus — so the adherence tier.
 
 ## Exit criteria
 
-- [ ] A retired deposit filename surviving in any submission document fails a
+- [x] A retired deposit filename surviving in any submission document fails a
       local gate
-- [ ] Red-to-green demonstrated on `codebook.md` specifically, the case that
+- [x] Red-to-green demonstrated on `codebook.md` specifically, the case that
       motivated this
-- [ ] Overlap with ticket 0387 resolved — either one guard or a stated reason
-      for two
-- [ ] `make check` passes
+- [x] Overlap with ticket 0387 resolved — **two guards, stated reason**: 0387
+      must separate signal from prose that legitimately names files not yet
+      created (its own body calls that "the whole design problem", 99 raw hits).
+      Here the authority is a closed set — what the build stages — so the check
+      is exact and needs no heuristics. Merging them would drag this one into
+      that unsolved separation problem.
+- [x] `make check` passes

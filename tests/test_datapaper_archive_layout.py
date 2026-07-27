@@ -34,10 +34,81 @@ PRODUCTS = [
     "tab_retrieval_protocol.csv", "tab_retrieval_protocol.md",
 ]
 
+# The correspondence that describes the deposit to the editor (ticket 0403).
+# These are outside the vars-driven-prose rule — the filenames in them are
+# literals, and the ed04 record description is pasted into the live Zenodo
+# record by hand.
+SUBMISSION_DOCS = [
+    os.path.join(REPO, "deliverables", "data-paper", "revision-rdj26561", name)
+    for name in ("ed04-zenodo-restructure-upload.md",
+                 "summary-of-revisions.md",
+                 "response-letter.md")
+]
+
+# Deliberate exceptions: a product name a document may mention although the
+# build does not ship it, each with the reason. Empty by design — an entry here
+# is a claim that prose may outrun the build, which wants justifying.
+# `test_prose_allowlist_entries_are_earned` rejects one that has become
+# redundant, so it cannot rot into a mute skip (the pattern
+# config/unrendered-artifacts.txt uses).
+PROSE_PRODUCT_ALLOWLIST: dict[str, str] = {}
+
+# Extensions a deposited product can carry. Anything else in a products
+# sentence (a directory, a command, a section reference) is not a candidate.
+_PRODUCT_EXT = r"\.(?:csv|json|npz|tar\.gz|md)"
+_PATHISH = re.compile(r"[\w./-]+" + _PRODUCT_EXT + r"\b")
+_BACKTICKED = re.compile(r"`([^`]+)`")
+
 
 def _read(path):
     with open(path) as f:
         return f.read()
+
+
+def shipped_products(build_script_text=None):
+    """Product basenames the build script actually stages into data/products/.
+
+    Derived rather than restated: `PRODUCTS` above is the pinned expectation and
+    `test_products_list_matches_the_build_script` holds the two together, so the
+    build script stays the single authority on what the deposit contains.
+    """
+    sh = build_script_text if build_script_text is not None else _read(BUILD_SCRIPT)
+    names = set()
+    for line in sh.splitlines():
+        if "data/products" not in line:
+            continue
+        # `cp SRC "$TMP/data/products/"` names the file in SRC; an emitter names
+        # it in --output. Both are path-ish tokens on the staging line.
+        names.update(os.path.basename(m.group(0)) for m in _PATHISH.finditer(line))
+    return names
+
+
+def products_named_in(text):
+    """Filenames a document presents as contents of the deposit.
+
+    Scoped to a window, because these documents name plenty of files that are
+    not deposit products (scripts, configs, catalogs). The window opens on a
+    `data/products/` mention and closes at the end of that paragraph, which is
+    how all three documents enumerate the deposit: a `data/products/` clause
+    followed by a backticked list. Only backticked, path-ish tokens with a
+    product extension count.
+    """
+    lines = text.splitlines()
+    found = set()
+    for i, line in enumerate(lines):
+        if "data/products" not in line:
+            continue
+        last_stem = None
+        for j in range(i, len(lines)):
+            if j > i and not lines[j].strip():
+                break
+            for token in _BACKTICKED.findall(lines[j]):
+                matches = [os.path.basename(m.group(0)) for m in _PATHISH.finditer(token)]
+                if matches:
+                    found.update(matches)
+                    last_stem = re.sub(_PRODUCT_EXT + r"$", "", matches[-1])
+                elif last_stem and re.fullmatch(_PRODUCT_EXT, token):
+                    found.add(last_stem + token)
 
 
 class TestRenderRuleTracksTheIncludeClosure:
@@ -259,3 +330,69 @@ class TestDepositCountsTrackTheCorpus:
         """The v2 harvest adds two source layers, so the archive's data files
         do change; the runbook must not tell the author otherwise."""
         assert "unchanged from the previous version" not in _read(self.ED04)
+
+
+class TestSubmissionProseNamesOnlyShippedProducts:
+    """A submission document must not promise a deposit file the build drops.
+
+    Ticket 0403. Retiring `codebook.md` (ticket 0354) left it named in three
+    documents that describe the deposit to the editor, including the record
+    description pasted into Zenodo. Nothing caught them: `PRODUCTS` guards the
+    build side (build script, archive README, data-paper.qmd) while the
+    `revision-rdj26561/` correspondence sat outside every check.
+
+    `TestDepositCountsTrackTheCorpus` set the precedent for the deposit's
+    hand-pasted *counts*. This is the same argument for its filenames.
+
+    Not the same guard as ticket 0387 (prose naming a script that no longer
+    exists). That one must separate a real signal from prose that legitimately
+    names files yet to be created; here the authority is a closed set — what the
+    build stages — so the check is exact and needs no heuristics.
+    """
+
+    def test_products_list_matches_the_build_script(self):
+        """PRODUCTS is an expectation pinned to the authority, not a second one."""
+        assert set(PRODUCTS) == shipped_products(), (
+            "PRODUCTS and the build script disagree on what the deposit ships; "
+            f"only in PRODUCTS: {sorted(set(PRODUCTS) - shipped_products())}, "
+            f"only in the build script: {sorted(shipped_products() - set(PRODUCTS))}"
+        )
+
+    @pytest.mark.parametrize("path", SUBMISSION_DOCS, ids=os.path.basename)
+    def test_document_names_only_shipped_products(self, path):
+        named = products_named_in(_read(path))
+        assert named, (
+            f"{os.path.basename(path)} names no deposit product at all. Either it "
+            "stopped describing the deposit, or its `data/products/` enumeration "
+            "moved out of the paragraph this parses — the guard has gone blind, "
+            "which is the failure mode a subset check cannot report on its own."
+        )
+        unshipped = sorted(named - shipped_products() - set(PROSE_PRODUCT_ALLOWLIST))
+        assert not unshipped, (
+            f"{os.path.basename(path)} presents {unshipped} as deposit contents, "
+            "but the build script does not stage them into data/products/. "
+            "Either the file was retired (fix the prose) or the build lost it."
+        )
+
+    def test_prose_allowlist_entries_are_earned(self):
+        for name, reason in PROSE_PRODUCT_ALLOWLIST.items():
+            assert reason.strip(), f"{name} is allowlisted without a reason"
+            assert name not in shipped_products(), (
+                f"{name} is shipped by the build, so its allowlist entry is "
+                "redundant — drop it")
+
+    def test_a_retired_product_is_caught(self):
+        """Red-proof, kept: the codebook.md case, on a synthetic document.
+
+        Pinned against a synthetic text rather than by mutating the real files,
+        so the check that the guard *can* fail travels with the guard.
+        """
+        doc = (
+            "**ED-04 (Zenodo package structure).** The deposit contains\n"
+            "`data/inputs/` with the catalogs, and `data/products/` with the\n"
+            "paper's outputs (`climate_finance_corpus.csv`, `codebook.md`,\n"
+            "`embeddings.npz`); `code/` holds the pipeline source.\n"
+        )
+        named = products_named_in(doc)
+        assert "climate_finance_corpus.csv" in named, "the real products must parse"
+        assert sorted(named - shipped_products()) == ["codebook.md"]

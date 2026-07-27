@@ -10,6 +10,13 @@ archive.
 So this test does the only thing that can catch that class: it builds the archive,
 extracts it somewhere else entirely, and runs the reviewer's own Makefile there.
 A reviewer with the tarball and nothing else must get a PDF.
+
+The guard produces its own precondition (ticket 0384). It needs a pre-built
+`manuscript.pdf`, which the build script ships as `expected-manuscript.pdf`, and
+skipping when that file was absent disarmed it in exactly the state a fresh
+worktree starts in. `_ensure_reference_pdf` builds it instead — a Quarto-only
+render off git-tracked inputs, no uv and no corpus. The remaining skips are
+genuine environment gates: no Quarto, or no LaTeX engine.
 """
 
 import os
@@ -26,6 +33,9 @@ SHIPPED_PDF = os.path.join(REPO, "deliverables", "manuscript", "manuscript.pdf")
 RENDERED = os.path.join("deliverables", "manuscript", "manuscript.pdf")
 
 
+MANUSCRIPT_MK = os.path.join("deliverables", "manuscript", "manuscript.mk")
+
+
 def _has_latex():
     """A LaTeX engine on PATH, or the TinyTeX distribution Quarto installs."""
     if shutil.which("xelatex"):
@@ -34,6 +44,63 @@ def _has_latex():
         os.path.isdir(os.path.expanduser("~/.TinyTeX"))
         or os.path.isdir(os.path.expanduser("~/.local/share/TinyTeX"))
     )
+
+
+def _ensure_reference_pdf():
+    """Build `deliverables/manuscript/manuscript.pdf` when it is absent.
+
+    The build script ships this PDF as `expected-manuscript.pdf`, so the
+    clean-room render cannot run without it. Skipping instead (ticket 0384)
+    disarmed the guard in precisely the state a fresh worktree starts in.
+
+    Building it is cheap and self-contained: `manuscript.mk` is the Phase-3
+    writing workpackage, whose every prerequisite — prose, three figures,
+    `tab_venues.md`, bibliography, vars — is git-tracked, so no uv, no corpus
+    and no Phase-2 run is involved. The PDF is left in place afterwards: it is
+    exactly what `make manuscript` produces, gitignored, and byte-stable under
+    the `SOURCE_DATE_EPOCH` that fragment exports.
+    """
+    if os.path.isfile(SHIPPED_PDF):
+        return
+    built = subprocess.run(
+        ["make", "-f", MANUSCRIPT_MK, RENDERED],
+        cwd=REPO, capture_output=True, text=True, timeout=1800,
+    )
+    assert built.returncode == 0 and os.path.isfile(SHIPPED_PDF), (
+        "could not build the reference manuscript PDF the archive ships:\n"
+        f"stdout:\n{built.stdout[-4000:]}\nstderr:\n{built.stderr[-4000:]}"
+    )
+
+
+def test_absent_reference_pdf_is_built_rather_than_skipped(tmp_path, monkeypatch):
+    """A missing manuscript PDF must trigger a build, not a skip.
+
+    Red before ticket 0384: the clean-room guard skipped whenever
+    `deliverables/manuscript/manuscript.pdf` was absent — which is the state a
+    fresh `EnterWorktree` session starts in, so the one guard written to catch
+    "assembles but does not render" reported a skip exactly where this
+    project's sessions are born.
+
+    The render is self-sufficient: `manuscript.mk` builds the PDF from
+    git-tracked prose, figures, tables, and bibliography alone — no uv, no
+    corpus — so the guard can produce its own precondition.
+    """
+    absent = tmp_path / "manuscript.pdf"
+    monkeypatch.setattr("test_archive_render_smoke.SHIPPED_PDF", str(absent))
+
+    invoked = []
+
+    def fake_run(cmd, **kwargs):
+        invoked.append(cmd)
+        absent.write_bytes(b"%PDF-1.4\n")
+        return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
+
+    monkeypatch.setattr("test_archive_render_smoke.subprocess.run", fake_run)
+
+    _ensure_reference_pdf()
+
+    assert invoked, "an absent reference PDF must be built, not skipped over"
+    assert invoked[0][0] == "make", f"expected a make invocation, got {invoked[0]}"
 
 
 @pytest.mark.integration
@@ -48,8 +115,7 @@ def test_manuscript_archive_renders_in_clean_room(tmp_path):
         pytest.skip("quarto not installed")
     if not _has_latex():
         pytest.skip("no LaTeX engine (xelatex or TinyTeX) available")
-    if not os.path.isfile(SHIPPED_PDF):
-        pytest.skip(f"no pre-built manuscript PDF — run `make manuscript` first ({SHIPPED_PDF})")
+    _ensure_reference_pdf()
 
     # The build script writes the tarball into the repo root. Leave the tree as
     # we found it: a developer may have one there already.
