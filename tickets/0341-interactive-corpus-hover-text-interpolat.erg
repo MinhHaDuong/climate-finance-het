@@ -1,0 +1,61 @@
+%erg 0.1
+Title: Interactive corpus hover text interpolates title and journal into raw HTML unescaped
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T12:09Z HDMX-coding-agent created
+2026-07-27T12:17Z HDMX-coding-agent note filed by the 0325 roar sweep. The tell is that two sibling scripts already do this correctly, so it is an inconsistency rather than an unconsidered case.
+
+--- body ---
+## Context
+
+The 0325 sweep looked for values interpolated into markup without escaping.
+`scripts/figures/plot_interactive_corpus.py` builds Plotly hover text as raw
+HTML — deliberate `<b>`, `<br>`, `<i>` tags — and interpolates `title_short`,
+`first_author`, and `journal_short` straight in (lines ~233-239, 265-268,
+298-305), writing `deliverables/_shared/figures/interactive_core_corpus.html`.
+
+Title and journal are free bibliographic text. An `&` or a `<` in either
+corrupts the hover box the same way an unescaped `|` corrupts a table cell.
+Ampersands in journal names are ordinary ("Energy Research & Social Science").
+
+What makes this worth fixing rather than noting: `plot_genealogy_html.py` and
+`plot_alluvial_html.py` already call `html.escape()` on every free-text field
+before interpolation. The convention exists in this codebase; one script
+departs from it.
+
+## Relevant files
+
+- `scripts/figures/plot_interactive_corpus.py` — the three interpolation sites
+- `scripts/figures/plot_genealogy_html.py` — correct: escapes before building
+- `scripts/figures/plot_alluvial_html.py` — correct, same pattern
+
+## Actions
+
+1. Apply `html.escape()` to `title_short`, `first_author`, and
+   `journal_short` at each hover-text site, matching the sibling scripts.
+2. Leave the intentional `<b>`/`<br>`/`<i>` structure tags alone — escape the
+   interpolated values, not the template.
+
+## Test
+
+Assert that a record whose title contains `&` and `<` produces hover text in
+which those characters appear escaped while the structural tags survive
+unescaped. A unit test on the hover-text builder is enough here: unlike the
+LaTeX and pipe-table cases, the corruption is visible in the emitted string,
+because the escaping and the markup live in the same layer.
+
+## Verification
+
+- [ ] A title containing `&` and `<` survives into the rendered hover box
+- [ ] `<b>`/`<br>`/`<i>` still render as markup
+- [ ] The figure still builds
+
+## Invariants
+
+- `make check` passes; the interactive figure regenerates.
+
+## Exit criteria
+
+- [ ] All three HTML-emitting figure scripts escape free text the same way

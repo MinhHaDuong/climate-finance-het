@@ -1,0 +1,93 @@
+%erg 0.1
+Title: Markdown pipe-table emitters interpolate free-text journal names unescaped
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T12:09Z HDMX-coding-agent created
+2026-07-27T12:15Z HDMX-coding-agent note found by the 0325 roar sweep for the same defect class. Latent, not currently firing: every row in the shipped tab_venues.md carries its five cells, because no pipe-bearing venue sits in today's top-N.
+
+--- body ---
+## Context
+
+Ticket 0325 fixed an emitter that interpolated values into a Markdown pipe
+table without escaping `|`, so the deposited codebook published its
+reconstruction recipe truncated at the pipe. The sweep for that defect class
+found two more emitters with the same shape, both interpolating a **journal
+name** — free text straight from the bibliographic corpus.
+
+The corpus really does contain the dangerous character. In
+`refined_works.csv`, 10 `journal` values and 14 `title` values carry a literal
+`|`, all bilingual names joined with a pipe:
+
+```
+International Development Policy | Revue internationale de politique de développement
+Journal of Corporate Finance Research / Корпоративные Финансы | ISSN 2073-0438
+```
+
+Nothing is corrupted today: the venues selected for the manuscript table
+happen to be pipe-free. It fires on the first corpus rebuild that promotes one
+of those venues into the top-N — silently, because a Markdown renderer drops
+the overflowing cell rather than erroring.
+
+## Root cause
+
+Same as 0325: a script builds markup by string interpolation and does not
+escape what the markup treats as syntax.
+
+- `scripts/figures/export_tab_venues.py:120` —
+  `f"| {r['lean']} | {r['journal']} "` — `journal` is raw `refined_works.csv`
+  text, no canonicalisation. Its output is `{{< include >}}`d by
+  `deliverables/manuscript/manuscript.qmd:331` (and the fr variant at
+  `manuscript-Gide.qmd:226`), so this instance reaches a rendered manuscript.
+- `scripts/figures/export_core_venues_markdown.py:107` —
+  `f"| {venue} | {count} | {vtype} |"`. `venue` is `venue_canonical`, which
+  passes through `canonical_venue()` in `scripts/_venue_naming.py` — but that
+  function returns the **raw journal string** when no rule matches
+  (`_venue_naming.py:59`), so an uncurated name flows straight through.
+  Dormant for now: the table has a Makefile target (`Makefile:330`) but no
+  `.qmd` includes it yet.
+
+## Relevant files
+
+- `scripts/figures/export_tab_venues.py` — the reachable, rendered instance
+- `scripts/figures/export_core_venues_markdown.py` — the dormant instance
+- `scripts/_venue_naming.py` — `canonical_venue()`'s raw fallback
+- `scripts/_deposit_variables.py` — `markdown_cell()`, the escaping already
+  written for 0325; extract it rather than writing a third copy
+
+## Actions
+
+1. Lift `markdown_cell()` out of `_deposit_variables.py` into a neutral module
+   both emitters can import, keeping its prose/code-span split — CommonMark
+   reads a backslash as an escape in prose but literally inside a code span,
+   so one blanket rule corrupts one side. 0325's commit message records the
+   three candidate rules and how each fails.
+2. Route every free-text cell in both emitters through it.
+3. Leave numeric and curated-label columns alone; escaping them is noise.
+
+## Test
+
+Red first, and on the **rendered** table rather than the emitted source — the
+lesson of 0325 is that a source-level assertion cannot see this. Build a
+one-row table from a venue named
+`International Development Policy | Revue internationale`, render it through
+pandoc's GFM reader, and assert the row still has five `<td>` cells with the
+venue name whole. `tests/test_rendered_table_fidelity.py` carries the pattern.
+
+## Verification
+
+- [ ] A pipe-bearing venue renders as one cell in both tables
+- [ ] Regenerating `tab_venues.md` from the current corpus is a no-op — no
+      pipe-bearing venue is in today's top-N, so the fix must not churn it
+- [ ] One escaping implementation, imported by all three call sites
+
+## Invariants
+
+- `make check` passes; the manuscript still renders.
+- Numeric columns keep their formatting (`:.0f`).
+
+## Exit criteria
+
+- [ ] No Markdown-table emitter interpolates free text without escaping
+- [ ] The escaping rule lives in one place, pinned by a rendered test
