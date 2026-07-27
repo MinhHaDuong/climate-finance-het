@@ -598,6 +598,9 @@ class TestArchiveBitInvariance:
             "pipeline_io.py",
             "pipeline_progress.py",
             "pipeline_text.py",
+            # Shared --input/--output parser: imported by the entry points, so
+            # the archive must ship it, but it is never a Makefile prerequisite.
+            "script_io_args.py",
         }
         for s in copied_scripts:
             if s in utilities:

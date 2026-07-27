@@ -36,6 +36,7 @@ import os
 import re
 
 import pytest
+from _mk_discovery import all_makefiles
 
 pytestmark = pytest.mark.adherence
 
@@ -79,17 +80,12 @@ def _read(path):
 
 
 def _makefile_text():
-    """Concatenated text of every Makefile that could declare an archive input."""
-    parts = [_read(os.path.join(REPO, "Makefile"))]
-    for root, _dirs, files in os.walk(os.path.join(REPO, "deliverables")):
-        for name in sorted(files):
-            if name.endswith(".mk"):
-                parts.append(_read(os.path.join(root, name)))
-    for root, _dirs, files in os.walk(os.path.join(REPO, "scripts")):
-        for name in sorted(files):
-            if name.endswith(".mk"):
-                parts.append(_read(os.path.join(root, name)))
-    return "\n".join(parts)
+    """Concatenated text of every Makefile that could declare an archive input.
+
+    Enumerated through the shared helper (ticket 0248) so this guard cannot
+    silently narrow its coverage when a fragment moves.
+    """
+    return "\n".join(p.read_text() for p in all_makefiles())
 
 
 def _declared_inputs(archive):

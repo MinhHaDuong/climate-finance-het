@@ -60,6 +60,10 @@ cp -L "$DATA_DIR/refined_embeddings.npz" "$TMP/data/catalogs/"
 # resolve to a real file, so the next mover cannot silently strand the cp.
 SCRIPTS=(
     scripts/utils.py
+    # Shared --input/--output parser. Every entry point below calls
+    # parse_io_args at the top of main, so without it the archived scripts fail
+    # at import; the archive shipped without it until ticket 0292.
+    scripts/script_io_args.py
     scripts/pipeline_loaders.py
     scripts/pipeline_io.py
     scripts/pipeline_progress.py
