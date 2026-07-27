@@ -1,0 +1,98 @@
+%erg 0.1
+Title: dvc.lock no longer certifies the corpus after the 2026-07-27 merge wave
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T18:20Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+`dvc status` on `main` reports all 20 pipeline stages dirty. Every one is
+*dep-hash drift*, not changed data: `dvc.lock` records the script hashes that
+were current when the stage outputs were produced, and six tickets merged into
+`main` on the afternoon of 2026-07-27 (0323, 0343, 0346, 0349, 0355, 0363)
+edited `scripts/utils.py`, `scripts/pipeline_io.py`,
+`scripts/pipeline_loaders.py`, `scripts/pipeline_text.py`, and
+`scripts/harvest/catalog_merge.py` after `dvc.lock` was last written (commit
+9f9ef18d, ticket 0355).
+
+The corpus on disk is internally consistent. `dvc status` reports no changed
+outputs for any stage, and `dvc status --cloud` says the cache and remote
+`padme` are in sync, so nothing is missing and nothing needs pushing. What is
+no longer true is the certification: `dvc.lock` does not attest that the
+current scripts produce the corpus now sitting in `data/`.
+
+At least one merged change is output-affecting, so `dvc commit` will not
+resolve this. Ticket 0323 ("one language normaliser, so prose and table counts
+agree") changes how the `language` column is computed; recording the existing
+outputs against the new script hashes would certify a corpus the new code did
+not produce.
+
+One stage additionally has a genuinely missing output. `catalog_merge` declares
+`data/catalogs/run_reports/catalog_merge.json` — ticket 0349 added both the
+stable-path output and the matching `stable_copy=True` call at
+`scripts/harvest/catalog_merge.py:305`. The last `catalog_merge` run was 13:21
+on 2026-07-27, before 0349 landed at 16:16, so only timestamped reports exist
+(`catalog_merge__20260727T132143Z.json`). One run of the stage writes the stable
+path. `dvc status --cloud` warns about it: "missing version info. Cache for it
+will not be collected."
+
+Surfaced while closing ticket 0366, whose verification checklist asked for a
+clean `dvc status`. That ticket's own scope — three red acceptance tests — is
+resolved and unrelated to this drift, which is pre-existing and whole-pipeline.
+
+## Relevant files
+
+- `dvc.yaml`, `dvc.lock` — stage definitions and the stale certification
+- `scripts/utils.py`, `scripts/pipeline_io.py`, `scripts/pipeline_loaders.py`,
+  `scripts/pipeline_text.py` — the drifted deps
+- `scripts/harvest/catalog_merge.py` — writes the stable run report since 0349
+- `data/catalogs/run_reports/` — timestamped reports present, stable one absent
+
+## Actions
+
+1. Confirm the scope with the author before spending it. A full `dvc repro` is
+   a corpus rebuild: network access, hours of wall clock, and the Flag-6
+   rescore of the uncacheable works, and it rebuilds the corpus underneath the
+   manuscript.
+2. Run the repro from the primary checkout with the network reachable.
+3. Byte-compare the regenerated `refined_works.csv` against the current one
+   before accepting it. 0323's language-normaliser change is expected to move
+   the `language` column; anything else moving is a finding, not noise.
+4. If the corpus changes, re-check the numbers the manuscript sources from it
+   (`compute_vars.py` outputs) and the derived tables.
+5. `dvc commit` and `dvc push`, then confirm `dvc status` is clean.
+
+## Test
+
+No new test. A clean `dvc status` is the check, and it is not a pytest
+assertion. If a guard is wanted, an `adherence`-marked test asserting `dvc
+status` is empty would surface this class of drift at `make lint` time instead
+of only when someone runs `dvc status` by hand. That guard would fail today, so
+it can only land after this ticket resolves.
+
+## Verification
+
+- [ ] `dvc status` reports no dirty stages
+- [ ] `data/catalogs/run_reports/catalog_merge.json` exists and is a declared,
+      cached DVC output
+- [ ] `dvc status --cloud` in sync, with no "missing version info" warning
+- [ ] The `refined_works.csv` diff against the pre-repro copy is explained
+      column by column
+- [ ] `make check` still green after the repro
+
+## Invariants
+
+- Never `dvc commit` to clear drift without re-running the stage: it certifies
+  outputs the current code did not produce.
+- Run from the primary checkout — a worktree's `data/` is empty.
+- Acceptance tests are the contract and are never weakened to accommodate a
+  changed corpus.
+
+## Exit criteria
+
+`dvc status` is clean on `main`, the corpus in `data/` is the corpus the
+current scripts produce, and any change the repro introduces to published
+numbers has been reviewed.
