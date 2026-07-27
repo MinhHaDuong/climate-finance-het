@@ -40,6 +40,7 @@ from utils import (
     normalize_doi,
     normalize_doi_safe,
     save_csv,
+    work_key,
 )
 
 log = get_logger("corpus_filter")
@@ -426,22 +427,69 @@ def load_citations(cheap=False):
     return citations_df
 
 
-def load_embeddings(df, cheap=False):
-    """Return (embeddings, emb_df, has_embeddings)."""
-    if cheap or not os.path.exists(EMBEDDINGS_PATH):
+def _flag5_subset(df):
+    """Rows Flag 5 scores: abstract-bearing, inside the periodization window."""
+    sub = df[df["abstract"].notna() & (df["abstract"].str.len() > 50)].copy()
+    sub["year_num"] = pd.to_numeric(sub["year"], errors="coerce")
+    periodization = load_analysis_config()["periodization"]
+    sub = sub[(sub["year_num"] >= periodization["year_min"])
+              & (sub["year_num"] <= periodization["year_max"])]
+    return sub.reset_index(drop=True)
+
+
+def load_embeddings(df, cheap=False, embeddings_path=None):
+    """Return (embeddings, emb_df, has_embeddings) for Flag 5.
+
+    The vectors are matched to works through the ``keys`` array written by
+    enrich_embeddings.py, so ``embeddings[i]`` belongs to ``emb_df`` row i by
+    construction. Position is never assumed: the two frames are filtered
+    independently — enrich_embeddings embeds every titled work in the
+    periodization window, this loader wants the abstract-bearing subset — and
+    the day the row sets diverged, the length check turned Flag 5 off on every
+    run behind a log.warning (ticket 0336).
+
+    Returns ``(None, None, False)`` only for a genuine absence: ``--cheap``, no
+    cache file, or a works frame with no Flag 5 candidate at all. A cache that
+    exists and holds vectors either yields them or raises.
+    """
+    path = embeddings_path or EMBEDDINGS_PATH
+    if cheap or not os.path.exists(path):
         return None, None, False
-    emb_df = df.copy()
-    emb_df = emb_df[emb_df["abstract"].notna() & (emb_df["abstract"].str.len() > 50)]
-    emb_df["year_num"] = pd.to_numeric(emb_df["year"], errors="coerce")
-    _cfg = load_analysis_config()
-    emb_df = emb_df[(emb_df["year_num"] >= _cfg["periodization"]["year_min"]) & (emb_df["year_num"] <= _cfg["periodization"]["year_max"])]
-    emb_df = emb_df.reset_index(drop=True)
-    cache = np.load(EMBEDDINGS_PATH, allow_pickle=True)
-    embeddings = cache["vectors"] if "vectors" in cache.files else cache
-    if len(embeddings) != len(emb_df):
-        log.warning("  Embedding size mismatch (%d vs %d), skipping.", len(embeddings), len(emb_df))
+
+    cache = np.load(path, allow_pickle=True)
+    vectors = cache["vectors"] if "vectors" in cache.files else cache
+    if "keys" not in cache.files:
+        raise RuntimeError(
+            f"{path} carries no 'keys' array, so its {len(vectors)} vectors "
+            "cannot be matched to works. Re-run: make corpus-enrich"
+        )
+    key_to_row = {str(k): i for i, k in enumerate(cache["keys"])}
+
+    emb_df = _flag5_subset(df)
+    if emb_df.empty:
+        log.warning("  No abstract-bearing work inside the periodization "
+                    "window: Flag 5 has nothing to score.")
         return None, None, False
-    log.info("  Embeddings: %d", len(embeddings))
+
+    rows = emb_df.apply(work_key, axis=1).map(key_to_row)
+    matched = rows.notna()
+    n_matched = int(matched.sum())
+    if n_matched == 0:
+        raise RuntimeError(
+            f"{path} holds {len(vectors)} vectors and the corpus has "
+            f"{len(emb_df)} Flag 5 candidates, but the two have no work in "
+            "common. The embeddings are stale or keyed differently. "
+            "Re-run: make corpus-enrich"
+        )
+    if n_matched < len(emb_df):
+        log.warning("  Flag 5 embedding coverage: %d / %d candidates "
+                    "(%d unembedded works excluded from the flag)",
+                    n_matched, len(emb_df), len(emb_df) - n_matched)
+
+    emb_df = emb_df[matched].reset_index(drop=True)
+    embeddings = vectors[rows[matched].to_numpy(dtype=int)]
+    log.info("  Embeddings: %d (joined by work key against %d vectors)",
+             len(embeddings), len(vectors))
     return embeddings, emb_df, True
 
 

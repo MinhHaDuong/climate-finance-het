@@ -300,6 +300,9 @@ stages:
   # Phase 1c: Extend → extended_works.csv
   # Adds diagnostic flags and protection columns; no rows removed.
   # corpus_filter.py loads config/corpus_filter.yaml via filter_flags.py.
+  # embeddings.npz is a real input: Flag 5 (semantic isolation) reads it. Left
+  # undeclared, DVC never re-ran extend when the embeddings changed, so a dead
+  # Flag 5 could not be told from a cached one (ticket 0336).
   extend:
     cmd: >-
       uv run --env-file .env python scripts/harvest/corpus_filter.py --extend --works-input data/catalogs/enriched_works.csv --works-output data/catalogs/extended_works.csv
@@ -314,6 +317,7 @@ stages:
       - scripts/pipeline_text.py
       - config/corpus_filter.yaml
       - data/catalogs/enriched_works.csv
+      - data/catalogs/embeddings.npz
     outs:
       - data/catalogs/extended_works.csv
 
