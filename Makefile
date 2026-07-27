@@ -123,7 +123,7 @@ NCC_FIGS        := deliverables/_shared/figures/fig_ncc_divergence.png \
 ALL_FIGS := $(MANUSCRIPT_FIGS) $(DATAPAPER_FIGS) $(MULTILAYER_FIGS) $(TECHREP_FIGS) $(NCC_FIGS)
 
 # ── Default target ────────────────────────────────────────
-.PHONY: all setup manuscript papers corpus-report technical-report data-paper multilayer-detection multilayer-techrep zoo figures figures-manuscript figures-datapaper figures-companion figures-techrep figures-ncc stats check check-package check-fast lint test-durations venv-canonicalize smoke benchmark determinism-check regression regression-update audit-pdf-content check-corpus check-manuscript-data data corpus corpus-sync corpus-discover corpus-enrich corpus-extend corpus-filter corpus-align corpus-filter-all corpus-tables corpus-validate deploy-corpus clean rebuild archive-analysis archive-manuscript archive-datapaper analysis-figures analysis-tables analysis-stats manuscript-render manuscript-figures datapaper-render datapaper-figures corpus-handoff
+.PHONY: all setup manuscript papers corpus-report technical-report data-paper multilayer-detection multilayer-techrep zoo figures figures-manuscript figures-datapaper figures-companion figures-techrep figures-ncc stats check check-package check-fast lint test-durations venv-canonicalize smoke benchmark determinism-check regression regression-update audit-pdf-content check-corpus check-manuscript-data data corpus corpus-sync corpus-discover corpus-enrich corpus-extend corpus-filter corpus-align corpus-filter-all corpus-tables corpus-validate deploy-corpus clean rebuild archive-analysis archive-manuscript archive-datapaper analysis-figures analysis-tables analysis-stats manuscript-render manuscript-figures datapaper-render datapaper-figures corpus-handoff deposit-descriptors deposit-validate
 
 .DEFAULT_GOAL := manuscript
 
@@ -689,6 +689,35 @@ archive-manuscript: $(MANUSCRIPT_FIGS) $(MANUSCRIPT_INCLUDES) deliverables/manus
 #   tar xzf archive.tar.gz && cd ... && uv sync && dvc repro
 archive-datapaper: check-corpus corpus-tables figures-datapaper
 	bash build/build_datapaper_archive.sh
+
+# ── Deposit descriptors + gate (ticket 0354) ──────────────
+# The deposited CSV is validated against its own published datapackage.json, so
+# every value-level claim the codebook makes (types, enumerations, ranges) is
+# checked on the *written bytes* — where an integer serialised as "2026.0" or a
+# quoting slip lives, invisible to any in-memory assertion.
+#
+# The descriptors describe the file as shipped, so they depend on the CSV, not
+# on the contract alone: an optional column absent from a build gets no field.
+# Staged under data/derived/ (regenerable, gitignored); the archive build emits
+# its own copies beside the data it ships.
+DEPOSIT_STAGE = data/derived/deposit
+DEPOSIT_CSV = $(DEPOSIT_STAGE)/climate_finance_corpus.csv
+DEPOSIT_PKG = $(DEPOSIT_STAGE)/datapackage.json
+DEPOSIT_CRO = $(DEPOSIT_STAGE)/croissant.json
+
+$(DEPOSIT_CSV): scripts/figures/export_deposit.py scripts/_deposit_variables.py $(EXTENDED)
+	$(PYTHON) $< --output $@
+
+$(DEPOSIT_PKG): scripts/figures/export_datapackage.py scripts/_deposit_schema.py scripts/_deposit_variables.py $(DEPOSIT_CSV)
+	$(PYTHON) $< --input $(DEPOSIT_CSV) --output $@
+
+$(DEPOSIT_CRO): scripts/figures/export_croissant.py scripts/_deposit_schema.py scripts/_deposit_variables.py $(DEPOSIT_CSV)
+	$(PYTHON) $< --input $(DEPOSIT_CSV) --output $@
+
+deposit-descriptors: $(DEPOSIT_PKG) $(DEPOSIT_CRO)
+
+deposit-validate: $(DEPOSIT_PKG)
+	$(UV_RUN) frictionless validate $(DEPOSIT_PKG)
 
 # Repair shared-env console-script shebangs (ticket 0158). uv only rewrites them
 # on an actual sync, so scripts that a removed worktree left behind keep its

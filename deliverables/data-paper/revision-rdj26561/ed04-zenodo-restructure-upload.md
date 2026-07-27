@@ -16,7 +16,11 @@ the latest version.
 1. Rebuild the archive at the merged commit:
    `make check-corpus corpus-tables figures-datapaper && bash build/build_datapaper_archive.sh`
    → `climate-finance-datapaper.tar.gz` (layout: `code/`, `data/inputs/`,
-   `data/products/`; codebook.md in `data/products/`).
+   `data/products/`; `codebook.md`, `datapackage.json` and `croissant.json`
+   in `data/products/`). The build validates the deposited CSV against its own
+   `datapackage.json` and aborts rather than package a file that contradicts
+   the schema it publishes (ticket 0354), so a successful build is also a
+   passed data check.
 2. Zenodo → record 19236130 → **New version**. Remove the old tarball, upload
    the new one.
 3. Replace the record description with the text below; keep title, authors,

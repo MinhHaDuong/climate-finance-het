@@ -20,18 +20,36 @@ import os
 import sys
 
 import pandas as pd
-from _deposit_variables import check_columns, transform
+from _deposit_variables import DEPOSIT_VARIABLES, check_columns, transform
 from script_io_args import parse_io_args, validate_io
 from utils import CATALOGS_DIR, get_logger
 
 log = get_logger("export_deposit")
 
 
+def coerce_integer_columns(df):
+    """Write contract integers as integers, not floats.
+
+    pandas widens an integer column to float64 as soon as one value goes
+    missing, so ``to_csv`` writes ``2026.0`` for a year the codebook publishes
+    as ``integer`` — a deposited file contradicting its own data dictionary,
+    and the first thing ``frictionless validate`` reports (ticket 0354). The
+    nullable ``Int64`` dtype keeps the gaps and drops the decimal.
+
+    A genuinely fractional value raises here rather than being truncated
+    silently: a year of 2026.4 is a pipeline bug, not something to round away.
+    """
+    for v in DEPOSIT_VARIABLES:
+        if v.dtype != "integer" or v.name not in df.columns:
+            continue
+        df[v.name] = pd.to_numeric(df[v.name], errors="coerce").astype("Int64")
+    return df
+
+
 def main():
     io_args, _extra = parse_io_args()
-    validate_io(output=io_args.output)
-
     os.makedirs(os.path.dirname(io_args.output), exist_ok=True)
+    validate_io(output=io_args.output)
 
     # --- Read extended_works.csv (has quality flags) ---
     extended_path = os.path.join(CATALOGS_DIR, "extended_works.csv")
@@ -42,6 +60,7 @@ def main():
 
     # --- Transform to the deposit column layout ---
     df = transform(df)
+    df = coerce_integer_columns(df)
 
     # --- Write ---
     out_path = io_args.output
