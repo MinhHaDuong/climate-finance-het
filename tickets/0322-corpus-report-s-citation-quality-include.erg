@@ -1,0 +1,79 @@
+%erg 0.1
+Title: corpus-report's citation-quality include still carries corpus-v1 audit numbers and a v1 verification date
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T09:52Z HDMX-coding-agent created
+2026-07-27T09:55Z HDMX-coding-agent note surfaced by the independent review of PR #1131 (ticket 0320), which flagged it as out-of-scope but real. Not on the RDJ resubmission path — corpus-report is not the submitted document — so this is deliberately NOT bundled into 0320.
+
+2026-07-27T10:13Z HDMX-coding-agent note independent review of #1129 surfaced a second hand-typed literal in the same document: corpus-report.qmd:67 states the corpus spans '47 languages' as a bare number (last touched 2026-04-22). It moves once 0297's langdetect backfill recovers ~1,500 language tags, and it rots by the same mechanism as the audit figures already in this ticket. Fold it into the same fix: whatever is decided on pinned-v1 vs live, this number follows it.
+--- body ---
+## Context
+
+`deliverables/_shared/_includes/citation-quality.md` is included by
+`corpus-report.qmd` (its only consumer). Its "Quality verification" section
+hand-types corpus-v1 figures:
+
+- "verification date: 2026-03-26"
+- "Confirmed by Crossref | 297 / 300"
+- "**Accuracy** | **99.0%**, 95% CI [97.1%, 99.7%]"
+- "The 3 unconfirmed links are OpenAlex additions ... These are not false
+  positives but references from an additional source."
+- Test B: "Crossref ref DOIs checked | 11,780"
+
+On the frozen v2 corpus `qa_citations_report.json` reports 291/300 = 97.0%,
+CI [94.4%, 98.4%], 9 unconfirmed, and 6,119 reference DOIs checked. So every
+number in that section is stale, and the "not false positives" gloss is the
+same unverifiable claim that was removed from the data paper in 0320.
+
+The document is internally inconsistent rather than simply old: its totals
+come from `{{< meta corpus_total >}}` (regenerated, v2 = 33,344) while these
+verification numbers are hand-typed v1. A reader gets v2 counts and v1 audit
+figures in one document.
+
+Deliberately out of 0320's scope: corpus-report is not the submitted paper
+and not on the resubmission path. Filed so it is not lost.
+
+## Relevant files
+
+- `deliverables/_shared/_includes/citation-quality.md` — the stale section
+- `deliverables/corpus-report/corpus-report.qmd` — sole consumer; also states
+  a 2026-03-26 snapshot date (see 0319)
+- `scripts/analysis/compute_citation_verification.py` — the producer built in
+  0320; the vars already exist, they are just scoped to the data paper
+- `deliverables/_shared/technical-report-vars.yml` — where corpus-report's
+  vars would have to land
+
+## Actions
+
+1. Decide first: is corpus-report a **v1 document** (then pin its snapshot
+   date and say so, per 0319's pinning approach) or a **live document** (then
+   every number in it must be vars-driven)? Do not fix the numbers before
+   answering this — half-migrating is how it reached the current state.
+2. If live: register the `verify_*` / `complete_*` vars for corpus-report's
+   vars file and replace the hand-typed table.
+3. Drop or re-verify the "not false positives" gloss; it describes 3 links
+   that are now 9, none of them individually checked.
+4. Extend `tests/test_citation_verification.py`'s literal guard to cover this
+   include, so the fix cannot silently regress.
+
+## Test
+
+- Red first: point the guard at `citation-quality.md` and watch it fail on
+  the current content.
+
+## Verification
+
+- [ ] No corpus statistic in the include is hand-typed, or the document is
+      explicitly pinned to v1 with its date
+
+## Invariants
+
+- The corpus stays frozen; this ticket reads existing artifacts.
+- No number moves in the data paper as a side effect (0320 owns that file).
+
+## Exit criteria
+
+- [ ] corpus-report is internally consistent: one corpus version throughout
+- [ ] The literal guard covers the include

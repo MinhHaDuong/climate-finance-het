@@ -342,3 +342,166 @@ class TestScriptStructure:
 
     def test_uses_enrich_cache(self):
         assert "enrich_cache" in self.source
+
+
+# ---------- Pass 2 must persist, not just mutate (ticket 0297) ----------
+
+
+class TestPass2Persistence:
+    """Pass 2's detections have to survive the process.
+
+    The bug this class exists for: pass2_local_detect mutated the in-memory
+    frame, main() never wrote that frame back (the script is cache-only, per
+    its own comment), and pass 2 wrote to no cache. So ~1,500 langdetect
+    results were recomputed and discarded on every run, and enriched_works.csv
+    kept 1,743 null languages (4.0%) against a <2% contract — of which 1,579
+    had a title and 1,306 had an abstract, i.e. exactly the population pass 2
+    is for.
+
+    The pre-existing TestPass2LocalDetect tests all passed throughout, because
+    they assert the in-memory mutation. These assert the persisted artifact.
+    """
+
+    def _one_english_row(self):
+        return pd.DataFrame({
+            "language": [None],
+            "title": ["Climate Finance"],
+            "abstract": ["Climate finance refers to local, national, or transnational "
+                         "financing that seeks to support mitigation and adaptation "
+                         "actions addressing climate change."],
+            "doi": ["10.1/a"],
+            "source_id": ["W1"],
+        })
+
+    def test_detections_are_recorded_in_the_cache(self):
+        from enrich_language import pass2_local_detect
+        cache = {}
+        df = self._one_english_row()
+        filled = pass2_local_detect(df, cache)
+        assert filled == 1
+        assert cache, "pass 2 detected a language but recorded it nowhere"
+        assert "en" in cache.values()
+
+    def test_cache_is_keyed_the_way_the_join_looks_it_up(self):
+        """enrich_join resolves by normalised DOI first, then source_id."""
+        from enrich_language import pass2_local_detect
+        cache = {}
+        pass2_local_detect(self._one_english_row(), cache)
+        assert cache.get("10.1/a") == "en"
+
+    def test_falls_back_to_source_id_when_no_doi(self):
+        from enrich_language import pass2_local_detect
+        cache = {}
+        df = self._one_english_row()
+        df.loc[0, "doi"] = None
+        pass2_local_detect(df, cache)
+        assert cache.get("W1") == "en"
+
+    def test_undetectable_rows_are_not_cached(self):
+        """A row langdetect cannot resolve must leave no cache entry, so the
+        join does not later fill it with an empty string."""
+        from enrich_language import pass2_local_detect
+        cache = {}
+        df = pd.DataFrame({
+            "language": [None], "title": [""], "abstract": [""],
+            "doi": ["10.1/z"], "source_id": ["W9"],
+        })
+        pass2_local_detect(df, cache)
+        assert cache == {}
+
+    def test_cache_argument_is_optional(self):
+        """The existing call sites and tests pass no cache."""
+        from enrich_language import pass2_local_detect
+        assert pass2_local_detect(self._one_english_row()) == 1
+
+
+class TestInvalidCodesAreReplaced:
+    """An invalid ISO 639-1 code is as bad as a missing one.
+
+    Pass 2 already re-detects rows whose language is a non-ISO code ('ua',
+    'sh' — 5 such rows in the current corpus). That correction hit the same
+    wall as the null backfill: enrich_join only filled rows it considered
+    *missing*, so a corrected code never reached the monolith and the deposit
+    kept shipping codes the codebook says are ISO 639-1.
+    """
+
+    def test_join_treats_an_invalid_code_as_missing(self, tmp_path):
+        import sys as _sys
+        _sys.path.insert(0, os.path.join(SCRIPTS_DIR, "harvest"))
+        from enrich_join import _apply_language_cache
+
+        cache_dir = tmp_path / "enrich_cache"
+        cache_dir.mkdir()
+        pd.DataFrame([{"key": "10.1/a", "language": "uk"}]).to_csv(
+            cache_dir / "language_detected.csv", index=False)
+
+        df = pd.DataFrame({
+            "language": ["ua"],       # not ISO 639-1
+            "doi": ["10.1/a"],
+            "source_id": ["W1"],
+        })
+        _apply_language_cache(df, str(cache_dir))
+        assert df.loc[0, "language"] == "uk"
+        assert df.loc[0, "language_provenance"] == "detected:langdetect"
+
+    def test_a_valid_code_is_left_alone(self, tmp_path):
+        import sys as _sys
+        _sys.path.insert(0, os.path.join(SCRIPTS_DIR, "harvest"))
+        from enrich_join import _apply_language_cache
+
+        cache_dir = tmp_path / "enrich_cache"
+        cache_dir.mkdir()
+        pd.DataFrame([{"key": "10.1/a", "language": "en"}]).to_csv(
+            cache_dir / "language_detected.csv", index=False)
+
+        df = pd.DataFrame({
+            "language": ["fr"], "doi": ["10.1/a"], "source_id": ["W1"],
+        })
+        _apply_language_cache(df, str(cache_dir))
+        assert df.loc[0, "language"] == "fr"
+        assert df.loc[0, "language_provenance"] == "source"
+
+    def test_a_row_neither_cache_knows_stays_null(self, tmp_path):
+        """No cache entry, no invention: the language stays null and the
+        provenance column says nothing rather than claiming a source."""
+        import sys as _sys
+        _sys.path.insert(0, os.path.join(SCRIPTS_DIR, "harvest"))
+        from enrich_join import _apply_language_cache
+
+        cache_dir = tmp_path / "enrich_cache"
+        cache_dir.mkdir()
+        pd.DataFrame([{"key": "10.1/other", "language": "en"}]).to_csv(
+            cache_dir / "language_resolved.csv", index=False)
+        pd.DataFrame([{"key": "10.1/elsewhere", "language": "fr"}]).to_csv(
+            cache_dir / "language_detected.csv", index=False)
+
+        df = pd.DataFrame({
+            "language": [None], "doi": ["10.1/a"], "source_id": ["W1"],
+        })
+        _apply_language_cache(df, str(cache_dir))
+        assert pd.isna(df.loc[0, "language"])
+        assert df.loc[0, "language_provenance"] == ""
+
+    def test_an_uncorrected_invalid_code_is_left_as_is(self, tmp_path):
+        """When neither cache can correct a non-ISO code, the join leaves it
+        untouched — it does not blank it, and it does not label it 'source'.
+        Documents the residual population the null-rate contract tolerates."""
+        import sys as _sys
+        _sys.path.insert(0, os.path.join(SCRIPTS_DIR, "harvest"))
+        from enrich_join import _apply_language_cache
+
+        cache_dir = tmp_path / "enrich_cache"
+        cache_dir.mkdir()
+        pd.DataFrame([{"key": "10.1/other", "language": "en"}]).to_csv(
+            cache_dir / "language_resolved.csv", index=False)
+        pd.DataFrame([{"key": "10.1/elsewhere", "language": "uk"}]).to_csv(
+            cache_dir / "language_detected.csv", index=False)
+
+        df = pd.DataFrame({
+            "language": ["ua"],       # not ISO 639-1
+            "doi": ["10.1/a"],
+            "source_id": ["W1"],
+        })
+        _apply_language_cache(df, str(cache_dir))
+        assert df.loc[0, "language"] == "ua"
+        assert df.loc[0, "language_provenance"] == ""

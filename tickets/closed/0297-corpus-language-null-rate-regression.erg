@@ -2,11 +2,13 @@
 Title: Corpus language null rate at 4.1% — acceptance test red for weeks
 Created: 2026-07-22
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1129
 
 --- log ---
 2026-07-22T16:40Z HDMX-coding-agent created author request during 0289 review (failure known for weeks, now tracked)
 2026-07-22T16:40Z HDMX-coding-agent note inherits cluster 2 from closed triage ticket 0263 — same 4.1% (1743/42916) on doudou AND padme, so a corpus property, not local staleness; after backfill on padme, finish with make corpus-sync on doudou
 
+2026-07-27T10:57Z HDMX-coding-agent closed — autoclosed — PR #1129
 --- body ---
 ## Context
 

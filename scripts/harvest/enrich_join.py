@@ -18,7 +18,7 @@ import os
 
 import pandas as pd
 from openalex_corpus.text import normalize_doi
-from pipeline_text import normalize_lang
+from pipeline_text import is_valid_iso639_1, normalize_lang
 from utils import CATALOGS_DIR, get_logger, save_csv
 
 log = get_logger("enrich_join")
@@ -148,25 +148,65 @@ def _apply_abstract_caches(df, cache_dir):
 
 
 def _apply_language_cache(df, cache_dir):
-    """Normalize language codes and fill missing from cache."""
-    df["language"] = df["language"].apply(normalize_lang)
-    lang_cache = _load_csv_cache(
-        os.path.join(cache_dir, "language_resolved.csv"), "key", "language")
+    """Normalize language codes and fill missing from the two language caches.
 
-    applied = 0
-    for idx in df.index:
-        if _is_missing(df.at[idx, "language"]):
-            doi = normalize_doi(df.at[idx, "doi"])
-            sid = str(df.at[idx, "source_id"])
-            lang = lang_cache.get(doi, "") if doi else ""
-            if not lang:
-                lang = lang_cache.get(sid, "")
-            if lang:
-                df.at[idx, "language"] = lang
-                applied += 1
-    log.info("Language cache: applied %d (cache has %d entries)",
-             applied, len(lang_cache))
-    return applied
+    Order matters: `language_resolved` holds values *sourced* from OpenAlex,
+    `language_detected` holds values *inferred* by langdetect from title and
+    abstract (ticket 0297). Sourced wins; inference only fills what is still
+    null afterwards, and every inferred value is disclosed in
+    `language_provenance` so a deposited language tag never hides how it was
+    obtained. Mirrors abstract_provenance / keywords_provenance.
+    """
+    df["language"] = df["language"].apply(normalize_lang)
+    resolved = _load_csv_cache(
+        os.path.join(cache_dir, "language_resolved.csv"), "key", "language")
+    detected = _load_csv_cache(
+        os.path.join(cache_dir, "language_detected.csv"), "key", "language")
+
+    def _needs_filling(val):
+        """Missing, or present but not a real ISO 639-1 code.
+
+        A code the codebook calls ISO 639-1 but that no standard recognises
+        ('ua', 'sh') is not usable data; pass 2 already re-detects those, and
+        treating them as present would discard the correction (ticket 0297).
+        """
+        return _is_missing(val) or not is_valid_iso639_1(val)
+
+    # One pass over the column answers both questions: the rows that do NOT
+    # need filling already carried a usable code from their source catalog,
+    # and the rest are exactly the loop's work list (a few thousand of ~28k).
+    needs_filling = df["language"].apply(_needs_filling).astype(bool)
+    provenance = pd.Series("", index=df.index, dtype=object)
+    provenance[~needs_filling] = "source"
+
+    def _lookup(cache, doi, sid):
+        lang = cache.get(doi, "") if doi else ""
+        return lang or cache.get(sid, "")
+
+    applied_resolved = applied_detected = 0
+    for idx in df.index[needs_filling.to_numpy()]:
+        doi = normalize_doi(df.at[idx, "doi"])
+        sid = str(df.at[idx, "source_id"])
+
+        lang = _lookup(resolved, doi, sid)
+        if lang:
+            df.at[idx, "language"] = lang
+            provenance.at[idx] = "openalex"
+            applied_resolved += 1
+            continue
+
+        lang = _lookup(detected, doi, sid)
+        if lang:
+            df.at[idx, "language"] = lang
+            provenance.at[idx] = "detected:langdetect"
+            applied_detected += 1
+
+    df["language_provenance"] = provenance
+    log.info(
+        "Language caches: applied %d sourced (%d entries) + %d detected (%d entries)",
+        applied_resolved, len(resolved), applied_detected, len(detected),
+    )
+    return applied_resolved + applied_detected
 
 
 def _apply_summaries(df, cache_dir):

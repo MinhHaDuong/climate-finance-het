@@ -17,8 +17,12 @@ import numpy as np
 import pandas as pd
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
-from sklearn.metrics import (adjusted_rand_score, normalized_mutual_info_score,
-                             silhouette_samples, silhouette_score)
+from sklearn.metrics import (
+    adjusted_rand_score,
+    normalized_mutual_info_score,
+    silhouette_samples,
+    silhouette_score,
+)
 
 sys.path.insert(0, "scripts")
 sys.path.insert(0, "libs/openalex-corpus/src")
@@ -36,9 +40,12 @@ def figure_communities(figure_name):
         reg = yaml.safe_load(f)
     return {int(cid): (reg["concepts"][k]["label"], reg["concepts"][k]["color"])
             for cid, k in reg["figures"].get(figure_name, {}).items()}
-from pipeline_loaders import (load_refined_citations, load_refined_embeddings,
-                              load_refined_works)
 from openalex_corpus.text import normalize_doi
+from pipeline_loaders import (
+    load_refined_citations,
+    load_refined_embeddings,
+    load_refined_works,
+)
 
 
 def main():

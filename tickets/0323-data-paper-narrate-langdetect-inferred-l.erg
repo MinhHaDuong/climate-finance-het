@@ -1,0 +1,75 @@
+%erg 0.1
+Title: Data paper: narrate langdetect-inferred language tags in prose, as abstract reconstruction already is
+Created: 2026-07-27
+Author: HDMX-coding-agent
+Blocked-by: 0297
+
+--- log ---
+2026-07-27T10:09Z HDMX-coding-agent created
+2026-07-27T10:12Z HDMX-coding-agent note child of 0274. Surfaced by the independent review of PR #1129, then sharpened: the reviewer read this as an inherited gap ("disclosure lives only in the codebook, consistent with prior practice"). It is not. data-paper.qmd:122 already narrates abstract reconstruction in prose. Language would be the ONE derived field with no prose narration, and that gap is created by 0297 rather than inherited.
+
+--- body ---
+## Context
+
+Ticket 0297 makes ~1,500 language tags langdetect inferences rather than
+catalog-sourced values. That is disclosed mechanically: `language_provenance`
+is declared in `scripts/_deposit_variables.py` and auto-renders into
+`codebook.md` via `export_codebook.py`, mirroring `abstract_provenance` and
+`keywords_provenance`.
+
+But the data paper's own convention is to narrate a derivation in prose as
+well, describing what was done rather than naming the column.
+`data-paper.qmd:122` does exactly this for abstracts:
+
+> "Abstracts are often missing: enrichment reconstructs them from OpenAlex
+> inverted indices and ISTEX fulltext, and residual absences trigger flag 2."
+
+There is no equivalent sentence for language. After 0297 lands and the corpus
+is rebuilt, a referee reading the prose narrative alone would not learn that a
+meaningful share of language tags are inferred from title and abstract rather
+than carried by the source catalog. In a data paper about data quality, whose
+referee already probed provenance (R1-13), that is worth one clause.
+
+This is not a general "narrate every column" request. Abstracts are narrated
+because their derivation changes what the field means; language now has the
+same property, and nothing else in the deposit contract does.
+
+## Relevant files
+
+- `deliverables/data-paper/data-paper.qmd` — §2.4 (the abstract-flaws
+  paragraph, line 122) is the precedent and the natural home
+- `scripts/analysis/compute_vars.py` — needs `lang_detected_n` /
+  `lang_detected_pct` so the clause is vars-driven, not hand-typed
+- `scripts/harvest/enrich_join.py` — `_apply_language_cache` already computes
+  the counts it applies; the artifact can come from there
+- `deliverables/_shared/tables/codebook.md` — where the column-level
+  disclosure already lands
+
+## Actions
+
+1. After the corpus rebuild, emit the inferred-language count and share as
+   vars (the number is meaningless before the rebuild — hence Blocked-by).
+2. Add one clause to §2.4 in the paper's existing voice, vars-driven.
+3. Check whether the response letter's R1-13 answer should mention it; the
+   referee asked about provenance and this strengthens rather than weakens
+   the answer.
+
+## Test
+
+- Extend the §2-§3 literal guard in `tests/test_citation_verification.py`
+  to cover the new numbers (it already forbids bare percentages there).
+
+## Verification
+
+- [ ] The share of inferred language tags appears in the prose, vars-driven
+- [ ] The clause survives a corpus rebuild without an edit
+
+## Invariants
+
+- No hand-typed corpus numbers in prose.
+- Do not overstate: langdetect on title+abstract is an inference with an
+  error rate, and the sentence should not imply the tags are authoritative.
+
+## Exit criteria
+
+- [ ] Language derivation narrated in prose, as abstract reconstruction is

@@ -849,80 +849,76 @@ class TestCitationQuality:
                 "Re-run: uv run python scripts/qa/qa_citations.py"
             )
 
-    def test_qa_report_has_verification(self):
-        """qa_citations_report.json has a verification section with precision/recall."""
+    def test_qa_report_has_the_blocks_the_paper_quotes(self):
+        """qa_citations.py emits `accuracy` and `completeness`.
+
+        This assertion used to look for a `verification` block carrying
+        mean_precision / mean_recall. The producer stopped emitting that shape,
+        so the check failed for a schema reason and told nobody anything about
+        link quality — while the two tests below silently SKIPPED on the same
+        missing key. Meanwhile the data paper kept quoting a hand-typed 99.0%
+        against a report that said 97.0% (ticket 0320). A guard that cannot
+        fail for the reason it exists is worse than no guard.
+        """
         if not os.path.isfile(QC_CITATIONS_REPORT_PATH):
             pytest.skip("qa_citations_report.json not found")
         import json
         with open(QC_CITATIONS_REPORT_PATH) as f:
             report = json.load(f)
 
-        assert "verification" in report, \
-            "Report missing 'verification' section" + _diagnosis(
-                "qa_citations.py report format changed",
-                "Re-run: uv run python scripts/qa/qa_citations.py "
-                "--output deliverables/_shared/tables/qa_citations_report.json",
-                "~3 min",
-                "Cannot verify citation link quality",
-            )
-        data = report["verification"]
-        assert "sample_n" in data, \
-            "verification missing sample_n" + _diagnosis(
-                "qa_citations.py report incomplete",
-                "Re-run: uv run python scripts/qa/qa_citations.py "
-                "--output deliverables/_shared/tables/qa_citations_report.json",
-                "~3 min",
-                "Cannot assess sample size",
-            )
-        assert "mean_precision" in data, \
-            "verification missing mean_precision" + _diagnosis(
-                "Precision not computed",
-                "Re-run qa_citations.py",
-                "~3 min",
-                "No accuracy metric reported",
-            )
-        assert "mean_recall" in data, \
-            "verification missing mean_recall" + _diagnosis(
-                "Recall not computed",
-                "Re-run qa_citations.py",
-                "~3 min",
-                    "No statistical uncertainty reported",
+        for block, fields in (
+            ("accuracy", ("sample_n", "confirmed", "not_confirmed",
+                          "proportion", "ci_lower", "ci_upper")),
+            ("completeness", ("sample_n", "captured", "missed",
+                              "proportion", "ci_lower", "ci_upper")),
+        ):
+            assert block in report, \
+                f"Report missing '{block}' block" + _diagnosis(
+                    "qa_citations.py report format changed",
+                    "Re-run: uv run python scripts/qa/qa_citations.py "
+                    "--output deliverables/_shared/tables/qa_citations_report.json",
+                    "~3 min",
+                    "Cannot verify citation link quality",
+                )
+            missing = [f for f in fields if f not in report[block]]
+            assert not missing, \
+                f"'{block}' missing {missing}" + _diagnosis(
+                    "qa_citations.py report incomplete",
+                    "Re-run qa_citations.py",
+                    "~3 min",
+                    "The data paper quotes these fields (R1-13)",
                 )
 
-    def test_citation_precision_high(self):
-        """Precision (our links confirmed by Crossref) should be >= 0.90."""
+    def test_citation_accuracy_high(self):
+        """Of the links we ship, the share Crossref confirms. >= 0.90."""
         if not os.path.isfile(QC_CITATIONS_REPORT_PATH):
             pytest.skip("qa_citations_report.json not found")
         import json
         with open(QC_CITATIONS_REPORT_PATH) as f:
             report = json.load(f)
-        if "verification" not in report:
-            pytest.skip("Report missing verification section")
 
-        precision = report["verification"].get("mean_precision")
-        assert precision is not None, "verification missing mean_precision"
-        assert precision >= 0.90, \
-            f"Precision = {precision:.3f} (expected >= 0.90)" + _diagnosis(
+        # No skip-on-missing-key: an absent block is a failure, not a pass.
+        # Skipping is what let the schema drift go unnoticed.
+        accuracy = report["accuracy"]["proportion"]
+        assert accuracy >= 0.90, \
+            f"Accuracy = {accuracy:.3f} (expected >= 0.90)" + _diagnosis(
                 "Many citation links not confirmed by Crossref",
-                "Investigate false links in report details",
+                "Investigate unconfirmed links in report accuracy.details",
                 "1-2 hours",
                 "Citation graph contains unverifiable edges",
             )
 
-    def test_citation_recall_high(self):
-        """Recall (Crossref refs we captured) should be >= 0.90."""
+    def test_citation_completeness_high(self):
+        """Of the reference DOIs Crossref holds, the share we captured. >= 0.90."""
         if not os.path.isfile(QC_CITATIONS_REPORT_PATH):
             pytest.skip("qa_citations_report.json not found")
         import json
         with open(QC_CITATIONS_REPORT_PATH) as f:
             report = json.load(f)
-        if "verification" not in report:
-            pytest.skip("Report missing verification section")
 
-        recall = report["verification"].get("mean_recall")
-        assert recall is not None, "verification missing mean_recall"
-        assert recall >= 0.90, \
-            f"Recall = {recall:.3f} (expected >= 0.90)" + _diagnosis(
+        completeness = report["completeness"]["proportion"]
+        assert completeness >= 0.90, \
+            f"Completeness = {completeness:.3f} (expected >= 0.90)" + _diagnosis(
                 "Many Crossref references missing from our data",
                 "Check merge_citations.py and enrichment pipeline",
                 "1-2 hours",

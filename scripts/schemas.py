@@ -56,6 +56,8 @@ RefinedWorksSchema = DataFrameSchema(
         "from_oecd": Column(str, nullable=True, required=False),
         "abstract_provenance": Column(str, nullable=True, required=False),
         "keywords_provenance": Column(str, nullable=True, required=False),
+        # Set by enrich_join from the two language caches (ticket 0297).
+        "language_provenance": Column(str, nullable=True, required=False),
         "source_count": Column(str, nullable=True),
         "abstract_status": Column(str, nullable=True),
         "near_duplicate_group": Column(str, nullable=True),
@@ -157,6 +159,42 @@ NullModelSchema = DataFrameSchema(
 # pre-2007 slice. Decides the interpretive regime for the separation test.
 
 Pre2007CoverageSchema = DataFrameSchema(
+    columns={
+        "metric": Column(str),
+        "value": Column(float, nullable=True),
+    },
+    strict=True,
+    coerce=True,
+)
+
+# ---------------------------------------------------------------------------
+# Citation-verification CSV (ticket 0320)
+# ---------------------------------------------------------------------------
+# Long format: the accuracy and completeness statistics the data paper's §2
+# quotes (RDJ-26561 R1-13), flattened from qa_citations_report.json so the
+# prose reads them as vars instead of carrying hand-typed literals that
+# outlive their corpus. Mirrors the Pre2007CoverageSchema metric/value idiom.
+
+CitationVerificationSchema = DataFrameSchema(
+    columns={
+        "metric": Column(str),
+        "value": Column(float, nullable=True),
+    },
+    strict=True,
+    coerce=True,
+)
+
+# ---------------------------------------------------------------------------
+# Periodised citation-coverage CSV (ticket 0317)
+# ---------------------------------------------------------------------------
+# Long format: one (metric, value) row per period statistic, feeding the data
+# paper's §4 coverage paragraph. Periods are positional (p1/p2/p3) with their
+# year bounds as values, so labels are reconstructable from a floats-only
+# table. Both denominators ship — all works and DOI-bearing works only — since
+# they disagree in direction and the prose must name the one it uses.
+# Mirrors the Pre2007CoverageSchema metric/value idiom.
+
+CitationCoveragePeriodsSchema = DataFrameSchema(
     columns={
         "metric": Column(str),
         "value": Column(float, nullable=True),

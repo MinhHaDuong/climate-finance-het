@@ -488,14 +488,18 @@ def run_flagging(df, args, config, citations_df, embeddings, emb_df, has_embeddi
         log.info("  Computing LLM relevance scores...")
         prior_flags = [c for c in FLAG_COLUMNS[:5] if c in df.columns]
         already_flagged = df[prior_flags].any(axis=1) if prior_flags else pd.Series(False, index=df.index)
+        # Seed from this run, not from the input (ticket 0314). llm_irrelevant
+        # round-trips through extended_works.csv, so an inherited column would
+        # satisfy the presence-only apply gate and let the summary report a
+        # count no scoring in this run produced. Unscored rows are False by
+        # definition: only candidates are scored, and a non-candidate is not
+        # irrelevant.
+        df["llm_irrelevant"] = False
         for i, (batch_idx, partial) in enumerate(flag_llm_irrelevant_streaming(
                 df, config, already_flagged=already_flagged), 1):
             df.loc[partial.index, "llm_irrelevant"] = partial
-        if "llm_irrelevant" in df.columns:
-            n_llm = df["llm_irrelevant"].fillna(False).sum()
-            log.info("  Flag 6 (LLM irrelevant): %d", n_llm)
-        else:
-            log.info("  Flag 6: no candidates scored")
+        n_llm = df["llm_irrelevant"].fillna(False).sum()
+        log.info("  Flag 6 (LLM irrelevant): %d", n_llm)
     else:
         log.info("  Flag 6: skipped (--skip-llm)")
 

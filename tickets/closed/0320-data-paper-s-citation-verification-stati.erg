@@ -1,0 +1,93 @@
+%erg 0.1
+Title: Data paper's citation-verification statistic is stale and now wrong (claims 99.0%, corpus v2 gives 97.0%)
+Created: 2026-07-27
+Author: HDMX-coding-agent
+Closed: autoclosed — PR #1131
+
+--- log ---
+2026-07-27T08:10Z HDMX-coding-agent created
+2026-07-27T08:16Z HDMX-coding-agent note child of 0274, blocks resubmission. Found while triaging a make check failure during 0317 — the failing acceptance test was checking a retired key name, so it could not see the real defect underneath.
+
+2026-07-27T08:45Z HDMX-coding-agent note author approved the plan 2026-07-27. Implemented on t0320-verification-vars: compute_citation_verification.py -> tab_citation_verification.csv (CitationVerificationSchema, whitelisted for archival), compute_vars.citation_verification_stats -> 12 vars scoped to DOC_VARS['data-paper'], paragraph rewritten macro-only. Inspected the 9 unconfirmed links before rewriting: all status=ok (the Crossref query succeeded), a mix of book chapters (Routledge, Cambridge/IPCC), a CHOICE review and ordinary journal articles — so the old 'not errors' gloss was not re-asserted; the new sentence states what the test measures and why absence from a Crossref reference deposit is weak evidence of error. Added the completeness result (98.3%, CI [98.0,98.6]), which was measured but never quoted. Stale guards fixed: test_qa_report_has_verification asserted a retired 'verification' key while test_citation_precision_high/recall_high SKIPPED on the same missing key — all three now assert the emitted accuracy/completeness schema and cannot skip past it.
+2026-07-27T09:53Z HDMX-coding-agent note REROLL from independent review of #1131 — the Action-4 sweep was not done and the reviewer found the same disproven 99.0% two paragraphs later in the same section (data-paper.qmd:124), plus the 'rather than errors' gloss I had just removed from the other sentence. Root cause: my negative guard was scoped to the one sentence I had already fixed, so it passed while the defect survived elsewhere. Fixed: line 124 vars-driven, both hand-typed 24% no-DOI shares replaced by a new corpus_no_doi_pct var, and the guard widened to the whole of sections 2-3 with an explicit allowlist (reranker calibration on a frozen sample, figure layout parameters). Mutation-tested on both previously-missed instances. Out of scope and filed separately: 0322 (corpus-report include) and a note on 0283 (the response letter and summary-of-revisions quote 99.0% to the editor).
+2026-07-27T10:55Z HDMX-coding-agent closed — autoclosed — PR #1131
+--- body ---
+## Context
+
+`deliverables/data-paper/data-paper.qmd` §2 states:
+
+> Citation graph verification on a sample of 300 links confirmed 99.0% against
+> Crossref metadata (95% CI [97.1%, 99.7%]); the 1% unconfirmed are
+> OpenAlex-sourced references absent from Crossref, not errors.
+
+Every number there is hand-typed and derived from corpus v1. The producing
+artifact, `deliverables/_shared/tables/qa_citations_report.json`, was
+regenerated on corpus v2 (generated 2026-07-24T15:39) and reports:
+
+- accuracy: 291/300 confirmed = **0.970**, 95% CI **[0.9440, 0.9841]**
+- not_confirmed: **9** (not 3), errors 0
+- completeness (unquoted in the paper): 6,016/6,119 = 0.983, CI [0.9796, 0.9861]
+
+So the paper claims a point estimate (99.0%) that falls **outside** the current
+interval's upper bound (98.4%), and describes "the 1% unconfirmed" where the
+measurement now says 3%. This is a factual error in a quality claim, in a data
+paper under revision, whose referee explicitly probed citation quality (R1-13).
+
+Found while triaging `tests/test_corpus_acceptance.py::TestCitationQuality::
+test_qa_report_has_verification`, which fails for a *different* reason: it
+asserts a `"verification"` key, but the report's schema is
+`{generated, seed, corpus, accuracy, completeness}`. The test has been
+guarding a format the producer no longer emits, so it could not catch this.
+
+## Relevant files
+
+- `deliverables/data-paper/data-paper.qmd` — the hand-typed claim (§2, the
+  paragraph beginning "As @tbl-quality shows")
+- `deliverables/_shared/tables/qa_citations_report.json` — the real numbers
+- `scripts/qa/qa_citations.py` — the producer
+- `scripts/analysis/compute_vars.py` — `citation_stats()` already reads this
+  report for `cite_total_dois` / `cite_crossref_rows`; the verification
+  numbers belong there too
+- `tests/test_corpus_acceptance.py::TestCitationQuality` — the stale guard
+
+## Actions
+
+1. Emit the verification statistics as vars from `citation_stats()`:
+   sample n, confirmed proportion, CI bounds, unconfirmed count/share.
+2. Rewrite the §2 sentence against those vars. The unconfirmed share is now
+   3%, so the "not errors" gloss needs re-checking against the 9 cases before
+   it is repeated — do not simply renumber the existing claim.
+3. Fix `test_qa_report_has_verification` to assert the schema the producer
+   actually emits (`accuracy` / `completeness`), so it guards the artifact
+   instead of a retired key name.
+4. Sweep §2 and §3 for other hand-typed corpus statistics — this one survived
+   a full corpus rebuild unnoticed, so it is unlikely to be alone. Known
+   suspects: the "24% of records lack DOIs" figure (appears twice, lines 128
+   and 140) and "the non-English layer counts 3,381 works" (line 110).
+
+## Test
+
+- Red first: a guard asserting that each verification number quoted in §2
+  equals its var, or that no bare percentage literal survives in that
+  paragraph. The point is that the next corpus rebuild moves the prose.
+
+## Verification
+
+- [ ] Every verification number in §2 traces to `qa_citations_report.json`
+      via a var
+- [ ] `make check` acceptance tier green on the current corpus
+- [ ] Rendered PDF quotes the frozen corpus's figure, not 99.0%
+
+## Invariants
+
+- No hand-typed corpus numbers in prose (project rule).
+- Corpus stays frozen (author decision 2026-07-27) — this ticket reads the
+  existing report, it does not trigger a rebuild.
+- The claim may only move in the direction the data moves; if 97.0% weakens
+  the paper's quality story, that is the author's call to frame, not a number
+  to round.
+
+## Exit criteria
+
+- [ ] §2's verification claim is vars-driven and matches corpus v2
+- [ ] The acceptance guard checks the emitted schema and would fail on drift

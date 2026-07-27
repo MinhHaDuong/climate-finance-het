@@ -1226,9 +1226,15 @@ class TestOutputFlag:
         ("figures/plot_fig1_bars.py", ["--input", f"{SMOKE}/refined_works.csv"], ".png"),
         ("figures/plot_fig_dag.py", [], ".png"),
         # Phase 2 exports
+        # Measures the metric; the export script below only renders it (0317).
+        (
+            "analysis/compute_citation_coverage.py",
+            ["--input", f"{SMOKE}/refined_works.csv", f"{SMOKE}/refined_citations.csv"],
+            ".csv",
+        ),
         (
             "figures/export_citation_coverage.py",
-            ["--input", f"{SMOKE}/refined_works.csv", f"{SMOKE}/refined_citations.csv"],
+            ["--input", f"{SMOKE}/tab_citation_coverage_periods.csv"],
             ".md",
         ),
         ("figures/export_language_table.py", ["--input", f"{SMOKE}/refined_works.csv"], ".md"),
