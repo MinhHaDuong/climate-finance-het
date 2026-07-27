@@ -26,6 +26,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "ana
 import compute_corpus_flow
 
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+MAKEFILE = os.path.join(REPO, "Makefile")
 FLOW_CSV = os.path.join(REPO, "deliverables", "_shared", "tables", "tab_corpus_flow.csv")
 FLOW_MD = os.path.join(REPO, "deliverables", "_shared", "tables", "tab_corpus_flow.md")
 
@@ -110,6 +111,38 @@ class TestBuildFlow:
         assert "{#tbl-flow}" in md
         assert "1,000" in md
         assert md.count("\n|") >= len(flow)
+
+
+class TestOutputPathContract:
+    """A grouped Make target (`a b &: …`) binds `$@` to whichever member make
+    was *asked* for. A recipe passing bare `$@` to a script that derives its
+    second output from the first therefore writes both files to the requested
+    member's path and leaves the other stale, while make records the whole
+    group as updated. `make …tab_corpus_flow.md` reproduced exactly that."""
+
+    def test_script_refuses_a_non_csv_output(self):
+        with pytest.raises(ValueError, match="csv"):
+            compute_corpus_flow.main("/tmp/tab_corpus_flow.md")
+
+    @pytest.mark.adherence
+    def test_grouped_recipes_name_their_output_explicitly(self):
+        """No `&:` rule whose members differ in extension may use bare `$@`."""
+        with open(MAKEFILE) as f:
+            lines = f.read().splitlines()
+
+        offenders = []
+        for i, line in enumerate(lines):
+            if "&:" not in line:
+                continue
+            members = line.split("&:")[0].split()
+            if len({os.path.splitext(m)[1] for m in members}) < 2:
+                continue
+            recipe = [ln for ln in lines[i + 1: i + 6] if ln.startswith("\t")]
+            if any("$@" in ln for ln in recipe):
+                offenders.append(members[0])
+        assert not offenders, (
+            f"grouped targets with mixed extensions using bare $@: {offenders}"
+        )
 
 
 # ── Generated artifact (slow tier — needs the built table) ───

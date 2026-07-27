@@ -312,7 +312,9 @@ def corpus_stats(v):
     if os.path.isfile(unified_path):
         unified_n = len(pd.read_csv(unified_path, usecols=["source"]))
         v["corpus_raw"] = _int(unified_n)
-        v["corpus_removal_pct"] = _pct(100 * (unified_n - n) / unified_n)
+        # No corpus_removal_pct: the removal rate is read off tab_corpus_flow
+        # stage by stage now (ticket 0327), and a single aggregate percentage
+        # was what let the two gaps hide.
 
 
 def filter_stats(v):

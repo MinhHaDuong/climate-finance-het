@@ -23,8 +23,9 @@ import json
 import os
 
 import pandas as pd
+from schemas import CorpusFlowSchema
 from script_io_args import parse_io_args, validate_io
-from utils import BASE_DIR, CATALOGS_DIR, get_logger, save_csv
+from utils import CATALOGS_DIR, get_logger, save_csv
 
 log = get_logger("compute_corpus_flow")
 
@@ -131,11 +132,21 @@ def latest_merge_report(catalogs_dir: str = CATALOGS_DIR) -> dict:
 
 
 def main(output_csv: str) -> None:
+    # The .md path is derived from --output, so a caller that passes the .md
+    # (a bare $@ under the grouped Make target) would write the CSV to the .md
+    # path and never touch the tracked CSV. Refuse instead of half-building.
+    if not output_csv.endswith(".csv"):
+        raise ValueError(
+            f"--output must name the .csv member, got {output_csv!r}; "
+            "the .md is derived from it"
+        )
+
     audit_path = os.path.join(CATALOGS_DIR, "corpus_audit.csv")
     audit = pd.read_csv(audit_path, usecols=["action"])
     log.info("Loaded %d audit rows from %s", len(audit), audit_path)
 
     flow = build_flow(latest_merge_report(), audit_buckets(audit))
+    CorpusFlowSchema.validate(flow)
     save_csv(flow, output_csv)
 
     md_path = os.path.splitext(output_csv)[0] + ".md"
@@ -147,6 +158,4 @@ def main(output_csv: str) -> None:
 if __name__ == "__main__":
     io_args, _extra = parse_io_args()
     validate_io(output=io_args.output)
-    main(io_args.output or os.path.join(
-        BASE_DIR, "deliverables", "_shared", "tables", "tab_corpus_flow.csv"
-    ))
+    main(io_args.output)

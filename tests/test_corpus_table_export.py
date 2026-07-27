@@ -125,12 +125,28 @@ class TestTotalRowIsTheDeduplicatedUnion:
         from export_corpus_table import build_caption
 
         caption = build_caption(
-            raw_multi=748, raw_extra=773, refined_multi=738, refined_extra=763,
-            triple_plus=25,
+            raw_multi=748, raw_extra=773, raw_triple=25,
+            refined_multi=738, refined_extra=763, refined_triple=24,
         )
-        for token in ("748", "773", "738", "763", "25"):
+        for token in ("748", "773", "738", "763", "25", "24"):
             assert token in caption, token
         assert "{#tbl-quality}" in caption
+
+    def test_caption_counts_triples_per_column(self):
+        """Each column's triple-provenance count is its own measurement — one
+        figure standing for both populations would be an unmeasured claim."""
+        from export_corpus_table import build_caption, membership_overlap
+
+        frame = pd.DataFrame(
+            {"from_a": [1, 1, 1], "from_b": [0, 1, 1], "from_c": [0, 0, 1]}
+        )
+        assert membership_overlap(frame, ["from_a", "from_b", "from_c"]) == (2, 3, 1)
+
+        caption = build_caption(
+            raw_multi=9, raw_extra=9, raw_triple=1,
+            refined_multi=8, refined_extra=8, refined_triple=7,
+        )
+        assert "1 and 7 of them carry three" in caption
 
 
 def test_source_meta_matches_source_names():

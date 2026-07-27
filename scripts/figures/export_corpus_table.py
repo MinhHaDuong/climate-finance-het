@@ -78,18 +78,20 @@ def sources_present(unified_cols, refined_cols) -> list[str]:
 def build_caption(
     raw_multi: int,
     raw_extra: int,
+    raw_triple: int,
     refined_multi: int,
     refined_extra: int,
-    triple_plus: int,
+    refined_triple: int,
 ) -> str:
     """Caption reporting the union/sum discrepancy in both count columns.
 
     The source rows count provenance *memberships*, the TOTAL row counts
     distinct works, so the columns sum above their total. Ticket 0327: the
     submitted table left that unstated, and the refined column's 763 extra
-    memberships did not match the 738 multi-source works quoted in §2.2 —
-    the {triple_plus} works carrying three provenances explain the difference.
-    Every number here is measured, so the caption cannot drift from the table.
+    memberships did not match the 738 multi-source works quoted in section 2.2.
+    The works carrying three provenances close that gap, and each column gets
+    its own count rather than one figure standing for both populations. Every
+    number is measured, so the caption cannot drift from the table.
     """
     return (
         ": Corpus sources. *Raw*: records with `from_*` provenance flag before"
@@ -100,7 +102,7 @@ def build_caption(
         f" sum: {raw_multi:,} raw records and {refined_multi:,} refined works"
         " carry more than one provenance flag, which puts the source rows"
         f" {raw_extra:,} and {refined_extra:,} memberships above their totals"
-        f" ({triple_plus:,} works carry three)."
+        f" ({raw_triple:,} and {refined_triple:,} of them carry three)."
         " *%non-EN*: share of non-English works."
         " *%DOI*, *%Abstract*, *%Refs*: metadata completeness among refined"
         " records. {#tbl-quality}"
@@ -141,6 +143,15 @@ def _write_md_table(summary: pd.DataFrame, path: str, caption: str) -> None:
 
 
 def main():
+    # The .md path is derived from --output, so being handed the .md (a bare
+    # $@ under the grouped Make target) would write the CSV to the .md path and
+    # leave the tracked CSV stale. Refuse instead of half-building.
+    if not _output_csv.endswith(".csv"):
+        raise ValueError(
+            f"--output must name the .csv member, got {_output_csv!r}; "
+            "the .md is derived from it"
+        )
+
     # Load refined corpus (after filtering). load_refined_works() coerces
     # year to numeric and cited_by_count to numeric-filled-0 — the same
     # coercion this script did inline before the loader migration.
@@ -237,9 +248,10 @@ def main():
     caption = build_caption(
         raw_multi=raw_multi,
         raw_extra=raw_extra,
+        raw_triple=raw_triple,
         refined_multi=ref_multi,
         refined_extra=ref_extra,
-        triple_plus=max(raw_triple, ref_triple),
+        refined_triple=ref_triple,
     )
 
     # Save markdown table (included by data-paper.qmd and _includes/tab_corpus_sources.md)

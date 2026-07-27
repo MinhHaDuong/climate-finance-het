@@ -272,16 +272,24 @@ deliverables/_shared/tables/tab_dedup_error_estimates.csv: scripts/analysis/comp
 deliverables/_shared/tables/tab_venues.md: scripts/figures/export_tab_venues.py scripts/utils.py $(REFINED) $(DERIVED)/tab_pole_papers.csv
 	$(PYTHON) $< --output $@ --pole-papers $(DERIVED)/tab_pole_papers.csv
 
+# --output names the .csv, not $@ — see the tab_corpus_flow rule below for why
+# a bare $@ under a grouped target writes both members to one path.
 deliverables/_shared/tables/tab_corpus_sources.csv deliverables/_shared/tables/tab_corpus_sources.md &: scripts/figures/export_corpus_table.py scripts/utils.py $(REFINED)
-	$(PYTHON) $< --output $@
+	$(PYTHON) $< --output deliverables/_shared/tables/tab_corpus_sources.csv
 
 # Corpus construction ledger (ticket 0327). Reads corpus_audit.csv and the
 # latest catalog_merge run report — both Phase-1 artifacts under $(DATA_DIR),
 # wildcarded like the compute_vars prerequisites so a Phase-2 build never
 # triggers Phase 1.
+#
+# --output names the .csv explicitly, never $@: under a grouped target $@ binds
+# to whichever member make was asked for, so `make …tab_corpus_flow.md` would
+# hand the script the .md path and leave the tracked .csv untouched while make
+# marked the whole group updated.
 deliverables/_shared/tables/tab_corpus_flow.csv deliverables/_shared/tables/tab_corpus_flow.md &: scripts/analysis/compute_corpus_flow.py scripts/utils.py \
-		$(wildcard $(DATA_DIR)/corpus_audit.csv)
-	$(PYTHON) $< --output $@
+		$(wildcard $(DATA_DIR)/corpus_audit.csv) \
+		$(wildcard $(DATA_DIR)/run_reports/catalog_merge__*.json)
+	$(PYTHON) $< --output deliverables/_shared/tables/tab_corpus_flow.csv
 
 deliverables/_shared/tables/tab_languages.md: scripts/figures/export_language_table.py scripts/utils.py $(REFINED)
 	$(PYTHON) $< --input $(REFINED) --output $@
