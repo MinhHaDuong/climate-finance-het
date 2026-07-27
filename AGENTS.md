@@ -46,6 +46,8 @@ Autonomous execution using test-driven development. The inner cycle is:
 
 Use `make check-fast` during development, `make check` before opening a PR. Makefile truth: prerequisites and targets must match each script's actual file reads and writes.
 
+**There is no CI.** This repo has no `.github/workflows/`, by decision (ticket 0321, 2026-07-27). Nothing runs the suite on push or on a pull request: `make check` is a purely local gate, and a green main is only ever whatever the last session verified on its own machine. Two consequences. Run `make check` yourself before opening a PR — no forge job will do it for you. And never read a merged PR as proof that main is green: when a full `make check` surfaces failures your branch did not cause, they belong to main, and they get their own ticket.
+
 ### Verify
 Gate each PR before merging via `/verify <pr-number>`. The skill runs the full loop:
 

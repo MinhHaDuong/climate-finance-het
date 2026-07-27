@@ -6,6 +6,8 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-27T08:10Z HDMX-coding-agent created
 2026-07-27T08:17Z HDMX-coding-agent note surfaced by a full `make check` on branch t0317-temporal-coverage; both failures are in files that branch does not touch. This repo has no CI workflows, so `make check` is a purely local gate and main's redness went unseen.
+2026-07-27T11:50Z HDMX-coding-agent note actions 1-2 landed via PR #1128 and PR #1130, both merged with a non-closing Ticket-ref because action 3 was still open. Verified on main b91b7446: ruff clean, test_script_classification 2 passed.
+2026-07-27T11:50Z HDMX-coding-agent note author arbitrated action 3: no CI, the local-only gate is deliberate. Recorded in AGENTS.md and in the Decision section.
 
 --- body ---
 ## Context
@@ -66,7 +68,19 @@ the file in `RECLASSIFIED_DUAL_ROLE` and `docs/repo-layout.md`.
 - `conception/` is exploration code, but it is still linted — the fix is a
   scoped per-file ignore with a reason, not removing it from ruff's reach.
 
+## Decision — no CI (author, 2026-07-27)
+
+The local-only gate is deliberate. This repo will not grow a
+`.github/workflows/`; `make check` before a PR stays the whole gate, run by
+whoever opens the PR. Recorded in `AGENTS.md` beside the existing
+`make check-fast` / `make check` instruction, with the two consequences a
+session needs to act on: nobody else runs the suite for you, and a merged PR
+is no evidence that main is green.
+
 ## Exit criteria
 
-- [ ] ruff clean and the dual-role import resolved
-- [ ] An explicit decision recorded on CI vs local-only gating
+- [x] ruff clean and the dual-role import resolved
+      (PR #1128 ruff; PR #1130 extracted the TF-IDF label vocabulary out of
+      the Tier-3 entry point — extraction, not an allowlist widening)
+- [x] An explicit decision recorded on CI vs local-only gating
+      (author 2026-07-27: no CI; see the Decision section and `AGENTS.md`)
