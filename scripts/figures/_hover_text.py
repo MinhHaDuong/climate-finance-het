@@ -6,6 +6,9 @@ bibliographic text, so it is escaped first — an `&` in a journal name
 ("Energy Research & Social Science") or a `<` in a title would otherwise
 corrupt the box. Same convention, same `html_mod` alias, as the sibling
 HTML figure scripts `plot_genealogy_html.py` and `plot_alluvial_html.py`.
+`_esc` is also imported directly by `plot_interactive_corpus.py` for the one
+non-hover-box sink, the Plotly legend trace name, so the escaping rule lives
+in one place rather than being re-implemented at each call site.
 
 `quote=False` is load-bearing, and is where this module must NOT follow the
 siblings. They emit SVG/HTML for the browser's own parser, which knows the

@@ -17,7 +17,6 @@ Usage:
 """
 
 import argparse
-import html as html_mod
 import json
 import os
 import re
@@ -25,7 +24,7 @@ import re
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
-from _hover_text import build_hover_text
+from _hover_text import _esc, build_hover_text
 from utils import (
     BASE_DIR,
     CATALOGS_DIR,
@@ -251,9 +250,9 @@ for cid in cluster_ids:
             line=dict(width=0.5, color="white"),
         ),
         # Plotly renders the trace name as markup; the label is free text
-        # from the generated cluster_labels.json, so escape it at the sink.
-        # quote=False for the same reason as the hover text — see _hover_text.
-        name=f"C{cid}: {html_mod.escape(str(label), quote=False)}",
+        # from the generated cluster_labels.json, so escape it at the sink,
+        # reusing the same escaping convention as the hover text (_hover_text).
+        name=f"C{cid}: {_esc(label)}",
         text=hover_texts,
         hoverinfo="text",
         customdata=subset["doi_url"].values,
