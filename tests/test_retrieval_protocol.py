@@ -380,6 +380,41 @@ def test_caption_declares_which_cells_are_config_derived():
     )
 
 
+def test_caption_does_not_credit_config_for_hand_typed_languages():
+    """The Languages column is config-derived for three rows, not five.
+
+    OpenAlex reads its term-language tags and the two key-document layers read
+    their seed entries; the ISTEX and grey-literature cells are literals in the
+    export script. A caption crediting all five configured sources to the
+    deposited configuration sells a referee a provenance two rows lack — the
+    same drift this artifact exists to prevent.
+    """
+    import export_retrieval_protocol as mod
+
+    with open(mod.__file__, encoding="utf-8") as fh:
+        source = fh.read()
+    rows = {r["Source"]: r for r in mod.build_protocol_rows()}
+    hand_typed = ("ISTEX", "Grey literature")
+    for name in hand_typed:
+        assert f'"Languages": "{rows[name]["Languages"]}"' in source, (
+            f"{name} languages are no longer a hand-typed literal — the "
+            "caption's disclosure must be revisited"
+        )
+
+    caption = mod.CAPTION.lower()
+    marker = "language coverage is config-derived only for"
+    assert marker in caption, (
+        "the caption must scope the Languages column's config provenance to "
+        "the rows that have it"
+    )
+    disclosure = caption[caption.index(marker) :]
+    for token in ("istex", "grey", "asserted"):
+        assert token in disclosure, (
+            f"the caption must disclose that {token!r} languages are asserted, "
+            "not read from config"
+        )
+
+
 def test_protocol_openalex_row_reports_the_query_field():
     """The reviewers asked which fields the query searched."""
     from export_retrieval_protocol import build_protocol_rows
