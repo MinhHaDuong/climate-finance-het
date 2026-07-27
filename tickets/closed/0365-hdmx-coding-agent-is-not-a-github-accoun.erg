@@ -2,11 +2,13 @@
 Title: HDMX-coding-agent is not a GitHub account: decide whether to provision one
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: decided and implemented: one account, procedural gate; prompt hook deleted
 
 --- log ---
 2026-07-27T15:45Z HDMX-coding-agent created
 
 2026-07-27T17:42Z decision recorded: one account, fine-grained PAT (0371), gate repaired as procedural
+2026-07-27T19:48Z HDMX-coding-agent closed — decided and implemented: one account, procedural gate; prompt hook deleted
 --- body ---
 ## Context
 
