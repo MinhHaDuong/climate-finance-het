@@ -15,11 +15,8 @@ import warnings
 
 import numpy as np
 import pandas as pd
-from pipeline_loaders import (
-    load_latest_run_report,
-    load_refined_citations,
-    load_refined_works,
-)
+from pipeline_io import latest_run_report
+from pipeline_loaders import load_refined_citations, load_refined_works
 from script_io_args import parse_io_args, validate_io
 from utils import (
     BASE_DIR,
@@ -366,7 +363,7 @@ def dedup_stats(v):
     error estimates from tab_dedup_error_estimates.csv (ticket 0301).
     Both are pipeline artifacts — no hand-curated numbers.
     """
-    rep = load_latest_run_report("catalog_merge", CATALOGS_DIR)
+    rep = latest_run_report("catalog_merge", CATALOGS_DIR)
     if rep is not None:
         v["dedup_doi_removed"] = _int(rep["doi_duplicates_removed"])
         v["dedup_titleyear_removed"] = _int(rep["title_year_duplicates_removed"])

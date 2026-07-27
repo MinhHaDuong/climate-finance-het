@@ -1,0 +1,90 @@
+%erg 0.1
+Title: HDMX-coding-agent is not a GitHub account: decide whether to provision one
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T15:45Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+`HDMX-coding-agent` is a git author name, not a GitHub account.
+`gh api users/HDMX-coding-agent` returns 404. `AGENT_GH_TOKEN` authenticates as
+**MinhHaDuong** with scopes `gist, read:org, repo, workflow` — the repository
+owner's own token, not a scoped machine PAT.
+
+Found while verifying ticket 0343's exit criterion that agent git operations
+still authenticate. They do: the token is byte-identical before and after that
+migration, so nothing here was caused by it. What 0343 did was make the claim
+checkable, and it turned out false in three places, now corrected:
+`.claude/rules/git.md`, `docs/data-management-plan.md`, and the
+`agentic-workflow.md` include.
+
+Two consequences remain, and both need a decision rather than an edit.
+
+**The merge gate rests on self-review.** `.claude/hooks/check-reviews.sh` counts
+reviews whose author is in `AGENT_LOGINS="HDMX-coding-agent MinhHaDuong"`. The
+first never matches anything, so the gate is satisfied by the PR author
+reviewing their own PR. The file already recorded accepting `MinhHaDuong` as a
+deliberate trade ("enables web-agent merges at the cost of permitting
+self-review"); what was not known is that the other half is inert, so the cost is
+paid unconditionally rather than as a fallback.
+
+**The data-management plan describes an access-control property the project does
+not have.** The DMP is a paper-facing deliverable; a reviewer reading "scoped
+GitHub PAT for CI/automation only" would infer a separation of privilege that
+does not exist. The prose is now accurate, but accuracy was achieved by removing
+the claim, not by making it true.
+
+## The decision
+
+Three options, in increasing cost:
+
+1. **Accept and document.** The agent is the author's hands; one identity is
+   honest. Drop the dead entry from `AGENT_LOGINS` and state plainly in the DMP
+   that agent and human share forge credentials. Cheapest, and defensible for a
+   single-author project.
+2. **Provision a real machine account** with a fine-grained PAT scoped to this
+   repository. Restores the separation the docs used to claim, makes the review
+   gate meaningful, and limits blast radius if the token leaks — which is the
+   scenario ticket 0343 exists to bound.
+3. **Keep one account, fix only the gate** — require a human review that is not
+   the PR author, independent of identity. Addresses self-review without
+   provisioning anything.
+
+MOA call: option 2 buys real privilege separation at the cost of account
+management; option 1 is honest but leaves the gate ornamental.
+
+## Relevant files
+
+- `.claude/hooks/check-reviews.sh` — `AGENT_LOGINS`, and the comment that now
+  records the dead entry
+- `docs/data-management-plan.md` § 3.2 — access management
+- `.claude/rules/git.md` — agent identity
+- `AGENTS.md` § Credentials — where a machine token would be selected via `KEYS=`
+
+## Actions
+
+1. Author decides between the three options above.
+2. Implement the chosen one, including the DMP wording.
+3. If option 2: add the machine token to `~/.config/keys/github.env` under its own
+   name and select it via `KEYS=` with the rename form, so the two identities
+   never collide under one variable.
+
+## Verification
+
+- [ ] `check-reviews.sh` contains no login that cannot match a review author
+- [ ] The DMP's § 3.2 claim is verifiable against the live configuration
+- [ ] If a machine account exists, `gh api user` under its token returns it
+
+## Invariants
+
+- No credential value in any committed file, test output, or PR description.
+- Whatever is decided, docs must describe what is true, not what is intended.
+
+## Exit criteria
+
+The project's forge identity is decided and documented, every doc describing it
+is verifiable, and the review gate either counts a review the author cannot
+supply alone or is honestly described as not doing so.

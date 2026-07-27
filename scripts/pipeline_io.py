@@ -139,7 +139,57 @@ def save_csv(df: pd.DataFrame, path: str) -> None:
 # Run reports
 # ---------------------------------------------------------------------------
 
-def save_run_report(data: dict[str, Any], run_id: str, script_name: str) -> str:
+RUN_ID_TIMESTAMP = re.compile(r"^\d{8}T\d{6}Z$")
+
+
+def latest_run_report(script_name: str,
+                      catalogs_dir: str | None = None) -> dict[str, Any] | None:
+    """Return the newest run report for ``script_name``, or None if there is none.
+
+    Two rules, both there to stop a stray file becoming a published number
+    (ticket 0349):
+
+    - The stable ``<script>.json`` wins when present. That is the file a DVC
+      stage can declare as an output; the timestamped siblings are run history.
+    - Otherwise only timestamped run ids are considered, ranked by timestamp.
+      The previous `sorted(glob(...))[-1]` ranked lexicographically, so
+      ``catalog_merge__test.json`` outranked every ``catalog_merge__2026…``
+      report — and fixtures with exactly that shape leak into the real corpus
+      directory (ticket 0346).
+
+    ``catalogs_dir`` is injectable on purpose. Reading the module global at call
+    time is what makes ``save_run_report`` untestable — a caller patching its
+    own ``CATALOGS_DIR`` cannot redirect it, which is the root cause behind
+    ticket 0346. Callers pass the directory they already resolved.
+    """
+    if catalogs_dir is None:
+        from pipeline_loaders import CATALOGS_DIR  # avoid circular import
+        catalogs_dir = CATALOGS_DIR
+
+    reports_dir = os.path.join(catalogs_dir, "run_reports")
+    stable = os.path.join(reports_dir, f"{script_name}.json")
+    if os.path.isfile(stable):
+        with open(stable) as f:
+            report: dict[str, Any] = json.load(f)
+        return report
+
+    prefix = f"{script_name}__"
+    dated = []
+    for name in os.listdir(reports_dir) if os.path.isdir(reports_dir) else []:
+        if not (name.startswith(prefix) and name.endswith(".json")):
+            continue
+        run_id = name[len(prefix):-len(".json")]
+        if RUN_ID_TIMESTAMP.match(run_id):
+            dated.append((run_id, os.path.join(reports_dir, name)))
+    if not dated:
+        return None
+    with open(max(dated)[1]) as f:
+        newest: dict[str, Any] = json.load(f)
+    return newest
+
+
+def save_run_report(data: dict[str, Any], run_id: str, script_name: str,
+                    stable_copy: bool = False) -> str:
     """Persist a structured run-summary dict as JSON in catalogs/run_reports/.
 
     Parameters
@@ -150,10 +200,14 @@ def save_run_report(data: dict[str, Any], run_id: str, script_name: str) -> str:
         Unique run identifier (e.g. timestamp or ``--run-id`` value).
     script_name : str
         Short script name used as filename prefix.
+    stable_copy : bool
+        Also write ``<script_name>.json``, overwritten each run. Set this when a
+        DVC stage needs a fixed path to declare as an output — a timestamped
+        filename cannot be one (ticket 0349).
 
     Returns
     -------
-    Path to the saved JSON file (str).
+    Path to the saved timestamped JSON file (str).
 
     """
     from pipeline_loaders import CATALOGS_DIR  # avoid circular import
@@ -166,6 +220,9 @@ def save_run_report(data: dict[str, Any], run_id: str, script_name: str) -> str:
     payload = {"script": script_name, "run_id": run_id, **data}
     with open(path, "w") as f:
         json.dump(payload, f, indent=2, default=str)
+    if stable_copy:
+        with open(os.path.join(reports_dir, f"{script_name}.json"), "w") as f:
+            json.dump(payload, f, indent=2, default=str)
     return path
 
 

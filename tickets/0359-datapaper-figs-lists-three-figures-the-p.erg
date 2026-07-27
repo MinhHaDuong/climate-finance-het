@@ -1,0 +1,132 @@
+%erg 0.1
+Title: The build graph produces 22 artifacts no document renders
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T16:45Z HDMX-coding-agent created
+2026-07-27T16:45Z HDMX-coding-agent note found while verifying 0328's cluster labels. One of the three orphans was created today by 0332's §4 cut; the other two predate it.
+
+2026-07-27T17:40Z HDMX-coding-agent note widened after a roar reachability sweep: this is not three figures in one variable, it is 17 includes, 2 tables and 5 figures across the whole build graph. Retitled. The sweep also found the trap the guard must avoid — see Test.
+--- body ---
+## Context
+
+`paths.mk`'s `DATAPAPER_FIGS` names five figures. The data paper renders two.
+
+| Figure | In `data-paper.qmd`? | Displayed where |
+|---|---|---|
+| `fig_bars.png` | yes | data paper |
+| `fig_global_map_direct.png` | yes | data paper |
+| `fig_dag.png` | no | `corpus-report.qmd` — misfiled, not orphaned |
+| `fig_global_map_cocitation.png` | no | nowhere — but deliberate |
+| `fig_sem_composition.png` | no | nowhere — orphaned today by 0332 |
+
+The three cases are different and want different answers:
+
+- **`fig_dag`** is a corpus-report figure sitting in the data paper's list.
+  There is no `CORPUSREPORT_FIGS` variable, which is why it landed here. The
+  variable name is the lie, not the build.
+- **`fig_global_map_cocitation`** is built on purpose and embedded nowhere —
+  `tests/test_global_map.py:175` pins that with `assert
+  "fig_global_map_cocitation" not in text  # companion, not embedded`. Leave
+  it; just say so where a reader of `paths.mk` will see it.
+- **`fig_sem_composition`** lost its only consumer when 0332 cut §4's
+  semantic-cluster paragraph. `make figures-datapaper` still builds it, the
+  backing table `tab_sem_composition.csv` is still committed, and
+  `compute_clusters.py` still runs for it. Nothing renders it.
+
+Not urgent — nothing is broken, and `make` is merely doing work no document
+consumes. It matters because `paths.mk` is where a reader goes to learn which
+figures a deliverable needs, and right now it answers wrong for three of five.
+
+## Relevant files
+
+- `paths.mk` — `DATAPAPER_FIGS` (line ~106) and the other `*_FIGS` variables
+- `Makefile` — `ALL_FIGS` (line ~146), `figures-datapaper` (line ~628)
+- `scripts/analysis/lit-confirmations.mk` — `SEM_COMPO_FIG`, `SEM_COMPO_TAB`
+- `tests/test_global_map.py` — pins the cocitation map as built-not-embedded
+- `deliverables/corpus-report/corpus-report.qmd` — the real consumer of `fig_dag`
+
+## Sweep result (2026-07-27): 22 unrendered artifacts, not three
+
+Resolved the include graph transitively from all 11 deliverable `.qmd` roots.
+`make` builds these; no document renders them:
+
+**Includes (17)** — all flat `_shared/_includes/*.md`, none reached from any
+root: `agentic-workflow`, `alluvial-diagram`, `bibliometric-context`,
+`bimodality-analysis`, `changepoint-analysis`, `citation-genealogy`,
+`clustering-comparison`, `cop-topic-structure`, `core-vs-full-analysis`,
+`core-vs-full`, `embedding-generation`, `pca-scatter`, `prior-mappings`,
+`structural-breaks`, `tab2_poles`, `tab_traditions`, `temporal-structure`.
+The `_includes/techrep/` and `_includes/zoo/` subtrees are all reached — the
+dead set is exactly the flat layer, which is the shape of a leftover from the
+deliverables reorg (0226/0240) rather than a scatter of individual mistakes.
+
+**Tables (2)**: `codebook.md` — *not* a defect, it ships in the Zenodo
+deposit and is not meant for a paper. `tab_venues_fr_caption.md` — a French
+caption variant; check whether its consumer still exists.
+
+**Figures (5)**: `fig_sem_composition` (orphaned by 0332), plus
+`fig_lexical_tfidf_2007`, `fig_lexical_tfidf_2013`,
+`fig_traditions_pre2008_citers`, and `fig_global_map_cocitation` — the last
+being deliberate and pinned by `tests/test_global_map.py:175`.
+
+So roughly a third of the generated-artifact surface is built for nobody.
+Nothing is broken; `make` is doing work and the maintenance burden is real.
+
+## Actions
+
+1. Decide `fig_sem_composition`'s fate — the only real question here. Either
+   it stays a maintained analysis artifact (say where it is consumed, and by
+   what), or the figure, its `.mk` rules, and `tab_sem_composition.csv` go
+   together. The clustering itself stays either way: `tab_sem6_assignments.csv`
+   backs §1's literature-confirmation bullet.
+2. Add `CORPUSREPORT_FIGS` and move `fig_dag` into it, so `ALL_FIGS` is
+   unchanged but each variable names its own deliverable's figures.
+3. Comment the cocitation map's built-not-embedded status in `paths.mk`,
+   pointing at the test that pins it. A reader should not have to grep to
+   learn it is intentional.
+
+## Test
+
+- Red first: an adherence guard asserting every generated artifact under
+  `deliverables/_shared/{_includes,tables,figures}/` is reachable from some
+  deliverable `.qmd`, with an explicit commented allowlist for the deliberate
+  exceptions (`codebook.md` ships in the deposit; `fig_global_map_cocitation`
+  is pinned unembedded by `test_global_map.py:175`). The allowlist is
+  load-bearing: without it the guard either fails forever or gets deleted.
+
+- **The trap the guard must avoid, learned by falling into it.** Quarto
+  resolves `{{< include >}}` paths **relative to the top rendering doc**, not
+  to the including file (see `.claude/rules/architecture.md`). A resolver that
+  joins each include against its own directory reports every nested include as
+  an orphan — the first pass of this sweep produced 13 false positives that
+  way, all of `_includes/zoo/*.md`, which `techrep-zoo.md` reaches via
+  `../_shared/_includes/zoo/…` from the zoo deliverable's directory. Walk the
+  graph from each root and keep the root's directory as the base throughout.
+
+- A naive "is the basename mentioned anywhere" grep is not enough either: it
+  cannot distinguish reachable-transitively from mentioned-in-a-Makefile, and
+  `paths.mk` mentions every one of these.
+
+## Verification
+
+- [ ] Every entry in every `*_FIGS` variable is either rendered by that
+      deliverable or on the commented allowlist
+- [ ] `make figures` builds the same set as before, or the difference is
+      deliberate and stated
+- [ ] `ALL_FIGS` unchanged by the `fig_dag` move
+
+## Invariants
+
+- `tab_sem6_assignments.csv` and the `lit_*` confirmation bullet in §1 keep
+  working whatever happens to the composition figure.
+- No deliverable loses a figure it renders.
+
+## Exit criteria
+
+- [ ] Every generated artifact is reachable from a deliverable, or on the
+      commented allowlist with its reason
+- [ ] The 17 flat includes are deleted, revived, or explained
+- [ ] `paths.mk` answers "which artifacts does this deliverable need?" correctly
+- [ ] A guard fails when the next prose cut orphans an artifact

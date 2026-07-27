@@ -23,7 +23,8 @@ Usage:
 import os
 
 import pandas as pd
-from pipeline_loaders import REFINED_WORKS_PATH, load_latest_run_report
+from pipeline_io import latest_run_report
+from pipeline_loaders import REFINED_WORKS_PATH
 from schemas import CorpusFlowSchema
 from script_io_args import parse_io_args, validate_io
 from utils import CATALOGS_DIR, get_logger, save_csv
@@ -131,12 +132,12 @@ def build_flow(
 def latest_merge_report(catalogs_dir: str = CATALOGS_DIR) -> dict:
     """Read the most recent catalog_merge run report, or fail loudly.
 
-    Delegates the lookup to pipeline_loaders.load_latest_run_report, which
-    returns None on a missing report; that is fine for compute_vars.dedup_stats
-    (an optional field, warned and skipped) but not here — the ledger cannot be
-    built without it, so a missing report is fatal in this caller.
+    Delegates the lookup to pipeline_io.latest_run_report, which returns None
+    on a missing report; that is fine for compute_vars.dedup_stats (an optional
+    field, warned and skipped) but not here — the ledger cannot be built without
+    it, so a missing report is fatal in this caller.
     """
-    report = load_latest_run_report("catalog_merge", catalogs_dir)
+    report = latest_run_report("catalog_merge", catalogs_dir)
     if report is None:
         pattern = os.path.join(catalogs_dir, "run_reports", "catalog_merge__*.json")
         raise FileNotFoundError(
