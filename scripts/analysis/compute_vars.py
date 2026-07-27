@@ -72,6 +72,7 @@ DOC_VARS = {
         "corpus_core_threshold",
         "corpus_multi_source",
         "corpus_multi_source_pct",
+        "corpus_no_doi_pct",
         "corpus_raw",
         "corpus_removal_pct",
         "corpus_sources",
@@ -538,6 +539,13 @@ def citation_coverage_period_stats(v):
     if df is None:
         return
     m = dict(zip(df["metric"], df["value"]))
+    # Share of corpus works carrying no DOI. Quoted twice in §3 as the reason
+    # the citation graph undercounts; hand-typed it had already rotted once
+    # (28% -> 24%) across a rebuild.
+    if m.get("all_n_works"):
+        v["corpus_no_doi_pct"] = _pct(
+            100 * (1 - m["all_n_with_doi"] / m["all_n_works"]), 0
+        )
     for period, key in (("pre2007", "p1"), ("cryst", "p2"), ("post2015", "p3")):
         v[f"cite_cov_{period}_pct"] = _pct(m[f"{key}_share_covered"], 0)
         v[f"cite_doi_{period}_pct"] = _pct(m[f"{key}_share_with_doi"], 0)

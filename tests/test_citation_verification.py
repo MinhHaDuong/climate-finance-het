@@ -94,27 +94,48 @@ def test_completeness_is_optional():
     assert "complete_captured_pct" not in m
 
 
-def test_quality_paragraph_carries_no_hand_typed_statistic():
+# Percentages in §2-§3 that are NOT corpus measurements and so cannot rot when
+# the corpus is rebuilt. Each needs a reason; anything else must be a macro.
+_ALLOWED_LITERALS = {
+    # Calibration of the relevance filter against human labels, measured once
+    # on a frozen blinded sample of 100 works. Independent of corpus size.
+    "81%": "reranker accuracy on the frozen 100-work calibration sample",
+    "10%": "share of that same calibration sample reclassified by threshold",
+    # Figure parameters, not findings.
+    "2%": "minimum community size drawn in the global map (a layout cutoff)",
+}
+
+
+def _measurable_literals(section):
+    """Bare percentages in a section, minus macros and non-measurements."""
+    text = re.sub(r"<!--.*?-->", "", section, flags=re.S)      # HTML comments
+    text = re.sub(r"\{\{<[^>]*>\}\}", "", text)                # macros
+    text = re.sub(r"width\s*=\s*\d+\.?\d*\s*%", "", text)      # figure attrs
+    text = re.sub(r"\b95\s*%\s*CI", "CI", text)                # confidence LEVEL
+    return [h for h in re.findall(r"\d+\.?\d*\s*%", text)
+            if h.replace(" ", "") not in _ALLOWED_LITERALS]
+
+
+def test_method_and_data_sections_carry_no_hand_typed_statistic():
     """Negative guard, per the project's CI test-polarity rule: pin the defect
     (a bare percentage literal), never a specific positive phrasing.
 
-    The paragraph's numbers must all arrive as {{< meta >}} macros. A literal
-    like '99.0%' here is exactly what went stale across a corpus rebuild.
+    Scoped to the WHOLE of §2 and §3, not to one sentence. The first version of
+    this guard covered only the sentence that had already been fixed, so it
+    passed while the same disproven 99.0% survived two paragraphs later in the
+    same section, and the no-DOI share sat hand-typed in two more places. A
+    guard shaped around the defect you already found is not a guard.
     """
     with open(DATA_PAPER) as fh:
         text = fh.read()
 
-    sentence_start = text.index("Citation graph verification")
-    paragraph_end = text.index("\n", sentence_start)
-    paragraph = text[sentence_start:paragraph_end]
+    start = text.index("## 2. Method")
+    end = text.index("## 4. Descriptive statistics")
+    literals = _measurable_literals(text[start:end])
 
-    # Strip the macros, then the confidence LEVEL ("95% CI"), which is a
-    # constant of the method and not a measurement that moves with the corpus.
-    without_macros = re.sub(r"\{\{<[^>]*>\}\}", "", paragraph)
-    without_level = re.sub(r"\b95\s*%\s*CI", "CI", without_macros)
-    literals = re.findall(r"\d+\.?\d*\s*%", without_level)
     assert not literals, (
-        f"hand-typed statistic(s) {literals} in the verification sentence — "
-        f"every number there must come from tab_citation_verification.csv "
-        f"via compute_vars (ticket 0320)"
+        f"hand-typed statistic(s) {literals} in §2-§3 — every corpus number "
+        f"there must arrive as a {{{{< meta >}}}} macro so the next rebuild "
+        f"moves the prose (ticket 0320). If a value genuinely cannot rot, add "
+        f"it to _ALLOWED_LITERALS with the reason."
     )
