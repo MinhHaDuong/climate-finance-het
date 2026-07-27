@@ -3,11 +3,17 @@ Title: ref_match and align read stale in DVC after the corpus repopulation
 Created: 2026-07-27
 Author: HDMX-coding-agent
 Label: needs-human
+Closed: verified-and-committed
 
 --- log ---
 2026-07-27T14:12Z HDMX-coding-agent created
 2026-07-27T14:15Z HDMX-coding-agent note deliberate residual of 0347, not an oversight. I could have silenced it with `dvc commit ref_match align`, which would assert those outputs correspond to the new refined_works.csv — a claim I cannot verify without running them, and running `align` rebuilds refined_embeddings.npz and refined_citations.csv, which feed the paper's citation statistics. Left stale on purpose: a truthful "may need re-running" beats a false "current".
 
+2026-07-27T14:42Z HDMX-coding-agent note VERIFIED then committed — action 1, not the cheaper action 2. Both stages re-run with outputs redirected to scratch (both accept explicit --out paths), so no shared artifact was overwritten during verification. All three DVC outs came out identical to what is on disk: citations.csv byte-identical, refined_citations.csv byte-identical, refined_embeddings.npz vectors array identical by shape/dtype/sha256 (the .npz container is a zip, so content was compared, not bytes). The ref_matches.csv intermediate was byte-identical too. align took 42s and kept 1,087,209 citation rows, matching the frozen figure. dvc commit -f ref_match align then recorded the new dep hashes; dvc status now reports both up to date, and dvc push had nothing to send because the outputs never changed.
+2026-07-27T14:42Z HDMX-coding-agent note honest limit on the ref_match evidence: its fuzzy matcher hit the cache on all 148,127 refs (0 new), so that run never consulted the corpus index and cannot by itself prove the corpus change is inert for this stage. What carries the argument for ref_match is inspection — _build_corpus_index reads only doi, title and year via explicit row.get calls, and 0347's byte-compare showed all three identical across every one of the 33,344 rows — plus the fact that citations.csv, the stage's actual DVC out, came out byte-identical through the full merge_citations path. align needs no such caveat: its documented matching key is doi then source_id with row-order alignment, all verified unchanged.
+2026-07-27T14:42Z HDMX-coding-agent note SIDE FINDING, bigger than this ticket: 'make data' cannot populate a worktree — dvc checkout fails with missing files for data/syllabi, openalex_citations.csv, istex_works.csv, refined_embeddings.npz and grey_works.csv, so neither the local cache nor the padme remote holds much of the corpus. The DVC tracking is substantially incomplete: padme's working tree is the only copy of several artifacts, and a clean-room reproduction of the deposit would fail. That is why verification here had to run against the primary checkout's data rather than an isolated worktree. Filed separately — it is a backup and reproducibility gap, not a 0355 blocker.
+2026-07-27T14:45Z HDMX-coding-agent note also committed data/catalogs/run_reports so the primary checkout's dvc checkout is no longer blocked: my catalog_merge and corpus_align runs had left two unsaved reports there, and DVC refuses to proceed past unsaved files without --force. 3 files pushed. The catalog_merge report is the one ticket 0349 is waiting on.
+2026-07-27T14:45Z HDMX-coding-agent closed — verified-and-committed
 --- body ---
 ## Context
 
