@@ -43,7 +43,7 @@ MAKEFILE_ANALYSIS = os.path.join(
 # so a wrong path would resolve against the real file and the guard would pass on
 # a `cp` that cannot work. Without the lookahead, `scripts/utils.pyc` does the
 # same. Either way the guard checks something other than what the array says.
-SCRIPT_PATH_RE = re.compile(r"(?<![\w/.-])scripts/(?:[\w-]+/)*[\w.-]+\.py(?!\w)")
+SCRIPT_PATH_RE = re.compile(r"(?<![\w/.-])scripts/(?:[\w-]+/)*[\w.-]+\.py(?![\w.])")
 
 
 def _read(path):
@@ -70,6 +70,12 @@ SCRIPTS_ARRAY_RE = re.compile(
     r"^SCRIPTS=\([ \t]*$(?P<body>.*?)^\)[ \t]*$", re.DOTALL | re.MULTILINE
 )
 
+# Any declaration that contributes entries to SCRIPTS, including the append form
+# `SCRIPTS+=(`. Counting with SCRIPTS_ARRAY_RE alone would miss an appended
+# second array entirely — the parser reads the first block, the append is never
+# seen, and the "exactly one array" check it should have tripped never fires.
+SCRIPTS_DECL_RE = re.compile(r"^SCRIPTS[ \t]*\+?=[ \t]*\(", re.MULTILINE)
+
 
 def _parse_scripts_array(content):
     """Repo-relative scripts/ paths inside a shell SCRIPTS=( ... ) array.
@@ -88,10 +94,14 @@ def _parse_scripts_array(content):
         "scripts it copies into the archive, opened by a line `SCRIPTS=(` and "
         "closed by a line holding only `)`"
     )
-    # Otherwise a second array would be parsed by neither this nor the line scan,
-    # which both take the first match — a silent blind spot of the 0352 kind.
-    assert len(blocks) == 1, (
-        f"expected exactly one SCRIPTS=( ... ) array, found {len(blocks)}"
+    # Otherwise entries outside the first block are parsed by neither this nor
+    # the line scan, which both take the first match — a silent blind spot of
+    # the 0352 kind. Counted over declarations, not blocks, so `SCRIPTS+=(`
+    # trips it too.
+    decls = SCRIPTS_DECL_RE.findall(content)
+    assert len(decls) == 1, (
+        "expected exactly one SCRIPTS array declaration, found "
+        f"{len(decls)} — entries outside the first are silently unchecked"
     )
     paths = []
     for line in blocks[0].splitlines():
@@ -119,8 +129,13 @@ def _entry_lines_by_line_scan(content):
     Deliberately a second, independent implementation: a ratchet that measured
     the array with the very regex under test would shrink along with it and
     report nothing.
+
+    Lines are right-stripped so the two implementations agree on what delimits
+    the block — SCRIPTS_ARRAY_RE tolerates trailing whitespace on `SCRIPTS=(`
+    and `)`, and a scan that did not would raise ValueError on a file the parser
+    reads fine. Loud rather than silent, but a false alarm all the same.
     """
-    lines = content.splitlines()
+    lines = [ln.rstrip() for ln in content.splitlines()]
     start = lines.index("SCRIPTS=(")
     end = start + 1 + lines[start + 1:].index(")")
     return [ln for ln in lines[start + 1:end] if _strip_inline_comment(ln)]
@@ -224,10 +239,31 @@ class TestScriptsArrayParser:
             with pytest.raises(AssertionError):
                 _parse_scripts_array(fixture)
 
-    def test_a_py_path_is_not_matched_inside_a_longer_extension(self):
-        """`scripts/utils.pyc` is not `scripts/utils.py`."""
+    @pytest.mark.parametrize("bad", ["scripts/utils.pyc", "scripts/utils.py.bak"])
+    def test_a_py_path_is_not_matched_inside_a_longer_extension(self, bad):
+        """Neither `scripts/utils.pyc` nor `scripts/utils.py.bak` is the real file."""
         with pytest.raises(AssertionError):
-            _parse_scripts_array("SCRIPTS=(\n    scripts/utils.pyc\n)\n")
+            _parse_scripts_array(f"SCRIPTS=(\n    {bad}\n)\n")
+
+    def test_a_second_array_declaration_is_rejected(self):
+        """Entries outside the first block are read by no parser here.
+
+        The append form is the trap: `SCRIPTS+=(` does not open a block that
+        SCRIPTS_ARRAY_RE matches, so counting blocks would report one and the
+        appended paths would go unchecked in silence.
+        """
+        appended = (
+            "SCRIPTS=(\n    scripts/utils.py\n)\n"
+            "SCRIPTS+=(\n    scripts/no_such_appended_helper.py\n)\n"
+        )
+        with pytest.raises(AssertionError, match="exactly one SCRIPTS array"):
+            _parse_scripts_array(appended)
+
+    def test_trailing_whitespace_on_the_delimiters_is_tolerated_by_both(self):
+        """The regex and the line scan must agree on what delimits the block."""
+        padded = "SCRIPTS=(  \n    scripts/utils.py\n)  \n"
+        assert _parse_scripts_array(padded) == ["scripts/utils.py"]
+        assert _entry_lines_by_line_scan(padded) == ["    scripts/utils.py"]
 
     def test_real_array_includes_the_shared_venue_helpers(self):
         """Both helpers sit below the comment that used to truncate the parse."""
