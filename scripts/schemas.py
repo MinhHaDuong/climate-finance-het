@@ -467,3 +467,23 @@ Sem6AssignmentsSchema = DataFrameSchema(
     strict=True,
     coerce=True,
 )
+
+
+# ---------------------------------------------------------------------------
+# Corpus construction ledger CSV (ticket 0327)
+# ---------------------------------------------------------------------------
+# One row per pipeline stage, In - Removed = Out. The chaining between rows and
+# the endpoint values are checked in compute_corpus_flow.build_flow, which is
+# where a violation must fail; the schema pins the shape and the sign domain so
+# a malformed frame cannot reach the paper's Table 3.
+
+CorpusFlowSchema = DataFrameSchema(
+    columns={
+        "Stage": Column(str, unique=True),
+        "In": Column(int, checks=pa.Check.gt(0)),
+        "Removed": Column(int, checks=pa.Check.ge(0)),
+        "Out": Column(int, checks=pa.Check.gt(0)),
+    },
+    strict=True,
+    coerce=True,
+)

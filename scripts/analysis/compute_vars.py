@@ -15,6 +15,7 @@ import warnings
 
 import numpy as np
 import pandas as pd
+from _vars_retrieval import RETRIEVAL_VARS, retrieval_protocol_stats
 from pipeline_io import latest_run_report
 from pipeline_loaders import load_refined_citations, load_refined_works
 from script_io_args import parse_io_args, validate_io
@@ -76,7 +77,6 @@ DOC_VARS = {
         "corpus_multi_source_pct",
         "corpus_no_doi_pct",
         "corpus_raw",
-        "corpus_removal_pct",
         "corpus_sources",
         "corpus_total",
         "corpus_with_embeddings",
@@ -85,10 +85,10 @@ DOC_VARS = {
         "filter_flagged",
         "filter_llm_irrelevant",
         "filter_missing_metadata",
-        "filter_net_removals",
         "filter_no_abstract",
         "filter_protected",
         "filter_title_blacklist",
+        *RETRIEVAL_VARS,  # §2.2 thresholds, read from config (ticket 0329)
         "dedup_doi_removed",
         "dedup_fn_pairs",
         "dedup_fn_pairs_pct",
@@ -314,7 +314,9 @@ def corpus_stats(v):
     if os.path.isfile(unified_path):
         unified_n = len(pd.read_csv(unified_path, usecols=["source"]))
         v["corpus_raw"] = _int(unified_n)
-        v["corpus_removal_pct"] = _pct(100 * (unified_n - n) / unified_n)
+        # No corpus_removal_pct: the removal rate is read off tab_corpus_flow
+        # stage by stage now (ticket 0327), and a single aggregate percentage
+        # was what let the two gaps hide.
 
 
 def filter_stats(v):
@@ -342,12 +344,21 @@ def filter_stats(v):
     missing = counts.filter(like="missing_metadata").sum()
     v["filter_missing_metadata"] = _int(int(missing))
 
-    # Flagged but kept = protected from removal
-    flagged_kept = (flagged_mask & (audit["action"] == "keep")).sum()
-    v["filter_protected"] = _int(flagged_kept)
-
-    # Net removals
-    v["filter_net_removals"] = _int((audit["action"] == "remove").sum())
+    # Flagged but not removed by the filter = retained by protection criteria.
+    #
+    # Measured against action != "remove", not action == "keep" (ticket 0327).
+    # The audit carries three actions: rows the filter removed ("remove"),
+    # rows it kept ("keep"), and rows it kept that a later duplicate-DOI pass
+    # dropped ("deduped"). Counting only "keep" mixed two stages — a few
+    # flagged works are protected by the filter and deduplicated afterwards,
+    # so the paper's `flagged - protected` subtraction came out above the
+    # removal count it was supposed to equal. Both terms now describe the same
+    # stage; the deduplication drop is its own row in tab_corpus_flow.csv.
+    #
+    # That overlap stays out of the paper on purpose: naming it costs a
+    # sentence of detail the reader does not need (author, 2026-07-27).
+    flagged_protected = (flagged_mask & (audit["action"] != "remove")).sum()
+    v["filter_protected"] = _int(flagged_protected)
 
 
 def dedup_stats(v):
@@ -717,6 +728,7 @@ def write_yaml(v, path):
 def main():
     v = {}
     corpus_stats(v)
+    retrieval_protocol_stats(v)
     embedding_stats(v)
     bimodality_stats(v)
     pca_stats(v)

@@ -1,0 +1,94 @@
+%erg 0.1
+Title: The archive guard checks the SCRIPTS declaration, not what the cp loop actually copies
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T19:20Z HDMX-coding-agent created found while executing 0352, which fixed the parser that reads the declaration. Deliberately not folded into that PR: it is a different concern and 0352's exit criteria do not reach it.
+
+--- body ---
+## Context
+
+Ticket 0352 fixed how `tests/test_archive_script_paths.py` *parses* the
+`SCRIPTS=( ... )` array in `build/build_analysis_archive.sh` — the non-greedy
+regex that stopped at the first `)` and silently validated a prefix. The parser
+now reads the whole declaration and every path in it resolves.
+
+The guard still only ever looks at the declaration. It never checks that the
+array is what the archive actually ships. Between `SCRIPTS=(` and the tarball
+sits a `cp` loop the test does not read:
+
+```bash
+for src in "${SCRIPTS[@]}"; do
+    cp --parents "$src" "$TMP/"
+done
+```
+
+Two ways to ship something other than the validated set, both passing today:
+
+- **A `cp` outside the array.** Any `cp some/other/script.py "$TMP/"` elsewhere
+  in the build script ships a file the guard never resolved. The blast radius is
+  the same as the original defect — the archive references a path that may not
+  exist — but arrives by a route the guard does not watch.
+- **A slice or a derived array.** `CORE_SCRIPTS=("${SCRIPTS[@]:0:6}")`, or a
+  loop over a filtered subset, ships *fewer* files than were validated. The
+  guard is green and the archive is short — the exact failure mode of 0352,
+  reintroduced one level down.
+
+Nothing is broken today: the loop is a plain iteration over the full array. This
+is the same shape of finding as 0352 itself — a guard whose promise is wider
+than its reach, filed before the gap costs something rather than after.
+
+## Root cause
+
+The guard's unit of analysis is a *declaration* when the thing it protects is a
+*behaviour*. `test_archive_script_paths.py`'s own docstring claims it "resolves
+every script path the archive tooling will actually `cp`/invoke" — the word
+*actually* is the overclaim. It resolves every path the tooling *declares*.
+
+## Relevant files
+
+- `tests/test_archive_script_paths.py` — the guard, and the docstring that
+  overclaims
+- `build/build_analysis_archive.sh` — the `SCRIPTS` array and the `cp` loop that
+  consumes it
+- `tickets/closed/0352-archive-script-list-guard-truncates-sile.erg` — the
+  parser fix this follows
+
+## Actions
+
+1. Assert the `cp` loop iterates the validated array unmodified: exactly one
+   loop over `"${SCRIPTS[@]}"`, no slice or index expression in the expansion.
+   A literal-shape assertion is enough; do not try to interpret shell.
+2. Assert no `cp` of a `scripts/*.py` path occurs outside that loop — every
+   Python file entering the archive goes through the guarded array.
+3. Correct the docstring so its promise matches its reach, whichever way the
+   above lands.
+
+## Test
+
+Red first, and pick the fixture that distinguishes a real fix from a lucky one:
+a build-script fixture whose loop reads `"${SCRIPTS[@]:0:3}"` while the array
+declares six resolvable paths. Every path in it exists, so today's guard passes;
+a guard that checks the consumption fails. Asserting on the loop's *presence*
+would not distinguish the two — the loop is present in both.
+
+## Verification
+
+- [ ] The sliced-loop fixture fails on the current guard and passes on the fixed
+      one
+- [ ] The real `build_analysis_archive.sh` passes unchanged
+- [ ] `make lint` passes; the test stays in the `adherence` tier
+
+## Invariants
+
+- No change to what the archive ships. This is a guard fix.
+- 0352's parser and its fixtures keep working — this adds a check, it does not
+  rewrite the parse.
+
+## Exit criteria
+
+- [ ] A script copied into the archive outside the validated array fails the
+      guard
+- [ ] A loop that ships a subset of the validated array fails the guard
+- [ ] The guard's docstring claims only what it checks

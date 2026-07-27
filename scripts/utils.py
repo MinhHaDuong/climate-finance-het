@@ -164,6 +164,7 @@ from pipeline_progress import (
 from pipeline_text import (
     ISO_639_1_CODES,
     LANG_NORMALIZE,
+    LANGUAGE_NAMES,
     clean_doi,
     detect_language,
     is_valid_iso639_1,

@@ -11,7 +11,13 @@ import os
 
 import pandas as pd
 from script_io_args import parse_io_args, validate_io
-from utils import BASE_DIR, CATALOGS_DIR, get_logger, normalize_lang_display
+from utils import (
+    BASE_DIR,
+    CATALOGS_DIR,
+    LANGUAGE_NAMES,
+    get_logger,
+    normalize_lang_display,
+)
 
 log = get_logger("export_language_table")
 
@@ -19,49 +25,9 @@ ENRICHED_PATH = os.path.join(CATALOGS_DIR, "enriched_works.csv")
 OUTPUT_DIR = os.path.join(BASE_DIR, "deliverables", "_shared", "tables")
 OUTPUT_MD = os.path.join(OUTPUT_DIR, "tab_languages.md")
 
-# ISO 639-1 → display name for languages we want to show individually
-LANGUAGE_NAMES = {
-    "en": "English",
-    "pt": "Portuguese",
-    "de": "German",
-    "es": "Spanish",
-    "fr": "French",
-    "id": "Indonesian",
-    "tr": "Turkish",
-    "ko": "Korean",
-    "ru": "Russian",
-    "sv": "Swedish",
-    "ar": "Arabic",
-    "uk": "Ukrainian",
-    "nl": "Dutch",
-    "pl": "Polish",
-    "ja": "Japanese",
-    "zh": "Chinese",
-    "it": "Italian",
-    "fi": "Finnish",
-    "no": "Norwegian",
-    "hu": "Hungarian",
-    "cs": "Czech",
-    "da": "Danish",
-    "hr": "Croatian",
-    "ca": "Catalan",
-    "ms": "Malay",
-    "th": "Thai",
-    "vi": "Vietnamese",
-    "el": "Greek",
-    "ro": "Romanian",
-    "sk": "Slovak",
-    "hi": "Hindi",
-    "fa": "Persian",
-    "he": "Hebrew",
-    "bn": "Bengali",
-    "lt": "Lithuanian",
-    "sl": "Slovenian",
-    "et": "Estonian",
-    "lv": "Latvian",
-    "bg": "Bulgarian",
-    "sr": "Serbian",
-}
+# LANGUAGE_NAMES (ISO 639-1 → display name) moved to pipeline_text beside the
+# normalisers, so this exporter and the retrieval-protocol table render the
+# same name for the same code (ticket 0329).
 
 # Minimum count to show individually (otherwise grouped as "Other")
 MIN_COUNT = 200

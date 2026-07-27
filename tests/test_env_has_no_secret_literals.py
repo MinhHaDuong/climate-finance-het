@@ -53,15 +53,28 @@ NON_SECRET_NAMES = frozenset(
 # The keystore selection line. Its value is a provider/variable list, not a secret.
 KEYS_NAME = "KEYS"
 
-# Credentials this project consumes. Each must be selected by `KEYS=` under the
-# plain name its consuming code reads from `os.environ`, so deleting an entry
-# (and silently breaking auth) fails here rather than at the next API call.
+# Credentials that must resolve for work started in this repo. Each must be
+# selected by `KEYS=` under the plain name its consumer reads from `os.environ`,
+# so deleting an entry (and silently breaking auth) fails here rather than at the
+# next API call.
+#
+# "Consumer" is wider than "code in this tree", because the loader's precedence
+# makes it so: bash-env.sh exports every project-`.env` key verbatim, `KEYS`
+# included, so a project `KEYS=` line *replaces* the harness one rather than
+# adding to it. Whatever runs with this directory as its startup cwd therefore
+# gets this line and only this line. Measured, not assumed: from a directory
+# whose `.env` selects only `openalex`, `HAL_ID` is unset even though
+# `~/.claude/.env` selects `hal` (ticket 0364).
 REQUIRED_KEYS_EXPORTS = frozenset(
     {
         "AGENT_GH_TOKEN",  # .claude/hooks/check-reviews.sh, .agent/runbooks/on-start.md
         "OPENALEX_API_KEY",  # scripts/pipeline_io.py and the harvest/enrich scripts
         "S2_API_KEY",  # scripts/harvest/catalog_semanticscholar.py
         "OPENROUTER_API_KEY",  # scripts/filter_flags_llm.py (via litellm)
+        # No code here reads these two: the harness `update-publist` skill does,
+        # and a deposit run launched from this repo root inherits this selection.
+        "HAL_ID",  # HAL SWORD deposit (harness skill update-publist)
+        "HAL_PASSWORD",  # idem
     }
 )
 
@@ -221,7 +234,7 @@ def test_shape_heuristic_accepts_the_real_non_secret_settings() -> None:
         "HDMX-coding-agent@users.noreply.github.com",
         "openrouter:OPENROUTER_API_KEY_CLIMATEFINANCE=OPENROUTER_API_KEY,"
         "github:AGENT_GH_TOKEN,openalex:OPENALEX_API_KEY,"
-        "semanticscholar:S2_API_KEY",
+        "semanticscholar:S2_API_KEY,hal:HAL_ID,hal:HAL_PASSWORD",
     )
     flagged = [v for v in benign if _credential_shaped_reason(v) is not None]
     assert not flagged, f"heuristic false-positives on benign settings: {flagged}"
@@ -266,6 +279,20 @@ STALE_ENV_CLAIMS = (
     "secrets sourced from project .env",
     "Load .env for GH_TOKEN",
     "not exported into every process",  # the overclaim in the other direction
+    # Two phrasings of "this skill reads its credentials from .env" (ticket 0364).
+    # The project fork of update-publist carried the first and was deleted; the
+    # harness copy that supersedes it carries the second. Pasting either sentence
+    # into this repo trips the guard instead of restoring the claim.
+    #
+    # The second is anchored on the credential name rather than cut at "from the
+    # project `.env`": .env legitimately supplies non-secret settings, so the
+    # shorter form would eventually fire on a true sentence about, say,
+    # CLIMATE_FINANCE_DATA. A guard that cries wolf on correct prose gets edited
+    # out, and then it guards nothing. The cost of the anchor is that a partial
+    # paste slips through — accepted, since the whole-sentence paste is the way
+    # this defect actually travels.
+    "Credentials from `.env`",
+    "HAL_PASSWORD` from the project `.env`",
 )
 
 # Files the stale-claim scan covers: every tracked text file, discovered rather

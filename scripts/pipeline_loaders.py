@@ -99,6 +99,7 @@ REFINED_WORKS_PATH = os.path.join(CATALOGS_DIR, "refined_works.csv")
 REFINED_EMBEDDINGS_PATH = os.path.join(CATALOGS_DIR, "refined_embeddings.npz")
 REFINED_CITATIONS_PATH = os.path.join(CATALOGS_DIR, "refined_citations.csv")
 
+
 # Phase 2 reads Feather for speed (20–50× faster than CSV). The Makefile
 # handoff target converts CSV → Feather; loaders fall back to CSV if missing.
 REFINED_WORKS_FEATHER = os.path.join(CATALOGS_DIR, "refined_works.feather")

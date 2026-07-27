@@ -2,7 +2,8 @@
 # Build the data paper reproducibility archive for Zenodo.
 #
 # Produces climate-finance-datapaper.tar.gz containing:
-#   code/           — full pipeline source (git archive) + pre-built figures/tables
+#   code/           — full pipeline source (git archive) + generated figures/tables,
+#                     all at their repo paths so deliverables/ works as it does here
 #   data/inputs/    — raw data inputs (per-source catalogs, pre-merge)
 #   data/products/  — final data products of the paper (corpus CSV without
 #                     abstracts, embeddings, citations, codebook)
@@ -21,6 +22,19 @@ ARCHIVE=climate-finance-datapaper
 TMP="/tmp/$ARCHIVE"
 # Honour the same data-root override as the Python pipeline (worktrees, smoke).
 DATA_DIR="${CLIMATE_FINANCE_DATA:-$PROJ_ROOT/data}/catalogs"
+
+# Phase-2 render inputs that `git archive` cannot ship because they are
+# gitignored regenerables. Mirrored into the code tree at their repo paths by
+# `cp --parents`, so this array is both the manifest and the layout. Guarded by
+# tests/test_archive_script_paths — each path must resolve to a real file, so a
+# renamed figure cannot silently strand the archive. Build them first with
+# `make corpus-tables figures-datapaper`. Keep the array free of parentheses.
+#
+# Figures only: the tables the paper includes are discovered below from its own
+# {{< include >}} directives, which cannot go stale the way a hand-kept list can.
+DATAPAPER_FILES=(
+    deliverables/_shared/figures/fig_bars.png
+)
 
 echo "=== Building data paper archive ==="
 
@@ -45,37 +59,51 @@ echo "  Copying final products (embeddings, citations, codebook)..."
 cp -L "$DATA_DIR/embeddings.npz" "$TMP/data/products/"
 cp -L "$DATA_DIR/citations.csv" "$TMP/data/products/"
 cp "$PROJ_ROOT/deliverables/_shared/tables/codebook.md" "$TMP/data/products/"
+# Retrieval-protocol appendix (ticket 0329): the paper points referees here for
+# the query fields, per-tier term counts, and the grey-literature enumeration.
+cp "$PROJ_ROOT/deliverables/_shared/tables/tab_retrieval_protocol.csv" "$TMP/data/products/"
+cp "$PROJ_ROOT/deliverables/_shared/tables/tab_retrieval_protocol.md" "$TMP/data/products/"
 
 echo "  Copying raw inputs (per-source catalogs)..."
-for src in openalex istex bibcnrs scispace grey teaching; do
+# One catalog per corpus source (utils.SOURCE_NAMES). Pinned by
+# test_datapaper_archive_layout.py so the deposit never ships fewer catalogs
+# than the paper claims sources (ticket 0327).
+for src in openalex istex bibcnrs scispace grey teaching unfccc oecd; do
     cp -L "$DATA_DIR/${src}_works.csv" "$TMP/data/inputs/" 2>/dev/null || true
 done
 
-# ── Quarto project config: data paper only ───────────────
-# The repo _quarto.yml lists all papers; Quarto scans them all even when
-# rendering one file. Replace with a minimal config for the data paper.
-cat > "$TMP/code/_quarto.yml" << 'YAML'
-project:
-  type: default
-  output-dir: output
-  render:
-    - content/data-paper.qmd
+# ── Generated render inputs (hard fail) ──────────────────
+# `git archive` ships every *tracked* file at its repo path, so the data paper
+# already arrives as its own Quarto project under deliverables/data-paper/ with
+# its own _quarto.yml. What it cannot ship are the Phase-2 artifacts that are
+# gitignored because they are regenerable; those are mirrored in here at the
+# same repo paths, so the ../_shared/... references in data-paper.qmd resolve.
+#
+# No repo-wide _quarto.yml is written: the 0226 reorg retired it, and a config
+# re-rooting the paper under content/ is what broke this script (ticket 0292).
+echo "  Copying generated figures and tables..."
+mkdir -p "$TMP/code/deliverables/_shared/figures" "$TMP/code/deliverables/_shared/tables"
+# Loop variable deliberately not `src`: test_datapaper_archive_layout.py finds
+# the per-source catalog loop by taking the first line matching "for src in",
+# so a second one here would shadow the guard depending on line order.
+for f in "${DATAPAPER_FILES[@]}"; do
+    cp --parents "$f" "$TMP/code/"
+done
 
-bibliography: content/bibliography/main.bib
+# Stage exactly the tables the paper includes, discovered from its own
+# {{< include >}} directives. The hand-kept list had already gone stale
+# (tab_variables.md was missing) and would have gone stale again with
+# tab_corpus_flow.md (ticket 0327). They land at the repo-mirrored path the
+# include directives themselves name, so discovery and destination agree.
+grep -o '{{< include [^ ]*tables/[^ ]*\.md' deliverables/data-paper/data-paper.qmd \
+  | sed 's|.*tables/||' | sort -u | while read -r tbl; do
+    cp "deliverables/_shared/tables/$tbl" "$TMP/code/deliverables/_shared/tables/"
+done
 
-format:
-  pdf:
-    pdf-engine: xelatex
-    cite-method: citeproc
-YAML
-
-# ── Figures, tables, vars for rendering (hard fail) ──────
-echo "  Copying figures and tables..."
-mkdir -p "$TMP/code/content/figures" "$TMP/code/content/tables"
-cp deliverables/_shared/figures/fig_bars.png "$TMP/code/content/figures/"
-cp deliverables/_shared/tables/tab_corpus_sources.md deliverables/_shared/tables/tab_languages.md \
-   "$TMP/code/content/tables/"
-cp deliverables/data-paper/data-paper-vars.yml "$TMP/code/content/"
+# Reviewer entry point. The repo's own Makefile rides along in the git archive
+# and is the Phase-2 build; this one is the three-target reviewer interface,
+# invoked as `make -f Makefile.datapaper`.
+cp build/templates/Makefile.datapaper "$TMP/code/Makefile.datapaper"
 
 # ── Checksums for make verify ────────────────────────────
 echo "  Computing data checksums..."

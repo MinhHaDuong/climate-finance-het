@@ -1,0 +1,87 @@
+%erg 0.1
+Title: Worktree .env snapshot goes stale and fails the secret-literal guard
+Created: 2026-07-27
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-07-27T18:55Z HDMX-coding-agent created
+2026-07-27T18:55Z HDMX-coding-agent note found by the raid 0339/0340/0341 wrap-up: a full `make check` on main went red in a long-lived worktree, and three of the eleven failures were this.
+
+--- body ---
+## Context
+
+`.worktreeinclude` copies `.env` into a new worktree **once, at creation**.
+The worktree then outlives its copy. When the author rotates `.env` — or when
+main tightens the guard that reads it — every worktree created before that
+moment keeps the old snapshot and starts failing tests its branch never
+touched.
+
+This fired today. The raid worktree was created at 14:19 and copied the
+`.env` of that moment (12 assignments). The author migrated `.env` to the
+keystore form at 17:51 (9 assignments), and ticket 0343 tightened
+`tests/test_env_has_no_secret_literals.py` on main the same day. Result: a
+full `make check` in the worktree failed three tests —
+
+- `test_env_assignments_are_allowlisted_or_keys`
+- `test_env_values_do_not_look_like_credentials`
+- `test_keys_line_selects_every_consumed_credential`
+
+— all three of which pass in the primary checkout at the same commit. The
+branch was innocent; the copied file was three and a half hours stale.
+
+Why this matters more than an ordinary flake: the guard being habituated
+into irrelevance is a **security** guard. It exists to catch a credential
+literal committed into `.env`. An agent that sees it fail on every long-lived
+worktree learns to scroll past it, and the one time it fires for real it
+reads like the same old staleness. The project has no CI (ticket 0321), so
+this local gate is the only thing standing there.
+
+Note also that a stale copy is not merely a false positive. The worktree's
+`.env` is a real file holding real assignments that main's current policy
+says should no longer live there — see the keystore convention. Staleness
+here means the old secrets keep a second home on disk, per worktree,
+indefinitely.
+
+## Relevant files
+
+- `.worktreeinclude` — declares `.env` and `.dvc/config.local` as copy-on-create
+- `tests/test_env_has_no_secret_literals.py` — the guard that fires (tightened by 0343)
+- `.claude/rules/workflow.md` — documents the copy behaviour
+- `.githooks/post-checkout` — a candidate hook point for a refresh
+
+## Actions
+
+1. Decide the mechanism (this is the part needing the author): refresh the
+   copy, symlink to the primary `.env`, or have the guard skip a worktree
+   whose copy predates the primary's mtime. A symlink is the only option that
+   cannot go stale, but it also means a worktree cannot hold a deliberately
+   different `.env` — which may be wanted for testing.
+2. Implement the chosen mechanism.
+3. Sweep existing worktrees for stale `.env` copies and refresh them.
+
+## Test
+
+Red first: create a worktree, touch the primary `.env` so it differs, and
+assert that the worktree's copy resolves to the current content (or that the
+guard reports the staleness explicitly rather than as a content failure).
+The test must never print an assignment's *value* — the existing guard's
+names-only discipline is correct and applies here too.
+
+## Verification
+
+- [ ] A worktree created before an `.env` change sees the change
+- [ ] `make check` in a long-lived worktree no longer fails these three tests spuriously
+- [ ] No test or error message prints a credential value
+
+## Invariants
+
+- The secret-literal guard keeps failing for real violations
+- No credential value is ever printed, logged, or committed
+- Worktree creation stays fast — no interactive credential prompt
+
+## Exit criteria
+
+A worktree's `.env` cannot silently diverge from the primary checkout's, and
+the three named tests pass in a long-lived worktree at a commit where they
+pass in the primary checkout.

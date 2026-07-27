@@ -1,0 +1,78 @@
+%erg 0.1
+Title: corpus-report is outside the vars registry, so its thresholds stay hand-typed
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T16:35Z HDMX-coding-agent created split out of 0329, which converted the data paper's thresholds but could not reach corpus-report's
+
+--- body ---
+## Context
+
+Ticket 0329 made every filtering threshold the *data paper* reports a
+`{{< meta >}}` macro read from `config/corpus_filter.yaml`. The same numbers
+are still typed as literals one deliverable over:
+
+- `deliverables/_shared/_includes/corpus-filtering.md:14,25` — the reranker
+  threshold `0.002`, twice, plus the Tier-3/4 concept-group rule
+- `deliverables/_shared/_includes/annex-crossencoder.md:26` — `0.002` three
+  times, and the superseded `0.0049`
+
+Both includes feed `deliverables/corpus-report/corpus-report.qmd`, and that
+document is the reason 0329 could not simply convert them. It reads
+`../_shared/technical-report-vars.yml`, but it is **absent from
+`compute_vars.DOC_VARS`**, which is keyed by document. So declaring
+`filter_reranker_threshold` under `technical-report` to serve corpus-report
+trips `test_doc_vars_no_extras` (the variable is unused in
+`technical-report.qmd` itself), and not declaring it renders an empty macro
+in corpus-report. Neither branch works without first wiring corpus-report
+into the registry.
+
+The values agree with config today, so this is drift risk rather than a live
+error. It becomes an error the first time the threshold is recalibrated —
+which the annex shows has already happened once, 0.0049 to 0.002.
+
+Second, smaller gap in the same area: `test_doc_vars_completeness` maps a
+document name to `deliverables/*/<name>.qmd`, so any deliverable outside
+`DOC_VARS` is unguarded in both directions. corpus-report is currently the
+only one, but the guard should key off the documents that exist rather than
+off the registry, or the next unregistered deliverable is equally invisible.
+
+## Relevant files
+
+- `scripts/analysis/compute_vars.py` — `DOC_VARS`, `DOC_OUTPUT_DIR`
+- `deliverables/corpus-report/corpus-report.qmd` — reads technical-report-vars.yml
+- `deliverables/_shared/_includes/corpus-filtering.md`, `annex-crossencoder.md`
+- `tests/test_doc_vars_completeness.py` — the registry-keyed guard
+- `tests/test_handoff_artifacts_tracked.py` — the tracked-artifact coverage guard (0329)
+
+## Actions
+
+1. Decide the registry shape: either register corpus-report as its own
+   document with its own vars file, or make `DOC_VARS` express "these
+   documents share technical-report-vars.yml". Sharing is the existing
+   reality, so the registry should say so rather than the render doing it
+   implicitly through `metadata-files`.
+2. Convert the `0.002` literals in both includes to macros.
+3. Widen `test_doc_vars_completeness` to discover deliverables from disk, so
+   an unregistered document fails loudly instead of being skipped.
+
+## Test
+
+- Red first: a guard asserting no `_includes/*.md` hand-types a value that
+  exists in `config/corpus_filter.yaml`, failing today on `0.002`.
+
+## Verification
+
+- [ ] corpus-report renders with no empty macros
+- [ ] Changing `reranker_threshold` in config changes both deliverables
+- [ ] A deliverable absent from DOC_VARS fails the completeness guard
+
+## Invariants
+
+- The historical `0.0049` in the annex is a *superseded* value being narrated,
+  not the current threshold — it must stay a literal, not become a macro.
+
+## Exit criteria
+
+- [ ] Every live threshold in the corpus report traces to config

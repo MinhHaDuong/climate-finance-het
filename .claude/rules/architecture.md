@@ -30,6 +30,18 @@ deliverable's folder. Knowing the rule above did not prevent it, so it is
 written here as the consequence rather than left to be re-derived (ticket 0359,
 whose reachability guard depends on getting this right).
 
+**`paths.mk` is the per-deliverable artifact contract.** Each document owns a
+`*_INCLUDES` list (the shared files it composes) and a `*_FIGS` list (the
+figures it embeds); its render rule takes both as prerequisites. Both answer
+"which artifacts does this deliverable need?", and both drift silently — a
+prose cut orphans a figure, a rewrite drops includes the list keeps. Two
+markers carry the deliberate exceptions: a `# not-embedded: <file> — <reason>`
+comment in `paths.mk` for a figure built on purpose and embedded nowhere, and
+`config/unrendered-artifacts.txt` for a shared include or table no document
+composes. `tests/test_deliverable_artifacts.py` diffs every list against the
+real include closure in both directions and rejects a stale marker, so an
+allowlist entry cannot rot into a mute skip (ticket 0359).
+
 The 11 documents across 9 folders:
 
 - `deliverables/manuscript/` — `manuscript.qmd` (main Œconomia article) +

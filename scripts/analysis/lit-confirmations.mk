@@ -32,32 +32,15 @@ $(SEM6_ROBUST): scripts/analysis/compute_semantic_robustness.py \
 		$(CONFIG) $(SEM6_ASSIGN) $(REFINED) $(REFINED_EMB)
 	$(PYTHON) $< --input $(SEM6_ASSIGN) --output $@
 
-# Semantic-composition figure for the data paper (author decision 2026-07-23):
-# manuscript appendix Figure 2 recomputed on the current corpus. Follow-up to
-# PR #1109 (author arbitration): the clustering input EXCLUDES works with
-# boilerplate/stub/missing abstracts (is_boilerplate_abstract) — a data-quality
-# artifact is not a theme of the field — via the _clean alluvial variant.
-# The alluvial table is copied into the shared tables dir as the committed
-# backing record.
-SEM_COMPO_TAB := deliverables/_shared/tables/tab_sem_composition.csv
-SEM_COMPO_FIG := deliverables/_shared/figures/fig_sem_composition.png
-
-$(DERIVED)/tab_alluvial_clean.csv $(DERIVED)/cluster_labels_clean.json \
-$(DERIVED)/tab_core_shares_clean.csv &: \
-		scripts/analysis/compute_clusters.py scripts/utils.py $(CONFIG) $(REFINED)
-	$(PYTHON) $< --output $(DERIVED)/tab_alluvial_clean.csv --exclude-boilerplate
-
-$(SEM_COMPO_TAB): $(DERIVED)/tab_alluvial_clean.csv
-	cp $< $@
-
-$(SEM_COMPO_FIG): scripts/figures/plot_fig2_composition.py \
-		scripts/plot_style.py scripts/utils.py $(CONFIG) \
-		$(DERIVED)/tab_alluvial_clean.csv $(DERIVED)/cluster_labels_clean.json \
-		config/datapaper_cluster_short_labels.json
-	$(PYTHON) $< --output $@ --input $(DERIVED)/tab_alluvial_clean.csv \
-		--labels $(DERIVED)/cluster_labels_clean.json \
-		--short-labels config/datapaper_cluster_short_labels.json
+# The semantic-composition figure and its backing table lived here from
+# 2026-07-23 until 0359 (author decision, 2026-07-27). 0332 cut §4's
+# semantic-cluster paragraph — the finding belongs to the companion paper, not
+# to a data paper — and no other deliverable took the figure, so `make` was
+# rebuilding it, its `_clean` clustering chain and its short-label config for
+# nobody. Deleted rather than kept on an allowlist: git holds the content, and
+# 0328 already recorded the six-cluster period table in its own body, which is
+# what a later reader would come back for. Nothing here produced
+# tab_sem6_assignments.csv, so §1's lit_* bullet is untouched.
 
 .PHONY: lit-confirmations
-lit-confirmations: $(LITCONF_STATS) $(SEM6_ASSIGN) $(SEM6_ROBUST) \
-	$(SEM_COMPO_TAB) $(SEM_COMPO_FIG)
+lit-confirmations: $(LITCONF_STATS) $(SEM6_ASSIGN) $(SEM6_ROBUST)
