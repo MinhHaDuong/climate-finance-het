@@ -134,19 +134,29 @@ def _measurable_counts(section):
 
     Matches comma-grouped thousands and bare integers of four digits or more.
     DOIs, URLs, inline code, and any 1000--2999 four-digit number are stripped
-    first. That year range is deliberately wide: a climate paper naming an SSP
-    horizon (2100) or a scenario year would otherwise break CI on a number that
-    cannot rot. It costs little, because `_int` puts a separator in every
-    four-digit corpus count it formats, so the comma branch is the real net;
-    what escapes is a count typed by hand with no separator, and a count below
-    1,000, both noted here rather than papered over.
+    first. The year range covers what §2--§3 actually contain: 1990, 2013, 2020,
+    2022, 2024, 2026 -- publication years, the periodization bounds, and the
+    snapshot date. None of those can rot, so matching them would be noise.
+
+    Earlier revisions of this docstring justified the range by a climate paper
+    naming an SSP horizon such as 2100. No such number is in the guarded span:
+    the only 2100 in the document is an ORCID in the frontmatter, outside §2--§3,
+    and the file has never mentioned SSP. The range is right; that reason for it
+    was invented, and a guard whose comment misstates its own purpose is the
+    defect this file exists to catch (PR #1153 gate, round 2).
+
+    The cost is real and narrow: `emb_dimensions` (1024) falls inside the strip,
+    so a hand-typed 1024 escapes. So does any hand-typed count between 1000 and
+    2999 without a separator, and any count below 1,000. `_int` puts a separator
+    in every four-digit corpus count it formats, so the comma branch carries the
+    guard; these are its blind spots, named rather than papered over.
     """
     text = re.sub(r"<!--.*?-->", "", section, flags=re.S)      # HTML comments
     text = re.sub(r"\{\{<[^>]*>\}\}", "", text)                # macros
     text = re.sub(r"`[^`]*`", "", text)                        # inline code
     text = re.sub(r"https?://\S+", "", text)                   # URLs
     text = re.sub(r"10\.\d{4,}/\S+", "", text)                 # DOIs
-    text = re.sub(r"\b[12]\d{3}\b", "", text)                  # years, scenarios
+    text = re.sub(r"\b[12]\d{3}\b", "", text)                  # years (see docstring)
     return [h for h in re.findall(r"\b\d{1,3}(?:,\d{3})+\b|\b\d{4,}\b", text)
             if h not in _ALLOWED_COUNTS]
 

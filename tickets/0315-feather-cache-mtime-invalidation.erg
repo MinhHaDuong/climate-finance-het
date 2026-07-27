@@ -7,6 +7,7 @@ Author: HDMX-coding-agent
 2026-07-24T16:20Z HDMX-coding-agent created from corpus-v2 rebuild incident (bit twice on 2026-07-24)
 
 2026-07-27T12:48Z HDMX-coding-agent note implemented in PR #1141 (loader staleness guard _handoff_cache_is_current, both Feather fast paths, 4 unit tests). Surfaced by the round-2 review of that PR: 0323 built the same fix without knowing 0315 claimed it. Both exit criteria met; only two read_feather call sites exist, both covered.
+2026-07-27T19:17Z HDMX-coding-agent bump PR #1153 gate returned ESCALATE round 2 — the year-strip range was justified by an SSP horizon absent from the guarded span; range kept, rationale corrected to the years actually present (1990, 2013, 2020, 2022, 2024, 2026) and emb_dimensions 1024 named as the real casualty
 --- body ---
 ## Context
 
