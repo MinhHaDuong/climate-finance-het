@@ -36,7 +36,7 @@ from _mk_discovery import (
 # Mechanical contract gate (`make lint` / `pytest -m adherence`).
 pytestmark = pytest.mark.adherence
 
-# Discovered once at import: eight rule targets today, four of them built on a
+# Discovered once at import: ten rule targets today, five of them built on a
 # checkout without corpus data. Absent ones are skipped, not failed.
 GENERATED = generated_markdown_targets()
 
@@ -664,7 +664,7 @@ def test_the_sweep_actually_parsed_rows():
     """Anti-vacuity: the sweep above passes trivially if it parsed nothing.
 
     Every artifact could be absent (a fresh clone without corpus data still has
-    four git-tracked ones), or the table detector could fail to recognise a
+    five git-tracked ones), or the table detector could fail to recognise a
     table and report no rows at all. Both read as green above.
     """
     rows_per_artifact = {
@@ -683,7 +683,7 @@ def test_the_sweep_actually_parsed_rows():
         "tab_venues.md and tab_venues_fr.md are git-tracked and should always "
         f"be present and parsed. Parsed: {rows_per_artifact}"
     )
-    # 71 rows today against a floor of 30. The gap is deliberate and the floor
+    # 98 rows today against a floor of 30. The gap is deliberate and the floor
     # is not a row-count pin: venue and codebook row counts move with the corpus
     # and with the deposit column contract, so a tight floor would fail on a
     # legitimate regeneration. What it must catch is a detector that has gone
