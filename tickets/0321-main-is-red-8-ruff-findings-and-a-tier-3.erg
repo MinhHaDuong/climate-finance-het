@@ -8,6 +8,7 @@ Author: HDMX-coding-agent
 2026-07-27T08:17Z HDMX-coding-agent note surfaced by a full `make check` on branch t0317-temporal-coverage; both failures are in files that branch does not touch. This repo has no CI workflows, so `make check` is a purely local gate and main's redness went unseen.
 2026-07-27T11:50Z HDMX-coding-agent note actions 1-2 landed via PR #1128 and PR #1130, both merged with a non-closing Ticket-ref because action 3 was still open. Verified on main b91b7446: ruff clean, test_script_classification 2 passed.
 2026-07-27T11:50Z HDMX-coding-agent note author arbitrated action 3: no CI, the local-only gate is deliberate. Recorded in AGENTS.md and in the Decision section.
+2026-07-27T12:09Z HDMX-coding-agent note verification run on main b91b7446: make check exits 0, pytest tests/ 1828 passed 22 skipped 0 failed in 3m42s. Main is green; 0297 and 0320 stay open on their substance.
 
 --- body ---
 ## Context
@@ -59,8 +60,12 @@ the file in `RECLASSIFIED_DUAL_ROLE` and `docs/repo-layout.md`.
 
 ## Verification
 
-- [ ] `make check` on a clean main shows only the corpus-data failures tracked
-      by 0297 and 0320
+- [x] `make check` on a clean main shows only the corpus-data failures tracked
+      by 0297 and 0320 — better than that on main b91b7446 (2026-07-27):
+      `make check` exits 0, `pytest tests/` reports 1828 passed, 22 skipped,
+      0 failed in 3m42s. The 0320 failure went with PR #1131; the 0297 one
+      cleared through the #1134 / #1138 merges. Both tickets stay open: a
+      green suite is not evidence their substantive work is done.
 
 ## Invariants
 
