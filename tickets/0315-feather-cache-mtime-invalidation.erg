@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-24T16:20Z HDMX-coding-agent created from corpus-v2 rebuild incident (bit twice on 2026-07-24)
 
+2026-07-27T12:48Z HDMX-coding-agent note implemented in PR #1141 (loader staleness guard _handoff_cache_is_current, both Feather fast paths, 4 unit tests). Surfaced by the round-2 review of that PR: 0323 built the same fix without knowing 0315 claimed it. Both exit criteria met; only two read_feather call sites exist, both covered.
 --- body ---
 ## Context
 

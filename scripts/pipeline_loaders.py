@@ -316,6 +316,12 @@ def _handoff_cache_is_current(feather_path, csv_path):
 
     An absent CSV is not staleness — reproducibility archives may ship either
     file — so the cache is trusted when there is nothing to compare it to.
+
+    One limit: ``getmtime`` follows symlinks, so under a DVC ``cache.type`` of
+    ``symlink`` or ``hardlink`` the CSV's timestamp is the cache object's
+    add-time rather than the checkout's. The committed default is ``copy``, so
+    the comparison is honest here; a project switching link types to save disk
+    would need a content check instead of an mtime one.
     """
     if not os.path.exists(csv_path):
         return True
