@@ -7,6 +7,7 @@ Author: HDMX-coding-agent
 2026-07-27T15:55Z HDMX-coding-agent created
 2026-07-27T15:58Z HDMX-coding-agent note surfaced by ticket 0341, whose "the figure still builds" verification box could not be ticked on any machine. Filed rather than fixed there: wiring a figure into the build is a packaging decision, not an escaping fix.
 
+2026-07-27T19:06Z HDMX-coding-agent note the two options are no longer evenly weighted. Since filing: ef9dabf1 (0359) cut fig_sem_composition with its rules and backing table, and 185cb2ea removed DVC tracking of cluster_labels — an input this script reads at line 52. So 'wire it in' now means writing a rule to regenerate an artifact the repo has deliberately stopped tracking, for a figure adjacent to one already cut. Meanwhile no deliverable references interactive_core_corpus.html: the only two mentions in the tree are the script's own docstring and its output path. It is in no submission, and neither outlet would carry it inline — RDJ publishes the article, Zenodo (10.5281/zenodo.19236130) carries the deposit, and that deposit's declared structure is code/ + data/inputs/ + data/products/, which an interactive HTML does not fit. Retirement is now the cheaper option; wiring it in needs a stated consumer first.
 --- body ---
 ## Context
 
