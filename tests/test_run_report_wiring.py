@@ -22,7 +22,10 @@ import yaml
 from utils import BASE_DIR
 
 DVC_YAML = os.path.join(BASE_DIR, "dvc.yaml")
-STABLE_REPORT = "data/catalogs/run_reports/catalog_merge.json"
+# Outside run_reports/ on purpose: that directory is itself a DVC output, and
+# DVC rejects an output nested inside another at graph-construction time — the
+# original placement made `dvc repro` and `dvc dag` abort outright (ticket 0430).
+STABLE_REPORT = "data/catalogs/catalog_merge_report.json"
 
 
 def _stage_outs(stage_name):
@@ -70,20 +73,64 @@ def test_latest_report_ignores_non_timestamp_run_ids(tmp_path, monkeypatch):
 
 
 def test_latest_report_prefers_the_declared_stable_file(tmp_path, monkeypatch):
-    """The DVC-declared file wins when present; the archive is a fallback."""
+    """The DVC-declared file wins when present; the archive is a fallback.
+
+    The stable file sits beside the catalogs, not in `run_reports/` — see the
+    module constant. Writing it to the old location must NOT satisfy this test,
+    which is why the path comes from `stable_report_path` rather than a literal.
+    """
     monkeypatch.setattr("pipeline_loaders.CATALOGS_DIR", str(tmp_path))
     reports = tmp_path / "run_reports"
     reports.mkdir()
     (reports / "catalog_merge__20260101T000000Z.json").write_text(
         json.dumps({"doi_duplicates_removed": 1})
     )
-    (reports / "catalog_merge.json").write_text(
-        json.dumps({"doi_duplicates_removed": 833})
-    )
 
-    from pipeline_io import latest_run_report
+    from pipeline_io import latest_run_report, stable_report_path
+
+    with open(stable_report_path("catalog_merge", str(tmp_path)), "w") as fh:
+        json.dump({"doi_duplicates_removed": 833}, fh)
 
     assert latest_run_report("catalog_merge")["doi_duplicates_removed"] == 833
+
+
+def test_stable_report_is_not_inside_the_tracked_run_reports_dir(tmp_path):
+    """The placement is the fix; pin it so a later tidy-up cannot undo it.
+
+    Moving this file back under `run_reports/` would look like housekeeping and
+    would silently make the whole pipeline unreproducible again (ticket 0430).
+    """
+    from pipeline_io import stable_report_path
+
+    path = stable_report_path("catalog_merge", str(tmp_path))
+    assert os.path.dirname(path) == str(tmp_path), (
+        f"stable report must sit in CATALOGS_DIR, not a subdirectory: {path}"
+    )
+    assert "run_reports" not in path, (
+        f"stable report is inside the DVC-tracked run_reports/ directory: {path}"
+    )
+
+
+def test_save_run_report_writes_the_stable_copy_where_dvc_expects_it(tmp_path, monkeypatch):
+    """End-to-end: the writer and the declaration must agree.
+
+    Asserting on the written artifact rather than on the returned path — the
+    return value is the timestamped report, so a stable copy written to the
+    wrong place would leave every other assertion here green.
+    """
+    monkeypatch.setattr("pipeline_loaders.CATALOGS_DIR", str(tmp_path))
+
+    from pipeline_io import save_run_report
+
+    save_run_report({"doi_duplicates_removed": 833}, "20260727T132143Z",
+                    "catalog_merge", stable_copy=True)
+
+    declared = os.path.join(str(tmp_path), os.path.basename(STABLE_REPORT))
+    assert os.path.isfile(declared), (
+        f"dvc.yaml declares {STABLE_REPORT}; nothing was written to {declared}"
+    )
+    with open(declared) as fh:
+        assert json.load(fh)["doi_duplicates_removed"] == 833
 
 
 def test_latest_report_returns_none_when_absent(tmp_path, monkeypatch):

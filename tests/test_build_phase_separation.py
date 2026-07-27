@@ -23,7 +23,7 @@ import subprocess
 from pathlib import Path
 
 import pytest
-from _mk_discovery import mk_fragments
+from _mk_discovery import makefile_constants, mk_fragments
 
 REPO_ROOT = os.path.join(os.path.dirname(__file__), "..")
 MANUSCRIPT_MK = os.path.join(REPO_ROOT, "deliverables", "manuscript", "manuscript.mk")
@@ -92,18 +92,30 @@ def test_phase_purity_guard_has_teeth(tmp_path):
         disk = f.read()
     assert _has_render(disk) and _has_phase2(disk)
 
-# The manuscript's writing-facing deliverables — what manuscript.qmd actually
-# consumes via ![](../_shared/figures/...) and
-# {{< include ../_shared/tables/tab_venues.md >}}.
-MANUSCRIPT_DELIVERABLES = [
-    "deliverables/_shared/figures/fig_bars_v1.png",
-    "deliverables/_shared/figures/fig_composition.png",
-    "deliverables/_shared/figures/fig_breaks.png",
-    "deliverables/_shared/tables/tab_venues.md",
-]
+# The manuscript's writing-facing deliverables — what manuscript.qmd consumes
+# via ![](../_shared/figures/...) and {{< include ../_shared/tables/... >}}.
+#
+# Read from manuscript.mk rather than restated here. The render rule uses this
+# same variable as its prerequisites, so a copy under-covers the moment the
+# manuscript gains a deliverable: the rule would require the new file while
+# this test kept passing on the stale four and never checked it was tracked —
+# exactly the silent drift ticket 0290 found in the paths.mk include lists.
+MANUSCRIPT_DELIVERABLES = makefile_constants()["MANUSCRIPT_DELIVERABLES"].split()
 
 # Tokens that betray a Phase-1/data dependency leaking into the writing build.
 DATA_TOKENS = ["$(REFINED)", "$(DATA_DIR)", "refined_works", "data/"]
+
+
+def test_manuscript_deliverables_is_not_empty():
+    """The parametrized check below must actually have something to check.
+
+    An empty list makes `parametrize` generate zero cases, so a rename or a
+    parser regression would read as a green suite rather than as a failure.
+    """
+    assert MANUSCRIPT_DELIVERABLES, (
+        "MANUSCRIPT_DELIVERABLES resolved empty from manuscript.mk — the "
+        "variable was renamed or the .mk parser stopped reading it."
+    )
 
 
 @pytest.mark.integration

@@ -157,7 +157,10 @@ stages:
       # The dedup counters compute_vars publishes in the data paper. Declared so
       # dvc can tell when they are stale; the timestamped siblings in
       # run_reports/ are run history and stay undeclared (ticket 0349).
-      - data/catalogs/run_reports/catalog_merge.json
+      # Deliberately NOT inside run_reports/ — that directory is a DVC output
+      # (run_reports.dvc), and DVC rejects an output nested in another at graph
+      # construction, which made dvc repro and dvc dag abort outright (0430).
+      - data/catalogs/catalog_merge_report.json
 
   # ── Phase 1b: Enrichment pipeline ──────────────────────────
   # Split into independent DVC stages so each step is cached separately.

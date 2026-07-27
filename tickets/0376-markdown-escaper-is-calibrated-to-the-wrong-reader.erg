@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-27T19:05Z HDMX-coding-agent created
 2026-07-27T19:05Z HDMX-coding-agent note raised by the #1191 red-team agent, re-triaged from blocker to its own ticket, and reproduced independently before filing
+2026-07-27T20:50Z HDMX-coding-agent note reimagine: reader established off a real quarto render (strace + intercepted defaults), not off the docs. Character set settled at @ ~ ^ by measurement — see the resolved tension in Actions 3.
 
 --- body ---
 ## Context
@@ -41,9 +42,13 @@ folded into 0370:
 
 ## Scope — this predates 0370 and is wider than it
 
-The gap lives in the shared helper, so it reaches every caller: the deposit
-codebook (0325), both venue tables and the core-venues table (0339), and the
-corpus-sources and language tables (0370). The venue emitters are the most
+The gap lives in the shared helper, so it reaches every caller: both venue
+tables and the core-venues table (0339), the corpus-sources, language and
+corpus-flow tables (0370), and the retrieval-protocol table. (This ticket was
+filed naming the deposit codebook of 0325 as a carrier; ticket 0354 has since
+retired that emitter, and `markdown_cell` — the function it used — now has no
+live caller at all. That is inert to this ticket, which only touches
+`_GFM_LITERAL`, but it deserves its own ticket.) The venue emitters are the most
 plausible carrier by a wide margin — they interpolate *journal names straight
 out of the bibliographic corpus*, where an `@` is far likelier than in a
 hand-edited source label. Those emitters are already merged.
@@ -58,25 +63,65 @@ why it is worth its own ticket rather than a sixth item on a fix-the-emitter PR.
   module docstring's rationale for the scope needs revising with it
 - `tests/_gfm_render.py` — `render_gfm`, the `-f gfm` oracle used by every
   escaping test
-- `tests/test_markdown_table.py`, `tests/test_rendered_venue_table_fidelity.py`,
-  `tests/test_corpus_table_export.py`, `tests/test_language_table.py` — the
-  callers of that oracle
+- `tests/test_corpus_flow.py`, `tests/test_corpus_table_export.py`,
+  `tests/test_language_table.py`, `tests/test_rendered_venue_table_fidelity.py`
+  — the four callers of that oracle. (This list named
+  `tests/test_markdown_table.py` until the feasibility pass; that module
+  deliberately defers render assertions and never imports `_gfm_render`, while
+  `test_corpus_flow.py` was missing.) `render_gfm` is called positionally with
+  two arguments by all four, so an optional `bibliography=` third parameter is
+  backward-compatible.
+- `deliverables/_shared/bibliography/main.bib` — a real tracked bibliography;
+  the `@key` test needs no synthesized fixture
 - `deliverables/data-paper/data-paper.qmd`,
   `deliverables/corpus-report/corpus-report.qmd` — `bibliography:` set
 
 ## Actions
 
-1. Establish which reader Quarto invokes for these documents, and with which
-   extensions. Do not assume plain `markdown`; read it off a real Quarto run
-   rather than off the docs, and record the answer in the module docstring.
+1. **Settled — record it, do not re-derive.** Established from two real
+   `quarto render` runs by intercepting the `--defaults` YAML Quarto hands its
+   bundled pandoc, cross-checked with `strace -f -e trace=execve`: `from:` is
+   not a reader name but a custom Lua reader,
+   `/opt/quarto/share/filters/qmd-reader.lua`, whose source sets
+   `Extensions = pandoc.format.extensions 'markdown'` and reads with
+   `{format = "markdown", extensions = …}`. No `reader-extensions:` key appears
+   in the captured defaults, so the extension set is pandoc's own default for
+   `markdown` — the full extended reader. When `bibliography:` is set (all ten
+   deliverables), Quarto appends the `citeproc` filter automatically.
+
+   `pandoc --list-extensions` confirms the gap: `markdown` carries
+   `+citations +subscript +superscript`; `gfm` has none of them.
+
+   Record this in the module docstring so the next reader does not re-derive it.
 2. Switch the oracle to that reader. This is the load-bearing step — do it
    first, so the character-set change lands against a test that can fail.
-3. Widen `_GFM_LITERAL` to whatever the reader makes live in a table cell
-   (`@`, `~`, `^` at minimum), keeping the existing rule that constructs
-   needing a matched pair are left alone so shipped tables do not churn.
-4. Re-check the no-churn pins in all six emitters. If widening the set rewrites
-   a currently-shipped value, that is a finding, not a nuisance — report it
-   before suppressing it.
+3. Widen `_GFM_LITERAL` to `@`, `~`, `^`.
+
+   **A tension in this ticket's original wording, resolved by measurement.**
+   "At minimum `@`, `~`, `^`" and "keep the matched-pair exemption" conflict:
+   `@` fires on a single occurrence, but `~`/`^` need a pair, which would put
+   them under the exemption alongside `*`/`_`. Measured:
+
+   - `@` is live alone, and an *unmatched* key is worse than a matched one — it
+     renders visible broken-citation garbage rather than failing quietly.
+   - `` ` `` pairs **across cells**: `` c`1 | MID3 | d`2 `` swallows the middle
+     cell into a code span. That, not single-character liveness, is why the
+     backtick is already escaped unconditionally.
+   - `~`/`^` do **not** pair across cells, but do fire within one:
+     `CO~2~ emissions` renders `CO<sub>2</sub> emissions` — an entirely
+     plausible string in this corpus.
+
+   So the exemption's real basis is not "needs a pair". It is that the emitters
+   themselves add `**…**` after escaping, so escaping `*` would destroy markup
+   they intend. No emitter ever adds a tilde or caret. `~`/`^` are therefore
+   escaped and `*`/`_` stay exempt, and the docstring's rationale should say
+   this rather than "changes the rendering on their own", which is the criterion
+   that created the ambiguity.
+4. Re-check the no-churn pins in all six emitters. Measured so far: the four
+   git-tracked shipped tables contain **zero** occurrences of `@`, `~` or `^`,
+   so they cannot churn. The four corpus-derived tables could not be checked
+   without `data/catalogs/` populated — that check is still owed, and if
+   widening rewrites a shipped value it is a finding to report, not suppress.
 
 ## Test
 
