@@ -89,16 +89,47 @@ def unresolved_markdown(target: str) -> bool:
 
     `expand_vars` resolves a bare `$(NAME)`, so anything built with a Make list
     function survives with its syntax attached. Each form leaves a different
-    wreck and all three are caught by the same test:
+    wreck and all of them are caught by the same test:
 
         $(foreach m,$(METHODS),… tab_$(m).md …)  ->  '…tab_$(m).md'
         $(addprefix DIR/,a.md b.md)              ->  'DIR/,a.md'  and  'b.md)'
+        $(TABLES) where TABLES := a.md b.md      ->  'a.md b.md'
 
     The second form is why a bare "contains `$`" test is not enough: the `$`
     lands on a *different* whitespace token than the `.md` does.
+
+    The third is the dangerous one, because it looks clean from every angle a
+    character test can reach — no Make syntax survives, and the token still ends
+    in `.md`. Only its *shape* betrays it: a path is one whitespace-free token,
+    so a target that does not survive `str.split` is a list wearing a filename.
+    `rule_targets` now expands before it splits and no longer produces this, and
+    the check stays because the guarantee belongs here: whatever future resolver
+    hands a list to a caller expecting a path fails loudly rather than skipping.
     """
     return ".md" in target and (
-        bool(set("$%(),") & set(target)) or not target.endswith(".md"))
+        bool(set("$%(),") & set(target))
+        or target.split() != [target]
+        or not target.endswith(".md"))
+
+
+def has_delimiter(line: str) -> bool:
+    """True when `line` carries an unescaped ``|`` — i.e. it is row-shaped.
+
+    Weaker than ``len(split_row(line)) > 1``, and deliberately so. A value torn
+    by a raw newline leaves a remainder holding the row's *closing* pipe and
+    nothing else, which splits to one cell: row-shaped to a reader, invisible to
+    a two-cell test. This is the predicate the :func:`scan` docstring has always
+    described — "any line that carries an unescaped ``|``".
+    """
+    i = 0
+    while i < len(line):
+        if line[i] == "\\" and i + 1 < len(line):
+            i += 2
+        elif line[i] == "|":
+            return True
+        else:
+            i += 1
+    return False
 
 
 def _is_separator(cells: list[str]) -> bool:
@@ -106,8 +137,8 @@ def _is_separator(cells: list[str]) -> bool:
 
 
 def scan(text: str) -> tuple[list[tuple[int, list[str], list[tuple[int, list[str]]]]],
-                             list[int], int | None]:
-    """`(tables, orphan row lines, unclosed fence line)`.
+                             list[int], list[int], int | None]:
+    """`(tables, orphan row lines, torn row lines, unclosed fence line)`.
 
     A table is a pipe row immediately followed by a delimiter row, which is the
     rule GFM itself applies. Fenced blocks are skipped: ``tab_variables.md``
@@ -119,7 +150,7 @@ def scan(text: str) -> tuple[list[tuple[int, list[str], list[tuple[int, list[str
     column count as the header, so a mismatch there is the same defect one line
     higher.
 
-    The other two return values exist because a *silent* end-of-table is the
+    The other three return values exist because a *silent* end-of-table is the
     way this parser could be blind to exactly the defect it hunts:
 
     - **Orphans.** A raw newline inside a value ends the table at that line, so
@@ -128,6 +159,15 @@ def scan(text: str) -> tuple[list[tuple[int, list[str], list[tuple[int, list[str
       (the codebook path) does not, so the hole is reachable from a shipped
       emitter. Any line outside a fence that carries an unescaped ``|`` and no
       table claimed is reported.
+    - **Torn rows.** The orphan rule needs the remainder to still carry a pipe,
+      and when the newline lands in the *last* column it does not: the row above
+      counts its declared cells and passes, and the tail below holds no
+      delimiter at all. So a table body that ends on a non-blank line rather
+      than on a blank one, EOF or a fence is reported at that line. This is a
+      contract on *generated* output — an emitter writes a blank line after a
+      table — and it is deliberately strict about what may abut a table body,
+      because a torn Markdown description can begin with anything, ``#``
+      included, and a block-start exemption would reopen the hole it closes.
     - **Unclosed fence.** One stray fence swallows the rest of the file, and
       the sweep would read it as clean.
 
@@ -145,6 +185,7 @@ def scan(text: str) -> tuple[list[tuple[int, list[str], list[tuple[int, list[str
     tables: list[tuple[int, list[str], list[tuple[int, list[str]]]]] = []
     claimed: set[int] = set()
     row_shaped: list[int] = []
+    torn: list[int] = []
     fence_opened_at: int | None = None
     fence: tuple[str, int] = ("", 0)
     i = 0
@@ -168,7 +209,7 @@ def scan(text: str) -> tuple[list[tuple[int, list[str], list[tuple[int, list[str
         if fence_opened_at is not None:
             i += 1
             continue
-        if len(split_row(stripped)) > 1:
+        if has_delimiter(stripped):
             row_shaped.append(i + 1)
         if ("|" not in stripped or i + 1 >= len(lines)
                 or not _is_separator(split_row(lines[i + 1]))):
@@ -184,9 +225,15 @@ def scan(text: str) -> tuple[list[tuple[int, list[str], list[tuple[int, list[str
             rows.append((j + 1, split_row(lines[j])))
             claimed.add(j + 1)
             j += 1
+        # The body loop stops on EOF, a blank line, a fence, or a line with no
+        # pipe. Only the last of those is anomalous in generated output, and it
+        # is the signature of a value torn by a raw newline in the last column.
+        if (j < len(lines) and lines[j].strip() and "|" not in lines[j]
+                and not lines[j].strip().startswith(("```", "~~~"))):
+            torn.append(j + 1)
         tables.append((i + 1, header, rows))
         i = j
-    return tables, sorted(set(row_shaped) - claimed), fence_opened_at
+    return tables, sorted(set(row_shaped) - claimed), torn, fence_opened_at
 
 
 def pipe_tables(text: str) -> list[tuple[int, list[str], list[tuple[int, list[str]]]]]:
@@ -201,7 +248,7 @@ def malformed_rows(text: str) -> list[str]:
     and an unclosed fence are the two ways this parser could report a clean
     file while never looking at the rows that matter.
     """
-    tables, orphans, unclosed = scan(text)
+    tables, orphans, torn, unclosed = scan(text)
     problems = [
         f"line {lineno}: {len(cells)} cells, header at line {header_line} "
         f"declares {len(header)} — {'|'.join(cells)[:120]}"
@@ -214,6 +261,12 @@ def malformed_rows(text: str) -> list[str]:
         "ended early, most likely on a raw newline inside a value, leaving every "
         "row below unchecked"
         for lineno in orphans
+    ]
+    problems += [
+        f"line {lineno}: text abutting the table above with no delimiter in it "
+        "— the last cell of the row above was torn by a raw newline, so the "
+        "rest of that value and every row below it went unchecked"
+        for lineno in torn
     ]
     if unclosed is not None:
         problems.append(
