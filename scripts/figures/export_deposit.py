@@ -36,13 +36,18 @@ def coerce_integer_columns(df):
     and the first thing ``frictionless validate`` reports (ticket 0354). The
     nullable ``Int64`` dtype keeps the gaps and drops the decimal.
 
-    A genuinely fractional value raises here rather than being truncated
-    silently: a year of 2026.4 is a pipeline bug, not something to round away.
+    Both ways of not being an integer raise here rather than passing quietly.
+    A fractional value (2026.4) is a pipeline bug, not something to round away;
+    a non-numeric one ("n.d.") must not become an empty cell, because `year` is
+    nullable by measurement, so a blank validates cleanly and the descriptor
+    would report a green deposit that had silently lost the value. This step is
+    the only place that catch can happen — hence ``errors="raise"``. Genuine
+    gaps are already NaN from ``read_csv`` and pass through untouched.
     """
     for v in DEPOSIT_VARIABLES:
         if v.dtype != "integer" or v.name not in df.columns:
             continue
-        df[v.name] = pd.to_numeric(df[v.name], errors="coerce").astype("Int64")
+        df[v.name] = pd.to_numeric(df[v.name], errors="raise").astype("Int64")
     return df
 
 

@@ -191,3 +191,40 @@ class TestDepositEnvelope:
         roles = {c["roles"][0]: c["path"] for c in pkg["contributors"]}
         assert "0000-0001-9988-2100" in roles["author"]
         assert "ror.org" in roles["funder"]
+
+
+class TestIntegerCoercion:
+    """`export_deposit.coerce_integer_columns` — the fix for `2026.0`.
+
+    The descriptor cannot police this one on its own. A malformed year that
+    becomes an *empty* cell validates cleanly, because `year` is nullable by
+    measurement; only the coercion step can refuse it.
+    """
+
+    def _frame(self, value):
+        import pandas as pd
+        return pd.DataFrame({"year": [value, "2020"]})
+
+    def test_missing_value_does_not_become_a_float(self):
+        import pandas as pd
+        from figures.export_deposit import coerce_integer_columns
+
+        df = coerce_integer_columns(pd.DataFrame({"year": [2026.0, None]}))
+        assert df["year"].astype("string").tolist()[0] == "2026"
+
+    def test_non_numeric_value_is_refused_not_emptied(self):
+        """The silent path this closes: `coerce` would publish a blank year.
+
+        A blank passes validation (`year` is nullable), so a garbage value would
+        leave the deposit green while losing data. Refuse it at the write step.
+        """
+        from figures.export_deposit import coerce_integer_columns
+
+        with pytest.raises((ValueError, TypeError)):
+            coerce_integer_columns(self._frame("n.d."))
+
+    def test_fractional_value_is_refused_not_truncated(self):
+        from figures.export_deposit import coerce_integer_columns
+
+        with pytest.raises((ValueError, TypeError)):
+            coerce_integer_columns(self._frame("2026.4"))
