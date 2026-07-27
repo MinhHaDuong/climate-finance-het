@@ -1,0 +1,41 @@
+# Shared artifacts no deliverable renders, and why that is the right answer.
+#
+# tests/test_deliverable_artifacts.py resolves the {{< include >}} graph from all
+# eleven deliverable .qmd roots and fails on any tracked file under
+# deliverables/_shared/{_includes,tables} the graph does not reach. Every entry
+# below is an accepted exception; anything else is a defect.
+#
+# Format: <repo-relative path> — <reason>
+# The reason is load-bearing, not decoration: a redundancy check fails the suite
+# when an entry becomes reachable, so this file cannot rot into a mute skip-list.
+
+deliverables/_shared/tables/codebook.md — data dictionary for the Zenodo deposit (per-column allowed values and measured missingness), not a paper float; data-paper.qmd §3 points readers to it by name
+
+deliverables/_shared/tables/tab_retrieval_protocol.md — deposited in the Zenodo package (build_datapaper_archive.sh copies it to data/products/), not a paper float; data-paper.qmd §2 points readers to it by name for the full per-source protocol and grey-literature seed list (ticket 0329)
+
+deliverables/_shared/tables/tab_venues_fr_caption.md — build input, not a float: manuscript.mk's $(GIDE_VENUES_FR) rule concatenates it onto tab_venues.md to make the French-caption variant that manuscript-Gide.qmd includes
+
+# The seventeen top-level _includes/ files below are leftovers of the technical
+# report's rewrite and split (0226/0240): the report now composes _includes/techrep/
+# and _includes/zoo/ only. Their disposition — delete, relocate to conception/, or
+# re-embed — is content arbitration the author owns, and it is ticket 0290's whole
+# subject. 0359 stops the bleeding instead: they no longer sit in any *_INCLUDES
+# render prerequisite pretending to be live, and this list holds them where a
+# reader and the guard can both see them. Delete an entry here when 0290 settles it.
+deliverables/_shared/_includes/agentic-workflow.md — orphaned since the techrep split; disposition pending ticket 0290
+deliverables/_shared/_includes/alluvial-diagram.md — orphaned since the techrep split; disposition pending ticket 0290
+deliverables/_shared/_includes/bibliometric-context.md — orphaned since the techrep split; part A split off to prior-mappings.md by 0289, remainder pending ticket 0290
+deliverables/_shared/_includes/bimodality-analysis.md — orphaned since the techrep split; disposition pending ticket 0290
+deliverables/_shared/_includes/changepoint-analysis.md — orphaned since the techrep split; disposition pending ticket 0290
+deliverables/_shared/_includes/citation-genealogy.md — orphaned since the techrep split; disposition pending ticket 0290
+deliverables/_shared/_includes/clustering-comparison.md — orphaned since the techrep split; disposition pending ticket 0290
+deliverables/_shared/_includes/cop-topic-structure.md — orphaned since the techrep split; disposition pending ticket 0290
+deliverables/_shared/_includes/core-vs-full-analysis.md — orphaned since the techrep split; disposition pending ticket 0290
+deliverables/_shared/_includes/core-vs-full.md — orphaned since the techrep split; core-vs-full-definition.md is the live one the corpus report composes; disposition pending ticket 0290
+deliverables/_shared/_includes/embedding-generation.md — orphaned since the techrep split; disposition pending ticket 0290
+deliverables/_shared/_includes/pca-scatter.md — orphaned since the techrep split; disposition pending ticket 0290
+deliverables/_shared/_includes/prior-mappings.md — staged for the data paper by ticket 0289, not yet included by it; disposition pending ticket 0290
+deliverables/_shared/_includes/structural-breaks.md — orphaned since the techrep split; disposition pending ticket 0290
+deliverables/_shared/_includes/tab2_poles.md — orphaned since the techrep split; disposition pending ticket 0290
+deliverables/_shared/_includes/tab_traditions.md — orphaned since the techrep split; disposition pending ticket 0290
+deliverables/_shared/_includes/temporal-structure.md — orphaned since the techrep split; disposition pending ticket 0290

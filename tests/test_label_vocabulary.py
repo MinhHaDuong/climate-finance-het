@@ -1,7 +1,7 @@
 """The TF-IDF label vocabulary has one home (ticket 0321).
 
-`compute_clusters` labels semantic k-means clusters (fig_sem_composition panel
-subtitles); `analyze_global_map` labels Louvain citation communities
+`compute_clusters` labels semantic k-means clusters (alluvial panels);
+`analyze_global_map` labels Louvain citation communities
 (fig_global_map_direct nodes). Both score terms by TF-IDF distinctiveness over
 the same corpus, so they have to suppress the same stopwords and collapse the
 same acronyms — otherwise the two figures disagree about which terms

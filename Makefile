@@ -140,13 +140,15 @@ NCC_FIGS        := deliverables/_shared/figures/fig_ncc_divergence.png \
                    deliverables/_shared/figures/fig_ncc_bimodality.png \
                    deliverables/_shared/figures/fig_ncc_alluvial.png
 
-# Zoo figures (ZOO_SCHEMATICS / ZOO_RESULT_FIGS, defined in paths.mk) are
-# deliberately excluded from ALL_FIGS / make figures: plot scripts not yet wired.
-# Add them to ALL_FIGS when plot_schematic_*.py and plot_zoo_results.py have targets.
-ALL_FIGS := $(MANUSCRIPT_FIGS) $(DATAPAPER_FIGS) $(MULTILAYER_FIGS) $(TECHREP_FIGS) $(NCC_FIGS)
+# Zoo figures (ZOO_SCHEMATICS / ZOO_RESULT_FIGS, defined in paths.mk, and so
+# TECHREP_FIGS which expands to them) are deliberately excluded from ALL_FIGS /
+# make figures: they need the full divergence and null-model pipeline. Build
+# them with `make zoo-figures`.
+ALL_FIGS := $(MANUSCRIPT_FIGS) $(DATAPAPER_FIGS) $(CORPUS_REPORT_FIGS) \
+            $(MULTILAYER_FIGS) $(SLIDES_FIGS) $(ORPHANED_FIGS) $(NCC_FIGS)
 
 # ── Default target ────────────────────────────────────────
-.PHONY: all setup manuscript papers corpus-report technical-report data-paper multilayer-detection multilayer-techrep zoo figures figures-manuscript figures-datapaper figures-companion figures-techrep figures-ncc stats check check-package check-fast lint test-durations venv-canonicalize smoke benchmark determinism-check regression regression-update audit-pdf-content check-corpus check-manuscript-data data corpus corpus-sync corpus-discover corpus-enrich corpus-extend corpus-filter corpus-align corpus-filter-all corpus-tables corpus-validate deploy-corpus clean rebuild archive-analysis archive-manuscript archive-datapaper analysis-figures analysis-tables analysis-stats manuscript-render manuscript-figures datapaper-render datapaper-figures corpus-handoff
+.PHONY: all setup manuscript papers corpus-report technical-report data-paper multilayer-detection multilayer-techrep zoo figures figures-manuscript figures-datapaper figures-corpusreport figures-companion figures-techrep figures-ncc stats check check-package check-fast lint test-durations venv-canonicalize smoke benchmark determinism-check regression regression-update audit-pdf-content check-corpus check-manuscript-data data corpus corpus-sync corpus-discover corpus-enrich corpus-extend corpus-filter corpus-align corpus-filter-all corpus-tables corpus-validate deploy-corpus clean rebuild archive-analysis archive-manuscript archive-datapaper analysis-figures analysis-tables analysis-stats manuscript-render manuscript-figures datapaper-render datapaper-figures corpus-handoff
 
 .DEFAULT_GOAL := manuscript
 
@@ -663,11 +665,14 @@ deliverables/_shared/figures/fig_ncc_alluvial.png: \
 		$(DERIVED)/tab_alluvial.csv $(DERIVED)/cluster_labels.json
 	$(PYTHON) $< --output $@ --input $(DERIVED)/tab_alluvial.csv
 
-figures-manuscript: corpus-handoff $(MANUSCRIPT_FIGS)
-figures-datapaper:  corpus-handoff $(DATAPAPER_FIGS)
-figures-companion:  corpus-handoff $(MULTILAYER_FIGS)
-figures-techrep:    corpus-handoff $(TECHREP_FIGS)
-figures-ncc:        corpus-handoff $(NCC_FIGS)
+figures-manuscript:   corpus-handoff $(MANUSCRIPT_FIGS)
+figures-datapaper:    corpus-handoff $(DATAPAPER_FIGS)
+figures-corpusreport: corpus-handoff $(CORPUS_REPORT_FIGS)
+figures-companion:    corpus-handoff $(MULTILAYER_FIGS)
+# The technical report's figures ARE the zoo set, so this is `zoo-figures` with
+# the corpus handoff in front (ticket 0359).
+figures-techrep:      corpus-handoff $(TECHREP_FIGS)
+figures-ncc:          corpus-handoff $(NCC_FIGS)
 figures: corpus-handoff $(ALL_FIGS) corpus-tables
 
 # ── Namespaced aliases (Phase 2) ────────────────────────

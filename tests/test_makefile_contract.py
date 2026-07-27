@@ -236,14 +236,23 @@ class TestPerDeliverableIncludes:
     0237 each owns a render-only .mk that depends on its OWN includes (not the
     retired PROJECT_INCLUDES union). The per-doc include sets live in paths.mk."""
 
-    def test_citation_coverage_in_techrep_includes(self):
-        """tab_citation_coverage.md is included transitively via citation-quality.md."""
+    def test_citation_coverage_in_corpus_report_includes(self):
+        """tab_citation_coverage.md is included transitively via citation-quality.md.
+
+        The corpus report is citation-quality.md's only consumer. This pinned
+        TECHREP_INCLUDES until 0359: the technical report was rewritten to
+        compose the zoo tree and dropped citation-quality.md, so the list kept
+        a prerequisite for an edge that no longer existed while the document
+        that does have it declared neither. tests/test_deliverable_artifacts.py
+        now checks every include list against its .qmd's real closure; this
+        stays as the named regression pin for the transitive case.
+        """
         paths = read_paths_mk()
-        m = re.search(r"^TECHREP_INCLUDES\s*:=\s*(.*?)(?=\n\S|\n\n)", paths,
+        m = re.search(r"^CORPUS_REPORT_INCLUDES\s*:=\s*(.*?)(?=\n\S|\n\n)", paths,
                        re.MULTILINE | re.DOTALL)
-        assert m, "TECHREP_INCLUDES not found in paths.mk"
+        assert m, "CORPUS_REPORT_INCLUDES not found in paths.mk"
         assert "tab_citation_coverage.md" in m.group(1), \
-            "TECHREP_INCLUDES must list tab_citation_coverage.md (transitive dep of citation-quality.md)"
+            "CORPUS_REPORT_INCLUDES must list tab_citation_coverage.md (transitive dep of citation-quality.md)"
 
     def test_project_includes_union_retired(self):
         """The PROJECT_INCLUDES union model is retired (0237): no render rule uses it.
