@@ -45,6 +45,10 @@ echo "  Copying final products (embeddings, citations, codebook)..."
 cp -L "$DATA_DIR/embeddings.npz" "$TMP/data/products/"
 cp -L "$DATA_DIR/citations.csv" "$TMP/data/products/"
 cp "$PROJ_ROOT/deliverables/_shared/tables/codebook.md" "$TMP/data/products/"
+# Retrieval-protocol appendix (ticket 0329): the paper points referees here for
+# the query fields, per-tier term counts, and the grey-literature enumeration.
+cp "$PROJ_ROOT/deliverables/_shared/tables/tab_retrieval_protocol.csv" "$TMP/data/products/"
+cp "$PROJ_ROOT/deliverables/_shared/tables/tab_retrieval_protocol.md" "$TMP/data/products/"
 
 echo "  Copying raw inputs (per-source catalogs)..."
 # One catalog per corpus source (utils.SOURCE_NAMES). Pinned by

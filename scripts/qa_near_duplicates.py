@@ -27,18 +27,25 @@ import re
 from collections import defaultdict
 
 import pandas as pd
+from filter_flags import _load_config
 from utils import get_logger
 
 log = get_logger("qa_near_duplicates")
 
-# Default parameters
-DEFAULT_PREFIX_LENGTH = 200
-DEFAULT_MIN_GROUP_SIZE = 5
-DEFAULT_MIN_ABSTRACT_LENGTH = 50
+# filter_flags owns the corpus-filter YAML loader; there is exactly one.
+# Missing file or missing block raises here rather than falling back to inline
+# defaults — the data paper reports these numbers, so a silent fallback would
+# let the prose describe a run that used something else (ticket 0329).
+_CFG = _load_config()["near_duplicate"]
+
+# Default parameters — config-derived, reported in the data paper's §2.2.
+DEFAULT_PREFIX_LENGTH = _CFG["prefix_length"]
+DEFAULT_MIN_GROUP_SIZE = _CFG["min_group_size"]
+DEFAULT_MIN_ABSTRACT_LENGTH = _CFG["min_abstract_length"]
 # Fraction of papers in a title group that must share an abstract prefix
 # with at least one other member for the group to be considered a true
 # near-duplicate cluster (filters out generic titles with diverse content)
-DEFAULT_ABSTRACT_OVERLAP_THRESHOLD = 0.5
+DEFAULT_ABSTRACT_OVERLAP_THRESHOLD = _CFG["abstract_overlap_threshold"]
 
 
 def _normalize_text(text: str) -> str:

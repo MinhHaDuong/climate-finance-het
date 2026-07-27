@@ -213,6 +213,54 @@ LANG_NORMALIZE = {
     "heb": "he", "hebrew": "he",
 }
 
+# ISO 639-1 → display name, for any table or figure that prints a language.
+# Library-level rather than owned by one exporter: @tbl-languages and the
+# deposited retrieval-protocol table both render language names, and two
+# private copies would let them disagree on the same code (ticket 0329 —
+# the layering guard flagged the entry-point import that copy invited).
+LANGUAGE_NAMES = {
+    "en": "English",
+    "pt": "Portuguese",
+    "de": "German",
+    "es": "Spanish",
+    "fr": "French",
+    "id": "Indonesian",
+    "tr": "Turkish",
+    "ko": "Korean",
+    "ru": "Russian",
+    "sv": "Swedish",
+    "ar": "Arabic",
+    "uk": "Ukrainian",
+    "nl": "Dutch",
+    "pl": "Polish",
+    "ja": "Japanese",
+    "zh": "Chinese",
+    "it": "Italian",
+    "fi": "Finnish",
+    "no": "Norwegian",
+    "hu": "Hungarian",
+    "cs": "Czech",
+    "da": "Danish",
+    "hr": "Croatian",
+    "ca": "Catalan",
+    "ms": "Malay",
+    "th": "Thai",
+    "vi": "Vietnamese",
+    "el": "Greek",
+    "ro": "Romanian",
+    "sk": "Slovak",
+    "hi": "Hindi",
+    "fa": "Persian",
+    "he": "Hebrew",
+    "bn": "Bengali",
+    "lt": "Lithuanian",
+    "sl": "Slovenian",
+    "et": "Estonian",
+    "lv": "Latvian",
+    "bg": "Bulgarian",
+    "sr": "Serbian",
+}
+
 
 def normalize_lang(code: object) -> str | None:
     """Normalize a language code to 2-letter ISO 639-1.

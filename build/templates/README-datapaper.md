@@ -26,6 +26,8 @@ climate-finance-datapaper/
       codebook.md                # Data dictionary: per-column type, values, missingness
       embeddings.npz             # 38,736 multilingual vectors (1024-dim)
       citations.csv              # 1,375,310 citation pairs
+      tab_retrieval_protocol.csv # Per-source query fields, term counts, languages
+      tab_retrieval_protocol.md  # The same, plus the grey-literature seed list
 ```
 
 `data/inputs/` holds the raw harvests as retrieved from each source, before

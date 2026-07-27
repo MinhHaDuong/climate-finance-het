@@ -28,7 +28,11 @@ QMD = os.path.join(REPO, "deliverables", "data-paper", "data-paper.qmd")
 GITIGNORE = os.path.join(REPO, ".gitignore")
 CODEBOOK = os.path.join(REPO, "deliverables", "_shared", "tables", "codebook.md")
 
-PRODUCTS = ["climate_finance_corpus.csv", "embeddings.npz", "citations.csv", "codebook.md"]
+PRODUCTS = [
+    "climate_finance_corpus.csv", "embeddings.npz", "citations.csv", "codebook.md",
+    # The retrieval-protocol appendix §2.1 points referees at (ticket 0329).
+    "tab_retrieval_protocol.csv", "tab_retrieval_protocol.md",
+]
 
 
 def _read(path):
