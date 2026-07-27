@@ -1,8 +1,15 @@
 # Phase 2 reproducibility — "Inventing Climate Finance" (Œconomia)
-# Shipped inside the analysis archive (cp'd by make archive-analysis).
+# Shipped inside the analysis archive (cp'd by build/build_analysis_archive.sh).
 # Not used during development — provides a simple reviewer-facing interface.
 #
 # Verifies: figures and tables are reproducible from Phase 1 data.
+#
+# Outputs land at their repo paths (deliverables/_shared/..., data/derived/...),
+# which is what expected_outputs.md5 records — the build script checksums the
+# repo tree, so a template writing to some other prefix makes `make verify` fail
+# on missing files. Every recipe passes --output explicitly: the shared parser
+# in scripts/script_io_args.py declares it required with no default, so a recipe
+# omitting it exits 2 before doing any work (ticket 0292).
 #
 # Prerequisites: uv (https://docs.astral.sh/uv/)
 # Usage:
@@ -26,51 +33,67 @@ export PATH := $(HOME)/.local/bin:$(PATH)
 
 DATA    := data/catalogs
 REFINED := $(DATA)/refined_works.csv
+CONFIG  := config/analysis.yaml
 # Analysis-side scratch dir for large intermediates (matches utils.DERIVED_TABLES_DIR).
 DERIVED := data/derived/tables
+# Phase-2 artifacts destined for a document.
+SHARED  := deliverables/_shared
+
+# The nine outputs expected_outputs.md5 records. Keep in step with
+# ANALYSIS_OUTPUTS in the repo Makefile and in build_analysis_archive.sh.
+OUTPUTS := $(SHARED)/figures/fig_bars_v1.png \
+           $(SHARED)/figures/fig_composition.png \
+           $(SHARED)/tables/tab_venues.md \
+           $(DERIVED)/tab_alluvial.csv \
+           $(DERIVED)/tab_core_shares.csv \
+           $(DERIVED)/tab_bimodality.csv \
+           $(DERIVED)/tab_axis_detection.csv \
+           $(DERIVED)/tab_pole_papers.csv \
+           $(DERIVED)/cluster_labels.json
 
 .DEFAULT_GOAL := figures
 .PHONY: figures verify
 
-figures: content/figures/fig_bars_v1.png content/figures/fig_composition.png \
-         content/tables/tab_venues.md $(DERIVED)/tab_alluvial.csv
+figures: $(OUTPUTS)
 
 # Script paths mirror the repo layout after the epic-0240 reorg: entry points
 # live under scripts/{figures,analysis}/, tier-2 libs (utils, plot_style) stay
 # flat at scripts/. PYTHONPATH=scripts resolves the flat imports either way.
 $(DERIVED)/tab_alluvial.csv $(DERIVED)/tab_core_shares.csv $(DERIVED)/cluster_labels.json &: \
-		scripts/analysis/compute_clusters.py scripts/utils.py $(REFINED) $(DATA)/refined_embeddings.npz
+		scripts/analysis/compute_clusters.py scripts/utils.py $(CONFIG) $(REFINED) $(DATA)/refined_embeddings.npz
 	$(UV_RUN) python $< --output $(DERIVED)/tab_alluvial.csv
 
+# Bimodality tables (computation only — figures are separate targets below)
+$(DERIVED)/tab_bimodality.csv $(DERIVED)/tab_axis_detection.csv \
+$(DERIVED)/tab_pole_papers.csv &: \
+		scripts/analysis/analyze_bimodality.py scripts/utils.py $(CONFIG) $(REFINED)
+	$(UV_RUN) python $< --output $(DERIVED)/tab_bimodality.csv
+
 # ── Figures ─────────────────────────────────────────────────
-content/figures/fig_bars_v1.png: scripts/figures/plot_fig1_bars.py scripts/plot_style.py scripts/utils.py $(REFINED)
-	$(UV_RUN) python $< --v1-only
+$(SHARED)/figures/fig_bars_v1.png: scripts/figures/plot_fig1_bars.py scripts/plot_style.py scripts/utils.py $(CONFIG) $(REFINED)
+	$(UV_RUN) python $< --output $@ --v1-only
 
-content/figures/fig_composition.png: scripts/figures/plot_fig2_composition.py scripts/plot_style.py scripts/utils.py \
+$(SHARED)/figures/fig_composition.png: scripts/figures/plot_fig2_composition.py scripts/plot_style.py scripts/utils.py \
 		config/v1_tab_alluvial.csv config/v1_cluster_labels.json
-	$(UV_RUN) python $< --alluvial config/v1_tab_alluvial.csv --labels config/v1_cluster_labels.json
+	$(UV_RUN) python $< --output $@ --input config/v1_tab_alluvial.csv --labels config/v1_cluster_labels.json
 
-$(DATA)/het_mostcited_50.csv: scripts/analysis/build_het_core.py scripts/utils.py $(REFINED)
-	$(UV_RUN) python $<
+$(SHARED)/tables/tab_venues.md: scripts/figures/export_tab_venues.py scripts/_markdown_table.py scripts/utils.py \
+		$(REFINED) $(DERIVED)/tab_pole_papers.csv
+	$(UV_RUN) python $< --output $@ --pole-papers $(DERIVED)/tab_pole_papers.csv
 
-content/tables/tab_venues.md: scripts/figures/export_tab_venues.py scripts/utils.py $(REFINED) \
+# Bimodality figures (each reads tab_pole_papers.csv). Not checksummed —
+# available to reviewers who want the distributional detail behind the tables.
+$(SHARED)/figures/fig_bimodality.png: scripts/figures/plot_bimodality.py scripts/utils.py \
 		$(DERIVED)/tab_pole_papers.csv
-	$(UV_RUN) python $<
+	$(UV_RUN) python $< --output $@
 
-$(DERIVED)/tab_pole_papers.csv &: scripts/analysis/analyze_bimodality.py scripts/utils.py $(REFINED)
-	$(UV_RUN) python $<
-
-content/figures/fig_bimodality.png: scripts/figures/plot_bimodality.py scripts/utils.py \
+$(SHARED)/figures/fig_bimodality_lexical.png: scripts/figures/plot_bimodality_lexical.py scripts/utils.py \
 		$(DERIVED)/tab_pole_papers.csv
-	$(UV_RUN) python $<
+	$(UV_RUN) python $< --output $@
 
-content/figures/fig_bimodality_lexical.png: scripts/figures/plot_bimodality_lexical.py scripts/utils.py \
+$(SHARED)/figures/fig_bimodality_keywords.png: scripts/figures/plot_bimodality_keywords.py scripts/utils.py \
 		$(DERIVED)/tab_pole_papers.csv
-	$(UV_RUN) python $<
-
-content/figures/fig_bimodality_keywords.png: scripts/figures/plot_bimodality_keywords.py scripts/utils.py \
-		$(DERIVED)/tab_pole_papers.csv
-	$(UV_RUN) python $<
+	$(UV_RUN) python $< --output $@
 
 # ── Verification ──────────────────────────────────────────
 verify: figures

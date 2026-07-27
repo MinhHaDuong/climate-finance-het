@@ -33,11 +33,16 @@ ANALYSIS_OUTPUTS=(
 echo "=== Building analysis archive ==="
 
 rm -rf "$TMP"
+# Output directories the archived Makefile writes into. They must pre-exist:
+# validate_io() in scripts/script_io_args.py requires the output's parent
+# directory, and the recipes mirror the repo paths that expected_outputs.md5
+# records — not a re-rooted content/ tree (ticket 0292).
 mkdir -p "$TMP/data/catalogs" \
+         "$TMP/data/derived/tables" \
          "$TMP/scripts" \
          "$TMP/config" \
-         "$TMP/content/figures" \
-         "$TMP/content/tables"
+         "$TMP/deliverables/_shared/figures" \
+         "$TMP/deliverables/_shared/tables"
 
 cd "$PROJ_ROOT"
 
@@ -55,6 +60,10 @@ cp -L "$DATA_DIR/refined_embeddings.npz" "$TMP/data/catalogs/"
 # resolve to a real file, so the next mover cannot silently strand the cp.
 SCRIPTS=(
     scripts/utils.py
+    # Shared --input/--output parser. Every entry point below calls
+    # parse_io_args at the top of main, so without it the archived scripts fail
+    # at import; the archive shipped without it until ticket 0292.
+    scripts/script_io_args.py
     scripts/pipeline_loaders.py
     scripts/pipeline_io.py
     scripts/pipeline_progress.py
