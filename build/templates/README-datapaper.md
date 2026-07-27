@@ -25,7 +25,7 @@ climate-finance-datapaper/
                                  # teaching, unfccc, oecd
     products/              # Final data products of this paper
       climate_finance_corpus.csv # 43,179 works (abstracts stripped)
-      codebook.md                # Data dictionary: per-column type, values, missingness
+      datapackage.json           # Frictionless schema: per-column type, values, missingness
       embeddings.npz             # 38,736 multilingual vectors (1024-dim)
       citations.csv              # 1,375,310 citation pairs
       tab_retrieval_protocol.csv # Per-source query fields, term counts, languages
@@ -35,6 +35,16 @@ climate-finance-datapaper/
 `data/inputs/` holds the raw harvests as retrieved from each source, before
 merge and deduplication — the provenance trail. `data/products/` holds the
 curated outputs this paper describes; most users need only `products/`.
+
+`datapackage.json` documents every column of the corpus CSV — storage type,
+allowed values, ranges, and the share of empty cells measured on the shipped
+data. It is executable documentation, so you can check the file you received
+against it:
+
+```bash
+pip install frictionless
+frictionless validate data/products/datapackage.json
+```
 
 ## Prerequisites
 

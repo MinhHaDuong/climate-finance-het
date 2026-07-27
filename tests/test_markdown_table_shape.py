@@ -40,10 +40,13 @@ pytestmark = pytest.mark.adherence
 # checkout without corpus data. Absent ones are skipped, not failed.
 GENERATED = generated_markdown_targets()
 
-# Present in every checkout — git-tracked, and the artifact whose split cell
-# ticket 0325 fixed. Pins discovery against a Makefile refactor that silently
-# stops resolving table targets.
-CANONICAL = "deliverables/_shared/tables/codebook.md"
+# Present in every checkout — git-tracked, built with no Phase-1 data, and one
+# of the three artifacts still emitted as a pipe table through the escaper.
+# Pins discovery against a Makefile refactor that silently stops resolving
+# table targets. Was codebook.md until ticket 0354 retired it; the escaper's
+# shipped subject moved here, and the escaped-pipe payload did not survive the
+# move (see test_parser_reads_a_real_shipped_table below).
+CANONICAL = "deliverables/_shared/tables/tab_retrieval_protocol.md"
 
 _SEPARATOR_CELL = re.compile(r"^:?-+:?$")
 
@@ -458,26 +461,29 @@ def test_markdown_cell_output_keeps_the_row_whole():
     assert not malformed_rows(doc)
 
 
-def test_parser_reads_the_real_escaped_codebook_row():
-    """Real-world positive: `is_flagged` legitimately carries a `\\|`.
+def test_parser_reads_a_real_shipped_table():
+    """Real-world positive: the parser reads a deposited table's true shape.
 
-    The counterpart to the fixture — a parser that simply never reports a
+    The counterpart to the fixture above — a parser that simply never reports a
     mismatch would pass the tree sweep too. This one asserts the cell count it
     reads on a shipped file, so an over-eager escape rule fails here.
+
+    Narrower than it was. Until ticket 0354 this read codebook.md's `is_flagged`
+    row, which carried a genuine ``\\|`` from the filter recipe and so pinned the
+    escape path against a *deposited* artifact. That row now lives in a LaTeX
+    longtable (tab_variables.md) and in datapackage.json, neither a pipe table,
+    and no shipped Markdown table carries an escaped pipe any more. The escape
+    itself stays covered by the fixture tests on ``markdown_cell`` output; what
+    is lost is the real-file half of that pair.
     """
     path = REPO_ROOT / CANONICAL
     if not path.is_file():
         pytest.skip(f"{CANONICAL} not built on this machine")
-    rows = [
-        cells
-        for _, _, rows in pipe_tables(path.read_text(encoding="utf-8"))
-        for _, cells in rows
-        if "is_flagged" in "".join(cells)
-    ]
-    assert rows, "no is_flagged row in the codebook"
-    assert all(len(cells) == 5 for cells in rows), rows
-    assert any(r"\|" in "".join(cells) for cells in rows), \
-        "the is_flagged recipe lost its escaped pipe"
+    tables = pipe_tables(path.read_text(encoding="utf-8"))
+    assert tables, f"no pipe table found in {CANONICAL}"
+    for _, header, rows in tables:
+        for _, cells in rows:
+            assert len(cells) == len(header), (CANONICAL, header, cells)
 
 
 # ---------------------------------------------------------------------------
@@ -679,13 +685,14 @@ def test_the_sweep_actually_parsed_rows():
     # leave one of three units inert and the floor softer than it reads.
     with_tables = {a: n for a, n in rows_per_artifact.items() if n}
     assert len(with_tables) >= 3, (
-        "fewer than three generated pipe-table artifacts parsed; codebook.md, "
-        "tab_venues.md and tab_venues_fr.md are git-tracked and should always "
-        f"be present and parsed. Parsed: {rows_per_artifact}"
+        "fewer than three generated pipe-table artifacts parsed; "
+        "tab_retrieval_protocol.md, tab_venues.md and tab_venues_fr.md are "
+        "git-tracked and should always be present and parsed. "
+        f"Parsed: {rows_per_artifact}"
     )
     # 98 rows today against a floor of 30. The gap is deliberate and the floor
-    # is not a row-count pin: venue and codebook row counts move with the corpus
-    # and with the deposit column contract, so a tight floor would fail on a
+    # is not a row-count pin: venue and protocol row counts move with the corpus
+    # and with the harvest configuration, so a tight floor would fail on a
     # legitimate regeneration. What it must catch is a detector that has gone
     # blind — which shows up as zero or near-zero, not as a 20% drift.
     assert sum(with_tables.values()) >= 30, (

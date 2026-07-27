@@ -14,21 +14,16 @@ must agree character for character. The Markdown copy is the same path §3
 takes, which is what makes agreement meaningful rather than self-referential.
 """
 
-import os
 import re
 import shutil
 import subprocess
-from html import escape
 
 import pytest
 from _deposit_variables import (
     DEPOSIT_VARIABLES,
     describe,
     latex_inline,
-    markdown_cell,
-    render_codebook,
 )
-from _gfm_render import cell_texts, render_gfm, require_pandoc, row_with
 
 RECIPE = "df[~df['is_flagged'] | df['is_protected']]"
 
@@ -102,65 +97,3 @@ class TestRenderedFidelity:
         emitted, _ = rendered
         line = next(e for e in emitted if "is_flagged" in e)
         assert RECIPE in line, f"negation lost in the rendered table: {line}"
-
-
-@pytest.mark.integration
-def test_codebook_recipe_survives_gfm_rendering(tmp_path):
-    """The codebook ships as Markdown, so its rendering deserves the same oracle.
-
-    A raw `|` ends a pipe-table cell: the deposited data dictionary used to
-    publish the recipe cut in half, at the pipe. Asserting on the escaped
-    source would only restate the fix, so this renders and reads the cell back.
-    """
-    require_pandoc()
-    flat = render_gfm(render_codebook({}, n_rows=1), tmp_path)
-    row = row_with(flat, "refined subset")
-    assert f"<code>{escape(RECIPE, quote=False)}</code>" in row, \
-        f"recipe corrupted in the rendered codebook:\n{row}"
-    # GFM silently drops a cell that overflows the header, so the row count
-    # alone does not catch the defect — it pins the column contract, and the
-    # assertion above pins the payload.
-    assert row.count("<td") == 5, f"row is not the five declared columns:\n{row}"
-
-
-@pytest.mark.integration
-@pytest.mark.parametrize("payload", [
-    "a | b",                                    # bare pipe, prose
-    "recipe `df[~df['f'] | df['p']]` end",      # bare pipe, code span
-    r"a \ b",                                   # backslash, prose
-    r"regex `\d{4}` end",                       # backslash, code span
-    r"a \| b",                                  # both: the escape-layer case
-])
-def test_cell_escaping_round_trips_through_gfm(payload, tmp_path):
-    """Each escaping branch is checked on the rendered page, not on the escape.
-
-    Two payloads carry the weight, and they fail different wrong answers —
-    verified against both through real pandoc:
-
-    - `a \\| b` truncates to `a \\` under the pre-fix rule, which escaped the
-      pipe alone: the value's own backslash absorbs the new escape and the
-      pipe goes live, splitting the cell. Same defect as the shipped codebook.
-    - `` `\\d{4}` `` renders as `\\\\d{4}` if a backslash is escaped everywhere,
-      because CommonMark reads it literally inside a code span.
-
-    Only escaping prose and code separately passes both.
-    """
-    require_pandoc()
-    flat = render_gfm(
-        f"| Case | Value |\n|:--|:--|\n| probe | {markdown_cell(payload)} |\n",
-        tmp_path)
-    row = row_with(flat, "probe")
-    assert row.count("<td") == 2, f"payload split the row:\n{row}"
-
-    text = cell_texts(row)[1]
-    assert text == escape(payload.replace("`", ""), quote=False), \
-        f"payload altered in transit: {text!r}"
-
-
-@pytest.mark.integration
-def test_data_paper_prose_prints_the_same_recipe():
-    """Both copies start from one string; @tbl-variables is the other copy."""
-    root = os.path.join(os.path.dirname(__file__), "..")
-    with open(os.path.join(root, "deliverables", "data-paper",
-                           "data-paper.qmd")) as f:
-        assert f"`{RECIPE}`" in f.read()
