@@ -8,6 +8,7 @@ Author: HDMX-coding-agent
 2026-07-27T14:40Z HDMX-coding-agent note filed by the 0340 adherence self-gate, round 2. Both of its residual nits close with this one change.
 2026-07-27T15:05Z HDMX-coding-agent note corrected: the 0340 review panel found test_arch_compliance.py has no Makefile parser at all — its _ASSIGN is a Python-source regex for architecture rule 9. Two copies, not three.
 
+2026-07-27T18:38Z HDMX-coding-agent note now motivated by two confirmed instances of the same bug shape in two separate hand-rolled parsers: tests/_mk_discovery.py::rule_targets() (fixed in PR #1172) and tests/test_corpus_flow.py::grouped_targets_using_bare_at() (ticket 0374, open). Both split a Make target list on whitespace before expanding variables, so a $(VAR) holding several paths reads as one target. Each was found by a merge gate, neither by the guard itself.
 --- body ---
 ## Context
 
