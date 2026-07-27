@@ -16,10 +16,8 @@ prevent, and here the cache was swallowing it downstream of every guard.
 import os
 
 import pandas as pd
+import pipeline_loaders  # on sys.path via [tool.pytest.ini_options] pythonpath
 import pytest
-
-import _source_roots  # noqa: F401  (puts scripts/ on sys.path)
-import pipeline_loaders
 
 WORKS = {
     "doi": ["10.1/a", "10.1/b"],
