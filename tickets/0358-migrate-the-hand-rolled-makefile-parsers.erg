@@ -1,0 +1,90 @@
+%erg 0.1
+Title: Migrate the hand-rolled Makefile parsers onto the shared discovery helper
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T14:33Z HDMX-coding-agent created
+2026-07-27T14:40Z HDMX-coding-agent note filed by the 0340 adherence self-gate, round 2. Both of its residual nits close with this one change.
+
+--- body ---
+## Context
+
+Ticket 0340 added the canonical Makefile parser to `tests/_mk_discovery.py`
+(`makefile_constants`, `expand_vars`, `rule_targets`). Three hand-rolled copies
+remain, and they are each strictly narrower than the shared one:
+
+- `tests/test_phase_layout.py:46` — matches only `NAME := value` at column
+  zero, so it misses the six `export NAME :=` assignments, and it reads
+  *physical* lines, so it misses continued target lists. Concretely:
+  `Makefile:380-382` declares three Phase-2 targets built by
+  `scripts/analysis/compute_clusters.py` across a `\` continuation, and the
+  guard matches no rule there — it silently skips all three.
+- `tests/test_arch_compliance.py:380` and
+  `tests/test_evict_analysis_intermediates.py:180` — two more variants, with
+  divergent semantics (the new helper is first-definition-wins, the evict one
+  is last-wins).
+
+This is the failure mode ticket 0248 was filed against — a guard that keeps
+passing over fewer files rather than because its contract still holds — one
+level up from `.mk` *enumeration*, which is all 0248's meta-guard polices.
+
+It also leaves `makefile_constants(files=...)` without a caller. That parameter
+exists precisely so `test_phase_layout` can keep its deliberately narrow scope
+(`files=[MAKEFILE]`) while sharing the parsing; until the migration lands, the
+parameter is dead surface and its docstring names a caller that does not exist.
+
+## Relevant files
+
+- `tests/_mk_discovery.py` — the shared parser; `files=` is the migration seam
+- `tests/test_phase_layout.py` — narrowest copy, and the one demonstrably
+  skipping real targets
+- `tests/test_arch_compliance.py` — second copy
+- `tests/test_evict_analysis_intermediates.py` — third copy, last-wins semantics
+- `tests/test_mk_discovery_unified.py` — the 0248 meta-guard to extend
+
+## Actions
+
+1. Migrate `test_phase_layout.py` to `makefile_constants(files=[MAKEFILE])` and
+   `rule_targets()`, keeping its constant scope narrow on purpose.
+2. Migrate the other two copies, deciding explicitly whether each wants
+   first-wins or last-wins and stating why in a comment — the divergence today
+   is accidental, not designed.
+3. Extend `test_mk_discovery_unified.py` from `.mk` *enumeration* to Make
+   *parsing*: no test outside `_mk_discovery.py` may hand-roll a Make
+   assignment or rule-line regex, with the same `_ALLOWLIST` mechanism.
+
+## Test
+
+Red step, before touching any guard: assert the shared parser sees what the
+hand-rolled one misses.
+
+```python
+def test_phase_layout_sees_continued_target_lists():
+    # Makefile:380-382 declares three targets across a `\` continuation
+    from _mk_discovery import rule_targets
+    assert "data/derived/tables/tab_alluvial.csv" in rule_targets()
+```
+
+Then extend the meta-guard and confirm it goes red against the three
+un-migrated copies before migrating them.
+
+## Verification
+
+- [ ] `test_phase_layout` resolves the `Makefile:380-382` continuation targets
+- [ ] The meta-guard fails on a reintroduced hand-rolled Make regex
+- [ ] `makefile_constants(files=...)` has a real caller and a true docstring
+- [ ] `make lint` and `make check-fast` hold their counts
+
+## Invariants
+
+- Migrating must not *widen* `test_phase_layout`'s constant scope — a wider
+  constant set widens what it flags, which is a behaviour change, not a
+  refactor. Pass `files=[MAKEFILE]`.
+- Pure refactor on three guards: confirm each still flags what it flagged, by
+  mutation, not by a green suite.
+
+## Exit criteria
+
+- [ ] One Makefile parser in the test suite, in `_mk_discovery.py`
+- [ ] A standing meta-guard prevents a fourth from appearing
