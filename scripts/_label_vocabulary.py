@@ -2,10 +2,12 @@
 
 Two consumers label groups of works by their distinctive TF-IDF terms and must
 agree on what counts as distinctive: `compute_clusters` (semantic k-means
-clusters, whose top terms become the fig_sem_composition panel subtitles) and
-`analyze_global_map` (Louvain citation communities, whose top terms label the
-fig_global_map_direct nodes). A term suppressed in one and kept in the other
-would make the two figures disagree about the same corpus.
+clusters, whose top terms label the alluvial panels) and `analyze_global_map`
+(Louvain citation communities, whose top terms label the fig_global_map_direct
+nodes). A term suppressed in one and kept in the other would make the two
+disagree about the same corpus. The clusters' most visible consumer used to be
+the fig_sem_composition subtitles, deleted with that figure in 0359; the shared
+vocabulary still matters because both labellers describe one corpus.
 
 This module exists because `analyze_global_map` was importing these names from
 `compute_clusters`, which is a Tier-3 entry point. The `scripts/` reorg (epic

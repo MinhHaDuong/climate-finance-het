@@ -1,0 +1,75 @@
+%erg 0.1
+Title: A comment block splits the COP topic-structure table in two
+Created: 2026-07-27
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-07-27T15:40Z HDMX-coding-agent created
+2026-07-27T15:40Z HDMX-coding-agent note found by running ticket 0340's new parser over the hand-authored includes. Prose file — the author arbitrates, so this is filed rather than fixed.
+
+--- body ---
+## Context
+
+`deliverables/_shared/_includes/cop-topic-structure.md` carries a four-column
+table that does not render as one table. Two defects, both mechanical:
+
+- **Line 38** — the row for "Green bonds, Art. 2.1(c)" ends with an HTML
+  comment *after* its closing pipe (`… | 2016--present | <!-- corrected
+  2026-07-11 (0244) … -->`). That trailing text is a fifth cell against a
+  four-column header, so the row renders with a stray column.
+- **Line 42** — the row for "WIM, Santiago Network, L\&D Fund" sits below two
+  blank-line-separated comment blocks, so it belongs to no table at all. It
+  renders as a paragraph of pipe-separated text, outside the table it was
+  written for.
+
+The provenance comments themselves are worth keeping — they record the 0244
+verification pass. They just cannot sit inside a table body.
+
+This is a prose file in the manuscript workpackage, so it is filed for the
+author rather than edited autonomously.
+
+## Relevant files
+
+- `deliverables/_shared/_includes/cop-topic-structure.md:33-42` — the table
+- `tests/test_markdown_table_shape.py` — the parser that found it; it covers
+  *generated* tables only, which is why this hand-authored one went unnoticed
+
+## Actions
+
+1. Move both provenance comments out of the table body — above the table, or
+   below its last row, with one blank line separating them.
+2. Restore the `WIM, Santiago Network, L\&D Fund` row to the table body.
+3. Decide whether the 0340 sweep should extend to hand-authored
+   `_includes/*.md`. It reads them at no cost; the question is whether a prose
+   defect should fail an adherence gate the author does not run.
+
+## Test
+
+Red first:
+
+```python
+def test_cop_topic_structure_is_one_table():
+    from test_markdown_table_shape import malformed_rows
+    text = (REPO_ROOT / "deliverables/_shared/_includes/cop-topic-structure.md").read_text()
+    assert not malformed_rows(text)
+```
+
+It reports two offenders today (lines 38 and 42) and none after the fix.
+
+## Verification
+
+- [ ] `malformed_rows` returns nothing for the file
+- [ ] The rendered PDF shows one eight-row table, no stray column
+- [ ] Both 0244 provenance comments survive in the source
+
+## Invariants
+
+- No factual change to any cell — this is a layout repair, not a content edit.
+- The corrected EIB/World Bank green-bond attribution from 0244 stays as
+  written.
+
+## Exit criteria
+
+- [ ] The file parses as a single well-formed table
+- [ ] An explicit decision recorded on whether the sweep covers `_includes/`

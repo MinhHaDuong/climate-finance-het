@@ -1,0 +1,101 @@
+%erg 0.1
+Title: Generated HTML figures have no artifact-level escaping guard
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T18:43Z HDMX-coding-agent created
+2026-07-27T18:52Z HDMX-coding-agent note filed from the 0339/0340/0341 raid wrap-up sweep; symmetric gap to 0340's Markdown guard
+
+--- body ---
+## Context
+
+The defect class "free bibliographic text interpolated into generated markup
+without escaping" is now eight instances deep across two sinks. Both sinks are
+guarded, but not to the same standard, and the asymmetry is the gap this
+ticket closes.
+
+The **Markdown half** got an artifact-level guard in ticket 0340:
+`tests/test_markdown_table_shape.py` discovers generated Markdown targets from
+the Makefile and asserts every emitted row carries its declared cell count. It
+reads the file the emitter actually wrote. It proved its own discovery claim by
+natural experiment during the raid — an unrelated merge added two generated
+Markdown targets and the guard went 35 to 36 tests with no edits.
+
+The **HTML half** got only a unit-plus-grep guard in ticket 0341.
+`tests/test_hover_text_escaping.py` behaviourally pins `build_hover_text()`
+(`TestEscaping`, `TestStructure`) and adds a source-level ratchet
+(`TestAllHtmlFigureScriptsEscape`). That class's own docstring states the
+limit plainly: the greps check that each script *reaches* an escaping path and
+that the three removed interpolations stay removed; they "do not prove any
+script escapes every sink — a grep cannot. A regression reformatted on the way
+back in (`row.title_short`, or the field hoisted to a local) would slip past
+them."
+
+So nothing in the suite reads a generated `.html` file and checks it. Two of
+the three HTML emitters are wired Make targets and could be checked today:
+
+- `Makefile:467` — `deliverables/_shared/figures/fig_alluvial.html`
+- `Makefile:513` — `deliverables/_shared/figures/fig_genealogy.html`
+
+The third, `interactive_core_corpus.html`, is the unwired orphan of ticket
+0351; a discovery-driven guard picks it up for free once 0351 wires it in,
+which is an argument for discovery over a hardcoded list, not a blocker.
+
+This also follows the standing memory lesson "test the rendered artifact, not
+the emitted source" — the same lesson ticket 0325 paid for, where a
+byte-correct source file published an inverted filter recipe.
+
+## Relevant files
+
+- `tests/test_markdown_table_shape.py` — the model to follow (discovery-driven, artifact-level)
+- `tests/_mk_discovery.py` — `rule_targets()`; reuse it, do not hand-roll a Makefile parser (see 0358)
+- `tests/test_hover_text_escaping.py` — the existing HTML guard whose coverage this extends; do not duplicate its unit tests
+- `scripts/figures/_hover_text.py` — `quote=False` escaper for Plotly sinks
+- `scripts/figures/plot_alluvial_html.py`, `scripts/figures/plot_genealogy_html.py` — `quote=True` escaper, real-HTML sinks
+- `Makefile:467`, `Makefile:513` — the two wired `.html` targets
+
+## Actions
+
+1. Add a discovery step that enumerates generated `.html` targets from the
+   Makefile via `tests/_mk_discovery.py`, mirroring the Markdown guard's
+   structure.
+2. Parametrize one test per discovered artifact. Skip (do not fail) when the
+   artifact is absent locally — the corpus-gated convention the Markdown guard
+   already uses, and the reason five of its tests skip here.
+3. Assert on the parsed artifact: parse the emitted HTML/SVG and check that no
+   text node or attribute value carries an unescaped `<`, an unescaped bare
+   `&` (one not opening a valid entity), or an attribute-terminating quote.
+   Parse it — do not regex the raw bytes, which is the mistake that makes a
+   guard pass for incidental reasons (the round-1 REROLL defect in 0340).
+4. Keep the Plotly-versus-real-HTML distinction visible in the assertion or
+   its docstring, so a future reader does not "fix" `quote=False` into
+   `quote=True`. Plotly's `convertEntities` is an 8-entry lookup with no
+   `quot`, so `&quot;` renders literally in hover text; `quote=True` is
+   correct only for the two `data-tooltip=` sinks.
+
+## Test
+
+Red step: craft a fixture HTML artifact containing a title with a raw `<` and a
+bare `&` in a text node, point the parametrized check at it, and watch it fail.
+Only then wire the discovery. A guard written green-first against artifacts
+that already pass proves nothing about what it detects.
+
+## Verification
+
+- [ ] The guard fails on the crafted red fixture and passes on the real artifacts
+- [ ] Discovery is Makefile-driven — adding a new `.html` target adds a test with no edit to the test file (demonstrate by adding a target in a scratch copy)
+- [ ] Absent artifacts skip, they do not fail
+- [ ] `make lint` and `make check-fast` green
+
+## Invariants
+
+- `tests/test_hover_text_escaping.py` keeps passing unchanged — this ticket adds a layer, it does not replace the unit tests
+- No change to `scripts/figures/_hover_text.py` escaping semantics; `quote=False` at Plotly sinks stays
+- Does not block on 0351; the orphan figure joins the guard automatically if and when it is wired
+
+## Exit criteria
+
+- [ ] A discovery-driven, artifact-level escaping guard covers every wired generated `.html` target
+- [ ] The guard's coverage claim is demonstrated, not asserted (a new target is picked up with zero test edits)
+- [ ] The HTML half of the defect class now has the same standard of guard as the Markdown half

@@ -1,4 +1,4 @@
-"""Path-resolution guard for the analysis reproducibility archive (ticket 0261).
+"""Path-resolution guard for the reproducibility archives (tickets 0261, 0292, 0352).
 
 The older archive guards (`test_archive_checksums.py::TestArchiveScripts`,
 `test_script_hygiene.py::TestArchiveBitInvariance`) only assert that a script's
@@ -13,26 +13,63 @@ actually `cp`/invoke to a real file on disk. Point any listed path at a moved or
 missing file and the guard fails — so the next mover cannot silently strand the
 archive.
 
-"Every" is load-bearing, and was once only nearly true: until ticket 0352 the
-SCRIPTS array was captured with a non-greedy `SCRIPTS=\\((.*?)\\)`, which ended
-at the first `)` in the block — a parenthesis in an ordinary comment truncated
-the list and the guard stayed green over the prefix it had read. The array is
-now delimited by a line-anchored `)`, and the parser asserts one path per entry
-line so a regression cannot quietly shrink it again.
+Ticket 0292 widened the coverage from the analysis script's `SCRIPTS` array to
+every input all three archive scripts copy. The 0226 reorg had broken the
+manuscript and data paper scripts the same way — they assembled a `content/`
+tree and copied a root `_quarto.yml` that no longer exists — and only the
+analysis script was guarded, which is why the breakage went unseen.
+
+"Every" is load-bearing, and was once only nearly true: until ticket 0352 each
+array was captured with a non-greedy `<ARRAY>=\\((.*?)\\)`, which ended at the
+first `)` in the block — a parenthesis in an ordinary comment truncated the list
+and the guard stayed green over the prefix it had read. Every array is now
+delimited by a line-anchored `)`, and the parser asserts one path per entry line
+so a regression cannot quietly shrink it again. The three build scripts used to
+carry a "keep the array free of parentheses" warning to work around this; that
+warning was a tripwire depending on the next editor reading a comment, which is
+the exact failure mode these guards exist to remove, and it is gone.
+
+Two kinds of input need different proof of life:
+
+- **Tracked assets** (the manuscript source, the bibliography) exist on disk in
+  any checkout, so existence is the check.
+- **Generated artifacts** (`fig_bars.png`, `tab_languages.md`) are gitignored
+  regenerables, absent from a fresh checkout and rebuilt by `make`. Requiring
+  them on disk would make this guard fail for anyone who has not run the full
+  pipeline, so the check is that a Make rule still names them.
+
+So the invariant is: *every declared archive input either exists on disk or is
+named by a Make rule.* A renamed or moved asset satisfies neither and fails.
 """
 
 import os
 import re
 
 import pytest
+from _mk_discovery import all_makefiles
 
 pytestmark = pytest.mark.adherence
 
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-BUILD_SCRIPT = os.path.join(REPO, "build", "build_analysis_archive.sh")
+BUILD_DIR = os.path.join(REPO, "build")
 MAKEFILE_ANALYSIS = os.path.join(
     REPO, "build", "templates", "Makefile.analysis-manuscript"
 )
+
+BUILD_SCRIPTS = {
+    "analysis": os.path.join(BUILD_DIR, "build_analysis_archive.sh"),
+    "manuscript": os.path.join(BUILD_DIR, "build_manuscript_archive.sh"),
+    "datapaper": os.path.join(BUILD_DIR, "build_datapaper_archive.sh"),
+}
+
+# Each archive script declares its inputs in one named bash array, so the array
+# is both the manifest and the archive layout. Keeping the name here means a
+# renamed array fails loudly rather than silently guarding nothing.
+INPUT_ARRAYS = {
+    "analysis": "SCRIPTS",
+    "manuscript": "MANUSCRIPT_FILES",
+    "datapaper": "DATAPAPER_FILES",
+}
 
 # scripts/<optional-subdirs>/<name>.py — matches both flat (scripts/utils.py)
 # and reorg'd (scripts/figures/plot_fig1_bars.py) entry points.
@@ -42,8 +79,25 @@ MAKEFILE_ANALYSIS = os.path.join(
 # `../scripts/utils.py` and `old_scripts/utils.py` both yield `scripts/utils.py`,
 # so a wrong path would resolve against the real file and the guard would pass on
 # a `cp` that cannot work. Without the lookahead, `scripts/utils.pyc` does the
-# same. Either way the guard checks something other than what the array says.
+# same. Either way the guard checks something other than what the source says.
 SCRIPT_PATH_RE = re.compile(r"(?<![\w/.-])scripts/(?:[\w-]+/)*[\w.-]+\.py(?![\w.])")
+
+# A repo-relative path as written in a bash array or a literal `cp` source.
+# Anything with a shell variable or a glob resolves at run time and cannot be
+# checked statically, so those simply do not match. The token runs to the end of
+# the path: requiring a trailing `\.\w+` extension instead would truncate
+# `build/templates/Makefile.analysis-manuscript` at `.analysis`, since `\w`
+# excludes the hyphen — a false positive, not a finding.
+#
+# The leading lookbehind is the 0352 token-boundary fix: without it
+# `../scripts/utils.py` and `old_scripts/utils.py` each yield the bare
+# `scripts/utils.py`, which resolves against the real file, so an entry the
+# archive's `cp` cannot use would pass. Trailing greediness gives the other
+# boundary for free — `scripts/utils.pyc` yields itself, not `scripts/utils.py`,
+# and then fails the existence check as it should.
+REPO_PATH_RE = re.compile(
+    r"(?<![\w./-])(?:deliverables|scripts|config|build|libs)/[\w./-]+"
+)
 
 
 def _read(path):
@@ -61,46 +115,58 @@ def _strip_inline_comment(line):
     return line.split("#", 1)[0].strip()
 
 
-# The array is shell source with one entry per line and its terminator alone on
-# a line, so the block is delimited by a line-anchored `)` rather than by
-# counting brackets. Simpler than bracket nesting and sufficient for this shape;
-# an unanchored `SCRIPTS=\((.*?)\)` ends the block at the first `)` *anywhere* —
-# a paren inside a comment truncated the list silently (ticket 0352).
-SCRIPTS_ARRAY_RE = re.compile(
-    r"^SCRIPTS=\([ \t]*$(?P<body>.*?)^\)[ \t]*$", re.DOTALL | re.MULTILINE
-)
+def _array_block_re(array):
+    """Regex capturing the body of an `<array>=( ... )` block.
 
-# Any declaration that contributes entries to SCRIPTS, including the append form
-# `SCRIPTS+=(`. Counting with SCRIPTS_ARRAY_RE alone would miss an appended
-# second array entirely — the parser reads the first block, the append is never
-# seen, and the "exactly one array" check it should have tripped never fires.
-SCRIPTS_DECL_RE = re.compile(r"^SCRIPTS[ \t]*\+?=[ \t]*\(", re.MULTILINE)
+    The arrays are shell source with one entry per line and the terminator alone
+    on a line, so the block is delimited by a line-anchored `)` rather than by
+    counting brackets. Simpler than bracket nesting and sufficient for this
+    shape; an unanchored `<array>=\\((.*?)\\)` ends the block at the first `)`
+    *anywhere* — a paren inside a comment truncated the list silently (0352).
+
+    It also fails *loudly* (no match at all) if an array's shape ever changes,
+    where a bracket counter would keep quietly returning something.
+    """
+    return re.compile(
+        rf"^{array}=\([ \t]*$(?P<body>.*?)^\)[ \t]*$", re.DOTALL | re.MULTILINE
+    )
 
 
-def _parse_scripts_array(content):
-    """Repo-relative scripts/ paths inside a shell SCRIPTS=( ... ) array.
+def _array_decl_re(array):
+    """Regex matching any declaration that contributes entries to `array`.
+
+    Includes the append form `<array>+=(`. Counting with the block regex alone
+    would miss an appended second array entirely — the parser reads the first
+    block, the append is never seen, and the "exactly one array" check it should
+    have tripped never fires.
+    """
+    return re.compile(rf"^{array}[ \t]*\+?=[ \t]*\(", re.MULTILINE)
+
+
+def _parse_input_array(content, array):
+    """Repo-relative paths inside a shell `<array>=( ... )` declaration.
 
     Takes the build script's *content* rather than reading it, so the parser can
-    be exercised against fixtures independently of the real array.
+    be exercised against fixtures independently of the real arrays.
 
-    Every non-comment line of the block must carry exactly one scripts/*.py
+    Every non-comment line of the block must carry exactly one repo-relative
     path. That per-line invariant is what stops a future parser regression from
     silently shrinking the list: a truncated parse drops entry lines and paths
     together, but any mismatch between them fails loudly here.
     """
-    blocks = SCRIPTS_ARRAY_RE.findall(content)
+    blocks = _array_block_re(array).findall(content)
     assert blocks, (
-        "build_analysis_archive.sh must declare a SCRIPTS=( ... ) array of the "
-        "scripts it copies into the archive, opened by a line `SCRIPTS=(` and "
-        "closed by a line holding only `)`"
+        f"the build script must declare a {array}=( ... ) array of the inputs "
+        f"it copies into the archive, opened by a line `{array}=(` and closed "
+        "by a line holding only `)`"
     )
     # Otherwise entries outside the first block are parsed by neither this nor
     # the line scan, which both take the first match — a silent blind spot of
-    # the 0352 kind. Counted over declarations, not blocks, so `SCRIPTS+=(`
+    # the 0352 kind. Counted over declarations, not blocks, so `<array>+=(`
     # trips it too.
-    decls = SCRIPTS_DECL_RE.findall(content)
+    decls = _array_decl_re(array).findall(content)
     assert len(decls) == 1, (
-        "expected exactly one SCRIPTS array declaration, found "
+        f"expected exactly one {array} array declaration, found "
         f"{len(decls)} — entries outside the first are silently unchecked"
     )
     paths = []
@@ -108,37 +174,77 @@ def _parse_scripts_array(content):
         entry = _strip_inline_comment(line)
         if not entry:
             continue
-        found = SCRIPT_PATH_RE.findall(entry)
+        found = REPO_PATH_RE.findall(entry)
         assert len(found) == 1, (
-            "every entry line of the SCRIPTS array must name exactly one "
-            f"scripts/*.py path, got {found} from: {line.strip()!r}"
+            f"every entry line of the {array} array must name exactly one "
+            f"repo-relative path, got {found} from: {line.strip()!r}"
         )
         paths.append(found[0])
-    assert paths, "SCRIPTS=( ... ) array holds no scripts/*.py paths"
+    assert paths, f"{array}=( ... ) array holds no repo-relative paths"
     return paths
 
 
-def _archive_script_paths():
-    """Repo-relative scripts/ paths the build script copies into the archive."""
-    return _parse_scripts_array(_read(BUILD_SCRIPT))
-
-
-def _entry_lines_by_line_scan(content):
-    """Entry lines of the SCRIPTS array, counted without the parser's regex.
+def _entry_lines_by_line_scan(content, array):
+    """Entry lines of an `<array>=( ... )` block, counted without the parser's regex.
 
     Deliberately a second, independent implementation: a ratchet that measured
-    the array with the very regex under test would shrink along with it and
+    an array with the very regex under test would shrink along with it and
     report nothing.
 
     Lines are right-stripped so the two implementations agree on what delimits
-    the block — SCRIPTS_ARRAY_RE tolerates trailing whitespace on `SCRIPTS=(`
-    and `)`, and a scan that did not would raise ValueError on a file the parser
+    the block — the block regex tolerates trailing whitespace on `<array>=(` and
+    `)`, and a scan that did not would raise ValueError on a file the parser
     reads fine. Loud rather than silent, but a false alarm all the same.
     """
     lines = [ln.rstrip() for ln in content.splitlines()]
-    start = lines.index("SCRIPTS=(")
+    start = lines.index(f"{array}=(")
     end = start + 1 + lines[start + 1:].index(")")
     return [ln for ln in lines[start + 1:end] if _strip_inline_comment(ln)]
+
+
+def _makefile_text():
+    """Concatenated text of every Makefile that could declare an archive input.
+
+    Enumerated through the shared helper (ticket 0248) so this guard cannot
+    silently narrow its coverage when a fragment moves.
+    """
+    return "\n".join(p.read_text() for p in all_makefiles())
+
+
+def _declared_inputs(archive):
+    """Repo-relative paths inside the build script's declared input array."""
+    return _parse_input_array(_read(BUILD_SCRIPTS[archive]), INPUT_ARRAYS[archive])
+
+
+def _literal_cp_sources(archive):
+    """Repo-relative literal `cp` sources outside the declared array.
+
+    The arguments are tokenised rather than pattern-matched. A path regex has to
+    anchor on something, and anchoring on a leading directory misses exactly the
+    defect this ticket exists for: the retired root `_quarto.yml` is a bare
+    filename at the repo root, so a prefix-anchored pattern never sees it and the
+    guard stays green on the original bug.
+
+    Tokens carrying a shell variable or a glob resolve at run time against roots
+    this test cannot know, so they are skipped — which also drops every
+    destination, since all of them are written under "$TMP".
+    """
+    text = _read(BUILD_SCRIPTS[archive]).replace("\\\n", " ")
+    sources = []
+    for line in text.splitlines():
+        stripped = line.lstrip()
+        if stripped.startswith("#") or not stripped.startswith("cp "):
+            continue
+        for token in stripped[len("cp "):].split():
+            if any(token.startswith(op) for op in (">", "|", "&", ";", "2>")):
+                break  # a redirection or `|| true` — the cp arguments end here
+            token = token.strip("\"'")
+            if not token or token.startswith("-"):
+                continue  # a cp flag, not a path
+            if "$" in token or "*" in token or "?" in token:
+                continue  # resolves at run time
+            sources.append(token)
+    return sources
 
 
 def _makefile_script_paths():
@@ -147,7 +253,7 @@ def _makefile_script_paths():
     Comments are stripped first: a `# … scripts/x.py …` example must not be read
     as a real prerequisite. Inline comments count — stripping only whole-line
     ones left `foo: bar  # see scripts/x.py` readable as a prerequisite, the same
-    "documentation parsed as data" class ticket 0352 closed for the array.
+    "documentation parsed as data" class ticket 0352 closed for the arrays.
     """
     lines = [_strip_inline_comment(ln) for ln in _read(MAKEFILE_ANALYSIS).splitlines()]
     paths = SCRIPT_PATH_RE.findall("\n".join(lines))
@@ -155,78 +261,121 @@ def _makefile_script_paths():
     return paths
 
 
-# A SCRIPTS array shaped like the real one, except that its last entry sits
-# below a comment containing a parenthesis and names a file that does not exist.
-# A parser that stops at the first `)` never sees that entry, so the existence
-# guard passes on a list it only read the prefix of (ticket 0352).
-FIXTURE_PAREN_COMMENT = """\
-SCRIPTS=(
+def _named_by_make(path, makefile_text):
+    """True when a Makefile names this exact path, not merely contains it.
+
+    A plain substring test is wrong here: `_quarto.yml` occurs inside
+    `deliverables/manuscript/_quarto.yml`, so a retired root-level `_quarto.yml`
+    would look produced when nothing produces it — silently green on the very
+    defect ticket 0292 exists for. The path must sit on its own token boundary.
+    """
+    pattern = rf"(?<![\w./-]){re.escape(path)}(?![\w./-])"
+    return re.search(pattern, makefile_text) is not None
+
+
+def _unresolvable(paths, makefile_text):
+    """Paths that neither exist on disk nor are named by a Make rule.
+
+    `exists` rather than `isfile`: the analysis archive copies the bundled
+    `libs/openalex-corpus` package directory wholesale.
+    """
+    return sorted({
+        p for p in paths
+        if not os.path.exists(os.path.join(REPO, p))
+        and not _named_by_make(p, makefile_text)
+    })
+
+
+def _fixture_paren_comment(array):
+    """An array shaped like the real ones, whose last entry hides behind a paren.
+
+    The entry sits below a comment containing a parenthesis and names a file that
+    does not exist. A parser that stops at the first `)` never sees that entry,
+    so the existence guard passes on a list it only read the prefix of (0352).
+    """
+    return f"""\
+{array}=(
     scripts/utils.py
     # Shared helpers the two venue emitters import (added by ticket 0339).
     scripts/no_such_helper_below_a_paren_comment.py
 )
 """
 
-# A comment naming a path is documentation, not an entry: it must not be
-# copied into the archive, and must not stand in for a truly-listed path.
-FIXTURE_PATH_IN_COMMENT = """\
-SCRIPTS=(
+
+def _fixture_path_in_comment(array):
+    """A comment naming a path is documentation, not an entry.
+
+    It must not be copied into the archive, and must not stand in for a
+    truly-listed path.
+    """
+    return f"""\
+{array}=(
     scripts/utils.py
     # Superseded by scripts/no_such_commented_out_helper.py — do not ship.
 )
 """
 
 
-class TestScriptsArrayParser:
+ALL_ARRAYS = sorted(INPUT_ARRAYS.values())
+
+
+class TestInputArrayParser:
     """The parser must read the whole array, whatever punctuation appears in it."""
 
-    def test_reads_entries_below_a_parenthesis_bearing_comment(self):
+    @pytest.mark.parametrize("array", ALL_ARRAYS)
+    def test_reads_entries_below_a_parenthesis_bearing_comment(self, array):
         """An ordinary comment with a paren in it must not end the array.
 
-        Red before ticket 0352: `SCRIPTS=\\((.*?)\\)` is non-greedy, so the
+        Red before ticket 0352: `<array>=\\((.*?)\\)` is non-greedy, so the
         capture stopped at the `)` of "(added by ticket 0339)" and every entry
-        below it went unread — silently, with the guard still green.
+        below it went unread — silently, with the guard still green. Ticket 0292
+        parameterised that same regex over three build scripts, so the fixture
+        is parameterised over all three array names too.
         """
-        paths = _parse_scripts_array(FIXTURE_PAREN_COMMENT)
+        paths = _parse_input_array(_fixture_paren_comment(array), array)
         assert "scripts/no_such_helper_below_a_paren_comment.py" in paths, (
             "the parser stopped early: entries below a comment containing a "
             f"parenthesis were not read (got {paths})"
         )
 
-    def test_existence_guard_catches_a_missing_path_below_such_a_comment(self):
+    @pytest.mark.parametrize("array", ALL_ARRAYS)
+    def test_existence_guard_catches_a_missing_path_below_such_a_comment(self, array):
         """The asymmetry that makes the fixture a test: the truncating parser
         passes it because it never sees the bad path, the correct one fails."""
-        missing = [
-            p for p in _parse_scripts_array(FIXTURE_PAREN_COMMENT)
-            if not os.path.isfile(os.path.join(REPO, p))
-        ]
+        missing = _unresolvable(
+            _parse_input_array(_fixture_paren_comment(array), array), _makefile_text()
+        )
         assert missing == ["scripts/no_such_helper_below_a_paren_comment.py"], (
             "a nonexistent script listed below a parenthesis-bearing comment "
             f"must be reported as missing, got {missing}"
         )
 
-    def test_paths_named_only_in_comments_are_not_entries(self):
+    @pytest.mark.parametrize("array", ALL_ARRAYS)
+    def test_paths_named_only_in_comments_are_not_entries(self, array):
         """Otherwise a commented-out path could mask a genuinely absent entry."""
-        paths = _parse_scripts_array(FIXTURE_PATH_IN_COMMENT)
+        paths = _parse_input_array(_fixture_path_in_comment(array), array)
         assert paths == ["scripts/utils.py"], (
             f"comment text was parsed as an array entry: {paths}"
         )
 
-    def test_real_array_parses_to_its_full_length(self):
-        """Every non-comment line of the real array must yield exactly one path.
+    @pytest.mark.parametrize("archive", sorted(BUILD_SCRIPTS))
+    def test_real_array_parses_to_its_full_length(self, archive):
+        """Every non-comment line of each real array must yield exactly one path.
 
-        Guards against a future parser regression silently shrinking the list:
+        Guards against a future parser regression silently shrinking a list:
         a prefix-only parse fails this even when every path it did read exists.
         """
-        content = _read(BUILD_SCRIPT)
-        paths = _parse_scripts_array(content)
-        entry_lines = _entry_lines_by_line_scan(content)
+        content = _read(BUILD_SCRIPTS[archive])
+        array = INPUT_ARRAYS[archive]
+        paths = _parse_input_array(content, array)
+        entry_lines = _entry_lines_by_line_scan(content, array)
         assert len(paths) == len(entry_lines), (
             f"parsed {len(paths)} paths from {len(entry_lines)} entry lines — "
-            "the parser is reading only part of the SCRIPTS array"
+            f"the parser is reading only part of the {array} array"
         )
 
-    def test_a_path_is_not_matched_inside_a_longer_path(self):
+    @pytest.mark.parametrize("bad", ["../scripts/utils.py", "old_scripts/utils.py"])
+    def test_a_path_is_not_matched_inside_a_longer_path(self, bad):
         """A near-miss entry must not resolve against the real file it contains.
 
         `../scripts/utils.py` and `old_scripts/utils.py` are paths the archive
@@ -234,63 +383,99 @@ class TestScriptsArrayParser:
         `scripts/utils.py` out of both — the guard would then check a file the
         array never named. Same silent-subset class as the truncating parse.
         """
-        for bad in ("../scripts/utils.py", "old_scripts/utils.py"):
-            fixture = f"SCRIPTS=(\n    {bad}\n)\n"
-            with pytest.raises(AssertionError):
-                _parse_scripts_array(fixture)
+        with pytest.raises(AssertionError):
+            _parse_input_array(f"SCRIPTS=(\n    {bad}\n)\n", "SCRIPTS")
 
     @pytest.mark.parametrize("bad", ["scripts/utils.pyc", "scripts/utils.py.bak"])
-    def test_a_py_path_is_not_matched_inside_a_longer_extension(self, bad):
-        """Neither `scripts/utils.pyc` nor `scripts/utils.py.bak` is the real file."""
-        with pytest.raises(AssertionError):
-            _parse_scripts_array(f"SCRIPTS=(\n    {bad}\n)\n")
+    def test_an_entry_parses_to_the_whole_token_not_a_prefix(self, bad):
+        """Neither `scripts/utils.pyc` nor `scripts/utils.py.bak` is the real file.
 
-    def test_a_second_array_declaration_is_rejected(self):
+        Ticket 0292 widened the token pattern past a fixed extension — it has to
+        match `build/templates/Makefile.analysis-manuscript` and the bundled
+        `libs/openalex-corpus` directory — so the check is not that these are
+        rejected but that they are read *whole*. Truncated to `scripts/utils.py`
+        they would resolve against the real file and pass; read whole they fail
+        the existence check, which is the correct verdict.
+        """
+        paths = _parse_input_array(f"SCRIPTS=(\n    {bad}\n)\n", "SCRIPTS")
+        assert paths == [bad], f"entry truncated to a shorter real path: {paths}"
+        assert _unresolvable(paths, _makefile_text()) == [bad]
+
+    @pytest.mark.parametrize("array", ALL_ARRAYS)
+    def test_a_second_array_declaration_is_rejected(self, array):
         """Entries outside the first block are read by no parser here.
 
-        The append form is the trap: `SCRIPTS+=(` does not open a block that
-        SCRIPTS_ARRAY_RE matches, so counting blocks would report one and the
+        The append form is the trap: `<array>+=(` does not open a block that the
+        block regex matches, so counting blocks would report one and the
         appended paths would go unchecked in silence.
         """
         appended = (
-            "SCRIPTS=(\n    scripts/utils.py\n)\n"
-            "SCRIPTS+=(\n    scripts/no_such_appended_helper.py\n)\n"
+            f"{array}=(\n    scripts/utils.py\n)\n"
+            f"{array}+=(\n    scripts/no_such_appended_helper.py\n)\n"
         )
-        with pytest.raises(AssertionError, match="exactly one SCRIPTS array"):
-            _parse_scripts_array(appended)
+        with pytest.raises(AssertionError, match=f"exactly one {array} array"):
+            _parse_input_array(appended, array)
 
     def test_trailing_whitespace_on_the_delimiters_is_tolerated_by_both(self):
         """The regex and the line scan must agree on what delimits the block."""
         padded = "SCRIPTS=(  \n    scripts/utils.py\n)  \n"
-        assert _parse_scripts_array(padded) == ["scripts/utils.py"]
-        assert _entry_lines_by_line_scan(padded) == ["    scripts/utils.py"]
+        assert _parse_input_array(padded, "SCRIPTS") == ["scripts/utils.py"]
+        assert _entry_lines_by_line_scan(padded, "SCRIPTS") == ["    scripts/utils.py"]
 
     def test_real_array_includes_the_shared_venue_helpers(self):
         """Both helpers sit below the comment that used to truncate the parse."""
-        paths = _parse_scripts_array(_read(BUILD_SCRIPT))
+        paths = _declared_inputs("analysis")
         for helper in ("scripts/_venue_naming.py", "scripts/_markdown_table.py"):
             assert helper in paths, (
                 f"{helper} is imported by the archived venue emitters but the "
                 "guard does not see it in the SCRIPTS array"
             )
 
+    @pytest.mark.parametrize("archive", sorted(BUILD_SCRIPTS))
+    def test_no_stale_keep_free_of_parentheses_warning(self, archive):
+        """The workaround the fixed parser retires must not creep back.
+
+        Each build script carried a "keep the array free of parentheses" comment
+        while the guard truncated at the first `)`. Re-adding one would mean the
+        parser had regressed — and, worse, would tell the next editor to work
+        around a constraint that no longer exists (ticket 0352).
+        """
+        text = _read(BUILD_SCRIPTS[archive])
+        assert "free of parentheses" not in text, (
+            f"build_{archive}_archive.sh still warns editors to keep its input "
+            "array free of parentheses; the parser no longer requires that"
+        )
+
 
 class TestArchiveScriptPathsResolve:
-    """Every script path the archive tooling names must resolve to a real file."""
+    """Every path the archive tooling names must resolve to a real file."""
 
-    def test_build_script_paths_exist(self):
-        """Each path in the build script's cp list must point at an existing file.
+    @pytest.mark.parametrize("archive", sorted(BUILD_SCRIPTS))
+    def test_declared_inputs_resolve(self, archive):
+        """Each path in a build script's input array must exist or be built.
 
-        Red before ticket 0261: the loop copied `scripts/compute_clusters.py`,
-        but the file lives at `scripts/analysis/compute_clusters.py` post-reorg.
+        Red before ticket 0261: the analysis loop copied
+        `scripts/compute_clusters.py`, but the file lives at
+        `scripts/analysis/compute_clusters.py` post-reorg.
         """
-        missing = [
-            p for p in _archive_script_paths()
-            if not os.path.isfile(os.path.join(REPO, p))
-        ]
+        missing = _unresolvable(_declared_inputs(archive), _makefile_text())
         assert not missing, (
-            "build_analysis_archive.sh lists scripts that do not exist at the "
-            f"path it will cp (moved or deleted?): {sorted(missing)}"
+            f"build_{archive}_archive.sh declares inputs that neither exist on "
+            f"disk nor are produced by any Make rule (moved or renamed?): {missing}"
+        )
+
+    @pytest.mark.parametrize("archive", sorted(BUILD_SCRIPTS))
+    def test_literal_cp_sources_resolve(self, archive):
+        """Each literal `cp` source outside the array must exist or be built.
+
+        Red before ticket 0292: build_manuscript_archive.sh copied a root
+        `_quarto.yml` retired by the 0226 deliverables/ reorg, so the script
+        died before writing a tarball.
+        """
+        missing = _unresolvable(_literal_cp_sources(archive), _makefile_text())
+        assert not missing, (
+            f"build_{archive}_archive.sh copies files that neither exist on disk "
+            f"nor are produced by any Make rule: {missing}"
         )
 
     def test_makefile_script_paths_exist(self):
@@ -309,7 +494,7 @@ class TestArchiveScriptPathsResolve:
         """Every entry point the archived Makefile invokes must be copied by the
         build script at the same path — otherwise the archive Makefile references
         a script the archive does not ship."""
-        copied = set(_archive_script_paths())
+        copied = set(_declared_inputs("analysis"))
         invoked = set(_makefile_script_paths())
         not_shipped = invoked - copied
         assert not not_shipped, (

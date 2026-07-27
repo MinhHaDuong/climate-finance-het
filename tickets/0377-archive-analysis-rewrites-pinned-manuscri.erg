@@ -1,0 +1,98 @@
+%erg 0.1
+Title: make archive-analysis rewrites the manuscript's pinned figures against whatever corpus is on disk
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T20:45Z HDMX-coding-agent created found while verifying 0292: building the analysis archive left fig_bars_v1.png and tab_venues.md modified in the working tree, both tracked, both pinned to the v1 corpus. Reverted by hand before committing.
+
+--- body ---
+## Context
+
+`archive-analysis` depends on `ANALYSIS_OUTPUTS`, and two of those nine are
+tracked handoff artifacts the manuscript renders from:
+
+- `deliverables/_shared/figures/fig_bars_v1.png`
+- `deliverables/_shared/tables/tab_venues.md`
+
+So building the analysis archive rebuilds them from whatever corpus sits in
+`data/catalogs/`. On the v2 corpus both come out different from the committed
+versions, which are v1. Nothing warns; the change lands in the working tree and
+rides along on the next `git add -A`.
+
+The manuscript is pinned to v1 on purpose — `manuscript-vars.yml` says so, the
+`--v1-only` flag exists for it, and 0292's own invariants restate it: *do not
+regenerate figures or tables until the author has signed off on the new row
+count*. A Phase-4 packaging step is the last place that decision should be
+taken, and it is taken silently.
+
+Observed 2026-07-27 while verifying 0292 on padme (corpus v2, frozen):
+
+```
+$ make archive-analysis          # succeeds, writes an 89M tarball
+$ git status --porcelain
+ M deliverables/_shared/figures/fig_bars_v1.png
+ M deliverables/_shared/tables/tab_venues.md
+```
+
+Both were reverted by hand. Had they not been, a routine archive build would
+have changed the manuscript's inputs, and the shipped PDF would no longer match
+the figures in the repo.
+
+## Why it matters
+
+The frozen-corpus invariant is enforced by convention, not mechanism. Every
+consumer of `ANALYSIS_OUTPUTS` inherits the power to rewrite pinned manuscript
+inputs, and the archive build is the one that runs when the corpus is *not* the
+one those inputs were pinned to. The failure is silent and only visible in
+`git status`, which an autonomous run may not read before committing.
+
+The same hazard applies to any future target that depends on `ANALYSIS_OUTPUTS`
+— this is a class, not one target.
+
+## Relevant files
+
+- `Makefile` — `ANALYSIS_OUTPUTS`, `archive-analysis`, the `fig_bars_v1` and
+  `tab_venues` rules
+- `deliverables/manuscript/manuscript-vars.yml` — records the v1 pin
+- `build/build_analysis_archive.sh` — checksums the nine outputs into
+  `expected_outputs.md5`
+
+## Actions
+
+1. Decide what the archive should ship. Options, to be arbitrated:
+   a. Have `archive-analysis` checksum and package the committed artifacts
+      **as they stand**, without rebuilding them — the archive documents what
+      the paper used, which is the v1 pin.
+   b. Keep the rebuild but write it somewhere other than the tracked path, so
+      the reviewer's reproduction is compared against the committed copy rather
+      than overwriting it.
+   Option (a) looks right on the face of it: the archive's job is to let a
+   reviewer reproduce *the published figures*, and rebuilding them against a
+   later corpus defeats that.
+2. Implement the chosen option.
+3. Guard the class: a test asserting no Make target under `archive-*` has a
+   tracked, pinned artifact as a rebuildable prerequisite — or, more cheaply,
+   that a build leaves the working tree clean.
+
+## Test
+
+Red first: run the archive build in a worktree whose corpus differs from the
+pin and assert `git status --porcelain` reports no modification to any tracked
+file under `deliverables/`. Fails today on the two files above.
+
+## Verification
+
+- [ ] Building the analysis archive leaves the working tree clean
+- [ ] The archive still lets a reviewer verify the published figures
+- [ ] Guard red-tested by pointing a prerequisite back at a tracked pinned file
+
+## Invariants
+
+- The manuscript's v1 pin holds until the author signs off (0336/0274 lane).
+- `make check` stays green.
+
+## Exit criteria
+
+- No archive build can rewrite a tracked, pinned manuscript input, and a guard
+  fails if one is wired to again.

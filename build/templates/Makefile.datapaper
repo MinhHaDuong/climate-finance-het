@@ -31,11 +31,27 @@ verify:
 	@echo "=== PASS ==="
 
 # ── papers: render the data paper only ───────────────────
-papers: output/content/data-paper.pdf
+# The archive mirrors the repo layout: the data paper is its own Quarto project
+# under deliverables/data-paper/ and reaches shared assets as ../_shared/...
+# A single-file render writes the PDF next to its source, so the target below is
+# the exact path Quarto produces — make checks the recipe's exit code, not
+# whether the target appeared, so naming a path the tool never writes would
+# leave this rule reporting success with nothing built.
+DATAPAPER := deliverables/data-paper/data-paper.pdf
+SHARED    := deliverables/_shared
+
+papers: $(DATAPAPER)
 	@echo "=== Data paper rendered ==="
 
-output/content/data-paper.pdf: content/data-paper.qmd content/data-paper-vars.yml \
-                               content/bibliography/main.bib
+$(DATAPAPER): deliverables/data-paper/data-paper.qmd \
+              deliverables/data-paper/data-paper-vars.yml \
+              deliverables/data-paper/_quarto.yml \
+              $(SHARED)/bibliography/main.bib \
+              $(SHARED)/figures/fig_bars.png \
+              $(SHARED)/figures/fig_global_map_direct.png \
+              $(SHARED)/tables/tab_corpus_sources.md \
+              $(SHARED)/tables/tab_languages.md \
+              $(SHARED)/tables/tab_variables.md
 	quarto render $< --to pdf
 
 # ── corpus: incremental rebuild via DVC ──────────────────

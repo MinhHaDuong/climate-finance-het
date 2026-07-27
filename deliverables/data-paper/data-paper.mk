@@ -12,7 +12,9 @@
 
 -include paths.mk
 
-deliverables/data-paper/data-paper.pdf: deliverables/data-paper/data-paper.qmd $(DATAPAPER_INCLUDES) $(BIB) deliverables/data-paper/data-paper-vars.yml
+# DATAPAPER_FIGS added by 0359 — the paper embeds two of its four figures and
+# nothing made the PDF depend on either.
+deliverables/data-paper/data-paper.pdf: deliverables/data-paper/data-paper.qmd $(DATAPAPER_INCLUDES) $(BIB) deliverables/data-paper/data-paper-vars.yml $(DATAPAPER_FIGS)
 	quarto render $< --to pdf
 
 .PHONY: data-paper
