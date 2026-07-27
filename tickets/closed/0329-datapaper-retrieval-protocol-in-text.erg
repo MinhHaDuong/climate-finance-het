@@ -2,6 +2,7 @@
 Title: The retrieval protocol is not reconstructible from the paper: eight languages never listed, thresholds never stated
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1162
 
 --- log ---
 2026-07-27T11:00Z HDMX-coding-agent created
@@ -17,6 +18,7 @@ Author: HDMX-coding-agent
 
 2026-07-27T12:35Z HDMX-coding-agent note raid Imagine complete. All holes reproduce; authoritative sources located: eight languages config/openalex_queries.yaml:74-92 (English, French, German, Spanish, Portuguese, Arabic, Chinese, Japanese); cross-encoder reranker_threshold 0.002 config/corpus_filter.yaml:125 (BAAI/bge-reranker-v2-m3); semantic outlier is GLOBAL not stratified (scripts/filter_flags.py:186-230, single corpus-wide centroid, sigma 2 at corpus_filter.yaml:116-117); near-duplicate thresholds are hardcoded Python constants at scripts/qa_near_duplicates.py:35-41, NOT config — the one genuine read-the-code hole; 17 grey reports enumerated in config/grey_sources.yaml; Tier 3/4 co-occurrence via min_concept_groups 2 and 3; key-documents rule recorded in ticket 0288, never reached prose.
 2026-07-27T12:35Z HDMX-coding-agent note raid narrowings: drop original Action 4 (flat taxonomy CSV) — it would be a lossy mirror of already-deposited config/openalex_queries.yaml and violates the ticket's own no-drifting-copy invariant; point at the deposited YAML instead. KEEP Action 3's appendix table (Verification requires it) but drop the harvest-date and records-returned columns — no machine source exists (harvest date is a hand-typed literal at data-paper.qmd:110), and hand-typing them recreates the defect the ticket exists to fix. Move the four near-dup constants into config/corpus_filter.yaml so 'emit thresholds from config' is honest.
+2026-07-27T18:04Z HDMX-coding-agent closed — autoclosed — PR #1162
 --- body ---
 ## Context
 
