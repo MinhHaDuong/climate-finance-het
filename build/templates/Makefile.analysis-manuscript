@@ -41,6 +41,12 @@ SHARED  := deliverables/_shared
 
 # The nine outputs expected_outputs.md5 records. Keep in step with
 # ANALYSIS_OUTPUTS in the repo Makefile and in build_analysis_archive.sh.
+#
+# $(DERIVED)/het_mostcited_50.csv is deliberately absent (ticket 0292 dropped
+# its target, ticket 0384 records why): it is not one of the nine checksummed
+# outputs, and nothing this Makefile builds reads it — tab_venues.md comes from
+# $(REFINED) plus tab_pole_papers.csv. build_het_core.py still produces it in
+# the repo's own Phase 2, where summarize_core_venues.py consumes it.
 OUTPUTS := $(SHARED)/figures/fig_bars_v1.png \
            $(SHARED)/figures/fig_composition.png \
            $(SHARED)/tables/tab_venues.md \

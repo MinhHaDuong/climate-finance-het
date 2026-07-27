@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Build the analysis reproducibility archive (Phase 2).
-# Extracted from Makefile archive-analysis recipe.
+# Entry point: `make archive-analysis`, which builds the outputs first.
 #
 # Produces climate-finance-analysis.tar.gz containing:
 #   data/     — Phase 1 contract data (refined_works, embeddings)
