@@ -1,0 +1,88 @@
+%erg 0.1
+Title: Two tables the deliverables include are gitignored, so the 0340 guard skips them
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T18:20Z HDMX-coding-agent created
+2026-07-27T18:20Z HDMX-coding-agent note found by the /verify-adherence gate on PR #1191 (ticket 0370) and confirmed independently by two agents of its review panel
+
+--- body ---
+## Context
+
+`deliverables/_shared/tables/tab_corpus_sources.md` and `tab_languages.md` are
+gitignored. Both are `{{< include >}}`d directly by `data-paper.qmd` and
+`corpus-report.qmd`, which makes them handoff artifacts under the standing rule
+"don't gitignore handoff artifacts" — generated files a downstream workpackage
+consumes are durable state.
+
+Their siblings are already tracked by explicit negations in `.gitignore`:
+`tab_variables.md`, `codebook.md`, `tab_venues.md`. The `.gitignore` comment
+around line 57 even says `tab_corpus_sources.csv` is "grouped with
+tab_corpus_sources.md", then negates only the `.csv`. So the current state
+reads as an oversight rather than a decision.
+
+The concrete cost is a blind spot in a standing guard. Ticket 0340's
+`tests/test_markdown_table_shape.py` sweeps generated Markdown artifacts for
+cell-count defects, but it can only check files that exist. On a checkout
+without corpus data these two are absent, the sweep skips them, and the
+escaping fixed in 0370 ships unverified by the very guard built to verify it.
+That is how 0370 stayed live and invisible in the first place.
+
+## Relevant files
+
+- `.gitignore:47` — the ignore rule; lines 57-61 hold the negations for the
+  tracked siblings and the misleading comment
+- `deliverables/data-paper/data-paper.qmd`,
+  `deliverables/corpus-report/corpus-report.qmd` — the two includers
+- `tests/test_markdown_table_shape.py` — the 0340 sweep that skips them
+- `tests/_mk_discovery.py` — `generated_markdown_targets()`, the authoritative
+  list of generated Markdown artifacts
+
+## Actions
+
+1. Add `.gitignore` negations for `tab_corpus_sources.md` and
+   `tab_languages.md`, and fix the stale comment that already claims the
+   grouping.
+2. Commit the two artifacts as currently generated on a corpus machine. Verify
+   first that regenerating them is a no-op — 0370's no-churn pins say it should
+   be, but the check belongs here, not in the PR that added the escaper.
+3. Decide the general rule rather than case by case: every `.md` under
+   `deliverables/_shared/tables/` that a `.qmd` includes is tracked. Encode it
+   as the test below so the next added table cannot silently fall out.
+
+## Test
+
+Red first, an `adherence` test: parse every `deliverables/**/*.qmd` for
+`{{< include ../_shared/(tables/…\.md) >}}`, and assert each resolved path
+appears in `git ls-files`. It fails today on exactly these two.
+
+```python
+@pytest.mark.adherence
+def test_included_shared_tables_are_tracked():
+    """Every table a deliverable includes is a handoff artifact."""
+```
+
+Prefer deriving the include set from the same resolver the orphan sweep uses
+if one exists by then — note the architecture rule that a nested include
+resolves against the *root document's* directory, not its own.
+
+## Verification
+
+- [ ] The new adherence test fails before the `.gitignore` change and passes after
+- [ ] `git ls-files deliverables/_shared/tables` lists both `.md` files
+- [ ] Regenerating both on a corpus machine leaves the working tree clean
+- [ ] `tests/test_markdown_table_shape.py` no longer skips them on a
+      corpus-free checkout
+
+## Invariants
+
+- No change to the generated content — this ticket tracks files, it does not
+  regenerate or reformat them.
+- The `.csv` siblings keep their current tracking status; escaping and
+  inclusion are Markdown concerns.
+
+## Exit criteria
+
+- [ ] Both files are tracked and the 0340 sweep covers them on a clean checkout
+- [ ] An adherence test pins the rule for every future shared table
