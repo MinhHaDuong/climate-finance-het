@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 # run_corpus_pipeline.sh — Run the full DVC corpus pipeline on padme.
 #
-# Env policy: secrets sourced from project .env via uv --env-file;
-# never via command-line KEY=value.
+# Env policy: .env holds no secret (ticket 0343). Credentials live in
+# ~/.config/keys/<provider>.env, are selected by the KEYS= line in .env, and
+# reach the environment through the keystore loader that the Makefile wires in
+# via BASH_ENV. Never via command-line KEY=value — that leaks to `ps`.
 #
 # Guards: hostname must be padme, dvc must be installed, branch must be main.
 # After dvc repro + push, auto-commits dvc.lock if it's the only changed file.

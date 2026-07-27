@@ -14,7 +14,9 @@ set -euo pipefail
 
 cd "$CLAUDE_PROJECT_DIR" || exit 0
 
-# Load .env for GH_TOKEN
+# .env no longer carries AGENT_GH_TOKEN (ticket 0343) — the keystore loader
+# exports it. Still sourced for the non-secret settings, and the fallback below
+# takes whichever of the two is populated, so this works either way.
 if [ -f .env ]; then
     set -a
     source .env

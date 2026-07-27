@@ -48,7 +48,9 @@ _log = logging.getLogger("pipeline.loaders")
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Load .env from repo root (secrets like API keys live here, gitignored).
+# Load .env from repo root (gitignored): data paths and the KEYS= selection line.
+# API keys are NOT here — they live in ~/.config/keys/ and reach the environment
+# through the keystore loader, not through this call (ticket 0343).
 load_dotenv(os.path.join(BASE_DIR, ".env"))
 CONFIG_DIR = os.path.join(BASE_DIR, "config")
 

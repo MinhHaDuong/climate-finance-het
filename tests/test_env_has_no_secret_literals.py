@@ -173,3 +173,74 @@ def test_keys_line_selects_every_consumed_credential() -> None:
         "KEYS= does not select these credentials, so consuming code will not "
         "resolve them: " + ", ".join(missing)
     )
+
+
+# --- ratchets: keep prose and build wiring honest about the mechanism --------
+#
+# Both defects below were caught by review on this ticket's own branch, not by a
+# test. They are lexically stable, so a grep holds them permanently.
+
+# Claims that .env supplies credentials. Each was true before ticket 0343.
+STALE_ENV_CLAIMS = (
+    "find their API keys",
+    "access to data paths and API keys",
+    "secrets like API keys live here",
+    "secrets sourced from project .env",
+    "not exported into every process",  # the overclaim in the other direction
+)
+
+# Docs and deliverables that describe the credential mechanism. Kept explicit:
+# a repo-wide walk would sweep .venv and the ticket archive, where these strings
+# legitimately appear as history.
+MECHANISM_DOCS = (
+    "docs/data-management-plan.md",
+    "docs/roadmap-datapaper.md",
+    "deliverables/_shared/_includes/agentic-workflow.md",
+    "deliverables/agentic/agentic-paper.qmd",
+    "scripts/pipeline_loaders.py",
+    "scripts/run_corpus_pipeline.sh",
+    "Makefile",
+    ".claude/rules/git.md",
+    ".agent/runbooks/on-start.md",
+)
+
+
+def test_no_doc_claims_env_supplies_credentials() -> None:
+    """No tracked doc still says `.env` holds the API keys."""
+    stale: list[str] = []
+    for rel in MECHANISM_DOCS:
+        path = os.path.join(PROJECT_ROOT, rel)
+        if not os.path.exists(path):
+            continue
+        with open(path, encoding="utf-8", errors="replace") as fh:
+            for lineno, line in enumerate(fh, start=1):
+                for claim in STALE_ENV_CLAIMS:
+                    if claim in line:
+                        stale.append(f"{rel}:{lineno} ({claim!r})")
+    assert not stale, (
+        "These lines describe the pre-0343 mechanism, in which `.env` carried "
+        "the credentials: " + ", ".join(stale)
+    )
+
+
+def test_makefile_wires_the_keystore_loader() -> None:
+    """The build resolves credentials for the author's shell, not just the agent's.
+
+    `uv run --env-file .env` stopped supplying credentials the moment they left
+    `.env`. Recipes get them from the keystore loader, which bash reads via
+    BASH_ENV — and only when SHELL is bash, since BASH_ENV is a bash mechanism.
+    Losing either half silently breaks `make corpus` in a plain terminal while
+    leaving the agent's own path (where BASH_ENV is already set) working, so the
+    breakage would not show up in an agent-run build.
+    """
+    with open(os.path.join(PROJECT_ROOT, "Makefile"), encoding="utf-8") as fh:
+        makefile = fh.read()
+
+    assert re.search(r"^export BASH_ENV\s*:?=", makefile, re.MULTILINE), (
+        "Makefile does not export BASH_ENV, so recipes never load the keystore "
+        "and every credential is absent in a shell that has not loaded it."
+    )
+    assert re.search(r"^SHELL\s*:?=.*bash", makefile, re.MULTILINE), (
+        "Makefile does not set SHELL to bash, so BASH_ENV is ignored and the "
+        "keystore loader never runs."
+    )
