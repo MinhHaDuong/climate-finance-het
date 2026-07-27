@@ -57,6 +57,8 @@ import glob
 import os
 import re
 
+from _mk_discovery import all_makefiles
+
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 DELIVERABLES = os.path.join(REPO_ROOT, "deliverables")
 SHARED = os.path.join(DELIVERABLES, "_shared")
@@ -79,11 +81,13 @@ def _deliverable_roots():
 
 
 def _makefiles():
-    """Every Makefile fragment that can name an artifact path."""
-    paths = [os.path.join(REPO_ROOT, "Makefile"), os.path.join(REPO_ROOT, "paths.mk")]
-    paths += sorted(glob.glob(os.path.join(REPO_ROOT, "scripts", "analysis", "*.mk")))
-    paths += sorted(glob.glob(os.path.join(DELIVERABLES, "*", "*.mk")))
-    return [p for p in paths if os.path.isfile(p)]
+    """Every Makefile fragment that can name an artifact path.
+
+    Shared discovery (ticket 0248): a `.mk` relocation updates one list, and this
+    guard cannot silently narrow its universe — which would turn a real orphan
+    into a false green.
+    """
+    return [str(p) for p in all_makefiles() if p.is_file()]
 
 
 def _read(path):
@@ -156,8 +160,113 @@ def _rel(path):
     return os.path.relpath(path, REPO_ROOT)
 
 
-# Deliberate exceptions, repo-relative path -> reason. Filled by the green step.
-ALLOWED: dict[str, str] = {}
+# ── Allowlist ────────────────────────────────────────────────────────────────
+# Repo-relative artifact path -> why it is built and consumed by no document.
+#
+# Every entry states a real reason and, where one exists, the ticket that will
+# settle it. `test_allowlist_has_no_redundant_entries` deletes the exemption's
+# cover the moment an artifact becomes reachable again, so this cannot rot into
+# a permanent "ignore these" list.
+
+_FLAT_INCLUDE_REASON = (
+    "Leftover of the 0226/0240 deliverables reorg: the technical report now "
+    "composes only _includes/techrep/, so the whole flat _includes/*.md layer "
+    "fell out of every document at once. Disposition (delete / relocate to "
+    "conception/ / re-embed) is ticket 0290's, and its action 2 sends any "
+    "include not clearly superseded by the techrep/ set to the author. This "
+    "guard is 0290's action 3; it does not pre-empt its action 1."
+)
+
+_UNSETTLED_REASON = (
+    "Built by make, displayed by no prose file, disposition undecided. "
+    "Deleting a committed artifact together with its Make rules while the data "
+    "paper is mid-R&R is an author call, not a sweep's. Tracked with the "
+    "flat-include audit in ticket 0290."
+)
+
+ALLOWED: dict[str, str] = {
+    # ── The 17 flat shared includes — see _FLAT_INCLUDE_REASON, ticket 0290 ──
+    "deliverables/_shared/_includes/agentic-workflow.md": _FLAT_INCLUDE_REASON,
+    "deliverables/_shared/_includes/alluvial-diagram.md": _FLAT_INCLUDE_REASON,
+    "deliverables/_shared/_includes/bibliometric-context.md": _FLAT_INCLUDE_REASON,
+    "deliverables/_shared/_includes/bimodality-analysis.md": _FLAT_INCLUDE_REASON,
+    "deliverables/_shared/_includes/changepoint-analysis.md": _FLAT_INCLUDE_REASON,
+    "deliverables/_shared/_includes/citation-genealogy.md": _FLAT_INCLUDE_REASON,
+    "deliverables/_shared/_includes/clustering-comparison.md": _FLAT_INCLUDE_REASON,
+    "deliverables/_shared/_includes/cop-topic-structure.md": _FLAT_INCLUDE_REASON,
+    "deliverables/_shared/_includes/core-vs-full-analysis.md": _FLAT_INCLUDE_REASON,
+    "deliverables/_shared/_includes/core-vs-full.md": _FLAT_INCLUDE_REASON,
+    "deliverables/_shared/_includes/embedding-generation.md": _FLAT_INCLUDE_REASON,
+    "deliverables/_shared/_includes/pca-scatter.md": _FLAT_INCLUDE_REASON,
+    "deliverables/_shared/_includes/prior-mappings.md": _FLAT_INCLUDE_REASON,
+    "deliverables/_shared/_includes/structural-breaks.md": _FLAT_INCLUDE_REASON,
+    "deliverables/_shared/_includes/tab2_poles.md": _FLAT_INCLUDE_REASON,
+    "deliverables/_shared/_includes/tab_traditions.md": _FLAT_INCLUDE_REASON,
+    "deliverables/_shared/_includes/temporal-structure.md": _FLAT_INCLUDE_REASON,
+    # ── Figures: deliberate, with a stated consumer outside the render graph ──
+    "deliverables/_shared/figures/fig_global_map_cocitation.png": (
+        "Companion artifact, committed but embedded nowhere by design "
+        "(ticket 0307, R1-14): the data paper carries the direct-citation map, "
+        "the co-citation map backs the reviewer response. The intent is pinned "
+        "by tests/test_global_map.py:175, which asserts the basename is absent "
+        "from the data paper source."
+    ),
+    "deliverables/_shared/figures/fig_traditions_pre2008_citers.png": (
+        "Citer-limited variant of fig_traditions built for the RDJ4HSS R1-14 "
+        "response (ticket 0286); its consumer is "
+        "deliverables/data-paper/revision-rdj26561/r1-14-network-response.md, "
+        "a revision record rather than a rendered deliverable."
+    ),
+    "deliverables/_shared/figures/fig_ncc_alluvial.png": (
+        "NCC_FIGS is declared analysis-only at Makefile:136 — the four fig_ncc_* "
+        "figures reproduce the analysis in Nature Climate Change house format "
+        "for comparison (docs/ncc-pipeline-audit.md) and were never meant for a "
+        "deliverable."
+    ),
+    "deliverables/_shared/figures/fig_ncc_bimodality.png": (
+        "See fig_ncc_alluvial.png — analysis-only NCC_FIGS set, Makefile:136."
+    ),
+    "deliverables/_shared/figures/fig_ncc_core_comparison.png": (
+        "See fig_ncc_alluvial.png — analysis-only NCC_FIGS set, Makefile:136."
+    ),
+    "deliverables/_shared/figures/fig_ncc_divergence.png": (
+        "See fig_ncc_alluvial.png — analysis-only NCC_FIGS set, Makefile:136."
+    ),
+    "deliverables/_shared/figures/fig_sem_composition.png": (
+        "Orphaned on 2026-07-27 when ticket 0332 cut the data paper's §4 "
+        "semantic-cluster paragraph. Kept rather than deleted: the paper is "
+        "mid-R&R and §4 may be revisited in round 2, so retiring the figure "
+        "with its lit-confirmations.mk rules is reversible-only-once and "
+        "belongs to the author. The backing tab_sem_composition.csv and the "
+        "clustering behind tab_sem6_assignments.csv stay either way — §1's "
+        "literature-confirmation bullet depends on them."
+    ),
+    # ── Figures and tables with no consumer and no decision yet ───────────────
+    # These are standalone rules outside every *_FIGS render list, so `make
+    # figures` does not even build them; they run on demand from their own
+    # targets.
+    "deliverables/_shared/figures/fig_breakpoints_core.png": _UNSETTLED_REASON,
+    "deliverables/_shared/figures/fig_k_sensitivity.png": _UNSETTLED_REASON,
+    "deliverables/_shared/figures/fig_venue_concentration.png": _UNSETTLED_REASON,
+    # These two sit in TECHREP_FIGS, so `make figures` builds them, yet the
+    # technical report displays neither — their prose consumers were in the flat
+    # include layer above.
+    "deliverables/_shared/figures/fig_communities.png": _UNSETTLED_REASON,
+    "deliverables/_shared/figures/fig_traditions.png": _UNSETTLED_REASON,
+    "deliverables/_shared/tables/tab_core_venues_top10.md": _UNSETTLED_REASON,
+    # ── Markdown tables consumed by something other than a document ──────────
+    "deliverables/_shared/tables/codebook.md": (
+        "Ships in the Zenodo deposit, not in a paper: "
+        "build/build_datapaper_archive.sh:47 copies it into data/products/ of "
+        "the reproducibility archive, where README-datapaper.md documents it as "
+        "the data dictionary. Correct as-is."
+    ),
+    "deliverables/_shared/tables/tab_venues_fr_caption.md": (
+        "A build input, not a rendered fragment: manuscript.mk:62-63 "
+        "concatenates it onto tab_venues.md to produce tab_venues_fr.md, which "
+        "manuscript-Gide.qmd does include. Correct as-is."
+    ),
+}
 
 
 def test_nested_zoo_includes_are_reachable():

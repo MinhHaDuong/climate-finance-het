@@ -103,10 +103,21 @@ ZOO_INCLUDES := deliverables/_shared/_includes/techrep/overview.md \
 # Phase-2 rules that PRODUCE them live in the concern .mk (root), not here.
 MANUSCRIPT_FIGS := deliverables/_shared/figures/fig_bars_v1.png deliverables/_shared/figures/fig_composition.png deliverables/_shared/figures/fig_breaks.png
 
-DATAPAPER_FIGS  := deliverables/_shared/figures/fig_bars.png deliverables/_shared/figures/fig_dag.png \
+# fig_global_map_cocitation is built on purpose and embedded in no document: the
+# data paper carries the direct-citation map, the co-citation map backs the R1-14
+# reviewer response (ticket 0307). tests/test_global_map.py:175 pins that by
+# asserting the basename is absent from the data paper source — do not "fix" it
+# by embedding the figure. fig_sem_composition lost its consumer when ticket 0332
+# cut §4's semantic-cluster paragraph; kept pending the round-2 decision.
+# Both are recorded in tests/test_artifact_reachability.py's allowlist.
+DATAPAPER_FIGS  := deliverables/_shared/figures/fig_bars.png \
                    deliverables/_shared/figures/fig_global_map_direct.png \
                    deliverables/_shared/figures/fig_global_map_cocitation.png \
                    deliverables/_shared/figures/fig_sem_composition.png
+
+# fig_dag sat in DATAPAPER_FIGS only because no corpus-report figure list
+# existed; corpus-report.qmd:25 is its sole consumer (ticket 0359).
+CORPUSREPORT_FIGS := deliverables/_shared/figures/fig_dag.png
 
 MULTILAYER_FIGS  := deliverables/_shared/figures/fig_breakpoints.png deliverables/_shared/figures/fig_alluvial.png \
                    deliverables/_shared/figures/fig_breaks.png \
