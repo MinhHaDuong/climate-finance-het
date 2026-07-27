@@ -20,10 +20,10 @@ import os
 import re
 
 import pytest
+from _script_discovery import all_script_files
 from utils import BASE_DIR
 
 TESTS_DIR = os.path.join(BASE_DIR, "tests")
-SCRIPTS_DIR = os.path.join(BASE_DIR, "scripts")
 
 #: The module that defines the path constants. ``utils`` only re-exports them.
 DEFINING_MODULE = "pipeline_loaders"
@@ -61,27 +61,27 @@ def call_time_constants():
 
     Today this finds ``CATALOGS_DIR`` (``save_run_report``, ``latest_run_report``)
     and ``POOL_DIR`` (``pool_path``, ``load_pool_ids``, ``load_pool_records``).
+
+    Enumerated through ``all_script_files()``, the one sanctioned ``scripts/``
+    walk (ticket 0260). A hand-rolled ``os.walk`` here would be the third one in
+    the suite, and 0260 exists precisely because those narrow silently under a
+    reorg — it also correctly excludes ``scripts/archive*/``, which the
+    hand-rolled version scanned.
     """
     found = set()
-    for root, _dirs, files in os.walk(SCRIPTS_DIR):
-        for fname in files:
-            if not fname.endswith(".py"):
+    for path in all_script_files():
+        try:
+            tree = ast.parse(path.read_text(encoding="utf-8"))
+        except SyntaxError:
+            # A file this interpreter cannot parse is out of scope, and a
+            # discovery helper is the wrong place to fail the suite over it.
+            continue
+        for func in ast.walk(tree):
+            if not isinstance(func, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 continue
-            path = os.path.join(root, fname)
-            with open(path, encoding="utf-8") as fh:
-                src = fh.read()
-            try:
-                tree = ast.parse(src)
-            except SyntaxError:
-                # A file this interpreter cannot parse is out of scope, and a
-                # discovery helper is the wrong place to fail the suite over it.
-                continue
-            for func in ast.walk(tree):
-                if not isinstance(func, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                    continue
-                for node in ast.walk(func):
-                    if isinstance(node, ast.ImportFrom) and node.module == DEFINING_MODULE:
-                        found.update(a.name for a in node.names if a.name.isupper())
+            for node in ast.walk(func):
+                if isinstance(node, ast.ImportFrom) and node.module == DEFINING_MODULE:
+                    found.update(a.name for a in node.names if a.name.isupper())
     return found
 
 
@@ -98,6 +98,16 @@ def _aliases_of(tree, module):
             for a in node.names:
                 if a.name == module and a.asname:
                     aliases.add(a.asname)
+        # A plain rebinding (``u = utils``) is a second spelling of the same
+        # alias. One pass suffices for the shapes in this suite; chained
+        # rebindings would need the taint propagation that
+        # test_arch_compliance's loader detector already implements, and
+        # lifting that into a shared helper is the standing follow-up.
+        elif isinstance(node, ast.Assign) and isinstance(node.value, ast.Name):
+            if node.value.id in aliases:
+                for tgt in node.targets:
+                    if isinstance(tgt, ast.Name):
+                        aliases.add(tgt.id)
     return aliases
 
 
@@ -193,9 +203,14 @@ def _facade_patch_offenders(sources):
         tree = ast.parse(src)
         defining = _aliases_of(tree, DEFINING_MODULE)
         facade = _aliases_of(tree, FACADE_MODULE)
+        # A dotted string target names the module by import path
+        # ("scripts.utils.CATALOGS_DIR"), so match on the trailing segment too.
+        def names(mod, group):
+            return mod in group or mod.rpartition(".")[2] in group
+
         for scope, rebinds in sorted(_rebinds_by_scope(tree, constants).items()):
-            patched_at_source = {c for m, c in rebinds if m in defining}
-            for const in sorted({c for m, c in rebinds if m in facade}):
+            patched_at_source = {c for m, c in rebinds if names(m, defining)}
+            for const in sorted({c for m, c in rebinds if names(m, facade)}):
                 if const not in patched_at_source:
                     offenders.append(f"{name}:{scope}: {const}")
     return offenders
@@ -316,6 +331,20 @@ import utils as u
 
 def test_something(tmp_path):
     u.CATALOGS_DIR = str(tmp_path)
+"""
+
+SAMPLE_ASSIGNED_ALIAS = """
+import utils
+
+u = utils
+
+def test_something(tmp_path):
+    u.CATALOGS_DIR = str(tmp_path)
+"""
+
+SAMPLE_DOTTED_TARGET = """
+def test_something(tmp_path, monkeypatch):
+    monkeypatch.setattr("scripts.utils.CATALOGS_DIR", str(tmp_path))
 """
 
 SAMPLE_KEYWORD_SETATTR = """
@@ -440,6 +469,8 @@ def test_facade_guard_resolves_an_aliased_facade_import():
     it resolves the defining module.
     """
     assert _facade_patch_offenders([("alias.py", SAMPLE_FACADE_ALIAS)])
+    assert _facade_patch_offenders([("assigned.py", SAMPLE_ASSIGNED_ALIAS)])
+    assert _facade_patch_offenders([("dotted.py", SAMPLE_DOTTED_TARGET)])
 
 
 def test_save_run_report_honours_the_patched_definition_site(tmp_path, monkeypatch):
