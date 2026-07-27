@@ -16,6 +16,7 @@ import os
 
 import numpy as np
 import pandas as pd
+from _markdown_table import markdown_text_cell
 from script_io_args import parse_io_args, validate_io
 from utils import CATALOGS_DIR, DERIVED_TABLES_DIR, get_logger
 
@@ -115,9 +116,13 @@ def main():
     )
     lines.append("|:-----|:--------|-----:|-----:|------:|")
 
+    # `journal` is raw refined_works.csv text — ten corpus entries are bilingual
+    # names joined with a literal `|`, which would end the cell (ticket 0339).
+    # `lean` is one of three labels assigned just above, and the rest are
+    # numeric; escaping those would only add noise to the artifact.
     for _, r in selected.iterrows():
         lines.append(
-            f"| {r['lean']} | {r['journal']} "
+            f"| {r['lean']} | {markdown_text_cell(r['journal'])} "
             f"| {r['efficiency']:.0f} | {r['accountability']:.0f} "
             f"| {r['total']:.0f} |"
         )
