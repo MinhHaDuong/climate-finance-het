@@ -19,6 +19,8 @@ Both are proved able to fail, on a document written to be broken, before either
 is trusted on a real one — the invariant ticket 0327 paid for.
 """
 
+import re
+
 import pytest
 from _qmd_meta import (
     PLACEHOLDER,
@@ -33,37 +35,59 @@ from _qmd_meta import (
     unresolved_meta_keys,
 )
 
-#: Documents known to render `?meta:` placeholders today, with the ticket that
-#: fixes each. The static guard marks these `strict`, so the entry fails the
-#: suite once the document is fixed and a stale exemption cannot outlive the
-#: defect it names.
+#: Documents that render `?meta:` placeholders today, pinned to the exact keys.
+#:
+#: An `xfail` would be the obvious way to record a known defect and it is the
+#: wrong one here: it says only "this document fails", so a *new* unresolved
+#: key in the same document reports the identical `1 xfailed` and nothing
+#: notices. Pinning the set instead makes the guard fail in both directions —
+#: when a key is added, and when the fix lands and the set empties, at which
+#: point the entry is deleted rather than left to rot.
+#:
+#: corpus-report reads technical-report-vars.yml but is absent from
+#: compute_vars.DOC_VARS, so it has no vars file of its own. Ticket 0357 owns
+#: that registry gap. (0322 is adjacent, not the fix — its action 2 covers the
+#: verify_*/complete_* vars, a different set of keys.)
 KNOWN_UNRESOLVED = {
-    # corpus-report reads technical-report-vars.yml but is absent from
-    # compute_vars.DOC_VARS, so it has no vars file of its own: 12 distinct
-    # keys, 22 occurrences, all rendering as placeholders. Ticket 0357 owns the
-    # registry gap itself. (0322 is adjacent, not the fix — its action 2 covers
-    # the verify_*/complete_* vars, a different set of keys.)
-    "corpus-report": "ticket 0357 — corpus-report is outside the vars registry",
+    "corpus-report": frozenset({
+        "cite_coverage_pct",
+        "cite_crossref_rows",
+        "cite_doi_ref_pct",
+        "cite_doi_ref_rows",
+        "cite_fetched_dois",
+        "cite_never_fetched",
+        "cite_total_dois",
+        "cite_total_rows",
+        "corpus_core",
+        "corpus_core_threshold",
+        "corpus_sources",
+        "corpus_with_embeddings",
+    }),
 }
 
+PLACEHOLDER_RE = re.compile(re.escape(PLACEHOLDER) + r"([A-Za-z0-9_.-]+)")
 
-def _params(strict=True):
-    """Discovered documents, each carrying its own known-defect mark.
 
-    `strict` belongs to the static guard alone. A `pytest.skip()` raised inside
-    a strict xfail reports SKIPPED, not XPASS, so a guard that can skip cannot
-    be relied on to self-destruct when the defect is fixed — and the render
-    guard skips wherever a gitignored generated include is absent, which is the
-    ordinary fresh-worktree case. The static guard has no skip path, so it
-    carries the strict mark and the self-destruct property for both.
-    """
-    out = []
-    for qmd in deliverable_qmds():
-        marks = []
-        if qmd.stem in KNOWN_UNRESOLVED:
-            marks.append(pytest.mark.xfail(strict=strict, reason=KNOWN_UNRESOLVED[qmd.stem]))
-        out.append(pytest.param(qmd, marks=marks, id=qmd.stem))
-    return out
+def _params():
+    """Every discovered document, as a parametrize list."""
+    return [pytest.param(qmd, id=qmd.stem) for qmd in deliverable_qmds()]
+
+
+def _assert_matches_expectation(qmd, unresolved, where):
+    """Compare an unresolved-key set against what this document is pinned to."""
+    expected = KNOWN_UNRESOLVED.get(qmd.stem, frozenset())
+    if unresolved == expected:
+        return
+    new = sorted(unresolved - expected)
+    fixed = sorted(expected - unresolved)
+    detail = []
+    if new:
+        detail.append(f"{len(new)} key(s) nothing declares, each rendering as "
+                      f"`{PLACEHOLDER}key`: {new}")
+    if fixed:
+        detail.append(f"{len(fixed)} key(s) now resolve — drop them from "
+                      f"KNOWN_UNRESOLVED: {fixed}")
+    raise AssertionError(f"{qmd.name} ({where}): " + "; ".join(detail))
 
 
 def _broken_document(tmp_path, key="absent_key"):
@@ -104,14 +128,24 @@ def test_static_resolver_reads_the_generated_vars_file(tmp_path):
     assert "declared_key" in unresolved_meta_keys(qmd)
 
 
+@pytest.mark.parametrize("bad", ['- a\n- b\n', 'just a string\n'])
+def test_static_resolver_rejects_a_vars_file_that_is_not_a_mapping(tmp_path, bad):
+    """A malformed vars file must fail loudly, not quietly declare nonsense.
+
+    `set()` over a YAML list yields its elements; over a bare scalar, its
+    characters. Either way every macro would look declared and the fast tier —
+    the one that runs where no render can — would report an all-clear.
+    """
+    qmd = _broken_document(tmp_path)
+    (tmp_path / "probe-vars.yml").write_text(bad, encoding="utf-8")
+    with pytest.raises(ValueError, match="must be a YAML mapping"):
+        unresolved_meta_keys(qmd)
+
+
 @pytest.mark.parametrize("qmd", _params())
 def test_no_deliverable_uses_an_undeclared_meta_key(qmd):
     """Every `{{< meta X >}}` in a deliverable resolves against its metadata."""
-    unresolved = unresolved_meta_keys(qmd)
-    assert not unresolved, (
-        f"{qmd.name}: {len(unresolved)} macro key(s) nothing declares, each of "
-        f"which renders as `{PLACEHOLDER}key`: {sorted(unresolved)}"
-    )
+    _assert_matches_expectation(qmd, unresolved_meta_keys(qmd), "static scan")
 
 
 def test_discovery_finds_the_deliverables():
@@ -120,7 +154,10 @@ def test_discovery_finds_the_deliverables():
     Every guard below is parametrized over `deliverable_qmds()`, so renaming
     `deliverables/` — this repo has renamed a deliverable directory before —
     would remove all three at once, silently and with exit 0. The data paper is
-    named outright because its 77 macro keys are why this suite exists.
+    named outright because it resolves every number it reports through this
+    mechanism, which is why the suite exists. No key count here: it moves with
+    every ticket that converts a literal, and a suite about numbers rotting
+    should not ship a rotting number of its own.
     """
     found = deliverable_qmds()
     assert found, "no deliverable .qmd discovered — has deliverables/ moved?"
@@ -198,7 +235,7 @@ def test_quarto_still_refuses_the_reserved_keys(tmp_path):
 
 
 @pytest.mark.integration
-@pytest.mark.parametrize("qmd", _params(strict=False))
+@pytest.mark.parametrize("qmd", _params())
 def test_rendered_deliverable_has_no_meta_placeholder(qmd):
     """Ask Quarto itself: nothing it produced carries a `?meta:` placeholder."""
     require_quarto()
@@ -207,12 +244,10 @@ def test_rendered_deliverable_has_no_meta_placeholder(qmd):
         pytest.skip(f"generated include not built: {missing[0]} (run `make corpus-tables`)")
     result = render_to_markdown(qmd)
     assert result.returncode == 0, f"{qmd.name} failed to render:\n{result.stderr}"
-    placeholders = sorted({
-        line for line in result.stdout.split() if PLACEHOLDER in line
-    })
-    assert not placeholders, (
-        f"{qmd.name}: rendered output carries unresolved macros: {placeholders}"
+    _assert_matches_expectation(
+        qmd, set(PLACEHOLDER_RE.findall(result.stdout)), "rendered output"
     )
-    assert WARNING not in result.stderr, (
-        f"{qmd.name}: Quarto warned about an unknown meta key:\n{result.stderr}"
-    )
+    if not KNOWN_UNRESOLVED.get(qmd.stem):
+        assert WARNING not in result.stderr, (
+            f"{qmd.name}: Quarto warned about an unknown meta key:\n{result.stderr}"
+        )

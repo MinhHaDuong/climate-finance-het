@@ -62,6 +62,26 @@ def _read(path: Path) -> str:
     return path.read_text(encoding="utf-8")
 
 
+def _load_mapping(path: Path) -> dict:
+    """Load a metadata file, insisting it is a mapping.
+
+    `set()` over a YAML list yields its *elements* as declared keys, and over a
+    bare scalar yields its *characters* — either way the static guard declares
+    keys nobody wrote and reports a false all-clear. A real render fails loudly
+    on such a file, so only the toolchain-free tier needs this check, and that
+    is the tier meant to work where the render cannot.
+    """
+    loaded = yaml.safe_load(_read(path))
+    if loaded is None:
+        return {}
+    if not isinstance(loaded, dict):
+        raise ValueError(
+            f"{path}: a metadata file must be a YAML mapping, got "
+            f"{type(loaded).__name__}"
+        )
+    return loaded
+
+
 def front_matter(qmd: Path) -> dict:
     """The document's YAML header, or an empty mapping if it has none."""
     match = _FRONT_MATTER_RE.match(_read(qmd))
@@ -130,7 +150,7 @@ def declared_keys(qmd: Path) -> set[str]:
     for spec in files:
         path = qmd.parent / spec
         if path.is_file():
-            keys |= set(yaml.safe_load(_read(path)) or {})
+            keys |= set(_load_mapping(path))
     return keys - QUARTO_REFUSES
 
 
