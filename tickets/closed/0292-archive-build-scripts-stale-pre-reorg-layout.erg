@@ -2,6 +2,7 @@
 Title: Phase-4 archive scripts still build the pre-0226 content/ layout; manuscript one is broken
 Created: 2026-07-22
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1199
 
 --- log ---
 2026-07-22T10:05Z HDMX-coding-agent created
@@ -12,6 +13,7 @@ Author: HDMX-coding-agent
 
 2026-07-27T20:30Z HDMX-coding-agent corrected all three scripts rebuilt on the deliverables/ mirror layout via cp --parents; each now declares its inputs in one named array that is both manifest and layout. Three defects beyond the ticket's diagnosis: the datapaper script wrote a _quarto.yml whose render list named content/data-paper.qmd, a file it never created; every recipe in Makefile.analysis-manuscript invoked its script without --output, which the shared parser declares required, so nothing in that archive could build; and the analysis archive never shipped scripts/script_io_args.py though three of its entry points import it. Also fixed: the analysis Makefile's default goal built four of the nine outputs its own verify checksums, and its targets sat under content/ while expected_outputs.md5 records repo paths.
 
+2026-07-27T18:52Z HDMX-coding-agent closed — autoclosed — PR #1199
 --- body ---
 ## Context
 During the 0153 resubmission deposit (2026-07-21), `bash
