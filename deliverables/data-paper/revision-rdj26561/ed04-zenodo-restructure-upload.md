@@ -1,8 +1,9 @@
 # ED-04 — Zenodo package restructure: upload kit (ticket 0280)
 
 One version bump groups the package restructure (ED-04, ticket 0280) and the
-codebook (R1-19, ticket 0287). Uploading is the author's act; everything below
-is prepared.
+machine-readable data dictionary (R1-19, ticket 0287, superseded by ticket 0354:
+`datapackage.json` replaced the prose `codebook.md`). Uploading is the author's
+act; everything below is prepared.
 
 ## Invariant
 
@@ -31,7 +32,7 @@ the latest version.
 4. Fill the record metadata below (ORCID, funding). It persists across
    versions, so this is a one-time pass.
 5. Set the version field (suggested: `v2.0` — new corpus harvest, eight
-   sources, restructured packaging + codebook) and publish.
+   sources, restructured packaging + datapackage.json) and publish.
 6. Check that the paper's cited DOI still resolves; the paper cites
    10.5281/zenodo.19236130 — if the journal prefers, switch the citation to
    the concept DOI or the new version DOI at proof stage.
@@ -77,14 +78,18 @@ The archive is structured in three parts:
   deduplication — the provenance trail.
 - `data/products/` — final data products of the paper:
   `climate_finance_corpus.csv` (43,179 deduplicated works, abstracts stripped
-  for redistribution reasons), `codebook.md` (data dictionary: per-column
-  type, allowed values, and measured missingness), `embeddings.npz` (38,736
-  multilingual 1024-dim vectors, BAAI/bge-m3), and `citations.csv`
-  (citation pairs, normalised DOIs).
+  for redistribution reasons), `datapackage.json` (Frictionless Table Schema:
+  per-column storage type, allowed values, ranges, and measured missingness —
+  executable, so `frictionless validate datapackage.json` checks the CSV against
+  it), `embeddings.npz` (38,736 multilingual 1024-dim vectors, BAAI/bge-m3),
+  `citations.csv` (citation pairs, normalised DOIs), and
+  `tab_retrieval_protocol.csv`/`.md` (the retrieval-protocol appendix §2.1
+  points referees at).
 
 Changes in this version: package restructured to separate raw inputs from
-final products (editorial remark ED-04); added `codebook.md`, the formal data
-dictionary for `climate_finance_corpus.csv` (reviewer remark R1-19); the
+final products (editorial remark ED-04); added `datapackage.json`, the
+machine-readable data dictionary for `climate_finance_corpus.csv`, executable
+against the deposited file (reviewer remark R1-19); the
 corpus is rebuilt on the v2 harvest, which adds the curated UNFCCC and OECD
 DAC key-document layers, so `data/inputs/` carries eight per-source catalogs
 and the data files change with it.
@@ -97,7 +102,7 @@ Code: MIT. Data: CC BY 4.0.
 > separate raw data inputs from final data products. The new version of the
 > deposit (same concept DOI) contains `data/inputs/` with the eight per-source
 > catalogs as harvested, and `data/products/` with the paper's outputs
-> (`climate_finance_corpus.csv`, `codebook.md`, `embeddings.npz`,
+> (`climate_finance_corpus.csv`, `datapackage.json`, `embeddings.npz`,
 > `citations.csv`); `code/` holds the pipeline source. The archive README and
 > the paper's Data section (§3) describe the same layout, and the packaging is
 > produced by a build script, so the structure is reproducible rather than
