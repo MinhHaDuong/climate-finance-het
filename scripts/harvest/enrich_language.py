@@ -6,7 +6,10 @@ Two-pass pipeline:
            then query by openalex_id for records without DOIs.
   Pass 2 — Local text detection: langdetect on title+abstract for remaining nulls.
 
-Cache: data/catalogs/enrich_cache/language_resolved.csv
+Caches (one per pass, kept apart so enrich_join can tell a sourced language
+from an inferred one — see language_provenance):
+  Pass 1 — data/catalogs/enrich_cache/language_resolved.csv
+  Pass 2 — data/catalogs/enrich_cache/language_detected.csv
 
 Usage:
     uv run python scripts/enrich_language.py [--dry-run]
