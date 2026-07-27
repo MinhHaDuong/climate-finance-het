@@ -10,6 +10,7 @@ Closed: autoclosed — PR #1172
 
 2026-07-27T14:02Z HDMX-coding-agent note blocker 0339 closed — Blocked-by removed.
 2026-07-27T18:33Z HDMX-coding-agent closed — autoclosed — PR #1172
+2026-07-27T18:34Z HDMX-coding-agent bump verify-reroll — round 1: two defects found by execution (last-column newline hole in scan(); rule_targets() split before expand_vars). Round 2 APPROVED after red-first fixes.
 --- body ---
 ## Context
 
