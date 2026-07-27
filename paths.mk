@@ -18,16 +18,24 @@ CSL := deliverables/_shared/bibliography/oeconomia.csl
 # is a folder-scoped Quarto project, so a render needs only its own includes — not
 # the union of all docs (the retired PROJECT_INCLUDES model).
 #
+# Each set is the doc's FULL include closure: the {{< include >}} directives in
+# the .qmd plus everything they pull in transitively. Nested includes resolve
+# against the ROOT document's directory, not the including file's — so a nested
+# `../_shared/_includes/zoo/x.md` is reached from `deliverables/<doc>/`.
+#
 # These lists are the render rules' prerequisites, so a stale entry is not just a
 # wrong answer to "what does this doc need?" — it makes the rule miss a real
 # dependency and rebuild on a file the doc stopped including. Ticket 0359 found
 # every list but MANUSCRIPT/MULTILAYER_TECHREP/ZOO drifted: the technical report
 # declared eleven includes it had dropped and none of the 23 it composes.
-# tests/test_deliverable_artifacts.py now diffs each list against the .qmd's
-# transitive include closure, in both directions.
+# tests/test_deliverable_artifacts.py recomputes every closure from the .qmd
+# files and fails on mismatch in both directions. Ticket 0290 landed a second
+# guard of its own in parallel; the two were merged into that one file rather
+# than left as two answers to one question.
 MANUSCRIPT_INCLUDES := deliverables/_shared/tables/tab_venues.md
 
-# corpus-report.qmd {{< include >}} directives (authored by grepping the .qmd).
+GIDE_INCLUDES := deliverables/_shared/tables/tab_venues_fr.md
+
 CORPUS_REPORT_INCLUDES := deliverables/_shared/_includes/corpus-construction.md \
 		deliverables/_shared/_includes/corpus-enrichment.md \
 		deliverables/_shared/_includes/corpus-filtering.md \
@@ -35,42 +43,16 @@ CORPUS_REPORT_INCLUDES := deliverables/_shared/_includes/corpus-construction.md 
 		deliverables/_shared/_includes/metadata-quality.md \
 		deliverables/_shared/_includes/embedding-quality.md \
 		deliverables/_shared/_includes/citation-quality.md \
+		deliverables/_shared/tables/tab_citation_coverage.md \
 		deliverables/_shared/tables/tab_languages.md \
 		deliverables/_shared/_includes/core-vs-full-definition.md \
 		deliverables/_shared/_includes/reproducibility.md \
 		deliverables/_shared/_includes/annex-crossencoder.md \
-		deliverables/_shared/_includes/teaching-convergence.md \
-		deliverables/_shared/tables/tab_citation_coverage.md
+		deliverables/_shared/_includes/teaching-convergence.md
 
-DATAPAPER_INCLUDES := deliverables/_shared/tables/tab_corpus_sources.md \
-		deliverables/_shared/tables/tab_corpus_flow.md \
-		deliverables/_shared/tables/tab_languages.md \
-		deliverables/_shared/tables/tab_variables.md
-
-# The multilayer paper composes no shared include — it is self-contained prose
-# plus its five companion figures (MULTILAYER_FIGS, which the render rule takes
-# in this variable's place). Until 0359 it declared six top-level includes it
-# had stopped composing, all of them in the orphan set ticket 0290 audits.
-MULTILAYER_INCLUDES :=
-
-# Technical supplement to the multilayer paper (ticket 0096).
-MULTILAYER_TECHREP_INCLUDES := \
-	deliverables/_shared/_includes/techrep/overview.md \
-	deliverables/_shared/_includes/techrep/zscore.md \
-	deliverables/_shared/_includes/techrep/null-model.md \
-	deliverables/_shared/_includes/zoo/S2_energy.md \
-	deliverables/_shared/_includes/zoo/L1_js.md \
-	deliverables/_shared/_includes/zoo/G9_community.md \
-	deliverables/_shared/_includes/zoo/G2_spectral.md \
-	deliverables/_shared/_includes/zoo/C2ST_embedding.md \
-	deliverables/_shared/_includes/zoo/C2ST_lexical.md
-
-# Method-zoo include tree: one composer + 18 per-method entries.
-# Used by breakpoint-detect-method-zoo.qmd.
-ZOO_INCLUDES := deliverables/_shared/_includes/techrep/overview.md \
-		deliverables/_shared/_includes/techrep/zscore.md \
-		deliverables/_shared/_includes/techrep/null-model.md \
-		deliverables/_shared/_includes/techrep-zoo.md \
+# Method-zoo include tree: one composer + 18 per-method entries. Shared by the
+# technical report and the standalone zoo document, which compose it identically.
+ZOO_TREE := deliverables/_shared/_includes/techrep-zoo.md \
 		deliverables/_shared/_includes/zoo/S1_mmd.md \
 		deliverables/_shared/_includes/zoo/S2_energy.md \
 		deliverables/_shared/_includes/zoo/S3_sliced_wasserstein.md \
@@ -90,10 +72,45 @@ ZOO_INCLUDES := deliverables/_shared/_includes/techrep/overview.md \
 		deliverables/_shared/_includes/zoo/G8_betweenness.md \
 		deliverables/_shared/_includes/zoo/G9_community.md
 
-# The technical report composes the whole zoo tree plus one section of its own.
-# `:=` expands now, so this must follow ZOO_INCLUDES.
-TECHREP_INCLUDES := $(ZOO_INCLUDES) \
-		deliverables/_shared/_includes/techrep/summary-of-findings.md
+# The technical report is the method-zoo document (rewritten under 0096/0226):
+# four framing includes plus the composer and its 18 per-method entries. The
+# corpus/analysis chapters it used to carry are gone (ticket 0290).
+TECHREP_INCLUDES := deliverables/_shared/_includes/techrep/overview.md \
+		deliverables/_shared/_includes/techrep/zscore.md \
+		deliverables/_shared/_includes/techrep/null-model.md \
+		deliverables/_shared/_includes/techrep/summary-of-findings.md \
+		$(ZOO_TREE)
+
+DATAPAPER_INCLUDES := deliverables/_shared/tables/tab_corpus_sources.md \
+		deliverables/_shared/tables/tab_corpus_flow.md \
+		deliverables/_shared/tables/tab_languages.md \
+		deliverables/_shared/tables/tab_variables.md
+
+# The multilayer paper composes no shared include — it carries its method and
+# results sections inline (guarded by
+# tests/test_multilayer_detection_sections.py::test_no_old_method_includes) plus
+# its five companion figures (MULTILAYER_FIGS, which the render rule takes in
+# this variable's place). Until 0359 it declared six top-level includes it had
+# stopped composing, all of them in the orphan set ticket 0290 audits.
+MULTILAYER_INCLUDES :=
+
+# Technical supplement to the multilayer paper (ticket 0096).
+MULTILAYER_TECHREP_INCLUDES := \
+	deliverables/_shared/_includes/techrep/overview.md \
+	deliverables/_shared/_includes/techrep/zscore.md \
+	deliverables/_shared/_includes/techrep/null-model.md \
+	deliverables/_shared/_includes/zoo/S2_energy.md \
+	deliverables/_shared/_includes/zoo/L1_js.md \
+	deliverables/_shared/_includes/zoo/G9_community.md \
+	deliverables/_shared/_includes/zoo/G2_spectral.md \
+	deliverables/_shared/_includes/zoo/C2ST_embedding.md \
+	deliverables/_shared/_includes/zoo/C2ST_lexical.md
+
+# breakpoint-detect-method-zoo.qmd: three framing includes + the shared zoo tree.
+ZOO_INCLUDES := deliverables/_shared/_includes/techrep/overview.md \
+		deliverables/_shared/_includes/techrep/zscore.md \
+		deliverables/_shared/_includes/techrep/null-model.md \
+		$(ZOO_TREE)
 
 # ── Per-document figure sets ─────────────────────────────
 # Artifact-file lists. A render rule lists these as plain file prerequisites; the

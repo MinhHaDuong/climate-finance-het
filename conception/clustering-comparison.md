@@ -1,4 +1,10 @@
 ## Clustering Method and Representation Space Comparison
+<!-- Moved here from deliverables/_shared/_includes/ (ticket 0290, 2026-07-27):
+     written for the technical report before its rewrite into the method zoo,
+     rendered by no deliverable since. Kept as a conception note rather than
+     deleted — the method comparison is reusable material, and its literature
+     attributions were verified under 0244. It is no longer an include: wiring
+     it into a document means re-reading it against the current corpus first. -->
 <!-- WARNING: AI-generated, not human-reviewed | attributions verified & corrected 2026-07-11 (ticket 0244) -->
 <!-- Literature attribution verified 2026-07-11 (0244): Yu et al. (2017, PLoS One) = Yu D, Wang W,
      Zhang S, Zhang W, Liu R, "Hybrid self-optimized clustering model based on citation links and

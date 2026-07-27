@@ -1,4 +1,9 @@
 ## Clustering validity: positioning in the bibliometric literature
+<!-- Moved here from deliverables/_shared/_includes/ (ticket 0290, 2026-07-27):
+     still rendered by no deliverable, and its cross-references point at
+     sections 7.8/9 of a technical report that no longer has them. Kept as a
+     conception note; the author cleared its AI-generated marker under 0289,
+     so the prose is reviewed material, only homeless. -->
 <!-- Split (ticket 0289, 2026-07-22): part B of the former §11 fragment,
      written 2026-03 for the technical report but never wired into any
      document (orphan — see ticket 0290). Part A (prior-mappings review)
