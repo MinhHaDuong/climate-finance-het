@@ -2,6 +2,7 @@
 Title: Validate the deposit CSV against a generated datapackage.json
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1176
 
 --- log ---
 2026-07-27T14:05Z HDMX-coding-agent created
@@ -9,6 +10,7 @@ Author: HDMX-coding-agent
 2026-07-27T18:40Z HDMX-coding-agent note Croissant built then dropped: no validator in reach (mlcroissant pulls pandas-stubs, flips mypy repo-wide)
 2026-07-27T20:15Z HDMX-coding-agent note Merged origin/main (50 commits): repointed ticket 0340's table sentinel off the retired codebook, corrected three submission docs that still promised it
 
+2026-07-27T19:06Z HDMX-coding-agent closed — autoclosed — PR #1176
 --- body ---
 ## Context
 
