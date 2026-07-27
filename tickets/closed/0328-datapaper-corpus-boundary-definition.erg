@@ -3,6 +3,7 @@ Title: The corpus boundary contradicts itself: the stated definition excludes wh
 Created: 2026-07-27
 Author: HDMX-coding-agent
 Label: needs-human
+Closed: Boundary contradiction resolved for this revision. The author took option (c) — own the real-world fuzziness — and the implementing pass removed §1's false green-finance filter claim; §2.1 already bounds the circularity objection in prose. Actions 5 (prospective-taxonomy ablation) and 6 (conjoin the Japanese Tier-1 term) are deliberately not done: both change or cost a harvest pass and belong to a future corpus version, not to the RDJ-26561 resubmission. Author assented to closing on 2026-07-27.
 
 --- log ---
 2026-07-27T11:00Z HDMX-coding-agent created
@@ -13,6 +14,8 @@ Label: needs-human
 
 2026-07-27T17:44Z note raid 328/352/359 phase-2 verification: actions 1-4 confirmed landed in the tree. §1's false filter claim is gone (zero matches for 'filter out'/'pure green' in data-paper.qmd); §2.1 line 80 explicitly bounds the circularity ('retrospective by construction ... a circularity to keep in mind when dating the field's turns from this corpus alone'); fig_sem_composition appears in no deliverable. All three exit criteria are satisfiable as written, the third by the 'explicitly bounded' arm rather than 'quantified'.
 2026-07-27T17:44Z note RETURNED TO AUTHOR, not executed. Actions 5 (prospective-taxonomy ablation) and 6 (conjoin the Japanese Tier-1 term) are both marked author calls in the body: the first costs a harvest pass and would quantify rather than bound the circularity objection; the second changes the harvest and belongs to a future corpus version. Recommendation: close 0328 as done for this revision, or say the word and the ablation gets its own ticket. Left open and needs-human either way.
+2026-07-27T17:47Z note author: okay to close
+2026-07-27T17:47Z HDMX-coding-agent closed — Boundary contradiction resolved for this revision. The author took option (c) — own the real-world fuzziness — and the implementing pass removed §1's false green-finance filter claim; §2.1 already bounds the circularity objection in prose. Actions 5 (prospective-taxonomy ablation) and 6 (conjoin the Japanese Tier-1 term) are deliberately not done: both change or cost a harvest pass and belong to a future corpus version, not to the RDJ-26561 resubmission. Author assented to closing on 2026-07-27.
 --- body ---
 ## Context
 
