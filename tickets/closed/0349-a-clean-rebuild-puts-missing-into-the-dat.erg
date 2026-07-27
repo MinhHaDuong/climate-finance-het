@@ -2,6 +2,7 @@
 Title: catalog_merge's run report is an undeclared side-effect output
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: catalog_merge.json declared in the stage outs; latest_run_report replaces the lexicographic glob and ignores non-timestamp run ids
 
 --- log ---
 2026-07-27T15:15Z HDMX-coding-agent created
@@ -10,6 +11,7 @@ Author: HDMX-coding-agent
 2026-07-27T15:52Z HDMX-coding-agent correction The [MISSING] was my artifact, not a defect. Ticket rescoped and downgraded; see the correction section. needs-human removed
 
 2026-07-27T13:36Z HDMX-coding-agent note observation from 0347's corpus rerun, not a fix of this ticket. catalog_merge ran on 2026-07-27 and wrote data/catalogs/run_reports/catalog_merge__20260727T132143Z.json carrying doi_duplicates_removed=833 and title_year_duplicates_removed=159 — the two values already in the author's vars file, so those numbers reproduce from the pipeline and are not stale survivors. Note also that reports from the 07-24 build were already on disk in the main checkout (catalog_merge__20260724T132552Z.json, same two keys). That makes the 'artifact was never generated' premise worth re-checking before acting: a clean 'make stats' run inside a git worktree sees an empty data/ (only .dvc pointers, no run_reports) unless the DVC data is pulled, which would produce the same [MISSING] fallback with the artifact present all along. I have not isolated which of the two it is — reporting the observation, not the cause. Cheap discriminator: re-run the make pass in the main checkout where data/ is populated.
+2026-07-27T14:16Z HDMX-coding-agent closed — catalog_merge.json declared in the stage outs; latest_run_report replaces the lexicographic glob and ignores non-timestamp run ids
 --- body ---
 ## Correction (2026-07-27): the premise was wrong
 

@@ -19,6 +19,24 @@ import pytest
 pytestmark = pytest.mark.integration
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+@pytest.fixture(autouse=True)
+def _isolate_data_root(tmp_path_factory, monkeypatch):
+    """Point DATA_DIR at scratch for every test in this module.
+
+    These tests spawn pipeline scripts with ``cwd=REPO_ROOT``. A monkeypatch
+    cannot cross a process boundary, so without this the child resolves
+    CATALOGS_DIR from the repo's own ``.env`` (``data``) and its run report
+    lands in the DVC-tracked ``data/catalogs/run_reports/`` (ticket 0346).
+
+    Setting the variable in ``os.environ`` rather than at each call site is
+    deliberate: child processes inherit it, so a subprocess call added later
+    cannot forget the redirect. ``load_dotenv`` runs with ``override=False``,
+    so this wins over the checked-in ``.env``.
+    """
+    monkeypatch.setenv("CLIMATE_FINANCE_DATA", str(tmp_path_factory.mktemp("data_root")))
+
 SCRIPTS_DIR = os.path.join(REPO_ROOT, "scripts")
 HARVEST_DIR = os.path.join(SCRIPTS_DIR, "harvest")
 sys.path.insert(0, SCRIPTS_DIR)

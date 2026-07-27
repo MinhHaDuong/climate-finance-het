@@ -154,6 +154,10 @@ stages:
       - data/catalogs/scispace_works.csv
     outs:
       - data/catalogs/unified_works.csv
+      # The dedup counters compute_vars publishes in the data paper. Declared so
+      # dvc can tell when they are stale; the timestamped siblings in
+      # run_reports/ are run history and stay undeclared (ticket 0349).
+      - data/catalogs/run_reports/catalog_merge.json
 
   # ── Phase 1b: Enrichment pipeline ──────────────────────────
   # Split into independent DVC stages so each step is cached separately.

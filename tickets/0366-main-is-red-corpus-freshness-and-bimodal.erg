@@ -1,0 +1,79 @@
+%erg 0.1
+Title: main is red: corpus freshness and bimodality dip fail on stale artifacts
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T15:45Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+`make check` on current `main` fails three tests. None is a code defect; all
+three are stale-artifact state, and they were surfaced by the ticket 0343 gate
+run, which touched no corpus or analysis code.
+
+    tests/test_corpus_acceptance.py::TestCorpusAlign::test_refined_embeddings_freshness
+    tests/test_corpus_acceptance.py::TestCorpusAlign::test_refined_citations_freshness
+    tests/test_bimodality_dip.py::test_bimodality_dip_column_is_not_silently_empty
+
+**The two freshness failures.** A Phase-1 rebuild ran in the primary checkout on
+2026-07-27 while the gate was running: `refined_works.csv` moved from 13:21 to
+15:29 and again to 16:09, while `refined_embeddings.npz` and
+`refined_citations.csv` stayed at 13:21. The contract says the aligned artifacts
+are 1:1 with `refined_works.csv`; they are now older than it, which is exactly
+what the assertions detect. Whether the rebuild finished is worth checking before
+regenerating — a half-run pipeline is the more interesting possibility.
+
+**The dip failure.** `dip_pvalue is present but empty in every row`. The test
+arrived on main with the ticket 0330 fix (diptest was undeclared). It reads
+`data/derived/tables/tab_bimodality.csv`, dated 2026-07-24 — written before that
+fix, when `diptest` was absent and the column came out empty. The test is
+correct and the table predates it.
+
+Worth separating: 0330 made an undeclared dependency a hard error, which is why
+this is now visible. The remaining work is regeneration, not another code fix.
+
+## Relevant files
+
+- `data/catalogs/{refined_works.csv,refined_embeddings.npz,refined_citations.csv}`
+  — Phase-1 contract, DVC-managed
+- `data/derived/tables/tab_bimodality.csv`, `tab_bimodality_core.csv` — Phase-2,
+  gitignored and regenerable
+- `tests/test_corpus_acceptance.py`, `tests/test_bimodality_dip.py`
+
+## Actions
+
+1. Establish whether the 2026-07-27 Phase-1 rebuild completed or was interrupted.
+   If interrupted, finish or re-run it before anything downstream.
+2. Regenerate the aligned artifacts so `refined_embeddings.npz` and
+   `refined_citations.csv` are newer than `refined_works.csv` and still 1:1 with it.
+3. Regenerate the bimodality tables with `diptest` installed, so `dip_pvalue` is
+   populated.
+4. Confirm `dvc.lock` matches the regenerated state, and `dvc push`.
+
+## Test
+
+No new test. The three named above must pass; they are the acceptance contract
+and must not be weakened (`.claude/rules/coding.md` § Testing).
+
+## Verification
+
+- [ ] `make check` green on `main` from the primary checkout
+- [ ] `refined_embeddings.npz` / `refined_citations.csv` newer than
+      `refined_works.csv`, and row-aligned with it
+- [ ] `dip_pvalue` non-empty in `tab_bimodality.csv`
+- [ ] `dvc status` clean; regenerated corpus pushed
+
+## Invariants
+
+- Acceptance tests are the top-level contract — never weakened to go green.
+- Regenerate; do not hand-edit a derived table to satisfy an assertion.
+- Run from the primary checkout: a worktree's `data/` is empty and
+  `CLIMATE_FINANCE_DATA=data` is relative, which produces a different and
+  misleading failure set.
+
+## Exit criteria
+
+`make check` is green on `main` with the corpus reachable, and every derived
+artifact is newer than the input it derives from.
