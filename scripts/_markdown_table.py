@@ -30,21 +30,23 @@ Markdown-aware rule to it would silently typeset half the name as code.
 # that one rule holds throughout. The backslash needs the opposite treatment on
 # each side of a span boundary — CommonMark reads it as an escape in prose but
 # literally inside code — so prose and code are escaped separately.
-_GFM_TEXT = str.maketrans({"\\": r"\\", "|": r"\|"})
+_PROSE = {"\\": r"\\", "|": r"\|"}
+
+_GFM_TEXT = str.maketrans(_PROSE)
 _GFM_CODE = str.maketrans({"|": r"\|"})
 
-# Plain text: no character carries markup intent, so the backtick is escaped
-# rather than opening a span. Scoped to the three characters that change the
-# rendering on their own; emphasis and link syntax need a matched pair and are
-# deliberately left alone, so an ordinary venue name keeps its punctuation and
-# regenerating a shipped table stays a no-op.
+# Plain text extends the prose rule rather than restating it: no character
+# carries markup intent, so the backtick is escaped rather than opening a span.
+# Scoped to the three characters that change the rendering on their own;
+# emphasis and link syntax need a matched pair and are deliberately left alone,
+# so an ordinary venue name keeps its punctuation and regenerating a shipped
+# table stays a no-op.
 #
 # CR and LF are folded to a space, not escaped: a pipe-table row is
 # line-delimited, so a raw newline ends the row and no backslash can hold it.
 # Only line breaks are touched — collapsing runs of ordinary whitespace would
 # churn shipped rows for a defect that does not exist.
-_GFM_LITERAL = str.maketrans(
-    {"\\": r"\\", "|": r"\|", "`": r"\`", "\n": " ", "\r": " "})
+_GFM_LITERAL = str.maketrans({**_PROSE, "`": r"\`", "\n": " ", "\r": " "})
 
 # Translation is single-pass: a sequential replace loop would re-escape the
 # backslashes its own earlier substitutions introduced.
