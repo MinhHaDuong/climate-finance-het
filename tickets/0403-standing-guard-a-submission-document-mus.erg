@@ -1,0 +1,99 @@
+%erg 0.1
+Title: Standing guard: a submission document must not name a deposit file the build does not ship
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T19:13Z HDMX-coding-agent created
+2026-07-27T19:22Z HDMX-coding-agent note Filed from the ticket-0354 roar; the class fired three times inside one merge
+
+--- body ---
+## Context
+
+Retiring one deposited file (`codebook.md`, ticket 0354) left stale references
+in **six** places. Three were caught only when the branch met `origin/main`,
+because each was a guard on main keyed to that filename:
+
+- `tests/test_markdown_table_shape.py` — pinned it as the sentinel discovery
+  must find, and as the shipped file carrying a real escaped pipe;
+- `config/unrendered-artifacts.txt` — listed it as a deliberately-unrendered
+  shared table (its earned-entry guard fired correctly);
+- `Makefile` / `.gitignore` / `build_datapaper_archive.sh` — build wiring.
+
+The other three were **prose**, and nothing caught them at all. They drifted
+silently and would have reached the editor:
+
+- `revision-rdj26561/ed04-zenodo-restructure-upload.md` — including the record
+  description the author pastes into Zenodo, and its quoted response-letter
+  bullet;
+- `revision-rdj26561/summary-of-revisions.md` — items 7 and 8;
+- `revision-rdj26561/response-letter.md` — the ED-04 reply.
+
+The asymmetry is the finding. The *build* side of the deposit is guarded:
+`tests/test_datapaper_archive_layout.py::PRODUCTS` pins the product list across
+the build script, the archive README, and `data-paper.qmd`. The *correspondence*
+side is not: the revision documents that describe the deposit to the editor are
+outside every check, so a file can leave `data/products/` while three documents
+keep promising it.
+
+`TestDepositCountsTrackTheCorpus` already establishes the precedent for exactly
+this class one layer over — it pins the deposit's hand-pasted *counts* to the
+generated vars, because "the deposit's prose is the one place the project's
+vars-driven-prose rule cannot reach". Filenames need the same treatment as
+counts.
+
+Related: 0387 (standing guard, prose must not name a script that no longer
+exists) is the same shape for scripts rather than deposit products. Consider
+whether one guard covers both.
+
+## Relevant files
+
+- `tests/test_datapaper_archive_layout.py` — owns `PRODUCTS` and the existing
+  count guard; the natural home.
+- `deliverables/data-paper/revision-rdj26561/{ed04-zenodo-restructure-upload,
+  summary-of-revisions,response-letter}.md` — the three unguarded documents.
+- `build/build_datapaper_archive.sh` — the authority on what ships.
+
+## Actions
+
+1. Extend the layout guard: for each revision document, extract every
+   `` `*.csv` ``/`` `*.json` ``/`` `*.md` ``/`` `*.npz` `` filename mentioned in
+   a deposit-products context and assert it is in `PRODUCTS` (or explicitly
+   allowlisted with a reason, following the earned-entry pattern so the
+   allowlist cannot rot).
+2. Derive the authority from the build script rather than restating it, so the
+   guard cannot drift from what is packaged.
+3. Decide the scope question this raises: `response-letter.md` and
+   `summary-of-revisions.md` are under author sign-off. The guard should fail
+   the *build*, not silently rewrite prose — it reports, the author edits.
+
+## Test
+
+Red first: with `codebook.md` re-inserted into any one of the three documents,
+the guard fails and names the document and the filename. Green: with the current
+(corrected) documents, it passes. Source inspection only — no subprocess, no
+corpus — so the adherence tier.
+
+## Verification
+
+- [ ] Re-adding a retired filename to any of the three documents fails `make lint`
+- [ ] The current tree passes
+- [ ] The product authority is read from the build script, not duplicated
+- [ ] An allowlisted exception carries a reason and is rejected when unearned
+
+## Invariants
+
+- `PRODUCTS` stays the single list; this extends its reach rather than adding a
+  second source of truth.
+- The guard reports; it never edits submission prose (prose is author-arbitrated
+  per rules/git.md).
+
+## Exit criteria
+
+- [ ] A retired deposit filename surviving in any submission document fails a
+      local gate
+- [ ] Red-to-green demonstrated on `codebook.md` specifically, the case that
+      motivated this
+- [ ] Overlap with ticket 0387 resolved — either one guard or a stated reason
+      for two
+- [ ] `make check` passes
