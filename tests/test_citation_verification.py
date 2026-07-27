@@ -133,30 +133,29 @@ def _measurable_counts(section):
     moved the refined layer to 2,061 (ticket 0323).
 
     Matches comma-grouped thousands and bare integers of four digits or more.
-    DOIs, URLs, inline code, and any 1000--2999 four-digit number are stripped
-    first. The year range covers what §2--§3 actually contain: 1990, 2013, 2020,
-    2022, 2024, 2026 -- publication years, the periodization bounds, and the
-    snapshot date. None of those can rot, so matching them would be noise.
+    DOIs, URLs, inline code, and 19xx/20xx years are stripped first, which
+    covers every year §2--§3 actually contains: 1990, 2013, 2020, 2022, 2024,
+    2026.
 
-    Earlier revisions of this docstring justified the range by a climate paper
-    naming an SSP horizon such as 2100. No such number is in the guarded span:
-    the only 2100 in the document is an ORCID in the frontmatter, outside §2--§3,
-    and the file has never mentioned SSP. The range is right; that reason for it
-    was invented, and a guard whose comment misstates its own purpose is the
-    defect this file exists to catch (PR #1153 gate, round 2).
+    The strip stays narrow deliberately. Widening it to `[12]\\d{3}` would blind
+    the guard to every bare corpus count in 1000--2999, eight of which are live
+    in `data-paper-vars.yml` — so a calendar year beyond 2099 belongs in
+    `_ALLOWED_COUNTS`, by name, rather than in a wider regex. No such year is in
+    the guarded span today, and the entry that once claimed one (2100, "an SSP
+    scenario horizon") was removed: the only 2100 in the document is an ORCID in
+    the frontmatter, outside §2--§3, and the file has never contained "SSP". It
+    was not free — 2100 sits in the same band as `corpus_core` (2,644) and
+    `emb_dimensions` (1024), so allowlisting it let a plausible hand-typed count
+    through for a case that does not arise (PR #1153 gate, round 2).
 
-    The cost is real and narrow: `emb_dimensions` (1024) falls inside the strip,
-    so a hand-typed 1024 escapes. So does any hand-typed count between 1000 and
-    2999 without a separator, and any count below 1,000. `_int` puts a separator
-    in every four-digit corpus count it formats, so the comma branch carries the
-    guard; these are its blind spots, named rather than papered over.
+    What still escapes is a count below 1,000.
     """
     text = re.sub(r"<!--.*?-->", "", section, flags=re.S)      # HTML comments
     text = re.sub(r"\{\{<[^>]*>\}\}", "", text)                # macros
     text = re.sub(r"`[^`]*`", "", text)                        # inline code
     text = re.sub(r"https?://\S+", "", text)                   # URLs
     text = re.sub(r"10\.\d{4,}/\S+", "", text)                 # DOIs
-    text = re.sub(r"\b[12]\d{3}\b", "", text)                  # years (see docstring)
+    text = re.sub(r"\b(?:19|20)\d{2}\b", "", text)             # calendar years
     return [h for h in re.findall(r"\b\d{1,3}(?:,\d{3})+\b|\b\d{4,}\b", text)
             if h not in _ALLOWED_COUNTS]
 
@@ -204,3 +203,20 @@ def test_method_and_data_sections_carry_no_hand_typed_count():
         f"the prose (ticket 0323). If a value genuinely cannot rot, add it to "
         f"_ALLOWED_COUNTS with the reason."
     )
+
+
+def test_count_guard_still_sees_the_1000_2999_band():
+    """Pin the guard's range against the widening that would blind it.
+
+    Widening the year strip to `[12]\\d{3}` would strip every bare corpus count
+    in 1000--2999 — `corpus_core` (2,644), `emb_dimensions` (1024) and six more
+    live values in `data-paper-vars.yml`. The band must stay visible, and a
+    four-digit count inside it must still be caught even though it reads like a
+    year.
+    """
+    assert _measurable_counts("The corpus holds 2644 works.") == ["2644"]
+    assert _measurable_counts("Embeddings have 1024 dimensions.") == ["1024"]
+    assert _measurable_counts("Coverage was measured in 2024.") == []
+    # 2100 is a count in the live band, not a year the document contains: it
+    # must be caught, which the removed allowlist entry prevented.
+    assert _measurable_counts("The band holds 2100 works.") == ["2100"]
