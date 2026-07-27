@@ -209,3 +209,15 @@ class TestAllHtmlFigureScriptsEscape:
             assert f"{{row['{field}']}}" not in src, (
                 f"{field} is still interpolated unescaped into hover markup"
             )
+
+    def test_interactive_corpus_legend_label_is_escaped(self):
+        """The legend is the same sink as the hover box.
+
+        Plotly renders the trace `name` as HTML too, and the cluster label is
+        free text from the generated cluster_labels.json — so an `&` in a
+        label corrupts the legend entry exactly as it corrupted the hover box.
+        """
+        src = _read_figure_script("plot_interactive_corpus.py")
+        assert 'name=f"C{cid}: {label}"' not in src, (
+            "cluster label interpolated unescaped into the Plotly legend name"
+        )

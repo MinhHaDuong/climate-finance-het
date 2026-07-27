@@ -17,6 +17,7 @@ Usage:
 """
 
 import argparse
+import html as html_mod
 import json
 import os
 import re
@@ -249,7 +250,9 @@ for cid in cluster_ids:
             opacity=0.6,
             line=dict(width=0.5, color="white"),
         ),
-        name=f"C{cid}: {label}",
+        # Plotly renders the trace name as HTML; the label is free text from
+        # the generated cluster_labels.json, so escape it at the sink.
+        name=f"C{cid}: {html_mod.escape(str(label))}",
         text=hover_texts,
         hoverinfo="text",
         customdata=subset["doi_url"].values,
