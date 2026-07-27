@@ -8,6 +8,7 @@ Label: needs-human
 2026-07-27T11:00Z HDMX-coding-agent created
 2026-07-27T11:00Z HDMX-coding-agent note child of 0274. Raised by 4 of 4 external panel reviewers. Marked needs-human: the cheap half is mechanical, the expensive half (re-annotation) is an author call against the 2026-10-20 deadline.
 
+2026-07-27T19:46Z HDMX-coding-agent note AUTHOR DECISION: ablation now, re-annotation only if a stratum loses disproportionately. Build the removal-ablation table from extended_works.csv, report per-stratum removal for bibCNRS/UNFCCC/OECD/grey/non-English, and let it decide whether a 300-work re-annotation is needed. Sequenced after 0372: the ablation reports flag 6's reach, 0372 establishes whether its validation number is real.
 --- body ---
 ## Context
 
