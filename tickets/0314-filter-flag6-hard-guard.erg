@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-24T16:20Z HDMX-coding-agent created from corpus-v2 rebuild incident
 
+2026-07-27T07:58Z HDMX-coding-agent note closed on t0317-temporal-coverage: reranker backend raises on missing torch (remediation + --skip-llm opt-out in the message), and run_flagging now seeds llm_irrelevant from this run instead of inheriting it from extended_works.csv — the inherited column is what satisfied the presence-only apply gate and kept the skip silent. Sibling-flag audit per action 2: flags 4 and 5 already degrade explicitly via expected_flag_columns(); this ImportError was the only membership-affecting flag that could vanish untraced.
 --- body ---
 ## Context
 
@@ -34,5 +35,5 @@ number (paper, letter, deposit) inherits the inflation unnoticed.
 
 ## Exit criteria
 
-- [ ] Filter cannot exit 0 with a membership-affecting flag skipped
-- [ ] make check green
+- [x] Filter cannot exit 0 with a membership-affecting flag skipped
+- [x] make check green
