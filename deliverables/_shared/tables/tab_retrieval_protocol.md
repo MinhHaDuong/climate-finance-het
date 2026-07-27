@@ -13,7 +13,7 @@ All API queries are bounded to publication years 1990--2024. Terms, concept grou
 | SciSpace | AI-assisted systematic review, hand-exported | vendor native search | not machine-readable | English |
 | Teaching canon | Syllabus scraping plus LLM reference extraction | syllabus full text | not machine-readable | English |
 
-: Retrieval protocol per source, rendered from the deposited configuration files. *Retrieval*: how records enter the corpus. *Query fields*: the index fields the query matched. *Query terms*: search terms, or curated seed documents where the source is a hand-assembled list. *Languages*: the languages the query terms are written in. Records returned and retained per source are in the corpus composition table; harvest-run counts are not reported here because no machine-readable record of them exists.
+: Retrieval protocol per source. *Retrieval*: how records enter the corpus. *Query fields*: the index fields the query matched. *Query terms*: search terms, or curated seed documents where the source is a hand-assembled list. *Languages*: the languages the query terms or seed documents are written in. Counts and language coverage are rendered from the deposited configuration for the five configured sources (OpenAlex, ISTEX, the grey seed list, and the two key-document layers). The three restricted sources have no machine-readable query — their rows describe the harvest as it was performed and are marked accordingly. Records returned and retained per source are in the corpus composition table; per-run harvest counts are not reported here because no machine-readable record of them exists.
 
 
 ### Curated grey-literature seed list {.unnumbered}

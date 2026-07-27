@@ -27,20 +27,25 @@ import pandas as pd
 import yaml
 from _deposit_variables import markdown_cell
 from script_io_args import parse_io_args, validate_io
-from utils import CONFIG_DIR, get_logger, save_csv
+from utils import CONFIG_DIR, LANGUAGE_NAMES, get_logger, save_csv
 
 log = get_logger("export_retrieval_protocol")
 
 COLUMNS = ["Source", "Retrieval", "Query fields", "Query terms", "Languages"]
 
 CAPTION = (
-    ": Retrieval protocol per source, rendered from the deposited"
-    " configuration files. *Retrieval*: how records enter the corpus."
-    " *Query fields*: the index fields the query matched. *Query terms*:"
-    " search terms, or curated seed documents where the source is a"
-    " hand-assembled list. *Languages*: the languages the query terms are"
-    " written in. Records returned and retained per source are in the corpus"
-    " composition table; harvest-run counts are not reported here because no"
+    ": Retrieval protocol per source. *Retrieval*: how records enter the"
+    " corpus. *Query fields*: the index fields the query matched."
+    " *Query terms*: search terms, or curated seed documents where the source"
+    " is a hand-assembled list. *Languages*: the languages the query terms or"
+    " seed documents are written in."
+    " Counts and language coverage are rendered from the deposited"
+    " configuration for the five configured sources (OpenAlex, ISTEX, the"
+    " grey seed list, and the two key-document layers). The three restricted"
+    " sources have no machine-readable query — their rows describe the"
+    " harvest as it was performed and are marked accordingly."
+    " Records returned and retained per source are in the corpus composition"
+    " table; per-run harvest counts are not reported here because no"
     " machine-readable record of them exists."
 )
 
@@ -71,6 +76,16 @@ def _cell(value) -> str:
 def target_languages(queries: dict) -> list[str]:
     """Language display names declared by the Tier-1 term tags."""
     return sorted({lang for lang in queries["term_languages"].values() if lang})
+
+
+def seed_languages(entries: list[dict]) -> str:
+    """Languages a curated seed list declares, read from its own entries.
+
+    The key-document layers carry a per-document ``language`` field, so this
+    column is config-derived for them rather than described by hand.
+    """
+    codes = sorted({e["language"] for e in entries if e.get("language")})
+    return ", ".join(LANGUAGE_NAMES.get(c, c.upper()) for c in codes)
 
 
 def _openalex_terms(queries: dict) -> str:
@@ -132,14 +147,14 @@ def build_protocol_rows() -> list[dict]:
             "Retrieval": "Curated seed list (config/unfccc_sources.yaml)",
             "Query fields": "document symbol",
             "Query terms": f"{len(unfccc)} seed documents",
-            "Languages": "English",
+            "Languages": seed_languages(unfccc),
         },
         {
             "Source": "OECD DAC key documents",
             "Retrieval": "Curated seed list (config/oecd_dac_sources.yaml)",
             "Query fields": "document symbol",
             "Query terms": f"{len(oecd)} seed documents",
-            "Languages": "English",
+            "Languages": seed_languages(oecd),
         },
         {
             "Source": "bibCNRS",

@@ -14,12 +14,19 @@ artifact wired into a writing-side Makefile and left untracked trips it.
 import os
 import re
 import subprocess
+import sys
 
 import pytest
 import yaml
 from _mk_discovery import mk_fragments
-from compute_vars import DOC_OUTPUT_DIR, DOC_VARS
 from utils import BASE_DIR
+
+# Make's PYTHONPATH carries `scripts` and the package source root, not
+# `scripts/analysis`, so every test importing a compute_* module inserts it
+# itself. Omitting this makes the import succeed or fail by collection order.
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "analysis"))
+
+from compute_vars import DOC_OUTPUT_DIR, DOC_VARS
 
 # Paths a render rule can name. Deliberately excludes the rendered PDF/DOCX,
 # which are regenerable outputs rather than inputs and stay ignored.

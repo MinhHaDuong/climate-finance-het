@@ -300,6 +300,54 @@ def test_protocol_rows_count_the_curated_seed_lists():
         )
 
 
+def test_seed_layer_languages_come_from_the_seed_entries():
+    """The key-document rows read their languages, they do not assert them.
+
+    Both seed lists carry a per-document ``language`` field, so this column
+    has a config source and must use it — a hand-typed "English" would keep
+    printing English after the first French COP decision was seeded.
+    """
+    from export_retrieval_protocol import build_protocol_rows
+
+    rows = {r["Source"]: r for r in build_protocol_rows()}
+    for name, path in (
+        ("UNFCCC key documents", "unfccc_sources.yaml"),
+        ("OECD DAC key documents", "oecd_dac_sources.yaml"),
+    ):
+        entries = _load(os.path.join(REPO, "config", path))["documents"]
+        codes = {e["language"] for e in entries if e.get("language")}
+        assert codes, f"{path} declares no language field to read"
+        assert len(rows[name]["Languages"].split(", ")) == len(codes), (
+            f"{name} reports {rows[name]['Languages']!r} against "
+            f"{len(codes)} distinct seed language(s)"
+        )
+
+
+def test_unconfigured_sources_say_so_rather_than_inventing_a_query():
+    """Honesty guard on the three hand-exported sources.
+
+    Their rows describe a harvest with no machine-readable record. Printing a
+    plausible query for them would be worse than printing nothing, because a
+    referee would take it for the query that ran.
+    """
+    from export_retrieval_protocol import build_protocol_rows
+
+    rows = {r["Source"]: r for r in build_protocol_rows()}
+    for name in ("bibCNRS", "SciSpace", "Teaching canon"):
+        assert rows[name]["Query terms"] == "not machine-readable", (
+            f"{name} claims a query term count it cannot source from config"
+        )
+
+
+def test_caption_declares_which_cells_are_config_derived():
+    from export_retrieval_protocol import CAPTION
+
+    assert "machine-readable" in CAPTION and "configuration" in CAPTION, (
+        "the caption must tell a referee which cells are rendered from config "
+        "and which merely describe the harvest"
+    )
+
+
 def test_protocol_openalex_row_reports_the_query_field():
     """The reviewers asked which fields the query searched."""
     from export_retrieval_protocol import build_protocol_rows
