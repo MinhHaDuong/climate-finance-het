@@ -2,6 +2,7 @@
 Title: Flag 5 (semantic isolation) is silently skipped on every corpus filter run
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1140
 
 --- log ---
 2026-07-27T11:30Z HDMX-coding-agent created found during the 0297 corpus regeneration on padme
@@ -11,6 +12,7 @@ Author: HDMX-coding-agent
 2026-07-27T12:56Z HDMX-coding-agent corrected review round 2 removed the normalized-DOI second chance in flag_semantic_outlier (it handed candidate distances to works excluded from the subset) and added a min_coverage floor of 0.9 in config/corpus_filter.yaml so a 99-percent-dead flag raises instead of warning. Dry-run figures unchanged: 1277 flagged, 361 net new removals. Author-decision items surfaced, see PR 1140.
 2026-07-27T13:23Z HDMX-coding-agent corrected review round 3 replaced the key remap with index assignment (emb_df keeps df index), added a keys/vectors length check, and measured duplicate work keys among candidates: 416 of 32938 (1.3 percent), pre-dedup grey-lit and reintroduced duplicate DOIs. Final dry run: 1276 flagged (was 1277, the leak flagged one non-candidate), 886 already flagged, 93 protected, 361 net new removals. refined_works.csv 33344 to ~32983. Awaits author sign-off.
 2026-07-27T17:40Z HDMX-coding-agent note gaze review-pr panel on PR #1140: request-changes. The new RuntimeError for a keys-less embeddings.npz is uncaught at its only production call site (main), so --apply aborts and writes no refined_works.csv; breaks test_phase1_migration test_corpus_filter_apply_works and test_corpus_filter_idempotent (3 passed on main, 2 failed on branch). A dead flag should be made loud, not a malformed cache fatal to the whole filter
+2026-07-27T17:57Z HDMX-coding-agent closed — autoclosed — PR #1140
 --- body ---
 ## Context
 

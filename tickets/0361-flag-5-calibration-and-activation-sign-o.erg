@@ -2,12 +2,13 @@
 Title: Flag 5 calibration and activation sign-off: per-language centroid, sigma, or retire
 Created: 2026-07-27
 Author: HDMX-coding-agent
-Blocked-by: 0336
 
 --- log ---
 2026-07-27T14:40Z HDMX-coding-agent created split from 0336 — the fix that revived Flag 5 stands on its own; deciding what the flag should do is a separate author-owned call
 2026-07-27T14:40Z HDMX-coding-agent note calibration sweep run read-only against the frozen corpus; the table in the body is the decision record
 
+2026-07-27T17:40Z HDMX-coding-agent note author leans option B (retire): 'Flag 5 seems better suited to detect outliers and investigate, rather than filter'. Independent Fable-model defense round commissioned on the instrument, its implementation, state of the art, and redundancy with flags 1-4/6 before the call is fixed
+2026-07-27T17:57Z HDMX-coding-agent note blocker 0336 closed — Blocked-by removed.
 --- body ---
 ## Context
 
