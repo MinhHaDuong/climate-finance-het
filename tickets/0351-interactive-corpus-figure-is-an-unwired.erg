@@ -1,0 +1,91 @@
+%erg 0.1
+Title: Interactive corpus figure is an unwired orphan: no Make target, unverifiable build
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T15:55Z HDMX-coding-agent created
+2026-07-27T15:58Z HDMX-coding-agent note surfaced by ticket 0341, whose "the figure still builds" verification box could not be ticked on any machine. Filed rather than fixed there: wiring a figure into the build is a packaging decision, not an escaping fix.
+
+--- body ---
+## Context
+
+`scripts/figures/plot_interactive_corpus.py` writes
+`deliverables/_shared/figures/interactive_core_corpus.html`, but nothing in the
+build produces it. There is no Make target (`docs/repo-layout.md:208-212`), so
+the artifact exists only where someone once ran the script by hand.
+
+Ticket 0341 hit this as a hard stop. Its verification asked that "the figure
+still builds"; that box is unverifiable, not merely unverified — the script
+needs two gitignored Phase-2 artifacts (`semantic_clusters.csv`,
+`cluster_labels.json`) that are absent from the worktree *and* the primary
+checkout, and no rule regenerates them into place. 0341 shipped with the box
+open and substitute evidence recorded instead.
+
+This violates the standing build rule: every generated file a deliverable
+references must have a Makefile target that produces it from a tracked source.
+An orphan script is also where rot goes unseen — 0341 found the script's whole
+pipeline runs at module scope (`parse_args()` and a corpus read fire on import),
+which no test could have caught precisely because nothing imports or invokes it.
+
+## The decision this ticket needs
+
+Two honest options, and the answer is the author's:
+
+1. **Wire it in.** Give it a Make target with its real prerequisites, so the
+   figure is reproducible and 0341's verification becomes checkable. Costs a
+   dependency on Phase-2 artifacts that are currently gitignored — those would
+   need a rule too, or the target stays DVC-gated and skips cleanly.
+2. **Retire it.** If the interactive figure is not a live deliverable, delete
+   the script and the stale HTML rather than carrying an untested,
+   unreferenced emitter that future sweeps keep flagging.
+
+Do not split the difference by leaving it as-is; that is the current state, and
+it is what made 0341's exit criterion unfalsifiable.
+
+## Relevant files
+
+- `scripts/figures/plot_interactive_corpus.py` — the orphan; pipeline at module scope
+- `scripts/figures/_hover_text.py` — its testable extract, added by 0341
+- `deliverables/_shared/figures/interactive_core_corpus.html` — the hand-made artifact
+- `docs/repo-layout.md:208-212` — where the missing target is documented as missing
+- `Makefile` — where a target would go
+
+## Actions
+
+1. Decide wire-in vs retire with the author. Record the decision in this ticket.
+2. If wiring in: add the target with accurate prerequisites (Makefile truth —
+   prerequisites and targets must match the script's actual reads and writes),
+   and make it skip cleanly when the Phase-2 inputs are absent.
+3. If wiring in: move the module-scope pipeline into a `main()` guard so the
+   script is importable, and drop 0341's workaround note if one remains.
+4. If retiring: delete script, extract, test, and artifact together, and check
+   no `.qmd` or slide deck includes the HTML first.
+
+## Test
+
+Wire-in path: a Makefile-truth test asserting the new target's prerequisites
+match the script's declared inputs — `tests/test_phase_layout.py` already parses
+Make targets and is the place for it. Red first by asserting the target exists
+before adding it.
+
+Retire path: the test is the grep proving no deliverable references the
+artifact; no new test survives the deletion.
+
+## Verification
+
+- [ ] The decision is recorded here with its rationale
+- [ ] Wire-in: `make <target>` produces the HTML from tracked inputs, or skips
+      cleanly and loudly when Phase-2 artifacts are absent
+- [ ] Wire-in: the script imports without executing its pipeline
+- [ ] Retire: nothing in `deliverables/` references the removed artifact
+
+## Invariants
+
+- `make check` passes either way.
+- Do not silently delete an artifact a manuscript includes — grep first.
+
+## Exit criteria
+
+- [ ] `plot_interactive_corpus.py` is either reachable from the build or gone
+- [ ] No figure script writes into `deliverables/` without a Make target
