@@ -313,7 +313,11 @@ COMPUTED_STATS := deliverables/_shared/technical-report-vars.yml \
                   deliverables/data-paper/data-paper-vars.yml deliverables/multilayer/multilayer-detection-vars.yml
 
 # Grouped target (&:) — one invocation writes all 3 files. Requires GNU Make >= 4.3.
-$(COMPUTED_STATS) &: scripts/analysis/compute_vars.py scripts/utils.py $(REFINED) \
+# config/corpus_filter.yaml is a real prerequisite (ticket 0329): compute_vars
+# reads the filtering thresholds the data paper reports straight from it, so an
+# edit to sigma or a near-duplicate threshold must rebuild the vars file.
+$(COMPUTED_STATS) &: scripts/analysis/compute_vars.py scripts/utils.py \
+		config/corpus_filter.yaml $(REFINED) \
 		$(DERIVED)/tab_bimodality.csv $(DERIVED)/tab_bimodality_core.csv \
 		$(DERIVED)/tab_axis_detection.csv \
 		deliverables/_shared/tables/tab_citation_coverage_periods.csv \

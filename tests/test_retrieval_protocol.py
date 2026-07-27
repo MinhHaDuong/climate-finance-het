@@ -218,6 +218,22 @@ def test_compute_vars_emits_thresholds_from_config():
         assert v[var] == expected, f"{var}: got {v[var]!r}, config says {expected!r}"
 
 
+def test_stats_rule_depends_on_the_threshold_config():
+    """Make must rebuild the vars file when a reported threshold changes.
+
+    compute_vars reads config/corpus_filter.yaml, so leaving it out of the
+    prerequisites lets an edited sigma sit in config while the paper keeps
+    printing the old number — the exact drift this ticket exists to close.
+    """
+    with open(os.path.join(REPO, "Makefile"), encoding="utf-8") as fh:
+        makefile = fh.read()
+    rule = makefile.split("$(COMPUTED_STATS) &:", 1)[1].split("\n\n", 1)[0]
+    assert "config/corpus_filter.yaml" in rule, (
+        "the $(COMPUTED_STATS) rule must list config/corpus_filter.yaml as a "
+        "prerequisite; compute_vars.py reads its thresholds into the paper"
+    )
+
+
 def test_threshold_vars_registered_for_the_data_paper():
     from compute_vars import DOC_VARS
 
@@ -283,23 +299,45 @@ def test_grey_enumeration_lists_every_curated_report():
     assert {r["Title"] for r in rows} == {e["title"] for e in grey}
 
 
-def test_markdown_render_escapes_nothing_it_should_not():
-    """Render oracle: the emitted markdown keeps every pipe cell aligned.
+def _pipe_tables(md: str) -> list[list[str]]:
+    """Consecutive runs of pipe rows — one run per markdown table."""
+    tables, current = [], []
+    for line in md.splitlines():
+        if line.startswith("|"):
+            current.append(line)
+        elif current:
+            tables.append(current)
+            current = []
+    if current:
+        tables.append(current)
+    return tables
 
-    A title containing a pipe would silently split a row. The emitter owns
-    escaping (ticket 0325).
+
+def test_markdown_rows_are_not_ragged():
+    """Render oracle: every row carries its own table's column count.
+
+    A title containing a pipe would silently split a row and shift every
+    later cell. The emitter owns escaping (ticket 0325), so each table is
+    checked against its own header rather than a file-wide width.
     """
     from export_retrieval_protocol import render_markdown
 
-    md = render_markdown()
-    header, delim, *body = [
-        ln for ln in md.splitlines() if ln.startswith("|")
-    ]
-    width = header.count("|")
-    ragged = [ln for ln in [delim, *body] if ln.count("|") != width and ln.count("|") > 0]
-    # Two tables share the file; group by their own header widths instead.
-    widths = {ln.count("|") for ln in [header, delim, *body]}
-    assert len(widths) <= 2, f"ragged markdown rows: {ragged[:3]}"
+    tables = _pipe_tables(render_markdown())
+    assert len(tables) == 2, f"expected the protocol and grey tables, got {len(tables)}"
+    for table in tables:
+        header, *rest = table
+        width = header.count("|")
+        ragged = [ln for ln in rest if ln.count("|") != width]
+        assert not ragged, (
+            f"rows disagree with their header's {width} pipes: {ragged[:2]}"
+        )
+
+
+def test_markdown_escapes_a_pipe_in_a_cell():
+    """The fang: an unescaped pipe in a title must not survive into a row."""
+    from export_retrieval_protocol import _escape
+
+    assert "|" not in _escape("Climate | Finance").replace("\\|", "")
 
 
 def test_paper_points_at_the_deposited_protocol():
@@ -310,6 +348,30 @@ def test_paper_points_at_the_deposited_protocol():
     )
     for cfg_name in ("openalex_queries.yaml", "corpus_filter.yaml", "grey_sources.yaml"):
         assert cfg_name in sources, f"§2.1 must name the deposited {cfg_name}"
+
+
+def test_paper_reports_the_config_concept_group_rule():
+    """§2.1's Tier 3/4 co-occurrence rule must match what the harvest applied.
+
+    The language list is guarded above; these three numbers describe the same
+    harvest and were the other half of the reviewers' "reconstruct the query"
+    complaint, so they get the same treatment.
+    """
+    cfg = _load(QUERIES_YAML)
+    sources = _section(_qmd_text(), "2.1")
+    spelled = {2: "two", 3: "three", 4: "four"}
+
+    n_groups = len(cfg["concept_groups"])
+    assert spelled[n_groups] in sources or str(n_groups) in sources, (
+        f"§2.1 must say the taxonomy has {n_groups} concept groups"
+    )
+    for tier in (3, 4):
+        need = cfg["tiers"][tier]["min_concept_groups"]
+        assert spelled[need] in sources or str(need) in sources, (
+            f"§2.1 must report Tier {tier}'s {need}-group co-occurrence rule"
+        )
+    for group in cfg["concept_groups"]:
+        assert group in sources, f"§2.1 must name the {group!r} concept group"
 
 
 def test_paper_states_the_key_document_selection_rule():
