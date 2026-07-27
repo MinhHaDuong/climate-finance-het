@@ -10,6 +10,7 @@ Author: HDMX-coding-agent
 2026-07-27T12:22Z HDMX-coding-agent corrected review round 1 found the distance remap in flag_semantic_outlier was DOI-keyed, so 6544 DOI-less candidates were un-flaggable while still setting the centroid. Remapped by work key. Corrected dry run: Flag 5 flags 1277 works (was 1075), 887 already flagged, 93 protected, 361 net new removals (was 161). refined_works.csv would go 33344 to ~32983. Still NOT landed, awaits author sign-off.
 2026-07-27T12:56Z HDMX-coding-agent corrected review round 2 removed the normalized-DOI second chance in flag_semantic_outlier (it handed candidate distances to works excluded from the subset) and added a min_coverage floor of 0.9 in config/corpus_filter.yaml so a 99-percent-dead flag raises instead of warning. Dry-run figures unchanged: 1277 flagged, 361 net new removals. Author-decision items surfaced, see PR 1140.
 2026-07-27T13:23Z HDMX-coding-agent corrected review round 3 replaced the key remap with index assignment (emb_df keeps df index), added a keys/vectors length check, and measured duplicate work keys among candidates: 416 of 32938 (1.3 percent), pre-dedup grey-lit and reintroduced duplicate DOIs. Final dry run: 1276 flagged (was 1277, the leak flagged one non-candidate), 886 already flagged, 93 protected, 361 net new removals. refined_works.csv 33344 to ~32983. Awaits author sign-off.
+2026-07-27T17:40Z HDMX-coding-agent note gaze review-pr panel on PR #1140: request-changes. The new RuntimeError for a keys-less embeddings.npz is uncaught at its only production call site (main), so --apply aborts and writes no refined_works.csv; breaks test_phase1_migration test_corpus_filter_apply_works and test_corpus_filter_idempotent (3 passed on main, 2 failed on branch). A dead flag should be made loud, not a malformed cache fatal to the whole filter
 --- body ---
 ## Context
 
@@ -102,7 +103,25 @@ what hid this.
   regenerate figures or tables until the author has signed off on the new
   row count.
 
+## Children
+
+Split out when the calibration sweep showed the shipped threshold carries a
+language gradient — deciding what Flag 5 should *do* is a research call, and
+bundling it here would have held a working fix hostage to it.
+
+- 0361 — calibration and activation sign-off (per-language centroid, sigma, or
+  retire). Owns the sign-off clause that used to sit in this ticket's exit
+  criteria, and governs removing `--skip-semantic-flag`.
+- 0362 — `run_corpus_pipeline.sh` auto-commits and pushes `dvc.lock` to main, so
+  the sign-off invariant 0361 relies on exists only in prose. Should land before
+  any activation.
+
 ## Exit criteria
 
-- Flag 5 evaluates on every run, its effect on the corpus is measured and
-  signed off, and a guard prevents it from silently going dead again.
+- Flag 5 can no longer die silently: it either evaluates or fails loudly, the
+  join no longer depends on positional alignment between two independently
+  filtered frames, and a guard pins both.
+- `embeddings.npz` is a declared dep of the `extend` stage.
+- Flag 5 ships **inert** (`--skip-semantic-flag` in `dvc.yaml`). What the flag
+  should do, and whether it should exist at all, is 0361's to settle — this
+  ticket does not claim that sign-off and closes without it.

@@ -304,7 +304,7 @@ stages:
   # undeclared, DVC never re-ran extend when the embeddings changed, so a dead
   # Flag 5 could not be told from a cached one (ticket 0336).
   # --skip-semantic-flag holds Flag 5 (semantic isolation) inert pending
-  # calibration sign-off (ticket 0336): the fix that revived it is merged, but
+  # calibration sign-off (ticket 0361): the fix that revived it is merged, but
   # sigma has never been calibrated against live output and activating it would
   # remove 361 works. Remove this flag only after the author signs off.
   extend:
