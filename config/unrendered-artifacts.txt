@@ -14,27 +14,10 @@ deliverables/_shared/tables/tab_retrieval_protocol.md — deposited in the Zenod
 
 deliverables/_shared/tables/tab_venues_fr_caption.md — build input, not a float: manuscript.mk's $(GIDE_VENUES_FR) rule concatenates it onto tab_venues.md to make the French-caption variant that manuscript-Gide.qmd includes
 
-# The seventeen top-level _includes/ files below are leftovers of the technical
-# report's rewrite and split (0226/0240): the report now composes _includes/techrep/
-# and _includes/zoo/ only. Their disposition — delete, relocate to conception/, or
-# re-embed — is content arbitration the author owns, and it is ticket 0290's whole
-# subject. 0359 stops the bleeding instead: they no longer sit in any *_INCLUDES
-# render prerequisite pretending to be live, and this list holds them where a
-# reader and the guard can both see them. Delete an entry here when 0290 settles it.
-deliverables/_shared/_includes/agentic-workflow.md — orphaned since the techrep split; disposition pending ticket 0290
-deliverables/_shared/_includes/alluvial-diagram.md — orphaned since the techrep split; disposition pending ticket 0290
-deliverables/_shared/_includes/bibliometric-context.md — orphaned since the techrep split; part A split off to prior-mappings.md by 0289, remainder pending ticket 0290
-deliverables/_shared/_includes/bimodality-analysis.md — orphaned since the techrep split; disposition pending ticket 0290
-deliverables/_shared/_includes/changepoint-analysis.md — orphaned since the techrep split; disposition pending ticket 0290
-deliverables/_shared/_includes/citation-genealogy.md — orphaned since the techrep split; disposition pending ticket 0290
-deliverables/_shared/_includes/clustering-comparison.md — orphaned since the techrep split; disposition pending ticket 0290
-deliverables/_shared/_includes/cop-topic-structure.md — orphaned since the techrep split; disposition pending ticket 0290
-deliverables/_shared/_includes/core-vs-full-analysis.md — orphaned since the techrep split; disposition pending ticket 0290
-deliverables/_shared/_includes/core-vs-full.md — orphaned since the techrep split; core-vs-full-definition.md is the live one the corpus report composes; disposition pending ticket 0290
-deliverables/_shared/_includes/embedding-generation.md — orphaned since the techrep split; disposition pending ticket 0290
-deliverables/_shared/_includes/pca-scatter.md — orphaned since the techrep split; disposition pending ticket 0290
-deliverables/_shared/_includes/prior-mappings.md — staged for the data paper by ticket 0289, not yet included by it; disposition pending ticket 0290
-deliverables/_shared/_includes/structural-breaks.md — orphaned since the techrep split; disposition pending ticket 0290
-deliverables/_shared/_includes/tab2_poles.md — orphaned since the techrep split; disposition pending ticket 0290
-deliverables/_shared/_includes/tab_traditions.md — orphaned since the techrep split; disposition pending ticket 0290
-deliverables/_shared/_includes/temporal-structure.md — orphaned since the techrep split; disposition pending ticket 0290
+# Ticket 0290 settled the seventeen top-level _includes/ leftovers of the
+# technical report's rewrite and split (0226/0240): fourteen deleted, two moved
+# to conception/ as research notes, and prior-mappings.md kept below. 0359 had
+# parked all seventeen here so a reader and the guard could both see them; the
+# entry that remains is the only one that is still an artifact awaiting a
+# consumer. Delete it when the data paper composes it.
+deliverables/_shared/_includes/prior-mappings.md — staged for the data paper by ticket 0289, not yet included by it; the data paper's revision draft carries the overlap prose, so the include is retained for the composition pass rather than deleted

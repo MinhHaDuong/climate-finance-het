@@ -234,18 +234,29 @@ def read_paths_mk():
 class TestPerDeliverableIncludes:
     """Since 0226 each deliverable is a folder-scoped Quarto project, and since
     0237 each owns a render-only .mk that depends on its OWN includes (not the
-    retired PROJECT_INCLUDES union). The per-doc include sets live in paths.mk."""
+    retired PROJECT_INCLUDES union). The per-doc include sets live in paths.mk.
+
+    This class checks the *structure* — which file owns which rule, and that the
+    union model stays retired. Whether each set holds the right files is checked
+    by the closure oracle, tests/test_deliverable_artifacts.py, which recomputes
+    every document's include closure from its .qmd and compares in both
+    directions. 0290 landed a second oracle in parallel with 0359's; they were
+    merged into that one file rather than left as two. Named-file pins are
+    what those checks replace — do not add another. The one below is the
+    surviving exception: it names the transitive case, and it survived only by
+    being retargeted, which is the argument against its shape. It pinned
+    TECHREP_INCLUDES until 0290/0359, where it outlived the fact it encoded —
+    the technical report was rewritten into the method zoo and stopped including
+    citation-quality.md at all, so the pin guarded an edge that no longer
+    existed while the document that does have it declared neither.
+    """
 
     def test_citation_coverage_in_corpus_report_includes(self):
         """tab_citation_coverage.md is included transitively via citation-quality.md.
 
-        The corpus report is citation-quality.md's only consumer. This pinned
-        TECHREP_INCLUDES until 0359: the technical report was rewritten to
-        compose the zoo tree and dropped citation-quality.md, so the list kept
-        a prerequisite for an edge that no longer existed while the document
-        that does have it declared neither. tests/test_deliverable_artifacts.py
-        now checks every include list against its .qmd's real closure; this
-        stays as the named regression pin for the transitive case.
+        The corpus report is citation-quality.md's only consumer, so this is the
+        named regression pin for the transitive case: a table reached through an
+        include rather than named by the .qmd.
         """
         paths = read_paths_mk()
         m = re.search(r"^CORPUS_REPORT_INCLUDES\s*:=\s*(.*?)(?=\n\S|\n\n)", paths,

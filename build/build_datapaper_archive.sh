@@ -31,7 +31,7 @@ DATA_DIR="${CLIMATE_FINANCE_DATA:-$PROJ_ROOT/data}/catalogs"
 # `cp --parents`, so this array is both the manifest and the layout. Guarded by
 # tests/test_archive_script_paths — each path must resolve to a real file, so a
 # renamed figure cannot silently strand the archive. Build them first with
-# `make corpus-tables figures-datapaper`. Keep the array free of parentheses.
+# `make corpus-tables figures-datapaper`.
 #
 # Figures only: the tables the paper includes are discovered below from its own
 # {{< include >}} directives, which cannot go stale the way a hand-kept list can.

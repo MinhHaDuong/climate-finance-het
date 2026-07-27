@@ -1,6 +1,7 @@
 ## Prior bibliometric mappings of climate finance
-<!-- Split from bibliometric-context.md (ticket 0289, 2026-07-22): part A, the
-     related-work review staged for the data-paper added-value response
+<!-- Split from the former bibliometric-context.md (ticket 0289, 2026-07-22):
+     part A, the related-work review staged for the data-paper added-value
+     response
      (tickets 0278/0283). Author-reviewed 2026-07-22 (PDF draft read; marker
      cleared per author decision). -->
 <!-- Factual claims verified sur pièce 2026-07-22 (ticket 0289, local PDFs + empirical overlap probe):

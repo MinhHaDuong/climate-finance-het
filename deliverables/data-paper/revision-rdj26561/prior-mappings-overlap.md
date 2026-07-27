@@ -108,8 +108,10 @@ under 0152).
 
 ## Sur-pièce verification of the comparison text (action 1)
 
-Claims in `deliverables/_shared/_includes/bibliometric-context.md` and the
-papers, checked against the local PDFs on 2026-07-22:
+Claims in the comparison text (split under 0289 into
+`deliverables/_shared/_includes/prior-mappings.md` and
+`conception/clustering-validity-positioning.md`, the latter moved out of the
+include tree under 0290) and in the papers, checked against the local PDFs on 2026-07-22:
 
 - Carè & Weber 2023: 315 articles, 2004–2021, Scopus
   TITLE-ABS-KEY("climate finance"), seven clusters, "ghettoization",

@@ -84,6 +84,9 @@ NO_RENDER_RULE = ("slides-eshet", "slides-gide")
 # the union of those roots' closures.
 INCLUDE_VAR_ROOTS = {
     "MANUSCRIPT_INCLUDES": ("manuscript/manuscript.qmd",),
+    # The Gide variant composes the French-caption table, not the English one,
+    # so it owns a list rather than sharing MANUSCRIPT_INCLUDES (ticket 0290).
+    "GIDE_INCLUDES": ("manuscript/manuscript-Gide.qmd",),
     "CORPUS_REPORT_INCLUDES": ("corpus-report/corpus-report.qmd",),
     "TECHREP_INCLUDES": ("technical-report/technical-report.qmd",),
     "DATAPAPER_INCLUDES": ("data-paper/data-paper.qmd",),
@@ -342,6 +345,28 @@ def test_every_include_variable_is_accounted_for():
     assert not stray, (
         f"paths.mk include lists mapped to no document: {stray}. Add them to "
         f"INCLUDE_VAR_ROOTS."
+    )
+
+
+@pytest.mark.adherence
+def test_every_document_with_includes_has_a_variable():
+    """The other direction: a document cannot escape by having no variable.
+
+    The check above catches a *variable* nobody mapped. This catches a
+    *document* nobody declared: it composes includes, so its render rule needs
+    them as prerequisites, but no `*_INCLUDES` list names it and both include
+    checks skip it silently. A document that composes nothing (the agentic
+    paper, the slide decks) needs no list, and the check starts applying the
+    moment it gains its first include. Ported from ticket 0290's guard, the one
+    direction this file did not already cover.
+    """
+    mapped = {root for roots in INCLUDE_VAR_ROOTS.values() for root in roots}
+    unmapped = sorted(q for q, (refs, _) in CLOSURES.items()
+                      if refs and q not in mapped)
+    assert not unmapped, (
+        f"Document(s) composing includes that no paths.mk list declares: "
+        f"{unmapped}. Add a *_INCLUDES variable and map it in "
+        f"INCLUDE_VAR_ROOTS — otherwise the render rule misses them."
     )
 
 

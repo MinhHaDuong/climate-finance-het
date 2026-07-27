@@ -27,7 +27,7 @@ TMP="/tmp/$ARCHIVE"
 # mirrors each one into the archive, so this array is simultaneously the
 # manifest and the layout. Guarded by tests/test_archive_script_paths — each
 # path must resolve to a real file, so a moved asset cannot silently strand
-# the archive. Keep the array free of parentheses.
+# the archive.
 MANUSCRIPT_FILES=(
     deliverables/manuscript/manuscript.qmd
     deliverables/manuscript/manuscript-vars.yml

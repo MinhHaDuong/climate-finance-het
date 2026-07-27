@@ -64,7 +64,7 @@ $(GIDE_VENUES_FR): deliverables/_shared/tables/tab_venues.md deliverables/_share
 
 GIDE_INPUTS := $(GIDE_SRC) $(MANUSCRIPT_BIB) $(MANUSCRIPT_CSL) \
                $(MANUSCRIPT_VARS) \
-               $(MANUSCRIPT_DELIVERABLES) $(GIDE_VENUES_FR)
+               $(MANUSCRIPT_DELIVERABLES) $(GIDE_INCLUDES)
 
 deliverables/manuscript/manuscript-Gide.pdf: $(GIDE_INPUTS)
 	quarto render $(GIDE_SRC) --to pdf
