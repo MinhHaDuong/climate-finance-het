@@ -19,7 +19,7 @@ Formal data dictionary for the deposited corpus file. Columns are organised in f
 | `all_authors` | string, nullable | free | 2.4% | Full author list, separator-joined |
 | `year` | integer | free | 1.1% | Publication year |
 | `journal` | string, nullable | free | 16.3% | Publication venue (journal, publisher, or repository) |
-| `language` | string, nullable | free | 4.0% | Language code (ISO 639-1), detected and normalised |
+| `language` | string, nullable | free | 0.2% | Language code (ISO 639-1), detected and normalised |
 | `keywords` | string, nullable | free | 2.7% | Keywords, semicolon-separated |
 | `categories` | string, nullable | free | 1.8% | Subject categories / concepts from the source catalog |
 | `cited_by_count` | integer | free | 4.7% | Citation count (OpenAlex, as of the collection date) |
@@ -39,6 +39,7 @@ Formal data dictionary for the deposited corpus file. Columns are organised in f
 | `from_oecd` | boolean | 0, 1 | 0.0% | Provenance flag: curated OECD key document |
 | `abstract_provenance` | string, nullable | curated, reconstructed:lead, reconstructed:exec_summary, empty | 99.4% | Provenance of the abstract text for curated key documents: `curated`, `reconstructed:lead`, or `reconstructed:exec_summary`; empty elsewhere |
 | `keywords_provenance` | string, nullable | extracted, generated:lexicon, empty | 100.0% | Provenance of the keywords for curated key documents: `extracted` or `generated:lexicon`; empty elsewhere |
+| `language_provenance` | string, nullable | source, openalex, detected:langdetect, empty | 0.2% | How the language code was obtained: `source` (carried by the source catalog), `openalex` (backfilled from the OpenAlex API), or `detected:langdetect` (inferred from title and abstract); empty where no language could be established |
 | `source_count` | integer | 1–8 | 0.0% | Number of sources that contributed the record (sum of the provenance flags) |
 
 ## Curation metadata
@@ -49,7 +50,7 @@ Formal data dictionary for the deposited corpus file. Columns are organised in f
 | `near_duplicate_group` | integer, nullable | free | 98.8% | Group identifier for near-identical content published under several DOIs; null for ungrouped works |
 | `semantic_outlier_dist` | float, nullable | free | n/a | Distance to the corpus embedding centroid, computed for the semantic-outlier flag |
 | `in_v1` | boolean | true, false | n/a | Version tracking: work present in the v1.0 submission corpus |
-| `is_flagged` | boolean | true, false | 0.0% | Any quality flag raised; the refined subset is `df[~df['is_flagged'] | df['is_protected']]` |
+| `is_flagged` | boolean | true, false | 0.0% | Any quality flag raised; the refined subset is `df[~df['is_flagged'] \| df['is_protected']]` |
 | `flag_reason` | string | comma-joined subset of the six flag names, or empty | 74.0% | Comma-separated list of raised quality flags (missing_metadata, no_abstract_irrelevant, title_blacklist, citation_isolated_old, semantic_outlier, llm_irrelevant); empty when unflagged |
 | `is_protected` | boolean | true, false | 0.0% | Protection from removal (key papers kept despite flags) |
 | `protection_reason` | string, nullable | free | 76.5% | Why the work is protected (citation count, seed list, ...) |

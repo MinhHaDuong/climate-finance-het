@@ -1,9 +1,9 @@
 """Generate the variables-description table for the data paper (ticket 0279).
 
 Renders the climate_finance_corpus.csv column contract declared in
-scripts/_deposit_variables.py as a Quarto pipe table (@tbl-variables).
-export_deposit.py enforces the same contract at write time, so this table
-cannot drift from the shipped CSV.
+scripts/_deposit_variables.py as a Quarto crossref div (@tbl-variables)
+wrapping a raw-LaTeX longtable. export_deposit.py enforces the same contract
+at write time, so this table cannot drift from the shipped CSV.
 
 Usage:
     uv run python scripts/figures/export_variables_table.py \
