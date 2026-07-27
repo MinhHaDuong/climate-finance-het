@@ -316,6 +316,68 @@ class TestFlagLLMIrrelevant:
         assert isinstance(result, pd.Series)
         assert len(result) == len(fixture_df)
 
+    def test_unrunnable_reranker_is_a_hard_error(self, fixture_df, config, monkeypatch):
+        """Flag 6 decides corpus membership, so it may not be skipped silently.
+
+        Ticket 0314: on the 2026-07-24 rebuild the reranker backend ran without
+        torch, logged a warning, and returned no candidates. The stage exited 0
+        and shipped 38,166 refined works instead of 33,344 — 5,840 irrelevant
+        works silently retained, because the ``llm_irrelevant`` column survived
+        from the previous pass and satisfied the presence-only apply gate.
+        """
+        import builtins
+
+        import filter_flags_llm
+
+        config = dict(config)
+        config["llm_relevance"] = dict(config["llm_relevance"], backend="reranker")
+
+        real_import = builtins.__import__
+
+        def no_torch(name, *args, **kwargs):
+            if name == "torch":
+                raise ImportError("No module named 'torch'")
+            return real_import(name, *args, **kwargs)
+
+        monkeypatch.setattr(builtins, "__import__", no_torch)
+
+        already_flagged = pd.Series(False, index=fixture_df.index)
+        with pytest.raises(RuntimeError, match="Flag 6"):
+            list(
+                filter_flags_llm.flag_llm_irrelevant_streaming(
+                    fixture_df, config, already_flagged=already_flagged
+                )
+            )
+
+    def test_hard_error_names_the_remediation(self, fixture_df, config, monkeypatch):
+        """The operator must learn how to fix it from the message alone."""
+        import builtins
+
+        import filter_flags_llm
+
+        config = dict(config)
+        config["llm_relevance"] = dict(config["llm_relevance"], backend="reranker")
+
+        real_import = builtins.__import__
+
+        def no_torch(name, *args, **kwargs):
+            if name == "torch":
+                raise ImportError("No module named 'torch'")
+            return real_import(name, *args, **kwargs)
+
+        monkeypatch.setattr(builtins, "__import__", no_torch)
+
+        already_flagged = pd.Series(False, index=fixture_df.index)
+        with pytest.raises(RuntimeError) as excinfo:
+            list(
+                filter_flags_llm.flag_llm_irrelevant_streaming(
+                    fixture_df, config, already_flagged=already_flagged
+                )
+            )
+        message = str(excinfo.value)
+        assert "uv sync" in message
+        assert "--skip-llm" in message
+
 
 # ============================================================
 # LLM cache invalidation

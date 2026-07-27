@@ -239,9 +239,20 @@ def _reranker_streaming(df, config, *, already_flagged):
     """
     try:
         import torch  # noqa: F401 — availability check, used in _load_reranker_model
-    except ImportError:
-        log.warning("Flag 6 skipped: torch/sentence-transformers not installed")
-        return
+    except ImportError as exc:
+        # Hard error, not a warning (ticket 0314). Flag 6 decides corpus
+        # membership: skipping it ships a silently inflated corpus that every
+        # downstream number — paper, letter, deposit — inherits unnoticed. A
+        # failed build is recoverable; a plausible wrong one is not.
+        raise RuntimeError(
+            "Flag 6 (semantic relevance) cannot run: torch/sentence-transformers "
+            "not importable, and the reranker backend requires them. Refusing to "
+            "continue, because skipping Flag 6 silently retains irrelevant works. "
+            "Install them with `uv sync --group corpus --extra cpu` (or "
+            "`--extra cu130` on a CUDA host) and make sure the source roots are "
+            "on PYTHONPATH — `make` exports them, a bare shell does not. "
+            "To build a corpus without Flag 6 on purpose, pass --skip-llm."
+        ) from exc
 
     llm_cfg = config["llm_relevance"]
     candidates_mask, doi_norm = _identify_candidates(df, config, already_flagged)

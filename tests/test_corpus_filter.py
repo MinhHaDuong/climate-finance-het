@@ -12,6 +12,7 @@ CLI flag presence is checked via source inspection (no subprocess).
 Extend/filter mode tests that run corpus_filter via subprocess are marked @integration.
 """
 
+import argparse
 import os
 import subprocess
 import sys
@@ -273,3 +274,57 @@ class TestFilterMode:
         assert "audit" in out.lower() or audit_path.exists() or \
                any("audit" in f for f in os.listdir(tmp_path)), \
             f"--filter did not produce corpus_audit.csv. Output:\n{out}"
+
+
+# ---------------------------------------------------------------------------
+# Flag 6 must reflect THIS run, never the previous one (ticket 0314)
+# ---------------------------------------------------------------------------
+
+
+class TestFlag6NotCarriedOver:
+    """The ``llm_irrelevant`` column round-trips through extended_works.csv.
+
+    That is how the 2026-07-24 skip stayed silent: the column arrived already
+    populated from the prior pass, so the presence-only apply gate was
+    satisfied and the summary reported a count that no scoring in this run had
+    produced. Seeding the column from this run's scoring makes the state
+    honest — a run that scores nothing reports nothing.
+    """
+
+    def _run_flagging(self, df, monkeypatch, yields):
+        sys.path.insert(0, SCRIPTS_DIR)
+        sys.path.insert(0, HARVEST_DIR)
+        import corpus_filter
+
+        monkeypatch.setattr(
+            corpus_filter, "flag_llm_irrelevant_streaming",
+            lambda *a, **k: iter(yields),
+        )
+        monkeypatch.setattr(
+            corpus_filter, "detect_near_duplicate_groups",
+            lambda d: pd.Series("", index=d.index),
+        )
+        from filter_flags import _load_config
+
+        args = argparse.Namespace(
+            skip_llm=False, skip_citation_flag=True, cheap=False,
+        )
+        config = _load_config(
+            os.path.join(FIXTURE_DIR, "corpus_filter_test.yaml")
+        )
+        flagged, _has_embeddings = corpus_filter.run_flagging(
+            df, args, config, None, None, None, False
+        )
+        return flagged
+
+    def test_stale_flag6_column_is_not_reported_as_this_runs_result(
+        self, monkeypatch
+    ):
+        """Input carries llm_irrelevant=True; this run scores nothing."""
+        df = pd.read_csv(os.path.join(FIXTURE_DIR, "filter_fixture.csv"))
+        df["llm_irrelevant"] = True
+        out = self._run_flagging(df, monkeypatch, yields=[])
+        assert not out["llm_irrelevant"].fillna(False).any(), (
+            "stale Flag 6 values from a previous pass survived a run that "
+            "scored nothing"
+        )
