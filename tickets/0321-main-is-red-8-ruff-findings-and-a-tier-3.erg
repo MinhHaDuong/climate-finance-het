@@ -1,0 +1,72 @@
+%erg 0.1
+Title: main is red: 8 ruff findings and a tier-3 dual-role import from the 2026-07-24 merges
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T08:10Z HDMX-coding-agent created
+2026-07-27T08:17Z HDMX-coding-agent note surfaced by a full `make check` on branch t0317-temporal-coverage; both failures are in files that branch does not touch. This repo has no CI workflows, so `make check` is a purely local gate and main's redness went unseen.
+
+--- body ---
+## Context
+
+A full `make check` on 2026-07-27 returned 5 failures. Three were unrelated
+to the branch under test and are tracked elsewhere (0297 language nulls, 0320
+citation verification). The two below are lint/architecture regressions that
+entered with the 2026-07-24 merges — PR #1124 (salvage-exploration) and commit
+10a8c029 (global map labelled by community TF-IDF terms).
+
+There is no `.github/workflows/` in this repo, so nothing catches this on
+push; the gate is whatever a session runs locally. That is the reason it sat
+unnoticed, and it is worth a line in the decision below.
+
+### `tests/test_ruff.py::test_ruff_clean` — 8 findings, 7 auto-fixable
+
+- `conception/exploration-sem-vs-citation/explore_semantic_vs_citation.py`
+  — I001 ×2 (unsorted import blocks), PLR0915 (92 statements > 80)
+- `conception/exploration-sem-vs-citation/explore_v1_clusters_vs_citation.py`
+  — F401 ×3 (`json`, `os`, `pipeline_loaders.BASE_DIR` unused), I001
+- `scripts/analysis/analyze_global_map.py` — I001
+
+### `tests/test_script_classification.py::test_no_tier3_entry_point_is_imported`
+
+`compute_clusters` is imported by `analyze_global_map`. Per the guard's own
+message the resolution is either to extract the leaked helper into a neutral
+`_`-module (the 0250/0254 pattern) and repoint the importer, or to reclassify
+the file in `RECLASSIFIED_DUAL_ROLE` and `docs/repo-layout.md`.
+
+## Actions
+
+1. `uv run ruff check --fix` clears the 7 mechanical findings. PLR0915 on
+   `explore_semantic_vs_citation.py` needs a judgement call: that file is
+   salvaged exploration code, so either split its main, or add it to the
+   per-file ignores the way `compute_clustering_comparison.py` already is.
+2. Resolve the `compute_clusters` → `analyze_global_map` dual-role import by
+   one of the two routes the guard names. Extraction is preferable; the
+   reclassification escape hatch exists for cases where the helper is
+   genuinely entry-point-shaped.
+3. Decide whether this repo should have a CI workflow running `make check`,
+   or whether the local-gate convention is deliberate. If deliberate, say so
+   in `AGENTS.md` so the next session does not assume a green main.
+
+## Test
+
+- `make lint` (adherence tier) green.
+- `tests/test_script_classification.py` green without widening the allowlist,
+  unless reclassification is the chosen route and is documented.
+
+## Verification
+
+- [ ] `make check` on a clean main shows only the corpus-data failures tracked
+      by 0297 and 0320
+
+## Invariants
+
+- Do not silence a guard to make it pass; both have a documented resolution.
+- `conception/` is exploration code, but it is still linted — the fix is a
+  scoped per-file ignore with a reason, not removing it from ruff's reach.
+
+## Exit criteria
+
+- [ ] ruff clean and the dual-role import resolved
+- [ ] An explicit decision recorded on CI vs local-only gating

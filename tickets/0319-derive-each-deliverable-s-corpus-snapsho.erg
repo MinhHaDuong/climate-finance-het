@@ -1,0 +1,71 @@
+%erg 0.1
+Title: Derive each deliverable's corpus snapshot date from the artifact, not a test literal
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T07:54Z HDMX-coding-agent created
+2026-07-27T08:00Z HDMX-coding-agent note found while clearing make check-fast for the RDJ-26561 resubmission (ticket 0317): test_snapshot_date_documented had a single hardcoded SNAPSHOT_DATE = 2026-03-26 asserted against all three documents, and had been red on main since the data paper's as-of date moved to 2026-07-24 (commit 6faa0876). Unblocked with per-document literals; this ticket is the real fix.
+
+--- body ---
+## Context
+
+Three deliverables state the corpus snapshot their numbers come from, in
+prose. `tests/test_snapshot_date_documented.py` asserted one shared literal
+against all three, so the moment the data paper was rebuilt on corpus v2 the
+test went red and stayed red — a stale guard reporting a stale fact, with no
+way to tell which of the two had moved.
+
+The documents are legitimately on different corpora:
+
+- `deliverables/data-paper/data-paper.qmd` — corpus v2, 2026-07-24
+- `deliverables/multilayer/multilayer-detection.qmd` — v1, 2026-03-26
+- `deliverables/corpus-report/corpus-report.qmd` — v1, 2026-03-26
+
+Per-document literals unblock CI but keep the number hand-maintained in two
+places (the prose and the test), which is the defect class this repo already
+rules against: no hand-curated data in the pipeline, and vars-driven numbers
+in prose.
+
+## Relevant files
+
+- `tests/test_snapshot_date_documented.py` — the per-document literals to retire
+- `scripts/analysis/compute_vars.py` — where a `corpus_snapshot_date` var belongs
+- `data/catalogs/run_reports/catalog_merge__*.json` — carries the real build
+  timestamp, but is DVC-managed and absent in a clean CI checkout
+
+## Actions
+
+1. Emit `corpus_snapshot_date` as a computed var from the corpus build report,
+   into each deliverable's `-vars.yml`.
+2. Replace the prose literals with `{{< meta corpus_snapshot_date >}}` in the
+   documents built on the current corpus.
+3. For documents deliberately pinned to an older corpus (multilayer,
+   corpus-report on v1), pin the var in their `-vars.yml` the way
+   `manuscript-vars.yml` is pinned, and say so in a comment.
+4. Rewrite the test to assert the prose date equals the document's own var —
+   a consistency check, not a literal.
+
+## Test
+
+- Red first: mutate one document's `-vars.yml` snapshot date and assert the
+  test fails naming that document.
+- The test must pass in a checkout with no `data/catalogs/` present (CI has
+  no corpus data), so it reads the committed `-vars.yml`, never the corpus.
+
+## Verification
+
+- [ ] `make check-fast` green with no corpus data on disk
+- [ ] Changing the corpus and re-running `make stats` moves the data paper's
+      documented date with no test edit
+
+## Invariants
+
+- No hand-typed corpus numbers in prose (project rule).
+- The check keeps failing when a document's prose and its corpus disagree —
+  this ticket makes the guard sharper, never looser.
+
+## Exit criteria
+
+- [ ] Snapshot date is vars-driven in every document not deliberately pinned
+- [ ] `tests/test_snapshot_date_documented.py` holds no date literals

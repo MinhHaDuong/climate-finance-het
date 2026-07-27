@@ -6,3 +6,7 @@
 !refined_citations.csv
 !tab_pole_papers.csv
 !tab_lexical_tfidf.csv
+# Input to export_citation_coverage.py since it stopped recomputing the metric
+# and started rendering the compute script's artifact (ticket 0317). Generated
+# from the two contract fixtures above by compute_citation_coverage.py.
+!tab_citation_coverage_periods.csv

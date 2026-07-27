@@ -45,6 +45,7 @@ EXTENDED    := $(DATA_DIR)/extended_works.csv
 REFINED     := $(DATA_DIR)/refined_works.csv
 REFINED_EMB := $(DATA_DIR)/refined_embeddings.npz
 REFINED_CIT := $(DATA_DIR)/refined_citations.csv
+CITATIONS   := $(DATA_DIR)/citations.csv
 
 # Phase 2 derived data (regenerable, under data/derived/)
 MOSTCITED   := $(DERIVED)/het_mostcited_50.csv
@@ -245,8 +246,14 @@ corpus-validate: $(REFINED)
 	$(PYTHON) -m pytest tests/test_corpus_acceptance.py -v -s --tb=long
 
 # ── Corpus reporting (Phase 2 — reads only refined data) ──
-deliverables/_shared/tables/tab_citation_coverage.md: scripts/figures/export_citation_coverage.py scripts/utils.py $(REFINED)
+# The periodised coverage metric is computed once, here, and rendered by the
+# export script below — two computations of one number is how the v1.0 prose
+# drifted (ticket 0317).
+deliverables/_shared/tables/tab_citation_coverage_periods.csv: scripts/analysis/compute_citation_coverage.py scripts/utils.py $(CONFIG) $(REFINED) $(CITATIONS)
 	$(PYTHON) $< --output $@
+
+deliverables/_shared/tables/tab_citation_coverage.md: scripts/figures/export_citation_coverage.py scripts/utils.py deliverables/_shared/tables/tab_citation_coverage_periods.csv
+	$(PYTHON) $< --input deliverables/_shared/tables/tab_citation_coverage_periods.csv --output $@
 
 deliverables/_shared/tables/tab_reference_counts.csv: scripts/analysis/compute_reference_counts.py scripts/utils.py $(REFINED) $(REFINED_CIT)
 	$(PYTHON) $< --output $@
@@ -277,6 +284,7 @@ deliverables/_shared/tables/codebook.md: scripts/figures/export_codebook.py scri
 	$(PYTHON) $< --output $@
 
 corpus-tables: deliverables/_shared/tables/tab_corpus_sources.csv deliverables/_shared/tables/tab_corpus_sources.md \
+               deliverables/_shared/tables/tab_citation_coverage_periods.csv \
                deliverables/_shared/tables/tab_citation_coverage.md \
                deliverables/_shared/tables/tab_reference_counts.csv \
                deliverables/_shared/tables/tab_languages.md \
@@ -291,6 +299,7 @@ COMPUTED_STATS := deliverables/_shared/technical-report-vars.yml \
 $(COMPUTED_STATS) &: scripts/analysis/compute_vars.py scripts/utils.py $(REFINED) \
 		$(DERIVED)/tab_bimodality.csv $(DERIVED)/tab_bimodality_core.csv \
 		$(DERIVED)/tab_axis_detection.csv \
+		deliverables/_shared/tables/tab_citation_coverage_periods.csv \
 		$(wildcard $(UNIFIED)) \
 		$(wildcard $(DATA_DIR)/corpus_audit.csv) \
 		$(wildcard $(DATA_DIR)/embeddings.npz) \

@@ -166,6 +166,25 @@ Pre2007CoverageSchema = DataFrameSchema(
 )
 
 # ---------------------------------------------------------------------------
+# Periodised citation-coverage CSV (ticket 0317)
+# ---------------------------------------------------------------------------
+# Long format: one (metric, value) row per period statistic, feeding the data
+# paper's §4 coverage paragraph. Periods are positional (p1/p2/p3) with their
+# year bounds as values, so labels are reconstructable from a floats-only
+# table. Both denominators ship — all works and DOI-bearing works only — since
+# they disagree in direction and the prose must name the one it uses.
+# Mirrors the Pre2007CoverageSchema metric/value idiom.
+
+CitationCoveragePeriodsSchema = DataFrameSchema(
+    columns={
+        "metric": Column(str),
+        "value": Column(float, nullable=True),
+    },
+    strict=True,
+    coerce=True,
+)
+
+# ---------------------------------------------------------------------------
 # Pre-2007 tradition-separation null CSV (ticket 0182)
 # ---------------------------------------------------------------------------
 # One row per separation statistic (within_tradition_share, modularity):

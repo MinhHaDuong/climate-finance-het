@@ -1,93 +1,80 @@
-"""Export citation coverage table by period for Quarto includes.
+"""Render the citation-coverage table for Quarto includes.
 
-Produces:
-- deliverables/_shared/tables/tab_citation_coverage.md: period coverage + core coverage
+Reads: deliverables/_shared/tables/tab_citation_coverage_periods.csv
+Writes: deliverables/_shared/tables/tab_citation_coverage.md
 
-Reads: refined_works.csv, citations.csv
+This script renders; it does not measure. The metric — and in particular its
+denominator — is defined once in scripts/analysis/compute_citation_coverage.py
+(ticket 0317). Recomputing it here is what let the v1.0 prose numbers drift
+away from the artifact.
 
 Usage:
-    uv run python scripts/export_citation_coverage.py
+    uv run python scripts/figures/export_citation_coverage.py \
+        --input deliverables/_shared/tables/tab_citation_coverage_periods.csv \
+        --output deliverables/_shared/tables/tab_citation_coverage.md
 """
 
 import os
 
 import pandas as pd
-from pipeline_loaders import load_refined_works
 from script_io_args import parse_io_args, validate_io
-from utils import (
-    BASE_DIR,
-    CATALOGS_DIR,
-    get_logger,
-    load_analysis_periods,
-    normalize_doi,
-    normalize_doi_safe,
-)
+from utils import BASE_DIR, get_logger
 
 log = get_logger("export_citation_coverage")
 
-CITATIONS_PATH = os.path.join(CATALOGS_DIR, "citations.csv")
-OUTPUT_PATH = os.path.join(BASE_DIR, "deliverables", "_shared", "tables", "tab_citation_coverage.md")
-
-CORE_THRESHOLD = 50
-_period_tuples, _period_labels = load_analysis_periods()
-PERIODS = [(label, start, end) for label, (start, end) in zip(_period_labels, _period_tuples)]
+TABLES_DIR = os.path.join(BASE_DIR, "deliverables", "_shared", "tables")
+DEFAULT_INPUT = os.path.join(TABLES_DIR, "tab_citation_coverage_periods.csv")
 
 
-def main(refined_path=None, citations_path=CITATIONS_PATH):
-    if refined_path is not None:
-        refined = pd.read_csv(refined_path, low_memory=False)
-    else:
-        refined = load_refined_works()
-    citations = pd.read_csv(citations_path, usecols=["source_doi"], low_memory=False)
+def _period_count(metrics):
+    """How many p<i>_ period blocks the artifact carries."""
+    i = 1
+    while f"p{i}_n_works" in metrics:
+        i += 1
+    return i - 1
 
-    # Normalize DOIs for matching
-    refined["doi_norm"] = refined["doi"].apply(normalize_doi_safe)
-    fetched_dois = set(citations["source_doi"].dropna().apply(normalize_doi).unique())
 
-    refined["has_citations"] = refined["doi_norm"].isin(fetched_dois)
-
-    # Period table
+def render_table(metrics):
+    """Render the coverage markdown from the long (metric, value) mapping."""
     lines = [
         "| Period | Total works | With citation data | Coverage |",
         "|--------|------------:|-------------------:|---------:|",
     ]
-    for label, lo, hi in PERIODS:
-        mask = (refined["year"] >= lo) & (refined["year"] <= hi)
-        period = refined[mask]
-        total = len(period)
-        with_data = period["has_citations"].sum()
-        pct = 100 * with_data / total if total > 0 else 0
+    for i in range(1, _period_count(metrics) + 1):
+        label = f"{int(metrics[f'p{i}_year_min'])}–{int(metrics[f'p{i}_year_max'])}"
+        total = int(metrics[f"p{i}_n_works"])
+        with_data = int(metrics[f"p{i}_n_covered"])
+        pct = metrics[f"p{i}_share_covered"]
         lines.append(f"| {label} | {total:,} | {with_data:,} | {pct:.0f}% |")
 
-    # Core coverage
-    core = refined[refined["cited_by_count"] >= CORE_THRESHOLD]
-    core_total = len(core)
-    core_with = core["has_citations"].sum()
-    core_pct = 100 * core_with / core_total if core_total > 0 else 0
-
-    lines.append("")
-    lines.append(
+    threshold = int(metrics["core_threshold"])
+    lines += [
+        "",
         f"Coverage is significantly higher for the most-cited works "
-        f"(core papers with $\\geq {CORE_THRESHOLD}$ incoming citations): "
-        f"{core_with:,} of {core_total:,} ({core_pct:.0f}%) have reference data."
-    )
+        f"(core papers with $\\geq {threshold}$ incoming citations): "
+        f"{int(metrics['core_n_covered']):,} of {int(metrics['core_n']):,} "
+        f"({metrics['core_share_covered']:.0f}%) have reference data.",
+    ]
+    return "\n".join(lines) + "\n"
 
-    content = "\n".join(lines) + "\n"
 
-    os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
-    with open(OUTPUT_PATH, "w") as f:
+def main():
+    io_args, _extra = parse_io_args()
+    validate_io(output=io_args.output)
+
+    inputs = io_args.input or []
+    source = inputs[0] if inputs else DEFAULT_INPUT
+    df = pd.read_csv(source)
+    metrics = dict(zip(df["metric"], df["value"]))
+
+    content = render_table(metrics)
+    os.makedirs(os.path.dirname(io_args.output), exist_ok=True)
+    with open(io_args.output, "w") as f:
         f.write(content)
 
-    log.info("Wrote %s", OUTPUT_PATH)
+    log.info("Wrote %s", io_args.output)
     log.info("\n%s", content)
 
 
 if __name__ == "__main__":
-    io_args, _extra = parse_io_args()
-    validate_io(output=io_args.output)
-    OUTPUT_PATH = io_args.output
-    inputs = io_args.input or []
-    main(
-        refined_path=inputs[0] if len(inputs) > 0 else None,
-        citations_path=inputs[1] if len(inputs) > 1 else CITATIONS_PATH,
-    )
+    main()
