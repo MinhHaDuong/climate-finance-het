@@ -1,0 +1,122 @@
+%erg 0.1
+Title: Phase-2 derived tables are stale against the corpus, and the manuscript quotes the stale numbers
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T14:30Z HDMX-coding-agent created
+2026-07-27T14:30Z HDMX-coding-agent note Found while checking ticket 0330's byte-compare invariant, not by a sweep
+
+--- body ---
+## Context
+
+Ticket 0330 required an old-code-vs-new-code byte-compare on the same current
+corpus. Running `analyze_bimodality.py` against `data/catalogs/` as it stands
+today produced numbers that differ from the ones sitting in
+`data/derived/tables/tab_bimodality.csv` and, through `compute_vars.py`, from
+the ones the manuscripts quote.
+
+The 0330 change itself is exonerated: pre-fix and post-fix code on the current
+corpus give byte-identical tables. The drift is between the *corpus* and the
+*derived tables built from an earlier corpus*.
+
+    variable                  | committed vars | fresh run
+    bim_dbic_embedding        |          1,350 |      1,355
+    bim_dbic_tfidf            |         15,984 |     15,990
+    bim_dbic_pre2007          |             19 |         20
+    bim_dbic_2007_2014        |            -59 |        -60
+    bim_dbic_post2015         |          1,118 |      1,119
+    bim_n_efficiency          |            875 |        874
+    unsupervised_PC3 delta_bic|          1,398 |      1,406
+    embedding_lexical_corr    |         0.7721 |     0.7721 (unchanged)
+
+The likely cause is the 0297 language backfill (merged as PR #1129), which
+regenerated the corpus. Nothing re-ran Phase 2 afterwards, so
+`data/derived/` still reflects the pre-backfill corpus and the committed
+`*-vars.yml` still reflect `data/derived/`. Each layer is internally
+consistent, which is why nothing complained: `compute_vars.py` reproduces the
+committed vars byte-for-byte from the stale tables.
+
+Magnitudes are small (0.4% on delta_bic, one paper on a pole count) and no
+qualitative claim flips on them. This is filed as hygiene, not as an erratum.
+
+## Why it matters anyway
+
+This is the failure mode the project has already been bitten by: a headline
+number that moves between passes with no alarm. The corpus is DVC-managed and
+Phase 2 is Make-driven, so the dependency exists on paper —
+`$(DERIVED)/tab_bimodality.csv` lists `$(REFINED)` as a prerequisite. It did
+not fire because the derived tree is gitignored and regenerable, so whoever
+merged 0297 had no local artifact whose timestamp Make could compare, and
+whoever renders the manuscript reads committed vars rather than rebuilding.
+
+The general shape: a corpus regeneration is a Phase-1 event, and nothing
+obliges the Phase-2 artifacts committed to git to be rebuilt in the same PR.
+
+## Relevant files
+
+- `data/derived/tables/*.csv` — the stale layer (gitignored, regenerable)
+- `deliverables/_shared/technical-report-vars.yml`,
+  `deliverables/data-paper/data-paper-vars.yml`,
+  `deliverables/multilayer/multilayer-detection-vars.yml` — the committed
+  layer that quotes it
+- `Makefile` — the `$(COMPUTED_STATS) &:` rule and its `$(REFINED)` prerequisite
+- `deliverables/manuscript/manuscript-vars.yml` — pinned to v1.0 by design, out
+  of scope
+
+## Actions
+
+1. Rebuild Phase 2 from the current corpus and commit the resulting `*-vars.yml`
+   diff on its own, so the numeric change is reviewable as one commit rather
+   than buried in a feature PR.
+2. Diff every regenerated var, not only the bimodality ones. This ticket
+   inspected `tab_bimodality.csv` and `tab_axis_detection.csv` because 0330
+   pointed there; the other Phase-2 tables were not checked and may carry
+   their own drift.
+3. Decide whether a guard is worth it, and if so add one. A candidate: an
+   adherence test asserting that the corpus fingerprint recorded in the vars
+   files matches the current `refined_works.csv` — which requires recording
+   such a fingerprint at vars-write time, since none exists today.
+
+## Test
+
+Red step for action 3, if the guard is adopted:
+
+    def test_committed_vars_match_current_corpus():
+        """Ticket 0344. Vars must not outlive the corpus they were computed from."""
+        vars_fp = yaml.safe_load(open(VARS))["corpus_fingerprint"]
+        assert vars_fp == corpus_fingerprint(REFINED_WORKS), (
+            "committed vars were computed from a different corpus - "
+            "rebuild Phase 2 and commit the vars diff"
+        )
+
+Fails today for the reason that the fingerprint field does not exist yet, which
+is itself the finding.
+
+## Verification
+
+- [ ] A fresh `make` on the current corpus leaves `git status` clean for
+      `deliverables/**/*-vars.yml`
+- [ ] The vars diff is reviewed number by number, with any qualitative change
+      called out explicitly
+- [ ] Every Phase-2 derived table is regenerated, not just the two 0330 touched
+
+## Invariants
+
+- `deliverables/manuscript/manuscript-vars.yml` stays pinned. It is v1.0 by
+  decision and must not be swept into a regeneration.
+- No prose is edited under this ticket. If a regenerated number contradicts a
+  sentence, that is the author's arbitration and gets its own ticket.
+
+## Exit criteria
+
+- [ ] Phase-2 artifacts and the corpus agree, verified by a clean rebuild
+- [ ] The vars diff is committed separately and reviewed
+- [ ] A decision is recorded on whether to add the staleness guard, with the
+      guard implemented or the reason for declining written down
+
+## See also
+
+- 0330 — the byte-compare that surfaced this; its own change is byte-neutral
+- 0297 (closed, PR #1129) — the language backfill that most likely moved the
+  corpus without a Phase-2 rebuild
