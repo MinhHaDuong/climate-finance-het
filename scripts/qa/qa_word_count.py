@@ -55,6 +55,12 @@ BLACKLISTED_PHRASES = [
 # "robust" is only blacklisted in non-statistical sense — flag for manual review
 REVIEW_WORDS = ["robust"]
 
+# Em-dashes per 1,000 body words. The prose rule is one per paragraph; at this
+# paper's ~120-word paragraphs that is ~8 per 1,000, so 4 leaves room for the
+# occasional parenthetical pair while still catching a document that reaches
+# for the dash instead of a period.
+EM_DASH_PER_1K_LIMIT = 4.0
+
 
 def count_words(text: str) -> int:
     """Count words in a string, excluding pure numbers and punctuation."""
@@ -127,24 +133,32 @@ def check_structure(full_text: str) -> list[str]:
     return warnings
 
 
+def strip_references(full_text: str) -> str:
+    """Drop everything from the References/Bibliography heading onward.
+
+    AI-tell checks judge the author's prose. A reference list is neither: the
+    words in it are other people's titles, publisher names, and URL slugs, and
+    the author cannot rewrite them. Scanning it produces false positives that
+    no edit can clear — Buchner et al. 2013's "The Global Landscape of Climate
+    Finance" tripped the "landscape" blacklist through its URL slug, which the
+    old "Global Landscape" carve-out could not match because the slug is
+    lowercase and hyphenated. Stripping the section removes the whole class
+    rather than growing a carve-out per citation.
+    """
+    match = re.search(r"^(?:References|Bibliography)\b", full_text, re.MULTILINE)
+    return full_text[: match.start()] if match else full_text
+
+
 def check_ai_tells(full_text: str) -> list[str]:
     """Check for AI-tell blacklisted words and phrases. Returns list of findings."""
     findings = []
-    lower = full_text.lower()
+    lower = strip_references(full_text).lower()
 
     # Blacklisted words
     for word in BLACKLISTED_WORDS:
-        # "landscape" is OK in "Global Landscape" (CPI report title)
-        if word == "landscape":
-            count = len(re.findall(r"\blandscape\b", lower))
-            ok_count = len(re.findall(r"global landscape", lower))
-            bad_count = count - ok_count
-            if bad_count > 0:
-                findings.append(f"  BLACKLISTED WORD: '{word}' x{bad_count} (excluding 'Global Landscape')")
-        else:
-            count = len(re.findall(rf"\b{word}\b", lower))
-            if count > 0:
-                findings.append(f"  BLACKLISTED WORD: '{word}' x{count}")
+        count = len(re.findall(rf"\b{word}\b", lower))
+        if count > 0:
+            findings.append(f"  BLACKLISTED WORD: '{word}' x{count}")
 
     # Blacklisted phrases
     for phrase in BLACKLISTED_PHRASES:
@@ -165,15 +179,27 @@ def check_ai_tells(full_text: str) -> list[str]:
     elif contrasts:
         findings.append(f"  Contrast 'not X, but Y': {len(contrasts)} (OK, target: ≤3)")
 
-    # Em-dash density (3+ per paragraph = too many)
-    paragraphs = full_text.split("\n\n")
-    heavy_paras = 0
-    for para in paragraphs:
-        dashes = para.count("—") + para.count("--")
-        if dashes >= 3:
-            heavy_paras += 1
-    if heavy_paras > 0:
-        findings.append(f"  EM-DASH HEAVY: {heavy_paras} paragraph(s) with 3+ em-dashes")
+    # Em-dash density, measured over the body rather than per paragraph.
+    #
+    # The prose rule is "at most one em-dash per paragraph", but pdfplumber
+    # rarely emits a blank line, so splitting extracted text on "\n\n" lumps
+    # whole sections into one block. The old per-paragraph threshold therefore
+    # measured nothing: it fired on any document with three dashes anywhere,
+    # and pointed at a "paragraph" spanning six pages. Density over the body is
+    # what this extraction can actually support, so measure that and say so.
+    #
+    # The negative lookahead skips a dash used as a table's empty-cell mark
+    # ("Other (40 languages) — 771"), which is notation, not prose.
+    body = strip_references(full_text)
+    dashes = len(re.findall(r"(?:—|--)\s+(?!\d)", body))
+    body_words = count_words(body)
+    if body_words:
+        per_1k = 1000 * dashes / body_words
+        if per_1k > EM_DASH_PER_1K_LIMIT:
+            findings.append(
+                f"  EM-DASH DENSE: {dashes} in {body_words:,} body words "
+                f"({per_1k:.1f} per 1,000; target: ≤ {EM_DASH_PER_1K_LIMIT})"
+            )
 
     return findings
 

@@ -8,7 +8,6 @@ Usage:
     uv run python scripts/analysis/compute_vars.py
 """
 
-import glob
 import json
 import os
 import sys
@@ -16,6 +15,7 @@ import warnings
 
 import numpy as np
 import pandas as pd
+from pipeline_io import latest_run_report
 from pipeline_loaders import load_refined_citations, load_refined_works
 from script_io_args import parse_io_args, validate_io
 from utils import (
@@ -357,12 +357,8 @@ def dedup_stats(v):
     error estimates from tab_dedup_error_estimates.csv (ticket 0301).
     Both are pipeline artifacts — no hand-curated numbers.
     """
-    reports = sorted(
-        glob.glob(os.path.join(CATALOGS_DIR, "run_reports", "catalog_merge__*.json"))
-    )
-    if reports:
-        with open(reports[-1]) as f:
-            rep = json.load(f)
+    rep = latest_run_report("catalog_merge", CATALOGS_DIR)
+    if rep is not None:
         v["dedup_doi_removed"] = _int(rep["doi_duplicates_removed"])
         v["dedup_titleyear_removed"] = _int(rep["title_year_duplicates_removed"])
     else:

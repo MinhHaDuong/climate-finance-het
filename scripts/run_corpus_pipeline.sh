@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 # run_corpus_pipeline.sh — Run the full DVC corpus pipeline on padme.
 #
-# Env policy: secrets sourced from project .env via uv --env-file;
-# never via command-line KEY=value.
+# Env policy: .env holds no secret (ticket 0343). Credentials live in
+# ~/.config/keys/<provider>.env, are selected by the KEYS= line in .env, and
+# reach the environment through the keystore loader that the Makefile wires in
+# via BASH_ENV. Never via command-line KEY=value — that leaks to `ps`.
 #
 # Guards: hostname must be padme, dvc must be installed, branch must be main.
 # After dvc repro + push, auto-commits dvc.lock if it's the only changed file.
@@ -15,6 +17,18 @@ set -euo pipefail
 
 PROJ_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$PROJ_ROOT"
+
+# --- Credentials (ticket 0343) ---
+# `make corpus` gets these from the loader the Makefile wires in via BASH_ENV.
+# The documented direct invocation does not: a plain terminal has no BASH_ENV
+# set, so nothing would apply the KEYS= selection and every API call would run
+# unauthenticated. Load it here so both entry points behave the same.
+# Must follow the cd — the loader reads $PWD/.env to find the KEYS= line.
+KEYSTORE_LOADER="${KEYSTORE_LOADER:-$HOME/.claude/scripts/bash-env.sh}"
+if [ -z "${OPENALEX_API_KEY:-}" ] && [ -f "$KEYSTORE_LOADER" ]; then
+    # shellcheck source=/dev/null
+    . "$KEYSTORE_LOADER"
+fi
 
 # --- Guard: hostname ---
 if [ "$(hostname)" != "padme" ]; then

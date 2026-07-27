@@ -1,0 +1,152 @@
+%erg 0.1
+Title: Validate the deposit CSV against a generated datapackage.json
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T14:05Z HDMX-coding-agent created
+2026-07-27T14:20Z HDMX-coding-agent note Scoped from an Imagine session on codebook.md; author settled the envelope half as a manual checklist (one resubmission), so this ticket is code only
+
+--- body ---
+## Context
+
+The deposit ships `codebook.md`, a data dictionary generated from the column
+contract in `scripts/_deposit_variables.py`. An Imagine session audited what
+that contract actually enforces:
+
+- **Enforced today.** `check_columns()` (`_deposit_variables.py:268`) is called
+  at `export_deposit.py:52` before the CSV is written. It catches an
+  undocumented column and a missing *required* column. Column names only.
+- **Published but enforced by nothing.** Every value-level claim in the
+  codebook: `source` ∈ {8 catalogs}, `abstract_status` ∈ {5 values},
+  `source_count` ∈ 1–8, `year` is an integer, which columns tolerate nulls.
+  Thirty-three rows of allowed-values prose that no code reads.
+
+The deposit therefore makes machine-checkable claims that no machine checks.
+The fix is to enforce them against the **serialized artifact**, not the
+in-memory frame: an integer rendered as `1.0`, a quoting defect, or an encoding
+slip is invisible to a frame-level assertion. This is the defect class recorded
+in memory as *"Test the artifact a script writes, never the record it builds"*
+(0288/0347 — 41 passing tests missed a dropped field for five days because
+every one asserted on the in-memory dict) and *"a source-level test cannot see
+a rendering bug"* (0325).
+
+`datapackage.json` (Frictionless Table Schema) is the right vehicle **because**
+`frictionless validate` reads the written CSV. Shipping the JSON without
+validating against it would repeat the same violation one level up, so the
+emitter and the gate land together or not at all.
+
+Scope boundary decided by the author: Frictionless is for the **deposit**
+(Phase 4) only. Pandera stays the mechanism for the internal Phase 1→2
+contract (architecture rule 2). Two schema systems at two boundaries
+describing two different column sets — the deposit drops `abstract`,
+`doi_norm`, `action` (`COLUMNS_TO_DROP`) — is not duplication.
+
+## Relevant files
+
+- `scripts/_deposit_variables.py` — the contract. `Variable` dataclass (l.42),
+  `DEPOSIT_VARIABLES` (l.72, 33 entries), `check_columns` (l.268),
+  `render_codebook` (l.383). `type` and `allowed_values` are **prose strings**
+  (`"string, nullable"`, `"openalex, istex, …"`) — the restructure target.
+- `scripts/figures/export_deposit.py` — writes the deposit CSV; calls
+  `check_columns` at l.52.
+- `scripts/figures/export_codebook.py` — emits `codebook.md` (Makefile:288).
+- `scripts/figures/export_variables_table.py` — emits `tab_variables.md`
+  (Makefile:283).
+- `build/build_datapaper_archive.sh` — Phase-4 archive build. Writes the
+  deposit CSV (l.42-43), copies `codebook.md` into `data/products/` (l.47).
+- `pyproject.toml` — `pandera>=0.30.1` (l.24); `frictionless` absent.
+
+## Actions
+
+1. **Structure the contract.** Give `Variable` machine-readable fields
+   (`dtype`, `nullable: bool`, `enum: list[str] | None`, optional
+   `minimum`/`maximum`) and **derive** the existing prose `type` /
+   `allowed_values` from them. Direction matters: structure → prose is safe,
+   prose → structure is parsing. All 33 entries.
+2. **Emit `datapackage.json`.** New `scripts/figures/export_datapackage.py`
+   (Phase 2 script-I/O discipline: `--output` required, no default) rendering
+   the contract as a Frictionless Table Schema — one `resource` for
+   `climate_finance_corpus.csv`, one `field` per contract variable carrying
+   `name`, `type`, `description`, and `constraints` (`required`, `enum`,
+   `minimum`/`maximum`). Descriptor envelope (title, DOI, license) stubbed from
+   literals; see Out of scope.
+3. **Gate the archive build.** Add `make deposit-validate` running
+   `frictionless validate` on the emitted CSV against the emitted JSON, and
+   call it from `build_datapaper_archive.sh` *before* packaging so the archive
+   cannot be built unvalidated. Copy `datapackage.json` into `data/products/`
+   beside the CSV. Declare `frictionless` as a **pinned dev dependency** and
+   `uv lock` it (adherence verdicts must be machine-independent).
+
+## Test
+
+Red step — prove the current gap, in one test:
+
+Build a 2-row frame that **passes `check_columns`** (all required columns
+present, no extras) but carries an out-of-enum value, e.g. `source =
+"wikipedia"`. Write it to CSV. Assert `frictionless validate` against the
+generated `datapackage.json` **fails**, naming the offending field.
+
+Today this cannot even be written — there is no `datapackage.json` — which is
+the point: the test is red because the artifact and the gate are both absent.
+Mark `@pytest.mark.integration` (subprocess). Add a green counterpart on a
+contract-conforming frame.
+
+## Verification
+
+- [ ] The red test fails before action 2/3 and passes after.
+- [ ] `frictionless validate` rejects: an out-of-enum `source`, a null in a
+      non-nullable column, a non-integer `year`, `source_count = 9`.
+- [ ] `make deposit-validate` exits non-zero on a seeded violation, and
+      `build_datapaper_archive.sh` aborts rather than packaging.
+- [ ] `data/products/` in the built archive contains `datapackage.json`
+      alongside `climate_finance_corpus.csv` and `codebook.md`.
+
+## Invariants
+
+- **`codebook.md` and `tab_variables.md` are byte-identical before and after
+  action 1.** The restructure is a pure refactor of the contract's internals;
+  the generated prose must not move. Byte-compare the two files old-vs-new on
+  the same corpus (workflow rule: refactor validation compares the artifact,
+  not the test result). A diff here means the prose derivation is wrong.
+- `check_columns` keeps its signature and behaviour; `test_variables_table.py`
+  (11 call sites) stays green untouched.
+- No Frictionless anywhere in the Phase 1→2 path. Pandera remains the internal
+  mechanism (architecture rule 2).
+- The validation is Phase 4 (release), not Phase 2 — it must not run on every
+  `make all`, only on an archive build or an explicit `make deposit-validate`.
+- `make lint` and `make check-fast` pass; `make check` before the PR.
+
+## Out of scope
+
+- **Envelope metadata** — DataCite relations (`IsSupplementTo` the RDJ4HSS
+  article, `IsVersionOf` v1.0), ORCID, funder ID. The author settled this as a
+  **manual checklist** for one resubmission: the Zenodo upload is a web-form
+  "New version" click-path (`ed04-zenodo-restructure-upload.md:20`), so no
+  repo-side metadata file would be consumed, and shipping one would be the same
+  dogfood violation moved upstream. The checklist items belong in the ed04
+  runbook; the funder ID is author knowledge. ORCID already lives at
+  `deliverables/data-paper/data-paper.qmd:5` — do not create a second home.
+- **Croissant** (MLCommons JSON-LD) — a second serializer over the same
+  structured contract, cheap once action 1 lands. Gate on someone asking; for
+  an HSS venue it is noise.
+- **The unused Phase 1→2 schemas.** `RefinedWorksSchema` /
+  `RefinedCitationsSchema` / `validate_embeddings` (`schemas.py:29,74,~365`)
+  are referenced only by `tests/test_schema_contracts.py` on synthetic frames —
+  never on the real read path, though architecture rule 2 mandates write-time
+  validation and `Makefile:217`'s `check-corpus` gate tests only `test -f`.
+  Separate finding, separate ticket.
+
+## Exit criteria
+
+- [ ] `Variable` carries `dtype` / `nullable` / `enum`; prose derived from them
+- [ ] `codebook.md` and `tab_variables.md` byte-identical vs pre-change
+- [ ] `scripts/figures/export_datapackage.py` emits a valid Frictionless
+      descriptor covering all 33 contract variables
+- [ ] `make deposit-validate` gates on the written CSV and fails on a seeded
+      out-of-enum value
+- [ ] `build_datapaper_archive.sh` calls the gate before packaging; ships
+      `datapackage.json` in `data/products/`
+- [ ] `frictionless` pinned in dev dependencies and `uv lock`ed
+- [ ] Integration test (red→green) covers the four violation classes above
+- [ ] `make check` passes
