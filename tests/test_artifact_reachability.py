@@ -43,11 +43,21 @@ a guard whose verdict depends on whether `make` has run is worthless.
 
 - Includes: every `_includes/**/*.md` on disk. All are committed handoff
   artifacts; no build step writes one.
-- Figures / markdown tables: every such path named literally in a Makefile or
-  `.mk`. Most are gitignored and regenerable, so the filesystem is not a stable
-  universe; the build graph is. Dynamic outputs whose filenames are computed at
-  run time (`fig_lexical_tfidf_{year}.png`, tracked by `.lexical_tfidf.stamp`)
-  are outside any static universe and outside this guard.
+- Figures / markdown tables: the build graph, not the filesystem — most are
+  gitignored and regenerable. The build graph is read two ways, and the union is
+  the universe, because neither way alone is complete:
+    * a text scan of every Makefile, which catches paths written literally as
+      rule targets;
+    * `make` itself, expanding every variable the Makefiles assign, which
+      catches lists composed by a make function. Eight figures reach the disk
+      only that way — `BIAS_FIGS` via `$(foreach)` in `zoo-figures.mk` and
+      `SENS_FIG_PCA`/`SENS_FIG_JL` in `divergence.mk` — and a text scan cannot
+      see them: even the directory is a variable (`$(ZOO_FIGS)/…`). Letting
+      make do the expansion also means the universe cannot narrow when a list
+      is refactored from literals into a function.
+  Dynamic outputs whose filenames are computed at run time inside a *script*
+  (`fig_lexical_tfidf_{year}.png`, tracked by `.lexical_tfidf.stamp`) are in
+  neither reading and remain outside this guard.
 - CSV and JSON artifacts are excluded: scripts read them, documents do not.
 
 Adherence tier: a build-graph contract, like every other `_mk_discovery` consumer
@@ -60,6 +70,9 @@ guards, and this one is invisible there unless marked.
 import glob
 import os
 import re
+import shutil
+import subprocess
+import tempfile
 
 import pytest
 from _mk_discovery import all_makefiles
@@ -155,11 +168,68 @@ def _displayed_basenames():
     return names
 
 
+# A Make variable assignment: `NAME :=`, `NAME =`, `NAME ?=`, `NAME +=`.
+_VAR_ASSIGN_RE = re.compile(r"^[ \t]*([A-Za-z_][A-Za-z0-9_]*)[ \t]*[:?+]?=", re.M)
+
+# Ask make to expand every assigned variable and keep only the artifact paths.
+# make does the filtering, so nothing shell-hostile ever reaches printf.
+_PROBE = (
+    "__erg_artifacts:\n"
+    "\t@printf '%s\\n' $(sort $(filter"
+    " deliverables/_shared/figures/%.png"
+    " deliverables/_shared/tables/%.md"
+    ",{refs}))\n"
+)
+
+
+def _assigned_variable_names():
+    names = set()
+    for mk in _makefiles():
+        names |= set(_VAR_ASSIGN_RE.findall(_read(mk)))
+    return sorted(names)
+
+
+def _make_expanded_artifacts():
+    """Artifact paths make computes from the variables the Makefiles assign.
+
+    Enumerating the names lexically and letting *make* expand them keeps this
+    honest about `$(foreach)`-composed lists, which no text scan can resolve —
+    the directory itself is often a variable. `.VARIABLES` would be the obvious
+    shortcut; it silently drops fragment-defined variables here, so the explicit
+    name list is deliberate.
+    """
+    make = shutil.which("make")
+    if make is None:
+        pytest.skip("make not on PATH — cannot expand the build graph's variables")
+    refs = " ".join(f"$({name})" for name in _assigned_variable_names())
+    with tempfile.TemporaryDirectory() as tmp:
+        probe = os.path.join(tmp, "probe.mk")
+        with open(probe, "w", encoding="utf-8") as f:
+            f.write(_PROBE.format(refs=refs))
+        result = subprocess.run(
+            [make, "-s", "-f", "Makefile", "-f", probe, "__erg_artifacts"],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
+    assert result.returncode == 0, (
+        "make could not expand the build graph — the guard's universe would "
+        f"silently narrow:\n{result.stderr}"
+    )
+    return {line.strip() for line in result.stdout.splitlines() if line.strip()}
+
+
 def _declared(pattern):
-    """Artifact paths (repo-relative) named literally in the build graph."""
+    """Artifact paths (repo-relative) the build graph produces.
+
+    Union of the two readings described in the module docstring: paths written
+    literally anywhere in a Makefile, and paths make computes from a variable.
+    """
     found = set()
     for mk in _makefiles():
         found |= {m.group(0) for m in pattern.finditer(_read(mk))}
+    found |= {p for p in _make_expanded_artifacts() if pattern.fullmatch(p)}
     return found
 
 
@@ -187,8 +257,18 @@ _FLAT_INCLUDE_REASON = (
 _UNSETTLED_REASON = (
     "Built by make, displayed by no prose file, disposition undecided. "
     "Deleting a committed artifact together with its Make rules while the data "
-    "paper is mid-R&R is an author call, not a sweep's. Tracked with the "
-    "flat-include audit in ticket 0290."
+    "paper is mid-R&R is an author call, not a sweep's. No ticket covers these "
+    "yet — 0290 audits the flat includes only — so this entry is the record "
+    "until one is filed."
+)
+
+_ZOO_DIAGNOSTIC_REASON = (
+    "Method-zoo robustness diagnostic, reachable only through its own on-demand "
+    "phony target (bias-figures / sensitivity-figures / convergence). Outside "
+    "ALL_FIGS, so `make figures` never builds it, and displayed by no prose "
+    "file. Whether the zoo paper should show its own robustness panels is an "
+    "open editorial question, not a build defect; untracked, like the entries "
+    "above."
 )
 
 ALLOWED: dict[str, str] = {
@@ -261,6 +341,17 @@ ALLOWED: dict[str, str] = {
     "deliverables/_shared/figures/fig_communities.png": _UNSETTLED_REASON,
     "deliverables/_shared/figures/fig_traditions.png": _UNSETTLED_REASON,
     "deliverables/_shared/tables/tab_core_venues_top10.md": _UNSETTLED_REASON,
+    # Method-zoo diagnostics, visible only because make expands the variables
+    # that compose them ($(foreach) in zoo-figures.mk and divergence.mk).
+    "deliverables/_shared/figures/fig_zoo_bias_S1_MMD.png": _ZOO_DIAGNOSTIC_REASON,
+    "deliverables/_shared/figures/fig_zoo_bias_S2_energy.png": _ZOO_DIAGNOSTIC_REASON,
+    "deliverables/_shared/figures/fig_zoo_bias_L1.png": _ZOO_DIAGNOSTIC_REASON,
+    "deliverables/_shared/figures/fig_zoo_bias_C2ST_embedding.png": _ZOO_DIAGNOSTIC_REASON,
+    "deliverables/_shared/figures/fig_sensitivity_pca_S1_MMD.png": _ZOO_DIAGNOSTIC_REASON,
+    "deliverables/_shared/figures/fig_sensitivity_pca_S2_energy.png": _ZOO_DIAGNOSTIC_REASON,
+    "deliverables/_shared/figures/fig_sensitivity_jl_S1_MMD.png": _ZOO_DIAGNOSTIC_REASON,
+    "deliverables/_shared/figures/fig_sensitivity_jl_S2_energy.png": _ZOO_DIAGNOSTIC_REASON,
+    "deliverables/_shared/figures/fig_convergence.png": _ZOO_DIAGNOSTIC_REASON,
     # ── Markdown tables consumed by something other than a document ──────────
     "deliverables/_shared/tables/codebook.md": (
         "Ships in the Zenodo deposit, not in a paper: "
@@ -294,6 +385,28 @@ def test_nested_zoo_includes_are_reachable():
         "nested zoo includes reported unreachable — the resolver is resolving "
         "include paths against the including file's directory instead of the "
         "root document's:\n" + "\n".join(missing)
+    )
+
+
+def test_variable_composed_figures_are_in_the_universe():
+    """The universe includes figures no text scan can see.
+
+    `BIAS_FIGS` is `$(foreach m,$(BIAS_METHODS),$(ZOO_FIGS)/fig_zoo_bias_$(m).png)`
+    — both the directory and the stem come from variables, so its four figures
+    appear nowhere in the Makefiles as literal text. They escaped the guard
+    entirely until make was asked to do the expansion. This pin fails if the
+    universe ever narrows back to a text scan, which would turn real orphans
+    into a silent pass.
+    """
+    universe = _declared(_MK_FIGURE_RE)
+    composed = [
+        f"deliverables/_shared/figures/fig_zoo_bias_{m}.png"
+        for m in ("S1_MMD", "S2_energy", "L1", "C2ST_embedding")
+    ]
+    missing = [p for p in composed if p not in universe]
+    assert not missing, (
+        "variable-composed figures absent from the guard's universe — the build "
+        "graph is being read by text scan alone:\n" + "\n".join(missing)
     )
 
 
