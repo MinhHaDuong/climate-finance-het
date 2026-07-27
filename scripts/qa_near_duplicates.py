@@ -23,22 +23,39 @@ Usage:
     df["near_duplicate_group"] = detect_near_duplicate_groups(df)
 """
 
+import os
 import re
 from collections import defaultdict
 
 import pandas as pd
-from utils import get_logger
+import yaml
+from utils import CONFIG_DIR, get_logger
 
 log = get_logger("qa_near_duplicates")
 
-# Default parameters
-DEFAULT_PREFIX_LENGTH = 200
-DEFAULT_MIN_GROUP_SIZE = 5
-DEFAULT_MIN_ABSTRACT_LENGTH = 50
+
+def _near_duplicate_config() -> dict:
+    """Read the near_duplicate block of config/corpus_filter.yaml.
+
+    Fails loud on a missing file or block rather than falling back to inline
+    defaults: the data paper reports these numbers, so a silent fallback would
+    let the prose describe a run that used something else (ticket 0329).
+    """
+    path = os.path.join(CONFIG_DIR, "corpus_filter.yaml")
+    with open(path, encoding="utf-8") as f:
+        return yaml.safe_load(f)["near_duplicate"]
+
+
+_CFG = _near_duplicate_config()
+
+# Default parameters — config-derived, reported in the data paper's §2.2.
+DEFAULT_PREFIX_LENGTH = _CFG["prefix_length"]
+DEFAULT_MIN_GROUP_SIZE = _CFG["min_group_size"]
+DEFAULT_MIN_ABSTRACT_LENGTH = _CFG["min_abstract_length"]
 # Fraction of papers in a title group that must share an abstract prefix
 # with at least one other member for the group to be considered a true
 # near-duplicate cluster (filters out generic titles with diverse content)
-DEFAULT_ABSTRACT_OVERLAP_THRESHOLD = 0.5
+DEFAULT_ABSTRACT_OVERLAP_THRESHOLD = _CFG["abstract_overlap_threshold"]
 
 
 def _normalize_text(text: str) -> str:

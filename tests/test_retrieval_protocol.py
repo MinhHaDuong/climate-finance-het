@@ -321,7 +321,7 @@ def test_paper_states_the_key_document_selection_rule():
 
 
 def test_paper_states_the_outlier_rule_is_global():
-    """The reviewers' actual question: global or stratified?"""
+    """The reviewers' actual question was global or stratified."""
     pipeline = _section(_qmd_text(), "2.2")
     assert "global" in pipeline.lower(), (
         "§2.2 must say the semantic-outlier mean and SD are computed globally"

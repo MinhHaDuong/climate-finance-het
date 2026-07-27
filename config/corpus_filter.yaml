@@ -113,8 +113,25 @@ year_floor: 1960
 citation_isolation:
   max_year: 2019
 
+# Distance to the corpus centroid is compared against a mean and standard
+# deviation taken over the WHOLE corpus — one global centroid, one global
+# mean/SD, no language, source, or year strata (see flag_semantic_outlier).
 semantic_outlier:
   sigma: 2
+
+# Near-duplicate detection (qa_near_duplicates.py). These were module-level
+# Python constants until ticket 0329; the data paper reports them, so they live
+# in config where a reader can find them without opening the code.
+near_duplicate:
+  # Characters of the normalised abstract used as the pass-1 clustering key.
+  prefix_length: 200
+  # Minimum members for a cluster to count as a coordinated publication.
+  min_group_size: 5
+  # Abstracts shorter than this are ignored by the prefix pass.
+  min_abstract_length: 50
+  # Fraction of a title group that must share an abstract prefix with another
+  # member before the group is accepted (filters generic titles).
+  abstract_overlap_threshold: 0.5
 
 llm_relevance:
   backend: reranker
