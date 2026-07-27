@@ -295,10 +295,10 @@ deliverables/_shared/tables/tab_dedup_error_estimates.csv: scripts/analysis/comp
 deliverables/_shared/tables/tab_venues.md: scripts/figures/export_tab_venues.py scripts/_markdown_table.py scripts/utils.py $(REFINED) $(DERIVED)/tab_pole_papers.csv
 	$(PYTHON) $< --output $@ --pole-papers $(DERIVED)/tab_pole_papers.csv
 
-deliverables/_shared/tables/tab_corpus_sources.csv deliverables/_shared/tables/tab_corpus_sources.md &: scripts/figures/export_corpus_table.py scripts/utils.py $(REFINED)
+deliverables/_shared/tables/tab_corpus_sources.csv deliverables/_shared/tables/tab_corpus_sources.md &: scripts/figures/export_corpus_table.py scripts/_markdown_table.py scripts/utils.py $(REFINED)
 	$(PYTHON) $< --output $@
 
-deliverables/_shared/tables/tab_languages.md: scripts/figures/export_language_table.py scripts/utils.py $(REFINED)
+deliverables/_shared/tables/tab_languages.md: scripts/figures/export_language_table.py scripts/_markdown_table.py scripts/utils.py $(REFINED)
 	$(PYTHON) $< --input $(REFINED) --output $@
 
 # Variables table for the data paper (ticket 0279) — rendered from the deposit
