@@ -1,0 +1,110 @@
+%erg 0.1
+Title: Derive the archive output lists instead of hand-syncing them across three files
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T23:10Z HDMX-coding-agent created from the simplification items ticket 0384 recorded but did not apply; 0384 closes on its three guard gaps, so these would be lost with it.
+
+--- body ---
+## Context
+
+Ticket 0292 rebuilt the three Phase-4 archive scripts; its review panel filed
+three guard-completeness gaps (closed by 0384) and three simplification items,
+never applied because they surfaced after the merge. One of the three —
+`lru_cache` on `_makefile_text` — landed with 0384 because it sat in the file
+that ticket was already editing. The other two are real refactors and are
+recorded here so they do not close with 0384.
+
+Neither is a live defect. Both are drift classes held shut today by a comment
+and by convention rather than by construction.
+
+### Item 1 — the nine-path output list is hand-synced across three files
+
+`ANALYSIS_OUTPUTS` is written out in full in three places:
+
+- `Makefile:726` (the repo's Phase-2 target list),
+- `build/build_analysis_archive.sh:21` (the array the archive checksums),
+- `build/templates/Makefile.analysis-manuscript:44` (`OUTPUTS`, the reviewer's
+  target list, which `expected_outputs.md5` records).
+
+The only thing keeping the three in step is a comment in each ("Keep in step
+with ANALYSIS_OUTPUTS in the repo Makefile and in build_analysis_archive.sh").
+A path added to one and not the others produces an archive whose `make verify`
+checks a different set than the one the repo built, and nothing fails first.
+
+This is the same defect class as gap 5 of ticket 0384 — `Makefile.datapaper`'s
+shared-table prerequisites drifting from the paper's include closure — which
+#1220 closed with a bidirectional guard rather than by deriving. The cheap
+version here is that same shape: a guard asserting the three lists are equal.
+The structural version is one source (the repo Makefile's `ANALYSIS_OUTPUTS`)
+with the other two generated or read from it.
+
+### Item 2 — the `cp --parents` mirror loop is copy-pasted three ways
+
+Each build script carries its own version of the same loop:
+
+```
+for src in "${MANUSCRIPT_FILES[@]}"; do cp --parents "$src" "$TMP/"; done
+for src in "${SCRIPTS[@]}";          do cp --parents "$src" "$TMP/"; done
+for f   in "${DATAPAPER_FILES[@]}";  do cp --parents "$f"   "$TMP/code/"; done
+```
+
+Three copies with three loop-variable names and two destination roots. Note
+before touching the third: `build_datapaper_archive.sh:103` documents that its
+loop variable is deliberately *not* `src`, because
+`test_datapaper_archive_layout.py` finds the per-source catalog loop by taking
+the first line matching `for src in`. A shared helper must not reintroduce a
+second `for src in` in that file, or it silently shifts what that guard reads.
+
+## Relevant files
+
+- `Makefile` — `ANALYSIS_OUTPUTS`, the candidate single source
+- `build/build_analysis_archive.sh` — the duplicated array and one mirror loop
+- `build/templates/Makefile.analysis-manuscript` — `OUTPUTS`, the third copy
+- `build/build_manuscript_archive.sh`, `build/build_datapaper_archive.sh` — the
+  other two mirror loops
+- `tests/test_archive_script_paths.py` — where a list-agreement guard belongs
+- `tests/test_datapaper_archive_layout.py` — the `for src in` reader to respect
+
+## Actions
+
+1. Decide guard-vs-derive for the nine-path list. Prefer deriving if one source
+   can be read by all three consumers without shell magic in the shipped
+   template; otherwise add the bidirectional guard, as #1220 did for the
+   datapaper prerequisites, and say in the comment that the guard is the
+   mechanism.
+2. Factor the `cp --parents` mirror into one helper the three scripts source,
+   keeping `build_datapaper_archive.sh` free of a second `for src in` line.
+
+## Test
+
+Red first:
+
+- Add a tenth path to `ANALYSIS_OUTPUTS` in the repo Makefile alone and assert
+  a test fails naming the two files that did not follow (none does today).
+- Drop a path from the template's `OUTPUTS` alone and assert the same.
+- After the helper lands, assert
+  `test_datapaper_archive_layout.py`'s per-source catalog check still reads the
+  catalog loop and not the mirror loop — mutate the catalog list and confirm it
+  still goes red.
+
+## Verification
+
+- [ ] Each red test above fails before the change and passes after
+- [ ] The three archives build and their checksum files still match
+- [ ] `make check` stays green
+
+## Invariants
+
+- The shipped reviewer template stays runnable with Quarto/uv alone — no
+  `$(shell …)` that assumes the repo's tooling is present.
+- `test_datapaper_archive_layout.py`'s per-source catalog guard keeps reading
+  the catalog loop.
+
+## Exit criteria
+
+- The nine-path list can no longer drift silently between its three homes, by
+  derivation or by a red-tested guard, and the choice is documented where the
+  list is written.
+- The mirror loop exists once.
