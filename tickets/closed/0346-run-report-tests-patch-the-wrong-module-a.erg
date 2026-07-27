@@ -2,6 +2,7 @@
 Title: Run-report tests patch the wrong module and write into the real corpus directory
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1207
 
 --- log ---
 2026-07-27T15:01Z HDMX-coding-agent created
@@ -10,8 +11,10 @@ Author: HDMX-coding-agent
 2026-07-27T16:45Z HDMX-coding-agent correction Two claims in the read-only pass were wrong: load_dotenv does NOT override an exported var, and test_phase1_contract was never a culprit. Corrected below
 2026-07-27T16:48Z HDMX-coding-agent note Leak fixed and proven by mtime. Deletion of the 8 files deliberately deferred — see the last section
 2026-07-27T18:30Z HDMX-coding-agent note Sweep done and recorded: POOL_DIR is the same latent defect, the 0251 guard exempts bare assignment on a rationale this ticket falsifies, and the consuming-module patch is not the defect. Guard now AST-driven, not name-keyed
+2026-07-27T19:20Z HDMX-coding-agent note Guard merged as #1193 (7dbd16ce). Fixtures deleted, 141 -> 133; the recorded dvc add recipe was stale (0349's stage output overlaps the dir), dvc commit is the right tool
 2026-07-27T18:35Z HDMX-coding-agent note Exit criteria 1-3 discharged. Full suite (1846 passed, 7 known corpus-absent failures) left all 224 data/catalogs mtimes untouched. Fixture deletion remains the one open post-merge step
 
+2026-07-27T18:50Z HDMX-coding-agent closed — autoclosed — PR #1207
 --- body ---
 ## Context
 
@@ -157,13 +160,36 @@ The eight are exactly the files whose run id is not a UTC timestamp — the same
 criterion `latest_run_report` now uses to ignore them, so nothing reads them
 even while they sit there.
 
-Still deferred as of this branch, and deliberately so. The reasoning above has
-not expired: sibling worktrees still carry pre-fix `tests/`, and `rm` plus
-`dvc add` against the author's real corpus directory is a destructive action on
-data this branch cannot make durable — a sibling suite run would recreate the
-files before the deletion was committed. It is also the author's checkout, not
-this worktree's. Run it after this merges and the other sessions rebase; the
-recipe above is exact and the files are inert until then.
+Deferred while the guard PR was open, then run once it merged (#1193, merge
+commit `7dbd16ce`), on the author's instruction. 141 files → 133.
+
+**The recipe above was stale, and `dvc add` refuses to run it.** Ticket 0349
+declared `data/catalogs/run_reports/catalog_merge.json` as an output of the
+`catalog_merge` stage in `dvc.yaml`, so the directory is now tracked by
+`run_reports.dvc` *and* contains a pipeline-stage output. `dvc add` rejects the
+overlap outright:
+
+    ERROR: The output paths:
+    'data/catalogs/run_reports'('data/catalogs/run_reports.dvc')
+    'data/catalogs/run_reports/catalog_merge.json'('catalog_merge')
+    overlap and are thus in the same tracked directory.
+
+`dvc commit -f data/catalogs/run_reports.dvc` is the correct tool: it records
+the current workspace state into the existing `.dvc` without re-declaring the
+output, leaving the overlap untouched. `a4ae94be…dir` (141 files, 60,681 B) →
+`6bfb855b…dir` (133 files, 58,985 B), pushed to the `padme` remote, `dvc
+status` clean.
+
+Deleting was verified rather than trusted: the eight are *exactly* the files
+whose run id fails `RUN_ID_TIMESTAMP` (`^\d{8}T\d{6}Z$`) — checked by running
+that regex over all 141, not by re-reading the list above. The same regex is
+what `latest_run_report` filters on, so nothing read them. A copy of the eight
+was taken before deletion.
+
+Five of them carried mtimes from 17:24 that day — a sibling worktree on pre-fix
+`tests/` rewrote them while this ticket's own branch was in review, which is
+the recreation risk that justified the deferral. The guard is on main now, so a
+sibling recreating them fails its own suite instead of leaking silently.
 
 Not fixable by deletion: the fixtures are inside four committed DVC snapshots,
 one of which is the hash `run_reports.dvc` points at. Removing them from
@@ -295,7 +321,8 @@ that escapes `tmp_path` trips it.
       author's checkout and this worktree: byte-identical before and after,
       no mtime moved. The seven failures are `test_corpus_acceptance`
       file-existence checks, the known absent-DVC-data gap in a worktree.
-- [ ] The eight existing fixture files are gone — still deferred, see below
+- [x] The eight existing fixture files are gone — `run_reports.dvc` now records
+      133 files (was 141), new hash `6bfb855b…dir`, pushed to the remote
 
 ## Invariants
 
