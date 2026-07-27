@@ -87,8 +87,17 @@ DOC_VARS = {
         "filter_missing_metadata",
         "filter_net_removals",
         "filter_no_abstract",
+        "filter_outlier_sigma",
         "filter_protected",
+        "filter_reranker_threshold",
         "filter_title_blacklist",
+        # Retrieval-protocol thresholds, straight from config/corpus_filter.yaml
+        # (ticket 0329) — the paper reports them, so they are never hand-typed.
+        "neardup_min_group_size",
+        "neardup_overlap_pct",
+        "neardup_prefix_chars",
+        "protect_min_cited",
+        "protect_min_sources",
         "dedup_doi_removed",
         "dedup_fn_pairs",
         "dedup_fn_pairs_pct",
@@ -378,6 +387,33 @@ def dedup_stats(v):
         v["dedup_fp_doi_collision_groups"] = _int(m["fp_doi_groups_near_zero_overlap"])
         v["dedup_fp_empty_year_groups"] = _int(m["fp_empty_year_groups"])
         v["dedup_fp_empty_year_docs"] = _int(m["fp_empty_year_docs_merged"])
+
+
+def retrieval_protocol_stats(v):
+    """Filtering thresholds the data paper reports, straight from config.
+
+    All four RDJ-26561 external reviewers asked for the numbers the six-flag
+    filter actually used (ticket 0329). They are config values, not corpus
+    measurements, so this collector needs no Phase-1 data — and reading them
+    here rather than typing them into the prose is what keeps the paper and
+    the pipeline from drifting apart.
+    """
+    # Local import, as embedding_stats does: filter_flags owns the corpus-filter
+    # config loader, and no new YAML parsing belongs here.
+    from filter_flags import _load_config
+
+    cfg = _load_config()
+    v["filter_outlier_sigma"] = str(cfg["semantic_outlier"]["sigma"])
+    v["filter_reranker_threshold"] = str(cfg["llm_relevance"]["reranker_threshold"])
+
+    nd = cfg["near_duplicate"]
+    v["neardup_prefix_chars"] = str(nd["prefix_length"])
+    v["neardup_min_group_size"] = str(nd["min_group_size"])
+    v["neardup_overlap_pct"] = _pct(100 * nd["abstract_overlap_threshold"], decimals=0)
+
+    protection = cfg["protection"]
+    v["protect_min_cited"] = str(protection["min_cited_by"])
+    v["protect_min_sources"] = str(protection["min_source_count"])
 
 
 def embedding_stats(v):
@@ -721,6 +757,7 @@ def write_yaml(v, path):
 def main():
     v = {}
     corpus_stats(v)
+    retrieval_protocol_stats(v)
     embedding_stats(v)
     bimodality_stats(v)
     pca_stats(v)
