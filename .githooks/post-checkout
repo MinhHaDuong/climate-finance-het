@@ -4,10 +4,12 @@
 # .env and .dvc/config.local are handled by .worktreeinclude (auto-copied
 # into worktrees created by EnterWorktree / `claude --worktree`).
 #
-# This hook only co-locates the worktree's uv environment with the uv cache so
-# worktree creation stays fast. It does NOT populate DVC data: doing that eagerly
-# copied ~1.7 GB into every worktree and timed out creation. Data is now fetched
-# on demand with `make data` (see the Makefile).
+# This hook wires the worktree to two shared, off-tree resources: the uv
+# environment beside the uv cache, and the primary checkout's DVC cache. Both
+# are symlinks, so worktree creation stays fast. It still does NOT populate DVC
+# data — doing that eagerly copied ~1.7 GB into every worktree and timed out
+# creation. Data is fetched on demand with `make data` (see the Makefile),
+# which needs the shared cache below to find anything.
 
 # Co-locate the uv project environment with the uv cache on /data.
 # uv hardlinks wheels from its cache into the environment, but only when both
@@ -34,4 +36,51 @@ if [ -d /data/envs ]; then
     if [ -d "$SHARED_ENV" ] && { [ ! -e .venv ] || [ -L .venv ]; }; then
         ln -sfn "$SHARED_ENV" .venv 2>/dev/null || true
     fi
+fi
+
+# Share the primary checkout's DVC cache.
+# `.dvc/` is not tracked wholesale: a worktree gets `config` from git and
+# `config.local` from .worktreeinclude, but the cache is gitignored, so a fresh
+# worktree starts with an empty private one — and `config.local` carries only
+# the remote URL, never cache.dir. `make data` then searches that empty
+# cache, fails, and corpus work gets pushed back into the primary
+# checkout, losing worktree isolation and the dvc commit/push that goes with a
+# normal PR (ticket 0360, after 0347).
+#
+# Same idiom as .venv above. Sharing the cache is what makes `make data` able to
+# find anything at all, and on this machine it costs almost no disk: cache.type
+# is unset, so DVC tries its default chain (reflink, then copy) and the repo is
+# on btrfs, where a checked-out file shares extents with the cache blob and is
+# copied only on write. Verified with filefrag, since differing inodes cannot
+# tell reflink from copy. Where the filesystem has no reflink, DVC falls back to
+# a real copy and a worktree that runs `make data` spends ~2.2 GB.
+#
+# Leave cache.type unset, and never set hardlink or symlink. Reflink is safe
+# because a write breaks the sharing; a hardlink shares one inode, so any writer
+# that opens the target in place writes into the cache blob itself. Phase 1 has
+# such a writer: np.savez_compressed() truncates the embeddings .npz directly.
+# (The CSV path is safe either way — pipeline_io.save_csv writes a temp file and
+# os.replace()s it onto a fresh inode.) A test enforces this, since the setting
+# can hide in the gitignored .dvc/config.local.
+#
+# One consequence to know about: `dvc gc` now reaches every checkout at once. It
+# prunes by reachability computed from whichever checkout invokes it, so a stale
+# worktree pinned to an old dvc.lock can delete blobs the primary still needs.
+# Run it from the primary checkout on a current dvc.lock, or not at all.
+#
+# The path is derived from the repo rather than hard-coded, so a clone
+# elsewhere works. Only ever replace an absent or symlinked .dvc/cache — a
+# standalone (non-worktree) checkout owns a real cache directory, and
+# clobbering it would orphan every blob in it. Where the cache has been
+# relocated with `dvc cache dir <path>`, that setting lands in the git-tracked
+# .dvc/config, which a worktree inherits anyway, so this link is simply inert.
+#
+# stderr is kept (unlike the .venv link above) because the two failures differ
+# in consequence: a failed .venv share still leaves a working local env, while a
+# failed cache link leaves exactly the empty private cache this exists to
+# eliminate. `|| true` still keeps a checkout from failing over it.
+SHARED_CACHE=$(CDPATH= cd -- "$(git rev-parse --git-common-dir)/.." 2>/dev/null && pwd)/.dvc/cache
+if [ -d "$SHARED_CACHE" ] && [ "$SHARED_CACHE" != "$(pwd)/.dvc/cache" ] &&
+   { [ ! -e .dvc/cache ] || [ -L .dvc/cache ]; }; then
+    ln -sfn "$SHARED_CACHE" .dvc/cache || true
 fi

@@ -156,6 +156,43 @@ setting `CLIMATE_FINANCE_DATA` in `.env`. `scripts/utils.py` re-exports `DATA_DI
 `CATALOGS_DIR`, `DERIVED_TABLES_DIR`, `EMBEDDINGS_PATH` from `pipeline_loaders`.
 Resolve paths through those constants — never hardcode `data/catalogs/` in a script.
 
+**A worktree needs `make data` once.** `data/` is DVC-managed, so a fresh
+worktree checks out none of it. `.githooks/post-checkout` symlinks the
+worktree's `.dvc/cache` at the primary checkout's cache, which is what lets
+`make data` (a `dvc checkout`, no network) populate `data/` from local blobs.
+Corpus work therefore belongs in a worktree like any other work. Running Phase 1
+in the primary checkout gives up git isolation and skips the `dvc commit` /
+`dvc push` that a normal PR carries, which is how ticket 0347 left `dvc.lock`
+pointing at a superseded corpus (ticket 0360).
+
+On this machine that costs almost no disk. `cache.type` is unset, so DVC tries
+its default chain, reflink then copy, and the repo sits on btrfs: a checked-out
+file shares its physical extents with the cache blob and gets its own copy only
+on write. Measured, because inode identity cannot tell reflink from copy — after
+a full `make data` in a probe worktree, `filefrag` reported the same extents
+flagged `shared` for workspace file and cache blob, and free space was unchanged.
+On a filesystem without reflink DVC falls back to a real copy, and there the same
+checkout costs the full 2.2 GB.
+
+Leave `cache.type` unset, and never set `hardlink` or `symlink`. Reflink is
+safe because a write breaks the sharing; hardlinked files share one inode, so a
+writer that opens the target in place writes straight into the cache blob and
+corrupts it for every checkout at once. Phase 1 has both kinds of writer:
+`pipeline_io.save_csv()` writes a temp file and `os.replace()`s it, an atomic
+rename onto a fresh inode that would survive even a hardlinked cache, but
+`np.savez_compressed(path, …)` in `enrich_embeddings` and `corpus_align` opens
+the embeddings `.npz` directly and truncates it. One in-place writer is enough.
+`tests/test_post_checkout_hook.py::test_dvc_cache_type_is_not_an_aliasing_type`
+enforces this, because the setting can live in the gitignored
+`.dvc/config.local` where no diff would show it.
+
+**One cache, every checkout: think before `dvc gc`.** Sharing the cache widens
+that command's blast radius. It prunes by reachability computed from whichever
+checkout invokes it, so a stale worktree pinned to an old `dvc.lock`, or one
+mid-rebuild that has not pushed, can delete blobs the primary still needs. Run
+it from the primary checkout on a current `dvc.lock`, or not at all — ticket
+0252 kept 8 orphan pointers for this reason.
+
 `data/` is split by dataflow phase, so the directory names which phase owns a file:
 
 ```
