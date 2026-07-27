@@ -133,31 +133,39 @@ def test_compute_script_cli_contract():
 def test_makefile_wires_target():
     mk = open(os.path.join(SCRIPTS, "analysis", "lit-confirmations.mk")).read()
     for t in ("tab_lit_confirmations.csv", "tab_sem6_assignments.csv",
-              "tab_semantic_robustness.csv", "tab_sem_composition.csv",
-              "fig_sem_composition.png",
-              # 0310 follow-up: the composition figure clusters the CLEAN
-              # input (boilerplate/stub abstracts excluded).
-              "tab_alluvial_clean.csv", "--exclude-boilerplate"):
+              "tab_semantic_robustness.csv"):
         assert t in mk, t
-    # The exclusion is implemented in both semantic-input producers.
-    for script in ("analysis/compute_clusters.py",
-                   "analysis/compute_sem6_assignments.py"):
-        src = open(os.path.join(SCRIPTS, script)).read()
-        assert "is_boilerplate_abstract" in src, script
+    # The boilerplate/stub exclusion stays asserted on the surviving producer.
+    # compute_clusters.py kept its own copy, but 0359 deleted the only rule
+    # that invoked it from here (the composition figure's _clean chain), so
+    # this file no longer speaks for it.
+    src = open(os.path.join(SCRIPTS, "analysis",
+                            "compute_sem6_assignments.py")).read()
+    assert "is_boilerplate_abstract" in src
     top = open(os.path.join(BASE, "Makefile")).read()
     assert "lit-confirmations.mk" in top
 
 
-def test_sem_composition_figure_artifacts_committed():
-    """Figure + backing table exist and agree on period rows."""
-    fig = os.path.join(BASE, "deliverables", "_shared", "figures",
-                       "fig_sem_composition.png")
-    tab = os.path.join(BASE, "deliverables", "_shared", "tables",
-                       "tab_sem_composition.csv")
-    assert os.path.exists(fig)
-    df = pd.read_csv(tab, index_col=0)
-    assert len(df) == 3          # three periods
-    assert df.shape[1] == 6      # six clusters
+def test_sem_composition_artifacts_are_gone():
+    """The composition figure and its backing table stay deleted (0359).
+
+    0332 cut §4's semantic-cluster paragraph — the finding belongs to the
+    companion paper, not to a data paper — and no deliverable took the figure,
+    so `make` rebuilt it for nobody. Author decision 2026-07-27: delete the
+    figure, its rules and the table; git keeps the content, and 0328 recorded
+    the six-cluster period table in its own body.
+
+    Pinned rather than merely removed, because the pull to re-add a figure
+    whose numbers were verified correct is real — the reason it went is scope,
+    not error.
+    """
+    for path in (("figures", "fig_sem_composition.png"),
+                 ("tables", "tab_sem_composition.csv")):
+        assert not os.path.exists(os.path.join(
+            BASE, "deliverables", "_shared", *path)), (
+            f"{path[1]} is back. If a deliverable now embeds it, revive the "
+            f"rule in lit-confirmations.mk and delete this test; if not, it is "
+            f"a rebuild for nobody.")
 
 
 def test_compute_vars_exports_lit_variables():

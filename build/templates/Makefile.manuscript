@@ -1,26 +1,41 @@
 # Phase 3 reproducibility — "Inventing Climate Finance" (Œconomia)
-# Shipped inside the manuscript archive (cp'd by make archive-manuscript).
+# Shipped inside the manuscript archive (cp'd by build/build_manuscript_archive.sh).
 # Not used during development — provides a simple reviewer-facing interface.
 #
 # Verifies: PDF renders from pre-built figures and content.
 # No Python, no data, no scripts required.
 #
-# Prerequisites: Quarto ≥ 1.4, XeLaTeX
+# The archive mirrors the repo layout: the manuscript is its own Quarto project
+# under deliverables/manuscript/ and reaches shared assets as ../_shared/...
+# Quarto's single-file render writes the PDF next to its source, so the target
+# below is the exact path Quarto produces — make checks the recipe's exit code,
+# not whether a file appeared, so a target naming a path the tool never writes
+# would leave this rule perpetually "succeeding" with nothing built.
+#
+# Prerequisites: Quarto >= 1.4, XeLaTeX
 # Usage:
 #   make         # render manuscript PDF
 #   make verify  # check inputs and output match expected checksums
 
 export SOURCE_DATE_EPOCH := 0
 
+MANUSCRIPT := deliverables/manuscript/manuscript.pdf
+SHARED     := deliverables/_shared
+
 .DEFAULT_GOAL := manuscript
 .PHONY: manuscript verify
 
-manuscript: output/content/manuscript.pdf
+manuscript: $(MANUSCRIPT)
 
-output/content/manuscript.pdf: content/manuscript.qmd content/manuscript-vars.yml \
-		content/figures/fig_bars.png content/figures/fig_composition.png \
-		content/tables/tab_venues.md \
-		content/bibliography/main.bib content/bibliography/oeconomia.csl
+$(MANUSCRIPT): deliverables/manuscript/manuscript.qmd \
+		deliverables/manuscript/manuscript-vars.yml \
+		deliverables/manuscript/_quarto.yml \
+		$(SHARED)/figures/fig_bars_v1.png \
+		$(SHARED)/figures/fig_breaks.png \
+		$(SHARED)/figures/fig_composition.png \
+		$(SHARED)/tables/tab_venues.md \
+		$(SHARED)/bibliography/main.bib \
+		$(SHARED)/bibliography/oeconomia.csl
 	quarto render $< --to pdf
 
 # ── Verification ──────────────────────────────────────────
@@ -31,11 +46,11 @@ output/content/manuscript.pdf: content/manuscript.qmd content/manuscript-vars.ym
 #   A mismatch is a warning, not a failure — inputs are the real contract.
 verify: manuscript
 	md5sum -c checksums.md5
-	@if diff -q expected-manuscript.pdf output/content/manuscript.pdf >/dev/null 2>&1; then \
+	@if diff -q expected-manuscript.pdf $(MANUSCRIPT) >/dev/null 2>&1; then \
 		echo "VERIFY: all inputs match, rebuilt PDF identical to shipped PDF"; \
 	else \
 		echo "VERIFY: all inputs match"; \
 		echo "WARNING: rebuilt PDF differs from shipped PDF (expected with different toolchain versions)"; \
 		echo "  Shipped:  $$(pdfinfo expected-manuscript.pdf 2>/dev/null | grep Producer || echo 'pdfinfo not available')"; \
-		echo "  Rebuilt:  $$(pdfinfo output/content/manuscript.pdf 2>/dev/null | grep Producer || echo 'pdfinfo not available')"; \
+		echo "  Rebuilt:  $$(pdfinfo $(MANUSCRIPT) 2>/dev/null | grep Producer || echo 'pdfinfo not available')"; \
 	fi

@@ -1,9 +1,9 @@
 # technical-report.mk — Phase 3 render workpackage for the technical report.
 #
 # Render-only: produces deliverables/technical-report/technical-report.pdf from
-# handoff artifacts on disk (includes, bibliography, vars, figures, the lexical
-# TF-IDF stamp) — all produced by a prior `make analysis` (Phase 2). No uv, no
-# corpus data, no compute rules. Toolchain: Quarto + a LaTeX engine only.
+# handoff artifacts on disk (includes, bibliography, vars, figures) — all
+# produced by a prior `make analysis` (Phase 2). No uv, no corpus data, no
+# compute rules. Toolchain: Quarto + a LaTeX engine only.
 #
 #   make -f deliverables/technical-report/technical-report.mk deliverables/technical-report/technical-report.pdf
 #
@@ -12,11 +12,15 @@
 # plain artifact-file prerequisites here, satisfied by a prior analysis build —
 # not targets this file knows how to rebuild.
 #
-# The report is the method-zoo document, so it consumes the zoo figure sets. It
-# carried $(TECHREP_FIGS) $(MULTILAYER_FIGS) and .lexical_tfidf.stamp until 0290:
-# 23 figures no remaining section references, left over from the rewrite. They
-# forced the render to wait on unrelated Phase-2 work and misstated what the
-# document actually consumes.
+# The report is the method-zoo document, so it consumes the zoo figure sets —
+# schematics plus result panels, which `make zoo-figures` produces. It is named
+# as the pair rather than as its $(TECHREP_FIGS) alias so that zoo.mk,
+# multilayer.mk and this file all read the same. Until ticket 0359 the rule named
+# twelve figures the report stopped embedding at the techrep rewrite plus the
+# multilayer paper's companion figures, and none of the ones the LaTeX run
+# actually opens; ticket 0290 then dropped .lexical_tfidf.stamp for the same
+# reason — no remaining section references it, so it only forced the render to
+# wait on unrelated Phase-2 work.
 
 -include paths.mk
 

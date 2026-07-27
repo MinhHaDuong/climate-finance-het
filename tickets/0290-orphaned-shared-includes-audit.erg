@@ -12,6 +12,8 @@ Author: HDMX-coding-agent
 2026-07-27T18:40Z HDMX-coding-agent note figure sets have the same drift; filed as 0373 rather than widened into this PR. Nine Make-built figures are now provably referenced by nothing (their only consumers were these orphans) — decisions belong to the author, tracked in 0373.
 2026-07-27T18:40Z HDMX-coding-agent note conflict to resolve at merge: open PR #1172 files ticket 0368 to fix a broken table inside cop-topic-structure.md, which this PR deletes. 0368 becomes moot; close it as such, or restore the file if the author wants the content.
 
+2026-07-27T19:20Z HDMX-coding-agent note ticket 0359 delivers Action 3 (the hygiene guard): tests/test_deliverable_artifacts.py fails when a tracked file under _shared/{_includes,tables} is reachable from no deliverable .qmd. All 17 orphans are listed in config/unrendered-artifacts.txt with "disposition pending ticket 0290" — the guard is green and the content decision is untouched, still this ticket's. 0359 also removed seven of them from the TECHREP/DATAPAPER/MULTILAYER_INCLUDES render prerequisites, where they were posing as live dependencies; that is wiring, not disposition. Delete an allowlist line here as each orphan is settled.
+
 --- body ---
 ## Context
 
