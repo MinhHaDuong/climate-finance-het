@@ -18,6 +18,18 @@ generated `figures/` and `tables/`, `technical-report-vars.yml`) live in
 includes resolve relative to the top rendering doc, and every deliverable folder
 sits one level under `deliverables/`, so the prefix is uniform.
 
+**Consequence for anything that walks this graph.** A nested include's path is
+resolved against the *root document's* directory, not against the file that
+contains it — so a resolver must carry the root's directory as base through
+every level of recursion. Joining each include against its own directory is the
+natural implementation and it is wrong: it misses every nested include and
+reports it as unreachable. A 2026-07-27 orphan sweep written that way returned
+13 confident false positives, all of `_includes/zoo/*.md`, which
+`_includes/techrep-zoo.md` reaches as `../_shared/_includes/zoo/…` from the zoo
+deliverable's folder. Knowing the rule above did not prevent it, so it is
+written here as the consequence rather than left to be re-derived (ticket 0359,
+whose reachability guard depends on getting this right).
+
 The 11 documents across 9 folders:
 
 - `deliverables/manuscript/` — `manuscript.qmd` (main Œconomia article) +

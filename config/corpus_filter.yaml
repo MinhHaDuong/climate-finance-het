@@ -115,6 +115,12 @@ citation_isolation:
 
 semantic_outlier:
   sigma: 2
+  # Fraction of Flag 5 candidates that must resolve to an embedding vector.
+  # Below it the flag is scoring a rump of the corpus against a centroid built
+  # from that same rump, which is a dead flag with a number attached — so it is
+  # a hard error, not a warning (ticket 0336). Observed coverage on the
+  # 2026-07-27 corpus: 0.996 (32,938 of 33,057).
+  min_coverage: 0.9
 
 llm_relevance:
   backend: reranker
