@@ -2,11 +2,13 @@
 Title: Data paper: regenerate the temporal citation-coverage figures on corpus v2
 Created: 2026-07-24
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1127
 
 --- log ---
 2026-07-24T21:20Z HDMX-coding-agent created child of 0274 (checkpoint TODO)
 
 2026-07-27T07:51Z HDMX-coding-agent note FINDING: the gradient did NOT invert. The TODO's ~86%/77% conditioned on DOI-BEARING works; the paper's stated denominator is all corpus works, on which v2 gives 40%/47%/69% (v1 said 27%/47%). The apparent inversion is a denominator artifact: DOI carriage rises 46%->85% across periods, so conditioning on it hides exactly the population the caveat is about. Metric now in scripts/analysis/compute_citation_coverage.py -> tab_citation_coverage_periods.csv (CitationCoveragePeriodsSchema); both denominators ship; vars via compute_vars.citation_coverage_period_stats; export_citation_coverage.py refactored to render from the CSV (byte-identical output verified) so one number has one definition. Also dropped the paragraph's 'the field itself was smaller before 2007' clause: field size cannot move a share.
+2026-07-27T10:54Z HDMX-coding-agent closed — autoclosed — PR #1127
 --- body ---
 ## Context
 
