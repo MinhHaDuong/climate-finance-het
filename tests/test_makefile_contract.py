@@ -234,16 +234,18 @@ def read_paths_mk():
 class TestPerDeliverableIncludes:
     """Since 0226 each deliverable is a folder-scoped Quarto project, and since
     0237 each owns a render-only .mk that depends on its OWN includes (not the
-    retired PROJECT_INCLUDES union). The per-doc include sets live in paths.mk."""
+    retired PROJECT_INCLUDES union). The per-doc include sets live in paths.mk.
 
-    def test_citation_coverage_in_techrep_includes(self):
-        """tab_citation_coverage.md is included transitively via citation-quality.md."""
-        paths = read_paths_mk()
-        m = re.search(r"^TECHREP_INCLUDES\s*:=\s*(.*?)(?=\n\S|\n\n)", paths,
-                       re.MULTILINE | re.DOTALL)
-        assert m, "TECHREP_INCLUDES not found in paths.mk"
-        assert "tab_citation_coverage.md" in m.group(1), \
-            "TECHREP_INCLUDES must list tab_citation_coverage.md (transitive dep of citation-quality.md)"
+    This class checks the *structure* — which file owns which rule, and that the
+    union model stays retired. Whether each set holds the right files is checked
+    in tests/test_include_graph.py, which recomputes every document's include
+    closure and compares. A single hand-written pin lived here until 0290
+    (TECHREP_INCLUDES must list tab_citation_coverage.md, transitively via
+    citation-quality.md); it outlived the fact it encoded, because the technical
+    report was rewritten into the method zoo and stopped including
+    citation-quality.md at all. Named-file pins are what the closure check
+    replaces — do not add another.
+    """
 
     def test_project_includes_union_retired(self):
         """The PROJECT_INCLUDES union model is retired (0237): no render rule uses it.

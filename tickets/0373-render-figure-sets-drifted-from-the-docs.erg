@@ -1,0 +1,91 @@
+%erg 0.1
+Title: Render figure sets in paths.mk drifted from what the documents reference
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T18:30Z HDMX-coding-agent created found while settling 0290: the include sets were stale in the same way, and fixing those exposed the figure sets
+
+--- body ---
+## Context
+
+Follows ticket 0290, which resynced the per-document `*_INCLUDES` sets in `paths.mk` against
+each document's real include closure and added
+`tests/test_include_graph.py` to keep them honest. The `*_FIGS` sets next to
+them have the same defect and are not yet covered.
+
+Measured on 2026-07-27, comparing each set against the figures actually
+referenced by the document and everything it includes:
+
+| Set | declared | referenced | declared-not-referenced | referenced-not-declared |
+|-----|---------:|-----------:|------------------------:|------------------------:|
+| `MANUSCRIPT_FIGS` | 3 | 3 | 0 | 0 |
+| `DATAPAPER_FIGS` | 5 | 2 | 3 | 0 |
+| `MULTILAYER_FIGS` | 11 | 5 | 7 | 1 |
+| `ZOO_SCHEMATICS` + `ZOO_RESULT_FIGS` | 35 | 35 | 0 | 0 |
+
+`MULTILAYER_FIGS` is the one with a genuine hole: `multilayer-detection.qmd`
+uses `fig_companion_sensitivity.png`, which no set declares, so editing that
+figure does not rebuild the PDF. The rest is over-declaration — a render waits
+on Phase-2 work it does not consume.
+
+Three documents have no figure set at all, so their render rules carry no
+figure prerequisites: `corpus-report.qmd` (5 figures),
+`multilayer-detection-techrep.qmd` (11), and the two slide decks (3 and 2).
+
+0290 already dropped `$(TECHREP_FIGS) $(MULTILAYER_FIGS)` from the technical
+report's render rule — the report is the method-zoo document and consumes the
+zoo sets — but left `TECHREP_FIGS` itself alone: it still feeds the
+`figures-techrep` alias and `ALL_FIGS`, and deciding which of its 12 figures
+are still wanted is a content question, not a mechanical one.
+
+## Second finding: figures no document references
+
+Nine Make-built figures are referenced by no deliverable now that the orphaned
+includes are gone: `fig_alluvial`, `fig_alluvial_core`, `fig_genealogy`,
+`fig_pca_scatter`, `fig_seed_axis_core`, `fig_breakpoints`, `fig_bimodality`,
+`fig_kde`, plus the `fig_lexical_tfidf_*` family behind `.lexical_tfidf.stamp`.
+They were already unreferenced before 0290 — their only consumers were the
+orphaned includes — so this is exposure, not breakage. `make analysis` still
+builds them. Ticket 0351 covers one instance of this class (an unwired
+interactive corpus figure); this is the general sweep.
+
+Deciding each is a content call: some are worth re-wiring into a document,
+some are worth retiring with their producer script and Make rule.
+
+## Relevant files
+
+- `paths.mk` — the `*_FIGS` sets
+- `deliverables/*/[a-z]*.mk` — render rules that consume them
+- `tests/test_include_graph.py` — the closure walker to extend; it already
+  resolves nested includes against the root document's directory
+- `Makefile` — `figures-techrep`, `ALL_FIGS`, the `.lexical_tfidf.stamp` rule
+
+## Actions
+
+1. Extend the closure walker to collect figure references (`../_shared/figures/*.png`)
+   alongside includes.
+2. Resync every `*_FIGS` set to its document's real references; add sets for the
+   three documents that have none.
+3. Add the guard: each document's figure set equals its references, mirroring
+   `test_paths_mk_matches_include_closure`.
+4. Put the nine unreferenced figures to the author: re-wire or retire. Retiring
+   one means removing its producer script and Make rule too, not just the
+   `*_FIGS` entry.
+
+## Test
+
+Red first: `test_paths_mk_matches_figure_references[multilayer-detection.qmd]`
+fails on the missing `fig_companion_sensitivity.png` before any fix.
+
+## Invariants
+
+- `make check` stays green; no render rule loses a prerequisite it needs.
+- The include-side guard from 0290 keeps passing unchanged.
+
+## Exit criteria
+
+- [ ] Every `*_FIGS` set matches its document's figure references
+- [ ] Every deliverable that references figures has a set
+- [ ] A guard fails on drift in either direction
+- [ ] The nine unreferenced figures each have a recorded decision

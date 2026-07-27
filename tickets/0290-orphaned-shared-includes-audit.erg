@@ -6,6 +6,11 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-21T10:00Z HDMX-coding-agent created roar sweep after the 0286 false-premise fix
 2026-07-22T18:05Z HDMX-coding-agent note bibliometric-context.md split by 0289 (author decision): part A -> prior-mappings.md (staged for data paper), part B stays (clustering validity, still orphaned, stale Section 7.8/9 refs flagged); both markers cleared after author PDF review
+2026-07-27T18:40Z HDMX-coding-agent note dispositions settled and applied: 14 deleted, 2 moved to conception/, 1 kept and exempted (prior-mappings.md, staged for 0283). Author directed execution rather than arbitration.
+2026-07-27T18:40Z HDMX-coding-agent note guard added (action 3): tests/test_include_graph.py, one closure walker checking both no-orphans and paths.mk-matches-closure. Found the include sets were stale too — TECHREP_INCLUDES listed 6 files the .qmd had stopped including and omitted the whole 19-file zoo tree it does include, so editing a method write-up did not rebuild the report.
+2026-07-27T18:40Z HDMX-coding-agent note tests/test_makefile_contract.py::test_citation_coverage_in_techrep_includes removed — a hand-written pin of one file in TECHREP_INCLUDES that outlived its fact; the closure check subsumes it for every document.
+2026-07-27T18:40Z HDMX-coding-agent note figure sets have the same drift; filed as 0373 rather than widened into this PR. Nine Make-built figures are now provably referenced by nothing (their only consumers were these orphans) — decisions belong to the author, tracked in 0373.
+2026-07-27T18:40Z HDMX-coding-agent note conflict to resolve at merge: open PR #1172 files ticket 0368 to fix a broken table inside cop-topic-structure.md, which this PR deletes. 0368 becomes moot; close it as such, or restore the file if the author wants the content.
 
 --- body ---
 ## Context
@@ -39,9 +44,38 @@ Already spoken for: `bibliometric-context.md` (ticket 0289 verifies it),
    `deliverables/_shared/_includes/` (non-recursive) is referenced by at
    least one deliverable, so future orphans surface at CI time.
 
+## Dispositions (2026-07-27)
+
+**Deleted** — superseded or retracted; git history keeps the content:
+
+| File | Reason |
+|------|--------|
+| `agentic-workflow.md` | superseded by `deliverables/agentic/agentic-paper.qmd`, which carries the same material as a live deliverable |
+| `bimodality-analysis.md` | its framing was retracted by 0345 — the axis is a continuum, dip test p=1.0 |
+| `tab2_poles.md` | same retraction: "the two-component model is strongly preferred over unimodality" |
+| `changepoint-analysis.md` | AI-generated, PROVENANCE UNRESOLVED under 0244; the live break treatment is the method zoo |
+| `cop-topic-structure.md` | AI-generated, PROVENANCE UNRESOLVED under 0244 |
+| `temporal-structure.md` | AI-generated, PROVENANCE UNRESOLVED under 0244 |
+| `core-vs-full.md`, `core-vs-full-analysis.md` | superseded by `core-vs-full-definition.md`, which the corpus report includes |
+| `embedding-generation.md` | superseded by `corpus-enrichment.md` + `embedding-quality.md`, both wired |
+| `tab_traditions.md` | both manuscripts carry their own inline `{#tbl-traditions}` table |
+| `alluvial-diagram.md`, `citation-genealogy.md`, `pca-scatter.md`, `structural-breaks.md` | figure narration for the technical report as it stood before the method-zoo rewrite |
+
+**Moved to `conception/`** — unique, reviewed, no document renders them:
+
+- `clustering-comparison.md` — method/representation-space comparison,
+  attributions verified under 0244; reusable for a methods paper.
+- `bibliometric-context.md` → `conception/clustering-validity-positioning.md` —
+  0289 part B, author-cleared; its cross-references point at sections of a
+  technical report that no longer has them.
+
+**Kept** — `prior-mappings.md`, staged for the data-paper resubmission response
+(0283). Exempted in the guard's `ALLOWED_ORPHANS` with that ticket recorded; a
+second test fails the exemption once the file is actually wired in.
+
 ## Verification
 
-- [ ] No unreferenced top-level include remains without an explicit
+- [x] No unreferenced top-level include remains without an explicit
       disposition decision
 
 ## Invariants
@@ -51,5 +85,7 @@ Already spoken for: `bibliometric-context.md` (ticket 0289 verifies it),
 
 ## Exit criteria
 
-- [ ] Each orphan deleted, relocated, or re-embedded per decision
-- [ ] Guard added or explicitly declined in the log
+- [x] Each orphan deleted, relocated, or re-embedded per decision
+- [x] Guard added or explicitly declined in the log — added as
+      `tests/test_include_graph.py`, both directions verified against planted
+      defects
