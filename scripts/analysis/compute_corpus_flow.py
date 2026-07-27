@@ -23,6 +23,7 @@ import json
 import os
 
 import pandas as pd
+from pipeline_loaders import REFINED_WORKS_PATH
 from schemas import CorpusFlowSchema
 from script_io_args import parse_io_args, validate_io
 from utils import CATALOGS_DIR, get_logger, save_csv
@@ -52,7 +53,12 @@ def audit_buckets(audit: pd.DataFrame) -> dict[str, int]:
     A new action value must be given its own stage in the ledger rather than
     being folded into an existing one or silently dropped.
     """
-    counts = audit["action"].value_counts()
+    counts = audit["action"].value_counts(dropna=False)
+    if counts.index.isna().any():
+        raise ValueError(
+            "corpus_audit.csv has rows with no action; every record must be "
+            "accounted for by exactly one bucket"
+        )
     if DRY_RUN_ACTION in counts.index:
         raise ValueError(
             f"corpus_audit.csv carries {DRY_RUN_ACTION!r}: it is a dry-run "
@@ -69,11 +75,24 @@ def audit_buckets(audit: pd.DataFrame) -> dict[str, int]:
     return {action: int(counts.get(action, 0)) for action in AUDIT_ACTIONS}
 
 
-def build_flow(merge_report: dict, buckets: dict[str, int]) -> pd.DataFrame:
+def build_flow(
+    merge_report: dict, buckets: dict[str, int], refined_n: int
+) -> pd.DataFrame:
     """Assemble the stage table from the merge run report and audit buckets.
 
-    Raises ValueError when either source's own arithmetic fails to close —
-    a silent residue here is exactly the defect the table exists to expose.
+    Raises ValueError when the ledger fails to close. Three checks, each
+    independent of the others, because two of them alone were not:
+
+    1. the merge report's own arithmetic (pooled - removals == unified);
+    2. the audit buckets accounting for every unified record;
+    3. the last Out equalling `refined_n`, the row count of the corpus the
+       paper actually ships.
+
+    Check 3 is the one that has to come from outside. Comparing the last Out
+    to `buckets["keep"]` is algebraically implied by check 2, so an audit whose
+    rows are all `keep` — no filtering ran — produced a published-shape ledger
+    ending 9,835 works high with nothing raised. Measuring against the refined
+    corpus closes that hole at the source rather than leaving it to the suite.
     """
     pooled = int(merge_report["records_total"])
     unified = int(merge_report["records_unified"])
@@ -108,9 +127,10 @@ def build_flow(merge_report: dict, buckets: dict[str, int]) -> pd.DataFrame:
             {"Stage": label, "In": running, "Removed": removed, "Out": running - removed}
         )
         running -= removed
-    if running != buckets["keep"]:
+    if running != refined_n:
         raise ValueError(
-            f"ledger ends at {running}, not the {buckets['keep']} refined works"
+            f"ledger ends at {running}, not the {refined_n} works in "
+            "refined_works.csv — the published corpus and the audit disagree"
         )
     return pd.DataFrame(rows)
 
@@ -163,7 +183,13 @@ def main(output_csv: str) -> None:
     audit = pd.read_csv(audit_path, usecols=["action"])
     log.info("Loaded %d audit rows from %s", len(audit), audit_path)
 
-    flow = build_flow(latest_merge_report(), audit_buckets(audit))
+    # One column of the shipped corpus: the external anchor the ledger's
+    # closing check needs. Cheap next to the audit read, and it is the only
+    # check the audit cannot satisfy by construction.
+    refined_n = len(pd.read_csv(REFINED_WORKS_PATH, usecols=["source"]))
+    log.info("Refined corpus: %d works", refined_n)
+
+    flow = build_flow(latest_merge_report(), audit_buckets(audit), refined_n)
     CorpusFlowSchema.validate(flow)
     save_csv(flow, output_csv)
 

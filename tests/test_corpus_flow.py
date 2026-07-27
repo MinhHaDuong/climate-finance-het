@@ -40,6 +40,8 @@ MERGE_REPORT = {
     "records_unified": 940,
 }
 BUCKETS = {"keep": 700, "remove": 200, "deduped": 40}
+# The refined corpus the ledger must land on — an anchor outside the audit.
+REFINED_N = 700
 
 
 # ── Pure logic (fast tier) ───────────────────────────────────
@@ -80,7 +82,7 @@ class TestAuditBuckets:
 
 class TestBuildFlow:
     def test_stage_arithmetic_closes(self):
-        flow = compute_corpus_flow.build_flow(MERGE_REPORT, BUCKETS)
+        flow = compute_corpus_flow.build_flow(MERGE_REPORT, BUCKETS, REFINED_N)
         for _, row in flow.iterrows():
             assert row["Out"] == row["In"] - row["Removed"], row["Stage"]
         outs = flow["Out"].tolist()
@@ -88,18 +90,18 @@ class TestBuildFlow:
         assert ins[1:] == outs[:-1], "each stage must start where the previous ended"
 
     def test_starts_at_pooled_records_ends_at_refined_corpus(self):
-        flow = compute_corpus_flow.build_flow(MERGE_REPORT, BUCKETS)
+        flow = compute_corpus_flow.build_flow(MERGE_REPORT, BUCKETS, REFINED_N)
         assert flow["In"].iloc[0] == MERGE_REPORT["records_total"]
-        assert flow["Out"].iloc[-1] == BUCKETS["keep"]
+        assert flow["Out"].iloc[-1] == REFINED_N
 
     def test_unified_count_is_a_checkpoint(self):
-        flow = compute_corpus_flow.build_flow(MERGE_REPORT, BUCKETS)
+        flow = compute_corpus_flow.build_flow(MERGE_REPORT, BUCKETS, REFINED_N)
         assert MERGE_REPORT["records_unified"] in flow["Out"].tolist()
 
     def test_every_bucket_appears_as_a_removal_or_the_final_out(self):
         """`deduped` must be a stage of its own — the omission that produced
         both reported gaps."""
-        flow = compute_corpus_flow.build_flow(MERGE_REPORT, BUCKETS)
+        flow = compute_corpus_flow.build_flow(MERGE_REPORT, BUCKETS, REFINED_N)
         removed = flow["Removed"].tolist()
         assert BUCKETS["remove"] in removed
         assert BUCKETS["deduped"] in removed
@@ -107,15 +109,32 @@ class TestBuildFlow:
     def test_buckets_not_summing_to_unified_is_an_error(self):
         bad = dict(BUCKETS, deduped=39)
         with pytest.raises(ValueError, match="audit"):
-            compute_corpus_flow.build_flow(MERGE_REPORT, bad)
+            compute_corpus_flow.build_flow(MERGE_REPORT, bad, REFINED_N)
 
     def test_merge_report_not_closing_is_an_error(self):
         bad = dict(MERGE_REPORT, records_unified=939)
         with pytest.raises(ValueError, match="merge"):
-            compute_corpus_flow.build_flow(bad, BUCKETS)
+            compute_corpus_flow.build_flow(bad, BUCKETS, REFINED_N)
+
+    def test_an_audit_that_filtered_nothing_cannot_close(self):
+        """The closing check must come from outside the audit.
+
+        An all-`keep` audit satisfies the bucket-sum check by construction, and
+        comparing the last Out to buckets["keep"] is algebraically implied by
+        it. Before the refined-corpus anchor, such an audit produced a
+        publishable-looking ledger ending at the unified count.
+        """
+        unfiltered = {"keep": 940, "remove": 0, "deduped": 0}
+        with pytest.raises(ValueError, match="refined_works"):
+            compute_corpus_flow.build_flow(MERGE_REPORT, unfiltered, REFINED_N)
+
+    def test_missing_action_is_an_error(self):
+        audit = pd.DataFrame({"action": ["keep", None, "remove"]})
+        with pytest.raises(ValueError, match="no action"):
+            compute_corpus_flow.audit_buckets(audit)
 
     def test_markdown_table_carries_a_label_and_thousands_separators(self):
-        flow = compute_corpus_flow.build_flow(MERGE_REPORT, BUCKETS)
+        flow = compute_corpus_flow.build_flow(MERGE_REPORT, BUCKETS, REFINED_N)
         md = compute_corpus_flow.format_md(flow)
         assert "{#tbl-flow}" in md
         assert "1,000" in md
