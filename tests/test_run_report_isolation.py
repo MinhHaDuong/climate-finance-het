@@ -68,42 +68,68 @@ def call_time_constants():
     return found
 
 
-def _module_aliases(tree):
-    """Names by which this file refers to the defining module."""
-    aliases = {DEFINING_MODULE}
+def _aliases_of(tree, module):
+    """Names by which this file refers to ``module``.
+
+    Applied to the facade as well as to the defining module: resolving one and
+    matching the other literally would leave ``import utils as u`` unflagged,
+    which is the alias blind spot the ticket-0251 guard already has.
+    """
+    aliases = {module}
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
             for a in node.names:
-                if a.name == DEFINING_MODULE and a.asname:
+                if a.name == module and a.asname:
                     aliases.add(a.asname)
     return aliases
 
 
-def _rebinds(tree, constants):
-    """Yield ``(module_name, constant)`` for every rebinding in the file.
+def _rebinds_in(node, constants):
+    """Yield ``(module_name, constant)`` for a rebinding performed by ``node``.
 
     Three shapes, all in use in this suite: bare attribute assignment
     (``utils.CATALOGS_DIR = x``), the ``monkeypatch.setattr`` string target
     (``setattr("pipeline_loaders.CATALOGS_DIR", x)``), and the two-argument
     object form (``setattr(pl, "CATALOGS_DIR", x)``).
     """
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Assign):
-            for tgt in node.targets:
-                if (isinstance(tgt, ast.Attribute) and tgt.attr in constants
-                        and isinstance(tgt.value, ast.Name)):
-                    yield tgt.value.id, tgt.attr
-        elif isinstance(node, ast.Call) and getattr(node.func, "attr", None) == "setattr" \
-                or isinstance(node, ast.Call) and getattr(node.func, "id", None) == "setattr":
-            args = node.args
-            if len(args) >= 2 and isinstance(args[0], ast.Constant) \
-                    and isinstance(args[0].value, str) and "." in args[0].value:
-                mod, _, const = args[0].value.rpartition(".")
-                if const in constants:
-                    yield mod, const
-            elif len(args) >= 3 and isinstance(args[0], ast.Name) \
-                    and isinstance(args[1], ast.Constant) and args[1].value in constants:
-                yield args[0].id, args[1].value
+    if isinstance(node, ast.Assign):
+        for tgt in node.targets:
+            if (isinstance(tgt, ast.Attribute) and tgt.attr in constants
+                    and isinstance(tgt.value, ast.Name)):
+                yield tgt.value.id, tgt.attr
+    elif isinstance(node, ast.Call) and (
+            getattr(node.func, "attr", None) == "setattr"
+            or getattr(node.func, "id", None) == "setattr"):
+        args = node.args
+        if len(args) >= 2 and isinstance(args[0], ast.Constant) \
+                and isinstance(args[0].value, str) and "." in args[0].value:
+            mod, _, const = args[0].value.rpartition(".")
+            if const in constants:
+                yield mod, const
+        elif len(args) >= 3 and isinstance(args[0], ast.Name) \
+                and isinstance(args[1], ast.Constant) and args[1].value in constants:
+            yield args[0].id, args[1].value
+
+
+def _rebinds_by_scope(tree, constants):
+    """Group rebindings by the function that performs them.
+
+    Per function, not per file. A neighbour patching the definition site says
+    nothing about this test: pairing them file-wide would exempt a genuine
+    no-op merely for sitting next to a correct one.
+    """
+    scopes = {}
+
+    def visit(node, scope):
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            scope = node.name
+        for pair in _rebinds_in(node, constants):
+            scopes.setdefault(scope, []).append(pair)
+        for child in ast.iter_child_nodes(node):
+            visit(child, scope)
+
+    visit(tree, "<module>")
+    return scopes
 
 
 def _facade_patch_offenders(sources):
@@ -125,12 +151,13 @@ def _facade_patch_offenders(sources):
     constants = call_time_constants()
     for name, src in sources:
         tree = ast.parse(src)
-        aliases = _module_aliases(tree)
-        rebinds = list(_rebinds(tree, constants))
-        patched_at_source = {c for m, c in rebinds if m in aliases}
-        for const in sorted({c for m, c in rebinds if m == FACADE_MODULE}):
-            if const not in patched_at_source:
-                offenders.append(f"{name}: {const}")
+        defining = _aliases_of(tree, DEFINING_MODULE)
+        facade = _aliases_of(tree, FACADE_MODULE)
+        for scope, rebinds in sorted(_rebinds_by_scope(tree, constants).items()):
+            patched_at_source = {c for m, c in rebinds if m in defining}
+            for const in sorted({c for m, c in rebinds if m in facade}):
+                if const not in patched_at_source:
+                    offenders.append(f"{name}:{scope}: {const}")
     return offenders
 
 
@@ -233,6 +260,24 @@ def test_something(tmp_path, monkeypatch):
     compute_vars.dedup_stats({})
 """
 
+SAMPLE_CROSS_FUNCTION = """
+import pipeline_loaders
+import utils
+
+def test_correct(tmp_path, monkeypatch):
+    monkeypatch.setattr(pipeline_loaders, "CATALOGS_DIR", str(tmp_path))
+
+def test_leaks(tmp_path):
+    utils.CATALOGS_DIR = str(tmp_path)
+"""
+
+SAMPLE_FACADE_ALIAS = """
+import utils as u
+
+def test_something(tmp_path):
+    u.CATALOGS_DIR = str(tmp_path)
+"""
+
 
 @pytest.mark.adherence
 def test_discovery_is_not_vacuous():
@@ -275,6 +320,32 @@ def test_facade_guard_leaves_the_consuming_module_idiom_alone():
     does reach it. Flagging it would push authors toward the wrong fix.
     """
     assert not _facade_patch_offenders([("sample_consumer.py", SAMPLE_CONSUMER_PATCH)])
+
+
+@pytest.mark.adherence
+def test_facade_guard_scopes_the_exemption_to_one_function():
+    """A correct neighbour must not launder the test next door.
+
+    Patching the facade *as well as* the definition site is fine, so the guard
+    needs an exemption — but keyed to the function performing both, not to the
+    file. File-level pairing would have let a real no-op through whenever any
+    sibling in the same module happened to patch ``pipeline_loaders``, which is
+    the common case in a suite that mixes fixed and unfixed tests.
+    """
+    offenders = _facade_patch_offenders([("cross.py", SAMPLE_CROSS_FUNCTION)])
+    assert offenders == ["cross.py:test_leaks: CATALOGS_DIR"], offenders
+
+
+@pytest.mark.adherence
+def test_facade_guard_resolves_an_aliased_facade_import():
+    """``import utils as u`` is the same defect wearing a different name.
+
+    The 0251 guard matches the literal string ``utils`` and documents this as
+    an accepted limitation. Repeating it here would be a poor trade for a guard
+    that already walks the AST: ``_aliases_of`` resolves the facade exactly as
+    it resolves the defining module.
+    """
+    assert _facade_patch_offenders([("alias.py", SAMPLE_FACADE_ALIAS)])
 
 
 def test_save_run_report_honours_the_patched_definition_site(tmp_path, monkeypatch):
