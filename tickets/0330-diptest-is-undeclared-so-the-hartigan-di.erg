@@ -6,6 +6,8 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-27T11:02Z HDMX-coding-agent created
 2026-07-27T11:10Z HDMX-coding-agent note Found by the roar sweep after PR #1127 (ticket 0314) hard-guarded the same class at Flag 6
+2026-07-27T14:05Z minh decision Option 1 (declare and enforce). Option 2 rejected: dropping the column hides the question instead of answering it, leaving the two-communities claim resting on delta-BIC alone
+2026-07-27T14:05Z HDMX-coding-agent note Statistical stakes recorded below under "Why option 1"; the per-period delta-BIC/n confound found while explaining them is out of scope here
 
 --- body ---
 ## Context
@@ -76,6 +78,36 @@ Option 1 is the recommendation: the GMM delta-BIC is a single line of evidence
 for a load-bearing claim (bimodality of the axis score), and Hartigan's dip is
 the standard independent check on exactly that. But it changes what the analysis
 reports, so it is the author's call, not the agent's.
+
+## Decision: option 1 (author, 2026-07-27)
+
+Option 2 was rejected as evasive. The settled reasoning:
+
+Delta-BIC is a model-selection number, not a test of two modes. It answers "is
+one Gaussian a bad fit?", and a two-component mixture wins that comparison for a
+skewed or heavy-tailed *unimodal* distribution just as readily as for a genuinely
+two-humped one — a two-Gaussian mixture is itself unimodal unless the component
+means separate by roughly more than 2 sigma, which the script never checks. It
+also has no scale: the likelihood gain grows with n while the penalty grows with
+log n, so at n=29675 any small departure from normality yields a large number.
+
+Hartigan's dip statistic is the largest vertical distance between the empirical
+CDF and the nearest unimodal CDF. Its null is exactly the hypothesis at issue —
+one mode, any shape, no Gaussian assumption — and the statistic does not inflate
+with n. The two fail differently: delta-BIC's false-positive mode
+(non-Gaussian but single-humped) is what dip is immune to.
+
+The manuscript's existing corroboration is thinner than it reads. The TF-IDF
+layer is a different *representation* scored on the same pole vocabularies and
+judged by the *same* statistic, with the two axis scores correlated at r=0.77.
+Independence there is on the data axis, not the method axis. Dip supplies the
+missing one.
+
+This is a falsification risk, taken deliberately. At n=29675 the dip test has
+real power, so a non-rejection would be a finding: it would mean delta_bic=1350
+was detecting non-Gaussianity rather than two modes, and section 5.3 of
+multilayer-detection.qmd would need rewriting. That possibility is the reason to
+run it, not a reason to drop the column.
 
 ## Test
 
