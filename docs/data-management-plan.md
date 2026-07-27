@@ -86,7 +86,7 @@ deposit to ensure reproducibility.
 
 - GitHub repository: private during review, public upon acceptance
 - `.env` file (gitignored): machine-specific paths and the agent's public git identity, plus a `KEYS=` line naming which credentials the project may load
-- `~/.config/keys/<provider>.env` (mode 0600, outside the repo): the API keys and agent token themselves — never written as literals in `.env`, so they are not exported into every process the project spawns
+- `~/.config/keys/<provider>.env` (mode 0600, outside the repo): the API keys and agent token themselves — never written as literals in `.env`, so the repository directory holds no credential and only the keys named on the `KEYS=` line enter the environment
 - CNRS Janus credentials: personal, not shared — pre-harvested exports included instead
 - Machine user (`HDMX-coding-agent`): scoped GitHub PAT for CI/automation only
 

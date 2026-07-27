@@ -7,9 +7,17 @@ better scrubbing: it is not having the value in the environment of processes
 that do not need it.
 
 Secrets live in `~/.config/keys/<provider>.env` and are selected per project by
-the `KEYS=` line, which `~/.claude/scripts/bash-env.sh` reads in an isolated
-subshell and exports only under the requested name. `.env` therefore holds only
-non-secret settings plus that one selection line.
+the `KEYS=` line that `~/.claude/scripts/bash-env.sh` reads. `.env` therefore
+holds only non-secret settings plus that one selection line.
+
+What this buys is narrower than it looks, and worth stating exactly: a selected
+credential still reaches every bash subprocess, because the loader runs on each
+one. What changes is that the repository directory holds no credential at rest,
+and that the selection is default-deny — an unlisted provider is never loaded,
+so a sibling project's keys no longer arrive in this project's environment. The
+selection forms this project uses (`provider:VAR`, `provider:SRC=DST`) export
+one named variable each; a bare `provider` entry would source the whole provider
+file instead, which is why the KEYS= line here names every variable explicitly.
 
 **These tests never print a value they reject — variable NAME only.** A guard
 that echoes the credential it found reproduces the defect it exists to prevent.
