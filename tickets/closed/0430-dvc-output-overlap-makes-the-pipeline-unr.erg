@@ -1,0 +1,147 @@
+%erg 0.1
+Title: DVC output overlap makes the whole pipeline unreproducible
+Created: 2026-07-27
+Author: HDMX-coding-agent
+Closed: autoclosed — PR #1228
+
+--- log ---
+2026-07-27T20:10Z HDMX-coding-agent created
+2026-07-27T20:10Z HDMX-coding-agent note Found while working around a stale dvc add recipe in 0346; the workaround hid how broad the failure is
+
+2026-07-27T19:32Z HDMX-coding-agent closed — autoclosed — PR #1228
+--- body ---
+## Context
+
+`dvc repro` does not run. Neither does `dvc dag`. Both fail before executing
+anything:
+
+    ERROR: The output paths:
+    'data/catalogs/run_reports'('data/catalogs/run_reports.dvc')
+    'data/catalogs/run_reports/catalog_merge.json'('catalog_merge')
+    overlap and are thus in the same tracked directory.
+    To keep reproducibility, outputs should be in separate tracked directories
+    or tracked individually.
+
+Two DVC objects claim the same path. `data/catalogs/run_reports.dvc` tracks the
+whole directory as one output (133 files). `dvc.yaml` line 160 declares
+`data/catalogs/run_reports/catalog_merge.json` as an output of the
+`catalog_merge` stage. DVC forbids overlapping outputs — if two objects own a
+path, neither can authoritatively restore or invalidate it — and it refuses at
+graph-construction time, before any stage runs.
+
+The corpus rebuild is the thing this blocks. Phase 1 is "slow, API-dependent,
+run rarely", so the breakage is invisible until someone actually needs it.
+
+## Why nobody has noticed
+
+The failure is in the declaration, not in the data, and every cheap check
+sidesteps the graph:
+
+- `catalog_merge.json` does not exist on disk. Only timestamped siblings do
+  (`catalog_merge__20260724T112050Z.json`, `…__20260727T132143Z.json`).
+- `dvc.lock` for `catalog_merge` still records only
+  `data/catalogs/unified_works.csv`. The stage has not run since 0349 added the
+  declaration, so the lock never picked it up.
+- Per-target commands do not build the full graph and all succeed:
+  `dvc status <path>.dvc`, `dvc commit`, `dvc push`, and even a bare
+  `dvc status`, which happily prints per-stage output.
+
+So the repo reports healthy on every command except the one that matters.
+
+## How it got here
+
+Ticket 0349 wanted DVC to know when the data paper's dedup counters go stale,
+and a timestamped filename cannot be declared as a stage output. So
+`save_run_report` gained a `stable_copy` flag writing `<script>.json` beside
+the timestamped report, and `catalog_merge` calls it with `stable_copy=True`.
+The reasoning is sound and the comment in `dvc.yaml` shows the intent was
+deliberately narrow — "the timestamped siblings in `run_reports/` are run
+history and stay undeclared".
+
+The miss: `run_reports/` was already a DVC output in its own right, so *any*
+file declared inside it collides with the parent. The stable path needed to be
+outside that directory, not inside it.
+
+## Chosen fix
+
+Move the stable copy out of `run_reports/` and declare it there. It keeps
+0349's staleness signal, dissolves the overlap, and needs no change to how run
+history works.
+
+`data/catalogs/` is not tracked wholesale — it holds individually declared
+stage outputs (`unified_works.csv`, …) and per-file `.dvc` records — so a file
+directly in `CATALOGS_DIR` is a clean home and matches the existing pattern.
+
+Two alternatives were considered and rejected:
+
+- *Let the stage own `run_reports/` and drop `run_reports.dvc`.* Wrong: the
+  directory holds run history from many scripts (`enrich_*`, `corpus_align`,
+  `qa_*`), so no single stage can own it.
+- *Revert the declaration.* Gives up the staleness signal 0349 deliberately
+  built, and returns the published dedup counters to being sourced from a
+  timestamped file.
+
+## Relevant files
+
+- `dvc.yaml:160` — the overlapping declaration
+- `data/catalogs/run_reports.dvc` — the directory output it collides with
+- `scripts/pipeline_io.py::save_run_report` — writes the stable copy inside `run_reports/`
+- `scripts/pipeline_io.py::latest_run_report` — prefers the stable copy
+- `scripts/harvest/catalog_merge.py:305` — the one `stable_copy=True` caller
+- `tests/test_phase_layout.py` — the existing guard over Make/DVC path layout
+
+## Actions
+
+1. `save_run_report(stable_copy=True)` writes `<script_name>_report.json` to
+   `CATALOGS_DIR`, not to `CATALOGS_DIR/run_reports/`.
+2. `latest_run_report` reads the stable copy from the new location, keeping its
+   precedence over timestamped siblings.
+3. `dvc.yaml` declares `data/catalogs/catalog_merge_report.json`.
+4. Add a standing guard: no DVC output may be nested inside another. This is
+   the defect class, and it is mechanically checkable from `dvc.yaml` plus the
+   `.dvc` files without invoking DVC.
+
+## Test
+
+Red step — the class guard, which fails on the tree as it stands:
+
+    @pytest.mark.adherence
+    def test_no_dvc_output_nested_inside_another():
+        """Ticket 0430. Overlapping outs make dvc repro refuse to build the graph."""
+        overlaps = _nested_output_pairs()
+        assert not overlaps, (
+            "DVC forbids overlapping outputs; dvc repro and dvc dag fail at "
+            "graph construction: " + ", ".join(overlaps)
+        )
+
+Fails today naming
+`data/catalogs/run_reports` / `data/catalogs/run_reports/catalog_merge.json`.
+It reads the declarations rather than shelling out to DVC, so it stays in the
+fast tier and works without the corpus present.
+
+## Verification
+
+- [ ] The guard is red before the fix, green after
+- [ ] `dvc dag` and `dvc repro --dry` load the graph instead of erroring
+- [ ] `latest_run_report("catalog_merge")` still prefers the stable copy
+- [ ] `make lint` and `make check-fast` pass
+
+## Invariants
+
+- 0349's staleness signal survives: a stable, DVC-declarable path still carries
+  the published dedup counters.
+- Run history in `run_reports/` keeps its timestamped-only shape, and
+  `run_reports.dvc` keeps tracking the directory.
+- The `RUN_ID_TIMESTAMP` filter from 0346 stays — a non-timestamp file must
+  never become a published number.
+
+## Exit criteria
+
+- [ ] `dvc repro --dry` builds the graph
+- [ ] A standing guard fails on any nested DVC output
+- [ ] The stable counter file is declared and lives outside `run_reports/`
+
+## See also
+
+- 0349 — added the stable copy and the declaration
+- 0346 — the run-report isolation work that surfaced this
