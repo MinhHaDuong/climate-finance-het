@@ -1,0 +1,97 @@
+%erg 0.1
+Title: Data paper counts do not reconcile: two arithmetic gaps, two column-sum mismatches, and a stale "six sources"
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T11:00Z HDMX-coding-agent created
+2026-07-27T11:00Z HDMX-coding-agent note child of 0274. Raised by 2 of 4 external panel reviewers (openai/gpt-5.5 both personas), independently verified against our own vars. Also answers referee remark R1-12, which asked for the dedup accounting.
+
+--- body ---
+## Context
+
+The external peer-review panel (2026-07-27, four frontier-model reviewers)
+read the rendered PDF. Both openai/gpt-5.5 personas independently walked the
+corpus arithmetic and found it does not close. Verified against our own vars:
+
+**Gap 1 — the filtering ledger (19 works).** §2.3 states 11,244 flagged and
+1,789 retained by protection criteria. 11,244 − 1,789 = 9,455, but the paper
+reports **9,436** net removals. Gap of 19, unexplained.
+
+**Gap 2 — the raw-to-refined ledger (399 works).** 43,179 raw − 33,344
+refined = **9,835** removals. The stated 9,436 net removals plus 21
+content-duplicates gives 9,457. Gap of 399 (or 378, depending on which of
+the above is right), unexplained.
+
+**Gap 3 — Table 2 raw column.** Per-source raw counts (OpenAlex 41,138 +
+ISTEX 748 + bibCNRS 233 + SciSpace 663 + grey 281 + teaching 622 + UNFCCC 232
++ OECD 35) sum to 43,952 against a TOTAL of 43,179. Explicable as the union
+of multi-source records, but the table does not say so.
+
+**Gap 4 — Table 2 refined column.** Per-source refined counts sum to 34,107
+against a TOTAL of 33,344: 763 extra memberships. §2.2 says 738 refined works
+appear in multiple sources; 763 ≠ 738 unless some works carry three or more
+provenances, which is plausible but unstated.
+
+**Gap 5 — source cardinality.** The title and Table 1 describe eight sources;
+the Zenodo related-dataset entry and suggested citation still say "Six
+Sources", and §3 refers to "the six per-source catalogs". A v1.0/v1.1
+versioning artifact that survived the v2 rebuild.
+
+For a data paper, the construction ledger *is* the contribution. A reviewer
+who cannot make the corpus size add up will not trust anything downstream.
+
+## Relevant files
+
+- `deliverables/data-paper/data-paper.qmd` — §2.2, §2.3, §3, Table 2
+- `deliverables/data-paper/data-paper-vars.yml` — the generated numbers
+- `scripts/analysis/compute_vars.py` — where each of these vars is derived
+- `scripts/harvest/corpus_filter.py` — the authoritative removal ledger
+- `data/catalogs/run_reports/` — the Phase-1 pass that produced 33,344
+- `deliverables/data-paper/revision-rdj26561/external-review/` — the four reviews
+
+## Actions
+
+1. Trace each number to its producing stage in `corpus_filter.py`. The gaps
+   are almost certainly real bookkeeping (works removed at a stage the prose
+   does not name — empty-title drops, content-duplicates counted before
+   protection, flags computed pre- vs post-enrichment), not a computation
+   error. Name the missing stages.
+2. Replace the prose ledger with a **CONSORT-style flow table**: one row per
+   stage, with in / removed / out, summing exactly to 43,179 → 33,344. This is
+   also the cleanest possible answer to referee remark R1-12.
+3. Emit the flow table from the pipeline, not by hand — a new
+   `compute_corpus_flow.py` writing `tab_corpus_flow.csv`, rendered via the
+   existing table path. Hand-typed counts are exactly how these gaps arose.
+4. Label Table 2's TOTAL row explicitly as the deduplicated union, and add a
+   note giving the multi-provenance count for both columns.
+5. Fix the "six sources" residue: paper §3, the Zenodo deposit title,
+   the related-dataset entry, and the suggested citation.
+
+## Test
+
+- Red first: a test asserting the flow table's stage arithmetic closes —
+  every `out` equals the previous `in` minus `removed`, and the final `out`
+  equals `corpus_total`.
+- A second guard asserting Table 2's TOTAL row is not the naive column sum
+  *and* that the difference matches the reported multi-provenance count.
+- A grep guard for the string "six sources" / "Six Sources" across the
+  deliverable and deposit metadata.
+
+## Verification
+
+- [ ] Flow table sums 43,179 → 33,344 with no unexplained residue
+- [ ] Every §2.3 count in the prose is a `{{< meta >}}` macro fed by the table
+- [ ] Table 2's TOTAL row carries the union label and the overlap counts
+- [ ] No "six sources" survives in paper, deposit metadata, or citation
+
+## Invariants
+
+- The deposited CSV's documented reconstruction recipe reproduces exactly
+  `corpus_total` works (shared invariant with 0325).
+- No number in §2 is hand-typed (project rule: vars-driven prose).
+
+## Exit criteria
+
+- [ ] Every count in §2 reconciles arithmetically from a single generated table
+- [ ] R1-12's dedup accounting is answered by that table in the response letter

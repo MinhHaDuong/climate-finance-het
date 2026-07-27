@@ -1,0 +1,103 @@
+%erg 0.1
+Title: The multilingual claim outruns the evidence, and the non-English layer count is wrong by 1,358 works
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T11:00Z HDMX-coding-agent created
+2026-07-27T11:00Z HDMX-coding-agent note child of 0274. Raised by 4 of 4 external panel reviewers. Not Blocked-by 0297 (that fix has merged), but gated on the corpus rebuild it enables — Table 3's numbers all move when the backfilled languages land. Do the claim calibration first; edit the numbers after the rebuild.
+
+--- body ---
+## Context
+
+All four external reviewers (2026-07-27 panel) flagged the gap between the
+paper's multilingual framing and Table 3's 89.9% English. One of them found
+a factual error inside it.
+
+**The arithmetic error.** The paper states *"the non-English layer counts
+3,381 works"*. That figure is total minus English — it silently includes the
+1,358 **unclassified** records. Classified non-English works number
+**2,023**. The paper's headline multilingual quantity is inflated by 67%
+through a denominator slip. (openai/gpt-5.5, grinchy.)
+
+**The claim gap.** §2.3 concedes non-English coverage is limited, but the
+Abstract and Conclusion still claim the dataset supports "multilingual
+retrieval", "cross-lingual analysis", and "comparing how the category
+travelled across languages". None of these is demonstrated. Specifically:
+
+- The paper says the embeddings "place all works in a shared semantic space
+  regardless of language". True of multilingual sentence transformers in
+  general; it is not a validation result for this corpus.
+- UNFCCC and OECD documents available in several languages are indexed in
+  English only — weakening the multilingual claim at exactly the
+  institutional sources where official translations exist.
+- Grey literature is 0% non-English in Table 2.
+- bibCNRS contributes 219 refined works at 7% non-English, which is small
+  for a source whose stated purpose is non-English discourse.
+- No retrieval evaluation by language is reported anywhere.
+- "Other (40 languages)" is opaque.
+- Language-detection methodology is not described.
+
+**Interaction with 0297.** The language backfill (0297, merged as #1129)
+resolves pass-2 detections that were never persisted, dropping the null rate
+from 4.04% toward 0.29%. Every number above moves when the corpus is rebuilt
+— including the 1,358 unclassified. Do not edit Table 3's numbers until that
+rebuild lands, or this ticket gets done twice. 0323 covers narrating the
+inferred-vs-sourced provenance split, which is the honest way to present the
+rebuilt table.
+
+## Relevant files
+
+- `deliverables/data-paper/data-paper.qmd` — Abstract, §1, §2.1, §2.3, §3, §5, Table 3
+- `deliverables/data-paper/data-paper-vars.yml` — `lang_english_pct` and kin
+- `scripts/analysis/compute_vars.py` — where the non-English figure is derived
+- `scripts/harvest/enrich_language.py`, `enrich_join.py` — 0297's fix
+- `tickets/0323-*.erg` — narrate inferred vs sourced language provenance
+
+## Actions
+
+1. Correct the non-English figure: report **classified non-English**
+   separately from **unclassified**, and never quote total-minus-English as
+   a multilingual quantity. Derive both as vars.
+2. List the eight target languages (shared action with 0329 — do it once).
+3. Calibrate the claims in the Abstract and Conclusion to what Table 3
+   supports. "Enables multilingual retrieval" is defensible; "supports
+   cross-lingual analysis" and "comparing how the category travelled across
+   languages" are not, absent a diagnostic.
+4. Describe the language-detection method in one sentence, and state the
+   sourced-vs-inferred split (this is 0323's content — coordinate, do not
+   duplicate).
+5. Say plainly that multi-language institutional documents are indexed in
+   English only, and why. A stated limitation costs less than a reviewer
+   discovering it.
+6. **Optional, strengthens materially**: one cross-lingual diagnostic —
+   retrieve known UNFCCC/OECD document pairs that exist in two languages and
+   report nearest-neighbour alignment. Small, uses corpus material already
+   present, and converts the embedding claim from directional to
+   demonstrated. Recommend running it if 0297's rebuild leaves time.
+
+## Test
+
+- Red first: a guard asserting no sentence in the deliverable quotes a
+  non-English work count equal to `corpus_total − english_count`.
+- A guard asserting the paper names as many languages as the config declares
+  (shared with 0329).
+- A prose guard (negative polarity, per project rule) forbidding
+  "cross-lingual analysis" / "comparing how the category travelled" in the
+  Abstract and Conclusion unless a diagnostic var exists.
+
+## Verification
+
+- [ ] Classified non-English and unclassified are reported separately
+- [ ] Abstract and Conclusion claims match Table 3
+- [ ] Language detection and the English-only institutional indexing stated
+
+## Invariants
+
+- All Table 3 numbers come from the post-0297 corpus rebuild. Editing them
+  against the current corpus guarantees rework.
+
+## Exit criteria
+
+- [ ] No multilingual claim in the paper exceeds what Table 3 demonstrates
+- [ ] The 3,381 figure is gone from the paper and from the response letter

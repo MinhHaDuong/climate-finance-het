@@ -13,6 +13,7 @@ Author: HDMX-coding-agent
 2026-07-24T12:30Z HDMX-coding-agent note corpus-v2 rebuild archived (0294): catalog_merge__20260724T112050Z.json — 43,157 unified works (was 42,916); dedup procedures unchanged, totals moved with the 0288 seed expansion (doi dups 833, title-year dups 159, empty-title 3)
 2026-07-24T16:00Z HDMX-coding-agent note corpus-v2 finalized (0294): catalog_merge__20260724T132552Z.json — 43,179 unified, 33,344 refined, 1,087,209 refined citations. The 112050Z pass silently skipped Flag 6 (semantic relevance filter — torch not on PYTHONPATH), inflating refined to 38,166; the finalized pass ran Flag 6 (5,840 llm_irrelevant flagged). Full 35-seed OECD config + ECDPM grey added. All Phase-2 artifacts, response letter, and summary refreshed to these numbers.
 
+2026-07-27T11:00Z HDMX-coding-agent note external peer-review panel run as a pre-resubmission dress rehearsal (4 reviewers: openai/gpt-5.5 and mistralai/mistral-large-2512, grinchy + student personas). Verdicts split Reject / Major revision — harsher than the real R1 referee, by design. Nine children filed (0327-0335) plus 0325 already open. Four findings were unanimous: corpus boundary, retrieval protocol, filter validation, multilingual overclaim. Reviews archived at deliverables/data-paper/revision-rdj26561/external-review/.
 2026-07-27T08:11Z HDMX-coding-agent note two children filed 2026-07-27 from a full make check during 0317: 0320 (data paper's citation-verification claim is v1 and now wrong — says 99.0% CI [97.1,99.7], corpus v2 gives 97.0% CI [94.4,98.4]; blocks resubmission) and 0321 (main red on ruff + a tier-3 dual-role import from the 07-24 merges; no CI workflows exist in this repo so make check is a local-only gate). 0317 and 0314 closed on branch t0317-temporal-coverage.
 --- body ---
 ## Context
@@ -50,6 +51,24 @@ remarks; coverage check clean at filing time).
 - 0287 — corpus CSV layout: restructure or document, author decision (R1-19) [needs-human]
 - 0288 — corpus v2: curated international-institution key-documents layer, UNFCCC + OECD DAC sub-lists (R1-06) — critical path: blocks final corpus numbers
 - 0289 — verify/strengthen the comparison to prior bibliometric mappings, incl. empirical overlap check (supports ED-02, R1-18)
+
+### From the external peer-review panel (2026-07-27)
+
+Four frontier-model reviewers read the rendered PDF as a dress rehearsal
+before resubmission. Reviews at
+`deliverables/data-paper/revision-rdj26561/external-review/`. Weight in
+brackets = how many of the four raised it.
+
+- 0325 — variables table drops the negation: LaTeX `esc()` eats the tilde [1, sharp catch]
+- 0327 — counts do not reconcile: gaps of 19 and 399, two column-sum mismatches, stale "six sources" [2] — also answers R1-12
+- 0328 — corpus boundary contradicts itself: definition excludes what Figure 3 shows [4] [needs-human]
+- 0329 — retrieval protocol not reconstructible: eight languages never listed, thresholds never stated [4]
+- 0330 — relevance filter may remove what the corpus claims to add; validated on 100 works [4] [needs-human]
+- 0331 — multilingual claim outruns evidence; non-English count wrong by 1,358 [4] — blocked-by 0297
+- 0332 — §4 reads as a research article, not dataset validation; also the length answer [3] [needs-human]
+- 0333 — Figure 2 captioned full-corpus but maps 13,112 of 33,344 [3]
+- 0334 — "subsumes" compares queries not corpora; grey layer is 1.5% of the corpus [2]
+- 0335 — z = 76 reported with p = 0.0099; Chow test model unstated [1]
 
 ## Exit criteria
 

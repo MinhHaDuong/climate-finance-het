@@ -1,0 +1,105 @@
+%erg 0.1
+Title: The corpus boundary contradicts itself: the stated definition excludes what Figure 3 shows as major clusters
+Created: 2026-07-27
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-07-27T11:00Z HDMX-coding-agent created
+2026-07-27T11:00Z HDMX-coding-agent note child of 0274. Raised by 4 of 4 external panel reviewers — the single most convergent finding. Marked needs-human: the resolution is an author scope decision, not an implementation choice.
+
+--- body ---
+## Context
+
+All four external reviewers (2026-07-27 panel) independently identified the
+same defect, and openai/gpt-5.5 (grinchy) made it the lead objection behind a
+Reject recommendation: **the corpus does not match its own definition.**
+
+The Introduction defines climate finance as "North-South financial flows
+directed at mitigating and adapting to climate change" and states that pure
+green finance is filtered out. Ticket 0288 records the author's settled
+decision that **carbon markets and ESG are deliberate corpus-scope
+exclusions**. Yet Figure 3 presents "Green bonds & sustainable finance",
+"Carbon markets & EU ETS", and "Renewable energy & sustainable growth" as
+major thematic clusters, and Figure 3 shows the Kyoto/CDM cluster growing to
+~20% of the post-2015 period.
+
+Either the definition is wrong about the corpus, or the corpus is wrong
+about the definition. As written, a reader cannot tell which — and the paper
+prints both.
+
+Reviewer framing: *"This is not a minor definitional quibble. If the
+operational definition is closer to 'climate-related finance, policy
+mechanisms, carbon markets, and selected sustainable-finance topics', then
+the title, abstract, and Introduction overstate the specificity of the
+corpus."*
+
+**The circularity sharpener** (mistralai/mistral-large, student persona):
+the four-tier keyword taxonomy was mined from 2,644 core papers already known
+to be climate finance, so the temporal distribution in Figure 1 partly
+measures the taxonomy rather than the field. The proposed test is a
+**prospective-taxonomy ablation** — rebuild the query from period-contemporary
+sources only (UNFCCC glossaries, early IPCC and UNCED reports, pre-2009
+institutional vocabulary) and compare the recovered temporal profile against
+the retrospective taxonomy's. If the take-off year survives, the circularity
+objection is answered empirically rather than conceded in prose.
+
+## Relevant files
+
+- `deliverables/data-paper/data-paper.qmd` — §1 (definition), §2.1, §4, Figure 3
+- `tickets/0288-datapaper-unfccc-grey-literature-layer.erg` — the recorded
+  exclusion decision, log 2026-07-22T10:00Z and body lines 73–79, 108–109
+- `config/` — the keyword taxonomy that actually ran
+- `scripts/analysis/` — the k-means cluster labelling behind Figure 3
+
+## Actions
+
+1. **Author decision, first and blocking**: which is authoritative — the
+   narrow North-South definition, or the corpus as harvested? Three options:
+   - (a) Narrow the corpus to the definition. Expensive; changes every number.
+   - (b) Widen the stated definition to what the taxonomy actually retrieves,
+     and retitle/reframe accordingly. Cheapest; costs the specificity claim.
+   - (c) Keep both, but state explicitly that adjacent green/carbon-market
+     literature is retained as *context* with a named operational rule for
+     when it is in. Requires the rule to actually exist in the code.
+   Recommend (c) if a rule can be stated, (b) otherwise. Do not ship (a)
+   before the deadline.
+2. Reconcile the answer with 0288's recorded exclusion of carbon markets and
+   ESG — either that decision changes, or Figure 3's cluster labels are
+   misleading about what is in those clusters. Check the underlying works
+   before assuming the labels are right; TF-IDF cluster names overstate.
+3. Write the operational inclusion/exclusion statement into §2.1 as a short
+   table distinguishing international climate finance, climate policy
+   finance, green finance, sustainable finance, carbon markets, climate-risk
+   finance, development finance, and energy finance — in or out, and by what
+   rule.
+4. Scope the prospective-taxonomy ablation as a **separate decision**: run it
+   (strengthens the paper materially, costs a harvest pass) or answer the
+   circularity in the limitations paragraph. §2.1 already concedes the
+   circularity; the panel's point is that conceding is not quantifying.
+
+## Test
+
+- A guard asserting the paper's scope table and the harvest taxonomy's
+  top-level categories agree — a category marked "out" must not appear as a
+  tier in the config.
+- If the ablation runs: the recovered take-off year under the prospective
+  taxonomy, recorded as a var, with the retrospective year alongside.
+
+## Verification
+
+- [ ] §1's definition and Figure 3's clusters no longer contradict
+- [ ] 0288's exclusion decision is either upheld in the figure or amended
+- [ ] The inclusion/exclusion rule is operational (a reader could apply it)
+
+## Invariants
+
+- Any narrowing of the corpus invalidates every number in §2–§4 and the
+  Zenodo deposit. If option (a) is chosen, this ticket blocks resubmission
+  and the deadline needs renegotiating with the editor.
+
+## Exit criteria
+
+- [ ] The author's scope decision is recorded in this ticket's log
+- [ ] The paper states one operational boundary and holds to it throughout
+- [ ] The circularity objection is either quantified or explicitly bounded
