@@ -32,14 +32,19 @@ def artifact_dirs(tmp_path, monkeypatch):
     (catalogs / "run_reports").mkdir(parents=True)
     report = {
         "script": "catalog_merge",
-        "run_id": "test",
+        "run_id": "20260727T132143Z",
         "records_total": 43906,
         "doi_duplicates_removed": 833,
         "title_year_duplicates_removed": 154,
         "dropped_empty_title": 3,
         "records_unified": 42916,
     }
-    with open(catalogs / "run_reports" / "catalog_merge__test.json", "w") as f:
+    # Timestamped run id, matching what catalog_merge actually writes. The
+    # former "__test" name is now deliberately ignored by latest_run_report:
+    # a non-timestamp id sorts after every real report and would hijack two
+    # published numbers (ticket 0349). Keeping the old name here would have
+    # exercised a path the pipeline rejects.
+    with open(catalogs / "run_reports" / "catalog_merge__20260727T132143Z.json", "w") as f:
         json.dump(report, f)
 
     tables = tmp_path / "tables"

@@ -72,8 +72,31 @@ export SOURCE_DATE_EPOCH := 0
 export PYTHONPATH := scripts:libs/openalex-corpus/src$(if $(PYTHONPATH),:$(PYTHONPATH),)
 
 # ── Toolchain ─────────────────────────────────────────────
-# Env policy: secrets sourced from project .env via uv --env-file;
-# never via export KEY := $(shell ...) or command-line KEY=value.
+# Env policy: .env holds no secret (ticket 0343). Credentials live in
+# ~/.config/keys/<provider>.env and are selected by the KEYS= line in .env; the
+# keystore loader applies that selection, and bash reads it via BASH_ENV at the
+# start of every recipe shell. `uv run --env-file .env` still carries the
+# non-secret settings through. Never `export KEY := $(shell ...)` and never
+# `KEY=value` on a command line — both leak the value to `ps`.
+#
+# SHELL must be bash for this to work: BASH_ENV is honoured only by
+# non-interactive bash, which is exactly what make runs a recipe in.
+#
+# The wildcard is the graceful-degradation knob. Where the loader is absent — a
+# clean-room checkout, a reproducibility archive, a container — it expands to
+# empty, bash ignores an empty BASH_ENV, and recipes fall back to whatever
+# credentials the ambient environment already carries.
+#
+# Consequence worth knowing: the loader re-applies .env at the start of each
+# recipe shell, so `CLIMATE_FINANCE_DATA=/other make corpus` is ignored — the
+# recipe sees .env's value, not the one on the command line. Change a .env
+# variable in .env, which is the mechanism .claude/rules/architecture.md
+# documents for relocating the data root anyway. Command-line overrides still
+# work on a leaf process (`CLIMATE_FINANCE_DATA=/other uv run python …`),
+# because there the assignment happens after the shell has started.
+SHELL           := /bin/bash
+KEYSTORE_LOADER ?= $(HOME)/.claude/scripts/bash-env.sh
+export BASH_ENV := $(wildcard $(KEYSTORE_LOADER))
 #
 # Named tool variables so invocations stay overridable and self-documenting.
 # PATH export covers non-interactive shells (ssh, cron, systemd) where
@@ -679,7 +702,6 @@ datapaper-figures: figures-datapaper
 # ── Phase 4a — analysis archive (packages Phase 2 outputs) ─
 # Data + scripts: reviewers verify figures/tables are reproducible.
 #   tar xzf archive.tar.gz && cd ... && uv sync && make
-SHELL            := /bin/bash
 ANALYSIS_OUTPUTS := deliverables/_shared/figures/fig_bars_v1.png \
                     deliverables/_shared/figures/fig_composition.png \
                     deliverables/_shared/tables/tab_venues.md \

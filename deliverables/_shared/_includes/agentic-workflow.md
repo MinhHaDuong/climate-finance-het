@@ -36,7 +36,7 @@ The pipeline was initially a flat Makefile. Migrating to DVC (issues #101--#104)
 
 ### Worktrees for parallel agent work
 
-Git worktrees allow multiple branches to be checked out simultaneously in separate directories. The project uses worktrees extensively: each agent conversation runs in its own throwaway worktree via Claude Code's built-in `EnterWorktree` tool, enabling parallel sessions to work on independent tasks without interfering with each other. A `.worktreeinclude` file ensures that `.env` and `.dvc/config.local` are auto-copied into each worktree, so scripts find their API keys and data paths without manual setup.
+Git worktrees allow multiple branches to be checked out simultaneously in separate directories. The project uses worktrees extensively: each agent conversation runs in its own throwaway worktree via Claude Code's built-in `EnterWorktree` tool, enabling parallel sessions to work on independent tasks without interfering with each other. A `.worktreeinclude` file ensures that `.env` and `.dvc/config.local` are auto-copied into each worktree, so scripts find their data paths and storage configuration without manual setup. What `.env` carries is the machine's settings and the names of the credentials the project may use, not the credentials themselves.
 
 ### Pre-commit hooks as quality gates
 
@@ -58,7 +58,7 @@ Longer-lived knowledge is stored in dedicated memory files (e.g., `project_dvc_i
 
 ### Agent identity
 
-The agent operates under a dedicated GitHub account (`HDMX-coding-agent`) with its own credentials stored in `.env`. This separates human and agent contributions in git history, making authorship auditable. The agent's git name and email are set at the start of each conversation via the `on-start` trigger, ensuring consistent attribution.
+The agent commits under a dedicated identity (`HDMX-coding-agent`). This separates human and agent contributions in git history, making authorship auditable. The agent's git name and email are set at the start of each conversation via the `on-start` trigger, ensuring consistent attribution. Its access token is held outside the repository in a per-provider key store, which the project's configuration selects by name rather than by value; no credential is written into a file the project reads.
 
 ## 14. Collaboration Patterns
 
