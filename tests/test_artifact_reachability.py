@@ -60,11 +60,17 @@ a guard whose verdict depends on whether `make` has run is worthless.
   neither reading and remain outside this guard.
 - CSV and JSON artifacts are excluded: scripts read them, documents do not.
 
-Adherence tier: a build-graph contract, like every other `_mk_discovery` consumer
-(`test_build_phase_separation`, `test_mk_discovery_unified`,
-`test_handoff_artifacts_tracked`). Cost is fast-tier — a pure-Python lexical scan,
-no subprocess, no heavy import — but `make lint` is the gate built to run rule
-guards, and this one is invisible there unless marked.
+Commented-out prose does not count as a consumer. HTML comments are stripped
+before a prose file is scanned, so a figure whose only reference sits inside
+`<!-- … -->` reads as orphaned — which it is. Ticket 0332 orphaned
+`fig_sem_composition.png` by deleting a paragraph; had it commented the
+paragraph out instead, the unstripped guard would have stayed green.
+
+Tiers: `adherence` because this is a build-graph contract, like every other
+`_mk_discovery` consumer (`test_build_phase_separation`,
+`test_mk_discovery_unified`, `test_handoff_artifacts_tracked`); `integration`
+because four of its checks spawn `make`. Both siblings above dual-mark the same
+way.
 """
 
 import glob
@@ -75,9 +81,9 @@ import subprocess
 import tempfile
 
 import pytest
-from _mk_discovery import all_makefiles
+from _mk_discovery import all_makefiles, mk_fragments
 
-pytestmark = pytest.mark.adherence
+pytestmark = [pytest.mark.adherence, pytest.mark.integration]
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 DELIVERABLES = os.path.join(REPO_ROOT, "deliverables")
@@ -89,6 +95,9 @@ _INCLUDE_RE = re.compile(r"\{\{<\s*include\s+([^\s>]+)\s*>\}\}")
 _IMAGE_RE = re.compile(r"!\[[^\]]*\]\(([^)\s]+)")
 # `\includegraphics[opts]{path}` — raw LaTeX, used by the slide decks.
 _GRAPHICS_RE = re.compile(r"\\includegraphics(?:\[[^\]]*\])?\{([^}]+)\}")
+
+# `<!-- … -->` — commented-out prose, which consumes nothing.
+_HTML_COMMENT_RE = re.compile(r"<!--.*?-->", re.S)
 
 # Artifact paths as they appear in the build graph.
 _MK_FIGURE_RE = re.compile(r"deliverables/_shared/figures/[\w.-]+\.png")
@@ -113,6 +122,11 @@ def _makefiles():
 def _read(path):
     with open(path, encoding="utf-8") as f:
         return f.read()
+
+
+def _read_prose(path):
+    """Prose with HTML comments removed — commented-out text consumes nothing."""
+    return _HTML_COMMENT_RE.sub("", _read(path))
 
 
 def _includes_in(text):
@@ -141,7 +155,7 @@ def _reachable_includes():
             current = queue.pop()
             if not os.path.isfile(current):
                 continue
-            for rel in _includes_in(_read(current)):
+            for rel in _includes_in(_read_prose(current)):
                 target = os.path.normpath(os.path.join(base, rel))
                 reached.add(target)
                 if target not in seen:
@@ -162,7 +176,7 @@ def _displayed_basenames():
     """
     names = set()
     for path in _deliverable_roots() + _all_shared_includes():
-        text = _read(path)
+        text = _read_prose(path)
         for rel in _assets_in(text) + _includes_in(text):
             names.add(os.path.basename(rel))
     return names
@@ -189,6 +203,24 @@ def _assigned_variable_names():
     return sorted(names)
 
 
+def _probe_entry_points():
+    """Every makefile that can be a `make -f` entry point, so none goes unexpanded.
+
+    The root `Makefile` `-include`s the Phase-2 concern fragments but never the
+    six per-deliverable render fragments — `make papers` invokes those with their
+    own `$(MAKE) -f` (ticket 0237). Probing only the root would leave every
+    variable they assign expanding to nothing, which is the same blind spot the
+    text-scan-only universe had, one directory over.
+    """
+    root = os.path.join(REPO_ROOT, "Makefile")
+    renders = [
+        str(p)
+        for p in mk_fragments()
+        if p.parent.parent.name == "deliverables" and p.is_file()
+    ]
+    return [root] + sorted(renders)
+
+
 def _make_expanded_artifacts():
     """Artifact paths make computes from the variables the Makefiles assign.
 
@@ -202,22 +234,26 @@ def _make_expanded_artifacts():
     if make is None:
         pytest.skip("make not on PATH — cannot expand the build graph's variables")
     refs = " ".join(f"$({name})" for name in _assigned_variable_names())
+    found = set()
     with tempfile.TemporaryDirectory() as tmp:
         probe = os.path.join(tmp, "probe.mk")
         with open(probe, "w", encoding="utf-8") as f:
             f.write(_PROBE.format(refs=refs))
-        result = subprocess.run(
-            [make, "-s", "-f", "Makefile", "-f", probe, "__erg_artifacts"],
-            cwd=REPO_ROOT,
-            capture_output=True,
-            text=True,
-            timeout=120,
-        )
-    assert result.returncode == 0, (
-        "make could not expand the build graph — the guard's universe would "
-        f"silently narrow:\n{result.stderr}"
-    )
-    return {line.strip() for line in result.stdout.splitlines() if line.strip()}
+        for entry in _probe_entry_points():
+            result = subprocess.run(
+                [make, "-s", "-f", os.path.relpath(entry, REPO_ROOT), "-f", probe,
+                 "__erg_artifacts"],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                timeout=120,
+            )
+            assert result.returncode == 0, (
+                f"make could not expand {os.path.relpath(entry, REPO_ROOT)} — the "
+                f"guard's universe would silently narrow:\n{result.stderr}"
+            )
+            found |= {ln.strip() for ln in result.stdout.splitlines() if ln.strip()}
+    return found
 
 
 def _declared(pattern):
@@ -402,12 +438,35 @@ def test_variable_composed_figures_are_in_the_universe():
     composed = [
         f"deliverables/_shared/figures/fig_zoo_bias_{m}.png"
         for m in ("S1_MMD", "S2_energy", "L1", "C2ST_embedding")
+    ] + [
+        f"deliverables/_shared/figures/fig_sensitivity_{proj}_{m}.png"
+        for proj in ("pca", "jl")
+        for m in ("S1_MMD", "S2_energy")
     ]
     missing = [p for p in composed if p not in universe]
     assert not missing, (
         "variable-composed figures absent from the guard's universe — the build "
         "graph is being read by text scan alone:\n" + "\n".join(missing)
     )
+
+
+def test_commented_out_prose_is_not_a_consumer():
+    """A reference inside `<!-- … -->` must not keep an artifact looking alive.
+
+    Deleting a paragraph is how 0332 orphaned `fig_sem_composition.png`, but
+    commenting one out is just as routine while drafting — and without stripping,
+    the guard reads the dead reference as a live consumer and stays green on a
+    real orphan.
+    """
+    live = "![kept](../_shared/figures/fig_live.png)"
+    dead = "<!-- ![dropped](../_shared/figures/fig_dead.png) -->"
+    with tempfile.TemporaryDirectory() as tmp:
+        sample = os.path.join(tmp, "sample.qmd")
+        with open(sample, "w", encoding="utf-8") as f:
+            f.write(f"{live}\n\n{dead}\n")
+        names = {os.path.basename(r) for r in _assets_in(_read_prose(sample))}
+    assert "fig_live.png" in names, "a live reference must survive comment stripping"
+    assert "fig_dead.png" not in names, "a commented-out reference must not count"
 
 
 def test_shared_includes_are_reachable():
