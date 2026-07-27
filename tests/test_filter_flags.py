@@ -324,40 +324,89 @@ class TestFlagSemanticOutlier:
         assert flag_mask.iloc[3] == True, "the DOI-less outlier escaped Flag 5"
         assert flag_mask.sum() == 1, "a DOI-bearing neighbour was flagged instead"
 
-    def test_non_candidates_get_no_distance(self, config):
+    @staticmethod
+    def _one_outlier(n_rows, emb_dim=8, seed=11):
+        rng = np.random.default_rng(seed)
+        embeddings = rng.normal(
+            loc=1.0, scale=0.1, size=(n_rows, emb_dim)).astype(np.float32)
+        embeddings[0] = -10.0 * np.ones(emb_dim, dtype=np.float32)
+        return embeddings
+
+    @pytest.mark.parametrize("non_candidate_doi, why", [
+        ("https://doi.org/10.1000/P0", "differs only in case and DOI prefix"),
+        ("10.1000/p0", "is an exact work_key duplicate"),
+    ])
+    def test_non_candidates_get_no_distance(self, config, non_candidate_doi, why):
         """Only rows the caller put in emb_df may be scored.
 
-        A DOI-normalising fallback was tried and removed in review: a work the
-        loader deliberately excluded (no abstract, out of window, unembedded)
-        picked up a candidate's distance whenever their DOIs normalised onto
-        each other, and so became flaggable outside the subset.
+        Two remaps were tried and removed in review — normalised DOI, then the
+        exact work key. Each handed a candidate's distance to a work the loader
+        deliberately excluded (no abstract, out of window, unembedded) whenever
+        the two shared a key, making it flaggable outside the subset. The exact
+        duplicate is the reachable case: enrichment reintroduces duplicate DOIs
+        and grey-lit placeholder DOIs are shared across distinct documents, and
+        the dedup that clears them runs in --filter, after --extend where this
+        flag computes.
         """
-        rng = np.random.default_rng(11)
-        emb_dim = 8
-        embeddings = rng.normal(
-            loc=1.0, scale=0.1, size=(3, emb_dim)).astype(np.float32)
-        embeddings[0] = -10.0 * np.ones(emb_dim, dtype=np.float32)
-
+        n = 20
         emb_df = pd.DataFrame({
-            "doi": ["10.1000/a", "10.1000/b", "10.1000/c"],
-            "source_id": ["W1", "W2", "W3"],
-            "title": ["A", "B", "C"],
+            "doi": [f"10.1000/p{i}" for i in range(n)],
+            "source_id": [f"W{i}" for i in range(n)],
+            "title": [f"P{i}" for i in range(n)],
         })
-        # df carries the three candidates plus a non-candidate whose DOI differs
-        # only in case and prefix — the shape the removed fallback collapsed.
+        # The planted outlier is row 0; the non-candidate collides with it.
         df = pd.concat([emb_df, pd.DataFrame({
-            "doi": ["https://doi.org/10.1000/A"],
-            "source_id": ["W9"],
+            "doi": [non_candidate_doi],
+            "source_id": ["W99"],
             "title": ["Not a candidate"],
         })], ignore_index=True)
 
         flag_mask, dists = flag_semantic_outlier(
-            df, config, embeddings=embeddings, emb_df=emb_df
+            df, config, embeddings=self._one_outlier(n), emb_df=emb_df
         )
-        assert pd.isna(dists.iloc[3]), (
-            "a work outside emb_df was handed a candidate's distance"
+        assert flag_mask.iloc[0] == True, "the planted candidate outlier"
+        assert pd.isna(dists.iloc[n]), (
+            f"a work outside emb_df ({why}) was handed a candidate's distance"
         )
-        assert flag_mask.iloc[3] == False
+        assert flag_mask.iloc[n] == False
+        assert flag_mask.sum() == 1, "only the planted candidate may be flagged"
+
+    def test_emb_df_must_be_a_slice_of_df(self, config):
+        """Distances are assigned by index, so a foreign emb_df is an error.
+
+        Silently mapping it back by key is what produced the defect above.
+        """
+        emb_df = pd.DataFrame(
+            {"doi": ["10.1000/x", "10.1000/y"]}, index=[100, 101])
+        df = pd.DataFrame({"doi": ["10.1000/a", "10.1000/b"]})
+        with pytest.raises(ValueError, match="(?i)slice of df|absent from df"):
+            flag_semantic_outlier(
+                df, config, embeddings=self._one_outlier(2), emb_df=emb_df)
+
+    def test_distances_land_on_the_right_rows_for_a_gappy_slice(self, config):
+        """emb_df keeps df's index, so a non-contiguous slice still lines up."""
+        df = pd.DataFrame({
+            "doi": [f"10.1000/p{i}" for i in range(5)],
+            "source_id": [f"W{i}" for i in range(5)],
+            "title": [f"P{i}" for i in range(5)],
+        })
+        emb_df = df.loc[[1, 3, 4]]
+        # Rows 1 and 4 sit together, row 3 points away, so row 3's distance is
+        # the largest of the three and a swap is visible.
+        embeddings = np.stack([
+            np.full(8, 1.0, dtype=np.float32),
+            -np.full(8, 1.0, dtype=np.float32),
+            np.full(8, 1.0, dtype=np.float32),
+        ])
+
+        _mask, dists = flag_semantic_outlier(
+            df, config, embeddings=embeddings, emb_df=emb_df)
+
+        assert list(dists.index[dists.notna()]) == [1, 3, 4]
+        assert dists.loc[3] > dists.loc[1], (
+            "distances landed on the wrong rows — index alignment is wrong"
+        )
+        assert dists.loc[1] == pytest.approx(dists.loc[4])
 
     def test_missing_embeddings_raises(self, config):
         df = pd.DataFrame({"doi": ["10.1000/a"]})

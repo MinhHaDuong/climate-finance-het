@@ -229,20 +229,22 @@ def flag_semantic_outlier(df, config, *, embeddings, emb_df):
     std_dist = cos_dist.std()
     threshold = mean_dist + sigma * std_dist
 
-    # Map distances back onto df by work key, not by DOI. A DOI-keyed map
-    # discards the distance of every DOI-less work — while that work still
-    # counts toward the centroid — so it is unflaggable and warps everyone
-    # else's score (found in review of ticket 0336). work_key is what the
-    # embeddings are keyed on upstream, so the same key carries the result back.
-    # One key, no fallback. A normalized-DOI second chance was tried and
-    # removed in review: it hands a distance to works the caller deliberately
-    # left out of emb_df (no abstract, out of window, unembedded) whenever
-    # their DOI normalizes onto a candidate's, which both flags non-candidates
-    # and lets one work carry another's score. emb_df is a slice of df here, so
-    # the exact key always hits.
-    dist_by_key = dict(zip(work_keys(emb_df), cos_dist))
-    dist_by_key.pop("", None)
-    outlier_dists = work_keys(df).map(dist_by_key)
+    # Put each distance back on the row it was computed for, by index. emb_df
+    # is a slice of df carrying df's own index, so membership needs no
+    # re-derivation — and re-deriving it is what kept going wrong: a DOI-keyed
+    # map dropped every DOI-less work's distance while that work still set the
+    # centroid, then a normalised-DOI map and finally an exact-work_key map
+    # each handed a candidate's distance to whatever non-candidate happened to
+    # share the key (ticket 0336, review rounds 1-3). Index membership cannot
+    # collide, so the class closes here rather than shrinking again.
+    unknown = emb_df.index.difference(df.index)
+    if len(unknown):
+        raise ValueError(
+            f"emb_df has {len(unknown)} rows absent from df — it must be a "
+            "slice of df so distances can be assigned by index"
+        )
+    outlier_dists = pd.Series(np.nan, index=df.index, dtype=float)
+    outlier_dists.loc[emb_df.index] = np.asarray(cos_dist, dtype=float)
 
     flag_mask = outlier_dists.notna() & (outlier_dists > threshold)
 

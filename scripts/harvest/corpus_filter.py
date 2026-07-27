@@ -444,7 +444,10 @@ def _flag5_subset(df):
     in_window = abstract_bearing[
         (abstract_bearing["year_num"] >= periodization["year_min"])
         & (abstract_bearing["year_num"] <= periodization["year_max"])]
-    return abstract_bearing, in_window.reset_index(drop=True)
+    # df's index is preserved, not reset: it is how the flag puts each distance
+    # back on the right row. Re-deriving membership from a key downstream lets a
+    # non-candidate that happens to share a key collect a candidate's distance.
+    return abstract_bearing, in_window
 
 
 DEFAULT_MIN_COVERAGE = 0.9
@@ -496,9 +499,17 @@ def load_embeddings(df, cheap=False, embeddings_path=None, skip=False,
             "without Flag 5 on purpose."
         )
     vectors = cache["vectors"]
+    keys = cache["keys"]
+    if len(keys) != len(vectors):
+        raise RuntimeError(
+            f"{path} is inconsistent: {len(keys)} keys for {len(vectors)} "
+            "vectors. The two are positional within the cache file, so no "
+            "work can be matched safely. Re-run 'make corpus-enrich', or pass "
+            "--skip-semantic-flag to filter without Flag 5 on purpose."
+        )
     # An empty key identifies nothing, and two works carrying one would collide
     # onto a single vector. Drop it rather than hand out a wrong distance.
-    key_to_row = {str(k): i for i, k in enumerate(cache["keys"]) if str(k)}
+    key_to_row = {str(k): i for i, k in enumerate(keys) if str(k)}
 
     if emb_df.empty:
         periodization = load_analysis_config()["periodization"]
@@ -529,8 +540,20 @@ def load_embeddings(df, cheap=False, embeddings_path=None, skip=False,
                     n_matched, len(emb_df), 100 * coverage,
                     len(emb_df) - n_matched)
 
-    emb_df = emb_df[matched].reset_index(drop=True)
+    emb_df = emb_df[matched]
     embeddings = vectors[rows[matched].to_numpy(dtype=int)]
+
+    # Two candidates sharing a work key resolve to one vector — last-wins in the
+    # cache lookup — so one of them is scored against the other's embedding.
+    # It happens upstream of the DOI dedup, which runs in --filter, after the
+    # --extend pass where this flag computes. Report the count: it is small
+    # enough to be noise and large enough to want naming (ticket 0336 review).
+    n_dup_keys = int(work_keys(emb_df).duplicated().sum())
+    if n_dup_keys:
+        log.warning("  Flag 5: %d candidates share a work key with another "
+                    "and are scored against a single vector (pre-dedup "
+                    "duplicates; see apply_filter)", n_dup_keys)
+
     log.info("  Embeddings: %d (joined by work key against %d vectors)",
              len(embeddings), len(vectors))
     return embeddings, emb_df, True

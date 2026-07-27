@@ -498,6 +498,44 @@ class TestFlag5NeverSilentlyDead:
         with pytest.raises(RuntimeError, match="keys"):
             cf.load_embeddings(df, embeddings_path=str(path))
 
+    def test_desynced_keys_and_vectors_raise_rather_than_IndexError(
+        self, tmp_path
+    ):
+        """keys and vectors are positional within the cache file.
+
+        Unequal lengths used to surface as a bare IndexError out of numpy,
+        bypassing the operator-facing message every other path here gives.
+        """
+        cf = _import_corpus_filter()
+        df = _works_frame(n=2)
+        path = tmp_path / "desynced.npz"
+        np.savez_compressed(
+            path,
+            vectors=np.zeros((1, 8), dtype=np.float32),
+            keys=np.array(["10.1/work0", "10.1/work1"], dtype=object),
+        )
+
+        with pytest.raises(RuntimeError, match="(?i)keys.*vectors|inconsistent"):
+            cf.load_embeddings(df, embeddings_path=str(path))
+
+    def test_emb_df_keeps_the_works_frame_index(self, tmp_path):
+        """The returned slice must carry df's index, not a fresh range.
+
+        flag_semantic_outlier assigns distances by index; a reset index would
+        silently put every distance on the wrong row.
+        """
+        cf = _import_corpus_filter()
+        df = _works_frame(n=4)
+        df.loc[1, "abstract"] = None          # drop row 1 from the subset
+        path, _ = _write_npz(
+            tmp_path, ["10.1/work0", "10.1/work2", "10.1/work3"])
+
+        _embeddings, emb_df, has_embeddings = cf.load_embeddings(
+            df, embeddings_path=path)
+
+        assert has_embeddings
+        assert list(emb_df.index) == [0, 2, 3]
+
     def test_coverage_below_the_floor_raises(self, tmp_path):
         """A 99%-dead flag is still a dead flag.
 
