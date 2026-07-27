@@ -8,6 +8,7 @@ Label: needs-human
 2026-07-27T18:55Z HDMX-coding-agent created
 2026-07-27T18:55Z HDMX-coding-agent note found by the raid 0339/0340/0341 wrap-up: a full `make check` on main went red in a long-lived worktree, and three of the eleven failures were this.
 
+2026-07-27T19:15Z HDMX-coding-agent note the body overclaims and is corrected here. 'The old secrets keep a second home on disk, per worktree, indefinitely' is wrong: git worktree remove deletes the gitignored .env with the directory (verified by probe — created a worktree, wrote a marker .env, removed it, file gone). The copy lives exactly as long as the worktree, not indefinitely. The exception is the case that actually bites: removal is REFUSED when tracked files are dirty or the tree is locked, and --force is blocked by the destructive-bash guard, so unremovable worktrees accumulate copies. Measured 2026-07-27T21:15Z: 31 non-primary worktrees, 29 holding a .env, 14 of them older than the primary's 17:51 migration. So the remedy is GC cadence (/molt), not a .worktreeinclude mechanism change. The one piece that survives independently: the guard reports a stale copy as a credential violation, giving no way to tell 'this worktree is old' from 'someone pasted a secret into .env'.
 --- body ---
 ## Context
 
