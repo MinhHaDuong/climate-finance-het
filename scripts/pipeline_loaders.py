@@ -39,6 +39,7 @@ import os
 
 import pandas as pd
 from dotenv import load_dotenv
+from pipeline_keystore import apply_keys_selection
 
 _log = logging.getLogger("pipeline.loaders")
 
@@ -52,6 +53,15 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # API keys are NOT here — they live in ~/.config/keys/ and reach the environment
 # through the keystore loader, not through this call (ticket 0343).
 load_dotenv(os.path.join(BASE_DIR, ".env"))
+
+# Apply the KEYS= selection that load_dotenv just read. Every entry point passes
+# through this import, which is the point: the bash loader covers shells that
+# set BASH_ENV, but `dvc repro` chooses its stage shell from $SHELL or /bin/sh
+# and a bare `uv run python scripts/…` gets neither. Without this, those paths
+# run unauthenticated and silently, since a missing key reads as "free tier".
+# Never overwrites an already-set variable, so it composes with the bash loader.
+apply_keys_selection()
+
 CONFIG_DIR = os.path.join(BASE_DIR, "config")
 
 # Data lives in <repo>/data/ (managed by DVC).

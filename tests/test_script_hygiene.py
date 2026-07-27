@@ -107,6 +107,7 @@ LIBRARY_SCRIPTS = {
     "syllabi_process.py",
     "pipeline_text.py",
     "pipeline_io.py",
+    "pipeline_keystore.py",
     "pipeline_loaders.py",
     "pipeline_progress.py",
 }
@@ -977,6 +978,7 @@ class TestScriptNaming:
         "plot_style.py",
         "script_io_args.py",
         "pipeline_io.py",
+        "pipeline_keystore.py",
         "pipeline_loaders.py",
         "pipeline_progress.py",
         "pipeline_text.py",
