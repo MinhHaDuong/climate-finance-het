@@ -129,7 +129,7 @@ Some duplicate records survive. Two passes deduplicate at merge (DOI-based, then
 
 The abstract field concentrates two flaws. Abstracts are often missing: enrichment reconstructs them from OpenAlex inverted indices and ISTEX fulltext, and residual absences trigger flag 2. Stored abstracts are sometimes contaminated, holding boilerplate (paywall notices, repository metadata) or the article's own text: boilerplate detection excludes stub abstracts from the embeddings, and oversize detection excludes full-text fields.
 
-Language codes are often missing or non-standard: enrichment backfills them from the OpenAlex API, then infers what remains with langdetect from title and abstract, and `language_provenance` marks each tag's origin. The inference covers {{< meta lang_detected_n >}} refined works ({{< meta lang_detected_pct >}}%), so a user who needs catalog values alone can drop them.
+Language codes are often missing or non-standard: enrichment backfills them from the OpenAlex API, then infers what remains with langdetect from title and abstract, and `language_provenance` marks each tag's origin. The inference covers {{< meta lang_detected_n >}} refined works ({{< meta lang_detected_pct >}}%), so a user can restrict the corpus to whichever provenance they trust.
 
 Citation assignments can be incorrect; the audit reported in Section 2.3 confirmed {{< meta verify_confirmed_pct >}}% of sampled links, and the remainder are references our data carries that the citing work's Crossref deposit does not list.
 

@@ -329,6 +329,16 @@ def _handoff_cache_is_current(feather_path, csv_path):
 
     An absent CSV is not staleness — reproducibility archives may ship either
     file — so the cache is trusted when there is nothing to compare it to.
+
+    One limit: under a DVC ``cache.type`` of ``symlink`` or ``hardlink`` the
+    checkout shares the cache object's mtime — resolved through the link, or
+    read from the one inode both names point at — so the CSV reports its
+    add-time rather than the checkout's. The comparison then fails toward
+    false-fresh: a re-materialized CSV looks older than the Feather and the
+    stale cache is served anyway, which is the one error this function exists
+    to prevent. The committed default is ``copy``, so the comparison is honest
+    here; a project switching link types to save disk needs a content check
+    instead of an mtime one.
     """
     if not os.path.exists(csv_path):
         return True
