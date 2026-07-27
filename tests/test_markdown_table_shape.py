@@ -26,7 +26,12 @@ import re
 
 import pytest
 from _markdown_table import markdown_cell, markdown_text_cell
-from _mk_discovery import REPO_ROOT, generated_markdown_targets
+from _mk_discovery import (
+    REPO_ROOT,
+    generated_markdown_targets,
+    makefile_constants,
+    rule_targets,
+)
 
 # Mechanical contract gate (`make lint` / `pytest -m adherence`).
 pytestmark = pytest.mark.adherence
@@ -232,6 +237,34 @@ def test_discovery_reads_the_build_not_a_list():
         f"{CANONICAL} is git-tracked and built by a Make rule, so discovery "
         f"must find it; it found {sorted(GENERATED)}"
     )
+
+
+def test_rule_targets_reads_a_continued_target_list():
+    """A `\\`-continued target list must not lose the targets before the colon.
+
+    Make joins the physical lines before parsing, so every token in the list is
+    a declared target. A reader that matched physical lines would keep only the
+    ones on the line the colon lands on — and the loss is invisible, because an
+    undiscovered target reads exactly like an artifact that was never built.
+    No `.md` target is written that way today, which is the point: the sweep's
+    promise is to cover the *next* emitter, wherever its rule is formatted.
+    """
+    targets = rule_targets()
+    assert "data/derived/tables/tab_alluvial.csv" in targets, (
+        "Makefile:380 declares this target before a line continuation; "
+        "rule_targets() dropped it"
+    )
+
+
+def test_makefile_constants_reads_exported_assignments():
+    """`export NAME := value` is an assignment, and six of them exist here.
+
+    Missing one is worse than it looks: a target referencing it resolves to a
+    literal `$(NAME)/…` path, which is never on disk — so the sweep skips it
+    silently instead of checking it.
+    """
+    constants = makefile_constants()
+    assert "SOURCE_DATE_EPOCH" in constants, sorted(constants)[:20]
 
 
 @pytest.mark.parametrize("artifact", sorted(GENERATED))

@@ -18,12 +18,42 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 # `$(NAME)` or `${NAME}`; automatic variables ($@, $<) are deliberately left
 # alone — they only appear in recipes, which this module never reads.
 _VAR = re.compile(r"\$[({]([A-Za-z_][A-Za-z0-9_]*)[)}]")
-# `NAME := value` and its `=`, `?=`, `+=` siblings, at column zero.
-_ASSIGN = re.compile(r"^([A-Za-z_][A-Za-z0-9_]*)\s*(?::=|\?=|\+=|=)\s*(.*?)\s*$")
+# `NAME := value` and its `=`, `?=`, `+=` siblings, at column zero. The optional
+# `export`/`override` prefix is not decoration: six assignments in this build
+# carry it, and without it those names resolve to a literal `$(NAME)` — a path
+# that then reads as "artifact merely absent", which callers skip silently.
+_ASSIGN = re.compile(
+    r"^(?:export\s+|override\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*(?::=|\?=|\+=|=)\s*(.*?)\s*$")
 # A rule line `target [target…]: prereqs`, at column zero (recipes are indented).
 # The `(?!=)` lookahead is what separates `target:` from an `NAME :=` assignment.
 _RULE = re.compile(r"^([^\s#][^:=]*):(?!=)")
-_CONTINUATION = re.compile(r"\\\n[ \t]*")
+
+
+def _logical_lines(text: str) -> list[tuple[int, str]]:
+    """`(first physical line, joined line)` with `\\` continuations collapsed.
+
+    Both readers below go through this, so neither can see a different set of
+    lines than the other. Make condenses a backslash-newline and the following
+    indentation to one space outside a recipe, which is what the join does; the
+    line number reported is where the logical line *starts*, so a diagnostic
+    points at the target list rather than at its last continuation.
+    """
+    lines: list[tuple[int, str]] = []
+    buffered = ""
+    start = 0
+    for lineno, raw in enumerate(text.splitlines(), 1):
+        if buffered:
+            piece = raw.lstrip()
+        else:
+            start, piece = lineno, raw
+        if piece.endswith("\\"):
+            buffered += piece[:-1].rstrip() + " "
+            continue
+        lines.append((start, buffered + piece))
+        buffered = ""
+    if buffered:
+        lines.append((start, buffered))
+    return lines
 
 
 def mk_fragments() -> list[Path]:
@@ -69,8 +99,7 @@ def makefile_constants(files: list[Path] | None = None) -> dict[str, str]:
     """
     raw: dict[str, str] = {}
     for path in all_makefiles() if files is None else files:
-        text = _CONTINUATION.sub(" ", path.read_text(encoding="utf-8"))
-        for line in text.splitlines():
+        for _, line in _logical_lines(path.read_text(encoding="utf-8")):
             assignment = _ASSIGN.match(line)
             if assignment:
                 raw.setdefault(assignment.group(1), assignment.group(2))
@@ -98,12 +127,23 @@ def rule_targets() -> dict[str, str]:
     as `$(GIDE_VENUES_FR):` is discovered under its real path. Grouped-target
     rules (`a.csv b.md &:`) contribute each target; the `&` token resolves to
     itself and is harmless to any suffix-filtering caller.
+
+    Reading logical lines rather than physical ones is load-bearing: a rule
+    whose target list runs across a `\\` continuation would otherwise lose every
+    target declared before the line the colon lands on (`Makefile:380` drops two
+    of three that way), and the loss is silent — an undiscovered target reads
+    exactly like an artifact that was never built.
+
+    Two known imprecisions, both harmless to a suffix-filtering caller and left
+    rather than papered over: a `$(foreach …,$(eval …))` template body parses as
+    a rule, contributing keys that keep an unexpanded `$(m)`; and a target
+    naming a variable this module cannot resolve keeps its `$(NAME)` literal
+    rather than disappearing, so a caller sees the unresolved name.
     """
     constants = makefile_constants()
     targets: dict[str, str] = {}
     for path in all_makefiles():
-        lines = path.read_text(encoding="utf-8").splitlines()
-        for lineno, line in enumerate(lines, 1):
+        for lineno, line in _logical_lines(path.read_text(encoding="utf-8")):
             rule = _RULE.match(line)
             if not rule:
                 continue
