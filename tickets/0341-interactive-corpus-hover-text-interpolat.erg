@@ -6,6 +6,8 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-27T12:09Z HDMX-coding-agent created
 2026-07-27T12:17Z HDMX-coding-agent note filed by the 0325 roar sweep. The tell is that two sibling scripts already do this correctly, so it is an inconsistency rather than an unconsidered case.
+2026-07-27T15:40Z HDMX-coding-agent note arbitration: "the same way" as the siblings is WRONG here and the exit criterion below is amended. They feed innerHTML, so html.escape's default quote=True is right for them. Plotly parses neither hover text nor trace names as HTML — it runs its own convertEntities over an eight-name table (mu amp lt gt nbsp times plusmn deg) plus a numeric branch. quot is absent, so quote=True renders a literal &quot; in 23 of 2,644 core titles. This script escapes with quote=False. Same intent, deliberately different call.
+2026-07-27T15:44Z HDMX-coding-agent note accepted cost: 24 of 2,644 core titles carry markup Plotly's hover renderer whitelists (mostly <sub> from OpenAlex, e.g. "Outsourcing CO <sub>2</sub> within China"). Those now show the literal tag instead of a subscript. Net is 135 rows repaired against 24 flattened, and escaping data-borne tags uniformly beats rendering whichever ones a source happens to emit. Restoring subscripts would mean selectively unescaping a tag whitelist after the fact — a separate feature, not filed.
 
 --- body ---
 ## Context
@@ -48,9 +50,16 @@ because the escaping and the markup live in the same layer.
 
 ## Verification
 
-- [ ] A title containing `&` and `<` survives into the rendered hover box
-- [ ] `<b>`/`<br>`/`<i>` still render as markup
-- [ ] The figure still builds
+- [x] A title containing `&` and `<` survives into the rendered hover box
+- [x] `<b>`/`<br>`/`<i>` still render as markup
+- [ ] The figure still builds — NOT VERIFIED, and not verifiable on any machine
+      as things stand. The script is an unwired orphan: no Make target
+      (`docs/repo-layout.md:208-212`), and it needs two gitignored Phase-2
+      artifacts absent from both the worktree and the primary checkout
+      (`semantic_clusters.csv`, `cluster_labels.json`). Substitute evidence:
+      the changed path builds hover text for all 2,644 core rows of the real
+      corpus with no error and no entity Plotly cannot decode. Wiring the
+      figure into the build is a separate ticket if anyone wants it.
 
 ## Invariants
 
@@ -58,4 +67,10 @@ because the escaping and the markup live in the same layer.
 
 ## Exit criteria
 
-- [ ] All three HTML-emitting figure scripts escape free text the same way
+- [x] All three HTML-emitting figure scripts escape free text before it reaches
+      markup. Amended from "the same way" — see the 15:40Z log entry. The two
+      siblings feed innerHTML and keep `quote=True`; the Plotly script uses
+      `quote=False` because Plotly's own entity decoder has no `quot`. Escaping
+      free text is the shared rule; the exact call is per output target.
+- [x] The `quote=` choice is pinned by a test at every Plotly sink, so a future
+      reader cannot "restore" the default without failing the suite.

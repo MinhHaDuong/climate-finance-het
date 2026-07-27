@@ -191,6 +191,45 @@ class TestStructure:
             "Cited by: 120",
         ]
 
+    def test_numeric_fields_render_as_integers(self):
+        """Production feeds floats, not ints — the `int()` coercion is load-bearing.
+
+        `year` and `cited_by_count` come off a pandas frame through
+        `pd.to_numeric`, so they arrive as float64. Without the coercion the
+        tooltip reads `Zomer (2008.0)` and `Cited by: 1140.0` on every point,
+        and every other test in this file would still pass: they all pass
+        plain int literals.
+        """
+        from _hover_text import build_hover_text
+
+        out = build_hover_text(
+            title="Land suitability for the CDM",
+            first_author="Zomer",
+            year=2008.0,
+            journal="Agriculture Ecosystems & Environment",
+            cited_by_count=1140.0,
+        )
+        assert "Zomer (2008)" in out
+        assert "Cited by: 1140" in out
+        assert "2008.0" not in out
+        assert "1140.0" not in out
+
+    def test_numpy_scalars_render_as_integers(self):
+        """The real call sites pass numpy scalars from `DataFrame.iterrows()`."""
+        import numpy as np
+        from _hover_text import build_hover_text
+
+        out = build_hover_text(
+            title="T",
+            first_author="A",
+            year=np.float64(1997),
+            journal="J",
+            cited_by_count=np.int64(52),
+        )
+        assert "A (1997)" in out
+        assert "Cited by: 52" in out
+        assert "1997.0" not in out
+
     def test_cited_in_manuscript_appends_italic_line(self):
         from _hover_text import build_hover_text
 
