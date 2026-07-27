@@ -1,0 +1,94 @@
+%erg 0.1
+Title: Variables table drops the negation: LaTeX esc() eats the tilde, publishing an inverted filter recipe
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T10:21Z HDMX-coding-agent created
+2026-07-27T12:25Z HDMX-coding-agent note found by the external peer-review panel (openai/gpt-5.5, grinchy persona), which read the RENDERED PDF and flagged that the paper gives two different filter expressions. Verified: the source is correct in both places, the PDF is not. Child of 0274 — resubmission-blocking.
+
+--- body ---
+## Context
+
+The data paper documents how to reproduce the refined subset from the
+deposited CSV. It prints that recipe twice, and the rendered PDF disagrees
+with itself:
+
+| Where | Renders as |
+|---|---|
+| §3 prose | `df[~df['is_flagged'] \| df['is_protected']]` — correct |
+| Table 4 (`@tbl-variables`) | `df[ df['is_flagged'] \| df['is_protected']]` — **negation gone** |
+
+A reader following Table 4 selects the complement: the flagged-and-unprotected
+works that were *removed*, not the 33,344 that were kept. In a data paper
+whose contribution is the dataset, the documented recipe for reconstructing
+the advertised subset is about as load-bearing as text gets.
+
+**The source is correct.** Both `deliverables/data-paper/data-paper.qmd` and
+`scripts/_deposit_variables.py` carry the tilde. The corruption happens at
+render.
+
+## Root cause
+
+`render_markdown_table()` in `scripts/_deposit_variables.py` emits raw LaTeX
+(a `longtable` inside a ```` ```{=latex} ```` block). Its `esc()` helper
+escapes only `&`, `%`, `#`, `_`. So in a LaTeX table cell:
+
+- `~` is a **non-breaking space** — `df[~df[` becomes `df[ df[`
+- `` ` `` is an **opening quote** — the code span renders as quoted prose
+
+Both are LaTeX doing exactly what LaTeX does with unescaped input. Nothing is
+broken upstream; the emitter is incomplete.
+
+Audit of all 32 deposit variables for characters `esc()` does not handle:
+
+- `is_flagged` — `~` and backticks. **Semantic corruption.**
+- `abstract_provenance`, `keywords_provenance`, `abstract_status` — backticks
+  only. Cosmetic: code literals render as quoted prose.
+
+## Relevant files
+
+- `scripts/_deposit_variables.py` — `render_markdown_table()` and `esc()`
+- `scripts/figures/export_variables_table.py` — thin wrapper, no escaping
+- `deliverables/_shared/tables/tab_variables.md` — the generated artifact
+- `deliverables/_shared/tables/codebook.md` — check whether the deposited
+  codebook takes the same path and is corrupted the same way
+
+## Actions
+
+1. Extend `esc()` to the LaTeX specials it currently ignores: `\` (first, or
+   it double-escapes the others), `~`, `^`, `$`, `{`, `}`. Use
+   `\textasciitilde{}` / `\textasciicircum{}` / `\textbackslash{}`.
+2. Render markdown backtick spans as `\texttt{...}` rather than letting them
+   become quotes, so a code literal in a description reads as code.
+3. Check `codebook.md` for the same defect — it documents the same column and
+   ships inside the Zenodo deposit.
+4. Re-render and diff the PDF's Table 4 against §3's prose: the two
+   expressions must be character-identical.
+
+## Test
+
+- Red first: assert that the rendered `tab_variables.md` contains no bare `~`
+  or backtick inside the LaTeX block, and that the `is_flagged` row's
+  expression matches the one in `data-paper.qmd` exactly.
+- Stronger, and the one that would have caught this: extract the text of the
+  built PDF and assert the two filter expressions are identical. A source-level
+  test cannot see a rendering bug — that is the whole lesson here.
+
+## Verification
+
+- [ ] PDF Table 4 and §3 print the same expression, tilde intact
+- [ ] The three cosmetic backtick cases render as code, not quotes
+- [ ] The deposited codebook carries the correct recipe
+
+## Invariants
+
+- The deposited CSV's documented reconstruction recipe must reproduce exactly
+  {{< meta corpus_total >}} works.
+- No weakening of the deposit contract: `export_deposit.py` enforces the same
+  variable list at write time and must stay in agreement.
+
+## Exit criteria
+
+- [ ] Every deposit-variable description survives LaTeX rendering unaltered
+- [ ] A guard compares the rendered artifact, not only the source

@@ -1,0 +1,70 @@
+%erg 0.1
+Title: C2ST smoke tests run production-sized permutations: 45% of the serial suite in two tests
+Created: 2026-07-27
+Author: HDMX-coding-agent
+Closed: fixed on t0326-c2st-smoke-perm-override — --n-perm override, 462s -> 12.1s
+
+--- log ---
+2026-07-27T12:40Z HDMX-coding-agent created
+2026-07-27T12:45Z HDMX-coding-agent closed — --n-perm CLI override added; the two smoke tests pass --n-perm 3; measured 462s -> 12.1s, 125 tests green in the null-model/divergence suites, ruff clean.
+
+--- body ---
+## Context
+
+Measuring where `make check` spends its time (author request, 2026-07-27):
+a serial full run is 1,037s over 1,804 tests, and **two tests are 462s of
+it — 45%**:
+
+- `TestC2STNullModelSmoke::test_compute_produces_output[C2ST_lexical]` 236.6s
+- `TestC2STNullModelSmoke::test_compute_produces_output[C2ST_embedding]` 225.1s
+
+The other ten tests in the same file cost 2.4s combined. Tier totals:
+integration 929.3s (89.6%), slow 78.4s, fast 15.0s over 1,116 tests,
+adherence 14.4s. The fast tier has nothing to reclaim; the cost is one file.
+
+Cause: both tests invoke `compute_null_model.py` end-to-end with no way to
+lower `n_perm`, so a fixture-sized smoke run still trains a C2ST classifier
+`divergence.permutation.n_perm = 500` times per window. The subprocess timeout
+is 300s and the run was reaching 236s of it.
+
+A smoke test's contract is that the script runs end-to-end and writes a valid
+artifact. The statistical properties (AUC in range, null near chance,
+reproducibility, schema) are already covered by the ten cheap unit tests in
+the same file, which drive the backends directly and cost ~0.3s each.
+
+## Resolution
+
+`--n-perm` on `compute_null_model.py`, mirroring the existing `--n-jobs`:
+
+- `default=None`, so omitting it leaves the configured value untouched — a
+  production run can never silently inherit a test-sized permutation count.
+- Applied as a single assignment into `cfg["divergence"]["permutation"]`
+  after `load_analysis_config()`. Every permutation backend reads that key,
+  so one line covers all methods with no signature threading.
+- Logs at WARNING when overridden. A null distribution at n_perm=3 is not
+  publishable, and silence is how it would reach a figure.
+
+The two smoke tests pass `--n-perm 3`.
+
+## Measured
+
+- The two tests: 462s -> 12.1s (38x).
+- Expected serial suite: 1,037s -> ~590s.
+- `tests/test_null_model_c2st.py` + `test_null_model.py` + `test_divergence.py`:
+  125 passed. `ruff check` clean.
+
+## Note for the workpackage split (author, 2026-07-27)
+
+These are exploratory tests belonging to the method-zoo / multilayer
+deliverable, not to the data paper. Under a phase taxonomy they read as
+"Phase 2 analysis" and look common; under the per-deliverable taxonomy the
+author ratified, they are one deliverable's private work and should not run
+when the data paper is touched. That distinction is the split's job, not this
+ticket's — recorded here because this file is the clearest example of why the
+per-deliverable model is the right one.
+
+## Exit criteria
+
+- [x] The smoke tests prove the end-to-end contract without production compute
+- [x] Omitting --n-perm leaves the configured value in force
+- [x] An overridden run says so, loudly

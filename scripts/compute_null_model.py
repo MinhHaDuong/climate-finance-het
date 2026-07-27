@@ -131,6 +131,16 @@ def main():
         default=-1,
         help="Parallel workers for CPU path (-1 = all cores, 1 = sequential)",
     )
+    parser.add_argument(
+        "--n-perm",
+        type=int,
+        default=None,
+        help=(
+            "Override divergence.permutation.n_perm for this run. Omit to use "
+            "the configured value. Intended for smoke tests, which need the "
+            "script to run end-to-end, not a publishable null distribution"
+        ),
+    )
     args = parser.parse_args(extra)
 
     method_name = args.method
@@ -143,6 +153,18 @@ def main():
         )
 
     cfg = load_analysis_config()
+    # Single override point: every permutation backend reads n_perm from
+    # cfg["divergence"]["permutation"], so setting it here covers all methods
+    # without threading a parameter through each backend's signature. Logged
+    # loudly because a null distribution computed at a test-sized n_perm is
+    # not publishable, and silence is how it would end up in a figure.
+    if args.n_perm is not None:
+        cfg["divergence"]["permutation"]["n_perm"] = args.n_perm
+        log.warning(
+            "n_perm OVERRIDDEN to %d (config value ignored) — smoke/debug run, "
+            "not a publishable null distribution",
+            args.n_perm,
+        )
     log.info("=== Null model: %s (channel=%s) ===", method_name, channel)
 
     # Load existing divergence CSV for year/window pairs
