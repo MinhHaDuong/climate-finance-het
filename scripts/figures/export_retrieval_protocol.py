@@ -25,7 +25,7 @@ import os
 
 import pandas as pd
 import yaml
-from _deposit_variables import markdown_cell
+from _markdown_table import markdown_text_cell
 from script_io_args import parse_io_args, validate_io
 from utils import CONFIG_DIR, LANGUAGE_NAMES, get_logger, save_csv
 
@@ -64,13 +64,15 @@ def _load(name):
 def _cell(value) -> str:
     """Make a value safe for a pipe-table cell.
 
-    Delegates the escaping to the codebook's ``markdown_cell``, which already
-    knows that a raw ``|`` ends a cell and that GFM honours ``\\|`` inside a
-    code span too. Ticket 0339 tracks the private copies of this rule; this
-    emitter does not add a fifth. Newlines are collapsed first — a YAML
-    folded title would otherwise break the row before escaping ran.
+    ``markdown_text_cell``, not ``markdown_cell``: every value here is plain
+    text with no markup intent — YAML config strings and 17 bibliographic
+    titles from the grey seed list. ``markdown_cell`` is reserved for Markdown
+    authored in this repo and raises on an unbalanced backtick, so a stray
+    backtick in a report title would abort the build, and a paired one would
+    typeset half a title as code. Neither is a contract a bibliographic
+    string should be held to (ticket 0339's escaper split).
     """
-    return markdown_cell(" ".join(str(value).split()))
+    return markdown_text_cell(" ".join(str(value).split()))
 
 
 def target_languages(queries: dict) -> list[str]:

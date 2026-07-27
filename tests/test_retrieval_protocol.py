@@ -253,6 +253,38 @@ def test_stats_rule_depends_on_the_threshold_config():
     )
 
 
+def test_committed_vars_artifact_matches_config():
+    """The number the paper prints, not the number the collector would print.
+
+    Every other guard here computes its expected side from the same live
+    config the production code reads, so all of them stay green when the
+    committed artifact is stale — edit a threshold, skip `make stats`, and
+    the paper keeps printing the old value with nothing to say so. This repo
+    has no CI, so that is the standing drift vector, and it is the exact
+    failure this ticket exists to remove. Possible only for the config-derived
+    variables: the corpus-derived ones need Phase-1 data to recompute.
+    """
+    from _vars_retrieval import retrieval_protocol_stats
+    from compute_vars import DOC_OUTPUT_DIR
+
+    expected = {}
+    retrieval_protocol_stats(expected)
+
+    path = os.path.join(DOC_OUTPUT_DIR["data-paper"], "data-paper-vars.yml")
+    with open(path, encoding="utf-8") as fh:
+        committed = yaml.safe_load(fh) or {}
+
+    stale = {
+        k: (committed.get(k), v)
+        for k, v in expected.items()
+        if str(committed.get(k)) != v
+    }
+    assert not stale, (
+        "data-paper-vars.yml is stale against config/corpus_filter.yaml "
+        f"(committed, expected): {stale}. Run `make stats` and commit."
+    )
+
+
 def test_threshold_vars_registered_for_the_data_paper():
     from compute_vars import DOC_VARS
 
@@ -444,6 +476,31 @@ def test_paper_points_at_the_deposited_protocol():
     )
     for cfg_name in ("openalex_queries.yaml", "corpus_filter.yaml", "grey_sources.yaml"):
         assert cfg_name in sources, f"§2.1 must name the deposited {cfg_name}"
+
+
+def test_quoted_tier1_terms_exist_in_the_config():
+    """No document may quote a Tier-1 term the harvest never issued.
+
+    The corpus report listed a Japanese term (気候ファイナンス) the config does
+    not contain, next to the eight-language claim it is meant to evidence —
+    a term substitution rather than a count drift, and invisible to a guard
+    that only counts languages. One direction only: these lists summarise,
+    so a config term may go unquoted, but a quoted term must be real.
+    """
+    tier1 = set(_load(QUERIES_YAML)["tiers"][1]["terms"])
+    include = os.path.join(
+        REPO, "deliverables", "_shared", "_includes", "corpus-construction.md"
+    )
+    with open(include, encoding="utf-8") as fh:
+        line = next(ln for ln in fh if ln.startswith("**Tier 1"))
+
+    quoted = set(re.findall(r'`"([^"]+)"`', line))
+    assert quoted, "the Tier-1 paragraph quotes no terms — has it been reworded?"
+    invented = quoted - tier1
+    assert not invented, (
+        f"terms quoted in corpus-construction.md that config never queried: "
+        f"{sorted(invented)}"
+    )
 
 
 def test_paper_reports_the_config_concept_group_rule():

@@ -289,7 +289,10 @@ deliverables/_shared/tables/tab_variables.md: scripts/figures/export_variables_t
 RETRIEVAL_CONFIG := config/openalex_queries.yaml config/corpus_collect.yaml \
                     config/grey_sources.yaml config/unfccc_sources.yaml \
                     config/oecd_dac_sources.yaml
-deliverables/_shared/tables/tab_retrieval_protocol.csv deliverables/_shared/tables/tab_retrieval_protocol.md &: scripts/figures/export_retrieval_protocol.py scripts/utils.py $(RETRIEVAL_CONFIG)
+# scripts/_markdown_table.py is a real prerequisite, as it is for the sibling
+# rules above: the escaper decides the emitted bytes, so a change there must
+# rebuild this table or the deposit ships the pre-fix rendering.
+deliverables/_shared/tables/tab_retrieval_protocol.csv deliverables/_shared/tables/tab_retrieval_protocol.md &: scripts/figures/export_retrieval_protocol.py scripts/utils.py scripts/_markdown_table.py $(RETRIEVAL_CONFIG)
 	$(PYTHON) $< --output $@
 
 # Codebook / data dictionary for the Zenodo package (ticket 0287, R1-19) —
