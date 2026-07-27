@@ -205,8 +205,27 @@ def test_qa_near_duplicates_defaults_come_from_config():
     assert qnd.DEFAULT_ABSTRACT_OVERLAP_THRESHOLD == block["abstract_overlap_threshold"]
 
 
+def test_declared_vars_match_what_the_collector_emits():
+    """RETRIEVAL_VARS is spliced into DOC_VARS, so it must be exact.
+
+    A name declared but not emitted renders as an empty macro; a name emitted
+    but not declared never reaches the paper at all.
+    """
+    from _vars_retrieval import RETRIEVAL_VARS, retrieval_protocol_stats
+
+    v = {}
+    retrieval_protocol_stats(v)
+    assert set(RETRIEVAL_VARS) == set(v), (
+        f"declared but not emitted: {sorted(set(RETRIEVAL_VARS) - set(v))}; "
+        f"emitted but not declared: {sorted(set(v) - set(RETRIEVAL_VARS))}"
+    )
+    assert set(RETRIEVAL_VARS) == set(THRESHOLD_VARS), (
+        "this test file's registry has drifted from the collector's"
+    )
+
+
 def test_compute_vars_emits_thresholds_from_config():
-    from compute_vars import retrieval_protocol_stats
+    from _vars_retrieval import retrieval_protocol_stats
 
     cfg = _load(FILTER_YAML)
     v = {}
