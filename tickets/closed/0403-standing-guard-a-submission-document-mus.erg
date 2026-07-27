@@ -2,11 +2,13 @@
 Title: Standing guard: a submission document must not name a deposit file the build does not ship
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: tooling-lane severity floor: standing guard; the originating stale references were fixed in 0354
 
 --- log ---
 2026-07-27T19:13Z HDMX-coding-agent created
 2026-07-27T19:22Z HDMX-coding-agent note Filed from the ticket-0354 roar; the class fired three times inside one merge
 
+2026-07-27T19:45Z HDMX-coding-agent closed — tooling-lane severity floor: standing guard; the originating stale references were fixed in 0354
 --- body ---
 ## Context
 

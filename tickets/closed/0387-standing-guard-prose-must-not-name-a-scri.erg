@@ -3,11 +3,13 @@ Title: Standing guard — tracked prose must not name a script path that does no
 Created: 2026-07-27
 Author: HDMX-coding-agent
 Blocked-by: 0388
+Closed: tooling-lane severity floor: standing guard; 0388 fixes the live instances and stays open
 
 --- log ---
 2026-07-27T19:06Z HDMX-coding-agent created
 2026-07-27T19:25Z HDMX-coding-agent note Blocker repointed 0386 -> 0388: a parallel session's renumber took 0386 first.
 
+2026-07-27T19:45Z HDMX-coding-agent closed — tooling-lane severity floor: standing guard; 0388 fixes the live instances and stays open
 --- body ---
 ## Context
 

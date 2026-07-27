@@ -2,10 +2,12 @@
 Title: HDMX-coding-agent is not a GitHub account: decide whether to provision one
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: tooling-lane severity floor: agent identity is infrastructure; commits are attributed correctly today
 
 --- log ---
 2026-07-27T15:45Z HDMX-coding-agent created
 
+2026-07-27T19:45Z HDMX-coding-agent closed — tooling-lane severity floor: agent identity is infrastructure; commits are attributed correctly today
 --- body ---
 ## Context
 
