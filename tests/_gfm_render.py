@@ -44,9 +44,21 @@ def render_gfm(markdown: str, tmp_path) -> str:
 
 
 def row_with(flat: str, needle: str) -> str:
-    """The rendered `<tr>` carrying `needle`, as flattened HTML."""
+    """The rendered `<tr>` carrying `needle`, as flattened HTML.
+
+    Ambiguity is an error, not a first-match: returning `matching[0]` silently
+    lets a decoy row stand in for the one under test, and the caller then
+    asserts on cells it never meant to read. The suites that use this helper are
+    checking that a *specific* row survived rendering intact, so a needle that
+    picks out more than one row is a defect in the test, not something to
+    resolve by position.
+    """
     matching = [row for row in _ROW.findall(flat) if needle in row]
     assert matching, f"no rendered row carries {needle!r}:\n{flat}"
+    assert len(matching) == 1, (
+        f"{needle!r} matches {len(matching)} rendered rows — pick a needle that "
+        f"identifies one:\n" + "\n".join(matching)
+    )
     return matching[0]
 
 

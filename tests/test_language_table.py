@@ -192,8 +192,11 @@ def test_shipped_language_names_are_untouched_by_the_escaper(tmp_path):
     `LANGUAGE_NAMES` value carries an escapable character today, so the emitted
     table must carry no backslash at all — and the Total row's `**` must be the
     only asterisks in it.
+
+    No `require_pandoc()`: this pin reads the emitted bytes, so gating it on a
+    renderer it never invokes would only make it skip where its sibling in
+    `test_corpus_table_export.py` runs.
     """
-    require_pandoc()
     from export_language_table import LANGUAGE_NAMES
 
     enriched = tmp_path / "enriched_works.csv"
