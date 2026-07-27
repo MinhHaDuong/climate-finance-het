@@ -413,3 +413,50 @@ class TestPass2Persistence:
         """The existing call sites and tests pass no cache."""
         from enrich_language import pass2_local_detect
         assert pass2_local_detect(self._one_english_row()) == 1
+
+
+class TestInvalidCodesAreReplaced:
+    """An invalid ISO 639-1 code is as bad as a missing one.
+
+    Pass 2 already re-detects rows whose language is a non-ISO code ('ua',
+    'sh' — 5 such rows in the current corpus). That correction hit the same
+    wall as the null backfill: enrich_join only filled rows it considered
+    *missing*, so a corrected code never reached the monolith and the deposit
+    kept shipping codes the codebook says are ISO 639-1.
+    """
+
+    def test_join_treats_an_invalid_code_as_missing(self, tmp_path):
+        import sys as _sys
+        _sys.path.insert(0, os.path.join(SCRIPTS_DIR, "harvest"))
+        from enrich_join import _apply_language_cache
+
+        cache_dir = tmp_path / "enrich_cache"
+        cache_dir.mkdir()
+        pd.DataFrame([{"key": "10.1/a", "language": "uk"}]).to_csv(
+            cache_dir / "language_detected.csv", index=False)
+
+        df = pd.DataFrame({
+            "language": ["ua"],       # not ISO 639-1
+            "doi": ["10.1/a"],
+            "source_id": ["W1"],
+        })
+        _apply_language_cache(df, str(cache_dir))
+        assert df.loc[0, "language"] == "uk"
+        assert df.loc[0, "language_provenance"] == "detected:langdetect"
+
+    def test_a_valid_code_is_left_alone(self, tmp_path):
+        import sys as _sys
+        _sys.path.insert(0, os.path.join(SCRIPTS_DIR, "harvest"))
+        from enrich_join import _apply_language_cache
+
+        cache_dir = tmp_path / "enrich_cache"
+        cache_dir.mkdir()
+        pd.DataFrame([{"key": "10.1/a", "language": "en"}]).to_csv(
+            cache_dir / "language_detected.csv", index=False)
+
+        df = pd.DataFrame({
+            "language": ["fr"], "doi": ["10.1/a"], "source_id": ["W1"],
+        })
+        _apply_language_cache(df, str(cache_dir))
+        assert df.loc[0, "language"] == "fr"
+        assert df.loc[0, "language_provenance"] == "source"

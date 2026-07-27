@@ -18,7 +18,7 @@ import os
 
 import pandas as pd
 from openalex_corpus.text import normalize_doi
-from pipeline_text import normalize_lang
+from pipeline_text import is_valid_iso639_1, normalize_lang
 from utils import CATALOGS_DIR, get_logger, save_csv
 
 log = get_logger("enrich_join")
@@ -163,10 +163,19 @@ def _apply_language_cache(df, cache_dir):
     detected = _load_csv_cache(
         os.path.join(cache_dir, "language_detected.csv"), "key", "language")
 
-    # Anything already present before either cache is applied came with the
-    # record from its source catalog.
+    def _needs_filling(val):
+        """Missing, or present but not a real ISO 639-1 code.
+
+        A code the codebook calls ISO 639-1 but that no standard recognises
+        ('ua', 'sh') is not usable data; pass 2 already re-detects those, and
+        treating them as present would discard the correction (ticket 0297).
+        """
+        return _is_missing(val) or not is_valid_iso639_1(val)
+
+    # Anything usable before either cache is applied came with the record
+    # from its source catalog.
     provenance = pd.Series("", index=df.index, dtype=object)
-    provenance[~df["language"].apply(_is_missing)] = "source"
+    provenance[~df["language"].apply(_needs_filling)] = "source"
 
     def _lookup(cache, doi, sid):
         lang = cache.get(doi, "") if doi else ""
@@ -174,7 +183,7 @@ def _apply_language_cache(df, cache_dir):
 
     applied_resolved = applied_detected = 0
     for idx in df.index:
-        if not _is_missing(df.at[idx, "language"]):
+        if not _needs_filling(df.at[idx, "language"]):
             continue
         doi = normalize_doi(df.at[idx, "doi"])
         sid = str(df.at[idx, "source_id"])
