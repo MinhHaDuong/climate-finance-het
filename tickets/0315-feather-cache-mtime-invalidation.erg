@@ -7,6 +7,10 @@ Author: HDMX-coding-agent
 2026-07-24T16:20Z HDMX-coding-agent created from corpus-v2 rebuild incident (bit twice on 2026-07-24)
 
 2026-07-27T12:48Z HDMX-coding-agent note implemented in PR #1141 (loader staleness guard _handoff_cache_is_current, both Feather fast paths, 4 unit tests). Surfaced by the round-2 review of that PR: 0323 built the same fix without knowing 0315 claimed it. Both exit criteria met; only two read_feather call sites exist, both covered.
+
+2026-07-27T15:30Z HDMX-coding-agent note PR #1153 gate returned REROLL round 1: count-guard year strip widened too far, and the symlink caveat named the wrong failure direction plus a wrong hardlink mechanism.
+
+2026-07-27T15:40Z HDMX-coding-agent note round-1 reroll fixed: year strip restored to (?:19|20)\d{2} with 2100 allowlisted, regression test pins the 1000-2999 band, caveat now states the false-fresh direction and the shared-mtime mechanism.
 --- body ---
 ## Context
 

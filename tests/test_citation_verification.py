@@ -110,6 +110,7 @@ _ALLOWED_LITERALS = {
 # _ALLOWED_LITERALS: each needs a reason, anything else must be a macro.
 _ALLOWED_COUNTS = {
     "8192": "the embedding model's context window, a model parameter",
+    "2100": "an SSP scenario horizon, a calendar year outside the year strip",
 }
 
 
@@ -133,20 +134,19 @@ def _measurable_counts(section):
     moved the refined layer to 2,061 (ticket 0323).
 
     Matches comma-grouped thousands and bare integers of four digits or more.
-    DOIs, URLs, inline code, and any 1000--2999 four-digit number are stripped
-    first. That year range is deliberately wide: a climate paper naming an SSP
-    horizon (2100) or a scenario year would otherwise break CI on a number that
-    cannot rot. It costs little, because `_int` puts a separator in every
-    four-digit corpus count it formats, so the comma branch is the real net;
-    what escapes is a count typed by hand with no separator, and a count below
-    1,000, both noted here rather than papered over.
+    DOIs, URLs, inline code, and 19xx/20xx years are stripped first. A calendar
+    year outside that strip (an SSP horizon such as 2100) goes in
+    `_ALLOWED_COUNTS`, not into a wider year regex: widening to `[12]\\d{3}`
+    would blind the guard to every bare corpus count in 1000--2999, eight of
+    which are live in `data-paper-vars.yml`. What still escapes is a count
+    below 1,000.
     """
     text = re.sub(r"<!--.*?-->", "", section, flags=re.S)      # HTML comments
     text = re.sub(r"\{\{<[^>]*>\}\}", "", text)                # macros
     text = re.sub(r"`[^`]*`", "", text)                        # inline code
     text = re.sub(r"https?://\S+", "", text)                   # URLs
     text = re.sub(r"10\.\d{4,}/\S+", "", text)                 # DOIs
-    text = re.sub(r"\b[12]\d{3}\b", "", text)                  # years, scenarios
+    text = re.sub(r"\b(?:19|20)\d{2}\b", "", text)             # calendar years
     return [h for h in re.findall(r"\b\d{1,3}(?:,\d{3})+\b|\b\d{4,}\b", text)
             if h not in _ALLOWED_COUNTS]
 
@@ -194,3 +194,18 @@ def test_method_and_data_sections_carry_no_hand_typed_count():
         f"the prose (ticket 0323). If a value genuinely cannot rot, add it to "
         f"_ALLOWED_COUNTS with the reason."
     )
+
+
+def test_count_guard_still_sees_the_1000_2999_band():
+    """Pin the guard's range against the widening that would blind it.
+
+    Widening the year strip to `[12]\\d{3}` so an SSP horizon like 2100 passes
+    also strips every bare corpus count in 1000--2999 — `corpus_core` (2,644),
+    `emb_dimensions` (1024) and six more live values in `data-paper-vars.yml`.
+    The allowlist is the escape hatch the guard's own message points to, so the
+    band stays visible and 2100 passes by name.
+    """
+    assert _measurable_counts("The corpus holds 2644 works.") == ["2644"]
+    assert _measurable_counts("Embeddings have 1024 dimensions.") == ["1024"]
+    assert _measurable_counts("Scenarios run to 2100.") == []
+    assert _measurable_counts("Coverage was measured in 2024.") == []
