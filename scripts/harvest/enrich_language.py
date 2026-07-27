@@ -261,11 +261,24 @@ def pass1_apply_cache(df, cache):
 
 # --- Pass 2: local text detection ---
 
-def pass2_local_detect(df):
+def pass2_local_detect(df, cache=None):
     """Fill remaining null language values using langdetect on title+abstract.
 
     Also flags nonsensical existing values (codes not in ISO 639-1).
     Returns number of records filled.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Works frame; mutated in place.
+    cache : dict | None
+        When given, each detection is recorded as {key: lang} using the same
+        key convention enrich_join resolves by — normalised DOI first, else
+        source_id. This script is cache-only (it never writes the works CSV
+        back), so without this the detections die with the process: that was
+        ticket 0297, ~1,500 results recomputed and discarded every run.
+        Undetectable rows are left out entirely rather than cached empty.
+
     """
     filled = 0
     for idx in df.index:
@@ -290,6 +303,11 @@ def pass2_local_detect(df):
         if detected and is_valid_iso639_1(detected):
             df.at[idx, "language"] = detected
             filled += 1
+            if cache is not None:
+                doi = normalize_doi(df.at[idx, "doi"]) if pd.notna(df.at[idx, "doi"]) else ""
+                key = doi or (str(df.at[idx, "source_id"]) if "source_id" in df.columns else "")
+                if key:
+                    cache[key] = detected
 
     return filled
 
@@ -379,12 +397,20 @@ def main():
 
     # --- Pass 2: local text detection ---
     log.info("Pass 2: local text detection (langdetect)")
-    filled_pass2 = pass2_local_detect(df)
+    detected_cache = load_cache("language_detected")
+    filled_pass2 = pass2_local_detect(df, detected_cache)
     counters["pass2_filled"] = filled_pass2
     null_after_pass2 = int(df["language"].isna().sum())
     log.info("Pass 2 filled %d, remaining null: %d", filled_pass2, null_after_pass2)
 
-    # Cache-only: enrich_join.py applies caches to the monolith (#428)
+    # Cache-only: enrich_join.py applies caches to the monolith (#428).
+    # Pass 2 gets its OWN cache, kept apart from pass 1's language_resolved:
+    # pass 1 carries values sourced from OpenAlex, pass 2 carries values
+    # inferred by langdetect. Merging them would make an inferred tag
+    # indistinguishable from a sourced one in a deposited dataset — the
+    # distinction enrich_join turns into language_provenance (ticket 0297).
+    save_cache("language_detected", detected_cache)
+    log.info("Detected-language cache: %d entries", len(detected_cache))
 
     elapsed = time.time() - t0
     counters.update({

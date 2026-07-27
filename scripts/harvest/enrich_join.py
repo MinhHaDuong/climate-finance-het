@@ -148,25 +148,56 @@ def _apply_abstract_caches(df, cache_dir):
 
 
 def _apply_language_cache(df, cache_dir):
-    """Normalize language codes and fill missing from cache."""
-    df["language"] = df["language"].apply(normalize_lang)
-    lang_cache = _load_csv_cache(
-        os.path.join(cache_dir, "language_resolved.csv"), "key", "language")
+    """Normalize language codes and fill missing from the two language caches.
 
-    applied = 0
+    Order matters: `language_resolved` holds values *sourced* from OpenAlex,
+    `language_detected` holds values *inferred* by langdetect from title and
+    abstract (ticket 0297). Sourced wins; inference only fills what is still
+    null afterwards, and every inferred value is disclosed in
+    `language_provenance` so a deposited language tag never hides how it was
+    obtained. Mirrors abstract_provenance / keywords_provenance.
+    """
+    df["language"] = df["language"].apply(normalize_lang)
+    resolved = _load_csv_cache(
+        os.path.join(cache_dir, "language_resolved.csv"), "key", "language")
+    detected = _load_csv_cache(
+        os.path.join(cache_dir, "language_detected.csv"), "key", "language")
+
+    # Anything already present before either cache is applied came with the
+    # record from its source catalog.
+    provenance = pd.Series("", index=df.index, dtype=object)
+    provenance[~df["language"].apply(_is_missing)] = "source"
+
+    def _lookup(cache, doi, sid):
+        lang = cache.get(doi, "") if doi else ""
+        return lang or cache.get(sid, "")
+
+    applied_resolved = applied_detected = 0
     for idx in df.index:
-        if _is_missing(df.at[idx, "language"]):
-            doi = normalize_doi(df.at[idx, "doi"])
-            sid = str(df.at[idx, "source_id"])
-            lang = lang_cache.get(doi, "") if doi else ""
-            if not lang:
-                lang = lang_cache.get(sid, "")
-            if lang:
-                df.at[idx, "language"] = lang
-                applied += 1
-    log.info("Language cache: applied %d (cache has %d entries)",
-             applied, len(lang_cache))
-    return applied
+        if not _is_missing(df.at[idx, "language"]):
+            continue
+        doi = normalize_doi(df.at[idx, "doi"])
+        sid = str(df.at[idx, "source_id"])
+
+        lang = _lookup(resolved, doi, sid)
+        if lang:
+            df.at[idx, "language"] = lang
+            provenance.at[idx] = "openalex"
+            applied_resolved += 1
+            continue
+
+        lang = _lookup(detected, doi, sid)
+        if lang:
+            df.at[idx, "language"] = lang
+            provenance.at[idx] = "detected:langdetect"
+            applied_detected += 1
+
+    df["language_provenance"] = provenance
+    log.info(
+        "Language caches: applied %d sourced (%d entries) + %d detected (%d entries)",
+        applied_resolved, len(resolved), applied_detected, len(detected),
+    )
+    return applied_resolved + applied_detected
 
 
 def _apply_summaries(df, cache_dir):
