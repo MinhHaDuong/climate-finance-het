@@ -67,9 +67,10 @@ def source_files(qmd: Path) -> tuple[list[Path], list[str]]:
     (`.claude/rules/architecture.md`, ticket 0359, where writing it that way
     produced 13 confident false positives).
 
-    Generated tables under `_shared/tables/` are gitignored, so a fresh
-    worktree legitimately lacks some includes. Those are returned rather than
-    raised, so the caller decides whether a partial scan is good enough.
+    Some generated tables under `_shared/tables/` are gitignored — others are
+    deliberately tracked, for the clean-room build — so a fresh worktree
+    legitimately lacks a few includes. Those are returned rather than raised,
+    so the caller decides whether a partial scan is good enough.
     """
     base = qmd.parent
     found: list[Path] = []
@@ -130,11 +131,12 @@ def require_quarto() -> None:
 def render_to_markdown(qmd: Path) -> subprocess.CompletedProcess:
     """Render `qmd` through Quarto, returning the completed process.
 
-    Markdown rather than the document's own PDF format, because the two resolve
-    shortcodes over the same code path while only one of them needs a LaTeX run
-    — under a second per document instead of a minute. `--output -` writes to
-    stdout, so rendering a tracked document leaves no artifact beside its
-    source; `--no-execute` keeps the render off the compute path entirely.
+    Markdown rather than the document's own PDF format: shortcodes resolve in a
+    Lua filter ahead of writer selection, so both formats resolve identically
+    while only one needs a LaTeX run — 2–8 s per document, ~1 min for the whole
+    tier. `--output -` writes to stdout, so no rendered document lands beside a
+    tracked source (Quarto still writes its gitignored `.quarto/` cache).
+    `--no-execute` keeps the render off the compute path entirely.
     """
     return subprocess.run(
         ["quarto", "render", qmd.name, "--to", "markdown", "--no-execute", "--output", "-"],

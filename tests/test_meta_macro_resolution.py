@@ -12,7 +12,8 @@ Two guards, deliberately different in what they trust:
   generated includes, so it is `integration` and skips where either is absent.
 * the **static resolver** answers from the files on disk, against the generated
   `*-vars.yml` rather than the `DOC_VARS` dict one layer above it. It needs
-  nothing, so it runs in the fast loop and covers every machine.
+  nothing, so it runs in the fast loop and covers every machine — including the
+  fresh worktrees where the render guard skips.
 
 Both are proved able to fail, on a document written to be broken, before either
 is trusted on a real one — the invariant ticket 0327 paid for.
@@ -32,8 +33,9 @@ from _qmd_meta import (
 )
 
 #: Documents known to render `?meta:` placeholders today, with the ticket that
-#: fixes each. `strict` is the point: the entry fails the suite once the
-#: document is fixed, so a stale exemption cannot outlive the defect.
+#: fixes each. The static guard marks these `strict`, so the entry fails the
+#: suite once the document is fixed and a stale exemption cannot outlive the
+#: defect it names.
 KNOWN_UNRESOLVED = {
     # corpus-report reads technical-report-vars.yml but is absent from
     # compute_vars.DOC_VARS, so it has no vars file of its own and renders 22
@@ -44,13 +46,21 @@ KNOWN_UNRESOLVED = {
 }
 
 
-def _params():
-    """Discovered documents, each carrying its own known-defect mark."""
+def _params(strict=True):
+    """Discovered documents, each carrying its own known-defect mark.
+
+    `strict` belongs to the static guard alone. A `pytest.skip()` raised inside
+    a strict xfail reports SKIPPED, not XPASS, so a guard that can skip cannot
+    be relied on to self-destruct when the defect is fixed — and the render
+    guard skips wherever a gitignored generated include is absent, which is the
+    ordinary fresh-worktree case. The static guard has no skip path, so it
+    carries the strict mark and the self-destruct property for both.
+    """
     out = []
     for qmd in deliverable_qmds():
         marks = []
         if qmd.stem in KNOWN_UNRESOLVED:
-            marks.append(pytest.mark.xfail(strict=True, reason=KNOWN_UNRESOLVED[qmd.stem]))
+            marks.append(pytest.mark.xfail(strict=strict, reason=KNOWN_UNRESOLVED[qmd.stem]))
         out.append(pytest.param(qmd, marks=marks, id=qmd.stem))
     return out
 
@@ -103,6 +113,22 @@ def test_no_deliverable_uses_an_undeclared_meta_key(qmd):
     )
 
 
+def test_discovery_finds_the_deliverables():
+    """A glob that matches nothing parametrizes nothing, and pytest calls that a pass.
+
+    Every guard below is parametrized over `deliverable_qmds()`, so renaming
+    `deliverables/` — this repo has renamed a deliverable directory before —
+    would remove all three at once, silently and with exit 0. The data paper is
+    named outright because its 77 macro keys are why this suite exists.
+    """
+    found = deliverable_qmds()
+    assert found, "no deliverable .qmd discovered — has deliverables/ moved?"
+    assert "data-paper" in {qmd.stem for qmd in found}, (
+        f"the data paper is not among the discovered documents: "
+        f"{sorted(qmd.stem for qmd in found)}"
+    )
+
+
 @pytest.mark.parametrize("qmd", [pytest.param(q, id=q.stem) for q in deliverable_qmds()])
 def test_document_scan_is_not_silently_empty(qmd):
     """The scan reaches the document's own text and its metadata.
@@ -139,13 +165,13 @@ def test_render_oracle_flags_an_undeclared_key(tmp_path):
 
 
 @pytest.mark.integration
-@pytest.mark.parametrize("qmd", _params())
+@pytest.mark.parametrize("qmd", _params(strict=False))
 def test_rendered_deliverable_has_no_meta_placeholder(qmd):
     """Ask Quarto itself: nothing it produced carries a `?meta:` placeholder."""
     require_quarto()
     _, missing = source_files(qmd)
     if missing:
-        pytest.skip(f"generated include not built: {missing[0]} (run `make analysis`)")
+        pytest.skip(f"generated include not built: {missing[0]} (run `make corpus-tables`)")
     result = render_to_markdown(qmd)
     assert result.returncode == 0, f"{qmd.name} failed to render:\n{result.stderr}"
     placeholders = sorted({
