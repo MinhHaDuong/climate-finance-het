@@ -1,0 +1,115 @@
+%erg 0.1
+Title: Repopulate keywords_provenance for the 263 curated key documents
+Created: 2026-07-27
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-07-27T13:07Z HDMX-coding-agent created
+2026-07-27T13:10Z HDMX-coding-agent note child of 0288, found while verifying it for closure. The code fix and its test ship with 0288's closing PR; only the data repopulation is left, and it is a Phase-1 rerun on a corpus the author froze on 2026-07-27 — hence needs-human.
+
+--- body ---
+## Context
+
+Verifying 0288 for closure found `keywords_provenance` empty for all 33,344
+rows of `refined_works.csv`, while 242 of the 263 curated key documents carry
+lexicon-generated or extracted keywords. The author's rule of 2026-07-22 —
+keywords are never faked from a short title; they are extracted from a
+first-page keywords block, else generated from a deterministic lexicon, and
+either way **disclosed via `keywords_provenance`** — is half-shipped: the
+honest derivation runs, the disclosure does not reach the corpus.
+
+Cause, isolated to one line of `catalog_keydocs.main()`:
+
+    df = pd.DataFrame(records, columns=WORKS_COLUMNS + ["abstract_provenance"])
+
+`pd.DataFrame(records, columns=[...])` *selects* the named columns, so
+`build_record`'s `keywords_provenance` was dropped one line after being
+computed. `unfccc_works.csv` and `oecd_works.csv` therefore have no such
+column, and `catalog_merge`'s `EXTRA_CARRY_COLS` created it empty downstream.
+
+The code fix (one line) and the test that catches it landed with 0288's
+closing PR. The 41 tests that passed over the bug asserted on `build_record`'s
+returned dict and on a synthetic DataFrame that already had the column — never
+on the emitted CSV. The new test drives `main()` and reads the artifact back.
+
+What remains is the **data**: the frozen v2 corpus still carries the empty
+column.
+
+## Why it matters
+
+`codebook.md` is not wrong — it truthfully reports `keywords_provenance` as
+100% missing while describing it as taking `extracted` / `generated:lexicon`
+"for curated key documents". So the Zenodo deposit ships a documented column
+that is never filled, for exactly the records its description names. A user
+who wants to know whether a key document's keywords came from the document or
+from our lexicon cannot tell.
+
+## The author decision
+
+Repopulating requires re-running the keydocs harvest and the merge/filter
+chain. Cost and blast radius:
+
+- The harvest is **offline**: `fetch_pdf` returns `cached` for the warm pool
+  in `data/pool/keydocs/`, so no network and no refetch.
+- The change is **additive metadata only** — it fills a column that is
+  currently empty end to end. No count, share, or statistic in any deliverable
+  moves.
+- But it is a Phase-1 rerun (`catalog_keydocs` → `catalog_merge` →
+  `corpus_filter`), which regenerates `refined_works.csv` on a corpus the
+  author froze on 2026-07-27.
+
+Options:
+
+1. **Fold it into 0344's Phase-2 rebuild** (recommended). 0344 already
+   establishes that the derived tables must be rebuilt against the current
+   corpus; doing the keydocs re-harvest immediately before it means one
+   regeneration pass, not two.
+2. **Ship the column empty** and correct the codebook description instead, so
+   the deposit documents what it actually contains.
+3. Defer past resubmission — the column is empty in the v1 deposit too, so
+   this is not a regression the referee can see.
+
+## Relevant files
+
+- `scripts/harvest/catalog_keydocs.py` — fixed emitter (0288's PR)
+- `tests/test_catalog_keydocs.py` —
+  `TestMainEndToEnd::test_keywords_provenance_reaches_the_written_catalog`
+- `data/catalogs/{unfccc,oecd}_works.csv` — lack the column
+- `data/catalogs/refined_works.csv` — column present, 0/33,344 populated
+- `deliverables/_shared/tables/codebook.md:41` — documents it at 100% missing
+- `scripts/_deposit_variables.py:131` — the deposit column contract
+- `data/pool/keydocs/` — warm PDF/text pool, makes the re-harvest offline
+
+## Test
+
+The regression guard already exists (0288's PR). The rerun needs an assertion
+on the real artifact, not a fixture: after regeneration, at least the 242
+keyword-bearing key documents carry a non-empty `keywords_provenance` in
+`refined_works.csv`, and every value is one of `extracted` /
+`generated:lexicon`.
+
+## Verification
+
+- [ ] `unfccc_works.csv` and `oecd_works.csv` carry a populated
+      `keywords_provenance` column after the re-harvest
+- [ ] `refined_works.csv`: non-empty for the keyword-bearing key documents,
+      empty elsewhere
+- [ ] `codebook.md` regenerated; its missingness figure for the column drops
+      from 100% to roughly 99.3%
+- [ ] No other number in any deliverable moves — byte-compare the derived
+      tables before and after, per the refactor-validation rule
+
+## Invariants
+
+- Additive only: no count, share, or statistic in any deliverable changes.
+- Phase separation: the manuscript build never triggers Phase 1.
+- `in_v1` reproducibility is preserved.
+
+## Exit criteria
+
+- [ ] Author picks option 1, 2, or 3
+- [ ] If 1: the layer's keywords carry their provenance in the corpus, and the
+      codebook reflects it
+- [ ] If 2: the codebook description no longer promises values the deposit
+      does not carry

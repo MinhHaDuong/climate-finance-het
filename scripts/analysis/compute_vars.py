@@ -55,12 +55,13 @@ DOC_VARS = {
         #   embedding-generation
         "cite_coverage_core_pct",
         "cite_cov_cryst_pct",
-        "cite_cov_post2015_of_doi_pct",
         "cite_cov_post2015_pct",
-        "cite_cov_pre2007_of_doi_pct",
         "cite_cov_pre2007_pct",
-        "cite_doi_post2015_pct",
-        "cite_doi_pre2007_pct",
+        # The four DOI-carriage vars (cite_doi_{pre2007,post2015}_pct and
+        # cite_cov_{pre2007,post2015}_of_doi_pct) left with 0332's cut of the
+        # gradient-mechanism sentences; the three period coverages above stay.
+        # compute_citation_coverage.py still emits all seven — re-add here if
+        # the mechanism argument returns.
         "cite_refined_coverage_pct",
         "cite_refined_rows",
         "cite_total_rows",
@@ -105,12 +106,12 @@ DOC_VARS = {
         "lang_detected_pct",
         "lang_english_pct",
         "lang_non_english_n",
-        # The adaptation-share and chi-square/p details left the paper with
-        # PR #1120's cut pass; only the two finance-journal shares survive in
-        # the literature-confirmation bullet (§1). Re-add here if the bullet
-        # ever regains its test statistics.
-        "lit_sem6_ari",
-        "lit_sem6_n",
+        # Two earlier cuts orphaned lit_* vars, both still emitted upstream:
+        # the adaptation-share and chi-square/p details went with PR #1120,
+        # leaving only the two finance-journal shares in the
+        # literature-confirmation bullet (§1); lit_sem6_ari and lit_sem6_n went
+        # with 0332's §4 cut, since the semantic-cluster paragraph they served
+        # needed an under-review companion paper to interpret.
         "lit_finshare_post_pct",
         "lit_finshare_pre_pct",
         "lit_growth_f",

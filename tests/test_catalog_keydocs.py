@@ -330,6 +330,34 @@ class TestMainEndToEnd:
         assert curated["abstract"] == "Curated abstract."
         assert curated["abstract_provenance"] == "curated"
 
+    def test_keywords_provenance_reaches_the_written_catalog(self, tmp_path,
+                                                             monkeypatch):
+        """The keywords disclosure survives the DataFrame construction.
+
+        build_record() returning keywords_provenance is not enough: main()
+        names the output columns explicitly, so a field absent from that list
+        is dropped between the record and the CSV. The corpus-v2 keydocs
+        catalogs were harvested that way — 242 of 263 key documents carry
+        lexicon-generated keywords whose provenance column is empty in
+        refined_works.csv, and the codebook duly reports it 100% missing.
+        Asserting on the artifact, not the record, is what catches it.
+        """
+        seed = _write_seed(tmp_path, [_entry()])
+        out = tmp_path / "unfccc_works.csv"
+        text = ("UNFCCC SECRETARIAT\n"
+                "Keywords: climate finance, long-term finance\n"
+                + "Body prose continues at length. " * 100)
+        monkeypatch.setattr(ck, "fetch_pdf", lambda *a, **k: "cached")
+        monkeypatch.setattr(ck, "get_document_text", lambda *a, **k: (text, "text"))
+        ck.main(["--input", seed, "--output", str(out),
+                 "--source-name", "unfccc", "--fetch",
+                 "--pool-dir", str(tmp_path)])
+        df = pd.read_csv(str(out), dtype=str, keep_default_na=False)
+        assert "keywords_provenance" in df.columns
+        row = df.iloc[0]
+        assert row["keywords"] == "climate finance, long-term finance"
+        assert row["keywords_provenance"] == "extracted"
+
 
 class TestRealSeeds:
     """The committed seed files are valid and dedup-safe against the
