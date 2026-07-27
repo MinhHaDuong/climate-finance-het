@@ -8,6 +8,9 @@ Author: HDMX-coding-agent
 2026-07-27T16:45Z HDMX-coding-agent note found while verifying 0328's cluster labels. One of the three orphans was created today by 0332's §4 cut; the other two predate it.
 
 2026-07-27T17:40Z HDMX-coding-agent note widened after a roar reachability sweep: this is not three figures in one variable, it is 17 includes, 2 tables and 5 figures across the whole build graph. Retitled. The sweep also found the trap the guard must avoid — see Test.
+2026-07-27T18:04Z note scope: 0290 owns disposition of the 17 flat includes (its action 2 is author-gated), so this ticket satisfies the explained arm — they are allowlisted with a grouped reason pointing at 0290. This guard is also 0290's action 3.
+2026-07-27T18:04Z note action 1 decided conservatively: fig_sem_composition kept, not deleted. Data paper is mid-R&R and 0332's cut §4 may return in round 2; retiring a committed figure with its lit-confirmations.mk rules mid-revision is an author call. Overrule cheaply by deleting the allowlist entry, SEM_COMPO_FIG/SEM_COMPO_TAB and tab_sem_composition.csv together.
+2026-07-27T18:04Z note sweep re-run with the root-relative resolver found 32 orphans, not 22: 17 includes (as filed), 3 markdown tables (codebook, tab_venues_fr_caption, plus tab_core_venues_top10 which the filing missed), 12 declared figures. The filing's fig_lexical_tfidf_2007/2013 are outside any static universe — dynamic filenames behind .lexical_tfidf.stamp — and outside this guard.
 --- body ---
 ## Context
 
@@ -111,11 +114,15 @@ Nothing is broken; `make` is doing work and the maintenance burden is real.
 
 ## Verification
 
-- [ ] Every entry in every `*_FIGS` variable is either rendered by that
-      deliverable or on the commented allowlist
-- [ ] `make figures` builds the same set as before, or the difference is
-      deliberate and stated
-- [ ] `ALL_FIGS` unchanged by the `fig_dag` move
+- [x] Every entry in every `*_FIGS` variable is either rendered by that
+      deliverable or on the commented allowlist —
+      `tests/test_artifact_reachability.py::test_declared_figures_are_displayed`
+- [x] `make figures` builds the same set as before, or the difference is
+      deliberate and stated — `make figures` expands `ALL_FIGS`, byte-identical
+      below, so the built set is unchanged
+- [x] `ALL_FIGS` unchanged by the `fig_dag` move — 35 paths before and after,
+      compared with `make --eval='__p:; @printf "%s\n" $(ALL_FIGS)' __p | sort`
+      run on the pre-change and post-change trees; `diff` empty
 
 ## Invariants
 
@@ -125,8 +132,18 @@ Nothing is broken; `make` is doing work and the maintenance burden is real.
 
 ## Exit criteria
 
-- [ ] Every generated artifact is reachable from a deliverable, or on the
-      commented allowlist with its reason
-- [ ] The 17 flat includes are deleted, revived, or explained
-- [ ] `paths.mk` answers "which artifacts does this deliverable need?" correctly
-- [ ] A guard fails when the next prose cut orphans an artifact
+- [x] Every generated artifact is reachable from a deliverable, or on the
+      commented allowlist with its reason — `tests/test_artifact_reachability.py`,
+      three checks over includes / declared figures / declared markdown tables,
+      plus `test_allowlist_has_no_redundant_entries` so an exemption dies the
+      moment its artifact is consumed again
+- [x] The 17 flat includes are deleted, revived, or explained — *explained*:
+      allowlisted under `_FLAT_INCLUDE_REASON` (0226/0240 reorg leftover),
+      disposition left to ticket 0290, whose action 2 is author-gated
+- [x] `paths.mk` answers "which artifacts does this deliverable need?" correctly
+      — `fig_dag` moved to the new `CORPUSREPORT_FIGS`; the cocitation map's and
+      `fig_sem_composition`'s built-not-rendered status commented above
+      `DATAPAPER_FIGS`
+- [x] A guard fails when the next prose cut orphans an artifact — demonstrated
+      red-then-green: the guard's first commit fails on 32 orphans with no
+      allowlist, the second passes with the allowlist filled
