@@ -11,7 +11,7 @@ from html import escape
 
 import pandas as pd
 import pytest
-from _gfm_render import cell_texts, render_gfm, require_pandoc, row_with
+from _qmd_render import cell_texts, render_qmd, require_pandoc, row_with
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "figures"))  # 0255: moved figures entry points
@@ -204,8 +204,8 @@ class TestKeydocsSourcesPreV2Data:
 # A pipe in a source label is not a hypothetical the emitter gets to rule out:
 # `SOURCE_META` is edited by hand and its labels are free text. The shape is the
 # one that already shipped twice — 0325 in the deposit codebook, 0339 in both
-# venue tables — where a raw `|` ends the cell and GFM drops the overflow
-# instead of erroring.
+# venue tables — where a raw `|` ends the cell and the renderer drops the
+# overflow instead of erroring.
 PIPE_SOURCE = "OECD DAC | CRS key documents"
 PIPE_TOTAL = "TOTAL | all sources"
 
@@ -233,7 +233,7 @@ def _render(summary: pd.DataFrame, tmp_path) -> str:
 
     output = tmp_path / "tab_corpus_sources.md"
     _write_md_table(summary, str(output), _CAPTION)
-    return render_gfm(output.read_text(encoding="utf-8"), tmp_path)
+    return render_qmd(output.read_text(encoding="utf-8"), tmp_path)
 
 
 @pytest.mark.integration
