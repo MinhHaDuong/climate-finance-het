@@ -249,6 +249,11 @@ corpus-validate: $(REFINED)
 # The periodised coverage metric is computed once, here, and rendered by the
 # export script below — two computations of one number is how the v1.0 prose
 # drifted (ticket 0317).
+# Verification statistics the data paper's §2 quotes (ticket 0320) — flattened
+# from the QA report so the prose reads vars, never hand-typed literals.
+deliverables/_shared/tables/tab_citation_verification.csv: scripts/analysis/compute_citation_verification.py scripts/utils.py deliverables/_shared/tables/qa_citations_report.json
+	$(PYTHON) $< --output $@
+
 deliverables/_shared/tables/tab_citation_coverage_periods.csv: scripts/analysis/compute_citation_coverage.py scripts/utils.py $(CONFIG) $(REFINED) $(CITATIONS)
 	$(PYTHON) $< --output $@
 
@@ -285,6 +290,7 @@ deliverables/_shared/tables/codebook.md: scripts/figures/export_codebook.py scri
 
 corpus-tables: deliverables/_shared/tables/tab_corpus_sources.csv deliverables/_shared/tables/tab_corpus_sources.md \
                deliverables/_shared/tables/tab_citation_coverage_periods.csv \
+               deliverables/_shared/tables/tab_citation_verification.csv \
                deliverables/_shared/tables/tab_citation_coverage.md \
                deliverables/_shared/tables/tab_reference_counts.csv \
                deliverables/_shared/tables/tab_languages.md \
@@ -300,6 +306,7 @@ $(COMPUTED_STATS) &: scripts/analysis/compute_vars.py scripts/utils.py $(REFINED
 		$(DERIVED)/tab_bimodality.csv $(DERIVED)/tab_bimodality_core.csv \
 		$(DERIVED)/tab_axis_detection.csv \
 		deliverables/_shared/tables/tab_citation_coverage_periods.csv \
+		deliverables/_shared/tables/tab_citation_verification.csv \
 		$(wildcard $(UNIFIED)) \
 		$(wildcard $(DATA_DIR)/corpus_audit.csv) \
 		$(wildcard $(DATA_DIR)/embeddings.npz) \

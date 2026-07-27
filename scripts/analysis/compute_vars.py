@@ -63,10 +63,16 @@ DOC_VARS = {
         "cite_refined_coverage_pct",
         "cite_refined_rows",
         "cite_total_rows",
+        "complete_captured_n",
+        "complete_captured_pct",
+        "complete_ci_lower_pct",
+        "complete_ci_upper_pct",
+        "complete_total_n",
         "corpus_core",
         "corpus_core_threshold",
         "corpus_multi_source",
         "corpus_multi_source_pct",
+        "corpus_no_doi_pct",
         "corpus_raw",
         "corpus_removal_pct",
         "corpus_sources",
@@ -118,6 +124,11 @@ DOC_VARS = {
         "refs_p95",
         "refs_zero_n",
         "refs_zero_share_pct",
+        "verify_ci_lower_pct",
+        "verify_ci_upper_pct",
+        "verify_confirmed_pct",
+        "verify_sample_n",
+        "verify_unconfirmed_n",
     ],
     "multilayer-detection": [
         "bim_corr",
@@ -489,6 +500,31 @@ def citation_stats(v):
                 )
 
 
+def citation_verification_stats(v):
+    """Crossref verification statistics from tab_citation_verification.csv.
+
+    0320's Phase-2 artifact, quoted by the data paper's §2 quality paragraph
+    (RDJ-26561 R1-13). Percentages carry one decimal because the confidence
+    bounds are the point of the sentence: rounding 94.4 to 94 would widen the
+    reported interval, and rounding 98.4 to 98 would narrow it.
+    """
+    df = _read_csv("tab_citation_verification.csv")
+    if df is None:
+        return
+    m = dict(zip(df["metric"], df["value"]))
+    v["verify_sample_n"] = _int(m["verify_sample_n"])
+    v["verify_unconfirmed_n"] = _int(m["verify_unconfirmed_n"])
+    v["verify_confirmed_pct"] = _pct(m["verify_confirmed_pct"])
+    v["verify_ci_lower_pct"] = _pct(m["verify_ci_lower_pct"])
+    v["verify_ci_upper_pct"] = _pct(m["verify_ci_upper_pct"])
+    if "complete_captured_pct" in m:
+        v["complete_captured_n"] = _int(m["complete_captured_n"])
+        v["complete_total_n"] = _int(m["complete_total_n"])
+        v["complete_captured_pct"] = _pct(m["complete_captured_pct"])
+        v["complete_ci_lower_pct"] = _pct(m["complete_ci_lower_pct"])
+        v["complete_ci_upper_pct"] = _pct(m["complete_ci_upper_pct"])
+
+
 def citation_coverage_period_stats(v):
     """Periodised citation coverage from tab_citation_coverage_periods.csv.
 
@@ -503,6 +539,13 @@ def citation_coverage_period_stats(v):
     if df is None:
         return
     m = dict(zip(df["metric"], df["value"]))
+    # Share of corpus works carrying no DOI. Quoted twice in §3 as the reason
+    # the citation graph undercounts; hand-typed it had already rotted once
+    # (28% -> 24%) across a rebuild.
+    if m.get("all_n_works"):
+        v["corpus_no_doi_pct"] = _pct(
+            100 * (1 - m["all_n_with_doi"] / m["all_n_works"]), 0
+        )
     for period, key in (("pre2007", "p1"), ("cryst", "p2"), ("post2015", "p3")):
         v[f"cite_cov_{period}_pct"] = _pct(m[f"{key}_share_covered"], 0)
         v[f"cite_doi_{period}_pct"] = _pct(m[f"{key}_share_with_doi"], 0)
@@ -618,6 +661,7 @@ def main():
     pca_stats(v)
     citation_stats(v)
     citation_coverage_period_stats(v)
+    citation_verification_stats(v)
     filter_stats(v)
     reference_count_stats(v)
     dedup_stats(v)

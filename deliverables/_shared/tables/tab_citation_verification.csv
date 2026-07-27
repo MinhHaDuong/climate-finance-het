@@ -1,0 +1,17 @@
+metric,value
+verify_sample_n,300.0
+verify_tested_n,300.0
+verify_confirmed_n,291.0
+verify_unconfirmed_n,9.0
+verify_errors_n,0.0
+verify_confirmed_pct,97.0
+verify_ci_lower_pct,94.3977
+verify_ci_upper_pct,98.4138
+verify_unconfirmed_pct,3.0000000000000027
+complete_sample_n,300.0
+complete_total_n,6119.0
+complete_captured_n,6016.0
+complete_missed_n,103.0
+complete_captured_pct,98.3167
+complete_ci_lower_pct,97.9627
+complete_ci_upper_pct,98.6101

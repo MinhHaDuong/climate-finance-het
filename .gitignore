@@ -74,6 +74,10 @@ deliverables/_shared/tables/*
 # this table, and it carries both denominators so the archived record shows
 # which one the prose used (ticket 0317).
 !deliverables/_shared/tables/tab_citation_coverage_periods.csv
+# Crossref verification statistics quoted in the data paper's quality
+# paragraph (R1-13); commit the artifact so every quoted value has an
+# archived record (ticket 0320).
+!deliverables/_shared/tables/tab_citation_verification.csv
 # Literature confirmations quoted in the data paper's review bullets
 # (ED-02/R1-18, ticket 0310); commit the artifacts so every quoted statistic
 # has an archived, deterministic record.
