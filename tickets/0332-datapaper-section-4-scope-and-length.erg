@@ -1,0 +1,137 @@
+%erg 0.1
+Title: Section 4 reads as a research article, not dataset validation — and it is where the word budget is
+Created: 2026-07-27
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-07-27T11:00Z HDMX-coding-agent created
+2026-07-27T11:00Z HDMX-coding-agent note child of 0274. Raised by 3 of 4 external panel reviewers. Marked needs-human: cutting §4 is an author call, and it deletes work landed earlier today (0317's periodised coverage paragraph, 0320's verification numbers).
+2026-07-27T12:05Z HDMX-coding-agent note Action 2 corrected: the field-history statistics (Chow break, 17% growth, cross-pole z) are in §1's replication bullets (data-paper.qmd:57-59), not §4, so the §4 cut does not free them. Split into 2(i) §4 and 2(ii) §1, and the budget rationale no longer credits the §4 cut with §1's words. Added the 0327 sequencing note — §4 removal precedes 0327's table, per the remove-whole-before-condensing rule.
+
+--- body ---
+## Context
+
+Three of four external reviewers (2026-07-27 panel) said §4 does something a
+data paper should not: it makes field-history claims. openai/gpt-5.5
+(student): *"Section 4 sometimes looks like findings from a separate research
+article rather than dataset validation."* openai/gpt-5.5 (grinchy) put it
+harder — the section *"risks laundering corpus-construction artifacts as
+field history"*, because §2.1 itself concedes the keyword taxonomy is
+retrospective and "embeds the negotiation calendar in the harvest itself".
+
+Figure 1's growth curve is the exposed case. Annual publication growth may
+reflect OpenAlex coverage expansion, DOI adoption, working-paper indexing
+changes, English terminology drift, publication lag, post-2015 keyword
+choices, retained adjacent green-finance literature, or uneven early grey
+retrieval — before it reflects anything about the field. The paper reports a
+2015 structural break and 17% post-2015 annual growth without adjusting for
+any of them. Those two statistics are in §1, not §4 — see Action 2(ii).
+
+Specific §4 problems the panel named:
+- Figure 3's caption periods ("Before / Crystallisation / Disputes") disagree
+  with Figure 1's ("Established field" for 2015–2024).
+- The Kyoto/CDM cluster grows from 2% pre-2007 to 20% post-2015, which is
+  counterintuitive for a Kyoto-era mechanism and suggests the TF-IDF label
+  misdescribes the cluster.
+- The adjusted Rand index is reported "over 8,315 works" with no explanation
+  of why 8,315 and not 33,344.
+- §4 leans on an under-review companion study to interpret its own
+  clustering. A data paper should not require an unpublished paper to read.
+- Figure 2 is captioned at "full-corpus scale" but maps 13,112 of 33,344
+  works (see 0333).
+
+**This is also the bulk of the length answer.** The RDJ4HSS Data Paper target
+is 2,500 words and the manuscript is over. Per the cutting rule, whole removal
+comes before condensation — and §4 is the passage a referee would cut, on
+independent grounds. 0274's cut plan already contemplated removing the
+coverage paragraph whole.
+
+Budget the two sections separately. §4 is where the words are, but the
+field-history *statistics* are three bullets in §1 (Action 2(ii)), so cutting
+§4 frees §4's words and nothing more. Do not credit the §4 cut with text it
+will not remove.
+
+**Sequencing against 0327.** 0327 adds a CONSORT-style flow table to the same
+document under the same 2,500-word budget. Per the cutting rule — remove whole
+before you condense — this ticket's §4 removal runs *first*, so 0327's table
+lands in a document already at or under target rather than forcing a
+condensation pass afterwards. This ticket owns the budget guard; 0327 checks
+against it.
+
+**Honest note on cost.** Cutting §4 deletes work merged today: 0317's
+periodised citation-coverage paragraph (40/47/69% with the DOI-carriage
+mechanism) and part of 0320's verification macros. Those were the right fixes
+*given the paragraph exists*; three reviewers say the paragraph should not
+exist in a data paper. Sunk cost is not a reason to keep it. The scripts and
+generated tables stay regardless — only the prose is at stake, and the
+numbers remain available for the companion work.
+
+## Relevant files
+
+- `deliverables/data-paper/data-paper.qmd` — §4 in full, Figures 1–3
+- `deliverables/data-paper/data-paper-vars.yml` — the §4 macros
+- `scripts/analysis/compute_citation_coverage.py` — 0317's output (keep)
+- `scripts/figures/export_citation_coverage.py` — renders from the CSV (keep)
+- `deliverables/data-paper/revision-rdj26561/ledger.dedup.jsonl` — check no
+  referee remark loses its only support to the cut
+
+## Actions
+
+1. **Author decision**: cut §4 to dataset-validation scope, or defend it as
+   demonstration-of-reuse. Recommend cutting — it answers three reviewers and
+   the word budget with one edit.
+2. If cutting: the cut spans two sections. Keep them separate — only part (i)
+   is inside §4.
+
+   **(i) §4 — rank and remove whole, in this order:** (a) the
+   companion-study-dependent cluster interpretation, (b) the
+   citation-coverage gradient paragraph, (c) Figure 1's periodisation bands
+   and the period narrative carried in its caption. Then stop; do not
+   condense what survives until the budget is met.
+
+   **(ii) §1 — a separate decision, not freed by the §4 cut.** The
+   field-history statistics live in the Introduction's replication bullets
+   (`data-paper.qmd:57–59`: the `lit_growth_f` / `lit_growth_p` Chow test,
+   `lit_growth_post_pct` for 17% annual growth, `lit_poles_z` for the
+   cross-pole result), not in §4 prose. Cutting §4 leaves every one of them
+   standing. They are also the paper's demonstration that the corpus is
+   reusable, so removing them costs something the §4 cut does not — decide
+   them on their own merits. Coordinate with 0335, which covers how these
+   statistics are reported if they are kept.
+3. Keep as validation, reframed in one or two sentences each: temporal
+   extent, source composition, language composition, network connectivity.
+   These are dataset *properties*, not findings.
+4. Check every removal against the ledger — no referee remark and no
+   load-bearing claim may lose its only support.
+5. Fix, in whatever survives: the Figure 1 / Figure 3 period-label
+   disagreement, the 8,315 denominator, and the Kyoto/CDM cluster label
+   (inspect the member works before trusting the TF-IDF terms).
+6. Displaced is not deleted: the removed analysis moves to the companion
+   work or the technical report, with a one-line pointer left behind.
+
+## Test
+
+- Red first: a word-count guard asserting the deliverable is at or under the
+  2,500-word target (excluding references and captions), so the budget is
+  mechanically enforced rather than eyeballed.
+- A guard asserting Figure 1's and Figure 3's period labels come from a
+  single source of truth in config, not two hand-typed caption strings.
+- Ledger coverage check re-run after the cut.
+
+## Verification
+
+- [ ] Word count at or under target
+- [ ] No field-history claim survives without the sensitivity analysis it needs
+- [ ] Period labels agree across figures
+- [ ] Ledger coverage check clean after the cut
+
+## Invariants
+
+- No referee remark loses its only supporting passage.
+- The Phase-2 scripts and generated tables are untouched by the prose cut.
+
+## Exit criteria
+
+- [ ] §4 validates the dataset; it does not argue about the field
+- [ ] The manuscript meets the RDJ4HSS Data Paper length target

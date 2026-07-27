@@ -1,0 +1,101 @@
+%erg 0.1
+Title: "Subsumes 89.3% of Carè and Weber" compares queries, not corpora; and the grey-literature layer is 1.5% of the corpus
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T11:00Z HDMX-coding-agent created
+2026-07-27T11:00Z HDMX-coding-agent note child of 0274. Raised by 2 of 4 external panel reviewers. Two claim-calibration fixes in the same editing pass; both are prose-only.
+
+--- body ---
+## Context
+
+Two claims in §1 and §5 outrun their evidence. Both are cheap to fix and
+expensive to leave — a referee who catches an overclaim discounts every
+other claim.
+
+**Claim 1 — the prior-mapping comparison.** §1 reports subsuming 89.3% of
+the works retrieved for Carè and Weber's query, 91.0% for Shang and Jin's,
+and 40.1% for Maria et al.'s. But the comparison replicates *their queries
+against OpenAlex*, whereas those studies used Scopus or Web of Science. That
+measures OpenAlex coverage, query translation fidelity, DOI availability, and
+title matching — not whether this corpus subsumes their corpora. The 40.1%
+figure especially: a reader cannot tell whether it means poor coverage of
+Maria et al. or a query that translated badly.
+
+This was already the subject of ticket 0289 (verify/strengthen the comparison
+to prior bibliometric mappings). The panel's contribution is naming the
+inferential gap precisely: **"subsumes" is the wrong verb** for a query-level
+approximation.
+
+**Claim 2 — the grey-literature layer.** The Abstract says the dataset
+combines academic databases, institutional repositories, and grey literature,
+"enabling broader coverage than single-source bibliometric studies". Table 2
+gives 210 refined grey-literature records, 230 UNFCCC key documents, and 33
+OECD DAC key documents — together under 1.5% of the corpus. The grey source
+is "17 curated reports + World Bank repository", which is a curated selection,
+not a systematic harvest: it excludes national institutions, central banks,
+regional development banks, NGOs, foundations, research institutes, and
+non-English institutional publications. §2.3 acknowledges some of this; the
+Abstract and Conclusion do not.
+
+The panel also pressed on "key documents": *key according to whom, selected
+how, reproducible how?* 0288 recorded selection criteria; they never reached
+the prose (shared action with 0329).
+
+Note that 0281 and 0288 already extended this layer deliberately, and the
+author's decision was to curate rather than harvest. The fix is not more
+sources — it is naming the layer honestly.
+
+## Relevant files
+
+- `deliverables/data-paper/data-paper.qmd` — Abstract, §1, §2.1, §5, Tables 1–2
+- `tickets/0289-*.erg` — the prior-mapping comparison ticket (coordinate)
+- `tickets/0288-*.erg` — key-documents selection criteria, recorded in the log
+- `tickets/0281-*.erg` — the grey-literature boundary decision
+- `deliverables/_shared/tables/` — the overlap-comparison table
+
+## Actions
+
+1. Replace "subsumes" with an accurate verb, and state in the same sentence
+   that the comparison replicates the published queries against OpenAlex
+   rather than against the studies' retrieved records. One clause.
+2. Report the matching rule used (DOI? title+year?) and, if cheap, a
+   false-match spot check. State the 40.1% case's likely cause rather than
+   leaving it hanging — a low number the authors cannot explain reads worse
+   than a low number they can.
+3. Rename the grey layer to what it is — "selected institutional documents"
+   or similar — in the Abstract, §2.1, and Table 1. Keep "grey literature"
+   only where the World Bank repository harvest genuinely applies.
+4. Move the 1.5% share into the text near the claim, not only into Table 2.
+   A quantified modest claim survives review; an unquantified broad one does
+   not.
+5. State the key-documents selection criteria from 0288's log (shared with
+   0329 — write once, reference twice).
+6. In the Conclusion, replace the coverage-breadth claim with what the layer
+   actually buys: institutional vocabulary and negotiation-record material
+   absent from academic indexes.
+
+## Test
+
+- Prose guard (negative polarity): the word "subsumes" does not appear in
+  the deliverable.
+- A guard asserting the grey-literature share is a macro, not a literal, and
+  appears within the Abstract's or §1's claim sentence.
+- A guard asserting Table 1's label for the layer matches the Abstract's.
+
+## Verification
+
+- [ ] The prior-mapping comparison states its own method's limits
+- [ ] The institutional-documents layer is named and quantified where claimed
+- [ ] Key-documents selection criteria appear in the paper
+
+## Invariants
+
+- No new sources are added by this ticket; 0281 and 0288 settled the layer's
+  extent. This is a naming and calibration pass only.
+
+## Exit criteria
+
+- [ ] No claim in the Abstract or Conclusion exceeds what Tables 1–2 show
+- [ ] 0289's comparison is reported as the approximation it is
