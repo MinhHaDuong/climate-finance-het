@@ -28,15 +28,35 @@ Two kinds of input need different proof of life:
   them on disk would make this guard fail for anyone who has not run the full
   pipeline, so the check is that a Make rule still names them.
 
-So the invariant is: *every declared archive input either exists on disk or is
-named by a Make rule.* A renamed or moved asset satisfies neither and fails.
+Ticket 0384 scoped the second half per archive. Matching against every Makefile
+in the repo at once resolves any archive's artifact for any archive, so the
+manuscript array could name the data paper's `fig_bars.png` — four characters
+from its own `fig_bars_v1.png` — and stay green. Existence on disk cannot
+separate them either: on a machine that has run the pipeline, both are there.
+What does separate them is ownership. `paths.mk` declares one figure list and
+one include list per document, and `tests/test_deliverable_artifacts.py` keeps
+both honest against each `.qmd`'s real include closure, so a document archive
+may ship only the shared artifacts of the document it packages.
+
+So the invariant has two halves:
+
+- a **shared render artifact** (under `deliverables/_shared/figures`, `tables`
+  or `_includes`) declared by a document archive must appear in that document's
+  own `paths.mk` artifact set;
+- every **other** declared input must exist on disk or be named by a Make rule.
+
+Ownership applies to the declared input array, which is the document's render
+manifest. The literal `cp` payload outside it — data products, the reviewer
+Makefile, the reference PDF — is not part of any document's include closure, so
+it gets the second half only.
 """
 
+import functools
 import os
 import re
 
 import pytest
-from _mk_discovery import all_makefiles
+from _mk_discovery import all_makefiles, makefile_constants
 
 pytestmark = pytest.mark.adherence
 
@@ -61,6 +81,36 @@ INPUT_ARRAYS = {
     "datapaper": "DATAPAPER_FILES",
 }
 
+# The `paths.mk` artifact sets that own each document archive's shared render
+# inputs. Naming the variables here rather than deriving them means a renamed
+# list fails loudly — `_owned_artifacts` asserts each one still exists — instead
+# of quietly shrinking the ownership set to nothing.
+#
+# The analysis archive maps to no document: it ships the pipeline itself, and
+# its guarded array holds only `scripts/` entry points, so no include closure
+# describes it. `None` marks that absence, distinct from an empty set.
+ARCHIVE_ARTIFACT_VARS = {
+    "manuscript": ("MANUSCRIPT_FIGS", "MANUSCRIPT_INCLUDES"),
+    "datapaper": ("DATAPAPER_FIGS", "DATAPAPER_INCLUDES"),
+    "analysis": None,
+}
+
+# Where Phase 2 writes the artifacts a document renders. A declared input under
+# one of these is owned by exactly one deliverable; anything else in
+# `deliverables/_shared/` (the bibliography, the CSL) is a tracked asset no
+# `paths.mk` list describes, so it stays on the existence check.
+SHARED_ARTIFACT_DIRS = (
+    "deliverables/_shared/figures/",
+    "deliverables/_shared/tables/",
+    "deliverables/_shared/_includes/",
+)
+
+# `$PROJ_ROOT/` and `${PROJ_ROOT}/` — the one shell variable in these scripts
+# that is statically resolvable, since every build script defines it as the repo
+# root. Stripping it before the run-time-token filter is what brings the two
+# tracked retrieval-protocol tables the data paper deposits under the guard.
+PROJ_ROOT_PREFIX_RE = re.compile(r"^\$\{?PROJ_ROOT\}?/")
+
 # scripts/<optional-subdirs>/<name>.py — matches both flat (scripts/utils.py)
 # and reorg'd (scripts/figures/plot_fig1_bars.py) entry points.
 SCRIPT_PATH_RE = re.compile(r"scripts/(?:[\w-]+/)*[\w.-]+\.py")
@@ -79,13 +129,35 @@ def _read(path):
         return f.read()
 
 
+@functools.lru_cache(maxsize=1)
 def _makefile_text():
     """Concatenated text of every Makefile that could declare an archive input.
 
     Enumerated through the shared helper (ticket 0248) so this guard cannot
-    silently narrow its coverage when a fragment moves.
+    silently narrow its coverage when a fragment moves. Cached: the union is
+    ~107 KB and every parametrized case re-reads it otherwise.
     """
     return "\n".join(p.read_text() for p in all_makefiles())
+
+
+def _owned_artifacts(archive):
+    """The shared render artifacts this archive's document owns, or None.
+
+    None means no document owns the archive — the analysis one — in which case
+    the ownership half of the invariant does not apply.
+    """
+    names = ARCHIVE_ARTIFACT_VARS[archive]
+    if names is None:
+        return None
+    constants = makefile_constants()
+    owned = set()
+    for name in names:
+        assert name in constants, (
+            f"paths.mk no longer defines {name}; the {archive} archive's "
+            "ownership scope would silently shrink to nothing"
+        )
+        owned.update(constants[name].split())
+    return owned
 
 
 def _declared_inputs(archive):
@@ -119,6 +191,12 @@ def _literal_cp_sources(archive):
     Tokens carrying a shell variable or a glob resolve at run time against roots
     this test cannot know, so they are skipped — which also drops every
     destination, since all of them are written under "$TMP".
+
+    `$PROJ_ROOT/` is the exception (ticket 0384): every build script defines it
+    as the repo root, so the remainder is an ordinary repo-relative path. It is
+    stripped before the run-time filter, which is what brings the two tracked
+    retrieval-protocol tables under the guard. Destinations stay skipped —
+    `$TMP` survives the strip and still carries a `$`.
     """
     text = _read(BUILD_SCRIPTS[archive]).replace("\\\n", " ")
     sources = []
@@ -132,6 +210,7 @@ def _literal_cp_sources(archive):
             token = token.strip("\"'")
             if not token or token.startswith("-"):
                 continue  # a cp flag, not a path
+            token = PROJ_ROOT_PREFIX_RE.sub("", token)
             if "$" in token or "*" in token or "?" in token:
                 continue  # resolves at run time
             sources.append(token)
@@ -165,17 +244,29 @@ def _named_by_make(path, makefile_text):
     return re.search(pattern, makefile_text) is not None
 
 
-def _unresolvable(paths, makefile_text):
-    """Paths that neither exist on disk nor are named by a Make rule.
+def _unresolvable(paths, owned_by=None):
+    """Paths the named archive may not legitimately declare.
 
-    `exists` rather than `isfile`: the analysis archive copies the bundled
-    `libs/openalex-corpus` package directory wholesale.
+    `owned_by` is the archive's shared-artifact ownership set, or None when no
+    ownership applies. A path under `SHARED_ARTIFACT_DIRS` is judged by
+    membership alone — never by disk existence, which on a machine that has run
+    the pipeline resolves every paper's artifacts equally and so cannot tell
+    `fig_bars.png` from `fig_bars_v1.png`.
+
+    Everything else: `exists` rather than `isfile`, because the analysis archive
+    copies the bundled `libs/openalex-corpus` package directory wholesale.
     """
-    return sorted({
-        p for p in paths
-        if not os.path.exists(os.path.join(REPO, p))
-        and not _named_by_make(p, makefile_text)
-    })
+    makefile_text = _makefile_text()
+    missing = set()
+    for path in paths:
+        if owned_by is not None and path.startswith(SHARED_ARTIFACT_DIRS):
+            if path not in owned_by:
+                missing.add(path)
+            continue
+        if (not os.path.exists(os.path.join(REPO, path))
+                and not _named_by_make(path, makefile_text)):
+            missing.add(path)
+    return sorted(missing)
 
 
 class TestArchiveScriptPathsResolve:
@@ -189,10 +280,14 @@ class TestArchiveScriptPathsResolve:
         `scripts/compute_clusters.py`, but the file lives at
         `scripts/analysis/compute_clusters.py` post-reorg.
         """
-        missing = _unresolvable(_declared_inputs(archive), _makefile_text())
+        missing = _unresolvable(
+            _declared_inputs(archive), owned_by=_owned_artifacts(archive)
+        )
         assert not missing, (
-            f"build_{archive}_archive.sh declares inputs that neither exist on "
-            f"disk nor are produced by any Make rule (moved or renamed?): {missing}"
+            f"build_{archive}_archive.sh declares inputs that are not this "
+            "archive's to ship: a shared render artifact must be listed in the "
+            "packaged document's own paths.mk set, and every other input must "
+            f"exist on disk or be named by a Make rule. Offenders: {missing}"
         )
 
     @pytest.mark.parametrize("archive", sorted(BUILD_SCRIPTS))
@@ -203,7 +298,7 @@ class TestArchiveScriptPathsResolve:
         `_quarto.yml` retired by the 0226 deliverables/ reorg, so the script
         died before writing a tarball.
         """
-        missing = _unresolvable(_literal_cp_sources(archive), _makefile_text())
+        missing = _unresolvable(_literal_cp_sources(archive))
         assert not missing, (
             f"build_{archive}_archive.sh copies files that neither exist on disk "
             f"nor are produced by any Make rule: {missing}"
@@ -220,6 +315,47 @@ class TestArchiveScriptPathsResolve:
             "Makefile.analysis-manuscript invokes scripts that do not exist at "
             f"the named path: {sorted(missing)}"
         )
+
+    def test_declared_shared_artifacts_belong_to_this_archive(self):
+        """The manuscript array may not name another paper's shared artifact.
+
+        Red before ticket 0384: `_named_by_make` matched against every Makefile
+        in the repo at once, so any archive could name any archive's artifact
+        and still resolve. `fig_bars.png` is the data paper's; the manuscript
+        ships `fig_bars_v1.png`, four characters away.
+        """
+        foreign = "deliverables/_shared/figures/fig_bars.png"
+        assert _unresolvable(
+            [foreign], owned_by=_owned_artifacts("manuscript")
+        ) == [foreign]
+
+    @pytest.mark.parametrize("archive", sorted(BUILD_SCRIPTS))
+    def test_scoping_does_not_reject_an_archives_own_artifacts(self, archive):
+        """Scoping must stay a filter on foreign artifacts, not a new blocker.
+
+        The companion to the test above: over-tightening the ownership check
+        would fail every archive on its own inputs, which is the failure mode a
+        red test on the foreign path alone cannot see.
+        """
+        owned = _owned_artifacts(archive)
+        if owned is None:
+            pytest.skip(f"the {archive} archive ships no document's render inputs")
+        assert owned, f"paths.mk declares an empty artifact set for {archive}"
+        assert _unresolvable(sorted(owned), owned_by=owned) == []
+
+    def test_proj_root_prefixed_cp_sources_are_checked(self):
+        """`$PROJ_ROOT/`-prefixed `cp` sources resolve statically, so check them.
+
+        Red before ticket 0384: any token holding a `$` was dropped as
+        run-time-resolved, which silently exempted the two tracked retrieval
+        protocol tables the data paper deposits.
+        """
+        sources = _literal_cp_sources("datapaper")
+        for name in ("tab_retrieval_protocol.csv", "tab_retrieval_protocol.md"):
+            assert f"deliverables/_shared/tables/{name}" in sources, (
+                f"{name} is a tracked file named by a statically resolvable "
+                f"$PROJ_ROOT/ path, but the guard still skips it: {sources}"
+            )
 
     def test_build_and_makefile_agree_on_entry_points(self):
         """Every entry point the archived Makefile invokes must be copied by the
