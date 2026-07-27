@@ -1,8 +1,9 @@
 """CONSORT-style corpus construction ledger (ticket 0327).
 
-Produces:
-- deliverables/_shared/tables/tab_corpus_flow.csv — one row per pipeline stage
-- deliverables/_shared/tables/tab_corpus_flow.md  — Quarto-includable table
+Produces deliverables/_shared/tables/tab_corpus_flow.csv — one row per pipeline
+stage. Rendering it for Quarto is scripts/figures/export_corpus_flow.py's job:
+compute and export stay separate (architecture.md Phase-2 rule 4), which also
+gives each Make rule a single output.
 
 Each row carries In / Removed / Out, and the stages chain: every stage starts
 where the previous one ended, and the last Out is the refined corpus. The
@@ -15,7 +16,8 @@ missing from the arithmetic. Here the buckets are enumerated explicitly and an
 unrecognised one is a hard error.
 
 Usage:
-    uv run python scripts/analysis/compute_corpus_flow.py --output <path.csv>
+    uv run python scripts/analysis/compute_corpus_flow.py \
+        --output deliverables/_shared/tables/tab_corpus_flow.csv
 """
 
 import glob
@@ -38,13 +40,6 @@ AUDIT_ACTIONS = ("keep", "remove", "deduped")
 # filter that never ran, so no ledger can be built from it — the remedy is to
 # rerun the filter for real, not to add a stage.
 DRY_RUN_ACTION = "would_remove"
-
-CAPTION = (
-    ": Corpus construction ledger. Each stage starts where the previous one"
-    " ended; *In* less *Removed* equals *Out* on every row. The first *In* is"
-    " the pooled source-catalog records, the last *Out* the refined corpus."
-    " {#tbl-flow}"
-)
 
 
 def audit_buckets(audit: pd.DataFrame) -> dict[str, int]:
@@ -135,23 +130,13 @@ def build_flow(
     return pd.DataFrame(rows)
 
 
-def format_md(flow: pd.DataFrame, caption: str = CAPTION) -> str:
-    """Render the ledger as a Quarto-includable markdown table."""
-    lines = [
-        "| Stage | In | Removed | Out |",
-        "|:------|---:|--------:|----:|",
-    ]
-    for _, row in flow.iterrows():
-        lines.append(
-            f"| {row['Stage']} | {int(row['In']):,} | "
-            f"{int(row['Removed']):,} | {int(row['Out']):,} |"
-        )
-    lines += ["", caption, ""]
-    return "\n".join(lines)
-
-
 def latest_merge_report(catalogs_dir: str = CATALOGS_DIR) -> dict:
-    """Read the most recent catalog_merge run report."""
+    """Read the most recent catalog_merge run report.
+
+    Run IDs are ISO-8601 UTC stamps (catalog_merge__20260724T132552Z.json), a
+    fixed-width format whose lexicographic order is its chronological order, so
+    a plain sort picks the latest. Same idiom as compute_vars.dedup_stats.
+    """
     pattern = os.path.join(catalogs_dir, "run_reports", "catalog_merge__*.json")
     reports = sorted(glob.glob(pattern))
     if not reports:
@@ -165,15 +150,6 @@ def latest_merge_report(catalogs_dir: str = CATALOGS_DIR) -> dict:
 
 
 def main(output_csv: str) -> None:
-    # The .md path is derived from --output, so a caller that passes the .md
-    # (a bare $@ under the grouped Make target) would write the CSV to the .md
-    # path and never touch the tracked CSV. Refuse instead of half-building.
-    if not output_csv.endswith(".csv"):
-        raise ValueError(
-            f"--output must name the .csv member, got {output_csv!r}; "
-            "the .md is derived from it"
-        )
-
     audit_path = os.path.join(CATALOGS_DIR, "corpus_audit.csv")
     if not os.path.isfile(audit_path):
         raise FileNotFoundError(
@@ -192,11 +168,6 @@ def main(output_csv: str) -> None:
     flow = build_flow(latest_merge_report(), audit_buckets(audit), refined_n)
     CorpusFlowSchema.validate(flow)
     save_csv(flow, output_csv)
-
-    md_path = os.path.splitext(output_csv)[0] + ".md"
-    with open(md_path, "w") as f:
-        f.write(format_md(flow))
-    log.info("Wrote %s", md_path)
 
 
 if __name__ == "__main__":

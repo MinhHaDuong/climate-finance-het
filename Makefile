@@ -300,23 +300,23 @@ deliverables/_shared/tables/tab_venues.md: scripts/figures/export_tab_venues.py 
 deliverables/_shared/tables/tab_corpus_sources.csv deliverables/_shared/tables/tab_corpus_sources.md &: scripts/figures/export_corpus_table.py scripts/utils.py $(REFINED)
 	$(PYTHON) $< --output deliverables/_shared/tables/tab_corpus_sources.csv
 
-# Corpus construction ledger (ticket 0327). Reads corpus_audit.csv and the
-# latest catalog_merge run report, both Phase-1 artifacts under $(DATA_DIR).
-# They are $(wildcard)ed like the compute_vars prerequisites, which keeps a
-# Phase-2 build from triggering Phase 1 but is NOT a freshness guarantee: on a
-# checkout without corpus data the list expands empty, so make can report the
-# committed table up to date without ever reading the corpus. The script fails
-# loudly when either input is missing; a stale-vs-corpus table is ticket 0344's
-# problem, not something this rule detects.
+# Corpus construction ledger (ticket 0327). Compute and render are separate
+# rules with one output each, so neither can be handed the other's path.
 #
-# --output names the .csv explicitly, never $@: under a grouped target $@ binds
-# to whichever member make was asked for, so `make …tab_corpus_flow.md` would
-# hand the script the .md path and leave the tracked .csv untouched while make
-# marked the whole group updated.
-deliverables/_shared/tables/tab_corpus_flow.csv deliverables/_shared/tables/tab_corpus_flow.md &: scripts/analysis/compute_corpus_flow.py scripts/utils.py \
+# Reads corpus_audit.csv, refined_works.csv and the latest catalog_merge run
+# report. The two Phase-1 artifacts under $(DATA_DIR) are $(wildcard)ed like
+# the compute_vars prerequisites, which keeps a Phase-2 build from triggering
+# Phase 1 but is NOT a freshness guarantee: on a checkout without corpus data
+# the list expands empty, so make can report the committed table up to date
+# without ever reading the corpus. The script fails loudly when an input is
+# missing; a stale-vs-corpus table is ticket 0344's problem, not this rule's.
+deliverables/_shared/tables/tab_corpus_flow.csv: scripts/analysis/compute_corpus_flow.py scripts/utils.py $(REFINED) \
 		$(wildcard $(DATA_DIR)/corpus_audit.csv) \
 		$(wildcard $(DATA_DIR)/run_reports/catalog_merge__*.json)
-	$(PYTHON) $< --output deliverables/_shared/tables/tab_corpus_flow.csv
+	$(PYTHON) $< --output $@
+
+deliverables/_shared/tables/tab_corpus_flow.md: scripts/figures/export_corpus_flow.py scripts/utils.py deliverables/_shared/tables/tab_corpus_flow.csv
+	$(PYTHON) $< --input deliverables/_shared/tables/tab_corpus_flow.csv --output $@
 
 deliverables/_shared/tables/tab_languages.md: scripts/figures/export_language_table.py scripts/utils.py $(REFINED)
 	$(PYTHON) $< --input $(REFINED) --output $@

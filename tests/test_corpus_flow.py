@@ -22,6 +22,7 @@ import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "analysis"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "figures"))
 
 import compute_corpus_flow
 
@@ -133,44 +134,116 @@ class TestBuildFlow:
         with pytest.raises(ValueError, match="no action"):
             compute_corpus_flow.audit_buckets(audit)
 
+
+class TestRenderTable:
+    """Rendering lives in scripts/figures/export_corpus_flow.py — compute and
+    export stay separate, so each Make rule has a single output."""
+
     def test_markdown_table_carries_a_label_and_thousands_separators(self):
+        import export_corpus_flow
+
         flow = compute_corpus_flow.build_flow(MERGE_REPORT, BUCKETS, REFINED_N)
-        md = compute_corpus_flow.format_md(flow)
+        md = export_corpus_flow.render_table(flow)
         assert "{#tbl-flow}" in md
         assert "1,000" in md
         assert md.count("\n|") >= len(flow)
 
 
-class TestOutputPathContract:
-    """A grouped Make target (`a b &: …`) binds `$@` to whichever member make
-    was *asked* for. A recipe passing bare `$@` to a script that derives its
-    second output from the first therefore writes both files to the requested
-    member's path and leaves the other stale, while make records the whole
-    group as updated. `make …tab_corpus_flow.md` reproduced exactly that."""
+def _logical_lines(text: str):
+    """Makefile lines with backslash continuations joined, keeping the line
+    number of each logical line's first physical line."""
+    joined = []
+    buf, start = None, 0
+    for n, raw in enumerate(text.splitlines(), start=1):
+        if buf is None:
+            buf, start = raw, n
+        else:
+            buf = buf[:-1] + " " + raw.lstrip()
+        if buf.endswith("\\"):
+            continue
+        joined.append((start, buf))
+        buf = None
+    if buf is not None:
+        joined.append((start, buf))
+    return joined
 
-    def test_script_refuses_a_non_csv_output(self):
-        with pytest.raises(ValueError, match="csv"):
-            compute_corpus_flow.main("/tmp/tab_corpus_flow.md")
+
+def grouped_targets_using_bare_at(makefile_text: str) -> list[str]:
+    """Grouped Make targets (`a b &: …`) whose recipe passes a bare `$@`.
+
+    `$@` binds to whichever member make was *asked* for, so a recipe handing it
+    to a script that derives its other outputs writes them all to the requested
+    member's path and leaves the rest stale — while make records the whole
+    group as updated. `make …tab_corpus_flow.md` reproduced exactly that.
+
+    Any grouped target is checked, not only mixed-extension ones: two members
+    sharing an extension are just as substitutable. Continuation lines are
+    joined first, since a multi-line target list is the common shape and a
+    line-at-a-time scan silently skips it. Echo lines are exempt — printing
+    `$@` is not writing to it.
+    """
+    lines = _logical_lines(makefile_text)
+    offenders = []
+    for idx, (_, line) in enumerate(lines):
+        if "&:" not in line or line.lstrip().startswith("#"):
+            continue
+        members = line.split("&:")[0].split()
+        if len(members) < 2:
+            continue
+        for _, recipe in lines[idx + 1:]:
+            if not recipe.startswith("\t"):
+                break
+            body = recipe.lstrip("\t@-")
+            if body.startswith(("echo ", "printf ")):
+                continue
+            if "$@" in recipe:
+                offenders.append(members[0])
+                break
+    return offenders
+
+
+class TestOutputPathContract:
+    """Guard for the grouped-target `$@` trap (see the helper's docstring)."""
 
     @pytest.mark.adherence
     def test_grouped_recipes_name_their_output_explicitly(self):
-        """No `&:` rule whose members differ in extension may use bare `$@`."""
         with open(MAKEFILE) as f:
-            lines = f.read().splitlines()
-
-        offenders = []
-        for i, line in enumerate(lines):
-            if "&:" not in line:
-                continue
-            members = line.split("&:")[0].split()
-            if len({os.path.splitext(m)[1] for m in members}) < 2:
-                continue
-            recipe = [ln for ln in lines[i + 1: i + 6] if ln.startswith("\t")]
-            if any("$@" in ln for ln in recipe):
-                offenders.append(members[0])
+            offenders = grouped_targets_using_bare_at(f.read())
         assert not offenders, (
-            f"grouped targets with mixed extensions using bare $@: {offenders}"
+            f"grouped targets passing a bare $@ to their recipe: {offenders}"
         )
+
+    def test_guard_catches_a_multi_line_target_list(self):
+        """The shape that silently escaped the first version of this guard."""
+        makefile = (
+            "a/one.csv a/two.json \\\n"
+            "\t\tb/three.csv &: \\\n"
+            "\t\tscripts/x.py\n"
+            "\t$(PYTHON) $< --output $@\n"
+        )
+        assert grouped_targets_using_bare_at(makefile) == ["a/one.csv"]
+
+    def test_guard_catches_same_extension_members(self):
+        makefile = "a.csv b.csv &: scripts/x.py\n\t$(PYTHON) $< --output $@\n"
+        assert grouped_targets_using_bare_at(makefile) == ["a.csv"]
+
+    def test_guard_scans_the_whole_recipe_not_a_fixed_window(self):
+        makefile = (
+            "a.csv b.md &: scripts/x.py\n"
+            + "\t@echo step\n" * 8
+            + "\t$(PYTHON) $< --output $@\n"
+        )
+        assert grouped_targets_using_bare_at(makefile) == ["a.csv"]
+
+    def test_guard_ignores_echoed_at_and_plain_targets(self):
+        makefile = (
+            "a.csv b.md &: scripts/x.py\n"
+            "\t@echo building $@\n"
+            "\t$(PYTHON) $< --output a.csv\n"
+            "\nc.csv: scripts/y.py\n"
+            "\t$(PYTHON) $< --output $@\n"
+        )
+        assert grouped_targets_using_bare_at(makefile) == []
 
 
 # ── Generated artifact (slow tier — needs the built table) ───
