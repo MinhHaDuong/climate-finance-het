@@ -1,0 +1,87 @@
+%erg 0.1
+Title: Unresolved crossrefs render as ?@ref with exit 0, and one is live in multilayer-detection
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T19:14Z HDMX-coding-agent created found by the 0363 wrap-up sweep, looking for the same defect class one mechanism over
+
+--- body ---
+## Context
+
+Ticket 0363 closed the `{{< meta >}}` half of a defect class: Quarto writes a
+placeholder into the document, exits 0, warns only on stderr, and no test sees
+it. The wrap-up sweep for siblings found the other half. An unresolved
+crossref renders as the literal `?@fig-name` on exactly those terms.
+
+**One is live today.** `deliverables/multilayer/multilayer-detection.qmd`
+references `@fig-companion-zseries` three times and the figure is defined
+nowhere, so the prose promises what the reader does not get:
+
+- l.114 "the subsampling variance is shown explicitly as a ribbon in
+  @fig-companion-zseries"
+- l.134 "the central sixteen values ... bound the shaded region in
+  @fig-companion-zseries"
+- l.158 "The subsampling ribbon in @fig-companion-zseries exposes whether this
+  bias is large relative to subsampling noise"
+
+The name says where it went: the former `companion-paper.qmd` was retired when
+the method paper became the `multilayer/` pair (`.claude/rules/architecture.md`).
+The figure left with it; the three sentences leaning on it did not.
+
+Confirmed by render, not by grep: `quarto render multilayer-detection.qmd --to
+markdown` exits 0 and emits `?@fig-companion-zseries`.
+
+The two actions below are separable — the prose fix need not wait on the guard,
+nor the guard on the prose.
+
+## Relevant files
+
+- `deliverables/multilayer/multilayer-detection.qmd` — the three references
+- `tests/_qmd_meta.py` — the 0363 scan and render helpers, to extend
+- `tests/test_meta_macro_resolution.py` — the two-guard pattern to follow
+- `deliverables/_shared/figures/` — whether a z-series ribbon figure still exists
+
+## Actions
+
+1. Decide what the three sentences should say. Either the figure returns (does a
+   z-series ribbon figure still exist, or can a `plot_*` script produce one?) or
+   the sentences are rewritten to state the subsampling ribbon without pointing
+   at a figure. An author call on what the paper claims the reader can verify,
+   not a mechanical fix.
+2. Extend the 0363 guard to the crossref class. The render oracle already holds
+   the rendered text, so this is one more pattern over the same output:
+   `?@[A-Za-z0-9_:-]+` alongside `?meta:`. The static side gets no equivalent —
+   resolving a crossref means knowing every label Quarto's own filter defines,
+   including labels generated inside an `{{< include >}}` — so the render oracle
+   carries this one alone, and the ticket should say so rather than leave the
+   asymmetry looking like an oversight.
+3. Cover undefined citation keys in the same pass. They render as `**@key?**`;
+   the sweep found none today, which makes now the cheap time to guard them.
+
+## Test
+
+- Red first, on a synthetic document: reference `@fig-does-not-exist`, render,
+  assert the guard fails. It must fail on that before it is trusted anywhere.
+- Assert the guard passes on every deliverable once action 1 lands. Until then
+  multilayer-detection is a known instance, and 0363's convention applies: pin
+  the exact expected placeholder set rather than mark an xfail, so a second
+  unresolved reference in the same document cannot hide behind the first.
+
+## Verification
+
+- [ ] A synthetic `@fig-does-not-exist` makes the suite fail
+- [ ] `?@fig-companion-zseries` no longer appears in a rendered multilayer-detection
+- [ ] The guard reads rendered output, not the source
+
+## Invariants
+
+- No reader of any deliverable sees a `?@` or `?meta:` placeholder.
+- The guard must be able to fail (0327, 0363).
+- The render oracle keeps skipping cleanly where a generated include is not
+  built; it must not become a hard failure on a fresh worktree.
+
+## Exit criteria
+
+- [ ] An unresolved crossref cannot reach a rendered deliverable without a test
+      failing, and multilayer-detection has none
