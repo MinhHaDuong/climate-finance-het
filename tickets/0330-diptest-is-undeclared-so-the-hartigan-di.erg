@@ -1,0 +1,128 @@
+%erg 0.1
+Title: diptest is undeclared so the Hartigan dip test never runs
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T11:02Z HDMX-coding-agent created
+2026-07-27T11:10Z HDMX-coding-agent note Found by the roar sweep after PR #1127 (ticket 0314) hard-guarded the same class at Flag 6
+
+--- body ---
+## Context
+
+Ticket 0314 (merged as PR #1127) turned a silently-skipped pipeline stage into
+a hard error: when `torch` is not importable, `filter_flags_llm.py` now raises
+instead of logging "Flag 6 skipped" and shipping an inflated corpus. The
+post-merge sweep for the same class found one more live instance.
+
+`scripts/analysis/analyze_bimodality.py` imports `diptest` inside a
+`try/except ImportError` and, on failure, emits `log.info("diptest package not
+available, skipping Hartigan's dip test")` and continues. But `diptest` appears
+nowhere in `pyproject.toml` or `uv.lock` — it is not a declared dependency, in
+any group or extra. The import therefore always fails, and the dip test has
+never run in this project.
+
+The consequence is visible in the committed artifact. Every row of
+`data/derived/tables/tab_bimodality.csv` carries an empty `dip_pvalue`:
+
+    embedding           | dip_pvalue = ''  | delta_bic = 1350
+    tfidf_lexical       | dip_pvalue = ''  | delta_bic = 15984
+    unsupervised_PC3    | dip_pvalue = ''  | delta_bic = 1398
+    embedding_1990-2006 | dip_pvalue = ''  | delta_bic = 19
+    embedding_2007-2014 | dip_pvalue = ''  | delta_bic = -59
+    embedding_2015-2024 | dip_pvalue = ''  | delta_bic = 1118
+
+Meanwhile the module docstring advertises the file as containing "Dip test
+p-values, GMM BIC, pole paper counts".
+
+Blast radius is bounded, and no published number is wrong.
+`compute_vars.py::bimodality_stats` reads only `n_efficiency_pole`,
+`n_accountability_pole`, `n_both_poles`, `delta_bic`, `bic_1comp`, `bic_2comp`,
+`embedding_lexical_corr`, and `explained_variance`. It never reads
+`dip_pvalue`, so no manuscript variable derives from the empty column. This is
+a dead advertised output, not a corrupted result — filed at normal severity
+rather than as a correctness emergency.
+
+For contrast, `scripts/_divergence_backend.py` was checked and is not an
+instance: `torch` is a declared extra (`cpu` / `cu130`), the NumPy path is a
+speed fallback producing the same numbers, and `get_backend()` already raises
+`RuntimeError` when the config asks for CUDA and it is absent. That is the
+pattern this ticket wants at the diptest joint.
+
+## Relevant files
+
+- `scripts/analysis/analyze_bimodality.py` — the swallowed ImportError in
+  `_test_bimodality()`, and the per-period `dip_pvalue is not None` guard below it
+- `pyproject.toml` — where the dependency is missing
+- `data/derived/tables/tab_bimodality.csv` — the artifact with the empty column
+- `scripts/analysis/compute_vars.py::bimodality_stats` — the consumer that
+  bounds the blast radius
+- `scripts/filter_flags_llm.py` — the reference hard-guard from ticket 0314
+
+## Decision required
+
+Two defensible resolutions; the author picks.
+
+1. Declare and enforce. Add `diptest` to the appropriate dependency group,
+   `uv lock`, and convert the `except ImportError` into a `raise RuntimeError`
+   in the ticket-0314 idiom (name the install command, name the opt-out flag).
+   The dip test then runs and the column becomes real. Costs a dependency;
+   gains the second bimodality statistic the docstring already promises.
+2. Drop the column. Remove the diptest branch, the `dip_p` field, and the
+   docstring claim. No new dependency; the table stops advertising something it
+   never delivered.
+
+Option 1 is the recommendation: the GMM delta-BIC is a single line of evidence
+for a load-bearing claim (bimodality of the axis score), and Hartigan's dip is
+the standard independent check on exactly that. But it changes what the analysis
+reports, so it is the author's call, not the agent's.
+
+## Test
+
+Red step, and it holds under either option:
+
+    def test_bimodality_dip_column_is_not_silently_empty():
+        """Ticket 0330. Either the dip test runs, or the column is gone."""
+        df = pd.read_csv(TABLES_DIR / "tab_bimodality.csv")
+        if "dip_pvalue" in df.columns:
+            assert df["dip_pvalue"].notna().any(), (
+                "dip_pvalue present but empty in every row - "
+                "diptest is not installed and the skip is silent"
+            )
+
+Fails today (column present, all-empty); passes under either resolution. Mark
+it `slow` if it reads the real derived table.
+
+## Verification
+
+- [ ] The test above is red on current main before the fix
+- [ ] Option 1: `uv run python -c "import diptest"` succeeds, and a regenerated
+      `tab_bimodality.csv` has non-empty `dip_pvalue`
+- [ ] Option 2: no `dip` reference remains in `analyze_bimodality.py`, and the
+      docstring no longer promises dip p-values
+- [ ] No `log.info(... "not available" ...)` remains on a dependency-missing
+      path in this file
+
+## Invariants
+
+- `compute_vars.py::bimodality_stats` emits identical values for every variable
+  it currently produces. This ticket must not move a manuscript number —
+  byte-compare the vars output before and after.
+- `make check-fast` and `make lint` stay green.
+
+## Exit criteria
+
+- [ ] The choice between option 1 and option 2 is recorded in this ticket's log
+- [ ] The chosen resolution is implemented and the test above passes
+- [ ] No silent dependency-missing skip remains in `analyze_bimodality.py`
+
+## See also
+
+- 0314 (closed, PR #1127) — the same class, hard-guarded at Flag 6
+- 0336 — a third silent skip, found independently during the 0297 corpus
+  regeneration: Flag 5 returns "skipped" on every run because the embeddings
+  matrix and the row subset disagree on length. Different root cause (data-shape
+  mismatch, not a missing dependency), same failure mode — a stage that decides
+  corpus membership announces its own absence at INFO and the run continues.
+- 0331 — the standing class guard, so the next undeclared import is caught
+  mechanically instead of by a post-merge sweep
