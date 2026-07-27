@@ -172,19 +172,19 @@ def _apply_language_cache(df, cache_dir):
         """
         return _is_missing(val) or not is_valid_iso639_1(val)
 
-    # Anything usable before either cache is applied came with the record
-    # from its source catalog.
+    # One pass over the column answers both questions: the rows that do NOT
+    # need filling already carried a usable code from their source catalog,
+    # and the rest are exactly the loop's work list (a few thousand of ~28k).
+    needs_filling = df["language"].apply(_needs_filling).astype(bool)
     provenance = pd.Series("", index=df.index, dtype=object)
-    provenance[~df["language"].apply(_needs_filling)] = "source"
+    provenance[~needs_filling] = "source"
 
     def _lookup(cache, doi, sid):
         lang = cache.get(doi, "") if doi else ""
         return lang or cache.get(sid, "")
 
     applied_resolved = applied_detected = 0
-    for idx in df.index:
-        if not _needs_filling(df.at[idx, "language"]):
-            continue
+    for idx in df.index[needs_filling.to_numpy()]:
         doi = normalize_doi(df.at[idx, "doi"])
         sid = str(df.at[idx, "source_id"])
 
