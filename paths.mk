@@ -51,6 +51,7 @@ DATAPAPER_INCLUDES := deliverables/_shared/_includes/corpus-construction.md \
 		deliverables/_shared/_includes/embedding-generation.md \
 		deliverables/_shared/_includes/reproducibility.md \
 		deliverables/_shared/tables/tab_corpus_sources.md \
+		deliverables/_shared/tables/tab_corpus_flow.md \
 		deliverables/_shared/tables/tab_languages.md \
 		deliverables/_shared/tables/tab_variables.md
 

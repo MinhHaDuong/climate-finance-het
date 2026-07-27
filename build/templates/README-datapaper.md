@@ -1,7 +1,7 @@
 # Data paper reproducibility archive
 
 Companion to: Ha-Duong M. (2026) "A Curated Corpus of Climate Finance
-Literature, 1990–2024: Six Sources, Multilingual Retrieval, and Grey
+Literature, 1990–2024: Eight Sources, Multilingual Retrieval, and Grey
 Literature", Research Data Journal for the Humanities and Social Sciences.
 
 Dataset DOI: [10.5281/zenodo.19236130](https://doi.org/10.5281/zenodo.19236130)
@@ -19,12 +19,13 @@ climate-finance-datapaper/
     checksums-data.md5     # Reference checksums for data/
   data/
     inputs/                # Raw data inputs: per-source catalogs, pre-merge
-      *_works.csv                # openalex, istex, bibcnrs, scispace, grey, teaching
+      *_works.csv                # openalex, istex, bibcnrs, scispace, grey,
+                                 # teaching, unfccc, oecd
     products/              # Final data products of this paper
-      climate_finance_corpus.csv # 42,922 works (abstracts stripped)
+      climate_finance_corpus.csv # 43,179 works (abstracts stripped)
       codebook.md                # Data dictionary: per-column type, values, missingness
-      embeddings.npz             # 38,479 multilingual vectors (1024-dim)
-      citations.csv              # 968,871 citation pairs
+      embeddings.npz             # 38,736 multilingual vectors (1024-dim)
+      citations.csv              # 1,375,310 citation pairs
       tab_retrieval_protocol.csv # Per-source query fields, term counts, languages
       tab_retrieval_protocol.md  # The same, plus the grey-literature seed list
 ```

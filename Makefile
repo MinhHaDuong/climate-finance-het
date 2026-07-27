@@ -295,8 +295,28 @@ deliverables/_shared/tables/tab_dedup_error_estimates.csv: scripts/analysis/comp
 deliverables/_shared/tables/tab_venues.md: scripts/figures/export_tab_venues.py scripts/_markdown_table.py scripts/utils.py $(REFINED) $(DERIVED)/tab_pole_papers.csv
 	$(PYTHON) $< --output $@ --pole-papers $(DERIVED)/tab_pole_papers.csv
 
+# --output names the .csv, not $@ — see the tab_corpus_flow rule below for why
+# a bare $@ under a grouped target writes both members to one path.
 deliverables/_shared/tables/tab_corpus_sources.csv deliverables/_shared/tables/tab_corpus_sources.md &: scripts/figures/export_corpus_table.py scripts/utils.py $(REFINED)
+	$(PYTHON) $< --output deliverables/_shared/tables/tab_corpus_sources.csv
+
+# Corpus construction ledger (ticket 0327). Compute and render are separate
+# rules with one output each, so neither can be handed the other's path.
+#
+# Reads corpus_audit.csv, refined_works.csv and the latest catalog_merge run
+# report. The two Phase-1 artifacts under $(DATA_DIR) are $(wildcard)ed like
+# the compute_vars prerequisites, which keeps a Phase-2 build from triggering
+# Phase 1 but is NOT a freshness guarantee: on a checkout without corpus data
+# the list expands empty, so make can report the committed table up to date
+# without ever reading the corpus. The script fails loudly when an input is
+# missing; a stale-vs-corpus table is ticket 0344's problem, not this rule's.
+deliverables/_shared/tables/tab_corpus_flow.csv: scripts/analysis/compute_corpus_flow.py scripts/utils.py $(REFINED) \
+		$(wildcard $(DATA_DIR)/corpus_audit.csv) \
+		$(wildcard $(DATA_DIR)/run_reports/catalog_merge__*.json)
 	$(PYTHON) $< --output $@
+
+deliverables/_shared/tables/tab_corpus_flow.md: scripts/figures/export_corpus_flow.py scripts/utils.py deliverables/_shared/tables/tab_corpus_flow.csv
+	$(PYTHON) $< --input deliverables/_shared/tables/tab_corpus_flow.csv --output $@
 
 deliverables/_shared/tables/tab_languages.md: scripts/figures/export_language_table.py scripts/utils.py $(REFINED)
 	$(PYTHON) $< --input $(REFINED) --output $@
@@ -316,7 +336,7 @@ RETRIEVAL_CONFIG := config/openalex_queries.yaml config/corpus_collect.yaml \
 # rules above: the escaper decides the emitted bytes, so a change there must
 # rebuild this table or the deposit ships the pre-fix rendering.
 deliverables/_shared/tables/tab_retrieval_protocol.csv deliverables/_shared/tables/tab_retrieval_protocol.md &: scripts/figures/export_retrieval_protocol.py scripts/utils.py scripts/_markdown_table.py $(RETRIEVAL_CONFIG)
-	$(PYTHON) $< --output $@
+	$(PYTHON) $< --output deliverables/_shared/tables/tab_retrieval_protocol.csv
 
 # Codebook / data dictionary for the Zenodo package (ticket 0287, R1-19) —
 # missingness is measured on the real corpus, so this needs Phase-1 data.
@@ -324,6 +344,7 @@ deliverables/_shared/tables/codebook.md: scripts/figures/export_codebook.py scri
 	$(PYTHON) $< --output $@
 
 corpus-tables: deliverables/_shared/tables/tab_corpus_sources.csv deliverables/_shared/tables/tab_corpus_sources.md \
+               deliverables/_shared/tables/tab_corpus_flow.csv deliverables/_shared/tables/tab_corpus_flow.md \
                deliverables/_shared/tables/tab_citation_coverage_periods.csv \
                deliverables/_shared/tables/tab_citation_verification.csv \
                deliverables/_shared/tables/tab_citation_coverage.md \
