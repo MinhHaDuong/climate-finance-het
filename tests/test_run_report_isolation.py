@@ -32,11 +32,21 @@ FACADE_MODULE = "utils"
 
 
 def _test_sources():
-    for name in sorted(os.listdir(TESTS_DIR)):
-        if name.startswith("test_") and name.endswith(".py"):
-            path = os.path.join(TESTS_DIR, name)
+    """Every test module, including conftest and nested test directories.
+
+    ``conftest.py`` is the one file most likely to rebind a path constant for a
+    whole package, and a top-level ``listdir`` filtered on ``test_*`` missed
+    both it and any subdirectory.
+    """
+    for root, _dirs, files in os.walk(TESTS_DIR):
+        for name in sorted(files):
+            if not name.endswith(".py"):
+                continue
+            if not (name.startswith("test_") or name == "conftest.py"):
+                continue
+            path = os.path.join(root, name)
             with open(path, encoding="utf-8") as fh:
-                yield name, fh.read()
+                yield os.path.relpath(path, TESTS_DIR), fh.read()
 
 
 def call_time_constants():
@@ -57,8 +67,15 @@ def call_time_constants():
         for fname in files:
             if not fname.endswith(".py"):
                 continue
-            with open(os.path.join(root, fname), encoding="utf-8") as fh:
-                tree = ast.parse(fh.read())
+            path = os.path.join(root, fname)
+            with open(path, encoding="utf-8") as fh:
+                src = fh.read()
+            try:
+                tree = ast.parse(src)
+            except SyntaxError:
+                # A file this interpreter cannot parse is out of scope, and a
+                # discovery helper is the wrong place to fail the suite over it.
+                continue
             for func in ast.walk(tree):
                 if not isinstance(func, (ast.FunctionDef, ast.AsyncFunctionDef)):
                     continue
@@ -97,18 +114,27 @@ def _rebinds_in(node, constants):
             if (isinstance(tgt, ast.Attribute) and tgt.attr in constants
                     and isinstance(tgt.value, ast.Name)):
                 yield tgt.value.id, tgt.attr
-    elif isinstance(node, ast.Call) and (
-            getattr(node.func, "attr", None) == "setattr"
-            or getattr(node.func, "id", None) == "setattr"):
-        args = node.args
-        if len(args) >= 2 and isinstance(args[0], ast.Constant) \
-                and isinstance(args[0].value, str) and "." in args[0].value:
-            mod, _, const = args[0].value.rpartition(".")
-            if const in constants:
-                yield mod, const
-        elif len(args) >= 3 and isinstance(args[0], ast.Name) \
-                and isinstance(args[1], ast.Constant) and args[1].value in constants:
-            yield args[0].id, args[1].value
+        return
+    if not isinstance(node, ast.Call):
+        return
+    name = getattr(node.func, "attr", None) or getattr(node.func, "id", None)
+    if name not in {"setattr", "patch", "object"}:
+        return
+    # setattr accepts its arguments by keyword too, and monkeypatch names them
+    # target/name/value. Reading node.args alone made the keyword form
+    # invisible, which is a guard that can be stepped around by accident.
+    kw = {k.arg: k.value for k in node.keywords}
+    args = list(node.args)
+    first = args[0] if args else kw.get("target")
+    second = args[1] if len(args) > 1 else kw.get("name")
+    if isinstance(first, ast.Constant) and isinstance(first.value, str) \
+            and "." in first.value:
+        mod, _, const = first.value.rpartition(".")
+        if const in constants:
+            yield mod, const
+    elif isinstance(first, ast.Name) and isinstance(second, ast.Constant) \
+            and second.value in constants:
+        yield first.id, second.value
 
 
 def _rebinds_by_scope(tree, constants):
@@ -121,8 +147,12 @@ def _rebinds_by_scope(tree, constants):
     scopes = {}
 
     def visit(node, scope):
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            scope = node.name
+        # Qualified by the enclosing class, not the bare name: two test classes
+        # in one module routinely define identically named methods, and keying
+        # on the name alone would merge their exemptions — the very laundering
+        # this per-scope split exists to prevent, one nesting level down.
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            scope = f"{scope}.{node.name}" if scope != "<module>" else node.name
         for pair in _rebinds_in(node, constants):
             scopes.setdefault(scope, []).append(pair)
         for child in ast.iter_child_nodes(node):
@@ -140,12 +170,22 @@ def _facade_patch_offenders(sources):
     flagged: ``test_dedup_vars`` patches ``compute_vars.CATALOGS_DIR`` and does
     redirect its target, because ``dedup_stats`` passes the directory to
     ``latest_run_report`` as an argument rather than letting it re-import
-    (ticket 0349 made that parameter injectable for exactly this reason). Only
-    ``utils`` is a pure re-export with no reader of its own, so only a rebind
-    there is unambiguously a no-op.
+    (ticket 0349 made that parameter injectable for exactly this reason).
 
     Patching the facade *as well* is fine — code reading the re-export needs it.
     What is not fine is patching only the facade.
+
+    Coverage boundary, stated because the obvious reading is wrong: the facade
+    is not readerless. ``compute_vars`` (:381, :535) and ``plot_alluvial_html``
+    (:85) do function-local ``from utils import <CONST>``, so the mirror-image
+    defect exists — for a constant read at call time off ``utils``, patching
+    ``pipeline_loaders`` is the no-op instead. This guard covers one direction
+    only: constants reached through ``pipeline_loaders``, which is where ticket
+    0346's leak lived. The other direction reads rather than writes DVC data,
+    so it cannot leak the same way, and folding it in would give a guard whose
+    correct patch target flips per constant — a design call, not a widened
+    regex. The assertion below says "patch ``pipeline_loaders.<CONST>`` *too*",
+    additive on purpose, so following it stays safe either way.
     """
     offenders = []
     constants = call_time_constants()
@@ -278,6 +318,34 @@ def test_something(tmp_path):
     u.CATALOGS_DIR = str(tmp_path)
 """
 
+SAMPLE_KEYWORD_SETATTR = """
+import utils
+
+def test_something(tmp_path, monkeypatch):
+    monkeypatch.setattr(target=utils, name="CATALOGS_DIR", value=str(tmp_path))
+"""
+
+SAMPLE_MOCK_PATCH = """
+from unittest import mock
+
+def test_something(tmp_path):
+    with mock.patch("utils.CATALOGS_DIR", str(tmp_path)):
+        pass
+"""
+
+SAMPLE_SAME_NAME_TWO_CLASSES = """
+import pipeline_loaders
+import utils
+
+class TestCorrect:
+    def test_it(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(pipeline_loaders, "CATALOGS_DIR", str(tmp_path))
+
+class TestLeaks:
+    def test_it(self, tmp_path):
+        utils.CATALOGS_DIR = str(tmp_path)
+"""
+
 
 @pytest.mark.adherence
 def test_discovery_is_not_vacuous():
@@ -334,6 +402,32 @@ def test_facade_guard_scopes_the_exemption_to_one_function():
     """
     offenders = _facade_patch_offenders([("cross.py", SAMPLE_CROSS_FUNCTION)])
     assert offenders == ["cross.py:test_leaks: CATALOGS_DIR"], offenders
+
+
+@pytest.mark.adherence
+def test_facade_guard_distinguishes_same_named_methods_in_two_classes():
+    """Qualify the scope by class, or the per-function split leaks one level down.
+
+    Two classes each defining ``test_it`` is ordinary pytest style. Keyed on the
+    bare function name they would share one exemption bucket, and the correct
+    one would launder the leaking one — the file-level laundering this guard
+    already rejects, merely nested.
+    """
+    offenders = _facade_patch_offenders([("two.py", SAMPLE_SAME_NAME_TWO_CLASSES)])
+    assert offenders == ["two.py:TestLeaks.test_it: CATALOGS_DIR"], offenders
+
+
+@pytest.mark.adherence
+def test_facade_guard_sees_past_the_call_shape():
+    """The rebinding shapes differ; the defect does not.
+
+    ``setattr`` takes its arguments by keyword too, and ``unittest.mock`` offers
+    a third spelling. A guard that reads positional ``setattr`` args alone is
+    steppable by accident — nobody writes ``target=`` to evade a check, they
+    write it because the call is long.
+    """
+    assert _facade_patch_offenders([("kw.py", SAMPLE_KEYWORD_SETATTR)])
+    assert _facade_patch_offenders([("mockp.py", SAMPLE_MOCK_PATCH)])
 
 
 @pytest.mark.adherence
