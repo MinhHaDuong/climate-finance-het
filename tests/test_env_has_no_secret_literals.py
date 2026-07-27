@@ -186,6 +186,7 @@ STALE_ENV_CLAIMS = (
     "access to data paths and API keys",
     "secrets like API keys live here",
     "secrets sourced from project .env",
+    "Load .env for GH_TOKEN",
     "not exported into every process",  # the overclaim in the other direction
 )
 
@@ -202,6 +203,7 @@ MECHANISM_DOCS = (
     "Makefile",
     ".claude/rules/git.md",
     ".agent/runbooks/on-start.md",
+    ".claude/hooks/check-reviews.sh",
 )
 
 
