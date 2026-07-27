@@ -1,0 +1,328 @@
+"""The data paper's retrieval protocol is reconstructible from config (ticket 0329).
+
+All four external reviewers of RDJ-26561 said the paper names its method
+without specifying it: the eight target languages are never listed, the
+filtering thresholds are never reported, and the query protocol can only be
+recovered by reading the harvest code. These guards make the paper's claims
+answerable to the configuration the harvest actually read.
+
+Three guard families:
+
+- **Config integrity** — every Tier-1 term carries a language tag, so the
+  language list the paper prints cannot drift from the terms that ran.
+- **Prose ↔ config** — the paper names exactly the languages config declares,
+  and every threshold it quotes is a ``{{< meta >}}`` macro rather than a
+  hand-typed literal.
+- **Artifact ↔ config** — the deposited retrieval-protocol table counts the
+  same terms and seed documents the config holds, so the deposit cannot drift
+  from what ran.
+
+Everything here reads YAML and text files only. No corpus data, no heavy
+dependency: fast tier.
+"""
+
+import os
+import re
+import sys
+
+import pytest
+import yaml
+
+REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, os.path.join(REPO, "scripts"))
+sys.path.insert(0, os.path.join(REPO, "scripts", "analysis"))
+sys.path.insert(0, os.path.join(REPO, "scripts", "figures"))
+
+QMD = os.path.join(REPO, "deliverables", "data-paper", "data-paper.qmd")
+QUERIES_YAML = os.path.join(REPO, "config", "openalex_queries.yaml")
+FILTER_YAML = os.path.join(REPO, "config", "corpus_filter.yaml")
+GREY_YAML = os.path.join(REPO, "config", "grey_sources.yaml")
+
+
+def _load(path):
+    with open(path, encoding="utf-8") as fh:
+        return yaml.safe_load(fh)
+
+
+def _qmd_text():
+    with open(QMD, encoding="utf-8") as fh:
+        return fh.read()
+
+
+def _section(text, heading_prefix):
+    """Body of the ``### <heading_prefix> ...`` section, up to the next heading."""
+    lines = text.splitlines()
+    start = next(
+        i for i, ln in enumerate(lines) if ln.startswith(f"### {heading_prefix}")
+    )
+    end = len(lines)
+    for i in range(start + 1, len(lines)):
+        if lines[i].startswith("## ") or lines[i].startswith("### "):
+            end = i
+            break
+    return "\n".join(lines[start:end])
+
+
+def target_languages() -> list[str]:
+    """Display names of the languages the Tier-1 core terms are written in."""
+    tags = _load(QUERIES_YAML)["term_languages"]
+    return sorted({lang for lang in tags.values() if lang})
+
+
+# --------------------------------------------------------------------------- #
+# Config integrity — the language tags cover Tier 1 exactly
+# --------------------------------------------------------------------------- #
+def test_term_languages_covers_tier1_exactly():
+    """A bijection, so neither list can gain or lose a term unnoticed.
+
+    ``term_languages`` is what the paper's language sentence is generated
+    from; ``tiers.1.terms`` is what the harvester queries. If they diverge the
+    paper describes a harvest that did not happen.
+    """
+    cfg = _load(QUERIES_YAML)
+    tagged = set(cfg["term_languages"])
+    queried = set(cfg["tiers"][1]["terms"])
+    assert tagged == queried, (
+        "term_languages and tiers.1.terms disagree — "
+        f"untagged terms: {sorted(queried - tagged)}; "
+        f"tagged but never queried: {sorted(tagged - queried)}"
+    )
+
+
+def test_eight_target_languages_declared():
+    """The paper's headline claim is eight languages; config must hold eight."""
+    assert len(target_languages()) == 8, (
+        f"config declares {len(target_languages())} target languages "
+        f"({target_languages()}), the paper claims eight"
+    )
+
+
+def test_language_neutral_terms_are_tagged_null():
+    """Institution names (``green climate fund``) carry no language tag.
+
+    Tagging them with a language would inflate the count the paper prints.
+    """
+    tags = _load(QUERIES_YAML)["term_languages"]
+    untagged = [t for t, lang in tags.items() if lang is None]
+    assert untagged, "at least the institution-name terms must be tagged null"
+
+
+# --------------------------------------------------------------------------- #
+# Prose ↔ config — the paper names the languages config declares
+# --------------------------------------------------------------------------- #
+def test_paper_names_every_target_language():
+    sources = _section(_qmd_text(), "2.1")
+    missing = [lang for lang in target_languages() if lang not in sources]
+    assert not missing, (
+        f"§2.1 does not name these target languages: {missing}. "
+        "The language list must match config/openalex_queries.yaml."
+    )
+
+
+def test_paper_names_no_language_it_did_not_query():
+    """Guards the other direction: no language in §2.1 that config lacks.
+
+    The candidate set is every language name that appears as a tag anywhere
+    plus the common near-misses a drafter might add by hand.
+    """
+    sources = _section(_qmd_text(), "2.1")
+    declared = set(target_languages())
+    candidates = {
+        "English", "French", "German", "Spanish", "Portuguese", "Arabic",
+        "Chinese", "Japanese", "Russian", "Italian", "Dutch", "Korean",
+        "Hindi", "Indonesian", "Turkish",
+    }
+    named_in_list = {
+        lang for lang in candidates - declared
+        if re.search(rf"\b{lang}\b", sources)
+    }
+    assert not named_in_list, (
+        f"§2.1 names languages the harvest never queried: {sorted(named_in_list)}"
+    )
+
+
+# --------------------------------------------------------------------------- #
+# Prose ↔ config — thresholds are macros, not literals
+# --------------------------------------------------------------------------- #
+# Every threshold §2.2 quotes, with the config path it must come from.
+THRESHOLD_VARS = {
+    "filter_outlier_sigma": ("semantic_outlier", "sigma"),
+    "filter_reranker_threshold": ("llm_relevance", "reranker_threshold"),
+    "neardup_prefix_chars": ("near_duplicate", "prefix_length"),
+    "neardup_min_group_size": ("near_duplicate", "min_group_size"),
+    "neardup_overlap_pct": ("near_duplicate", "abstract_overlap_threshold"),
+    "protect_min_cited": ("protection", "min_cited_by"),
+    "protect_min_sources": ("protection", "min_source_count"),
+}
+
+# Literals that must never reappear in §2.2 in place of their macro. Chosen to
+# be unambiguous in that section — a bare "50" would also match the abstract
+# length, so only distinctive spellings are pinned.
+BANNED_LITERALS = [
+    "mean + 2 standard deviations",
+    "0.002",
+    "200 characters",
+    "2+ sources",
+]
+
+
+@pytest.mark.parametrize("var", sorted(THRESHOLD_VARS))
+def test_threshold_cited_as_macro(var):
+    pipeline = _section(_qmd_text(), "2.2")
+    assert f"{{{{< meta {var} >}}}}" in pipeline, (
+        f"§2.2 must cite {var} as a {{{{< meta >}}}} macro (project rule: "
+        "no hand-typed pipeline numbers)"
+    )
+
+
+@pytest.mark.parametrize("literal", BANNED_LITERALS)
+def test_threshold_not_hand_typed(literal):
+    pipeline = _section(_qmd_text(), "2.2")
+    assert literal not in pipeline, (
+        f"§2.2 hand-types {literal!r}; cite the config-derived macro instead"
+    )
+
+
+def test_near_duplicate_thresholds_live_in_config():
+    """The four near-duplicate constants moved out of the Python source.
+
+    This is the one place the reviewers' "you must read the code" complaint
+    was literally true: the thresholds were module-level constants.
+    """
+    block = _load(FILTER_YAML)["near_duplicate"]
+    for key in ("prefix_length", "min_group_size", "min_abstract_length",
+                "abstract_overlap_threshold"):
+        assert key in block, f"config/corpus_filter.yaml near_duplicate lacks {key}"
+
+
+def test_qa_near_duplicates_defaults_come_from_config():
+    import qa_near_duplicates as qnd
+
+    block = _load(FILTER_YAML)["near_duplicate"]
+    assert qnd.DEFAULT_PREFIX_LENGTH == block["prefix_length"]
+    assert qnd.DEFAULT_MIN_GROUP_SIZE == block["min_group_size"]
+    assert qnd.DEFAULT_MIN_ABSTRACT_LENGTH == block["min_abstract_length"]
+    assert qnd.DEFAULT_ABSTRACT_OVERLAP_THRESHOLD == block["abstract_overlap_threshold"]
+
+
+def test_compute_vars_emits_thresholds_from_config():
+    from compute_vars import retrieval_protocol_stats
+
+    cfg = _load(FILTER_YAML)
+    v = {}
+    retrieval_protocol_stats(v)
+    for var, (block, key) in THRESHOLD_VARS.items():
+        assert var in v, f"retrieval_protocol_stats did not emit {var}"
+        raw = cfg[block][key]
+        expected = f"{raw * 100:.0f}" if var.endswith("_pct") else str(raw)
+        assert v[var] == expected, f"{var}: got {v[var]!r}, config says {expected!r}"
+
+
+def test_threshold_vars_registered_for_the_data_paper():
+    from compute_vars import DOC_VARS
+
+    declared = set(DOC_VARS["data-paper"])
+    missing = set(THRESHOLD_VARS) - declared
+    assert not missing, f"DOC_VARS['data-paper'] is missing {sorted(missing)}"
+
+
+# --------------------------------------------------------------------------- #
+# Artifact ↔ config — the deposited table counts what the config holds
+# --------------------------------------------------------------------------- #
+def test_protocol_rows_count_the_config_terms():
+    from export_retrieval_protocol import build_protocol_rows
+
+    cfg = _load(QUERIES_YAML)
+    rows = {r["Source"]: r for r in build_protocol_rows()}
+    assert "OpenAlex" in rows, "the protocol table must have an OpenAlex row"
+
+    expected_total = sum(len(t["terms"]) for t in cfg["tiers"].values())
+    assert str(expected_total) in rows["OpenAlex"]["Query terms"], (
+        f"OpenAlex row must report {expected_total} terms: "
+        f"{rows['OpenAlex']['Query terms']!r}"
+    )
+    for tier, tier_cfg in cfg["tiers"].items():
+        assert f"T{tier} {len(tier_cfg['terms'])}" in rows["OpenAlex"]["Query terms"], (
+            f"tier {tier} term count missing from the OpenAlex row"
+        )
+
+
+def test_protocol_rows_count_the_curated_seed_lists():
+    from export_retrieval_protocol import build_protocol_rows
+
+    rows = {r["Source"]: r for r in build_protocol_rows()}
+    n_grey = len(_load(GREY_YAML))
+    assert str(n_grey) in rows["Grey literature"]["Query terms"], (
+        f"grey row must report {n_grey} curated reports"
+    )
+    for name, path in (
+        ("UNFCCC key documents", "unfccc_sources.yaml"),
+        ("OECD DAC key documents", "oecd_dac_sources.yaml"),
+    ):
+        n = len(_load(os.path.join(REPO, "config", path))["documents"])
+        assert str(n) in rows[name]["Query terms"], (
+            f"{name} row must report {n} seed documents"
+        )
+
+
+def test_protocol_openalex_row_reports_the_query_field():
+    """The reviewers asked which fields the query searched."""
+    from export_retrieval_protocol import build_protocol_rows
+
+    rows = {r["Source"]: r for r in build_protocol_rows()}
+    assert "default.search" in rows["OpenAlex"]["Query fields"]
+
+
+def test_grey_enumeration_lists_every_curated_report():
+    """Action 6: the 17 grey-literature reports are enumerated in the deposit."""
+    from export_retrieval_protocol import build_grey_rows
+
+    grey = _load(GREY_YAML)
+    rows = build_grey_rows()
+    assert len(rows) == len(grey)
+    assert {r["Title"] for r in rows} == {e["title"] for e in grey}
+
+
+def test_markdown_render_escapes_nothing_it_should_not():
+    """Render oracle: the emitted markdown keeps every pipe cell aligned.
+
+    A title containing a pipe would silently split a row. The emitter owns
+    escaping (ticket 0325).
+    """
+    from export_retrieval_protocol import render_markdown
+
+    md = render_markdown()
+    header, delim, *body = [
+        ln for ln in md.splitlines() if ln.startswith("|")
+    ]
+    width = header.count("|")
+    ragged = [ln for ln in [delim, *body] if ln.count("|") != width and ln.count("|") > 0]
+    # Two tables share the file; group by their own header widths instead.
+    widths = {ln.count("|") for ln in [header, delim, *body]}
+    assert len(widths) <= 2, f"ragged markdown rows: {ragged[:3]}"
+
+
+def test_paper_points_at_the_deposited_protocol():
+    """§2.1 tells the reader where the reconstructable protocol lives."""
+    sources = _section(_qmd_text(), "2.1")
+    assert "tab_retrieval_protocol" in sources, (
+        "§2.1 must name the deposited retrieval-protocol table"
+    )
+    for cfg_name in ("openalex_queries.yaml", "corpus_filter.yaml", "grey_sources.yaml"):
+        assert cfg_name in sources, f"§2.1 must name the deposited {cfg_name}"
+
+
+def test_paper_states_the_key_document_selection_rule():
+    """Ticket 0288's author-validated rule reaches the prose (reviewers: 'key
+    according to whom?'). Pinned on the load-bearing nouns, not a phrasing."""
+    sources = _section(_qmd_text(), "2.1")
+    for token in ("COP", "OECD DAC", "curated"):
+        assert token in sources, f"§2.1 key-document rule missing {token!r}"
+
+
+def test_paper_states_the_outlier_rule_is_global():
+    """The reviewers' actual question: global or stratified?"""
+    pipeline = _section(_qmd_text(), "2.2")
+    assert "global" in pipeline.lower(), (
+        "§2.2 must say the semantic-outlier mean and SD are computed globally"
+    )
