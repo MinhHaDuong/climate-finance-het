@@ -35,7 +35,12 @@ from _qmd_meta import (
 #: fixes each. `strict` is the point: the entry fails the suite once the
 #: document is fixed, so a stale exemption cannot outlive the defect.
 KNOWN_UNRESOLVED = {
-    "corpus-report": "ticket 0357 — corpus-report is outside the vars registry",
+    # corpus-report reads technical-report-vars.yml but is absent from
+    # compute_vars.DOC_VARS, so it has no vars file of its own and renders 22
+    # placeholders. Ticket 0322 action 2 owns registering its vars; ticket
+    # 0357, filed on the branch of PR #1162 and not yet on main, states the
+    # registry gap directly.
+    "corpus-report": "tickets 0322 / 0357 — corpus-report is outside the vars registry",
 }
 
 
