@@ -22,7 +22,8 @@ climate-finance-datapaper/
       *_works.csv                # openalex, istex, bibcnrs, scispace, grey, teaching
     products/              # Final data products of this paper
       climate_finance_corpus.csv # 42,922 works (abstracts stripped)
-      codebook.md                # Data dictionary: per-column type, values, missingness
+      datapackage.json           # Frictionless schema: per-column type, values, missingness
+      croissant.json             # MLCommons Croissant description of the same
       embeddings.npz             # 38,479 multilingual vectors (1024-dim)
       citations.csv              # 968,871 citation pairs
 ```
@@ -30,6 +31,19 @@ climate-finance-datapaper/
 `data/inputs/` holds the raw harvests as retrieved from each source, before
 merge and deduplication — the provenance trail. `data/products/` holds the
 curated outputs this paper describes; most users need only `products/`.
+
+`datapackage.json` documents every column of the corpus CSV — storage type,
+allowed values, ranges, and the share of empty cells measured on the shipped
+data. It is executable documentation, so you can check the file you received
+against it:
+
+```bash
+pip install frictionless
+frictionless validate data/products/datapackage.json
+```
+
+`croissant.json` describes the same table in MLCommons Croissant, for tools
+that ingest datasets by field.
 
 ## Prerequisites
 

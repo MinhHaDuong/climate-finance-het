@@ -15,12 +15,14 @@ import os
 import pytest
 from _deposit_schema import (
     contract_for,
+    frictionless_field,
     render_croissant,
     render_datapackage,
 )
 from _deposit_variables import DEPOSIT_VARIABLES, check_columns, contract_names
 
 RESOURCE = "climate_finance_corpus.csv"
+RECIPE = "df[~df['is_flagged'] | df['is_protected']]"
 
 
 def _valid_value(v) -> str:
@@ -83,15 +85,38 @@ class TestContractStructure:
         """`empty` is a missing value, not an enum member.
 
         Frictionless skips enum checks on missing cells, so listing `empty`
-        would put a member in the schema that no cell can ever match.
+        would put a member in the schema that no cell can ever match; the
+        column says so with `nullable` instead.
         """
         by_name = {v.name: v for v in DEPOSIT_VARIABLES}
         for name in ("abstract_provenance", "keywords_provenance",
                      "language_provenance"):
             v = by_name[name]
             assert "empty" not in v.enum
-            assert v.enum_allows_empty
-            assert v.allowed_values.endswith(", empty")
+            assert v.nullable
+
+    def test_required_is_the_negation_of_nullable(self):
+        for v in DEPOSIT_VARIABLES:
+            constraints = frictionless_field(v).get("constraints", {})
+            assert constraints.get("required", False) is (not v.nullable), v.name
+
+    def test_empty_meaning_a_value_is_not_read_as_missing(self):
+        """`flag_reason` is empty for an unflagged work — data, not a gap.
+
+        Without a field-level `missingValues: []` the empty cell would count as
+        missing and `required` would fail on the 74% of works carrying no flag.
+        """
+        by_name = {v.name: v for v in DEPOSIT_VARIABLES}
+        v = by_name["flag_reason"]
+        assert v.empty_is_a_value and not v.nullable
+        assert frictionless_field(v)["missingValues"] == []
+
+    def test_measured_missingness_travels_with_the_schema(self):
+        """What the retired prose codebook printed, now inside the descriptor."""
+        pkg = render_datapackage(contract_names(), "test", {"doi": 0.1964})
+        fields = {f["name"]: f for f in pkg["resources"][0]["schema"]["fields"]}
+        assert fields["doi"]["missingRate"] == 0.1964
+        assert "missingRate" not in fields["title"], "unmeasured column claims none"
 
     def test_boolean_fields_carry_no_enum(self):
         """The deposit writes 0/1 for provenance and True/False for curation.
@@ -104,13 +129,17 @@ class TestContractStructure:
             if v.dtype == "boolean":
                 assert not v.enum, f"{v.name} must not constrain by enum"
 
-    def test_published_prose_is_derived_from_structure(self):
-        by_name = {v.name: v for v in DEPOSIT_VARIABLES}
-        assert by_name["doi"].type == "string, nullable"
-        assert by_name["year"].type == "integer"
-        assert by_name["semantic_outlier_dist"].type == "float, nullable"
-        assert by_name["source_count"].allowed_values == "1–8"
-        assert by_name["source_id"].allowed_values == ""
+    def test_recipe_survives_the_json_descriptor(self):
+        """The 0325 defect class, checked in the medium that now carries it.
+
+        A delimiter inside payload text corrupted the recipe once already (a
+        `|` cut the codebook cell in half) and again in LaTeX (a `~` inverted
+        it). JSON escaping is `json.dump`'s job, but the claim is cheap to pin
+        and this is where the description is published now.
+        """
+        pkg = json.loads(json.dumps(render_datapackage(contract_names(), "t")))
+        fields = {f["name"]: f for f in pkg["resources"][0]["schema"]["fields"]}
+        assert RECIPE in fields["is_flagged"]["description"]
 
     def test_every_variable_maps_to_a_frictionless_type(self):
         allowed = {"string", "integer", "number", "boolean"}
@@ -186,3 +215,26 @@ class TestCroissant:
         roles = {c["roles"][0]: c["path"] for c in pkg["contributors"]}
         assert "0000-0001-9988-2100" in roles["author"]
         assert "ror.org" in roles["funder"]
+
+    @pytest.mark.integration
+    def test_croissant_passes_the_spec_validator(self, tmp_path):
+        """Checked against the spec, not just against our own expectations.
+
+        Structural assertions only restate what the emitter wrote; mlcroissant
+        is the independent oracle, the same role frictionless plays for the
+        Table Schema.
+        """
+        mlc = pytest.importorskip(
+            "mlcroissant",
+            reason="pip install mlcroissant to check croissant.json against the "
+                   "spec; it is not a project dependency because it pulls "
+                   "pandas-stubs, which changes mypy's verdict repo-wide")
+
+        columns = contract_names()
+        csv_path = os.path.join(str(tmp_path), RESOURCE)
+        _write_csv(csv_path, columns, [_conforming_row(columns)])
+        doc_path = os.path.join(str(tmp_path), "croissant.json")
+        with open(doc_path, "w", encoding="utf-8") as f:
+            json.dump(render_croissant(columns, "test", csv_path, 1), f)
+
+        mlc.Dataset(jsonld=doc_path)  # raises ValidationError on a bad document

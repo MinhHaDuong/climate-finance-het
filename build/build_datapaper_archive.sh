@@ -5,7 +5,7 @@
 #   code/           — full pipeline source (git archive) + pre-built figures/tables
 #   data/inputs/    — raw data inputs (per-source catalogs, pre-merge)
 #   data/products/  — final data products of the paper (corpus CSV without
-#                     abstracts, embeddings, citations, codebook, and the
+#                     abstracts, embeddings, citations, and the
 #                     machine-readable descriptors datapackage.json +
 #                     croissant.json)
 # Raw-vs-product split per RDJ-26561 remark ED-04 (ticket 0280).
@@ -63,10 +63,9 @@ PYTHONPATH="scripts:libs/openalex-corpus/src${PYTHONPATH:+:$PYTHONPATH}" \
 echo "  Validating the deposited CSV against its own datapackage.json..."
 uv run --env-file .env frictionless validate "$TMP/data/products/datapackage.json"
 
-echo "  Copying final products (embeddings, citations, codebook)..."
+echo "  Copying final products (embeddings, citations)..."
 cp -L "$DATA_DIR/embeddings.npz" "$TMP/data/products/"
 cp -L "$DATA_DIR/citations.csv" "$TMP/data/products/"
-cp "$PROJ_ROOT/deliverables/_shared/tables/codebook.md" "$TMP/data/products/"
 
 echo "  Copying raw inputs (per-source catalogs)..."
 for src in openalex istex bibcnrs scispace grey teaching; do

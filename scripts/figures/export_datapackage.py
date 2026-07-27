@@ -18,8 +18,9 @@ import json
 import os
 import sys
 
+import pandas as pd
 from _deposit_schema import DEPOSIT_VERSION, read_header, render_datapackage
-from _deposit_variables import check_columns
+from _deposit_variables import check_columns, compute_missingness
 from script_io_args import parse_io_args, validate_io
 from utils import get_logger
 
@@ -50,7 +51,14 @@ def main() -> None:
             log.error(e)
         sys.exit(1)
 
-    descriptor = render_datapackage(columns, opts.version)
+    # Missingness is measured on the file being described, as the retired prose
+    # codebook did. Read as strings with NA-coercion off so an empty cell is
+    # counted exactly as written rather than as pandas' idea of a null.
+    df = pd.read_csv(io_args.input[0], dtype=str, keep_default_na=False,
+                     low_memory=False)
+    missingness = compute_missingness(df)
+
+    descriptor = render_datapackage(columns, opts.version, missingness)
     n_fields = len(descriptor["resources"][0]["schema"]["fields"])  # type: ignore[index]
 
     with open(io_args.output, "w", encoding="utf-8") as f:

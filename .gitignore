@@ -46,7 +46,6 @@ deliverables/_shared/figures/*
 !deliverables/_shared/figures/fig_sem_composition.png
 deliverables/_shared/tables/*
 !deliverables/_shared/tables/tab_variables.md
-!deliverables/_shared/tables/codebook.md
 !deliverables/_shared/tables/tab_venues.md
 !deliverables/_shared/tables/tab_venues_fr.md
 !deliverables/_shared/tables/tab_venues_fr_caption.md

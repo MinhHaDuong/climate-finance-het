@@ -13,8 +13,9 @@ step. Three consumers keep it honest:
 - tests/test_variables_table.py — pins contract/transform agreement;
 - scripts/_deposit_schema.py — renders the machine-readable descriptors
   (`datapackage.json`, `croissant.json`) whose constraints ``frictionless
-  validate`` enforces against the written CSV, so the value-level claims below
-  are checked and not merely published (ticket 0354).
+  validate`` enforces against the written CSV. They also carry the storage
+  types, allowed values and measured missingness that the retired prose
+  codebook used to print (ticket 0354).
 
 Columns marked ``required=False`` depend on optional pipeline stages
 (embeddings for the outlier distance, the v1 identifier file, the corpus-v2
@@ -22,8 +23,6 @@ curated key-documents layer) and may be absent from older corpus builds.
 """
 
 from dataclasses import dataclass
-
-from _markdown_table import markdown_cell
 
 # Individual flag columns collapsed into is_flagged + flag_reason
 FLAG_COLUMNS = [
@@ -45,34 +44,33 @@ COLUMNS_TO_DROP = [
 DEPOSIT_RENAMES = {"from_scispsace": "from_scispace"}
 
 
-# Frictionless Table Schema type → the word the codebook and paper publish.
-# The contract stores the machine type and derives the prose; parsing prose back
-# into constraints is exactly what this direction removes.
-_PUBLISHED_TYPE = {
-    "string": "string",
-    "integer": "integer",
-    "number": "float",
-    "boolean": "boolean",
-}
-
-
 @dataclass(frozen=True)
 class Variable:
-    """One deposited column: machine constraints, with the prose derived.
+    """One deposited column, described in machine-enforceable terms.
 
-    ``dtype`` / ``nullable`` / ``enum`` / ``minimum`` / ``maximum`` are what
-    ``export_datapackage.py`` publishes as a Frictionless field. ``type`` and
-    ``allowed_values`` are properties rendering the same facts as the prose the
-    codebook and the paper's variables table have always shown, so a claim
-    cannot be enforced in one place and printed differently in the other.
+    Every constraint here is published in `datapackage.json` and checked by
+    ``frictionless validate`` against the written CSV. Nothing is prose-only:
+    the paper's table carries the name and the description, and a reuser who
+    needs types, enumerations, ranges or missingness reads the descriptor.
 
-    Two encodings are deliberate. ``enum`` never carries the empty sentinel:
-    Frictionless treats an empty cell as a missing value and skips enum checks
-    on it, so ``enum_allows_empty`` adds ``empty`` to the prose without putting
-    an unmatchable member in the schema. And a boolean field gets no enum at
-    all — the type already restricts it, and the deposit writes two different
-    token pairs (``0``/``1`` for the provenance flags, ``True``/``False`` for
-    the curation ones), both of which Frictionless accepts natively.
+    Three encodings are deliberate, each forced by how the deposit serialises:
+
+    - ``enum`` never carries an empty sentinel. Frictionless treats an empty
+      cell as a missing value and skips enum checks on it, so listing ``empty``
+      would add a member no cell can match. ``nullable`` says that instead.
+    - A boolean field gets no enum. The type already restricts it, and the
+      deposit writes ``0``/``1`` for the provenance flags but ``True``/``False``
+      for the curation ones; an enum is matched against the parsed value, not
+      the token, so declaring either pair would reject the other.
+    - ``empty_is_a_value`` marks a column where the empty string *means*
+      something rather than being absent — ``flag_reason`` is empty for an
+      unflagged work, which is data, not a gap. Such a field publishes
+      ``missingValues: []`` so the emptiness is a value and ``required`` still
+      holds.
+
+    ``nullable`` is measured, not aspirational: it is true exactly where the
+    shipped data has gaps, so ``required`` can be published as a guarantee a
+    future build must keep.
     """
 
     name: str
@@ -83,26 +81,9 @@ class Variable:
     group: str = ""
     nullable: bool = False
     enum: tuple[str, ...] = ()
-    enum_allows_empty: bool = False
     minimum: int | None = None
     maximum: int | None = None
-    values_note: str = ""
-
-    @property
-    def type(self) -> str:
-        """The published type word, e.g. ``string`` or ``float, nullable``."""
-        base = _PUBLISHED_TYPE[self.dtype]
-        return f"{base}, nullable" if self.nullable else base
-
-    @property
-    def allowed_values(self) -> str:
-        """The published allowed-values cell; empty means unconstrained."""
-        if self.enum:
-            listed = ", ".join(self.enum)
-            return f"{listed}, empty" if self.enum_allows_empty else listed
-        if self.minimum is not None and self.maximum is not None:
-            return f"{self.minimum}–{self.maximum}"
-        return self.values_note
+    empty_is_a_value: bool = False
 
 
 # The four logical groups of the deposit layout (ticket 0287, remark R1-19).
@@ -115,9 +96,6 @@ GROUPS = [
     "Curation metadata",
 ]
 _IDENTITY, _BIBLIO, _PROV, _CURATION = GROUPS
-
-_BOOL01 = "0, 1"
-_BOOLTF = "true, false"
 
 _MERGE = "source catalogs, merged by catalog_merge.py"
 _ENRICH = "enrichment (enrich_* scripts)"
@@ -132,17 +110,19 @@ DEPOSIT_VARIABLES: list[Variable] = [
                    "teaching", "unfccc", "oecd")),
     Variable("source_id", "string",
              "Identifier in the primary source (e.g. OpenAlex work ID)", _MERGE,
-             group=_IDENTITY),
+             group=_IDENTITY, nullable=True),
     Variable("doi", "string",
              "Digital Object Identifier, when available", _MERGE,
              group=_IDENTITY, nullable=True),
-    Variable("title", "string", "Title of the work", _MERGE, group=_BIBLIO),
+    Variable("title", "string", "Title of the work", _MERGE, group=_BIBLIO,
+             nullable=True),
     Variable("first_author", "string", "First author name", _MERGE,
              group=_BIBLIO, nullable=True),
     Variable("all_authors", "string",
              "Full author list, separator-joined", _MERGE, group=_BIBLIO,
              nullable=True),
-    Variable("year", "integer", "Publication year", _MERGE, group=_BIBLIO),
+    Variable("year", "integer", "Publication year", _MERGE, group=_BIBLIO,
+             nullable=True),
     Variable("journal", "string",
              "Publication venue (journal, publisher, or repository)", _MERGE,
              group=_BIBLIO, nullable=True),
@@ -157,46 +137,43 @@ DEPOSIT_VARIABLES: list[Variable] = [
              group=_BIBLIO, nullable=True),
     Variable("cited_by_count", "integer",
              "Citation count (OpenAlex, as of the collection date)", _MERGE,
-             group=_BIBLIO),
+             group=_BIBLIO, nullable=True),
     Variable("affiliations", "string",
              "Author affiliations, when available", _MERGE, group=_BIBLIO,
              nullable=True),
     Variable("from_openalex", "boolean", "Provenance flag: found in OpenAlex",
-             _MERGE, group=_PROV, values_note=_BOOL01),
+             _MERGE, group=_PROV),
     Variable("from_istex", "boolean", "Provenance flag: found in ISTEX",
-             _MERGE, group=_PROV, values_note=_BOOL01),
+             _MERGE, group=_PROV),
     Variable("from_bibcnrs", "boolean", "Provenance flag: found in bibCNRS",
-             _MERGE, group=_PROV, values_note=_BOOL01),
+             _MERGE, group=_PROV),
     Variable("from_scispace", "boolean", "Provenance flag: found via SciSpace",
-             _MERGE, group=_PROV, values_note=_BOOL01),
+             _MERGE, group=_PROV),
     Variable("from_grey", "boolean",
-             "Provenance flag: grey-literature source", _MERGE, group=_PROV,
-             values_note=_BOOL01),
+             "Provenance flag: grey-literature source", _MERGE, group=_PROV),
     Variable("from_teaching", "boolean",
-             "Provenance flag: teaching canon (syllabi)", _MERGE, group=_PROV,
-             values_note=_BOOL01),
+             "Provenance flag: teaching canon (syllabi)", _MERGE, group=_PROV),
     Variable("from_unfccc", "boolean",
              "Provenance flag: curated UNFCCC key document", _KEYDOCS,
-             required=False, group=_PROV, values_note=_BOOL01),
+             required=False, group=_PROV),
     Variable("from_oecd", "boolean",
              "Provenance flag: curated OECD key document", _KEYDOCS,
-             required=False, group=_PROV, values_note=_BOOL01),
+             required=False, group=_PROV),
     Variable("abstract_provenance", "string",
              "Provenance of the abstract text, for curated key documents only",
              _KEYDOCS, required=False, group=_PROV, nullable=True,
              enum=("curated", "reconstructed:lead",
-                   "reconstructed:exec_summary"), enum_allows_empty=True),
+                   "reconstructed:exec_summary")),
     Variable("keywords_provenance", "string",
              "Provenance of the keywords, for curated key documents only",
              _KEYDOCS, required=False, group=_PROV, nullable=True,
-             enum=("extracted", "generated:lexicon"), enum_allows_empty=True),
+             enum=("extracted", "generated:lexicon")),
     Variable("language_provenance", "string",
              "How the language code was obtained: carried by the source "
              "catalog, backfilled from OpenAlex, or inferred from title and "
              "abstract", _ENRICH,
              required=False, group=_PROV, nullable=True,
-             enum=("source", "openalex", "detected:langdetect"),
-             enum_allows_empty=True),
+             enum=("source", "openalex", "detected:langdetect")),
     Variable("source_count", "integer",
              "Number of sources that contributed the record", _MERGE,
              group=_PROV,
@@ -217,20 +194,19 @@ DEPOSIT_VARIABLES: list[Variable] = [
              group=_CURATION, nullable=True),
     Variable("in_v1", "boolean",
              "Version tracking: work present in the v1.0 submission corpus",
-             _FILTER, required=False, group=_CURATION, values_note=_BOOLTF),
+             _FILTER, required=False, group=_CURATION),
     Variable("is_flagged", "boolean",
              "Any quality flag raised; the refined subset is "
              "`df[~df['is_flagged'] | df['is_protected']]`", _FILTER,
-             group=_CURATION, values_note=_BOOLTF),
+             group=_CURATION),
     Variable("flag_reason", "string",
              "Comma-separated list of raised quality flags "
              f"({', '.join(FLAG_COLUMNS)}); empty when unflagged", _FILTER,
              group=_CURATION,
-             values_note="comma-joined subset of the six flag names, or "
-             "empty"),
+             empty_is_a_value=True),
     Variable("is_protected", "boolean",
              "Protection from removal (key papers kept despite flags)", _FILTER,
-             group=_CURATION, values_note=_BOOLTF),
+             group=_CURATION),
     Variable("protection_reason", "string",
              "Why the work is protected (citation count, seed list, ...)",
              _FILTER, required=False, group=_CURATION, nullable=True),
@@ -366,13 +342,13 @@ def render_markdown_table() -> str:
     lines = [
         "::: {#tbl-variables}",
         "```{=latex}",
-        r"\begin{longtable}{@{}l l p{8.2cm}@{}}",
+        r"\begin{longtable}{@{}l p{10.4cm}@{}}",
         r"\toprule",
-        r"Variable & Type & Description \\",
+        r"Variable & Description \\",
         r"\midrule",
         r"\endfirsthead",
         r"\toprule",
-        r"Variable & Type & Description \\",
+        r"Variable & Description \\",
         r"\midrule",
         r"\endhead",
     ]
@@ -387,7 +363,6 @@ def render_markdown_table() -> str:
         mark = "" if v.required else OPTIONAL_MARK
         lines.append(
             rf"\texttt{{{v.name.translate(_LATEX_CODE)}}}{mark}"
-            rf" & {latex_inline(v.type)}"
             rf" & {latex_inline(describe(v))} \\")
     lines += [
         r"\bottomrule",
@@ -398,8 +373,9 @@ def render_markdown_table() -> str:
         "the four logical groups: " + ", ".join(groups) + ". " + OPTIONAL_MARK +
         " marks a variable absent from corpus builds predating its pipeline "
         "stage. Generated from the deposit column contract "
-        "(`scripts/_deposit_variables.py`); per-source provenance, allowed "
-        "values, and missingness are in the deposited codebook.",
+        "(`scripts/_deposit_variables.py`); storage types, allowed values, "
+        "ranges and measured missingness are in the deposited "
+        "`datapackage.json`.",
         ":::",
     ]
     return "\n".join(lines) + "\n"
@@ -420,42 +396,3 @@ def compute_missingness(df) -> dict[str, float]:
         missing = s.isna() | (s.astype(str).str.strip() == "")
         out[col] = float(missing.mean())
     return out
-
-
-def render_codebook(missingness: dict[str, float], n_rows: int) -> str:
-    """Render the formal data dictionary (codebook) as standalone Markdown.
-
-    One section per logical group; per column: type, allowed values,
-    measured missingness, description. Ships in the Zenodo package
-    (coordinated with ticket 0280) and answers remark R1-19.
-    """
-    lines = [
-        "# Codebook — climate_finance_corpus.csv",
-        "",
-        "Formal data dictionary for the deposited corpus file. Columns are "
-        "organised in four logical groups. Missingness (share of empty or "
-        f"null cells) is measured on the shipped data ({n_rows} rows) by "
-        "`scripts/figures/export_codebook.py`; `n/a` marks optional columns "
-        "absent from this build. Generated from the deposit column contract "
-        "(`scripts/_deposit_variables.py`).",
-    ]
-    for group in GROUPS:
-        members = [v for v in DEPOSIT_VARIABLES if v.group == group]
-        if not members:
-            continue
-        lines += [
-            "",
-            f"## {group}",
-            "",
-            "| Variable | Type | Allowed values | Missing | Description |",
-            "|:------|:----|:------------|------:|:-------------------------|",
-        ]
-        for v in members:
-            if v.name in missingness:
-                miss = f"{100 * missingness[v.name]:.1f}%"
-            else:
-                miss = "n/a"
-            allowed = v.allowed_values or "free"
-            cells = [f"`{v.name}`", v.type, allowed, miss, v.description]
-            lines.append("| " + " | ".join(markdown_cell(c) for c in cells) + " |")
-    return "\n".join(lines) + "\n"

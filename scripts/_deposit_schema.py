@@ -99,14 +99,14 @@ _CROISSANT_TYPE = {
 def _constraints(v: Variable) -> dict[str, object]:
     """Frictionless field constraints for one variable, omitting empty ones.
 
-    ``nullable`` deliberately does not become ``required``. Four columns the
-    contract types non-nullable carry real gaps in the shipped data (source_id
-    1.3%, title 0.6%, year 1.1%, cited_by_count 4.7%), so publishing a
-    non-null guarantee would either fail the gate on a correct build or bake
-    this build's missingness into the schema. The prose keeps saying what the
-    column is *for*; the schema only claims what it can enforce.
+    ``required`` is the negation of ``nullable``, which the contract states
+    from measured evidence rather than intent — so a column declared required
+    is one the shipped data has no gap in, and a future build that introduces
+    one fails the gate. That is the guarantee worth publishing.
     """
     out: dict[str, object] = {}
+    if not v.nullable:
+        out["required"] = True
     if v.enum:
         out["enum"] = list(v.enum)
     if v.minimum is not None:
@@ -116,16 +116,30 @@ def _constraints(v: Variable) -> dict[str, object]:
     return out
 
 
-def frictionless_field(v: Variable) -> dict[str, object]:
-    """One Frictionless Table Schema field."""
+def frictionless_field(v: Variable,
+                       missing: float | None = None) -> dict[str, object]:
+    """One Frictionless Table Schema field.
+
+    ``missingRate`` is a custom property carrying what the retired prose
+    codebook printed: the share of empty cells measured on the shipped data.
+    Frictionless preserves unknown field properties, so it travels with the
+    schema instead of in a separate document that can drift from it.
+    """
     field: dict[str, object] = {
         "name": v.name,
         "type": v.dtype,
         "description": v.description,
     }
+    if v.empty_is_a_value:
+        # An empty cell here is data ("no flags raised"), not an absent value,
+        # so it must not be read as missing — otherwise `required` would fail
+        # on every unflagged work.
+        field["missingValues"] = []
     constraints = _constraints(v)
     if constraints:
         field["constraints"] = constraints
+    if missing is not None:
+        field["missingRate"] = round(missing, 4)
     return field
 
 
@@ -147,8 +161,15 @@ def contract_for(columns: list[str]) -> list[Variable]:
     return [by_name[c] for c in columns if c in by_name]
 
 
-def render_datapackage(columns: list[str], version: str) -> dict[str, object]:
-    """Frictionless Data Package descriptor for the deposited CSV."""
+def render_datapackage(columns: list[str], version: str,
+                       missingness: dict[str, float] | None = None,
+                       ) -> dict[str, object]:
+    """Frictionless Data Package descriptor for the deposited CSV.
+
+    ``missingness`` maps column → share of empty cells, measured on the file
+    being described. Omitted, the fields carry no ``missingRate``.
+    """
+    miss = missingness or {}
     return {
         "$schema": "https://datapackage.org/profiles/2.0/datapackage.json",
         "name": RESOURCE_NAME,
@@ -178,7 +199,8 @@ def render_datapackage(columns: list[str], version: str) -> dict[str, object]:
             "encoding": "utf-8",
             "dialect": {"delimiter": ",", "header": True},
             "schema": {
-                "fields": [frictionless_field(v) for v in contract_for(columns)],
+                "fields": [frictionless_field(v, miss.get(v.name))
+                           for v in contract_for(columns)],
                 "missingValues": [""],
             },
         }],

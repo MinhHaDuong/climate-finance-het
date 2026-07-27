@@ -3,7 +3,8 @@
 The editor asked that the Zenodo package distinguish raw data inputs (the
 per-source catalogs such as ``bibcnrs_works.csv``) from the final data
 products of the paper (``climate_finance_corpus.csv``, ``embeddings.npz``,
-``citations.csv``, ``codebook.md``). The build script must stage that split
+``citations.csv``, and the descriptors ``datapackage.json`` /
+``croissant.json``). The build script must stage that split
 reproducibly — ``data/inputs/`` vs ``data/products/`` — and the README
 template and paper text must describe the same layout.
 
@@ -24,9 +25,9 @@ BUILD_SCRIPT = os.path.join(REPO, "build", "build_datapaper_archive.sh")
 README = os.path.join(REPO, "build", "templates", "README-datapaper.md")
 QMD = os.path.join(REPO, "deliverables", "data-paper", "data-paper.qmd")
 GITIGNORE = os.path.join(REPO, ".gitignore")
-CODEBOOK = os.path.join(REPO, "deliverables", "_shared", "tables", "codebook.md")
 
-PRODUCTS = ["climate_finance_corpus.csv", "embeddings.npz", "citations.csv", "codebook.md"]
+PRODUCTS = ["climate_finance_corpus.csv", "embeddings.npz", "citations.csv",
+            "datapackage.json", "croissant.json"]
 
 
 def _read(path):
@@ -63,11 +64,18 @@ class TestBuildScriptLayout:
             f"checksum generation must recurse into inputs/ and products/: {line!r}"
         )
 
-    def test_codebook_source_exists(self):
-        """codebook.md is a committed deliverable (ticket 0287) the build cp's."""
-        assert os.path.isfile(CODEBOOK), (
-            "deliverables/_shared/tables/codebook.md must exist (make corpus-tables "
-            "generates it; it is committed like its table twins)"
+    def test_descriptors_are_emitted_then_validated(self):
+        """The descriptors are generated into products/, not copied in.
+
+        Order is the guarantee: emitted from the CSV just written, then
+        validated against it, before anything is packaged (ticket 0354).
+        """
+        sh = _read(BUILD_SCRIPT)
+        emit = sh.index("export_datapackage.py")
+        validate = sh.index("frictionless validate")
+        tar = sh.index("tar czf")
+        assert emit < validate < tar, (
+            "emit -> validate -> package, so an invalid deposit cannot be shipped"
         )
 
 
@@ -83,9 +91,3 @@ class TestDocsMatchLayout:
         assert "inputs/" in qmd and "products/" in qmd, (
             "data-paper.qmd Data section must describe the inputs/ vs products/ split"
         )
-
-
-class TestGitignoreCodebookNegation:
-    def test_codebook_unignored(self):
-        gi = _read(GITIGNORE)
-        assert "!deliverables/_shared/tables/codebook.md" in gi
