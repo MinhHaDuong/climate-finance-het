@@ -23,7 +23,6 @@ climate-finance-datapaper/
     products/              # Final data products of this paper
       climate_finance_corpus.csv # 42,922 works (abstracts stripped)
       datapackage.json           # Frictionless schema: per-column type, values, missingness
-      croissant.json             # MLCommons Croissant description of the same
       embeddings.npz             # 38,479 multilingual vectors (1024-dim)
       citations.csv              # 968,871 citation pairs
 ```
@@ -41,9 +40,6 @@ against it:
 pip install frictionless
 frictionless validate data/products/datapackage.json
 ```
-
-`croissant.json` describes the same table in MLCommons Croissant, for tools
-that ingest datasets by field.
 
 ## Prerequisites
 

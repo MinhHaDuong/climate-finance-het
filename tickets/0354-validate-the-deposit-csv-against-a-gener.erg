@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-27T14:05Z HDMX-coding-agent created
 2026-07-27T14:20Z HDMX-coding-agent note Scoped from an Imagine session on codebook.md; author settled the envelope half as a manual checklist (one resubmission), so this ticket is code only
+2026-07-27T18:40Z HDMX-coding-agent note Croissant built then dropped: no validator in reach (mlcroissant pulls pandas-stubs, flips mypy repo-wide)
 
 --- body ---
 ## Context
@@ -128,8 +129,13 @@ contract-conforming frame.
   runbook; the funder ID is author knowledge. ORCID already lives at
   `deliverables/data-paper/data-paper.qmd:5` — do not create a second home.
 - **Croissant** (MLCommons JSON-LD) — a second serializer over the same
-  structured contract, cheap once action 1 lands. Gate on someone asking; for
-  an HSS venue it is noise.
+  structured contract. Built, then dropped by the author (2026-07-27): nothing
+  in reach validates it against the spec. `mlcroissant` is the only oracle and
+  it pulls `pandas-stubs`, which changes mypy's verdict repo-wide (5 new errors
+  in `pipeline_text.py`, `enrich_dois.py`, `pipeline_progress.py`), so the
+  document would have shipped on structural self-assertions alone — the exact
+  unenforced-claim drift this ticket exists to remove. For an HSS venue it is
+  noise besides. Revisit only if a consumer asks and mypy is pinned first.
 - **The unused Phase 1→2 schemas.** `RefinedWorksSchema` /
   `RefinedCitationsSchema` / `validate_embeddings` (`schemas.py:29,74,~365`)
   are referenced only by `tests/test_schema_contracts.py` on synthetic frames —

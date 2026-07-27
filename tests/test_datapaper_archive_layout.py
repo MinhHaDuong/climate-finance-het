@@ -3,9 +3,8 @@
 The editor asked that the Zenodo package distinguish raw data inputs (the
 per-source catalogs such as ``bibcnrs_works.csv``) from the final data
 products of the paper (``climate_finance_corpus.csv``, ``embeddings.npz``,
-``citations.csv``, and the descriptors ``datapackage.json`` /
-``croissant.json``). The build script must stage that split
-reproducibly — ``data/inputs/`` vs ``data/products/`` — and the README
+``citations.csv``, and the descriptor ``datapackage.json``). The build script
+must stage that split reproducibly — ``data/inputs/`` vs ``data/products/`` — and the README
 template and paper text must describe the same layout.
 
 Mechanical greps in the spirit of test_archive_script_paths.py: they pin the
@@ -27,7 +26,7 @@ QMD = os.path.join(REPO, "deliverables", "data-paper", "data-paper.qmd")
 GITIGNORE = os.path.join(REPO, ".gitignore")
 
 PRODUCTS = ["climate_finance_corpus.csv", "embeddings.npz", "citations.csv",
-            "datapackage.json", "croissant.json"]
+            "datapackage.json"]
 
 
 def _read(path):

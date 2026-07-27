@@ -13,12 +13,7 @@ import json
 import os
 
 import pytest
-from _deposit_schema import (
-    contract_for,
-    frictionless_field,
-    render_croissant,
-    render_datapackage,
-)
+from _deposit_schema import contract_for, frictionless_field, render_datapackage
 from _deposit_variables import DEPOSIT_VARIABLES, check_columns, contract_names
 
 RESOURCE = "climate_finance_corpus.csv"
@@ -188,53 +183,11 @@ class TestWrittenCsvValidates:
         assert not report.valid
 
 
-class TestCroissant:
-    """The optional second serialisation of the same contract."""
-
-    def test_fields_match_the_shipped_columns(self, tmp_path):
-        columns = contract_names()
-        csv_path = os.path.join(str(tmp_path), RESOURCE)
-        _write_csv(csv_path, columns, [_conforming_row(columns)])
-        doc = render_croissant(columns, "test", csv_path, 1)
-
-        names = [f["name"] for f in doc["recordSet"][0]["field"]]
-        assert names == columns
-
-    def test_carries_checksum_orcid_and_funder(self, tmp_path):
-        columns = contract_names()
-        csv_path = os.path.join(str(tmp_path), RESOURCE)
-        _write_csv(csv_path, columns, [_conforming_row(columns)])
-        doc = render_croissant(columns, "test", csv_path, 1)
-
-        assert len(doc["distribution"][0]["sha256"]) == 64
-        assert "0000-0001-9988-2100" in doc["creator"]["sameAs"]
-        assert "ror.org" in doc["funder"]["sameAs"]
+class TestDepositEnvelope:
+    """Provenance the descriptor publishes beyond the column schema."""
 
     def test_datapackage_carries_orcid_and_funder(self):
         pkg = render_datapackage(contract_names(), "test")
         roles = {c["roles"][0]: c["path"] for c in pkg["contributors"]}
         assert "0000-0001-9988-2100" in roles["author"]
         assert "ror.org" in roles["funder"]
-
-    @pytest.mark.integration
-    def test_croissant_passes_the_spec_validator(self, tmp_path):
-        """Checked against the spec, not just against our own expectations.
-
-        Structural assertions only restate what the emitter wrote; mlcroissant
-        is the independent oracle, the same role frictionless plays for the
-        Table Schema.
-        """
-        mlc = pytest.importorskip(
-            "mlcroissant",
-            reason="pip install mlcroissant to check croissant.json against the "
-                   "spec; it is not a project dependency because it pulls "
-                   "pandas-stubs, which changes mypy's verdict repo-wide")
-
-        columns = contract_names()
-        csv_path = os.path.join(str(tmp_path), RESOURCE)
-        _write_csv(csv_path, columns, [_conforming_row(columns)])
-        doc_path = os.path.join(str(tmp_path), "croissant.json")
-        with open(doc_path, "w", encoding="utf-8") as f:
-            json.dump(render_croissant(columns, "test", csv_path, 1), f)
-
-        mlc.Dataset(jsonld=doc_path)  # raises ValidationError on a bad document

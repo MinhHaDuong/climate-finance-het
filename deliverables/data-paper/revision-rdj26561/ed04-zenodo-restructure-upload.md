@@ -16,7 +16,7 @@ the latest version.
 1. Rebuild the archive at the merged commit:
    `make check-corpus corpus-tables figures-datapaper && bash build/build_datapaper_archive.sh`
    → `climate-finance-datapaper.tar.gz` (layout: `code/`, `data/inputs/`,
-   `data/products/`; `codebook.md`, `datapackage.json` and `croissant.json`
+   `data/products/`; `datapackage.json`
    in `data/products/`). The build validates the deposited CSV against its own
    `datapackage.json` and aborts rather than package a file that contradicts
    the schema it publishes (ticket 0354), so a successful build is also a

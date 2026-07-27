@@ -1,18 +1,19 @@
-"""Machine-readable renderings of the deposit column contract (ticket 0354).
+"""Machine-readable rendering of the deposit column contract (ticket 0354).
 
-Two serialisations of the same facts `_deposit_variables.py` already carries:
+A **Frictionless Data Package** (`datapackage.json`) over the facts
+`_deposit_variables.py` already carries. It is the descriptor `frictionless
+validate` reads, so every value-level claim the deposit publishes (types,
+enumerations, ranges) is checked against the *written* CSV rather than an
+in-memory frame. Validating the artifact is the whole point: an integer
+serialised as ``1.0``, a quoting slip, or an encoding fault is invisible to a
+frame-level assertion (0288/0347, 0325).
 
-- **Frictionless Data Package** (`datapackage.json`) — the descriptor
-  `frictionless validate` reads, so every value-level claim the codebook
-  publishes (types, enumerations, ranges) is checked against the *written* CSV
-  rather than an in-memory frame. Validating the artifact is the whole point:
-  an integer serialised as ``1.0``, a quoting slip, or an encoding fault is
-  invisible to a frame-level assertion (0288/0347, 0325).
-- **Croissant** (`croissant.json`) — MLCommons JSON-LD over schema.org, for ML
-  consumers that index datasets by field. Optional deliverable; it reuses the
-  same contract, so the two descriptions cannot disagree.
+A second serialisation in MLCommons Croissant was built and dropped: nothing
+in reach validates it against the spec (`mlcroissant` pulls `pandas-stubs`,
+which changes mypy's verdict repo-wide), and an unvalidated descriptor is the
+drift this ticket exists to remove.
 
-Neither emitter stamps a timestamp. The descriptors are build outputs, and a
+The emitter stamps no timestamp. The descriptor is a build output, and a
 changing ``created`` field would dirty git on every rebuild for no information.
 
 The envelope below mirrors the Zenodo record by hand, because the deposit is
@@ -23,8 +24,6 @@ rather than being read from the record.
 """
 
 import csv
-import hashlib
-import os
 
 from _deposit_variables import DEPOSIT_VARIABLES, Variable
 
@@ -38,19 +37,7 @@ def read_header(path: str) -> list[str]:
     return header
 
 
-def count_rows(path: str) -> int:
-    """Data rows in a CSV.
-
-    Counted through the csv reader, not by newlines: bibliographic titles and
-    author lists carry embedded newlines inside quoted fields, so a line count
-    overstates the number of records.
-    """
-    with open(path, newline="", encoding="utf-8") as f:
-        reader = csv.reader(f)
-        next(reader, None)
-        return sum(1 for _ in reader)
-
-# The deposited CSV, named the same in the archive and in the descriptors.
+# The deposited CSV, named the same in the archive and in the descriptor.
 RESOURCE_FILENAME = "climate_finance_corpus.csv"
 RESOURCE_NAME = "climate-finance-corpus"
 
@@ -69,10 +56,6 @@ DATASET_DESCRIPTION = (
     "carrying per-source provenance flags and a quality-flag audit trail. The "
     "refined subset is df[~df['is_flagged'] | df['is_protected']]. Abstracts "
     "are not redistributed; retrieve them via the DOI or OpenAlex identifier.")
-CITE_AS = (
-    "Ha-Duong, M. (2026). A Curated Corpus of Climate Finance Literature, "
-    "1990–2024: Six Sources, Multilingual Retrieval, and Grey Literature "
-    "[Data set]. Zenodo. https://doi.org/10.5281/zenodo.19236130")
 
 KEYWORDS = ["climate finance", "bibliometrics", "history of economic thought",
             "grey literature", "OpenAlex", "text corpus"]
@@ -85,15 +68,9 @@ AUTHOR = {"name": "Minh Ha-Duong",
           "organization": "CIRED"}
 FUNDER = {"name": "Centre National de la Recherche Scientifique",
           "ror": "https://ror.org/02feahw73",
+          # Crossref Funder Registry ID: the Zenodo upload form asks for it,
+          # the Data Package contributor object has no slot for it.
           "funder_id": "https://doi.org/10.13039/501100004794"}
-
-# Frictionless type → Croissant (schema.org) dataType.
-_CROISSANT_TYPE = {
-    "string": "sc:Text",
-    "integer": "sc:Integer",
-    "number": "sc:Float",
-    "boolean": "sc:Boolean",
-}
 
 
 def _constraints(v: Variable) -> dict[str, object]:
@@ -203,91 +180,5 @@ def render_datapackage(columns: list[str], version: str,
                            for v in contract_for(columns)],
                 "missingValues": [""],
             },
-        }],
-    }
-
-
-def sha256_of(path: str) -> str:
-    """Streaming SHA-256 of a file, for the Croissant FileObject."""
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
-
-
-_CROISSANT_CONTEXT: dict[str, object] = {
-    "@language": "en",
-    "@vocab": "https://schema.org/",
-    "cr": "http://mlcommons.org/croissant/",
-    "sc": "https://schema.org/",
-    "column": "cr:column",
-    "conformsTo": "dct:conformsTo",
-    "dataType": {"@id": "cr:dataType", "@type": "@vocab"},
-    "dct": "http://purl.org/dc/terms/",
-    "extract": "cr:extract",
-    "field": "cr:field",
-    "fileObject": "cr:fileObject",
-    "recordSet": "cr:recordSet",
-    "source": "cr:source",
-}
-
-
-def render_croissant(columns: list[str], version: str, csv_path: str,
-                     n_rows: int) -> dict[str, object]:
-    """Croissant (MLCommons JSON-LD) description of the deposited CSV."""
-    file_id = RESOURCE_FILENAME
-    record_id = RESOURCE_NAME
-    fields = [{
-        "@type": "cr:Field",
-        "@id": f"{record_id}/{v.name}",
-        "name": v.name,
-        "description": v.description,
-        "dataType": _CROISSANT_TYPE[v.dtype],
-        "source": {
-            "fileObject": {"@id": file_id},
-            "extract": {"column": v.name},
-        },
-    } for v in contract_for(columns)]
-    return {
-        "@context": _CROISSANT_CONTEXT,
-        "@type": "sc:Dataset",
-        "conformsTo": "http://mlcommons.org/croissant/1.0",
-        "name": RESOURCE_NAME,
-        "title": DATASET_TITLE,
-        "description": DATASET_DESCRIPTION,
-        "version": version,
-        "license": LICENSE_URL,
-        "url": CONCEPT_DOI,
-        "citeAs": CITE_AS,
-        "keywords": KEYWORDS,
-        "creator": {
-            "@type": "sc:Person",
-            "name": AUTHOR["name"],
-            "sameAs": AUTHOR["orcid"],
-            "affiliation": {"@type": "sc:Organization",
-                            "name": AUTHOR["organization"]},
-        },
-        "funder": {
-            "@type": "sc:Organization",
-            "name": FUNDER["name"],
-            "sameAs": FUNDER["ror"],
-            "identifier": FUNDER["funder_id"],
-        },
-        "distribution": [{
-            "@type": "cr:FileObject",
-            "@id": file_id,
-            "name": os.path.basename(csv_path),
-            "description": f"Deposited corpus table, {n_rows} rows.",
-            "contentUrl": RESOURCE_FILENAME,
-            "encodingFormat": "text/csv",
-            "sha256": sha256_of(csv_path),
-        }],
-        "recordSet": [{
-            "@type": "cr:RecordSet",
-            "@id": record_id,
-            "name": record_id,
-            "description": "One deduplicated bibliographic work per row.",
-            "field": fields,
         }],
     }

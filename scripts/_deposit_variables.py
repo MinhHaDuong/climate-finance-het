@@ -11,11 +11,11 @@ step. Three consumers keep it honest:
   variables table (``render_markdown_table()``), so the published table
   cannot drift from the shipped CSV;
 - tests/test_variables_table.py — pins contract/transform agreement;
-- scripts/_deposit_schema.py — renders the machine-readable descriptors
-  (`datapackage.json`, `croissant.json`) whose constraints ``frictionless
-  validate`` enforces against the written CSV. They also carry the storage
-  types, allowed values and measured missingness that the retired prose
-  codebook used to print (ticket 0354).
+- scripts/_deposit_schema.py — renders the machine-readable descriptor
+  (`datapackage.json`) whose constraints ``frictionless validate`` enforces
+  against the written CSV. It also carries the storage types, allowed values
+  and measured missingness that the retired prose codebook used to print
+  (ticket 0354).
 
 Columns marked ``required=False`` depend on optional pipeline stages
 (embeddings for the outlier distance, the v1 identifier file, the corpus-v2

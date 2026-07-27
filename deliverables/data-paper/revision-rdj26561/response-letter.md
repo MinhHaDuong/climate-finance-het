@@ -66,7 +66,7 @@ the deposited file.
 separate raw data inputs from final data products. The new version of the
 deposit (same concept DOI) contains `data/inputs/` with the per-source
 catalogs as harvested, and `data/products/` with the paper's outputs
-(`climate_finance_corpus.csv`, `datapackage.json`, `croissant.json`,
+(`climate_finance_corpus.csv`, `datapackage.json`,
 `embeddings.npz`, `citations.csv`); `code/` holds the pipeline source. The archive README and
 the paper's Data section describe the same layout, and the packaging is
 produced by a build script, so the structure is reproducible rather than
@@ -217,10 +217,8 @@ Instead, the revision makes the structure explicit for manual exploration:
 formal data dictionary in machine-readable form: `datapackage.json`, a
 Frictionless Table Schema giving, per column, the storage type, the allowed
 values, the range, and the share of missing values measured on the deposited
-file, plus `croissant.json` carrying the same description in MLCommons
-Croissant. Both are generated from the same declared column contract that the
-export script enforces when writing the CSV, so they cannot drift from the
-data. The schema is also executable, so a reader can verify the deposit
+file. It is generated from the same declared column contract that the export
+script enforces when writing the CSV, so it cannot drift from the data. The schema is also executable, so a reader can verify the deposit
 rather than take the documentation on trust — `frictionless validate
 datapackage.json` — and our build refuses to package an archive whose data
 contradicts it.

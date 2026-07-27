@@ -691,14 +691,13 @@ archive-datapaper: check-corpus corpus-tables figures-datapaper
 # checked on the *written bytes* — where an integer serialised as "2026.0" or a
 # quoting slip lives, invisible to any in-memory assertion.
 #
-# The descriptors describe the file as shipped, so they depend on the CSV, not
+# The descriptor describes the file as shipped, so it depends on the CSV, not
 # on the contract alone: an optional column absent from a build gets no field.
 # Staged under data/derived/ (regenerable, gitignored); the archive build emits
-# its own copies beside the data it ships.
+# its own copy beside the data it ships.
 DEPOSIT_STAGE = data/derived/deposit
 DEPOSIT_CSV = $(DEPOSIT_STAGE)/climate_finance_corpus.csv
 DEPOSIT_PKG = $(DEPOSIT_STAGE)/datapackage.json
-DEPOSIT_CRO = $(DEPOSIT_STAGE)/croissant.json
 
 $(DEPOSIT_CSV): scripts/figures/export_deposit.py scripts/_deposit_variables.py $(EXTENDED)
 	$(PYTHON) $< --output $@
@@ -706,10 +705,7 @@ $(DEPOSIT_CSV): scripts/figures/export_deposit.py scripts/_deposit_variables.py 
 $(DEPOSIT_PKG): scripts/figures/export_datapackage.py scripts/_deposit_schema.py scripts/_deposit_variables.py $(DEPOSIT_CSV)
 	$(PYTHON) $< --input $(DEPOSIT_CSV) --output $@
 
-$(DEPOSIT_CRO): scripts/figures/export_croissant.py scripts/_deposit_schema.py scripts/_deposit_variables.py $(DEPOSIT_CSV)
-	$(PYTHON) $< --input $(DEPOSIT_CSV) --output $@
-
-deposit-descriptors: $(DEPOSIT_PKG) $(DEPOSIT_CRO)
+deposit-descriptors: $(DEPOSIT_PKG)
 
 deposit-validate: $(DEPOSIT_PKG)
 	$(UV_RUN) frictionless validate $(DEPOSIT_PKG)
