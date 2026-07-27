@@ -324,6 +324,41 @@ class TestFlagSemanticOutlier:
         assert flag_mask.iloc[3] == True, "the DOI-less outlier escaped Flag 5"
         assert flag_mask.sum() == 1, "a DOI-bearing neighbour was flagged instead"
 
+    def test_non_candidates_get_no_distance(self, config):
+        """Only rows the caller put in emb_df may be scored.
+
+        A DOI-normalising fallback was tried and removed in review: a work the
+        loader deliberately excluded (no abstract, out of window, unembedded)
+        picked up a candidate's distance whenever their DOIs normalised onto
+        each other, and so became flaggable outside the subset.
+        """
+        rng = np.random.default_rng(11)
+        emb_dim = 8
+        embeddings = rng.normal(
+            loc=1.0, scale=0.1, size=(3, emb_dim)).astype(np.float32)
+        embeddings[0] = -10.0 * np.ones(emb_dim, dtype=np.float32)
+
+        emb_df = pd.DataFrame({
+            "doi": ["10.1000/a", "10.1000/b", "10.1000/c"],
+            "source_id": ["W1", "W2", "W3"],
+            "title": ["A", "B", "C"],
+        })
+        # df carries the three candidates plus a non-candidate whose DOI differs
+        # only in case and prefix — the shape the removed fallback collapsed.
+        df = pd.concat([emb_df, pd.DataFrame({
+            "doi": ["https://doi.org/10.1000/A"],
+            "source_id": ["W9"],
+            "title": ["Not a candidate"],
+        })], ignore_index=True)
+
+        flag_mask, dists = flag_semantic_outlier(
+            df, config, embeddings=embeddings, emb_df=emb_df
+        )
+        assert pd.isna(dists.iloc[3]), (
+            "a work outside emb_df was handed a candidate's distance"
+        )
+        assert flag_mask.iloc[3] == False
+
     def test_missing_embeddings_raises(self, config):
         df = pd.DataFrame({"doi": ["10.1000/a"]})
         with pytest.raises(ValueError, match="embeddings and emb_df are required"):

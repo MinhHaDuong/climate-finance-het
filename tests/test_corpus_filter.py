@@ -415,18 +415,31 @@ class TestFlag5EmbeddingKeyJoin:
                 "to positional alignment"
             )
 
-    def test_partial_coverage_keeps_the_covered_rows(self, tmp_path):
+    def test_partial_coverage_above_the_floor_keeps_the_covered_rows(self, tmp_path):
         """Works without a vector are dropped, the rest still evaluate."""
         cf = _import_corpus_filter()
         df = _works_frame(n=4)
         path, _ = _write_npz(tmp_path, ["10.1/work0", "10.1/work3"])
 
         embeddings, emb_df, has_embeddings = cf.load_embeddings(
-            df, embeddings_path=path)
+            df, embeddings_path=path, min_coverage=0.4)
 
         assert has_embeddings
         assert len(embeddings) == len(emb_df) == 2
         assert set(emb_df["doi"]) == {"10.1/work0", "10.1/work3"}
+
+    def test_empty_key_in_the_cache_is_not_handed_out(self, tmp_path):
+        """An empty key identifies nothing and would collide two works onto one
+        vector. It must not match anybody."""
+        cf = _import_corpus_filter()
+        df = _works_frame(n=2)
+        df["doi"] = ""
+        df["source_id"] = ""
+        df["title"] = ""
+        path, _ = _write_npz(tmp_path, ["", "10.1/unrelated"])
+
+        with pytest.raises(RuntimeError, match="(?i)coverage|no work in common"):
+            cf.load_embeddings(df, embeddings_path=path)
 
     def test_falls_back_to_source_id_when_doi_is_absent(self, tmp_path):
         """work_key() keys on source_id for DOI-less works; so must the join."""
@@ -484,6 +497,31 @@ class TestFlag5NeverSilentlyDead:
 
         with pytest.raises(RuntimeError, match="keys"):
             cf.load_embeddings(df, embeddings_path=str(path))
+
+    def test_coverage_below_the_floor_raises(self, tmp_path):
+        """A 99%-dead flag is still a dead flag.
+
+        Zero overlap already raised, but one vector out of a thousand
+        candidates used to warn and proceed — scoring a rump of the corpus
+        against a centroid built from that same rump (review round 2).
+        """
+        cf = _import_corpus_filter()
+        df = _works_frame(n=10)
+        path, _ = _write_npz(tmp_path, ["10.1/work0"])
+
+        with pytest.raises(RuntimeError, match="(?i)coverage"):
+            cf.load_embeddings(df, embeddings_path=path, min_coverage=0.9)
+
+    def test_coverage_floor_comes_from_config_by_default(self):
+        """The floor is a research parameter, so it lives in the config."""
+        import yaml
+
+        cfg_path = os.path.join(
+            os.path.dirname(__file__), "..", "config", "corpus_filter.yaml")
+        with open(cfg_path) as f:
+            cfg = yaml.safe_load(f)
+        floor = cfg["semantic_outlier"]["min_coverage"]
+        assert 0 < floor <= 1, "min_coverage must be a fraction"
 
     def test_unusable_year_column_raises_instead_of_emptying_the_subset(
         self, tmp_path

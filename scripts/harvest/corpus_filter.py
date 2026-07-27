@@ -447,7 +447,11 @@ def _flag5_subset(df):
     return abstract_bearing, in_window.reset_index(drop=True)
 
 
-def load_embeddings(df, cheap=False, embeddings_path=None, skip=False):
+DEFAULT_MIN_COVERAGE = 0.9
+
+
+def load_embeddings(df, cheap=False, embeddings_path=None, skip=False,
+                    min_coverage=None):
     """Return (embeddings, emb_df, has_embeddings) for Flag 5.
 
     The vectors are matched to works through the ``keys`` array written by
@@ -458,6 +462,11 @@ def load_embeddings(df, cheap=False, embeddings_path=None, skip=False):
     the day the row sets diverged, the length check turned Flag 5 off on every
     run behind a log.warning (ticket 0336).
 
+    ``min_coverage`` is the fraction of candidates that must resolve to a
+    vector; below it the flag would score a rump of the corpus against a
+    centroid built from that same rump, so it raises. Defaults to
+    ``semantic_outlier.min_coverage`` in config/corpus_filter.yaml.
+
     ``(None, None, False)`` is returned only when Flag 5 is genuinely absent:
     ``--cheap``, ``--skip-semantic-flag``, no cache file, or a corpus with no
     abstract-bearing work. Otherwise the cache either yields its vectors or
@@ -466,6 +475,10 @@ def load_embeddings(df, cheap=False, embeddings_path=None, skip=False):
     path = embeddings_path or EMBEDDINGS_PATH
     if cheap or skip or not os.path.exists(path):
         return None, None, False
+
+    if min_coverage is None:
+        min_coverage = _load_config().get("semantic_outlier", {}).get(
+            "min_coverage", DEFAULT_MIN_COVERAGE)
 
     abstract_bearing, emb_df = _flag5_subset(df)
     if abstract_bearing.empty:
@@ -483,7 +496,9 @@ def load_embeddings(df, cheap=False, embeddings_path=None, skip=False):
             "without Flag 5 on purpose."
         )
     vectors = cache["vectors"]
-    key_to_row = {str(k): i for i, k in enumerate(cache["keys"])}
+    # An empty key identifies nothing, and two works carrying one would collide
+    # onto a single vector. Drop it rather than hand out a wrong distance.
+    key_to_row = {str(k): i for i, k in enumerate(cache["keys"]) if str(k)}
 
     if emb_df.empty:
         periodization = load_analysis_config()["periodization"]
@@ -497,18 +512,22 @@ def load_embeddings(df, cheap=False, embeddings_path=None, skip=False):
     rows = work_keys(emb_df).map(key_to_row)
     matched = rows.notna()
     n_matched = int(matched.sum())
-    if n_matched == 0:
+    coverage = n_matched / len(emb_df)
+    if coverage < min_coverage:
         raise RuntimeError(
-            f"{path} holds {len(vectors)} vectors and the corpus has "
-            f"{len(emb_df)} Flag 5 candidates, but the two have no work in "
-            "common. The embeddings are stale or keyed differently. Re-run "
+            f"Flag 5 embedding coverage {coverage:.1%} is below the "
+            f"{min_coverage:.0%} floor: {n_matched} of {len(emb_df)} candidates "
+            f"resolved against {len(vectors)} vectors in {path}. Scoring a "
+            "fraction of the corpus against a centroid built from that same "
+            "fraction is a dead flag with a number attached. Re-run "
             "'make corpus-enrich', or pass --skip-semantic-flag to filter "
             "without Flag 5 on purpose."
         )
     if n_matched < len(emb_df):
-        log.warning("  Flag 5 embedding coverage: %d / %d candidates "
-                    "(%d unembedded works excluded from the flag)",
-                    n_matched, len(emb_df), len(emb_df) - n_matched)
+        log.warning("  Flag 5 embedding coverage: %d / %d candidates (%.1f%%, "
+                    "%d unembedded works excluded from the flag)",
+                    n_matched, len(emb_df), 100 * coverage,
+                    len(emb_df) - n_matched)
 
     emb_df = emb_df[matched].reset_index(drop=True)
     embeddings = vectors[rows[matched].to_numpy(dtype=int)]

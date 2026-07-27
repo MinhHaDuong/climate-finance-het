@@ -234,21 +234,15 @@ def flag_semantic_outlier(df, config, *, embeddings, emb_df):
     # counts toward the centroid — so it is unflaggable and warps everyone
     # else's score (found in review of ticket 0336). work_key is what the
     # embeddings are keyed on upstream, so the same key carries the result back.
+    # One key, no fallback. A normalized-DOI second chance was tried and
+    # removed in review: it hands a distance to works the caller deliberately
+    # left out of emb_df (no abstract, out of window, unembedded) whenever
+    # their DOI normalizes onto a candidate's, which both flags non-candidates
+    # and lets one work carry another's score. emb_df is a slice of df here, so
+    # the exact key always hits.
     dist_by_key = dict(zip(work_keys(emb_df), cos_dist))
     dist_by_key.pop("", None)
     outlier_dists = work_keys(df).map(dist_by_key)
-
-    # Normalized DOI as a second chance: emb_df is a slice of df in this
-    # pipeline, but a caller passing an independently-loaded frame can differ
-    # in DOI casing or prefix, which work_key does not normalize.
-    unmatched = outlier_dists.isna()
-    if unmatched.any() and "doi" in df.columns and "doi" in emb_df.columns:
-        emb_dois = emb_df["doi"].apply(normalize_doi_safe)
-        dist_by_doi = dict(zip(emb_dois, cos_dist))
-        dist_by_doi.pop("", None)
-        doi_norm = (df["doi_norm"] if "doi_norm" in df.columns
-                    else df["doi"].apply(normalize_doi_safe))
-        outlier_dists = outlier_dists.fillna(doi_norm.map(dist_by_doi))
 
     flag_mask = outlier_dists.notna() & (outlier_dists > threshold)
 
