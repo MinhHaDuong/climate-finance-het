@@ -153,11 +153,20 @@ in the primary checkout gives up git isolation and skips the `dvc commit` /
 `dvc push` that a normal PR carries, which is how ticket 0347 left `dvc.lock`
 pointing at a superseded corpus (ticket 0360).
 
-The data is copied, not linked: `cache.type` is unset, so DVC's default `copy`
-costs about 2.2 GB per worktree that asks for data. That is deliberate. Phase-1
-scripts rewrite `data/catalogs/*.csv` in place, and a hardlinked checkout shares
-the cache blob's inode, so one rewrite would corrupt the cache for every
-checkout at once.
+On this machine that costs almost no disk. `cache.type` is unset, so DVC tries
+its default chain, reflink then copy, and the repo sits on btrfs: a checked-out
+file shares its physical extents with the cache blob and gets its own copy only
+on write. Measured, because inode identity cannot tell reflink from copy — after
+a full `make data` in a probe worktree, `filefrag` reported the same extents
+flagged `shared` for workspace file and cache blob, and free space was unchanged.
+On a filesystem without reflink DVC falls back to a real copy, and there the same
+checkout costs the full 2.2 GB.
+
+Leave `cache.type` unset. Reflink is safe here precisely because a write breaks
+the sharing, which is what keeps Phase-1's in-place rewrites of
+`data/catalogs/*.csv` off the cache blob. Setting `hardlink` would remove that
+protection: hardlinked files share one inode, so a single rewrite would corrupt
+the cache for every checkout at once.
 
 **One cache, every checkout: think before `dvc gc`.** Sharing the cache widens
 that command's blast radius. It prunes by reachability computed from whichever

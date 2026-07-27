@@ -113,13 +113,12 @@ def test_hook_points_dvc_cache_at_the_shared_cache():
     then searches that empty cache and fails, which is what pushed corpus work
     back into the primary checkout (ticket 0360, via 0347).
 
-    Symlinking is the same idiom the hook already uses for .venv. It is what
-    makes `make data` able to find anything at all; it does not make the data
-    free. cache.type is unset, so DVC's default is `copy` and each worktree that
-    asks for data spends ~2.2 GB. Hardlinking would remove that cost and is
-    rejected: Phase-1 scripts rewrite data/catalogs/*.csv in place, and a
-    hardlinked checkout shares the cache blob's inode, so one rewrite would
-    corrupt the cache for every checkout at once."""
+    Symlinking is the same idiom the hook already uses for .venv, and on a
+    reflink-capable filesystem it is nearly free: cache.type is unset, so DVC
+    tries reflink before copy, and a reflinked checkout shares extents with the
+    cache blob until something writes. cache.type must stay unset — `hardlink`
+    would share one inode instead, and Phase-1 rewrites data/catalogs/*.csv in
+    place, so a single rewrite would corrupt the cache for every checkout."""
     source = HOOK.read_text()
     assert ".dvc/cache" in source
     # The path must be derived from the repo, not hard-coded, so the fix
@@ -256,8 +255,16 @@ def test_hook_never_clobbers_a_real_dvc_cache_directory():
     parent = tempfile.mkdtemp(prefix="wt-dvc-own-cache-")
     wt = Path(parent) / "wt"
     try:
+        # core.hooksPath=/dev/null is load-bearing, not tidiness. Where hooks are
+        # configured (what `make setup` does), `git worktree add` fires
+        # post-checkout itself, which symlinks .dvc/cache before the fixture
+        # below runs — mkdir(exist_ok=True) then no-ops through the link and the
+        # sentinel write lands a stray blob in the real 19 GB shared cache. The
+        # fixture must build its own cache directory on a checkout git has not
+        # already wired up.
         result = subprocess.run(
-            ["git", "worktree", "add", "--detach", str(wt), "HEAD"],
+            ["git", "-c", "core.hooksPath=/dev/null",
+             "worktree", "add", "--detach", str(wt), "HEAD"],
             cwd=REPO, capture_output=True, text=True,
         )
         assert result.returncode == 0, f"git worktree add failed:\n{result.stderr}"
@@ -265,6 +272,10 @@ def test_hook_never_clobbers_a_real_dvc_cache_directory():
         # Stand in for a standalone checkout: a real cache directory holding a
         # blob that exists nowhere else.
         own_cache = wt / ".dvc" / "cache"
+        assert not own_cache.is_symlink(), (
+            "fixture precondition failed: .dvc/cache is already a symlink, so "
+            "this test would write into the shared cache instead of a private one"
+        )
         own_cache.mkdir(parents=True, exist_ok=True)
         sentinel = own_cache / "sentinel-blob"
         sentinel.write_text("the only copy")
@@ -320,8 +331,13 @@ def test_fresh_worktree_shares_the_primary_dvc_cache():
     parent = tempfile.mkdtemp(prefix="wt-dvc-cache-")
     wt = Path(parent) / "wt"
     try:
+        # Hooks disabled so the outcome depends only on the hook this test then
+        # runs by hand. Otherwise a machine with core.hooksPath configured has
+        # already created the link at `worktree add` time, and the assertions
+        # below would pass without exercising the version under test.
         result = subprocess.run(
-            ["git", "worktree", "add", "--detach", str(wt), "HEAD"],
+            ["git", "-c", "core.hooksPath=/dev/null",
+             "worktree", "add", "--detach", str(wt), "HEAD"],
             cwd=REPO,
             capture_output=True,
             text=True,

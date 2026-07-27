@@ -11,6 +11,7 @@ Closed: fixed
 2026-07-27T15:50Z HDMX-coding-agent note implemented as a symlink in .githooks/post-checkout, mirroring the .venv idiom, with the shared path derived from git rev-parse --git-common-dir so a clone elsewhere works. Verified end to end: in a probe worktree the link resolves to the primary cache and 'make data' checks the corpus out, delivering refined_works.csv at 66,400,079 bytes — the repopulated corpus from 0347. Two corrections to my own ticket while implementing. First, action 1 (writing cache.dir into .dvc/config.local) is unusable: that file is gitignored, so the fix cannot ship in a PR; action 2's computed path is the only viable form. Second, the ticket and my first draft of the hook claimed the sharing 'costs no extra disk'. False: dvc config cache.type is unset, so DVC defaults to copy and each worktree running make data spends ~2.2 GB. Measured, not assumed — inodes differ and du confirms. I did NOT switch cache.type to hardlink to make the claim true: Phase-1 scripts rewrite data/catalogs/*.csv in place, and a hardlinked checkout shares the inode with the cache blob, so one rewrite would corrupt the cache for every checkout. Copy is the safe default here; the comment now says so.
 2026-07-27T15:51Z HDMX-coding-agent closed — fixed
 2026-07-27T18:30Z HDMX-coding-agent note review-pr panel on PR #1179 caught action 3 (the .claude/rules/architecture.md note) silently dropped: the ticket closed 'fixed' with every Verification and Exit-criteria box ticked, and no box covered that action, which is how the omission stayed invisible. Done now, in § Data location, together with the one hazard the cache sharing widens: dvc gc prunes by reachability computed from whichever checkout invokes it, so with a single cache behind every checkout a stale worktree can delete blobs the primary still needs (the caveat 0252 cites for keeping 8 orphan pointers). git.md and workflow.md updated to point at it. Also on that review: a behavioural test I added for the never-clobber guard was vacuous — ln -sfn onto a real directory nests the link inside it rather than replacing it, so is_symlink() and the sentinel both survive; the test now asserts the directory's contents and fails with the guard removed.
+2026-07-27T20:45Z HDMX-coding-agent note review-pr round 2 found the cost claim wrong and a test that polluted the real cache. (1) DVC's default cache.type chain is reflink-then-copy and this repo is on btrfs, so checkout reflinks: filefrag reports identical physical extents flagged 'shared' for workspace file and cache blob after a full make data in a probe worktree, and df was unchanged across the 2.2 GB checkout. My draft-2 method (inodes differ, du confirms) cannot tell reflink from copy — a reflink produces exactly that signature. Corrected in the hook comment, architecture.md, the test docstring and the ticket. (2) The never-clobber test called plain 'git worktree add'; where core.hooksPath is configured, git fires post-checkout itself, the link is created before the fixture runs, mkdir(exist_ok=True) no-ops through it and the sentinel write lands in the real 19 GB shared cache. Reproduced by injecting core.hooksPath via GIT_CONFIG_*: the test failed and wrote /home/haduong/Climate_finance/.dvc/cache/sentinel-blob, which I removed. Fixed with -c core.hooksPath=/dev/null plus a precondition assert. (3) The fix itself is sound through the documented path: with hooks pointed at this branch's .githooks, git worktree add created the link and make data checked the corpus out of the shared cache. It is inert on this machine only because core.hooksPath names a directory that does not exist; make setup repairs that.
 --- body ---
 ## Context
 
@@ -86,16 +87,30 @@ superseded corpus until the author noticed.
    standalone checkout owns a real cache directory and clobbering it would
    orphan its blobs.
 
-   **Cost, measured rather than assumed.** An earlier draft of this ticket said
-   the sharing costs no extra disk. That is false: `dvc config cache.type` is
-   unset, so DVC's default is `copy`, and each worktree that runs `make data`
-   spends ~2.2 GB (verified — the checked-out file and the cache blob have
-   different inodes and a link count of 1). Switching `cache.type` to
-   `hardlink` would make the claim true and is **rejected**: Phase-1 scripts
-   rewrite `data/catalogs/*.csv` in place, and a hardlinked checkout shares the
-   inode with the cache blob, so one rewrite would corrupt the cache for every
-   checkout at once. The copy is the price of isolation, and only worktrees
-   that ask for data pay it.
+   **Cost — measured twice, wrong the first time.** This ticket has now carried
+   two contradictory claims, both from bad measurement, so the method matters
+   more than the number:
+
+   - Draft 1: "costs no extra disk." Asserted, not measured.
+   - Draft 2: "`cache.type` is unset, so DVC copies: ~2.2 GB per worktree."
+     Measured by comparing inodes and running `du`. **Also wrong** — neither can
+     distinguish a reflink from a copy. Different inodes are exactly what a
+     reflink produces, and `du` deduplicates by inode, not by shared extent.
+   - Correct: DVC's default `cache.type` chain is reflink, then copy. This repo
+     sits on btrfs, so `dvc checkout` **reflinks**. Verified with `filefrag`
+     after a full `make data` in a probe worktree: workspace file and cache blob
+     report identical physical extents flagged `shared`, and free space was
+     unchanged across a 2.2 GB checkout. The 2.2 GB figure is the *apparent*
+     size, and it is what the checkout would really cost on a filesystem with no
+     reflink, where DVC falls back to copying.
+
+   `cache.type` stays unset. Reflink is safe precisely because a write breaks
+   the sharing, which is what keeps Phase-1's in-place rewrites of
+   `data/catalogs/*.csv` off the cache blob. Setting `hardlink` would remove
+   that protection — one shared inode, so a single rewrite would corrupt the
+   cache for every checkout at once. Note this reverses draft 2's reasoning:
+   copy-on-write is not a cost paid for isolation, it is what provides the
+   isolation, free.
 3. **Done.** `.claude/rules/architecture.md` § Data location now states that a
    worktree needs `make data` once, that corpus work belongs in a worktree like
    any other work, and what the copy costs. It also records the one hazard the

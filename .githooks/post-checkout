@@ -47,15 +47,18 @@ fi
 # checkout, losing worktree isolation and the dvc commit/push that goes with a
 # normal PR (ticket 0360, after 0347).
 #
-# Same idiom as .venv above, but note what it does and does not buy. Sharing
-# the cache is what makes `make data` able to find anything at all; it does not
-# make the data free. DVC's cache.type is unset here, so its default is `copy`
-# and each worktree that asks for data spends ~2.2 GB of real disk. That is
-# deliberate: linking would hand every worktree the same inode as the cache
-# blob, and Phase-1 scripts rewrite data/catalogs/*.csv in place, so a single
-# rewrite would corrupt the shared cache for every checkout at once. Paying the
-# copy is the cost of doing corpus work in isolation, and it is only paid by
-# worktrees that actually run `make data`.
+# Same idiom as .venv above. Sharing the cache is what makes `make data` able to
+# find anything at all, and on this machine it costs almost no disk: cache.type
+# is unset, so DVC tries its default chain (reflink, then copy) and the repo is
+# on btrfs, where a checked-out file shares extents with the cache blob and is
+# copied only on write. Verified with filefrag, since differing inodes cannot
+# tell reflink from copy. Where the filesystem has no reflink, DVC falls back to
+# a real copy and a worktree that runs `make data` spends ~2.2 GB.
+#
+# Leave cache.type unset. Reflink is safe exactly because a write breaks the
+# sharing, which keeps Phase-1's in-place rewrites of data/catalogs/*.csv away
+# from the cache blob. `hardlink` would drop that protection — one shared inode,
+# so a single rewrite would corrupt the cache for every checkout at once.
 #
 # One consequence to know about: `dvc gc` now reaches every checkout at once. It
 # prunes by reachability computed from whichever checkout invokes it, so a stale
