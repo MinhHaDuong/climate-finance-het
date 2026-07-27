@@ -7,6 +7,7 @@ Author: HDMX-coding-agent
 2026-07-27T08:10Z HDMX-coding-agent created
 2026-07-27T08:16Z HDMX-coding-agent note child of 0274, blocks resubmission. Found while triaging a make check failure during 0317 — the failing acceptance test was checking a retired key name, so it could not see the real defect underneath.
 
+2026-07-27T08:45Z HDMX-coding-agent note author approved the plan 2026-07-27. Implemented on t0320-verification-vars: compute_citation_verification.py -> tab_citation_verification.csv (CitationVerificationSchema, whitelisted for archival), compute_vars.citation_verification_stats -> 12 vars scoped to DOC_VARS['data-paper'], paragraph rewritten macro-only. Inspected the 9 unconfirmed links before rewriting: all status=ok (the Crossref query succeeded), a mix of book chapters (Routledge, Cambridge/IPCC), a CHOICE review and ordinary journal articles — so the old 'not errors' gloss was not re-asserted; the new sentence states what the test measures and why absence from a Crossref reference deposit is weak evidence of error. Added the completeness result (98.3%, CI [98.0,98.6]), which was measured but never quoted. Stale guards fixed: test_qa_report_has_verification asserted a retired 'verification' key while test_citation_precision_high/recall_high SKIPPED on the same missing key — all three now assert the emitted accuracy/completeness schema and cannot skip past it.
 --- body ---
 ## Context
 

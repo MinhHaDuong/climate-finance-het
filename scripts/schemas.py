@@ -166,6 +166,23 @@ Pre2007CoverageSchema = DataFrameSchema(
 )
 
 # ---------------------------------------------------------------------------
+# Citation-verification CSV (ticket 0320)
+# ---------------------------------------------------------------------------
+# Long format: the accuracy and completeness statistics the data paper's §2
+# quotes (RDJ-26561 R1-13), flattened from qa_citations_report.json so the
+# prose reads them as vars instead of carrying hand-typed literals that
+# outlive their corpus. Mirrors the Pre2007CoverageSchema metric/value idiom.
+
+CitationVerificationSchema = DataFrameSchema(
+    columns={
+        "metric": Column(str),
+        "value": Column(float, nullable=True),
+    },
+    strict=True,
+    coerce=True,
+)
+
+# ---------------------------------------------------------------------------
 # Periodised citation-coverage CSV (ticket 0317)
 # ---------------------------------------------------------------------------
 # Long format: one (metric, value) row per period statistic, feeding the data
