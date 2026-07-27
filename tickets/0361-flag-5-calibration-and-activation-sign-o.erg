@@ -1,0 +1,161 @@
+%erg 0.1
+Title: Flag 5 calibration and activation sign-off: per-language centroid, sigma, or retire
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T14:40Z HDMX-coding-agent created split from 0336 — the fix that revived Flag 5 stands on its own; deciding what the flag should do is a separate author-owned call
+2026-07-27T14:40Z HDMX-coding-agent note calibration sweep run read-only against the frozen corpus; the table in the body is the decision record
+
+2026-07-27T17:40Z HDMX-coding-agent note author leans option B (retire): 'Flag 5 seems better suited to detect outliers and investigate, rather than filter'. Independent Fable-model defense round commissioned on the instrument, its implementation, state of the art, and redundancy with flags 1-4/6 before the call is fixed
+2026-07-27T17:57Z HDMX-coding-agent note blocker 0336 closed — Blocked-by removed.
+--- body ---
+## Context
+
+Ticket 0336 revived Flag 5 (semantic isolation), which had been returning
+`skipped` on every run. The fix merges with the flag held inert via
+`--skip-semantic-flag` in `dvc.yaml`'s `extend.cmd`, because activating it as
+shipped would remove 361 works on a threshold no human has ever seen produce
+output.
+
+`sigma: 2` was set on a smaller corpus under MiniLM. The embedding model was
+swapped to BGE-M3 **15 days after the flag silently died**, so the threshold
+deciding 361 removals has never been calibrated against anything it produced.
+
+## What the shipped setting would remove
+
+361 net new removals, reproduced independently of the implementing agent.
+Nothing precious by citation: **zero works cited >= 50**, max 43, median 0 — the
+core subset (~2,300 papers cited >= 50) loses nothing. Most are genuine harvest
+false positives (doctoral viva procedures, Ce-Zr nickel catalysis, fractional
+differential equations, mycotoxins in animal feed, Irish negative equity).
+
+But 45 of the 361 titles carry climate vocabulary, and these are in scope:
+
+- *From small to insignificant: Climate impact of the Kyoto Protocol with and
+  without the US* (2001, 39 cites)
+- *International Carbon Finance and EcoSecurities* (2008)
+- *Official Documents — Agreement with France for Donation to the Adaptation
+  Fund* (2013)
+- *The feasibility of ambitious climate agreements: Norway as an early test
+  case* (2002)
+- *COP27 climate change conference: urgent action needed for Africa and the
+  world* (2022)
+
+A paper titled *International Carbon Finance* culled as a semantic outlier is a
+calibration failure, not a filter working.
+
+## The language gradient — the real defect
+
+Baseline removal rate 1.09% of 33,057 candidates. By language, shipped setting:
+
+| lang | candidates | removed | rate | vs baseline |
+|------|-----------|---------|------|-------------|
+| es | 449 | 20 | 4.45% | 4.1x |
+| ko | 87 | 3 | 3.45% | 3.2x |
+| pt | 608 | 20 | 3.29% | 3.0x |
+| fr | 354 | 10 | 2.82% | 2.6x |
+| ru | 119 | 3 | 2.52% | 2.3x |
+| en | 30,225 | 288 | 0.95% | 0.9x |
+
+The centroid is built from a 91.6%-English corpus, so distance-from-centroid
+partly measures *not-in-English* rather than *off-topic*. Non-English works are
+culled at 2.3-4.1x the English rate — and that multilingual tail is the
+dependent variable of `docs/research-note-multilingual.md`. Activating the flag
+as shipped would thin the population that note studies, while the data paper
+reports a six-flag filter whose sixth flag has an unmeasured language gradient.
+
+## Calibration sweep (read-only, frozen corpus)
+
+The per-language arm computes both centroid and mean/std within language,
+falling back to the global arm below n=30.
+
+| variant | flagged | net rm | climate-vocab culled | on-topic 6 culled | es | pt | fr | ko | en |
+|---------|---------|--------|---------------------|-------------------|----|----|----|----|----|
+| global s=2 *(shipped)* | 1276 | 361 | 45 | 6/6 | 4.1x | 3.0x | 2.6x | 3.1x | 0.9x |
+| global s=3 | 238 | 38 | 1 | 1/6 | 9.7x | 4.3x | 4.9x | 0x | 0.7x |
+| global s=4 | 39 | 5 | 0 | 0/6 | 14.7x | 10.9x | 18.6x | 0x | 0.4x |
+| per-lang s=2 | 1324 | 385 | 48 | 6/6 | 1.1x | 0.4x | 1.9x | 1.0x | 1.0x |
+| **per-lang s=3** | 238 | **45** | 4 | 1/6 | 0x | 1.2x | 2.1x | 0x | 1.0x |
+| per-lang s=4 | 40 | 4 | 1 | 1/6 | 0x | 0x | 23.3x | 0x | 0.8x |
+
+Three findings:
+
+1. **The per-language centroid fixes the gradient at its source.** At s=2 it
+   collapses es 4.1x -> 1.1x, pt 3.0x -> 0.4x, ko 3.2x -> 1.0x, en 0.9x -> 1.0x.
+2. **Raising sigma against a global centroid makes the bias worse**, not better:
+   global s=4 gives es 14.7x, pt 10.9x, fr 18.6x, because the extreme tail of a
+   91.6%-English centroid distribution is almost entirely non-English. Sigma is
+   the wrong lever for the gradient; the centroid is the right one.
+3. **s=4 empties the flag**: 4 removals of 32,938 (0.012%). A sixth flag that
+   culls four papers is decorative, and harder to defend in the paper than
+   honestly reporting five.
+
+Caveat: at s=3 and s=4 the per-language ratios rest on 0-7 works per language,
+so those multipliers are noise (fr 23.3x at s=4 is one paper of 354). They are
+not signal.
+
+## Options
+
+- **A. Per-language centroid at s=3** (recommended). 45 removals, flat gradient
+  (en 1.0x, pt 1.2x, es 0x), 4 climate-vocab works culled against 45 shipped. A
+  flag that filters without a language gradient.
+- **B. Retire Flag 5.** Defensible: Flag 6 (LLM relevance) already flags 11,244
+  works and does topical filtering better; Flag 5's marginal contribution at s=3
+  is 45 works of 33,000. The paper would describe five flags, which is what the
+  artifact has actually been for months. Cheapest and most honest option.
+- **C. Per-language centroid at s=2.** Fixes the gradient but still culls all six
+  named on-topic works. Not recommended.
+
+Under every variant but global s=4 the *Adaptation Fund* document is culled. It
+is an `Official Documents` record, so that is an abstract-quality problem, not a
+threshold problem — no sigma fixes it. Handle separately or accept.
+
+## Relevant files
+
+- `scripts/filter_flags.py` — `flag_semantic_outlier` (centroid and threshold)
+- `scripts/harvest/corpus_filter.py` — `load_embeddings`, `_flag5_subset`
+- `config/corpus_filter.yaml` — `semantic_outlier.sigma`, `min_coverage`
+- `dvc.yaml` — `extend.cmd` carries `--skip-semantic-flag`; removing it activates
+- `docs/research-note-multilingual.md` — the note whose signal Flag 5 removes on
+- `deliverables/data-paper/data-paper.qmd` and the revision letter — both
+  describe six flags while the artifact has five
+
+## Actions
+
+1. Author decides A, B, or C. This is a research call, not a mechanical one.
+2. Implement it; if A, the per-language arm needs a documented floor for small
+   languages, in the shape of the existing `min_coverage`.
+3. Measure the resulting `refined_works.csv` row count and record it.
+4. Reconcile the prose: the data paper and revision letter say six flags. Either
+   activate and keep the claim true, or correct the count.
+5. Only then remove `--skip-semantic-flag` from `dvc.yaml`.
+
+## Test
+
+- A test asserting the language gradient stays inside a stated band after
+  calibration. The defect this ticket exists for is invisible to any count
+  assertion; only a per-language rate comparison sees it.
+- If B, a test asserting the flag is absent from `FLAG_COLUMNS` and that the
+  prose count matches.
+
+## Verification
+
+- [ ] Chosen option implemented, language gradient measured afterwards
+- [ ] `refined_works.csv` row-count change measured and recorded
+- [ ] Data paper and revision letter flag count matches the artifact
+- [ ] `--skip-semantic-flag` removed from `dvc.yaml` only after sign-off
+
+## Invariants
+
+- The corpus is frozen (author, 2026-07-27) mid RDJ-26561 R&R. No activation
+  before sign-off, and no rebuild that moves downstream counts without it.
+- No weakening of acceptance thresholds.
+- 0362 should land before any activation: `run_corpus_pipeline.sh` auto-pushes
+  `dvc.lock` to main, so an activated flag would execute with no checkpoint.
+
+## Exit criteria
+
+- Flag 5 is either calibrated with a measured, flat language gradient and
+  activated with author sign-off, or retired — and the paper's flag count
+  matches the artifact either way.
