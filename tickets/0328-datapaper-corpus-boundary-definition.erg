@@ -7,6 +7,8 @@ Label: needs-human
 --- log ---
 2026-07-27T11:00Z HDMX-coding-agent created
 2026-07-27T11:00Z HDMX-coding-agent note child of 0274. Raised by 4 of 4 external panel reviewers — the single most convergent finding. Marked needs-human: the resolution is an author scope decision, not an implementation choice.
+2026-07-27T13:30Z HDMX-coding-agent note AUTHOR DECISION: option (c) — own the real-world fuzziness. Describe how the boundary is drawn, acknowledge that adjacent material passes the net in quantity, and state the preference plainly: recall of climate finance over selectivity against its neighbours. Neither narrowing the corpus nor retitling.
+2026-07-27T13:30Z HDMX-coding-agent note implementing that decision surfaced a factual error in section 1: the paper claimed "we filter out pure green finance", and no such filter exists. See Finding below. The boundary is drawn at the query, conjunctively, and the quality filters do the opposite of what the sentence claimed.
 
 --- body ---
 ## Context
@@ -44,6 +46,43 @@ institutional vocabulary) and compare the recovered temporal profile against
 the retrospective taxonomy's. If the take-off year survives, the circularity
 objection is answered empirically rather than conceded in prose.
 
+## Finding: there is no green-finance filter, and §1 said there was
+
+Section 1 read: *"As we filter out pure green finance to retain only works
+related to international climate finance…"*. Checked against the config that
+actually ran:
+
+- **Nothing filters green finance out.** There is no green-finance flag in
+  `corpus_filter.yaml`. The six flags are citation isolation, cross-encoder
+  relevance, absent abstract with irrelevant title, missing metadata, title
+  blacklist, and semantic outlier.
+- **The filters do the opposite.** `safe_title` protects works whose titles
+  carry `green bond`, `green finance`, `carbon market`, `carbon tax`,
+  `carbon price`, `carbon credit`, `carbon trading`, `carbon offset`, or
+  `renewable` — that list exists to stop the flags from removing them.
+- **The cross-encoder query is broad**: "climate policy and financial
+  mechanisms". The fallback LLM prompt is broader still, naming carbon
+  markets and green investment as inclusion criteria.
+
+**What actually bounds the corpus is the query taxonomy, conjunctively.**
+Every green/carbon-market term in `openalex_queries.yaml` is searched paired
+with a climate term: `green bonds climate`, `sustainable finance climate`,
+`carbon offset climate`, `carbon credit climate`, `emissions trading
+climate`, `green investment climate`, `green economy climate`. Pure green
+finance is never searched for; it enters only inside a climate-searched work
+or through one of the seven non-OpenAlex sources.
+
+That rule is clean enough to state in the paper, which is what option (c)
+needs. **One exception**, disclosed in the prose rather than hidden: the
+Japanese Tier-1 term グリーンファイナンス (green finance) is unconjoined.
+`carbon finance` is also unconjoined, which is defensible — it denotes
+climate finance, not its neighbours.
+
+**This reconciles 0288.** Carbon markets and ESG were excluded as *seeding*
+decisions — the harvest does not go looking for them — not as filter rules.
+Adjacent material that arrives via climate vocabulary was always kept. The
+two decisions never conflicted; the prose misdescribed one of them.
+
 ## Relevant files
 
 - `deliverables/data-paper/data-paper.qmd` — §1 (definition), §2.1, §4, Figure 3
@@ -54,29 +93,34 @@ objection is answered empirically rather than conceded in prose.
 
 ## Actions
 
-1. **Author decision, first and blocking**: which is authoritative — the
-   narrow North-South definition, or the corpus as harvested? Three options:
-   - (a) Narrow the corpus to the definition. Expensive; changes every number.
-   - (b) Widen the stated definition to what the taxonomy actually retrieves,
-     and retitle/reframe accordingly. Cheapest; costs the specificity claim.
-   - (c) Keep both, but state explicitly that adjacent green/carbon-market
-     literature is retained as *context* with a named operational rule for
-     when it is in. Requires the rule to actually exist in the code.
-   Recommend (c) if a rule can be stated, (b) otherwise. Do not ship (a)
-   before the deadline.
-2. Reconcile the answer with 0288's recorded exclusion of carbon markets and
-   ESG — either that decision changes, or Figure 3's cluster labels are
-   misleading about what is in those clusters. Check the underlying works
-   before assuming the labels are right; TF-IDF cluster names overstate.
-3. Write the operational inclusion/exclusion statement into §2.1 as a short
-   table distinguishing international climate finance, climate policy
-   finance, green finance, sustainable finance, carbon markets, climate-risk
-   finance, development finance, and energy finance — in or out, and by what
-   rule.
-4. Scope the prospective-taxonomy ablation as a **separate decision**: run it
-   (strengthens the paper materially, costs a harvest pass) or answer the
-   circularity in the limitations paragraph. §2.1 already concedes the
-   circularity; the panel's point is that conceding is not quantifying.
+1. ~~Author decision~~ — DONE, option (c), logged above.
+2. ~~Correct §1's false filter claim~~ — DONE. Deleted, not replaced. The
+   sentence's trailing clause ("green finance at large --- a broader field
+   than this dataset covers by design") already carries the explanatory work.
+3. ~~State the operational rule in §2.1~~ — DROPPED by the author. A first
+   attempt added a paragraph describing the conjunctive query rule, its one
+   exception, and the recall preference; the author cut it as verbose. The
+   §1 clause was false and had to go; the mechanism does not need explaining
+   in the paper. Net effect on the corpus: -16 words. The mechanism stays
+   documented here, in the Finding above.
+4. **Remaining — Figure 3's cluster labels.** The panel read "Green bonds &
+   sustainable finance" and "Carbon markets & EU ETS" as evidence the corpus
+   is off-scope. Under the rule above those clusters are legitimate, but the
+   TF-IDF labels may still misdescribe their members. Sample each cluster and
+   confirm the label names what is in it; TF-IDF top terms overstate. The
+   panel's separate catch that "Kyoto mechanisms & CDM" *grows* to ~20% after
+   2015 is the tell that at least one label is wrong (tracked in 0332).
+5. **Remaining — the prospective-taxonomy ablation, still an author call.**
+   Rebuild the query from period-contemporary sources only (UNFCCC glossaries,
+   early IPCC and UNCED reports, pre-2009 institutional vocabulary) and
+   compare the recovered temporal profile against the retrospective
+   taxonomy's. Costs a harvest pass; answers the circularity objection
+   empirically instead of conceding it in prose. §2.1 already concedes it —
+   the panel's point is that conceding is not quantifying.
+6. **Remaining — optional config hygiene, not before resubmission.** Conjoin
+   or drop the unconjoined Japanese Tier-1 green-finance term so the stated
+   rule holds without an exception. This changes the harvest, so it belongs
+   to a future corpus version, not to this revision.
 
 ## Test
 
