@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-27T11:30Z HDMX-coding-agent created found during the 0297 corpus regeneration on padme
 
+2026-07-27T11:47Z HDMX-coding-agent measured dry run (read-only, frozen corpus 2026-07-27): key join lives, 33057 Flag 5 candidates, 32938 joined against 38736 vectors, 119 unembedded. Flag 5 flags 1075 works: 885 already flagged by another flag, 93 protected, 161 net new removals. refined_works.csv would go 33344 to ~33183. Row-count change NOT landed, awaits author sign-off.
 --- body ---
 ## Context
 
