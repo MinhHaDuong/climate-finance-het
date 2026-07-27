@@ -17,6 +17,7 @@ Usage:
 import os
 
 import pandas as pd
+from _markdown_table import markdown_text_cell
 from _venue_naming import canonical_venue, venue_type
 from script_io_args import parse_io_args, validate_io
 from utils import BASE_DIR, DERIVED_TABLES_DIR, get_logger
@@ -103,8 +104,12 @@ def main():
         "| Venue | Papers | Type |",
         "|:------|-------:|:-----|",
     ]
+    # A venue is either a curated PUBLISHER_GROUPS label or — when no rule in
+    # `canonical_venue()` matched — the raw journal string, which may carry a
+    # literal `|` (ticket 0339). Escaping the column uniformly is a no-op on the
+    # curated labels, so it needs no branch. `count` and `vtype` are ours.
     for venue, count, vtype in table_rows:
-        lines.append(f"| {venue} | {count} | {vtype} |")
+        lines.append(f"| {markdown_text_cell(venue)} | {count} | {vtype} |")
 
     lines.append("")
     lines.append(

@@ -19,6 +19,8 @@ curated key-documents layer) and may be absent from older corpus builds.
 
 from dataclasses import dataclass
 
+from _markdown_table import markdown_cell
+
 # Individual flag columns collapsed into is_flagged + flag_reason
 FLAG_COLUMNS = [
     "missing_metadata",
@@ -200,10 +202,8 @@ _LATEX_CODE_SPECIALS = _LATEX_TEXT_SPECIALS | {"'": r"\textquotesingle{}"}
 _LATEX_TEXT = str.maketrans(_LATEX_TEXT_SPECIALS)
 _LATEX_CODE = str.maketrans(_LATEX_CODE_SPECIALS)
 
-# The Markdown side of the same split: the pipe is escaped everywhere, the
-# backslash only where Markdown would read it as an escape.
-_GFM_TEXT = str.maketrans({"\\": r"\\", "|": r"\|"})
-_GFM_CODE = str.maketrans({"|": r"\|"})
+# The Markdown side of the same split moved to `_markdown_table` when the venue
+# emitters turned out to need it too (ticket 0339); it is imported above.
 
 
 OPTIONAL_MARK = "†"
@@ -238,27 +238,6 @@ def latex_inline(text: str) -> str:
     return "".join(
         rf"\texttt{{{part.translate(_LATEX_CODE)}}}" if i % 2
         else part.translate(_LATEX_TEXT).replace("...", r"\ldots{}")
-        for i, part in enumerate(parts)
-    )
-
-
-def markdown_cell(text: str) -> str:
-    """Markdown description → a Markdown pipe-table cell.
-
-    A raw ``|`` ends the cell, so the codebook's recipe used to be published
-    cut in half; GFM honours ``\\|`` inside a code span too, so that one rule
-    holds throughout. A backslash needs the opposite treatment on each side of
-    a span boundary — CommonMark reads it as an escape in prose but literally
-    inside code — so prose and code are escaped separately. Escaping both
-    blindly would corrupt any description documenting a regex or a path;
-    escaping neither reintroduces the cell split, one layer down, for a value
-    that already contains ``\\|``.
-    """
-    parts = text.split("`")
-    if len(parts) % 2 == 0:
-        raise ValueError(f"unbalanced backtick in description: {text!r}")
-    return "`".join(
-        part.translate(_GFM_CODE) if i % 2 else part.translate(_GFM_TEXT)
         for i, part in enumerate(parts)
     )
 

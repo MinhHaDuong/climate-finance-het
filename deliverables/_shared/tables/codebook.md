@@ -38,7 +38,7 @@ Formal data dictionary for the deposited corpus file. Columns are organised in f
 | `from_unfccc` | boolean | 0, 1 | 0.0% | Provenance flag: curated UNFCCC key document |
 | `from_oecd` | boolean | 0, 1 | 0.0% | Provenance flag: curated OECD key document |
 | `abstract_provenance` | string, nullable | curated, reconstructed:lead, reconstructed:exec_summary, empty | 99.4% | Provenance of the abstract text, for curated key documents only |
-| `keywords_provenance` | string, nullable | extracted, generated:lexicon, empty | 100.0% | Provenance of the keywords, for curated key documents only |
+| `keywords_provenance` | string, nullable | extracted, generated:lexicon, empty | 99.4% | Provenance of the keywords, for curated key documents only |
 | `language_provenance` | string, nullable | source, openalex, detected:langdetect, empty | 0.2% | How the language code was obtained: carried by the source catalog, backfilled from OpenAlex, or inferred from title and abstract |
 | `source_count` | integer | 1–8 | 0.0% | Number of sources that contributed the record |
 

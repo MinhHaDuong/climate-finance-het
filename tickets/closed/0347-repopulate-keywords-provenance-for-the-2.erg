@@ -3,11 +3,16 @@ Title: Repopulate keywords_provenance for the 263 curated key documents
 Created: 2026-07-27
 Author: HDMX-coding-agent
 Label: needs-human
+Closed: autoclosed — PR #1161
 
 --- log ---
 2026-07-27T13:07Z HDMX-coding-agent created
 2026-07-27T13:10Z HDMX-coding-agent note child of 0288, found while verifying it for closure. The code fix and its test ship with 0288's closing PR; only the data repopulation is left, and it is a Phase-1 rerun on a corpus the author froze on 2026-07-27 — hence needs-human.
 
+2026-07-27T13:33Z HDMX-coding-agent note AUTHOR ACCEPTED THE UNFREEZE (2026-07-27). Option 1 executed. Chain run offline from the main checkout where DATA_DIR resolves to the real corpus: catalog_keydocs (unfccc, oecd) -> catalog_merge -> enrich_join -> corpus_filter --extend -> corpus_filter --filter, then make corpus-handoff to refresh the Feather layer. Network forced closed via a dead proxy plus HF_HUB_OFFLINE, so the 19 seed documents without a pooled PDF could not gain new abstracts and shift Flag 2; both harvests ran fully from the warm pool (217 unfccc + 31 oecd cached PDFs). Backup of all 8 affected artifacts with SHA256SUMS at data/raw/0347-preunfreeze-backup/ (340 MB) before the first write.
+2026-07-27T13:33Z HDMX-coding-agent note BYTE-COMPARE RESULT — additive-only holds at every stage. unified_works.csv 43,179 rows: only keywords_provenance changed (245 cells). enriched_works.csv: same 245. extended_works.csv: same 245 — every quality flag identical, including llm_irrelevant for the 2,688 works Flag 6 rescores from scratch each run. corpus_audit.csv: NO change at all. refined_works.csv 33,344 rows: only keywords_provenance (242 cells), 0 leakage onto non-keydoc rows, 0 keydocs left with keywords but no provenance. Headline counts reproduced exactly: 43,179 unified, 833/159/3 dedup removals, 33,344 refined, in_v1 28,976, 399 duplicate-DOI drops. codebook.md: exactly one line changed, missingness 100.0% -> 99.4%. All values are generated:lexicon; no document carried a first-page keywords block, so 'extracted' remains an unused-but-valid enum value. Phase 2 was deliberately NOT rebuilt and needs no rebuild: no analysis or figure script reads keywords_provenance (grep of scripts/analysis and scripts/figures is empty), so no Phase-2 artifact can move. 0344's staleness is a separate, pre-existing matter.
+2026-07-27T13:33Z HDMX-coding-agent note two findings from the rerun, both filed rather than absorbed. (1) The rerun could not start: corpus_filter --extend died at CrossEncoder.__init__ because protobuf was absent from the venv — an undeclared transitive of the sentencepiece tokenizer conversion, so a corpus rebuild was simply impossible on this machine until installed. Declared in pyproject's corpus group and locked here; uv lock adds protobuf 7.35.1 and moves no other package (17-line lock diff). (2) The premise I wrote into this ticket — 'no count moves' — was NOT self-evident: Flag 6's relevance cache is DOI-keyed, so 1,908 no-DOI works can never be cached and 2,688 candidates are rescored by the cross-encoder on every rebuild. Had the model or its libraries drifted, llm_irrelevant could have moved and taken the refined row count with it. The byte-compare shows it did not drift, so the corpus is intact — but the exposure is real and is filed as 0350. My original claim was safe by luck of a stable environment, not by design.
+2026-07-27T13:50Z HDMX-coding-agent closed — autoclosed — PR #1161
 --- body ---
 ## Context
 
@@ -91,14 +96,19 @@ keyword-bearing key documents carry a non-empty `keywords_provenance` in
 
 ## Verification
 
-- [ ] `unfccc_works.csv` and `oecd_works.csv` carry a populated
-      `keywords_provenance` column after the re-harvest
-- [ ] `refined_works.csv`: non-empty for the keyword-bearing key documents,
-      empty elsewhere
-- [ ] `codebook.md` regenerated; its missingness figure for the column drops
-      from 100% to roughly 99.3%
-- [ ] No other number in any deliverable moves — byte-compare the derived
-      tables before and after, per the refactor-validation rule
+- [x] `unfccc_works.csv` and `oecd_works.csv` carry a populated
+      `keywords_provenance` column after the re-harvest (216 + 29 = 245
+      `generated:lexicon`; every other column byte-identical)
+- [x] `refined_works.csv`: non-empty for the keyword-bearing key documents,
+      empty elsewhere (242 of 242, zero leakage, zero mismatches)
+- [x] `codebook.md` regenerated; its missingness figure for the column drops
+      from 100% to roughly 99.3% (actual: 99.4%, and it is the only line in
+      the file that changed)
+- [x] No other number in any deliverable moves — byte-compare the derived
+      tables before and after, per the refactor-validation rule (all four
+      Phase-1 artifacts differ only in this column; `corpus_audit.csv`
+      unchanged; Phase 2 provably unaffected — no analysis or figure script
+      reads the column)
 
 ## Invariants
 
@@ -108,8 +118,9 @@ keyword-bearing key documents carry a non-empty `keywords_provenance` in
 
 ## Exit criteria
 
-- [ ] Author picks option 1, 2, or 3
-- [ ] If 1: the layer's keywords carry their provenance in the corpus, and the
+- [x] Author picks option 1, 2, or 3 (author accepted the unfreeze
+      2026-07-27 — option 1)
+- [x] If 1: the layer's keywords carry their provenance in the corpus, and the
       codebook reflects it
-- [ ] If 2: the codebook description no longer promises values the deposit
-      does not carry
+- [x] If 2: n/a — option 1 taken, so the codebook now describes values the
+      deposit actually carries
