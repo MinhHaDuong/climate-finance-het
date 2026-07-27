@@ -61,9 +61,9 @@ remarks; coverage check clean at filing time).
 Four frontier-model reviewers read the rendered PDF as a dress rehearsal
 before resubmission. Reviews at
 `deliverables/data-paper/revision-rdj26561/external-review/`. Weight in
-brackets = how many of the four raised it.
+brackets = how many of the four raised it. 0325, listed above, also came from
+this panel — the sharp catch no other reviewer made.
 
-- 0325 — variables table drops the negation: LaTeX `esc()` eats the tilde [1, sharp catch]
 - 0327 — counts do not reconcile: gaps of 19 and 399, two column-sum mismatches, stale "six sources" [2] — also answers R1-12
 - 0328 — corpus boundary contradicts itself: definition excludes what Figure 3 shows [4] [needs-human]
 - 0329 — retrieval protocol not reconstructible: eight languages never listed, thresholds never stated [4]
