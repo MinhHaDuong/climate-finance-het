@@ -1,9 +1,9 @@
 """Tests for worktree setup: post-checkout hook and .worktreeinclude.
 
 .worktreeinclude auto-copies .env and .dvc/config.local into worktrees
-created by EnterWorktree. The post-checkout hook only co-locates the uv
-environment; DVC data is populated on demand via `make data`, never
-eagerly at checkout time.
+created by EnterWorktree. The post-checkout hook wires up the two shared,
+off-tree resources — the uv environment and the DVC cache — by symlink. DVC
+*data* is populated on demand via `make data`, never eagerly at checkout time.
 """
 
 import os
@@ -113,8 +113,13 @@ def test_hook_points_dvc_cache_at_the_shared_cache():
     then searches that empty cache and fails, which is what pushed corpus work
     back into the primary checkout (ticket 0360, via 0347).
 
-    Symlinking is the same idiom the hook already uses for .venv, and it costs
-    nothing: dvc hardlinks out of a cache on the same filesystem."""
+    Symlinking is the same idiom the hook already uses for .venv. It is what
+    makes `make data` able to find anything at all; it does not make the data
+    free. cache.type is unset, so DVC's default is `copy` and each worktree that
+    asks for data spends ~2.2 GB. Hardlinking would remove that cost and is
+    rejected: Phase-1 scripts rewrite data/catalogs/*.csv in place, and a
+    hardlinked checkout shares the cache blob's inode, so one rewrite would
+    corrupt the cache for every checkout at once."""
     source = HOOK.read_text()
     assert ".dvc/cache" in source
     # The path must be derived from the repo, not hard-coded, so the fix
@@ -122,12 +127,23 @@ def test_hook_points_dvc_cache_at_the_shared_cache():
     assert "--git-common-dir" in source
 
 
+def _dvc_block(source: str) -> str:
+    """The hook's DVC-cache section, from its heading comment to end of file.
+
+    Anchoring on the heading keeps the assertions below non-vacuous no matter
+    how the comment above it grows; an offset window around the first literal
+    `.dvc/cache` happened to work but would silently start covering the .venv
+    block's `ln -sfn` after any edit that shifted it."""
+    marker = "# Share the primary checkout's DVC cache."
+    assert marker in source, "DVC-cache section heading not found in the hook"
+    return source.split(marker, 1)[1]
+
+
 def test_hook_replaces_stale_dvc_cache_symlink():
     """Same idempotence contract as .venv: replace a dangling or stale link
     rather than erroring, and never clobber a real cache directory that a
     standalone (non-worktree) checkout legitimately owns."""
-    source = HOOK.read_text()
-    dvc_block = source.split(".dvc/cache", 1)[0][-600:] + source.split(".dvc/cache", 1)[1][:600]
+    dvc_block = _dvc_block(HOOK.read_text())
     assert "ln -sfn" in dvc_block
     assert "-L .dvc/cache" in dvc_block
 
@@ -206,6 +222,76 @@ def test_worktree_creation_is_fast_and_light():
         shutil.rmtree(parent, ignore_errors=True)
 
 
+def _shared_cache() -> Path:
+    """The DVC cache the hook should link to: the primary checkout's.
+
+    Derived the same way the hook derives it, from --git-common-dir, so the
+    expectation holds whether the suite runs in the primary checkout or in a
+    worktree (REPO is itself a worktree during most agent sessions)."""
+    common_dir = subprocess.run(
+        ["git", "rev-parse", "--git-common-dir"],
+        cwd=REPO, capture_output=True, text=True, check=True,
+    ).stdout.strip()
+    return (Path(common_dir).resolve().parent / ".dvc" / "cache").resolve()
+
+
+@pytest.mark.integration
+def test_hook_never_clobbers_a_real_dvc_cache_directory():
+    """The highest-consequence guard, tested behaviourally rather than by
+    substring: a checkout that owns a real .dvc/cache directory keeps it.
+
+    Only worktrees should be relinked. A standalone clone's cache is the only
+    copy of its blobs, so replacing that directory with a symlink would orphan
+    every one of them. The source pin above ("-L .dvc/cache") states the
+    intent; this proves the shell actually honours it, sentinel and all.
+
+    The assertion that bites is the directory-contents one, and the first draft
+    of this test lacked it and passed with the guard deleted. `ln -sfn` does not
+    clobber an existing *directory*: it creates the link inside it, leaving
+    .dvc/cache/cache dangling off a real cache. That is the actual failure mode
+    here, and it is invisible to an is_symlink()/sentinel check alone."""
+    shared_cache = _shared_cache()
+    if not shared_cache.is_dir():
+        pytest.skip(f"no primary DVC cache at {shared_cache}; guard is unreachable")
+    parent = tempfile.mkdtemp(prefix="wt-dvc-own-cache-")
+    wt = Path(parent) / "wt"
+    try:
+        result = subprocess.run(
+            ["git", "worktree", "add", "--detach", str(wt), "HEAD"],
+            cwd=REPO, capture_output=True, text=True,
+        )
+        assert result.returncode == 0, f"git worktree add failed:\n{result.stderr}"
+
+        # Stand in for a standalone checkout: a real cache directory holding a
+        # blob that exists nowhere else.
+        own_cache = wt / ".dvc" / "cache"
+        own_cache.mkdir(parents=True, exist_ok=True)
+        sentinel = own_cache / "sentinel-blob"
+        sentinel.write_text("the only copy")
+
+        hook = subprocess.run(["sh", str(HOOK)], cwd=wt, capture_output=True, text=True)
+        assert hook.returncode == 0, f"post-checkout hook failed:\n{hook.stderr}"
+
+        assert not own_cache.is_symlink(), (
+            "the hook replaced a real .dvc/cache directory with a symlink: on a "
+            "standalone checkout that orphans every blob in it."
+        )
+        assert own_cache.is_dir()
+        assert sentinel.read_text() == "the only copy"
+        assert sorted(p.name for p in own_cache.iterdir()) == ["sentinel-blob"], (
+            "the hook wrote into a real .dvc/cache directory: ln -sfn onto an "
+            "existing directory nests the link inside it (.dvc/cache/cache) "
+            "rather than replacing it, so the guard must skip the link entirely."
+        )
+    finally:
+        subprocess.run(
+            ["git", "worktree", "remove", "--force", str(wt)],
+            cwd=REPO, capture_output=True,
+        )
+        subprocess.run(["git", "worktree", "prune"], cwd=REPO, capture_output=True)
+        shutil.rmtree(parent, ignore_errors=True)
+
+
 @pytest.mark.integration
 def test_fresh_worktree_shares_the_primary_dvc_cache():
     """Behavioural guard: a fresh worktree must resolve DVC's cache to the
@@ -225,11 +311,12 @@ def test_fresh_worktree_shares_the_primary_dvc_cache():
     is machine-local config this test has no business asserting. Driving the
     hook directly tests the hook's own behaviour, deterministically, on any
     checkout."""
-    common_dir = subprocess.run(
-        ["git", "rev-parse", "--git-common-dir"],
-        cwd=REPO, capture_output=True, text=True, check=True,
-    ).stdout.strip()
-    shared_cache = (Path(common_dir).resolve().parent / ".dvc" / "cache").resolve()
+    shared_cache = _shared_cache()
+    if not shared_cache.is_dir():
+        pytest.skip(
+            f"no primary DVC cache at {shared_cache} (fresh clone before the "
+            "first dvc pull): the hook correctly no-ops, nothing to assert"
+        )
     parent = tempfile.mkdtemp(prefix="wt-dvc-cache-")
     wt = Path(parent) / "wt"
     try:

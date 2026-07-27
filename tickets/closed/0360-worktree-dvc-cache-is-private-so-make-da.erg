@@ -10,6 +10,7 @@ Closed: fixed
 
 2026-07-27T15:50Z HDMX-coding-agent note implemented as a symlink in .githooks/post-checkout, mirroring the .venv idiom, with the shared path derived from git rev-parse --git-common-dir so a clone elsewhere works. Verified end to end: in a probe worktree the link resolves to the primary cache and 'make data' checks the corpus out, delivering refined_works.csv at 66,400,079 bytes — the repopulated corpus from 0347. Two corrections to my own ticket while implementing. First, action 1 (writing cache.dir into .dvc/config.local) is unusable: that file is gitignored, so the fix cannot ship in a PR; action 2's computed path is the only viable form. Second, the ticket and my first draft of the hook claimed the sharing 'costs no extra disk'. False: dvc config cache.type is unset, so DVC defaults to copy and each worktree running make data spends ~2.2 GB. Measured, not assumed — inodes differ and du confirms. I did NOT switch cache.type to hardlink to make the claim true: Phase-1 scripts rewrite data/catalogs/*.csv in place, and a hardlinked checkout shares the inode with the cache blob, so one rewrite would corrupt the cache for every checkout. Copy is the safe default here; the comment now says so.
 2026-07-27T15:51Z HDMX-coding-agent closed — fixed
+2026-07-27T18:30Z HDMX-coding-agent note review-pr panel on PR #1179 caught action 3 (the .claude/rules/architecture.md note) silently dropped: the ticket closed 'fixed' with every Verification and Exit-criteria box ticked, and no box covered that action, which is how the omission stayed invisible. Done now, in § Data location, together with the one hazard the cache sharing widens: dvc gc prunes by reachability computed from whichever checkout invokes it, so with a single cache behind every checkout a stale worktree can delete blobs the primary still needs (the caveat 0252 cites for keeping 8 orphan pointers). git.md and workflow.md updated to point at it. Also on that review: a behavioural test I added for the never-clobber guard was vacuous — ln -sfn onto a real directory nests the link inside it rather than replacing it, so is_symlink() and the sentinel both survive; the test now asserts the directory's contents and fails with the guard removed.
 --- body ---
 ## Context
 
@@ -95,9 +96,20 @@ superseded corpus until the author noticed.
    inode with the cache blob, so one rewrite would corrupt the cache for every
    checkout at once. The copy is the price of isolation, and only worktrees
    that ask for data pay it.
-3. Note in `.claude/rules/architecture.md` § Data location that a worktree needs
-   `make data` once, and that corpus work belongs in a worktree like any other
-   work.
+3. **Done.** `.claude/rules/architecture.md` § Data location now states that a
+   worktree needs `make data` once, that corpus work belongs in a worktree like
+   any other work, and what the copy costs. It also records the one hazard the
+   sharing widens: `dvc gc` prunes by reachability from whichever checkout
+   invokes it, so with one cache behind every checkout a stale worktree can
+   delete blobs the primary still needs (the caveat `tickets/closed/0252` cites
+   for keeping 8 orphan pointers). `.claude/rules/git.md` and
+   `.claude/rules/workflow.md`, which described worktree data setup as
+   `.worktreeinclude` alone, now point here.
+
+   This action was dropped in the first pass while the ticket closed `fixed`
+   with every box ticked — no exit criterion covered it, which is exactly how
+   the omission stayed invisible. Caught by the `/review-pr` panel on PR #1179,
+   not by the gate.
 
 ## Test
 

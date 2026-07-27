@@ -57,12 +57,24 @@ fi
 # copy is the cost of doing corpus work in isolation, and it is only paid by
 # worktrees that actually run `make data`.
 #
+# One consequence to know about: `dvc gc` now reaches every checkout at once. It
+# prunes by reachability computed from whichever checkout invokes it, so a stale
+# worktree pinned to an old dvc.lock can delete blobs the primary still needs.
+# Run it from the primary checkout on a current dvc.lock, or not at all.
+#
 # The path is derived from the repo rather than hard-coded, so a clone
 # elsewhere works. Only ever replace an absent or symlinked .dvc/cache — a
 # standalone (non-worktree) checkout owns a real cache directory, and
-# clobbering it would orphan every blob in it.
+# clobbering it would orphan every blob in it. Where the cache has been
+# relocated with `dvc cache dir <path>`, that setting lands in the git-tracked
+# .dvc/config, which a worktree inherits anyway, so this link is simply inert.
+#
+# stderr is kept (unlike the .venv link above) because the two failures differ
+# in consequence: a failed .venv share still leaves a working local env, while a
+# failed cache link leaves exactly the empty private cache this exists to
+# eliminate. `|| true` still keeps a checkout from failing over it.
 SHARED_CACHE=$(CDPATH= cd -- "$(git rev-parse --git-common-dir)/.." 2>/dev/null && pwd)/.dvc/cache
 if [ -d "$SHARED_CACHE" ] && [ "$SHARED_CACHE" != "$(pwd)/.dvc/cache" ] &&
    { [ ! -e .dvc/cache ] || [ -L .dvc/cache ]; }; then
-    ln -sfn "$SHARED_CACHE" .dvc/cache 2>/dev/null || true
+    ln -sfn "$SHARED_CACHE" .dvc/cache || true
 fi

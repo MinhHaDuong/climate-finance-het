@@ -132,6 +132,28 @@ setting `CLIMATE_FINANCE_DATA` in `.env`. `scripts/utils.py` re-exports `DATA_DI
 `CATALOGS_DIR`, `DERIVED_TABLES_DIR`, `EMBEDDINGS_PATH` from `pipeline_loaders`.
 Resolve paths through those constants — never hardcode `data/catalogs/` in a script.
 
+**A worktree needs `make data` once.** `data/` is DVC-managed, so a fresh
+worktree checks out none of it. `.githooks/post-checkout` symlinks the
+worktree's `.dvc/cache` at the primary checkout's cache, which is what lets
+`make data` (a `dvc checkout`, no network) populate `data/` from local blobs.
+Corpus work therefore belongs in a worktree like any other work. Running Phase 1
+in the primary checkout gives up git isolation and skips the `dvc commit` /
+`dvc push` that a normal PR carries, which is how ticket 0347 left `dvc.lock`
+pointing at a superseded corpus (ticket 0360).
+
+The data is copied, not linked: `cache.type` is unset, so DVC's default `copy`
+costs about 2.2 GB per worktree that asks for data. That is deliberate. Phase-1
+scripts rewrite `data/catalogs/*.csv` in place, and a hardlinked checkout shares
+the cache blob's inode, so one rewrite would corrupt the cache for every
+checkout at once.
+
+**One cache, every checkout: think before `dvc gc`.** Sharing the cache widens
+that command's blast radius. It prunes by reachability computed from whichever
+checkout invokes it, so a stale worktree pinned to an old `dvc.lock`, or one
+mid-rebuild that has not pushed, can delete blobs the primary still needs. Run
+it from the primary checkout on a current `dvc.lock`, or not at all — ticket
+0252 kept 8 orphan pointers for this reason.
+
 `data/` is split by dataflow phase, so the directory names which phase owns a file:
 
 ```
