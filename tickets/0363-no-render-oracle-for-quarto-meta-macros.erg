@@ -1,0 +1,82 @@
+%erg 0.1
+Title: No render oracle for Quarto meta macros: an undeclared key renders as a literal ?meta:key and no test can see it
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T15:41Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Quarto exits 0 when a `{{< meta key >}}` macro names a key that is absent from
+the generated vars file. It silently writes the literal string `?meta:key` into
+the rendered PDF. Nothing in the suite can see this: the render succeeds, the
+tests pass, and the defect is visible only to a human reading the finished
+document.
+
+Found twice in the 0327/0329 raid (2026-07-27), by two independent verification
+gates. Ticket 0329 alone moved 15 facts behind macros; the data paper now uses
+77 macro keys in total. Every number a referee will check is behind this
+mechanism, and its only gate today is someone remembering to look.
+
+The nearest existing guard, `tests/test_doc_vars_completeness.py`, cross-checks
+prose usage against `DOC_VARS` — a Python dict in `compute_vars.py`. That is a
+source-to-source check, one layer removed from the generated
+`data-paper-vars.yml` that Quarto actually reads. It never invokes Quarto and
+never inspects rendered output. A grep of the whole suite finds no test that
+runs `quarto render` and looks for `?meta:`.
+
+All 77 keys resolve correctly today — verified by hand during the raid. That is
+incidental, not gated, and the next added macro is unguarded again.
+
+This is the same defect class as ticket 0325 (a byte-correct source file that
+published an inverted filter recipe because nothing tested the *rendered*
+output). The lesson recorded there was "test the rendered page, not the emitted
+source"; the data paper's numbers are still on the wrong side of it.
+
+## Relevant files
+
+- `tests/test_doc_vars_completeness.py` — the existing source-to-source guard
+- `scripts/analysis/compute_vars.py` — `DOC_VARS`, and the vars-file emitters
+- `deliverables/data-paper/data-paper.qmd` — 77 macro uses
+- `deliverables/data-paper/data-paper.mk` — the render rule
+
+## Actions
+
+1. Add a render-level guard that fails when a rendered deliverable contains the
+   literal `?meta:`. Extracting text from the built PDF (`pdftotext`) is the
+   honest oracle; a Quarto render into a temp dir is the cheaper one.
+2. Decide the tier deliberately: a real render needs the Quarto toolchain and
+   the vars artifact, so it belongs in `integration` or `slow`, not the fast
+   loop. It must run under `make check`.
+3. If a full render is too heavy for routine use, add the cheap complement as
+   well — resolve every `{{< meta X >}}` in the qmd and its includes against the
+   generated vars YAML directly, rather than against the `DOC_VARS` dict. This
+   closes the one-layer-removed gap even when no render happens.
+
+## Test
+
+- Red first: declare a macro naming a key that does not exist, render, and
+  assert the guard fails. The guard must fail on that input before it is
+  trusted on real input.
+- Assert the guard passes on the current deliverables (77 keys, all resolving).
+
+## Verification
+
+- [ ] A deliberately undeclared macro key makes the suite fail
+- [ ] The guard reads rendered output, or the generated vars file, not `DOC_VARS`
+- [ ] Runs under `make check`; correctly tiered
+
+## Invariants
+
+- No number in the data paper reaches the reader as `?meta:`.
+- The guard must be able to fail. A check that cannot go red certifies nothing
+  (see 0327, where the ledger's own closure guard was algebraically dependent
+  and would have passed a ledger 9,835 works too high).
+
+## Exit criteria
+
+- [ ] An undeclared `{{< meta >}}` key cannot reach a rendered deliverable
+      without a test failing
