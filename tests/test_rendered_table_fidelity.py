@@ -28,6 +28,7 @@ from _deposit_variables import (
     markdown_cell,
     render_codebook,
 )
+from _gfm_render import cell_texts, render_gfm, require_pandoc, row_with
 
 RECIPE = "df[~df['is_flagged'] | df['is_protected']]"
 
@@ -111,17 +112,9 @@ def test_codebook_recipe_survives_gfm_rendering(tmp_path):
     publish the recipe cut in half, at the pipe. Asserting on the escaped
     source would only restate the fix, so this renders and reads the cell back.
     """
-    if shutil.which("pandoc") is None:
-        pytest.skip("pandoc not available on this machine")
-    source = tmp_path / "codebook.md"
-    source.write_text(render_codebook({}, n_rows=1), encoding="utf-8")
-
-    rendered = subprocess.run(["pandoc", "-f", "gfm", "-t", "html", str(source)],
-                              capture_output=True, text=True, check=True).stdout
-    # pandoc wraps its output, so rows are found in the flattened document.
-    flat = re.sub(r"\s+", " ", rendered)
-    rows = re.findall(r"<tr[^>]*>.*?</tr>", flat)
-    row = next(r for r in rows if "refined subset" in r)
+    require_pandoc()
+    flat = render_gfm(render_codebook({}, n_rows=1), tmp_path)
+    row = row_with(flat, "refined subset")
     assert f"<code>{escape(RECIPE, quote=False)}</code>" in row, \
         f"recipe corrupted in the rendered codebook:\n{row}"
     # GFM silently drops a cell that overflows the header, so the row count
@@ -152,21 +145,14 @@ def test_cell_escaping_round_trips_through_gfm(payload, tmp_path):
 
     Only escaping prose and code separately passes both.
     """
-    if shutil.which("pandoc") is None:
-        pytest.skip("pandoc not available on this machine")
-    source = tmp_path / "cell.md"
-    source.write_text(
+    require_pandoc()
+    flat = render_gfm(
         f"| Case | Value |\n|:--|:--|\n| probe | {markdown_cell(payload)} |\n",
-        encoding="utf-8")
-
-    rendered = subprocess.run(["pandoc", "-f", "gfm", "-t", "html", str(source)],
-                              capture_output=True, text=True, check=True).stdout
-    flat = re.sub(r"\s+", " ", rendered)
-    row = next(r for r in re.findall(r"<tr[^>]*>.*?</tr>", flat) if "probe" in r)
+        tmp_path)
+    row = row_with(flat, "probe")
     assert row.count("<td") == 2, f"payload split the row:\n{row}"
 
-    cell = re.findall(r"<td[^>]*>(.*?)</td>", row)[1]
-    text = re.sub(r"<[^>]+>", "", cell)
+    text = cell_texts(row)[1]
     assert text == escape(payload.replace("`", ""), quote=False), \
         f"payload altered in transit: {text!r}"
 

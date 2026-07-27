@@ -2,6 +2,7 @@
 Title: Corpus v2: curated international-institution key-documents layer (UNFCCC + OECD DAC)
 Created: 2026-07-20
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1156
 
 --- log ---
 2026-07-20T11:00Z HDMX-coding-agent created author approved expansion within the UN-system frame (session 2026-07-20)
@@ -12,6 +13,11 @@ Author: HDMX-coding-agent
 2026-07-22T23:55Z HDMX-coding-agent note author decisions on review consider-tier (session 2026-07-22): keywords never faked from short_title — first-page keywords block extracted, else deterministic lexicon generation, disclosed via keywords_provenance; filename-stem collisions rejected at seed validation; harvest_entry's load_seed contract documented
 2026-07-22T23:00Z HDMX-coding-agent note BUILD phase implemented on branch t288-corpus-v2-layer: catalog_keydocs harvester, starter seed lists (47 UNFCCC + 14 OECD), merge/protection/disclosure wiring, dvc stages. Document-level enumeration completion + padme harvest split to child ticket 0304
 
+2026-07-27T13:06Z HDMX-coding-agent note VERIFICATION PASS against frozen corpus v2 (2026-07-27). Exit 1 MET: layer in the v2 corpus and counts refreshed — tab_corpus_sources.md (generated) reads UNFCCC 232 raw / 230 refined / 225 unique and OECD DAC 35 / 33 / 33, matching a direct query of refined_works.csv (from_unfccc=230, from_oecd=33, 263 total). Exit 3 MET: response-letter.md:81-101 answers R1-06 with R1-08, carries 0281's national-institutions boundary rationale and the 230/33 counts. Exit 2 WAS NOT MET and is fixed on this branch: the bias section disclosed the citation-network exclusion only generically (no-DOI works undercounted, 'concentrates in early and grey-literature works') and never named the layer; @tbl-quality's %Refs 0%/6% was its only explicit trace. Added one sentence to section 2.3, numbers referenced via @tbl-quality rather than hand-typed (data-paper-vars.yml is gitignored and has no keydocs var).
+2026-07-27T13:06Z HDMX-coding-agent note VERIFICATION of the two open boxes. Provenance flags: from_unfccc / from_oecd / abstract_provenance all correct (245 reconstructed, 3 original, 15 missing on the layer), BUT keywords_provenance is empty for all 33,344 refined rows while 242 of 263 key documents carry lexicon-generated keywords. Cause isolated to one line: catalog_keydocs.main() built its DataFrame with columns=WORKS_COLUMNS + ['abstract_provenance'], so build_record's keywords_provenance was selected away between the record and the CSV — unfccc_works.csv and oecd_works.csv have no such column at all. The author rule of 2026-07-22 (keywords never faked, disclosed via keywords_provenance) is half-shipped: the honest derivation runs, the disclosure does not. codebook.md is not wrong — it truthfully reports the column 100% missing, so the deposit documents a column it never fills. Fixed on this branch, plus the test that catches it: the 41 existing tests passed because they assert on build_record's dict and on a synthetic DataFrame that already has the column, never on the emitted CSV. Repopulating the data needs a keydocs re-harvest (warm pool, offline) + catalog_merge + corpus_filter — additive metadata, no count moves — which is a Phase-1 rerun on a frozen corpus, so it is the author's call; natural home is 0344's Phase-2 rebuild.
+2026-07-27T13:07Z HDMX-coding-agent note VERIFICATION of in_v1 reproducibility (config/v1_identifiers.txt.gz: 21,634 DOIs + 8,241 sids = 29,875). Recovered in refined v2: 21,607 DOIs + 7,707 sids = 29,314 identifiers present, flagged on 28,976 rows (fewer than 29,314 because dedup collapses DOI+sid pairs onto one v2 row). Absent: 561 identifiers (1.9%) — 503 of them still in unified_works.csv, so removed by v2's stricter six-flag filter (expected, Flag 6 ran), and 58 (19 DOIs + 39 sids, 0.2%) absent from the v2 harvest entirely. Reading: the v1 subset is reproducible to 98.1% of its identifiers, with a quantified 58-work harvest-level gap. Dedup claims in the Test section verified: 5 keydocs merged onto existing grey seeds (Biennial Assessments 4th/5th, three SCF summaries) rather than duplicating them, and of 372 10.1787 rows in refined only 4 come from the OECD layer — no wholesale re-add. One exact title collision (Report of the Green Climate Fund to the Conference of the Parties: unfccc FCCC/CP/2015/3 vs a scispace row with no year) is the empty-year title key, ticket 0299's territory, not a layer defect.
+2026-07-27T13:08Z HDMX-coding-agent note residual filed as 0347 (needs-human): repopulate keywords_provenance in the corpus. Recommended option is to fold the offline re-harvest into 0344's Phase-2 rebuild. All three exit criteria are now met, so this ticket closes on merge of its PR — which unblocks 0283, the response letter.
+2026-07-27T13:15Z HDMX-coding-agent closed — autoclosed — PR #1156
 --- body ---
 ## Context
 
@@ -128,8 +134,14 @@ companion; the new corpus ships in 0280's new Zenodo version.
 - [x] Inclusion rule and document list validated by the author (2026-07-22:
       amended rule + both sub-lists at class level; the document-level list
       materializes at harvest within the validated classes)
-- [ ] Layer present in the regenerated corpus with correct provenance flags
-- [ ] v1 subset reproducible via `in_v1` after the rerun
+- [x] Layer present in the regenerated corpus with correct provenance flags
+      (verified 2026-07-27: `from_unfccc` 230, `from_oecd` 33,
+      `abstract_provenance` populated. One exception carried to 0347:
+      `keywords_provenance` is empty corpus-wide — emitter fixed here, data
+      repopulation is a Phase-1 rerun on the frozen corpus, author's call)
+- [x] v1 subset reproducible via `in_v1` after the rerun (98.1% of the 29,875
+      v1 identifiers recovered; 503 removed by v2's stricter filter, 58
+      absent from the v2 harvest — quantified, see log)
 
 ## Invariants
 
@@ -141,8 +153,11 @@ companion; the new corpus ships in 0280's new Zenodo version.
 
 ## Exit criteria
 
-- [ ] UNFCCC + OECD DAC layer in the v2 corpus, counts refreshed in
-      data-paper.qmd
-- [ ] Citation-network exclusion of the layer disclosed in the bias section
-- [ ] Response-letter bullet drafted: R1-06 answered by extension within the
+- [x] UNFCCC + OECD DAC layer in the v2 corpus, counts refreshed in
+      data-paper.qmd (@tbl-quality: 232/230/225 UNFCCC, 35/33/33 OECD DAC,
+      matching a direct query of refined_works.csv)
+- [x] Citation-network exclusion of the layer disclosed in the bias section
+      (section 2.3, added here — was only generic no-DOI wording before)
+- [x] Response-letter bullet drafted: R1-06 answered by extension within the
       frame + 0281's boundary rationale for national institutions
+      (response-letter.md:81-101)
