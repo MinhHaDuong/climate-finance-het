@@ -2,10 +2,12 @@
 Title: main is red: corpus freshness and bimodality dip fail on stale artifacts
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: regenerated: rebuild had completed; bimodality tables rebuilt with diptest
 
 --- log ---
 2026-07-27T15:45Z HDMX-coding-agent created
 
+2026-07-27T16:01Z HDMX-coding-agent closed — regenerated: rebuild had completed; bimodality tables rebuilt with diptest
 --- body ---
 ## Context
 

@@ -1,5 +1,5 @@
 %erg 0.1
-Title: DATAPAPER_FIGS builds three figures the data paper does not contain
+Title: The build graph produces 22 artifacts no document renders
 Created: 2026-07-27
 Author: HDMX-coding-agent
 
@@ -7,6 +7,7 @@ Author: HDMX-coding-agent
 2026-07-27T16:45Z HDMX-coding-agent created
 2026-07-27T16:45Z HDMX-coding-agent note found while verifying 0328's cluster labels. One of the three orphans was created today by 0332's §4 cut; the other two predate it.
 
+2026-07-27T17:40Z HDMX-coding-agent note widened after a roar reachability sweep: this is not three figures in one variable, it is 17 includes, 2 tables and 5 figures across the whole build graph. Retitled. The sweep also found the trap the guard must avoid — see Test.
 --- body ---
 ## Context
 
@@ -46,6 +47,33 @@ figures a deliverable needs, and right now it answers wrong for three of five.
 - `tests/test_global_map.py` — pins the cocitation map as built-not-embedded
 - `deliverables/corpus-report/corpus-report.qmd` — the real consumer of `fig_dag`
 
+## Sweep result (2026-07-27): 22 unrendered artifacts, not three
+
+Resolved the include graph transitively from all 11 deliverable `.qmd` roots.
+`make` builds these; no document renders them:
+
+**Includes (17)** — all flat `_shared/_includes/*.md`, none reached from any
+root: `agentic-workflow`, `alluvial-diagram`, `bibliometric-context`,
+`bimodality-analysis`, `changepoint-analysis`, `citation-genealogy`,
+`clustering-comparison`, `cop-topic-structure`, `core-vs-full-analysis`,
+`core-vs-full`, `embedding-generation`, `pca-scatter`, `prior-mappings`,
+`structural-breaks`, `tab2_poles`, `tab_traditions`, `temporal-structure`.
+The `_includes/techrep/` and `_includes/zoo/` subtrees are all reached — the
+dead set is exactly the flat layer, which is the shape of a leftover from the
+deliverables reorg (0226/0240) rather than a scatter of individual mistakes.
+
+**Tables (2)**: `codebook.md` — *not* a defect, it ships in the Zenodo
+deposit and is not meant for a paper. `tab_venues_fr_caption.md` — a French
+caption variant; check whether its consumer still exists.
+
+**Figures (5)**: `fig_sem_composition` (orphaned by 0332), plus
+`fig_lexical_tfidf_2007`, `fig_lexical_tfidf_2013`,
+`fig_traditions_pre2008_citers`, and `fig_global_map_cocitation` — the last
+being deliberate and pinned by `tests/test_global_map.py:175`.
+
+So roughly a third of the generated-artifact surface is built for nobody.
+Nothing is broken; `make` is doing work and the maintenance burden is real.
+
 ## Actions
 
 1. Decide `fig_sem_composition`'s fate — the only real question here. Either
@@ -61,13 +89,25 @@ figures a deliverable needs, and right now it answers wrong for three of five.
 
 ## Test
 
-- Red first: an adherence guard asserting every figure in `<DOC>_FIGS` is
-  referenced by that deliverable's `.qmd` — with an explicit, commented
-  allowlist for deliberate built-not-embedded figures. That guard is what
-  would have caught this the moment 0332 cut the paragraph, and it catches
-  the next cut too.
-- The allowlist is the load-bearing part: without it the guard either fails
-  on the cocitation map forever or gets deleted.
+- Red first: an adherence guard asserting every generated artifact under
+  `deliverables/_shared/{_includes,tables,figures}/` is reachable from some
+  deliverable `.qmd`, with an explicit commented allowlist for the deliberate
+  exceptions (`codebook.md` ships in the deposit; `fig_global_map_cocitation`
+  is pinned unembedded by `test_global_map.py:175`). The allowlist is
+  load-bearing: without it the guard either fails forever or gets deleted.
+
+- **The trap the guard must avoid, learned by falling into it.** Quarto
+  resolves `{{< include >}}` paths **relative to the top rendering doc**, not
+  to the including file (see `.claude/rules/architecture.md`). A resolver that
+  joins each include against its own directory reports every nested include as
+  an orphan — the first pass of this sweep produced 13 false positives that
+  way, all of `_includes/zoo/*.md`, which `techrep-zoo.md` reaches via
+  `../_shared/_includes/zoo/…` from the zoo deliverable's directory. Walk the
+  graph from each root and keep the root's directory as the base throughout.
+
+- A naive "is the basename mentioned anywhere" grep is not enough either: it
+  cannot distinguish reachable-transitively from mentioned-in-a-Makefile, and
+  `paths.mk` mentions every one of these.
 
 ## Verification
 
@@ -85,5 +125,8 @@ figures a deliverable needs, and right now it answers wrong for three of five.
 
 ## Exit criteria
 
-- [ ] `paths.mk` answers "which figures does this deliverable need?" correctly
-- [ ] A guard fails when the next prose cut orphans a figure
+- [ ] Every generated artifact is reachable from a deliverable, or on the
+      commented allowlist with its reason
+- [ ] The 17 flat includes are deleted, revived, or explained
+- [ ] `paths.mk` answers "which artifacts does this deliverable need?" correctly
+- [ ] A guard fails when the next prose cut orphans an artifact
