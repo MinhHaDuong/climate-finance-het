@@ -1,0 +1,104 @@
+%erg 0.1
+Title: Flag 6 rescores 2,688 works on every corpus rebuild: the relevance cache is DOI-keyed
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T13:32Z HDMX-coding-agent created
+2026-07-27T13:35Z HDMX-coding-agent note found during 0347's corpus rerun. Measured, not inferred: 10,226 Flag-6 candidates, 7,538 cache hits, 2,688 needing a fresh reranker score, of which 1,908 have no DOI at all. The rerun then proved the rescoring reproduces bit-identically on padme with the cached model — so this is a cost and fragility ticket, not a correctness one.
+
+--- body ---
+## Context
+
+`filter_flags_llm._load_llm_cache` keys the relevance-score cache on the
+normalised DOI:
+
+    cache[row["doi"]] = float(score_str)
+
+A work without a DOI therefore can never be cached, and is rescored by the
+cross-encoder on every `corpus_filter --extend` run. Measured on the current
+corpus (43,179 works):
+
+| | count |
+|---|---|
+| Flag-6 candidates | 10,226 |
+| already cached by DOI | 7,538 |
+| needing a fresh score | **2,688** |
+| of those, no DOI at all (never cacheable) | **1,908** |
+
+The 1,908 are structural: grey literature, the curated UNFCCC/OECD key
+documents (0% and 12% DOI carriage), and other no-DOI records. Every corpus
+rebuild pays for them again.
+
+## Why it matters
+
+Cost is the smaller half. The real issue is that a stage the project treats as
+deterministic depends on a model load:
+
+- **A rebuild needs the GPU, the model, and its full dependency closure.**
+  0347's rerun died at `CrossEncoder.__init__` because `protobuf` was absent
+  from the venv — an undeclared transitive of the sentencepiece tokenizer
+  conversion. Because no-DOI records are never cached, there is no cache-only
+  path that could have skipped the model entirely.
+- **Reproducibility rests on an unpinned model + library combination.** If
+  `sentence-transformers`, `transformers`, or the model revision moves, 2,688
+  works can silently change `llm_irrelevant`, which moves `refined_works.csv`
+  row counts and every downstream statistic. Nothing pins the model revision
+  and nothing detects the drift.
+
+Good news, and the reason this is not filed as a defect: on 0347's rerun the
+2,688 rescored works came out **bit-identical** to the frozen 2026-07-24 pass
+(`extended_works.csv` differed only in the 245 `keywords_provenance` cells).
+So the reranker is reproducible on this machine with the cached model. The
+exposure is to future environment drift, not to a present error.
+
+## Relevant files
+
+- `scripts/filter_flags_llm.py` — `_load_llm_cache`, `_save_llm_cache`,
+  `_cache_key`, `_identify_candidates`, `_load_reranker_model`
+- `data/catalogs/llm_relevance_cache.csv` — 40,219 entries, DOI-keyed
+- `config/corpus_filter.yaml` — `llm_relevance` block (model, threshold)
+- `scripts/harvest/corpus_filter.py` — the `--extend` entry point
+
+## Actions
+
+1. Give the cache a fallback key for no-DOI records. `source_id` is the
+   natural choice — `in_v1` already uses exactly this DOI-then-source_id
+   strategy (`corpus_filter.add_in_v1_column`), so the pattern is established
+   in the codebase and needs no invention. Keep the `_cache_key` config hash
+   so a model or query change still invalidates.
+2. Pin the model revision in `config/corpus_filter.yaml` and fold it into the
+   cache's config hash, so a model update invalidates the cache loudly instead
+   of silently rescoring differently.
+3. Once 1 lands, a fully warm cache makes the model load unnecessary — skip
+   `_load_reranker_model` when no candidate needs a fresh score, so a rebuild
+   on a machine without the GPU or the model closure still succeeds.
+
+## Test
+
+- A no-DOI work scored once is served from cache on the second run: assert
+  `_load_reranker_model` is not called at all when every candidate is cached
+  (the assertion that would have caught the eager load).
+- Cache round-trip for a record with an empty DOI and a populated
+  `source_id`.
+- A changed model revision in config invalidates the cached entry.
+
+## Verification
+
+- [ ] Candidate count needing a fresh score drops to 0 on a second
+      consecutive `--extend` with no corpus change
+- [ ] `--extend` completes on a machine with no reranker model available,
+      given a warm cache
+- [ ] `extended_works.csv` byte-identical across the two runs
+
+## Invariants
+
+- Flag 6's decisions must not change as a side effect of adding the fallback
+  key: byte-compare `extended_works.csv` before and after, per the
+  refactor-validation rule.
+
+## Exit criteria
+
+- [ ] No-DOI works are cached across runs
+- [ ] Model revision pinned and part of the cache invalidation key
+- [ ] A warm-cache rebuild needs neither GPU nor model
