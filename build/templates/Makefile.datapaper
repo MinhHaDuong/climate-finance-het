@@ -49,6 +49,7 @@ $(DATAPAPER): deliverables/data-paper/data-paper.qmd \
               $(SHARED)/bibliography/main.bib \
               $(SHARED)/figures/fig_bars.png \
               $(SHARED)/figures/fig_global_map_direct.png \
+              $(SHARED)/tables/tab_corpus_flow.md \
               $(SHARED)/tables/tab_corpus_sources.md \
               $(SHARED)/tables/tab_languages.md \
               $(SHARED)/tables/tab_variables.md
