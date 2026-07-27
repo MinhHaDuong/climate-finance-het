@@ -29,12 +29,12 @@ import community as community_louvain
 import networkx as nx
 import numpy as np
 from _global_map_graph import direct_graph, load_data
-from compute_clusters import LABEL_STOPWORDS, _collapse_acronyms
+from _label_vocabulary import LABEL_STOPWORDS, collapse_acronyms
 from openalex_corpus.embedding import is_boilerplate_abstract
-from sklearn.feature_extraction.text import TfidfVectorizer
 from pipeline_loaders import load_analysis_config
 from scipy.sparse import csr_matrix
 from script_io_args import parse_io_args, validate_io
+from sklearn.feature_extraction.text import TfidfVectorizer
 from utils import get_logger
 
 log = get_logger("analyze_global_map")
@@ -139,7 +139,7 @@ def _member_text(row):
     abstract = _clean(row.get("abstract"))
     if is_boilerplate_abstract(abstract, title=title):
         abstract = ""
-    return _collapse_acronyms(" ".join(p for p in (title, keywords, abstract) if p))
+    return collapse_acronyms(" ".join(p for p in (title, keywords, abstract) if p))
 
 
 def add_top_terms(summary, partition, works, n_terms=3):

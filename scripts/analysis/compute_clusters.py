@@ -22,11 +22,11 @@ Usage:
 import argparse
 import json
 import os
-import re
 import warnings
 
 import numpy as np
 import pandas as pd
+from _label_vocabulary import LABEL_STOPWORDS, collapse_acronyms
 from openalex_corpus.embedding import is_boilerplate_abstract
 from script_io_args import parse_io_args, validate_io
 from sklearn.cluster import KMeans
@@ -46,38 +46,6 @@ log = get_logger("compute_clusters")
 warnings.filterwarnings("ignore", category=FutureWarning)
 
 
-LABEL_STOPWORDS = {
-    "climate", "climate change", "change", "finance", "financial", "carbon",
-    "emission", "emissions", "mitigation", "adaptation",
-    "paper", "study", "analysis", "results", "approach", "article", "research",
-    "literature", "review", "data", "work", "based", "findings", "using",
-    "new", "use", "used", "model", "evidence", "impact", "effects", "effect",
-    "role", "case", "sector", "risk", "market", "markets", "investment",
-    "countries", "country", "policy", "policies", "global", "world",
-    "international", "national", "economic", "economics", "development",
-    "blockchain", "esg", "theory", "usd",
-    "pdf", "http", "https", "www", "vol", "pp",
-}
-
-ACRONYM_EXPANSIONS = {
-    r"\benvironmental[,]?\s+social\s+(?:and\s+)?governance\b": "ESG",
-    r"\bclean\s+development\s+mechanism\b": "CDM",
-    r"\bemissions?\s+trading\s+(?:system|scheme)\b": "ETS",
-    r"\bunited\s+nations\s+framework\s+convention\s+on\s+climate\s+change\b": "UNFCCC",
-    r"\bconference\s+of\s+(?:the\s+)?parties\b": "COP",
-    r"\bgreen\s+climate\s+fund\b": "GCF",
-    r"\bsustainable\s+development\s+goals?\b": "SDGs",
-    r"\bnationally\s+determined\s+contributions?\b": "NDCs",
-}
-
-
-def _collapse_acronyms(text):
-    """Replace known expansions with their acronyms to avoid double-counting."""
-    for pattern, acronym in ACRONYM_EXPANSIONS.items():
-        text = re.sub(pattern, acronym, text, flags=re.IGNORECASE)
-    return text
-
-
 def _word_count(terms):
     return sum(len(t.split()) for t in terms)
 
@@ -90,7 +58,7 @@ def _label_clusters(df, core_only):
 
     Returns dict mapping cluster_id -> label string.
     """
-    abstracts_for_tfidf = [_collapse_acronyms(a) for a in df["abstract"].fillna("").tolist()]
+    abstracts_for_tfidf = [collapse_acronyms(a) for a in df["abstract"].fillna("").tolist()]
     min_df_val = 3 if core_only else 5
     label_vectorizer = TfidfVectorizer(
         ngram_range=(1, 2), max_features=8000, sublinear_tf=True,
