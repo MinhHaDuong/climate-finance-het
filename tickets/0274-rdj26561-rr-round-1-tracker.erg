@@ -50,6 +50,9 @@ remarks; coverage check clean at filing time).
 - 0287 — corpus CSV layout: restructure or document, author decision (R1-19) [needs-human]
 - 0288 — corpus v2: curated international-institution key-documents layer, UNFCCC + OECD DAC sub-lists (R1-06) — critical path: blocks final corpus numbers
 - 0289 — verify/strengthen the comparison to prior bibliometric mappings, incl. empirical overlap check (supports ED-02, R1-18)
+- 0320 — citation-verification statistic is v1 and now wrong under corpus v2 — blocks resubmission
+- 0321 — main red on ruff + a tier-3 dual-role import from the 07-24 merges
+- 0325 — variables table drops the negation: LaTeX esc() eats the tilde, publishing an inverted filter recipe
 
 ## Exit criteria
 

@@ -239,7 +239,14 @@ def markdown_cell(text: str) -> str:
 
     A raw ``|`` ends the cell, so the codebook's recipe used to be published
     cut in half. Escaping it is valid inside a code span too (GFM tables).
+
+    A backslash has no such single answer — CommonMark reads ``\\\\`` as an
+    escape in prose but literally inside a code span, so one rule would be
+    wrong on one side. No contract string contains one; if that changes, this
+    stops the build rather than publishing a cell that silently truncates.
     """
+    if "\\" in text:
+        raise ValueError(f"backslash has no safe pipe-table escaping: {text!r}")
     return text.replace("|", r"\|")
 
 

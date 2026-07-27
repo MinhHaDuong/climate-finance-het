@@ -20,6 +20,7 @@ from _deposit_variables import (
     contract_names,
     describe,
     latex_inline,
+    markdown_cell,
     render_codebook,
     render_markdown_table,
     transform,
@@ -311,6 +312,12 @@ class TestCodebookEscaping:
                 continue
             cells = re.split(r"(?<!\\)\|", line)
             assert len(cells) == 7, f"row splits into the wrong cell count: {line}"
+
+    def test_backslash_is_a_build_error(self):
+        """`\\|` would become `\\\\|`, which GFM truncates silently — the defect
+        this ticket is about, one escape layer deeper. Fail loudly instead."""
+        with pytest.raises(ValueError, match="backslash"):
+            markdown_cell(r"a \| b")
 
     def test_recipe_survives_the_pipe_table(self):
         md = render_codebook({}, n_rows=1)
