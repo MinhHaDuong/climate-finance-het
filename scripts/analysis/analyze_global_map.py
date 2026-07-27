@@ -31,10 +31,10 @@ import numpy as np
 from _global_map_graph import direct_graph, load_data
 from compute_clusters import LABEL_STOPWORDS, _collapse_acronyms
 from openalex_corpus.embedding import is_boilerplate_abstract
-from sklearn.feature_extraction.text import TfidfVectorizer
 from pipeline_loaders import load_analysis_config
 from scipy.sparse import csr_matrix
 from script_io_args import parse_io_args, validate_io
+from sklearn.feature_extraction.text import TfidfVectorizer
 from utils import get_logger
 
 log = get_logger("analyze_global_map")
