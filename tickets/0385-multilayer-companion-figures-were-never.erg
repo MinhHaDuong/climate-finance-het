@@ -1,0 +1,103 @@
+%erg 0.1
+Title: The multilayer paper's five figures have never been built
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T18:55Z HDMX-coding-agent created surfaced by 0359: wiring MULTILAYER_FIGS into the render rule turned a silent wrong output into a loud failure, and the loud failure is that the figures do not exist
+
+--- body ---
+## Context
+
+`multilayer-detection.qmd` embeds five figures. None of them exists — not
+tracked on `origin/main`, not present in the author's primary checkout:
+
+| Figure | Tracked | On disk |
+|---|---|---|
+| `fig_companion_zseries.png` | no | no |
+| `fig_companion_heatmap.png` | no | no |
+| `fig_companion_terms.png` | no | no |
+| `fig_companion_community.png` | no | no |
+| `fig_companion_sensitivity.png` | no | no |
+
+Producing rules exist (`scripts/analysis/multilayer-detection.mk`), so this is
+not a missing recipe. They have simply never been run to completion, and
+nothing noticed.
+
+Nothing noticed because until ticket 0359 the render rule did not depend on
+them. `multilayer-detection.pdf` listed `$(MULTILAYER_INCLUDES)` — six
+top-level includes the paper had stopped composing, which happened to exist —
+and no figure at all. So `make multilayer-detection` on `origin/main` **exits
+0 and produces a PDF with five broken image references**. 0359 wired
+`$(MULTILAYER_FIGS)` in, which converts that silent wrong output into a hard
+stop. The hard stop is correct; the underlying gap is this ticket.
+
+Contrast the manuscript, which gets this right: `fig_bars_v1.png`,
+`fig_composition.png` and `fig_breaks.png` are git-tracked through
+`.gitignore` negations precisely so `manuscript.mk` renders clean-room from
+committed artifacts with no corpus and no `uv`. The multilayer paper has no
+such provision, so it cannot be rendered by anyone who does not hold the
+corpus — which includes any clean clone, and the reproducibility archives.
+
+Two distinct questions, and the first must be answered before the second:
+
+1. **Do the figures still reproduce?** The rules depend on the divergence and
+   null-model chain. If that chain has drifted since the figures were last
+   designed, "build them" is not a five-minute job.
+2. **Should they be committed?** They are writing-facing deliverables of a
+   paper, which is the exact criterion `.gitignore` already uses for the
+   manuscript's three (see the comment at `.gitignore:27-31`, tickets 0131 and
+   0226). If yes, they get negation entries and the multilayer paper joins the
+   clean-room set.
+
+## Relevant files
+
+- `scripts/analysis/multilayer-detection.mk` — the five producing rules
+- `deliverables/multilayer/multilayer.mk` — render rule, now depending on them
+- `paths.mk` — `MULTILAYER_FIGS`
+- `.gitignore` — lines 27-31 state the tracked-deliverable rule the manuscript
+  follows and this paper does not
+- `deliverables/multilayer/multilayer-detection.qmd` — embeds all five
+
+## Actions
+
+1. Run `make figures-companion` on a machine with the corpus and record
+   whether all five rules complete. If any fails, that failure is the real
+   subject of this ticket and the rest waits on it.
+2. Decide whether the five join the tracked writing deliverables. Follow the
+   manuscript's precedent unless there is a reason not to — a figure a paper
+   embeds is a writing deliverable.
+3. If tracked: add the `.gitignore` negations and commit the figures, then
+   confirm a clean-room render (`make -f deliverables/multilayer/multilayer.mk`)
+   from a checkout with no `data/`.
+4. If deliberately not tracked: say so where a reader will see it — the paper
+   is then corpus-only by design, and the reproducibility archive needs to
+   carry the figures or the build.
+
+## Test
+
+- Red first: assert each of the five is either git-tracked or reachable from a
+  Make rule whose prerequisites are all satisfiable without `data/catalogs/`.
+  `tests/test_handoff_artifacts_tracked.py` already holds this shape for the
+  vars files and is the natural home.
+- The weaker "the file exists on disk" assertion is not enough: it passes on
+  the author's machine after any local build and fails everywhere else, which
+  is how this gap survived.
+
+## Verification
+
+- [ ] `make figures-companion` completes, or its failure is diagnosed
+- [ ] A clean-room render of the multilayer paper either works, or the ticket
+      records why it is not meant to
+
+## Invariants
+
+- No change to what `multilayer-detection.qmd` embeds; this is about supplying
+  the figures it already asks for.
+- The 0359 render-rule prerequisites stay — the loud failure is the feature.
+
+## Exit criteria
+
+- [ ] The five figures exist and are reproducible, or their absence is a
+      recorded decision with the render path adjusted to match
+- [ ] A guard fails when a paper embeds a figure no clean checkout can obtain

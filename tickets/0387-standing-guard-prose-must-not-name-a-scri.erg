@@ -1,0 +1,95 @@
+%erg 0.1
+Title: Standing guard — tracked prose must not name a script path that does not exist
+Created: 2026-07-27
+Author: HDMX-coding-agent
+Blocked-by: 0388
+
+--- log ---
+2026-07-27T19:06Z HDMX-coding-agent created
+2026-07-27T19:25Z HDMX-coding-agent note Blocker repointed 0386 -> 0388: a parallel session's renumber took 0386 first.
+
+--- body ---
+## Context
+
+Companion to ticket 0388, which fixes the instances. This one stops the class
+coming back.
+
+The class has now been fixed twice and returned twice. Ticket 0235 ("stale
+renamed script references") closed. `docs/ncc-pipeline-audit.md:286` recorded
+another instance in a prose audit; that one was fixed and two siblings in
+neighbouring files were missed. The 0364 wrap-up sweep found those two. Each
+round was a point fix, and a point fix cannot cover a class that reappears
+wherever the next rename happens to land.
+
+The defect is mechanically detectable, which is what makes a standing test the
+right instrument rather than another audit. A one-off sweep of tracked prose
+for `(scripts|tests|libs)/…\.py` references that do not resolve on disk found
+99 raw hits; the signal is much smaller, and separating it is the whole design
+problem below.
+
+## The design problem: most hits are legitimate
+
+A naive "every named path must exist" test fails on day one. Three classes of
+legitimate non-existent reference:
+
+1. **Closed tickets** record paths as they were. `tickets/closed/**` is
+   history and rewriting it to satisfy a guard is the wrong direction — the
+   same reasoning that excludes `tickets/` from `STALE_ENV_CLAIMS` in
+   `tests/test_env_has_no_secret_literals.py`.
+2. **Open tickets name files they will create.** A ticket proposing
+   `scripts/compute_graph_density.py` is doing its job. This is the large
+   majority of the 99 and it is not a defect.
+3. **Documentation placeholders** — `scripts/my_script.py` in
+   `.agent/guidelines/coding-guidelines.md`, `scripts/x.py` in
+   `.claude/rules/coding.md` — are illustrative by design.
+
+So the guard's value lives almost entirely in one place: **prose that renders
+into a deliverable**, where the reference is a provenance claim a reader can
+follow. Scope it there and the false-positive rate goes to zero.
+
+## Actions
+
+1. Add an `adherence`-marked test asserting that every
+   `(scripts|tests|libs)/…\.py` path named in a file under
+   `deliverables/` resolves on disk.
+2. Discover the files, do not list them — the auto-discovery rule
+   (memory: `feedback_autodiscovery_class_guard`). A hardcoded list is how
+   the previous rounds missed siblings.
+3. Give deliberate exceptions one marker, checked for staleness, so an
+   allowlist entry cannot rot into a mute skip. `tests/test_deliverable_artifacts.py`
+   (ticket 0359) already does exactly this for includes and figures with
+   `# not-embedded:` and `config/unrendered-artifacts.txt` — follow that
+   pattern, and prefer extending that test over adding a new one if the fit
+   is clean.
+4. Decide whether to extend beyond `deliverables/` later. Do not do it in
+   this ticket: the open-ticket class above would drown the signal.
+
+## Test
+
+The guard *is* the deliverable. Its own red step: with 0388 reverted, the test
+names `deliverables/_shared/_includes/alluvial-diagram.md` and
+`structural-breaks.md` and fails. With 0388 applied, green. Assert on the
+message content too — a guard that fails without naming the offending file
+and path costs more than it saves.
+
+Second red step, for the staleness check: add an allowlist entry for a path
+that does exist, and confirm the test rejects the redundant entry.
+
+## Verification
+
+- [ ] Red before 0388's fix, green after, on the real files
+- [ ] Failure message names file, line, and the unresolved path
+- [ ] A redundant allowlist entry fails the test
+- [ ] `make lint` green; the test is `adherence`-marked, not in the fast tier
+
+## Invariants
+
+- No change to any deliverable's rendered content.
+- The guard must not fire on `tickets/**` or on documentation placeholders.
+- Auto-discovery, not a hardcoded file list.
+
+## Exit criteria
+
+A renamed or deleted script cannot leave a dangling provenance reference in
+any rendered deliverable without a test failing, and every deliberate
+exception is explicit and checked for staleness.

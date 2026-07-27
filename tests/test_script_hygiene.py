@@ -776,7 +776,6 @@ class TestPdfDiscipline:
         "analysis/analyze_embeddings.py",
         "analysis/analyze_unfccc_topics.py",
         "harvest/compute_reranker_calibration.py",
-        "figures/plot_interactive_corpus.py",
     ]
 
     @pytest.mark.parametrize("script", NON_PLOTTING)
@@ -1197,7 +1196,6 @@ class TestOutputFlag:
         "compute_clustering_comparison.py",
         "compute_temporal_communities.py",
         "analyze_communities_clusters.py",
-        "plot_interactive_corpus.py",
         "enrich_openalex_keywords.py",
         # DVC join/merge stages
         "enrich_join.py",

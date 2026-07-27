@@ -1,0 +1,86 @@
+%erg 0.1
+Title: make data exits 255 on a run_report with no hash info in dvc.lock
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T18:32Z HDMX-coding-agent created
+2026-07-27T18:35Z HDMX-coding-agent note found while verifying 0360's shared-cache fix end to end in a probe worktree
+
+--- body ---
+## Context
+
+With 0360's shared-cache fix in place, `make data` in a fresh worktree does
+check the corpus out of the primary cache — and still exits non-zero:
+
+    $ make data
+    uv run --env-file .env dvc checkout
+    WARNING: No file hash info found for '.../data/catalogs/run_reports/catalog_merge.json'.
+             It won't be created.
+    ERROR: Checkout failed for following targets:
+    data/catalogs/run_reports
+    data/catalogs/run_reports/catalog_merge.json
+    Is your cache up to date?
+    make: *** [Makefile:203 : data] Erreur 255
+
+Everything else lands: `citations.csv` (386 MB), `refined_works.csv`,
+`enriched_works.csv`, `embeddings.npz` and the rest are all present. Only the
+one run-report entry has no hash recorded.
+
+This is *not* 0360's bug — that one was an empty private cache, now fixed and
+verified. This is a separate gap in the recorded state, and it stayed masked
+while `make data` could not work in a worktree at all.
+
+## Why it matters
+
+`make data` is the documented way to populate a worktree, and 0360's whole
+point was to make that path usable. A target that does the work and then
+returns 255 breaks anything chaining off it, and it trains the reader to ignore
+a red exit code — which is how the next real checkout failure gets waved
+through.
+
+## Relevant files
+
+- `dvc.lock` — the `outs` entry for `data/catalogs/run_reports`
+- `Makefile:203` — the `data:` target
+- `scripts/pipeline_io.py` — `save_run_report`, which writes the run reports
+- `tickets/closed/0360-*.erg` — the shared-cache fix that surfaced this
+
+## Actions
+
+1. Establish whether `catalog_merge.json` is missing from the cache or present
+   but unrecorded in `dvc.lock`. `dvc status` plus a direct look at the
+   recorded `outs` entry separates the two.
+2. If the artifact is genuinely stale or absent, regenerate or `dvc commit` it
+   and push, so recorded state and cache agree.
+3. Decide whether run reports belong in the checkout contract at all. They are
+   QA summaries, not corpus data; if a missing one should not fail `make data`,
+   the fix is to scope the target rather than to chase the file.
+
+## Test
+
+Integration, in a fresh worktree, asserting the exit code and not just the
+files — the current failure is invisible to any check that only looks for
+`refined_works.csv`:
+
+    git -c core.hooksPath=.githooks worktree add <tmp> --detach HEAD
+    cd <tmp> && make data          # must exit 0
+    test -f data/catalogs/refined_works.csv
+
+## Verification
+
+- [ ] `make data` in a fresh worktree exits 0
+- [ ] `dvc status` reports the run_reports out as clean
+- [ ] The corpus files still check out byte-identically
+
+## Invariants
+
+- No corpus artifact is regenerated to satisfy this — the contract files are
+  already correct and must not be touched.
+- Whatever lands keeps `make data` network-free.
+
+## Exit criteria
+
+- [ ] `make data` succeeds end to end in a worktree with a zero exit code, or
+      the run-report out is deliberately removed from what that target checks
+      out, with the reason recorded here.

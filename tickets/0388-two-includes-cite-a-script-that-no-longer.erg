@@ -1,0 +1,91 @@
+%erg 0.1
+Title: Two rendered includes cite compute_alluvial.py, which no longer exists
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T19:05Z HDMX-coding-agent created
+2026-07-27T19:25Z HDMX-coding-agent note Renumbered 0386 -> 0388: PR #1215 renumbered another ticket onto 0386 minutes before #1216 merged. Both PRs were fixing the same duplicate 0385, independently, to different target ids.
+
+--- body ---
+## Context
+
+Found by the ticket 0364 wrap-up sweep, looking for the same defect class the
+ticket had just fixed: a document naming a source that is not there.
+
+Two shared includes carry a `**Scripts:**` provenance line naming
+`scripts/compute_alluvial.py`:
+
+- `deliverables/_shared/_includes/alluvial-diagram.md:3`
+- `deliverables/_shared/_includes/structural-breaks.md:3`
+
+That file exists nowhere in the repo. The alluvial artifacts are produced by
+`scripts/analysis/analyze_alluvial.py` plus the `scripts/figures/plot_*` set;
+`compute_alluvial.py` was a shim that has since been removed —
+`tests/test_alluvial_unit.py` still describes its `_build_argv()` flag
+forwarding in a docstring, which is how the old name survives in the tree.
+
+These includes render into deliverables, so the dangling pointer reaches
+readers. A reader checking provenance — the reason the line exists — finds
+nothing.
+
+Three things make this more than a typo:
+
+1. **The class already recurred.** Ticket 0235, "stale renamed script
+   references", is closed. This is the same defect returning in files that
+   fix did not reach.
+2. **It was already audited and not fixed.** `docs/ncc-pipeline-audit.md:286`
+   records "core-vs-full.md include references `compute_alluvial.py`". That
+   instance *was* fixed — `core-vs-full.md` no longer names it — but the two
+   above were never found, and the audit line still reads as an open finding.
+   Recording a defect in a prose audit is not a mechanism for removing it.
+3. **A green suite does not see it.** `make check` passes today. Nothing
+   resolves a `**Scripts:**` line against the filesystem.
+
+## Relevant files
+
+- `deliverables/_shared/_includes/alluvial-diagram.md:3` — dangling ref.
+- `deliverables/_shared/_includes/structural-breaks.md:3` — dangling ref.
+- `scripts/analysis/analyze_alluvial.py` — the real producer.
+- `tests/test_alluvial_unit.py:7,236,255` — docstrings naming the dead shim.
+- `docs/ncc-pipeline-audit.md:286` — the stale audit finding.
+- `deliverables/_shared/_includes/temporal-structure.md:7,12` — a *different*
+  dangling ref (`scripts/analyze_space_interactions.py`, now under
+  `scripts/archive/`) that ticket 0244 already annotated in place. It is a
+  marked exception, not a silent one; decide whether to repoint it at the
+  archive path or leave the marker, but do not treat it as the same bug.
+
+## Actions
+
+1. Repoint both `**Scripts:**` lines at the real producers. Verify against the
+   Makefile rule that actually builds each figure, not by name similarity.
+2. Update the three `tests/test_alluvial_unit.py` docstrings so the dead name
+   stops propagating; no behaviour change.
+3. Resolve `docs/ncc-pipeline-audit.md:286` — the instance it names is fixed.
+4. Decide the `temporal-structure.md` case explicitly and record the decision.
+
+## Test
+
+Ticket 0387 covers the standing guard for this class; do not write it here.
+For this ticket, the check is mechanical and one-shot: every
+`scripts/…\.py` / `tests/…\.py` path named in a file under
+`deliverables/_shared/_includes/` resolves on disk. Run it before and after —
+red on the two lines above, green after.
+
+## Verification
+
+- [ ] Both includes name a path that exists, and that path is the one the
+      Makefile rule for that figure actually invokes
+- [ ] `make check` still green
+- [ ] The audit line no longer reads as an open finding
+
+## Invariants
+
+- Prose edits only in the provenance lines — no change to any figure, table,
+  or number.
+- `make check` stays green (project has no CI; run it locally).
+
+## Exit criteria
+
+No file under `deliverables/_shared/_includes/` names a script path that does
+not exist, and every surviving exception is annotated as a deliberate one.
