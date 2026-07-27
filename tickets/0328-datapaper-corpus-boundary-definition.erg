@@ -9,6 +9,7 @@ Label: needs-human
 2026-07-27T11:00Z HDMX-coding-agent note child of 0274. Raised by 4 of 4 external panel reviewers — the single most convergent finding. Marked needs-human: the resolution is an author scope decision, not an implementation choice.
 2026-07-27T13:30Z HDMX-coding-agent note AUTHOR DECISION: option (c) — own the real-world fuzziness. Describe how the boundary is drawn, acknowledge that adjacent material passes the net in quantity, and state the preference plainly: recall of climate finance over selectivity against its neighbours. Neither narrowing the corpus nor retitling.
 2026-07-27T13:30Z HDMX-coding-agent note implementing that decision surfaced a factual error in section 1: the paper claimed "we filter out pure green finance", and no such filter exists. See Finding below. The boundary is drawn at the query, conjunctively, and the quality filters do the opposite of what the sentence claimed.
+2026-07-27T16:40Z HDMX-coding-agent note action 4 is moot: 0332's cut removed fig_sem_composition from the paper, so its labels bear on nothing in the resubmission. Checked anyway before noticing, and recording the one useful bit so it is not re-litigated in round 2 — the reviewer's "Kyoto mechanisms & CDM grows from 2% to 20%" is a misread: cluster 1 runs 41.4/20.8/2.1 across the three periods; the 2%-to-20% trajectory is cluster 3, Paris Agreement & loss and damage. Filed 0359 for the orphaned-figure residue.
 
 --- body ---
 ## Context
@@ -103,13 +104,12 @@ two decisions never conflicted; the prose misdescribed one of them.
    §1 clause was false and had to go; the mechanism does not need explaining
    in the paper. Net effect on the corpus: -16 words. The mechanism stays
    documented here, in the Finding above.
-4. **Remaining — Figure 3's cluster labels.** The panel read "Green bonds &
-   sustainable finance" and "Carbon markets & EU ETS" as evidence the corpus
-   is off-scope. Under the rule above those clusters are legitimate, but the
-   TF-IDF labels may still misdescribe their members. Sample each cluster and
-   confirm the label names what is in it; TF-IDF top terms overstate. The
-   panel's separate catch that "Kyoto mechanisms & CDM" *grows* to ~20% after
-   2015 is the tell that at least one label is wrong (tracked in 0332).
+4. ~~Figure 3's cluster labels~~ — MOOT. 0332 cut the figure from the paper;
+   the labels affect no resubmission text. Verified before that registered:
+   every label matches its period profile, and the reviewer's Kyoto objection
+   is a misread of a neighbouring cluster (see the log). Full six-cluster
+   table in PR #1173 if the figure ever returns.
+
 5. **Remaining — the prospective-taxonomy ablation, still an author call.**
    Rebuild the query from period-contemporary sources only (UNFCCC glossaries,
    early IPCC and UNCED reports, pre-2009 institutional vocabulary) and
