@@ -263,8 +263,8 @@ stages:
       size: 93753009
     - path: data/catalogs/refined_works.csv
       hash: md5
-      md5: 1dbfa07c6c610cfccfea3b798f86fbd7
-      size: 66395965
+      md5: a2cdab95c82026b567b83947236321bd
+      size: 66400079
     - path: scripts/harvest/corpus_align.py
       hash: md5
       md5: 05f2e24e9f8f7d6099a6a7451bb64f11
@@ -275,20 +275,20 @@ stages:
       size: 14432
     - path: scripts/pipeline_loaders.py
       hash: md5
-      md5: a892abcf0b0205d7ca79575a54fced31
-      size: 15674
+      md5: 6ac145f69eb53adbd9b6fa6a750bc5c0
+      size: 18042
     - path: scripts/pipeline_progress.py
       hash: md5
       md5: 0279195c59e9de819e8b519490b26091
       size: 10311
     - path: scripts/pipeline_text.py
       hash: md5
-      md5: a3b002a94340e9b0cf56bf3773a40ded
-      size: 9971
+      md5: 5ef4cedb16c16c215b6589d53299f4a3
+      size: 11115
     - path: scripts/utils.py
       hash: md5
-      md5: 244f7b96ab8207c15a695f83da16a3a0
-      size: 6006
+      md5: 113d9b646b3bebfa6237c8922f7cd5e5
+      size: 6034
     outs:
     - path: data/catalogs/refined_citations.csv
       hash: md5
@@ -951,8 +951,8 @@ stages:
       size: 51497696
     - path: data/catalogs/refined_works.csv
       hash: md5
-      md5: 1dbfa07c6c610cfccfea3b798f86fbd7
-      size: 66395965
+      md5: a2cdab95c82026b567b83947236321bd
+      size: 66400079
     - path: scripts/corpus_merge_citations.py
       hash: md5
       md5: 66392d9fa594e9cfe82983ccfead922f
@@ -967,12 +967,12 @@ stages:
       size: 14432
     - path: scripts/pipeline_text.py
       hash: md5
-      md5: a3b002a94340e9b0cf56bf3773a40ded
-      size: 9971
+      md5: 5ef4cedb16c16c215b6589d53299f4a3
+      size: 11115
     - path: scripts/utils.py
       hash: md5
-      md5: 244f7b96ab8207c15a695f83da16a3a0
-      size: 6006
+      md5: 113d9b646b3bebfa6237c8922f7cd5e5
+      size: 6034
     outs:
     - path: data/catalogs/citations.csv
       hash: md5

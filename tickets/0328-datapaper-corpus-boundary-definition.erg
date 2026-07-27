@@ -9,7 +9,7 @@ Label: needs-human
 2026-07-27T11:00Z HDMX-coding-agent note child of 0274. Raised by 4 of 4 external panel reviewers — the single most convergent finding. Marked needs-human: the resolution is an author scope decision, not an implementation choice.
 2026-07-27T13:30Z HDMX-coding-agent note AUTHOR DECISION: option (c) — own the real-world fuzziness. Describe how the boundary is drawn, acknowledge that adjacent material passes the net in quantity, and state the preference plainly: recall of climate finance over selectivity against its neighbours. Neither narrowing the corpus nor retitling.
 2026-07-27T13:30Z HDMX-coding-agent note implementing that decision surfaced a factual error in section 1: the paper claimed "we filter out pure green finance", and no such filter exists. See Finding below. The boundary is drawn at the query, conjunctively, and the quality filters do the opposite of what the sentence claimed.
-2026-07-27T16:40Z HDMX-coding-agent note action 4 done — cluster labels VERIFIED CORRECT, and the panel's objection REFUTED. openai/gpt-5.5 (student) reported "Kyoto mechanisms & CDM appears to grow from 2% before 2007 to 20% after 2015, which is counterintuitive". Measured from tab_sem6_assignments.csv (8,315 works): cluster 1 runs 41.4% -> 20.8% -> 2.1% across the three periods. It contracts by a factor of 20, exactly as a Kyoto-era mechanism should. The 2%/20% pair the reviewer quotes belongs to cluster 3, "Paris Agreement & loss and damage", which runs 1.3% -> 2.6% -> 18.3% — the reviewer read the right numbers off the wrong panel. No relabelling needed.
+2026-07-27T16:40Z HDMX-coding-agent note action 4 is moot: 0332's cut removed fig_sem_composition from the paper, so its labels bear on nothing in the resubmission. Checked anyway before noticing, and recording the one useful bit so it is not re-litigated in round 2 — the reviewer's "Kyoto mechanisms & CDM grows from 2% to 20%" is a misread: cluster 1 runs 41.4/20.8/2.1 across the three periods; the 2%-to-20% trajectory is cluster 3, Paris Agreement & loss and damage. Filed 0359 for the orphaned-figure residue.
 
 --- body ---
 ## Context
@@ -104,28 +104,12 @@ two decisions never conflicted; the prose misdescribed one of them.
    §1 clause was false and had to go; the mechanism does not need explaining
    in the paper. Net effect on the corpus: -16 words. The mechanism stays
    documented here, in the Finding above.
-4. ~~Figure 3's cluster labels~~ — DONE, and the panel was wrong. Measured
-   from `tab_sem6_assignments.csv` (8,315 works), share of each period:
+4. ~~Figure 3's cluster labels~~ — MOOT. 0332 cut the figure from the paper;
+   the labels affect no resubmission text. Verified before that registered:
+   every label matches its period profile, and the reviewer's Kyoto objection
+   is a misread of a neighbouring cluster (see the log). Full six-cluster
+   table in PR #1173 if the figure ever returns.
 
-   | Cluster | pre-2007 | 2007-2014 | post-2015 |
-   |---|---|---|---|
-   | 0 Renewable energy & sustainable growth | 16.3 | 19.5 | 24.7 |
-   | 1 Kyoto mechanisms & CDM | **41.4** | 20.8 | **2.1** |
-   | 2 Carbon markets & EU ETS | 14.2 | 19.7 | 21.2 |
-   | 3 Paris Agreement & loss and damage | **1.3** | 2.6 | **18.3** |
-   | 4 Green bonds & sustainable finance | 1.7 | 11.4 | 14.4 |
-   | 5 Land use, forests & agriculture | 25.1 | 26.1 | 19.3 |
-
-   Cluster 1 contracts by a factor of 20, which is exactly what a Kyoto-era
-   mechanism should do. The "2% before 2007 to 20% after 2015" the reviewer
-   attributes to it is cluster 3's trajectory — right numbers, wrong panel.
-   Every label matches its period profile. No relabelling needed, and the
-   "off-scope clusters" reading collapses with it: green bonds and carbon
-   markets grow because the field did, not because the harvest leaked.
-
-   Residue for someone else: 0332's cut left `fig_sem_composition` displayed
-   by no deliverable while `paths.mk` still lists it under `DATAPAPER_FIGS`.
-   Filed separately.
 5. **Remaining — the prospective-taxonomy ablation, still an author call.**
    Rebuild the query from period-contemporary sources only (UNFCCC glossaries,
    early IPCC and UNCED reports, pre-2009 institutional vocabulary) and
