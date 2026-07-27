@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-27T18:25Z HDMX-coding-agent created
 2026-07-27T18:25Z HDMX-coding-agent note found by the #1191 review panel while reading the escaping fix; pre-existing, not introduced by ticket 0370
+2026-07-27T20:40Z HDMX-coding-agent note reimagine: the CSV half of the premise is false — to_csv's default na_rep already emits empty fields. Fix site moves to _write_md_table, which is also what the Test section actually exercises.
 
 --- body ---
 ## Context
@@ -18,7 +19,15 @@ whose refined count is zero with five of the eight dict keys — `Source`,
 `_write_md_table` reads each cell with `row.get(c, "")`. The key *is* present
 in the Series, holding `NaN`, so the `""` default never fires: the cell becomes
 `str(float('nan'))`. The shipped table gets the literal string `nan` in four
-columns, and the `.csv` sibling gets the same.
+columns. Measured on the current tree:
+
+    | UNFCCC key documents | 50 | 0 | 0 | nan | nan | nan | nan |
+
+**Correction (reimagine, 2026-07-27).** This ticket was filed claiming the
+`.csv` sibling carries the same `nan`. It does not. `save_csv` calls
+`df.to_csv(..., index=False)`, whose default `na_rep=""` already renders NaN as
+an empty field — verified by writing and reading the file back. The defect is
+Markdown-only.
 
 Pre-existing — the code did this before ticket 0370 touched the line, and 0370
 deliberately did not widen its scope to cover it. It is latent rather than
@@ -40,14 +49,16 @@ not, in a published data paper's quality table.
 
 ## Actions
 
-1. Decide where to fix it. Filling the missing keys at the row-building site is
-   the narrower change and keeps the `.csv` correct too; coercing `NaN` to `""`
-   in `_write_md_table` fixes only the Markdown side. Prefer the row-building
-   site, and state the choice in the commit.
+1. Coerce `NaN` to `""` in `_write_md_table`, beside the existing
+   `Raw`/`Refined`/`Unique` branch. The ticket originally preferred the
+   row-building site *because* that also fixed the `.csv` — that reason is void
+   (the `.csv` was never wrong), and the row-building site is now the worse
+   choice for a second reason: the Test section below drives `_write_md_table`
+   directly, bypassing `main()`, so a fix inside `main()` would leave the
+   ticket's own test red. Fix and test must name the same site.
 2. Check the TOTAL row cannot reach the same shape.
-3. Confirm the `.csv` sibling carries an empty field, not the string `nan` —
-   the invariant in 0370 was that escaping is a Markdown concern; this one is
-   not, and touches both outputs.
+3. Confirm the `.csv` sibling still carries an empty field. This is a
+   regression check, not a fix: it already passes.
 
 ## Test
 
@@ -65,6 +76,7 @@ dropped a computed field before.
 
 - [ ] A zero-refined source renders four empty cells, not `nan`
 - [ ] The `.csv` row carries empty fields for the same four columns
+      (already true before the change — pinned so it stays true)
 - [ ] Sources with a non-zero refined count are byte-unchanged
 - [ ] `make lint` and `make check-fast` hold
 
