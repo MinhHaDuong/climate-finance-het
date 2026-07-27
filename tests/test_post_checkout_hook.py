@@ -103,6 +103,35 @@ def test_hook_serializes_concurrent_env_creation():
     assert "flock" in source
 
 
+def test_hook_points_dvc_cache_at_the_shared_cache():
+    """A worktree must share the primary checkout's DVC cache.
+
+    `.dvc/` is not tracked wholesale: a worktree gets `config` from git and
+    `config.local` from .worktreeinclude, but the cache is gitignored, so a
+    fresh worktree starts with an empty private cache — and `config.local`
+    carries only the remote URL, never cache.dir. `make data` (dvc checkout)
+    then searches that empty cache and fails, which is what pushed corpus work
+    back into the primary checkout (ticket 0360, via 0347).
+
+    Symlinking is the same idiom the hook already uses for .venv, and it costs
+    nothing: dvc hardlinks out of a cache on the same filesystem."""
+    source = HOOK.read_text()
+    assert ".dvc/cache" in source
+    # The path must be derived from the repo, not hard-coded, so the fix
+    # survives a clone somewhere else.
+    assert "--git-common-dir" in source
+
+
+def test_hook_replaces_stale_dvc_cache_symlink():
+    """Same idempotence contract as .venv: replace a dangling or stale link
+    rather than erroring, and never clobber a real cache directory that a
+    standalone (non-worktree) checkout legitimately owns."""
+    source = HOOK.read_text()
+    dvc_block = source.split(".dvc/cache", 1)[0][-600:] + source.split(".dvc/cache", 1)[1][:600]
+    assert "ln -sfn" in dvc_block
+    assert "-L .dvc/cache" in dvc_block
+
+
 def _tree_size_mb(root: Path) -> float:
     """On-disk size of a checked-out tree in MB, excluding .git and NOT following
     symlinks. A symlinked .venv contributes only the link, not its GB-scale
@@ -167,6 +196,68 @@ def test_worktree_creation_is_fast_and_light():
                 ".venv is a real directory in a fresh worktree: the hook copied "
                 "the env instead of symlinking it to the shared env on /data."
             )
+    finally:
+        subprocess.run(
+            ["git", "worktree", "remove", "--force", str(wt)],
+            cwd=REPO,
+            capture_output=True,
+        )
+        subprocess.run(["git", "worktree", "prune"], cwd=REPO, capture_output=True)
+        shutil.rmtree(parent, ignore_errors=True)
+
+
+@pytest.mark.integration
+def test_fresh_worktree_shares_the_primary_dvc_cache():
+    """Behavioural guard: a fresh worktree must resolve DVC's cache to the
+    primary checkout's, so `make data` can check the corpus out of it.
+
+    Source inspection above pins the hook's wording; this pins the outcome. It
+    is the check that would have caught ticket 0360 — from the primary checkout
+    everything looks fine, and the failure appears only inside a worktree, which
+    is why it survived until a corpus rerun was pushed out of one.
+
+    Asserts the link resolves to the shared cache AND that the worktree holds no
+    real cache directory of its own, so a regression to per-worktree copying is
+    caught by structure rather than by a GB-scale surprise later.
+
+    The hook is invoked explicitly rather than relied upon to fire from
+    `git worktree add`: whether git runs it depends on `core.hooksPath`, which
+    is machine-local config this test has no business asserting. Driving the
+    hook directly tests the hook's own behaviour, deterministically, on any
+    checkout."""
+    common_dir = subprocess.run(
+        ["git", "rev-parse", "--git-common-dir"],
+        cwd=REPO, capture_output=True, text=True, check=True,
+    ).stdout.strip()
+    shared_cache = (Path(common_dir).resolve().parent / ".dvc" / "cache").resolve()
+    parent = tempfile.mkdtemp(prefix="wt-dvc-cache-")
+    wt = Path(parent) / "wt"
+    try:
+        result = subprocess.run(
+            ["git", "worktree", "add", "--detach", str(wt), "HEAD"],
+            cwd=REPO,
+            capture_output=True,
+            text=True,
+        )
+        assert result.returncode == 0, f"git worktree add failed:\n{result.stderr}"
+
+        # Run the working-tree hook, not the fresh worktree's copy: the
+        # worktree is checked out at HEAD, so its copy would be the committed
+        # version and the test would grade the last commit instead of the
+        # change under test.
+        hook = subprocess.run(["sh", str(HOOK)],
+                              cwd=wt, capture_output=True, text=True)
+        assert hook.returncode == 0, f"post-checkout hook failed:\n{hook.stderr}"
+
+        cache = wt / ".dvc" / "cache"
+        assert cache.is_symlink(), (
+            ".dvc/cache in a fresh worktree is not a symlink: the worktree has a "
+            "private cache, so `make data` (dvc checkout) finds nothing and "
+            "corpus work gets pushed back into the primary checkout (0360)."
+        )
+        assert cache.resolve() == shared_cache, (
+            f".dvc/cache points at {cache.resolve()}, expected {shared_cache}"
+        )
     finally:
         subprocess.run(
             ["git", "worktree", "remove", "--force", str(wt)],

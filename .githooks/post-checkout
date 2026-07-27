@@ -4,10 +4,12 @@
 # .env and .dvc/config.local are handled by .worktreeinclude (auto-copied
 # into worktrees created by EnterWorktree / `claude --worktree`).
 #
-# This hook only co-locates the worktree's uv environment with the uv cache so
-# worktree creation stays fast. It does NOT populate DVC data: doing that eagerly
-# copied ~1.7 GB into every worktree and timed out creation. Data is now fetched
-# on demand with `make data` (see the Makefile).
+# This hook wires the worktree to two shared, off-tree resources: the uv
+# environment beside the uv cache, and the primary checkout's DVC cache. Both
+# are symlinks, so worktree creation stays fast. It still does NOT populate DVC
+# data — doing that eagerly copied ~1.7 GB into every worktree and timed out
+# creation. Data is fetched on demand with `make data` (see the Makefile),
+# which needs the shared cache below to find anything.
 
 # Co-locate the uv project environment with the uv cache on /data.
 # uv hardlinks wheels from its cache into the environment, but only when both
@@ -34,4 +36,33 @@ if [ -d /data/envs ]; then
     if [ -d "$SHARED_ENV" ] && { [ ! -e .venv ] || [ -L .venv ]; }; then
         ln -sfn "$SHARED_ENV" .venv 2>/dev/null || true
     fi
+fi
+
+# Share the primary checkout's DVC cache.
+# `.dvc/` is not tracked wholesale: a worktree gets `config` from git and
+# `config.local` from .worktreeinclude, but the cache is gitignored, so a fresh
+# worktree starts with an empty private one — and `config.local` carries only
+# the remote URL, never cache.dir. `make data` then searches that empty
+# cache, fails, and corpus work gets pushed back into the primary
+# checkout, losing worktree isolation and the dvc commit/push that goes with a
+# normal PR (ticket 0360, after 0347).
+#
+# Same idiom as .venv above, but note what it does and does not buy. Sharing
+# the cache is what makes `make data` able to find anything at all; it does not
+# make the data free. DVC's cache.type is unset here, so its default is `copy`
+# and each worktree that asks for data spends ~2.2 GB of real disk. That is
+# deliberate: linking would hand every worktree the same inode as the cache
+# blob, and Phase-1 scripts rewrite data/catalogs/*.csv in place, so a single
+# rewrite would corrupt the shared cache for every checkout at once. Paying the
+# copy is the cost of doing corpus work in isolation, and it is only paid by
+# worktrees that actually run `make data`.
+#
+# The path is derived from the repo rather than hard-coded, so a clone
+# elsewhere works. Only ever replace an absent or symlinked .dvc/cache — a
+# standalone (non-worktree) checkout owns a real cache directory, and
+# clobbering it would orphan every blob in it.
+SHARED_CACHE=$(CDPATH= cd -- "$(git rev-parse --git-common-dir)/.." 2>/dev/null && pwd)/.dvc/cache
+if [ -d "$SHARED_CACHE" ] && [ "$SHARED_CACHE" != "$(pwd)/.dvc/cache" ] &&
+   { [ ! -e .dvc/cache ] || [ -L .dvc/cache ]; }; then
+    ln -sfn "$SHARED_CACHE" .dvc/cache 2>/dev/null || true
 fi

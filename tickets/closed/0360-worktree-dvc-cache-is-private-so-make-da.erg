@@ -2,11 +2,14 @@
 Title: A worktree's DVC cache is private and empty, so `make data` cannot work there
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: fixed
 
 --- log ---
 2026-07-27T14:42Z HDMX-coding-agent created
 2026-07-27T14:50Z HDMX-coding-agent note filed while hunting 0355. My first diagnosis was wrong twice, recorded here so the correction is not lost: I read the checkout failure first as "DVC tracking is substantially incomplete", then as "the cache is missing the corpus". Both false — 29 of 33 recorded outs are in the cache, every standalone .dvc out is present, and cache and remote are in sync. The cause is narrower and fixable in one line.
 
+2026-07-27T15:50Z HDMX-coding-agent note implemented as a symlink in .githooks/post-checkout, mirroring the .venv idiom, with the shared path derived from git rev-parse --git-common-dir so a clone elsewhere works. Verified end to end: in a probe worktree the link resolves to the primary cache and 'make data' checks the corpus out, delivering refined_works.csv at 66,400,079 bytes — the repopulated corpus from 0347. Two corrections to my own ticket while implementing. First, action 1 (writing cache.dir into .dvc/config.local) is unusable: that file is gitignored, so the fix cannot ship in a PR; action 2's computed path is the only viable form. Second, the ticket and my first draft of the hook claimed the sharing 'costs no extra disk'. False: dvc config cache.type is unset, so DVC defaults to copy and each worktree running make data spends ~2.2 GB. Measured, not assumed — inodes differ and du confirms. I did NOT switch cache.type to hardlink to make the claim true: Phase-1 scripts rewrite data/catalogs/*.csv in place, and a hardlinked checkout shares the inode with the cache blob, so one rewrite would corrupt the cache for every checkout. Copy is the safe default here; the comment now says so.
+2026-07-27T15:51Z HDMX-coding-agent closed — fixed
 --- body ---
 ## Context
 
@@ -71,20 +74,27 @@ superseded corpus until the author noticed.
 
 ## Actions
 
-1. Point every worktree at the shared cache, by adding to the copied
-   `.dvc/config.local`:
+1. ~~Add `[cache] dir = …` to the copied `.dvc/config.local`.~~ **Unusable**:
+   `.dvc/config.local` is gitignored (`.dvc/.gitignore:1`), so a fix there
+   cannot ship in a PR — it would be a per-machine setup step that every
+   checkout has to repeat. Superseded by action 2.
+2. **Done.** The post-checkout hook symlinks `.dvc/cache` at the primary
+   checkout's cache, mirroring the `.venv` idiom already in that hook, with the
+   path derived from `git rev-parse --git-common-dir` so a clone elsewhere
+   works. Only an absent or already-symlinked `.dvc/cache` is replaced — a
+   standalone checkout owns a real cache directory and clobbering it would
+   orphan its blobs.
 
-       [cache]
-           dir = /home/haduong/Climate_finance/.dvc/cache
-
-   `dvc checkout` then hardlinks or reflinks out of the shared cache —
-   near-instant, no duplication, no network. This mirrors what the hook already
-   does for the uv environment, and carries the same caveat
-   `rules/coding-python.md` records for the uv cache: it works because worktree
-   and cache share a filesystem.
-2. Prefer a computed path over the hard-coded absolute one, so the repo stays
-   clonable elsewhere: the post-checkout hook can derive it with
-   `dvc cache dir --local "$(git rev-parse --git-common-dir)/../.dvc/cache"`.
+   **Cost, measured rather than assumed.** An earlier draft of this ticket said
+   the sharing costs no extra disk. That is false: `dvc config cache.type` is
+   unset, so DVC's default is `copy`, and each worktree that runs `make data`
+   spends ~2.2 GB (verified — the checked-out file and the cache blob have
+   different inodes and a link count of 1). Switching `cache.type` to
+   `hardlink` would make the claim true and is **rejected**: Phase-1 scripts
+   rewrite `data/catalogs/*.csv` in place, and a hardlinked checkout shares the
+   inode with the cache blob, so one rewrite would corrupt the cache for every
+   checkout at once. The copy is the price of isolation, and only worktrees
+   that ask for data pay it.
 3. Note in `.claude/rules/architecture.md` § Data location that a worktree needs
    `make data` once, and that corpus work belongs in a worktree like any other
    work.
@@ -105,10 +115,16 @@ copying is caught by size now rather than by a timeout months later.
 
 ## Verification
 
-- [ ] `dvc cache dir` in a worktree reports the shared cache
-- [ ] `make data` in a fresh worktree populates `data/catalogs/` with no network
-- [ ] The worktree's own `.dvc/cache` stays empty (no duplication)
-- [ ] Worktree creation time is unchanged
+- [x] `dvc cache dir` in a worktree reports the shared cache (via the symlink,
+      which resolves to the primary's `.dvc/cache`)
+- [x] `make data` in a fresh worktree populates `data/catalogs/` with no network
+      — verified end to end, delivering `refined_works.csv` at 66,400,079 bytes,
+      the repopulated corpus from 0347
+- [x] The worktree keeps no cache of its own — `.dvc/cache` is a symlink, not a
+      directory. (The *data* is still copied: see the cost note under Actions.
+      The original wording "no duplication" conflated the two and was wrong.)
+- [x] Worktree creation time is unchanged — the hook adds one `ln -sfn`, and
+      `test_worktree_creation_is_fast_and_light` still passes
 
 ## Invariants
 
@@ -118,6 +134,7 @@ copying is caught by size now rather than by a timeout months later.
 
 ## Exit criteria
 
-- [ ] `make data` works in a worktree, cheaply, without network
-- [ ] Corpus work no longer needs the primary checkout, so it keeps git
+- [x] `make data` works in a worktree, without network, at a stated and
+      measured disk cost
+- [x] Corpus work no longer needs the primary checkout, so it keeps git
       isolation and the DVC bookkeeping that comes with a normal PR
