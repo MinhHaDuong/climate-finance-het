@@ -98,13 +98,17 @@ def products_named_in(text):
     for i, line in enumerate(lines):
         if "data/products" not in line:
             continue
+        last_stem = None
         for j in range(i, len(lines)):
             if j > i and not lines[j].strip():
                 break
             for token in _BACKTICKED.findall(lines[j]):
-                found.update(os.path.basename(m.group(0))
-                             for m in _PATHISH.finditer(token))
-    return found
+                matches = [os.path.basename(m.group(0)) for m in _PATHISH.finditer(token)]
+                if matches:
+                    found.update(matches)
+                    last_stem = re.sub(_PRODUCT_EXT + r"$", "", matches[-1])
+                elif last_stem and re.fullmatch(_PRODUCT_EXT, token):
+                    found.add(last_stem + token)
 
 
 class TestRenderRuleTracksTheIncludeClosure:
