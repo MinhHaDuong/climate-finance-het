@@ -1,0 +1,109 @@
+%erg 0.1
+Title: The relevance filter may remove exactly the grey and non-English records the corpus claims to add — validated on 100 works
+Created: 2026-07-27
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-07-27T11:00Z HDMX-coding-agent created
+2026-07-27T11:00Z HDMX-coding-agent note child of 0274. Raised by 4 of 4 external panel reviewers. Marked needs-human: the cheap half is mechanical, the expensive half (re-annotation) is an author call against the 2026-10-20 deadline.
+
+--- body ---
+## Context
+
+The cross-encoder relevance filter flags 5,840 works — the largest single
+removal mechanism in the pipeline. Its entire validation is *"AUC = 0.818 and
+81% accuracy"* on a blinded sample of 100 works. All four external reviewers
+(2026-07-27 panel) called this insufficient for the role it plays.
+
+The sharpest form of the objection (openai/gpt-5.5, student persona) is not
+that the validation is small but that it is **misaligned with the corpus's
+own selling point**: every filter in the pipeline penalises precisely the
+records the paper claims to contribute.
+
+- **Citation isolation** removes pre-2020 works with no DOI-linked citation
+  in either direction — grey literature, policy reports, and non-English
+  works are the least likely to have that metadata.
+- **Absent abstract + irrelevant title** penalises sources with weak
+  abstract coverage; Table 2 reports bibCNRS at 5% abstracts.
+- **Semantic outlier** detection against a *global* centroid removes
+  genuinely distinct language communities and minority topics by
+  construction.
+- **Cross-encoder scoring** runs against one English query, "climate policy
+  and financial mechanisms" — which is not even the paper's own definition
+  of climate finance.
+- **Protection criteria** (citations ≥ 50, presence in 2+ sources,
+  within-corpus citations, teaching syllabi) all privilege visible English
+  academic work.
+
+So the filter's failure mode is correlated with the corpus's contribution.
+That is a stronger claim than "the sample is small", and it is answerable
+with data we already have.
+
+Additional gaps named by the panel: no annotation protocol, no inclusion
+criteria given to annotators, no annotator count or inter-annotator
+agreement, no class balance (81% accuracy is uninterpretable without
+prevalence), no precision/recall/F1 at the deployed threshold, no confidence
+intervals, and a threshold sensitivity reported only as "halving or doubling
+reclassifies roughly 10%".
+
+## Relevant files
+
+- `deliverables/data-paper/data-paper.qmd` — §2.2, §2.3, §2.4
+- `scripts/filter_flags_llm.py` — the cross-encoder flag and its threshold
+- `scripts/harvest/corpus_filter.py` — flag application and protection rules
+- `data/catalogs/reranker_calibration.csv` — the 100-work calibration sample
+- `data/catalogs/extended_works.csv` — every flag, per work, pre-removal
+
+## Actions
+
+**Cheap and mandatory — the removal ablation.** No new annotation needed;
+`extended_works.csv` carries every flag on every work before removal.
+
+1. Generate a removal-ablation table: rows = source, language, period, DOI
+   presence, citation-count decile; columns = flagged, protected, net
+   removed, % of that stratum. Ship it as a deposited artifact and give the
+   headline rows in §2.3.
+2. Report, specifically, what fraction of bibCNRS, UNFCCC, OECD, grey, and
+   non-English records were flagged and then rescued — and **which flag**
+   accounts for non-English removals. Three reviewers asked this directly.
+3. Report class balance and precision/recall at the deployed threshold from
+   the existing 100-work sample, with confidence intervals. The AUC is
+   already computed; the rest is arithmetic on the same file.
+4. State the annotation protocol as it actually happened (who, what
+   criteria, blinded how). If it was single-annotator, say so — an honest
+   n=1 protocol beats an unstated one.
+
+**Expensive — author decision.** A stratified re-annotation (≥ 300 works,
+strata: non-English, grey, pre-2000, OpenAlex-only, near-threshold) with
+inter-annotator agreement would answer the objection properly. Costs an
+annotation round against a 2026-10-20 deadline. The alternative is to ship
+the ablation, state the limitation precisely, and let round 2 ask.
+Recommend: **ablation now, re-annotation only if the ablation shows a
+stratum losing disproportionately.** The ablation is also the instrument
+that tells you whether the worry is real.
+
+## Test
+
+- Red first: the ablation table's `net removed` column, summed over any
+  complete stratification, equals the pipeline's total removals.
+- A guard asserting §2.3's reported per-stratum figures are macros drawn
+  from that table.
+
+## Verification
+
+- [ ] Ablation table published, per source / language / period / DOI status
+- [ ] Non-English removal attributed to specific flags
+- [ ] Precision, recall, and class balance reported at the deployed threshold
+- [ ] Annotation protocol stated
+
+## Invariants
+
+- The ablation reads `extended_works.csv` (pre-removal); computing it from
+  `refined_works.csv` would be circular and would silently report zeros.
+
+## Exit criteria
+
+- [ ] The paper answers "does the filter erase what the corpus claims to
+      add?" with numbers rather than with a caveat
+- [ ] The re-annotation decision is recorded in this ticket's log

@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.10"
 resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'win32' and extra != 'extra-19-climate-finance-het-cpu' and extra == 'extra-19-climate-finance-het-cu130'",
@@ -760,6 +760,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "bibtexparser" },
     { name = "dcor" },
+    { name = "diptest" },
     { name = "ftfy" },
     { name = "langdetect" },
     { name = "litellm" },
@@ -820,6 +821,7 @@ dev = [
 requires-dist = [
     { name = "bibtexparser" },
     { name = "dcor", specifier = ">=0.6.1" },
+    { name = "diptest", specifier = ">=0.10.0" },
     { name = "ftfy", specifier = ">=6.3.1" },
     { name = "langdetect", specifier = ">=1.0.9" },
     { name = "litellm", specifier = ">=1.30.0,<=1.82.6" },
@@ -1240,6 +1242,39 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/61/7b/35cbccb7effc5d7e40f4c55e2b79399e1853041997fcda15c9ff160abba0/dictdiffer-0.9.0.tar.gz", hash = "sha256:17bacf5fbfe613ccf1b6d512bd766e6b21fb798822a133aa86098b8ac9997578", size = 31513, upload-time = "2021-07-22T13:24:29.276Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/47/ef/4cb333825d10317a36a1154341ba37e6e9c087bac99c1990ef07ffdb376f/dictdiffer-0.9.0-py2.py3-none-any.whl", hash = "sha256:442bfc693cfcadaf46674575d2eba1c53b42f5e404218ca2c2ff549f2df56595", size = 16754, upload-time = "2021-07-22T13:24:26.783Z" },
+]
+
+[[package]]
+name = "diptest"
+version = "0.11.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-19-climate-finance-het-cpu' and extra == 'extra-19-climate-finance-het-cu130')" },
+    { name = "numpy", version = "2.4.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'extra-19-climate-finance-het-cpu' and extra == 'extra-19-climate-finance-het-cu130')" },
+    { name = "psutil" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/5e/0b/92a00796fb3a7e0fd1aea26ebcacfd6282857789ea72e847662e5103b24e/diptest-0.11.0.tar.gz", hash = "sha256:cd74d61d4e2620aa4c40900b7ff0ff48b7517fd00871c9066f737ba4081b2f81", size = 88751, upload-time = "2026-04-24T15:02:30.192Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/7f/72/98e16cba68767eef0d46393915ec7fe2b8e67500b1892aa90d91fefa84a7/diptest-0.11.0-cp310-cp310-macosx_13_0_arm64.whl", hash = "sha256:9e6274617642e6eb68d9f805b67c05c67c6ad69ab51fe5ba221b97cc7c875d7e", size = 380215, upload-time = "2026-04-24T15:01:47.499Z" },
+    { url = "https://files.pythonhosted.org/packages/16/d7/12db529042a934ccc3ffd1993a3ff22b262a867ee411800bbbfd3b3dffc3/diptest-0.11.0-cp310-cp310-macosx_13_0_x86_64.whl", hash = "sha256:93507db94b8d407f8992454979a9ac21909b326e0d8617ead9bb73e2ec1b210f", size = 418790, upload-time = "2026-04-24T15:01:48.937Z" },
+    { url = "https://files.pythonhosted.org/packages/30/7f/8a2e0d1a0ad932e89c7b411828eebd944768ab7373b8f6885db141f74241/diptest-0.11.0-cp310-cp310-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:553a395d9a0eb3df95f53ab5b5bc57e7aca6fa5e28ab5ac23b467ec51536c23d", size = 236321, upload-time = "2026-04-24T15:01:50.415Z" },
+    { url = "https://files.pythonhosted.org/packages/66/85/cb8e04875f59bdc8c31452dc8708f72f50a3243823a95a303dcd935c822a/diptest-0.11.0-cp310-cp310-win_amd64.whl", hash = "sha256:e341ac5462fdbf8465b4b28fb718ae3cbc4cf6cafcb6041350d34b639c275be6", size = 401213, upload-time = "2026-04-24T15:01:51.861Z" },
+    { url = "https://files.pythonhosted.org/packages/66/6b/53f48c6f143ce74cf186e53f062301161e40cab1766c2a97e54eaf80ad0e/diptest-0.11.0-cp311-cp311-macosx_13_0_arm64.whl", hash = "sha256:82a0e12a6bd4047a361748c8deaea2ccface432dbb2c59bc44d4e06ca2fc51f9", size = 381319, upload-time = "2026-04-24T15:01:53.394Z" },
+    { url = "https://files.pythonhosted.org/packages/0b/c6/d7278a5d53c5eb928dc00f3ffdb4812834732d2a01d7e6aca6a169de8683/diptest-0.11.0-cp311-cp311-macosx_13_0_x86_64.whl", hash = "sha256:021254d83aa695369c784438ec8767035acf2c51148e92fb555b11847db8a4cd", size = 420070, upload-time = "2026-04-24T15:01:54.95Z" },
+    { url = "https://files.pythonhosted.org/packages/3e/3a/b07665ad28d343fd15f61ae6b317a716655513fd3fb120239d1bf049769a/diptest-0.11.0-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:3e0720dcbb1a90d487bc7c47117039b7f12576a89d7bec99bbda1365cf072cc8", size = 236924, upload-time = "2026-04-24T15:01:56.287Z" },
+    { url = "https://files.pythonhosted.org/packages/5e/03/21b6a1130ff39d8d1736e968b1476eabb7323139659dcb0e097fb30dfb34/diptest-0.11.0-cp311-cp311-win_amd64.whl", hash = "sha256:399894348c60d3694c6fb37d249cbc618b2e12f2463620fd23b0f8aee442b13c", size = 401454, upload-time = "2026-04-24T15:01:57.913Z" },
+    { url = "https://files.pythonhosted.org/packages/7b/99/1e42c734b0695aec2aef68ab1691bc1b0f602b38e72c06f086c5968ed8fd/diptest-0.11.0-cp312-cp312-macosx_13_0_arm64.whl", hash = "sha256:7d2b8822daabbd11b0a4e4d8356e3116db8adc0a4b67b49d487fbc8809264d54", size = 382111, upload-time = "2026-04-24T15:01:59.322Z" },
+    { url = "https://files.pythonhosted.org/packages/19/81/7ee938c02e8592e63bb4affb978ec1a7038ecc84c43a16b2942e65648cef/diptest-0.11.0-cp312-cp312-macosx_13_0_x86_64.whl", hash = "sha256:e2fc655e90250ffb031e616ec78e28b6c74d90ad5cfe5e84f2b9b44c417a595f", size = 421931, upload-time = "2026-04-24T15:02:00.881Z" },
+    { url = "https://files.pythonhosted.org/packages/ac/ac/34d243df356728f3d1d97ea380341a65a5cbd09a52aeb40d449cddd6a450/diptest-0.11.0-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:b6748d22df28b030b34b2d47f257d45520564b63f20330ab507c888995d6b272", size = 238025, upload-time = "2026-04-24T15:02:02.362Z" },
+    { url = "https://files.pythonhosted.org/packages/e5/6b/ba30e2c6c748c54d75c6d08fde2c52a10edff987c7767be19468fea9bbf9/diptest-0.11.0-cp312-cp312-win_amd64.whl", hash = "sha256:e886ff65bc938188ec65530ce377063c87ea356bf65c5e1f80e5aacb862aebb0", size = 403543, upload-time = "2026-04-24T15:02:03.634Z" },
+    { url = "https://files.pythonhosted.org/packages/d3/d1/75575cb04d4852354492eb869e876ed31054be6f1dfaf7b3f0c53e92d369/diptest-0.11.0-cp313-cp313-macosx_13_0_arm64.whl", hash = "sha256:f192191bcd50d9ec715b5fb6b259a1fb136970e979b69ec0f2f47d419653a12b", size = 382114, upload-time = "2026-04-24T15:02:05.268Z" },
+    { url = "https://files.pythonhosted.org/packages/10/06/dbdbfaa2e80bb742fb12666091ed1a3bed61237842607efbb2866c64e603/diptest-0.11.0-cp313-cp313-macosx_13_0_x86_64.whl", hash = "sha256:c35497a46c727618004ab0a34ceb5e17b52d83487d87de3e3a103863f0b4d49e", size = 422010, upload-time = "2026-04-24T15:02:06.739Z" },
+    { url = "https://files.pythonhosted.org/packages/a2/47/14ee6416a288abeb46f40836985d6e064b9c7c90005ed3146cdf3b7f7a81/diptest-0.11.0-cp313-cp313-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:0c582ae71d4577faed5fc8487b03f9d8c00f80d6290f5455785fd1222d879b72", size = 238138, upload-time = "2026-04-24T15:02:08.666Z" },
+    { url = "https://files.pythonhosted.org/packages/04/a0/b95dbd5ed59ec2efaa16dac075b217706fa0296d97473508c78cea66aa38/diptest-0.11.0-cp313-cp313-win_amd64.whl", hash = "sha256:737a17bc806b0761684d2e2bbba7a83ec7f9d77b5bda3b2b613f59e0abba8256", size = 403545, upload-time = "2026-04-24T15:02:09.955Z" },
+    { url = "https://files.pythonhosted.org/packages/f1/3f/9ac5ebe1fe0a653066e71e448ee02746ffd4377df8d5bfe7dc26b00365c1/diptest-0.11.0-cp314-cp314-macosx_13_0_arm64.whl", hash = "sha256:4c7aca12a559137395dd195e091eb4056d01f787a1861b97d20c609340d94bbe", size = 382253, upload-time = "2026-04-24T15:02:11.25Z" },
+    { url = "https://files.pythonhosted.org/packages/af/bd/acd2da0086aeab997da07b5ab5230e49a6113bb0bcf6b3097acf5c9285ef/diptest-0.11.0-cp314-cp314-macosx_13_0_x86_64.whl", hash = "sha256:ab5666183fd0051598ad1c7cca0e70d084efdc503245c9294bcf7cd4ad141b62", size = 422044, upload-time = "2026-04-24T15:02:12.414Z" },
+    { url = "https://files.pythonhosted.org/packages/08/87/4131ec4535edf36f6ef84ef379dd7cab7dcee227c10ecdc4f68826df0169/diptest-0.11.0-cp314-cp314-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:1965173824566d873f6c7ecfcc7949b83f18880515488ecefd367bbbb7a01369", size = 238092, upload-time = "2026-04-24T15:02:14.123Z" },
+    { url = "https://files.pythonhosted.org/packages/25/46/2b4589cd82371e2ed69f351ef0384545ae46584bcf9fed4498c392844022/diptest-0.11.0-cp314-cp314-win_amd64.whl", hash = "sha256:15886ee258cf7ce94fd443e29984a732230972a2ffdfb4bebea3bd2cf42bbb85", size = 414689, upload-time = "2026-04-24T15:02:15.368Z" },
 ]
 
 [[package]]

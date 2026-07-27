@@ -1,0 +1,95 @@
+%erg 0.1
+Title: The Introduction reports z = 76 with p = 0.0099, and the Chow test's model is never stated
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T11:00Z HDMX-coding-agent created
+2026-07-27T11:00Z HDMX-coding-agent note child of 0274. Two statistical-reporting defects found by the external panel; the z/p pair is almost certainly a permutation-floor reporting artifact, not a wrong computation.
+2026-07-27T12:05Z HDMX-coding-agent note section pointers corrected: the reviewer placed the Chow test in §4, but it is in §1's replication bullets (data-paper.qmd:57, lit_growth_f/lit_growth_p) alongside the z/p pair. The z = 76 / p = 0.0099 diagnosis is unchanged — only the location was wrong.
+
+--- body ---
+## Context
+
+Two statistics in the paper are reported in a way that invites the wrong
+conclusion.
+
+**The z/p pair.** §1 reports a rewiring result as *"z = 76, p = 0.0099"*.
+openai/gpt-5.5 (grinchy): *"A z-score of 76 would imply an astronomically
+small p-value, not 0.0099. This suggests either a reporting error or a
+misunderstanding of the null model."*
+
+The likely truth is neither: 0.0099 is the **empirical floor of a permutation
+test with B = 100** (1/(B+1) = 0.0099). The p-value is not an estimate of the
+tail probability, it is "smaller than this test can resolve". Reported
+bare next to z = 76 it reads as a weak result attached to an impossible
+statistic. **Verify this before rewriting** — if B is not 100, the diagnosis
+is wrong and the number needs a real investigation.
+
+If confirmed, the fix is to report `p < 1/(B+1)` with B named, or raise B.
+Note 0326 just added `--n-perm` to `compute_null_model.py`; if this figure
+came from a smoke-sized run rather than the production configuration, that is
+a different and more serious problem — check the provenance of the number
+before touching the prose.
+
+**The Chow test.** §1 reports F = 10, p = 0.0004 for a structural break on
+log annual counts, without stating the break date tested, the model (linear
+on logs? Poisson? negative binomial?), or whether the standard errors are
+robust. mistralai/mistral-large (grinchy) notes the test assumes
+homoskedasticity and no autocorrelation, both implausible for annual
+publication counts, and suggests either a count model with robust errors or
+a nonparametric alternative (Pettitt) that does not assume a linear trend.
+
+Both statistics sit in §1, not §4: the field-history claims live in the
+Introduction's replication bullets (`lit_growth_f`, `lit_growth_p`,
+`lit_poles_z`), so 0332's §4 cut does not reach them. 0332 carries those
+claims as a separate, explicitly labelled §1 sub-action. If that sub-action
+lands, the Chow test goes with it and only the z/p item survives. Sequence
+accordingly — do not restate a test that is about to be deleted.
+
+## Relevant files
+
+- `deliverables/data-paper/data-paper.qmd` — §1, replication bullets: both the
+  z/p pair and the Chow test (lines 57–59, the `lit_*` macros)
+- `scripts/compute_null_model.py` — the permutation driver and its `n_perm`
+- `config/analysis.yaml` — `divergence.permutation.n_perm`
+- `deliverables/data-paper/data-paper-vars.yml` — where both figures resolve
+- `scripts/analysis/` — the Chow test implementation, if one exists in-tree
+
+## Actions
+
+1. Trace the z = 76 / p = 0.0099 pair to its producing run. Confirm B, and
+   confirm the run used the production `n_perm`, not a smoke override.
+2. Report the p-value as a bound with B stated, or raise B until the reported
+   p is an estimate rather than a floor. Do not print a floor as an estimate.
+3. Emit both figures as vars if they are not already. A hand-typed z of 76
+   is exactly the class of number that rots (project rule).
+4. For the Chow test, if it survives 0332: state the break year tested, the
+   model, and the error structure, in the sentence that reports it.
+5. Consider whether the Chow test is the right instrument at all. The
+   periodisation is historically grounded and corroborated by the
+   embedding-based break detection (writing rules); a fragile time-series
+   test on counts adds a soft target without adding support.
+
+## Test
+
+- Red first: a guard asserting no reported p-value in the deliverable equals
+  1/(B+1) for the configured B while being formatted as an equality.
+- A guard asserting z-scores and p-values in the prose resolve to macros.
+
+## Verification
+
+- [ ] The z/p pair's provenance is confirmed and recorded in this log
+- [ ] The p-value is reported as a bound or the test is rerun with larger B
+- [ ] The Chow test states break year, model, and error structure — or is cut
+
+## Invariants
+
+- Nothing published may come from a run using `--n-perm` (0326's smoke
+  override). If the provenance check finds one, that is a separate and
+  higher-priority finding.
+
+## Exit criteria
+
+- [ ] Every test statistic in the paper is reported with the information
+      needed to interpret it, and none is internally impossible

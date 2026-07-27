@@ -2,12 +2,14 @@
 Title: Data paper: narrate langdetect-inferred language tags in prose, as abstract reconstruction already is
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1141
 
 --- log ---
 2026-07-27T10:09Z HDMX-coding-agent created
 2026-07-27T10:12Z HDMX-coding-agent note child of 0274. Surfaced by the independent review of PR #1129, then sharpened: the reviewer read this as an inherited gap ("disclosure lives only in the codebook, consistent with prior practice"). It is not. data-paper.qmd:122 already narrates abstract reconstruction in prose. Language would be the ONE derived field with no prose narration, and that gap is created by 0297 rather than inherited.
 
 2026-07-27T11:24Z HDMX-coding-agent note unblocked: 0297 closed and the corpus regenerated on padme 2026-07-27. Real figures from enriched_works.csv language_provenance: 40644 source, 850 openalex, 1620 detected:langdetect, 65 empty (of 43179). refined_works.csv: 33344 rows, 9 null
+2026-07-27T12:42Z HDMX-coding-agent closed — autoclosed — PR #1141
 --- body ---
 ## Context
 
