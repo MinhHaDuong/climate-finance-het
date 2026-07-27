@@ -75,18 +75,49 @@ def sources_present(unified_cols, refined_cols) -> list[str]:
     cols = set(unified_cols) | set(refined_cols)
     return [s for s in PRIMARY_SOURCES if f"from_{s}" in cols]
 
-CAPTION = (
-    ": Corpus sources. *Raw*: records with `from_*` provenance flag before"
-    " filtering (a record in multiple sources is counted once per source)."
-    " *Refined*: after six-flag quality filtering."
-    " *Unique*: found only in that source (`source_count = 1`)."
-    " *%non-EN*: share of non-English works."
-    " *%DOI*, *%Abstract*, *%Refs*: metadata completeness among refined"
-    " records. {#tbl-quality}"
-)
+def build_caption(
+    raw_multi: int,
+    raw_extra: int,
+    refined_multi: int,
+    refined_extra: int,
+    triple_plus: int,
+) -> str:
+    """Caption reporting the union/sum discrepancy in both count columns.
+
+    The source rows count provenance *memberships*, the TOTAL row counts
+    distinct works, so the columns sum above their total. Ticket 0327: the
+    submitted table left that unstated, and the refined column's 763 extra
+    memberships did not match the 738 multi-source works quoted in §2.2 —
+    the {triple_plus} works carrying three provenances explain the difference.
+    Every number here is measured, so the caption cannot drift from the table.
+    """
+    return (
+        ": Corpus sources. *Raw*: records with `from_*` provenance flag before"
+        " filtering (a record in multiple sources is counted once per source)."
+        " *Refined*: after six-flag quality filtering."
+        " *Unique*: found only in that source (`source_count = 1`)."
+        " The **TOTAL** row is the deduplicated union of works, not the column"
+        f" sum: {raw_multi:,} raw records and {refined_multi:,} refined works"
+        " carry more than one provenance flag, which puts the source rows"
+        f" {raw_extra:,} and {refined_extra:,} memberships above their totals"
+        f" ({triple_plus:,} works carry three)."
+        " *%non-EN*: share of non-English works."
+        " *%DOI*, *%Abstract*, *%Refs*: metadata completeness among refined"
+        " records. {#tbl-quality}"
+    )
 
 
-def _write_md_table(summary: pd.DataFrame, path: str) -> None:
+def membership_overlap(frame: pd.DataFrame, from_cols: list[str]) -> tuple[int, int, int]:
+    """(works with 2+ provenances, extra memberships, works with 3+)."""
+    per_work = frame[from_cols].fillna(0).astype(int).sum(axis=1)
+    return (
+        int((per_work >= 2).sum()),
+        int((per_work - 1).clip(lower=0).sum()),
+        int((per_work >= 3).sum()),
+    )
+
+
+def _write_md_table(summary: pd.DataFrame, path: str, caption: str) -> None:
     """Write a Quarto-includable markdown table with selected columns."""
     cols = ["Source", "Raw", "Refined", "Unique", "%non-EN", "%DOI", "%Abstract", "%Refs"]
     lines = [
@@ -103,7 +134,7 @@ def _write_md_table(summary: pd.DataFrame, path: str) -> None:
             vals.append(f"**{v}**" if is_total else str(v))
         lines.append("| " + " | ".join(vals) + " |")
     lines.append("")
-    lines.append(CAPTION)
+    lines.append(caption)
     lines.append("")
     with open(path, "w") as f:
         f.write("\n".join(lines))
@@ -145,8 +176,9 @@ def main():
     log.info("Loaded %d citation rows", len(cit))
 
     # Compute per-source statistics
+    present = sources_present(unified.columns, df.columns)
     rows = []
-    for src in sources_present(unified.columns, df.columns):
+    for src in present:
         from_col = f"from_{src}"
         mask_u = unified[from_col] == 1 if from_col in unified.columns else unified["source"].str.contains(src, na=False)
         mask_r = df[from_col] == 1 if from_col in df.columns else df["source"].str.contains(src, na=False)
@@ -195,9 +227,24 @@ def main():
     csv_path = _output_csv
     save_csv(summary, csv_path)
 
+    # Provenance overlap: what separates each column's sum from its TOTAL.
+    raw_multi, raw_extra, raw_triple = membership_overlap(
+        unified, [f"from_{s}" for s in present if f"from_{s}" in unified.columns]
+    )
+    ref_multi, ref_extra, ref_triple = membership_overlap(
+        df, [f"from_{s}" for s in present if f"from_{s}" in df.columns]
+    )
+    caption = build_caption(
+        raw_multi=raw_multi,
+        raw_extra=raw_extra,
+        refined_multi=ref_multi,
+        refined_extra=ref_extra,
+        triple_plus=max(raw_triple, ref_triple),
+    )
+
     # Save markdown table (included by data-paper.qmd and _includes/tab_corpus_sources.md)
     md_path = os.path.splitext(csv_path)[0] + ".md"
-    _write_md_table(summary, md_path)
+    _write_md_table(summary, md_path, caption)
     log.info("Wrote %s", md_path)
 
 
