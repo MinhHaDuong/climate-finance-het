@@ -18,9 +18,15 @@ import os
 import re
 import shutil
 import subprocess
+from html import escape
 
 import pytest
-from _deposit_variables import DEPOSIT_VARIABLES, describe, latex_inline
+from _deposit_variables import (
+    DEPOSIT_VARIABLES,
+    describe,
+    latex_inline,
+    render_codebook,
+)
 
 RECIPE = "df[~df['is_flagged'] | df['is_protected']]"
 
@@ -94,6 +100,33 @@ class TestRenderedFidelity:
         emitted, _ = rendered
         line = next(e for e in emitted if "is_flagged" in e)
         assert RECIPE in line, f"negation lost in the rendered table: {line}"
+
+
+@pytest.mark.integration
+def test_codebook_recipe_survives_gfm_rendering(tmp_path):
+    """The codebook ships as Markdown, so its rendering deserves the same oracle.
+
+    A raw `|` ends a pipe-table cell: the deposited data dictionary used to
+    publish the recipe cut in half, at the pipe. Asserting on the escaped
+    source would only restate the fix, so this renders and reads the cell back.
+    """
+    if shutil.which("pandoc") is None:
+        pytest.skip("pandoc not available on this machine")
+    source = tmp_path / "codebook.md"
+    source.write_text(render_codebook({}, n_rows=1), encoding="utf-8")
+
+    rendered = subprocess.run(["pandoc", "-f", "gfm", "-t", "html", str(source)],
+                              capture_output=True, text=True, check=True).stdout
+    # pandoc wraps its output, so rows are found in the flattened document.
+    flat = re.sub(r"\s+", " ", rendered)
+    rows = re.findall(r"<tr[^>]*>.*?</tr>", flat)
+    row = next(r for r in rows if "refined subset" in r)
+    assert f"<code>{escape(RECIPE, quote=False)}</code>" in row, \
+        f"recipe corrupted in the rendered codebook:\n{row}"
+    # GFM silently drops a cell that overflows the header, so the row count
+    # alone does not catch the defect — it pins the column contract, and the
+    # assertion above pins the payload.
+    assert row.count("<td") == 5, f"row is not the five declared columns:\n{row}"
 
 
 @pytest.mark.integration
