@@ -7,6 +7,8 @@ Author: HDMX-coding-agent
 2026-07-21T10:00Z HDMX-coding-agent created roar sweep after the 0286 false-premise fix
 2026-07-22T18:05Z HDMX-coding-agent note bibliometric-context.md split by 0289 (author decision): part A -> prior-mappings.md (staged for data paper), part B stays (clustering validity, still orphaned, stale Section 7.8/9 refs flagged); both markers cleared after author PDF review
 
+2026-07-27T19:20Z HDMX-coding-agent note ticket 0359 delivers Action 3 (the hygiene guard): tests/test_deliverable_artifacts.py fails when a tracked file under _shared/{_includes,tables} is reachable from no deliverable .qmd. All 17 orphans are listed in config/unrendered-artifacts.txt with "disposition pending ticket 0290" — the guard is green and the content decision is untouched, still this ticket's. 0359 also removed seven of them from the TECHREP/DATAPAPER/MULTILAYER_INCLUDES render prerequisites, where they were posing as live dependencies; that is wiring, not disposition. Delete an allowlist line here as each orphan is settled.
+
 --- body ---
 ## Context
 

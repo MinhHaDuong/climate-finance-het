@@ -598,6 +598,9 @@ class TestArchiveBitInvariance:
             "pipeline_io.py",
             "pipeline_progress.py",
             "pipeline_text.py",
+            # Shared --input/--output parser: imported by the entry points, so
+            # the archive must ship it, but it is never a Makefile prerequisite.
+            "script_io_args.py",
         }
         for s in copied_scripts:
             if s in utilities:
@@ -906,12 +909,20 @@ class TestNoWrongNamespacePatch:
     - an aliased import (``import utils as u`` then patching ``u``) is not
       caught; no test file aliases utils today (checked 2026-07-11, ticket
       0251) and new code has no reason to start.
-    - direct attribute assignment (``utils.CONST = x``) is not flagged. The
-      two legitimate patterns found by the 0249 sweep use it and stay
-      allowed: a test patching utils' own namespace before calling a
-      function that lives in utils itself (test_robustness_observability.py
-      save_run_report tests), and dual-namespace patching of utils AND the
-      consuming module together (test_pipeline_e2e.py _patched_merge_dirs).
+    - direct attribute assignment (``utils.CONST = x``) is not flagged here.
+      One of the two patterns the 0249 sweep called legitimate turned out not
+      to be: the save_run_report tests in test_robustness_observability.py
+      were said to patch "utils' own namespace before calling a function that
+      lives in utils itself", but save_run_report lives in pipeline_io and
+      re-imports CATALOGS_DIR from pipeline_loaders inside its body, so the
+      assignment redirected nothing and the tests wrote into the DVC-tracked
+      corpus for four and a half months while reporting green (ticket 0346).
+      Bare assignment is now covered by
+      test_run_report_isolation.py::test_no_test_patches_a_call_time_constant_off_the_definition_site,
+      which resolves the defining module from the AST instead of trusting a
+      claim about where a function lives. What remains allowed here is
+      dual-namespace patching of utils AND the consuming module together
+      (test_pipeline_e2e.py _patched_merge_dirs).
     """
 
     FORBIDDEN = [

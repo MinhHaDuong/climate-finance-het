@@ -11,10 +11,16 @@
 # process never parses the root Phase-2 rules (ticket 0237). The figure lists and
 # .lexical_tfidf.stamp are plain artifact-file prerequisites here, satisfied by a
 # prior analysis build — not targets this file knows how to rebuild.
+#
+# TECHREP_FIGS is the zoo set (schematics + result panels), which is what the
+# report embeds; `make zoo-figures` produces it. Until ticket 0359 this rule
+# named twelve figures the report stopped embedding at the techrep rewrite, plus
+# the multilayer paper's companion figures — and named none of the ones the
+# LaTeX run actually opens.
 
 -include paths.mk
 
-deliverables/technical-report/technical-report.pdf: deliverables/technical-report/technical-report.qmd $(TECHREP_INCLUDES) $(BIB) deliverables/_shared/technical-report-vars.yml $(TECHREP_FIGS) $(MULTILAYER_FIGS) .lexical_tfidf.stamp
+deliverables/technical-report/technical-report.pdf: deliverables/technical-report/technical-report.qmd $(TECHREP_INCLUDES) $(BIB) deliverables/_shared/technical-report-vars.yml $(TECHREP_FIGS) .lexical_tfidf.stamp
 	quarto render $< --to pdf
 
 .PHONY: technical-report

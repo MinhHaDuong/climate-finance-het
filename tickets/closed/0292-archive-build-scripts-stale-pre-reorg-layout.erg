@@ -2,12 +2,18 @@
 Title: Phase-4 archive scripts still build the pre-0226 content/ layout; manuscript one is broken
 Created: 2026-07-22
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1199
 
 --- log ---
 2026-07-22T10:05Z HDMX-coding-agent created
 
 2026-07-24T21:20Z HDMX-coding-agent note pulled into the RDJ-26561 resubmission lane (tracker 0274): the Zenodo repack (0280 kit + cut-plan supplement files) depends on these scripts building the current layout. Evidence found today: stray pre-reorg output/ tree with stale PDFs (companion-paper.pdf) in the primary checkout, trashed during tidy-up.
 
+2026-07-27T20:35Z HDMX-coding-agent verified manuscript archive: built, extracted to a clean tmp dir, rendered through its own Makefile, and make verify reports the rebuilt PDF byte-identical to the shipped one, md5 98c27adba24ff6cb43f09a07c462c7fe under SOURCE_DATE_EPOCH=0. Datapaper archive: built end to end at 211M, extracted, and data-paper.pdf renders from make -f Makefile.datapaper papers. Analysis archive: built at 89M; its Makefile dry-run resolves every rule to a recipe passing --output at the paths expected_outputs.md5 records, and the archive now carries script_io_args.py; a full clean-room run was not made, it needs a 1.8G uv sync. Guard red-tested on three mutations: a renamed array input, a renamed regenerable, and reintroducing the retired root _quarto.yml cp. make lint 185 passed, make check-fast 1217 passed. make check leaves 8 failures, none from this branch: 7 are test_corpus_acceptance file-existence in an empty worktree data/catalogs, and test_bias_flag passes in isolation.
+
+2026-07-27T20:30Z HDMX-coding-agent corrected all three scripts rebuilt on the deliverables/ mirror layout via cp --parents; each now declares its inputs in one named array that is both manifest and layout. Three defects beyond the ticket's diagnosis: the datapaper script wrote a _quarto.yml whose render list named content/data-paper.qmd, a file it never created; every recipe in Makefile.analysis-manuscript invoked its script without --output, which the shared parser declares required, so nothing in that archive could build; and the analysis archive never shipped scripts/script_io_args.py though three of its entry points import it. Also fixed: the analysis Makefile's default goal built four of the nine outputs its own verify checksums, and its targets sat under content/ while expected_outputs.md5 records repo paths.
+
+2026-07-27T18:52Z HDMX-coding-agent closed — autoclosed — PR #1199
 --- body ---
 ## Context
 During the 0153 resubmission deposit (2026-07-21), `bash
@@ -54,10 +60,10 @@ breakage went unseen.
   tarball's `make` renders (currently fails at the _quarto.yml cp).
 
 ## Verification
-- [ ] All three archive scripts build from a clean checkout
-- [ ] Manuscript archive clean-room render byte-identical to shipped PDF
+- [x] All three archive scripts build from a clean checkout
+- [x] Manuscript archive clean-room render byte-identical to shipped PDF
       (SOURCE_DATE_EPOCH=0)
-- [ ] Widened path guard red-tested by mutating one cp source
+- [x] Widened path guard red-tested by mutating one cp source
 
 ## Invariants
 - Archive layout mirrors the repo (deliverables/), per the 0226 architecture.

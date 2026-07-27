@@ -16,10 +16,16 @@
 
 -include paths.mk
 
-deliverables/multilayer/multilayer-detection.pdf: deliverables/multilayer/multilayer-detection.qmd $(MULTILAYER_INCLUDES) $(BIB) deliverables/multilayer/multilayer-detection-vars.yml
+# The paper composes no shared include (MULTILAYER_INCLUDES is empty since 0359);
+# its five companion figures are what it actually needs on disk.
+deliverables/multilayer/multilayer-detection.pdf: deliverables/multilayer/multilayer-detection.qmd $(MULTILAYER_FIGS) $(BIB) deliverables/multilayer/multilayer-detection-vars.yml
 	quarto render $< --to pdf
 
-deliverables/multilayer/multilayer-detection-techrep.pdf: deliverables/multilayer/multilayer-detection-techrep.qmd $(MULTILAYER_TECHREP_INCLUDES) $(BIB) deliverables/_shared/technical-report-vars.yml
+# The supplement embeds the zoo figures of the six methods it discusses. It takes
+# the whole zoo set as prerequisite rather than a seventh variable naming eleven
+# files: `make zoo-figures` produces the set as a unit, so a subset would buy no
+# incrementality (0359).
+deliverables/multilayer/multilayer-detection-techrep.pdf: deliverables/multilayer/multilayer-detection-techrep.qmd $(MULTILAYER_TECHREP_INCLUDES) $(BIB) deliverables/_shared/technical-report-vars.yml $(ZOO_SCHEMATICS) $(ZOO_RESULT_FIGS)
 	quarto render $< --to pdf
 
 .PHONY: multilayer-detection multilayer-techrep

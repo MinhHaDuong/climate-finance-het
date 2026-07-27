@@ -23,12 +23,17 @@ make verify      # check inputs match + compare PDF to shipped reference
 
 | Path | Description |
 |------|-------------|
-| `content/` | Manuscript source (.qmd), figures, tables, bibliography |
+| `deliverables/manuscript/` | Manuscript source (`.qmd`), pinned variables, Quarto project config |
+| `deliverables/_shared/` | Figures, tables, and bibliography the manuscript references |
 | `expected-manuscript.pdf` | Pre-built reference PDF for comparison |
 | `checksums.md5` | MD5 checksums of all input files |
 | `TOOLCHAIN.txt` | Quarto and xdvipdfmx versions used to build the shipped PDF |
 | `Makefile` | Build and verify targets |
-| `_quarto.yml` | Quarto project configuration |
+
+The archive mirrors the repository layout. The manuscript is its own Quarto
+project and reaches shared assets as `../_shared/...`, so those relative
+references resolve here exactly as they do in the source repository. The
+rendered PDF appears at `deliverables/manuscript/manuscript.pdf`.
 
 ## Verification
 

@@ -1,8 +1,8 @@
 # Data paper reproducibility archive
 
-Companion to: Ha-Duong M. (2026) "A Curated Corpus of Climate Finance
-Literature, 1990–2024: Eight Sources, Multilingual Retrieval, and Grey
-Literature", Research Data Journal for the Humanities and Social Sciences.
+Companion to: Ha-Duong M. (2026) "A Curated Multi-Source Corpus of Climate
+Finance Literature, 1990–2024: Multilingual Retrieval and Grey Literature",
+Research Data Journal for the Humanities and Social Sciences.
 
 Dataset DOI: [10.5281/zenodo.19236130](https://doi.org/10.5281/zenodo.19236130)
 
@@ -12,7 +12,9 @@ Dataset DOI: [10.5281/zenodo.19236130](https://doi.org/10.5281/zenodo.19236130)
 climate-finance-datapaper/
   code/                    # Full pipeline source (git archive of HEAD)
     Makefile.datapaper     # Entry point — three targets below
-    content/               # Data paper source, figures, tables, vars
+    deliverables/          # Papers, each its own Quarto project
+      data-paper/          #   source (.qmd), pinned vars, project config
+      _shared/             #   figures, tables, bibliography
     scripts/               # Pipeline + analysis scripts
     config/                # Query taxonomy, source configuration
     dvc.yaml, dvc.lock     # Pipeline definitions
@@ -65,7 +67,7 @@ No Python, no internet needed.
 
 **`make papers`** — renders `data-paper.pdf` from frozen variables and
 pre-built figures. No pipeline, no API calls, no corpus data needed.
-Output: `output/content/data-paper.pdf`.
+Output: `deliverables/data-paper/data-paper.pdf`.
 
 **`make corpus`** — runs the full DVC pipeline (`dvc repro`). Included as
 process documentation; a full rebuild requires API access and takes 4–6
@@ -78,7 +80,7 @@ paper's figure and tables. They illustrate how to work with the dataset:
 
 | Script | Output | What it does |
 |--------|--------|--------------|
-| `scripts/plot_fig_bars.py` | `fig_bars.png` | Annual publication volume bar chart |
+| `scripts/figures/plot_fig1_bars.py` | `fig_bars.png` | Annual publication volume bar chart |
 | `scripts/figures/export_corpus_table.py` | `tab_corpus_sources.md` | Per-source quality and completeness table |
 | `scripts/figures/export_language_table.py` | `tab_languages.md` | Language distribution table |
 
