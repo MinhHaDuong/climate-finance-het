@@ -84,6 +84,23 @@ def split_row(line: str) -> list[str]:
     return cells
 
 
+def unresolved_markdown(target: str) -> bool:
+    """True when `target` mentions `.md` but did not flatten to a plain path.
+
+    `expand_vars` resolves a bare `$(NAME)`, so anything built with a Make list
+    function survives with its syntax attached. Each form leaves a different
+    wreck and all three are caught by the same test:
+
+        $(foreach m,$(METHODS),… tab_$(m).md …)  ->  '…tab_$(m).md'
+        $(addprefix DIR/,a.md b.md)              ->  'DIR/,a.md'  and  'b.md)'
+
+    The second form is why a bare "contains `$`" test is not enough: the `$`
+    lands on a *different* whitespace token than the `.md` does.
+    """
+    return ".md" in target and (
+        bool(set("$%(),") & set(target)) or not target.endswith(".md"))
+
+
 def _is_separator(cells: list[str]) -> bool:
     return bool(cells) and all(_SEPARATOR_CELL.match(c.strip()) for c in cells)
 
@@ -118,11 +135,18 @@ def scan(text: str) -> tuple[list[tuple[int, list[str], list[tuple[int, list[str
     claimed: set[int] = set()
     row_shaped: list[int] = []
     fence_opened_at: int | None = None
+    fence_marker = ""
     i = 0
     while i < len(lines):
         stripped = lines[i].strip()
+        # CommonMark closes a fence only with its own marker, so the two are
+        # tracked together. Sharing one toggle would let a ``` inside a ~~~
+        # block reopen the document — both a missed table and a false orphan.
         if stripped.startswith(("```", "~~~")):
-            fence_opened_at = None if fence_opened_at else i + 1
+            if fence_opened_at is None:
+                fence_opened_at, fence_marker = i + 1, stripped[:3]
+            elif stripped.startswith(fence_marker):
+                fence_opened_at, fence_marker = None, ""
             i += 1
             continue
         if fence_opened_at is not None:
@@ -248,6 +272,27 @@ def test_parser_flags_an_unclosed_fence():
     assert offenders and "unclosed code fence" in offenders[0], offenders
 
 
+def test_a_fence_closes_only_on_its_own_marker():
+    """A ``` inside a ~~~ block must not reopen the document.
+
+    One shared toggle would end the tilde block early, so a malformed row after
+    it reads as clean — and, in the other direction, code inside the block gets
+    reported as an orphan.
+    """
+    document = (
+        "~~~\n"
+        "```\n"
+        "| A | B | C |\n"
+        "~~~\n"
+        "| A | B |\n"
+        "|:--|:--|\n"
+        "| 1 | 2 | 3 |\n"
+    )
+    offenders = malformed_rows(document)
+    assert len(offenders) == 1, offenders
+    assert "line 7" in offenders[0], offenders
+
+
 @pytest.mark.parametrize("payload", [
     "a | b",                                  # the bare pipe, prose
     r"a \| b",                                # a value already carrying an escape
@@ -317,6 +362,61 @@ def test_discovery_reads_the_build_not_a_list():
         f"{CANONICAL} is git-tracked and built by a Make rule, so discovery "
         f"must find it; it found {sorted(GENERATED)}"
     )
+
+
+def test_no_markdown_target_escapes_as_an_unresolved_path():
+    """A `.md` target the resolver cannot flatten must fail, never skip.
+
+    This is the sweep's sharpest edge, because the failure is invisible. Make's
+    list functions are how this repo adds a per-method artifact — `$(foreach m,
+    …,$(eval …))` and `$(addprefix …)` appear thirty-odd times in
+    `divergence.mk` and `zoo-figures.mk` for `.csv` and `.png`, so a templated
+    `.md` is the likely shape of the fourth emitter this guard exists to catch.
+    `expand_vars` resolves a bare `$(NAME)` and nothing else, so such a target
+    reaches `GENERATED` carrying a literal `$(m)`, then fails `is_file()` and is
+    skipped as "not built on this machine" — silently, on every run, forever.
+
+    Rather than teach the resolver Make's function library, refuse the input:
+    any target mentioning `.md` that did not flatten to a plain path fails here,
+    naming itself. Whoever adds the templated emitter then extends the resolver
+    deliberately instead of losing coverage without noticing.
+    """
+    unresolved = sorted(t for t in rule_targets() if unresolved_markdown(t))
+    assert not unresolved, (
+        "Make rule target(s) mentioning `.md` did not resolve to a plain path, "
+        "so the sweep would skip them as absent rather than check them. Extend "
+        "expand_vars() in tests/_mk_discovery.py to flatten them:\n  "
+        + "\n  ".join(unresolved)
+    )
+
+
+@pytest.mark.parametrize("target, escapes", [
+    ("deliverables/_shared/tables/tab_venues.md", False),   # a resolved target
+    ("deliverables/_shared/tables/tab_div_$(m).md", True),  # $(foreach …$(eval …))
+    ("deliverables/_shared/tables/,a.md", True),            # $(addprefix …) head
+    ("b.md)", True),                                        # $(addprefix …) tail
+    ("deliverables/_shared/tables/%.md", True),             # a pattern rule
+    ("data/derived/tables/tab_div_$(m).csv", False),        # not markdown, not ours
+])
+def test_unresolved_markdown_predicate(target, escapes):
+    """The tree scan above is a forward-looking ratchet: today it finds nothing.
+
+    So the predicate is pinned on synthetic inputs instead — otherwise the one
+    assertion whose whole purpose is to fire on a target that does not exist yet
+    would be the module's one untested line.
+    """
+    assert unresolved_markdown(target) is escapes
+
+
+def test_a_pipe_row_pair_without_a_delimiter_is_not_a_table():
+    """Constrains `_is_separator`, which gates the whole detector.
+
+    Left unpinned, `_is_separator` could return True unconditionally and every
+    other assertion in this module still passes — a mutation that turns any two
+    adjacent pipe lines into a table with an arbitrary header.
+    """
+    assert not pipe_tables("| a | b |\n| c | d |\n")
+    assert pipe_tables("| a | b |\n|:--|--:|\n| c | d |\n")
 
 
 def test_rule_targets_reads_a_continued_target_list():
@@ -391,6 +491,11 @@ def test_the_sweep_actually_parsed_rows():
         "tab_venues.md and tab_venues_fr.md are git-tracked and should always "
         f"be present and parsed. Parsed: {rows_per_artifact}"
     )
+    # 71 rows today against a floor of 30. The gap is deliberate and the floor
+    # is not a row-count pin: venue and codebook row counts move with the corpus
+    # and with the deposit column contract, so a tight floor would fail on a
+    # legitimate regeneration. What it must catch is a detector that has gone
+    # blind — which shows up as zero or near-zero, not as a 20% drift.
     assert sum(with_tables.values()) >= 30, (
         f"the sweep parsed only {sum(with_tables.values())} table rows — the "
         f"table detector is not seeing them: {rows_per_artifact}"

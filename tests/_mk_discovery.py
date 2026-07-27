@@ -96,8 +96,11 @@ def makefile_constants(files: list[Path] | None = None) -> dict[str, str]:
     definition wins, and `all_makefiles()` puts the top-level Makefile first.
 
     `files` is a parameter rather than a fixed union because the right scope is
-    the caller's: `tests/test_phase_layout.py` deliberately reads the main
-    Makefile alone, since widening its constant set would widen what it flags.
+    the caller's, and one caller will want a narrow one: `test_phase_layout.py`
+    reads the main Makefile alone, since widening its constant set would widen
+    what it flags. It still hand-rolls its own parser today — migrating it onto
+    `files=[MAKEFILE]` is ticket 0358, which is where this parameter gets its
+    first caller.
     """
     raw: dict[str, str] = {}
     for path in all_makefiles() if files is None else files:
