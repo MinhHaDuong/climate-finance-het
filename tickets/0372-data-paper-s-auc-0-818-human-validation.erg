@@ -6,6 +6,7 @@ Label: needs-human
 
 --- log ---
 2026-07-27T18:05Z HDMX-coding-agent created surfaced by the independent Flag 5 defense round; verified directly against both artifacts
+2026-07-27T19:33Z HDMX-coding-agent note promoted to R&R blocker (author): tracker 0274 now carries Blocked-by: 0372 and lists it as a child. RDJ-26561 does not resubmit until this closes.
 
 --- body ---
 ## Context
