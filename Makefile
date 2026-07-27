@@ -144,7 +144,7 @@ NCC_FIGS        := deliverables/_shared/figures/fig_ncc_divergence.png \
 # TECHREP_FIGS which expands to them) are deliberately excluded from ALL_FIGS /
 # make figures: they need the full divergence and null-model pipeline. Build
 # them with `make zoo-figures`.
-ALL_FIGS := $(MANUSCRIPT_FIGS) $(DATAPAPER_FIGS) $(CORPUSREPORT_FIGS) \
+ALL_FIGS := $(MANUSCRIPT_FIGS) $(DATAPAPER_FIGS) $(CORPUS_REPORT_FIGS) \
             $(MULTILAYER_FIGS) $(SLIDES_FIGS) $(ORPHANED_FIGS) $(NCC_FIGS)
 
 # ── Default target ────────────────────────────────────────
@@ -667,7 +667,7 @@ deliverables/_shared/figures/fig_ncc_alluvial.png: \
 
 figures-manuscript:   corpus-handoff $(MANUSCRIPT_FIGS)
 figures-datapaper:    corpus-handoff $(DATAPAPER_FIGS)
-figures-corpusreport: corpus-handoff $(CORPUSREPORT_FIGS)
+figures-corpusreport: corpus-handoff $(CORPUS_REPORT_FIGS)
 figures-companion:    corpus-handoff $(MULTILAYER_FIGS)
 # The technical report's figures ARE the zoo set, so this is `zoo-figures` with
 # the corpus handoff in front (ticket 0359).

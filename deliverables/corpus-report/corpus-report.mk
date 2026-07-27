@@ -13,9 +13,9 @@
 
 -include paths.mk
 
-# The report embeds five figures (CORPUSREPORT_FIGS, added by 0359 — until then
+# The report embeds five figures (CORPUS_REPORT_FIGS, added by 0359 — until then
 # no figure was a prerequisite here and the PDF did not rebuild when one changed).
-deliverables/corpus-report/corpus-report.pdf: deliverables/corpus-report/corpus-report.qmd $(CORPUS_REPORT_INCLUDES) $(BIB) deliverables/_shared/technical-report-vars.yml $(CORPUSREPORT_FIGS)
+deliverables/corpus-report/corpus-report.pdf: deliverables/corpus-report/corpus-report.qmd $(CORPUS_REPORT_INCLUDES) $(BIB) deliverables/_shared/technical-report-vars.yml $(CORPUS_REPORT_FIGS)
 	quarto render $< --to pdf
 
 .PHONY: corpus-report

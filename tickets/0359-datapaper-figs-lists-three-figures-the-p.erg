@@ -123,7 +123,9 @@ Nothing is broken; `make` is doing work and the maintenance burden is real.
       `fig_composition_wide.png` (the Gide deck embeds it), neither previously
       declared by any variable
 - [x] `ALL_FIGS` unchanged by the `fig_dag` move — `fig_dag` moved from
-      `DATAPAPER_FIGS` to the new `CORPUSREPORT_FIGS`, still in `ALL_FIGS`
+      `DATAPAPER_FIGS` to the new `CORPUS_REPORT_FIGS` (spelled to match its
+      sibling `CORPUS_REPORT_INCLUDES`, not the ticket's `CORPUSREPORT_FIGS`),
+      still in `ALL_FIGS`
 
 ## Invariants
 

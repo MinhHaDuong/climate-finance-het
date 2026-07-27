@@ -125,7 +125,7 @@ DATAPAPER_FIGS  := deliverables/_shared/figures/fig_bars.png \
 # fig_bars is shared with the data paper; fig_dag and the three semantic-space
 # panels were filed under DATAPAPER_FIGS / TECHREP_FIGS until 0359 — the corpus
 # report is their only consumer.
-CORPUSREPORT_FIGS := deliverables/_shared/figures/fig_bars.png \
+CORPUS_REPORT_FIGS := deliverables/_shared/figures/fig_bars.png \
                    deliverables/_shared/figures/fig_dag.png \
                    deliverables/_shared/figures/fig_semantic.png \
                    deliverables/_shared/figures/fig_semantic_lang.png \
@@ -213,5 +213,5 @@ ZOO_RESULT_FIGS := deliverables/_shared/figures/fig_zoo_S1_MMD.png \
 # each carrying its schematic and its result panel. Defined here, after the two
 # lists it expands (`:=` is immediate). Until 0359 this variable named twelve
 # figures the report has not embedded since the techrep rewrite; they are now in
-# CORPUSREPORT_FIGS and ORPHANED_FIGS.
+# CORPUS_REPORT_FIGS and ORPHANED_FIGS.
 TECHREP_FIGS    := $(ZOO_SCHEMATICS) $(ZOO_RESULT_FIGS)
