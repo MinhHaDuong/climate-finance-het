@@ -6,6 +6,7 @@ and proportional risk labels.
 
 import json
 import os
+import re
 import subprocess
 from pathlib import Path
 
@@ -111,7 +112,7 @@ class TestMergeGate:
 
     def test_one_review_no_trivial_blocks(self, tmp_path):
         """1 review, no trivial label → deny (need 2)."""
-        reviews = json.dumps([{"user": {"login": "HDMX-coding-agent"}}])
+        reviews = json.dumps([{"user": {"login": "MinhHaDuong"}}])
         result = run_hook(
             make_bash_input("gh pr merge 42"),
             gh_responses={
@@ -125,7 +126,7 @@ class TestMergeGate:
 
     def test_one_review_with_trivial_allows(self, tmp_path):
         """1 review + review:trivial label → allow (need 1)."""
-        reviews = json.dumps([{"user": {"login": "HDMX-coding-agent"}}])
+        reviews = json.dumps([{"user": {"login": "MinhHaDuong"}}])
         labels = json.dumps([{"name": "review:trivial"}])
         result = run_hook(
             make_bash_input("gh pr merge 42"),
@@ -138,12 +139,48 @@ class TestMergeGate:
         decision = result["stdout"]["hookSpecificOutput"]["permissionDecision"]
         assert decision == "allow"
 
+    def test_independent_bot_review_counts(self, tmp_path):
+        """A Copilot review counts — it is the one reviewer not the PR author."""
+        reviews = json.dumps(
+            [
+                {"user": {"login": "MinhHaDuong"}},
+                {"user": {"login": "copilot-pull-request-reviewer[bot]"}},
+            ]
+        )
+        result = run_hook(
+            make_bash_input("gh pr merge 42"),
+            gh_responses={
+                "pulls/42/reviews": reviews,
+                "issues/42/labels": "[]",
+            },
+            tmp_path=tmp_path,
+        )
+        assert result["stdout"]["hookSpecificOutput"]["permissionDecision"] == "allow"
+
+    def test_unknown_login_does_not_count(self, tmp_path):
+        """A review by a login outside the list does not satisfy the gate."""
+        reviews = json.dumps(
+            [
+                {"user": {"login": "some-drive-by"}},
+                {"user": {"login": "another-stranger"}},
+            ]
+        )
+        result = run_hook(
+            make_bash_input("gh pr merge 42"),
+            gh_responses={
+                "pulls/42/reviews": reviews,
+                "issues/42/labels": "[]",
+            },
+            tmp_path=tmp_path,
+        )
+        assert result["stdout"]["hookSpecificOutput"]["permissionDecision"] == "deny"
+
     def test_two_reviews_allows(self, tmp_path):
         """2 reviews, no trivial label → allow (need 2)."""
         reviews = json.dumps(
             [
-                {"user": {"login": "HDMX-coding-agent"}},
-                {"user": {"login": "HDMX-coding-agent"}},
+                {"user": {"login": "MinhHaDuong"}},
+                {"user": {"login": "MinhHaDuong"}},
             ]
         )
         result = run_hook(
@@ -198,8 +235,8 @@ class TestPRNumberExtraction:
         """Extracts from 'gh pr merge 42'."""
         reviews = json.dumps(
             [
-                {"user": {"login": "HDMX-coding-agent"}},
-                {"user": {"login": "HDMX-coding-agent"}},
+                {"user": {"login": "MinhHaDuong"}},
+                {"user": {"login": "MinhHaDuong"}},
             ]
         )
         result = run_hook(
@@ -217,8 +254,8 @@ class TestPRNumberExtraction:
         """Extracts from MCP tool input with pullNumber (camelCase)."""
         reviews = json.dumps(
             [
-                {"user": {"login": "HDMX-coding-agent"}},
-                {"user": {"login": "HDMX-coding-agent"}},
+                {"user": {"login": "MinhHaDuong"}},
+                {"user": {"login": "MinhHaDuong"}},
             ]
         )
         result = run_hook(
@@ -244,8 +281,8 @@ class TestPRNumberExtraction:
         """Extracts PR number from URL in command."""
         reviews = json.dumps(
             [
-                {"user": {"login": "HDMX-coding-agent"}},
-                {"user": {"login": "HDMX-coding-agent"}},
+                {"user": {"login": "MinhHaDuong"}},
+                {"user": {"login": "MinhHaDuong"}},
             ]
         )
         result = run_hook(
@@ -259,3 +296,84 @@ class TestPRNumberExtraction:
             tmp_path=tmp_path,
         )
         assert result["stdout"]["hookSpecificOutput"]["permissionDecision"] == "allow"
+
+
+# --- Registration: a correct hook that never fires is not a gate ---
+
+SETTINGS = Path(__file__).parent.parent / ".claude" / "settings.json"
+
+
+def pretooluse_entries() -> list[dict]:
+    """PreToolUse hook registrations from .claude/settings.json."""
+    return json.loads(SETTINGS.read_text())["hooks"]["PreToolUse"]
+
+
+def matches_tool(matcher: str, tool_name: str) -> bool:
+    """Whether `matcher` fires on `tool_name`, as Claude Code resolves it.
+
+    An uncompilable matcher fires on nothing, so it is False rather than an
+    error — `Bash(*gh pr merge*)` is not valid regex ("nothing to repeat").
+    """
+    try:
+        return re.fullmatch(matcher, tool_name) is not None
+    except re.error:
+        return False
+
+
+class TestHookRegistration:
+    """The gate must be wired to a matcher Claude Code will actually fire.
+
+    Claude Code matches `matcher` against the **tool name** as a regex.
+    Permission-rule syntax (`Bash(gh pr merge *)`) belongs in a handler's
+    optional `if` field, not in `matcher`. Registered under a matcher that
+    matches no tool name, a hook is silently inert: it never runs, never
+    denies, and leaves no trace that it did not. Ticket 0365 found the merge
+    gate in exactly that state — the script below passes every behavioural
+    test above, yet 35 of the 40 most recent merged PRs carried zero reviews.
+    """
+
+    def test_merge_gate_matches_the_bash_tool_name(self):
+        """Some PreToolUse entry running the gate matches the tool name 'Bash'."""
+        matchers = [
+            entry.get("matcher", "")
+            for entry in pretooluse_entries()
+            if any(
+                "check-reviews.sh" in h.get("command", "")
+                for h in entry.get("hooks", [])
+            )
+        ]
+        assert matchers, "check-reviews.sh is not registered under any PreToolUse entry"
+        assert any(matches_tool(m, "Bash") for m in matchers), (
+            f"No matcher fires on the Bash tool: {matchers}. "
+            "PreToolUse matchers match the tool name; narrow by command with "
+            "an `if` field on the handler."
+        )
+
+    def test_no_matcher_uses_permission_rule_syntax(self):
+        """No PreToolUse matcher carries permission-rule parentheses."""
+        offenders = [
+            entry.get("matcher", "")
+            for entry in pretooluse_entries()
+            if "(" in entry.get("matcher", "")
+        ]
+        assert not offenders, (
+            f"Matchers use permission-rule syntax and will never fire: {offenders}. "
+            "Move the command pattern to an `if` field on the handler."
+        )
+
+    def test_agent_logins_are_resolvable_accounts(self):
+        """Every login the gate counts must be able to author a review.
+
+        A login that matches no forge account can never appear as a review
+        author, so listing it inflates the apparent breadth of the gate while
+        contributing nothing (ticket 0365).
+        """
+        script = HOOK_SCRIPT.read_text()
+        match = re.search(r'^AGENT_LOGINS="([^"]*)"', script, re.MULTILINE)
+        assert match, "AGENT_LOGINS not found in check-reviews.sh"
+        logins = match.group(1).split()
+        assert logins, "AGENT_LOGINS is empty — the gate would count nothing"
+        assert "HDMX-coding-agent" not in logins, (
+            "HDMX-coding-agent is a git author name, not a forge account "
+            "(`gh api users/HDMX-coding-agent` → 404); it can never author a review."
+        )

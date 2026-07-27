@@ -27,10 +27,11 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Bash(*gh pr merge*)",
+        "matcher": "Bash",
         "hooks": [
           {
             "type": "command",
+            "if": "Bash(gh pr merge *)",
             "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/check-reviews.sh"
           }
         ]
@@ -45,10 +46,11 @@
         ]
       },
       {
-        "matcher": "Bash(*git commit*)",
+        "matcher": "Bash",
         "hooks": [
           {
             "type": "prompt",
+            "if": "Bash(git commit *)",
             "prompt": "Before committing, verify: (1) If dvc.lock is staged, confirm recorded hashes exist in local cache — if not, run dvc repro/commit first. (2) Re-read any file you modified or relied on — fix stale numbers, dead references, or outdated status in this same commit. (3) If you changed a pipeline script interface or data schema, update content/technical-report.qmd."
           }
         ]
