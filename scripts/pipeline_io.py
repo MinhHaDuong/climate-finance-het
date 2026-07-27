@@ -142,6 +142,22 @@ def save_csv(df: pd.DataFrame, path: str) -> None:
 RUN_ID_TIMESTAMP = re.compile(r"^\d{8}T\d{6}Z$")
 
 
+def stable_report_path(script_name: str, catalogs_dir: str) -> str:
+    """Fixed path a DVC stage can declare as an output for ``script_name``.
+
+    One definition because the writer and the reader must not drift: if
+    ``save_run_report`` and ``latest_run_report`` disagree about where the
+    stable copy lives, the reader silently falls back to the timestamped
+    siblings and the published number changes with no error anywhere.
+
+    Deliberately in ``CATALOGS_DIR`` rather than ``CATALOGS_DIR/run_reports/``.
+    The latter is a DVC output in its own right, and DVC rejects an output
+    nested inside another at graph-construction time — which is what made
+    ``dvc repro`` refuse to run (ticket 0430).
+    """
+    return os.path.join(catalogs_dir, f"{script_name}_report.json")
+
+
 def latest_run_report(script_name: str,
                       catalogs_dir: str | None = None) -> dict[str, Any] | None:
     """Return the newest run report for ``script_name``, or None if there is none.
@@ -149,8 +165,11 @@ def latest_run_report(script_name: str,
     Two rules, both there to stop a stray file becoming a published number
     (ticket 0349):
 
-    - The stable ``<script>.json`` wins when present. That is the file a DVC
-      stage can declare as an output; the timestamped siblings are run history.
+    - The stable ``<script>_report.json`` wins when present. That is the file a
+      DVC stage can declare as an output; the timestamped siblings are run
+      history. It sits in ``catalogs_dir`` itself, not in ``run_reports/``,
+      because that directory is already a DVC output and nesting one inside
+      another makes ``dvc repro`` refuse to build the graph (ticket 0430).
     - Otherwise only timestamped run ids are considered, ranked by timestamp.
       The previous `sorted(glob(...))[-1]` ranked lexicographically, so
       ``catalog_merge__test.json`` outranked every ``catalog_merge__2026…``
@@ -167,7 +186,7 @@ def latest_run_report(script_name: str,
         catalogs_dir = CATALOGS_DIR
 
     reports_dir = os.path.join(catalogs_dir, "run_reports")
-    stable = os.path.join(reports_dir, f"{script_name}.json")
+    stable = stable_report_path(script_name, catalogs_dir)
     if os.path.isfile(stable):
         with open(stable) as f:
             report: dict[str, Any] = json.load(f)
@@ -201,9 +220,16 @@ def save_run_report(data: dict[str, Any], run_id: str, script_name: str,
     script_name : str
         Short script name used as filename prefix.
     stable_copy : bool
-        Also write ``<script_name>.json``, overwritten each run. Set this when a
-        DVC stage needs a fixed path to declare as an output — a timestamped
-        filename cannot be one (ticket 0349).
+        Also write ``CATALOGS_DIR/<script_name>_report.json``, overwritten each
+        run. Set this when a DVC stage needs a fixed path to declare as an
+        output — a timestamped filename cannot be one (ticket 0349).
+
+        It lands beside the other catalog artifacts, *not* inside
+        ``run_reports/``, and that placement is load-bearing. ``run_reports/``
+        is itself a DVC output (``run_reports.dvc`` tracks the directory), and
+        DVC forbids one output nesting inside another: declaring a file in
+        there makes ``dvc repro`` and ``dvc dag`` abort at graph construction,
+        so the pipeline stops being reproducible at all (ticket 0430).
 
     Returns
     -------
@@ -221,7 +247,7 @@ def save_run_report(data: dict[str, Any], run_id: str, script_name: str,
     with open(path, "w") as f:
         json.dump(payload, f, indent=2, default=str)
     if stable_copy:
-        with open(os.path.join(reports_dir, f"{script_name}.json"), "w") as f:
+        with open(stable_report_path(script_name, CATALOGS_DIR), "w") as f:
             json.dump(payload, f, indent=2, default=str)
     return path
 

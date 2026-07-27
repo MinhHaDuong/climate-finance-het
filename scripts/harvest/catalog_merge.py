@@ -302,6 +302,8 @@ def main(run_id: str | None = None):
               "multi_source_works": int((result["source_count"] > 1).sum())}
     # stable_copy: compute_vars sources two published data-paper numbers from
     # this report, and a DVC stage can only declare a fixed path (ticket 0349).
+    # It lands at CATALOGS_DIR/catalog_merge_report.json, outside run_reports/,
+    # which is itself a DVC output — see stable_report_path (ticket 0430).
     report_path = save_run_report(report, run_id, "catalog_merge", stable_copy=True)
 
     log.info("Summary:")
