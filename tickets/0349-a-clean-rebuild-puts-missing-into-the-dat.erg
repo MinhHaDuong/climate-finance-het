@@ -103,79 +103,78 @@ worse than the author can.
 - `tickets/closed/0284-datapaper-dedup-counts-artifact.erg` — closed, artifact
   never landed
 
-## Decision required
+## Why it is not already declared
 
-The author picks; both are defensible and the choice depends on how much
-Phase-1 time is affordable before resubmission.
+A DVC `outs:` entry is a fixed path. The run report is
+`catalog_merge__<UTC timestamp>.json`, so it cannot be named as an output as
+things stand — which is very likely why it never was, rather than an oversight.
 
-1. **Regenerate the artifact.** `dvc repro catalog_merge` on a full-data
-   session, so the run report exists and the two counts are reproducible. Costs
-   a Phase-1 run. This is what 0284 intended.
-2. **Source the counts from something durable.** If the dedup counts can be
-   recomputed from `refined_works.csv` and the pool rather than from a run
-   report, compute them like every other variable. Costs analysis work, removes
-   the dependency on a transient report for good.
+The repo already solves this shape elsewhere. The enrichment stages write a
+`.stamp` file as their declared output precisely because their real product
+(`enrich_cache/`) has data-dependent contents, and the architecture rule says
+so: "Sentinel stamps for dynamic outputs. Use a stamp file when a script
+produces data-dependent filenames."
 
-Whichever is chosen, the fallback must stop being silent — see Actions.
+Declaring the whole `run_reports/` directory is not an option: several scripts
+write into it, and DVC forbids two stages owning one output.
 
 ## Actions
 
-1. Implement the chosen option above.
-2. Make the placeholder loud. A variable that a document renders must not
-   degrade to `[MISSING]` behind a `UserWarning`. Either fail the build for
-   placeholders in a *rendered* variable, or emit them at ERROR and list them
-   in the run's final summary. `compute_vars` already aborts on variables it
-   cannot compute at all; this fallback path deliberately bypasses that, and
-   the bypass is the defect.
-3. Audit the rest of the `setdefault(..., MISSING)` block the same way. It also
-   covers `dedup_fn_*` and `dedup_fp_*`; check which of those any document
-   renders.
+1. Have `catalog_merge` write a stable-named report alongside the timestamped
+   one — `data/catalogs/run_reports/catalog_merge.json`, overwritten each run —
+   and declare that path in the stage's `outs:`. The timestamped files stay as
+   an unversioned history, which is what they are useful for.
+2. Point `compute_vars.dedup_stats` at the stable name instead of
+   `sorted(glob(...))[-1]`. This also removes the latent collision recorded in
+   ticket 0346: the glob takes the lexicographically last match, and any leaked
+   fixture named `catalog_merge__test*.json` sorts after every timestamped
+   report, so it would silently become the source of two published numbers.
+3. Check whether any other stage has the same undeclared side-effect. Every
+   caller of `save_run_report` that runs inside a DVC stage is a candidate.
+
+Do 2 even if 1 is judged not worth it — the glob is the sharper of the two
+problems and the fix is one line.
 
 ## Test
 
-Red step:
+Red step, on the wiring rather than on the values:
 
-    def test_no_rendered_variable_is_missing():
-        """Ticket 0349. A placeholder in a rendered var must fail the build."""
-        for doc, path in VARS_FILES.items():
-            v = yaml.safe_load(open(path))
-            rendered = meta_refs_in(DOC_SOURCES[doc])
-            bad = sorted(k for k in rendered if v.get(k) == "[MISSING]")
-            assert not bad, f"{doc} renders placeholder(s): {bad}"
+    def test_catalog_merge_declares_its_run_report():
+        """Ticket 0349. A stage's artifacts must be declared, not side effects."""
+        stage = yaml.safe_load(open("dvc.yaml"))["stages"]["catalog_merge"]
+        outs = [list(o)[0] if isinstance(o, dict) else o for o in stage["outs"]]
+        assert any("run_reports" in o for o in outs), (
+            "catalog_merge writes a run report that compute_vars reads, but "
+            "declares only unified_works.csv - dvc cannot tell when the report "
+            "is stale"
+        )
 
-Fails today on the data paper for the two dedup counts.
-
-Correction to an earlier claim in this ticket: the companion Z-series
-placeholders (`zone_1_start`, `zone_1_end`, `s2_peak_year_w3`,
-`l1_peak_year_w3`, `g9_peak_year_w3`) were described as "not yet referenced by
-a document". They are — `multilayer-detection.qmd` renders all five, so that
-paper currently prints `[MISSING]` five times. A rendered-variable guard will
-therefore fail on multilayer too, which is correct but wider than this ticket.
-Either scope the guard to the data paper first and widen it once the Z-series
-lands, or fix both together. Do not narrow the guard to hide the multilayer
-case.
+Fails today. A companion test should assert `dedup_stats` reads a fixed
+filename rather than globbing, so action 2 cannot regress.
 
 ## Verification
 
-- [ ] The test above is red before the fix, green after
-- [ ] `make stats` from an empty `data/derived/` reproduces 833 and 159, or
-      whatever the corrected values are
-- [ ] A rendered data-paper PDF contains no `[MISSING]`
-- [ ] The `dedup_fn_*` / `dedup_fp_*` audit is recorded here
+- [ ] Both tests above are red before, green after
+- [ ] `dvc repro catalog_merge` on an unchanged corpus is a no-op; on a changed
+      one it rewrites `catalog_merge.json`
+- [ ] `dedup_doi_removed` and `dedup_titleyear_removed` still resolve to 833
+      and 159 on the current corpus — this ticket must not move a number
+- [ ] A file named `catalog_merge__zzz.json` dropped into `run_reports/` no
+      longer changes the vars output
 
 ## Invariants
 
-- No number in the data paper changes silently. If regenerating the artifact
-  yields values other than 833 and 159, that is a finding for the author and a
-  correction to the manuscript, not a quiet substitution.
-- The Z-series placeholders stay out of scope; they are a known separate gap.
+- No published number changes. The counts are correct today; this is about how
+  the artifact carrying them is declared.
+- The timestamped reports keep being written. They are the run history and
+  other tooling may read them.
 
 ## Exit criteria
 
-- [ ] The two dedup counts are reproducible from a clean checkout
-- [ ] A rendered variable can no longer degrade to a placeholder without
-      failing the build
-- [ ] The audit of the remaining fallback keys is done and recorded
+- [ ] `catalog_merge`'s run report is a declared output of its DVC stage, or a
+      recorded decision that a stamp is not worth it
+- [ ] `compute_vars` reads a fixed filename, not the last glob match
+- [ ] The audit of other `save_run_report` callers inside DVC stages is recorded
 
 ## See also
 
