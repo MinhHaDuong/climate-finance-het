@@ -2,6 +2,7 @@
 Title: Run-report tests patch the wrong module and write into the real corpus directory
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1207
 
 --- log ---
 2026-07-27T15:01Z HDMX-coding-agent created
@@ -13,6 +14,7 @@ Author: HDMX-coding-agent
 2026-07-27T19:20Z HDMX-coding-agent note Guard merged as #1193 (7dbd16ce). Fixtures deleted, 141 -> 133; the recorded dvc add recipe was stale (0349's stage output overlaps the dir), dvc commit is the right tool
 2026-07-27T18:35Z HDMX-coding-agent note Exit criteria 1-3 discharged. Full suite (1846 passed, 7 known corpus-absent failures) left all 224 data/catalogs mtimes untouched. Fixture deletion remains the one open post-merge step
 
+2026-07-27T18:50Z HDMX-coding-agent closed — autoclosed — PR #1207
 --- body ---
 ## Context
 
