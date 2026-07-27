@@ -21,7 +21,8 @@ Two functions, because the callers hold two different input contracts:
     The input is plain text with no markup intent — a journal name out of the
     bibliographic corpus, a source label edited by hand, a language code the
     normaliser passed through unchanged. Used by the venue-table emitters, the
-    corpus-sources table and the language table (ticket 0370).
+    retrieval-protocol table, and — ticket 0370 — the corpus-sources table, the
+    language table and the corpus-flow ledger.
 
 Collapsing them into one function is the trap this split avoids: a journal name
 that happens to contain two backticks is not a code span, and applying the
