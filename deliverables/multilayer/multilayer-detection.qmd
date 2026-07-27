@@ -111,7 +111,7 @@ Each document is represented in three spaces that expose different aspects of th
 
 For each candidate year $t$ and each half-width $w$, we form a before-window $\mathcal{D}_t^- = \{d : t - w \le \text{year}(d) \le t\}$ and an after-window $\mathcal{D}_t^+ = \{d : t < \text{year}(d) \le t + w\}$. Windows that fail a minimum-size filter are skipped. In practice, $w = 3$ is the default and $w \in \{2, 4\}$ are reported as sensitivity checks. Year bounds are stored per window rather than recomputed from the year index, following the ticket 0067 convention that separates segmentation logic from timestamp arithmetic.
 
-Because the corpus grows over time, the after-window is typically larger than the before-window. All statistics are computed on equal-$n$ subsamples (§4.5), and the subsampling variance is shown explicitly as a ribbon in @fig-companion-zseries.
+Because the corpus grows over time, the after-window is typically larger than the before-window. All statistics are computed on equal-$n$ subsamples (§4.5), and the subsampling variance is shown explicitly as a ribbon in @fig-zseries.
 
 ### 4.4 Distributional comparison
 
@@ -131,7 +131,7 @@ For each $(t, w)$ we compute four statistics across the two windows.
 
 The four statistics have different sources of variation, and we handle them with two inference primitives.
 
-*Permutation Z-scores for S2, L1, G9.* For each $(t, w)$, we pool the two windows, relabel them at random $B = 500$ times while preserving sample sizes, and recompute the statistic. The standardised effect size $Z(t) = (S_{\text{obs}} - \bar{S}_{\text{perm}}) / \mathrm{sd}(S_{\text{perm}})$ is directly comparable across years despite changing corpus size. A permutation scheme is appropriate here because the observed statistic has no closed-form null under general distributional alternatives. To expose subsampling variance in the numerator, we draw $R = 20$ independent equal-$n$ subsamples of the observed side and compute a trimmed Z-score ribbon: the central sixteen values (discarding the two extremes on each end, equivalent to the 10th and 90th percentiles) bound the shaded region in @fig-companion-zseries. The denominator --- the permutation null mean and standard deviation --- is identical across all twenty draws; only the observed subsample changes.
+*Permutation Z-scores for S2, L1, G9.* For each $(t, w)$, we pool the two windows, relabel them at random $B = 500$ times while preserving sample sizes, and recompute the statistic. The standardised effect size $Z(t) = (S_{\text{obs}} - \bar{S}_{\text{perm}}) / \mathrm{sd}(S_{\text{perm}})$ is directly comparable across years despite changing corpus size. A permutation scheme is appropriate here because the observed statistic has no closed-form null under general distributional alternatives. To expose subsampling variance in the numerator, we draw $R = 20$ independent equal-$n$ subsamples of the observed side and compute a trimmed Z-score ribbon: the central sixteen values (discarding the two extremes on each end, equivalent to the 10th and 90th percentiles) bound the shaded region in @fig-zseries. The denominator --- the permutation null mean and standard deviation --- is identical across all twenty draws; only the observed subsample changes.
 
 *Cross-validation fold variance for C2ST.* The C2ST AUC already has a built-in variance estimator: the standard deviation of AUC across the five CV folds. Permuting labels for C2ST is expensive (each permutation retrains the classifier $k$ times) and yields less information than the fold variance, which directly reflects sampling variability in the classifier's decision boundary. We therefore report AUC with its CV standard deviation rather than a permutation Z.
 
@@ -155,7 +155,7 @@ Two robustness checks accompany every reported result.
 
 *Bootstrap confidence intervals.* For each validated zone we draw $K$ bootstrap resamples of the underlying corpus, rerun the detection pipeline, and report the fraction of resamples that retain the zone. Bootstrap $K$ is read from the analysis configuration (ticket 0047).
 
-One caveat deserves explicit mention. The bias audit tickets B2 and B9 documented a residual growth bias in the permutation null at small window widths: when the corpus grows sharply across the window, the null distribution is inflated and Z-scores are biased upward in years of rapid publication growth. We flag the bias rather than correct it. A stratified permutation that conditions on year-specific sample sizes is the principled fix, and we defer it to future work. The subsampling ribbon in @fig-companion-zseries exposes whether this bias is large relative to subsampling noise.
+One caveat deserves explicit mention. The bias audit tickets B2 and B9 documented a residual growth bias in the permutation null at small window widths: when the corpus grows sharply across the window, the null distribution is inflated and Z-scores are biased upward in years of rapid publication growth. We flag the bias rather than correct it. A stratified permutation that conditions on year-specific sample sizes is the principled fix, and we defer it to future work. The subsampling ribbon in @fig-zseries exposes whether this bias is large relative to subsampling noise.
 
 ### 4.9 Interpretation
 

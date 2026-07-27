@@ -1,11 +1,12 @@
-"""Shared scan of Quarto `{{< meta >}}` macros and the metadata that resolves them.
+"""Shared scan of Quarto documents and the references a render must resolve.
 
-Quarto exits 0 on a macro naming a key no metadata declares. It writes the
-literal `?meta:key` into the rendered document and warns on stderr, and nothing
-downstream reads either — so the defect reaches the page and only a human
-reading the finished PDF can see it (ticket 0363).
+Quarto publishes a document missing an input rather than failing on it: an
+undeclared `{{< meta >}}` key becomes `?meta:key`, a crossref to a nonexistent
+label becomes `?@fig-name`, an unknown citation key renders as `(key?)`. Exit
+code 0 every time, with the only complaint on a stderr nothing reads, so the
+defect reaches the page (tickets 0363, 0420).
 
-Two guards cover that failure: a static resolver that answers from the files on
+Two guards cover that class: a static resolver that answers from the files on
 disk, and a render oracle that asks Quarto itself. Both need the same three
 answers — which documents exist, which keys each uses across its include tree,
 and which keys its metadata actually declares — so those live here and the two
@@ -33,6 +34,39 @@ _FRONT_MATTER_RE = re.compile(r"\A---\n(.*?)\n---\s*?\n", re.S)
 PLACEHOLDER = "?meta:"
 #: The stderr line Quarto emits alongside it.
 WARNING = "Unknown meta key"
+
+#: Literals Quarto writes into the *output* when an input is missing. Both
+#: behave alike — the document is published carrying the placeholder, the exit
+#: code is 0, and the only complaint goes to a stderr nobody reads — so they are
+#: one defect class and one render answers for both (tickets 0363, 0420).
+PLACEHOLDER_PATTERNS = {
+    "meta key": re.compile(r"\?meta:([A-Za-z0-9_.-]+)"),
+    "crossref": re.compile(r"\?@([A-Za-z0-9_:-]+)"),
+}
+
+#: A missing citation key is the same defect but leaves no mark in *markdown*
+#: output: citeproc renders `(key?)` into HTML and PDF, while markdown keeps
+#: citations unresolved by design, so `@key` there is normal and says nothing.
+#: The signal that survives every writer is this stderr line. Measured, not
+#: assumed — the guard first looked for a `**@key?**` literal that no Quarto
+#: writer emits, and would have passed forever.
+CITEPROC_MISSING_RE = re.compile(r"Citeproc: citation (\S+) not found")
+
+
+def placeholders_in(rendered: str) -> dict[str, set[str]]:
+    """Unresolved-input placeholders in rendered output, keyed by mechanism.
+
+    Only mechanisms that actually fired appear, so an empty dict means the
+    render's output resolved everything. Citations are not visible here — see
+    `missing_citations_in`, which reads stderr.
+    """
+    found = {kind: set(rx.findall(rendered)) for kind, rx in PLACEHOLDER_PATTERNS.items()}
+    return {kind: hits for kind, hits in found.items() if hits}
+
+
+def missing_citations_in(stderr: str) -> set[str]:
+    """Citation keys citeproc could not resolve, read from a render's stderr."""
+    return set(CITEPROC_MISSING_RE.findall(stderr))
 
 #: Front-matter keys Quarto consumes as its own configuration and does not
 #: expose to a `{{< meta >}}` macro. Being present in the header is therefore

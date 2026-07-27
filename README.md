@@ -77,7 +77,7 @@ the repo:
   With one exception today: **corpus-report is live in intent but not in fact.**
   It is absent from `compute_vars.DOC_VARS`, so it has no vars file of its own
   and 12 of its macro keys render as `?meta:` placeholders. Ticket 0357 carries
-  the fix; `tests/test_meta_macro_resolution.py` holds the line until then.
+  the fix; `tests/test_render_placeholders.py` holds the line until then.
 
 An already-submitted paper's frozen, reproducible form is its **external deposit**,
 not an in-repo copy: the data paper's is `papiers/sent/RDJ4HSS_…/` plus its Zenodo
