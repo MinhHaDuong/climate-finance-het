@@ -1,0 +1,66 @@
+%erg 0.1
+Title: The corpus-source table hand-types "9 languages" against a config that declares eight
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T16:35Z HDMX-coding-agent created split out of 0329, whose review found the defect and whose log wrongly deferred it to 0327 (0327 does not track it)
+
+--- body ---
+## Context
+
+`scripts/figures/export_corpus_table.py:27` describes the OpenAlex row as:
+
+    "4-tier keyword taxonomy, 9 languages (default.search on title+abstract+fulltext)"
+
+The harvest config declares **eight** target languages, and the data paper
+says eight in §2.1 and again in §2.3. The generated `tab_corpus_sources.md`
+ships in the Zenodo deposit, so the deposit currently contradicts the paper
+it accompanies on a number the paper puts in its own title claim
+("Multilingual Retrieval").
+
+Found during the review of PR #1162 (ticket 0329). It predates that branch —
+`origin/main` carries the same line — so it is a standing defect, not a
+regression. 0329 left it alone to avoid colliding with 0327, which owns the
+file; the review then confirmed 0327 does not track it either, which is why
+this ticket exists.
+
+Ticket 0329 landed the machinery that makes the fix mechanical:
+`config/openalex_queries.yaml` now carries a `term_languages` tag per Tier-1
+term, and `tests/test_retrieval_protocol.py::target_languages` reads the
+display names off it.
+
+## Relevant files
+
+- `scripts/figures/export_corpus_table.py` — `SOURCE_META["openalex"]["query"]`, the literal
+- `config/openalex_queries.yaml` — `term_languages`, the eight-language source of truth
+- `tests/test_retrieval_protocol.py` — `target_languages()`, the reader to reuse
+- `deliverables/_shared/tables/tab_corpus_sources.md` — the regenerated output
+
+## Actions
+
+1. Derive the language count in `SOURCE_META["openalex"]["query"]` from
+   `term_languages` instead of typing it.
+2. Regenerate `tab_corpus_sources.{csv,md}` and commit.
+3. Sweep the same file for other hand-typed retrieval facts (the ISTEX query
+   string and the bibCNRS language list are the candidates) and decide
+   per-cell whether config can source them.
+
+## Test
+
+- Red first: a guard asserting the OpenAlex row's language count equals
+  `len(target_languages())`, failing today at 9 against 8.
+
+## Verification
+
+- [ ] The generated table and the paper agree on the language count
+- [ ] The count moves automatically when a language is added to the taxonomy
+
+## Invariants
+
+- No behaviour change to the corpus statistics the table reports; this is a
+  description string only.
+
+## Exit criteria
+
+- [ ] No hand-typed language count survives in the deposited source table

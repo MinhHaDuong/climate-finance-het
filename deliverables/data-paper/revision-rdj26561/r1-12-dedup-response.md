@@ -1,5 +1,10 @@
 # Response-letter bullet — deduplication counts and weaknesses (ticket 0276, feeds 0283)
 
+> **Superseded.** This is the ticket-0276 draft, quoting the v1.1 *deposited*
+> corpus. The letter that ships is `response-letter.md`, whose R1-12 bullet
+> quotes the v2 corpus and adds the construction ledger (ticket 0327). Kept for
+> the drafting record; do not reconcile its numbers against the current corpus.
+
 Remarks covered: R1-12; ED-01 (deduplication part).
 
 **R1-12 (per-procedure duplicate counts; WP-vs-published pairs; author

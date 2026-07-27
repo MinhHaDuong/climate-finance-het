@@ -1,0 +1,102 @@
+%erg 0.1
+Title: Data paper's AUC = 0.818 human validation is not reproducible from either shipped table
+Created: 2026-07-27
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-07-27T18:05Z HDMX-coding-agent created surfaced by the independent Flag 5 defense round; verified directly against both artifacts
+
+--- body ---
+## Context
+
+`deliverables/data-paper/data-paper.qmd` states the reranker's human validation
+twice, and promises the evidence ships:
+
+- line 106: "On a blinded sample of 100 works, the scores reached **AUC = 0.818
+  and 81% accuracy** against human labels ... The calibration and validation
+  tables ship in the Zenodo deposit."
+- line 120: "its cross-encoder relevance scoring was human-validated at
+  **AUC = 0.818** (Section 2.3)."
+
+Neither shipped table reproduces those numbers. Measured directly:
+
+| artifact | n | `reranker_score` range | `human_label` | AUC | weak_label accuracy |
+|----------|---|----------------------|---------------|-----|--------------------|
+| `data/catalogs/reranker_hitl_review.csv` | 100 | 0.0043 – 0.0055 | 53 True / 47 False | **0.482** | 0.520 |
+| `docs/reranker_hitl_stratified.csv` | 100 | 0.0000 – 0.5513 | **100 True / 0 False** | **undefined** (one class) | 0.720 |
+
+Each file is missing exactly what the other has. The catalogs file has both label
+classes but its scores span 0.0012 — a degenerate range that discriminates
+nothing (AUC 0.482, i.e. below chance). The docs file has live-range scores but
+every `human_label` is True, so no AUC is computable from it at all. The two
+share only a handful of works, so they are not two views of one sample.
+
+Cause not established. Candidates, in rough order of likelihood: the catalogs
+file's `reranker_score` column was overwritten by a later run under a different
+scoring configuration (its range looks like a different query or normalisation);
+or the docs file's labels were truncated to the positive stratum; or the 0.818
+was computed on a third artifact that no longer ships. What is established is
+that **the published claim cannot be checked against what the deposit contains**.
+
+## Why this is urgent
+
+RDJ-26561 is in revise-and-resubmit (tracker 0274, due ~2026-10-20). Referee
+R1-13 already probed provenance, and the paper answers by pointing at these
+tables. A referee or reader who downloads the deposit and recomputes gets 0.482
+against a claimed 0.818. This is the kind of finding that should be fixed before
+the response letter goes back, not after.
+
+Note this is independent of Flag 5 / tickets 0336 and 0361 — those concern flag
+5 (semantic outlier); this concerns flag 6's validation evidence, which the
+paper leans on much harder.
+
+## Relevant files
+
+- `deliverables/data-paper/data-paper.qmd` — lines 106 and 120 carry the claim
+- `data/catalogs/reranker_hitl_review.csv` — labels present, scores degenerate
+- `docs/reranker_hitl_stratified.csv` — scores live, labels single-class
+- `scripts/analysis/compute_reranker_calibration.py` — writes the catalogs file
+  (Phase-1 despite the `compute_` prefix, per architecture.md)
+- the Zenodo deposit manifest — what actually ships
+
+## Actions
+
+1. Establish which sample and which score column produced 0.818, from git
+   history of both files and of `compute_reranker_calibration.py`. Do not
+   re-derive a new number and quietly substitute it.
+2. If the original computation is recoverable, restore the correct artifact and
+   make it the one that ships.
+3. If it is **not** recoverable, re-run the human validation honestly on a
+   labelled sample with both classes and live scores, and correct the paper to
+   the measured value. A changed number in the R&R is defensible; an
+   unreproducible one is not.
+4. Correct both prose sites, and check the response letter for the same claim.
+5. Add the reproduction as a test so the claim cannot silently drift again.
+
+## Test
+
+- A test that recomputes AUC and accuracy from the shipped artifact and asserts
+  they match the value quoted in the prose, within a stated tolerance. This is
+  the cited-works-availability pattern applied to a computed claim: a number in
+  the paper must be recomputable from what ships.
+
+## Verification
+
+- [ ] The AUC and accuracy quoted in the paper recompute from a shipped table
+- [ ] The shipped sample has both label classes and live-range scores
+- [ ] Response letter and paper agree with the artifact
+- [ ] Test pins the reproduction
+
+## Invariants
+
+- The corpus is frozen (author, 2026-07-27); this needs no corpus rebuild.
+- Do not change the quoted number without establishing what the original
+  computation was — silently replacing 0.818 with a fresh figure destroys the
+  audit trail this ticket exists to restore.
+- No weakening of acceptance thresholds.
+
+## Exit criteria
+
+- Every human-validation number in the data paper recomputes from an artifact
+  that ships, and a test enforces it.

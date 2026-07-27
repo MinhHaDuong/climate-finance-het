@@ -150,6 +150,16 @@ def rule_targets() -> dict[str, str]:
     of three that way), and the loss is silent — an undiscovered target reads
     exactly like an artifact that was never built.
 
+    The target list is expanded *before* it is split, which is the order Make
+    itself uses and the only order that survives a variable holding several
+    paths. `$(COMPUTED_STATS) &:` at `Makefile:328` names three files; splitting
+    first hands the whole value to one `expand_vars` call and yields a single
+    space-joined key no `is_file()` can ever match. That is silent for a `.yml`
+    list and worse than silent for a `.md` one — the joined key still ends in
+    `.md`, so the unresolved-target ratchet in `test_markdown_table_shape.py`
+    waves it through and every artifact behind the variable is then skipped as
+    merely absent.
+
     Two known imprecisions, both harmless to a suffix-filtering caller and left
     rather than papered over: a `$(foreach …,$(eval …))` template body parses as
     a rule, contributing keys that keep an unexpanded `$(m)`; and a target
@@ -163,9 +173,9 @@ def rule_targets() -> dict[str, str]:
             rule = _RULE.match(line)
             if not rule:
                 continue
-            for token in rule.group(1).split():
+            for token in expand_vars(rule.group(1), constants).split():
                 targets.setdefault(
-                    expand_vars(token, constants),
+                    token,
                     f"{path.relative_to(REPO_ROOT)}:{lineno}",
                 )
     return targets

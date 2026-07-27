@@ -1,0 +1,69 @@
+%erg 0.1
+Title: Grouped-target output guard is blind to variable-expanded target lists
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T18:10Z HDMX-coding-agent created
+2026-07-27T18:20Z HDMX-coding-agent note found by the raid 0327/0329 merge gate, not by the guard itself. Filed with the reproducing case already identified.
+
+2026-07-27T18:38Z HDMX-coding-agent note second confirmed instance of this class, found independently by PR #1172's round-1 verify gate: tests/_mk_discovery.py::rule_targets() split the target list on whitespace before expand_vars, collapsing a multi-path $(VAR) into one space-joined key. Fixed there by expanding first (Make's own order). This ticket's grouped_targets_using_bare_at() at tests/test_corpus_flow.py:190 does the same split with no expansion and does NOT route through rule_targets(), so that fix does not reach it. Two hand-rolled parsers, one bug shape — ticket 0358 (migrate to a single Makefile parser) is the structural fix for both.
+--- body ---
+## Context
+
+Ticket 0327 added `test_grouped_recipes_name_their_output_explicitly` to stop a
+real defect: in a grouped Make target (`a b &:`), `$@` binds to whichever member
+make was asked to build, so a recipe using a bare `$@` can write its output to a
+sibling's path while make reports success. The tracked file is left stale and
+every downstream consumer reads it.
+
+The guard works, and it earned its keep immediately — it caught 0329's
+`tab_retrieval_protocol` rule during the raid merge, a defect neither branch
+showed alone.
+
+But `grouped_targets_using_bare_at()` detects multi-member groups by splitting
+the target-list *text* on whitespace. A group written as a single variable token
+that expands to several files is therefore invisible to it. `$(COMPUTED_STATS)
+&:` (Makefile:349) is exactly that shape, and it does pass a bare `$@`.
+
+That rule is safe today only by accident of its consumer:
+`scripts/analysis/compute_vars.py::main()` ignores `io_args.output` entirely and
+routes each of its three writes through `DOC_OUTPUT_DIR` internally (see its own
+comment, and ticket 0226). Change that script to honour `--output` — the
+direction `script-io.md` pushes every script toward — and the defect goes live
+with no test to catch it.
+
+## Relevant files
+
+- `tests/test_corpus_flow.py` — `TestOutputPathContract`, `grouped_targets_using_bare_at()`
+- `Makefile:349` — `$(COMPUTED_STATS) &:`, the invisible case
+- `scripts/analysis/compute_vars.py` — the consumer whose current behaviour masks it
+
+## Actions
+
+1. Expand Make variables in the target list before splitting, or fail closed:
+   treat any target list containing an unexpanded `$(...)` as multi-member.
+   Failing closed is cheaper and needs no Make evaluation.
+2. Fix whatever the widened guard then flags.
+
+## Test
+
+Red step: add a case to `TestOutputPathContract` asserting the guard flags a
+grouped recipe whose target list is a single variable token expanding to
+several files, and that it uses a bare `$@`. It must fail against the guard as
+written today.
+
+## Verification
+
+- [ ] The new test fails before the fix, passes after.
+- [ ] `make lint` green — the widened guard flags nothing else, or what it flags is fixed.
+
+## Invariants
+
+- No false positive on a genuine single-output rule that echoes `$@`.
+- `tests/test_corpus_flow.py::TestOutputPathContract` keeps its existing five cases.
+
+## Exit criteria
+
+The guard flags a bare `$@` in a grouped target regardless of whether the target
+list is written as literal paths or as a variable, and `make lint` is green.

@@ -36,7 +36,7 @@ from _mk_discovery import (
 # Mechanical contract gate (`make lint` / `pytest -m adherence`).
 pytestmark = pytest.mark.adherence
 
-# Discovered once at import: eight rule targets today, four of them built on a
+# Discovered once at import: ten rule targets today, five of them built on a
 # checkout without corpus data. Absent ones are skipped, not failed.
 GENERATED = generated_markdown_targets()
 
@@ -89,16 +89,47 @@ def unresolved_markdown(target: str) -> bool:
 
     `expand_vars` resolves a bare `$(NAME)`, so anything built with a Make list
     function survives with its syntax attached. Each form leaves a different
-    wreck and all three are caught by the same test:
+    wreck and all of them are caught by the same test:
 
         $(foreach m,$(METHODS),… tab_$(m).md …)  ->  '…tab_$(m).md'
         $(addprefix DIR/,a.md b.md)              ->  'DIR/,a.md'  and  'b.md)'
+        $(TABLES) where TABLES := a.md b.md      ->  'a.md b.md'
 
     The second form is why a bare "contains `$`" test is not enough: the `$`
     lands on a *different* whitespace token than the `.md` does.
+
+    The third is the dangerous one, because it looks clean from every angle a
+    character test can reach — no Make syntax survives, and the token still ends
+    in `.md`. Only its *shape* betrays it: a path is one whitespace-free token,
+    so a target that does not survive `str.split` is a list wearing a filename.
+    `rule_targets` now expands before it splits and no longer produces this, and
+    the check stays because the guarantee belongs here: whatever future resolver
+    hands a list to a caller expecting a path fails loudly rather than skipping.
     """
     return ".md" in target and (
-        bool(set("$%(),") & set(target)) or not target.endswith(".md"))
+        bool(set("$%(),") & set(target))
+        or target.split() != [target]
+        or not target.endswith(".md"))
+
+
+def has_delimiter(line: str) -> bool:
+    """True when `line` carries an unescaped ``|`` — i.e. it is row-shaped.
+
+    Weaker than ``len(split_row(line)) > 1``, and deliberately so. A value torn
+    by a raw newline leaves a remainder holding the row's *closing* pipe and
+    nothing else, which splits to one cell: row-shaped to a reader, invisible to
+    a two-cell test. This is the predicate the :func:`scan` docstring has always
+    described — "any line that carries an unescaped ``|``".
+    """
+    i = 0
+    while i < len(line):
+        if line[i] == "\\" and i + 1 < len(line):
+            i += 2
+        elif line[i] == "|":
+            return True
+        else:
+            i += 1
+    return False
 
 
 def _is_separator(cells: list[str]) -> bool:
@@ -106,8 +137,8 @@ def _is_separator(cells: list[str]) -> bool:
 
 
 def scan(text: str) -> tuple[list[tuple[int, list[str], list[tuple[int, list[str]]]]],
-                             list[int], int | None]:
-    """`(tables, orphan row lines, unclosed fence line)`.
+                             list[int], list[int], int | None]:
+    """`(tables, orphan row lines, torn row lines, unclosed fence line)`.
 
     A table is a pipe row immediately followed by a delimiter row, which is the
     rule GFM itself applies. Fenced blocks are skipped: ``tab_variables.md``
@@ -119,7 +150,7 @@ def scan(text: str) -> tuple[list[tuple[int, list[str], list[tuple[int, list[str
     column count as the header, so a mismatch there is the same defect one line
     higher.
 
-    The other two return values exist because a *silent* end-of-table is the
+    The other three return values exist because a *silent* end-of-table is the
     way this parser could be blind to exactly the defect it hunts:
 
     - **Orphans.** A raw newline inside a value ends the table at that line, so
@@ -128,6 +159,15 @@ def scan(text: str) -> tuple[list[tuple[int, list[str], list[tuple[int, list[str
       (the codebook path) does not, so the hole is reachable from a shipped
       emitter. Any line outside a fence that carries an unescaped ``|`` and no
       table claimed is reported.
+    - **Torn rows.** The orphan rule needs the remainder to still carry a pipe,
+      and when the newline lands in the *last* column it does not: the row above
+      counts its declared cells and passes, and the tail below holds no
+      delimiter at all. So a table body that ends on a non-blank line rather
+      than on a blank one, EOF or a fence is reported at that line. This is a
+      contract on *generated* output — an emitter writes a blank line after a
+      table — and it is deliberately strict about what may abut a table body,
+      because a torn Markdown description can begin with anything, ``#``
+      included, and a block-start exemption would reopen the hole it closes.
     - **Unclosed fence.** One stray fence swallows the rest of the file, and
       the sweep would read it as clean.
 
@@ -145,6 +185,7 @@ def scan(text: str) -> tuple[list[tuple[int, list[str], list[tuple[int, list[str
     tables: list[tuple[int, list[str], list[tuple[int, list[str]]]]] = []
     claimed: set[int] = set()
     row_shaped: list[int] = []
+    torn: list[int] = []
     fence_opened_at: int | None = None
     fence: tuple[str, int] = ("", 0)
     i = 0
@@ -168,7 +209,7 @@ def scan(text: str) -> tuple[list[tuple[int, list[str], list[tuple[int, list[str
         if fence_opened_at is not None:
             i += 1
             continue
-        if len(split_row(stripped)) > 1:
+        if has_delimiter(stripped):
             row_shaped.append(i + 1)
         if ("|" not in stripped or i + 1 >= len(lines)
                 or not _is_separator(split_row(lines[i + 1]))):
@@ -184,9 +225,15 @@ def scan(text: str) -> tuple[list[tuple[int, list[str], list[tuple[int, list[str
             rows.append((j + 1, split_row(lines[j])))
             claimed.add(j + 1)
             j += 1
+        # The body loop stops on EOF, a blank line, a fence, or a line with no
+        # pipe. Only the last of those is anomalous in generated output, and it
+        # is the signature of a value torn by a raw newline in the last column.
+        if (j < len(lines) and lines[j].strip() and "|" not in lines[j]
+                and not lines[j].strip().startswith(("```", "~~~"))):
+            torn.append(j + 1)
         tables.append((i + 1, header, rows))
         i = j
-    return tables, sorted(set(row_shaped) - claimed), fence_opened_at
+    return tables, sorted(set(row_shaped) - claimed), torn, fence_opened_at
 
 
 def pipe_tables(text: str) -> list[tuple[int, list[str], list[tuple[int, list[str]]]]]:
@@ -201,7 +248,7 @@ def malformed_rows(text: str) -> list[str]:
     and an unclosed fence are the two ways this parser could report a clean
     file while never looking at the rows that matter.
     """
-    tables, orphans, unclosed = scan(text)
+    tables, orphans, torn, unclosed = scan(text)
     problems = [
         f"line {lineno}: {len(cells)} cells, header at line {header_line} "
         f"declares {len(header)} — {'|'.join(cells)[:120]}"
@@ -214,6 +261,12 @@ def malformed_rows(text: str) -> list[str]:
         "ended early, most likely on a raw newline inside a value, leaving every "
         "row below unchecked"
         for lineno in orphans
+    ]
+    problems += [
+        f"line {lineno}: text abutting the table above with no delimiter in it "
+        "— the last cell of the row above was torn by a raw newline, so the "
+        "rest of that value and every row below it went unchecked"
+        for lineno in torn
     ]
     if unclosed is not None:
         problems.append(
@@ -263,21 +316,52 @@ def test_parser_flags_a_delimiter_row_of_the_wrong_width():
 
 
 def test_parser_flags_rows_orphaned_by_a_raw_newline():
-    """A newline inside a value ends the table; the rows below must not vanish.
+    """A newline inside a value ends the table; the break itself must be named.
 
     `markdown_cell` — the codebook path — does not fold newlines, so this hole
-    is reachable from a shipped emitter. The malformed row here is two lines
-    past the break: before orphan reporting, this document read as clean.
+    is reachable from a shipped emitter. Both documents below carry the same
+    defect, and the short one is why this test asserts twice. It used to append
+    the synthetic `| x | y | z |` row and assert only on that, so it passed for
+    a reason unrelated to its name: strip the trailing row and the same broken
+    input read as clean. A newline landing in the *last* column leaves a
+    remainder carrying no delimiter at all — one cell, claimed by no table and
+    shaped like no row, so it entered neither the width check nor the orphan
+    set. Pinning the break line makes the trailing row optional evidence.
     """
-    document = (
+    torn = (
         "| A | B |\n"
         "|:--|:--|\n"
         "| ok | first\n"
         "second\n"
-        "| x | y | z |\n"
     )
-    offenders = malformed_rows(document)
-    assert offenders, "every row below the break went unchecked"
+    offenders = malformed_rows(torn)
+    assert offenders, "the last column's newline tore the row and nothing fired"
+    assert "line 4" in " ".join(offenders), offenders
+
+    below = malformed_rows(torn + "| x | y | z |\n")
+    assert "line 4" in " ".join(below), below
+    assert "line 5" in " ".join(below), below
+
+
+def test_a_torn_last_cell_is_caught_across_a_blank_line():
+    """The shipped shape: `markdown_cell` passes a paragraph break straight through.
+
+    `scripts/_deposit_variables.py:402` routes every codebook Description — free
+    Markdown prose, and the table's last column — through `markdown_cell`, which
+    folds nothing. A paragraph break in one description emits a blank line
+    mid-table: the row above it still counts its declared cells and passes, the
+    table ends on the blank, and the tail of the description lands below as
+    prose carrying the row's closing pipe. That remainder is a single cell,
+    which is precisely what a width check cannot see.
+    """
+    description = "first para\n\nsecond para"
+    doc = (
+        "| Variable | Description |\n"
+        "|:--|:--|\n"
+        f"| `x` | {markdown_cell(description)} |\n"
+    )
+    offenders = malformed_rows(doc)
+    assert offenders, "a paragraph break inside the last cell read as clean"
     assert "line 5" in " ".join(offenders), offenders
 
 
@@ -452,6 +536,7 @@ def test_no_markdown_target_escapes_as_an_unresolved_path():
     ("deliverables/_shared/tables/,a.md", True),            # $(addprefix …) head
     ("b.md)", True),                                        # $(addprefix …) tail
     ("deliverables/_shared/tables/%.md", True),             # a pattern rule
+    ("a.md b.md c.md", True),                               # $(VAR) holding a list
     ("data/derived/tables/tab_div_$(m).csv", False),        # not markdown, not ours
 ])
 def test_unresolved_markdown_predicate(target, escapes):
@@ -489,6 +574,36 @@ def test_rule_targets_reads_a_continued_target_list():
     assert "data/derived/tables/tab_alluvial.csv" in targets, (
         "Makefile:380 declares this target before a line continuation; "
         "rule_targets() dropped it"
+    )
+
+
+def test_rule_targets_splits_a_variable_holding_several_paths():
+    """`$(VAR):` where VAR holds a list is several targets, not one long name.
+
+    Splitting the target list before expanding it collapses the whole value into
+    one space-joined key — `Makefile:328` declares three `-vars.yml` files behind
+    `$(COMPUTED_STATS)` and used to yield a single 130-character path. Nothing
+    fails: the bogus key ends in `.yml`, so the Markdown sweep never looks at it.
+    Written with `.md` it is worse than silent, it is *actively* reassuring —
+    the key still ends in `.md`, so the unresolved-target ratchet passes, and
+    `is_file()` then fails on a path that cannot exist, skipping every artifact
+    behind that variable as "not built on this machine". Make expands first and
+    splits after; so must this.
+    """
+    targets = rule_targets()
+    for member in ("deliverables/_shared/technical-report-vars.yml",
+                   "deliverables/data-paper/data-paper-vars.yml",
+                   "deliverables/multilayer/multilayer-detection-vars.yml"):
+        assert member in targets, (
+            f"{member} is declared through $(COMPUTED_STATS) at Makefile:328; "
+            "rule_targets() split the target list before expanding it, so all "
+            "three collapsed into one space-joined key"
+        )
+    joined = sorted(t for t in targets if t.split() != [t])
+    assert not joined, (
+        "Make target(s) carrying whitespace — a variable holding several paths "
+        "was expanded after the split, so it reads as one impossible path:\n  "
+        + "\n  ".join(joined)
     )
 
 
@@ -549,7 +664,7 @@ def test_the_sweep_actually_parsed_rows():
     """Anti-vacuity: the sweep above passes trivially if it parsed nothing.
 
     Every artifact could be absent (a fresh clone without corpus data still has
-    four git-tracked ones), or the table detector could fail to recognise a
+    five git-tracked ones), or the table detector could fail to recognise a
     table and report no rows at all. Both read as green above.
     """
     rows_per_artifact = {
@@ -568,7 +683,7 @@ def test_the_sweep_actually_parsed_rows():
         "tab_venues.md and tab_venues_fr.md are git-tracked and should always "
         f"be present and parsed. Parsed: {rows_per_artifact}"
     )
-    # 71 rows today against a floor of 30. The gap is deliberate and the floor
+    # 98 rows today against a floor of 30. The gap is deliberate and the floor
     # is not a row-count pin: venue and codebook row counts move with the corpus
     # and with the deposit column contract, so a tight floor would fail on a
     # legitimate regeneration. What it must catch is a detector that has gone
