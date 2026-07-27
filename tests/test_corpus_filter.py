@@ -27,6 +27,8 @@ HARVEST_DIR = os.path.join(SCRIPTS_DIR, "harvest")
 PYTHON = sys.executable
 FIXTURE_DIR = os.path.join(os.path.dirname(__file__), "fixtures")
 DVC_YAML = os.path.join(os.path.dirname(__file__), "..", "dvc.yaml")
+FILTER_YAML = os.path.join(
+    os.path.dirname(__file__), "..", "config", "corpus_filter.yaml")
 
 
 def run_script(*args, cwd=None):
@@ -648,6 +650,43 @@ class TestSkipSemanticFlagCLI:
             "Flag 5's call site swallows an exception again"
         )
 
+
+class TestFlag5DiagnosticActivation:
+    """Flag 5's safe configuration is diagnostic (ticket 0361).
+
+    Pipeline activation is a separate v3 step.  These tests pin the capability
+    while ``dvc.yaml`` continues to skip it until the rebuilt outputs and
+    publication contract can move together.
+    """
+
+    def _semantic_block(self):
+        with open(FILTER_YAML) as f:
+            return yaml.safe_load(f)["semantic_outlier"]
+
+    def test_config_declares_diagnostic_mode(self):
+        assert self._semantic_block().get("mode") == "diagnostic", (
+            "config/corpus_filter.yaml must state semantic_outlier.mode; "
+            "activating Flag 5 as a filter needs author sign-off"
+        )
+
+    def test_config_declares_the_per_language_centroid(self):
+        assert self._semantic_block().get("centroid") == "per_language", (
+            "a global centroid on a 91.6%-English corpus measures 'not in "
+            "English' as much as 'off topic'"
+        )
+
+    def test_config_carries_no_unused_sigma(self):
+        """An unused threshold in config is a landmine.
+
+        `sigma: 2` was calibrated on a smaller corpus under a different
+        embedding model and was never validated against anything it produced.
+        Diagnostic mode reads no sigma, so leaving the key would invite the
+        next reader to trust it.
+        """
+        assert "sigma" not in self._semantic_block(), (
+            "semantic_outlier.sigma is unread in diagnostic mode — remove it "
+            "rather than leave an uncalibrated threshold in config"
+        )
 
 class TestExtendDeclaresEmbeddingsDep:
     """`extend` consumes embeddings.npz, so DVC must know it (ticket 0336).
