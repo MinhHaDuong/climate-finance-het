@@ -23,30 +23,20 @@ Usage:
     df["near_duplicate_group"] = detect_near_duplicate_groups(df)
 """
 
-import os
 import re
 from collections import defaultdict
 
 import pandas as pd
-import yaml
-from utils import CONFIG_DIR, get_logger
+from filter_flags import _load_config
+from utils import get_logger
 
 log = get_logger("qa_near_duplicates")
 
-
-def _near_duplicate_config() -> dict:
-    """Read the near_duplicate block of config/corpus_filter.yaml.
-
-    Fails loud on a missing file or block rather than falling back to inline
-    defaults: the data paper reports these numbers, so a silent fallback would
-    let the prose describe a run that used something else (ticket 0329).
-    """
-    path = os.path.join(CONFIG_DIR, "corpus_filter.yaml")
-    with open(path, encoding="utf-8") as f:
-        return yaml.safe_load(f)["near_duplicate"]
-
-
-_CFG = _near_duplicate_config()
+# filter_flags owns the corpus-filter YAML loader; there is exactly one.
+# Missing file or missing block raises here rather than falling back to inline
+# defaults — the data paper reports these numbers, so a silent fallback would
+# let the prose describe a run that used something else (ticket 0329).
+_CFG = _load_config()["near_duplicate"]
 
 # Default parameters — config-derived, reported in the data paper's §2.2.
 DEFAULT_PREFIX_LENGTH = _CFG["prefix_length"]

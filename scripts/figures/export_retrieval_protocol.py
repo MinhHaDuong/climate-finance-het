@@ -214,11 +214,19 @@ def render_markdown() -> str:
 
 
 def main(output: str) -> None:
-    save_csv(pd.DataFrame(build_protocol_rows(), columns=COLUMNS), output)
-    md_path = os.path.splitext(output)[0] + ".md"
-    with open(md_path, "w", encoding="utf-8") as fh:
+    """Write both group members, whichever one Make asked for.
+
+    The Makefile rule is a grouped target (``X.csv X.md &:``) and passes
+    ``$@``, which GNU Make sets to the member that triggered the rule. Keying
+    off the stem rather than the given suffix means a stale ``.md`` alone
+    still rebuilds the CSV, instead of writing CSV bytes to the ``.md`` path
+    and leaving the ``.csv`` absent while Make counts the group as built.
+    """
+    stem = os.path.splitext(output)[0]
+    save_csv(pd.DataFrame(build_protocol_rows(), columns=COLUMNS), stem + ".csv")
+    with open(stem + ".md", "w", encoding="utf-8") as fh:
         fh.write(render_markdown())
-    log.info("Wrote %s and %s", output, md_path)
+    log.info("Wrote %s.csv and %s.md", stem, stem)
 
 
 if __name__ == "__main__":
