@@ -25,6 +25,7 @@ from _deposit_variables import (
     DEPOSIT_VARIABLES,
     describe,
     latex_inline,
+    markdown_cell,
     render_codebook,
 )
 
@@ -127,6 +128,47 @@ def test_codebook_recipe_survives_gfm_rendering(tmp_path):
     # alone does not catch the defect — it pins the column contract, and the
     # assertion above pins the payload.
     assert row.count("<td") == 5, f"row is not the five declared columns:\n{row}"
+
+
+@pytest.mark.integration
+@pytest.mark.parametrize("payload", [
+    "a | b",                                    # bare pipe, prose
+    "recipe `df[~df['f'] | df['p']]` end",      # bare pipe, code span
+    r"a \ b",                                   # backslash, prose
+    r"regex `\d{4}` end",                       # backslash, code span
+    r"a \| b",                                  # both: the escape-layer case
+])
+def test_cell_escaping_round_trips_through_gfm(payload, tmp_path):
+    """Each escaping branch is checked on the rendered page, not on the escape.
+
+    Two payloads carry the weight, and they fail different wrong answers —
+    verified against both through real pandoc:
+
+    - `a \\| b` truncates to `a \\` under the pre-fix rule, which escaped the
+      pipe alone: the value's own backslash absorbs the new escape and the
+      pipe goes live, splitting the cell. Same defect as the shipped codebook.
+    - `` `\\d{4}` `` renders as `\\\\d{4}` if a backslash is escaped everywhere,
+      because CommonMark reads it literally inside a code span.
+
+    Only escaping prose and code separately passes both.
+    """
+    if shutil.which("pandoc") is None:
+        pytest.skip("pandoc not available on this machine")
+    source = tmp_path / "cell.md"
+    source.write_text(
+        f"| Case | Value |\n|:--|:--|\n| probe | {markdown_cell(payload)} |\n",
+        encoding="utf-8")
+
+    rendered = subprocess.run(["pandoc", "-f", "gfm", "-t", "html", str(source)],
+                              capture_output=True, text=True, check=True).stdout
+    flat = re.sub(r"\s+", " ", rendered)
+    row = next(r for r in re.findall(r"<tr[^>]*>.*?</tr>", flat) if "probe" in r)
+    assert row.count("<td") == 2, f"payload split the row:\n{row}"
+
+    cell = re.findall(r"<td[^>]*>(.*?)</td>", row)[1]
+    text = re.sub(r"<[^>]+>", "", cell)
+    assert text == escape(payload.replace("`", ""), quote=False), \
+        f"payload altered in transit: {text!r}"
 
 
 @pytest.mark.integration

@@ -204,6 +204,11 @@ _LATEX_CODE_SPECIALS = _LATEX_TEXT_SPECIALS | {"'": r"\textquotesingle{}"}
 _LATEX_TEXT = str.maketrans(_LATEX_TEXT_SPECIALS)
 _LATEX_CODE = str.maketrans(_LATEX_CODE_SPECIALS)
 
+# The Markdown side of the same split: the pipe is escaped everywhere, the
+# backslash only where Markdown would read it as an escape.
+_GFM_TEXT = str.maketrans({"\\": r"\\", "|": r"\|"})
+_GFM_CODE = str.maketrans({"|": r"\|"})
+
 
 def describe(v: Variable) -> str:
     """The variable's description as published, in Markdown."""
@@ -235,19 +240,24 @@ def latex_inline(text: str) -> str:
 
 
 def markdown_cell(text: str) -> str:
-    """Text → a Markdown pipe-table cell.
+    """Markdown description → a Markdown pipe-table cell.
 
     A raw ``|`` ends the cell, so the codebook's recipe used to be published
-    cut in half. Escaping it is valid inside a code span too (GFM tables).
-
-    A backslash has no such single answer — CommonMark reads ``\\\\`` as an
-    escape in prose but literally inside a code span, so one rule would be
-    wrong on one side. No contract string contains one; if that changes, this
-    stops the build rather than publishing a cell that silently truncates.
+    cut in half; GFM honours ``\\|`` inside a code span too, so that one rule
+    holds throughout. A backslash needs the opposite treatment on each side of
+    a span boundary — CommonMark reads it as an escape in prose but literally
+    inside code — so prose and code are escaped separately. Escaping both
+    blindly would corrupt any description documenting a regex or a path;
+    escaping neither reintroduces the cell split, one layer down, for a value
+    that already contains ``\\|``.
     """
-    if "\\" in text:
-        raise ValueError(f"backslash has no safe pipe-table escaping: {text!r}")
-    return text.replace("|", r"\|")
+    parts = text.split("`")
+    if len(parts) % 2 == 0:
+        raise ValueError(f"unbalanced backtick in description: {text!r}")
+    return "`".join(
+        part.translate(_GFM_CODE) if i % 2 else part.translate(_GFM_TEXT)
+        for i, part in enumerate(parts)
+    )
 
 
 def contract_names() -> list[str]:

@@ -313,11 +313,19 @@ class TestCodebookEscaping:
             cells = re.split(r"(?<!\\)\|", line)
             assert len(cells) == 7, f"row splits into the wrong cell count: {line}"
 
-    def test_backslash_is_a_build_error(self):
-        """`\\|` would become `\\\\|`, which GFM truncates silently — the defect
-        this ticket is about, one escape layer deeper. Fail loudly instead."""
-        with pytest.raises(ValueError, match="backslash"):
-            markdown_cell(r"a \| b")
+    def test_backslash_is_escaped_only_where_markdown_reads_it(self):
+        """Prose and code disagree on what a backslash means, so the cell
+        cannot use one rule for both. Escaping both blindly would corrupt a
+        description documenting a regex; escaping neither would let a value
+        already containing `\\|` split the cell — this ticket's defect, one
+        escape layer down."""
+        assert markdown_cell(r"a \ b") == r"a \\ b"
+        assert markdown_cell(r"a `\d{4}` b") == r"a `\d{4}` b"
+        assert markdown_cell(r"a \| b") == r"a \\\| b"
+
+    def test_pipe_is_escaped_on_both_sides_of_a_span(self):
+        assert markdown_cell("a | b") == r"a \| b"
+        assert markdown_cell("a `x | y` b") == r"a `x \| y` b"
 
     def test_recipe_survives_the_pipe_table(self):
         md = render_codebook({}, n_rows=1)
