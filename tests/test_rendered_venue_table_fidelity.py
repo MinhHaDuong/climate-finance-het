@@ -61,9 +61,17 @@ def _render_row(markdown: str, needle: str, tmp_path) -> str:
     return matching[0]
 
 
-def _cell_text(row: str, index: int) -> str:
-    cell = re.findall(r"<td[^>]*>(.*?)</td>", row)[index]
-    return re.sub(r"<[^>]+>", "", cell).strip()
+def _cells(row: str) -> list[str]:
+    """The row's cells as plain text.
+
+    Asserting on the whole tuple rather than on `row.count("<td")`: GFM
+    truncates an overflowing row to the header's declared column count, so the
+    count is right either way and cannot tell the two apart. What the split
+    actually does is shift every later value one column left and drop the last
+    — visible only by reading the values back.
+    """
+    return [re.sub(r"<[^>]+>", "", cell).strip()
+            for cell in re.findall(r"<td[^>]*>(.*?)</td>", row)]
 
 
 @pytest.fixture(scope="module")
@@ -100,9 +108,9 @@ def test_manuscript_venue_table_keeps_a_pipe_bearing_venue_whole(pandoc, tmp_pat
          "--min-papers", "1"])
 
     row = _render_row(markdown, NEEDLE, tmp_path)
-    assert row.count("<td") == 5, f"the venue split the row:\n{row}"
-    assert _cell_text(row, 1) == escape(PIPE_VENUE, quote=False), \
-        f"venue name altered in transit:\n{row}"
+    assert _cells(row) == [
+        "Efficiency", escape(PIPE_VENUE, quote=False), "2", "0", "2",
+    ], f"the venue split the row:\n{row}"
 
 
 @pytest.mark.integration
@@ -124,6 +132,6 @@ def test_core_venue_table_keeps_a_pipe_bearing_venue_whole(pandoc, tmp_path):
         "export_core_venues_markdown.py", output, ["--core", str(core)])
 
     row = _render_row(markdown, NEEDLE, tmp_path)
-    assert row.count("<td") == 3, f"the venue split the row:\n{row}"
-    assert _cell_text(row, 0) == escape(PIPE_VENUE, quote=False), \
-        f"venue name altered in transit:\n{row}"
+    assert _cells(row) == [
+        escape(PIPE_VENUE, quote=False), "2", "Journal",
+    ], f"the venue split the row:\n{row}"
