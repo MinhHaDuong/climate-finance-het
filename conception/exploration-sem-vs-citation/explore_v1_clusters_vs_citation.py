@@ -6,8 +6,6 @@ Per-work assignment for the paper partition = nearest committed v1 centroid
 KMeans geometry of compute_clusters.py. No figure output.
 """
 
-import json
-import os
 import sys
 from collections import Counter
 
@@ -22,10 +20,12 @@ sys.path.insert(0, "scripts")
 sys.path.insert(0, "libs/openalex-corpus/src")
 
 import yaml
-
 from openalex_corpus.text import normalize_doi
-from pipeline_loaders import (BASE_DIR, load_refined_citations,
-                              load_refined_embeddings, load_refined_works)
+from pipeline_loaders import (
+    load_refined_citations,
+    load_refined_embeddings,
+    load_refined_works,
+)
 
 RANDOM_STATE = 42
 

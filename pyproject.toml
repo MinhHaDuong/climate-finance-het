@@ -152,6 +152,11 @@ select = [
 "scripts/utils.py" = ["F401", "E402"]
 "scripts/harvest/catalog_syllabi.py" = ["F401"]
 "scripts/analysis/compute_clustering_comparison.py" = ["F401"]
+# Salvaged exploration kept as the provenance of the two-structurations claim
+# (PR #1124). Its main() is the script that was actually run; splitting it to
+# satisfy a length threshold would make the file no longer that script, which
+# defeats the reason it is committed. Length ignored, everything else enforced.
+"conception/exploration-sem-vs-citation/explore_semantic_vs_citation.py" = ["PLR0915"]
 
 [tool.ruff.lint.mccabe]
 max-complexity = 15
