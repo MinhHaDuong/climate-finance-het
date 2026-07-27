@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-27T15:01Z HDMX-coding-agent created
 2026-07-27T15:01Z HDMX-coding-agent note Found while investigating unexpected mtimes in data/catalogs during the 0344 make pass
+2026-07-27T16:05Z HDMX-coding-agent note Read-only follow-up: TWO leak mechanisms, not one; 4.5 months old; fixtures are inside committed DVC snapshots; and a latent glob collision that would silently replace a data-paper number
 
 --- body ---
 ## Context
@@ -24,6 +25,58 @@ The names map one-to-one onto test cases in
 writes `my_script__test-run-001`, `test_save_run_report_json_schema` writes
 `test_script__run-xyz`, `test_save_run_report_sanitizes_run_id` writes the
 `run_id_with_spaces_special_` name) and `tests/test_pipeline_e2e.py`.
+
+## Read-only follow-up (2026-07-27)
+
+**Age.** `test_robustness_observability.py` was added 2026-03-12,
+`test_pipeline_e2e.py` 2026-03-16, and DVC began tracking `run_reports/` on
+2026-03-15. The leak has run for roughly four and a half months. The files are
+not stale relics: all eight were rewritten between 15:42:57 and 15:43:06 on
+2026-07-27, because concurrent sessions regenerate them on every test run.
+
+**They are committed corpus data.** Scanning the 46 `.dir` objects in the DVC
+cache, the fixtures appear in four snapshots — including
+`42bc3e29ab25f7aa1ffb2cd687b41472.dir`, the hash `run_reports.dvc` points at on
+main. Beyond the five first noticed, the snapshots also carry
+`corpus_align__smoke-test.json`, `corpus_align__test-align-001.json` and
+`enrich_citations_batch__test-preview.json`. Patching the tests stops new
+writes; it does not remove these.
+
+**Two mechanisms, not one.** The root cause below covers only the first.
+
+1. *In-process.* `test_robustness_observability.py` patches
+   `utils.CATALOGS_DIR`, while `save_run_report` re-imports from
+   `pipeline_loaders` at call time. Produces `my_script__test-run-001`,
+   `test_script__run-xyz`, `script__run_id_with_spaces_special_`,
+   `enrich_abstracts__consistency-test`, `enrich_citations_batch__test-preview`.
+2. *Subprocess.* `test_pipeline_e2e.py` (lines ~536, ~644) and
+   `test_phase1_contract.py` (~355) spawn `corpus_align.py` with
+   `cwd=REPO_ROOT`. Monkeypatching a module global in the parent cannot reach a
+   child process, so the child resolves the real `CATALOGS_DIR`. Produces
+   `corpus_align__smoke-test`, `corpus_align__e2e-smoke`,
+   `corpus_align__test-align-001`. Note `test_phase1_contract` already passes
+   `env=env` and still leaks — consistent with `pipeline_loaders` calling
+   `load_dotenv()`, which lets the checked-in `.env` override an inherited
+   environment variable. Fixing this one needs env *and* `.env` control, not a
+   monkeypatch.
+
+The repo already knows about mechanism 1. `_patched_merge_dirs` in
+`test_pipeline_e2e.py` patches `pipeline_loaders.CATALOGS_DIR` and its
+docstring explains precisely why — "without this the report would leak into the
+real DVC-tracked `data/catalogs/run_reports/`". The knowledge exists in one
+file and was never propagated to the others.
+
+**Latent hazard worth more than the pollution.** `compute_vars.dedup_stats`
+globs `catalog_merge__*.json` and takes `sorted(...)[-1]`. Run ids are UTC
+timestamps beginning with a digit, so any leaked fixture named
+`catalog_merge__test*.json` sorts *after* every real report — `t` > `2` in
+ASCII — and would silently become the source of `dedup_doi_removed` and
+`dedup_titleyear_removed` in the data paper. `test_dedup_vars.py` writes
+exactly such a file (`catalog_merge__test.json`) and is correctly isolated to
+`tmp_path` today, so this has not fired. Given that isolation demonstrably
+fails by two independent mechanisms in neighbouring files, treat the near-miss
+as the real finding: a leaked fixture would not merely litter the directory, it
+would replace a published number.
 
 ## Root cause
 

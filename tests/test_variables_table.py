@@ -15,6 +15,7 @@ import pytest
 from _deposit_variables import (
     DEPOSIT_VARIABLES,
     GROUPS,
+    OPTIONAL_MARK,
     check_columns,
     compute_missingness,
     contract_names,
@@ -244,7 +245,10 @@ def table_rows(md: str) -> dict[str, tuple[str, str]]:
         if not line.startswith(r"\texttt{"):
             continue
         cells = line.rsplit(r" \\", 1)[0].split(" & ")
-        rows[plain_text(cells[0])] = (cells[1], cells[2])
+        # Optional variables carry OPTIONAL_MARK after the name (ticket 0332);
+        # key the row on the variable itself.
+        name = plain_text(cells[0]).removesuffix(OPTIONAL_MARK)
+        rows[name] = (cells[1], cells[2])
     return rows
 
 
@@ -287,9 +291,16 @@ class TestLatexEscaping:
             "a bare tilde in raw LaTeX is a non-breaking space"
 
     def test_code_spans_set_as_code(self):
+        """A backtick span must reach the PDF as code, not as a quoted word.
+
+        Re-pointed at is_flagged when 0332's trim removed abstract_status's
+        value enumeration: is_flagged now carries the contract's only code
+        span, and it is the load-bearing one — the reconstruction recipe.
+        """
         block = latex_block(render_markdown_table())
-        assert r"\texttt{original}" in block, \
-            "abstract_status enumerates code literals; they must set as code"
+        assert r"\texttt{" in block, "no code span survived the emitter"
+        assert r"\texttt{df[" in block, \
+            "the refined-subset recipe must set as code, not as quoted prose"
 
     def test_unbalanced_backtick_is_a_build_error(self):
         """A malformed contract description fails loudly, not silently."""

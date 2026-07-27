@@ -1,0 +1,96 @@
+%erg 0.1
+Title: Archive script-list guard truncates silently at the first parenthesis
+Created: 2026-07-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-27T13:22Z HDMX-coding-agent created
+2026-07-27T13:30Z HDMX-coding-agent note surfaced by ticket 0339, which had to add two helpers to the SCRIPTS array and found the guard reads only a prefix of it. Filed as a follow-up rather than fixed in that PR: the guard is a different concern from Markdown escaping.
+
+--- body ---
+## Context
+
+`tests/test_archive_script_paths.py` exists to stop the analysis reproducibility
+archive from shipping a script list that points at moved or missing files. Its
+own docstring says the older guards were toothless because they matched
+basenames, and that this one "has teeth: it resolves every script path the
+archive tooling will actually `cp`/invoke to a real file on disk".
+
+It resolves every path it *reads*, but it does not read the whole array:
+
+```python
+m = re.search(r"SCRIPTS=\((.*?)\)", content, re.DOTALL)
+```
+
+`(.*?)` is non-greedy, so the capture stops at the **first** `)` after
+`SCRIPTS=(`. Any parenthesis appearing inside the array — in an ordinary
+explanatory comment, most likely, since the entries themselves are bare paths —
+ends the captured region early. Every path below that point goes unchecked, and
+the guard still passes. A guard that silently inspects a prefix is worse than no
+guard, because the docstring's promise is what the next mover relies on.
+
+Nothing is broken today: the array currently holds no parenthesis. Ticket 0339
+had to add a comment to it and worked around the trap by wording the comment
+without parens and documenting the hazard in place. That workaround is a
+tripwire depending on the next editor reading a comment, which is precisely the
+failure mode the guard was written to remove.
+
+The same 0339 pass found the guard's blind spot had already cost something:
+`scripts/_venue_naming.py` was missing from the array, so the archived
+`export_core_venues_markdown.py` could not have imported it. That instance is
+fixed in 0339's PR; this ticket is about the parser that let it hide.
+
+## Root cause
+
+A shell array is being parsed with a regex that does not model the shell's
+bracket nesting. The non-greedy quantifier makes the failure silent rather than
+loud — a greedy `(.*)` would over-capture to the last `)` in the file and at
+worst pull in extra paths, which fails loudly instead of passing falsely.
+
+## Relevant files
+
+- `tests/test_archive_script_paths.py:43` — the non-greedy `re.search`
+- `build/build_analysis_archive.sh:56` — the `SCRIPTS=( ... )` array, and 0339's
+  in-place hazard comment to remove once this is fixed
+- `build/templates/Makefile.analysis-manuscript` — the sibling path source the
+  same test cross-checks
+
+## Actions
+
+1. Parse the array by locating `SCRIPTS=(` and scanning to its matching close
+   paren, or by anchoring the terminator to a line that is exactly `)` — the
+   array is shell source with one entry per line, so a line anchor is both
+   sufficient and simpler than bracket counting. Prefer the simpler rule and say
+   why in the commit.
+2. Assert the parsed entry count matches the number of `scripts/*.py` lines in
+   the array, so a future parser regression cannot silently shrink the list
+   again.
+3. Remove the "keep this array free of parentheses" comment 0339 left in
+   `build_analysis_archive.sh` — once the parser is correct, the constraint it
+   warns about no longer exists, and a stale warning misleads.
+
+## Test
+
+Red first. Point the parser at a fixture array whose *last* entry sits below a
+comment containing a parenthesis, and whose last entry names a file that does
+not exist. Today's parser passes that fixture (it never sees the bad path); a
+correct parser fails it. That asymmetry is the test — asserting the parsed list
+length alone would not distinguish a fixed parser from a lucky one.
+
+## Verification
+
+- [ ] The fixture above fails on the current parser and passes on the fixed one
+- [ ] The real array parses to its full length, `_markdown_table.py` and
+      `_venue_naming.py` included
+- [ ] `build/build_analysis_archive.sh` no longer carries the paren warning
+
+## Invariants
+
+- `make lint` passes; the test stays in the `adherence` tier (it reads files).
+- No change to what the archive actually ships — this is a guard fix, not a
+  packaging change.
+
+## Exit criteria
+
+- [ ] The guard reads the entire SCRIPTS array regardless of punctuation in it
+- [ ] A path added below a parenthesis-bearing comment is still resolved

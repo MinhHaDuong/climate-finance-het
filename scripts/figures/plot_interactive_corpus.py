@@ -1,7 +1,7 @@
 """Interactive HTML exploration of the core climate finance corpus.
 
-Produces a standalone Plotly scatter plot of the ~1,176 core papers
-(cited_by_count >= 50) with:
+Produces a standalone Plotly scatter plot of the core papers
+(cited_by_count >= 50; 2,644 in the current corpus) with:
   - X-axis: year (with jitter to reduce overplotting)
   - Y-axis: seed axis score (efficiency <-> accountability spectrum)
   - Color: KMeans semantic cluster (6 clusters)
@@ -10,10 +10,10 @@ Produces a standalone Plotly scatter plot of the ~1,176 core papers
   - Highlighted: papers cited in bibliography/main.bib (star markers)
   - ISTEX papers: PDF link in tooltip
 
-Output: figures/interactive_core_corpus.html
+Output: deliverables/_shared/figures/interactive_core_corpus.html
 
 Usage:
-    uv run python scripts/plot_interactive_corpus.py
+    uv run python scripts/figures/plot_interactive_corpus.py
 """
 
 import argparse
@@ -24,6 +24,7 @@ import re
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
+from _hover_text import _esc, build_hover_text
 from utils import (
     BASE_DIR,
     CATALOGS_DIR,
@@ -229,15 +230,14 @@ for cid in cluster_ids:
     # Build custom hover text
     hover_texts = []
     for _, row in subset.iterrows():
-        lines = [
-            f"<b>{row['title_short']}</b>",
-            f"{row['first_author']} ({int(row['year'])})",
-            f"{row['journal_short']}",
-            f"Cited by: {int(row['cited_by_count'])}",
-        ]
-        if row["istex_url"]:
-            lines.append(f"ISTEX PDF: {row['istex_url']}")
-        hover_texts.append("<br>".join(lines))
+        hover_texts.append(build_hover_text(
+            title=row["title_short"],
+            first_author=row["first_author"],
+            year=row["year"],
+            journal=row["journal_short"],
+            cited_by_count=row["cited_by_count"],
+            istex_url=row["istex_url"],
+        ))
 
     fig.add_trace(go.Scatter(
         x=subset["year_jitter"],
@@ -249,7 +249,10 @@ for cid in cluster_ids:
             opacity=0.6,
             line=dict(width=0.5, color="white"),
         ),
-        name=f"C{cid}: {label}",
+        # Plotly renders the trace name as markup; the label is free text
+        # from the generated cluster_labels.json, so escape it at the sink,
+        # reusing the same escaping convention as the hover text (_hover_text).
+        name=f"C{cid}: {_esc(label)}",
         text=hover_texts,
         hoverinfo="text",
         customdata=subset["doi_url"].values,
@@ -261,13 +264,15 @@ unassigned = non_bib[non_bib["cluster"] == -1]
 if len(unassigned) > 0:
     hover_texts = []
     for _, row in unassigned.iterrows():
-        lines = [
-            f"<b>{row['title_short']}</b>",
-            f"{row['first_author']} ({int(row['year'])})",
-            f"{row['journal_short']}",
-            f"Cited by: {int(row['cited_by_count'])}",
-        ]
-        hover_texts.append("<br>".join(lines))
+        # No ISTEX line on the unassigned trace — behaviour preserved from the
+        # inline builder this replaced; only the escaping changed (0341).
+        hover_texts.append(build_hover_text(
+            title=row["title_short"],
+            first_author=row["first_author"],
+            year=row["year"],
+            journal=row["journal_short"],
+            cited_by_count=row["cited_by_count"],
+        ))
 
     fig.add_trace(go.Scatter(
         x=unassigned["year_jitter"],
@@ -294,16 +299,15 @@ if len(bib_papers) > 0:
 
         hover_texts = []
         for _, row in subset.iterrows():
-            lines = [
-                f"<b>{row['title_short']}</b>",
-                f"{row['first_author']} ({int(row['year'])})",
-                f"{row['journal_short']}",
-                f"Cited by: {int(row['cited_by_count'])}",
-                "<i>Cited in manuscript</i>",
-            ]
-            if row["istex_url"]:
-                lines.append(f"ISTEX PDF: {row['istex_url']}")
-            hover_texts.append("<br>".join(lines))
+            hover_texts.append(build_hover_text(
+                title=row["title_short"],
+                first_author=row["first_author"],
+                year=row["year"],
+                journal=row["journal_short"],
+                cited_by_count=row["cited_by_count"],
+                cited_in_manuscript=True,
+                istex_url=row["istex_url"],
+            ))
 
         # Show legend only for first bib cluster trace
         show_legend = bool(cid == min(
