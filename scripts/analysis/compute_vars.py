@@ -349,11 +349,14 @@ def filter_stats(v):
     # Measured against action != "remove", not action == "keep" (ticket 0327).
     # The audit carries three actions: rows the filter removed ("remove"),
     # rows it kept ("keep"), and rows it kept that a later duplicate-DOI pass
-    # dropped ("deduped"). Counting only "keep" mixed two stages — 19 flagged
-    # works were protected by the filter and deduplicated afterwards, so the
-    # paper's `flagged - protected` subtraction came out 19 above the removal
-    # count it was supposed to equal. Both terms now describe the same stage;
-    # the deduplication drop is its own row in tab_corpus_flow.csv.
+    # dropped ("deduped"). Counting only "keep" mixed two stages — a few
+    # flagged works are protected by the filter and deduplicated afterwards,
+    # so the paper's `flagged - protected` subtraction came out above the
+    # removal count it was supposed to equal. Both terms now describe the same
+    # stage; the deduplication drop is its own row in tab_corpus_flow.csv.
+    #
+    # That overlap stays out of the paper on purpose: naming it costs a
+    # sentence of detail the reader does not need (author, 2026-07-27).
     flagged_protected = (flagged_mask & (audit["action"] != "remove")).sum()
     v["filter_protected"] = _int(flagged_protected)
 

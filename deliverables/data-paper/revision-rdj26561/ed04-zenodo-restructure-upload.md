@@ -19,11 +19,14 @@ the latest version.
    `data/products/`; codebook.md in `data/products/`).
 2. Zenodo → record 19236130 → **New version**. Remove the old tarball, upload
    the new one.
-3. Replace the record description with the text below. Retitle the record
-   "Six Sources" → "**Eight Sources**" (ticket 0327): the v2 corpus adds the
-   curated UNFCCC and OECD DAC layers, and the paper's related-dataset entry
-   and suggested citation now carry the eight-source title. Authors, license
-   (data CC BY 4.0, code MIT), and keywords stay unchanged.
+3. Replace the record description with the text below. Retitle the record to
+   "**A Curated Multi-Source Corpus of Climate Finance Literature, 1990–2024:
+   Multilingual Retrieval and Grey Literature**", matching the paper's own
+   title. The count leaves the title entirely (author, 2026-07-27): the v2
+   corpus adds the curated UNFCCC and OECD DAC layers, and pinning a number in
+   the title only re-opens this edit at the next harvest. The source count
+   lives in the prose, where `{{< meta corpus_sources >}}` keeps it current.
+   Authors, license (data CC BY 4.0, code MIT), and keywords stay unchanged.
 4. Fill the record metadata below (ORCID, funding). It persists across
    versions, so this is a one-time pass.
 5. Set the version field (suggested: `v2.0` — new corpus harvest, eight
@@ -56,8 +59,8 @@ the **New version** button; adding it manually duplicates the chain.
 
 ## Record description (new version)
 
-Reproducibility archive for "A Curated Corpus of Climate Finance Literature,
-1990–2024: Eight Sources, Multilingual Retrieval, and Grey Literature"
+Reproducibility archive for "A Curated Multi-Source Corpus of Climate Finance
+Literature, 1990–2024: Multilingual Retrieval and Grey Literature"
 (Research Data Journal for the Humanities and Social Sciences).
 
 The archive is structured in three parts:
