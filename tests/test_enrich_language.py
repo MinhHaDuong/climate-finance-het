@@ -460,3 +460,48 @@ class TestInvalidCodesAreReplaced:
         _apply_language_cache(df, str(cache_dir))
         assert df.loc[0, "language"] == "fr"
         assert df.loc[0, "language_provenance"] == "source"
+
+    def test_a_row_neither_cache_knows_stays_null(self, tmp_path):
+        """No cache entry, no invention: the language stays null and the
+        provenance column says nothing rather than claiming a source."""
+        import sys as _sys
+        _sys.path.insert(0, os.path.join(SCRIPTS_DIR, "harvest"))
+        from enrich_join import _apply_language_cache
+
+        cache_dir = tmp_path / "enrich_cache"
+        cache_dir.mkdir()
+        pd.DataFrame([{"key": "10.1/other", "language": "en"}]).to_csv(
+            cache_dir / "language_resolved.csv", index=False)
+        pd.DataFrame([{"key": "10.1/elsewhere", "language": "fr"}]).to_csv(
+            cache_dir / "language_detected.csv", index=False)
+
+        df = pd.DataFrame({
+            "language": [None], "doi": ["10.1/a"], "source_id": ["W1"],
+        })
+        _apply_language_cache(df, str(cache_dir))
+        assert pd.isna(df.loc[0, "language"])
+        assert df.loc[0, "language_provenance"] == ""
+
+    def test_an_uncorrected_invalid_code_is_left_as_is(self, tmp_path):
+        """When neither cache can correct a non-ISO code, the join leaves it
+        untouched — it does not blank it, and it does not label it 'source'.
+        Documents the residual population the null-rate contract tolerates."""
+        import sys as _sys
+        _sys.path.insert(0, os.path.join(SCRIPTS_DIR, "harvest"))
+        from enrich_join import _apply_language_cache
+
+        cache_dir = tmp_path / "enrich_cache"
+        cache_dir.mkdir()
+        pd.DataFrame([{"key": "10.1/other", "language": "en"}]).to_csv(
+            cache_dir / "language_resolved.csv", index=False)
+        pd.DataFrame([{"key": "10.1/elsewhere", "language": "uk"}]).to_csv(
+            cache_dir / "language_detected.csv", index=False)
+
+        df = pd.DataFrame({
+            "language": ["ua"],       # not ISO 639-1
+            "doi": ["10.1/a"],
+            "source_id": ["W1"],
+        })
+        _apply_language_cache(df, str(cache_dir))
+        assert df.loc[0, "language"] == "ua"
+        assert df.loc[0, "language_provenance"] == ""
