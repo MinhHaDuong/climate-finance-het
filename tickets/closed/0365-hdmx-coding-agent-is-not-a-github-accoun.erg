@@ -1,0 +1,163 @@
+%erg 0.1
+Title: HDMX-coding-agent is not a GitHub account: decide whether to provision one
+Created: 2026-07-27
+Author: HDMX-coding-agent
+Closed: decided and implemented: one account, procedural gate; prompt hook deleted
+
+--- log ---
+2026-07-27T15:45Z HDMX-coding-agent created
+
+2026-07-27T17:42Z decision recorded: one account, fine-grained PAT (0371), gate repaired as procedural
+2026-07-27T19:48Z HDMX-coding-agent closed — decided and implemented: one account, procedural gate; prompt hook deleted
+--- body ---
+## Context
+
+`HDMX-coding-agent` is a git author name, not a GitHub account.
+`gh api users/HDMX-coding-agent` returns 404. `AGENT_GH_TOKEN` authenticates as
+**MinhHaDuong** with scopes `gist, read:org, repo, workflow` — the repository
+owner's own token, not a scoped machine PAT.
+
+Found while verifying ticket 0343's exit criterion that agent git operations
+still authenticate. They do: the token is byte-identical before and after that
+migration, so nothing here was caused by it. What 0343 did was make the claim
+checkable, and it turned out false in three places, now corrected:
+`.claude/rules/git.md`, `docs/data-management-plan.md`, and the
+`agentic-workflow.md` include.
+
+Two consequences remain, and both need a decision rather than an edit.
+
+**The merge gate rests on self-review.** `.claude/hooks/check-reviews.sh` counts
+reviews whose author is in `AGENT_LOGINS="HDMX-coding-agent MinhHaDuong"`. The
+first never matches anything, so the gate is satisfied by the PR author
+reviewing their own PR. The file already recorded accepting `MinhHaDuong` as a
+deliberate trade ("enables web-agent merges at the cost of permitting
+self-review"); what was not known is that the other half is inert, so the cost is
+paid unconditionally rather than as a fallback.
+
+**The data-management plan describes an access-control property the project does
+not have.** The DMP is a paper-facing deliverable; a reviewer reading "scoped
+GitHub PAT for CI/automation only" would infer a separation of privilege that
+does not exist. The prose is now accurate, but accuracy was achieved by removing
+the claim, not by making it true.
+
+## The decision
+
+Three options, in increasing cost:
+
+1. **Accept and document.** The agent is the author's hands; one identity is
+   honest. Drop the dead entry from `AGENT_LOGINS` and state plainly in the DMP
+   that agent and human share forge credentials. Cheapest, and defensible for a
+   single-author project.
+2. **Provision a real machine account** with a fine-grained PAT scoped to this
+   repository. Restores the separation the docs used to claim, makes the review
+   gate meaningful, and limits blast radius if the token leaks — which is the
+   scenario ticket 0343 exists to bound.
+3. **Keep one account, fix only the gate** — require a human review that is not
+   the PR author, independent of identity. Addresses self-review without
+   provisioning anything.
+
+MOA call: option 2 buys real privilege separation at the cost of account
+management; option 1 is honest but leaves the gate ornamental.
+
+## The decision, as settled (2026-07-27)
+
+The author took option 1 for identity, refused option 2, and took the
+procedural reading of option 3.
+
+1. **One account, scope the token.** No machine account. `AGENT_GH_TOKEN`
+   becomes a *fine-grained* PAT limited to this repository, replacing the
+   classic account-wide one. Separation of privilege is by token scope, not by
+   account. Minting it is a browser action, so it left as child ticket 0371
+   (`Label: needs-human`); nothing else here depends on it.
+2. **No second GitHub account.** The option-2 framing did not survive scrutiny:
+   a machine account would not fix self-review, because the agent would open the
+   PR *and* run `/review-pr` under the same machine token. Privilege separation
+   is a token-scope question; self-review is a who-may-count question. They were
+   conflated in the ticket as written.
+3. **The gate is procedural, and now it runs.** Investigating option 3 found the
+   gate was not resting on self-review — it never fired at all. Its `matcher`
+   held permission-rule syntax (`Bash(*gh pr merge*)`), but a `matcher` matches
+   *tool names*; command-content filtering belongs in the handler's `if` field.
+   The registration was silently inert, which is why 35 of the last 40 merged
+   PRs carried zero reviews. Fixed, along with the identical defect in the
+   git-commit prompt hook. The gate asserts that the review pass ran and posted
+   findings — not that an independent party approved. Requiring a non-author
+   reviewer would stop autonomous waves merging unattended; that trade was
+   declined deliberately and is now stated in the script and the DMP.
+
+Two smaller findings landed with it: `copilot-pull-request-reviewer[bot]` is a
+genuinely independent reviewer already active on this repo and was missing from
+`AGENT_LOGINS`; and the script's `REPO` was the pre-rename slug, which resolved
+by redirect and so failed quietly rather than loudly.
+
+## What the session then observed, which revises the above
+
+The caveat below was overtaken by evidence. Editing `.claude/settings.json`
+reloaded it mid-session, and the repaired git-commit **prompt** hook fired twice
+on commands containing no `git commit` — blocking the session. So the matcher
+repair works (the hook fired at all, which it never did before), but its `if`
+filter did **not** narrow. Observation only; the cause is not established. The
+handler is `"type": "prompt"`, so `if` may be unsupported there, or unsupported
+generally.
+
+The prompt hook is therefore **deleted rather than repaired**. It sat inert for
+months and nothing missed it; a guard that cannot be verified and taxes every
+command is worse than no guard (harness policy: prefer deleting a guard to
+growing it).
+
+The merge gate stays, on an asymmetry rather than a guess: even if its `if` is
+equally inert, that handler exits early with *allow* whenever it cannot extract
+a PR number, so the worst case is a process spawn per Bash call and it can only
+ever deny a real `gh pr merge`. The prompt hook's worst case was a hard block on
+every command. Same uncertainty, opposite blast radius.
+
+`test_merge_gate_narrows_to_merge_commands` is retained deliberately. It pins
+intent — the registration must carry the filter — even though this session
+proved the runtime may ignore it. If `if` turns out to be inert for command
+handlers too, the gate should be re-cut to filter inside the script.
+
+Superseded caveat, kept for the record: live hook firing cannot be confirmed
+from the session that made the change — settings load at session start.
+
+## Relevant files
+
+- `.claude/hooks/check-reviews.sh` — `AGENT_LOGINS`, and the comment that now
+  records the dead entry
+- `docs/data-management-plan.md` § 3.2 — access management
+- `.claude/rules/git.md` — agent identity
+- `AGENTS.md` § Credentials — where a machine token would be selected via `KEYS=`
+
+## Actions
+
+1. ~~Author decides between the three options above.~~ Done — see the decision
+   section.
+2. ~~Implement the chosen one, including the DMP wording.~~ Done in this PR:
+   `.claude/settings.json`, `.claude/hooks/check-reviews.sh`,
+   `tests/test_check_reviews.py`, `docs/data-management-plan.md` § 3.2.
+3. ~~If option 2: add the machine token under its own name and select it via
+   `KEYS=` with the rename form.~~ Not applicable — option 2 declined. One
+   identity, one variable, so the rename form is unnecessary. The token swap
+   itself is ticket 0371.
+
+## Verification
+
+- [x] `check-reviews.sh` contains no login that cannot match a review author —
+      `HDMX-coding-agent` removed; `tests/test_check_reviews.py::TestHookRegistration::test_agent_logins_are_resolvable_accounts`
+      fails if it returns
+- [x] The DMP's § 3.2 claim is verifiable against the live configuration — the
+      two bullets now describe one forge identity, scope-based separation, and a
+      procedural (not independent) merge gate, each checkable against
+      `.claude/settings.json` and `check-reviews.sh`
+- [x] If a machine account exists, `gh api user` under its token returns it —
+      moot: no machine account, by decision 2
+
+## Invariants
+
+- No credential value in any committed file, test output, or PR description.
+- Whatever is decided, docs must describe what is true, not what is intended.
+
+## Exit criteria
+
+The project's forge identity is decided and documented, every doc describing it
+is verifiable, and the review gate either counts a review the author cannot
+supply alone or is honestly described as not doing so.
