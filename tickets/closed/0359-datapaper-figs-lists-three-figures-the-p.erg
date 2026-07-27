@@ -2,6 +2,7 @@
 Title: The build graph produces 22 artifacts no document renders
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1196
 
 --- log ---
 2026-07-27T16:45Z HDMX-coding-agent created
@@ -12,6 +13,7 @@ Author: HDMX-coding-agent
 2026-07-27T18:45Z HDMX-coding-agent note author decision on Action 1: delete fig_sem_composition.png, its two .mk rules, its _clean clustering chain, config/datapaper_cluster_short_labels.json and tab_sem_composition.csv — git keeps the content. History: born 2026-07-23 (0310 item 6) as the companion study's composition figure recomputed on the current corpus; orphaned 2026-07-27 by 0332's §4 whole-removal cut, which said the label question "belongs to whatever deliverable keeps the figure" — none did; the label objection was then refuted the same day by 0328 (cluster 1 runs 41.4->20.8->2.1%, the reviewer had read cluster 3). Deleted for scope, not for error. Consequence to flag: the ED-02/R1-18 response bullet loses its non-bijective-structuration clause, whose only support was the deleted figure.
 
 2026-07-27T19:30Z HDMX-coding-agent note the *_FIGS lists were half the defect. The *_INCLUDES lists — which are render-rule prerequisites, not just documentation — had drifted further: TECHREP_INCLUDES named eleven includes the report had dropped and none of the 23 it composes; DATAPAPER four; MULTILAYER all six. Three render rules named no figure at all, so `make multilayer-detection.pdf` on main renders happily with none of its five figures on disk. Fixed both contracts, wired the missing figure prerequisites, and widened the guard to includes and tables. tab_venues_fr_caption.md is not dead: manuscript.mk concatenates it into the Gide venues table. Two figures nobody declared (fig_companion_sensitivity, fig_composition_wide) gained homes; ALL_FIGS loses nothing and gains exactly those two.
+2026-07-27T18:52Z HDMX-coding-agent closed — autoclosed — PR #1196
 --- body ---
 ## Context
 
