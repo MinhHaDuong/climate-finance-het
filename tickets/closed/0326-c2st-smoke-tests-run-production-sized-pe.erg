@@ -2,11 +2,13 @@
 Title: C2ST smoke tests run production-sized permutations: 45% of the serial suite in two tests
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1132
 
 --- log ---
 2026-07-27T12:40Z HDMX-coding-agent created
 2026-07-27T12:45Z HDMX-coding-agent note fix landed — --n-perm CLI override added; the two smoke tests pass --n-perm 3; measured 462s -> 12.1s, 125 tests green in the null-model/divergence suites, ruff clean.
 
+2026-07-27T10:57Z HDMX-coding-agent closed — autoclosed — PR #1132
 --- body ---
 ## Context
 
