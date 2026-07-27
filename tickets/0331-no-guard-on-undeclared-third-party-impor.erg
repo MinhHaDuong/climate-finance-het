@@ -2,12 +2,12 @@
 Title: no guard on undeclared third-party imports in scripts/
 Created: 2026-07-27
 Author: HDMX-coding-agent
-Blocked-by: 0330
 
 --- log ---
 2026-07-27T11:02Z HDMX-coding-agent created
 2026-07-27T11:12Z HDMX-coding-agent note Class-level follow-up to 0330; the same defect already shipped once in libs/ (0211)
 
+2026-07-27T12:47Z HDMX-coding-agent note blocker 0330 closed — Blocked-by removed.
 --- body ---
 ## Context
 
