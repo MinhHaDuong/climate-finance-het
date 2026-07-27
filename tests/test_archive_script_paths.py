@@ -352,11 +352,18 @@ def _named_by_make(path, makefile_text):
     return re.search(pattern, makefile_text) is not None
 
 
-def _unresolvable(paths, owned_by=None):
+def _unresolvable(paths, *, owned_by=None):
     """Paths the named archive may not legitimately declare.
 
     `owned_by` is the archive's shared-artifact ownership set, or None when no
-    ownership applies. A path under `SHARED_ARTIFACT_DIRS` is judged by
+    ownership applies. It is keyword-only on purpose: it replaced a positional
+    `makefile_text` parameter, and a stale call site passing the Makefile blob
+    positionally bound a ~107 KB string to it and stayed green — the ownership
+    branch never fired for the `scripts/` paths that call site used, so the
+    misbinding was inert until the fixture grew a shared artifact. Keyword-only
+    makes that a `TypeError` at the call, which no fixture change can defer.
+
+    A path under `SHARED_ARTIFACT_DIRS` is judged by
     membership alone — never by disk existence, which on a machine that has run
     the pipeline resolves every paper's artifacts equally and so cannot tell
     `fig_bars.png` from `fig_bars_v1.png`.
@@ -434,7 +441,7 @@ class TestInputArrayParser:
         """The asymmetry that makes the fixture a test: the truncating parser
         passes it because it never sees the bad path, the correct one fails."""
         missing = _unresolvable(
-            _parse_input_array(_fixture_paren_comment(array), array), _makefile_text()
+            _parse_input_array(_fixture_paren_comment(array), array)
         )
         assert missing == ["scripts/no_such_helper_below_a_paren_comment.py"], (
             "a nonexistent script listed below a parenthesis-bearing comment "
