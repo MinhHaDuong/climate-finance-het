@@ -1,0 +1,123 @@
+%erg 0.1
+Title: no guard on undeclared third-party imports in scripts/
+Created: 2026-07-27
+Author: HDMX-coding-agent
+Blocked-by: 0330
+
+--- log ---
+2026-07-27T11:02Z HDMX-coding-agent created
+2026-07-27T11:12Z HDMX-coding-agent note Class-level follow-up to 0330; the same defect already shipped once in libs/ (0211)
+
+--- body ---
+## Context
+
+This defect class has now bitten twice, in two different code trees, and both
+times a human reading code caught it rather than a test.
+
+- Ticket 0211, in `libs/openalex-corpus`: the package declared only `pandas`
+  while `crawl.py` imported `requests`. The shared dev env already had
+  `requests`, so a 25-test suite stayed green over a broken clean install.
+  Fixed in #956 and guarded afterwards by
+  `tests/test_openalex_corpus_installability.py`.
+- Ticket 0330, in `scripts/`: `analyze_bimodality.py` imports `diptest`, which
+  is declared nowhere. Because the import sits in a `try/except ImportError`
+  that logs at INFO and continues, nothing was ever red — the Hartigan dip test
+  simply never ran, and shipped an empty column in a Make-wired table.
+
+The 0211 guard is scoped to the path package only: it builds a throwaway venv,
+installs `libs/openalex-corpus`, and imports its submodules. It says nothing
+about `scripts/`, which is where the bulk of the pipeline lives and where 0330
+happened. The tree with the most code has the least coverage.
+
+The warm shared dev env is what hides both: it accumulates packages from every
+extra and group ever installed, so an undeclared import resolves at author time
+and fails only for a fresh clone, a CI container, or a reproducibility-archive
+consumer. That last case matters most — the Phase-4 archives exist so a third
+party can rebuild the analysis.
+
+## Relevant files
+
+- `tests/test_openalex_corpus_installability.py` — the existing guard; the
+  model to generalise, and the precedent for making it mutation-proof
+- `pyproject.toml` — dependency groups and extras that form the declared set
+- `scripts/**/*.py` — the unguarded tree (Phase 1 and Phase 2)
+- `conception/**/*.py` — decide whether in or out of scope (see below)
+
+## Actions
+
+1. Enumerate every module-level and function-level `import X` /
+   `from X import ...` across `scripts/`, using `ast`, not regex. The 0330
+   instance is a function-local import inside a `try`, so a module-header-only
+   scan would have missed it.
+2. Partition each imported name into stdlib (`sys.stdlib_module_names`),
+   first-party (resolvable under the `scripts` or `libs/openalex-corpus/src`
+   source roots), or third-party.
+3. Assert every third-party name maps to a distribution declared in
+   `pyproject.toml`, across dependencies, optional extras, and dependency
+   groups alike. Import name and distribution name differ often enough
+   (`sklearn`/`scikit-learn`, `yaml`/`PyYAML`, `community`/`python-louvain`)
+   that a mapping table or `importlib.metadata.packages_distributions()` is
+   required; a bare name comparison produces false positives on day one.
+4. Give the test an explicit, commented allowlist for any deliberate optional
+   import, so adding one is a visible decision rather than a silent pass.
+
+## Decisions to settle while implementing
+
+- Scope. `scripts/` is certainly in. `conception/` holds salvaged exploration
+  scripts kept as provenance (see the `PLR0915` per-file ignore added in
+  PR #1128) and is arguably out — archived one-shot runs, not pipeline code.
+  Recommendation: `scripts/` only, with `conception/` excluded and the reason
+  recorded in the test docstring.
+- Tier. Pure `ast` parsing plus a `pyproject.toml` read needs no heavy import
+  and no subprocess, so the fast tier fits; it is also a contract check, which
+  makes `adherence` defensible. Recommendation: `adherence`, beside the ruff and
+  hygiene guards it resembles.
+
+## Test
+
+The guard is itself the deliverable, so it needs a mutation-proof companion in
+the 0211 style — a test proving the guard would have caught the historical
+defect:
+
+    @pytest.mark.adherence
+    def test_undeclared_import_guard_catches_a_planted_import(tmp_path):
+        """Ticket 0331. Plant an undeclared import; the scanner must flag it."""
+        planted = tmp_path / "fake_script.py"
+        planted.write_text("def f():\n    import diptest\n    return diptest\n")
+        undeclared = scan_for_undeclared_imports([planted], declared=DECLARED)
+        assert "diptest" in undeclared
+
+Note the function-local placement: that is exactly the 0330 shape, and a
+scanner reading only module headers fails this test, which is the point.
+
+## Verification
+
+- [ ] Run the scanner against current main; every name it reports is either a
+      genuine undeclared import or gets a justified allowlist entry
+- [ ] The `diptest` instance from 0330 is reported before 0330 is fixed
+- [ ] The planted-import test fails if the scanner is downgraded to a
+      module-header-only or regex implementation
+- [ ] `make lint` stays green once the allowlist is settled
+
+## Invariants
+
+- No production script changes in this ticket — it adds a test and, at most, an
+  allowlist. The `diptest` resolution itself belongs to 0330.
+- Test-suite runtime does not regress; the fast tier stays within its budget.
+
+## Exit criteria
+
+- [ ] A guard exists that fails when a `scripts/` module imports a third-party
+      package absent from `pyproject.toml`
+- [ ] It parses with `ast` and catches function-local imports inside
+      `try/except ImportError`
+- [ ] Its mutation-proof companion test is present and meaningful
+- [ ] Scope (`conception/` in or out) and tier are recorded in the test docstring
+
+## See also
+
+- 0330 — the instance that prompted this; fix it first so the guard lands green
+- 0211 (closed, PR #956) — the same class in `libs/`, and the narrow-scope guard
+  this one generalises
+- 0314 (closed, PR #1127) — the adjacent rule that a missing dependency must
+  fail loudly rather than skip a stage
