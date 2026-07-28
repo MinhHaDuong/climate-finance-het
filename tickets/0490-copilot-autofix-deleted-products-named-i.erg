@@ -1,0 +1,77 @@
+%erg 0.1
+Title: Copilot autofix deleted products_named_in's return, main is red
+Created: 2026-07-28
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-28T00:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+`origin/main` fails `make lint` with four errors in
+`tests/test_datapaper_archive_layout.py`. Reproduced on a pristine
+`origin/main` checkout, so this is main's, not a branch's.
+
+`products_named_in` returns `None`. Commit `d7d9789f` ("Potential fix for
+pull request finding", Copilot Autofix, merged as part of PR #1233 /
+ticket 0403) rewrote the token loop and dropped the trailing `return found`
+along with the lines it replaced:
+
+```
+-                found.update(os.path.basename(m.group(0))
+-                             for m in _PATHISH.finditer(token))
+-    return found
++                matches = [...]
+```
+
+The rewrite is otherwise correct — it adds the split-token case where a
+document backticks a stem and its extension separately. Only the `return`
+was collateral.
+
+Three consequences, all currently live on main:
+
+- `test_document_names_only_shipped_products` fails for all three
+  submission documents, but with the guard's *blindness* message ("names no
+  deposit product at all"), not a truthful one. The message accuses the
+  prose of the failure mode the code is actually in.
+- `test_a_retired_product_is_caught` — 0403's own red-proof — dies with
+  `TypeError: argument of type 'NoneType' is not iterable`.
+- The deposit-filename guard 0403 was filed to build has been inert since
+  it merged, roughly eleven hours.
+
+Why nothing caught it: this repo runs no CI (ticket 0321), so `make lint`
+is a purely local gate and a merged PR is no evidence main is green.
+The autofix commit was authored on the forge, where no gate ran it at all.
+
+## Relevant files
+
+- `tests/test_datapaper_archive_layout.py:86` — `products_named_in`, missing `return found`
+
+## Actions
+
+1. Restore `return found` at the end of `products_named_in`.
+2. Keep the split-token logic the autofix added; it is a real improvement.
+
+## Test
+
+Red first: `test_a_retired_product_is_caught` already is the red test — it
+fails today with `TypeError`. It passes once the return is restored, and it
+pins the parse against a synthetic document, so it travels with the guard.
+No new test is needed; the existing one was never able to run.
+
+## Verification
+
+- [ ] `uv run pytest tests/test_datapaper_archive_layout.py` → all pass
+- [ ] `make lint` → green
+- [ ] The three submission documents parse to a non-empty product set
+
+## Invariants
+
+- The split-token behaviour `d7d9789f` added must survive the fix.
+- `PROSE_PRODUCT_ALLOWLIST` and `PRODUCTS` are untouched.
+
+## Exit criteria
+
+`make lint` is green on `origin/main`, and 0403's guard is live rather
+than vacuous.
