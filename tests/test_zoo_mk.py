@@ -9,6 +9,7 @@ import re
 from pathlib import Path
 
 import pytest
+from _mk_discovery import makefile_constants
 
 ZOO_MK = (
     Path(__file__).resolve().parent.parent / "scripts" / "analysis" / "zoo-figures.mk"
@@ -22,29 +23,11 @@ ZOO_RENDER_MK = (
 SCHEMATIC_SCRIPTS_DIR = Path(__file__).resolve().parent.parent / "scripts" / "figures"
 
 
-def _make_list_re(name: str) -> re.Pattern:
-    return re.compile(
-        rf"^{name}\s*:=\s*(.*?)(?=\n\S|\n\n|\Z)",
-        re.MULTILINE | re.DOTALL,
-    )
-
-
-_CROSSYEAR_RE = _make_list_re("CROSSYEAR_METHODS")
-_SCHEMATIC_STEMS_RE = _make_list_re("ZOO_SCHEMATIC_STEMS")
-
-
-def _parse_make_list(mk: str, pattern: re.Pattern, name: str) -> list[str]:
-    m = pattern.search(mk)
-    assert m, f"{name} not found in zoo-figures.mk"
-    return [t for t in m.group(1).split() if t != "\\"]
-
-
-def _parse_crossyear_methods(mk: str) -> list[str]:
-    return _parse_make_list(mk, _CROSSYEAR_RE, "CROSSYEAR_METHODS")
-
-
-def _parse_schematic_stems(mk: str) -> list[str]:
-    return _parse_make_list(mk, _SCHEMATIC_STEMS_RE, "ZOO_SCHEMATIC_STEMS")
+def _mk_list(name: str) -> list[str]:
+    """`name`'s tokens from zoo-figures.mk, via the shared `.mk` parser (0248)."""
+    constants = makefile_constants(files=[ZOO_MK])
+    assert name in constants, f"{name} not found in zoo-figures.mk"
+    return constants[name].split()
 
 
 def _schematic_script_stems() -> set[str]:
@@ -86,15 +69,15 @@ class TestZooMkStructure:
             "crossyear-tables must be declared .PHONY"
         )
 
-    def test_crossyear_methods_has_18_methods(self, zoo_mk_text):
-        methods = _parse_crossyear_methods(zoo_mk_text)
+    def test_crossyear_methods_has_18_methods(self):
+        methods = _mk_list("CROSSYEAR_METHODS")
         assert len(methods) == 18, (
             f"Expected 18 CROSSYEAR_METHODS, got {len(methods)}: {methods}"
         )
 
-    def test_cumulative_methods_included(self, zoo_mk_text):
+    def test_cumulative_methods_included(self):
         """L3, G3, G4, G7 use cumulative/single windows — must still have recipes."""
-        methods = _parse_crossyear_methods(zoo_mk_text)
+        methods = _mk_list("CROSSYEAR_METHODS")
         for expected in (
             "L3",
             "G3_coupling_age",
@@ -103,7 +86,7 @@ class TestZooMkStructure:
         ):
             assert expected in methods, f"{expected} missing from CROSSYEAR_METHODS"
 
-    def test_schematic_stems_match_the_scripts_on_disk(self, zoo_mk_text):
+    def test_schematic_stems_match_the_scripts_on_disk(self):
         """`ZOO_SCHEMATIC_STEMS` and `plot_schematic_*.py` must name the same set.
 
         The pattern rule builds `schematic_$(stem).png` from
@@ -114,7 +97,7 @@ class TestZooMkStructure:
         the two "match exactly" and nothing enforced it (ticket 0571), so the
         assertion is set equality rather than a subset check.
         """
-        declared = set(_parse_schematic_stems(zoo_mk_text))
+        declared = set(_mk_list("ZOO_SCHEMATIC_STEMS"))
         on_disk = _schematic_script_stems()
         assert declared == on_disk, (
             "ZOO_SCHEMATIC_STEMS must match scripts/figures/plot_schematic_*.py. "

@@ -21,6 +21,7 @@ from compute_dedup_error_estimates import (
     compute_false_negatives,
     compute_false_positives,
 )
+from pipeline_loaders import load_analysis_config
 
 
 def _metric(df, name):
@@ -168,13 +169,7 @@ def test_default_thresholds_and_config_block_name_the_same_keys():
     assertion is equality, not a subset relation in either direction (ticket
     0571).
     """
-    import yaml
-
-    config_path = os.path.join(
-        os.path.dirname(__file__), "..", "config", "analysis.yaml"
-    )
-    with open(config_path) as fh:
-        cfg = yaml.safe_load(fh)
+    cfg = load_analysis_config()
 
     assert "dedup_error_estimates" in cfg, (
         "config/analysis.yaml lost its dedup_error_estimates block; "

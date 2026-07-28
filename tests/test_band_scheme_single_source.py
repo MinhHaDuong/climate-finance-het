@@ -68,9 +68,16 @@ def test_band_scheme_module_defines_the_scheme():
 
 
 def test_no_consumer_redefines_the_band_scheme():
-    """A module that re-assigns one of the names has forked the scheme."""
+    """A module that re-assigns one of the names has forked the scheme.
+
+    Scans every module under scripts/, not just the known consumers: a fourth
+    module re-introducing a literal copy is the same defect, and a hardcoded
+    consumer list would never see it (the 0357 disk-discovery precedent).
+    """
     offenders = {}
-    for path in CONSUMERS:
+    for path in sorted(SCRIPTS.rglob("*.py")):
+        if path.name == "_band_scheme.py":
+            continue
         tree = ast.parse(path.read_text())
         redefined = _module_level_assignments(tree) & BAND_SCHEME_NAMES
         if redefined:
