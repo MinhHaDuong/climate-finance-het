@@ -16,4 +16,4 @@
 | Accountability | Wiley Interdisciplinary Reviews Climate Change | 7 | 28 | 35 |
 | Accountability | Global Environmental Politics | 2 | 13 | 15 |
 
-: Revues de publication des travaux les plus cités (cités $\geq$ 50 fois), par pôle d'affectation. Chaque travail est rattaché au pôle efficacité ou redevabilité selon sa position sur l'axe sémantique (cf. note méthodologique en annexe). La colonne « Lean » indique l'orientation dominante de la revue : le pôle où se range la majorité de ses articles. {#tbl-venues}
+: Revues de publication des travaux les plus cités (cités $\geq$ 50 fois), par pôle d'affectation. Chaque travail est rattaché au pôle efficacité ou redevabilité selon sa position sur l'axe sémantique (cf. note méthodologique en annexe). La colonne « Lean » indique l'orientation dominante de la revue : une revue n'est rattachée à un pôle que si celui-ci l'emporte sur l'autre d'un facteur supérieur à 1,42 sur des effectifs lissés (rapport de cotes dont le logarithme en base 2 dépasse 0,5) ; les partages plus serrés sont notés « Shared », une simple majorité ne suffisant pas. {#tbl-venues}
