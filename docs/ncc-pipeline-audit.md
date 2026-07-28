@@ -151,11 +151,12 @@ papers: check-corpus output/content/technical-report.pdf \
         output/content/ncc-analysis.pdf
 ```
 
-### compute_vars.py update
+### Vars registry update
 
 Add an `"ncc-analysis"` entry to the `DOC_VARS` dictionary in
-`scripts/analysis/compute_vars.py` (around line 113). The NCC piece would need a
-subset of companion-paper variables, likely:
+`scripts/analysis/_vars_registry.py`, and a matching `DOC_VARS_FILE` entry naming
+the vars file the document loads. The NCC piece would need a subset of
+companion-paper variables, likely:
 - `corpus_total`, `corpus_total_approx`, `corpus_core`,
   `corpus_core_threshold`, `corpus_sources`
 - `bim_dbic_embedding`, `bim_dbic_tfidf`, `bim_corr`
@@ -265,7 +266,7 @@ are pre-built, not rebuilt on every render).
 
 ### Should-do (recommended)
 
-3. **Add NCC entry to compute_vars.py `DOC_VARS`.** Otherwise the NCC
+3. **Add NCC entry to `_vars_registry.py`'s `DOC_VARS`.** Otherwise the NCC
    document cannot use `{{< meta >}}` variables. ~10 lines.
 
 4. **Add ncc-analysis.qmd to _quarto.yml.** Required for Quarto to render

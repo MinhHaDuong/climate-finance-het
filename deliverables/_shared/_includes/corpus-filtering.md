@@ -9,9 +9,9 @@ Six flags are applied to each paper:
 1. **Missing metadata:** Papers lacking a title are always flagged. Papers missing only author or year are flagged only if the title also lacks "safe" domain words (a curated list of 30+ terms across English, French, German, Spanish, Chinese, and Japanese).
 2. **No abstract + irrelevant title:** Papers with abstracts shorter than 50 characters whose titles lack safe domain words. (Re-evaluated after abstract enrichment — papers that gained abstracts may be unflagged.)
 3. **Title blacklist:** Papers whose titles contain noise terms (e.g., "blockchain," "cryptocurrency," "deep learning," "metaverse") but no safe domain words.
-4. **Citation isolation:** Papers published in 2019 or earlier that are neither cited by nor citing any other paper in the corpus. Requires `citations.csv` from §2.3.
-5. **Semantic outlier:** Papers whose embedding cosine distance from the corpus centroid exceeds mean + 2 standard deviations. Requires `embeddings.npz` from §2.4.
-6. **Cross-encoder relevance:** Papers with weak concept-group coverage (fewer than 2 of 4 groups: climate, finance, development, environment) are scored by a cross-encoder reranker model (`BAAI/bge-reranker-v2-m3`, 568M parameters) against the query "climate policy and financial mechanisms." Papers scoring below the calibrated threshold (0.002) are flagged as irrelevant. This replaced an earlier LLM-based classification (Gemini Flash via OpenRouter) for speed, cost, and reproducibility. See §3.1 for calibration details.
+4. **Citation isolation:** Papers published in {{< meta filter_citation_max_year >}} or earlier that are neither cited by nor citing any other paper in the corpus. Requires `citations.csv` from §2.3.
+5. **Semantic outlier:** Papers whose embedding cosine distance from the corpus centroid exceeds mean + {{< meta filter_outlier_sigma >}} standard deviations. Requires `embeddings.npz` from §2.4.
+6. **Cross-encoder relevance:** Papers with weak concept-group coverage (fewer than {{< meta filter_min_concept_groups >}} of {{< meta filter_concept_group_n >}} groups: {{< meta filter_concept_groups >}}) are scored by a cross-encoder reranker model (`BAAI/bge-reranker-v2-m3`, 568M parameters) against the query "climate policy and financial mechanisms." Papers scoring below the calibrated threshold ({{< meta filter_reranker_threshold >}}) are flagged as irrelevant. This replaced an earlier LLM-based classification (Gemini Flash via OpenRouter) for speed, cost, and reproducibility. See §3.1 for calibration details.
 
 | Flag | Prerequisite | Phase available |
 |------|-------------|----------------|
@@ -22,11 +22,11 @@ Six flags are applied to each paper:
 | 5. Semantic outlier | `embeddings.npz` | Full filter only |
 | 6. Cross-encoder relevance | Abstracts | Full filter only |
 
-Flag 6 uses a cross-encoder reranker (`BAAI/bge-reranker-v2-m3`, 568M parameters) to score each paper's relevance to "climate policy and financial mechanisms." The model is deterministic, reproducible, and runs locally. The query was selected from 100 candidates (best AUC = 0.766 on weak labels; human validation AUC = 0.818). Threshold 0.002 yields 81% accuracy on a blinded 100-paper sample. See the Annex for full calibration details.
+Flag 6 uses a cross-encoder reranker (`BAAI/bge-reranker-v2-m3`, 568M parameters) to score each paper's relevance to "climate policy and financial mechanisms." The model is deterministic, reproducible, and runs locally. The query was selected from 100 candidates (best AUC = 0.766 on weak labels; human validation AUC = 0.818). Threshold {{< meta filter_reranker_threshold >}} yields 81% accuracy on a blinded 100-paper sample. See the Annex for full calibration details.
 
 ### Phase B: Protection
 
-Papers are protected from removal if they meet any of: cited_by_count >= 50, appear in 2+ sources, are cited within the corpus, or appear in the teaching canon (`from_teaching` flag).
+Papers are protected from removal if they meet any of: cited_by_count >= {{< meta protect_min_cited >}}, appear in {{< meta protect_min_sources >}}+ sources, are cited within the corpus, or appear in the teaching canon (`from_teaching` flag).
 
 ### Phase C: Verification
 

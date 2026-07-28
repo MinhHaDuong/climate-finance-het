@@ -1,8 +1,12 @@
-"""Compute corpus statistics and write per-document vars files for Quarto.
+"""Compute corpus statistics and write the vars files Quarto reads.
 
-Reads pipeline outputs (CSVs, NPZ, JSON) and produces one YAML file per
-Quarto document, each containing only the variables that document uses.
-Quarto injects them via {{< meta key >}} shortcodes.
+Reads pipeline outputs (CSVs, NPZ, JSON) and writes one YAML file per distinct
+path in `DOC_VARS_FILE`, each carrying only the variables the documents that
+load it use. Quarto injects them via {{< meta key >}} shortcodes.
+
+Which document declares what lives in `_vars_registry`; this module holds the
+collectors that produce the values. Both registry names are re-exported here,
+since the guards that read the registry import them from this module.
 
 Usage:
     uv run python scripts/analysis/compute_vars.py
@@ -15,7 +19,7 @@ import warnings
 
 import numpy as np
 import pandas as pd
-from _vars_registry import DOC_OUTPUT_DIR, DOC_VARS
+from _vars_registry import DOC_VARS, DOC_VARS_FILE
 from _vars_retrieval import retrieval_protocol_stats
 from pipeline_io import latest_run_report
 from pipeline_loaders import load_refined_citations, load_refined_works
@@ -35,8 +39,8 @@ log = get_logger("compute_vars")
 TABLES_DIR = os.path.join(BASE_DIR, "deliverables", "_shared", "tables")
 CONTENT_DIR = os.path.join(BASE_DIR, "deliverables", "_shared")
 
-# The per-document variable registry (DOC_VARS, DOC_OUTPUT_DIR) lives in
-# _vars_registry.py and is re-exported here for its importers.
+# Re-exported for the guards that read the registry through this module.
+__all__ = ["DOC_VARS", "DOC_VARS_FILE", "main"]
 
 MISSING = "[MISSING]"
 
@@ -642,18 +646,26 @@ def main():
     ):
         v.setdefault(_k, MISSING)
 
-    # Write per-document vars files
+    # Write the vars files, one per distinct path in DOC_VARS_FILE. A file
+    # several documents load carries the union of their keys; the missing-key
+    # report stays per-document, since that is the granularity at which a
+    # variable is registered.
     all_missing = []
+    per_file = {}
     for doc_name, keys in DOC_VARS.items():
-        doc_v = {k: v[k] for k in keys if k in v}
         missing = [k for k in keys if k not in v]
         if missing:
             log.warning("%s: %d variables missing: %s", doc_name, len(missing), missing)
             all_missing.extend(f"{doc_name}:{k}" for k in missing)
-        out_dir = DOC_OUTPUT_DIR[doc_name]
-        os.makedirs(out_dir, exist_ok=True)
-        path = os.path.join(out_dir, f"{doc_name}-vars.yml")
-        write_yaml(doc_v, path)
+        # A shared vars file is the union of its documents' declared keys.
+        # `dict.fromkeys` rather than a set only because iteration order is then
+        # deterministic within a run; it does not affect the file, which
+        # `write_yaml` writes sorted either way.
+        per_file.setdefault(DOC_VARS_FILE[doc_name], {}).update(dict.fromkeys(keys))
+
+    for path, keys in per_file.items():
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        write_yaml({k: v[k] for k in keys if k in v}, path)
 
     if all_missing:
         log.error(
@@ -668,6 +680,6 @@ if __name__ == "__main__":
     io_args, _extra = parse_io_args()
     validate_io(output=io_args.output)
     # --output receives the primary output path (first vars file) for the Make
-    # grouped-target contract; each doc's vars file is routed to its own
-    # deliverable folder via DOC_OUTPUT_DIR (ticket 0226).
+    # grouped-target contract; each vars file is routed to its own path via
+    # DOC_VARS_FILE (tickets 0226, 0357).
     main()

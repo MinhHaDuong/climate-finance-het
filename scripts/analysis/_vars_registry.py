@@ -1,24 +1,45 @@
-"""Per-document variable registry for compute_vars (ticket 0334 split).
+"""Which variables each document declares, and which file they are written to.
 
-Pure data: which variables each Quarto document uses, and where each
-document's -vars.yml lands. The collectors that *compute* the values stay in
-compute_vars.py; this module holds only the registration, so the registry can
-grow without pushing the collector module over the size ceiling. Tests import
-it through compute_vars (`compute_vars.DOC_VARS`), which re-exports both
-names.
+Split out of `compute_vars.py` when registering corpus-report pushed that
+module past the god-module cap (ticket 0357). The split follows the seam that
+was already there: this module is the *registry* — a document-keyed contract
+that changes whenever prose gains or loses a `{{< meta >}}` macro — while
+`compute_vars` holds the *collectors* that read pipeline outputs. The two churn
+for unrelated reasons.
+
+`compute_vars` re-exports both names, so `from compute_vars import DOC_VARS`
+keeps working for the guards that read the registry.
 """
 
 import os
 
-from _vars_retrieval import RETRIEVAL_VARS
+from _vars_retrieval import FLAG_RULE_VARS, RETRIEVAL_VARS
 from utils import BASE_DIR
 
-# Each document's -vars.yml lands in its own deliverable folder (ticket 0226).
-# technical-report-vars.yml is shared by 4 docs, so it lives in _shared/.
-DOC_OUTPUT_DIR = {
-    "technical-report": os.path.join(BASE_DIR, "deliverables", "_shared"),
-    "data-paper": os.path.join(BASE_DIR, "deliverables", "data-paper"),
-    "multilayer-detection": os.path.join(BASE_DIR, "deliverables", "multilayer"),
+# The metadata file each document loads, matching the `metadata-files:` line in
+# its front matter. Most documents get a sibling -vars.yml in their own
+# deliverable folder (ticket 0226); four share technical-report-vars.yml, which
+# is why it lives in _shared/.
+#
+# Sharing is declared here rather than left implicit in the render (ticket
+# 0357). A document absent from this registry still renders — Quarto resolves
+# whatever the shared file happens to carry and writes `?meta:key` for the rest,
+# exit 0 — so an unregistered document does not fail, it quietly under-declares.
+# corpus-report did exactly that for 12 keys. Every shared file is written with
+# the union of its documents' keys.
+SHARED_VARS_FILE = os.path.join(BASE_DIR, "deliverables", "_shared", "technical-report-vars.yml")
+
+DOC_VARS_FILE = {
+    "technical-report": SHARED_VARS_FILE,
+    "corpus-report": SHARED_VARS_FILE,
+    "multilayer-detection-techrep": SHARED_VARS_FILE,
+    "breakpoint-detect-method-zoo": SHARED_VARS_FILE,
+    "data-paper": os.path.join(
+        BASE_DIR, "deliverables", "data-paper", "data-paper-vars.yml"
+    ),
+    "multilayer-detection": os.path.join(
+        BASE_DIR, "deliverables", "multilayer", "multilayer-detection-vars.yml"
+    ),
 }
 
 # Which variables each document uses (direct + {{< include >}}'d files).
@@ -29,6 +50,43 @@ DOC_VARS = {
     "technical-report": [
         "corpus_total",
         "emb_dimensions",
+    ],
+    # Three documents that also load technical-report-vars.yml. The first two
+    # happened to resolve because they quote the same two variables the
+    # technical report does; corpus-report did not, and rendered 12 `?meta:`
+    # placeholders until ticket 0357 registered it.
+    "multilayer-detection-techrep": [
+        "corpus_total",
+        "emb_dimensions",
+    ],
+    "breakpoint-detect-method-zoo": [
+        "corpus_total",
+        "emb_dimensions",
+    ],
+    "corpus-report": [
+        # direct + includes: corpus-construction, corpus-enrichment,
+        #   corpus-filtering, metadata/embedding/citation-quality,
+        #   core-vs-full-definition, reproducibility, annex-crossencoder,
+        #   teaching-convergence
+        "cite_coverage_pct",
+        "cite_crossref_rows",
+        "cite_doi_ref_pct",
+        "cite_doi_ref_rows",
+        "cite_fetched_dois",
+        "cite_never_fetched",
+        "cite_total_dois",
+        "cite_total_rows",
+        "corpus_core",
+        "corpus_core_threshold",
+        "corpus_sources",
+        "corpus_total",
+        "corpus_with_embeddings",
+        # Flag 6 and Phase B thresholds, read from config (ticket 0357).
+        *FLAG_RULE_VARS,
+        "filter_outlier_sigma",
+        "filter_reranker_threshold",
+        "protect_min_cited",
+        "protect_min_sources",
     ],
     "data-paper": [
         # direct + includes: corpus-construction, corpus-filtering,

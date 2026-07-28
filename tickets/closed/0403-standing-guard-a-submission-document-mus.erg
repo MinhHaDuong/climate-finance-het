@@ -2,6 +2,7 @@
 Title: Standing guard: a submission document must not name a deposit file the build does not ship
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: guard landed on main via PR #1233; merged outside erg-pr-merge so the close did not ride it
 
 --- log ---
 2026-07-27T19:13Z HDMX-coding-agent created
@@ -10,6 +11,7 @@ Author: HDMX-coding-agent
 2026-07-28T07:20Z HDMX-coding-agent note origin/main is red on this guard: 4 failures in test_datapaper_archive_layout, reproducible on a branch with zero commits. Three are test_document_names_only_shipped_products on response-letter.md, summary-of-revisions.md and ed04-zenodo-restructure-upload.md ("names no deposit product at all"); the fourth is test_a_retired_product_is_caught failing with TypeError: argument of type 'NoneType' is not iterable, which is the guard's own self-test and points at d7d9789f "Potential fix for pull request finding" rather than at the prose. Found incidentally by a make lint run from ticket 0470; not diagnosed further
 2026-07-28T09:05Z HDMX-coding-agent note Diagnosed and repaired: d7d9789f restructured the token loop of products_named_in to expand ed04's split-extension shorthand and dropped `return found`, so the function returned None — all four failures were that one guard bug (the three docs read as naming nothing via `assert None`; the self-test hit TypeError on `in None`). The prose was never at fault. Fix restores the return and adds test_a_split_extension_shorthand_is_expanded as red-proof for the previously untested shorthand branch. Guard stands; ticket stays open
 
+2026-07-28T08:29Z HDMX-coding-agent closed — guard landed on main via PR #1233; merged outside erg-pr-merge so the close did not ride it
 --- body ---
 ## Context
 

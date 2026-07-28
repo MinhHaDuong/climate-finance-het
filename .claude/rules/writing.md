@@ -66,6 +66,8 @@ Prose adherence tests (`tests/test_manuscript_prose.py`) pin only **negative gua
 
 Positive editorial intent lives in `docs/editorial-brief.md` — one entry per standing decision (**Decision** / **Rationale** / **Ticket** / **Status**) — and is checked at review time by the `/review-pr-prose` brief auditor against each diff.
 
+**Pure prose tickets get no `## Test` section: TDD is not appropriate.** The red step assumes a machine-checkable positive outcome, and the polarity rule above says prose has none. Verification is review-based: the recompiled artifact and the `/review-pr-prose` panel. A prose ticket extends `tests/test_manuscript_prose.py` only when it pins a newly-observed defect class (negative or mechanical, per the polarity rule), never pro forma to satisfy the handoff template.
+
 ## Testing
 
 `make check-fast` before editing. `make clean` then `make all` (separate Bash calls) as integration test before PR.
