@@ -2,10 +2,12 @@
 Title: run_corpus_pipeline.sh auto-commits and pushes dvc.lock straight to main
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1287
 
 --- log ---
 2026-07-27T14:40Z HDMX-coding-agent created found while scoping 0336: the sign-off invariant Flag 5 depends on is not operationalized
 
+2026-07-28T20:31Z HDMX-coding-agent closed — autoclosed — PR #1287
 --- body ---
 ## Context
 

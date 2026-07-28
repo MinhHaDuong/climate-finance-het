@@ -180,14 +180,16 @@ all: manuscript papers
 # Padme is the data authority. Run the pipeline on padme, pull on doudou.
 #
 # On padme (pipeline run):
-#   make corpus                      # dvc repro + push + commit lock
+#   make corpus                      # dvc repro + dvc push (never commits)
 #
 # On doudou (sync only):
 #   make corpus-sync                 # git pull + dvc pull
 #   make figures && make manuscript  # Phase 2 + 3 (no DVC needed)
 
 # Full pipeline — run on padme only (GPU, API access).
-# After dvc repro + push, auto-commits dvc.lock if it's the only change.
+# After dvc repro + push, this target NEVER commits. If dvc.lock changed it
+# prints the diff and exits 1 — land the lock via branch + merge request
+# (ticket 0362).
 corpus:
 	bash scripts/run_corpus_pipeline.sh
 

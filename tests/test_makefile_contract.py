@@ -51,7 +51,7 @@ class TestTargetPresence:
     def test_corpus_target_delegates_to_script(self):
         """The 'corpus' meta-target must delegate to run_corpus_pipeline.sh.
 
-        The pipeline logic (guards, dvc repro, auto-commit) lives in a
+        The pipeline logic (guards, dvc repro, the publication gate) lives in a
         standalone bash script for testability and readability. The Makefile
         simply invokes it.
         """

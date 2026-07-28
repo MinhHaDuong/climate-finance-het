@@ -75,7 +75,10 @@ Reviewer asks to include 2025 data or additional sources.
 
 1. Create ticket branch: `t{N}-corpus-expansion-{description}`
 2. Update `config/corpus_collect.yaml` (year_max, new queries)
-3. Run full pipeline: `make corpus` (on padme — GPU, API access)
+3. Run full pipeline: `make corpus` (on padme — GPU, API access). It exits 1
+   by design once `dvc.lock` changes — that refusal is the expected outcome of
+   a corpus-changing run, not a failure. Review the printed diff, then commit
+   `dvc.lock` onto the ticket branch yourself (ticket 0362).
 4. Verify: `make corpus-validate` (acceptance tests)
 5. Freeze new v2 config: `config/v2_*`
 6. Regenerate all figures: `make figures`
