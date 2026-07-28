@@ -1,0 +1,78 @@
+%erg 0.1
+Title: The venue table's "Lean" caption describes a majority test, but the code applies a log-odds threshold
+Created: 2026-07-28
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-28T17:25Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Surfaced by the review panel on PR #1274 (ticket 0610), which regenerated
+`tab_venues.md` against the current corpus.
+
+`scripts/figures/export_tab_venues.py` builds the caption at lines 144–145:
+
+> "Lean" indicates the venue's overall orientation: journals where a majority
+> of core papers fall on one side.
+
+but assigns the label at lines 89–94 from a log-odds ratio with a ±0.5
+threshold, not from a majority. The two agree only when every `Shared` row is
+close to an even split.
+
+Until PR #1274 they did agree by luck: the sole `Shared` row was CIFOR eBooks at
+12/12, a true tie, so a reader checking the caption against the table found it
+accurate. The regenerated table drops that row and labels **Nature Climate
+Change `Shared` at 13/17** — a 57% accountability majority. The caption now
+tells the reader something the table visibly contradicts.
+
+This reaches a rendered deliverable: `tab_venues.md` is included by the Œconomia
+manuscript as `@tbl-venues`.
+
+Not fixed in #1274 because the two available fixes are not equivalent and the
+choice is the author's:
+
+- **Fix the caption** — describe the actual rule (a log-odds threshold, i.e.
+  "journals whose split is at least 2:1 one way"). Keeps every current row.
+- **Fix the threshold** — make `lean()` a genuine majority test. Changes which
+  venues carry which label, and would move Nature Climate Change back to
+  `Accountability`.
+
+The first is a prose change to a generated caption; the second changes a
+published table's content. They are different claims about what the table is
+for.
+
+## Relevant files
+
+- `scripts/figures/export_tab_venues.py` — caption at 140–147, `lean()` at 89–94
+- `deliverables/_shared/tables/tab_venues.md` — the generated table
+- `deliverables/_shared/tables/tab_venues_fr_caption.md` — the French caption,
+  which must move with whichever fix is chosen
+- `deliverables/manuscript/manuscript.qmd:329` — cites `@tbl-venues`
+
+## Actions
+
+1. Author decides: caption or threshold.
+2. Apply it in `export_tab_venues.py`, and mirror any caption wording into the
+   French caption file.
+3. Regenerate `tab_venues.md` and `tab_venues_fr.md` from a corpus-present
+   worktree.
+
+## Test
+
+If the threshold changes, the red step is a unit test on `lean()` pinning the
+boundary cases (a 13/17 split, an exact tie, a 2:1 split). If only the caption
+changes, there is no red step — it is prose, per the polarity rule in
+`.claude/rules/writing.md`.
+
+## Verification
+
+- [ ] Caption and `lean()` describe the same rule
+- [ ] French caption matches the English one
+- [ ] Both tables regenerated
+
+## Exit criteria
+
+A reader can check the "Lean" column against the Eff./Acc. counts and find the
+caption's stated rule holds for every row.
