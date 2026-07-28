@@ -1,0 +1,82 @@
+%erg 0.1
+Title: A document can assert what the real data does not support, and no guard covers the general class
+Created: 2026-07-28
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-28T18:09Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Tracking ticket, opened at the 2026-07-28 raid wrap-up (tickets 0570, 0571,
+0625). Three independent findings this raid share one shape — a document
+renders successfully (exit 0) while asserting something the underlying data
+does not support — and each was caught by a different, narrowly-scoped
+mechanism:
+
+- **0357** (closed): a corpus-report page quoted a variable no vars registry
+  defined; the render oracle catches unresolved `{{< meta >}}` references.
+- **0570** (closed, this raid): a vars file shipped the literal string
+  `[MISSING]` into five keys, and a results paragraph quoted them —
+  `[MISSING]` *resolves*, so the render oracle is blind to it by
+  construction. Fixed by a new sentinel-value guard
+  (`test_no_deliverable_quotes_a_sentinel_value`) plus, on the same PR, an
+  author-arbitrated prose rewrite once the real numbers turned out to
+  contradict the paragraph.
+- **0651** (open, filed this raid): figure scripts behind `@fig-terms` and
+  `@fig-community` fall back to *synthetic placeholder data* (pixels, not
+  text — a `TODO(t0064)` stamp invisible to `pdftotext`) when their input
+  tables are absent, and the results prose describes the figure as real.
+  Neither the render oracle, the sentinel guard, nor a text-mode PDF sweep
+  can see it.
+
+Each fix closes its own mechanism (unresolved reference / literal sentinel
+string / synthetic-fallback branch) but not the general property: nothing
+currently asserts "every quantitative or figural claim in a rendered
+deliverable traces to data the pipeline actually computed." A fourth
+mechanism — a hand-typed number that was once correct and never re-verified
+against a rebuilt table — is the same shape again, the exact failure the
+"numbers in prose must be vars-driven" project insight already warns about;
+ticket 0641 (open) audits a related but distinct facet, corpus-vs-artifact
+drift for tracked tables specifically, not fabrication or sentinel leakage.
+
+## Relevant files
+
+- `tests/test_render_placeholders.py` — the 0357 render-oracle guard
+- `tests/test_no_deliverable_quotes_a_sentinel_value` (0570) — the sentinel guard
+- `tickets/0651-figure-scripts-fall-back-to-synthetic-pl.erg` — the open
+  synthetic-fallback variant
+- `tickets/0641-audit-all-tracked-phase-2-artifacts-for.erg` — the open
+  corpus-drift variant, tracked tables only
+- `deliverables/*/` — the rendered documents at risk
+
+## Actions
+
+1. Once 0651 lands, review whether its "script must not fabricate data,
+   must fail loudly instead" pattern generalizes to a repo-wide lint: sweep
+   every producer script (not just the multilayer figures) for a
+   fallback-to-synthetic-data branch and fail-loud instead.
+2. Assess whether a single audit ("does every `{{< meta >}}`/`@fig-`/`@tbl-`
+   reference in every deliverable trace to a producer that ran on the
+   currently-pinned corpus, with no fallback and no hand-typed literal in
+   between") is buildable as one guard, or whether the class is inherently
+   multi-mechanism and the right answer is a checklist wired into
+   `/submission-readiness` rather than a single test.
+3. Decide whether 0641 should be folded into this ticket's scope or stay a
+   sibling (0641 is narrower — tracked-artifact drift only, no fabrication
+   or sentinel angle).
+
+## Verification
+
+- [ ] Either a repo-wide guard exists covering fabricated/sentinel/drifted
+      claims in rendered deliverables, or an explicit decision records why
+      the three mechanisms are being kept separate on purpose
+
+## Exit criteria
+
+A decision is made and recorded: consolidate the render-integrity checks
+(0357's oracle, 0570's sentinel guard, 0651's anti-fabrication guard, 0641's
+drift audit) into one documented invariant with one entry point, or
+explicitly keep them as separate per-mechanism guards with the reasoning
+for not unifying written here.
