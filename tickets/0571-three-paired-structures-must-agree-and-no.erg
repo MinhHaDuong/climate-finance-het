@@ -1,0 +1,98 @@
+%erg 0.1
+Title: Three paired structures must agree and nothing asserts they do
+Created: 2026-07-28
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-28T00:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Found by the ticket-0357 wrap-up sweep. 0357 split one registry into
+`DOC_VARS` and `DOC_VARS_FILE` and added
+`test_the_two_registry_halves_name_the_same_documents` to assert their key
+sets match. The sweep looked for the same shape elsewhere: two structures that
+must agree, kept in step by a comment rather than a check.
+
+Three instances, all currently in agreement — so this closes a gap rather than
+fixing a break. What makes each worth a test is that divergence is **silent**:
+no exception, no missing target, just wrong or absent output at exit 0. A
+comment saying "must match" is evidence someone already foresaw the drift and
+had no way to enforce it.
+
+## The three
+
+**1. Band-scheme constants, triplicated.**
+`N_COMMUNITIES`, `BAND_NAMES`/`COMMUNITY_NAMES`, `BAND_COLORS_RGB` are hand-copied in
+`scripts/analysis/analyze_genealogy.py:141-144` (source of truth),
+`scripts/figures/plot_genealogy.py:62-64` ("must match analyze_genealogy.py"),
+and `scripts/figures/plot_genealogy_html.py:54-56` (same comment).
+Each module reads only its own copy. Re-theming the static PNG without touching
+the other two yields `fig_genealogy.png` and `fig_genealogy.html` — both real
+Make targets (`Makefile:512,516`) — that disagree on which colour means which
+lineage band. No test references any of the three names.
+
+**2. `DEFAULT_THRESHOLDS` vs `config/analysis.yaml`.**
+`scripts/analysis/compute_dedup_error_estimates.py:59-64` ("keep the two in
+sync") vs `config/analysis.yaml:231-235`. `_load_thresholds()` does
+`{**DEFAULT_THRESHOLDS, **cfg}` where `cfg` is
+`load_analysis_config().get("dedup_error_estimates", {})` — so a renamed or
+deleted *block* falls back to the hardcoded defaults with no warning.
+`tests/test_dedup_error_estimates.py` exercises `DEFAULT_THRESHOLDS` but never
+opens the config to compare.
+
+**3. `ZOO_SCHEMATIC_STEMS` vs the scripts on disk.**
+`scripts/analysis/zoo-figures.mk:21-26` ("stems match the plot_schematic_*.py
+script suffixes exactly") vs the 17 `scripts/analysis/plot_schematic_*.py`
+files. Adding a script without adding its stem does not error — `make
+zoo-figures` simply never builds that panel and the deliverable ships without
+it. `tests/test_zoo_mk.py` checks the pattern rule and `CROSSYEAR_METHODS`, but
+never globs the schematic scripts.
+
+## Relevant files
+
+- `scripts/analysis/analyze_genealogy.py:141-144`, `scripts/figures/plot_genealogy.py:62-64`, `scripts/figures/plot_genealogy_html.py:54-56`
+- `scripts/analysis/compute_dedup_error_estimates.py:59-64`, `config/analysis.yaml:231-235`
+- `scripts/analysis/zoo-figures.mk:21-26`, `scripts/analysis/plot_schematic_*.py`
+- `tests/test_doc_vars_completeness.py` — the reference implementation from 0357
+
+## Actions
+
+1. For **1**, prefer deletion to assertion: derive the two figure modules'
+   constants from `analyze_genealogy` by import rather than testing three
+   copies agree. A parity test is the fallback when a shared definition is not
+   reachable; here it is.
+2. For **2** and **3**, add the parity assertions — the config block and the
+   Makefile list are genuinely separate artifacts and cannot be collapsed.
+3. Consider whether `_load_thresholds()` should warn when the config block is
+   absent instead of falling back silently.
+
+## Test
+
+Red first, one per instance, each red-tested in **both** directions — dropping
+an entry from each side in turn. A one-directional check passes a guard that
+only asserts one subset relation, which is the trap
+`[[feedback_split_contract_needs_parity]]` records.
+
+For **3** the red step is mechanical: add a throwaway
+`plot_schematic_XXTEST.py`, confirm the guard fails, remove it.
+
+## Verification
+
+- [ ] Each guard fails when its pair is made to diverge, both directions
+- [ ] `make lint` and `make check` pass with all three in place
+- [ ] Instance 1 has one definition, not three, or a test explaining why not
+
+## Invariants
+
+- No figure output changes: this is a refactor plus guards, and
+  `fig_genealogy.png` must be byte-identical before and after (see the
+  refactor-validation rule — byte-compare the artifact, not just green tests).
+- The `{**DEFAULT_THRESHOLDS, **cfg}` override order stays as it is; config
+  still wins over the defaults.
+
+## Exit criteria
+
+No pair in this ticket can diverge without a test failing, and the band scheme
+has one definition rather than three.
