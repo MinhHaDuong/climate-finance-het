@@ -41,11 +41,63 @@ pinned by `tests/test_hash_seed_determinism.py` and `make determinism-check`.
 
 ## Verification
 
-- [ ] Every tracked Phase-2 artifact rebuilt and diffed
-- [ ] Each diff classified; substantive ones reconciled with citing prose
-- [ ] Submission-record artifacts left for author arbitration
+- [x] Every tracked Phase-2 artifact rebuilt and diffed
+- [x] Each diff classified; substantive ones reconciled with citing prose
+- [x] Submission-record artifacts left for author arbitration
 
 ## Exit criteria
 
 All tracked Phase-2 artifacts match what their producers emit from the pinned
 corpus, or carry an explicit author decision to stay as committed.
+
+## Result (2026-07-28)
+
+63 git-tracked artifacts under `deliverables/_shared/{tables,figures,_includes}/`.
+Producers were discovered from the Make database (`make -n <target>` per file),
+not from a hand list. Rebuild: `make -j4 NJOBS=6` on the corpus `dvc.lock` pins,
+`PYTHONHASHSEED=0` / `SOURCE_DATE_EPOCH=0` (already exported by the Makefile).
+No producer in the set touches the null-model chain. Every rebuilt target's
+mtime was checked, so "clean" means "regenerated and byte-identical", not
+"make skipped it".
+
+| Class | n | Members |
+|---|---|---|
+| Clean | 20 | `fig_composition`, `fig_composition_wide`, `fig_global_map_direct`, `fig_traditions_pre2008_citers`; `tab_citation_coverage_periods`, `tab_citation_verification`, `tab_corpus_flow`, `tab_corpus_sources`, `tab_dedup_error_estimates`, `tab_filter_ablation`, `tab_lit_confirmations`, `tab_network_limitations`, `tab_reference_counts`, `tab_reranker_validation`, `tab_retrieval_protocol.csv`, `tab_retrieval_protocol.md`, `tab_sem6_assignments`, `tab_semantic_robustness`, `tab_variables.md`, `tab_venues.md` |
+| Cosmetic | 0 | — |
+| Substantive, committed | 3 | `fig_breaks.png`, `tab_null_separation_pre2007.csv`, `tab_pre2007_coverage.csv` |
+| Substantive, reverted | 2 | `fig_bars_v1.png`, `fig_global_map_cocitation.png` |
+| No producer | 37 | 34 `_includes/*.md`, `figures/scratch/scout_tradition_coupling.png`, `tab_venues_fr.md`, `tab_venues_fr_caption.md` |
+| Excluded | 1 | `qa_cocitation_edges_report.json` (author decision: dated live-Crossref probe of record) |
+
+Today's earlier merges all verify clean: 0610 (`tab_venues.md`,
+`fig_traditions_pre2008_citers.png`), 0625 (`tab_network_limitations.csv`),
+0640 (venue captions).
+
+Findings that outlive this ticket, all reported rather than fixed here:
+
+1. `fig_bars_v1.png` is not actually frozen. `manuscript.qmd` A.2 declares
+   `@fig-bars` frozen on the first-submission corpus, but `plot_fig1_bars.py
+   --v1-only` filters the live `in_v1` column of `refined_works.csv`, so the
+   figure is recomputed from a mutable corpus; four year-bars moved. The
+   committed PNG is the only record of the submitted figure.
+2. `config/community_registry.yml` keys hand-curated community labels and
+   colours on Louvain community *ids*. Its own comment warns they are stable
+   only for a fixed seed; they are also only stable for a fixed corpus. On the
+   pinned corpus 7 of 9 registered co-citation communities lose their name and
+   colour, and `plot_fig_global_map.auto_label` renders three of them as the
+   literal string `nan nan` (the ticket 0550 NaN-formatting class).
+3. `tab_venues_fr.md` / `tab_venues_fr_caption.md` have no producer: they are
+   hand-maintained French translations whose data body must be kept in sync
+   with the generated `tab_venues.md` by hand. They match at HEAD; nothing
+   would catch it if they stopped matching.
+4. `tab_citation_verification.csv` is derived from a live-Crossref probe
+   (`qa_citations.py`, 300 links) — the same class the author froze for
+   `qa_cocitation_edges_report.json`. It reproduced byte-identically this time,
+   so no action was needed, but whether it should also be frozen is an author
+   call.
+
+Prose that moves, for author arbitration (not edited by this branch):
+`manuscript.qmd` A.5 quotes `84 nodes, 369 edges`, within-tradition share
+`0.89`, null `0.37`, `z ≈ 25`, and "only about three co-citation-core nodes
+match". The pinned corpus now gives 109 / 466, 0.878, 0.353, z ≈ 28.1, and
+seven anchor nodes with eight edges.
