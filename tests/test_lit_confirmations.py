@@ -250,6 +250,24 @@ def test_permutation_floor_is_reported_as_a_bound_not_an_equality():
     )
 
 
+def test_perm_p_formatter_bounds_the_floor_and_estimates_above_it():
+    """`_fmt_perm_p` switches comparator at the resolution floor.
+
+    At the floor the bound is the floor rounded UP to one significant digit,
+    so the printed inequality stays true (1/101 is 0.00990..., and
+    'p < 0.0099' would overstate); above it the equality form is _fmt_p's.
+    """
+    import sys
+
+    sys.path.insert(0, os.path.join(SCRIPTS, "analysis"))
+    from compute_vars import _fmt_perm_p
+
+    assert _fmt_perm_p(1 / 101, 100) == "< 0.01"
+    assert _fmt_perm_p(2 / 101, 100) == "= 0.0198"
+    assert _fmt_perm_p(1 / 501, 500) == "< 0.002"
+    assert _fmt_perm_p(0.03, 100) == "= 0.0300"
+
+
 def test_no_hardcoded_p_values_in_prose_bullets():
     """The confirmation bullets carry no literal p = 0.x digits."""
     import re
