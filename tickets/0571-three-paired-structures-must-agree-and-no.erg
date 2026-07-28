@@ -7,6 +7,7 @@ Author: HDMX-coding-agent
 2026-07-28T00:00Z HDMX-coding-agent created
 2026-07-28T09:06Z claude note raid 570/571 Imagine+Plan — path corrected (schematics are in scripts/figures/, not scripts/analysis/); instance-1 import does not resolve under PYTHONPATH, shared module scripts/_band_scheme.py instead; Action 3 considered and deferred; exit criteria untouched
 2026-07-28T09:12Z claude note feasibility PASS — all six pair files verified; surfaces disjoint from 0570; no cross-cutting registry in this wave
+2026-07-28T12:33Z claude bump circuit-breaker — session limit killed execute agent mid-run; WIP salvaged to t571-band-scheme-and-parity-guards, finisher relaunched on existing branch
 
 --- body ---
 ## Context

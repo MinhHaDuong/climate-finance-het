@@ -7,6 +7,7 @@ Author: HDMX-coding-agent
 2026-07-28T00:00Z HDMX-coding-agent created
 2026-07-28T09:06Z claude note raid 570/571 Imagine+Plan — policy (b) settled; "not yet generated" comment is stale (tab_summary Make targets exist); Actions rewritten, exit criteria untouched
 2026-07-28T09:12Z claude note feasibility PASS — paths/lines verified against tree; surfaces disjoint from 0571; compute_vars.py confinement rule in Actions covers the five open sibling PRs
+2026-07-28T12:33Z claude bump circuit-breaker — session limit killed execute agent mid-run; WIP salvaged to t570-vars-missing-sentinel-guard, finisher relaunched on existing branch
 
 --- body ---
 ## Context
