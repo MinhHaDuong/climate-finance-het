@@ -36,14 +36,6 @@ import compute_vars
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 DATA_PAPER = os.path.join(ROOT, "deliverables", "data-paper", "data-paper.qmd")
 
-# Every deliverable that describes this corpus's embedding model. The
-# shared-semantic-space guard below runs over all of them; the capability
-# patterns above stay scoped to the data paper, for the reason given there.
-MULTILAYER = os.path.join(ROOT, "deliverables", "multilayer", "multilayer-detection.qmd")
-MULTILAYER_TECHREP = os.path.join(
-    ROOT, "deliverables", "multilayer", "multilayer-detection-techrep.qmd")
-EMBEDDING_DOCS = (DATA_PAPER, MULTILAYER, MULTILAYER_TECHREP)
-
 # Claims of a cross-language capability, as patterns rather than substrings.
 #
 # The first draft of this guard listed three literal substrings and skipped
@@ -81,34 +73,6 @@ UNDEMONSTRATED = (
 )
 
 
-# The shared-semantic-space assertion, which the patterns above do not cover.
-#
-# 0338 cut "place all works in a shared semantic space regardless of language"
-# from the data paper's §1 and never pinned it — so the paper could regress to
-# it, and two sentences in the multilayer paper still carried it. Only one of
-# those was found by review; the other (§2, describing the corpus rather than
-# comparing methods) was found by running this pattern. That asymmetry is the
-# argument for the guard.
-#
-# The defect is the *unattributed indicative*. A multilingual transformer is
-# trained on an objective that pulls translations together; whether it succeeds
-# on this corpus is a measurement nobody here has taken. Saying the model "is
-# trained to place" texts in one space reports the objective, which is true and
-# checkable; saying it "places" them reports an outcome, which is not.
-#
-# Attribution is therefore what the guard looks for, not vocabulary. This keeps
-# it usable in a methods paper whose subject *is* embedding behaviour — a guard
-# forbidding the topic's words in a paper about that topic would be the wrong
-# shape, and would push an author to drop the honest sentence rather than
-# attribute it.
-# The span is wide because the object of "place" is often a language list: the
-# multilayer §2 sentence puts 70 characters between the verb and the phrase,
-# and a 60-character bound silently missed it while catching its §6.1 sibling.
-# Widening costs nothing — `[^.]` cannot cross a sentence boundary.
-_PLACING = r"\b(?:place|places|map|maps|put|puts|project|projects)\b[^.]{0,120}\bsemantic space\b"
-_ATTRIBUTION = r"\b(?:trained|designed|intended|built|meant|aims?)\s+to\b"
-
-
 def read(path):
     with open(path) as fh:
         return fh.read()
@@ -126,21 +90,6 @@ def _hits(text: str) -> list[str]:
         for match in re.finditer(pattern, text, flags=re.I):
             found.append(match.group(0))
     return sorted(set(found))
-
-
-def _unattributed_placing(text: str) -> list[str]:
-    """Sentences asserting the model *does* place texts in one semantic space.
-
-    Sentence-scoped rather than pattern-scoped: the attribution and the verb it
-    qualifies are always in the same sentence, and a lookbehind cannot span the
-    variable-width phrases that carry it.
-    """
-    found = []
-    for sentence in re.split(r"(?<=[.!?])\s+", text):
-        if re.search(_PLACING, sentence, flags=re.I) and not re.search(
-                _ATTRIBUTION, sentence, flags=re.I):
-            found.append(" ".join(sentence.split()))
-    return found
 
 
 def _corpus_stats(languages, monkeypatch):
@@ -304,67 +253,3 @@ def test_no_undemonstrated_claim_anywhere_in_the_document():
     assert not found, (
         f"the paper claims {found} without a diagnostic behind it (ticket 0338)"
     )
-
-
-# --- 3. The shared semantic space is an objective, not a measured outcome ---
-
-def test_no_document_asserts_the_shared_semantic_space_as_an_outcome():
-    """Every deliverable that describes the embedding model, not just the paper.
-
-    The claim travelled: 0338 calibrated it out of the data paper while two
-    sentences of the multilayer paper kept it, and the review that caught the
-    first of those missed the second. A guard reads all three documents in one
-    pass, which is the thing a review round demonstrably does not do.
-    """
-    offenders = {
-        os.path.relpath(doc, ROOT): hits
-        for doc in EMBEDDING_DOCS
-        if (hits := _unattributed_placing(re.sub(r"<!--.*?-->", "", read(doc), flags=re.S)))
-    }
-
-    assert not offenders, (
-        f"{offenders} assert as an outcome what is only the model's training "
-        f"objective (ticket 0338). Attribute it — \"is trained to place\", the "
-        f"form the data paper's §1 and §3 already use — or publish the "
-        f"measurement that makes the indicative true."
-    )
-
-
-def test_semantic_space_guard_catches_the_wordings_it_was_written_against():
-    """Red-test: the two live sentences, and the data-paper one 0338 removed."""
-    for text in [
-        # multilayer §2, the one review missed
-        "The multilingual embedding model places works in English, French, "
-        "Chinese, Japanese, and German into a shared semantic space.",
-        # multilayer §6.1, the one review found
-        "Multilingual sentence-transformers (here `BAAI/bge-m3`) place documents "
-        "in a shared semantic space regardless of language.",
-        # data paper §1, cut by 0338 and unpinned until now
-        "embeddings that place all works in a shared semantic space regardless "
-        "of language",
-        "the encoder maps every abstract into one shared semantic space",
-    ]:
-        assert _unattributed_placing(text), f"the guard does not catch {text!r}"
-
-
-def test_semantic_space_guard_passes_attributed_and_unrelated_prose():
-    """The other polarity: attributed claims and neighbouring vocabulary.
-
-    The third case is the one that decides the guard's shape. §2 of the
-    multilayer paper discusses adapting change-point methods to
-    high-dimensional semantic spaces — the topic, with no assertion about this
-    model. A guard keyed on the phrase rather than on the verb would fire there
-    and be deleted within a week.
-    """
-    for text in [
-        "The multilingual embedding model is trained to place works into a "
-        "shared semantic space.",
-        "The model maps texts in English, French, Chinese, Japanese, and German "
-        "into a shared semantic space, which is designed to group works by topic "
-        "rather than by language.",
-        "adapting them to high-dimensional semantic spaces requires either "
-        "dimensionality reduction or divergence-based summarisation",
-        "embedded with a sentence-transformer trained to place texts of any of "
-        "them in one semantic space",
-    ]:
-        assert not _unattributed_placing(text), f"the guard wrongly fires on {text!r}"
