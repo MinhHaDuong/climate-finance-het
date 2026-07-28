@@ -75,6 +75,11 @@ def find_literal_percentages(text: str) -> list[str]:
     return re.findall(r"\b\d+(?:\.\d+)?%", text)
 
 
+def _split_pipe_row(line: str) -> list[str]:
+    """Cells of one ``| a | b |`` markdown table row, trimmed."""
+    return [c.strip() for c in line.strip().strip("|").split("|")]
+
+
 def sources_table_labels(text: str) -> list[str]:
     """First-column labels of the #tbl-sources pipe table."""
     return [next(iter(row.values())) for row in tbl_sources_rows(text)]
@@ -119,7 +124,7 @@ def pipe_table_rows(text: str, columns: list[str]) -> list[dict]:
         if not line.startswith("|"):
             in_table = False
             continue
-        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        cells = _split_pipe_row(line)
         if cells == columns:
             in_table = True
             continue
@@ -142,12 +147,12 @@ def tbl_sources_rows(text: str) -> list[dict]:
     )
     assert m, "no #tbl-sources pipe table found"
     header, _delim, *body = m.group(1).splitlines()
-    columns = [c.strip() for c in header.strip().strip("|").split("|")]
+    columns = _split_pipe_row(header)
     rows = []
     for line in body:
         if not line.strip():
             continue
-        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        cells = _split_pipe_row(line)
         rows.append(dict(zip(columns, cells)))
     return rows
 
@@ -231,9 +236,10 @@ def test_generated_source_tables_use_table_1s_label():
         _read(os.path.join(TABLES, "tab_retrieval_protocol.md")),
         ["Source", "Retrieval", "Query fields", "Query terms", "Languages"],
     )
-    assert world_bank_row_label(md_rows) == expected, (
+    md_label = world_bank_row_label(md_rows)
+    assert md_label == expected, (
         f"the deposited protocol markdown labels the layer "
-        f"{world_bank_row_label(md_rows)!r}, not Table 1's {expected!r}"
+        f"{md_label!r}, not Table 1's {expected!r}"
     )
 
 
