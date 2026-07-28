@@ -8,6 +8,8 @@ Author: HDMX-coding-agent
 
 2026-07-27T21:20Z HDMX-coding-agent note the /gaze gate finished after #1199 had already merged and returned ESCALATE on that timing: the merge landed ~100s after the panel comment, so no gate was applied. Its post-hoc audit added two findings that ARE live defects on main, now gaps 4 and 5 below, plus two documentation items. Correction to the audit: it reported "no passing run of the render smoke test exists anywhere" — the test ran green three times during the 0292 session, where manuscript.pdf had been built. The defect is that it skips by default, which is gap 2, not that it never passes.
 
+2026-07-27T23:15Z HDMX-coding-agent note gaps 1-3 closed on branch t0384-guard-completeness-gaps; gaps 4-5 landed earlier via PR #1220. The two unapplied simplification items — the nine-path list hand-synced across three files, and the cp --parents loop copy-pasted three ways — move to ticket 0435 so they do not close with this one; lru_cache on _makefile_text landed here, since it sat in a file this ticket was already editing. Action 6 stays satisfied by the bidirectional guard #1220 added: deriving Makefile.datapaper's prerequisites would need a $(shell grep) in a template that ships to reviewers, and the guard forbids the same drift without it.
+
 --- body ---
 ## Context
 
