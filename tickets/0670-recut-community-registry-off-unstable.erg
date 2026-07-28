@@ -1,0 +1,91 @@
+%erg 0.1
+Title: Re-key the community registry off unstable Louvain ids, and stop auto_label emitting "nan nan"
+Created: 2026-07-28
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-28T20:45Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+The 0641 artifact audit rebuilt `fig_global_map_cocitation.png` from the corpus
+`dvc.lock` pins and got a regression, not a data correction: 7 of the 9
+registered co-citation communities lost their name and their colour, and three
+of the fallback labels render the literal string `nan nan`.
+
+Cause: `config/community_registry.yml` maps hand-curated concepts onto Louvain
+community **ids**:
+
+```yaml
+figures:
+  fig_global_map_cocitation:
+    "13": climate-science
+    "11": climate-risk
+    ...
+```
+
+The file's own comment warns those ids are "stable only for that seed". They
+are also only stable for a fixed corpus — a corpus change repartitions the
+graph and renumbers the communities, so the mapping silently addresses the
+wrong communities or none at all. Nothing fails; the figure just comes out
+grey and mislabelled. `tests/test_global_map.py` checks the registry's
+*contents* (`"green-finance" in figs[...]`), which is true whatever the ids
+point at, so it cannot see this.
+
+The fallback then compounds it. `plot_fig_global_map.auto_label` builds a label
+from a community's top two members, and when the bibliographic metadata is
+missing the author-year string is the text `nan nan` — the same class as ticket
+0550 (`or ""` does not catch NaN). The audit deliberately did NOT commit the
+rebuilt PNG rather than ship that string into a tracked artifact, so the
+committed figure is currently correct-looking but computed from a superseded
+corpus.
+
+## Relevant files
+
+- `config/community_registry.yml` — the id-keyed mapping
+- `scripts/figures/_community_registry.py` — `figure_communities`, `surname_label`
+- `scripts/figures/plot_fig_global_map.py` — `auto_label`, `render`
+- `tests/test_global_map.py` — the guard that cannot see this
+- `deliverables/_shared/figures/fig_global_map_cocitation.png` — the artifact
+
+## Actions
+
+1. Key the registry on something stable across a repartition — the community's
+   anchor members (a few reference labels or DOIs that identify the concept),
+   matched at render time — rather than the Louvain id.
+2. Make `auto_label` refuse to emit a label built from missing metadata: no
+   `nan` in rendered text, ever. Prefer dropping the member and falling back
+   to the next one, then to `community <id>`.
+3. Re-derive the co-citation mapping against the pinned corpus and regenerate
+   `fig_global_map_cocitation.png`.
+
+## Test
+
+Red step first, and at the level where the defect lives (0402: a static guard
+is always one spelling behind):
+
+- A test that renders the label for a community whose top members carry NaN
+  author/year and asserts `nan` appears nowhere in the output text. This fails
+  today.
+- A test that permutes community ids in a synthetic summary and asserts the
+  same concepts keep their labels — the property the id-keyed registry lacks.
+
+## Verification
+
+- [ ] Renaming/renumbering communities does not change which concept gets which
+      label
+- [ ] No rendered label contains `nan`
+- [ ] `fig_global_map_cocitation.png` regenerated from the pinned corpus with
+      all major communities named and coloured
+
+## Invariants
+
+- One concept = one label = one colour across figures (the registry's purpose)
+- `fig_global_map_direct.png` is unaffected — it labels by top TF-IDF terms and
+  came back byte-identical in the 0641 audit
+
+## Exit criteria
+
+The co-citation map regenerates from the pinned corpus with its curated labels
+intact, and a corpus change can no longer silently unname a community.

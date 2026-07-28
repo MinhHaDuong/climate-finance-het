@@ -1,0 +1,123 @@
+%erg 0.1
+Title: Reconcile the manuscript's corpus-dependent claims with the pinned corpus (A.2 freeze, A.5 numbers, Paris marker)
+Created: 2026-07-28
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-07-28T20:45Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+The 0641 artifact audit rebuilt every tracked Phase-2 artifact from the corpus
+`dvc.lock` pins and turned up two things the manuscript asserts that the
+pipeline no longer supports. Both are manuscript prose, so the audit reported
+them rather than editing them (`rules/git.md`, prose workpackages: an
+autonomous pass produces a report, the author arbitrates).
+
+**A.2 — the frozen figure is not frozen.** `manuscript.qmd` A.2 states that
+"the growth of the literature (@fig-bars) and its thematic recomposition
+(@fig-composition) are frozen on the corpus as it stood at the first
+submission." `@fig-composition` genuinely is: `plot_fig2_composition.py` reads
+the frozen `config/v1_tab_alluvial.csv`, and it rebuilt byte-identical.
+`@fig-bars` is not: `plot_fig1_bars.py --v1-only` filters the live `in_v1`
+column of `refined_works.csv`, so it is recomputed from a mutable corpus. On
+the pinned corpus four year-bars move. The committed PNG is therefore the only
+record of the submitted figure, and re-running its documented command does not
+reproduce it.
+
+**A.5 — the quoted statistics have moved.** A.5 quotes five values inline from
+`tab_null_separation_pre2007.csv`. Regenerated from the pinned corpus (0641,
+PR for that ticket):
+
+| Quantity | A.5 prose | Pinned corpus |
+|---|---|---|
+| pre-2007 co-citation graph | 84 nodes, 369 edges | 109 nodes, 466 edges |
+| within-tradition co-citation share | 0.89 | 0.878 |
+| configuration-model null | 0.37 | 0.353 |
+| z | ≈ 25 | ≈ 28.1 |
+| a-priori anchor nodes matched | "about three" | 7 (8 edges) |
+
+A.2 explicitly licenses this drift — "the diagnostic statistics reported below
+are computed on the current working corpus" — so the direction of the fix is a
+transcription refresh, not a retraction. The qualitative claims survive: the
+separation is still strong and still circular, and the a-priori test still
+degenerates. But "only about three co-citation-core nodes match, all
+environmental economics" needs re-checking against the seven-node result before
+it is restated.
+
+**@fig-breaks — the Paris marker crosses its own threshold.**
+`scripts/figures/plot_fig2_breaks.py` draws a significance threshold at
+z = 1.5 and plots 2015 and 2021 as "not a break" markers; its docstring states
+the reading outright ("2007 is a cosine break, 2013 is a JS break. Paris and
+Glasgow are not breaks"). On the pinned corpus the window-3 Jensen-Shannon z
+for 2015 is **1.528** — above that line. The regenerated figure therefore shows
+the Paris marker sitting on the significance threshold, while `manuscript.qmd`
+L313 reads Paris as "a thematic diversification ... rather than a rupture" and
+`.claude/rules/writing.md` codifies "Paris (2015) shows only a marginal
+Jensen-Shannon rise, not a rupture."
+
+The periodization's two breaks survive and strengthen: 2007 cosine z 1.855,
+2013 JS z 1.659, both above threshold. What moves is the act II -> III boundary
+claim, which the writing rules describe as institutional rather than detected —
+so a 2015 JS z of 1.53 is not fatal to the thesis, but it does need a reading
+rather than a silent republication. 0641 left the committed figure in place for
+that reason.
+
+Related: `docs/audit-manuscript-stat-provenance.md` handoff item 2 — reconcile
+the 84/369-vs-169/1,056 pre-2007 graph — is still open and now has a third
+number to account for.
+
+## Relevant files
+
+- `deliverables/manuscript/manuscript.qmd` — A.2 disclosure (~L297), Paris
+  reading (~L313), A.5 bullet (~L323)
+- `deliverables/_shared/tables/tab_null_separation_pre2007.csv` — the A.5 source
+- `deliverables/_shared/figures/fig_breaks.png` — the figure whose marker moved
+- `scripts/figures/plot_fig1_bars.py` — the `--v1-only` filter
+- `scripts/figures/plot_fig2_breaks.py` — the hardcoded threshold and markers
+- `tests/test_separation_provenance.py` — the guard that couples CSV and prose
+- `docs/audit-manuscript-stat-provenance.md` — the Option C decision and its handoff list
+
+## Actions
+
+Author decisions first; nothing here is the MOE's call.
+
+1. `@fig-bars`: either freeze the v1 subset as a config artifact (the
+   `fig_composition` pattern — a committed `config/v1_*` snapshot the producer
+   reads), or amend A.2 to say the figure is archived rather than reproducible.
+2. A.5: refresh the five transcribed values, and re-word the a-priori-anchor
+   sentence against the 7-node/8-edge result. The CSV and the prose must move
+   in the same commit — `test_a5_prose_matches_committed_csv` enforces it.
+3. `@fig-breaks`: read the 2015 z = 1.528 against the "not a rupture" claim,
+   then either regenerate the figure and adjust the marker semantics and the
+   prose together, or record why the committed figure stays.
+4. Decide whether these numbers should be Quarto variables rather than typed
+   prose, so the next corpus change moves them mechanically.
+
+## Test
+
+None — pure prose plus an author decision. Per `.claude/rules/writing.md`, a
+prose ticket gets no red step; verification is the recompiled PDF and
+`/review-pr-prose`.
+
+## Verification
+
+- [ ] Every number A.5 quotes matches the committed
+      `tab_null_separation_pre2007.csv`, and `make check` is green
+- [ ] A.2's freeze claim is true of both figures it names, or reworded
+- [ ] `@fig-breaks` and the Paris reading agree
+- [ ] `make manuscript` renders
+
+## Invariants
+
+- The three-act periodization: 2007 cosine break, 2013 JS break, no further
+  structural break. Both survive on the pinned corpus and get stronger; nothing
+  here reopens them.
+
+## Exit criteria
+
+The manuscript's provenance claims, its quoted statistics, and its figures all
+hold against the corpus `dvc.lock` pins, under an explicit author decision on
+the freeze and on the Paris marker.
