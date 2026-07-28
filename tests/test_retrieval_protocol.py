@@ -107,6 +107,30 @@ def test_language_neutral_terms_are_tagged_null():
     assert untagged, "at least the institution-name terms must be tagged null"
 
 
+def test_source_table_language_count_matches_config():
+    """The OpenAlex row of the deposited source table states config's count.
+
+    Red before ticket 0356: `SOURCE_META["openalex"]["query"]` hand-typed
+    "9 languages" against a config declaring eight, so the Zenodo deposit
+    contradicted the paper it accompanies on the number the paper puts in
+    its own title claim ("Multilingual Retrieval"). The count must come
+    from `term_languages`, the same source of truth the paper's language
+    sentence is checked against.
+    """
+    from export_corpus_table import SOURCE_META
+
+    query = SOURCE_META["openalex"]["query"]
+    m = re.search(r"(\d+)\s+languages", query)
+    assert m, (
+        f"the OpenAlex query description no longer states a language count: "
+        f"{query!r}"
+    )
+    assert int(m.group(1)) == len(target_languages()), (
+        f"the deposited source table says {m.group(1)} languages, config "
+        f"declares {len(target_languages())} ({target_languages()})"
+    )
+
+
 # --------------------------------------------------------------------------- #
 # Prose ↔ config — the paper names the languages config declares
 # --------------------------------------------------------------------------- #
