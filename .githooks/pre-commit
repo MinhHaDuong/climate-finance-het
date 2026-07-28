@@ -38,15 +38,17 @@ fi
 large=$(git diff --cached --name-only --diff-filter=AM | while IFS= read -r file; do
     case "$file" in uv.lock) continue ;; esac
     case "$file" in deliverables/_shared/tables/*.csv) continue ;; esac
-    # Same rationale as the tables exemption: a generated deliverable artifact
-    # whose size is a property of the render, not of a mistake. Without this the
-    # guard is one-way — fig_traditions_pre2008_citers.png was committed at
-    # 838KB before the check existed, so every regeneration of it was blocked
-    # even when the new file is *smaller* (832KB, ticket 0610).
-    case "$file" in deliverables/_shared/figures/*.png) continue ;; esac
     case "$file" in tickets/erg|tickets/erg-github) continue ;; esac
+    # Rendered figures get a raised ceiling rather than an exemption. Two of the
+    # nine tracked PNGs were committed over 500KB before this check existed, so
+    # the guard was one-way on them: every regeneration was refused, including a
+    # *smaller* one (fig_traditions_pre2008_citers.png, 838KB → 832KB, ticket
+    # 0610). A raised bound restores the round trip without opening the door to
+    # an unbounded binary, which a bare `continue` would.
+    limit=512000
+    case "$file" in deliverables/_shared/figures/*.png) limit=1048576 ;; esac
     size=$(wc -c < "$file" 2>/dev/null || echo 0)
-    if [ "$size" -gt 512000 ]; then
+    if [ "$size" -gt "$limit" ]; then
         printf '  %s (%dKB)\n' "$file" "$(( size / 1024 ))"
     fi
 done)
