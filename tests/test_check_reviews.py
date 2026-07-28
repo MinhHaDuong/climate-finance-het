@@ -228,6 +228,170 @@ class TestMergeGate:
         assert decision == "deny"
 
 
+# --- Tickets-only fast path (rules/git.md) ---
+
+
+def make_files_response(*files: str | tuple[str, str]) -> str:
+    """Build a pulls/N/files JSON response.
+
+    Each item is a filename, or a (filename, previous_filename) tuple for a
+    rename.
+    """
+    payload = []
+    for f in files:
+        if isinstance(f, tuple):
+            payload.append({"filename": f[0], "previous_filename": f[1]})
+        else:
+            payload.append({"filename": f})
+    return json.dumps(payload)
+
+
+@pytest.mark.integration
+class TestTicketsOnlyFastPath:
+    """A diff that is only tickets/*.erg is exempt from the review count.
+
+    rules/git.md ("Ticket-filing PRs take the fast path") says such a PR
+    merges on `erg check` plus an ID-collision scan, with no review ceremony.
+    The gate honours that: zero reviews, no label, still allowed — but only
+    when every changed file (and every rename source) is a .erg under
+    tickets/. Anything else falls through to the normal review gate.
+    """
+
+    def test_tickets_only_diff_allows_without_reviews(self, tmp_path):
+        """Filing PR: one new tickets/*.erg, 0 reviews, no label → allow."""
+        result = run_hook(
+            make_bash_input("gh pr merge 42"),
+            gh_responses={
+                "pulls/42/files": make_files_response("tickets/0400-some-task.erg"),
+                "pulls/42/reviews": "[]",
+                "issues/42/labels": "[]",
+            },
+            tmp_path=tmp_path,
+        )
+        assert result["returncode"] == 0
+        decision = result["stdout"]["hookSpecificOutput"]["permissionDecision"]
+        assert decision == "allow"
+
+    def test_ticket_close_rename_allows(self, tmp_path):
+        """A close PR renaming tickets/*.erg into tickets/closed/ → allow."""
+        result = run_hook(
+            make_bash_input("gh pr merge 42"),
+            gh_responses={
+                "pulls/42/files": make_files_response(
+                    ("tickets/closed/0400-some-task.erg", "tickets/0400-some-task.erg"),
+                ),
+                "pulls/42/reviews": "[]",
+                "issues/42/labels": "[]",
+            },
+            tmp_path=tmp_path,
+        )
+        decision = result["stdout"]["hookSpecificOutput"]["permissionDecision"]
+        assert decision == "allow"
+
+    def test_mixed_diff_keeps_the_full_gate(self, tmp_path):
+        """A ticket plus one code file → the review gate applies (deny at 0)."""
+        result = run_hook(
+            make_bash_input("gh pr merge 42"),
+            gh_responses={
+                "pulls/42/files": make_files_response(
+                    "tickets/0400-some-task.erg", "scripts/compute_vars.py"
+                ),
+                "pulls/42/reviews": "[]",
+                "issues/42/labels": "[]",
+            },
+            tmp_path=tmp_path,
+        )
+        decision = result["stdout"]["hookSpecificOutput"]["permissionDecision"]
+        assert decision == "deny"
+
+    def test_rename_from_outside_tickets_is_not_exempt(self, tmp_path):
+        """A file smuggled in by renaming code into tickets/*.erg → deny."""
+        result = run_hook(
+            make_bash_input("gh pr merge 42"),
+            gh_responses={
+                "pulls/42/files": make_files_response(
+                    ("tickets/0400-evil.erg", "scripts/compute_vars.py"),
+                ),
+                "pulls/42/reviews": "[]",
+                "issues/42/labels": "[]",
+            },
+            tmp_path=tmp_path,
+        )
+        decision = result["stdout"]["hookSpecificOutput"]["permissionDecision"]
+        assert decision == "deny"
+
+    def test_non_erg_file_under_tickets_is_not_exempt(self, tmp_path):
+        """tickets/.ergrc is config, not a ticket — the full gate applies."""
+        result = run_hook(
+            make_bash_input("gh pr merge 42"),
+            gh_responses={
+                "pulls/42/files": make_files_response("tickets/.ergrc"),
+                "pulls/42/reviews": "[]",
+                "issues/42/labels": "[]",
+            },
+            tmp_path=tmp_path,
+        )
+        decision = result["stdout"]["hookSpecificOutput"]["permissionDecision"]
+        assert decision == "deny"
+
+    def test_empty_file_list_is_not_exempt(self, tmp_path):
+        """An empty files response proves nothing — fall through to the gate."""
+        result = run_hook(
+            make_bash_input("gh pr merge 42"),
+            gh_responses={
+                "pulls/42/files": "[]",
+                "pulls/42/reviews": "[]",
+                "issues/42/labels": "[]",
+            },
+            tmp_path=tmp_path,
+        )
+        decision = result["stdout"]["hookSpecificOutput"]["permissionDecision"]
+        assert decision == "deny"
+
+    def test_possibly_truncated_file_list_is_not_exempt(self, tmp_path):
+        """100 files = the pagination cap; page 2 could hold code → deny.
+
+        The hook asks for per_page=100 and does not paginate, so a list of
+        exactly 100 ticket files cannot be distinguished from a longer diff
+        whose tail is code. The exemption must refuse to guess.
+        """
+        files = make_files_response(
+            *[f"tickets/{i:04d}-bulk.erg" for i in range(100)]
+        )
+        result = run_hook(
+            make_bash_input("gh pr merge 42"),
+            gh_responses={
+                "pulls/42/files": files,
+                "pulls/42/reviews": "[]",
+                "issues/42/labels": "[]",
+            },
+            tmp_path=tmp_path,
+        )
+        decision = result["stdout"]["hookSpecificOutput"]["permissionDecision"]
+        assert decision == "deny"
+
+    def test_files_api_garbage_falls_through_to_review_gate(self, tmp_path):
+        """A broken files response never crashes the hook; the gate still works."""
+        reviews = json.dumps(
+            [
+                {"user": {"login": "MinhHaDuong"}},
+                {"user": {"login": "MinhHaDuong"}},
+            ]
+        )
+        result = run_hook(
+            make_bash_input("gh pr merge 42"),
+            gh_responses={
+                "pulls/42/files": "this is not json",
+                "pulls/42/reviews": reviews,
+                "issues/42/labels": "[]",
+            },
+            tmp_path=tmp_path,
+        )
+        assert result["returncode"] == 0
+        decision = result["stdout"]["hookSpecificOutput"]["permissionDecision"]
+        assert decision == "allow"
+
+
 # --- PR number extraction ---
 
 
