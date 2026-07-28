@@ -7,6 +7,7 @@ Author: HDMX-coding-agent
 2026-07-28T00:00Z HDMX-coding-agent created
 2026-07-28T09:06Z claude note raid 570/571 Imagine+Plan — path corrected (schematics are in scripts/figures/, not scripts/analysis/); instance-1 import does not resolve under PYTHONPATH, shared module scripts/_band_scheme.py instead; Action 3 considered and deferred; exit criteria untouched
 2026-07-28T09:12Z claude note feasibility PASS — all six pair files verified; surfaces disjoint from 0570; no cross-cutting registry in this wave
+2026-07-28T15:10Z claude note byte-compare PASS — tab_lineages.csv, fig_genealogy.png and fig_genealogy.html all byte-identical old-vs-new on the same inputs under PYTHONHASHSEED=0. Unpinned, two runs of main's own code differ: load_edges() returns list(set(...)), so edge draw order follows the string-hash seed. Pre-existing, out of scope here, worth its own ticket.
 
 --- body ---
 ## Context
@@ -107,9 +108,9 @@ For **3** the red step is mechanical: add a throwaway
 
 ## Verification
 
-- [ ] Each guard fails when its pair is made to diverge, both directions
-- [ ] `make lint` and `make check` pass with all three in place
-- [ ] Instance 1 has one definition, not three, or a test explaining why not
+- [x] Each guard fails when its pair is made to diverge, both directions
+- [x] `make lint` and `make check` pass with all three in place
+- [x] Instance 1 has one definition, not three, or a test explaining why not
 
 ## Invariants
 
