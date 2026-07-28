@@ -48,14 +48,21 @@ DATA_PAPER = os.path.join(ROOT, "deliverables", "data-paper", "data-paper.qmd")
 # There is no automatic lift. Backing the claim with a diagnostic means
 # editing this file alongside publishing the measurement, which is a
 # deliberate, reviewable act; a stray variable is not.
+
+# Every separator that renders as a hyphen. A copy-paste from a word processor
+# or a reference manager carries U+2010/2011/2013 or a soft hyphen, each of
+# which reads as "cross-lingual" on the page and slipped past a plain `\-`
+# (round-2 review).
+_HYPHENS = r"[\s\-­‐‑‒–—―]"
+
 UNDEMONSTRATED = (
     # cross-lingual, crosslingual, cross linguistic, cross-language.
     # `\b` is load-bearing: without it the optional whitespace lets the pattern
     # straddle a word boundary and fire on the abstract's legitimate "works
     # across linguistic contexts", which is a retrieval claim, not a capability
     # claim.
-    r"\bcross[\s\-]?lingu",
-    r"\bcross[\s\-]?language",
+    rf"\bcross{_HYPHENS}?lingu",
+    rf"\bcross{_HYPHENS}?language",
     # the travel metaphor, with or without an interposed count
     r"travell?ed?\s+across",
     # comparison framed as a capability the corpus does not demonstrate
@@ -112,10 +119,13 @@ def test_language_buckets_partition_the_corpus(monkeypatch):
     assert v["lang_unclassified_n"] == "2"
     assert v["lang_english_pct"] == "54.5"
 
-    total = _count(v["corpus_total"])
-    english = round(float(v["lang_english_pct"]) / 100 * total)
+    # English comes from the fixture, not from reconstructing it out of the
+    # rounded percentage: `_pct` keeps one decimal, so at corpus scale that
+    # reconstruction is off by a few works and the identity would only hold
+    # because the fixture is tiny (round-2 review).
+    english = languages.count("en")
     assert english + _count(v["lang_non_english_n"]) + _count(
-        v["lang_unclassified_n"]) == total
+        v["lang_unclassified_n"]) == _count(v["corpus_total"])
 
 
 def test_non_english_layer_is_not_total_minus_english(monkeypatch):
@@ -125,11 +135,11 @@ def test_non_english_layer_is_not_total_minus_english(monkeypatch):
     non-English layer. A rewrite that reintroduced the shortcut would pass
     every count-formatting check and fail here.
     """
-    v = _corpus_stats(["en"] * 6 + ["fr", "pt", "es"] + [None] * 4, monkeypatch)
+    languages = ["en"] * 6 + ["fr", "pt", "es"] + [None] * 4
+    v = _corpus_stats(languages, monkeypatch)
 
     total = _count(v["corpus_total"])
-    english = round(float(v["lang_english_pct"]) / 100 * total)
-    assert _count(v["lang_non_english_n"]) < total - english
+    assert _count(v["lang_non_english_n"]) < total - languages.count("en")
 
 
 def test_unclassified_var_registered_for_the_data_paper():
@@ -194,6 +204,11 @@ def test_guard_catches_every_wording_it_was_written_against():
         "enables cross-language comparison",
         "permits comparison between the corpus languages",
         "designed to compare languages",
+        # every separator that renders as a hyphen (round-2 review)
+        "cross‐lingual analysis",
+        "cross‑lingual analysis",
+        "cross–lingual analysis",
+        "cross­lingual analysis",
     ]
     for text in live + near_misses:
         assert _hits(text), f"the guard does not catch {text!r}"
@@ -217,19 +232,24 @@ def test_guard_passes_the_limitation_statements_it_must_not_block():
         assert not _hits(text), f"the guard wrongly fires on {text!r}"
 
 
-def test_no_undemonstrated_claim_anywhere_in_the_body():
-    """§1 sells the reuse cases; it may not sell one the corpus cannot serve.
+def test_no_undemonstrated_claim_anywhere_in_the_document():
+    """The whole file, from byte zero — the exit criterion says "in the paper".
 
-    Scoped wider than the two sections above because the Introduction's list of
-    reuse cases is read as a claim too, and the phrase that seeded this ticket
-    ("cross-lingual studies") sat there as well as in the Abstract.
+    §1 sells the reuse cases, and a reuse case is a claim: "cross-lingual
+    studies" sat there as well as in the Abstract. But an earlier draft started
+    the scan at `## 1. Introduction` and stopped at `## References`, which left
+    the title, the keywords list, and the Related-dataset bullet unread.
+    Round-2 review replanted the originating string into each of the three and
+    all three passed. The title is the worst of them: it is the PDF cover and
+    the Zenodo citation string, so a claim there travels further than one in §5.
+
+    Only HTML comments are stripped. They carry provenance notes that name the
+    defect on purpose, and a comment is not a claim to a reader.
     """
-    text = read(DATA_PAPER)
-    body = text[text.index("## 1. Introduction"):text.index("## References")]
-    body = re.sub(r"<!--.*?-->", "", body, flags=re.S)
+    document = re.sub(r"<!--.*?-->", "", read(DATA_PAPER), flags=re.S)
 
-    found = _hits(body)
+    found = _hits(document)
 
     assert not found, (
-        f"the body claims {found} without a diagnostic behind it (ticket 0338)"
+        f"the paper claims {found} without a diagnostic behind it (ticket 0338)"
     )

@@ -91,12 +91,16 @@ rebuilt table.
 
 - [x] Classified non-English and unclassified are reported separately —
   §2.3 prints `lang_non_english_n` (2,061) and `lang_unclassified_n` (11);
-  `compute_vars.py:280` derives both, `tests/test_language_claims.py`
-  pins the partition against total-minus-English.
+  `compute_vars.py:158-163` derives both (declared in
+  `scripts/analysis/_vars_registry.py`, where 0357 moved `DOC_VARS`
+  mid-review), and `tests/test_language_claims.py` pins the partition
+  against total-minus-English.
 - [x] Abstract and Conclusion claims match Table 3 — the four
   cross-language claims are gone (Abstract, §1 ×2, §5), guarded by
   `test_abstract_and_conclusion_claim_no_cross_language_capability` and
-  `test_no_undemonstrated_claim_anywhere_in_the_body`.
+  `test_no_undemonstrated_claim_anywhere_in_the_document`, the second of
+  which reads the file from byte zero so the title and keywords are covered
+  too.
 - [x] Language detection and the English-only institutional indexing stated
   — §2.4 (langdetect + `language_provenance`, landed with 0323) and §2.1
   ("we index only the English version"); §2.3 now also states that no
@@ -120,8 +124,13 @@ be as specified: it asks for nearest-neighbour alignment on UNFCCC/OECD
 documents that exist in two languages, and §2.1 records that the corpus
 indexes only the English version of those. The claims were calibrated down
 instead, which is the branch the ticket names for the no-diagnostic case.
-`test_language_claims.py` lifts its guard automatically if a diagnostic ever
-publishes an `xling_*` variable.
+
+The guard does **not** lift itself. It was drafted that way — any `xling_*`
+key in the vars file skipped it — and review defeated the draft in one line:
+`xling_foo: "0"` disarmed both claim guards while "cross-lingual analysis"
+sat live in the abstract. The escape hatch is gone. A future diagnostic
+retires the matching pattern by editing `tests/test_language_claims.py` in
+the same change that publishes the measurement, where a reviewer sees it.
 
 ## Exit criteria
 
