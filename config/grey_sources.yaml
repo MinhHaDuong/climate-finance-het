@@ -1,5 +1,7 @@
-# Curated grey literature for climate finance HET analysis
-# These are key institutional reports cited in the manuscript plan
+# Curated institutional reports for climate finance HET analysis
+# These are key institutional reports cited in the manuscript plan.
+# The filename keeps `grey` — it is a code identifier the pipeline reads
+# (from_grey, catalog_grey.py); only display names moved (ticket 0565).
 
 - title: "Climate Finance in 2013-14 and the USD 100 Billion Goal"
   author: "OECD"

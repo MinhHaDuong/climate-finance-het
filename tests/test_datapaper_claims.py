@@ -77,16 +77,7 @@ def find_literal_percentages(text: str) -> list[str]:
 
 def sources_table_labels(text: str) -> list[str]:
     """First-column labels of the #tbl-sources pipe table."""
-    m = re.search(
-        r"\n(\| *Source *\|.*?)\n\n: [^\n]*\{#tbl-sources\}", text, re.DOTALL
-    )
-    assert m, "no #tbl-sources pipe table found"
-    labels = []
-    for line in m.group(1).splitlines()[2:]:  # skip header + delimiter rows
-        cells = [c.strip() for c in line.strip().strip("|").split("|")]
-        if cells and cells[0]:
-            labels.append(cells[0])
-    return labels
+    return [next(iter(row.values())) for row in tbl_sources_rows(text)]
 
 
 def world_bank_row_label(rows: list[dict], label_key: str = "Source") -> str:
@@ -103,6 +94,12 @@ def world_bank_row_label(rows: list[dict], label_key: str = "Source") -> str:
         for r in rows
         if "world bank" in " ".join(str(v) for v in r.values()).lower()
     }
+    assert hits, (
+        "no row mentions the World Bank harvest, so the layer cannot be "
+        "identified. If a table was reworded to drop the phrase, this guard "
+        "needs a new fingerprint — the labels themselves have not necessarily "
+        f"drifted. Labels seen: {[str(r[label_key]).strip() for r in rows]}"
+    )
     assert len(hits) == 1, (
         f"expected exactly one row mentioning the World Bank harvest, got {hits}"
     )
@@ -134,13 +131,18 @@ def pipe_table_rows(text: str, columns: list[str]) -> list[dict]:
 
 
 def tbl_sources_rows(text: str) -> list[dict]:
-    """Table 1 (``{#tbl-sources}``) as dicts, keyed by its own header cells."""
+    """Table 1 (``{#tbl-sources}``) as dicts, keyed by its own header cells.
+
+    The single parser for that table: ``sources_table_labels`` and the
+    label-vs-Abstract guard both read it through here, so a change to Table 1's
+    markup lands in one regex rather than three (review of PR #1284).
+    """
     m = re.search(
-        r"\n\| *(Source *\|.*?)\n\n: [^\n]*\{#tbl-sources\}", text, re.DOTALL
+        r"\n(\| *Source *\|.*?)\n\n: [^\n]*\{#tbl-sources\}", text, re.DOTALL
     )
     assert m, "no #tbl-sources pipe table found"
     header, _delim, *body = m.group(1).splitlines()
-    columns = [c.strip() for c in ("| " + header).strip().strip("|").split("|")]
+    columns = [c.strip() for c in header.strip().strip("|").split("|")]
     rows = []
     for line in body:
         if not line.strip():
@@ -177,18 +179,11 @@ def test_abstract_layer_share_is_a_shortcode_not_a_literal():
 def test_sources_table_label_matches_abstract():
     text = _paper()
     abstract = extract_abstract(text).lower()
-    labels = sources_table_labels(text)
-    wb_labels = [
-        label
-        for label, line in zip(labels, _tbl_sources_rows(text))
-        if "world bank" in line.lower()
-    ]
-    assert wb_labels, "no #tbl-sources row mentions the World Bank harvest"
-    for label in wb_labels:
-        assert label.lower() in abstract, (
-            f"Table 1 labels the layer {label!r} but the Abstract does not "
-            f"use that name — the two must move together"
-        )
+    label = world_bank_row_label(tbl_sources_rows(text))
+    assert label.lower() in abstract, (
+        f"Table 1 labels the layer {label!r} but the Abstract does not "
+        f"use that name — the two must move together"
+    )
 
 
 @pytest.mark.adherence
@@ -240,14 +235,6 @@ def test_generated_source_tables_use_table_1s_label():
         f"the deposited protocol markdown labels the layer "
         f"{world_bank_row_label(md_rows)!r}, not Table 1's {expected!r}"
     )
-
-
-def _tbl_sources_rows(text: str) -> list[str]:
-    m = re.search(
-        r"\n(\| *Source *\|.*?)\n\n: [^\n]*\{#tbl-sources\}", text, re.DOTALL
-    )
-    assert m
-    return [line for line in m.group(1).splitlines()[2:] if line.strip()]
 
 
 # --------------------------------------------------------------------------- #
@@ -349,6 +336,19 @@ def test_fang_world_bank_row_label_rejects_an_ambiguous_table():
         {"Source": "B", "Coverage": "World Bank API"},
     ]
     with pytest.raises(AssertionError, match="exactly one row"):
+        world_bank_row_label(rows)
+
+
+@pytest.mark.adherence
+def test_fang_lost_fingerprint_says_so_rather_than_blaming_a_rename():
+    """Rewording every mention away must not read as a label drift.
+
+    The guard finds the layer by the phrase "World Bank"; a table that stops
+    using it leaves nothing to key on. Reporting that as a mismatch would send
+    the next reader after a rename that never happened.
+    """
+    rows = [{"Source": "Institutional reports", "Coverage": "curated seed list"}]
+    with pytest.raises(AssertionError, match="needs a new fingerprint"):
         world_bank_row_label(rows)
 
 
