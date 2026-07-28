@@ -1,0 +1,41 @@
+%erg 0.1
+Title: decide the deposit and paper title: Grey Literature or Institutional reports
+Created: 2026-07-28
+Label: needs-human
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-28T20:35Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Ticket 0565 (PR #1284) renamed the source-layer label to "Institutional
+reports" across the data paper's tables, generators, and both consumers'
+prose — but stopped, by design, at the sites entangled with the paper's
+own title, which still headlines "Grey Literature". The deferred sites are
+`deliverables/manuscript/manuscript.qmd:291,293`,
+`deliverables/agentic/agentic-paper.qmd:29,148`, and
+`scripts/_deposit_schema.py:51-61`; the Zenodo deposit retitle is the same
+decision (memory `project_datapaper_release_actions` ties it to the next
+version upload). PR #1284's review round 2 flagged that no ticket tracked
+this decision; this is that ticket.
+
+## Actions
+
+1. Author decides the title: keep "Grey Literature" (and accept the layer
+   label divergence as title-only), or retitle to match the new label.
+2. On a decision, sweep the deferred sites above plus the Zenodo metadata
+   at the next version upload (author-only step, per the release-actions
+   memory).
+
+## Verification
+
+- [ ] Title, deposit metadata, and the deferred prose sites agree with the
+  decision
+- [ ] No remaining site glosses the renamed layer with the rejected term
+
+## Exit criteria
+
+One decision covers title, deposit, and the deferred prose sites; nothing
+is left half-renamed.
