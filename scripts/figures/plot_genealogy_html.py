@@ -68,17 +68,24 @@ def _to_sy(ynorm):
 
 
 def load_model(lineages_path):
-    """Load tab_lineages.csv and build the data structures the renderer needs."""
+    """Load tab_lineages.csv and build the data structures the renderer needs.
+
+    ``backbone_dois`` is a list in CSV row order, not a set: the renderer
+    enumerates it to emit ``<circle>`` elements and to break ties when ranking
+    by citation count, so a set would put the interpreter's hash seed into the
+    SVG (ticket 0591). Callers that need membership tests build their own set.
+    """
     df = pd.read_csv(lineages_path)
 
     doi_meta = {}
     lineage = {}
     positions = {}
-    backbone_dois = set()
+    backbone_dois = []
 
     for _, row in df.iterrows():
         d = row["doi"]
-        backbone_dois.add(d)
+        if d not in lineage:
+            backbone_dois.append(d)
         lineage[d] = int(row["lineage"])
         positions[d] = (float(row["x"]), float(row["y"]))
         doi_meta[d] = {
@@ -92,18 +99,24 @@ def load_model(lineages_path):
 
 
 def load_edges(backbone_dois):
-    """Load citation edges between backbone papers."""
+    """Load citation edges between backbone papers, in ascending edge order.
+
+    Sorted rather than ``list(set(...))``: edges are emitted as ``<line>``
+    elements in list order, so an unordered dedup made the HTML hash-seed
+    dependent — the first byte to differ across two runs (0591).
+    """
     cit = load_refined_citations()
     cit["source_doi"] = cit["source_doi"].apply(normalize_doi)
     cit["ref_doi"] = cit["ref_doi"].apply(normalize_doi)
 
+    backbone = set(backbone_dois)
     edges = set()
     for _, row in cit.iterrows():
         s = row["source_doi"]
         r = row["ref_doi"]
-        if s in backbone_dois and r in backbone_dois:
+        if s in backbone and r in backbone:
             edges.add((r, s))
-    return list(edges)
+    return sorted(edges)
 
 
 def _infer_bands(backbone_dois, lineage, positions):

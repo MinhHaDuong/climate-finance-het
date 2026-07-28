@@ -858,10 +858,15 @@ audit-pdf-content:
 smoke:
 	$(PYTHON) -m pytest tests/test_smoke_pipeline.py -v --tb=short
 
-# Determinism check: run figure scripts twice on smoke data, diff outputs.
+# Determinism check: run figure scripts twice, diff outputs.
 # Catches unseeded randomness, leaking timestamps, floating-point non-determinism.
+# Two modules, and the second is the stricter one: test_determinism.py runs both
+# halves under a pinned PYTHONHASHSEED=0, so it cannot see a producer that walks
+# a set into its output, while test_hash_seed_determinism.py varies the seed
+# between the two runs and can (ticket 0591).
 determinism-check:
-	$(PYTHON) -m pytest tests/test_determinism.py -v --tb=short
+	$(PYTHON) -m pytest tests/test_determinism.py \
+		tests/test_hash_seed_determinism.py -v --tb=short
 
 # Regression hashes: compare Phase 2 output hashes against golden baseline.
 # Runs as pytest (one test per script, module-scoped fixture = scripts run once).
