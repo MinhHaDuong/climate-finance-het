@@ -2,6 +2,7 @@
 Title: export_corpus_table ships a literal "nan" when a source refines to zero works
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1250
 
 --- log ---
 2026-07-27T18:25Z HDMX-coding-agent created
@@ -10,6 +11,7 @@ Author: HDMX-coding-agent
 
 2026-07-28T07:28Z HDMX-coding-agent note fixed in _write_md_table: one blanking rule for all eight columns; TOTAL wrap made conditional so an empty cell cannot emit ****; byte-identical on the live corpus, which has no zero-refined source
 2026-07-28T07:52Z HDMX-coding-agent note gaze #1250: exit criterion narrowed to the missing-value mechanism; the empty-frame "nan%" f-string path recorded as out of scope
+2026-07-28T07:57Z HDMX-coding-agent closed — autoclosed — PR #1250
 --- body ---
 ## Context
 
