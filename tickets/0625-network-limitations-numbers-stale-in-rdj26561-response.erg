@@ -1,0 +1,80 @@
+%erg 0.1
+Title: Stale network-limitations numbers are quoted verbatim to RDJ26561 reviewers
+Created: 2026-07-28
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-28T17:10Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Found while regenerating the three tracked artifacts for ticket 0610. That
+ticket assumed its artifacts were stale because PR #1272 changed their
+producers; they are not. Running the *pre-0591* producers against the current
+corpus reproduces the new artifacts byte-for-byte, and they are stable across
+PYTHONHASHSEED 0/1/12345. The real cause is that the committed artifacts
+predate the corpus `dvc.lock` now pins.
+
+That cause is not confined to 0610's three files. `tab_network_limitations.csv`
+is tracked, is regenerated from the same corpus, and drifts the same way — and
+unlike the venue table, its numbers are quoted **verbatim in a submission
+record**, `deliverables/data-paper/revision-rdj26561/r1-14-network-response.md`.
+
+Regenerating it (`make network-limitations`) against the current corpus gives:
+
+| Metric | Committed | Current | Prose says |
+|---|---|---|---|
+| `econ_within_share_z` | 9.086 | 8.738 | "z = 9.1" — now wrong |
+| `boot_pricing_rate` | 0.925 | 0.920 | "93–100% of draws" — now 92–100% |
+| `boot_burden_rate` | 0.08 | 0.125 | "emerges in 8%" — now 12.5% |
+| `econ_cross_share_null_mean` | 0.4378 | 0.4363 | "44% ± 5%" — still rounds true |
+| `n_citing_docs` | 631 | 652 | — |
+| `network_n_nodes` | 132 | 126 | — |
+
+The load-bearing claims survive: cross-cluster edges are still 0, the z is still
+far above any conventional threshold, and the two economic clusters still
+reappear in ≥92% of bootstrap draws. What is wrong is the *stated figures*, and
+one of them by more than half its own value (8% → 12.5%).
+
+The regeneration was reverted in the 0610 branch — out of that ticket's scope,
+and the prose fix is an author call, not an agent edit.
+
+## Relevant files
+
+- `deliverables/_shared/tables/tab_network_limitations.csv` — tracked, drifts
+- `deliverables/data-paper/revision-rdj26561/r1-14-network-response.md` — quotes
+  the numbers at lines 49, 57–61
+- `scripts/analysis/compute_network_limitations.py` — producer
+- `deliverables/_shared/tables/qa_cocitation_edges_report.json` — tracked, same
+  class, not yet checked
+
+## Actions
+
+1. Regenerate `tab_network_limitations.csv` and
+   `qa_cocitation_edges_report.json` from a corpus-present worktree.
+2. Diff both; characterise which stated numbers move.
+3. Bring the response prose in line with the regenerated values — **author
+   arbitration**, since this is a submission record, not agent-editable prose.
+4. Sweep the rest of `deliverables/_shared/tables/*.csv` for the same drift:
+   0610 and this ticket are two instances of one class, so the question is how
+   many tracked artifacts are stale against the current `dvc.lock`.
+
+## Test
+
+No red step — a regeneration plus a human diff review, as in 0610. If the sweep
+in action 4 finds the class is broad, a staleness check (every tracked
+generated artifact matches what its producer emits on the pinned corpus) would
+be the guard worth writing, and that belongs in its own ticket.
+
+## Verification
+
+- [ ] Both artifacts regenerated and diffed
+- [ ] Every number the response quotes traced to a current value
+- [ ] Author has arbitrated the prose changes
+- [ ] Sweep result recorded: how many tracked artifacts are stale
+
+## Exit criteria
+
+No number in the RDJ26561 response contradicts the artifact it cites, and the
+breadth of the staleness class is known rather than assumed.
