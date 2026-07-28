@@ -1,0 +1,69 @@
+%erg 0.1
+Title: Table 2's generated "Grey literature" row label contradicts Table 1's rename
+Created: 2026-07-28
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-28T09:10Z HDMX-coding-agent created
+2026-07-28T09:10Z HDMX-coding-agent note follow-up from PR #1260 review (ticket 0334); generator shared with corpus-report, so out of that PR's scope
+
+--- body ---
+## Context
+
+Ticket 0334 renamed the curated-seed + World Bank source to "Institutional
+reports" in the data paper's Table 1 (`#tbl-sources`), the Abstract, §2.1,
+§2.2, §2.3, and the Conclusion, keeping "grey literature" only where the
+World Bank repository harvest genuinely applies. Table 2 (`@tbl-quality`,
+the included `tab_corpus_sources.md`) still prints "Grey literature" as the
+row label one page later, because the label comes from a generator shared
+with the corpus report. PR #1260's review flagged the inconsistency and
+deferred it here: changing the display label touches every document that
+includes the table.
+
+The paper's title also still headlines "Grey Literature"; that is an
+author-level decision entangled with the Zenodo deposit retitle (see memory
+`project_datapaper_release_actions`) and is NOT in this ticket's scope.
+
+## Relevant files
+
+- `scripts/figures/export_corpus_table.py` — writes `tab_corpus_sources.csv`
+  and its `.md`; owns the display label
+- `deliverables/_shared/tables/tab_corpus_sources.csv` — generated artifact
+- `deliverables/data-paper/data-paper.qmd` — includes the `.md` as Table 2;
+  Table 1 carries the new label
+- `deliverables/corpus-report/corpus-report.qmd` — the other consumer; check
+  its surrounding prose before renaming
+- `tests/test_datapaper_claims.py` — the label-agreement guard pattern to
+  extend
+
+## Actions
+
+1. Decide the display label with the corpus report's usage in view: rename
+   the row to "Institutional reports" everywhere, or parameterise the label
+   per document if the corpus report has reasons to keep "Grey literature".
+2. Update `export_corpus_table.py`, regenerate the csv/md pair, and sweep
+   both consumers' prose for sentences that gloss the old row label.
+3. Extend the Table-1/Abstract label-agreement guard to cover Table 2, so
+   the three cannot drift apart again.
+
+## Test
+
+- A guard asserting the `tab_corpus_sources` row label for the World Bank /
+  curated-seed source matches Table 1's label in `data-paper.qmd` (extend
+  `tests/test_datapaper_claims.py`).
+
+## Verification
+
+- [ ] Table 1 and Table 2 use the same label for the layer in the rendered
+  data paper
+- [ ] The corpus report still reads correctly around the renamed row
+
+## Invariants
+
+- No change to the counts in the table; label and prose only.
+- `make check-fast` and `make lint` stay green.
+
+## Exit criteria
+
+- [ ] The data paper's two source tables agree on the layer's name, and a
+  guard pins the agreement
