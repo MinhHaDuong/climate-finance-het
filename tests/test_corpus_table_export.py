@@ -319,6 +319,18 @@ def _zero_refined_row(source: str = _ZERO_SOURCE) -> dict:
     return {"Source": source, "Raw": 50, "Refined": 0, "Unique": 0}
 
 
+def _table_rows(emitted: str) -> str:
+    """The pipe-table rows only, with the caption paragraph dropped.
+
+    Scanning the whole file for `nan` would be a trap of this test's own making:
+    the real caption says "provenance", and a substring search cannot tell that
+    from a defective cell. The shipped table was checked and contains exactly
+    one `nan` — inside that word. Assertions about cell values belong to the
+    rows.
+    """
+    return "\n".join(l for l in emitted.splitlines() if l.startswith("|"))
+
+
 @pytest.mark.integration
 def test_zero_refined_source_renders_empty_cells_not_nan(tmp_path):
     """A source with no refined works must ship blanks, not the string `nan`.
@@ -357,7 +369,8 @@ def test_zero_refined_source_emits_no_nan_token(tmp_path):
     output = tmp_path / "tab_corpus_sources.md"
     _write_md_table(summary, str(output), _CAPTION)
 
-    assert "nan" not in output.read_text(encoding="utf-8")
+    rows = _table_rows(output.read_text(encoding="utf-8"))
+    assert "nan" not in rows, f"a zero-refined source shipped a literal nan:\n{rows}"
 
 
 def test_a_zero_refined_total_row_is_also_blank_not_nan(tmp_path):
@@ -374,12 +387,12 @@ def test_a_zero_refined_total_row_is_also_blank_not_nan(tmp_path):
     summary = pd.DataFrame([_zero_refined_row("TOTAL")], columns=_MD_COLUMNS)
     output = tmp_path / "tab_corpus_sources.md"
     _write_md_table(summary, str(output), _CAPTION)
-    emitted = output.read_text(encoding="utf-8")
+    rows = _table_rows(output.read_text(encoding="utf-8"))
 
-    assert "nan" not in emitted, f"the TOTAL branch shipped a nan:\n{emitted}"
-    assert "****" not in emitted, (
+    assert "nan" not in rows, f"the TOTAL branch shipped a nan:\n{rows}"
+    assert "****" not in rows, (
         "an empty TOTAL cell emitted a bare `****`, which pandoc reads as "
-        f"literal asterisks rather than emphasis:\n{emitted}"
+        f"literal asterisks rather than emphasis:\n{rows}"
     )
 
 
