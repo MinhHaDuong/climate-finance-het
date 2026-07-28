@@ -102,6 +102,7 @@ DOC_VARS = {
         "gm_coverage_pct",
         "gm_modularity",
         "gm_n_connected",
+        "inst_layer_pct",
         "lang_detected_n",
         "lang_detected_pct",
         "lang_english_pct",
@@ -308,6 +309,14 @@ def corpus_stats(v):
     if "from_openalex" in df.columns:
         oa_pct = 100 * df["from_openalex"].sum() / n
         v["openalex_pct"] = _pct(oa_pct)
+
+    # Selected institutional layer (grey + unfccc + oecd): union, not sum,
+    # so a work carried by two of the three layers counts once. The Abstract
+    # quantifies its coverage claim with this share (ticket 0334).
+    inst_cols = [c for c in ("from_grey", "from_unfccc", "from_oecd") if c in df.columns]
+    if inst_cols:
+        inst_n = df[inst_cols].any(axis=1).sum()
+        v["inst_layer_pct"] = _pct(100 * inst_n / n)
 
     # Raw (pre-filter) count from unified_works.csv
     unified_path = os.path.join(CATALOGS_DIR, "unified_works.csv")
