@@ -112,27 +112,18 @@ def zseries_stats(v):
         return
 
     year_min, year_max = int(cfg["year_min"]), int(cfg["year_max"])
-    for key, method in (
-        ("s2_peak_year_w3", "S2_energy"),
-        ("l1_peak_year_w3", "L1"),
-        ("g9_peak_year_w3", "G9_community"),
-    ):
-        peak = _peak_year(summaries.get(method), window, year_min, year_max)
+    # Peak year at w=3, and how far that peak travels as the half-width varies
+    # (§4.8 sweeps w over {2,3,4}). §5.1 quotes the spreads to argue a peak
+    # year is a weak summary of these series, and a hand-typed spread would rot
+    # at the next corpus rebuild exactly as the numbers this ticket replaced did.
+    for prefix, method in (("s2", "S2_energy"), ("l1", "L1"), ("g9", "G9_community")):
+        df = summaries.get(method)
+        peak = _peak_year(df, window, year_min, year_max)
         if peak is not None:
-            v[key] = str(peak)
-
-    # How far each peak travels as the half-width varies (§4.8 sweeps w over
-    # {2,3,4}). §5.1 quotes these to argue a peak year is a weak summary of
-    # these series, and a hand-typed spread would rot at the next corpus
-    # rebuild exactly as the numbers this ticket replaced did.
-    for key, method in (
-        ("s2_peak_spread_w234", "S2_energy"),
-        ("l1_peak_spread_w234", "L1"),
-        ("g9_peak_spread_w234", "G9_community"),
-    ):
-        spread = _peak_spread(summaries.get(method), year_min, year_max)
+            v[f"{prefix}_peak_year_w3"] = str(peak)
+        spread = _peak_spread(df, year_min, year_max)
         if spread is not None:
-            v[key] = str(spread)
+            v[f"{prefix}_peak_spread_w234"] = str(spread)
 
     years = list(range(year_min, year_max + 1))
     mat = signal_matrix(

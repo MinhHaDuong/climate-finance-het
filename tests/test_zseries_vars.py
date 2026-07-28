@@ -210,8 +210,6 @@ def test_a_renamed_window_refuses_rather_than_mislabel(tables, monkeypatch, capl
     is not — so the collector declines and leaves the sentinel, which the
     render guard then reports.
     """
-    import _companion_plot_utils
-
     cfg = dict(_companion_plot_utils.companion_config())
     cfg["lead_window"] = 4
     monkeypatch.setattr(_companion_plot_utils, "companion_config", lambda: cfg)
