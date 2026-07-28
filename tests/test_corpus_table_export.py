@@ -300,3 +300,128 @@ def test_shipped_labels_are_untouched_by_the_escaper(tmp_path):
         assert f"| {meta['label']} |" in emitted, (
             f"label {meta['label']!r} was rewritten by the escaper"
         )
+
+
+# --- ticket 0375: a source that refines to zero works -------------------------
+#
+# `main()` appends five keys for such a source and `continue`s, so
+# `pd.DataFrame(rows)` fills the four percentage columns with NaN for that row.
+# The rows below reproduce that shape by construction rather than by running the
+# corpus: what the emitter sees is a Series whose percentage keys are present
+# and hold NaN, and that is the whole input to the defect.
+
+_ZERO_SOURCE = "UNFCCC key documents"
+
+
+def _zero_refined_row(source: str = _ZERO_SOURCE) -> dict:
+    """What the md emitter sees of the five-key dict `main()` builds for such a source.
+
+    Four keys, not five: `Query` is in `main()`'s dict but not in `_MD_COLUMNS`,
+    so it never reaches `_write_md_table`.
+    """
+    return {"Source": source, "Raw": 50, "Refined": 0, "Unique": 0}
+
+
+def _table_rows(emitted: str) -> str:
+    """The pipe-table rows only, with the caption paragraph dropped.
+
+    Scanning the whole file for `nan` would be a trap of this test's own making:
+    the real caption says "provenance", and a substring search cannot tell that
+    from a defective cell. The shipped table was checked and contains exactly
+    one `nan` — inside that word. Assertions about cell values belong to the
+    rows.
+    """
+    return "\n".join(l for l in emitted.splitlines() if l.startswith("|"))
+
+
+@pytest.mark.integration
+def test_zero_refined_source_renders_empty_cells_not_nan(tmp_path):
+    """A source with no refined works must ship blanks, not the string `nan`.
+
+    `row.get(c, "")` does not catch this: the key *is* in the Series, holding
+    NaN, so the default never fires and the cell becomes `str(float('nan'))`.
+    A published data paper's quality table cannot carry `nan` in four columns.
+
+    Asserted on the rendered page for the same reason as the sibling tests
+    above — and here it also settles what "empty" means downstream: the reader
+    must produce four empty cells, not four cells that merely look empty in the
+    source.
+    """
+    require_pandoc()
+    summary = pd.DataFrame(
+        [_summary_row("Populated source"), _zero_refined_row()],
+        columns=_MD_COLUMNS,
+    )
+
+    row = row_with(_render(summary, tmp_path), _ZERO_SOURCE)
+
+    assert cell_texts(row) == [_ZERO_SOURCE, "50", "0", "0", "", "", "", ""], (
+        f"a zero-refined source shipped a literal 'nan':\n{row}"
+    )
+
+
+def test_zero_refined_source_emits_no_nan_token(tmp_path):
+    """The same defect at the source level, where it is unambiguous.
+
+    The rendered assertion above is the contract; this one names the symptom, so
+    a regression reports `nan` rather than an empty-string mismatch.
+    """
+    from export_corpus_table import _write_md_table
+
+    summary = pd.DataFrame([_zero_refined_row()], columns=_MD_COLUMNS)
+    output = tmp_path / "tab_corpus_sources.md"
+    _write_md_table(summary, str(output), _CAPTION)
+
+    rows = _table_rows(output.read_text(encoding="utf-8"))
+    assert "nan" not in rows, f"a zero-refined source shipped a literal nan:\n{rows}"
+
+
+def test_a_zero_refined_total_row_is_also_blank_not_nan(tmp_path):
+    """The TOTAL branch must not reach the defect either.
+
+    `main()` always gives TOTAL its full ten keys, so this cannot happen from
+    that call site today. The point is the emitter's contract, not that call
+    site: `_write_md_table` wraps TOTAL's values in `**…**` after formatting, so
+    a NaN reaching it would ship `**nan**` — the defect with emphasis on it.
+    Pinned so the guard covers both branches, not just the one that bites now.
+    """
+    from export_corpus_table import _write_md_table
+
+    summary = pd.DataFrame([_zero_refined_row("TOTAL")], columns=_MD_COLUMNS)
+    output = tmp_path / "tab_corpus_sources.md"
+    _write_md_table(summary, str(output), _CAPTION)
+    rows = _table_rows(output.read_text(encoding="utf-8"))
+
+    assert "nan" not in rows, f"the TOTAL branch shipped a nan:\n{rows}"
+    assert "****" not in rows, (
+        "an empty TOTAL cell emitted a bare `****`, which pandoc reads as "
+        f"literal asterisks rather than emphasis:\n{rows}"
+    )
+
+
+def test_the_csv_sibling_writes_empty_fields_for_the_same_row(tmp_path):
+    """Regression pin, not a fix — the `.csv` was never wrong.
+
+    This ticket was filed claiming the CSV carried the same `nan`; it does not,
+    because `to_csv`'s default `na_rep=""` already renders NaN as an empty
+    field. Pinned by driving the real writer and reading the file back rather
+    than asserting on the frame: a `columns=` allowlist has silently dropped a
+    computed field before (tickets 0288, 0347).
+    """
+    from pipeline_io import save_csv
+
+    summary = pd.DataFrame(
+        [_summary_row("Populated source"), _zero_refined_row()],
+        columns=_MD_COLUMNS,
+    )
+    output = tmp_path / "tab_corpus_sources.csv"
+    save_csv(summary, str(output))
+
+    written = output.read_text(encoding="utf-8")
+    assert "nan" not in written, f"the CSV grew a literal nan:\n{written}"
+
+    reread = pd.read_csv(output, keep_default_na=False, dtype=str)
+    zero = reread[reread["Source"] == _ZERO_SOURCE].iloc[0]
+    assert [zero[c] for c in ("%non-EN", "%DOI", "%Abstract", "%Refs")] == [
+        "", "", "", "",
+    ], f"the CSV's empty cells did not survive the round trip:\n{written}"
