@@ -18,8 +18,11 @@ abstract: |
   source of variation. We detect candidate years where Z exceeds a fixed
   threshold, group contiguous supra-threshold years into *transition zones*,
   and validate a zone only when at least two independent layers agree.
-  A two-pass censored-gap analysis confirms that validated zones survive
-  the removal of transitional years. The framework does not claim to
+  A two-pass censored-gap analysis tests whether validated zones survive
+  the removal of transitional years. Applied to this corpus the rule returns
+  a single zone covering the whole analysis window: at the thresholds used
+  here it does not localise a break, and the three layers instead show a
+  distribution in continuous motion. The framework does not claim to
   uniquely determine the field's true periodization; it provides
   reproducible, multi-representation evidence of where the distribution of
   scholarship shifts.
@@ -172,17 +175,19 @@ For each confirmed zone, the framework extracts three interpretive outputs.
 
 ### 5.1 Structural breaks in the full corpus
 
-@fig-zseries presents permutation Z-scores for the three distance detectors across the full corpus of {{< meta corpus_total >}} works. At the lead window half-width $w = 3$, S2 energy distance peaks at year {{< meta s2_peak_year_w3 >}}, L1 Jensen--Shannon divergence peaks at year {{< meta l1_peak_year_w3 >}}, and G9 community divergence peaks at year {{< meta g9_peak_year_w3 >}}. All three layers exceed the $Z > 2$ threshold in a contiguous run centred on 2007--2009, and a secondary run in 2013--2015. Sensitivity checks at $w = 2$ and $w = 4$ shift the peak locations by at most one year (Appendix §A.1).
+@fig-zseries presents permutation Z-scores for the three distance detectors across the full corpus of {{< meta corpus_total >}} works. At the lead window half-width $w = 3$, S2 energy distance peaks at year {{< meta s2_peak_year_w3 >}}, L1 Jensen--Shannon divergence peaks at year {{< meta l1_peak_year_w3 >}}, and G9 community divergence peaks at year {{< meta g9_peak_year_w3 >}}. The three peaks fall in the last third of the analysis window, and they disagree with one another. They also move with the half-width: varying $w$ over $\{2, 3, 4\}$ (§4.8) displaces the S2, L1, and G9 peaks by {{< meta s2_peak_spread_w234 >}}, {{< meta l1_peak_spread_w234 >}}, and {{< meta g9_peak_spread_w234 >}} years respectively. A peak year is therefore a weak summary of these series, which is the reason the framework reports zones rather than point breakpoints (§4.3).
 
-Applying the two-layer agreement rule yields two validated transition zones. The first runs from {{< meta zone_1_start >}} to {{< meta zone_1_end >}} and is supported by all three detectors; @fig-heatmap marks it as a confirmed discontinuity. The second zone, around 2013--2015, is confirmed by the lexical and citation layers, with the embedding layer peaking one year earlier.
+Applying the two-layer agreement rule yields one validated transition zone, running from {{< meta zone_1_start >}} to {{< meta zone_1_end >}}. Every year in that span satisfies the rule, so the supra-threshold run is uninterrupted and covers the analysis window; @fig-heatmap marks every column. At a threshold of $|Z| > 2$ with two agreeing layers, the rule does not discriminate within this corpus: it selects the whole period rather than isolating candidate breaks. What the three layers show is a distribution in continuous motion, not one that steps at a date.
 
-The censored-gap analysis (§4.7) confirms both zones as genuine discontinuities. Removing the transitional years reduces the supra-threshold run, ruling out a gradual redistribution explanation. @fig-terms shows the top discriminative terms for each confirmed zone; @fig-community shows the corresponding community shifts.
+The Z-scores also rise broadly with time on all three layers. One possible explanation is that detection power tracks the yearly document count, which grows across the window; separating that from a genuine acceleration would require a permutation scheme conditioning on year-specific sample sizes, which this design does not use.
+
+Two downstream steps are therefore not reported. The censored-gap confirmation of §4.7 does not apply to a zone that spans the analysis window, since excising its years leaves no before-and-after to compare. The interpretive outputs of §4.9 are withheld for the same reason: @fig-terms and @fig-community are placeholders pending the interpretation layer, not results.
 
 ### 5.2 No break in the core subset
 
-Restricting the corpus to its {{< meta corpus_core >}} most-cited works (citation count ≥ {{< meta corpus_core_threshold >}}) eliminates both validated zones: no method exceeds the $Z > 2$ threshold at any year under this filter.
+Restricting the corpus to its {{< meta corpus_core >}} most-cited works (citation count ≥ {{< meta corpus_core_threshold >}}) eliminates the validated zone: no method exceeds the $Z > 2$ threshold at any year under this filter.
 
-The null result is substantively informative. The most-cited works in climate finance span the full analysis window and are not concentrated in any particular sub-period. The structural breaks visible in the full corpus reflect changing *composition* --- new communities entering and new vocabulary becoming standard --- rather than a reorientation among the works that anchored the intellectual canon. The core subset remained stable throughout.
+The null result is substantively informative. The most-cited works in climate finance span the full analysis window and are not concentrated in any particular sub-period. The movement visible in the full corpus reflects changing *composition* --- new communities entering and new vocabulary becoming standard --- rather than a reorientation among the works that anchored the intellectual canon. The core subset remained stable throughout.
 
 ### 5.3 The efficiency--accountability axis
 
@@ -258,14 +263,16 @@ Candidate applications include AI ethics (where rapid field growth since 2018 ma
 
 We presented a framework for detecting structural change in scientific literatures that combines three independent document representations --- sentence-transformer embeddings, TF--IDF lexical distributions, and a temporally consistent citation graph --- with a classifier two-sample test as a robustness reference. Statistical inference uses permutation Z-scores for the distance statistics and cross-validation fold variance for the classifier, two primitives chosen to match each method's source of variation. Candidate years with $Z > 2$ are grouped into transition zones and validated only when at least two independent layers agree; a censored-gap test then separates genuine discontinuities from gradual redistributions.
 
-The framework does not claim to recover a unique true periodization. It produces a reproducible ledger of validated zones, each annotated with the layers that support it and the discriminative terms, documents, and community shifts that characterise it. Applied to climate finance scholarship (1998--2021, {{< meta corpus_total >}} works), it identifies transition zones that downstream tickets will interpret against the field's institutional history.
+The framework does not claim to recover a unique true periodization. It produces a reproducible ledger of validated zones, each annotated with the layers that support it and the discriminative terms, documents, and community shifts that characterise it. Applied to climate finance scholarship (1998--2021, {{< meta corpus_total >}} works), it returns one zone spanning the analysis window. That is a null result for localisation rather than a periodization: at these thresholds the agreement rule selects every year, and the layers agree on continuous movement rather than on a date.
 
 Future work should test sensitivity to embedding model choice (SPECTER2, ClimateBERT, SciBERT), implement a stratified permutation scheme that conditions on year-specific sample sizes, and apply the framework to other fields where endogenous periodization across multiple layers is desirable.
 
 ## Sensitivity analysis {#sec-sensitivity}
 
-@fig-companion-sensitivity shows the S2 energy distance Z-score profile under a 4×4 parameter grid of window half-width $w \in \{1, 3, 5, 7\}$ and censored-gap $g \in \{0, 1, 3, 5\}$ years. Each panel shows five curves for PCA dimensionalities (64, 128, 256, 512, full). Centre lines are medians over $R=3$ independent equal-$n$ subsample draws. The model choice (BAAI/bge-m3) is fixed; extending to alternative embeddings is left for future work.
+@fig-companion-sensitivity shows the S2 energy distance profile under a 4×4 parameter grid of window half-width $w \in \{1, 3, 5, 7\}$ and censored-gap $g \in \{0, 1, 3, 5\}$ years. Each panel shows five curves for PCA dimensionalities (64, 128, 256, 512, full). Centre lines are medians over $R=3$ independent equal-$n$ subsample draws. The sweep moves parameters on the embedding layer alone: within each cell the energy statistic is standardised across that cell's years, so a curve places years relative to one another rather than against the permutation null of §4.5, and no cell re-runs the two-layer agreement rule. The model choice (BAAI/bge-m3) is fixed; extending to alternative embeddings is left for future work.
 
-The broad shape of the Z-score profile --- low plateau before 2007, sharp rise through 2007--2013, high plateau after 2013 --- is stable across all 16 parameter combinations. PCA dimensionality affects the magnitude of the Z-score but not its shape. Window width affects the smoothness of the transition; narrower windows ($w=1$) show more year-to-year variability, while wider windows ($w=7$) smooth over short-lived shocks. Gap width has minimal effect on the central finding.
+The grid records parameter dependence rather than confirming a stable profile, because the quantity such a check would fix does not hold still. Section 5.1 measures the movement directly on the lead analysis: over the narrower range $w \in \{2, 3, 4\}$ the S2, L1, and G9 peak years already shift by {{< meta s2_peak_spread_w234 >}}, {{< meta l1_peak_spread_w234 >}}, and {{< meta g9_peak_spread_w234 >}} years, and the agreement rule returns a single zone covering {{< meta zone_1_start >}}--{{< meta zone_1_end >}}. Widening $w$ to 7 pools more years on each side of every candidate year, which by construction attenuates the year-to-year sampling variability that $w = 1$ exposes, together with any short-lived shock. No localised break survives for the grid to hold fixed, and that dependence on the parameters is the sensitivity finding: it is the same reason §5.1 reports a zone and continuous movement rather than a breakpoint year.
 
-![Sensitivity sweep: 4×4 grid of window × gap, 5 PCA dims per cell.](../_shared/figures/fig_companion_sensitivity.png){#fig-companion-sensitivity}
+Two limits bound what this appendix supports. The gap and dimension axes are not anchored to a validated zone, so the sweep licenses no claim about their effect on localisation --- with no localised break in the results, they have nothing to displace. And the grid covers S2 only; the L1 and G9 layers that vote in the agreement rule are not swept here.
+
+![Sensitivity sweep: 4×4 grid of window × gap, 5 PCA dims per cell. Curves are S2 energy distance standardised across the years of each cell.](../_shared/figures/fig_companion_sensitivity.png){#fig-companion-sensitivity}

@@ -379,9 +379,22 @@ COMPUTED_STATS := deliverables/_shared/technical-report-vars.yml \
 # reason config/corpus_filter.yaml is: registering a variable or changing which
 # config key it reads changes the emitted bytes, and compute_vars.py's own
 # mtime does not move when they are edited (ticket 0357).
+# The Z-series collector (ticket 0570) reads the divergence summaries and the
+# C2ST tables through scripts/_companion_plot_utils.py, so that module is a
+# real prerequisite; the tables it reads are $(wildcard) ones, like every other
+# optional input above — present, they rebuild the vars file with real numbers;
+# absent, they expand to nothing and the sentinel fallback keeps `make stats`
+# working on a checkout that has never run the divergence chain.
 $(COMPUTED_STATS) &: scripts/analysis/compute_vars.py \
 		scripts/analysis/_vars_registry.py scripts/analysis/_vars_retrieval.py \
-		scripts/utils.py \
+		scripts/analysis/_vars_ablation.py scripts/analysis/_vars_zseries.py \
+		scripts/utils.py scripts/_companion_plot_utils.py \
+		$(wildcard $(DERIVED)/tab_summary_S2_energy.csv) \
+		$(wildcard $(DERIVED)/tab_summary_L1.csv) \
+		$(wildcard $(DERIVED)/tab_summary_G9_community.csv) \
+		$(wildcard $(DERIVED)/tab_summary_G2_spectral.csv) \
+		$(wildcard $(DERIVED)/tab_div_C2ST_embedding.csv) \
+		$(wildcard $(DERIVED)/tab_div_C2ST_lexical.csv) \
 		config/corpus_filter.yaml $(REFINED) \
 		$(DERIVED)/tab_bimodality.csv $(DERIVED)/tab_bimodality_core.csv \
 		$(DERIVED)/tab_axis_detection.csv \

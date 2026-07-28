@@ -70,9 +70,21 @@ class TestResults51:
         assert s, "§5.1 heading not found"
         assert "[TO WRITE" not in s
 
-    def test_mentions_2007_or_2009(self):
-        s = section_h3(read(COMPANION), "5.1 Structural breaks in the full corpus")
-        assert "2007" in s or "2009" in s, "§5.1 must mention key break years"
+    # Removed with ticket 0570: a positive pin on "2007" or "2009" in §5.1.
+    #
+    # It was falsified, not merely brittle. Once the divergence chain actually
+    # ran, the three detectors peaked at 2014, 2020, and 2019, and the
+    # two-layer agreement rule returned one zone spanning 1998--2020 — so
+    # "key break years" names years the corpus does not single out, and the
+    # guard would have forced the paper to keep asserting them.
+    #
+    # It is also the shape the house polarity rule forbids (writing.md, "CI
+    # test polarity rule"): prose guards pin forbidden phrasings and mechanical
+    # checks, never that a specific positive phrasing appears, because a
+    # positive pin breaks on every legitimate rewrite. This one broke on the
+    # rewrite that made the section true. Replacing it with a pin on the new
+    # years would rebuild the same trap one corpus rebuild later; the values
+    # are asserted where they are produced, in test_zseries_vars.py.
 
     def test_mentions_censored(self):
         s = section_h3(read(COMPANION), "5.1 Structural breaks in the full corpus")

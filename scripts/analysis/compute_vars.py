@@ -23,6 +23,7 @@ import pandas as pd
 from _vars_ablation import filter_ablation_stats
 from _vars_registry import DOC_VARS, DOC_VARS_FILE
 from _vars_retrieval import retrieval_protocol_stats
+from _vars_zseries import zseries_stats
 from pipeline_io import latest_run_report
 from pipeline_loaders import load_refined_citations, load_refined_works
 from script_io_args import parse_io_args, validate_io
@@ -667,11 +668,20 @@ def main():
     ):
         v.setdefault(_k, MISSING)
 
-    # Companion Z-series vars — require tab_summary_*.csv (not yet generated)
+    # Companion Z-series vars. zseries_stats reads tab_summary_*.csv where the
+    # divergence chain has produced them; the setdefault below stays as the
+    # partial-build path, for a checkout that has not run it. A sentinel here
+    # is legal — a *quoted* sentinel is not, and
+    # test_render_placeholders.py::test_no_deliverable_quotes_a_sentinel_value
+    # is what fails when one reaches a document (ticket 0570).
+    zseries_stats(v)
     for _k in (
         "s2_peak_year_w3",
         "l1_peak_year_w3",
         "g9_peak_year_w3",
+        "s2_peak_spread_w234",
+        "l1_peak_spread_w234",
+        "g9_peak_spread_w234",
         "zone_1_start",
         "zone_1_end",
     ):

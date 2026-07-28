@@ -28,6 +28,9 @@ caption (the markdown writer drops caption text) — so citations are read from
 stderr, and crossrefs from the union of output and stderr.
 """
 
+import os
+import sys
+
 import pytest
 from _qmd_meta import (
     PLACEHOLDER,
@@ -40,10 +43,17 @@ from _qmd_meta import (
     placeholders_in,
     render_to_markdown,
     require_quarto,
+    sentinel_valued_keys,
     source_files,
     unresolved_crossrefs_in,
     unresolved_meta_keys,
 )
+
+# compute_vars lives in scripts/analysis/, which is not one of the pytest
+# pythonpath roots — same two-line prelude test_doc_vars_completeness.py uses.
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "analysis"))
+import compute_vars
 
 #: Documents that render `?meta:` placeholders today, pinned to the exact keys.
 #:
@@ -61,6 +71,37 @@ from _qmd_meta import (
 #: mechanism available for the next known-broken document, and keeps the
 #: guard's both-directions behaviour: a new unresolved key fails here.
 KNOWN_UNRESOLVED: dict[str, frozenset[str]] = {}
+
+
+def _sentinel_values() -> frozenset[str]:
+    """Every "this value is unavailable" marker `compute_vars` can write.
+
+    Read off the module rather than transcribed here. `compute_vars` defines
+    one such marker today (`MISSING`); a second one added beside it joins this
+    guard without anyone remembering to, which is the whole reason the ticket
+    forbids hardcoding the literal. The shape — an upper-case module constant
+    whose string value is bracketed — is what a sentinel looks like in that
+    file, and `MISSING` is asserted present so a derivation that silently
+    stopped finding anything fails here instead of passing everything.
+    """
+    found = frozenset(
+        value
+        for name, value in vars(compute_vars).items()
+        if name.isupper()
+        and isinstance(value, str)
+        and value.startswith("[")
+        and value.endswith("]")
+    )
+    assert compute_vars.MISSING in found, (
+        f"the sentinel scan of compute_vars found {sorted(found)}, which does "
+        f"not include MISSING={compute_vars.MISSING!r} — the scan is broken, "
+        f"and a broken scan reports every document clean"
+    )
+    return found
+
+
+SENTINELS = _sentinel_values()
+
 
 def _params():
     """Every discovered document, as a parametrize list."""
@@ -146,6 +187,33 @@ def _broken_citation_document(tmp_path):
     return qmd
 
 
+def _sentinel_document(tmp_path):
+    """A document whose vars file declares three keys and quotes two of them.
+
+    All three shapes the guard must tell apart are present: a quoted key with a
+    real value (fine), a quoted key whose value is the sentinel (the defect),
+    and an unquoted sentinel key (the partial-build path, which must stay
+    legal — a vars file may carry a sentinel, only a document may not quote
+    one).
+    """
+    (tmp_path / "probe-vars.yml").write_text(
+        f'real_key: "2007"\n'
+        f'broken_key: "{compute_vars.MISSING}"\n'
+        f'unquoted_key: "{compute_vars.MISSING}"\n',
+        encoding="utf-8",
+    )
+    qmd = tmp_path / "sentinel.qmd"
+    qmd.write_text(
+        "---\n"
+        'title: "Sentinel"\n'
+        "metadata-files: [probe-vars.yml]\n"
+        "---\n\n"
+        "Peaks at {{< meta real_key >}} and at {{< meta broken_key >}}.\n",
+        encoding="utf-8",
+    )
+    return qmd
+
+
 def _broken_document(tmp_path, key="absent_key"):
     """A minimal Quarto document naming one declared key and one undeclared."""
     (tmp_path / "probe-vars.yml").write_text('declared_key: "1,234"\n', encoding="utf-8")
@@ -202,6 +270,68 @@ def test_static_resolver_rejects_a_vars_file_that_is_not_a_mapping(tmp_path, bad
 def test_no_deliverable_uses_an_undeclared_meta_key(qmd):
     """Every `{{< meta X >}}` in a deliverable resolves against its metadata."""
     _assert_matches_expectation(qmd, unresolved_meta_keys(qmd), "static scan")
+
+
+# --------------------------------------------------------------------------
+# The sentinel resolver (ticket 0570)
+# --------------------------------------------------------------------------
+#
+# One layer below the resolver above. Those keys fail to resolve; these resolve
+# to a value that means they have no value, so every key-level guard is
+# satisfied while the paragraph published
+#
+#     S2 energy distance peaks at year [MISSING]
+#
+# at exit code 0. `compute_vars` writes the sentinel on purpose — a contributor
+# without `tab_summary_*.csv` must still be able to run `make stats` — so the
+# rule is not "no sentinel in a vars file" but "no sentinel in a *quoted* key".
+
+
+def test_sentinel_resolver_flags_a_quoted_sentinel(tmp_path):
+    """Red first: the resolver sees the defect on a document built to have it."""
+    assert sentinel_valued_keys(_sentinel_document(tmp_path), SENTINELS) == {
+        "broken_key"
+    }
+
+
+def test_sentinel_resolver_allows_an_unquoted_sentinel(tmp_path):
+    """The partial-build path stays legal: a carried sentinel nobody quotes.
+
+    Without this the obvious over-fix — make `compute_vars` fail on a missing
+    artifact — would look correct, and would break `make stats` on every
+    machine that has not run the divergence chain.
+    """
+    found = sentinel_valued_keys(_sentinel_document(tmp_path), SENTINELS)
+    assert "unquoted_key" not in found
+    assert "real_key" not in found
+
+
+def test_sentinel_resolver_reads_the_generated_vars_file(tmp_path):
+    """The verdict comes from the artifact Quarto loads, not from a dict.
+
+    Rewriting the vars file must flip the answer — otherwise the guard is
+    reading something one layer removed, which is the gap that let this defect
+    sit on `origin/main` behind two key-level guards.
+    """
+    qmd = _sentinel_document(tmp_path)
+    assert sentinel_valued_keys(qmd, SENTINELS)
+    (tmp_path / "probe-vars.yml").write_text(
+        'real_key: "2007"\nbroken_key: "2009"\nunquoted_key: "x"\n', encoding="utf-8"
+    )
+    assert not sentinel_valued_keys(qmd, SENTINELS)
+
+
+@pytest.mark.parametrize("qmd", _params())
+def test_no_deliverable_quotes_a_sentinel_value(qmd):
+    """No `{{< meta X >}}` in a deliverable resolves to a sentinel."""
+    quoted = sentinel_valued_keys(qmd, SENTINELS)
+    assert not quoted, (
+        f"{qmd.name}: {len(quoted)} key(s) resolve to a sentinel and would be "
+        f"published as if they were results: {sorted(quoted)}. Either produce "
+        f"the numbers (run the chain that generates the missing artifact) or "
+        f"stop making the claim — do not silence this by removing the sentinel "
+        f"from the vars file, which only turns it back into a `{PLACEHOLDER}`."
+    )
 
 
 @pytest.mark.parametrize("qmd", _params())
