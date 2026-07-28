@@ -616,6 +616,100 @@ def global_map_stats(v):
         v["gm_connected_pct"] = _pct(100 * summary["n_nodes"] / total, 0)
 
 
+def _peak_year(df, window):
+    """Year of the largest Z-score at ``window``, or None if there is none.
+
+    None rather than an exception when the table is absent or carries no
+    Z-score at this window: a partial build has no summary tables at all, and
+    the caller's fallback is what keeps `make stats` working there.
+    """
+    if df is None or df.empty:
+        return None
+    from _companion_plot_utils import window_rows
+
+    rows = window_rows(df, window)
+    if "z_score" not in rows.columns or not rows["z_score"].notna().any():
+        return None
+    return int(rows.loc[rows["z_score"].idxmax(), "year"])
+
+
+def zseries_stats(v):
+    """Z-series peak years and the first validated transition zone (0570).
+
+    Reads the three `tab_summary_*.csv` the divergence chain produces. The
+    ticket-0570 comment these vars used to carry — "not yet generated" — was
+    stale: `divergence.mk` has built those targets since the bootstrap/null
+    work landed, so what was missing was a reader, not the data.
+
+    The zone bounds come from the same helper the heatmap draws its borders
+    with, on the same signal matrix, because the paragraph in the paper says
+    "@fig-heatmap marks it as a confirmed discontinuity" — a second definition
+    here would let the sentence and the figure it points at disagree.
+
+    `_companion_plot_utils` is imported inside the function, not at module
+    scope: it is a figure-side helper, and `compute_vars` is imported by guards
+    that only want its constants. Nothing here degrades to an exception — a
+    machine without the summary tables leaves every key untouched for the
+    caller's fallback, which is the partial-build path this ticket must keep.
+    """
+    from _companion_plot_utils import (
+        companion_config,
+        contiguous_runs,
+        load_c2st_tables,
+        load_summary_tables,
+        signal_matrix,
+        validated_zone_columns,
+    )
+
+    cfg = companion_config()
+    window = int(cfg["lead_window"])
+    if window != 3:
+        # The key names pin the window (`_w3`). Writing a w=4 number into a key
+        # that says w3 is this ticket's own defect class — a value that reads
+        # as something it is not — so refuse and let the keys fall back to the
+        # sentinel, which the render guard then reports.
+        log.error(
+            "companion.lead_window is %d but the Z-series vars are named _w3; "
+            "rename the keys (and the prose) before changing the window.",
+            window,
+        )
+        return
+
+    summaries = load_summary_tables(DERIVED_TABLES_DIR)
+    if not summaries:
+        log.info("No tab_summary_*.csv in %s — Z-series vars stay unset.",
+                 DERIVED_TABLES_DIR)
+        return
+
+    for key, method in (
+        ("s2_peak_year_w3", "S2_energy"),
+        ("l1_peak_year_w3", "L1"),
+        ("g9_peak_year_w3", "G9_community"),
+    ):
+        peak = _peak_year(summaries.get(method), window)
+        if peak is not None:
+            v[key] = str(peak)
+
+    years = list(range(int(cfg["year_min"]), int(cfg["year_max"]) + 1))
+    mat = signal_matrix(
+        summaries,
+        load_c2st_tables(DERIVED_TABLES_DIR),
+        years,
+        window,
+        float(cfg["auc_chance"]),
+        float(cfg["auc_scale"]),
+        list(cfg["methods"].keys()),
+    )
+    runs = contiguous_runs(
+        validated_zone_columns(
+            mat, float(cfg["z_threshold"]), int(cfg["validated_zone_min_methods"])
+        )
+    )
+    if runs:
+        v["zone_1_start"] = str(years[runs[0][0]])
+        v["zone_1_end"] = str(years[runs[0][-1]])
+
+
 # ── Write YAML ───────────────────────────────────────────────
 
 
@@ -667,7 +761,13 @@ def main():
     ):
         v.setdefault(_k, MISSING)
 
-    # Companion Z-series vars — require tab_summary_*.csv (not yet generated)
+    # Companion Z-series vars. zseries_stats reads tab_summary_*.csv where the
+    # divergence chain has produced them; the setdefault below stays as the
+    # partial-build path, for a checkout that has not run it. A sentinel here
+    # is legal — a *quoted* sentinel is not, and
+    # test_render_placeholders.py::test_no_deliverable_quotes_a_sentinel_value
+    # is what fails when one reaches a document (ticket 0570).
+    zseries_stats(v)
     for _k in (
         "s2_peak_year_w3",
         "l1_peak_year_w3",

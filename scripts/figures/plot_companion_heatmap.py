@@ -21,14 +21,14 @@ import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 from _companion_plot_utils import (
     add_tables_dir_arg,
     companion_config,
     load_c2st_tables,
     load_summary_tables,
     save_companion_figure,
-    window_rows,
+    signal_matrix,
+    validated_zone_columns,
 )
 from matplotlib.patches import Rectangle
 from plot_style import DPI, FIGWIDTH, apply_style
@@ -37,37 +37,6 @@ from utils import get_logger
 
 log = get_logger("plot_companion_heatmap")
 apply_style()
-
-
-def _signal_matrix(
-    summaries: dict[str, pd.DataFrame],
-    c2sts: dict[str, pd.DataFrame],
-    years: list[int],
-    window: int,
-    auc_chance: float,
-    auc_scale: float,
-    row_order: list[str],
-) -> np.ndarray:
-    """Build a (len(row_order), len(years)) signed signal matrix."""
-    mat = np.full((len(row_order), len(years)), np.nan, dtype=float)
-    year_to_col = {y: i for i, y in enumerate(years)}
-
-    for i, method in enumerate(row_order):
-        if method in summaries:
-            sub = window_rows(summaries[method], window)
-            for _, row in sub.iterrows():
-                y = int(row["year"])
-                if y in year_to_col and pd.notna(row.get("z_score")):
-                    mat[i, year_to_col[y]] = float(row["z_score"])
-        elif method in c2sts:
-            sub = window_rows(c2sts[method], window)
-            for _, row in sub.iterrows():
-                y = int(row["year"])
-                if y in year_to_col and pd.notna(row.get("value")):
-                    mat[i, year_to_col[y]] = (
-                        float(row["value"]) - auc_chance
-                    ) * auc_scale
-    return mat
 
 
 def main() -> None:
@@ -94,7 +63,7 @@ def main() -> None:
 
     summaries = load_summary_tables(args.tables_dir)
     c2sts = load_c2st_tables(args.tables_dir)
-    mat = _signal_matrix(
+    mat = signal_matrix(
         summaries,
         c2sts,
         years,
@@ -120,9 +89,10 @@ def main() -> None:
         interpolation="nearest",
     )
 
-    # Yearly validated-zone borders (per column).
-    above = np.abs(mat) >= z_thr
-    zone_cols = np.where(np.nansum(above, axis=0) >= min_methods)[0]
+    # Yearly validated-zone borders (per column). The rule lives in
+    # _companion_plot_utils so the prose in the paper (compute_vars reads the
+    # same helper for zone_1_start/end) cannot drift from what is drawn here.
+    zone_cols = validated_zone_columns(mat, z_thr, min_methods)
     for c in zone_cols:
         ax.add_patch(
             Rectangle(
