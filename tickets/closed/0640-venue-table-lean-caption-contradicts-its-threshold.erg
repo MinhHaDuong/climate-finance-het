@@ -2,10 +2,12 @@
 Title: The venue table's "Lean" caption describes a majority test, but the code applies a log-odds threshold
 Created: 2026-07-28
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1278
 
 --- log ---
 2026-07-28T17:25Z HDMX-coding-agent created
 
+2026-07-28T18:11Z HDMX-coding-agent closed — autoclosed — PR #1278
 --- body ---
 ## Context
 
