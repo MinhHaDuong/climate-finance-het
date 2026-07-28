@@ -76,7 +76,8 @@ echo "  Copying final products (embeddings, citations)..."
 cp -L "$DATA_DIR/embeddings.npz" "$TMP/data/products/"
 cp -L "$DATA_DIR/citations.csv" "$TMP/data/products/"
 # Retrieval-protocol appendix (ticket 0329): the paper points referees here for
-# the query fields, per-tier term counts, and the grey-literature enumeration.
+# the query fields, per-tier term counts, and the institutional-reports
+# seed-list enumeration.
 cp "$PROJ_ROOT/deliverables/_shared/tables/tab_retrieval_protocol.csv" "$TMP/data/products/"
 cp "$PROJ_ROOT/deliverables/_shared/tables/tab_retrieval_protocol.md" "$TMP/data/products/"
 # Reranker human-validation evidence (ticket 0372): §2.3 quotes AUC = 0.818

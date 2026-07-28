@@ -59,8 +59,12 @@ SOURCE_META = {
         "label": "SciSpace",
         "query": "AI-curated systematic review (RIS + CSV exports)",
     },
+    # Display label follows Table 1 of the data paper, which ticket 0334
+    # renamed; the `grey` key, `from_grey` flag, and `grey_sources.yaml` are
+    # code identifiers and keep the old name. Pinned by
+    # tests/test_datapaper_claims.py (ticket 0565).
     "grey": {
-        "label": "Grey literature",
+        "label": "Institutional reports",
         "query": "World Bank Open Knowledge Repository API + curated YAML (OECD, UNFCCC, CPI)",
     },
     "teaching": {

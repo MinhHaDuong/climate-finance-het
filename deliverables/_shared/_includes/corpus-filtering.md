@@ -41,7 +41,7 @@ Flagged, non-protected papers are removed.
 
 Enrichment steps can reintroduce duplicates from source JSONs that the merge step had already deduplicated. Two classes of duplicates are addressed:
 
-1. **Grey-literature placeholder DOIs.** Some grey-literature documents share a fake placeholder DOI (e.g., `10.1108/meq.2003.14.4.541.3`). These are detected as normalized DOIs appearing more than once exclusively among `from_grey` records. The DOI field is cleared for these records so they are not collapsed in the next step.
+1. **Institutional-report placeholder DOIs.** Some institutional reports share a fake placeholder DOI (e.g., `10.1108/meq.2003.14.4.541.3`). These are detected as normalized DOIs appearing more than once exclusively among `from_grey` records. The DOI field is cleared for these records so they are not collapsed in the next step.
 
 2. **OpenAlex duplicate IDs.** The same paper is occasionally indexed under two different OpenAlex IDs with the same DOI. After clearing placeholder DOIs, records are deduplicated on `doi_norm`, keeping the record with the highest `cited_by_count` (best bibliometric signal). Records without a DOI (NaN `doi_norm`) are excluded from deduplication to avoid incorrectly collapsing distinct works.
 

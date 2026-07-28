@@ -365,8 +365,8 @@ def test_protocol_rows_count_the_curated_seed_lists():
 
     rows = {r["Source"]: r for r in build_protocol_rows()}
     n_grey = len(_load(GREY_YAML))
-    assert str(n_grey) in rows["Grey literature"]["Query terms"], (
-        f"grey row must report {n_grey} curated reports"
+    assert str(n_grey) in rows["Institutional reports"]["Query terms"], (
+        f"institutional-reports row must report {n_grey} curated reports"
     )
     for name, path in (
         ("UNFCCC key documents", "unfccc_sources.yaml"),
@@ -430,17 +430,17 @@ def test_caption_does_not_credit_config_for_hand_typed_languages():
     """The Languages column is config-derived for three rows, not five.
 
     OpenAlex reads its term-language tags and the two key-document layers read
-    their seed entries; the ISTEX and grey-literature cells are literals in the
-    export script. A caption crediting all five configured sources to the
-    deposited configuration sells a referee a provenance two rows lack — the
-    same drift this artifact exists to prevent.
+    their seed entries; the ISTEX and institutional-reports cells are literals
+    in the export script. A caption crediting all five configured sources to
+    the deposited configuration sells a referee a provenance two rows lack —
+    the same drift this artifact exists to prevent.
     """
     import export_retrieval_protocol as mod
 
     with open(mod.__file__, encoding="utf-8") as fh:
         source = fh.read()
     rows = {r["Source"]: r for r in mod.build_protocol_rows()}
-    hand_typed = ("ISTEX", "Grey literature")
+    hand_typed = ("ISTEX", "Institutional reports")
     for name in hand_typed:
         assert f'"Languages": "{rows[name]["Languages"]}"' in source, (
             f"{name} languages are no longer a hand-typed literal — the "
@@ -454,7 +454,7 @@ def test_caption_does_not_credit_config_for_hand_typed_languages():
         "the rows that have it"
     )
     disclosure = caption[caption.index(marker) :]
-    for token in ("istex", "grey", "asserted"):
+    for token in ("istex", "institutional-reports", "asserted"):
         assert token in disclosure, (
             f"the caption must disclose that {token!r} languages are asserted, "
             "not read from config"
@@ -470,7 +470,7 @@ def test_protocol_openalex_row_reports_the_query_field():
 
 
 def test_grey_enumeration_lists_every_curated_report():
-    """Action 6: the 17 grey-literature reports are enumerated in the deposit."""
+    """Action 6: the 17 curated institutional reports are enumerated in the deposit."""
     from export_retrieval_protocol import build_grey_rows
 
     grey = _load(GREY_YAML)

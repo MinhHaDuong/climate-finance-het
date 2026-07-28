@@ -17,6 +17,14 @@ Guards:
   percentage at all).
 - The label Table 1 gives the World Bank / curated-seed source appears in
   the Abstract, so the two cannot drift apart under a rename.
+- That same label is the one the two generated source tables print for the
+  layer (ticket 0565). Table 1 is authored in the paper, Table 2 and the
+  deposited retrieval protocol come from ``export_corpus_table.py`` and
+  ``export_retrieval_protocol.py``, which the corpus report also consumes —
+  so a rename in the paper silently left the generated tables a page later
+  calling the same layer something else. The guard reads Table 1's label and
+  requires the generators and their committed artifacts to print it, rather
+  than pinning any particular wording.
 """
 
 import os
@@ -28,16 +36,22 @@ import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "analysis"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "figures"))
 
 import compute_vars
 
-QMD = os.path.join(
-    os.path.dirname(__file__), "..", "deliverables", "data-paper", "data-paper.qmd"
-)
+REPO = os.path.join(os.path.dirname(__file__), "..")
+QMD = os.path.join(REPO, "deliverables", "data-paper", "data-paper.qmd")
+TABLES = os.path.join(REPO, "deliverables", "_shared", "tables")
 
 
 def _paper() -> str:
     with open(QMD, encoding="utf-8") as f:
+        return f.read()
+
+
+def _read(path: str) -> str:
+    with open(path, encoding="utf-8") as f:
         return f.read()
 
 
@@ -61,18 +75,86 @@ def find_literal_percentages(text: str) -> list[str]:
     return re.findall(r"\b\d+(?:\.\d+)?%", text)
 
 
+def _split_pipe_row(line: str) -> list[str]:
+    """Cells of one ``| a | b |`` markdown table row, trimmed."""
+    return [c.strip() for c in line.strip().strip("|").split("|")]
+
+
 def sources_table_labels(text: str) -> list[str]:
     """First-column labels of the #tbl-sources pipe table."""
+    return [next(iter(row.values())) for row in tbl_sources_rows(text)]
+
+
+def world_bank_row_label(rows: list[dict], label_key: str = "Source") -> str:
+    """The label of the one row that describes the World Bank harvest.
+
+    "World Bank" is the layer's fingerprint across every table: Table 1 names
+    it in Coverage, the composition table in Query, the protocol table in
+    Retrieval. Keying on it rather than on a column position or a source id
+    means the guard follows the layer through a rename instead of pinning the
+    name it happens to carry today.
+    """
+    hits = {
+        str(r[label_key]).strip()
+        for r in rows
+        if "world bank" in " ".join(str(v) for v in r.values()).lower()
+    }
+    assert hits, (
+        "no row mentions the World Bank harvest, so the layer cannot be "
+        "identified. If a table was reworded to drop the phrase, this guard "
+        "needs a new fingerprint — the labels themselves have not necessarily "
+        f"drifted. Labels seen: {[str(r[label_key]).strip() for r in rows]}"
+    )
+    assert len(hits) == 1, (
+        f"expected exactly one row mentioning the World Bank harvest, got {hits}"
+    )
+    return hits.pop()
+
+
+def pipe_table_rows(text: str, columns: list[str]) -> list[dict]:
+    """Body rows of the pipe table whose header row is exactly ``columns``.
+
+    Matching the whole header, not just its first cell, is what lets this run
+    over ``tab_retrieval_protocol.md`` — which carries the protocol table and
+    the seed enumeration back to back — and pick the one asked for. Rows come
+    back as dicts so ``world_bank_row_label`` can search every cell.
+    """
+    rows, in_table = [], False
+    for line in text.splitlines():
+        if not line.startswith("|"):
+            in_table = False
+            continue
+        cells = _split_pipe_row(line)
+        if cells == columns:
+            in_table = True
+            continue
+        if not in_table or set(line) <= set("|:- "):
+            continue
+        rows.append(dict(zip(columns, cells)))
+    assert rows, f"no pipe table with header {columns} found"
+    return rows
+
+
+def tbl_sources_rows(text: str) -> list[dict]:
+    """Table 1 (``{#tbl-sources}``) as dicts, keyed by its own header cells.
+
+    The single parser for that table: ``sources_table_labels`` and the
+    label-vs-Abstract guard both read it through here, so a change to Table 1's
+    markup lands in one regex rather than three (review of PR #1284).
+    """
     m = re.search(
         r"\n(\| *Source *\|.*?)\n\n: [^\n]*\{#tbl-sources\}", text, re.DOTALL
     )
     assert m, "no #tbl-sources pipe table found"
-    labels = []
-    for line in m.group(1).splitlines()[2:]:  # skip header + delimiter rows
-        cells = [c.strip() for c in line.strip().strip("|").split("|")]
-        if cells and cells[0]:
-            labels.append(cells[0])
-    return labels
+    header, _delim, *body = m.group(1).splitlines()
+    columns = _split_pipe_row(header)
+    rows = []
+    for line in body:
+        if not line.strip():
+            continue
+        cells = _split_pipe_row(line)
+        rows.append(dict(zip(columns, cells)))
+    return rows
 
 
 # --------------------------------------------------------------------------- #
@@ -102,26 +184,63 @@ def test_abstract_layer_share_is_a_shortcode_not_a_literal():
 def test_sources_table_label_matches_abstract():
     text = _paper()
     abstract = extract_abstract(text).lower()
-    labels = sources_table_labels(text)
-    wb_labels = [
-        label
-        for label, line in zip(labels, _tbl_sources_rows(text))
-        if "world bank" in line.lower()
-    ]
-    assert wb_labels, "no #tbl-sources row mentions the World Bank harvest"
-    for label in wb_labels:
-        assert label.lower() in abstract, (
-            f"Table 1 labels the layer {label!r} but the Abstract does not "
-            f"use that name — the two must move together"
+    label = world_bank_row_label(tbl_sources_rows(text))
+    assert label.lower() in abstract, (
+        f"Table 1 labels the layer {label!r} but the Abstract does not "
+        f"use that name — the two must move together"
+    )
+
+
+@pytest.mark.adherence
+def test_generated_source_tables_use_table_1s_label():
+    """Ticket 0565: Table 1, Table 2, and the protocol table name one layer once.
+
+    Table 1 is authored prose, the other two are generated and shared with the
+    corpus report, so a rename in the paper does not reach them. Both the
+    generator and its committed artifact are checked: the generator alone
+    would pass while the deposited CSV still carried the old label, and the
+    artifact alone would pass until the next ``make``.
+    """
+    import export_corpus_table
+    import export_retrieval_protocol
+
+    expected = world_bank_row_label(tbl_sources_rows(_paper()))
+
+    assert export_corpus_table.SOURCE_META["grey"]["label"] == expected, (
+        f"Table 1 calls the layer {expected!r} but export_corpus_table labels "
+        f"it {export_corpus_table.SOURCE_META['grey']['label']!r}"
+    )
+    protocol_label = world_bank_row_label(
+        export_retrieval_protocol.build_protocol_rows()
+    )
+    assert protocol_label == expected, (
+        f"Table 1 calls the layer {expected!r} but the retrieval protocol "
+        f"labels it {protocol_label!r}"
+    )
+
+    for name in ("tab_corpus_sources.csv", "tab_retrieval_protocol.csv"):
+        rows = pd.read_csv(os.path.join(TABLES, name)).to_dict("records")
+        artifact_label = world_bank_row_label(rows)
+        assert artifact_label == expected, (
+            f"{name} labels the layer {artifact_label!r}, not Table 1's "
+            f"{expected!r} — run `make corpus-tables` and commit"
         )
 
-
-def _tbl_sources_rows(text: str) -> list[str]:
-    m = re.search(
-        r"\n(\| *Source *\|.*?)\n\n: [^\n]*\{#tbl-sources\}", text, re.DOTALL
+    # The protocol table's committed .md, whose row label is what a reader of
+    # the deposit sees. Its composition-table counterpart is deliberately not
+    # read here: `tab_corpus_sources.md` is gitignored, so a clean clone has
+    # none until a build with the corpus produces one — and it comes out of
+    # the same DataFrame as the CSV above in a single `main()`, so it cannot
+    # drift from it on its own.
+    md_rows = pipe_table_rows(
+        _read(os.path.join(TABLES, "tab_retrieval_protocol.md")),
+        ["Source", "Retrieval", "Query fields", "Query terms", "Languages"],
     )
-    assert m
-    return [line for line in m.group(1).splitlines()[2:] if line.strip()]
+    md_label = world_bank_row_label(md_rows)
+    assert md_label == expected, (
+        f"the deposited protocol markdown labels the layer "
+        f"{md_label!r}, not Table 1's {expected!r}"
+    )
 
 
 # --------------------------------------------------------------------------- #
@@ -185,6 +304,91 @@ def test_fang_containment_verb_detected():
 @pytest.mark.adherence
 def test_fang_literal_percentage_detected():
     assert find_literal_percentages(extract_abstract(BAD_DOC)) == ["1.5%"]
+
+
+# Shaped like the real artifact: tab_corpus_sources.csv carries a Query column,
+# and the institutional-reports row's query is where "World Bank" appears. The
+# fingerprint has to be in the fixture for world_bank_row_label to have anything
+# to key on — without it the fang could only compare strings by hand.
+GENERATED_MD = """| Source | Query | Raw | Refined |
+|:-------|:------|----:|--------:|
+| OpenAlex | 4-tier keyword taxonomy | 40,000 | 30,000 |
+| Institutional reports | World Bank Open Knowledge Repository API | 281 | 210 |
+
+: Corpus sources. {#tbl-quality}
+
+| Title | Author | Year |
+|:---|:---|:---|
+| A World Bank report | Bank | 2013 |
+
+: The seed list.
+"""
+
+
+@pytest.mark.adherence
+def test_fang_world_bank_row_label_follows_a_rename():
+    """The helper reads the label off the layer, not off a pinned name."""
+    rows = [
+        {"Source": "OpenAlex", "Coverage": "academic index"},
+        {"Source": "Grey literature", "Coverage": "seed + World Bank repository"},
+    ]
+    assert world_bank_row_label(rows) == "Grey literature"
+    renamed = [dict(r) for r in rows]
+    renamed[1]["Source"] = "Institutional reports"
+    assert world_bank_row_label(renamed) == "Institutional reports"
+
+
+@pytest.mark.adherence
+def test_fang_world_bank_row_label_rejects_an_ambiguous_table():
+    """Two matching rows would let the guard pick a label at random."""
+    rows = [
+        {"Source": "A", "Coverage": "World Bank repository"},
+        {"Source": "B", "Coverage": "World Bank API"},
+    ]
+    with pytest.raises(AssertionError, match="exactly one row"):
+        world_bank_row_label(rows)
+
+
+@pytest.mark.adherence
+def test_fang_lost_fingerprint_says_so_rather_than_blaming_a_rename():
+    """Rewording every mention away must not read as a label drift.
+
+    The guard finds the layer by the phrase "World Bank"; a table that stops
+    using it leaves nothing to key on. Reporting that as a mismatch would send
+    the next reader after a rename that never happened.
+    """
+    rows = [{"Source": "Institutional reports", "Coverage": "curated seed list"}]
+    with pytest.raises(AssertionError, match="needs a new fingerprint"):
+        world_bank_row_label(rows)
+
+
+@pytest.mark.adherence
+def test_fang_pipe_table_rows_picks_its_own_table():
+    """The seed enumeration sits right below the protocol table; skip it."""
+    rows = pipe_table_rows(GENERATED_MD, ["Source", "Query", "Raw", "Refined"])
+    assert [r["Source"] for r in rows] == ["OpenAlex", "Institutional reports"]
+    with pytest.raises(AssertionError, match="no pipe table with header"):
+        pipe_table_rows(GENERATED_MD, ["Source", "Retrieval"])
+
+
+@pytest.mark.adherence
+def test_fang_generated_table_label_drift_detected():
+    """Revert Table 2's label alone and the agreement check must fail."""
+    paper_label = world_bank_row_label(tbl_sources_rows(BAD_DOC.replace(
+        "| Grey literature |", "| Institutional reports |"
+    )))
+    assert paper_label == "Institutional reports"
+    drifted = pipe_table_rows(
+        GENERATED_MD.replace("| Institutional reports |", "| Grey literature |"),
+        ["Source", "Query", "Raw", "Refined"],
+    )
+    # Read the drifted label the way the production guard does, off the layer's
+    # own fingerprint — a hand-rolled membership check would pass even if
+    # world_bank_row_label were broken.
+    assert world_bank_row_label(drifted) == "Grey literature"
+    assert world_bank_row_label(drifted) != paper_label, (
+        f"fang failed to detect drift: both tables would report {paper_label!r}"
+    )
 
 
 @pytest.mark.adherence

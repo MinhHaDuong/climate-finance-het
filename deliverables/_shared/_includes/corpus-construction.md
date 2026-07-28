@@ -13,13 +13,13 @@ The discover stage is described below; enrichment and filtering are documented i
 
 ### Sources
 
-The corpus assembles academic and grey literature from {{< meta corpus_sources >}} sources. Three are fully automated (reproducible from the repository and an internet connection), one is hybrid-automated, and two require manual export.
+The corpus assembles academic literature and institutional documents from {{< meta corpus_sources >}} sources. Three are fully automated (reproducible from the repository and an internet connection), one is hybrid-automated, and two require manual export.
 
 | Source | Script | Automation | Coverage |
 |---|---|---|---|
 | OpenAlex | `catalog_openalex.py` | Automated (free API) | Primary academic source: tiered keyword search (4 tiers, ~50 queries) |
 | ISTEX | `catalog_istex.py --api` | Automated (public API) | French national archive: `"climate finance" OR "finance climat" OR "finance climatique"` |
-| Grey literature | `catalog_grey.py` | Hybrid (YAML seed + World Bank API) | OECD, UNFCCC, World Bank, CPI reports |
+| Institutional reports | `catalog_grey.py` | Hybrid (YAML seed + World Bank API) | OECD, UNFCCC, World Bank, CPI reports |
 | Teaching canon | `build_teaching_canon.py` | Automated (scraping + LLM extraction) | Syllabus readings from 51 institutions |
 | bibCNRS | `catalog_bibcnrs.py` | **Hand-harvested** (CNRS Janus auth) | Non-English literature (FR, ZH, JA) via WoS/EconLit/FRANCIS |
 | SciSpace | `catalog_scispace.py` | **Hand-harvested** (commercial tool) | AI-curated thematic corpus (RIS + CSV exports) |
@@ -55,7 +55,7 @@ OpenAlex indexes 100% of Crossref's DOI registry and adds abstracts, concepts, t
 - **ISTEX:** The ISTEX search API (`api.istex.fr`) is queried for `"climate finance" OR "finance climat" OR "finance climatique"`. Raw responses are stored in the pool (`pool/istex/`) following the same append-only architecture as OpenAlex. ISTEX adds full-text metadata from Springer, Elsevier, and Wiley archives accessible through the French national license.
 - **bibCNRS** (hand-harvested): Title-field searches in French (`"finance climat"`), Chinese (`"气候金融"`), and Japanese (`"気候金融"`) on the bibCNRS portal (`bib.cnrs.fr`), which aggregates WoS, EconLit, and FRANCIS. Requires CNRS Janus institutional credentials; no public API exists. RIS exports are saved to `data/exports/` and parsed by the script. Harvested February 2026; 242 works.
 - **SciSpace** (hand-harvested): An AI-curated corpus produced by SciSpace's systematic review tool, exported as RIS and CSV files. The tool's proprietary discovery algorithm complements keyword-based search. Harvested January 2026; 663 works.
-- **Grey literature:** A curated YAML seed list (`config/grey_sources.yaml`, 16 key policy documents from OECD, UNFCCC, CPI) plus automated search of the World Bank Open Knowledge Repository API using three queries: `"climate finance"`, `"climate change policy" AND finance`, and `"financial mechanisms" AND climate`. Each query is capped at 500 results; results are deduplicated by UUID across queries. Fully reproducible.
+- **Institutional reports:** A curated YAML seed list (`config/grey_sources.yaml`, 16 key policy documents from OECD, UNFCCC, CPI) plus automated search of the World Bank Open Knowledge Repository API using three queries: `"climate finance"`, `"climate change policy" AND finance`, and `"financial mechanisms" AND climate`. Each query is capped at 500 results; results are deduplicated by UUID across queries. Fully reproducible.
 - **Teaching canon:** An automated web scraper (`catalog_syllabi.py`) harvests university course syllabi via DuckDuckGo search and curated seed URLs, downloads HTML/PDF content, classifies pages with an LLM, and extracts bibliographic references. PDF parsing uses pdfplumber to capture reading lists in any format. The normalize stage deduplicates references across syllabi, cleans DOIs (stripping URL prefixes), and enriches title-only references via OpenAlex DOI resolution (shared cache with the main corpus enrichment). Title-only references undergo fuzzy deduplication (rapidfuzz token sort ratio at 75%) so that edition variants and paraphrases aggregate their course counts. Readings then pass a two-tier convergence filter: detailed syllabi (≥20 DOI readings, e.g. doctoral seminars) pass at ≥1 course; standard readings require DOI + ≥2 courses or title-only + ≥3 courses. The result is converted to `teaching_works.csv` by `build_teaching_canon.py`, and the merge pipeline sets the `from_teaching` provenance flag.
 
 ### Merge and deduplication
