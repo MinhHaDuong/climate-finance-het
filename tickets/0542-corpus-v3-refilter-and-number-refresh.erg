@@ -1,0 +1,60 @@
+%erg 0.1
+Title: Corpus v3: apply panel-adjudicated flag 6, refilter, refresh every downstream number
+Created: 2026-07-28
+Author: HDMX-coding-agent
+Blocked-by: 0541
+
+--- log ---
+2026-07-28T08:10Z HDMX-coding-agent created child of 0540, blocked by 0541 (needs the panel decisions). Executes only after the 0540 Go; lands on a branch that is not merged before the RDJ-26561 resubmission without a second explicit author call.
+--- body ---
+## Context
+
+Child of tracker 0540. Once 0541 delivers panel decisions for the non-EN
+stratum (or the full corpus, per the bridge decision), this ticket applies
+them as flag 6, refilters, and propagates the new numbers everywhere.
+Corpus v2 (2026-07-24, 33,344 refined) is the baseline; the v2 refresh is
+the template for the churn and its cost (~1–2 weeks elapsed on that
+precedent, mostly in the propagation, not the refilter).
+
+## Actions
+
+1. Wire panel decisions into corpus_filter: flag 6 = cross-encoder for
+   `language == en`, panel majority for the rest (or panel everywhere, per
+   0540 decision). Config-driven, no hardcoded language list.
+2. Refilter → new refined_works/embeddings/citations; `dvc commit` +
+   `dvc push` on the branch (the 0347/0360 lesson: never skip the pointer
+   update).
+3. Rerun Phase 2; refresh vars files, tables, figures for both reports and
+   the data paper.
+4. Diff audit: per-stratum table of works entering/leaving the corpus
+   v2→v3, deposited alongside the votes artifact.
+5. Update the two prose sites that quote filter validation (data-paper.qmd
+   lines ~106/120) to describe the two-tier instrument and its anchors —
+   consistent with whatever 0372 restored.
+
+## Test
+
+- Red first: the composed flag-6 column equals cross-encoder decisions on
+  EN rows and panel majority on non-EN rows, on a fixture with both.
+- Guard: refined counts in prose are vars-driven (existing discipline); no
+  hand-typed count survives the refresh.
+
+## Verification
+
+- [ ] v3 contract files on the branch, dvc pushed
+- [ ] v2→v3 diff audit table deposited
+- [ ] make check green on the branch
+- [ ] Both reports + data paper render with v3 numbers, no stale count
+
+## Invariants
+
+- The resubmission lane (0274) keeps building against v2 until the author
+  explicitly switches it. Two corpora coexist on two branches; nothing
+  auto-merges.
+- Protection rules and all other flags unchanged — any diff outside flag 6
+  jurisdiction is a defect.
+
+## Exit criteria
+
+- v3 corpus + refreshed deliverables on the branch, diff audit deposited,
+  author walkthrough of the v2→v3 delta done.

@@ -2,12 +2,14 @@
 Title: Grouped-target output guard is blind to variable-expanded target lists
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: tooling-lane severity floor: guard blind spot with no live instance
 
 --- log ---
 2026-07-27T18:10Z HDMX-coding-agent created
 2026-07-27T18:20Z HDMX-coding-agent note found by the raid 0327/0329 merge gate, not by the guard itself. Filed with the reproducing case already identified.
 
 2026-07-27T18:38Z HDMX-coding-agent note second confirmed instance of this class, found independently by PR #1172's round-1 verify gate: tests/_mk_discovery.py::rule_targets() split the target list on whitespace before expand_vars, collapsing a multi-path $(VAR) into one space-joined key. Fixed there by expanding first (Make's own order). This ticket's grouped_targets_using_bare_at() at tests/test_corpus_flow.py:190 does the same split with no expansion and does NOT route through rule_targets(), so that fix does not reach it. Two hand-rolled parsers, one bug shape — ticket 0358 (migrate to a single Makefile parser) is the structural fix for both.
+2026-07-27T19:45Z HDMX-coding-agent closed — tooling-lane severity floor: guard blind spot with no live instance
 --- body ---
 ## Context
 

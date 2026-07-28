@@ -3,6 +3,7 @@ Title: Section 4 reads as a research article, not dataset validation — and it 
 Created: 2026-07-27
 Author: HDMX-coding-agent
 Label: needs-human
+Label: deferred
 
 --- log ---
 2026-07-27T11:00Z HDMX-coding-agent created
@@ -12,6 +13,7 @@ Label: needs-human
 2026-07-27T12:05Z HDMX-coding-agent note Action 2 corrected: the field-history statistics (Chow break, 17% growth, cross-pole z) are in §1's replication bullets (data-paper.qmd:57-59), not §4, so the §4 cut does not free them. Split into 2(i) §4 and 2(ii) §1, and the budget rationale no longer credits the §4 cut with §1's words. Added the 0327 sequencing note — §4 removal precedes 0327's table, per the remove-whole-before-condensing rule.
 
 2026-07-27T17:20Z HDMX-coding-agent note AUTHOR DIRECTION on the remaining overage: sections 2.3, 1 and 2.4 grew answering R1 remarks, and much of that answer belongs in the reply letter rather than in the paper permanently. Condense there, move the displaced text to the letter. See "Where the remaining words are" below.
+2026-07-27T19:46Z HDMX-coding-agent note AUTHOR DECISION: deferred. The word-budget pass waits until the ticket inflow is under control — cutting prose while 74 tickets a day arrive spends author attention on the wrong constraint. Labelled deferred so erg ready stops offering it. The editor query about whether the ED-03 variables table and references count toward the 2,500 is unsent and remains the cheapest first move when this resumes.
 --- body ---
 ## Context
 
