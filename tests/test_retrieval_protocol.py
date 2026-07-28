@@ -549,6 +549,91 @@ def test_markdown_escapes_a_pipe_in_a_cell():
     assert "|" in cell, "the pipe itself must survive into the published cell"
 
 
+def _rendered_protocol(tmp_path):
+    """The appendix as a reader sees it, through the reader Quarto uses."""
+    from _qmd_render import render_qmd, require_pandoc
+    from export_retrieval_protocol import render_markdown
+
+    require_pandoc()
+    return render_qmd(render_markdown(), tmp_path)
+
+
+@pytest.mark.integration
+def test_published_istex_query_renders_verbatim(tmp_path):
+    """A value a reader copies and executes must survive rendering byte-for-byte.
+
+    The reader carries ``smart``, which turns the query's straight quotes into
+    typographic ones. ISTEX does not read ``“`` as a phrase delimiter, so the
+    published query returns nothing — the reproducibility claim the table
+    exists to support is false as published (ticket 0530).
+    """
+    from _qmd_render import cell_texts, row_with
+    from export_retrieval_protocol import build_protocol_rows
+
+    query = {r["Source"]: r for r in build_protocol_rows()}["ISTEX"]["Query terms"]
+    assert '"' in query, (
+        f"the ISTEX query no longer carries a straight quote ({query!r}) — this "
+        "guard no longer exercises the smart-typography defect it was written for"
+    )
+
+    cells = cell_texts(row_with(_rendered_protocol(tmp_path), "ISTEX"))
+    assert query in cells, (
+        f"the published ISTEX query is not readable back verbatim: expected "
+        f"{query!r} among the rendered cells {cells!r}"
+    )
+
+
+@pytest.mark.integration
+def test_prose_cells_keep_smart_typography(tmp_path):
+    """The control: the fix must be per-cell, not a global de-typography.
+
+    It also stops the guard above from passing vacuously. If the oracle's
+    reader ever loses ``smart`` — the `gfm` regression ticket 0376 fixed — a
+    straight-quoted query reads back verbatim with no code span at all, and
+    the verbatim guard goes green while the shipped table stays broken. This
+    fails first in that case.
+    """
+    from _qmd_render import cell_texts, row_with
+    from export_retrieval_protocol import build_grey_rows
+
+    titles = [r["Title"] for r in build_grey_rows() if "'" in r["Title"]]
+    assert titles, "no curated report title carries an apostrophe to check"
+    title = titles[0]
+
+    flat = _rendered_protocol(tmp_path)
+    curly = title.replace("'", "’")
+    cells = cell_texts(row_with(flat, curly.split("’")[0]))
+    assert curly in cells, (
+        f"a prose cell lost its smart typography: expected {curly!r} among "
+        f"{cells!r}"
+    )
+
+
+def test_every_quoted_cell_is_a_code_span():
+    """The class guard: no future executable value may land in a smart cell.
+
+    A straight double quote in a published cell is a phrase delimiter — the
+    mark of a value meant to be copied and run — and the reader's ``smart``
+    extension rewrites it. Keyed on that distinguishing feature rather than on
+    the ISTEX row, so a query added for a sixth source inherits the guard
+    instead of shipping broken. Fast tier: source-level, no renderer.
+    """
+    from export_retrieval_protocol import render_markdown
+
+    offenders = []
+    for table in _pipe_tables(render_markdown()):
+        for line in table[2:]:
+            for cell in (c.strip() for c in line.strip("|").split("|")):
+                if '"' in cell and not (
+                    cell.startswith("`") and cell.endswith("`")
+                ):
+                    offenders.append(cell)
+    assert not offenders, (
+        "cells carry a straight quote outside a code span, so the reader's "
+        f"smart extension will rewrite them: {offenders}"
+    )
+
+
 def test_paper_points_at_the_deposited_protocol():
     """§2.1 tells the reader where the reconstructable protocol lives."""
     sources = _section(_qmd_text(), "2.1")
