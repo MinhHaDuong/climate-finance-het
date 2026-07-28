@@ -2,12 +2,14 @@
 Title: build_het_core fabricates a 2020 year for undated works, inflating their rank
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1238
 
 --- log ---
 2026-07-27T19:12Z HDMX-coding-agent created
 2026-07-27T19:20Z HDMX-coding-agent note Found by the ticket-0354 roar sweep for the silent-coercion class the deposit gate exposed
 2026-07-27T22:40Z HDMX-coding-agent note Corrected this ticket's own severity claim: the venues table is built but rendered by no document
 
+2026-07-28T07:15Z HDMX-coding-agent closed — autoclosed — PR #1238
 --- body ---
 ## Context
 
