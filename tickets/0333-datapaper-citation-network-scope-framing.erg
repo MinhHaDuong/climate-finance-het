@@ -7,6 +7,8 @@ Author: HDMX-coding-agent
 2026-07-27T11:00Z HDMX-coding-agent created
 2026-07-27T11:00Z HDMX-coding-agent note child of 0274. Raised by 3 of 4 external panel reviewers. Mostly prose and one caption; the substantive part is defining what "80% of corpus DOIs" counts.
 
+2026-07-28T09:50Z HDMX-coding-agent note the investigation sharpened the diagnosis: §2.3's sentence was wrong, not merely ambiguous. refined_citations.csv constrains source_doi only (corpus_align.py's contract), so the 1,087,209 pairs are outgoing references to any literature — the prose claimed both endpoints were corpus works. The 80% denominator is DOI-bearing refined works; the numerator is works with at least one outgoing reference row. The both-endpoints set is Figure 2's graph (13,112 connected works, now stated with its corpus share as gm_connected_pct). Actions 1-5 landed; action 6 (the 10-community table) deferred to the author: the paper sits at RDJ's 2,500-word budget and 0332 owns the length arbitration, so adding a table is an author call, not a fix. Sampling of the 300-link check verified in qa_citations.py: simple random, unstratified, fixed seed, both-DOI rows — now stated, with the partial-circularity caveat.
+
 --- body ---
 ## Context
 

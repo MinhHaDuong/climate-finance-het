@@ -89,7 +89,7 @@ def test_no_doi_exclusion_is_stated_for_targets_too():
     citing-source half implies the target half works, and it does not.
     """
     data_section = _section("3.")
-    assert re.search(r"cited targets|as a target|either side", data_section), (
+    assert re.search(r"cited targets?|as a (cited )?target|either side|both directions", data_section), (
         "§3 states the citing-source exclusion; state the cited-target "
         "exclusion too — the graph excludes no-DOI works in both directions"
     )

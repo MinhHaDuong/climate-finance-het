@@ -99,6 +99,7 @@ DOC_VARS = {
         "dedup_fp_empty_year_groups",
         "dedup_titleyear_removed",
         "gm_communities",
+        "gm_connected_pct",
         "gm_coverage_pct",
         "gm_modularity",
         "gm_n_connected",
@@ -704,6 +705,13 @@ def global_map_stats(v):
     v["gm_coverage_pct"] = _pct(100 * summary["coverage_share"], 0)
     v["gm_n_connected"] = _int(summary["n_nodes"])
     v["gm_modularity"] = f"{summary['modularity']:.2f}"
+    # Share of the corpus the connected subgraph holds (ticket 0333): the
+    # reviewers could not reconcile 13,112 with the corpus total because the
+    # prose never divided one by the other. corpus_stats() has run by now,
+    # so corpus_total is present in its display form.
+    if "corpus_total" in v:
+        total = int(str(v["corpus_total"]).replace(",", ""))
+        v["gm_connected_pct"] = _pct(100 * summary["n_nodes"] / total, 0)
 
 
 # ── Write YAML ───────────────────────────────────────────────
