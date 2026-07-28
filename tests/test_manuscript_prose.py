@@ -5,7 +5,12 @@ guards and mechanical density checks. No positive authorial wording is asserted
 — a legitimate rewrite must never turn one of these red. The positive voice
 lives in the editorial brief, not here.
 
-Two guard shapes:
+Most guards read ``manuscript.qmd`` alone. The exception is the ``@sec-``
+crossref guard (ticket 0318), which sweeps every ``deliverables/**/*.qmd``
+because its defect class is a rendering property of any document, not of this
+manuscript's voice.
+
+Three guard shapes:
 
 - **Hard bans** — a forbidden phrasing whose count must stay zero. Seeded from
   ``config/ai-tells.yml`` (the single source for the wordlists) plus the AEDIST
@@ -19,6 +24,10 @@ Two guard shapes:
   the ceiling in a deliberate commit. Covers em dashes, define-by-negation
   ("not X, but Y"), conditional words (``robust``/``landscape``), and hardcoded
   figure/table cross-refs (which should be ``@fig-``/``@tbl-``).
+
+- **Forbidden combinations** — two features that are each fine alone but broken
+  together, across every deliverable. Today: a hand-numbered heading plus an
+  ``@sec-`` crossref, which renders an empty "Section " (ticket 0318).
 
 Each guard is a pure ``find_*`` function exercised twice: once against the live
 manuscript (must be clean / within ceiling) and once against a known-bad
@@ -419,3 +428,51 @@ def test_fang_repeated_openers_logic():
     openers = ["the climate finance object", "the climate finance object"]
     dups = [openers[i] for i in range(1, len(openers)) if openers[i] == openers[i - 1]]
     assert dups
+
+
+# --------------------------------------------------------------------------- #
+# Ticket 0318 — @sec- crossrefs are empty in hand-numbered documents
+# --------------------------------------------------------------------------- #
+# Quarto resolves ``@sec-x`` against its own section counter. A document whose
+# headings carry hand-typed numbers ("## 3. Data") has no such counter unless
+# ``number-sections`` is on, so the reference renders as a bare "Section " with
+# nothing after it — and Quarto exits 0. The data paper shipped six of these
+# (PR #1120); multilayer-detection.qmd was the seventh. Negative polarity: the
+# guard forbids the *combination*, it pins no wording.
+HAND_NUMBERED_HEADING_RE = re.compile(r"^#{1,4} \d+\.", re.MULTILINE)
+SEC_XREF_RE = re.compile(r"@sec-[A-Za-z0-9_-]+")
+
+
+def find_empty_sec_xrefs(text: str) -> list[str]:
+    """``@sec-`` refs in a text that also numbers its headings by hand."""
+    if not HAND_NUMBERED_HEADING_RE.search(text):
+        return []
+    return SEC_XREF_RE.findall(text)
+
+
+def _deliverable_qmds() -> list[Path]:
+    # rglob, not glob("*/*.qmd"): a document filed one level deeper must not
+    # slip out of the guard's scope silently.
+    return sorted((REPO_ROOT / "deliverables").rglob("*.qmd"))
+
+
+def test_no_sec_xref_in_hand_numbered_deliverable():
+    offenders = {
+        path.relative_to(REPO_ROOT).as_posix(): refs
+        for path in _deliverable_qmds()
+        if (refs := find_empty_sec_xrefs(path.read_text(encoding="utf-8")))
+    }
+    assert not offenders, (
+        "@sec- crossref(s) in a document with hand-numbered headings render as an "
+        "empty 'Section ' (ticket 0318). Replace with literal section text:\n  "
+        + "\n  ".join(f"{k}: {', '.join(v)}" for k, v in offenders.items())
+    )
+
+
+def test_fang_empty_sec_xref():
+    hand_numbered = "## 3. Data\n\nSee @sec-sensitivity.\n"
+    assert find_empty_sec_xrefs(hand_numbered) == ["@sec-sensitivity"]
+    # A document that lets Quarto number its sections keeps working refs.
+    assert find_empty_sec_xrefs("## Data\n\nSee @sec-sensitivity.\n") == []
+    # No refs at all is clean even when headings are hand-numbered.
+    assert find_empty_sec_xrefs(hand_numbered.replace("@sec-sensitivity", "above")) == []

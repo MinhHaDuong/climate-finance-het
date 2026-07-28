@@ -2,10 +2,12 @@
 Title: Fix @sec crossref in multilayer-detection.qmd; guard the class (hand-numbered headings render @sec empty)
 Created: 2026-07-24
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1286
 
 --- log ---
 2026-07-24T22:40Z HDMX-coding-agent created from roar sweep (PR #1120 fix class)
 
+2026-07-28T20:16Z HDMX-coding-agent closed — autoclosed — PR #1286
 --- body ---
 ## Context
 
