@@ -28,10 +28,19 @@ changed=$(git status --porcelain)
 
 if [ -z "$changed" ]; then
     echo "dvc.lock unchanged, nothing to commit."
-elif [ "$(echo "$changed" | sed 's/^...//')" = "dvc.lock" ]; then
+elif echo "$changed" | sed 's/^...//' | grep -qxF 'dvc.lock'; then
+    # Refuse when dvc.lock is *among* the changed files, not only when it is
+    # the sole one. A real `dvc repro` can leave a stray untracked file behind,
+    # and the old "is the only change" test then downgraded the refusal to the
+    # exit-0 warning path — the one case the checkpoint exists for.
     echo ""
     echo "REFUSING to publish: the pipeline re-run changed dvc.lock."
     echo ""
+    if [ "$(echo "$changed" | sed 's/^...//')" != "dvc.lock" ]; then
+        echo "Other files changed too — review them before committing anything:"
+        echo "$changed"
+        echo ""
+    fi
     # Against HEAD, not the index: an already-staged dvc.lock would otherwise
     # print an empty diff under "review the diff above".
     git --no-pager diff HEAD -- dvc.lock || true

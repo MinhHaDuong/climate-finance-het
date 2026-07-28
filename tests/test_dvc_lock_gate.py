@@ -106,22 +106,26 @@ def test_staged_dvc_lock_still_shows_its_diff(throwaway_repo: Path):
     assert "staged: true" in result.stdout, "the diff must be shown against HEAD"
 
 
-def test_dvc_lock_plus_another_file_takes_the_warning_path(throwaway_repo: Path):
-    """The mixed case is the warning path, not silence.
+@pytest.mark.parametrize("sibling", ["other.txt", "stray-untracked.tmp"])
+def test_dvc_lock_among_other_changes_is_still_refused(
+    throwaway_repo: Path, sibling: str
+):
+    """dvc.lock changed is a refusal even when it is not the only change.
 
-    Pins the boundary: a gate that dropped the refusal for every multi-file
-    change would pass the two single-case tests above.
+    The untracked variant is the one that matters: a real `dvc repro` can leave
+    a stray file behind, and an "is the only change" test would then downgrade
+    the refusal to the exit-0 warning path.
     """
     repo = throwaway_repo
     (repo / "dvc.lock").write_text("schema: '2.0'\nchanged: true\n")
-    (repo / "other.txt").write_text("modified\n")
+    (repo / sibling).write_text("modified\n")
 
     result = _run_gate(repo)
 
-    assert result.returncode == 0, result.stderr
-    assert "WARNING" in result.stdout
-    assert "dvc.lock" in result.stdout
-    assert "other.txt" in result.stdout
+    assert result.returncode != 0, f"a stray {sibling} must not downgrade the refusal"
+    assert "REFUSING" in result.stdout
+    assert sibling in result.stdout, "the other changed files must be listed too"
+    assert _git(repo, "rev-parse", "main") == _git(repo, "rev-parse", "HEAD")
 
 
 def test_pipeline_script_no_longer_pushes_to_main():
