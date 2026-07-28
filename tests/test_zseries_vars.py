@@ -25,6 +25,7 @@ import logging
 import os
 import sys
 
+import _companion_plot_utils
 import numpy as np
 import pandas as pd
 import pytest
@@ -44,14 +45,22 @@ PEAK = 2009
 def _summary(method: str, peak: int = PEAK) -> pd.DataFrame:
     """A tab_summary_{method}.csv whose w=3 rows peak at `peak`.
 
-    Other windows carry a *higher* Z at a different year, so a collector that
-    forgot to filter on the window would report that year instead and fail
-    loudly rather than coincidentally agreeing.
+    Two decoys, because the collector must ignore both:
+
+    * other *windows* carry a higher Z at a different year, so a collector that
+      forgot to filter on the window reports that year instead;
+    * the years *below* `companion.year_min` carry the highest Z in the table,
+      which is what the real S2 table does — it starts at 1993 and its argmax
+      is 1996, six years before the figure the sentence cites begins.
+
+    Both make a wrong collector fail loudly rather than coincidentally agree.
     """
     rows = []
-    for year in range(1998, 2022):
+    for year in range(1993, 2022):
         for window in (2, 3, 4):
-            if window == 3:
+            if year < 1998:
+                z = 200.0
+            elif window == 3:
                 z = 9.0 if year == peak else (3.0 if year in ZONE_A + ZONE_B else 0.4)
             else:
                 z = 99.0 if year == 1999 else 0.1
@@ -113,6 +122,24 @@ def test_peak_years_come_from_the_w3_rows(tables):
     assert v["s2_peak_year_w3"] == str(PEAK)
     assert v["l1_peak_year_w3"] == str(PEAK)
     assert v["g9_peak_year_w3"] == str(PEAK)
+
+
+def test_peak_year_ignores_years_the_figure_does_not_show(tables):
+    """The argmax is taken over `companion.year_min..year_max`, nothing wider.
+
+    Replaying the real defect, not a synthetic one: `tab_summary_S2_energy.csv`
+    starts at 1993 and its unrestricted w=3 argmax is 1996, while
+    `plot_companion_zseries` sets `xlim(year_min, year_max)` = 1998..2021 and
+    the sentence quoting this key points at that figure. An unrestricted collector
+    publishes a peak year the reader cannot find on the figure cited beside it.
+    The fixture's pre-1998 rows carry the table's largest Z for exactly this
+    reason, so a collector that drops the restriction reports 1993 here.
+    """
+    v = {}
+    compute_vars.zseries_stats(v)
+    cfg = _companion_plot_utils.companion_config()
+    for key in ("s2_peak_year_w3", "l1_peak_year_w3", "g9_peak_year_w3"):
+        assert int(cfg["year_min"]) <= int(v[key]) <= int(cfg["year_max"])
 
 
 def test_zone_1_is_the_first_run_not_the_whole_span(tables):

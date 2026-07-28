@@ -616,19 +616,33 @@ def global_map_stats(v):
         v["gm_connected_pct"] = _pct(100 * summary["n_nodes"] / total, 0)
 
 
-def _peak_year(df, window):
-    """Year of the largest Z-score at ``window``, or None if there is none.
+def _peak_year(df, window, year_min, year_max):
+    """Year of the largest Z-score at ``window``, within ``[year_min, year_max]``.
+
+    The year window is not decoration. The divergence tables run wider than the
+    companion analysis reports — `tab_summary_S2_energy.csv` starts at 1993 —
+    and the S2 argmax over the full table is 1996, while `plot_companion_zseries`
+    draws `set_xlim(year_min, year_max)` and the sentence quoting this value
+    points at that figure. An unrestricted argmax therefore names a year the
+    reader cannot find on the figure cited beside it, which is this ticket's own
+    defect class one step over: not a missing number, a number that answers a
+    different question than the sentence asks. The zone bounds below were
+    already restricted (`signal_matrix` is built on `years`), so restricting
+    here also makes the five keys answer over one range instead of two.
 
     None rather than an exception when the table is absent or carries no
-    Z-score at this window: a partial build has no summary tables at all, and
-    the caller's fallback is what keeps `make stats` working there.
+    Z-score in range: a partial build has no summary tables at all, and the
+    caller's fallback is what keeps `make stats` working there.
     """
     if df is None or df.empty:
         return None
     from _companion_plot_utils import window_rows
 
     rows = window_rows(df, window)
-    if "z_score" not in rows.columns or not rows["z_score"].notna().any():
+    if "z_score" not in rows.columns:
+        return None
+    rows = rows[(rows["year"] >= year_min) & (rows["year"] <= year_max)]
+    if not rows["z_score"].notna().any():
         return None
     return int(rows.loc[rows["z_score"].idxmax(), "year"])
 
@@ -681,16 +695,17 @@ def zseries_stats(v):
                  DERIVED_TABLES_DIR)
         return
 
+    year_min, year_max = int(cfg["year_min"]), int(cfg["year_max"])
     for key, method in (
         ("s2_peak_year_w3", "S2_energy"),
         ("l1_peak_year_w3", "L1"),
         ("g9_peak_year_w3", "G9_community"),
     ):
-        peak = _peak_year(summaries.get(method), window)
+        peak = _peak_year(summaries.get(method), window, year_min, year_max)
         if peak is not None:
             v[key] = str(peak)
 
-    years = list(range(int(cfg["year_min"]), int(cfg["year_max"]) + 1))
+    years = list(range(year_min, year_max + 1))
     mat = signal_matrix(
         summaries,
         load_c2st_tables(DERIVED_TABLES_DIR),
