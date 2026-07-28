@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-28T09:40Z HDMX-coding-agent created
 
+2026-07-28T14:20Z HDMX-coding-agent note resolved by direct fix in PR #1258; second instance found at 2 line 77; guard written then reverted (author call)
 --- body ---
 ## Context
 
@@ -75,8 +76,45 @@ None up front. Per `.claude/rules/writing.md`, a pure prose ticket carries no
 and the polarity rule says prose has none. If action 3 concludes the guard
 should extend, that extension is a negative guard and gets its red test then.
 
+## Outcome
+
+Resolved by direct fix in PR #1258 rather than as its own change: the author
+asked for the fix, not the ticket, while this filing was in flight.
+
+**Action 1 — attributed, not deleted.** The methods-comparison reading is the
+right one, and it survives intact under attribution. The distinction that
+carries the decision: a multilingual transformer is *trained* on an objective
+that pulls translations together, which is true and checkable; whether it
+succeeds on this corpus is a measurement nobody has taken. "Is trained to
+place" reports the objective, "places" reports an outcome.
+
+**A second instance the filing did not know about.** The review that raised
+this found only §6.1. §2 line 77 --- "The multilingual embedding model places
+works in English, French, Chinese, Japanese, and German into a shared semantic
+space" --- carried the same unattributed form and is the worse of the two,
+since it describes the *dataset* rather than comparing methods, which is the
+register 0338 is about. Found by running a pattern over the file, not by
+reading it. Both are fixed; both now match the data paper's §1 and §3.
+
+**Action 3 — no, the guard does not extend here.** A guard was written and
+reverted at the author's direction: 115 lines to pin two phrases is out of
+proportion, and the severity floor's rule against proliferating machinery
+applies. Two facts for whoever reopens the question. The guard keyed on
+*attribution* rather than vocabulary, which is what let it read a methods
+paper without firing on its subject matter --- the argument this ticket
+recorded against extension does not apply to that shape. And it is a
+source-text pattern match, so a synonym for "place" evades it; a prose claim
+has no data signature, so no stronger instrument exists. Commits `5816bd0b`
+(add) and `662ee83f` (revert) keep it recoverable if the claim returns a third
+time.
+
 ## Exit criteria
 
-- [ ] The multilayer paper's embedding claim and the data paper's are
-      consistent in strength, or the difference is recorded as deliberate
-- [ ] Action 3 answered either way, so the next sweep does not refile this
+- [x] The multilayer paper's embedding claim and the data paper's are
+      consistent in strength --- both now use "trained to place"
+      (`multilayer-detection.qmd` §2 and §6.1, commit `1fe3de5b`), matching
+      `data-paper.qmd` §1 ("trained to place texts of any of them in one
+      semantic space") and §3 ("designed to group works by topic")
+- [x] Action 3 answered: no. Recorded in the Outcome above with the reasoning
+      and the revert SHAs, so the next sweep finds the decision rather than
+      the gap
