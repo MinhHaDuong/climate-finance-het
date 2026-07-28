@@ -2,12 +2,14 @@
 Title: The multilingual claim outruns the evidence, and the non-English layer count is wrong by 1,358 works
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1258
 
 --- log ---
 2026-07-27T11:00Z HDMX-coding-agent created
 2026-07-27T11:00Z HDMX-coding-agent note child of 0274. Raised by 4 of 4 external panel reviewers. Not Blocked-by 0297 (that fix has merged), but gated on the corpus rebuild it enables — Table 3's numbers all move when the backfilled languages land. Do the claim calibration first; edit the numbers after the rebuild.
 
 2026-07-28T08:17Z HDMX-coding-agent note claims calibrated; lang_unclassified_n published. Action 6 infeasible as specified (no bilingual pairs in corpus by design)
+2026-07-28T12:57Z HDMX-coding-agent closed — autoclosed — PR #1258
 --- body ---
 ## Context
 

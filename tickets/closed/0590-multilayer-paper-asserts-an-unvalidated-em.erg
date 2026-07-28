@@ -2,11 +2,13 @@
 Title: The multilayer paper still asserts the shared-semantic-space property the data paper just stopped asserting
 Created: 2026-07-28
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1258
 
 --- log ---
 2026-07-28T09:40Z HDMX-coding-agent created
 
 2026-07-28T14:20Z HDMX-coding-agent note resolved by direct fix in PR #1258; second instance found at 2 line 77; guard written then reverted (author call)
+2026-07-28T12:57Z HDMX-coding-agent closed — autoclosed — PR #1258
 --- body ---
 ## Context
 
