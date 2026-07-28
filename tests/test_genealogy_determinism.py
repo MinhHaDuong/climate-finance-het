@@ -19,7 +19,6 @@ import subprocess
 import sys
 
 import pytest
-
 from _source_roots import source_root_env
 
 SCRIPTS_DIR = os.path.abspath(

@@ -115,21 +115,27 @@ def load_data():
 # ============================================================
 
 def select_backbone(works, doi_meta):
-    """Select highly-cited papers with abstracts and valid years."""
+    """Select highly-cited papers with abstracts and valid years.
+
+    Returns a DOI list in ascending DOI order. The order is part of the
+    contract, not an accident: downstream steps enumerate this collection to
+    assign layout jitter and to lay out CSV rows, so a `set` here would put the
+    interpreter's hash seed into `tab_lineages.csv` and, through it, into both
+    genealogy figures (ticket 0591).
+    """
     cite_threshold = _cfg["clustering"]["cite_threshold"]
     year_max = _cfg["periodization"]["year_max"]
     log.info("Selecting backbone (cited_by_count >= %d)...", cite_threshold)
 
     has_abs = works["abstract"].notna() & (works["abstract"].str.len() > 50)
     high_cited = works[has_abs & (works["cited_by_count"] >= cite_threshold)]
-    backbone_dois = set(high_cited["doi_norm"])
 
     # Filter to papers with valid year
-    backbone_dois = {
-        d for d in backbone_dois
+    backbone_dois = sorted({
+        d for d in set(high_cited["doi_norm"])
         if d in doi_meta and doi_meta[d]["year"] is not None
         and 1985 <= (doi_meta[d]["year"] or 0) <= year_max
-    }
+    })
 
     log.info("Backbone papers (with valid year): %d", len(backbone_dois))
     return backbone_dois
@@ -178,8 +184,8 @@ def assign_lineages(backbone_dois, doi_meta, doi_to_cluster):
         else:
             lineage[d] = doi_to_cluster.get(d, 0)
 
-    # Keep only papers with assigned lineages
-    backbone_dois = {d for d in backbone_dois if d in lineage}
+    # Keep only papers with assigned lineages, preserving the sorted order
+    backbone_dois = [d for d in backbone_dois if d in lineage]
     band_counts = {
         b: sum(1 for d in backbone_dois if lineage[d] == b)
         for b in range(N_COMMUNITIES)
@@ -196,16 +202,22 @@ def assign_lineages(backbone_dois, doi_meta, doi_to_cluster):
 # ============================================================
 
 def build_citation_dag(backbone_dois, cit):
-    """Build directed edges between backbone papers (cited → citing)."""
+    """Build directed edges between backbone papers (cited → citing).
+
+    Returns the edges sorted, so the list does not carry set iteration order.
+    ``backbone_dois`` arrives as an ordered list; the membership test runs once
+    per citation row, so it needs the set.
+    """
     log.info("Building citation DAG...")
+    backbone = set(backbone_dois)
     edges = set()
     for _, row in cit.iterrows():
         s = row["source_doi"]
         r = row["ref_doi"]
-        if s in backbone_dois and r in backbone_dois:
+        if s in backbone and r in backbone:
             edges.add((r, s))  # cited → citing
 
-    edges = list(edges)
+    edges = sorted(edges)
     log.info("Internal citation edges: %d", len(edges))
     return edges
 
@@ -292,8 +304,11 @@ def save_lineage_table(backbone_dois, lineage, positions, doi_meta, output_path)
             "y": round(y, 6),
         })
 
+    # kind="stable": the default quicksort would reorder the many ties in
+    # cited_by_count arbitrarily. A stable sort keeps them in the DOI order
+    # `rows` was built in, so the row order is a function of the data alone.
     lineage_df = pd.DataFrame(rows).sort_values(
-        ["lineage", "cited_by_count"], ascending=[True, False]
+        ["lineage", "cited_by_count"], ascending=[True, False], kind="stable"
     )
     lineage_df.to_csv(output_path, index=False)
     log.info("Saved lineage table -> %s (%d papers)", output_path, len(lineage_df))
