@@ -64,8 +64,8 @@ mtime was checked, so "clean" means "regenerated and byte-identical", not
 |---|---|---|
 | Clean | 20 | `fig_composition`, `fig_composition_wide`, `fig_global_map_direct`, `fig_traditions_pre2008_citers`; `tab_citation_coverage_periods`, `tab_citation_verification`, `tab_corpus_flow`, `tab_corpus_sources`, `tab_dedup_error_estimates`, `tab_filter_ablation`, `tab_lit_confirmations`, `tab_network_limitations`, `tab_reference_counts`, `tab_reranker_validation`, `tab_retrieval_protocol.csv`, `tab_retrieval_protocol.md`, `tab_sem6_assignments`, `tab_semantic_robustness`, `tab_variables.md`, `tab_venues.md` |
 | Cosmetic | 0 | — |
-| Substantive, committed | 3 | `fig_breaks.png`, `tab_null_separation_pre2007.csv`, `tab_pre2007_coverage.csv` |
-| Substantive, reverted | 2 | `fig_bars_v1.png`, `fig_global_map_cocitation.png` |
+| Substantive, committed | 2 | `fig_breaks.png`, `tab_pre2007_coverage.csv` |
+| Substantive, left as committed | 3 | `fig_bars_v1.png`, `fig_global_map_cocitation.png`, `tab_null_separation_pre2007.csv` |
 | No producer | 37 | 34 `_includes/*.md`, `figures/scratch/scout_tradition_coupling.png`, `tab_venues_fr.md`, `tab_venues_fr_caption.md` |
 | Excluded | 1 | `qa_cocitation_edges_report.json` (author decision: dated live-Crossref probe of record) |
 
@@ -101,3 +101,18 @@ Prose that moves, for author arbitration (not edited by this branch):
 `0.89`, null `0.37`, `z ≈ 25`, and "only about three co-citation-core nodes
 match". The pinned corpus now gives 109 / 466, 0.878, 0.353, z ≈ 28.1, and
 seven anchor nodes with eight edges.
+
+`tab_null_separation_pre2007.csv` was regenerated, committed, and then put back
+as committed. `tests/test_separation_provenance.py::test_a5_prose_matches_committed_csv`
+reads those six figures out of the CSV and asserts each appears in the A.5
+bullet, by design: the guard's docstring says a regeneration that updates the
+CSV *and* the prose together stays green, and only a silent drift between them
+turns red. Committing the CSV alone was that silent drift. So the artifact is
+mechanically prose-coupled, the pair must land in one author-arbitrated PR
+(0671), and until then the CSV stays as committed under the exit criteria's
+"or carry an explicit author decision" clause. Worth recording as the general
+shape: an artifact's *guards* say whether it is load-bearing for prose more
+reliably than grepping the prose does.
+
+Follow-ups filed: 0670 (community registry keyed on unstable Louvain ids, and
+the `nan nan` label), 0671 (manuscript A.2 freeze claim and the A.5 numbers).
