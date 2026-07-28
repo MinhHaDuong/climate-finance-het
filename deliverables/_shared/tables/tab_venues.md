@@ -16,4 +16,4 @@
 | Accountability | Wiley Interdisciplinary Reviews Climate Change | 7 | 28 | 35 |
 | Accountability | Global Environmental Politics | 2 | 13 | 15 |
 
-: Publication venues of core works (cited $\geq$ 50) by pole assignment. Each work is assigned to the efficiency or accountability pole based on its position along the embedding axis (§3.4). "Lean" indicates the venue's overall orientation: a venue is assigned to a pole only when that pole outnumbers the other by a factor of at least 1.4 (a smoothed log-odds ratio of 0.5, base 2); closer splits are labelled Shared, so a bare majority is not enough. {#tbl-venues}
+: Publication venues of core works (cited $\geq$ 50) by pole assignment. Each work is assigned to the efficiency or accountability pole based on its position along the embedding axis (§3.4). "Lean" indicates the venue's overall orientation: a venue is assigned to a pole only when that pole outnumbers the other by more than a factor of 1.42 on Laplace-smoothed counts (an odds ratio whose base-2 logarithm exceeds 0.5); closer splits are labelled Shared, so a bare majority is not enough. {#tbl-venues}
