@@ -7,8 +7,9 @@ Closed: decided and implemented: one account, procedural gate; prompt hook delet
 --- log ---
 2026-07-27T15:45Z HDMX-coding-agent created
 
-2026-07-27T17:42Z decision recorded: one account, fine-grained PAT (0371), gate repaired as procedural
+2026-07-27T17:42Z decision recorded: one account, fine-grained PAT (0450), gate repaired as procedural
 2026-07-27T19:48Z HDMX-coding-agent closed — decided and implemented: one account, procedural gate; prompt hook deleted
+2026-07-28T07:12Z HDMX-coding-agent note the child ticket filed here was allocated 0371, which origin/main already carried as 'included shared tables are gitignored' — a duplicate ID that landed on main and left `erg check` red there. Renumbered to 0450, fifteen clear of the 0435 frontier rather than to the next free ID; the three references above are updated.
 --- body ---
 ## Context
 
@@ -67,7 +68,7 @@ procedural reading of option 3.
 1. **One account, scope the token.** No machine account. `AGENT_GH_TOKEN`
    becomes a *fine-grained* PAT limited to this repository, replacing the
    classic account-wide one. Separation of privilege is by token scope, not by
-   account. Minting it is a browser action, so it left as child ticket 0371
+   account. Minting it is a browser action, so it left as child ticket 0450
    (`Label: needs-human`); nothing else here depends on it.
 2. **No second GitHub account.** The option-2 framing did not survive scrutiny:
    a machine account would not fix self-review, because the agent would open the
@@ -137,7 +138,7 @@ from the session that made the change — settings load at session start.
 3. ~~If option 2: add the machine token under its own name and select it via
    `KEYS=` with the rename form.~~ Not applicable — option 2 declined. One
    identity, one variable, so the rename form is unnecessary. The token swap
-   itself is ticket 0371.
+   itself is ticket 0450.
 
 ## Verification
 
