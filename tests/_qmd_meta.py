@@ -13,7 +13,7 @@ and which keys its metadata actually declares — so those live here and the two
 guards agree on what "a document's keys" means.
 
 Support module, not a test module: `tests/_*.py` is this repo's flat helper
-surface (`_source_roots.py`, `_gfm_render.py`).
+surface (`_source_roots.py`, `_qmd_render.py`).
 """
 
 import re

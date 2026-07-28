@@ -7,11 +7,10 @@ sibling survives rendering with a pipe-bearing value (ticket 0370).
 
 import os
 import sys
-from html import escape
 
 import pandas as pd
 import pytest
-from _gfm_render import cell_texts, render_gfm, require_pandoc, row_with
+from _qmd_render import cell_texts, render_qmd, require_pandoc, row_with
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "figures"))  # 0255: moved figures entry points
@@ -204,8 +203,8 @@ class TestKeydocsSourcesPreV2Data:
 # A pipe in a source label is not a hypothetical the emitter gets to rule out:
 # `SOURCE_META` is edited by hand and its labels are free text. The shape is the
 # one that already shipped twice — 0325 in the deposit codebook, 0339 in both
-# venue tables — where a raw `|` ends the cell and GFM drops the overflow
-# instead of erroring.
+# venue tables — where a raw `|` ends the cell and the renderer drops the
+# overflow instead of erroring.
 PIPE_SOURCE = "OECD DAC | CRS key documents"
 PIPE_TOTAL = "TOTAL | all sources"
 
@@ -233,7 +232,7 @@ def _render(summary: pd.DataFrame, tmp_path) -> str:
 
     output = tmp_path / "tab_corpus_sources.md"
     _write_md_table(summary, str(output), _CAPTION)
-    return render_gfm(output.read_text(encoding="utf-8"), tmp_path)
+    return render_qmd(output.read_text(encoding="utf-8"), tmp_path)
 
 
 @pytest.mark.integration
@@ -250,7 +249,7 @@ def test_pipe_bearing_source_keeps_its_eight_cells(tmp_path):
     row = row_with(_render(summary, tmp_path), "OECD DAC")
 
     assert cell_texts(row) == [
-        escape(PIPE_SOURCE, quote=False),
+        PIPE_SOURCE,
         "1,200", "900", "300", "12%", "88%", "77%", "66%",
     ], f"the source label split the row:\n{row}"
 
@@ -270,7 +269,7 @@ def test_total_row_stays_bold_around_an_escaped_value(tmp_path):
 
     assert "<strong>" in row, f"the TOTAL row lost its emphasis:\n{row}"
     assert cell_texts(row) == [
-        escape(PIPE_TOTAL, quote=False),
+        PIPE_TOTAL,
         "1,200", "900", "300", "12%", "88%", "77%", "66%",
     ], f"the TOTAL label split the row:\n{row}"
 
