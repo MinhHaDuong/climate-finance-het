@@ -183,27 +183,66 @@ def meta_keys_used(qmd: Path) -> set[str]:
     return {key for f in files for key in META_RE.findall(_read(f))}
 
 
-def declared_keys(qmd: Path) -> set[str]:
-    """Every key Quarto can resolve: the header's own, plus its metadata files.
+def declared_values(qmd: Path) -> dict:
+    """Every key Quarto can resolve, paired with what it resolves *to*.
 
-    Reading the generated `*-vars.yml` is the whole point — the older guard in
-    `test_doc_vars_completeness.py` checks prose against the `DOC_VARS` dict in
-    `compute_vars.py`, one layer above the artifact Quarto actually loads.
+    Keys alone answer "does this render a `?meta:`"; they cannot answer "does
+    this render a value that means the number is unavailable". A vars file is
+    allowed to carry a sentinel — the partial-build workflow depends on it —
+    but a document quoting that key publishes the sentinel as if it were a
+    result, at exit code 0, with every key-level guard satisfied (ticket 0570).
 
-    Keys in `QUARTO_REFUSES` are excluded wherever they come from: Quarto keeps
+    Later sources win, matching Quarto: a `metadata-files` entry overrides the
+    header, and a later entry overrides an earlier one.
+
+    Keys in `QUARTO_REFUSES` are dropped wherever they come from: Quarto keeps
     them for itself, so a header carrying `format:` does not make
     `{{< meta format >}}` resolve.
     """
     header = front_matter(qmd)
-    keys = set(header)
+    values = dict(header)
     files = header.get("metadata-files") or []
     if isinstance(files, str):
         files = [files]
     for spec in files:
         path = qmd.parent / spec
         if path.is_file():
-            keys |= set(_load_mapping(path))
-    return keys - QUARTO_REFUSES
+            values.update(_load_mapping(path))
+    for key in QUARTO_REFUSES:
+        values.pop(key, None)
+    return values
+
+
+def declared_keys(qmd: Path) -> set[str]:
+    """Every key Quarto can resolve: the header's own, plus its metadata files.
+
+    Reading the generated `*-vars.yml` is the whole point — the older guard in
+    `test_doc_vars_completeness.py` checks prose against the `DOC_VARS` dict in
+    `compute_vars.py`, one layer above the artifact Quarto actually loads.
+    """
+    return set(declared_values(qmd))
+
+
+def sentinel_valued_keys(qmd: Path, sentinels) -> set[str]:
+    """Keys the document quotes whose declared value is one of `sentinels`.
+
+    The intersection is what makes this a defect: a sentinel sitting in a vars
+    file nobody quotes is the partial-build path working as designed, and a key
+    quoted with a real value is a result. Only a quoted sentinel reaches a
+    reader as a number that is not one.
+
+    Values are compared stripped, since the vars writer quotes every value and
+    a hand-maintained file may pad it. Non-string values (a header's list or
+    integer) can never equal a sentinel, so they are skipped rather than
+    coerced — `str(None)` matching a sentinel spelled `"None"` would be a
+    false positive nobody could act on.
+    """
+    values = declared_values(qmd)
+    used = meta_keys_used(qmd)
+    return {
+        key for key in used
+        if isinstance(values.get(key), str) and values[key].strip() in sentinels
+    }
 
 
 def unresolved_meta_keys(qmd: Path) -> set[str]:
