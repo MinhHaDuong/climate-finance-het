@@ -5,7 +5,12 @@ guards and mechanical density checks. No positive authorial wording is asserted
 — a legitimate rewrite must never turn one of these red. The positive voice
 lives in the editorial brief, not here.
 
-Two guard shapes:
+Most guards read ``manuscript.qmd`` alone. The exception is the ``@sec-``
+crossref guard (ticket 0318), which sweeps every ``deliverables/**/*.qmd``
+because its defect class is a rendering property of any document, not of this
+manuscript's voice.
+
+Three guard shapes:
 
 - **Hard bans** — a forbidden phrasing whose count must stay zero. Seeded from
   ``config/ai-tells.yml`` (the single source for the wordlists) plus the AEDIST
@@ -19,6 +24,10 @@ Two guard shapes:
   the ceiling in a deliberate commit. Covers em dashes, define-by-negation
   ("not X, but Y"), conditional words (``robust``/``landscape``), and hardcoded
   figure/table cross-refs (which should be ``@fig-``/``@tbl-``).
+
+- **Forbidden combinations** — two features that are each fine alone but broken
+  together, across every deliverable. Today: a hand-numbered heading plus an
+  ``@sec-`` crossref, which renders an empty "Section " (ticket 0318).
 
 Each guard is a pure ``find_*`` function exercised twice: once against the live
 manuscript (must be clean / within ceiling) and once against a known-bad
