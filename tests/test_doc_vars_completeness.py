@@ -197,3 +197,23 @@ def test_the_registry_prose_scan_is_not_vacuous():
             f"{name} no longer mentions DOC_VARS — drop it from REGISTRY_PROSE "
             f"or the two scans above pass on it for free"
         )
+
+
+def test_the_two_registry_halves_name_the_same_documents():
+    """`DOC_VARS` and `DOC_VARS_FILE` are one contract split across two dicts.
+
+    Ticket 0357 split them, and nothing made them agree. The two failure modes
+    are asymmetric, which is why this is worth a guard rather than a comment:
+    a document in `DOC_VARS` with no `DOC_VARS_FILE` entry raises a bare
+    `KeyError` from three call sites, while the mirror case — a path declared
+    for a document the variable registry never lists — is silently never
+    written, and the document renders `?meta:` placeholders at exit 0. That is
+    the exact failure this ticket exists to remove.
+    """
+    from compute_vars import DOC_VARS_FILE
+
+    assert set(DOC_VARS) == set(DOC_VARS_FILE), (
+        "the registry halves disagree — "
+        f"declare variables but no file: {sorted(set(DOC_VARS) - set(DOC_VARS_FILE))}; "
+        f"declare a file but no variables: {sorted(set(DOC_VARS_FILE) - set(DOC_VARS))}"
+    )

@@ -649,8 +649,10 @@ def main():
         if missing:
             log.warning("%s: %d variables missing: %s", doc_name, len(missing), missing)
             all_missing.extend(f"{doc_name}:{k}" for k in missing)
-        # dict, not set: first-declared order is stable across runs, so a vars
-        # file only changes when its content does.
+        # A shared vars file is the union of its documents' declared keys.
+        # `dict.fromkeys` rather than a set only because iteration order is then
+        # deterministic within a run; it does not affect the file, which
+        # `write_yaml` writes sorted either way.
         per_file.setdefault(DOC_VARS_FILE[doc_name], {}).update(dict.fromkeys(keys))
 
     for path, keys in per_file.items():

@@ -27,13 +27,13 @@ from utils import BASE_DIR
 # exit 0 — so an unregistered document does not fail, it quietly under-declares.
 # corpus-report did exactly that for 12 keys. Every shared file is written with
 # the union of its documents' keys.
-SHARED_VARS = os.path.join(BASE_DIR, "deliverables", "_shared", "technical-report-vars.yml")
+SHARED_VARS_FILE = os.path.join(BASE_DIR, "deliverables", "_shared", "technical-report-vars.yml")
 
 DOC_VARS_FILE = {
-    "technical-report": SHARED_VARS,
-    "corpus-report": SHARED_VARS,
-    "multilayer-detection-techrep": SHARED_VARS,
-    "breakpoint-detect-method-zoo": SHARED_VARS,
+    "technical-report": SHARED_VARS_FILE,
+    "corpus-report": SHARED_VARS_FILE,
+    "multilayer-detection-techrep": SHARED_VARS_FILE,
+    "breakpoint-detect-method-zoo": SHARED_VARS_FILE,
     "data-paper": os.path.join(
         BASE_DIR, "deliverables", "data-paper", "data-paper-vars.yml"
     ),
