@@ -2,12 +2,14 @@
 Title: Table 2's generated "Grey literature" row label contradicts Table 1's rename
 Created: 2026-07-28
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1284
 
 --- log ---
 2026-07-28T09:10Z HDMX-coding-agent created
 2026-07-28T09:10Z HDMX-coding-agent note follow-up from PR #1260 review (ticket 0334); generator shared with corpus-report, so out of that PR's scope
 2026-07-28T09:40Z HDMX-coding-agent note scope extended: review round 2 found the same label in tab_retrieval_protocol (caption, heading, row label, pinned by tests); rename all generated tables under one decision
 
+2026-07-28T20:21Z HDMX-coding-agent closed — autoclosed — PR #1284
 --- body ---
 ## Context
 
