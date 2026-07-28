@@ -146,7 +146,11 @@ def _draw_labels(ax, G, pos, trad_to_comm, comm_to_nodes, ref_counts,
     # Keep readable labels only; dedupe identical label texts
     # (e.g. two distinct references both rendered "Axel Michaelowa 2003"),
     # keeping the most-cited node.
-    candidates = sorted(label_nodes, key=lambda d: -ref_counts.get(d, 0))
+    # DOI is the tiebreaker, not decoration: `label_nodes` is a set, citation
+    # counts tie constantly, and the dedupe below keeps whichever tied node
+    # comes first — so without it, which node carries a shared label text
+    # followed the hash seed (ticket 0591).
+    candidates = sorted(label_nodes, key=lambda d: (-ref_counts.get(d, 0), d))
     labels, seen_texts = {}, set()
     for n in candidates:
         text = G.nodes[n]["label"]

@@ -60,7 +60,11 @@ def main():
     acc_counts = acc["journal"].value_counts()
 
     rows = []
-    for j in set(eff_counts.index) | set(acc_counts.index):
+    # sorted(): the union is a set of journal-name strings, and `rows` order
+    # survives all the way to which venues `nlargest` keeps among ties below,
+    # so an unordered walk here put the hash seed into tab_venues.md — a
+    # git-tracked table the Œconomia manuscript includes (ticket 0591).
+    for j in sorted(set(eff_counts.index) | set(acc_counts.index)):
         ne = eff_counts.get(j, 0)
         na = acc_counts.get(j, 0)
         total = ne + na
@@ -73,7 +77,13 @@ def main():
             "total": total, "log_odds": lor,
         })
 
-    df = pd.DataFrame(rows).sort_values("log_odds", ascending=False)
+    # kind="stable" here and at the final sort below: log_odds ties are common
+    # (any two journals with the same efficiency/accountability counts share
+    # one), and the pandas default is quicksort, whose tie order is a numpy
+    # implementation detail. Stable sorting pins ties to the journal-name order
+    # `rows` was built in.
+    df = pd.DataFrame(rows).sort_values("log_odds", ascending=False,
+                                        kind="stable")
 
     # Assign lean labels
     def lean(lor):
@@ -107,7 +117,7 @@ def main():
 
     selected = pd.concat([eff_sel, shared_sel, acc_sel, key_rows])
     selected = selected.drop_duplicates(subset="journal")
-    selected = selected.sort_values("log_odds", ascending=False)
+    selected = selected.sort_values("log_odds", ascending=False, kind="stable")
 
     # Build markdown table
     lines = []

@@ -1,16 +1,22 @@
-"""Genealogy artifacts are byte-reproducible without pinning PYTHONHASHSEED (0591).
+"""Phase-2 artifacts are byte-reproducible without pinning PYTHONHASHSEED (0591).
 
-The genealogy chain builds its citation edge list and its backbone paper list as
-Python ``set`` objects, then iterates them to draw. Set iteration order over
-strings follows the interpreter's hash seed, so two runs of the same code on the
-same inputs produced different bytes unless ``PYTHONHASHSEED`` happened to be
-pinned — which the Makefile does globally, hiding the defect from every
-``make``-driven run and surfacing it only in a refactor byte-compare
-(ticket 0571, PR #1269).
+Set iteration order over strings follows the interpreter's hash seed. Where a
+producer walks a set into its output — the genealogy chain's citation edges and
+backbone paper list, the venue table's journal-name union — two runs of the same
+code on the same inputs produced different bytes unless ``PYTHONHASHSEED``
+happened to be pinned. The Makefile pins it globally (``export PYTHONHASHSEED
+:= 0``), which is why every ``make``-driven run looked deterministic and the
+defect surfaced only in ticket 0571's refactor byte-compare, where it read as a
+spurious regression.
 
 These tests deliberately run each producer under *two different* hash seeds.
 Pinning the seed to a single value, as ``tests/test_determinism.py`` does, would
 make them pass against the defect.
+
+Not every sweep hit earns a test here. The two `plot_fig_traditions*` renderers
+carry the same defect but need a Louvain partition over a real citation graph to
+reach the tied labels, which no synthetic fixture reproduces cheaply; they are
+fixed by inspection and left uncovered.
 """
 
 import filecmp
@@ -204,4 +210,56 @@ class TestGenealogyHashSeedIndependence:
         assert filecmp.cmp(str(p1), str(p2), shallow=False), (
             "tab_lineages.csv differs between hash seeds — layout jitter or row "
             "order is following set iteration order"
+        )
+
+
+@pytest.mark.integration
+class TestVenueTableHashSeedIndependence:
+    """The venue table walks a set union of journal names (0591 sweep).
+
+    Covered here rather than in its own module because it is the same defect
+    class on the same harness. It earns a test where the two traditions figures
+    do not: `tab_venues.md` is git-tracked and included by the Œconomia
+    manuscript, so a hash-seed flip changes which journals a published table
+    names.
+    """
+
+    @pytest.fixture
+    def venue_inputs(self, tmp_path):
+        """Journals engineered so several tie on both total and log-odds.
+
+        Ties are the whole point: `nlargest(5, "total")` keeps the first row
+        among equals, so a tied group is what exposes an unordered walk.
+        """
+        works_rows = []
+        poles_rows = []
+        doi_n = 0
+        # 12 journals in 4 tie-groups of 3, each group sharing one
+        # (efficiency, accountability) count pair — hence one log_odds and one
+        # total across the group.
+        for group, (n_eff, n_acc) in enumerate([(9, 3), (3, 9), (6, 6), (8, 4)]):
+            for member in range(3):
+                journal = f"Journal of Group{group} Variant{member}"
+                for pole, count in (("efficiency", n_eff), ("accountability", n_acc)):
+                    for _ in range(count):
+                        doi = f"10.2000/venue{doi_n:04d}"
+                        doi_n += 1
+                        works_rows.append((doi, journal, 100, f"Title {doi_n}"))
+                        poles_rows.append((doi, 0.5 if pole == "efficiency" else -0.5, pole))
+        works = tmp_path / "refined_works.csv"
+        poles = tmp_path / "tab_pole_papers.csv"
+        _write_csv(str(works), ["doi", "journal", "cited_by_count", "title"], works_rows)
+        _write_csv(str(poles), ["doi", "axis_score", "pole_assignment"], poles_rows)
+        return str(works), str(poles)
+
+    def test_venue_table(self, tmp_path, venue_inputs):
+        works, poles = venue_inputs
+        p1, p2 = _run_under_both_seeds(
+            "figures/export_tab_venues.py", "tab_venues.md",
+            ["--refined-works", works, "--pole-papers", poles],
+            tmp_path, str(tmp_path),
+        )
+        assert filecmp.cmp(str(p1), str(p2), shallow=False), (
+            "tab_venues.md differs between hash seeds — the journal set union "
+            "is being walked unordered into the table"
         )

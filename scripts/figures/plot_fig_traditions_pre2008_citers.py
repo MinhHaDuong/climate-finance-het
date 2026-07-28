@@ -95,7 +95,10 @@ def _draw_labels(ax, res, pos, barrett_nodes):
     for c in res["trad_to_comm"].values():
         label_nodes.update(sorted(
             res["comm_to_nodes"][c], key=lambda d: -ref_counts.get(d, 0))[:4])
-    candidates = sorted(label_nodes, key=lambda d: -ref_counts.get(d, 0))
+    # DOI tiebreaker — same defect as plot_fig_traditions._draw_labels:
+    # `label_nodes` is a set and tied citation counts let the hash seed decide
+    # which node keeps a shared label text (ticket 0591).
+    candidates = sorted(label_nodes, key=lambda d: (-ref_counts.get(d, 0), d))
     labels, seen = {}, set()
     for n in candidates:
         t = G.nodes[n]["label"]
