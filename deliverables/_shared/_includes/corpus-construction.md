@@ -13,7 +13,7 @@ The discover stage is described below; enrichment and filtering are documented i
 
 ### Sources
 
-The corpus assembles academic and grey literature from {{< meta corpus_sources >}} sources. Three are fully automated (reproducible from the repository and an internet connection), one is hybrid-automated, and two require manual export.
+The corpus assembles academic literature and institutional documents from {{< meta corpus_sources >}} sources. Three are fully automated (reproducible from the repository and an internet connection), one is hybrid-automated, and two require manual export.
 
 | Source | Script | Automation | Coverage |
 |---|---|---|---|

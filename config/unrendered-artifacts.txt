@@ -10,7 +10,7 @@
 # when an entry becomes reachable, so this file cannot rot into a mute skip-list.
 
 
-deliverables/_shared/tables/tab_retrieval_protocol.md — deposited in the Zenodo package (build_datapaper_archive.sh copies it to data/products/), not a paper float; data-paper.qmd §2 points readers to it by name for the full per-source protocol and grey-literature seed list (ticket 0329)
+deliverables/_shared/tables/tab_retrieval_protocol.md — deposited in the Zenodo package (build_datapaper_archive.sh copies it to data/products/), not a paper float; data-paper.qmd §2 points readers to it by name for the full per-source protocol and institutional-reports seed list (ticket 0329)
 
 deliverables/_shared/tables/tab_venues_fr_caption.md — build input, not a float: manuscript.mk's $(GIDE_VENUES_FR) rule concatenates it onto tab_venues.md to make the French-caption variant that manuscript-Gide.qmd includes
 
