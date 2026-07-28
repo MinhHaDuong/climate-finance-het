@@ -1,0 +1,145 @@
+%erg 0.1
+Title: A clean clone cannot run make data or pass corpus acceptance
+Created: 2026-07-28
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-28T10:00Z HDMX-coding-agent created from two failures the 0384 session hit in a fresh worktree and could not attribute to its own diff. Both reproduce on origin/main. ID allocated at 0450, clear of the 435 frontier, per the renumber rule.
+
+2026-07-28T10:05Z HDMX-coding-agent note Correcting the record in PR #1236, which reported the checkout failure as "make data exits 255 on missing run_reports cache blobs". Both halves of that are wrong: run_reports checks out fine (all 133 member blobs present in the shared cache), and the failing target is catalog_merge_report.json, which fails for absent hash info rather than an absent blob. The symptom was recorded from a tail of make output without reading which target it named.
+
+--- body ---
+## Context
+
+A fresh worktree cannot reach a green `make check` on `origin/main`, for two
+unrelated reasons in the corpus lane. Both were found while gating ticket 0384
+and neither belongs to that diff. Both are science-lane, not tooling-lane: they
+block the corpus pipeline in any clean clone, so the severity floor does not
+condemn them.
+
+### Defect 1 — `dvc.lock` omits an output `dvc.yaml` declares, so `make data` exits 255
+
+`make data` is `dvc checkout`. It fails hard:
+
+```
+WARNING: No file hash info found for '.../data/catalogs/catalog_merge_report.json'.
+         It won't be created.
+A       data/catalogs/run_reports/
+ERROR: Checkout failed for following targets:
+data/catalogs/catalog_merge_report.json
+Is your cache up to date?
+make: *** [Makefile:205 : data] Erreur 255
+```
+
+The cause is a stale lock, not a stale cache. The `catalog_merge` stage declares
+two outputs in `dvc.yaml:163` and records one in `dvc.lock`:
+
+```
+dvc.yaml   catalog_merge outs: [data/catalogs/unified_works.csv,
+                                data/catalogs/catalog_merge_report.json]
+dvc.lock   catalog_merge outs: data/catalogs/unified_works.csv  (md5 3633ad9f…)
+```
+
+So the report has no hash entry, `dvc checkout` has nothing to materialise it
+from, and it treats that as a checkout failure rather than a skip. The second
+output was added to `dvc.yaml` without a `dvc repro`/`dvc commit` refreshing the
+lock.
+
+Note what the exit code costs beyond the missing file: `make data` is the
+documented way to populate a worktree, and it returns non-zero *after* doing
+almost all its work. Everything else checks out — the run that produced this
+transcript materialised `run_reports/` successfully on the line above the error.
+A caller that trusts the exit code concludes the corpus is absent when it is
+present.
+
+### Defect 2 — `test_reranker_cache_exists` asserts on a file no clean clone can have
+
+`tests/test_corpus_acceptance.py:164` asserts `llm_relevance_cache.csv` exists.
+That file is:
+
+- named by no `.dvc` file and by no `dvc.yaml` stage — `git grep` over
+  `*.dvc`, `dvc.yaml`, `dvc.lock` returns nothing;
+- git-ignored at `data/catalogs/.gitignore:22`.
+
+It is therefore untracked local state on whichever machine last ran the
+reranker, and the assertion cannot pass in any clean clone — not by fetching,
+not by `make data`.
+
+Three things make this look like an oversight rather than a deliberate gate:
+
+1. **The same module already treats the same absence as an environment gate.**
+   The `reranker_cache` fixture at line 105 calls `pytest.skip` when the file is
+   missing. One module, one file, two policies.
+2. **The test's own diagnosis text disclaims severity**: "Flag 6 will score from
+   scratch on next run — slow but not broken." A hard assert for a
+   self-described non-breaking condition.
+3. **Its four sibling existence tests are all DVC-tracked.**
+   `refined_works.csv`, `corpus_audit.csv`, `embeddings.npz` and `citations.csv`
+   all materialise from `make data`. This one alone does not, so it reads as a
+   fifth member of a set it is not actually a member of.
+
+Whether the fix is to skip, to DVC-track the cache, or to keep the assert and
+document the machine dependence is a judgement call for whoever owns Flag 6 —
+see the note under Actions.
+
+## Relevant files
+
+- `dvc.yaml` — `catalog_merge` stage, two outs declared at line 163
+- `dvc.lock` — `catalog_merge` stage, one out recorded
+- `Makefile:205` — the `data:` target (`dvc checkout`)
+- `tests/test_corpus_acceptance.py` — the fixture at 105, the assert at 164
+- `data/catalogs/.gitignore:22` — where the cache is ignored
+- `tickets/0350-flag-6-rescores-2-688-works-on-every-cor.erg` — prior art on
+  this cache; records it as 40,219 DOI-keyed entries
+
+## Actions
+
+1. Refresh `dvc.lock` for `catalog_merge` so `catalog_merge_report.json` carries
+   hash info, or drop it from `dvc.yaml`'s outs if it is not meant to be a
+   tracked product. Decide which before touching the lock — a `dvc commit` that
+   records whatever happens to be on the author's disk pins an artifact nobody
+   chose.
+2. Resolve defect 2 in the direction its owner wants, and make the module
+   internally consistent either way. If the cache is genuinely machine-local,
+   the assert becomes a skip and matches the fixture. If it is a corpus product,
+   it gets DVC-tracked and leaves `.gitignore`, and the fixture's skip becomes
+   the anomaly instead.
+3. Do not weaken either check merely to reach green — the invariant below.
+
+## Test
+
+Red first:
+
+- In a worktree with the shared cache symlinked, assert `make data` exits 0.
+  It exits 255 today.
+- Assert every path `dvc.yaml` declares as an out of a stage appears in that
+  stage's `dvc.lock` outs. This is the general form of defect 1 and catches the
+  next stage to drift the same way; `catalog_merge` is the current instance.
+- For defect 2, the red test depends on the direction chosen in action 2. If the
+  cache becomes tracked, assert it materialises from `make data` in a clean
+  worktree. If the assert becomes a skip, assert the module handles the file's
+  absence the same way in both places, so the two policies cannot diverge again.
+
+## Verification
+
+- [ ] `make data` exits 0 in a fresh worktree with the cache symlinked
+- [ ] Every `dvc.yaml` stage out has a `dvc.lock` entry, checked mechanically
+- [ ] `tests/test_corpus_acceptance.py` treats `llm_relevance_cache.csv` the
+      same way in the fixture and in the existence test
+- [ ] `make check` passes in a worktree that has only fetched and run `make data`
+
+## Invariants
+
+- No check is relaxed to make a clean clone pass. If a file genuinely cannot
+  exist without a GPU run, the suite says so by skipping, not by asserting and
+  failing.
+- `dvc.lock` is refreshed by the pipeline, not hand-edited.
+- The corpus content does not change. This ticket is about whether a clean clone
+  can obtain and verify it, not about what it contains.
+
+## Exit criteria
+
+- A clone that has fetched, symlinked the cache and run `make data` reaches a
+  green `make check` with no corpus-absence failures, and a mechanical guard
+  prevents `dvc.yaml` and `dvc.lock` from disagreeing about a stage's outputs
+  again.
