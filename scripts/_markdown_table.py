@@ -27,29 +27,65 @@ Two functions, because the callers hold two different input contracts:
 Collapsing them into one function is the trap this split avoids: a journal name
 that happens to contain two backticks is not a code span, and applying the
 Markdown-aware rule to it would silently typeset half the name as code.
+
+**Which reader these rules are calibrated to (ticket 0376).** Not GFM, though
+the tables look like GFM pipe tables. Quarto's ``from:`` is a custom Lua reader,
+``/opt/quarto/share/filters/qmd-reader.lua``, which delegates to ``readqmd.lua``;
+that module sets ``Extensions = pandoc.format.extensions 'markdown'`` and calls
+``pandoc.read`` with ``{format = "markdown", extensions = …}``. No
+``reader-extensions:`` key appears in the ``--defaults`` YAML Quarto hands its
+bundled pandoc, so the extension set is pandoc's own default for ``markdown`` —
+the full extended reader. ``pandoc --list-extensions`` gives the difference that
+matters here: ``markdown`` carries ``+citations +subscript +superscript``, and
+``gfm`` carries none of the three. Where ``bibliography:`` is set — every
+deliverable that renders one of these tables — Quarto appends ``citeproc``
+automatically, so a live ``@key`` does not merely become a span, it resolves.
+
+Recorded here so the next reader does not re-derive it from the documentation,
+which describes neither the Lua reader nor the extension set it selects.
 """
 
-# The pipe is escaped everywhere; GFM honours ``\|`` inside a code span too, so
-# that one rule holds throughout. The backslash needs the opposite treatment on
-# each side of a span boundary — CommonMark reads it as an escape in prose but
-# literally inside code — so prose and code are escaped separately.
+# The pipe is escaped everywhere; the reader honours ``\|`` inside a code span
+# too, so that one rule holds throughout. The backslash needs the opposite
+# treatment on each side of a span boundary — CommonMark reads it as an escape
+# in prose but literally inside code — so prose and code are escaped separately.
 _PROSE = {"\\": r"\\", "|": r"\|"}
 
-_GFM_TEXT = str.maketrans(_PROSE)
-_GFM_CODE = str.maketrans({"|": r"\|"})
+_MARKDOWN_TEXT = str.maketrans(_PROSE)
+_MARKDOWN_CODE = str.maketrans({"|": r"\|"})
 
 # Plain text extends the prose rule rather than restating it: no character
-# carries markup intent, so the backtick is escaped rather than opening a span.
-# Scoped to the three characters that change the rendering on their own;
-# emphasis and link syntax need a matched pair and are deliberately left alone,
-# so an ordinary venue name keeps its punctuation and regenerating a shipped
-# table stays a no-op.
+# carries markup intent, so the backtick is escaped rather than opening a span,
+# and ``@``, ``~`` and ``^`` are escaped because the reader above reads them as
+# citation, subscript and superscript syntax. ``~`` carries a fourth one that
+# list does not name: ``+strikeout`` is live in this reader too, so
+# ``~~struck~~`` renders ``<del>``. Verified against pandoc, not assumed. The
+# escape is character-level rather than pair-aware, so it already neutralises
+# both readings of the tilde — but "subscript" alone would leave a maintainer
+# unaware that strikeout is covered (raised by the #1244 review panel).
+#
+# Emphasis and link syntax stay exempt, and the reason is not the one the
+# earlier wording gave. "Changes the rendering on its own" does not separate the
+# two groups: ``~`` and ``^`` need a matched pair exactly as ``*`` and ``_`` do,
+# and ``CO~2~ emissions`` — an entirely plausible corpus string — renders
+# ``CO<sub>2</sub> emissions`` from one cell. The real criterion is authorship:
+# the emitters themselves add ``**…**`` *after* escaping, so escaping ``*``
+# would destroy markup they intend, while no emitter ever adds a tilde or a
+# caret. ``@`` is escaped on the same footing and needs no pair at all.
+#
+# The backtick's own reason is a third one worth keeping distinct: it pairs
+# *across* cells — ``c`1 | MID | d`2`` swallows the middle cell into a code
+# span — which is why it is escaped unconditionally rather than under the
+# matched-pair reasoning. ``~`` and ``^`` do not pair across cells.
 #
 # CR and LF are folded to a space, not escaped: a pipe-table row is
 # line-delimited, so a raw newline ends the row and no backslash can hold it.
 # Only line breaks are touched — collapsing runs of ordinary whitespace would
 # churn shipped rows for a defect that does not exist.
-_GFM_LITERAL = str.maketrans({**_PROSE, "`": r"\`", "\n": " ", "\r": " "})
+_MARKDOWN_LITERAL = str.maketrans({
+    **_PROSE, "`": r"\`", "@": r"\@", "~": r"\~", "^": r"\^",
+    "\n": " ", "\r": " ",
+})
 
 # Translation is single-pass: a sequential replace loop would re-escape the
 # backslashes its own earlier substitutions introduced.
@@ -79,7 +115,7 @@ def markdown_cell(text: str) -> str:
     corpus must not take this path; see ``markdown_text_cell``.
     """
     return "`".join(
-        part.translate(_GFM_CODE) if i % 2 else part.translate(_GFM_TEXT)
+        part.translate(_MARKDOWN_CODE) if i % 2 else part.translate(_MARKDOWN_TEXT)
         for i, part in enumerate(_split_spans(text))
     )
 
@@ -102,4 +138,4 @@ def markdown_text_cell(text: str) -> str:
     ValueError would turn one odd backtick in a corpus record — a character with
     no meaning there — into a failed manuscript build.
     """
-    return str(text).translate(_GFM_LITERAL)
+    return str(text).translate(_MARKDOWN_LITERAL)

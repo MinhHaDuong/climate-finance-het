@@ -1,0 +1,131 @@
+%erg 0.1
+Title: Swap AGENT_GH_TOKEN to a fine-grained PAT scoped to this repository
+Created: 2026-07-27
+Author: HDMX-coding-agent
+Closed: fine-grained PAT installed and verified on both loader paths; scope bounded, write confirmed
+
+--- log ---
+2026-07-27T16:30Z HDMX-coding-agent created
+
+2026-07-27T17:42Z filed as the browser-only half of 0365 decision 1
+2026-07-28T07:10Z HDMX-coding-agent renumber 0371 -> 0470: collided on origin/main with 0371-included-shared-tables-are-gitignored (filed 25 min later); renumbered clear of the 0435 frontier per tickets/AGENTS.md
+2026-07-28T07:15Z HDMX-coding-agent closed — fine-grained PAT installed and verified on both loader paths; scope bounded, write confirmed
+--- body ---
+## Context
+
+Child of 0365, which settled the project's forge identity: one account, no
+machine account, privilege separation by **token scope** rather than by account.
+
+`AGENT_GH_TOKEN` is today a *classic* PAT with scopes `gist, read:org, repo,
+workflow`. Classic scopes are account-wide: the token reaches every repository
+the owner has, plus their gists. A fine-grained PAT restricted to
+`MinhHaDuong/climate-finance-het` gives the agent exactly the access it uses and
+bounds the blast radius of a leak — which is the scenario ticket 0343 exists to
+bound.
+
+This is the one step of 0365 an agent cannot perform: minting a PAT is a browser
+action under the owner's account. Everything else 0365 decided has landed.
+
+## Actions
+
+1. Create a fine-grained PAT at github.com → Settings → Developer settings →
+   Personal access tokens → Fine-grained tokens.
+   - Resource owner: `MinhHaDuong`
+   - Repository access: **Only select repositories** → `climate-finance-het`
+   - Repository permissions:
+     - Metadata: Read-only (mandatory, granted automatically)
+     - Contents: Read and write — clone, push, branch
+     - Pull requests: Read and write — open, review, merge
+     - Issues: Read and write — the merge gate reads PR labels, which live on
+       the issues endpoint
+   - Nothing else. `workflow` is unnecessary (the repo has no
+     `.github/workflows/`), and `gist` and `read:org` are unused.
+   - Expiry: the author's call. Fine-grained PATs cannot be non-expiring; note
+     the date, because every agent forge operation stops when it lapses.
+2. Replace the value of `AGENT_GH_TOKEN` in `~/.config/keys/github.env`
+   (mode 0600). No `KEYS=` change: one identity, one variable, so the rename
+   form 0365 considered is not needed.
+
+   **Superseded by what was done.** The author stored the new token under
+   `AGENT_GH_TOKEN_CLIMATEFINANCE`, keeping the classic PAT addressable at
+   `AGENT_GH_TOKEN`, and the `KEYS=` entry became the rename-on-export form
+   `github:AGENT_GH_TOKEN_CLIMATEFINANCE=AGENT_GH_TOKEN`. That is the better
+   arrangement and the plan above was wrong to rule it out: a fine-grained PAT
+   is *per-repository* by construction, so the keystore will accumulate one
+   github token per project and a bare `AGENT_GH_TOKEN` cannot name them all.
+   The suffix names which repository the token is bounded to; the `KEYS=` line
+   does the selection, exactly as the sibling
+   `openrouter:OPENROUTER_API_KEY_CLIMATEFINANCE=OPENROUTER_API_KEY` entry
+   already did. It also satisfies the invariant below for free — the classic
+   PAT stays reachable under its own name during the swap instead of being
+   overwritten.
+3. Verify, in a shell that has *not* inherited the old value — `BASH_ENV`
+   re-injects it, so use `env -i` or clear it first.
+
+## Verification
+
+All checks run under `env -i` so the old value could not be inherited, and by
+behaviour rather than by inspecting any value.
+
+- [x] `gh api user --jq .login` under the new token returns `MinhHaDuong`
+- [x] `gh api repos/MinhHaDuong/climate-finance-het --jq .full_name` succeeds;
+      PR, issue and label endpoints all read (3 open PRs, 20 labels)
+- [x] Scope is bounded, not account-wide: `MinhHaDuong/{cadens,padme,fuzzy-corpus}`
+      each return 404 under the new token and resolve under the classic one.
+      `gh api user/repos --jq length` is *not* a usable check — a fine-grained
+      PAT reads every **public** repository implicitly, so `CIRED/cired.digital`
+      resolving proves nothing. Only a private repo discriminates
+- [x] Write access confirmed reversibly: created `refs/heads/probe-token-scope`
+      at `origin/main`'s SHA, deleted it, and confirmed zero matching refs
+      remain. This is what the invariant below needs — a read-only token would
+      have locked the agent out at the next push
+- [x] Both application paths export it, which is the trap 0343 left: the
+      `BASH_ENV` loader (`make` recipes) and `pipeline_loaders` →
+      `pipeline_keystore` (`dvc repro`, bare `uv run python`). Each verified by
+      the private-repo 404, not by reading the value. Default-deny holds:
+      `AGENT_GH_TOKEN_CLIMATEFINANCE` itself is never exported
+- [x] Live end-to-end: the repaired 0365 merge gate — which reads
+      `AGENT_GH_TOKEN` to query reviews and labels — allowed PR #1239 under the
+      new token
+- [x] `make lint` and the credential suites pass (36 tests across
+      `test_env_has_no_secret_literals`, `test_pipeline_keystore`,
+      `test_check_reviews`). `make lint`'s 4 failures in
+      `test_datapaper_archive_layout` are `origin/main`'s, reproducible on a
+      branch with no commits, and belong to open tickets 0403/0384
+
+## Invariants
+
+- No credential value in any committed file, test output, or PR description.
+- `.env` gains no literal; `tests/test_env_has_no_secret_literals.py` enforces it.
+- Do not delete the classic PAT until the fine-grained one is confirmed working
+  — a failed swap otherwise locks the agent out of the forge mid-session.
+
+## Residual, deliberately left open
+
+The classic PAT is still live in `~/.config/keys/github.env` under
+`AGENT_GH_TOKEN`, now unreferenced by this project's `KEYS=` line. Revoking it
+is the author's call, not this ticket's: other projects on this machine may
+select `github:AGENT_GH_TOKEN`, and revoking would break them silently. The
+account-wide blast radius this ticket set out to bound is bounded *for this
+project* — the classic token no longer reaches it.
+
+Two things worth knowing later:
+
+- **Expiry is a scheduled outage.** Fine-grained PATs cannot be non-expiring
+  (366 days maximum). Every agent forge operation — push, PR, the merge gate —
+  stops on that date, with a 404 that looks like a permissions bug rather than a
+  lapsed credential.
+- **The merge gate now blocks the documented ticket-only fast path.** With the
+  matcher repaired (0365), `.claude/hooks/check-reviews.sh` demands 2 review
+  cycles, or 1 with the `review:trivial` label, on *any* `gh pr merge` — while
+  `.claude/rules/git.md` says a tickets-only diff merges on `erg check` plus a
+  collision scan, with no review requested. PR #1239 hit this. The label plus one
+  procedural review clears it, which is consistent with 0365 option 3b, but the
+  rule and the hook now disagree in writing and one of them should yield.
+
+## Exit criteria
+
+`AGENT_GH_TOKEN` is a fine-grained PAT whose access is limited to this
+repository, the agent's forge operations still work under it, and the
+data-management plan's claim that separation is by token scope is verifiable
+against the live token.

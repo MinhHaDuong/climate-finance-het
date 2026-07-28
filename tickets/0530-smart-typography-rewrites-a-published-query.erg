@@ -1,0 +1,112 @@
+%erg 0.1
+Title: Pandoc's smart extension rewrites the published ISTEX query's quotes, so copying it out of the table gives a query that does not match
+Created: 2026-07-28
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-28T07:55Z HDMX-coding-agent created
+2026-07-28T07:55Z HDMX-coding-agent note surfaced by the #1244 simplify pass as "smart also differs markdown vs gfm"; filed after confirming it reaches a published cell, not as a theoretical extension gap
+
+--- body ---
+## Context
+
+Ticket 0376 recalibrated `scripts/_markdown_table.py` from GFM to the reader
+Quarto actually uses, and widened the escaped set to `@`, `~`, `^` — the three
+extensions `markdown` carries and `gfm` does not, per `pandoc --list-extensions`.
+It missed a fourth. `smart` is also live in `markdown` and absent from `gfm`:
+
+    markdown   'Energy – Environment, “quoted” … and don’t'
+    gfm        'Energy -- Environment, "quoted" ... and don\'t'
+    source     'Energy -- Environment, "quoted" ... and don\'t'
+
+This is not a theoretical gap. `deliverables/_shared/tables/tab_retrieval_protocol.md`
+publishes the ISTEX Boolean query verbatim so a reader can reproduce the corpus
+build. Rendered through the real reader:
+
+    SOURCE   : "climate finance" OR "finance climat" OR "finance climatique"
+    RENDERED : “climate finance” OR “finance climat” OR “finance climatique”
+
+A reader who copies the query out of the published table gets curly quotes.
+ISTEX does not treat `“` as a phrase delimiter, so the query returns nothing —
+or, worse, something different. The reproducibility claim the table exists to
+support is false as published.
+
+This is the 0325 defect class exactly: a published filter recipe that does not
+work when copied. It differs from 0376's three characters in an important way,
+which is why it needs its own judgment rather than a reflex fix.
+
+## Why this is not simply "add `smart`'s characters to the escaper"
+
+`@`, `~` and `^` were unambiguous: they produce *wrong* output — a resolved
+citation, a subscript — from a value that meant none of it. `smart` produces
+**typographically correct** output. Curly quotes and en-dashes in a journal
+name, a source label or prose are what a rendered document should have, and
+the manuscript wants them everywhere else.
+
+So the fix is not "escape `"`, `'`, `--`, `...` in `markdown_text_cell`" — that
+would degrade every other table's typography to fix one column. The distinction
+is per-column and semantic: a cell holding **a value a reader will copy and
+execute** (a query, a regex, a path, a DOI) must render verbatim; a cell
+holding **prose** should keep smart typography.
+
+Options, for the implementer to weigh — do not pick one from this list without
+checking it renders:
+
+1. **Wrap executable cells in a code span.** `` `…` `` suppresses `smart` inside
+   it and signals "verbatim" to the reader. Most likely correct, and matches how
+   the value is meant to be read. Needs care: the backtick is escaped by
+   `markdown_text_cell` (0339/0370), so the span must be added by the emitter
+   *around* an escaped value, the same escape-then-wrap ordering the TOTAL rows
+   use — and `_markdown_table.py` already documents why that order matters.
+2. **A third helper**, e.g. `markdown_verbatim_cell`, extending the existing
+   two-function split for the "value is executable" contract.
+3. **Disable `smart` globally** in the deliverables' Quarto config. Cheapest to
+   write, worst to live with: it degrades the typography of ten documents to fix
+   four cells, and the manuscript is at a submission stage.
+
+## Blast radius — measured, not guessed
+
+Scanned all six built Markdown tables for `--`, `...`, `"` and `'` in pipe
+rows. Only `tab_retrieval_protocol.md` has a real hit (one row: the ISTEX
+query). Every other reported hit was the header separator row (`|:---|:---|`),
+which is not a data cell. So the live surface is small and specific — but the
+*class* is not: any future query, regex or path added to a table inherits it.
+
+## Relevant files
+
+- `deliverables/_shared/tables/tab_retrieval_protocol.md` — the carrier
+- `scripts/figures/export_retrieval_protocol.py` — its emitter
+- `scripts/_markdown_table.py` — the shared escaper; its "Which reader" docstring
+  names three extensions and should name this fourth whatever the fix
+- `tests/_qmd_render.py` — the oracle; already reads `-f markdown`, so it can
+  see this defect today without modification
+- `tests/test_markdown_table.py` — where 0376's reader-extension tests live
+
+## Test
+
+Red first: render the retrieval-protocol table's ISTEX row through
+`tests/_qmd_render.py` and assert the query cell reads back with **straight**
+quotes. It must fail today — verified, it does.
+
+Drive the real emitter, not a hand-built frame, so the test covers the path
+that produces the shipped file.
+
+## Verification
+
+- [ ] The published query cell reads back byte-identical to the query as run
+- [ ] Journal names and prose cells keep smart typography — the fix must not be
+      a global de-typography
+- [ ] Regenerating all nine Markdown targets changes only the intended cells,
+      byte-compared old vs new
+
+## Invariants
+
+- 0376's `@ ~ ^` escaping stays; this widens coverage, it does not revisit that.
+- `markdown_text_cell` still never raises.
+- The manuscript's typography is unchanged outside the executable cells.
+
+## Exit criteria
+
+- [ ] A value a reader is meant to copy and execute renders verbatim
+- [ ] A test fails if a future emitter puts an executable value in a
+      smart-transformed cell

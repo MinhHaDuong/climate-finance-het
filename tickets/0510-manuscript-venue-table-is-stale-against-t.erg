@@ -1,0 +1,115 @@
+%erg 0.1
+Title: The manuscript's venue table is stale against the current corpus — a venue vanished and one changed pole
+Created: 2026-07-28
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-28T07:40Z HDMX-coding-agent created
+2026-07-28T07:40Z HDMX-coding-agent note found incidentally by the 0376 churn A/B, which regenerated every Markdown table on a corpus machine; the escaper change is byte-neutral and is not the cause
+
+--- body ---
+## Context
+
+`deliverables/_shared/tables/tab_venues.md` is git-tracked and sits in
+`MANUSCRIPT_INCLUDES` (`paths.mk:35`), so it renders into the Œconomia article;
+`tab_venues_fr.md` is a shell transform of it and renders into the Gide variant.
+The committed file no longer matches what the emitter produces from the current
+corpus.
+
+Found while running ticket 0376's no-churn check, which regenerates every
+generated Markdown target on padme with `data/catalogs/` populated. That check
+built each target twice — once with the old escaper, once with the widened one
+— and got byte-identical output both times, so **the escaper is not the cause**.
+The drift is between the *committed artifact* and *any* fresh regeneration.
+
+Not a nondeterminism: two consecutive `make -B` runs produce identical output,
+and both match the A/B runs. The emitter is deterministic.
+
+## What changed
+
+Committed `tab_venues.md` was last written 2026-07-22 (`9973559c`, a housekeeping
+sweep). `dvc.lock` last moved 2026-07-27 (`9f9ef18d`, ticket 0355) — so the table
+is five days behind the corpus it describes.
+
+The diff is not cosmetic. Regenerating today gives:
+
+- **A venue disappears.** `Center for International Forestry Research (CIFOR)
+  eBooks` (12 efficiency / 12 accountability / 24 total) is in the shipped table
+  and absent from the regenerated one.
+- **A venue changes pole.** `Nature Climate Change` is `Accountability | 12 | 18`
+  in the shipped table and `Shared | 13 | 17` when regenerated — the majority
+  flipped, so its *Lean* label changed.
+- **Per-pole counts move on five more rows** while their totals hold:
+  `Renewable and Sustainable Energy Reviews` 30/11 → 32/9, `Sustainability`
+  73/35 → 74/34, `Energy Policy` 48/21 → 47/22, `Climate Policy` 20/38 → 21/37.
+
+The caption ties these numbers to the argument — "Lean indicates the venue's
+overall orientation: journals where a majority of core papers fall on one side"
+(§3.4 pole assignment). A flipped lean and a vanished venue are argument-bearing,
+not presentation drift.
+
+## Why this is not simply "regenerate and commit"
+
+Two questions the author owns, which is why this is a ticket and not a fix:
+
+1. **Which corpus should the Œconomia manuscript cite?** `manuscript-vars.yml`
+   is deliberately *pinned* (`deliverables/manuscript/manuscript.mk`), and the
+   manuscript is at a submission stage. If the pinned-vars discipline extends to
+   this table, the right fix is a guard that fails when the table drifts from
+   its pin, not a regeneration. If it does not, the table should regenerate with
+   the rest.
+2. **Is the CIFOR disappearance expected?** A whole venue leaving the core
+   subset between two corpus builds is the kind of change ticket 0355 might
+   explain, or might not. It should be understood before it is published.
+
+## Relevant files
+
+- `deliverables/_shared/tables/tab_venues.md` — the stale artifact (tracked)
+- `deliverables/_shared/tables/tab_venues_fr.md` — derived from it by
+  `deliverables/manuscript/manuscript.mk:62`, therefore stale too
+- `scripts/figures/export_tab_venues.py` — the emitter
+- `paths.mk:35` — `MANUSCRIPT_INCLUDES`, which is what makes this reach a paper
+- `deliverables/manuscript/manuscript.mk` — the pinned-vars clean-room render
+
+## Actions
+
+1. Decide question 1 above. It is a call about the manuscript's data provenance,
+   not a mechanical one.
+2. If regenerating: regenerate both tables, and check whether any prose in
+   `manuscript.qmd` names a venue, a lean, or a count from this table. A
+   flipped lean with unflipped prose is worse than the stale table.
+3. If pinning: add the table to whatever guards the pin, so the drift is caught
+   at build time rather than by an unrelated ticket's side-check.
+
+## Test
+
+An adherence test that regenerating `tab_venues.md` from the current corpus is
+a no-op against the committed file — the same shape as the byte-compare that
+found this, but wired as a guard. It must be `slow` (needs `data/catalogs/`),
+and it must fail today.
+
+The trap to avoid when writing it: `make -B deliverables/_shared/tables/tab_venues_fr.md`
+from the repo root prints `Rien à faire` and exits 0, because that rule lives in
+`deliverables/manuscript/manuscript.mk` which the top-level Makefile does not
+include. A guard built on that invocation would report the target clean without
+ever rebuilding it.
+
+## Verification
+
+- [ ] The regeneration diff is either empty, or every changed value is explained
+- [ ] No manuscript prose contradicts the table it now ships with
+- [ ] `tab_venues_fr.md` is regenerated in the same change if `tab_venues.md` is
+
+## Invariants
+
+- The Gide variant keeps rendering: `tab_venues_fr.md` is produced by stripping
+  the caption line from `tab_venues.md` and appending
+  `tab_venues_fr_caption.md`, so the two must be regenerated together.
+- Ticket 0376's finding stands: the escaper widening is byte-neutral on all nine
+  generated Markdown targets. This ticket does not reopen that.
+
+## Exit criteria
+
+- [ ] The venue table the manuscript renders is either current with the corpus
+      or deliberately pinned, and which one is recorded
+- [ ] The drift cannot recur silently — a guard catches it at build time

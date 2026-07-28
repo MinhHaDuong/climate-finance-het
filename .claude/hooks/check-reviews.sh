@@ -68,6 +68,35 @@ if [ -z "$PR_NUMBER" ]; then
     exit 0
 fi
 
+# Tickets-only fast path (rules/git.md, "Ticket-filing PRs take the fast
+# path"): a PR whose diff is only .erg files under tickets/ merges on
+# `erg check` plus an ID-collision scan — review ceremony would be a
+# self-posted label plus a self-review, pure procedure with no content, so
+# the gate exempts it. The determination is conservative, so it cannot
+# weaken the gate for code PRs:
+#   - any non-ticket path, any rename whose source is outside tickets/,
+#     an empty file list, or a list at the pagination cap (>= 100 files,
+#     possibly truncated) → no exemption;
+#   - any API or parse error → no exemption either: fall through to the
+#     normal review count below, leaving error behaviour exactly as it is
+#     today. The hook itself never dies and never denies from this block.
+TICKETS_ONLY=$(gh api "repos/$OWNER/$REPO/pulls/$PR_NUMBER/files?per_page=100" 2>/dev/null \
+    | python3 -c "
+import sys, json, re
+files = json.load(sys.stdin)
+def is_ticket(path):
+    return re.fullmatch(r'tickets/.+\.erg', path or '') is not None
+paths = [f.get('filename') for f in files]
+renames = [f.get('previous_filename') for f in files if f.get('previous_filename')]
+ok = 0 < len(files) < 100 and all(is_ticket(p) for p in paths + renames)
+print('yes' if ok else 'no')
+" 2>/dev/null) || TICKETS_ONLY="no"
+
+if [ "$TICKETS_ONLY" = "yes" ]; then
+    echo '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"allow","permissionDecisionReason":"Tickets-only diff — fast path per rules/git.md; erg check + ID-collision scan are the gate, no review cycles required."}}'
+    exit 0
+fi
+
 # Count reviews by any accepted reviewer on this PR.
 #
 # What this gate asserts: that enough review cycles have been posted on the PR:

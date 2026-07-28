@@ -140,15 +140,26 @@ def _write_md_table(summary: pd.DataFrame, path: str, caption: str) -> None:
     # no emitter has to know which column happens to carry a `|` today (tickets
     # 0325, 0339, 0370). Escaping runs *before* the TOTAL row's emphasis markers
     # are added, so the `**` stay markup and only the value is treated as text.
+    # A missing value is blanked once, for every column, before anything is
+    # formatted. `row.get(c, "")` does not cover it: a source that refines to
+    # zero works reaches here with the four percentage keys *present* and
+    # holding NaN, so the default never fires and the cell renders the string
+    # `nan` (ticket 0375). The int branch keeps no `pd.notna` guard of its own —
+    # one blanking rule for all eight columns is what stops the next column
+    # added here from inheriting the same hole.
     for _, row in summary.iterrows():
         is_total = "TOTAL" in str(row["Source"])
         vals = []
         for c in cols:
             v = row.get(c, "")
-            if c in ("Raw", "Refined", "Unique"):
-                v = f"{int(v):,}" if pd.notna(v) else ""
+            if pd.isna(v):
+                v = ""
+            elif c in ("Raw", "Refined", "Unique"):
+                v = f"{int(v):,}"
             cell = markdown_text_cell(v)
-            vals.append(f"**{cell}**" if is_total else cell)
+            # An empty TOTAL cell must not become a bare `****`, which pandoc
+            # reads as two literal asterisks rather than emphasis.
+            vals.append(f"**{cell}**" if is_total and cell else cell)
         lines.append("| " + " | ".join(vals) + " |")
     lines.append("")
     lines.append(caption)
