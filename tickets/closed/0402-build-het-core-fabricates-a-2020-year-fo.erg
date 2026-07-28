@@ -1,0 +1,161 @@
+%erg 0.1
+Title: build_het_core fabricates a 2020 year for undated works, inflating their rank
+Created: 2026-07-27
+Author: HDMX-coding-agent
+Closed: autoclosed — PR #1238
+
+--- log ---
+2026-07-27T19:12Z HDMX-coding-agent created
+2026-07-27T19:20Z HDMX-coding-agent note Found by the ticket-0354 roar sweep for the silent-coercion class the deposit gate exposed
+2026-07-27T22:40Z HDMX-coding-agent note Corrected this ticket's own severity claim: the venues table is built but rendered by no document
+
+2026-07-28T07:15Z HDMX-coding-agent closed — autoclosed — PR #1238
+2026-07-28T10:15Z HDMX-coding-agent note Review round 2 defeated the static guard twice; added runtime invariants and retracted the unbypassable claim
+
+--- body ---
+## Context
+
+Ticket 0354 found `export_deposit.py` silently turning an unparseable integer
+into an empty cell. Sweeping the same class across `scripts/` surfaced a worse
+instance: this one does not empty the value, it **invents** one.
+
+```python
+# scripts/analysis/build_het_core.py:353
+df["year_num"] = pd.to_numeric(df["year"], errors="coerce").fillna(2020)
+```
+
+A work with no year is treated as published in 2020. That value is not a
+filtering convenience — it feeds the score that selects and ranks the corpus:
+
+```python
+# build_het_core.py:399
+s2["cit_per_year"] = s2["cited_by_count_num"] / np.maximum(1, CURRENT_YEAR - s2["year_num"])
+```
+
+`cit_per_year` enters `s2["score"]` (line 416), the frame is sorted by score
+(line 422), and the top rows are written to `het_mostcited_50.csv`. So an
+undated work is scored as if six years old rather than its true age. For a
+genuinely old work the denominator falls from ~31 to ~6, inflating
+`cit_per_year` by roughly 5x and pushing it up the ranking.
+
+Measured on the current corpus: **389 of 33,344 refined works (1.2%) carry a
+blank year**, and every one of them is scored as 2020. None is unparseable —
+the defect is entirely the `fillna`, not the coercion.
+
+**Correction to this ticket's own filing (2026-07-27).** It claimed the chain
+reaches a published artifact:
+
+```
+build_het_core.py -> data/derived/tables/het_mostcited_50.csv
+  -> summarize_core_venues.py -> export_core_venues_markdown.py
+  -> deliverables/_shared/tables/tab_core_venues_top10.md
+```
+
+The chain is real, but its endpoint is not published. `tab_core_venues_top10.md`
+has a Make rule and no consumer: no `.qmd` includes it, it is gitignored (the
+blanket `deliverables/_shared/tables/*` with no negation), and `compute_vars.py`
+never reads the ranking. So no paper number depends on the fabricated dates. The
+severity was overstated at filing; what survives is a correctness defect in a
+scoring pipeline whose output is an analysis intermediate.
+
+Measured on the real corpus, the fabrication was **not** merely latent: fixing it
+swaps 43 of the 1000 selected works, and the (unrendered) venues table moves one
+cell, OECD publications 59 -> 57. Ordering and venue membership are unchanged.
+
+Aside, not ticketed (the author capped filing): an artifact built by a Make rule
+and rendered by nothing is what `config/unrendered-artifacts.txt` exists to
+declare, but ticket 0359's guard inspects *tracked* markdown only, so an
+untracked generated table escapes it.
+
+`cited_by_count_num` (line 352) uses `.fillna(0)` in the same statement. That
+one is defensible — no citation record is close to zero citations — but it
+conflates "unknown" with "zero" and should be stated deliberately rather than
+left as a twin of the year bug.
+
+## Relevant files
+
+- `scripts/analysis/build_het_core.py:352-353` — the two `fillna` calls;
+  `:399` — where the fabricated year enters the score; `:416,422,436` — score,
+  sort, written columns.
+- `scripts/analysis/summarize_core_venues.py`,
+  `scripts/figures/export_core_venues_markdown.py` — the downstream consumers
+  that carry the effect into a published table.
+- `Makefile:386` — the `$(MOSTCITED)` rule.
+
+## Actions
+
+1. Decide the policy for an undated work and make it explicit, rather than
+   silently dating it 2020. Three candidates:
+   - **Exclude from the ranking.** A work whose age is unknown has no
+     meaningful citations-per-year; dropping it from the score is honest and
+     costs 1.2% of rows.
+   - **Rank on total citations only** for undated works, so the age-normalised
+     term is not invented.
+   - **Impute and disclose**, if the corpus genuinely needs those rows: keep an
+     imputation but record it in a column and state the count wherever the
+     table is published.
+2. Apply the same explicitness to `cited_by_count_num`'s `.fillna(0)` — either
+   justify it in a comment or handle it like the year.
+3. Regenerate `het_mostcited_50.csv` and `tab_core_venues_top10.md`, and report
+   how the published top-10 changes. If it does not change, say so — that is
+   the useful finding for the paper.
+
+## Test
+
+Red first: a test that builds a small frame with one undated work carrying a
+high citation count, runs the scoring step, and asserts the undated work is not
+ranked above a dated work with the same citation count. Today the undated work
+wins, because its denominator is smaller.
+
+Pure-pandas on a synthetic frame, so the fast tier.
+
+## Verification
+
+- [x] The undated-work count is reported by the script's log, not silent —
+      "Corpus: 33344 papers (389 undated - no citations-per-year credit)"
+- [x] `het_mostcited_50.csv` regenerates and the diff is stated: 43 of 1000
+      selected works swap; the venues table moves one cell (OECD 59 -> 57) and
+      is rendered by no document, per the correction above
+- [x] No `fillna` on a value that feeds a score remains without a stated reason
+      — the year no longer takes one; `cited_by_count`'s zero is justified in
+      place (a work OpenAlex never saw cited has nought citations, a
+      measurement rather than a guess)
+
+## Invariants
+
+- `tab_core_venues_top10.md` stays a valid pipe table (the ticket-0340 shape
+  guard sweeps it).
+- The Makefile contract for `$(MOSTCITED)` is unchanged — this is a scoring
+  policy fix, not a rewiring.
+
+## Exit criteria
+
+- [x] Undated works no longer receive a fabricated publication year that feeds
+      the score — `parse_years` leaves them NA, `citations_per_year` gives them
+      no age credit while pagerank and teaching-canon signals still carry them
+- [x] The policy chosen is stated in the code (`citations_per_year` docstring
+      records why zero rather than dropping the work or imputing a median). No
+      prose to update: the affected artifact is published nowhere.
+      Correction to this ticket's own safety measurement: the "0 of 210/230/33"
+      figure counted only the `from_grey`/`from_unfccc`/`from_oecd` source flags,
+      a narrower slice than the code's own `is_institutional_report()`, which
+      matches 1,366 works of which 19 are undated. The conclusion survives — all
+      19 are uncited, so they forfeit a term that would have been zero anyway —
+      but the original framing overstated the check.
+- [x] Red-to-green test pins the ranking against age fabrication —
+      `tests/test_het_core_ranking.py`; the call-site guard was red on
+      `fillna(2020)` and names the consequence.
+      **Not claimed complete, after two review rounds broke it.** A static check
+      cannot enumerate every spelling of an imputation: round 1 defeated a regex
+      (`fillna(2020.0)`, `fillna(value=2020)`, `fillna(CURRENT_YEAR)`,
+      `np.where`), round 2 defeated the AST version by fabricating *before*
+      parsing (`df["year"].replace("", "2020")`) and by routing a parallel
+      column into the helper. What holds now is three layers: AST checks for the
+      direct routes, a file-versus-parse blank count that catches pre-parse
+      fabrication, and a frame-level invariant asserting undated works carry no
+      rate — the last checked against the frame's own `year_num`, so it survives
+      a parallel column however written. Each verified by reproducing the bypass
+      and reverting it. One bypass the review listed (`.replace(pd.NA, 2020)` on
+      a float64 column) turns out inert: `pd.NA` does not match `NaN` there, so
+      it fabricates nothing.
+- [x] `make check` passes

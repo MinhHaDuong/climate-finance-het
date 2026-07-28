@@ -2,11 +2,13 @@
 Title: The archive guard checks the SCRIPTS declaration, not what the cp loop actually copies
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: tooling-lane severity floor: guard checks the wrong surface; no shipped archive is wrong today
 
 --- log ---
 2026-07-27T19:20Z HDMX-coding-agent created found while executing 0352, which fixed the parser that reads the declaration. Deliberately not folded into that PR: it is a different concern and 0352's exit criteria do not reach it.
 
 2026-07-27T19:01Z note partly overtaken by ticket 0292, which landed on main after this was filed. origin/main:tests/test_archive_script_paths.py now carries _literal_cp_sources(), which tokenises cp arguments and collects literal repo-relative sources outside the declared array — that is Action 2, done. Action 1 is NOT covered: _literal_cp_sources skips any token containing a dollar sign, so a slice like CORE_SCRIPTS=("${SCRIPTS[@]:0:6}") is passed over exactly as "${SCRIPTS[@]}" is. The subset case, which is the one that silently ships fewer files than were validated, remains open. Action 3 (the docstring overclaim) also remains. Re-scope before executing.
+2026-07-27T19:45Z HDMX-coding-agent closed — tooling-lane severity floor: guard checks the wrong surface; no shipped archive is wrong today
 --- body ---
 ## Context
 

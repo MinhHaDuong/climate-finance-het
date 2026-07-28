@@ -2,12 +2,14 @@
 Title: no guard on undeclared third-party imports in scripts/
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: tooling-lane severity floor: guard proposal with no live instance; the class is recorded, refile if it reaches a deliverable
 
 --- log ---
 2026-07-27T11:02Z HDMX-coding-agent created
 2026-07-27T11:12Z HDMX-coding-agent note Class-level follow-up to 0330; the same defect already shipped once in libs/ (0211)
 
 2026-07-27T12:47Z HDMX-coding-agent note blocker 0330 closed — Blocked-by removed.
+2026-07-27T19:45Z HDMX-coding-agent closed — tooling-lane severity floor: guard proposal with no live instance; the class is recorded, refile if it reaches a deliverable
 --- body ---
 ## Context
 
