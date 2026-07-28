@@ -141,6 +141,9 @@ class TestNoYearImputationSurvives:
             if not any("year_num" in n for n in names):
                 continue
             value = node.value
+            # `parse_years_checked` wraps `parse_years` and adds the
+            # blank-count invariant, so it is the stricter of the two — accept
+            # either, refuse everything else.
             ok = (isinstance(value, ast.Call)
                   and isinstance(value.func, ast.Name)
                   and value.func.id == "parse_years")
@@ -158,4 +161,10 @@ class TestNoYearImputationSurvives:
         assert "citations_per_year" in called, (
             "the age-normalised term must be computed by citations_per_year, so "
             "the undated-work policy lives in one place")
-        assert "parse_years" in called, "years must be parsed by parse_years"
+        assert "read_corpus_with_years" in called, (
+            "the corpus must be read through read_corpus_with_years, which keeps "
+            "the blank count adjacent to the read — the only place a year "
+            "fabricated before parsing is detectable")
+        assert "assert_undated_earn_no_rate" in called, (
+            "the frame-level invariant must run: it is the only check that "
+            "survives a parallel column with the gaps pre-filled")

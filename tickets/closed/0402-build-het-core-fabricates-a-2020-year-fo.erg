@@ -10,6 +10,8 @@ Closed: autoclosed — PR #1238
 2026-07-27T22:40Z HDMX-coding-agent note Corrected this ticket's own severity claim: the venues table is built but rendered by no document
 
 2026-07-28T07:15Z HDMX-coding-agent closed — autoclosed — PR #1238
+2026-07-28T10:15Z HDMX-coding-agent note Review round 2 defeated the static guard twice; added runtime invariants and retracted the unbypassable claim
+
 --- body ---
 ## Context
 
@@ -134,7 +136,26 @@ Pure-pandas on a synthetic frame, so the fast tier.
 - [x] The policy chosen is stated in the code (`citations_per_year` docstring
       records why zero rather than dropping the work or imputing a median). No
       prose to update: the affected artifact is published nowhere.
+      Correction to this ticket's own safety measurement: the "0 of 210/230/33"
+      figure counted only the `from_grey`/`from_unfccc`/`from_oecd` source flags,
+      a narrower slice than the code's own `is_institutional_report()`, which
+      matches 1,366 works of which 19 are undated. The conclusion survives — all
+      19 are uncited, so they forfeit a term that would have been zero anyway —
+      but the original framing overstated the check.
 - [x] Red-to-green test pins the ranking against age fabrication —
       `tests/test_het_core_ranking.py`; the call-site guard was red on
-      `fillna(2020)` and names the consequence
+      `fillna(2020)` and names the consequence.
+      **Not claimed complete, after two review rounds broke it.** A static check
+      cannot enumerate every spelling of an imputation: round 1 defeated a regex
+      (`fillna(2020.0)`, `fillna(value=2020)`, `fillna(CURRENT_YEAR)`,
+      `np.where`), round 2 defeated the AST version by fabricating *before*
+      parsing (`df["year"].replace("", "2020")`) and by routing a parallel
+      column into the helper. What holds now is three layers: AST checks for the
+      direct routes, a file-versus-parse blank count that catches pre-parse
+      fabrication, and a frame-level invariant asserting undated works carry no
+      rate — the last checked against the frame's own `year_num`, so it survives
+      a parallel column however written. Each verified by reproducing the bypass
+      and reverting it. One bypass the review listed (`.replace(pd.NA, 2020)` on
+      a float64 column) turns out inert: `pd.NA` does not match `NaN` there, so
+      it fabricates nothing.
 - [x] `make check` passes
