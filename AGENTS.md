@@ -71,11 +71,11 @@ Autonomous execution using test-driven development. The inner cycle is:
 1. **Red**: write a failing test that defines the expected behavior. Commit.
 2. **Green**: write the minimum code to make it pass. Commit.
 3. **Refactor**: clean up, then confirm tests still pass. Use `make check-fast` during development. Commit.
-4. **PR**: Pass `make check` gate, then push and open a PR.
+4. **PR**: Pass the merge gate — `make check-fast` + `make lint` (~40 s combined) — then push and open a PR. Run the full `make check` before the PR only when the diff touches the pipeline surface (`scripts/`, `libs/`, `dvc.yaml`, the Makefiles, or `tests/` files marked slow/integration); doc, prose, config, and ticket diffs skip it.
 
-Use `make check-fast` during development, `make check` before opening a PR. Makefile truth: prerequisites and targets must match each script's actual file reads and writes.
+Use `make check-fast` during development. Makefile truth: prerequisites and targets must match each script's actual file reads and writes.
 
-**There is no CI.** This repo has no `.github/workflows/`, by decision (ticket 0321, 2026-07-27). Nothing runs the suite on push or on a pull request: `make check` is a purely local gate, and a green main is only ever whatever the last session verified on its own machine. Two consequences. Run `make check` yourself before opening a PR — no forge job will do it for you. And never read a merged PR as proof that main is green: when a full `make check` surfaces failures your branch did not cause, they belong to main, and they get their own ticket.
+**There is no CI.** This repo has no `.github/workflows/`, by decision (ticket 0321, 2026-07-27). Nothing runs the suite on push or on a pull request: the gate above is purely local, and the slow/integration tier is verified **ex post**, not per PR — `/lair` step 9 runs the full `make check` on main at end of day and opens a ticket for each new failure (gate eased 2026-07-28: 18 days of session logs showed the full suite costing 4–10 min per gate run while catching nothing the fast tiers missed; every observed failure was environmental or fast/adherence-tier). Never read a merged PR as proof that main is green: when a full `make check` surfaces failures your branch did not cause, they belong to main, and they get their own ticket.
 
 ### Verify
 Gate each PR before merging via `/verify <pr-number>`. The skill runs the full loop:
