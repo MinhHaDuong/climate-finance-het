@@ -63,10 +63,19 @@ which describes neither the Lua reader nor the extension set it selects.
 
 import re
 
-# The pipe is escaped everywhere; the reader honours ``\|`` inside a code span
-# too, so that one rule holds throughout. The backslash needs the opposite
-# treatment on each side of a span boundary — CommonMark reads it as an escape
-# in prose but literally inside code — so prose and code are escaped separately.
+# In prose the pipe is escaped and the backslash with it, because CommonMark
+# reads a backslash as an escape there.
+#
+# ``_MARKDOWN_CODE`` escapes the pipe *inside* a span, and that rule is wrong —
+# measured, 2026-07-28, against the reader above: ``a \| b`` inside a span
+# renders the backslash literally, and a raw ``a | b`` inside a span parses as
+# one cell, because pandoc's pipe-table splitter respects spans. The comment
+# here used to claim the reader "honours ``\|`` inside a code span too", and
+# that claim is what ``markdown_verbatim_cell``'s first draft inherited before
+# the #1289 review caught it. Left in place rather than fixed: ``markdown_cell``
+# is the only user and has no live caller today, so changing its output would be
+# an unverifiable edit to a dormant path. Corrected here so the next reader does
+# not inherit the same false premise a third time (ticket 0530).
 _PROSE = {"\\": r"\\", "|": r"\|"}
 
 _MARKDOWN_TEXT = str.maketrans(_PROSE)
@@ -155,16 +164,30 @@ def markdown_verbatim_cell(text: str) -> str:
     what a backtick wrap at the call site violates. Nothing in the emitter can
     enforce the precondition, so the construction belongs here.
 
-    Inside a span the only escape that survives is ``\\|``, which the reader
-    honours. A backtick is handled the way CommonMark provides for: the fence
-    is one longer than the value's longest backtick run, and a value that
-    begins or ends with one is padded, since the reader strips a single leading
-    and trailing space from a span's content.
+    **Nothing is escaped**, and that is the whole point of a span: CommonMark
+    processes no backslash escape inside one, so an escape does not protect the
+    value, it *becomes* the value. Measured, because the module comment above
+    asserted the opposite and the first draft of this function inherited it —
+    ``pandoc -f markdown`` renders ``a \\| b`` inside a span as the literal
+    ``a \\| b``, and renders a raw ``a | b`` inside a span as ``a | b`` in one
+    cell. The pipe needs no escape here: the reader's pipe-table splitter
+    respects code spans, so the span itself does the work the backslash does in
+    prose. Escaping it would publish a backslash in the middle of a regex a
+    reader is meant to run (caught by the #1289 review panel, second round).
+
+    A backtick is therefore handled structurally, the way CommonMark provides
+    for: the fence is one longer than the value's longest backtick run, and a
+    value that begins or ends with one is padded, since the reader strips a
+    single leading and trailing space from a span's content.
+
+    Runs of whitespace are collapsed, as everywhere else in these emitters — a
+    pipe-table row is line-delimited, so a newline in the value would end the
+    row outright and no construction can hold it.
 
     Never raises, for ``markdown_text_cell``'s reason: the input is data, not
     markup this repo authored.
     """
-    value = " ".join(str(text).split()).translate(_MARKDOWN_CODE)
+    value = " ".join(str(text).split())
     if not value:
         return ""
     runs = re.findall(r"`+", value)

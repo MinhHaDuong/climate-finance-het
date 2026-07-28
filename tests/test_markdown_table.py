@@ -277,15 +277,30 @@ class TestVerbatimCell:
         so the padding is invisible in the output but keeps the fences apart."""
         assert markdown_verbatim_cell("`x`") == "`` `x` ``"
 
-    def test_the_pipe_is_still_escaped(self):
-        """The one escape that survives inside a span — and it must, or the
-        value silently ends the table cell."""
-        assert markdown_verbatim_cell("a | b") == r"`a \| b`"
+    @pytest.mark.integration
+    def test_a_pipe_in_the_value_neither_splits_nor_escapes(self, tmp_path):
+        r"""Both halves, through the renderer, because the source alone lies.
 
-    def test_a_backslash_is_left_alone(self):
-        r"""Inside a span CommonMark reads `\` literally, so escaping it would
-        publish a doubled backslash in a regex a reader is meant to run."""
-        assert markdown_verbatim_cell(r"\d+") == r"`\d+`"
+        The first draft escaped the pipe, inheriting this module's prose rule.
+        Inside a span that is exactly wrong: CommonMark processes no escape
+        there, so `\|` ships the backslash into the published value — a
+        backslash in the middle of a regex a reader is meant to run. The span
+        needs no escape, because the reader's pipe-table splitter respects it.
+
+        A source-level assertion cannot tell these apart: `` `a \| b` `` and
+        `` `a | b` `` are both plausible-looking strings, and only the render
+        says which one publishes the value the emitter was given. That is why
+        the escaped form got through the first round (#1289 review, round two).
+        """
+        from _qmd_render import require_pandoc
+        require_pandoc()
+        value = "(alpha|beta)+ AND \"gamma\""
+
+        assert _rendered_value(markdown_verbatim_cell(value), tmp_path) == value
+
+    def test_no_backslash_is_added(self):
+        r"""The unit half: a span escapes nothing, so nothing is escaped."""
+        assert markdown_verbatim_cell(r"(a|b) \d+") == r"`(a|b) \d+`"
 
     def test_an_empty_value_is_not_an_empty_span(self):
         """A bare `` renders as two literal backticks, not an empty span."""

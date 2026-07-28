@@ -38,6 +38,10 @@ QUERIES_YAML = os.path.join(REPO, "config", "openalex_queries.yaml")
 FILTER_YAML = os.path.join(REPO, "config", "corpus_filter.yaml")
 GREY_YAML = os.path.join(REPO, "config", "grey_sources.yaml")
 
+# A code span, matching the fence back to its own length so a ``` span is not
+# ended by the first single backtick inside it.
+_CODE_SPAN = re.compile(r"(`+)(?:(?!\1).)*?\1")
+
 
 def _load(path):
     with open(path, encoding="utf-8") as fh:
@@ -626,23 +630,23 @@ def test_every_quoted_cell_is_a_code_span():
     "phrase delimiter", which is why it is the feature the guard keys on. A
     future executable value carrying only a hyphen range is out of its reach.
 
-    Cells are split on unescaped pipes, via the same rule ``_separators``
-    encodes: a naive ``split("|")`` would cut an escaped ``\\|`` in half and
-    could miss a quoted value that also contains a pipe — precisely the class
-    this guard claims (raised by the #1289 review panel).
+    Checked per row with the code spans removed, rather than by splitting the
+    row into cells. Splitting is what this guard got wrong twice: on a raw
+    ``|`` it cuts an escaped pipe in half, and on an unescaped one it cuts a
+    verbatim cell that legitimately contains a pipe — which a code span is
+    allowed to, since the reader's splitter respects it. Deleting the spans
+    first sidesteps the question, and closes a hole the cell form had anyway:
+    a cell that is *two* spans with a bare quote between them passed the
+    startswith/endswith test (both raised by the #1289 review panel).
     """
     from export_retrieval_protocol import render_markdown
 
     offenders = []
     for table in _pipe_tables(render_markdown()):
         for line in table[2:]:
-            row = line.strip().strip("|")
-            for raw in re.split(r"(?<!\\)\|", row):
-                cell = raw.strip()
-                if '"' in cell and not (
-                    cell.startswith("`") and cell.endswith("`")
-                ):
-                    offenders.append(cell)
+            outside_spans = _CODE_SPAN.sub("", line)
+            if '"' in outside_spans:
+                offenders.append(line.strip())
     assert not offenders, (
         "cells carry a straight quote outside a code span, so the reader's "
         f"smart extension will rewrite them: {offenders}"
