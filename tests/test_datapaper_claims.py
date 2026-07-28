@@ -24,6 +24,7 @@ import re
 import sys
 
 import pandas as pd
+import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "analysis"))
@@ -77,6 +78,7 @@ def sources_table_labels(text: str) -> list[str]:
 # --------------------------------------------------------------------------- #
 # Live guards
 # --------------------------------------------------------------------------- #
+@pytest.mark.adherence
 def test_no_record_level_containment_verb():
     hits = find_containment_verbs(_paper())
     assert hits == [], (
@@ -85,6 +87,7 @@ def test_no_record_level_containment_verb():
     )
 
 
+@pytest.mark.adherence
 def test_abstract_layer_share_is_a_shortcode_not_a_literal():
     abstract = extract_abstract(_paper())
     assert "{{< meta inst_layer_pct >}}" in abstract, (
@@ -95,6 +98,7 @@ def test_abstract_layer_share_is_a_shortcode_not_a_literal():
     assert literals == [], f"hand-typed percentage(s) in the Abstract: {literals}"
 
 
+@pytest.mark.adherence
 def test_sources_table_label_matches_abstract():
     text = _paper()
     abstract = extract_abstract(text).lower()
@@ -161,6 +165,7 @@ abstract: |
 """
 
 
+@pytest.mark.adherence
 def test_fang_containment_verb_detected():
     assert find_containment_verbs("It subsumes and Subsumed corpora") == [
         "subsumes",
@@ -168,10 +173,12 @@ def test_fang_containment_verb_detected():
     ]
 
 
+@pytest.mark.adherence
 def test_fang_literal_percentage_detected():
     assert find_literal_percentages(extract_abstract(BAD_DOC)) == ["1.5%"]
 
 
+@pytest.mark.adherence
 def test_fang_label_mismatch_detected():
     abstract = extract_abstract(BAD_DOC).lower()
     labels = sources_table_labels(BAD_DOC)
