@@ -5,6 +5,8 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-07-28T00:00Z HDMX-coding-agent created
+2026-07-28T09:06Z claude note raid 570/571 Imagine+Plan — policy (b) settled; "not yet generated" comment is stale (tab_summary Make targets exist); Actions rewritten, exit criteria untouched
+2026-07-28T09:12Z claude note feasibility PASS — paths/lines verified against tree; surfaces disjoint from 0571; compute_vars.py confinement rule in Actions covers the five open sibling PRs
 
 --- body ---
 ## Context
@@ -63,17 +65,44 @@ and therefore invisible to a guard aimed at the renderer's.
 
 ## Actions
 
-1. Decide the policy question first, because it drives everything else: should
-   a vars file be *allowed* to carry a sentinel? Two coherent answers —
-   (a) never: `compute_vars` fails rather than writing one, and an
-   unavailable statistic means the prose must not claim it; or
-   (b) yes, but no document may quote a key whose value is a sentinel.
-   (b) is the smaller change and keeps the partial-build workflow the
-   `setdefault` was written for.
-2. Implement the chosen policy.
-3. Either produce the Z-series statistics (`tab_summary_*.csv`) or cut the
-   claim from the paragraph. A results sentence with the number removed is
-   not a weaker claim, it is an unsupported one.
+Policy DECIDED at raid Imagine phase: **(b)** — a vars file may carry a
+sentinel (the partial-build workflow depends on it; every collector in
+`compute_vars` degrades gracefully by design, cf. the dedup block just above),
+but no document may quote a key whose value is a sentinel. Policy (a) would
+contradict this ticket's own invariant ("a contributor without
+`tab_summary_*.csv` must still be able to run `make stats`").
+
+The "not yet generated" comment at `compute_vars.py:631` is stale: the
+`tab_summary_{S2_energy,L1,G9_community}.csv` targets exist
+(`divergence.mk:321-325`, all three methods wired into `BOOT_METHODS` and
+`SUBSAMP_METHODS`), so real numbers are producible on padme. What is missing
+is a *reader*, not the CSVs.
+
+1. Extend `tests/_qmd_meta.py` with a value-reading helper (it currently
+   returns key names only), then add the guard to
+   `tests/test_render_placeholders.py`: no key quoted by a deliverable may
+   resolve to a sentinel value. Import `compute_vars.MISSING` — do not
+   hardcode the string, so the guard tracks the definition.
+2. Factor the validated-zone detection out of
+   `scripts/figures/plot_companion_heatmap.py` (~lines 119-132) into a shared
+   helper (`_companion_plot_utils.py`), so `compute_vars` and the heatmap use
+   one definition of "which years form a validated zone". Do not reimplement
+   it a second time.
+3. Add a Z-series collector to `compute_vars.py` reading the three
+   `tab_summary_*.csv` (peak year = idxmax(z_score) at window==3; zone bounds
+   from the shared zone helper), placed before the existing `setdefault`
+   fallback, which stays as the partial-build path.
+4. Run the chain once on padme (`make data` → divergence-tables →
+   bootstrap-tables → null-model → subsample-tables → divergence-summary →
+   `make stats`), regenerate `multilayer-detection-vars.yml` with real
+   numbers.
+
+CONFINEMENT RULE (feasibility note): five open PRs (#1260, #1258, #1254,
+#1253, #1234) edit other regions of `compute_vars.py`. Keep this PR's edits
+textually confined to the Z-series setdefault block (lines ~629-638) plus the
+new collector function; do not touch the dedup block or `main()`'s write
+loop. `multilayer-detection-techrep.qmd` does not quote these keys (verified)
+— only `multilayer-detection.qmd` does.
 
 ## Test
 
