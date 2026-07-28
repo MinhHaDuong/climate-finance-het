@@ -360,7 +360,13 @@ COMPUTED_STATS := deliverables/_shared/technical-report-vars.yml \
 # config/corpus_filter.yaml is a real prerequisite (ticket 0329): compute_vars
 # reads the filtering thresholds the data paper reports straight from it, so an
 # edit to sigma or a near-duplicate threshold must rebuild the vars file.
-$(COMPUTED_STATS) &: scripts/analysis/compute_vars.py scripts/utils.py \
+# _vars_registry.py and _vars_retrieval.py are real prerequisites for the same
+# reason config/corpus_filter.yaml is: registering a variable or changing which
+# config key it reads changes the emitted bytes, and compute_vars.py's own
+# mtime does not move when they are edited (ticket 0357).
+$(COMPUTED_STATS) &: scripts/analysis/compute_vars.py \
+		scripts/analysis/_vars_registry.py scripts/analysis/_vars_retrieval.py \
+		scripts/utils.py \
 		config/corpus_filter.yaml $(REFINED) \
 		$(DERIVED)/tab_bimodality.csv $(DERIVED)/tab_bimodality_core.csv \
 		$(DERIVED)/tab_axis_detection.csv \

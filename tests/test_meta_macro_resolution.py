@@ -44,26 +44,13 @@ from _qmd_meta import (
 #: when a key is added, and when the fix lands and the set empties, at which
 #: point the entry is deleted rather than left to rot.
 #:
-#: corpus-report reads technical-report-vars.yml but is absent from
-#: compute_vars.DOC_VARS, so it has no vars file of its own. Ticket 0357 owns
-#: that registry gap. (0322 is adjacent, not the fix — its action 2 covers the
-#: verify_*/complete_* vars, a different set of keys.)
-KNOWN_UNRESOLVED = {
-    "corpus-report": frozenset({
-        "cite_coverage_pct",
-        "cite_crossref_rows",
-        "cite_doi_ref_pct",
-        "cite_doi_ref_rows",
-        "cite_fetched_dois",
-        "cite_never_fetched",
-        "cite_total_dois",
-        "cite_total_rows",
-        "corpus_core",
-        "corpus_core_threshold",
-        "corpus_sources",
-        "corpus_with_embeddings",
-    }),
-}
+#: Empty since ticket 0357, which registered corpus-report in
+#: `compute_vars.DOC_VARS` and so emptied the only entry this map ever held —
+#: the 12 keys it read from the shared technical-report-vars.yml that nothing
+#: declared. Leaving the map in place rather than deleting it keeps the
+#: mechanism available for the next known-broken document, and keeps the
+#: guard's both-directions behaviour: a new unresolved key fails here.
+KNOWN_UNRESOLVED: dict[str, frozenset[str]] = {}
 
 PLACEHOLDER_RE = re.compile(re.escape(PLACEHOLDER) + r"([A-Za-z0-9_.-]+)")
 

@@ -32,10 +32,8 @@ import sys
 from pathlib import Path
 
 import pytest
-import yaml
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-CONFIG_PATH = REPO_ROOT / "config" / "corpus_filter.yaml"
 INCLUDES_DIR = REPO_ROOT / "deliverables" / "_shared" / "_includes"
 
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
