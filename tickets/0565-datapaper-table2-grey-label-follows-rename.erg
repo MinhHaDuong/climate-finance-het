@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-28T09:10Z HDMX-coding-agent created
 2026-07-28T09:10Z HDMX-coding-agent note follow-up from PR #1260 review (ticket 0334); generator shared with corpus-report, so out of that PR's scope
+2026-07-28T09:40Z HDMX-coding-agent note scope extended: review round 2 found the same label in tab_retrieval_protocol (caption, heading, row label, pinned by tests); rename all generated tables under one decision
 
 --- body ---
 ## Context
@@ -28,6 +29,11 @@ author-level decision entangled with the Zenodo deposit retitle (see memory
 
 - `scripts/figures/export_corpus_table.py` — writes `tab_corpus_sources.csv`
   and its `.md`; owns the display label
+- `scripts/figures/export_retrieval_protocol.py` — same label in the deposited
+  protocol table: row label "Grey literature", the seed-list caption and
+  heading; `tests/test_retrieval_protocol.py` pins them at lines ~344/419/433
+- `deliverables/data-paper/data-paper.qmd` §2.2 — the "curated grey-literature
+  seed list" sentence follows whatever these tables decide
 - `deliverables/_shared/tables/tab_corpus_sources.csv` — generated artifact
 - `deliverables/data-paper/data-paper.qmd` — includes the `.md` as Table 2;
   Table 1 carries the new label
@@ -43,8 +49,11 @@ author-level decision entangled with the Zenodo deposit retitle (see memory
    per document if the corpus report has reasons to keep "Grey literature".
 2. Update `export_corpus_table.py`, regenerate the csv/md pair, and sweep
    both consumers' prose for sentences that gloss the old row label.
-3. Extend the Table-1/Abstract label-agreement guard to cover Table 2, so
-   the three cannot drift apart again.
+3. Apply the same decision to `export_retrieval_protocol.py` (row label,
+   caption, heading), update the pinned expectations in
+   `tests/test_retrieval_protocol.py`, and regenerate the deposited pair.
+4. Extend the Table-1/Abstract label-agreement guard to cover Table 2 and the
+   protocol table, so none can drift apart again.
 
 ## Test
 
