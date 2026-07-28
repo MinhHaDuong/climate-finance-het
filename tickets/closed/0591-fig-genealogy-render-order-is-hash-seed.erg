@@ -2,10 +2,12 @@
 Title: fig_genealogy render order is hash-seed nondeterministic
 Created: 2026-07-28
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1272
 
 --- log ---
 2026-07-28T13:17Z HDMX-coding-agent created
 
+2026-07-28T14:50Z HDMX-coding-agent closed — autoclosed — PR #1272
 --- body ---
 ## Context
 
