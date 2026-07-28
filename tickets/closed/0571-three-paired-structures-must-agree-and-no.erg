@@ -2,6 +2,7 @@
 Title: Three paired structures must agree and nothing asserts they do
 Created: 2026-07-28
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1269
 
 --- log ---
 2026-07-28T00:00Z HDMX-coding-agent created
@@ -9,6 +10,7 @@ Author: HDMX-coding-agent
 2026-07-28T09:12Z claude note feasibility PASS — all six pair files verified; surfaces disjoint from 0570; no cross-cutting registry in this wave
 2026-07-28T15:10Z claude note byte-compare PASS — tab_lineages.csv, fig_genealogy.png and fig_genealogy.html all byte-identical old-vs-new on the same inputs under PYTHONHASHSEED=0. Unpinned, two runs of main's own code differ: load_edges() returns list(set(...)), so edge draw order follows the string-hash seed. Pre-existing, out of scope here, worth its own ticket.
 
+2026-07-28T13:46Z HDMX-coding-agent closed — autoclosed — PR #1269
 --- body ---
 ## Context
 
