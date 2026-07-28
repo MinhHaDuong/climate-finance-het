@@ -17,6 +17,7 @@ import matplotlib.patheffects as pe
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from _band_scheme import BAND_COLORS_RGB, BAND_NAMES, N_COMMUNITIES
 from matplotlib.colors import to_rgba
 from matplotlib.path import Path
 from script_io_args import parse_io_args, validate_io
@@ -58,12 +59,6 @@ COP_EVENTS = {
     2021: "Glasgow",
     2024: "Baku",
 }
-
-# Band scheme (must match analyze_genealogy.py)
-BAND_COLORS_RGB = {0: "#F4A261", 1: "#457B9D", 2: "#E63946"}
-COMMUNITY_NAMES = {0: "CDM / Kyoto heritage", 1: "Accountability pole", 2: "Efficiency pole"}
-N_COMMUNITIES = 3
-
 
 def load_model(lineages_path):
     """Load tab_lineages.csv and build the data structures the renderer needs."""
@@ -247,7 +242,7 @@ def render_figure(backbone_dois, doi_meta, lineage, positions, edges, pdf, outpu
     for c in sorted_comms:
         band = comm_to_band[c]
         band_center = (band + 0.5) * band_height
-        name = COMMUNITY_NAMES.get(c, f"Cluster {c}")
+        name = BAND_NAMES.get(c, f"Cluster {c}")
         label_text = name.replace(" / ", "\n")
         n = sum(1 for d in backbone_dois if lineage.get(d) == c)
         label_text += f"\n(n={n})"
