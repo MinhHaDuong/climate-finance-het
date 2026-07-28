@@ -10,7 +10,6 @@ Verifies that:
 import os
 import subprocess
 import sys
-from html import escape
 
 import pytest
 from _qmd_render import cell_texts, render_qmd, require_pandoc, row_with
@@ -145,11 +144,11 @@ def test_pipe_bearing_language_code_keeps_its_four_cells(tmp_path):
         text=True, check=True)
 
     flat = render_qmd(output.read_text(encoding="utf-8"), tmp_path)
-    row = row_with(flat, escape(PIPE_CODE.upper(), quote=False))
+    row = row_with(flat, PIPE_CODE.upper())
 
     assert cell_texts(row) == [
-        escape(PIPE_CODE.upper(), quote=False),
-        escape(PIPE_CODE, quote=False),
+        PIPE_CODE.upper(),
+        PIPE_CODE,
         f"{ENOUGH_ROWS}",
         "100.0",
     ], f"the language code split the row:\n{row}"

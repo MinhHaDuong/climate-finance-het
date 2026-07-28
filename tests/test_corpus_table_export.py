@@ -7,7 +7,6 @@ sibling survives rendering with a pipe-bearing value (ticket 0370).
 
 import os
 import sys
-from html import escape
 
 import pandas as pd
 import pytest
@@ -250,7 +249,7 @@ def test_pipe_bearing_source_keeps_its_eight_cells(tmp_path):
     row = row_with(_render(summary, tmp_path), "OECD DAC")
 
     assert cell_texts(row) == [
-        escape(PIPE_SOURCE, quote=False),
+        PIPE_SOURCE,
         "1,200", "900", "300", "12%", "88%", "77%", "66%",
     ], f"the source label split the row:\n{row}"
 
@@ -270,7 +269,7 @@ def test_total_row_stays_bold_around_an_escaped_value(tmp_path):
 
     assert "<strong>" in row, f"the TOTAL row lost its emphasis:\n{row}"
     assert cell_texts(row) == [
-        escape(PIPE_TOTAL, quote=False),
+        PIPE_TOTAL,
         "1,200", "900", "300", "12%", "88%", "77%", "66%",
     ], f"the TOTAL label split the row:\n{row}"
 
