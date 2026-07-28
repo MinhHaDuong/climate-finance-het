@@ -155,3 +155,36 @@ def test_long_format_and_schema(refined_fixture, combined_fixture):
     assert _metric(out, "fn_exact_title_pairs") == 1
     assert _metric(out, "fp_doi_groups_near_zero_overlap") == 1
     assert _metric(out, "fp_empty_year_max_group_size") == 3
+
+
+def test_default_thresholds_and_config_block_name_the_same_keys():
+    """`DEFAULT_THRESHOLDS` and the config block must agree, key for key.
+
+    `_load_thresholds()` returns `{**DEFAULT_THRESHOLDS, **cfg}`, so neither
+    direction of divergence raises. A key renamed in the config silently falls
+    back to the hardcoded default; a key added to the config that no default
+    covers reaches production without ever being exercised by the fixtures
+    above, which run on `DEFAULT_THRESHOLDS`. Both are wrong at exit 0, so the
+    assertion is equality, not a subset relation in either direction (ticket
+    0571).
+    """
+    import yaml
+
+    config_path = os.path.join(
+        os.path.dirname(__file__), "..", "config", "analysis.yaml"
+    )
+    with open(config_path) as fh:
+        cfg = yaml.safe_load(fh)
+
+    assert "dedup_error_estimates" in cfg, (
+        "config/analysis.yaml lost its dedup_error_estimates block; "
+        "_load_thresholds() would silently fall back to DEFAULT_THRESHOLDS"
+    )
+    config_keys = set(cfg["dedup_error_estimates"])
+    default_keys = set(DEFAULT_THRESHOLDS)
+
+    assert config_keys == default_keys, (
+        "DEFAULT_THRESHOLDS and the dedup_error_estimates block must name the "
+        f"same thresholds. Only in config: {sorted(config_keys - default_keys)}; "
+        f"only in DEFAULT_THRESHOLDS: {sorted(default_keys - config_keys)}"
+    )

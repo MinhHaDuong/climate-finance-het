@@ -19,16 +19,40 @@ ZOO_RENDER_MK = (
     Path(__file__).resolve().parent.parent / "deliverables" / "zoo" / "zoo.mk"
 )
 
-_CROSSYEAR_RE = re.compile(
-    r"^CROSSYEAR_METHODS\s*:=\s*(.*?)(?=\n\S|\n\n|\Z)",
-    re.MULTILINE | re.DOTALL,
-)
+SCHEMATIC_SCRIPTS_DIR = Path(__file__).resolve().parent.parent / "scripts" / "figures"
+
+
+def _make_list_re(name: str) -> re.Pattern:
+    return re.compile(
+        rf"^{name}\s*:=\s*(.*?)(?=\n\S|\n\n|\Z)",
+        re.MULTILINE | re.DOTALL,
+    )
+
+
+_CROSSYEAR_RE = _make_list_re("CROSSYEAR_METHODS")
+_SCHEMATIC_STEMS_RE = _make_list_re("ZOO_SCHEMATIC_STEMS")
+
+
+def _parse_make_list(mk: str, pattern: re.Pattern, name: str) -> list[str]:
+    m = pattern.search(mk)
+    assert m, f"{name} not found in zoo-figures.mk"
+    return [t for t in m.group(1).split() if t != "\\"]
 
 
 def _parse_crossyear_methods(mk: str) -> list[str]:
-    m = _CROSSYEAR_RE.search(mk)
-    assert m, "CROSSYEAR_METHODS not found in zoo-figures.mk"
-    return [t for t in m.group(1).split() if t != "\\"]
+    return _parse_make_list(mk, _CROSSYEAR_RE, "CROSSYEAR_METHODS")
+
+
+def _parse_schematic_stems(mk: str) -> list[str]:
+    return _parse_make_list(mk, _SCHEMATIC_STEMS_RE, "ZOO_SCHEMATIC_STEMS")
+
+
+def _schematic_script_stems() -> set[str]:
+    """Stems of the plot_schematic_*.py scripts actually on disk."""
+    return {
+        p.stem[len("plot_schematic_"):]
+        for p in SCHEMATIC_SCRIPTS_DIR.glob("plot_schematic_*.py")
+    }
 
 
 @pytest.fixture(scope="class")
@@ -78,6 +102,26 @@ class TestZooMkStructure:
             "G7_disruption",
         ):
             assert expected in methods, f"{expected} missing from CROSSYEAR_METHODS"
+
+    def test_schematic_stems_match_the_scripts_on_disk(self, zoo_mk_text):
+        """`ZOO_SCHEMATIC_STEMS` and `plot_schematic_*.py` must name the same set.
+
+        The pattern rule builds `schematic_$(stem).png` from
+        `plot_schematic_$(stem).py`, so a stem with no script fails loudly at
+        build time — but the other direction is silent: a script the list omits
+        is simply never built, and `make zoo-figures` ships the deliverable one
+        panel short at exit 0. The comment at the head of zoo-figures.mk says
+        the two "match exactly" and nothing enforced it (ticket 0571), so the
+        assertion is set equality rather than a subset check.
+        """
+        declared = set(_parse_schematic_stems(zoo_mk_text))
+        on_disk = _schematic_script_stems()
+        assert declared == on_disk, (
+            "ZOO_SCHEMATIC_STEMS must match scripts/figures/plot_schematic_*.py. "
+            f"Declared with no script: {sorted(declared - on_disk)}; "
+            f"script with no stem (panel would never build): "
+            f"{sorted(on_disk - declared)}"
+        )
 
     def test_zoo_pdf_target_in_render_mk(self):
         """The zoo PDF render rule lives in deliverables/zoo/zoo.mk (ticket 0237).
