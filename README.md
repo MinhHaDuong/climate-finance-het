@@ -77,9 +77,10 @@ the repo:
   Which document reads which vars file is declared in `scripts/analysis/_vars_registry.py`
   (`DOC_VARS` and `DOC_VARS_FILE`, re-exported by `compute_vars`); four documents
   share `_shared/technical-report-vars.yml`, so that file is written with the union
-  of their declared keys. `tests/test_meta_macro_resolution.py` renders every
-  deliverable and fails on any `?meta:` placeholder, so an unregistered document
-  cannot quietly ship one (ticket 0357).
+  of their declared keys. `tests/test_render_placeholders.py` renders every
+  deliverable and fails on the whole unresolved-reference class — meta keys,
+  crossrefs, citations — so an unregistered document cannot quietly ship one
+  (tickets 0357, 0420).
 
 An already-submitted paper's frozen, reproducible form is its **external deposit**,
 not an in-repo copy: the data paper's is `papiers/sent/RDJ4HSS_…/` plus its Zenodo

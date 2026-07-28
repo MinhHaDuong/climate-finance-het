@@ -23,7 +23,7 @@ lands, with no edit here.
 
 The registry side of the same ticket — that every macro a deliverable names
 actually resolves — is `test_doc_vars_completeness.py` and
-`test_meta_macro_resolution.py`. This guard covers the other direction: a number
+`test_render_placeholders.py`. This guard covers the other direction: a number
 that never became a macro at all.
 """
 

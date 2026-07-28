@@ -7,6 +7,10 @@ these fast-tier tests keep the rule itself covered on any machine.
 `markdown_cell`'s own rule is pinned in `test_variables_table.py`, next to the
 codebook contract it serves. What is pinned here is the plain-text sibling and,
 above all, the boundary between the two — the reason there are two functions.
+
+Ticket 0376 adds one rendered class at the bottom of this module rather than in
+a fidelity suite: what it pins is the *character set* — a property of the
+escaper itself — against the reader the build really uses.
 """
 
 import os
@@ -14,7 +18,16 @@ import os
 import pytest
 from _markdown_table import markdown_cell, markdown_text_cell
 
-SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
+TESTS_DIR = os.path.dirname(__file__)
+SCRIPTS_DIR = os.path.join(TESTS_DIR, "..", "scripts")
+BIBLIOGRAPHY = os.path.join(
+    TESTS_DIR, "..", "deliverables", "_shared", "bibliography", "main.bib")
+
+# A key that really resolves in that bibliography. A resolving key is the
+# stronger fixture: an unresolvable one renders visible broken-citation garbage,
+# which an author would catch, while this one renders a plausible-looking
+# reference to a work the row never meant to cite.
+LIVE_KEY = "stern2007"
 
 # (emitter, the expression it interpolates as a free-text cell)
 EMITTERS = [
@@ -118,3 +131,92 @@ def test_emitter_escapes_its_free_text_cell(script, expression):
     for line in rows:
         assert f"markdown_text_cell({expression})" in line, \
             f"{script}: free-text cell interpolated unescaped:\n{line}"
+
+
+# --- Ticket 0376: the character set must match the reader that renders ---
+
+ROW_MARK = "ROWMARK"
+
+
+def _one_row_table(value: str) -> str:
+    """A minimal pipe table whose single body row carries `value`.
+
+    The second cell is a fixed sentinel so `row_with` has an unambiguous needle
+    that no test value can perturb.
+    """
+    return f"| Value | Mark |\n|---|---|\n| {value} | {ROW_MARK} |\n"
+
+
+def _rendered_value(value: str, tmp_path, bibliography: str | None = None) -> str:
+    """`value` as the reader renders it into a cell, tags stripped."""
+    from _qmd_render import cell_texts, render_qmd, row_with
+
+    flat = render_qmd(_one_row_table(value), tmp_path, bibliography)
+    return cell_texts(row_with(flat, ROW_MARK))[0]
+
+
+class TestReaderExtensionCharacters:
+    """`@`, `~` and `^` are live syntax in the reader Quarto uses.
+
+    `markdown` carries `+citations +subscript +superscript`; `gfm` carries none
+    of them. The escaper and its oracle were both calibrated to `gfm`, so a
+    corpus value carrying one of these characters rendered as markup in a
+    published table and no test could see it.
+
+    Each case is paired with an unescaped control. Without the control a test
+    passes vacuously the day someone points the oracle back at `gfm` — which is
+    precisely the regression this ticket exists to prevent.
+    """
+
+    @pytest.mark.integration
+    def test_citation_key_reaches_the_page_as_text(self, tmp_path):
+        """The carrier of record: journal names come straight from the corpus,
+        where an `@` is far likelier than in a hand-edited source label."""
+        from _qmd_render import require_pandoc
+        require_pandoc()
+        value = f"Grey lit @{LIVE_KEY} set"
+
+        assert _rendered_value(value, tmp_path, BIBLIOGRAPHY) != value, (
+            "control failed: an unescaped citation key rendered literally, so "
+            "this test cannot see the defect — has the oracle's reader changed?"
+        )
+        assert _rendered_value(
+            markdown_text_cell(value), tmp_path, BIBLIOGRAPHY) == value
+
+    @pytest.mark.integration
+    def test_tilde_and_caret_reach_the_page_as_text(self, tmp_path):
+        """`CO~2~` is an entirely plausible string in this corpus, and it
+        renders as `CO<sub>2</sub>` unescaped."""
+        from _qmd_render import require_pandoc
+        require_pandoc()
+        value = "CO~2~ at x^2^"
+
+        assert _rendered_value(value, tmp_path) == "CO2 at x2", (
+            "control failed: subscript/superscript did not fire, so this test "
+            "cannot see the defect — has the oracle's reader changed?"
+        )
+        assert _rendered_value(markdown_text_cell(value), tmp_path) == value
+
+
+class TestReaderExtensionCharactersUnit:
+    """The same rule without pandoc, so it stays covered on any machine.
+
+    This repo has no CI and the rendered cases above skip wholesale where pandoc
+    is absent; source-level pins need nothing installed.
+    """
+
+    def test_at_sign_is_escaped(self):
+        assert markdown_text_cell(f"@{LIVE_KEY}") == rf"\@{LIVE_KEY}"
+
+    def test_tilde_and_caret_are_escaped(self):
+        assert markdown_text_cell("CO~2~ at x^2^") == r"CO\~2\~ at x\^2\^"
+
+    def test_emphasis_stays_exempt_beside_them(self):
+        """Why `~`/`^` are escaped while `*`/`_` are not.
+
+        The exemption is not "needs a matched pair" — `~`/`^` need one too. It
+        is that the emitters themselves add `**…**` *after* escaping, so
+        escaping `*` would destroy markup they intend. No emitter ever adds a
+        tilde or a caret.
+        """
+        assert markdown_text_cell("*em* _x_ ~sub~") == r"*em* _x_ \~sub\~"

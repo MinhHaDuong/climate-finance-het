@@ -8,7 +8,7 @@ added to prose but not registered in compute_vars.py.
 This checks prose against the `DOC_VARS` dict — a source-to-source check that
 catches a new variable before anyone regenerates the vars file. It is one layer
 above the artifact Quarto loads, so it cannot see a key that leaves `DOC_VARS`
-correct but the generated YAML short; `test_meta_macro_resolution.py` closes
+correct but the generated YAML short; `test_render_placeholders.py` closes
 that side (ticket 0363). The shortcode scan is shared between the two.
 """
 

@@ -2,12 +2,16 @@
 Title: export_corpus_table ships a literal "nan" when a source refines to zero works
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1250
 
 --- log ---
 2026-07-27T18:25Z HDMX-coding-agent created
 2026-07-27T18:25Z HDMX-coding-agent note found by the #1191 review panel while reading the escaping fix; pre-existing, not introduced by ticket 0370
 2026-07-27T20:40Z HDMX-coding-agent note reimagine: the CSV half of the premise is false — to_csv's default na_rep already emits empty fields. Fix site moves to _write_md_table, which is also what the Test section actually exercises.
 
+2026-07-28T07:28Z HDMX-coding-agent note fixed in _write_md_table: one blanking rule for all eight columns; TOTAL wrap made conditional so an empty cell cannot emit ****; byte-identical on the live corpus, which has no zero-refined source
+2026-07-28T07:52Z HDMX-coding-agent note gaze #1250: exit criterion narrowed to the missing-value mechanism; the empty-frame "nan%" f-string path recorded as out of scope
+2026-07-28T07:57Z HDMX-coding-agent closed — autoclosed — PR #1250
 --- body ---
 ## Context
 
@@ -64,9 +68,10 @@ not, in a published data paper's quality table.
 
 Red first, in `tests/test_corpus_table_export.py`: build a summary from a rows
 list where one source dict carries only the five keys, run it through
-`_write_md_table`, and assert on the rendered row (via `tests/_gfm_render.py`,
-the oracle 0325 established) that the four percentage cells are empty. Assert
-on the render, not on the emitted source.
+`_write_md_table`, and assert on the rendered row (via `tests/_qmd_render.py`,
+the oracle 0325 established — ticket 0376 renamed it from `_gfm_render.py` and
+`render_gfm` to `render_qmd` when it moved the reader off GFM) that the four
+percentage cells are empty. Assert on the render, not on the emitted source.
 
 Cover the `.csv` path in the same ticket: drive the write and read the file
 back rather than asserting on the in-memory frame — a `columns=` allowlist has
@@ -74,11 +79,20 @@ dropped a computed field before.
 
 ## Verification
 
-- [ ] A zero-refined source renders four empty cells, not `nan`
-- [ ] The `.csv` row carries empty fields for the same four columns
-      (already true before the change — pinned so it stays true)
-- [ ] Sources with a non-zero refined count are byte-unchanged
-- [ ] `make lint` and `make check-fast` hold
+- [x] A zero-refined source renders four empty cells, not `nan` — asserted on
+      the rendered page: `cell_texts(row) == [label, "50", "0", "0", "", "",
+      "", ""]`. Replayed against the pre-change emitter: fails with the literal
+      `nan`.
+- [x] The `.csv` row carries empty fields for the same four columns
+      (already true before the change — pinned so it stays true) — pinned by
+      driving `save_csv` and reading the file back with
+      `keep_default_na=False`, not by asserting on the frame.
+- [x] Sources with a non-zero refined count are byte-unchanged — built
+      `tab_corpus_sources.{csv,md}` on padme under a pinned `SOURCE_DATE_EPOCH`
+      with the old emitter and the new one: both byte-identical. The live
+      corpus has no zero-refined source (all ten refine to > 0), which confirms
+      this ticket's "latent rather than live" reading.
+- [x] `make lint` and `make check-fast` hold — see the PR gate section.
 
 ## Invariants
 
@@ -89,4 +103,30 @@ dropped a computed field before.
 
 ## Exit criteria
 
-- [ ] No `nan` can reach `tab_corpus_sources.md` or `tab_corpus_sources.csv`
+- [x] No *missing value* can reach `tab_corpus_sources.md` or
+      `tab_corpus_sources.csv` as the literal `nan` —
+      `_write_md_table` now blanks any missing value once, before formatting,
+      for all eight columns rather than only the three integer ones. The int
+      branch dropped its own `pd.notna` guard: one blanking rule is what stops
+      the next column added there from inheriting the same hole.
+
+      Two things the fix had to get right beyond the reported symptom. An empty
+      TOTAL cell must not be wrapped as `****`, which pandoc reads as two
+      literal asterisks rather than emphasis — so the wrap is now conditional
+      on the cell being non-empty. And the `nan`-absence assertions scan the
+      pipe-table rows only, not the whole emitted file: the real caption
+      contains "prove**nan**ce", so a whole-file substring search would have
+      been a check that fires on correct output. That was caught by running the
+      sweep against the real shipped table, where it returned exactly one hit
+      — inside that word.
+
+      Scope of the claim, narrowed on review (PR #1250): this closes the
+      *missing-value* mechanism — a key present in the Series holding NaN. A
+      second, distinct mechanism survives and is out of scope here: `main()`
+      formats every percentage as an f-string at row-build time, so on an empty
+      frame `f"{float('nan') * 100:.0f}%"` bakes the string `"nan%"` into the
+      cell. That is a non-null value, which neither this guard nor `to_csv`'s
+      `na_rep` can see. It needs `len(df) == 0` — a corpus state that fails
+      loudly upstream long before the table is written — so it is not filed as
+      a defect, only recorded so the exit criterion is not read as broader than
+      the fix.
