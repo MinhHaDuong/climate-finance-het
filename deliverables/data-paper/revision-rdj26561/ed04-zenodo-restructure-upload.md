@@ -85,9 +85,17 @@ The archive is structured in three parts:
   per-column storage type, allowed values, ranges, and measured missingness —
   executable, so `frictionless validate datapackage.json` checks the CSV against
   it), `embeddings.npz` (38,736 multilingual 1024-dim vectors, BAAI/bge-m3),
-  `citations.csv` (citation pairs, normalised DOIs), and
+  `citations.csv` (citation pairs, normalised DOIs),
   `tab_retrieval_protocol.csv`/`.md` (the retrieval-protocol appendix §2.1
-  points referees at).
+  points referees at), and the relevance-filter validation evidence §2.3
+  quotes AUC = 0.818 from (ticket 0372): `tab_reranker_validation.csv`
+  (per-quintile human-relevant rates, from which the AUC recomputes),
+  `reranker_hitl_stratified.csv` (the 100-work stratified validation sample;
+  per-work grades not retained), `reranker_hitl_review.csv` (threshold-zone
+  sample with per-work human grades), `reranker_calibration.csv` (the
+  weak-label calibration set), and `tab_filter_ablation.csv` (the
+  per-stratum removal ablation: works flagged, rescued, and removed by
+  source, language, period, DOI presence, and citation decile; ticket 0337).
 
 Changes in this version: package restructured to separate raw inputs from
 final products (editorial remark ED-04); added `datapackage.json`, the

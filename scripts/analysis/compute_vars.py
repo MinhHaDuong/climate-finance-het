@@ -15,6 +15,7 @@ import warnings
 
 import numpy as np
 import pandas as pd
+from _vars_ablation import ABLATION_VARS, filter_ablation_stats
 from _vars_retrieval import RETRIEVAL_VARS, retrieval_protocol_stats
 from pipeline_io import latest_run_report
 from pipeline_loaders import load_refined_citations, load_refined_works
@@ -88,6 +89,7 @@ DOC_VARS = {
         "filter_no_abstract",
         "filter_protected",
         "filter_title_blacklist",
+        *ABLATION_VARS,  # §2.3 language ablation (ticket 0337)
         *RETRIEVAL_VARS,  # §2.2 thresholds, read from config (ticket 0329)
         "dedup_doi_removed",
         "dedup_fn_pairs",
@@ -736,14 +738,14 @@ def main():
     citation_coverage_period_stats(v)
     citation_verification_stats(v)
     filter_stats(v)
+    filter_ablation_stats(v)
     reference_count_stats(v)
     dedup_stats(v)
     global_map_stats(v)
     lit_confirmations_stats(v)
 
-    # Dedup vars fall back to MISSING while their artifacts are pending:
-    # the catalog_merge run report awaits a dvc-capable full-data session
-    # (ticket 0284) and tab_dedup_error_estimates.csv lands with ticket 0301.
+    # Dedup vars fall back to MISSING while their artifacts are pending: the
+    # catalog_merge run report awaits dvc (0284), the error table 0301.
     for _k in (
         "dedup_doi_removed",
         "dedup_titleyear_removed",
