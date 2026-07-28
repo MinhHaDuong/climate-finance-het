@@ -8,7 +8,9 @@ and the CLI/Makefile contracts by source inspection (no subprocess in the
 fast tier).
 """
 
+import glob
 import os
+import re
 
 import networkx as nx
 import yaml
@@ -164,3 +166,41 @@ def test_response_letter_numbers_trace_to_artifact():
     pct = round(100 * df["econ_cross_share_null_mean"])
     assert f"{pct:.0f}%" in md
     assert f"z = {df['econ_within_share_z']:.1f}" in md
+
+
+def test_no_response_file_quotes_a_stale_z():
+    """No response document quotes a z-score the stats CSV does not produce.
+
+    The presence check above passes as soon as ONE file carries the current
+    value, so it cannot see a second file still carrying the old one. That is
+    not hypothetical: ticket 0625 regenerated the table (z 9.086 -> 8.738),
+    fixed `r1-14-network-response.md`, and left the same R1-14 sentence in
+    `response-letter.md` reading z = 9.1 — contradicting the artifact it
+    cites, in the document that actually goes to the journal.
+
+    Absence, not presence, is the property worth pinning. Files are discovered
+    rather than listed, so a new response document is covered on arrival;
+    `external-review/` is excluded on purpose — it holds inbound referee text,
+    whose quoted numbers are theirs to be wrong about, not ours to correct.
+    """
+    base = os.path.join(SCRIPTS, "..")
+    csv_path = os.path.join(
+        base, "deliverables", "_shared", "tables",
+        "tab_network_limitations.csv")
+    import pandas as pd
+
+    df = pd.read_csv(csv_path).set_index("metric")["value"]
+    expected = f"{df['econ_within_share_z']:.1f}"
+    responses = sorted(glob.glob(os.path.join(
+        base, "deliverables", "data-paper", "revision-rdj26561", "*.md")))
+    assert responses, "revision bundle has no response documents"
+    stale = []
+    for path in responses:
+        with open(path) as fh:
+            for lineno, line in enumerate(fh, 1):
+                for quoted in re.findall(r"\bz = (\d+\.\d+)", line):
+                    if quoted != expected:
+                        stale.append(
+                            f"{os.path.basename(path)}:{lineno} quotes "
+                            f"z = {quoted}, table says {expected}")
+    assert not stale, "; ".join(stale)

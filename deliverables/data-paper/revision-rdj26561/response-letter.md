@@ -174,7 +174,7 @@ others; counts, coverage, and modularity are drawn from the generated
 artifact, not hand-typed. *Limitations*: the same network is too thin before
 2008 for inferential use. A tradition-separation analysis of the pre-2008
 citer subgraph finds that while the economic-cluster separation holds against
-a degree-preserving null (z = 9.1), the subgraph covers only about 8% of
+a degree-preserving null (z = 8.7), the subgraph covers only about 8% of
 early works, and bootstrap community assignments are stable only for the
 best-connected references. The paper states the early-period undercount as a
 usage caveat; the figure demonstrates what the network supports at
