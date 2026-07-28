@@ -314,7 +314,11 @@ _ZERO_SOURCE = "UNFCCC key documents"
 
 
 def _zero_refined_row(source: str = _ZERO_SOURCE) -> dict:
-    """The five-key dict `main()` builds when a source refines to nothing."""
+    """What the md emitter sees of the five-key dict `main()` builds for such a source.
+
+    Four keys, not five: `Query` is in `main()`'s dict but not in `_MD_COLUMNS`,
+    so it never reaches `_write_md_table`.
+    """
     return {"Source": source, "Raw": 50, "Refined": 0, "Unique": 0}
 
 

@@ -9,6 +9,7 @@ Author: HDMX-coding-agent
 2026-07-27T20:40Z HDMX-coding-agent note reimagine: the CSV half of the premise is false — to_csv's default na_rep already emits empty fields. Fix site moves to _write_md_table, which is also what the Test section actually exercises.
 
 2026-07-28T07:28Z HDMX-coding-agent note fixed in _write_md_table: one blanking rule for all eight columns; TOTAL wrap made conditional so an empty cell cannot emit ****; byte-identical on the live corpus, which has no zero-refined source
+2026-07-28T07:52Z HDMX-coding-agent note gaze #1250: exit criterion narrowed to the missing-value mechanism; the empty-frame "nan%" f-string path recorded as out of scope
 --- body ---
 ## Context
 
@@ -100,7 +101,8 @@ dropped a computed field before.
 
 ## Exit criteria
 
-- [x] No `nan` can reach `tab_corpus_sources.md` or `tab_corpus_sources.csv` —
+- [x] No *missing value* can reach `tab_corpus_sources.md` or
+      `tab_corpus_sources.csv` as the literal `nan` —
       `_write_md_table` now blanks any missing value once, before formatting,
       for all eight columns rather than only the three integer ones. The int
       branch dropped its own `pd.notna` guard: one blanking rule is what stops
@@ -115,3 +117,14 @@ dropped a computed field before.
       been a check that fires on correct output. That was caught by running the
       sweep against the real shipped table, where it returned exactly one hit
       — inside that word.
+
+      Scope of the claim, narrowed on review (PR #1250): this closes the
+      *missing-value* mechanism — a key present in the Series holding NaN. A
+      second, distinct mechanism survives and is out of scope here: `main()`
+      formats every percentage as an f-string at row-build time, so on an empty
+      frame `f"{float('nan') * 100:.0f}%"` bakes the string `"nan%"` into the
+      cell. That is a non-null value, which neither this guard nor `to_csv`'s
+      `na_rep` can see. It needs `len(df) == 0` — a corpus state that fails
+      loudly upstream long before the table is written — so it is not filed as
+      a defect, only recorded so the exit criterion is not read as broader than
+      the fix.
