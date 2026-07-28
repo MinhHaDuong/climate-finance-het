@@ -40,8 +40,8 @@ WARNING = "Unknown meta key"
 #: code is 0, and the only complaint goes to a stderr nobody reads — so they are
 #: one defect class and one render answers for both (tickets 0363, 0420).
 PLACEHOLDER_PATTERNS = {
-    "meta key": re.compile(r"\?meta:([A-Za-z0-9_.-]+)"),
-    "crossref": re.compile(r"\?@([A-Za-z0-9_:-]+)"),
+    "meta key": re.compile(re.escape(PLACEHOLDER) + r"([A-Za-z0-9_.-]+)"),
+    "crossref": re.compile(r"\?@([A-Za-z0-9_:.-]+)"),
 }
 
 #: A missing citation key is the same defect but leaves no mark in *markdown*
@@ -57,7 +57,7 @@ CITEPROC_MISSING_RE = re.compile(r"Citeproc: citation (\S+) not found")
 #: writer drops caption text wholesale, so a broken ref there never reaches the
 #: output as `?@label` — the body-text pattern above is blind to it (found by
 #: the PR #1237 review; probe: a caption citing `@fig-ghost` yields zero `?@`
-#: in stdout and two of these warnings on stderr). The output pattern is kept
+#: in stdout while this warning fires on stderr). The output pattern is kept
 #: as well: it localises body-text hits, and belt-and-braces costs one regex.
 CROSSREF_MISSING_RE = re.compile(r"Unable to resolve crossref @?([A-Za-z0-9_:.-]+)")
 

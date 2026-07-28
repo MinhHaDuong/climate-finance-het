@@ -35,7 +35,6 @@ from _qmd_meta import (
     WARNING,
     declared_keys,
     deliverable_qmds,
-    front_matter,
     meta_keys_used,
     missing_citations_in,
     placeholders_in,
@@ -234,7 +233,7 @@ def test_citing_deliverable_declares_a_bibliography(qmd):
     files, _ = source_files(qmd)
     cites = any("[@" in f.read_text(encoding="utf-8") for f in files)
     if cites:
-        assert "bibliography" in front_matter(qmd), (
+        assert "bibliography" in declared_keys(qmd), (
             f"{qmd.name} cites (`[@key]`) but declares no bibliography, so "
             f"citeproc never runs and an unknown key fails silently"
         )

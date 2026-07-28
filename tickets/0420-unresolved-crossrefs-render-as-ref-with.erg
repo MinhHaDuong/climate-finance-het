@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-27T19:14Z HDMX-coding-agent created found by the 0363 wrap-up sweep, looking for the same defect class one mechanism over
 
+2026-07-28T07:33Z HDMX-coding-agent note review round 1 edited the Relevant-files entry in place to follow the test-suite rename (test_meta_macro_resolution.py → test_render_placeholders.py); logged per review round 2's process note
 --- body ---
 ## Context
 
