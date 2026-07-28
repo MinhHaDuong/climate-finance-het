@@ -1,0 +1,159 @@
+%erg 0.1
+Title: Audit all tracked Phase-2 artifacts for corpus drift against the pinned dvc.lock
+Created: 2026-07-28
+Author: HDMX-coding-agent
+Closed: autoclosed — PR #1282
+
+--- log ---
+2026-07-28T15:21Z HDMX-coding-agent created
+
+2026-07-28T19:20Z HDMX-coding-agent closed — autoclosed — PR #1282
+--- body ---
+## Context
+
+Ticket 0610 (PR #1274) set out to regenerate three artifacts assumed stale from
+the 0591 producer change, and found the real cause was different: the committed
+copies predated the corpus that `dvc.lock` now pins. The same drift was then
+found by accident in `tab_network_limitations.csv` (ticket 0625), whose numbers
+were quoted verbatim to RDJ26561 reviewers. Two live instances found without
+looking means the class deserves one systematic pass.
+
+## Relevant files
+
+- `deliverables/_shared/tables/`, `deliverables/_shared/figures/`,
+  `deliverables/_shared/_includes/` — git-tracked Phase-2 outputs
+- `scripts/analysis/*.mk`, `paths.mk` — the producers and their wiring
+
+## Actions
+
+1. In a corpus-present worktree (`make data`), rebuild every git-tracked
+   Phase-2 artifact from the current pinned corpus.
+2. Diff each against its committed copy; classify clean / cosmetic /
+   substantive.
+3. For substantive diffs, check the prose that includes or quotes the artifact
+   (manuscript, tech report, data paper, revision responses) before committing.
+4. Commit the regenerated set with the classification in the message. Anything
+   touching a submission record is reported to the author, not auto-committed
+   (precedent: 0625).
+
+## Test
+
+No red step — regeneration audit; determinism of the producers is already
+pinned by `tests/test_hash_seed_determinism.py` and `make determinism-check`.
+
+## Verification
+
+- [x] Every tracked Phase-2 artifact rebuilt and diffed
+- [x] Each diff classified; substantive ones reconciled with citing prose
+- [x] Submission-record artifacts left for author arbitration
+
+## Exit criteria
+
+All tracked Phase-2 artifacts match what their producers emit from the pinned
+corpus, or carry an explicit author decision to stay as committed.
+
+## Result (2026-07-28)
+
+63 git-tracked artifacts under `deliverables/_shared/{tables,figures,_includes}/`.
+Producers were discovered from the Make database (`make -n <target>` per file),
+not from a hand list. Rebuild: `make -j4 NJOBS=6` on the corpus `dvc.lock` pins,
+`PYTHONHASHSEED=0` / `SOURCE_DATE_EPOCH=0` (already exported by the Makefile).
+No producer in the set touches the null-model chain. Every rebuilt target's
+mtime was checked, so "clean" means "regenerated and byte-identical", not
+"make skipped it".
+
+| Class | n | Members |
+|---|---|---|
+| Clean | 20 | `fig_composition`, `fig_composition_wide`, `fig_global_map_direct`, `fig_traditions_pre2008_citers`; `tab_citation_coverage_periods`, `tab_citation_verification`, `tab_corpus_flow`, `tab_corpus_sources`, `tab_dedup_error_estimates`, `tab_filter_ablation`, `tab_lit_confirmations`, `tab_network_limitations`, `tab_reference_counts`, `tab_reranker_validation`, `tab_retrieval_protocol.csv`, `tab_retrieval_protocol.md`, `tab_sem6_assignments`, `tab_semantic_robustness`, `tab_variables.md`, `tab_venues.md` |
+| Cosmetic | 0 | — |
+| Substantive, left as committed | 5 | `fig_bars_v1.png`, `fig_breaks.png`, `fig_global_map_cocitation.png`, `tab_null_separation_pre2007.csv`, `tab_pre2007_coverage.csv` |
+| No producer | 37 | 34 `_includes/*.md`, `figures/scratch/scout_tradition_coupling.png`, `tab_venues_fr.md`, `tab_venues_fr_caption.md` |
+| Excluded | 1 | `qa_cocitation_edges_report.json` (author decision: dated live-Crossref probe of record) |
+
+Today's earlier merges all verify clean: 0610 (`tab_venues.md`,
+`fig_traditions_pre2008_citers.png`), 0625 (`tab_network_limitations.csv`),
+0640 (venue captions).
+
+Findings that outlive this ticket, all reported rather than fixed here:
+
+1. `fig_bars_v1.png` is not actually frozen. `manuscript.qmd` A.2 declares
+   `@fig-bars` frozen on the first-submission corpus, but `plot_fig1_bars.py
+   --v1-only` filters the live `in_v1` column of `refined_works.csv`, so the
+   figure is recomputed from a mutable corpus; four year-bars moved. The
+   committed PNG is the only record of the submitted figure.
+2. `config/community_registry.yml` keys hand-curated community labels and
+   colours on Louvain community *ids*. Its own comment warns they are stable
+   only for a fixed seed; they are also only stable for a fixed corpus. On the
+   pinned corpus 7 of 9 registered co-citation communities lose their name and
+   colour, and `plot_fig_global_map.auto_label` renders three of them as the
+   literal string `nan nan` (the ticket 0550 NaN-formatting class).
+3. `tab_venues_fr.md` / `tab_venues_fr_caption.md` have no producer: they are
+   hand-maintained French translations whose data body must be kept in sync
+   with the generated `tab_venues.md` by hand. They match at HEAD; nothing
+   would catch it if they stopped matching.
+4. `tab_citation_verification.csv` is derived from a live-Crossref probe
+   (`qa_citations.py`, 300 links) — the same class the author froze for
+   `qa_cocitation_edges_report.json`. It reproduced byte-identically this time,
+   so no action was needed, but whether it should also be frozen is an author
+   call.
+
+Prose that moves, for author arbitration (not edited by this branch):
+`manuscript.qmd` A.5 quotes `84 nodes, 369 edges`, within-tradition share
+`0.89`, null `0.37`, `z ≈ 25`, and "only about three co-citation-core nodes
+match". The pinned corpus now gives 109 / 466, 0.878, 0.353, z ≈ 28.1, and
+seven anchor nodes with eight edges.
+
+`tab_null_separation_pre2007.csv` was regenerated, committed, and then put back
+as committed. `tests/test_separation_provenance.py::test_a5_prose_matches_committed_csv`
+reads those six figures out of the CSV and asserts each appears in the A.5
+bullet, by design: the guard's docstring says a regeneration that updates the
+CSV *and* the prose together stays green, and only a silent drift between them
+turns red. Committing the CSV alone was that silent drift. So the artifact is
+mechanically prose-coupled, the pair must land in one author-arbitrated PR
+(0671), and until then the CSV stays as committed under the exit criteria's
+"or carry an explicit author decision" clause. Worth recording as the general
+shape: an artifact's *guards* say whether it is load-bearing for prose more
+reliably than grepping the prose does.
+
+`fig_breaks.png` went the same way, found by the adherence pass rather than by
+a guard. `plot_fig2_breaks.py` draws a significance threshold at z = 1.5 and
+plots 2015 and 2021 as "not a break" markers. On the pinned corpus the
+window-3 Jensen-Shannon z for 2015 is 1.528 — above that line. So the
+regenerated figure shows the Paris marker on the significance threshold while
+the script's own docstring, `manuscript.qmd` L313, and
+`.claude/rules/writing.md` all read Paris as a diversification and not a
+rupture. The two breaks the periodization rests on survive and strengthen
+(2007 cosine z 1.86, 2013 JS z 1.66); it is the act II -> III boundary claim
+that moves, which is an author reading.
+
+`tab_pre2007_coverage.csv` was the last to move, on the PR review's red-team
+finding. It is the only artifact in the set with no consumer of any kind — A.5
+cites it qualitatively ("coverage of the early literature is sparse"), which the
+larger numbers still support — so it looked safe to commit alone. It is not:
+`separation.mk` declares `separation: $(SEP_COVERAGE) $(SEP_NULL)`, and
+`compute_pre2007_coverage.py`'s docstring says its numbers "decide the
+interpretive regime for the separation null model". Committing one half of that
+pair while reverting the other would put A.5's evidence on two corpus snapshots
+— and `docs/audit-manuscript-stat-provenance.md` handoff item 2 is *already* an
+unresolved two-snapshot confusion about this same pre-2007 graph (84/369 vs
+169/1,056). Manufacturing a second one to save a one-file diff is the wrong
+trade, so the pair goes to 0671 together.
+
+So the audit commits nothing. That is the honest result: of 63 artifacts, 20
+are proven reproducible against the pinned corpus, 37 have no producer, 1 is
+excluded, and all 5 that moved are blocked on an author reading. The
+deliverable is the classification and the findings, and the exit criteria
+anticipate this — "or carry an explicit author decision to stay as committed".
+
+The generalisation, since the four coupled artifacts were each found by a
+different means: **what makes an artifact prose-coupled is not always a guard
+or a quoted number.** Here it was, in turn, a failing guard
+(`tab_null_separation_pre2007.csv`), a threshold and marker labels hardcoded in
+a plotting script (`fig_breaks.png`), an explicit freeze claim in the appendix
+(`fig_bars_v1.png`), and a Makefile pairing plus a producer docstring
+(`tab_pre2007_coverage.csv`). Grepping the citing prose for each artifact's
+numbers found none of the four.
+
+Follow-ups filed: 0670 (community registry keyed on unstable Louvain ids, and
+the `nan nan` label), 0671 (manuscript A.2 freeze claim, the A.5 numbers, and
+the `@fig-breaks` Paris marker).
