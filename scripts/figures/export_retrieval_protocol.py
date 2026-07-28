@@ -25,7 +25,7 @@ import os
 
 import pandas as pd
 import yaml
-from _markdown_table import markdown_text_cell
+from _markdown_table import markdown_text_cell, markdown_verbatim_cell
 from script_io_args import parse_io_args, validate_io
 from utils import CONFIG_DIR, LANGUAGE_NAMES, get_logger, save_csv
 
@@ -226,17 +226,18 @@ def _pipe_table(rows: list[dict], columns: list[str], caption: str) -> list[str]
         "|" + "|".join([":---"] * len(columns)) + "|",
     ]
     for row in rows:
-        cells = []
-        for column in columns:
-            # Escape first, wrap second — the same order export_corpus_table.py
-            # uses for the TOTAL row's emphasis. `_cell` escapes the backtick,
-            # so wrapping before escaping would turn the span's own delimiters
-            # into literal characters. An empty value is left unwrapped: a bare
-            # `` renders as two literal backticks, not an empty code span.
-            cell = _cell(row[column])
-            if cell and (row.get("Source"), column) in VERBATIM_CELLS:
-                cell = f"`{cell}`"
-            cells.append(cell)
+        cells = [
+            # Two different escapers, because the two contracts differ: prose
+            # is escaped for prose, an executable value is built as a code
+            # span. Not `_cell` output wrapped in backticks at this call site
+            # — that is what the #1289 review caught, and it corrupts any value
+            # carrying a backtick, since `_cell` escapes one with a backslash
+            # the reader ignores inside a span.
+            markdown_verbatim_cell(row[column])
+            if (row.get("Source"), column) in VERBATIM_CELLS
+            else _cell(row[column])
+            for column in columns
+        ]
         lines.append("| " + " | ".join(cells) + " |")
     lines += ["", caption, ""]
     return lines

@@ -617,13 +617,28 @@ def test_every_quoted_cell_is_a_code_span():
     extension rewrites it. Keyed on that distinguishing feature rather than on
     the ISTEX row, so a query added for a sixth source inherits the guard
     instead of shipping broken. Fast tier: source-level, no renderer.
+
+    Scoped to the double quote alone, and the scope is a judgment, not an
+    oversight. ``smart`` also rewrites ``'``, ``--`` and ``...``, but each of
+    those is overwhelmingly prose in this table — an apostrophe in a report
+    title *should* curl, and asserting otherwise would fire on every row. The
+    double quote is the one whose presence in a published cell reliably means
+    "phrase delimiter", which is why it is the feature the guard keys on. A
+    future executable value carrying only a hyphen range is out of its reach.
+
+    Cells are split on unescaped pipes, via the same rule ``_separators``
+    encodes: a naive ``split("|")`` would cut an escaped ``\\|`` in half and
+    could miss a quoted value that also contains a pipe — precisely the class
+    this guard claims (raised by the #1289 review panel).
     """
     from export_retrieval_protocol import render_markdown
 
     offenders = []
     for table in _pipe_tables(render_markdown()):
         for line in table[2:]:
-            for cell in (c.strip() for c in line.strip("|").split("|")):
+            row = line.strip().strip("|")
+            for raw in re.split(r"(?<!\\)\|", row):
+                cell = raw.strip()
                 if '"' in cell and not (
                     cell.startswith("`") and cell.endswith("`")
                 ):

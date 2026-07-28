@@ -16,7 +16,11 @@ escaper itself — against the reader the build really uses.
 import os
 
 import pytest
-from _markdown_table import markdown_cell, markdown_text_cell
+from _markdown_table import (
+    markdown_cell,
+    markdown_text_cell,
+    markdown_verbatim_cell,
+)
 
 TESTS_DIR = os.path.dirname(__file__)
 SCRIPTS_DIR = os.path.join(TESTS_DIR, "..", "scripts")
@@ -220,3 +224,69 @@ class TestReaderExtensionCharactersUnit:
         tilde or a caret.
         """
         assert markdown_text_cell("*em* _x_ ~sub~") == r"*em* _x_ \~sub\~"
+
+
+class TestVerbatimCell:
+    """A value a reader copies and executes must survive the reader intact.
+
+    The reader carries `smart`, which rewrites `"` `'` `--` `...`. That is
+    correct for prose and wrong for a query: it published an ISTEX search whose
+    phrase delimiters no longer delimit phrases (ticket 0530). A code span
+    suppresses `smart` inside it, so the fix is a construction, not an escape.
+    """
+
+    @pytest.mark.integration
+    def test_straight_quotes_survive_the_reader(self, tmp_path):
+        from _qmd_render import require_pandoc
+        require_pandoc()
+        value = '"climate finance" OR "finance climat"'
+
+        assert _rendered_value(value, tmp_path) != value, (
+            "control failed: unescaped straight quotes rendered literally, so "
+            "this test cannot see the defect — has the oracle lost `smart`?"
+        )
+        assert _rendered_value(markdown_verbatim_cell(value), tmp_path) == value
+
+    @pytest.mark.integration
+    def test_a_backtick_in_the_value_does_not_break_the_span(self, tmp_path):
+        """The defect the #1289 review found in the first fix.
+
+        Wrapping `markdown_text_cell` output in backticks looks right and is
+        not: it escapes a backtick with a backslash, which CommonMark reads
+        *literally* inside a code span, so the span closes on the value's own
+        backtick and the remainder leaks out as raw Markdown. Worse than the
+        bug being fixed, and dormant — no ISTEX query carries a backtick today
+        — which is exactly why it is pinned here rather than left to the one
+        live value.
+        """
+        from _qmd_render import require_pandoc
+        require_pandoc()
+        value = 'q = `x` AND "y"'
+
+        assert _rendered_value(f"`{markdown_text_cell(value)}`", tmp_path) != value, (
+            "control failed: the naive escape-then-wrap no longer corrupts the "
+            "value, so this test no longer pins the defect it was written for"
+        )
+        assert _rendered_value(markdown_verbatim_cell(value), tmp_path) == value
+
+    def test_the_fence_outgrows_the_longest_backtick_run(self):
+        assert markdown_verbatim_cell("a ``b`` c") == "```a ``b`` c```"
+
+    def test_a_leading_or_trailing_backtick_is_padded(self):
+        """The reader strips one leading and one trailing space from a span,
+        so the padding is invisible in the output but keeps the fences apart."""
+        assert markdown_verbatim_cell("`x`") == "`` `x` ``"
+
+    def test_the_pipe_is_still_escaped(self):
+        """The one escape that survives inside a span — and it must, or the
+        value silently ends the table cell."""
+        assert markdown_verbatim_cell("a | b") == r"`a \| b`"
+
+    def test_a_backslash_is_left_alone(self):
+        r"""Inside a span CommonMark reads `\` literally, so escaping it would
+        publish a doubled backslash in a regex a reader is meant to run."""
+        assert markdown_verbatim_cell(r"\d+") == r"`\d+`"
+
+    def test_an_empty_value_is_not_an_empty_span(self):
+        """A bare `` renders as two literal backticks, not an empty span."""
+        assert markdown_verbatim_cell("") == ""

@@ -12,7 +12,7 @@ wrong one: it normalises *corpus* text (encoding artifacts, DOIs, language
 codes) and pulls in pandas, ftfy and langdetect for it. Escaping markup is a
 different concern with no dependencies at all.
 
-Two functions, because the callers hold two different input contracts:
+Three functions, because the callers hold three different input contracts:
 
 ``markdown_cell``
     The input **is** Markdown — a curated description authored in-repo, whose
@@ -23,6 +23,10 @@ Two functions, because the callers hold two different input contracts:
     normaliser passed through unchanged. Used by the venue-table emitters, the
     retrieval-protocol table, and — ticket 0370 — the corpus-sources table, the
     language table and the corpus-flow ledger.
+``markdown_verbatim_cell``
+    The input is a value a reader will copy and **execute** — a query, a regex,
+    a path. Rendered as a code span, which is what keeps it verbatim under
+    ``smart``. Used for the deposited ISTEX query (ticket 0530).
 
 Collapsing them into one function is the trap this split avoids: a journal name
 that happens to contain two backticks is not a code span, and applying the
@@ -48,13 +52,16 @@ output — curly quotes in a journal name or a caption are what a rendered
 document should have — so escaping it would degrade every table's typography.
 It is wrong only for a cell holding a value a reader will copy and execute,
 where it silently rewrites the value: it published an ISTEX query whose phrase
-delimiters no longer delimit phrases (ticket 0530). That is a per-cell semantic
-distinction the escaper cannot see, so the emitter owns it, by wrapping such a
-cell in a code span — which suppresses ``smart`` inside it — *after* escaping.
+delimiters no longer delimit phrases (ticket 0530). Which cells those are is a
+per-cell semantic distinction no escaper can infer, so the emitter declares it
+— but the *construction* is ``markdown_verbatim_cell``'s, because getting a
+code span right for an arbitrary value is this module's kind of knowledge.
 
 Recorded here so the next reader does not re-derive it from the documentation,
 which describes neither the Lua reader nor the extension set it selects.
 """
+
+import re
 
 # The pipe is escaped everywhere; the reader honours ``\|`` inside a code span
 # too, so that one rule holds throughout. The backslash needs the opposite
@@ -129,6 +136,41 @@ def markdown_cell(text: str) -> str:
         part.translate(_MARKDOWN_CODE) if i % 2 else part.translate(_MARKDOWN_TEXT)
         for i, part in enumerate(_split_spans(text))
     )
+
+
+def markdown_verbatim_cell(text: str) -> str:
+    """Plain text → a pipe-table cell the reader renders as a code span.
+
+    For a value the reader is meant to copy and execute — a query, a regex, a
+    path. The span is what suppresses ``smart``, so the published value keeps
+    the straight quotes it needs to work (ticket 0530).
+
+    This exists rather than wrapping ``markdown_text_cell``'s output in
+    backticks at the call site, which is what the emitter did first and which
+    is wrong for any value carrying a backtick: that function escapes one to
+    ``\\```, and CommonMark reads a backslash *literally* inside a code span,
+    so the escape does not hold — the span closes on the value's own backtick
+    and the remainder leaks out as raw Markdown. The rule the escapers already
+    document, that prose and code need opposite backslash treatment, is exactly
+    what a backtick wrap at the call site violates. Nothing in the emitter can
+    enforce the precondition, so the construction belongs here.
+
+    Inside a span the only escape that survives is ``\\|``, which the reader
+    honours. A backtick is handled the way CommonMark provides for: the fence
+    is one longer than the value's longest backtick run, and a value that
+    begins or ends with one is padded, since the reader strips a single leading
+    and trailing space from a span's content.
+
+    Never raises, for ``markdown_text_cell``'s reason: the input is data, not
+    markup this repo authored.
+    """
+    value = " ".join(str(text).split()).translate(_MARKDOWN_CODE)
+    if not value:
+        return ""
+    runs = re.findall(r"`+", value)
+    fence = "`" * ((max(len(r) for r in runs) + 1) if runs else 1)
+    pad = " " if value.startswith("`") or value.endswith("`") else ""
+    return f"{fence}{pad}{value}{pad}{fence}"
 
 
 def markdown_text_cell(text: str) -> str:
