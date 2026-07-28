@@ -147,6 +147,15 @@ def test_corpus_stats_emits_inst_layer_share(monkeypatch, tmp_path):
     compute_vars.corpus_stats(v)
     assert v["inst_layer_pct"] == "37.5"  # 3 of 8, union not sum
 
+    # A missing layer column must not silently shrink the share: the collector
+    # emits nothing, and the absent key fails loud as an unresolved shortcode.
+    monkeypatch.setattr(
+        compute_vars, "load_refined_works", lambda: df.drop(columns=["from_oecd"])
+    )
+    v = {}
+    compute_vars.corpus_stats(v)
+    assert "inst_layer_pct" not in v
+
 
 # --------------------------------------------------------------------------- #
 # Fangs — each guard proven against a known-bad fixture
