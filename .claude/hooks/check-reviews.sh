@@ -24,8 +24,10 @@ if [ -f .env ]; then
 fi
 export GH_TOKEN="${AGENT_GH_TOKEN:-${GH_TOKEN:-}}"
 
-OWNER="minhhaduong"
-REPO="oeconomia-climate-finance"
+# Canonical slug. The pre-rename `oeconomia-climate-finance` still resolves by
+# redirect, so a stale value here fails silently rather than loudly.
+OWNER="MinhHaDuong"
+REPO="climate-finance-het"
 
 # Read stdin (Claude Code sends JSON with tool_input)
 INPUT=$(cat)
@@ -67,14 +69,25 @@ if [ -z "$PR_NUMBER" ]; then
 fi
 
 # Count reviews by any accepted reviewer on this PR.
-# HDMX-coding-agent: a git author name only — no such GitHub account exists
-#   (`gh api users/HDMX-coding-agent` returns 404), so it can never appear as a
-#   review author and this half of the list matches nothing. The gate therefore
-#   rests entirely on the entry below. Left in place rather than silently
-#   dropped: whether to provision a real machine account is the author's call.
-# MinhHaDuong: personal identity used by the web MCP token (same as PR author).
-#   Accepting it enables web-agent merges at the cost of permitting self-review.
-AGENT_LOGINS="HDMX-coding-agent MinhHaDuong"
+#
+# What this gate asserts: that enough review cycles have been posted on the PR:
+#   - label "review:trivial"  → 1 review cycle minimum
+#   - default                 → 2 review cycles minimum
+# It is a *procedural* check, not an independence check — the project has one
+# forge identity, so these reviews may be authored by the same account that
+# opened the PR (ticket 0365, option 3b). Independence would mean requiring a
+# reviewer other than the PR author, which would stop autonomous waves from
+# merging unattended; that trade was declined deliberately.
+# The substantive merge gate is local: `make check` plus /verify; this hook only
+# stops a merge that skipped the review step entirely.
+# MinhHaDuong: the single forge identity — the agent token and the web MCP
+#   token both authenticate as it, and it is also the PR author.
+#   `HDMX-coding-agent` is a git author name, not a forge account
+#   (`gh api users/HDMX-coding-agent` → 404); it was removed from this list
+#   because it can never author a review.
+# copilot-pull-request-reviewer[bot]: genuinely independent of the PR author,
+#   counted when present. Not required — it does not review every PR.
+AGENT_LOGINS="MinhHaDuong copilot-pull-request-reviewer[bot]"
 REVIEW_COUNT=$(gh api "repos/$OWNER/$REPO/pulls/$PR_NUMBER/reviews" 2>/dev/null \
     | AGENT_LOGINS="$AGENT_LOGINS" python3 -c "
 import os, sys, json
