@@ -25,7 +25,7 @@ import os
 
 import pandas as pd
 import yaml
-from _markdown_table import markdown_text_cell
+from _markdown_table import markdown_text_cell, markdown_verbatim_cell
 from script_io_args import parse_io_args, validate_io
 from utils import CONFIG_DIR, LANGUAGE_NAMES, get_logger, save_csv
 
@@ -205,13 +205,40 @@ def build_grey_rows() -> list[dict]:
     ]
 
 
+# Cells holding a value a reader is meant to copy and execute (ticket 0530).
+# The reader Quarto uses carries `smart`, so a straight quote in a rendered cell
+# comes out curly — and ISTEX does not read `“` as a phrase delimiter, so the
+# published query returned nothing. A code span suppresses smart typography
+# inside it and tells the reader the value is verbatim.
+#
+# Keyed per cell rather than per column, and not applied in `_cell`: the other
+# `Query terms` values are prose ("not machine-readable", term counts) and the
+# rest of the table is prose too, where curly quotes and en-dashes are what a
+# rendered document should have. The distinction is semantic — executable value
+# versus prose — so it is declared here, where the values are known, rather than
+# guessed by the escaper.
+VERBATIM_CELLS = frozenset({("ISTEX", "Query terms")})
+
+
 def _pipe_table(rows: list[dict], columns: list[str], caption: str) -> list[str]:
     lines = [
         "| " + " | ".join(columns) + " |",
         "|" + "|".join([":---"] * len(columns)) + "|",
     ]
     for row in rows:
-        lines.append("| " + " | ".join(_cell(row[c]) for c in columns) + " |")
+        cells = [
+            # Two different escapers, because the two contracts differ: prose
+            # is escaped for prose, an executable value is built as a code
+            # span. Not `_cell` output wrapped in backticks at this call site
+            # — that is what the #1289 review caught, and it corrupts any value
+            # carrying a backtick, since `_cell` escapes one with a backslash
+            # the reader ignores inside a span.
+            markdown_verbatim_cell(row[column])
+            if (row.get("Source"), column) in VERBATIM_CELLS
+            else _cell(row[column])
+            for column in columns
+        ]
+        lines.append("| " + " | ".join(cells) + " |")
     lines += ["", caption, ""]
     return lines
 

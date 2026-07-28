@@ -6,7 +6,8 @@ these fast-tier tests keep the rule itself covered on any machine.
 
 `markdown_cell`'s own rule is pinned in `test_variables_table.py`, next to the
 codebook contract it serves. What is pinned here is the plain-text sibling and,
-above all, the boundary between the two — the reason there are two functions.
+above all, the boundaries between them — the reason the module splits at all.
+Ticket 0530 adds the third sibling, `markdown_verbatim_cell`, at the bottom.
 
 Ticket 0376 adds one rendered class at the bottom of this module rather than in
 a fidelity suite: what it pins is the *character set* — a property of the
@@ -16,7 +17,11 @@ escaper itself — against the reader the build really uses.
 import os
 
 import pytest
-from _markdown_table import markdown_cell, markdown_text_cell
+from _markdown_table import (
+    markdown_cell,
+    markdown_text_cell,
+    markdown_verbatim_cell,
+)
 
 TESTS_DIR = os.path.dirname(__file__)
 SCRIPTS_DIR = os.path.join(TESTS_DIR, "..", "scripts")
@@ -220,3 +225,84 @@ class TestReaderExtensionCharactersUnit:
         tilde or a caret.
         """
         assert markdown_text_cell("*em* _x_ ~sub~") == r"*em* _x_ \~sub\~"
+
+
+class TestVerbatimCell:
+    """A value a reader copies and executes must survive the reader intact.
+
+    The reader carries `smart`, which rewrites `"` `'` `--` `...`. That is
+    correct for prose and wrong for a query: it published an ISTEX search whose
+    phrase delimiters no longer delimit phrases (ticket 0530). A code span
+    suppresses `smart` inside it, so the fix is a construction, not an escape.
+    """
+
+    @pytest.mark.integration
+    def test_straight_quotes_survive_the_reader(self, tmp_path):
+        from _qmd_render import require_pandoc
+        require_pandoc()
+        value = '"climate finance" OR "finance climat"'
+
+        assert _rendered_value(value, tmp_path) != value, (
+            "control failed: unescaped straight quotes rendered literally, so "
+            "this test cannot see the defect — has the oracle lost `smart`?"
+        )
+        assert _rendered_value(markdown_verbatim_cell(value), tmp_path) == value
+
+    @pytest.mark.integration
+    def test_a_backtick_in_the_value_does_not_break_the_span(self, tmp_path):
+        """The defect the #1289 review found in the first fix.
+
+        Wrapping `markdown_text_cell` output in backticks looks right and is
+        not: it escapes a backtick with a backslash, which CommonMark reads
+        *literally* inside a code span, so the span closes on the value's own
+        backtick and the remainder leaks out as raw Markdown. Worse than the
+        bug being fixed, and dormant — no ISTEX query carries a backtick today
+        — which is exactly why it is pinned here rather than left to the one
+        live value.
+        """
+        from _qmd_render import require_pandoc
+        require_pandoc()
+        value = 'q = `x` AND "y"'
+
+        assert _rendered_value(f"`{markdown_text_cell(value)}`", tmp_path) != value, (
+            "control failed: the naive escape-then-wrap no longer corrupts the "
+            "value, so this test no longer pins the defect it was written for"
+        )
+        assert _rendered_value(markdown_verbatim_cell(value), tmp_path) == value
+
+    def test_the_fence_outgrows_the_longest_backtick_run(self):
+        assert markdown_verbatim_cell("a ``b`` c") == "```a ``b`` c```"
+
+    def test_a_leading_or_trailing_backtick_is_padded(self):
+        """The reader strips one leading and one trailing space from a span,
+        so the padding is invisible in the output but keeps the fences apart."""
+        assert markdown_verbatim_cell("`x`") == "`` `x` ``"
+
+    @pytest.mark.integration
+    def test_a_pipe_in_the_value_neither_splits_nor_escapes(self, tmp_path):
+        r"""Both halves, through the renderer, because the source alone lies.
+
+        The first draft escaped the pipe, inheriting this module's prose rule.
+        Inside a span that is exactly wrong: CommonMark processes no escape
+        there, so `\|` ships the backslash into the published value — a
+        backslash in the middle of a regex a reader is meant to run. The span
+        needs no escape, because the reader's pipe-table splitter respects it.
+
+        A source-level assertion cannot tell these apart: `` `a \| b` `` and
+        `` `a | b` `` are both plausible-looking strings, and only the render
+        says which one publishes the value the emitter was given. That is why
+        the escaped form got through the first round (#1289 review, round two).
+        """
+        from _qmd_render import require_pandoc
+        require_pandoc()
+        value = "(alpha|beta)+ AND \"gamma\""
+
+        assert _rendered_value(markdown_verbatim_cell(value), tmp_path) == value
+
+    def test_no_backslash_is_added(self):
+        r"""The unit half: a span escapes nothing, so nothing is escaped."""
+        assert markdown_verbatim_cell(r"(a|b) \d+") == r"`(a|b) \d+`"
+
+    def test_an_empty_value_is_not_an_empty_span(self):
+        """A bare `` renders as two literal backticks, not an empty span."""
+        assert markdown_verbatim_cell("") == ""

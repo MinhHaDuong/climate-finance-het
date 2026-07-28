@@ -2,11 +2,13 @@
 Title: Pandoc's smart extension rewrites the published ISTEX query's quotes, so copying it out of the table gives a query that does not match
 Created: 2026-07-28
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1289
 
 --- log ---
 2026-07-28T07:55Z HDMX-coding-agent created
 2026-07-28T07:55Z HDMX-coding-agent note surfaced by the #1244 simplify pass as "smart also differs markdown vs gfm"; filed after confirming it reaches a published cell, not as a theoretical extension gap
 
+2026-07-28T21:07Z HDMX-coding-agent closed — autoclosed — PR #1289
 --- body ---
 ## Context
 
