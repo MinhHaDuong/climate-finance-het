@@ -1,0 +1,50 @@
+%erg 0.1
+Title: Rescue 292 unique source files stranded in the t101-dvc-init worktree
+Created: 2026-07-28
+Author: minh
+Label: needs-human
+
+--- log ---
+2026-07-28T15:40Z minh created
+
+--- body ---
+## Context
+
+`~/CNRS/papiers/actif/t101-dvc-init/` is a stray worktree from ticket 0101
+(DVC init, March 2026) whose parent registration is gone. Scheduled for
+purge during the 2026-07-28 roadmap housekeeping, but a content check
+stopped it: of 377 unique file contents under its `data/raw/` (31
+hash-named directories, content-addressed source documents) and
+`data/syllabi/`, **292 are absent from the DVC remote**
+(`ssh://padme/data/projets/dvc/oeconomia-climate-finance`, verified by
+per-file md5 lookup in `files/md5/`). `raw/` was never DVC-tracked in that
+worktree (only `pool.dvc` was); the current pool (101 files) does not
+contain these contents. 175 MB total.
+
+These look like raw sources from the corpus-building phase that were never
+re-ingested. If they matter for the data paper or the curated corpus, they
+must enter DVC; if not, the decision to discard should be recorded here,
+not made silently by a cleanup script.
+
+## Relevant files
+
+- `~/CNRS/papiers/actif/t101-dvc-init/data/raw/` — 31 hash-named dirs, the unique contents
+- `~/CNRS/papiers/actif/t101-dvc-init/data/syllabi/` — partial overlap with tracked syllabi (missing `crossref_cache.jsonl` side)
+- `~/CNRS/papiers/actif/t101-dvc-init/data/pool.dvc` — old pool pointer (47 files, md5 8b27dd4d…dir)
+- `data/pool.dvc`, `data/syllabi.dvc` — current tracked state
+
+## Actions
+
+1. Author decides: are the 292 contents corpus sources worth keeping?
+2. If yes: `dvc add` them (as `data/raw/` or merged into the pool), push to padme, then delete the stray worktree.
+3. If no: record the rationale in this ticket's log, then delete the stray worktree.
+
+## Verification
+
+- [ ] Re-run the md5 sweep: every file content under the worktree's `data/` resolves in the DVC remote, OR the discard rationale is logged.
+- [ ] `papiers/actif/t101-dvc-init/` no longer exists.
+
+## Exit criteria
+
+- [ ] No unique data content exists only in the stray worktree.
+- [ ] The keep/discard decision is recorded with its reasoning.
