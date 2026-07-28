@@ -18,7 +18,6 @@ helper would pass even if an emitter stopped calling it.
 import os
 import subprocess
 import sys
-from html import escape
 
 import pytest
 from _qmd_render import cell_texts, render_qmd, require_pandoc, row_with
@@ -75,7 +74,7 @@ def test_manuscript_venue_table_keeps_a_pipe_bearing_venue_whole(tmp_path):
 
     row = row_with(render_qmd(markdown, tmp_path), NEEDLE)
     assert cell_texts(row) == [
-        "Efficiency", escape(PIPE_VENUE, quote=False), "2", "0", "2",
+        "Efficiency", PIPE_VENUE, "2", "0", "2",
     ], f"the venue split the row:\n{row}"
 
 
@@ -100,5 +99,38 @@ def test_core_venue_table_keeps_a_pipe_bearing_venue_whole(tmp_path):
 
     row = row_with(render_qmd(markdown, tmp_path), NEEDLE)
     assert cell_texts(row) == [
-        escape(PIPE_VENUE, quote=False), "2", "Journal",
+        PIPE_VENUE, "2", "Journal",
     ], f"the venue split the row:\n{row}"
+
+
+@pytest.mark.integration
+def test_an_ampersand_venue_reads_back_as_itself(tmp_path):
+    """A venue carrying `&` must compare equal to the name, not to `&amp;`.
+
+    `Energy & Environment` is a real journal, and `&` is legal in a pipe-table
+    cell — nothing splits, nothing needs escaping. The failure this pins is in
+    the *oracle*: pandoc emits `&amp;` because that is HTML's transport form,
+    so a `cell_texts` that only stripped tags returned `&amp;` and an
+    exact-equality assertion failed on output that rendered perfectly.
+
+    No fixture in the suite carried an entity-bearing value before, so the
+    defect sat behind `html.escape(value, quote=False)` wrappers on the expected
+    side that were no-ops on every fixture present. Raised by the #1244 review
+    panel; this is the case that makes the fix falsifiable.
+    """
+    require_pandoc()
+    venue = "Energy & Environment"
+    core = tmp_path / "het_mostcited_50.csv"
+    core.write_text(f'journal\n"{venue}"\n"{venue}"\n', encoding="utf-8")
+    output = str(tmp_path / "tab_core_venues_top10.md")
+
+    markdown = _run_emitter(
+        "export_core_venues_markdown.py", output, ["--core", str(core)])
+
+    assert venue in markdown, (
+        f"the emitter should pass `&` through untouched:\n{markdown}"
+    )
+    row = row_with(render_qmd(markdown, tmp_path), "Energy")
+    assert cell_texts(row) == [venue, "2", "Journal"], (
+        f"the oracle returned the transport form rather than the text:\n{row}"
+    )

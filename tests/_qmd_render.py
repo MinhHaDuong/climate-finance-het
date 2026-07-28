@@ -29,6 +29,7 @@ Support module, not a test module: `tests/_*.py` is this repo's flat helper
 surface (`_source_roots.py`, `_script_discovery.py`).
 """
 
+import html
 import re
 import shutil
 import subprocess
@@ -88,12 +89,21 @@ def row_with(flat: str, needle: str) -> str:
 
 
 def cell_texts(row: str) -> list[str]:
-    """The row's cells as plain text.
+    """The row's cells as plain text — what a reader of the page would see.
 
     Asserting on the whole tuple beats asserting on `row.count("<td")`: the
     reader truncates an overflowing row to the header's declared column count,
     so the count is right either way and cannot tell a split row from a whole
     one. What the split actually does is shift every later value one column left
     and drop the last — visible only by reading the values back.
+
+    Entities are decoded, not just tags stripped. Without that this returns the
+    *transport* form rather than the text: a journal name carrying `&` renders
+    perfectly and comes back as `&amp;`, so an exact-equality assertion against
+    the original value fails on correct output. Callers were papering over this
+    with `html.escape(value, quote=False)` on the expected side — a no-op on
+    every fixture in the suite today, and therefore scaffolding that encoded the
+    wrong contract without ever being exercised. Raised by the #1244 review
+    panel; the escape-on-the-expected-side wrappers are gone with it.
     """
-    return [_TAG.sub("", cell).strip() for cell in _CELL.findall(row)]
+    return [html.unescape(_TAG.sub("", cell)).strip() for cell in _CELL.findall(row)]

@@ -2,6 +2,7 @@
 Title: The Markdown cell escaper is calibrated to GFM, but the manuscript renders through pandoc-markdown
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1244
 
 --- log ---
 2026-07-27T19:05Z HDMX-coding-agent created
@@ -9,6 +10,7 @@ Author: HDMX-coding-agent
 2026-07-27T20:50Z HDMX-coding-agent note reimagine: reader established off a real quarto render (strace + intercepted defaults), not off the docs. Character set settled at @ ~ ^ by measurement — see the resolved tension in Actions 3.
 
 2026-07-28T07:21Z HDMX-coding-agent note action 4 done on padme: nine generated targets (discovery surface says nine, not the six this ticket assumed) built old-escaper vs new and byte-compared — all identical, zero @ ~ ^ in any shipped row
+2026-07-28T07:39Z HDMX-coding-agent closed — autoclosed — PR #1244
 --- body ---
 ## Context
 

@@ -57,7 +57,12 @@ _MARKDOWN_CODE = str.maketrans({"|": r"\|"})
 # Plain text extends the prose rule rather than restating it: no character
 # carries markup intent, so the backtick is escaped rather than opening a span,
 # and ``@``, ``~`` and ``^`` are escaped because the reader above reads them as
-# citation, subscript and superscript syntax.
+# citation, subscript and superscript syntax. ``~`` carries a fourth one that
+# list does not name: ``+strikeout`` is live in this reader too, so
+# ``~~struck~~`` renders ``<del>``. Verified against pandoc, not assumed. The
+# escape is character-level rather than pair-aware, so it already neutralises
+# both readings of the tilde — but "subscript" alone would leave a maintainer
+# unaware that strikeout is covered (raised by the #1244 review panel).
 #
 # Emphasis and link syntax stay exempt, and the reason is not the one the
 # earlier wording gave. "Changes the rendering on its own" does not separate the
