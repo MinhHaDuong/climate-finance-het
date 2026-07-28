@@ -387,7 +387,7 @@ COMPUTED_STATS := deliverables/_shared/technical-report-vars.yml \
 # working on a checkout that has never run the divergence chain.
 $(COMPUTED_STATS) &: scripts/analysis/compute_vars.py \
 		scripts/analysis/_vars_registry.py scripts/analysis/_vars_retrieval.py \
-		scripts/analysis/_vars_ablation.py \
+		scripts/analysis/_vars_ablation.py scripts/analysis/_vars_zseries.py \
 		scripts/utils.py scripts/_companion_plot_utils.py \
 		$(wildcard $(DERIVED)/tab_summary_S2_energy.csv) \
 		$(wildcard $(DERIVED)/tab_summary_L1.csv) \

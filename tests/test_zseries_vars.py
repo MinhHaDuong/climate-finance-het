@@ -33,6 +33,7 @@ from _companion_plot_utils import contiguous_runs, validated_zone_columns
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "analysis"))
+import _vars_zseries
 import compute_vars
 
 #: Years the fixture puts above threshold on every method, in two separate
@@ -78,7 +79,7 @@ def tables(tmp_path, monkeypatch):
     """A tables dir holding the three summary tables the collector reads."""
     for method in ("S2_energy", "L1", "G9_community"):
         _summary(method).to_csv(tmp_path / f"tab_summary_{method}.csv", index=False)
-    monkeypatch.setattr(compute_vars, "DERIVED_TABLES_DIR", str(tmp_path))
+    monkeypatch.setattr(_vars_zseries, "DERIVED_TABLES_DIR", str(tmp_path))
     return tmp_path
 
 
@@ -118,7 +119,7 @@ def test_contiguous_runs_of_nothing_is_nothing():
 def test_peak_years_come_from_the_w3_rows(tables):
     """Each peak year is the w=3 argmax, not the larger Z at another window."""
     v = {}
-    compute_vars.zseries_stats(v)
+    _vars_zseries.zseries_stats(v)
     assert v["s2_peak_year_w3"] == str(PEAK)
     assert v["l1_peak_year_w3"] == str(PEAK)
     assert v["g9_peak_year_w3"] == str(PEAK)
@@ -136,7 +137,7 @@ def test_peak_year_ignores_years_the_figure_does_not_show(tables):
     reason, so a collector that drops the restriction reports 1993 here.
     """
     v = {}
-    compute_vars.zseries_stats(v)
+    _vars_zseries.zseries_stats(v)
     cfg = _companion_plot_utils.companion_config()
     for key in ("s2_peak_year_w3", "l1_peak_year_w3", "g9_peak_year_w3"):
         assert int(cfg["year_min"]) <= int(v[key]) <= int(cfg["year_max"])
@@ -145,14 +146,14 @@ def test_peak_year_ignores_years_the_figure_does_not_show(tables):
 def test_zone_1_is_the_first_run_not_the_whole_span(tables):
     """Zone 1 ends where the run ends, not where the last validated year is."""
     v = {}
-    compute_vars.zseries_stats(v)
+    _vars_zseries.zseries_stats(v)
     assert (v["zone_1_start"], v["zone_1_end"]) == (str(ZONE_A[0]), str(ZONE_A[-1]))
 
 
 def test_no_key_is_a_sentinel_when_the_tables_are_there(tables):
     """The point of the ticket: with data present, nothing reads as unavailable."""
     v = {}
-    compute_vars.zseries_stats(v)
+    _vars_zseries.zseries_stats(v)
     assert compute_vars.MISSING not in v.values()
     assert len(v) == 8
 
@@ -167,7 +168,7 @@ def test_peak_spread_measures_travel_across_windows(tables):
     return 0 here.
     """
     v = {}
-    compute_vars.zseries_stats(v)
+    _vars_zseries.zseries_stats(v)
     assert v["s2_peak_spread_w234"] == str(PEAK - 1999)
 
 
@@ -181,12 +182,12 @@ def test_peak_spread_is_zero_when_every_window_agrees():
     df = _summary("S2_energy")
     df.loc[df.window != 3, "z_score"] = 0.1
     df.loc[(df.window != 3) & (df.year == PEAK), "z_score"] = 50.0
-    assert compute_vars._peak_spread(df, 1998, 2021) == 0
+    assert _vars_zseries._peak_spread(df, 1998, 2021) == 0
 
 
 def test_peak_spread_of_an_absent_table_is_none():
     """Absent table: None, so the partial-build fallback still owns the key."""
-    assert compute_vars._peak_spread(None, 1998, 2021) is None
+    assert _vars_zseries._peak_spread(None, 1998, 2021) is None
 
 
 def test_partial_build_writes_nothing(tmp_path, monkeypatch):
@@ -196,9 +197,9 @@ def test_partial_build_writes_nothing(tmp_path, monkeypatch):
     and *raising* would break `make stats` on every checkout that has not run
     the divergence chain — the invariant this ticket is explicitly bound by.
     """
-    monkeypatch.setattr(compute_vars, "DERIVED_TABLES_DIR", str(tmp_path))
+    monkeypatch.setattr(_vars_zseries, "DERIVED_TABLES_DIR", str(tmp_path))
     v = {}
-    compute_vars.zseries_stats(v)
+    _vars_zseries.zseries_stats(v)
     assert v == {}
 
 
@@ -220,7 +221,7 @@ def test_a_renamed_window_refuses_rather_than_mislabel(tables, monkeypatch, capl
     # monkeypatch restores it.
     monkeypatch.setattr(logging.getLogger("pipeline"), "propagate", True)
     v = {}
-    with caplog.at_level(logging.ERROR, logger=compute_vars.log.name):
-        compute_vars.zseries_stats(v)
+    with caplog.at_level(logging.ERROR, logger=_vars_zseries.log.name):
+        _vars_zseries.zseries_stats(v)
     assert v == {}
     assert "_w3" in caplog.text
