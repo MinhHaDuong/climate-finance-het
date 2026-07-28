@@ -94,6 +94,36 @@ def test_other_files_changed_keeps_the_warning_path(throwaway_repo: Path):
     assert _git(repo, "status", "--porcelain") != ""
 
 
+def test_staged_dvc_lock_still_shows_its_diff(throwaway_repo: Path):
+    """A gate diffing the index would print nothing under "review the diff"."""
+    repo = throwaway_repo
+    (repo / "dvc.lock").write_text("schema: '2.0'\nstaged: true\n")
+    _git(repo, "add", "dvc.lock")
+
+    result = _run_gate(repo)
+
+    assert result.returncode != 0
+    assert "staged: true" in result.stdout, "the diff must be shown against HEAD"
+
+
+def test_dvc_lock_plus_another_file_takes_the_warning_path(throwaway_repo: Path):
+    """The mixed case is the warning path, not silence.
+
+    Pins the boundary: a gate that dropped the refusal for every multi-file
+    change would pass the two single-case tests above.
+    """
+    repo = throwaway_repo
+    (repo / "dvc.lock").write_text("schema: '2.0'\nchanged: true\n")
+    (repo / "other.txt").write_text("modified\n")
+
+    result = _run_gate(repo)
+
+    assert result.returncode == 0, result.stderr
+    assert "WARNING" in result.stdout
+    assert "dvc.lock" in result.stdout
+    assert "other.txt" in result.stdout
+
+
 def test_pipeline_script_no_longer_pushes_to_main():
     text = (REPO / "scripts" / "run_corpus_pipeline.sh").read_text()
     assert "git push origin main" not in text, (

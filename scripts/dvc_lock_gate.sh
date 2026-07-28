@@ -12,6 +12,10 @@
 # the pipeline script's own guards (padme, dvc, GROBID, main) make its tail
 # unreachable in a throwaway repo.
 #
+# There is deliberately no --publish opt-in flag (ticket 0362, action 3): an
+# opt-in is the same hole behind a flag, and the operator's next step is two
+# git commands the message spells out.
+#
 # Exit status: 0 when nothing changed or when files other than dvc.lock
 # changed (the pre-existing warning path, unchanged); 1 when dvc.lock changed,
 # so `make corpus` fails loudly and the operator commits it via branch + PR.
@@ -28,7 +32,9 @@ elif [ "$(echo "$changed" | sed 's/^...//')" = "dvc.lock" ]; then
     echo ""
     echo "REFUSING to publish: the pipeline re-run changed dvc.lock."
     echo ""
-    git --no-pager diff -- dvc.lock || true
+    # Against HEAD, not the index: an already-staged dvc.lock would otherwise
+    # print an empty diff under "review the diff above".
+    git --no-pager diff HEAD -- dvc.lock || true
     echo ""
     echo "dvc.lock is left uncommitted in the working tree. Publishing a corpus"
     echo "change is a human decision (ticket 0362): review the diff above, then"

@@ -42,7 +42,8 @@ uv run dvc cache dir /data/projets/dvc-cache/oeconomia
 **Padme is the data authority.** The corpus pipeline (Phase 1) runs on padme. Doudou only pulls data — never pushes.
 
 ```bash
-# On padme — build corpus (auto-pushes data, auto-commits dvc.lock):
+# On padme — build corpus (pushes data to the DVC remote; never commits.
+# A changed dvc.lock exits 1 — land it via branch + merge request):
 make corpus
 
 # On doudou — sync and build:
