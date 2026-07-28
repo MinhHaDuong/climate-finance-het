@@ -13,6 +13,7 @@ import os
 import re
 
 import networkx as nx
+import pandas as pd
 import yaml
 
 SCRIPTS = os.path.join(os.path.dirname(__file__), "..", "scripts")
@@ -152,7 +153,6 @@ def test_response_letter_numbers_trace_to_artifact():
         "r1-14-network-response.md")
     assert os.path.exists(md_path)
     assert os.path.exists(csv_path)
-    import pandas as pd
 
     df = pd.read_csv(csv_path).set_index("metric")["value"]
     md = open(md_path).read()
@@ -179,28 +179,64 @@ def test_no_response_file_quotes_a_stale_z():
     cites, in the document that actually goes to the journal.
 
     Absence, not presence, is the property worth pinning. Files are discovered
-    rather than listed, so a new response document is covered on arrival;
-    `external-review/` is excluded on purpose — it holds inbound referee text,
-    whose quoted numbers are theirs to be wrong about, not ours to correct.
+    rather than listed, so a new response document is covered on arrival.
+
+    The spacing and case of the match are deliberately loose: `z=8.7` and
+    `Z = 8.7` are the same claim to a reader, and a guard that reads only one
+    spelling is one rewrite from blind. `external-review/` is skipped
+    explicitly rather than by relying on the glob being non-recursive — it
+    holds inbound referee text, whose numbers are theirs to be wrong about
+    (one of those files quotes "z = 76" as a criticism), and an implicit
+    exclusion would evaporate the day someone widens the glob.
     """
-    base = os.path.join(SCRIPTS, "..")
+    bundle = os.path.join(
+        SCRIPTS, "..", "deliverables", "data-paper", "revision-rdj26561")
     csv_path = os.path.join(
-        base, "deliverables", "_shared", "tables",
+        SCRIPTS, "..", "deliverables", "_shared", "tables",
         "tab_network_limitations.csv")
-    import pandas as pd
 
     df = pd.read_csv(csv_path).set_index("metric")["value"]
     expected = f"{df['econ_within_share_z']:.1f}"
-    responses = sorted(glob.glob(os.path.join(
-        base, "deliverables", "data-paper", "revision-rdj26561", "*.md")))
+    responses = [p for p in sorted(glob.glob(
+        os.path.join(bundle, "**", "*.md"), recursive=True))
+        if "external-review" not in os.path.relpath(p, bundle).split(os.sep)]
     assert responses, "revision bundle has no response documents"
     stale = []
     for path in responses:
         with open(path) as fh:
             for lineno, line in enumerate(fh, 1):
-                for quoted in re.findall(r"\bz = (\d+\.\d+)", line):
+                for quoted in re.findall(r"\bz\s*=\s*(\d+\.\d+)", line,
+                                         re.IGNORECASE):
                     if quoted != expected:
                         stale.append(
-                            f"{os.path.basename(path)}:{lineno} quotes "
+                            f"{os.path.relpath(path, bundle)}:{lineno} quotes "
                             f"z = {quoted}, table says {expected}")
     assert not stale, "; ".join(stale)
+
+
+def test_response_provenance_names_the_pinned_corpus():
+    """The response's corpus-state line names the corpus `dvc.lock` pins.
+
+    The response asserts, three lines apart, both a corpus state and that
+    repeated `make network-limitations` runs are byte-identical. Once the
+    numbers are regenerated those two claims constrain each other: if the
+    named corpus were really the one in hand, the regeneration would have
+    reproduced the old table. Ticket 0625 moved the numbers and initially
+    left the line naming a 2026-07-23 checkout the values no longer came
+    from — a false provenance claim manufactured by the fix itself.
+
+    Pinning the md5 rather than the date is what makes the claim checkable:
+    a date is prose, a hash is the corpus.
+    """
+    base = os.path.join(SCRIPTS, "..")
+    lock = yaml.safe_load(open(os.path.join(base, "dvc.lock")))
+    pinned = {o["md5"] for stage in lock["stages"].values()
+              for o in stage.get("outs", [])
+              if o["path"].endswith("refined_citations.csv")}
+    assert pinned, "dvc.lock pins no refined_citations.csv"
+    md = open(os.path.join(
+        base, "deliverables", "data-paper", "revision-rdj26561",
+        "r1-14-network-response.md")).read()
+    assert any(h in md for h in pinned), (
+        f"the response names no currently pinned refined_citations; "
+        f"dvc.lock pins {sorted(pinned)}")

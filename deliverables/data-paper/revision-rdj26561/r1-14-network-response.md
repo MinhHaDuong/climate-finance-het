@@ -79,8 +79,8 @@ construction (MIN_COCIT = 3).
 
 ## Provenance
 
-- Corpus state: post-PR#1093 `refined_citations` (DVC checkout of
-  2026-07-23).
+- Corpus state: the `refined_citations` that `dvc.lock` pins (md5
+  `3a3789511757a4aaa260178c230938fc`, recorded 2026-07-27).
 - Parameters: `config/analysis.yaml`, section `network_limitations`
   (citer cutoff 2008, 100 rewirings, 200 bootstrap replicates, seed 42).
 - The rewiring null is deterministic by construction (sorted canonical
