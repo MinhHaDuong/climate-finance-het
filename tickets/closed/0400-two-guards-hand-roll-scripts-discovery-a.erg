@@ -2,11 +2,13 @@
 Title: Two guards hand-roll scripts/ discovery and enforce over archive_traditions
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: tooling-lane severity floor: guard discovery consistency, over-inclusion only
 
 --- log ---
 2026-07-27T18:53Z HDMX-coding-agent created
 2026-07-27T18:58Z HDMX-coding-agent note Found by the 0346 roar sweep; the divergence is already visible in make lint output
 
+2026-07-27T19:45Z HDMX-coding-agent closed — tooling-lane severity floor: guard discovery consistency, over-inclusion only
 --- body ---
 ## Context
 

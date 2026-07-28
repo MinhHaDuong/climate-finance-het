@@ -2,10 +2,13 @@
 Title: Unresolved crossrefs render as ?@ref with exit 0, and one is live in multilayer-detection
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1237
 
 --- log ---
 2026-07-27T19:14Z HDMX-coding-agent created found by the 0363 wrap-up sweep, looking for the same defect class one mechanism over
 
+2026-07-28T07:33Z HDMX-coding-agent note review round 1 edited the Relevant-files entry in place to follow the test-suite rename (test_meta_macro_resolution.py → test_render_placeholders.py); logged per review round 2's process note
+2026-07-28T07:37Z HDMX-coding-agent closed — autoclosed — PR #1237
 --- body ---
 ## Context
 
@@ -39,7 +42,7 @@ nor the guard on the prose.
 
 - `deliverables/multilayer/multilayer-detection.qmd` — the three references
 - `tests/_qmd_meta.py` — the 0363 scan and render helpers, to extend
-- `tests/test_meta_macro_resolution.py` — the two-guard pattern to follow
+- `tests/test_render_placeholders.py` — the two-guard pattern to follow (renamed from test_meta_macro_resolution.py in this ticket's own PR)
 - `deliverables/_shared/figures/` — whether a z-series ribbon figure still exists
 
 ## Actions

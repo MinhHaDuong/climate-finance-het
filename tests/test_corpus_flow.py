@@ -159,7 +159,7 @@ class TestRenderTable:
         overflow rather than erroring.
         """
         import export_corpus_flow
-        from _gfm_render import cell_texts, render_gfm, require_pandoc, row_with
+        from _qmd_render import cell_texts, render_qmd, require_pandoc, row_with
 
         require_pandoc()
         label = "Quality filtering | protection criteria applied"
@@ -168,7 +168,7 @@ class TestRenderTable:
         )
 
         row = row_with(
-            render_gfm(export_corpus_flow.render_table(flow), tmp_path),
+            render_qmd(export_corpus_flow.render_table(flow), tmp_path),
             "Quality filtering",
         )
 

@@ -32,6 +32,14 @@ PRODUCTS = [
     "datapackage.json",
     # The retrieval-protocol appendix §2.1 points referees at (ticket 0329).
     "tab_retrieval_protocol.csv", "tab_retrieval_protocol.md",
+    # The reranker human-validation evidence §2.3 quotes AUC = 0.818 from
+    # (ticket 0372): per-quintile rates + the two sample sheets + the
+    # weak-label calibration set.
+    "tab_reranker_validation.csv", "reranker_hitl_stratified.csv",
+    "reranker_hitl_review.csv", "reranker_calibration.csv",
+    # The per-stratum removal ablation §2.3's bias paragraph points at
+    # (ticket 0337).
+    "tab_filter_ablation.csv",
 ]
 
 # The correspondence that describes the deposit to the editor (ticket 0403).
@@ -109,6 +117,7 @@ def products_named_in(text):
                     last_stem = re.sub(_PRODUCT_EXT + r"$", "", matches[-1])
                 elif last_stem and re.fullmatch(_PRODUCT_EXT, token):
                     found.add(last_stem + token)
+    return found
 
 
 class TestRenderRuleTracksTheIncludeClosure:
@@ -396,3 +405,17 @@ class TestSubmissionProseNamesOnlyShippedProducts:
         named = products_named_in(doc)
         assert "climate_finance_corpus.csv" in named, "the real products must parse"
         assert sorted(named - shipped_products()) == ["codebook.md"]
+
+    def test_a_split_extension_shorthand_is_expanded(self):
+        """Red-proof for the `` `stem.csv`/`.md` `` shorthand (ed04 writes
+        `tab_retrieval_protocol.csv`/`.md`): the bare-extension token expands
+        against the preceding stem, and the function returns the set — the
+        2026-07-27 patch that added this branch dropped the return statement,
+        which blinded the whole guard (three docs reported as naming nothing)
+        and broke its own self-test with a TypeError."""
+        doc = (
+            "The `data/products/` folder ships\n"
+            "`tab_retrieval_protocol.csv`/`.md` for the appendix.\n"
+        )
+        named = products_named_in(doc)
+        assert named == {"tab_retrieval_protocol.csv", "tab_retrieval_protocol.md"}

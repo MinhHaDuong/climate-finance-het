@@ -2,12 +2,14 @@
 Title: Generated HTML figures have no artifact-level escaping guard
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: tooling-lane severity floor: guard symmetry between two already-guarded sinks
 
 --- log ---
 2026-07-27T18:43Z HDMX-coding-agent created
 2026-07-27T18:52Z HDMX-coding-agent note filed from the 0339/0340/0341 raid wrap-up sweep; symmetric gap to 0340's Markdown guard
 
 2026-07-27T19:08Z HDMX-coding-agent note the repo now has two HTML producers, not three: plot_interactive_corpus.py is retired under ticket 0351. Both survivors (plot_genealogy_html.py, plot_alluvial_html.py) are already wired Make targets, so the artifact-level guard this ticket asks for no longer waits on 0351 and no longer needs a skip path for an unbuildable figure.
+2026-07-27T19:45Z HDMX-coding-agent closed — tooling-lane severity floor: guard symmetry between two already-guarded sinks
 --- body ---
 ## Context
 

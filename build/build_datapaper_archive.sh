@@ -79,6 +79,15 @@ cp -L "$DATA_DIR/citations.csv" "$TMP/data/products/"
 # the query fields, per-tier term counts, and the grey-literature enumeration.
 cp "$PROJ_ROOT/deliverables/_shared/tables/tab_retrieval_protocol.csv" "$TMP/data/products/"
 cp "$PROJ_ROOT/deliverables/_shared/tables/tab_retrieval_protocol.md" "$TMP/data/products/"
+# Reranker human-validation evidence (ticket 0372): §2.3 quotes AUC = 0.818
+# and names these four files; the per-quintile rate table is what the AUC
+# recomputes from, the sample sheets are the surviving grading record.
+cp "$PROJ_ROOT/deliverables/_shared/tables/tab_reranker_validation.csv" "$TMP/data/products/"
+# Removal ablation (ticket 0337): what the filter removes, per stratum.
+cp "$PROJ_ROOT/deliverables/_shared/tables/tab_filter_ablation.csv" "$TMP/data/products/"
+cp "$PROJ_ROOT/docs/reranker_hitl_stratified.csv" "$TMP/data/products/"
+cp -L "$DATA_DIR/reranker_hitl_review.csv" "$TMP/data/products/"
+cp -L "$DATA_DIR/reranker_calibration.csv" "$TMP/data/products/"
 
 echo "  Copying raw inputs (per-source catalogs)..."
 # One catalog per corpus source (utils.SOURCE_NAMES). Pinned by

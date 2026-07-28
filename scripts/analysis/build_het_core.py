@@ -194,6 +194,93 @@ def field_score(row):
     return "unknown"
 
 
+def parse_years(raw):
+    """Publication years as numbers, with the undated left undated.
+
+    The corpus is read with ``dtype=str, keep_default_na=False``, so a missing
+    year arrives as an empty string. Blanks become NA; anything else must parse,
+    because a year that is neither blank nor a number is a pipeline fault, not a
+    value to swallow (the same argument as `export_deposit.coerce_integer_columns`,
+    ticket 0354).
+    """
+    return pd.to_numeric(raw.astype(str).str.strip().replace("", pd.NA),
+                         errors="raise")
+
+
+def read_corpus_with_years(corpus_path):
+    """Read the corpus and parse its years, with nothing able to intervene.
+
+    The read and the blank count sit in one function on purpose. A year
+    fabricated *before* parsing is invisible everywhere downstream — substitute
+    "2020" for a blank and the corpus looks legitimately dated, leaving every
+    later assertion vacuously true, which is how a review defeated the static
+    guards. Comparing blanks in the column *as read* against unknowns after
+    parsing is the only check that sees it, and it only works while no caller can
+    slip a mutation between the two. Taking the count inside a
+    `parse_years(raw)` wrapper instead looks equivalent and is not: the wrapper
+    receives the already-fabricated column and its count agrees with itself.
+    """
+    df = pd.read_csv(corpus_path, dtype=str, keep_default_na=False)
+    blank_in_file = int((df["year"].astype(str).str.strip() == "").sum())
+    df["year_num"] = parse_years(df["year"])
+    unknown = int(df["year_num"].isna().sum())
+    assert unknown == blank_in_file, (
+        f"{blank_in_file} works have no year in {corpus_path} but {unknown} are "
+        "unknown after parsing — a year was supplied between the read and the "
+        "parse (ticket 0402)")
+    return df
+
+
+def assert_undated_earn_no_rate(frame):
+    """No undated work may carry a citations-per-year rate.
+
+    Checked against the frame's own ``year_num``, not against whatever was handed
+    to `citations_per_year`. That is the difference that matters: the helper's
+    internal assertion is vacuous if a caller passes a parallel column with the
+    gaps already filled (``s2["eff_year"] = s2["year_num"].replace(np.nan, 2020)``
+    escaped every other check; the ``pd.NA`` spelling a review proposed is inert,
+    since it does not match NaN in a float64 column). This holds whatever route
+    the value took.
+    """
+    undated = frame["year_num"].isna()
+    assert not (frame.loc[undated, "cit_per_year"] > 0).any(), (
+        f"{int(undated.sum())} works have no year, yet some earned a "
+        "citations-per-year rate — an age was imputed on the way here "
+        "(ticket 0402)")
+
+
+def citations_per_year(cited_by_count, year_num, current_year=CURRENT_YEAR):
+    """Age-normalised citation rate — zero where the age is unknown.
+
+    A work with no year has no computable age. Substituting one (this used to
+    substitute 2020) does not lose the value quietly, it *invents* it: the
+    denominator becomes ~6 years instead of the true age, so an old undated work
+    has its rate inflated several-fold and climbs the ranking on a number nobody
+    measured (ticket 0402).
+
+    Zero, rather than dropping the work. The two other scoring signals —
+    citation-graph centrality and teaching-canon presence — do not depend on the
+    year, so an undated work stays eligible on the evidence that does exist and
+    only forfeits the term that cannot be computed. Dropping it instead would
+    discard 389 works, 214 of them teaching-canon readings, to fix 389 unknown
+    ages; imputing a median age would be the same fabrication with a better
+    excuse.
+    """
+    age = current_year - year_num
+    rate = (cited_by_count / np.maximum(1, age)).fillna(0.0)
+    # Runtime invariant, not a test: an undated work must leave here with no
+    # rate. A review defeated the static guards by imputing through a channel
+    # they did not name (`.replace` instead of `.fillna`, a parallel `eff_year`
+    # column), which is the general weakness of pattern-matching source text.
+    # Asserting the property in the code path costs nothing and holds however
+    # the caller was written.
+    undated = year_num.isna()
+    assert not (rate[undated] > 0).any(), (
+        "an undated work earned a citations-per-year rate; its age was imputed "
+        "somewhere upstream of this function (ticket 0402)")
+    return rate
+
+
 def robust_minmax(values):
     """Min-max normalize, clipping at 1st/99th percentiles."""
     arr = np.array(values, dtype=float)
@@ -348,13 +435,24 @@ def main():
 
     # Load corpus
     corpus_path = args.refined_works
-    df = pd.read_csv(corpus_path, dtype=str, keep_default_na=False)
-    df["cited_by_count_num"] = pd.to_numeric(df["cited_by_count"], errors="coerce").fillna(0)
-    df["year_num"] = pd.to_numeric(df["year"], errors="coerce").fillna(2020)
+    df = read_corpus_with_years(corpus_path)
+    # An absent citation count reads as zero: OpenAlex records no citations for
+    # a work it has never seen cited, so nought is the measurement, not a guess.
+    # An absent year is different in kind — see parse_years / citations_per_year.
+    df["cited_by_count_num"] = pd.to_numeric(
+        df["cited_by_count"].astype(str).str.strip().replace("", pd.NA),
+        errors="raise").fillna(0)
     df["doi_norm"] = df["doi"].apply(normalize_doi)
-    log.info("Corpus: %d papers", len(df))
+    n_undated = int(df["year_num"].isna().sum())
+    log.info("Corpus: %d papers (%d undated — no citations-per-year credit)",
+             len(df), n_undated)
 
-    # Identify teaching works via from_teaching column (bypass theme gate)
+    # Identify teaching works via from_teaching column (bypass theme gate).
+    # Zero for an absent flag is a measurement, not a guess, so this fillna
+    # stands where the year's could not: `from_teaching` is a presence flag over
+    # the syllabus corpus, and a work no syllabus lists appears on none. The
+    # column is also absent from older corpus builds, which is what `.get`
+    # covers.
     from_teaching = pd.to_numeric(df.get("from_teaching", 0), errors="coerce").fillna(0) == 1
     teaching_dois = set(df.loc[from_teaching, "doi_norm"]) - {""}
 
@@ -396,11 +494,14 @@ def main():
     # ── Step 4: Score and rank ──────────────────────────────────────
 
     log.info("-- Step 4: Score and rank --")
-    s2["cit_per_year"] = s2["cited_by_count_num"] / np.maximum(
-        1, CURRENT_YEAR - s2["year_num"]
+    s2["cit_per_year"] = citations_per_year(
+        s2["cited_by_count_num"], s2["year_num"]
     )
+    assert_undated_earn_no_rate(s2)
 
-    # Teaching bonus: use from_teaching column (binary, no count available)
+    # Teaching bonus: use from_teaching column (binary, no count available).
+    # Same reading as at the identification step above — an absent flag means
+    # the work is on no syllabus, so zero is what was observed.
     s2_from_teaching = pd.to_numeric(
         s2.get("from_teaching", 0), errors="coerce"
     ).fillna(0)

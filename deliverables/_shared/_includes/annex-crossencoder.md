@@ -1,5 +1,12 @@
 ## Cross-encoder Calibration {#sec-reranker-calibration}
 
+<!-- Ticket 0357: the live threshold reads from config/corpus_filter.yaml
+through the filter_reranker_threshold variable. The two 0.0049 below stay
+literal on purpose — they narrate the superseded initial threshold, a
+historical fact that must not move when the config does. The 81% / 74% / 76%
+figures are measured at the live threshold, so a recalibration means re-running
+the human-validation sample, not just editing config. -->
+
 Flag 6 uses a cross-encoder reranker rather than a generative LLM to classify papers as relevant or irrelevant. Cross-encoders score a (query, document) pair by jointly encoding both through a transformer, producing a single relevance score. This is deterministic, reproducible, and runs locally on CPU without API costs.
 
 **Model.** We use `BAAI/bge-reranker-v2-m3` (568M parameters, multilingual), loaded via the `sentence-transformers` `CrossEncoder` class. The model scores each candidate paper's title and abstract against a query string, producing a continuous relevance score. Scores are cached per DOI so that threshold adjustments do not require re-scoring.
@@ -23,6 +30,6 @@ Each candidate query was evaluated on a stratified sample of 200 papers (100 pos
 
 **Threshold selection.** Using the best query, all 3,530 labeled papers were scored. Score distributions are compressed near zero (positive mean = 0.032, negative mean = 0.006). An initial threshold of 0.0049 was selected via Youden's J on weak labels. This was then validated and adjusted through human-in-the-loop review.
 
-**Human validation.** A stratified sample of 100 papers (20 per score quintile) was presented in randomized order, blinded to scores and metadata, for human labeling against the criterion: "Is this paper relevant to the history of economic thought on climate finance?" The AUC against human labels was 0.818, higher than the 0.766 against weak labels, confirming the reranker's discriminative power. The proportion of human-relevant papers increased monotonically across score quintiles (10%, 15%, 20%, 60%, 80%), showing a clear signal. However, the initial threshold of 0.0049 fell in a zone where 60% of papers were human-relevant, indicating excessive removal. The threshold was adjusted to 0.002, yielding 81% accuracy (precision = 74%, recall = 76%) on the human-labeled sample. At this threshold, strata 1--3 (scores below 0.002, where 85% of papers are irrelevant) are removed, while strata 4--5 (where 60--80% are relevant) are retained.
+**Human validation.** A stratified sample of 100 papers (20 per score quintile) was presented in randomized order, blinded to scores and metadata, for human labeling against the criterion: "Is this paper relevant to the history of economic thought on climate finance?" The AUC against human labels was 0.818, higher than the 0.766 against weak labels, confirming the reranker's discriminative power. The proportion of human-relevant papers increased monotonically across score quintiles (10%, 15%, 20%, 60%, 80%), showing a clear signal. However, the initial threshold of 0.0049 fell in a zone where 60% of papers were human-relevant, indicating excessive removal. The threshold was adjusted to {{< meta filter_reranker_threshold >}}, yielding 81% accuracy (precision = 74%, recall = 76%) on the human-labeled sample. At this threshold, strata 1--3 (scores below {{< meta filter_reranker_threshold >}}, where 85% of papers are irrelevant) are removed, while strata 4--5 (where 60--80% are relevant) are retained.
 
 **Comparison with LLM backend.** The cross-encoder replaces the previous Gemini Flash (OpenRouter) / Qwen 32B (Ollama) backend. Advantages: deterministic output, no API dependency, ~5 minutes on 24 CPU threads vs. ~15 minutes with rate-limited API calls, zero marginal cost. The continuous score also enables threshold tuning without re-running the model.

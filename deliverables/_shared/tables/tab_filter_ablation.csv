@@ -1,0 +1,30 @@
+axis,stratum,n,flagged,rescued,removed,removed_pct
+corpus,all,43179,11244,1810,9434,21.8
+source,openalex,41138,10627,1405,9222,22.4
+source,istex,748,165,57,108,14.4
+source,bibcnrs,233,11,1,10,4.3
+source,scispace,663,44,17,27,4.1
+source,grey,281,84,17,67,23.8
+source,teaching,622,354,354,0,0.0
+source,unfccc,232,4,4,0,0.0
+source,oecd,35,4,4,0,0.0
+language,English,39537,9603,1718,7885,19.9
+language,non-English,3577,1585,91,1494,41.8
+language,unknown,65,56,1,55,84.6
+period,pre-1990,68,46,21,25,36.8
+period,1990-2006,2220,705,144,561,25.3
+period,2007-2014,9651,2505,431,2074,21.5
+period,2015 on,30761,7755,1038,6717,21.8
+period,no year,479,233,176,57,11.9
+doi,has DOI,34698,10687,1801,8886,25.6
+doi,no DOI,8481,557,9,548,6.5
+citation_decile,1,4318,808,5,803,18.6
+citation_decile,2,4318,1261,25,1236,28.6
+citation_decile,3,4318,1388,97,1291,29.9
+citation_decile,4,4318,1266,88,1178,27.3
+citation_decile,5,4318,1312,258,1054,24.4
+citation_decile,6,4317,1115,40,1075,24.9
+citation_decile,7,4318,1060,75,985,22.8
+citation_decile,8,4318,1018,152,866,20.1
+citation_decile,9,4318,970,254,716,16.6
+citation_decile,10,4318,1046,816,230,5.3
