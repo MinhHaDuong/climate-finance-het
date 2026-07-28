@@ -1,0 +1,120 @@
+%erg 0.1
+Title: The `str(row.get(k, "") or "")` idiom does not catch NaN — 52 call sites can emit the string "nan"
+Created: 2026-07-28
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-28T08:05Z HDMX-coding-agent created
+2026-07-28T08:05Z HDMX-coding-agent note found by the 0375 roar sweep; the idiom's failure was measured, and the shipped artifacts were checked and are clean, so this is latent like 0375 was
+
+--- body ---
+## Context
+
+Ticket 0375 fixed one site where a present-but-null key defeated a
+`row.get(c, "")` default. The roar sweep for that anti-pattern found the same
+mistake in a second, more common disguise, and the disguise is the reason it
+survived: it *looks* like it handles the null.
+
+    str(row.get("title", "") or "")
+
+The `or ""` reads as a null guard. It is not one. `float('nan')` is **truthy**,
+so `or` never fires on it, and `str(nan)` is `'nan'`:
+
+    row.get('title','')       -> nan
+    str(row.get(...) or '')   -> 'nan'
+    bool(nan)                 -> True
+
+It works only when the missing value is `None`. `pd.read_csv` produces `NaN`,
+not `None`, for a missing field — so on this repo's own corpus the guard is
+inert exactly where it is needed. (Measured both ways: with a `None` cell the
+idiom yields `''`; with a real `NaN` cell in an object column it yields
+`'nan'`.)
+
+## Scope — measured
+
+Across `scripts/`:
+
+- **52** occurrences of `str(row.get(…) or "")` in **13** files
+- **30** occurrences of bare `str(row.get(…))`, which does not even pretend
+
+Heaviest: `analysis/build_het_core.py` (7), `analysis/analyze_genealogy.py` (5),
+`qa/qa_detect_type.py` (5), `archive_traditions/detect_traditions_{pre2015,v2,v3}.py`
+(5 each), `_pre2007_traditions.py` (4), `analysis/analyze_cocitation.py` (4),
+`analysis/analyze_communities_clusters.py` (4).
+
+## Latent, not live — checked, not assumed
+
+Every built artifact under `deliverables/_shared/{tables,_includes,figures}`
+was scanned for a standalone `nan` token (word-boundary regex, so
+"prove**nan**ce" does not count — the trap 0375 walked into). **Zero hits.**
+
+So nothing ships a `nan` today, and this has the same standing 0375 had when it
+was filed: a real defect that needs a missing value to arrive in a specific
+column. It is filed because the surface is 52 sites wide rather than one, and
+because the idiom actively misleads the next reader into thinking the case is
+handled.
+
+## Two different consequences, worth separating
+
+1. **Text built for matching or embedding** (`build_text`, genealogy and
+   cocitation node labels, `qa_detect_type`'s lowercased fields). A stray
+   `'nan'` token pollutes a similarity computation rather than a page. Quiet,
+   and it degrades a measurement rather than breaking it — which is worse to
+   find later, not better.
+2. **Values that reach a figure or a file** — `figures/plot_genealogy.py`,
+   `plot_genealogy_html.py`, `plot_alluvial_html.py` (`str(row.get("first_author", "?"))`,
+   whose `"?"` default has the identical hole), `harvest/build_teaching_yaml.py`.
+   These are the ones that would publish the token.
+
+Fix the second group first; the first group is a data-quality question the
+author may want to see rather than silence.
+
+## Relevant files
+
+- `scripts/utils.py` or `scripts/pipeline_text.py` — the natural home for one
+  shared helper, so the fix is not 52 hand-edits with 52 chances to differ
+- The 13 files listed above
+- `tests/test_script_hygiene.py` — where a standing guard would live
+
+## Actions
+
+1. Add one helper — e.g. `text_or_empty(value)` — that blanks `None`, `NaN` and
+   the literal strings `"nan"`/`"none"`, and returns `str(value).strip()`
+   otherwise. One definition, so the semantics cannot drift per call site.
+2. Migrate the figure/file-writing group first, then the text-building group.
+3. Decide, for the text-building group, whether a missing title should be
+   silently blank or should be *counted and reported* — a corpus record with no
+   title is a data-quality signal, and blanking it hides it. This is an author
+   call, not a mechanical one.
+
+## Test
+
+Red first: drive one real emitter from each group with a frame whose string
+column holds a genuine `NaN` (`pd.DataFrame({"title": ["a", np.nan]})`, not
+`None` — the distinction is the whole ticket) and assert the written artifact
+carries no standalone `nan` token.
+
+Assert on the **written file** and with a word-boundary regex, not `"nan" in
+text`: 0375's first draft of that check would have fired on the word
+"provenance" in a caption.
+
+## Verification
+
+- [ ] A `NaN`-bearing frame produces no `nan` token in any written artifact
+- [ ] A `None`-bearing frame still behaves as before (no regression on the case
+      the old idiom did handle)
+- [ ] Regenerating all nine Markdown targets and the HTML figures is
+      byte-identical on the current corpus, which has no such gap
+
+## Invariants
+
+- No change to any shipped artifact on today's corpus — the sweep found zero
+  `nan` tokens, so this must be a no-op there. A diff is a finding to explain,
+  not to accept.
+
+## Exit criteria
+
+- [ ] The `or ""` idiom is gone from `scripts/`, replaced by one shared helper
+- [ ] A standing `adherence` test fails when a new `str(row.get(… ) or "")`
+      appears, so the class cannot return in an unrelated future PR — this is
+      the guard half, and it is what a per-PR gate structurally cannot provide
