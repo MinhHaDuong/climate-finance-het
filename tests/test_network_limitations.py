@@ -181,13 +181,25 @@ def test_no_response_file_quotes_a_stale_z():
     Absence, not presence, is the property worth pinning. Files are discovered
     rather than listed, so a new response document is covered on arrival.
 
-    The spacing and case of the match are deliberately loose: `z=8.7` and
-    `Z = 8.7` are the same claim to a reader, and a guard that reads only one
-    spelling is one rewrite from blind. `external-review/` is skipped
-    explicitly rather than by relying on the glob being non-recursive — it
-    holds inbound referee text, whose numbers are theirs to be wrong about
-    (one of those files quotes "z = 76" as a criticism), and an implicit
-    exclusion would evaporate the day someone widens the glob.
+    Two scoping decisions, both learned from the guard's first draft:
+
+    *Which z.* Requiring every z in the bundle to equal this one is wrong —
+    the bundle may quote a z from any other analysis, and such a guard fails
+    on correct prose. The claim actually guarded is the degree-preserving
+    null, so a match counts only on a line that names it. All three real
+    occurrences sit on such a line.
+
+    *Which spelling.* `z = 8.7`, `z=8.7`, `Z = 8.7`, `z ≈ 8.7` and `a z of
+    8.7` are one claim to a reader, and a guard reading one of them is a
+    rewrite away from blind. Comparison is numeric at the precision the prose
+    chose, not string equality: `z = 8.74` is more precise and correct, and
+    a `.1f` string compare would bounce it.
+
+    `external-review/` is skipped explicitly rather than by relying on the
+    glob being non-recursive — it holds inbound referee text, whose numbers
+    are theirs to be wrong about (one of those files quotes "z = 76" as a
+    criticism), and an implicit exclusion would evaporate the day someone
+    widens the glob.
     """
     bundle = os.path.join(
         SCRIPTS, "..", "deliverables", "data-paper", "revision-rdj26561")
@@ -196,21 +208,25 @@ def test_no_response_file_quotes_a_stale_z():
         "tab_network_limitations.csv")
 
     df = pd.read_csv(csv_path).set_index("metric")["value"]
-    expected = f"{df['econ_within_share_z']:.1f}"
+    actual = float(df["econ_within_share_z"])
     responses = [p for p in sorted(glob.glob(
         os.path.join(bundle, "**", "*.md"), recursive=True))
         if "external-review" not in os.path.relpath(p, bundle).split(os.sep)]
     assert responses, "revision bundle has no response documents"
+    quote_re = re.compile(r"\bz\s*(?:=|≈|of)\s*(\d+(?:\.\d+)?)", re.IGNORECASE)
     stale = []
     for path in responses:
         with open(path) as fh:
             for lineno, line in enumerate(fh, 1):
-                for quoted in re.findall(r"\bz\s*=\s*(\d+\.\d+)", line,
-                                         re.IGNORECASE):
-                    if quoted != expected:
+                if "degree-preserving" not in line.lower():
+                    continue
+                for quoted in quote_re.findall(line):
+                    decimals = len(quoted.partition(".")[2])
+                    if float(quoted) != round(actual, decimals):
                         stale.append(
                             f"{os.path.relpath(path, bundle)}:{lineno} quotes "
-                            f"z = {quoted}, table says {expected}")
+                            f"z = {quoted}, table says "
+                            f"{round(actual, decimals)}")
     assert not stale, "; ".join(stale)
 
 

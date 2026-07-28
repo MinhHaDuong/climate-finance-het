@@ -79,8 +79,15 @@ construction (MIN_COCIT = 3).
 
 ## Provenance
 
-- Corpus state: the `refined_citations` that `dvc.lock` pins (md5
-  `3a3789511757a4aaa260178c230938fc`, recorded 2026-07-27).
+- Corpus state, statistics table: the `refined_citations` that `dvc.lock`
+  pins (md5 `3a3789511757a4aaa260178c230938fc`, recorded 2026-07-27). The
+  network it describes has 126 nodes and 203 edges.
+- Corpus state, edge spot-check: an earlier `refined_citations` (DVC
+  checkout of 2026-07-23), whose network had 132 nodes and 222 edges. The
+  spot-check is a live-Crossref probe, so rerunning it draws a fresh sample
+  and re-fetches every witness; it is retained as evidence of record at the
+  date it was run rather than silently re-rolled. Its concordance therefore
+  describes the earlier graph, not the one the table above reports.
 - Parameters: `config/analysis.yaml`, section `network_limitations`
   (citer cutoff 2008, 100 rewirings, 200 bootstrap replicates, seed 42).
 - The rewiring null is deterministic by construction (sorted canonical
