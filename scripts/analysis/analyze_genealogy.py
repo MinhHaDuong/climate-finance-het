@@ -20,6 +20,7 @@ from collections import defaultdict
 
 import numpy as np
 import pandas as pd
+from _band_scheme import BAND_NAMES, N_COMMUNITIES
 from script_io_args import parse_io_args, validate_io
 from utils import (
     BASE_DIR,
@@ -138,10 +139,10 @@ def select_backbone(works, doi_meta):
 # Step 3: Assign lineages (3 bands)
 # ============================================================
 
-# Band scheme constants
-N_COMMUNITIES = 3
-BAND_NAMES = {0: "CDM / Kyoto heritage", 1: "Accountability pole", 2: "Efficiency pole"}
-BAND_COLORS_RGB = {0: "#F4A261", 1: "#457B9D", 2: "#E63946"}
+# The band scheme itself (N_COMMUNITIES, BAND_NAMES, BAND_COLORS_RGB) lives in
+# scripts/_band_scheme.py, shared with both renderers (ticket 0571).
+# CDM_CLUSTER is not part of it: it names the KMeans cluster whose members are
+# assigned to band 0 below, a modelling input rather than a presentation choice.
 CDM_CLUSTER = 2
 
 
