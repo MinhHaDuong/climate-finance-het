@@ -249,7 +249,7 @@ Candidate applications include AI ethics (where rapid field growth since 2018 ma
 
 *Louvain stochasticity in the graph layer.* Community detection is a stochastic procedure, and different random seeds yield different partitions. Ticket B6 showed that Louvain instability broadens zone edges on the G9 layer without shifting peak years. We fix the seed from the analysis configuration and report results from a single run; a stability study across seeds is a natural extension.
 
-*Corpus English dominance.* English accounts for {{< meta lang_english_pct >}}% of works. The multilingual embedding model places other languages in the same space, but the lexical layer is dominated by English terms, and minority-language structural changes may be underdetected. Ticket B3 quantifies the asymmetry.
+*Corpus English dominance.* English accounts for {{< meta lang_english_pct >}}% of works. The multilingual embedding model is trained to place other languages in the same space, but the lexical layer is dominated by English terms, and minority-language structural changes may be underdetected. Ticket B3 quantifies the asymmetry.
 
 *DOI resolution drift for pre-2000 works.* The citation graph depends on DOI-level reference matching, which degrades for older works where DOIs were assigned retrospectively. Ticket B10 documents the drift; the G9 layer is weaker before 2000 for this reason. We restrict the analysis window to 1998--2021 in part to limit exposure to this drift.
 
