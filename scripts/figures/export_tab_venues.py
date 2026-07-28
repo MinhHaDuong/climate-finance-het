@@ -141,8 +141,10 @@ def main():
         ": Publication venues of core works (cited $\\geq$ 50) by pole assignment. "
         "Each work is assigned to the efficiency or accountability pole based on "
         "its position along the embedding axis (§3.4). "
-        "\"Lean\" indicates the venue's overall orientation: "
-        "journals where a majority of core papers fall on one side. "
+        "\"Lean\" indicates the venue's overall orientation: a venue is "
+        "assigned to a pole only when that pole outnumbers the other by a "
+        "factor of at least 1.4 (a smoothed log-odds ratio of 0.5, base 2); "
+        "closer splits are labelled Shared, so a bare majority is not enough. "
         "{#tbl-venues}"
     )
     lines.append("")
