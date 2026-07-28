@@ -10,11 +10,11 @@ literal form is a decimal fraction, and only for values the vars layer already
 exposes as a `{{< meta >}}` macro — a number the prose *could* have resolved
 through the pipeline and chose not to. It deliberately does not scan for the
 integer thresholds (sigma 2, min_cited_by 50, prefix_length 200). Measured on
-this corpus of prose, a standalone-token scan for "2" returns 138 hits across
-the shared includes and "50" returns 29, essentially all of them section
-numbers, tier labels, sample sizes, and unrelated cutoffs. A guard whose
-signal-to-noise is that bad is an allowlist with a test wrapped around it, and
-an allowlist that large rots into a mute skip.
+this corpus of prose, a standalone-token scan for "2" matches 73 lines across
+the 34 shared includes, "50" matches 13 and "200" matches 7 — essentially all
+of them section numbers, tier labels, sample sizes, and unrelated cutoffs. A
+guard whose signal-to-noise is that bad is an allowlist with a test wrapped
+around it, and an allowlist that large rots into a mute skip.
 
 What the guard *is* general over: the value comes from config at test time, so
 recalibrating 0.002 to 0.003 re-aims the scan at 0.003 rather than blessing the
@@ -44,14 +44,13 @@ from _vars_retrieval import retrieval_protocol_stats
 #: (include file, literal, why it is not the config value), and
 #: `test_no_allowlist_entry_is_redundant` deletes it for you by failing once the
 #: match is gone — so an entry cannot outlive the text it excuses.
-ALLOWED = [
-    (
-        "temporal-structure.md",
-        "0.002",
-        "a k=2 EN/non-English silhouette score in the language-structure table, "
-        "not the cross-encoder relevance threshold",
-    ),
-]
+#:
+#: Empty today, and the mechanism has already earned its keep: the list held
+#: `temporal-structure.md`'s k=2 EN/non-English silhouette score of 0.002, a
+#: number unrelated to the cross-encoder threshold. Ticket 0290's orphan sweep
+#: deleted that include on main, and the redundancy check failed on the rebase
+#: rather than leaving a dead excuse here to mute a real hit later.
+ALLOWED: list[tuple[str, str, str]] = []
 
 
 def _config_values() -> dict[str, str]:
