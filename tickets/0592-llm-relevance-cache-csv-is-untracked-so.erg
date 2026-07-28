@@ -1,0 +1,57 @@
+%erg 0.1
+Title: llm_relevance_cache.csv is untracked so test_reranker_cache_exists cannot pass in a fresh worktree
+Created: 2026-07-28
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-28T13:17Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Found by ticket 0571's finisher (PR #1269) running `make check` in a fresh
+worktree: `test_reranker_cache_exists` fails because
+`data/catalogs/llm_relevance_cache.csv` is neither git- nor DVC-tracked —
+no fresh worktree can have it, and `make data` (a DVC checkout) cannot fetch
+it. The test only passes in the primary checkout, where the file happens to
+sit. A gate that fails everywhere except one blessed directory is an
+environmental assertion, not a test.
+
+Two tensions to resolve, not just a tracking fix:
+
+- Placement: per `.claude/rules/architecture.md`, incremental caches belong
+  in `enrich_cache/` (gitignored, survives `dvc repro`), not
+  `data/catalogs/` (DVC-managed corpus contract). If this file is an
+  incremental LLM cache, it may be mis-homed as well as untracked.
+- Intent: decide what the test is meant to guarantee. "The cache exists" is
+  only meaningful on a machine that has run the reranker; a portable suite
+  cannot assert it unconditionally.
+
+## Relevant files
+
+- `tests/` — the test defining `test_reranker_cache_exists` (locate by name)
+- `data/catalogs/llm_relevance_cache.csv` — primary checkout only
+- `dvc.yaml`, `.dvc/` — where tracking would live if the file is contract data
+
+## Actions
+
+1. Decide the file's home (enrich_cache/ vs DVC-tracked catalogs/) per the
+   architecture rule, and move or track accordingly.
+2. Re-scope the test to match: either it checks a DVC-tracked artifact that
+   `make data` provisions, or it is skipped/removed where the cache is
+   legitimately absent.
+
+## Test
+
+The re-scoped test passes in a fresh worktree after `make data`, and fails
+only when the guarantee it states is actually violated.
+
+## Verification
+
+- [ ] `make check` passes in a fresh worktree after `make data`
+- [ ] The file's location matches the architecture rule for its kind
+
+## Exit criteria
+
+No test in the suite depends on untracked state private to the primary
+checkout.

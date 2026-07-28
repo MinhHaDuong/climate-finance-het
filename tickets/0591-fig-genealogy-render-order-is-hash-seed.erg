@@ -1,0 +1,54 @@
+%erg 0.1
+Title: fig_genealogy render order is hash-seed nondeterministic
+Created: 2026-07-28
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-28T13:17Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Found during ticket 0571's byte-compare invariant (PR #1269). `load_edges()`
+in both genealogy renderers returns `list(set(...))`, so edge draw order
+follows the Python string-hash seed: two runs of the SAME code on the same
+inputs, unpinned, produce different bytes (first difference at byte 3375 of
+`fig_genealogy.html`, an edge `<line>`; the PNG differs too). The 0571 A/B
+compare only passed with `PYTHONHASHSEED` pinned — an unpinned compare
+looked like a regression until the discriminator isolated it.
+
+This contradicts the Phase-2 contract ("fast, deterministic",
+`.claude/rules/architecture.md`) and defeats the point of `save_figure()`
+stripping metadata for byte-reproducible PNGs: the metadata is stable but
+the pixels are not. Any future refactor-validation byte-compare on these
+figures will report a spurious diff.
+
+## Relevant files
+
+- `scripts/figures/plot_genealogy.py` — `load_edges()`, `list(set(...))`
+- `scripts/figures/plot_genealogy_html.py` — same pattern
+- `scripts/pipeline_io.py` — `save_figure()` byte-reproducibility rationale
+
+## Actions
+
+1. Replace the `list(set(...))` dedup with an order-stable one (`sorted(set(...))`
+   or `dict.fromkeys`) in both renderers — one shared helper if they can share.
+2. Sweep other `plot_*`/`export_*` scripts for the same `list(set(` /
+   iteration-over-set pattern feeding an output; fix in the same commit if
+   trivial, list here if not.
+
+## Test
+
+Red first: build `fig_genealogy.html` twice under two different
+`PYTHONHASHSEED` values and `cmp` — fails today. Green after the stable
+ordering. Mark integration (subprocess).
+
+## Verification
+
+- [ ] Two builds under different hash seeds are byte-identical (PNG and HTML)
+- [ ] `make lint` and `make check` pass
+
+## Exit criteria
+
+Genealogy figures are byte-reproducible without pinning `PYTHONHASHSEED`,
+and no other Phase-2 output script feeds set iteration order into an artifact.
