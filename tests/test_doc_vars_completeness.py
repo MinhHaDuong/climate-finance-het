@@ -1,4 +1,4 @@
-"""Verify DOC_VARS in compute_vars.py lists every {{< meta >}} variable.
+"""Verify DOC_VARS lists every {{< meta >}} variable, and that prose says where it lives.
 
 Scans each .qmd and its {{< include >}}'d files for {{< meta X >}} shortcodes,
 then checks that every variable X appears in the DOC_VARS mapping for that
@@ -13,6 +13,7 @@ that side (ticket 0363). The shortcode scan is shared between the two.
 """
 
 import os
+import re
 import sys
 
 import pytest
@@ -116,3 +117,83 @@ def test_no_pinned_document_is_also_generated():
         f"{both} are listed as hand-maintained but compute_vars also generates "
         f"their variables — drop them from PINNED_DOCS"
     )
+
+
+#: Prose files that describe the registry to a reader or an editor. Each is a
+#: propagation target: a change to where `DOC_VARS` lives has to reach them, and
+#: nothing but a check makes that happen.
+REGISTRY_PROSE = [
+    "README.md",
+    "docs/ncc-pipeline-audit.md",
+    ".claude/rules/architecture.md",
+]
+
+#: Where `DOC_VARS` is actually defined. `compute_vars` re-exports it, so an
+#: instruction that says otherwise still *works* — which is exactly why it
+#: survives: following it lands the editor in a file that no longer holds the
+#: dict (ticket 0357).
+REGISTRY_MODULE = "_vars_registry.py"
+
+_REPO_ROOT = os.path.join(os.path.dirname(__file__), "..")
+
+#: "the DOC_VARS dictionary in compute_vars.py", "compute_vars.py's DOC_VARS",
+#: and their near neighbours — prose that points an editor at the re-export.
+_WRONG_HOME = re.compile(
+    r"DOC_VARS[^.\n]{0,60}\bcompute_vars\.py|compute_vars\.py[^.\n]{0,60}\bDOC_VARS"
+)
+
+
+def _prose(name):
+    path = os.path.join(_REPO_ROOT, name)
+    with open(path, encoding="utf-8") as fh:
+        return fh.read()
+
+
+@pytest.mark.parametrize("name", REGISTRY_PROSE)
+def test_prose_points_at_the_module_that_defines_the_registry(name):
+    """Prose naming DOC_VARS must send an editor to the registry, not the re-export."""
+    offenders = [
+        f"  {name}:{i}  {line.strip()}"
+        for i, line in enumerate(_prose(name).splitlines(), 1)
+        if _WRONG_HOME.search(line)
+    ]
+    assert not offenders, (
+        f"{name} tells the reader DOC_VARS lives in compute_vars.py; it is "
+        f"defined in scripts/analysis/{REGISTRY_MODULE} and only re-exported "
+        f"there, so following this lands in the wrong file:\n" + "\n".join(offenders)
+    )
+
+
+@pytest.mark.parametrize("name", REGISTRY_PROSE)
+def test_prose_does_not_call_a_registered_document_unregistered(name):
+    """A fixed defect described as open is worse than no description at all.
+
+    The README carried "**corpus-report is live in intent but not in fact.** It
+    is absent from `compute_vars.DOC_VARS`" for as long as that was true, and
+    would have carried it afterwards too. Registration is machine-checkable, so
+    the claim should be.
+
+    Scoped to the paragraph, not to a character window: in the real text the
+    document name and the word "absent" sat on different lines with a sentence
+    boundary between them, which is precisely what a proximity regex misses. A
+    first draft of this guard used one and passed the replayed defect.
+    """
+    for para in re.split(r"\n\s*\n", _prose(name)):
+        if "absent from" not in para:
+            continue
+        named = sorted(doc for doc in DOC_VARS if doc in para)
+        assert not named, (
+            f"{name} has a paragraph saying {named} are absent from the "
+            f"registry, but DOC_VARS registers them — the prose describes a "
+            f"defect that is fixed:\n  {' '.join(para.split())[:300]}"
+        )
+
+
+def test_the_registry_prose_scan_is_not_vacuous():
+    """Every named file must exist and mention the registry, or the scan is blind."""
+    for name in REGISTRY_PROSE:
+        text = _prose(name)
+        assert "DOC_VARS" in text, (
+            f"{name} no longer mentions DOC_VARS — drop it from REGISTRY_PROSE "
+            f"or the two scans above pass on it for free"
+        )
