@@ -9,6 +9,7 @@ import re
 from pathlib import Path
 
 import pytest
+from _mk_discovery import makefile_constants
 
 ZOO_MK = (
     Path(__file__).resolve().parent.parent / "scripts" / "analysis" / "zoo-figures.mk"
@@ -19,16 +20,22 @@ ZOO_RENDER_MK = (
     Path(__file__).resolve().parent.parent / "deliverables" / "zoo" / "zoo.mk"
 )
 
-_CROSSYEAR_RE = re.compile(
-    r"^CROSSYEAR_METHODS\s*:=\s*(.*?)(?=\n\S|\n\n|\Z)",
-    re.MULTILINE | re.DOTALL,
-)
+SCHEMATIC_SCRIPTS_DIR = Path(__file__).resolve().parent.parent / "scripts" / "figures"
 
 
-def _parse_crossyear_methods(mk: str) -> list[str]:
-    m = _CROSSYEAR_RE.search(mk)
-    assert m, "CROSSYEAR_METHODS not found in zoo-figures.mk"
-    return [t for t in m.group(1).split() if t != "\\"]
+def _mk_list(name: str) -> list[str]:
+    """`name`'s tokens from zoo-figures.mk, via the shared `.mk` parser (0248)."""
+    constants = makefile_constants(files=[ZOO_MK])
+    assert name in constants, f"{name} not found in zoo-figures.mk"
+    return constants[name].split()
+
+
+def _schematic_script_stems() -> set[str]:
+    """Stems of the plot_schematic_*.py scripts actually on disk."""
+    return {
+        p.stem[len("plot_schematic_"):]
+        for p in SCHEMATIC_SCRIPTS_DIR.glob("plot_schematic_*.py")
+    }
 
 
 @pytest.fixture(scope="class")
@@ -62,15 +69,15 @@ class TestZooMkStructure:
             "crossyear-tables must be declared .PHONY"
         )
 
-    def test_crossyear_methods_has_18_methods(self, zoo_mk_text):
-        methods = _parse_crossyear_methods(zoo_mk_text)
+    def test_crossyear_methods_has_18_methods(self):
+        methods = _mk_list("CROSSYEAR_METHODS")
         assert len(methods) == 18, (
             f"Expected 18 CROSSYEAR_METHODS, got {len(methods)}: {methods}"
         )
 
-    def test_cumulative_methods_included(self, zoo_mk_text):
+    def test_cumulative_methods_included(self):
         """L3, G3, G4, G7 use cumulative/single windows — must still have recipes."""
-        methods = _parse_crossyear_methods(zoo_mk_text)
+        methods = _mk_list("CROSSYEAR_METHODS")
         for expected in (
             "L3",
             "G3_coupling_age",
@@ -78,6 +85,26 @@ class TestZooMkStructure:
             "G7_disruption",
         ):
             assert expected in methods, f"{expected} missing from CROSSYEAR_METHODS"
+
+    def test_schematic_stems_match_the_scripts_on_disk(self):
+        """`ZOO_SCHEMATIC_STEMS` and `plot_schematic_*.py` must name the same set.
+
+        The pattern rule builds `schematic_$(stem).png` from
+        `plot_schematic_$(stem).py`, so a stem with no script fails loudly at
+        build time — but the other direction is silent: a script the list omits
+        is simply never built, and `make zoo-figures` ships the deliverable one
+        panel short at exit 0. The comment at the head of zoo-figures.mk says
+        the two "match exactly" and nothing enforced it (ticket 0571), so the
+        assertion is set equality rather than a subset check.
+        """
+        declared = set(_mk_list("ZOO_SCHEMATIC_STEMS"))
+        on_disk = _schematic_script_stems()
+        assert declared == on_disk, (
+            "ZOO_SCHEMATIC_STEMS must match scripts/figures/plot_schematic_*.py. "
+            f"Declared with no script: {sorted(declared - on_disk)}; "
+            f"script with no stem (panel would never build): "
+            f"{sorted(on_disk - declared)}"
+        )
 
     def test_zoo_pdf_target_in_render_mk(self):
         """The zoo PDF render rule lives in deliverables/zoo/zoo.mk (ticket 0237).

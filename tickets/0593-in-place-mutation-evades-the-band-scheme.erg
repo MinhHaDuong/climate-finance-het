@@ -1,0 +1,49 @@
+%erg 0.1
+Title: in-place mutation evades the band-scheme single-source AST guard
+Created: 2026-07-28
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-28T13:45Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Scope-overflow finding from the /gaze verify of PR #1269 (ticket 0571). The
+band scheme now has one definition (`scripts/_band_scheme.py`) and an AST
+guard asserting no module re-defines the constants. The guard catches
+re-definition but not re-binding at runtime: an in-place mutation such as
+`BAND_COLORS_RGB[0] = "#000000"` in a consumer module silently forks the
+scheme for every later reader in the same process, and no test fails.
+
+The gaze panel classified this non-blocking for 0571 (whose scope was the
+three hand-copied literals), but it is the same defect class one step
+removed: divergence with no failing test.
+
+## Relevant files
+
+- `scripts/_band_scheme.py` — the single source
+- `tests/test_band_scheme_single_source.py` — the AST guard this extends
+
+## Actions
+
+1. Make the shared constants immutable: `MappingProxyType` for the dicts
+   (or freeze at import); attempted mutation then raises at the mutation
+   site instead of corrupting downstream readers.
+2. Extend the AST guard only if immutability cannot cover a route (e.g.
+   `copy()`-then-mutate-then-rebind is fine and should stay legal).
+
+## Test
+
+Red first: a test that mutates `BAND_COLORS_RGB[0]` and asserts the
+mutation raises. Fails today (dict accepts it), green with the proxy.
+
+## Verification
+
+- [ ] In-place mutation of any band-scheme constant raises
+- [ ] `make lint` and `make check` pass
+
+## Exit criteria
+
+The band scheme cannot be forked at runtime without an exception at the
+forking line.
