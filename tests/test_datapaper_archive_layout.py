@@ -109,6 +109,7 @@ def products_named_in(text):
                     last_stem = re.sub(_PRODUCT_EXT + r"$", "", matches[-1])
                 elif last_stem and re.fullmatch(_PRODUCT_EXT, token):
                     found.add(last_stem + token)
+    return found
 
 
 class TestRenderRuleTracksTheIncludeClosure:
