@@ -28,7 +28,7 @@ Variable & Description \\
 \texttt{from\_istex} & Provenance flag: found in ISTEX \\
 \texttt{from\_bibcnrs} & Provenance flag: found in bibCNRS \\
 \texttt{from\_scispace} & Provenance flag: found via SciSpace \\
-\texttt{from\_grey} & Provenance flag: grey-literature source \\
+\texttt{from\_grey} & Provenance flag: institutional reports (curated seed + World Bank) \\
 \texttt{from\_teaching} & Provenance flag: teaching canon (syllabi) \\
 \texttt{from\_unfccc}† & Provenance flag: curated UNFCCC key document \\
 \texttt{from\_oecd}† & Provenance flag: curated OECD key document \\

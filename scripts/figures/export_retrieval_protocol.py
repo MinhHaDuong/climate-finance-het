@@ -192,7 +192,7 @@ def build_protocol_rows() -> list[dict]:
 
 
 def build_grey_rows() -> list[dict]:
-    """The curated grey-literature seed list, one row per report."""
+    """The curated institutional-reports seed list, one row per report."""
     return [
         {
             "Title": entry["title"],
