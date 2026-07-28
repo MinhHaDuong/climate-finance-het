@@ -16,7 +16,9 @@ Three functions, because the callers hold three different input contracts:
 
 ``markdown_cell``
     The input **is** Markdown — a curated description authored in-repo, whose
-    backticks are intentional code spans. Used by the deposit codebook.
+    backticks are intentional code spans. Written for the deposit codebook; no
+    live caller under ``scripts/`` today, and its rule is pinned by
+    ``tests/test_variables_table.py`` (see the ``_MARKDOWN_CODE`` note below).
 ``markdown_text_cell``
     The input is plain text with no markup intent — a journal name out of the
     bibliographic corpus, a source label edited by hand, a language code the
@@ -75,7 +77,9 @@ import re
 # the #1289 review caught it. Left in place rather than fixed: ``markdown_cell``
 # is the only user and has no live caller today, so changing its output would be
 # an unverifiable edit to a dormant path. Corrected here so the next reader does
-# not inherit the same false premise a third time (ticket 0530).
+# not inherit the same false premise a third time (ticket 0530). Whoever does
+# fix it should know that ``tests/test_variables_table.py`` currently *pins* the
+# escaped form, so the guard moves with the behaviour.
 _PROSE = {"\\": r"\\", "|": r"\|"}
 
 _MARKDOWN_TEXT = str.maketrans(_PROSE)

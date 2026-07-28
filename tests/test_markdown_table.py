@@ -6,7 +6,8 @@ these fast-tier tests keep the rule itself covered on any machine.
 
 `markdown_cell`'s own rule is pinned in `test_variables_table.py`, next to the
 codebook contract it serves. What is pinned here is the plain-text sibling and,
-above all, the boundary between the two — the reason there are two functions.
+above all, the boundaries between them — the reason the module splits at all.
+Ticket 0530 adds the third sibling, `markdown_verbatim_cell`, at the bottom.
 
 Ticket 0376 adds one rendered class at the bottom of this module rather than in
 a fidelity suite: what it pins is the *character set* — a property of the
