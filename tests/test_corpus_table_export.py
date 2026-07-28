@@ -301,3 +301,63 @@ def test_shipped_labels_are_untouched_by_the_escaper(tmp_path):
         assert f"| {meta['label']} |" in emitted, (
             f"label {meta['label']!r} was rewritten by the escaper"
         )
+
+
+# --- Ticket 0375: a zero-refined source must not ship a literal "nan" ---
+
+# main() builds the row for a source whose refined count is zero with five of
+# the eight keys; pd.DataFrame(rows) fills the four percentage columns with
+# float NaN for that row. The key IS present in the Series, so _write_md_table's
+# `row.get(c, "")` default never fires and the cell became str(float('nan')).
+ZERO_REFINED_ROW = {
+    "Source": "UNFCCC key documents", "Raw": 50, "Refined": 0, "Unique": 0,
+}
+
+
+@pytest.mark.integration
+def test_zero_refined_source_renders_empty_cells_not_nan(tmp_path):
+    """The four percentage cells of a zero-refined source render empty.
+
+    Red before ticket 0375: the shipped table carried
+    `| UNFCCC key documents | 50 | 0 | 0 | nan | nan | nan | nan |`.
+    Asserted on the rendered page, not the emitted source (0325's oracle) —
+    and against float NaN arriving through the DataFrame fill, the exact
+    shape main() produces, not a hand-written None.
+    """
+    require_pandoc()
+    summary = pd.DataFrame(
+        [_summary_row("OpenAlex"), ZERO_REFINED_ROW], columns=_MD_COLUMNS
+    )
+
+    row = row_with(_render(summary, tmp_path), "UNFCCC")
+
+    assert cell_texts(row) == [
+        "UNFCCC key documents", "50", "0", "0", "", "", "", "",
+    ], f"a zero-refined source leaked NaN into the rendered row:\n{row}"
+
+
+def test_zero_refined_source_keeps_empty_csv_fields(tmp_path):
+    """The .csv sibling carries empty fields for the same four columns.
+
+    This is a regression pin, not a fix: `to_csv`'s default `na_rep` already
+    renders NaN as an empty field. Pinned by reading the written file back —
+    a `columns=` allowlist has silently dropped a computed field before
+    (tickets 0288/0347), so the in-memory frame proves nothing.
+    """
+    from export_corpus_table import save_csv
+
+    summary = pd.DataFrame(
+        [_summary_row("OpenAlex"), ZERO_REFINED_ROW], columns=_MD_COLUMNS
+    )
+    csv_path = tmp_path / "tab_corpus_sources.csv"
+    save_csv(summary, str(csv_path))
+
+    text = csv_path.read_text(encoding="utf-8")
+    unfccc = [ln for ln in text.splitlines() if ln.startswith("UNFCCC")]
+    assert unfccc, f"the zero-refined row vanished from the csv:\n{text}"
+    assert "nan" not in unfccc[0], (
+        f"the csv row carries a literal nan: {unfccc[0]!r}"
+    )
+    assert unfccc[0].endswith(",,,,"), (
+        f"expected four trailing empty fields, got: {unfccc[0]!r}"
+    )
