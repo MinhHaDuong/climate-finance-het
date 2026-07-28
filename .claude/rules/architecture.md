@@ -30,6 +30,21 @@ deliverable's folder. Knowing the rule above did not prevent it, so it is
 written here as the consequence rather than left to be re-derived (ticket 0359,
 whose reachability guard depends on getting this right).
 
+**`DOC_VARS` is the per-document variable contract, and `DOC_VARS_FILE` says
+which metadata file each document loads.** Both live in
+`scripts/analysis/_vars_registry.py` and are re-exported by `compute_vars`, so
+`from compute_vars import DOC_VARS` still resolves but the file to edit is the
+registry. Four documents
+share `_shared/technical-report-vars.yml`, so that file is written with the
+union of their declared keys. The registry states the sharing rather than
+leaving the render to discover it, because an unregistered document does not
+fail: Quarto resolves whatever the shared file happens to carry, writes
+`?meta:key` for the rest, and exits 0. corpus-report sat outside the registry
+that way and rendered 12 placeholders. `tests/test_doc_vars_completeness.py`
+now discovers documents from disk, so the next unregistered one fails instead
+of being skipped; a document whose vars file is hand-maintained goes in that
+test's `PINNED_DOCS` (ticket 0357).
+
 **`paths.mk` is the per-deliverable artifact contract.** Each document owns a
 `*_INCLUDES` list (the shared files it composes) and a `*_FIGS` list (the
 figures it embeds); its render rule takes both as prerequisites. Both answer

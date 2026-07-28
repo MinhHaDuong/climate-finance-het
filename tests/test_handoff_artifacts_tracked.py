@@ -26,7 +26,7 @@ from utils import BASE_DIR
 # itself. Omitting this makes the import succeed or fail by collection order.
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "analysis"))
 
-from compute_vars import DOC_OUTPUT_DIR, DOC_VARS
+from compute_vars import DOC_VARS, DOC_VARS_FILE
 
 # Paths a render rule can name. Deliberately excludes the rendered PDF/DOCX,
 # which are regenerable outputs rather than inputs and stay ignored.
@@ -84,16 +84,16 @@ def test_tracked_vars_file_carries_every_declared_variable(doc):
     file exists in git (ticket 0329, after 0348 made these files handoff
     artifacts).
     """
-    path = os.path.join(DOC_OUTPUT_DIR[doc], f"{doc}-vars.yml")
+    path = DOC_VARS_FILE[doc]
     if not os.path.isfile(path):
         pytest.skip(f"{path} not built here")
     with open(path, encoding="utf-8") as fh:
         present = yaml.safe_load(fh) or {}
     missing = [k for k in DOC_VARS[doc] if k not in present]
     assert not missing, (
-        f"{doc}-vars.yml is missing {len(missing)} declared variable(s): "
-        f"{missing}. Regenerate it with `make stats` and commit the result — "
-        "the render reads this file, not compute_vars.py."
+        f"{os.path.basename(path)} is missing {len(missing)} variable(s) "
+        f"declared for {doc}: {missing}. Regenerate it with `make stats` and "
+        "commit the result — the render reads this file, not compute_vars.py."
     )
 
 
