@@ -141,6 +141,7 @@ DOC_VARS = {
         "gm_coverage_pct",
         "gm_modularity",
         "gm_n_connected",
+        "inst_layer_pct",
         "lang_detected_n",
         "lang_detected_pct",
         "lang_english_pct",

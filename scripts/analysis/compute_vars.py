@@ -180,6 +180,17 @@ def corpus_stats(v):
         oa_pct = 100 * df["from_openalex"].sum() / n
         v["openalex_pct"] = _pct(oa_pct)
 
+    # Selected institutional layer (grey + unfccc + oecd): union, not sum,
+    # so a work carried by two of the three layers counts once. All three
+    # columns are required — computing the share from a subset would silently
+    # shrink the layer, whereas an absent key surfaces downstream as an
+    # unresolved shortcode (ticket 0334). The Abstract quantifies its
+    # coverage claim with this share.
+    inst_cols = ["from_grey", "from_unfccc", "from_oecd"]
+    if all(c in df.columns for c in inst_cols):
+        inst_n = df[inst_cols].any(axis=1).sum()
+        v["inst_layer_pct"] = _pct(100 * inst_n / n)
+
     # Raw (pre-filter) count from unified_works.csv
     unified_path = os.path.join(CATALOGS_DIR, "unified_works.csv")
     if os.path.isfile(unified_path):
