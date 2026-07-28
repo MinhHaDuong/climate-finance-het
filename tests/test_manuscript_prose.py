@@ -442,7 +442,9 @@ def find_empty_sec_xrefs(text: str) -> list[str]:
 
 
 def _deliverable_qmds() -> list[Path]:
-    return sorted((REPO_ROOT / "deliverables").glob("*/*.qmd"))
+    # rglob, not glob("*/*.qmd"): a document filed one level deeper must not
+    # slip out of the guard's scope silently.
+    return sorted((REPO_ROOT / "deliverables").rglob("*.qmd"))
 
 
 def test_no_sec_xref_in_hand_numbered_deliverable():
