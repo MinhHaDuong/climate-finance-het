@@ -2,10 +2,14 @@
 Title: Stale network-limitations numbers are quoted verbatim to RDJ26561 reviewers
 Created: 2026-07-28
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1279
 
 --- log ---
 2026-07-28T17:10Z HDMX-coding-agent created
+2026-07-28T17:35Z HDMX-coding-agent note Scope adjustment: action 4 (sweep all tracked tables for this drift class) is delegated to ticket 0641, the systematic audit of that class. This ticket does actions 1-3 only; its exit criterion reduces to "no number in the RDJ26561 response contradicts the artifact it cites".
+2026-07-28T17:45Z HDMX-coding-agent note qa_cocitation_edges_report.json regenerated and then deliberately reverted, NOT committed - it is not the same drift class as the CSV. Rerunning it re-samples 50 edges from a graph that changed (222 -> 203 edges) and re-fetches each witness from live Crossref, so it is a new experiment, not a replay. Measured: n_nodes 132 -> 126, n_edges 222 -> 203, n_confirmed 49/50 -> 47/50, concordance 0.98 -> 0.94, Wilson CI [0.895, 0.996] -> [0.838, 0.979], n_unresolvable 0 both. The three current misses are new edges, none of them the committed run's Energy Journal pair: 10.1038/nature03301--10.1038/nature02771 (witness 10.1017/cbo9780511817434), 10.2307/20033020--10.1126/science.1064419 (witness 10.1007/s10584-008-9406-0), 10.2307/20033020--10.1126/science.287.5461.2225 (witness 10.1029/2005gl023977). Adopting the rerun would require rewriting the spot-check paragraph's "the one miss is an Energy Journal special-issue pair" clause into a fresh three-miss narrative - authored claims about a submission record's evidence, which is the author's call, not an agent edit. Reverting keeps the response consistent with the artifact it cites. Author decides: freeze the spot-check as a dated 2026-07-23 probe of record, or accept the rerun and commission the rewrite.
 
+2026-07-28T16:48Z HDMX-coding-agent closed — autoclosed — PR #1279
 --- body ---
 ## Context
 
@@ -69,10 +73,14 @@ be the guard worth writing, and that belongs in its own ticket.
 
 ## Verification
 
-- [ ] Both artifacts regenerated and diffed
-- [ ] Every number the response quotes traced to a current value
-- [ ] Author has arbitrated the prose changes
-- [ ] Sweep result recorded: how many tracked artifacts are stale
+- [x] Both artifacts regenerated and diffed
+- [x] Every number the response quotes traced to a current value
+- [ ] Author has arbitrated the prose changes — the merge decision on PR
+      #1279 *is* the arbitration; the PR body lists every change as a
+      before/after pair. Left unticked deliberately: an agent ticking a box
+      that asserts the author acted would forge the record.
+- [ ] Sweep result recorded: how many tracked artifacts are stale —
+      delegated to ticket 0641 (see the 17:35Z log note)
 
 ## Exit criteria
 

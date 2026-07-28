@@ -8,9 +8,12 @@ and the CLI/Makefile contracts by source inspection (no subprocess in the
 fast tier).
 """
 
+import glob
 import os
+import re
 
 import networkx as nx
+import pandas as pd
 import yaml
 
 SCRIPTS = os.path.join(os.path.dirname(__file__), "..", "scripts")
@@ -150,7 +153,6 @@ def test_response_letter_numbers_trace_to_artifact():
         "r1-14-network-response.md")
     assert os.path.exists(md_path)
     assert os.path.exists(csv_path)
-    import pandas as pd
 
     df = pd.read_csv(csv_path).set_index("metric")["value"]
     md = open(md_path).read()
@@ -164,3 +166,121 @@ def test_response_letter_numbers_trace_to_artifact():
     pct = round(100 * df["econ_cross_share_null_mean"])
     assert f"{pct:.0f}%" in md
     assert f"z = {df['econ_within_share_z']:.1f}" in md
+
+
+def test_no_response_file_quotes_a_stale_z():
+    """No response document quotes a z-score the stats CSV does not produce.
+
+    The presence check above passes as soon as ONE file carries the current
+    value, so it cannot see a second file still carrying the old one. That is
+    not hypothetical: ticket 0625 regenerated the table (z 9.086 -> 8.738),
+    fixed `r1-14-network-response.md`, and left the same R1-14 sentence in
+    `response-letter.md` reading z = 9.1 — contradicting the artifact it
+    cites, in the document that actually goes to the journal.
+
+    Absence, not presence, is the property worth pinning. Files are discovered
+    rather than listed, so a new response document is covered on arrival.
+
+    Three scoping decisions, each paid for by a review round:
+
+    *Which z.* Requiring every z in the bundle to equal this one fails on
+    correct prose — the bundle may quote a z from another analysis, and one
+    already exists: `lit_poles_z`, the Kouwenberg--Zheng poles separation,
+    also a degree-preserving rewiring null and rendered as such in
+    `data-paper.qmd`. So the accepted set is every z the pipeline generates,
+    not this one value. That is the property worth asserting: a
+    degree-preserving z in the response traces to some artifact. A superseded
+    9.1 matches nothing and is caught; a legitimate 76 matches and passes.
+
+    *Which spelling.* `z = 8.7`, `z=8.7`, `Z = 8.7`, `z ≈ 8.7` and `a z of
+    8.7` are one claim to a reader, and a guard reading one of them is a
+    rewrite away from blind. Comparison is numeric at the precision the prose
+    chose, not string equality: `z = 8.74` is more precise and correct, and
+    a `.1f` string compare would bounce it.
+
+    *Which window.* Matching per line makes an ordinary paragraph rewrap
+    blind the guard — the real occurrences sit at 63--73 characters in files
+    wrapped near 77, so one added word moves a z onto its own line. The
+    search runs over whitespace-collapsed text within a window of the phrase
+    instead, which no reflow changes.
+
+    `external-review/` is skipped explicitly rather than by relying on the
+    glob being non-recursive — it holds inbound referee text, whose numbers
+    are theirs to be wrong about, and an implicit exclusion would evaporate
+    the day someone widens the glob.
+    """
+    base = os.path.join(SCRIPTS, "..")
+    bundle = os.path.join(
+        base, "deliverables", "data-paper", "revision-rdj26561")
+    df = pd.read_csv(os.path.join(
+        base, "deliverables", "_shared", "tables",
+        "tab_network_limitations.csv")).set_index("metric")["value"]
+    generated = [float(df["econ_within_share_z"])]
+    with open(os.path.join(
+            base, "deliverables", "data-paper", "data-paper-vars.yml")) as fh:
+        poles_z = yaml.safe_load(fh).get("lit_poles_z")
+    if poles_z is not None:
+        generated.append(float(poles_z))
+
+    responses = [p for p in sorted(glob.glob(
+        os.path.join(bundle, "**", "*.md"), recursive=True))
+        if "external-review" not in os.path.relpath(p, bundle).split(os.sep)]
+    assert responses, "revision bundle has no response documents"
+    claim_re = re.compile(
+        r"degree-preserving.{0,120}?\bz\s*(?:=|≈|of)\s*(\d+(?:\.\d+)?)",
+        re.IGNORECASE)
+    stale = []
+    for path in responses:
+        with open(path) as fh:
+            text = " ".join(fh.read().split())
+        for quoted in claim_re.findall(text):
+            decimals = len(quoted.partition(".")[2])
+            if not any(float(quoted) == round(g, decimals)
+                       for g in generated):
+                stale.append(
+                    f"{os.path.relpath(path, bundle)} quotes z = {quoted} "
+                    f"for a degree-preserving null; the pipeline generates "
+                    f"{[round(g, decimals) for g in generated]}")
+    assert not stale, "; ".join(stale)
+
+
+def test_response_provenance_names_the_pinned_corpus():
+    """The response's corpus-state line names the corpus `dvc.lock` pins.
+
+    The response asserts, three lines apart, both a corpus state and that
+    repeated `make network-limitations` runs are byte-identical. Once the
+    numbers are regenerated those two claims constrain each other: if the
+    named corpus were really the one in hand, the regeneration would have
+    reproduced the old table. Ticket 0625 moved the numbers and initially
+    left the line naming a 2026-07-23 checkout the values no longer came
+    from — a false provenance claim manufactured by the fix itself.
+
+    Pinning the md5 rather than the date is what makes the claim checkable:
+    a date is prose, a hash is the corpus.
+
+    The hash is required *in the bullet that claims it*, not anywhere in the
+    file. The document deliberately names two corpus states — the statistics
+    table's and the spot-check's earlier one — so a file-wide search would
+    be satisfied by the hash sitting in either, and could not see the exact
+    defect it exists to catch recur one bullet over.
+    """
+    base = os.path.join(SCRIPTS, "..")
+    lock = yaml.safe_load(open(os.path.join(base, "dvc.lock")))
+    pinned = {o["md5"] for stage in lock["stages"].values()
+              for o in stage.get("outs", [])
+              if o["path"].endswith("refined_citations.csv")}
+    assert pinned, "dvc.lock pins no refined_citations.csv"
+    md = open(os.path.join(
+        base, "deliverables", "data-paper", "revision-rdj26561",
+        "r1-14-network-response.md")).read()
+    bullet = re.search(
+        r"^-\s+Corpus state, statistics table:(.*?)(?=^-\s|\Z)",
+        md, re.MULTILINE | re.DOTALL)
+    assert bullet, (
+        "no 'Corpus state, statistics table:' bullet — the response must "
+        "say which corpus the regenerated table came from")
+    claimed = " ".join(bullet.group(1).split())
+    assert any(h in claimed for h in pinned), (
+        f"the statistics-table corpus bullet names no currently pinned "
+        f"refined_citations; it says {claimed!r}, dvc.lock pins "
+        f"{sorted(pinned)}")
