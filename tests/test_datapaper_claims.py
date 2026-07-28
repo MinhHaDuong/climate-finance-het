@@ -306,10 +306,14 @@ def test_fang_literal_percentage_detected():
     assert find_literal_percentages(extract_abstract(BAD_DOC)) == ["1.5%"]
 
 
-GENERATED_MD = """| Source | Raw | Refined |
-|:-------|----:|--------:|
-| OpenAlex | 40,000 | 30,000 |
-| Institutional reports | 281 | 210 |
+# Shaped like the real artifact: tab_corpus_sources.csv carries a Query column,
+# and the institutional-reports row's query is where "World Bank" appears. The
+# fingerprint has to be in the fixture for world_bank_row_label to have anything
+# to key on — without it the fang could only compare strings by hand.
+GENERATED_MD = """| Source | Query | Raw | Refined |
+|:-------|:------|----:|--------:|
+| OpenAlex | 4-tier keyword taxonomy | 40,000 | 30,000 |
+| Institutional reports | World Bank Open Knowledge Repository API | 281 | 210 |
 
 : Corpus sources. {#tbl-quality}
 
@@ -361,7 +365,7 @@ def test_fang_lost_fingerprint_says_so_rather_than_blaming_a_rename():
 @pytest.mark.adherence
 def test_fang_pipe_table_rows_picks_its_own_table():
     """The seed enumeration sits right below the protocol table; skip it."""
-    rows = pipe_table_rows(GENERATED_MD, ["Source", "Raw", "Refined"])
+    rows = pipe_table_rows(GENERATED_MD, ["Source", "Query", "Raw", "Refined"])
     assert [r["Source"] for r in rows] == ["OpenAlex", "Institutional reports"]
     with pytest.raises(AssertionError, match="no pipe table with header"):
         pipe_table_rows(GENERATED_MD, ["Source", "Retrieval"])
@@ -376,9 +380,15 @@ def test_fang_generated_table_label_drift_detected():
     assert paper_label == "Institutional reports"
     drifted = pipe_table_rows(
         GENERATED_MD.replace("| Institutional reports |", "| Grey literature |"),
-        ["Source", "Raw", "Refined"],
+        ["Source", "Query", "Raw", "Refined"],
     )
-    assert paper_label not in [r["Source"] for r in drifted]
+    # Read the drifted label the way the production guard does, off the layer's
+    # own fingerprint — a hand-rolled membership check would pass even if
+    # world_bank_row_label were broken.
+    assert world_bank_row_label(drifted) == "Grey literature"
+    assert world_bank_row_label(drifted) != paper_label, (
+        f"fang failed to detect drift: both tables would report {paper_label!r}"
+    )
 
 
 @pytest.mark.adherence
