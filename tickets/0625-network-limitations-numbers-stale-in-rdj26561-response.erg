@@ -71,10 +71,14 @@ be the guard worth writing, and that belongs in its own ticket.
 
 ## Verification
 
-- [ ] Both artifacts regenerated and diffed
-- [ ] Every number the response quotes traced to a current value
-- [ ] Author has arbitrated the prose changes
-- [ ] Sweep result recorded: how many tracked artifacts are stale
+- [x] Both artifacts regenerated and diffed
+- [x] Every number the response quotes traced to a current value
+- [ ] Author has arbitrated the prose changes — the merge decision on PR
+      #1279 *is* the arbitration; the PR body lists every change as a
+      before/after pair. Left unticked deliberately: an agent ticking a box
+      that asserts the author acted would forge the record.
+- [ ] Sweep result recorded: how many tracked artifacts are stale —
+      delegated to ticket 0641 (see the 17:35Z log note)
 
 ## Exit criteria
 
