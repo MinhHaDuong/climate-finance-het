@@ -1,0 +1,59 @@
+%erg 0.1
+Title: figure scripts fall back to synthetic placeholder data and the render exits 0
+Created: 2026-07-28
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-28T15:26Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Found during ticket 0570's prose audit of the multilayer technical report.
+The scripts behind `@fig-terms` and `@fig-community` fall back to *synthetic
+placeholder data* (with a TODO(t0064) annotation stamped into the image
+pixels) when their interpretation tables (`tab_discrim_terms*.csv`,
+`tab_community_shifts*.csv`) are absent — and those tables do not exist. The
+document then renders a results sentence ("shows the top discriminative
+terms for each confirmed zone") over invented data, and the build exits 0.
+
+This is the guard-proof variant of the 0570 defect class. The 0357 render
+oracle cannot see it (nothing fails to resolve), the 0570 sentinel guard
+cannot see it (nothing is a sentinel), and pdftotext cannot see it (the TODO
+stamp is pixels, not text). Ticket 0064 tracks *building* the interpretation
+layer; this ticket is about the *failure mode*: a figure script must not
+substitute invented data silently.
+
+## Relevant files
+
+- the `@fig-terms` / `@fig-community` producing scripts (locate via the
+  multilayer Make targets; each contains the synthetic-fallback branch)
+- `tickets/0064-*.erg` — the open interpretation-layer ticket this is not
+
+## Actions
+
+1. Invert the fallback: absent input tables → the script exits non-zero
+   with a message naming the missing table and ticket 0064, instead of
+   fabricating data. Make then stops; the deliverable cannot embed the stub.
+2. Sweep all `plot_*` scripts for the same synthetic-fallback pattern
+   (grep for the TODO-stamp idiom and any np.random/hardcoded demo arrays
+   behind an `if not exists` branch); list and fix in the same commit.
+3. If a deliverable currently depends on one of these figures, its prose
+   claim is unsupported: cut or flag the passage in the same PR, and say so
+   in the PR body for author review.
+
+## Test
+
+Red first: run one offending script with its input table absent and assert
+exit code 0 today (the defect); green asserts non-zero exit and no output
+file written. Mark integration (subprocess).
+
+## Verification
+
+- [ ] Each swept script fails loudly without its input; none writes a stub
+- [ ] `make check` passes; no deliverable renders a placeholder figure
+
+## Exit criteria
+
+No figure in any deliverable can be generated from data the pipeline did
+not compute.
