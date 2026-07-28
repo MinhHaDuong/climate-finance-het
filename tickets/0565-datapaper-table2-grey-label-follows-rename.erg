@@ -8,6 +8,7 @@ Author: HDMX-coding-agent
 2026-07-28T09:10Z HDMX-coding-agent note follow-up from PR #1260 review (ticket 0334); generator shared with corpus-report, so out of that PR's scope
 2026-07-28T09:40Z HDMX-coding-agent note scope extended: review round 2 found the same label in tab_retrieval_protocol (caption, heading, row label, pinned by tests); rename all generated tables under one decision
 
+2026-07-28T20:12Z bump verify-reroll — round 1: unresolved verifiable minor — test_fang_generated_table_label_drift_detected still doesn't exercise world_bank_row_label() on a drifted artifact fixture carrying the World Bank fingerprint
 --- body ---
 ## Context
 
