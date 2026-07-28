@@ -29,7 +29,7 @@ climate-finance-datapaper/
       embeddings.npz             # 38,736 multilingual vectors (1024-dim)
       citations.csv              # 1,375,310 citation pairs
       tab_retrieval_protocol.csv # Per-source query fields, term counts, languages
-      tab_retrieval_protocol.md  # The same, plus the grey-literature seed list
+      tab_retrieval_protocol.md  # The same, plus the institutional-reports seed list
       tab_reranker_validation.csv # Relevance-filter validation: per-quintile human-relevant rates (implies AUC 0.818)
       reranker_hitl_stratified.csv # The 100-work stratified validation sample (scores; per-work grades not retained)
       reranker_hitl_review.csv   # Threshold-zone sample, 100 works with per-work human grades

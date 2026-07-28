@@ -10,7 +10,7 @@ Produces, from config only (no corpus data, no network):
 - ``tab_retrieval_protocol.csv`` — one row per source: retrieval mode, the
   fields the query searched, the term or seed count, and language coverage.
 - ``tab_retrieval_protocol.md`` — the same table for human reading, plus the
-  enumeration of the curated grey-literature reports.
+  enumeration of the curated institutional reports.
 
 Deliberately absent: harvest date and per-query record counts. Neither has a
 machine-readable source, and hand-typing them would recreate the drift this
@@ -40,12 +40,13 @@ CAPTION = (
     " is a hand-assembled list. *Languages*: the languages the query terms or"
     " seed documents are written in."
     " Query-term counts are rendered from the deposited configuration for the"
-    " five configured sources (OpenAlex, ISTEX, the grey seed list, and the"
-    " two key-document layers). Language coverage is config-derived only for"
+    " five configured sources (OpenAlex, ISTEX, the institutional-reports seed"
+    " list, and the two key-document layers). Language coverage is"
+    " config-derived only for"
     " OpenAlex, whose terms carry language tags, and for the two key-document"
     " layers, whose seed entries carry a language field. The ISTEX and"
-    " grey-literature languages are asserted by the harvest scripts, because"
-    " neither source declares a language a script could read."
+    " institutional-reports languages are asserted by the harvest scripts,"
+    " because neither source declares a language a script could read."
     " The three restricted sources have no machine-readable query — their"
     " rows describe the harvest as it was performed and are marked"
     " accordingly."
@@ -55,7 +56,7 @@ CAPTION = (
 )
 
 GREY_CAPTION = (
-    ": The curated grey-literature seed list, in full"
+    ": The curated institutional-reports seed list, in full"
     " (`config/grey_sources.yaml`). The World Bank Open Knowledge Repository"
     " contributes further records by API query and is not enumerated."
 )
@@ -140,8 +141,11 @@ def build_protocol_rows() -> list[dict]:
             "Query terms": collect["queries"]["istex"],
             "Languages": "English, French",
         },
+        # Label follows Table 1 of the data paper (ticket 0334's rename); the
+        # config filename stays `grey_sources.yaml`, a code identifier.
+        # Pinned by tests/test_datapaper_claims.py (ticket 0565).
         {
-            "Source": "Grey literature",
+            "Source": "Institutional reports",
             "Retrieval": "Curated seed list plus World Bank repository API",
             "Query fields": "seed identifiers; repository full-text search",
             "Query terms": (
@@ -234,7 +238,7 @@ def render_markdown() -> str:
     lines += _pipe_table(build_protocol_rows(), COLUMNS, CAPTION)
     lines += [
         "",
-        "### Curated grey-literature seed list {.unnumbered}",
+        "### Curated institutional-reports seed list {.unnumbered}",
         "",
     ]
     lines += _pipe_table(

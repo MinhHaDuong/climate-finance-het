@@ -6,17 +6,17 @@ All API queries are bounded to publication years 1990--2024. Terms, concept grou
 |:---|:---|:---|:---|:---|
 | OpenAlex | Four-tier keyword search (co-occurrence filter, T3 2 / T4 3 of 4 concept groups) | default.search (title, abstract, indexed fulltext) | 52 (T1 15, T2 25, T3 10, T4 2) | 8: Arabic, Chinese, English, French, German, Japanese, Portuguese, Spanish |
 | ISTEX | Boolean phrase search | ISTEX default index | "climate finance" OR "finance climat" OR "finance climatique" | English, French |
-| Grey literature | Curated seed list plus World Bank repository API | seed identifiers; repository full-text search | 17 curated reports, 3 API queries | English |
+| Institutional reports | Curated seed list plus World Bank repository API | seed identifiers; repository full-text search | 17 curated reports, 3 API queries | English |
 | UNFCCC key documents | Curated seed list (config/unfccc_sources.yaml) | document symbol | 232 seed documents | English |
 | OECD DAC key documents | Curated seed list (config/oecd_dac_sources.yaml) | document symbol | 35 seed documents | English |
 | bibCNRS | Hand-harvested export (CNRS credentials) | aggregator native search (Gale, Wanfang, NewsBank) | not machine-readable | French, Chinese, Japanese, German |
 | SciSpace | AI-assisted systematic review, hand-exported | vendor native search | not machine-readable | English |
 | Teaching canon | Syllabus scraping plus LLM reference extraction | syllabus full text | not machine-readable | English |
 
-: Retrieval protocol per source. *Retrieval*: how records enter the corpus. *Query fields*: the index fields the query matched. *Query terms*: search terms, or curated seed documents where the source is a hand-assembled list. *Languages*: the languages the query terms or seed documents are written in. Query-term counts are rendered from the deposited configuration for the five configured sources (OpenAlex, ISTEX, the grey seed list, and the two key-document layers). Language coverage is config-derived only for OpenAlex, whose terms carry language tags, and for the two key-document layers, whose seed entries carry a language field. The ISTEX and grey-literature languages are asserted by the harvest scripts, because neither source declares a language a script could read. The three restricted sources have no machine-readable query — their rows describe the harvest as it was performed and are marked accordingly. Records returned and retained per source are in the corpus composition table; per-run harvest counts are not reported here because no machine-readable record of them exists.
+: Retrieval protocol per source. *Retrieval*: how records enter the corpus. *Query fields*: the index fields the query matched. *Query terms*: search terms, or curated seed documents where the source is a hand-assembled list. *Languages*: the languages the query terms or seed documents are written in. Query-term counts are rendered from the deposited configuration for the five configured sources (OpenAlex, ISTEX, the institutional-reports seed list, and the two key-document layers). Language coverage is config-derived only for OpenAlex, whose terms carry language tags, and for the two key-document layers, whose seed entries carry a language field. The ISTEX and institutional-reports languages are asserted by the harvest scripts, because neither source declares a language a script could read. The three restricted sources have no machine-readable query — their rows describe the harvest as it was performed and are marked accordingly. Records returned and retained per source are in the corpus composition table; per-run harvest counts are not reported here because no machine-readable record of them exists.
 
 
-### Curated grey-literature seed list {.unnumbered}
+### Curated institutional-reports seed list {.unnumbered}
 
 | Title | Author | Year | Organisation |
 |:---|:---|:---|:---|
@@ -38,5 +38,5 @@ All API queries are bounded to publication years 1990--2024. Terms, concept grou
 | Providing Global Public Goods: Managing Globalization | Kaul, Inge; Conceição, Pedro; Le Goulven, Katell; Mendoza, Ronald U. | 2003 | UNDP/Oxford University Press |
 | Reporting on Development: ODA and Financing for Development | Vanheukelom, Jan and Migliorisi, Stefano and Herrero Cangas, Alisa and Keijzer, Niels and Spierings, Eunike | 2012 | ECDPM |
 
-: The curated grey-literature seed list, in full (`config/grey_sources.yaml`). The World Bank Open Knowledge Repository contributes further records by API query and is not enumerated.
+: The curated institutional-reports seed list, in full (`config/grey_sources.yaml`). The World Bank Open Knowledge Repository contributes further records by API query and is not enumerated.
 
