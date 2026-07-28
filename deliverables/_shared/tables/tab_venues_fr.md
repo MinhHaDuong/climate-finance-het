@@ -1,17 +1,16 @@
 | Lean | Journal | Eff. | Acc. | Total |
 |:-----|:--------|-----:|-----:|------:|
 | Efficiency | Energy Economics | 16 | 2 | 18 |
+| Efficiency | Renewable and Sustainable Energy Reviews | 32 | 9 | 41 |
 | Efficiency | Journal of Cleaner Production | 30 | 10 | 40 |
-| Efficiency | Renewable and Sustainable Energy Reviews | 30 | 11 | 41 |
-| Efficiency | Energy Policy | 48 | 21 | 69 |
-| Efficiency | Sustainability | 73 | 35 | 108 |
+| Efficiency | Sustainability | 74 | 34 | 108 |
+| Efficiency | Energy Policy | 47 | 22 | 69 |
 | Efficiency | Energies | 27 | 16 | 43 |
-| Shared | Center for International Forestry Research (CIFOR) eBooks | 12 | 12 | 24 |
 | Shared | Ecology and Society | 16 | 18 | 34 |
-| Accountability | Nature Climate Change | 12 | 18 | 30 |
+| Shared | Nature Climate Change | 13 | 17 | 30 |
 | Accountability | Nature Communications | 13 | 22 | 35 |
+| Accountability | Climate Policy | 21 | 37 | 58 |
 | Accountability | Climatic Change | 15 | 28 | 43 |
-| Accountability | Climate Policy | 20 | 38 | 58 |
 | Accountability | PLoS ONE | 11 | 22 | 33 |
 | Accountability | International Environmental Agreements Politics Law and Economics | 7 | 16 | 23 |
 | Accountability | Wiley Interdisciplinary Reviews Climate Change | 7 | 28 | 35 |

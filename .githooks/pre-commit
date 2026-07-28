@@ -38,6 +38,12 @@ fi
 large=$(git diff --cached --name-only --diff-filter=AM | while IFS= read -r file; do
     case "$file" in uv.lock) continue ;; esac
     case "$file" in deliverables/_shared/tables/*.csv) continue ;; esac
+    # Same rationale as the tables exemption: a generated deliverable artifact
+    # whose size is a property of the render, not of a mistake. Without this the
+    # guard is one-way — fig_traditions_pre2008_citers.png was committed at
+    # 838KB before the check existed, so every regeneration of it was blocked
+    # even when the new file is *smaller* (832KB, ticket 0610).
+    case "$file" in deliverables/_shared/figures/*.png) continue ;; esac
     case "$file" in tickets/erg|tickets/erg-github) continue ;; esac
     size=$(wc -c < "$file" 2>/dev/null || echo 0)
     if [ "$size" -gt 512000 ]; then
