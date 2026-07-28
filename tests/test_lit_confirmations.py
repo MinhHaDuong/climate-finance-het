@@ -220,6 +220,54 @@ def test_sem6_assignments_artifact_contract():
     assert df["doi"].is_monotonic_increasing
 
 
+def test_permutation_floor_is_reported_as_a_bound_not_an_equality():
+    """A permutation p at its resolution floor must not print as `= p`.
+
+    Red before ticket 0335: the paper read "z = 76, p = 0.0099" — an
+    internally impossible pair that one external reviewer read as a
+    reporting error. The truth is that 0.0099 is exactly 1/(B+1) for the
+    configured B = 100 rewirings: zero null replicates reached the observed
+    value, so the p is the smallest value the test can resolve, a bound and
+    not an estimate. Printing the floor with `=` claims a precision the
+    test does not have; the fix formats it as `< bound` with B carried
+    into the prose as its own variable.
+    """
+    art = pd.read_csv(CSV_PATH).set_index("metric")["value"]
+    p, n_perm = float(art["poles_p_value"]), int(art["poles_n_perm"])
+    floor = 1.0 / (n_perm + 1.0)
+    if p > floor:
+        return  # a rebuild found exceedances; the equality form is honest
+    with open(os.path.join(
+            BASE, "deliverables", "data-paper", "data-paper-vars.yml")) as fh:
+        vars_yml = yaml.safe_load(fh)
+    assert not str(vars_yml["lit_poles_p"]).startswith("="), (
+        f"lit_poles_p is {vars_yml['lit_poles_p']!r}, but the artifact's "
+        f"poles_p_value ({p:.6f}) sits at the B={n_perm} permutation floor "
+        f"1/(B+1)={floor:.6f} — report a bound, not an equality"
+    )
+    assert "lit_poles_nperm" in vars_yml, (
+        "the prose needs B to interpret the bound; export lit_poles_nperm"
+    )
+
+
+def test_perm_p_formatter_bounds_the_floor_and_estimates_above_it():
+    """`_fmt_perm_p` switches comparator at the resolution floor.
+
+    At the floor the bound is the floor rounded UP to one significant digit,
+    so the printed inequality stays true (1/101 is 0.00990..., and
+    'p < 0.0099' would overstate); above it the equality form is _fmt_p's.
+    """
+    import sys
+
+    sys.path.insert(0, os.path.join(SCRIPTS, "analysis"))
+    from compute_vars import _fmt_perm_p
+
+    assert _fmt_perm_p(1 / 101, 100) == "< 0.01"
+    assert _fmt_perm_p(2 / 101, 100) == "= 0.0198"
+    assert _fmt_perm_p(1 / 501, 500) == "< 0.002"
+    assert _fmt_perm_p(0.03, 100) == "= 0.0300"
+
+
 def test_no_hardcoded_p_values_in_prose_bullets():
     """The confirmation bullets carry no literal p = 0.x digits."""
     import re

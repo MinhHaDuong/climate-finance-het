@@ -13,6 +13,7 @@ Usage:
 """
 
 import json
+import math
 import os
 import sys
 import warnings
@@ -538,6 +539,25 @@ def _fmt_p(p):
     return "< 0.0001"
 
 
+def _fmt_perm_p(p, n_perm):
+    """Empirical permutation p with a floor-aware comparator (ticket 0335).
+
+    An add-one smoothed permutation p of 1/(B+1) means zero null replicates
+    reached the observed value: the test hit its resolution floor, and the
+    value is a bound, not an estimate. Printing it as '= 0.0099' beside
+    z = 76 read as an internally impossible pair to an external reviewer.
+    At the floor, report '< bound' with the floor rounded UP to one
+    significant digit so the bound stays true (1/101 -> '< 0.01'); above
+    it, the empirical p is a real estimate and _fmt_p's equality applies.
+    """
+    floor = 1.0 / (float(n_perm) + 1.0)
+    if p > floor:
+        return _fmt_p(p)
+    magnitude = 10.0 ** math.floor(math.log10(floor))
+    bound = math.ceil(floor / magnitude) * magnitude
+    return f"< {bound:g}"
+
+
 def lit_confirmations_stats(v):
     """Literature-confirmation stats from tab_lit_confirmations.csv (0310).
 
@@ -559,7 +579,8 @@ def lit_confirmations_stats(v):
     v["lit_poles_cross_pct"] = f"{m['poles_cross_share_pct']:.1f}"
     v["lit_poles_cross_null_pct"] = f"{m['poles_cross_share_null_pct']:.1f}"
     v["lit_poles_z"] = f"{m['poles_within_share_z']:.0f}"
-    v["lit_poles_p"] = _fmt_p(m["poles_p_value"])
+    v["lit_poles_p"] = _fmt_perm_p(m["poles_p_value"], m["poles_n_perm"])
+    v["lit_poles_nperm"] = _int(m["poles_n_perm"])
     v["lit_adapt_n"] = _int(m["adapt_n"])
     v["lit_mitig_n"] = _int(m["mitig_n"])
     v["lit_adapt_share_pct"] = f"{m['adapt_share_pct']:.0f}"

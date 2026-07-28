@@ -160,6 +160,7 @@ DOC_VARS = {
         "lit_growth_post_pct",
         "lit_poles_cross_null_pct",
         "lit_poles_cross_pct",
+        "lit_poles_nperm",
         "lit_poles_p",
         "lit_poles_z",
         "openalex_pct",
