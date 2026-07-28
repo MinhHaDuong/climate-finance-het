@@ -106,6 +106,7 @@ DOC_VARS = {
         "lang_detected_pct",
         "lang_english_pct",
         "lang_non_english_n",
+        "lang_unclassified_n",
         # Two earlier cuts orphaned lit_* vars, both still emitted upstream:
         # the adaptation-share and chi-square/p details went with PR #1120,
         # leaving only the two finance-journal shares in the
@@ -290,6 +291,11 @@ def corpus_stats(v):
         # (3,381) inside a refined-corpus sentence.
         non_en = ((lang != "en") & (lang != "unknown")).sum()
         v["lang_non_english_n"] = _int(non_en)
+        # The third bucket, published because leaving it unnamed is what let a
+        # reader reach the multilingual quantity by subtracting English from
+        # the total — which is exactly the 3,381 above (ticket 0338). The three
+        # counts partition the corpus, so the sum is checkable on the page.
+        v["lang_unclassified_n"] = _int((lang == "unknown").sum())
 
     # Language provenance (ticket 0323). A share of the deposited language
     # tags is inferred by langdetect from title and abstract rather than
