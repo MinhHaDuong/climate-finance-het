@@ -181,13 +181,16 @@ def test_no_response_file_quotes_a_stale_z():
     Absence, not presence, is the property worth pinning. Files are discovered
     rather than listed, so a new response document is covered on arrival.
 
-    Two scoping decisions, both learned from the guard's first draft:
+    Three scoping decisions, each paid for by a review round:
 
-    *Which z.* Requiring every z in the bundle to equal this one is wrong —
-    the bundle may quote a z from any other analysis, and such a guard fails
-    on correct prose. The claim actually guarded is the degree-preserving
-    null, so a match counts only on a line that names it. All three real
-    occurrences sit on such a line.
+    *Which z.* Requiring every z in the bundle to equal this one fails on
+    correct prose — the bundle may quote a z from another analysis, and one
+    already exists: `lit_poles_z`, the Kouwenberg--Zheng poles separation,
+    also a degree-preserving rewiring null and rendered as such in
+    `data-paper.qmd`. So the accepted set is every z the pipeline generates,
+    not this one value. That is the property worth asserting: a
+    degree-preserving z in the response traces to some artifact. A superseded
+    9.1 matches nothing and is caught; a legitimate 76 matches and passes.
 
     *Which spelling.* `z = 8.7`, `z=8.7`, `Z = 8.7`, `z ≈ 8.7` and `a z of
     8.7` are one claim to a reader, and a guard reading one of them is a
@@ -195,38 +198,49 @@ def test_no_response_file_quotes_a_stale_z():
     chose, not string equality: `z = 8.74` is more precise and correct, and
     a `.1f` string compare would bounce it.
 
+    *Which window.* Matching per line makes an ordinary paragraph rewrap
+    blind the guard — the real occurrences sit at 63--73 characters in files
+    wrapped near 77, so one added word moves a z onto its own line. The
+    search runs over whitespace-collapsed text within a window of the phrase
+    instead, which no reflow changes.
+
     `external-review/` is skipped explicitly rather than by relying on the
     glob being non-recursive — it holds inbound referee text, whose numbers
-    are theirs to be wrong about (one of those files quotes "z = 76" as a
-    criticism), and an implicit exclusion would evaporate the day someone
-    widens the glob.
+    are theirs to be wrong about, and an implicit exclusion would evaporate
+    the day someone widens the glob.
     """
+    base = os.path.join(SCRIPTS, "..")
     bundle = os.path.join(
-        SCRIPTS, "..", "deliverables", "data-paper", "revision-rdj26561")
-    csv_path = os.path.join(
-        SCRIPTS, "..", "deliverables", "_shared", "tables",
-        "tab_network_limitations.csv")
+        base, "deliverables", "data-paper", "revision-rdj26561")
+    df = pd.read_csv(os.path.join(
+        base, "deliverables", "_shared", "tables",
+        "tab_network_limitations.csv")).set_index("metric")["value"]
+    generated = [float(df["econ_within_share_z"])]
+    with open(os.path.join(
+            base, "deliverables", "data-paper", "data-paper-vars.yml")) as fh:
+        poles_z = yaml.safe_load(fh).get("lit_poles_z")
+    if poles_z is not None:
+        generated.append(float(poles_z))
 
-    df = pd.read_csv(csv_path).set_index("metric")["value"]
-    actual = float(df["econ_within_share_z"])
     responses = [p for p in sorted(glob.glob(
         os.path.join(bundle, "**", "*.md"), recursive=True))
         if "external-review" not in os.path.relpath(p, bundle).split(os.sep)]
     assert responses, "revision bundle has no response documents"
-    quote_re = re.compile(r"\bz\s*(?:=|≈|of)\s*(\d+(?:\.\d+)?)", re.IGNORECASE)
+    claim_re = re.compile(
+        r"degree-preserving.{0,120}?\bz\s*(?:=|≈|of)\s*(\d+(?:\.\d+)?)",
+        re.IGNORECASE)
     stale = []
     for path in responses:
         with open(path) as fh:
-            for lineno, line in enumerate(fh, 1):
-                if "degree-preserving" not in line.lower():
-                    continue
-                for quoted in quote_re.findall(line):
-                    decimals = len(quoted.partition(".")[2])
-                    if float(quoted) != round(actual, decimals):
-                        stale.append(
-                            f"{os.path.relpath(path, bundle)}:{lineno} quotes "
-                            f"z = {quoted}, table says "
-                            f"{round(actual, decimals)}")
+            text = " ".join(fh.read().split())
+        for quoted in claim_re.findall(text):
+            decimals = len(quoted.partition(".")[2])
+            if not any(float(quoted) == round(g, decimals)
+                       for g in generated):
+                stale.append(
+                    f"{os.path.relpath(path, bundle)} quotes z = {quoted} "
+                    f"for a degree-preserving null; the pipeline generates "
+                    f"{[round(g, decimals) for g in generated]}")
     assert not stale, "; ".join(stale)
 
 
@@ -243,6 +257,12 @@ def test_response_provenance_names_the_pinned_corpus():
 
     Pinning the md5 rather than the date is what makes the claim checkable:
     a date is prose, a hash is the corpus.
+
+    The hash is required *in the bullet that claims it*, not anywhere in the
+    file. The document deliberately names two corpus states — the statistics
+    table's and the spot-check's earlier one — so a file-wide search would
+    be satisfied by the hash sitting in either, and could not see the exact
+    defect it exists to catch recur one bullet over.
     """
     base = os.path.join(SCRIPTS, "..")
     lock = yaml.safe_load(open(os.path.join(base, "dvc.lock")))
@@ -253,6 +273,14 @@ def test_response_provenance_names_the_pinned_corpus():
     md = open(os.path.join(
         base, "deliverables", "data-paper", "revision-rdj26561",
         "r1-14-network-response.md")).read()
-    assert any(h in md for h in pinned), (
-        f"the response names no currently pinned refined_citations; "
-        f"dvc.lock pins {sorted(pinned)}")
+    bullet = re.search(
+        r"^-\s+Corpus state, statistics table:(.*?)(?=^-\s|\Z)",
+        md, re.MULTILINE | re.DOTALL)
+    assert bullet, (
+        "no 'Corpus state, statistics table:' bullet — the response must "
+        "say which corpus the regenerated table came from")
+    claimed = " ".join(bullet.group(1).split())
+    assert any(h in claimed for h in pinned), (
+        f"the statistics-table corpus bullet names no currently pinned "
+        f"refined_citations; it says {claimed!r}, dvc.lock pins "
+        f"{sorted(pinned)}")
