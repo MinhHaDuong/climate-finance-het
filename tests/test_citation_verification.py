@@ -99,8 +99,19 @@ def test_completeness_is_optional():
 _ALLOWED_LITERALS = {
     # Calibration of the relevance filter against human labels, measured once
     # on a frozen blinded sample of 100 works. Independent of corpus size.
+    # The raw labels were destroyed by their own collection sheet (ticket
+    # 0372), so no rebuild can ever move these numbers; their consistency
+    # with the deposited evidence table is pinned by
+    # test_reranker_validation_claim.py instead of by the vars pipeline.
     "81%": "reranker accuracy on the frozen 100-work calibration sample",
-    "10%": "share of that same calibration sample reclassified by threshold",
+    "74%": "reranker precision at the deployed threshold, same frozen sample",
+    "76%": "reranker recall at the deployed threshold, same frozen sample",
+    "10%": "share of that same calibration sample reclassified by threshold; "
+           "also the stratum-1 human-relevant rate (tech report §3.1)",
+    "15%": "stratum-2 human-relevant rate, frozen validation record (0372)",
+    "20%": "stratum-3 human-relevant rate, frozen validation record (0372)",
+    "60%": "stratum-4 human-relevant rate, frozen validation record (0372)",
+    "80%": "stratum-5 human-relevant rate, frozen validation record (0372)",
     # Figure parameters, not findings.
     "2%": "minimum community size drawn in the global map (a layout cutoff)",
 }

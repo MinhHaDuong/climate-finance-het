@@ -1,0 +1,101 @@
+%erg 0.1
+Title: Corpus v3 tracker: language-fair flag 6 — panel adjudication replaces the cross-encoder outside English
+Created: 2026-07-28
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-07-28T08:10Z HDMX-coding-agent created from the author's design call in the flag-6 bias session: "makes no sense to keep the rough filter if we grade relevance with a strong panel; keep the filter only for EN". Children 0541 (panel protocol + scoring) and 0542 (refilter + refresh) filed together. Non-blocking for the R&R by author directive — 0274 does not reference this tracker, the resubmission ships on frozen v2 with the bias disclosed (0283 log). All work happens on a branch; nothing spends money or touches the corpus before the Go decision recorded here.
+--- body ---
+## Context
+
+The relevance filter (flag 6) carries a measured language bias. Evidence, all
+on corpus v2, logged in 0337 and 0283 on 2026-07-28:
+
+- Removal ablation: non-English works removed at 41.8% vs English 19.9%.
+  Flag 6 carries 58.9% of non-English removals vs 50.4% of English ones — the
+  only flag skewed that way. Abstract coverage is ruled out as confound
+  (non-English coverage is higher, 88.0% vs 85.7%).
+- Paired-query experiment (1,589 non-English works, GPU, seed 20260728):
+  scoring against an own-language translation of the deployed English query
+  lifts pass rate 55.3% → 66.8% (+11.5pp, Wilcoxon p=3.2e-104). Symmetric
+  control: 600 English works scored against foreign queries lose 6.5–48.7pp.
+  The cross-encoder partly measures query–document language match, not
+  relevance. Model is BAAI/bge-reranker-v2-m3 (already multilingual); the
+  monolingual element is the query string.
+- The 0.818 human validation (0372) is de facto an English-stratum
+  validation: 97 of its 100 works are English.
+
+## The design (author, 2026-07-28)
+
+Two-tier flag 6:
+
+- **English (~39.5k works)**: cross-encoder + 0.002 threshold, unchanged —
+  validated at AUC 0.818 on what is now visibly its own stratum.
+- **Non-English + unknown (3,642 works)**: relevance adjudicated by a
+  3-seat AI panel (Fable 5, GPT-5.6, Kimi 3 — three vendors, decorrelated),
+  majority vote, judged in-language, blinded to reranker scores. Protocol in
+  0541.
+- Other flags, protection rules, and the score column unchanged. Bounded
+  change: the diff to refined_works is confined to the non-EN stratum.
+
+## Why not panel the whole 43,179? (author asked; answer before Go)
+
+Cost is NOT the discriminator. Measured token volumes (title[:300] +
+abstract[:1500], 250-token prompt overhead, 80-token output, 3 seats):
+
+| scope | works | calls | $ budget | $ mid | $ premium |
+|---|---|---|---|---|---|
+| bridge (batch-2 anchor) | 94 | 282 | 0.15 | 0.49 | 0.99 |
+| non-EN flag-6-flagged only | 949 | 2,847 | 1.47 | 4.84 | 9.68 |
+| non-EN + unknown | 3,642 | 10,926 | 5.52 | 18.11 | 36.23 |
+| full corpus | 43,179 | 129,537 | 65.94 | 216.33 | 432.66 |
+
+Price points: budget $0.6/$2.5 per M in/out, mid $2/$8, premium $4/$16 —
+confirm live prices at run time. Even full-corpus at premium is ~$430.
+
+The real arguments:
+
+- **For full corpus**: one uniform instrument kills the asymmetric-standards
+  objection entirely; simplest §2.3; retires the cross-encoder.
+- **Against**: it re-adjudicates the one stratum whose instrument is
+  *validated against human labels* (0.818/81% on the English sample) —
+  replacing a measured instrument where it is not broken; blast radius
+  becomes corpus-wide (every count's provenance changes, not just the
+  non-EN stratum); 130k calls of wall-clock and rate-limit exposure; and the
+  reproducibility story for a data paper weakens (local model → API panel)
+  across the whole corpus instead of one stratum.
+- **The bridge decides it**: 0541 phase A grades the 94 human-labelled
+  batch-2 works first. If the panel clearly dominates the cross-encoder on
+  English hard cases (κ vs human), full-corpus becomes the honest choice;
+  if they are comparable, two-tier is the defensible minimum change.
+
+## Go criteria (author decision, records here)
+
+- [ ] Corpus unfrozen for v3 work (reverses the 2026-07-27 freeze) — on a
+      branch, never merged before resubmission without a second explicit call
+- [ ] Spend approved (scope picked after bridge results: two-tier vs full)
+- [ ] Panel seat list confirmed (Fable 5, GPT-5.6, Kimi 3)
+
+## Children
+
+- 0541 — panel adjudication: protocol, bridge run, scoring (prepare now,
+  execute on Go)
+- 0542 — v3 refilter + downstream number refresh (Blocked-by 0541)
+
+## Invariants
+
+- The R&R (0274) proceeds on frozen v2 regardless; the reply letter
+  discloses the bias with the 0337/0283 numbers. This tracker is not a child
+  of 0274 and blocks nothing there.
+- No API spend, no corpus mutation, before Go is recorded in this log.
+- Batch-1 loss scar: panel votes are written to an append-only deposited
+  artifact; never to a sheet a generator can regenerate blank (that is how
+  the original human labels died — compute_reranker_calibration.py:426).
+
+## Exit criteria
+
+- Go decision recorded (either direction; a documented no-go also closes)
+- Both children closed
+- v3 refined corpus + refreshed numbers on a branch, or the reversal
+  documented

@@ -2,11 +2,13 @@
 Title: Standing guard: every field a harvester builds must survive to its CSV
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: tooling-lane severity floor: standing guard over machinery; the originating instance was fixed in 0288
 
 --- log ---
 2026-07-27T14:00Z HDMX-coding-agent created
 2026-07-27T14:05Z HDMX-coding-agent note filed from 0347's roar sweep. The sweep found no live sibling — catalog_keydocs was the only source emitting fields outside WORKS_COLUMNS — so this is a class guard against recurrence, not a fix for a second instance.
 
+2026-07-27T19:45Z HDMX-coding-agent closed — tooling-lane severity floor: standing guard over machinery; the originating instance was fixed in 0288
 --- body ---
 ## Context
 

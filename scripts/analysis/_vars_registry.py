@@ -13,6 +13,7 @@ keeps working for the guards that read the registry.
 
 import os
 
+from _vars_ablation import ABLATION_VARS
 from _vars_retrieval import FLAG_RULE_VARS, RETRIEVAL_VARS
 from utils import BASE_DIR
 
@@ -125,6 +126,7 @@ DOC_VARS = {
         "filter_no_abstract",
         "filter_protected",
         "filter_title_blacklist",
+        *ABLATION_VARS,  # §2.3 language ablation (ticket 0337)
         *RETRIEVAL_VARS,  # §2.2 thresholds, read from config (ticket 0329)
         "dedup_doi_removed",
         "dedup_fn_pairs",

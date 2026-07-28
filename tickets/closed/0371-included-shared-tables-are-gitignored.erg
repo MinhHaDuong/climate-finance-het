@@ -2,6 +2,7 @@
 Title: Five generated tables are gitignored, so the 0340 guard skips half its targets
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: tooling-lane severity floor: guard coverage over guards, no live wrong artifact
 
 --- log ---
 2026-07-27T18:20Z HDMX-coding-agent created
@@ -10,6 +11,7 @@ Author: HDMX-coding-agent
 2026-07-27T20:45Z HDMX-coding-agent note reimagine: premise strengthened — paths.mk's *_INCLUDES list these tables as prerequisites of two render-only .mk files that declare "no corpus data". Scope narrows: extend tests/test_deliverable_artifacts.py, do not write the sketched parser.
 2026-07-27T20:10Z HDMX-coding-agent note widened from two tables to five — the #1191 round-4 panel caught the undercount; the real set comes from git check-ignore over the 0340 discovery list, not from the diff that surfaced it
 
+2026-07-27T19:45Z HDMX-coding-agent closed — tooling-lane severity floor: guard coverage over guards, no live wrong artifact
 --- body ---
 ## Context
 

@@ -103,8 +103,14 @@ rebuilt table.
   too.
 - [x] Language detection and the English-only institutional indexing stated
   — §2.4 (langdetect + `language_provenance`, landed with 0323) and §2.1
-  ("we index only the English version"); §2.3 now also states that no
-  retrieval evaluation by language was run.
+  ("we index only the English version"). This branch briefly added "we report
+  no retrieval evaluation by language" to §2.3, and 0337 falsified it
+  mid-review: its ablation reports exactly such an evaluation, finding that
+  rescoring non-English works against an own-language query lifts the share
+  passing the threshold by 11.5 points. The clause was dropped at the merge
+  rather than carried into main as a false statement — the reviewers' "no
+  retrieval evaluation by language" complaint is answered by 0337's measurement,
+  not by this ticket's disclaimer.
 
 ## Invariants
 

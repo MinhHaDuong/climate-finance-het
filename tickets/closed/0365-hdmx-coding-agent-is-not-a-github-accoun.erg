@@ -9,6 +9,7 @@ Closed: decided and implemented: one account, procedural gate; prompt hook delet
 
 2026-07-27T17:42Z decision recorded: one account, fine-grained PAT (0470), gate repaired as procedural
 2026-07-27T19:48Z HDMX-coding-agent closed — decided and implemented: one account, procedural gate; prompt hook deleted
+2026-07-28T07:12Z HDMX-coding-agent note the child ticket filed here was allocated 0371, which origin/main already carried as 'included shared tables are gitignored' — a duplicate ID that landed on main and left `erg check` red there. Two sessions repaired it concurrently: this branch renumbered to 0450, main to 0470 minutes later. Deferring to main's 0470, since a third number would be worse than either; the references above follow it.
 --- body ---
 ## Context
 

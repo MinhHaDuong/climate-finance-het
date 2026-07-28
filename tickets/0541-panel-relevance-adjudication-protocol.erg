@@ -1,0 +1,93 @@
+%erg 0.1
+Title: Panel relevance adjudication for flag 6: protocol, English bridge, non-EN scoring
+Created: 2026-07-28
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-28T08:10Z HDMX-coding-agent created child of 0540. Preparation (this ticket text, prompts, script skeleton, cost table) is done without spend; any API call waits for the Go recorded on 0540.
+--- body ---
+## Context
+
+Child of tracker 0540 — read its Context first. This ticket implements the
+panel that adjudicates relevance for non-English works, and the bridge that
+anchors the panel to the surviving human labels before any scoring that
+counts.
+
+## Protocol (the deliverable is the discipline, so it is spelled out)
+
+- **Seats**: Fable 5 (Anthropic), GPT-5.6 (OpenAI), Kimi 3 (Moonshot).
+  Three vendors — decorrelation by construction. Pin exact model IDs and
+  record them in the votes artifact.
+- **Unit of judgment**: title[:300] + abstract[:1500], presented in the
+  work's own language, no translation. Blinded: no reranker score, no flag
+  state, no source column. Randomized order, seed recorded.
+- **Prompt**: the paper's own inclusion definition of climate finance
+  (from data-paper.qmd §1/§2), NOT the reranker query string — the query is
+  the instrument under indictment. One prompt template, versioned in-repo;
+  answer as JSON {relevant: bool, confidence: 0-1, reason: one line}.
+- **Decision rule**: majority of 3. Ties impossible. Report per-language
+  Fleiss' κ and per-seat agreement.
+- **Votes artifact**: append-only CSV (doi, seat, model_id, label,
+  confidence, reason, prompt_hash, ts), written by a dedicated writer that
+  refuses to overwrite existing rows. Deposited with the corpus. This is the
+  batch-1 scar (0540 Invariants): no regenerable sheet ever holds labels.
+
+## Phases
+
+- **A — bridge (~$1, 94 works)**: panel grades the batch-2 human-labelled
+  works (data/catalogs/reranker_hitl_review.csv, 93 unique DOIs + 1
+  unmatched, author labels 49/45). Deliverables: panel-vs-human κ, per-seat
+  agreement, and panel-vs-cross-encoder comparison on the same works.
+  DECISION POINT: results go to 0540 to pick two-tier vs full-corpus.
+- **B — non-EN + unknown (3,642 works, ~$18 mid)**: full jurisdiction, not
+  just the 949 flag-6-flagged — false-keeps must be measurable too.
+  Deliverables: votes artifact; per-language precision/recall of the OLD
+  flag 6 against panel majority (the reply-letter table); the new flag-6
+  decisions for 0542.
+- **C — optional full corpus (~$216 mid)**: only if the bridge decision
+  says so.
+
+## Relevant files
+
+- `scripts/filter_flags_llm.py` — existing flag-6 machinery (openrouter
+  backend already exists for LLM fallback)
+- `config/corpus_filter.yaml` — llm_relevance block; panel config lands here
+- `data/catalogs/reranker_hitl_review.csv` — bridge sample with human labels
+- `deliverables/data-paper/revision-rdj26561/flag6-language-bias/` — the
+  study that motivates this (ablation + paired-query experiment)
+- `.env` KEYS= line — the two non-Anthropic seats need their providers
+  named there (default-deny; see AGENTS.md Credentials)
+
+## Actions
+
+1. Prompt template from the paper's inclusion definition; version it.
+2. Votes writer with append-only guard + its red test.
+3. Panel runner: batched, resumable, per-seat caching, rate-limit aware.
+4. Phase A; report to 0540; wait for scope decision.
+5. Phase B (or C per decision); compute per-language tables.
+
+## Test
+
+- Red first: votes writer refuses a duplicate (doi, seat) row and refuses
+  to truncate an existing file.
+- Bridge invariant: every batch-2 DOI gets exactly 3 votes; κ computed only
+  over works with all seats present.
+
+## Verification
+
+- [ ] Votes artifact exists, append-only, model IDs + prompt hash recorded
+- [ ] Panel-vs-human κ on bridge reported to 0540
+- [ ] Per-language precision/recall of old flag 6 vs panel majority
+- [ ] No API call before 0540 Go (log order proves it)
+
+## Invariants
+
+- Corpus untouched by this ticket — it produces labels and reports only;
+  mutation is 0542's job.
+- Judged in-language; the English query string appears nowhere in the
+  prompt.
+
+## Exit criteria
+
+- Phases A and B (and C if chosen) complete, votes deposited, tables
+  delivered to 0540 and 0283.

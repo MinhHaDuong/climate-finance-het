@@ -48,6 +48,8 @@ deliverables/_shared/tables/*
 # Committed like its table twins — it needs no Phase-1 data to regenerate.
 !deliverables/_shared/tables/tab_retrieval_protocol.csv
 !deliverables/_shared/tables/tab_retrieval_protocol.md
+!deliverables/_shared/tables/tab_reranker_validation.csv
+!deliverables/_shared/tables/tab_filter_ablation.csv
 !deliverables/_shared/tables/tab_venues.md
 !deliverables/_shared/tables/tab_venues_fr.md
 !deliverables/_shared/tables/tab_venues_fr_caption.md
