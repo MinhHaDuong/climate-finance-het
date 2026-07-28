@@ -65,6 +65,36 @@ so a 2015 JS z of 1.53 is not fatal to the thesis, but it does need a reading
 rather than a silent republication. 0641 left the committed figure in place for
 that reason.
 
+**It is two window widths, not one.** The PR review re-derived the table and
+found 2015 above the threshold at w4 as well. Full z-scores from
+`data/derived/tables/tab_breakpoints.csv` on the pinned corpus, recorded here
+because that path is gitignored and the worktree is throwaway:
+
+| year | z_js_w2 | z_js_w3 | z_js_w4 | z_cos_w3 |
+|---|---|---|---|---|
+| 2007 | 0.112 | -0.197 | -0.598 | **1.855** |
+| 2013 | **2.208** | **1.659** | 1.286 | 1.103 |
+| 2015 | 1.186 | **1.528** | **1.594** | 0.070 |
+| 2021 | -0.078 | -0.458 | -0.703 | -1.117 |
+
+So 2015 clears z = 1.5 at two of the three window widths, and at w4 it clears
+by more than 2013 does at w3. The figure plots w3 only. Reading "marginal" onto
+this needs either a defence or a rewording; it is a stronger challenge than the
+single-window figure suggests.
+
+**Prior on the coverage table.** `tab_pre2007_coverage.csv` is 0641's fifth
+deferred artifact and comes with `tab_null_separation_pre2007.csv` as a pair:
+`separation.mk` declares `separation: $(SEP_COVERAGE) $(SEP_NULL)`, and
+`compute_pre2007_coverage.py`'s docstring says its numbers "decide the
+interpretive regime for the separation null model". On the pinned corpus the
+pre-2007 slice is markedly less thin than the committed table says — n_works
+1344 -> 1654, works with an outgoing edge 407 -> 667, share 30.3% -> 40.3%.
+A.5 currently reads "coverage of the early literature is sparse ... beyond what
+the corpus can settle"; that still holds at 40%, but the margin narrowed, and
+the two tables must be refreshed in one commit so the appendix does not end up
+citing two corpus snapshots. `docs/audit-manuscript-stat-provenance.md` handoff
+item 2 is an open instance of exactly that confusion on this same graph.
+
 Related: `docs/audit-manuscript-stat-provenance.md` handoff item 2 — reconcile
 the 84/369-vs-169/1,056 pre-2007 graph — is still open and now has a third
 number to account for.
@@ -90,10 +120,13 @@ Author decisions first; nothing here is the MOE's call.
 2. A.5: refresh the five transcribed values, and re-word the a-priori-anchor
    sentence against the 7-node/8-edge result. The CSV and the prose must move
    in the same commit — `test_a5_prose_matches_committed_csv` enforces it.
-3. `@fig-breaks`: read the 2015 z = 1.528 against the "not a rupture" claim,
-   then either regenerate the figure and adjust the marker semantics and the
-   prose together, or record why the committed figure stays.
-4. Decide whether these numbers should be Quarto variables rather than typed
+3. `@fig-breaks`: read 2015's z = 1.528 (w3) and 1.594 (w4) against the "not a
+   rupture" claim, then either regenerate the figure and adjust the marker
+   semantics and the prose together, or record why the committed figure stays.
+4. `tab_pre2007_coverage.csv` refreshes in the same commit as
+   `tab_null_separation_pre2007.csv` — they are one Make target and one
+   interpretive regime.
+5. Decide whether these numbers should be Quarto variables rather than typed
    prose, so the next corpus change moves them mechanically.
 
 ## Test
@@ -108,6 +141,7 @@ prose ticket gets no red step; verification is the recompiled PDF and
       `tab_null_separation_pre2007.csv`, and `make check` is green
 - [ ] A.2's freeze claim is true of both figures it names, or reworded
 - [ ] `@fig-breaks` and the Paris reading agree
+- [ ] The two pre-2007 tables land in one commit
 - [ ] `make manuscript` renders
 
 ## Invariants

@@ -41,6 +41,41 @@ rebuilt PNG rather than ship that string into a tracked artifact, so the
 committed figure is currently correct-looking but computed from a superseded
 corpus.
 
+## The measurement, recorded here because its source is gitignored
+
+The audit ran in a throwaway worktree and `data/derived/` is gitignored, so
+these numbers are unverifiable short of a full pipeline re-run once it is
+pruned. Recording them makes the diagnosis checkable.
+
+Registry ids for `fig_global_map_cocitation`: **13, 11, 25, 21, 10, 24, 8, 6, 9**
+(nine concepts). Community ids the pinned corpus actually produces, from
+`data/derived/tables/global_map_cocitation.json` (eight communities):
+
+| id | size | auto label (top two members) |
+|---|---|---|
+| 1 | 614 | `IPCC 2022 / nan nan` |
+| 8 | 517 | `Robert J. Zomer 2008 / IPCC 2018` |
+| 0 | 431 | `Stern 2007 / Philipp Krueger 2019` |
+| 4 | 416 | `nan nan / nan nan` |
+| 5 | 382 | `Karen Holm Olsen 2007 / Christoph Sutter 2007` |
+| 3 | 321 | `United Nations 1992 / Robert O. Keohane 2011` |
+| 7 | 223 | `Florian Weiler 2018 / nan nan` |
+| 6 | 148 | `Michael E. Porter 1995 / W. David Montgomery 1972` |
+
+The two id sets intersect at exactly **{8, 6}** — and those are precisely the
+two communities that kept a registry label in the rebuilt figure
+(`north-south`, `carbon-pricing`). The mechanism is therefore confirmed, not
+inferred: the other seven registry entries address ids the partition no longer
+contains, so `figure_communities` returns no match and every one of them falls
+through to `auto_label` and the grey default colour.
+
+Note also that id 8 is `Robert J. Zomer 2008 / IPCC 2018`, a land-use and
+climate-science pairing, while the registry labels id 8 "North-South climate
+finance allocation". So the surviving labels are not merely lucky — at least
+one of them is now **wrong**, applied to a community about something else. That
+is the worse half of the defect: an unmatched id degrades visibly to grey, a
+matched-but-reshuffled id lies silently.
+
 ## Relevant files
 
 - `config/community_registry.yml` — the id-keyed mapping
