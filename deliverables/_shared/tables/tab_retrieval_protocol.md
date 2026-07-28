@@ -5,7 +5,7 @@ All API queries are bounded to publication years 1990--2024. Terms, concept grou
 | Source | Retrieval | Query fields | Query terms | Languages |
 |:---|:---|:---|:---|:---|
 | OpenAlex | Four-tier keyword search (co-occurrence filter, T3 2 / T4 3 of 4 concept groups) | default.search (title, abstract, indexed fulltext) | 52 (T1 15, T2 25, T3 10, T4 2) | 8: Arabic, Chinese, English, French, German, Japanese, Portuguese, Spanish |
-| ISTEX | Boolean phrase search | ISTEX default index | "climate finance" OR "finance climat" OR "finance climatique" | English, French |
+| ISTEX | Boolean phrase search | ISTEX default index | `"climate finance" OR "finance climat" OR "finance climatique"` | English, French |
 | Institutional reports | Curated seed list plus World Bank repository API | seed identifiers; repository full-text search | 17 curated reports, 3 API queries | English |
 | UNFCCC key documents | Curated seed list (config/unfccc_sources.yaml) | document symbol | 232 seed documents | English |
 | OECD DAC key documents | Curated seed list (config/oecd_dac_sources.yaml) | document symbol | 35 seed documents | English |

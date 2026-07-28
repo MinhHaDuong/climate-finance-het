@@ -41,6 +41,17 @@ matters here: ``markdown`` carries ``+citations +subscript +superscript``, and
 deliverable that renders one of these tables — Quarto appends ``citeproc``
 automatically, so a live ``@key`` does not merely become a span, it resolves.
 
+A fourth extension differs the same way and is deliberately **not** escaped
+here: ``smart``, which rewrites ``"`` ``'`` ``--`` ``...`` as typographic
+quotes, dashes and an ellipsis. Unlike the three above it produces *correct*
+output — curly quotes in a journal name or a caption are what a rendered
+document should have — so escaping it would degrade every table's typography.
+It is wrong only for a cell holding a value a reader will copy and execute,
+where it silently rewrites the value: it published an ISTEX query whose phrase
+delimiters no longer delimit phrases (ticket 0530). That is a per-cell semantic
+distinction the escaper cannot see, so the emitter owns it, by wrapping such a
+cell in a code span — which suppresses ``smart`` inside it — *after* escaping.
+
 Recorded here so the next reader does not re-derive it from the documentation,
 which describes neither the Lua reader nor the extension set it selects.
 """
