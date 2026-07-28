@@ -27,8 +27,6 @@ import re
 import sys
 
 import pandas as pd
-import pytest
-import yaml
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "analysis"))
@@ -37,25 +35,54 @@ import compute_vars
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 DATA_PAPER = os.path.join(ROOT, "deliverables", "data-paper", "data-paper.qmd")
-VARS = os.path.join(ROOT, "deliverables", "data-paper", "data-paper-vars.yml")
 
-# A cross-lingual diagnostic, if one is ever run, publishes its result under
-# this prefix. Its presence is what lifts the claim guard below: the paper may
-# say "cross-lingual" exactly when a measurement backs the word.
-DIAGNOSTIC_PREFIX = "xling_"
-
-# Wordings that assert a cross-language capability rather than a multilingual
-# harvest. Lexically stable: each reads the same in any draft.
+# Claims of a cross-language capability, as patterns rather than substrings.
+#
+# The first draft of this guard listed three literal substrings and skipped
+# itself whenever any `xling_*` key appeared in the vars file. Both were
+# defeated in review: adding `xling_foo: "0"` disarmed it while the forbidden
+# claim sat live in the abstract, and "travelled across **the eight**
+# languages" walked straight past `"across languages"`. Two lessons, both
+# applied here — the escape hatch is gone, and the phrasings are patterns.
+#
+# There is no automatic lift. Backing the claim with a diagnostic means
+# editing this file alongside publishing the measurement, which is a
+# deliberate, reviewable act; a stray variable is not.
 UNDEMONSTRATED = (
-    "cross-lingual",
-    "cross-linguistic",
-    "across languages",
+    # cross-lingual, crosslingual, cross linguistic, cross-language.
+    # `\b` is load-bearing: without it the optional whitespace lets the pattern
+    # straddle a word boundary and fire on the abstract's legitimate "works
+    # across linguistic contexts", which is a retrieval claim, not a capability
+    # claim.
+    r"\bcross[\s\-]?lingu",
+    r"\bcross[\s\-]?language",
+    # the travel metaphor, with or without an interposed count
+    r"travell?ed?\s+across",
+    # comparison framed as a capability the corpus does not demonstrate
+    r"compar\w+[^.]{0,60}(?:across|between)\s+(?:the\s+)?(?:\S+\s+){0,3}languages",
+    r"compar\w+\s+(?:the\s+)?languages\b",
+    r"(?:support|permit|enabl|allow)\w*[^.]{0,60}"
+    r"(?:across|between)\s+(?:the\s+)?(?:\S+\s+){0,3}languages",
 )
 
 
 def read(path):
     with open(path) as fh:
         return fh.read()
+
+
+def _count(value: str) -> int:
+    """A count as compute_vars formats it: `f"{n:,}"` above 999."""
+    return int(value.replace(",", ""))
+
+
+def _hits(text: str) -> list[str]:
+    """Forbidden patterns that match, reported by the text they matched."""
+    found = []
+    for pattern in UNDEMONSTRATED:
+        for match in re.finditer(pattern, text, flags=re.I):
+            found.append(match.group(0))
+    return sorted(set(found))
 
 
 def _corpus_stats(languages, monkeypatch):
@@ -85,9 +112,10 @@ def test_language_buckets_partition_the_corpus(monkeypatch):
     assert v["lang_unclassified_n"] == "2"
     assert v["lang_english_pct"] == "54.5"
 
-    english = round(float(v["lang_english_pct"]) / 100 * 11)
-    total = int(v["corpus_total"].replace(",", ""))
-    assert english + int(v["lang_non_english_n"]) + int(v["lang_unclassified_n"]) == total
+    total = _count(v["corpus_total"])
+    english = round(float(v["lang_english_pct"]) / 100 * total)
+    assert english + _count(v["lang_non_english_n"]) + _count(
+        v["lang_unclassified_n"]) == total
 
 
 def test_non_english_layer_is_not_total_minus_english(monkeypatch):
@@ -99,9 +127,9 @@ def test_non_english_layer_is_not_total_minus_english(monkeypatch):
     """
     v = _corpus_stats(["en"] * 6 + ["fr", "pt", "es"] + [None] * 4, monkeypatch)
 
-    total = int(v["corpus_total"])
+    total = _count(v["corpus_total"])
     english = round(float(v["lang_english_pct"]) / 100 * total)
-    assert int(v["lang_non_english_n"]) < total - english
+    assert _count(v["lang_non_english_n"]) < total - english
 
 
 def test_unclassified_var_registered_for_the_data_paper():
@@ -117,12 +145,6 @@ def test_paper_reports_the_unclassified_layer_beside_the_non_english_one():
 
 # --- 2. No claim the language table does not support ---
 
-def _diagnostic_vars():
-    with open(VARS) as fh:
-        declared = yaml.safe_load(fh) or {}
-    return [k for k in declared if k.startswith(DIAGNOSTIC_PREFIX)]
-
-
 def _abstract_and_conclusion():
     """The two places a reader takes the paper's claims from."""
     text = read(DATA_PAPER)
@@ -133,43 +155,66 @@ def _abstract_and_conclusion():
 
 
 def test_abstract_and_conclusion_claim_no_cross_language_capability():
-    """Negative guard on the claim, conditional on the evidence.
+    """The two places a reader takes the paper's claims from, guarded hardest.
 
-    The forbidden wordings become available the moment a cross-lingual
-    diagnostic publishes a `xling_*` variable --- the guard asks for evidence,
-    not for silence. Until then the defensible claim is multilingual
-    *retrieval*: an eight-language keyword taxonomy, which the corpus did run.
+    The defensible claim is multilingual *retrieval* --- an eight-language
+    keyword taxonomy, which the corpus did run. A cross-language capability is
+    a different assertion, and nothing in the paper measures one.
     """
-    if _diagnostic_vars():
-        pytest.skip("a cross-lingual diagnostic backs the claim")
-
-    text = _abstract_and_conclusion().lower()
-    found = [phrase for phrase in UNDEMONSTRATED if phrase in text]
+    found = _hits(_abstract_and_conclusion())
 
     assert not found, (
         f"the Abstract or Conclusion claims {found}, which @tbl-languages does "
         f"not demonstrate: the corpus indexes only the English version of the "
         f"multi-language UNFCCC and OECD documents and reports no retrieval "
-        f"evaluation by language (ticket 0338). Either calibrate the wording "
-        f"to multilingual retrieval, or run a diagnostic and publish it as a "
-        f"`{DIAGNOSTIC_PREFIX}*` variable."
+        f"evaluation by language (ticket 0338). Calibrate the wording to "
+        f"multilingual retrieval. If a diagnostic now backs the claim, publish "
+        f"its measurement and retire the matching pattern here in the same "
+        f"change --- deliberately, so a reviewer sees it."
     )
 
 
-def test_guard_would_catch_the_wording_it_was_written_against():
-    """Red-test the guard: the phrases it forbids are the ones that were there.
+def test_guard_catches_every_wording_it_was_written_against():
+    """Red-test the guard against the originating text and its near misses.
 
-    Without this, a rename of any forbidden phrase would silently empty the
-    guard and it would still pass.
+    A guard shaped around only the wording already fixed is not a guard. Each
+    case below defeated an earlier draft: the first three were live in the
+    paper, the rest are one-word edits away from them --- review reproduced the
+    fourth ("travelled across **the eight** languages") against a
+    literal-substring version and it passed 7/7.
     """
-    original = (
-        "pre-computed multilingual embeddings to support cross-lingual "
-        "analysis ... permits comparing how the category travelled across "
-        "languages"
-    )
-    assert [p for p in UNDEMONSTRATED if p in original] == [
-        "cross-lingual", "across languages",
+    live = [
+        "pre-computed multilingual embeddings to support cross-lingual analysis",
+        "a single, cross-lingual bibliographic object",
+        "permits comparing how the category travelled across languages",
     ]
+    near_misses = [
+        "comparing how the category travelled across the eight languages",
+        "supports crosslingual retrieval",
+        "enables cross-language comparison",
+        "permits comparison between the corpus languages",
+        "designed to compare languages",
+    ]
+    for text in live + near_misses:
+        assert _hits(text), f"the guard does not catch {text!r}"
+
+
+def test_guard_passes_the_limitation_statements_it_must_not_block():
+    """The other half of the red-test: honest limitation prose stays legal.
+
+    A guard that fires on the paper's own concessions would push the author to
+    delete the concession rather than the claim --- the opposite of the point.
+    """
+    for text in [
+        "Non-English coverage remains limited.",
+        "Coverage at that level supports case studies rather than balanced "
+        "comparison; we report no retrieval evaluation by language.",
+        "core terms in eight languages",
+        "its eight-language retrieval adds a non-English layer",
+        # the word-boundary case: "across linguistic" is not "cross-lingual"
+        "used to capture relevant works across linguistic contexts",
+    ]:
+        assert not _hits(text), f"the guard wrongly fires on {text!r}"
 
 
 def test_no_undemonstrated_claim_anywhere_in_the_body():
@@ -179,14 +224,11 @@ def test_no_undemonstrated_claim_anywhere_in_the_body():
     reuse cases is read as a claim too, and the phrase that seeded this ticket
     ("cross-lingual studies") sat there as well as in the Abstract.
     """
-    if _diagnostic_vars():
-        pytest.skip("a cross-lingual diagnostic backs the claim")
-
     text = read(DATA_PAPER)
     body = text[text.index("## 1. Introduction"):text.index("## References")]
     body = re.sub(r"<!--.*?-->", "", body, flags=re.S)
 
-    found = sorted({phrase for phrase in UNDEMONSTRATED if phrase in body.lower()})
+    found = _hits(body)
 
     assert not found, (
         f"the body claims {found} without a diagnostic behind it (ticket 0338)"
