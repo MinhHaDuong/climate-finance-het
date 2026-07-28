@@ -1,0 +1,66 @@
+%erg 0.1
+Title: L1 bootstrap runs single-core: give it the joblib knob the other methods have
+Created: 2026-07-28
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-28T13:56Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Measured during the ticket-0570 first-ever build of the divergence tables
+(2026-07-28, padme, 24 cores): under `make -j4 NJOBS=6`, S2/G2/G9 all
+finished while the L1 bootstrap ran ~90 minutes alone on one core — the
+whole chain's critical path, with the machine at load ~3/24. The
+architecture doc's CPU-parallel strategy (joblib across (year, window)
+pairs, `scripts/_permutation_accel.py`) covers G2_spectral, G9_community,
+and L2, but the L1 *bootstrap* path has no `n_jobs` route: `NJOBS` never
+reaches its inner loop. L1's permutation path already has TF-IDF
+precomputation; the bootstrap resampling loop is the gap.
+
+GPU is not an option here (L1 is sparse TF-IDF + Jensen–Shannon; the GPU
+strategy applies to dense distance-matrix methods), so joblib across
+(year, window) pairs — the exact pattern the other CPU methods use — is
+the right lever. Expected effect: worst stage of a full rebuild drops from
+~90 min to ~10 min at NJOBS=6, aligning with the documented "end-to-end
+~7 min" expectation set by the accelerated methods.
+
+## Relevant files
+
+- `scripts/_permutation_accel.py` — existing joblib pattern to reuse
+- the L1 bootstrap implementation (locate via `scripts/compute_divergence.py`
+  `--method L1` dispatch and its bootstrap module)
+- `scripts/analysis/divergence.mk` — `NJOBS` plumbing (`tab_boot_*` rules)
+
+## Actions
+
+1. Thread `n_jobs` from the CLI/Make `NJOBS` into the L1 bootstrap loop,
+   parallelizing across (year, window) pairs with joblib, default
+   `n_jobs=1` at the API boundary (test determinism, same convention as
+   the other methods).
+2. Verify the parallel and serial paths produce identical output on a
+   reduced grid (same seeds → same resamples; byte-compare the CSV).
+
+## Test
+
+Red first: an integration test on a tiny grid asserting the L1 bootstrap
+honours `n_jobs` (e.g. serial vs n_jobs=2 byte-identical output and the
+parameter actually reaches joblib). Fails today because the parameter does
+not exist on the L1 path.
+
+## Verification
+
+- [ ] Serial vs parallel byte-identical `tab_boot_L1.csv` on a reduced grid
+- [ ] `NJOBS` reaches the L1 bootstrap from the Make invocation
+- [ ] `make lint` and `make check` pass
+
+## Invariants
+
+- Default behaviour unchanged (`n_jobs=1`); seeds still from
+  `config/analysis.yaml`; no schema change to `tab_boot_L1.csv`.
+
+## Exit criteria
+
+A full-table rebuild no longer has a single-core stage as its critical
+path: the L1 bootstrap scales with `NJOBS` like the other CPU methods.
