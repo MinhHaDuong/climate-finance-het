@@ -5,6 +5,8 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-07-28T00:00Z HDMX-coding-agent created
+2026-07-28T09:06Z claude note raid 570/571 Imagine+Plan — path corrected (schematics are in scripts/figures/, not scripts/analysis/); instance-1 import does not resolve under PYTHONPATH, shared module scripts/_band_scheme.py instead; Action 3 considered and deferred; exit criteria untouched
+2026-07-28T09:12Z claude note feasibility PASS — all six pair files verified; surfaces disjoint from 0570; no cross-cutting registry in this wave
 
 --- body ---
 ## Context
@@ -44,8 +46,10 @@ opens the config to compare.
 
 **3. `ZOO_SCHEMATIC_STEMS` vs the scripts on disk.**
 `scripts/analysis/zoo-figures.mk:21-26` ("stems match the plot_schematic_*.py
-script suffixes exactly") vs the 17 `scripts/analysis/plot_schematic_*.py`
-files. Adding a script without adding its stem does not error — `make
+script suffixes exactly") vs the 17 `scripts/figures/plot_schematic_*.py`
+files (path corrected at Plan phase — the original filing said
+`scripts/analysis/`; a guard globbing there finds zero scripts and passes
+vacuously). Adding a script without adding its stem does not error — `make
 zoo-figures` simply never builds that panel and the deliverable ships without
 it. `tests/test_zoo_mk.py` checks the pattern rule and `CROSSYEAR_METHODS`, but
 never globs the schematic scripts.
@@ -54,19 +58,42 @@ never globs the schematic scripts.
 
 - `scripts/analysis/analyze_genealogy.py:141-144`, `scripts/figures/plot_genealogy.py:62-64`, `scripts/figures/plot_genealogy_html.py:54-56`
 - `scripts/analysis/compute_dedup_error_estimates.py:59-64`, `config/analysis.yaml:231-235`
-- `scripts/analysis/zoo-figures.mk:21-26`, `scripts/analysis/plot_schematic_*.py`
+- `scripts/analysis/zoo-figures.mk:21-26`, `scripts/figures/plot_schematic_*.py`
 - `tests/test_doc_vars_completeness.py` — the reference implementation from 0357
 
 ## Actions
 
-1. For **1**, prefer deletion to assertion: derive the two figure modules'
-   constants from `analyze_genealogy` by import rather than testing three
-   copies agree. A parity test is the fallback when a shared definition is not
-   reachable; here it is.
-2. For **2** and **3**, add the parity assertions — the config block and the
-   Makefile list are genuinely separate artifacts and cannot be collapsed.
-3. Consider whether `_load_thresholds()` should warn when the config block is
-   absent instead of falling back silently.
+Plan-phase finding: the filing's preferred fix for **1** (import from
+`analyze_genealogy`) does NOT resolve — `PYTHONPATH` carries only the flat
+`scripts/` root (`pyproject.toml:81`, `Makefile:72`), never `scripts/analysis/`
+or `scripts/figures/`, so `from analyze_genealogy import ...` raises
+`ModuleNotFoundError` under the exact Make invocation (`Makefile:512`). The
+shared definition must live at `scripts/` root, the one directory every
+subpackage sees — the established convention for private shared helpers
+(`_companion_plot_utils.py`, `_divergence_io.py`).
+
+1. Create `scripts/_band_scheme.py` holding `N_COMMUNITIES`, `BAND_NAMES`,
+   `BAND_COLORS_RGB` (values verbatim from `analyze_genealogy.py:141-144`).
+   All three modules import from it; rename `COMMUNITY_NAMES` → `BAND_NAMES`
+   at the call sites (`plot_genealogy.py:250`, `plot_genealogy_html.py:285`).
+   Add a source-inspection hygiene test asserting the two plot files import
+   from `_band_scheme` rather than defining literals.
+2. Parity test for **2**: key-set equality between `DEFAULT_THRESHOLDS` and
+   the `dedup_error_estimates` block of `config/analysis.yaml`, both
+   directions. The `{**DEFAULT_THRESHOLDS, **cfg}` merge order
+   (compute_dedup_error_estimates.py:327-331) stays untouched.
+3. Parity test for **3**: parse `ZOO_SCHEMATIC_STEMS` from `zoo-figures.mk`
+   (copy the `_parse_crossyear_methods` regex pattern already in
+   `tests/test_zoo_mk.py`) vs `glob("scripts/figures/plot_schematic_*.py")`
+   stems — set equality, both directions.
+4. Byte-compare `fig_genealogy.png` before/after the instance-1 refactor
+   (`save_figure()` already strips metadata, so identical values ⇒ identical
+   bytes; the compare is the proof, not the green suite).
+
+Considered and DEFERRED (not required by exit criteria): a runtime warning in
+`_load_thresholds()` when the config block is absent — the bidirectional
+parity test fails earlier and unconditionally, where a log line fires only on
+an actual invocation and is easy to miss.
 
 ## Test
 
