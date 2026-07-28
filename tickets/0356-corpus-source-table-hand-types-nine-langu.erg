@@ -6,6 +6,8 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-27T16:35Z HDMX-coding-agent created split out of 0329, whose review found the defect and whose log wrongly deferred it to 0327 (0327 does not track it)
 
+2026-07-28T09:30Z HDMX-coding-agent note action 3 sweep decided: the ISTEX query string and the bibCNRS language list stay literal — both describe manual pulls (French institutional archive export; Gale/Wanfang/NewsBank portal queries) with no config file to derive from, so there is no source of truth to drift against. Only the OpenAlex count had one (term_languages), and only it is derived. Recorded in the _openalex_language_count docstring too.
+
 --- body ---
 ## Context
 

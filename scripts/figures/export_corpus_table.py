@@ -12,6 +12,7 @@ and abstract availability.
 import os
 
 import pandas as pd
+import yaml
 from _markdown_table import markdown_text_cell
 from pipeline_loaders import load_refined_works
 from script_io_args import parse_io_args, validate_io
@@ -21,11 +22,30 @@ log = get_logger("export_corpus_table")
 
 CORE_THRESHOLD = 50
 
+
+def _openalex_language_count() -> int:
+    """Target languages the Tier-1 taxonomy declares (ticket 0356).
+
+    Same source of truth as the paper's language sentence
+    (`tests/test_retrieval_protocol.py::target_languages`): distinct non-null
+    `term_languages` tags. A hand-typed "9 languages" shipped in the deposit
+    against a config declaring eight; deriving the count is what keeps table,
+    paper, and config on one number. The ISTEX and bibCNRS descriptions below
+    stay literal — they describe manual pulls with no config source to derive
+    from.
+    """
+    path = os.path.join(BASE_DIR, "config", "openalex_queries.yaml")
+    with open(path, encoding="utf-8") as fh:
+        tags = yaml.safe_load(fh)["term_languages"]
+    return len({lang for lang in tags.values() if lang})
+
+
 # Source metadata: label and query description from catalog_*.py scripts
 SOURCE_META = {
     "openalex": {
         "label": "OpenAlex",
-        "query": "4-tier keyword taxonomy, 9 languages (default.search on title+abstract+fulltext)",
+        "query": f"4-tier keyword taxonomy, {_openalex_language_count()} languages"
+                 " (default.search on title+abstract+fulltext)",
     },
     "istex": {
         "label": "ISTEX",
