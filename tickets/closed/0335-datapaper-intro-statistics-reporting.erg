@@ -2,6 +2,7 @@
 Title: The Introduction reports z = 76 with p = 0.0099, and the Chow test's model is never stated
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1253
 
 --- log ---
 2026-07-27T11:00Z HDMX-coding-agent created
@@ -10,6 +11,7 @@ Author: HDMX-coding-agent
 
 2026-07-28T09:40Z HDMX-coding-agent provenance confirmed (action 1): tab_lit_confirmations.csv carries poles_p_value = 0.009900990099... = 1/101 exactly, poles_n_perm = 100 — the production null_n_perm in config/analysis.yaml lit_confirmations block, not a smoke override (compute_null_model's --n-perm feeds a different artifact family). null_separation_test computes add-one smoothed p, so 1/(B+1) means zero of 100 rewirings reached the observed share. The invariant holds: no --n-perm run feeds this number. Fix: _fmt_perm_p formats the floor as '< 0.01' (floor rounded up to one significant digit) and lit_poles_nperm carries B into the prose. Chow sentence now states the model (one log-linear trend vs separate intercept and slope each side, classical errors); action 5 (whether Chow is the right instrument at all) is deliberately not taken here — that is 0332's §1 sub-action to arbitrate, and cutting a test is an author call.
 
+2026-07-28T13:05Z HDMX-coding-agent closed — autoclosed — PR #1253
 --- body ---
 ## Context
 
