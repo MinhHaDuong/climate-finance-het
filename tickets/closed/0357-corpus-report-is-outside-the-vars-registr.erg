@@ -2,11 +2,13 @@
 Title: corpus-report is outside the vars registry, so its thresholds stay hand-typed
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1252
 
 --- log ---
 2026-07-27T16:35Z HDMX-coding-agent created split out of 0329, which converted the data paper's thresholds but could not reach corpus-report's
 
 2026-07-27T18:52Z HDMX-coding-agent note live error, not drift risk: corpus-report renders 12 distinct unresolved keys (22 occurrences) as ?meta: placeholders today, confirmed by a real quarto render while building 0363's render oracle. That guard pins the exact set in tests/test_meta_macro_resolution.py KNOWN_UNRESOLVED and fails when this ticket's fix empties it.
+2026-07-28T08:37Z HDMX-coding-agent closed — autoclosed — PR #1252
 --- body ---
 ## Context
 

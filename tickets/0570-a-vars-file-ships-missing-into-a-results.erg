@@ -1,0 +1,107 @@
+%erg 0.1
+Title: A vars file ships [MISSING] into a results paragraph, and the render oracle cannot see it
+Created: 2026-07-28
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-28T00:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Found by the ticket-0357 wrap-up sweep, looking for other instances of
+"a tool exits 0 while emitting a placeholder into a published artifact".
+This one is live on `origin/main`, not latent.
+
+`deliverables/multilayer/multilayer-detection-vars.yml` carries five keys set
+to the literal string `[MISSING]` as committed:
+
+```
+g9_peak_year_w3: "[MISSING]"
+l1_peak_year_w3: "[MISSING]"
+s2_peak_year_w3: "[MISSING]"
+zone_1_end:      "[MISSING]"
+zone_1_start:    "[MISSING]"
+```
+
+All five are quoted by `multilayer-detection.qmd:175,177`, in a *results*
+paragraph. The document renders today as:
+
+> S2 energy distance peaks at year [MISSING], L1 Jensen--Shannon divergence
+> peaks at year [MISSING], and G9 community divergence peaks at year
+> [MISSING].
+> The first [transition zone] runs from [MISSING] to [MISSING] and is
+> supported by all three detectors.
+
+The sentinel comes from `compute_vars.py:45` (`MISSING = "[MISSING]"`), applied
+by `v.setdefault(_k, MISSING)` at `compute_vars.py:629-637` for the Z-series
+vars, commented "require tab_summary_*.csv (not yet generated)". So the value
+is deliberate at the point of writing; what is missing is anything stopping it
+from reaching a rendered paragraph.
+
+## Why the existing guards do not catch it
+
+This is ticket 0357's class one layer deeper, and the fix 0357 shipped is
+blind to it *by construction*:
+
+- `test_render_placeholders.py` matches Quarto's own unresolved-reference
+  syntax (`?meta:`, `?@ref`, the citeproc stderr line). These keys **do**
+  resolve, so nothing fires.
+- `test_doc_vars_completeness.py` asserts a key is *declared*, never that its
+  value is meaningful.
+
+0357 closed "the key does not resolve". This is "the key resolves to a value
+that means it has no value" — a hand-rolled sentinel instead of the renderer's,
+and therefore invisible to a guard aimed at the renderer's.
+
+## Relevant files
+
+- `deliverables/multilayer/multilayer-detection-vars.yml:25,26,32,33,34` — the sentinels
+- `deliverables/multilayer/multilayer-detection.qmd:175,177` — the results paragraph quoting them
+- `scripts/analysis/compute_vars.py:45,629-637` — where `MISSING` is defined and applied
+- `tests/test_render_placeholders.py` — the guard that cannot see this
+
+## Actions
+
+1. Decide the policy question first, because it drives everything else: should
+   a vars file be *allowed* to carry a sentinel? Two coherent answers —
+   (a) never: `compute_vars` fails rather than writing one, and an
+   unavailable statistic means the prose must not claim it; or
+   (b) yes, but no document may quote a key whose value is a sentinel.
+   (b) is the smaller change and keeps the partial-build workflow the
+   `setdefault` was written for.
+2. Implement the chosen policy.
+3. Either produce the Z-series statistics (`tab_summary_*.csv`) or cut the
+   claim from the paragraph. A results sentence with the number removed is
+   not a weaker claim, it is an unsupported one.
+
+## Test
+
+Red first: a guard asserting no key quoted by a deliverable resolves to a
+value in a sentinel set (`[MISSING]`, and any sibling markers `compute_vars`
+defines). It must fail today on all five keys in
+`multilayer-detection.qmd`, naming them.
+
+Red-test it by replaying this exact defect, not a synthetic one — see
+`[[feedback_red_test_the_guard_you_wrote]]`: point it at the committed
+vars file as-is and confirm five named failures before fixing anything.
+
+## Verification
+
+- [ ] The new guard fails on `origin/main` content, listing the five keys
+- [ ] After the fix, `multilayer-detection.qmd` renders with no `[MISSING]`
+- [ ] `pdftotext` of the rendered PDF contains no `[MISSING]`
+- [ ] `make lint` and `make check` pass
+
+## Invariants
+
+- `test_render_placeholders.py`'s existing coverage (meta keys, crossrefs,
+  citations) is not weakened — this guard is additional, not a replacement.
+- The partial-build workflow keeps working: a contributor without
+  `tab_summary_*.csv` must still be able to run `make stats`.
+
+## Exit criteria
+
+No deliverable can render a sentinel value as if it were a result, and the
+multilayer paper's Z-series paragraph either carries real numbers or does not
+make the claim.

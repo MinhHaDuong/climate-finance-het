@@ -206,18 +206,27 @@ def test_qa_near_duplicates_defaults_come_from_config():
 
 
 def test_declared_vars_match_what_the_collector_emits():
-    """RETRIEVAL_VARS is spliced into DOC_VARS, so it must be exact.
+    """Both declaration lists are spliced into DOC_VARS, so together they must be exact.
 
     A name declared but not emitted renders as an empty macro; a name emitted
-    but not declared never reaches the paper at all.
+    but not declared never reaches the paper at all. The collector serves two
+    documents that quote different subsets, so it emits the union of
+    `RETRIEVAL_VARS` (data paper, §2.2) and `FLAG_RULE_VARS` (corpus report,
+    the per-flag rule parameters) — checking against either alone would report
+    the other list's names as undeclared.
     """
-    from _vars_retrieval import RETRIEVAL_VARS, retrieval_protocol_stats
+    from _vars_retrieval import FLAG_RULE_VARS, RETRIEVAL_VARS, retrieval_protocol_stats
 
+    declared = set(RETRIEVAL_VARS) | set(FLAG_RULE_VARS)
     v = {}
     retrieval_protocol_stats(v)
-    assert set(RETRIEVAL_VARS) == set(v), (
-        f"declared but not emitted: {sorted(set(RETRIEVAL_VARS) - set(v))}; "
-        f"emitted but not declared: {sorted(set(v) - set(RETRIEVAL_VARS))}"
+    assert declared == set(v), (
+        f"declared but not emitted: {sorted(declared - set(v))}; "
+        f"emitted but not declared: {sorted(set(v) - declared)}"
+    )
+    assert not set(RETRIEVAL_VARS) & set(FLAG_RULE_VARS), (
+        "the two lists must partition the collector's output — a name in both "
+        "would be registered twice for a document that quotes it once"
     )
     assert set(RETRIEVAL_VARS) == set(THRESHOLD_VARS), (
         "this test file's registry has drifted from the collector's"
@@ -254,7 +263,7 @@ def test_stats_rule_depends_on_the_threshold_config():
 
 
 def test_committed_vars_artifact_matches_config():
-    """The number the paper prints, not the number the collector would print.
+    """The number a document prints, not the number the collector would print.
 
     Every other guard here computes its expected side from the same live
     config the production code reads, so all of them stay green when the
@@ -263,24 +272,37 @@ def test_committed_vars_artifact_matches_config():
     has no CI, so that is the standing drift vector, and it is the exact
     failure this ticket exists to remove. Possible only for the config-derived
     variables: the corpus-derived ones need Phase-1 data to recompute.
+
+    Checked per document rather than against the data paper alone: since
+    ticket 0357 the corpus report registers config-derived thresholds too, and
+    they land in a *different*, shared vars file. A guard aimed at one file
+    would leave the other free to rot.
     """
     from _vars_retrieval import retrieval_protocol_stats
-    from compute_vars import DOC_OUTPUT_DIR
+    from compute_vars import DOC_VARS, DOC_VARS_FILE
 
     expected = {}
     retrieval_protocol_stats(expected)
 
-    path = os.path.join(DOC_OUTPUT_DIR["data-paper"], "data-paper-vars.yml")
-    with open(path, encoding="utf-8") as fh:
-        committed = yaml.safe_load(fh) or {}
-
-    stale = {
-        k: (committed.get(k), v)
-        for k, v in expected.items()
-        if str(committed.get(k)) != v
-    }
+    checked = 0
+    stale = {}
+    for doc, keys in DOC_VARS.items():
+        registered = [k for k in keys if k in expected]
+        if not registered:
+            continue
+        path = DOC_VARS_FILE[doc]
+        with open(path, encoding="utf-8") as fh:
+            committed = yaml.safe_load(fh) or {}
+        for key in registered:
+            checked += 1
+            if str(committed.get(key)) != expected[key]:
+                stale[f"{os.path.basename(path)}:{key}"] = (
+                    committed.get(key),
+                    expected[key],
+                )
+    assert checked, "no document registers a config-derived threshold"
     assert not stale, (
-        "data-paper-vars.yml is stale against config/corpus_filter.yaml "
+        "a committed vars file is stale against config/corpus_filter.yaml "
         f"(committed, expected): {stale}. Run `make stats` and commit."
     )
 
