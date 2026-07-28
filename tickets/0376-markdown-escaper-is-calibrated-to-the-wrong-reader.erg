@@ -8,6 +8,7 @@ Author: HDMX-coding-agent
 2026-07-27T19:05Z HDMX-coding-agent note raised by the #1191 red-team agent, re-triaged from blocker to its own ticket, and reproduced independently before filing
 2026-07-27T20:50Z HDMX-coding-agent note reimagine: reader established off a real quarto render (strace + intercepted defaults), not off the docs. Character set settled at @ ~ ^ by measurement — see the resolved tension in Actions 3.
 
+2026-07-28T07:21Z HDMX-coding-agent note action 4 done on padme: nine generated targets (discovery surface says nine, not the six this ticket assumed) built old-escaper vs new and byte-compared — all identical, zero @ ~ ^ in any shipped row
 --- body ---
 ## Context
 
@@ -123,6 +124,21 @@ why it is worth its own ticket rather than a sixth item on a fix-the-emitter PR.
    without `data/catalogs/` populated — that check is still owed, and if
    widening rewrites a shipped value it is a finding to report, not suppress.
 
+   **Done, on padme with the corpus populated.** Enumerated from the discovery
+   surface — `tests/_mk_discovery.generated_markdown_targets()` — which returns
+   **nine** targets, not the six this ticket assumed. Built all nine twice under
+   a pinned `SOURCE_DATE_EPOCH`, once with the pre-change escaper and once with
+   the widened one, and byte-compared: **all nine identical.** The reason, not
+   just the result: zero occurrences of `@`, `~` or `^` in any row of any
+   generated table, and zero escapes emitted. The widening is prophylactic
+   against future corpus values, not a rewrite of present ones.
+
+   One target needed care. `tab_venues_fr.md`'s rule lives in
+   `deliverables/manuscript/manuscript.mk`, which the top-level Makefile does
+   not include, so `make -B <target>` from the root reported "nothing to do" —
+   a vacuous pass that looks exactly like a real one. Rebuilt explicitly with
+   `make -f deliverables/manuscript/manuscript.mk` before comparing.
+
 ## Test
 
 Red first, in `tests/test_markdown_table.py`: feed `markdown_text_cell` a value
@@ -135,11 +151,23 @@ Add the same shape for `~` and `^`.
 
 ## Verification
 
-- [ ] The new test fails under the current three-character map and passes after
-- [ ] Every existing escaping test still passes against the new oracle
-- [ ] Regenerating all six tables on a corpus machine is a no-op, or each
-      changed value is explained
-- [ ] `make lint` and `make check-fast` hold
+- [x] The new test fails under the current three-character map and passes after
+      — replayed: with `scripts/_markdown_table.py` reverted to its pre-change
+      state, 5 of the new tests fail and 13 pass. The strongest is not synthetic:
+      `@stern2007` rendered as `Stern (2007)`, resolved against the real tracked
+      bibliography, which is the published-table defect this ticket describes.
+      All 73 pass with the change in.
+- [x] Every existing escaping test still passes against the new oracle — the
+      four `_gfm_render` callers plus `test_markdown_table.py`: 73 passed.
+- [x] Regenerating all six tables on a corpus machine is a no-op, or each
+      changed value is explained — nine targets (not six), all byte-identical
+      old-escaper vs new. See Actions 4.
+- [x] `make lint` and `make check-fast` hold — `check-fast` exit 0 over 1333
+      tests. `make lint` shows 4 failures in
+      `tests/test_datapaper_archive_layout.py`, all of which **reproduce on a
+      pristine `origin/main` checkout** (verified in a detached probe worktree,
+      same 4). They predate this branch and belong to the 0403 deposit-prose
+      guard; filed separately rather than absorbed here.
 
 ## Invariants
 
@@ -149,5 +177,14 @@ Add the same shape for `~` and `^`.
 
 ## Exit criteria
 
-- [ ] The escaper's character set matches the reader that renders the tables
-- [ ] No escaping test asserts through a reader the build does not use
+- [x] The escaper's character set matches the reader that renders the tables —
+      `_GFM_LITERAL` (renamed `_MARKDOWN_LITERAL`) now carries `@`, `~`, `^`
+      alongside `\`, `|`, `` ` ``, matching pandoc's `markdown` reader that
+      `qmd-reader.lua` selects.
+- [x] No escaping test asserts through a reader the build does not use — the
+      oracle now reads `-f markdown` (which carries `+citations +subscript
+      +superscript`) and takes an optional `bibliography=` to run citeproc. It
+      is the suite's only render oracle and all four callers go through it.
+      Renamed `tests/_gfm_render.py` → `tests/_qmd_render.py` and `render_gfm`
+      → `render_qmd`: the old name asserted the very thing this ticket found
+      false, and leaving it would have re-taught the mistake to the next reader.
