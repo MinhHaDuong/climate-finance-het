@@ -194,6 +194,40 @@ def field_score(row):
     return "unknown"
 
 
+def parse_years(raw):
+    """Publication years as numbers, with the undated left undated.
+
+    The corpus is read with ``dtype=str, keep_default_na=False``, so a missing
+    year arrives as an empty string. Blanks become NA; anything else must parse,
+    because a year that is neither blank nor a number is a pipeline fault, not a
+    value to swallow (the same argument as `export_deposit.coerce_integer_columns`,
+    ticket 0354).
+    """
+    return pd.to_numeric(raw.astype(str).str.strip().replace("", pd.NA),
+                         errors="raise")
+
+
+def citations_per_year(cited_by_count, year_num, current_year=CURRENT_YEAR):
+    """Age-normalised citation rate — zero where the age is unknown.
+
+    A work with no year has no computable age. Substituting one (this used to
+    substitute 2020) does not lose the value quietly, it *invents* it: the
+    denominator becomes ~6 years instead of the true age, so an old undated work
+    has its rate inflated several-fold and climbs the ranking on a number nobody
+    measured (ticket 0402).
+
+    Zero, rather than dropping the work. The two other scoring signals —
+    citation-graph centrality and teaching-canon presence — do not depend on the
+    year, so an undated work stays eligible on the evidence that does exist and
+    only forfeits the term that cannot be computed. Dropping it instead would
+    discard 389 works, 214 of them teaching-canon readings, to fix 389 unknown
+    ages; imputing a median age would be the same fabrication with a better
+    excuse.
+    """
+    age = current_year - year_num
+    return (cited_by_count / np.maximum(1, age)).fillna(0.0)
+
+
 def robust_minmax(values):
     """Min-max normalize, clipping at 1st/99th percentiles."""
     arr = np.array(values, dtype=float)
@@ -349,10 +383,17 @@ def main():
     # Load corpus
     corpus_path = args.refined_works
     df = pd.read_csv(corpus_path, dtype=str, keep_default_na=False)
-    df["cited_by_count_num"] = pd.to_numeric(df["cited_by_count"], errors="coerce").fillna(0)
-    df["year_num"] = pd.to_numeric(df["year"], errors="coerce").fillna(2020)
+    # An absent citation count reads as zero: OpenAlex records no citations for
+    # a work it has never seen cited, so nought is the measurement, not a guess.
+    # An absent year is different in kind — see parse_years / citations_per_year.
+    df["cited_by_count_num"] = pd.to_numeric(
+        df["cited_by_count"].astype(str).str.strip().replace("", pd.NA),
+        errors="raise").fillna(0)
+    df["year_num"] = parse_years(df["year"])
     df["doi_norm"] = df["doi"].apply(normalize_doi)
-    log.info("Corpus: %d papers", len(df))
+    n_undated = int(df["year_num"].isna().sum())
+    log.info("Corpus: %d papers (%d undated — no citations-per-year credit)",
+             len(df), n_undated)
 
     # Identify teaching works via from_teaching column (bypass theme gate)
     from_teaching = pd.to_numeric(df.get("from_teaching", 0), errors="coerce").fillna(0) == 1
@@ -396,8 +437,8 @@ def main():
     # ── Step 4: Score and rank ──────────────────────────────────────
 
     log.info("-- Step 4: Score and rank --")
-    s2["cit_per_year"] = s2["cited_by_count_num"] / np.maximum(
-        1, CURRENT_YEAR - s2["year_num"]
+    s2["cit_per_year"] = citations_per_year(
+        s2["cited_by_count_num"], s2["year_num"]
     )
 
     # Teaching bonus: use from_teaching column (binary, no count available)

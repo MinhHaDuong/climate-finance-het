@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-27T19:12Z HDMX-coding-agent created
 2026-07-27T19:20Z HDMX-coding-agent note Found by the ticket-0354 roar sweep for the silent-coercion class the deposit gate exposed
+2026-07-27T22:40Z HDMX-coding-agent note Corrected this ticket's own severity claim: the venues table is built but rendered by no document
 
 --- body ---
 ## Context
@@ -37,7 +38,8 @@ Measured on the current corpus: **389 of 33,344 refined works (1.2%) carry a
 blank year**, and every one of them is scored as 2020. None is unparseable —
 the defect is entirely the `fillna`, not the coercion.
 
-This reaches a published artifact. The chain is:
+**Correction to this ticket's own filing (2026-07-27).** It claimed the chain
+reaches a published artifact:
 
 ```
 build_het_core.py -> data/derived/tables/het_mostcited_50.csv
@@ -45,8 +47,21 @@ build_het_core.py -> data/derived/tables/het_mostcited_50.csv
   -> deliverables/_shared/tables/tab_core_venues_top10.md
 ```
 
-So which venues appear in a published top-10 table depends in part on 389
-fabricated publication dates.
+The chain is real, but its endpoint is not published. `tab_core_venues_top10.md`
+has a Make rule and no consumer: no `.qmd` includes it, it is gitignored (the
+blanket `deliverables/_shared/tables/*` with no negation), and `compute_vars.py`
+never reads the ranking. So no paper number depends on the fabricated dates. The
+severity was overstated at filing; what survives is a correctness defect in a
+scoring pipeline whose output is an analysis intermediate.
+
+Measured on the real corpus, the fabrication was **not** merely latent: fixing it
+swaps 43 of the 1000 selected works, and the (unrendered) venues table moves one
+cell, OECD publications 59 -> 57. Ordering and venue membership are unchanged.
+
+Aside, not ticketed (the author capped filing): an artifact built by a Make rule
+and rendered by nothing is what `config/unrendered-artifacts.txt` exists to
+declare, but ticket 0359's guard inspects *tracked* markdown only, so an
+untracked generated table escapes it.
 
 `cited_by_count_num` (line 352) uses `.fillna(0)` in the same statement. That
 one is defensible — no citation record is close to zero citations — but it
@@ -92,10 +107,15 @@ Pure-pandas on a synthetic frame, so the fast tier.
 
 ## Verification
 
-- [ ] The undated-work count is reported by the script's log, not silent
-- [ ] `het_mostcited_50.csv` regenerates and the diff in the published top-10
-      venues table is stated (including "no change" if that is the outcome)
-- [ ] No `fillna` on a value that feeds a score remains without a stated reason
+- [x] The undated-work count is reported by the script's log, not silent —
+      "Corpus: 33344 papers (389 undated - no citations-per-year credit)"
+- [x] `het_mostcited_50.csv` regenerates and the diff is stated: 43 of 1000
+      selected works swap; the venues table moves one cell (OECD 59 -> 57) and
+      is rendered by no document, per the correction above
+- [x] No `fillna` on a value that feeds a score remains without a stated reason
+      — the year no longer takes one; `cited_by_count`'s zero is justified in
+      place (a work OpenAlex never saw cited has nought citations, a
+      measurement rather than a guess)
 
 ## Invariants
 
@@ -106,9 +126,13 @@ Pure-pandas on a synthetic frame, so the fast tier.
 
 ## Exit criteria
 
-- [ ] Undated works no longer receive a fabricated publication year that feeds
-      the score
-- [ ] The policy chosen is stated in the code and, if it affects a published
-      number, in the prose that publishes it
-- [ ] Red-to-green test pins the ranking against age fabrication
-- [ ] `make check` passes
+- [x] Undated works no longer receive a fabricated publication year that feeds
+      the score — `parse_years` leaves them NA, `citations_per_year` gives them
+      no age credit while pagerank and teaching-canon signals still carry them
+- [x] The policy chosen is stated in the code (`citations_per_year` docstring
+      records why zero rather than dropping the work or imputing a median). No
+      prose to update: the affected artifact is published nowhere.
+- [x] Red-to-green test pins the ranking against age fabrication —
+      `tests/test_het_core_ranking.py`; the call-site guard was red on
+      `fillna(2020)` and names the consequence
+- [x] `make check` passes
