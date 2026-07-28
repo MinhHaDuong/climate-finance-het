@@ -1,0 +1,72 @@
+%erg 0.1
+Title: Render oracle skips silently on the number-bearing documents in every fresh worktree
+Created: 2026-07-28
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-28T00:00Z HDMX-coding-agent created filed by the PR #1237 red-team review (pre-existing, touched by 0420's guard extension)
+
+--- body ---
+## Context
+
+The render-oracle guard (`tests/test_render_placeholders.py::
+test_rendered_deliverable_has_no_placeholder`) skips a document whose
+generated includes are not built, by design (tickets 0363 and 0420 both pin
+this invariant: no hard failure on a fresh worktree). The PR #1237 red-team
+review measured the consequence: in a fresh worktree — the checkout the
+repo's own workflow mandates for every ticket — `data-paper` and
+`corpus-report` skip because `deliverables/_shared/tables/*.md` are absent
+and `make check` never builds `corpus-tables` first. The reviewer then
+injected `@fig-totally-does-not-exist-xyz` into `data-paper.qmd` and reran:
+SKIPPED, exit 0. The guard is green-by-absence on exactly the two documents
+whose numbers a referee checks, in the default dev environment, and this
+repo has no CI to run it anywhere else.
+
+Not new to 0420 — inherited from 0363's design — but 0420 widened the same
+blind spot to two more mechanisms (crossrefs, citations) on the same
+documents.
+
+## Relevant files
+
+- `tests/test_render_placeholders.py` — the skip at the top of
+  `test_rendered_deliverable_has_no_placeholder` (`pytest.skip` on missing
+  generated include)
+- `tests/_qmd_meta.py` — `source_files()` reports the missing includes
+- `Makefile` — `check` target ordering; `corpus-tables` is never a
+  prerequisite of the integration tier
+
+## Actions
+
+1. Decide the mechanism: either (a) `make check` builds `corpus-tables`
+   before the integration tier where the corpus is present, or (b) the suite
+   emits a loud, un-missable end-of-run warning (not a `-v`-only SKIPPED
+   line) naming each deliverable whose render oracle did not run, or (c) a
+   sentinel test fails when BOTH number-bearing documents skipped AND the
+   corpus is present (i.e. the skip was avoidable). Option (c) preserves the
+   fresh-worktree invariant exactly.
+2. Keep the 0363/0420 invariant: a worktree without the corpus data must
+   still pass `make check` cleanly.
+
+## Test
+
+- Red first: with the corpus present and `corpus-tables` unbuilt, the chosen
+  mechanism must turn the silent skip into a visible signal (failure or loud
+  report). With the corpus absent, everything stays green and quiet.
+
+## Verification
+
+- [ ] Injecting a broken crossref into `data-paper.qmd` in a corpus-bearing
+      checkout makes `make check` fail (after building what it needs)
+- [ ] A corpus-less fresh worktree still passes `make check` with clean skips
+
+## Invariants
+
+- The render oracle never hard-fails on a fresh worktree without the corpus
+  (0363, 0420).
+- The red-first probes (`test_render_oracle_flags_*`) keep running wherever
+  Quarto exists — they need no corpus.
+
+## Exit criteria
+
+- [ ] A skipped render oracle on `data-paper` or `corpus-report` is loudly
+      visible (or avoided) on any machine where it could have run
