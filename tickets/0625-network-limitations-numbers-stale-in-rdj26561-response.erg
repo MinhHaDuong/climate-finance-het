@@ -5,6 +5,7 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-07-28T17:10Z HDMX-coding-agent created
+2026-07-28T17:35Z HDMX-coding-agent note Scope adjustment: action 4 (sweep all tracked tables for this drift class) is delegated to ticket 0641, the systematic audit of that class. This ticket does actions 1-3 only; its exit criterion reduces to "no number in the RDJ26561 response contradicts the artifact it cites".
 
 --- body ---
 ## Context
