@@ -138,6 +138,7 @@ DOC_VARS = {
         "dedup_fp_empty_year_groups",
         "dedup_titleyear_removed",
         "gm_communities",
+        "gm_connected_pct",
         "gm_coverage_pct",
         "gm_modularity",
         "gm_n_connected",
