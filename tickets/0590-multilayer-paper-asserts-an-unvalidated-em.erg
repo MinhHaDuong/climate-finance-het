@@ -1,0 +1,82 @@
+%erg 0.1
+Title: The multilayer paper still asserts the shared-semantic-space property the data paper just stopped asserting
+Created: 2026-07-28
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-28T09:40Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Ticket 0338 removed four cross-language capability claims from the data
+paper, on the ground that a property of multilingual sentence-transformers in
+general is not a validation result for this corpus. Its review panel then
+found the same sentence still standing in a different deliverable, outside
+that ticket's scope.
+
+`deliverables/multilayer/multilayer-detection.qmd:226`:
+
+> *Multilingual coverage.* LDA and STM require language-specific stopword
+> lists and tokenisation. Multilingual sentence-transformers (here
+> `BAAI/bge-m3`) place documents in a shared semantic space **regardless of
+> language**, and the citation graph is language-agnostic by construction.
+
+This is science-lane by the severity floor in `.claude/rules/workflow.md`: a
+live claim in a rendered document, not a gap in machinery.
+
+## The judgment call this ticket exists to settle
+
+The multilayer sentence is weaker than the ones 0338 cut, and it may well be
+fine as written. It appears in a *method comparison* — embeddings versus
+LDA/STM — where citing a model's design property as a reason to prefer it is
+ordinary methods prose, not a claim about what this corpus demonstrates. The
+data paper's versions were different: they told a reuser what the *dataset*
+supports.
+
+So the question is not "delete it" but "which of the two readings is it?".
+Two defensible outcomes:
+
+- **Keep, attributed.** Make the sentence say the model is *designed* to do
+  this, the way the data paper's §3 already does ("designed to group works by
+  topic rather than by language"). One word, and the asymmetry with the data
+  paper disappears.
+- **Keep as is**, and record here why a methods comparison is exempt — so the
+  next sweep does not refile it.
+
+What is not defensible is leaving two deliverables from the same pipeline
+making opposite-strength claims about the same embedding model with no note
+saying which is deliberate.
+
+## Relevant files
+
+- `deliverables/multilayer/multilayer-detection.qmd` — line 226
+- `deliverables/data-paper/data-paper.qmd` — §1 and §3, the calibrated wording
+  to match against
+- `tests/test_language_claims.py` — 0338's guard, scoped to the data paper
+  only; extending it is a separate decision, see below
+
+## Actions
+
+1. Decide between the two readings above. This is an author call on a
+   manuscript, not an agent call.
+2. Apply the wording, if any.
+3. Decide whether 0338's claim guard should cover this deliverable too. Note
+   the argument against: the guard's forbidden patterns are calibrated to
+   claims about a *dataset's* capability, and a methods paper legitimately
+   discusses cross-lingual embedding behaviour as a subject. A guard that
+   forbids the vocabulary of the topic in a paper *about* that topic is the
+   wrong shape.
+
+## Test
+
+None up front. Per `.claude/rules/writing.md`, a pure prose ticket carries no
+`## Test` section: the red step assumes a machine-checkable positive outcome
+and the polarity rule says prose has none. If action 3 concludes the guard
+should extend, that extension is a negative guard and gets its red test then.
+
+## Exit criteria
+
+- [ ] The multilayer paper's embedding claim and the data paper's are
+      consistent in strength, or the difference is recorded as deliberate
+- [ ] Action 3 answered either way, so the next sweep does not refile this
