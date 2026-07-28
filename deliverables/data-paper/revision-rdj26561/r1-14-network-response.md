@@ -20,9 +20,9 @@ financial economics of climate risk, among others. *Limitations*: the same
 network is too thin before 2008 for inferential use. Our tradition-separation
 analysis of the pre-2008 subgraph --- the paragraph below --- finds that
 while the economic-cluster separation is significant against a
-degree-preserving null (z = 9.1), the pre-2008 citer subgraph covers only
+degree-preserving null (z = 8.7), the pre-2008 citer subgraph covers only
 about 8% of early works, and bootstrap community assignments are stable for
-just the best-connected references (93--100% for anchors). The paper states
+just the best-connected references (92--100% for anchors). The paper states
 the early-period undercount as a usage caveat; the figure demonstrates what
 the network supports at full-corpus scale.
 
@@ -47,7 +47,7 @@ embedded in the paper.
 > Development Mechanism and research on carbon pricing and international
 > agreements form two well-separated co-citation communities with no
 > direct edge between them — against 44% ± 5% of cross-cluster edges
-> expected under degree-preserving rewiring (z = 9.1, empirical
+> expected under degree-preserving rewiring (z = 8.7, empirical
 > p < 0.01) — a division of intellectual labour that anticipates the
 > later split between development and environmental framings. Second,
 > the burden-sharing and equity debate, politically central in the UNFCCC
@@ -57,8 +57,8 @@ embedded in the paper.
 > question, Scott Barrett on treaty design, co-cites with the pricing
 > cluster rather than with any equity pole. Both findings survive
 > resampling: across 200 bootstrap draws of the citing documents, the two
-> economic clusters reappear in 93–100% of draws while an equity
-> community emerges in 8%. The period's sparsity bounds precision, not
+> economic clusters reappear in 92–100% of draws while an equity
+> community emerges in 12.5%. The period's sparsity bounds precision, not
 > validity: the network is dense enough to separate the two economic
 > traditions, and to establish that the governance tradition acquired its
 > scholarly canon only after the field crystallized.
@@ -89,5 +89,5 @@ construction (MIN_COCIT = 3).
 - Artifact mapping: cross-cluster null share and z —
   `econ_cross_share_null_mean`, `econ_within_share_z`; anchor census —
   `burden_candidates`, `burden_candidates_in_network`; bootstrap rates —
-  `boot_pricing_rate` (0.925), `boot_cdm_rate` (0.995),
-  `boot_burden_rate` (0.08).
+  `boot_pricing_rate` (0.92), `boot_cdm_rate` (1.0),
+  `boot_burden_rate` (0.125).
