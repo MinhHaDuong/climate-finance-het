@@ -107,7 +107,9 @@ fi
 # opened the PR (ticket 0365, option 3b). Independence would mean requiring a
 # reviewer other than the PR author, which would stop autonomous waves from
 # merging unattended; that trade was declined deliberately.
-# The substantive merge gate is local: `make check` plus /verify; this hook only
+# The substantive merge gate is local: `make check-fast` + `make lint` plus
+# /verify (the full `make check` runs ex post on main via /lair step 9, and
+# pre-PR only for pipeline-surface diffs — AGENTS.md § Execute); this hook only
 # stops a merge that skipped the review step entirely.
 # MinhHaDuong: the single forge identity — the agent token and the web MCP
 #   token both authenticate as it, and it is also the PR author.

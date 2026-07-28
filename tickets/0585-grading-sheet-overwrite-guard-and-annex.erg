@@ -1,0 +1,64 @@
+%erg 0.1
+Title: The grading sheet still overwrites hand-filled labels; the tech-report annex omits the loss
+Created: 2026-07-28
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-28T11:40Z HDMX-coding-agent created from the 0372 roar sweep: the line that destroyed the validation labels is unchanged, and one prose surface still describes the labels as if they existed
+--- body ---
+## Context
+
+Ticket 0372 established that the 100-work human-validation labels were
+destroyed by their own collection sheet: `compute_reranker_calibration.py`
+writes `hitl_df["human_label"] = ""` on every run and tells the reviewer to
+fill the file in place, so the next run regenerates it blank. The roar sweep
+confirms this is the only instance of the class in `scripts/`, and that it is
+still live — a re-run of the calibration (plausible during the 0540/0541
+corpus-v3 work) would destroy a graded sheet again.
+
+Second residue, same origin: `deliverables/_shared/_includes/annex-crossencoder.md`
+and `corpus-filtering.md` describe the human validation accurately as history
+but never say the per-work grades were not retained. The data paper now
+carries that disclosure (0372); the technical report should agree with it —
+a reader cross-checking the annex against the deposit hits the same wall
+0372 was filed for.
+
+## Relevant files
+
+- `scripts/harvest/compute_reranker_calibration.py` — line ~426 writes the
+  blank `human_label` column in place
+- `docs/reranker_hitl_stratified.csv` — the sheet it overwrites
+- `deliverables/_shared/_includes/annex-crossencoder.md` — "on the
+  human-labeled sample", no not-retained disclosure
+- `tickets/closed/0372-…` — forensics and the shipped remediation
+- `tickets/0541-…` — the append-only votes protocol this must not contradict
+
+## Actions
+
+1. Make the writer refuse to overwrite: if the output sheet exists and its
+   `human_label` column has any non-empty value, abort with a message naming
+   a `--force` escape hatch, and write the fresh sheet beside it otherwise.
+2. Add one sentence to the annex (and echo in `corpus-filtering.md` if it
+   reads naturally): the per-work grades were not retained; the per-quintile
+   rates and the implied AUC ship as `tab_reranker_validation.csv` (0372).
+
+## Test
+
+- Red first: run the sheet-writing path against a fixture sheet carrying one
+  graded row; assert it exits non-zero and the graded value survives.
+
+## Verification
+
+- [ ] Writer aborts on a graded sheet; `--force` documented
+- [ ] Annex carries the not-retained disclosure and names the deposited table
+- [ ] `make lint` and `make check-fast` green
+
+## Invariants
+
+- No change to the deployed threshold, the query, or any corpus artifact —
+  this ticket touches one writer's safety and two prose surfaces only.
+
+## Exit criteria
+
+- A graded sheet can no longer be destroyed by a re-run, and every prose
+  surface describing the validation agrees the raw labels are gone.

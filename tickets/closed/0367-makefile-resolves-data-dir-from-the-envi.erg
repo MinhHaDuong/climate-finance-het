@@ -2,11 +2,13 @@
 Title: Makefile resolves DATA_DIR from the environment like the Python side
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: tooling-lane severity floor: Makefile/Python consistency, no wrong value reaches a deliverable
 
 --- log ---
 2026-07-27T15:52Z HDMX-coding-agent created
 2026-07-27T15:55Z HDMX-coding-agent note Found while wiring ticket 0354's deposit gate: make could not reach a corpus the Python scripts read fine
 
+2026-07-27T19:45Z HDMX-coding-agent closed — tooling-lane severity floor: Makefile/Python consistency, no wrong value reaches a deliverable
 --- body ---
 ## Context
 

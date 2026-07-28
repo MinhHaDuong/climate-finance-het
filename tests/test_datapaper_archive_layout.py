@@ -32,6 +32,14 @@ PRODUCTS = [
     "datapackage.json",
     # The retrieval-protocol appendix §2.1 points referees at (ticket 0329).
     "tab_retrieval_protocol.csv", "tab_retrieval_protocol.md",
+    # The reranker human-validation evidence §2.3 quotes AUC = 0.818 from
+    # (ticket 0372): per-quintile rates + the two sample sheets + the
+    # weak-label calibration set.
+    "tab_reranker_validation.csv", "reranker_hitl_stratified.csv",
+    "reranker_hitl_review.csv", "reranker_calibration.csv",
+    # The per-stratum removal ablation §2.3's bias paragraph points at
+    # (ticket 0337).
+    "tab_filter_ablation.csv",
 ]
 
 # The correspondence that describes the deposit to the editor (ticket 0403).
