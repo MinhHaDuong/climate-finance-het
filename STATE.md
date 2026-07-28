@@ -1,30 +1,30 @@
 # State
 
-Last updated: 2026-07-27T08:30Z
+Last updated: 2026-07-28T20:41Z
 
 ## Current goal
 
 **RDJ-26561 R&R — corpus frozen, three items to resubmission.** Tracker 0274,
-due ~2026-10-20. Friday's queue landed (#1120 restructure/TF-IDF map/count-free
-title, #1116 corpus v2, #1124–#1126). Corpus v2 **frozen** (author 2026-07-27):
-the four outstanding OECD targets are phantoms or genuinely offline, documented
-no_url — 0311/0312/0313 close on that, no rebuild. Remaining: **0320** stale
-verification claim (paper 99.0% vs v2 97.0%, factual error), **0283** letter
-reconciliation (list in ticket log) + sign-off, **0292** archive scripts
-(blocks Zenodo repack), then 0274's integration review against the ledger.
-Open author call: **0297** language nulls at 4.0%, fixable to ~0.4%, but its
-Phase-1 rerun moves `lang_english_pct` — do it before the letter or after
-resubmission, not between. Dress rehearsal available pre-resub: wide panel +
-external referees. Œconomia: awaiting editor; 0306/0309 parked.
+due ~2026-10-20. Corpus v2 **frozen** (author 2026-07-27). Remaining: **0320**
+stale verification claim, **0283** letter reconciliation + sign-off, **0292**
+archive scripts (blocks Zenodo repack), then 0274's integration review. Open
+call: **0297** language nulls. Œconomia: awaiting editor; 0306/0309 parked.
+Raid 2026-07-28 closed 0570/0571/0625/0640/0641/0565: the multilayer techrep
+now reports what its tables show (peaks 2014/2020/2019, one 1998–2020 zone);
+63 tracked artifacts audited, clean except 5 movers awaiting author (#1282).
+New author calls: **0671** Paris-2015 z crosses 1.5 (act II→III wording) +
+A.5 numbers, **0670** registry on unstable ids, **0672** deposit title.
 
 ## Status
-<!-- refreshed 2026-07-27T08:30Z · as of 875c3203 -->
-**Tickets:** 26 ready · 39 blocked · 2 awaiting author (`erg ready tickets/`);
-  next: 0320 verification claim · 0283 letter reconciliation · 0292 repack
-**In flight:** PR #1127 (0317 + 0314), local `make check` green but for 0321
-**New today:** 0319 snapshot date · 0320 verification claim · 0321 main red
-(ruff + tier-3 import; no CI here, `make check` is a local-only gate)
-**Housekeeping:** stale dir `.claude/worktrees/t0066-null-csv-schema/` — author
+<!-- generated 2026-07-28T20:41Z · as of 92c7024d -->
+
+**Tickets:** 40 ready · 46 blocked · 9 awaiting author — `erg ready tickets/` for full list
+  next: 0272 Extract shared derive_companion_path() helper f… · 0273 load_cluster_labels() ignores --input, reads cl…
+**In flight:** 2 open PRs (1 draft), oldest #1285 0d
+**Recent (first-parent):**
+  92c7024d Merge pull request #1288 from MinhHaDuong/ticket-deposit-title
+  c95dc90d Merge pull request #1287 from MinhHaDuong/t0362-no-auto-push-dvc-lock
+  0b670fb8 Merge pull request #1284 from MinhHaDuong/t565-table2-grey-label
 
 ## Submissions
 
