@@ -7,8 +7,9 @@
 # via BASH_ENV. Never via command-line KEY=value — that leaks to `ps`.
 #
 # Guards: hostname must be padme, dvc must be installed, branch must be main.
-# After dvc repro + push, auto-commits dvc.lock if it's the only changed file.
-# Otherwise warns the user to commit manually.
+# After dvc repro + push, scripts/dvc_lock_gate.sh reports what changed. It
+# never commits and never pushes: a dvc.lock change exits non-zero so the
+# operator lands it via branch + merge request (ticket 0362).
 #
 # Usage: bash scripts/run_corpus_pipeline.sh
 #   (or invoked via `make corpus`)
@@ -79,25 +80,7 @@ if [ "$ret" -ne 0 ]; then
     exit "$ret"
 fi
 
-# --- Auto-commit logic ---
-changed=$(git status --porcelain)
-
-if [ -z "$changed" ]; then
-    echo "dvc.lock unchanged, nothing to commit."
-elif [ "$(echo "$changed" | sed 's/^...//')" = "dvc.lock" ]; then
-    echo "Auto-committing dvc.lock..."
-    branch="housekeeping-dvclock-$(date +%Y%m%d-%H%M%S)"
-    git checkout -b "$branch"
-    git add dvc.lock
-    git commit -m "data: update dvc.lock after pipeline re-run"
-    git checkout main
-    git merge "$branch"
-    git branch -d "$branch"
-    git push origin main
-    echo "dvc.lock committed and pushed."
-else
-    echo ""
-    echo "WARNING: files other than dvc.lock changed:"
-    echo "$changed"
-    echo "Stage and commit manually."
-fi
+# --- Publication gate (ticket 0362) ---
+# Reports what changed; never commits or pushes. Exits non-zero when dvc.lock
+# changed, so publishing a corpus change stays a deliberate human step.
+bash "$PROJ_ROOT/scripts/dvc_lock_gate.sh"

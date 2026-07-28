@@ -42,13 +42,15 @@ def throwaway_repo(tmp_path: Path) -> Path:
     (repo / "other.txt").write_text("hello\n")
     _git(repo, "add", "-A")
     _git(repo, "commit", "-m", "initial")
-    shutil.copy(GATE, repo / "dvc_lock_gate.sh")
+    # The gate lives outside the repo: a copy inside it would show up as an
+    # untracked file and change the very `git status` the gate reads.
+    shutil.copy(GATE, tmp_path / "dvc_lock_gate.sh")
     return repo
 
 
 def _run_gate(repo: Path) -> subprocess.CompletedProcess:
     return subprocess.run(
-        ["bash", "./dvc_lock_gate.sh"],
+        ["bash", str(repo.parent / "dvc_lock_gate.sh")],
         cwd=repo,
         capture_output=True,
         text=True,
