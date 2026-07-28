@@ -2,12 +2,14 @@
 Title: A vars file ships [MISSING] into a results paragraph, and the render oracle cannot see it
 Created: 2026-07-28
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1280
 
 --- log ---
 2026-07-28T00:00Z HDMX-coding-agent created
 2026-07-28T09:06Z claude note raid 570/571 Imagine+Plan — policy (b) settled; "not yet generated" comment is stale (tab_summary Make targets exist); Actions rewritten, exit criteria untouched
 2026-07-28T09:12Z claude note feasibility PASS — paths/lines verified against tree; surfaces disjoint from 0571; compute_vars.py confinement rule in Actions covers the five open sibling PRs
 
+2026-07-28T17:59Z HDMX-coding-agent closed — autoclosed — PR #1280
 --- body ---
 ## Context
 
