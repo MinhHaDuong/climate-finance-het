@@ -64,9 +64,10 @@ not, in a published data paper's quality table.
 
 Red first, in `tests/test_corpus_table_export.py`: build a summary from a rows
 list where one source dict carries only the five keys, run it through
-`_write_md_table`, and assert on the rendered row (via `tests/_gfm_render.py`,
-the oracle 0325 established) that the four percentage cells are empty. Assert
-on the render, not on the emitted source.
+`_write_md_table`, and assert on the rendered row (via `tests/_qmd_render.py`,
+the oracle 0325 established — ticket 0376 renamed it from `_gfm_render.py` and
+`render_gfm` to `render_qmd` when it moved the reader off GFM) that the four
+percentage cells are empty. Assert on the render, not on the emitted source.
 
 Cover the `.csv` path in the same ticket: drive the write and read the file
 back rather than asserting on the in-memory frame — a `columns=` allowlist has

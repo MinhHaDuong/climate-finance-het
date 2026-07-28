@@ -10,10 +10,9 @@ Verifies that:
 import os
 import subprocess
 import sys
-from html import escape
 
 import pytest
-from _gfm_render import cell_texts, render_gfm, require_pandoc, row_with
+from _qmd_render import cell_texts, render_qmd, require_pandoc, row_with
 from _source_roots import source_root_env
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "figures"))  # 0255: moved figures entry points
@@ -144,12 +143,12 @@ def test_pipe_bearing_language_code_keeps_its_four_cells(tmp_path):
         cwd=REPO_ROOT, env=source_root_env(), capture_output=True,
         text=True, check=True)
 
-    flat = render_gfm(output.read_text(encoding="utf-8"), tmp_path)
-    row = row_with(flat, escape(PIPE_CODE.upper(), quote=False))
+    flat = render_qmd(output.read_text(encoding="utf-8"), tmp_path)
+    row = row_with(flat, PIPE_CODE.upper())
 
     assert cell_texts(row) == [
-        escape(PIPE_CODE.upper(), quote=False),
-        escape(PIPE_CODE, quote=False),
+        PIPE_CODE.upper(),
+        PIPE_CODE,
         f"{ENOUGH_ROWS}",
         "100.0",
     ], f"the language code split the row:\n{row}"
@@ -173,7 +172,7 @@ def test_total_row_keeps_its_emphasis(tmp_path):
         cwd=REPO_ROOT, env=source_root_env(), capture_output=True,
         text=True, check=True)
 
-    flat = render_gfm(output.read_text(encoding="utf-8"), tmp_path)
+    flat = render_qmd(output.read_text(encoding="utf-8"), tmp_path)
     row = row_with(flat, "Total")
 
     assert "<strong>" in row, f"the Total row lost its emphasis:\n{row}"

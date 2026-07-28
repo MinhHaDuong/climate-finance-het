@@ -1,25 +1,32 @@
-"""No `{{< meta >}}` macro reaches a rendered deliverable unresolved (ticket 0363).
+"""No unresolved reference reaches a rendered deliverable (tickets 0363, 0420).
 
-Quarto exits 0 when a macro names a key its metadata does not declare, writes
-the literal `?meta:key` into the document, and warns only on stderr. Every
-number a referee checks in the data paper is behind that mechanism, and until
-this suite its only gate was someone remembering to look at the finished PDF.
+Quarto publishes a document that is missing an input rather than failing on it.
+An undeclared `{{< meta >}}` key becomes the literal `?meta:key`; a crossref to
+a label that does not exist becomes `?@fig-name`; a citation key absent from
+the bibliography renders as `(key?)`. In every case the exit code is 0 and the
+only complaint goes to a stderr nothing reads, so the defect reaches the page
+and only a human looking at the finished PDF can catch it.
 
 Two guards, deliberately different in what they trust:
 
 * the **render oracle** asks Quarto — the authority on its own resolution — and
-  reads the output it actually produced. It needs the toolchain and the
-  generated includes, so it is `integration` and skips where either is absent.
+  reads what it actually produced. It needs the toolchain and the generated
+  includes, so it is `integration` and skips where either is absent. It covers
+  all three mechanisms in one render.
 * the **static resolver** answers from the files on disk, against the generated
   `*-vars.yml` rather than the `DOC_VARS` dict one layer above it. It needs
   nothing, so it runs in the fast loop and covers every machine — including the
-  fresh worktrees where the render guard skips.
+  fresh worktrees where the render guard skips. It covers meta keys only:
+  resolving a crossref means knowing every label Quarto's own filter defines,
+  including labels generated inside an `{{< include >}}`.
 
-Both are proved able to fail, on a document written to be broken, before either
-is trusted on a real one — the invariant ticket 0327 paid for.
+Each mechanism is proved able to fail, on a document written to be broken,
+before the guard is trusted on a real one — the invariant ticket 0327 paid for.
+And the signal per mechanism is measured, not assumed: citations leave no mark
+in markdown output at all, and neither does a crossref inside a figure or table
+caption (the markdown writer drops caption text) — so citations are read from
+stderr, and crossrefs from the union of output and stderr.
 """
-
-import re
 
 import pytest
 from _qmd_meta import (
@@ -29,9 +36,12 @@ from _qmd_meta import (
     declared_keys,
     deliverable_qmds,
     meta_keys_used,
+    missing_citations_in,
+    placeholders_in,
     render_to_markdown,
     require_quarto,
     source_files,
+    unresolved_crossrefs_in,
     unresolved_meta_keys,
 )
 
@@ -65,9 +75,6 @@ KNOWN_UNRESOLVED = {
     }),
 }
 
-PLACEHOLDER_RE = re.compile(re.escape(PLACEHOLDER) + r"([A-Za-z0-9_.-]+)")
-
-
 def _params():
     """Every discovered document, as a parametrize list."""
     return [pytest.param(qmd, id=qmd.stem) for qmd in deliverable_qmds()]
@@ -88,6 +95,68 @@ def _assert_matches_expectation(qmd, unresolved, where):
         detail.append(f"{len(fixed)} key(s) now resolve — drop them from "
                       f"KNOWN_UNRESOLVED: {fixed}")
     raise AssertionError(f"{qmd.name} ({where}): " + "; ".join(detail))
+
+
+def _broken_crossref_document(tmp_path):
+    """A document whose figure is labelled one thing and referenced as another.
+
+    Not merely a reference to nothing: the label mismatch is the shape the
+    defect actually takes in this repo (ticket 0420 — a figure labelled
+    `fig-zseries`, embedded as `fig_companion_zseries.png`, referenced three
+    times as `@fig-companion-zseries`), and a guard should be exercised on it.
+    """
+    qmd = tmp_path / "xref.qmd"
+    qmd.write_text(
+        "---\n"
+        'title: "Xref"\n'
+        "---\n\n"
+        "Resolvable: @fig-real. Broken: @fig-not-a-label.\n\n"
+        "![A caption.](placeholder.png){#fig-real}\n",
+        encoding="utf-8",
+    )
+    return qmd
+
+
+def _broken_caption_crossref_document(tmp_path):
+    """A document whose only broken crossref lives inside a figure caption.
+
+    The placement matters: Quarto's markdown writer drops caption text, so no
+    `?@label` reaches the output and the stdout scan alone is blind here. The
+    stderr warning is the only signal for this shape.
+    """
+    (tmp_path / "placeholder.png").touch()
+    qmd = tmp_path / "cap.qmd"
+    qmd.write_text(
+        "---\n"
+        'title: "Cap"\n'
+        "---\n\n"
+        "![A caption citing @fig-ghost.](placeholder.png){#fig-real}\n",
+        encoding="utf-8",
+    )
+    return qmd
+
+
+def _broken_citation_document(tmp_path):
+    """A document citing one key its bibliography has and one it does not."""
+    (tmp_path / "refs.bib").write_text(
+        "@article{real2020,\n"
+        "  title={A Real Work},\n"
+        "  author={Author, A.},\n"
+        "  year={2020},\n"
+        "  journal={J}\n"
+        "}\n",
+        encoding="utf-8",
+    )
+    qmd = tmp_path / "cite.qmd"
+    qmd.write_text(
+        "---\n"
+        'title: "Cite"\n'
+        "bibliography: refs.bib\n"
+        "---\n\n"
+        "Good: @real2020. Bad: @nosuchkey2099.\n",
+        encoding="utf-8",
+    )
+    return qmd
 
 
 def _broken_document(tmp_path, key="absent_key"):
@@ -146,6 +215,28 @@ def test_static_resolver_rejects_a_vars_file_that_is_not_a_mapping(tmp_path, bad
 def test_no_deliverable_uses_an_undeclared_meta_key(qmd):
     """Every `{{< meta X >}}` in a deliverable resolves against its metadata."""
     _assert_matches_expectation(qmd, unresolved_meta_keys(qmd), "static scan")
+
+
+@pytest.mark.parametrize("qmd", _params())
+def test_citing_deliverable_declares_a_bibliography(qmd):
+    """A document that cites must run citeproc, or its bad keys are silent.
+
+    The citation guard's signal is citeproc's stderr warning — and citeproc
+    only runs where the front matter declares a bibliography. A document citing
+    without one gets no warning for an unknown key, so the render oracle is
+    structurally blind there. Cheapest closure: forbid the configuration. The
+    bracketed `[@key]` form is required syntax for the scan because a bare
+    `@word` matches emails and crossrefs; a document citing exclusively in
+    narrative form would pass — accepted, since every citing document in this
+    repo uses the bracketed form somewhere.
+    """
+    files, _ = source_files(qmd)
+    cites = any("[@" in f.read_text(encoding="utf-8") for f in files)
+    if cites:
+        assert "bibliography" in declared_keys(qmd), (
+            f"{qmd.name} cites (`[@key]`) but declares no bibliography, so "
+            f"citeproc never runs and an unknown key fails silently"
+        )
 
 
 def test_discovery_finds_the_deliverables():
@@ -235,18 +326,84 @@ def test_quarto_still_refuses_the_reserved_keys(tmp_path):
 
 
 @pytest.mark.integration
+def test_render_oracle_flags_a_broken_crossref(tmp_path):
+    """Red first for the crossref mechanism, on the shape the repo actually hit.
+
+    Exit 0 again: a reference to a label that does not exist is not an error to
+    Quarto, which is why this reached a deliverable and stayed.
+    """
+    require_quarto()
+    result = render_to_markdown(_broken_crossref_document(tmp_path))
+    assert result.returncode == 0, f"expected a silent failure, got:\n{result.stderr}"
+    assert placeholders_in(result.stdout).get("crossref") == {"fig-not-a-label"}
+
+
+@pytest.mark.integration
+def test_render_oracle_flags_a_caption_crossref(tmp_path):
+    """Red first for the caption placement, whose only signal is stderr.
+
+    Both halves are the point. Stderr must see the broken ref — and stdout must
+    NOT, or this probe stops documenting the blind spot that makes the stderr
+    scan load-bearing, and a future reader can "simplify" the guard back to
+    output-only and pass this test while reopening the hole.
+    """
+    require_quarto()
+    result = render_to_markdown(_broken_caption_crossref_document(tmp_path))
+    assert result.returncode == 0, f"expected a silent failure, got:\n{result.stderr}"
+    assert unresolved_crossrefs_in(result.stderr) == {"fig-ghost"}
+    assert not placeholders_in(result.stdout), (
+        "markdown output now carries the caption's broken ref — the stderr "
+        "scan may no longer be the only signal; re-examine, don't just fix"
+    )
+
+
+@pytest.mark.integration
+def test_render_oracle_flags_a_missing_citation(tmp_path):
+    """Red first for citations, and a check that the *signal* is the right one.
+
+    Asserting the markdown output still carries a bare `@nosuchkey2099` is the
+    point, not an aside: markdown keeps citations unresolved by design, so
+    nothing in the output distinguishes a good key from a bad one and a guard
+    reading only stdout cannot see this mechanism at all.
+    """
+    require_quarto()
+    result = render_to_markdown(_broken_citation_document(tmp_path))
+    assert result.returncode == 0, f"expected a silent failure, got:\n{result.stderr}"
+    assert missing_citations_in(result.stderr) == {"nosuchkey2099"}
+    assert "@nosuchkey2099" in result.stdout, "markdown output leaves citations alone"
+    assert not placeholders_in(result.stdout), "and writes no placeholder for them"
+
+
+@pytest.mark.integration
 @pytest.mark.parametrize("qmd", _params())
-def test_rendered_deliverable_has_no_meta_placeholder(qmd):
-    """Ask Quarto itself: nothing it produced carries a `?meta:` placeholder."""
+def test_rendered_deliverable_has_no_placeholder(qmd):
+    """Ask Quarto itself: nothing it produced carries an unresolved-input literal.
+
+    One render answers for all three mechanisms. They differ only in which
+    input went missing — a meta key, a crossref label, a citation key — and
+    checking them together costs one regex each on text already in hand, where
+    a test per mechanism would re-render every document.
+    """
     require_quarto()
     _, missing = source_files(qmd)
     if missing:
         pytest.skip(f"generated include not built: {missing[0]} (run `make corpus-tables`)")
     result = render_to_markdown(qmd)
     assert result.returncode == 0, f"{qmd.name} failed to render:\n{result.stderr}"
-    _assert_matches_expectation(
-        qmd, set(PLACEHOLDER_RE.findall(result.stdout)), "rendered output"
+
+    found = placeholders_in(result.stdout)
+    _assert_matches_expectation(qmd, found.get("meta key", set()), "rendered output")
+    unexpected = {kind: sorted(hits) for kind, hits in found.items() if kind != "meta key"}
+    bad_xrefs = set(found.get("crossref", set())) | unresolved_crossrefs_in(result.stderr)
+    if bad_xrefs:
+        unexpected["crossref"] = sorted(bad_xrefs)
+    missing_cites = missing_citations_in(result.stderr)
+    if missing_cites:
+        unexpected["citation"] = sorted(missing_cites)
+    assert not unexpected, (
+        f"{qmd.name}: rendered output carries unresolved references: {unexpected}"
     )
+
     if not KNOWN_UNRESOLVED.get(qmd.stem):
         assert WARNING not in result.stderr, (
             f"{qmd.name}: Quarto warned about an unknown meta key:\n{result.stderr}"

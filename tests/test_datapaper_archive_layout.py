@@ -397,3 +397,17 @@ class TestSubmissionProseNamesOnlyShippedProducts:
         named = products_named_in(doc)
         assert "climate_finance_corpus.csv" in named, "the real products must parse"
         assert sorted(named - shipped_products()) == ["codebook.md"]
+
+    def test_a_split_extension_shorthand_is_expanded(self):
+        """Red-proof for the `` `stem.csv`/`.md` `` shorthand (ed04 writes
+        `tab_retrieval_protocol.csv`/`.md`): the bare-extension token expands
+        against the preceding stem, and the function returns the set — the
+        2026-07-27 patch that added this branch dropped the return statement,
+        which blinded the whole guard (three docs reported as naming nothing)
+        and broke its own self-test with a TypeError."""
+        doc = (
+            "The `data/products/` folder ships\n"
+            "`tab_retrieval_protocol.csv`/`.md` for the appendix.\n"
+        )
+        named = products_named_in(doc)
+        assert named == {"tab_retrieval_protocol.csv", "tab_retrieval_protocol.md"}
