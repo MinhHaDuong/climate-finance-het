@@ -147,6 +147,14 @@ def _write_md_table(summary: pd.DataFrame, path: str, caption: str) -> None:
             v = row.get(c, "")
             if c in ("Raw", "Refined", "Unique"):
                 v = f"{int(v):,}" if pd.notna(v) else ""
+            elif pd.isna(v):
+                # A zero-refined source reaches here as float NaN: main()
+                # builds its row without the percentage keys and the
+                # DataFrame fills them, so the .get default above never
+                # fires. An empty cell, not str(nan), in the deposit
+                # (ticket 0375). The .csv sibling was never wrong —
+                # to_csv's default na_rep already writes empty fields.
+                v = ""
             cell = markdown_text_cell(v)
             vals.append(f"**{cell}**" if is_total else cell)
         lines.append("| " + " | ".join(vals) + " |")
