@@ -64,8 +64,8 @@ mtime was checked, so "clean" means "regenerated and byte-identical", not
 |---|---|---|
 | Clean | 20 | `fig_composition`, `fig_composition_wide`, `fig_global_map_direct`, `fig_traditions_pre2008_citers`; `tab_citation_coverage_periods`, `tab_citation_verification`, `tab_corpus_flow`, `tab_corpus_sources`, `tab_dedup_error_estimates`, `tab_filter_ablation`, `tab_lit_confirmations`, `tab_network_limitations`, `tab_reference_counts`, `tab_reranker_validation`, `tab_retrieval_protocol.csv`, `tab_retrieval_protocol.md`, `tab_sem6_assignments`, `tab_semantic_robustness`, `tab_variables.md`, `tab_venues.md` |
 | Cosmetic | 0 | — |
-| Substantive, committed | 2 | `fig_breaks.png`, `tab_pre2007_coverage.csv` |
-| Substantive, left as committed | 3 | `fig_bars_v1.png`, `fig_global_map_cocitation.png`, `tab_null_separation_pre2007.csv` |
+| Substantive, committed | 1 | `tab_pre2007_coverage.csv` |
+| Substantive, left as committed | 4 | `fig_bars_v1.png`, `fig_breaks.png`, `fig_global_map_cocitation.png`, `tab_null_separation_pre2007.csv` |
 | No producer | 37 | 34 `_includes/*.md`, `figures/scratch/scout_tradition_coupling.png`, `tab_venues_fr.md`, `tab_venues_fr_caption.md` |
 | Excluded | 1 | `qa_cocitation_edges_report.json` (author decision: dated live-Crossref probe of record) |
 
@@ -114,5 +114,23 @@ mechanically prose-coupled, the pair must land in one author-arbitrated PR
 shape: an artifact's *guards* say whether it is load-bearing for prose more
 reliably than grepping the prose does.
 
+`fig_breaks.png` went the same way, found by the adherence pass rather than by
+a guard. `plot_fig2_breaks.py` draws a significance threshold at z = 1.5 and
+plots 2015 and 2021 as "not a break" markers. On the pinned corpus the
+window-3 Jensen-Shannon z for 2015 is 1.528 — above that line. So the
+regenerated figure shows the Paris marker on the significance threshold while
+the script's own docstring, `manuscript.qmd` L313, and
+`.claude/rules/writing.md` all read Paris as a diversification and not a
+rupture. The two breaks the periodization rests on survive and strengthen
+(2007 cosine z 1.86, 2013 JS z 1.66); it is the act II -> III boundary claim
+that moves, which is an author reading.
+
+The generalisation, since the two cases were found by different means: what
+makes an artifact prose-coupled is not always a guard or a quoted number. Here
+it was a *threshold and a marker hardcoded in the plotting script* — a claim
+compiled into the producer. Grepping the citing prose for the artifact's
+numbers found nothing in either case.
+
 Follow-ups filed: 0670 (community registry keyed on unstable Louvain ids, and
-the `nan nan` label), 0671 (manuscript A.2 freeze claim and the A.5 numbers).
+the `nan nan` label), 0671 (manuscript A.2 freeze claim, the A.5 numbers, and
+the `@fig-breaks` Paris marker).
