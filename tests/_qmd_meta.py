@@ -52,6 +52,15 @@ PLACEHOLDER_PATTERNS = {
 #: writer emits, and would have passed forever.
 CITEPROC_MISSING_RE = re.compile(r"Citeproc: citation (\S+) not found")
 
+#: Crossrefs fail on stderr too, and for one placement stderr is the ONLY
+#: signal: a crossref inside a figure or table caption. Quarto's markdown
+#: writer drops caption text wholesale, so a broken ref there never reaches the
+#: output as `?@label` — the body-text pattern above is blind to it (found by
+#: the PR #1237 review; probe: a caption citing `@fig-ghost` yields zero `?@`
+#: in stdout and two of these warnings on stderr). The output pattern is kept
+#: as well: it localises body-text hits, and belt-and-braces costs one regex.
+CROSSREF_MISSING_RE = re.compile(r"Unable to resolve crossref @?([A-Za-z0-9_:.-]+)")
+
 
 def placeholders_in(rendered: str) -> dict[str, set[str]]:
     """Unresolved-input placeholders in rendered output, keyed by mechanism.
@@ -67,6 +76,15 @@ def placeholders_in(rendered: str) -> dict[str, set[str]]:
 def missing_citations_in(stderr: str) -> set[str]:
     """Citation keys citeproc could not resolve, read from a render's stderr."""
     return set(CITEPROC_MISSING_RE.findall(stderr))
+
+
+def unresolved_crossrefs_in(stderr: str) -> set[str]:
+    """Crossref labels a render could not resolve, read from its stderr.
+
+    The union of this and the output scan is the crossref verdict: stdout
+    misses caption-borne refs, stderr covers every placement.
+    """
+    return set(CROSSREF_MISSING_RE.findall(stderr))
 
 #: Front-matter keys Quarto consumes as its own configuration and does not
 #: expose to a `{{< meta >}}` macro. Being present in the header is therefore

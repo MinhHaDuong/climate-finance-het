@@ -39,7 +39,7 @@ nor the guard on the prose.
 
 - `deliverables/multilayer/multilayer-detection.qmd` — the three references
 - `tests/_qmd_meta.py` — the 0363 scan and render helpers, to extend
-- `tests/test_meta_macro_resolution.py` — the two-guard pattern to follow
+- `tests/test_render_placeholders.py` — the two-guard pattern to follow (renamed from test_meta_macro_resolution.py in this ticket's own PR)
 - `deliverables/_shared/figures/` — whether a z-series ribbon figure still exists
 
 ## Actions
