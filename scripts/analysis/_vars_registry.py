@@ -146,6 +146,7 @@ DOC_VARS = {
         "lang_detected_pct",
         "lang_english_pct",
         "lang_non_english_n",
+        "lang_unclassified_n",
         # Two earlier cuts orphaned lit_* vars, both still emitted upstream:
         # the adaptation-share and chi-square/p details went with PR #1120,
         # leaving only the two finance-journal shares in the

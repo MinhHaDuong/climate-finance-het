@@ -74,7 +74,7 @@ All three studies periodize the field exogenously, by reference to policy milest
 
 ## 3. Data
 
-The analysis uses a multilingual corpus of {{< meta corpus_total >}} works on climate finance, assembled from {{< meta corpus_sources >}} bibliographic sources and described in the companion data descriptor [cross-ref data-paper]. Sentence-transformer embeddings ({{< meta emb_dimensions >}} dimensions, `BAAI/bge-m3`) are available for all works with titles and publication years in range. The corpus was designed for breadth and transparency, with full audit trail and LLM-validated quality filtering. The multilingual embedding model places works in English, French, Chinese, Japanese, and German into a shared semantic space. The corpus snapshot was taken on 2026-03-26; records first indexed after this date are excluded.
+The analysis uses a multilingual corpus of {{< meta corpus_total >}} works on climate finance, assembled from {{< meta corpus_sources >}} bibliographic sources and described in the companion data descriptor [cross-ref data-paper]. Sentence-transformer embeddings ({{< meta emb_dimensions >}} dimensions, `BAAI/bge-m3`) are available for all works with titles and publication years in range. The corpus was designed for breadth and transparency, with full audit trail and LLM-validated quality filtering. The multilingual embedding model is trained to place works in English, French, Chinese, Japanese, and German into a shared semantic space. The corpus snapshot was taken on 2026-03-26; records first indexed after this date are excluded.
 
 Analysis runs over the years 1998--2021. Although the global corpus spans 1990--2024 (the research window declared in `config/analysis.yaml`), the companion paper restricts itself to a narrower analytic span because the per-window bounds convention (ticket 0067) requires both halves $[t-w, t]$ and $[t, t+w]$ to lie inside the corpus --- at the lead half-width $w = 3$ this contracts the admissible range to 1993--2020, and the minimum-papers filter then lifts the lower bound to 1998. Later years are likewise truncated to avoid incomplete citation coverage. A full sensitivity sweep over window, gap, and PCA dimensionality is reported in @sec-sensitivity.
 
@@ -223,7 +223,7 @@ The framework differs from LDA, STM, and BERTopic on four properties relevant to
 
 *Endogenous break detection with explicit inference.* BERTopic's "Topics over Time" module and DTM track topic proportions over pre-specified time bins without a statistical test for structural discontinuities. The framework treats break detection as an inference problem with permutation Z-scores, a threshold, and a validation rule that spans three independent representations.
 
-*Multilingual coverage.* LDA and STM require language-specific stopword lists and tokenisation. Multilingual sentence-transformers (here `BAAI/bge-m3`) place documents in a shared semantic space regardless of language, and the citation graph is language-agnostic by construction.
+*Multilingual coverage.* LDA and STM require language-specific stopword lists and tokenisation. Multilingual sentence-transformers (here `BAAI/bge-m3`) are trained to place documents in a shared semantic space regardless of language, and the citation graph is language-agnostic by construction.
 
 Topic models retain advantages in labeled interpretability: a topic defined by its top-$k$ words is immediately readable. The framework recovers this through its L1 lexical layer and the discriminative-term interpretation outputs (§4.9); it does not generate a full topic labelling.
 

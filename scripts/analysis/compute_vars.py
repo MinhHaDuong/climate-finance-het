@@ -148,27 +148,26 @@ def corpus_stats(v):
         v["corpus_multi_source"] = _int(multi)
         v["corpus_multi_source_pct"] = _pct(100 * multi / n)
 
-    # Language. Bucketed through the same normaliser @tbl-languages uses, so a
-    # count printed in the prose sums with the table beside it: `arz` and `sco`
-    # are ISO 639-3 codes with no ISO 639-1 equivalent, and the table files
-    # them under Unclassified rather than non-English (PR #1141 review).
+    # Language. The three counts partition the corpus, so a reader can check
+    # the sum on the page — which is the point: while the unclassified bucket
+    # went unpublished, the paper reached the multilingual quantity by
+    # subtracting English from the total and printed 3,381 for a layer that
+    # measured 2,023 (tickets 0323, 0338). Bucketed through the normaliser
+    # @tbl-languages uses, so prose and table agree: `arz` and `sco` are ISO
+    # 639-3 codes with no ISO 639-1 equivalent, and both file them under
+    # Unclassified rather than non-English (PR #1141 review).
     if "language" in df.columns:
         lang = df["language"].apply(normalize_lang_display)
         en_count = (lang == "en").sum()
         v["lang_english_pct"] = _pct(100 * en_count / n)
-        # The non-English *layer* excludes the unclassified rows, matching the
-        # separate "Unclassified" line of @tbl-languages. Hand-typed in the
-        # paper until 0323, where it had rotted to an enriched-corpus figure
-        # (3,381) inside a refined-corpus sentence.
-        non_en = ((lang != "en") & (lang != "unknown")).sum()
-        v["lang_non_english_n"] = _int(non_en)
+        v["lang_non_english_n"] = _int(((lang != "en") & (lang != "unknown")).sum())
+        v["lang_unclassified_n"] = _int((lang == "unknown").sum())
 
-    # Language provenance (ticket 0323). A share of the deposited language
-    # tags is inferred by langdetect from title and abstract rather than
-    # carried by the source catalog, so the data paper narrates the derivation
-    # the way it already narrates abstract reconstruction. Prefix match, not
-    # equality: `detected:langdetect` names the detector, and a second
-    # detector would extend the value rather than replace it.
+    # Language provenance (ticket 0323). Some deposited tags are inferred by
+    # langdetect from title and abstract rather than carried by the source
+    # catalog, so the paper narrates the derivation the way it already narrates
+    # abstract reconstruction. Prefix match, not equality: `detected:langdetect`
+    # names the detector, and a second one would extend the value, not replace it.
     if "language_provenance" in df.columns:
         detected = df["language_provenance"].fillna("").str.startswith("detected").sum()
         v["lang_detected_n"] = _int(detected)

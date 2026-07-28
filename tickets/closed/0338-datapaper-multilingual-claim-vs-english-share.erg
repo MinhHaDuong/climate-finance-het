@@ -2,11 +2,14 @@
 Title: The multilingual claim outruns the evidence, and the non-English layer count is wrong by 1,358 works
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1258
 
 --- log ---
 2026-07-27T11:00Z HDMX-coding-agent created
 2026-07-27T11:00Z HDMX-coding-agent note child of 0274. Raised by 4 of 4 external panel reviewers. Not Blocked-by 0297 (that fix has merged), but gated on the corpus rebuild it enables — Table 3's numbers all move when the backfilled languages land. Do the claim calibration first; edit the numbers after the rebuild.
 
+2026-07-28T08:17Z HDMX-coding-agent note claims calibrated; lang_unclassified_n published. Action 6 infeasible as specified (no bilingual pairs in corpus by design)
+2026-07-28T12:57Z HDMX-coding-agent closed — autoclosed — PR #1258
 --- body ---
 ## Context
 
@@ -88,16 +91,58 @@ rebuilt table.
 
 ## Verification
 
-- [ ] Classified non-English and unclassified are reported separately
-- [ ] Abstract and Conclusion claims match Table 3
-- [ ] Language detection and the English-only institutional indexing stated
+- [x] Classified non-English and unclassified are reported separately —
+  §2.3 prints `lang_non_english_n` (2,061) and `lang_unclassified_n` (11);
+  `compute_vars.py:158-163` derives both (declared in
+  `scripts/analysis/_vars_registry.py`, where 0357 moved `DOC_VARS`
+  mid-review), and `tests/test_language_claims.py` pins the partition
+  against total-minus-English.
+- [x] Abstract and Conclusion claims match Table 3 — the four
+  cross-language claims are gone (Abstract, §1 ×2, §5), guarded by
+  `test_abstract_and_conclusion_claim_no_cross_language_capability` and
+  `test_no_undemonstrated_claim_anywhere_in_the_document`, the second of
+  which reads the file from byte zero so the title and keywords are covered
+  too.
+- [x] Language detection and the English-only institutional indexing stated
+  — §2.4 (langdetect + `language_provenance`, landed with 0323) and §2.1
+  ("we index only the English version"). This branch briefly added "we report
+  no retrieval evaluation by language" to §2.3, and 0337 falsified it
+  mid-review: its ablation reports exactly such an evaluation, finding that
+  rescoring non-English works against an own-language query lifts the share
+  passing the threshold by 11.5 points. The clause was dropped at the merge
+  rather than carried into main as a false statement — the reviewers' "no
+  retrieval evaluation by language" complaint is answered by 0337's measurement,
+  not by this ticket's disclaimer.
 
 ## Invariants
 
 - All Table 3 numbers come from the post-0297 corpus rebuild. Editing them
   against the current corpus guarantees rework.
 
+## Outcome
+
+The rebuild changed the size of the defect, not its shape. With 0297's
+backfill landed, the unclassified bucket is 11 works, not 1,358 — so
+total-minus-English now overstates the non-English layer by 11 rather than
+by 67%. The guard is still worth its lines: the shortcut it forbids is
+available again after any harvest that outruns the backfill.
+
+Action 6 (the optional cross-lingual diagnostic) is **not** done, and cannot
+be as specified: it asks for nearest-neighbour alignment on UNFCCC/OECD
+documents that exist in two languages, and §2.1 records that the corpus
+indexes only the English version of those. The claims were calibrated down
+instead, which is the branch the ticket names for the no-diagnostic case.
+
+The guard does **not** lift itself. It was drafted that way — any `xling_*`
+key in the vars file skipped it — and review defeated the draft in one line:
+`xling_foo: "0"` disarmed both claim guards while "cross-lingual analysis"
+sat live in the abstract. The escape hatch is gone. A future diagnostic
+retires the matching pattern by editing `tests/test_language_claims.py` in
+the same change that publishes the measurement, where a reviewer sees it.
+
 ## Exit criteria
 
-- [ ] No multilingual claim in the paper exceeds what Table 3 demonstrates
-- [ ] The 3,381 figure is gone from the paper and from the response letter
+- [x] No multilingual claim in the paper exceeds what Table 3 demonstrates
+- [x] The 3,381 figure is gone from the paper and from the response letter —
+  absent from both (it survives only in `external-review/`, the reviewer's
+  own text, and in the comments of the guards that pin it)
