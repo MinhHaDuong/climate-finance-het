@@ -154,7 +154,39 @@ def test_no_key_is_a_sentinel_when_the_tables_are_there(tables):
     v = {}
     compute_vars.zseries_stats(v)
     assert compute_vars.MISSING not in v.values()
-    assert len(v) == 5
+    assert len(v) == 8
+
+
+def test_peak_spread_measures_travel_across_windows(tables):
+    """The spread is max-minus-min of the per-window peaks, in years.
+
+    §5.1 quotes it to argue a peak year is a weak summary. The fixture peaks at
+    the same year on every window it sweeps (the non-w3 windows put their
+    maximum at 1999, which is in range), so the spread is the distance between
+    those two, not zero — a collector that reported only the lead window would
+    return 0 here.
+    """
+    v = {}
+    compute_vars.zseries_stats(v)
+    assert v["s2_peak_spread_w234"] == str(PEAK - 1999)
+
+
+def test_peak_spread_is_zero_when_every_window_agrees():
+    """A series whose peak does not move reports 0, not nothing.
+
+    Zero is a real answer here — it is the strongest form of the robustness the
+    sentence is testing — so it must not be conflated with the absent-table
+    case, which returns None and leaves the key to the sentinel fallback.
+    """
+    df = _summary("S2_energy")
+    df.loc[df.window != 3, "z_score"] = 0.1
+    df.loc[(df.window != 3) & (df.year == PEAK), "z_score"] = 50.0
+    assert compute_vars._peak_spread(df, 1998, 2021) == 0
+
+
+def test_peak_spread_of_an_absent_table_is_none():
+    """Absent table: None, so the partial-build fallback still owns the key."""
+    assert compute_vars._peak_spread(None, 1998, 2021) is None
 
 
 def test_partial_build_writes_nothing(tmp_path, monkeypatch):

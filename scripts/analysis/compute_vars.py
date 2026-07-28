@@ -647,6 +647,23 @@ def _peak_year(df, window, year_min, year_max):
     return int(rows.loc[rows["z_score"].idxmax(), "year"])
 
 
+def _peak_spread(df, year_min, year_max):
+    """Range in years between the earliest and latest peak across half-widths.
+
+    Zero when every window agrees on the peak year. The sweep is over whatever
+    windows the table carries — §4.8 varies `w` over {2,3,4} — rather than a
+    hardcoded set, so the number tracks the table instead of a stale comment.
+    """
+    if df is None or df.empty or "window" not in df.columns:
+        return None
+    peaks = [
+        p
+        for w in sorted(df["window"].dropna().unique())
+        if (p := _peak_year(df, int(w), year_min, year_max)) is not None
+    ]
+    return max(peaks) - min(peaks) if peaks else None
+
+
 def zseries_stats(v):
     """Z-series peak years and the first validated transition zone (0570).
 
@@ -704,6 +721,19 @@ def zseries_stats(v):
         peak = _peak_year(summaries.get(method), window, year_min, year_max)
         if peak is not None:
             v[key] = str(peak)
+
+    # How far each peak travels as the half-width varies (§4.8 sweeps w over
+    # {2,3,4}). §5.1 quotes these to argue a peak year is a weak summary of
+    # these series, and a hand-typed spread would rot at the next corpus
+    # rebuild exactly as the numbers this ticket replaced did.
+    for key, method in (
+        ("s2_peak_spread_w234", "S2_energy"),
+        ("l1_peak_spread_w234", "L1"),
+        ("g9_peak_spread_w234", "G9_community"),
+    ):
+        spread = _peak_spread(summaries.get(method), year_min, year_max)
+        if spread is not None:
+            v[key] = str(spread)
 
     years = list(range(year_min, year_max + 1))
     mat = signal_matrix(
@@ -787,6 +817,9 @@ def main():
         "s2_peak_year_w3",
         "l1_peak_year_w3",
         "g9_peak_year_w3",
+        "s2_peak_spread_w234",
+        "l1_peak_spread_w234",
+        "g9_peak_spread_w234",
         "zone_1_start",
         "zone_1_end",
     ):
