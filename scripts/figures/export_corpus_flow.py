@@ -39,7 +39,9 @@ def render_table(flow: pd.DataFrame, caption: str = CAPTION) -> str:
     """Render the ledger as a Quarto-includable markdown table."""
     lines = [
         "| Stage | In | Removed | Out |",
-        "|:------|---:|--------:|----:|",
+        # Pandoc maps delimiter-row dash counts to relative column widths:
+        # give the prose Stage column the room, keep the count columns narrow.
+        "|:----------------------------------------------------|----:|------:|----:|",
     ]
     # `Stage` is prose — the removal labels `compute_corpus_flow` authors by
     # hand. The counts are `int`-formatted and cannot carry a `|`, but the

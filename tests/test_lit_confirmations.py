@@ -237,16 +237,33 @@ def test_permutation_floor_is_reported_as_a_bound_not_an_equality():
     floor = 1.0 / (n_perm + 1.0)
     if p > floor:
         return  # a rebuild found exceedances; the equality form is honest
+    # The poles bullet moved from the paper (vars-driven lit_poles_p) to the
+    # R&R response letter, hand-typed (0332). The property is unchanged: at
+    # the permutation floor the p prints as a bound, never an equality.
     with open(os.path.join(
             BASE, "deliverables", "data-paper", "data-paper-vars.yml")) as fh:
         vars_yml = yaml.safe_load(fh)
-    assert not str(vars_yml["lit_poles_p"]).startswith("="), (
-        f"lit_poles_p is {vars_yml['lit_poles_p']!r}, but the artifact's "
-        f"poles_p_value ({p:.6f}) sits at the B={n_perm} permutation floor "
-        f"1/(B+1)={floor:.6f} — report a bound, not an equality"
-    )
-    assert "lit_poles_nperm" in vars_yml, (
-        "the prose needs B to interpret the bound; export lit_poles_nperm"
+    if "lit_poles_p" in vars_yml:
+        assert not str(vars_yml["lit_poles_p"]).startswith("="), (
+            f"lit_poles_p is {vars_yml['lit_poles_p']!r}, but the artifact's "
+            f"poles_p_value ({p:.6f}) sits at the B={n_perm} permutation "
+            f"floor 1/(B+1)={floor:.6f} — report a bound, not an equality"
+        )
+        assert "lit_poles_nperm" in vars_yml, (
+            "the prose needs B to interpret the bound; export lit_poles_nperm"
+        )
+        return
+    letter = open(os.path.join(
+        BASE, "deliverables", "data-paper", "revision-rdj26561",
+        "response-letter.md")).read()
+    text = " ".join(letter.split())
+    import re
+    claims = re.findall(r"rewiring \(z = [\d.]+, p ([=<]) [\d.]+", text)
+    assert claims, "the response letter no longer states the poles p"
+    assert all(c == "<" for c in claims), (
+        f"poles p sits at the B={n_perm} permutation floor "
+        f"1/(B+1)={floor:.6f} — the letter must report a bound (<), "
+        "not an equality"
     )
 
 
@@ -269,19 +286,20 @@ def test_perm_p_formatter_bounds_the_floor_and_estimates_above_it():
 
 
 def test_no_hardcoded_p_values_in_prose_bullets():
-    """The confirmation bullets carry no literal p = 0.x digits."""
+    """Prose lines quoting lit_ variables carry no literal p = 0.x digits.
+
+    The confirmation bullets moved to the R&R response letter (0332, author
+    decision 2026-07-28); the surviving surface is the growth sentence in
+    the descriptive-statistics section, which quotes the lit_growth_*
+    variables. The guard keeps its negative polarity: wherever a lit_
+    variable is quoted, no hand-typed decimal may ride beside it.
+    """
     import re
 
     qmd = open(os.path.join(
         BASE, "deliverables", "data-paper", "data-paper.qmd")).read()
-    # Find the confirmations block: bullets quoting lit_ variables (results
-    # 1-5) plus the figure-based item 6 (no number by design).
-    bullets = [ln for ln in qmd.splitlines()
-               if ln.lstrip().startswith("-")
-               and ("lit_" in ln or "@fig-sem-composition" in ln)]
-    # Author copyedit 2026-07-24 reduced the block from six bullets to a
-    # short list; the guard is negative-polarity — no literal p-values —
-    # so it only needs the block to exist, not a fixed count.
-    assert len(bullets) >= 2, "expected the confirmation bullets block"
-    for ln in bullets:
+    lines = [ln for ln in qmd.splitlines()
+             if "lit_" in ln and not ln.lstrip().startswith("<!--")]
+    assert lines, "expected at least one lit_-quoting prose line"
+    for ln in lines:
         assert not re.search(r"[=<]\s*0?\.\d", ln), f"hardcoded number: {ln}"

@@ -33,11 +33,11 @@ DATA_DIR="${CLIMATE_FINANCE_DATA:-$PROJ_ROOT/data}/catalogs"
 # renamed figure cannot silently strand the archive. Build them first with
 # `make corpus-tables figures-datapaper`.
 #
-# Figures only: the tables the paper includes are discovered below from its own
-# {{< include >}} directives, which cannot go stale the way a hand-kept list can.
-DATAPAPER_FILES=(
-    deliverables/_shared/figures/fig_bars.png
-)
+# No gitignored figures to mirror: fig_bars left the paper (0332 — growth
+# curve described in prose, figure referred to the companion study), and the
+# remaining embedded figure (fig_global_map_direct.png) is git-tracked, so it
+# ships via git archive. The tables the paper includes are discovered below
+# from its own {{< include >}} directives.
 
 echo "=== Building data paper archive ==="
 
@@ -106,14 +106,8 @@ done
 #
 # No repo-wide _quarto.yml is written: the 0226 reorg retired it, and a config
 # re-rooting the paper under content/ is what broke this script (ticket 0292).
-echo "  Copying generated figures and tables..."
-mkdir -p "$TMP/code/deliverables/_shared/figures" "$TMP/code/deliverables/_shared/tables"
-# Loop variable deliberately not `src`: test_datapaper_archive_layout.py finds
-# the per-source catalog loop by taking the first line matching "for src in",
-# so a second one here would shadow the guard depending on line order.
-for f in "${DATAPAPER_FILES[@]}"; do
-    cp --parents "$f" "$TMP/code/"
-done
+echo "  Copying generated tables..."
+mkdir -p "$TMP/code/deliverables/_shared/tables"
 
 # Stage exactly the tables the paper includes, discovered from its own
 # {{< include >}} directives. The hand-kept list had already gone stale

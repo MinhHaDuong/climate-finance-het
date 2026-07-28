@@ -128,11 +128,11 @@ MANUSCRIPT_FIGS := deliverables/_shared/figures/fig_bars_v1.png deliverables/_sh
 # not-embedded: fig_global_map_cocitation.png — co-citation companion to the
 #   direct map, built for comparison and deliberately embedded in no document;
 #   pinned by tests/test_global_map.py::test_datapaper_prose_uses_generated_vars
-DATAPAPER_FIGS  := deliverables/_shared/figures/fig_bars.png \
-                   deliverables/_shared/figures/fig_global_map_direct.png \
+DATAPAPER_FIGS  := deliverables/_shared/figures/fig_global_map_direct.png \
                    deliverables/_shared/figures/fig_global_map_cocitation.png
 
-# fig_bars is shared with the data paper; fig_dag and the three semantic-space
+# fig_bars left the data paper (0332, author decision 2026-07-28: growth curve
+# described in prose, figure referred to the companion paper); fig_dag and the three semantic-space
 # panels were filed under DATAPAPER_FIGS / TECHREP_FIGS until 0359 — the corpus
 # report is their only consumer.
 CORPUS_REPORT_FIGS := deliverables/_shared/figures/fig_bars.png \

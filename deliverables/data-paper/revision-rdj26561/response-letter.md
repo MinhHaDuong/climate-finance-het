@@ -43,9 +43,30 @@ and briefly references the research questions of the Œconomia companion paper
 (crystallisation of climate finance as a category of economic governance,
 three-act periodization), including the epistemic role the companion assigns
 to the corpus: corroboration of a documentary history, not discovery. The
-revised literature review also demonstrates added value directly by
-re-testing six published results on the corpus, each with one explicit
-statistical test (Section 1); and I replicated the prior mappings' published
+To demonstrate added value directly, I re-tested published results on the
+corpus, each with one explicit statistical test. To hold the word budget, these
+replications now live in this letter rather than in the paper (the growth
+break remains in Section 4):
+
+- Kouwenberg and Zheng (2023) report exponential growth in climate finance
+  publications, especially from 2015 onwards. The corpus confirms the
+  take-off, with a structural break in the trend of log annual corpus counts
+  at 2015 (Chow test of one log-linear trend against separate intercept and
+  slope on each side, classical errors: F = 10, p = 0.0004) and output
+  growing 17% a year since.
+- Kouwenberg and Zheng (2023) also find the financial--economic author
+  cluster "quite disconnected" from the rest of the field; the corpus
+  confirms this on citation links. After clustering on cocitations, edges
+  between the public-finance pole (allocation, governance, loss-and-damage)
+  and the market-finance pole (climate risk, green bonds, innovation
+  finance) make up 0.4% of edges against 12.8% expected under
+  degree-preserving rewiring (z = 76, p < 0.01 over 100 rewired replicates).
+- Diaz-Rainey et al. (2017) found that very few climate finance articles
+  appeared in top finance journals between 1998 and mid-2015. The corpus
+  confirms the near-absence and dates the turn, with the finance-journal
+  share of corpus works rising from 0.01% before 2015 to 0.28% after.
+
+I also replicated the prior mappings' published
 search queries against OpenAlex: 89.3% of the works retrieved for the query
 of Carè and Weber (2023) and 91.0% for that of Shang and Jin (2023) are
 present in my dataset, while coverage falls to 40.1% for Reis Maria et

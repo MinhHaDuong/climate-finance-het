@@ -216,11 +216,12 @@ def test_no_response_file_quotes_a_stale_z():
         base, "deliverables", "_shared", "tables",
         "tab_network_limitations.csv")).set_index("metric")["value"]
     generated = [float(df["econ_within_share_z"])]
-    with open(os.path.join(
-            base, "deliverables", "data-paper", "data-paper-vars.yml")) as fh:
-        poles_z = yaml.safe_load(fh).get("lit_poles_z")
-    if poles_z is not None:
-        generated.append(float(poles_z))
+    # The Kouwenberg--Zheng poles z moved from the paper's vars file to the
+    # response letter itself (0332), so read it from its producing artifact.
+    lit = pd.read_csv(os.path.join(
+        base, "deliverables", "_shared", "tables",
+        "tab_lit_confirmations.csv")).set_index("metric")["value"]
+    generated.append(float(lit["poles_within_share_z"]))
 
     responses = [p for p in sorted(glob.glob(
         os.path.join(bundle, "**", "*.md"), recursive=True))
