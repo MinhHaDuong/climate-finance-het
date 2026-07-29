@@ -1,4 +1,13 @@
-# DRAFT — Supplementary note 1: reply to the editor's letter (RDJ-26561)
+---
+format:
+  pdf:
+    papersize: a4
+    include-in-header:
+      text: |
+        \pagestyle{empty}
+---
+
+**Supplementary note 1 — reply to the editor's letter (RDJ-26561)**
 
 > *"Please address the caveats of using OpenAlex for scientometrics, in
 > particular the difficulties related to paper deduplication […]"*
