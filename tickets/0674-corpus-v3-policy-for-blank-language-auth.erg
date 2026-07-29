@@ -1,0 +1,43 @@
+%erg 0.1
+Title: corpus v3: policy for blank language, author, and year fields
+Created: 2026-07-29
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-29T08:12Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Author question during the 0283 proofread (2026-07-29): should works without
+a language tag be removed, as no-title works are? Probe of the frozen v2
+refined corpus (33,344 works):
+
+- **language blank: 9.** Six bibCNRS Chinese works with full metadata
+  (titles, authors, years, DOIs) — langdetect skipped them (no abstract);
+  remedy is tagging `zh`, not removal. Three OpenAlex oddities: a title-less
+  record with author/year/DOI (W1558763458), an author-less chapter stub
+  "J. Climate Finance" (W7132781315), a 2025 "Green Climate Fund" record.
+- **first_author blank: 543 (1.6%).** Teaching canon 228, OpenAlex 249;
+  samples are institutional/corporate documents where personal authorship
+  does not exist. Gap is corporate authorship not carried, not junk.
+- **year blank: 389 (1.2%).** Teaching 214, OpenAlex 132, SciSpace 46;
+  SciSpace subset includes title-less rows worth per-record review.
+- **Related, found in passing: 3,278 works dated outside 1990–2024**
+  (2,752 in 2025, 485 in 2026, 1 in 2027, ~40 pre-1990 back to 1960) while
+  title/abstract/§2.1 declare the window. Surfaced to the author separately;
+  whatever the resubmission says, v3 needs a policy (enforce the window,
+  or a documented exemption for lead-times and window-exempt layers).
+
+## Actions
+
+1. Author decides per facet: remove, repair (tag zh, carry corporate
+   author, backfill year), or document as accepted missingness.
+2. Implement in the filter/enrich pipeline with per-facet counts in the
+   run report; refresh deposit descriptor missingness shares.
+
+## Exit criteria
+
+- [ ] Each blank-field facet has a decided, implemented, documented policy
+- [ ] Year-window policy decided and enforced or documented
+- [ ] v3 QA report shows the resulting counts
