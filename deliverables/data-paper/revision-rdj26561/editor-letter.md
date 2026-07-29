@@ -12,20 +12,18 @@ CIRED, CNRS\
 45 bis avenue de la Belle Gabrielle, 94736 Nogent-sur-Marne, France\
 minh.ha-duong@cnrs.fr
 
-\vspace{1.5em}
+\vspace{0.8em}
 
 Dr Cédric Chambru,\
 Research Data Journal for the Humanities and Social Sciences
 
-\vspace{1.5em}
+\vspace{0.8em}
 
 Paris, 29 July 2026
 
-\vspace{1.5em}
+\vspace{0.8em}
 
 **Re: revised manuscript RDJ-26561**
-
-\vspace{1em}
 
 Dear Dr Chambru,
 
@@ -61,10 +59,10 @@ been addressed. The key changes:
 Thank you and the referee for a report that made both the paper and the
 dataset better.
 
-\vspace{1.5em}
+\vspace{0.8em}
 
 Sincerely,
 
-\vspace{2.5em}
+\vspace{2em}
 
 Minh Ha-Duong
