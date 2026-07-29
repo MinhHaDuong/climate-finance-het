@@ -96,18 +96,19 @@ exposure the report identified — has left the paper.
 > coverage that OpenAlex alone does not provide.' However, OpenAlex does
 > include non-English sources."*
 
-As the report notes, OpenAlex does include non-English sources, and the
-earlier wording overstated. Table 3 measures the point (the OpenAlex row's
-%non-EN cell reads 6%), and Section 2.3 now claims only the incremental
-coverage the smaller sources add. Beyond the wording, the
-revision measures a language bias undetected in the submitted version:
-the relevance filter removes 41.8% of non-English works against 19.9% of
-English ones, and rescoring the flagged non-English works against an
-own-language translation of the query lifts the share crossing the threshold
-by 11.5 percentage points — the score partly reflects query language, not
-topical relevance. Section 2.4 states the bias and its direction; a multilingual relevance
-query is planned for the next corpus release, and users can meanwhile
-rebuild from the deposited flags under their own filter policy.
+The report is right: OpenAlex indexes non-English sources, and the earlier
+sentence overstated. Section 2.3 now claims only what Table 3 measures: 6%
+of OpenAlex's refined works are non-English, and the smaller sources add
+incremental non-English, institutional, and pedagogical coverage.
+
+The revision also measures a language bias the submitted version missed.
+The relevance filter removes 41.8% of non-English works but only 19.9% of
+English ones. The cause is the query, not the content: rescoring the
+flagged non-English works against an own-language translation of the query
+lifts the pass rate by 11.5 percentage points. Section 2.4 discloses the
+bias and its direction. The next corpus release will deploy a multilingual
+query; until then, users can rebuild from the deposited flags under their
+own filter policy.
 
 > *"[…] I find it extremely difficult to assess the potential of this
 > dataset for conducting research on the history of economic thought […]"*
