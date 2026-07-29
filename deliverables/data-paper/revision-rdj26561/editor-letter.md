@@ -1,64 +1,68 @@
-# DRAFT — Cover letter to the editor, RDJ-26561 (author sign-off required before submission)
+---
+format:
+  pdf:
+    papersize: a4
+    include-in-header:
+      text: |
+        \pagestyle{empty}
+---
 
-Companion to `response-letter.md` (point-by-point reply) and
-`summary-of-revisions.md`. This letter carries the substance the editor
-needs before reading either: what changed in the dataset, what changed in
-the paper, and the choices that call for an editorial judgment.
+Minh Ha-Duong,\
+CIRED, CNRS\
+45 bis avenue de la Belle Gabrielle, 94736 Nogent-sur-Marne, France\
+minh.ha-duong@cnrs.fr
+
+\vspace{0.8em}
+
+Dr Cédric Chambru,\
+Research Data Journal for the Humanities and Social Sciences
+
+\vspace{0.8em}
+
+Paris, 29 July 2026
+
+\vspace{0.8em}
+
+**Re: revised manuscript RDJ-26561**
 
 Dear Dr Chambru,
 
-Please find the revised version of manuscript RDJ-26561, "A Curated
-Multi-Source Corpus of Climate Finance Literature, 1990–2024," together
-with a summary of revisions and a point-by-point reply to your letter and
-to the referee report. Every point raised has been addressed; one is
-answered with a justified alternative rather than the requested change,
-flagged below. Three matters deserve your attention beyond the
-point-by-point reply.
+Please find the revised version of manuscript RDJ-26561, retitled "A
+Curated Multi-Source Corpus of Climate Finance Literature, 1990–2024:
+Multilingual Retrieval and Institutional Reports." Every point raised has
+been addressed. The key changes:
 
-**The dataset itself changed, not only the paper.** Prompted by the
-referee's remark on institutional coverage (R1-06), the revision extends
-the corpus with a curated layer of UNFCCC and OECD DAC key documents —
-COP decisions on finance, Biennial Assessments, Rio-marker reporting
-directives — as a durable pipeline source with its own provenance flags.
-The corpus grows from 42,916 to 43,179 unified works (30,987 to 33,344
-after filtering), the source count from six to eight, and the deposit
-title drops "Six Sources" accordingly (same Zenodo concept DOI, new
-version). The new Zenodo version, uploaded with this resubmission,
-restructures the package as you requested (ED-04): `code/`,
-`data/inputs/` (per-source catalogs as harvested), and `data/products/`
-(final corpus files with a machine-readable, executable data dictionary). Every statistic, table, and figure in the paper was
-regenerated from the v2 corpus by the deposited pipeline; no number is
-hand-typed.
-
-**The revision strengthens the paper partly by weakening its claims.**
-Rerun on the v2 corpus, the citation-link audit now reports 97.0%
-confirmed (previously 99.0%), and the paper states what that audit
-measures: agreement with Crossref, not ground truth, partly circular for
-links harvested from Crossref or OpenAlex deposits. The revision also
-quantifies a bias no one asked about: the relevance filter removes a
-larger share of non-English works, and rescoring against own-language
-queries shows the score partly reflects query language. Both statements
-trade headline polish for accuracy; I hope the journal reads them as the
-data paper's job.
-
-**One referee suggestion is declined with an alternative** (R1-19,
-restructuring the corpus CSV). The file layout stays: reshaping a
-published Zenodo artifact would break every downstream consumer for a
-viewer-ergonomics gain. Instead the revision documents the structure — a
-generated variables table in the paper and a Frictionless
-`datapackage.json` in the deposit that a reader can execute to verify the
-file against its own documentation.
-
-One placement choice is reversible at your preference: to hold the
-2,500-word budget, the three literature replications requested under
-ED-02 (growth break, pole disconnection, finance-journal share) are
-reported in the response letter, with only the growth break retained in
-the paper's Section 4. I will gladly reinstate them in the text if you
-prefer.
+- **The dataset itself changed, not only the paper.** Prompted by the
+  referee's remark on institutional coverage, the corpus gains a curated
+  layer of UNFCCC and OECD DAC key documents and grows from 42,916 to
+  43,179 unified works (30,987 to 33,344 after filtering). The Zenodo
+  deposit (same concept DOI, new version) is restructured as you requested
+  into code, raw inputs, and final products, with an executable data
+  dictionary; every corpus statistic in the paper is regenerated
+  by the deposited pipeline.
+- **The revision strengthens the paper partly by weakening its claims.**
+  The citation-link audit rerun on the new corpus reports 97.0% confirmed
+  (previously 99.0%), stated as agreement with Crossref rather than ground
+  truth, and the revision measures and discloses a language bias in the
+  relevance filter, absent from the submitted version.
+- **One referee suggestion is declined with an alternative**: the corpus
+  CSV keeps its published layout, and the revision documents the structure
+  instead — a generated variables table in the paper and a Frictionless
+  `datapackage.json` a reader can execute to verify the file.
+- Alongside the expanded discussion of research directions, three
+  published results were re-tested on the corpus to demonstrate added
+  value. The reply notes report them; the paper keeps the growth break in
+  Section 4. I will gladly move the other two into the text if you prefer.
+- The draft of the companion history-of-thought study built on this corpus
+  is enclosed, so the dataset's research potential can be assessed on use.
 
 Thank you and the referee for a report that made both the paper and the
 dataset better.
 
+\vspace{0.8em}
+
 Sincerely,
+
+\vspace{2em}
 
 Minh Ha-Duong

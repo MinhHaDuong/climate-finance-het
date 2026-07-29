@@ -255,11 +255,11 @@ def test_permutation_floor_is_reported_as_a_bound_not_an_equality():
         return
     letter = open(os.path.join(
         BASE, "deliverables", "data-paper", "revision-rdj26561",
-        "response-letter.md")).read()
+        "reply-editor.md")).read()
     text = " ".join(letter.split())
     import re
     claims = re.findall(r"rewiring \(z = [\d.]+, p ([=<]) [\d.]+", text)
-    assert claims, "the response letter no longer states the poles p"
+    assert claims, "the editor reply note no longer states the poles p"
     assert all(c == "<" for c in claims), (
         f"poles p sits at the B={n_perm} permutation floor "
         f"1/(B+1)={floor:.6f} — the letter must report a bound (<), "
