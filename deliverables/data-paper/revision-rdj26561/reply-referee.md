@@ -1,8 +1,5 @@
 # DRAFT — Supplementary note 2: reply to the referee report (RDJ-26561)
 
-Each remark is quoted in abridged form, followed by the reply. Corpus
-numbers reflect the v2 rebuild of 2026-07-24, frozen 2026-07-27.
-
 > *"[…] the corpus does not include in the grey literature documents from
 > national institutions: government or parliamentary reports […] central
 > bank communications. Why is that?"*

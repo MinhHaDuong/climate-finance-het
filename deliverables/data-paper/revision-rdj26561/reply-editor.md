@@ -1,8 +1,5 @@
 # DRAFT — Supplementary note 1: reply to the editor's letter (RDJ-26561)
 
-Each remark is quoted in abridged form, followed by the reply. Corpus
-numbers reflect the v2 rebuild of 2026-07-24, frozen 2026-07-27.
-
 > *"Please address the caveats of using OpenAlex for scientometrics, in
 > particular the difficulties related to paper deduplication […]"*
 
