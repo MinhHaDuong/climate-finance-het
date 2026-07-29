@@ -1,18 +1,20 @@
 # State
 
-Last updated: 2026-07-29T14:41Z
+Last updated: 2026-07-29T16:20Z
 
 ## Current goal
 
-**RDJ-26561 revision 1 RELEASED (2026-07-29); handoff to doudou.**
-Zenodo v2.0.0 (DOI 10.5281/zenodo.21679237, concept .19236129); HAL
-hal-05570600v2 in moderation; tag rdj26561-revision1; frozen package in
-papiers/actif/RDJHSS_…/release/2026-07-29-RDJHSS-revision1 (padme).
-Doudou (author): rsync that dir to the nextcloud papiers tree; homepage
-Ha-Duong.bib (new title, concept DOI); platform upload (paper + cover +
-2 reply notes + Œconomia companion draft); actif → sent; close 0283/0274.
-If the platform asks: changes-highlighted manuscript (latexdiff).
-Œconomia: awaiting editor; 0671/0670 parked. Zoo + multilayer: later.
+**RDJ-26561 revision 1 RESUBMITTED (2026-07-29); awaiting decision.**
+Author uploaded the full kit on the journal platform (DataPaper.docx/pdf
+with keywords, Figure1, Table1-5, replies, Acknowledgements). Zenodo
+v2.0.0 (DOI 10.5281/zenodo.21679237, concept .19236129); HAL
+hal-05570600v2 in moderation; tag rdj26561-revision1; submission branch
+fast-forwarded to it; kit archived in
+papiers/sent/RDJ4HSS_…/release/2026-07-29-RDJHSS-revision1; 0283/0274
+closed. Remaining (author): homepage Ha-Duong.bib (new title, concept
+DOI). Œconomia: awaiting editor; 0671/0670 parked. Zoo + multilayer:
+later. Machine debt (doudou): .env keystore migration not applied;
+.dvc/config.local cache.type=symlink — 4 local test failures.
 
 ## Status
 <!-- generated 2026-07-29T14:41Z · as of 80c1563e -->
