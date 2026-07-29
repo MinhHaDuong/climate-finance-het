@@ -9,6 +9,9 @@ author:
 date: today
 metadata-files: [data-paper-vars.yml]
 bibliography: ../_shared/bibliography/main.bib
+# Cited inside Table 1's raw-LaTeX cells, invisible to citeproc there.
+nocite: |
+  @buchner2013
 abstract: |
   This data paper presents a curated, multilingual corpus of
   {{< meta corpus_total >}} works on climate finance published between 1990
@@ -72,18 +75,26 @@ The dataset was constructed for a history-of-economic-thought study of how clima
 
 The corpus assembles academic literature and institutional documents from {{< meta corpus_sources >}} sources with complementary coverage profiles (@tbl-sources). Five are automated or semi-automated (reproducible from the scripts and an internet connection); three require manual export from restricted platforms.
 
-| Source | Automation | Coverage |
-|--------|------------|----------|
-| OpenAlex [@priem_etal2022] | Automated (free API) | Primary academic source (indexes Crossref, DOAJ, PubMed, and more): tiered keyword search |
-| ISTEX | Automated (public metadata API; fulltext restricted to French research institutions) | CNRS national text-mining platform (multi-publisher) |
-| Institutional reports | Hybrid (curated seed + World Bank API) | 17 selected reports [e.g., @buchner2013] + World Bank repository grey-literature harvest |
-| Teaching canon | AI-assisted (scraping + LLM extraction) | Syllabus readings from university courses worldwide |
-| bibCNRS | Hand-harvested (CNRS credentials) | CNRS portal aggregating non-English news & discourse (Gale, Wanfang, NewsBank) in FR, ZH, JA, DE |
-| SciSpace | AI-collected, hand-exported | SciSpace systematic review tool exports |
-| UNFCCC | AI-collected | Negotiation documents  |
-| OECD | Hand-harvested | Statistical guidelines |
+::: {#tbl-sources tbl-pos="tbp"}
+```{=latex}
+\begin{tabular}{@{}p{0.17\linewidth} p{0.30\linewidth} p{0.42\linewidth}@{}}
+\toprule
+Source & Automation & Coverage \\
+\midrule
+OpenAlex (Priem et al. 2022) & Automated (free API) & Primary academic source (indexes Crossref, DOAJ, PubMed, and more): tiered keyword search \\
+ISTEX & Automated (public metadata API; fulltext restricted to French research institutions) & CNRS national text-mining platform (multi-publisher) \\
+Institutional reports & Hybrid (curated seed + World Bank API) & 17 selected reports (e.g., Buchner et al. 2013) + World Bank repository grey-literature harvest \\
+Teaching canon & AI-assisted (scraping + LLM extraction) & Syllabus readings from university courses worldwide \\
+bibCNRS & Hand-harvested (CNRS credentials) & CNRS portal aggregating non-English news \& discourse (Gale, Wanfang, NewsBank) in FR, ZH, JA, DE \\
+SciSpace & AI-collected, hand-exported & SciSpace systematic review tool exports \\
+UNFCCC & AI-collected & Negotiation documents \\
+OECD & Hand-harvested & Statistical guidelines \\
+\bottomrule
+\end{tabular}
+```
 
-: Sources, automation level, and coverage scope. {#tbl-sources tbl-pos="tbp"}
+Sources, automation level, and coverage scope.
+:::
 
 The search strategy uses a four-tier keyword taxonomy reflecting the evolving vocabulary of climate finance: core terms in eight languages (Tier 1: English, French, German, Spanish, Portuguese, Arabic, Chinese, Japanese), English institutional and diplomatic vocabulary (Tier 2), and climate-adjacent terms retained only when the abstract mentions two (Tier 3) or three (Tier 4) of four concept groups (climate, finance, development, environment). Every term is issued against OpenAlex's `default.search` field, which matches title, abstract, and indexed fulltext. The taxonomy was informed by keyword mining of {{< meta corpus_core >}} core papers (cited $\geq$ {{< meta corpus_core_threshold >}} times).
 
@@ -115,9 +126,9 @@ This section examines the corpus on three fronts: what each source contributes a
 
 @tbl-quality summarises corpus composition and metadata completeness per source; a work discovered by several sources counts in each of their rows. OpenAlex contributes {{< meta openalex_pct >}}% of refined works; the seven smaller sources increase the corpus's non-English, institutional, and pedagogical coverage. The "Unique" column counts the works only that source contributed (`source_count = 1`), and it shows the sources are complementary rather than redundant: between {{< meta unique_min_pct >}}% ({{< meta unique_min_source >}}) and {{< meta unique_max_pct >}}% ({{< meta unique_max_source >}}) of each smaller source's refined works appear in no other source. %non-EN is the share of non-English works, %DOI the share with a valid DOI, %Abstract the share with an abstract longer than 50 characters, and %Refs the share with at least one reference in the citation graph.
 
-{{< include ../_shared/tables/tab_corpus_sources.md >}}
-
 Citation-graph accuracy was audited on a simple random sample of {{< meta verify_sample_n >}} links drawn, with a fixed seed, from the links whose citing and cited works both carry a DOI. A sampled link counts as confirmed when the cited work's DOI appears in the reference list the citing work's publisher deposited at Crossref: {{< meta verify_confirmed_pct >}}% of the sample is confirmed (95% CI [{{< meta verify_ci_lower_pct >}}%, {{< meta verify_ci_upper_pct >}}%]). The {{< meta verify_unconfirmed_n >}} unconfirmed links appear in our data but not in that deposited list, which is itself incomplete for books, chapters, and older articles, so absence there does not establish that a link is wrong. Tested in the other direction, the corpus captures {{< meta complete_captured_pct >}}% of the reference DOIs Crossref does hold ({{< meta complete_captured_n >}} of {{< meta complete_total_n >}}, 95% CI [{{< meta complete_ci_lower_pct >}}%, {{< meta complete_ci_upper_pct >}}%]). Both checks measure agreement with Crossref, not ground truth, and the confirmation is partly circular for the links that were themselves harvested from Crossref or OpenAlex deposits; they bound link accuracy and capture, not the share of true citations the graph misses. Restricting to links whose citing work belongs to the refined corpus yields {{< meta cite_refined_rows >}} outgoing citation pairs (the cited work may lie outside the corpus); {{< meta cite_refined_coverage_pct >}}% of DOI-bearing corpus works appear as a citing source; among the core papers (cited $\geq$ {{< meta corpus_core_threshold >}} times), that share rises to {{< meta cite_coverage_core_pct >}}%. The stricter subset where both endpoints are corpus works is the graph of @fig-global-map: it connects {{< meta gm_n_connected >}} works, {{< meta gm_connected_pct >}}% of the corpus.
+
+{{< include ../_shared/tables/tab_corpus_sources.md >}}
 
 The number of references each work contributes to the citation graph varies by orders of magnitude, so it doubles as a screening variable. Among the {{< meta refs_doi_docs >}} DOI-bearing works, the median is {{< meta refs_median >}} references (mean {{< meta refs_mean >}}, 95th percentile {{< meta refs_p95 >}}, maximum {{< meta refs_max >}}); {{< meta refs_zero_n >}} works ({{< meta refs_zero_share_pct >}}%) contribute none, a gap concentrated in books, reviews, editorials, and grey literature, while counts in the hundreds mark review articles.
 

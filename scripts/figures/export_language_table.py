@@ -10,7 +10,6 @@ normalised (e.g., en_US → en) and grouped into major languages + "Other".
 import os
 
 import pandas as pd
-from _markdown_table import markdown_text_cell
 from script_io_args import parse_io_args, validate_io
 from utils import (
     BASE_DIR,
@@ -106,9 +105,16 @@ def main() -> None:
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
+    # Raw LaTeX tabular, not a pipe table: pandoc renders captioned pipe
+    # tables as longtables, which cannot float and split across pages; the
+    # raw-tabular-in-div pattern (as tab_variables.md) yields a real float.
     lines = [
-        f"| {' | '.join(table.columns)} |",
-        "| :---------- | :---- | ----: | --------: |",
+        '::: {#tbl-languages tbl-pos="tbp"}',
+        "```{=latex}",
+        r"\begin{tabular}{@{}l l r r@{}}",
+        r"\toprule",
+        " & ".join(c.replace("%", r"\%") for c in table.columns) + r" \\",
+        r"\midrule",
     ]
     # `Code` is the corpus `language` value itself and `Language` its
     # upper-cased form whenever LANGUAGE_NAMES has no entry — `normalize_lang`
@@ -124,15 +130,21 @@ def main() -> None:
     total_row = len(table) - 1
     works_col = table.columns.get_loc("Works")
     for i, (_, row) in enumerate(table.iterrows()):
-        cells = [markdown_text_cell(v) for v in row]
+        cells = [str(v).replace("&", r"\&").replace("%", r"\%") for v in row]
         # Same thousands-separator locale as the other shipped tables.
         cells[works_col] = f"{int(row['Works']):,}"
         if i == total_row:
-            cells[label_col] = f"**{cells[label_col]}**"
-        lines.append("| " + " | ".join(cells) + " |")
+            cells[label_col] = rf"\textbf{{{cells[label_col]}}}"
+        lines.append(" & ".join(cells) + r" \\")
 
-    lines.append("")
-    lines.append(': Language distribution in the refined corpus. {#tbl-languages tbl-pos="tbp"}')
+    lines += [
+        r"\bottomrule",
+        r"\end{tabular}",
+        "```",
+        "",
+        "Language distribution in the refined corpus.",
+        ":::",
+    ]
 
     md = "\n".join(lines) + "\n"
     with open(OUTPUT_MD, "w", encoding="utf-8") as f:

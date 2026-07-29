@@ -142,17 +142,24 @@ def tbl_sources_rows(text: str) -> list[dict]:
     label-vs-Abstract guard both read it through here, so a change to Table 1's
     markup lands in one regex rather than three (review of PR #1284).
     """
+    # Table 1 is a raw-LaTeX tabular inside the #tbl-sources div since
+    # 2026-07-29 (floated whole; pipe tables render as unfloatable
+    # longtables): rows are `cell & cell & cell \\` between the rules.
     m = re.search(
-        r"\n(\| *Source *\|.*?)\n\n: [^\n]*\{#tbl-sources[^}]*\}", text, re.DOTALL
+        r"\{#tbl-sources[^}]*\}.*?\\midrule\n(.*?)\\bottomrule",
+        text, re.DOTALL,
     )
-    assert m, "no #tbl-sources pipe table found"
-    header, _delim, *body = m.group(1).splitlines()
-    columns = _split_pipe_row(header)
+    assert m, "no #tbl-sources table found"
+    header = re.search(
+        r"\{#tbl-sources[^}]*\}.*?\\toprule\n(.*?) \\\\", text, re.DOTALL
+    ).group(1)
+    columns = [c.strip() for c in header.split("&")]
     rows = []
-    for line in body:
-        if not line.strip():
+    for line in m.group(1).splitlines():
+        line = line.strip().rstrip("\\").strip()
+        if not line:
             continue
-        cells = _split_pipe_row(line)
+        cells = [c.strip() for c in line.split(" & ")]
         rows.append(dict(zip(columns, cells)))
     return rows
 
@@ -285,11 +292,19 @@ abstract: |
   making up 1.5% of the works.
 ---
 
-| Source | Automation | Coverage |
-|--------|------------|----------|
-| Grey literature | Hybrid | curated seed + World Bank repository |
+::: {#tbl-sources tbl-pos="tbp"}
+```{=latex}
+\\begin{tabular}{@{}l l l@{}}
+\\toprule
+Source & Automation & Coverage \\\\
+\\midrule
+Grey literature & Hybrid & curated seed + World Bank repository \\\\
+\\bottomrule
+\\end{tabular}
+```
 
-: Sources. {#tbl-sources}
+Sources.
+:::
 """
 
 
@@ -375,7 +390,7 @@ def test_fang_pipe_table_rows_picks_its_own_table():
 def test_fang_generated_table_label_drift_detected():
     """Revert Table 2's label alone and the agreement check must fail."""
     paper_label = world_bank_row_label(tbl_sources_rows(BAD_DOC.replace(
-        "| Grey literature |", "| Institutional reports |"
+        "Grey literature &", "Institutional reports &"
     )))
     assert paper_label == "Institutional reports"
     drifted = pipe_table_rows(
@@ -398,6 +413,6 @@ def test_fang_label_mismatch_detected():
     assert labels == ["Grey literature"]
     # the fixture's abstract does say "grey literature", so mismatch detection
     # is exercised on a renamed-label variant instead
-    renamed = BAD_DOC.replace("| Grey literature |", "| Institutional reports |")
+    renamed = BAD_DOC.replace("Grey literature &", "Institutional reports &")
     assert "institutional reports" not in abstract
     assert sources_table_labels(renamed) == ["Institutional reports"]
