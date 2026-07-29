@@ -361,8 +361,8 @@ def render_markdown_table() -> str:
         r"\end{longtable}",
         "```",
         "",
-        "Variables of `climate_finance_corpus.csv`. Horizontal rules separate "
-        "the four logical groups: " + ", ".join(groups) + ". "
+        "Variables of `climate_finance_corpus.csv`, in four groups: "
+        + ", ".join(groups) + ". "
         "Generated from the deposit column contract "
         "(`scripts/_deposit_variables.py`); storage types, allowed values, "
         "ranges and measured missingness are in the deposited "

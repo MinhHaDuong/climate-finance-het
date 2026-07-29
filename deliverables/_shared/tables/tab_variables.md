@@ -48,5 +48,5 @@ Variable & Description \\
 \end{longtable}
 ```
 
-Variables of `climate_finance_corpus.csv`. Horizontal rules separate the four logical groups: record identity, bibliographic metadata, provenance flags, curation metadata. Generated from the deposit column contract (`scripts/_deposit_variables.py`); storage types, allowed values, ranges and measured missingness are in the deposited `datapackage.json`.
+Variables of `climate_finance_corpus.csv`, in four groups: record identity, bibliographic metadata, provenance flags, curation metadata. Generated from the deposit column contract (`scripts/_deposit_variables.py`); storage types, allowed values, ranges and measured missingness are in the deposited `datapackage.json`.
 :::
