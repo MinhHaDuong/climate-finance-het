@@ -4,20 +4,22 @@
 > national institutions: government or parliamentary reports […] central
 > bank communications. Why is that?"*
 
-This remark pushed the revision to extend the dataset, and I thank the
-referee for it: a curated UNFCCC and OECD DAC key-document layer (230 and 33
-works after deduplication) now enters the corpus as a durable pipeline
-source with its own provenance flags. On national institutions, Section 2.4
-states and justifies the boundary: the corpus traces climate finance as a
-category of *international* economic governance. The point stands — some national positions do constitute international policy, as a
-United States exit from climate finance mechanisms would shift the
-negotiation itself — so the boundary does cost relevant documents.
-Tractability decided it: each national document family is a corpus-scale
-universe of its own. Central-bank communications alone hold 35,487 speeches
-in the dataset of Campiglio, Deyris, Romelli and Scalisi (2025), which the
-report kindly points to. The revised text names national sources as the
-natural extension path and cites Campiglio et al. as the first curated open
-dataset to plug in.
+I thank the referee for this remark, which extended the dataset: a curated
+UNFCCC and OECD DAC key-document layer (230 and 33 works after
+deduplication) now enters the corpus as a durable pipeline source with its
+own provenance flags.
+
+On national institutions, Section 2.4 states and justifies the boundary:
+the corpus traces climate finance as a category of *international* economic
+governance. The point stands. Some national positions do constitute
+international policy — a United States exit from climate finance mechanisms
+would shift the negotiation itself — so the boundary costs relevant
+documents. Tractability decided it: each national document family is a
+corpus-scale universe of its own. Central-bank communications alone hold
+35,487 speeches in the dataset of Campiglio, Deyris, Romelli and Scalisi
+(2025), which the report points to. The revised text names national sources
+as the natural extension path and cites Campiglio et al. as the first
+curated open dataset to plug in.
 
 > *"There are numerous inconsistencies in the metadata: incorrect citation
 > assignments, missing abstracts, duplicates, and sometimes missing
@@ -31,20 +33,21 @@ mitigated" entry.
 > any) differ between the working paper version and the published version
 > […]"*
 
-What counts as a duplicate depends on usage — a citation analysis wants a
+What counts as a duplicate depends on usage: a citation analysis wants a
 working paper merged with its published version, while a history of the
-record wants both kept — so the pipeline's answer is transparency and open
-code rather than a rigid stance: every pass is counted, the residual classes
-are measured, and users can redraw the line. Section 2.2 now counts what
-each pass removes — 833 records on DOI, 159 on title+year, and 399 in a
-third DOI pass after enrichment that the submitted version omitted — and
-Table 2 reconciles the 44,174 pooled records to the 33,344 refined works
-with no residue. Section 2.4 quantifies the residual
-class the report predicted: 344 exact-title, same-first-author candidate
-pairs (1.0% of works), a fuzzy-title upper bound of 1,329 works (4.0%), and
-the over-merge side (38 DOI collision groups, 7 degenerate empty-year
-groups), all from a deposited audit script. Author-normalised deduplication
-is deferred to a future release: the audit found name order swapped across
+record wants both kept. The pipeline therefore answers with open code
+rather than a rigid stance — every pass is counted, the residual classes
+are measured, and users can redraw the line.
+
+Section 2.2 now counts what each pass removes: 833 records on DOI, 159 on
+title+year, and 399 in a third DOI pass after enrichment that the submitted
+version omitted. Table 2 reconciles the 44,174 pooled records to the 33,344
+refined works with no residue. Section 2.4 quantifies the residual class
+the report predicted: 344 exact-title, same-first-author candidate pairs
+(1.0% of works), a fuzzy-title upper bound of 1,329 works (4.0%), and the
+over-merge side (38 DOI collision groups, 7 degenerate empty-year groups),
+all from a deposited audit script. Author-normalised deduplication is
+deferred to a future release: the audit found name order swapped across
 sources, so a merge pass on today's names would over-merge.
 
 > *"OpenAlex contains a huge number of incorrect citation assignments […]
@@ -59,8 +62,8 @@ reference-string level (`corpus_parse_citations_grobid.py` in the deposited
 code); full-text PDF extraction remains explicitly not mitigated, since I do
 not hold the corpus's full texts. Two 300-sample audits bound the failure
 modes: 97.0% of sampled links are confirmed against Crossref reference
-lists, and 98.3% of the reference DOIs Crossref holds are captured — with
-Section 2.3 stating what these audits measure: agreement with Crossref, not
+lists, and 98.3% of the reference DOIs Crossref holds are captured.
+Section 2.3 states what these audits measure: agreement with Crossref, not
 ground truth.
 
 > *"The article would benefit from presenting a network of citations drawn
@@ -71,8 +74,8 @@ Both halves are answered in Section 4. *Potential*: a new figure maps the
 intra-corpus citation network at community granularity (Louvain detection);
 the major communities correspond to recognisable research programmes, from
 carbon markets to green bonds. *Limitations*: the same network is too thin
-before 2008 for inferential use — the pre-2008 citer subgraph covers about
-8% of early works — and the paper states this undercount as a usage caveat.
+before 2008 for inferential use (the pre-2008 citer subgraph covers about
+8% of early works), and the paper states this undercount as a usage caveat.
 
 > *"[OpenAlex] also indexes many other working paper series in economics
 > (NBER, MPRA…)."*
@@ -89,8 +92,8 @@ over 1,000 tokens are replaced by an LLM summary of ordinary abstract
 length, or flagged oversized where no summary is available, and the
 `abstract_status` column discloses each case. At the other end, a
 boilerplate detector drops stub abstracts, and affected works are embedded
-from title and keywords only (Section 3). The submitted Figure 1 — the
-exposure the report identified — has left the paper.
+from title and keywords only (Section 3). The submitted Figure 1, the
+exposure the report identified, has left the paper.
 
 > *"The author writes that 'the five smaller sources add non-English […]
 > coverage that OpenAlex alone does not provide.' However, OpenAlex does
@@ -112,7 +115,7 @@ under their own filter policy.
 > *"[…] I find it extremely difficult to assess the potential of this
 > dataset for conducting research on the history of economic thought […]"*
 
-The potential is best assessed on use rather than promise: the companion
+Use is a better test of potential than promise: the companion
 history-of-thought study under review at Œconomia, cited in the revised
 introduction, is built on this corpus, and I enclose its draft with this
 resubmission. Its results show what the dataset supports — from simple
@@ -124,13 +127,15 @@ periodization.
 > of the corpus rather unpleasant for someone who wishes to explore it
 > manually."*
 
-I kept the file layout — a standard rectangular UTF-8 CSV whose columns
+I kept the file layout: a standard rectangular UTF-8 CSV whose columns
 follow four logical groups in a fixed order, loading correctly in pandas or
 R. One pointer helps manual exploration: the column separator is the comma,
 never semicolons or tabs, and text fields containing commas are quoted.
-Reshaping a published Zenodo artifact would break its existing consumers. The revision makes
-the structure explicit instead: Table 5 shows each column's group, and the
-deposit ships a formal, machine-readable data dictionary
+Reshaping a published Zenodo artifact would break its existing consumers.
+
+The revision makes the structure explicit instead: Table 5 shows each
+column's group, and the deposit ships a formal, machine-readable data
+dictionary
 (`datapackage.json`, a Frictionless Table Schema with per-column types,
 allowed values, ranges, and measured missingness). Anyone who
 downloads the deposit can run `uvx frictionless validate datapackage.json`
