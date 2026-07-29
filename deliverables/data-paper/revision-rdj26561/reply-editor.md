@@ -28,7 +28,9 @@ The added value is now argued at both ends of the paper. The introduction
 grounds it in what prior mappings could not offer — each relies on a single
 database, searches in English only, and publishes the query rather than a
 reusable dataset — and the conclusion maps the research directions the
-dataset enables by method family, naming the ones you suggest.
+dataset enables by method family, naming the ones you suggest. The first of
+those directions is realised: the dataset was built for the enclosed
+companion history-of-thought study, referenced in the introduction.
 
 To demonstrate added value directly, I re-tested three published results on
 the corpus, each with one explicit statistical test: the post-2015 growth
