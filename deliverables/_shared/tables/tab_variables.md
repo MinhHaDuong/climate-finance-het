@@ -32,7 +32,7 @@ Variable & Description \\
 \texttt{from\_teaching} & Provenance flag: teaching canon (syllabi) \\
 \texttt{from\_unfccc} & Provenance flag: curated UNFCCC key document \\
 \texttt{from\_oecd} & Provenance flag: curated OECD key document \\
-\texttt{abstract\_provenance} & Provenance of the abstract text, for curated key documents only \\
+\texttt{abstract\_provenance} & Provenance of the abstract, for curated key documents only \\
 \texttt{keywords\_provenance} & Provenance of the keywords, for curated key documents only \\
 \texttt{language\_provenance} & How the language code was obtained (Section 2.4) \\
 \texttt{source\_count} & Number of sources that contributed the record \\

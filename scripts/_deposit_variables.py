@@ -161,7 +161,7 @@ DEPOSIT_VARIABLES: list[Variable] = [
              "Provenance flag: curated OECD key document", _KEYDOCS,
              required=False, group=_PROV),
     Variable("abstract_provenance", "string",
-             "Provenance of the abstract text, for curated key documents only",
+             "Provenance of the abstract, for curated key documents only",
              _KEYDOCS, required=False, group=_PROV, nullable=True,
              enum=("curated", "reconstructed:lead",
                    "reconstructed:exec_summary")),
