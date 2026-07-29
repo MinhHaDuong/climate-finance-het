@@ -16,10 +16,8 @@ Dear Dr Chambru,
 
 Please find the revised version of manuscript RDJ-26561, retitled "A
 Curated Multi-Source Corpus of Climate Finance Literature, 1990–2024:
-Multilingual Retrieval and Institutional Reports," together with a summary
-of revisions and two supplementary notes replying point by point to your
-letter and to the referee report. Every point raised has been addressed.
-The key changes:
+Multilingual Retrieval and Institutional Reports." Every point raised has
+been addressed. The key changes:
 
 - **The dataset itself changed, not only the paper.** Prompted by the
   referee's remark on institutional coverage, the corpus gains a curated
