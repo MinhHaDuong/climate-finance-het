@@ -70,14 +70,10 @@ def _load(name):
 def _cell(value) -> str:
     """Make a value safe for a pipe-table cell.
 
-    ``markdown_text_cell``, not ``markdown_cell``: every value here is plain
-    text with no markup intent — YAML config strings and 17 bibliographic
-    titles from the institutional-reports seed list. ``markdown_cell`` is
-    reserved for Markdown
-    authored in this repo and raises on an unbalanced backtick, so a stray
-    backtick in a report title would abort the build, and a paired one would
-    typeset half a title as code. Neither is a contract a bibliographic
-    string should be held to (ticket 0339's escaper split).
+    ``markdown_text_cell``: every value here is plain text with no markup
+    intent — YAML config strings and 17 bibliographic titles from the
+    institutional-reports seed list — so every escapable character is escaped
+    and nothing is read as syntax (ticket 0339's escaper split).
     """
     return markdown_text_cell(" ".join(str(value).split()))
 

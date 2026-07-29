@@ -25,7 +25,7 @@ Adherence tier: the guard reads files and runs nothing.
 import re
 
 import pytest
-from _markdown_table import markdown_cell, markdown_text_cell
+from _markdown_table import markdown_text_cell
 from _mk_discovery import (
     REPO_ROOT,
     generated_markdown_targets,
@@ -158,9 +158,9 @@ def scan(text: str) -> tuple[list[tuple[int, list[str], list[tuple[int, list[str
 
     - **Orphans.** A raw newline inside a value ends the table at that line, so
       every row below it belongs to no table and would never be width-checked.
-      ``markdown_text_cell`` folds a newline to a space, but ``markdown_cell``
-      (the codebook path) does not, so the hole is reachable from a shipped
-      emitter. Any line outside a fence that carries an unescaped ``|`` and no
+      ``markdown_text_cell`` folds a newline to a space, but a hand-written
+      table has no escaper in front of it, so the hole stays reachable.
+      Any line outside a fence that carries an unescaped ``|`` and no
       table claimed is reported.
     - **Torn rows.** The orphan rule needs the remainder to still carry a pipe,
       and when the newline lands in the *last* column it does not: the row above
@@ -321,8 +321,8 @@ def test_parser_flags_a_delimiter_row_of_the_wrong_width():
 def test_parser_flags_rows_orphaned_by_a_raw_newline():
     """A newline inside a value ends the table; the break itself must be named.
 
-    `markdown_cell` — the codebook path — does not fold newlines, so this hole
-    is reachable from a shipped emitter. Both documents below carry the same
+    A newline can reach a hand-edited table even though every live emitter
+    folds them. Both documents below carry the same
     defect, and the short one is why this test asserts twice. It used to append
     the synthetic `| x | y | z |` row and assert only on that, so it passed for
     a reason unrelated to its name: strip the trailing row and the same broken
@@ -347,21 +347,21 @@ def test_parser_flags_rows_orphaned_by_a_raw_newline():
 
 
 def test_a_torn_last_cell_is_caught_across_a_blank_line():
-    """The shipped shape: `markdown_cell` passes a paragraph break straight through.
+    """A paragraph break in the last cell must be named, not read as clean.
 
-    `scripts/_deposit_variables.py:402` routes every codebook Description — free
-    Markdown prose, and the table's last column — through `markdown_cell`, which
-    folds nothing. A paragraph break in one description emits a blank line
+    A paragraph break inside a hand-written description emits a blank line
     mid-table: the row above it still counts its declared cells and passes, the
     table ends on the blank, and the tail of the description lands below as
     prose carrying the row's closing pipe. That remainder is a single cell,
-    which is precisely what a width check cannot see.
+    which is precisely what a width check cannot see. (The emitter that once
+    passed newlines through, `markdown_cell`, is deleted; the parser hole it
+    exposed stays covered.)
     """
     description = "first para\n\nsecond para"
     doc = (
         "| Variable | Description |\n"
         "|:--|:--|\n"
-        f"| `x` | {markdown_cell(description)} |\n"
+        f"| `x` | {description} |\n"
     )
     offenders = malformed_rows(doc)
     assert offenders, "a paragraph break inside the last cell read as clean"
@@ -454,13 +454,6 @@ def test_escaped_free_text_keeps_the_row_whole(payload):
     assert not malformed_rows(doc), payload
 
 
-def test_markdown_cell_output_keeps_the_row_whole():
-    """The codebook path: Markdown input whose code span carries a live pipe."""
-    recipe = "df[~df['is_flagged'] | df['is_protected']]"
-    doc = f"| Variable | Description |\n|:--|:--|\n| x | {markdown_cell(recipe)} |\n"
-    assert not malformed_rows(doc)
-
-
 def test_parser_reads_a_real_shipped_table():
     """Real-world positive: the parser reads a deposited table's true shape.
 
@@ -473,7 +466,7 @@ def test_parser_reads_a_real_shipped_table():
     escape path against a *deposited* artifact. That row now lives in a LaTeX
     longtable (tab_variables.md) and in datapackage.json, neither a pipe table,
     and no shipped Markdown table carries an escaped pipe any more. The escape
-    itself stays covered by the fixture tests on ``markdown_cell`` output; what
+    itself stays covered by the fixture tests on ``markdown_text_cell`` output; what
     is lost is the real-file half of that pair.
     """
     path = REPO_ROOT / CANONICAL
@@ -661,7 +654,7 @@ def test_generated_markdown_rows_match_their_header(artifact):
         f"{artifact} (built by {GENERATED[artifact]}) has rows whose cell count "
         "differs from their header — a raw `|` in an interpolated value splits "
         "the cell and the renderer drops the overflow. Route free text through "
-        "scripts/_markdown_table.py (markdown_text_cell / markdown_cell):\n  "
+        "scripts/_markdown_table.py (markdown_text_cell):\n  "
         + "\n  ".join(offenders)
     )
 
