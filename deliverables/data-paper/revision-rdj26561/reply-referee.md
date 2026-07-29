@@ -131,7 +131,7 @@ I kept the file layout: a standard rectangular UTF-8 CSV whose columns
 follow four logical groups in a fixed order, loading correctly in pandas or
 R. One pointer helps manual exploration: the column separator is the comma,
 never semicolons or tabs, and text fields containing commas are quoted.
-Reshaping a published Zenodo artifact would break its existing consumers.
+A published artifact's layout is best kept stable across versions.
 
 The revision makes the structure explicit instead: Table 5 shows each
 column's group, and the deposit ships a formal, machine-readable data
