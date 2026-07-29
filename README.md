@@ -9,7 +9,7 @@ How economists and institutions co-produced the categories, metrics, and account
 | Document | File | Journal | Status |
 |----------|------|---------|--------|
 | Manuscript | `deliverables/manuscript/manuscript.qmd` | Œconomia (Varia) | Submitted 2026-03-18; R&R, revision v2.0.5 in progress |
-| Data paper | `deliverables/data-paper/data-paper.qmd` | RDJ4HSS (diamond OA) | Submitted 2026-03-26, under review |
+| Data paper | `deliverables/data-paper/data-paper.qmd` | RDJ4HSS (diamond OA) | Revision 1 released 2026-07-29, resubmission in progress |
 | Technical report | `deliverables/technical-report/technical-report.qmd` | HAL working paper | Complete |
 | Method paper | `deliverables/multilayer/multilayer-detection.qmd` | Scientometrics / QSS | Outline |
 
@@ -118,6 +118,7 @@ keeps only the live working copy.
 |------------|------|--------|-----|---------|
 | Œconomia (Varia) | 2026-03-18 | [10.5281/zenodo.19097045](https://doi.org/10.5281/zenodo.19097045) | [hal-05558422v1](https://hal.science/hal-05558422v1) | `v1.0-submission` |
 | RDJ4HSS (data paper) | 2026-03-26 | [10.5281/zenodo.19236130](https://doi.org/10.5281/zenodo.19236130) | — | `v1.1-rdj-submitted` |
+| RDJ4HSS (revision 1) | 2026-07-29 | [10.5281/zenodo.21679237](https://doi.org/10.5281/zenodo.21679237) | hal-05570600v2 (in moderation) | `rdj26561-revision1` |
 
 Errata 1 (Figure 2 label fix) archived in `papiers/actif/Oeconomia_Inventing_Climate_Finance/2026-03-23 Oeconomia errata/`.
 
