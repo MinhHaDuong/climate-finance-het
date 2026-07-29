@@ -72,7 +72,8 @@ PYTHONPATH="scripts:libs/openalex-corpus/src${PYTHONPATH:+:$PYTHONPATH}" \
 echo "  Validating the deposited CSV against its own datapackage.json..."
 uv run --env-file .env frictionless validate "$TMP/data/products/datapackage.json"
 
-echo "  Copying final products (embeddings, citations)..."
+echo "  Copying final products (embeddings, citations, audit)..."
+cp -L "$DATA_DIR/corpus_audit.csv" "$TMP/data/products/"
 cp -L "$DATA_DIR/embeddings.npz" "$TMP/data/products/"
 cp -L "$DATA_DIR/citations.csv" "$TMP/data/products/"
 # Retrieval-protocol appendix (ticket 0329): the paper points referees here for
@@ -124,6 +125,7 @@ done
 # and is the Phase-2 build; this one is the three-target reviewer interface,
 # invoked as `make -f Makefile.datapaper`.
 cp build/templates/Makefile.datapaper "$TMP/code/Makefile.datapaper"
+cp build/templates/README-datapaper.md "$TMP/README.md"
 
 # ── Checksums for make verify ────────────────────────────
 echo "  Computing data checksums..."

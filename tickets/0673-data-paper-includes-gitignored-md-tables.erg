@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-29T07:16Z HDMX-coding-agent created
 
+2026-07-29T08:55Z HDMX-coding-agent note bit twice during the 0283 proofread: bolded tab_corpus_flow.md and regenerated tab_languages.md (stale Unclassified 1,358 -> 11 after 0297) both gitignored, so neither fix can ride the PR; author's primary checkout keeps stale copies until a make run there
 --- body ---
 ## Context
 

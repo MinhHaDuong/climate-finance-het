@@ -158,6 +158,17 @@ def corpus_stats(v):
     # @tbl-languages uses, so prose and table agree: `arz` and `sco` are ISO
     # 639-3 codes with no ISO 639-1 equivalent, and both file them under
     # Unclassified rather than non-English (PR #1141 review).
+    # Out-of-window works (author disclosure, 2026-07-29): the pool is
+    # append-only, so records harvested before the 2026-03 year bounds stay.
+    if "year" in df.columns:
+        yy = pd.to_numeric(df["year"], errors="coerce")
+        late = int((yy > 2024).sum())
+        early = int((yy < 1990).sum())
+        v["window_late_n"] = _int(late)
+        v["window_early_n"] = _int(early)
+        v["window_out_n"] = _int(late + early)
+        v["window_out_pct"] = _pct(100 * (late + early) / n)
+
     if "language" in df.columns:
         lang = df["language"].apply(normalize_lang_display)
         en_count = (lang == "en").sum()
@@ -636,6 +647,55 @@ def write_yaml(v, path):
 # ── Main ─────────────────────────────────────────────────────
 
 
+def unique_share_stats(v):
+    """Complementarity range of the smaller sources' Unique column (2.3)."""
+    df = _read_csv("tab_corpus_sources.csv", directory=TABLES_DIR)
+    if df is None:
+        return
+    rows = df[~df["Source"].isin(["OpenAlex", "TOTAL"])].copy()
+    rows = rows[rows["Refined"] > 0]
+    share = 100 * rows["Unique"] / rows["Refined"]
+    lo, hi = share.idxmin(), share.idxmax()
+    v["unique_min_pct"] = _pct(share[lo], 0)
+    v["unique_min_source"] = str(rows.loc[lo, "Source"])
+    v["unique_max_pct"] = _pct(share[hi], 0)
+    v["unique_max_source"] = str(rows.loc[hi, "Source"])
+
+
+def snowball_stats(v):
+    """Reverse-snowballing probe of the citation table (2.3): how far the
+    reference lists reach beyond the corpus."""
+    try:
+        works = load_refined_works()[["doi"]]
+        cits = load_refined_citations()[["source_doi", "ref_doi"]]
+    except FileNotFoundError as exc:
+        warnings.warn(str(exc))
+        return
+    corpus_dois = set(works["doi"].dropna().str.lower())
+    refs = cits["ref_doi"].dropna().str.lower()
+    n_distinct = refs.nunique()
+    absent = refs[~refs.isin(corpus_dois)]
+    v["snowball_cited_dois"] = _int(n_distinct)
+    v["snowball_absent_pct"] = _pct(100 * absent.nunique() / n_distinct)
+    v["snowball_absent_50plus"] = _int((absent.value_counts() >= 50).sum())
+
+
+def audit_stats(v):
+    """Refined-subset reconstruction steps beyond the flag rule (§3): the
+    post-filter DOI deduplication and the pre-1960 year floor, counted from
+    the deposited corpus_audit.csv."""
+    path = os.path.join(CATALOGS_DIR, "corpus_audit.csv")
+    try:
+        audit = pd.read_csv(path)
+    except FileNotFoundError as exc:
+        warnings.warn(str(exc))
+        return
+    v["audit_dedup_n"] = _int((audit["action"] == "deduped").sum())
+    v["audit_yearfloor_n"] = _int(
+        ((audit["action"] == "remove") & audit["protected"]).sum()
+    )
+
+
 def main():
     v = {}
     corpus_stats(v)
@@ -652,6 +712,9 @@ def main():
     dedup_stats(v)
     global_map_stats(v)
     lit_confirmations_stats(v)
+    unique_share_stats(v)
+    snowball_stats(v)
+    audit_stats(v)
 
     # Dedup vars fall back to MISSING while their artifacts are pending: the
     # catalog_merge run report awaits dvc (0284), the error table 0301.

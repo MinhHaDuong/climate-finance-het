@@ -48,10 +48,22 @@ def render_table(flow: pd.DataFrame, caption: str = CAPTION) -> str:
     # label can, and a raw one would end its cell and drop the last count
     # (ticket 0370). Whether a label happens to contain one today is not the
     # question: the escaper exists so no emitter has to know.
+    #
+    # The unified-corpus count is bolded at the merge→filter pivot: readers
+    # meet 43,179 in the prose first, and without the emphasis the ledger's
+    # 44,174 opening reads as a contradiction rather than the pre-dedup pool.
+    # Keyed on the quality-filtering boundary row, not a literal count.
+    filtering = flow["Stage"].str.startswith("Quality filtering")
+    milestone = int(flow.loc[filtering, "In"].iloc[0]) if filtering.any() else None
+
+    def fmt(value: int) -> str:
+        n = int(value)
+        return f"**{n:,}**" if n == milestone else f"{n:,}"
+
     for _, row in flow.iterrows():
         lines.append(
-            f"| {markdown_text_cell(row['Stage'])} | {int(row['In']):,} | "
-            f"{int(row['Removed']):,} | {int(row['Out']):,} |"
+            f"| {markdown_text_cell(row['Stage'])} | {fmt(row['In'])} | "
+            f"{fmt(row['Removed'])} | {fmt(row['Out'])} |"
         )
     lines += ["", caption, ""]
     return "\n".join(lines)

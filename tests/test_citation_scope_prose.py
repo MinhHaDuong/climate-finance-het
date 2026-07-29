@@ -116,13 +116,14 @@ def test_crossref_check_states_its_sampling_and_scope():
 def test_abstract_dependent_products_are_named():
     """§3's abstracts caveat must name the products computed from them.
 
-    Embeddings, semantic-outlier flags, and reranker relevance scores all
-    depend on abstracts that are not deposited; a reuser re-fetching from a
-    live index cannot exactly regenerate them. Naming the affected products
-    is the one honest sentence two reviewers asked for.
+    Embeddings and reranker relevance scores depend on abstracts that are
+    not deposited; a reuser re-fetching from a live index cannot exactly
+    regenerate them. Naming the affected products is the one honest sentence
+    two reviewers asked for. (The semantic-outlier flag left the list with
+    flag 5's deactivation — five-flag decision, author 2026-07-29.)
     """
     data_section = _section("3.")
-    for product in ("outlier", "relevance"):
+    for product in ("embedding", "relevance"):
         assert product in data_section, (
             f"§3 must name {product!r} among the products computed from "
             "non-deposited abstracts"

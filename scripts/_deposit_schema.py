@@ -46,19 +46,23 @@ LICENSE_URL = "https://creativecommons.org/licenses/by/4.0/"
 
 # Bumped with the Zenodo record's version field; the ed04 checklist is where
 # the author sets it on upload. Overridable per invocation with --version.
-DEPOSIT_VERSION = "1.1.1"
+DEPOSIT_VERSION = "2.0.0"
 
-DATASET_TITLE = ("A Curated Corpus of Climate Finance Literature, 1990–2024: "
-                 "Six Sources, Multilingual Retrieval, and Grey Literature")
+# The dataset drops the paper's subtitle so the two objects stay citable
+# apart (author decision 2026-07-29); the Zenodo record takes this title.
+DATASET_TITLE = ("A Curated Multi-Source Corpus of Climate Finance Literature, "
+                 "1990–2024")
 DATASET_DESCRIPTION = (
     "Deduplicated bibliographic corpus of the climate finance literature, "
-    "merged from six catalogs with multilingual retrieval and grey literature, "
+    "merged from eight catalogs with multilingual retrieval and institutional reports, "
     "carrying per-source provenance flags and a quality-flag audit trail. The "
-    "refined subset is df[~df['is_flagged'] | df['is_protected']]. Abstracts "
+    "refined subset is df[~df['is_flagged'] | df['is_protected']] minus the "
+    "post-filter DOI duplicates and pre-1960 records listed in "
+    "corpus_audit.csv. Abstracts "
     "are not redistributed; retrieve them via the DOI or OpenAlex identifier.")
 
 KEYWORDS = ["climate finance", "bibliometrics", "history of economic thought",
-            "grey literature", "OpenAlex", "text corpus"]
+            "institutional reports", "OpenAlex", "text corpus"]
 
 # ORCID is also carried by the paper front matter (data-paper.qmd); the funder
 # identifiers were verified against ROR and the Crossref Funder Registry, which

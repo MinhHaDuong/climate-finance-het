@@ -30,7 +30,6 @@ FLAG_COLUMNS = [
     "no_abstract_irrelevant",
     "title_blacklist",
     "citation_isolated_old",
-    "semantic_outlier",
     "llm_irrelevant",
 ]
 
@@ -39,6 +38,15 @@ COLUMNS_TO_DROP = [
     "abstract",       # publisher redistribution restrictions
     "doi_norm",       # intermediate
     "action",         # redundant with is_flagged/is_protected
+    # Flag 5 (semantic outlier) was inactive in the v2 build and its columns
+    # are not part of the deposit contract; drop them if an older extended
+    # file still carries them (ticket 0361, author decision 2026-07-29).
+    "semantic_outlier",
+    "semantic_outlier_dist",
+    # Not in the deposit: the column exists only in refined_works.csv, so the
+    # v2 deposit (built from extended_works.csv) never carried it; the contract
+    # describes exactly the shipped file (author decision 2026-07-29).
+    "in_v1",
 ]
 
 DEPOSIT_RENAMES = {"from_scispsace": "from_scispace"}
@@ -150,7 +158,7 @@ DEPOSIT_VARIABLES: list[Variable] = [
     Variable("from_scispace", "boolean", "Provenance flag: found via SciSpace",
              _MERGE, group=_PROV),
     Variable("from_grey", "boolean",
-             "Provenance flag: institutional reports (curated seed + World Bank)",
+             "Provenance flag: institutional reports (Section 2.1)",
              _MERGE, group=_PROV),
     Variable("from_teaching", "boolean",
              "Provenance flag: teaching canon (syllabi)", _MERGE, group=_PROV),
@@ -161,7 +169,7 @@ DEPOSIT_VARIABLES: list[Variable] = [
              "Provenance flag: curated OECD key document", _KEYDOCS,
              required=False, group=_PROV),
     Variable("abstract_provenance", "string",
-             "Provenance of the abstract text, for curated key documents only",
+             "Provenance of the abstract, for curated key documents only",
              _KEYDOCS, required=False, group=_PROV, nullable=True,
              enum=("curated", "reconstructed:lead",
                    "reconstructed:exec_summary")),
@@ -170,9 +178,7 @@ DEPOSIT_VARIABLES: list[Variable] = [
              _KEYDOCS, required=False, group=_PROV, nullable=True,
              enum=("extracted", "generated:lexicon")),
     Variable("language_provenance", "string",
-             "How the language code was obtained: carried by the source "
-             "catalog, backfilled from OpenAlex, or inferred from title and "
-             "abstract", _ENRICH,
+             "How the language code was obtained (Section 2.4)", _ENRICH,
              required=False, group=_PROV, nullable=True,
              enum=("source", "openalex", "detected:langdetect")),
     Variable("source_count", "integer",
@@ -180,36 +186,25 @@ DEPOSIT_VARIABLES: list[Variable] = [
              group=_PROV,
              minimum=1, maximum=8),
     Variable("abstract_status", "string",
-             "Whether the undistributed abstract was original, reconstructed "
-             "from an inverted index or fulltext, LLM-summarised, oversized, "
-             "or missing", _ENRICH, group=_CURATION,
+             "Fate of the undistributed abstract (Section 3)",
+             _ENRICH, group=_CURATION,
              enum=("original", "reconstructed", "generated", "too_long",
                    "missing")),
     Variable("near_duplicate_group", "integer",
-             "Group identifier for near-identical content published under "
-             "several DOIs", _FILTER,
+             "Group id of near-identical content under several DOIs", _FILTER,
              group=_CURATION, nullable=True),
-    Variable("semantic_outlier_dist", "number",
-             "Distance to the corpus embedding centroid", _FILTER,
-             required=False,
-             group=_CURATION, nullable=True),
-    Variable("in_v1", "boolean",
-             "Version tracking: work present in the v1.0 submission corpus",
-             _FILTER, required=False, group=_CURATION),
     Variable("is_flagged", "boolean",
-             "Any quality flag raised; the refined subset is "
-             "`df[~df['is_flagged'] | df['is_protected']]`", _FILTER,
-             group=_CURATION),
+             "Any quality flag raised (refined-subset rule: Section 3)",
+             _FILTER, group=_CURATION),
     Variable("flag_reason", "string",
-             "Comma-separated list of raised quality flags "
-             f"({', '.join(FLAG_COLUMNS)}); empty when unflagged", _FILTER,
-             group=_CURATION,
+             "Comma-separated raised quality flags; empty when unflagged",
+             _FILTER, group=_CURATION,
              empty_is_a_value=True),
     Variable("is_protected", "boolean",
              "Protection from removal (key papers kept despite flags)", _FILTER,
              group=_CURATION),
     Variable("protection_reason", "string",
-             "Why the work is protected (citation count, seed list, ...)",
+             "Why the work is protected (Section 2.2)",
              _FILTER, required=False, group=_CURATION, nullable=True),
 ]
 
@@ -241,17 +236,12 @@ _LATEX_CODE = str.maketrans(_LATEX_CODE_SPECIALS)
 # emitters turned out to need it too (ticket 0339); it is imported above.
 
 
-OPTIONAL_MARK = "†"
-
-
 def describe(v: Variable) -> str:
     """The variable's description as published, in Markdown.
 
-    Optionality is marked on the variable name, not spelled out per row. Eight
-    of the 33 variables are optional, so the old per-row sentence spent 64
-    words — a quarter of all description text in the table — repeating one
-    fact eight times. The caption states it once and the name carries a dagger
-    (ticket 0332, word budget).
+    Optionality (a column absent from builds predating its pipeline stage) is
+    a contract fact recorded in `required`; it is no longer surfaced in the
+    published table — the dagger legend confused readers (author, 2026-07-29).
     """
     return v.description
 
@@ -333,25 +323,20 @@ def render_markdown_table() -> str:
 
     Emitted as a Quarto div (#tbl-variables) wrapping raw LaTeX: pipe tables
     cannot draw the horizontal rules that separate the four logical groups,
-    so the paper's PDF build gets a longtable with \midrule at each group
-    boundary. Group names appear in the caption only (author decision,
+    so the paper's PDF build gets a floating tabular with \midrule at each
+    group boundary (one page since the one-line descriptions, so no longtable). Group names appear in the caption only (author decision,
     2026-07-24).
 
     Raw LaTeX means pandoc never sees these cells, so this function owns their
     escaping — see ``latex_inline``.
     """
     lines = [
-        "::: {#tbl-variables}",
+        '::: {#tbl-variables tbl-pos="tbp"}',
         "```{=latex}",
-        r"\begin{longtable}{@{}l p{10.4cm}@{}}",
+        r"\begin{tabular}{@{}l p{10.4cm}@{}}",
         r"\toprule",
         r"Variable & Description \\",
         r"\midrule",
-        r"\endfirsthead",
-        r"\toprule",
-        r"Variable & Description \\",
-        r"\midrule",
-        r"\endhead",
     ]
     prev_group = None
     groups: list[str] = []
@@ -361,19 +346,17 @@ def render_markdown_table() -> str:
         if v.group != prev_group:
             groups.append(v.group.lower())
         prev_group = v.group
-        mark = "" if v.required else OPTIONAL_MARK
         lines.append(
-            rf"\texttt{{{v.name.translate(_LATEX_CODE)}}}{mark}"
+            rf"\texttt{{{v.name.translate(_LATEX_CODE)}}}"
             rf" & {latex_inline(describe(v))} \\")
     lines += [
         r"\bottomrule",
-        r"\end{longtable}",
+        r"\end{tabular}",
         "```",
         "",
-        "Variables of `climate_finance_corpus.csv`. Horizontal rules separate "
-        "the four logical groups: " + ", ".join(groups) + ". " + OPTIONAL_MARK +
-        " marks a variable absent from corpus builds predating its pipeline "
-        "stage. Generated from the deposit column contract "
+        "Variables of `climate_finance_corpus.csv`, in four groups: "
+        + ", ".join(groups) + ". "
+        "Generated from the deposit column contract "
         "(`scripts/_deposit_variables.py`); storage types, allowed values, "
         "ranges and measured missingness are in the deposited "
         "`datapackage.json`.",

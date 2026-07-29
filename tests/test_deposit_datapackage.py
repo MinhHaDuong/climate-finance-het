@@ -133,8 +133,8 @@ class TestContractStructure:
         and this is where the description is published now.
         """
         pkg = json.loads(json.dumps(render_datapackage(contract_names(), "t")))
-        fields = {f["name"]: f for f in pkg["resources"][0]["schema"]["fields"]}
-        assert RECIPE in fields["is_flagged"]["description"]
+        assert RECIPE in pkg["description"], \
+            "the refined-subset rule left the package-level description"
 
     def test_every_variable_maps_to_a_frictionless_type(self):
         allowed = {"string", "integer", "number", "boolean"}

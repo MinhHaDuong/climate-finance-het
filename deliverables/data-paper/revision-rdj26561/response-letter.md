@@ -2,17 +2,22 @@
 
 Manuscript RDJ-26561, submitted as "A Curated Corpus of Climate Finance
 Literature, 1990–2024" (retitled "A Curated Multi-Source Corpus of Climate
-Finance Literature, 1990–2024" in this revision) — point-by-point reply to
-the editor's letter and to the referee report. Assembled 2026-07-24 (ticket 0283); corpus numbers reflect the v2
-rebuild of 2026-07-24.
+Finance Literature, 1990–2024: Multilingual Retrieval and Institutional
+Reports" in this revision) — point-by-point reply to the editor's letter and
+to the referee report. Assembled 2026-07-29 (ticket 0283); corpus numbers
+reflect the v2 rebuild of 2026-07-24, frozen 2026-07-27.
 
 Dear Dr Chambru,
 
 Thank you for the decision letter and for the referee's careful report. I
-have revised the paper on every point raised. The revision also extends the
-corpus itself: a curated layer of UNFCCC and OECD DAC key documents joins the
-grey literature (referee remark R1-06), so the corpus grows from 42,916 to
-43,179 unified works (30,987 to 33,344 after filtering). All
+have revised the paper on every point raised. The paper is also retitled, to
+"A Curated Multi-Source Corpus of Climate Finance Literature, 1990--2024:
+Multilingual Retrieval and Institutional Reports": the new title names the
+multi-source design and the two coverage layers the corpus adds, and drops
+the work count, which changes with each release. The revision also extends
+the corpus itself: a curated layer of UNFCCC and OECD DAC key documents joins
+the institutional reports (referee remark R1-06), so the corpus grows from
+42,916 to 43,179 unified works (30,987 to 33,344 after filtering). All
 figures, tables, and in-text statistics were regenerated from the v2 corpus by
 the deposited pipeline; no number in the paper is hand-typed. Below I reply
 point by point, first to your letter, then to the referee report.
@@ -20,11 +25,11 @@ point by point, first to your letter, then to the referee report.
 ## Reply to the editor
 
 **ED-01 (OpenAlex caveats, deduplication, regional databases).** I added
-Section 2.4, "Limitations and Potential Biases," which reviews each
-documented OpenAlex flaw — query false positives, duplicate records, missing
-abstracts, incorrect citation assignments, contaminated abstract fields,
-missing full-text — and pairs it with the pipeline step that addresses it,
-or with an explicit "not mitigated" statement.
+Section 2.4, "Limitations and Biases," which maps each documented
+OpenAlex flaw — query false positives, duplicate records, missing abstracts,
+incorrect citation assignments, contaminated abstract fields, missing
+full-text — to the pipeline step that addresses it, or to an explicit "not
+mitigated" statement.
 The section names deduplication's residual weak point (works sharing neither
 a DOI nor a normalised title+year pair, such as a preprint and its retitled
 published version) rather than claiming the merge passes catch everything.
@@ -105,7 +110,7 @@ submitted within the three-month window.
 The referee is right that the corpus excluded documents from national
 institutions (government and parliamentary reports, economic analysis
 councils, central bank communications). I now state and justify this boundary
-explicitly in Section 2.3, for two reasons. First, the boundary follows the
+explicitly in Section 2.4, for two reasons. First, the boundary follows the
 research object: the corpus traces climate finance as a category of
 *international* economic governance, defined, negotiated, and accounted for
 in the UNFCCC and OECD arenas, whereas national documents largely apply that
@@ -136,8 +141,8 @@ OpenAlex limitation, and the pipeline step that addresses it or an explicit
 variable).** Section 2.2 now states how many duplicates each procedure
 removes, with counts drawn from the pipeline's merge run report: on the v2
 corpus, the DOI-based pass removes 833 records and the title+year pass 159.
-The revision also adds Table 3, a stage-by-stage construction ledger
-reconciling the 44,174 pooled source records to the 33,344 refined works with
+The revision also adds a stage-by-stage construction ledger (the corpus flow
+table in Section 2.3), reconciling the 44,174 pooled source records to the 33,344 refined works with
 no residue. Every removal in the pipeline now carries its own row, including
 a third DOI pass that runs after enrichment and drops 399 records, which the
 submitted version omitted from its arithmetic. The table is generated from
@@ -179,14 +184,17 @@ the revised Section 3 states this explicitly — is full-text reference
 extraction from PDFs: I do not hold the full texts of the corpus's academic
 works, so parsing PDFs of the entire corpus is not feasible under current
 access conditions; Section 2.4 keeps this limitation as explicitly not
-mitigated. On incorrect assignments
-generally, the 300-link audit against Crossref (97.0% confirmed on the v2
-corpus, 95% CI [94.4%, 98.4%]) addresses link accuracy — the revised
-Section 2.3 also states what the audit measures: agreement with Crossref,
-not ground truth, partly circular for links harvested from Crossref or
-OpenAlex deposits; the new reference-count
-reporting addresses list completeness — the "empty or aberrant" failure mode
-the referee describes.
+mitigated. On incorrect assignments generally, two audits on the frozen v2
+corpus address the two failure modes. For link accuracy, a 300-link audit
+against Crossref confirms 97.0% of sampled citation links (291 of 300, 95%
+CI [94.4%, 98.4%]). For list completeness — the "empty or aberrant" failure
+mode the referee describes — a second 300-work audit checks the opposite
+direction: of the reference DOIs Crossref holds for the sampled works, the
+corpus captures 98.3% (6,016 of 6,119, 95% CI [98.0%, 98.6%]); the
+reference-count reporting above flags the works where neither index holds a
+list. The revised Section 2.3 also states what these audits measure:
+agreement with Crossref, not ground truth, partly circular for links
+harvested from Crossref or OpenAlex deposits.
 
 **R1-14 (present a citation network to demonstrate potential and/or
 limitations).** I answer both halves. *Potential*: the revised Section 3 adds
@@ -228,15 +236,34 @@ Section 2.3 now claims only the incremental coverage the smaller sources add:
 and pedagogical coverage." The parallel exclusivity phrasing in the
 conclusion was removed in the same pass.
 
+Beyond the wording, the revision measures and discloses a language bias the
+submitted version did not know it had. A per-stratum removal ablation
+(deposited as `tab_filter_ablation.csv`) shows the relevance filter removes
+41.8% of non-English works against 19.9% of English ones. The gap is not a
+metadata artifact — non-English works have the *higher* abstract coverage
+(88.0% vs 85.7%) — and the mechanism is measured, not conjectured: the
+cross-encoder is multilingual, but the deployed relevance query is a single
+English string. Rescoring the 1,589 flagged non-English works against an
+own-language translation of the query lifts the share crossing the deployed
+threshold by 11.5 percentage points, and the symmetric control (English works
+scored against a foreign-language query) loses pass rate, confirming that the
+score partly reflects query–document language match rather than topical
+relevance. Section 2.4 now states this bias and its direction. The remedy — a
+translated or multilingual query — changes which works are removed and so
+reopens the frozen corpus; it is scheduled for the next corpus release rather
+than patched into this one. Users needing non-English coverage can rebuild
+from the deposited flags under their own filter policy, as Section 2.4 notes.
+
 **R1-18 (potential for HET research hard to assess; cleaning still needed).**
-Answered candidly in the expanded conclusion: any focused research question
-will demand task-specific cleaning beyond the generic filtering documented in
-the paper; the corpus is offered as reusable infrastructure, not a finished
-analysis. The conclusion illustrates both the limit and what survives it from
-my own use: community-separation tests fail on the thin pre-2007 window, yet
-qualitative results stand on simple counts (Negishi absent from the pre-2007
-canon; Barrett co-cited with the carbon-pricing literature). The companion
-paper under review at Œconomia is cited as the proof of use.
+The referee is right, and I concede the point directly: any focused research
+question will demand task-specific cleaning beyond the generic filtering
+documented in the paper. The corpus is offered as reusable infrastructure,
+not a finished analysis. My own use illustrates both the limit and what
+survives it: community-separation tests fail on the thin pre-2007 window,
+yet qualitative results stand on simple counts --- Negishi is absent from
+the pre-2007 canon, and Barrett is co-cited with the carbon-pricing
+literature. The companion paper under review at Œconomia, cited in the
+revised introduction, is the proof of use.
 
 **R1-19 (organization of the corpus CSV).** I kept the file layout. The file
 is a standard rectangular CSV that loads directly into pandas or R, and its

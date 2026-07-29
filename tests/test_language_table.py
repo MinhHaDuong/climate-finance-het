@@ -12,7 +12,6 @@ import subprocess
 import sys
 
 import pytest
-from _qmd_render import cell_texts, render_qmd, require_pandoc, row_with
 from _source_roots import source_root_env
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "figures"))  # 0255: moved figures entry points
@@ -132,7 +131,6 @@ ENOUGH_ROWS = 250
 @pytest.mark.integration
 def test_pipe_bearing_language_code_keeps_its_four_cells(tmp_path):
     """A malformed two-letter code must not shift the counts one column left."""
-    require_pandoc()
     enriched = tmp_path / "enriched_works.csv"
     enriched.write_text(
         "language\n" + f'"{PIPE_CODE}"\n' * ENOUGH_ROWS, encoding="utf-8")
@@ -143,15 +141,38 @@ def test_pipe_bearing_language_code_keeps_its_four_cells(tmp_path):
         cwd=REPO_ROOT, env=source_root_env(), capture_output=True,
         text=True, check=True)
 
-    flat = render_qmd(output.read_text(encoding="utf-8"), tmp_path)
-    row = row_with(flat, PIPE_CODE.upper())
-
-    assert cell_texts(row) == [
+    # Raw-LaTeX medium (2026-07-29): a `|` in a cell is literal text, so the
+    # markdown column-shift hazard is gone; pin instead that the row keeps
+    # exactly four `&`-separated cells in the emitted tabular.
+    emitted = output.read_text(encoding="utf-8")
+    rows = [line for line in emitted.splitlines() if PIPE_CODE in line]
+    assert rows, f"no emitted row carries {PIPE_CODE!r}:\n{emitted}"
+    cells = [c.strip() for c in rows[0].rstrip("\\").split("&")]
+    assert cells == [
         PIPE_CODE.upper(),
         PIPE_CODE,
         f"{ENOUGH_ROWS}",
         "100.0",
-    ], f"the language code split the row:\n{row}"
+    ], f"the language code split the row:\n{rows[0]}"
+
+
+@pytest.mark.integration
+def test_counts_carry_thousands_separators(tmp_path):
+    """Counts use the same 10,000-style locale as every other shipped table
+    (author request, 2026-07-29: Table 4 read 31272 beside tables reading
+    43,179)."""
+    enriched = tmp_path / "enriched_works.csv"
+    enriched.write_text("language\n" + 'en\n' * 1500, encoding="utf-8")
+    output = tmp_path / "tab_languages.md"
+
+    subprocess.run(
+        [sys.executable, SCRIPT, "--input", str(enriched), "--output", str(output)],
+        cwd=REPO_ROOT, env=source_root_env(), capture_output=True,
+        text=True, check=True)
+
+    md = output.read_text(encoding="utf-8")
+    assert "1,500" in md, md
+    assert "| 1500 |" not in md
 
 
 @pytest.mark.integration
@@ -162,7 +183,6 @@ def test_total_row_keeps_its_emphasis(tmp_path):
     markers never pass through the escaper. Pinning the rendered `<strong>` is
     what would catch a reordering that hands them to it.
     """
-    require_pandoc()
     enriched = tmp_path / "enriched_works.csv"
     enriched.write_text("language\n" + "en\n" * ENOUGH_ROWS, encoding="utf-8")
     output = tmp_path / "tab_languages.md"
@@ -172,12 +192,14 @@ def test_total_row_keeps_its_emphasis(tmp_path):
         cwd=REPO_ROOT, env=source_root_env(), capture_output=True,
         text=True, check=True)
 
-    flat = render_qmd(output.read_text(encoding="utf-8"), tmp_path)
-    row = row_with(flat, "Total")
-
-    assert "<strong>" in row, f"the Total row lost its emphasis:\n{row}"
-    assert cell_texts(row) == ["Total", "", f"{ENOUGH_ROWS}", "100.0"], (
-        f"the Total row lost a cell:\n{row}"
+    emitted = output.read_text(encoding="utf-8")
+    rows = [line for line in emitted.splitlines() if "Total" in line]
+    assert rows, f"no emitted row carries 'Total':\n{emitted}"
+    assert r"\textbf{Total}" in rows[0], \
+        f"the Total row lost its emphasis:\n{rows[0]}"
+    cells = [c.strip() for c in rows[0].rstrip("\\").split("&")]
+    assert cells == [r"\textbf{Total}", "", f"{ENOUGH_ROWS}", "100.0"], (
+        f"the Total row lost a cell:\n{rows[0]}"
     )
 
 
@@ -211,12 +233,12 @@ def test_shipped_language_names_are_untouched_by_the_escaper(tmp_path):
 
     emitted = output.read_text(encoding="utf-8")
 
-    assert "\\" not in emitted, (
-        "escaping churned a shipped language name — regenerating the table "
-        f"would rewrite rows that did not change:\n{emitted}"
-    )
-    assert emitted.count("*") == 4, (
-        "the only emphasis in the table is the Total row's `**…**`:\n{}".format(emitted)
+    # Raw-LaTeX medium: backslashes are structure now, so the churn pin is
+    # that every shipped name appears verbatim as the row's first cell and
+    # the Total row carries the only \textbf.
+    assert emitted.count(r"\textbf") == 1, (
+        "the only emphasis in the table is the Total row's:\n{}".format(emitted)
     )
     for name in LANGUAGE_NAMES.values():
-        assert f"| {name} |" in emitted, f"name {name!r} was rewritten by the escaper"
+        assert f"\n{name} & " in emitted, \
+            f"name {name!r} was rewritten by the escaper"

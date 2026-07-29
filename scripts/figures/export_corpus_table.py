@@ -123,13 +123,13 @@ def build_caption(
     number is measured, so the caption cannot drift from the table.
     """
     return (
-        ": Corpus sources. *Raw*: records with `from_*` provenance flag before"
+        ": Works counts and key fields presence by source. *Raw*: records with `from_*` provenance flag before"
         " filtering (a record in multiple sources is counted once per source)."
-        " *Refined*: after six-flag quality filtering."
+        " *Refined*: after quality filtering."
         " *Unique*: found only in that source (`source_count = 1`);"
         f" *Refined* less *Unique* = {refined_multi:,} works appearing in two"
         " or more sources."
-        " The **TOTAL** row is the deduplicated union of works, not the column"
+        " The TOTAL row is the deduplicated union of works, not the column"
         f" sum: {raw_multi:,} raw records and {refined_multi:,} refined works"
         " carry more than one provenance flag, which puts the source rows"
         f" {raw_extra:,} and {refined_extra:,} memberships above their totals"

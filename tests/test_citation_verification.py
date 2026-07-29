@@ -175,7 +175,7 @@ def _method_and_data_sections():
     """The §2-§3 span of the data paper, the scope both guards below share."""
     with open(DATA_PAPER) as fh:
         text = fh.read()
-    return text[text.index("## 2. Method"):text.index("## 4. Descriptive statistics")]
+    return text[text.index("## 2. Method"):text.index("## 4. Data overview")]
 
 
 def test_method_and_data_sections_carry_no_hand_typed_statistic():

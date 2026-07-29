@@ -28,7 +28,7 @@ conditions. The "Missing full-text" row of Table `tbl-openalex-limits`
 keeps this limitation as explicitly not mitigated.
 
 On incorrect assignments generally: the existing 300-link audit against
-Crossref (99.0% confirmed, 95% CI [97.1%, 99.7%]) addresses link accuracy;
+Crossref (97.0% confirmed, 95% CI [94.4%, 98.4%]) addresses link accuracy;
 the new reference-count reporting addresses list completeness — the
 "empty or aberrant" failure mode the referee describes.
 
