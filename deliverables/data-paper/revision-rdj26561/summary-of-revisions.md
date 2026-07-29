@@ -26,7 +26,9 @@ Manuscript RDJ-26561, "A Curated Corpus of Climate Finance Literature,
    per-document reference-count distribution, including the zero-reference
    share and its concentration in books, reviews, and grey literature;
    GROBID-based parsing of unresolved reference strings is now part of the
-   pipeline; the 300-link Crossref audit (99.0% confirmed) is retained.
+   pipeline; the 300-link Crossref audit is retained and re-run on the frozen
+v2 corpus (97.0% confirmed, 95% CI [94.4%, 98.4%]), joined by a completeness
+audit (98.3% of Crossref-held reference DOIs captured).
    (R1-13)
 
 5. **Citation network demonstrated.** A new figure presents a global map of

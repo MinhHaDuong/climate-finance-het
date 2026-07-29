@@ -1,5 +1,5 @@
 ---
-title: "A Curated Multi-Source Corpus of Climate Finance Literature, 1990--2024: Multilingual Retrieval and Grey Literature"
+title: "A Curated Multi-Source Corpus of Climate Finance Literature, 1990--2024: Multilingual Retrieval and Institutional Reports"
 author:
   - name: "Minh Ha-Duong\\thanks{Directeur de recherche, CIRED, CNRS. Correspondence: minh.ha-duong@cnrs.fr}"
     orcid: "0000-0001-9988-2100"
@@ -36,7 +36,7 @@ format:
 <!-- Format: Data Paper, max 2,500 words, diamond OA, IISG/Openjournals -->
 <!-- Structure follows Petram & Kruizinga (2024) exemplar: Introduction, Method, Data, Concluding Remarks -->
 
-- Related dataset: "A Curated Multi-Source Corpus of Climate Finance Literature, 1990--2024: Multilingual Retrieval and Grey Literature" with DOI [10.5281/zenodo.19236130](https://doi.org/10.5281/zenodo.19236130) in repository "Zenodo"
+- Related dataset: "A Curated Multi-Source Corpus of Climate Finance Literature, 1990--2024: Multilingual Retrieval and Institutional Reports" with DOI [10.5281/zenodo.19236130](https://doi.org/10.5281/zenodo.19236130) in repository "Zenodo"
 
 ## 1. Introduction {#sec-introduction}
 
@@ -169,6 +169,6 @@ This corpus assembles climate finance scholarship into a single multilingual bib
 
 The corpus data files and pipeline source code are deposited in Zenodo under CC BY 4.0 at [10.5281/zenodo.19236130](https://doi.org/10.5281/zenodo.19236130). Key software dependencies: Python $\geq$ 3.10, pandas, sentence-transformers, and DVC. Suggested citation:
 
-> Ha-Duong, M. (2026). A Curated Multi-Source Corpus of Climate Finance Literature, 1990–2024: Multilingual Retrieval and Grey Literature [Data set]. Zenodo. [10.5281/zenodo.19236130](https://doi.org/10.5281/zenodo.19236130)
+> Ha-Duong, M. (2026). A Curated Multi-Source Corpus of Climate Finance Literature, 1990–2024: Multilingual Retrieval and Institutional Reports [Data set]. Zenodo. [10.5281/zenodo.19236130](https://doi.org/10.5281/zenodo.19236130)
 
 ## References {.unnumbered}
