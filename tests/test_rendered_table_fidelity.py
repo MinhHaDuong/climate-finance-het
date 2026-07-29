@@ -93,7 +93,15 @@ class TestRenderedFidelity:
 
     def test_reconstruction_recipe_keeps_its_negation(self, rendered):
         """The specific corruption: `~` typeset as a non-breaking space, so the
-        published recipe selected the removed works instead of the kept ones."""
+        published recipe selected the removed works instead of the kept ones.
+
+        The recipe left the table cell with the one-line descriptions (author,
+        2026-07-29); its rendered copy now lives in §3 prose and the
+        datapackage description, both pinned by test_variables_table. Here the
+        surviving fidelity claim is that the is_flagged row still renders and
+        points at Section 3 rather than carrying a corrupted recipe."""
         emitted, _ = rendered
-        line = next(e for e in emitted if "is_flagged" in e)
-        assert RECIPE in line, f"negation lost in the rendered table: {line}"
+        line = emitted[[v.name for v in DEPOSIT_VARIABLES].index("is_flagged")]
+        assert "Section 3" in line, \
+            f"is_flagged row lost its Section 3 pointer: {line}"
+        assert " " not in line, f"non-breaking space artifact: {line}"
