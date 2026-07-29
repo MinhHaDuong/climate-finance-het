@@ -4,15 +4,18 @@ Last updated: 2026-07-29T13:36Z
 
 ## Current goal
 
-**RDJ-26561 R&R — beta 1 CLOSED (author, 2026-07-29).** Tracker 0274, due
-~2026-10-20. Corpus v2 frozen 2026-07-27. All validated and merged: paper
-(retitled "Institutional Reports", A4, tables whole), archive v2.0.0
-(corpus_audit.csv, subtitle-free dataset title), cover letter + two reply
-notes (PRs #1295/#1297), tag rdj26561-resubmission-beta1. Remaining, author
-acts: Zenodo upload (title without subtitle, version 2.0.0), journal
-submission with the Œconomia companion draft enclosed, then package to
-papiers/sent/ and close 0283/0274. Œconomia: awaiting editor; 0671/0670
-parked for after vacation. Zoo + multilayer: potential future articles.
+**RDJ-26561 revision 1 RELEASED (2026-07-29); handoff to doudou for
+resubmission.** Zenodo v2.0.0 published (DOI 10.5281/zenodo.21679237,
+concept 10.5281/zenodo.19236129, subtitle-free title); HAL hal-05570600v2
+in moderation; tag rdj26561-revision1; frozen package in
+papiers/actif/RDJHSS_Curated_Corpus_Climate_Finance/release/2026-07-29-RDJHSS-revision1
+(padme). On doudou (author): rsync that dir into the nextcloud papiers
+tree; update homepage Ha-Duong.bib (new title, concept DOI); upload
+paper + cover + 2 reply notes + Œconomia companion draft on the journal
+platform; then move actif → sent and close 0283/0274. Optional if the
+platform asks: changes-highlighted manuscript (latexdiff v1 vs rev1).
+Œconomia: awaiting editor; 0671/0670 parked for after vacation.
+Zoo + multilayer: potential future articles.
 Post-release (HAL variant): Table 1 needs vspace between rows (author 2026-07-29).
 
 ## Status
