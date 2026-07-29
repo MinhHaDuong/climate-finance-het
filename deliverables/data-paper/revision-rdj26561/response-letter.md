@@ -1,8 +1,9 @@
 # DRAFT — Response letter, RDJ-26561 (author sign-off required before submission)
 
-Manuscript RDJ-26561, "A Curated Corpus of Climate Finance Literature,
-1990–2024" — point-by-point reply to the editor's letter and to the referee
-report. Assembled 2026-07-24 (ticket 0283); corpus numbers reflect the v2
+Manuscript RDJ-26561, submitted as "A Curated Corpus of Climate Finance
+Literature, 1990–2024" (retitled "A Curated Multi-Source Corpus of Climate
+Finance Literature, 1990–2024" in this revision) — point-by-point reply to
+the editor's letter and to the referee report. Assembled 2026-07-24 (ticket 0283); corpus numbers reflect the v2
 rebuild of 2026-07-24.
 
 Dear Dr Chambru,
@@ -19,11 +20,11 @@ point by point, first to your letter, then to the referee report.
 ## Reply to the editor
 
 **ED-01 (OpenAlex caveats, deduplication, regional databases).** I added
-Section 2.4, "OpenAlex limitations and pipeline responses," with a table
-(@tbl-openalex-limits) mapping each documented OpenAlex flaw — query false
-positives, duplicate records, missing abstracts, incorrect citation
-assignments, contaminated abstract fields, missing full-text — to the
-pipeline step that addresses it, or to an explicit "not mitigated" statement.
+Section 2.4, "Limitations and Potential Biases," which reviews each
+documented OpenAlex flaw — query false positives, duplicate records, missing
+abstracts, incorrect citation assignments, contaminated abstract fields,
+missing full-text — and pairs it with the pipeline step that addresses it,
+or with an explicit "not mitigated" statement.
 The section names deduplication's residual weak point (works sharing neither
 a DOI nor a normalised title+year pair, such as a preprint and its retitled
 published version) rather than claiming the merge passes catch everything.
@@ -83,8 +84,9 @@ the pipeline from the deposit's declared column contract, which the export
 script checks when writing the CSV, so the published table cannot drift from
 the deposited file.
 
-**ED-04 (Zenodo package structure).** I restructured the Zenodo package to
-separate raw data inputs from final data products. The new version of the
+**ED-04 (Zenodo package structure).** The Zenodo package is restructured to
+separate raw data inputs from final data products; the new version is
+uploaded with this resubmission. The new version of the
 deposit (same concept DOI) contains `data/inputs/` with the per-source
 catalogs as harvested, and `data/products/` with the paper's outputs
 (`climate_finance_corpus.csv`, `datapackage.json`,
@@ -176,10 +178,13 @@ title, first author, and year against corpus works. What I do not do — and
 the revised Section 3 states this explicitly — is full-text reference
 extraction from PDFs: I do not hold the full texts of the corpus's academic
 works, so parsing PDFs of the entire corpus is not feasible under current
-access conditions; the "Missing full-text" row of @tbl-openalex-limits keeps
-this limitation as explicitly not mitigated. On incorrect assignments
-generally, the existing 300-link audit against Crossref (99.0% confirmed,
-95% CI [97.1%, 99.7%]) addresses link accuracy; the new reference-count
+access conditions; Section 2.4 keeps this limitation as explicitly not
+mitigated. On incorrect assignments
+generally, the 300-link audit against Crossref (97.0% confirmed on the v2
+corpus, 95% CI [94.4%, 98.4%]) addresses link accuracy — the revised
+Section 2.3 also states what the audit measures: agreement with Crossref,
+not ground truth, partly circular for links harvested from Crossref or
+OpenAlex deposits; the new reference-count
 reporting addresses list completeness — the "empty or aberrant" failure mode
 the referee describes.
 
@@ -219,7 +224,7 @@ annual totals do not depend on abstract length.
 **R1-16c (non-English coverage wording).** The referee is correct that
 OpenAlex includes non-English sources, so the earlier wording overstated.
 Section 2.3 now claims only the incremental coverage the smaller sources add:
-"the five smaller sources increase the corpus's non-English, institutional,
+"the seven smaller sources increase the corpus's non-English, institutional,
 and pedagogical coverage." The parallel exclusivity phrasing in the
 conclusion was removed in the same pass.
 

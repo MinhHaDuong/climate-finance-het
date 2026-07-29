@@ -1,7 +1,9 @@
 # DRAFT — Summary of revisions, RDJ-26561 (author sign-off required before submission)
 
-Manuscript RDJ-26561, "A Curated Corpus of Climate Finance Literature,
-1990–2024." Main revisions, 2026-07 round.
+Manuscript RDJ-26561, submitted as "A Curated Corpus of Climate Finance
+Literature, 1990–2024," retitled "A Curated Multi-Source Corpus of Climate
+Finance Literature, 1990–2024" in this revision. Main revisions, 2026-07
+round.
 
 1. **Corpus extended (v2).** A curated layer of UNFCCC and OECD DAC key
    documents (COP decisions on finance, Biennial Assessments, Rio-marker
@@ -10,9 +12,9 @@ Manuscript RDJ-26561, "A Curated Corpus of Climate Finance Literature,
    unified works (30,987 to 33,344 after filtering); all statistics, tables, and figures were regenerated from
    the v2 corpus by the deposited pipeline. (R1-06)
 
-2. **New Section 2.4, "OpenAlex limitations and pipeline responses."** A
-   table maps each documented OpenAlex flaw to the pipeline step that
-   addresses it, or to an explicit "not mitigated" statement; the section
+2. **New Section 2.4, "Limitations and Potential Biases."** The section
+   pairs each documented OpenAlex flaw with the pipeline step that
+   addresses it, or with an explicit "not mitigated" statement; it also
    names concrete regional databases (SciELO, Garuda) as complements.
    (ED-01, R1-07, R1-10, R1-11, R1-16b)
 
@@ -26,8 +28,9 @@ Manuscript RDJ-26561, "A Curated Corpus of Climate Finance Literature,
    per-document reference-count distribution, including the zero-reference
    share and its concentration in books, reviews, and grey literature;
    GROBID-based parsing of unresolved reference strings is now part of the
-   pipeline; the 300-link Crossref audit (99.0% confirmed) is retained.
-   (R1-13)
+   pipeline; the 300-link Crossref audit, rerun on the v2 corpus, confirms
+   97.0% of sampled links, and the paper now states what the audit measures:
+   agreement with Crossref, not ground truth. (R1-13)
 
 5. **Citation network demonstrated.** A new figure presents a global map of
    the corpus citation network (Louvain communities on the direct-citation
@@ -36,9 +39,11 @@ Manuscript RDJ-26561, "A Curated Corpus of Climate Finance Literature,
 
 6. **Added value made concrete.** The conclusion discusses the research
    directions the database enables and references the Œconomia companion
-   paper; the literature review re-tests six published results on the
-   corpus; a replication of prior mappings' published queries shows 89–91%
-   coverage of the climate finance populations they drew on. (ED-02, R1-18)
+   paper; three published results are re-tested on the corpus, each with one
+   explicit statistical test (reported in the response letter to hold the
+   word budget; the growth break stays in Section 4); a replication of prior
+   mappings' published queries shows 89–91% coverage of the climate finance
+   populations they drew on. (ED-02, R1-18)
 
 7. **Variables table and data dictionary.** Section 3 adds a generated table
    describing every variable of `climate_finance_corpus.csv`; the Zenodo
