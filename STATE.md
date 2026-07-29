@@ -1,6 +1,6 @@
 # State
 
-Last updated: 2026-07-29T13:36Z
+Last updated: 2026-07-29T14:39Z (housekeeping run 2026-07-29 evening)
 
 ## Current goal
 
@@ -16,7 +16,6 @@ platform; then move actif → sent and close 0283/0274. Optional if the
 platform asks: changes-highlighted manuscript (latexdiff v1 vs rev1).
 Œconomia: awaiting editor; 0671/0670 parked for after vacation.
 Zoo + multilayer: potential future articles.
-Post-release (HAL variant): Table 1 needs vspace between rows (author 2026-07-29).
 
 ## Status
 <!-- generated 2026-07-29T13:36Z · as of df29ad0b -->
