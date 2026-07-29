@@ -2,6 +2,7 @@
 Title: Data paper: response letter, summary of revisions, resubmission package
 Created: 2026-07-20
 Author: HDMX-coding-agent
+Closed: revision 1 uploaded to the journal platform 2026-07-29 (author confirmation); release kit in papiers/sent/.../release/2026-07-29-RDJHSS-revision1
 
 --- log ---
 2026-07-20T09:00Z HDMX-coding-agent created
@@ -28,6 +29,7 @@ Author: HDMX-coding-agent
 2026-07-27T13:15Z HDMX-coding-agent note blocker 0288 closed — Blocked-by removed.
 2026-07-28T07:37Z HDMX-coding-agent note MATERIAL FOR THE REPLY LETTER (author, 2026-07-28): the 0337 removal ablation and a follow-up paired experiment produced findings that must appear in the response, not just in the paper. Three parts. (1) The panel's objection that the filter erases the layers the corpus claims to add is REFUTED with numbers on the axes they named: teaching, UNFCCC and OECD lose 0% of their records (protection catches every flagged one), bibCNRS 4.3%, SciSpace 4.1%, grey 23.8% against a corpus mean of 21.9%; and records WITHOUT a DOI are removed at 6.5% against 25.6% for records with one, the opposite of the predicted direction. (2) One stratum does lose disproportionately and it is language: non-English 41.8% vs English 19.9%. Not a metadata artifact — non-English abstract coverage is HIGHER (88.0% vs 85.7%), and restricted to works that have an abstract, flag 6 fires at 29.5% vs 14.4%. (3) The cause is measured, not conjectured: the cross-encoder BAAI/bge-reranker-v2-m3 is already multilingual, but the deployed query is a single English string. Scoring 1,589 non-English works against their own-language translation of that query lifts the pass rate 55.3% -> 66.8% (+11.5pp, Wilcoxon p=3.2e-104), and the symmetric control confirms the mechanism is query-document language match rather than better queries: 600 English works scored against a foreign-language query LOSE 6.5 to 48.7 points of pass rate. The filter therefore carries a measurable language bias, and the reply letter should disclose it rather than let a reader discover it. Remedy is a translated or multilingual query, which changes which works are removed and so re-opens the frozen corpus — a v3 decision, out of scope for this resubmission. Sequencing consequence for this ticket: the letter's filter-validation paragraph cannot be drafted from 0337 alone; it needs the ablation table as a deposited artifact, and it must be consistent with whatever 0372 restores as the validation evidence, since the 100-work sample was stratified by score and never by language and so has never measured the filter outside English.
 2026-07-29T13:33Z beta 1 closed by author 2026-07-29: paper, archive v2.0.0, cover + two reply notes all validated; tag rdj26561-resubmission-beta1; remaining: Zenodo upload + journal submission (author acts)
+2026-07-29T15:44Z HDMX-coding-agent closed — revision 1 uploaded to the journal platform 2026-07-29 (author confirmation); release kit in papiers/sent/.../release/2026-07-29-RDJHSS-revision1
 --- body ---
 ## Context
 
