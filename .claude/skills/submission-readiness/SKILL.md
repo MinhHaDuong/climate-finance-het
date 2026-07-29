@@ -35,6 +35,7 @@ Run before creating a submission branch (`/submission-branch`). Every item must 
 - [ ] Cover letter in `papiers/<state>/<track>/`
 - [ ] AI disclosure statement in `papiers/<state>/<track>/`
 - [ ] Journal-specific files prepared (anonymized PDF, figures at required resolution, metadata)
+- [ ] Every link checked: `curl -sIL` each DOI/URL in the submitted files and in the registers being updated, and confirm the *landing page* is the intended version — HTTP 200 is not enough (a DOI can resolve to the previous version right after a deposit: homepage hotfix, 2026-07-29)
 - [ ] `docs/release-journal.md` entry drafted
 
 ## Prior art
