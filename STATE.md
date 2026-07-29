@@ -1,19 +1,18 @@
 # State
 
-Last updated: 2026-07-28T20:41Z
+Last updated: 2026-07-29T07:25Z (housekeeping run 2026-07-29T07:25Z)
 
 ## Current goal
 
-**RDJ-26561 R&R — corpus frozen, three items to resubmission.** Tracker 0274,
-due ~2026-10-20. Corpus v2 **frozen** (author 2026-07-27). Remaining: **0320**
-stale verification claim, **0283** letter reconciliation + sign-off, **0292**
-archive scripts (blocks Zenodo repack), then 0274's integration review. Open
-call: **0297** language nulls. Œconomia: awaiting editor; 0306/0309 parked.
-Raid 2026-07-28 closed 0570/0571/0625/0640/0641/0565: the multilayer techrep
-now reports what its tables show (peaks 2014/2020/2019, one 1998–2020 zone);
-63 tracked artifacts audited, clean except 5 movers awaiting author (#1282).
-New author calls: **0671** Paris-2015 z crosses 1.5 (act II→III wording) +
-A.5 numbers, **0670** registry on unstable ids, **0672** deposit title.
+**RDJ-26561 R&R — resubmission sprint before vacation (starts 2026-07-30).**
+Tracker 0274, due ~2026-10-20. Corpus v2 **frozen** (author 2026-07-27).
+0320/0292/0297/0372 all closed; the last blocker is **0283** letter
+reconciliation + author sign-off, then 0274's integration review and the
+author submits. Title decision (0672, author 2026-07-29): retitle to
+**"Institutional reports"** — sweep deferred sites + Zenodo at upload.
+Œconomia: awaiting editor; 0306/0309 parked; 0671/0670 author calls parked
+for after vacation. Zoo + multilayer techreps: potential future articles,
+not active submissions (author 2026-07-29).
 
 ## Status
 <!-- generated 2026-07-28T20:41Z · as of 92c7024d -->

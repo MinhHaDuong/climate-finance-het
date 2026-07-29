@@ -1,0 +1,45 @@
+%erg 0.1
+Title: data-paper includes gitignored .md tables: clean-room render fails
+Created: 2026-07-29
+Author: HDMX-coding-agent
+
+--- log ---
+2026-07-29T07:16Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Found during the 2026-07-29 housekeeping sweep: a fresh worktree render of
+`deliverables/data-paper/data-paper.qmd` fails on
+`{{< include ../_shared/tables/tab_corpus_sources.md >}}` — the `.md`
+renderings of the shared tables are gitignored while their `.csv` twins are
+tracked. `rules/git.md` says handoff artifacts a downstream workpackage
+consumes are durable state and stay committed; a Phase-3 clean-room render
+must work from tracked artifacts alone (`manuscript.mk` doctrine). Today it
+does not: it needs a prior Phase-2 run or a copy from another checkout.
+
+## Actions
+
+1. Decide the shape: track the generated `.md` tables (align with the
+   handoff-artifact rule), or make the render targets depend on the Phase-2
+   rules that produce them (weakens the clean-room split).
+2. Apply to every gitignored file in the data paper's include closure
+   (sweep all deliverables, not just data-paper — `paths.mk` lists them).
+3. Extend `tests/test_deliverable_artifacts.py` (or a sibling) so an
+   include pointing at an untracked file fails.
+
+## Verification
+
+- [ ] `quarto render deliverables/data-paper/data-paper.qmd` succeeds in a
+      fresh worktree with no Phase-2 run and no manual copying.
+
+## Invariants
+
+- No Phase-3 rule triggers Phase 2 (architecture.md: never let a later
+  phase trigger an earlier one).
+
+## Exit criteria
+
+- [ ] Clean-room render of every submission deliverable passes from a fresh
+      worktree
+- [ ] Guard added so the next untracked include fails a test, not a render
