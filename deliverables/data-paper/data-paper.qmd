@@ -185,7 +185,7 @@ This corpus assembles climate finance scholarship into a single multilingual bib
 
 ## Data and Code Availability {.unnumbered}
 
-The corpus data files and pipeline source code are deposited in Zenodo under CC BY 4.0 at [10.5281/zenodo.19236130](https://doi.org/10.5281/zenodo.19236130). Key software dependencies: Python $\geq$ 3.10, pandas, sentence-transformers, and DVC. Suggested citation:
+The corpus data files and pipeline source code are deposited in Zenodo under CC BY 4.0 at [10.5281/zenodo.19236130](https://doi.org/10.5281/zenodo.19236130). Key software dependencies: Python $\geq$ 3.10, pandas, sentence-transformers (with PyTorch), and DVC. Suggested citation:
 
 > Ha-Duong, M. (2026). A Curated Multi-Source Corpus of Climate Finance Literature, 1990–2024: Multilingual Retrieval and Institutional Reports [Data set]. Zenodo. [10.5281/zenodo.19236130](https://doi.org/10.5281/zenodo.19236130)
 
