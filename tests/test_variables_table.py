@@ -190,7 +190,7 @@ class TestMarkdownTable:
 
     def test_render_has_quarto_label_and_caption(self):
         md = render_markdown_table()
-        assert "{#tbl-variables}" in md
+        assert "{#tbl-variables" in md
         assert md.strip().splitlines()[-1] == ":::", \
             "table is a crossref div; caption is its closing paragraph"
 

@@ -1,14 +1,9 @@
-::: {#tbl-variables}
+::: {#tbl-variables tbl-pos="tbp"}
 ```{=latex}
-\begin{longtable}{@{}l p{10.4cm}@{}}
+\begin{tabular}{@{}l p{10.4cm}@{}}
 \toprule
 Variable & Description \\
 \midrule
-\endfirsthead
-\toprule
-Variable & Description \\
-\midrule
-\endhead
 \texttt{source} & Primary source catalog for the record's metadata \\
 \texttt{source\_id} & Identifier in the primary source (e.g. OpenAlex work ID) \\
 \texttt{doi} & Digital Object Identifier, when available \\
@@ -44,7 +39,7 @@ Variable & Description \\
 \texttt{is\_protected} & Protection from removal (key papers kept despite flags) \\
 \texttt{protection\_reason} & Why the work is protected (Section 2.2) \\
 \bottomrule
-\end{longtable}
+\end{tabular}
 ```
 
 Variables of `climate_finance_corpus.csv`, in four groups: record identity, bibliographic metadata, provenance flags, curation metadata. Generated from the deposit column contract (`scripts/_deposit_variables.py`); storage types, allowed values, ranges and measured missingness are in the deposited `datapackage.json`.

@@ -143,7 +143,7 @@ def tbl_sources_rows(text: str) -> list[dict]:
     markup lands in one regex rather than three (review of PR #1284).
     """
     m = re.search(
-        r"\n(\| *Source *\|.*?)\n\n: [^\n]*\{#tbl-sources\}", text, re.DOTALL
+        r"\n(\| *Source *\|.*?)\n\n: [^\n]*\{#tbl-sources[^}]*\}", text, re.DOTALL
     )
     assert m, "no #tbl-sources pipe table found"
     header, _delim, *body = m.group(1).splitlines()

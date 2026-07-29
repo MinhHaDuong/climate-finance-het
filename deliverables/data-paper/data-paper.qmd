@@ -83,7 +83,7 @@ The corpus assembles academic literature and institutional documents from {{< me
 | UNFCCC | AI-collected | Negotiation documents  |
 | OECD | Hand-harvested | Statistical guidelines |
 
-: Sources, automation level, and coverage scope. {#tbl-sources}
+: Sources, automation level, and coverage scope. {#tbl-sources tbl-pos="tbp"}
 
 The search strategy uses a four-tier keyword taxonomy reflecting the evolving vocabulary of climate finance: core terms in eight languages (Tier 1: English, French, German, Spanish, Portuguese, Arabic, Chinese, Japanese), English institutional and diplomatic vocabulary (Tier 2), and climate-adjacent terms retained only when the abstract mentions two (Tier 3) or three (Tier 4) of four concept groups (climate, finance, development, environment). Every term is issued against OpenAlex's `default.search` field, which matches title, abstract, and indexed fulltext. The taxonomy was informed by keyword mining of {{< meta corpus_core >}} core papers (cited $\geq$ {{< meta corpus_core_threshold >}} times).
 

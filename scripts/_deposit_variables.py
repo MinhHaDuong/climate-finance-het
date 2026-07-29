@@ -323,25 +323,20 @@ def render_markdown_table() -> str:
 
     Emitted as a Quarto div (#tbl-variables) wrapping raw LaTeX: pipe tables
     cannot draw the horizontal rules that separate the four logical groups,
-    so the paper's PDF build gets a longtable with \midrule at each group
-    boundary. Group names appear in the caption only (author decision,
+    so the paper's PDF build gets a floating tabular with \midrule at each
+    group boundary (one page since the one-line descriptions, so no longtable). Group names appear in the caption only (author decision,
     2026-07-24).
 
     Raw LaTeX means pandoc never sees these cells, so this function owns their
     escaping — see ``latex_inline``.
     """
     lines = [
-        "::: {#tbl-variables}",
+        '::: {#tbl-variables tbl-pos="tbp"}',
         "```{=latex}",
-        r"\begin{longtable}{@{}l p{10.4cm}@{}}",
+        r"\begin{tabular}{@{}l p{10.4cm}@{}}",
         r"\toprule",
         r"Variable & Description \\",
         r"\midrule",
-        r"\endfirsthead",
-        r"\toprule",
-        r"Variable & Description \\",
-        r"\midrule",
-        r"\endhead",
     ]
     prev_group = None
     groups: list[str] = []
@@ -356,7 +351,7 @@ def render_markdown_table() -> str:
             rf" & {latex_inline(describe(v))} \\")
     lines += [
         r"\bottomrule",
-        r"\end{longtable}",
+        r"\end{tabular}",
         "```",
         "",
         "Variables of `climate_finance_corpus.csv`, in four groups: "

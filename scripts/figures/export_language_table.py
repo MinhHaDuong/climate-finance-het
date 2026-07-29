@@ -132,7 +132,7 @@ def main() -> None:
         lines.append("| " + " | ".join(cells) + " |")
 
     lines.append("")
-    lines.append(": Language distribution in the refined corpus. {#tbl-languages}")
+    lines.append(': Language distribution in the refined corpus. {#tbl-languages tbl-pos="tbp"}')
 
     md = "\n".join(lines) + "\n"
     with open(OUTPUT_MD, "w", encoding="utf-8") as f:
