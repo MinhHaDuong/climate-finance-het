@@ -1,4 +1,10 @@
-# DRAFT — Supplementary note 2: reply to the referee report (RDJ-26561)
+---
+format:
+  pdf:
+    papersize: a4
+---
+
+**Supplementary note 2 — reply to the referee report (RDJ-26561)**
 
 > *"[…] the corpus does not include in the grey literature documents from
 > national institutions: government or parliamentary reports […] central
