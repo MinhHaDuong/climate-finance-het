@@ -176,6 +176,21 @@ class TestRenderTable:
             f"the stage label split the row:\n{row}"
         )
 
+    def test_unified_milestone_is_bolded(self):
+        """The unified-corpus count is bolded where the ledger pivots from
+        merging to filtering: the Out of the last merge stage and the In of
+        the quality-filtering stage. Keyed on the boundary row, not on a
+        literal count, so a corpus rebuild keeps the emphasis without a test
+        edit (author request, 2026-07-29: the 44,174 opening read as a
+        contradiction of the 43,179 unified count until the milestone was
+        visually anchored)."""
+        import export_corpus_flow
+
+        flow = compute_corpus_flow.build_flow(MERGE_REPORT, BUCKETS, REFINED_N)
+        md = export_corpus_flow.render_table(flow)
+        unified = MERGE_REPORT["records_unified"]
+        assert md.count(f"**{unified:,}**") == 2, md
+
     def test_shipped_stage_labels_are_untouched_by_the_escaper(self):
         """Escaping must be a no-op on the labels the ledger actually emits.
 
