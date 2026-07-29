@@ -125,7 +125,7 @@ def build_caption(
     return (
         ": Corpus sources. *Raw*: records with `from_*` provenance flag before"
         " filtering (a record in multiple sources is counted once per source)."
-        " *Refined*: after six-flag quality filtering."
+        " *Refined*: after quality filtering."
         " *Unique*: found only in that source (`source_count = 1`);"
         f" *Refined* less *Unique* = {refined_multi:,} works appearing in two"
         " or more sources."

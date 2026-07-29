@@ -30,7 +30,6 @@ FLAG_COLUMNS = [
     "no_abstract_irrelevant",
     "title_blacklist",
     "citation_isolated_old",
-    "semantic_outlier",
     "llm_irrelevant",
 ]
 
@@ -39,6 +38,11 @@ COLUMNS_TO_DROP = [
     "abstract",       # publisher redistribution restrictions
     "doi_norm",       # intermediate
     "action",         # redundant with is_flagged/is_protected
+    # Flag 5 (semantic outlier) was inactive in the v2 build and its columns
+    # are not part of the deposit contract; drop them if an older extended
+    # file still carries them (ticket 0361, author decision 2026-07-29).
+    "semantic_outlier",
+    "semantic_outlier_dist",
 ]
 
 DEPOSIT_RENAMES = {"from_scispsace": "from_scispace"}
@@ -186,10 +190,6 @@ DEPOSIT_VARIABLES: list[Variable] = [
     Variable("near_duplicate_group", "integer",
              "Group identifier for near-identical content published under "
              "several DOIs", _FILTER,
-             group=_CURATION, nullable=True),
-    Variable("semantic_outlier_dist", "number",
-             "Distance to the corpus embedding centroid", _FILTER,
-             required=False,
              group=_CURATION, nullable=True),
     Variable("in_v1", "boolean",
              "Version tracking: work present in the v1.0 submission corpus",

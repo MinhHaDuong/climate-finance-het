@@ -39,7 +39,6 @@ Variable & Description \\
 \midrule
 \texttt{abstract\_status} & Whether the undistributed abstract was original, reconstructed from an inverted index or fulltext, LLM-summarised, oversized, or missing \\
 \texttt{near\_duplicate\_group} & Group identifier for near-identical content published under several DOIs \\
-\texttt{semantic\_outlier\_dist} & Distance to the corpus embedding centroid \\
 \texttt{in\_v1} & Version tracking: work present in the v1.0 submission corpus \\
 \texttt{is\_flagged} & Any quality flag raised; the refined subset is \texttt{df[\textasciitilde{}df[\textquotesingle{}is\_flagged\textquotesingle{}] \textbar{} df[\textquotesingle{}is\_protected\textquotesingle{}]]} \\
 \texttt{flag\_reason} & Comma-separated list of raised quality flags; empty when unflagged \\
