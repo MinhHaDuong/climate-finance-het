@@ -45,10 +45,10 @@ been addressed. The key changes:
   CSV keeps its published layout, and the revision documents the structure
   instead — a generated variables table in the paper and a Frictionless
   `datapackage.json` a reader can execute to verify the file.
-- To hold the 2,500-word budget, the three literature replications you
-  requested are reported in the reply notes, with the growth break retained
-  in the paper. I will gladly reinstate the others in the text if you
-  prefer.
+- Going beyond the discussion of research directions you asked for, three
+  published results were re-tested on the corpus to demonstrate added
+  value. The reply notes report them; the paper keeps the growth break in
+  Section 4. I will gladly move the other two into the text if you prefer.
 - The draft of the companion history-of-thought study built on this corpus
   is enclosed, so the dataset's research potential can be assessed on use.
 
