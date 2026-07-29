@@ -145,7 +145,7 @@ Citation assignments can be incorrect; the audit reported in Section 2.3 confirm
 
 Reference lists arrive empty or aberrant; per-document reference counts (Section 2.3) are the screening variable, and GROBID parses the unstructured reference strings Crossref and OpenAlex leave unresolved, recovering title, first author, and year for fuzzy matching against corpus works (`corpus_parse_citations_grobid.py` in the deposited code). The audit above verifies the links we have, not the links we miss: with a fifth of DOI-bearing works contributing no outgoing edge, network statistics should be checked for sensitivity to their exclusion.
 
-We do not hold the full texts of the corpus's academic works, so the citation graph relies on indexed metadata and deposited reference strings, and no-DOI works ({{< meta corpus_no_doi_pct >}}%) are undercounted.
+We do not hold the full texts of the corpus's academic works, so the citation graph relies on indexed metadata and deposited reference strings, and no-DOI works ({{< meta corpus_no_doi_pct >}}%) are undercounted --- a limitation this release does not mitigate.
 
 ## 3. Data description {#sec-data}
 

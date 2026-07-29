@@ -107,7 +107,7 @@ submitted within the three-month window.
 The referee is right that the corpus excluded documents from national
 institutions (government and parliamentary reports, economic analysis
 councils, central bank communications). I now state and justify this boundary
-explicitly in Section 2.3, for two reasons. First, the boundary follows the
+explicitly in Section 2.4, for two reasons. First, the boundary follows the
 research object: the corpus traces climate finance as a category of
 *international* economic governance, defined, negotiated, and accounted for
 in the UNFCCC and OECD arenas, whereas national documents largely apply that
@@ -250,14 +250,15 @@ than patched into this one. Users needing non-English coverage can rebuild
 from the deposited flags under their own filter policy, as Section 2.4 notes.
 
 **R1-18 (potential for HET research hard to assess; cleaning still needed).**
-Answered candidly in the expanded conclusion: any focused research question
-will demand task-specific cleaning beyond the generic filtering documented in
-the paper; the corpus is offered as reusable infrastructure, not a finished
-analysis. The conclusion illustrates both the limit and what survives it from
-my own use: community-separation tests fail on the thin pre-2007 window, yet
-qualitative results stand on simple counts (Negishi absent from the pre-2007
-canon; Barrett co-cited with the carbon-pricing literature). The companion
-paper under review at Œconomia is cited as the proof of use.
+The referee is right, and I concede the point directly: any focused research
+question will demand task-specific cleaning beyond the generic filtering
+documented in the paper. The corpus is offered as reusable infrastructure,
+not a finished analysis. My own use illustrates both the limit and what
+survives it: community-separation tests fail on the thin pre-2007 window,
+yet qualitative results stand on simple counts --- Negishi is absent from
+the pre-2007 canon, and Barrett is co-cited with the carbon-pricing
+literature. The companion paper under review at Œconomia, cited in the
+revised introduction, is the proof of use.
 
 **R1-19 (organization of the corpus CSV).** I kept the file layout. The file
 is a standard rectangular CSV that loads directly into pandas or R, and its
