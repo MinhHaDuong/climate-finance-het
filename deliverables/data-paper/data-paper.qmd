@@ -30,6 +30,7 @@ keywords: |
 format:
   pdf:
     pdf-engine: xelatex
+    papersize: a4
     include-in-header:
       text: |
         % Keep section headings off page bottoms; forbid widows/orphans.
