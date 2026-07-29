@@ -47,7 +47,6 @@ $(DATAPAPER): deliverables/data-paper/data-paper.qmd \
               deliverables/data-paper/data-paper-vars.yml \
               deliverables/data-paper/_quarto.yml \
               $(SHARED)/bibliography/main.bib \
-              $(SHARED)/figures/fig_bars.png \
               $(SHARED)/figures/fig_global_map_direct.png \
               $(SHARED)/tables/tab_corpus_flow.md \
               $(SHARED)/tables/tab_corpus_sources.md \
