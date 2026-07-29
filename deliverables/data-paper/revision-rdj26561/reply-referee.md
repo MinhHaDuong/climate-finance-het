@@ -133,7 +133,7 @@ R. One pointer helps manual exploration: the column separator is the comma,
 never semicolons or tabs, and text fields containing commas are quoted.
 A published artifact's layout is best kept stable across versions.
 
-The revision makes the structure explicit instead: Table 5 shows each
+The revision makes the structure explicit and formally guaranteed instead: Table 5 shows each
 column's group, and the deposit ships a formal, machine-readable data
 dictionary
 (`datapackage.json`, a Frictionless Table Schema with per-column types,
