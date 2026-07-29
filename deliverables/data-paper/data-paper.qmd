@@ -83,7 +83,7 @@ All API queries are bounded to publication years 1990--2024; the lower bound ref
 
 The UNFCCC and OECD layers enter through a curated inclusion rule rather than a keyword query. A document qualifies if it is an official document produced by or addressed to the COP or the OECD DAC that defines, accounts for, or governs climate finance, including party and negotiating-bloc submissions, together with the negotiation record around those decisions: session summaries such as the IISD Earth Negotiations Bulletin, and statements delivered at COPs. The classes were fixed empirically rather than by an a priori list of institutions, by crossing a companion history-of-thought study's bibliography against the first corpus version and keeping the classes of documents it cited but the corpus lacked.
 
-### 2.2 The discover, ingest, refine, deduplicate pipeline {#sec-data-structure}
+### 2.2 The discover, ingest, deduplicate, refine pipeline {#sec-data-structure}
 
 The merge pipeline combines records from all sources through two deduplication passes: DOI-based (normalised, lowercased), which removes {{< meta dedup_doi_removed >}} records, and title+year matching for records lacking DOIs, which removes a further {{< meta dedup_titleyear_removed >}}. Enrichment can backfill a DOI onto a record that entered without one, revealing duplicates the first two passes could not match; a third DOI pass after enrichment removes them (counted in @tbl-flow). When duplicates are found, the maximum citation count is retained and metadata follows a source-priority order.
 
