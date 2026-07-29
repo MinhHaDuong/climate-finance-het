@@ -48,8 +48,10 @@ LICENSE_URL = "https://creativecommons.org/licenses/by/4.0/"
 # the author sets it on upload. Overridable per invocation with --version.
 DEPOSIT_VERSION = "1.1.1"
 
+# The dataset drops the paper's subtitle so the two objects stay citable
+# apart (author decision 2026-07-29); the Zenodo record takes this title.
 DATASET_TITLE = ("A Curated Multi-Source Corpus of Climate Finance Literature, "
-                 "1990–2024: Multilingual Retrieval and Institutional Reports")
+                 "1990–2024")
 DATASET_DESCRIPTION = (
     "Deduplicated bibliographic corpus of the climate finance literature, "
     "merged from eight catalogs with multilingual retrieval and institutional reports, "
