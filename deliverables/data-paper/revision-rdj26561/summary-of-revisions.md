@@ -1,7 +1,9 @@
 # DRAFT — Summary of revisions, RDJ-26561 (author sign-off required before submission)
 
-Manuscript RDJ-26561, "A Curated Corpus of Climate Finance Literature,
-1990–2024." Main revisions, 2026-07 round.
+Manuscript RDJ-26561, submitted as "A Curated Corpus of Climate Finance
+Literature, 1990–2024," retitled "A Curated Multi-Source Corpus of Climate
+Finance Literature, 1990–2024" in this revision. Main revisions, 2026-07
+round.
 
 1. **Corpus extended (v2).** A curated layer of UNFCCC and OECD DAC key
    documents (COP decisions on finance, Biennial Assessments, Rio-marker

@@ -23,10 +23,10 @@ directives — as a durable pipeline source with its own provenance flags.
 The corpus grows from 42,916 to 43,179 unified works (30,987 to 33,344
 after filtering), the source count from six to eight, and the deposit
 title drops "Six Sources" accordingly (same Zenodo concept DOI, new
-version). The Zenodo package is also restructured as you requested
-(ED-04): `code/`, `data/inputs/` (per-source catalogs as harvested), and
-`data/products/` (final corpus files with a machine-readable, executable
-data dictionary). Every statistic, table, and figure in the paper was
+version). The new Zenodo version, uploaded with this resubmission,
+restructures the package as you requested (ED-04): `code/`,
+`data/inputs/` (per-source catalogs as harvested), and `data/products/`
+(final corpus files with a machine-readable, executable data dictionary). Every statistic, table, and figure in the paper was
 regenerated from the v2 corpus by the deposited pipeline; no number is
 hand-typed.
 
