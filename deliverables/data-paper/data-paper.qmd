@@ -58,7 +58,7 @@ The dataset was constructed for a history-of-economic-thought study of how clima
 
 ## 2. Method {#sec-method}
 
-### 2.1 Sources {#sec-sources}
+### 2.1 Sources: discovery and ingestion {#sec-sources}
 
 The corpus assembles academic literature and institutional documents from {{< meta corpus_sources >}} sources with complementary coverage profiles (@tbl-sources). Five are automated or semi-automated (reproducible from the scripts and an internet connection); three require manual export from restricted platforms.
 
