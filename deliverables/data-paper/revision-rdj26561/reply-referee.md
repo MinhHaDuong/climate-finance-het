@@ -125,6 +125,6 @@ would break its consumers for a viewer-ergonomics gain. The revision makes
 the structure explicit instead: Table 5 shows each column's group, and the
 deposit ships a formal, machine-readable data dictionary
 (`datapackage.json`, a Frictionless Table Schema with per-column types,
-allowed values, ranges, and measured missingness). The schema is executable
-— `frictionless validate datapackage.json` — and the build refuses to
-package an archive whose data contradicts it.
+allowed values, ranges, and measured missingness). The dictionary is executable: anyone who downloads the
+deposit can run `frictionless validate datapackage.json` and have the
+corpus CSV checked, column by column, against its own documentation.
