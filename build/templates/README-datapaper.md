@@ -1,7 +1,7 @@
 # Data paper reproducibility archive
 
 Companion to: Ha-Duong M. (2026) "A Curated Multi-Source Corpus of Climate
-Finance Literature, 1990–2024: Multilingual Retrieval and Grey Literature",
+Finance Literature, 1990–2024: Multilingual Retrieval and Institutional Reports",
 Research Data Journal for the Humanities and Social Sciences.
 
 Dataset DOI: [10.5281/zenodo.19236130](https://doi.org/10.5281/zenodo.19236130)
@@ -26,7 +26,9 @@ climate-finance-datapaper/
     products/              # Final data products of this paper
       climate_finance_corpus.csv # 43,179 works (abstracts stripped)
       datapackage.json           # Frictionless schema: per-column type, values, missingness
-      embeddings.npz             # 38,736 multilingual vectors (1024-dim)
+      embeddings.npz             # 38,736 multilingual vectors (1024-dim);
+                                 # load with np.load(..., allow_pickle=True)
+                                 # (the keys array is object-typed)
       citations.csv              # 1,375,310 citation pairs
       tab_retrieval_protocol.csv # Per-source query fields, term counts, languages
       tab_retrieval_protocol.md  # The same, plus the institutional-reports seed list

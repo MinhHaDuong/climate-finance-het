@@ -129,7 +129,7 @@ def build_caption(
         " *Unique*: found only in that source (`source_count = 1`);"
         f" *Refined* less *Unique* = {refined_multi:,} works appearing in two"
         " or more sources."
-        " The **TOTAL** row is the deduplicated union of works, not the column"
+        " The TOTAL row is the deduplicated union of works, not the column"
         f" sum: {raw_multi:,} raw records and {refined_multi:,} refined works"
         " carry more than one provenance flag, which puts the source rows"
         f" {raw_extra:,} and {refined_extra:,} memberships above their totals"

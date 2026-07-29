@@ -48,11 +48,11 @@ LICENSE_URL = "https://creativecommons.org/licenses/by/4.0/"
 # the author sets it on upload. Overridable per invocation with --version.
 DEPOSIT_VERSION = "1.1.1"
 
-DATASET_TITLE = ("A Curated Corpus of Climate Finance Literature, 1990–2024: "
-                 "Six Sources, Multilingual Retrieval, and Institutional Reports")
+DATASET_TITLE = ("A Curated Multi-Source Corpus of Climate Finance Literature, "
+                 "1990–2024: Multilingual Retrieval and Institutional Reports")
 DATASET_DESCRIPTION = (
     "Deduplicated bibliographic corpus of the climate finance literature, "
-    "merged from six catalogs with multilingual retrieval and institutional reports, "
+    "merged from eight catalogs with multilingual retrieval and institutional reports, "
     "carrying per-source provenance flags and a quality-flag audit trail. The "
     "refined subset is df[~df['is_flagged'] | df['is_protected']]. Abstracts "
     "are not redistributed; retrieve them via the DOI or OpenAlex identifier.")

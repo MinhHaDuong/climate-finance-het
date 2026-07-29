@@ -124,6 +124,7 @@ done
 # and is the Phase-2 build; this one is the three-target reviewer interface,
 # invoked as `make -f Makefile.datapaper`.
 cp build/templates/Makefile.datapaper "$TMP/code/Makefile.datapaper"
+cp build/templates/README-datapaper.md "$TMP/README.md"
 
 # ── Checksums for make verify ────────────────────────────
 echo "  Computing data checksums..."
