@@ -1,6 +1,6 @@
 # State
 
-Last updated: 2026-07-29T08:05Z (housekeeping run 2026-07-29)
+Last updated: 2026-07-29T13:36Z
 
 ## Current goal
 
@@ -16,15 +16,15 @@ parked for after vacation. Zoo + multilayer: potential future articles.
 Post-release (HAL variant): Table 1 needs vspace between rows (author 2026-07-29).
 
 ## Status
-<!-- generated 2026-07-28T20:41Z · as of 92c7024d -->
+<!-- generated 2026-07-29T13:36Z · as of df29ad0b -->
 
-**Tickets:** 40 ready · 46 blocked · 9 awaiting author — `erg ready tickets/` for full list
+**Tickets:** 41 ready · 46 blocked · 9 awaiting author — `erg ready tickets/` for full list
   next: 0272 Extract shared derive_companion_path() helper f… · 0273 load_cluster_labels() ignores --input, reads cl…
-**In flight:** 2 open PRs (1 draft), oldest #1285 0d
+**In flight:** no open PRs
 **Recent (first-parent):**
-  92c7024d Merge pull request #1288 from MinhHaDuong/ticket-deposit-title
-  c95dc90d Merge pull request #1287 from MinhHaDuong/t0362-no-auto-push-dvc-lock
-  0b670fb8 Merge pull request #1284 from MinhHaDuong/t565-table2-grey-label
+  df29ad0b Merge pull request #1298 from MinhHaDuong/beta1-close
+  cce30d41 Merge pull request #1297 from MinhHaDuong/t0283-reply-notes
+  f1867202 Merge pull request #1295 from MinhHaDuong/t0283-response-letter
 
 ## Submissions
 
