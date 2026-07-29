@@ -119,6 +119,21 @@ DOC_VARS = {
         "corpus_total",
         "corpus_with_embeddings",
         "emb_dimensions",
+        # Out-of-window disclosure (author, 2026-07-29): works dated outside
+        # the declared 1990-2024 search window, from the append-only pool.
+        "window_out_n",
+        "window_out_pct",
+        "window_late_n",
+        "window_early_n",
+        # Unique-column complementarity range in 2.3 (smaller sources only).
+        "unique_min_pct",
+        "unique_min_source",
+        "unique_max_pct",
+        "unique_max_source",
+        # Reverse-snowballing probe of the citation table (2.3).
+        "snowball_cited_dois",
+        "snowball_absent_pct",
+        "snowball_absent_50plus",
         "filter_citation_isolated",
         "filter_flagged",
         "filter_llm_irrelevant",
@@ -127,7 +142,12 @@ DOC_VARS = {
         "filter_protected",
         "filter_title_blacklist",
         *ABLATION_VARS,  # §2.3 language ablation (ticket 0337)
-        *RETRIEVAL_VARS,  # §2.2 thresholds, read from config (ticket 0329)
+        # §2.2 thresholds, read from config (ticket 0329) — minus the
+        # semantic-outlier sigma: flag 5 left the data paper with the
+        # five-flag decision (author 2026-07-29, ticket 0361); the sigma
+        # stays computed for the corpus-report, which describes the
+        # implemented (inactive) flag.
+        *[k for k in RETRIEVAL_VARS if k != "filter_outlier_sigma"],
         "dedup_doi_removed",
         "dedup_fn_pairs",
         "dedup_fn_pairs_pct",
