@@ -329,8 +329,15 @@ def render_markdown_table() -> str:
 
     Raw LaTeX means pandoc never sees these cells, so this function owns their
     escaping — see ``latex_inline``.
+
+    Raw LaTeX also means non-PDF formats (the journal's DOCX submission file)
+    would drop the table entirely, so the LaTeX div is wrapped in a
+    ``content-visible when-format="pdf"`` div and a pipe-table twin under
+    ``unless-format="pdf"`` carries the same rows for every other format.
+    Both carry the ``#tbl-variables`` label; only one survives a given render.
     """
     lines = [
+        '::: {.content-visible when-format="pdf"}',
         '::: {#tbl-variables tbl-pos="tbp"}',
         "```{=latex}",
         r"\begin{tabular}{@{}l p{10.4cm}@{}}",
@@ -349,17 +356,32 @@ def render_markdown_table() -> str:
         lines.append(
             rf"\texttt{{{v.name.translate(_LATEX_CODE)}}}"
             rf" & {latex_inline(describe(v))} \\")
-    lines += [
-        r"\bottomrule",
-        r"\end{tabular}",
-        "```",
-        "",
+    caption = (
         "Variables of `climate_finance_corpus.csv`, in four groups: "
         + ", ".join(groups) + ". "
         "Generated from the deposit column contract "
         "(`scripts/_deposit_variables.py`); storage types, allowed values, "
         "ranges and measured missingness are in the deposited "
-        "`datapackage.json`.",
+        "`datapackage.json`.")
+    lines += [
+        r"\bottomrule",
+        r"\end{tabular}",
+        "```",
+        "",
+        caption,
+        ":::",
+        ":::",
+        "",
+        '::: {.content-visible unless-format="pdf"}',
+        "| Variable | Description |",
+        "|:---------|:------------|",
+    ]
+    for v in DEPOSIT_VARIABLES:
+        desc = describe(v).replace("|", r"\|")
+        lines.append(f"| `{v.name}` | {desc} |")
+    lines += [
+        "",
+        f": {caption} {{#tbl-variables}}",
         ":::",
     ]
     return "\n".join(lines) + "\n"
