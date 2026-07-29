@@ -49,6 +49,8 @@ format:
 <!-- Format: Data Paper, max 2,500 words, diamond OA, IISG/Openjournals -->
 <!-- Structure follows Petram & Kruizinga (2024) exemplar: Introduction, Method, Data, Concluding Remarks -->
 
+**Keywords:** climate finance, bibliometric corpus, multilingual, sentence-transformer embeddings, scientometrics, history of economic thought
+
 - Related dataset: "A Curated Multi-Source Corpus of Climate Finance Literature, 1990--2024" with DOI [10.5281/zenodo.19236130](https://doi.org/10.5281/zenodo.19236130) in repository "Zenodo"
 
 ## 1. Introduction {#sec-introduction}
@@ -75,6 +77,7 @@ The dataset was constructed for a history-of-economic-thought study of how clima
 
 The corpus assembles academic literature and institutional documents from {{< meta corpus_sources >}} sources with complementary coverage profiles (@tbl-sources). Five are automated or semi-automated (reproducible from the scripts and an internet connection); three require manual export from restricted platforms.
 
+::: {.content-visible when-format="pdf"}
 ::: {#tbl-sources tbl-pos="tbp"}
 ```{=latex}
 \begin{tabular}{@{}p{0.17\linewidth} p{0.30\linewidth} p{0.42\linewidth}@{}}
@@ -94,6 +97,22 @@ OECD & Hand-harvested & Statistical guidelines \\
 ```
 
 Sources, automation level, and coverage scope.
+:::
+:::
+
+::: {.content-visible unless-format="pdf"}
+| Source | Automation | Coverage |
+|:-------|:-----------------|:---------------------------|
+| OpenAlex (Priem et al. 2022) | Automated (free API) | Primary academic source (indexes Crossref, DOAJ, PubMed, and more): tiered keyword search |
+| ISTEX | Automated (public metadata API; fulltext restricted to French research institutions) | CNRS national text-mining platform (multi-publisher) |
+| Institutional reports | Hybrid (curated seed + World Bank API) | 17 selected reports (e.g., Buchner et al. 2013) + World Bank repository grey-literature harvest |
+| Teaching canon | AI-assisted (scraping + LLM extraction) | Syllabus readings from university courses worldwide |
+| bibCNRS | Hand-harvested (CNRS credentials) | CNRS portal aggregating non-English news & discourse (Gale, Wanfang, NewsBank) in FR, ZH, JA, DE |
+| SciSpace | AI-collected, hand-exported | SciSpace systematic review tool exports |
+| UNFCCC | AI-collected | Negotiation documents |
+| OECD | Hand-harvested | Statistical guidelines |
+
+: Sources, automation level, and coverage scope. {#tbl-sources}
 :::
 
 The search strategy uses a four-tier keyword taxonomy reflecting the evolving vocabulary of climate finance: core terms in eight languages (Tier 1: English, French, German, Spanish, Portuguese, Arabic, Chinese, Japanese), English institutional and diplomatic vocabulary (Tier 2), and climate-adjacent terms retained only when the abstract mentions two (Tier 3) or three (Tier 4) of four concept groups (climate, finance, development, environment). Every term is issued against OpenAlex's `default.search` field, which matches title, abstract, and indexed fulltext. The taxonomy was informed by keyword mining of {{< meta corpus_core >}} core papers (cited $\geq$ {{< meta corpus_core_threshold >}} times).

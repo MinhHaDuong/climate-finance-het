@@ -1,3 +1,4 @@
+::: {.content-visible when-format="pdf"}
 ::: {#tbl-variables tbl-pos="tbp"}
 ```{=latex}
 \begin{tabular}{@{}l p{10.4cm}@{}}
@@ -43,4 +44,43 @@ Variable & Description \\
 ```
 
 Variables of `climate_finance_corpus.csv`, in four groups: record identity, bibliographic metadata, provenance flags, curation metadata. Generated from the deposit column contract (`scripts/_deposit_variables.py`); storage types, allowed values, ranges and measured missingness are in the deposited `datapackage.json`.
+:::
+:::
+
+::: {.content-visible unless-format="pdf"}
+| Variable | Description |
+|:---------|:------------|
+| `source` | Primary source catalog for the record's metadata |
+| `source_id` | Identifier in the primary source (e.g. OpenAlex work ID) |
+| `doi` | Digital Object Identifier, when available |
+| `title` | Title of the work |
+| `first_author` | First author name |
+| `all_authors` | Full author list, separator-joined |
+| `year` | Publication year |
+| `journal` | Publication venue (journal, publisher, or repository) |
+| `language` | Language code (ISO 639-1), detected and normalised |
+| `keywords` | Keywords, semicolon-separated |
+| `categories` | Subject categories / concepts from the source catalog |
+| `cited_by_count` | Citation count (OpenAlex, as of the collection date) |
+| `affiliations` | Author affiliations, when available |
+| `from_openalex` | Provenance flag: found in OpenAlex |
+| `from_istex` | Provenance flag: found in ISTEX |
+| `from_bibcnrs` | Provenance flag: found in bibCNRS |
+| `from_scispace` | Provenance flag: found via SciSpace |
+| `from_grey` | Provenance flag: institutional reports (Section 2.1) |
+| `from_teaching` | Provenance flag: teaching canon (syllabi) |
+| `from_unfccc` | Provenance flag: curated UNFCCC key document |
+| `from_oecd` | Provenance flag: curated OECD key document |
+| `abstract_provenance` | Provenance of the abstract, for curated key documents only |
+| `keywords_provenance` | Provenance of the keywords, for curated key documents only |
+| `language_provenance` | How the language code was obtained (Section 2.4) |
+| `source_count` | Number of sources that contributed the record |
+| `abstract_status` | Fate of the undistributed abstract (Section 3) |
+| `near_duplicate_group` | Group id of near-identical content under several DOIs |
+| `is_flagged` | Any quality flag raised (refined-subset rule: Section 3) |
+| `flag_reason` | Comma-separated raised quality flags; empty when unflagged |
+| `is_protected` | Protection from removal (key papers kept despite flags) |
+| `protection_reason` | Why the work is protected (Section 2.2) |
+
+: Variables of `climate_finance_corpus.csv`, in four groups: record identity, bibliographic metadata, provenance flags, curation metadata. Generated from the deposit column contract (`scripts/_deposit_variables.py`); storage types, allowed values, ranges and measured missingness are in the deposited `datapackage.json`. {#tbl-variables}
 :::
