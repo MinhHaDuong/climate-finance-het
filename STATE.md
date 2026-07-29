@@ -1,31 +1,31 @@
 # State
 
-Last updated: 2026-07-29T16:20Z
+Last updated: 2026-07-29T16:37Z
 
 ## Current goal
 
 **RDJ-26561 revision 1 RESUBMITTED (2026-07-29); awaiting decision.**
-Author uploaded the full kit on the journal platform (DataPaper.docx/pdf
-with keywords, Figure1, Table1-5, replies, Acknowledgements). Zenodo
-v2.0.0 (DOI 10.5281/zenodo.21679237, concept .19236129); HAL
-hal-05570600v2 in moderation; tag rdj26561-revision1; submission branch
-fast-forwarded to it; kit archived in
-papiers/sent/RDJ4HSS_…/release/2026-07-29-RDJHSS-revision1; 0283/0274
-closed. Remaining (author): homepage Ha-Duong.bib (new title, concept
-DOI). Œconomia: awaiting editor; 0671/0670 parked. Zoo + multilayer:
-later. Machine debt (doudou): .env keystore migration not applied;
-.dvc/config.local cache.type=symlink — 4 local test failures.
+Editor acknowledged same day, will read before his summer leave next
+week. Kit archived in papiers/sent/RDJ4HSS_…/release/…-revision1; tag
+rdj26561-revision1; Zenodo v2.0.0 (10.5281/zenodo.21679237, concept
+.19236129); HAL v2 in moderation; 0283/0274 closed. External registers
+done: homepage entry split paper/dataset (relations link, concept DOI),
+Feuille de route 2026 row updated. Corpus lock from padme's re-run
+landed (PR #1309, frozen outputs unchanged); branches pruned to main +
+2 submission records. Œconomia: awaiting editor; 0671/0670 parked.
+Zoo + multilayer: later. Machine debt (doudou): .env keystore migration
+not applied; .dvc/config.local cache.type=symlink — 4 local failures.
 
 ## Status
-<!-- generated 2026-07-29T14:41Z · as of 80c1563e -->
+<!-- generated 2026-07-29T16:37Z · as of 2eacdd26 -->
 
-**Tickets:** 41 ready · 45 blocked · 8 awaiting author — `erg ready tickets/` for full list
+**Tickets:** 39 ready · 45 blocked · 8 awaiting author — `erg ready tickets/` for full list
   next: 0272 Extract shared derive_companion_path() helper f… · 0273 load_cluster_labels() ignores --input, reads cl…
 **In flight:** no open PRs
 **Recent (first-parent):**
-  80c1563e Merge pull request #1303 from MinhHaDuong/housekeeping-20260729b
-  c7557009 Merge pull request #1302 from MinhHaDuong/release-handoff
-  c134c09f Merge pull request #1301 from MinhHaDuong/t0283-rc2-archive-fix
+  2eacdd26 chore: housekeeping fixes (sweep)
+  08e12fcc Merge pull request #1309 from MinhHaDuong/t0362-lock-catalog-merge-report
+  0c3a7d77 Merge pull request #1308 from MinhHaDuong/chore-readiness-check-links
 
 ## Submissions
 
