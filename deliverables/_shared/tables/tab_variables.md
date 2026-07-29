@@ -37,11 +37,10 @@ Variable & Description \\
 \texttt{language\_provenance} & How the language code was obtained (Section 2.4) \\
 \texttt{source\_count} & Number of sources that contributed the record \\
 \midrule
-\texttt{abstract\_status} & Whether the undistributed abstract was original, reconstructed from an inverted index or fulltext, LLM-summarised, oversized, or missing \\
-\texttt{near\_duplicate\_group} & Group identifier for near-identical content published under several DOIs \\
-\texttt{in\_v1} & Version tracking: work present in the v1.0 submission corpus \\
-\texttt{is\_flagged} & Any quality flag raised; the refined subset is \texttt{df[\textasciitilde{}df[\textquotesingle{}is\_flagged\textquotesingle{}] \textbar{} df[\textquotesingle{}is\_protected\textquotesingle{}]]} \\
-\texttt{flag\_reason} & Comma-separated list of raised quality flags; empty when unflagged \\
+\texttt{abstract\_status} & Fate of the undistributed abstract (Section 3) \\
+\texttt{near\_duplicate\_group} & Group id of near-identical content under several DOIs \\
+\texttt{is\_flagged} & Any quality flag raised (refined-subset rule: Section 3) \\
+\texttt{flag\_reason} & Comma-separated raised quality flags; empty when unflagged \\
 \texttt{is\_protected} & Protection from removal (key papers kept despite flags) \\
 \texttt{protection\_reason} & Why the work is protected (Section 2.2) \\
 \bottomrule

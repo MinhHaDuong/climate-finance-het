@@ -680,6 +680,22 @@ def snowball_stats(v):
     v["snowball_absent_50plus"] = _int((absent.value_counts() >= 50).sum())
 
 
+def audit_stats(v):
+    """Refined-subset reconstruction steps beyond the flag rule (§3): the
+    post-filter DOI deduplication and the pre-1960 year floor, counted from
+    the deposited corpus_audit.csv."""
+    path = os.path.join(CATALOGS_DIR, "corpus_audit.csv")
+    try:
+        audit = pd.read_csv(path)
+    except FileNotFoundError as exc:
+        warnings.warn(str(exc))
+        return
+    v["audit_dedup_n"] = _int((audit["action"] == "deduped").sum())
+    v["audit_yearfloor_n"] = _int(
+        ((audit["action"] == "remove") & audit["protected"]).sum()
+    )
+
+
 def main():
     v = {}
     corpus_stats(v)
@@ -698,6 +714,7 @@ def main():
     lit_confirmations_stats(v)
     unique_share_stats(v)
     snowball_stats(v)
+    audit_stats(v)
 
     # Dedup vars fall back to MISSING while their artifacts are pending: the
     # catalog_merge run report awaits dvc (0284), the error table 0301.

@@ -54,7 +54,9 @@ DATASET_DESCRIPTION = (
     "Deduplicated bibliographic corpus of the climate finance literature, "
     "merged from eight catalogs with multilingual retrieval and institutional reports, "
     "carrying per-source provenance flags and a quality-flag audit trail. The "
-    "refined subset is df[~df['is_flagged'] | df['is_protected']]. Abstracts "
+    "refined subset is df[~df['is_flagged'] | df['is_protected']] minus the "
+    "post-filter DOI duplicates and pre-1960 records listed in "
+    "corpus_audit.csv. Abstracts "
     "are not redistributed; retrieve them via the DOI or OpenAlex identifier.")
 
 KEYWORDS = ["climate finance", "bibliometrics", "history of economic thought",

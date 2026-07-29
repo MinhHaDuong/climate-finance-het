@@ -43,6 +43,10 @@ COLUMNS_TO_DROP = [
     # file still carries them (ticket 0361, author decision 2026-07-29).
     "semantic_outlier",
     "semantic_outlier_dist",
+    # Not in the deposit: the column exists only in refined_works.csv, so the
+    # v2 deposit (built from extended_works.csv) never carried it; the contract
+    # describes exactly the shipped file (author decision 2026-07-29).
+    "in_v1",
 ]
 
 DEPOSIT_RENAMES = {"from_scispsace": "from_scispace"}
@@ -182,25 +186,19 @@ DEPOSIT_VARIABLES: list[Variable] = [
              group=_PROV,
              minimum=1, maximum=8),
     Variable("abstract_status", "string",
-             "Whether the undistributed abstract was original, reconstructed "
-             "from an inverted index or fulltext, LLM-summarised, oversized, "
-             "or missing", _ENRICH, group=_CURATION,
+             "Fate of the undistributed abstract (Section 3)",
+             _ENRICH, group=_CURATION,
              enum=("original", "reconstructed", "generated", "too_long",
                    "missing")),
     Variable("near_duplicate_group", "integer",
-             "Group identifier for near-identical content published under "
-             "several DOIs", _FILTER,
+             "Group id of near-identical content under several DOIs", _FILTER,
              group=_CURATION, nullable=True),
-    Variable("in_v1", "boolean",
-             "Version tracking: work present in the v1.0 submission corpus",
-             _FILTER, required=False, group=_CURATION),
     Variable("is_flagged", "boolean",
-             "Any quality flag raised; the refined subset is "
-             "`df[~df['is_flagged'] | df['is_protected']]`", _FILTER,
-             group=_CURATION),
+             "Any quality flag raised (refined-subset rule: Section 3)",
+             _FILTER, group=_CURATION),
     Variable("flag_reason", "string",
-             "Comma-separated list of raised quality flags; empty when unflagged", _FILTER,
-             group=_CURATION,
+             "Comma-separated raised quality flags; empty when unflagged",
+             _FILTER, group=_CURATION,
              empty_is_a_value=True),
     Variable("is_protected", "boolean",
              "Protection from removal (key papers kept despite flags)", _FILTER,

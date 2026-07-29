@@ -3,6 +3,8 @@
 ablation_en_removed_pct: "19.9"
 ablation_f6_nonen_share_pct: "58.9"
 ablation_nonen_removed_pct: "41.8"
+audit_dedup_n: "399"
+audit_yearfloor_n: "2"
 cite_cov_cryst_pct: "47"
 cite_cov_post2015_pct: "69"
 cite_cov_pre2007_pct: "40"

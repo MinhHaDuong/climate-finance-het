@@ -30,6 +30,7 @@ climate-finance-datapaper/
                                  # load with np.load(..., allow_pickle=True)
                                  # (the keys array is object-typed)
       citations.csv              # 1,375,310 citation pairs
+      corpus_audit.csv           # keep/remove/dedup decision per work, with reason
       tab_retrieval_protocol.csv # Per-source query fields, term counts, languages
       tab_retrieval_protocol.md  # The same, plus the institutional-reports seed list
       tab_reranker_validation.csv # Relevance-filter validation: per-quintile human-relevant rates (implies AUC 0.818)

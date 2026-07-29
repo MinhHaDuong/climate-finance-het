@@ -130,6 +130,10 @@ DOC_VARS = {
         "unique_min_source",
         "unique_max_pct",
         "unique_max_source",
+        # Refined-subset reconstruction steps beyond the flag rule (§3),
+        # counted from the deposited corpus_audit.csv.
+        "audit_dedup_n",
+        "audit_yearfloor_n",
         # Reverse-snowballing probe of the citation table (2.3).
         "snowball_cited_dois",
         "snowball_absent_pct",

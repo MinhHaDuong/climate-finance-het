@@ -72,7 +72,8 @@ PYTHONPATH="scripts:libs/openalex-corpus/src${PYTHONPATH:+:$PYTHONPATH}" \
 echo "  Validating the deposited CSV against its own datapackage.json..."
 uv run --env-file .env frictionless validate "$TMP/data/products/datapackage.json"
 
-echo "  Copying final products (embeddings, citations)..."
+echo "  Copying final products (embeddings, citations, audit)..."
+cp -L "$DATA_DIR/corpus_audit.csv" "$TMP/data/products/"
 cp -L "$DATA_DIR/embeddings.npz" "$TMP/data/products/"
 cp -L "$DATA_DIR/citations.csv" "$TMP/data/products/"
 # Retrieval-protocol appendix (ticket 0329): the paper points referees here for

@@ -91,8 +91,13 @@ class TestContract:
             assert col in names, f"corpus-v2 column {col} missing from contract"
 
     def test_abstract_status_documents_reconstructed(self):
+        """The enum keeps the value; the prose meaning moved to §3 when the
+        table descriptions were condensed to one line (author, 2026-07-29)."""
         var = {v.name: v for v in DEPOSIT_VARIABLES}["abstract_status"]
-        assert "reconstructed" in var.description
+        assert "reconstructed" in var.enum
+        with open(DATA_PAPER) as f:
+            assert "reconstructed from an inverted index" in f.read(), \
+                "§3 no longer documents the abstract_status values"
 
     def test_abstract_not_in_contract(self):
         assert "abstract" not in contract_names(), \
@@ -248,19 +253,23 @@ class TestLatexEscaping:
     """
 
     def test_recipe_is_declared_once_and_reaches_both_copies(self):
-        """§3 prose and the contract carry the same expression, character for
-        character — the precondition for the rendered copies agreeing."""
+        """§3 prose and the deposit description carry the same expression,
+        character for character. The table cell now points to §3 instead of
+        repeating the recipe (one-line descriptions, author 2026-07-29)."""
         with open(DATA_PAPER) as f:
             paper = f.read()
         assert f"`{RECIPE}`" in paper, "data-paper §3 no longer prints this recipe"
-        by_name = {v.name: v for v in DEPOSIT_VARIABLES}
-        assert f"`{RECIPE}`" in by_name["is_flagged"].description
+        from _deposit_schema import DATASET_DESCRIPTION
+        assert RECIPE in DATASET_DESCRIPTION, \
+            "datapackage description no longer states the refined-subset rule"
 
     def test_recipe_survives_latex_escaping(self):
-        """The tilde reaches the table as a tilde, not a non-breaking space."""
-        desc = table_rows(render_markdown_table())["is_flagged"]
-        assert RECIPE in plain_text(desc), \
-            f"recipe corrupted by the LaTeX emitter:\n{desc}"
+        """The tilde reaches LaTeX as a tilde, not a non-breaking space —
+        exercised directly, since no table cell carries the recipe anymore."""
+        from _deposit_variables import latex_inline
+        out = latex_inline(f"`{RECIPE}`")
+        assert r"\textasciitilde" in out and "~" not in out.replace(
+            r"\textasciitilde", ""), f"recipe corrupted by latex_inline:\n{out}"
 
     def test_every_description_survives_unaltered(self):
         """Exit criterion: no description loses or gains a character in transit."""
@@ -278,14 +287,13 @@ class TestLatexEscaping:
     def test_code_spans_set_as_code(self):
         """A backtick span must reach the PDF as code, not as a quoted word.
 
-        Re-pointed at is_flagged when 0332's trim removed abstract_status's
-        value enumeration: is_flagged now carries the contract's only code
-        span, and it is the load-bearing one — the reconstruction recipe.
+        The recipe left the table for §3 with the one-line descriptions
+        (author, 2026-07-29); the variable-name column is the remaining code
+        surface, and latex_inline's recipe handling is pinned directly by
+        test_recipe_survives_latex_escaping.
         """
         block = latex_block(render_markdown_table())
         assert r"\texttt{" in block, "no code span survived the emitter"
-        assert r"\texttt{df[" in block, \
-            "the refined-subset recipe must set as code, not as quoted prose"
 
     def test_unbalanced_backtick_is_a_build_error(self):
         """A malformed contract description fails loudly, not silently."""
