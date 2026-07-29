@@ -49,6 +49,5 @@ resubmission.
 > *"[…] please also prepare a summary of the main revisions and a
 > point-by-point reply."*
 
-The cover letter, this note, its companion note replying to the referee, and
-the accompanying summary of revisions answer the request; the revision is
-submitted within the three-month window.
+Answered by this note, its companion note replying to the referee, and the
+accompanying summary of revisions.

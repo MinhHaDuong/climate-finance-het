@@ -44,7 +44,7 @@ been addressed. The key changes:
   is enclosed, so the dataset's research potential can be assessed on use.
 
 Thank you and the referee for a report that made both the paper and the
-dataset better. The revision is submitted within the three-month window.
+dataset better.
 
 Sincerely,
 
