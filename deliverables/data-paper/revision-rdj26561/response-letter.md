@@ -1,9 +1,11 @@
 # DRAFT — Response letter, RDJ-26561 (author sign-off required before submission)
 
-Manuscript RDJ-26561, "A Curated Corpus of Climate Finance Literature,
-1990–2024" — point-by-point reply to the editor's letter and to the referee
-report. Assembled 2026-07-29 (ticket 0283); corpus numbers reflect the v2
-rebuild of 2026-07-24, frozen 2026-07-27.
+Manuscript RDJ-26561, submitted as "A Curated Corpus of Climate Finance
+Literature, 1990–2024" (retitled "A Curated Multi-Source Corpus of Climate
+Finance Literature, 1990–2024: Multilingual Retrieval and Institutional
+Reports" in this revision) — point-by-point reply to the editor's letter and
+to the referee report. Assembled 2026-07-29 (ticket 0283); corpus numbers
+reflect the v2 rebuild of 2026-07-24, frozen 2026-07-27.
 
 Dear Dr Chambru,
 
@@ -87,8 +89,9 @@ the pipeline from the deposit's declared column contract, which the export
 script checks when writing the CSV, so the published table cannot drift from
 the deposited file.
 
-**ED-04 (Zenodo package structure).** I restructured the Zenodo package to
-separate raw data inputs from final data products. The new version of the
+**ED-04 (Zenodo package structure).** The Zenodo package is restructured to
+separate raw data inputs from final data products; the new version is
+uploaded with this resubmission. The new version of the
 deposit (same concept DOI) contains `data/inputs/` with the per-source
 catalogs as harvested, and `data/products/` with the paper's outputs
 (`climate_finance_corpus.csv`, `datapackage.json`,
@@ -189,7 +192,9 @@ mode the referee describes — a second 300-work audit checks the opposite
 direction: of the reference DOIs Crossref holds for the sampled works, the
 corpus captures 98.3% (6,016 of 6,119, 95% CI [98.0%, 98.6%]); the
 reference-count reporting above flags the works where neither index holds a
-list.
+list. The revised Section 2.3 also states what these audits measure:
+agreement with Crossref, not ground truth, partly circular for links
+harvested from Crossref or OpenAlex deposits.
 
 **R1-14 (present a citation network to demonstrate potential and/or
 limitations).** I answer both halves. *Potential*: the revised Section 3 adds
@@ -227,7 +232,7 @@ annual totals do not depend on abstract length.
 **R1-16c (non-English coverage wording).** The referee is correct that
 OpenAlex includes non-English sources, so the earlier wording overstated.
 Section 2.3 now claims only the incremental coverage the smaller sources add:
-"the five smaller sources increase the corpus's non-English, institutional,
+"the seven smaller sources increase the corpus's non-English, institutional,
 and pedagogical coverage." The parallel exclusivity phrasing in the
 conclusion was removed in the same pass.
 
