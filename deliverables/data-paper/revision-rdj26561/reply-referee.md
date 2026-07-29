@@ -9,8 +9,7 @@ referee for it: a curated UNFCCC and OECD DAC key-document layer (230 and 33
 works after deduplication) now enters the corpus as a durable pipeline
 source with its own provenance flags. On national institutions, Section 2.4
 states and justifies the boundary: the corpus traces climate finance as a
-category of *international* economic governance. The referee's point still
-lands — some national positions do constitute international policy, as a
+category of *international* economic governance. The point stands — some national positions do constitute international policy, as a
 United States exit from climate finance mechanisms would shift the
 negotiation itself — so the boundary does cost relevant documents.
 Tractability decided it: each national document family is a corpus-scale
@@ -32,10 +31,15 @@ mitigated" entry.
 > any) differ between the working paper version and the published version
 > […]"*
 
-Section 2.2 now counts what each pass removes — 833 records on DOI, 159 on
-title+year, and 399 in a third DOI pass after enrichment that the submitted
-version omitted — and Table 2 reconciles the 44,174 pooled records to the
-33,344 refined works with no residue. Section 2.4 quantifies the residual
+What counts as a duplicate depends on usage — a citation analysis wants a
+working paper merged with its published version, while a history of the
+record wants both kept — so the pipeline's answer is transparency and open
+code rather than a rigid stance: every pass is counted, the residual classes
+are measured, and users can redraw the line. Section 2.2 now counts what
+each pass removes — 833 records on DOI, 159 on title+year, and 399 in a
+third DOI pass after enrichment that the submitted version omitted — and
+Table 2 reconciles the 44,174 pooled records to the 33,344 refined works
+with no residue. Section 2.4 quantifies the residual
 class the report predicted: 344 exact-title, same-first-author candidate
 pairs (1.0% of works), a fuzzy-title upper bound of 1,329 works (4.0%), and
 the over-merge side (38 DOI collision groups, 7 degenerate empty-year
@@ -92,9 +96,10 @@ exposure the report identified — has left the paper.
 > coverage that OpenAlex alone does not provide.' However, OpenAlex does
 > include non-English sources."*
 
-Correct — the wording overstated; Table 3 measures the point (the OpenAlex
-row's %non-EN cell reads 6%), and Section 2.3 now claims only the
-incremental coverage the smaller sources add. Beyond the wording, the
+As the report notes, OpenAlex does include non-English sources, and the
+earlier wording overstated. Table 3 measures the point (the OpenAlex row's
+%non-EN cell reads 6%), and Section 2.3 now claims only the incremental
+coverage the smaller sources add. Beyond the wording, the
 revision measures a language bias undetected in the submitted version:
 the relevance filter removes 41.8% of non-English works against 19.9% of
 English ones, and rescoring the flagged non-English works against an
