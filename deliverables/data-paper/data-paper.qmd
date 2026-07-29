@@ -93,7 +93,7 @@ The refine step draws the consequence: a *refined* work is one that is unflagged
 
 ### 2.3 Quality and Completeness {#sec-quality}
 
-@tbl-quality summarises corpus composition and metadata completeness per source; a work discovered by several sources counts in each of their rows. The "Unique" column counts the works only that source contributed (`source_count = 1`), and it shows the sources are complementary rather than redundant: between 39% (SciSpace) and 98% (UNFCCC key documents) of each smaller source's refined works appear in no other source. %non-EN is the share of non-English works, %DOI the share with a valid DOI, %Abstract the share with an abstract longer than 50 characters, and %Refs the share with at least one reference in the citation graph.
+@tbl-quality summarises corpus composition and metadata completeness per source; a work discovered by several sources counts in each of their rows. The "Unique" column counts the works only that source contributed (`source_count = 1`), and it shows the sources are complementary rather than redundant: between 39% (SciSpace) and 100% (OECD DAC key documents) of each smaller source's refined works appear in no other source. %non-EN is the share of non-English works, %DOI the share with a valid DOI, %Abstract the share with an abstract longer than 50 characters, and %Refs the share with at least one reference in the citation graph.
 
 {{< include ../_shared/tables/tab_corpus_sources.md >}}
 
