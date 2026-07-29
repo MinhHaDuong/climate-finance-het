@@ -1,6 +1,6 @@
 # State
 
-Last updated: 2026-07-29T16:37Z
+Last updated: 2026-07-29T17:44Z
 
 ## Current goal
 
@@ -10,22 +10,22 @@ week. Kit archived in papiers/sent/RDJ4HSS_…/release/…-revision1; tag
 rdj26561-revision1; Zenodo v2.0.0 (10.5281/zenodo.21679237, concept
 .19236129); HAL v2 in moderation; 0283/0274 closed. External registers
 done: homepage entry split paper/dataset (relations link, concept DOI),
-Feuille de route 2026 row updated. Corpus lock from padme's re-run
-landed (PR #1309, frozen outputs unchanged); branches pruned to main +
-2 submission records. Œconomia: awaiting editor; 0671/0670 parked;
+Feuille de route 2026 row updated. Full `make corpus` landed (PR
+#1311): enrichment + embeddings refreshed, refined outputs unchanged;
+llama-server stopped, GPUs free. Œconomia: awaiting editor; 0671/0670 parked;
 zoo + multilayer later. Machine debt (doudou): .env keystore migration
 not applied; .dvc/config.local cache.type=symlink — 4 local failures.
 
 ## Status
-<!-- generated 2026-07-29T16:37Z · as of 2eacdd26 -->
+<!-- generated 2026-07-29T17:44Z · as of e640d497 -->
 
 **Tickets:** 39 ready · 45 blocked · 8 awaiting author — `erg ready tickets/` for full list
   next: 0272 Extract shared derive_companion_path() helper f… · 0273 load_cluster_labels() ignores --input, reads cl…
 **In flight:** no open PRs
 **Recent (first-parent):**
-  2eacdd26 chore: housekeeping fixes (sweep)
+  e640d497 Merge pull request #1311 from MinhHaDuong/data/dvc-lock-corpus-20260729
+  55edbf03 Merge pull request #1310 from MinhHaDuong/housekeeping-20260729-b
   08e12fcc Merge pull request #1309 from MinhHaDuong/t0362-lock-catalog-merge-report
-  0c3a7d77 Merge pull request #1308 from MinhHaDuong/chore-readiness-check-links
 
 ## Submissions
 
