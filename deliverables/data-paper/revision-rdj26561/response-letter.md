@@ -19,11 +19,11 @@ point by point, first to your letter, then to the referee report.
 ## Reply to the editor
 
 **ED-01 (OpenAlex caveats, deduplication, regional databases).** I added
-Section 2.4, "OpenAlex limitations and pipeline responses," with a table
-(@tbl-openalex-limits) mapping each documented OpenAlex flaw — query false
-positives, duplicate records, missing abstracts, incorrect citation
-assignments, contaminated abstract fields, missing full-text — to the
-pipeline step that addresses it, or to an explicit "not mitigated" statement.
+Section 2.4, "Limitations and Potential Biases," which reviews each
+documented OpenAlex flaw — query false positives, duplicate records, missing
+abstracts, incorrect citation assignments, contaminated abstract fields,
+missing full-text — and pairs it with the pipeline step that addresses it,
+or with an explicit "not mitigated" statement.
 The section names deduplication's residual weak point (works sharing neither
 a DOI nor a normalised title+year pair, such as a preprint and its retitled
 published version) rather than claiming the merge passes catch everything.
@@ -176,10 +176,13 @@ title, first author, and year against corpus works. What I do not do — and
 the revised Section 3 states this explicitly — is full-text reference
 extraction from PDFs: I do not hold the full texts of the corpus's academic
 works, so parsing PDFs of the entire corpus is not feasible under current
-access conditions; the "Missing full-text" row of @tbl-openalex-limits keeps
-this limitation as explicitly not mitigated. On incorrect assignments
-generally, the existing 300-link audit against Crossref (99.0% confirmed,
-95% CI [97.1%, 99.7%]) addresses link accuracy; the new reference-count
+access conditions; Section 2.4 keeps this limitation as explicitly not
+mitigated. On incorrect assignments
+generally, the 300-link audit against Crossref (97.0% confirmed on the v2
+corpus, 95% CI [94.4%, 98.4%]) addresses link accuracy — the revised
+Section 2.3 also states what the audit measures: agreement with Crossref,
+not ground truth, partly circular for links harvested from Crossref or
+OpenAlex deposits; the new reference-count
 reporting addresses list completeness — the "empty or aberrant" failure mode
 the referee describes.
 
