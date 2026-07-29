@@ -241,17 +241,12 @@ _LATEX_CODE = str.maketrans(_LATEX_CODE_SPECIALS)
 # emitters turned out to need it too (ticket 0339); it is imported above.
 
 
-OPTIONAL_MARK = "†"
-
-
 def describe(v: Variable) -> str:
     """The variable's description as published, in Markdown.
 
-    Optionality is marked on the variable name, not spelled out per row. Eight
-    of the 33 variables are optional, so the old per-row sentence spent 64
-    words — a quarter of all description text in the table — repeating one
-    fact eight times. The caption states it once and the name carries a dagger
-    (ticket 0332, word budget).
+    Optionality (a column absent from builds predating its pipeline stage) is
+    a contract fact recorded in `required`; it is no longer surfaced in the
+    published table — the dagger legend confused readers (author, 2026-07-29).
     """
     return v.description
 
@@ -361,9 +356,8 @@ def render_markdown_table() -> str:
         if v.group != prev_group:
             groups.append(v.group.lower())
         prev_group = v.group
-        mark = "" if v.required else OPTIONAL_MARK
         lines.append(
-            rf"\texttt{{{v.name.translate(_LATEX_CODE)}}}{mark}"
+            rf"\texttt{{{v.name.translate(_LATEX_CODE)}}}"
             rf" & {latex_inline(describe(v))} \\")
     lines += [
         r"\bottomrule",
@@ -371,9 +365,8 @@ def render_markdown_table() -> str:
         "```",
         "",
         "Variables of `climate_finance_corpus.csv`. Horizontal rules separate "
-        "the four logical groups: " + ", ".join(groups) + ". " + OPTIONAL_MARK +
-        " marks a variable absent from corpus builds predating its pipeline "
-        "stage. Generated from the deposit column contract "
+        "the four logical groups: " + ", ".join(groups) + ". "
+        "Generated from the deposit column contract "
         "(`scripts/_deposit_variables.py`); storage types, allowed values, "
         "ranges and measured missingness are in the deposited "
         "`datapackage.json`.",

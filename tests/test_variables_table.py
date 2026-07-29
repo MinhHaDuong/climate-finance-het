@@ -15,7 +15,6 @@ import pytest
 from _deposit_variables import (
     DEPOSIT_VARIABLES,
     GROUPS,
-    OPTIONAL_MARK,
     check_columns,
     compute_missingness,
     contract_names,
@@ -232,9 +231,10 @@ def table_rows(md: str) -> dict[str, str]:
         if not line.startswith(r"\texttt{"):
             continue
         cells = line.rsplit(r" \\", 1)[0].split(" & ")
-        # Optional variables carry OPTIONAL_MARK after the name (ticket 0332);
+        # The optionality dagger was dropped from the published table
+        # (author, 2026-07-29); names are published bare.
         # key the row on the variable itself.
-        name = plain_text(cells[0]).removesuffix(OPTIONAL_MARK)
+        name = plain_text(cells[0])
         rows[name] = cells[1]
     return rows
 
