@@ -175,7 +175,7 @@ def test_no_response_file_quotes_a_stale_z():
     value, so it cannot see a second file still carrying the old one. That is
     not hypothetical: ticket 0625 regenerated the table (z 9.086 -> 8.738),
     fixed `r1-14-network-response.md`, and left the same R1-14 sentence in
-    `response-letter.md` reading z = 9.1 — contradicting the artifact it
+    `the response letter` reading z = 9.1 (file since split into reply notes) — contradicting the artifact it
     cites, in the document that actually goes to the journal.
 
     Absence, not presence, is the property worth pinning. Files are discovered

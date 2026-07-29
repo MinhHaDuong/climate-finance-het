@@ -51,9 +51,11 @@ PRODUCTS = [
 # record by hand.
 SUBMISSION_DOCS = [
     os.path.join(REPO, "deliverables", "data-paper", "revision-rdj26561", name)
+    # The cover letter and the two reply notes deliberately name no product
+    # files (2026-07-29 restructure): they point to the paper's Section 3,
+    # which the vars-driven-prose rule already guards.
     for name in ("ed04-zenodo-restructure-upload.md",
-                 "summary-of-revisions.md",
-                 "response-letter.md")
+                 "summary-of-revisions.md")
 ]
 
 # Deliberate exceptions: a product name a document may mention although the
