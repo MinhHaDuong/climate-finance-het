@@ -4,6 +4,7 @@ Created: 2026-07-27
 Author: HDMX-coding-agent
 Label: needs-human
 Label: deferred
+Closed: fixed in the beta-1 revision: replications moved to the reply notes (ED-02), §4 renamed 'Data overview' and slimmed to growth-in-time prose + citation-network map; panel round 2 will re-judge
 
 --- log ---
 2026-07-27T11:00Z HDMX-coding-agent created
@@ -15,6 +16,7 @@ Label: deferred
 2026-07-27T17:20Z HDMX-coding-agent note AUTHOR DIRECTION on the remaining overage: sections 2.3, 1 and 2.4 grew answering R1 remarks, and much of that answer belongs in the reply letter rather than in the paper permanently. Condense there, move the displaced text to the letter. See "Where the remaining words are" below.
 2026-07-27T19:46Z HDMX-coding-agent note AUTHOR DECISION: deferred. The word-budget pass waits until the ticket inflow is under control — cutting prose while 74 tickets a day arrive spends author attention on the wrong constraint. Labelled deferred so erg ready stops offering it. The editor query about whether the ED-03 variables table and references count toward the 2,500 is unsent and remains the cheapest first move when this resumes.
 2026-07-28T21:50Z HDMX-coding-agent note AUTHOR DECISION (batch of edits): do not query the editor; move the end of the introduction (three replication bullets) into the response letter instead. Executed with the same PR: fig_bars dropped from the paper (growth curve now prose in section 4, figure referred to the companion study), 2.3/2.4 restructured (biases consolidated into 2.4, OpenAlex out of the title). The deferred label now covers only any residual condensation of 2.3/1/2.4.
+2026-07-29T14:19Z HDMX-coding-agent closed — fixed in the beta-1 revision: replications moved to the reply notes (ED-02), §4 renamed 'Data overview' and slimmed to growth-in-time prose + citation-network map; panel round 2 will re-judge
 --- body ---
 ## Context
 
