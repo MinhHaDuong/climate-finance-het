@@ -34,6 +34,7 @@ format:
       text: |
         % Keep section headings off page bottoms; forbid widows/orphans.
         \usepackage{needspace}
+        \usepackage{placeins}
         \usepackage{etoolbox}
         \preto\subsection{\needspace{4\baselineskip}}
         \preto\subsubsection{\needspace{4\baselineskip}}
@@ -190,6 +191,8 @@ The companion paper [Ha-Duong, under review] gives an alternative overview of th
 ## 5. Concluding Remarks {#sec-concluding}
 
 This corpus assembles climate finance scholarship into a single multilingual bibliographic object, pairing the breadth of OpenAlex with French archives (ISTEX), non-English discourse (bibCNRS), pedagogical use (teaching canon), AI-assisted discovery (SciSpace), and a selected layer of institutional reports and UNFCCC and OECD key documents that carries the negotiation record and the institutions' own vocabulary into an otherwise academic corpus. Its provenance and author metadata support networks of institutions and co-authors, its embeddings feed topic models and content classification, and its eight-language retrieval adds a non-English layer that the English-only queries of the prior mappings cannot reach; the architecture accepts new sources and a longer temporal window, and a future iteration would use OpenAlex's bulk download rather than keyword queries. By making its boundaries explicit rather than implicit, the corpus turns the definition of "climate finance" from a hidden assumption into an object of analysis.
+
+\FloatBarrier
 
 ## Data and Code Availability {.unnumbered}
 
