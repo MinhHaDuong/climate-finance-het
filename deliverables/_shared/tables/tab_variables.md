@@ -28,26 +28,26 @@ Variable & Description \\
 \texttt{from\_istex} & Provenance flag: found in ISTEX \\
 \texttt{from\_bibcnrs} & Provenance flag: found in bibCNRS \\
 \texttt{from\_scispace} & Provenance flag: found via SciSpace \\
-\texttt{from\_grey} & Provenance flag: institutional reports (curated seed + World Bank) \\
+\texttt{from\_grey} & Provenance flag: institutional reports (Section 2.1) \\
 \texttt{from\_teaching} & Provenance flag: teaching canon (syllabi) \\
-\texttt{from\_unfccc}† & Provenance flag: curated UNFCCC key document \\
-\texttt{from\_oecd}† & Provenance flag: curated OECD key document \\
-\texttt{abstract\_provenance}† & Provenance of the abstract text, for curated key documents only \\
-\texttt{keywords\_provenance}† & Provenance of the keywords, for curated key documents only \\
-\texttt{language\_provenance}† & How the language code was obtained: carried by the source catalog, backfilled from OpenAlex, or inferred from title and abstract \\
+\texttt{from\_unfccc} & Provenance flag: curated UNFCCC key document \\
+\texttt{from\_oecd} & Provenance flag: curated OECD key document \\
+\texttt{abstract\_provenance} & Provenance of the abstract text, for curated key documents only \\
+\texttt{keywords\_provenance} & Provenance of the keywords, for curated key documents only \\
+\texttt{language\_provenance} & How the language code was obtained (Section 2.4) \\
 \texttt{source\_count} & Number of sources that contributed the record \\
 \midrule
 \texttt{abstract\_status} & Whether the undistributed abstract was original, reconstructed from an inverted index or fulltext, LLM-summarised, oversized, or missing \\
 \texttt{near\_duplicate\_group} & Group identifier for near-identical content published under several DOIs \\
-\texttt{semantic\_outlier\_dist}† & Distance to the corpus embedding centroid \\
-\texttt{in\_v1}† & Version tracking: work present in the v1.0 submission corpus \\
+\texttt{semantic\_outlier\_dist} & Distance to the corpus embedding centroid \\
+\texttt{in\_v1} & Version tracking: work present in the v1.0 submission corpus \\
 \texttt{is\_flagged} & Any quality flag raised; the refined subset is \texttt{df[\textasciitilde{}df[\textquotesingle{}is\_flagged\textquotesingle{}] \textbar{} df[\textquotesingle{}is\_protected\textquotesingle{}]]} \\
-\texttt{flag\_reason} & Comma-separated list of raised quality flags (missing\_metadata, no\_abstract\_irrelevant, title\_blacklist, citation\_isolated\_old, semantic\_outlier, llm\_irrelevant); empty when unflagged \\
+\texttt{flag\_reason} & Comma-separated list of raised quality flags; empty when unflagged \\
 \texttt{is\_protected} & Protection from removal (key papers kept despite flags) \\
-\texttt{protection\_reason}† & Why the work is protected (citation count, seed list, \ldots{}) \\
+\texttt{protection\_reason} & Why the work is protected (Section 2.2) \\
 \bottomrule
 \end{longtable}
 ```
 
-Variables of `climate_finance_corpus.csv`. Horizontal rules separate the four logical groups: record identity, bibliographic metadata, provenance flags, curation metadata. † marks a variable absent from corpus builds predating its pipeline stage. Generated from the deposit column contract (`scripts/_deposit_variables.py`); storage types, allowed values, ranges and measured missingness are in the deposited `datapackage.json`.
+Variables of `climate_finance_corpus.csv`. Horizontal rules separate the four logical groups: record identity, bibliographic metadata, provenance flags, curation metadata. Generated from the deposit column contract (`scripts/_deposit_variables.py`); storage types, allowed values, ranges and measured missingness are in the deposited `datapackage.json`.
 :::

@@ -150,7 +150,7 @@ DEPOSIT_VARIABLES: list[Variable] = [
     Variable("from_scispace", "boolean", "Provenance flag: found via SciSpace",
              _MERGE, group=_PROV),
     Variable("from_grey", "boolean",
-             "Provenance flag: institutional reports (curated seed + World Bank)",
+             "Provenance flag: institutional reports (Section 2.1)",
              _MERGE, group=_PROV),
     Variable("from_teaching", "boolean",
              "Provenance flag: teaching canon (syllabi)", _MERGE, group=_PROV),
@@ -170,9 +170,7 @@ DEPOSIT_VARIABLES: list[Variable] = [
              _KEYDOCS, required=False, group=_PROV, nullable=True,
              enum=("extracted", "generated:lexicon")),
     Variable("language_provenance", "string",
-             "How the language code was obtained: carried by the source "
-             "catalog, backfilled from OpenAlex, or inferred from title and "
-             "abstract", _ENRICH,
+             "How the language code was obtained (Section 2.4)", _ENRICH,
              required=False, group=_PROV, nullable=True,
              enum=("source", "openalex", "detected:langdetect")),
     Variable("source_count", "integer",
@@ -201,15 +199,14 @@ DEPOSIT_VARIABLES: list[Variable] = [
              "`df[~df['is_flagged'] | df['is_protected']]`", _FILTER,
              group=_CURATION),
     Variable("flag_reason", "string",
-             "Comma-separated list of raised quality flags "
-             f"({', '.join(FLAG_COLUMNS)}); empty when unflagged", _FILTER,
+             "Comma-separated list of raised quality flags; empty when unflagged", _FILTER,
              group=_CURATION,
              empty_is_a_value=True),
     Variable("is_protected", "boolean",
              "Protection from removal (key papers kept despite flags)", _FILTER,
              group=_CURATION),
     Variable("protection_reason", "string",
-             "Why the work is protected (citation count, seed list, ...)",
+             "Why the work is protected (Section 2.2)",
              _FILTER, required=False, group=_CURATION, nullable=True),
 ]
 
