@@ -31,7 +31,7 @@ been addressed. The key changes:
   The citation-link audit rerun on the new corpus reports 97.0% confirmed
   (previously 99.0%), stated as agreement with Crossref rather than ground
   truth, and the revision measures and discloses a language bias in the
-  relevance filter that the submitted version did not know it had.
+  relevance filter, absent from the submitted version.
 - **One referee suggestion is declined with an alternative**: the corpus
   CSV keeps its published layout, and the revision documents the structure
   instead — a generated variables table in the paper and a Frictionless

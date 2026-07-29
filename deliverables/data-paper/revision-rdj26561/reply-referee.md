@@ -87,7 +87,7 @@ affected works are embedded from title and keywords only (Section 2.4).
 
 Correct — the wording overstated, and Section 2.3 now claims only the
 incremental coverage the smaller sources add. Beyond the wording, the
-revision measures a language bias the submitted version did not know it had:
+revision measures a language bias undetected in the submitted version:
 the relevance filter removes 41.8% of non-English works against 19.9% of
 English ones, and rescoring the flagged non-English works against an
 own-language translation of the query lifts the share crossing the threshold
