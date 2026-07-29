@@ -1,3 +1,12 @@
+---
+format:
+  pdf:
+    papersize: a4
+    include-in-header:
+      text: |
+        \pagestyle{empty}
+---
+
 # DRAFT — Cover letter to the editor, RDJ-26561 (author sign-off required before submission)
 
 Minh Ha-Duong
