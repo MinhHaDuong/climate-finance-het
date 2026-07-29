@@ -46,7 +46,7 @@ LICENSE_URL = "https://creativecommons.org/licenses/by/4.0/"
 
 # Bumped with the Zenodo record's version field; the ed04 checklist is where
 # the author sets it on upload. Overridable per invocation with --version.
-DEPOSIT_VERSION = "1.1.1"
+DEPOSIT_VERSION = "2.0.0"
 
 # The dataset drops the paper's subtitle so the two objects stay citable
 # apart (author decision 2026-07-29); the Zenodo record takes this title.
