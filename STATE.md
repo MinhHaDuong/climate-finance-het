@@ -4,14 +4,14 @@ Last updated: 2026-07-29T08:05Z (housekeeping run 2026-07-29)
 
 ## Current goal
 
-**RDJ-26561 R&R — resubmission sprint before vacation (starts 2026-07-30).**
-Tracker 0274, due ~2026-10-20. Corpus v2 **frozen** (author 2026-07-27).
-0320/0292/0297/0372 closed; last blocker **0283**: letter reconciled
-(Crossref 97.0%, completeness 98.3%, language-bias disclosure, retitle line)
-on branch t0283-response-letter — awaiting author sign-off, then 0274's
-integration review and the author submits. Title (0672, author 2026-07-29):
-**"Institutional Reports"** swept through paper, deposit schema, manuscript,
-agentic paper; Zenodo retitle at upload. Œconomia: awaiting editor; 0671/0670
+**RDJ-26561 R&R — beta 1 CLOSED (author, 2026-07-29).** Tracker 0274, due
+~2026-10-20. Corpus v2 frozen 2026-07-27. All validated and merged: paper
+(retitled "Institutional Reports", A4, tables whole), archive v2.0.0
+(corpus_audit.csv, subtitle-free dataset title), cover letter + two reply
+notes (PRs #1295/#1297), tag rdj26561-resubmission-beta1. Remaining, author
+acts: Zenodo upload (title without subtitle, version 2.0.0), journal
+submission with the Œconomia companion draft enclosed, then package to
+papiers/sent/ and close 0283/0274. Œconomia: awaiting editor; 0671/0670
 parked for after vacation. Zoo + multilayer: potential future articles.
 Post-release (HAL variant): Table 1 needs vspace between rows (author 2026-07-29).
 
