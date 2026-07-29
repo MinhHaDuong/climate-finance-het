@@ -165,7 +165,7 @@ Abstracts are not included in the deposited file due to publisher redistribution
 
 The dataset is released under CC BY 4.0. The five automated or semi-automated sources can be re-harvested with an internet connection; the three restricted sources (bibCNRS, SciSpace, OECD) have their raw exports included in the Zenodo deposit.
 
-## 4. Descriptive statistics {#sec-descriptive}
+## 4. The corpus at a glance {#sec-descriptive}
 
 This section summarises the corpus from two angles: its growth in time, reported in the text, and the structure of its citations, mapped in @fig-global-map.
 
