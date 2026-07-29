@@ -106,9 +106,8 @@ The relevance filter removes 41.8% of non-English works but only 19.9% of
 English ones. The cause is the query, not the content: rescoring the
 flagged non-English works against an own-language translation of the query
 lifts the pass rate by 11.5 percentage points. Section 2.4 discloses the
-bias and its direction. The next corpus release will deploy a multilingual
-query; until then, users can rebuild from the deposited flags under their
-own filter policy.
+bias and its direction, and users can rebuild from the deposited flags
+under their own filter policy.
 
 > *"[…] I find it extremely difficult to assess the potential of this
 > dataset for conducting research on the history of economic thought […]"*
