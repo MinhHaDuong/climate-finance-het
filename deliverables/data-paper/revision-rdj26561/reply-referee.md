@@ -124,13 +124,16 @@ periodization.
 > of the corpus rather unpleasant for someone who wishes to explore it
 > manually."*
 
-I kept the file layout — a standard rectangular CSV whose columns follow
-four logical groups in a fixed order; reshaping a published Zenodo artifact
-would break its consumers for a viewer-ergonomics gain. The revision makes
+I kept the file layout — a standard rectangular UTF-8 CSV whose columns
+follow four logical groups in a fixed order, loading correctly in pandas or
+R. How a given viewer renders the file is a property of the viewer;
+well-formedness is a property of the file, and the validation below
+establishes it objectively. Reshaping a published Zenodo artifact would
+also break its existing consumers. The revision makes
 the structure explicit instead: Table 5 shows each column's group, and the
 deposit ships a formal, machine-readable data dictionary
 (`datapackage.json`, a Frictionless Table Schema with per-column types,
-allowed values, ranges, and measured missingness). This offers an objective verification of the data file format: anyone who
+allowed values, ranges, and measured missingness). Anyone who
 downloads the deposit can run `uvx frictionless validate datapackage.json`
 in its `data/products/` directory and have the corpus CSV checked, column
 by column, against its own documentation.
