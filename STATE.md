@@ -13,6 +13,7 @@ integration review and the author submits. Title (0672, author 2026-07-29):
 **"Institutional Reports"** swept through paper, deposit schema, manuscript,
 agentic paper; Zenodo retitle at upload. Œconomia: awaiting editor; 0671/0670
 parked for after vacation. Zoo + multilayer: potential future articles.
+Post-release (HAL variant): Table 1 needs vspace between rows (author 2026-07-29).
 
 ## Status
 <!-- generated 2026-07-28T20:41Z · as of 92c7024d -->
