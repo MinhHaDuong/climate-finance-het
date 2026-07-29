@@ -23,7 +23,7 @@ point by point, first to your letter, then to the referee report.
 ## Reply to the editor
 
 **ED-01 (OpenAlex caveats, deduplication, regional databases).** I added
-Section 2.4, "Limitations and Potential Biases," which maps each documented
+Section 2.4, "Limitations and Biases," which maps each documented
 OpenAlex flaw — query false positives, duplicate records, missing abstracts,
 incorrect citation assignments, contaminated abstract fields, missing
 full-text — to the pipeline step that addresses it, or to an explicit "not
