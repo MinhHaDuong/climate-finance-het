@@ -4,16 +4,21 @@
 > national institutions: government or parliamentary reports […] central
 > bank communications. Why is that?"*
 
-Section 2.4 now states and justifies the boundary: the corpus traces climate
-finance as a category of *international* economic governance, and each
-national document class is a corpus-scale universe of its own — the
-central-bank dataset of Campiglio, Deyris, Romelli and Scalisi (2025), which
-the report kindly points to, holds 35,487 speeches for that single class.
-The revised text names national sources as the natural extension path and
-cites Campiglio et al. as the first curated open dataset to plug in. Within
-the international frame, coverage did grow: a curated UNFCCC and OECD DAC
-key-document layer (230 and 33 works after deduplication) enters the corpus
-as a durable pipeline source with its own provenance flags.
+This remark pushed the revision to extend the dataset, and I thank the
+referee for it: a curated UNFCCC and OECD DAC key-document layer (230 and 33
+works after deduplication) now enters the corpus as a durable pipeline
+source with its own provenance flags. On national institutions, Section 2.4
+states and justifies the boundary: the corpus traces climate finance as a
+category of *international* economic governance. The referee's point still
+lands — some national positions do constitute international policy, as a
+United States exit from climate finance mechanisms would shift the
+negotiation itself — so the boundary does cost relevant documents.
+Tractability decided it: each national document family is a corpus-scale
+universe of its own. Central-bank communications alone hold 35,487 speeches
+in the dataset of Campiglio, Deyris, Romelli and Scalisi (2025), which the
+report kindly points to. The revised text names national sources as the
+natural extension path and cites Campiglio et al. as the first curated open
+dataset to plug in.
 
 > *"There are numerous inconsistencies in the metadata: incorrect citation
 > assignments, missing abstracts, duplicates, and sometimes missing
@@ -75,17 +80,20 @@ needed."
 > *"OpenAlex sometimes records full-text content in the abstracts […]
 > Consequently, Figure 1 is potentially biased."*
 
-The submitted Figure 1 has left the paper, so the exposure the report
-identified is gone with it; the abstract field now feeds only the deposited
-embeddings, where a boilerplate detector (`is_boilerplate_abstract` in the
-deposited code) drops stub and contaminated abstracts before embedding, and
-affected works are embedded from title and keywords only (Section 3).
+Full text recorded in the abstract field is caught by a size limit: fields
+over 1,000 tokens are replaced by an LLM summary of ordinary abstract
+length, or flagged oversized where no summary is available, and the
+`abstract_status` column discloses each case. At the other end, a
+boilerplate detector drops stub abstracts, and affected works are embedded
+from title and keywords only (Section 3). The submitted Figure 1 — the
+exposure the report identified — has left the paper.
 
 > *"The author writes that 'the five smaller sources add non-English […]
 > coverage that OpenAlex alone does not provide.' However, OpenAlex does
 > include non-English sources."*
 
-Correct — the wording overstated, and Section 2.3 now claims only the
+Correct — the wording overstated; Table 3 measures the point (the OpenAlex
+row's %non-EN cell reads 6%), and Section 2.3 now claims only the
 incremental coverage the smaller sources add. Beyond the wording, the
 revision measures a language bias undetected in the submitted version:
 the relevance filter removes 41.8% of non-English works against 19.9% of
