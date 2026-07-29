@@ -30,6 +30,14 @@ keywords: |
 format:
   pdf:
     pdf-engine: xelatex
+    include-in-header:
+      text: |
+        % Keep section headings off page bottoms; forbid widows/orphans.
+        \usepackage{needspace}
+        \usepackage{etoolbox}
+        \preto\subsection{\needspace{4\baselineskip}}
+        \preto\subsubsection{\needspace{4\baselineskip}}
+        \widowpenalty=10000 \clubpenalty=10000
 ---
 
 <!-- Target journal: Research Data Journal for the Humanities and Social Sciences (RDJ4HSS) -->
@@ -117,9 +125,9 @@ Relevance filtering (flag 5) scores each work with a cross-encoder reranker (BAA
 
 ### 2.4 Limitations and Biases {#sec-openalex-limits}
 
-{{< include ../_shared/tables/tab_languages.md >}}
-
 Several biases qualify reuse. The corpus is strongest on the academic pool and weakest on policy discourse and media, partially captured through the institutional-reports and bibCNRS sources. Non-English coverage remains limited (@tbl-languages): English accounts for {{< meta lang_english_pct >}}% of refined works despite targeting eight languages: indexing systems amplify English's established position as the language of scientific communication; the classified non-English layer counts {{< meta lang_non_english_n >}} works, led by Portuguese, Spanish, German, and French, and a further {{< meta lang_unclassified_n >}} carry no language tag --- coverage that supports case studies rather than balanced comparison.
+
+{{< include ../_shared/tables/tab_languages.md >}}
 
 Filtering compounds the language imbalance: {{< meta ablation_nonen_removed_pct >}}% of non-English works are removed, against {{< meta ablation_en_removed_pct >}}% of English ones, and the cross-encoder flag accounts for {{< meta ablation_f6_nonen_share_pct >}}% of those non-English removals. Metadata coverage does not explain the gap, since non-English works have the higher abstract coverage. The scorer itself does, at least in part: rescoring the same non-English works against an own-language translation of the query lifts the share crossing the deployed threshold by 11.5 percentage points, so the score partly reflects query language rather than topical relevance. The per-stratum removal ablation ships as `tab_filter_ablation.csv`; users needing non-English coverage can rebuild from the deposited flags under their own filter policy.
 

@@ -123,7 +123,7 @@ def build_caption(
     number is measured, so the caption cannot drift from the table.
     """
     return (
-        ": Corpus sources. *Raw*: records with `from_*` provenance flag before"
+        ": Works counts and key fields presence by source. *Raw*: records with `from_*` provenance flag before"
         " filtering (a record in multiple sources is counted once per source)."
         " *Refined*: after quality filtering."
         " *Unique*: found only in that source (`source_count = 1`);"
