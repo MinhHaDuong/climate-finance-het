@@ -167,7 +167,7 @@ The dataset is released under CC BY 4.0. The five automated or semi-automated so
 
 ## 4. Descriptive statistics {#sec-descriptive}
 
-Two views summarise the corpus: its growth in time and the structure of its citations.
+This section summarises the corpus from two angles: its growth in time, reported in the text, and the structure of its citations, mapped in @fig-global-map.
 
 Annual publication volume grows from a handful of works in the early 1990s (the search window is 1990--2024; the earliest works date from 1992) to a take-off with a structural break in the trend of log annual counts at 2015 (Chow test of one log-linear trend against separate intercept and slope on each side, classical errors: F = {{< meta lit_growth_f >}}, p {{< meta lit_growth_p >}}), output growing {{< meta lit_growth_post_pct >}}% a year since. The phrase "climate finance" itself is nearly absent from titles and abstracts before 2009, then spreads through the literature. The annual-volume figure appears in the companion study [Ha-Duong, under review].
 
