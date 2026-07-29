@@ -12,8 +12,8 @@ rdj26561-revision1; Zenodo v2.0.0 (10.5281/zenodo.21679237, concept
 done: homepage entry split paper/dataset (relations link, concept DOI),
 Feuille de route 2026 row updated. Corpus lock from padme's re-run
 landed (PR #1309, frozen outputs unchanged); branches pruned to main +
-2 submission records. Œconomia: awaiting editor; 0671/0670 parked.
-Zoo + multilayer: later. Machine debt (doudou): .env keystore migration
+2 submission records. Œconomia: awaiting editor; 0671/0670 parked;
+zoo + multilayer later. Machine debt (doudou): .env keystore migration
 not applied; .dvc/config.local cache.type=symlink — 4 local failures.
 
 ## Status
@@ -29,8 +29,7 @@ not applied; .dvc/config.local cache.type=symlink — 4 local failures.
 
 ## Submissions
 
-- RDJ-26561 (RDJ4HSS data paper): R&R round 1, due ~2026-10-20
-- Œconomia manuscript v2.0.5: resubmitted 2026-07-21, awaiting editor
+- RDJ-26561 rev. 1 resubmitted 2026-07-29; Œconomia v2.0.5 resubmitted 2026-07-21 — both awaiting editor
 
 ## Corpus (v2, built 2026-07-24, frozen 2026-07-27)
 - 8 sources; 43,179 unified → 33,344 refined; 38,736×1024 embeddings;
