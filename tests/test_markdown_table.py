@@ -4,10 +4,9 @@ The rendered-page oracles in `test_rendered_venue_table_fidelity.py` are the
 ones that prove the escaping *works*; they need pandoc and skip without it, so
 these fast-tier tests keep the rule itself covered on any machine.
 
-`markdown_cell`'s own rule is pinned in `test_variables_table.py`, next to the
-codebook contract it serves. What is pinned here is the plain-text sibling and,
-above all, the boundaries between them — the reason the module splits at all.
-Ticket 0530 adds the third sibling, `markdown_verbatim_cell`, at the bottom.
+What is pinned here is the plain-text escaper and, above all, the boundary with
+its sibling — the reason the module splits at all. Ticket 0530 adds the second
+sibling, `markdown_verbatim_cell`, at the bottom.
 
 Ticket 0376 adds one rendered class at the bottom of this module rather than in
 a fidelity suite: what it pins is the *character set* — a property of the
@@ -17,11 +16,7 @@ escaper itself — against the reader the build really uses.
 import os
 
 import pytest
-from _markdown_table import (
-    markdown_cell,
-    markdown_text_cell,
-    markdown_verbatim_cell,
-)
+from _markdown_table import markdown_text_cell, markdown_verbatim_cell
 
 TESTS_DIR = os.path.dirname(__file__)
 SCRIPTS_DIR = os.path.join(TESTS_DIR, "..", "scripts")
@@ -77,32 +72,19 @@ class TestPlainTextEscaping:
 
 
 class TestContractBoundary:
-    """The two functions differ by input contract, not by error policy."""
+    """Free text is data, not markup this repo authored."""
 
     def test_free_text_never_raises_on_an_odd_backtick(self):
         """A stray backtick in a bibliographic record is a character, not a typo.
 
-        Inheriting `markdown_cell`'s ValueError here would let one such
-        character fail a manuscript build.
+        Raising here would let one such character fail a manuscript build.
         """
         assert markdown_text_cell("Journal of ` Studies") == r"Journal of \` Studies"
 
-    def test_authored_markdown_still_rejects_an_odd_backtick(self):
-        """The raise is right where the input *is* Markdown: an unbalanced
-        backtick is an authoring typo whose intent cannot be guessed."""
-        with pytest.raises(ValueError, match="unbalanced backtick"):
-            markdown_cell("a `dangling span")
-
-    def test_balanced_backticks_are_a_code_span_only_for_authored_markdown(self):
-        """The case a mere non-raising variant would still get wrong.
-
-        Two backticks in a journal name are two characters; in a codebook
-        description they delimit a code span, which is escaped by the other
-        rule. One function cannot serve both.
-        """
-        payload = "a `b | c` d"
-        assert markdown_cell(payload) == r"a `b \| c` d"
-        assert markdown_text_cell(payload) == r"a \`b \| c\` d"
+    def test_balanced_backticks_are_characters_not_a_span(self):
+        """Two backticks in a journal name are two characters, never a code
+        span — the value carries no markup intent."""
+        assert markdown_text_cell("a `b | c` d") == r"a \`b \| c\` d"
 
 
 class TestLineBreaks:

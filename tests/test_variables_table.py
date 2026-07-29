@@ -24,7 +24,6 @@ from _deposit_variables import (
     render_markdown_table,
     transform,
 )
-from _markdown_table import markdown_cell
 from utils import FROM_COLS, WORKS_COLUMNS
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
@@ -292,30 +291,6 @@ class TestLatexEscaping:
         """A malformed contract description fails loudly, not silently."""
         with pytest.raises(ValueError, match="backtick"):
             latex_inline("a `dangling span")
-
-
-class TestMarkdownCellEscaping:
-    """A raw `|` ends a pipe-table cell, so payload text must escape it.
-
-    Same defect class as the LaTeX one — a delimiter inside payload — in the
-    other markup language the contract's descriptions render into. The retired
-    codebook published the recipe cut in half at the `|`; these rules are what
-    kept the remaining Markdown table emitters from repeating it.
-    """
-
-    def test_backslash_is_escaped_only_where_markdown_reads_it(self):
-        """Prose and code disagree on what a backslash means, so the cell
-        cannot use one rule for both. Escaping both blindly would corrupt a
-        description documenting a regex; escaping neither would let a value
-        already containing `\\|` split the cell — this ticket's defect, one
-        escape layer down."""
-        assert markdown_cell(r"a \ b") == r"a \\ b"
-        assert markdown_cell(r"a `\d{4}` b") == r"a `\d{4}` b"
-        assert markdown_cell(r"a \| b") == r"a \\\| b"
-
-    def test_pipe_is_escaped_on_both_sides_of_a_span(self):
-        assert markdown_cell("a | b") == r"a \| b"
-        assert markdown_cell("a `x | y` b") == r"a `x \| y` b"
 
 
 class TestDataPaperIntegration:

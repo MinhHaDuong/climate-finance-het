@@ -12,13 +12,8 @@ wrong one: it normalises *corpus* text (encoding artifacts, DOIs, language
 codes) and pulls in pandas, ftfy and langdetect for it. Escaping markup is a
 different concern with no dependencies at all.
 
-Three functions, because the callers hold three different input contracts:
+Two functions, because the callers hold two different input contracts:
 
-``markdown_cell``
-    The input **is** Markdown — a curated description authored in-repo, whose
-    backticks are intentional code spans. Written for the deposit codebook; no
-    live caller under ``scripts/`` today, and its rule is pinned by
-    ``tests/test_variables_table.py`` (see the ``_MARKDOWN_CODE`` note below).
 ``markdown_text_cell``
     The input is plain text with no markup intent — a journal name out of the
     bibliographic corpus, a source label edited by hand, a language code the
@@ -31,8 +26,15 @@ Three functions, because the callers hold three different input contracts:
     ``smart``. Used for the deposited ISTEX query (ticket 0530).
 
 Collapsing them into one function is the trap this split avoids: a journal name
-that happens to contain two backticks is not a code span, and applying the
-Markdown-aware rule to it would silently typeset half the name as code.
+is prose the reader should typeset (curly quotes and all), while a query set in
+a code span is a value the reader must receive byte-for-byte.
+
+A third sibling, ``markdown_cell``, took Markdown authored in-repo whose
+backticks were intentional code spans. It was written for the retired deposit
+codebook, never gained a live caller, and carried a measured-wrong rule (a
+backslash-pipe escape inside a span, which a span renders literally — the #1289/#1290
+lesson). Deleted 2026-07-29; git history keeps it, and any revival should build
+its span handling on ``markdown_verbatim_cell``'s fence construction instead.
 
 **Which reader these rules are calibrated to (ticket 0376).** Not GFM, though
 the tables look like GFM pipe tables. Quarto's ``from:`` is a custom Lua reader,
@@ -66,24 +68,10 @@ which describes neither the Lua reader nor the extension set it selects.
 import re
 
 # In prose the pipe is escaped and the backslash with it, because CommonMark
-# reads a backslash as an escape there.
-#
-# ``_MARKDOWN_CODE`` escapes the pipe *inside* a span, and that rule is wrong —
-# measured, 2026-07-28, against the reader above: ``a \| b`` inside a span
-# renders the backslash literally, and a raw ``a | b`` inside a span parses as
-# one cell, because pandoc's pipe-table splitter respects spans. The comment
-# here used to claim the reader "honours ``\|`` inside a code span too", and
-# that claim is what ``markdown_verbatim_cell``'s first draft inherited before
-# the #1289 review caught it. Left in place rather than fixed: ``markdown_cell``
-# is the only user and has no live caller today, so changing its output would be
-# an unverifiable edit to a dormant path. Corrected here so the next reader does
-# not inherit the same false premise a third time (ticket 0530). Whoever does
-# fix it should know that ``tests/test_variables_table.py`` currently *pins* the
-# escaped form, so the guard moves with the behaviour.
+# reads a backslash as an escape there. Inside a code span the opposite holds —
+# no escape is processed at all — which is why the span path below escapes
+# nothing (measured 2026-07-28 against the reader above; #1289 review).
 _PROSE = {"\\": r"\\", "|": r"\|"}
-
-_MARKDOWN_TEXT = str.maketrans(_PROSE)
-_MARKDOWN_CODE = str.maketrans({"|": r"\|"})
 
 # Plain text extends the prose rule rather than restating it: no character
 # carries markup intent, so the backtick is escaped rather than opening a span,
@@ -122,35 +110,6 @@ _MARKDOWN_LITERAL = str.maketrans({
 # backslashes its own earlier substitutions introduced.
 
 
-def _split_spans(text: str) -> list[str]:
-    """Split Markdown on backticks; odd indices are code-span interiors."""
-    parts = text.split("`")
-    if len(parts) % 2 == 0:
-        raise ValueError(f"unbalanced backtick in description: {text!r}")
-    return parts
-
-
-def markdown_cell(text: str) -> str:
-    """Markdown description → a Markdown pipe-table cell.
-
-    A raw ``|`` ends the cell, so the codebook's reconstruction recipe used to
-    be published cut in half. Escaping both sides of a span boundary blindly
-    would corrupt any description documenting a regex or a path; escaping
-    neither reintroduces the cell split, one layer down, for a value that
-    already contains ``\\|``.
-
-    Raises ``ValueError`` on an unbalanced backtick, and deliberately keeps
-    doing so: the input is Markdown authored in this repo, where an odd
-    backtick is a typo whose intent is genuinely ambiguous — guessing would
-    either escape a real code span or typeset prose as code. Free text from the
-    corpus must not take this path; see ``markdown_text_cell``.
-    """
-    return "`".join(
-        part.translate(_MARKDOWN_CODE) if i % 2 else part.translate(_MARKDOWN_TEXT)
-        for i, part in enumerate(_split_spans(text))
-    )
-
-
 def markdown_verbatim_cell(text: str) -> str:
     """Plain text → a pipe-table cell the reader renders as a code span.
 
@@ -170,8 +129,8 @@ def markdown_verbatim_cell(text: str) -> str:
 
     **Nothing is escaped**, and that is the whole point of a span: CommonMark
     processes no backslash escape inside one, so an escape does not protect the
-    value, it *becomes* the value. Measured, because the module comment above
-    asserted the opposite and the first draft of this function inherited it —
+    value, it *becomes* the value. Measured, because this module once asserted
+    the opposite and the first draft of this function inherited it —
     ``pandoc -f markdown`` renders ``a \\| b`` inside a span as the literal
     ``a \\| b``, and renders a raw ``a | b`` inside a span as ``a | b`` in one
     cell. The pipe needs no escape here: the reader's pipe-table splitter
@@ -214,8 +173,8 @@ def markdown_text_cell(text: str) -> str:
     as the pipe, one level below the escaper.
 
     Never raises. These emitters feed a rendered manuscript, and a bibliographic
-    string is not a contract the build may reject: inheriting ``markdown_cell``'s
-    ValueError would turn one odd backtick in a corpus record — a character with
-    no meaning there — into a failed manuscript build.
+    string is not a contract the build may reject: raising on an odd backtick
+    would turn one such character in a corpus record — a character with no
+    meaning there — into a failed manuscript build.
     """
     return str(text).translate(_MARKDOWN_LITERAL)
