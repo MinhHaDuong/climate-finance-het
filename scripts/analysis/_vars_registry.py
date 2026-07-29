@@ -148,22 +148,16 @@ DOC_VARS = {
         "lang_english_pct",
         "lang_non_english_n",
         "lang_unclassified_n",
-        # Two earlier cuts orphaned lit_* vars, both still emitted upstream:
-        # the adaptation-share and chi-square/p details went with PR #1120,
-        # leaving only the two finance-journal shares in the
-        # literature-confirmation bullet (§1); lit_sem6_ari and lit_sem6_n went
-        # with 0332's §4 cut, since the semantic-cluster paragraph they served
-        # needed an under-review companion paper to interpret.
-        "lit_finshare_post_pct",
-        "lit_finshare_pre_pct",
+        # Successive cuts orphaned lit_* vars, all still emitted upstream:
+        # the adaptation-share and chi-square/p details went with PR #1120;
+        # lit_sem6_ari and lit_sem6_n went with 0332's §4 cut; the §1
+        # replication bullets moved to the R&R response letter (0332,
+        # author decision 2026-07-28), taking lit_finshare_* and lit_poles_*
+        # with them. The growth trio stays: §4 now describes the growth curve
+        # in prose in place of the dropped fig_bars.
         "lit_growth_f",
         "lit_growth_p",
         "lit_growth_post_pct",
-        "lit_poles_cross_null_pct",
-        "lit_poles_cross_pct",
-        "lit_poles_nperm",
-        "lit_poles_p",
-        "lit_poles_z",
         "openalex_pct",
         "refs_doi_docs",
         "refs_max",

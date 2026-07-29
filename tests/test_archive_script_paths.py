@@ -85,10 +85,14 @@ BUILD_SCRIPTS = {
 # Each archive script declares its inputs in one named bash array, so the array
 # is both the manifest and the archive layout. Keeping the name here means a
 # renamed array fails loudly rather than silently guarding nothing.
+# The datapaper archive left this mapping (0332): its only gitignored render
+# input, fig_bars.png, left the paper, the remaining embedded figure is
+# git-tracked (ships via git archive), and the tables are discovered from the
+# qmd's own include directives — no input array remains to guard. Its literal
+# `cp` sources stay covered by the BUILD_SCRIPTS-parametrized tests.
 INPUT_ARRAYS = {
     "analysis": "SCRIPTS",
     "manuscript": "MANUSCRIPT_FILES",
-    "datapaper": "DATAPAPER_FILES",
 }
 
 # The `paths.mk` artifact sets that own each document archive's shared render
@@ -284,7 +288,13 @@ def _owned_artifacts(archive):
 
 
 def _declared_inputs(archive):
-    """Repo-relative paths inside the build script's declared input array."""
+    """Repo-relative paths inside the build script's declared input array.
+
+    An archive with no declared array (datapaper, since 0332) has no
+    array-declared inputs; its `cp` sources are guarded separately.
+    """
+    if archive not in INPUT_ARRAYS:
+        return []
     return _parse_input_array(_read(BUILD_SCRIPTS[archive]), INPUT_ARRAYS[archive])
 
 
@@ -463,6 +473,8 @@ class TestInputArrayParser:
         Guards against a future parser regression silently shrinking a list:
         a prefix-only parse fails this even when every path it did read exists.
         """
+        if archive not in INPUT_ARRAYS:
+            return  # no declared array to parse (datapaper, since 0332)
         content = _read(BUILD_SCRIPTS[archive])
         array = INPUT_ARRAYS[archive]
         paths = _parse_input_array(content, array)

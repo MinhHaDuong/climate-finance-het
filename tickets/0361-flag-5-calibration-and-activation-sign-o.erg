@@ -9,6 +9,7 @@ Author: HDMX-coding-agent
 
 2026-07-27T17:40Z HDMX-coding-agent note author leans option B (retire): 'Flag 5 seems better suited to detect outliers and investigate, rather than filter'. Independent Fable-model defense round commissioned on the instrument, its implementation, state of the art, and redundancy with flags 1-4/6 before the call is fixed
 2026-07-27T17:57Z HDMX-coding-agent note blocker 0336 closed — Blocked-by removed.
+2026-07-28T21:50Z HDMX-coding-agent note author flagged the prose surfaces still describing an active flag 5 / six-flag pipeline while dvc.yaml holds it inert: data-paper.qmd section 2.2 (six-flag pipeline, flag 5 sentence), section 2.4 (six-flag filter), and export_corpus_table.py caption (six-flag quality filtering). Sweep them all when this decision lands.
 --- body ---
 ## Context
 
