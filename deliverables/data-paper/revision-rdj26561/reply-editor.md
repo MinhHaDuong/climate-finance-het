@@ -45,9 +45,3 @@ The package is restructured into `code/` (pipeline source), `data/inputs/`
 outputs). The layout is produced by a build script, described identically in
 the archive README and Section 3, and the new version is uploaded with this
 resubmission.
-
-> *"[…] please also prepare a summary of the main revisions and a
-> point-by-point reply."*
-
-Answered by this note, its companion note replying to the referee, and the
-accompanying summary of revisions.
