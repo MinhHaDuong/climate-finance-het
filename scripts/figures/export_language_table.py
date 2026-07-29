@@ -122,8 +122,11 @@ def main() -> None:
     # widening of the set, in a file that would never be re-read for it.
     label_col = table.columns.get_loc("Language")
     total_row = len(table) - 1
+    works_col = table.columns.get_loc("Works")
     for i, (_, row) in enumerate(table.iterrows()):
         cells = [markdown_text_cell(v) for v in row]
+        # Same thousands-separator locale as the other shipped tables.
+        cells[works_col] = f"{int(row['Works']):,}"
         if i == total_row:
             cells[label_col] = f"**{cells[label_col]}**"
         lines.append("| " + " | ".join(cells) + " |")

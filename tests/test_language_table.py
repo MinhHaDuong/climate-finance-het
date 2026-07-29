@@ -155,6 +155,25 @@ def test_pipe_bearing_language_code_keeps_its_four_cells(tmp_path):
 
 
 @pytest.mark.integration
+def test_counts_carry_thousands_separators(tmp_path):
+    """Counts use the same 10,000-style locale as every other shipped table
+    (author request, 2026-07-29: Table 4 read 31272 beside tables reading
+    43,179)."""
+    enriched = tmp_path / "enriched_works.csv"
+    enriched.write_text("language\n" + 'en\n' * 1500, encoding="utf-8")
+    output = tmp_path / "tab_languages.md"
+
+    subprocess.run(
+        [sys.executable, SCRIPT, "--input", str(enriched), "--output", str(output)],
+        cwd=REPO_ROOT, env=source_root_env(), capture_output=True,
+        text=True, check=True)
+
+    md = output.read_text(encoding="utf-8")
+    assert "1,500" in md, md
+    assert "| 1500 |" not in md
+
+
+@pytest.mark.integration
 def test_total_row_keeps_its_emphasis(tmp_path):
     """`**Total**` is authored markup, not corpus text — it must reach the page.
 
