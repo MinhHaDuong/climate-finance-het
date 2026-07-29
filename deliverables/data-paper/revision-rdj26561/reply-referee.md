@@ -79,7 +79,7 @@ The submitted Figure 1 has left the paper, so the exposure the report
 identified is gone with it; the abstract field now feeds only the deposited
 embeddings, where a boilerplate detector (`is_boilerplate_abstract` in the
 deposited code) drops stub and contaminated abstracts before embedding, and
-affected works are embedded from title and keywords only (Section 2.4).
+affected works are embedded from title and keywords only (Section 3).
 
 > *"The author writes that 'the five smaller sources add non-English […]
 > coverage that OpenAlex alone does not provide.' However, OpenAlex does
@@ -92,9 +92,9 @@ the relevance filter removes 41.8% of non-English works against 19.9% of
 English ones, and rescoring the flagged non-English works against an
 own-language translation of the query lifts the share crossing the threshold
 by 11.5 percentage points — the score partly reflects query language, not
-topical relevance. Section 2.4 states the bias, its direction, and the
-remedy scheduled for the next corpus release; users can rebuild from the
-deposited flags under their own filter policy.
+topical relevance. Section 2.4 states the bias and its direction; a multilingual relevance
+query is planned for the next corpus release, and users can meanwhile
+rebuild from the deposited flags under their own filter policy.
 
 > *"[…] I find it extremely difficult to assess the potential of this
 > dataset for conducting research on the history of economic thought […]"*
