@@ -1,0 +1,48 @@
+%erg 0.1
+Title: REL — passe bibliométrique : courants, lieux, lignées de citation
+Created: 2026-08-21
+Author: haduong
+Blocked-by: 0701
+
+--- log ---
+2026-08-21T12:00Z haduong created
+
+--- body ---
+## Contexte
+
+Enfant de 0700, premier des deux mouvements promis à l'éditeur. Identifier les
+principaux courants de recherche du champ, leurs lieux de publication, et leurs
+lignées de citation, sur le corpus v2 gelé.
+
+C'est la partie qui porte l'argument de nouveauté : le champ n'avait été
+cartographié que sur des corpus de quelques centaines à quelques milliers de
+documents, celui-ci en compte 33 344 raffinés avec 1 087 209 citations.
+
+## Actions
+
+1. Détection des courants sur le corpus gelé — réutiliser ce qui existe
+   (`conception/clustering-comparison.md`, `clustering-validity-positioning.md`)
+   plutôt que repartir de zéro.
+2. Lieux de publication par courant, et leur évolution par période.
+3. Lignées de citation : quelles œuvres fondent quel courant, et par quels
+   relais.
+4. Figures et tableaux dans `deliverables/_shared/`, engendrés, jamais tenus à
+   la main.
+
+## Test
+
+Un courant détecté doit se reconnaître : contrôle sur pièce d'un échantillon
+d'œuvres par courant, lu par l'auteur. Un partitionnement dont les classes ne
+se nomment pas est un partitionnement à refaire, pas un résultat.
+
+## Invariants
+
+- Corpus **gelé** : aucune reconstruction, sinon les chiffres du data paper et
+  ceux de la revue divergent.
+- Aucune analyse reprise du manuscrit Œconomia — voir le garde de 0705.
+
+## Critères de sortie
+
+- [ ] Courants identifiés, nommés, et validés sur pièce par l'auteur
+- [ ] Lieux et lignées produits, avec leurs figures engendrées
+- [ ] Chiffres cohérents avec ceux publiés du corpus

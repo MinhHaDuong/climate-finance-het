@@ -1,0 +1,40 @@
+%erg 0.1
+Title: REL — synthèse narrative : ce que chaque courant établit et laisse ouvert
+Created: 2026-08-21
+Author: haduong
+Blocked-by: 0702
+
+--- log ---
+2026-08-21T12:00Z haduong created
+
+--- body ---
+## Contexte
+
+Enfant de 0700, second mouvement promis à l'éditeur. Pour chaque courant
+identifié en 0702 : ce qu'il établit, et ce qu'il laisse ouvert.
+
+C'est là que la revue cesse d'être bibliométrique. Un compte de citations ne
+dit pas ce qu'un courant a montré ; il faut lire.
+
+## Actions
+
+1. Par courant, lire les œuvres du noyau (≥ 50 citations) et les jalons des
+   lignées.
+2. Rédiger la synthèse : acquis, désaccords vivants, questions ouvertes.
+3. Restituer les désaccords plutôt que les arbitrer d'autorité — la revue
+   cartographie, elle ne tranche pas.
+
+## Invariants
+
+- **Citer ce qu'on détient** : chaque œuvre citée résout vers un plein texte
+  local (`test_cited_works_available.py`), allowlist des inatteignables tenue
+  et purgée quand un texte arrive. Une revue de littérature est le genre où
+  cette discipline se relâche.
+- Une page citée se lit sur la page, jamais interpolée depuis une extraction.
+- Aucun texte repris du manuscrit Œconomia — voir 0705.
+
+## Critères de sortie
+
+- [ ] Un développement par courant, acquis et questions ouvertes distingués
+- [ ] Garde des pleins textes vert sur la bibliographie ajoutée
+- [ ] Passe d'édition d'auteur
