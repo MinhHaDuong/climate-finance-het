@@ -1,0 +1,63 @@
+%erg 0.1
+Title: REL — revue de littérature finance climat : proposition acceptée, haute priorité
+Created: 2026-08-21
+Author: haduong
+Label: needs-human
+
+--- log ---
+2026-08-21T11:00Z haduong created
+
+--- body ---
+## Contexte
+
+**L'éditeur de REL a répondu oui** à la proposition de revue de littérature sur
+la finance climat, et l'auteur place le travail en **haute priorité**
+(2026-08-21). Rien d'autre n'était connu de l'agent au moment du dépôt de ce
+ticket : les inconnues du §Àpréciser sont marquées comme telles plutôt que
+devinées, et doivent être remplies avant que le travail commence.
+
+Ce ticket est ouvert avant le départ en vacances de l'auteur, pour que
+l'information ne se perde pas et que la file reflète la priorité à la reprise.
+Il ne prescrit pas encore le travail.
+
+## À préciser avant de commencer
+
+- [ ] **REL** — nom complet de la revue, et ses consignes aux auteurs
+      (longueur, format des références, politique de preprint)
+- [ ] **Échéance** convenue avec l'éditeur
+- [ ] **Périmètre** arbitré avec l'éditeur : quelle littérature, quelles bornes
+      de période, revue systématique ou essai bibliographique
+- [ ] Existe-t-il déjà un brouillon, ou part-on de zéro ?
+
+## Ce sur quoi ça s'appuie, et qui existe déjà
+
+Le corpus v2 de ce dépôt est directement pertinent et représente l'essentiel du
+travail d'acquisition : 8 sources, 43 179 références unifiées → 33 344
+raffinées, 38 736 × 1024 plongements, 1 087 209 citations raffinées, noyau
+(≥ 50 citations) de 2 644 œuvres, couverture de citation 40/47/69 % par période.
+Gelé le 27/07. Une revue de littérature adossée à ce corpus n'a pas à refaire
+l'acquisition — c'est l'argument principal pour que ce soit ce dépôt qui porte
+le travail.
+
+Voir aussi le papier de périodisation (0026) et le manuscrit Œconomia, dont la
+matière recoupe la revue sans la couvrir.
+
+## Invariants
+
+- La revue **cite ce qu'elle détient** : tout travail cité doit résoudre vers un
+  plein texte local, conformément au garde `test_cited_works_available.py` de ce
+  dépôt et à l'allowlist des inatteignables. Une revue de littérature est
+  précisément le genre où cette discipline se relâche.
+- Orthographe cohérente, variété fixée par la revue, jamais mélangée.
+- Prose éditée en place avec l'auteur, pas derrière un worktree (règle des
+  workpackages de prose).
+
+## Critères de sortie
+
+- [ ] Les quatre inconnues ci-dessus sont renseignées
+- [ ] Périmètre et plan validés par l'auteur
+- [ ] Manuscrit soumis à REL
+- [ ] Registres externes propagés à la soumission : page perso
+      (`Ha-Duong.bib`) **et** feuille de route CNRS — c'est un manuscrit, donc
+      il a une ligne sur la feuille de route, contrairement à un dépôt de
+      données

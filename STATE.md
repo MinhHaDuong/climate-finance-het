@@ -29,6 +29,11 @@ not applied; .dvc/config.local cache.type=symlink — 4 local failures.
 
 ## Submissions
 
+- **REL literature review: proposal ACCEPTED by the editor (2026-08-21) — HIGH
+  PRIORITY.** Ticket 0700, `needs-human`: journal's full name, deadline, agreed
+  scope and whether a draft exists are all still unknown and must be filled
+  before work starts. The v2 corpus below is the asset that makes this cheap —
+  the acquisition is already done.
 - RDJ-26561 rev. 1 resubmitted 2026-07-29; Œconomia v2.0.5 resubmitted 2026-07-21 — both awaiting editor
 
 ## Corpus (v2, built 2026-07-24, frozen 2026-07-27)
