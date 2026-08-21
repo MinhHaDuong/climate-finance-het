@@ -29,6 +29,18 @@ not applied; .dvc/config.local cache.type=symlink — 4 local failures.
 
 ## Submissions
 
+- **REL literature review — INVITED, scope agreed, due ~2026-12-06. HIGH
+  PRIORITY.** *Reviews of Economic Literature* (Stanford UP, open access);
+  proposal 2026-08-06, accepted 2026-08-21 — topic, structure and timeline suit
+  the journal; **acceptance of a proposal is not a promise of publication**. Agreed scope:
+  map and synthesize the field on the v2 corpus (33k works, 1990–2024), a
+  bibliometric pass on strands/venues/citation lineages then a narrative
+  synthesis, with promised attention to how far the research literature engages
+  the four accounting controversies (loan valuation, marker credibility,
+  private-finance attribution, additionality). Hard constraint declared to the
+  editor: **no shared text or analyses with the Œconomia manuscript** — same
+  corpus, opposite direction. Ticket 0700. The v2 corpus is what makes four
+  months tenable; the acquisition is already done.
 - RDJ-26561 rev. 1 resubmitted 2026-07-29; Œconomia v2.0.5 resubmitted 2026-07-21 — both awaiting editor
 
 ## Corpus (v2, built 2026-07-24, frozen 2026-07-27)

@@ -1,0 +1,128 @@
+%erg 0.1
+Title: REL — revue de littérature finance climat : périmètre agréé, livrable début décembre 2026
+Created: 2026-08-21
+Author: haduong
+
+--- log ---
+2026-08-21T11:00Z haduong created
+2026-08-21T11:40Z haduong note Réponse de l'éditeur reçue ; périmètre et calendrier agréés, étiquette needs-human levée
+
+--- body ---
+## Contexte
+
+**Revue sollicitée.** L'éditeur de *Reviews of Economic Literature* (Stanford
+University Press, accès ouvert) a invité l'auteur à proposer une contribution.
+Proposition envoyée le 2026-08-06, **acceptée le 2026-08-21** : la rédaction
+confirme que le sujet et la structure conviennent à la revue et que le
+calendrier proposé lui va.
+
+Deux réserves à retenir : l'acceptation d'une proposition **n'est pas une
+promesse de publication** — le manuscrit passera les contrôles de qualité
+habituels — et l'accord ne porte donc que sur le périmètre, pas sur l'issue.
+
+*(La correspondance elle-même n'est pas versionnée : ce dépôt est public et
+l'échange est privé. Elle vit dans `~/CNRS/papiers/actif/REL_Climate_Finance_Literature_Review/`,
+sous un répertoire d'événement daté — `2026-08-21 proposal accepted/` — selon
+la convention relevée sur les papiers en cours et publiés : un répertoire par
+événement, la correspondance en `.txt` datés, et `releases/` pour les kits.
+Ce ticket porte la substance de l'accord, qui est ce dont le travail dépend.)*
+
+L'accès ouvert du modèle Stanford UP a motivé l'acceptation de l'invitation,
+en cohérence avec l'engagement science ouverte du CNRS.
+
+## Échéance
+
+Quatre mois annoncés dans la proposition du 06/08, calendrier validé par
+l'éditeur. Lecture conservatrice : **2026-12-06**. La lecture généreuse
+(quatre mois depuis la confirmation) donnerait le 21/12 ; ne pas s'y fier sans
+l'écrire à l'éditeur. Il reste environ quinze semaines à la reprise de
+septembre.
+
+## Périmètre agréé — ne pas l'élargir sans en reparler à l'éditeur
+
+Cartographier et synthétiser la littérature de la finance climat, sur la base
+du corpus curé de plus de 33 000 œuvres (1990–2024), multilingue, déposé
+ouvertement avec son réseau de citations et ses plongements
+(`https://doi.org/10.5281/zenodo.19236129`).
+
+L'argument de nouveauté tel qu'il a été vendu : le champ est passé de la
+quasi-inexistence avant 2007 à un domaine vaste et dispersé entre économie,
+politique climatique, énergie et gouvernance — **cartographié jusqu'ici sur des
+corpus de quelques centaines à quelques milliers de documents seulement**.
+L'échelle du corpus est donc la contribution, et le manuscrit doit la faire
+valoir.
+
+Deux mouvements, dans cet ordre :
+
+1. **Analyse bibliométrique** — identifier les principaux courants de
+   recherche, leurs lieux de publication, et leurs lignées de citation.
+2. **Synthèse narrative** — pour chaque courant, ce qu'il établit et ce qu'il
+   laisse ouvert.
+
+**Attention particulière promise à l'éditeur** : dans quelle mesure la
+littérature de recherche s'empare des controverses comptables qui dominent le
+débat de politique publique — **valorisation des prêts, crédibilité des
+marqueurs, attribution de la finance privée, additionnalité** — et où elle
+développe ses propres questions. C'est la partie qui distingue la proposition
+d'une revue bibliométrique ordinaire ; ne pas la laisser se réduire à un
+paragraphe.
+
+## Actifs disponibles — l'acquisition est déjà faite
+
+Corpus v2 de ce dépôt, gelé le 2026-07-27 : 8 sources, 43 179 références
+unifiées → 33 344 raffinées, 38 736 × 1024 plongements, 1 087 209 citations
+raffinées, noyau (≥ 50 citations) de 2 644 œuvres, couverture de citation
+40/47/69 % par période. C'est ce qui rend l'échéance de quatre mois tenable.
+
+Le *data paper* du corpus (RDJ-26561) était annoncé à l'éditeur comme « to
+appear » ; il est en réalité en révision 1, décision attendue. **Vérifier son
+état avant soumission** et ajuster la formulation si la décision n'est pas
+tombée.
+
+## Invariants
+
+- **Aucun texte ni analyse partagés avec le manuscrit Œconomia.** L'auteur l'a
+  déclaré à l'éditeur pour la transparence : les deux travaux utilisent le même
+  corpus en sens opposés — le papier d'histoire demande comment l'objet a été
+  assemblé et n'utilise le corpus que pour corroborer sa périodisation ; la
+  revue cartographie et synthétise la littérature de recherche elle-même, ce
+  que le papier d'histoire ne tente délibérément pas. Cet engagement est une
+  contrainte dure, pas une intention : à la relecture, chasser toute reprise de
+  texte ou d'analyse.
+- **Citer ce qu'on détient.** Une revue de littérature cite massivement et
+  c'est le genre où la discipline se relâche : chaque œuvre citée doit résoudre
+  vers un plein texte local, garde `test_cited_works_available.py`, allowlist
+  des inatteignables tenue à jour et purgée quand un texte arrive.
+- Orthographe cohérente, variété fixée par les consignes de la revue.
+- Prose éditée en place avec l'auteur, pas derrière un worktree.
+
+## Où vivent les choses
+
+| Quoi | Où |
+|---|---|
+| Manuscrit, analyses, figures | `deliverables/literature-review/` de ce dépôt |
+| Correspondance, kits de soumission | `~/CNRS/papiers/actif/REL_Climate_Finance_Literature_Review/` |
+| Corpus | v2 gelé, DOI de concept `10.5281/zenodo.19236129` |
+| Découpe du travail | enfants 0701–0705 |
+
+## Actions
+
+1. Récupérer les consignes aux auteurs de *Reviews of Economic Literature*
+   (longueur, format des références, politique de preprint, licence) — les
+   déposer dans `~/CNRS/papiers/actif/REL_Climate_Finance_Literature_Review/`, dans un
+   `instructions to authors/` comme le fait *Oeconomia — Joint production*.
+2. Plan détaillé des deux mouvements, validé par l'auteur avant rédaction.
+3. Analyse bibliométrique sur le corpus gelé — courants, lieux, lignées.
+4. Synthèse narrative par courant.
+5. Section sur les quatre controverses comptables.
+6. Passe d'édition d'auteur, puis lecteurs.
+
+## Critères de sortie
+
+- [ ] Consignes aux auteurs récupérées et respectées
+- [ ] Plan validé par l'auteur
+- [ ] Zéro texte ou analyse partagés avec le manuscrit Œconomia, vérifié
+- [ ] Garde des pleins textes vert sur la bibliographie de la revue
+- [ ] Manuscrit soumis à REL au plus tard le 2026-12-06
+- [ ] Registres externes propagés : page perso `Ha-Duong.bib` **et** feuille de
+      route CNRS — c'est un manuscrit, donc il y a une ligne

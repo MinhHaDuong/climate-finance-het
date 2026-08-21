@@ -1,0 +1,50 @@
+%erg 0.1
+Title: REL — les quatre controverses comptables : ce que la recherche en fait
+Created: 2026-08-21
+Author: haduong
+Blocked-by: 0702
+
+--- log ---
+2026-08-21T12:00Z haduong created
+
+--- body ---
+## Contexte
+
+Enfant de 0700, et **la partie qui distingue cette proposition d'une revue
+bibliométrique ordinaire**. Elle a été promise nommément à l'éditeur, donc elle
+ne se réduit pas à un paragraphe si le calendrier serre.
+
+Question : dans quelle mesure la littérature de recherche s'empare des
+controverses comptables qui dominent le débat de politique publique — et où
+elle développe ses propres questions au lieu de suivre l'agenda politique.
+
+Les quatre, telles qu'annoncées :
+
+1. **Valorisation des prêts** — à quelle valeur un prêt concessionnel compte.
+2. **Crédibilité des marqueurs** — ce que les marqueurs de Rio mesurent.
+3. **Attribution de la finance privée** — quel privé est mobilisé par quel public.
+4. **Additionnalité** — ce qui s'ajoute à l'aide existante.
+
+## Actions
+
+1. Pour chacune, mesurer la présence dans le corpus : volume, période, courants
+   qui la portent, lieux.
+2. Lire ce que la recherche en dit, et le distinguer de ce que le débat
+   politique en dit.
+3. Écrire le constat d'écart — y compris s'il est faible : un champ qui suit
+   l'agenda politique est un résultat, pas un échec de la mesure.
+4. Nommer les questions propres que la littérature développe hors de cet agenda.
+
+## Invariants
+
+- La donnée `data/book/riomarkers/` appartient au chapitre de livre, **pas** à
+  ce manuscrit — ne pas l'y importer sans arbitrage.
+- Un constat négatif (« la littérature ne s'en empare pas ») est l'affirmation
+  la plus fragile à écrire : l'étayer par une mesure sur le corpus, pas par une
+  impression de lecture.
+
+## Critères de sortie
+
+- [ ] Présence des quatre controverses mesurée sur le corpus
+- [ ] Section rédigée, écart recherche/débat politique établi ou réfuté
+- [ ] Questions propres de la littérature nommées
