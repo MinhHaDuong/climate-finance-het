@@ -12,3 +12,14 @@ deferred
 # Defaults to "origin" -- you update from where you cloned. Point it at upstream
 # to track upstream's binary instead, e.g.:
 # url = https://github.com/MinhHaDuong/git-erg.git
+
+# Posée ici parce que le defaut ne peut pas faire avancer ce depot : `erg update`
+# tire depuis l'origin du depot courant, donc il refetche le binaire que
+# climate-finance-het a lui-meme commite, se compare a lui-meme et repond
+# "already up to date" sans rien faire. C'est la raison pour laquelle le binaire
+# est reste sur celui du 11 juin jusqu'au 2026-09-10.
+# Cout connu et accepte : `.ergrc` devient une "edition locale", donc tout
+# `erg init` ulterieur sort en 2 en le preservant. L'effet reste entier
+# (AGENTS.md est bien rafraichi), seul le code de sortie change. Un chemin de
+# mise a jour mort coute plus cher qu'un code de sortie bruyant.
+url = https://github.com/MinhHaDuong/git-erg.git
