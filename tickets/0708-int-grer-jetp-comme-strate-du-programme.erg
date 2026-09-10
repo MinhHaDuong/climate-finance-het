@@ -1,0 +1,119 @@
+%erg 0.1
+Title: Intégrer JETP comme strate du programme climate finance
+Created: 2026-09-10
+Author: Minh
+Label: needs-human
+
+--- log ---
+2026-09-10T16:00Z Minh created
+2026-09-10T16:02Z Minh filed children 0709, 0710, 0711, 0712
+2026-09-10T17:30Z Minh 0709 done, first PR of the wave — 0710/0711/0712 remain open
+
+--- body ---
+
+## Context
+
+Le programme JETP (Just Energy Transition Partnerships, avec Christophe
+Cassen, CIRED) compte désormais trois papiers en cours plus un dépôt
+historique (hal-04412457, 2024). Il vivait de façon autonome, déplacé le
+2026-09-10 de `~/CNRS/papiers/actif/JETP at two/` vers
+`~/CNRS/projets/actifs/jetp/` (simple `mv`, pas encore réorganisé selon les
+conventions de ce dépôt). L'auteur a tranché aujourd'hui : JETP devient une
+strate de `climate-finance-het` plutôt qu'un projet indépendant.
+
+**Pourquoi.** Les deux programmes mesurent de la finance climat sur données
+OCDE CRS. Le papier court JETP (mécanisme macro, courbe de référence de
+décaissement) et le papier 3 (ledger) construisent leur propre pipeline de
+tirage CRS/IATI (`analyse-crs/pull_crs.py`, `pilote-ledger-vn/iati-crs/`,
+~322 Mo de tirages bruts) qui recoupe vraisemblablement l'infrastructure CRS
+déjà présente ici (`data/book/riomarkers/`, `config/corpus_filter.yaml`,
+pipeline DVC avec padme comme autorité des données). Fusionner évite
+d'entretenir deux pipelines CRS et permet aux papiers de mesure JETP de
+citer/réutiliser une machinerie de construction de corpus déjà vérifiée.
+
+**Ce qui reste hors périmètre**, explicitement (voir Invariants) : le papier 1
+(dépôt 2024) et le dossier AFD-Sénégal avec R. Blachier, mis en pause le
+2026-09-10 (`enquete-afd-senelec-2026-09-09.md`, chiffre central 670 M€ non
+vérifié).
+
+## Relevant files
+
+- `~/CNRS/projets/actifs/jetp/` — emplacement provisoire actuel, tout le
+  contenu y a été déplacé le 2026-09-10 depuis `~/CNRS/papiers/actif/JETP at two/`.
+  Ancien emplacement conservé vide, l'auteur le supprimera lui-même.
+- `~/CNRS/projets/actifs/jetp/cr-reunion-2026-09-08-christophe.md` — CR complet
+  de la réunion du 2026-09-08 : idée de recherche, stratégie de publication
+  (classement à 7 revues par éditeurs simulés), plan détaillé, résultats
+  préliminaires, répartition des rôles, pour les deux papiers court et long.
+- `~/CNRS/projets/actifs/jetp/papier-court-mesure/` — papier court (mesure) :
+  `bloc1-absorbabilite-2026-09-08.{md,csv}`,
+  `courbe-reference-decaissement-2026-09-08.{md,csv}`, `analyse-crs/`.
+- `~/CNRS/projets/actifs/jetp/papier-long-economie-politique/` — papier long
+  (économie politique comparée) : `ancrage-litterature-developpement-2026-09-08.md`,
+  `saturation-angle-absorption-2026-09-08.md` (+ logs),
+  `saturation-biblio-2026-08-10.md` (+ logs), `cible-revue-2026-09-08.md`,
+  `cible-revue-complement-2026-09-08.md`.
+- `~/CNRS/projets/actifs/jetp/papier-3-ledger/` — ledger : `pilote-ledger-vn/`
+  (pilote Vietnam, ~322 Mo, tirages IATI+CRS bruts), `imagine-jetp-ledger-2026-08-10.md`.
+- `~/CNRS/projets/actifs/jetp/papier-1-2024/`, `~/CNRS/projets/actifs/jetp/aside-afd-senelec/`
+  — hors périmètre de ce tracker (voir Invariants).
+- `conception/clustering-comparison.md` — précédent pour atterrir du matériau
+  de recherche orphelin mais réutilisable avant câblage dans un livrable.
+- `data/book/riomarkers/`, `config/corpus_filter.yaml` — infra CRS existante à
+  confronter (0710).
+
+## Actions (ordre des vagues)
+
+1. **0709** — atterrir les deux notes de recherche et le CR en
+   `conception/jetp-*.md`, contenu adapté sans changement de pipeline.
+   Sans blocage, exécuté aujourd'hui.
+2. **0710** — réconcilier `analyse-crs/` + `pilote-ledger-vn/iati-crs/` avec
+   l'infra CRS existante ; décision d'architecture de l'auteur (fusion ou
+   maintien séparé), accès padme si fusion.
+3. **0711** — squelettes de livrables Quarto (`deliverables/jetp-mesure/`,
+   `deliverables/jetp-econpol/`), câblés dans le Makefile / `make papers` /
+   `_vars_registry.py`. Blocked-by 0710.
+4. **0712** — migration complète des notes datées vers leurs nouveaux
+   emplacements, mise en conformité avec les conventions de provenance /
+   marqueur IA de ce dépôt. Blocked-by 0709, 0711.
+
+## Test
+
+- 0709 : aucun (atterrissage de contenu pur, pas de code).
+- 0710 : un tirage CRS pour un pays JETP reproduit les mêmes lignes
+  d'activité via le pipeline réconcilié que `analyse-crs/pull_crs.py`
+  produisait seul (nombre de lignes + valeur totale).
+- 0711 : `make papers` construit les deux nouveaux livrables sans déclencher
+  la classe de références non résolues de `test_render_placeholders.py`.
+
+## Verification
+
+- [ ] 0709 mergé, notes + CR lisibles sous `conception/`
+- [ ] Décision d'architecture 0710 consignée dans son propre journal
+- [ ] Livrables 0711 construisent proprement via `make papers`
+- [ ] Notes migrées 0712 portent les conventions de provenance du dépôt, pas
+      un simple déplacement verbatim
+
+## Invariants
+
+- Le papier 1 (manuscrit 2024) et le dossier AFD-Sénégal restent **hors
+  périmètre** de ce tracker et de tous ses enfants — ils restent dans
+  `~/CNRS/projets/actifs/jetp/` sauf décision séparée, documentée par un
+  nouveau ticket.
+- Aucune mutation de corpus ni DVC avant que la décision d'architecture de
+  0710 soit consignée dans son journal — même discipline que 0540 §Invariants.
+- L'ancien emplacement `~/CNRS/papiers/actif/JETP at two/` n'est touché par
+  aucun enfant de ce tracker ; l'auteur le supprime lui-même quand il le
+  souhaite.
+- La revue de littérature REL (tracker 0700, échéance ~2026-12-06, PRIORITÉ
+  HAUTE) n'est ni bloquée ni concurrencée par ce travail — aucun texte ni
+  analyse partagés avec Œconomia ou la revue REL, même garde que 0705.
+
+## Exit criteria
+
+- 0709, 0710, 0711, 0712 tous fermés (0710 peut fermer sur une décision
+  documentée de « maintien séparé »)
+- Le contenu et le code JETP vivent dans `climate-finance-het`, ou une
+  décision documentée dit le contraire
+- Ancien emplacement autonome vide de tout ce qui n'est pas déjà dupliqué ici
+  (vérification finale de l'auteur, pas de ce tracker)

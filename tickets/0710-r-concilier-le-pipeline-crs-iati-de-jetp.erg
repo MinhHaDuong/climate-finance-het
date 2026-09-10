@@ -1,0 +1,66 @@
+%erg 0.1
+Title: Réconcilier le pipeline CRS-IATI de JETP avec l'infra existante
+Created: 2026-09-10
+Author: Minh
+Label: needs-human
+
+--- log ---
+2026-09-10T16:02Z Minh created
+
+--- body ---
+
+## Context
+
+JETP a construit son propre pipeline de tirage OCDE CRS et IATI
+(`analyse-crs/pull_crs.py`, `pilote-ledger-vn/iati-crs/`, ~322 Mo de tirages
+bruts pour le seul pilote Vietnam) pendant que ce dépôt a déjà une
+infrastructure CRS (`data/book/riomarkers/`, 6 zips CRS ~503 Mo,
+`config/corpus_filter.yaml`, pipeline DVC avec padme comme autorité des
+données — voir README §« Padme is the data authority »). Avant de câbler des
+livrables JETP (0711), il faut décider si les deux pipelines fusionnent ou
+restent séparés.
+
+**Ce n'est pas une décision technique seule** : `data/book/riomarkers/` est
+étiqueté « book chapter, NOT the paper » dans STATE.md — périmètre distinct
+du corpus bibliométrique principal. Fusionner le tirage JETP dedans change ce
+périmètre.
+
+## Relevant files
+
+- `~/CNRS/projets/actifs/jetp/papier-court-mesure/analyse-crs/` (scripts :
+  `pull_crs.py`, `cohortes.py`, `synthese.py`, `livrable_csv.py`, `final.py`)
+- `~/CNRS/projets/actifs/jetp/papier-3-ledger/pilote-ledger-vn/iati-crs/`
+- `data/book/riomarkers/`, `config/corpus_filter.yaml`, `dvc.yaml`
+
+## Actions
+
+1. Comparer le format et le périmètre des deux tirages CRS (dataflow OCDE
+   utilisé, codes secteur, granularité activité vs microdonnées).
+2. Poser la question à l'auteur : fusionner sous DVC/padme, ou garder JETP
+   sur un tirage local léger et documenté séparément ?
+3. Si fusion : migrer `pull_crs.py` en étape DVC (`dvc.yaml`), avec padme
+   comme autorité, en respectant « Doudou only pulls data — never pushes ».
+4. Si maintien séparé : documenter pourquoi dans le journal de ce ticket, et
+   fermer.
+
+## Test
+
+Pour un pays JETP (Vietnam), le tirage réconcilié reproduit le même nombre
+de lignes d'activité et la même valeur totale engagée que
+`analyse-crs/pull_crs.py` en tirage autonome, à la même date de tirage.
+
+## Verification
+
+- [ ] Décision (fusion / séparé) actée dans le journal, avec la justification
+- [ ] Si fusion : `dvc repro` reproduit le tirage JETP depuis ce dépôt
+- [ ] Aucune donnée poussée depuis doudou (règle padme-autorité respectée)
+
+## Invariants
+
+Aucune mutation de corpus ni de `dvc.lock` avant que la décision ne soit
+consignée ici — même discipline que 0540.
+
+## Exit criteria
+
+Décision consignée ; si fusion, pipeline JETP tourne sous DVC/padme et
+`analyse-crs/` autonome est retiré.

@@ -1,0 +1,50 @@
+%erg 0.1
+Title: Migration complète du contenu de recherche JETP
+Created: 2026-09-10
+Author: Minh
+Blocked-by: 0711
+
+--- log ---
+2026-09-10T16:02Z Minh created
+
+2026-09-10T16:22Z HDMX-coding-agent note blocker 0709 closed — Blocked-by removed.
+--- body ---
+
+## Context
+
+Dernier maillon du tracker 0708 : les notes de recherche datées, encore dans
+`~/CNRS/projets/actifs/jetp/`, migrent vers leur emplacement définitif
+(fragment `_includes/` d'un livrable, ou `conception/` si encore orpheline),
+avec mise en conformité aux conventions de provenance de ce dépôt
+(bandeau IA le cas échéant, attributions vérifiées datées — voir
+`conception/clustering-comparison.md` pour le gabarit).
+
+## Relevant files
+
+- `~/CNRS/projets/actifs/jetp/papier-court-mesure/*.md`
+- `~/CNRS/projets/actifs/jetp/papier-long-economie-politique/*.md`
+- `deliverables/jetp-mesure/`, `deliverables/jetp-econpol/` (créés par 0711)
+
+## Actions
+
+1. Pour chaque note datée du 2026-09-08/2026-08-10, décider : fragment câblé
+   dans un livrable, ou `conception/` si son contenu n'est pas encore mûr
+   pour la rédaction finale.
+2. Ajouter le bandeau de provenance requis par ce dépôt.
+3. Vérifier qu'aucune référence croisée ne pointe plus vers l'ancien chemin
+   `~/CNRS/projets/actifs/jetp/`.
+
+## Test
+
+`test_render_placeholders.py` reste vert après migration.
+
+## Verification
+
+- [ ] Chaque note a un domicile unique et définitif
+- [ ] Aucune référence brisée
+
+## Exit criteria
+
+Plus aucun contenu de recherche significatif ne reste hors de
+`climate-finance-het`, à l'exception explicite du papier 1 et du dossier
+AFD-Sénégal (hors périmètre, voir 0708 §Invariants).
