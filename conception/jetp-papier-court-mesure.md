@@ -119,10 +119,9 @@ probabilité une fois la courbe déjà construite.
 - **Anonymisation** : Climate Policy exige un manuscrit anonymisé identique
   au nominatif — le dépôt HAL doit sortir complètement du texte (7/7
   éditeurs simulés le demandent de toute façon, voir le papier long).
-- **Réconciliation de l'infrastructure de tirage CRS** avec celle déjà
-  présente dans ce dépôt (`data/book/riomarkers/`, `config/corpus_filter.yaml`)
-  — ticket 0710, préalable à tout tirage supplémentaire pour l'annexe
-  comptable ou une extension à d'autres pays.
+- **Vérifier qu'aucun tirage CRS équivalent n'existe déjà** ailleurs dans mes
+  projets en cours avant tout nouveau tirage pour l'annexe comptable ou une
+  extension à d'autres pays.
 
 ## Résultats préliminaires
 

@@ -163,9 +163,7 @@ mots sur un format que sept sections comparatives serraient. Le reste
 
 - **Section AFD-Senelec** (5/7 éditeurs simulés la réclament comme le
   matériau le plus sous-exploité du manuscrit, chiffrée par décile pour
-  certains). Bloquée : le dossier séparé avec R. Blachier
-  (`~/CNRS/projets/actifs/jetp/aside-afd-senelec/enquete-afd-senelec-2026-09-09.md`,
-  hors périmètre de l'intégration climate-finance-het) est en pause — sa
+  certains). Bloquée : le dossier séparé avec R. Blachier est en pause — sa
   figure centrale (670 M€ de tranche AFD) s'est révélée non vérifiée,
   contredite en ordre de grandeur par IATI et le CRS. Sans ce point, la
   section devra s'appuyer sur d'autres pièces.
