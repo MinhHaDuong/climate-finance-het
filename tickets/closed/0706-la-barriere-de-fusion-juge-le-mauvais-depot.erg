@@ -1,0 +1,107 @@
+%erg 0.1
+Title: La barrière de fusion juge le dépôt du projet et non celui que vise la commande
+Created: 2026-09-10
+Author: HDMX-coding-agent
+Closed: autoclosed — PR #1317
+
+--- log ---
+2026-09-10T12:00Z HDMX-coding-agent created
+
+2026-09-10T10:57Z HDMX-coding-agent closed — autoclosed — PR #1317
+--- body ---
+## Contexte
+
+Réalisation locale de la décision prise dans le ticket 0900 du harnais, qui
+posait la question de niveau : cette barrière devient-elle une capacité du
+harnais, ou reste-t-elle par projet ? Réponse retenue — par projet, avec le
+contrat écrit et un garde de non-régression dans la suite de tests d'ici.
+
+Motif : il n'existe qu'une seule copie de cette barrière dans tout l'arbre de
+travail, celle-ci. L'argument du ticket 0900 pour la remontée au harnais
+reposait sur « chaque copie héritera du même angle mort » ; l'inventaire
+contredit la prémisse. Et la barrière est saturée de politique locale — sa
+liste d'identités de relecture, sa voie rapide pour les PR de fiches qui cite
+les règles d'ici, ses seuils. Remonter le mécanisme laisserait la substance
+sur place. Ce qui ferait basculer la décision : un second projet consommateur
+qui se dote d'une barrière de fusion. À ce moment-là, la capacité se nomme
+dans le harnais et la partie propre à la forge passe derrière un point
+d'extension.
+
+## Le défaut
+
+`.claude/hooks/check-reviews.sh` portait deux littéraux d'identité de dépôt en
+tête de fichier et ne lisait de la commande que le *numéro* de PR. Une fusion
+lancée depuis ce projet vers un autre dépôt était donc jugée sur la PR de même
+numéro d'ici — une PR réelle, sans rapport — et le verdict était prononcé avec
+aplomb.
+
+Observé le 2026-09-10, les deux sens du même défaut :
+
+| Commande | PR réellement jugée | Relectures | Verdict |
+|---|---|---|---|
+| `merge 859 --repo <harnais>` | « Vannes debrief » (ici) | 1 | AUTORISÉ à tort |
+| `merge 861 --repo <harnais>` | « housekeeping sweep » (ici) | 0 | REFUSÉ à tort |
+
+Le second bloquait la PR qui fichait le ticket 0900 : le bug empêchait son
+propre signalement d'être fusionné.
+
+## Le correctif
+
+Le dépôt visé est désormais *résolu*, jamais supposé, par ordre de force de
+preuve : les champs `owner`/`repo` de l'outil MCP, un sélecteur `--repo`/`-R`
+explicite, le dépôt nommé dans une URL de PR, puis seulement le dépôt distant
+`origin` du répertoire où la commande s'exécute — que la charge utile du hook
+fournit dans son champ `cwd`. Ce dernier est une mesure de ce que `gh`
+résoudrait lui-même, pas une conjecture à son sujet.
+
+Quand la cible n'est pas déterminable — pas de sélecteur et pas de dépôt
+distant GitHub, un `cd` dans la commande qui déplace la cible hors de ce que
+`cwd` décrit, ou une PR sans numéro comme `gh pr merge --squash` — le hook
+répond `ask`. C'est la seule réponse qui n'est ni un blanc-seing ni un blocage
+de travail légitime : elle rend la main. C'était le défaut de forme que le
+ticket 0900 nommait — un « autorisé » indiscernable d'un « je n'ai pas pu
+regarder ».
+
+Le motif de chaque verdict nomme maintenant l'objet jugé
+(`<propriétaire>/<dépôt>#<numéro>`), pour qu'une lecture du mauvais dépôt soit
+visible au lieu d'être muette.
+
+## Fichiers concernés
+
+- `.claude/hooks/check-reviews.sh` — résolution de la cible et abstention
+- `tests/test_check_reviews.py` — les tests rouges d'abord, et le garde
+
+## Test
+
+Treize tests, rouges d'abord, en trois familles — la description « douze tests
+à dépôts en désaccord » d'une première rédaction était fausse et est corrigée
+ici : six seulement emploient cette technique.
+
+1. **Six tests à dépôts en désaccord** (`TestGateJudgesTheTargetedRepo`). Le
+   contrôle positif est obligatoire, parce que le défaut se cache derrière un
+   verdict plausible : chaque cas garnit le *mauvais* dépôt de l'état de
+   relecture **inverse**, de sorte qu'un hook qui lit le mauvais rend le verdict
+   opposé et non un verdict juste par accident. Un montage où les deux dépôts
+   s'accordent passerait avant comme après et ne prouverait rien.
+2. **Cinq tests d'abstention** (`TestUndeterminableRepoAbstains`), un par
+   chemin par lequel la cible devient indéterminable.
+3. **Deux gardes de source** (`TestNoRepoIdentityLiteralSurvives`).
+
+La relecture du ticket 0900 a montré que les gardes de source n'attrapent que
+le littéral écrit tel quel : une variante à littéral scindé
+(`_proj = 'climate' + '-finance' + '-het'`) les passe au vert toutes les deux.
+Ce sont les tests de comportement qui attrapent la classe — cette variante
+remplaçait le repli d'abstention, et deux tests d'abstention sont passés au
+rouge sur elle. Les gardes de source restent comme cliquet de lisibilité, pas
+comme rempart.
+
+## Exit criteria
+
+- [x] Le hook statue sur le dépôt réellement visé par la commande
+- [x] Dépôt non déterminable → abstention explicite (`ask`), jamais une supposition
+- [x] Numéro de PR non déterminable sur une commande de fusion → même abstention
+- [x] Des tests rouges d'abord, dont six avec les deux dépôts en désaccord
+      dans les deux sens
+- [x] Aucun littéral d'identité de dépôt ne subsiste dans la logique de décision,
+      et un garde de la suite l'empêche de revenir
+- [x] Les 24 tests préexistants de la barrière restent verts

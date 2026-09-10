@@ -568,3 +568,312 @@ class TestHookRegistration:
             "HDMX-coding-agent is a git author name, not a forge account "
             "(`gh api users/HDMX-coding-agent` → 404); it can never author a review."
         )
+
+
+# --- Which repo the gate judges (ticket 0900) ---
+
+# The two slugs of the experiment in harness ticket 0900. The gate lives in
+# this project, so `OTHER_REPO` is the repo a command can target from here
+# while the hook, before the fix, silently answered about `OWN_REPO`.
+OWN_REPO = "MinhHaDuong/climate-finance-het"
+OTHER_REPO = "MinhHaDuong/ImperialDragonHarness"
+
+_TWO_REVIEWS = json.dumps(
+    [{"user": {"login": "MinhHaDuong"}}, {"user": {"login": "MinhHaDuong"}}]
+)
+_NO_REVIEWS = "[]"
+
+
+def make_payload(command: str, cwd: str | None = None) -> str:
+    """Hook stdin for a Bash call, with the session cwd the payload carries.
+
+    Claude Code sends `cwd` at the top level of every hook payload. That is
+    the directory the command runs in, hence the repo `gh` resolves when the
+    command names none — the only non-guessing answer available to the hook.
+    """
+    payload: dict = {"tool_input": {"command": command}}
+    if cwd is not None:
+        payload["cwd"] = cwd
+    return json.dumps(payload)
+
+
+def decision_of(result: dict) -> str:
+    return result["stdout"]["hookSpecificOutput"]["permissionDecision"]
+
+
+@pytest.mark.integration
+class TestGateJudgesTheTargetedRepo:
+    """The gate must answer about the repo the command targets.
+
+    Harness ticket 0900: the hook carried two repo-identity literals and never
+    read the `--repo` selector, so a merge command issued from this project
+    against another repo was judged on *this* repo's PR of the same number —
+    a real PR, an unrelated one, and the verdict was pronounced on it.
+
+    Every test here is a positive control in the ticket's sense: the wrong
+    repo is stocked with the *opposite* review state, so a hook that reads the
+    wrong one returns the opposite verdict rather than an accidentally correct
+    one. A fixture where both repos agree would pass before and after the fix
+    and would prove nothing.
+    """
+
+    def test_targeted_repo_unreviewed_is_denied_though_own_repo_is_reviewed(
+        self, tmp_path
+    ):
+        """The false allow of 2026-09-10, in miniature.
+
+        PR 859 on the targeted repo has no review and must be refused. PR 859
+        on this project has two and would be waved through. Before the fix the
+        hook allowed the merge, having checked a PR nobody asked about.
+        """
+        result = run_hook(
+            make_payload(f"gh pr merge 859 --repo {OTHER_REPO}"),
+            gh_responses={
+                f"{OTHER_REPO}/pulls/859/reviews": _NO_REVIEWS,
+                f"{OTHER_REPO}/issues/859/labels": "[]",
+                f"{OWN_REPO}/pulls/859/reviews": _TWO_REVIEWS,
+                f"{OWN_REPO}/issues/859/labels": "[]",
+            },
+            tmp_path=tmp_path,
+        )
+        assert decision_of(result) == "deny"
+
+    def test_targeted_repo_reviewed_is_allowed_though_own_repo_is_not(self, tmp_path):
+        """The false deny an hour later — the bug blocking its own ticket.
+
+        PR 861 on the targeted repo carries the two reviews the gate wants.
+        PR 861 here carries none. Before the fix the hook denied a merge that
+        had been reviewed exactly as required.
+        """
+        result = run_hook(
+            make_payload(f"gh pr merge 861 --repo {OTHER_REPO}"),
+            gh_responses={
+                f"{OTHER_REPO}/pulls/861/reviews": _TWO_REVIEWS,
+                f"{OTHER_REPO}/issues/861/labels": "[]",
+                f"{OWN_REPO}/pulls/861/reviews": _NO_REVIEWS,
+                f"{OWN_REPO}/issues/861/labels": "[]",
+            },
+            tmp_path=tmp_path,
+        )
+        assert decision_of(result) == "allow"
+
+    def test_short_repo_flag_is_read(self, tmp_path):
+        """`-R` is the same selector spelled shorter, and gh accepts both."""
+        result = run_hook(
+            make_payload(f"gh pr merge 861 -R {OTHER_REPO}"),
+            gh_responses={
+                f"{OTHER_REPO}/pulls/861/reviews": _TWO_REVIEWS,
+                f"{OTHER_REPO}/issues/861/labels": "[]",
+                f"{OWN_REPO}/pulls/861/reviews": _NO_REVIEWS,
+                f"{OWN_REPO}/issues/861/labels": "[]",
+            },
+            tmp_path=tmp_path,
+        )
+        assert decision_of(result) == "allow"
+
+    def test_pr_url_names_its_own_repo(self, tmp_path):
+        """A PR URL carries owner and repo; the gate must not ignore them."""
+        result = run_hook(
+            make_payload(f"gh pr merge https://github.com/{OTHER_REPO}/pull/861"),
+            gh_responses={
+                f"{OTHER_REPO}/pulls/861/reviews": _TWO_REVIEWS,
+                f"{OTHER_REPO}/issues/861/labels": "[]",
+                f"{OWN_REPO}/pulls/861/reviews": _NO_REVIEWS,
+                f"{OWN_REPO}/issues/861/labels": "[]",
+            },
+            tmp_path=tmp_path,
+        )
+        assert decision_of(result) == "allow"
+
+    def test_mcp_owner_and_repo_fields_are_read(self, tmp_path):
+        """The MCP merge tool names the repo in its own fields."""
+        owner, name = OTHER_REPO.split("/")
+        payload = json.dumps(
+            {"tool_input": {"owner": owner, "repo": name, "pullNumber": 861}}
+        )
+        result = run_hook(
+            payload,
+            gh_responses={
+                f"{OTHER_REPO}/pulls/861/reviews": _TWO_REVIEWS,
+                f"{OTHER_REPO}/issues/861/labels": "[]",
+                f"{OWN_REPO}/pulls/861/reviews": _NO_REVIEWS,
+                f"{OWN_REPO}/issues/861/labels": "[]",
+            },
+            tmp_path=tmp_path,
+        )
+        assert decision_of(result) == "allow"
+
+    def test_bare_number_resolves_against_the_session_cwd(self, tmp_path):
+        """No selector → the repo `gh` itself would resolve: the cwd's remote.
+
+        This is a measurement, not the guess the ticket forbids: it reads the
+        origin remote of the directory the command runs in. Here that cwd is
+        a scratch clone whose origin is the *other* repo, so a hook still
+        answering about its own project returns the opposite verdict.
+        """
+        clone = tmp_path / "elsewhere"
+        clone.mkdir()
+        subprocess.run(["git", "init", "-q", str(clone)], check=True)
+        subprocess.run(
+            ["git", "-C", str(clone), "remote", "add", "origin",
+             f"git@github.com:{OTHER_REPO}.git"],
+            check=True,
+        )
+        result = run_hook(
+            make_payload("gh pr merge 861", cwd=str(clone)),
+            gh_responses={
+                f"{OTHER_REPO}/pulls/861/reviews": _TWO_REVIEWS,
+                f"{OTHER_REPO}/issues/861/labels": "[]",
+                f"{OWN_REPO}/pulls/861/reviews": _NO_REVIEWS,
+                f"{OWN_REPO}/issues/861/labels": "[]",
+            },
+            tmp_path=tmp_path,
+        )
+        assert decision_of(result) == "allow"
+
+
+@pytest.mark.integration
+class TestUndeterminableRepoAbstains:
+    """Cannot tell which repo → say so, never answer about a guess.
+
+    The ticket's form defect: the hook emitted an "allow" indistinguishable
+    from "I could not look". `ask` is the one verdict that is neither — it
+    neither waves the merge through nor blocks a legitimate one, it hands the
+    call back. A deny here would be just as wrong in the other direction: the
+    gate would be refusing merges it has no opinion about.
+    """
+
+    def test_cwd_outside_any_repo_abstains(self, tmp_path):
+        """No selector and a cwd with no origin remote → nothing to measure."""
+        nowhere = tmp_path / "nowhere"
+        nowhere.mkdir()
+        result = run_hook(
+            make_payload("gh pr merge 861", cwd=str(nowhere)),
+            gh_responses={
+                f"{OWN_REPO}/pulls/861/reviews": _TWO_REVIEWS,
+                f"{OWN_REPO}/issues/861/labels": "[]",
+            },
+            tmp_path=tmp_path,
+        )
+        assert decision_of(result) == "ask"
+
+    def test_directory_change_in_the_command_abstains(self, tmp_path):
+        """A `cd` moves the merge somewhere the payload cwd no longer describes."""
+        result = run_hook(
+            make_payload("cd ../other-project && gh pr merge 861", cwd="/tmp"),
+            gh_responses={
+                f"{OWN_REPO}/pulls/861/reviews": _TWO_REVIEWS,
+                f"{OWN_REPO}/issues/861/labels": "[]",
+            },
+            tmp_path=tmp_path,
+        )
+        assert decision_of(result) == "ask"
+
+    def test_non_github_remote_abstains(self, tmp_path):
+        """The gate speaks one forge's API; another host is not its business."""
+        clone = tmp_path / "gitlab-clone"
+        clone.mkdir()
+        subprocess.run(["git", "init", "-q", str(clone)], check=True)
+        subprocess.run(
+            ["git", "-C", str(clone), "remote", "add", "origin",
+             "git@gitlab.com:someone/elsewhere.git"],
+            check=True,
+        )
+        result = run_hook(
+            make_payload("gh pr merge 861", cwd=str(clone)),
+            tmp_path=tmp_path,
+        )
+        assert decision_of(result) == "ask"
+
+    def test_pr_merge_without_a_number_abstains(self, tmp_path):
+        """`gh pr merge --squash` merges the current branch's PR, unnamed.
+
+        The number is as undeterminable as the repo, and the same rule applies:
+        before the fix this returned "allow", the exact shape the ticket's
+        "défaut de forme" section names. A command that is not a PR merge at
+        all still allows — see `test_no_pr_number_allows`; the gate has no
+        opinion about `git merge`, which is different from having lost track
+        of a PR merge it was asked to judge.
+        """
+        result = run_hook(
+            make_payload("gh pr merge --squash --delete-branch", cwd="/tmp"),
+            tmp_path=tmp_path,
+        )
+        assert decision_of(result) == "ask"
+
+
+    def test_mcp_without_owner_and_repo_abstains(self, tmp_path):
+        """The MCP tool can send a PR number and name no repo at all.
+
+        Closing a bypass shape found in review: a repo identity reintroduced on
+        this path would be invisible to the command-line cases above, since no
+        `--repo` selector and no command string are involved. The behavioural
+        tests are what catch a reintroduced literal — the two source guards
+        below only catch it spelled verbatim — so this path needs one of its
+        own.
+        """
+        nowhere = tmp_path / "mcp-nowhere"
+        nowhere.mkdir()
+        payload = json.dumps({"cwd": str(nowhere), "tool_input": {"pullNumber": 861}})
+        result = run_hook(
+            payload,
+            gh_responses={
+                f"{OWN_REPO}/pulls/861/reviews": _TWO_REVIEWS,
+                f"{OWN_REPO}/issues/861/labels": "[]",
+            },
+            tmp_path=tmp_path,
+        )
+        assert decision_of(result) == "ask"
+
+
+class TestNoRepoIdentityLiteralSurvives:
+    """Exit criterion 5: the decision logic names no repo of its own.
+
+    A literal is what made the gate answer about the wrong PR while believing
+    it had checked the right one. The gate stays in this repo, so nothing but a
+    test stops a future edit from reintroducing the identity it just lost.
+
+    These two catch the defect spelled verbatim, and only that. A red-team pass
+    on the decision PR built a split-literal variant
+    (``_proj = 'climate' + '-finance' + '-het'``) that passes both of them. The
+    guard against the *class* is the behavioural suite above: that variant
+    replaced the abstention fallback, and ``test_cwd_outside_any_repo_abstains``
+    and ``test_non_github_remote_abstains`` both went red on it. Read these two
+    as a readability ratchet — a literal is easy to see and easy to grep — and
+    the behavioural tests as the guard that actually holds.
+    """
+
+    REPO_NAME_LITERALS = ("climate-finance-het", "oeconomia-climate-finance")
+
+    def _code_lines(self) -> list[str]:
+        """Script lines with comments and blanks removed."""
+        out = []
+        for line in HOOK_SCRIPT.read_text().splitlines():
+            stripped = line.strip()
+            if not stripped or stripped.startswith("#"):
+                continue
+            out.append(line)
+        return out
+
+    def test_no_repo_identity_assignment(self):
+        """No `OWNER=`/`REPO=` literal at the top of the script."""
+        offenders = [
+            ln
+            for ln in self._code_lines()
+            if re.match(r'^\s*(OWNER|REPO)=["\']?[A-Za-z0-9_.-]+["\']?\s*$', ln)
+        ]
+        assert not offenders, (
+            f"repo identity is hardcoded again: {offenders}. The gate must "
+            "resolve the repo from the command it is judging."
+        )
+
+    def test_no_repo_name_in_executable_code(self):
+        """This project's slug appears in prose only, never in the logic."""
+        offenders = [
+            ln
+            for ln in self._code_lines()
+            if any(lit in ln for lit in self.REPO_NAME_LITERALS)
+        ]
+        assert not offenders, (
+            f"a repo name literal is back in the decision logic: {offenders}"
+        )
