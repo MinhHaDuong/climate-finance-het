@@ -6,6 +6,7 @@ Author: Minh
 --- log ---
 2026-09-10T16:02Z Minh created
 2026-09-10T17:30Z Minh done — trois notes dans conception/, contenu recadré par papier (pas une copie brute du CR), voir body pour le détail
+2026-09-10T18:20Z Minh correction — le CR va dans conception/reunions/, pas à la racine de conception/ ; les deux notes de recherche par papier restent à la racine ; PDF générés pour les trois (pandoc/xelatex, DejaVu Serif, tex_math_dollars désactivé — les montants en $ cassaient le rendu)
 
 --- body ---
 
@@ -38,7 +39,9 @@ câblé dans un livrable.
    résultats préliminaires, répartition des rôles — pour le papier court.
 2. Écrire `conception/jetp-papier-long-economie-politique.md` : mêmes
    rubriques pour le papier long.
-3. Écrire `conception/jetp-cr-reunion-2026-09-08.md` (copie adaptée du CR).
+3. Écrire `conception/reunions/jetp-cr-reunion-2026-09-08.md` (copie adaptée
+   du CR — les comptes-rendus de réunion vont dans ce sous-dossier, pas à la
+   racine de `conception/`).
 4. Ajouter un bandeau de provenance en tête de chaque fichier (date, origine,
    « matériau de conception, pas encore câblé dans un livrable »).
 
