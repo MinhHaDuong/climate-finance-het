@@ -534,10 +534,22 @@ class TestHookRegistration:
             if "check-reviews.sh" in h.get("command", "")
         ]
         assert handlers, "the gate is not registered under a matcher firing on Bash"
-        unfiltered = [h for h in handlers if "gh pr merge" not in h.get("if", "")]
+        # Each handler must narrow to *a* merge command. There is more than one
+        # spelling: the porcelain `gh pr merge`, and the REST form the harness's
+        # worktree guard prescribes (ticket 0707). What must never appear is a
+        # handler with no filter at all.
+        MERGE_FORMS = ("gh pr merge", "pulls/")
+        unfiltered = [
+            h
+            for h in handlers
+            if not any(form in h.get("if", "") for form in MERGE_FORMS)
+        ]
         assert not unfiltered, (
-            "A Bash-matcher gate with no `if` filter for 'gh pr merge' runs on "
+            "A Bash-matcher gate with no `if` filter for a merge command runs on "
             f"every Bash call: {unfiltered}"
+        )
+        assert any("gh pr merge" in h.get("if", "") for h in handlers), (
+            "no handler covers the porcelain `gh pr merge` form"
         )
 
     def test_no_matcher_uses_permission_rule_syntax(self):
@@ -826,6 +838,32 @@ class TestUndeterminableRepoAbstains:
         assert decision_of(result) == "ask"
 
 
+    def test_no_cwd_and_no_project_dir_abstains(self, tmp_path):
+        """Neither a payload `cwd` nor CLAUDE_PROJECT_DIR — nothing to measure.
+
+        `run_hook` always injects CLAUDE_PROJECT_DIR, so no other test reaches
+        this fallback; a red-team variant hid a repo identity there and passed
+        the whole suite. Run the hook the way production can actually call it.
+        """
+        mock_dir = tmp_path / "bare"
+        mock_dir.mkdir()
+        gh = mock_dir / "gh"
+        gh.write_text("#!/bin/bash\necho '[]'\nexit 0\n")
+        gh.chmod(0o755)
+        env = {
+            "PATH": f"{mock_dir}:{os.environ.get('PATH', '')}",
+            "HOME": str(tmp_path),
+            "GH_TOKEN": "fake-token",
+        }
+        proc = subprocess.run(
+            ["bash", str(HOOK_SCRIPT)],
+            input=json.dumps({"tool_input": {"pullNumber": 861}}),
+            capture_output=True, text=True, env=env, timeout=10, cwd=str(tmp_path),
+        )
+        decision = json.loads(proc.stdout)["hookSpecificOutput"]["permissionDecision"]
+        assert decision == "ask"
+
+
 class TestNoRepoIdentityLiteralSurvives:
     """Exit criterion 5: the decision logic names no repo of its own.
 
@@ -839,8 +877,15 @@ class TestNoRepoIdentityLiteralSurvives:
     guard against the *class* is the behavioural suite above: that variant
     replaced the abstention fallback, and ``test_cwd_outside_any_repo_abstains``
     and ``test_non_github_remote_abstains`` both went red on it. Read these two
-    as a readability ratchet — a literal is easy to see and easy to grep — and
-    the behavioural tests as the guard that actually holds.
+    as a readability ratchet: a literal is easy to see and easy to grep.
+
+    What the behavioural tests promise is narrower than "the guard that holds",
+    which is how this docstring first put it. They cover the resolution paths
+    the hook actually has — and a later red-team pass proved the point by
+    hiding an identity in the one fallback no test reached, passing all 37
+    (ticket 0707 covers that path now). No finite set of source checks catches
+    an arbitrarily obfuscated reintroduction; the real protection for a short
+    script is that someone reads it.
     """
 
     REPO_NAME_LITERALS = ("climate-finance-het", "oeconomia-climate-finance")
@@ -877,3 +922,133 @@ class TestNoRepoIdentityLiteralSurvives:
         assert not offenders, (
             f"a repo name literal is back in the decision logic: {offenders}"
         )
+
+
+# --- Merge commands the gate never saw (ticket 0707) ---
+
+
+@pytest.mark.integration
+class TestApiMergeFormIsGated:
+    """`gh api .../pulls/N/merge -X PUT` merges a PR. The gate must judge it.
+
+    Found by a red-team pass on the 0900 decision. The hook recognised only
+    `gh pr merge`, so the REST form returned "Not a pull-request merge — the
+    review gate does not apply": a confident allow, about a command that
+    merges a pull request. It is the same defect 0900 exists to kill, one
+    spelling further along.
+
+    It is not an exotic spelling either. `scripts/block-pr-merge-in-worktree.sh`
+    in the harness — a guard that fires in every worktree session — prints this
+    exact command as the prescribed workaround when `gh pr merge` refuses to run
+    from a worktree. An agent following the harness's own instructions took the
+    one path the gate could not see.
+    """
+
+    def test_api_merge_is_judged_on_the_repo_in_its_path(self, tmp_path):
+        """The API path names owner, repo and number; all three must be read."""
+        result = run_hook(
+            make_payload(
+                f"gh api repos/{OTHER_REPO}/pulls/859/merge -X PUT -f merge_method=squash"
+            ),
+            gh_responses={
+                f"{OTHER_REPO}/pulls/859/reviews": _NO_REVIEWS,
+                f"{OTHER_REPO}/issues/859/labels": "[]",
+                f"{OWN_REPO}/pulls/859/reviews": _TWO_REVIEWS,
+                f"{OWN_REPO}/issues/859/labels": "[]",
+            },
+            tmp_path=tmp_path,
+        )
+        assert decision_of(result) == "deny"
+
+    def test_api_merge_allows_when_the_targeted_pr_is_reviewed(self, tmp_path):
+        """The gate must not simply block the REST form — it must judge it."""
+        result = run_hook(
+            make_payload(f"gh api repos/{OTHER_REPO}/pulls/861/merge -X PUT"),
+            gh_responses={
+                f"{OTHER_REPO}/pulls/861/reviews": _TWO_REVIEWS,
+                f"{OTHER_REPO}/issues/861/labels": "[]",
+                f"{OWN_REPO}/pulls/861/reviews": _NO_REVIEWS,
+                f"{OWN_REPO}/issues/861/labels": "[]",
+            },
+            tmp_path=tmp_path,
+        )
+        assert decision_of(result) == "allow"
+
+    def test_reading_a_pr_through_the_api_is_not_a_merge(self, tmp_path):
+        """`gh api .../pulls/861` without the merge sub-path is a read."""
+        result = run_hook(
+            make_payload(f"gh api repos/{OTHER_REPO}/pulls/861"),
+            tmp_path=tmp_path,
+        )
+        assert decision_of(result) == "allow"
+
+
+class TestApiMergeFormReachesTheHook:
+    """A correct gate wired to a filter that never fires is not a gate.
+
+    The behavioural tests above run the hook directly, which is exactly how the
+    bypass hid: in production the handler's `if` filter was `Bash(gh pr merge *)`,
+    so the REST form never reached the script at all. Both layers have to know
+    about it — ticket 0365 learned the same lesson about `matcher`.
+    """
+
+    def test_if_filter_covers_the_api_merge_form(self):
+        handlers = [
+            h
+            for entry in pretooluse_entries()
+            if matches_tool(entry.get("matcher", ""), "Bash")
+            for h in entry.get("hooks", [])
+            if "check-reviews.sh" in h.get("command", "")
+        ]
+        assert handlers, "the gate is not registered under a matcher firing on Bash"
+        assert any("pulls/" in h.get("if", "") for h in handlers), (
+            "no `if` filter fires on `gh api .../pulls/N/merge`, the form the "
+            f"harness's own worktree guard prescribes: {[h.get('if') for h in handlers]}"
+        )
+
+
+@pytest.mark.integration
+class TestDefaultRepoBeatsOriginRemote:
+    """`gh repo set-default` decides what a bare `gh pr merge` targets.
+
+    The hook resolved a selector-less command by reading the `origin` remote,
+    and called that "a measurement of what gh would resolve". Under a fork
+    topology — `origin` the fork, `upstream` the source, `gh repo set-default`
+    pointing at the latter — gh resolves the default repo and the hook resolved
+    origin, so the gate again answered confidently about a repo nobody targeted.
+    `gh` records the choice as `remote.<name>.gh-resolved` in git config.
+    """
+
+    def _clone_with_default(self, tmp_path):
+        clone = tmp_path / "fork-clone"
+        clone.mkdir()
+        subprocess.run(["git", "init", "-q", str(clone)], check=True)
+        subprocess.run(
+            ["git", "-C", str(clone), "remote", "add", "origin",
+             f"git@github.com:{OWN_REPO}.git"],
+            check=True,
+        )
+        subprocess.run(
+            ["git", "-C", str(clone), "remote", "add", "upstream",
+             f"git@github.com:{OTHER_REPO}.git"],
+            check=True,
+        )
+        subprocess.run(
+            ["git", "-C", str(clone), "config", "remote.upstream.gh-resolved", "base"],
+            check=True,
+        )
+        return clone
+
+    def test_resolved_default_repo_wins_over_origin(self, tmp_path):
+        clone = self._clone_with_default(tmp_path)
+        result = run_hook(
+            make_payload("gh pr merge 861", cwd=str(clone)),
+            gh_responses={
+                f"{OTHER_REPO}/pulls/861/reviews": _TWO_REVIEWS,
+                f"{OTHER_REPO}/issues/861/labels": "[]",
+                f"{OWN_REPO}/pulls/861/reviews": _NO_REVIEWS,
+                f"{OWN_REPO}/issues/861/labels": "[]",
+            },
+            tmp_path=tmp_path,
+        )
+        assert decision_of(result) == "allow"

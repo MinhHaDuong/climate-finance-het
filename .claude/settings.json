@@ -33,6 +33,11 @@
             "type": "command",
             "if": "Bash(gh pr merge *)",
             "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/check-reviews.sh"
+          },
+          {
+            "type": "command",
+            "if": "Bash(gh api *pulls/*/merge*)",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/check-reviews.sh"
           }
         ]
       },
