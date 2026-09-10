@@ -802,13 +802,45 @@ class TestUndeterminableRepoAbstains:
         assert decision_of(result) == "ask"
 
 
+    def test_mcp_without_owner_and_repo_abstains(self, tmp_path):
+        """The MCP tool can send a PR number and name no repo at all.
+
+        Closing a bypass shape found in review: a repo identity reintroduced on
+        this path would be invisible to the command-line cases above, since no
+        `--repo` selector and no command string are involved. The behavioural
+        tests are what catch a reintroduced literal — the two source guards
+        below only catch it spelled verbatim — so this path needs one of its
+        own.
+        """
+        nowhere = tmp_path / "mcp-nowhere"
+        nowhere.mkdir()
+        payload = json.dumps({"cwd": str(nowhere), "tool_input": {"pullNumber": 861}})
+        result = run_hook(
+            payload,
+            gh_responses={
+                f"{OWN_REPO}/pulls/861/reviews": _TWO_REVIEWS,
+                f"{OWN_REPO}/issues/861/labels": "[]",
+            },
+            tmp_path=tmp_path,
+        )
+        assert decision_of(result) == "ask"
+
+
 class TestNoRepoIdentityLiteralSurvives:
     """Exit criterion 5: the decision logic names no repo of its own.
 
     A literal is what made the gate answer about the wrong PR while believing
-    it had checked the right one. This is the anti-drift guard the per-project
-    decision rests on: the gate stays in this repo, so nothing but a test stops
-    a future edit from reintroducing the identity it just lost.
+    it had checked the right one. The gate stays in this repo, so nothing but a
+    test stops a future edit from reintroducing the identity it just lost.
+
+    These two catch the defect spelled verbatim, and only that. A red-team pass
+    on the decision PR built a split-literal variant
+    (``_proj = 'climate' + '-finance' + '-het'``) that passes both of them. The
+    guard against the *class* is the behavioural suite above: that variant
+    replaced the abstention fallback, and ``test_cwd_outside_any_repo_abstains``
+    and ``test_non_github_remote_abstains`` both went red on it. Read these two
+    as a readability ratchet — a literal is easy to see and easy to grep — and
+    the behavioural tests as the guard that actually holds.
     """
 
     REPO_NAME_LITERALS = ("climate-finance-het", "oeconomia-climate-finance")

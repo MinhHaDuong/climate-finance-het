@@ -71,18 +71,35 @@ visible au lieu d'être muette.
 
 ## Test
 
-Le contrôle positif est obligatoire, parce que le défaut se cache derrière un
-verdict plausible : chaque cas garnit le *mauvais* dépôt de l'état de relecture
-**inverse**, de sorte qu'un hook qui lit le mauvais rend le verdict opposé et
-non un verdict juste par accident. Un montage où les deux dépôts s'accordent
-passerait avant comme après et ne prouverait rien.
+Treize tests, rouges d'abord, en trois familles — la description « douze tests
+à dépôts en désaccord » d'une première rédaction était fausse et est corrigée
+ici : six seulement emploient cette technique.
+
+1. **Six tests à dépôts en désaccord** (`TestGateJudgesTheTargetedRepo`). Le
+   contrôle positif est obligatoire, parce que le défaut se cache derrière un
+   verdict plausible : chaque cas garnit le *mauvais* dépôt de l'état de
+   relecture **inverse**, de sorte qu'un hook qui lit le mauvais rend le verdict
+   opposé et non un verdict juste par accident. Un montage où les deux dépôts
+   s'accordent passerait avant comme après et ne prouverait rien.
+2. **Cinq tests d'abstention** (`TestUndeterminableRepoAbstains`), un par
+   chemin par lequel la cible devient indéterminable.
+3. **Deux gardes de source** (`TestNoRepoIdentityLiteralSurvives`).
+
+La relecture du ticket 0900 a montré que les gardes de source n'attrapent que
+le littéral écrit tel quel : une variante à littéral scindé
+(`_proj = 'climate' + '-finance' + '-het'`) les passe au vert toutes les deux.
+Ce sont les tests de comportement qui attrapent la classe — cette variante
+remplaçait le repli d'abstention, et deux tests d'abstention sont passés au
+rouge sur elle. Les gardes de source restent comme cliquet de lisibilité, pas
+comme rempart.
 
 ## Exit criteria
 
 - [x] Le hook statue sur le dépôt réellement visé par la commande
 - [x] Dépôt non déterminable → abstention explicite (`ask`), jamais une supposition
 - [x] Numéro de PR non déterminable sur une commande de fusion → même abstention
-- [x] Un test rouge d'abord, avec les deux dépôts en désaccord dans les deux sens
+- [x] Des tests rouges d'abord, dont six avec les deux dépôts en désaccord
+      dans les deux sens
 - [x] Aucun littéral d'identité de dépôt ne subsiste dans la logique de décision,
       et un garde de la suite l'empêche de revenir
 - [x] Les 24 tests préexistants de la barrière restent verts
