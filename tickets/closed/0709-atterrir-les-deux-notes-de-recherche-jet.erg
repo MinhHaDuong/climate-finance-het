@@ -2,12 +2,14 @@
 Title: Atterrir les deux notes de recherche JETP et le CR en conception
 Created: 2026-09-10
 Author: Minh
+Closed: autoclosed — PR #1319
 
 --- log ---
 2026-09-10T16:02Z Minh created
 2026-09-10T17:30Z Minh done — trois notes dans conception/, contenu recadré par papier (pas une copie brute du CR), voir body pour le détail
 2026-09-10T18:20Z Minh correction — le CR va dans conception/reunions/, pas à la racine de conception/ ; les deux notes de recherche par papier restent à la racine ; PDF générés pour les trois (pandoc/xelatex, DejaVu Serif, tex_math_dollars désactivé — les montants en $ cassaient le rendu)
 
+2026-09-10T16:22Z HDMX-coding-agent closed — autoclosed — PR #1319
 --- body ---
 
 ## Context
