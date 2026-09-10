@@ -1,0 +1,63 @@
+%erg 0.1
+Title: Atterrir les deux notes de recherche JETP et le CR en conception
+Created: 2026-09-10
+Author: Minh
+
+--- log ---
+2026-09-10T16:02Z Minh created
+2026-09-10T17:30Z Minh done — trois notes dans conception/, contenu recadré par papier (pas une copie brute du CR), voir body pour le détail
+
+--- body ---
+
+## Context
+
+Premier enfant du tracker 0708 (intégration de JETP comme strate de ce
+programme). Sans dépendance de pipeline ni de données : il s'agit
+d'atterrir, en l'état, le matériau de recherche déjà rédigé pour les deux
+papiers JETP en cours (court/mesure, long/économie politique) plus le CR de
+la réunion du 8 septembre qui les documente tous les deux, sur le modèle des
+notes déjà présentes dans `conception/` (cf. `clustering-comparison.md`,
+`clustering-validity-positioning.md`) — matériau réutilisable, pas encore
+câblé dans un livrable.
+
+## Relevant files
+
+- `~/CNRS/projets/actifs/jetp/cr-reunion-2026-09-08-christophe.md` — source
+  du CR.
+- `~/CNRS/projets/actifs/jetp/papier-court-mesure/`,
+  `~/CNRS/projets/actifs/jetp/papier-long-economie-politique/` — sources des
+  deux notes par papier (à composer depuis le CR + les notes datées du
+  2026-09-08 dans ces dossiers).
+- `conception/clustering-comparison.md` — gabarit de forme (en-tête de
+  provenance, avertissement IA le cas échéant).
+
+## Actions
+
+1. Écrire `conception/jetp-papier-court-mesure.md` : idée de recherche,
+   stratégie de publication, plan détaillé, données et analyses nécessaires,
+   résultats préliminaires, répartition des rôles — pour le papier court.
+2. Écrire `conception/jetp-papier-long-economie-politique.md` : mêmes
+   rubriques pour le papier long.
+3. Écrire `conception/jetp-cr-reunion-2026-09-08.md` (copie adaptée du CR).
+4. Ajouter un bandeau de provenance en tête de chaque fichier (date, origine,
+   « matériau de conception, pas encore câblé dans un livrable »).
+
+## Test
+
+Aucun — contenu Markdown pur, pas de code ni de donnée.
+
+## Verification
+
+- [ ] Les trois fichiers existent sous `conception/`, lisibles seuls
+- [ ] Aucune revendication de nouveauté ou de résultat n'est plus forte dans
+      la copie que dans la source (relecture croisée avec le CR original)
+
+## Invariants
+
+- Ne touche à aucun pipeline, aucune donnée, aucun Makefile.
+- N'importe pas `papier-1-2024/` ni `aside-afd-senelec/` (hors périmètre du
+  tracker 0708).
+
+## Exit criteria
+
+Les trois notes sont dans `conception/`, chacune autonome et datée.
