@@ -8,6 +8,7 @@ Label: needs-human
 2026-09-10T16:00Z Minh created
 2026-09-10T16:02Z Minh filed children 0709, 0710, 0711, 0712
 2026-09-10T17:30Z Minh 0709 done, first PR of the wave — 0710/0711/0712 remain open
+2026-09-10T18:45Z Minh papier 1 rangé dans ~/CNRS/papiers/published/Reports/JETP at two/, vérifié document de travail CIRED non peer-reviewé — références de chemin corrigées ici
 
 --- body ---
 
@@ -55,7 +56,11 @@ vérifié).
   `cible-revue-complement-2026-09-08.md`.
 - `~/CNRS/projets/actifs/jetp/papier-3-ledger/` — ledger : `pilote-ledger-vn/`
   (pilote Vietnam, ~322 Mo, tirages IATI+CRS bruts), `imagine-jetp-ledger-2026-08-10.md`.
-- `~/CNRS/projets/actifs/jetp/papier-1-2024/`, `~/CNRS/projets/actifs/jetp/aside-afd-senelec/`
+- `~/CNRS/papiers/published/Reports/JETP at two/` (déplacé le 2026-09-10
+  depuis `~/CNRS/projets/actifs/jetp/papier-1-2024/` — vérifié : document
+  de travail CIRED, indexé série CIRED Working Papers sur RePEc, non
+  peer-reviewé, pas actif ; voir `statut-2026-09-10.md` sur place),
+  `~/CNRS/projets/actifs/jetp/aside-afd-senelec/`
   — hors périmètre de ce tracker (voir Invariants).
 - `conception/clustering-comparison.md` — précédent pour atterrir du matériau
   de recherche orphelin mais réutilisable avant câblage dans un livrable.
@@ -96,10 +101,12 @@ vérifié).
 
 ## Invariants
 
-- Le papier 1 (manuscrit 2024) et le dossier AFD-Sénégal restent **hors
-  périmètre** de ce tracker et de tous ses enfants — ils restent dans
-  `~/CNRS/projets/actifs/jetp/` sauf décision séparée, documentée par un
-  nouveau ticket.
+- Le papier 1 (manuscrit 2024, rangé le 2026-09-10 dans
+  `~/CNRS/papiers/published/Reports/JETP at two/` — document de travail
+  CIRED vérifié, non peer-reviewé, plus actif) et le dossier AFD-Sénégal
+  (resté dans `~/CNRS/projets/actifs/jetp/aside-afd-senelec/`) restent
+  **hors périmètre** de ce tracker et de tous ses enfants, sauf décision
+  séparée documentée par un nouveau ticket.
 - Aucune mutation de corpus ni DVC avant que la décision d'architecture de
   0710 soit consignée dans son journal — même discipline que 0540 §Invariants.
 - L'ancien emplacement `~/CNRS/papiers/actif/JETP at two/` n'est touché par
