@@ -98,8 +98,8 @@ traitait comme uniforme entre les quatre pays.
   solvabilité vient ici, en synthèse.
 - **Q4 — avec quel effet ?** Physique (aucune fermeture programmée exécutée
   hors Komati, Cirebon-1 annulé, Eskom reporté à 2030-2034, Vung Ang II mis
-  en service en avril 2026 — signe négatif), social (~70 M$ de dépenses
-  justice sur 764 M$ de dons sud-africains engagés, réforme tarifaire lue
+  en service en avril 2026 — signe négatif), social (~70 M USD de dépenses
+  justice sur 764 M USD de dons sud-africains engagés, réforme tarifaire lue
   comme transfert du coût vers les ménages), développemental (contenu
   local, emploi, prix et accès).
 
@@ -217,8 +217,8 @@ Hadley et al. (ODI, juin 2022) et un UK Task Force (novembre 2021). Reste
 libre : une table de conformité systématique, JETP par JETP.
 
 **Corrections propagées dans le dossier** : « 2,1 % de dons » vietnamien
-non sourçable, révisé à ~1,5 % (Selvaraju et al., 153,18 M$) ; dépenses
-justice sud-africaines ~70 M$ (pas 0,2 Md$), correctement attribuées
+non sourçable, révisé à ~1,5 % (Selvaraju et al., 153,18 M USD) ; dépenses
+justice sud-africaines ~70 M USD (pas 0,2 Md USD), correctement attribuées
 (Selvaraju, Pratiwi, Sabogal & Ahlgren, Grantham/LSE). Un article concurrent
 (Kruger et al., *Sustainable Futures*, 3 septembre 2026) lu intégralement :
 zéro occurrence d'absorption/solvabilité/bilan/appui budgétaire/

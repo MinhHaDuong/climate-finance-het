@@ -105,8 +105,8 @@ contrainte n'a jamais été évaluée — elle ne remplace pas la macro.
   position d'explication — jamais l'inverse.
 - **Q4 — avec quel effet ?** Physique (aucune fermeture programmée exécutée
   hors Komati, Cirebon-1 annulé, Eskom reporté à 2030-2034, Vung Ang II mis en
-  service en avril 2026 — signe négatif), social (~70 M$ de dépenses justice
-  sur 764 M$ de dons sud-africains engagés), développemental (contenu local,
+  service en avril 2026 — signe négatif), social (~70 M USD de dépenses justice
+  sur 764 M USD de dons sud-africains engagés), développemental (contenu local,
   emploi, prix et accès).
 
 **Ce qui manquait à la version d'il y a deux ans**, identifié par Christophe
@@ -158,7 +158,7 @@ OCDE CRS microdonnées, 4 pays, cohortes d'engagement 2006-2020) :
 
 - Référence pondérée, prêts concessionnels énergie type projet : **37,3 %**
   décaissés à 4 ans ; référence propre au Vietnam : **47,5 %**.
-- JETP Vietnam : **≈ 9 %** décaissés à 4 ans (~800 M$ sur 8,08 Md$ de part
+- JETP Vietnam : **≈ 9 %** décaissés à 4 ans (~800 M USD sur 8,08 Md USD de part
   publique) — facteur **5,3**, 10ᵉ-15ᵉ centile de la distribution historique
   vietnamienne.
 - **Le vrai résultat n'est pas ce facteur, c'est la substitution
@@ -171,14 +171,14 @@ OCDE CRS microdonnées, 4 pays, cohortes d'engagement 2006-2020) :
   décomposition : la quasi-totalité du décaissement rapide est de l'appui
   budgétaire (prêts de réforme KfW à 93-97 % à un an, prêt de la Banque
   mondiale à ~98 %). Le seul vrai prêt-projet du portefeuille, le *Eskom Just
-  Energy Transition Project* de la Banque mondiale (472,4 M$), a décaissé
-  **1,1 M$ — 0,2 %** à un an. En Indonésie, les prêts JETP type projet
-  (188,9 M$) sont à **0,0 %** à un an, contre 94,5 % pour l'appui budgétaire.
+  Energy Transition Project* de la Banque mondiale (472,4 M USD), a décaissé
+  **1,1 M USD — 0,2 %** à un an. En Indonésie, les prêts JETP type projet
+  (188,9 M USD) sont à **0,0 %** à un an, contre 94,5 % pour l'appui budgétaire.
 - Le goulot vietnamien est à l'engagement, pas au décaissement : les
-  engagements de prêts ODA énergie sont passés de 393,9 M$/an (2006-2020) à
-  **40,9 M$/an** (2022-2024) — une seule activité de prêt par an sur cette
-  période (92,7 M$ en 2022, 30,0 M$ en 2023, **0 en 2024**) face à une
-  promesse de 15,8 Md$. Réserve à écrire dans le papier : cet effondrement
+  engagements de prêts ODA énergie sont passés de 393,9 M USD/an (2006-2020) à
+  **40,9 M USD/an** (2022-2024) — une seule activité de prêt par an sur cette
+  période (92,7 M USD en 2022, 30,0 M USD en 2023, **0 en 2024**) face à une
+  promesse de 15,8 Md USD. Réserve à écrire dans le papier : cet effondrement
   commence en 2018, quatre ans avant le JETP, et coïncide avec la sortie du
   Vietnam de l'éligibilité IDA — non imputable au JETP, mais son échec à
   l'inverser l'est.
@@ -219,11 +219,11 @@ systématique, JETP par JETP, contre les principes nommés.
 **Corrections apportées à la chaîne de faits** (propagées dans le dossier) :
 le « 2,1 % de dons » vietnamien est **non sourçable** (aucun document du
 corpus ne le contient) — fourchette défendable 2-4 %, version révisée à
-~1,5 % (Selvaraju et al., 153,18 M$) ; « l'Inde a refusé le modèle en
+~1,5 % (Selvaraju et al., 153,18 M USD) ; « l'Inde a refusé le modèle en
 invoquant sa conception centrée sur la dette » n'a pas de source pour le
 motif et a été retiré — ce qui est sourcé : l'abandon formel des négociations
 à la COP29 (novembre 2024) ; les dépenses justice sud-africaines sont
-**~70 M$** (moins de 10 % des 764 M$ de dons engagés), pas 0,2 Md$, correctement
+**~70 M USD** (moins de 10 % des 764 M USD de dons engagés), pas 0,2 Md USD, correctement
 attribuées à Selvaraju, Pratiwi, Sabogal & Ahlgren (Grantham/LSE). Un article
 concurrent (Kruger et al., *Sustainable Futures*, 3 septembre 2026 — cinq
 jours avant cette note) a été lu intégralement : zéro occurrence
@@ -436,7 +436,7 @@ l'instrumente au lieu de se contenter de l'argumenter.
 - B3 Aide liée.
 
 **C. Environnemental** — C1 MW retirés/programmés, C2 MW charbon mis en
-service pendant la période (Vung Ang II, signe négatif), C3 $/MW
+service pendant la période (Vung Ang II, signe négatif), C3 USD/MW
 effectivement fermé.
 
 **Découpage acté avec le papier 2** : voir plus haut — bloc I et bloc III au
@@ -454,7 +454,7 @@ par une passe à 8 agents distincte du pré-codage : **45 vérifiées, 1
 partielle, 0 introuvable, 0 document manquant.**
 
 **Trouvailles déjà exploitables** : dérive de l'enveloppe vietnamienne
-(15,5 → 15,8 → 15,0 Md$, dernière révision silencieuse, post-retrait
+(15,5 → 15,8 → 15,0 Md USD, dernière révision silencieuse, post-retrait
 américain) ; décision du plan révisé identifiée et sourcée (Quyết định
 458/QĐ-TTg, 23 mars 2026) — **reste à vérifier si son texte cite le JETP**,
 un des deux faits binaires nommés en séance comme pouvant trancher le

@@ -34,8 +34,8 @@ quadruplé après le JETP, et ils décaissent plus vite que la référence. Mais
 la quasi-totalité de ce décaissement rapide est de l'appui budgétaire (KfW,
 93-97 % à un an ; Banque mondiale, ~98 %). Le seul vrai prêt-projet du
 portefeuille, le *Eskom Just Energy Transition Project* de la Banque
-mondiale (472,4 M$), a décaissé **1,1 M$ — 0,2 %** à un an. En Indonésie,
-les prêts JETP type projet (188,9 M$) sont à **0,0 %** à un an, contre
+mondiale (472,4 M USD), a décaissé **1,1 M USD — 0,2 %** à un an. En Indonésie,
+les prêts JETP type projet (188,9 M USD) sont à **0,0 %** à un an, contre
 94,5 % pour l'appui budgétaire.
 
 **L'implication pour le lecteur.** Le chiffre agrégé « moins de 5 %
@@ -61,7 +61,7 @@ tirages sur travaux.
 Structure resserrée sur une mesure, pas sur la comparaison à quatre
 dimensions du papier long :
 
-1. **Le fait** — la promesse (2,5-20 Md$ par pays selon les 4 JETP), le
+1. **Le fait** — la promesse (2,5-20 Md USD par pays selon les 4 JETP), le
    chiffre agrégé cité par la presse (« moins de 5 % décaissé »), et
    pourquoi ce chiffre seul ne dit rien sur la cause.
 2. **Méthode** — construction de la courbe de référence : OCDE CRS
@@ -75,8 +75,8 @@ dimensions du papier long :
    modalité CRS (A01/A02 vs C01), avec le cas sud-africain et indonésien
    comme démonstration a fortiori (l'agrégat réfute, la modalité confirme).
 5. **Résultat 3 — le goulot vietnamien est à l'engagement, pas au
-   décaissement** : effondrement des engagements ODA énergie de 393,9 M$/an
-   à 40,9 M$/an, antérieur de 4 ans au JETP (sortie de l'éligibilité IDA en
+   décaissement** : effondrement des engagements ODA énergie de 393,9 M USD/an
+   à 40,9 M USD/an, antérieur de 4 ans au JETP (sortie de l'éligibilité IDA en
    2018) — réserve de causalité à écrire explicitement.
 6. **Réponse à l'objection du referee** (« à 4 ans sur un instrument à
    15-20 ans, moins de 5 % est peut-être normal ») — la courbe normale n'est
@@ -140,7 +140,7 @@ plus fragile :
    dans le texte, pas seulement à mesurer).
 4. La thèse tient contre la tendance centrale, pas contre le pire cas : à
    l'activité, le premier quartile est à 0 % à 4 ans, trois cohortes
-   vietnamiennes et un bailleur entier (JBIC, 498 M$) sont proches de 0 % —
+   vietnamiennes et un bailleur entier (JBIC, 498 M USD) sont proches de 0 % —
    concession à écrire explicitement (fragile si omise : un referee la
    trouvera).
 
