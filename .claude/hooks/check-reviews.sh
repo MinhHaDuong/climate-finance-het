@@ -85,20 +85,45 @@ def normalize(slug):
     return '/'.join(parts)
 
 
-def remote_slug(cwd):
-    \"\"\"owner/name of cwd's origin remote, or None if there is not one.\"\"\"
-    if not cwd or not os.path.isdir(cwd):
-        return None
+def git_out(cwd, *args):
     try:
-        url = subprocess.run(
-            ['git', '-C', cwd, 'remote', 'get-url', 'origin'],
-            capture_output=True, text=True, timeout=5,
+        r = subprocess.run(
+            ['git', '-C', cwd, *args], capture_output=True, text=True, timeout=5,
         )
     except (OSError, subprocess.SubprocessError):
         return None
-    if url.returncode != 0:
+    return r.stdout.strip() if r.returncode == 0 else None
+
+
+def remote_slug(cwd):
+    \"\"\"The repo a bare \`gh pr merge\` would target from this directory.
+
+    \`gh repo set-default\` records the choice as remote.<name>.gh-resolved, and
+    gh consults it before falling back to origin. Reading origin alone was
+    called a measurement of what gh resolves; under a fork topology it is not
+    the same answer, and the gate went back to answering confidently about a
+    repo nobody targeted (ticket 0707). Follow the same order gh does.
+    \"\"\"
+    if not cwd or not os.path.isdir(cwd):
         return None
-    return normalize(url.stdout.strip())
+    resolved = git_out(cwd, 'config', '--get-regexp', r'^remote\..*\.gh-resolved$')
+    for line in (resolved or '').splitlines():
+        key, _, value = line.partition(' ')
+        value = value.strip()
+        # gh writes either the literal 'base' (use that remote's URL) or an
+        # explicit owner/name it resolved earlier.
+        if value and value != 'base':
+            explicit = normalize(value)
+            if explicit:
+                return explicit
+        name = key[len('remote.'):-len('.gh-resolved')]
+        url = git_out(cwd, 'remote', 'get-url', name)
+        if url:
+            slug = normalize(url)
+            if slug:
+                return slug
+    url = git_out(cwd, 'remote', 'get-url', 'origin')
+    return normalize(url) if url else None
 
 
 data = json.load(sys.stdin)
@@ -108,19 +133,33 @@ cmd = ti.get('command') or ''
 # --- Is this a pull-request merge at all? ---
 mcp_number = ti.get('pullNumber') or ti.get('pull_number')
 gh_merge = re.search(r'\bgh\s+pr\s+merge\b', cmd) is not None
-if not mcp_number and not gh_merge:
-    # \`git merge\`, or anything else that reached this hook: not our business.
+
+# The REST form merges a pull request just as surely as \`gh pr merge\`, and the
+# harness's own worktree guard prescribes it by name when \`gh pr merge\` refuses
+# to run from a worktree. Recognising only the porcelain left the gate blind to
+# the one path it tells people to take (ticket 0707). The path itself names the
+# repo and the number, so this form needs no other resolution.
+api_merge = re.search(
+    r'repos/([^/\s]+)/([^/\s]+)/pulls/(\d+)/merge\b', cmd
+) if re.search(r'\bgh\s+api\b', cmd) else None
+
+if not mcp_number and not gh_merge and not api_merge:
+    # \`git merge\`, a PR read through the API, or anything else that reached
+    # this hook: not our business.
     emit('notapr')
 
 number = None
 slug = None
 
-if mcp_number:
+if api_merge:
+    number = api_merge.group(3)
+    slug = normalize(f'{api_merge.group(1)}/{api_merge.group(2)}')
+elif mcp_number:
     number = str(mcp_number)
     owner, repo = ti.get('owner'), ti.get('repo')
     if owner and repo:
         slug = normalize(f'{owner}/{repo}')
-else:
+elif gh_merge:
     try:
         toks = shlex.split(cmd)
     except ValueError:

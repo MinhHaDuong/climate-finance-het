@@ -1,0 +1,100 @@
+%erg 0.1
+Title: La barrière de fusion ne voit pas la forme REST, celle que le harnais prescrit
+Created: 2026-09-10
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-10T11:40Z HDMX-coding-agent created
+
+--- body ---
+## Contexte
+
+Trouvé par une passe adverse sur la décision du ticket 0900 du harnais, juste
+après que la fiche 0706 eut corrigé la cécité au dépôt. Même famille, un cran
+plus loin : la barrière ne se trompait plus de dépôt, elle ne se déclenchait
+plus du tout sur une des formes de la commande de fusion.
+
+## Le défaut
+
+`gh api repos/<propriétaire>/<dépôt>/pulls/<n>/merge -X PUT` fusionne une PR
+aussi sûrement que `gh pr merge <n>`. La barrière ne reconnaissait que la
+seconde, et répondait sur la première :
+
+    allow :: Not a pull-request merge — the review gate does not apply.
+
+Un « autorisé » sûr de lui, à propos d'une commande qui fusionne une pull
+request. C'est exactement la forme que le ticket 0900 nomme et prétend avoir
+tuée, une orthographe plus loin.
+
+Le défaut est en deux couches, et la couche haute est la pire : le filtre `if`
+du hook dans `.claude/settings.json` valait `Bash(gh pr merge *)`, de sorte que
+la forme REST n'atteignait même pas le script. Une reproduction qui appelle le
+hook directement ne voit que la couche basse.
+
+**Ce n'est pas une orthographe exotique.** `scripts/block-pr-merge-in-worktree.sh`
+du harnais — un garde qui se déclenche dans toute session en worktree — imprime
+cette commande précise comme contournement prescrit quand `gh pr merge` refuse
+de s'exécuter depuis un worktree. Un agent qui suit les instructions du harnais
+empruntait donc la seule voie que la barrière ne pouvait pas voir.
+
+## Le second défaut, même passe
+
+`gh repo set-default` décide de ce que vise un `gh pr merge` sans sélecteur, et
+l'enregistre dans la configuration git sous `remote.<nom>.gh-resolved`. Le hook
+lisait le dépôt distant `origin` et appelait cela « une mesure de ce que la
+forge résoudrait elle-même ». Sous une topologie de fourche — `origin` la
+fourche, `upstream` la source, le dépôt par défaut pointant sur la seconde —
+ce n'est pas la même réponse, et la barrière recommençait à statuer avec
+aplomb sur un dépôt que personne ne visait.
+
+## Le correctif
+
+- La forme REST est reconnue : son chemin nomme le propriétaire, le dépôt et le
+  numéro, donc elle ne demande aucune autre résolution. Un `gh api` sur
+  `/pulls/<n>` **sans** le sous-chemin `/merge` reste une lecture et passe.
+- Un second gestionnaire dans `.claude/settings.json` amène cette forme jusqu'au
+  script. Aucun gestionnaire ne reste sans filtre : le test de recensement
+  vérifie désormais que chacun se restreint à *une* forme de fusion, et qu'au
+  moins un couvre chaque forme.
+- La résolution suit l'ordre de la forge : dépôt par défaut enregistré, puis
+  `origin`.
+
+## Le troisième point, qui est une correction de discours
+
+La même passe a construit une variante qui cache l'identité du dépôt dans un
+repli de `cwd` codé en dur, et qui passait les 37 tests d'alors — parce que le
+banc d'essai injecte toujours `CLAUDE_PROJECT_DIR` et n'atteint jamais ce repli.
+Un test couvre maintenant la forme réelle : ni `cwd` dans la charge utile, ni
+variable d'environnement.
+
+Il faut dire ce qui est vrai plutôt que ce qui rassure : aucun jeu fini de
+tests de source n'attrape une réintroduction arbitrairement obfusquée. Les
+tests de comportement couvrent les chemins de résolution que le hook possède,
+et c'est tout ce qu'ils promettent ; la protection réelle d'un script court
+reste sa relecture. La fiche 0706 revendiquait un rempart, ce qui était trop
+fort ; c'est corrigé là-bas comme ici.
+
+## Fichiers concernés
+
+- `.claude/hooks/check-reviews.sh` — reconnaissance de la forme REST, ordre de
+  résolution du dépôt
+- `.claude/settings.json` — le second gestionnaire
+- `tests/test_check_reviews.py` — les tests rouges d'abord
+
+## Test
+
+Rouge d'abord, et avec le mauvais dépôt garni de l'état de relecture inverse,
+comme pour la fiche 0706 : une forme REST visant un autre dépôt doit être jugée
+sur le dépôt de son chemin. Contrôle positif pour chaque garde : la variante à
+repli codé en dur doit passer au rouge sur le nouveau test, et la forme REST
+doit être refusée en conditions réelles là où elle était autorisée.
+
+## Exit criteria
+
+- [x] La forme REST de la fusion est jugée, pas classée « pas une fusion »
+- [x] Elle atteint le script : le filtre `if` la couvre, et aucun gestionnaire
+      ne reste sans filtre
+- [x] Une lecture `gh api` sur `/pulls/<n>` reste autorisée
+- [x] Le dépôt par défaut enregistré prime sur `origin`
+- [x] Le repli sans `cwd` ni `CLAUDE_PROJECT_DIR` est couvert par un test
+- [x] Le discours sur la portée des gardes est corrigé, ici et dans 0706
