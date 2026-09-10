@@ -1,18 +1,28 @@
 #!/bin/bash
 # PreToolUse hook: block PR merge unless enough review cycles completed.
 #
-# Reads tool_input from stdin (JSON). Extracts PR number, queries GitHub API
-# for review count, compares against threshold from PR labels.
+# Reads the hook payload from stdin (JSON). Resolves *which PR on which repo*
+# the command targets, queries GitHub for that PR's review count, and compares
+# against a threshold taken from the PR labels.
 #
 # Proportionality:
 #   - label "review:trivial"  → 1 review cycle minimum
 #   - default                 → 2 review cycles minimum
 #
-# Output: JSON with permissionDecision "allow" or "deny".
+# Output: JSON with permissionDecision "allow", "deny" or "ask".
+#
+# Why the repo is resolved and never assumed (harness ticket 0900): this script
+# used to carry two repo-identity literals and read only the PR *number* from
+# the command. A merge issued from this project against another repo was judged
+# on this project's PR of the same number — a real, unrelated PR — and the
+# verdict was pronounced with full confidence. It allowed one unreviewed merge
+# and refused a properly reviewed one within the same hour. A gate whose
+# failure is indistinguishable from a pass is not a gate, so when the target
+# cannot be determined this hook now abstains ("ask") instead of guessing.
 
 set -euo pipefail
 
-cd "$CLAUDE_PROJECT_DIR" || exit 0
+cd "${CLAUDE_PROJECT_DIR:-.}" || exit 0
 
 # .env no longer carries AGENT_GH_TOKEN (ticket 0343) — the keystore loader
 # exports it. Still sourced for the non-secret settings, and the fallback below
@@ -24,49 +34,185 @@ if [ -f .env ]; then
 fi
 export GH_TOKEN="${AGENT_GH_TOKEN:-${GH_TOKEN:-}}"
 
-# Canonical slug. The pre-rename `oeconomia-climate-finance` still resolves by
-# redirect, so a stale value here fails silently rather than loudly.
-OWNER="MinhHaDuong"
-REPO="climate-finance-het"
-
-# Read stdin (Claude Code sends JSON with tool_input)
+# Read stdin (Claude Code sends the hook payload as JSON)
 INPUT=$(cat)
 
-# Extract PR number from tool input.
-# For Bash(*gh pr merge*): parse from command string
-# For mcp__github__merge_pull_request: parse from pull_number field
-PR_NUMBER=""
+# ---------------------------------------------------------------------------
+# Resolve the target: which PR, on which repo.
+#
+# Emits one tab-separated line: STATUS <TAB> NUMBER <TAB> SLUG <TAB> REASON
+#   ok      — number and slug both determined
+#   notapr  — the command is not a pull-request merge; the gate has no opinion
+#   abstain — it *is* a PR merge, but the target cannot be determined
+#
+# Precedence, strongest evidence first: the MCP tool's own owner/repo fields,
+# an explicit --repo/-R selector, the repo named inside a PR URL, and only then
+# the origin remote of the directory the command runs in — which is a
+# measurement of what `gh` itself would resolve, not a guess about it.
+# ---------------------------------------------------------------------------
+RESOLVED=$(echo "$INPUT" | python3 -c "
+import json, os, re, shlex, subprocess, sys
 
-# Try MCP tool input first (pullNumber camelCase, or pull_number snake_case)
-PR_NUMBER=$(echo "$INPUT" | python3 -c "
-import sys, json
+# Flags of \`gh pr merge\` that consume the following token, so a digit sitting
+# in a commit body is never mistaken for the PR number.
+VALUE_FLAGS = {
+    '-R', '--repo', '-b', '--body', '-F', '--body-file', '-t', '--subject',
+    '--match-head-commit', '--author-email',
+}
+SEPARATORS = {'&&', '||', ';', '|', '&'}
+
+
+def emit(status, number='', slug='', reason=''):
+    print('\t'.join((status, str(number), slug, reason)))
+    sys.exit(0)
+
+
+def normalize(slug):
+    \"\"\"Reduce a repo selector to owner/name, or None if it is not one.\"\"\"
+    if not slug:
+        return None
+    slug = slug.strip().rstrip('/')
+    m = re.match(r'^(?:https?://|ssh://(?:[^@/]+@)?|git@)?([^/:]+)[:/](.+)$', slug)
+    if m and '.' in m.group(1):
+        host, path = m.group(1), m.group(2)
+        if host.lower() not in ('github.com', 'www.github.com'):
+            return None
+        slug = path
+    slug = slug.removesuffix('.git')
+    parts = [p for p in slug.split('/') if p]
+    if len(parts) != 2:
+        return None
+    return '/'.join(parts)
+
+
+def remote_slug(cwd):
+    \"\"\"owner/name of cwd's origin remote, or None if there is not one.\"\"\"
+    if not cwd or not os.path.isdir(cwd):
+        return None
+    try:
+        url = subprocess.run(
+            ['git', '-C', cwd, 'remote', 'get-url', 'origin'],
+            capture_output=True, text=True, timeout=5,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return None
+    if url.returncode != 0:
+        return None
+    return normalize(url.stdout.strip())
+
+
 data = json.load(sys.stdin)
-ti = data.get('tool_input', {})
-# MCP merge tool sends 'pullNumber' (camelCase); accept snake_case as fallback
-pn = ti.get('pullNumber', '') or ti.get('pull_number', '')
-if pn:
-    print(pn)
-    sys.exit(0)
-# Bash: extract from command string like 'gh pr merge 42'
-import re
-cmd = ti.get('command', '')
-m = re.search(r'gh\s+pr\s+merge\s+(\d+)', cmd)
-if m:
-    print(m.group(1))
-    sys.exit(0)
-# Also try URL patterns like 'gh pr merge https://...pull/42'
-m = re.search(r'/pull/(\d+)', cmd)
-if m:
-    print(m.group(1))
-    sys.exit(0)
-sys.exit(1)
-" 2>/dev/null) || true
+ti = data.get('tool_input') or {}
+cmd = ti.get('command') or ''
 
-if [ -z "$PR_NUMBER" ]; then
-    # Can't determine PR number — allow (don't block non-PR merges like git merge)
-    echo '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"allow","permissionDecisionReason":"Could not determine PR number — allowing."}}'
+# --- Is this a pull-request merge at all? ---
+mcp_number = ti.get('pullNumber') or ti.get('pull_number')
+gh_merge = re.search(r'\bgh\s+pr\s+merge\b', cmd) is not None
+if not mcp_number and not gh_merge:
+    # \`git merge\`, or anything else that reached this hook: not our business.
+    emit('notapr')
+
+number = None
+slug = None
+
+if mcp_number:
+    number = str(mcp_number)
+    owner, repo = ti.get('owner'), ti.get('repo')
+    if owner and repo:
+        slug = normalize(f'{owner}/{repo}')
+else:
+    try:
+        toks = shlex.split(cmd)
+    except ValueError:
+        toks = cmd.split()
+
+    start = None
+    for i in range(len(toks) - 2):
+        if toks[i].split('/')[-1] == 'gh' and toks[i + 1] == 'pr' and toks[i + 2] == 'merge':
+            start = i + 3
+            break
+
+    positionals = []
+    i = start if start is not None else len(toks)
+    while i < len(toks):
+        tok = toks[i]
+        if tok in SEPARATORS:
+            break
+        if tok.startswith('--repo=') or tok.startswith('-R='):
+            slug = normalize(tok.split('=', 1)[1])
+            i += 1
+            continue
+        if tok in ('-R', '--repo'):
+            if i + 1 < len(toks):
+                slug = normalize(toks[i + 1])
+            i += 2
+            continue
+        if tok in VALUE_FLAGS:
+            i += 2
+            continue
+        if tok.startswith('-'):
+            i += 1
+            continue
+        positionals.append(tok)
+        i += 1
+
+    # \`gh pr merge [<number> | <url> | <branch>]\` — the first positional.
+    target = positionals[0] if positionals else None
+    if target and target.isdigit():
+        number = target
+    elif target:
+        m = re.search(r'^(?:https?://)?([^/]+)/([^/]+)/([^/]+)/pull/(\d+)', target)
+        if m:
+            number = m.group(4)
+            slug = slug or normalize(f'{m.group(2)}/{m.group(3)}')
+
+    if number is None:
+        m = re.search(r'/pull/(\d+)', cmd)
+        if m:
+            number = m.group(1)
+
+if number is None:
+    # A PR merge whose subject we cannot name — \`gh pr merge --squash\` on the
+    # current branch, or a branch name we would have to resolve ourselves.
+    emit('abstain', reason='could not determine which PR this merge targets')
+
+if slug is None:
+    # No selector: the repo is whatever \`gh\` resolves from its working
+    # directory. A directory change inside the command moves that target
+    # somewhere the payload no longer describes, so stop rather than assume.
+    if re.search(r'(?:^|[;&|]\s*)\s*(?:cd|pushd)\s', cmd):
+        emit('abstain', reason='the command changes directory before merging')
+    cwd = data.get('cwd') or os.environ.get('CLAUDE_PROJECT_DIR') or ''
+    slug = remote_slug(cwd)
+
+if slug is None:
+    emit(
+        'abstain',
+        number=number,
+        reason='no --repo selector and no GitHub origin remote to resolve it from',
+    )
+
+emit('ok', number=number, slug=slug)
+" 2>/dev/null) || RESOLVED=""
+
+if [ -z "$RESOLVED" ]; then
+    # The resolver itself failed. That is not an all-clear either.
+    echo '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask","permissionDecisionReason":"Merge gate could not parse this command — it cannot say whether the PR was reviewed. Confirm manually, or re-run naming the PR and repo explicitly."}}'
     exit 0
 fi
+
+IFS=$'\t' read -r STATUS PR_NUMBER REPO_SLUG ABSTAIN_REASON <<<"$RESOLVED"
+
+case "$STATUS" in
+    notapr)
+        echo '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"allow","permissionDecisionReason":"Not a pull-request merge — the review gate does not apply."}}'
+        exit 0
+        ;;
+    abstain)
+        printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask","permissionDecisionReason":"Merge gate abstains: %s. It has checked nothing, and says so rather than guessing (ticket 0900)."}}\n' "$ABSTAIN_REASON"
+        exit 0
+        ;;
+esac
 
 # Tickets-only fast path (rules/git.md, "Ticket-filing PRs take the fast
 # path"): a PR whose diff is only .erg files under tickets/ merges on
@@ -80,7 +226,9 @@ fi
 #   - any API or parse error → no exemption either: fall through to the
 #     normal review count below, leaving error behaviour exactly as it is
 #     today. The hook itself never dies and never denies from this block.
-TICKETS_ONLY=$(gh api "repos/$OWNER/$REPO/pulls/$PR_NUMBER/files?per_page=100" 2>/dev/null \
+# The predicate is structural, so it holds for whichever repo is being judged:
+# every git-erg adopter shapes ticket-filing diffs the same way.
+TICKETS_ONLY=$(gh api "repos/$REPO_SLUG/pulls/$PR_NUMBER/files?per_page=100" 2>/dev/null \
     | python3 -c "
 import sys, json, re
 files = json.load(sys.stdin)
@@ -111,6 +259,10 @@ fi
 # /verify (the full `make check` runs ex post on main via /lair step 9, and
 # pre-PR only for pipeline-surface diffs — AGENTS.md § Execute); this hook only
 # stops a merge that skipped the review step entirely.
+#
+# These logins are *reviewer* identity, not repo identity: they say whose
+# review counts, and travel with the author across every repo this gate may be
+# asked about. They are not what ticket 0900 removed.
 # MinhHaDuong: the single forge identity — the agent token and the web MCP
 #   token both authenticate as it, and it is also the PR author.
 #   `HDMX-coding-agent` is a git author name, not a forge account
@@ -119,7 +271,7 @@ fi
 # copilot-pull-request-reviewer[bot]: genuinely independent of the PR author,
 #   counted when present. Not required — it does not review every PR.
 AGENT_LOGINS="MinhHaDuong copilot-pull-request-reviewer[bot]"
-REVIEW_COUNT=$(gh api "repos/$OWNER/$REPO/pulls/$PR_NUMBER/reviews" 2>/dev/null \
+REVIEW_COUNT=$(gh api "repos/$REPO_SLUG/pulls/$PR_NUMBER/reviews" 2>/dev/null \
     | AGENT_LOGINS="$AGENT_LOGINS" python3 -c "
 import os, sys, json
 allowed = set(os.environ['AGENT_LOGINS'].split())
@@ -129,7 +281,7 @@ print(count)
 " 2>/dev/null) || REVIEW_COUNT=0
 
 # Check for review:trivial label
-HAS_TRIVIAL=$(gh api "repos/$OWNER/$REPO/issues/$PR_NUMBER/labels" 2>/dev/null \
+HAS_TRIVIAL=$(gh api "repos/$REPO_SLUG/issues/$PR_NUMBER/labels" 2>/dev/null \
     | python3 -c "
 import sys, json
 labels = json.load(sys.stdin)
@@ -145,9 +297,9 @@ else
 fi
 
 if [ "$REVIEW_COUNT" -ge "$REQUIRED" ]; then
-    echo "{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"allow\",\"permissionDecisionReason\":\"$REVIEW_COUNT review(s) found, $REQUIRED required. Merge allowed.\"}}"
+    echo "{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"allow\",\"permissionDecisionReason\":\"$REVIEW_COUNT review(s) found on $REPO_SLUG#$PR_NUMBER, $REQUIRED required. Merge allowed.\"}}"
     exit 0
 else
-    echo "{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":\"Only $REVIEW_COUNT review(s) found, $REQUIRED required. Run /review-pr $PR_NUMBER before merging.\"}}"
+    echo "{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":\"Only $REVIEW_COUNT review(s) found on $REPO_SLUG#$PR_NUMBER, $REQUIRED required. Run /review-pr $PR_NUMBER before merging.\"}}"
     exit 0
 fi
