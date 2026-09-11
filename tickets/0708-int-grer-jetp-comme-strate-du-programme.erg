@@ -10,6 +10,7 @@ Label: needs-human
 2026-09-10T17:30Z Minh 0709 done, first PR of the wave — 0710/0711/0712 remain open
 2026-09-10T18:45Z Minh papier 1 rangé dans ~/CNRS/papiers/published/Reports/JETP at two/, vérifié document de travail CIRED non peer-reviewé — références de chemin corrigées ici
 2026-09-11T16:30Z Minh note 0710 tranche — portage du pipeline CRS du papier court sous DVC (data/jetp/), pilote ledger VN hors perimetre ; execution filee en 0713, 0711 debloque
+2026-09-11T18:30Z Minh note 46 fichiers redondants de jetp/ passes en .bak lecture seule apres verification octet a octet ; le CR cr-reunion-2026-09-08-christophe.md est EXCLU — il a diverge et porte du contenu absent de conception/reunions/
 
 --- body ---
 
