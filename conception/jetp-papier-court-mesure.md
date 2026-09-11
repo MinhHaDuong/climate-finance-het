@@ -121,11 +121,6 @@ court cesse d'être une fragilité à couvrir.
   comme livrable séparé, seulement esquissée par pays dans le bloc I du
   papier long. Réutilisable telle quelle si construite une fois pour les
   deux papiers.
-- **Déposer la chaîne de tirage CRS en données supplémentaires.** Sous ce
-  format, la seule surface d'attaque du papier est la construction de la
-  référence — population de prêts concessionnels énergie, fenêtre,
-  correction du décalage engagement-signature. Bricolée, le relecteur unique
-  la démolit ; déposée et ré-exécutable, elle se défend.
 - **Anonymisation** : Climate Policy exige un manuscrit anonymisé identique
   au nominatif — le dépôt HAL doit sortir complètement du texte (7/7
   éditeurs simulés le demandent de toute façon, voir le papier long).
@@ -204,6 +199,13 @@ si la cible change) : sortir toute référence au dépôt HAL du texte
 (anonymisation, condition stricte chez Climate Policy) ; présenter la courbe
 de référence comme le contrefactuel, pas seulement la mesure ; annexe
 comptable complète par source et tranche.
+
+**Condition propre au format retenu** : déposer la chaîne de tirage CRS en
+données supplémentaires. Sous la Policy Analysis, la seule surface d'attaque
+du papier est la construction de la référence — population de prêts
+concessionnels énergie, fenêtre, correction du décalage engagement-signature.
+Bricolée, le relecteur unique la démolit ; déposée et ré-exécutable, elle se
+défend.
 
 ## Répartition des rôles
 

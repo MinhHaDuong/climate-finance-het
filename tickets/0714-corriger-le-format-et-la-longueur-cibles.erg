@@ -7,6 +7,7 @@ Blocked-by: 0708
 --- log ---
 2026-09-11T16:26Z minh created
 2026-09-11T16:40Z minh note arbitrage auteur : Policy Analysis, moins de 5000 mots
+2026-09-11T17:05Z minh note l'action de format se resout, ne se remplace pas : le depot CRS est une condition de soumission
 
 --- body ---
 ## Contexte
@@ -65,9 +66,12 @@ source (`tandfonline.com` en 403), seul son plafond l'est.
 ## Actions
 
 1. Corriger la ligne « Longueur cible » et y consigner le renversement.
-2. Retirer l'action ouverte devenue sans objet (« vérifier le format exact
-   accepté par Climate Policy pour une coupe à 7 000 mots »), et lui
-   substituer le dépôt du pipeline en données supplémentaires.
+2. Résoudre l'action ouverte « vérifier le format exact accepté par Climate
+   Policy » : elle est répondue — 5 000 mots en Policy Analysis chez Climate
+   Policy, et non 3 000 chez GEC. Elle sort donc de la liste
+   pré-rédactionnelle plutôt que d'y être remplacée. Le dépôt du pipeline en
+   données supplémentaires est une condition de *soumission*, pas de
+   rédaction : il va dans la Stratégie de publication.
 3. Corriger la cible en Stratégie de publication (chiffres du scénario 3).
 4. Corriger le motif d'exclusion de Global Environmental Change : la courbe
    est une observation empirique, ce qui la rend inéligible à la Perspective
