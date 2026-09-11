@@ -5,6 +5,8 @@ Author: Minh
 
 --- log ---
 2026-09-11T21:32Z Minh created — première tranche du suivi vivant quatre pays
+2026-09-11T20:56Z Codex implemented — registre, stockage par contenu, manifeste append-only, ciblage par source et contrôles hors ligne
+2026-09-11T20:56Z Codex verified — 12 tests ciblés et 328 contrôles lint passent ; quatre plans d'ancrage collectés ; check-fast bloqué par 0724
 
 --- body ---
 
@@ -37,7 +39,7 @@ quatre valeurs et un statut financier hors taxonomie.
 
 1. Définir le registre de sources, le manifeste de collecte, le sidecar de
    provenance, le ledger d'événements et le registre de projets.
-2. Écrire `scripts/jetp/harvest_documents.py` avec entrées/sorties explicites,
+2. Écrire `scripts/jetp/corpus_harvest_documents.py` avec entrées/sorties explicites,
    reprise idempotente et journal structuré.
 3. Stocker métadonnées et règles dans git ; déclarer le pool binaire sous
    `data/jetp/documents/` pour DVC sans pousser depuis cette machine.
@@ -48,8 +50,12 @@ quatre valeurs et un statut financier hors taxonomie.
 
 ## Exit criteria
 
-- [ ] Le test rouge décrit ci-dessus passe
-- [ ] Un run hors ligne sur fixtures démontre versionnage et reprise
-- [ ] Le schéma distingue source, document collecté, projet et événement
-- [ ] Le pool binaire est séparé des registres git et prêt pour DVC/padme
+- [x] Le test rouge décrit ci-dessus passe
+- [x] Un run hors ligne sur fixtures démontre versionnage et reprise
+- [x] Le schéma distingue source, document collecté, projet et événement
+- [x] Le pool binaire est séparé des registres git et prêt pour DVC/padme
 - [ ] `make check-fast`, `make lint` et le test d'intégration ciblé passent
+
+`make lint` et le test d'intégration passent. `make check-fast` échoue
+uniquement sur le test préexistant consigné dans le ticket 0724 ; le corpus
+JETP n'a pas modifié le code ni la fixture concernés.
