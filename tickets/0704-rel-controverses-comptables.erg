@@ -6,6 +6,7 @@ Blocked-by: 0702
 
 --- log ---
 2026-08-21T12:00Z haduong created
+2026-09-11T16:01Z haduong note materiau amont reuni hors depot pendant l'audit Gavard & Schoch — note de source + lot de 14 articles sur l'efficacite emissions, voir section Materiau amont
 
 --- body ---
 ## Contexte
@@ -24,6 +25,45 @@ Les quatre, telles qu'annoncées :
 2. **Crédibilité des marqueurs** — ce que les marqueurs de Rio mesurent.
 3. **Attribution de la finance privée** — quel privé est mobilisé par quel public.
 4. **Additionnalité** — ce qui s'ajoute à l'aide existante.
+
+## Matériau amont déjà réuni (hors dépôt)
+
+Réuni le 2026-09-11 pendant l'audit Gavard & Schoch, et directement utile à la
+controverse 2 (crédibilité des marqueurs) comme à la question d'efficacité qui
+la sous-tend. Discipline EDM : les PDF restent en staging, Zotero est le
+système de référence, rien de tout cela n'entre dans ce dépôt.
+
+**Note de source.** `~/CNRS/papiers/actif/Gavard Scotch 2026 Climate finance
+counterproductive/audit/research-note-gavard-schoch-2026.md` — note d'audit
+autonome sur Gavard & Schoch (2026). Elle distingue atténuation Rio, adaptation
+Rio et transferts MDP ; reconstitue le plan GEE à retards échelonnés depuis le
+code Stata publié ; relève une erreur de conversion coefficient vers pourcentage
+(1,76 % et non 4,7 % pour l'adaptation ; 1,11 % et non 1,86 % pour
+l'atténuation) — **à vérifier sur le PDF publié avant toute allégation
+publique**, l'archive Zenodo datant de 2022. Elle consigne aussi les réserves de
+réplication : écart 164/168 pays, agrégation Excel manuelle, variables
+`perGDP` mal étiquetées, incohérence AR(4)/AR(7).
+
+Le sujet est devenu un projet de papier à part entière (Comment pour *EJW*,
+`manuscript/` et `reproduction/` dans le même dossier). La note avait d'abord
+été proposée au dépôt en PR #1323, fermée le 2026-09-11 : ce n'est pas du
+matériau de note de source pour ce dépôt-ci, seulement une référence pour ici.
+
+**Lot d'articles.** Même dossier, `docs/` — quatorze articles plus le
+supplément Li–Rishi–Bae, sur l'effet de la finance climat et de l'aide verte
+sur les émissions : Apergis–Pinar–Ünlü 2024, Aquilas–Atemnkeng 2022, Bai et al.
+2022, Gavard–Schoch 2021 (ZEW DP 21-014), Han–Jun 2023, Lee et al. 2022,
+Li–Rishi–Bae 2021 (+ supplément), Li et al. 2022, Lin et al. 2023, Mahalik
+et al. 2021, Ming et al. 2025, Nghiem et al. 2026, Pinar 2023, Wu–Pan–She 2021.
+
+Trois textes manquants, suivis dans `docs/missing-papers.html` : Gavard &
+Schoch (2026) version publiée (10.1017/S1355770X26100679), Wang & Tang (2026)
+(10.1002/sd.70738), Zeng et al. (2022) (10.1007/s11356-022-21185-y).
+
+**Ce que ce lot n'est pas.** Un échantillon de lecture réuni par recherche
+ciblée, pas une mesure sur le corpus v2. L'invariant ci-dessous s'applique sans
+réserve : ce matériau peut nourrir la lecture de la controverse 2, il ne peut
+pas étayer un constat de présence ou d'absence dans la littérature.
 
 ## Actions
 
