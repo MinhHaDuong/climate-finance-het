@@ -1,0 +1,5 @@
+# Binary source snapshots are content-addressed and tracked through DVC.
+/documents/
+
+# Interrupted downloads never belong in git or DVC.
+/staging/
