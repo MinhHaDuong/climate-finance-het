@@ -1,0 +1,193 @@
+{
+  "angle": "I — vocabulaires latéraux : l'argument dit avec d'autres mots (bankability, debt overhang, decoupling, missing middle, adverse selection, etc.)",
+  "databases": ["Crossref", "OpenAIRE", "DOAJ", "HAL (archives-ouvertes.fr)", "Unpaywall", "WebSearch (budget épuisé après 1 requête)", "WebFetch direct (ODI, SSRN, publishers)"],
+  "positive_control": {
+    "P1_control": {
+      "query": "OpenAIRE title=blended+finance+poorest+countries (WebSearch bloqué: budget de session épuisé à la 1re requête)",
+      "result": "RÉUSSI. Retrouve Attridge & Engen 2019, 'Blended finance in the poorest countries: the need for a better approach', ODI/EconStor, handle 10419/206745. Absent de Crossref (rapport de think tank, pas de DOI Crossref) mais indexé par OpenAIRE via EconStor. Canal OpenAIRE fonctionnel pour la littérature grise institutionnelle."
+    },
+    "P2_control": {
+      "query": "Crossref + OpenAIRE: cohesion funds absorption rate n+2 rule",
+      "result": "RÉUSSI sur les deux canaux. Crossref: Komorowski/Mróz/Stanny 2020 (Land, 10.3390/land10010026), Cunico/Aivazidou/Mollona 2022 (European Policy Analysis, 10.1002/epa2.1162), Marin 2019 (Review of Int'l Comparative Management). OpenAIRE: Voicu-Olteanu 2015 (DOAJ, Roumanie, n+2 explicite), Gandolfo 2014 (thèse Bologne, Italie, n+2 explicite). Champ entier confirmé actif et interrogeable — mais AUCUNE des pièces trouvées ne transpose ce cadre à la finance climatique ou au JETP (voir famille dédiée ci-dessous, sèche)."
+    }
+  },
+  "vocab_families": [
+    {
+      "name": "P1 — bankability / unbankable / shovel-ready / project pipeline gap",
+      "queries": [
+        "Crossref: unbankable climate projects pipeline developing countries",
+        "Crossref: shovel-ready project pipeline gap climate finance preparation facility",
+        "OpenAIRE: Just Energy Transition Partnership bankable pipeline absorptive capacity",
+        "DOAJ: \"just energy transition partnership\" bankability"
+      ],
+      "dry_queries": ["OpenAIRE JETP+bankable (0 résultat)", "DOAJ JETP+bankability (0 résultat)"],
+      "hits_n": 2,
+      "note": "2 pièces adjacentes trouvées (Uzoka-Jarrett 2026 SSRN sur la préparation de projets infra-nationaux en Afrique ; Naumann-Woleske/Mazzocchetti/Monasterolo 2026 SSRN sur coût du capital et adaptation) mais SSRN bloqué en lecture directe (403) — non lues, non classées. Aucune pièce ne mentionne JETP nommément."
+    },
+    {
+      "name": "P1 — demand-side constraints / capital is not the binding constraint",
+      "queries": ["Crossref: demand side constraints climate finance capital not binding constraint"],
+      "dry_queries": ["sec (1 résultat hors-sujet: demand-side management/CCUS, pas absorption)"],
+      "hits_n": 0
+    },
+    {
+      "name": "P1 — debt overhang / fiscal space + green investment + DSA",
+      "queries": [
+        "Crossref: debt overhang state owned utility insolvency power sector tariff",
+        "Crossref: Eskom PLN debt insolvency state utility just energy transition",
+        "Crossref: fiscal space mitigation investment developing country sovereign debt ceiling",
+        "Crossref: debt sustainability analysis country platform climate multiple donors",
+        "OpenAIRE: JETP debt overhang utility insolvency Eskom PLN EVN"
+      ],
+      "dry_queries": ["fiscal space+mitigation (0 pertinent)", "OpenAIRE JETP+Eskom/PLN/EVN (0 résultat)"],
+      "hits_n": 1,
+      "note": "Panizza 2025, UNU-WIDER, 'Debt sustainability and climate financing' (10.35188/unu-wider/edij1962) — DSA + investissement climatique poussant des pays sous le seuil de solvabilité. Généraliste (adaptation, tous EMDE), ne cite pas JETP, ne traite pas l'agrégation multi-bailleurs (P2). Candidat adjacent le plus solide de la famille."
+    },
+    {
+      "name": "P1 — original sin / currency risk / TCX / hedging cost",
+      "queries": ["Crossref: original sin currency risk climate finance Eichengreen Hausmann", "Crossref: currency hedging cost green investment TCX local currency risk premium"],
+      "dry_queries": ["les deux requêtes sèches côté climat — la littérature 'original sin' classique ressort mais RIEN ne la relie à la finance climat/verte"],
+      "hits_n": 0
+    },
+    {
+      "name": "P1 — cohesion funds absorption transposée au climat",
+      "queries": ["voir contrôle positif P2_control ci-dessus"],
+      "dry_queries": ["aucune des pièces UE (Pologne, Italie, Roumanie) ne transpose le cadre n+2/absorption à la finance climat ou au JETP"],
+      "hits_n": 0,
+      "note": "Champ vérifié vivant (contrôle positif réussi) mais AUCUNE transposition trouvée vers le climat. C'est un résultat nul significatif, pas un trou de couverture — la sonde fonctionne, le champ existe, la passerelle n'existe pas (ou pas dans ces bases)."
+    },
+    {
+      "name": "P2 — fallacy of composition / aggregation problem / jointly announced severally owed / pledge accounting / orphan commitment",
+      "queries": [
+        "Crossref: \"jointly announced severally owed\" climate finance pledge",
+        "Crossref: fallacy of composition donor pledges climate finance aggregation",
+        "Crossref: double counting climate finance pledge accounting orphan commitment",
+        "Crossref: aggregation problem nobody owns total climate pledge several liability",
+        "Crossref: who owns the total climate finance package coordination failure multiple donors"
+      ],
+      "dry_queries": ["toutes sèches sur le concept exact ; seuls des articles génériques sur le déficit des 100 Md$ ou la comptabilité climat en général ressortent, aucun ne pose le problème structurel d'agrégation/gouvernance"],
+      "hits_n": 1,
+      "note": "Mundaca & Strand 2025, 'Efficient mobilization of climate finance: Donors and receiving countries', Journal of Climate Finance 13, 100077 (10.1016/j.jclimf.2025.100077) — abstract non accessible (Elsevier, Unpaywall confirme closed access, pas d'OA). Titre suggère un lien à la coordination donateurs/récipiendaires mais NON LU — classé non résolu par discipline, pas préemptant."
+    },
+    {
+      "name": "P3 — strategic delay / foot-dragging / decoupling / mock compliance / weapons of the weak / gaming the conditionality",
+      "queries": [
+        "Crossref: strategic delay non-implementation conditionality developing countries aid",
+        "Crossref: decoupling mock compliance aid conditionality developing country government",
+        "Crossref: weapons of the weak debt aversion developing country borrowing reluctance",
+        "Crossref: politics of non-implementation quiet resistance developing country state donor",
+        "Crossref: gaming the conditionality recipient government aid strategy resist",
+        "DOAJ: \"strategic agency\" recipient country climate finance refuse conditionality"
+      ],
+      "dry_queries": ["toutes les six requêtes sèches — pas une seule pièce ne relie explicitement ces cadres théoriques (Scott, Meyer & Rowan, Walter) à la finance climatique ou au JETP"],
+      "hits_n": 0
+    },
+    {
+      "name": "P3 — under-borrowing / debt aversion / refuse IMF programme",
+      "queries": ["Crossref: under-borrowing debt averse developing countries refuse IMF programme"],
+      "dry_queries": ["sec — uniquement littérature générale sur les décisions d'emprunt souverain (Bunte 2019), rien sur le refus délibéré ou l'aversion à la dette comme stratégie"],
+      "hits_n": 0
+    },
+    {
+      "name": "P4 — missing middle / graduation IDA-IBRD / middle-income trap + climate finance",
+      "queries": ["Crossref: missing middle development finance graduation middle income"],
+      "dry_queries": ["hits trouvés mais TOUS hors-sujet : 'missing middle' = financement PME, pas graduation pays du financement climatique concessionnel ; 'middle-income trap' = macroéconomie générale, pas finance climat"],
+      "hits_n": 0,
+      "note": "Faux amis lexicaux confirmés : le terme 'missing middle' est occupé par un tout autre champ (financement des PME), ce qui n'aide ni ne nuit à P4."
+    },
+    {
+      "name": "P4 — adverse selection / crowding out / additionality / inverse targeting concessional finance",
+      "queries": [
+        "Crossref: adverse selection concessional lending least risky countries blended finance",
+        "Crossref: crowding out additionality blended finance concessional capital private investment",
+        "Crossref: climate finance solvency sovereign access market refuse conditionality",
+        "Crossref: solvent countries refuse loans insolvent cannot absorb climate finance distribution"
+      ],
+      "dry_queries": ["aucune pièce ne pose explicitement l'argument d'adverse selection / ciblage inverse en finance climatique, ni l'argument bimodal (solvables refusent / insolvables ne peuvent pas absorber)"],
+      "hits_n": 0,
+      "note": "La pièce la plus proche de cet argument reste Attridge & Engen 2019 (voir contrôle positif) : leur thèse ('blended finance ne peut pas honnêtement financer les pays les plus pauvres, la finance concessionnelle doit être recalibrée pour eux') est structurellement adjacente à P4 mais formulée comme critique de politique de blended finance en général (SDG financing gap), PAS comme argument sur le JETP ni sur la bimodalité solvable/insolvable. Ne préempte pas P4 telle quelle."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "Blended finance in the poorest countries: the need for a better approach",
+      "authors": "Samantha Attridge, Lars Engen",
+      "year": 2019,
+      "venue": "ODI (Overseas Development Institute), London — dépôt EconStor",
+      "doi_or_url": "http://hdl.handle.net/10419/206745",
+      "abstract_read": true,
+      "abstract_excerpt": "'Billions-to-billions' est un résultat plus réaliste que 'billions-to-trillions' pour la finance mixte ; l'accent mis sur le blended finance risque de détourner l'attention des priorités de développement (réduction de la pauvreté) dans les pays à faible revenu ; les décideurs manquent de données sur l'impact et le coût réel du blended finance ; appel à une approche différenciée et sur mesure pour les pays les plus pauvres.",
+      "preclass": "adjacent P4 (argument proche mais formulé sur le blended finance en général et le déficit ODD, pas sur le JETP ni sur la bimodalité solvable/insolvable)",
+      "why": "Contrôle positif confirmé — pièce connue de ce champ, sert de point d'ancrage lexical pour P4 mais ne préempte pas l'argument spécifique du manuscrit."
+    },
+    {
+      "title": "Debt sustainability and climate financing",
+      "authors": "Ugo Panizza",
+      "year": 2025,
+      "venue": "UNU-WIDER (working paper/policy piece)",
+      "doi_or_url": "10.35188/unu-wider/edij1962",
+      "abstract_read": true,
+      "abstract_excerpt": "Les tentatives d'incorporer les besoins d'investissement public externe pour l'adaptation climatique et le développement durable dans le cadre de la DSA montrent que les investissements additionnels pourraient pousser la plupart des pays au-delà des seuils de solvabilité de la dette ; sans investissements d'adaptation, le changement climatique pousse 1 pays EMDE sur 5 en détresse de dette ; les flux de financement (~21 Md$) couvrent moins de 10% des besoins d'adaptation (215-387 Md$).",
+      "preclass": "adjacent P1 (cadre DSA/seuils de solvabilité très proche, mais généraliste — tous EMDE et adaptation, sans référence au JETP, ni à l'insolvabilité d'un opérateur électrique spécifique, ni à P2)",
+      "why": "Le candidat le plus solide trouvé pour P1 : mobilise exactement le vocabulaire DSA/seuils de solvabilité que P1 reformule, mais sans jamais mentionner JETP, Eskom/PLN/EVN, ni la structure de gouvernance multi-bailleurs de P2."
+    },
+    {
+      "title": "Efficient mobilization of climate finance: Donors and receiving countries",
+      "authors": "Gabriela Mundaca, Jon Strand",
+      "year": 2025,
+      "venue": "Journal of Climate Finance, vol. 13, art. 100077",
+      "doi_or_url": "10.1016/j.jclimf.2025.100077",
+      "abstract_read": false,
+      "abstract_excerpt": "NON DISPONIBLE — Crossref ne fournit pas l'abstract pour cet éditeur ; Unpaywall confirme 'closed access', aucune version OA repérée ; ScienceDirect non accessible en WebFetch direct (paywall/403 documenté dans tooling.md).",
+      "preclass": "non résolu (titre + auteurs seulement — PAS classé selon la discipline de la mission)",
+      "why": "Titre thématiquement proche de P2 (coordination bailleurs/récipiendaires) mais impossible de vérifier le contenu réel sans lire l'abstract ; signalé comme piste à vérifier manuellement (accès institutionnel), pas comme préemption."
+    },
+    {
+      "title": "Strengthening Project Preparation for Subnational Climate Finance in Africa: A Systems and Operations Management Approach",
+      "authors": "Amandla Uzoka-Jarrett",
+      "year": 2026,
+      "venue": "SSRN (preprint)",
+      "doi_or_url": "10.2139/ssrn.6941238",
+      "abstract_read": false,
+      "abstract_excerpt": "NON DISPONIBLE — SSRN bloque WebFetch direct (403), conformément au constat de tooling.md.",
+      "preclass": "non résolu",
+      "why": "Résumé Crossref indique '4 goulots d'étranglement interconnectés' incluant contraintes côté demande et fragmentation côté offre affectant la bankabilité — thématiquement adjacent à P1 mais échelle infra-nationale africaine, pas JETP national. Non lu, non classé."
+    },
+    {
+      "title": "Cost of Capital, Concessional Finance and Adaptation Investment",
+      "authors": "Karl Naumann-Woleske, Andrea Mazzocchetti, Irene Monasterolo",
+      "year": 2026,
+      "venue": "SSRN (preprint)",
+      "doi_or_url": "10.2139/ssrn.6918682",
+      "abstract_read": false,
+      "abstract_excerpt": "NON DISPONIBLE — SSRN bloque WebFetch direct (403).",
+      "preclass": "non résolu",
+      "why": "Résumé Crossref indique que le financement concessionnel 'crowd-in' l'investissement privé de résilience — pertinent pour le débat coût du capital de P1 mais non lu."
+    },
+    {
+      "title": "Structural Barriers to Climate Finance Access",
+      "authors": "Shinta Kumala Sari",
+      "year": 2026,
+      "venue": "Research Horizon (journal.lifescifi.com) — statut peer-review incertain",
+      "doi_or_url": "10.54518/rh.6.3.2026.1131",
+      "abstract_read": false,
+      "abstract_excerpt": "NON DISPONIBLE — erreur de certificat SSL sur la page de la revue (échec d'outil, pas absence de contenu) ; revue non reconnue, pas indexée DOAJ, signaux de qualité douteux non vérifiés davantage faute de résumé lisible.",
+      "preclass": "non résolu — signalé mais fortement suspect (revue non identifiable dans les canaux standards)",
+      "why": "Titre générique très proche de P1 mais impossible d'évaluer le contenu ni la qualité éditoriale ; à ne pas citer sans vérification supplémentaire."
+    }
+  ],
+  "tool_failures": [
+    "WebSearch : budget de session épuisé après 1 seule requête ('200 sur 200 déjà utilisées par d'autres agents de la passe') — canal gray-literature/actualité INDISPONIBLE pour ce chercheur au-delà de la 1re requête.",
+    "SSRN (papers.ssrn.com, www.ssrn.com) : 403 Forbidden systématique en WebFetch direct, confirmé sur 2 URLs distinctes — conforme à tooling.md. 2 candidats (Uzoka-Jarrett 2026, Naumann-Woleske et al. 2026) restent non lus pour cette raison.",
+    "ScienceDirect (Elsevier) : abstract absent de Crossref, Unpaywall confirme closed access, page éditeur non tentée directement (bloqueur documenté dans tooling.md) — Mundaca & Strand 2025 reste non lu.",
+    "odi.org : 403 Forbidden sur la page de publication directe (contournée avec succès via OpenAIRE/EconStor).",
+    "journal.lifescifi.com (Research Horizon) : échec de vérification de certificat SSL — page non lue, candidat non classé pour cause d'échec d'outil et non d'absence de contenu.",
+    "OpenAlex et Semantic Scholar : non testés par ce chercheur (429 systématique documenté par tooling.md, jugé inutile de retenter)."
+  ],
+  "verdict": {
+    "P1": "NON PRÉEMPTÉ. Le champ 'bilan/solvabilité' (DSA, debt overhang, original sin, bankability) existe abondamment en général, et Panizza 2025 (UNU-WIDER) mobilise le cadre DSA/seuils de solvabilité le plus proche — mais aucune pièce trouvée ne l'applique au JETP ni à l'insolvabilité spécifique d'un opérateur électrique national (Eskom/PLN/EVN/Senelec) sous tarif réprimé. La transposition de la littérature d'absorption des fonds structurels européens (n+2) au climat — hypothèse explicitement testée — est confirmée ABSENTE malgré un champ source vivant et bien indexé (contrôle positif réussi). Deux pistes SSRN non lues (bloquées) laissent un residuum de risque non éliminé.",
+    "P2": "NON PRÉEMPTÉ dans les canaux consultés, avec une réserve : Mundaca & Strand 2025 (Journal of Climate Finance) a un titre thématiquement proche mais reste non lu (paywall Elsevier total, aucune voie OA) — à vérifier par accès institutionnel avant de clore ce point. Aucune formulation trouvée du problème structurel 'jointly announced, severally owed' / fallacy of composition appliqué aux engagements JETP.",
+    "P3": "NON PRÉEMPTÉ. Sécheresse totale et cohérente sur tous les cadres testés (weapons of the weak, decoupling/mock compliance, politique de non-mise-en-œuvre, gaming the conditionality, sous-emprunt stratégique). Aucun pont trouvé entre ces cadres théoriques établis (Scott, Meyer & Rowan, Walter) et la finance climatique ou le JETP en particulier.",
+    "P4": "NON PRÉEMPTÉ tel que formulé (bimodalité solvable/insolvable). Attridge & Engen 2019 reste la pièce la plus proche dans l'esprit (critique du blended finance comme mal calibré pour les pays qui en ont le plus besoin) mais ne pose pas l'argument spécifique de bimodalité ni ne mentionne le JETP. 'Missing middle' et 'graduation IDA/IBRD' se sont révélés être des faux amis lexicaux occupés par d'autres champs (PME, macro générale)."
+  }
+}

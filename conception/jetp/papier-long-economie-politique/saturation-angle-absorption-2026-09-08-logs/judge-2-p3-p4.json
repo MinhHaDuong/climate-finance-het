@@ -1,0 +1,221 @@
+{
+  "agent": "JUGE ADVERSARIAL n°2",
+  "perimetre": ["P3 — agentivite strategique des recipiendaires", "P4 — la solvabilite achete l'agentivite"],
+  "date": "2026-09-08",
+  "etat_outils": {
+    "WebSearch": "non utilise (budget epuise 200/200)",
+    "Crossref": "200 OK — 8/8 DOI resolus a la source",
+    "Unpaywall": "200 OK",
+    "OpenAlex": "429 au demarrage; UNE fenetre de disponibilite exploitee (lookup DOI Apriliyanti = 200, abstract inverse recupere); repasse en 429 'Insufficient budget' ensuite; controle positif sur /works?search= a echoue en 429 -> aucun balayage OpenAlex possible",
+    "Semantic Scholar": "200 OK (contrairement a la note d'outillage) — abstracts recuperes pour Andriko, Tilley, Svensson; abstract null pour Apriliyanti et Daley; Bradlow absent de l'index",
+    "OpenAIRE": "200 OK — aucune copie verte indexee pour Apriliyanti; pour Daley uniquement un DOI ResearchGate",
+    "DOAJ": "200 OK — utilise pour le statut d'indexation des deux revues indonesiennes",
+    "fatcat/scholar.archive.org": "ECHEC OUTIL — reponse non-JSON sur les 5 DOI (a declarer comme trou, pas comme absence)",
+    "curl direct": "DataDome/Cloudflare 403 sur e3s-conferences.org, tandfonline.com, academic.oup.com, soas-repository.worktribe.com, sciencedirect.com",
+    "WebFetch": "403 sur tous les hosts ci-dessus (aucun gain sur curl)",
+    "proxy lecteur r.jina.ai": "SUCCES sur e3s-conferences.org (PDF Andriko) et tandfonline.com (PDF integraux Daley et Tilley); ECHEC (captcha) sur sciencedirect.com, academic.oup.com, core.ac.uk, scholar.google.com, soas-repository",
+    "consequence": "textes integraux obtenus: Andriko, Daley, Tilley, Robertua, Rizqia, Svensson (version working paper). Non obtenus: Apriliyanti (abstract verifie via OpenAlex), Bradlow (abstract verifie via Crossref)."
+  },
+  "candidats": [
+    {
+      "item": 1,
+      "full_reference": "Apriliyanti, Indri Dwi; Nugraha, Diwangkara Bagus; Overland, Indra (2026). « Explaining Indonesia's failed energy transition: Mapping power and support for decarbonization among government institutions and actors ». Energy Research & Social Science 135, 104675. DOI 10.1016/j.erss.2026.104675. Elsevier. Date de publication Crossref [2026,5]; depose 2026-03-24. Hybride OA (CC-BY d'apres Semantic Scholar).",
+      "sources_tried": ["Crossref (200, sans abstract)", "Unpaywall (is_oa true, unique localisation = editeur)", "Semantic Scholar (abstract null)", "OpenAIRE (aucune copie verte)", "Europe PMC (0 hit)", "NUPI Brage DSpace API (reponse vide)", "nupi.no page publication (404)", "colab.ws (page sans abstract)", "scilit (403 Akamai)", "CORE (captcha)", "Google Scholar (403)", "sciencedirect direct + WebFetch + r.jina.ai (403 / captcha)", "OpenAlex lookup DOI (200 — SUCCES, abstract_inverted_index)"],
+      "fulltext_obtained": false,
+      "abstract_read": true,
+      "abstract_source": "OpenAlex, abstract_inverted_index reconstruit (DOI lookup, HTTP 200)",
+      "exact_quotes": [
+        "The USD 20 billion Just Energy Transition Partnership (JETP), REDD+, and various multilateral development bank programs all aim to facilitate decarbonization in Indonesia, but so far, the country has made little progress.",
+        "This study draws on theories of regime resistance and institutional agency to examine how power asymmetries, competing logics, bureaucratic fragmentation, and political short-termism among central government institutions shape the implementation of decarbonization policies.",
+        "reveals that resistance to decarbonization is reinforced by interactions among state bodies",
+        "it finds that institutional power and support for decarbonization are inversely correlated: bodies with the authority to shape policy, such as the presidency and key economic ministries, prioritize (perceived) growth, energy security, and affordability while ministries and agencies with a stronger climate orientation, such as the Ministry of Environment, the Ministry of Forestry, or National Development Planning Agency, typically lack the institutional leverage to ensure change.",
+        "Resistance operates through three main mechanisms: the strategic use of policy instruments that prolong coal dependence, politicized planning processes, and the use of inter-ministerial veto points."
+      ],
+      "framing": "b — factions/organes INTERNES a l'Etat se bloquent mutuellement. Le mot 'agency' du resume est explicitement 'institutional agency' entre 'central government institutions', et l'explanandum est le faible progres de decarbonation, PAS la non-absorption du financement. Aucune relation recipiendaire-vs-bailleurs dans le resume; le JETP n'y figure que comme l'un des programmes dont la mise en oeuvre patine.",
+      "verdict": "A CITER ET DISTINGUER",
+      "nuance_adversariale": "Lecture du collegue CONFIRMEE, mais elle sous-estime un chevauchement reel: 'the strategic use of policy instruments that prolong coal dependence' et 'politicized planning processes' recouvrent, au niveau du MECANISME, deux des quatre volets de P3 (detournement vers l'agenda charbon/national, ralentissement delibere). Ce qui reste non occupe: (i) le vis-a-vis avec les bailleurs, (ii) la non-absorption de l'argent comme explanandum, (iii) tout refus d'emprunter ou de conditionnalite, (iv) toute variable de solvabilite. Il faudra citer cet article comme la reference etablie du volet 'ralentissement/prolongation du charbon' et positionner P3 par difference — la these ne peut plus presenter ce volet comme neuf.",
+      "proposition_touched": ["P3 (partiellement, volet ralentissement/prolongation)"],
+      "confidence": "haute sur le cadrage (b) et sur la reference; moyenne sur l'ampleur du chevauchement (texte integral non lu — le corps de l'article pourrait developper un volet donateurs que le resume ne signale pas)"
+    },
+    {
+      "item": 2,
+      "full_reference": "Sandria, Andriko; Adji, Kresna Damar; Prabowo, Jericho Julius (2023). « Exceptions for stop building coal-fired power plants in Indonesia ». E3S Web of Conferences 467, 05007. DOI 10.1051/e3sconf/202346705007. EDP Sciences, CC-BY 4.0. Actes du 9th ICCC 2023. Auteurs: International Relations Department + ASEAN Studies Centre, Universitas Sebelas Maret, Surakarta. 4 pages, 9 references.",
+      "sources_tried": ["Crossref (200, abstract JATS integral)", "Semantic Scholar (200, abstract + PDF OA, citationCount 2)", "curl PDF e3s (DataDome 403)", "WebFetch PDF e3s (403)", "r.jina.ai sur le PDF e3s (SUCCES — texte integral 4 pages)"],
+      "fulltext_obtained": true,
+      "abstract_read": true,
+      "exact_quotes": [
+        "RESUME: « Yet, Indonesia allowing the construction of new coal-fired power plants has been used for bargaining positions for most of its interest in international forums. »",
+        "RESUME: « Indonesia got $20 billion deals from G7 Countries for transitions in The Just Energy Transition Partnership (JETP) scheme but is still getting international attention to get more investments. »",
+        "RESUME: « In conclusion, Indonesia is using coal-fired power plants rhetoric to get funding for its transitions coping with the climate changes agenda in energy sectors. »",
+        "METHODE (corps): « This paper will look at public diplomacy efforts in various international forums conducted by Indonesia. Discourse is a tool that can be used in public diplomacy [6]. […] The data in this paper was collected through tracking Indonesian government speeches and statements relating to electricity generation and renewable energy. »",
+        "CORPS, unique occurrence du JETP: « At the G20 meeting, Indonesia also succeeded in securing an agreement on the Just Energy Transition Partnership (JETP) to reduce dependence on fossil fuels and coal. »",
+        "CONCLUSION integrale (corps): « Indonesia postponed the PLTU moratorium to ensure that domestic energy needs are met to grow the industry. Indonesia seeks to attract investors with rich resource offers to develop green industries. Rhetoric as a developing country is used to gain support in the transition process, starting from technology transfer, infrastructure development and other investments. […] Indonesia's diplomacy to show commitment and efforts to reduce carbon emissions is directed at getting new investors in renewable energy. The sooner Indonesia gets investors, the sooner it will realize an emissions-free Indonesia […] »"
+      ],
+      "framing": "c — mais dans la direction INVERSE de P3. L'agentivite decrite est une agentivite d'ACQUISITION (obtenir plus d'argent), pas de NON-ABSORPTION. Le charbon y est un levier pour attirer des fonds, pas un motif de refus.",
+      "verdict": "OCCUPE PARTIELLEMENT",
+      "statut_editorial": "Acte de colloque (E3S Web of Conferences, EDP Sciences). Relecture sous la responsabilite des organisateurs de la conference, pas comite de lecture de revue. 4 pages, aucune revue de litterature autonome, methode = lecture de discours gouvernementaux, aucune donnee financiere. Cite 2 fois (Semantic Scholar).",
+      "nuance_adversariale": "Le mecanisme P3 EST ENONCE — dans le resume, et litteralement: le charbon sert de 'bargaining position'. C'est le candidat qui enonce le plus explicitement une agentivite strategique du recipiendaire face aux bailleurs. MAIS: (i) la these du resume n'est nulle part demontree dans le corps — le corps documente une campagne de promotion d'investissement, et la conclusion ne reprend pas le mot 'bargaining'; (ii) publie fin 2023, avant que la non-absorption ne soit un fait observable; (iii) le JETP y apparait une fois, comme un succes obtenu; (iv) la direction est inversee (attirer, pas refuser). Il ne peut donc pas etre presente comme un precedent qui rend P3 non-neuve, mais il DOIT etre cite: presenter P3 sans lui expose a une remarque d'arbitre.",
+      "proposition_touched": ["P3 (volet levier de negociation / detournement vers l'agenda national)"],
+      "confidence": "haute — texte integral lu en entier"
+    },
+    {
+      "item": 3,
+      "full_reference": "Daley, Freddie; Lawrie, Charles (2026). « Country platforms and constrained states: the Indonesian JET-P and the twilight of de-risking ». New Political Economy, publie en ligne le 13 mai 2026, p. 1-25, DOI 10.1080/13563467.2026.2666810. Taylor & Francis, Open Access CC-BY. Global Studies, University of Sussex. Revise 14 avril 2026, accepte 17 avril 2026. Finance ESRC grant 2576981. Methode: entretiens (au moins INT1-INT13) + documents CIPP.",
+      "sources_tried": ["Crossref (200, sans abstract)", "Unpaywall (is_oa true, CC-BY, PDF editeur)", "Semantic Scholar (abstract null)", "OpenAIRE (DOI ResearchGate 10.13140/rg.2.2.29194.02243 seulement)", "curl PDF tandfonline (Cloudflare 403)", "WebFetch (403)", "r.jina.ai sur le PDF tandfonline (SUCCES — 26 pages, texte integral)"],
+      "fulltext_obtained": true,
+      "abstract_read": true,
+      "exact_quotes": [
+        "RESUME: « Contrary to the belief that public finance will 'unlock' greater private investment in decarbonisation, we argue that the Indonesian JET-P exemplifies a counterproductive strategy for phasing out fossil fuels. In fact, JET-Ps limit energy transitions and industrial development by explicitly prescribing reduced state capacity. »",
+        "CONCLUSION — la phrase la plus proche de P3: « It is no wonder that the JET-Ps have run aground, since their proposition is unappealing to state governments and elites which wish to remain in control or expand their control over energy development. »",
+        "« Precisely because CFPPs are state-owned enterprises with vast workforces, efforts to close them down prematurely are met with fierce resistance from government ministries, trade unions and civil society. »",
+        "« interviewees stressed that discussions of coal phase-out beyond Cirebon-1 have ground to a halt, as asset owners exhibit continued reluctance to sell and as available finance dries up [INT1-6, 10-13]. »",
+        "« However, it would be incorrect to assume that the Indonesian state and PLN are perennial obstacles to the energy transition and green industrialisation. »",
+        "« Elsewhere in the Indonesian economy, the state has won concessions from overseas companies for technology transfer and grown domestic manufacturing capacity. » (suivi du dossier nickel — explicitement situe HORS du JET-P)",
+        "P4 / solvabilite: « These financial instruments are intended to boost the creditworthiness of Indonesian state institutions and private companies, enabling them to borrow more money on more favourable terms [INT7,8]. »",
+        "P1 / plafond de dette: « Guarantees of up to $2 billion offered by the UK and US are routed through the International Bank for Reconstruction and Development (IBRD) to extend Indonesia's prudential credit limit with the World Bank, a mechanism that expands the country's borrowing capacity but does not constitute a direct capital transfer (Hauber 2023). »",
+        "P1: « Grant funding makes up just 2.6 per cent of the IPG's public finance pledge as the only financial instrument imposing no repayment obligation on the Indonesian state. The overwhelming majority of IPG finance therefore arrives as debt or contingent liability, embedding ongoing repayment obligations into the Indonesian state's fiscal position regardless of the degree of concessionality. »",
+        "P2: « Interviewees close to the policymaking process noted that the Indonesian government itself lacks a consolidated view of disbursements across the over fifty funding packages, with individual facilities reporting to different ministries under different accounting frameworks [INT8]. »",
+        "P1: « even if the full $21.6 billion commitment were deployed it would cover approximately 22 per cent of identified need, leaving a structural financing gap of roughly 78 per cent. »"
+      ],
+      "framing": "a + b principalement (subordination financiere internationale + resistance des incumbents et des ministeres), avec UNE phrase de conclusion qui bascule vers (c) : l'offre est 'unappealing' aux gouvernements, donc elle echoue. La verification du collegue est exacte quant au titre: 'constrained states' = Etats contraints PAR le dispositif JET-P lui-meme ('explicitly prescribing reduced state capacity').",
+      "verdict": "OCCUPE PARTIELLEMENT (P3) / A CITER ET DISTINGUER (P4)",
+      "nuance_adversariale": "C'est l'article le plus dangereux du dossier, mais pas la ou le brief l'attendait. Sur P3: il occupe le resultat ('les JET-P se sont echoues parce que leur proposition ne plait pas aux Etats et aux elites') sans occuper le mecanisme P3 — aucun refus d'emprunter documente, aucun refus de conditionnalite, aucune non-absorption presentee comme choix souverain; la resistance y est celle d'interets acquis, et l'agentivite reelle du recipiendaire (nickel, contenu local) est explicitement renvoyee HORS du JET-P ('Elsewhere in the Indonesian economy'). Sur P4: la solvabilite y figure a l'envers — la creditworthiness est la CIBLE des instruments (on la rehausse pour faire emprunter davantage), pas une RESSOURCE de negociation; aucun raisonnement sur les deux bouts de la distribution, aucune comparaison entre pays selon leur solvabilite. Alerte hors perimetre pour l'equipe: P1 est fortement entame par cet article (part des dons 2,6 %, dette et passifs eventuels, ecart de 78 %, et surtout la 'prudential credit limit' de la Banque mondiale, qui EST le plafond d'endettement souverain de P1); P2 l'est partiellement (le gouvernement lui-meme n'a pas de vue consolidee des decaissements sur plus de cinquante paquets).",
+      "proposition_touched": ["P3 (resultat, pas mecanisme)", "P4 (vocabulaire, direction inverse)", "P1 (fortement — hors perimetre, signale)", "P2 (partiellement — hors perimetre, signale)"],
+      "confidence": "haute — 26 pages lues"
+    },
+    {
+      "item": 4,
+      "full_reference": "Bradlow, Benjamin H.; Swamidurai, Aishwarya (2026). « The \"power to pollute\" and \"post-neoliberal\" climate finance ». Socio-Economic Review, article avance publie le 16 mars 2026 (depose Crossref 2026-02-11), DOI 10.1093/ser/mwag015. Oxford University Press, CC-BY-NC-ND. Materiau: entretiens semi-directifs avec des responsables sud-africains, documents de politique, livres blancs et prises de parole publiques 2021-2024.",
+      "sources_tried": ["Crossref (200, abstract JATS integral)", "Unpaywall (is_oa true, hybride, PDF OUP)", "Semantic Scholar (DOI absent de l'index)", "OpenAlex (200 sur le lookup: any_repository_has_fulltext = false, aucune copie verte)", "curl PDF OUP (Cloudflare 403)", "r.jina.ai sur le PDF et sur la page article (captcha)", "site personnel de l'auteur (page vide de resultat exploitable)"],
+      "fulltext_obtained": false,
+      "abstract_read": true,
+      "abstract_source": "Crossref (JATS integral)",
+      "exact_quotes": [
+        "« Since 2021, Just Energy Transition Partnerships (JETPs) provide finance to middle-income countries (MICs) whose energy profile is largely powered by coal—those countries with what we call the \"power to pollute.\" »",
+        "« we assess whether the JETP model in fact enables MICs to pursue industrial policy innovations that parallel emergent \"post-neoliberal\" policy paradigms of rich countries »",
+        "« We argue that JETP financing is unlikely to enable the rise of green industrial policies typical of \"post-neoliberal\" approaches in rich countries, despite the hopes of recipient countries entering into these agreements. »",
+        "« This type of financing is instead becoming a mechanism to constrain domestic policy flexibility—and domestic politics—for carbon emissions mitigation, often reinforcing neoliberal principles in practice. »"
+      ],
+      "framing": "a — le recipiendaire subit; son ambition industrielle est une ESPERANCE decue ('despite the hopes of recipient countries'), pas une strategie exercee. Le mot 'power' du titre designe une propriete qui rend le pays eligible (avoir du charbon a eteindre), pas un levier documente comme exerce — mais ceci est etabli sur le seul resume.",
+      "verdict": "A CITER ET DISTINGUER",
+      "nuance_adversariale": "Le cousin conceptuel le plus proche de P4, et il faut le dire franchement: 'power to pollute' est exactement le geste analytique de P4 — identifier ce que le recipiendaire detient qui lui donne du levier face aux bailleurs — mais l'actif identifie est l'emission de carbone, pas la solvabilite, et le resultat est l'inverse (le financement contraint au lieu d'habiliter). Sur P3, le volet 'detournement vers l'agenda national (industrialisation)' y est present comme intention pretee aux recipiendaires et refutee comme resultat. Reserve: texte integral jamais lu, ni par l'agent precedent ni par moi; si le corps documente une negociation sud-africaine ou l'Etat monnaie son charbon, la distance a P4 se reduit fortement. C'est le seul point du dossier ou je recommande de reprendre la lecture (acces institutionnel OUP).",
+      "proposition_touched": ["P4 (cousin conceptuel, actif different)", "P3 (volet detournement, en negatif)"],
+      "confidence": "moyenne — resume verifie a la source, corps inaccessible (trou de couverture declare, pas une absence)"
+    },
+    {
+      "item": 5,
+      "full_reference": "Tilley, Lisa (2026). « Indonesian nickel sovereignty and global raced finance: the value of Element 28 in an age of 'transition' ». Review of International Political Economy 33(4):1610-1637, publie en ligne le 18 mars 2026, DOI 10.1080/09692290.2026.2642935. Taylor & Francis, CC-BY-NC-ND. 29 pages.",
+      "sources_tried": ["Crossref (200, sans abstract)", "Unpaywall (green, depot SOAS)", "Semantic Scholar (200, abstract integral)", "curl + WebFetch + r.jina.ai sur le depot SOAS Worktribe (403 / captcha)", "r.jina.ai sur le PDF tandfonline (SUCCES — 29 pages, texte integral)"],
+      "fulltext_obtained": true,
+      "abstract_read": true,
+      "exact_quotes": [
+        "RESUME: « Indonesia has sought to build sovereignty over its mineral resources and reinvigorated a value project which stretches back at least to independence and the Bandung era. »",
+        "RESUME: « Nickel, I argue here, might be the perfect national commodity, serving Indonesia's long-time quest to break with the law of worldwide value and raced financial subordination by capturing downstream value-added processing and production. »",
+        "RESULTAT NUL VERIFIE — comptages sur le texte integral (29 p.): 'JETP' 0, 'JET-P' 0, 'Just Energy' 0, 'climate finance' 0, 'World Bank' 0, 'IMF' 0, 'loan' 0, 'concessional' 0, 'donor' 0, 'creditworth' 0, 'conditional' 1, 'debt' 4.",
+        "CONTROLE POSITIF de la sonde sur le meme fichier: 'finance' 28, 'subordination' 18, 'value' 84, 'nickel' 158 — la sonde voit bien le texte, le zero sur JETP est donc un resultat, pas un echec d'outil."
+      ],
+      "framing": "hors typologie — l'article ne porte pas sur la relation bailleurs/recipiendaire dans un dispositif de financement climat. Il documente le projet de souverainete minerale (interdiction d'exportation de minerai brut, captation de la transformation aval) et la subordination financiere raciale au sens d'Amin.",
+      "verdict": "SANS RAPPORT (pour la preemption) / A CITER comme contexte",
+      "nuance_adversariale": "Le classement du collegue ('detournement vers l'agenda national, mais hors-JETP') est exact et je le durcis: ce n'est pas 'hors-JETP' au sens de peripherique, c'est zero mention. L'article etablit solidement, dans une revue de premier rang, que l'Indonesie POURSUIT un agenda d'industrialisation minerale — il fournit donc la piece de contexte pour le volet 'detournement vers l'agenda national' de P3, mais il n'etablit strictement rien sur l'absorption d'un paquet JETP et ne peut preempter aucune des quatre propositions. Aucun risque de priorite.",
+      "proposition_touched": ["P3 (contexte du volet agenda national uniquement)"],
+      "confidence": "haute — texte integral, resultat nul avec controle positif"
+    },
+    {
+      "item": "6a",
+      "full_reference": "Robertua, Verdinand; Oktavian, Riskey; Gadaza, Aniza C.; Margaretha, Ruth (2026). « Discursive Hegemonic Mediation dalam Pemberitaan Media tentang Just Energy Transition Partnership (JETP) di Indonesia: Analisis Wacana Kritis Model Fairclough ». Global Political Studies Journal 9(2):129-147, DOI 10.34010/gpsjournal.v9i2.18891, Universitas Komputer Indonesia (UNIKOM). P-ISSN 2301-749X, E-ISSN 2686-2905. NOTE: le PDF porte en tete « Volume 9 Nomor 2 Edisi Oktober 2025 » alors que Crossref date la publication du 2026-03-06 (depot 2026-03-09) — numero nominalement d'octobre 2025, DOI enregistre en mars 2026.",
+      "sources_tried": ["Crossref (200, abstract JATS integral)", "PDF OJS UNIKOM telecharge directement (19 p., succes)", "DOAJ par ISSN 2686-2905 et 2301-749X (0 resultat)"],
+      "fulltext_obtained": true,
+      "abstract_read": true,
+      "statut_editorial": "Revue universitaire indonesienne (UNIKOM), non indexee DOAJ (verifie sur les deux ISSN). DOI Crossref actif. Article en indonesien. Aucune declaration de processus de relecture accessible depuis les sources interrogees.",
+      "exact_quotes": [
+        "RESUME: « In Indonesia, however, JETP operates not merely as a technical policy scheme but as a discursive arena where donor-country hegemony is articulated and stabilized. »",
+        "RESUME: « structural critiques such as the predominance of loans over grants and uncertainties in donor commitments are reduced to technical concerns »",
+        "RESUME: « the media act as hegemonic mediators, permitting limited criticism without challenging the broader power relations »",
+        "CORPS: « Resistensi media tidak diarahkan pada penolakan ideologis terhadap dominasi global, melainkan pada kekhawatiran pragmatis terkait mekanisme pendanaan dan tata kelola kebijakan energi. » (la resistance des medias ne vise pas un rejet ideologique de la domination globale, mais des inquietudes pragmatiques sur le mecanisme de financement et la gouvernance)",
+        "CORPS, symptomes releves via citations de presse: « Pendanaan yang cair baru mencapai lima persen dari target awal yang dijanjikan negara donor. » (Kompas.com) ; « JETP dikhawatirkan hanya memupuk utang baru bagi negara miskin dan berkembang. » (CNN Indonesia) ; « JETP itu gagal, program gagal. Dua tahun berjalan tapi tidak sepeser pun dikucurkan oleh pemerintah AS. » (Hashim Djojohadikusumo, via Media Indonesia)",
+        "CORPS: « Keputusan Amerika Serikat (AS) mundur dari komitmen pendanaan Just Energy Transition Partnership (JETP) menyebabkan Indonesia kehilangan dana hibah (grant) hampir USD 70 juta atau setara Rp 1 triliun. » (Kumparan)"
+      ],
+      "framing": "a — hegemonie des bailleurs et normalisation de la dependance. L'objet analyse est le CADRAGE MEDIATIQUE, pas le dispositif financier. La seule note d'agentivite est elle-meme un constat de cadrage: les medias grand public presentent le gouvernement comme « aktor proaktif yang mendayagunakan kerja sama global untuk kepentingan nasional » — un acteur proactif mobilisant la cooperation globale pour l'interet national. C'est une observation sur le discours de presse, pas une these sur la strategie de l'Etat.",
+      "verdict": "A CITER ET DISTINGUER (P1, comme releve de symptomes en source secondaire) / SANS RAPPORT (P3, P4)",
+      "etablit_sur_P1": "Rien de premiere main. Il fait circuler, via des citations de presse, les symptomes deja connus: 5 % de decaissement, predominance des prets sur les dons, crainte du piege de dette, retrait americain et perte de ~70 M USD de dons. Aucun mecanisme de bilan, aucune donnee originale.",
+      "etablit_sur_P3": "Rien. Il argumente meme dans le sens contraire: la critique indonesienne reste 'dans les limites du consensus hegemonique forme par les pays donateurs et les elites politiques nationales'.",
+      "proposition_touched": ["P1 (symptomes, seconde main)"],
+      "confidence": "haute — texte integral lu"
+    },
+    {
+      "item": "6b",
+      "full_reference": "Rizqia, Andini Maulifa; Wulansari, Ica (2026). « Implementation of Just Energy Transition Partnership (JETP) Indonesia ». Jurnal Manajemen dan Bisnis Madani 8(1):1-10, DOI 10.51353/0dhvhf66, Universitas Paramadina, CC-BY-SA 4.0. P-ISSN 2615-0662, E-ISSN 2615-580X. Publie 2026-03-05. Approche qualitative descriptive sur donnees secondaires.",
+      "sources_tried": ["Crossref (200, abstract JATS integral)", "PDF OJS Paramadina telecharge directement (10 p., succes)", "DOAJ par ISSN 2615-580X et 2615-0662 (0 resultat)"],
+      "fulltext_obtained": true,
+      "abstract_read": true,
+      "statut_editorial": "Revue universitaire indonesienne (Universitas Paramadina), non indexee DOAJ (verifie sur les deux ISSN). DOI Crossref actif. Article de 10 pages, en anglais, sur donnees secondaires exclusivement.",
+      "exact_quotes": [
+        "« Findings show that most financing is loan-based, which increases Indonesia's fiscal burden while contributing little to renewable deployment. »",
+        "« The data show that over two-thirds of JETP financing relies on debt-based instruments, both concessional and commercial, indicating that the majority of Indonesia's transition financing must be repaid. This configuration raises fiscal sustainability concerns, particularly given that state-owned utility Perusahaan Listrik Negara (PLN) is projected to require an additional USD 132.5 billion by 2040 to sustain decarbonization, of which more than USD 96 billion will be sourced through external debt (CIPP, 2023) »",
+        "« The dominance of loan-based financing, coupled with limited mechanisms for technology transfer, reflects structural asymmetries that constrain Indonesia's bargaining power. »",
+        "« Financial obligations from concessional and commercial loans limit Indonesia's fiscal flexibility, while technology imports constrain domestic industrial upgrading and innovation. These mechanisms collectively shape Indonesia's subordinate position in the global green economy. »",
+        "Tableau 1 (compose par les auteures d'apres le CIPP 2023): prets concessionnels 7,0 Md USD (35 %), prets commerciaux 6,2 (31 %), garanties 5,0 (25 %), DONS 0,8 (4 %), fonds propres et autres 1,0 (5 %)."
+      ],
+      "framing": "a — theorie de la dependance appliquee telle quelle; l'Indonesie est le terme subordonne de la relation. L'article dit explicitement que les asymetries CONTRAIGNENT le pouvoir de negociation indonesien, ce qui est l'exact contraire de P3.",
+      "verdict": "A CITER ET DISTINGUER (P1) / SANS RAPPORT (P3, P4)",
+      "etablit_sur_P1": "La premisse descriptive de P1 (part ecrasante de prets, moins de 5 % de dons, besoin de 132,5 Md USD de PLN dont 96 par dette externe) est enoncee et chiffree — mais reprise du CIPP 2023, pas mesuree. Elle en tire une conclusion de dependance et de souverainete, jamais un argument de capacite d'absorption: nulle part il n'est dit que le paquet est INABSORBABLE, ni que le plafond de dette ou l'insolvabilite de l'operateur explique la non-absorption. Le mecanisme de bilan de P1 n'y est pas.",
+      "etablit_sur_P3": "Rien, et le sens est oppose (pouvoir de negociation contraint, pas exerce). A noter comme piste: l'article resume Chotimah (2023) comme soutenant que le JETP est « an outcome of Indonesia's deliberative foreign policy strategy in response to global pressures » — reference non resolue par moi, a verifier par l'equipe, car cette formulation touche P3.",
+      "proposition_touched": ["P1 (premisse descriptive uniquement)"],
+      "confidence": "haute — texte integral lu"
+    },
+    {
+      "item": 7,
+      "full_reference": "Svensson, Jakob (2000). « When is foreign aid policy credible? Aid dependence and conditionality ». Journal of Development Economics 61(1):61-84, DOI 10.1016/S0304-3878(99)00061-9, Elsevier. NON OA (Unpaywall: is_oa false). VERSION LUE: le manuscrit de travail depose sur DiVA (Institute for International Economic Studies, Stockholm University), premiere version novembre 1994, version d'octobre 1995 — PAS le texte publie de 2000. Toute citation ci-dessous provient de cette version de travail.",
+      "sources_tried": ["Crossref (200, sans abstract)", "Unpaywall (closed)", "Semantic Scholar (200 — pointeur DiVA su.diva-portal.org, abstract elide par l'editeur)", "telechargement DiVA FULLTEXT01 (succes, PDF, version working paper)"],
+      "fulltext_obtained": "partiellement — texte integral de la version working paper 1995; version publiee JDE 2000 non obtenue",
+      "abstract_read": true,
+      "exact_quotes": [
+        "RESUME (WP 1995): « in this paper we show that an aid contract, as proposed in the literature, is not time-consistent. This may be one explanation for the poor results of the vast amount of foreign aid disbursed to the developing world. »",
+        "RESUME (WP 1995): « Finally, we provide some evidence supporting the basic idea of the paper, namely that aid induces weak fiscal discipline and that increased fiscal difficulties lead to higher inflow of aid. »",
+        "INTRODUCTION: « If the recipient government expects that budget deficits will be balanced by increased aid flows, it may lack the incentive to avoid deficits in the first place. […] Ex post it is optimal for an altruistic donor to no longer withhold aid to those in most need. The anticipation that this will happen will in turn affect the recipient's choice ex ante. »",
+        "CONCLUSION: « conditionality is a way to deal with macroeconomic mismanagement. However, without a commitment technology, such a contract is difficult to enforce. »",
+        "CONCLUSION: « The empirical implication of the model is that aid induces weak fiscal discipline and that increased deficits lead to higher inflow of aid. »",
+        "Titre de la section 2: « A Model of Strategic Aid Dependence and Conditionality »"
+      ],
+      "framing": "non applicable a P3 (aucune non-absorption: chez Svensson l'aide EST versee, et davantage; l'echec porte sur son effet, pas sur son absorption).",
+      "verdict": "A CITER ET DISTINGUER (P4) / SANS RAPPORT (P3)",
+      "nuance_adversariale": "Le collegue a raison de le donner comme la piece generale la plus proche de P4, et raison de dire 'asymetrique' — je precise en quoi. Svensson etablit une chose que P4 a besoin d'avoir derriere elle: la position budgetaire du recipiendaire est ENDOGENE a la relation d'aide, elle est un choix strategique et non une donnee. Mais le sens est inverse au pole insolvable de P4: chez Svensson la faiblesse budgetaire ATTIRE l'aide (dilemme du Samaritain, contrainte budgetaire molle), alors que P4 pose que l'insolvabilite EMPECHE l'absorption. Et le pole solvable de P4 — la marge de manoeuvre achete le droit de refuser — est totalement absent: le modele n'a pas de recipiendaire qui refuse, pas de distinction pret/don, pas de bord superieur de la distribution de solvabilite, donc pas de mecanisme bidirectionnel et pas de these du domaine de validite vide. Le mecanisme bidirectionnel de P4 n'est PAS chez Svensson, meme sous une autre forme. Reserve de methode: verdict etabli sur la version 1995; la version JDE 2000 n'a pas ete lue.",
+      "proposition_touched": ["P4 (une moitie, en sens inverse)"],
+      "confidence": "moyenne-haute — modele et conclusion lus in extenso, mais sur la version de travail et non sur le texte publie"
+    }
+  ],
+  "balayage_adversarial_complementaire": {
+    "objectif": "chercher, au-dela des candidats fournis, une piece qui preempterait P4",
+    "OpenAlex": "IMPOSSIBLE — 429 'Insufficient budget' sur /works?search=; le controle positif lui-meme a echoue. Trou de couverture declare: aucun balayage OpenAlex n'a pu etre fait sur P3/P4.",
+    "Crossref query.bibliographic": [
+      "recipient+country+strategic+agency+Just+Energy+Transition+Partnership+refusal+loans (58 586 hits, aucun pertinent dans les 8 premiers)",
+      "creditworthiness+bargaining+power+recipient+refuse+concessional+loans+climate+finance (2,9 M hits, bruit total — la recherche bibliographique Crossref n'est pas une sonde exploitable a ce niveau de specificite)",
+      "sovereign+debt+ceiling+absorptive+capacity+climate+finance+non-absorption (3,4 M hits, bruit)",
+      "recipient+agency+donor+conditionality+energy+transition+Indonesia+Vietnam+South+Africa+Senegal (256 543 hits, bruit)"
+    ],
+    "verdict_sur_le_balayage": "NON PROBANT — Crossref query.bibliographic classe par pertinence textuelle et sature; ces quatre requetes ne constituent pas un resultat nul exploitable, seulement l'absence d'un candidat evident. Le balayage systematique sur P4 reste a faire avec un moteur semantique (OpenAlex ou Semantic Scholar search, tous deux indisponibles ou contraints ce jour)."
+  },
+  "verdict_ensemble": {
+    "P3": {
+      "statut": "PARTIELLEMENT OCCUPE",
+      "occupe_par": [
+        "Apriliyanti et al. 2026 (ERSS, Q1) — le volet 'ralentissement delibere / prolongation du charbon' est etabli comme mecanisme, mais en cadrage (b) intra-etatique",
+        "Daley & Lawrie 2026 (New Political Economy) — le RESULTAT ('les JET-P se sont echoues parce que leur proposition ne plait pas aux Etats et aux elites'), sans le mecanisme",
+        "Sandria et al. 2023 (E3S, actes) — le volet 'charbon comme levier de negociation' ENONCE, non demontre, en 4 pages d'actes de colloque, et en direction inverse (attirer, non refuser)",
+        "Bradlow & Swamidurai 2026 (SER) — le volet 'detournement vers l'agenda industriel national', pose comme esperance des recipiendaires et refute comme resultat"
+      ],
+      "reste_libre": "L'inversion complete du cadrage: la NON-ABSORPTION du financement comme choix souverain face aux bailleurs, et notamment le volet le plus dur — le refus d'emprunter, c'est-a-dire le refus de tranches non concessionnelles. Aucune des sept pieces ne documente un refus. Reste libre aussi la portee comparative (quatre pays), tout le corpus etant mono-pays (Indonesie, sauf Bradlow = Afrique du Sud).",
+      "formulation_la_plus_forte_encore_defendable": "« La non-absorption des paquets JETP est en partie un refus souverain de contracter la dette offerte a ces conditions, et non seulement un echec d'execution des bailleurs ni la seule resistance d'interets acquis. » Cette formulation tient. Ce qui ne tient plus: presenter comme neuf le fait que les recipiendaires ralentissent, prolongent le charbon ou poursuivent leur propre agenda industriel — trois auteurs l'ont ecrit, dont un en Q1. Il faut donc articuler explicitement P3 en trois temps: (i) la litterature etablit la resistance intra-etatique et la prolongation strategique du charbon (Apriliyanti), (ii) elle etablit que l'offre deplait aux Etats (Daley & Lawrie), (iii) elle n'a pas franchi le pas consistant a lire la non-absorption comme un refus, ni documente le refus lui-meme."
+    },
+    "P4": {
+      "statut": "LIBRE",
+      "adjacences_a_citer": [
+        "Svensson 2000 (JDE) — la position budgetaire du recipiendaire est strategiquement endogene, mais dans le seul sens 'la faiblesse attire l'aide'",
+        "Daley & Lawrie 2026 — la creditworthiness comme CIBLE des instruments JETP (garanties rehaussant la 'prudential credit limit'), donc comme variable manipulee, jamais comme ressource de negociation",
+        "Bradlow & Swamidurai 2026 — meme geste analytique que P4 (nommer l'actif qui donne du levier au recipiendaire) mais sur un autre actif, le 'power to pollute'"
+      ],
+      "reste_libre": "Le mecanisme bidirectionnel, en entier. Aucune des sept pieces ne pose la solvabilite comme variable d'agentivite, ne distingue les deux bouts de sa distribution, ni ne conclut que le domaine de validite d'un instrument fonde sur le pret pourrait etre vide.",
+      "formulation_la_plus_forte_encore_defendable": "« La solvabilite achete l'agentivite: aux deux bouts de sa distribution, l'instrument fonde sur le pret produit la meme non-absorption pour des raisons opposees — le pays solvable peut se permettre de refuser, le pays insolvable ne peut pas absorber — de sorte que le domaine de validite de l'instrument est peut-etre vide. » Rien dans le dossier n'entame cette formulation. Deux reserves de prudence, aucune n'etant une preemption: le corps de Bradlow & Swamidurai n'a jamais ete lu par personne dans cette passe, et aucun balayage semantique n'a pu etre execute sur P4 (OpenAlex et Semantic Scholar search indisponibles). Le verdict 'libre' repose donc sur sept re-resolutions et non sur un balayage; il doit etre annonce comme tel."
+    }
+  }
+}

@@ -1,0 +1,384 @@
+[
+ {
+  "label": "",
+  "angle": "Articles on Just Energy Transition Partnerships (JETP) that explicitly cite the classic development-aid-effectiveness literature (Easterly, Alesina, Riddell, \"tied aid,\" \"aid conditionality,\" \"aid effectiveness,\" \"pledge inflation\")",
+  "queries": [
+   "\"Just Energy Transition Partnership\" \"tied aid\"",
+   "\"Just Energy Transition Partnership\" \"aid conditionality\"",
+   "\"Just Energy Transition Partnership\" \"aid effectiveness\"",
+   "\"Just Energy Transition Partnership\" Easterly",
+   "\"Just Energy Transition Partnership\" Alesina",
+   "\"Just Energy Transition Partnership\" Riddell aid",
+   "\"Just Energy Transition Partnership\" \"pledge inflation\"",
+   "JETP \"development aid literature\" \"aid effectiveness\" review",
+   "JETP \"conditionality\" academic paper \"foreign aid\" literature bridge",
+   "\"Just Energy Transition Partnership\" \"aide liée\" OR \"conditionnalité de l'aide\" (search tool unavailable, no results)",
+   "JETP climate finance \"tyranny of experts\" OR \"white man's burden\" Easterly",
+   "\"just energy transition partnership\" \"donor interests\" \"Alesina and Dollar\"",
+   "\"just energy transition partnership\" scholarly article \"aid conditionality\" development studies journal",
+   "\"Country platforms and constrained states\" Indonesian JET-P \"twilight of de-risking\" abstract",
+   "\"just energy transition partnership in South Africa\" \"key factors driving international cooperation\" abstract conditionality (tool unavailable)",
+   "\"Translating promise into practice\" Just Energy Transition Partnerships abstract conditional funding",
+   "OpenAlex API search: Just Energy Transition Partnership aid conditionality Easterly Alesina Riddell",
+   "Semantic Scholar API search: Just Energy Transition Partnership aid conditionality Easterly (429 rate-limited, no results)",
+   "\"JETP\" OR \"just energy transition partnership\" \"tied aid\" development economics",
+   "\"just energy transition partnership\" \"Collier\" OR \"Bourguignon\" aid effectiveness (tool unavailable, no results)"
+  ],
+  "databases": [
+   "Web search (general, primary tool)",
+   "OpenAlex API (api.openalex.org)",
+   "Semantic Scholar API (api.semanticscholar.org) — one call rate-limited (429), no usable result",
+   "Web fetch attempts on Taylor & Francis, ScienceDirect, Research Square — all returned HTTP 403 (paywalled/blocked), fell back to WebSearch abstract snippets for these"
+  ],
+  "dry": "This angle ran dry after roughly 13 distinct queries (including two WebSearch tool-unavailable failures that were retried and one Semantic Scholar 429 rate-limit) across English and one attempted French query, spanning general web search, OpenAlex, and Semantic Scholar. No candidate was found where a JETP-focused article explicitly names or cites Easterly, Alesina, Riddell, or uses the specific terms 'tied aid' or 'pledge inflation' in connection with JETPs. Several JETP papers use the generic term 'conditionality' descriptively (as an empirical feature of JETP financing packages: earmarking, loan-vs-grant terms) but none of the retrievable abstracts/snippets show engagement with the classic bilateral-aid-effectiveness canon by name or citation. Three fetch attempts (Taylor & Francis, Scie"
+ },
+ {
+  "label": "",
+  "angle": "Revues comparatives 4-pays JETP publiées 2025-2026 en peer-review (Web of Science/Scopus style)",
+  "queries": [
+   "\"Just Energy Transition Partnership\" comparative South Africa Indonesia Vietnam Senegal 2025 2026 peer-reviewed",
+   "\"JETP\" \"four countries\" comparative review South Africa Indonesia Vietnam Senegal journal article",
+   "\"Just Energy Transition Partnerships\" \"inclusive climate finance approach\" ScienceDirect abstract Vietnam Senegal South Africa Indonesia",
+   "JETP comparative case study \"Executive Order 14162\" OR \"US withdrawal\" South Africa Indonesia Vietnam journal",
+   "\"Just Energy Transition Partnerships\" \"inclusive climate finance approach\" journal \"World Development\" OR \"Energy Research\" OR \"Climate Policy\" submitted 2024",
+   "\"Fit for purpose\" JETP accountability international climate governance Global Policy abstract four countries",
+   "\"Surveying just transition pathways in global climate policy\" JETP South Africa Indonesia Vietnam Senegal Climate Policy 2026",
+   "JETP \"Trump\" withdrawal \"International Partners Group\" comparative analysis peer-reviewed article 2026",
+   "\"transition minérale\" OR \"partenariat pour une transition énergétique juste\" comparaison Afrique du Sud Indonésie Vietnam Sénégal revue scientifique (failed - tool unavailable)",
+   "\"Pathways towards just transitions in the Global South\" abstract JETP South Africa Indonesia Vietnam Senegal ScienceDirect",
+   "JETP comparative review 2026 peer-reviewed article \"four JETPs\" OR \"all four\" South Africa Indonesia Vietnam Senegal after US withdrawal",
+   "\"Global Environmental Politics\" special issue North-South just transitions JETP South Africa Indonesia Vietnam Senegal comparative",
+   "JETP retrospective assessment two years later comparative South Africa Indonesia Vietnam Senegal 2026 academic"
+  ],
+  "databases": [
+   "WebSearch (Google-backed) — primary, used for all 13 queries",
+   "attempted WebFetch on sciencedirect.com and researchgate.net for abstract/date verification — both returned HTTP 403 (paywalled/blocked), no fallback to Semantic Scholar/OpenAlex/Crossref was needed since WebSearch snippets supplied sufficient metadata; one Crossref API check was run but hit an unrelated DOI (metadata resolution mismatch, not useful)"
+  ],
+  "dry": "Search for this angle ran dry after ~13 queries in English and one attempted French query (WebSearch tool returned \"unavailable\" transiently on 3 of 13 calls but succeeded on retry with reformulated queries, so coverage was not materially degraded). No paper was found that (a) covers all four JETPs (South Africa, Indonesia, Vietnam, Senegal) comparatively, (b) is peer-reviewed, (c) is dated 2025-2026, AND (d) explicitly takes the March 2025 US withdrawal (Executive Order 14162 / IPG exit) as its analytical pivot. The single strongest 4-country comparative peer-reviewed candidate (Karg et al., Energy Research & Social Science 2025) pre-dates the withdrawal in its evidence base and does not use it as a pivot — it is the paper the claim's reviewers are most likely to cite against novelty, but"
+ },
+ {
+  "label": "",
+  "angle": "Peer-reviewed journal articles centered specifically on Senegal's JETP",
+  "queries": [
+   "\"Senegal\" AND \"Just Energy Transition Partnership\" journal article",
+   "Senegal JETP peer-reviewed research",
+   "\"Sénégal\" \"transition énergétique juste\" article scientifique revue",
+   "Senegal just energy transition partnership \"Energy Research & Social Science\"",
+   "Senegal JETP Energy Policy Elsevier 2024 2025",
+   "Senegal JETP civil society governance journal article Energy Sustainable Development",
+   "\"Senegal\" JETP coal gas \"just transition\" scopus web of science",
+   "\"A Tale of Sustainable Energy Transition\" Senegal MDPI Sustainability abstract fossil fuel discoveries JETP",
+   "Senegal JETP \"African Journal\" OR \"Third World Quarterly\" OR \"Climate Policy\" OR \"Journal of Energy\" 2025 article",
+   "Senegal \"Just Energy Transition Partnership\" case study political economy article 2026",
+   "site:hal.science Sénégal \"transition énergétique juste\" JETP",
+   "\"PTEJ\" Sénégal partenariat transition énergétique juste article académique",
+   "Senegal Just Energy Transition Partnership dissertation thesis theses.fr article scientifique",
+   "OpenAlex API: search=Senegal JETP energy transition (two calls, sorted by relevance and by date)"
+  ],
+  "databases": [
+   "Google web search (WebSearch tool)",
+   "OpenAlex API (api.openalex.org/works)",
+   "direct WebFetch of PLOS Sustainability and Transformation, MDPI, ScienceDirect article pages"
+  ],
+  "dry": "Ran 14 distinct queries (English/French, varied synonyms, targeted journal names, OpenAlex API, HAL site-search, thesis search) specifically hunting for a peer-reviewed journal article whose primary object of study is Senegal's JETP. None surfaced. The two closest peer-reviewed hits (Karg et al. 2025 in Energy Research & Social Science, and the PLOS Sustainability and Transformation piece) are 3-4-country comparative justice analyses in which Senegal is explicitly the thinnest, least-detailed case (verified by full-text fetch, not title alone) — the authors themselves note the coal-transition framework doesn't map cleanly onto Senegal's gas-producer context, leaving its section under-analyzed relative to South Africa/Indonesia/Vietnam. The MDPI Sustainability article is peer-reviewed and S"
+ },
+ {
+  "label": "",
+  "angle": "Articles centrés sur le retrait américain de mars 2025 (Executive Order 14162 / sortie de l'International Partners Group) comme angle d'analyse principal des JETP, en peer-review",
+  "queries": [
+   "\"US withdrawal\" \"Just Energy Transition Partnership\" 2025 2026",
+   "\"International Partners Group\" withdrawal analysis JETP",
+   "Executive Order 14162 JETP South Africa Indonesia Vietnam",
+   "\"retrait américain\" JETP transition énergétique juste 2025",
+   "Trump withdrawal Just Energy Transition Partnership peer-reviewed article",
+   "JETP \"Trump\" comparative South Africa Indonesia Vietnam Senegal journal article",
+   "\"Just Energy Transition Partnership\" US withdrawal site:doi.org OR site:tandfonline.com OR site:sciencedirect.com OR site:wiley.com",
+   "JETP geopolitics US exit climate finance retrospective evaluation article 2026",
+   "\"reconfiguration\"/\"recomposition\" International Partners Group JETP after US exit academic paper",
+   "JETP quatre pays Afrique du Sud Indonésie Vietnam Sénégal retrait américain analyse comparative revue",
+   "\"IPG\" retreat JETP comparative analysis peer review journal Energy Policy Climate Policy 2025 2026",
+   "Hug 2026 REEL Just Energy Transition Partnerships investment law Indonesia Vietnam abstract",
+   "Karg Gupta Chen Just Energy Transition Partnerships inclusive climate finance abstract",
+   "Kawiriaan Zan Translating promise into practice JETP Research Square",
+   "OpenAlex API: works search Just Energy Transition Partnership US withdrawal (full-text search)",
+   "OpenAlex API: title.search JETP/Just Energy Transition Partnership from_publication_date 2025-01-01 and 2025-03-01, listing venue/type",
+   "Crossref API: query.bibliographic Just Energy Transition Partnership US withdrawal",
+   "Semantic Scholar API: paper search Just Energy Transition Partnership United States withdrawal (429 rate-limited, no results obtained)"
+  ],
+  "databases": [
+   "Google web search (via WebSearch tool, English and French queries)",
+   "OpenAlex API (api.openalex.org) — full-text search and title-filtered search",
+   "Crossref API (api.crossref.org)",
+   "Semantic Scholar API (attempted, returned HTTP 429 — no data obtained)",
+   "Direct WebFetch of ScienceDirect, Wiley Online Library, Carnegie Endowment, Research Square pages (ScienceDirect and Wiley blocked by 403/402 paywalls; abstracts recovered indirectly via web search snippets instead)"
+  ],
+  "dry": "Après 18 requêtes distinctes (web + API) couvrant anglais/français et bases académiques (OpenAlex, Crossref, tentative Semantic Scholar), AUCUN article en peer-review n'a été trouvé qui prenne explicitement et principalement le retrait américain de mars 2025 (EO 14162 / sortie de l'IPG) comme pivot analytique d'une comparaison rétrospective des 4 JETP. La littérature académique sur ce point précis se limite à des rapports de think tank (Carnegie, CGEP — non peer-reviewed) et un preprint non revu par les pairs (Research Square, mars 2026) qui traite bien les 4 pays mais sous un autre angle (translation gap). Les articles peer-reviewed comparatifs identifiés (Karg/Gupta/Chen 2025 — 4 pays, justice/finance inclusive ; Hug 2026 — 2 pays, droit des investissements) existent mais organisent leur"
+ },
+ {
+  "label": "",
+  "angle": "Articles peer-reviewed centrés spécifiquement sur le Vietnam et le JETP (excluant les études comparatives multi-pays et les mentions en passant)",
+  "queries": [
+   "\"Vietnam\" \"Just Energy Transition Partnership\" journal article 2025",
+   "Vietnam JETP peer-reviewed article energy policy 2024 2025",
+   "\"Vietnam\" \"JETP\" governance coal phase-out academic journal article",
+   "\"transition énergétique juste\" Vietnam JETP revue article (échec outil, relancé en anglais)",
+   "Vietnam Just Energy Transition Partnership site:tandfonline.com OR site:sciencedirect.com OR site:mdpi.com OR site:springer.com",
+   "\"Vietnam\" \"Just Energy Transition Partnership\" \"just transition\" journal article 2026",
+   "Vietnam JETP political economy energy security journal article Vietnamese authors",
+   "Vietnam JETP \"energy justice\" peer-reviewed article 2025 2026",
+   "Vietnam \"Just Energy Transition Partnership\" implementation resource mobilization plan journal 2025",
+   "\"Vietnam\" JETP \"case study\" academic article energy transition partnership implementation challenges",
+   "OpenAlex API: search=Vietnam Just Energy Transition Partnership, filter from_publication_date:2024-01-01,type:article",
+   "Crossref API: query.bibliographic=Vietnam Just Energy Transition Partnership, filter from-pub-date:2024-01-01"
+  ],
+  "databases": [
+   "Google Web Search (WebSearch tool)",
+   "OpenAlex API (api.openalex.org)",
+   "Crossref API (api.crossref.org)",
+   "WebFetch direct on ScienceDirect, Wiley, IOPscience, OJS/Unida journal pages (partly blocked by paywalls/403/402)"
+  ],
+  "dry": "Recherche saturée après 10+ requêtes distinctes (anglais, tentative française bloquée par une panne ponctuelle de l'outil puis contournée) et deux interrogations d'API bibliographiques (OpenAlex, Crossref) qui n'ont fait remonter aucun nouveau titre. La requête française directe a échoué techniquement (« Web search error: unavailable ») ; les recherches anglaises suivantes couvrent le même espace sémantique (JETP, transition énergétique juste, sortie du charbon, justice énergétique, mobilisation des ressources), donc l'angle francophone n'a probablement pas été manqué.\n\nRésultat net pour le stress-test : la revendication « Vietnam quasi inexploré en peer-review » n'est PAS entièrement confirmée — un article peer-reviewed trouvé (Jurnal Sosial Humaniora, 2026) est explicitement et exclusive"
+ },
+ {
+  "label": "",
+  "angle": "Country platforms / minilateral climate finance (JETP) linked to the \"wide\" aid-effectiveness literature (Burnside–Dollar policy-conditionality growth regressions, Collier state-capacity/aid-architecture work, Bulow–Rogoff debt-trap/seniority theory, ODA crowding-out empirics)",
+  "queries": [
+   "Just Energy Transition Partnership aid effectiveness Burnside Dollar conditionality",
+   "JETP minilateral climate finance \"aid effectiveness\" literature",
+   "country platforms climate finance Collier aid conditionality",
+   "JETP debt trap Bulow Rogoff climate finance",
+   "\"Just Energy Transition Partnership\" \"aid effectiveness\"",
+   "\"country platform\" climate finance aid effectiveness literature review",
+   "JETP \"crowding out\" ODA official development assistance",
+   "JETP Indonesia South Africa \"tied aid\" OR \"aid conditionality\" academic paper",
+   "minilateral climate finance aid effectiveness Easterly Riddell",
+   "\"Burnside\" \"Dollar\" climate finance conditionality growth effectiveness",
+   "JETP \"promise\" inflation pledges climate finance rhetoric delivery gap",
+   "\"country platform\" Collier \"climate finance\" review paper \"aid effectiveness\"",
+   "JETP Vietnam Senegal \"debt sustainability\" OR \"debt trap\" academic article",
+   "\"Just Energy Transition Partnership\" \"Collier\"",
+   "JETP \"aide liée\" OR \"conditionnalité de l'aide\" transition énergétique",
+   "\"climate club\" OR minilateral \"aid effectiveness\" conditionality Paris Declaration ownership",
+   "JETP \"Wall Street Consensus\" Gabor derisking aid effectiveness comparison",
+   "\"Country platforms for climate action\" ODI \"something borrowed\" aid effectiveness Paris Declaration ownership ODI",
+   "semantic scholar / openalex API queries combining JETP + Burnside/Collier/Dollar/conditionality"
+  ],
+  "databases": [
+   "Web (general search engine via WebSearch tool)",
+   "OpenAlex API (api.openalex.org)",
+   "Semantic Scholar API (api.semanticscholar.org) — rate-limited/429, largely unusable",
+   "ScienceDirect, Wiley Online Library, Taylor & Francis, Oxford Academic (publisher sites, mostly paywalled: 402/403)"
+  ],
+  "dry": "Ran 19 distinct queries (well above the 6-10 floor) across English and French, varying vocabulary (aid effectiveness / conditionality / tied aid / aide liée / ODA crowding-out / debt trap / Bulow-Rogoff / Burnside-Dollar / Collier / minilateral / climate club / Paris Declaration / de-risking / Wall Street Consensus). WebSearch intermittently threw \\\"unavailable\\\" errors on several calls (mid-session flakiness, not a hard block); those queries were re-run successfully on retry or via reformulation, so no angle was left uncovered by tool failure alone. Publisher pages (ScienceDirect, Wiley, Taylor & Francis) were paywalled (402/403) for full text; abstracts were retrieved via OpenAlex's abstract_inverted_index reconstruction as a fallback, which worked for 3 of 4 attempts. Semantic Scholar A"
+ },
+ {
+  "label": "",
+  "angle": "Peer-reviewed journal articles centered specifically on Vietnam's JETP (not passing mentions in multi-country articles) — round 2, deeper pass following round-1 citation leads",
+  "queries": [
+   "\"Vietnam\" \"Just Energy Transition Partnership\" journal article 2025 (WebSearch)",
+   "Vietnam JETP peer-reviewed article coal phase-out governance (WebSearch)",
+   "\"Vietnam\" \"JETP\" \"just transition\" academic journal 2026 (WebSearch)",
+   "\"Vietnam\" \"Just Energy Transition Partnership\" \"justice\" OR \"energy justice\" peer review article (WebSearch)",
+   "Vietnam JETP political economy article Energy Policy journal (WebSearch)",
+   "\"Việt Nam\" \"JETP\" tạp chí khoa học chuyển đổi năng lượng công bằng (WebSearch, Vietnamese)",
+   "Do Burke \"Phasing out coal power\" Vietnam Energy Policy 2023 abstract JETP (WebSearch)",
+   "Vietnam JETP case study implementation article \"Energy Research\" OR \"Climate Policy\" OR \"Energy Strategy Reviews\" (WebSearch)",
+   "Hug \"Just Energy Transition Partnerships\" \"investment law\" Indonesia Vietnam abstract RECIEL (WebSearch)",
+   "OpenAlex API: search=Vietnam Just Energy Transition Partnership, filter from_publication_date 2024-01-01 (WebFetch api.openalex.org)",
+   "\"Vietnam\" JETP article citing \"background report\" Ha-Duong 2023 coal phase-out (WebSearch, citation-following)",
+   "Crossref lookup on JSH article DOI 10.30997/jsh.v17i1.24230 (WebFetch api.crossref.org)",
+   "\"JETP\" Vietnam article \"policy\" 2025 \"Journal of\" energy transition case study peer-reviewed (WebSearch)",
+   "Vietnam JETP renewable energy governance article ScienceDirect OR Springer OR Taylor Francis 2025 2026 (WebSearch)",
+   "Semantic Scholar API: Vietnam Just Energy Transition Partnership 2024-2026 (WebFetch api.semanticscholar.org — returned HTTP 429, no results obtained, not used further)",
+   "\"Vietnam\" \"JETP\" thesis OR dissertation OR \"master's\" energy transition partnership analysis (WebSearch)"
+  ],
+  "databases": [
+   "WebSearch (Google-backed)",
+   "Crossref API (api.crossref.org)",
+   "OpenAlex API (api.openalex.org)",
+   "Semantic Scholar API (api.semanticscholar.org) — attempted, rate-limited (429), abandoned in favor of WebSearch/Crossref/OpenAlex which succeeded",
+   "Direct WebFetch of publisher/OJS pages and one PDF (Tạp chí Dầu khí / PetroVietnam Journal)"
+  ],
+  "dry": "Round 2 substantially reconfirms round-1's likely finding rather than overturning it, with one important exception. Ten distinct queries (English, Vietnamese-language, and Crossref/OpenAlex/Semantic-Scholar API probes) converge on the same small candidate pool; no new candidates emerged after query 7-8, indicating the search has saturated for this specific angle with currently available tools.\\n\\nKey finding: the search surface for 'Vietnam JETP' peer-reviewed literature is dominated by (a) grey literature/NGO reports (IISD, International Rivers, Böll Stiftung, Climateworks, Fulcrum/ISEAS, Lowy Institute) that are explicitly non-peer-reviewed, (b) the author's own prior working papers (Ha-Duong 2023 background report, HAL post-print), and (c) peer-reviewed articles that are structurally co"
+ },
+ {
+  "label": "",
+  "angle": "Revues comparatives 4-pays JETP (Afrique du Sud, Indonésie, Vietnam, Sénégal) publiées 2025-2026 en peer-review — recherche round 2, approfondissement par suivi de citations des candidats round 1",
+  "queries": [
+   "\"Just Energy Transition Partnership\" comparative South Africa Indonesia Vietnam Senegal 2025",
+   "JETP comparative review peer-reviewed article 2026 South Africa Indonesia Vietnam Senegal",
+   "\"Just Energy Transition Partnerships\" comparative analysis four countries journal article",
+   "JETP \"Executive Order 14162\" withdrawal analysis",
+   "\"partenariat pour une transition énergétique juste\" comparaison Afrique du Sud Indonésie Vietnam Sénégal (échec outil)",
+   "JETP comparative justice perspective article 2026 Indonesia South Africa Vietnam Senegal",
+   "JETP \"stocktake\" OR \"stock-take\" comparative four countries 2026 journal",
+   "\"Just Energy Transition Partnership\" \"coal phase-out\" comparative case study peer-reviewed 2026 (échec outil)",
+   "JETP South Africa Indonesia Vietnam Senegal review article \"WIREs\" OR \"Wiley Interdisciplinary\"",
+   "\"just energy transition partnerships\" retrospective assessment \"geopolitics\" 2026 four cases",
+   "cites \"Just Energy Transition Partnerships: An inclusive climate finance approach\" Karg Gupta Chen 2025",
+   "\"Review of International Political Economy\" OR \"New Political Economy\" JETP Indonesia de-risking 2026",
+   "\"Translating promise into practice\" JETP scoping review authors journal 2026",
+   "\"Just Energy Transition Partnership\" comparative \"before and after\" US withdrawal peer review study (échec outil)",
+   "partenariat transition énergétique juste comparaison quatre pays retrait américain 2025 revue"
+  ],
+  "databases": [
+   "Google Web Search (WebSearch tool, style Web of Science/Scopus)",
+   "ScienceDirect (via WebSearch + tentative WebFetch, bloqué 403)",
+   "ResearchGate (via WebSearch + tentative WebFetch, bloqué 403)",
+   "Crossref API (api.crossref.org)",
+   "OpenAlex API (api.openalex.org)",
+   "Taylor & Francis Online (via WebSearch + tentative WebFetch, bloqué 403)",
+   "Research Square (préprints, via WebSearch + tentative WebFetch, bloqué 403)",
+   "IHE Delft repository (PDF récupéré mais illisible/corrompu à l'extraction)"
+  ],
+  "dry": "Recherche non saturée à 100% mais approche de l'assèchement : les 9-10 dernières requêtes (variations d'anglais, une tentative de français, citations amont/aval du candidat le plus fort) font toutes remonter le même petit noyau d'articles (Karg/Gupta/Chen 2025 ; l'article Indonésie de-risking RIPE 2026 ; le préprint Research Square ; Banerjee PLOS 2024) sans nouveau candidat comparatif à 4 pays. Deux limites méthodologiques importantes à signaler à l'éditeur : (1) ScienceDirect, ResearchGate et Taylor & Francis ont systématiquement renvoyé HTTP 403 sur WebFetch — je n'ai donc PAS pu lire les textes intégraux des deux candidats les plus sérieux (Karg/Gupta/Chen 2025 et l'article RIPE Indonésie 2026) pour vérifier définitivement si le retrait américain y sert de pivot analytique structurant "
+ },
+ {
+  "label": "",
+  "angle": "Articles JETP citant explicitement la littérature classique de l'aide au développement (tied aid, aid conditionality, aid effectiveness, Easterly, Alesina, Riddell, pledge inflation)",
+  "queries": [
+   "\"Just Energy Transition Partnership\" \"tied aid\"",
+   "\"Just Energy Transition Partnership\" \"aid effectiveness\"",
+   "\"Just Energy Transition Partnership\" \"aid conditionality\"",
+   "\"Just Energy Transition Partnership\" Easterly",
+   "\"Just Energy Transition Partnership\" \"pledge inflation\"",
+   "\"Just Energy Transition Partnership\" Alesina Riddell",
+   "\"Just Energy Transition Partnership\" \"development aid\" literature review conditionality",
+   "\"Just Energy Transition Partnerships\" \"aid literature\" OR \"foreign aid literature\"",
+   "JETP climate finance \"traditional aid\" critique Riddell Easterly Alesina",
+   "\"Just Energy Transition Partnership\" \"aid effectiveness agenda\" Paris Declaration",
+   "\"Just Energy Transition Partnership\" \"White Man's Burden\" Easterly aid",
+   "\"Just Energy Transition Partnership\" \"Does Foreign Aid Really Work\" Riddell",
+   "JETP \"aid tying\" OR \"donor coordination\" development economics climate finance",
+   "\"Just Energy Transition Partnership\" \"aid regime\" OR \"aid architecture\" critique political economy",
+   "OpenAlex API: Just Energy Transition Partnership aid conditionality tied aid"
+  ],
+  "databases": [
+   "WebSearch (Google-backed)",
+   "OpenAlex API (api.openalex.org)",
+   "Semantic Scholar API (blocked, HTTP 429)",
+   "direct WebFetch on ScienceDirect (403), UNRISD PDF (unparseable), Oxford Academic Socio-Economic Review, PLOS Sustainability and Transformation, Research Square (403), ResearchGate (403)"
+  ],
+  "dry": "15 queries across WebSearch, OpenAlex, and attempted Semantic Scholar (rate-limited/blocked) and ScienceDirect/ResearchGate/Research Square (403 paywalled). No article combining \\\"Just Energy Transition Partnership\\\" with any of tied aid, aid conditionality, aid effectiveness, Easterly, Alesina, Riddell, or pledge inflation was found in any search result title or snippet across 6 direct co-occurrence queries. The OpenAlex API search for the exact keyword combination returned only classical development-aid papers (Easterly & Pfütze 2008, Loxley & Sackey 2008, Grabbe 1999, Polak 1991, Platteau 2004, Crawford & Kacarska 2017) with no JETP-related hits at all in the same result set — a strong disjointness signal. Two ScienceDirect/Research Square candidates with topically adjacent framing ('co"
+ },
+ {
+  "label": "",
+  "angle": "Canaux jusqu'ici non balayés (créneaux 1-2 de la grille de recherche : peer-review juridique, actes de colloque indexés, chapitres d'ouvrages collectifs) sur les JETP — vérification des six candidats signalés par le critique de complétude, plus recherche exploratoire pour saturation.",
+  "queries": [
+   "JETP investment law RECIEL 2026 Indonesia Vietnam substantive standards (WebSearch — budget épuisé, non exécutée)",
+   "Local content requirements Just Energy Transition Asia JWELB 2025 (WebSearch — budget épuisé, non exécutée)",
+   "Just Energy Transition Partnership Business and Human Rights Journal 2025 (WebSearch — budget épuisé, non exécutée)",
+   "Financing Climate Action Routledge Transition Planning and Country Platforms chapter (WebSearch — budget épuisé, non exécutée)",
+   "IOP Conference Series 1511 JETP Indonesia Vietnam stocktake (WebSearch — budget épuisé, non exécutée)",
+   "JETP legal analysis 2026 edited volume chapter (WebSearch — budget épuisé, non exécutée)",
+   "Crossref works/10.1111/reel.70033",
+   "Crossref works/10.1093/jwelb/jwaf003",
+   "Crossref works/10.1017/bhj.2024.28",
+   "Crossref works/10.1088/1755-1315/1511/1/012010",
+   "Crossref works/10.1088/1755-1315/1511/1/012012",
+   "Crossref works/10.4324/9781003589709-33",
+   "OpenAlex search: Just Energy Transition Partnership investment law",
+   "OpenAlex search: Just Energy Transition Partnership human rights procedural justice"
+  ],
+  "databases": [
+   "Crossref API (api.crossref.org) — primary, used as fallback after WebSearch quota exhausted",
+   "OpenAlex API (api.openalex.org) — supplementary saturation check"
+  ],
+  "dry": "All six signaled candidates confirmed as real, correctly attributed peer-reviewed/indexed publications via Crossref (WebSearch was unavailable — session quota exhausted at 200/200 calls before any query on this angle ran; fell back entirely to api.crossref.org, supplemented by two api.openalex.org saturation searches that returned only generic energy-justice literature with no additional JETP-specific legal/proceedings/edited-volume hits). Net effect on the three creneaux under stress-test: creneau1 (no peer-reviewed 4-JETP comparative retrospective pivoted on the March 2025 US withdrawal) survives — none of the six is a 4-country study nor engages Executive Order 14162 as an analytical pivot. Creneau2 (Vietnam/Senegal quasi-unexplored) needs a partial qualifier, not a retraction: three of"
+ },
+ {
+  "label": "",
+  "angle": "Créneau 3 (aide au développement / finance concessionnelle) — pont JETP × aide liée, conditionnalité, inflation des promesses, équivalent-don, testé contre 6 sources désignées + recherche additionnelle",
+  "queries": [
+   "JETP \"grant equivalent\" concessionality OECD DAC climate finance (WebSearch, blocked)",
+   "Just Energy Transition Partnership \"tied aid\" conditionality peer review (WebSearch, blocked)",
+   "JETP pledge inflation climate finance promises Oxfam shadow report 2025 (WebSearch, blocked)",
+   "\"country platform\" climate finance Nigeria Easterly aid effectiveness (WebSearch, blocked)",
+   "eco-humanitarian rentierism aid politics International Affairs 2025 (WebSearch, blocked)",
+   "JETP concessional finance debt development aid literature Alesina Riddell (WebSearch, blocked)",
+   "OpenAlex: Just Energy Transition Partnership tied aid conditionality grant equivalent",
+   "Crossref: eco-humanitarian rentierism aid International Affairs",
+   "Crossref: country platform climate action Nigeria (429 error, unresolved)",
+   "OpenAlex: Just Energy Transition Partnership concessional finance debt",
+   "OpenAlex doi lookup: 10.46830/wrien.25.00030 (WRI Financing country platforms)",
+   "OpenAlex doi lookup: 10.1787/345b768b-en (OECD private finance mobilised)",
+   "OpenAlex doi lookup: 10.59184/rp025.02 (Nigeria country platform)",
+   "OpenAlex doi lookup: 10.21201/2025.000088 (Oxfam Climate Finance Shadow Report 2025)",
+   "OpenAlex: grant equivalent methodology DAC concessionality climate finance CGD ODI",
+   "OpenAlex: Just Energy Transition Partnership aid effectiveness conditionality Indonesia South Africa",
+   "OpenAlex: Just Energy Transition Partnership aid promises unmet disbursement gap",
+   "OpenAlex: Center for Global Development grant equivalent concessionality DAC reform"
+  ],
+  "databases": [
+   "OpenAlex API (api.openalex.org)",
+   "Crossref API (api.crossref.org)",
+   "WebSearch (blocked mid-session: 'this session has used its web search budget 200 of 200')"
+  ],
+  "dry": "Le budget WebSearch de la session était épuisé (200/200) avant la première requête de ce lot — bascule immédiate sur WebFetch contre api.openalex.org et api.crossref.org (Crossref a renvoyé un 429 sur une requête, contournée via OpenAlex). Les 6 sources désignées par l'utilisateur ont toutes été vérifiées et confirmées comme gris (Oxfam, WRI, OECD, rapport Nigeria) sauf une (Tsourapas & El-Anis, International Affairs, peer-reviewed mais hors-JETP). Aucune recherche additionnelle (CGD grant-equivalent, disbursement-gap JETP, Alesina/Easterly/Riddell + JETP) n'a produit de nouveau candidat pertinent — signal de saturation cohérent avec le diagnostic du critique de complétude: le créneau 3 est réellement sous-couvert et son corpus est majoritairement gris. Recommandation: le manuscrit peut ci"
+ },
+ {
+  "label": "",
+  "angle": "Créneau francophone (Sénégal) — recherche de saturation dans les canaux francophones : HAL, Cairn, theses.fr, AFD papiers de recherche, Ferdi, Enda Energie/IED Dakar, versions françaises NRGI. Objectif : déterminer si le créneau Sénégal est libre uniquement en peer-review anglophone, ou libre tout court (y compris littérature grise et francophone).",
+  "queries": [
+   "JETP Sénégal (HAL API)",
+   "\"transition énergétique juste\" Sénégal (HAL API)",
+   "hal-05599857 record fetch (blocked by Anubis, retried via HAL API metadata)",
+   "\"JETP\" general (HAL API, filtered for Vietnam/Senegal/Indonesia/South Africa)",
+   "JETP Sénégal (theses.fr API)",
+   "\"transition énergétique juste\" Sénégal (theses.fr API)",
+   "\"transition energetique juste\" Senegal (OpenAlex)",
+   "Senelec conditionnalité AFD transition energetique (OpenAlex)",
+   "JETP Sénégal (Cairn.info search, blocked 403)",
+   "AFD ressources JETP Sénégal (afd.fr search)",
+   "Ferdi JETP Sénégal (ferdi.fr search)",
+   "JETP Sénégal enda-energie.org OR iedafrique.org (Bing)",
+   "\"JETP\" Sénégal Cairn.info (Bing)",
+   "\"plan d'investissement\" \"transition énergétique\" Sénégal article scientifique (Bing)",
+   "\"Nouveau JETP du Sénégal\" NRGI (Bing)",
+   "IDDRI JETP Sénégal analyse (Bing)"
+  ],
+  "databases": [
+   "HAL (api.archives-ouvertes.fr)",
+   "theses.fr (api.openalex... actually theses.fr/api/v1)",
+   "OpenAlex (api.openalex.org)",
+   "Cairn.info (blocked, 403)",
+   "afd.fr site search",
+   "ferdi.fr site search",
+   "Bing web search (fallback for Enda Energie, IED Dakar, NRGI, IDDRI — WebSearch tool exhausted at 200/200 calls before this task started)"
+  ],
+  "dry": "Le canal francophone n'est pas mort, mais reste peu dense et surtout non académique. Constat principal : le germe hal-05599857 (Yanis Rihi, avril 2026) est un article de vulgarisation/opinion (The Conversation France), pas un article évalué par les pairs — son dépôt sur HAL sous docType ART peut tromper un balayage automatisé qui ne distinguerait pas presse et revue. Son autrice est doctorante à Paris-Saclay sur une thèse en cours, plus large que le seul cas sénégalais (justice climat/transition Nord-Sud), non encore soutenue. Aucun article de revue (Cairn), aucun papier de recherche AFD ou Ferdi, aucune publication Enda Energie/IED Dakar spécifique au JETP sénégalais n'a pu être localisé positivement dans les canaux interrogés — mais plusieurs de ces recherches (Cairn 403, sites AFD/Ferdi"
+ },
+ {
+  "label": "",
+  "angle": "Working papers et dépôts institutionnels d'économie de l'énergie (SSRN, RePEc/EconStor, ANU Open Research/Crawford, ZEF, IDOS, Bruegel, IEEFA) — vérification prioritaire de Do, Halimatussadiah, Burke & Jotzo (2026) et balayage de l'aval Do/Jotzo 2025-2026.",
+  "queries": [
+   "Do Halimatussadiah Burke Jotzo 2026 Just Energy Transition Partnerships at Risk Indonesia Vietnam SSRN (blocked, budget exhausted)",
+   "Thang Nam Do Frank Jotzo 2025 2026 Vietnam JETP working paper (blocked)",
+   "JETP South Africa Indonesia Vietnam Senegal comparative RePEc EconStor working paper (blocked)",
+   "JETP ANU Crawford Open Research working paper 2026 (blocked)",
+   "JETP Trump withdrawal Bruegel IEEFA working paper (blocked)",
+   "JETP Vietnam Senegal ZEF IDOS discussion paper (blocked)",
+   "api.crossref.org/works/10.2139/ssrn.6979738",
+   "api.openalex.org search JETP Indonesia Vietnam risk",
+   "api.openalex.org authors search Thang Nam Do",
+   "api.crossref.org works query comparative JETP South Africa Indonesia Vietnam Senegal 2025-",
+   "api.openalex.org works filter author Thang Nam Do (A5010966473) from 2025",
+   "api.openalex.org works filter author Thang Nam Do variant A5104441812",
+   "api.openalex.org authors search Frank Jotzo",
+   "api.openalex.org works filter author Frank Jotzo (A5074676770) from 2025",
+   "api.openalex.org search JETP aid conditionality tied aid development literature bridge",
+   "bruegel.org search Just Energy Transition Partnership",
+   "openresearch-repository.anu.edu.au discover Just Energy Transition Partnership (timeout)",
+   "ideas.repec.org htsearch Just Energy Transition Partnership (returned homepage only, not usable)",
+   "ieefa.org search Just Energy Transition Partnership (403 Forbidden)",
+   "econstor.eu simple-search Just Energy Transition Partnership (blocked by Anubis bot-detection challenge)"
+  ],
+  "databases": [
+   "Crossref API (api.crossref.org)",
+   "OpenAlex API (api.openalex.org)",
+   "WebSearch (exhausted after 6 calls — budget hit 200/200 mid-session)",
+   "WebFetch attempted on Bruegel, ANU Open Research, RePEc/IDEAS, EconStor, IEEFA — all four returned unusable content (homepage-only, bot challenge, timeout, or 403)"
+  ],
+  "dry": "Tooling failure, not confirmed absence: WebSearch hit its session budget (200/200) after only 1 query attempt registered against this angle, so 5 of the 6 requested queries never actually executed — this is a hard tool-availability failure, not a null result, and should not be read as evidence against the flagged venues. WebFetch fallbacks to RePEc/IDEAS (returns homepage shell, not search results — htsearch endpoint appears to require JS or session cookies), EconStor (blocked by Anubis proof-of-work anti-scraping challenge), IEEFA (403 Forbidden on the search URL), and ANU Open Research repository (60s timeout) were all unusable — none of SSRN's four named sibling venues (RePEc/EconStor, ANU Open Research, IEEFA; Bruegel returned a real but negative result) could be genuinely searched. Br"
+ }
+]

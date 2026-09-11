@@ -1,0 +1,240 @@
+{
+  "agent": "veille",
+  "date_run": "2026-09-08",
+  "mission": "Statut des deux préprints menaçants (Do et al. SSRN 6979738 ; Kawiriaan & Zan Research Square rs-9059924) + balayage fenêtre 2026-08-10..2026-09-08 sur JETP / country platforms / absorptive capacity / debt sustainability",
+  "task_A_preprint_status": {
+    "preprint_1": {
+      "citation": "Do, T.N., Halimatussadiah, A., Burke, P.J. & Jotzo, F., \"Just Energy Transition Partnerships at Risk in Indonesia and Vietnam\", SSRN 10.2139/ssrn.6979738, posted 2026-07-29",
+      "status_check": {
+        "crossref_doi_lookup": {
+          "query": "GET https://api.crossref.org/works/10.2139/ssrn.6979738",
+          "result": "type=posted-content, publisher=Elsevier BV (SSRN), no 'relation' field to a published version, is-referenced-by-count=0"
+        },
+        "openalex_doi_lookup": {
+          "query": "GET https://api.openalex.org/works/https://doi.org/10.2139/ssrn.6979738",
+          "result": "type=preprint, single location (SSRN Electronic Journal), no published-version location"
+        },
+        "semantic_scholar": {
+          "query": "GET /graph/v1/paper/DOI:10.2139/ssrn.6979738",
+          "result": "not found by DOI; found via title search (paperId 98a4558...), venue='', no DOI attached, publicationDate 2026-06-18 (earlier working-paper date)"
+        },
+        "crossref_bibliographic_search_for_journal_version": {
+          "queries": [
+            "query.bibliographic=Just Energy Transition Partnerships at Risk Indonesia Vietnam",
+            "query.bibliographic=Just Energy Transition Partnerships at Risk in Indonesia and Vietnam & query.container-title=Journal of Southeast Asian Economies"
+          ],
+          "result": "No DOI registered in Crossref for a JSEAE journal version as of 2026-09-08. Probed DOI pattern 10.1355/ae43-1[a-h] directly: all 404 except one transient 429 (rechecked -> 404)."
+        },
+        "publisher_catalog_confirmation": {
+          "source": "https://bookshop.iseas.edu.sg/publication/8012 (ISEAS Publishing official bookshop page for Journal of Southeast Asian Economies Vol. 43/1, April 2026)",
+          "method": "direct curl fetch, HTTP 200, verbatim text extracted",
+          "finding": "Page lists, under 'POLICY NOTE': 'Just Energy Transition Partnerships at Risk in Indonesia and Vietnam, by Thang Nam Do, Alin Halimatussadiah, Paul J. Burke, Frank Jotzo' with an abstract byte-identical to the SSRN/Crossref abstract. Issue: AE43/1, ISSN 23395095, 113 pages, publisher ISEAS - Yusof Ishak Institute, 'Date of publication: April 2026'."
+        },
+        "independent_confirmation": {
+          "source": "https://researchportalplus.anu.edu.au/en/persons/frank-jotzo/ (ANU institutional research portal, WebFetch)",
+          "finding": "Lists 'Just Energy Transition Partnerships at Risk in Indonesia and Vietnam' (Do, Halimatussadiah, Burke, Jotzo) as published April 2026 in Journal of Southeast Asian Economies, Vol 43, Issue 1 -- independent corroboration from a second authoritative source, no DOI shown."
+        },
+        "project_muse_check": {
+          "url": "https://muse.jhu.edu/issue/57077 (JSEAE Vol 43 No 1, April 2026)",
+          "result": "WebSearch confirmed the issue exists on Project MUSE; WebFetch of the issue page blocked by a 'Verification required!' bot-check wall -- could not read the table of contents directly."
+        }
+      },
+      "verdict": "CONFIRMED PUBLISHED as a peer-reviewed 'Policy Note' in Journal of Southeast Asian Economies (ISEAS - Yusof Ishak Institute) Vol. 43(1), nominally cover-dated April 2026 -- via two independent authoritative sources (ISEAS's own bookshop catalog, ANU institutional research portal), abstract text identical to the SSRN posting. NOT YET deposited in Crossref/OpenAlex/Semantic Scholar under a journal DOI as of 2026-09-08 (checked DOI pattern 10.1355/ae43-1[a-h], all absent). Exact online release date relative to the 2026-08-10 window boundary is UNRESOLVED: the nominal cover date (April 2026) predates the window and even predates the SSRN posting (29 July 2026) and Crossref indexing of the SSRN copy, which is chronologically odd -- most plausible explanations are (a) publisher/deposit lag for this journal (a precedent case, Vol 42/1 April 2025, only appears in Crossref by two DOIs as of Sept 2026, i.e. ~17 months lag) or (b) the printed cover date lags actual availability. Given this, the honest answer to 'a-t-il paru en revue depuis le 10 aout 2026' is: DEJA PARU EN REVUE (confirmed), mais date d'apparition effective par rapport a la fenetre INDETERMINEE faute de DOI/date precise -- ce n'est en tout cas plus un simple preprint SSRN a risque, c'est deja une publication a comite de lecture (format Policy Note)."
+    },
+    "preprint_2": {
+      "citation": "Kawiriaan, H.U. & Zan, T.T., \"Translating promise into practice in Just Energy Transition Partnerships\", Research Square 10.21203/rs.3.rs-9059924/v1, posted 2026-03-18, Crossref group-title 'In Review'",
+      "status_check": {
+        "crossref_doi_lookup": {
+          "query": "GET https://api.crossref.org/works/10.21203/rs.3.rs-9059924/v1",
+          "result": "type=posted-content, group-title='In Review', no 'relation' field, is-referenced-by-count=0, indexed date-time still 2026-03-18 (never re-indexed since posting)"
+        },
+        "openalex_doi_lookup": {
+          "result": "type=preprint, single location (Research Square), no published-version location"
+        },
+        "semantic_scholar": {
+          "result": "TOOL FAILURE: rate-limited (HTTP 429) on every attempt (3 retries with backoff 8s/15s/20s) -- could not query S2 for this paper by DOI or title."
+        },
+        "crossref_bibliographic_search_for_journal_version": {
+          "query": "query.bibliographic=Translating promise into practice Just Energy Transition Partnerships",
+          "result": "No other DOI found matching this title; only the Research Square posted-content DOI itself returned among 10 results."
+        },
+        "direct_page_fetch": {
+          "url": "https://www.researchsquare.com/article/rs-9059924/v1",
+          "method": "curl with browser User-Agent (WebFetch blocked by 403 both for this page and papers.ssrn.com)",
+          "result": "HTTP 200, full page retrieved. Page explicitly states: 'Status: Under Revision', 'Version 1 posted', 'This work is licensed under a CC BY 4.0 License ... has not been peer reviewed by a journal.' -- CONFIRMS still not published."
+        }
+      },
+      "verdict": "STILL A PREPRINT as of 2026-09-08. Research Square page itself states 'Status: Under Revision' and explicitly '[this content] has not been peer reviewed by a journal.' No published-version DOI found anywhere (Crossref relation field empty, no bibliographic match). No journal appearance since 10 August 2026 (or ever)."
+    }
+  },
+  "task_A_content_overlap": {
+    "preprint_1_do_et_al": {
+      "text_read": "Full abstract only (identical across SSRN/Crossref/ISEAS catalog); full text of the Policy Note itself blocked (SSRN 403, ScienceDirect/ISEAS/MUSE full text not accessible; the abstract is the complete available primary text)",
+      "abstract_verbatim_key_claims": [
+        "'a core misalignment between recipient country expectations for early concessional finance and international partners' emphasis on reform conditionality'",
+        "'Low grant shares, slow disbursement and weakened trust -- exacerbated by recent geopolitical shifts, including the withdrawal of the United States from JETPs in 2025 -- have further constrained progress'",
+        "'re-energizing JETPs requires an explicit sequencing strategy that front-loads concessional finance and prioritizes politically and economically feasible pioneer projects'"
+      ],
+      "P1_non_absorbabilite_bilan": "ADJACENT / SYMPTOME SEULEMENT. Mentionne 'low grant shares' (proche de la premisse de P1 sur la structure du paquet) mais ne developpe aucun argument de bilan (pas de plafond de dette souverain, pas d'insolvabilite d'operateur electrique -- PLN n'est meme pas nomme -- pas d'exposition de change, pas de cout du capital). Le blocage est presente comme un probleme de confiance/sequencage/conditionnalite, pas de bilan.",
+      "P2_personne_evalue_paquet_entier": "NON TOUCHE. Aucune mention de la fragmentation des bailleurs (KfW/AFD/JBIC/BEI/BM/BAD), aucune mention de 'jointly announced severally owed' ou d'un deficit de gouvernance sur l'evaluation du paquet global.",
+      "P3_agentivite_strategique": "ADJACENT FAIBLE. 'recipient country expectations' evoque une agentivite du destinataire mais cadree comme un ecart d'attentes/malentendu, pas comme un choix souverain deliberé de refus/detournement. Aucune mention de refus de tranches, detournement vers gaz/charbon captif/contenu local, ni de refus de conditionnalites de suivi.",
+      "P4_solvabilite_achete_agentivite": "NON TOUCHE. Aucune mention de la distribution de solvabilite ni d'un lien entre solvabilite et capacite de refuser des conditions.",
+      "classification": "adjacent (symptome de P1 et P3 evoque en surface, aucune des quatre propositions n'est enoncee comme argument)"
+    },
+    "preprint_2_kawiriaan_zan": {
+      "text_read": "Texte quasi-integral recupere via curl direct sur researchsquare.com (introduction + resultats, ~48 700 caracteres extraits, y compris methode et discussion partielle)",
+      "note": "Cite explicitement Ha-Duong & Cassen 2024 (le manuscrit 'at two' lui-meme) comme reference sur le paquet Senegal, et cite Karg et al. 2025, Boute 2025 (deja dans le registre 'pieces connues' du brief).",
+      "keyword_scan_full_text": {
+        "debt": 11,
+        "balance sheet": 0,
+        "sovereign": 4,
+        "IMF": 0,
+        "DSA": 0,
+        "solvency": 0,
+        "insolven": 0,
+        "Eskom": 0,
+        "PLN": 0,
+        "EVN": 0,
+        "Senelec": 0,
+        "jointly announced": 0,
+        "severally": 0,
+        "governance gap": 0,
+        "agency": 0,
+        "refus*": 0,
+        "conditionalit*": 3,
+        "grant share": 0,
+        "absorptive capacity": 1,
+        "fiscal space": 0,
+        "exchange rate": 0,
+        "cost of capital": 0,
+        "local content": 1,
+        "strategic": 1,
+        "International Partners Group": 2
+      },
+      "verbatim_excerpts": [
+        "'studies document persistent confusion about whether JETP funds represent grants, concessional loans, or mobilized private capital -- a distinction with profound implications for debt sustainability and national ownership'",
+        "'Across the four JETPs, concessional loans dominate grant financing, raising concerns about debt sustainability particularly in countries like Senegal and South Africa that already face fiscal constraints (Karg et al., 2025)'",
+        "'Boute (2025) notes that loans under debt financing must be repaid, which can worsen debt issues, with loan structures often requiring sovereign guarantees that shift financial risk to recipient governments'",
+        "'Vietnam faces similar challenges, with financing concerns compounded by the country's limited absorptive capacity for the scale of investment proposed (Ayas, et al., 2024)' -- seule occurrence du terme 'absorptive capacity', citation secondaire d'un tiers, non developpee",
+        "'the International Partners Group maintains significant influence over investment priorities through the secretariat structure and approval processes ... what one study terms a participation paradox'",
+        "'Current structures, which give International Partners Group members effective veto power over investments, should evolve toward models where recipient countries hold decision-making authority'"
+      ],
+      "P1_non_absorbabilite_bilan": "ADJACENT / SYMPTOME. C'est une revue de portee (scoping review) synthetisant la litterature secondaire deja connue (Karg 2025, Boute 2025) sur le ratio prets/dons et la soutenabilite de la dette en general. AUCUNE mention d'Eskom, PLN, EVN, Senelec, d'un plafond DSA FMI/BM, d'exposition de change ou de cout du capital -- pas d'argument de BILAN au sens de P1, seulement le constat generique 'les couts dominent les dons, ca inquiete sur la dette'.",
+      "P2_personne_evalue_paquet_entier": "NON TOUCHE DIRECTEMENT mais proche par un autre biais : le papier documente la fragmentation de gouvernance donateur/beneficiaire (IPG detient un droit de veto, structure de secretariat) -- c'est un angle de gouvernance, mais jamais formule comme 'personne n'a le mandat d'evaluer la capacite d'absorption du paquet DANS SON ENSEMBLE' ; l'argument de P2 (jointly announced, severally owed / agregat sans proprietaire institutionnel) n'apparait pas.",
+      "P3_agentivite_strategique": "ADJACENT. Le papier note que 'recipient countries continue to expand coal capacity or pursue fossil gas development, seemingly at odds with JETP objectives' et discute le débat gaz comme 'necessary transition fuel for energy access, industrialization' -- CONSTATE le symptome (poursuite d'un agenda propre) mais le cadre comme une 'tension'/'translation gap' plutot que comme une AGENTIVITE STRATEGIQUE deliberee (refus de tranches, ralentissement volontaire). Pas de discussion du refus des conditionnalites de suivi/transparence en tant que strategie.",
+      "P4_solvabilite_achete_agentivite": "NON TOUCHE. Zero occurrence de logique solvable/insolvable; aucune comparaison des deux bouts de la distribution de solvabilite.",
+      "classification": "adjacent (P1 et P3 a l'etat de symptome/synthese de litterature existante; P2 effleure via la gouvernance IPG mais sans l'argument structurel specifique; P4 absent)"
+    }
+  },
+  "task_A_other_team_papers_since_2026_08_10": {
+    "method": "ANU Research Portal Plus (Frank Jotzo, Paul Burke pages via WebFetch) + WebSearch (Thang Nam Do, Alin Halimatussadiah) avant epuisement du budget WebSearch",
+    "findings": [
+      {
+        "note": "Aucune nouvelle publication de Do/Jotzo/Burke/Halimatussadiah (les 4 auteurs du preprint 1) posterieure au 10 aout 2026 trouvee. Publications 2026 les plus recentes de Burke/Jotzo (avant le 10 aout): Reforming EU CBAM (Energy Nexus, juin 2026), Climate policy upscaling (Climate Policy, avril 2026)."
+      },
+      {
+        "title": "Are just energy transition investment plans tailored to country-specific challenges? Comparing South Africa and Indonesia",
+        "authors": "Wikus Kruger, Alin Halimatussadiah, Fabian Wagner, Fachry Abdul Razak Afifi, Mavi Magagula, Priskila Teresa Nandita",
+        "venue": "Sustainable Futures (Elsevier, DOAJ, open access)",
+        "doi": "10.1016/j.sftr.2026.102119",
+        "date": "en ligne le 2026-09-03 (Unpaywall oa_date), cover date decembre 2026 -- DANS LA FENETRE",
+        "co_author_overlap": "Alin Halimatussadiah = co-autrice du preprint 1 -- repond a la question (d) du brief",
+        "abstract_read": "NON. Echec d'acces: ScienceDirect (WebFetch + curl direct + r.jina.ai proxy) bloque par captcha Cloudflare (403 a chaque tentative); ResearchGate (Wikus Kruger) 403; DOAJ pas encore indexe (0 resultat, indexation en retard); Semantic Scholar renvoie l'entree mais abstract=null.",
+        "classification": "CANDIDAT NON CLASSE -- titre seul insuffisant selon la discipline du brief (regle 2). A signaler a l'auteur pour verification manuelle (acces institutionnel), potentiellement tres pertinent pour P1/P3 vu le titre ('tailored to country-specific challenges') et la co-autrice."
+      }
+    ]
+  },
+  "task_B_window_sweep": {
+    "window": "2026-08-10 to 2026-09-08 inclusive",
+    "positive_controls": [
+      {
+        "query": "GET https://api.crossref.org/works?query.title=just+energy+transition+partnership&filter=from-created-date:2026-07-01,until-created-date:2026-07-31&rows=50",
+        "expected": "Do et al. SSRN 10.2139/ssrn.6979738",
+        "result": "SUCCESS -- 10.2139/ssrn.6979738 present in results"
+      },
+      {
+        "query": "GET https://api.crossref.org/works?query.title=JETP&filter=from-created-date:2026-07-01,until-created-date:2026-07-31&rows=20",
+        "expected": "Yunissa & Maksum, Journal of Government and Politics 8(1), 10.31764/jgop.v8i1.40158",
+        "result": "SUCCESS -- total=1, exactly this DOI returned"
+      }
+    ],
+    "methodological_finding": "Crossref query.bibliographic / query.title perform bag-of-words relevance ranking, NOT exact phrase matching -- verified: wrapping the query in double quotes (query.title=\"just energy transition partnership\") returns an IDENTICAL result set/count to the unquoted version (total-results=15104 both times). A broad bag-of-words query against common words ('just','energy','transition') returns tens of thousands of irrelevant hits and only surfaces true JETP items if they rank in the top ~50 by relevance; this is why a precise 'JETP'-acronym-only title search was used as the primary probe for the window, cross-checked against the broader bag-of-words query for phrasings that avoid the acronym.",
+    "queries_run": [
+      {"tool":"Crossref","query":"works/10.2139/ssrn.6979738","result":"see task A"},
+      {"tool":"Crossref","query":"works/10.21203/rs.3.rs-9059924/v1","result":"see task A"},
+      {"tool":"OpenAlex","query":"works?search=test&per-page=1 (and the planned JETP/country-platform/absorptive-capacity date-filtered queries)","result":"TOOL FAILURE -- HTTP error 'Rate limit exceeded / Insufficient budget', dailyRemainingUsd=0.0005, retryAfter=37693s (~10.5h). OpenAlex COULD NOT BE USED for the entire Task B window sweep. This is a hard gap in coverage, explicitly flagged."},
+      {"tool":"Semantic Scholar","query":"paper/search?query=Just Energy Transition Partnerships at Risk Indonesia Vietnam","result":"success after backoff, returned 22 hits (see task A), none new for the window"},
+      {"tool":"Semantic Scholar","query":"paper/search?query=Translating promise into practice ... (Kawiriaan)","result":"TOOL FAILURE -- HTTP 429 on 3 attempts with backoff, never succeeded"},
+      {"tool":"Semantic Scholar","query":"paper/search?query=just energy transition partnership country platform absorptive capacity","result":"TOOL FAILURE -- HTTP 429 on 2 attempts, never succeeded"},
+      {"tool":"Crossref","query":"query.bibliographic=just energy transition partnership, filter created-date 2026-08-10..2026-09-08, rows=50","result":"total-results=24527 (bag-of-words, mostly noise); filtered locally for JETP/country-platform/absorptive-capacity keywords in title -> 2 candidates (Hastuti et al POLISTAAT; APRI Country Platform/JET insight brief), both discussed below"},
+      {"tool":"Crossref","query":"query.title=just energy transition partnership, filter created-date 2026-08-10..2026-09-08, rows=50","result":"total-results=15104 (same bag-of-words issue). Top candidate by actual publication date IN WINDOW: 10.1016/j.sftr.2026.102119 (Kruger, Halimatussadiah et al., Sustainable Futures, published 2026-09-03) -- see Task A(d) above, abstract unreadable."},
+      {"tool":"Crossref","query":"query.title=JETP (acronym only), filter created-date 2026-08-10..2026-09-08, rows=50","result":"total-results=1 -- ONLY 10.23969/paradigmapolistaat.v9i1.61714 (Hastuti, Poerwantika, Pratama, Saputra, 'JUST ENERGY TRANSITION PARTNERSHIP (JETP) SEBAGAI KATALIS INVESTASI HIJAU', Paradigma POLISTAAT 9(1), publie 2026-07-29 -- donc AVANT la fenetre par sa date de publication, seulement deposite sur Crossref le 2026-08-15). RESULTAT NUL pour un item veritablement nouveau et publie dans la fenetre selon ce critere strict."},
+      {"tool":"Crossref","query":"query.title=JETP (acronym only), NO date filter, sort=created desc, rows=40","result":"total-results=128 (dont l'essentiel = fausse piste 'JETP Letters', revue de physique russe, sans rapport). Confirme qu'aucun item titre 'JETP' n'a ete cree dans Crossref apres le 2026-08-15 (Hastuti et al.) -- corrobore le resultat nul ci-dessus par une methode independante (tri chronologique plutot que filtre de date)."},
+      {"tool":"Crossref","query":"query.bibliographic=country platform climate finance, filter created-date window, rows=30","result":"total-results=14643. Candidats 'country platform' pertinents mais tous ANTERIEURS a la fenetre par leur date de publication reelle malgre un depot Crossref recent: 'Beyond JET-P: building country platforms that work for Africa's climate and development goals' (Richard Calland, APRI, 10.59184/sa025.017, publie 2025-11-21, depose sur Crossref 2026-08-18) ; 'A country-platform playbook for scaling adaptation finance' (Ebipere Clark, APRI, 10.59184/sa026.06, date Crossref '2026' sans mois -- indetermine)."},
+      {"tool":"Crossref","query":"query.bibliographic=absorptive capacity climate finance, filter created-date window, rows=30","result":"total-results=12772. Rien de specifiquement JETP; un item tangent hors-sujet climat: 'Absorptive Capacity, Exchange-Rate Regimes, and the Growth Effects of Foreign Direct Investment: Threshold Evidence from 115 Developing Economies' (SSRN 7354686, 2026) -- litterature FDI generale, pas climat/JETP, ecarte."},
+      {"tool":"Crossref","query":"query.bibliographic=debt sustainability energy transition, filter created-date window, rows=30","result":"total-results=30913. Aucun candidat pertinent pour JETP/country platforms. Deux items generiques dette souveraine Afrique du Sud verifies et ecartes (voir ci-dessous)."},
+      {"tool":"Crossref","query":"query.bibliographic=JETP absorptive capacity debt Indonesia Vietnam Senegal South Africa, filter created-date window, rows=30","result":"total-results=20079. Deux candidats verifies et ecartes: 'A time series analysis of the sustainability of government debt in South Africa' (Gisele Mah, F1000Research, 2026-08-13) -- dette publique generale ARDL 1997Q4-2023Q4, aucune mention JETP/climat; 'Debt Sustainability and Management in Africa' (Osei, Boumbouya, Oppong, book chapter, 2026-08-12, abstract vide) -- hors sujet"},
+      {"tool":"HAL","query":"https://api.archives-ouvertes.fr/search/?q=%22just+energy+transition+partnership%22&wt=json&rows=30","result":"numFound=8, tous anterieurs a 2026 (2023-2025). RESULTAT NUL pour la fenetre."},
+      {"tool":"arXiv","query":"http://export.arxiv.org/api/query?search_query=all:%22just+energy+transition+partnership%22&sortBy=submittedDate&sortOrder=descending","result":"0 entrees. RESULTAT NUL (phrase jamais utilisee sur arXiv)."},
+      {"tool":"RePEc/IDEAS","query":"htsearch cgi endpoint, avec et sans filtre de date","result":"TOOL FAILURE -- l'endpoint htsearch ne renvoie que le squelette de la page de recherche (JS-rendered / anti-bot 'IDEAS is struggling with massive bot traffic'), aucun resultat exploitable via curl direct."},
+      {"tool":"EconStor","query":"https://www.econstor.eu/simple-search?query=...","result":"TOOL FAILURE -- page de challenge anti-bot ('Making sure you're not a bot!'), aucun resultat exploitable."},
+      {"tool":"WebSearch","query":"~9 requetes emises avant epuisement du budget de session (200/200 utilise par la session globale, pas seulement cet agent)","result":"Budget epuise a partir d'un certain point; les requetes prevues pour la litterature grise (ODI, CGD, IEEFA, Carnegie, Bruegel, E3G, Grantham LSE, IISD, NRGI, AFD) sur la fenetre n'ont pas pu etre lancees via WebSearch. Contournement partiel via WebFetch direct sur les pages connues (voir ci-dessous)."},
+      {"tool":"WebFetch","query":"pages de listing directes (Carnegie, Grantham LSE, ODI, IISD, CGD)","result":"Carnegie: confirme aucune suite JETP-specifique en aout-septembre 2026 (3 papiers Carnegie recents identifies, aucun sur JETP/country platforms). Grantham LSE: liste de publications recentes ne remonte pas jusqu'a la fenetre (derniere entree listee 28 juillet 2026), rien sur JETP. ODI: 403 (bloque). CGD: 404 (mauvaise URL, non retentee faute de budget WebSearch pour la retrouver). IISD: 404 (idem)."}
+    ],
+    "candidates_found_in_window": [
+      {
+        "title": "Are just energy transition investment plans tailored to country-specific challenges? Comparing South Africa and Indonesia",
+        "authors": "Kruger, Halimatussadiah, Wagner, Afifi, Magagula, Nandita",
+        "date": "2026-09-03 (online, Sustainable Futures, Elsevier/DOAJ open access)",
+        "doi": "10.1016/j.sftr.2026.102119",
+        "abstract_lue": false,
+        "pre_classification": "NON CLASSABLE (resume inaccessible malgre plusieurs tentatives -- ScienceDirect captcha, ResearchGate 403, DOAJ non indexe, S2 sans resume). Signale a l'auteur pour verification manuelle."
+      },
+      {
+        "title": "JUST ENERGY TRANSITION PARTNERSHIP (JETP) SEBAGAI KATALIS INVESTASI HIJAU: IMPLIKASI BAGI PERTUMBUHAN EKONOMI INDONESIA",
+        "authors": "Ika Sri Hastuti, Tine Ratna Poerwantika, Rama Rifqi Pratama, Rizfa Palsa Dwi Saputra",
+        "date": "publie 2026-07-29 (donc juste avant la fenetre), depose sur Crossref le 2026-08-15 (dans la fenetre)",
+        "doi": "10.23969/paradigmapolistaat.v9i1.61714",
+        "venue": "Paradigma POLISTAAT: Jurnal Ilmu Sosial dan Ilmu Politik (revue indonesienne locale)",
+        "abstract_lue": true,
+        "resume_pertinent": "Etude qualitative (analyse de contenu/thematique) sur le CIPP indonesien: conclut que le JETP 'belum dapat dikategorikan sebagai penggerak utama pertumbuhan ekonomi' (ne peut pas encore etre qualifie de moteur principal de croissance) et liste parmi les facteurs limitants 'kondisi keuangan PLN' (l'etat financier de PLN) aux cotes de la certitude reglementaire, la capacite institutionnelle, la qualite du financement, la disponibilite des projets et la geopolitique energetique.",
+        "pre_classification": "ADJACENT -- mentionne 'kondisi keuangan PLN' comme UN facteur parmi six, sans le developper comme argument de bilan structurel (P1). Symptome reconnu, argument non fait. Touche P1 au niveau le plus superficiel."
+      },
+      {
+        "title": "Beyond JET-P: building country platforms that work for Africa's climate and development goals",
+        "authors": "Richard Calland",
+        "date": "publie 2025-11-21 (bien avant la fenetre), depose sur Crossref le 2026-08-18 (dans la fenetre) -- artefact de retard de depot, PAS une nouvelle parution",
+        "doi": "10.59184/sa025.017",
+        "venue": "APRI - Africa Policy Research Institute (note de politique / blog)",
+        "abstract_lue": true,
+        "resume": "'Can Africa turn country platforms from donor-led projects into powerful vehicles for self-driven transformation? This piece explores how leadership, design and ownership will shape their impact.'",
+        "pre_classification": "CONTEXTE -- litterature grise (note d'opinion, pas une evaluation empirique), anterieure a la fenetre malgre l'indexation recente. Effleure P2 (gouvernance/ownership des country platforms) au niveau le plus general, sans l'argument specifique 'jointly announced severally owed'."
+      },
+      {
+        "title": "A country-platform playbook for scaling adaptation finance",
+        "authors": "Ebipere Clark",
+        "date": "2026, mois indetermine dans Crossref",
+        "doi": "10.59184/sa026.06",
+        "venue": "APRI",
+        "abstract_lue": true,
+        "resume": "'Climate change is costing lives and livelihoods - but funding solutions is falling short. This playbook shows how smarter finance can turn resilience into real investment.'",
+        "pre_classification": "HORS SUJET / CONTEXTE FAIBLE -- porte sur le financement de l'adaptation en general (pas sur les JETP energie), date de publication non confirmee dans la fenetre."
+      }
+    ],
+    "candidates_checked_and_rejected": [
+      {"title":"A time series analysis of the sustainability of government debt in South Africa","doi":"10.12688/f1000research.178699.1","reason":"Dette publique sud-africaine generale (ARDL, 1997-2023), aucune mention JETP/climat/PLN/Eskom"},
+      {"title":"Debt Sustainability and Management in Africa","doi":"10.4324/9781003587385-12","reason":"Chapitre de manuel generaliste, abstract vide, portee generale dette africaine"},
+      {"title":"Absorptive Capacity, Exchange-Rate Regimes, and the Growth Effects of Foreign Direct Investment","doi":"(SSRN 7354686)","reason":"Litterature IDE/croissance generale, hors climat/JETP"},
+      {"title":"Insight Brief: Global South Peer Learning Workshop on Country Platform and Just Energy Transition","doi":"10.59184/rp025.04","reason":"Publie 2025-09-24, tres anterieur a la fenetre malgre le depot Crossref recent; brief evenementiel (APRI, Nigeria) sans argument P1-P4 developpe"}
+    ]
+  },
+  "tool_failures_summary": [
+    "OpenAlex: budget quotidien epuise pour toute la session -- AUCUNE requete OpenAlex n'a fonctionne pour la Tache B (retryAfter ~10.5h, hors delai de la mission). Lacune de couverture explicitement signalee.",
+    "Semantic Scholar: rate-limited (HTTP 429) de maniere intermittente sans cle API -- 2 requetes sur 5 ont echoue meme apres plusieurs tentatives avec backoff.",
+    "RePEc/IDEAS htsearch: endpoint ne renvoie pas de resultats via curl direct (page anti-bot).",
+    "EconStor: bloque par un challenge anti-bot.",
+    "SSRN (papers.ssrn.com) et ScienceDirect: 403 systematique (Cloudflare / captcha) sur WebFetch ET curl direct (avec user-agent navigateur) ET via proxy r.jina.ai -- texte integral du preprint 1 et de l'article Kruger/Halimatussadiah 2026-09-03 non accessibles malgre plusieurs methodes.",
+    "ResearchGate et Project MUSE: bloques (403 / 'Verification required').",
+    "WebSearch: budget de session epuise (200/200) avant d'avoir pu completer le balayage de la litterature grise (Bruegel, E3G, NRGI, AFD, IISD, CGD non verifies)."
+  ]
+}

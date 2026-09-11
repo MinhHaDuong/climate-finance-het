@@ -1,0 +1,267 @@
+{
+  "angle": "B — développement économique : littérature de la capacité d'absorption de l'aide, appliquée (ou non) à la finance climatique et aux JETP. Cible P1, P2, P4.",
+  "date": "2026-09-08",
+  "databases": ["OpenAlex API", "Crossref API", "Semantic Scholar API", "SSRN/PMC direct fetch", "WebSearch (grey literature, budget-limited)"],
+  "positive_control": {
+    "query": "absorptive capacity foreign aid (OpenAlex works search)",
+    "url": "https://api.openalex.org/works?search=absorptive%20capacity%20foreign%20aid&per-page=25",
+    "result": "OK — sonde valide. Remonte Feeny & de Silva (2012) Economic Modelling 29(3):725-733, doi:10.1016/j.econmod.2012.01.013 ; Hansen & Tarp (2001) J. Dev. Econ. ; Kang (2010) Philippines absorptive capacity ; Roodman (2007) 'Aid Project Proliferation and Absorptive Capacity'. Guillaumont/Chauvet/Bourguignon/Sundberg/McGillivray/Chenery/Strout n'apparaissaient pas dans le TOP-6 résumé par l'outil de fetch (troncature du résumé, pas absence de la base — vérifié séparément par requêtes nommées ci-dessous, qui les ont bien résolues à la source). Verdict : positive control RÉUSSI."
+  },
+  "queries": [
+    "OpenAlex: absorptive capacity foreign aid",
+    "Crossref bibliographic: Chenery Strout foreign assistance economic development",
+    "OpenAlex: Guillaumont Chauvet absorptive capacity aid policy",
+    "Crossref bibliographic: Guillaumont Chauvet Aid and Performance A Reassessment",
+    "Crossref bibliographic: Bourguignon Sundberg aid effectiveness opening black box",
+    "Crossref bibliographic: Feeny McGillivray aid allocation absorptive capacity",
+    "Crossref bibliographic: Clemens Radelet Bhavnani Bazzi counting chickens aid growth",
+    "Crossref bibliographic: Berg Gottschalk Portillo Zanna absorption spending scaling up aid",
+    "Crossref bibliographic: aid commitments disbursements gap developing countries",
+    "Crossref bibliographic: donor proliferation fragmentation aid effectiveness",
+    "OpenAlex: pledge inflation climate finance commitment disbursement",
+    "OpenAlex: division of labour donors aid harmonisation Paris Declaration",
+    "OpenAlex filter default.search: \"absorptive capacity\" \"climate finance\"",
+    "OpenAlex filter default.search: \"absorptive capacity\" JETP",
+    "OpenAlex works/doi: 10.2139/ssrn.5768142 (Huynh Thanh Dien, Vietnam green finance)",
+    "OpenAlex works/doi: 10.1080/14693062.2022.2114985 (Pauw et al. post-2025 climate finance target)",
+    "Crossref query: aid absorption energy transition green finance",
+    "Crossref query: diminishing returns climate finance aid effectiveness [429 — échoué]",
+    "Crossref query: diminishing returns climate finance developing countries",
+    "Crossref query: aid effectiveness principles climate finance Paris Declaration",
+    "Crossref query: donor fragmentation climate finance developing countries [429 — échoué]",
+    "Crossref query: climate finance donor proliferation coordination recipient countries",
+    "Crossref query: Just Energy Transition Partnership debt sustainability sovereign debt",
+    "Semantic Scholar: JETP debt sustainability balance sheet [429 — échoué]",
+    "Semantic Scholar: aid absorption energy transition [429 — échoué]",
+    "Semantic Scholar: diminishing returns climate finance aid [429 — échoué]",
+    "WebSearch: JETP \"debt sustainability\" balance sheet Eskom PLN EVN Senelec insolvency",
+    "WebSearch: \"Just Energy Transition Partnership\" \"absorptive capacity\"",
+    "WebSearch: \"pledged\" aid package \"no single\" institution accountable aggregate donors \"severally\"",
+    "WebSearch: Bradlow Swamidurai Socio-Economic Review Just Energy Transition Partnership abstract",
+    "WebSearch: \"aid pipeline\" commitment disbursement gap developing countries academic literature",
+    "Crossref query.bibliographic: aid dependence bargaining power conditionality creditworthiness recipient",
+    "Crossref works/DOI lookups: Bradlow & Swamidurai (10.1093/ser/mwag015), Karg/Gupta/Chen (10.1016/j.erss.2025.104103), Do et al SSRN (10.2139/ssrn.6979738), Moitra et al BMJ Global Health (10.1136/bmjgh-2020-004858)"
+  ],
+  "dry_queries": [
+    "OpenAlex default.search \"absorptive capacity\" JETP — un seul résultat pertinent trouvé (préprint Vietnam, voir candidats), le reste hors sujet (matériaux/chimie)",
+    "Crossref: aid pipeline unspent commitments disbursement lag developing countries — 429, non résolu par API, relayé sur WebSearch",
+    "WebSearch: \"Just Energy Transition Partnership\" \"absorptive capacity\" exact — aucune source académique ou grise ne combine explicitement les deux termes",
+    "WebSearch: \"pledged\" aid package \"no single\" institution accountable aggregate donors \"severally\" — aucun résultat correspondant au cadrage P2 (jointly announced / severally owed) ; la littérature de coordination des donateurs existe mais sous d'autres formulations (fragmentation, harmonisation), pas sous ce cadrage précis d'irresponsabilité de l'agrégat",
+    "Crossref: donor fragmentation climate finance developing countries — 429 Too Many Requests, échec outil (voir tool_failures)",
+    "Crossref: diminishing returns climate finance aid effectiveness — 429 Too Many Requests puis requête reformulée a abouti (aucun résultat appliquant le cadre macro rendements-décroissants de Chenery-Strout/Guillaumont à la finance climatique ; le seul 'Diminishing Returns' trouvé, Ervine 2013 NPE, porte sur les marchés carbone, pas sur l'absorption macroéconomique de l'aide)"
+  ],
+  "candidates": [
+    {
+      "title": "The Role of Green Finance in Vietnam's Integrated Economic Development Model",
+      "authors": "Huynh Thanh Dien",
+      "year": 2025,
+      "venue": "SSRN Electronic Journal / Zenodo (preprint, non peer-reviewed)",
+      "doi_or_url": "10.2139/ssrn.5768142 ; 10.5281/zenodo.17696293",
+      "abstract_read": true,
+      "abstract_excerpt": "Métadonnées seules disponibles (texte intégral non accédé) ; extrait cité par l'outil : 'Vietnam has opportunities to mobilize international resources (JETP, green credit, GSS bonds, carbon market), but absorption capacity remains limited' en raison d'institutions fragmentées et de faiblesses technologiques.",
+      "preclass": "adjacent",
+      "why": "Emploie littéralement le terme 'absorption capacity' au sujet du JETP vietnamien, mais dans un texte non peer-reviewed (préprint SSRN/Zenodo, auteur en génie alimentaire/environnemental), sans mobilisation apparente de l'appareil théorique Chenery-Strout/Guillaumont, et sans traiter du bilan (P1), de la gouvernance de l'agrégat (P2) ou du couple solvabilité-agentivité (P4). Ne préempte aucune proposition ; à surveiller si une version peer-reviewed apparaît."
+    },
+    {
+      "title": "Post-2025 climate finance target: how much more and how much better?",
+      "authors": "Pauw, Moslener, Zamarioli, Amerasinghe, Atela, Affana, Buchner, Klein, Mbeva, Puri, Roberts, Shawoo, Watson, Weikmans",
+      "year": 2022,
+      "venue": "Climate Policy 22(9-10):1241-1251",
+      "doi_or_url": "10.1080/14693062.2022.2114985",
+      "abstract_read": true,
+      "abstract_excerpt": "Traite de la cible post-2025 de finance climat collective post-COP26, avec cinq éléments prioritaires de négociation (équilibre adaptation/atténuation, instruments financiers, mobilisation privée, transparence/redevabilité). Ne traite pas explicitement de la capacité d'absorption des pays récipiendaires.",
+      "preclass": "hors sujet",
+      "why": "Pas de mobilisation du cadre absorptive capacity ; n'aborde ni bilan, ni gouvernance de l'agrégat multi-bailleurs, ni agentivité stratégique."
+    },
+    {
+      "title": "Drivers of Bilateral Climate Finance Aid: The Roles of Paris Agreement Commitments and Public Governance",
+      "authors": "Cheng Yuan, Han Xuehui",
+      "year": 2022,
+      "venue": "Research Square (preprint, in review)",
+      "doi_or_url": "10.21203/rs.3.rs-1809158/v1",
+      "abstract_read": true,
+      "abstract_excerpt": "Examine si les engagements NDC et la capacité de gouvernance publique déterminent l'attraction de l'aide climatique bilatérale (données OCDE 2010-2018) ; trouve qu'une meilleure gestion budgétaire et une meilleure administration publique augmentent la probabilité de recevoir de l'aide.",
+      "preclass": "adjacent",
+      "why": "Touche à la capacité institutionnelle du récipiendaire comme déterminant de l'allocation de la finance climat (proche du concept d'absorptive capacity au sens de la gouvernance), mais ne traite pas du bilan financier des opérateurs publics (P1), ni de la gouvernance de l'agrégat multi-bailleurs (P2), ni du lien solvabilité-agentivité (P4). Statut préprint non publié."
+    },
+    {
+      "title": "Just Energy Transition Partnerships at Risk in Indonesia and Vietnam",
+      "authors": "Thang Nam Do, Alin Halimatussadiah, Paul J. Burke, Frank Jotzo",
+      "year": 2026,
+      "venue": "SSRN Electronic Journal (working paper, déjà connu du brief)",
+      "doi_or_url": "10.2139/ssrn.6979738",
+      "abstract_read": true,
+      "abstract_excerpt": "30 entretiens avec des parties prenantes ; identifie 'a core misalignment between recipient country expectations for early concessional finance and international partners' emphasis on reform conditionality' ; recommande de séquencer le financement (avances + projets pilotes) pour restaurer la confiance.",
+      "preclass": "adjacent",
+      "why": "Touche à un désalignement d'attentes proche de P3 (agentivité/attentes du récipiendaire) mais ne mobilise pas le cadre théorique de la capacité d'absorption de l'aide (Chenery-Strout/Guillaumont), ne traite pas du bilan (P1) ni de la gouvernance de l'agrégat (P2) ni du couple solvabilité-agentivité (P4). Confirme le désaccord bailleur-récipiendaire mais sans le cadre analytique de l'angle B."
+    },
+    {
+      "title": "The 'power to pollute' and 'post-neoliberal' climate finance",
+      "authors": "Benjamin H. Bradlow, Aishwarya Swamidurai",
+      "year": 2026,
+      "venue": "Socio-Economic Review (advance article)",
+      "doi_or_url": "10.1093/ser/mwag015",
+      "abstract_read": true,
+      "abstract_excerpt": "Étudie le JETP sud-africain via entretiens semi-directifs (2021-2024) ; argumente que le financement JETP contraint la flexibilité de politique domestique plutôt que de permettre une politique industrielle verte 'post-néolibérale', renforçant en pratique des principes néolibéraux.",
+      "preclass": "adjacent",
+      "why": "Déjà listé dans le brief comme pièce connue (DOI corrigé ici : mwag015, pas mwaf021 comme une première recherche l'avait mal orienté). Traite de contrainte de politique domestique (proche P3/P4) via l'angle politico-économique, pas via le cadre théorique de l'absorptive capacity. ATTENTION : un résumé automatique a affirmé, sans accès au texte intégral (paywall, 403 sur ScienceDirect/OUP), que 'le corps du texte révèle [le problème de gouvernance de l'agrégat multi-bailleurs] comme un problème structurel' — cette affirmation N'A PAS été vérifiée par lecture directe et ne doit pas être citée comme preuve que P2 est préempté par cet article. Nécessite une lecture humaine du texte intégral avant toute conclusion sur P1/P2/P4."
+    },
+    {
+      "title": "Factors associated with the disbursements of development assistance for health in low-income and middle-income countries, 2002-2017",
+      "authors": "Modhurima Moitra, Ian Cogswell, Emilie Maddison, Kyle Simpson, Hayley Stutzman, Golsum Tsakalos, Joseph Dieleman, Angela E. Micah",
+      "year": 2021,
+      "venue": "BMJ Global Health 6(4):e004858",
+      "doi_or_url": "10.1136/bmjgh-2020-004858",
+      "abstract_read": true,
+      "abstract_excerpt": "Analyse >1000 observations pays-année (2002-2017) ; les taux de décaissement sont plus élevés quand les coûts administratifs sont faibles, l'aide est hors-budget, la corruption perçue est faible, la fragilité politique est faible et le PIB/hab. est élevé.",
+      "preclass": "contexte",
+      "why": "Pièce empirique moderne et solide sur l'écart engagement-décaissement (aide-santé, pas climat), utile pour construire l'appareil du papier (cf. P2) mais ne touche pas la finance climatique ni les JETP."
+    }
+  ],
+  "canon": [
+    {
+      "id": "chenery-strout-1966",
+      "authors": "Hollis B. Chenery, Alan M. Strout",
+      "year": 1966,
+      "title": "Foreign Assistance and Economic Development",
+      "venue": "American Economic Review",
+      "volume_issue_pages": "56, September 1966, pp. 679-733",
+      "doi": "non résolu (DOI non attribué rétroactivement dans les métadonnées Crossref consultées ; référence vérifiée via citation secondaire dans un chapitre Chenery 1989 indexé par Crossref, pas via un enregistrement Crossref direct de l'article de 1966 lui-même)",
+      "note": "Pièce fondatrice du modèle des 'deux écarts' (épargne / devises) — origine de la notion de capacité d'absorption macroéconomique de l'aide. Vérifier le DOI directement auprès de JSTOR/AEA avant citation définitive dans le manuscrit."
+    },
+    {
+      "id": "guillaumont-chauvet-2001",
+      "authors": "Patrick Guillaumont, Lisa Chauvet",
+      "year": 2001,
+      "title": "Aid and Performance: A Reassessment",
+      "venue": "Journal of Development Studies",
+      "volume_issue_pages": "37(6), pp. 66-92",
+      "doi": "10.1080/713601083"
+    },
+    {
+      "id": "bourguignon-sundberg-2007",
+      "authors": "François Bourguignon, Mark Sundberg",
+      "year": 2007,
+      "title": "Aid Effectiveness — Opening the Black Box",
+      "venue": "American Economic Review (Papers and Proceedings)",
+      "volume_issue_pages": "97(2), pp. 316-321",
+      "doi": "10.1257/aer.97.2.316"
+    },
+    {
+      "id": "feeny-mcgillivray-2008",
+      "authors": "Simon Feeny, Mark McGillivray",
+      "year": 2008,
+      "title": "Aid allocation to fragile states: Absorptive capacity constraints",
+      "venue": "Journal of International Development",
+      "volume_issue_pages": "21(5), pp. 618-632",
+      "doi": "10.1002/jid.1502"
+    },
+    {
+      "id": "feeny-mcgillivray-2011",
+      "authors": "Simon Feeny, Mark McGillivray",
+      "year": 2011,
+      "title": "Scaling-up foreign aid: will the 'big push' work?",
+      "venue": "The World Economy",
+      "volume_issue_pages": "34(1), pp. 54-73",
+      "doi": "10.1111/j.1467-9701.2010.01291.x"
+    },
+    {
+      "id": "feeny-desilva-2012",
+      "authors": "Simon Feeny, Ashton de Silva",
+      "year": 2012,
+      "title": "Measuring absorptive capacity constraints to foreign aid",
+      "venue": "Economic Modelling",
+      "volume_issue_pages": "29(3), pp. 725-733",
+      "doi": "10.1016/j.econmod.2012.01.013"
+    },
+    {
+      "id": "clemens-radelet-bhavnani-bazzi-2012",
+      "authors": "Michael A. Clemens, Steven Radelet, Rikhil R. Bhavnani, Samuel Bazzi",
+      "year": 2012,
+      "title": "Counting Chickens when they Hatch: Timing and the Effects of Aid on Growth",
+      "venue": "The Economic Journal",
+      "volume_issue_pages": "122(561), pp. 590-617",
+      "doi": "10.1111/j.1468-0297.2011.02482.x"
+    },
+    {
+      "id": "berg-gottschalk-portillo-zanna-2010",
+      "authors": "Rafael Portillo, Andrew Berg, Jan Gottschalk, Luis-Felipe Zanna",
+      "year": 2010,
+      "title": "The Macroeconomics of Medium-Term Aid Scaling-Up Scenarios",
+      "venue": "IMF Working Paper",
+      "volume_issue_pages": "WP/10/160",
+      "doi": "10.5089/9781455201433.001",
+      "note": "Cadre 'absorbing vs spending' aid (absorption = financement d'un déficit courant plus élevé, contrôlée par la politique de réserves de la banque centrale ; spending = contrôlé par l'autorité budgétaire). C'est la pièce IMF demandée par le brief ; ordre des auteurs vérifié via Crossref (Portillo en premier auteur, pas Berg — à corriger si le brief citait 'Berg, Gottschalk, Portillo & Zanna' comme ordre alphabétique conventionnel)."
+    },
+    {
+      "id": "roodman-2006",
+      "authors": "David Roodman",
+      "year": 2006,
+      "title": "Aid Project Proliferation and Absorptive Capacity",
+      "venue": "Center for Global Development Working Paper",
+      "volume_issue_pages": "No. 75",
+      "doi": "10.2139/ssrn.984053"
+    },
+    {
+      "id": "acharya-delima-moore-2006",
+      "authors": "Arnab Acharya, Ana Teresa Fuzzo de Lima, Mick Moore",
+      "year": 2006,
+      "title": "Proliferation and Fragmentation: Transactions Costs and the Value of Aid",
+      "venue": "Journal of Development Studies",
+      "volume_issue_pages": "42(1), pp. 1-21",
+      "doi": "10.1080/00220380500356225"
+    },
+    {
+      "id": "knack-rahman-2007",
+      "authors": "Stephen Knack, Aminur Rahman",
+      "year": 2007,
+      "title": "Donor Fragmentation and Bureaucratic Quality in Aid Recipients",
+      "venue": "Journal of Development Economics",
+      "volume_issue_pages": "83(1), pp. 176-197",
+      "doi": "10.1016/j.jdeveco.2006.02.002"
+    },
+    {
+      "id": "easterly-pfutze-2008",
+      "authors": "William Easterly, Tobias Pfutze",
+      "year": 2008,
+      "title": "Where Does the Money Go? Best and Worst Practices in Foreign Aid",
+      "venue": "Journal of Economic Perspectives",
+      "volume_issue_pages": "22(2), pp. 29-52",
+      "doi": "10.1257/jep.22.2.29"
+    },
+    {
+      "id": "svensson-2000",
+      "authors": "Jakob Svensson",
+      "year": 2000,
+      "title": "When is foreign aid policy credible? Aid dependence and conditionality",
+      "venue": "Journal of Development Economics",
+      "volume_issue_pages": "61(1), pp. 61-84",
+      "doi": "10.1016/s0304-3878(99)00061-9",
+      "note": "Pertinent pour P4 (dépendance à l'aide et crédibilité de la conditionnalité) mais ne théorise pas explicitement le lien solvabilité-agentivité dans les deux sens (solvable refuse / insolvable ne peut absorber) — ce lien précis reste, à notre connaissance, non trouvé dans la littérature générale de l'aide."
+    },
+    {
+      "id": "moitra-et-al-2021",
+      "authors": "Modhurima Moitra, Ian Cogswell, Emilie Maddison, Kyle Simpson, Hayley Stutzman, Golsum Tsakalos, Joseph Dieleman, Angela E. Micah",
+      "year": 2021,
+      "title": "Factors associated with the disbursements of development assistance for health in low-income and middle-income countries, 2002-2017",
+      "venue": "BMJ Global Health",
+      "volume_issue_pages": "6(4), e004858",
+      "doi": "10.1136/bmjgh-2020-004858",
+      "note": "Illustration empirique moderne de l'écart engagement-décaissement (hors climat) ; utile comme référence méthodologique pour construire un indicateur analogue en finance climatique."
+    }
+  ],
+  "tool_failures": [
+    "OpenAlex API: HTTP 429 Too Many Requests avec Retry-After: 38024 secondes (~10.5h) après une série de requêtes rapprochées — a bloqué toute requête OpenAlex ultérieure pour le reste de la session. Contournement : bascule sur Crossref puis WebSearch.",
+    "Semantic Scholar API (sans clé): HTTP 429 Too Many Requests sur toutes les tentatives après la première série de requêtes OpenAlex — jamais résolu dans la session. Zéro requête Semantic Scholar n'a abouti.",
+    "Crossref API: HTTP 429 Too Many Requests de façon intermittente (2 échecs sur ~15 requêtes) — récupéré en reformulant/réessayant après une requête réussie intercalée.",
+    "WebFetch direct sur thediplomat.com : HTTP 403 Forbidden — impossible de lire l'article de fond sur le blocage des JETP en Asie du Sud-Est (paywall/anti-bot).",
+    "WebFetch direct sur sciencedirect.com (S2214629625001847) : HTTP 403 Forbidden — abstract récupéré indirectement via Crossref (résultat : c'est en fait Karg, Gupta & Chen 2025 ERSS 125:104103, déjà connu du brief, pas un nouveau papier).",
+    "WebFetch direct sur papers.ssrn.com (abstract_id=6979738) : HTTP 403 Forbidden — abstract récupéré indirectement via Crossref.",
+    "Un résumé automatique WebFetch de la page OUP (Bradlow & Swamidurai) a affirmé sans base vérifiable que 'le corps du texte révèle un problème structurel de coordination des bailleurs' alors que le texte intégral est sous paywall et n'a jamais été lu — affirmation explicitement marquée comme NON VÉRIFIÉE dans le candidat correspondant, à ne pas citer comme preuve de préemption de P2."
+  ],
+  "verdict": {
+    "P1_bilan_non_absorbabilite": "NON PRÉEMPTÉ par cet angle. Aucune pièce trouvée n'applique explicitement le cadre bilan (plafond de dette souveraine, insolvabilité de l'opérateur électrique sous tarif réprimé, exposition de change, coût du capital) au JETP via la littérature de l'absorptive capacity. Bradlow & Swamidurai touchent à la contrainte de politique domestique côté Afrique du Sud, mais pas via ce cadre théorique, et le contenu précis reste à vérifier en texte intégral (paywall).",
+    "P2_personne_evalue_le_paquet_entier": "NON PRÉEMPTÉ, et c'est le résultat le plus robuste de cette passe : aucune requête croisant 'absorptive capacity'/'aid absorption' avec la gouvernance de l'agrégat multi-bailleurs ('jointly announced, severally owed', pas d'institution responsable du total) n'a rien remonté de spécifique aux JETP ou même à la finance climatique en général. La littérature de fragmentation des bailleurs (Acharya-de Lima-Moore, Knack-Rahman, Roodman) théorise les coûts de transaction de la prolifération mais PAS l'absence de mandat institutionnel pour tester la soutenabilité de l'agrégat — c'est un angle distinct et, à notre connaissance après cette recherche, non occupé.",
+    "P4_solvabilite_achete_agentivite": "NON PRÉEMPTÉ. Aucune pièce ne théorise le mécanisme bidirectionnel (solvable refuse les conditions / insolvable ne peut pas absorber, donc domaine de validité vide pour un instrument fondé sur le prêt) appliqué à la finance climatique ou à l'aide en général. Svensson (2000) sur dépendance à l'aide et crédibilité de la conditionnalité est la pièce la plus proche dans la littérature générale de l'aide, mais reste asymétrique (traite la dépendance, pas le refus stratégique du côté solvable ni la symétrie des deux extrêmes)."
+  }
+}
