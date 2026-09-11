@@ -258,13 +258,20 @@ Proposition au standard CRediT, à valider ou corriger par lui :
 
 | Rôle CRediT | Contributeur |
 |---|---|
-| Conceptualization | Minh (principal) ; Christophe (lecture institutionnelle du résultat de substitution) |
+| Conceptualization | **Conjoint** — l'étalon et le dispositif de mesure (Minh) ; la question à laquelle l'étalon sert à répondre, et la lecture institutionnelle de l'hétérogénéité (Christophe) |
 | Methodology, Software, Formal analysis, Data curation | Minh |
-| **Validation** | **Christophe** — relecture critique de la construction de la référence : population de prêts, fenêtre, correction du décalage engagement-signature. C'est la seule surface d'attaque du papier ; un second lecteur sur ce point est une contribution, pas une politesse. |
-| Writing – original draft | Minh (mesure, méthode, résultats) ; Christophe (implications de politique publique, et les 3 à 5 *key policy insights* exigés par la revue) |
+| **Investigation** | **Christophe** — la matière qui explique l'hétérogénéité entre pays, et qui n'est pas dans le CRS : ce que sont réellement les deux activités sud-africaines qui décaissent à 87 %, pourquoi la norme indonésienne est quasi nulle à la médiane, quelle pratique de bailleur produit la substitution vers l'appui budgétaire. Travail de terrain documentaire, pas de relecture. |
+| Writing – original draft | Minh : mesure, méthode, résultats. **Christophe : la section d'interprétation** — pourquoi l'écart varie, ce qui se conclut pour la conception des plateformes-pays — **et les 3 à 5 *key policy insights*** exigés par la revue. Section nommée, pas des commentaires en marge. |
+| Validation | Les deux |
 | Writing – review & editing | Les deux |
 | Visualization | Minh |
 | Corresponding author | Minh |
+
+Sans la section d'interprétation et l'investigation qui la nourrit, le papier
+reste une note de mesure et perd son format : la Policy Analysis suppose une
+analyse, pas seulement un étalon. **L'ordre des signatures se rediscute sur ce
+mérite** si la contribution de Christophe s'avère à la hauteur de ce tableau ;
+la proposition de départ reste Minh premier auteur.
 
 **Le coût, énoncé plutôt que tu.** L'indépendance de calendrier était l'une
 des trois raisons de partir court et vite ; un coauteur la réintroduit. La
