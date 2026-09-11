@@ -19,8 +19,11 @@ Energy Transition Project, principal prêt-projet du JETP sud-africain.
 Entrée  : analyse-crs/out/activites.csv
 Sorties : figure-distribution-decaissement.{pdf,png} + .csv des points tracés
 """
-import pathlib, sys
+import pathlib
+import sys
+
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
