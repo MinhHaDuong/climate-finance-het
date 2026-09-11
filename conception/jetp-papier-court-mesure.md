@@ -6,11 +6,22 @@
 
 # Papier court — mesure et mécanisme (JETP)
 
-Titre de travail : *Just Energy Transition Partnerships: the disbursement
-gap is instrument substitution, not delay*. Second volet, avec le papier
-long d'économie politique comparée (`jetp-papier-long-economie-politique.md`),
-d'un papier unique reformulé le 2026-09-08 en réunion avec Christophe Cassen
-(CR complet : `jetp-cr-reunion-2026-09-08.md`).
+Titre de travail : *How slow is slow? Benchmarking Just Energy Transition
+Partnership disbursement against comparable concessional energy lending*.
+
+Second volet, avec le papier long d'économie politique comparée
+(`jetp-papier-long-economie-politique.md`), d'un papier unique reformulé le
+2026-09-08 en réunion avec Christophe Cassen (CR complet :
+`jetp-cr-reunion-2026-09-08.md`).
+
+*Titre arrêté le 2026-09-11, sur deux principes.* Le précédent (« the
+disbursement gap is instrument substitution, not delay ») était construit en
+ressort — un « ce n'est pas X, c'est Y » qui promeut l'explication en
+manchette. **L'explication n'est pas la mesure** : la substitution
+d'instrument reste dans le corps. Et la contribution est l'étalon lui-même,
+qui n'existait pas — il permet de dire si un taux de décaissement est lent.
+Le titre n'asserte donc aucun écart uniforme, que l'Afrique du Sud contredit
+(voir Résultats).
 
 ## Idée de recherche
 
