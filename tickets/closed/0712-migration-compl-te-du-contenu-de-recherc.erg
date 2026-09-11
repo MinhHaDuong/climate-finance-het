@@ -1,0 +1,62 @@
+%erg 0.1
+Title: Migration complète du contenu de recherche JETP
+Created: 2026-09-10
+Author: Minh
+Closed: autoclosed — PR #1326
+
+--- log ---
+2026-09-10T16:02Z Minh created
+
+2026-09-10T16:22Z HDMX-coding-agent note blocker 0709 closed — Blocked-by removed.
+2026-09-11T17:00Z Minh note Blocked-by 0711 retire — ranger n'a pas besoin des livrables Quarto, seulement d'un domicile ; le cablage en fragments reste a 0711
+2026-09-11T17:00Z Minh fait 42 fichiers atterris en conception/jetp/ avec bandeaux de provenance et README d'inventaire ; ce qui n'a pas migre est liste avec sa raison
+2026-09-11T16:19Z HDMX-coding-agent closed — autoclosed — PR #1326
+--- body ---
+
+## Context
+
+Dernier maillon du tracker 0708 : les notes de recherche datées, encore dans
+`~/CNRS/projets/actifs/jetp/`, migrent vers leur emplacement définitif
+(fragment `_includes/` d'un livrable, ou `conception/` si encore orpheline),
+avec mise en conformité aux conventions de provenance de ce dépôt
+(bandeau IA le cas échéant, attributions vérifiées datées — voir
+`conception/clustering-comparison.md` pour le gabarit).
+
+## Relevant files
+
+- `~/CNRS/projets/actifs/jetp/papier-court-mesure/*.md`
+- `~/CNRS/projets/actifs/jetp/papier-long-economie-politique/*.md`
+- `deliverables/jetp-mesure/`, `deliverables/jetp-econpol/` (créés par 0711)
+
+## Actions
+
+1. ~~Pour chaque note, décider : fragment câblé dans un livrable, ou
+   `conception/`.~~ **Reformulé le 2026-09-11 : tout atterrit dans
+   `conception/jetp/` maintenant.** Le choix « fragment de livrable » suppose
+   des décisions de rédaction que 0711 porte et qui ne sont pas prises ; le
+   subordonner à elles revenait à ranger les fichiers en dernier. Le câblage
+   reste le travail de 0711, qui trouvera le matériau rangé.
+2. Ajouter le bandeau de provenance requis par ce dépôt.
+3. Écrire l'inventaire de ce qui n'a **pas** migré, avec sa raison — sinon
+   « ce qui reste dans `jetp/` » redevient indéchiffrable dans trois mois.
+4. Ne pas supprimer les originaux : la suppression appartient à l'auteur
+   (même discipline que 0708 §Invariants sur l'ancien emplacement).
+
+## Test
+
+`test_render_placeholders.py` reste vert après migration.
+
+## Verification
+
+- [ ] Chaque note a un domicile unique et définitif
+- [ ] Aucune référence brisée
+
+## Exit criteria
+
+Plus aucun contenu de recherche significatif ne reste hors de
+`climate-finance-het` sans raison écrite. Les exceptions, chacune avec sa
+justification, sont listées dans `conception/jetp/README.md` : le papier 1 et
+le dossier AFD-Sénégal (hors périmètre, 0708 §Invariants), la chaîne
+`analyse-crs/` (portée par 0713), les tirages bruts du pilote Viêt Nam, le
+staging bibliographique destiné à Zotero, et les figures orphelines du
+papier 1.

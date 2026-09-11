@@ -1,0 +1,257 @@
+{
+  "angle": "F — littérature grise, working papers, rapports institutionnels (think tanks climat/dev, IFI, dépôts d'économie, évaluations de bailleurs)",
+  "date": "2026-09-08",
+  "databases": [
+    "WebSearch (générique, épuisé après ~7 requêtes utiles — quota partagé de session)",
+    "OpenAlex API (bloqué HTTP 429 dès la 1re requête, Retry-After ~37000s)",
+    "Crossref API (bloqué HTTP 429)",
+    "HAL / archives-ouvertes.fr API (fonctionnel)",
+    "RePEc/IDEAS htsearch (non fonctionnel via WebFetch — ne renvoie que la page d'accueil)",
+    "EconStor (bloqué par protection anti-bot Anubis)",
+    "DuckDuckGo html (bloqué par captcha)",
+    "Bing (résultats non pertinents/garbage rendu JS)",
+    "Google (mur de consentement, non franchissable)",
+    "WebFetch direct sur sites institutionnels (ODI, CGD, Grantham LSE/JTFL, ECDPM, Carnegie, The Conversation, Atlantic Council, TNI/AIDC, IMF, Treasury RSA, IEEFA, IISD, WRI, E3G, Bruegel, NRGI, AFD, jetip.gov.za, jetp-id.org)"
+  ],
+  "queries": [
+    "Hadley Mustapha Colenbrander Miller Quevedo \"country platforms\" climate ODI 2022 (WebSearch)",
+    "Selvaraju \"Just Transition Finance Lab\" Grantham LSE 2025 JETP report (WebSearch)",
+    "JETP \"balance sheet\" absorptive capacity Eskom PLN EVN debt ceiling (WebSearch)",
+    "\"jointly announced\" \"severally owed\" OR \"severally financed\" climate finance JETP (WebSearch)",
+    "IMF Article IV South Africa 2026 Just Energy Transition debt sustainability Eskom (WebSearch)",
+    "OpenAlex: works?search=country platforms climate action something borrowed something new",
+    "OpenAlex: works?search=Just Energy Transition Partnership absorptive capacity balance sheet",
+    "OpenAlex: works?search=\"country platform\" climate finance debt sustainability absorptive",
+    "Crossref: query.bibliographic=Just Energy Transition Partnership absorptive capacity balance sheet",
+    "RePEc/IDEAS htsearch q=Just Energy Transition Partnership absorptive capacity",
+    "EconStor simple-search query=Just Energy Transition Partnership",
+    "HAL API: q=\"Just Energy Transition Partnership\"",
+    "HAL API: q=\"country platform\" AND (climate OR energy)",
+    "DuckDuckGo html: IEEFA \"Financing the JETP\" making sense of the packages",
+    "Bing: IEEFA \"Financing the JETP\" making sense of the packages",
+    "Google: \"absorptive capacity\" \"Just Energy Transition Partnership\" debt",
+    "WebFetch direct: ODI media.odi.org PDF (Hadley et al. 2022, texte intégral)",
+    "WebFetch direct: justtransitionfinance.org PDF (Selvaraju et al. 2025, texte intégral)",
+    "WebFetch direct: cgdev.org PDF Platforms that Perform (Latortue & Goodman 2025, texte intégral)",
+    "WebFetch direct: africanclimatefoundation.org Appraising country platforms PDF (404)",
+    "WebFetch direct: treasury.gov.za IMF Article IV South Africa 2025 Staff Report PDF",
+    "WebFetch direct: ecdpm.org Two years into South Africa's JETP",
+    "WebFetch direct: ieefa.org Financing the JETP (403)",
+    "WebFetch direct: theconversation.com JETP built to flounder",
+    "WebFetch direct: carnegieendowment.org JETP Crossroads",
+    "WebFetch direct: jetknowledge.org op-ed market capture or climate justice (échec silencieux)",
+    "WebFetch direct: deluair.com consultancy JETP at the inflection 2026 (403)",
+    "WebFetch direct: atlanticcouncil.org JETP COP27 blog",
+    "WebFetch direct: iisd.org JETP leapfrog article (403)",
+    "WebFetch direct: tni.org Eskom Transformed full report PDF",
+    "WebFetch direct: odi.org Country Platform Development Note Tanaka Gilmour Raubenheimer (403)",
+    "WebFetch direct: wri.org knowledge network hub country platforms (404)",
+    "WebFetch direct: e3g.org search Just Energy Transition Partnership (échec silencieux)",
+    "WebFetch direct: resourcegovernance.org (NRGI) search JETP (404)",
+    "WebFetch direct: bruegel.org search JETP (403)",
+    "WebFetch direct: papers.ssrn.com abstract_id=6979738 Do et al. 2026 (403)",
+    "WebFetch direct: afd.fr recherche JETP (404, deux tentatives d'URL)",
+    "WebFetch direct: worldbank.org search CCDR Indonesia (page JS vide)",
+    "WebFetch direct: jetip.gov.za (DNS introuvable)",
+    "WebFetch direct: jetp-id.org (403)",
+    "HAL API halId_s:hal-04790077 (Earsom, HAL communication, pas d'abstract disponible)"
+  ],
+  "dry_queries": [
+    "\"jointly announced\" \"severally owed\"/\"severally financed\" — aucune occurrence trouvée dans les résultats WebSearch remontés (résultat nul avant l'épuisement du quota ; à retenter avec un outil de recherche non épuisé)",
+    "HAL API \"country platform\" AND (climate OR energy) — ne remonte que les propres travaux antérieurs de Minh Ha-Duong (background report Vietnam JETP mai 2023), rien de nouveau"
+  ],
+  "positive_control": {
+    "piece_1": {
+      "reference": "Hadley, Mustapha, Colenbrander, Miller & Quevedo (2022), \"Country platforms for climate action: something borrowed, something new?\", ODI Global, 24 juin 2022",
+      "found": true,
+      "method": "WebSearch a localisé la page ODI et le PDF (media.odi.org/documents/ODI_Emerging_analysis_Country_platforms_for_climate_action.pdf) ; PDF téléchargé et converti intégralement en texte (pdftotext -layout, 3115 lignes) puis lu.",
+      "result": "Confirmé : titre, auteurs, date exacts retrouvés. Texte intégral lu. Ne développe PAS explicitement les mécanismes de bilan (P1), l'absence d'évaluateur du paquet entier (P2) ni l'agentivité stratégique du récipiendaire (P3) dans les termes cherchés — c'est une pièce fondatrice sur le CONCEPT de country platform, antérieure à la mise en œuvre du JETP sud-africain."
+    },
+    "piece_2": {
+      "reference": "Selvaraju, Indah Pratiwi, Sabogal & Ahlgren (nov. 2025), \"Just Energy Transition Partnership grants and country platforms: lessons from Indonesia and South Africa\", Grantham Research Institute / Just Transition Finance Lab, LSE",
+      "found": true,
+      "method": "WebSearch a localisé la page LSE et le PDF (justtransitionfinance.org/wp-content/uploads/2025/11/...) ; PDF téléchargé et converti intégralement en texte (2399 lignes) puis lu.",
+      "result": "Confirmé : titre, auteurs, date exacts retrouvés. Texte intégral lu. CONTIENT un mécanisme précis proche de P1 (voir candidats) et les meilleures données chiffrées loans/grants trouvées dans cette passe."
+    },
+    "verdict_sonde": "La sonde WebSearch fonctionnait au moment des deux contrôles positifs (tous deux réussis, pièces lues intégralement, pas seulement au titre). Le quota WebSearch de session s'est épuisé immédiatement après (200/200) — épuisement partagé entre les chercheurs parallèles de la passe, pas un échec de la sonde elle-même. Les contrôles positifs sur OpenAlex et Crossref n'ont PAS pu être exécutés : ces deux API ont renvoyé HTTP 429 dès la première requête de cette session (Retry-After ~37000s pour OpenAlex), donc leur sonde est certifiée cassée pour le reste de la session — à ne pas interpréter un futur résultat nul de ces deux API comme une absence."
+  },
+  "candidates": [
+    {
+      "title": "Just Energy Transition Partnership grants and country platforms: lessons from Indonesia and South Africa",
+      "authors": "Sangeeth Selvaraju, Anisa Indah Pratiwi, Laura Sabogal, Viktor Ahlgren",
+      "year": 2025,
+      "venue": "Grantham Research Institute on Climate Change and the Environment / Just Transition Finance Lab, LSE — Policy report, novembre 2025",
+      "doi_or_url": "https://justtransitionfinance.org/wp-content/uploads/2025/11/Just-Energy-Transition-Partnership-grants-and-country-platforms-lessons-from-Indonesia-and-South-Africa.pdf",
+      "abstract_read": true,
+      "abstract_excerpt": "« The structure of loan financing creates fiscal vulnerabilities through currency risk allocation. Indonesia's renewable energy PPAs allocate currency convertibility risk to IPPs while exchange rate volatility is borne by PLN [...] As private sector-led power projects predominantly borrow in US dollars, currency volatility concentrates fiscal pressure on PLN's balance sheet and creates contingent liabilities for government (PT SMI, 2023). »",
+      "preclass": "adjacent P1",
+      "why": "Décrit avec précision LE mécanisme de bilan (exposition de change concentrée sur PLN, passifs conditionnels pour l'État) que P1 généralise aux quatre pays — mais seulement pour l'Indonésie, sans construire l'argument comparatif de non-absorbabilité ni le relier explicitement à un plafond de dette souveraine ou à une théorie générale. Ne touche pas P2 de façon frontale (mentionne la fragmentation des bailleurs — chacun ses propres critères — sans dire explicitement que PERSONNE n'évalue le paquet entier). Ne touche pas P3 de façon substantielle. Contient les meilleures données chiffrées loans/grants de la passe (voir figures)."
+    },
+    {
+      "title": "Platforms that Perform: Navigating Country Platform Implementation",
+      "authors": "Alexia Latortue, Jared Goodman",
+      "year": 2025,
+      "venue": "Center for Global Development, CGD Policy Paper 364, octobre 2025",
+      "doi_or_url": "https://www.cgdev.org/publication/platforms-perform-navigating-country-platform-implementation",
+      "abstract_read": true,
+      "abstract_excerpt": "« [...] each institution brings its own priorities, own requirements, own diligence processes—even its own board dates or calendars for making decisions. [...] partners that join the partnership often don't collaborate as a collective. » ; sur l'Indonésie : « the Indonesians considered the JETP targets and plans as 'aspirational' and gave more credence to targets in the key Indonesian planning documents for the electricity sector. »",
+      "preclass": "adjacent P2",
+      "why": "Basé sur plus de 50 entretiens, documente précisément la fragmentation de la diligence (chaque bailleur son propre processus) qui SOUS-TEND P2, sans jamais formuler la conclusion « donc personne n'a la charge d'évaluer la soutenabilité globale du paquet » — reste au niveau de la coordination opérationnelle (transaction costs, calendriers), pas de la gouvernance de l'instrument. Le passage sur l'Indonésie qui traite les cibles JETP comme 'aspirationnelles' face aux plans nationaux réels (RUPTL/RUKN) est un indice faible de P3 (priorité domestique substituée à la cible du bailleur) mais non développé comme choix stratégique délibéré."
+    },
+    {
+      "title": "The Just Energy Transition Partnership Crossroads",
+      "authors": "Alexander Csanadi, Daniel Helmeci",
+      "year": 2025,
+      "venue": "Carnegie Endowment for International Peace, 20 octobre 2025",
+      "doi_or_url": "https://carnegieendowment.org/research/2025/10/the-just-energy-transition-partnership-crossroads",
+      "abstract_read": "partiel — via résumé produit par l'outil WebFetch (texte brut non extrait localement, à re-vérifier sur source primaire avant citation)",
+      "abstract_excerpt": "« the landscape of actual financial commitments is an extraordinarily complex assemblage of dozens of actors, each with their own priorities and operating procedures. »",
+      "preclass": "adjacent P2",
+      "why": "Pièce déjà connue (liste du brief). Le résumé obtenu confirme la fragmentation institutionnelle mais, selon ce résumé, N'ARGUMENTE PAS explicitement (a) le bilan comme obstacle plutôt que la lenteur administrative, ni (c) l'agentivité stratégique du récipiendaire comme refus délibéré — présente au contraire les pays hôtes comme s'adaptant aux conditionnalités des bailleurs plutôt que les contestant. Table de financement par pays donnée par le résumé (grants <5% Afrique du Sud, ~3% Indonésie, ~4% Vietnam) à vérifier contre le texte source, non recoupée indépendamment."
+    },
+    {
+      "title": "Two years into South Africa's Just Energy Transition Partnership: How real is the deal?",
+      "authors": "Jan Vanheukelom",
+      "year": 2023,
+      "venue": "ECDPM, 27 novembre 2023 (Talking Points / brief)",
+      "doi_or_url": "https://ecdpm.org/work/two-years-south-africas-just-energy-transition-partnership-how-real-deal",
+      "abstract_read": "partiel — via résumé produit par l'outil WebFetch, non extrait en texte brut localement",
+      "abstract_excerpt": "« this state-owned enterprise [Eskom] was no longer allowed to borrow. So donors could not use Eskom as a channel for concessional loans. » — et : « Less than one-tenth of concessional finance had been spent. »",
+      "preclass": "adjacent P1",
+      "why": "Décrit littéralement le mécanisme central de P1 pour l'Afrique du Sud : un moratoire d'emprunt imposé à Eskom (conséquence du plan de sauvetage budgétaire de 2023) empêche structurellement l'absorption des prêts concessionnels du JETP — c'est un blocage de bilan, pas une lenteur administrative. Mais la pièce ne généralise pas au-delà de l'Afrique du Sud, ne compare pas aux trois autres pays, et ne formule pas la thèse P2 (bien qu'elle documente une fragmentation inter-ministérielle en passant). Antérieure au manuscrit « JETP at two » (janv. 2024) — pourrait déjà être connue/citée par les auteurs ; à vérifier dans refs.bib. Figures de décaissement précieuses (voir figures)."
+    },
+    {
+      "title": "The world's largest climate finance deal was built to flounder: why funding fails to reach the front-line",
+      "authors": "Nikita Sud (University of Oxford)",
+      "year": 2026,
+      "venue": "The Conversation (édition France), 5 mars 2026",
+      "doi_or_url": "https://theconversation.com/the-worlds-largest-climate-finance-deal-was-built-to-flounder-why-funding-fails-to-reach-the-front-line-273805",
+      "abstract_read": "partiel — via résumé produit par l'outil WebFetch",
+      "abstract_excerpt": "« Once touted as Indonesia-led, the JETP was soon beholden to the interests of developed countries. » ; un responsable indonésien : « an instrument of control used by G7 countries to counter China's influence in Southeast Asia » ; « by mid-2024 [...] none of the pledged transition finance had translated into new clean energy projects [or the early retirement of coal-fired power plants] »",
+      "preclass": "adjacent P3 / adjacent P2",
+      "why": "Rapporte un discours de fonctionnaires indonésiens qui perçoivent le JETP comme un instrument de contrôle géopolitique plutôt que d'aide — c'est un indice de scepticisme/résistance politique (proche P3) mais présenté comme une critique de gouvernance donneur-dépendante (proche P2 : dépendance aux financements des groupes de travail par OCDE/BM/BAsD) plutôt que comme un choix souverain actif de refus. Donnée factuelle utile : à mi-2024, aucun financement engagé n'avait produit de nouveau projet d'énergie propre ni de retrait anticipé de charbon — fonds allés aux consultants pour études."
+    },
+    {
+      "title": "Country platforms for climate action: something borrowed, something new?",
+      "authors": "Sierd Hadley, Shakira Mustapha, Sarah Colenbrander, Mark Miller, Adriana Quevedo",
+      "year": 2022,
+      "venue": "ODI Global, Emerging analysis, juin 2022",
+      "doi_or_url": "https://odi.org/en/publications/country-platforms-for-climate-action-something-borrowed-something-new/",
+      "abstract_read": true,
+      "abstract_excerpt": "(pièce de contrôle positif, cf. positive_control) — texte intégral lu, ne développe pas P1/P2/P3 dans les termes cherchés.",
+      "preclass": "contexte",
+      "why": "Pièce déjà connue du brief, contrôle positif de la sonde. Fondatrice sur le concept de country platform mais antérieure à toute évaluation empirique du JETP — logiquement, ne peut pas préempter des propositions qui portent sur des défaillances constatées ex post."
+    },
+    {
+      "title": "Just Energy Transition Partnerships: Will COP27 deliver for emerging economies?",
+      "authors": "Christopher Cassidy, Rainer Quitzow, Maia Sparkman",
+      "year": 2022,
+      "venue": "Atlantic Council, EnergySource blog, 4 novembre 2022",
+      "doi_or_url": "https://www.atlanticcouncil.org/blogs/energysource/just-energy-transition-partnerships-will-cop27-deliver-for-emerging-economies/",
+      "abstract_read": "partiel — via résumé WebFetch",
+      "abstract_excerpt": "« JETPs should rather be seen as an additional catalyst » ; nécessité de « track progress across the JETPs' three primary dimensions » — présenté comme un manque encore à combler.",
+      "preclass": "hors sujet",
+      "why": "Pièce d'avant la mise en œuvre (nov. 2022), au ton optimiste, plaide pour l'appropriation nationale (« country-driven ») sans discuter de bilan, d'agrégat non évalué ni de refus stratégique constaté. Signale en creux (implicitement) qu'aucun mécanisme de suivi intégré n'existait encore à ce stade — trop faible et trop précoce pour préempter P2."
+    },
+    {
+      "title": "Eskom Transformed: Achieving a Just Energy Transition for South Africa",
+      "authors": "Eskom Research Reference Group (publié par AIDC, Alternative Information & Development Centre, soutien Friedrich-Ebert-Stiftung)",
+      "year": "non résolu (rapport cite IRP 2019 et une source « retrieved 16 May 2020 » — antérieur au JETP, malgré son apparition dans une recherche 2026)",
+      "venue": "TNI / AIDC report",
+      "doi_or_url": "https://www.tni.org/files/publication-downloads/eskom-transformed-full-report.pdf",
+      "abstract_read": true,
+      "abstract_excerpt": "Aucune occurrence de « JETP » ou « Just Energy Transition Partnership » dans le texte intégral (7663 lignes converties et grepées) ; traite de la souveraineté énergétique et de l'endettement d'Eskom dans le cadre du programme REI4P antérieur au JETP.",
+      "preclass": "hors sujet",
+      "why": "Texte intégral lu (pdftotext local) : ne mentionne jamais le JETP. Rapport pré-JETP sur la dette d'Eskom et la souveraineté énergétique liée aux IPP renouvelables — pertinent pour le contexte général d'endettement d'Eskom mais ne discute pas le paquet JETP lui-même."
+    },
+    {
+      "title": "Evaluating South Africa's Just Energy Transition Partnership from a European Perspective: Three Years Later",
+      "authors": "Joseph Earsom",
+      "year": 2024,
+      "venue": "communication (HAL, type COMM), 1er novembre 2024 — possiblement une présentation liée à Earsom 2024 Global Policy 15(1):135-141 déjà connu, à vérifier s'il s'agit d'un doublon ou d'une pièce distincte",
+      "doi_or_url": "https://univ-catholille.hal.science/hal-04790077v1",
+      "abstract_read": false,
+      "abstract_excerpt": "non disponible — page HAL bloquée par protection anti-bot Anubis, métadonnées API HAL ne contiennent pas de champ résumé pour cette notice.",
+      "preclass": "non résolu",
+      "why": "Impossible de lire le résumé malgré deux tentatives (page web + API métadonnées). Titre suggère une pertinence directe (bilan JETP Afrique du Sud à trois ans, perspective européenne) mais classement interdit sans lecture du résumé — à retenter avec un outil capable de contourner la protection anti-bot, ou en écrivant directement à l'auteur/Zotero."
+    }
+  ],
+  "figures": [
+    {
+      "value": "Afrique du Sud : sur l'engagement initial de 8,5 Md$, seulement 4% (US$329,7 millions) en dons ; US$5,3 Md prêts concessionnels ; US$1,5 Md prêts commerciaux ; US$1,3 Md garanties",
+      "source": "Selvaraju et al. 2025, Grantham LSE/JTFL, citant RSA JETP IP 2023",
+      "date_of_figure": "structure d'engagement 2023, rapportée nov. 2025"
+    },
+    {
+      "value": "Indonésie : sur l'engagement IPG de 10 Md$, ~US$285 millions (2,85%) assistance technique/dons ; US$6,9 Md prêts concessionnels ; US$2,1 Md garanties MDB ; US$1,6 Md prêts non-concessionnels ; US$385 millions equity ; US$0,3 Md autre/à déterminer. Le CIPP chiffre le besoin de décarbonation du secteur électrique à US$97,3 Md d'ici 2030, contre moins de US$20 millions actuellement alloués à l'infrastructure électrique directe.",
+      "source": "Selvaraju et al. 2025, Grantham LSE/JTFL, citant CIPP 2023 / JETP Secretariat 2023",
+      "date_of_figure": "nov. 2025"
+    },
+    {
+      "value": "Vietnam : moins de 3% des US$15,5–15,8 Md pledgés sous forme de dons ; l'essentiel en prêts (concessionnels et non-concessionnels)",
+      "source": "Selvaraju et al. 2025, Grantham LSE/JTFL",
+      "date_of_figure": "nov. 2025"
+    },
+    {
+      "value": "Sénégal : US$2,7 Md pledgés (juin 2023) par le IPG (France, Allemagne, UE, UK, Canada) — aucune ventilation prêts/dons trouvée dans cette pièce ni ailleurs dans cette passe",
+      "source": "Selvaraju et al. 2025, Grantham LSE/JTFL, citant Government of Senegal 2023",
+      "date_of_figure": "nov. 2025"
+    },
+    {
+      "value": "Afrique du Sud : engagement passé de 8,5 Md$ (2021) à 12,5 Md$ (nov. 2023) ; transferts effectifs limités à €600 millions de prêts concessionnels (France, Allemagne) ; dons ~85 M$ (Mpumalanga, Cap-Occidental) sur 330 M$ de dons totaux engagés pour la composante « juste » ; « less than one-tenth of concessional finance had been spent » à cette date",
+      "source": "Jan Vanheukelom, ECDPM, 27 nov. 2023",
+      "date_of_figure": "novembre 2023"
+    },
+    {
+      "value": "Indonésie : à mi-2024, aucun financement JETP engagé (sur 20 Md$ pledgés) n'avait produit de nouveau projet d'énergie propre ni de retrait anticipé de centrale à charbon ; fonds dirigés vers des consultants pour études",
+      "source": "Nikita Sud, The Conversation, 5 mars 2026",
+      "date_of_figure": "situation à mi-2024, rapportée mars 2026"
+    },
+    {
+      "value": "Afrique du Sud : le secteur électrique dominé par Eskom a un ratio de couverture des intérêts sous le seuil retenu par le FMI (contrairement aux entreprises non financières dans leur ensemble, dont le ratio est passé de 3,5 à 4, confortablement au-dessus du seuil de 2)",
+      "source": "FMI, Article IV Afrique du Sud, Country Report No. 26/34, Consultation 2025 conclue le 9 février 2026",
+      "date_of_figure": "données 2025Q2-Q3, publié février 2026"
+    },
+    {
+      "value": "Afrique du Sud, scénario DSA du FMI : sous scénario standardisé (tout le besoin de financement climatique porté par l'État à taux de marché), la dette publique pourrait atteindre 210% du PIB en 2050 ; sous scénario personnalisé incorporant les estimations CCDR de la Banque mondiale (4,4% du PIB/an 2030-2050) et l'hypothèse que le financement concessionnel externe couvre ~15% du financement total (conforme aux engagements JET 2022-2027) et que près de la moitié du reste vient du privé, la dette publique atteindrait ~120% du PIB en 2050",
+      "source": "FMI, Article IV Afrique du Sud, Country Report No. 26/34, février 2026 (Debt Sustainability Analysis)",
+      "date_of_figure": "projections publiées février 2026"
+    }
+  ],
+  "tool_failures": [
+    {"tool": "WebSearch", "target": "requêtes génériques après les 2 contrôles positifs", "failure": "quota de session épuisé (200/200) — partagé entre chercheurs parallèles de la passe ; aucune requête WebSearch possible après ce point"},
+    {"tool": "WebFetch->OpenAlex API", "target": "works?search=Just Energy Transition Partnership absorptive capacity balance sheet ; works?search=country platform climate finance debt sustainability absorptive", "failure": "HTTP 429, Retry-After ~37000s (~10h+) — sonde certifiée cassée pour le reste de la session"},
+    {"tool": "WebFetch->Crossref API", "target": "query.bibliographic=Just Energy Transition Partnership absorptive capacity balance sheet", "failure": "HTTP 429"},
+    {"tool": "WebFetch->EconStor", "target": "simple-search?query=Just Energy Transition Partnership", "failure": "bloqué par protection anti-bot Anubis (proof-of-work JS), aucun résultat lisible"},
+    {"tool": "WebFetch->RePEc/IDEAS", "target": "cgi-bin/htsearch (deux tentatives d'URL différentes)", "failure": "ne renvoie que la page d'accueil du site, jamais de résultats de recherche — l'interface htsearch semble nécessiter un rendu ou une méthode que WebFetch ne peut pas déclencher"},
+    {"tool": "WebFetch->DuckDuckGo html", "target": "recherche IEEFA Financing the JETP", "failure": "page CAPTCHA (« select all squares containing a duck »), aucun résultat"},
+    {"tool": "WebFetch->Bing", "target": "recherche IEEFA Financing the JETP", "failure": "résultats non pertinents (recettes de cuisine Reddit) — rendu défaillant, pas de vrais résultats"},
+    {"tool": "WebFetch->Google", "target": "\"absorptive capacity\" \"Just Energy Transition Partnership\" debt", "failure": "redirection vers mur de consentement consent.google.com, non franchissable en un appel"},
+    {"tool": "WebFetch", "target": "ieefa.org/resources/financing-jetp-making-sense-packages", "failure": "HTTP 403"},
+    {"tool": "WebFetch", "target": "iisd.org/articles/insight/just-energy-transition-partnerships", "failure": "HTTP 403"},
+    {"tool": "WebFetch", "target": "jetknowledge.org op-ed market capture or climate justice", "failure": "commande échouée sans sortie (timeout/erreur silencieuse)"},
+    {"tool": "WebFetch", "target": "deluair.com/consultancy/insights/jetp-energy-transition-2026", "failure": "HTTP 403"},
+    {"tool": "WebFetch", "target": "africanclimatefoundation.org Appraising country platforms PDF", "failure": "HTTP 404 (URL trouvée par WebSearch mais déjà morte)"},
+    {"tool": "WebFetch", "target": "odi.org/en/publications/country-platform-development-note/ (Tanaka, Gilmour, Raubenheimer, ODI, fév. 2025)", "failure": "HTTP 403 — piste identifiée via citation dans le rapport CGD mais jamais lue"},
+    {"tool": "WebFetch", "target": "wri.org knowledge-network-hub-country-platforms", "failure": "HTTP 404 — URL devinée, probablement incorrecte"},
+    {"tool": "WebFetch", "target": "e3g.org/?s=Just+Energy+Transition+Partnership", "failure": "commande échouée sans sortie"},
+    {"tool": "WebFetch", "target": "resourcegovernance.org (NRGI) articles?search=...", "failure": "HTTP 404"},
+    {"tool": "WebFetch", "target": "bruegel.org/search", "failure": "HTTP 403"},
+    {"tool": "WebFetch", "target": "papers.ssrn.com abstract_id=6979738 (Do, Halimatussadiah, Burke & Jotzo 2026 — pièce déjà connue, non re-vérifiée)", "failure": "HTTP 403"},
+    {"tool": "WebFetch", "target": "afd.fr recherche JETP (deux formats d'URL testés)", "failure": "HTTP 404 les deux fois"},
+    {"tool": "WebFetch", "target": "worldbank.org/en/search CCDR Indonesia", "failure": "page rendue vide côté JS, aucun résultat exploitable"},
+    {"tool": "WebFetch", "target": "jetip.gov.za", "failure": "DNS introuvable (getaddrinfo ENOTFOUND)"},
+    {"tool": "WebFetch", "target": "jetp-id.org", "failure": "HTTP 403"},
+    {"tool": "WebFetch", "target": "univ-catholille.hal.science/hal-04790077v1 (page HTML)", "failure": "bloqué par protection anti-bot Anubis"},
+    {"tool": "WebFetch", "target": "treasury.gov.za IMF Article IV PDF (rendu direct par WebFetch)", "failure": "WebFetch n'a pas su décoder le flux PDF compressé — contournement réussi en sauvant le binaire et en lançant pdftotext localement"},
+    {"tool": "WebFetch", "target": "cgdev.org PDF Platforms that Perform (rendu direct par WebFetch)", "failure": "idem — contourné via pdftotext local sur le binaire sauvegardé"},
+    {"tool": "WebFetch", "target": "odi.org PDF Hadley et al. 2022 / justtransitionfinance.org PDF Selvaraju et al. 2025 / tni.org Eskom Transformed PDF (rendu direct par WebFetch)", "failure": "idem — tous contournés via pdftotext local, texte intégral effectivement lu dans les quatre cas"}
+  ],
+  "verdict": {
+    "P1_non_absorbabilite_bilan": "NON PRÉEMPTÉ par une pièce qui généralise l'argument aux 4 pays. Le mécanisme causal exact de P1 (exposition de change concentrée sur l'opérateur électrique public, passifs conditionnels, moratoire d'emprunt) est décrit de façon détaillée mais séparément pour l'Indonésie (Selvaraju et al. 2025, PLN) et pour l'Afrique du Sud (Vanheukelom 2023, moratoire Eskom). Personne, dans les pièces atteintes, ne construit l'argument comparatif à 4 pays ni ne le formule comme thèse générale « obstacle de bilan, pas de lenteur administrative ». Le FMI (Article IV RSA fév. 2026) fournit des données factuelles cohérentes avec P1 (ratio de couverture Eskom sous seuil, scénarios DSA à 210% vs 120% du PIB) mais SANS jamais formuler cette lecture — silence net.",
+    "P2_personne_evalue_le_paquet_entier": "NON PRÉEMPTÉ frontalement, mais fortement approché. Latortue & Goodman (CGD 2025) et Csanadi & Helmeci (Carnegie 2025) documentent tous deux, indépendamment, la fragmentation de la diligence (chaque bailleur son propre processus, ses propres critères, ses propres calendriers) qui est la PRÉMISSE empirique de P2 — mais aucun des deux ne tire la conclusion explicite que personne n'a le mandat d'évaluer la soutenabilité de l'agrégat. Le silence du FMI (ci-dessus) sur le paquet JETP comme objet d'évaluation en lui-même — traité comme une simple hypothèse de scénario DSA plutôt que comme un objet audité — est lui-même une pièce à charge indirecte pour P2 (aucune institution rencontrée dans cette passe ne revendique ce mandat).",
+    "P3_agentivite_strategique": "NON PRÉEMPTÉ comme thèse générale. Des indices épars et non systématisés : (i) Vanheukelom 2023 documente la résistance politique sud-africaine (Ramaphosa, Mantashe) mais la présente comme de l'obstruction domestique plutôt que comme une négociation stratégique avec les bailleurs ; (ii) The Conversation (Sud 2026) rapporte des officiels indonésiens qualifiant le JETP d'« instrument de contrôle » du G7 contre la Chine — un discours de résistance politique, mais présenté comme critique de dépendance plutôt que comme choix souverain actif de refus/détournement ; (iii) CGD 2025 note que l'Indonésie traite les cibles JETP comme « aspirationnelles » face à ses propres plans électriques (RUPTL/RUKN) — un indice faible de détournement vers l'agenda domestique. Aucune pièce ne théorise ces éléments comme choix souverain délibéré au sens de P3.",
+    "P4_solvabilite_achete_agentivite": "AUCUNE trace dans cette passe — proposition non abordée par la littérature grise trouvée, dans un sens ou dans l'autre.",
+    "verdict_global": "Provisoire et FORTEMENT circonscrit par l'épuisement des outils : quota WebSearch de session épuisé après seulement 2 contrôles positifs et 3 requêtes utiles ; OpenAlex et Crossref bloqués en HTTP 429 dès la première requête (pour ~10h+) ; la plupart des sites d'institutions (IEEFA, IISD, WRI, E3G, Bruegel, NRGI, ODI pour une 2e pièce, Deluair, jetp-id.org, EconStor, RePEc/IDEAS) ont renvoyé 403/404/anti-bot/JS-vide. La réserve visée par cette passe (SSRN/RePEc/EconStor) n'a PU être vidée : SSRN a renvoyé 403 sur la seule pièce testée (Do et al. 2026, déjà connue), EconStor est resté totalement opaque (protection anti-bot), RePEc/IDEAS n'a jamais renvoyé de résultats exploitables. Ce résultat ne doit PAS être lu comme « le canal est sec » — c'est très exactement le schéma d'échec que le protocole demande de signaler : un résultat nul d'API cassée n'est pas une absence. Sur le fond, malgré ces contraintes sévères, aucune pièce trouvée et lue en texte intégral ne préempte une proposition entière ; plusieurs (Selvaraju et al. 2025, Vanheukelom 2023, Latortue & Goodman 2025, Csanadi & Helmeci 2025) fournissent des briques empiriques et des données chiffrées solides qui RENFORCENT la plausibilité de P1 et P2 sans jamais les formuler comme thèse. Recommandation : retenter cet angle avec (a) un quota WebSearch non partagé/non épuisé, (b) un accès direct SSRN/EconStor/RePEc via un outil authentifié ou un contournement anti-bot, (c) relance spécifique sur odi.org 'Country Platform Development Note' (Tanaka/Gilmour/Raubenheimer, fév. 2025) et sur la pièce HAL d'Earsom (nov. 2024), toutes deux non résolues faute d'accès."
+  }
+}

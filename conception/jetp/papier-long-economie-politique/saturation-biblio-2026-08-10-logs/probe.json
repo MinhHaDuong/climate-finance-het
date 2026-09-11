@@ -1,0 +1,20 @@
+{
+ "probe": {
+  "queries": [
+   "comparative Just Energy Transition Partnership South Africa Indonesia Vietnam Senegal peer-reviewed 2025 2026",
+   "JETP \"US withdrawal\" OR \"Executive Order 14162\" comparative analysis South Africa Indonesia Vietnam",
+   "\"Just Energy Transition Partnership\" four countries comparative retrospective evaluation article 2026",
+   "JETP Senegal Vietnam Indonesia South Africa comparison Trump withdrawal International Partners Group (failed - tool unavailable)",
+   "\"JETP\" \"two years\" OR \"at two\" evaluation 2025 assessment peer review journal",
+   "\"Just Energy Transition Partnerships: An inclusive climate finance approach\" abstract Senegal Vietnam Indonesia South Africa justice",
+   "JETP comparative study \"International Partners Group\" withdrawal analytical framework peer-reviewed journal 2025 2026 South Africa Indonesia Vietnam Senegal",
+   "JETP 2026 journal article climate policy world development energy research comparative South Africa Indonesia Vietnam Senegal US exit (failed - tool unavailable)",
+   "\"just energy transition partnership\" \"since the US withdrawal\" comparative analysis 2026"
+  ],
+  "databases": [
+   "WebSearch (general web)",
+   "WebFetch on carnegieendowment.org (successful)",
+   "WebFetch on sciencedirect.com (403 blocked, relied on WebSearch snippets instead)"
+  ]
+ }
+}

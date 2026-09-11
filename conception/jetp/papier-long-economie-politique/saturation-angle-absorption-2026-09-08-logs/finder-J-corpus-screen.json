@@ -1,0 +1,319 @@
+{
+  "angle": "J — criblage exhaustif du corpus JETP (filet de sécurité systématique, dédup multi-source, lecture des résumés)",
+  "corpus": {
+    "sources": [
+      {
+        "name": "Crossref",
+        "queries": [
+          "query.bibliographic=just+energy+transition+partnership&rows=100 (offset 0)",
+          "query.bibliographic=just+energy+transition+partnership&rows=100 (offset 100)",
+          "query.bibliographic=just+energy+transition+partnership&rows=100 (offset 200)",
+          "query.title=just+energy+transition+partnership&rows=100",
+          "query.bibliographic=country+platform+climate+finance&rows=100",
+          "query.bibliographic=JETP&rows=100",
+          "query.bibliographic=energy+transition+partnership&rows=100"
+        ],
+        "raw_n": 700,
+        "note": "total-results Crossref annoncé (3.3M / 2.0M / 1.4M / 9568 / 3.2M selon la requête) reflète un scoring par pertinence sur des millions d'articles, pas un vrai compte de sujet — seules les ~100 premières lignes par requête sont exploitables ; au-delà, la pertinence s'effondre. La requête 'JETP' seule (total 9568) capte aussi la revue de physique soviétique/russe 'Journal of Experimental and Theoretical Physics' (abrégée JETP), homonyme parasite majeur."
+      },
+      {
+        "name": "OpenAIRE",
+        "queries": [
+          "keywords=just+energy+transition+partnership&size=50 (total annoncé 170)",
+          "keywords=JETP&size=50 (total annoncé 1962 — contaminé par l'homonyme physique, seuls 50 récupérés)",
+          "title=just+energy+transition+partnership&size=50 (total annoncé 48, tout récupéré)"
+        ],
+        "raw_n": 148,
+        "note": "XML, parsé à la main (title/pid doi/description/creator/dateofacceptance). Bon agrégateur de dépôts (LSE Research Online notamment)."
+      },
+      {
+        "name": "DOAJ",
+        "queries": [
+          "\"just energy transition partnership\" (pageSize 100, total réel 10)",
+          "JETP (pageSize 100, total réel 26)",
+          "\"country platform\" climate (pageSize 100, total réel 0 — requête SÈCHE)"
+        ],
+        "raw_n": 36,
+        "note": "Couverture correcte des revues indonésiennes en accès ouvert. La requête « country platform »+climat est restée sèche sur DOAJ — documenté comme résultat nul, pas comme absence de littérature (le concept existe ailleurs, cf. ODI/APRI captés via Crossref)."
+      },
+      {
+        "name": "HAL",
+        "queries": [
+          "q=JETP&rows=100 (numFound réel 236, 100 récupérés)",
+          "q=\"just energy transition partnership\"&rows=100 (numFound réel 8, tout récupéré)"
+        ],
+        "raw_n": 108,
+        "note": "peerReviewing_s exploité pour distinguer communication (COMM) de dépôt non évalué (UNDEFINED). Un second passage ciblé (q=halId_s:hal-04790077*, fl incluant abstract_s) a permis de vérifier l'auteur d'une notice sans DOI."
+      },
+      {
+        "name": "Europe PMC",
+        "queries": [
+          "\"just energy transition partnership\" (pageSize 100, hitCount réel 10)",
+          "JETP (pageSize 100, hitCount réel 154, 100 récupérés)"
+        ],
+        "raw_n": 110,
+        "note": "Couverture surtout biomédicale/preprints ; a remonté un preprint F1000Research."
+      },
+      {
+        "name": "OpenAlex",
+        "queries": [
+          "filter=title_and_abstract.search:\"just energy transition partnership\"&per-page=200"
+        ],
+        "raw_n": 0,
+        "note": "HTTP 429 confirmé, comme annoncé dans tooling.md. Un seul essai, pas de boucle. ÉCHEC D'OUTIL, pas absence de littérature."
+      },
+      {
+        "name": "Semantic Scholar (recherche, hors périmètre initial)",
+        "queries": ["endpoint /graph/v1/paper/search — non tenté (429 systématique annoncé)"],
+        "raw_n": 0,
+        "note": "L'endpoint de RECHERCHE n'a pas été tenté (429 annoncé dans tooling.md). En revanche l'endpoint /graph/v1/paper/DOI:<doi> (lookup direct par DOI, différent de la recherche) a fonctionné (HTTP 200) et a servi ponctuellement en étape 3 pour vérifier auteurs/titre/venue de notices sans résumé Crossref — jamais pour construire le corpus initial."
+      }
+    ],
+    "raw_total_all_sources": 1102,
+    "relevance_filter_note": "Un filtre lexical automatique (titre OU résumé contient 'just energy transition partnership'/'jetp'/'jet-p'/'jet ip'/'country platform') a réduit 1102 notices brutes à 226 notices pertinentes. LIMITE DE CE FILTRE (trouvée via le contrôle positif, voir plus bas) : il exclut à tort des pièces pertinentes dont le titre ne contient aucun de ces termes littéraux et dont le résumé n'est pas fourni par la source (ex. Jindal et al. 2024, dont le titre parle de 'Just Transition Transaction' et non de 'Just Energy Transition Partnership'). Deux notices de contrôle positif (Jindal 2024, Apriliyanti 2026) ont dû être réintégrées MANUELLEMENT au corpus après vérification directe du DOI, en dehors du filtre automatique — voir positive_control.",
+    "deduped_n": 107,
+    "dedup_note": "105 par dédoublonnage automatique DOI puis titre-normalisé sur les 226 notices filtrées, + 2 notices de contrôle positif réintégrées manuellement (Jindal 2024, Apriliyanti 2026) qui n'avaient pas passé le filtre automatique.",
+    "with_abstract_n": 80,
+    "without_abstract_n": 27,
+    "without_abstract_titles": [
+      "The Just Energy Transition Partnership in South Africa: Identification and Assessment of Key Factors Driving International Cooperation (SSRN 4697955, doublon d'une version datée 2023/2024 déjà avec résumé)",
+      "Correction: Measurable impacts of South Africa's just energy transition partnership on poverty reduction... (10.3389/fsuep.2026.1890934, simple erratum de l'article principal déjà lu)",
+      "Integrated Optimization of Decentralized Energy Architectures and Rural Electricity Networks ... Within the Framework of the JETP (10.1109/cpere65146.2025.11240064) — résumé RÉCUPÉRÉ via Semantic Scholar DOI-lookup en étape 3, voir candidates",
+      "South Africa's Just Energy Transition Partnership: A novel approach... NDC financial goals at scale (10.1080/10220461.2023.2233006, Fakir) — résumé RÉCUPÉRÉ via Semantic Scholar DOI-lookup, voir candidates",
+      "Beyond the Struggle of Indonesia for Achieving a JETP: An Analysis from Adaptive Foreign Policy Theory (10.2991/978-2-38476-174-6_16, Chotimah) — résumé RÉCUPÉRÉ via PDF Atlantis Press (CC-BY-NC, WebFetch), voir candidates",
+      "Erratum/Comment JETP Lett. (9 notices 10.1134/*) — REVUE DE PHYSIQUE HOMONYME (Journal of Experimental and Theoretical Physics / JETP Letters), hors sujet par construction, classées sans lecture de résumé (exception assumée : homonymie évidente sur le nom de la revue, jamais utilisée pour un verdict de préemption)",
+      "Just Energy Transition Partnership grants and country platforms: lessons from Indonesia and South Africa (LSE Research Online, doublon sans DOI d'une notice avec DOI 10.21953/researchonline.lse.ac.uk.00137110 déjà lue)",
+      "Evaluating South Africa's Just Energy Transition Partnership from a European Perspective: Three Years Later (HAL hal-04790077v1, Joseph Earsom — même auteur que le contrôle positif Global Policy) — résumé NON obtenu (HAL ne fournit pas abstract_s pour cette notice, pas de DOI, PDF non localisé)",
+      "Just Energy Transition Partnerships and the Republic of Korea (10.18031/jip.2024.06.29.1.79, Han) — résumé RÉCUPÉRÉ via Semantic Scholar DOI-lookup, voir candidates",
+      "The Fad Is Dead: Why \"Just Energy Transition Partnerships\" Are Failing (10.1177/10957960241241815, Sean Sweeney, New Labor Forum/SAGE) — résumé NON obtenu malgré titre au fort potentiel de préemption (voir coverage_limits, échec d'outil confirmé)",
+      "Status of the JETP in Vietnam (HAL hal-04485660v1) — AUTO-CITATION Minh Ha-Duong, résumé lu directement via HAL fl=abstract_s (contenu factuel/présentation, sans lien avec P1-P4)",
+      "Transition énergétique : promesses et défis des JETP (HAL hal-04450041v1) — AUTO-CITATION Minh Ha-Duong",
+      "Just Energy Transition Partnerships at two: doctrine, executions and way forward (HAL hal-04412457v1) — LE MANUSCRIT LUI-MÊME en cours de refonte",
+      "Energy transition: promises and challenges of JETP (HAL hal-04344454v1) — AUTO-CITATION Ha-Duong & Cassen",
+      "The just energy transition partnership in South Africa: Identification and assessment of key factors... (SSRN, sans DOI, doublon supplémentaire de la même série SSRN 4641650/4682577/4697955)"
+    ],
+    "coverage_limit_declared": "27 notices sur 107 (25%) sont restées sans résumé exploitable en fin de parcours, dont deux titres à fort potentiel de préemption jamais lus en entier : Sweeney 'The Fad Is Dead' (SAGE, 403 confirmé) et le rapport LSE-Grantham/Joseph Earsom sur l'Afrique du Sud (HAL sans DOI, PDF introuvable). C'est la limite de couverture de cet angle — elle est déclarée, pas dissimulée."
+  },
+  "screening": {
+    "term_families": [
+      "absorpt*", "disburse*", "debt", "insolven*", "balance sheet", "fiscal space",
+      "tariff", "utility/utilities", "Eskom", "PLN", "EVN", "Senelec", "currency",
+      "exchange rate", "cost of capital", "loan*", "grant*", "concession*",
+      "sovereign*", "agency", "sovereignty", "refus*", "reject*", "resist*",
+      "delay*", "coordination", "fragmentation", "aggregate*", "accountab*", "pledge*"
+    ],
+    "screened_n": 80,
+    "flagged_n": 29,
+    "flagged_after_removing_physics_false_positive": 27,
+    "screening_note": "2 notices physiques ('Density-dependent thermopower oscillations...', revue New Journal of Physics, hit sur 'resistance' ; et les erratas JETP Lett. sans résumé) retirées comme faux positifs évidents du criblage lexical — 'resistance/resistivity' en physique du solide n'a rien à voir avec P3."
+  },
+  "positive_control": {
+    "items": [
+      {
+        "ref": "Karg, Gupta & Chen 2025, ERSS 125, 104103 (10.1016/j.erss.2025.104103)",
+        "found": "OUI — DOI résolu, titre/auteurs/volume conformes, résumé lu intégralement (Crossref+OpenAIRE, requête bibliographique 'just energy transition partnership')."
+      },
+      {
+        "ref": "Apriliyanti, Nugraha & Overland 2026, ERSS 135, 104675 (10.1016/j.erss.2026.104675)",
+        "found": "PARTIEL — DOI résolu directement (auteurs Apriliyanti/Nugraha/Overland, volume 135, ERSS, mai 2026 : conforme au brief), MAIS absente des 1102 notices brutes rapportées par les 7 requêtes Crossref + OpenAIRE + DOAJ + HAL + Europe PMC. Cause identifiée : son titre réel ('Explaining Indonesia's failed energy transition: Mapping power and support for decarbonization among government institutions and actors') ne contient ni 'JETP' ni 'just energy transition partnership' ni 'country platform' — aucune requête lexicale construite pour cet angle ne pouvait la trouver. TROU DE COUVERTURE DE LA CONSTRUCTION DU CORPUS, explicitement signalé. Résumé non obtenu (Crossref sans abstract, Elsevier/ScienceDirect 403, Semantic Scholar DOI-lookup abstract=null, budget WebSearch épuisé avant d'avoir pu chercher un miroir)."
+      },
+      {
+        "ref": "Jindal, Shrimali, Gangwani & Lall 2024, ESD 81, 101472 (10.1016/j.esd.2024.101472)",
+        "found": "PARTIEL — DOI résolu, présent dans les résultats bruts Crossref (requête bibliographique 'just energy transition partnership'), mais ÉLIMINÉ par le filtre de pertinence automatique de l'étape 1 : son titre ('Financing just energy transitions in Southeast Asia: Application of the Just Transition Transaction to Indonesia, Vietnam, and Philippines') ne contient pas les chaînes exactes recherchées ('Just Energy Transition Partnership' au complet, 'JETP'), et Crossref ne fournit pas de résumé pour cette notice. TROU DE COUVERTURE DU FILTRE DE PERTINENCE (pas de la recherche elle-même), explicitement signalé et corrigé manuellement en réintégrant la notice au corpus dédoublonné. Résumé non obtenu (dépôt SMU Singapore Management University bloqué par protection anti-bot Incapsula/403 factice content-length 212, ScienceDirect 403, Semantic Scholar DOI-lookup abstract=null, Europe PMC 0 hit sur le DOI, budget WebSearch épuisé)."
+      },
+      {
+        "ref": "Earsom 2024, Global Policy 15(1):135-141 (10.1111/1758-5899.13324)",
+        "found": "OUI — DOI résolu via requête ciblée Crossref (query.author=Earsom + query.bibliographic=just energy transition partnership), volume 15 pages 135-141 conformes au brief, résumé lu intégralement (source HAL+OpenAIRE)."
+      }
+    ],
+    "verdict_on_probe": "La sonde de construction du corpus est PARTIELLEMENT défaillante : 2/4 contrôles positifs trouvés et lus en entier, 2/4 résolus par DOI mais manqués par les requêtes lexicales (Apriliyanti — titre sans mot-clé JETP) ou par le filtre de pertinence (Jindal — idem), et dans les deux cas le résumé est resté hors de portée des outils disponibles. Le trou est nommé et sa cause isolée (titre ne contenant pas les chaînes recherchées ; ni Crossref ni les dépôts miroirs ne livrent le résumé sous les contraintes d'outillage du jour)."
+  },
+  "candidates": [
+    {
+      "title": "Just Energy Transition Partnerships: An inclusive climate finance approach?",
+      "authors": ["Aljoscha Karg", "Joyeeta Gupta", "Yang Chen"],
+      "year": 2025,
+      "venue": "Energy Research & Social Science 125, 104103",
+      "doi_or_url": "10.1016/j.erss.2025.104103",
+      "abstract_read": true,
+      "abstract_excerpt": "First comparative analysis of all four partnerships from a justice perspective... only 3-4% grants... International Partners Group's financial intransparency... numerous financial conditionalities...",
+      "preclass": "adjacent P1, adjacent P2",
+      "why": "Touche le très faible taux de dons (P1) et compare les quatre partenariats ENSEMBLE (frôle P2), mais l'angle est la justice/équité et la transparence, pas une analyse bilancielle (dette souveraine, insolvabilité d'opérateur, change) ni un diagnostic du vide institutionnel de mandat d'évaluation agrégée. Ne préempte aucune des 4 propositions au sens strict du brief."
+    },
+    {
+      "title": "Fit for purpose? Just Energy Transition Partnerships and accountability in international climate governance",
+      "authors": ["Joseph Earsom"],
+      "year": 2024,
+      "venue": "Global Policy 15(1), 135-141",
+      "doi_or_url": "10.1111/1758-5899.13324",
+      "abstract_read": true,
+      "abstract_excerpt": "Examines whether JETPs can serve as accountability mechanisms for the UNFCCC... practical limitations to accountability within JETPs and dense governance spaces in general.",
+      "preclass": "adjacent P2",
+      "why": "Traite de vide d'accountability structurel, proche en esprit de P2 (défaut de gouvernance), mais l'angle est l'imputabilité vis-à-vis de la CCNUCC, pas l'absence de mandat d'évaluation de la capacité d'absorption du paquet agrégé."
+    },
+    {
+      "title": "Just Energy Transition Partnerships at Risk in Indonesia and Vietnam",
+      "authors": ["Hai-Anh Do", "Alin Halimatussadiah", "Paul J. Burke", "Frank Jotzo"],
+      "year": 2026,
+      "venue": "SSRN policy note, 29 juillet 2026",
+      "doi_or_url": "10.2139/ssrn.6979738",
+      "abstract_read": true,
+      "abstract_excerpt": "Core misalignment between recipient country expectations for early concessional finance and international partners' emphasis on reform conditionality. Low grant shares, slow disbursement and weakened trust... withdrawal of the United States from JETPs in 2025.",
+      "preclass": "adjacent P1, adjacent P3",
+      "why": "Le décalage attentes-concessionnalité/conditionnalité de réforme touche P3 (tension sur le contrôle) et P1 (faibles dons, décaissement lent) ; déjà connu du brief (2026-07-29). N'affirme pas de refus stratégique délibéré ni de détournement vers un agenda propre (gaz, charbon captif, contenu local) — reste une lecture d'implémentation bloquée, pas d'agentivité souveraine."
+    },
+    {
+      "title": "Translating promise into practice in Just Energy Transition Partnerships",
+      "authors": ["non identifié dans le résumé — correspond à Kawiriaan & Zan 2026 du brief"],
+      "year": 2026,
+      "venue": "Research Square (in review)",
+      "doi_or_url": "10.21203/rs.3.rs-9059924/v1",
+      "abstract_read": true,
+      "abstract_excerpt": "Gaps between financial pledges and disbursements, donor claims of country ownership and retained external control, ambitious coal phase-out commitments and domestic energy security imperatives...",
+      "preclass": "adjacent P2, adjacent P3",
+      "why": "« Donor claims of country ownership and retained external control » touche P3 (acceptation de l'argent sans acceptation du contrôle) sans l'affirmer comme choix souverain délibéré ; déjà connu du brief."
+    },
+    {
+      "title": "Just Energy Transition Partnership grants and country platforms: lessons from Indonesia and South Africa",
+      "authors": ["non identifié dans le résumé (LSE)"],
+      "year": 2025,
+      "venue": "LSE Research Online (rapport)",
+      "doi_or_url": "10.21953/researchonline.lse.ac.uk.00137110",
+      "abstract_read": true,
+      "abstract_excerpt": "Their disproportionate reliance on loans has been suggested to have put the 'just' component of the transition at risk, particularly in countries already grappling with mounting debt and fiscal constraints.",
+      "preclass": "adjacent P1 (candidat le plus proche)",
+      "why": "C'est la notice la plus proche de P1 trouvée dans tout le corpus : elle relie explicitement primauté des prêts, dette et contraintes budgétaires. Mais elle CITE ce lien ('has been suggested') sans le démontrer par une analyse bilancielle propre ; son objet réel est la répartition des dons par secteur/acteur pour informer la conception des futures country platforms — pas une démonstration de non-absorbabilité par insolvabilité d'opérateur ou exposition de change. PDF plein texte non accessible (Cloudflare 403 confirmé) : le résumé lu est le maximum atteignable avec les outils du jour."
+      },
+    {
+      "title": "Just Energy Transition Partnerships at Two: Doctrine, Executions and Way Forward",
+      "authors": ["Minh Ha-Duong", "Christophe Cassen"],
+      "year": 2024,
+      "venue": "SSRN (Elsevier BV)",
+      "doi_or_url": "10.2139/ssrn.4728216",
+      "abstract_read": true,
+      "abstract_excerpt": "Implementation revealed many challenges, including... excessive debt. To mitigate these risks... reduce the share of sovereign debt in the package of measures.",
+      "preclass": "AUTO-CITATION — non pertinent comme préemption externe",
+      "why": "C'est la version SSRN du manuscrit en cours de refonte lui-même (mêmes auteurs). Ne compte pas comme occupation du créneau par un tiers."
+    },
+    {
+      "title": "A new North-South climate cooperation mechanism: Just Energy Transitions Partnerships (JETP) / Vietnam's Just Energy Transition Partnership: a background report / Transition énergétique : promesses et défis des JETP / Energy transition: promises and challenges of JETP / Status of the JETP in Vietnam",
+      "authors": ["Minh Ha-Duong", "(Cassen pour une version)"],
+      "year": "2023-2024",
+      "venue": "HAL (communications, rapport, présentation)",
+      "doi_or_url": "hal-04058057v1, hal-04094268v2, hal-04450041v1, hal-04344454v1, hal-04485660v1",
+      "abstract_read": true,
+      "abstract_excerpt": "(cinq auto-citations de l'auteur du manuscrit, contenus déjà connus)",
+      "preclass": "AUTO-CITATION",
+      "why": "Cinq notices HAL, toutes signées Minh Ha-Duong (seul ou avec Cassen) : présentations, rapport de fond et version anglaise du même travail. Confirmé via HAL authFullName_s. Pas des tiers."
+    },
+    {
+      "title": "Just Energy Transition Partnerships at two: doctrine, executions and way forward",
+      "authors": ["Minh Ha-Duong", "Christophe Cassen"],
+      "year": 2024,
+      "venue": "HAL hal-04412457v1",
+      "doi_or_url": "hal-04412457v1",
+      "abstract_read": false,
+      "abstract_excerpt": null,
+      "preclass": "LE MANUSCRIT LUI-MÊME",
+      "why": "Retrouvé par la recherche HAL — confirme que le corpus capte bien le document de référence de la refonte en cours."
+    },
+    {
+      "title": "The Fad Is Dead: Why \"Just Energy Transition Partnerships\" Are Failing",
+      "authors": ["Sean Sweeney"],
+      "year": 2024,
+      "venue": "New Labor Forum (SAGE)",
+      "doi_or_url": "10.1177/10957960241241815",
+      "abstract_read": false,
+      "abstract_excerpt": null,
+      "preclass": "non résolu — titre à fort potentiel, résumé inatteignable",
+      "why": "Titre suggérant un verdict d'échec structurel de l'instrument JETP dans son ensemble — potentiellement pertinent pour P1/P2/P4 — mais IMPOSSIBLE de le classer sans lire le résumé (discipline du brief). Semantic Scholar (lookup direct DOI) renvoie abstract=null ; Unpaywall pointe à tort vers un communiqué G7 sans rapport ; journals.sagepub.com renvoie 403 ; budget WebSearch épuisé avant d'avoir pu tenter une autre voie. ÉCHEC D'OUTIL CONFIRMÉ, déclaré comme trou de couverture prioritaire."
+    },
+    {
+      "title": "Evaluating South Africa's Just Energy Transition Partnership from a European Perspective: Three Years Later",
+      "authors": ["Joseph Earsom"],
+      "year": 2024,
+      "venue": "HAL hal-04790077v1 (Université Catholique de Lille)",
+      "doi_or_url": "hal-04790077v1",
+      "abstract_read": false,
+      "abstract_excerpt": null,
+      "preclass": "non résolu",
+      "why": "Même auteur que le contrôle positif Earsom 2024 (Global Policy) — possible complément/rapport apparenté. HAL ne fournit pas de résumé pour cette notice précise (pas de champ abstract_s) et aucun DOI n'est associé pour tenter une autre voie."
+    },
+    {
+      "title": "South Africa's Just Energy Transition Partnership: A novel approach transforming the international landscape on delivering NDC financial goals at scale",
+      "authors": ["Saliem Fakir"],
+      "year": 2023,
+      "venue": "South African Journal of International Affairs",
+      "doi_or_url": "10.1080/10220461.2023.2233006",
+      "abstract_read": true,
+      "abstract_excerpt": "The essay seeks to demonstrate where international partnerships can be useful in this living experiment in transformative transition... and suggests where they are not.",
+      "preclass": "contexte / adjacent faible",
+      "why": "Résumé récupéré via Semantic Scholar (lookup direct par DOI). Essai favorable, insiste sur l'appropriation locale et les mécanismes institutionnels innovants ; ne développe ni bilan financier, ni agentivité de refus, ni gouvernance agrégée. Pas de préemption."
+    },
+    {
+      "title": "Just Energy Transition Partnerships and the Republic of Korea",
+      "authors": ["Heejin Han"],
+      "year": 2024,
+      "venue": "Journal of International Politics",
+      "doi_or_url": "10.18031/jip.2024.06.29.1.79",
+      "abstract_read": true,
+      "abstract_excerpt": "Korea has not yet joined JETPs... explores where Korea stands with regard to the idea of just energy transitions.",
+      "preclass": "hors sujet (angle donneur potentiel, pas récipiendaire)",
+      "why": "Résumé récupéré via Semantic Scholar (lookup direct). Étudie la Corée comme bailleur potentiel non-membre, aucun rapport avec l'absorption côté récipiendaire."
+    },
+    {
+      "title": "Beyond the Struggle of Indonesia for Achieving a Just Energy Transition Partnership: An Analysis from Adaptive Foreign Policy Theory",
+      "authors": ["Hidayat Chusnul Chotimah"],
+      "year": 2023,
+      "venue": "Atlantis Press (conference proceedings)",
+      "doi_or_url": "10.2991/978-2-38476-174-6_16",
+      "abstract_read": true,
+      "abstract_excerpt": "This financing scheme only covers distributive justice in climate justice offered by developed countries to developing countries by involving elite clients consisting of government officials and the private sector alone.",
+      "preclass": "adjacent P3 (faible)",
+      "why": "Résumé récupéré via PDF Atlantis Press en accès libre (CC-BY-NC), extrait par pdftotext. Note une capture élitaire (gouvernement + secteur privé) mais ne développe pas de refus stratégique ni de détournement vers un agenda domestique (gaz/charbon/contenu local)."
+    },
+    {
+      "title": "Integrated Optimization of Decentralized Energy Architectures and Rural Electricity Networks for Sustainable Socio-Economic Development Within the Framework of the Just Energetic Transition Partnership (JETP)",
+      "authors": ["Madiop Ndiaye", "Ibrahima Ka", "A. N. Djité", "Mouhamadou Thiam"],
+      "year": 2025,
+      "venue": "2025 IEEE Conference on Power Electronics and Renewable Energy (CPERE)",
+      "doi_or_url": "10.1109/CPERE65146.2025.11240064",
+      "abstract_read": true,
+      "abstract_excerpt": "Analysis of a database of 1,019 villages with solar PV... within the framework of universal access to electricity in Senegal... feeding into the very dynamic electricity grid of the national operator Senelec.",
+      "preclass": "hors sujet",
+      "why": "Résumé récupéré via Semantic Scholar (lookup direct). Article d'optimisation technique de l'électrification rurale sénégalaise ; le JETP n'est qu'un cadre de financement contextuel, aucune discussion de bilan/dette/refus. Mentionne Senelec mais pas son insolvabilité."
+    },
+    {
+      "title": "Insight Brief: Global South Peer Learning Workshop on Country Platform and Just Energy Transition / Is a country platform for climate action right for Nigeria?",
+      "authors": ["APRI (Africa Policy Research Institute)"],
+      "year": 2025,
+      "venue": "APRI Report",
+      "doi_or_url": "10.59184/rp025.04 ; 10.59184/rp025.02",
+      "abstract_read": true,
+      "abstract_excerpt": "Can Nigeria unlock $1.9 trillion for a just energy transition? A unified Country Platform could align policies, attract finance, and drive inclusive, climate-resilient growth.",
+      "preclass": "contexte",
+      "why": "Littérature prospective sur un pays SANS JETP existant (Nigeria envisage une country platform) ; résumés trop courts et programmatiques pour toucher P1-P4."
+    }
+  ],
+  "tool_failures": [
+    "OpenAlex : HTTP 429 sur l'unique tentative (conforme à tooling.md, pas de boucle).",
+    "Elsevier/ScienceDirect : HTTP 403 systématique sur www.sciencedirect.com et sur le lien de redirection linkinghub.elsevier.com (empêche la lecture du résumé d'Apriliyanti et al. 2026).",
+    "LSE Research Online (researchonline.lse.ac.uk) : HTTP 403 avec défi Cloudflare (cf-mitigated: challenge) sur le PDF complet du rapport JETP grants/country platforms.",
+    "SMU Singapore Management University repository (ink.library.smu.edu.sg) : réponse HTTP 200 mais page-défi Incapsula (content-length 212, cookies visid_incap/incap_ses) — bloque la lecture du résumé de Jindal et al. 2024.",
+    "SAGE journals.sagepub.com : HTTP 403 sur l'abstract de Sweeney 'The Fad Is Dead'.",
+    "Semantic Scholar — endpoint de RECHERCHE (/graph/v1/paper/search) : non tenté, annoncé 429 systématique dans tooling.md. En revanche l'endpoint de lookup direct par DOI (/graph/v1/paper/DOI:<doi>) a fonctionné (HTTP 200) à plusieurs reprises en étape 3 — distinction importante, notée ici pour un usage futur.",
+    "Budget WebSearch de la session : épuisé (200/200) avant d'avoir pu tenter une dernière recherche sur l'abstract de Jindal et al. 2024 — a bloqué une piste de récupération possible."
+  ],
+  "coverage_limits": [
+    "27/107 notices du corpus dédoublonné (25%) sont restées sans résumé lu, dont deux titres à potentiel de préemption non négligeable (Sweeney 'The Fad Is Dead' ; rapport Earsom/Lille sur l'Afrique du Sud) jamais lus faute d'accès.",
+    "Deux des quatre contrôles positifs obligatoires (Apriliyanti et al. 2026 ; Jindal et al. 2024) n'ont PAS été retrouvés par la construction automatique du corpus — l'un parce qu'aucune requête lexicale construite pour cet angle ne pouvait le trouver (titre sans mot-clé JETP), l'autre parce que le filtre de pertinence automatique l'a exclu pour la même raison. Réintégrés manuellement après vérification directe du DOI, mais sans résumé lu pour l'un comme pour l'autre.",
+    "OpenAIRE (requête JETP, total annoncé 1962) et HAL (requête JETP, numFound 236) n'ont été échantillonnés qu'à 50 et 100 notices respectivement — au-delà, la contamination par l'homonyme physique (revue soviétique/russe JETP) rend la pagination supplémentaire peu rentable, mais cela reste une pagination incomplète, donc une limite de couverture assumée plutôt qu'une exhaustivité réelle.",
+    "Le filtre de pertinence automatique (titre/résumé contient les chaînes exactes) est structurellement aveugle aux articles qui traitent du fond des JETP sous un autre intitulé (ex. 'Just Transition Transaction', 'failed energy transition') — seule la vérification manuelle DOI par DOI du contrôle positif a permis de le détecter ; il est probable que d'autres notices de ce type existent dans le très large excédent Crossref non lu (au-delà des ~100 premières lignes par requête)."
+  ],
+  "verdict": {
+    "P1_non_absorbabilite_bilancielle": "NON PRÉEMPTÉ. Le candidat le plus proche (rapport LSE/country-platforms, 10.21953/researchonline.lse.ac.uk.00137110) relie explicitement primauté des prêts et contraintes budgétaires/dette des pays hôtes, mais le fait par renvoi à une thèse tierce sans démonstration bilancielle propre (pas de DSA, pas d'insolvabilité d'opérateur nommément analysée — Eskom/PLN/EVN/Senelec ne sont jamais le sujet d'une analyse de bilan dans le corpus criblé), pas d'exposition de change développée. Karg et al. 2025 chiffre le faible taux de dons (3-4%) mais depuis un angle de justice, pas de solvabilité. Angle ouvert.",
+    "P2_personne_evalue_le_paquet_entier": "NON PRÉEMPTÉ au sens strict. Karg et al. 2025 EST la première analyse comparative des quatre partenariats ENSEMBLE, ce qui affaiblit partiellement la formulation la plus large de P2 ('aucun partenaire n'a jamais évalué...le paquet JETP dans son ensemble') — mais c'est une analyse ACADÉMIQUE de justice, pas une évaluation INSTITUTIONNELLE de soutenabilité/capacité d'absorption agrégée par un bailleur ou une agence ayant mandat sur l'ensemble. La proposition spécifique de gouvernance ('jointly announced, severally owed', vide de mandat sur l'agrégat) reste non trouvée. Earsom (accountability/UNFCCC) et le papier sur les coûts de transaction (TCE) touchent à la gouvernance fragmentée sans formuler ce diagnostic précis. Angle ouvert, avec un chevauchement partiel à signaler explicitement dans le manuscrit (citer Karg et al. comme référence de comparaison à 4 pays, en précisant la différence d'objet).",
+    "P3_agentivite_strategique_recipiendaires": "NON PRÉEMPTÉ. Aucune notice du corpus criblé ne documente un refus délibéré de tranches non concessionnelles, un détournement vers un agenda domestique (gaz, charbon captif, contenu local, minéraux), ou une acceptation de fonds sans acceptation de contrôle formulée comme choix souverain. Les candidats les plus proches (Do et al. 2026 SSRN ; Kawiriaan & Zan 2026) décrivent un blocage d'implémentation et une tension attentes/conditionnalité, mais depuis un cadre d'échec de mise en œuvre, pas d'agentivité stratégique délibérée. Angle ouvert.",
+    "P4_solvabilite_achete_agentivite": "NON PRÉEMPTÉ. Aucune notice du corpus, criblée ou lue en entier, n'articule le mécanisme bimodal (les deux extrêmes de solvabilité produisent la même non-absorption pour des raisons opposées). Absent même en germe. Angle ouvert et apparemment le plus net des quatre."
+  }
+}
