@@ -3,6 +3,7 @@ Title: Corriger le format et la longueur cibles du papier court JETP
 Created: 2026-09-11
 Author: minh
 Blocked-by: 0708
+Closed: autoclosed — PR #1328
 
 --- log ---
 2026-09-11T16:26Z minh created
@@ -11,6 +12,7 @@ Blocked-by: 0708
 
 2026-09-11T17:09Z figure 1 construite puis refaite trois fois : population, denominateur, horizon
 2026-09-11T17:09Z Christophe cosignataire du papier court ; titre arrete ; perimetre elargi au-dela du format
+2026-09-11T17:10Z HDMX-coding-agent closed — autoclosed — PR #1328
 --- body ---
 ## Contexte
 
