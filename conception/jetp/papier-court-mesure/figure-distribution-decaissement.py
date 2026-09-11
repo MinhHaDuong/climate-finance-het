@@ -1,17 +1,20 @@
 #!/usr/bin/env python3
-"""Figure 1 du papier court JETP — l'écart à la norme, distribution par pays.
+"""Figure 1 du papier court JETP — le décaissé du paquet annoncé contre la norme du pays.
 
-Un panneau par pays. Dans chacun, la distribution des taux de décaissement
-observés à 3 et 4 ans pour les prêts-projet du secteur énergie (un point par
-activité, aire proportionnelle au montant engagé), et la barre de position
-observée de la cohorte JETP sur le MÊME instrument.
+Un panneau par pays, chacun à SON horizon. Les quatre JETP n'ayant pas été
+signés la même année, un horizon commun les compterait inégalement : l'Afrique
+du Sud a eu trois ans depuis sa signature, le Sénégal un seul. Chaque panneau
+est donc lu à l'horizon réellement écoulé pour ce pays, la norme du pays étant
+prise au même horizon.
 
-Trois avertissements portés par la figure elle-même :
-  - projet n'est pas programme : tout ici est prêt-projet C01, l'appui
-    budgétaire A01/A02 est exclu des deux côtés de la comparaison ;
-  - la cohorte JETP n'est pas observable à 3 ou 4 ans (le CRS s'arrête en
-    2024) — sa barre est à h = 2 et le dit ;
-  - les effectifs JETP sont des poignées d'activités, affichés tels quels.
+Deux dénominateurs, délibérément :
+  - la distribution rapporte le décaissé à l'ENGAGEMENT SIGNÉ (norme d'exécution) ;
+  - la barre rapporte le décaissé au PAQUET ANNONCÉ (ce qui a été promis).
+L'écart entre les deux mesure ce qui n'a jamais quitté l'annonce.
+
+La norme couvre les prêts officiels de type projet, APD et autres flux
+officiels : s'en tenir à l'APD excluait les prêts IBRD, donc l'Eskom Just
+Energy Transition Project, principal prêt-projet du JETP sud-africain.
 
 Entrée  : analyse-crs/out/activites.csv
 Sorties : figure-distribution-decaissement.{pdf,png} + .csv des points tracés
@@ -26,79 +29,83 @@ import pandas as pd
 HERE = pathlib.Path(__file__).parent
 SRC = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else
                    "/home/haduong/CNRS/projets/actifs/jetp/papier-court-mesure/analyse-crs/out/activites.csv")
+FIN = pd.Timestamp("2024-12-31")           # dernière année du tirage CRS
 
-PAYS = {"VNM": "Viêt Nam", "IDN": "Indonésie", "ZAF": "Afrique du Sud", "SEN": "Sénégal"}
-NORME_H3, NORME_H4, JETP_C = "#8cb8e8", "#2a78d6", "#eb6834"   # bleu séquentiel + orange catégoriel
-JETP_H = 2
+# pays -> (nom, signature, paquet annoncé en M USD, libellé du paquet, 1re année de cohorte)
+JETP = {
+    "ZAF": ("Afrique du Sud", "2021-11-02", 8500.0, "8,5 Md$", 2022),
+    "IDN": ("Indonésie", "2022-11-15", 20000.0, "20 Md$", 2022),
+    "VNM": ("Viêt Nam", "2022-12-14", 15500.0, "15,5 Md$", 2022),
+    "SEN": ("Sénégal", "2023-06-22", 2500 * 1.09, "2,5 Md€", 2023),
+}
+NORME, BARRE = "#2a78d6", "#eb6834"
 
 plt.rcParams.update({
     "font.family": "serif", "font.serif": ["DejaVu Serif"], "font.size": 9,
-    "axes.edgecolor": "#c9c9c4", "axes.linewidth": 0.8,
-    "xtick.color": "#6b6b66", "ytick.color": "#2b2b28",
-    "text.color": "#2b2b28", "axes.labelcolor": "#2b2b28",
+    "axes.edgecolor": "#c9c9c4", "axes.linewidth": .8,
+    "xtick.color": "#6b6b66", "text.color": "#2b2b28", "axes.labelcolor": "#2b2b28",
 })
 
-d = pd.read_csv(SRC)
-d = d[(d.denom > 0) & (d.instr == "pret") & (d.modalite == "C01")].copy()
-for h in (2, 3, 4):
-    d[f"r{h}"] = 100 * d[f"d{h}"] / d.denom
-hist, jetp = d[d["T"] <= 2020], d[d["T"].between(2022, 2023)]
+brut = pd.read_csv(SRC)
+brut = brut[brut.denom > 0].copy()
+proj = brut[brut.instr.isin(["pret", "autre_officiel"]) & (brut.modalite == "C01")]
 
 rng = np.random.default_rng(0)
-fig, axes = plt.subplots(2, 2, figsize=(7.4, 5.6), sharex=True)
+fig, axes = plt.subplots(2, 2, figsize=(7.4, 5.3), sharex=True)
 traces = []
 
-for ax, (code, nom) in zip(axes.flat, PAYS.items()):
-    h_ = hist[hist.pays == code]
-    for i, (h, couleur) in enumerate([(3, NORME_H3), (4, NORME_H4)]):
-        y = 1 - i * 0.55
-        v, w = h_[f"r{h}"].values, h_.denom.values
-        if len(v):
-            q1, med, q3 = np.percentile(v, [25, 50, 75])
-            ax.hlines(y, q1, q3, color=couleur, lw=7, alpha=.28, zorder=2)
-            ax.vlines(med, y - .11, y + .11, color=couleur, lw=2.4, zorder=4)
-            ax.scatter(v, y + rng.uniform(-.09, .09, len(v)), s=8 + 92 * w / w.max(),
-                       facecolor=couleur, alpha=.45, edgecolor="white", lw=.6, zorder=3)
-            pond = 100 * h_[f"d{h}"].sum() / h_.denom.sum()
-            ax.plot([pond], [y], marker="D", ms=6, color=couleur,
-                    markeredgecolor="white", markeredgewidth=1, zorder=5)
-            ax.text(-4, y, f"{h} ans", ha="right", va="center", fontsize=8.5, color=couleur)
-            traces += [{"pays": nom, "serie": f"norme h={h}", "taux_pct": float(x)} for x in v]
+for ax, (code, (nom, sig, paquet, lib, an0)) in zip(axes.flat, JETP.items()):
+    h = int((FIN - pd.Timestamp(sig)).days / 365.25)          # horizon propre au pays
+    norme = proj[(proj.pays == code) & (proj["T"] <= 2020)]
+    v, w = (100 * norme[f"d{h}"] / norme.denom).values, norme.denom.values
+    q1, med, q3 = np.percentile(v, [25, 50, 75])
+    pond = 100 * norme[f"d{h}"].sum() / norme.denom.sum()
 
-    g = jetp[jetp.pays == code]
-    if len(g):
-        pos = 100 * g[f"d{JETP_H}"].sum() / g.denom.sum()
-        ax.axvline(pos, color=JETP_C, lw=2.4, zorder=6)
-        cote = "left" if pos > 50 else "right"
-        dx = -3 if cote == "left" else 3
-        ax.annotate(f"JETP {pos:.0f} % à {JETP_H} ans\nn = {len(g)} prêt-projet", (pos + dx, -0.30),
-                    color=JETP_C, fontsize=7.8, fontweight="bold",
-                    ha="right" if cote == "left" else "left", va="center",
-                    annotation_clip=False)
-        traces.append({"pays": nom, "serie": f"JETP h={JETP_H}", "taux_pct": float(pos)})
+    ax.hlines(.55, q1, q3, color=NORME, lw=9, alpha=.25, zorder=2)
+    ax.vlines(med, .40, .70, color=NORME, lw=2.4, zorder=4)
+    ax.scatter(v, .55 + rng.uniform(-.11, .11, len(v)), s=8 + 92 * w / w.max(),
+               facecolor=NORME, alpha=.42, edgecolor="white", lw=.6, zorder=3)
+    ax.plot([pond], [.55], marker="D", ms=6.5, color=NORME,
+            markeredgecolor="white", markeredgewidth=1, zorder=5)
 
-    ax.set_title(f"{nom}   ·   norme : n = {len(h_)} prêts-projet", fontsize=9.5, loc="left", pad=5)
-    ax.set_xlim(-14, 104); ax.set_ylim(-0.62, 1.32)
+    cohorte = brut[(brut.pays == code) & (brut["T"] >= an0)]
+    pos = 100 * cohorte[f"d{h}"].sum() / paquet
+    ax.axvline(pos, color=BARRE, lw=2.6, zorder=6)
+    cote = pos > 55
+    ax.annotate(f"{pos:.1f} % du paquet annoncé\ndécaissé", (pos + (-3 if cote else 3), .03),
+                color=BARRE, fontsize=8, fontweight="bold",
+                ha="right" if cote else "left", va="center", annotation_clip=False)
+
+    ax.set_title(f"{nom}  ·  {h} an{'s' if h > 1 else ''}  ·  paquet {lib}",
+                 fontsize=9.5, loc="left", pad=5)
+    ax.set_xlim(-8, 104); ax.set_ylim(-.22, .95)
     ax.set_yticks([]); ax.set_xticks(range(0, 101, 25))
     ax.grid(axis="x", color="#e6e6e2", lw=.7); ax.set_axisbelow(True)
-    for s in ("top", "right", "left"):
-        ax.spines[s].set_visible(False)
+    for sp in ("top", "right", "left"):
+        ax.spines[sp].set_visible(False)
+    traces += [{"pays": nom, "horizon_ans": h, "serie": "norme, activité", "taux_pct": float(x)} for x in v]
+    traces.append({"pays": nom, "horizon_ans": h, "serie": "norme, pondérée", "taux_pct": float(pond)})
+    traces.append({"pays": nom, "horizon_ans": h, "serie": "décaissé / paquet annoncé", "taux_pct": float(pos)})
 
 for ax in axes[1]:
-    ax.set_xlabel("part de l'engagement décaissée (%)")
-h = [plt.Line2D([], [], ls="", marker="o", ms=7, mfc=NORME_H3, mec="white", label="activité, norme à 3 ans"),
-     plt.Line2D([], [], ls="", marker="o", ms=7, mfc=NORME_H4, mec="white", label="activité, norme à 4 ans"),
-     plt.Line2D([], [], ls="", marker="D", ms=6, color="#2a78d6", mec="white", label="taux pondéré du portefeuille"),
-     plt.Line2D([], [], color=JETP_C, lw=2.4, label="cohorte JETP observée")]
-fig.legend(handles=h, loc="lower center", ncol=4, frameon=False, bbox_to_anchor=(.5, -.015), fontsize=8)
-fig.suptitle("L'écart à la norme : où se place le JETP dans la distribution du pays",
-             fontsize=11.5, x=.012, ha="left", y=.985)
-fig.text(.012, .935, "Prêts-projet ODA au secteur énergie (CRS C01) — l'appui budgétaire est exclu des deux côtés. "
-         "Aire du point ∝ montant engagé.", fontsize=8, color="#6b6b66", ha="left")
-fig.text(.012, -.075, "Source : OCDE CRS, microdonnées, tirage du 2026-09-08. Norme : engagements ≤ 2020, observés à 3 et 4 ans. "
-         "La cohorte JETP (2022-2023) n'est pas observable au-delà de 2 ans.", fontsize=7.5, color="#6b6b66", ha="left")
-fig.tight_layout(rect=[0, .05, 1, .915])
+    ax.set_xlabel("part décaissée (%)")
+leg = [plt.Line2D([], [], ls="", marker="o", ms=7, mfc=NORME, mec="white",
+                  label="norme du pays : une activité, aire ∝ montant engagé"),
+       plt.Line2D([], [], ls="", marker="D", ms=6.5, color=NORME, mec="white",
+                  label="norme, taux pondéré du portefeuille"),
+       plt.Line2D([], [], color=BARRE, lw=2.6, label="décaissé JETP / paquet annoncé")]
+fig.legend(handles=leg, loc="lower center", ncol=3, frameon=False, bbox_to_anchor=(.5, -.02), fontsize=8)
+fig.suptitle("Le décaissé du paquet annoncé, contre la norme d'exécution du pays",
+             fontsize=11.5, x=.012, ha="left", y=.99)
+fig.text(.012, .925, "Chaque pays à son propre horizon, le temps écoulé depuis sa signature : les quatre JETP\n"
+         "n'ont pas été signés la même année. Norme et barre y sont prises au même horizon.",
+         fontsize=8, color="#6b6b66", ha="left", va="top")
+fig.text(.012, -.055, "Source : OCDE CRS, microdonnées, tirage du 2026-09-08 (dernière année 2024).\n"
+         "Norme : prêts officiels de type projet (C01), secteur énergie, engagements ≤ 2020, rapportés à l'engagement signé.\n"
+         "Barre : toutes opérations engagées depuis la signature, rapportées au paquet annoncé.",
+         fontsize=7.2, color="#6b6b66", ha="left", va="top")
+fig.tight_layout(rect=[0, .06, 1, .875])
 for ext in ("pdf", "png"):
     fig.savefig(HERE / f"figure-distribution-decaissement.{ext}", dpi=200, bbox_inches="tight")
 pd.DataFrame(traces).to_csv(HERE / "figure-distribution-decaissement.csv", index=False)
-print(f"{len(traces)} points -> {HERE/'figure-distribution-decaissement.pdf'}")
+print(f"{len(traces)} points tracés")

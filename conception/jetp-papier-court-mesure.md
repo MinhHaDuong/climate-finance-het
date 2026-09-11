@@ -20,8 +20,9 @@ ressort — un « ce n'est pas X, c'est Y » qui promeut l'explication en
 manchette. **L'explication n'est pas la mesure** : la substitution
 d'instrument reste dans le corps. Et la contribution est l'étalon lui-même,
 qui n'existait pas — il permet de dire si un taux de décaissement est lent.
-Le titre n'asserte donc aucun écart uniforme, que l'Afrique du Sud contredit
-(voir Résultats).
+Le titre n'asserte par ailleurs aucun écart uniforme, ce que la donnée ne
+permettrait pas : à horizon apparié, l'Afrique du Sud et le Sénégal décaissent
+au niveau de leur propre norme (voir Résultats).
 
 ## Idée de recherche
 
@@ -139,20 +140,17 @@ court cesse d'être une fragilité à couvrir.
   présente dans ce dépôt (`data/book/riomarkers/`, `config/corpus_filter.yaml`)
   — ticket 0710, préalable à tout tirage supplémentaire pour l'annexe
   comptable ou une extension à d'autres pays.
-- **Comparer les décaissements sur les quatre pays**, au niveau où la
-  comparaison est possible : à *h* ≤ 2 et par modalité (appui budgétaire
-  contre prêt type projet), et non par un taux à quatre ans que la censure à
-  droite interdit hors Viêt Nam. La référence *historique* par pays à quatre
-  ans est en revanche disponible et directement comparable — Viêt Nam
-  47,5 %, Sénégal 46,1 %, Afrique du Sud 44,2 %, Indonésie 19,0 %. Le
-  contraste entre ces références est lui-même un résultat : l'Indonésie part
-  d'une norme basse, ce qui change la lecture de son écart. Rappel du verdict
-  de la note de référence, à ne pas contourner : « la thèse d'un défaut de
-  conception uniforme du JETP, mesurée par le seul taux de décaissement, ne
-  tient pas ; la même mesure, décomposée par modalité, en fournit une version
-  plus forte ».
+- **La comparaison à quatre pays est faite** — figure 1 ci-dessous. Reste à
+  en tirer la section d'interprétation, qui revient à Christophe.
 
 ## Résultats préliminaires
+
+![**Figure 1.** Le décaissé du paquet annoncé, contre la norme d'exécution du
+pays. Chaque panneau est lu au temps écoulé depuis la signature de son JETP, la
+norme du pays y étant prise au même horizon. Deux dénominateurs : la
+distribution rapporte le décaissé à l'engagement signé, la barre le rapporte au
+paquet annoncé — l'écart entre les deux mesure ce qui n'a jamais quitté
+l'annonce.](jetp/papier-court-mesure/figure-distribution-decaissement.pdf)
 
 Voir Idée de recherche ci-dessus pour les chiffres — ils constituent déjà le
 cœur du papier, pas une collecte préparatoire. En synthèse, du plus solide au
@@ -171,14 +169,24 @@ plus fragile :
    vietnamiennes et un bailleur entier (JBIC, 498 M USD) sont proches de 0 % —
    concession à écrire explicitement (fragile si omise : un referee la
    trouvera).
-5. **La comparaison à quatre ans n'est pas disponible à quatre pays.** Aucune
-   cohorte postérieure à 2020 n'est observable à quatre ans dans le CRS
-   (dernière année disponible : 2024) ; la cohorte JETP ne l'est qu'à *h* = 2
-   au plus, et le seul taux JETP à quatre ans du dossier est vietnamien, de
-   source MOIT et non CRS. Côté JETP, le Sénégal n'a aucune activité de prêt
-   type projet sur la cohorte, l'Afrique du Sud en a 2, l'Indonésie 4 — des
-   poignées de projets, pas des tendances (le plus fragile du lot, et ce qui
-   borne la comparaison à quatre pays).
+5. **Le goulot est à l'engagement, pas au décaissement, et cela vaut pour les
+   quatre pays.** La part du paquet annoncé jamais transformée en engagement
+   signé atteint 98 % au Viêt Nam, 91 % au Sénégal, 89 % en Indonésie et 60 %
+   en Afrique du Sud. La note d'août ne l'établissait que pour le Viêt Nam.
+6. **À horizon apparié, l'écart d'exécution ne tient qu'à moitié.** Rapporté au
+   paquet annoncé et pris au temps réellement écoulé depuis chaque signature :
+   Viêt Nam 1,1 % contre une norme de 25,8 % à deux ans, Indonésie 5,4 % contre
+   25,5 % — écarts nets ; Afrique du Sud 26,2 % contre 30,5 % à trois ans,
+   Sénégal 7,2 % contre 7,2 % à un an — au niveau de leur norme. **Le papier ne
+   peut donc pas asserter un écart uniforme** (fragile si omis : la figure 1 le
+   montre).
+7. **Trois spécifications, trois réponses — et c'est un résultat.** Le
+   chiffre-titre s'est déplacé deux fois pendant la construction, selon les
+   instruments retenus (s'en tenir à l'APD excluait les prêts IBRD, donc
+   l'*Eskom Just Energy Transition Project*), le dénominateur (engagement signé
+   ou paquet annoncé) et l'horizon (uniforme ou apparié aux signatures). Une
+   mesure aussi sensible à sa spécification justifie que le papier porte sur
+   l'étalon plutôt que sur un chiffre.
 
 ## Stratégie de publication
 
@@ -250,8 +258,9 @@ Policy est définie comme une *evidence-based objective analysis of particular
 policy approaches* — la couche d'analyse de politique publique est
 constitutive du format, pas un ornement. Et la comparaison à quatre pays
 ouvre précisément les questions auxquelles la mesure ne répond pas :
-pourquoi l'Afrique du Sud s'inverse, pourquoi la référence historique
-indonésienne est si basse, et ce que la substitution vers l'appui budgétaire
+pourquoi 60 à 98 % des paquets ne sont jamais devenus des engagements signés,
+pourquoi l'Indonésie décaisse cinq fois moins que sa norme quand l'Afrique du
+Sud tient la sienne, et ce que la substitution vers l'appui budgétaire
 dit de la pratique réelle des bailleurs. C'est le terrain de Christophe.
 
 Proposition au standard CRediT, à valider ou corriger par lui :
@@ -260,7 +269,7 @@ Proposition au standard CRediT, à valider ou corriger par lui :
 |---|---|
 | Conceptualization | **Conjoint** — l'étalon et le dispositif de mesure (Minh) ; la question à laquelle l'étalon sert à répondre, et la lecture institutionnelle de l'hétérogénéité (Christophe) |
 | Methodology, Software, Formal analysis, Data curation | Minh |
-| **Investigation** | **Christophe** — la matière qui explique l'hétérogénéité entre pays, et qui n'est pas dans le CRS : ce que sont réellement les deux activités sud-africaines qui décaissent à 87 %, pourquoi la norme indonésienne est quasi nulle à la médiane, quelle pratique de bailleur produit la substitution vers l'appui budgétaire. Travail de terrain documentaire, pas de relecture. |
+| **Investigation** | **Christophe** — la matière qui explique l'hétérogénéité entre pays, et qui n'est pas dans le CRS : pourquoi 60 à 98 % des paquets annoncés ne sont jamais devenus des engagements signés, ce que fait réellement l'opération AFD « JET Sudafricain » qui décaisse 348 M USD l'année même de son engagement, quelle pratique de bailleur produit la substitution vers l'appui budgétaire. Travail de terrain documentaire, pas de relecture. |
 | Writing – original draft | Minh : mesure, méthode, résultats. **Christophe : la section d'interprétation** — pourquoi l'écart varie, ce qui se conclut pour la conception des plateformes-pays — **et les 3 à 5 *key policy insights*** exigés par la revue. Section nommée, pas des commentaires en marge. |
 | Validation | Les deux |
 | Writing – review & editing | Les deux |
