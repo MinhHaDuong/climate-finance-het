@@ -128,6 +128,18 @@ court cesse d'être une fragilité à couvrir.
   présente dans ce dépôt (`data/book/riomarkers/`, `config/corpus_filter.yaml`)
   — ticket 0710, préalable à tout tirage supplémentaire pour l'annexe
   comptable ou une extension à d'autres pays.
+- **Comparer les décaissements sur les quatre pays**, au niveau où la
+  comparaison est possible : à *h* ≤ 2 et par modalité (appui budgétaire
+  contre prêt type projet), et non par un taux à quatre ans que la censure à
+  droite interdit hors Viêt Nam. La référence *historique* par pays à quatre
+  ans est en revanche disponible et directement comparable — Viêt Nam
+  47,5 %, Sénégal 46,1 %, Afrique du Sud 44,2 %, Indonésie 19,0 %. Le
+  contraste entre ces références est lui-même un résultat : l'Indonésie part
+  d'une norme basse, ce qui change la lecture de son écart. Rappel du verdict
+  de la note de référence, à ne pas contourner : « la thèse d'un défaut de
+  conception uniforme du JETP, mesurée par le seul taux de décaissement, ne
+  tient pas ; la même mesure, décomposée par modalité, en fournit une version
+  plus forte ».
 
 ## Résultats préliminaires
 
@@ -148,6 +160,14 @@ plus fragile :
    vietnamiennes et un bailleur entier (JBIC, 498 M USD) sont proches de 0 % —
    concession à écrire explicitement (fragile si omise : un referee la
    trouvera).
+5. **La comparaison à quatre ans n'est pas disponible à quatre pays.** Aucune
+   cohorte postérieure à 2020 n'est observable à quatre ans dans le CRS
+   (dernière année disponible : 2024) ; la cohorte JETP ne l'est qu'à *h* = 2
+   au plus, et le seul taux JETP à quatre ans du dossier est vietnamien, de
+   source MOIT et non CRS. Côté JETP, le Sénégal n'a aucune activité de prêt
+   type projet sur la cohorte, l'Afrique du Sud en a 2, l'Indonésie 4 — des
+   poignées de projets, pas des tendances (le plus fragile du lot, et ce qui
+   borne la comparaison à quatre pays).
 
 ## Stratégie de publication
 
@@ -209,12 +229,37 @@ défend.
 
 ## Répartition des rôles
 
-**Minh, premier auteur, seul jusqu'à publication ou décision contraire.**
-C'est la comptabilité et la courbe de référence, produites par Minh (avec
-agents délégués pour le tirage et la mise en forme des données) ; le papier
-ne dépend pas de la disponibilité de Christophe. Proposition actée en
-séance : Christophe relit s'il le souhaite, sans obligation de calendrier ni
-de contribution de fond.
+**Minh premier auteur et corresponding ; Christophe coauteur.** Décision de
+l'auteur du 2026-09-11, qui révise la proposition actée en séance (« Minh
+seul, Christophe relit s'il le souhaite, sans contribution de fond »).
+
+**Le rôle proposé n'est pas une relecture requalifiée : il est appelé par le
+format et par la comparaison à quatre pays.** La Policy Analysis de Climate
+Policy est définie comme une *evidence-based objective analysis of particular
+policy approaches* — la couche d'analyse de politique publique est
+constitutive du format, pas un ornement. Et la comparaison à quatre pays
+ouvre précisément les questions auxquelles la mesure ne répond pas :
+pourquoi l'Afrique du Sud s'inverse, pourquoi la référence historique
+indonésienne est si basse, et ce que la substitution vers l'appui budgétaire
+dit de la pratique réelle des bailleurs. C'est le terrain de Christophe.
+
+Proposition au standard CRediT, à valider ou corriger par lui :
+
+| Rôle CRediT | Contributeur |
+|---|---|
+| Conceptualization | Minh (principal) ; Christophe (lecture institutionnelle du résultat de substitution) |
+| Methodology, Software, Formal analysis, Data curation | Minh |
+| **Validation** | **Christophe** — relecture critique de la construction de la référence : population de prêts, fenêtre, correction du décalage engagement-signature. C'est la seule surface d'attaque du papier ; un second lecteur sur ce point est une contribution, pas une politesse. |
+| Writing – original draft | Minh (mesure, méthode, résultats) ; Christophe (implications de politique publique, et les 3 à 5 *key policy insights* exigés par la revue) |
+| Writing – review & editing | Les deux |
+| Visualization | Minh |
+| Corresponding author | Minh |
+
+**Le coût, énoncé plutôt que tu.** L'indépendance de calendrier était l'une
+des trois raisons de partir court et vite ; un coauteur la réintroduit. La
+contrepartie proposée : un périmètre borné — une section, les key policy
+insights, une passe de validation — et une date de soumission fixée d'avance,
+le papier partant à cette date avec ce qui est prêt.
 
 À noter : Ha-Duong est déjà auteur publié en solo dans *Climate Policy*
 (*Power system...*, référence exacte à vérifier dans le CR complet) — un
