@@ -5,6 +5,7 @@ Author: Minh
 
 --- log ---
 2026-09-11T16:30Z Minh created — exécution de la décision arbitrée en 0710
+2026-09-11T18:30Z Minh note reference de non-regression repointee vers conception/jetp/ — l'original jetp/ est passe en .bak lecture seule
 
 --- body ---
 
@@ -27,9 +28,11 @@ migration à sens unique, sans fusion de logiques concurrentes.
   portage : `pull_crs.py` (tirage SDMX OCDE), `cohortes.py` (reconstitution
   des activités et profils), `livrable_csv.py`, `final.py`, `synthese.py`,
   plus `README.md` qui documente la chaîne et les choix de méthode.
-- `~/CNRS/projets/actifs/jetp/papier-court-mesure/courbe-reference-decaissement-2026-09-08.{md,csv}`
-  — sortie actuelle, produite hors dépôt le 2026-09-08 ; sert de référence de
-  non-régression.
+- `conception/jetp/papier-court-mesure/courbe-reference-decaissement-2026-09-08.{md,csv}`
+  — sortie actuelle, produite hors dépôt le 2026-09-08, versionnée ici par
+  0712 ; **c'est la référence de non-régression**. L'original côté `jetp/`
+  a été mis en `.bak` lecture seule le 2026-09-11 : ne pas s'y fier, il n'est
+  plus la copie vivante.
 - `dvc.yaml`, `paths.mk`, `scripts/analysis/utils.py`, `scripts/analysis/script_io_args.py`
   — machinerie d'accueil.
 - `README.md` §« Padme is the data authority » — la contrainte d'exécution.
