@@ -1,15 +1,18 @@
 """Contracts for the versioned JETP document corpus (ticket 0716)."""
 
 import csv
+import os
+import subprocess
+import sys
+import threading
 from dataclasses import dataclass, field
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 import pytest
 import requests
-
-from jetp.harvest_documents import harvest_registry, load_registry
+from jetp.corpus_harvest_documents import harvest_registry, load_registry
 from jetp.schemas import validate_event_record
-
 
 REGISTRY_FIELDS = [
     "source_id",
@@ -96,6 +99,22 @@ def test_registry_rejects_country_outside_the_four_jetps(tmp_path):
         load_registry(registry)
 
 
+def test_canonical_registry_has_a_plan_document_for_each_jetp_country():
+    registry = Path(__file__).parents[1] / "data" / "jetp" / "sources.csv"
+    rows = load_registry(registry)
+    plan_types = {"investment_plan", "implementation_plan"}
+
+    covered = {
+        row["country"]
+        for row in rows
+        if row["source_type"] in plan_types
+        and row["expected_format"] == "pdf"
+        and row["active"] == "true"
+    }
+
+    assert covered == {"ZAF", "IDN", "VNM", "SEN"}
+
+
 def test_event_schema_rejects_unknown_financial_status():
     event = {
         "country": "VNM",
@@ -146,6 +165,7 @@ def test_harvest_versions_changed_content_and_uses_conditional_get(tmp_path):
     assert rows[0]["sha256"] != rows[1]["sha256"]
     assert len(list(store.glob("objects/*/*.pdf"))) == 2
     assert session.calls[0][1]["headers"]["If-None-Match"] == '"v1"'
+    assert b"\r\n" not in manifest.read_bytes()
 
 
 def test_not_modified_reuses_prior_object_without_body_download(tmp_path):
@@ -153,13 +173,15 @@ def test_not_modified_reuses_prior_object_without_body_download(tmp_path):
     manifest = tmp_path / "manifest.csv"
     store = tmp_path / "documents"
     _write_registry(registry, [_source()])
-    first_session = FakeSession([
-        FakeResponse(
-            200,
-            b"%PDF-1.7 stable",
-            {"Content-Type": "application/pdf", "ETag": '"stable"'},
-        )
-    ])
+    first_session = FakeSession(
+        [
+            FakeResponse(
+                200,
+                b"%PDF-1.7 stable",
+                {"Content-Type": "application/pdf", "ETag": '"stable"'},
+            )
+        ]
+    )
     harvest_registry(
         registry,
         manifest,
@@ -181,6 +203,45 @@ def test_not_modified_reuses_prior_object_without_body_download(tmp_path):
     assert rows[-1]["sha256"] == rows[0]["sha256"]
     assert len(list(store.glob("objects/*/*.pdf"))) == 1
     assert second_session.calls[0][1]["headers"]["If-None-Match"] == '"stable"'
+
+
+def test_harvest_can_target_one_registered_source(tmp_path):
+    registry = tmp_path / "sources.csv"
+    manifest = tmp_path / "manifest.csv"
+    store = tmp_path / "documents"
+    _write_registry(
+        registry,
+        [
+            _source(source_id="vnm-rmp"),
+            _source(source_id="sen-plan", country="SEN"),
+        ],
+    )
+
+    harvest_registry(
+        registry,
+        manifest,
+        store,
+        source_ids={"sen-plan"},
+        retrieved_at="2026-09-11T21:00:00Z",
+        session=FakeSession([FakeResponse(200, b"%PDF-1.7 Senegal")]),
+    )
+
+    assert [row["source_id"] for row in _read_manifest(manifest)] == ["sen-plan"]
+
+
+def test_harvest_rejects_unknown_target_source(tmp_path):
+    registry = tmp_path / "sources.csv"
+    manifest = tmp_path / "manifest.csv"
+    _write_registry(registry, [_source()])
+
+    with pytest.raises(ValueError, match="unknown source_id"):
+        harvest_registry(
+            registry,
+            manifest,
+            tmp_path / "documents",
+            source_ids={"not-registered"},
+            session=FakeSession([]),
+        )
 
 
 @pytest.mark.parametrize(
@@ -213,3 +274,58 @@ def test_failures_are_explicit_and_never_stored(response, expected_status, tmp_p
     assert rows[0]["status"] == expected_status
     assert rows[0]["storage_path"] == ""
     assert list(store.glob("objects/**/*")) == []
+
+
+@pytest.mark.integration
+def test_cli_harvests_from_a_local_http_server(tmp_path):
+    class Handler(BaseHTTPRequestHandler):
+        def do_GET(self):
+            body = b"%PDF-1.7 local fixture"
+            self.send_response(200)
+            self.send_header("Content-Type", "application/pdf")
+            self.send_header("Content-Length", str(len(body)))
+            self.send_header("ETag", '"fixture"')
+            self.end_headers()
+            self.wfile.write(body)
+
+        def log_message(self, format, *args):
+            del format, args
+
+    server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    registry = tmp_path / "sources.csv"
+    manifest = tmp_path / "manifest.csv"
+    store = tmp_path / "documents"
+    url = f"http://127.0.0.1:{server.server_port}/report.pdf"
+    _write_registry(registry, [_source(url=url)])
+    environment = os.environ.copy()
+    environment["PYTHONPATH"] = "scripts:libs/openalex-corpus/src"
+    try:
+        result = subprocess.run(
+            [
+                sys.executable,
+                "scripts/jetp/corpus_harvest_documents.py",
+                "--input",
+                str(registry),
+                "--output",
+                str(manifest),
+                "--storage-root",
+                str(store),
+                "--retrieved-at",
+                "2026-09-11T21:00:00Z",
+            ],
+            capture_output=True,
+            check=False,
+            env=environment,
+            text=True,
+        )
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join()
+
+    assert result.returncode == 0, result.stderr
+    rows = _read_manifest(manifest)
+    assert rows[0]["status"] == "collected"
+    assert (store / rows[0]["storage_path"]).read_bytes().startswith(b"%PDF-")
