@@ -11,8 +11,14 @@ Development Economics*, First View, 9 September 2026, pp. 1--24.
 
 Peer-reviewed journal article. The published PDF is paywalled. This note is
 therefore based on the publisher's abstract and metadata, checked against the
-authors' public replication archive and estimation code. It does not claim to
-summarize parts of the article that are absent from those sources.
+authors' public preprint, replication archive and estimation code. It does not
+claim to summarize changes made between the archived manuscript and the
+accepted article that are absent from those sources.
+
+Author preprint: Gavard and Schoch, *Climate Finance and Emission Reductions:
+What Do the Last Twenty Years Tell Us?*, ZEW Discussion Paper No. 21-014,
+February 2021; manuscript dated 18 March 2021.
+<https://ftp.zew.de/pub/zew-docs/dp/dp21014.pdf>.
 
 Replication archive: Gavard and Schoch, "Dataset and simulation file associated
 with the paper...", deposited 5 October 2022, Zenodo.
@@ -21,10 +27,23 @@ with the paper...", deposited 5 October 2022, Zenodo.
 ### The result, stated carefully
 
 The authors compare three transfer measures rather than estimating one generic
-effect of climate finance. OECD Rio-marker public mitigation finance is followed
-by higher recipient-country emissions. Public adaptation finance is followed by
-an even larger increase. Transfers recorded through the Clean Development
-Mechanism (CDM) produce a modest emissions reduction after about five years.
+effect of climate finance. In the 2021 preprint, a transfer commitment of $10
+million per million tons of a recipient's lagged national CO2 emissions is
+associated over the following six years with:
+
+- a cumulative **4.7% increase** in emissions for Rio-marker adaptation finance
+  (95% confidence interval 0.93--15.78%);
+- a cumulative **1.86% increase** for Rio-marker public mitigation finance (95%
+  confidence interval 0.75--4.21%); and
+- no statistically significant cumulative response to CDM investment over the
+  full six-year horizon. The coefficient on the sixth annual lag alone is
+  negative: about **0.29% lower emissions in year six**, but years one to five
+  and the six-year cumulative response are not significant.
+
+The cleanest verbal summary is therefore: *recorded public climate-finance
+commitments are followed by higher territorial emissions in this sample, while
+the CDM proxy supplies only weak evidence of a delayed reduction*. It is too
+strong to say that CDM transfers "produce" a reduction after five years.
 
 This does **not** establish that a genuine mitigation project raises emissions.
 It shows that three accounting and delivery systems labelled as climate finance
@@ -72,6 +91,26 @@ remove donor selection based on lagged emissions, growth prospects, policy
 capacity or persistent trends. The estimates are therefore dynamic conditional
 associations under a timing restriction, not effects identified by an external
 shock or instrument.
+
+The causal requirement is sequential exogeneity: after conditioning on country
+and year effects and observed controls, changes in transfers must be unrelated
+to current and future innovations in emissions. That is demanding. Donors can
+target commitments in response to a recipient's expected growth, project
+pipeline, policy reforms, administrative capacity or prior emissions trend.
+Those same factors can change future emissions. First differencing removes
+time-invariant country heterogeneity; lagging finance prevents future finance
+from causing past emissions. Neither operation removes this forward-looking
+selection. Nor does an autoregressive working-correlation matrix create
+identification; it changes how residual dependence is modelled.
+
+The paper describes the estimates as intent-to-treat because the Rio variables
+are commitments rather than disbursements. That label is useful for the exposure
+margin but should not be confused with randomized-assignment ITT: commitment is
+still endogenously assigned. The positive coefficients can consistently capture
+several mixtures: causal construction emissions, economic activity enabled by
+infrastructure, relabelling of ordinary development finance, finance targeted at
+countries already on high-emissions trajectories, or failure to observe actual
+disbursement and implementation.
 
 ### What is strongest
 
@@ -129,6 +168,63 @@ The article appeared after the project's 1990--2024 corpus window and after the
 current Oeconomia revision was submitted. It is best treated as a forward-looking
 source for the REL review and later work, rather than silently inserted into an
 already-submitted text.
+
+### Could JETPs provide climate-finance shocks?
+
+Not at the country-announcement level. The four early JETPs were negotiated with
+countries selected precisely for coal dependence, policy opportunity and
+geopolitical salience. Announcements were anticipated, bundled finance with
+domestic policy commitments, and were followed by country-specific investment
+plans. Headline packages combine grants, concessional and market-rate debt,
+guarantees and expected private finance; commitment, financial close and
+disbursement occur on different dates. With only a handful of heterogeneous
+country treatments, an announcement-date event study would confound finance
+with selection, anticipation, contemporaneous power-sector reform and common
+energy-price shocks.
+
+JETPs are more promising as sources of *within-country allocation rules* than as
+country shocks. A credible design would use the earliest irreversible financing
+event available and exploit predetermined exposure:
+
+1. map each project from the investment plan to approval, financial close and
+   disbursement, separating genuinely additional funds from relabelled or
+   previously programmed finance;
+2. define treatment at plant, utility, province or eligible-project level rather
+   than assigning the entire country on the announcement date;
+3. exploit a published eligibility threshold, scoring rule or donor-side budget
+   discontinuity where one exists; otherwise use matched pipeline projects and a
+   transparent event study as suggestive rather than causal evidence;
+4. test pre-trends and report effects on direct outcomes first (financing terms,
+   closure, dispatch, renewable connection and grid investment), before national
+   emissions; and
+5. treat the JETP's policy conditions as co-treatments, not controls that can be
+   innocently partialled out.
+
+For Viet Nam in particular, the December 2022 political declaration overlaps
+with PDP8 development and its May 2023 approval, subsequent implementation
+planning, tariff and market changes, post-pandemic demand recovery and grid
+constraints. The December 2023 Resource Mobilisation Plan is another negotiated
+milestone, not a random finance arrival. Project-level disbursement or a sharp
+eligibility rule could yield a design; the declaration alone cannot.
+
+### Reproduction and update effort
+
+Approximate effort for one researcher already comfortable with Stata and the
+source datasets:
+
+| Deliverable | Researcher time | What drives it |
+|---|---:|---|
+| Run the archived code and reproduce archived tables | 2--4 days | Stata setup, package versions, table/figure reconciliation |
+| Forensic replication of the accepted article | 5--10 days | Obtain published PDF; reconcile 164/168 countries, 2022/2026 versions, AR(4)/AR(7), coefficients and samples |
+| Mechanical data extension using the old spreadsheet workflow | 1--2 weeks | Download later vintages, harmonize country-years, repeat manual pivots; quick but fragile |
+| Scripted, auditable update through the latest common year | 4--7 weeks | Rebuild OECD/CDM/World Bank/ND-GAIN ingestion, commitments versus disbursements, country concordance, tests and robustness |
+| Publication-grade JETP causal extension | 3--6 months minimum | Project-finance genealogy, additionality coding, actual disbursement dates, plant/utility outcomes, design and pre-trend validation |
+
+The efficient sequence is: spend one week on exact replication and discrepancy
+resolution; stop if the accepted results cannot be recovered; then budget about
+one month for a scripted update. A JETP extension should be a separate paper, not
+an extra robustness table, because treatment construction and identification
+are the core research contribution.
 
 ### Checks before substantive citation
 
