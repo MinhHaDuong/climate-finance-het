@@ -2,12 +2,14 @@
 Title: Réconcilier le pipeline CRS-IATI de JETP avec l'infra existante
 Created: 2026-09-10
 Author: Minh
+Closed: autoclosed — PR #1325
 
 --- log ---
 2026-09-10T16:02Z Minh created
 2026-09-11T16:30Z Minh note premisse corrigee — ce depot n'a aucun code CRS suivi ni etape CRS dans dvc.yaml ; il n'y a pas deux pipelines a reconcilier
 2026-09-11T16:30Z Minh decision portage du pipeline du papier court sous DVC dans data/jetp/, pilote ledger VN hors perimetre ; execution filee en 0713, etiquette needs-human levee
 
+2026-09-11T16:18Z HDMX-coding-agent closed — autoclosed — PR #1325
 --- body ---
 
 ## Context
