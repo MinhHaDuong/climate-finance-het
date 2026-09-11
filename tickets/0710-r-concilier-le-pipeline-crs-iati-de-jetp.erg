@@ -2,10 +2,11 @@
 Title: Réconcilier le pipeline CRS-IATI de JETP avec l'infra existante
 Created: 2026-09-10
 Author: Minh
-Label: needs-human
 
 --- log ---
 2026-09-10T16:02Z Minh created
+2026-09-11T16:30Z Minh note premisse corrigee — ce depot n'a aucun code CRS suivi ni etape CRS dans dvc.yaml ; il n'y a pas deux pipelines a reconcilier
+2026-09-11T16:30Z Minh decision portage du pipeline du papier court sous DVC dans data/jetp/, pilote ledger VN hors perimetre ; execution filee en 0713, etiquette needs-human levee
 
 --- body ---
 
@@ -24,6 +25,47 @@ restent séparés.
 étiqueté « book chapter, NOT the paper » dans STATE.md — périmètre distinct
 du corpus bibliométrique principal. Fusionner le tirage JETP dedans change ce
 périmètre.
+
+## Constat et décision (2026-09-11)
+
+**La prémisse du Context ci-dessus est fausse et doit être lue avec cette
+correction.** Vérification faite le 2026-09-11 :
+
+- aucun script lisant du CRS n'est suivi en git ; les cinq fichiers du dépôt
+  qui contiennent « CRS » parlent d'autre chose (`config/oecd_dac_sources.yaml`
+  catalogue des *documents* DAC pour le corpus bibliométrique,
+  `scripts/analysis/analyze_100bn.py` travaille sur `refined_works.csv`) ;
+- `dvc.yaml` ne contient aucune étape CRS ;
+- `data/book/riomarkers/` existe bien — 504 Mo sur padme, absent de doudou —
+  mais ce sont des zips bruts parqués pour le chapitre de livre, pas une
+  chaîne de traitement.
+
+Il n'y a donc pas deux pipelines CRS à réconcilier. Il y en a **un**, celui de
+JETP, et un dépôt qui a la machinerie (DVC, padme, Makefile, tests) sans le
+code. La question « fusionner ou garder séparé » se reformule en « porter ou
+laisser dehors ».
+
+**Décision de l'auteur, 2026-09-11 : porter le papier court, laisser le
+pilote ledger dehors.**
+
+`analyse-crs/` est mûr — cinq scripts, chaîne en quatre étapes, choix de
+méthode documentés — et alimente un livrable. Aujourd'hui la courbe de
+référence dépend d'un tirage OCDE de trente minutes non versionné, rejouable
+seulement en relisant un README ; pour un papier de mesure dont le résultat
+central est un chiffre, c'est la première chose qu'un referee demandera à
+reproduire. Le portage achète cette reproductibilité.
+
+Le pilote ledger Viêt Nam (322 Mo, papier 3) reste dehors : matériau
+exploratoire qui va bouger, le charger dans le remote DVC maintenant serait
+payer d'avance.
+
+Les données JETP vont dans `data/jetp/`, **pas** dans `data/book/` : c'est ce
+qui laisse intact le périmètre « chapitre de livre, pas le papier » et rend le
+portage acceptable sans arbitrage supplémentaire.
+
+L'exécution est filée en **0713**, pour que 0711 (squelettes Quarto) cesse
+d'attendre un travail dont il n'a besoin que du résultat de principe : savoir
+où vivront les données.
 
 ## Relevant files
 
@@ -62,5 +104,7 @@ consignée ici — même discipline que 0540.
 
 ## Exit criteria
 
-Décision consignée ; si fusion, pipeline JETP tourne sous DVC/padme et
-`analyse-crs/` autonome est retiré.
+Décision consignée avec sa justification — fait le 2026-09-11, voir §Constat
+et décision. Le portage lui-même est le ticket **0713** ; ce ticket-ci ne
+l'attend pas, sans quoi 0711 resterait bloqué sur une exécution dont il n'a
+besoin que de la conclusion.
