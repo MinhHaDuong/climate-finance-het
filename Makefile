@@ -149,9 +149,23 @@ ALL_FIGS := $(MANUSCRIPT_FIGS) $(DATAPAPER_FIGS) $(CORPUS_REPORT_FIGS) \
             $(MULTILAYER_FIGS) $(SLIDES_FIGS) $(ORPHANED_FIGS) $(NCC_FIGS)
 
 # ── Default target ────────────────────────────────────────
-.PHONY: all setup manuscript papers corpus-report technical-report data-paper multilayer-detection multilayer-techrep zoo jetp-mesure jetp-econpol jetp-vars figures figures-manuscript figures-datapaper figures-corpusreport figures-companion figures-techrep figures-ncc stats check check-package check-fast lint test-durations venv-canonicalize full-gate-preflight smoke benchmark determinism-check regression regression-update audit-pdf-content check-corpus check-manuscript-data data corpus corpus-sync corpus-discover corpus-enrich corpus-extend corpus-filter corpus-align corpus-filter-all corpus-tables corpus-validate deploy-corpus clean rebuild archive-analysis archive-manuscript archive-datapaper analysis-figures analysis-tables analysis-stats manuscript-render manuscript-figures datapaper-render datapaper-figures corpus-handoff deposit-descriptors deposit-validate jetp-harvest jetp-zaf-news-leads jetp-idn-portfolio jetp-documents-track
+.PHONY: all setup manuscript papers corpus-report technical-report data-paper multilayer-detection multilayer-techrep zoo jetp-mesure jetp-econpol jetp-vars jetp-crs jetp-crs-data figures figures-manuscript figures-datapaper figures-corpusreport figures-companion figures-techrep figures-ncc stats check check-package check-fast lint test-durations venv-canonicalize full-gate-preflight smoke benchmark determinism-check regression regression-update audit-pdf-content check-corpus check-manuscript-data data corpus corpus-sync corpus-discover corpus-enrich corpus-extend corpus-filter corpus-align corpus-filter-all corpus-tables corpus-validate deploy-corpus clean rebuild archive-analysis archive-manuscript archive-datapaper analysis-figures analysis-tables analysis-stats manuscript-render manuscript-figures datapaper-render datapaper-figures corpus-handoff deposit-descriptors deposit-validate jetp-harvest jetp-zaf-news-leads jetp-idn-portfolio jetp-documents-track
 
 .DEFAULT_GOAL := manuscript
+
+# ── Papier court JETP — courbe de référence du décaissement (ticket 0713) ──
+# Chaîne CRS portée sous scripts/jetp/, quatre étapes dans dvc.yaml. Les sorties
+# atterrissent sous data/jetp/derived/ ; le livrable que consomme le papier est
+# data/jetp/derived/courbe-reference-decaissement.csv.
+#
+# `jetp-crs-data` récupère le tirage OCDE archivé depuis le remote DVC — l'étape
+# jetp_pull est frozen à dessein (API à débit limité, millésimes révisés par
+# l'OCDE), donc le tirage ne se rejoue jamais tout seul.
+jetp-crs-data:
+	dvc pull data/jetp/crs
+
+jetp-crs: jetp-crs-data
+	dvc repro jetp_cohortes jetp_livrable jetp_synthese
 
 all: manuscript papers
 
