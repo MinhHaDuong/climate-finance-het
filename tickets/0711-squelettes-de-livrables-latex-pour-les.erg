@@ -1,0 +1,129 @@
+%erg 0.1
+Title: Squelettes de livrables LaTeX pour les papiers JETP mesure et econpol
+Created: 2026-09-10
+Author: Minh
+
+--- log ---
+2026-09-10T16:02Z Minh created
+
+2026-09-11T16:18Z HDMX-coding-agent note blocker 0710 closed — Blocked-by removed.
+2026-09-11T18:40Z Minh decision les deux papiers JETP sont rediges en LaTeX simple, pas en Quarto — le ticket est réécrit en conséquence (titre, actions, test, invariants)
+
+--- body ---
+
+## Context
+
+Une fois 0710 tranché, les deux papiers JETP (court/mesure, cible Climate
+Policy ; long/économie politique, cible Development Policy Review) deviennent
+des livrables de ce dépôt au même titre que `manuscript`, `technical-report`,
+`data-paper`, `multilayer` — voir README §Repository structure et §Build
+architecture (clean-room vs live). Ce sont des livrables **live** (pas encore
+de soumission externe qui les gèle).
+
+**Décision du 2026-09-11 : ils sont rédigés en LaTeX simple, pas en Quarto.**
+Les deux revues cibles ont une classe LaTeX de soumission, et l'auteur veut la
+main directe sur la composition. Ce ticket ne présuppose donc aucune
+infrastructure Quarto pour ces deux documents.
+
+Le dépôt n'a aujourd'hui qu'une seule chaîne de rendu (Quarto → LaTeX) et un
+seul fichier `.tex` suivi (`deliverables/manuscript/author-footnote.tex`) : la
+décision introduit une **seconde chaîne**, et trois couplages existants sont de
+forme Quarto, aucun gratuit à répliquer. Les nommer ici évite de les découvrir
+un par un pendant l'exécution :
+
+1. **Les variables.** `{{< meta clé >}}` + `-vars.yml` est un mécanisme Quarto.
+   L'équivalent LaTeX est un fichier de macros généré et `\input`é.
+2. **Les artefacts partagés.** `_shared/_includes/*.md` et
+   `_shared/tables/*.md` sont du markdown, non `\input`ables. Les tables ont
+   un jumeau CSV (`_shared/tables/*.csv`) : une sortie booktabs depuis le même
+   exportateur est la voie courte. Les figures (PNG) passent telles quelles.
+3. **Le garde-fou.** `tests/test_render_placeholders.py` interroge le résolveur
+   de Quarto et lit ses modes de défaillance propres (`?meta:clé`, `?@fig-x`,
+   `(clé?)`). Il n'a pas de prise sur un document LaTeX. L'équivalent LaTeX est
+   un contrôle du `.log`, pas une extension de ce test.
+
+## Relevant files
+
+- `deliverables/_shared/bibliography/main.bib` (`$(BIB)` dans `paths.mk`),
+  `deliverables/_shared/bibliography/OEconomia_EN_2.bst` (style natbib déjà au
+  dépôt, à réutiliser ou remplacer par le style de la revue cible)
+- `deliverables/_shared/_includes/`, `deliverables/_shared/tables/`,
+  `scripts/_markdown_table.py`, `scripts/figures/export_tab_*.py`
+- `scripts/analysis/_vars_registry.py` (`DOC_VARS`, `DOC_VARS_FILE`)
+- `tests/test_render_placeholders.py` (documents Quarto uniquement)
+- `Makefile` (cible `make papers`, pas de `.DELETE_ON_ERROR` aujourd'hui),
+  `deliverables/multilayer/multilayer.mk` (gabarit de `.mk` Phase 3)
+- `README.md` §Repository structure (« One Quarto project per document ») et
+  §Build architecture (ligne de chaîne clean-room)
+- `conception/jetp/` (matériau rangé par 0712, à câbler ici)
+- Règle de harnais `~/.claude/rules/manuscript-build.md` (gate sur le log)
+
+## Actions
+
+1. Créer `deliverables/jetp-mesure/` et `deliverables/jetp-econpol/`, un `.tex`
+   + un `.mk` chacun, sur le modèle *structurel* de `multilayer.mk` (Phase 3,
+   rendu seul, invoqué par `$(MAKE) -f`, aucun `uv` ni donnée) mais avec
+   `latexmk -pdf` comme moteur au lieu de `quarto render`. Classe `article`
+   tant que la classe de la revue n'est pas confirmée ; bibliographie natbib
+   sur `$(BIB)`.
+2. Variables : émettre `jetp-mesure-vars.tex` et `jetp-econpol-vars.tex` depuis
+   le même registre qui écrit les `-vars.yml` — `_vars_registry.py` gagne un
+   émetteur LaTeX (`\newcommand` par clé, nom de macro dérivé de la clé). Au
+   stade squelette, la plomberie plus une variable témoin suffisent ; les
+   vraies clés arrivent avec 0713.
+3. Artefacts partagés : pour chaque table dont un des deux papiers a besoin,
+   ajouter une sortie LaTeX (booktabs) à l'exportateur qui lit déjà le CSV.
+   Ne pas recopier à la main une table rendue.
+4. Câbler les deux `.mk` dans `make papers`.
+5. **Gater le rendu sur le `.log`, pas sur le code de sortie.** `latexmk` sort 0
+   avec un `\ref` ou un `\cite` non résolu — même classe de défaut que celle
+   que 0363/0420 ont payée côté Quarto. Embarquer dans le dépôt un contrôle qui échoue sur
+   `Reference ... undefined`, `Citation ... undefined`, `Undefined control
+   sequence`, et ajouter `.DELETE_ON_ERROR:` pour qu'un PDF raté ne reste pas
+   sur le disque à faire croire à une cible à jour.
+6. **Ne pas étendre `test_render_placeholders.py` aux deux nouveaux documents**
+   — son oracle est le résolveur de Quarto. Écrire le test du contrôle du log
+   (action 5) et laisser dans `test_render_placeholders.py` un commentaire
+   d'une ligne disant pourquoi les deux documents JETP n'y figurent pas, sinon
+   le trou se lira comme un oubli et quelqu'un « réparera » en contournant la
+   classe de test.
+7. README : §Repository structure et §Build architecture affirment aujourd'hui
+   une chaîne unique. Les corriger toutes les deux — la chaîne clean-room des
+   papiers JETP est TeX Live + latexmk seuls, sans Quarto ni Pandoc, ce qui est
+   une histoire de reproductibilité plus courte, pas plus longue.
+
+## Test
+
+Étape rouge d'abord : un `.tex` témoin volontairement cassé (un `\ref` vers une
+étiquette absente, un `\cite` vers une clé absente de `main.bib`) fait échouer
+le contrôle du log de l'action 5. Sans ce témoin, un contrôle vert ne prouve
+rien — c'est l'invariant de 0327.
+
+Puis : `make papers` construit `jetp-mesure.pdf` et `jetp-econpol.pdf` sans
+erreur, et le contrôle du log passe sur les deux.
+
+## Verification
+
+- [ ] Les deux `.tex` rendent un PDF vide-mais-structuré (squelette, pas le
+      texte final)
+- [ ] Le contrôle du log échoue sur le témoin cassé et passe sur les deux PDF
+- [ ] `_vars_registry.py` émet les deux fichiers de macros et les documents les
+      `\input`ent
+- [ ] `make papers` inclut les deux cibles
+- [ ] README §Repository structure et §Build architecture décrivent les deux
+      chaînes
+
+## Invariants
+
+- Documents **live**, pas clean-room — ne pas geler de vars avant une
+  soumission externe réelle (voir README §Build architecture).
+- Ne rien changer au chemin de rendu des livrables Quarto existants ;
+  `test_render_placeholders.py` reste vert sur eux.
+- Pas de PDF ni de `.log` suivis par git (mêmes règles que les autres
+  livrables).
+
+## Exit criteria
+
+Les deux squelettes de livrable LaTeX existent, se construisent sous
+`make papers`, sont gardés par un contrôle du log prouvé capable d'échouer, et
+sont prêts à recevoir le texte rangé en `conception/jetp/` par 0712.

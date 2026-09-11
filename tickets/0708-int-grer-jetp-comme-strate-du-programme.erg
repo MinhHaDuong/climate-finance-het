@@ -77,9 +77,12 @@ vérifié).
 2. **0710** — réconcilier `analyse-crs/` + `pilote-ledger-vn/iati-crs/` avec
    l'infra CRS existante ; décision d'architecture de l'auteur (fusion ou
    maintien séparé), accès padme si fusion.
-3. **0711** — squelettes de livrables Quarto (`deliverables/jetp-mesure/`,
+3. **0711** — squelettes de livrables **LaTeX** (`deliverables/jetp-mesure/`,
    `deliverables/jetp-econpol/`), câblés dans le Makefile / `make papers` /
-   `_vars_registry.py`. Blocked-by 0710.
+   `_vars_registry.py`. Blocked-by 0710. Les deux papiers JETP ne passent pas
+   par Quarto (décision de l'auteur du 2026-09-11) : ils introduisent une
+   seconde chaîne de rendu, dont 0711 porte le coût — variables en macros,
+   tables booktabs, garde-fou sur le `.log`.
 4. **0712** — migration complète des notes datées vers leurs nouveaux
    emplacements, mise en conformité avec les conventions de provenance /
    marqueur IA de ce dépôt. Blocked-by 0709, 0711.

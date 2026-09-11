@@ -6,7 +6,7 @@ inchangé par rapport à la source.
 
 **Ce dossier n'est pas un livrable.** C'est du matériau de recherche orphelin
 mais réutilisable, au même titre que `conception/clustering-comparison.md`. Le
-câblage en fragments de livrable Quarto est le ticket 0711, qui suppose des
+câblage en fragments de livrable LaTeX est le ticket 0711, qui suppose des
 choix de rédaction non encore faits. Ranger n'attend pas ces choix.
 
 ## Contenu
