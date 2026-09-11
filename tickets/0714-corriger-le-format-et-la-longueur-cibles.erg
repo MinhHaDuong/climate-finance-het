@@ -1,0 +1,91 @@
+%erg 0.1
+Title: Corriger le format et la longueur cibles du papier court JETP
+Created: 2026-09-11
+Author: minh
+Blocked-by: 0708
+
+--- log ---
+2026-09-11T16:26Z minh created
+2026-09-11T16:40Z minh note arbitrage auteur : Policy Analysis, moins de 5000 mots
+
+--- body ---
+## Contexte
+
+`conception/jetp-papier-court-mesure.md` porte « Longueur cible : 7 000 mots
+(coupe Research Article pour Climate Policy) » et écarte explicitement la
+variante Policy Analysis à 5 000 mots. Les deux sont faux.
+
+**Le 7 000 n'est pas la longueur du papier court.** La note de ciblage
+(`conception/jetp/papier-long-economie-politique/cible-revue-complement-2026-09-08.md`)
+évalue trois scénarios chez Climate Policy :
+
+| Scénario | Objet | Format | Combiné |
+|---|---|---|---|
+| 1 | le papier tel quel, 8-12 000 mots | aucun format ne l'accueille | ≈ 8 % |
+| 2 | le papier **long** amputé | Research Article 7 000 | ≈ 18 % |
+| 3 | le papier **court** dérivé | Policy Analysis 5 000 | ≈ 21 % |
+
+Le 7 000 est le scénario 2 — le papier long comprimé, dont la note dit qu'il
+« ne survit pas à la coupe en tant que ce qu'il est devenu ». Il a été
+recopié dans la ligne du papier court.
+
+**Les deux motifs qui faisaient écarter le scénario 3 sont caducs.** La note
+le jugeait « non faisable à court terme, une fois la courbe de référence
+construite » — elle l'est depuis le 2026-09-08 au soir. Et « un papier à une
+seule affirmation est bimodal chez un relecteur unique » — vrai sous
+l'hypothèse d'un manuscrit unique ; depuis la scission, le papier long porte
+les quatre affirmations et la mono-thèse du court cesse d'être une fragilité
+à couvrir.
+
+**Ce qui subsiste du risque, et sa contre-mesure.** La Policy Analysis ne
+fait que ~10 % du flux de la revue, et la seule surface d'attaque du papier
+est la construction de la référence : population de prêts concessionnels
+énergie, fenêtre, correction du décalage engagement-signature. Bricolée, le
+relecteur unique la démolit ; déposée en données supplémentaires et
+ré-exécutable, elle se défend.
+
+**Arbitrage de l'auteur, 2026-09-11** : Climate Policy, Policy Analysis,
+moins de 5 000 mots — « une courbe, une explication ».
+
+**Formats Climate Policy, vérifiés à la source** : Research Article 7 000,
+Synthesis 8 000 (réservé aux revues de l'état des connaissances), Policy
+Analysis 5 000, Debate/Viewpoint 3 000. Références exclues ; figures et
+tableaux comptés 250 mots la demi-page, 500 la page pleine. Le format à
+3 000 est un format de commentaire, pas un véhicule pour un résultat
+empirique original — sa définition éditoriale n'a pas pu être lue à la
+source (`tandfonline.com` en 403), seul son plafond l'est.
+
+## Relevant files
+
+- `conception/jetp-papier-court-mesure.md` — porte l'erreur, seul fichier à
+  corriger
+- `conception/reunions/jetp-cr-reunion-2026-09-08.md` — ne porte plus aucune
+  longueur ni format après le dégonflage de la PR #1322 ; rien à y faire
+
+## Actions
+
+1. Corriger la ligne « Longueur cible » et y consigner le renversement.
+2. Retirer l'action ouverte devenue sans objet (« vérifier le format exact
+   accepté par Climate Policy pour une coupe à 7 000 mots »), et lui
+   substituer le dépôt du pipeline en données supplémentaires.
+3. Corriger la cible en Stratégie de publication (chiffres du scénario 3).
+4. Corriger le motif d'exclusion de Global Environmental Change : la courbe
+   est une observation empirique, ce qui la rend inéligible à la Perspective
+   à 3 000 mots est qu'elle *nécessite* une description méthodologique.
+5. Régénérer `conception/jetp-papier-court-mesure.pdf`.
+
+## Invariants
+
+- Ne pas toucher aux notes destinées à Christophe autrement que sur le
+  format et la longueur — le fond scientifique n'est pas en cause.
+- Pas de référence d'organisation interne réintroduite (tickets, chemins
+  locaux) : ces notes sont lues par un collaborateur externe. Aligné sur
+  l'arbitrage de la PR #1322, sur laquelle cette branche est greffée.
+
+## Exit criteria
+
+- [ ] Plus aucune occurrence de « 7 000 mots » comme longueur du papier court
+- [ ] Le renversement de l'arbitrage est consigné, avec ses motifs
+- [ ] Le PDF régénéré porte la nouvelle longueur et reste conforme à ses deux
+      jumeaux du paquet (police, géométrie, pagination)
+- [ ] `erg check tickets/` passe

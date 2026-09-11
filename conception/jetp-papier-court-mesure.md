@@ -90,11 +90,19 @@ dimensions du papier long :
 8. **Conclusion, un paragraphe** — renvoi au mécanisme macro du papier long
    pour l'explication structurelle, sans le redévelopper.
 
-Longueur cible : **7 000 mots** (coupe Research Article pour Climate
-Policy — voir Stratégie de publication). Une variante à 5 000 mots
-(Policy Analysis) a été envisagée et écartée : elle mise tout le papier sur
-une seule mesure sous un régime à relecteur unique, sans gain net de
-probabilité une fois la courbe déjà construite.
+Longueur cible : **moins de 5 000 mots**, format Policy Analysis chez
+Climate Policy — une courbe, une explication (voir Stratégie de
+publication).
+
+*Arbitrage révisé le 2026-09-11.* Cette note portait 7 000 mots en Research
+Article et écartait la Policy Analysis au motif qu'elle « mise tout le papier
+sur une seule mesure sous un régime à relecteur unique ». Le 7 000 n'était
+pas la longueur du papier court : c'est celle du papier *long* comprimé pour
+entrer chez Climate Policy, un scénario dont la note de ciblage dit qu'il
+« ne survit pas à la coupe en tant que ce qu'il est devenu ». Quant au motif
+du rejet, il valait sous l'hypothèse d'un manuscrit unique : depuis la
+scission, le papier long porte les quatre affirmations, et la mono-thèse du
+court cesse d'être une fragilité à couvrir.
 
 ## Données et analyses nécessaires
 
@@ -113,9 +121,11 @@ probabilité une fois la courbe déjà construite.
   comme livrable séparé, seulement esquissée par pays dans le bloc I du
   papier long. Réutilisable telle quelle si construite une fois pour les
   deux papiers.
-- **Vérifier le format exact accepté par Climate Policy** pour une coupe à
-  7 000 mots Research Article — le plafond de 8 000 mots (Synthesis) est
-  vérifié à la source, la variante Research Article à confirmer.
+- **Déposer la chaîne de tirage CRS en données supplémentaires.** Sous ce
+  format, la seule surface d'attaque du papier est la construction de la
+  référence — population de prêts concessionnels énergie, fenêtre,
+  correction du décalage engagement-signature. Bricolée, le relecteur unique
+  la démolit ; déposée et ré-exécutable, elle se défend.
 - **Anonymisation** : Climate Policy exige un manuscrit anonymisé identique
   au nominatif — le dépôt HAL doit sortir complètement du texte (7/7
   éditeurs simulés le demandent de toute façon, voir le papier long).
@@ -146,11 +156,11 @@ plus fragile :
 
 ## Stratégie de publication
 
-**Cible : *Climate Policy* (Taylor & Francis), coupe à 7 000 mots, Research
-Article.** Verdict de l'éditeur simulé (passe du 2026-09-08, sept revues) :
-desk 55 %, acceptation 33 %, combiné **≈ 18 %** — et surtout, **33 jours de
-première décision, le seul délai de tout le tableau à sept revues vérifié à
-la source** (page de métriques de la revue), contre des délais de 3 à 6,6
+**Cible : *Climate Policy* (Taylor & Francis), Policy Analysis, moins de
+5 000 mots.** Verdict de l'éditeur simulé (passe du 2026-09-08, sept
+revues) : desk 60 %, acceptation 35 %, combiné **≈ 21 %** — le meilleur des
+sept revues évaluées — et surtout, **33 jours de première décision, le seul
+délai de tout le tableau à sept revues vérifié à la source** (page de métriques de la revue), contre des délais de 3 à 6,6
 mois partout ailleurs (auto-déclarés SciRev, effectifs dérisoires).
 
 C'est le résultat qui a tranché la scission court/long : le principe posé en
@@ -172,9 +182,22 @@ Trois raisons de partir vite et indépendamment :
   matière est entièrement produite et entièrement due à Minh.
 
 Repli non nécessaire à ce stade : la variante Global Environmental Change
-« courte » a été examinée et écartée — son seul format sous 8 000 mots (la
-Perspective à 3 000 mots) exclut explicitement les papiers à description
-méthodologique, donc exclut précisément ce papier.
+« courte » a été examinée et écartée. Son seul format sous 8 000 mots, la
+Perspective à 3 000 mots, est réservé au point de vue prospectif et
+explicitement fermé aux papiers *nécessitant une description
+méthodologique*. La courbe de référence est une observation empirique ; ce
+qui la rend inéligible à ce format, ce n'est pas sa nature, c'est qu'elle
+n'est crédible qu'accompagnée du détail de sa construction. **Les 3 000 mots
+envisagés en séance n'ont donc jamais été disponibles chez GEC** — ce n'est
+pas un arbitrage rendu contre la position de la réunion, c'est une option qui
+n'existait pas.
+
+Chez Climate Policy en revanche, les quatre formats sont vérifiés à la
+source : Research Article 7 000, Synthesis 8 000 (réservé aux revues de
+l'état des connaissances), Policy Analysis 5 000, Debate/Viewpoint 3 000 —
+références exclues, figures et tableaux comptés 250 mots la demi-page et 500
+la page pleine. Le format à 3 000 y est un format de commentaire, pas un
+véhicule pour un résultat empirique original.
 
 **Convergences à respecter** (issues du panel à sept revues, valables même
 si la cible change) : sortir toute référence au dépôt HAL du texte
