@@ -1,0 +1,33 @@
+%erg 0.1
+Title: Étendre et fermer les trous du ledger JETP Viêt Nam
+Created: 2026-09-11
+Author: Minh
+Blocked-by: 0716
+
+--- log ---
+2026-09-11T21:36Z Minh created
+
+--- body ---
+
+## Context
+
+Migrer le pilote du 10 août 2026 vers le contrat 0716, récupérer le RMP
+intégral et les textes de décisions manquants, puis mettre à jour toutes les
+sources jusqu'à la date de collecte. Les 24 projets/7,04 Md$ de juillet 2025
+doivent être distingués des 17 nouvelles propositions filtrées.
+
+## Test
+
+La migration conserve les 66 lignes de manifeste et les 46 observations de
+vérité terrain sans perte de provenance. Un contrôle dédié rejette toute
+confusion entre 24 projets totaux et 17 propositions nouvelles et exige un
+verdict explicite pour le RMP, les décisions 1009/458/1929 et les bulletins du
+portail MOIT jusqu'au dernier numéro observé.
+
+## Exit criteria
+
+- [ ] Manifeste et vérité terrain du pilote migrés sans perte
+- [ ] RMP, décisions et bulletins MOIT collectés ou blocage documenté
+- [ ] Les 24 projets sont suivis individuellement chez leurs bailleurs
+- [ ] ADB/BII sont couverts par page directe, IATI ou absence explicite
+- [ ] Contrôle de couverture Viêt Nam passe

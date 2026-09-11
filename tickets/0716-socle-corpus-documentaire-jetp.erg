@@ -1,0 +1,55 @@
+%erg 0.1
+Title: Installer le socle du corpus documentaire JETP
+Created: 2026-09-11
+Author: Minh
+
+--- log ---
+2026-09-11T21:32Z Minh created — première tranche du suivi vivant quatre pays
+
+--- body ---
+
+## Context
+
+Le pilote Viêt Nam a produit un manifeste utile mais local et ad hoc. Avant de
+collecter quatre pays, le dépôt a besoin d'un contrat commun pour recenser les
+sources, télécharger sans écraser l'historique, conserver les empreintes et
+préparer l'extraction projet par projet. Ce socle couvre rapports annuels,
+plans, listes de projets, pages bailleurs, opérateurs et actualités officielles.
+
+## Relevant files
+
+- `conception/jetp/papier-3-ledger/imagine-jetp-ledger-2026-08-10.md`
+- `conception/jetp/papier-3-ledger/pilote-ledger-vn/manifest.csv`
+- `conception/jetp/papier-3-ledger/pilote-ledger-vn/feuille-arbitrage.md`
+- `scripts/jetp/`, `data/jetp/`, `dvc.yaml`, `Makefile`
+
+## Test
+
+Écrire d'abord `tests/test_jetp_documents.py`. Sur un serveur HTTP local de
+fixtures, le harvester doit : produire une ligne de manifeste par URL ;
+calculer SHA-256 et taille ; conserver deux versions lorsque le contenu change
+à URL constante ; ne pas retélécharger un contenu inchangé ; enregistrer
+explicitement `blocked`, `missing` et `invalid_content` ; ne jamais traiter une
+page HTML d'erreur comme un PDF. Le registre doit rejeter un pays hors des
+quatre valeurs et un statut financier hors taxonomie.
+
+## Actions
+
+1. Définir le registre de sources, le manifeste de collecte, le sidecar de
+   provenance, le ledger d'événements et le registre de projets.
+2. Écrire `scripts/jetp/harvest_documents.py` avec entrées/sorties explicites,
+   reprise idempotente et journal structuré.
+3. Stocker métadonnées et règles dans git ; déclarer le pool binaire sous
+   `data/jetp/documents/` pour DVC sans pousser depuis cette machine.
+4. Ajouter les cibles Make/DVC nécessaires sans coupler le harvester au
+   pipeline bibliométrique.
+5. Précharger les quatre lignes d'autorité nationales et les catégories de
+   sources attendues, sans prétendre que ce squelette est déjà le recensement.
+
+## Exit criteria
+
+- [ ] Le test rouge décrit ci-dessus passe
+- [ ] Un run hors ligne sur fixtures démontre versionnage et reprise
+- [ ] Le schéma distingue source, document collecté, projet et événement
+- [ ] Le pool binaire est séparé des registres git et prêt pour DVC/padme
+- [ ] `make check-fast`, `make lint` et le test d'intégration ciblé passent

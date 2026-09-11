@@ -1,0 +1,32 @@
+%erg 0.1
+Title: Recenser le JETP Indonésie projet par projet
+Created: 2026-09-11
+Author: Minh
+Blocked-by: 0716
+
+--- log ---
+2026-09-11T21:35Z Minh created
+
+--- body ---
+
+## Context
+
+Appliquer le contrat 0716 au JETP indonésien depuis la déclaration de 2022
+jusqu'à la date de collecte. Couvrir le CIPP et ses mises à jour, le
+secrétariat/JETP Delivery Unit, PLN, le pipeline officiel, les 54 projets
+signalés en 2025, les bailleurs et le devenir des retraites charbon.
+
+## Test
+
+Le contrôle de couverture échoue tant que la matrice n'a pas de verdict pour
+JETP Indonesia/JETP Delivery Unit, MEMR, PLN, IPG, GFANZ et chaque bailleur
+public nommé. Les totaux de projet ne peuvent additionner besoin, annonce,
+MoU, approbation, signature et décaissement.
+
+## Exit criteria
+
+- [ ] CIPP 2023 et mises à jour ultérieures collectés ou absence prouvée
+- [ ] Les projets du pipeline sont identifiés et sourcés individuellement
+- [ ] Les 54 projets/1,1 Md$ annoncés en 2025 sont réconciliés aux fiches
+- [ ] Retraits charbon et financement ETM ont un statut physique distinct
+- [ ] Contrôle de couverture Indonésie passe

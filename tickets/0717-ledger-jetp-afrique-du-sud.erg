@@ -1,0 +1,33 @@
+%erg 0.1
+Title: Recenser le JETP Afrique du Sud projet par projet
+Created: 2026-09-11
+Author: Minh
+Blocked-by: 0716
+
+--- log ---
+2026-09-11T21:34Z Minh created
+
+--- body ---
+
+## Context
+
+Appliquer le contrat 0716 au JETP sud-africain depuis la déclaration de 2021
+jusqu'à la date de collecte. Couvrir JET IP, JET Implementation Plan, rapports
+de progression, registres publics, IPG, bailleurs, Eskom et chaque projet ou
+programme financier identifié.
+
+## Test
+
+Le contrôle de couverture échoue tant que la matrice d'autorités ne comporte
+pas Presidency/PCC/JET PMU, IPG, chaque bailleur public nommé, banques
+multilatérales et Eskom, avec pour chacun un verdict `collected`,
+`not_published`, `blocked` ou `not_applicable`. Chaque projet nommé dans une
+liste officielle doit avoir une identité stable et au moins une source.
+
+## Exit criteria
+
+- [ ] Rapports et listes officielles recensés de 2021 à la date de collecte
+- [ ] Projets et opérations financières séparés en événements datés
+- [ ] Pages bailleurs et Eskom examinées ; recherches sèches consignées
+- [ ] Actualités secondaires utiles rattachées comme pistes, pas comme preuve
+- [ ] Contrôle de couverture Afrique du Sud passe

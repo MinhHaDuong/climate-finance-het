@@ -1,0 +1,34 @@
+%erg 0.1
+Title: Recenser le JETP Sénégal projet par projet
+Created: 2026-09-11
+Author: Minh
+Blocked-by: 0716
+
+--- log ---
+2026-09-11T21:37Z Minh created
+
+--- body ---
+
+## Context
+
+Appliquer le contrat 0716 au JETP sénégalais depuis la déclaration de juin
+2023 jusqu'à la date de collecte. Le Plan d'investissement et ses annexes,
+publiés après le lancement, rendent obsolète toute photographie arrêtée à
+2024. Couvrir ministère, IPG, bailleurs, Senelec, projets de renouvelables,
+réseau, accès et articulation avec les nouveaux hydrocarbures.
+
+## Test
+
+Le contrôle de couverture échoue sans verdict pour le ministère, IPG, AFD,
+KfW, UE, Royaume-Uni, Canada, banques multilatérales et Senelec. Chaque projet
+du Plan d'investissement et de ses annexes doit avoir une identité stable,
+une source et un statut ; le chiffre AFD-Senelec de 670 M€ reste exclu tant
+qu'une source primaire ne le confirme.
+
+## Exit criteria
+
+- [ ] Déclaration, Plan d'investissement et annexes collectés
+- [ ] Chaque projet du plan est relié à ses pages bailleur/opérateur
+- [ ] Financement, état physique et dépendance hydrocarbures restent distincts
+- [ ] L'absence de publication annuelle est enregistrée comme donnée
+- [ ] Contrôle de couverture Sénégal passe

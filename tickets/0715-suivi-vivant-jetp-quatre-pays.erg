@@ -1,0 +1,72 @@
+%erg 0.1
+Title: Suivi vivant JETP exhaustif sur les quatre pays
+Created: 2026-09-11
+Author: Minh
+
+--- log ---
+2026-09-11T21:30Z Minh created — le CRS 2022-2024 reste un benchmark, pas la couche de suivi courant
+
+--- body ---
+
+## Context
+
+Le pipeline OECD CRS prévu par 0713 s'arrête à 2024. Il est nécessaire pour
+comparer les profils d'exécution, mais insuffisant pour suivre les JETP en
+2026. Le programme doit aussi observer le passage annonce -> projet ->
+approbation -> signature -> décaissement -> réalisation physique à partir des
+rapports, registres et pages projet publiés après 2024.
+
+L'auteur demande une couverture exhaustive des quatre JETP : Afrique du Sud,
+Indonésie, Viêt Nam et Sénégal. « Exhaustif » est défini sur un univers de
+sources explicite : portail JETP national, ministères responsables, co-leads
+IPG, bailleurs nommés dans le paquet, banques multilatérales, opérateur
+électrique et pages officielles de chaque projet identifié. Toute source
+attendue absente, bloquée ou non publiée est enregistrée comme telle ; elle
+n'est ni remplacée silencieusement ni devinée.
+
+Le dispositif est un workpackage autonome dans `climate-finance-het`. Il ne
+grossit pas la PR #1322, qui reste une passation éditoriale. Le pilote Viêt Nam
+de `conception/jetp/papier-3-ledger/` fournit les conventions initiales, mais
+les quatre pays doivent être traités avec le même contrat de preuve.
+
+## Actions
+
+1. **0716** — installer le contrat du corpus, le stockage DVC et le harvester
+   reproductible.
+2. **0717** — recenser et dépouiller l'Afrique du Sud, projet par projet.
+3. **0718** — recenser et dépouiller l'Indonésie, projet par projet.
+4. **0719** — reprendre le pilote Viêt Nam, combler ses trous et l'étendre à
+   la date courante.
+5. **0720** — recenser et dépouiller le Sénégal, projet par projet.
+6. **0721** — réconcilier les quatre ledgers avec CRS/IATI et produire les
+   contrôles transversaux.
+7. **0722** — installer la skill et les règles de mise à jour du dispositif.
+8. **0723** — joindre événements financiers, actifs et réalisations physiques.
+
+## Invariants
+
+- Le CRS 2022-2024 est une couche rétrospective ; aucun texte ne le présente
+  comme l'état courant d'un JETP.
+- Une ligne de ledger représente un événement financier daté, pas un projet
+  entier. Les couches annonce, MoU, approbation, signature et décaissement ne
+  sont jamais additionnées entre elles.
+- La devise de la source primaire est canonique. Une conversion tierce reste
+  une observation de recoupement exclue des agrégats.
+- Deux périmètres coexistent : `jetp_strict` lorsque la source rattache
+  explicitement l'opération au JETP ; `ipg_energy_extended` pour le contexte.
+- Les documents bruts sont content-addressed, horodatés et suivis par DVC ;
+  les registres, règles et sidecars de provenance restent lisibles dans git.
+- Aucun push de données DVC depuis cette machine : padme reste l'autorité des
+  données selon 0713.
+- Une actualité de presse sert de piste. Une valeur comptable n'entre dans le
+  ledger qu'avec une source primaire ou un verdict explicite `secondary_only`.
+
+## Exit criteria
+
+- [ ] Les tickets 0716 à 0723 sont fermés
+- [ ] Les quatre pays ont un registre de sources borné, un manifeste de
+      collecte, un ledger financier et une carte documentée des absences
+- [ ] Chaque montant agrégé est reconstructible depuis des événements sourcés
+- [ ] Le rafraîchissement périodique peut être relancé sans écraser les
+      observations historiques
+- [ ] La couverture et les limites sont publiables comme résultats de méthode

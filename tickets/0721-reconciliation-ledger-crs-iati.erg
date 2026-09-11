@@ -1,0 +1,33 @@
+%erg 0.1
+Title: Réconcilier les ledgers JETP avec CRS et IATI
+Created: 2026-09-11
+Author: Minh
+Blocked-by: 0717
+Blocked-by: 0718
+Blocked-by: 0719
+Blocked-by: 0720
+
+--- log ---
+2026-09-11T21:38Z Minh created
+
+--- body ---
+
+## Context
+
+Les quatre ledgers documentaires donnent l'état courant ; CRS et IATI donnent
+des lignes structurées mais retardées ou peu étiquetées. Il faut les rapprocher
+sans traiter une absence de label JETP comme une absence de financement.
+
+## Test
+
+Sur un échantillon ratifié, la réconciliation produit candidats, score et
+verdict sans fusion automatique ambiguë. Un agrégat échoue s'il mélange les
+périmètres `jetp_strict` et `ipg_energy_extended`, les couches de statut ou
+les conversions tierces.
+
+## Exit criteria
+
+- [ ] Rapprochement document/CRS/IATI traçable, réversible et évalué
+- [ ] Écarts annonce, signé, déclaré et décaissé produits par pays/bailleur
+- [ ] Taux de traçabilité publique et carte d'opacité calculés
+- [ ] Chaque agrégat renvoie aux événements et documents qui le composent
