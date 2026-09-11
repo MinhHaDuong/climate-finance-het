@@ -1,0 +1,70 @@
+version: 1
+
+# Canonical controlled vocabularies for the documentary corpus. Code reads
+# these values; do not duplicate a competing taxonomy in prose or scripts.
+countries:
+  ZAF: South Africa
+  IDN: Indonesia
+  VNM: Viet Nam
+  SEN: Senegal
+
+authority_categories:
+  - national_government
+  - jetp_secretariat
+  - ipg
+  - bilateral_funder
+  - multilateral_funder
+  - private_finance
+  - operator
+  - secondary_source
+
+source_types:
+  - political_declaration
+  - investment_plan
+  - implementation_plan
+  - annual_report
+  - progress_update
+  - project_list
+  - project_page
+  - approval_document
+  - financing_agreement
+  - operator_report
+  - official_news
+  - secondary_news
+  - data_portal
+
+financial_statuses:
+  - need
+  - announced
+  - mou
+  - approved
+  - signed
+  - disbursed
+  - cancelled
+  - withdrawn
+
+scopes:
+  - jetp_strict
+  - ipg_energy_extended
+
+collection_statuses:
+  - collected
+  - not_modified
+  - blocked
+  - missing
+  - invalid_content
+  - invalid_response
+  - retryable_http_error
+  - http_error
+  - fetch_error
+  - not_published
+  - not_applicable
+
+storage:
+  source_registry: data/jetp/sources.csv
+  manifest: data/jetp/manifest.csv
+  documents: data/jetp/documents
+  projects: data/jetp/projects.csv
+  events: data/jetp/events.csv
+  dry_searches: data/jetp/dry-searches.csv
+  decisions: data/jetp/decisions.md
