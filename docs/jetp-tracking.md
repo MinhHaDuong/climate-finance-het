@@ -52,7 +52,7 @@ which case the event is marked `secondary_only` during verification.
 |---|---:|---|
 | South Africa | 263/263 | Complete; register, reports, project pages and dry searches reconciled |
 | Indonesia | 74/74 | Complete; 66 collected, 6 central-only after explicit search, 2 archive-blocked |
-| Viet Nam | Migration 66/66 sources; 46/46 observations | RMP, decisions 1009/458 and newsletters 1-13 archived; 24-project follow-up next |
+| Viet Nam | 24/24 July 2025 records | 3 named projects followed to direct MOIT and funder sources; 21 identities explicitly not published |
 | Senegal | Not started | Follows Viet Nam |
 
 The Indonesia checkpoint includes 53 approved projects in the 30 November 2025
@@ -76,6 +76,16 @@ pilot note that reported 23 March. Decision 1929/QD-BCT is confirmed by dated
 official-operator news, but its signed full text was not exposed by the JETP
 document index, portal search or ministry legal register at this checkpoint;
 that gap remains a dry-search observation rather than an inferred document.
+
+The July 2025 Viet Nam portfolio is represented by 24 source-bounded records.
+MOIT and the IPG co-chair account name Bac Ai pumped storage, the Binh Duong
+and Dong Nai transmission investments, and the Tri An expansion. Direct MOIT,
+EVN and EIB pages are linked to those three records. The same official account
+describes the other 4 initial projects and 17 newly screened proposals only by
+count. Those 21 rows are therefore explicit count slots with
+`not_published` follow-up verdicts, not invented project identities. The
+current MOIT index still exposed only the three named profiles when checked on
+12 September 2026.
 
 ## Counting rules
 
