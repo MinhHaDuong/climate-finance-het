@@ -17,6 +17,7 @@ FIELDS = [
     "country",
     "source_id",
     "technology_group",
+    "priority_tier",
     "ordinal",
     "project_name",
     "system",
@@ -72,7 +73,7 @@ def _number(value: str) -> str:
 
 
 def _ordinal(value: object) -> tuple[int, str] | None:
-    match = re.fullmatch(r"\s*(\d+)\s*(.*?)\s*", str(value or ""))
+    match = re.fullmatch(r"\s*(\d+)\s*\.?\s*(.*?)\s*", str(value or ""))
     if not match:
         return None
     return int(match.group(1)), match.group(2)
@@ -106,6 +107,7 @@ def _record(
         "country": "IDN",
         "source_id": SOURCE_ID,
         "technology_group": group,
+        "priority_tier": "priority",
         "ordinal": str(ordinal),
         "project_name": _text(name),
         "system": _text(system),
@@ -343,12 +345,23 @@ def extract_priority_projects(pdf_path: Path) -> list[dict[str, str]]:
     return rows
 
 
-def write_csv(rows: list[dict[str, str]], output: Path) -> None:
+def write_csv(
+    rows: list[dict[str, str]], output: Path, source_id: str = SOURCE_ID
+) -> None:
+    preserved: list[dict[str, str]] = []
+    if output.exists():
+        with output.open(encoding="utf-8", newline="") as stream:
+            reader = csv.DictReader(stream)
+            if reader.fieldnames and set(FIELDS) <= set(reader.fieldnames):
+                preserved = [row for row in reader if row["source_id"] != source_id]
+    combined = sorted(
+        [*preserved, *rows], key=lambda row: (row["source_id"], row["plan_project_id"])
+    )
     output.parent.mkdir(parents=True, exist_ok=True)
     with output.open("w", encoding="utf-8", newline="") as stream:
-        writer = csv.DictWriter(stream, fieldnames=FIELDS)
+        writer = csv.DictWriter(stream, fieldnames=FIELDS, lineterminator="\n")
         writer.writeheader()
-        writer.writerows(rows)
+        writer.writerows(combined)
 
 
 def main() -> None:
