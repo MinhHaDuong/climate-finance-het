@@ -85,6 +85,7 @@ storage:
   documents: data/jetp/documents
   projects: data/jetp/projects.csv
   project_coverage: data/jetp/project-coverage.csv
+  idn_portfolio_observations: data/jetp/idn-portfolio-observations.csv
   plan_projects: data/jetp/plan-projects.csv
   events: data/jetp/events.csv
   implementation_events: data/jetp/implementation-events.csv
