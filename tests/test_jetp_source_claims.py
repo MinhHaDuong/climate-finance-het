@@ -88,11 +88,14 @@ def test_2025_annex_review_covers_every_portfolio_section() -> None:
     unresolved = {
         row["claim_id"] for row in rows if row["match_status"] == "not_in_register"
     }
-    assert unresolved == {
-        "zaf-annex25-eu-cso-grants",
-    }
+    assert not unresolved
     assert {
         row["matched_project_ids"]
         for row in rows
         if row["claim_id"] == "zaf-annex25-uk-nev"
     } == {"zaf-uk-nev-support"}
+    assert {
+        row["matched_project_ids"]
+        for row in rows
+        if row["claim_id"] == "zaf-annex25-eu-cso-grants"
+    } == {"zaf-eu-cso-green-economy-grants"}
