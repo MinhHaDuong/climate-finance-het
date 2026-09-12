@@ -13,6 +13,8 @@ RELATIONSHIPS = {
     "project_page",
     "project_page_component",
     "project_report",
+    "approval_document",
+    "data_portal",
     "named_in",
     "possible_match",
 }
@@ -50,7 +52,16 @@ def test_zaf_project_pages_are_evidence_not_duplicate_projects() -> None:
         if row["country"] == "ZAF" and row["source_id"].startswith("zaf-project-")
     }
 
-    assert len(projects) == 257
-    assert all(row["project_id"].startswith("zaf-register-") for row in projects)
+    register_projects = [
+        row for row in projects if row["project_id"].startswith("zaf-register-")
+    ]
+    assert len(register_projects) == 257
+    assert not any(row["project_id"].startswith("zaf-jetpmu-") for row in projects)
+    assert {
+        "zaf-annex-zandkopsdrift",
+        "zaf-growth-gateway-smme-accelerator",
+        "zaf-murp",
+        "zaf-eepbip",
+    } <= {row["project_id"] for row in projects}
     assert project_page_sources <= {row["source_id"] for row in links}
-    assert all(row["project_id"].startswith("zaf-register-") for row in links)
+    assert not any(row["project_id"].startswith("zaf-jetpmu-") for row in links)
