@@ -36,6 +36,30 @@ DIRECT_PORTFOLIO_PIPELINE_SOURCES = {
     "idn-pipe-nagajaya-micro-hydro": "idn-portfolio-project-nagajaya",
     "idn-pipe-hululais-1-2": "idn-portfolio-project-hululais",
 }
+PIPELINE_SOURCE_COHORT = {
+    "idn-pipe-dieng-3-4": {"idn-project-dieng3-adb"},
+    "idn-pipe-cirebon-1-retirement": {
+        "idn-project-cirebon-framework-marubeni",
+        "idn-news-cirebon-retirement-reuters-2025",
+    },
+    "idn-pipe-solar-cell-manufacturing": {
+        "idn-project-seg-construction-2024",
+        "idn-project-seg-operational-2025",
+    },
+    "idn-pipe-singkarak-floating-solar": {"idn-project-singkarak-acwa-2022"},
+    "idn-pipe-sutami-floating-solar": {
+        "idn-project-sutami-construction-plnnp-2026"
+    },
+    "idn-pipe-tanah-laut-wind": {
+        "idn-project-tanah-laut-plnnp",
+        "idn-project-tanah-laut-ppa-ptplnnr",
+    },
+    "idn-pipe-legok-nangka-waste": {
+        "idn-project-legok-agreement-ut-2024",
+        "idn-news-legok-groundbreaking-antara-2026",
+    },
+    "idn-pipe-rsud-energy-efficiency": {"idn-project-rsud-retrofit-c40"},
+}
 
 
 def read_csv(path: Path) -> list[dict[str, str]]:
@@ -216,3 +240,40 @@ def test_current_portfolio_pipeline_profiles_are_reviewed_and_archived() -> None
             "https://portfolio.jetp.id/project/"
         )
         assert source_id in archived
+
+
+def test_pipeline_source_cohort_is_reviewed_and_archived() -> None:
+    coverage = {
+        row["project_id"]: row
+        for row in read_csv(DATA / "project-coverage.csv")
+        if row["country"] == "IDN"
+    }
+    sources = {
+        row["source_id"]: row
+        for row in read_csv(DATA / "sources.csv")
+        if row["country"] == "IDN"
+    }
+    manifest = {
+        row["source_id"]: row for row in read_csv(DATA / "manifest.csv")
+    }
+
+    for project_id, source_ids in PIPELINE_SOURCE_COHORT.items():
+        row = coverage[project_id]
+        expected_status = (
+            "blocked"
+            if project_id
+            in {"idn-pipe-dieng-3-4", "idn-pipe-rsud-energy-efficiency"}
+            else "collected"
+        )
+        assert row["review_status"] == expected_status, project_id
+        assert row["checked_at"] == "2026-09-12", project_id
+        assert source_ids <= set(row["source_ids"].split(";")), project_id
+        for source_id in source_ids:
+            assert sources[source_id]["project_id"] == project_id
+            assert manifest[source_id]["status"] in {
+                "collected",
+                "not_modified",
+                "blocked",
+            }
+            if manifest[source_id]["status"] in {"collected", "not_modified"}:
+                assert manifest[source_id]["sha256"]
