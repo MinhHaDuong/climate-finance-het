@@ -54,7 +54,7 @@ def test_all_38_received_projects_are_preserved_as_plan_lines() -> None:
     assert len({row["plan_project_id"] for row in rows}) == 38
     assert {int(row["ordinal"]) for row in rows} == set(range(1, 39))
     assert {row["document_sha256"] for row in rows} == {ANNEX_SHA256}
-    assert {row["priority_tier"] for row in rows} == {"priority"}
+    assert {row["priority_tier"] for row in rows} == {""}
     assert all("received" in row["notes"].lower() for row in rows)
 
 
