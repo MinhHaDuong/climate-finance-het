@@ -5,7 +5,6 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 COVERAGE = ROOT / "data" / "jetp" / "authority-coverage.csv"
 SOURCES = ROOT / "data" / "jetp" / "sources.csv"
@@ -88,6 +87,11 @@ def test_every_official_south_african_project_has_a_source() -> None:
         for row in events
         if row["source_id"] in known_source_ids
     }
+    linked_project_sources = {
+        row["project_id"]
+        for row in read_csv(ROOT / "data" / "jetp" / "project-source-links.csv")
+        if row["country"] == "ZAF" and row["source_id"] in known_source_ids
+    }
     register_events = [
         row
         for row in events
@@ -98,5 +102,5 @@ def test_every_official_south_african_project_has_a_source() -> None:
     assert len(register_events) == 257
     assert len({row["event_id"] for row in register_events}) == 257
     assert {row["project_id"] for row in projects} <= (
-        direct_project_sources | event_project_sources
+        direct_project_sources | event_project_sources | linked_project_sources
     )
