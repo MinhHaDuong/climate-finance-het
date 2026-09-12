@@ -6,6 +6,7 @@ Blocked-by: 0716
 
 --- log ---
 2026-09-11T21:36Z Minh created
+2026-09-12T09:48Z Codex migrated the pilot manifest and evidence observations
 
 --- body ---
 
@@ -26,7 +27,7 @@ portail MOIT jusqu'au dernier numéro observé.
 
 ## Exit criteria
 
-- [ ] Manifeste et vérité terrain du pilote migrés sans perte
+- [x] Manifeste et vérité terrain du pilote migrés sans perte
 - [ ] RMP, décisions et bulletins MOIT collectés ou blocage documenté
 - [ ] Les 24 projets sont suivis individuellement chez leurs bailleurs
 - [ ] ADB/BII sont couverts par page directe, IATI ou absence explicite
