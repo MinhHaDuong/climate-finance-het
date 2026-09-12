@@ -147,3 +147,37 @@ def test_direct_approved_finance_sources_are_adjudicated_and_summarized() -> Non
         assert reviewed_sources, project_id
         assert {(project_id, source_id) for source_id in reviewed_sources} <= linked_pairs
     assert DIRECTLY_SOURCED_APPROVED_FINANCE_PROJECTS <= claimed_projects
+
+
+def test_indonesian_grants_link_the_direct_official_portfolio() -> None:
+    grant_projects = {
+        row["project_id"]
+        for row in read_csv(DATA / "projects.csv")
+        if row["country"] == "IDN" and row["project_id"].startswith("idn-grant-")
+    }
+    coverage = {
+        row["project_id"]: row
+        for row in read_csv(DATA / "project-coverage.csv")
+        if row["country"] == "IDN"
+    }
+    sources = {
+        row["source_id"]: row
+        for row in read_csv(DATA / "sources.csv")
+        if row["country"] == "IDN"
+    }
+
+    assert len(grant_projects) == 44
+    for project_id in grant_projects:
+        row = coverage[project_id]
+        assert row["review_status"] == "collected", project_id
+        assert row["checked_at"] == "2026-09-12", project_id
+        direct = [
+            sources[source_id]
+            for source_id in row["source_ids"].split(";")
+            if source_id in sources
+            and sources[source_id]["url"].startswith(
+                "https://portfolio.jetp.id/program/"
+            )
+        ]
+        assert direct, project_id
+        assert {source["project_id"] for source in direct} == {project_id}
