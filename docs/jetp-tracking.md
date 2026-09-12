@@ -14,6 +14,7 @@ the two roles separate and makes every aggregate reversible.
 | Binary snapshots | `data/jetp/documents/` | DVC | Content-addressed immutable objects; one object may support several source rows |
 | Project identities | `data/jetp/projects.csv` | git | Stable projects and aliases, independent of individual financing events |
 | Financial events | `data/jetp/events.csv` | git | One dated event at one status layer, tied to an exact document and locator |
+| Implementation events | `data/jetp/implementation-events.csv` | git | Physical project delivery and closure states, kept separate from finance |
 | Dry searches | `data/jetp/dry-searches.csv` | git | Expected but absent, blocked or unpublished material and the route checked |
 | Human decisions | `data/jetp/decisions.md` | git | Adjudications that change coding conventions or resolve conflicts |
 
@@ -46,6 +47,9 @@ which case the event is marked `secondary_only` during verification.
   many funders, instruments, dates and status layers.
 - `need`, `announced`, `mou`, `approved`, `signed` and `disbursed` are a
   chronology, not additive categories. Aggregates select one layer explicitly.
+- `proposed`, `preparation`, `procurement`, `construction`, `operational`, `suspended`,
+  `closure_proposed`, `closure_agreed`, `retired` and `cancelled` describe
+  physical delivery. They never follow automatically from a financial status.
 - The amount and currency stated by the primary document are canonical.
   Third-party conversions are retained as observations and excluded from sums.
 - `jetp_strict` requires explicit JETP attribution in the source.
