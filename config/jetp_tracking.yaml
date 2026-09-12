@@ -79,6 +79,7 @@ storage:
   manifest: data/jetp/manifest.csv
   documents: data/jetp/documents
   projects: data/jetp/projects.csv
+  plan_projects: data/jetp/plan-projects.csv
   events: data/jetp/events.csv
   implementation_events: data/jetp/implementation-events.csv
   project_source_links: data/jetp/project-source-links.csv
