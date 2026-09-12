@@ -53,3 +53,32 @@ def test_indonesia_2025_report_series_is_archived() -> None:
     }
 
     assert REPORT_SERIES_2025 <= material
+
+
+def test_indonesia_2025_approved_portfolio_is_project_level() -> None:
+    projects = [
+        row for row in read_csv(DATA / "projects.csv") if row["country"] == "IDN"
+    ]
+    events = [row for row in read_csv(DATA / "events.csv") if row["country"] == "IDN"]
+    progress_projects = {
+        row["project_id"]
+        for row in events
+        if row["source_id"] == "idn-jetp-progress-report-2025"
+    }
+
+    assert len(projects) == 53
+    assert len({row["project_id"] for row in projects}) == 53
+    assert len([row for row in projects if row["project_id"].startswith("idn-fin-")]) == 9
+    assert len([row for row in projects if row["project_id"].startswith("idn-grant-")]) == 44
+    assert {row["project_id"] for row in projects} == progress_projects
+    assert len(events) == 59
+    assert {row["financial_status"] for row in events} == {"approved"}
+    assert {
+        "idn-fin-muara-laboh-2",
+        "idn-fin-saguling-floating-solar",
+        "idn-fin-xurya-rooftop",
+        "idn-grant-wolcot",
+        "idn-grant-patuha-2",
+        "idn-grant-jetp-etp",
+        "idn-grant-ietf",
+    } <= {row["project_id"] for row in projects}
