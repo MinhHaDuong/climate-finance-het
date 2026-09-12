@@ -7,7 +7,6 @@ from pathlib import Path
 
 from jetp.migrate_vnm_pilot import migrate_pilot
 
-
 ROOT = Path(__file__).resolve().parents[1]
 PILOT = ROOT / "conception" / "jetp" / "papier-3-ledger" / "pilote-ledger-vn"
 DATA = ROOT / "data" / "jetp"
