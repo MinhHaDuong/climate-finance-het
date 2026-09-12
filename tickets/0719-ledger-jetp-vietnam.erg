@@ -9,6 +9,7 @@ Blocked-by: 0716
 2026-09-12T09:48Z Codex migrated the pilot manifest and evidence observations
 2026-09-12T10:07Z Codex archived the official RMP, decisions 1009/458 and newsletters 1-13; recorded the unresolved signed text of Decision 1929
 2026-09-12T13:00Z Codex resolved the July 2025 portfolio into 3 named projects and 21 explicit non-public count slots; linked direct MOIT, EVN and EIB sources
+2026-09-12T13:08Z Codex covered ADB and BII through direct pages, borrower confirmation and the IATI publisher gap without forcing non-JETP leads into the strict portfolio
 
 --- body ---
 
@@ -32,5 +33,5 @@ portail MOIT jusqu'au dernier numéro observé.
 - [x] Manifeste et vérité terrain du pilote migrés sans perte
 - [x] RMP, décisions et bulletins MOIT collectés ou blocage documenté
 - [x] Les 24 enregistrements sont suivis: 3 projets nommés chez leurs bailleurs et 21 identités non publiées sans nom inventé
-- [ ] ADB/BII sont couverts par page directe, IATI ou absence explicite
+- [x] ADB/BII sont couverts par page directe, IATI ou absence explicite
 - [ ] Contrôle de couverture Viêt Nam passe
