@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import pytest
-from jetp.extract_zaf_investment_register import (
+from jetp.build_zaf_investment_register import (
     build_event_records,
     build_project_records,
     parse_register_html,
