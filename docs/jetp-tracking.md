@@ -44,6 +44,21 @@ official updates when those exist. News is searched after official sources;
 secondary reporting remains a lead unless no primary document is public, in
 which case the event is marked `secondary_only` during verification.
 
+## Country checkpoints
+
+| Country | Project review | Current checkpoint |
+|---|---:|---|
+| South Africa | 263/263 | Complete; register, reports, project pages and dry searches reconciled |
+| Indonesia | 74/74 | Complete; 66 collected, 6 central-only after explicit search, 2 archive-blocked |
+| Viet Nam | Not started | Next country ticket |
+| Senegal | Not started | Follows Viet Nam |
+
+The Indonesia checkpoint includes 53 approved projects in the 30 November 2025
+portfolio snapshot (9 loan or equity projects and 44 grants), 20 finance-pipeline
+entries including AICET, 1,579 plan rows, and all 14 CMEA monitoring entries.
+The earlier March 2025 total of 54 projects is preserved as a separate dated
+observation rather than overwritten.
+
 ## Counting rules
 
 - A project and a financial event are different objects. A project may have
