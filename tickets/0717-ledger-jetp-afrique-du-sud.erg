@@ -6,6 +6,13 @@ Blocked-by: 0716
 
 --- log ---
 2026-09-11T21:34Z Minh created
+2026-09-12T08:42Z Codex completed the source-to-project coverage pass: 263
+project records (257 register rows plus 6 documented programmes outside the
+register), 259 dated financial events, 61 source records, 46 report claims,
+79 project-source links, 18 secondary-news leads and 21 authorities with a
+terminal coverage verdict. The three unnamed EU civil-society grants remain a
+programme cluster rather than three invented award records; the search route
+and false matches are recorded for later beneficiary-level resolution.
 
 --- body ---
 
@@ -26,8 +33,8 @@ liste officielle doit avoir une identité stable et au moins une source.
 
 ## Exit criteria
 
-- [ ] Rapports et listes officielles recensés de 2021 à la date de collecte
-- [ ] Projets et opérations financières séparés en événements datés
-- [ ] Pages bailleurs et Eskom examinées ; recherches sèches consignées
-- [ ] Actualités secondaires utiles rattachées comme pistes, pas comme preuve
-- [ ] Contrôle de couverture Afrique du Sud passe
+- [x] Rapports et listes officielles recensés de 2021 à la date de collecte
+- [x] Projets et opérations financières séparés en événements datés
+- [x] Pages bailleurs et Eskom examinées ; recherches sèches consignées
+- [x] Actualités secondaires utiles rattachées comme pistes, pas comme preuve
+- [x] Contrôle de couverture Afrique du Sud passe
