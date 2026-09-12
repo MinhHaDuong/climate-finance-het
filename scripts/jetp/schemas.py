@@ -17,6 +17,7 @@ def _load_contract() -> dict:
 CONTRACT = _load_contract()
 COUNTRIES = frozenset(CONTRACT["countries"])
 FINANCIAL_STATUSES = frozenset(CONTRACT["financial_statuses"])
+IMPLEMENTATION_STATUSES = frozenset(CONTRACT["implementation_statuses"])
 SCOPES = frozenset(CONTRACT["scopes"])
 SOURCE_TYPES = frozenset(CONTRACT["source_types"])
 AUTHORITY_CATEGORIES = frozenset(CONTRACT["authority_categories"])
@@ -55,3 +56,20 @@ def validate_event_record(record: dict[str, str]) -> None:
                 raise ValueError("amount_original must be non-negative")
         except InvalidOperation as exc:
             raise ValueError(f"invalid amount_original: {amount!r}") from exc
+
+
+def validate_implementation_event_record(record: dict[str, str]) -> None:
+    """Validate a non-financial project delivery or closure observation."""
+    country = record.get("country", "")
+    if country not in COUNTRIES:
+        raise ValueError(f"invalid country: {country!r}")
+    status = record.get("implementation_status", "")
+    if status not in IMPLEMENTATION_STATUSES:
+        raise ValueError(f"invalid implementation_status: {status!r}")
+    capacity = record.get("capacity_mw", "")
+    if capacity:
+        try:
+            if Decimal(capacity) < 0:
+                raise ValueError("capacity_mw must be non-negative")
+        except InvalidOperation as exc:
+            raise ValueError(f"invalid capacity_mw: {capacity!r}") from exc
