@@ -47,9 +47,7 @@ PIPELINE_SOURCE_COHORT = {
         "idn-project-seg-operational-2025",
     },
     "idn-pipe-singkarak-floating-solar": {"idn-project-singkarak-acwa-2022"},
-    "idn-pipe-sutami-floating-solar": {
-        "idn-project-sutami-construction-plnnp-2026"
-    },
+    "idn-pipe-sutami-floating-solar": {"idn-project-sutami-construction-plnnp-2026"},
     "idn-pipe-tanah-laut-wind": {
         "idn-project-tanah-laut-plnnp",
         "idn-project-tanah-laut-ppa-ptplnnr",
@@ -59,6 +57,32 @@ PIPELINE_SOURCE_COHORT = {
         "idn-news-legok-groundbreaking-antara-2026",
     },
     "idn-pipe-rsud-energy-efficiency": {"idn-project-rsud-retrofit-c40"},
+}
+FINAL_PIPELINE_VERDICTS = {
+    "idn-monitor-cihaur-talaga-micro-hydro": "central_only",
+    "idn-monitor-gde-pipeline-2025": "central_only",
+    "idn-pipe-dediesel-east-phase1": "central_only",
+    "idn-pipe-dediesel-west-phase1": "collected",
+    "idn-pipe-e-taxi": "central_only",
+    "idn-pipe-eib-sustainable-infrastructure": "collected",
+    "idn-pipe-hijaunesia-2": "collected",
+    "idn-pipe-hydro-quota-sulawesi": "collected",
+    "idn-pipe-hydro-quota-sumatra": "collected",
+    "idn-pipe-rscm-energy-efficiency": "central_only",
+}
+FINAL_PIPELINE_SOURCES = {
+    "idn-pipe-dediesel-west-phase1": {"idn-ibvogt-diesel-west-2023"},
+    "idn-pipe-eib-sustainable-infrastructure": {"idn-eib-ptsmi-mou-2024"},
+    "idn-pipe-hijaunesia-2": {"idn-jetp-work-plan-2024-presentation"},
+    "idn-pipe-hydro-quota-sulawesi": {"idn-jetp-work-plan-2024-presentation"},
+    "idn-pipe-hydro-quota-sumatra": {"idn-jetp-work-plan-2024-presentation"},
+}
+FINAL_PIPELINE_DRY_SEARCHES = {
+    "idn-monitor-cihaur-talaga-micro-hydro": "idn-search-cihaur-talaga-20260912",
+    "idn-monitor-gde-pipeline-2025": "idn-search-gde-pipeline-20260912",
+    "idn-pipe-dediesel-east-phase1": "idn-search-dediesel-east-20260912",
+    "idn-pipe-e-taxi": "idn-search-e-taxi-20260912",
+    "idn-pipe-rscm-energy-efficiency": "idn-search-rscm-efficiency-20260912",
 }
 
 
@@ -253,16 +277,13 @@ def test_pipeline_source_cohort_is_reviewed_and_archived() -> None:
         for row in read_csv(DATA / "sources.csv")
         if row["country"] == "IDN"
     }
-    manifest = {
-        row["source_id"]: row for row in read_csv(DATA / "manifest.csv")
-    }
+    manifest = {row["source_id"]: row for row in read_csv(DATA / "manifest.csv")}
 
     for project_id, source_ids in PIPELINE_SOURCE_COHORT.items():
         row = coverage[project_id]
         expected_status = (
             "blocked"
-            if project_id
-            in {"idn-pipe-dieng-3-4", "idn-pipe-rsud-energy-efficiency"}
+            if project_id in {"idn-pipe-dieng-3-4", "idn-pipe-rsud-energy-efficiency"}
             else "collected"
         )
         assert row["review_status"] == expected_status, project_id
@@ -277,3 +298,40 @@ def test_pipeline_source_cohort_is_reviewed_and_archived() -> None:
             }
             if manifest[source_id]["status"] in {"collected", "not_modified"}:
                 assert manifest[source_id]["sha256"]
+
+
+def test_final_pipeline_cohort_has_terminal_evidence_verdicts() -> None:
+    coverage = {
+        row["project_id"]: row
+        for row in read_csv(DATA / "project-coverage.csv")
+        if row["country"] == "IDN"
+    }
+    archived = {
+        row["source_id"]
+        for row in read_csv(DATA / "manifest.csv")
+        if row["status"] in {"collected", "not_modified"} and row["sha256"]
+    }
+    searches = {
+        row["search_id"]: row
+        for row in read_csv(DATA / "dry-searches.csv")
+        if row["country"] == "IDN"
+    }
+
+    assert len(coverage) == 74
+    assert not {
+        row["project_id"]
+        for row in coverage.values()
+        if row["review_status"] == "pending"
+    }
+    for project_id, verdict in FINAL_PIPELINE_VERDICTS.items():
+        row = coverage[project_id]
+        assert row["review_status"] == verdict, project_id
+        assert row["checked_at"] == "2026-09-12", project_id
+
+    for project_id, source_ids in FINAL_PIPELINE_SOURCES.items():
+        assert source_ids <= set(coverage[project_id]["source_ids"].split(";"))
+        assert source_ids <= archived
+
+    for project_id, search_id in FINAL_PIPELINE_DRY_SEARCHES.items():
+        assert search_id in searches, project_id
+        assert searches[search_id]["outcome"] == "central_only", project_id
