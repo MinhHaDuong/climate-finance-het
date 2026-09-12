@@ -53,7 +53,7 @@ which case the event is marked `secondary_only` during verification.
 | South Africa | 263/263 | Complete; register, reports, project pages and dry searches reconciled |
 | Indonesia | 74/74 | Complete; 66 collected, 6 central-only after explicit search, 2 archive-blocked |
 | Viet Nam | 24/24 July 2025 records | 3 named projects followed to direct MOIT and funder sources; 21 identities explicitly not published |
-| Senegal | Not started | Follows Viet Nam |
+| Senegal | 49 plan lines indexed | Central corpus complete: 38 received-project lines plus 11 quick wins; direct project-source review in progress |
 
 The Indonesia checkpoint includes 53 approved projects in the 30 November 2025
 portfolio snapshot (9 loan or equity projects and 44 grants), 20 finance-pipeline
@@ -96,6 +96,16 @@ share of a USD 350 million sustainable-finance facility, but neither page calls
 it a JETP project. The September 2026 IATI publisher profile for BII reports no
 valid activity rows, so it cannot supply the missing crosswalk. These are
 terminal authority verdicts and explicit dry searches, not project matches.
+
+The Senegal checkpoint starts from the 2023 political declaration and the
+354-page 2025 investment plan, not from an OECD cut-off. Annex 2 contributes
+38 numbered projects received for evaluation, while the main plan separately
+identifies eleven quick wins. Neither cohort is treated as approved finance or
+physical implementation. The main-plan statement that 34 projects were
+collected and the annex's 38 numbered submissions remain two dated claims, not
+one silently repaired total. The plan itself also names quick win 11 as 2,000
+hybridised boreholes on pages 33 and 354 but as 1,000 solarised boreholes on
+page 78; the ledger retains that internal conflict for later adjudication.
 
 ## Counting rules
 
