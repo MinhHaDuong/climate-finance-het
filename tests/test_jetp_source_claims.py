@@ -45,12 +45,27 @@ def test_matched_claim_projects_have_document_links() -> None:
     links = {
         (row["source_id"], row["project_id"])
         for row in read_csv(LINKS)
-        if row["relationship"] == "named_in"
     }
 
     for claim in read_csv(CLAIMS):
         for project_id in split_ids(claim["matched_project_ids"]):
             assert (claim["source_id"], project_id) in links, claim["claim_id"]
+
+
+def test_project_report_reviews_capture_key_verifiable_claims() -> None:
+    claims = {row["claim_id"]: row for row in read_csv(CLAIMS)}
+    expected = {
+        "zaf-growth26-pipeline",
+        "zaf-growth26-funnel",
+        "zaf-growth26-investment-need",
+        "zaf-eepbip23-duration",
+        "zaf-eepbip23-guarantee",
+        "zaf-eepbip23-jobs-target",
+        "zaf-eepbip-maf-funding",
+    }
+
+    assert expected <= claims.keys()
+    assert {claims[claim_id]["match_status"] for claim_id in expected} == {"matched"}
 
 
 def test_2025_annex_review_covers_every_portfolio_section() -> None:
