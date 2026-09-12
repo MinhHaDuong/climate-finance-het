@@ -82,3 +82,28 @@ def test_indonesia_2025_approved_portfolio_is_project_level() -> None:
         "idn-grant-jetp-etp",
         "idn-grant-ietf",
     } <= {row["project_id"] for row in projects}
+
+
+def test_indonesia_temporal_totals_are_preserved_not_overwritten() -> None:
+    claims = {
+        row["claim_id"]: row
+        for row in read_csv(DATA / "source-claims.csv")
+        if row["country"] == "IDN"
+    }
+    searches = {
+        row["search_id"]: row
+        for row in read_csv(DATA / "dry-searches.csv")
+        if row["country"] == "IDN"
+    }
+
+    assert {
+        "idn-cmea-mar25-approved-aggregate",
+        "idn-progress25-approved-aggregate",
+        "idn-progress25-approved-grants",
+        "idn-progress25-finance-in-process",
+    } <= claims.keys()
+    assert {row["match_status"] for row in claims.values()} == {"context_only"}
+    assert "54" in claims["idn-cmea-mar25-approved-aggregate"]["claim_summary"]
+    assert "53" in claims["idn-progress25-approved-aggregate"]["claim_summary"]
+    assert "idn-search-official-portfolio-20260912" in searches
+    assert searches["idn-search-official-portfolio-20260912"]["outcome"] == "blocked"
