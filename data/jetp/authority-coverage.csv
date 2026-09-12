@@ -1,0 +1,22 @@
+country,authority_id,authority,authority_category,verdict,source_ids,checked_at,notes
+ZAF,zaf-presidency,The Presidency of South Africa,national_government,collected,zaf-jet-implementation-plan-2023-2027;zaf-jet-pmu-resource-hub,2026-09-12,National governance and implementation corpus collected
+ZAF,zaf-pcc,Presidential Climate Commission,national_government,collected,zaf-pcc-jet-ip;zaf-jet-ip-2023-2027,2026-09-12,Direct PCC landing page and national investment plan collected
+ZAF,zaf-jet-pmu,JET Project Management Unit,jetp_secretariat,collected,zaf-jet-pmu-resource-hub;zaf-jet-investment-register-q1-2026,2026-09-12,Resource hub reports registers news and project collection harvested
+ZAF,zaf-ipg,International Partners Group,ipg,collected,zaf-eu-jetp-country-page;zaf-jet-implementation-plan-2023-2027,2026-09-12,EU overview and national implementation plan collected
+ZAF,zaf-france-afd,France and AFD,bilateral_funder,collected,zaf-afd-jet-policy-loan-2024;zaf-jet-investment-register-q1-2026,2026-09-12,Direct AFD page plus national operation register
+ZAF,zaf-germany-kfw,Germany and KfW,bilateral_funder,collected,zaf-kfw-jetp-project-profile;zaf-jet-investment-register-q1-2026,2026-09-12,Direct KfW profile plus national operation register
+ZAF,zaf-uk,United Kingdom and FCDO,bilateral_funder,collected,zaf-fcdo-jetp-programme-301523;zaf-jet-investment-register-q1-2026,2026-09-12,Direct DevTracker programme plus national operation register
+ZAF,zaf-eu-eib,European Union and European Investment Bank,multilateral_funder,collected,zaf-eu-jetp-country-page;zaf-eib-dbsa-renewables-2024,2026-09-12,Direct EU and EIB records collected
+ZAF,zaf-us,United States,bilateral_funder,collected,zaf-jet-us-withdrawal-2025;zaf-jet-grants-register-2024-q3,2026-09-12,Historical commitments retained separately from the 2025 withdrawal
+ZAF,zaf-netherlands,Government of the Netherlands,bilateral_funder,collected,zaf-eu-jetp-country-page;zaf-jet-investment-register-q1-2026,2026-09-12,Membership and operations evidenced by official EU and national sources
+ZAF,zaf-denmark,Government of Denmark,bilateral_funder,collected,zaf-eu-jetp-country-page;zaf-jet-investment-register-q1-2026,2026-09-12,Membership and operations evidenced by official EU and national sources
+ZAF,zaf-spain,Government of Spain,bilateral_funder,collected,zaf-jet-grants-register-2025-q1;zaf-jet-investment-register-q1-2026,2026-09-12,Operations evidenced by versioned official national registers
+ZAF,zaf-switzerland,Government of Switzerland,bilateral_funder,collected,zaf-jet-grants-register-2025-q1;zaf-jet-investment-register-q1-2026,2026-09-12,Operations evidenced by versioned official national registers
+ZAF,zaf-canada,Government of Canada,bilateral_funder,collected,zaf-jet-grants-register-2024-q3;zaf-jet-investment-register-q1-2026,2026-09-12,Operations evidenced by versioned official national registers
+ZAF,zaf-cif,Climate Investment Funds,multilateral_funder,collected,zaf-jet-ip-2023-2027;zaf-jet-implementation-plan-2023-2027,2026-09-12,Programme evidence collected nationally; direct CIF route is separately logged as blocked
+ZAF,zaf-world-bank,World Bank,multilateral_funder,collected,zaf-world-bank-eskom-jet-p177398;zaf-jet-investment-register-q1-2026,2026-09-12,Direct project record plus national register
+ZAF,zaf-afdb,African Development Bank,multilateral_funder,collected,zaf-afdb-jet-funding-platform;zaf-jet-investment-register-q1-2026,2026-09-12,Direct project record plus national register
+ZAF,zaf-dbsa,Development Bank of Southern Africa,national_government,collected,zaf-eib-dbsa-renewables-2024;zaf-dbsa-ntcsa-transmission,2026-09-12,Direct co-financing and transmission implementation records
+ZAF,zaf-idc,Industrial Development Corporation,national_government,collected,zaf-jet-investment-register-q1-2026,2026-09-12,Official national register evidence; direct portfolio-page search logged separately
+ZAF,zaf-eskom,Eskom,operator,collected,zaf-world-bank-eskom-jet-p177398;zaf-jet-investment-register-q1-2026,2026-09-12,Direct World Bank Eskom project record plus national register
+ZAF,zaf-ntcsa,National Transmission Company South Africa,operator,collected,zaf-ntcsa-transmission-plans;zaf-dbsa-ntcsa-transmission,2026-09-12,Direct operator planning portal and implementation-partner record
