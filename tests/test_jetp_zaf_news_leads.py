@@ -5,7 +5,7 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 
-from jetp.extract_zaf_news_leads import parse_secondary_news
+from jetp.build_zaf_news_leads import parse_secondary_news
 
 ROOT = Path(__file__).resolve().parents[1]
 
