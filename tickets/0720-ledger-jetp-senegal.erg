@@ -6,6 +6,7 @@ Blocked-by: 0716
 
 --- log ---
 2026-09-11T21:37Z Minh created
+2026-09-12T08:42Z Codex archived the political declaration, the 354-page investment plan and the 46-page annexes; extracted 38 received-project lines and 11 quick wins while preserving the plan's 34/38 count divergence and its conflicting QW11 descriptions
 
 --- body ---
 
@@ -27,7 +28,7 @@ qu'une source primaire ne le confirme.
 
 ## Exit criteria
 
-- [ ] Déclaration, Plan d'investissement et annexes collectés
+- [x] Déclaration, Plan d'investissement et annexes collectés
 - [ ] Chaque projet du plan est relié à ses pages bailleur/opérateur
 - [ ] Financement, état physique et dépendance hydrocarbures restent distincts
 - [ ] L'absence de publication annuelle est enregistrée comme donnée
