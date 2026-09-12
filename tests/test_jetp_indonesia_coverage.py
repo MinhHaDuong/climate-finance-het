@@ -245,27 +245,58 @@ def test_indonesia_temporal_totals_are_preserved_not_overwritten() -> None:
 
 
 def test_cirebon_finance_and_physical_retirement_are_distinct() -> None:
-    implementation = {
-        row["project_id"]: row
+    implementation = [
+        row
         for row in read_csv(DATA / "implementation-events.csv")
-        if row["country"] == "IDN"
-    }
+        if row["project_id"] == "idn-pipe-cirebon-1-retirement"
+    ]
     finance = [
         row
         for row in read_csv(DATA / "events.csv")
         if row["project_id"] == "idn-pipe-cirebon-1-retirement"
     ]
 
-    assert (
-        implementation["idn-pipe-cirebon-1-retirement"]["implementation_status"]
-        == "closure_proposed"
-    )
-    assert implementation["idn-pipe-cirebon-1-retirement"]["capacity_mw"] == "660"
+    assert {row["implementation_status"] for row in implementation} == {
+        "closure_proposed",
+        "suspended",
+    }
+    assert {row["capacity_mw"] for row in implementation} == {"660"}
     assert {row["financial_status"] for row in finance} <= {"announced", "mou"}
     assert not (
         {"approved", "signed", "disbursed"}
         & {row["financial_status"] for row in finance}
     )
+
+
+def test_pipeline_updates_preserve_source_specific_status_history() -> None:
+    rows = [
+        row
+        for row in read_csv(DATA / "implementation-events.csv")
+        if row["project_id"]
+        in {
+            "idn-pipe-solar-cell-manufacturing",
+            "idn-pipe-sutami-floating-solar",
+            "idn-pipe-legok-nangka-waste",
+        }
+    ]
+    statuses: dict[str, set[str]] = {}
+    for row in rows:
+        statuses.setdefault(row["project_id"], set()).add(
+            row["implementation_status"]
+        )
+
+    assert statuses["idn-pipe-solar-cell-manufacturing"] == {
+        "construction",
+        "operational",
+    }
+    assert statuses["idn-pipe-sutami-floating-solar"] == {
+        "procurement",
+        "construction",
+    }
+    assert statuses["idn-pipe-legok-nangka-waste"] == {
+        "proposed",
+        "construction",
+    }
 
 
 def test_cmea_selected_monitoring_list_is_fully_reconciled() -> None:
