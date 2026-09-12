@@ -1,0 +1,21 @@
+link_id,country,project_id,source_id,relationship,locator,review_status,notes
+zaf-link-pmu-nomzamo-fr005,ZAF,zaf-register-fr005,zaf-project-nomzamo-agri-village,project_page_component,project narrative,confirmed,"France-funded second phase; GreenCape, CORC and Peco Power match the register"
+zaf-link-pmu-nomzamo-dk004,ZAF,zaf-register-dk004,zaf-project-nomzamo-agri-village,project_page_component,project narrative,confirmed,Same Nomzamo alternative-service-delivery intervention
+zaf-link-report-nomzamo-fr005,ZAF,zaf-register-fr005,zaf-project-report-nomzamo-2025,project_report,whole report,confirmed,Impact report names France among the partners
+zaf-link-report-nomzamo-dk004,ZAF,zaf-register-dk004,zaf-project-report-nomzamo-2025,project_report,whole report,confirmed,Impact report names Denmark among the partners
+zaf-link-pmu-fr011,ZAF,zaf-register-fr011,zaf-project-just-transition-framework-france,project_page,project narrative,confirmed,"Implementer, purpose and December 2023 completion date match"
+zaf-link-pmu-fr010,ZAF,zaf-register-fr010,zaf-project-mining-ghost-towns-france,project_page,project narrative,confirmed,"Oneworld, IDC, purpose and December 2022 completion date match"
+zaf-link-pmu-fr009,ZAF,zaf-register-fr009,zaf-project-social-policies-france,project_page,project narrative,confirmed,"Peta Wolpe, Wendy Annecke, purpose and December 2022 completion date match"
+zaf-link-pmu-uk011,ZAF,zaf-register-uk011,zaf-project-lessons-best-practices-uk,project_page,project narrative,confirmed,"TIPS, purpose and November 2022 completion date match"
+zaf-link-pmu-uk006,ZAF,zaf-register-uk006,zaf-project-mpumalanga-pathways-uk,project_page,project narrative,confirmed,"CSIR, Mpumalanga pathways and March 2023 completion date match"
+zaf-link-pmu-uk003,ZAF,zaf-register-uk003,zaf-project-cape-town-grid-uk-pact,project_page,project narrative,confirmed,City of Cape Town grid-regulation skill-share matches
+zaf-link-pmu-uk005,ZAF,zaf-register-uk005,zaf-project-energy-one-stop-shop-uk-pact,project_page,project narrative,confirmed,Completed municipal Energy One Stop Shop skill-share predates the separate 2024 DTIC EOSS phase
+zaf-link-pmu-gr007,ZAF,zaf-register-gr007,zaf-project-just-sa-germany,project_page,project narrative,confirmed,"JUST SA title, implementing consortium and DFFE partner match"
+zaf-link-pmu-gr002,ZAF,zaf-register-gr002,zaf-project-sagen-germany,project_page_component,Capacities for the Energy Transition paragraph,confirmed,SAGEN umbrella page explicitly describes the completed CET component
+zaf-link-pmu-gr003,ZAF,zaf-register-gr003,zaf-project-sagen-germany,project_page_component,main programme narrative,confirmed,SAGEN IV scope and DMRE partnership match
+zaf-link-pmu-gr006,ZAF,zaf-register-gr006,zaf-project-sagen-germany,project_page_component,Capacities for the Energy Transition paragraph,confirmed,SAGEN umbrella page describes the successor CET II capacity component
+zaf-link-pmu-gr004,ZAF,zaf-register-gr004,zaf-project-h2sa-ptx-hub-germany,project_page_component,PtX Hub paragraph,confirmed,International PtX Hub South Africa component
+zaf-link-pmu-gr012,ZAF,zaf-register-gr012,zaf-project-h2sa-ptx-hub-germany,project_page_component,H2.SA paragraph,confirmed,H2.SA component
+zaf-link-pmu-gr015,ZAF,zaf-register-gr015,zaf-project-cpd4e-germany,project_page_component,main programme narrative,confirmed,CPD4E title and DHET partnership match
+zaf-link-pmu-sw004,ZAF,zaf-register-sw004,zaf-project-cpd4e-germany,project_page_component,co-funding sentence,confirmed,Page explicitly names SECO co-funding
+zaf-link-pmu-eu012,ZAF,zaf-register-eu012,zaf-project-cpd4e-germany,possible_match,co-funding sentence,provisional,Page names EU co-funding from March 2025 but the register groups a broader skills programme
