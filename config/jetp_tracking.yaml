@@ -66,5 +66,6 @@ storage:
   documents: data/jetp/documents
   projects: data/jetp/projects.csv
   events: data/jetp/events.csv
+  news_leads: data/jetp/news-leads.csv
   dry_searches: data/jetp/dry-searches.csv
   decisions: data/jetp/decisions.md
