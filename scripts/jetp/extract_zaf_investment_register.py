@@ -180,6 +180,19 @@ def build_event_records(
         unique_id = _text(row["Unique ID"])
         signed_date = _date(row.get("Date of Financing Agreement Signed*"))
         amount_usd = _text(row.get("Total US$"))
+        amount_original = _text(row.get("Amount: Pledged"))
+        reported_currency = _text(row.get("Currency: Pledged"))
+        currency_original = reported_currency if amount_original else ""
+        notes = _notes(
+            row,
+            "Status",
+            "Disbursement Channel",
+            "Co-Financing: Name",
+            "Institutional / South African Partner",
+        )
+        if reported_currency and not amount_original:
+            notes += f"; reported currency without amount={reported_currency}"
+        notes += "; project implementation status is not treated as disbursement evidence"
         record = {
             "event_id": f"{_project_id(unique_id)}-{reported_date}",
             "project_id": _project_id(unique_id),
@@ -191,8 +204,8 @@ def build_event_records(
             or _text(row.get("Funder/Source")),
             "window": _text(row.get("Portfolios")),
             "instrument": _text(row.get("Funding Instrument")),
-            "amount_original": _text(row.get("Amount: Pledged")),
-            "currency_original": _text(row.get("Currency: Pledged")),
+            "amount_original": amount_original,
+            "currency_original": currency_original,
             "amount_usd": amount_usd,
             "conversion_method": (
                 f"JET PMU reported USD equivalent at {reported_date}"
@@ -203,14 +216,7 @@ def build_event_records(
             "document_sha256": document_sha256,
             "locator": f"Overall - Data, Unique ID {unique_id}",
             "verification_status": "official_register",
-            "notes": _notes(
-                row,
-                "Status",
-                "Disbursement Channel",
-                "Co-Financing: Name",
-                "Institutional / South African Partner",
-            )
-            + "; project implementation status is not treated as disbursement evidence",
+            "notes": notes.lstrip("; "),
         }
         validate_event_record(record)
         records.append(record)
