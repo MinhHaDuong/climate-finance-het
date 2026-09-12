@@ -15,6 +15,8 @@ the two roles separate and makes every aggregate reversible.
 | Project identities | `data/jetp/projects.csv` | git | Stable projects and aliases, independent of individual financing events |
 | Project follow-up | `data/jetp/project-coverage.csv` | git | One direct-source review verdict per canonical project, preserving pending and dry searches |
 | Indonesia grant observations | `data/jetp/idn-portfolio-observations.csv` | git | One official-portal row per financing modality, reconciled without overwriting the 2025 report value |
+| Viet Nam pilot manifest | `data/jetp/vnm-pilot-manifest.csv` | git | Lossless staging of all 66 pilot collection attempts before canonical source reconciliation |
+| Viet Nam pilot observations | `data/jetp/vnm-pilot-observations.csv` | git | All 46 pilot evidence rows joined to their verification verdicts; unresolved human ratifications remain blank |
 | Plan-project lines | `data/jetp/plan-projects.csv` | git | Every row in an official plan or pipeline, with explicit canonical reconciliation |
 | Financial events | `data/jetp/events.csv` | git | One dated event at one status layer, tied to an exact document and locator |
 | Implementation events | `data/jetp/implementation-events.csv` | git | Physical project delivery and closure states, kept separate from finance |
@@ -50,7 +52,7 @@ which case the event is marked `secondary_only` during verification.
 |---|---:|---|
 | South Africa | 263/263 | Complete; register, reports, project pages and dry searches reconciled |
 | Indonesia | 74/74 | Complete; 66 collected, 6 central-only after explicit search, 2 archive-blocked |
-| Viet Nam | Not started | Next country ticket |
+| Viet Nam | Migration 66/66 sources; 46/46 observations | Pilot preserved; official corpus and 24-project follow-up in progress |
 | Senegal | Not started | Follows Viet Nam |
 
 The Indonesia checkpoint includes 53 approved projects in the 30 November 2025
@@ -58,6 +60,13 @@ portfolio snapshot (9 loan or equity projects and 44 grants), 20 finance-pipelin
 entries including AICET, 1,579 plan rows, and all 14 CMEA monitoring entries.
 The earlier March 2025 total of 54 projects is preserved as a separate dated
 observation rather than overwritten.
+
+The Viet Nam staging tables preserve the pilot's 54 successful collections,
+8 blocked requests and 4 unlocated documents as distinct outcomes. They also
+encode the July 2025 count of 24 total projects separately from the 17 newly
+screened proposals; neither count is inferred from the other. Pilot verdicts
+do not constitute author ratification, so the original blank ratification field
+is retained pending explicit decisions.
 
 ## Counting rules
 
