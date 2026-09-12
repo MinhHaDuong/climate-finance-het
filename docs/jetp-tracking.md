@@ -49,6 +49,10 @@ which case the event is marked `secondary_only` during verification.
 - A plan-project line is also distinct: `plan_only` preserves a project listed
   in an investment plan without implying observed finance or implementation;
   `matched` records only a reviewed link to a canonical project identity.
+- `priority` and `top_priority` reproduce the source plan's ranking (including
+  coloured-cell coding); they do not imply finance or physical advancement.
+  Extractors number physical rows consecutively and retain any printed row-number
+  anomaly in the locator and notes, so no line is dropped or silently repaired.
 - `need`, `announced`, `mou`, `approved`, `signed` and `disbursed` are a
   chronology, not additive categories. Aggregates select one layer explicitly.
 - `proposed`, `preparation`, `procurement`, `construction`, `operational`, `suspended`,
