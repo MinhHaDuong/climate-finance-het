@@ -31,6 +31,11 @@ APPROVED_FINANCE_PROJECTS = {
 DIRECTLY_SOURCED_APPROVED_FINANCE_PROJECTS = APPROVED_FINANCE_PROJECTS - {
     "idn-fin-rbl-sreap"
 }
+DIRECT_PORTFOLIO_PIPELINE_SOURCES = {
+    "idn-pipe-green-corridors-sulawesi": "idn-portfolio-project-gecs",
+    "idn-pipe-nagajaya-micro-hydro": "idn-portfolio-project-nagajaya",
+    "idn-pipe-hululais-1-2": "idn-portfolio-project-hululais",
+}
 
 
 def read_csv(path: Path) -> list[dict[str, str]]:
@@ -145,7 +150,9 @@ def test_direct_approved_finance_sources_are_adjudicated_and_summarized() -> Non
             if source_id in direct_sources
         }
         assert reviewed_sources, project_id
-        assert {(project_id, source_id) for source_id in reviewed_sources} <= linked_pairs
+        assert {
+            (project_id, source_id) for source_id in reviewed_sources
+        } <= linked_pairs
     assert DIRECTLY_SOURCED_APPROVED_FINANCE_PROJECTS <= claimed_projects
 
 
@@ -181,3 +188,31 @@ def test_indonesian_grants_link_the_direct_official_portfolio() -> None:
         ]
         assert direct, project_id
         assert {source["project_id"] for source in direct} == {project_id}
+
+
+def test_current_portfolio_pipeline_profiles_are_reviewed_and_archived() -> None:
+    coverage = {
+        row["project_id"]: row
+        for row in read_csv(DATA / "project-coverage.csv")
+        if row["country"] == "IDN"
+    }
+    sources = {
+        row["source_id"]: row
+        for row in read_csv(DATA / "sources.csv")
+        if row["country"] == "IDN"
+    }
+    archived = {
+        row["source_id"]
+        for row in read_csv(DATA / "manifest.csv")
+        if row["status"] in {"collected", "not_modified"} and row["sha256"]
+    }
+
+    for project_id, source_id in DIRECT_PORTFOLIO_PIPELINE_SOURCES.items():
+        row = coverage[project_id]
+        assert row["review_status"] == "collected", project_id
+        assert source_id in row["source_ids"].split(";"), project_id
+        assert sources[source_id]["project_id"] == project_id
+        assert sources[source_id]["url"].startswith(
+            "https://portfolio.jetp.id/project/"
+        )
+        assert source_id in archived
