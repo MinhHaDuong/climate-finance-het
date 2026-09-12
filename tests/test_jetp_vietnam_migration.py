@@ -5,7 +5,7 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 
-from jetp.migrate_vnm_pilot import migrate_pilot
+from jetp.build_vnm_pilot_migration import migrate_pilot
 
 ROOT = Path(__file__).resolve().parents[1]
 PILOT = ROOT / "conception" / "jetp" / "papier-3-ledger" / "pilote-ledger-vn"
