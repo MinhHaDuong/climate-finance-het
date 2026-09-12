@@ -56,10 +56,19 @@ def test_indonesia_2025_report_series_is_archived() -> None:
 
 
 def test_indonesia_2025_approved_portfolio_is_project_level() -> None:
-    projects = [
+    all_projects = [
         row for row in read_csv(DATA / "projects.csv") if row["country"] == "IDN"
     ]
-    events = [row for row in read_csv(DATA / "events.csv") if row["country"] == "IDN"]
+    projects = [
+        row
+        for row in all_projects
+        if row["project_id"].startswith(("idn-fin-", "idn-grant-"))
+    ]
+    events = [
+        row
+        for row in read_csv(DATA / "events.csv")
+        if row["country"] == "IDN" and row["financial_status"] == "approved"
+    ]
     progress_projects = {
         row["project_id"]
         for row in events
@@ -82,6 +91,29 @@ def test_indonesia_2025_approved_portfolio_is_project_level() -> None:
         "idn-grant-jetp-etp",
         "idn-grant-ietf",
     } <= {row["project_id"] for row in projects}
+
+
+def test_indonesia_2025_finance_pipeline_is_project_level() -> None:
+    projects = [
+        row
+        for row in read_csv(DATA / "projects.csv")
+        if row["country"] == "IDN" and row["project_id"].startswith("idn-pipe-")
+    ]
+    events = [
+        row
+        for row in read_csv(DATA / "events.csv")
+        if row["country"] == "IDN"
+        and row["source_id"] == "idn-jetp-progress-report-2025"
+        and row["financial_status"] != "approved"
+    ]
+
+    assert len(projects) == 19
+    assert len(events) == 20
+    assert len({row["project_id"] for row in events}) == 20
+    assert {row["financial_status"] for row in events} == {"announced", "mou"}
+    assert {row["project_id"] for row in projects} | {"idn-fin-rbl-aicet"} == {
+        row["project_id"] for row in events
+    }
 
 
 def test_indonesia_temporal_totals_are_preserved_not_overwritten() -> None:
@@ -107,3 +139,25 @@ def test_indonesia_temporal_totals_are_preserved_not_overwritten() -> None:
     assert "53" in claims["idn-progress25-approved-aggregate"]["claim_summary"]
     assert "idn-search-official-portfolio-20260912" in searches
     assert searches["idn-search-official-portfolio-20260912"]["outcome"] == "blocked"
+
+
+def test_cirebon_finance_and_physical_retirement_are_distinct() -> None:
+    implementation = {
+        row["project_id"]: row
+        for row in read_csv(DATA / "implementation-events.csv")
+        if row["country"] == "IDN"
+    }
+    finance = [
+        row
+        for row in read_csv(DATA / "events.csv")
+        if row["project_id"] == "idn-pipe-cirebon-1-retirement"
+    ]
+
+    assert implementation["idn-pipe-cirebon-1-retirement"][
+        "implementation_status"
+    ] == "closure_proposed"
+    assert implementation["idn-pipe-cirebon-1-retirement"]["capacity_mw"] == "660"
+    assert {row["financial_status"] for row in finance} <= {"announced", "mou"}
+    assert not ({"approved", "signed", "disbursed"} & {
+        row["financial_status"] for row in finance
+    })
