@@ -93,3 +93,18 @@ def test_register_rows_become_separate_projects_and_financial_events() -> None:
     assert events[1]["financial_status"] == "approved"
     assert events[1]["event_date"] == "2026-03-30"
     assert events[1]["locator"] == "Overall - Data, Unique ID EU002"
+
+
+def test_currency_without_amount_is_preserved_as_a_source_anomaly() -> None:
+    rows = parse_register_html(REGISTER_HTML)
+    rows[1]["Amount: Pledged"] = None
+    events = build_event_records(
+        rows,
+        source_id="zaf-jet-investment-register-q1-2026",
+        document_sha256="abc123",
+        reported_date="2026-03-30",
+    )
+
+    assert events[1]["amount_original"] == ""
+    assert events[1]["currency_original"] == ""
+    assert "reported currency without amount=EUR" in events[1]["notes"]
