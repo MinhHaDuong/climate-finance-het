@@ -128,13 +128,16 @@ def test_indonesia_temporal_totals_are_preserved_not_overwritten() -> None:
         if row["country"] == "IDN"
     }
 
-    assert {
+    aggregate_ids = {
         "idn-cmea-mar25-approved-aggregate",
         "idn-progress25-approved-aggregate",
         "idn-progress25-approved-grants",
         "idn-progress25-finance-in-process",
-    } <= claims.keys()
-    assert {row["match_status"] for row in claims.values()} == {"context_only"}
+    }
+    assert aggregate_ids <= claims.keys()
+    assert {claims[claim_id]["match_status"] for claim_id in aggregate_ids} == {
+        "context_only"
+    }
     assert "54" in claims["idn-cmea-mar25-approved-aggregate"]["claim_summary"]
     assert "53" in claims["idn-progress25-approved-aggregate"]["claim_summary"]
     assert "idn-search-official-portfolio-20260912" in searches
@@ -161,3 +164,40 @@ def test_cirebon_finance_and_physical_retirement_are_distinct() -> None:
     assert not ({"approved", "signed", "disbursed"} & {
         row["financial_status"] for row in finance
     })
+
+
+def test_cmea_selected_monitoring_list_is_fully_reconciled() -> None:
+    links = [
+        row
+        for row in read_csv(DATA / "project-source-links.csv")
+        if row["country"] == "IDN"
+        and row["source_id"] == "idn-jetp-progress-report-2025"
+        and row["relationship"] == "cmea_selected_monitoring"
+    ]
+    claims = [
+        row
+        for row in read_csv(DATA / "source-claims.csv")
+        if row["country"] == "IDN"
+        and row["source_id"] == "idn-jetp-progress-report-2025"
+        and row["section"] == "Appendix 2"
+    ]
+
+    assert len(links) == 14
+    assert len(claims) == 14
+    assert {row["match_status"] for row in claims} == {"matched"}
+    assert {
+        "idn-pipe-green-corridors-sulawesi",
+        "idn-pipe-dediesel-east-phase1",
+        "idn-pipe-dediesel-west-phase1",
+        "idn-pipe-singkarak-floating-solar",
+        "idn-fin-saguling-floating-solar",
+        "idn-pipe-hijaunesia-2",
+        "idn-monitor-gde-pipeline-2025",
+        "idn-pipe-sutami-floating-solar",
+        "idn-pipe-cirebon-1-retirement",
+        "idn-pipe-hululais-1-2",
+        "idn-pipe-solar-cell-manufacturing",
+        "idn-pipe-rsud-energy-efficiency",
+        "idn-pipe-rscm-energy-efficiency",
+        "idn-monitor-cihaur-talaga-micro-hydro",
+    } == {row["project_id"] for row in links}
