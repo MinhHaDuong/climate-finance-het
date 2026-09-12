@@ -89,6 +89,10 @@ def test_2025_annex_review_covers_every_portfolio_section() -> None:
         row["claim_id"] for row in rows if row["match_status"] == "not_in_register"
     }
     assert unresolved == {
-        "zaf-annex25-uk-nev",
         "zaf-annex25-eu-cso-grants",
     }
+    assert {
+        row["matched_project_ids"]
+        for row in rows
+        if row["claim_id"] == "zaf-annex25-uk-nev"
+    } == {"zaf-uk-nev-support"}
