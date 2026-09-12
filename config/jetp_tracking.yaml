@@ -61,6 +61,11 @@ scopes:
   - jetp_strict
   - ipg_energy_extended
 
+# Official plan ranking only; this is neither finance nor implementation status.
+priority_tiers:
+  - priority
+  - top_priority
+
 collection_statuses:
   - collected
   - not_modified
