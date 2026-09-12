@@ -12,7 +12,7 @@ from pathlib import Path
 import pytest
 import requests
 from jetp.corpus_harvest_documents import harvest_registry, load_registry
-from jetp.schemas import validate_event_record
+from jetp.schemas import validate_event_record, validate_implementation_event_record
 
 REGISTRY_FIELDS = [
     "source_id",
@@ -126,6 +126,37 @@ def test_event_schema_rejects_unknown_financial_status():
 
     with pytest.raises(ValueError, match="financial_status"):
         validate_event_record(event)
+
+
+def test_implementation_event_schema_keeps_physical_status_separate():
+    event = {
+        "country": "IDN",
+        "implementation_status": "retired",
+        "capacity_mw": "660",
+    }
+    validate_implementation_event_record(event)
+
+    event["implementation_status"] = "money_committed"
+    with pytest.raises(ValueError, match="implementation_status"):
+        validate_implementation_event_record(event)
+
+
+def test_canonical_implementation_events_reference_known_objects():
+    data = Path(__file__).parents[1] / "data" / "jetp"
+    with (data / "implementation-events.csv").open(
+        newline="", encoding="utf-8"
+    ) as stream:
+        events = list(csv.DictReader(stream))
+    with (data / "projects.csv").open(newline="", encoding="utf-8") as stream:
+        project_ids = {row["project_id"] for row in csv.DictReader(stream)}
+    with (data / "sources.csv").open(newline="", encoding="utf-8") as stream:
+        source_ids = {row["source_id"] for row in csv.DictReader(stream)}
+
+    assert len({row["implementation_event_id"] for row in events}) == len(events)
+    assert {row["project_id"] for row in events} <= project_ids
+    assert {row["source_id"] for row in events} <= source_ids
+    for event in events:
+        validate_implementation_event_record(event)
 
 
 def test_harvest_versions_changed_content_and_uses_conditional_get(tmp_path):
