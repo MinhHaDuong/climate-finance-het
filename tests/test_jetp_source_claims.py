@@ -70,4 +70,10 @@ def test_2025_annex_review_covers_every_portfolio_section() -> None:
         "Road to Rail",
         "Energy Efficiency",
     } <= {row["section"] for row in rows}
-    assert any(row["match_status"] == "not_in_register" for row in rows)
+    unresolved = {
+        row["claim_id"] for row in rows if row["match_status"] == "not_in_register"
+    }
+    assert unresolved == {
+        "zaf-annex25-uk-nev",
+        "zaf-annex25-eu-cso-grants",
+    }
