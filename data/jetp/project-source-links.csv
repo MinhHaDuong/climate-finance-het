@@ -19,3 +19,47 @@ zaf-link-pmu-gr012,ZAF,zaf-register-gr012,zaf-project-h2sa-ptx-hub-germany,proje
 zaf-link-pmu-gr015,ZAF,zaf-register-gr015,zaf-project-cpd4e-germany,project_page_component,main programme narrative,confirmed,CPD4E title and DHET partnership match
 zaf-link-pmu-sw004,ZAF,zaf-register-sw004,zaf-project-cpd4e-germany,project_page_component,co-funding sentence,confirmed,Page explicitly names SECO co-funding
 zaf-link-pmu-eu012,ZAF,zaf-register-eu012,zaf-project-cpd4e-germany,possible_match,co-funding sentence,provisional,Page names EU co-funding from March 2025 but the register groups a broader skills programme
+zaf-link-annex25-gr039,ZAF,zaf-register-gr039,zaf-jetp-leaders-2025-annex,named_in,Electricity - DPO III,confirmed,Third policy-based loan
+zaf-link-annex25-gr025,ZAF,zaf-register-gr025,zaf-jetp-leaders-2025-annex,named_in,Electricity - DBSA facility,confirmed,EUR 200m reform facility
+zaf-link-annex25-gr026,ZAF,zaf-register-gr026,zaf-jetp-leaders-2025-annex,named_in,Electricity - Cape Town loan,confirmed,EUR 150m grid loan
+zaf-link-annex25-gr026b,ZAF,zaf-register-gr026b,zaf-jetp-leaders-2025-annex,named_in,Electricity - Cape Town grant,confirmed,EUR 0.5m accompanying measure
+zaf-link-annex25-uk056,ZAF,zaf-register-uk056,zaf-jetp-leaders-2025-annex,named_in,Electricity - Etana,confirmed,USD 100m guarantee financing
+zaf-link-annex25-uk065,ZAF,zaf-register-uk065,zaf-jetp-leaders-2025-annex,named_in,Electricity - Red Sands,confirmed,153 MW battery facility
+zaf-link-annex25-dk001,ZAF,zaf-register-dk001,zaf-jetp-leaders-2025-annex,named_in,Electricity - Danish capacity programme,confirmed,Transmission component
+zaf-link-annex25-dk002,ZAF,zaf-register-dk002,zaf-jetp-leaders-2025-annex,named_in,Electricity - Danish capacity programme,confirmed,Distribution component
+zaf-link-annex25-uk059,ZAF,zaf-register-uk059,zaf-jetp-leaders-2025-annex,named_in,Electricity - Energy Council,confirmed,Wholesale-market reform support
+zaf-link-annex25-gr003,ZAF,zaf-register-gr003,zaf-jetp-leaders-2025-annex,named_in,Electricity and Municipalities - GIZ,provisional,SAGEN umbrella for named activities
+zaf-link-annex25-eu011,ZAF,zaf-register-eu011,zaf-jetp-leaders-2025-annex,named_in,Electricity - EU TA facility,confirmed,Planned 2026 facility
+zaf-link-annex25-gr035,ZAF,zaf-register-gr035,zaf-jetp-leaders-2025-annex,named_in,Electricity - German TA,confirmed,EUR 11m SAGEN V
+zaf-link-annex25-gr030,ZAF,zaf-register-gr030,zaf-jetp-leaders-2025-annex,named_in,Green hydrogen - KfW IDC,confirmed,EUR 17m memorandum
+zaf-link-annex25-eu021,ZAF,zaf-register-eu021,zaf-jetp-leaders-2025-annex,named_in,Green hydrogen - EU technical support,provisional,Register amount does not fully reconcile
+zaf-link-annex25-gr034,ZAF,zaf-register-gr034,zaf-jetp-leaders-2025-annex,named_in,Green hydrogen - German technical support,confirmed,EUR 6m value-chain support
+zaf-link-annex25-eu020,ZAF,zaf-register-eu020,zaf-jetp-leaders-2025-annex,named_in,Green hydrogen - Hive and CI3,provisional,Fund-level row without Hive subproject
+zaf-link-annex25-nl004,ZAF,zaf-register-nl004,zaf-jetp-leaders-2025-annex,named_in,Green hydrogen - Dutch fund support,provisional,Fund-level row without Hive subproject
+zaf-link-annex25-gr036,ZAF,zaf-register-gr036,zaf-jetp-leaders-2025-annex,named_in,New energy vehicles - German TA,confirmed,EUR 5m zero-emission transport support
+zaf-link-annex25-gr029,ZAF,zaf-register-gr029,zaf-jetp-leaders-2025-annex,named_in,Municipalities - Metro Trading Services,provisional,Only German component is distinct in register
+zaf-link-annex25-uk068,ZAF,zaf-register-uk068,zaf-jetp-leaders-2025-annex,named_in,Municipalities - embedded generation,confirmed,Six-municipality preparation support
+zaf-link-annex25-nl012,ZAF,zaf-register-nl012,zaf-jetp-leaders-2025-annex,named_in,Municipalities - Johannesburg waste,confirmed,EUR 27.5m project
+zaf-link-annex25-uk061,ZAF,zaf-register-uk061,zaf-jetp-leaders-2025-annex,named_in,Just - agribusiness facility,provisional,Programme matches but amounts differ
+zaf-link-annex25-gr007,ZAF,zaf-register-gr007,zaf-jetp-leaders-2025-annex,named_in,Just - German SMME support,provisional,JUST SA umbrella for named activities
+zaf-link-annex25-uk008,ZAF,zaf-register-uk008,zaf-jetp-leaders-2025-annex,named_in,Just - Climate Finance Accelerator,provisional,Programme row includes Wetility but not Carbon Charge
+zaf-link-annex25-uk072,ZAF,zaf-register-uk072,zaf-jetp-leaders-2025-annex,named_in,Just - Wetility,provisional,Fund-investment row includes Wetility
+zaf-link-annex25-gr033,ZAF,zaf-register-gr033,zaf-jetp-leaders-2025-annex,named_in,Just - societal participation,confirmed,EUR 4m project
+zaf-link-annex25-nl001-5,ZAF,zaf-register-nl001-5,zaf-jetp-leaders-2025-annex,named_in,Just - Grootvlei,confirmed,Training impact cluster
+zaf-link-annex25-nl001-6,ZAF,zaf-register-nl001-6,zaf-jetp-leaders-2025-annex,named_in,Just - Grootvlei,confirmed,Greenhouse subsidy
+zaf-link-annex25-nl001-7,ZAF,zaf-register-nl001-7,zaf-jetp-leaders-2025-annex,named_in,Just - Grootvlei,confirmed,Demonstration facility construction
+zaf-link-annex25-nl001-8,ZAF,zaf-register-nl001-8,zaf-jetp-leaders-2025-annex,named_in,Just - Grootvlei,confirmed,Second construction phase
+zaf-link-annex25-dk012,ZAF,zaf-register-dk012,zaf-jetp-leaders-2025-annex,named_in,Just - Transforming Youth Skills,confirmed,Teachers and ten Mpumalanga schools
+zaf-link-annex25-eu012,ZAF,zaf-register-eu012,zaf-jetp-leaders-2025-annex,named_in,Skills - multidonor portfolio,confirmed,EU skills component
+zaf-link-annex25-gr015,ZAF,zaf-register-gr015,zaf-jetp-leaders-2025-annex,named_in,Skills - multidonor portfolio,confirmed,German CPD4E component
+zaf-link-annex25-sw004,ZAF,zaf-register-sw004,zaf-jetp-leaders-2025-annex,named_in,Skills - multidonor portfolio,confirmed,Swiss CPD4E component
+zaf-link-annex25-uk074,ZAF,zaf-register-uk074,zaf-jetp-leaders-2025-annex,named_in,Skills - PowerUp and SAREM,confirmed,Named platform and masterplan support
+zaf-link-annex25-eu019,ZAF,zaf-register-eu019,zaf-jetp-leaders-2025-annex,named_in,Road to Rail - Transnet,provisional,Grant component recorded but EIB loan missing
+zaf-link-annex25-dk013,ZAF,zaf-register-dk013,zaf-jetp-leaders-2025-annex,named_in,Energy Efficiency - public buildings,confirmed,Johannesburg-Copenhagen collaboration
+zaf-link-annex25-uk030,ZAF,zaf-register-uk030,zaf-jetp-leaders-2025-annex,named_in,Energy Efficiency - MAGC,confirmed,Programme tranche
+zaf-link-annex25-uk048,ZAF,zaf-register-uk048,zaf-jetp-leaders-2025-annex,named_in,Energy Efficiency - MAGC,confirmed,Programme tranche
+zaf-link-annex25-uk049,ZAF,zaf-register-uk049,zaf-jetp-leaders-2025-annex,named_in,Energy Efficiency - MAGC,confirmed,Programme tranche
+zaf-link-annex25-uk063,ZAF,zaf-register-uk063,zaf-jetp-leaders-2025-annex,named_in,Energy Efficiency - MAGC,confirmed,Programme tranche
+zaf-link-annex25-uk064,ZAF,zaf-register-uk064,zaf-jetp-leaders-2025-annex,named_in,Energy Efficiency - MAGC,confirmed,Programme tranche
+zaf-link-annex25-uk069,ZAF,zaf-register-uk069,zaf-jetp-leaders-2025-annex,named_in,Energy Efficiency - MAGC,confirmed,Standard Bank component
+zaf-link-annex25-uk070,ZAF,zaf-register-uk070,zaf-jetp-leaders-2025-annex,named_in,Energy Efficiency - MAGC,confirmed,Nedbank component
