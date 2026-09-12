@@ -52,7 +52,7 @@ which case the event is marked `secondary_only` during verification.
 |---|---:|---|
 | South Africa | 263/263 | Complete; register, reports, project pages and dry searches reconciled |
 | Indonesia | 74/74 | Complete; 66 collected, 6 central-only after explicit search, 2 archive-blocked |
-| Viet Nam | Migration 66/66 sources; 46/46 observations | Pilot preserved; official corpus and 24-project follow-up in progress |
+| Viet Nam | Migration 66/66 sources; 46/46 observations | RMP, decisions 1009/458 and newsletters 1-13 archived; 24-project follow-up next |
 | Senegal | Not started | Follows Viet Nam |
 
 The Indonesia checkpoint includes 53 approved projects in the 30 November 2025
@@ -67,6 +67,15 @@ encode the July 2025 count of 24 total projects separately from the 17 newly
 screened proposals; neither count is inferred from the other. Pilot verdicts
 do not constitute author ratification, so the original blank ratification field
 is retained pending explicit decisions.
+
+The official Viet Nam corpus adds the 248-page Vietnamese RMP, the signed
+decisions 1009/QD-TTg and 458/QD-TTg, and all thirteen MOIT JETP newsletters
+published for March 2025 through March 2026. The date of Decision 458 is coded
+as 20 March 2026 from the signed text and current MOIT portal, correcting the
+pilot note that reported 23 March. Decision 1929/QD-BCT is confirmed by dated
+official-operator news, but its signed full text was not exposed by the JETP
+document index, portal search or ministry legal register at this checkpoint;
+that gap remains a dry-search observation rather than an inferred document.
 
 ## Counting rules
 
