@@ -5,7 +5,7 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 
-from jetp.extract_idn_portfolio_pages import parse_portfolio_html
+from jetp.build_idn_portfolio_pages import parse_portfolio_html
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data" / "jetp"
