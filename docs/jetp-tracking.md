@@ -87,6 +87,16 @@ count. Those 21 rows are therefore explicit count slots with
 current MOIT index still exposed only the three named profiles when checked on
 12 September 2026.
 
+ADB and British International Investment are covered without forcing their
+climate-finance leads into the strict 24. ADB project pages 55327-001 and
+58382-001 were located but remained blocked to automated collection; the
+accessible ADB VinFast announcement predates the JETP and contains no strict
+portfolio attribution. BII and VPBank directly confirm BII's USD 50 million
+share of a USD 350 million sustainable-finance facility, but neither page calls
+it a JETP project. The September 2026 IATI publisher profile for BII reports no
+valid activity rows, so it cannot supply the missing crosswalk. These are
+terminal authority verdicts and explicit dry searches, not project matches.
+
 ## Counting rules
 
 - A project and a financial event are different objects. A project may have
