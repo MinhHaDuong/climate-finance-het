@@ -13,6 +13,7 @@ the two roles separate and makes every aggregate reversible.
 | Collection history | `data/jetp/manifest.csv` | git | Append-only observation for every retrieval attempt, including failure and `not_modified` |
 | Binary snapshots | `data/jetp/documents/` | DVC | Content-addressed immutable objects; one object may support several source rows |
 | Project identities | `data/jetp/projects.csv` | git | Stable projects and aliases, independent of individual financing events |
+| Plan-project lines | `data/jetp/plan-projects.csv` | git | Every row in an official plan or pipeline, with explicit canonical reconciliation |
 | Financial events | `data/jetp/events.csv` | git | One dated event at one status layer, tied to an exact document and locator |
 | Implementation events | `data/jetp/implementation-events.csv` | git | Physical project delivery and closure states, kept separate from finance |
 | Dry searches | `data/jetp/dry-searches.csv` | git | Expected but absent, blocked or unpublished material and the route checked |
@@ -45,6 +46,9 @@ which case the event is marked `secondary_only` during verification.
 
 - A project and a financial event are different objects. A project may have
   many funders, instruments, dates and status layers.
+- A plan-project line is also distinct: `plan_only` preserves a project listed
+  in an investment plan without implying observed finance or implementation;
+  `matched` records only a reviewed link to a canonical project identity.
 - `need`, `announced`, `mou`, `approved`, `signed` and `disbursed` are a
   chronology, not additive categories. Aggregates select one layer explicitly.
 - `proposed`, `preparation`, `procurement`, `construction`, `operational`, `suspended`,
