@@ -166,11 +166,11 @@ JETP_SOURCE_ID_ARG := $(if $(JETP_SOURCE_ID),--source-id $(JETP_SOURCE_ID),)
 jetp-harvest: $(JETP_SOURCES) scripts/jetp/corpus_harvest_documents.py scripts/jetp/schemas.py config/jetp_tracking.yaml
 	$(PYTHON) scripts/jetp/corpus_harvest_documents.py --input $(JETP_SOURCES) --output $(JETP_MANIFEST) --storage-root $(JETP_DOCUMENTS) $(JETP_SOURCE_ID_ARG)
 
-jetp-zaf-news-leads: $(JETP_MANIFEST) scripts/jetp/extract_zaf_news_leads.py
-	$(PYTHON) scripts/jetp/extract_zaf_news_leads.py --input $(JETP_MANIFEST) --output data/jetp/news-leads.csv --storage-root $(JETP_DOCUMENTS)
+jetp-zaf-news-leads: $(JETP_MANIFEST) scripts/jetp/build_zaf_news_leads.py
+	$(PYTHON) scripts/jetp/build_zaf_news_leads.py --input $(JETP_MANIFEST) --output data/jetp/news-leads.csv --storage-root $(JETP_DOCUMENTS)
 
-jetp-idn-portfolio: $(JETP_SOURCES) $(JETP_MANIFEST) $(JETP_EVENTS) scripts/jetp/extract_idn_portfolio_pages.py
-	$(PYTHON) scripts/jetp/extract_idn_portfolio_pages.py --input $(JETP_SOURCES) $(JETP_MANIFEST) $(JETP_EVENTS) --output data/jetp/idn-portfolio-observations.csv --storage-root $(JETP_DOCUMENTS)
+jetp-idn-portfolio: $(JETP_SOURCES) $(JETP_MANIFEST) $(JETP_EVENTS) scripts/jetp/build_idn_portfolio_pages.py
+	$(PYTHON) scripts/jetp/build_idn_portfolio_pages.py --input $(JETP_SOURCES) $(JETP_MANIFEST) $(JETP_EVENTS) --output data/jetp/idn-portfolio-observations.csv --storage-root $(JETP_DOCUMENTS)
 
 jetp-documents-track:
 	@test "$$(hostname)" = padme || { echo "JETP DVC capture must run on padme" >&2; exit 1; }
