@@ -63,6 +63,7 @@ def test_zaf_project_pages_are_evidence_not_duplicate_projects() -> None:
         "zaf-murp",
         "zaf-eepbip",
         "zaf-uk-nev-support",
+        "zaf-eu-cso-green-economy-grants",
     } <= {row["project_id"] for row in projects}
     assert project_page_sources <= {row["source_id"] for row in links}
     assert not any(row["project_id"].startswith("zaf-jetpmu-") for row in links)
