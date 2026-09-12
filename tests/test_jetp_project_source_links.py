@@ -17,6 +17,7 @@ RELATIONSHIPS = {
     "data_portal",
     "named_in",
     "possible_match",
+    "cmea_selected_monitoring",
 }
 REVIEW_STATUSES = {"confirmed", "provisional", "unreviewed"}
 
