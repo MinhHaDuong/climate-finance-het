@@ -6,7 +6,7 @@ import csv
 from collections import Counter
 from pathlib import Path
 
-from jetp.extract_idn_progress_priority_projects import PROGRESS_SHA256
+from jetp.build_idn_progress_priority_projects import PROGRESS_SHA256
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data" / "jetp"
