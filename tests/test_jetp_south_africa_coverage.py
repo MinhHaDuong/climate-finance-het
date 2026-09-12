@@ -72,11 +72,31 @@ def test_every_official_south_african_project_has_a_source() -> None:
         for row in read_csv(ROOT / "data" / "jetp" / "projects.csv")
         if row["country"] == "ZAF"
     ]
-    project_sources = {
+    direct_project_sources = {
         row["project_id"]
         for row in read_csv(SOURCES)
         if row["country"] == "ZAF" and row["project_id"]
     }
+    known_source_ids = {row["source_id"] for row in read_csv(SOURCES)}
+    events = [
+        row
+        for row in read_csv(ROOT / "data" / "jetp" / "events.csv")
+        if row["country"] == "ZAF"
+    ]
+    event_project_sources = {
+        row["project_id"]
+        for row in events
+        if row["source_id"] in known_source_ids
+    }
+    register_events = [
+        row
+        for row in events
+        if row["source_id"] == "zaf-jet-investment-register-q1-2026"
+    ]
 
     assert projects, "No South African project has been inventoried"
-    assert {row["project_id"] for row in projects} <= project_sources
+    assert len(register_events) == 257
+    assert len({row["event_id"] for row in register_events}) == 257
+    assert {row["project_id"] for row in projects} <= (
+        direct_project_sources | event_project_sources
+    )
