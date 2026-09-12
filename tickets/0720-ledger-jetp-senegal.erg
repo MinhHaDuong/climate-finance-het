@@ -7,6 +7,7 @@ Blocked-by: 0716
 --- log ---
 2026-09-11T21:37Z Minh created
 2026-09-12T08:42Z Codex archived the political declaration, the 354-page investment plan and the 46-page annexes; extracted 38 received-project lines and 11 quick wins while preserving the plan's 34/38 count divergence and its conflicting QW11 descriptions
+2026-09-12T09:03Z Codex archived the ministry and IPG authority routes plus Senelec's 2023 and 2024 annual reports; recorded the absence of a dedicated 2024 or 2025 Senegal JETP annual report separately from the operator series
 
 --- body ---
 
@@ -31,5 +32,5 @@ qu'une source primaire ne le confirme.
 - [x] Déclaration, Plan d'investissement et annexes collectés
 - [ ] Chaque projet du plan est relié à ses pages bailleur/opérateur
 - [ ] Financement, état physique et dépendance hydrocarbures restent distincts
-- [ ] L'absence de publication annuelle est enregistrée comme donnée
+- [x] L'absence de publication annuelle est enregistrée comme donnée
 - [ ] Contrôle de couverture Sénégal passe
