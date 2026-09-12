@@ -9,6 +9,8 @@ Label: needs-human
 2026-09-10T16:02Z Minh filed children 0709, 0710, 0711, 0712
 2026-09-10T17:30Z Minh 0709 done, first PR of the wave — 0710/0711/0712 remain open
 2026-09-10T18:45Z Minh papier 1 rangé dans ~/CNRS/papiers/published/Reports/JETP at two/, vérifié document de travail CIRED non peer-reviewé — références de chemin corrigées ici
+2026-09-11T16:30Z Minh note 0710 tranche — portage du pipeline CRS du papier court sous DVC (data/jetp/), pilote ledger VN hors perimetre ; execution filee en 0713, 0711 debloque
+2026-09-11T18:30Z Minh note 46 fichiers redondants de jetp/ passes en .bak lecture seule apres verification octet a octet ; le CR cr-reunion-2026-09-08-christophe.md est EXCLU — il a diverge et porte du contenu absent de conception/reunions/
 
 --- body ---
 
@@ -75,9 +77,12 @@ vérifié).
 2. **0710** — réconcilier `analyse-crs/` + `pilote-ledger-vn/iati-crs/` avec
    l'infra CRS existante ; décision d'architecture de l'auteur (fusion ou
    maintien séparé), accès padme si fusion.
-3. **0711** — squelettes de livrables Quarto (`deliverables/jetp-mesure/`,
+3. **0711** — squelettes de livrables **LaTeX** (`deliverables/jetp-mesure/`,
    `deliverables/jetp-econpol/`), câblés dans le Makefile / `make papers` /
-   `_vars_registry.py`. Blocked-by 0710.
+   `_vars_registry.py`. Blocked-by 0710. Les deux papiers JETP ne passent pas
+   par Quarto (décision de l'auteur du 2026-09-11) : ils introduisent une
+   seconde chaîne de rendu, dont 0711 porte le coût — variables en macros,
+   tables booktabs, garde-fou sur le `.log`.
 4. **0712** — migration complète des notes datées vers leurs nouveaux
    emplacements, mise en conformité avec les conventions de provenance /
    marqueur IA de ce dépôt. Blocked-by 0709, 0711.

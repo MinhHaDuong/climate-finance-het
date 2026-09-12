@@ -1,0 +1,98 @@
+%erg 0.1
+Title: Porter le pipeline CRS du papier court JETP sous DVC
+Created: 2026-09-11
+Author: Minh
+
+--- log ---
+2026-09-11T16:30Z Minh created — exécution de la décision arbitrée en 0710
+2026-09-11T18:30Z Minh note reference de non-regression repointee vers conception/jetp/ — l'original jetp/ est passe en .bak lecture seule
+
+--- body ---
+
+## Context
+
+0710 a tranché : le pipeline CRS du papier court JETP est porté dans la
+machinerie de ce dépôt (DVC, padme, Makefile, tests), et non laissé autonome.
+Ce ticket exécute ce portage. La justification et le constat qui l'ont motivé
+sont dans le journal et le corps de 0710 — ne pas les redécouvrir ici.
+
+Rappel du point central : il n'y a pas deux pipelines CRS à réconcilier. Ce
+dépôt n'a **aucun** code de lecture CRS suivi en git et **aucune** étape CRS
+dans `dvc.yaml` ; `data/book/riomarkers/` est un dépôt de zips bruts pour le
+chapitre de livre, pas une chaîne de traitement. Le portage est donc une
+migration à sens unique, sans fusion de logiques concurrentes.
+
+## Relevant files
+
+- `~/CNRS/projets/actifs/jetp/papier-court-mesure/analyse-crs/` — source du
+  portage : `pull_crs.py` (tirage SDMX OCDE), `cohortes.py` (reconstitution
+  des activités et profils), `livrable_csv.py`, `final.py`, `synthese.py`,
+  plus `README.md` qui documente la chaîne et les choix de méthode.
+- `conception/jetp/papier-court-mesure/courbe-reference-decaissement-2026-09-08.{md,csv}`
+  — sortie actuelle, produite hors dépôt le 2026-09-08, versionnée ici par
+  0712 ; **c'est la référence de non-régression**. L'original côté `jetp/`
+  a été mis en `.bak` lecture seule le 2026-09-11 : ne pas s'y fier, il n'est
+  plus la copie vivante.
+- `dvc.yaml`, `paths.mk`, `scripts/analysis/utils.py`, `scripts/analysis/script_io_args.py`
+  — machinerie d'accueil.
+- `README.md` §« Padme is the data authority » — la contrainte d'exécution.
+
+## Actions
+
+1. Déplacer les cinq scripts en `scripts/jetp/`, câblés sur `utils`
+   (`BASE_DIR`, `get_logger`) et `script_io_args` comme le reste du dépôt.
+   Chaque fichier porte le marqueur `# WARNING: AI-generated, not human-reviewed`
+   en première ligne, convention relevée dans `scripts/analysis/`.
+2. Déclarer les données sous `data/jetp/` — **pas** `data/book/` (voir
+   Invariants) : les ~80 `crs_<PAYS>_<ANNEE>_{micro,agg}.csv.gz`.
+3. Écrire les quatre étapes dans `dvc.yaml` : tirage → cohortes → CSV livrable
+   → tableaux de synthèse, avec `deps`/`outs` déclarés.
+4. Exécuter le tirage **sur padme** (`~/Climate_finance`), pousser les données
+   au remote DVC depuis padme, faire atterrir le `dvc.lock` modifié par
+   branche + merge request.
+5. Retirer `analyse-crs/` de son emplacement autonome une fois la
+   non-régression établie, en laissant un pointeur vers `scripts/jetp/`.
+
+## Test
+
+Non-régression sur la sortie existante, écrite avant le portage : le
+`courbe-reference-decaissement.csv` produit par la chaîne portée est identique,
+cellule par cellule, à `courbe-reference-decaissement-2026-09-08.csv` lorsqu'on
+rejoue le même tirage. Les tirages OCDE étant révisables, comparer à partir des
+`.csv.gz` archivés, pas d'un nouveau tirage — sinon le test mesure les révisions
+de l'OCDE et non le portage.
+
+Le seuil qui compte : le résultat central du papier, 98,6 % contre 37,3 % de
+décaissement à quatre ans selon la modalité (C01 projet contre A01/A02 appui
+budgétaire), doit ressortir inchangé.
+
+## Verification
+
+- [ ] `dvc repro` reproduit la courbe de référence depuis ce dépôt
+- [ ] Test de non-régression passe sur le CSV livrable
+- [ ] Aucune donnée poussée depuis doudou — le push vient de padme
+- [ ] `make check` intègre la chaîne et passe
+- [ ] `analyse-crs/` autonome retiré, pointeur laissé
+
+## Invariants
+
+- **`data/book/riomarkers/` n'est pas touché.** Il appartient au chapitre de
+  livre (« book chapter, NOT the paper », STATE.md) ; les données JETP vont
+  dans `data/jetp/`, périmètre distinct. C'est la condition qui a rendu le
+  portage acceptable en 0710.
+- **Le pilote ledger Viêt Nam reste hors périmètre** :
+  `~/CNRS/projets/actifs/jetp/papier-3-ledger/pilote-ledger-vn/` (322 Mo,
+  tirages IATI+CRS bruts) est du matériau exploratoire pour le papier 3, pas
+  un livrable. Le charger dans le remote DVC maintenant serait payer pour du
+  matériau qui va bouger. Il rejoindra par un ticket séparé quand le papier 3
+  existera.
+- Règle padme : doudou ne pousse jamais de données.
+- La revue de littérature REL (0700, échéance ~2026-12-06) n'est ni bloquée
+  ni concurrencée par ce travail.
+
+## Exit criteria
+
+- [ ] Chaîne portée, `dvc repro` la rejoue, non-régression établie
+- [ ] `analyse-crs/` autonome retiré
+- [ ] 0711 peut consommer `courbe-reference-decaissement.csv` comme artefact
+      de livrable plutôt que comme fichier daté à la main

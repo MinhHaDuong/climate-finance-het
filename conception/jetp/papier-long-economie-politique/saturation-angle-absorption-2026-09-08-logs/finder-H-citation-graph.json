@@ -1,0 +1,262 @@
+{
+  "angle": "H — graphe de citations (amont/aval des pivots) pour tester la préemption des propositions P1-P4 (non-absorbabilité de bilan, non-évaluation de l'agrégat multi-bailleurs, agentivité souveraine, effet en U de la solvabilité)",
+  "date": "2026-09-08",
+  "databases": [
+    "OpenCitations (index/api/v1/citations, index/api/v1/references)",
+    "Crossref (works/{doi}, works?query.bibliographic=, reference field)",
+    "OpenAlex (works/{doi}, works?filter=cites:; fonctionnel brièvement puis 429 budget épuisé)",
+    "Semantic Scholar Graph API (paper/DOI:{doi}, /citations; fonctionnel par intermittence, puis 429/500)",
+    "Unpaywall (v2/{doi})",
+    "WebFetch direct (IOPscience landing + PDF, Springer landing)",
+    "WebSearch (budget épuisé par la session partagée avant utilisation possible)"
+  ],
+  "positive_control": {
+    "query": "OpenCitations citations 10.1016/j.erss.2025.104103 (Karg, Gupta & Chen 2025)",
+    "result": "SUCCES — 5 citing DOIs renvoyés (10.1002/sd.70738 ; 10.1016/j.jup.2025.102068 ; 10.1093/ooenergy/oiaf008 ; 10.23887/jish.v14i3.106127 ; 10.1177/14649934251360854), HTTP 200",
+    "fallback_control": {
+      "query": "OpenCitations citations 10.1257/aer.97.2.316 (AER très cité)",
+      "result": "SUCCES — liste non vide de citations renvoyée, HTTP 200 — confirme que l'API répond normalement et que les listes vides obtenues ailleurs (Daley, Bradlow, Apriliyanti, Do et al.) sont un résultat réel de faible couverture/récence, pas une panne d'outil"
+    },
+    "verdict": "Contrôle positif réussi. Note complémentaire : OpenCitations sous-compte systématiquement par rapport à Crossref is-referenced-by-count (retard d'indexation confirmé, ex. Karg : 5 chez OC contre 21 chez Crossref ; Ordóñez : 11 chez OC contre 22 chez Crossref) — Semantic Scholar, quand disponible, comble une partie de cet écart (19 et 24 citations respectivement)."
+  },
+  "pivots": [
+    {
+      "label": "Karg, Gupta & Chen 2025, ERSS 125:104103",
+      "doi": "10.1016/j.erss.2025.104103",
+      "citations_found_n": 21,
+      "citation_sources": {"opencitations": 5, "crossref_count_only": 21, "semantic_scholar": 19},
+      "references_found_n": 115,
+      "tool_used": "OpenCitations + Crossref (works + reference field) + Semantic Scholar /citations"
+    },
+    {
+      "label": "Daley & Lawrie 2026, New Political Economy",
+      "doi": "10.1080/13563467.2026.2666810",
+      "citations_found_n": 0,
+      "citation_sources": {"opencitations": 0, "crossref_count_only": 0, "semantic_scholar": 0},
+      "references_found_n": 107,
+      "tool_used": "OpenCitations + Crossref + Semantic Scholar",
+      "note": "Apparaît lui-même comme travail citant Karg 2025 et Ordóñez et al. 2024 (titre exact retrouvé via S2 : 'Country platforms and constrained states: the Indonesian JET-P and the twilight of de-risking') — confirme l'identité du pivot."
+    },
+    {
+      "label": "Apriliyanti, Nugraha & Overland 2026, ERSS 135:104675",
+      "doi": "10.1016/j.erss.2026.104675",
+      "citations_found_n": 6,
+      "citation_sources": {"opencitations": 0, "crossref_count_only": 5, "semantic_scholar": 6},
+      "references_found_n": 104,
+      "tool_used": "OpenCitations + Crossref + Semantic Scholar"
+    },
+    {
+      "label": "Do, Halimatussadiah, Burke & Jotzo 2026, SSRN",
+      "doi": "10.2139/ssrn.6979738",
+      "citations_found_n": 0,
+      "citation_sources": {"opencitations": 0, "crossref_count_only": 0},
+      "references_found_n": 0,
+      "tool_used": "OpenCitations + Crossref",
+      "note": "SSRN, 29 juillet 2026 — trop récent pour avoir des citants ; Semantic Scholar ne l'indexe pas ('not found'). references-count Crossref = 0 (SSRN ne dépose généralement pas ses références)."
+    },
+    {
+      "label": "Bradlow & Swamidurai 2026, Socio-Economic Review",
+      "doi": "10.1093/ser/mwag015",
+      "citations_found_n": "1 selon Crossref, mais IDENTITÉ NON RÉSOLUE",
+      "citation_sources": {"opencitations": 0, "crossref_count_only": 1, "semantic_scholar": "paper not found"},
+      "references_found_n": 68,
+      "tool_used": "OpenCitations (0) + Crossref (compte=1, pas de liste) + Semantic Scholar (introuvable)",
+      "note": "TROU DE COUVERTURE déclaré : Crossref indique 1 citation mais ne fournit aucune liste de DOI citants dans son endpoint works/, OpenCitations n'a pas encore indexé cette citation, et Semantic Scholar ne connaît pas le DOI. Aucun outil disponible ne permet d'identifier ce citant unique. Ce n'est pas un résultat nul, c'est un échec d'outillage."
+    },
+    {
+      "label": "Banerjee 2024, PLOS Sust. Transform. 3(8):e0000121",
+      "doi": "10.1371/journal.pstr.0000121",
+      "citations_found_n": 7,
+      "citation_sources": {"opencitations": 3, "crossref_count_only": 7, "semantic_scholar": 7},
+      "references_found_n": null,
+      "tool_used": "OpenCitations + Crossref + Semantic Scholar"
+    },
+    {
+      "label": "Ordóñez et al. 2024, Nature Climate Change 14",
+      "doi": "10.1038/s41558-024-02086-z",
+      "citations_found_n": 24,
+      "citation_sources": {"opencitations": 11, "crossref_count_only": 22, "semantic_scholar": 24},
+      "references_found_n": 33,
+      "tool_used": "OpenCitations + Crossref (works + reference field) + Semantic Scholar"
+    },
+    {
+      "label": "Jindal et al. 2024, ESD 81:101472",
+      "doi": "10.1016/j.esd.2024.101472",
+      "citations_found_n": 6,
+      "citation_sources": {"opencitations": 4, "crossref_count_only": 5, "semantic_scholar": 6},
+      "references_found_n": null,
+      "tool_used": "OpenCitations + Crossref + Semantic Scholar"
+    },
+    {
+      "label": "Earsom 2024, Global Policy 15(1):135-141",
+      "doi": "10.1111/1758-5899.13324",
+      "citations_found_n": 5,
+      "citation_sources": {"opencitations": 4, "crossref_count_only": 7, "semantic_scholar": 5},
+      "references_found_n": null,
+      "tool_used": "OpenCitations + Crossref + Semantic Scholar"
+    },
+    {
+      "label": "Hadley, Mustapha, Colenbrander, Miller & Quevedo 2022, ODI (country platforms)",
+      "doi": null,
+      "candidate_doi_unconfirmed": "10.59184/sa025.017 (titre proche : 'Beyond JET-P: building country platforms that work for Africa's climate and development goals' — non vérifié comme identique au rapport ODI cité dans le brief)",
+      "citations_found_n": "non déterminé",
+      "references_found_n": "non déterminé",
+      "tool_used": "Crossref (recherche bibliographique seulement — pas de DOI confirmé pour le rapport ODI exact) ; Semantic Scholar search en échec (429 puis 500)",
+      "note": "TROU DE COUVERTURE : rapport de littérature grise, DOI non confirmé, graphe de citations impossible à tracer avec les outils disponibles dans cette session."
+    },
+    {
+      "label": "Songwe, Stern & Bhattacharya 2022, IHLEG 'Finance for climate action'",
+      "doi": null,
+      "citations_found_n": "non déterminé",
+      "references_found_n": "non déterminé",
+      "tool_used": "Crossref (recherche bibliographique — aucune correspondance exacte trouvée) ; Semantic Scholar search en échec (429 puis 500)",
+      "note": "TROU DE COUVERTURE : rapport IHLEG sans DOI identifiable dans Crossref ; aucun outil disponible n'a permis de tracer son graphe de citations dans cette session."
+    },
+    {
+      "label": "Ha-Duong & Cassen 2024, JETPs at two (hal-04412457 / SSRN)",
+      "doi": "10.2139/ssrn.4728216",
+      "citations_found_n": 4,
+      "citation_sources": {"opencitations": 1, "crossref_count_only": 3, "openalex_before_ratelimit": 4, "semantic_scholar": "not found (SSRN preprint non indexé)"},
+      "references_found_n": 0,
+      "tool_used": "Crossref (résolution DOI SSRN + is-referenced-by-count) + OpenCitations + OpenAlex (fonctionnel une fois avant épuisement du budget) — TEST DE PRÉEMPTION PAR PROLONGEMENT, voir candidats"
+    }
+  ],
+  "queries": [
+    "GET opencitations.net/index/api/v1/citations/10.1016/j.erss.2025.104103",
+    "GET opencitations.net/index/api/v1/citations/10.1257/aer.97.2.316 (contrôle positif de secours)",
+    "GET opencitations.net/index/api/v1/citations/10.2139/ssrn.4728216",
+    "GET api.crossref.org/works/10.2139/ssrn.4728216",
+    "GET api.openalex.org/works/https://doi.org/10.2139/ssrn.4728216 (succès, avant épuisement budget)",
+    "GET api.openalex.org/works?filter=cites:W4391244906 (liste des 4 citants de Ha-Duong & Cassen)",
+    "GET opencitations.net/index/api/v1/citations/{doi} pour les 9 pivots à DOI résolu (Karg, Daley, Apriliyanti, Do et al., Bradlow, Banerjee, Ordóñez, Jindal, Earsom)",
+    "GET api.crossref.org/works/{doi} pour is-referenced-by-count et champ reference (Karg, Daley, Apriliyanti, Bradlow, Do et al., Banerjee, Ordóñez, Jindal, Earsom)",
+    "GET api.semanticscholar.org/graph/v1/paper/DOI:{doi} et /citations pour tous les pivots (succès intermittent, puis 429/500)",
+    "GET api.crossref.org/works?query.bibliographic=Banerjee+just+energy+transition+partnership+PLOS+sustainability",
+    "GET api.crossref.org/works?query.bibliographic=Ordonez+just+energy+transition+partnership+nature+climate+change",
+    "GET api.crossref.org/works?query.bibliographic=Earsom+just+energy+transition+partnership+global+policy",
+    "GET api.crossref.org/works?query.bibliographic=Building+blocks+successful+just+energy+transition+stocktake+Indonesia+Vietnam",
+    "GET api.crossref.org/works?query.bibliographic=jointly+announced+severally+owed+climate+finance (test de la préemption directe du terme-clé P2)",
+    "GET api.crossref.org/works?query.bibliographic=Just+Energy+Transition+Partnership+debt+ceiling+balance+sheet+absorptive+capacity",
+    "GET api.crossref.org/works?query.bibliographic=Songwe+Stern+Bhattacharya+Finance+for+climate+action+2022",
+    "GET api.crossref.org/works?query.bibliographic=Hadley+Mustapha+Colenbrander+country+platforms+climate+2022",
+    "GET api.unpaywall.org/v2/10.1007/s43545-026-01614-2",
+    "WebFetch https://doi.org/10.1007/s43545-026-01614-2 puis link.springer.com (mur d'authentification)",
+    "WebFetch https://iopscience.iop.org/article/10.1088/1755-1315/1511/1/012012 et /pdf (texte complet extrait via pdftotext)"
+  ],
+  "dry_queries": [
+    "OpenCitations citations 10.1080/13563467.2026.2666810 (Daley & Lawrie) — 0 résultat, cohérent avec parution très récente (2026), pas un échec d'outil",
+    "OpenCitations citations 10.2139/ssrn.6979738 (Do et al.) — 0 résultat, cohérent avec dépôt du 29 juillet 2026",
+    "OpenCitations citations 10.1016/j.erss.2026.104675 (Apriliyanti) — 0 résultat OC (Crossref/S2 en trouvent 5-6, donc retard d'indexation OC, pas absence réelle)",
+    "OpenCitations citations 10.1093/ser/mwag015 (Bradlow) — 0 résultat malgré is-referenced-by-count Crossref = 1 → trou de couverture déclaré, pas résultat nul",
+    "Crossref bibliographic search \"jointly announced severally owed\" + climate finance — aucun résultat pertinent (uniquement du droit fiscal/civil sur la responsabilité solidaire) : le terme-clé P2 n'est préempté nulle part dans Crossref",
+    "Crossref bibliographic search JETP debt ceiling balance sheet absorptive capacity — aucun article JETP-spécifique ; seuls des articles de finance générale (balance-sheet debt covenants, etc.) et les pivots déjà connus (Gürtler, von Lüpke SSRN)",
+    "Semantic Scholar paper search 'Beyond JET-P country platforms Africa' — ÉCHEC OUTIL (429 puis 500), pas une absence de littérature",
+    "Semantic Scholar paper search 'Finance for climate action IHLEG' — ÉCHEC OUTIL (429 puis 500), pas une absence de littérature"
+  ],
+  "candidates": [
+    {
+      "title": "Transaction costs of the Indonesian Just Energy Transition Partnership",
+      "authors": "Thant Thura Zan, Ida Dokk Smith, Indra Overland, Indira Pradnyaswari",
+      "year": 2025,
+      "venue": "IOP Conference Series: Earth and Environmental Science 1511, 012012 (4th ASEAN International Conference on Energy and Environment)",
+      "doi_or_url": "10.1088/1755-1315/1511/1/012012",
+      "abstract_read": true,
+      "abstract_excerpt": "'There is a gap in the knowledge about the transaction costs associated with JETPs... the study finds that asset specificity, uncertainty, legitimacy, and accountability influence the TCs in the governance of the Indonesian JETP.' Texte intégral lu (CC-BY, PDF extrait) : discute 'financing responsibilities are distributed among multiple entities' et 'inadequate mechanisms for donor coordination' (citant une étude sur les coûts de transaction de l'aide au Vietnam) — mais dans un cadre de coûts de transaction/duplication de gouvernance, jamais en termes de bilan, de solvabilité, de plafond de dette, ou de mandat d'évaluation de l'agrégat.",
+      "preclass": "adjacent",
+      "why": "Candidat le plus proche trouvé dans toute la passe : cite directement Ha-Duong & Cassen 2024 ET Earsom 2024, et effleure la fragmentation du financement entre bailleurs (proche de l'esprit P2) — mais l'argument est celui des coûts de transaction (Williamson), pas celui d'un défaut structurel de gouvernance empêchant toute évaluation de l'agrégat. Ne préempte aucune des quatre propositions telles que formulées."
+    },
+    {
+      "title": "The stability trap and the Biomass Paradox: conditional evidence from a hybrid ARDL-DML analysis of just energy transitions in the Global South",
+      "authors": "Saqib Munir, Mushab Rashid, Haider Ali Shams",
+      "year": 2026,
+      "venue": "SN Social Sciences",
+      "doi_or_url": "10.1007/s43545-026-01614-2",
+      "abstract_read": false,
+      "abstract_excerpt": "NON DISPONIBLE. Crossref : abstract absent. Unpaywall : is_oa=false, closed. Semantic Scholar : champ abstract explicitement 'elided by the publisher'. WebFetch : mur d'authentification Springer (redirection vers idp.springer.com). WebSearch : budget de session épuisé avant de pouvoir tenter une copie alternative.",
+      "preclass": "non résolu — accès impossible",
+      "why": "TROU DE COUVERTURE À SIGNALER, PAS UN RÉSULTAT NUL. Cité par Earsom 2024 (via Semantic Scholar citations). Le titre seul ('stability trap', 'conditional evidence', analyse par pays du Sud global des transitions énergétiques justes) suggère une possible parenté structurelle avec P4 (effet non-linéaire/seuil d'une variable de type stabilité macro-financière sur l'usage de l'instrument), mais la discipline du brief interdit tout classement sur titre seul. Ne pas traiter ce silence comme une absence : c'est un article dont le contenu réel reste inconnu."
+    },
+    {
+      "title": "From Climate Finance to Sustainable Development: The Synergy of Financial Instruments and National Governance for Achieving SDG 13",
+      "authors": "Lili Wang, Jing Tang",
+      "year": 2026,
+      "venue": "Sustainable Development",
+      "doi_or_url": "10.1002/sd.70738",
+      "abstract_read": true,
+      "abstract_excerpt": "Panel de 171 pays (2013-2023), double machine learning : 'loan-based instruments outperform grants... national governance capacity positively moderates the effectiveness of climate finance, with countries endowed with stronger governance realizing greater emission reductions from received funds.'",
+      "preclass": "adjacent",
+      "why": "Établit économétriquement qu'une capacité de gouvernance plus forte améliore l'efficacité du financement climatique par prêt — analogue statistique lointain de l'idée P4 (la capacité du récipiendaire conditionne l'usage de l'instrument), mais c'est une étude cross-country générale sur le financement climatique, sans référence à JETP, sans effet en U, sans mécanisme de bilan/solvabilité. Ne préempte pas P4."
+    },
+    {
+      "title": "Macroeconomic stability windows and national balance-sheet capacity: Evidence from public and external debt",
+      "authors": "Krzysztof Waśniewski",
+      "year": 2026,
+      "venue": "SSRN Electronic Journal (deux dépôts identiques : ssrn.6964517 et ssrn.6923151)",
+      "doi_or_url": "10.2139/ssrn.6964517",
+      "abstract_read": true,
+      "abstract_excerpt": "'develops an empirical measure of country-level macroeconomic stability windows and uses it to estimate liability-adjusted national balance-sheet capacity... covers 175 economies through 2023.'",
+      "preclass": "adjacent",
+      "why": "Trouvé par recherche directe sur le vocabulaire P1 ('balance sheet capacity', 'debt'). Papier de macro-méthodologie pure (indicateur de capacité de bilan national via dette publique/externe), sans aucun lien établi avec le financement climatique, JETP, ou l'absorption d'aide. Outil potentiellement mobilisable pour opérationnaliser P1 empiriquement, mais ne fait pas l'argument JETP lui-même."
+    },
+    {
+      "title": "Reconsidering ICSID in the Context of Global Just Transitions",
+      "authors": "Kyla Tienhaara",
+      "year": 2025,
+      "venue": "Global Environmental Politics",
+      "doi_or_url": "10.1162/glep.a.8",
+      "abstract_read": true,
+      "abstract_excerpt": "'ICSID tribunals play a role in determining the distribution of costs and benefits of the energy transition... potential for ICSID tribunals to shift financial burdens associated with the energy transition from the private to the public sphere and from the Global North to the Global South.'",
+      "preclass": "adjacent",
+      "why": "Cité par (cite) Earsom 2024. Traite de l'arbitrage investisseur-État et du transfert de charges financières lors des transitions énergétiques — voisin thématique de l'agentivité souveraine (P3) mais porte sur les différends d'investissement (mines, centrales à charbon), pas sur le refus/détournement de prêts JETP. N'établit pas l'argument P3."
+    },
+    {
+      "title": "The Global Climate Plan: A Global Plan to End Climate Change and Extreme Poverty",
+      "authors": "non déterminé (auteur non extrait — abstract non disponible)",
+      "year": 2024,
+      "venue": "SSRN Electronic Journal",
+      "doi_or_url": "10.2139/ssrn.4850808",
+      "abstract_read": false,
+      "abstract_excerpt": "Non disponible (abstract absent d'OpenAlex ; non vérifié davantage faute de budget).",
+      "preclass": "non résolu — probablement hors sujet",
+      "why": "Cite Ha-Duong & Cassen 2024. Titre suggérant une proposition de plan global générique, sans lien apparent avec les quatre propositions ; non lu en profondeur faute de ressources restantes — signalé honnêtement comme non vérifié plutôt que classé par défaut."
+    },
+    {
+      "title": "SWOT Analysis of the Hydrogen Supply Chain in Vietnam",
+      "authors": "non extrait",
+      "year": 2025,
+      "venue": "IEEE conference (EEE-AM 2025)",
+      "doi_or_url": "10.1109/eee-am66675.2025.11473400",
+      "abstract_read": false,
+      "abstract_excerpt": "Abstract non disponible dans OpenAlex ; titre indique une analyse SWOT sectorielle (hydrogène), sans lien apparent avec les quatre propositions.",
+      "preclass": "hors sujet (probable, non confirmé par lecture)",
+      "why": "Cite Ha-Duong & Cassen 2024, probablement en passant (référence de contexte sur JETP Vietnam). Non lu en détail."
+    },
+    {
+      "title": "Efficiency benchmarking and policy implications of Waste-to-Energy in Vietnam",
+      "authors": "non extrait",
+      "year": 2025,
+      "venue": "IEEE conference (EEE-AM 2025)",
+      "doi_or_url": "10.1109/eee-am66675.2025.11473559",
+      "abstract_read": true,
+      "abstract_excerpt": "Étude technique sur l'efficacité des usines de valorisation énergétique des déchets au Vietnam ; comparaison Allemagne/Japon/UE ; recommandations sur le tarif de rachat (FIT) et les PPP.",
+      "preclass": "hors sujet",
+      "why": "Cite Ha-Duong & Cassen 2024 en contexte de politique énergétique vietnamienne générale. Aucun rapport avec le bilan JETP, l'agrégat multi-bailleurs, l'agentivité souveraine ou la solvabilité."
+    }
+  ],
+  "tool_failures": [
+    "OpenAlex : budget épuisé en cours de session ('Insufficient budget... $0 remaining... retryAfter 37497s'), confirmant la note de tooling.md ; a fonctionné une fois pour Ha-Duong & Cassen (4 citants trouvés) avant l'épuisement — traiter tout silence OpenAlex ultérieur comme panne d'outil, pas absence.",
+    "Semantic Scholar : fonctionnel par intermittence pendant la session (a permis d'obtenir les listes de citations pour 7 des 9 pivots à DOI), puis 429 ('Too Many Requests') puis 500 ('Internal Server Error') sur les recherches par titre pour les rapports de littérature grise (ODI, IHLEG) — panne d'outil déclarée, pas absence de littérature.",
+    "Semantic Scholar : DOI non trouvé pour Bradlow & Swamidurai (10.1093/ser/mwag015), pour Do et al. (10.2139/ssrn.6979738), et pour Ha-Duong & Cassen (10.2139/ssrn.4728216, SSRN non indexé) — couverture incomplète de l'outil sur les prépublications SSRN et cette revue.",
+    "WebSearch : budget de session partagé épuisé (200/200 utilisés par l'ensemble des agents de la campagne) avant d'avoir pu vérifier le contenu de 'The stability trap and the Biomass Paradox' par une voie alternative (copie en accès ouvert, ResearchGate, etc.).",
+    "WebFetch : mur d'authentification Springer (idp.springer.com) empêchant la lecture de l'abstract complet de Munir, Rashid & Shams 2026 malgré deux tentatives (page article + tentative de redirection).",
+    "Crossref : aucun DOI trouvé correspondant avec certitude au rapport ODI (Hadley et al. 2022) ni au rapport IHLEG Songwe/Stern/Bhattacharya 2022 — ces deux pivots de littérature grise restent hors de portée du graphe de citations avec les outils disponibles.",
+    "Crossref : le champ reference n'est peuplé que pour les éditeurs qui déposent leurs références ; confirmé vide (0) pour le dépôt SSRN de Do et al. 2026, cohérent avec la note de tooling.md sur la couverture partielle des abstracts/références Crossref."
+  ],
+  "verdict": {
+    "P1_non_absorbabilite_bilan": "AUCUNE PRÉEMPTION TROUVÉE dans le graphe de citations amont/aval des pivots. La recherche directe par vocabulaire ('balance sheet', 'debt ceiling', 'absorptive capacity' + JETP) ne remonte que des papiers de finance générale sans lien établi avec JETP (Waśniewski 2026) ou les pivots déjà connus. Provisoire : créneau libre sous réserve du trou de couverture Bradlow (1 citant non identifié) et des deux rapports de littérature grise non tracés (ODI, IHLEG).",
+    "P2_non_evaluation_agregat": "AUCUNE PRÉEMPTION DIRECTE TROUVÉE. Le candidat le plus proche (Transaction costs of the Indonesian JETP, Zan et al. 2025) effleure la fragmentation de la responsabilité de financement entre entités multiples et l'absence de coordination inter-bailleurs, mais reformule cela en coûts de transaction/duplication de gouvernance, jamais en défaut structurel de mandat d'évaluation de l'agrégat ('jointly announced, severally owed'). La recherche directe de cette formule et de ses variantes ne remonte rien en dehors du droit de la responsabilité solidaire. Provisoire : créneau libre.",
+    "P3_agentivite_souveraine": "AUCUNE PRÉEMPTION TROUVÉE dans le graphe de citations. Le candidat le plus proche (ICSID, Tienhaara 2025) traite du transfert de charges financières via l'arbitrage investisseur-État, pas du refus/détournement/ralentissement des tranches JETP par un État récipiendaire. Do et al. 2026 (pivot déjà connu) évoque un 'misalignment' entre attentes de financement concessionnel et conditionnalité des bailleurs, proche en esprit mais formulé comme un défaut de séquençage, pas comme une agentivité stratégique délibérée. Provisoire : créneau libre.",
+    "P4_effet_U_solvabilite": "PAS DE PRÉEMPTION CONFIRMÉE, MAIS UN TROU DE COUVERTURE NON NÉGLIGEABLE. Wang & Tang 2026 (SDG13/DML) établit un lien statistique gouvernance-efficacité du prêt, analogue lointain sans effet en U ni cadre JETP. Le candidat le plus préoccupant reste 'The stability trap... conditional evidence... ARDL-DML... Global South' (Munir, Rashid & Shams 2026), dont le titre seul suggère une possible parenté structurelle avec P4 mais dont l'abstract est resté inaccessible à tous les outils disponibles (Crossref, Unpaywall, Semantic Scholar, WebFetch, WebSearch épuisé). Ce point doit être vérifié par un accès humain ou un budget WebSearch frais avant de déclarer le créneau P4 saturé.",
+    "test_prolongement_HaDuong_Cassen": "4 travaux citent Ha-Duong & Cassen 2024 (source OpenAlex, cross-validé partiellement par OpenCitations). Aucun ne préempte P1-P4 ; le plus substantiel (Transaction costs, Zan et al. 2025) est une analyse de coûts de transaction adjacente à P2 sans l'occuper. Test de préemption par prolongement : NÉGATIF, avec la réserve que Google Scholar/OpenAlex complet n'a pas pu être interrogé après épuisement du budget."
+  }
+}

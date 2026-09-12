@@ -1,0 +1,446 @@
+{
+ "angles": [
+  "Canal francophone (créneau 2, Sénégal) : HAL, Cairn, theses.fr, Papiers de recherche AFD, Ferdi, Enda Energie/IED Dakar, versions françaises NRGI. Germe confirmé : hal-05599857 (2026), « Comment la justice climatique risque de devenir un instrument de domination : le cas du JETP au Sénégal ». Requêtes : « partenariat pour une transition énergétique juste » Sénégal, « JETP Sénégal », « plan d'investissement Sénégal transition énergétique », « conditionnalité Senelec AFD ». Objectif : établir si le créneau Sénégal est libre en peer-review anglophone seulement, ou libre tout court.",
+  "Working papers et dépôts institutionnels d'économie de l'énergie (créneaux 1 et 2) : SSRN, RePEc/EconStor, ANU Open Research/Crawford, ZEF, IDOS, Bruegel, IEEFA. Candidat à juger en priorité absolue : Do, Halimatussadiah, Burke & Jotzo (2026), « Just Energy Transition Partnerships at Risk in Indonesia and Vietnam » (10.2139/ssrn.6979738, + version ANU Open Research). Balayer aussi tout l'aval 2025-2026 de Thang Nam Do et Frank Jotzo — c'est l'équipe la plus susceptible de publier un bilan rétrospectif Vietnam avant nous — et vérifier si une version revue est en presse.",
+  "Corpus gris aide au développement / finance concessionnelle (créneau 3, le moins couvert : 3 jugés sur 12). Tester le pont « JETP × aide liée, conditionnalité, inflation des promesses, équivalent-don » contre : Oxfam Climate Finance Shadow Report 2025 (10.21201/2025.000088), WRI « Financing country platforms » (10.46830/wrien.25.00030), OECD « Increasing development finance efforts to scale private finance mobilised » (10.1787/345b768b-en), « Is a country platform for climate action right for Nigeria? » (10.59184/rp025.02), CGD et ODI sur la concessionnalité et la méthode grant-equivalent du CAD, et « Instrumentalizing crisis as capital: eco-humanitarian rentierism and the global politics of aid », International Affairs 2025 (10.1093/ia/iiaf185).",
+  "Canaux juridique, actes de colloque et ouvrages collectifs (créneaux 1 et 2), jamais balayés. Peer-review juridique : RECIEL 2026 « Do JETPs collide or converge with substantive investment law standards? Indonesia and Vietnam » (10.1111/reel.70033), JWELB 2025 « Local content requirements in Asia's Just Energy Transition » (10.1093/jwelb/jwaf003), Business and Human Rights Journal 2025 (10.1017/bhj.2024.28). Actes : IOP Conf. Ser. 1511 (10.1088/1755-1315/1511/1/012010 stocktake Indonésie-Vietnam ; 10.1088/1755-1315/1511/1/012012 coûts de transaction). Ouvrages : chapitre « Transition Planning and Country Platforms » dans Financing Climate Action, Routledge (10.4324/9781003589709-33) — invalide l'affirmation du brief qu'aucun canal d'ouvrage collectif n'est ouvert."
+ ],
+ "finds": [
+  {
+   "angle": "Créneau francophone (Sénégal) — recherche de saturation dans les canaux francophones : HAL, Cairn, theses.fr, AFD papiers de recherche, Ferdi, Enda Energie/IED Dakar, versions françaises NRGI. Objectif : déterminer si le créneau Sénégal est libre uniquement en peer-review anglophone, ou libre tout court (y compris littérature grise et francophone).",
+   "queries_run": [
+    "JETP Sénégal (HAL API)",
+    "\"transition énergétique juste\" Sénégal (HAL API)",
+    "hal-05599857 record fetch (blocked by Anubis, retried via HAL API metadata)",
+    "\"JETP\" general (HAL API, filtered for Vietnam/Senegal/Indonesia/South Africa)",
+    "JETP Sénégal (theses.fr API)",
+    "\"transition énergétique juste\" Sénégal (theses.fr API)",
+    "\"transition energetique juste\" Senegal (OpenAlex)",
+    "Senelec conditionnalité AFD transition energetique (OpenAlex)",
+    "JETP Sénégal (Cairn.info search, blocked 403)",
+    "AFD ressources JETP Sénégal (afd.fr search)",
+    "Ferdi JETP Sénégal (ferdi.fr search)",
+    "JETP Sénégal enda-energie.org OR iedafrique.org (Bing)",
+    "\"JETP\" Sénégal Cairn.info (Bing)",
+    "\"plan d'investissement\" \"transition énergétique\" Sénégal article scientifique (Bing)",
+    "\"Nouveau JETP du Sénégal\" NRGI (Bing)",
+    "IDDRI JETP Sénégal analyse (Bing)"
+   ],
+   "databases_used": [
+    "HAL (api.archives-ouvertes.fr)",
+    "theses.fr (api.openalex... actually theses.fr/api/v1)",
+    "OpenAlex (api.openalex.org)",
+    "Cairn.info (blocked, 403)",
+    "afd.fr site search",
+    "ferdi.fr site search",
+    "Bing web search (fallback for Enda Energie, IED Dakar, NRGI, IDDRI — WebSearch tool exhausted at 200/200 calls before this task started)"
+   ],
+   "candidates": [
+    {
+     "title": "Comment la justice climatique risque de devenir un instrument de domination : le cas du Just Energy Transition Partnerships (JETP) au Sénégal",
+     "authors": "Yanis Rihi",
+     "year": "2026",
+     "venue": "The Conversation France (republished on HAL, hal-05599857)",
+     "url": "https://hal.science/hal-05599857v1",
+     "classification": "adjacent",
+     "why": "Confirmed as the seed/germ. This is a journalistic op-ed (The Conversation France) mirrored on HAL, NOT a peer-reviewed article — docType is ART but the venue is a media outlet, not a journal. It is authored by a PhD candidate (Yanis Rihi, Université Paris-Saclay, UMI SOURCE) whose in-progress thesis 'Transition(s) juste(s) vers des économies soutenables du Nord au Sud : défis communs ?' covers North-South just-transition themes broadly, not Senegal-JETP specifically as a dissertation focus. This confirms creneau2 (Senegal underexplored) survives for peer-reviewed venues, but the francophone public/grey-literature space around Senegal-JETP is not empty — critical commentary exists outside academic journals."
+    },
+    {
+     "title": "Transition(s) juste(s) vers des économies soutenables du Nord au Sud : défis communs ?",
+     "authors": "Yanis Rihi (dir. Rima Hawi)",
+     "year": "in progress since 2023",
+     "venue": "Université Paris-Saclay, UMI SOURCE (thesis, theses.fr)",
+     "url": "https://theses.fr",
+     "classification": "adjacent",
+     "why": "In-progress PhD thesis broadly on North-South just transitions; not Senegal-JETP-specific as its declared object, so does not preempt a peer-reviewed comparative JETP paper, but signals a francophone doctoral candidate already working adjacent territory and likely to publish more JETP-Senegal material (including via HAL/Conversation) before a submission lands."
+    },
+    {
+     "title": "(No Cairn.info article found on JETP Senegal)",
+     "classification": "background",
+     "why": "Cairn.info direct search blocked (403); Bing site-search for 'JETP Senegal Cairn.info' returned zero Cairn results among ~6,100 hits, with top results being Wikipedia, Élysée.fr, European Commission, AFD, IDDRI, and The Conversation. No positive evidence of a Cairn-hosted francophone journal article on JETP Senegal."
+    },
+    {
+     "title": "(No AFD Papiers de recherche or Ferdi publication found on JETP Senegal)",
+     "classification": "background",
+     "why": "Direct site search on afd.fr and ferdi.fr for 'JETP Sénégal' returned no matching publications in the visible results (site search UI may not expose full-text query results to a scraped fetch, so this is inconclusive rather than a confirmed absence — a caveat, not a finding)."
+    },
+    {
+     "title": "(No Enda Energie / IED Afrique Dakar publication found on JETP)",
+     "classification": "background",
+     "why": "Bing site-restricted search (enda-energie.org OR iedafrique.org) returned no JETP-Senegal-specific hits; general web results instead surfaced Wikipedia, Élysée.fr, European Commission, AFD, IDDRI, The Conversation, and a mention of 'Nouveau JETP du Sénégal' attributed loosely to NRGI/Resource Governance Institute in one snippet, but the exact NRGI French-language document and its URL could not be isolated via a follow-up query (result was diluted by generic 'nouveau' dictionary hits)."
+    },
+    {
+     "title": "IDDRI general publications",
+     "classification": "background",
+     "why": "IDDRI ('Institut indépendant de recherche sur les politiques') was flagged as a source touching JETP-Senegal in a general search snippet, but a targeted follow-up query for IDDRI's specific JETP-Senegal analysis returned only the institute's homepage and annual report, not a locatable dedicated publication — inconclusive."
+    }
+   ],
+   "dry_notes": "Le canal francophone n'est pas mort, mais reste peu dense et surtout non académique. Constat principal : le germe hal-05599857 (Yanis Rihi, avril 2026) est un article de vulgarisation/opinion (The Conversation France), pas un article évalué par les pairs — son dépôt sur HAL sous docType ART peut tromper un balayage automatisé qui ne distinguerait pas presse et revue. Son autrice est doctorante à Paris-Saclay sur une thèse en cours, plus large que le seul cas sénégalais (justice climat/transition Nord-Sud), non encore soutenue. Aucun article de revue (Cairn), aucun papier de recherche AFD ou Ferdi, aucune publication Enda Energie/IED Dakar spécifique au JETP sénégalais n'a pu être localisé positivement dans les canaux interrogés — mais plusieurs de ces recherches (Cairn 403, sites AFD/Ferdi/Enda avec moteurs de recherche interne non indexés côté fetch) sont des tests inconclusifs plutôt que des négatifs confirmés (le moteur de recherche interne du site peut ne pas renvoyer de résultats à un simple fetch HTML sans JS). Le budget WebSearch de la session étant épuisé avant même le début de cette tâche (200/200), toute la collecte a dû passer par WebFetch sur les API structurées (HAL, theses.fr, OpenAlex) puis, en repli, sur des pages Bing scrappées — un canal moins fiable pour l'exhaustivité et sujet à dilution du signal (ex. requête NRGI diluée par des définitions du mot « nouveau »). Verdict prudent : le créneau Sénégal reste libre en peer-review anglophone ET en peer-review francophone (aucune preuve du contraire trouvée dans HAL, Cairn, theses.fr) ; il n'est en revanche pas vierge en littérature grise/journalistique francophone, où au moins une critique substantielle (Rihi/Conversation) circule déjà et où une thèse en cours pourrait produire d'autres sorties avant toute soumission. Recommandation : citer/discuter l'article de Rihi comme contrepoint critique journalistique dans l'introduction (créneau2 tient toujours pour le versant peer-reviewed), mais ne pas se fier aux résultats \"zéro\" AFD/Ferdi/Enda comme preuve définitive d'absence — un balayage humain direct sur ces trois sites avec leur propre moteur de recherche (JS-rendu) serait nécessaire pour clore complètement ce sous-angle."
+  },
+  {
+   "angle": "Working papers et dépôts institutionnels d'économie de l'énergie (SSRN, RePEc/EconStor, ANU Open Research/Crawford, ZEF, IDOS, Bruegel, IEEFA) — vérification prioritaire de Do, Halimatussadiah, Burke & Jotzo (2026) et balayage de l'aval Do/Jotzo 2025-2026.",
+   "queries_run": [
+    "Do Halimatussadiah Burke Jotzo 2026 Just Energy Transition Partnerships at Risk Indonesia Vietnam SSRN (blocked, budget exhausted)",
+    "Thang Nam Do Frank Jotzo 2025 2026 Vietnam JETP working paper (blocked)",
+    "JETP South Africa Indonesia Vietnam Senegal comparative RePEc EconStor working paper (blocked)",
+    "JETP ANU Crawford Open Research working paper 2026 (blocked)",
+    "JETP Trump withdrawal Bruegel IEEFA working paper (blocked)",
+    "JETP Vietnam Senegal ZEF IDOS discussion paper (blocked)",
+    "api.crossref.org/works/10.2139/ssrn.6979738",
+    "api.openalex.org search JETP Indonesia Vietnam risk",
+    "api.openalex.org authors search Thang Nam Do",
+    "api.crossref.org works query comparative JETP South Africa Indonesia Vietnam Senegal 2025-",
+    "api.openalex.org works filter author Thang Nam Do (A5010966473) from 2025",
+    "api.openalex.org works filter author Thang Nam Do variant A5104441812",
+    "api.openalex.org authors search Frank Jotzo",
+    "api.openalex.org works filter author Frank Jotzo (A5074676770) from 2025",
+    "api.openalex.org search JETP aid conditionality tied aid development literature bridge",
+    "bruegel.org search Just Energy Transition Partnership",
+    "openresearch-repository.anu.edu.au discover Just Energy Transition Partnership (timeout)",
+    "ideas.repec.org htsearch Just Energy Transition Partnership (returned homepage only, not usable)",
+    "ieefa.org search Just Energy Transition Partnership (403 Forbidden)",
+    "econstor.eu simple-search Just Energy Transition Partnership (blocked by Anubis bot-detection challenge)"
+   ],
+   "databases_used": [
+    "Crossref API (api.crossref.org)",
+    "OpenAlex API (api.openalex.org)",
+    "WebSearch (exhausted after 6 calls — budget hit 200/200 mid-session)",
+    "WebFetch attempted on Bruegel, ANU Open Research, RePEc/IDEAS, EconStor, IEEFA — all four returned unusable content (homepage-only, bot challenge, timeout, or 403)"
+   ],
+   "candidates": [
+    {
+     "title": "Just Energy Transition Partnerships at Risk in Indonesia and Vietnam",
+     "authors": "Thang Nam Do, Alin Halimatussadiah, Paul J. Burke, Frank Jotzo",
+     "year": "2026",
+     "venue": "SSRN Electronic Journal (posted content, DOI 10.2139/ssrn.6979738); ANU-affiliated authors, likely mirrored to ANU Open Research/Crawford — mirror not independently confirmed (repository search timed out)",
+     "url": "https://doi.org/10.2139/ssrn.6979738",
+     "classification": "preempts",
+     "why": "CONFIRMED via Crossref metadata fetch: this is exactly the priority candidate flagged. It is a comparative Indonesia+Vietnam JETP paper (creneau2 partially covered for Vietnam, though Indonesia is the more-studied case so the paper leans toward filling the Vietnam gap specifically) built on stakeholder interviews, diagnosing a misalignment between recipient expectations for concessional finance and donor conditionality — this is directly adjacent to (arguably preempts a slice of) creneau3's aid-conditionality bridge, applied empirically to two of our four JETP cases. It does NOT cover South Africa, Senegal, or take the March 2025 US withdrawal (EO 14162) as an explicit analytical pivot — so it does not preempt creneau1's 4-country retrospective-with-2025-pivot framing, but it materially narrows the Vietnam-underexplored claim in creneau2 and anticipates part of the aid-literature bridge in creneau3. Must be cited and distinguished explicitly: our paper's added value must be stated as (a) the full 4-country scope including South Africa and Senegal, (b) the EO 14162 pivot as organizing device, and (c) peer-review venue vs. this SSRN working paper. Not yet peer-reviewed (SSRN posted content, 2026) — treat as a live, uncertain-status competitor: verify at final revision whether it has moved to journal review or press."
+    },
+    {
+     "title": "(No standalone Vietnam-only JETP retrospective found from Do/Jotzo team beyond the above)",
+     "authors": "Thang Nam Do / Frank Jotzo (ANU) — full 2025-2026 output swept",
+     "year": "2025-2026",
+     "venue": "OpenAlex author-works query",
+     "url": "",
+     "classification": "background",
+     "why": "Full sweep of Thang Nam Do's (ANU, OpenAlex A5010966473 and A5104441812) and Frank Jotzo's (A5074676770) 2025-2026 outputs found no additional Vietnam-specific JETP retrospective beyond the Indonesia+Vietnam SSRN paper above. Do's other 2025-2026 work is on rice farming carbon markets, cooperative upgrading, and Mekong cooperation; Jotzo's other 2025-2026 work is on Australia net-zero targets, coal maritime trade, and Paris Agreement double-counting. No second JETP paper 'in press' was found — the SSRN piece appears to be their sole and current JETP contribution. This lowers the urgency of the tracking risk somewhat (only one paper to watch, not a forthcoming series), though its content still narrows our novelty claims as above."
+    },
+    {
+     "title": "Aid-conditionality bridge (creneau3): no JETP-to-classic-aid-literature bridge paper found",
+     "authors": "n/a",
+     "year": "n/a",
+     "venue": "OpenAlex keyword search",
+     "url": "",
+     "classification": "background",
+     "why": "A direct OpenAlex search combining JETP terminology with aid-conditionality/tied-aid vocabulary (Easterly, Alesina-adjacent literature) returned zero JETP-tagged results — confirms creneau3's gap remains open in the indexed literature, modulo the partial empirical overlap noted in the Do/Halimatussadiah/Burke/Jotzo paper above, which uses conditionality language but does not explicitly engage the classical aid-effectiveness canon (Alesina, Easterly, Riddell) as a theoretical frame."
+    },
+    {
+     "title": "Comparative multi-country (4-JETP) retrospective in a working-paper/repository venue",
+     "authors": "n/a",
+     "year": "n/a",
+     "venue": "Crossref bibliographic query 2025-2026",
+     "url": "",
+     "classification": "background",
+     "why": "A Crossref bibliographic search for JETP works spanning South Africa, Indonesia, Vietnam, and Senegal jointly, restricted to 2025-2026, returned only the same Do/Halimatussadiah/Burke/Jotzo Indonesia+Vietnam paper as a near-match (2 of 4 countries) — no work covering all four JETPs comparatively was found in Crossref-indexed content. This is consistent with creneau1 remaining open, though absence-of-evidence caution applies given that RePEc/EconStor/Bruegel/IEEFA — exactly the venues most likely to host such a comparative retrospective — could not be searched directly (see dry_notes)."
+    }
+   ],
+   "dry_notes": "Tooling failure, not confirmed absence: WebSearch hit its session budget (200/200) after only 1 query attempt registered against this angle, so 5 of the 6 requested queries never actually executed — this is a hard tool-availability failure, not a null result, and should not be read as evidence against the flagged venues. WebFetch fallbacks to RePEc/IDEAS (returns homepage shell, not search results — htsearch endpoint appears to require JS or session cookies), EconStor (blocked by Anubis proof-of-work anti-scraping challenge), IEEFA (403 Forbidden on the search URL), and ANU Open Research repository (60s timeout) were all unusable — none of SSRN's four named sibling venues (RePEc/EconStor, ANU Open Research, IEEFA; Bruegel returned a real but negative result) could be genuinely searched. Bruegel was the one venue that did return real (negative) content. ZEF and IDOS were not attempted directly (no working WebFetch path found in the time available) — this angle's slots 1-2 institutional-repository coverage should be treated as UNVERIFIED for RePEc/EconStor/ANU/IEEFA/ZEF/IDOS specifically, pending either a fresh WebSearch-budget session or a human doing manual site searches on those five platforms. What IS solid: the priority candidate (Do/Halimatussadiah/Burke/Jotzo 2026, SSRN 10.2139/ssrn.6979738) is confirmed via Crossref with full metadata and abstract, and a full OpenAlex sweep of both Thang Nam Do's and Frank Jotzo's 2025-2026 output found no second JETP paper — so the \"verify if a Vietnam-only revised version is in press\" sub-task is answered negative (no evidence of one) but only as strongly as OpenAlex's indexing currency allows (SSRN preprints can lag OpenAlex ingestion by weeks). Recommend a follow-up pass once WebSearch quota resets, targeting explicitly: site:econstor.eu JETP, site:ideas.repec.org JETP Senegal Vietnam, site:ieefa.org JETP 2025 2026, ZEF Bonn discussion paper JETP, IDOS (formerly DIE) discussion paper JETP, and a direct check of SSRN's own page for ssrn.6979738 (co-authors, revision history, \"forthcoming\" status) plus its citing/related papers list."
+  },
+  {
+   "angle": "Créneau 3 (aide au développement / finance concessionnelle) — pont JETP × aide liée, conditionnalité, inflation des promesses, équivalent-don, testé contre 6 sources désignées + recherche additionnelle",
+   "queries_run": [
+    "JETP \"grant equivalent\" concessionality OECD DAC climate finance (WebSearch, blocked)",
+    "Just Energy Transition Partnership \"tied aid\" conditionality peer review (WebSearch, blocked)",
+    "JETP pledge inflation climate finance promises Oxfam shadow report 2025 (WebSearch, blocked)",
+    "\"country platform\" climate finance Nigeria Easterly aid effectiveness (WebSearch, blocked)",
+    "eco-humanitarian rentierism aid politics International Affairs 2025 (WebSearch, blocked)",
+    "JETP concessional finance debt development aid literature Alesina Riddell (WebSearch, blocked)",
+    "OpenAlex: Just Energy Transition Partnership tied aid conditionality grant equivalent",
+    "Crossref: eco-humanitarian rentierism aid International Affairs",
+    "Crossref: country platform climate action Nigeria (429 error, unresolved)",
+    "OpenAlex: Just Energy Transition Partnership concessional finance debt",
+    "OpenAlex doi lookup: 10.46830/wrien.25.00030 (WRI Financing country platforms)",
+    "OpenAlex doi lookup: 10.1787/345b768b-en (OECD private finance mobilised)",
+    "OpenAlex doi lookup: 10.59184/rp025.02 (Nigeria country platform)",
+    "OpenAlex doi lookup: 10.21201/2025.000088 (Oxfam Climate Finance Shadow Report 2025)",
+    "OpenAlex: grant equivalent methodology DAC concessionality climate finance CGD ODI",
+    "OpenAlex: Just Energy Transition Partnership aid effectiveness conditionality Indonesia South Africa",
+    "OpenAlex: Just Energy Transition Partnership aid promises unmet disbursement gap",
+    "OpenAlex: Center for Global Development grant equivalent concessionality DAC reform"
+   ],
+   "databases_used": [
+    "OpenAlex API (api.openalex.org)",
+    "Crossref API (api.crossref.org)",
+    "WebSearch (blocked mid-session: 'this session has used its web search budget 200 of 200')"
+   ],
+   "candidates": [
+    {
+     "title": "Climate Finance Shadow Report 2025: Analysing progress on climate finance under the Paris Agreement",
+     "authors": "Jan Kowalzig, John Nordbo, Rasmus Bo Sørensen, Tallulah Cherry-Virdee, Hans Peter Dejgaard, Nafkote Dabi",
+     "year": "2025",
+     "venue": "Oxfam / CARE (report)",
+     "url": "https://doi.org/10.21201/2025.000088",
+     "classification": "background",
+     "why": "Corpus gris confirmé: quantifie l'écart grants/prêts (deux tiers de prêts) et la sur-comptabilisation des promesses de finance climat au niveau global. Ne traite pas JETP nommément ni le vocabulaire aide liée/conditionnalité classique; utile comme donnée de fond pour l'argument équivalent-don mais pas un pont disciplinaire fait."
+    },
+    {
+     "title": "Financing country platforms",
+     "authors": "Melanie Robinson, Gaia Larsen",
+     "year": "2025",
+     "venue": "World Resources Institute (Expert Note)",
+     "url": "https://doi.org/10.46830/wrien.25.00030",
+     "classification": "background",
+     "why": "Corpus gris sur le montage financier des country platforms (dont JETP est un cas), rôles des acteurs financiers. Descriptif/prescriptif, aucun ancrage dans la littérature classique de l'aide (conditionnalité, aide liée) ni analyse critique de l'inflation des promesses."
+    },
+    {
+     "title": "Increasing development finance efforts to scale private finance mobilised and its impact",
+     "authors": "OECD",
+     "year": "2025",
+     "venue": "OECD Policy Briefs",
+     "url": "https://doi.org/10.1787/345b768b-en",
+     "classification": "background",
+     "why": "Note de politique OCDE sur la mobilisation de finance privée et les country platforms; fond méthodologique DAC pertinent pour l'argument équivalent-don mais ne mentionne pas JETP spécifiquement ni la littérature classique de l'aide (Alesina/Easterly/Riddell)."
+    },
+    {
+     "title": "Is a country platform for climate action right for Nigeria?",
+     "authors": "Lai Yahaya, Olumide Onitekun",
+     "year": "2025",
+     "venue": "Report (Nigeria-focused think tank)",
+     "url": "https://doi.org/10.59184/rp025.02",
+     "classification": "background",
+     "why": "Corpus gris, cas Nigeria (pas un JETP formel) évaluant l'opportunité d'un country platform; illustre le débat sur la réplicabilité du modèle JETP mais pas de dialogue avec la littérature d'aide classique."
+    },
+    {
+     "title": "Instrumentalizing crisis as capital: eco-humanitarian rentierism and the global politics of aid",
+     "authors": "Gerasimos Tsourapas, Imad El-Anis",
+     "year": "2025",
+     "venue": "International Affairs, vol. 101(6), pp. 2149-2172",
+     "url": "https://doi.org/10.1093/ia/iiaf185",
+     "classification": "adjacent",
+     "why": "Seule source peer-reviewed du lot: conceptualise le \"rentierisme éco-humanitaire\" (narration de crise, alignement discursif, conformité performative pour capter des ressources externes) via Egypte/Jordanie. Cadre conceptuel directement transposable au JETP (promesses conditionnelles, dépendance, marginalisation), mais l'article ne traite ni JETP ni le vocabulaire aide liée/équivalent-don — un pont explicite reste à faire, ce qui confirme plutôt le créneau 3 que ne le comble."
+    },
+    {
+     "title": "(Aucun travail identifié) — pont peer-reviewed explicite JETP × aide liée/conditionnalité/inflation des promesses/équivalent-don",
+     "authors": "",
+     "year": "",
+     "venue": "",
+     "url": "",
+     "classification": "background",
+     "why": "Recherches répétées (OpenAlex, Crossref, requêtes croisant JETP avec conditionality/tied aid/grant equivalent/disbursement gap/Alesina/Easterly/Riddell) ne retournent aucun article peer-reviewed faisant explicitement ce pont. Les seuls hits positifs sont soit gris (Oxfam/WRI/OECD/rapport Nigeria), soit conceptuellement adjacents mais hors-JETP (Tsourapas & El-Anis). Confirme que le créneau 3 reste ouvert au niveau peer-reviewed, et que sa littérature actuelle est presque entièrement grise."
+    }
+   ],
+   "dry_notes": "Le budget WebSearch de la session était épuisé (200/200) avant la première requête de ce lot — bascule immédiate sur WebFetch contre api.openalex.org et api.crossref.org (Crossref a renvoyé un 429 sur une requête, contournée via OpenAlex). Les 6 sources désignées par l'utilisateur ont toutes été vérifiées et confirmées comme gris (Oxfam, WRI, OECD, rapport Nigeria) sauf une (Tsourapas & El-Anis, International Affairs, peer-reviewed mais hors-JETP). Aucune recherche additionnelle (CGD grant-equivalent, disbursement-gap JETP, Alesina/Easterly/Riddell + JETP) n'a produit de nouveau candidat pertinent — signal de saturation cohérent avec le diagnostic du critique de complétude: le créneau 3 est réellement sous-couvert et son corpus est majoritairement gris. Recommandation: le manuscrit peut citer les 4 sources grises confirmées comme état de l'art institutionnel + Tsourapas & El-Anis comme cadre conceptuel transposable, tout en affirmant l'absence de pont peer-reviewed direct comme la contribution originale du papier sur ce point."
+  },
+  {
+   "angle": "Canaux jusqu'ici non balayés (créneaux 1-2 de la grille de recherche : peer-review juridique, actes de colloque indexés, chapitres d'ouvrages collectifs) sur les JETP — vérification des six candidats signalés par le critique de complétude, plus recherche exploratoire pour saturation.",
+   "queries_run": [
+    "JETP investment law RECIEL 2026 Indonesia Vietnam substantive standards (WebSearch — budget épuisé, non exécutée)",
+    "Local content requirements Just Energy Transition Asia JWELB 2025 (WebSearch — budget épuisé, non exécutée)",
+    "Just Energy Transition Partnership Business and Human Rights Journal 2025 (WebSearch — budget épuisé, non exécutée)",
+    "Financing Climate Action Routledge Transition Planning and Country Platforms chapter (WebSearch — budget épuisé, non exécutée)",
+    "IOP Conference Series 1511 JETP Indonesia Vietnam stocktake (WebSearch — budget épuisé, non exécutée)",
+    "JETP legal analysis 2026 edited volume chapter (WebSearch — budget épuisé, non exécutée)",
+    "Crossref works/10.1111/reel.70033",
+    "Crossref works/10.1093/jwelb/jwaf003",
+    "Crossref works/10.1017/bhj.2024.28",
+    "Crossref works/10.1088/1755-1315/1511/1/012010",
+    "Crossref works/10.1088/1755-1315/1511/1/012012",
+    "Crossref works/10.4324/9781003589709-33",
+    "OpenAlex search: Just Energy Transition Partnership investment law",
+    "OpenAlex search: Just Energy Transition Partnership human rights procedural justice"
+   ],
+   "databases_used": [
+    "Crossref API (api.crossref.org) — primary, used as fallback after WebSearch quota exhausted",
+    "OpenAlex API (api.openalex.org) — supplementary saturation check"
+   ],
+   "candidates": [
+    {
+     "title": "Do Just Energy Transition Partnerships collide or converge with substantive investment law standards? Case studies from Indonesia and Vietnam",
+     "authors": "Francine Hug",
+     "venue": "Review of European, Comparative & International Environmental Law (RECIEL)",
+     "year": "2026",
+     "url": "https://doi.org/10.1111/reel.70033",
+     "classification": "adjacent",
+     "why": "Confirmed via Crossref: peer-reviewed legal analysis of JETP investment-arbitration risk in Indonesia and Vietnam, proposing reforms so JETPs and investment law are mutually supportive. Populates the juridique channel the brief flagged as unswept, but is a 2-country legal/doctrinal study, not a 4-JETP comparative retrospective pivoted on the March 2025 US withdrawal (creneau1), nor does it treat Senegal or bridge to classical aid-conditionality literature (creneau3). Refutes any claim that peer-reviewed investment-law treatment of JETPs is absent."
+    },
+    {
+     "title": "Local content requirements in Asia's Just Energy Transition: Neutralizing tensions with international economic law",
+     "authors": "Francine Hug",
+     "venue": "Journal of World Energy Law & Business (JWELB)",
+     "year": "2025",
+     "url": "https://doi.org/10.1093/jwelb/jwaf003",
+     "classification": "adjacent",
+     "why": "Confirmed via Crossref: peer-reviewed international-economic-law analysis of local content requirements in Indonesian/Vietnamese JETPs, concluding international economic law complements rather than collides with transition goals. Same author/vein as the RECIEL piece; strengthens the juridique channel but does not cover Senegal, South Africa, the 2025 US IPG withdrawal, or the aid-literature bridge."
+    },
+    {
+     "title": "Procedural Justice and Due Process Principle in the Context of Just Energy Transition: Learning From South Africa",
+     "authors": "Begüm Kilimcioğlu",
+     "venue": "Business and Human Rights Journal (BHRJ)",
+     "year": "2025",
+     "url": "https://doi.org/10.1017/bhj.2024.28",
+     "classification": "background",
+     "why": "Confirmed via Crossref: peer-reviewed human-rights/procedural-justice legal analysis of South Africa's JET process, arguing affected parties must participate at all levels. Single-country (South Africa only), human-rights framing rather than investment-law or comparative-retrospective; opens a legal/HR sub-channel but does not touch Vietnam, Senegal, the 2025 pivot, or the aid-literature bridge — background relative to the three creneaux."
+    },
+    {
+     "title": "Building blocks for a successful just energy transition: A stocktake analysis of Indonesia and Vietnam",
+     "authors": "Ceren Ayas, Nga Vo, Ben Khuat, Diane Hu, Jannata Giwangkara, Michael Dolan, Trang Nguyen",
+     "venue": "IOP Conference Series: Earth and Environmental Science, vol. 1511",
+     "year": "2025",
+     "url": "https://doi.org/10.1088/1755-1315/1511/1/012010",
+     "classification": "adjacent",
+     "why": "Confirmed via Crossref: indexed conference proceedings paper offering a comparative stocktake/analytical framework for Indonesia and Vietnam JETPs, finding partial success in governance/socio-economic areas but persistent financing gaps. Two-country comparative retrospective (partially overlapping creneau2's Vietnam-underexplored claim, since it does treat Vietnam alongside Indonesia in a peer-reviewed-adjacent venue) but not 4-country, not pivoted on the 2025 US IPG withdrawal, no Senegal, no aid-literature bridge. Shows the créneau of 'Vietnam quasi-inexplored' needs qualifying rather than fully preempting."
+    },
+    {
+     "title": "Transaction costs of the Indonesian Just Energy Transition Partnership",
+     "authors": "Thant Thura Zan, Ida Dokk Smith, Indra Overland, Indira Pradnyaswari",
+     "venue": "IOP Conference Series: Earth and Environmental Science, vol. 1511",
+     "year": "2025",
+     "url": "https://doi.org/10.1088/1755-1315/1511/1/012012",
+     "classification": "background",
+     "why": "Confirmed via Crossref: proceedings paper applying transaction-cost economics (asset specificity, uncertainty, legitimacy, accountability) to Indonesia's JETP governance. Single-country, institutional-economics lens rather than legal/comparative/aid-literature — background for all three creneaux but confirms the actes-de-colloque channel is not empty."
+    },
+    {
+     "title": "Transition Planning and Country Platforms as a Way to Accelerate Development and Climate Action",
+     "authors": "Madhura Joshi, Laura Sabogal Reyes, Kavya Singhal",
+     "venue": "Book chapter in Financing Climate Action, Routledge India",
+     "year": "2025",
+     "url": "https://doi.org/10.4324/9781003589709-33",
+     "classification": "adjacent",
+     "why": "Confirmed via Crossref (pp. 417-426, first edition, published 13 Oct 2025): edited-volume chapter on 'country platforms' — the institutional design family JETPs belong to — as a vehicle for development-climate financing. Directly invalidates the brief's specific claim that no edited-volume/ouvrage-collectif channel is open on this topic. Not JETP-specific in title and not a comparative 4-country retrospective, so it does not preempt creneau1; also does not explicitly engage Alesina/Easterly/Riddell-style aid-conditionality literature, so creneau3's bridge remains unmade, though the chapter sits in the same conceptual neighborhood (country platforms as a development-finance instrument) and is the closest thing found to a link between the two literatures."
+    }
+   ],
+   "dry_notes": "All six signaled candidates confirmed as real, correctly attributed peer-reviewed/indexed publications via Crossref (WebSearch was unavailable — session quota exhausted at 200/200 calls before any query on this angle ran; fell back entirely to api.crossref.org, supplemented by two api.openalex.org saturation searches that returned only generic energy-justice literature with no additional JETP-specific legal/proceedings/edited-volume hits). Net effect on the three creneaux under stress-test: creneau1 (no peer-reviewed 4-JETP comparative retrospective pivoted on the March 2025 US withdrawal) survives — none of the six is a 4-country study nor engages Executive Order 14162 as an analytical pivot. Creneau2 (Vietnam/Senegal quasi-unexplored) needs a partial qualifier, not a retraction: three of the six items (Hug x2, Ayas et al.) treat Vietnam substantively, so 'Vietnam is quasi-inexplored versus Indonesia' is now overstated — Vietnam has real peer-review/proceedings coverage on the legal and transaction-cost dimensions, though still zero on the legal channel for Senegal or on any 4-country design. Senegal remains entirely absent from all six. Creneau3 (bridge to classical aid-conditionality literature) survives — none of the six candidates cites or engages Alesina/Easterly/Riddell-type aid literature; the Routledge chapter is the closest adjacency (country-platform framing) but does not make the bridge. The brief's blanket claim that no edited-volume channel exists is refuted outright by the Routledge/Financing Climate Action chapter. Recommend the brief's créneau2 language be softened from 'quasi-inexplored' to something like 'Vietnam has legal/proceedings coverage but no dedicated comparative-with-South-Africa peer-reviewed treatment; Senegal remains entirely absent from every genre swept to date.'"
+  }
+ ],
+ "judged": [
+  {
+   "title": "Comment la justice climatique risque de devenir un instrument de domination : le cas du Just Energy Transition Partnerships (JETP) au Sénégal",
+   "authors": "Yanis Rihi",
+   "year": "2026",
+   "venue": "The Conversation France (republished on HAL, hal-05599857)",
+   "url": "https://hal.science/hal-05599857v1",
+   "classification": "adjacent",
+   "why": "Confirmed as the seed/germ. This is a journalistic op-ed (The Conversation France) mirrored on HAL, NOT a peer-reviewed article — docType is ART but the venue is a media outlet, not a journal. It is authored by a PhD candidate (Yanis Rihi, Université Paris-Saclay, UMI SOURCE) whose in-progress thesis 'Transition(s) juste(s) vers des économies soutenables du Nord au Sud : défis communs ?' covers North-South just-transition themes broadly, not Senegal-JETP specifically as a dissertation focus. This confirms creneau2 (Senegal underexplored) survives for peer-reviewed venues, but the francophone public/grey-literature space around Senegal-JETP is not empty — critical commentary exists outside academic journals.",
+   "angle": "Créneau francophone (Sénégal) — recherche de saturation dans les canaux francophones : HAL, Cairn, theses.fr, AFD papiers de recherche, Ferdi, Enda Energie/IED Dakar, versions françaises NRGI. Objectif : déterminer si le créneau Sénégal est libre uniquement en peer-review anglophone, ou libre tout court (y compris littérature grise et francophone).",
+   "judge": {
+    "verdict": "must_cite",
+    "confidence": "high",
+    "justification": "Re-verified independently via HAL search API (landing page blocked by Anubis), Crossref API, and DOI resolution to the full text; WebSearch was unavailable (session budget of 200 calls already exhausted), so all checks went through WebFetch on those APIs.\n\nVENUE/TYPE (decisive, three independent sources agree): HAL's own record fields give peerReviewing_s=\"0\", popularLevel_s=\"1\" (vulgarisation), audience_s=\"2\", journalTitle_s=\"The Conversation France\", producedDate_s=\"2026-04-22\", no file deposited. Crossref gives type=\"posted-content\", publisher=\"The Conversation\", an EDITOR (Gabrielle Marechaux) rather than reviewers, and references-count=0. The researcher inferred non-peer-review from the venue name; HAL's own peerReviewing flag settles it outright. So this is a ~3,500-word journalistic op-ed, not a scholarly article.\n\nCONTENT vs THE THREE CRENEAUX (full text retrieved and read via the theconversation.com URL):\n- Creneau 1 (comparative retrospective of the 4 JETPs, 2025 US withdrawal as pivot): NOT touched. Single-country piece; South Africa/Indonesia/Vietnam appear in exactly one passing sentence; the US withdrawal is not discussed at all.\n- Creneau 2 (Senegal/Vietnam quasi-unexplored): substantive overlap in subject and critical framing — ~EUR 1.8bn as concessional loans, zero disbursement to date, the Sangomar fossil-expansion contradiction, governance opacity. But no original empirical data, no fieldwork or interviews, no analytical framework, and not peer-reviewed. The creneau as the brief states it is explicitly about the peer-reviewed venues (Energy Policy, Climate Policy, IEA, TWQ, RIPE — none with a dedicated JETP article). A media op-ed does not populate that literature, so the creneau survives.\n- Creneau 3 (bridge to the development-aid literature): NOT built. Structural adjustment (1980s-90s) is invoked illustratively only; no engagement with tied aid, conditionality, aid-promise inflation, or aid effectiveness.\n\nVERDICT RATIONALE: must_cite rather than preempts, because on the least generous reading it is still a same-year, same-country, same-angle piece whose observations partly anticipate the manuscript's, so its absence from the related work would read as a gap to a referee; and on the most generous reading a non-peer-reviewed op-ed with zero references cannot close a creneau defined over peer-reviewed venues. Citing it in fact strengthens the novelty claim: it documents that the critical framing circulates in francophone public debate while the scholarly treatment remains absent.\n\nCAVEATS: (1) I could not verify the researcher's claim about Rihi's thesis topic (no search capability), so that part of the justification remains unchecked. (2) The full text was read through a summarizer pass rather than raw, though the verdict turns on the venue/type determination, which three independent metadata sources corroborate. (3) Forward risk, not present preemption: a PhD candidate publishing this in April 2026 is plausibly staging a peer-reviewed article on the same case — creneau 2 carries a race-condition risk worth monitoring.",
+    "source_checked": true
+   }
+  },
+  {
+   "title": "Transition(s) juste(s) vers des économies soutenables du Nord au Sud : défis communs ?",
+   "authors": "Yanis Rihi (dir. Rima Hawi)",
+   "year": "in progress since 2023",
+   "venue": "Université Paris-Saclay, UMI SOURCE (thesis, theses.fr)",
+   "url": "https://theses.fr",
+   "classification": "adjacent",
+   "why": "In-progress PhD thesis broadly on North-South just transitions; not Senegal-JETP-specific as its declared object, so does not preempt a peer-reviewed comparative JETP paper, but signals a francophone doctoral candidate already working adjacent territory and likely to publish more JETP-Senegal material (including via HAL/Conversation) before a submission lands.",
+   "angle": "Créneau francophone (Sénégal) — recherche de saturation dans les canaux francophones : HAL, Cairn, theses.fr, AFD papiers de recherche, Ferdi, Enda Energie/IED Dakar, versions françaises NRGI. Objectif : déterminer si le créneau Sénégal est libre uniquement en peer-review anglophone, ou libre tout court (y compris littérature grise et francophone).",
+   "judge": {
+    "verdict": "must_cite",
+    "confidence": "high",
+    "justification": "Verified via theses.fr API (record s368943), HAL API, OpenAlex and a direct fetch of theconversation.com; WebSearch budget was exhausted (200/200) so these were the fallbacks. The thesis itself is real but in progress since 01/10/2023, undefended, and its declared object is Senegalese offshore oil/gas and Ivorian cocoa, not the JETPs — it produces no citable finding and preempts nothing. The researcher's hunch about adjacent output was however correct: HAL hal-05599857 (22 April 2026, DOI 10.64628/AAK.mwjhcnwrw) is a Rihi piece specifically on the Senegal JETP — but The Conversation France, peerReviewing=0, popularLevel=1, ~2,100 words. I read it: majority concessional loans (~EUR 1.8bn of EUR 2.5bn), nothing disbursed three years on, 118.8% debt/GDP, Sangomar's $5bn, BP/TotalEnergies dual role, structural-adjustment analogy and a conditionality-as-financial-discipline close. It mentions South Africa, Indonesia and Vietnam without comparing them, and never mentions the March 2025 US withdrawal. So creneau 1 (peer-reviewed four-case retrospective pivoting on the US exit) is untouched; creneau 2's peer-reviewed Senegal/Vietnam gap holds; creneau 3's aid-literature bridge is gestured at, not built. Two peer-reviewed Rihi items exist but are off-target (Mondes en Developpement 2025 53(3):55-72 on SDGs-to-just-transitions; a 3-page book review in Canadian Journal of Development Studies 2026). Cite the Conversation article in related work as the francophone Senegal-JETP conditionality piece — it postdates the January 2024 HAL register, so it corroborates rather than undercuts priority.",
+    "source_checked": true
+   }
+  },
+  {
+   "title": "Just Energy Transition Partnerships at Risk in Indonesia and Vietnam",
+   "authors": "Thang Nam Do, Alin Halimatussadiah, Paul J. Burke, Frank Jotzo",
+   "year": "2026",
+   "venue": "SSRN Electronic Journal (posted content, DOI 10.2139/ssrn.6979738); ANU-affiliated authors, likely mirrored to ANU Open Research/Crawford — mirror not independently confirmed (repository search timed out)",
+   "url": "https://doi.org/10.2139/ssrn.6979738",
+   "classification": "preempts",
+   "why": "CONFIRMED via Crossref metadata fetch: this is exactly the priority candidate flagged. It is a comparative Indonesia+Vietnam JETP paper (creneau2 partially covered for Vietnam, though Indonesia is the more-studied case so the paper leans toward filling the Vietnam gap specifically) built on stakeholder interviews, diagnosing a misalignment between recipient expectations for concessional finance and donor conditionality — this is directly adjacent to (arguably preempts a slice of) creneau3's aid-conditionality bridge, applied empirically to two of our four JETP cases. It does NOT cover South Africa, Senegal, or take the March 2025 US withdrawal (EO 14162) as an explicit analytical pivot — so it does not preempt creneau1's 4-country retrospective-with-2025-pivot framing, but it materially narrows the Vietnam-underexplored claim in creneau2 and anticipates part of the aid-literature bridge in creneau3. Must be cited and distinguished explicitly: our paper's added value must be stated as (a) the full 4-country scope including South Africa and Senegal, (b) the EO 14162 pivot as organizing device, and (c) peer-review venue vs. this SSRN working paper. Not yet peer-reviewed (SSRN posted content, 2026) — treat as a live, uncertain-status competitor: verify at final revision whether it has moved to journal review or press.",
+   "angle": "Working papers et dépôts institutionnels d'économie de l'énergie (SSRN, RePEc/EconStor, ANU Open Research/Crawford, ZEF, IDOS, Bruegel, IEEFA) — vérification prioritaire de Do, Halimatussadiah, Burke & Jotzo (2026) et balayage de l'aval Do/Jotzo 2025-2026.",
+   "judge": {
+    "verdict": "must_cite",
+    "confidence": "high",
+    "justification": "Source re-verified independently: Crossref returned the verbatim JATS abstract for DOI 10.2139/ssrn.6979738 (posted 2026-07-29, group-title SSRN, publisher Elsevier BV, posted-content type); OpenAlex independently confirmed title, four authors, and preprint status but has abstract_inverted_index null. WebSearch budget was exhausted (200/200), so both fetches were API fallbacks (api.crossref.org, api.openalex.org); SSRN full text was not retrievable. The ANU/Crawford mirror the researcher hypothesized remains unconfirmed — Crossref carries no institution field.\n\nVERDICT: must_cite, not preempts, on all three creneaux.\n\nCreneau 1 (peer-reviewed 4-country retrospective with the March 2025 US withdrawal as organizing pivot): untouched. Scope is Indonesia + Vietnam only; South Africa and Senegal absent. It is SSRN posted content, not peer-reviewed. The US withdrawal appears only as one exacerbating factor inside a subordinate clause (\"weakened trust-exacerbated by recent geopolitical shifts, including the withdrawal of the United States from JETPs in 2025\"), never as the analytical pivot.\n\nCreneau 2 (Vietnam and Senegal quasi-unexplored): the genuine point of contact, and only half of it. Senegal is entirely absent. Vietnam is covered, but jointly with Indonesia in a self-described \"policy note\" whose 30 interviews are not disaggregated by country — the Vietnam-specific evidentiary share is unknown and may be minor. One non-peer-reviewed policy note does not make Vietnam \"explored\". The claim survives but must be qualified rather than asserted flat.\n\nCreneau 3 (bridge to the development-aid literature: tied aid, conditionality, pledge inflation): the researcher over-reads this as \"anticipates part of the bridge\". The paper OBSERVES donor reform conditionality as a practical obstacle and prescribes a sequencing/front-loading fix. Observing conditionality is not bridging the conditionality scholarship; the abstract shows zero engagement with aid-effectiveness, tied-aid, or pledge-inflation literature as a conceptual apparatus. The slot stands intact.\n\nDefault-to-not-preempt was not even the operative reason here: the evidence positively rules out preemption of creneaux 1 and 3, and covers creneau 2 only partially. Residual uncertainty (unread full text) could only affect how much of creneau 3 is nibbled, which does not change must_cite.\n\nTHE REAL RISK IS PRIORITY ADJACENCY, NOT NOVELTY PREEMPTION. The paper publishes the manuscript's core empirical finding — loan-heavy packages with low grant shares erode recipient trust — with 30 primary interviews and a 2026 date, blunting the \"we predicted it in January 2024, HAL-timestamped\" rhetorical asset for the Indonesia/Vietnam half. Note also it posted 2026-07-29, ONE DAY AFTER the brief's 2026-07-28 literature sweep, which is why it was missed.\n\nREQUIRED ACTIONS: (a) cite and distinguish explicitly in related work, stating added value as full 4-country scope including South Africa and Senegal, EO 14162 as organizing device, the ex-ante/timestamped-register design, and peer-review venue; (b) soften the creneau-2 wording in any submitted text from \"Vietnam and Senegal remain almost unstudied\" to a formulation that concedes Vietnam is now addressed in gray/preprint literature while Senegal remains unstudied; (c) treat as a live competitor for venue, not just for content — the ANU team (Jotzo, Burke, Do) publishes routinely in Energy Policy, ERSS and Climate Policy, and a \"policy note\" maps directly onto Climate Policy's Policy Analysis format, i.e. Option A's exact slot; re-check its publication status immediately before submitting Options A or B.",
+    "source_checked": true
+   }
+  },
+  {
+   "title": "Instrumentalizing crisis as capital: eco-humanitarian rentierism and the global politics of aid",
+   "authors": "Gerasimos Tsourapas, Imad El-Anis",
+   "year": "2025",
+   "venue": "International Affairs, vol. 101(6), pp. 2149-2172",
+   "url": "https://doi.org/10.1093/ia/iiaf185",
+   "classification": "adjacent",
+   "why": "Seule source peer-reviewed du lot: conceptualise le \"rentierisme éco-humanitaire\" (narration de crise, alignement discursif, conformité performative pour capter des ressources externes) via Egypte/Jordanie. Cadre conceptuel directement transposable au JETP (promesses conditionnelles, dépendance, marginalisation), mais l'article ne traite ni JETP ni le vocabulaire aide liée/équivalent-don — un pont explicite reste à faire, ce qui confirme plutôt le créneau 3 que ne le comble.",
+   "angle": "Créneau 3 (aide au développement / finance concessionnelle) — pont JETP × aide liée, conditionnalité, inflation des promesses, équivalent-don, testé contre 6 sources désignées + recherche additionnelle",
+   "judge": {
+    "verdict": "must_cite",
+    "confidence": "high",
+    "source_checked": true,
+    "justification": "SOURCE VERIFIED, NOT VIA THE RESEARCHER'S DESCRIPTION. WebSearch was blocked (session budget 200/200 exhausted); fallbacks used: Crossref API, OpenAlex API, Semantic Scholar Graph API, doi.org -> OUP landing page, and the CC-BY full text PDF from the University of Birmingham repository (pure-oai.bham.ac.uk/ws/files/302805866/TsourapasG2025Instrumentalizing.pdf), extracted with pdftotext (25 pages, ~11,900 words, complete through the conclusion and reference footnotes) and grepped mechanically.\n\nEXISTENCE AND METADATA CONFIRMED, exactly as the researcher stated: Tsourapas, G. & El-Anis, I., \"Instrumentalizing crisis as capital: eco-humanitarian rentierism and the global politics of aid\", International Affairs 101(6), 2149-2172, November 2025, DOI 10.1093/ia/iiaf185, 44 references, hybrid CC-BY open access. Corroborated by three independent APIs plus the publisher page.\n\nMECHANICAL GREP OF THE FULL TEXT (the decisive evidence): ZERO occurrences of \"JETP\", \"Just Energy Transition\", \"energy transition\", \"tied aid\", \"grant equivalent\", \"South Africa\", \"Indonesia\", \"Vietnam\", \"Senegal\", \"Alesina\", \"Easterly\", \"Riddell\". The article engages no JETP literature whatsoever and no classic aid-effectiveness literature. Its aid-side theory base is rentierism, migration diplomacy, and critical IPE (e.g. Rahman, \"Foreign aid and Bangladesh\"), not the five-decade aid-effectiveness canon that Slot 3 names.\n\nWHY NOT \"preempts\": Slot 3 claims that the bridge between the JETP literature and the development-aid literature (tied aid, conditionality, promise inflation) remains to be built. This article builds a different bridge — crisis-driven climate and refugee finance to rentierism/migration-diplomacy IR theory — on two non-JETP cases (Egypt, Jordan) in a partly non-energy domain (forced displacement). Neither terminus of the claimed slot is present: it never touches JETPs, and it never engages the aid-effectiveness scholarship. The slot survives.\n\nWHY IT IS A STRONGER \"must_cite\" THAN THE RESEARCHER REALIZED — two findings the researcher's summary missed, which I flag because they raise reviewer risk: (1) at footnote 33 the article discusses Egypt's NWFE (Nexus of Water-Food-Energy) platform, citing the Egyptian Ministry of Planning document \"Egypt's country platform for NWFE program\" — NWFE is a country platform, i.e. an institutional sibling of the JETPs, and it is analysed with exactly the manuscript's own vocabulary: over US$10bn in pledges, \"emphasis on bankability, investor visibility and donor alignment\" rather than inclusive resilience, implementation \"conditional on the availability of sufficient international finance\". (2) The Jordan section describes US aid \"often tied to specific projects and political and economic reforms\" — tied aid in substance without the term — and concludes \"Jordan converts crisis into conditional capital, but at the cost of systemic dependency\". There is also a passing mention of the January 2025 Trump foreign-aid freeze (relevant to Slot 1 only as background; it is one sentence about Jordan, not an analytical pivot, so it does not touch Slot 1 either).\n\nCONSEQUENCE FOR THE MANUSCRIPT: this is the closest peer-reviewed conceptual neighbour found in the candidate set, and its country-platform passage means a WIREs or IEA referee could plausibly ask why it is absent. Cite it in related work and differentiate explicitly — the manuscript's contribution is the JETP-specific bridge to the aid-effectiveness literature (grant-equivalence, tied aid, promise inflation, four pilot countries), whereas Tsourapas & El-Anis theorize recipient-state crisis rent-seeking on Egypt/Jordan without engaging either JETPs or that literature. Framed that way the article corroborates rather than occupies the slot, and the manuscript can borrow its \"crisis narration / discursive alignment / performative compliance\" triad as a named prior framework it extends to energy-transition finance."
+   }
+  },
+  {
+   "title": "Do Just Energy Transition Partnerships collide or converge with substantive investment law standards? Case studies from Indonesia and Vietnam",
+   "authors": "Francine Hug",
+   "venue": "Review of European, Comparative & International Environmental Law (RECIEL)",
+   "year": "2026",
+   "url": "https://doi.org/10.1111/reel.70033",
+   "classification": "adjacent",
+   "why": "Confirmed via Crossref: peer-reviewed legal analysis of JETP investment-arbitration risk in Indonesia and Vietnam, proposing reforms so JETPs and investment law are mutually supportive. Populates the juridique channel the brief flagged as unswept, but is a 2-country legal/doctrinal study, not a 4-JETP comparative retrospective pivoted on the March 2025 US withdrawal (creneau1), nor does it treat Senegal or bridge to classical aid-conditionality literature (creneau3). Refutes any claim that peer-reviewed investment-law treatment of JETPs is absent.",
+   "angle": "Canaux jusqu'ici non balayés (créneaux 1-2 de la grille de recherche : peer-review juridique, actes de colloque indexés, chapitres d'ouvrages collectifs) sur les JETP — vérification des six candidats signalés par le critique de complétude, plus recherche exploratoire pour saturation.",
+   "judge": {
+    "verdict": "must_cite",
+    "confidence": "high",
+    "justification": "Source re-verified independently. WebSearch budget was exhausted (200/200) for this session, so I fell back to WebFetch: doi.org resolved to Wiley (HTTP 402, full text paywalled), then api.crossref.org and api.openalex.org returned concordant metadata and abstract. The item is real: Francine Hug (CUHK / Western Sydney), RECIEL 35(1) 115-141, published 23 Jan 2026, DOI 10.1111/reel.70033. Abstract content (paraphrased by the fetch layer, not verbatim): JETPs face investor-arbitration threats under expropriation and fair-and-equitable-treatment standards; examines two dimensions -- avoiding arbitration when decommissioning coal early, and de-risking effectiveness for renewables under regulatory risk; compares national climate obligations with international investment obligations; proposes legal reforms drawn from Indonesia and Vietnam; concludes investment law, contracts and legislation can be mutually supportive if deliberately crafted.\n\nAgainst the brief's three créneaux (lines 194-197): (1) no retrospective comparative assessment of the four JETPs and no pivot on the March 2025 US withdrawal -- purely doctrinal, two countries, no disbursement/outcome evidence; does not preempt. (2) \"Vietnam et Sénégal quasi inexplorés\" is PARTIALLY eroded: this is a substantive peer-reviewed Vietnam case study, so the Option E proposal sentence \"Vietnam and Senegal remain almost unstudied\" must be qualified (Vietnam is now studied through an investment-law lens, not an implementation/aid lens); Senegal untouched; a political-economy or outcome study of the Vietnamese JETP remains open, so this is a citation obligation, not preemption. (3) the bridge to development-aid literature (tied aid, conditionality, pledge inflation) is absent entirely.\n\nResidual uncertainty stated: full text unread (Wiley 402), and OpenAlex reports referenced_works_count 0, so its reference list is not indexed and I could not check internal engagement with the US withdrawal. Title and abstract both commit the paper to two case studies and to substantive investment-law standards, making a hidden four-country retrospective implausible. Per the default rule, thin evidence on the preemption question resolves to must_cite. Practical consequence: cite in the legal research-program cluster (already named as one of four clusters in the brief) and soften the Vietnam evidence-gap claim.",
+    "source_checked": true
+   }
+  },
+  {
+   "title": "Local content requirements in Asia's Just Energy Transition: Neutralizing tensions with international economic law",
+   "authors": "Francine Hug",
+   "venue": "Journal of World Energy Law & Business (JWELB)",
+   "year": "2025",
+   "url": "https://doi.org/10.1093/jwelb/jwaf003",
+   "classification": "adjacent",
+   "why": "Confirmed via Crossref: peer-reviewed international-economic-law analysis of local content requirements in Indonesian/Vietnamese JETPs, concluding international economic law complements rather than collides with transition goals. Same author/vein as the RECIEL piece; strengthens the juridique channel but does not cover Senegal, South Africa, the 2025 US IPG withdrawal, or the aid-literature bridge.",
+   "angle": "Canaux jusqu'ici non balayés (créneaux 1-2 de la grille de recherche : peer-review juridique, actes de colloque indexés, chapitres d'ouvrages collectifs) sur les JETP — vérification des six candidats signalés par le critique de complétude, plus recherche exploratoire pour saturation.",
+   "judge": {
+    "verdict": "must_cite",
+    "confidence": "high",
+    "source_checked": true,
+    "justification": "SOURCE RE-VERIFIED INDEPENDENTLY (WebSearch budget exhausted at 200/200 — fell back to WebFetch on api.crossref.org, api.openalex.org and api.semanticscholar.org; all three returned concordant metadata, so the researcher's Crossref claim holds).\n\nConfirmed record: Francine Hug (Faculty of Law, Chinese University of Hong Kong), \"Local content requirements in Asia's Just Energy Transition: Neutralizing tensions with international economic law\", Journal of World Energy Law & Business 18(1), jwaf003, online 18 Feb 2025 / print 14 Mar 2025, DOI 10.1093/jwelb/jwaf003. Citation count 1. Full abstract retrieved verbatim from Semantic Scholar and OpenAlex (Crossref's copy is truncated).\n\nWHAT THE PAPER ACTUALLY DOES (from the verbatim abstract, not the researcher's paraphrase): a doctrinal international-economic-law analysis asking whether local content requirements (LCRs) are compatible with international economic law. Method: \"juxtaposes LCR provisions in JETPs and domestic regulations in two case studies: Indonesia and Vietnam\", then costs/benefits, then state defences, then design recommendations. Thesis: international economic law \"complements, rather than collides with, energy transition goals\" and LCRs are lawful if non-discriminatory. Object of study = a regulatory-barrier question (trade/investment law), with the JETP only as the framing context.\n\nAGAINST THE THREE SLOTS (brief §4, lines 194-200):\n\nSlot 1 — \"aucune évaluation rétrospective comparée des 4 JETP en peer-review prenant le retrait américain de 2025 comme pivot\": NOT preempted, and structurally cannot be. Two countries, not four (Senegal and South Africa absent). No disbursement/execution assessment, no risk-register test, no regime-effectiveness or aid framing. Decisively: the article was published online 18 Feb 2025, i.e. two-to-three weeks BEFORE the early-March 2025 US IPG withdrawal that is the manuscript's pivot event — it cannot have taken as its pivot an event that had not occurred at press time.\n\nSlot 2 — \"Vietnam et Sénégal quasi inexplorés\": PARTIALLY ERODED, hence must_cite. Vietnam is one of two co-equal case studies here, so a blanket claim that the Vietnamese JETP is unstudied in peer review is falsifiable by this single paper. This matters most for Option E (WIREs Focus Article), whose simulated editor explicitly conditioned the invitation on \"a transparent search protocol behind the Vietnam/Senegal evidence-gap claim\" (brief lines 490-493). Note the erosion is narrow: it is Vietnam only (Senegal untouched), and along a legal-scholarship axis, not the finance/execution/justice axes on which the manuscript claims the gap. The honest form of the claim survives — \"Vietnam is studied almost exclusively through legal and regulatory lenses, not through disbursement or aid-effectiveness ones\".\n\nSlot 3 — \"le pont avec la littérature aide au développement (aide liée, conditionnalité, inflation des promesses)\": NOT preempted. Hug's frame is WTO/investment law (TRIMs-type national-treatment analysis and state defences), not aid effectiveness. A tempting false positive here is LCR ≈ tied aid; they are converses. Tied aid is a donor-side procurement constraint favouring donor-country suppliers; an LCR is a recipient-side constraint favouring domestic suppliers. Hug engages neither the aid-effectiveness canon nor pledge inflation nor conditionality-as-aid-doctrine.\n\nWHERE IT BELONGS IN THE MANUSCRIPT: it is a clean exemplar of the fourth research cluster Option E already names — \"legal scholarship on investment protection and compensation\" (brief line 443) — and should be cited there by name, alongside the RECIEL piece the researcher mentions (that companion piece I could NOT verify, no budget left; treat it as unconfirmed). Secondary use: it supplies a substantive, non-obvious counterpoint to the manuscript's \"hidden conditionalities / tied aid\" risk line, which the brief itself rates only \"partiellement confirmé\" (line 159) — Hug's conclusion that international economic law does not in fact obstruct the transition is a rival hypothesis worth naming in the risk table, which also helps disarm the circularity objection both simulated editors raised (lines 515-520, 540-542).\n\nCAVEAT ON EVIDENCE DEPTH: verdict rests on abstract-level evidence from three independent metadata APIs plus publisher-recorded scope, not on the full text (paywalled; no OA PDF per Semantic Scholar/Unpaywall). That is sufficient here because the abstract is unusually explicit about geography, method and thesis, and because the dispositive fact for slot 1 — the publication date preceding the pivot event — is metadata, not interpretation. Per the default-to-non-preemption rule, thin full-text access argues for must_cite, not for preemption.\n\nSources checked: [Crossref](https://api.crossref.org/works/10.1093/jwelb/jwaf003), [OpenAlex](https://api.openalex.org/works/doi:10.1093/jwelb/jwaf003), [Semantic Scholar](https://api.semanticscholar.org/graph/v1/paper/DOI:10.1093/jwelb/jwaf003), [DOI](https://doi.org/10.1093/jwelb/jwaf003)."
+   }
+  },
+  {
+   "title": "Building blocks for a successful just energy transition: A stocktake analysis of Indonesia and Vietnam",
+   "authors": "Ceren Ayas, Nga Vo, Ben Khuat, Diane Hu, Jannata Giwangkara, Michael Dolan, Trang Nguyen",
+   "venue": "IOP Conference Series: Earth and Environmental Science, vol. 1511",
+   "year": "2025",
+   "url": "https://doi.org/10.1088/1755-1315/1511/1/012010",
+   "classification": "adjacent",
+   "why": "Confirmed via Crossref: indexed conference proceedings paper offering a comparative stocktake/analytical framework for Indonesia and Vietnam JETPs, finding partial success in governance/socio-economic areas but persistent financing gaps. Two-country comparative retrospective (partially overlapping creneau2's Vietnam-underexplored claim, since it does treat Vietnam alongside Indonesia in a peer-reviewed-adjacent venue) but not 4-country, not pivoted on the 2025 US IPG withdrawal, no Senegal, no aid-literature bridge. Shows the créneau of 'Vietnam quasi-inexplored' needs qualifying rather than fully preempting.",
+   "angle": "Canaux jusqu'ici non balayés (créneaux 1-2 de la grille de recherche : peer-review juridique, actes de colloque indexés, chapitres d'ouvrages collectifs) sur les JETP — vérification des six candidats signalés par le critique de complétude, plus recherche exploratoire pour saturation.",
+   "judge": {
+    "verdict": "must_cite",
+    "confidence": "high",
+    "source_checked": true,
+    "justification": "VÉRIFICATION INDÉPENDANTE (WebSearch épuisé — repli WebFetch sur api.crossref.org, iopscience.iop.org, api.openalex.org). Le DOI 10.1088/1755-1315/1511/1/012010 résout bien : titre, auteurs et volume confirmés par Crossref et OpenAlex. Résumé intégral récupéré sur IOPscience. Élément décisif que le chercheur n'a PAS rapporté : il s'agit d'une communication au 4th ASEAN International Conference on Energy and Environment (AICEE 2024), tenue le 25 septembre 2024 à Vientiane, publiée en juin 2025 dans une série de proceedings IOP (relecture éditoriale de conférence, pas peer-review de revue). Le millésime réel du contenu est donc septembre 2024, pas 2025.\n\nCONTENU RÉEL (résumé verbatim) : cadre analytique de benchmarks pour évaluer des « innovative financial models » face au carbon lock-in, puis « stocktake analysis » Indonésie + Vietnam sur les deux premières années d'opérationnalisation des JETP ; verdict « partiellement atteint » sur les critères gouvernance, systémiques et socio-économiques ; lacune persistante sur le financement ; quatre axes prioritaires recommandés.\n\nCONFRONTATION AUX TROIS CRÉNEAUX :\n(1) Évaluation rétrospective comparée des QUATRE JETP en peer-review avec le retrait américain de mars 2025 comme pivot — NON préempté, et pas marginalement : deux pays sur quatre (ni Afrique du Sud ni Sénégal, aucune mention selon la vérification du texte), fenêtre temporelle close en septembre 2024, soit six mois AVANT le retrait US ; l'événement pivot ne pouvait pas y figurer. Venue de proceedings, non revue.\n(2) « Vietnam et Sénégal quasi inexplorés » — préemption PARTIELLE, du seul côté vietnamien. Le Vietnam y est traité substantiellement et à parité avec l'Indonésie, ce qui oblige à qualifier la formulation actuelle. Le Sénégal reste intact. La revendication telle qu'écrite dans l'abstract de l'option E (« Vietnam and Senegal remain almost unstudied ») doit être resserrée : « almost unstudied in the peer-reviewed journal literature », avec cette référence en note comme exception de littérature grise/proceedings — d'autant que l'éditeur WIREs simulé exige déjà un protocole de recherche transparent derrière précisément cette revendication de lacune. Ne pas la citer serait le point d'attaque le plus facile pour un referee sur l'option E.\n(3) Pont avec la littérature de l'aide au développement (aide liée, conditionnalité, inflation des promesses) — NON préempté, aucune trace.\n\nINTÉRÊT SECONDAIRE POUR L'OPTION C : le papier propose lui aussi un cadre d'évaluation par benchmarks des JETP. Il faut donc le citer et s'en démarquer explicitement (benchmarks de politique publique appliqués à 2 pays sur 2 ans vs effectivité des régimes / soft law appliquée à 4 pilotes sur 2021-2026), sinon la contribution de cadrage du manuscrit paraît moins neuve qu'elle ne l'est.\n\nRÉSERVES SUR LA JUSTIFICATION DU CHERCHEUR : « peer-reviewed-adjacent » est correct mais euphémique — c'est une communication de conférence ; il omet que le terrain s'arrête en septembre 2024, ce qui est l'argument le plus fort contre toute préemption du créneau 1. Sa conclusion (qualifier, pas préempter) reste néanmoins la bonne. Faible visibilité (1 citation dans OpenAlex), auteurs praticiens (profil Climateworks Centre / IESR) plutôt qu'académiques : à placer en related work, pas en concurrent direct."
+   }
+  },
+  {
+   "title": "Transition Planning and Country Platforms as a Way to Accelerate Development and Climate Action",
+   "authors": "Madhura Joshi, Laura Sabogal Reyes, Kavya Singhal",
+   "venue": "Book chapter in Financing Climate Action, Routledge India",
+   "year": "2025",
+   "url": "https://doi.org/10.4324/9781003589709-33",
+   "classification": "adjacent",
+   "why": "Confirmed via Crossref (pp. 417-426, first edition, published 13 Oct 2025): edited-volume chapter on 'country platforms' — the institutional design family JETPs belong to — as a vehicle for development-climate financing. Directly invalidates the brief's specific claim that no edited-volume/ouvrage-collectif channel is open on this topic. Not JETP-specific in title and not a comparative 4-country retrospective, so it does not preempt creneau1; also does not explicitly engage Alesina/Easterly/Riddell-style aid-conditionality literature, so creneau3's bridge remains unmade, though the chapter sits in the same conceptual neighborhood (country platforms as a development-finance instrument) and is the closest thing found to a link between the two literatures.",
+   "angle": "Canaux jusqu'ici non balayés (créneaux 1-2 de la grille de recherche : peer-review juridique, actes de colloque indexés, chapitres d'ouvrages collectifs) sur les JETP — vérification des six candidats signalés par le critique de complétude, plus recherche exploratoire pour saturation.",
+   "judge": {
+    "verdict": "must_cite",
+    "confidence": "high",
+    "justification": "Source re-vérifiée indépendamment (WebSearch épuisé 200/200 ; fallback WebFetch sur api.crossref.org et api.openalex.org ; page Taylor & Francis en 403). Métadonnées confirmées : chapitre 33, pp. 417-426, Financing Climate Action, Routledge India, 1re éd., 13 oct. 2025, ISBN 9781003589709, DOI et auteurs conformes. Résumé reconstruit verbatim depuis l'abstract_inverted_index brut d'OpenAlex (W4415129056), pas depuis la paraphrase du chercheur : le chapitre est un texte praticien prospectif de 10 pages dont l'objet est le potentiel d'une country platform POUR L'INDE, les JETP servant de source de leçons et non d'objet d'étude. referenced_works_count = 0.\n\nCréneau 1 (rétrospective comparée des 4 JETP, retrait US 2025 comme pivot) : NON préempté, et c'est décisif — les faits d'ancrage du résumé s'arrêtent à la COP28, aux réunions de printemps FMI/Banque mondiale 2024 et à la présidence brésilienne du G20. Le texte est antérieur à mars 2025 ; le retrait américain n'y figure pas. Ni rétrospectif, ni comparatif, ni 4 pays, ni pivoté sur le retrait US — structurellement impossible en 10 pages.\n\nCréneau 2 (Vietnam et Sénégal) : NON préempté. Pays nommés = Macédoine du Nord, Bangladesh, Inde.\n\nCréneau 3 (pont avec la littérature aide au développement : aide liée, conditionnalité, inflation des promesses) : NON préempté. Registre = design d'instrument de finance du développement (country-centred approaches, plans de transition nationaux, appui technique et analytique), pas l'aid-effectiveness scholarship. Aucun signe d'engagement Alesina/Easterly/Riddell ; l'absence de références déposées empêche même de tester l'hypothèse par la bibliographie, ce qui interdit de préempter par la règle du doute.\n\nRevendication annexe du chercheur (« invalide la claim qu'aucun canal ouvrage-collectif n'est ouvert ») : contresens sur la ligne 468 du brief, qui écarte l'option chapitre faute de handbook JETP AVEC APPEL OUVERT EN 2026. Un volume paru en oct. 2025 a son appel fermé ; il ne démontre rien sur un canal ouvert. De plus cette revendication porte sur une option de publication, pas sur un créneau de nouveauté.\n\nmust_cite plutôt que background_only parce que le chapitre annonce explicitement tirer « lessons to learn from the JETP experiences » pour les country platforms successeurs — exactement le mouvement conclusif des options A, C, D, E du brief — et parce qu'il touche le fil indien vivant dans le manuscrit (l'Inde a refusé un JETP à la COP29 pour raisons d'endettement ; ce chapitre plaide pour une country platform indienne : tension citable, pas concurrence). À citer en related-work de priorité basse, utile surtout pour l'option E (cartographie incluant la littérature praticienne) et la discussion Inde ; sans valeur probante contre aucune revendication de nouveauté.\n\nRéserve : texte intégral non lu (403 Taylor & Francis, aucune version déposée trouvée) ; verdict fondé sur le résumé éditeur et la pagination. Cette limite pousse vers le non-préemption, pas l'inverse.",
+    "source_checked": true
+   }
+  }
+ ]
+}

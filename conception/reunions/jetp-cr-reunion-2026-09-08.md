@@ -15,8 +15,11 @@ Suite au dépôt HAL de janvier 2024 (« JETP at two », rejeté deux fois —
 Energy Policy puis Energy for Sustainable Development, « conclusions
 prématurées »), deux papiers sortent de cette réunion :
 
-- **Un papier court**, centré sur la mesure du décaissement et le mécanisme
-  macro (solvabilité). Cible : *Climate Policy*.
+- **Un papier court**, *How slow is slow? Benchmarking Just Energy Transition
+  Partnership disbursement against comparable concessional energy lending*,
+  centré sur l'étalon de décaissement et l'interprétation des écarts entre
+  pays. Cible : *Climate Policy*, Policy Analysis, moins de 5 000 mots. Minh
+  premier auteur et corresponding ; Christophe coauteur.
 - **Un papier long**, l'économie politique comparée à quatre pays (Afrique
   du Sud, Indonésie, Vietnam, Sénégal). Cible : *Development Policy Review*.
 
@@ -30,8 +33,10 @@ Le papier, choisi en juillet pour un angle d'effectivité des régimes
 internationaux, est devenu un article d'**économie politique du
 développement**. Thèse retenue :
 
-> Les JETP ont promis des sommes que personne n'était chargé d'évaluer, à des
-> pays qui les ont jugées inabsorbables et ont décliné.
+> Les JETP ont promis des sommes que personne n'était chargé d'évaluer, et
+> dont une large part n'est jamais devenue un engagement signé. Les pays les
+> ont refusées, détournées, ralenties ou subies selon leur solvabilité et leur
+> agentivité.
 
 Genre : un **bilan d'étape**, provisoire sur les résultats (ils datent),
 définitif sur le diagnostic.
@@ -52,27 +57,38 @@ Ce que tu as identifié comme manquant à la version d'il y a deux ans — un
 paragraphe par pays sur la stratégie de développement, un autre sur
 l'organisation de l'économie — est repris dans le plan du papier long (note
 jointe), avec deux résultats de cadrage nouveaux : le Sénégal devient
-producteur d'hydrocarbures pendant son JETP, et le FCFA arrimé à l'euro
-annule le risque de change qu'un prêt AFD en dollars n'aurait pas.
+producteur d'hydrocarbures pendant son JETP, et le FCFA, arrimé à l'euro,
+neutralise sous la parité actuelle le risque de change d'un prêt AFD libellé
+en euros, contrairement à un prêt en dollars.
 
 **La scission en deux papiers** répond à une question restée ouverte en
 séance (« l'arbitrage court/long, c'est ET ou OU, et quoi d'abord ? ») posée
 comme conditionnelle : le papier court n'a de sens que si la courbe de
 référence du décaissement montre un écart net avec le JETP. Elle a été
 calculée le soir même : référence à 37,3 % à quatre ans contre ≈ 9 % pour le
-JETP vietnamien — écart net. D'où la réponse : les deux, le court d'abord
-(indépendant de nos calendriers respectifs, un coup jouable en quelques
-semaines pendant que le long se construit). Détail complet — classement à
-sept revues, chiffres de décaissement — dans les notes jointes.
+JETP vietnamien — écart net, qui a activé le papier court. La comparaison
+finale à quatre pays, chacun à son propre horizon, nuance le résultat : le
+Viêt Nam (1,1 % contre une norme de 25,8 %) et l'Indonésie (5,4 % contre
+25,5 %) sont nettement sous leur norme ; l'Afrique du Sud (26,2 % contre
+30,5 %) et le Sénégal (7,2 % contre 7,2 %) sont au niveau de la leur. Le
+papier ne peut donc pas asserter un écart uniforme. Le résultat commun est
+en amont : 60 à 98 % du paquet annoncé n'est jamais devenu un engagement
+signé. D'où la réponse : les deux papiers, le court d'abord, avec pour celui-ci
+une contribution bornée de Christophe et une date de soumission fixée
+d'avance. Détail complet — classement à sept revues, Figure 1, chiffres de
+décaissement — dans les notes jointes.
 
 ## Proposition de répartition des rôles
 
 La scission simplifie la question de la signature plutôt que de la
 compliquer : deux têtes d'affiche, chacune sur son périmètre.
 
-- **Papier court** — Minh premier auteur (c'est sa comptabilité, son
-  mécanisme), toi en relecture si tu le souhaites, sans dépendance de
-  calendrier.
+- **Papier court** — Minh premier auteur et corresponding ; toi coauteur de
+  plein exercice : conceptualisation conjointe, investigation de
+  l'hétérogénéité entre pays, section d'interprétation, 3 à 5 *key policy
+  insights*, validation et révision. Périmètre borné à cette section, aux
+  *insights* et à une passe de validation, avec une date de soumission fixée
+  d'avance.
 - **Papier long** — toi porteur des stratégies de développement, de
   l'organisation des économies et de l'agentivité, structurants pour ce
   papier et non accessoires. Répartition proposée, à valider ou corriger :
@@ -98,10 +114,13 @@ poser si l'idée d'un troisième papier séparé te convient.
 
 ## À valider de ton côté
 
-1. La scission en deux papiers et la répartition des rôles ci-dessus.
-2. Le principe de la revue de littérature WIREs Climate Change — proposition
+1. Pour le papier court : la répartition CRediT proposée, l'interprétation de
+   la Figure 1 et la date de soumission.
+2. Pour le papier long : la répartition des rôles ci-dessus et l'ordre des
+   signatures.
+3. Le principe de la revue de littérature WIREs Climate Change — proposition
    prête à rédiger, ne partira qu'avec ton accord.
-3. AFD-Sénégal avec Romain Blachier : toujours en pause de mon côté — un
+4. AFD-Sénégal avec Romain Blachier : toujours en pause de mon côté — un
    chiffre central du dossier m'a semblé fragile et je le revérifie avant
    d'y revenir.
 

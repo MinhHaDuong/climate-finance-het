@@ -19,8 +19,10 @@ for Sustainable Development, décembre 2024, « conclusions prématurées »).
 
 Thèse figée en séance :
 
-> Les JETP ont promis des sommes que personne n'était chargé d'évaluer, à des
-> pays qui les ont jugées inabsorbables et ont décliné.
+> Les JETP ont promis des sommes que personne n'était chargé d'évaluer, et
+> dont une large part n'est jamais devenue un engagement signé. Les pays les
+> ont refusées, détournées, ralenties ou subies selon leur solvabilité et leur
+> agentivité.
 
 Genre : **bilan d'étape** (« an interim assessment »), qui répond
 directement au motif de rejet de 2024 en étant provisoire sur les résultats
@@ -68,9 +70,10 @@ l'organisation de l'économie et du secteur électrique — sans eux, les
 questions « comment » et « pourquoi » (ci-dessous) n'ont pas de base
 empirique. Deux résultats de cadrage nouveaux en sortent : le Sénégal devient
 producteur d'hydrocarbures (Sangomar, Grand Tortue) **pendant** son JETP, la
-tension la plus vive des quatre cas ; le FCFA, arrimé à l'euro, annule le
-risque de change sur un prêt AFD à Senelec — un discriminant réel que 2024
-traitait comme uniforme entre les quatre pays.
+tension la plus vive des quatre cas ; le FCFA, arrimé à l'euro, neutralise
+sous la parité actuelle le risque de change d'un prêt AFD libellé en euros,
+contrairement à un prêt en dollars — un discriminant réel que 2024 traitait
+comme uniforme entre les quatre pays.
 
 ## Plan détaillé
 

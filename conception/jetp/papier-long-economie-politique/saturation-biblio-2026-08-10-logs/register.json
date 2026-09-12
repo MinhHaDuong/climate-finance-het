@@ -1,0 +1,338 @@
+{
+ "primary": {
+  "entries": [
+   {
+    "ref": "1. Daley & Lawrie 2026, New Political Economy, DOI 10.1080/13563467.2026.2666810",
+    "url_checked": "https://www.tandfonline.com/doi/full/10.1080/13563467.2026.2666810",
+    "still_online": true,
+    "verdict": "confirmé",
+    "notes": "Article confirmé en ligne (Taylor & Francis). Titre, DOI et revue exacts. Angle confirmé: économie politique du de-risking via le cas indonésien seul (critique du Wall Street Consensus / blended finance). La caractérisation du brief comme concurrent le plus direct (Indonésie seule, angle de-risking) est correcte."
+   },
+   {
+    "ref": "2. Karg et al. 2025, Energy Research & Social Science 125, 104103",
+    "url_checked": "https://www.sciencedirect.com/science/article/pii/S2214629625001847",
+    "still_online": true,
+    "verdict": "confirmé",
+    "notes": "Confirmé sur ScienceDirect. Angle justice/équité confirmé: première analyse comparative des quatre JETP sous l'angle justice; conclut à l'iniquité (opacité IPG, dons ~3-4%, conditionnalités, focus privatisation) et note que d'autres pays seraient plus légitimes pour un JETP. Le chiffre de 22 entretiens cité dans le brief n'a pas pu être vérifié indépendamment mais rien ne le contredit."
+   },
+   {
+    "ref": "3. Kurniawan et al. 2025, Global Environmental Politics 25(3)",
+    "url_checked": "https://direct.mit.edu/glep/article/25/3/118/131726/",
+    "still_online": true,
+    "verdict": "confirmé",
+    "notes": "Titre exact: 'Recarbonization Through Decarbonization: Nickel Extraction and the Deepening of Fossil Fuel Dependence in Indonesia', GEP 25(3), pp.118-138, été 2025 (Kurniawan, Winanti, Cahyati). Angle charbon captif du nickel confirmé."
+   },
+   {
+    "ref": "4. GEP 25(4), nov. 2025, numéro spécial North-South Just Transitions",
+    "url_checked": "https://muse.jhu.edu/issue/55987",
+    "still_online": true,
+    "verdict": "confirmé",
+    "notes": "Numéro spécial confirmé: 'Introduction to the Special Issue: The North-South Politics of Global Just Transitions', GEP 25(4), avec Dietzel (UNFCCC), Tienhaara (ICSID), Szedlacsek (Kenya/Afrique du Sud). Pas d'article JETP dédié dans ce numéro (traité indirectement via Kurniawan en 25(3)), cohérent avec le brief."
+   },
+   {
+    "ref": "5. Apriliyanti et al. 2026, ERSS 135, 104675",
+    "url_checked": "https://www.sciencedirect.com/science/article/pii/S2214629626001465",
+    "still_online": true,
+    "verdict": "confirmé",
+    "notes": "Titre exact: 'Explaining Indonesia's failed energy transition: Mapping power and support for decarbonization among government institutions and actors' (Apriliyanti, Nugraha, Overland), DOI 10.1016/j.erss.2026.104675. Angle échec institutionnel confirmé."
+   },
+   {
+    "ref": "6. Ordóñez et al. 2024, Nature Climate Change 14",
+    "url_checked": "https://www.nature.com/articles/s41558-024-02086-z",
+    "still_online": true,
+    "verdict": "nuancé",
+    "notes": "Article confirmé: 'Just Energy Transition Partnerships and the future of coal', Nature Climate Change 14, 1026-1029 (2024). Le brief le résume comme 'JETP et trajectoires charbon', correct mais incomplet: la conclusion est en fait optimiste (modélisation montrant une trajectoire des JETP compatible 1,5°C), en tension avec le narratif de risque du manuscrit — à signaler si l'article est mobilisé, car son verdict contraste avec Daley & Lawrie et Karg et al."
+   },
+   {
+    "ref": "7. Gürtler 2025, Earth System Governance",
+    "url_checked": "https://www.sciencedirect.com/science/article/pii/S2589811625000515",
+    "still_online": true,
+    "verdict": "confirmé",
+    "notes": "Titre confirmé: 'What space for justice? The just energy transition partnership with South Africa' (Konrad Gürtler), Earth System Governance, 2025. Angle Afrique du Sud/conceptions divergentes de la justice confirmé."
+   },
+   {
+    "ref": "8. von Lüpke 2025, Earth System Governance",
+    "url_checked": "https://www.sciencedirect.com/science/article/pii/S2589811625000400",
+    "still_online": true,
+    "verdict": "confirmé",
+    "notes": "Titre confirmé: 'The just energy transition partnership in South Africa: Identification and assessment of key factors driving international cooperation' (Heiner von Lüpke), Earth System Governance, 2025 — version publiée d'un discussion paper DIW Berlin de déc. 2023. Article bien distinct de Gürtler 2025 (même revue/volume, textes différents), pas un doublon."
+   },
+   {
+    "ref": "9. Banerjee 2024, PLOS Sustainability and Transformation",
+    "url_checked": "https://journals.plos.org/sustainabilitytransformation/article?id=10.1371%2Fjournal.pstr.0000121",
+    "still_online": true,
+    "verdict": "confirmé",
+    "notes": "Titre exact: 'Transforming the rhetoric of Just Energy Transition Partnerships into reality: The devil lies in the details', PLOS Sustain Transform 3(8): e0000121, 28 août 2024. Angle rhétorique vs pratique confirmé."
+   },
+   {
+    "ref": "10. Earsom 2024, Global Policy",
+    "url_checked": "https://onlinelibrary.wiley.com/doi/10.1111/1758-5899.13324",
+    "still_online": true,
+    "verdict": "confirmé",
+    "notes": "Titre exact: 'Fit for purpose? Just Energy Transition Partnerships and accountability in international climate governance', Global Policy 15(1), pp.135-141, 2024. Angle redevabilité confirmé: le cas sud-africain montre que les éléments structurels des JETP sont probablement insuffisants pour la redevabilité vis-à-vis de la CCNUCC."
+   },
+   {
+    "ref": "11. Jindal et al. 2024, Energy for Sustainable Development 81, 101472",
+    "url_checked": "cité via référence croisée Research Square",
+    "still_online": true,
+    "verdict": "confirmé",
+    "notes": "Titre complet: 'Financing just energy transitions in Southeast Asia: Application of the just transition transaction to Indonesia, Vietnam, and Philippines' (Jindal, Shrimali, Gangwani, Lall), ESD 81, 101472 (2024). Angle instruments financiers confirmé; le titre mentionne aussi les Philippines (pays non-JETP), sans contradiction avec la description du brief."
+   },
+   {
+    "ref": "12. Carnegie Endowment, The JETP Crossroads, oct. 2025",
+    "url_checked": "https://carnegieendowment.org/research/2025/10/the-just-energy-transition-partnership-crossroads",
+    "still_online": true,
+    "verdict": "confirmé",
+    "notes": "Confirmé en ligne, daté octobre 2025, auteurs Csanadi & Helmeci. Contenu conforme: retrait américain de mars 2025, hausse des engagements allemands, JETP à la croisée des chemins entre recentrage charbon et abandon partiel des objectifs initiaux."
+   },
+   {
+    "ref": "13. E3G/Grantham, nov. 2025, justtransitionfinance.org",
+    "url_checked": "https://justtransitionfinance.org/wp-content/uploads/2025/11/Just-Energy-Transition-Partnership-grants-and-country-platforms-lessons-from-Indonesia-and-South-Africa.pdf",
+    "still_online": true,
+    "verdict": "confirmé",
+    "notes": "Confirmé, également hébergé par LSE Grantham Research Institute et E3G/Just Transition Finance Lab. Contenu conforme: analyse de la répartition des dons Indonésie/Afrique du Sud."
+   },
+   {
+    "ref": "14. Preprint Research Square, mars 2026, scoping review JETP",
+    "url_checked": "https://www.researchsquare.com/article/rs-9059924/v1",
+    "still_online": true,
+    "verdict": "confirmé",
+    "notes": "Titre exact: 'Translating promise into practice in Just Energy Transition Partnerships', déposé le 18 mars 2026. Scoping review 2022-2025, concept de 'translation gap'. Correctement caractérisé comme non peer-reviewed."
+   }
+  ],
+  "window_sweep_new_items": [
+   {
+    "title": "Eskom reporte à fin septembre 2026 la décision sur le sort de cinq centrales à charbon (Camden, Grootvlei, Hendrina, Arnot, Kriel)",
+    "date": "2026-08-08",
+    "url": "https://techcentral.co.za/eskom-to-decide-fate-of-older-coal-stations-by-september/280540/",
+    "relevance": "Prolonge directement le §3.2 du brief sur les reports de fermeture de centrales; entre dans la fenêtre de 13 jours."
+   },
+   {
+    "title": "Bridging the inequality deficit in Indonesia's energy transition",
+    "date": "2026-07-30",
+    "url": "https://eastasiaforum.org/2026/07/30/bridging-the-inequality-deficit-in-indonesias-energy-transition/",
+    "relevance": "Commentaire de chercheurs (non peer-reviewed) prolongeant l'angle justice/équité de Karg et al. et Apriliyanti et al., avec accent sur le financement domestique (fonds souverain indonésien)."
+   },
+   {
+    "title": "Infra for Africa 2026 (Dakar/Dar es Salaam) — Sénégal présente JETP + Vision 2050 + Africa50 comme pipeline bancable",
+    "date": "2026-08-05/06",
+    "url": "https://www.capmad.com/post/at-infra-for-africa-2026-dakar-aims-to-turn-panels-into-a-lever-for-energy-sovereignty",
+    "relevance": "Actualité institutionnelle sur le Sénégal, pays quasi inexploré selon le brief; littérature grise/presse, pas peer-reviewed."
+   },
+   {
+    "title": "Commentaire diplomatique UE (Stelbaczky/EEAS) sur le JETP vietnamien",
+    "date": "2026-08-06 (rapporté)",
+    "url": "non capturé avec certitude",
+    "relevance": "Signal faible, source secondaire; à vérifier davantage avant citation."
+   }
+  ],
+  "queries_run": [
+   "Daley Lawrie 2026 Country platforms and constrained states Indonesian JET-P New Political Economy",
+   "10.1080/13563467.2026.2666810",
+   "Karg 2025 JETPs An inclusive climate finance approach Energy Research Social Science 104103",
+   "Kurniawan 2025 Global Environmental Politics nickel captive coal Indonesia",
+   "Global Environmental Politics 25(4) November 2025 special issue North-South Politics of Global Just Transitions",
+   "Apriliyanti 2026 Energy for Sustainable Development 104675 Indonesia institutional failure JETP",
+   "Ordóñez 2024 Nature Climate Change JETP coal trajectories",
+   "Gürtler 2025 Earth System Governance South Africa JETP",
+   "von Lüpke 2025 Earth System Governance South Africa JETP",
+   "Banerjee 2024 PLOS Sustainability Transformation JETP rhetoric practice",
+   "Earsom 2024 Global Policy JETP accountability",
+   "Jindal 2024 Energy for Sustainable Development 81 101472 JETP financial instruments",
+   "Carnegie Endowment The JETP Crossroads October 2025",
+   "Research Square preprint March 2026 scoping review JETP",
+   "E3G Grantham November 2025 JETP grants and country platforms lessons Indonesia South Africa",
+   "von Lüpke just energy transition partnership South Africa key factors driving international cooperation",
+   "JETP Just Energy Transition Partnership news August 2026",
+   "Just Energy Transition Partnership journal article August 2026",
+   "Indonesia JETP news August 2026",
+   "South Africa JETP Eskom coal news early August 2026",
+   "Vietnam JETP Senegal JETP news late July 2026",
+   "Eskom coal decommissioning announcement September plan August 8 2026 Marokane",
+   "just energy transition partnership OR JETP site:tandfonline.com OR site:sciencedirect.com OR site:direct.mit.edu 2026",
+   "country platform climate finance report August 2026",
+   "Senegal JETP investment plan news August 2026",
+   "Vietnam JETP energy transition news August 2026",
+   "East Asia Forum Bridging the inequality deficit Indonesia energy transition July 2026",
+   "IPG International Partners Group JETP report update 2026-08"
+  ]
+ },
+ "crosscheck": {
+  "entries": [
+   {
+    "ref": "1. Daley & Lawrie 2026, New Political Economy, DOI 10.1080/13563467.2026.2666810",
+    "url_checked": "https://api.crossref.org/works/10.1080/13563467.2026.2666810 + https://api.openalex.org/works/doi:10.1080/13563467.2026.2666810",
+    "still_online": true,
+    "verdict": "confirmé",
+    "notes": "Re-résolu indépendamment via Crossref ET OpenAlex (le premier passage n'avait vérifié que la page T&F). Titre exact : « Country platforms and constrained states: the Indonesian JET-P and the twilight of de-risking ». Freddie Daley et Charles Lawrie (Charles Lawrie corresponding), University of Sussex. Reçu/révisé 14 avril 2026, accepté 17 avril 2026, publié en ligne 13 mai 2026, pp. 1-25. CC-BY, OA hybride, financement ESRC (#2576981). PRÉCISION À APPORTER AU BRIEF : l'article est en ligne d'abord (online-first), SANS volume ni numéro attribués à ce jour — la référence bibliographique doit porter « published online 13 May 2026 », pas un volume. Angle confirmé par l'abstract : échec du Wall Street Consensus à faire passer l'investissement privé « from billions to trillions », littératures green state et de-risking, le JET-P indonésien comme « counterproductive strategy » qui bride explicitement la capacité étatique. Indonésie seule. La caractérisation du brief (« concurrent le plus direct ») reste correcte, mais voir le nouvel élément Do et al. 2026 ci-dessous qui la conteste."
+   },
+   {
+    "ref": "2. Karg et al. 2025, Energy Research & Social Science 125, 104103",
+    "url_checked": "https://api.openalex.org/works/doi:10.1016/j.erss.2025.104103 + Crossref + Semantic Scholar",
+    "still_online": true,
+    "verdict": "confirmé",
+    "notes": "Re-résolu via trois API indépendantes (ScienceDirect renvoie 403 en direct). Auteurs : Aljoscha Karg, Joyeeta Gupta, Yang Chen. ERSS vol. 125, art. 104103, publié le 9 mai 2025, DOI 10.1016/j.erss.2025.104103, OA hybride. VÉRIFICATION DU CHIFFRE CONTESTÉ PAR LE PREMIER PASSAGE : les « 22 entretiens » sont bien attestés — l'abstract dit « twenty-two expert interviews ». Le brief est exact. CORRECTION AU PREMIER PASSAGE : il écrit « conclut à l'iniquité » ; l'abstract est en fait à deux temps — d'abord un constat positif (fort soutien politique des pays hôtes, engagement public de 30,8 Md$, plans d'investissement appropriés par le pays, cadres de transition juste, débat lancé), PUIS les iniquités (opacité financière des partenaires, dons de 3-4 %, consultations faussées, conditionnalités étendues, priorité à la privatisation, exclusion des pays du Sud les plus en difficulté). L'article n'est donc pas un réquisitoire : c'est un bilan mitigé. La caractérisation du brief (« angle justice/équité, 22 entretiens ; pas l'angle risque ») est exacte. POINT D'ATTENTION CHIFFRÉ : Karg parle d'un engagement de finance publique de 30,8 Md$ là où les abstracts des options A/C/E du brief annoncent 46 Md$ — périmètres différents (finance publique vs total annoncé). À harmoniser ou à expliciter, un referee le relèvera."
+   },
+   {
+    "ref": "3. Kurniawan et al. 2025, Global Environmental Politics 25(3)",
+    "url_checked": "https://direct.mit.edu/glep/article/25/3/118/131726/ + https://muse.jhu.edu/issue/55597",
+    "still_online": true,
+    "verdict": "confirmé",
+    "notes": "Titre exact : « Recarbonization Through Decarbonization: Nickel Extraction and the Deepening of Fossil Fuel Dependence in Indonesia ». Auteurs complets : Nanang Indra Kurniawan, Poppy Sulistyaning Winanti, Devy Dhian Cahyati. GEP 25(3), pp. 118-138, numéro daté août 2025 (le premier passage disait « été 2025 » — précision : août). Méthode : terrain multi-situé dans les provinces nickelifères, écologie politique globale + EPI critique. RÉSERVE SUR LA CARACTÉRISATION : l'article ne porte pas sur le JETP mais sur l'extractivisme nickel et la dépendance fossile ; le brief le range à juste titre sous « charbon captif du nickel », mais il ne peut pas servir de référence JETP — c'est une pièce de contexte indonésien, pas de littérature JETP."
+   },
+   {
+    "ref": "4. GEP 25(4), nov. 2025, numéro spécial North-South Just Transitions",
+    "url_checked": "https://muse.jhu.edu/issue/55987 + https://direct.mit.edu/glep/article/25/4/1/133644/",
+    "still_online": true,
+    "verdict": "confirmé",
+    "notes": "Numéro spécial confirmé : « The North–South Politics of Global Just Transitions », GEP 25(4), nov. 2025. CORRECTION AU PREMIER PASSAGE : il attribuait implicitement l'introduction à Dietzel/Tienhaara/Szedlacsek. L'introduction est en réalité de Chukwumerije Okereke, Kennedy Mbeva et Reuben Makomere (pp. 1-22). Sommaire : Tienhaara, « Reconsidering ICSID in the Context of Global Just Transitions » (23-43) ; Szedlacsek, « Navigating Sub-Saharan African Just and Low-Carbon Transitions: Kenya and South Africa » (44-70) ; Dietzel, « Negotiating Just Transition at the UNFCCC » (71-100) ; plus un article sur les chaînes agroalimentaires soja/huile de palme. Le point du brief tient : AUCUN article JETP dédié dans ce numéro — ce qui étaie à la fois le « créneau libre » et le risque signalé pour l'option D (GEP vient de couvrir le terrain adjacent)."
+   },
+   {
+    "ref": "5. Apriliyanti et al. 2026, ERSS 135, 104675",
+    "url_checked": "https://api.crossref.org/works/10.1016/j.erss.2026.104675",
+    "still_online": true,
+    "verdict": "confirmé",
+    "notes": "Re-résolu via Crossref. Titre exact : « Explaining Indonesia's failed energy transition: Mapping power and support for decarbonization among government institutions and actors ». Auteurs : Indri Dwi Apriliyanti, Diwangkara Bagus Nugraha, Indra Overland. ERSS vol. 135, art. 104675, mai 2026. Référence du brief exacte. Angle « échec institutionnel indonésien » confirmé par le titre (cartographie du pouvoir et du soutien à la décarbonation parmi les institutions gouvernementales)."
+   },
+   {
+    "ref": "6. Ordóñez et al. 2024, Nature Climate Change 14",
+    "url_checked": "https://api.crossref.org/works/10.1038/s41558-024-02086-z",
+    "still_online": true,
+    "verdict": "nuancé",
+    "notes": "Le premier passage a raison et je confirme sa nuance en la durcissant. Titre : « Just Energy Transition Partnerships and the future of coal ». Auteurs : Jose A. Ordonez, Toon Vandyck, Kimon Keramidas, Rafael Garaffa, Matthias Weitzel. NCC 14(10), pp. 1026-1029, en ligne 31 juillet 2024. DEUX RÉSERVES, pas une : (a) la conclusion est FRANCHEMENT optimiste — « Results show greater alignment with a global 1.5 °C trajectory », les JETP y sont « a promising route for international collaboration to keep Paris Agreement goals within reach » ; mobilisé sans précaution, cet article contredit la thèse du manuscrit et un referee s'en saisira ; (b) c'est une évaluation par MODÈLE (pas empirique) portant sur TROIS JETP seulement — Afrique du Sud, Indonésie, Vietnam — le Sénégal en est absent. Le résumé du brief (« JETP et trajectoires charbon ») masque les deux points. Recommandation : le citer explicitement comme la position adverse ex ante que le bilan 2026 dément, ce qui renforce plutôt le manuscrit."
+   },
+   {
+    "ref": "7. Gürtler 2025, Earth System Governance",
+    "url_checked": "https://api.crossref.org/journals/2589-8116/works?query.title=just+energy+transition+partnership",
+    "still_online": true,
+    "verdict": "confirmé",
+    "notes": "Référence complète établie (le brief et le premier passage n'avaient ni volume ni DOI) : Konrad Gürtler, « What space for justice? The just energy transition partnership with South Africa », Earth System Governance, vol. 26, art. 100285, décembre 2025, DOI 10.1016/j.esg.2025.100285. Cadre analytique précis, à ne pas résumer par « conceptions divergentes de la justice » : quatre dimensions de justice SPATIALE (scalaire, centre-périphérie, interterritoriale, liée aux infrastructures). Constat : le débat sur la justice spatiale s'est concentré sur les relations internationales, le débat infranational ne fait que démarrer. Affiliation RIFS-Potsdam."
+   },
+   {
+    "ref": "8. von Lüpke 2025, Earth System Governance",
+    "url_checked": "https://api.crossref.org/journals/2589-8116/works?query.title=just+energy+transition+partnership",
+    "still_online": true,
+    "verdict": "confirmé",
+    "notes": "Référence complète établie : Heiner von Lüpke, « The just energy transition partnership in South Africa: Identification and assessment of key factors driving international cooperation », Earth System Governance, vol. 25, art. 100274, août 2025, DOI 10.1016/j.esg.2025.100274. CORRECTION AU PREMIER PASSAGE : il écrit « même revue/volume » que Gürtler — c'est faux, les deux sont dans des VOLUMES DIFFÉRENTS (25 en août 2025 pour von Lüpke, 26 en décembre 2025 pour Gürtler). Sa conclusion de fond (deux articles distincts, pas un doublon) est en revanche juste. Antériorité confirmée : trois versions SSRN successives du même texte (10.2139/ssrn.4641650 déc. 2023, puis .4682577 et .4697955 en 2024), issues d'un discussion paper DIW Berlin — à citer dans la version revue, pas dans la version SSRN."
+   },
+   {
+    "ref": "9. Banerjee 2024, PLOS Sustainability and Transformation",
+    "url_checked": "https://api.crossref.org/works/10.1371/journal.pstr.0000121",
+    "still_online": true,
+    "verdict": "confirmé",
+    "notes": "Re-résolu via Crossref, correspondance exacte. Aparajita Banerjee (auteure unique), « Transforming the rhetoric of Just Energy Transition Partnerships into reality: The devil lies in the details », PLOS Sustainability and Transformation 3(8), e0000121, 28 août 2024. Thèse : les JETP risquent de répéter les critiques historiques des partenariats Nord-Sud sauf alignement des politiques sur les réalités sociales, économiques et politiques des pays partenaires. Angle « rhétorique vs pratique » du brief exact — et le plus proche du registre de risques du manuscrit parmi les 13 références."
+   },
+   {
+    "ref": "10. Earsom 2024, Global Policy",
+    "url_checked": "https://api.crossref.org/works/10.1111/1758-5899.13324",
+    "still_online": true,
+    "verdict": "confirmé",
+    "notes": "Re-résolu via Crossref, correspondance exacte. Joseph Earsom (ESPOL-LAB, Université Catholique de Lille), « Fit for purpose? Just Energy Transition Partnerships and accountability in international climate governance », Global Policy 15(1), pp. 135-141, février 2024. Cas sud-africain ; conclut que les éléments structurels des JETP sont probablement insuffisants pour la redevabilité vis-à-vis de la CCNUCC. Directement pertinent pour la recommandation « transparence sous l'Accord de Paris (art. 13) » des options A et C — à engager, pas seulement à citer."
+   },
+   {
+    "ref": "11. Jindal et al. 2024, Energy for Sustainable Development 81, 101472",
+    "url_checked": "https://api.crossref.org/works/10.1016/j.esd.2024.101472",
+    "still_online": true,
+    "verdict": "confirmé",
+    "notes": "AMÉLIORATION SUR LE PREMIER PASSAGE, qui ne l'avait vérifié qu'« via référence croisée Research Square » : j'ai résolu le DOI directement. 10.1016/j.esd.2024.101472 existe et correspond. Titre exact : « Financing just energy transitions in Southeast Asia: Application of the Just Transition Transaction to Indonesia, Vietnam, and Philippines ». Auteurs : Abhinav Jindal, Gireesh Shrimali, Bharat Gangwani, Rajiv B. Lall. ESD vol. 81, art. 101472, août 2024. Note de contexte utile aux auteurs : ESD est la revue qui a rejeté le manuscrit en décembre 2024 (Bhattacharyya) — elle a donc publié un article JETP sur instruments financiers quatre mois avant ce rejet."
+   },
+   {
+    "ref": "12. Carnegie Endowment, The JETP Crossroads, oct. 2025",
+    "url_checked": "https://carnegieendowment.org/research/2025/10/the-just-energy-transition-partnership-crossroads?lang=en",
+    "still_online": true,
+    "verdict": "confirmé",
+    "notes": "Page re-fetchée et lue. Auteurs Alexander Csanadi et Daniel Helmeci, date exacte 20 octobre 2025. Contenu conforme et plus riche que ne le dit le brief : couvre les quatre pays ; l'alternative structurante est « restreindre au décommissionnement charbon » vs « élargir à l'expansion énergétique et à la transformation économique » ; financements = 13-33 % des besoins projetés seulement ; financement « justice » < 5 % des paquets ; retrait US daté du 5 mars 2025 ; Allemagne « increased its commitment by around 50 percent » ; Allemagne et Japon signalent rapidement leur intention de co-piloter l'Indonésie. Les chiffres 13-33 % et « justice < 5 % » sont mobilisables et absents du brief."
+   },
+   {
+    "ref": "13. E3G/Grantham, nov. 2025, justtransitionfinance.org",
+    "url_checked": "https://justtransitionfinance.org/wp-content/uploads/2025/11/Just-Energy-Transition-Partnership-grants-and-country-platforms-lessons-from-Indonesia-and-South-Africa.pdf (PDF téléchargé et extrait intégralement)",
+    "still_online": true,
+    "verdict": "nuancé",
+    "notes": "EN LIGNE, MAIS DEUX CORRECTIONS DONT UNE CHIFFRÉE GRAVE. (a) ATTRIBUTION : ce n'est pas un rapport « E3G/Grantham ». Citation suggérée par le rapport lui-même : Selvaraju S, Indah Pratiwi A, Sabogal L et Ahlgren V (2025), « Just Energy Transition Partnership grants and country platforms: lessons from Indonesia and South Africa », London: Grantham Research Institute on Climate Change and the Environment, LSE. C'est un policy report du Just Transition Finance Lab hébergé par le Grantham Research Institute ; seul le quatrième auteur (Viktor Ahlgren) est E3G, et Laura Sabogal Reyes est AFD/IDFC. CC BY-NC 4.0. (b) CHIFFRE FAUX DANS LE BRIEF : §3.2 écrit « Les dépenses justice plafonnent à ~0,2 Md$, un dixième du volume des dons (E3G/Grantham, nov. 2025) », et l'abstract de l'option A reprend « South African just-transition spending stagnated near $0.2bn ». Le texte source dit : « Of the US$764 million in total pledged grants as of March 2025, less than 10% — approximately US$70 million — is directed towards just transition objectives » (Box 3.2), dont 54,05 M$ pour le cluster Mpumalanga et ~16,2 M$ pour JUST SA. Le RATIO (un dixième des dons) est correct ; la VALEUR ABSOLUE est fausse d'un facteur ~3 : 70 M$, pas 200 M$. À corriger avant toute soumission — c'est un chiffre placé dans un abstract. Autres éléments exploitables et absents du brief : le JET IP appelait R131 mds (~7 Md$) d'investissements sociaux, sans traduction dans les calendriers de projets ; la plupart des projets se terminent entre 2026 et 2028, d'où un risque de discontinuité post-2027."
+   },
+   {
+    "ref": "14. Preprint Research Square, mars 2026, scoping review JETP",
+    "url_checked": "https://api.crossref.org/works/10.21203/rs.3.rs-9059924/v1 (la page researchsquare.com renvoie 403 ; DOI résolu via Crossref)",
+    "still_online": true,
+    "verdict": "confirmé",
+    "notes": "Titre exact : « Translating promise into practice in Just Energy Transition Partnerships ». Auteurs identifiés (le premier passage ne les donnait pas) : Herbagus Unggul Kawiriaan (Universitas Gadjah Mada) et Thant Thura Zan (Kyoto University). Posté le 18 mars 2026, DOI 10.21203/rs.3.rs-9059924/v1, type « posted content » (preprint) — non peer-reviewed, caractérisation du brief exacte. Périmètre : études publiées 2022-2025, cadre du « translation gap », JETP traités comme instruments de politique contestés. Écarts identifiés : promesses vs décaissements, appropriation nationale revendiquée vs contrôle externe conservé, engagements de sortie du charbon vs impératifs de sécurité énergétique, engagements de transition juste vs dispositifs sociaux étroits. ATTENTION STRATÉGIQUE : ce preprint occupe partiellement le créneau de l'option E (revue de littérature JETP) — s'il passe en revue avant, l'option E perd son argument de nouveauté."
+   }
+  ],
+  "window_sweep_new_items": [
+   {
+    "title": "Do, Halimatussadiah, Burke & Jotzo — « Just Energy Transition Partnerships at Risk in Indonesia and Vietnam » (preprint SSRN, DOI 10.2139/ssrn.6979738)",
+    "date": "2026-07-29",
+    "url": "https://doi.org/10.2139/ssrn.6979738",
+    "relevance": "TROUVAILLE MAJEURE MANQUÉE PAR LE PREMIER PASSAGE, et la plus conséquente de cette contre-vérification. Preprint déposé le 29 juillet 2026, en plein dans la fenêtre. Thang Nam Do, Alin Halimatussadiah, Paul J. Burke, Frank Jotzo (Burke et Jotzo = Crawford School / ANU, poids lourds du champ). Fondé sur 30 entretiens de parties prenantes. Diagnostic : blocage de la mise en œuvre malgré les engagements politiques, dû à un désalignement entre les attentes des pays receveurs (finance concessionnelle précoce) et l'insistance des partenaires internationaux sur les réformes ; part de dons faible, financements retardés, confiance érodée, aggravés par le retrait américain de 2025 ; recommande un financement concessionnel initial et un séquençage stratégique des projets. IMPACT SUR LE BRIEF, sur trois points : (1) il couvre le VIETNAM, ce qui affaiblit directement le « créneau libre » n°2 du §4 (« Vietnam et Sénégal quasi inexplorés ») ; (2) ses conclusions recoupent au moins quatre des six modes d'échec du registre 2024 (dons faibles, perte de confiance, conditionnalités, géopolitique) — c'est un concurrent plus direct que Daley & Lawrie, qui ne traite que l'Indonésie et par le seul angle de-risking ; (3) preprint SSRN, donc en route vers une revue — il sortira probablement avant toute soumission des options A/C/E. À lire et à engager explicitement dès l'introduction, au même titre que Karg et Daley & Lawrie."
+   },
+   {
+    "title": "Yunissa & Maksum — « Indonesia's Climate Diplomacy: Criticisms and Challenges of Biomass Co-firing Under JETP », Journal of Government and Politics 8(1), DOI 10.31764/jgop.v8i1.40158",
+    "date": "2026-07-27 (publié) / 2026-07-31 (indexé Crossref)",
+    "url": "https://doi.org/10.31764/jgop.v8i1.40158",
+    "relevance": "Nouvel item manqué par le premier passage, à la bordure de la fenêtre. Revue indonésienne de rang modeste, donc faible menace concurrentielle, mais deux intérêts : c'est un article JETP-spécifique paru dans la fenêtre, et il ouvre un sujet totalement absent du brief — la co-combustion biomasse comme échappatoire au phase-down du charbon indonésien, qui est un mode d'échec voisin du « charbon captif du nickel » déjà documenté au §3.3."
+   },
+   {
+    "title": "Angie Bexley — « Bridging the inequality deficit in Indonesia's energy transition », East Asia Forum (DOI 10.59425/eabc.1785448800)",
+    "date": "2026-07-30",
+    "url": "https://eastasiaforum.org/2026/07/30/bridging-the-inequality-deficit-in-indonesias-energy-transition/",
+    "relevance": "CONFIRMÉ par re-résolution du DOI via Crossref (la page renvoie 403 en fetch direct). Auteure identifiée : Angie Bexley — le premier passage disait « commentaire de chercheurs » sans nom. Dans la fenêtre. Littérature grise (commentaire, non peer-reviewed) prolongeant l'angle justice/équité de Karg et d'Apriliyanti, avec accent sur le financement domestique. Utilisable comme signal, pas comme référence."
+   },
+   {
+    "title": "HORS FENÊTRE — Musekiwa & Murray, « Measurable impacts of South Africa's just energy transition partnership on poverty reduction and economic opportunities in marginalized communities », Frontiers in Sustainable Energy Policy (DOI 10.3389/fsuep.2026.1773893 ; erratum 10.3389/fsuep.2026.1890934)",
+    "date": "2026-04-22 (erratum 2026-06-23)",
+    "url": "https://doi.org/10.3389/fsuep.2026.1773893",
+    "relevance": "LACUNE DE COUVERTURE DU §4, découverte en balayant la fenêtre. Hors des 13 jours, mais c'est un article JETP peer-reviewed de 2026 sur l'Afrique du Sud, absent de la cartographie littéraire du brief. Revue systématique ; conclut que les opportunités créées sont « short-term, low-quality, or geographically disconnected from communities experiencing job losses ». Étaye directement la ligne « transition injuste » du tableau §3.7 et doit figurer dans les ~15 références à intégrer (plan de l'option C) et dans le cluster « justice » de l'option E."
+   },
+   {
+    "title": "HORS FENÊTRE — Mumtaz & Suryadipura, « Indonesia's Energy Security Strategy through the Just Energy Transition Partnership: Implications for Energy Sovereignty », Jurnal Dinamika Global 11(1) (DOI 10.36859/jdg.v11i1.5527)",
+    "date": "2026-06-30",
+    "url": "https://doi.org/10.36859/jdg.v11i1.5527",
+    "relevance": "Seconde lacune mineure du §4. Revue indonésienne de rang modeste, faible enjeu concurrentiel, mais signale que la littérature JETP indonésienne s'étoffe côté souveraineté énergétique — argument à intégrer si l'option E revendique une cartographie exhaustive : une revue de littérature qui ignore la production régionale sera attaquée sur son protocole de recherche, précisément l'exigence formulée par l'éditeur simulé WIREs."
+   },
+   {
+    "title": "RETRAIT — TechCentral, « Eskom to decide fate of older coal stations by September » (item n°1 du premier passage)",
+    "date": "2026-04-22 (PAS 2026-08-08)",
+    "url": "https://techcentral.co.za/eskom-to-decide-fate-of-older-coal-stations-by-september/280540/",
+    "relevance": "CORRECTION D'ERREUR DU PREMIER PASSAGE. L'article est daté du 22 AVRIL 2026, pas du 8 août 2026 : il tombe HORS de la fenêtre 28 juillet–10 août et ne constitue pas un élément nouveau. Contenu réel, par ailleurs exact et utile au §3.2 : Eskom décidera d'ici fin septembre du sort de cinq centrales (Camden, Grootvlei, Hendrina, Arnot, Kriel), exemptées d'exploitation jusqu'à mars 2030, la décision étant conditionnée à la sécurisation contractuelle des capacités de remplacement — « until that capacity is contractually secured and demonstrably available », Eskom continuera de les exploiter (DG Dan Marokane) ; seule la moitié environ des projets renouvelables attribués depuis 2019 a été construite, d'où un risque de déficit 2029-2030. À citer, mais avec la bonne date."
+   },
+   {
+    "title": "NON VÉRIFIABLE — Capmad, « Infra for Africa 2026 » (Sénégal, JETP + Vision 2050 + Africa50) et commentaire diplomatique UE/EEAS sur le JETP vietnamien (items n°3 et n°4 du premier passage)",
+    "date": "2026-08-05/06 allégué",
+    "url": "https://www.capmad.com/post/at-infra-for-africa-2026-dakar-aims-to-turn-panels-into-a-lever-for-energy-sovereignty",
+    "relevance": "NI CONFIRMÉS NI RÉFUTÉS. La page Capmad renvoie 403 et le budget WebSearch de la session était épuisé ; aucune corroboration indépendante trouvée via Crossref ni OpenAlex, dont un balayage ciblé « Senegal + JETP » depuis le 1er juin 2026 ne remonte rien de pertinent (seul un rapport Banque mondiale GFDRR sur la résilience sénégalaise, sans rapport avec le JETP). L'item EEAS/Vietnam était déjà donné sans URL par le premier passage. Traiter les deux comme non établis : ne pas les citer. Conséquence positive pour le brief : le créneau « Sénégal quasi inexploré » (§4) reste intact après contre-vérification, contrairement au créneau Vietnam que Do et al. 2026 entame."
+   }
+  ],
+  "queries_run": [
+   "WebSearch (8 requêtes avant épuisement du budget de session à 200/200) : Karg \"Just Energy Transition Partnerships\" \"inclusive climate finance\" ERSS 104103",
+   "WebSearch : Kurniawan Winanti Cahyati \"Recarbonization Through Decarbonization\" Global Environmental Politics nickel Indonesia",
+   "WebSearch : Global Environmental Politics 25 4 November 2025 special issue \"North-South Politics of Global Just Transitions\" table of contents",
+   "WebSearch : Gürtler \"What space for justice\" just energy transition partnership South Africa Earth System Governance 2025",
+   "WebSearch : von Lüpke \"just energy transition partnership\" South Africa \"key factors\" international cooperation Earth System Governance 2025",
+   "WebSearch : \"Earth System Governance\" von Lüpke 2025 volume \"just energy transition partnership\" doi 10.1016/j.esg",
+   "WebSearch : \"Just Energy Transition Partnership\" news August 2026 — REFUSÉE, budget épuisé (200/200). Bascule intégrale sur les API de repli à partir de ce point.",
+   "REPLI Crossref API — GET api.crossref.org/works/10.1080/13563467.2026.2666810 (Daley & Lawrie)",
+   "REPLI Crossref API — GET api.crossref.org/works/10.1016/j.erss.2026.104675 (Apriliyanti)",
+   "REPLI Crossref API — GET api.crossref.org/works/10.1038/s41558-024-02086-z (Ordóñez)",
+   "REPLI Crossref API — GET api.crossref.org/works/10.1371/journal.pstr.0000121 (Banerjee)",
+   "REPLI Crossref API — GET api.crossref.org/works/10.1111/1758-5899.13324 (Earsom)",
+   "REPLI Crossref API — GET api.crossref.org/works/10.1016/j.esd.2024.101472 (Jindal)",
+   "REPLI Crossref API — GET api.crossref.org/works/10.21203/rs.3.rs-9059924/v1 (preprint Research Square)",
+   "REPLI Crossref API — GET api.crossref.org/works/10.2139/ssrn.6979738 (Do, Halimatussadiah, Burke & Jotzo)",
+   "REPLI Crossref API — GET api.crossref.org/journals/2589-8116/works?query.title=just+energy+transition+partnership (Earth System Governance : résolution des volumes/DOI Gürtler et von Lüpke)",
+   "REPLI Crossref API — GET api.crossref.org/works?query.bibliographic=...Karg... et ...von Luepke... (désambiguïsation des versions SSRN)",
+   "REPLI Crossref API — GET api.crossref.org/works?query.title=just+energy+transition+partnership&filter=from-created-date:2026-07-25,until-created-date:2026-08-10 (balayage fenêtre, 25 résultats examinés)",
+   "REPLI Crossref API — GET api.crossref.org/works?query.title=JETP&filter=from-created-date:2026-07-25,until-created-date:2026-08-11 (balayage fenêtre par acronyme)",
+   "REPLI Crossref API — GET api.crossref.org/works?query.bibliographic=Senegal+just+energy+transition+partnership&filter=from-created-date:2026-06-01 (contrôle du créneau Sénégal)",
+   "REPLI Crossref API — GET api.crossref.org/prefixes/10.59425/works?query.title=Indonesia+energy+transition+inequality (vérification East Asia Forum / Bexley)",
+   "REPLI OpenAlex API — GET api.openalex.org/works/doi:10.1016/j.erss.2025.104103 (abstract complet Karg — reconstruction de l'inverted index)",
+   "REPLI OpenAlex API — GET api.openalex.org/works/doi:10.1080/13563467.2026.2666810 (abstract Daley & Lawrie)",
+   "REPLI OpenAlex API — GET api.openalex.org/works?filter=title.search:just energy transition partnership,from_publication_date:2026-06-01 (balayage complémentaire)",
+   "REPLI OpenAlex API — GET api.openalex.org/works?filter=title.search:...poverty reduction marginalized (identification Musekiwa & Murray)",
+   "REPLI Semantic Scholar API — GET api.semanticscholar.org/graph/v1/paper/DOI:10.1016/j.erss.2025.104103 (triangulation Karg)",
+   "WebFetch direct — carnegieendowment.org/research/2025/10/the-just-energy-transition-partnership-crossroads?lang=en (lecture du contenu)",
+   "WebFetch direct + extraction pdftotext locale — justtransitionfinance.org PDF nov. 2025 (rapport intégral extrait ; c'est là qu'apparaît l'erreur chiffrée 70 M$ vs 0,2 Md$)",
+   "WebFetch direct — techcentral.co.za/eskom-to-decide-fate-of-older-coal-stations-by-september/280540/ (révèle la date réelle du 22 avril 2026)",
+   "Tentatives bloquées : sciencedirect.com (403), researchsquare.com (403), eastasiaforum.org (403), doaj.org/api (403), capmad.com (403), pure.uva.nl PDF (binaire non extractible côté fetch) — toutes contournées par les API ci-dessus sauf Capmad."
+  ]
+ }
+}

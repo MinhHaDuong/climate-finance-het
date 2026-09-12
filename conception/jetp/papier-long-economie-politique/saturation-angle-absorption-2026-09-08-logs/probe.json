@@ -1,0 +1,153 @@
+{
+  "probe": "sonde initiale",
+  "angle": "P1 (non-absorbabilité JETP pour raisons de bilan : plafond dette souveraine, insolvabilité utility, mismatch de change, coût du capital) et jonction avec P4 (domaine de validité vide d'un instrument fondé sur le prêt)",
+  "date": "2026-09-08",
+  "databases": ["OpenAlex (works API)", "Crossref (works API)", "Semantic Scholar Graph API"],
+  "positive_control": {
+    "query": "OpenAlex works?search=Just Energy Transition Partnership (bag-of-words, per-page=25)",
+    "returned": "meta.count=229915 (index bruit fort, recherche non bornée) ; parmi les 25 premiers résultats : Karg, Gupta & Chen 2025 ERSS 125:104103 (rang 2), von Lüpke 2025 ESG 25:100274 (rang 20), Banerjee 2024 PLOS Sust Transform 3(8):e0000121 (rang 6), Ha-Duong & Cassen 2024 SSRN 10.2139/ssrn.4728216 'Just Energy Transition Partnerships at Two' (rang 7) — confirme que la sonde fonctionne et retrouve les pièces connues.",
+    "second_control": {
+      "query": "OpenAlex filter=title_and_abstract.search:\"aid absorption\"",
+      "returned": "count=102 ; retrouve la littérature classique (ex: 'Aid Absorption and Spending in Africa: A Panel Cointegration Approach' 2011, JDS, 10.1080/00220388.2011.579115 ; IMF 'Aid Absorption: Recognizing and Avoiding Macroeconomic Hazards' 2006) — confirme que le canal 'absorptive capacity / aid absorption' est bien indexé et cherchable.",
+      "note": "'absorptive capacity' AND 'foreign aid' en phrase exacte co-présente donne 0 (trop strict), mais 'absorptive capacity' seul (54405) et 'aid absorption' (102) confirment que l'index n'est pas cassé."
+    }
+  },
+  "queries": [
+    {"db": "OpenAlex", "q": "search=Just Energy Transition Partnership", "count": 229915, "note": "positive control principal"},
+    {"db": "OpenAlex", "q": "search=Just Energy Transition Partnership absorptive capacity", "count": 21125, "note": "bag-of-words non borné, bruit total (papiers énergie génériques)"},
+    {"db": "OpenAlex", "q": "search=Just Energy Transition Partnership debt sustainability", "count": 41633, "note": "bruit"},
+    {"db": "OpenAlex", "q": "search=Just Energy Transition Partnership fiscal space", "count": 35280, "note": "bruit"},
+    {"db": "OpenAlex", "q": "search=Just Energy Transition Partnership debt distress", "count": 7506, "note": "top10 inclut Karg et al 2025 mais reste du bruit générique"},
+    {"db": "OpenAlex", "q": "search=Just Energy Transition Partnership concessionality loan share", "count": 11977, "note": "bruit"},
+    {"db": "OpenAlex", "q": "search=Just Energy Transition Partnership Eskom balance sheet", "count": 255, "note": "sec sur l'angle bilan"},
+    {"db": "OpenAlex", "q": "search=Just Energy Transition Partnership PLN financial insolvency", "count": 64, "note": "sec"},
+    {"db": "OpenAlex", "q": "search=Just Energy Transition Partnership EVN debt Vietnam", "count": 81, "note": "sec (résultats hors-sujet sauf déjà connus)"},
+    {"db": "OpenAlex", "q": "search=Just Energy Transition Partnership Senelec", "count": 48, "note": "sec"},
+    {"db": "OpenAlex", "q": "search=Just Energy Transition Partnership currency mismatch foreign exchange risk", "count": 2914, "note": "bruit"},
+    {"db": "OpenAlex", "q": "search=Just Energy Transition Partnership local currency lending", "count": 12510, "note": "bruit"},
+    {"db": "OpenAlex", "q": "search=country platform debt sustainability climate finance", "count": 42495, "note": "bruit"},
+    {"db": "OpenAlex", "q": "search=country platform absorptive capacity climate finance", "count": 19272, "note": "bruit"},
+    {"db": "OpenAlex", "q": "search=climate finance absorptive capacity developing countries", "count": 43429, "note": "bruit"},
+    {"db": "OpenAlex", "q": "search=jointly announced severally owed climate finance", "count": 205, "note": "sec sur P2, rien de pertinent"},
+    {"db": "OpenAlex", "q": "search=loan-based climate finance sovereign debt utility insolvency", "count": 1352, "note": "bruit, mais fait remonter Sachet et al 'Reducing the cost of capital...' Nat Energy 2024 (adjacent, hors-focus JETP)"},
+    {"db": "OpenAlex", "q": "filter=title_and_abstract.search:\"Just Energy Transition Partnership\" (corpus de référence)", "count": 167, "note": "corpus complet des travaux ayant JETP en titre/résumé ; passé au crible local par mots-clés (absorptive capacity, debt sustainability, debt distress, fiscal space, balance sheet, insolven*, currency mismatch, foreign exchange, sovereign debt, concessional, Eskom, PLN, EVN, Senelec, cost of capital, debt ceiling, DSA, utility, state-owned enterprise, loan share, grant share, jointly announced, severally owed) — 9/167 documents avec au moins un hit, aucun ne construit l'argument P1 complet (voir candidats)"},
+    {"db": "OpenAlex", "q": "filter: title_and_abstract JETP AND \"sovereign debt\"", "count": 0, "dry": true},
+    {"db": "OpenAlex", "q": "filter: title_and_abstract JETP AND \"Eskom\"", "count": 0, "dry": true},
+    {"db": "OpenAlex", "q": "filter: title_and_abstract JETP AND \"insolvency\"", "count": 0, "dry": true},
+    {"db": "OpenAlex", "q": "filter: title_and_abstract JETP AND \"currency\"", "count": 0, "dry": true},
+    {"db": "OpenAlex", "q": "filter: title_and_abstract JETP AND \"cost of capital\"", "count": 0, "dry": true},
+    {"db": "OpenAlex", "q": "filter: title_and_abstract JETP AND \"loan\"", "count": 0, "dry": true},
+    {"db": "OpenAlex", "q": "filter: title_and_abstract \"country platform\" AND \"debt sustainability\"", "count": 0, "dry": true},
+    {"db": "OpenAlex", "q": "filter: title_and_abstract \"country platform\" AND \"absorptive capacity\"", "count": 0, "dry": true},
+    {"db": "OpenAlex", "q": "filter: title_and_abstract \"absorptive capacity\" AND \"climate finance\"", "count": 0, "dry": true},
+    {"db": "OpenAlex", "q": "filter: title_and_abstract \"absorptive capacity\" AND \"foreign aid\" (phrase stricte)", "count": 0, "dry": true, "note": "probable faux négatif de phrase stricte, corrigé par le contrôle positif 'aid absorption' (102 résultats)"},
+    {"db": "OpenAlex", "q": "filter: title_and_abstract \"country platform\" (corpus)", "count": 130, "note": "candidats gris WRI examinés"},
+    {"db": "Crossref", "q": "query.bibliographic=Just Energy Transition Partnership debt sustainability balance sheet", "count_total_results": 4156639, "note": "requête non bornée par nature (Crossref renvoie un total-results global), top15 examiné manuellement"},
+    {"db": "Crossref", "q": "query.bibliographic=Just Energy Transition Partnership Eskom insolvency currency", "count_total_results": 3365780, "note": "top15 examiné manuellement, fait remonter 'Can aid foster Africa's attainment of a just energy transition and external debt sustainability?' Heliyon 2025"},
+    {"db": "Semantic Scholar", "q": "Just Energy Transition Partnership balance sheet / solvency utility / absorptive capacity / currency mismatch", "result": "TOOL FAILURE — HTTP 429 (rate limit) sur 4 tentatives successives, y compris après 8s d'attente", "dry": false, "tool_failure": true}
+  ],
+  "dry_queries": [
+    "title_and_abstract JETP AND sovereign debt (0)",
+    "title_and_abstract JETP AND Eskom (0)",
+    "title_and_abstract JETP AND insolvency (0)",
+    "title_and_abstract JETP AND currency (0)",
+    "title_and_abstract JETP AND cost of capital (0)",
+    "title_and_abstract JETP AND loan (0)",
+    "title_and_abstract country platform AND debt sustainability (0)",
+    "title_and_abstract country platform AND absorptive capacity (0)",
+    "title_and_abstract absorptive capacity AND climate finance (0)",
+    "title_and_abstract absorptive capacity AND foreign aid, phrase stricte (0, probable artefact de phrase stricte)"
+  ],
+  "candidates": [
+    {
+      "title": "Just Energy Transition Partnerships: An inclusive climate finance approach?",
+      "authors": "Karg, Gupta, Chen",
+      "year": 2025,
+      "venue": "Energy Research & Social Science 125:104103",
+      "doi": "10.1016/j.erss.2025.104103",
+      "abstract_read": true,
+      "classification": "adjacent",
+      "note": "Pièce déjà connue (brief). Diagnostique le faible taux de dons (3-4% grants) comme problème de JUSTICE/transparence/conditionnalités, jamais comme contrainte de bilan (pas d'Eskom/PLN/EVN, pas de mismatch de change, pas de DSA). Ne construit pas l'argument P1."
+    },
+    {
+      "title": "Just Energy Transition Partnerships at Risk in Indonesia and Vietnam",
+      "authors": "Do, Halimatussadiah, Burke, Jotzo (préprint ANU Open Research, doublon SSRN)",
+      "year": 2026,
+      "venue": "SSRN Electronic Journal / ANU Open Research",
+      "doi": "10.2139/ssrn.6979738",
+      "abstract_read": true,
+      "classification": "adjacent",
+      "note": "Pièce déjà connue (brief). Diagnostique un 'core misalignment' entre attentes de finance concessionnelle précoce des pays hôtes et conditionnalité des partenaires, low grant shares, slow disbursement — proche de P2/P3 (gouvernance, séquencement) mais ne mentionne jamais bilan souverain, insolvabilité d'utility, ni mismatch de change. N'est pas encore peer-reviewed (SSRN + policy note)."
+    },
+    {
+      "title": "What now for low-income and vulnerable countries' financing?",
+      "authors": "non identifié dans les métadonnées récupérées (UNU-WIDER)",
+      "year": 2025,
+      "venue": "UNU-WIDER (policy brief)",
+      "doi": "10.35188/unu-wider/yvaq6715",
+      "abstract_read": true,
+      "classification": "adjacent",
+      "note": "Discute longuement DSA/debt distress/concessionnalité pour les pays IDA, cite le JETP du Sénégal comme exemple positif de 'country platform' — mais ne diagnostique jamais une non-absorption du JETP par mécanisme de bilan ; policy brief, pas peer-reviewed au sens strict."
+    },
+    {
+      "title": "Can aid foster Africa's attainment of a just energy transition and external debt sustainability?",
+      "authors": "Nsakaza, Chilipaine",
+      "year": 2025,
+      "venue": "Heliyon",
+      "doi": "10.1016/j.heliyon.2025.e42507",
+      "abstract_read": true,
+      "classification": "hors sujet / contexte lointain",
+      "note": "Étude économétrique panel (GMM) ODA vs dette externe vs 'just energy transition' générique (39 pays africains, 2012-2022). Ne traite pas du JETP comme instrument, aucune mention de bilan d'utility ni de mismatch de change."
+    },
+    {
+      "title": "Whither Just Transition? A Case Study of Energy Transition Mechanism (ETM) Country Platform in Indonesia",
+      "authors": "non identifié",
+      "year": 2023,
+      "venue": "Journal of Global South (UGM), 10.22146/globalsouth.81111",
+      "doi": "10.22146/globalsouth.81111",
+      "abstract_read": true,
+      "classification": "adjacent",
+      "note": "Porte sur l'ETM (mécanisme voisin, pas le JETP) et critique le 'debt-heavy funding' de façon qualitative, sans construire l'argument de bilan (pas d'Eskom/PLN/EVN/Senelec nommés, pas de DSA, pas de mismatch de change)."
+    },
+    {
+      "title": "Innovative Climate Finance Accelerating Africa's Energy Transition",
+      "authors": "non identifié",
+      "year": 2025,
+      "venue": "International Journal of Research and Innovation in Social Science",
+      "doi": "10.47772/ijriss.2025.909000286",
+      "abstract_read": true,
+      "classification": "contexte / faible qualité",
+      "note": "Mentionne 'currency risk, debt sustainability' comme défis parmi d'autres (liste, pas d'argument construit) ; revue de faible facteur d'impact perçu, traitement superficiel."
+    },
+    {
+      "title": "Financing country platforms",
+      "authors": "non identifié",
+      "year": 2025,
+      "venue": "World Resources Institute (expert note)",
+      "doi": "10.46830/wrien.25.00030",
+      "abstract_read": true,
+      "classification": "adjacent / littérature grise prescriptive",
+      "note": "Note pratique sur COMMENT monter un country platform (rôles des acteurs financiers), pas un diagnostic de non-absorbabilité pour raisons de bilan."
+    },
+    {
+      "title": "Is a country platform for climate action right for Nigeria?",
+      "authors": "non identifié",
+      "year": 2025,
+      "venue": "policy brief, 10.59184/rp025.02",
+      "doi": "10.59184/rp025.02",
+      "abstract_read": true,
+      "classification": "hors sujet",
+      "note": "Prospectif/prescriptif pour le Nigeria, aucun diagnostic de bilan JETP existant."
+    }
+  ],
+  "tool_failures": [
+    "Semantic Scholar Graph API: HTTP 429 (rate limit) sur toutes les tentatives (4 requêtes, avec pause de 8s) — canal non exploité pour cette sonde, à reprendre par une sonde ultérieure avec throttling plus long ou clé API."
+  ],
+  "verdict": {
+    "P1": "LIBRE — aucun texte trouvé (peer-reviewed ou gris) qui construit l'argument complet 'non-absorption JETP = plafond de dette souveraine + insolvabilité de l'utility publique (Eskom/PLN/EVN/Senelec nommément) + mismatch de change + coût du capital'. La littérature identifiée déplore le faible taux de dons / la conditionnalité / le désalignement de gouvernance (Karg 2025, Do et al 2026) sans jamais construire l'argument de bilan. Toutes les requêtes croisant JETP + termes de bilan strict (Eskom, insolvency, currency, sovereign debt, cost of capital, loan) en title_and_abstract sur le corpus de 167 documents JETP retournent 0.",
+    "P4": "LIBRE — aucune requête n'a fait remonter un argument de 'domaine de validité vide' (solvables refusent / insolvables ne peuvent pas absorber) appliqué à un instrument fondé sur le prêt, JETP ou générique.",
+    "confidence_note": "Confiance modérée-haute pour P1/P4 sur le canal OpenAlex/Crossref (corpus JETP quasi-exhaustif de 167 documents passé au crible par mots-clés + confirmé par requêtes filtrées croisées, toutes sèches). Confiance réduite par l'échec du canal Semantic Scholar (429) et par le fait que la littérature grise récente (policy notes 2026, non indexées par abstract) peut échapper à l'indexation OpenAlex/Crossref — un complément WebSearch ciblé sur ces canaux gris serait utile avant de clore définitivement l'angle."
+  },
+  "confidence": "moyenne-haute",
+  "n_queries_run": 32
+}

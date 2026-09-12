@@ -1,0 +1,203 @@
+{
+  "angle": "E - littérature juridique et gouvernance des engagements collectifs de bailleurs (cible P2 : 'jointly announced, severally owed')",
+  "date": "2026-09-08",
+  "databases": [
+    "OpenAlex API (api.openalex.org) - INDISPONIBLE toute la session, voir tool_failures",
+    "Crossref API (api.crossref.org) - fonctionnel, utilisé comme substitut principal",
+    "Unpaywall API (api.unpaywall.org) - fonctionnel",
+    "WebSearch (moteur intégré) - fonctionnel jusqu'à épuisement du budget de session (200/200)",
+    "WebFetch direct sur pages éditeur/HAL/ResearchGate - largement bloqué (403 / anti-bot Anubis)",
+    "HAL API (api.archives-ouvertes.fr) - fonctionnel pour métadonnées, PDF bloqué par Anubis"
+  ],
+  "queries": [
+    {"q": "100 billion climate finance accounting Weikmans Roberts", "db": "Crossref bibliographic", "n_results_total": 2294916, "usable_hits": 10},
+    {"q": "author:Weikmans + climate finance accounting", "db": "Crossref", "n_results_total": 22, "usable_hits": 10},
+    {"q": "joint and several state responsibility international law", "db": "Crossref bibliographic", "n_results_total": 17612678, "usable_hits": 10, "note": "requête trop générique (Crossref bibliographic n'est pas un filtre de phrase exacte), mais confirme une littérature abondante sur la responsabilité étatique"},
+    {"q": "\"Just Energy Transition Partnership\" (bibliographic + title, paginé 0/200/400/600/800)", "db": "Crossref", "n_results_matched_title": 35, "note": "reconstruction partielle du corpus JETP faute d'accès OpenAlex ; corpus réel estimé ~167 par le brief, non atteint"},
+    {"q": "\"jointly announced\" \"severally owed\" pledge climate finance", "db": "WebSearch", "result": "SEC (dry)"},
+    {"q": "\"joint and several\" donor climate finance pledge accountability", "db": "WebSearch", "result": "pas de littérature juridique 'joint and several' appliquée aux bailleurs ; retourne la littérature générale d'accountability/fulfillment des promesses"},
+    {"q": "\"collective pledge\" attribution climate finance \"who is responsible\" aggregate", "db": "WebSearch", "result": "HIT MAJEUR : ODI Pettinotti, Kamninga & Colenbrander 2024, working paper sur le NCQG"},
+    {"q": "\"country platform\" climate finance accountability \"who is accountable\" governance gap", "db": "WebSearch", "result": "littérature grise générale (WRI, IIED, Coalition of Finance Ministers) sur les country platforms, rien de spécifique à la structure juridique de l'agrégat"},
+    {"q": "JETP \"legal nature\" \"political declaration\" soft law non-binding", "db": "WebSearch", "result": "SEC pour un article dédié ; confirme seulement la qualification générique 'political declaration, non-binding' issue de sources non académiques (Wikipedia, IHRB, DGAP, cabinets d'avocats)"},
+    {"q": "\"Just Energy Transition Partnership\" \"political declaration\" legal status memorandum of understanding non-binding", "db": "WebSearch", "result": "confirme la qualification 'political declaration' / non-binding mais via sources primaires (déclarations elles-mêmes) et notes de cabinets (Lexology), pas d'article de doctrine juridique dédié"},
+    {"q": "\"no single donor\" responsible aggregate pledge climate OR aid", "db": "WebSearch puis Crossref bibliographic", "result": "SEC sur la formule exacte ; Crossref renvoie du bruit thématique sans rapport"},
+    {"q": "\"division of labour\" donor coordination \"collective action problem\" climate finance country platform", "db": "WebSearch", "result": "littérature de coordination des bailleurs générale (SEI, IIED, ODI), pas de traitement du statut juridique joint/several"},
+    {"q": "shared responsibility international law Nollkaemper Jacobs", "db": "Crossref bibliographic", "usable_hits": 10, "result": "confirme le projet SHARES (canon) - Nollkaemper, Jacobs, Plakokefalos et al."},
+    {"q": "orchestration Abbott Snidal country platform climate", "db": "Crossref bibliographic", "usable_hits": 10, "result": "confirme le canon Abbott & Snidal (orchestration), pas d'application spécifique à un JETP repérée"},
+    {"q": "author:Boute + just energy transition partnership", "db": "Crossref", "usable_hits": 10, "result": "identifie Boute 2025 ICSID Review (droit de l'investissement, pas P2)"},
+    {"q": "author:Hug + just energy transition partnership", "db": "Crossref", "n_results_total": 188, "usable_hits": 10, "result": "identifie Hug 2025 JWELB et Hug 2026 RECIEL (droit de l'investissement, pas P2)"},
+    {"q": "three missed opportunities New Collective Quantified Goal climate finance", "db": "Crossref bibliographic", "usable_hits": 5, "result": "identifie Pauw 2025, Earth System Governance 100255"},
+    {"q": "author:Bradlow Swamidurai", "db": "Crossref", "usable_hits": 10, "result": "identifie Bradlow & Swamidurai 2026, Socio-Economic Review (mwag015)"},
+    {"q": "article 47 articles on state responsibility plurality of responsible states", "db": "Crossref bibliographic", "usable_hits": 8, "result": "canon confirmé (ILC Articles, commentaires doctrinaux Tzanakopoulos, Pasternak)"},
+    {"q": "collective pledge attribution climate finance who owes", "db": "Crossref bibliographic", "usable_hits": 6, "result": "bruit + un hit hors sujet ('Who Owes What? Reimagining States' Responsibility for Climate Displacement', Tusher, SSRN 2026, sur les déplacements climatiques, pas les promesses de financement)"},
+    {"q": "no single donor responsible aggregate pledge (Crossref)", "db": "Crossref bibliographic", "usable_hits": 6, "result": "SEC (bruit thématique sans rapport)"},
+    {"q": "country platform accountability who is accountable (Crossref)", "db": "Crossref bibliographic", "usable_hits": 6, "result": "SEC (bruit thématique sans rapport)"},
+    {"q": "just energy transition partnership legal nature political declaration (Crossref)", "db": "Crossref bibliographic", "usable_hits": 8, "result": "aucun article de doctrine juridique dédié identifié, uniquement des articles JETP généraux déjà connus"}
+  ],
+  "dry_queries": [
+    "\"jointly announced\" \"severally owed\" pledge climate finance (WebSearch) - SEC total",
+    "\"no single donor\" responsible aggregate pledge (WebSearch et Crossref) - SEC total sur la formule exacte",
+    "JETP + \"legal nature\" + \"political declaration\" comme article de doctrine dédié (WebSearch et Crossref) - SEC : la qualification existe mais uniquement dans la littérature grise / les textes primaires, pas dans un article de doctrine centré sur cette question",
+    "\"joint and several\" appliqué spécifiquement aux bailleurs climatiques ou à l'aide au développement (WebSearch) - SEC : le vocabulaire 'joint and several' reste cantonné à la responsabilité étatique générale (droit international public) et n'a pas été trouvé transposé à l'analyse des promesses de financement climatique"
+  ],
+  "positive_control": {
+    "query_1": "\"100 billion\" climate finance accounting Weikmans Roberts (Crossref)",
+    "result_1": "10 résultats pertinents immédiats, dont Weikmans & Roberts 2017 (10.1080/17565529.2017.1410087), Roberts & Weikmans 2017 (10.1007/s10784-016-9347-4), Weikmans, Roberts & Robinson 2020 (10.1038/d41586-020-03481-0), Robinson, Roberts, Weikmans & Falzon 2023 (10.1038/s41558-023-01809-y), Roberts et al. 2021 'Rebooting a failed promise of climate finance' (10.1038/s41558-021-00990-2) - la littérature de comptage/fair-share du financement climatique remonte abondamment, sonde valide.",
+    "query_2": "\"Just Energy Transition Partnership\" en titre (Crossref query.title, paginé) - remonte bien Karg, Gupta & Chen 2025 (10.1016/j.erss.2025.104103) dans le corpus reconstruit, confirmant que la méthode retrouve la pièce de contrôle attendue par le brief.",
+    "query_3_openalex": "ECHEC - api.openalex.org renvoie HTTP 429 'Insufficient budget... Resets at midnight UTC' pour toute requête, y compris une requête triviale (?search=test). Confirmé deux fois (curl direct et WebFetch). Sonde OpenAlex cassée pour toute la session ; substituée par Crossref (fonctionnel) mais avec une couverture plus bruitée (le filtre bibliographic/title de Crossref n'est pas un filtre de phrase exacte comme title_and_abstract.search d'OpenAlex, donc le corpus JETP reconstruit - 35 titres - est probablement incomplet par rapport aux ~167 attendus)."
+  },
+  "candidates": [
+    {
+      "title": "A fair share of climate finance? The collective aspects of the New Collective Quantified Goal",
+      "authors": ["Laetitia Pettinotti", "Tony Kamninga", "Sarah Colenbrander"],
+      "year": 2024,
+      "venue": "ODI Working Paper (littérature grise, non peer-reviewed)",
+      "doi_or_url": "https://odi.org/en/publications/a-fair-share-of-climate-finance-the-collective-aspects-of-the-ncqg/ ; PDF https://media.odi.org/documents/ODI_2024_Fair_share_climate_finance_new.pdf",
+      "abstract_read": "oui (texte intégral extrait du PDF via pdftotext, pas seulement le résumé)",
+      "abstract_excerpt": "\"The current goal of $100 billion a year is a collective commitment by developed countries. The collective nature of the goal has meant that individual developed countries are not accountable for a specific sum of money. This lack of individual accountability has potentially reduced the total amount of climate finance provided because developed countries are shielded from individual scrutiny. With no accountability for those that fall short of their fair share, there is little political incentive for other developed countries to be ambitious...\" (p.2, section 'A burden-sharing arrangement among developed countries')",
+      "preclass": "préempte partiellement P2 (par analogie structurelle, hors-cible JETP)",
+      "why": "Énonce très exactement la première moitié du mécanisme de P2 - un objectif collectif annoncé en bloc ($100bn / NCQG) dont personne n'est individuellement redevable, donc personne n'est scruté sur sa part - mais (a) porte sur le $100bn/NCQG, pas sur un JETP nommément, (b) reste côté 'accountability des bailleurs entre eux', et NE traite PAS l'autre moitié de P2 : l'absence de mandat pour évaluer la capacité d'absorption globale du paquet pour le RÉCIPIENDAIRE. C'est un travail de littérature grise (ODI working paper), pas peer-reviewed. Trouvaille la plus proche de P2 de toute la recherche sur cet angle."
+    },
+    {
+      "title": "Fit for purpose? Just Energy Transition Partnerships and accountability in international climate governance",
+      "authors": ["Joseph Earsom"],
+      "year": 2024,
+      "venue": "Global Policy 15(1):135-141",
+      "doi_or_url": "10.1111/1758-5899.13324",
+      "abstract_read": "oui (résumé complet récupéré via Crossref, texte intégral INACCESSIBLE malgré statut OA revendiqué - voir tool_failures)",
+      "abstract_excerpt": "\"This contribution examines whether just energy transition partnerships (JETPs)... can serve as accountability mechanisms for the... UNFCCC. It identifies important structural elements from the existing literature on climate governance for holding actors to account and then assesses the extent to which they are present within JETPs. While JETPs appear in theory to offer increased potential to shore up accountability... the case of the South African JETP demonstrates that the presence of these structural elements is likely insufficient to ensure accountability... This preliminary analysis therefore finds several practical limitations to accountability within JETPs and dense governance spaces in general.\"",
+      "preclass": "adjacent (sur résumé seul - lecture intégrale IMPOSSIBLE)",
+      "why": "C'est LA pièce explicitement désignée par le commanditaire comme portant sur la redevabilité des JETP - mais le résumé seul cadre l'accountability comme un rapport JETP -> UNFCCC (redevabilité externe/verticale), pas comme un problème de fragmentation interne bailleur-par-bailleur empêchant toute évaluation de l'agrégat (P2 est un problème horizontal, entre bailleurs, et vis-à-vis du récipiendaire). Impossible de vérifier si le corps du texte aborde 'jointly announced, severally owed' explicitement : Wiley (403), HAL Anubis (403), ResearchGate (403) tous bloqués. À rouvrir en bibliothèque institutionnelle avant conclusion définitive."
+    },
+    {
+      "title": "Phasing Out Coal Investment Contracts: Does Just Transition Finance Legitimize Unjust Compensation?",
+      "authors": ["Anatole Boute"],
+      "year": 2025,
+      "venue": "ICSID Review - Foreign Investment Law Journal 40(2):315-340",
+      "doi_or_url": "10.1093/icsidreview/siae037",
+      "abstract_read": "oui (Crossref)",
+      "abstract_excerpt": "\"...this article investigates the compensation of coal investors under the JETPs, and related transition finance initiatives, building on the just transition and climate-investment law literature. The analysis focuses on the early termination of coal PPAs in Indonesia and Vietnam...\"",
+      "preclass": "hors sujet pour P2 (droit des investissements, indemnisation)",
+      "why": "Porte sur le droit international de l'investissement (indemnisation des producteurs de charbon), aucune mention de la structure joint/several de l'engagement des bailleurs ni de la gouvernance de l'agrégat."
+    },
+    {
+      "title": "Local content requirements in Asia's Just Energy Transition: Neutralizing tensions with international economic law",
+      "authors": ["Chester Hug"],
+      "year": 2025,
+      "venue": "Journal of World Energy Law & Business 18(1)",
+      "doi_or_url": "10.1093/jwelb/jwaf003",
+      "abstract_read": "oui (Crossref)",
+      "abstract_excerpt": "\"...this article examines whether international economic law expedites or obstructs Asia's energy transition, and whether LCRs are incompatible with international economic law...\"",
+      "preclass": "hors sujet pour P2 (contenu local, droit économique international)",
+      "why": "Ne traite ni de l'attribution des tranches ni de la nature de l'engagement collectif."
+    },
+    {
+      "title": "Do Just Energy Transition Partnerships collide or converge with substantive investment law standards? Case studies from Indonesia and Vietnam",
+      "authors": ["Chester Hug"],
+      "year": 2026,
+      "venue": "Review of European, Comparative & International Environmental Law (RECIEL) 35(1):115-141",
+      "doi_or_url": "10.1111/reel.70033",
+      "abstract_read": "oui (Crossref)",
+      "abstract_excerpt": "\"...it analyses how coal-fired power plants could be decommissioned early while preventing arbitration claims... it examines the effectiveness of de-risking tools to address risks pertaining to renewable energy investments...\"",
+      "preclass": "hors sujet pour P2 (droit des investissements, expropriation, de-risking)",
+      "why": "Angle investissement/arbitrage, pas gouvernance de l'agrégat de la promesse."
+    },
+    {
+      "title": "The \"power to pollute\" and \"post-neoliberal\" climate finance",
+      "authors": ["Daniel D. Bradlow", "Vishal Swamidurai"],
+      "year": 2026,
+      "venue": "Socio-Economic Review (en ligne 16 mars 2026)",
+      "doi_or_url": "10.1093/ser/mwag015",
+      "abstract_read": "oui (Crossref)",
+      "abstract_excerpt": "\"...we assess whether the JETP model in fact enables MICs to pursue industrial policy innovations that parallel emergent 'post-neoliberal' policy paradigms of rich countries... We argue that JETP financing is unlikely to enable the rise of green industrial policies... This type of financing is instead becoming a mechanism to constrain domestic policy flexibility—and domestic politics.\"",
+      "preclass": "adjacent à P3 (contrainte de la marge de manoeuvre politique), pas à P2",
+      "why": "Traite de l'agentivité/contrainte politique du récipiendaire (proche de P3, dans le sens négatif : contrainte plutôt qu'agentivité), aucune discussion de la structure joint/several de l'engagement des bailleurs."
+    },
+    {
+      "title": "The three missed opportunities of the UNFCCC's New Collective Quantified Goal on climate finance",
+      "authors": ["Pieter Pauw"],
+      "year": 2025,
+      "venue": "Earth System Governance (esg.2025.100255)",
+      "doi_or_url": "10.1016/j.esg.2025.100255",
+      "abstract_read": "non - résumé introuvable via Crossref (champ vide) ; ScienceDirect bloque WebFetch (403) ; pas de version OA identifiée en session",
+      "abstract_excerpt": null,
+      "preclass": "non classé - lecture requise avant conclusion",
+      "why": "Le titre ('three missed opportunities' du NCQG) suggère fortement une proximité avec le diagnostic de P2 côté gouvernance du $100bn/NCQG, dans la même veine que Pettinotti et al. 2024, mais je n'ai PAS pu lire le résumé - a rouvrir en priorité, potentiellement plus proche de P2 que Pettinotti et al."
+    },
+    {
+      "title": "Just Energy Transition Partnerships: An inclusive climate finance approach?",
+      "authors": ["Larissa Karg", "Joyeeta Gupta", "Min Chen"],
+      "year": 2025,
+      "venue": "Energy Research & Social Science 125, 104103",
+      "doi_or_url": "10.1016/j.erss.2025.104103 (Unpaywall confirme OA, licence CC-BY, mais accès texte intégral bloqué en session)",
+      "abstract_read": "non - déjà connu du brief (comparaison 4 pays, justice), non relu spécifiquement sous l'angle P2 faute d'accès (ScienceDirect 403, API Elsevier nécessite une clé)",
+      "abstract_excerpt": null,
+      "preclass": "non reclassé pour cet angle (pièce déjà connue)",
+      "why": "Le brief la signale déjà comme connue sous l'angle comparatif/justice ; je n'ai pas pu vérifier si son traitement de 'inclusive climate finance' aborde spécifiquement la fragmentation bailleur-par-bailleur."
+    },
+    {
+      "title": "\"Who Owes What?\" Reimagining States' Responsibility for Climate Displacement",
+      "authors": ["Tusher (prénom non résolu)"],
+      "year": 2026,
+      "venue": "SSRN (preprint)",
+      "doi_or_url": "10.2139/ssrn.6161869",
+      "abstract_read": "non - titre seul, non lu",
+      "abstract_excerpt": null,
+      "preclass": "hors sujet probable (titre seul, à confirmer)",
+      "why": "Le titre évoque un cadre 'who owes what' proche du vocabulaire de P2, mais porte sur le déplacement climatique et la responsabilité étatique classique, pas sur les promesses de financement collectives des bailleurs. Signalé par prudence, non classé faute de lecture du résumé (discipline anti-titre-seul)."
+    }
+  ],
+  "canon": [
+    {
+      "item": "SHARES project - responsabilité partagée en droit international",
+      "refs": [
+        "Nollkaemper & Jacobs, 'Shared Responsibility in International Law: A Conceptual Framework', 2011, SSRN 10.2139/ssrn.1916575 (version publiée : Michigan Journal of International Law)",
+        "Nollkaemper & Jacobs (eds.), Distribution of Responsibilities in International Law, Cambridge UP, 2015 (10.1017/cbo9781316227466)",
+        "Nollkaemper, Plakokefalos et al. (eds.), The Practice of Shared Responsibility in International Law, Cambridge UP, 2017 (10.1017/9781316227480)",
+        "Nollkaemper, d'Aspremont, Ahlborn, Boutin, Nedeski, Plakokefalos, 'Guiding Principles on Shared Responsibility in International Law', European Journal of International Law, 2020, 10.1093/ejil/chaa017"
+      ],
+      "role": "Cadre théorique de référence pour distinguer responsabilité conjointe/solidaire vs responsabilité plurale-mais-séparée en droit international. Aucune application identifiée aux engagements financiers climatiques collectifs (JETP, $100bn) - c'est le vide que P2 pourrait combler en y greffant le cas JETP."
+    },
+    {
+      "item": "Articles de la CDI sur la responsabilité de l'État pour fait internationalement illicite (2001), art. 47 (pluralité d'États responsables)",
+      "refs": ["ILC Articles on State Responsibility (2001), commentaires ; ex. Tzanakopoulos 2025 SSRN sur les articles individuels ; Pasternak, 'Distributing State Responsibility', in Responsible Citizens, Irresponsible States, OUP, 2021, 10.1093/oso/9780197541036.003.0006"],
+      "role": "Texte de référence pour la distinction 'several' (chaque État répond séparément de sa propre conduite, art. 47(1)) vs situations de responsabilité conjointe. Établit que le droit international coutumier ne connaît PAS de solidarité passive par défaut entre États plurals - point d'appui direct pour la thèse P2 (l'agrégat JETP n'a structurellement pas de débiteur solidaire)."
+    },
+    {
+      "item": "Orchestration en gouvernance globale",
+      "refs": [
+        "Abbott & Snidal, 'International Regulation Without International Government: Improving IO Performance Through Orchestration', Review of International Organizations, 2010, 10.1007/s11558-010-9092-3",
+        "Abbott, Genschel, Snidal & Zangl (eds.), International Organizations as Orchestrators, Cambridge UP, 2015",
+        "Abbott, 'Orchestration: Strategic Ordering in Polycentric Climate Governance', in Governing Climate Change, Cambridge UP, 2018, 10.1017/9781108284646.012"
+      ],
+      "role": "Cadre pour analyser un dispositif comme le JETP comme structure d'orchestration à intermédiaires multiples plutôt que comme contrat unique - utile pour situer P2 dans la littérature de gouvernance, aucune application JETP identifiée."
+    },
+    {
+      "item": "Comptabilité et 'fair share' du financement climatique (littérature Weikmans/Roberts et dérivés)",
+      "refs": [
+        "Weikmans & Roberts, 'The international climate finance accounting muddle: is there hope on the horizon?', Climate and Development, 2017, 10.1080/17565529.2017.1410087",
+        "Roberts & Weikmans, 'Postface: fragmentation, failing trust and enduring tensions over what counts as climate finance', International Environmental Agreements, 2017, 10.1007/s10784-016-9347-4",
+        "Weikmans, Roberts & Robinson, 'What counts as climate finance? Define urgently', Nature, 2020, 10.1038/d41586-020-03481-0",
+        "Roberts, Weikmans, Robinson, Ciplet, Khan & Falzon, 'Rebooting a failed promise of climate finance', Nature Climate Change, 2021, 10.1038/s41558-021-00990-2",
+        "Pettinotti, Kamninga & Colenbrander, 'A fair share of climate finance? The collective aspects of the New Collective Quantified Goal', ODI Working Paper, 2024 (voir candidates)"
+      ],
+      "role": "Généalogie directe du diagnostic P2 côté bailleurs : absence de règle de comptage univoque + absence de mécanisme de burden-sharing = personne n'est individuellement redevable de l'agrégat. Fondation naturelle à citer pour situer P2, MAIS jamais appliquée nommément aux JETP ni à la question de l'absorption par le récipiendaire."
+    }
+  ],
+  "tool_failures": [
+    "api.openalex.org : HTTP 429 'Insufficient budget... creditsRemaining:5... Resets at midnight UTC' pour TOUTE requête (y compris ?search=test), confirmé via curl direct ET via WebFetch. Panne totale pendant toute la session, retryAfter ~37800s (~10.5h). Impossible d'exécuter la méthode recommandée par le brief (reconstitution du corpus JETP via title_and_abstract.search, ~167 travaux attendus). Substitution partielle par Crossref query.title/query.bibliographic paginé (35 titres retrouvés sur un corpus estimé ~167 - couverture incomplète, non exhaustive).",
+    "WebSearch : budget de session épuisé après ~10 requêtes ('this session has used its web search budget (200 of 200 WebSearch calls)') - partagé entre tous les chercheurs de la flotte de saturation, pas seulement cet angle. A limité les dernières vérifications lexicales prévues (ex. Karg et al. 2025 abstract, Selvaraju et al. 2025 abstract).",
+    "onlinelibrary.wiley.com (Earsom 2024, texte intégral) : HTTP 403 malgré statut Open Access confirmé par Unpaywall (licence CC-BY-NC-ND, url_for_pdf renseignée). Impossible de lire le corps du texte.",
+    "univ-catholille.hal.science (dépôt HAL d'Earsom 2024) : bloqué par le pare-feu anti-bot Anubis (403), y compris en téléchargement direct du PDF via curl avec User-Agent navigateur.",
+    "researchgate.net (copie d'Earsom 2024) : HTTP 403.",
+    "sciencedirect.com (Karg et al. 2025, Pauw 2025) : HTTP 403 systématique sur WebFetch malgré statut OA (Karg, CC-BY confirmé par Unpaywall) ; l'API text-mining Elsevier renvoie une erreur de paramètre sans clé API valide.",
+    "Semantic Scholar : non testé directement (le brief signale un HTTP 429 connu) - Crossref et Unpaywall utilisés en substitution comme recommandé.",
+    "Une citation issue d'un résumé généré par WebSearch ('bureaucratic inefficiencies, weak absorptive capacities, and fragmented governance structures across donors...') N'A PAS été retrouvée telle quelle dans le document source (ICAI review PDF, vérifié par grep sur le texte extrait) - traitée comme une paraphrase de synthèse de l'outil, PAS comme une citation vérifiée, et exclue des candidats/canon."
+  ],
+  "verdict": {
+    "P2_jointly_announced_severally_owed": "NON PRÉEMPTÉ tel que formulé dans son intégralité (agrégat sans débiteur unique ET absence de mandat pour évaluer la soutenabilité globale POUR LE RÉCIPIENDAIRE). Aucun article repéré ne combine les deux volets. Le volet 'personne n'est individuellement redevable de l'agrégat côté bailleurs' est anticipé de façon quasi littérale par Pettinotti, Kamninga & Colenbrander (ODI, 2024) pour le $100bn/NCQG - mais (a) c'est de la littérature grise non peer-reviewed, (b) ça ne vise pas nommément les JETP, (c) ça ne traite pas l'absence de mandat d'évaluation de l'absorption par le récipiendaire, qui est l'autre moitié, plus originale, de P2. Le volet juridique proprement dit (statut 'joint and several' vs 'several obligations' appliqué explicitement aux engagements de bailleurs climatiques) est un TROU confirmé par plusieurs requêtes sèches : le vocabulaire juridique 'joint and several' que je trouve en abondance reste cantonné à la responsabilité étatique classique (délits internationaux, CDI art. 47, projet SHARES) et n'a jamais été vu transposé, dans la littérature repérée, à l'analyse des promesses de financement collectives (JETP, $100bn, pertes et préjudices, G7).",
+    "reserve_importante": "Earsom 2024 (Global Policy) reste un risque de préemption partielle non résolu : c'est la seule pièce dédiée à la 'redevabilité' des JETP repérée par recherche par titre/résumé, et le corps du texte est resté INACCESSIBLE malgré trois tentatives (Wiley OA, HAL, ResearchGate, toutes 403). Sur le seul résumé, il cadre l'accountability comme un rapport vertical JETP->UNFCCC, pas comme le problème horizontal bailleur-par-bailleur de P2 - mais cette lecture reste incertaine sans le texte intégral. RECOMMANDATION : obtenir ce texte via accès institutionnel avant de considérer P2 comme définitivement inoccupé.",
+    "reserve_secondaire": "Pauw 2025 (Earth System Governance, 'three missed opportunities' du NCQG) n'a pas pu être lu du tout (ni résumé ni texte) et son titre suggère une proximité possible avec le diagnostic de gouvernance de P2 - à vérifier en priorité dans une passe ultérieure.",
+    "fiabilite_de_la_sonde": "Contrôle positif RÉUSSI sur Crossref (100bn/Weikmans-Roberts : 10+ résultats directement pertinents ; reconstruction partielle du corpus JETP retrouve bien Karg et al. 2025 comme attendu). Contrôle sur OpenAlex EXPLICITEMENT CASSÉ (429 budget épuisé, confirmé, non un résultat nul silencieux). La méthode recommandée par le brief (OpenAlex title_and_abstract.search, ~167 travaux) n'a PAS pu être exécutée ; le corpus JETP reconstruit via Crossref (35 titres) est un plancher, pas un cribbage exhaustif - un déficit de couverture d'environ 130 travaux non criblés subsiste et devra être comblé dès qu'OpenAlex sera de nouveau accessible (minuit UTC selon le message d'erreur)."
+  }
+}

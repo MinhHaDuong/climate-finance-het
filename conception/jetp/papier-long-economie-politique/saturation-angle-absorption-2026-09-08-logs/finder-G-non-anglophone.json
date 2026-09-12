@@ -1,0 +1,395 @@
+{
+  "angle": "G — canaux non anglophones et revues régionales (français, indonésien, vietnamien, allemand, espagnol/portugais)",
+  "date": "2026-09-08",
+  "channels": [
+    {
+      "name": "HAL (api.archives-ouvertes.fr)",
+      "databases": ["api.archives-ouvertes.fr/search"],
+      "queries": [
+        "halId_s:hal-05599857",
+        "title_t:\"Just Energy Transition Partnership\"",
+        "text:(JETP OR \"Just Energy Transition Partnership\") AND text:(Sénégal OR Vietnam OR Indonésie OR \"Afrique du Sud\")",
+        "text:\"capacité d'absorption\"",
+        "text:\"capacité d'absorption\" AND text:climat",
+        "text:\"capacité d'absorption\" AND text:\"aide au développement\"",
+        "text:\"soutenabilité de la dette\"",
+        "text:\"soutenabilité de la dette\" AND text:\"transition énergétique\"",
+        "text:\"conditionnalité\" AND text:JETP",
+        "text:\"appropriation\" AND text:JETP",
+        "text:Senelec"
+      ],
+      "dry_queries": [
+        "text:\"appropriation\" AND text:JETP -> 0 documents (real null, query mechanics confirmed working on other queries)",
+        "text:\"soutenabilité de la dette\" AND text:\"transition énergétique\" -> 3 docs, none JETP/developing-country specific (Ragot climate financing France, general debt paradigm pieces)"
+      ],
+      "positive_control": {
+        "query": "halId_s:hal-05599857",
+        "returned": "Exact match retrieved: Yanis Rihi, 'Comment la justice climatique risque de devenir un instrument de domination : le cas du JETP au Sénégal', docType_s=ART, peerReviewing_s=0, journalTitle_s='The Conversation France', producedDate_s=2026-04-22.",
+        "ok": true,
+        "note": "Confirms documented trap: docType ART but peerReviewing_s=0 -> tribune, NOT peer-reviewed. Classified accordingly."
+      }
+    },
+    {
+      "name": "theses.fr API",
+      "databases": ["theses.fr/api/v1/theses/recherche"],
+      "queries": [
+        "\"Just Energy Transition Partnership\"",
+        "\"transition énergétique juste\" dette"
+      ],
+      "dry_queries": [
+        "\"Just Energy Transition Partnership\" -> totalHits 0",
+        "\"transition énergétique juste\" dette -> totalHits 0"
+      ],
+      "positive_control": {
+        "query": "\"changement climatique\"",
+        "returned": "totalHits 5126, real thesis records returned (Rennes 1, Paris Est, Paris-Saclay, Le Mans, Strasbourg).",
+        "ok": true,
+        "note": "API confirmed functional; the two zero-hit JETP queries are genuine nulls, not a broken probe. No French PhD thesis yet indexed on JETP or on 'transition énergétique juste'+dette."
+      }
+    },
+    {
+      "name": "Cairn.info",
+      "databases": ["shs.cairn.info search"],
+      "queries": ["Just Energy Transition Partnership"],
+      "dry_queries": [],
+      "positive_control": {
+        "query": "Just Energy Transition Partnership",
+        "returned": "HTTP 403 Forbidden — site blocks the fetch tool.",
+        "ok": false,
+        "note": "Channel probe BROKEN, not a real null. Cairn coverage of JETP is UNRESOLVED for this pass."
+      }
+    },
+    {
+      "name": "Revue Tiers Monde / Mondes en développement (via Crossref container-title filter)",
+      "databases": ["api.crossref.org"],
+      "queries": [
+        "query.bibliographic=JETP+Just+Energy+Transition+Partnership&query.container-title=Mondes en développement",
+        "query.bibliographic=Just Energy Transition Partnership&query.container-title=Revue Tiers Monde"
+      ],
+      "dry_queries": [
+        "Mondes en développement -> only the author's own known piece (Ha-Duong 2024, no.205) among energy-transition articles; nothing else JETP-specific",
+        "Revue Tiers Monde -> 0 JETP-specific hits; generic 'transition' articles only, none on JETP"
+      ],
+      "positive_control": {
+        "query": "query.container-title=Mondes en développement (bibliographic: transition énergétique)",
+        "returned": "Returned real Mondes en développement articles including Ha-Duong 2024 'Vietnam at the dawn of its energy transition' (already known piece) — confirms Crossref indexes this journal correctly.",
+        "ok": true,
+        "note": "Channel functional; null on JETP-specific content is real."
+      }
+    },
+    {
+      "name": "AFD / Ferdi (site search)",
+      "databases": ["afd.fr", "ferdi.fr"],
+      "queries": ["Just Energy Transition Partnership"],
+      "dry_queries": [],
+      "positive_control": {
+        "query": "Just Energy Transition Partnership on afd.fr and ferdi.fr",
+        "returned": "afd.fr: two guessed search URLs both 404 (could not find correct search endpoint). ferdi.fr: homepage fetched but shows no working search results (site search interface not reachable via generic WebFetch).",
+        "ok": false,
+        "note": "Channel probe BROKEN — could not construct a working query URL for either site under tool constraints. AFD/Ferdi coverage of JETP debt/absorption angle is UNRESOLVED, not confirmed absent. (Cross-check attempted via Crossref bibliographic search instead: no AFD Papiers de recherche or Ferdi working paper on Senegal/JETP debt sustainability turned up there either, but Crossref does not index all AFD/Ferdi grey literature, so this is weak evidence only.)"
+      }
+    },
+    {
+      "name": "Indonesian portals (Garuda, Neliti, SINTA) — direct access",
+      "databases": ["garuda.kemdikbud.go.id", "neliti.com"],
+      "queries": ["Syachrullah Darmastuti Vietnam energy transition", "Mumtaz Suryadipura JETP"],
+      "dry_queries": [],
+      "positive_control": {
+        "query": "Syachrullah Darmastuti Vietnam energy transition (direct portal search)",
+        "returned": "garuda.kemdikbud.go.id: DNS resolution failed (ENOTFOUND) — domain unreachable from this tool. neliti.com/search: HTTP 403 Forbidden.",
+        "ok": false,
+        "note": "Direct portal access BROKEN for both. Substituted with Crossref DOI resolution (see next channel), which DID succeed and independently confirms both target pieces exist and are indexed with DOIs — but this is not proof Garuda/Neliti/SINTA themselves surface them, only that the underlying journals are Crossref members."
+      }
+    },
+    {
+      "name": "Crossref (substitute for Indonesian/Vietnamese/regional journal indexing)",
+      "databases": ["api.crossref.org"],
+      "queries": [
+        "Syachrullah Darmastuti Vietnam energy transition",
+        "Mumtaz Suryadipura JETP",
+        "JETP AND utang (bibliographic)",
+        "JETP kapasitas penyerapan utang",
+        "JETP PLN utang kapasitas penyerapan",
+        "JETP pinjaman hibah Indonesia",
+        "JETP EVN nợ tài chính vay ưu đãi",
+        "khả năng hấp thụ vốn JETP chuyển dịch năng lượng công bằng",
+        "JETP Vietnam nợ công EVN",
+        "Just Energy Transition Partnership Verschuldung Absorptionsfähigkeit",
+        "Just Energy Transition Partnership Verschuldung Schuldentragfähigkeit",
+        "Just Energy Transition Partnership deuda capacidad de absorción",
+        "Just Energy Transition Partnership dette Senegal soutenabilité",
+        "Tamasiga challenges opportunities Just Energy Transition Partnerships Africa",
+        "Bauer Feist Just Energy Transition Partnerships boosting international climate cooperation"
+      ],
+      "dry_queries": [
+        "JETP AND utang (bibliographic) -> 0 results",
+        "JETP kapasitas penyerapan utang / JETP PLN utang -> no JETP-specific PLN-debt article found; only unrelated PLN grid/technical papers",
+        "JETP EVN nợ tài chính vay ưu đãi -> no EVN-finance-specific JETP article found",
+        "Just Energy Transition Partnership Verschuldung/Absorptionsfähigkeit/Schuldentragfähigkeit -> no German-language JETP debt article found",
+        "Just Energy Transition Partnership deuda capacidad de absorción -> no Spanish/Portuguese JETP debt article found (only unrelated firm-level 'capacidad de absorción' management literature)",
+        "Tamasiga (bibliographic search) -> Crossref returned unrelated works; Tamasiga 2024 piece not resolved via Crossref bibliographic search (likely indexed elsewhere, e.g. a journal without full Crossref bibliographic-search coverage, or the query terms diluted the match)"
+      ],
+      "positive_control": {
+        "query": "Syachrullah Darmastuti Vietnam energy transition / Mumtaz Suryadipura JETP",
+        "returned": "Both resolved. (1) Dafa Syachrullah, Shanti Darmastuti, 'International Collaboration and Coordination Vietnam's Energy Transition: The Role of International Partners Through the Just Energy Transition Partnership', Jurnal Sosial Humaniora 17(1):69-82, 2026, DOI 10.30997/jsh.v17i1.24230. (2) Faiz Mumtaz, Dadan Suryadipura, 'Indonesia's Energy Security Strategy through the Just Energy Transition Partnership: Implications for Energy Sovereignty', Jurnal Dinamika Global 11(1):70-87, 2026, DOI 10.36859/jdg.v11i1.5527.",
+        "ok": true,
+        "note": "Both match the brief's expected control pieces (volume/issue/year consistent). Crossref successfully substitutes for the blocked direct-portal access."
+      }
+    },
+    {
+      "name": "DOAJ API",
+      "databases": ["doaj.org/api/search/articles"],
+      "queries": [
+        "JETP AND utang",
+        "\"Just Energy Transition Partnership\"",
+        "JETP AND gouvernance"
+      ],
+      "dry_queries": [
+        "JETP AND utang -> 0 results",
+        "JETP AND gouvernance -> 0 results (query syntax uncertain: DOAJ full-text search behaviour with 'AND' as literal token vs boolean operator not verified; treat as unresolved rather than confident null)"
+      ],
+      "positive_control": {
+        "query": "\"Just Energy Transition Partnership\"",
+        "returned": "10 results including several already-known pieces (Musekiwa & Murray, Gürtler, von Lüpke) plus several NEW candidates (see candidates list): Andriko/Adji/Prabowo 2023, Zainur/Kusuma 2025, Zainur/Puspa 2025, Maskun et al. 2023, Okoliko & Iqani 2025, Mumtaz & Suryadipura 2026.",
+        "ok": true,
+        "note": "Channel works well; useful discovery tool for open-access regional journals indexed in DOAJ."
+      }
+    },
+    {
+      "name": "IDOS/DIE Bonn (idos-research.de site search)",
+      "databases": ["idos-research.de"],
+      "queries": [
+        "Just Energy Transition Partnership debt",
+        "JETP Absorptionsfähigkeit Verschuldung"
+      ],
+      "dry_queries": [
+        "JETP Absorptionsfähigkeit Verschuldung -> no publication combining JETP with debt/absorptive-capacity terms found; only generic development-finance publications (domestic revenue mobilisation, development cooperation financing, climate mobility)"
+      ],
+      "positive_control": {
+        "query": "Just Energy Transition Partnership debt",
+        "returned": "Surfaced 3 real IDOS JETP-specific publications: Tamasiga 2024 'Challenges and opportunities for Just Energy Transition Partnerships in Africa'; Bauer & Feist 2022 'Just Energy Transition Partnerships: boosting international climate cooperation?'; Bauer & Faus Onbargi 2022 'Governing just transitions in a fraught world, with courage and fast'. Also surfaced Berensmann's German-language piece on debt traps for poor countries (not JETP-specific).",
+        "ok": true,
+        "note": "Channel confirmed functional and JETP-aware. The narrower query combining explicit debt/absorption German vocabulary with JETP returned a real null — IDOS has not published a piece framing JETP through balance-sheet/absorptive-capacity terms specifically, as far as this probe can tell."
+      }
+    },
+    {
+      "name": "adelphi, Wuppertal Institut, GIZ (site search)",
+      "databases": ["adelphi.de", "wupperinst.org", "giz.de"],
+      "queries": ["Just Energy Transition Partnership", "Just Energy Transition Partnership debt"],
+      "dry_queries": [],
+      "positive_control": {
+        "query": "Just Energy Transition Partnership",
+        "returned": "adelphi.de: search page returned generic historical project listings (2003-2016), not filtered JETP results — pagination/filtering not reachable via generic fetch (3911 total items, only first 25 unfiltered shown). wupperinst.org: 404 on guessed search URL. giz.de: returned a project-portal navigation page, not actual publication search results.",
+        "ok": false,
+        "note": "All three channel probes BROKEN under tool constraints (could not reach a working filtered-search endpoint for any of the three). Coverage of JETP debt/absorption material on these three German sites is UNRESOLVED, not confirmed absent."
+      }
+    },
+    {
+      "name": "Enda Energie / IED Dakar",
+      "databases": ["enda-energie.org"],
+      "queries": ["JETP"],
+      "dry_queries": [],
+      "positive_control": {
+        "query": "JETP",
+        "returned": "DNS resolution failed (ENOTFOUND) for www.enda-energie.org — domain name likely incorrect or site unreachable from this tool.",
+        "ok": false,
+        "note": "Channel probe BROKEN — could not even confirm the correct domain. Coverage UNRESOLVED."
+      }
+    },
+    {
+      "name": "OpenAlex",
+      "databases": ["api.openalex.org"],
+      "queries": ["Syachrullah Darmastuti Vietnam energy transition", "Mumtaz Suryadipura JETP"],
+      "dry_queries": [],
+      "positive_control": {
+        "query": "Syachrullah Darmastuti Vietnam energy transition (with &mailto=haduong@centre-cired.fr)",
+        "returned": "HTTP 429 Too Many Requests, Retry-After: 37583 seconds (~10.4h), despite the polite-pool mailto parameter.",
+        "ok": false,
+        "note": "Tool failure, not a content null. Likely shared-IP contention from other parallel finder agents in this same saturation run hammering OpenAlex concurrently. OpenAlex could not be used at all for this angle after the first attempt; all subsequent work relied on Crossref, DOAJ, HAL, theses.fr, and direct site fetches instead."
+      }
+    },
+    {
+      "name": "WebSearch (general)",
+      "databases": ["WebSearch tool"],
+      "queries": ["Syachrullah Darmastuti Vietnam energy transition Jurnal Sosial Humaniora", "Mumtaz Suryadipura JETP Jurnal Dinamika Global"],
+      "dry_queries": [],
+      "positive_control": {
+        "query": "any",
+        "returned": "Session WebSearch budget exhausted (200/200 used) before this angle could issue a single search — budget consumed by parallel/prior activity in the same session.",
+        "ok": false,
+        "note": "WebSearch entirely unavailable for this whole pass. All grey-literature discovery for this angle had to route through WebFetch on API endpoints and direct site URLs instead, per the brief's own tool guidance."
+      }
+    }
+  ],
+  "candidates": [
+    {
+      "title": "Comment la justice climatique risque de devenir un instrument de domination : le cas du Just Energy Transition Partnerships (JETP) au Sénégal",
+      "authors": ["Yanis Rihi"],
+      "year": 2026,
+      "venue": "The Conversation France (via HAL hal-05599857)",
+      "language": "fr",
+      "peer_reviewed": {"value": false, "evidence": "HAL field peerReviewing_s=0; venue is The Conversation France, a general-audience outlet"},
+      "doi_or_url": "hal-05599857 (https://hal.science/hal-05599857)",
+      "abstract_read": true,
+      "abstract_excerpt": "C'est un projet à 2,5 milliards d'euros qui se réclame de la justice climatique. [...] quand on regarde la nature des fonds et le contexte géopolitique, une question reste en suspens : ce mécanisme n'entretient-il pas les inégalités actuelles ?",
+      "preclass": "adjacent",
+      "why": "Journalistic essay raising a domination/inequality framing close in spirit to P3/P4, but no economic analysis of balance sheets, aggregate governance, or strategic refusal. Known control piece; does not preempt any proposition on its own peer-reviewed merits since it is not peer-reviewed."
+    },
+    {
+      "title": "Exceptions for stop building coal-fired power plants in Indonesia",
+      "authors": ["Andriko Sandria", "Kresna Damar Adji", "Jericho Julius Prabowo"],
+      "year": 2023,
+      "venue": "E3S Web of Conferences, vol. 467",
+      "language": "en",
+      "peer_reviewed": {"value": "uncertain", "evidence": "E3S Web of Conferences is a conference-proceedings series with light/varying review; not a peer-reviewed journal in the strict sense"},
+      "doi_or_url": "10.1051/e3sconf/202346705007",
+      "abstract_read": true,
+      "abstract_excerpt": "Indonesia employed rhetorical commitments to secure international renewable energy funding while using coal plant allowances as 'bargaining positions' in global forums. The country secured $20 billion from G7 countries through the Just Energy Transition Partnership scheme [...] strategically leveraged coal infrastructure discussions to attract climate transition investments.",
+      "preclass": "adjacent P3",
+      "why": "Closest thing found to a preemption of P3 (agentivité stratégique / détournement vers agenda propre, notamment charbon): argues Indonesia used coal continuation as a bargaining chip to extract JETP funds. But framed as opportunistic negotiation tactic, pre-dates the finalized CIPP, and is conference-proceedings tier, not a full peer-reviewed economic analysis of strategic refusal/redirection as P3 frames it."
+    },
+    {
+      "title": "Discursive Hegemonic Mediation dalam Pemberitaan Media tentang Just Energy Transition Partnership (JETP) di Indonesia: Analisis Wacana Kritis Model Fairclough",
+      "authors": ["Verdinand Robertua", "Riskey Oktavian", "Aniza C. Gadaza", "Ruth Margaretha"],
+      "year": 2026,
+      "venue": "Global Political Studies Journal, 9(2):129-147",
+      "language": "id/en",
+      "peer_reviewed": {"value": "presumed", "evidence": "OJS-format Indonesian academic journal; peer-review workflow not independently verified (site not directly accessible in this pass)"},
+      "doi_or_url": "10.34010/gpsjournal.v9i2.18891",
+      "abstract_read": true,
+      "abstract_excerpt": "global dominance is reproduced through the normalization of dependency and the limitation of critical perspectives within policy narratives [...] media outlets amplify narratives about green investment while downplaying structural concerns regarding loans versus grants [...] JETP's legitimacy in Indonesia is discursively constructed through processes that normalize dependency.",
+      "preclass": "adjacent P1",
+      "why": "The single closest finding of this whole pass to P1: explicitly names the loans-versus-grants structural concern and a dependency-normalization critique. But it is a critical-discourse-analysis (Fairclough) study of MEDIA FRAMING, not a balance-sheet/DSA/operator-insolvency economic analysis. It documents that the loan/grant asymmetry is publicly under-discussed in Indonesian media — which is adjacent to, but does not perform, the P1 argument."
+    },
+    {
+      "title": "Implementation of Just Energy Transition Partnership (JETP) Indonesia",
+      "authors": ["Andini Maulifa Rizqia", "Ica Wulansari"],
+      "year": 2026,
+      "venue": "Jurnal Manajemen dan Bisnis Madani (JMBM)",
+      "language": "en",
+      "peer_reviewed": {"value": "presumed", "evidence": "OJS-format Indonesian academic journal; review workflow not independently verified"},
+      "doi_or_url": "10.51353/0dhvhf66",
+      "abstract_read": true,
+      "abstract_excerpt": "most financing is loan-based, which increases Indonesia's fiscal burden while contributing little to renewable deployment [...] the partnership risks creating technological and financial dependency rather than fostering genuine energy independence.",
+      "preclass": "adjacent P1",
+      "why": "Second-closest finding to P1: states plainly that JETP financing is loan-heavy and raises Indonesia's fiscal burden. Stops short of the granular balance-sheet mechanics of P1 (sovereign debt ceilings/DSA thresholds, PLN operator insolvency under repressed tariffs, FX exposure, cost of capital) — it is a fiscal-burden/dependency claim at a general policy-analysis level, not a quantified balance-sheet argument."
+    },
+    {
+      "title": "Indonesia's Energy Security Strategy through the Just Energy Transition Partnership: Implications for Energy Sovereignty",
+      "authors": ["Faiz Mumtaz", "Dadan Suryadipura"],
+      "year": 2026,
+      "venue": "Jurnal Dinamika Global, 11(1):70-87",
+      "language": "en",
+      "peer_reviewed": {"value": "presumed", "evidence": "OJS-format Indonesian academic journal; review workflow not independently verified"},
+      "doi_or_url": "10.36859/jdg.v11i1.5527",
+      "abstract_read": true,
+      "abstract_excerpt": "while JETP partially strengthens energy sovereignty through sector diversification and transition capacity, Indonesia's energy system remained reliant on fossil fuels and imports by 2024 [...] JETP 'shifts dependence towards external capital and technological networks', resulting in only partial strengthening of energy security.",
+      "preclass": "adjacent P4",
+      "why": "Positive-control piece. Uses Cherp & Jewell energy-sovereignty framework, finds JETP substitutes one dependency (fossil imports) for another (external capital/technology) — thematically adjacent to P4's solvency/agentivity trade-off, but argued through sovereignty theory, not the solvency-distribution logic of P4."
+    },
+    {
+      "title": "International Collaboration and Coordination Vietnam's Energy Transition: The Role of International Partners Through the Just Energy Transition Partnership",
+      "authors": ["Dafa Syachrullah", "Shanti Darmastuti"],
+      "year": 2026,
+      "venue": "Jurnal Sosial Humaniora, 17(1):69-82",
+      "language": "en",
+      "peer_reviewed": {"value": "presumed", "evidence": "OJS-format Indonesian academic journal; review workflow not independently verified"},
+      "doi_or_url": "10.30997/jsh.v17i1.24230",
+      "abstract_read": true,
+      "abstract_excerpt": "collaboration operates through the Resource Mobilisation Plan governance structure, sector reforms, and renewable energy initiatives [...] institutionalized multilateralism, in which Vietnam's national interests and global climate mitigation objectives are aligned.",
+      "preclass": "context",
+      "why": "Positive-control piece. Describes the coordination mechanism (Resource Mobilisation Plan) in positive terms; if anything it is mild counter-evidence to P2's 'no one has a mandate to assess the aggregate' claim by describing a coordination structure — though the RMP as commonly understood is a country-side planning document, not a joint solvency assessment by donors, so it does not actually preempt P2. Flagged for the author's own judgment."
+    },
+    {
+      "title": "Quan hệ đối tác chuyển dịch năng lượng công bằng và những thách thức đặt ra cho ngành năng lượng Việt Nam",
+      "authors": ["Đặng Thị Thủy Hạnh", "Trương Như Tùng", "Đặng Thanh Tùng"],
+      "year": 2022,
+      "venue": "Petrovietnam Journal, vol. 12, pp. 38-44",
+      "language": "vi",
+      "peer_reviewed": {"value": "uncertain", "evidence": "Petrovietnam Journal is an industry/technical journal of the state oil & gas group; peer-review workflow not verified"},
+      "doi_or_url": "10.47800/pvj.2022.12-05",
+      "abstract_read": true,
+      "abstract_excerpt": "introduces information and main content of the JETP [...] launched on December 14, 2022 [...] analyzes key issues for successful JETP implementation in Vietnam while achieving Paris Agreement targets and ensuring economic-social benefits and energy security.",
+      "preclass": "context",
+      "why": "Descriptive/introductory piece on JETP Vietnam launch from an industry journal; no debt/balance-sheet/agentivity argument found in the abstract."
+    },
+    {
+      "title": "Just Energy Transition Partnership (JETP) sebagai Katalis Investasi Hijau: Implikasi bagi Pertumbuhan Ekonomi Indonesia",
+      "authors": ["Ika Sri Hastuti", "Tine Ratna Poerwantika", "Rama Rifqi Pratama", "Rizfa Palsa Dwi Saputra"],
+      "year": 2026,
+      "venue": "Paradigma POLISTAAT: Jurnal Ilmu Sosial dan Ilmu Politik",
+      "language": "id",
+      "peer_reviewed": {"value": "presumed", "evidence": "OJS-format Indonesian academic journal; not independently verified"},
+      "doi_or_url": "10.23969/paradigmapolistaat.v9i1.61714",
+      "abstract_read": true,
+      "abstract_excerpt": "JETP has functioned as a policy signal directing investor attention on renewable energy [...] though funding realization remains limited [...] could become a green growth catalyst if financial commitments translate into transparent, equitable investments.",
+      "preclass": "context",
+      "why": "Generally optimistic instrument narrative; notes limited funding realization but does not analyze why (no balance-sheet, governance-gap, or agency argument)."
+    },
+    {
+      "title": "Justice element in just energy transition partnership decarbonization policy: a conceptual legal analysis",
+      "authors": ["Maskun", "Valeria Erika Sari Paliling", "Alfiyah Nur Inayah Hamzah", "Nurul Habaib Al Mukarramah"],
+      "year": 2023,
+      "venue": "E3S Web of Conferences, vol. 467",
+      "language": "en",
+      "peer_reviewed": {"value": "uncertain", "evidence": "conference proceedings"},
+      "doi_or_url": "10.1051/e3sconf/202346705003",
+      "abstract_read": true,
+      "abstract_excerpt": "there are several targets and current directives of JETP that may not fulfill the just aspect [...] recommend that the partnership strengthen its directives and targets [...] incorporating regional government and community participation.",
+      "preclass": "context",
+      "why": "Normative legal analysis of the justice concept in JETP; does not address P1-P4's economic/governance/agency mechanisms."
+    },
+    {
+      "title": "The ASEAN's Green Trade Policy in Response to EU CBAM: A Comparative Study of Indonesia and Vietnam",
+      "authors": ["Zainur Ridho", "Arie Kusuma Paksi"],
+      "year": 2025,
+      "venue": "BIO Web of Conferences, vol. 199",
+      "language": "en",
+      "peer_reviewed": {"value": "uncertain", "evidence": "conference proceedings"},
+      "doi_or_url": "10.1051/bioconf/202519902006",
+      "abstract_read": true,
+      "abstract_excerpt": "Indonesia's response remains constrained by fossil fuel dependence and institutional obstacles, despite participation in the Just Energy Transition Partnership.",
+      "preclass": "context",
+      "why": "Trade-policy comparison; JETP mentioned only in passing as context for Indonesia's constrained response."
+    },
+    {
+      "title": "\"Watershed moment\" or \"more money to steal\"? Justice framings of South Africa's COP26 just energy transition deal in news media vs. Facebook comments",
+      "authors": ["Dominic Ayegba Okoliko", "Mehita Iqani"],
+      "year": 2025,
+      "venue": "Frontiers in Communication, vol. 10",
+      "language": "en",
+      "peer_reviewed": {"value": true, "evidence": "Frontiers journal, standard peer review"},
+      "doi_or_url": "10.3389/fcomm.2025.1671160",
+      "abstract_read": true,
+      "abstract_excerpt": "Facebook reflected grassroots perspectives grounded in lived experience and economic precarity [...] Facebook emphasized historical grievances and skepticism, highlighting power imbalances relevant to just-transition governance.",
+      "preclass": "context",
+      "why": "Media/communications framing study (public discourse and skepticism about the JETP being 'more money to steal'), not an economic or governance analysis of P1-P4. Was NOT in the brief's known-pieces list, worth noting to the author as a new peer-reviewed find even though it does not preempt the angle."
+    },
+    {
+      "title": "The European Union engagement on climate actions with countries from Asia-Pacific region case study: establishing the Just Energy Transition Partnership with Viet Nam",
+      "authors": ["Dan Vataman"],
+      "year": 2026,
+      "venue": "SSRN preprint",
+      "language": "en",
+      "peer_reviewed": {"value": false, "evidence": "SSRN preprint, not yet published in a peer-reviewed venue"},
+      "doi_or_url": "10.2139/ssrn.6687818",
+      "abstract_read": true,
+      "abstract_excerpt": "analyzes instruments and tools used by EU to deepen climate cooperation [...] focuses on Vietnam's implementation of its JETP [...] during a period marked by geopolitical challenges and economic uncertainties in 2025.",
+      "preclass": "context",
+      "why": "General EU-Vietnam JETP overview; no P1-P4 specific argument in the abstract."
+    }
+  ],
+  "tool_failures": [
+    "WebSearch: entire session budget (200/200) exhausted before this angle could run a single search; consumed by other concurrent activity in the same saturation run. All discovery routed through WebFetch on APIs/sites instead.",
+    "OpenAlex: HTTP 429 with Retry-After ~37583s (~10.4h) even with &mailto= polite-pool param, on the very first call. Unusable for the rest of this pass — likely shared-IP contention from sibling finder agents running the same saturation pass concurrently.",
+    "Crossref: intermittent HTTP 429 on isolated calls (e.g. first Tamasiga query), resolved by retry/rephrasing but adds noise; one Tamasiga bibliographic query never resolved the target paper (likely a Crossref bibliographic-search miss, not proof the paper doesn't exist — it was found via IDOS's own site search instead).",
+    "garuda.kemdikbud.go.id: DNS resolution failed (ENOTFOUND) from the fetch tool — domain unreachable, so the Indonesian Garuda portal itself could NOT be searched directly. Positive controls for this specific portal are UNRESOLVED (substituted via Crossref, which is a different channel).",
+    "neliti.com/search: HTTP 403 Forbidden — Neliti blocks the fetch tool directly.",
+    "shs.cairn.info/recherche: HTTP 403 Forbidden — Cairn blocks the fetch tool directly. French Cairn-hosted journals could not be searched at all this pass.",
+    "www.afd.fr search endpoints (two guessed URLs): both HTTP 404 — could not locate AFD's actual publication-search URL structure under tool constraints.",
+    "wupperinst.org/en/searchresults and /en/search: both HTTP 404 — could not locate Wuppertal Institute's actual search URL structure.",
+    "www.enda-energie.org: DNS resolution failed (ENOTFOUND) — domain likely incorrect or site unreachable; Enda Energie / IED Dakar grey literature could not be checked at all.",
+    "adelphi.de/en/search and giz.de/en/worldwide/search: both resolved but returned unfiltered navigational/project-portal content rather than actual query-filtered search results — effectively broken for this purpose under a generic fetch."
+  ],
+  "verdict": "Aucune préemption peer-reviewed nette de P1, P2, P3 ou P4 trouvée dans les canaux non anglophones sondés. Les deux trouvailles les plus proches sont indonésiennes et de 2026 : (1) Robertua et al. 2026 (Global Political Studies Journal) — analyse de discours critique qui nomme explicitement le déséquilibre prêts/dons et une 'normalisation de la dépendance', adjacent à P1 mais par la voie du discours médiatique, pas du bilan économique ; (2) Rizqia & Wulansari 2026 (Jurnal Manajemen dan Bisnis Madani) — affirme que le financement à dominante prêt alourdit le fardeau budgétaire indonésien, adjacent à P1 mais sans la mécanique de bilan détaillée (plafond de dette, DSA, insolvabilité PLN, change). Aucune trouvaille n'aborde frontalement P2 (gouvernance de l'agrégat, 'jointly announced severally owed') ni P4 (la solvabilité achète l'agentivité) ; Andriko et al. 2023 (E3S Web of Conferences, article de congrès) est la seule pièce touchant P3 (détournement stratégique du paquet vers le maintien du charbon comme levier de négociation), mais avec une portée et un statut de publication modestes. VERDICT MITIGÉ, pas un verdict propre : plusieurs canaux à fort risque documenté (Cairn, Garuda, Neliti direct, AFD, Ferdi, Enda Energie, Wuppertal, adelphi, GIZ) sont restés INACCESSIBLES sous les contraintes d'outillage de cette passe (DNS, 403, 404, budget WebSearch épuisé, OpenAlex à 429 pendant ~10h) — leur silence ne doit PAS être lu comme une absence confirmée. Le contrôle positif HAL a réussi et confirmé le piège documenté (tribune non peer-reviewed). Les deux contrôles positifs indonésiens ont réussi via Crossref (substitut aux portails directs, eux-mêmes bloqués). Recommandation : une repasse ultérieure devrait retenter Cairn/Garuda/Neliti/AFD/Ferdi/Enda Energie avec un outil d'accès web différent (navigateur authentifié ou proxy) avant de considérer ces canaux comme réellement secs."
+}
