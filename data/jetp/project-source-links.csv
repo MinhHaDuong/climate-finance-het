@@ -92,3 +92,14 @@ idn-link-monitor25-seg,IDN,idn-pipe-solar-cell-manufacturing,idn-jetp-progress-r
 idn-link-monitor25-rsud,IDN,idn-pipe-rsud-energy-efficiency,idn-jetp-progress-report-2025,cmea_selected_monitoring,Appendix 2 row 11,confirmed,Energy efficiency and rooftop solar in 27 regional hospitals
 idn-link-monitor25-rscm,IDN,idn-pipe-rscm-energy-efficiency,idn-jetp-progress-report-2025,cmea_selected_monitoring,Appendix 2 row 12,confirmed,RSCM HVAC and boiler retrofit
 idn-link-monitor25-cihaur-talaga,IDN,idn-monitor-cihaur-talaga-micro-hydro,idn-jetp-progress-report-2025,cmea_selected_monitoring,Appendix 2 row 13,confirmed,Combined monitoring row for two Cihaur and two Talaga units
+idn-link-isle1-wb-news,IDN,idn-fin-isle-1,idn-world-bank-isle1-2023,approval_document,press release,confirmed,Direct World Bank financing announcement for project P174350
+idn-link-isle1-wb-assessment,IDN,idn-fin-isle-1,idn-world-bank-isle1-technical-assessment-2022,project_report,technical assessment,confirmed,Direct technical assessment for project P174350
+idn-link-mrt-east-west-jica,IDN,idn-fin-mrt-east-west,idn-jica-mrt-east-west-2024,approval_document,press release,confirmed,Direct JICA loan announcement for Phase 1 I
+idn-link-mrt-north-south-jica,IDN,idn-fin-mrt-north-south,idn-jica-mrt-north-south-2023,approval_document,press release item 3,confirmed,Direct JICA loan announcement for Phase 2 II
+idn-link-aset-adb-project,IDN,idn-fin-pbl-aset,idn-adb-aset-56368-001,project_page,project 56368-001,confirmed,Direct ADB project record; automated harvest blocked by HTTP 403
+idn-link-aset-adb-news,IDN,idn-fin-pbl-aset,idn-adb-aset-news-2024,approval_document,press release,confirmed,Direct ADB approval announcement
+idn-link-aicet-adb-project,IDN,idn-fin-rbl-aicet,idn-adb-aicet-56140-001,project_page,project 56140-001,confirmed,Direct ADB project record; automated harvest blocked by HTTP 403
+idn-link-aicet-adb-news,IDN,idn-fin-rbl-aicet,idn-adb-aicet-news-2025,approval_document,press release,confirmed,Direct ADB approval announcement
+idn-link-muara-laboh-adb,IDN,idn-fin-muara-laboh-2,idn-adb-muara-laboh-2-2025,approval_document,press release,confirmed,Direct ADB financing agreement for the same physical expansion
+idn-link-saguling-gfanz,IDN,idn-fin-saguling-floating-solar,idn-gfanz-saguling-2025,approval_document,press release,confirmed,Direct GFANZ financing announcement explicitly identifying the project as JETP
+idn-link-xurya-jetp,IDN,idn-fin-xurya-rooftop,idn-jetp-xurya-equity-2024,approval_document,official JETP news,confirmed,Direct JETP Secretariat equity announcement
