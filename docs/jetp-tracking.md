@@ -14,6 +14,7 @@ the two roles separate and makes every aggregate reversible.
 | Binary snapshots | `data/jetp/documents/` | DVC | Content-addressed immutable objects; one object may support several source rows |
 | Project identities | `data/jetp/projects.csv` | git | Stable projects and aliases, independent of individual financing events |
 | Project follow-up | `data/jetp/project-coverage.csv` | git | One direct-source review verdict per canonical project, preserving pending and dry searches |
+| Indonesia grant observations | `data/jetp/idn-portfolio-observations.csv` | git | One official-portal row per financing modality, reconciled without overwriting the 2025 report value |
 | Plan-project lines | `data/jetp/plan-projects.csv` | git | Every row in an official plan or pipeline, with explicit canonical reconciliation |
 | Financial events | `data/jetp/events.csv` | git | One dated event at one status layer, tied to an exact document and locator |
 | Implementation events | `data/jetp/implementation-events.csv` | git | Physical project delivery and closure states, kept separate from finance |
