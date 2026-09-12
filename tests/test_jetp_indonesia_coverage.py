@@ -79,9 +79,7 @@ def test_indonesia_timeline_covers_launch_plan_and_2025_reports() -> None:
         "idn-cmea-progress-december-2025",
         *REPORT_SERIES_2025,
     } <= by_id.keys()
-    assert {by_id[source_id]["active"] for source_id in REPORT_SERIES_2025} == {
-        "true"
-    }
+    assert {by_id[source_id]["active"] for source_id in REPORT_SERIES_2025} == {"true"}
     assert {
         by_id[source_id]["published_date"][:4] for source_id in REPORT_SERIES_2025
     } == {"2025"}
@@ -111,7 +109,9 @@ def test_indonesia_2025_approved_portfolio_is_project_level() -> None:
     events = [
         row
         for row in read_csv(DATA / "events.csv")
-        if row["country"] == "IDN" and row["financial_status"] == "approved"
+        if row["country"] == "IDN"
+        and row["financial_status"] == "approved"
+        and row["source_id"] == "idn-jetp-progress-report-2025"
     ]
     progress_projects = {
         row["project_id"]
@@ -121,8 +121,13 @@ def test_indonesia_2025_approved_portfolio_is_project_level() -> None:
 
     assert len(projects) == 53
     assert len({row["project_id"] for row in projects}) == 53
-    assert len([row for row in projects if row["project_id"].startswith("idn-fin-")]) == 9
-    assert len([row for row in projects if row["project_id"].startswith("idn-grant-")]) == 44
+    assert (
+        len([row for row in projects if row["project_id"].startswith("idn-fin-")]) == 9
+    )
+    assert (
+        len([row for row in projects if row["project_id"].startswith("idn-grant-")])
+        == 44
+    )
     assert {row["project_id"] for row in projects} == progress_projects
     assert len(events) == 59
     assert {row["financial_status"] for row in events} == {"approved"}
@@ -157,6 +162,57 @@ def test_indonesia_2025_finance_pipeline_is_project_level() -> None:
     assert {row["financial_status"] for row in events} == {"announced", "mou"}
     assert {row["project_id"] for row in projects} | {"idn-fin-rbl-aicet"} == {
         row["project_id"] for row in events
+    }
+
+
+def test_current_portfolio_preserves_three_post_report_approvals() -> None:
+    events = [
+        row
+        for row in read_csv(DATA / "events.csv")
+        if row["country"] == "IDN"
+        and row["project_id"]
+        in {
+            "idn-pipe-green-corridors-sulawesi",
+            "idn-pipe-nagajaya-micro-hydro",
+            "idn-pipe-hululais-1-2",
+        }
+    ]
+    by_project: dict[str, list[dict[str, str]]] = {}
+    for event in events:
+        by_project.setdefault(event["project_id"], []).append(event)
+
+    for project_events in by_project.values():
+        assert {row["financial_status"] for row in project_events} == {
+            "announced",
+            "approved",
+        }
+
+    approved = {
+        row["project_id"]: row
+        for row in events
+        if row["financial_status"] == "approved"
+    }
+    assert approved["idn-pipe-green-corridors-sulawesi"]["amount_original"] == (
+        "300000000"
+    )
+    assert approved["idn-pipe-green-corridors-sulawesi"]["currency_original"] == ("EUR")
+    assert approved["idn-pipe-nagajaya-micro-hydro"]["amount_original"] == ("1260000")
+    assert approved["idn-pipe-nagajaya-micro-hydro"]["currency_original"] == "USD"
+    assert approved["idn-pipe-hululais-1-2"]["amount_original"] == "29156000000"
+    assert approved["idn-pipe-hululais-1-2"]["currency_original"] == "JPY"
+
+
+def test_nagajaya_source_specific_capacity_is_not_flattened() -> None:
+    rows = [
+        row
+        for row in read_csv(DATA / "implementation-events.csv")
+        if row["project_id"] == "idn-pipe-nagajaya-micro-hydro"
+    ]
+
+    assert {row["capacity_mw"] for row in rows} == {"6", "6.5"}
+    assert {row["source_id"] for row in rows} == {
+        "idn-jetp-progress-report-2025",
+        "idn-portfolio-project-nagajaya",
     }
 
 
@@ -200,9 +256,10 @@ def test_cirebon_finance_and_physical_retirement_are_distinct() -> None:
         if row["project_id"] == "idn-pipe-cirebon-1-retirement"
     ]
 
-    assert implementation["idn-pipe-cirebon-1-retirement"][
-        "implementation_status"
-    ] == "closure_proposed"
+    assert (
+        implementation["idn-pipe-cirebon-1-retirement"]["implementation_status"]
+        == "closure_proposed"
+    )
     assert implementation["idn-pipe-cirebon-1-retirement"]["capacity_mw"] == "660"
     assert {row["financial_status"] for row in finance} <= {"announced", "mou"}
     assert not (
