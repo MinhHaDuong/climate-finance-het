@@ -102,3 +102,20 @@ were read back and checked by MD5 and SHA-256 against local bytes. Every
 collected manifest entry and both event schemas validate. One PUELEC component
 observation is added; financial events are unchanged. See the
 [trial report](jetp-senegal-scout-trial-2026-09-13.md).
+
+
+## Managed-rounds checkpoint
+
+Rounds 2–4 add 18 registered sources, 19 retrieval observations and 17 unique
+archived objects: totals are 288 sources, 291 manifest observations and 245
+document objects. The documents directory is
+`4dfa34045276bdf14bacc9a002f36178.dir` (256,641,141 bytes).
+All 245 remote document objects and the original recovery archive were read
+back and verified by MD5 and SHA-256. Every collected manifest observation and
+both event schemas validate. Six historical ANER WARC captures additionally
+pass their embedded payload-digest checks; original URLs and byte ranges are
+preserved in the [capture appendix](jetp-senegal-archive-captures-2026-09-13.md).
+Financial and implementation tables are unchanged from the scout checkpoint.
+The [managed-rounds report](jetp-senegal-managed-rounds-2026-09-13.md) records
+the BOAD approval and procurement discoveries, their attribution limits, and
+why exact-identity coverage remains 20 collected / 20 central-only / 3 blocked.

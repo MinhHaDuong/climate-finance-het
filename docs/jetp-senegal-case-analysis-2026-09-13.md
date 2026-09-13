@@ -7,6 +7,10 @@ outcomes and content hashes. Interpretations below are distinguished from
 observations. This is a case argument for further research, not an assessment
 of measured programme impact.
 
+The later [managed research rounds](jetp-senegal-managed-rounds-2026-09-13.md)
+add procurement and contract records while preserving the coverage counts and
+the distinction between contextual finance and attributed project finance.
+
 The strongest finding is the gap between three objects often described with
 the same word, “project”: an investment-plan proposal, a site undergoing
 preparation, and a financed legal entity. Senegal makes that gap unusually
@@ -95,6 +99,22 @@ context, not BOAD financing approval. The report already refers to a memorandum
 before the August news: the later announcement cannot establish the first-ever
 agreement date. [BOAD-hosted ESIA, p.16](https://admin.boad.org/wp-content/uploads/2026/02/Rapport_EIES-Centrale-solaire-Ouarkhokh_Send-Senelec_Huwaei.pdf).
 
+A ministry report says that Senelec and CNTIC signed two EPC+F contracts on
+28 July 2025, in partnership with Huawei, for two 50MWc plants. It describes
+storage as 30MW/90MWh without resolving whether that quantity is aggregate or
+per plant. The named contract parties and Huawei's partner role should not be
+collapsed. [Ministry, 28 July 2025](https://energie-mines.gouv.sn/partenariat-senelec-et-huawei/).
+
+The ministry subsequently reported the Linguère foundation-stone ceremony in
+an article published on 10 April 2026, while Genertec's 26 May account names
+Senelec as project owner and says the plant entered implementation. Publication
+dates do not establish the exact ceremony day. BOAD's 27 March communiqué adds
+a distinct financial stage: under its heading for approved loans for partial
+project financing, it reports FCFA41.5bn for Senelec's 50MWc plus 30MW/90MWh
+Linguère plant. This is an approval, not a signed agreement, effectiveness or
+disbursement observation. [Genertec, 26 May 2026](https://www.intlgt.cn/xwzx/gsxw/202605/t20260526_57364.html);
+[BOAD, printed pp.2–3](https://admin.boad.org/wp-content/uploads/2026/03/COMPRESS-CA-150-1.pdf).
+
 Senelec's own public post announces two 50MW plants at Linguère and Koungheul
 and an agreement in Shenzhen. RTS dates the ministerial visit to 11 August 2026.
 The announcement does not identify the Champions Nationaux SPV or its
@@ -126,6 +146,29 @@ to the 350-village scheme. [Contractor announcement reproduced on LinkedIn](http
 The practical implication is that agency website failure is an observation
 about access, not implementation. Consultancy portfolios and study archives
 can expose preparation activity, but do not establish commissioned connections.
+
+ARCOP's ASER audit supplies an exact contract-level join for the separate
+PUELEC parent programme. Tender `T_ASER_003` produced contracts `T0038` and
+`T0039` with Global Engineering SARL; the two values sum exactly to the
+FCFA1,429,995,123 package later reported by the ministry. The audit documents
+signed contracts, start orders and issued payment orders for a 20% advance.
+It does not prove bank settlement, completion of the wider programme or any
+JETP/IPG attribution. It also contains no crosswalk to the distinct 350-, 330-
+or 600-village submissions. [ARCOP audit, printed pp.55–56](https://arcop.sn/wp-content/uploads/2025/10/RAPPORT-AGENCE-SENEGALAISE-DELECTRIFICATION-RURALE-ASER-2023-1.pdf).
+
+For public-building solar autonomy, an ANER 2025 general procurement notice
+recovered from a historical web archive plans consultant recruitment for
+feasibility studies. This preserves a preparation route for Annex 23 but names
+no sites, award, budget, universities or hospitals. It cannot make the separate
+192-health-facility D2B operation coextensive with the broad submission.
+[ANER AGPM 2025, archived route](https://www.aner.sn/wp-content/uploads/2025/01/AGPM-2025.pdf).
+
+Senelec's 2026 procurement plan similarly lists a consultant for a mobility-
+electrification master plan concerning charging infrastructure, funded in the
+row by an ACF grant. The source is a strong Annex 35 preparation candidate,
+but no exact project identifier, award, completed study or deployed charger
+supports promotion beyond `central_only`.
+[Senelec PPM 2026, p.13](https://www.senelec.sn/media/marches/documents/PPM_SENELEC_2026_VERSION_2_VALIDE_LE_13_03_2026.pdf).
 
 ## The renewable target coexists with gas expansion
 
@@ -192,7 +235,8 @@ rows even when public communications group them under “mobilisation”.
 ## Evidence that would change the case
 
 1. **Solar ownership and contracts:** obtain the QW2 SPV/shareholding and
-   procurement identifiers; reconcile the February and August Huawei memoranda.
+   procurement identifiers; reconcile the July CNTIC contracts with the
+   February ESIA and August Huawei memorandum.
    This would decide whether the national-ownership proposal persisted.
 2. **Actual financial flows:** obtain signed agreements, amounts paid and
    instrument-level reporting behind the mobilisation claim. Separate grant,
@@ -209,4 +253,4 @@ arrangements within an expanding gas-and-renewables system. The surviving
 public documents show that construction process more clearly than they show
 the final flow of money or distribution of benefits.
 
-The subsequent [bounded scout trial](jetp-senegal-scout-trial-2026-09-13.md) corroborated a three-village PUELEC component through state-funder reporting. It also located Ouarkhokh EPC and groundbreaking evidence without resolving the Champions Nationaux ownership crosswalk. Neither finding adds a financial commitment to the ledger.
+The subsequent [bounded scout trial](jetp-senegal-scout-trial-2026-09-13.md) corroborated a three-village PUELEC component through state-funder reporting. The [managed rounds](jetp-senegal-managed-rounds-2026-09-13.md) then identified its contracts, recovered preparatory procurement records and located BOAD's Linguère approval without resolving the Champions Nationaux ownership crosswalk or adding JETP-attributed finance.

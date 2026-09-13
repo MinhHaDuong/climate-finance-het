@@ -1,5 +1,7 @@
 # Senegal: bounded smaller-model scout trial, 13 September 2026
 
+This report records the initial trial. See the [subsequent managed rounds](jetp-senegal-managed-rounds-2026-09-13.md) for later evidence and adjudication.
+
 Three `gpt-5.6-sol` scouts made 31 web-tool calls across all 24 unresolved
 identities: solar/network (7 identities, 11 calls), rural programmes (7, 12)
 and other promoters (10, 8). The parent independently read candidate evidence,

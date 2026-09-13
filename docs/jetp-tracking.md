@@ -138,6 +138,17 @@ perimeter, without an inferred agreement or disbursement. The 2018 date on
 the factsheet describes technical assistance, not the battery's commissioning.
 The unconfirmed AFD–Senelec EUR 670 million figure remains excluded.
 
+The [managed Senegal research rounds](jetp-senegal-managed-rounds-2026-09-13.md)
+add four bounded distinctions. Senelec's mobility-electrification master-plan
+procurement is a provisional Annex 35 preparation candidate and leaves its
+coverage `central_only`. An archived ANER procurement notice preserves a
+feasibility-study route for public-building autonomy without identifying the
+whole Annex 23 submission. ARCOP identifies the two contracts behind the
+reported PUELEC component, while issued advance-payment orders remain short of
+settlement proof. BOAD's FCFA 41.5 billion approval is for partial financing of
+the single Linguère plant; absent a Champions Nationaux ownership crosswalk or
+JETP/IPG attribution, it remains context rather than QW2 finance.
+
 Every remaining project has a dated route and explicit gap in
 `project-coverage.csv` and `dry-searches.csv`. Related programmes, earlier
 pilots and geographically similar developments are provisional leads, not
@@ -194,3 +205,7 @@ rows accepted for evidence. A later refresh appends events and observations;
 it never rewrites prior states to make the latest value look timeless.
 
 The [13 September scout trial](jetp-senegal-scout-trial-2026-09-13.md) covers all 24 previously unresolved identities and corroborates one PUELEC component; 23 direct-source identities remain unresolved.
+
+The later [managed rounds](jetp-senegal-managed-rounds-2026-09-13.md) refine
+those leads without revising the historical trial counts: the checkpoint remains
+20 collected, 20 `central_only`, three blocked and 23 unresolved direct identities.
