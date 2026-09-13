@@ -82,3 +82,12 @@ and the original recovery archive were read back from the padme remote and
 verified by MD5 and SHA-256. The financial and physical event tables are
 unchanged: new possible identity matches do not create financing milestones.
 See `docs/jetp-senegal-case-analysis-2026-09-13.md`.
+
+## Pre-merge review corrections
+
+The subsequent merge review corrected 14 South African financial observations
+from approved to announced because their source supplied physical progress
+without a signing date or explicit approval. Original amounts and physical
+status wording remain preserved. Senegal regeneration now retains reviewed
+identity links for unchanged source rows and verifies PDF hashes before parsing.
+These corrections leave the 219-document DVC checkpoint unchanged.

@@ -19,6 +19,8 @@ Blocked-by: 0716
 
 2026-09-13T18:26Z Codex note Deeper case analysis adds nine archived sources; solar site links preserve provisional investment identity; all 219 documents remotely verified; 92 JETP tests and local fast/lint gates pass
 
+2026-09-13T18:37Z Codex note Author requested commit and merge after disclosure of 24 unresolved identities; merge delivers reviewed partial snapshot without closing this ticket. Five-perspective review identified and fixed regeneration/provenance and ZAF finance-status defects.
+
 --- body ---
 
 ## Context
@@ -134,3 +136,19 @@ ARTELIA site corroboration from the provisional Ouarkhokh/QW2 join. The case
 note calculates proposed equity/debt shares, records the earlier Huawei MoU
 reference and separates capacity, generation and emissions baselines. The
 24 unresolved direct identities remain open. No merge approval is asserted.
+
+## Merge review corrections
+
+The first review found three defects not caught by the prior suite.
+`f605b4c9` and `e9c754ef` add failing regression tests; `102cdacc` preserves
+reviewed Senegal reconciliation on stable source rows and rejects wrong PDF
+hashes before parsing; `18ae2724` stops inferring financial approval from
+physical progress and corrects 14 ZAF observations to announced. Amounts and
+source physical-status notes are preserved. A real-PDF regeneration in a
+temporary copy retained all 49 Senegal links and every other-country field.
+
+All five second-round perspectives approve the fixes. Fast checks pass
+(25 package checks; 1535 tests, seven skipped) and lint passes (332 tests,
+ten skipped). The forge review records the final full-suite result.
+The direct-page exit criterion is still MISSING for 24 identities; author
+merge authorization accepts this partial delivery without claiming closure.
