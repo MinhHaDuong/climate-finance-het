@@ -49,3 +49,15 @@ local `dvc add`.
 To recover on another checkout, configure access to the `padme` remote and run
 `dvc pull data/jetp/documents.dvc data/jetp/recovery.dvc`. The original
 archive's `SHA256SUMS` can then verify its extracted contents independently.
+
+
+## Senegal follow-up checkpoint
+
+After the initial recovery backup, the Senegal review added 30 source
+observations: 28 collected documents, one missing brochure and one failed
+ASER request. The canonical manifest now has 228 observations and 195 distinct
+document objects. The updated DVC directory and its 28 new objects were pushed
+(29 remote files), and all 195 documents plus the original archive were read
+back from the remote and verified by MD5 and SHA-256. All manifest byte counts
+and hashes and both event schemas were checked. The preserved recovery archive
+is unchanged.

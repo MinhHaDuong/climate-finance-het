@@ -9,6 +9,8 @@ Blocked-by: 0716
 2026-09-12T08:42Z Codex archived the political declaration, the 354-page investment plan and the 46-page annexes; extracted 38 received-project lines and 11 quick wins while preserving the plan's 34/38 count divergence and its conflicting QW11 descriptions
 2026-09-12T09:03Z Codex archived the ministry and IPG authority routes plus Senelec's 2023 and 2024 annual reports; recorded the absence of a dedicated 2024 or 2025 Senegal JETP annual report separately from the operator series
 
+2026-09-13T09:02Z Codex note Recovered and remotely verified the full archive and canonical documents; completed the dated Senegal documentary coverage pass with explicit unresolved direct-source gaps
+
 --- body ---
 
 ## Context
@@ -31,6 +33,36 @@ qu'une source primaire ne le confirme.
 
 - [x] Déclaration, Plan d'investissement et annexes collectés
 - [ ] Chaque projet du plan est relié à ses pages bailleur/opérateur
-- [ ] Financement, état physique et dépendance hydrocarbures restent distincts
+- [x] Financement, état physique et dépendance hydrocarbures restent distincts
 - [x] L'absence de publication annuelle est enregistrée comme donnée
-- [ ] Contrôle de couverture Sénégal passe
+- [x] Contrôle de couverture Sénégal passe
+
+
+## Recovery and review evidence (13 September 2026)
+
+Recovery checkpoint `8917149c` preserves the complete original archive and
+167 restored canonical documents. The follow-up adds 28 collected documents;
+all 195 canonical documents and the original archive were read back from the
+DVC remote and checked by MD5 and SHA-256. See
+`docs/jetp-recovery-2026-09-13.md`.
+
+The 49 plan lines resolve to 43 project/programme records. QW1 matches
+submission 15; PUELEC remains distinct from its 600-village component. The
+records are not additive assets. Red commit `c7995fab` specifies these scope
+boundaries and separates proposed finance from physical implementation.
+`tests/test_jetp_senegal_project_coverage.py` checks every dated verdict,
+confirmed direct-source links, unresolved routes, and exclusion of EUR 670m.
+
+The documentary pass is complete: 18 records have direct corroboration,
+21 remain central-only after follow-up, and four ASER routes are blocked.
+The literal direct-page exit criterion remains open for those 25 records;
+this is not a claim that all projects have independently confirmed progress.
+`project-coverage.csv`, `project-source-links.csv`, and `dry-searches.csv`
+record the routes and limitations. Finance, physical status and hydrocarbon
+dependence have separate fields/events, including explicit unknowns.
+
+Validation: 88 JETP tests passed; check-fast passed (25 package checks plus
+1,520 tests), and lint passed (332 tests). The full suite initially reported
+2,408 passed and eight failures caused by absent non-JETP corpus files in the
+fresh worktree. After copying existing local corpus outputs, both affected
+modules passed (62 passed, 18 skipped). No production-code fix was needed.

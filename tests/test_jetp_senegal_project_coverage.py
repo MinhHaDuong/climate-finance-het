@@ -113,7 +113,10 @@ def test_collected_project_verdicts_resolve_to_direct_sources() -> None:
             source_id
             for source_id in row["source_ids"].split(";")
             if source_id in sources
-            and sources[source_id]["project_id"] == row["project_id"]
+            and sources[source_id]["authority_category"] in {
+                "operator", "bilateral_funder", "multilateral_funder"
+            }
+            and (row["project_id"], source_id) in links
         }
         assert direct, row["project_id"]
         assert {(row["project_id"], source_id) for source_id in direct} <= links

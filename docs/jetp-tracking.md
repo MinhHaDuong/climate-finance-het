@@ -53,7 +53,7 @@ which case the event is marked `secondary_only` during verification.
 | South Africa | 263/263 | Complete; register, reports, project pages and dry searches reconciled |
 | Indonesia | 74/74 | Complete; 66 collected, 6 central-only after explicit search, 2 archive-blocked |
 | Viet Nam | 24/24 July 2025 records | 3 named projects followed to direct MOIT and funder sources; 21 identities explicitly not published |
-| Senegal | 49 plan lines indexed | Central corpus complete: 38 received-project lines plus 11 quick wins; direct project-source review in progress |
+| Senegal | 43 project/programme records reviewed | 49 plan lines retained; 18 direct corroborations, 21 central-only reviews and 4 blocked ASER routes as of 13 September 2026 |
 
 The Indonesia checkpoint includes 53 approved projects in the 30 November 2025
 portfolio snapshot (9 loan or equity projects and 44 grants), 20 finance-pipeline
@@ -106,6 +106,44 @@ collected and the annex's 38 numbered submissions remain two dated claims, not
 one silently repaired total. The plan itself also names quick win 11 as 2,000
 hybridised boreholes on pages 33 and 354 but as 1,000 solarised boreholes on
 page 78; the ledger retains that internal conflict for later adjudication.
+
+The 13 September follow-up preserves all 49 plan lines and reconciles six
+quick-win identities with submissions. QW1 groups the two 50 MW Senelec
+projects (Annex 2 submission 15), as the main plan states on printed page 53.
+QW5, QW6, QW7, QW9 and QW11 match submissions 11, 17, 19, 16 and 20.
+QW4/PUELEC remains a separate programme: printed page 240 places the
+600-village submission among several components. The 43 records therefore
+include both programmes and components; their budgets and capacities must
+not be summed without selecting a consistent level of aggregation.
+
+The newly collected Annex 8 explicitly limits its evaluation to 34 proposals
+from public promoters. This is recorded as an additional source claim;
+the main plan's wording and the 38-submission Annex 2 table remain intact.
+Annex 8 renumbers the public proposals, so its ordinals cannot be joined
+directly to Annex 2 ordinals.
+
+Direct evidence includes AEME programme pages and its 2023 report, ANER's
+public project API and 2026 magazine, Senelec procurement documents, an
+AFD Diass-storage factsheet, and a UASZ study of a component of Senelec's
+Village Ecole Vert. Title-only AEME pages establish programme identity;
+they do not establish delivery. ANER's generic `ongoing` label for solar
+pumps remains a source claim, without being translated into construction,
+commissioning or a delivered-pump count.
+
+The Saloum notice supports procurement of 11 PV/BESS plants serving 18
+villages. Its renewable-energy target remains a target. Its monetary bidder
+qualification thresholds are not financing amounts. Diass's reported KfW
+and AFD contributions remain undated financial observations in the extended
+perimeter, without an inferred agreement or disbursement. The 2018 date on
+the factsheet describes technical assistance, not the battery's commissioning.
+The unconfirmed AFD–Senelec EUR 670 million figure remains excluded.
+
+Every remaining project has a dated route and explicit gap in
+`project-coverage.csv` and `dry-searches.csv`. Related programmes, earlier
+pilots and geographically similar developments are provisional leads, not
+identity matches. Full prequalification and feasibility documents available
+only on request remain gaps; no request email was sent. See
+`docs/jetp-recovery-2026-09-13.md` for recovery and remote-byte verification.
 
 ## Counting rules
 
