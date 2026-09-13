@@ -252,22 +252,19 @@ def test_puelec_state_report_corroborates_parent_without_completing_components()
         assert coverage[f"sen-project-annex-{number:02d}"]["review_status"] == "blocked"
 
 
-def test_charging_masterplan_is_preparation_without_rollout_or_finance() -> None:
+def test_charging_masterplan_remains_provisional_without_exact_identity() -> None:
     source_id = "sen-senelec-ppm-2026-v2"
     project_id = "sen-project-annex-35"
     coverage = {row["project_id"]: row for row in read_csv(DATA / "project-coverage.csv")}
-    assert coverage[project_id]["review_status"] == "collected"
-    observations = [
-        row for row in read_csv(DATA / "implementation-events.csv")
-        if row["source_id"] == source_id and row["project_id"] == project_id
-    ]
-    assert len(observations) == 1
-    assert observations[0]["implementation_status"] == "preparation"
-    # Procurement-plan dates are planned dates, not completed milestones.
-    assert observations[0]["event_date"] == ""
-    assert observations[0]["capacity_mw"] == ""
-    assert "C_DEG_155" in observations[0]["locator"]
-    assert not any(
-        row["source_id"] == source_id and row["project_id"] == project_id
-        for row in read_csv(DATA / "events.csv")
-    )
+    assert coverage[project_id]["review_status"] == "central_only"
+    links = [row for row in read_csv(DATA / "project-source-links.csv")
+             if row["source_id"] == source_id and row["project_id"] == project_id]
+    assert len(links) == 1
+    assert links[0]["relationship"] == "possible_match"
+    assert links[0]["review_status"] == "provisional"
+    assert "C_DEG_155" in links[0]["locator"]
+    # A planned national study does not identify the exact JETP proposal.
+    for filename in ("implementation-events.csv", "events.csv"):
+        assert not any(row["source_id"] == source_id
+                       and row["project_id"] == project_id
+                       for row in read_csv(DATA / filename))
