@@ -1,0 +1,43 @@
+%erg 0.1
+Title: Build a visible JETP observatory MVP with historical comparison
+Created: 2026-09-13
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-13T21:00Z HDMX-coding-agent created User authorises steps 1–4, aggregate synthesis and a large completed-project comparison bundle.
+
+--- body ---
+
+## Context
+
+The author wants to see a working local website, not only plans or a project
+encyclopedia. Implement a bounded first slice of 0726 and 0727 under tracker 0725.
+Freeze existing evidence, export website-ready data, build country/project/method
+views and useful aggregate visualisations. Add a sizeable, source-backed bundle
+of historical closed energy operations from the four countries. Public deployment
+and monthly operations remain in 0727/0728. Do not close the parent tickets.
+
+## First test
+
+A fixture with an undisclosed identity, a register-derived signature assertion,
+a repeated financing observation and an operational event reported retrospectively
+must export without inventing an identity, payment, signature date or backwards
+chronology. A historical filter must exclude active and post-JETP approvals,
+retain the source's closed status, and expose missing/invalid duration dates.
+
+## Exit criteria
+
+- [ ] Reproducible offline export with input hashes, source links and coverage gaps
+- [ ] Homepage synthesises progress and country differences with attributable totals
+- [ ] Four country summaries, searchable catalogue, project timelines and methods/downloads
+- [ ] Historical closed energy-related operations with selection rules, source links and instrument filters
+- [ ] Static local preview and browser checks covering navigation, filters, aggregates, downloads and mobile layout
+- [ ] Gates run with failures and limitations reported; no acceleration or physical-completion inference from administrative closure
+
+## Scope and dependencies
+
+Uses the current documentary corpus and the Markdown-first storage contract.
+This first slice does not require the complete historical matching study 0730,
+full data-paper release, bulk Markdown dossier writing, or a SQLite service.
+The first historical bundle is descriptive, including older and mixed-sector
+operations with their sector/instrument labels. It is not a causal control group.
