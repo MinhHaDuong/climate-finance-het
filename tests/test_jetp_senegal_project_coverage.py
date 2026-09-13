@@ -11,14 +11,14 @@ DATA = ROOT / "data" / "jetp"
 ANNEX_SOURCE = "sen-investment-plan-annexes-mirror"
 MAIN_SOURCE = "sen-investment-plan-l4-mirror"
 QW_TO_ANNEX = {
-    4: 7,
+    1: 15,
     5: 11,
     6: 17,
     7: 19,
     9: 16,
     11: 20,
 }
-STANDALONE_QUICK_WINS = {1, 2, 3, 8, 10}
+STANDALONE_QUICK_WINS = {2, 3, 4, 8, 10}
 TERMINAL_VERDICTS = {
     "collected",
     "central_only",
@@ -33,7 +33,7 @@ def read_csv(path: Path) -> list[dict[str, str]]:
         return list(csv.DictReader(stream))
 
 
-def test_plan_lines_resolve_to_43_nonduplicated_projects() -> None:
+def test_plan_lines_resolve_to_43_distinct_project_or_programme_records() -> None:
     projects = [
         row for row in read_csv(DATA / "projects.csv") if row["country"] == "SEN"
     ]
@@ -87,7 +87,7 @@ def test_every_senegal_project_has_a_terminal_followup_verdict() -> None:
     assert len(coverage) == 43
     assert {row["project_id"] for row in coverage} == project_ids
     assert {row["review_status"] for row in coverage} <= TERMINAL_VERDICTS
-    assert {row["checked_at"] for row in coverage} == {"2026-09-12"}
+    assert {row["checked_at"] for row in coverage} == {"2026-09-13"}
     assert all(row["query_or_route"] for row in coverage)
 
 
@@ -117,3 +117,52 @@ def test_collected_project_verdicts_resolve_to_direct_sources() -> None:
         }
         assert direct, row["project_id"]
         assert {(row["project_id"], source_id) for source_id in direct} <= links
+
+
+def test_puelec_programme_does_not_absorb_its_600_village_component() -> None:
+    rows = {
+        row["plan_project_id"]: row
+        for row in read_csv(DATA / "plan-projects.csv")
+        if row["country"] == "SEN"
+    }
+    assert rows["sen-plan-qw-04"]["canonical_project_id"] == "sen-project-qw-04"
+    assert rows["sen-annex-received-07"]["canonical_project_id"] == (
+        "sen-project-annex-07"
+    )
+
+
+def test_solar_proposals_do_not_become_committed_finance_or_built_assets() -> None:
+    proposals = {"sen-project-qw-02", "sen-project-qw-03"}
+    physical = [
+        row for row in read_csv(DATA / "implementation-events.csv")
+        if row["project_id"] in proposals
+    ]
+    assert {row["project_id"] for row in physical} == proposals
+    assert {row["implementation_status"] for row in physical} == {"proposed"}
+    finance = [
+        row for row in read_csv(DATA / "events.csv")
+        if row["project_id"] in proposals
+    ]
+    assert all(row["financial_status"] == "need" for row in finance)
+
+
+def test_saloum_tender_is_a_physical_procurement_observation() -> None:
+    observations = [
+        row for row in read_csv(DATA / "implementation-events.csv")
+        if row["project_id"] == "sen-project-annex-16"
+        and row["event_date"] == "2026-09-09"
+    ]
+    assert len(observations) == 1
+    assert observations[0]["implementation_status"] == "procurement"
+    assert observations[0]["document_sha256"]
+
+
+def test_unconfirmed_afd_senelec_670_million_remains_excluded() -> None:
+    finance = [
+        row for row in read_csv(DATA / "events.csv") if row["country"] == "SEN"
+    ]
+    assert not any(
+        row["currency_original"] == "EUR"
+        and row["amount_original"] == "670000000"
+        for row in finance
+    )
