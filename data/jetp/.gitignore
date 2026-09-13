@@ -3,3 +3,5 @@
 
 # Interrupted downloads never belong in git or DVC.
 /staging/
+/documents
+/recovery
