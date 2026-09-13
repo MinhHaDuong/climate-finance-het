@@ -6,6 +6,8 @@ Author: Minh
 --- log ---
 2026-09-11T21:30Z Minh created — le CRS 2022-2024 reste un benchmark, pas la couche de suivi courant
 
+2026-09-13T19:18Z HDMX-coding-agent note 0725 tracks the observatory and academic publications; collection scope remains here.
+
 --- body ---
 
 ## Context
@@ -70,3 +72,10 @@ les quatre pays doivent être traités avec le même contrat de preuve.
 - [ ] Le rafraîchissement périodique peut être relancé sans écraser les
       observations historiques
 - [ ] La couverture et les limites sont publiables comme résultats de méthode
+
+## Publication programme (13 September 2026)
+
+Tracker 0725 and `conception/jetp-observatory-and-papers-plan.md` reuse this
+collection programme for a monthly public observatory and three academic papers.
+The short comparison concerns preparation and financing against pre-JETP energy
+projects. Physical-delivery work 0723 is an extension, not its prerequisite.

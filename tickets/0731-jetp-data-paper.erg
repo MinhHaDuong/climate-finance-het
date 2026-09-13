@@ -1,0 +1,38 @@
+%erg 0.1
+Title: Write the JETP observatory data paper
+Created: 2026-09-13
+Author: HDMX-coding-agent
+Blocked-by: 0726
+
+--- log ---
+2026-09-13T19:18Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+The data paper documents a new JETP dataset, distinct from the existing repository data-paper deliverable. Its contribution is consistent observation and transparent limits, not proof of acceleration.
+
+Plan: `conception/jetp-observatory-and-papers-plan.md`. Parent tracker: 0725.
+
+## First test
+
+First reproducibility acceptance check: an independent reader reconstructs one published country total and one timeline from a frozen release, dictionary and source locators. Any undocumented choice or unavailable required input is an explicit failure to fix.
+
+## Actions
+
+Create a distinct JETP data-paper outline and manuscript in the repository publication architecture. Describe collection, identities, sources, lifecycle states, missingness, conflicts, validation, release cadence and reuse. Quantify coverage rather than claiming universal completeness. Prepare a citable deposit package and verify its release identifier before finalising data-availability text. Choose a suitable venue with documented scope; do not submit as part of this ticket.
+
+## Exit criteria
+
+- [ ] Reviewable manuscript, coverage tables and validation examples
+- [ ] Dataset availability, version, reuse terms and citation are accurate
+- [ ] Independent reproduction exercise recorded
+- [ ] Claims distinguish source coverage from actual implementation performance
+- [ ] Citable data package prepared and manuscript builds with resolved references
+
+## Validation
+
+Apply the repository gates for the actual diff. Code work starts with the failing
+fixture above; prose/data work records the documentary acceptance check. Preserve
+source evidence and report limits rather than manufacturing a successful result.

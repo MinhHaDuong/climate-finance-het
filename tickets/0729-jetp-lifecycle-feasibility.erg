@@ -1,0 +1,37 @@
+%erg 0.1
+Title: Audit feasibility of JETP versus historical lifecycle comparisons
+Created: 2026-09-13
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-13T19:18Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+The intended short paper compares regular pre-JETP energy projects with explicitly attributed JETP projects. We need comparable transition dates, not more aggregate mobilisation figures. Pre-approval histories may be selectively missing.
+
+Plan: `conception/jetp-observatory-and-papers-plan.md`. Parent tracker: 0725.
+
+## First test
+
+First documentary acceptance exercise: trace one mature-on-JETP-entry project, one pending proposal and one historical comparator from sources into dated stages. A publication date substituted for an event date, or a pending proposal dropped as missing, must be detected. Record a failed initial extraction before refining the coding protocol.
+
+## Actions
+
+Select 10–15 named JETP investment projects by explicit lender/technology rules, covering different disclosure conditions without claiming representativeness. Define a historical candidate cohort in the same countries/lenders/instruments where feasible. Audit identification→approval, approval→signature and signature→effectiveness/first payment. Track event precision, pre-existing maturity, cancellations, reporting delay and censoring. Coordinate 0721 matching; do not wait for construction or complete four-country reconciliation. Record a feasibility matrix, extraction effort and go/narrow/defer recommendation for each stage.
+
+## Exit criteria
+
+- [ ] Selection rules and exclusions documented before outcome comparison
+- [ ] Both endpoints and source locators audited for each proposed interval
+- [ ] Historical pending/withdrawn proposal coverage and survivorship bias assessed
+- [ ] JETP entry and earlier project history distinguished
+- [ ] Stage-specific go/narrow/defer decision and justified scope for 0730; no acceleration claim required
+
+## Validation
+
+Apply the repository gates for the actual diff. Code work starts with the failing
+fixture above; prose/data work records the documentary acceptance check. Preserve
+source evidence and report limits rather than manufacturing a successful result.

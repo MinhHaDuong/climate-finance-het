@@ -1,0 +1,38 @@
+%erg 0.1
+Title: Build comparable JETP and pre-JETP lifecycle observations
+Created: 2026-09-13
+Author: HDMX-coding-agent
+Blocked-by: 0729
+
+--- log ---
+2026-09-13T19:18Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+After the pilot, build only the comparisons that have credible observation on both sides. Reuse the CRS pipeline 0713 and reconciliation 0721; lender histories complement rather than silently replace those data.
+
+Plan: `conception/jetp-observatory-and-papers-plan.md`. Parent tracker: 0725.
+
+## First test
+
+First failing analysis fixture: an unfinished project, a cancelled project, an interval-dated approval and a mature project relabelled JETP. Milestone-attainment estimates must retain at-risk observations, distinguish cancellation from ordinary censoring, respect date uncertainty and avoid restarting the project clock at relabelling.
+
+## Actions
+
+Freeze the pilot-approved cohort protocol before estimating effects. Extract source-linked dated histories and choose matching/stratification by country, lender, instrument and technology as sample support permits. Separate financial operations/tranches from project histories. Produce risk sets, sample counts, missingness and milestone-attainment/duration comparisons with uncertainty. Test sensitivity to maturity on entry, period composition and attribution. Keep post-signature execution distinct from pre-approval selection. If the pilot defers all duration comparisons, deliver a reproducible coverage result and record why no estimate is defensible.
+
+## Exit criteria
+
+- [ ] Frozen cohort and matching rules with reproducible source-linked data
+- [ ] Missing, censored, cancelled and interval-dated observations handled explicitly
+- [ ] Stage comparisons report sample support, uncertainty and sensitivity
+- [ ] No unsupported causal JETP-effect claim or completed-only comparison
+- [ ] Analysis artifacts tied to a frozen release and ready for 0732
+
+## Validation
+
+Apply the repository gates for the actual diff. Code work starts with the failing
+fixture above; prose/data work records the documentary acceptance check. Preserve
+source evidence and report limits rather than manufacturing a successful result.

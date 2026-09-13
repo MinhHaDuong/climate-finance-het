@@ -1,0 +1,37 @@
+%erg 0.1
+Title: Prepare a public JETP dataset release with auditable totals
+Created: 2026-09-13
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-13T19:18Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+The existing data/jetp registries contain projects, programme components, repeated financial stages and unresolved observations. Public totals require reviewed identities and an explicit publication boundary, not a sum of ledger rows.
+
+Plan: `conception/jetp-observatory-and-papers-plan.md`. Parent tracker: 0725.
+
+## First test
+
+First failing fixture: a programme and its component share financing, a loan has approval and signature observations, and a missing payment sits beside a true zero. An export must not double-count either overlap, mix stages, or turn the missing payment into zero; each reported amount must resolve to source evidence.
+
+## Actions
+
+Reuse docs/jetp-tracking.md and 0715–0721. Define release schema, identity hierarchy, lifecycle date semantics, strict versus extended attribution, aggregation and currency policies. Audit imported financial-status mappings against source meanings; a register start date is not automatically a signature date. Publish versioned machine-readable exports with coverage, unresolved/conflicting observations and release terms. Keep unavailable payments explicit. Support original and revised pledge perimeters without mixing them.
+
+## Exit criteria
+
+- [ ] Release export and dictionary cover four countries with explicit gaps
+- [ ] Project/programme/component and multi-tranche rules prevent duplicate totals
+- [ ] Event, publication and retrieval dates and date precision remain distinct
+- [ ] Totals expose constituent IDs, sources, stages, scope, cutoff and currency rules
+- [ ] Versioned downloadable dataset, provenance manifest, validation and reuse/redistribution terms prepared
+
+## Validation
+
+Apply the repository gates for the actual diff. Code work starts with the failing
+fixture above; prose/data work records the documentary acceptance check. Preserve
+source evidence and report limits rather than manufacturing a successful result.

@@ -1,0 +1,39 @@
+%erg 0.1
+Title: Reframe and write the short JETP lifecycle comparison paper
+Created: 2026-09-13
+Author: HDMX-coding-agent
+Blocked-by: 0730
+Blocked-by: 0711
+
+--- log ---
+2026-09-13T19:18Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+The author retains the comparison with regular pre-JETP energy projects, broadening outcomes beyond disbursement to preparation and financing speed. The old figure mixes political-pledge denominators with historical commitment denominators and cannot answer this question.
+
+Plan: `conception/jetp-observatory-and-papers-plan.md`. Parent tracker: 0725.
+
+## First test
+
+First figure acceptance check: every JETP and historical mark uses the same defined transition and clock, with cohort size and missingness traceable to 0730. A pledge-normalised flow or partnership-age proxy must fail this check. A null or mixed difference must render and remain reportable.
+
+## Actions
+
+Rewrite conception/jetp-papier-court-mesure.md around the frozen analysis and produce the LaTeX manuscript in deliverables/jetp-mesure via 0711. Replace the old figure with supported stage comparisons; preserve it only as clearly labelled historical material if useful. Explain selection, pre-existing maturity and limits of historical causal inference. Do not make instrument substitution or a positive acceleration result an exit condition. If no duration comparison survives 0729/0730, record an explicit re-scope decision before drafting a different paper.
+
+## Exit criteria
+
+- [ ] Question, methods and central figure use genuinely comparable lifecycle stages
+- [ ] Manuscript reports supported findings including null/mixed outcomes
+- [ ] Preparation bottlenecks distinguished from execution among approved projects
+- [ ] Old disbursement-only and predetermined-mechanism claims reconciled
+- [ ] Reproducible LaTeX manuscript with evidence-linked tables and limitations, ready for review
+
+## Validation
+
+Apply the repository gates for the actual diff. Code work starts with the failing
+fixture above; prose/data work records the documentary acceptance check. Preserve
+source evidence and report limits rather than manufacturing a successful result.

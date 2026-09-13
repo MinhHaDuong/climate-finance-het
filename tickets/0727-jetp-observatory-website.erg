@@ -1,0 +1,38 @@
+%erg 0.1
+Title: Build and publish the JETP observatory website
+Created: 2026-09-13
+Author: HDMX-coding-agent
+Blocked-by: 0726
+
+--- log ---
+2026-09-13T19:18Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+The observatory is an independent public research output: country portfolios and project descriptions with sources, timelines, totals and useful visual exploration. Its usefulness must not depend on demonstrating acceleration.
+
+Plan: `conception/jetp-observatory-and-papers-plan.md`. Parent tracker: 0725.
+
+## First test
+
+First browser acceptance test on a small release fixture: navigate country → filtered project → milestone source, and country total → constituent records. Include missing dates, a disputed amount and overlapping components; these must be legible and must not appear as zero progress or duplicate financing.
+
+## Actions
+
+Choose the simplest maintainable site approach after inspecting existing publishing infrastructure. Build accessible country and project pages, filters, portfolio/stage visualisations, timelines, source links and downloadable release access. Display last-reviewed and release dates. Produce a concrete preview, hosting proposal and public URL decision before launch; publish the reviewed site and verify the live route. Do not require interactive complexity where a clear table suffices.
+
+## Exit criteria
+
+- [ ] Four country pages and stable project URLs expose essential features and evidence
+- [ ] Totals and filters reconcile exactly with the selected dataset edition
+- [ ] Timelines separate dated events from status-only observations and missing data
+- [ ] Readable mobile/desktop and keyboard navigation; meaningful visualisations
+- [ ] Preview reviewed, hosting/URL resolved and public site verified with release metadata
+
+## Validation
+
+Apply the repository gates for the actual diff. Code work starts with the failing
+fixture above; prose/data work records the documentary acceptance check. Preserve
+source evidence and report limits rather than manufacturing a successful result.
