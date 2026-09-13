@@ -250,3 +250,24 @@ def test_puelec_state_report_corroborates_parent_without_completing_components()
                    for row in read_csv(DATA / "events.csv"))
     for number in (5, 6, 7):
         assert coverage[f"sen-project-annex-{number:02d}"]["review_status"] == "blocked"
+
+
+def test_charging_masterplan_is_preparation_without_rollout_or_finance() -> None:
+    source_id = "sen-senelec-ppm-2026-v2"
+    project_id = "sen-project-annex-35"
+    coverage = {row["project_id"]: row for row in read_csv(DATA / "project-coverage.csv")}
+    assert coverage[project_id]["review_status"] == "collected"
+    observations = [
+        row for row in read_csv(DATA / "implementation-events.csv")
+        if row["source_id"] == source_id and row["project_id"] == project_id
+    ]
+    assert len(observations) == 1
+    assert observations[0]["implementation_status"] == "preparation"
+    # Procurement-plan dates are planned dates, not completed milestones.
+    assert observations[0]["event_date"] == ""
+    assert observations[0]["capacity_mw"] == ""
+    assert "C_DEG_155" in observations[0]["locator"]
+    assert not any(
+        row["source_id"] == source_id and row["project_id"] == project_id
+        for row in read_csv(DATA / "events.csv")
+    )
