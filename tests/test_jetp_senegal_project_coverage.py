@@ -268,3 +268,21 @@ def test_charging_masterplan_remains_provisional_without_exact_identity() -> Non
         assert not any(row["source_id"] == source_id
                        and row["project_id"] == project_id
                        for row in read_csv(DATA / filename))
+
+
+def test_aner_public_institutions_identity_keeps_conditional_budget_unfunded() -> None:
+    project_id = "sen-project-annex-23"
+    source_id = "sen-aner-psd-2025-2029"
+    coverage = {row["project_id"]: row for row in read_csv(DATA / "project-coverage.csv")}
+    assert coverage[project_id]["review_status"] == "collected"
+    assert any(row["source_id"] == source_id
+               and row["project_id"] == project_id
+               and row["review_status"] == "confirmed"
+               for row in read_csv(DATA / "project-source-links.csv"))
+    # A conditional strategic budget is not an approved financing instrument.
+    assert not any(row["source_id"] == source_id
+                   for row in read_csv(DATA / "events.csv"))
+    # Axis-level targets and the separate 192-health-site operation do not
+    # establish completed outputs for this proposal.
+    assert not any(row["source_id"] == source_id
+                   for row in read_csv(DATA / "implementation-events.csv"))
