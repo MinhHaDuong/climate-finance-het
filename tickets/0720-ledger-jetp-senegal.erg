@@ -21,6 +21,8 @@ Blocked-by: 0716
 
 2026-09-13T18:37Z Codex note Author requested commit and merge after disclosure of 24 unresolved identities; merge delivers reviewed partial snapshot without closing this ticket. Five-perspective review identified and fixed regeneration/provenance and ZAF finance-status defects.
 
+2026-09-13T18:50Z Codex note Author authorized a trial of three smaller-model scouts, each with bounded primary-source searches; parent adjudicates every identity match before changing coverage.
+
 --- body ---
 
 ## Context
@@ -152,3 +154,18 @@ All five second-round perspectives approve the fixes. Fast checks pass
 ten skipped). The forge review records the final full-suite result.
 The direct-page exit criterion is still MISSING for 24 identities; author
 merge authorization accepts this partial delivery without claiming closure.
+
+## Bounded scout trial
+
+Three scouts cover all 24 unresolved identities: solar/network (7), rural
+programmes (7), other agencies/promoters (10). Each has a ceiling of 12 web
+tool calls and approximately eight minutes. They return candidate URLs,
+source passages, identity evidence, conflicts and unsuccessful routes.
+
+Acceptance uses the existing contract: corroboration must identify the same
+project/programme or an explicitly delimited component. Similar names,
+capacities or promotional finance offers do not establish identity or finance.
+The parent checks novelty against the 260 registered source URLs, reads primary
+evidence and archives accepted new material. A failed search stays a dated
+search observation. The existing coverage and finance/physical-separation tests
+remain the first checks for any proposed canonical updates.

@@ -113,9 +113,20 @@ def test_collected_project_verdicts_resolve_to_direct_sources() -> None:
             source_id
             for source_id in row["source_ids"].split(";")
             if source_id in sources
-            and sources[source_id]["authority_category"] in {
-                "operator", "bilateral_funder", "multilateral_funder"
-            }
+            and (
+                sources[source_id]["authority_category"] in {
+                    "operator", "bilateral_funder", "multilateral_funder"
+                }
+                or (
+                    # The state can fund a project directly. Its project report
+                    # corroborates identity; central plan membership does not.
+                    sources[source_id]["authority_category"] == "national_government"
+                    and sources[source_id]["source_type"] in {
+                        "official_news", "project_page", "financing_agreement",
+                        "approval_document",
+                    }
+                )
+            )
             and (row["project_id"], source_id) in links
         }
         assert direct, row["project_id"]
@@ -221,3 +232,21 @@ def test_solar_site_evidence_does_not_establish_the_investment_vehicle() -> None
     assert not any(row["source_id"] in {"sen-artelia-thiestouba-gbif",
                                          "sen-boad-ouarkhokh-esia"}
                    for row in read_csv(DATA / "events.csv"))
+
+
+def test_puelec_state_report_corroborates_parent_without_completing_components():
+    source_id = "sen-scout-puelec-commissioning-2025"
+    coverage = {row["project_id"]: row for row in read_csv(DATA / "project-coverage.csv")}
+    assert coverage["sen-project-qw-04"]["review_status"] == "collected"
+    observations = [row for row in read_csv(DATA / "implementation-events.csv")
+                    if row["source_id"] == source_id]
+    assert len(observations) == 1
+    assert observations[0]["project_id"] == "sen-project-qw-04"
+    assert observations[0]["implementation_status"] == "operational"
+    assert observations[0]["capacity_mw"] == ""
+    assert observations[0]["document_sha256"]
+    # The article does not establish JETP/IPG attribution for state spending.
+    assert not any(row["source_id"] == source_id
+                   for row in read_csv(DATA / "events.csv"))
+    for number in (5, 6, 7):
+        assert coverage[f"sen-project-annex-{number:02d}"]["review_status"] == "blocked"
