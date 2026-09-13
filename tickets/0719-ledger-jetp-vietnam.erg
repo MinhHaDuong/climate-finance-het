@@ -1,0 +1,38 @@
+%erg 0.1
+Title: Étendre et fermer les trous du ledger JETP Viêt Nam
+Created: 2026-09-11
+Author: Minh
+Blocked-by: 0716
+
+--- log ---
+2026-09-11T21:36Z Minh created
+2026-09-12T09:48Z Codex migrated the pilot manifest and evidence observations
+2026-09-12T10:07Z Codex archived the official RMP, decisions 1009/458 and newsletters 1-13; recorded the unresolved signed text of Decision 1929
+2026-09-12T13:00Z Codex resolved the July 2025 portfolio into 3 named projects and 21 explicit non-public count slots; linked direct MOIT, EVN and EIB sources
+2026-09-12T13:08Z Codex covered ADB and BII through direct pages, borrower confirmation and the IATI publisher gap without forcing non-JETP leads into the strict portfolio
+2026-09-12T13:32Z Codex closed the country gate: 74 JETP tests and the full lint suite pass; renamed seven ledger builders and split shared Indonesia parsing helpers to satisfy repository hygiene rules
+
+--- body ---
+
+## Context
+
+Migrer le pilote du 10 août 2026 vers le contrat 0716, récupérer le RMP
+intégral et les textes de décisions manquants, puis mettre à jour toutes les
+sources jusqu'à la date de collecte. Les 24 projets/7,04 Md$ de juillet 2025
+doivent être distingués des 17 nouvelles propositions filtrées.
+
+## Test
+
+La migration conserve les 66 lignes de manifeste et les 46 observations de
+vérité terrain sans perte de provenance. Un contrôle dédié rejette toute
+confusion entre 24 projets totaux et 17 propositions nouvelles et exige un
+verdict explicite pour le RMP, les décisions 1009/458/1929 et les bulletins du
+portail MOIT jusqu'au dernier numéro observé.
+
+## Exit criteria
+
+- [x] Manifeste et vérité terrain du pilote migrés sans perte
+- [x] RMP, décisions et bulletins MOIT collectés ou blocage documenté
+- [x] Les 24 enregistrements sont suivis: 3 projets nommés chez leurs bailleurs et 21 identités non publiées sans nom inventé
+- [x] ADB/BII sont couverts par page directe, IATI ou absence explicite
+- [x] Contrôle de couverture Viêt Nam passe

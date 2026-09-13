@@ -148,11 +148,33 @@ ALL_FIGS := $(MANUSCRIPT_FIGS) $(DATAPAPER_FIGS) $(CORPUS_REPORT_FIGS) \
             $(MULTILAYER_FIGS) $(SLIDES_FIGS) $(ORPHANED_FIGS) $(NCC_FIGS)
 
 # ── Default target ────────────────────────────────────────
-.PHONY: all setup manuscript papers corpus-report technical-report data-paper multilayer-detection multilayer-techrep zoo figures figures-manuscript figures-datapaper figures-corpusreport figures-companion figures-techrep figures-ncc stats check check-package check-fast lint test-durations venv-canonicalize smoke benchmark determinism-check regression regression-update audit-pdf-content check-corpus check-manuscript-data data corpus corpus-sync corpus-discover corpus-enrich corpus-extend corpus-filter corpus-align corpus-filter-all corpus-tables corpus-validate deploy-corpus clean rebuild archive-analysis archive-manuscript archive-datapaper analysis-figures analysis-tables analysis-stats manuscript-render manuscript-figures datapaper-render datapaper-figures corpus-handoff deposit-descriptors deposit-validate
+.PHONY: all setup manuscript papers corpus-report technical-report data-paper multilayer-detection multilayer-techrep zoo figures figures-manuscript figures-datapaper figures-corpusreport figures-companion figures-techrep figures-ncc stats check check-package check-fast lint test-durations venv-canonicalize smoke benchmark determinism-check regression regression-update audit-pdf-content check-corpus check-manuscript-data data corpus corpus-sync corpus-discover corpus-enrich corpus-extend corpus-filter corpus-align corpus-filter-all corpus-tables corpus-validate deploy-corpus clean rebuild archive-analysis archive-manuscript archive-datapaper analysis-figures analysis-tables analysis-stats manuscript-render manuscript-figures datapaper-render datapaper-figures corpus-handoff deposit-descriptors deposit-validate jetp-harvest jetp-zaf-news-leads jetp-idn-portfolio jetp-documents-track
 
 .DEFAULT_GOAL := manuscript
 
 all: manuscript papers
+
+# JETP documentary layer — current official evidence, distinct from the lagged
+# OECD CRS comparison pipeline. The manifest is kept in git; binary snapshots
+# are content-addressed locally and captured by DVC only on padme.
+JETP_SOURCES   := data/jetp/sources.csv
+JETP_MANIFEST  := data/jetp/manifest.csv
+JETP_DOCUMENTS := data/jetp/documents
+JETP_EVENTS    := data/jetp/events.csv
+JETP_SOURCE_ID_ARG := $(if $(JETP_SOURCE_ID),--source-id $(JETP_SOURCE_ID),)
+
+jetp-harvest: $(JETP_SOURCES) scripts/jetp/corpus_harvest_documents.py scripts/jetp/schemas.py config/jetp_tracking.yaml
+	$(PYTHON) scripts/jetp/corpus_harvest_documents.py --input $(JETP_SOURCES) --output $(JETP_MANIFEST) --storage-root $(JETP_DOCUMENTS) $(JETP_SOURCE_ID_ARG)
+
+jetp-zaf-news-leads: $(JETP_MANIFEST) scripts/jetp/build_zaf_news_leads.py
+	$(PYTHON) scripts/jetp/build_zaf_news_leads.py --input $(JETP_MANIFEST) --output data/jetp/news-leads.csv --storage-root $(JETP_DOCUMENTS)
+
+jetp-idn-portfolio: $(JETP_SOURCES) $(JETP_MANIFEST) $(JETP_EVENTS) scripts/jetp/build_idn_portfolio_pages.py
+	$(PYTHON) scripts/jetp/build_idn_portfolio_pages.py --input $(JETP_SOURCES) $(JETP_MANIFEST) $(JETP_EVENTS) --output data/jetp/idn-portfolio-observations.csv --storage-root $(JETP_DOCUMENTS)
+
+jetp-documents-track:
+	@test "$$(hostname)" = padme || { echo "JETP DVC capture must run on padme" >&2; exit 1; }
+	$(UV_RUN) dvc add $(JETP_DOCUMENTS)
 
 # ═══════════════════════════════════════════════════════════
 # PHASE 1 — Corpus Building (slow, API-dependent, run rarely)

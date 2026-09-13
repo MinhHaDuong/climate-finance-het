@@ -1,0 +1,48 @@
+%erg 0.1
+Title: Recenser le JETP Indonésie projet par projet
+Created: 2026-09-11
+Author: Minh
+Blocked-by: 0716
+
+--- log ---
+2026-09-11T21:35Z Minh created
+2026-09-12T04:36Z Codex closed the 74-project review matrix and passed the Indonesia coverage gate
+
+--- body ---
+
+## Context
+
+Appliquer le contrat 0716 au JETP indonésien depuis la déclaration de 2022
+jusqu'à la date de collecte. Couvrir le CIPP et ses mises à jour, le
+secrétariat/JETP Delivery Unit, PLN, le pipeline officiel, les 54 projets
+signalés en 2025, les bailleurs et le devenir des retraites charbon.
+
+## Test
+
+Le contrôle de couverture échoue tant que la matrice n'a pas de verdict pour
+JETP Indonesia/JETP Delivery Unit, MEMR, PLN, IPG, GFANZ et chaque bailleur
+public nommé. Les totaux de projet ne peuvent additionner besoin, annonce,
+MoU, approbation, signature et décaissement.
+
+## Exit criteria
+
+- [x] CIPP 2023 et mises à jour ultérieures collectés ou absence prouvée
+- [x] Les projets du pipeline sont identifiés et sourcés individuellement
+- [x] Les 54 projets/1,1 Md$ annoncés en mars 2025 sont réconciliés avec la photographie ultérieure de 53 projets au 30 novembre 2025
+- [x] Retraits charbon et financement ETM ont un statut physique distinct
+- [x] Contrôle de couverture Indonésie passe
+
+## Résultat
+
+La matrice contient 74 projets indonésiens, tous dotés d'un verdict terminal :
+66 `collected`, 6 `central_only` et 2 `blocked`. Les 44 programmes de subvention
+et les 9 projets de prêt ou de fonds propres approuvés ont été revus. Les 19
+projets du pipeline financier, le programme AICET et les 14 entrées de suivi
+CMEA sont reliés à des sources et à des recherches sèches explicites. Le CIPP
+2023 contient 437 lignes de plan et l'annexe 1 de 2025 en contient 1 142.
+
+Le jalon de mars 2025 (54 projets, 1,1 Md USD) et celui du 30 novembre 2025
+(53 projets) restent deux observations datées distinctes. Les états financiers
+et physiques ne sont pas fusionnés : notamment, Cirebon reste sans preuve de
+retraite, tandis que les annonces ultérieures de SEG, Sutami et Legok sont
+enregistrées comme événements physiques séparés.

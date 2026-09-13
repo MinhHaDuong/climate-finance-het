@@ -1,0 +1,154 @@
+%erg 0.1
+Title: Recenser le JETP Sénégal projet par projet
+Created: 2026-09-11
+Author: Minh
+Blocked-by: 0716
+
+--- log ---
+2026-09-11T21:37Z Minh created
+2026-09-12T08:42Z Codex archived the political declaration, the 354-page investment plan and the 46-page annexes; extracted 38 received-project lines and 11 quick wins while preserving the plan's 34/38 count divergence and its conflicting QW11 descriptions
+2026-09-12T09:03Z Codex archived the ministry and IPG authority routes plus Senelec's 2023 and 2024 annual reports; recorded the absence of a dedicated 2024 or 2025 Senegal JETP annual report separately from the operator series
+
+2026-09-13T09:02Z Codex note Recovered and remotely verified the full archive and canonical documents; completed the dated Senegal documentary coverage pass with explicit unresolved direct-source gaps
+
+2026-09-13T09:12Z Codex note User requested completion: resume project follow-up, extract dated operator/funder milestones and deliver an explicit project-by-project evidence report
+
+2026-09-13T09:26Z Codex note Resumed evidence committed in 2438dbf4; full suite passed (2455 tests); 210 canonical remote documents verified; 24 direct-source identities remain unresolved
+
+2026-09-13T10:00Z Codex note User requested deeper Senegal investigation; trace solar site and ownership identities, rural preparation and the gas-renewables accounting boundary
+
+2026-09-13T18:26Z Codex note Deeper case analysis adds nine archived sources; solar site links preserve provisional investment identity; all 219 documents remotely verified; 92 JETP tests and local fast/lint gates pass
+
+2026-09-13T18:37Z Codex note Author requested commit and merge after disclosure of 24 unresolved identities; merge delivers reviewed partial snapshot without closing this ticket. Five-perspective review identified and fixed regeneration/provenance and ZAF finance-status defects.
+
+--- body ---
+
+## Context
+
+Appliquer le contrat 0716 au JETP sénégalais depuis la déclaration de juin
+2023 jusqu'à la date de collecte. Le Plan d'investissement et ses annexes,
+publiés après le lancement, rendent obsolète toute photographie arrêtée à
+2024. Couvrir ministère, IPG, bailleurs, Senelec, projets de renouvelables,
+réseau, accès et articulation avec les nouveaux hydrocarbures.
+
+## Test
+
+Le contrôle de couverture échoue sans verdict pour le ministère, IPG, AFD,
+KfW, UE, Royaume-Uni, Canada, banques multilatérales et Senelec. Chaque projet
+du Plan d'investissement et de ses annexes doit avoir une identité stable,
+une source et un statut ; le chiffre AFD-Senelec de 670 M€ reste exclu tant
+qu'une source primaire ne le confirme.
+
+## Exit criteria
+
+- [x] Déclaration, Plan d'investissement et annexes collectés
+- [ ] Chaque projet du plan est relié à ses pages bailleur/opérateur
+- [x] Financement, état physique et dépendance hydrocarbures restent distincts
+- [x] L'absence de publication annuelle est enregistrée comme donnée
+- [x] Contrôle de couverture Sénégal passe
+
+
+## Recovery and review evidence (13 September 2026)
+
+Recovery checkpoint `8917149c` preserves the complete original archive and
+167 restored canonical documents. The follow-up adds 28 collected documents;
+all 195 canonical documents and the original archive were read back from the
+DVC remote and checked by MD5 and SHA-256. See
+`docs/jetp-recovery-2026-09-13.md`.
+
+The 49 plan lines resolve to 43 project/programme records. QW1 matches
+submission 15; PUELEC remains distinct from its 600-village component. The
+records are not additive assets. Red commit `c7995fab` specifies these scope
+boundaries and separates proposed finance from physical implementation.
+`tests/test_jetp_senegal_project_coverage.py` checks every dated verdict,
+confirmed direct-source links, unresolved routes, and exclusion of EUR 670m.
+
+The documentary pass is complete: 18 records have direct corroboration,
+21 remain central-only after follow-up, and four ASER routes are blocked.
+The literal direct-page exit criterion remains open for those 25 records;
+this is not a claim that all projects have independently confirmed progress.
+`project-coverage.csv`, `project-source-links.csv`, and `dry-searches.csv`
+record the routes and limitations. Finance, physical status and hydrocarbon
+dependence have separate fields/events, including explicit unknowns.
+
+Validation: 88 JETP tests passed; check-fast passed (25 package checks plus
+1,520 tests), and lint passed (332 tests). The full suite initially reported
+2,408 passed and eight failures caused by absent non-JETP corpus files in the
+fresh worktree. After copying existing local corpus outputs, both affected
+modules passed (62 passed, 18 skipped). No production-code fix was needed.
+
+
+## Resumed completion pass
+
+First test: Diass must have the operator-reported 31 March 2026 construction
+launch, without a commissioning inference; CETUD BioGNV must resolve to the
+IFC advisory project 609428, without converting advisory approval into plant
+capital finance. An ASER source failure must remain distinct from evidence
+that the submitted project is absent. All 43 records must appear in the final
+review with source locators and remaining verification limits.
+
+Follow the 25 unresolved identities using Annex 8 promoter descriptions,
+operator publications and funder project databases. Recheck the previously
+collected projects for newer milestones. Archive public documents and preserve
+failed attempts. Close the documentary work with a per-project evidence report;
+do not close a literal direct-source criterion by relabelling central evidence.
+
+
+## Resumed pass result and criterion evidence
+
+- Central documents: preserved hashes and recovery evidence in `8917149c` and
+  `2438dbf4`, `docs/jetp-recovery-2026-09-13.md`.
+- Direct project pages: **MISSING for 24 identities**. The new IFC BioGNV
+  disclosure resolves one previous central-only verdict. Current counts are
+  19 collected, 20 central_only, four blocked. No criterion was relaxed.
+- Distinct finance/physical/hydrocarbon observations: `2438dbf4` adds 32 plan
+  needs/allocations and two dated funding observations, records Diass launch
+  and BioGNV advisory preparation, and preserves explicit unknowns.
+  Evidence: `test_diass_groundbreaking_is_dated_without_claiming_commissioning`
+  and `test_biognv_advisory_approval_is_not_plant_capital_finance`.
+- Annual publication absence: earlier authority coverage remains unchanged;
+  a project/operator update is not relabelled a JETP annual report.
+- Coverage: all 43 identities have documented verdicts and implementation
+  baselines; `test_every_senegal_project_has_a_terminal_followup_verdict` and
+  `test_senegal_completion_report_covers_every_project_and_its_limits` pass.
+
+Full project review: `docs/jetp-senegal-review-2026-09-13.md`. Remaining source
+requests are prioritised there. The public documentary pass and extraction are
+complete, but a direct-source-complete claim or merge approval is not justified.
+
+Validation on the resumed data: 91 JETP tests; check-fast 25 package checks plus
+1526 passed/7 skipped; lint 332 passed/10 skipped; full make check 2455 passed/
+47 skipped in 214 seconds. No failures. Fifteen new documents backed up, and
+all 210 canonical objects plus the original recovery archive verified by remote
+readback (MD5 and SHA-256); 253 manifest rows checked. No independent PR review
+yet. Keep the draft PR and literal direct-source criterion open.
+
+## Deeper case investigation
+
+First test: ARTELIA metadata must corroborate QW1 separately from the provisional
+Ouarkhokh/Champions Nationaux join. Environmental studies and matching sites
+must not create a capital-finance observation. Preserve all 43 identities.
+Deliver a cited case note connecting financial design, preparation evidence,
+local impacts and the installed-capacity target, with unresolved joins explicit.
+
+Deeper-pass evidence: red test commit `9390aed6`; source links distinguish
+ARTELIA site corroboration from the provisional Ouarkhokh/QW2 join. The case
+note calculates proposed equity/debt shares, records the earlier Huawei MoU
+reference and separates capacity, generation and emissions baselines. The
+24 unresolved direct identities remain open. No merge approval is asserted.
+
+## Merge review corrections
+
+The first review found three defects not caught by the prior suite.
+`f605b4c9` and `e9c754ef` add failing regression tests; `102cdacc` preserves
+reviewed Senegal reconciliation on stable source rows and rejects wrong PDF
+hashes before parsing; `18ae2724` stops inferring financial approval from
+physical progress and corrects 14 ZAF observations to announced. Amounts and
+source physical-status notes are preserved. A real-PDF regeneration in a
+temporary copy retained all 49 Senegal links and every other-country field.
+
+All five second-round perspectives approve the fixes. Fast checks pass
+(25 package checks; 1535 tests, seven skipped) and lint passes (332 tests,
+ten skipped). The forge review records the final full-suite result.
+The direct-page exit criterion is still MISSING for 24 identities; author
+merge authorization accepts this partial delivery without claiming closure.

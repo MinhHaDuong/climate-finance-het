@@ -1,0 +1,40 @@
+%erg 0.1
+Title: Recenser le JETP Afrique du Sud projet par projet
+Created: 2026-09-11
+Author: Minh
+Blocked-by: 0716
+
+--- log ---
+2026-09-11T21:34Z Minh created
+2026-09-12T08:42Z Codex completed the source-to-project coverage pass: 263
+project records (257 register rows plus 6 documented programmes outside the
+register), 259 dated financial events, 61 source records, 46 report claims,
+79 project-source links, 18 secondary-news leads and 21 authorities with a
+terminal coverage verdict. The three unnamed EU civil-society grants remain a
+programme cluster rather than three invented award records; the search route
+and false matches are recorded for later beneficiary-level resolution.
+
+--- body ---
+
+## Context
+
+Appliquer le contrat 0716 au JETP sud-africain depuis la déclaration de 2021
+jusqu'à la date de collecte. Couvrir JET IP, JET Implementation Plan, rapports
+de progression, registres publics, IPG, bailleurs, Eskom et chaque projet ou
+programme financier identifié.
+
+## Test
+
+Le contrôle de couverture échoue tant que la matrice d'autorités ne comporte
+pas Presidency/PCC/JET PMU, IPG, chaque bailleur public nommé, banques
+multilatérales et Eskom, avec pour chacun un verdict `collected`,
+`not_published`, `blocked` ou `not_applicable`. Chaque projet nommé dans une
+liste officielle doit avoir une identité stable et au moins une source.
+
+## Exit criteria
+
+- [x] Rapports et listes officielles recensés de 2021 à la date de collecte
+- [x] Projets et opérations financières séparés en événements datés
+- [x] Pages bailleurs et Eskom examinées ; recherches sèches consignées
+- [x] Actualités secondaires utiles rattachées comme pistes, pas comme preuve
+- [x] Contrôle de couverture Afrique du Sud passe

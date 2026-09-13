@@ -1,0 +1,32 @@
+%erg 0.1
+Title: Relier finance JETP et réalisations physiques
+Created: 2026-09-11
+Author: Minh
+Blocked-by: 0721
+
+--- log ---
+2026-09-11T21:40Z Minh created
+
+--- body ---
+
+## Context
+
+Le ledger financier ne dit pas si l'argent déplace l'acier. Il faut rattacher
+les opérations aux centrales, lignes, stockages, capacités renouvelables et
+mesures sociales afin de mesurer délais, MW fermés ou mis en service et
+coexistence avec de nouveaux actifs fossiles.
+
+## Test
+
+Une opération ne rejoint un actif que par identifiant stable ou verdict
+documenté. Les cas Komati, Cirebon-1, Bac Ai et Vung Ang II doivent démontrer
+les quatre états : fermeture effective, retraite annulée/réaffectée,
+infrastructure bas-carbone en construction et nouvel actif fossile mis en
+service pendant le JETP.
+
+## Exit criteria
+
+- [ ] Registre d'actifs distinct du ledger financier
+- [ ] Jointure avec score, source et verdict humain
+- [ ] Chronologie financement -> réalisation reconstructible
+- [ ] Premiers indicateurs dollars/MW et délai produits avec limites explicites

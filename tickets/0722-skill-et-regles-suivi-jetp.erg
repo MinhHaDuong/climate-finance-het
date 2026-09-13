@@ -1,0 +1,31 @@
+%erg 0.1
+Title: Installer la skill et les règles du suivi JETP
+Created: 2026-09-11
+Author: Minh
+Blocked-by: 0716
+
+--- log ---
+2026-09-11T21:39Z Minh created
+
+--- body ---
+
+## Context
+
+Le suivi doit survivre au run initial. Une skill projet et une règle courte
+doivent orienter les futurs agents vers le harvester, le schéma, les registres
+et les arbitrages, sans recopier l'architecture dans leur contexte permanent.
+
+## Test
+
+Valider la skill avec le validateur du skill-creator. Sur trois requêtes
+réalistes — rafraîchir un pays, ajouter un projet, vérifier un chiffre — son
+parcours doit préserver l'historique, exiger la source primaire et refuser le
+double compte. Le test ne dépend pas d'une formulation exacte.
+
+## Exit criteria
+
+- [ ] Skill projet concise, références de schéma chargées à la demande
+- [ ] Règle permanente limitée aux invariants qui évitent une erreur publiée
+- [ ] Mode refresh, mode projet et mode vérification documentés
+- [ ] Les recherches sèches et arbitrages humains ont un emplacement stable
+- [ ] Aucun téléchargement, push DVC ou publication n'est implicitement autorisé

@@ -1,0 +1,43 @@
+%erg 0.1
+Title: Corriger le test de rupture de Chow sous le nul
+Created: 2026-09-11
+Author: Minh
+
+--- log ---
+2026-09-11T20:56Z Codex created — échec déterministe observé sur main et deux branches sans rapport avec le suivi JETP
+
+--- body ---
+
+## Context
+
+`make check-fast` échoue dans
+`tests/test_lit_confirmations.py::test_chow_break_null_is_insignificant` avec
+`p_value = 0.0007353910609657328`, alors que le test exige `p_value > 0.5`.
+L'échec est déterministe, reproduit sur `origin/main` et sur les branches 1322
+et 0716. Il n'est pas causé par le corpus documentaire JETP mais bloque sa
+porte de sortie globale.
+
+## Relevant files
+
+- `tests/test_lit_confirmations.py`
+- le module qui calcule la rupture de Chow appelé par ce test
+
+## Test
+
+Construire un nul déterministe qui ne soit pas un ajustement quasi parfait
+numériquement dégénéré. Vérifier d'abord que la statistique et la probabilité
+sont stables sur plusieurs exécutions et plateformes, puis conserver un cas
+alternatif avec rupture réelle.
+
+## Actions
+
+1. Isoler si l'échec vient de la fixture, des degrés de liberté ou du calcul.
+2. Corriger le plus petit contrat faux sans diminuer arbitrairement le seuil.
+3. Exécuter le test ciblé puis `make check-fast`.
+
+## Exit criteria
+
+- [ ] Le nul ne rejette pas de rupture sur une fixture non dégénérée
+- [ ] Le cas avec rupture reste significatif
+- [ ] Le résultat est déterministe sur trois exécutions
+- [ ] `make check-fast` passe
