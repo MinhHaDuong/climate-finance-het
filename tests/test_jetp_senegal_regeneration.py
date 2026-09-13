@@ -7,7 +7,6 @@ import csv
 import pytest
 from jetp.build_sen_plan_projects import (
     ANNEX_SHA256,
-    ANNEX_SOURCE_ID,
     FIELDS,
     MAIN_SHA256,
     MAIN_SOURCE_ID,
@@ -69,9 +68,7 @@ def test_regeneration_preserves_reviewed_reconciliation_only_for_stable_row(
     write_csv(regenerated, output)
 
     rows = {row["plan_project_id"]: row for row in _read(output)}
-    assert rows["sen-plan-qw-01"]["canonical_project_id"] == (
-        "sen-project-annex-15"
-    )
+    assert rows["sen-plan-qw-01"]["canonical_project_id"] == ("sen-project-annex-15")
     assert rows["sen-plan-qw-01"]["reconciliation_status"] == "matched"
     assert rows["sen-plan-qw-01"]["notes"] == "reviewed crosswalk"
     assert rows["sen-plan-qw-02"]["canonical_project_id"] == ""
@@ -95,7 +92,9 @@ def test_extraction_rejects_noncanonical_pdf_before_parsing(
     def unexpected_parse(_path):
         pytest.fail("mismatched input reached pdfplumber")
 
-    monkeypatch.setattr("jetp.build_sen_plan_projects.pdfplumber.open", unexpected_parse)
+    monkeypatch.setattr(
+        "jetp.build_sen_plan_projects.pdfplumber.open", unexpected_parse
+    )
 
     with pytest.raises(ValueError, match=f"SHA-256 mismatch.*{expected_hash}"):
         extractor(document)

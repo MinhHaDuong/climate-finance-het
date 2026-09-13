@@ -2,6 +2,7 @@
 
 import argparse
 import csv
+import hashlib
 import re
 from pathlib import Path
 
@@ -34,6 +35,14 @@ MAIN_SOURCE_ID = "sen-investment-plan-l4-mirror"
 ANNEX_SOURCE_ID = "sen-investment-plan-annexes-mirror"
 MAIN_SHA256 = "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca"
 ANNEX_SHA256 = "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21"
+
+
+def _require_sha256(path: Path, expected: str) -> None:
+    actual = hashlib.sha256(path.read_bytes()).hexdigest()
+    if actual != expected:
+        raise ValueError(
+            f"SHA-256 mismatch for {path}: expected {expected}, got {actual}"
+        )
 
 
 def _text(value: object) -> str:
@@ -78,6 +87,7 @@ def _base_record(
 
 def extract_received_projects(annexes_path: Path) -> list[dict[str, str]]:
     """Return all 38 submissions in Annex 2, without implying prioritisation."""
+    _require_sha256(annexes_path, ANNEX_SHA256)
     records: list[dict[str, str]] = []
     with pdfplumber.open(annexes_path) as pdf:
         for page_number in (13, 14, 15):
@@ -116,10 +126,13 @@ def extract_received_projects(annexes_path: Path) -> list[dict[str, str]]:
 
 def extract_quick_wins(main_plan_path: Path) -> list[dict[str, str]]:
     """Return the eleven top-priority lines from the main plan's page 33."""
+    _require_sha256(main_plan_path, MAIN_SHA256)
     records: list[dict[str, str]] = []
     with pdfplumber.open(main_plan_path) as pdf:
         tables = pdf.pages[32].extract_tables()
-        table = next(table for table in tables if _text(table[0][1]) == "Projet Quick Win")
+        table = next(
+            table for table in tables if _text(table[0][1]) == "Projet Quick Win"
+        )
         for row in table[1:]:
             match = re.fullmatch(r"QW(\d+)", _text(row[0]))
             if not match:
@@ -160,14 +173,30 @@ def extract_quick_wins(main_plan_path: Path) -> list[dict[str, str]]:
 def write_csv(rows: list[dict[str, str]], output: Path) -> None:
     replaced_sources = {MAIN_SOURCE_ID, ANNEX_SOURCE_ID}
     preserved: list[dict[str, str]] = []
+    reviewed: dict[tuple[str, str, str], dict[str, str]] = {}
     if output.exists():
         with output.open(encoding="utf-8", newline="") as stream:
             reader = csv.DictReader(stream)
             if reader.fieldnames != FIELDS:
                 raise ValueError("unexpected plan-projects schema")
+            existing = list(reader)
             preserved = [
-                row for row in reader if row["source_id"] not in replaced_sources
+                row for row in existing if row["source_id"] not in replaced_sources
             ]
+            reviewed = {
+                (
+                    row["plan_project_id"],
+                    row["source_id"],
+                    row["document_sha256"],
+                ): row
+                for row in existing
+                if row["source_id"] in replaced_sources
+            }
+    for row in rows:
+        key = (row["plan_project_id"], row["source_id"], row["document_sha256"])
+        if previous := reviewed.get(key):
+            for field in ("canonical_project_id", "reconciliation_status", "notes"):
+                row[field] = previous[field]
     combined = sorted(
         [*preserved, *rows],
         key=lambda row: (row["country"], row["source_id"], row["plan_project_id"]),
