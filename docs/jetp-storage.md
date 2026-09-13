@@ -39,7 +39,7 @@ unnecessary for the initial site.
 | Release descriptors | `data/jetp/releases/<edition_id>/release.json` | Git; planned output of 0726/0728 |
 | Analysis intermediates | `data/derived/jetp/` | Regenerable; gitignored; planned under 0730 |
 | Site sources and selected-release handoff | `deliverables/jetp-observatory/` | Planned under 0727; source and small handoff assets in Git |
-| Frozen downloadable editions | Versioned public release/deposit archives | Immutable files, checksums and public URLs in release descriptor |
+| Frozen downloadable editions | Versioned public release or deposit archives | Immutable files, checksums and public URLs in release descriptor |
 | Optional SQLite export | `data/derived/jetp/<edition_id>.sqlite` | Regenerable; never edited or required by the website |
 
 Only editorial README/templates and release guidance are scaffolded now. Country
