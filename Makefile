@@ -124,6 +124,7 @@ endif
 # calls them via `$(MAKE) -f deliverables/<x>/<x>.mk` so the render process never
 # parses these Phase-2 rules (ticket 0237).
 -include scripts/analysis/divergence.mk
+-include scripts/analysis/jetp_observatory.mk
 -include scripts/analysis/multilayer-detection.mk
 -include scripts/analysis/zoo-figures.mk
 -include scripts/analysis/venues.mk
