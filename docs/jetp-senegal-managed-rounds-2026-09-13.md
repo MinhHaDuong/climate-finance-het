@@ -1,5 +1,7 @@
 # Senegal JETP managed research rounds, 13 September 2026
 
+This is the earlier managed-round checkpoint. The [document-led follow-up](jetp-senegal-document-followup-2026-09-13.md) subsequently resolves Annex23 and updates coverage.
+
 ## Scope and status
 
 Three bounded scout streams followed the initial evidence review: solar and storage, rural electrification, and ANER programmes. Solar used 18 web calls in round 2, 10 in round 3, and 6 in round 4. Rural used 18 calls in round 2 and 10 in round 3. ANER programmes used 11 calls in round 2 and 10 in round 3, supplemented by public API and Common Crawl retrievals. The rounds searched for legal and procurement identifiers rather than accepting matches based on similar titles, capacities, or village counts.

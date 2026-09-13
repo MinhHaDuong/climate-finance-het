@@ -8,8 +8,9 @@ observations. This is a case argument for further research, not an assessment
 of measured programme impact.
 
 The later [managed research rounds](jetp-senegal-managed-rounds-2026-09-13.md)
-add procurement and contract records while preserving the coverage counts and
-the distinction between contextual finance and attributed project finance.
+added procurement and contract records while preserving the coverage counts at
+that checkpoint and the distinction between contextual finance and attributed
+project finance.
 
 The strongest finding is the gap between three objects often described with
 the same word, “project”: an investment-plan proposal, a site undergoing
@@ -21,7 +22,7 @@ claim unresolved. Counting either document as implementation of the whole
 investment proposal would erase the very transformation the case should explain.
 
 The current ledger still contains 43 project/programme identities from 49 plan
-lines, with 20 direct corroborations and 23 unresolved direct identities.
+lines, with 21 direct corroborations and 22 unresolved direct identities.
 These counts measure documentary coverage. They are neither counts of power
 plants nor a success rate for investment. None of the new documents establishes
 a project-level disbursement.
@@ -156,12 +157,18 @@ It does not prove bank settlement, completion of the wider programme or any
 JETP/IPG attribution. It also contains no crosswalk to the distinct 350-, 330-
 or 600-village submissions. [ARCOP audit, printed pp.55–56](https://arcop.sn/wp-content/uploads/2025/10/RAPPORT-AGENCE-SENEGALAISE-DELECTRIFICATION-RURALE-ASER-2023-1.pdf).
 
-For public-building solar autonomy, an ANER 2025 general procurement notice
-recovered from a historical web archive plans consultant recruitment for
-feasibility studies. This preserves a preparation route for Annex 23 but names
-no sites, award, budget, universities or hospitals. It cannot make the separate
-192-health-facility D2B operation coextensive with the broad submission.
-[ANER AGPM 2025, archived route](https://www.aner.sn/wp-content/uploads/2025/01/AGPM-2025.pdf).
+Separate ARCOP decisions document an ASER–AEE Power EPC contract for 928
+localities in five regions and a stated FCFA91.834bn pre-tax value. They supply
+no 600-village, 24MWc, grid-injection or village-schedule marker and therefore
+do not join that contract to Annex 7. [Document follow-up](jetp-senegal-document-followup-2026-09-13.md).
+
+For public-building solar autonomy, ANER's final July 2025 PSD names the project
+for universities, hospitals and public institutions and assigns it a conditional
+FCFA60.4bn planning budget. This exact broad family supports Annex 23 identity,
+but no secured finance or physical event. The 100-site/60MWc result on the prior
+page belongs to Axis 2.1 as a whole and is not a project output. The PSD lists a
+narrower health project separately; the earlier rooftop study remains a possible
+predecessor rather than a canonical join. [ANER PSD, printed pp.21–22 and 48](https://www.aner.sn/uploads/plan_strategique_developpement_aner_2025_2029.pdf).
 
 Senelec's 2026 procurement plan similarly lists a consultant for a mobility-
 electrification master plan concerning charging infrastructure, funded in the
@@ -253,4 +260,4 @@ arrangements within an expanding gas-and-renewables system. The surviving
 public documents show that construction process more clearly than they show
 the final flow of money or distribution of benefits.
 
-The subsequent [bounded scout trial](jetp-senegal-scout-trial-2026-09-13.md) corroborated a three-village PUELEC component through state-funder reporting. The [managed rounds](jetp-senegal-managed-rounds-2026-09-13.md) then identified its contracts, recovered preparatory procurement records and located BOAD's Linguère approval without resolving the Champions Nationaux ownership crosswalk or adding JETP-attributed finance.
+The subsequent [bounded scout trial](jetp-senegal-scout-trial-2026-09-13.md) corroborated a three-village PUELEC component through state-funder reporting. The [managed rounds](jetp-senegal-managed-rounds-2026-09-13.md) then identified its contracts, recovered preparatory procurement records and located BOAD's Linguère approval without resolving the Champions Nationaux ownership crosswalk or adding JETP-attributed finance. The later [document follow-up](jetp-senegal-document-followup-2026-09-13.md) confirms Annex 23 at planning stage and records the unjoined 928-locality AEE Power context.

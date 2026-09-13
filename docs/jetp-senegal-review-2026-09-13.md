@@ -1,10 +1,10 @@
 # Senegal JETP — documentary review, 13 September 2026
 
 All 49 plan lines have been reconciled to 43 project/programme identities.
-The public-source review now has 20 direct corroborations, 20 `central_only`
+The public-source review now has 21 direct corroborations, 19 `central_only`
 verdicts and three `blocked` ASER routes. These are not 43 additive assets or
 43 financed projects. The literal requirement for a direct page for every
-project remains unmet for 23 identities.
+project remains unmet for 22 identities.
 
 Financial needs, reported funding and physical implementation are separate
 observations. Project estimates below are not secured finance. Programmes and
@@ -14,9 +14,10 @@ or absence of activity. The plan's precise issue date remains unresolved.
 The [deeper case analysis](jetp-senegal-case-analysis-2026-09-13.md) adds
 solar site evidence, a rural feasibility-study lead and financial-design analysis.
 The [managed research rounds](jetp-senegal-managed-rounds-2026-09-13.md)
-record the later procurement, contract and archive checks and their adjudication.
-The 23 unresolved direct identities remain open; new possible matches do not
-change the coverage verdicts.
+record the earlier procurement, contract and archive checks and their
+adjudication. At that checkpoint, 23 direct identities remained unresolved. The
+later [document follow-up](jetp-senegal-document-followup-2026-09-13.md)
+promotes Annex 23 on an exact ANER planning record; 22 identities remain open.
 
 ## Findings from the resumed pass
 
@@ -46,6 +47,9 @@ change the coverage verdicts.
 - An archived ANER 2025 procurement notice preserves a feasibility-study route
   for public-building electrical autonomy; it does not define Annex 23's full
   institutional scope or establish an award.
+- ANER's final July 2025 PSD later confirms Annex 23's broad project family and
+  conditional planning budget; it establishes neither finance nor a physical
+  event.
 
 ## Project-by-project evidence
 
@@ -191,12 +195,14 @@ No avoided-emissions estimates are promoted to measured outcomes.
 
 **Documented implementation:** `proposed` (date unresolved ; sen-investment-plan-annexes-mirror). A proposal observation does not date the actual start of works.
 
-**Verification and limitation:** Portal connection refused; 24MWc and 600 villages are proposal targets. No separate finance or delivery evidence.
+**Verification and limitation:** Portal connection refused; 24MWc and 600 villages are proposal targets. ARCOP decisions 107 and 138 document a negotiated ASER–AEE Power EPC contract for 928 localities in five regions, with a stated FCFA91,833,980,000 pre-tax value. They contain no 600-village, 24MWc, grid-injection or village-schedule marker, so the contract remains context and is not joined to Annex 7. No separate finance or delivery evidence is assigned here. See the [document follow-up](jetp-senegal-document-followup-2026-09-13.md).
 
 **Sources and locators:**
 
 - [sen-investment-plan-annexes-mirror](https://www.vie-publique.sn/docs/f003f026-01ff-4996-8959-6d01c9139b91/annexes-plan-dinvestissement-transition-energetique-juste-jetp-senegal-mepm.pdf) — Annex 2, p. 13, row 7 ; retrieval `collected`.
 - [sen-aser-www-retry](https://www.aser.sn/) — Connection refused ; retrieval `fetch_error`.
+- [sen-arcop-aeepower-decision107-2024](https://arcop.sn/wp-content/uploads/2024/10/DECISION-107-2024-ARCOP-DEF-DU-02-OCTOBRE-2024.pdf) — Printed pp.1–2 and 5; procedural record for the separate 928-locality contract; retrieval `collected`.
+- [sen-arcop-aeepower-decision138-2024](https://arcop.sn/wp-content/uploads/2025/01/DECISION-N%C2%B0138-2024-du-24-ARCOP-CRD-DEF-du-24-DEC-2024.pdf) — Printed pp.1 and 3; 928-locality scope and stated contract value, without Annex 7 markers; retrieval `collected`.
 - [sen-investment-plan-l4-mirror](https://www.vie-publique.sn/docs/002da0bc-10a7-458c-9111-09accbd0f255/plan-investissement-transition-energetique-juste-jet-senegal-mepm.pdf) — Printed p.42, named project cost ; retrieval `collected`.
 
 ### sen-project-annex-08 — Eclairage général efficace
@@ -505,23 +511,24 @@ No avoided-emissions estimates are promoted to measured outcomes.
 
 ### sen-project-annex-23 — Autonomisation en énergie électrique des universités, hôpitaux et bâtiments abritant des institutions, ministères et autres services de l’administration
 
-**Promoter:** ANER. **Coverage:** `central_only`.
+**Promoter:** ANER. **Coverage:** `collected`.
 
 **Technology:** Solar electricity for public institutions. **Location:** not specified in the verified evidence.
 
-**Need/estimate:** 92 M EUR (Printed p.42, named project in summary cost table, M EUR). This estimate does not establish secured finance.
+**Need/estimate:** 92 M EUR (Printed p.42, named project in summary cost table, M EUR). ANER's later PSD separately assigns a conditional FCFA60.4bn planning budget. Neither estimate establishes secured finance, and they are not summed.
 
 **Secured finance:** no quantified commitment established in this review.
 
 **Documented implementation:** `proposed` (date unresolved ; sen-investment-plan-annexes-mirror). A proposal observation does not date the actual start of works.
 
-**Verification and limitation:** ANER's archived 2025 general procurement notice plans recruitment of a firm for feasibility studies for public-building electrical autonomy. It is current preparation context, but it names no sites, award, budget, universities or hospitals and does not identify the whole submitted programme. The separate D2B health-facility operation remains narrower.
+**Verification and limitation:** ANER's final July 2025 PSD names the solar-photovoltaic autonomy project for universities, hospitals and public institutions on printed p.22 and marks its FCFA60.4bn budget conditional on p.48. The distinctive promoter, purpose and broad beneficiary classes establish the project family at planning stage; the PSD proves no secured finance, award, construction or operation. The 100 public sites/60MWc on p.21 are an Axis 2.1 objective-level target, not this project's output. The narrower health project is listed separately on p.22, while the earlier rooftop study remains a possible predecessor rather than a canonical join. The archived 2025 procurement notice remains preparation context only.
 
 **Sources and locators:**
 
 - [sen-investment-plan-annexes-mirror](https://www.vie-publique.sn/docs/f003f026-01ff-4996-8959-6d01c9139b91/annexes-plan-dinvestissement-transition-energetique-juste-jetp-senegal-mepm.pdf) — Annex 2, p. 14, row 23 ; retrieval `collected`.
 - [sen-aner-project-api](https://aner.sn/api/projects) — Related programme or geographic lead ; retrieval `collected`.
 - [ANER AGPM 2025](https://www.aner.sn/wp-content/uploads/2025/01/AGPM-2025.pdf) — Consultant-services row for feasibility studies of public-building electrical autonomy; historical PDF recovered from a 16 March 2025 Common Crawl capture.
+- [sen-aner-psd-2025-2029](https://www.aner.sn/uploads/plan_strategique_developpement_aner_2025_2029.pdf) — Final July 2025 PSD, printed pp.22 and 48; exact project-family name and conditional planning budget; retrieval `collected`.
 - [sen-investment-plan-l4-mirror](https://www.vie-publique.sn/docs/002da0bc-10a7-458c-9111-09accbd0f255/plan-investissement-transition-energetique-juste-jet-senegal-mepm.pdf) — Printed p.42, named project cost ; retrieval `collected`.
 
 ### sen-project-annex-24 — Renforcement de l'Infrastructure Qualité pour des services énergétiques innovateurs

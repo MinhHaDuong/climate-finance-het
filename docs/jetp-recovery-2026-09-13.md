@@ -119,3 +119,18 @@ Financial and implementation tables are unchanged from the scout checkpoint.
 The [managed-rounds report](jetp-senegal-managed-rounds-2026-09-13.md) records
 the BOAD approval and procurement discoveries, their attribution limits, and
 why exact-identity coverage remains 20 collected / 20 central-only / 3 blocked.
+
+
+## Document-led checkpoint
+
+The follow-up adds 13 source records, 16 retrieval observations and 12 document
+objects: totals are 301 sources, 307 observations and 257 objects. The documents
+directory is `d614b74fc598c74dda6fae0dca4f0c1e.dir` (279,613,906 bytes).
+All 257 objects were read back from the existing local padme archive and verified
+by MD5 and SHA-256; the unchanged recovery archive also passed read-only
+verification. This pass copied only public document objects and did not push
+the recovery archive. Every collected manifest entry and both event schemas
+validate. Financial and implementation tables are byte-identical to the preceding
+checkpoint. ANER's final PSD supplies one additional direct identity, making
+coverage21 collected /19 central-only /3 blocked. See the
+[document-led report](jetp-senegal-document-followup-2026-09-13.md).

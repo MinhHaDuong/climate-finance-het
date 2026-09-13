@@ -31,6 +31,7 @@ Blocked-by: 0716
 2026-09-13T21:45Z Codex note Managed rounds2-4 recover BOAD FCFA41.5bn Linguere loan approval, PUELEC contract/payment-order evidence and six historical ANER captures; no exact QW2 legal/JETP join or new coverage promotion; 288 sources /291 observations /245 remote documents verified, financial and implementation tables unchanged
 2026-09-13T21:48Z Codex note Final independent audit accepts bounded claims and six WARC payloads;102 JETP tests pass, fast25 package plus1534 tests/10 skipped, lint332/10 skipped; ticket and diff hygiene pass; draft PR1332 extended, direct-source criterion remains open
 2026-09-13T20:26Z Codex note Author requests document-led follow-up: target named contracts, village schedules, original ANER fiches and institutional study records; verify contact routes and prepare precise requests after public-repository checks
+2026-09-13T20:46Z Codex note Document-led follow-up independently confirms Annex23 from final ANER PSD;21 collected /19 central_only /3 blocked,22 unresolved;301 sources /307 observations /257 archived objects verified;103 JETP tests and fast25+1535/10skip plus lint332/10skip pass; six reviewed institutional requests prepared but not sent
 --- body ---
 
 ## Context
@@ -204,3 +205,14 @@ matching; the initially proposed preparation event was removed after review.
 The BOAD approved loan is preserved as context because neither ledger scope
 admits an unjoined, unattributed loan. Coverage remains 20 collected,
 20 central-only and 3 blocked; the direct-source exit criterion stays open.
+
+
+The document-led follow-up supersedes the preceding current-coverage figure:
+21 collected, 19 central-only and 3 blocked. See
+`docs/jetp-senegal-document-followup-2026-09-13.md` and
+`docs/jetp-senegal-document-requests/README.md`. The ANER identity regression
+failed before integration. Independent source review accepted the exact
+institutional-project match while retaining the conditional budget and objective
+outputs as planning evidence. Financial and physical event tables are unchanged.
+Six institutional requests are complete and independently reviewed, with an
+explicit unsent register. The direct-source exit criterion remains open.

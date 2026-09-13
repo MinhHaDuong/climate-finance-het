@@ -53,7 +53,7 @@ which case the event is marked `secondary_only` during verification.
 | South Africa | 263/263 | Complete; register, reports, project pages and dry searches reconciled |
 | Indonesia | 74/74 | Complete; 66 collected, 6 central-only after explicit search, 2 archive-blocked |
 | Viet Nam | 24/24 July 2025 records | 3 named projects followed to direct MOIT and funder sources; 21 identities explicitly not published |
-| Senegal | 43 project/programme records reviewed | 49 plan lines retained; 20 direct corroborations, 20 central-only reviews and 3 blocked ASER routes as of 13 September 2026 |
+| Senegal | 43 project/programme records reviewed | 49 plan lines retained; 21 direct corroborations, 19 central-only reviews and 3 blocked ASER routes as of the latest 13 September 2026 review |
 
 The Indonesia checkpoint includes 53 approved projects in the 30 November 2025
 portfolio snapshot (9 loan or equity projects and 44 grants), 20 finance-pipeline
@@ -207,5 +207,12 @@ it never rewrites prior states to make the latest value look timeless.
 The [13 September scout trial](jetp-senegal-scout-trial-2026-09-13.md) covers all 24 previously unresolved identities and corroborates one PUELEC component; 23 direct-source identities remain unresolved.
 
 The later [managed rounds](jetp-senegal-managed-rounds-2026-09-13.md) refine
-those leads without revising the historical trial counts: the checkpoint remains
-20 collected, 20 `central_only`, three blocked and 23 unresolved direct identities.
+those leads without revising the historical trial counts. At that dated
+managed-round checkpoint, the counts were 20 collected, 20 `central_only`,
+three blocked and 23 unresolved direct identities.
+
+The subsequent [document follow-up](jetp-senegal-document-followup-2026-09-13.md)
+promotes Annex 23 from ANER's final strategic plan, bringing the current counts
+to 21 collected, 19 `central_only`, three blocked and 22 unresolved identities.
+It also records ARCOP's separate 928-locality ASER–AEE Power EPC contract as
+context without joining it to Annex 7's 600-village/24MWc proposal.
