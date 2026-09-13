@@ -38,3 +38,9 @@ source evidence and report limits rather than manufacturing a successful result.
 ## GitHub planning issue
 
 https://github.com/MinhHaDuong/climate-finance-het/issues/1333
+
+## First visible implementation slice
+
+0734 implements the local website MVP for steps 1–4, with aggregate synthesis
+and a historical closed-operation pool. It contributes to 0726/0727 without
+closing them or replacing the matched historical study. GitHub: #1342.

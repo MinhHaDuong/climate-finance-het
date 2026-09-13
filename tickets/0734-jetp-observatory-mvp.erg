@@ -2,10 +2,12 @@
 Title: Build a visible JETP observatory MVP with historical comparison
 Created: 2026-09-13
 Author: HDMX-coding-agent
+Closed: Local MVP steps 1–4 implemented and validated; public deployment remains in 0727
 
 --- log ---
 2026-09-13T21:00Z HDMX-coding-agent created User authorises steps 1–4, aggregate synthesis and a large completed-project comparison bundle.
 
+2026-09-13T20:55Z HDMX-coding-agent closed — Local MVP steps 1–4 implemented and validated; public deployment remains in 0727
 --- body ---
 
 ## Context
@@ -27,12 +29,12 @@ retain the source's closed status, and expose missing/invalid duration dates.
 
 ## Exit criteria
 
-- [ ] Reproducible offline export with input hashes, source links and coverage gaps
-- [ ] Homepage synthesises progress and country differences with attributable totals
-- [ ] Four country summaries, searchable catalogue, project timelines and methods/downloads
-- [ ] Historical closed energy-related operations with selection rules, source links and instrument filters
-- [ ] Static local preview and browser checks covering navigation, filters, aggregates, downloads and mobile layout
-- [ ] Gates run with failures and limitations reported; no acceleration or physical-completion inference from administrative closure
+- [x] Reproducible offline export with input hashes, source links and coverage gaps
+- [x] Homepage synthesises progress and country differences with attributable totals
+- [x] Four country summaries, searchable catalogue, project timelines and methods/downloads
+- [x] Historical closed energy-related operations with selection rules, source links and instrument filters
+- [x] Static local preview and browser checks covering navigation, filters, aggregates, downloads and mobile layout
+- [x] Gates run with failures and limitations reported; no acceleration or physical-completion inference from administrative closure
 
 ## Scope and dependencies
 
@@ -45,3 +47,9 @@ operations with their sector/instrument labels. It is not a causal control group
 ## GitHub issue
 
 https://github.com/MinhHaDuong/climate-finance-het/issues/1342
+
+## Delivery evidence
+
+Source/transform commit 58e21737; frozen handoff b690b25e. See
+`docs/jetp-observatory-mvp-validation.md` for test IDs, browser checks and the
+full-suite environment rerun. Local preview: http://127.0.0.1:8765.
