@@ -89,8 +89,8 @@ def test_register_rows_become_separate_projects_and_financial_events() -> None:
     assert events[0]["currency_original"] == "GBP"
     assert events[0]["amount_usd"] == "1250000"
 
-    # A completed implementation is not evidence of a financial disbursement.
-    assert events[1]["financial_status"] == "approved"
+    # A completed implementation proves neither financial approval nor disbursement.
+    assert events[1]["financial_status"] == "announced"
     assert events[1]["event_date"] == "2026-03-30"
     assert events[1]["locator"] == "Overall - Data, Unique ID EU002"
 
@@ -108,3 +108,35 @@ def test_currency_without_amount_is_preserved_as_a_source_anomaly() -> None:
     assert events[1]["amount_original"] == ""
     assert events[1]["currency_original"] == ""
     assert "reported currency without amount=EUR" in events[1]["notes"]
+
+
+@pytest.mark.parametrize(
+    ("status", "expected"),
+    [("C. Implementation Phase", "announced"), ("D. Completed", "announced"),
+     ("Not Approved", "announced"), ("B. Approved", "approved")],
+)
+def test_unsigned_project_status_is_not_a_financial_approval(status, expected):
+    row = parse_register_html(REGISTER_HTML)[1]
+    row["Status"] = status
+    event = build_event_records(
+        [row], source_id="register", document_sha256="abc123",
+        reported_date="2026-03-30",
+    )[0]
+    assert event["financial_status"] == expected
+
+
+def test_committed_register_events_keep_physical_only_statuses_announced():
+    import csv
+    from pathlib import Path
+
+    events = list(csv.DictReader(
+        (Path(__file__).resolve().parents[1] / "data/jetp/events.csv").open()
+    ))
+    for event in events:
+        if event["source_id"] != "zaf-jet-investment-register-q1-2026":
+            continue
+        if event["financial_status"] == "signed":
+            continue
+        if any(value in event["notes"] for value in
+               ("Status=C. Implementation Phase", "Status=D. Completed")):
+            assert event["financial_status"] == "announced", event["event_id"]
