@@ -17,7 +17,7 @@ claim unresolved. Counting either document as implementation of the whole
 investment proposal would erase the very transformation the case should explain.
 
 The current ledger still contains 43 project/programme identities from 49 plan
-lines, with 19 direct corroborations and 24 unresolved direct identities.
+lines, with 20 direct corroborations and 23 unresolved direct identities.
 These counts measure documentary coverage. They are neither counts of power
 plants nor a success rate for investment. None of the new documents establishes
 a project-level disbursement.
@@ -208,3 +208,5 @@ Senegal's JETP is a process of constructing financeable assets and ownership
 arrangements within an expanding gas-and-renewables system. The surviving
 public documents show that construction process more clearly than they show
 the final flow of money or distribution of benefits.
+
+The subsequent [bounded scout trial](jetp-senegal-scout-trial-2026-09-13.md) corroborated a three-village PUELEC component through state-funder reporting. It also located Ouarkhokh EPC and groundbreaking evidence without resolving the Champions Nationaux ownership crosswalk. Neither finding adds a financial commitment to the ledger.

@@ -53,7 +53,7 @@ which case the event is marked `secondary_only` during verification.
 | South Africa | 263/263 | Complete; register, reports, project pages and dry searches reconciled |
 | Indonesia | 74/74 | Complete; 66 collected, 6 central-only after explicit search, 2 archive-blocked |
 | Viet Nam | 24/24 July 2025 records | 3 named projects followed to direct MOIT and funder sources; 21 identities explicitly not published |
-| Senegal | 43 project/programme records reviewed | 49 plan lines retained; 19 direct corroborations, 20 central-only reviews and 4 blocked ASER routes as of 13 September 2026 |
+| Senegal | 43 project/programme records reviewed | 49 plan lines retained; 20 direct corroborations, 20 central-only reviews and 3 blocked ASER routes as of 13 September 2026 |
 
 The Indonesia checkpoint includes 53 approved projects in the 30 November 2025
 portfolio snapshot (9 loan or equity projects and 44 grants), 20 finance-pipeline
@@ -192,3 +192,5 @@ After collection, a researcher reviews redirects, invalid content and dry
 searches before DVC capture. Extraction and reconciliation run only on source
 rows accepted for evidence. A later refresh appends events and observations;
 it never rewrites prior states to make the latest value look timeless.
+
+The [13 September scout trial](jetp-senegal-scout-trial-2026-09-13.md) covers all 24 previously unresolved identities and corroborates one PUELEC component; 23 direct-source identities remain unresolved.

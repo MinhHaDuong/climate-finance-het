@@ -91,3 +91,14 @@ without a signing date or explicit approval. Original amounts and physical
 status wording remain preserved. Senegal regeneration now retains reviewed
 identity links for unchanged source rows and verifies PDF hashes before parsing.
 These corrections leave the 219-document DVC checkpoint unchanged.
+
+## Smaller-model scout checkpoint
+
+The bounded trial adds nine archived documents and one failed retrieval: 270
+registered sources, 272 manifest observations and 228 unique documents. The
+new documents directory is `d701d514d7fd28f700025dead4a67c6e.dir`
+(250,861,262 bytes). All 228 remote document objects and the recovery archive
+were read back and checked by MD5 and SHA-256 against local bytes. Every
+collected manifest entry and both event schemas validate. One PUELEC component
+observation is added; financial events are unchanged. See the
+[trial report](jetp-senegal-scout-trial-2026-09-13.md).

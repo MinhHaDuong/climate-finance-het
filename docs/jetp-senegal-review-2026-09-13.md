@@ -1,10 +1,10 @@
 # Senegal JETP — documentary review, 13 September 2026
 
 All 49 plan lines have been reconciled to 43 project/programme identities.
-The public-source review now has 19 direct corroborations, 20 `central_only`
-verdicts and four `blocked` ASER routes. These are not 43 additive assets or
+The public-source review now has 20 direct corroborations, 20 `central_only`
+verdicts and three `blocked` ASER routes. These are not 43 additive assets or
 43 financed projects. The literal requirement for a direct page for every
-project remains unmet for 24 identities.
+project remains unmet for 23 identities.
 
 Financial needs, reported funding and physical implementation are separate
 observations. Project estimates below are not secured finance. Programmes and
@@ -13,7 +13,7 @@ or absence of activity. The plan's precise issue date remains unresolved.
 
 The [deeper case analysis](jetp-senegal-case-analysis-2026-09-13.md) adds
 solar site evidence, a rural feasibility-study lead and financial-design analysis.
-The 24 unresolved direct identities remain open; new possible matches do not
+The 23 unresolved direct identities remain open; new possible matches do not
 change the coverage verdicts.
 
 ## Findings from the resumed pass
@@ -849,7 +849,7 @@ No avoided-emissions estimates are promoted to measured outcomes.
 
 ### sen-project-qw-04 — PUELEC
 
-**Promoter:** ASER. **Coverage:** `blocked`.
+**Promoter:** ASER. **Coverage:** `collected`.
 
 **Technology:** Grid extension, mini-grids and solar home systems. **Location:** not specified in the verified evidence.
 
@@ -857,15 +857,17 @@ No avoided-emissions estimates are promoted to measured outcomes.
 
 **Secured finance:** no quantified commitment established in this review.
 
-**Documented implementation:** `proposed` (date unresolved ; sen-investment-plan-l4-mirror). A proposal observation does not date the actual start of works.
+**Documented implementation:** three villages reported operational on 9 November 2025. This is a component observation, not completion of PUELEC or the 39-locality package. The tour began on 6 November; individual commissioning dates are unresolved.
 
-**Verification and limitation:** Operator access still blocked; prospective programme allocations overlap the three ASER submissions and other access measures.
+**Verification and limitation:** The ministry directly reports this state-funded PUELEC component under ASER supervision. Its FCFA 1,429,995,123 value is not attributed to JETP/IPG finance. The separate 350-, 330- and 600-village proposal identities remain unresolved. See the [scout trial](jetp-senegal-scout-trial-2026-09-13.md).
 
 **Sources and locators:**
 
 - [sen-investment-plan-l4-mirror](https://www.vie-publique.sn/docs/002da0bc-10a7-458c-9111-09accbd0f255/plan-investissement-transition-energetique-juste-jet-senegal-mepm.pdf) — p. 33, QW4 ; retrieval `collected`.
 - [sen-aser-programmes](https://aser.sn/) — named entry or recorded search route ; retrieval `fetch_error`.
 - [sen-aser-www-retry](https://www.aser.sn/) — Connection refused ; retrieval `fetch_error`.
+
+- [Ministry PUELEC commissioning report](https://energie-mines.gouv.sn/programme-durgence-delectrification-puelec-medina-kenioto-magnankanti-et-matakoussi-illumines-pour-la-premiere-fois-depuis-lindependance-du-senegal/) — 9 November 2025, title and contractor/state-funding paragraph; archived.
 
 ### sen-project-qw-08 — Etude de stabilité du réseau et des besoins en stockage
 
