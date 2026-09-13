@@ -6,6 +6,8 @@ Author: HDMX-coding-agent
 --- log ---
 2026-09-13T19:18Z HDMX-coding-agent created
 
+2026-09-13T20:18Z HDMX-coding-agent decision Markdown-first storage; DVC evidence archive; static website; SQLite optional derived export.
+
 --- body ---
 
 ## Context
@@ -35,3 +37,11 @@ Reuse docs/jetp-tracking.md and 0715–0721. Define release schema, identity hie
 Apply the repository gates for the actual diff. Code work starts with the failing
 fixture above; prose/data work records the documentary acceptance check. Preserve
 source evidence and report limits rather than manufacturing a successful result.
+
+## Storage implementation contract
+
+Implement the Markdown/CSV publication boundary in `docs/jetp-storage.md`. Validate dossier join IDs and referenced claims; facts remain in the registries. Freeze release inputs before writing a descriptor that references their Git SHA. Public packages must work without the internal DVC remote.
+
+## GitHub planning issue
+
+https://github.com/MinhHaDuong/climate-finance-het/issues/1334

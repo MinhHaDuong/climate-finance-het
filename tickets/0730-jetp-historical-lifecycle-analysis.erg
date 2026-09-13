@@ -7,6 +7,8 @@ Blocked-by: 0729
 --- log ---
 2026-09-13T19:18Z HDMX-coding-agent created
 
+2026-09-13T20:18Z HDMX-coding-agent decision Markdown-first storage; DVC evidence archive; static website; SQLite optional derived export.
+
 --- body ---
 
 ## Context
@@ -36,3 +38,11 @@ Freeze the pilot-approved cohort protocol before estimating effects. Extract sou
 Apply the repository gates for the actual diff. Code work starts with the failing
 fixture above; prose/data work records the documentary acceptance check. Preserve
 source evidence and report limits rather than manufacturing a successful result.
+
+## Storage implementation contract
+
+Keep historical comparator observations separate from the JETP portfolio and version their inputs. Intermediate analysis or optional SQLite exports belong under `data/derived/jetp/`; they are regenerable and never editable authorities.
+
+## GitHub planning issue
+
+https://github.com/MinhHaDuong/climate-finance-het/issues/1338

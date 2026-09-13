@@ -24,6 +24,13 @@ record remain historical inputs, not agreed conclusions. LaTeX remains the
 chosen format for the two analytical manuscripts (0711). No journal change is
 decided here.
 
+## Storage decision (13 September 2026)
+
+Markdown dossiers and small CSV registries stay in Git; binary evidence stays in
+the existing DVC archive. The website renders static HTML with release-bound
+JSON/CSV, without a live SQLite backend. SQLite may later be a derived export.
+See [storage contract](../docs/jetp-storage.md) and `data/jetp/README.md`.
+
 ## Track one: the observatory
 
 - Country pages: pledge history, portfolio composition, financing stages,
@@ -125,3 +132,8 @@ reviewable with reproducible evidence. Scientific scope may narrow after the
 pilot, with the decision recorded; positive acceleration is never an exit criterion.
 Close the tracker only after reviewing the integrated child deliverables, not
 merely because their individual tickets are closed.
+
+## Public planning tracker
+
+[GitHub issue #1333](https://github.com/MinhHaDuong/climate-finance-het/issues/1333)
+links the eight implementation and publication issues (#1334–#1341).
