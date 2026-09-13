@@ -13,6 +13,8 @@ Blocked-by: 0716
 
 2026-09-13T09:12Z Codex note User requested completion: resume project follow-up, extract dated operator/funder milestones and deliver an explicit project-by-project evidence report
 
+2026-09-13T09:26Z Codex note Resumed evidence committed in 2438dbf4; full suite passed (2455 tests); 210 canonical remote documents verified; 24 direct-source identities remain unresolved
+
 --- body ---
 
 ## Context
@@ -84,3 +86,33 @@ operator publications and funder project databases. Recheck the previously
 collected projects for newer milestones. Archive public documents and preserve
 failed attempts. Close the documentary work with a per-project evidence report;
 do not close a literal direct-source criterion by relabelling central evidence.
+
+
+## Resumed pass result and criterion evidence
+
+- Central documents: preserved hashes and recovery evidence in `8917149c` and
+  `2438dbf4`, `docs/jetp-recovery-2026-09-13.md`.
+- Direct project pages: **MISSING for 24 identities**. The new IFC BioGNV
+  disclosure resolves one previous central-only verdict. Current counts are
+  19 collected, 20 central_only, four blocked. No criterion was relaxed.
+- Distinct finance/physical/hydrocarbon observations: `2438dbf4` adds 32 plan
+  needs/allocations and two dated funding observations, records Diass launch
+  and BioGNV advisory preparation, and preserves explicit unknowns.
+  Evidence: `test_diass_groundbreaking_is_dated_without_claiming_commissioning`
+  and `test_biognv_advisory_approval_is_not_plant_capital_finance`.
+- Annual publication absence: earlier authority coverage remains unchanged;
+  a project/operator update is not relabelled a JETP annual report.
+- Coverage: all 43 identities have documented verdicts and implementation
+  baselines; `test_every_senegal_project_has_a_terminal_followup_verdict` and
+  `test_senegal_completion_report_covers_every_project_and_its_limits` pass.
+
+Full project review: `docs/jetp-senegal-review-2026-09-13.md`. Remaining source
+requests are prioritised there. The public documentary pass and extraction are
+complete, but a direct-source-complete claim or merge approval is not justified.
+
+Validation on the resumed data: 91 JETP tests; check-fast 25 package checks plus
+1526 passed/7 skipped; lint 332 passed/10 skipped; full make check 2455 passed/
+47 skipped in 214 seconds. No failures. Fifteen new documents backed up, and
+all 210 canonical objects plus the original recovery archive verified by remote
+readback (MD5 and SHA-256); 253 manifest rows checked. No independent PR review
+yet. Keep the draft PR and literal direct-source criterion open.

@@ -25,6 +25,8 @@ or absence of activity. The plan's precise issue date remains unresolved.
   publication/report was not retrieved; the conventional dam remains distinct.
 - The allocation table on p.46 reverses QW5/QW6. Amounts are joined by title.
   The 34/38 count and 1000/2000 borehole discrepancies are also preserved.
+- Saloum has a EUR30m summary cost and a EUR20m prospective allocation in the
+  plan. These are different quantities; neither proves a signed loan.
 - The unconfirmed AFD–Senelec EUR 670 million claim remains excluded.
 
 ## Project-by-project evidence
