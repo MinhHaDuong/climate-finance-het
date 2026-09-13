@@ -158,9 +158,9 @@ def _financial_status(row: dict) -> str:
     if _date(row.get("Date of Financing Agreement Signed*")):
         return "signed"
     project_status = _text(row.get("Status"))
-    if any(
-        word in project_status for word in ("Approved", "Implementation", "Completed")
-    ):
+    # Only the register's explicit approval category supports this milestone.
+    # Implementation/completion concern delivery and do not establish finance.
+    if project_status in {"Approved", "B. Approved"}:
         return "approved"
     return "announced"
 
