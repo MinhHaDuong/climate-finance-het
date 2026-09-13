@@ -207,3 +207,17 @@ def test_senegal_completion_report_covers_every_project_and_its_limits() -> None
             assert row["project_id"] in report
     assert "central_only" in report
     assert "blocked" in report
+
+
+def test_solar_site_evidence_does_not_establish_the_investment_vehicle() -> None:
+    links = read_csv(DATA / "project-source-links.csv")
+    assert any(row["source_id"] == "sen-artelia-thiestouba-gbif"
+               and row["project_id"] == "sen-project-annex-15"
+               and row["review_status"] == "confirmed" for row in links)
+    assert any(row["source_id"] == "sen-boad-ouarkhokh-esia"
+               and row["project_id"] == "sen-project-qw-02"
+               and row["relationship"] == "possible_match"
+               and row["review_status"] == "provisional" for row in links)
+    assert not any(row["source_id"] in {"sen-artelia-thiestouba-gbif",
+                                         "sen-boad-ouarkhokh-esia"}
+                   for row in read_csv(DATA / "events.csv"))
