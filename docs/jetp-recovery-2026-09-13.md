@@ -61,3 +61,14 @@ document objects. The updated DVC directory and its 28 new objects were pushed
 back from the remote and verified by MD5 and SHA-256. All manifest byte counts
 and hashes and both event schemas were checked. The preserved recovery archive
 is unchanged.
+
+
+## Resumed Senegal pass
+
+The next pass adds 22 source routes and 25 manifest observations, including
+three retries. Fifteen new documents were collected; ten attempts failed or
+were blocked/missing/invalid. The manifest now contains 253 observations and
+the canonical pool 210 documents. DVC pushed 16 files (15 objects and the updated
+directory). All 210 document objects and the unchanged recovery archive were
+read back from the remote and verified by MD5 and SHA-256. Both event schemas
+and every collected manifest hash/byte count passed validation.

@@ -53,7 +53,7 @@ which case the event is marked `secondary_only` during verification.
 | South Africa | 263/263 | Complete; register, reports, project pages and dry searches reconciled |
 | Indonesia | 74/74 | Complete; 66 collected, 6 central-only after explicit search, 2 archive-blocked |
 | Viet Nam | 24/24 July 2025 records | 3 named projects followed to direct MOIT and funder sources; 21 identities explicitly not published |
-| Senegal | 43 project/programme records reviewed | 49 plan lines retained; 18 direct corroborations, 21 central-only reviews and 4 blocked ASER routes as of 13 September 2026 |
+| Senegal | 43 project/programme records reviewed | 49 plan lines retained; 19 direct corroborations, 20 central-only reviews and 4 blocked ASER routes as of 13 September 2026 |
 
 The Indonesia checkpoint includes 53 approved projects in the 30 November 2025
 portfolio snapshot (9 loan or equity projects and 44 grants), 20 finance-pipeline
@@ -144,6 +144,15 @@ pilots and geographically similar developments are provisional leads, not
 identity matches. Full prequalification and feasibility documents available
 only on request remain gaps; no request email was sent. See
 `docs/jetp-recovery-2026-09-13.md` for recovery and remote-byte verification.
+
+The resumed pass adds a Senelec-reported Diass construction launch and IFC
+advisory project 609428 for the BioGNV plant. The ledger now holds 34 plan
+needs/estimates and five reported funding observations for Senegal; these
+are separate observations, not an additive financing total. All 43 identities
+have a plan/implementation baseline. The allocation table on printed page 46
+reverses the QW5/QW6 labels, so amounts are joined by title. See the complete
+[Senegal review](jetp-senegal-review-2026-09-13.md) for every project's evidence
+and limitations. Twenty-four identities still lack a confirmed direct page.
 
 ## Counting rules
 
