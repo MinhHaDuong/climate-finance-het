@@ -72,3 +72,13 @@ the canonical pool 210 documents. DVC pushed 16 files (15 objects and the update
 directory). All 210 document objects and the unchanged recovery archive were
 read back from the remote and verified by MD5 and SHA-256. Both event schemas
 and every collected manifest hash/byte count passed validation.
+
+## Deeper Senegal investigation
+
+The case-analysis pass adds nine collected sources, bringing the canonical pool
+to 219 documents (227,940,519 bytes) and the manifest to 262 observations.
+DVC directory hash: `26b95713c59f9c4cd22456fe83edef89.dir`. All 219 objects
+and the original recovery archive were read back from the padme remote and
+verified by MD5 and SHA-256. The financial and physical event tables are
+unchanged: new possible identity matches do not create financing milestones.
+See `docs/jetp-senegal-case-analysis-2026-09-13.md`.

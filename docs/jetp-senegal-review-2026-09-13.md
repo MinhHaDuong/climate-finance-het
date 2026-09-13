@@ -11,6 +11,11 @@ observations. Project estimates below are not secured finance. Programmes and
 components overlap, notably PUELEC. Missing pages do not establish abandonment
 or absence of activity. The plan's precise issue date remains unresolved.
 
+The [deeper case analysis](jetp-senegal-case-analysis-2026-09-13.md) adds
+solar site evidence, a rural feasibility-study lead and financial-design analysis.
+The 24 unresolved direct identities remain open; new possible matches do not
+change the coverage verdicts.
+
 ## Findings from the resumed pass
 
 - Diass: operator-reported groundbreaking on 31 March 2026; no commissioning
@@ -119,6 +124,8 @@ No avoided-emissions estimates are promoted to measured outcomes.
 - [sen-investment-plan-annexes-mirror](https://www.vie-publique.sn/docs/f003f026-01ff-4996-8959-6d01c9139b91/annexes-plan-dinvestissement-transition-energetique-juste-jetp-senegal-mepm.pdf) — Annex 2, p. 13, row 4 ; retrieval `collected`.
 
 ### sen-project-annex-05 — Electrification de 350 Villages Par Mini-Centrales Solaires
+
+**Deeper follow-up:** MRV’s collected catalogue lists a 2025 study of 10MW mini-grids in 350 Senegal villages. A matching village list or ASER contract identifier is still needed; source sen-mrv-350-villages remains a provisional link.
 
 **Promoter:** ASER. **Coverage:** `blocked`.
 
@@ -321,9 +328,11 @@ No avoided-emissions estimates are promoted to measured outcomes.
 
 ### sen-project-annex-15 — Construction de 2 centrales solaires de 50MWc avec du stockage de 2x30MW/90MWh
 
+**Deeper follow-up:** ARTELIA GBIF metadata identifies Touba-Toul and Dealy as the two sites (DOI 10.15468/r5fqf9). This refines the plan shorthand and corroborates preparatory environmental work; it supplies no capital-finance terms.
+
 **Promoter:** SENELEC. **Coverage:** `collected`.
 
-**Technology:** Solar PV and battery storage. **Location:** Thies and Touba.
+**Technology:** Solar PV and battery storage. **Location:** Touba-Toul (Thies region) and Dealy (Louga region), refining the plan shorthand Thies/Touba.
 
 **Need/estimate:** 202 M EUR (Printed p.41, named project in summary cost table, M EUR). This estimate does not establish secured finance.
 
@@ -800,9 +809,11 @@ No avoided-emissions estimates are promoted to measured outcomes.
 
 ### sen-project-qw-02 — Projet Quick Win 2: 100 MWc + BESS 60 MW x 3h IPP "Champions nationaux"
 
+**Deeper follow-up:** Main plan p.53 explicitly names Koungheul and Linguere. BOAD’s February 2026 Ouarkhokh ESIA and the August Senelec/Huawei announcement are possible matches. Neither establishes continuity of the proposed Champions Nationaux investment vehicle. See the case analysis for the earlier-MoU chronology discrepancy.
+
 **Promoter:** Senelec. **Coverage:** `central_only`.
 
-**Technology:** Solar PV and battery storage. **Location:** not specified in the verified evidence.
+**Technology:** Solar PV and battery storage. **Location:** Koungheul and Linguere (main plan p.53).
 
 **Need/estimate:** 215.9 M EUR (Printed p. 53, Emplois / Ressources, total MEUR). This estimate does not establish secured finance.
 
@@ -810,7 +821,7 @@ No avoided-emissions estimates are promoted to measured outcomes.
 
 **Documented implementation:** `proposed` (date unresolved ; sen-investment-plan-l4-mirror). A proposal observation does not date the actual start of works.
 
-**Verification and limitation:** No exact project financing/implementation follow-up located. Differently sized EPCF solar tenders are not identity matches.
+**Verification and limitation:** Same-site Senelec/Huawei development evidence located, but continuity of the proposed Champions Nationaux ownership and financing vehicle remains unconfirmed.
 
 **Sources and locators:**
 
