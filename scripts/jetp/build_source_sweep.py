@@ -140,6 +140,10 @@ def build_sweep(root: Path, policy_path: Path) -> dict:
               'claim_review_queue': queue, 'changes': [], 'change_report': change_report(plan, [], [], claims, []),
               'source_revisions': sources}
     result['inputs'][policy_path.relative_to(root).as_posix()] = {'sha256': policy_hash}
+    for name in ('scripts/jetp/_source_watch.py', 'scripts/jetp/build_source_sweep.py',
+                 'scripts/jetp/corpus_harvest_documents.py', 'scripts/jetp/_source_crosswalk.py',
+                 'scripts/jetp/_contracts.py', 'data/jetp/documents.dvc'):
+        result['inputs'][name] = {'sha256': hashlib.sha256((root / name).read_bytes()).hexdigest()}
     validate_candidate(result)
     return result
 

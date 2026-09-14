@@ -286,6 +286,32 @@ def assess_origin(evidence: dict, *, intelligence_role: str = 'unknown', rationa
             'review_state': 'pending_review', 'independence': 'unknown'}
 
 
+def record_origin(assessments: list[dict], assessment: dict, *, recorded_at: str,
+                  supersedes: str | None = None) -> list[dict]:
+    """Retain claim-origin proposal revisions; no proposal becomes an admission."""
+    _time(recorded_at)
+    _require(assessment.get('review_state') == 'pending_review', 'origin proposals do not admit evidence')
+    previous = next((row for row in assessments if row['origin_revision_id'] == supersedes), None)
+    _require(supersedes is None or previous is not None and previous['evidence_id'] == assessment['evidence_id']
+             and _time(previous['recorded_at']) < _time(recorded_at), 'invalid origin supersession')
+    row = {**deepcopy(assessment), 'recorded_at': recorded_at, 'supersedes': supersedes}
+    row['origin_revision_id'] = _identity('origin-revision', row)
+    return _append(assessments, row, 'origin_revision_id')
+
+
+def origins_at(assessments: list[dict], cutoff: str) -> list[dict]:
+    """Project immutable origin proposals at a knowledge cutoff, separately from acceptance."""
+    selected = {}
+    for row in sorted(assessments, key=lambda item: (_time(item['recorded_at']), item['origin_revision_id'])):
+        if _time(row['recorded_at']) > _time(cutoff):
+            continue
+        previous = selected.get(row['evidence_id'])
+        _require(previous is None or row == previous or row['supersedes'] == previous['origin_revision_id'],
+                 'ambiguous origin revision chain')
+        selected[row['evidence_id']] = deepcopy(row)
+    return list(selected.values())
+
+
 def change_report(plan: dict, checks: list[dict], discoveries: list[dict], claims: list[dict],
                   changes: list[dict]) -> dict:
     """Queue late reports, corrections and editorial impacts without updating claims."""

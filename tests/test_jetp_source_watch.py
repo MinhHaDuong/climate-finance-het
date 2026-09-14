@@ -361,3 +361,41 @@ def test_unacquired_origin_stays_citation_and_invalid_dependency_is_rejected():
     assert result['review_state'] == 'pending_review'
     with pytest.raises(ContractError, match='acquired evidence'):
         assess_origin({'evidence_id': 'claim'}, upstream_status='linked')
+
+
+def test_origin_revision_cutoff_keeps_previous_unknown_assessment():
+    from jetp._source_watch import assess_origin, origins_at, record_origin
+
+    unknown = assess_origin({'evidence_id': 'evidence'})
+    rows = record_origin([], unknown, recorded_at='2026-09-01T00:00:00Z')
+    old = deepcopy(rows)
+    new = assess_origin({'evidence_id': 'evidence'}, intelligence_role='secondary',
+                        rationale='explicit lender citation', upstream_status='cited_not_acquired',
+                        citation='Lender series, not acquired')
+    rows = record_origin(rows, new, recorded_at='2026-09-15T00:00:00Z',
+                         supersedes=rows[0]['origin_revision_id'])
+    assert origins_at(rows, '2026-09-14T00:00:00Z') == old
+    assert origins_at(rows, '2026-09-16T00:00:00Z')[0]['intelligence_role'] == 'secondary'
+
+
+@pytest.mark.slow
+def test_actual_registry_handoff_keeps_all_claims_and_offline_scope():
+    from pathlib import Path
+
+    from jetp.build_source_sweep import build_sweep
+
+    root = Path(__file__).resolve().parents[1]
+    result = build_sweep(root, root / 'config/jetp-source-watches.yaml')
+    assert len(result['plan']['targets']) == 4
+    assert all(row['status'] == 'deferred' and row['last_successful_check_at'] is None
+               for row in result['summary']['targets'])
+    assert result['checks'] == []
+    assert result['archive_verifications']
+    assert all(not row['publisher_coverage_advanced'] for row in result['archive_verifications'])
+    assert {row['source_id'] for row in result['archive_verifications'] if row['byte_status'] == 'available'} == {
+        'vnm-rmp-2023', 'zaf-jet-quarterly-2026-q1', 'idn-jetp-progress-report-2025'}
+    assert all(row['byte_reason'] == 'failed_acquisition' and row['document_sha256'] is None
+               for row in result['archive_verifications'] if row['source_id'] == 'sen-investment-plan-l4')
+    assert len(result['claim_review_queue']) == result['inputs']['data/jetp/source-claims.csv']['row_count']
+    assert {row['date_relation'] for row in result['claim_review_queue']} >= {'after_principal', 'before_principal'}
+    assert all(row['origin_assessment']['intelligence_role'] == 'unknown' for row in result['claim_review_queue'])
