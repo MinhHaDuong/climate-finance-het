@@ -1,0 +1,44 @@
+%erg 0.1
+Title: Make full-gate worktree environment prerequisites explicit
+Created: 2026-09-14
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-14T20:30Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Ticket 0737's full check completed with 2593 passing, 94 skipped and 17 failing
+checks in a fresh manually isolated worktree. Failure identities are recorded
+in docs/jetp-pilots/2026-09-15/afd/full-gate-failures.txt. The pilot did not touch
+the failing implementations. Eight failures reflect absent catalog artifacts;
+one denies a local socket, three deny Git worktree administration, and the
+remaining subprocess checks encounter read-only uv cache/environment setup.
+These are environment constraints, not evidence of pilot regressions.
+The untracked reranker cache has an existing specific ticket, [[0592]].
+
+## First test
+
+In a temporary checkout with a deliberately missing required corpus artifact
+and a configured unwritable task cache, the full-gate preflight must report the
+actual prerequisite and safe provisioning route before starting the long suite.
+It must not suggest rebuilding/harvesting the corpus merely because an isolated
+checkout has not materialized existing data. A complete environment must still
+run the existing acceptance checks; do not weaken correctness assertions.
+
+## Relevant files
+
+Makefile check/check-package/venv-canonicalize; tests/test_corpus_acceptance.py;
+tests/test_post_checkout_hook.py; tests/test_openalex_corpus_installability.py;
+docs/jetp-pilots/2026-09-15/afd/full-gate-failures.txt; README.md.
+
+## Exit criteria
+
+- Document and detect corpus materialization, writable task cache, local-socket
+  and Git administration requirements for the full gate.
+- Reproduce the listed failures on unchanged main or record which environment
+  correction resolves each; do not call an unrun check passing.
+- The first preflight test fails before implementation and passes afterward.
+- Preserve full-suite coverage and respect source/cache ownership; coordinate
+  the reranker-specific guarantee with 0592 rather than duplicating its fix.

@@ -51,13 +51,21 @@ archive resolved both without changing those tests. Final fast gate: 1,721 passe
 12 skipped. Adherence first caught a script prefix and then a test-import ordering
 violation; both received mechanical fixes. Final gate outcomes are recorded below.
 
-DVC replication is outstanding: automatic approval review rejected upload to the
-configured SSH remote because ownership/trust and explicit payload authorization
-were not established. No upload or workaround occurred. Repository README and
-JETP tracking instructions additionally reserve pushes for padme after review.
-All generated CSVs and response bodies remain local and hash-addressed. The PR
-is reproducible from the existing local source bundles, but remote replication
-has not been verified. This limitation is separate from the scientific DEFER.
+DVC replication is verified. The initial SSH attempt was rejected by automatic
+approval review. Inspection then established that this host is padme and the
+primary checkout's documented configuration uses the existing local archive at
+`/data/projets/dvc/oeconomia-climate-finance`, owned by the project user. Restoring
+that nonsecret local configuration in this worktree and requesting review of the
+local write was approved. DVC copied 15 distinct missing objects; a separate
+readback verified 30 object references (including duplicates) by MD5 across the
+three table pointers and new-originals bundle. No network upload occurred.
+
+The full pre-PR suite completed: **2,593 passed, 94 skipped, 17 failed** in
+263.52 seconds. Failures concern missing corpus artifacts, denied local sockets,
+read-only Git worktree administration, and read-only uv cache/subprocess setup;
+none is in the pilot test file. The full gate is not green. Its compact failure
+record is `full-gate-failures.txt`; later fast/adherence gates run on the updated
+main base. The independent scientific verdict does not erase these failures.
 
 Naive-mapping mutation check deliberately substituted cancellation/nonpayment
 for disappearance, parent acceptance/value-date imputation for exact-ID joins,
@@ -67,3 +75,11 @@ pass. The per-test outcome is in `naive-mapping-check.json`.
 
 Pre-PR adherence: **333 passed, 12 skipped**, import and matching-module checks
 passed; structured verdict in `adherence.json`. No unresolved adherence blocker.
+
+Environment follow-up: `tickets/0810-full-gate-environment-preflight.erg`; the
+reranker-cache-specific issue already exists as 0592.
+
+After rebase onto `0f97bbf6`, refreshed gates passed: **1,802 fast tests, 12
+skipped; 333 adherence tests, 12 skipped**. Original freeze author date and
+selection bytes were retained; `input-manifest.json` records both the original
+freeze identity and its rebased commit locator.

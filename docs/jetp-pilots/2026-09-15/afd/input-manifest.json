@@ -33,5 +33,8 @@
     "docs/jetp-audits/0735/round3/afd/acquisition-log.csv": "4f96fdc7b44ede4c61ecf50885f8f88912c59588ab84746d8a7cbeb9a32e9b9f"
   },
   "selection_freeze_sha": "9904cd5b",
-  "table_storage": "DVC-tracked CSVs due repository 500KB git limit; offline regeneration identical"
+  "table_storage": "DVC-tracked CSVs due repository 500KB git limit; offline regeneration identical",
+  "gate_base": "0f97bbf6cf1820ed410af82d9764e6c4350b6644",
+  "rebased_freeze_commit": "4371aba2f1c3035e27f6b80b8833b334c3b323dd",
+  "freeze_note": "Original pre-retrieval SHA retained; rebased commit carries identical selection bytes and author date."
 }
