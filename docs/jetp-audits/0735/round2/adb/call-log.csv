@@ -1,0 +1,31 @@
+unit,route,target,outcome,retrieval_date
+1,search,site.adb.org projects data sheet Philippines water approval signing effective date,official PHL PDS leads,2026-09-14
+2,search,site.data.adb.org projects sovereign nonsovereign projects data,official catalogue lead,2026-09-14
+3,open,https://data.adb.org/dataset/adb-sovereign-projects,success official metadata,2026-09-14
+4,open,https://www.adb.org/projects/41665-013/main,internal fetch error,2026-09-14
+5,search,"site.adb.org/projects Bangladesh transport Signing Date Effectivity Date",BGD PDS leads,2026-09-14
+6,search,"site.adb.org/projects Indonesia Viet Nam energy Signing Date Effectivity Date",VNM PDS lead,2026-09-14
+7,open,https://data.adb.org/dataset/adb-sovereign-projects line40,success official metadata and link IDs,2026-09-14
+8,open,https://www.adb.org/projects/42169-013/main,403,2026-09-14
+9,open,https://www.adb.org/projects/39595-023/main,403,2026-09-14
+10,click,sovereign catalogue CSV link3,internal error no bytes,2026-09-14
+11,search,site.adb.org/sites/default/files/project-documents 42169-013 Date of Signing,no usable new original,2026-09-14
+12,search,site.adb.org/sites/default/files/project-documents Philippines Water First Disbursement Completion,unrelated PRC evaluation lead,2026-09-14
+13,search,site.adb.org/projects Indonesia Cancelled,42362-013 PCR partial cancellation lead,2026-09-14
+14,open,https://www.adb.org/sites/default/files/project-documents/42362/42362-013-pcr-en.pdf,official PDF text success,2026-09-14
+15,open,https://www.adb.org/sites/default/files/project-documents/40031/40031-013-pcr-en.pdf,official PDF text success,2026-09-14
+16,python3 urllib,https://data.adb.org/dataset/adb-sovereign-projects,DNS resolution failed without escalation no source absence claim,2026-09-14
+17,open,https://www.adb.org/sites/default/files/project-documents/40031/40031-013-pcr-en.pdf line85,official PDF text success,2026-09-14
+18,search,site.adb.org 41665-013 pcr,no usable original completion report,2026-09-14
+19,search,site.adb.org Bangladesh transport Initial Disbursement Completion Report,34415-013 PCR lead,2026-09-14
+20,open,https://www.adb.org/sites/default/files/project-documents//34415-013-pcr.pdf,internal error,2026-09-14
+21,open,https://www.adb.org/sites/default/files/project-documents/40031/40031-013-pcr-en.pdf line175,official PDF text actual Tranche3 dates,2026-09-14
+22,click,sovereign catalogue XLSX link4,internal error no bytes,2026-09-14
+23,click,sovereign catalogue metadata JSON link54,internal error no bytes,2026-09-14
+24,open,https://www.adb.org/sites/default/files/project-documents/34415-013-pcr.pdf,403 normalized single slash alternate,2026-09-14
+25,open,https://www.adb.org/projects/41665-013/main#project-pds,403 anchored alternate,2026-09-14
+26,screenshot,42362-013 PCR PDF page index6,cache miss no image,2026-09-14
+27,screenshot,40031-013 PCR PDF page index8,cache miss no image,2026-09-14
+28,search,site.adb.org/projects Cancelled Project Status,no matching official project status returned,2026-09-14
+29,search,site.adb.org sovereign projects csv 2026,catalogue repeat no new download route,2026-09-14
+30,open,https://data.adb.org/taxonomy/term/236,official operational archive index success,2026-09-14

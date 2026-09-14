@@ -1,0 +1,277 @@
+[
+  {
+    "n": 1,
+    "type": "search",
+    "target": "site.eib.org projects pipelines approval signed Morocco water",
+    "retrieved_on": "2026-09-14",
+    "outcome": "Discovery: EIB catalogues and BMCE operation",
+    "byte_sha256": "",
+    "archival_status": "No original bytes collected"
+  },
+  {
+    "n": 2,
+    "type": "search",
+    "target": "site.afd.fr open data IATI projets date signature octroi",
+    "retrieved_on": "2026-09-14",
+    "outcome": "Discovery: AFD schema and transparency page",
+    "byte_sha256": "",
+    "archival_status": "No original bytes collected"
+  },
+  {
+    "n": 3,
+    "type": "open",
+    "target": "https://opendata.afd.fr/api/explore/v2.1/catalog/datasets/donnees-aide-au-developpement-afd/records?limit=2",
+    "retrieved_on": "2026-09-14",
+    "outcome": "Failed: web safe-open error",
+    "byte_sha256": "",
+    "archival_status": "No original bytes collected"
+  },
+  {
+    "n": 4,
+    "type": "open",
+    "target": "https://www.eib.org/en/projects/pipelines/explanatory-note",
+    "retrieved_on": "2026-09-14",
+    "outcome": "Failed: web safe-open error; corrected using official link in unit7",
+    "byte_sha256": "",
+    "archival_status": "No original bytes collected"
+  },
+  {
+    "n": 5,
+    "type": "open",
+    "target": "https://www.eib.org/en/projects/all/20160852",
+    "retrieved_on": "2026-09-14",
+    "outcome": "Official page: signature and operation ID",
+    "byte_sha256": "",
+    "archival_status": "No original bytes collected"
+  },
+  {
+    "n": 6,
+    "type": "open",
+    "target": "https://www.afd.fr/en/transparency-and-dialogue",
+    "retrieved_on": "2026-09-14",
+    "outcome": "Official page: disclosure boundary; IATI route linked",
+    "byte_sha256": "",
+    "archival_status": "No original bytes collected"
+  },
+  {
+    "n": 7,
+    "type": "open",
+    "target": "https://www.eib.org/en/projects/pipelines/notice/index",
+    "retrieved_on": "2026-09-14",
+    "outcome": "Official entry/exclusion/update/removal rules",
+    "byte_sha256": "",
+    "archival_status": "No original bytes collected"
+  },
+  {
+    "n": 8,
+    "type": "open",
+    "target": "https://www.eib.org/en/publications-research/eib-open-data",
+    "retrieved_on": "2026-09-14",
+    "outcome": "Official open-data landing page; text incomplete in initial display",
+    "byte_sha256": "",
+    "archival_status": "No original bytes collected"
+  },
+  {
+    "n": 9,
+    "type": "shell-get",
+    "target": "https://opendata.afd.fr/api/explore/v2.1/catalog/datasets/donnees-aide-au-developpement-afd/records?limit=2",
+    "retrieved_on": "2026-09-14",
+    "outcome": "Failed: shell DNS error; no bytes collected",
+    "byte_sha256": "",
+    "archival_status": "No original bytes collected"
+  },
+  {
+    "n": 10,
+    "type": "open",
+    "target": "https://www.eib.org/files/pipeline/20160852-pcr-en.pdf",
+    "retrieved_on": "2026-09-14",
+    "outcome": "Official PDF: February2023 closure and unpaid cancellation",
+    "byte_sha256": "",
+    "archival_status": "No original bytes collected"
+  },
+  {
+    "n": 11,
+    "type": "search",
+    "target": "site.eib.org/en/projects/all Tunisia \"Approved\" \"Signed\" energy",
+    "retrieved_on": "2026-09-14",
+    "outcome": "Discovery: STEG explicit milestone pair",
+    "byte_sha256": "",
+    "archival_status": "No original bytes collected"
+  },
+  {
+    "n": 12,
+    "type": "search",
+    "target": "site.eib.org/en/projects/all Egypt Senegal transport \"Signature\"",
+    "retrieved_on": "2026-09-14",
+    "outcome": "Discovery: 1995 Senegal signature and 1992 Egypt energy signature",
+    "byte_sha256": "",
+    "archival_status": "No original bytes collected"
+  },
+  {
+    "n": 13,
+    "type": "search",
+    "target": "site.opendata.afd.fr \"Maroc\" \"Date\"",
+    "retrieved_on": "2026-09-14",
+    "outcome": "Poor malformed site query; no usable AFD records",
+    "byte_sha256": "",
+    "archival_status": "No original bytes collected"
+  },
+  {
+    "n": 14,
+    "type": "search",
+    "target": "site:opendata.afd.fr \"Tunisie\" \"Date\"",
+    "retrieved_on": "2026-09-14",
+    "outcome": "No usable AFD record result",
+    "byte_sha256": "",
+    "archival_status": "No original bytes collected"
+  },
+  {
+    "n": 15,
+    "type": "search",
+    "target": "site:eib.org/en/projects/all \"Egypt\" \"Transport\" \"Milestone\"",
+    "retrieved_on": "2026-09-14",
+    "outcome": "Discovery: Egypt approved transport operation",
+    "byte_sha256": "",
+    "archival_status": "No original bytes collected"
+  },
+  {
+    "n": 16,
+    "type": "search",
+    "target": "site:eib.org/en/projects/all \"Senegal\" \"Water\" \"Milestone\"",
+    "retrieved_on": "2026-09-14",
+    "outcome": "No useful Senegal water operation returned",
+    "byte_sha256": "",
+    "archival_status": "No original bytes collected"
+  },
+  {
+    "n": 17,
+    "type": "open",
+    "target": "https://www.eib.org/en/projects/all/20170028",
+    "retrieved_on": "2026-09-14",
+    "outcome": "Official STEG page opened; detail read in24",
+    "byte_sha256": "",
+    "archival_status": "No original bytes collected"
+  },
+  {
+    "n": 18,
+    "type": "open",
+    "target": "https://www.eib.org/en/projects/all/20180765",
+    "retrieved_on": "2026-09-14",
+    "outcome": "Official Egypt page opened; approval-only case",
+    "byte_sha256": "",
+    "archival_status": "No original bytes collected"
+  },
+  {
+    "n": 19,
+    "type": "open",
+    "target": "https://opendata.afd.fr/explore/dataset/donnees-aide-au-developpement-afd/",
+    "retrieved_on": "2026-09-14",
+    "outcome": "Redirect to assets route; no usable row data demonstrated",
+    "byte_sha256": "",
+    "archival_status": "No original bytes collected"
+  },
+  {
+    "n": 20,
+    "type": "search",
+    "target": "site:afd.fr projet Maroc Tunisie eau transport énergie date octroi signature",
+    "retrieved_on": "2026-09-14",
+    "outcome": "Discovery: AFD energy pair; transport and water/Maroc/VietNam bond leads",
+    "byte_sha256": "",
+    "archival_status": "No original bytes collected"
+  },
+  {
+    "n": 21,
+    "type": "open",
+    "target": "https://www.afd.fr/fr/actualites/communique-de-presse/compteurs-electriques-intelligents-tunisie",
+    "retrieved_on": "2026-09-14",
+    "outcome": "Official AFD release opened; detail read26",
+    "byte_sha256": "",
+    "archival_status": "No original bytes collected"
+  },
+  {
+    "n": 22,
+    "type": "open",
+    "target": "https://www.afd.fr/fr/projets/un-reseau-ferroviaire-rapide-pour-accompagner-la-croissance-de-tunis",
+    "retrieved_on": "2026-09-14",
+    "outcome": "Official AFD transport project opened; detail read27",
+    "byte_sha256": "",
+    "archival_status": "No original bytes collected"
+  },
+  {
+    "n": 23,
+    "type": "open",
+    "target": "https://www.afd.fr/sites/default/files/2025-04/reporting-climate-bond-afd-2018.pdf",
+    "retrieved_on": "2026-09-14",
+    "outcome": "Official AFD bond PDF opened; relevant extract read28; date-table leads not independently resolved",
+    "byte_sha256": "",
+    "archival_status": "No original bytes collected"
+  },
+  {
+    "n": 24,
+    "type": "open",
+    "target": "https://www.eib.org/en/projects/all/20170028 (milestone lines)",
+    "retrieved_on": "2026-09-14",
+    "outcome": "Official STEG milestone block and signature amounts",
+    "byte_sha256": "",
+    "archival_status": "No original bytes collected"
+  },
+  {
+    "n": 25,
+    "type": "open",
+    "target": "https://www.eib.org/en/publications-research/eib-open-data (content lines)",
+    "retrieved_on": "2026-09-14",
+    "outcome": "Official EIB open-data catalogue links; no machine export downloaded",
+    "byte_sha256": "",
+    "archival_status": "No original bytes collected"
+  },
+  {
+    "n": 26,
+    "type": "open",
+    "target": "https://www.afd.fr/fr/actualites/communique-de-presse/compteurs-electriques-intelligents-tunisie",
+    "line": 20,
+    "retrieved_on": "2026-09-14",
+    "outcome": "Official AFD Smart Grid loan octroi2018 and signatureJanuary2019",
+    "byte_sha256": "",
+    "archival_status": "No original bytes collected"
+  },
+  {
+    "n": 27,
+    "type": "open",
+    "target": "https://www.afd.fr/fr/projets/un-reseau-ferroviaire-rapide-pour-accompagner-la-croissance-de-tunis",
+    "line": 20,
+    "retrieved_on": "2026-09-14",
+    "outcome": "Official AFD transport date de debut only; not approval/signature",
+    "byte_sha256": "",
+    "archival_status": "No original bytes collected"
+  },
+  {
+    "n": 28,
+    "type": "open",
+    "target": "https://www.afd.fr/sites/default/files/2025-04/reporting-climate-bond-afd-2018.pdf",
+    "line": 580,
+    "retrieved_on": "2026-09-14",
+    "outcome": "Official AFD bond PDF p11: VietNam adaptation and Egypt sanitation references; date-table not inspected",
+    "byte_sha256": "",
+    "archival_status": "No original bytes collected"
+  },
+  {
+    "n": 29,
+    "type": "open",
+    "target": "https://www.eib.org/en/projects/loans/index.htm",
+    "line": 285,
+    "retrieved_on": "2026-09-14",
+    "outcome": "Official all-signed-contract list scope; dynamic results not extracted",
+    "byte_sha256": "",
+    "archival_status": "No original bytes collected"
+  },
+  {
+    "n": 30,
+    "type": "open",
+    "target": "https://www.eib.org/en/projects/all/19942037",
+    "line": 285,
+    "retrieved_on": "2026-09-14",
+    "outcome": "Official Senegal signature20April1995; no paired approval",
+    "byte_sha256": "",
+    "archival_status": "No original bytes collected"
+  }
+]

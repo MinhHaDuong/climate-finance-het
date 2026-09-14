@@ -1,0 +1,66 @@
+[
+  {
+    "source_id": "adb-idn",
+    "url": "https://www.adb.org/sites/default/files/project-documents/42362/42362-013-pcr-en.pdf",
+    "retrieved_on": "2026-09-14",
+    "sha256": "4f7350335f52db61a924194152b18f5af2b085fd672f012b168f9ae9df1b3a56",
+    "bytes": 3041761,
+    "path": "data/jetp/audit-evidence/0735-round2/4f7350335f52db61a924194152b18f5af2b085fd672f012b168f9ae9df1b3a56.pdf"
+  },
+  {
+    "source_id": "adb-ind",
+    "url": "https://www.adb.org/sites/default/files/project-documents/40031/40031-013-pcr-en.pdf",
+    "retrieved_on": "2026-09-14",
+    "sha256": "f16d33461c00e6dc642050b31adf12c3caa3dfe3f7db005cc66d9599ea796bbc",
+    "bytes": 835339,
+    "path": "data/jetp/audit-evidence/0735-round2/f16d33461c00e6dc642050b31adf12c3caa3dfe3f7db005cc66d9599ea796bbc.pdf"
+  },
+  {
+    "source_id": "eib-tun",
+    "url": "https://www.eib.org/en/projects/all/20170028",
+    "retrieved_on": "2026-09-14",
+    "sha256": "ab24fe3130bdb8ffed5f1e562ddf87b9e955a00a19d67fb62f113385ee37a03f",
+    "bytes": 121107,
+    "path": "data/jetp/audit-evidence/0735-round2/ab24fe3130bdb8ffed5f1e562ddf87b9e955a00a19d67fb62f113385ee37a03f.html"
+  },
+  {
+    "source_id": "afd-record-probe",
+    "url": "https://opendata.afd.fr/api/explore/v2.1/catalog/datasets/donnees-aide-au-developpement-afd/records?limit=2",
+    "retrieved_on": "2026-09-14",
+    "sha256": "152c2afcbc1e5addc21725259fa2206bfe0f11efda7bdc708c4ba76d90da0f05",
+    "bytes": 5337,
+    "path": "data/jetp/audit-evidence/0735-round2/152c2afcbc1e5addc21725259fa2206bfe0f11efda7bdc708c4ba76d90da0f05.json"
+  },
+  {
+    "source_id": "afd-metadata",
+    "url": "https://opendata.afd.fr/api/explore/v2.1/catalog/datasets/donnees-aide-au-developpement-afd",
+    "retrieved_on": "2026-09-14",
+    "sha256": "a3ead19545f7f1cffcef69184a855437c6f7856bab63df9a711b6f970b298170",
+    "bytes": 9165,
+    "path": "data/jetp/audit-evidence/0735-round2/a3ead19545f7f1cffcef69184a855437c6f7856bab63df9a711b6f970b298170.json"
+  },
+  {
+    "source_id": "afd-full-export",
+    "url": "https://opendata.afd.fr/api/explore/v2.1/catalog/datasets/donnees-aide-au-developpement-afd/exports/json",
+    "retrieved_on": "2026-09-14",
+    "sha256": "f7d4454ff2f20926fe8407a5aaf101d2fe37537dfb17ffe55692bcc400851e87",
+    "bytes": 5022036,
+    "path": "data/jetp/audit-evidence/0735-round2/f7d4454ff2f20926fe8407a5aaf101d2fe37537dfb17ffe55692bcc400851e87.json"
+  },
+  {
+    "source_id": "afdb-kenya-audit",
+    "url": "https://libraryir.parliament.go.ke/bitstreams/62ed5b67-0bd2-443a-95d5-d2d1adc8517b/download",
+    "retrieved_on": "2026-09-14",
+    "sha256": "80feb01e026fb20f0d8e2949dad2ef9bf0225cda7e4f10b0511172dfe7a471d6",
+    "bytes": 35388797,
+    "path": "data/jetp/audit-evidence/0735-round2/80feb01e026fb20f0d8e2949dad2ef9bf0225cda7e4f10b0511172dfe7a471d6.pdf"
+  },
+  {
+    "source_id": "eib-population-notice",
+    "url": "https://www.eib.org/en/projects/pipelines/notice/index",
+    "retrieved_on": "2026-09-14",
+    "sha256": "c2a066f9b37df9242df1ce84b723c28194babb82c544b067e46e7dba302ca4a2",
+    "bytes": 91744,
+    "path": "data/jetp/audit-evidence/0735-round2/c2a066f9b37df9242df1ce84b723c28194babb82c544b067e46e7dba302ca4a2.html"
+  }
+]

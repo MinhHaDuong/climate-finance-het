@@ -1,4 +1,6 @@
-# Historical pipeline evidence checkpoint — ticket 0735
+# Historical pipeline evidence checkpoint — ticket 0735 (round 1)
+
+For the broader current findings, see [round 2](round2/report.md).
 
 2026-09-14. Phase Verify; independent scientific review accepted. **NARROW documentary work; DEFER causal use.** Round 1 stopped at 20/20 acquisition units (about five minutes of retrieval, under 90 minutes). No case expansion, effect estimate or primary design selection. See [frozen brief](scout-brief.md), [acquisition log](acquisition-log.csv), [landmarks](landmark-coverage.csv) and [operations](operation-coverage.csv).
 

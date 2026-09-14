@@ -1,0 +1,6 @@
+outs:
+- md5: 6cd6406b227e6860cae66906cce21d9c.dir
+  size: 44515286
+  nfiles: 8
+  hash: md5
+  path: 0735-round2

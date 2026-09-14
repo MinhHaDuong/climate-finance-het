@@ -24,7 +24,7 @@ Include an unfinished or cancelled operation and trace its membership to a dated
 source. A current closed-only API list masquerading as that historical population
 must fail. Record missing frames and dates rather than filling them from reports.
 
-## Bounded actions
+## First-round bounded actions (historical scope)
 
 1. Write a scout brief using docs/jetp-scout-brief.md: one lender/instrument stratum,
    one JETP country and two provisional comparator countries; energy and an
@@ -99,3 +99,24 @@ non-energy/non-JETP examples; actual milestone pairs where available; explicit
 historical-population and dropped/cancelled coverage; costed next acquisition
 priorities. Sparse findings remain valid, but narrow WB results are not taken
 as evidence about the wider source landscape. No design is selected.
+
+## Second-pass handoff
+
+Current report: `docs/jetp-audits/0735/round2/report.md`. Three institutional scouts
+used30units each; parentverification used12units. ADB andEIB originals demonstrate
+paired lifecycle dates. The officialAFD bulk export contains2080financing IDs,
+1492project IDs and1911award/signature pairs across sectors and borrower countries.
+Loan/grant strata, multi-country rows, dated2024metadata, missing values and
+reversed chronology remain explicit. AfDB individual leads remain unverified.
+
+The prioritized next acquisition is AFD historical inclusion/retention rules and
+an older snapshot, then original exceptions behind the seven reversed award/
+signature pairs. Approved-but-unsigned coverage is needed for that stage; the
+signed-to-first-payment route needs unpaid-contract retention checks. ADB/EIB
+provide complementary milestone and population probes. Continue country/sector
+exposure work under0736; no causal design is selected by this broader audit.
+
+Eight original payloads are DVC-tracked in a separate provisional audit bundle.
+Remote replication failed (padme connection refused); all nine cache objects are
+preserved in the primary local cache. The canonical source archive was not
+rewritten from its partial checkout. No website or ledger data changed.
