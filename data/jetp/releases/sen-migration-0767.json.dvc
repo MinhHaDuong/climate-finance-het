@@ -1,0 +1,5 @@
+outs:
+- md5: 060c15dcdfb6971c47564f78577e0e08
+  size: 3405806
+  hash: md5
+  path: sen-migration-0767.json
