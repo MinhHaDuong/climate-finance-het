@@ -320,3 +320,58 @@ def test_external_source_recovery_bytes_cannot_be_archive_output(tmp_path, monke
             bundles.build_candidate(root, output, accepted=accepted, source_root=tmp_path,
                                     builder=lambda *args: None)
     assert source.read_bytes() == b'verified source bytes'
+
+
+@pytest.mark.parametrize('writer', ['candidate', 'comparison'])
+@pytest.mark.parametrize('filename', ['candidate.zip.dvc', 'README.md', '.gitignore',
+                                      'release.json', 'other.zip'])
+@pytest.mark.parametrize('alias', ['direct', 'symlink', 'hardlink'])
+@pytest.mark.parametrize('directory', ['data/jetp/releases', 'scratch'])
+def test_writers_preserve_unrelated_outputs(tmp_path, monkeypatch, writer, filename, alias, directory):
+    from jetp import _observatory_bundle as bundles
+
+    accepted = tmp_path / 'accepted.zip'
+    tiny_bundle(accepted)
+    target = tmp_path / directory / filename
+    target.parent.mkdir(parents=True)
+    target.write_bytes(b'{"release_id":"accepted"}\n')
+    output = target
+    if alias != 'direct':
+        output = tmp_path / 'output-alias'
+        if alias == 'symlink':
+            output.symlink_to(target)
+        else:
+            output.hardlink_to(target)
+    (tmp_path / bundles.SITE).mkdir(parents=True)
+    manifest, payloads = bundles._read_bundle(accepted)
+    monkeypatch.setattr(bundles, '_capture', lambda *args: ({**manifest, 'sources': []}, payloads))
+    before = site_hashes(tmp_path)
+    with pytest.raises(ValueError, match='protected|recognized|alias'):
+        if writer == 'candidate':
+            bundles.build_candidate(tmp_path, output, accepted=accepted, builder=lambda *args: None)
+        else:
+            bundles.write_comparison(tmp_path, accepted, accepted, output)
+    assert site_hashes(tmp_path) == before
+
+
+@pytest.mark.parametrize('writer', ['candidate', 'comparison'])
+def test_recognized_outputs_allow_deterministic_reruns(tmp_path, monkeypatch, writer):
+    from jetp import _observatory_bundle as bundles
+
+    accepted = tmp_path / 'accepted.zip'
+    tiny_bundle(accepted)
+    (tmp_path / bundles.SITE).mkdir(parents=True)
+    manifest, payloads = bundles._read_bundle(accepted)
+    monkeypatch.setattr(bundles, '_capture', lambda *args: ({**manifest, 'sources': []}, payloads))
+    output = tmp_path / 'data/jetp/releases' / ('candidate.zip' if writer == 'candidate' else 'report.json')
+
+    def write():
+        if writer == 'candidate':
+            bundles.build_candidate(tmp_path, output, accepted=accepted, builder=lambda *args: None)
+        else:
+            bundles.write_comparison(tmp_path, accepted, accepted, output)
+
+    write()
+    before = output.read_bytes()
+    write()
+    assert output.read_bytes() == before
