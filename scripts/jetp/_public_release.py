@@ -83,10 +83,11 @@ def _site_payloads(root, input_git_sha):
     return payloads
 
 
-def _descriptor(edition, input_git_sha, cutoff, reviewer, payloads):
+def _descriptor(edition, input_git_sha, cutoff, prepared_on, reviewer, payloads):
     if not isinstance(edition, str) or not EDITION.fullmatch(edition):
         raise ValueError('edition must be YYYY-MM or YYYY-MM-rN')
     _required_date(cutoff, 'cutoff')
+    _required_date(prepared_on, 'prepared_on')
     if not isinstance(reviewer, str) or not reviewer:
         raise ValueError('reviewer is required')
     coverage = _coverage(payloads)
@@ -99,7 +100,14 @@ def _descriptor(edition, input_git_sha, cutoff, reviewer, payloads):
         'edition': edition,
         'release_state': 'prepared',
         'input_git_sha': input_git_sha,
-        'cutoff': cutoff,
+        'observation_cutoff': cutoff,
+        'release_prepared_date': prepared_on,
+        'publication_date': None,
+        'date_semantics': {'event_date': 'date of the observed event when reviewed',
+                           'source_publication_date': 'date the source published',
+                           'retrieval_date': 'date the source was retrieved',
+                           'observation_cutoff': 'latest evidence admitted to this edition',
+                           'release_prepared_date': 'date this package was prepared'},
         'reviewer': reviewer,
         'schema_version': 'jetp-contract/1',
         'aggregation_policy': {'reported_headlines': 'not_additive',
@@ -114,13 +122,13 @@ def _descriptor(edition, input_git_sha, cutoff, reviewer, payloads):
     }
 
 
-def build_release(root, output, *, edition, input_git_sha, cutoff, reviewer):
+def build_release(root, output, *, edition, input_git_sha, cutoff, prepared_on, reviewer):
     """Write a deterministic offline archive from site bytes pinned at one commit."""
     output = Path(output)
     if os.path.lexists(output):
         raise FileExistsError(f'Release destination already exists: {output}')
     payloads = _site_payloads(root, input_git_sha)
-    descriptor = _descriptor(edition, input_git_sha, cutoff, reviewer, payloads)
+    descriptor = _descriptor(edition, input_git_sha, cutoff, prepared_on, reviewer, payloads)
     output.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(dir=output.parent) as scratch:
         staged = Path(scratch) / 'release.zip'

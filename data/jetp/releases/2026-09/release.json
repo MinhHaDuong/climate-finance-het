@@ -48,7 +48,13 @@
     "conversion": "none",
     "reported_headlines": "not_additive"
   },
-  "cutoff": "2026-09-13",
+  "date_semantics": {
+    "event_date": "date of the observed event when reviewed",
+    "observation_cutoff": "latest evidence admitted to this edition",
+    "release_prepared_date": "date this package was prepared",
+    "retrieval_date": "date the source was retrieved",
+    "source_publication_date": "date the source published"
+  },
   "edition": "2026-09",
   "files": [
     {
@@ -124,6 +130,9 @@
   ],
   "format_version": "jetp-public-release/1",
   "input_git_sha": "fba8e63ff6a8ad44076cd054871e60d99db6bd3f",
+  "observation_cutoff": "2026-09-13",
+  "publication_date": null,
+  "release_prepared_date": "2026-09-15",
   "release_state": "prepared",
   "reviewer": "JETP release review",
   "schema_version": "jetp-contract/1",
