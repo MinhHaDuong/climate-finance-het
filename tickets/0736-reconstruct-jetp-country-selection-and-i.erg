@@ -43,11 +43,11 @@ JETP must not automatically become an untreated or quasi-random control.
 
 ## Deliverables and exit criteria
 
-- [ ] Dated source-linked selection/negotiation/intervention chronology with uncertainties
-- [ ] Comparator admissibility matrix flags negotiations, parallel programmes and other exposure
-- [ ] Rival explanations and evidence distinguishing them from JETP treatment recorded
-- [ ] Any allocation-rule candidate supported by original rules and a list of remaining identification gaps
-- [ ] Go/narrow/defer implications for each candidate design; no assumption that a funnel establishes assignment
+- [x] Dated source-linked selection/negotiation/intervention chronology with uncertainties
+- [x] Comparator admissibility matrix flags negotiations, parallel programmes and other exposure
+- [x] Rival explanations and evidence distinguishing them from JETP treatment recorded
+- [x] Any allocation-rule candidate supported by original rules and a list of remaining identification gaps
+- [x] Go/narrow/defer implications for each candidate design; no assumption that a funnel establishes assignment
 
 Unknown is a valid finding. These results guide 0729's definition of treatment,
 time zero, eligible population and counterfactual; they do not estimate an effect.
@@ -69,3 +69,12 @@ publication unverified through failed original route; no usable country
 allocation rule established. Parent Council-original reopen failed; independent
 source verification remains pending. No source bytes archived, no ledger changes,
 no estimation. Exit checkboxes remain unchecked pending review; ticket stays open.
+
+## Independent review
+
+All five documentary exit criteria are addressed as a bounded evidence audit;
+this does not establish a usable causal design or complete historical population.
+An independent scientific reviewer accepted the report and matrices. Fast gate:
+1549 passed, ten skipped; adherence:330 passed, thirteen skipped. The report
+records the missing-DVC environment failure and successful hydrated rerun.
+Ticket remains open until the report PR is accepted.

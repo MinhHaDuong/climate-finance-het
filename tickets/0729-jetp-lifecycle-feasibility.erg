@@ -80,3 +80,21 @@ return the scope decision to the author. Observatory/data-paper work continues.
 ## GitHub planning issue
 
 https://github.com/MinhHaDuong/climate-finance-het/issues/1337
+
+## First bounded audit checkpoint, 14 September 2026
+
+0735 and 0736 completed their first 20-unit rounds and received independent
+scientific review; report acceptance is tracked in their PRs. The source audits
+do not authorize primary estimation. Historical work found two dated World Bank
+rosters but no original approval/signature pairs, incomplete landmark coverage
+and uncertain stability of roster inclusion rules. Selection work documents
+pre-declaration discussions, India's parallel support, and selection partly on
+expected energy changes; no usable allocation mechanism was established.
+
+Before a design decision, review the reports under docs/jetp-audits/0735 and0736.
+Discriminating next documents are the missing 2015/2021 rosters and original
+operation agreements/withdrawals; G7 selection records; dated CIPP screening and
+accepted/rejected project lists; and comparator exposure histories. A further
+round needs a revised bounded brief. Neither baseline matching nor an absence
+of retrieved allocation rules establishes or refutes causality by itself.
+No design, exposure baseline or primary outcome is frozen by these audits.
