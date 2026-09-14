@@ -146,6 +146,19 @@ def _country_output(output: Path) -> bool:
                 or not all(isinstance(previous[key], list)
                            and all(isinstance(row, dict) for row in previous[key]) for key in records)):
             return False
+        required_objects = {'inputs', 'recipe_inputs', 'recovery_inputs', 'selected_acquisition',
+                            'edition_snapshot', 'extraction', 'comparison'}
+        if (not all(previous[key] for key in required_objects)
+                or not all(previous[key] for key in records)):
+            return False
+        if not previous['mvp_views']['overview'] or not previous['mvp_views']['comparison']:
+            return False
+        for view in {'ZAF', 'IDN', 'VNM', 'SEN'}:
+            payload = previous['mvp_views'][view]
+            if (not isinstance(payload.get('projects'), list)
+                    or not isinstance(payload.get('record_count'), int)
+                    or not isinstance(payload.get('country'), dict)):
+                return False
         validate_migration(previous)
         return True
     except (OSError, ValueError, KeyError, TypeError):
