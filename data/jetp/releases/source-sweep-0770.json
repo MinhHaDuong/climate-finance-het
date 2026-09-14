@@ -1,0 +1,4441 @@
+{
+  "acquisitions": [],
+  "admission_status": "unadmitted_candidate",
+  "archive_verifications": [
+    {
+      "acquisition_id": "acquisition-bae202b7f07f0caa1d29adadef941e03ef839ff968a9cbbe7dd91138c645fec5",
+      "byte_reason": null,
+      "byte_status": "available",
+      "check_scope": "archived_material",
+      "document_sha256": "b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c",
+      "publisher_coverage_advanced": false,
+      "retrieved_at": "2026-09-11T20:39:00Z",
+      "source_id": "vnm-rmp-2023",
+      "storage_path": "objects/b1/b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c.pdf",
+      "verified_at": "2026-09-14T18:37:57Z"
+    },
+    {
+      "acquisition_id": "acquisition-301c80dad7bec2ec3bd82a0f5d3fef1ef9da42f4c0f8917b0fbad7041311ab16",
+      "byte_reason": "failed_acquisition",
+      "byte_status": "unresolved",
+      "check_scope": "archived_material",
+      "document_sha256": null,
+      "publisher_coverage_advanced": false,
+      "retrieved_at": "2026-09-11T20:39:00Z",
+      "source_id": "sen-investment-plan-l4",
+      "storage_path": null,
+      "verified_at": "2026-09-14T18:37:57Z"
+    },
+    {
+      "acquisition_id": "acquisition-6a0cee00efc1f6bf06fae79aeeb9ae6163762432c4d33ced17b31a41063b5499",
+      "byte_reason": null,
+      "byte_status": "available",
+      "check_scope": "archived_material",
+      "document_sha256": "b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c",
+      "publisher_coverage_advanced": false,
+      "retrieved_at": "2026-09-11T20:42:35Z",
+      "source_id": "vnm-rmp-2023",
+      "storage_path": "objects/b1/b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c.pdf",
+      "verified_at": "2026-09-14T18:37:57Z"
+    },
+    {
+      "acquisition_id": "acquisition-2baf088ff1376d7365467564e92c1a98a4f9af5ddbea87c9e077d29097d22f8a",
+      "byte_reason": "failed_acquisition",
+      "byte_status": "unresolved",
+      "check_scope": "archived_material",
+      "document_sha256": null,
+      "publisher_coverage_advanced": false,
+      "retrieved_at": "2026-09-11T20:42:35Z",
+      "source_id": "sen-investment-plan-l4",
+      "storage_path": null,
+      "verified_at": "2026-09-14T18:37:57Z"
+    },
+    {
+      "acquisition_id": "acquisition-475f71768267d71de0bde56aca10d68d67c05b5d2b9b0ab9f1bc7ac076940ae8",
+      "byte_reason": null,
+      "byte_status": "available",
+      "check_scope": "archived_material",
+      "document_sha256": "1b62a65fd70c70b0234379fcc4fcda064e9175fc9aee21a37c97b283e1b8dc13",
+      "publisher_coverage_advanced": false,
+      "retrieved_at": "2026-09-12T05:33:00Z",
+      "source_id": "zaf-jet-quarterly-2026-q1",
+      "storage_path": "objects/1b/1b62a65fd70c70b0234379fcc4fcda064e9175fc9aee21a37c97b283e1b8dc13.pdf",
+      "verified_at": "2026-09-14T18:37:57Z"
+    },
+    {
+      "acquisition_id": "acquisition-38f3411e52bfbad0bde8e4a0175c75f87d5048483ad5c4616048775a6cad3251",
+      "byte_reason": null,
+      "byte_status": "available",
+      "check_scope": "archived_material",
+      "document_sha256": "74fb460fd09e76607e3cff308f5ba2754f2ebd91b0c9b7613c1a041e7b361162",
+      "publisher_coverage_advanced": false,
+      "retrieved_at": "2026-09-12T07:12:12Z",
+      "source_id": "idn-jetp-progress-report-2025",
+      "storage_path": "objects/74/74fb460fd09e76607e3cff308f5ba2754f2ebd91b0c9b7613c1a041e7b361162.pdf",
+      "verified_at": "2026-09-14T18:37:57Z"
+    },
+    {
+      "acquisition_id": "acquisition-3cb3ab177e79367ee44f29dd0f38b048010979e0c45f425f7328994b645e6303",
+      "byte_reason": "failed_acquisition",
+      "byte_status": "unresolved",
+      "check_scope": "archived_material",
+      "document_sha256": null,
+      "publisher_coverage_advanced": false,
+      "retrieved_at": "2026-09-13T09:14:21Z",
+      "source_id": "sen-investment-plan-l4",
+      "storage_path": null,
+      "verified_at": "2026-09-14T18:37:57Z"
+    }
+  ],
+  "change_report": {
+    "admission_status": "unadmitted_candidate",
+    "handoff_ticket": "0728",
+    "publication_action": "none",
+    "queue": [],
+    "summary": {
+      "complete": true,
+      "evidence_action": "preserve",
+      "publication_action": "none",
+      "targets": [
+        {
+          "check_ids": [],
+          "deferral_reason": "Publisher refresh deferred until this proposed watch policy is reviewed; archive verification only.",
+          "failure_streak": 0,
+          "last_attempt_at": null,
+          "last_changed_at": null,
+          "last_successful_check_at": null,
+          "next_check_at": "2026-09-14T18:37:57Z",
+          "status": "deferred",
+          "watch_id": "vnm-principal-rmp",
+          "watch_revision_id": "watch-revision-3d1d0eb4396c38f25d7c08aea76c2f3213e6e9d9bf16b7e217f32f3a0380b43b"
+        },
+        {
+          "check_ids": [],
+          "deferral_reason": "Publisher refresh deferred until this proposed watch policy is reviewed; archive verification only.",
+          "failure_streak": 0,
+          "last_attempt_at": null,
+          "last_changed_at": null,
+          "last_successful_check_at": null,
+          "next_check_at": "2026-09-14T18:37:57Z",
+          "status": "deferred",
+          "watch_id": "zaf-principal-quarterly",
+          "watch_revision_id": "watch-revision-7788dbcc40967772e11daa3bf48294992314484e73b708f95991f76e36828849"
+        },
+        {
+          "check_ids": [],
+          "deferral_reason": "Publisher refresh deferred until this proposed watch policy is reviewed; archive verification only.",
+          "failure_streak": 0,
+          "last_attempt_at": null,
+          "last_changed_at": null,
+          "last_successful_check_at": null,
+          "next_check_at": "2026-09-14T18:37:57Z",
+          "status": "deferred",
+          "watch_id": "idn-principal-progress",
+          "watch_revision_id": "watch-revision-254ee360c40f5deefd2e3e700f5aa57f2165cee1a2e38d5b99aeae630b232808"
+        },
+        {
+          "check_ids": [],
+          "deferral_reason": "Publisher refresh deferred until this proposed watch policy is reviewed; archive verification only.",
+          "failure_streak": 0,
+          "last_attempt_at": null,
+          "last_changed_at": null,
+          "last_successful_check_at": null,
+          "next_check_at": "2026-09-14T18:37:57Z",
+          "status": "deferred",
+          "watch_id": "sen-principal-plan",
+          "watch_revision_id": "watch-revision-271de040f18cde1325b1a8d81645f06b6cfe37dcef32923c6abb52bd8aa1f4ba"
+        }
+      ]
+    }
+  },
+  "changes": [],
+  "checks": [],
+  "claim_review_queue": [
+    {
+      "claim_id": "zaf-annex25-finance-aggregate",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-finance-aggregate",
+        "claim_summary": "USD 10bn current IPG pledge; USD 13.7bn including MDBs; USD 3.8bn allocated",
+        "country": "ZAF",
+        "match_status": "context_only",
+        "matched_project_ids": "",
+        "notes": "Portfolio-level figures are not project events",
+        "section": "Overview",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "idn-cmea-mar25-approved-aggregate",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-cmea-mar25-approved-aggregate",
+        "claim_summary": "54 funded projects totalling USD 1.1bn: 9 loan or equity projects and 45 grants; grants total USD 233m",
+        "country": "IDN",
+        "match_status": "context_only",
+        "matched_project_ids": "",
+        "notes": "March 2025 official snapshot retained as published; it must not be overwritten by the later November reporting cut-off",
+        "section": "Financing progress",
+        "source_id": "idn-cmea-progress-march-2025"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-cmea-progress-march-2025",
+      "source_publication_date": "2025-03-24"
+    },
+    {
+      "claim_id": "idn-progress25-approved-aggregate",
+      "date_relation": "same_publication_date",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-progress25-approved-aggregate",
+        "claim_summary": "53 canonical approved programmes or projects totalling USD 3.1bn: 5 loan or equity programmes, 4 financed projects and 44 grant or TA programmes",
+        "country": "IDN",
+        "match_status": "context_only",
+        "matched_project_ids": "",
+        "notes": "November 2025 snapshot; 59 financing rows represent these 53 canonical entries because several projects have multiple funders",
+        "section": "Section 4.3",
+        "source_id": "idn-jetp-progress-report-2025"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-jetp-progress-report-2025",
+      "source_publication_date": "2025-12-02"
+    },
+    {
+      "claim_id": "idn-progress25-approved-grants",
+      "date_relation": "same_publication_date",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-progress25-approved-grants",
+        "claim_summary": "44 approved grant or TA programmes totalling USD 206.6m",
+        "country": "IDN",
+        "match_status": "context_only",
+        "matched_project_ids": "",
+        "notes": "Report tables contain 46 donor contribution rows; ETP and IETF each have two donor rows consolidated into one canonical programme",
+        "section": "Section 4.3",
+        "source_id": "idn-jetp-progress-report-2025"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-jetp-progress-report-2025",
+      "source_publication_date": "2025-12-02"
+    },
+    {
+      "claim_id": "idn-progress25-finance-in-process",
+      "date_relation": "same_publication_date",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-progress25-finance-in-process",
+        "claim_summary": "20 loan or equity investments in process totalling approximately USD 4.8bn to USD 5.5bn",
+        "country": "IDN",
+        "match_status": "context_only",
+        "matched_project_ids": "",
+        "notes": "Pipeline is reported separately from approved finance and must not be added to the USD 3.1bn approved total",
+        "section": "Table 4.3-3",
+        "source_id": "idn-jetp-progress-report-2025"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-jetp-progress-report-2025",
+      "source_publication_date": "2025-12-02"
+    },
+    {
+      "claim_id": "zaf-annex25-dpo3",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-dpo3",
+        "claim_summary": "KfW and partners signed the third Development Policy Operation with National Treasury",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-register-gr039",
+        "notes": "Register description names the third reform loan and co-lenders",
+        "section": "Electricity",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-dbsa-credit",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-dbsa-credit",
+        "claim_summary": "KfW EUR 200m Energy Sector Reform Programme facility for DBSA",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-register-gr025",
+        "notes": "Amount recipient and investment scope match",
+        "section": "Electricity",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-cape-loan",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-cape-loan",
+        "claim_summary": "KfW EUR 150m City of Cape Town grid loan",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-register-gr026",
+        "notes": "Recipient and grid-investment purpose match",
+        "section": "Electricity",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-cape-grant",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-cape-grant",
+        "claim_summary": "KfW EUR 0.5m accompanying City of Cape Town grant",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-register-gr026b",
+        "notes": "Accompanying measure for GR026",
+        "section": "Electricity",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-etana",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-etana",
+        "claim_summary": "GuarantCo and BII USD 100m guarantee financing for Etana Energy",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-register-uk056",
+        "notes": "Recipient instrument and amount match",
+        "section": "Electricity",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-red-sands",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-red-sands",
+        "claim_summary": "Globeleq financial close for the 153 MW Red Sands battery facility",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-register-uk065",
+        "notes": "Name capacity and operator match",
+        "section": "Electricity",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-denmark-capacity",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-denmark-capacity",
+        "claim_summary": "Danish Energy Agency capacity programme with Eskom and power-sector authorities",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-register-dk001;zaf-register-dk002",
+        "notes": "Register separates transmission and distribution components",
+        "section": "Electricity",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-energy-council",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-energy-council",
+        "claim_summary": "UK support for the Energy Council electricity-market reform work",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-register-uk059",
+        "notes": "Current wholesale-market work and NECOM role match",
+        "section": "Electricity",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-giz-market",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-giz-market",
+        "claim_summary": "GIZ support for the NTCSA market operator and related reforms",
+        "country": "ZAF",
+        "match_status": "partial",
+        "matched_project_ids": "zaf-register-gr003",
+        "notes": "SAGEN IV is the matching umbrella programme; individual activities are not separate rows",
+        "section": "Electricity",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-eu-ta",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-eu-ta",
+        "claim_summary": "EU JETP Technical Assistance Facility planned for 2026",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-register-eu011",
+        "notes": "Facility title timing and institutional scope match",
+        "section": "Electricity",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-germany-ta",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-germany-ta",
+        "claim_summary": "Germany EUR 11m technical support for 2026 to 2029",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-register-gr035",
+        "notes": "Amount dates and SAGEN V scope match",
+        "section": "Electricity",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-kfw-idc",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-kfw-idc",
+        "claim_summary": "KfW EUR 17m memorandum with IDC for green hydrogen commercialisation",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-register-gr030",
+        "notes": "Amount recipient and green-hydrogen financing purpose match",
+        "section": "Green hydrogen",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-h2-battery-ta",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-h2-battery-ta",
+        "claim_summary": "EU EUR 21.5m and Germany EUR 6m technical support for hydrogen and battery value chains",
+        "country": "ZAF",
+        "match_status": "partial",
+        "matched_project_ids": "zaf-register-eu021;zaf-register-gr034",
+        "notes": "German component matches exactly; EU register facility is EUR 20m and may omit an additional component",
+        "section": "Green hydrogen",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-hive",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-hive",
+        "claim_summary": "Hive green-ammonia support through Climate Investor 3 including EU EUR 2.4m and Dutch EUR 50m fund support",
+        "country": "ZAF",
+        "match_status": "partial",
+        "matched_project_ids": "zaf-register-eu020;zaf-register-nl004",
+        "notes": "Register records the two umbrella funds but not Hive as its own row",
+        "section": "Green hydrogen",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-zandkopsdrift",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-zandkopsdrift",
+        "claim_summary": "EU strategic-project selection of Zandkopsdrift rare earths project",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-annex-zandkopsdrift",
+        "notes": "Canonical project added from the annex and confirmed by the EU decision record",
+        "section": "Green hydrogen",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-germany-nev",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-germany-nev",
+        "claim_summary": "Germany EUR 5m vehicle-electrification technical assistance from 2026",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-register-gr036",
+        "notes": "Amount timing and zero-emission transport objective match",
+        "section": "New energy vehicles",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-uk-nev",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-uk-nev",
+        "claim_summary": "UK support for the NEV Secretariat and DTIC battery value-chain policy",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-uk-nev-support",
+        "notes": "Canonical programme added outside the current register and corroborated by a 2025 ministerial reply naming UK PACT",
+        "section": "New energy vehicles",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-metro-trading",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-metro-trading",
+        "claim_summary": "Germany France and World Bank support for Metro Trading Services",
+        "country": "ZAF",
+        "match_status": "partial",
+        "matched_project_ids": "zaf-register-gr029",
+        "notes": "German contribution is present; French and World Bank components lack distinct rows",
+        "section": "Municipalities",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-uk-utility-reform",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-uk-utility-reform",
+        "claim_summary": "UK Municipal Utility Reform programme in four Mpumalanga municipalities",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-murp",
+        "notes": "Canonical programme added; AfDB approved a UK-guaranteed USD 400m loan in July 2026",
+        "section": "Municipalities",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-giz-municipal",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-giz-municipal",
+        "claim_summary": "GIZ support for cost studies and energy management across municipal distributors",
+        "country": "ZAF",
+        "match_status": "partial",
+        "matched_project_ids": "zaf-register-gr003",
+        "notes": "SAGEN IV is the matching umbrella programme",
+        "section": "Municipalities",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-uk-six-municipalities",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-uk-six-municipalities",
+        "claim_summary": "UK early preparation for embedded generation in six municipalities",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-register-uk068",
+        "notes": "JMEG register narrative describes three continuing and three additional municipalities",
+        "section": "Municipalities",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-johannesburg-waste",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-johannesburg-waste",
+        "claim_summary": "Netherlands EUR 27.5m Alternative Waste Treatment Technology project in Johannesburg",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-register-nl012",
+        "notes": "Title recipient amount and output match",
+        "section": "Municipalities",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-uk-agri-facility",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-uk-agri-facility",
+        "claim_summary": "UK GBP 2m blended facility for farm businesses in Mpumalanga",
+        "country": "ZAF",
+        "match_status": "partial",
+        "matched_project_ids": "zaf-register-uk061",
+        "notes": "Programme purpose matches but the register amount is GBP 0.5m",
+        "section": "Just",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-germany-smme",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-germany-smme",
+        "claim_summary": "German support to Mpumalanga small businesses communities MGCA and SMME facilities",
+        "country": "ZAF",
+        "match_status": "partial",
+        "matched_project_ids": "zaf-register-gr007",
+        "notes": "JUST SA is the matching umbrella programme",
+        "section": "Just",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-eu-cso-grants",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-eu-cso-grants",
+        "claim_summary": "Three EU civil-society grants for skills start-ups women and youth",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-eu-cso-green-economy-grants",
+        "notes": "Canonical programme cluster added outside the register; the three individual award names and amounts are not disclosed in the annex",
+        "section": "Just",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-cfa",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-cfa",
+        "claim_summary": "Climate Finance Accelerator outcomes for Wetility and Carbon Charge",
+        "country": "ZAF",
+        "match_status": "partial",
+        "matched_project_ids": "zaf-register-uk008;zaf-register-uk072",
+        "notes": "CFA and a Wetility fund investment are present; Carbon Charge lacks a distinct row",
+        "section": "Just",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-growth-gateway",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-growth-gateway",
+        "claim_summary": "UK Growth Gateway mobilised over USD 1m for four SMMEs",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-growth-gateway-smme-accelerator",
+        "notes": "Canonical programme added and confirmed by the 2026 FCDO blueprint",
+        "section": "Just",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-societal-participation",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-societal-participation",
+        "claim_summary": "Germany EUR 4m societal-participation project",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-register-gr033",
+        "notes": "Amount implementer and project purpose match",
+        "section": "Just",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-grootvlei",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-grootvlei",
+        "claim_summary": "Construction of the Netherlands-funded Grootvlei Horticulture Expertise Facility",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-register-nl001-5;zaf-register-nl001-6;zaf-register-nl001-7;zaf-register-nl001-8",
+        "notes": "Register separates training greenhouse subsidy and two construction phases",
+        "section": "Just",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-youth-skills",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-youth-skills",
+        "claim_summary": "Denmark Transforming Youth Skills support to teachers and ten Mpumalanga schools",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-register-dk012",
+        "notes": "Beneficiaries location and green-enterprise objective match",
+        "section": "Just",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-multidonor-skills",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-multidonor-skills",
+        "claim_summary": "EU Germany and Switzerland support for the JET Skills Portfolio",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-register-eu012;zaf-register-gr015;zaf-register-sw004",
+        "notes": "Amounts and CPD4E co-funding relationships match the register",
+        "section": "Skills",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-powerup",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-powerup",
+        "claim_summary": "UK PowerUp platform and SAREM implementation support",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-register-uk074",
+        "notes": "PowerUp and SAREM are explicit in the register narrative",
+        "section": "Skills",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-transnet",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-transnet",
+        "claim_summary": "EIB EUR 350m Transnet loan accompanied by an EU EUR 21m grant",
+        "country": "ZAF",
+        "match_status": "partial",
+        "matched_project_ids": "zaf-register-eu019",
+        "notes": "Register records the EUR 21m grant component but not the EIB loan event",
+        "section": "Road to Rail",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-france-transnet",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-france-transnet",
+        "claim_summary": "France exploring possible loan financing for Transnet",
+        "country": "ZAF",
+        "match_status": "context_only",
+        "matched_project_ids": "",
+        "notes": "Exploratory engagement is not a financing event",
+        "section": "Road to Rail",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-maf",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-maf",
+        "claim_summary": "Mitigation Action Facility support for public-sector energy performance projects",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-eepbip",
+        "notes": "Canonical programme added from the facility project profile and EEPBIP portal",
+        "section": "Energy Efficiency",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-denmark-buildings",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-denmark-buildings",
+        "claim_summary": "Denmark Johannesburg-Copenhagen public-buildings energy-efficiency collaboration",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-register-dk013",
+        "notes": "Cities sector and stated objective match",
+        "section": "Energy Efficiency",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-annex25-magc",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-annex25-magc",
+        "claim_summary": "UK and IFC Market Accelerator for Green Construction financing",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-register-uk030;zaf-register-uk048;zaf-register-uk049;zaf-register-uk063;zaf-register-uk064;zaf-register-uk069;zaf-register-uk070",
+        "notes": "Register separates programme tranches and participating financial institutions",
+        "section": "Energy Efficiency",
+        "source_id": "zaf-jetp-leaders-2025-annex"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-jetp-leaders-2025-annex",
+      "source_publication_date": "2025-12-09"
+    },
+    {
+      "claim_id": "zaf-growth26-pipeline",
+      "date_relation": "after_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-growth26-pipeline",
+        "claim_summary": "723 JET-aligned SMMEs sourced; approximately 29 percent women-owned",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-growth-gateway-smme-accelerator",
+        "notes": "Pipeline snapshot at 13 April 2026; gender share applies where gender is known",
+        "section": "Pipeline",
+        "source_id": "zaf-growth-gateway-report-2026"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-growth-gateway-report-2026",
+      "source_publication_date": "2026-08-19"
+    },
+    {
+      "claim_id": "zaf-growth26-funnel",
+      "date_relation": "after_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-growth26-funnel",
+        "claim_summary": "289 high-potential firms; 87 investment-ready; 61 in commercial discussions; 31 in due diligence; 14 deals or memoranda finalised",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-growth-gateway-smme-accelerator",
+        "notes": "Programme funnel counts rather than separately disclosed investee projects",
+        "section": "Pipeline",
+        "source_id": "zaf-growth-gateway-report-2026"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-growth-gateway-report-2026",
+      "source_publication_date": "2026-08-19"
+    },
+    {
+      "claim_id": "zaf-growth26-investment-need",
+      "date_relation": "after_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-growth26-investment-need",
+        "claim_summary": "R5.9bn disclosed investment need supported by more than 70 investors across five programme phases since 2023",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-growth-gateway-smme-accelerator",
+        "notes": "Potential investment need and engagement count; not treated as finance mobilised or disbursed",
+        "section": "Pipeline",
+        "source_id": "zaf-growth-gateway-report-2026"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-growth-gateway-report-2026",
+      "source_publication_date": "2026-08-19"
+    },
+    {
+      "claim_id": "zaf-eepbip23-duration",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-eepbip23-duration",
+        "claim_summary": "Programme duration May 2019 to December 2026 with DMRE as lead executing agency",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-eepbip",
+        "notes": "Direct implementer profile dated May 2023",
+        "section": "Programme profile",
+        "source_id": "zaf-eepbip-giz-profile-2023"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-eepbip-giz-profile-2023",
+      "source_publication_date": "2023-01-01"
+    },
+    {
+      "claim_id": "zaf-eepbip23-guarantee",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-eepbip23-guarantee",
+        "claim_summary": "IDC implements a partial credit guarantee securing loans to ESCOs for public-sector energy performance contracts",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-eepbip",
+        "notes": "Mechanism description; no loan amount or disbursement inferred",
+        "section": "Finance mechanism",
+        "source_id": "zaf-eepbip-giz-profile-2023"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-eepbip-giz-profile-2023",
+      "source_publication_date": "2023-01-01"
+    },
+    {
+      "claim_id": "zaf-eepbip23-jobs-target",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-eepbip23-jobs-target",
+        "claim_summary": "Approximately 1800 jobs estimated to be created through programme implementation",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-eepbip",
+        "notes": "Forward-looking programme target; not an observed outcome",
+        "section": "Expected benefits",
+        "source_id": "zaf-eepbip-giz-profile-2023"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-eepbip-giz-profile-2023",
+      "source_publication_date": "2023-01-01"
+    },
+    {
+      "claim_id": "zaf-eepbip-maf-funding",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-eepbip-maf-funding",
+        "claim_summary": "Mitigation Action Facility reports EUR 20.1m funding and active implementation",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-eepbip",
+        "notes": "Funding volume from the official facility profile; not treated as a disbursement total",
+        "section": "Funding",
+        "source_id": "zaf-eepbip-maf"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-eepbip-maf",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "zaf-dtic25-battery-framework",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "zaf-dtic25-battery-framework",
+        "claim_summary": "DTIC and IDC are building a national battery value-chain policy framework with support from UK PACT",
+        "country": "ZAF",
+        "match_status": "matched",
+        "matched_project_ids": "zaf-uk-nev-support",
+        "notes": "Ministerial reply confirms the policy-support component; it does not disclose a budget",
+        "section": "Policy implementation",
+        "source_id": "zaf-dtic-parliament-nev-2025"
+      },
+      "principal_publication_date": "2026-03-31",
+      "principal_source_id": "zaf-jet-quarterly-2026-q1",
+      "review_state": "pending_review",
+      "source_id": "zaf-dtic-parliament-nev-2025",
+      "source_publication_date": "2025-11-07"
+    },
+    {
+      "claim_id": "idn-monitor25-gecs",
+      "date_relation": "same_publication_date",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-monitor25-gecs",
+        "claim_summary": "Green Energy Corridor Sulawesi selected for CMEA monitoring with a described 950 km route",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-pipe-green-corridors-sulawesi",
+        "notes": "Appendix length differs from individual CIPP and financing-table segments and is retained as stated",
+        "section": "Appendix 2",
+        "source_id": "idn-jetp-progress-report-2025"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-jetp-progress-report-2025",
+      "source_publication_date": "2025-12-02"
+    },
+    {
+      "claim_id": "idn-monitor25-dediesel-east",
+      "date_relation": "same_publication_date",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-monitor25-dediesel-east",
+        "claim_summary": "Eastern de-dieselization cluster covers 46 solar PV and battery locations",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-pipe-dediesel-east-phase1",
+        "notes": "Matches the financing pipeline programme",
+        "section": "Appendix 2",
+        "source_id": "idn-jetp-progress-report-2025"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-jetp-progress-report-2025",
+      "source_publication_date": "2025-12-02"
+    },
+    {
+      "claim_id": "idn-monitor25-dediesel-west",
+      "date_relation": "same_publication_date",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-monitor25-dediesel-west",
+        "claim_summary": "Western de-dieselization cluster covers 48 solar PV and battery locations",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-pipe-dediesel-west-phase1",
+        "notes": "Matches the financing pipeline programme",
+        "section": "Appendix 2",
+        "source_id": "idn-jetp-progress-report-2025"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-jetp-progress-report-2025",
+      "source_publication_date": "2025-12-02"
+    },
+    {
+      "claim_id": "idn-monitor25-singkarak",
+      "date_relation": "same_publication_date",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-monitor25-singkarak",
+        "claim_summary": "Singkarak floating solar selected for monitoring at 76 MWp",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-pipe-singkarak-floating-solar",
+        "notes": "Financing table reports 50 MW and a possible relocation; capacity conflict retained",
+        "section": "Appendix 2",
+        "source_id": "idn-jetp-progress-report-2025"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-jetp-progress-report-2025",
+      "source_publication_date": "2025-12-02"
+    },
+    {
+      "claim_id": "idn-monitor25-saguling",
+      "date_relation": "same_publication_date",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-monitor25-saguling",
+        "claim_summary": "Saguling floating solar selected for monitoring at 92 MWp",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-fin-saguling-floating-solar",
+        "notes": "Financing table reports 60 MW; capacity conflict retained",
+        "section": "Appendix 2",
+        "source_id": "idn-jetp-progress-report-2025"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-jetp-progress-report-2025",
+      "source_publication_date": "2025-12-02"
+    },
+    {
+      "claim_id": "idn-monitor25-hijaunesia2",
+      "date_relation": "same_publication_date",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-monitor25-hijaunesia2",
+        "claim_summary": "Hijaunesia 2 selected as a multi-region solar and wind programme",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-pipe-hijaunesia-2",
+        "notes": "Matches the financing pipeline programme",
+        "section": "Appendix 2",
+        "source_id": "idn-jetp-progress-report-2025"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-jetp-progress-report-2025",
+      "source_publication_date": "2025-12-02"
+    },
+    {
+      "claim_id": "idn-monitor25-gde",
+      "date_relation": "same_publication_date",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-monitor25-gde",
+        "claim_summary": "Geo Dipa Energi pipeline covers 965 MW geothermal and a 5200 tonne-per-year mineral facility",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-monitor-gde-pipeline-2025",
+        "notes": "Programme-level monitored object rather than one physical project",
+        "section": "Appendix 2",
+        "source_id": "idn-jetp-progress-report-2025"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-jetp-progress-report-2025",
+      "source_publication_date": "2025-12-02"
+    },
+    {
+      "claim_id": "idn-monitor25-karangkates",
+      "date_relation": "same_publication_date",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-monitor25-karangkates",
+        "claim_summary": "Karangkates floating solar selected for monitoring at 129 MWp",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-pipe-sutami-floating-solar",
+        "notes": "Financing table calls the same reservoir project Sutami Karangkates and reports 100 MW; capacity conflict retained",
+        "section": "Appendix 2",
+        "source_id": "idn-jetp-progress-report-2025"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-jetp-progress-report-2025",
+      "source_publication_date": "2025-12-02"
+    },
+    {
+      "claim_id": "idn-monitor25-cirebon",
+      "date_relation": "same_publication_date",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-monitor25-cirebon",
+        "claim_summary": "Cirebon 660 MW coal plant selected for monitoring and described as undergoing repurposing",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-pipe-cirebon-1-retirement",
+        "notes": "Selection and repurposing language are not treated as evidence of physical retirement",
+        "section": "Appendix 2",
+        "source_id": "idn-jetp-progress-report-2025"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-jetp-progress-report-2025",
+      "source_publication_date": "2025-12-02"
+    },
+    {
+      "claim_id": "idn-monitor25-hululais",
+      "date_relation": "same_publication_date",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-monitor25-hululais",
+        "claim_summary": "Hululais 110 MW geothermal project selected for monitoring",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-pipe-hululais-1-2",
+        "notes": "Matches the financing pipeline project",
+        "section": "Appendix 2",
+        "source_id": "idn-jetp-progress-report-2025"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-jetp-progress-report-2025",
+      "source_publication_date": "2025-12-02"
+    },
+    {
+      "claim_id": "idn-monitor25-seg",
+      "date_relation": "same_publication_date",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-monitor25-seg",
+        "claim_summary": "SEG Solar module manufacturing facility selected for monitoring",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-pipe-solar-cell-manufacturing",
+        "notes": "Appendix resolves the operator omitted from the financing table",
+        "section": "Appendix 2",
+        "source_id": "idn-jetp-progress-report-2025"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-jetp-progress-report-2025",
+      "source_publication_date": "2025-12-02"
+    },
+    {
+      "claim_id": "idn-monitor25-rsud",
+      "date_relation": "same_publication_date",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-monitor25-rsud",
+        "claim_summary": "Energy efficiency and rooftop solar programme in 27 regional hospitals selected for monitoring",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-pipe-rsud-energy-efficiency",
+        "notes": "Matches the financing pipeline programme",
+        "section": "Appendix 2",
+        "source_id": "idn-jetp-progress-report-2025"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-jetp-progress-report-2025",
+      "source_publication_date": "2025-12-02"
+    },
+    {
+      "claim_id": "idn-monitor25-rscm",
+      "date_relation": "same_publication_date",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-monitor25-rscm",
+        "claim_summary": "RSCM HVAC and boiler retrofit selected for monitoring",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-pipe-rscm-energy-efficiency",
+        "notes": "Matches the financing pipeline project",
+        "section": "Appendix 2",
+        "source_id": "idn-jetp-progress-report-2025"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-jetp-progress-report-2025",
+      "source_publication_date": "2025-12-02"
+    },
+    {
+      "claim_id": "idn-monitor25-cihaur-talaga",
+      "date_relation": "same_publication_date",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-monitor25-cihaur-talaga",
+        "claim_summary": "Cihaur and Talaga micro-hydro bundle selected for monitoring with 5 MW combined capacity",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-monitor-cihaur-talaga-micro-hydro",
+        "notes": "Combined capacity derives from two 1.5 MW and two 1 MW units stated in the appendix",
+        "section": "Appendix 2",
+        "source_id": "idn-jetp-progress-report-2025"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-jetp-progress-report-2025",
+      "source_publication_date": "2025-12-02"
+    },
+    {
+      "claim_id": "idn-isle1-wb-financing",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-isle1-wb-financing",
+        "claim_summary": "World Bank USD 500m; Canada CCEFCF USD 47.5m; CTF USD 15m loan and USD 19m grant; total programme cost USD 1.14bn",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-fin-isle-1",
+        "notes": "Programme cost also includes PLN and private finance; only the Canadian component is currently represented in the central approved-event table",
+        "section": "Financing",
+        "source_id": "idn-world-bank-isle1-2023"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-world-bank-isle1-2023",
+      "source_publication_date": "2023-06-26"
+    },
+    {
+      "claim_id": "idn-isle1-wb-assessment",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-isle1-wb-assessment",
+        "claim_summary": "Technical assessment for Sustainable Least-Cost Electrification 1 under World Bank project P174350",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-fin-isle-1",
+        "notes": "Document identity and project number match the direct funder announcement",
+        "section": "Programme design",
+        "source_id": "idn-world-bank-isle1-technical-assessment-2022"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-world-bank-isle1-technical-assessment-2022",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "idn-mrt-east-west-jica-loan",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-mrt-east-west-jica-loan",
+        "claim_summary": "JICA signed a loan of up to JPY 140.699bn for Jakarta MRT East-West Line Phase 1 I on 13 May 2024",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-fin-mrt-east-west",
+        "notes": "Loan agreement evidence does not by itself establish construction or disbursement",
+        "section": "Loan agreement",
+        "source_id": "idn-jica-mrt-east-west-2024"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-jica-mrt-east-west-2024",
+      "source_publication_date": "2024-05-14"
+    },
+    {
+      "claim_id": "idn-mrt-north-south-jica-loan",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-mrt-north-south-jica-loan",
+        "claim_summary": "JICA signed JPY 87.918bn for Construction of Jakarta MRT Project Phase 2 II on 31 March 2023",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-fin-mrt-north-south",
+        "notes": "Direct tranche evidence; the Progress Report's USD figure remains its own reporting observation",
+        "section": "Loan agreement",
+        "source_id": "idn-jica-mrt-north-south-2023"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-jica-mrt-north-south-2023",
+      "source_publication_date": "2023-04-03"
+    },
+    {
+      "claim_id": "idn-aset-adb-approval",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-aset-adb-approval",
+        "claim_summary": "ADB approved a USD 500m policy-based loan for ASET with AFD and KfW as cofinancing partners",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-fin-pbl-aset",
+        "notes": "Direct ADB amount is distinct from the AFD and KfW contribution amounts recorded by the JETP report",
+        "section": "Approval",
+        "source_id": "idn-adb-aset-news-2024"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-adb-aset-news-2024",
+      "source_publication_date": "2024-09-20"
+    },
+    {
+      "claim_id": "idn-aicet-adb-approval",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-aicet-adb-approval",
+        "claim_summary": "ADB approved USD 470m plus USD 30m in administered funds and a USD 3m grant; implementation is planned for 2026-2031",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-fin-rbl-aicet",
+        "notes": "Direct ADB programme package complements rather than overwrites the JETP contribution events",
+        "section": "Approval",
+        "source_id": "idn-adb-aicet-news-2025"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-adb-aicet-news-2025",
+      "source_publication_date": "2025-11-19"
+    },
+    {
+      "claim_id": "idn-muara-laboh-adb-package",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-muara-laboh-adb-package",
+        "claim_summary": "ADB signed a USD 92.6m arranged package with Supreme Energy Muara Laboh",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-fin-muara-laboh-2",
+        "notes": "Separate co-lender package from the USD 138m JBIC event reported by JETP",
+        "section": "Financing agreement",
+        "source_id": "idn-adb-muara-laboh-2-2025"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-adb-muara-laboh-2-2025",
+      "source_publication_date": "2025-01-14"
+    },
+    {
+      "claim_id": "idn-muara-laboh-adb-capacity",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-muara-laboh-adb-capacity",
+        "claim_summary": "Financing supports an 83 MW expansion of the Muara Laboh geothermal facility",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-fin-muara-laboh-2",
+        "notes": "Capacity describes the incremental expansion",
+        "section": "Project scope",
+        "source_id": "idn-adb-muara-laboh-2-2025"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-adb-muara-laboh-2-2025",
+      "source_publication_date": "2025-01-14"
+    },
+    {
+      "claim_id": "idn-saguling-gfanz-financing",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-saguling-gfanz-financing",
+        "claim_summary": "DEG Proparco and Standard Chartered signed USD 60m financing for Saguling floating solar",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-fin-saguling-floating-solar",
+        "notes": "Matches the JETP financing-table amount without inferring disbursement",
+        "section": "Financing agreement",
+        "source_id": "idn-gfanz-saguling-2025"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-gfanz-saguling-2025",
+      "source_publication_date": "2025-04-29"
+    },
+    {
+      "claim_id": "idn-saguling-gfanz-capacity",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-saguling-gfanz-capacity",
+        "claim_summary": "GFANZ describes Saguling as a 92 MWp project developed by PLN Indonesia Power and ACWA Power",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-fin-saguling-floating-solar",
+        "notes": "The distinct 60 MW value in the JETP financing table remains preserved",
+        "section": "Project scope",
+        "source_id": "idn-gfanz-saguling-2025"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-gfanz-saguling-2025",
+      "source_publication_date": "2025-04-29"
+    },
+    {
+      "claim_id": "idn-xurya-jetp-equity",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-xurya-jetp-equity",
+        "claim_summary": "Norfund Climate Investment Fund committed USD 25m and BII USD 5m to Xurya within a USD 55m funding round",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-fin-xurya-rooftop",
+        "notes": "JETP Secretariat calls the two contributions the partnership's first equity investment",
+        "section": "Equity",
+        "source_id": "idn-jetp-xurya-equity-2024"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-jetp-xurya-equity-2024",
+      "source_publication_date": "2024-07-01"
+    },
+    {
+      "claim_id": "idn-portal-gecs-approval",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-portal-gecs-approval",
+        "claim_summary": "Current portal records EUR 300m KfW concessional financing as approved and reports a USD 353.19m equivalent",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-pipe-green-corridors-sulawesi",
+        "notes": "Later portal state is appended and does not overwrite the 2025 in-process classification",
+        "section": "Financial Information",
+        "source_id": "idn-portfolio-project-gecs"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-portfolio-project-gecs",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "idn-portal-gecs-scope",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-portal-gecs-scope",
+        "claim_summary": "Profile describes a 400 km Sulawesi transmission corridor and EUR 680m total project cost",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-pipe-green-corridors-sulawesi",
+        "notes": "The source-specific 400 km scope is retained separately from the 950 km Appendix 2 route description",
+        "section": "General Information",
+        "source_id": "idn-portfolio-project-gecs"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-portfolio-project-gecs",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "idn-portal-nagajaya-approval",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-portal-nagajaya-approval",
+        "claim_summary": "Current portal records USD 1.26m Norfund private equity as approved",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-pipe-nagajaya-micro-hydro",
+        "notes": "Later portal state is appended and does not overwrite the 2025 in-process classification",
+        "section": "Financial Information",
+        "source_id": "idn-portfolio-project-nagajaya"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-portfolio-project-nagajaya",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "idn-portal-nagajaya-capacity",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-portal-nagajaya-capacity",
+        "claim_summary": "Profile describes two Francis turbines totalling 6.5 MW",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-pipe-nagajaya-micro-hydro",
+        "notes": "Source-specific 6.5 MW is retained alongside the 6 MW value printed in the 2025 report",
+        "section": "General Information",
+        "source_id": "idn-portfolio-project-nagajaya"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-portfolio-project-nagajaya",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "idn-portal-hululais-approval",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-portal-hululais-approval",
+        "claim_summary": "Current portal records JPY 29.156bn JICA concessional financing as approved and reports a USD 183.6828m equivalent",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-pipe-hululais-1-2",
+        "notes": "Later portal state is appended and does not overwrite the report's 2025 USD 204m in-process observation",
+        "section": "Financial Information",
+        "source_id": "idn-portfolio-project-hululais"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-portfolio-project-hululais",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "idn-dieng3-adb-status",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-dieng3-adb-status",
+        "claim_summary": "ADB project 58342-001 identifies Dieng Unit 3 and currently marks the sovereign project Proposed",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-pipe-dieng-3-4",
+        "notes": "The page supports identity and current preparation status but not construction or approval",
+        "section": "Project overview",
+        "source_id": "idn-project-dieng3-adb"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-project-dieng3-adb",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "idn-cirebon-marubeni-framework",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-cirebon-marubeni-framework",
+        "claim_summary": "Marubeni reported a conditional December 2023 framework to study early retirement of the 660 MW Cirebon-1 plant",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-pipe-cirebon-1-retirement",
+        "notes": "The framework did not establish physical retirement or financing approval",
+        "section": "Framework announcement",
+        "source_id": "idn-project-cirebon-framework-marubeni"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-project-cirebon-framework-marubeni",
+      "source_publication_date": "2023-12-04"
+    },
+    {
+      "claim_id": "idn-cirebon-reuters-policy",
+      "date_relation": "after_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-cirebon-reuters-policy",
+        "claim_summary": "Indonesia's chief economic minister said on 5 December 2025 that early retirement of Cirebon-1 was unlikely to proceed",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-pipe-cirebon-1-retirement",
+        "notes": "Classified suspended rather than cancelled because the statement did not document legal termination of every agreement",
+        "section": "Ministerial statement",
+        "source_id": "idn-news-cirebon-retirement-reuters-2025"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-news-cirebon-retirement-reuters-2025",
+      "source_publication_date": "2025-12-05"
+    },
+    {
+      "claim_id": "idn-seg-groundbreaking",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-seg-groundbreaking",
+        "claim_summary": "SEG Solar reported the September 2024 groundbreaking of its integrated Indonesian photovoltaic manufacturing base",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-pipe-solar-cell-manufacturing",
+        "notes": "Direct operator construction milestone",
+        "section": "Groundbreaking",
+        "source_id": "idn-project-seg-construction-2024"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-project-seg-construction-2024",
+      "source_publication_date": "2024-09-30"
+    },
+    {
+      "claim_id": "idn-seg-operation",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-seg-operation",
+        "claim_summary": "SEG Solar reported successful Phase I operation with mass production and initial shipments after an 8 August 2025 event",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-pipe-solar-cell-manufacturing",
+        "notes": "Preserved alongside the later-published JETP report that only mentioned groundbreaking",
+        "section": "Phase I operation",
+        "source_id": "idn-project-seg-operational-2025"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-project-seg-operational-2025",
+      "source_publication_date": "2025-08-15"
+    },
+    {
+      "claim_id": "idn-singkarak-acwa-project",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-singkarak-acwa-project",
+        "claim_summary": "ACWA Power announced a 50 MWac Singkarak floating solar project with 49 percent ACWA ownership and the balance held by Indonesia Power",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-pipe-singkarak-floating-solar",
+        "notes": "Earlier development evidence does not supersede the 2025 suspended observation",
+        "section": "Project announcement",
+        "source_id": "idn-project-singkarak-acwa-2022"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-project-singkarak-acwa-2022",
+      "source_publication_date": "2022-11-01"
+    },
+    {
+      "claim_id": "idn-sutami-plnnp-construction",
+      "date_relation": "after_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-sutami-plnnp-construction",
+        "claim_summary": "PLN Nusantara Power reported that the 10 February 2026 soft launch marked the construction phase of the 100 MWac 133 MWp Karangkates project",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-pipe-sutami-floating-solar",
+        "notes": "Some permits were still pending; construction status is source-specific",
+        "section": "Construction update",
+        "source_id": "idn-project-sutami-construction-plnnp-2026"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-project-sutami-construction-plnnp-2026",
+      "source_publication_date": "2026-03-06"
+    },
+    {
+      "claim_id": "idn-tanah-laut-profile",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-tanah-laut-profile",
+        "claim_summary": "Operator profile describes 70 MW wind plus 10 MW 10 MWh battery storage with Total Eren and Adaro Power and status Development",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-pipe-tanah-laut-wind",
+        "notes": "Development status does not imply financing approval",
+        "section": "Tanah Laut WPP profile",
+        "source_id": "idn-project-tanah-laut-plnnp"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-project-tanah-laut-plnnp",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "idn-tanah-laut-ppa",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-tanah-laut-ppa",
+        "claim_summary": "PLN Nusantara Renewables reported a 4 May 2023 power purchase agreement for 70 MW wind plus a 10 MWh battery system",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-pipe-tanah-laut-wind",
+        "notes": "A power purchase agreement is not coded as a financing event",
+        "section": "PPA announcement",
+        "source_id": "idn-project-tanah-laut-ppa-ptplnnr"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-project-tanah-laut-ppa-ptplnnr",
+      "source_publication_date": "2023-05-04"
+    },
+    {
+      "claim_id": "idn-legok-ut-agreement",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-legok-ut-agreement",
+        "claim_summary": "United Tractors reported a July 2024 cooperation agreement for a facility processing about 2000 tonnes of waste per day and targeting 40 MW",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-pipe-legok-nangka-waste",
+        "notes": "Direct consortium participant evidence predating construction",
+        "section": "Cooperation agreement",
+        "source_id": "idn-project-legok-agreement-ut-2024"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-project-legok-agreement-ut-2024",
+      "source_publication_date": "2024-07-23"
+    },
+    {
+      "claim_id": "idn-legok-antara-groundbreaking",
+      "date_relation": "after_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-legok-antara-groundbreaking",
+        "claim_summary": "ANTARA reported that construction commenced at the 29 July 2026 groundbreaking for a 40.79 MW facility with a 41-month construction period",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-pipe-legok-nangka-waste",
+        "notes": "Secondary news carries an official ministry-attributed construction milestone",
+        "section": "Groundbreaking",
+        "source_id": "idn-news-legok-groundbreaking-antara-2026"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-news-legok-groundbreaking-antara-2026",
+      "source_publication_date": "2026-07-29"
+    },
+    {
+      "claim_id": "idn-rsud-c40-assessment",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-rsud-c40-assessment",
+        "claim_summary": "C40 CFF assessed energy audits and three rooftop-solar plus efficiency scenarios across 27 Jakarta regional public hospitals",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-pipe-rsud-energy-efficiency",
+        "notes": "The July 2024 assessment supports scope and preparation only; it is not financing approval or physical delivery evidence",
+        "section": "Preliminary results",
+        "source_id": "idn-project-rsud-retrofit-c40"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-project-rsud-retrofit-c40",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "idn-project-index-current-scope",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-project-index-current-scope",
+        "claim_summary": "Current official index exposes seven project profiles and none of the unresolved exact project names",
+        "country": "IDN",
+        "match_status": "context_only",
+        "matched_project_ids": "",
+        "notes": "Absence from the index supports a completed search route but is not evidence that a project does not exist",
+        "section": "Project portfolio",
+        "source_id": "idn-portfolio-project-index-2026"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-portfolio-project-index-2026",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "sen-plan-project-count-34",
+      "date_relation": "same_publication_date",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-plan-project-count-34",
+        "claim_summary": "The main plan says 34 projects were collected from stakeholders",
+        "country": "SEN",
+        "match_status": "context_only",
+        "matched_project_ids": "",
+        "notes": "This narrative count is retained as published and is not used to overwrite the 38 numbered submissions in the separate annex document",
+        "section": "Section 0.3 consultation process",
+        "source_id": "sen-investment-plan-l4-mirror"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-investment-plan-l4-mirror",
+      "source_publication_date": "2025-04-02"
+    },
+    {
+      "claim_id": "sen-annex-project-count-38",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-annex-project-count-38",
+        "claim_summary": "The annexes contain 38 numbered projects received for evaluation",
+        "country": "SEN",
+        "match_status": "context_only",
+        "matched_project_ids": "",
+        "notes": "Receipt for evaluation is not evidence of selection financing or implementation; the 38-line cohort remains distinct from the eleven quick wins",
+        "section": "Annex 2",
+        "source_id": "sen-investment-plan-annexes-mirror"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-investment-plan-annexes-mirror",
+      "source_publication_date": "2025-03-17"
+    },
+    {
+      "claim_id": "idn-eib-ptsmi-potential-framework",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-eib-ptsmi-potential-framework",
+        "claim_summary": "EIB and PT SMI signed an MoU contemplating a potential EUR 500m framework loan subject to EIB approval",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-pipe-eib-sustainable-infrastructure",
+        "notes": "No approved project allocation or disbursement is inferred",
+        "section": "Memorandum of understanding",
+        "source_id": "idn-eib-ptsmi-mou-2024"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-eib-ptsmi-mou-2024",
+      "source_publication_date": "2024-02-23"
+    },
+    {
+      "claim_id": "idn-workplan24-hijaunesia",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-workplan24-hijaunesia",
+        "claim_summary": "Public JETP Secretariat presentation identifies Hijaunesia 1 and 2 as a PLN Indonesia Power variable-renewables expansion programme",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-pipe-hijaunesia-2",
+        "notes": "Later 2025 report supplies the controlling 1 GW scope and Group A procurement status",
+        "section": "Priority projects under procurement",
+        "source_id": "idn-jetp-work-plan-2024-presentation"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-jetp-work-plan-2024-presentation",
+      "source_publication_date": "2024-06-05"
+    },
+    {
+      "claim_id": "idn-workplan24-hydro-quotas",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-workplan24-hydro-quotas",
+        "claim_summary": "PLN was evaluating hydropower procurement proposals for 400 MW in Sulawesi and 250 MW in Sumatra",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-pipe-hydro-quota-sulawesi;idn-pipe-hydro-quota-sumatra",
+        "notes": "Presentation independently corroborates both quota records",
+        "section": "Priority projects under procurement",
+        "source_id": "idn-jetp-work-plan-2024-presentation"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-jetp-work-plan-2024-presentation",
+      "source_publication_date": "2024-06-05"
+    },
+    {
+      "claim_id": "idn-workplan24-dediesel",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-workplan24-dediesel",
+        "claim_summary": "JETP work plan describes PLN de-dieselization as a flagship procurement programme",
+        "country": "IDN",
+        "match_status": "partial",
+        "matched_project_ids": "idn-pipe-dediesel-east-phase1;idn-pipe-dediesel-west-phase1",
+        "notes": "Programme-level evidence does not independently resolve the later 46 and 48 location cluster split",
+        "section": "Priority projects under procurement",
+        "source_id": "idn-jetp-work-plan-2024-presentation"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-jetp-work-plan-2024-presentation",
+      "source_publication_date": "2024-06-05"
+    },
+    {
+      "claim_id": "idn-ibvogt-dediesel-west-award",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-ibvogt-dediesel-west-award",
+        "claim_summary": "ib vogt reported award of 48 western projects totalling 60 MWp solar and 175 MWh storage",
+        "country": "IDN",
+        "match_status": "matched",
+        "matched_project_ids": "idn-pipe-dediesel-west-phase1",
+        "notes": "Scheduled early-2025 construction is not coded as actual construction",
+        "section": "Western Cluster award",
+        "source_id": "idn-ibvogt-diesel-west-2023"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-ibvogt-diesel-west-2023",
+      "source_publication_date": "2023-12-22"
+    },
+    {
+      "claim_id": "idn-geapp-dediesel-programme",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-geapp-dediesel-programme",
+        "claim_summary": "GEAPP describes a 0.2 GW first phase across 94 locations within the wider PLN diesel replacement programme",
+        "country": "IDN",
+        "match_status": "partial",
+        "matched_project_ids": "idn-pipe-dediesel-east-phase1;idn-pipe-dediesel-west-phase1",
+        "notes": "Programme-level claim corroborates the combined first phase but not the eastern and western subproject records separately",
+        "section": "Programme overview",
+        "source_id": "idn-geapp-diesel-replacement-program"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-geapp-diesel-replacement-program",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "idn-ieefa-dediesel-delay",
+      "date_relation": "after_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "idn-ieefa-dediesel-delay",
+        "claim_summary": "IEEFA reported in April 2026 that implementation remained slow and no first-phase power purchase agreements had been signed",
+        "country": "IDN",
+        "match_status": "partial",
+        "matched_project_ids": "idn-pipe-dediesel-east-phase1;idn-pipe-dediesel-west-phase1",
+        "notes": "Current programme-level assessment does not identify cluster-specific construction or cancellation",
+        "section": "Implementation constraints",
+        "source_id": "idn-ieefa-dediesel-update-2026"
+      },
+      "principal_publication_date": "2025-12-02",
+      "principal_source_id": "idn-jetp-progress-report-2025",
+      "review_state": "pending_review",
+      "source_id": "idn-ieefa-dediesel-update-2026",
+      "source_publication_date": "2026-04-02"
+    },
+    {
+      "claim_id": "sen-annex8-public-project-count-34",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-annex8-public-project-count-34",
+        "claim_summary": "Annex 8 evaluates 34 public-promoter proposals; Annex 2 retains 38 submissions including four private-promoter proposals.",
+        "country": "SEN",
+        "match_status": "context_only",
+        "matched_project_ids": "",
+        "notes": "Additional source-level observation; does not erase the main-plan wording or the preserved 34/38 discrepancy. Numbering differs between the two annexes; identities matched by name and promoter.",
+        "section": "pp. 3-5, scope and public-project table",
+        "source_id": "sen-annex8-project-analysis"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-annex8-project-analysis",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "sen-aner-pumps-ongoing-target-2026",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-aner-pumps-ongoing-target-2026",
+        "claim_summary": "ANER labels the solar-pump programme ongoing and describes a planned 4500-pump rollout.",
+        "country": "SEN",
+        "match_status": "matched",
+        "matched_project_ids": "sen-project-annex-29",
+        "notes": "Ongoing does not identify construction or commissioning. Expected impacts are not observed installed totals; no delivered-pump count or financial amount entered.",
+        "section": "API status, objectiveFr and impactFr",
+        "source_id": "sen-aner-project-29"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-aner-project-29",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "sen-saloum-notice-date-anomaly-2026",
+      "date_relation": "after_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-saloum-notice-date-anomaly-2026",
+        "claim_summary": "Tender deadline in PDF and publication date on operator index both read 9 September 2026.",
+        "country": "SEN",
+        "match_status": "matched",
+        "matched_project_ids": "sen-project-annex-16",
+        "notes": "Physical event uses index publication date as a documentary observation; no earlier issue date or claim that the tender remains open is inferred.",
+        "section": "PDF p. 4 and Senelec 2026 procurement index",
+        "source_id": "sen-senelec-saloum-tender-2026"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-senelec-saloum-tender-2026",
+      "source_publication_date": "2026-09-09"
+    },
+    {
+      "claim_id": "sen-diass-funding-revision-2026",
+      "date_relation": "after_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-diass-funding-revision-2026",
+        "claim_summary": "KfW28m grant plus AFD8m loan; March2027 is scheduled commissioning.",
+        "country": "SEN",
+        "match_status": "matched",
+        "matched_project_ids": "sen-project-qw-10",
+        "notes": "Older AFD factsheet reports KfW18m; preserve both, do not add successive snapshots.",
+        "section": "Funding and commissioning paragraphs",
+        "source_id": "sen-diass-groundbreaking-2026"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-diass-groundbreaking-2026",
+      "source_publication_date": "2026-04-20"
+    },
+    {
+      "claim_id": "sen-ifc609428-advisory",
+      "date_relation": "after_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-ifc609428-advisory",
+        "claim_summary": "IFC609428 advisory approval 2025-03-03; budget pending; active.",
+        "country": "SEN",
+        "match_status": "matched",
+        "matched_project_ids": "sen-project-annex-19",
+        "notes": "Not plant capital-finance approval.",
+        "section": "Advisory project summary",
+        "source_id": "sen-ifc-biogas-609428"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-ifc-biogas-609428",
+      "source_publication_date": "2025-11-03"
+    },
+    {
+      "claim_id": "sen-plan-qw5-qw6-table-conflict",
+      "date_relation": "same_publication_date",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-plan-qw5-qw6-table-conflict",
+        "claim_summary": "Allocation table reverses QW5/QW6 labels for biodigesters and public-building efficiency.",
+        "country": "SEN",
+        "match_status": "context_only",
+        "matched_project_ids": "",
+        "notes": "Join amounts by project title; retain canonical quick-win crosswalk from project descriptions.",
+        "section": "Printed p.46 versus project descriptions and Annex2",
+        "source_id": "sen-investment-plan-l4-mirror"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-investment-plan-l4-mirror",
+      "source_publication_date": "2025-04-02"
+    },
+    {
+      "claim_id": "sen-gandiaye-pilot-boundary",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-gandiaye-pilot-boundary",
+        "claim_summary": "Existing Gandiaye solar desalination pilot; linkage to the later multi-unit proposal unconfirmed.",
+        "country": "SEN",
+        "match_status": "partial",
+        "matched_project_ids": "sen-project-annex-28",
+        "notes": "No commissioning event for the whole proposal.",
+        "section": "Printed p.15",
+        "source_id": "sen-aner-magazine-2026"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-aner-magazine-2026",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "sen-offgrid-backup-boundary",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-offgrid-backup-boundary",
+        "claim_summary": "Product offers grid/genset backup options; Podor is the first deployment.",
+        "country": "SEN",
+        "match_status": "partial",
+        "matched_project_ids": "sen-project-annex-18",
+        "notes": "Actual proposal configuration and project identity remain unknown; no zero-fossil assumption.",
+        "section": "Technical specifications and Podor deployment",
+        "source_id": "sen-offgrid-muchcooler-product"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-offgrid-muchcooler-product",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "sen-saloum-cost-allocation-boundary",
+      "date_relation": "same_publication_date",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-saloum-cost-allocation-boundary",
+        "claim_summary": "Saloum summary project estimate EUR30m; prospective concessional allocation EUR20m.",
+        "country": "SEN",
+        "match_status": "matched",
+        "matched_project_ids": "sen-project-annex-16",
+        "notes": "Different financial quantities; neither establishes a signed loan or disbursement. Do not treat the allocation as the complete project cost.",
+        "section": "Printed pp.42 and 46",
+        "source_id": "sen-investment-plan-l4-mirror"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-investment-plan-l4-mirror",
+      "source_publication_date": "2025-04-02"
+    },
+    {
+      "claim_id": "sen-dig-sen-energy-policy-2025-2029",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-dig-sen-energy-policy-2025-2029",
+        "claim_summary": "Policy combines domestic-gas expansion and JETP renewable targets; installed capacity must not be read as generation or avoided emissions.",
+        "country": "SEN",
+        "match_status": "context_only",
+        "matched_project_ids": "",
+        "notes": "Attributed context; no project financial event inferred.",
+        "section": "Printed pp.56-57",
+        "source_id": "sen-energy-policy-2025-2029"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-energy-policy-2025-2029",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "sen-dig-sen-senego-mobilised-2026",
+      "date_relation": "after_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-dig-sen-senego-mobilised-2026",
+        "claim_summary": "Reports less than EUR1bn mobilised, attributed to Catherine Diop via Dakaractu; mobilisation definition and primary accounting table unavailable.",
+        "country": "SEN",
+        "match_status": "context_only",
+        "matched_project_ids": "",
+        "notes": "Attributed context; no project financial event inferred.",
+        "section": "12 August 2026 financing paragraph",
+        "source_id": "sen-senego-mobilised-2026"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-senego-mobilised-2026",
+      "source_publication_date": "2026-08-12"
+    },
+    {
+      "claim_id": "sen-dig-sen-nrgi-territories-2026",
+      "date_relation": "after_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-dig-sen-nrgi-territories-2026",
+        "claim_summary": "Briefing calls 11 projects financed and the investment plan unpublished; these claims are not adopted as ledger facts.",
+        "country": "SEN",
+        "match_status": "context_only",
+        "matched_project_ids": "",
+        "notes": "Attributed context; no project financial event inferred.",
+        "section": "Introductory paragraphs",
+        "source_id": "sen-nrgi-territories-2026"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-nrgi-territories-2026",
+      "source_publication_date": "2026-05-25"
+    },
+    {
+      "claim_id": "sen-dig-sen-nrgi-jetp-feasibility-2026",
+      "date_relation": "after_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-dig-sen-nrgi-jetp-feasibility-2026",
+        "claim_summary": "NRGI critiques projected financing and implementation design; projected 2026-2027 payments are not actual disbursements.",
+        "country": "SEN",
+        "match_status": "context_only",
+        "matched_project_ids": "",
+        "notes": "Attributed context; no project financial event inferred.",
+        "section": "Financial design and transparency analysis",
+        "source_id": "sen-nrgi-jetp-feasibility-2026"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-nrgi-jetp-feasibility-2026",
+      "source_publication_date": "2026-01-26"
+    },
+    {
+      "claim_id": "sen-scout-claim-sen-scout-puelec-commissioning-2025",
+      "date_relation": "after_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-scout-claim-sen-scout-puelec-commissioning-2025",
+        "claim_summary": "Ministry reports FCFA1429995123 incl tax for Global Engineerings SAR work under ASER supervision, funded by Senegal.",
+        "country": "SEN",
+        "match_status": "partial",
+        "matched_project_ids": "sen-project-qw-04",
+        "notes": "Component value and funding claim only. No disbursement evidence or JETP/IPG attribution; not entered into either financial scope.",
+        "section": "Contractor and state-funding paragraph",
+        "source_id": "sen-scout-puelec-commissioning-2025"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-scout-puelec-commissioning-2025",
+      "source_publication_date": "2025-11-09"
+    },
+    {
+      "claim_id": "sen-scout-claim-sen-scout-giz-ped2-project",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-scout-claim-sen-scout-giz-ped2-project",
+        "claim_summary": "PED II 2020.2099.8 identifies GFA and a programme commission of EUR11.6m.",
+        "country": "SEN",
+        "match_status": "context_only",
+        "matched_project_ids": "",
+        "notes": "Does not establish the amount of MRV study funding.",
+        "section": "Project details and participants",
+        "source_id": "sen-scout-giz-ped2-project"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-scout-giz-ped2-project",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "sen-scout-claim-sen-scout-clean-cooking-strategy",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-scout-claim-sen-scout-clean-cooking-strategy",
+        "claim_summary": "PNB baseline is 2678 biodigesters by 2023; national unconditional target is27000 by2030.",
+        "country": "SEN",
+        "match_status": "context_only",
+        "matched_project_ids": "",
+        "notes": "Baseline is not delivery of the proposed extension.",
+        "section": "Table 3, printed p.25",
+        "source_id": "sen-scout-clean-cooking-strategy"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-scout-clean-cooking-strategy",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "sen-scout-claim-sen-scout-ouarkhokh-par",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-scout-claim-sen-scout-ouarkhokh-par",
+        "claim_summary": "Reports a CNTIC EPC contract dated24July2024 for Ouarkhokh50MWc and30MW/90MWh.",
+        "country": "SEN",
+        "match_status": "context_only",
+        "matched_project_ids": "",
+        "notes": "Reported contract reference only; ownership and financing terms unverified.",
+        "section": "Printed pp.18 and59",
+        "source_id": "sen-scout-ouarkhokh-par"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-scout-ouarkhokh-par",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "sen-scout-claim-sen-scout-ouarkhokh-pepp",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-scout-claim-sen-scout-ouarkhokh-pepp",
+        "claim_summary": "Names a Huawei memorandum for Ouarkhokh.",
+        "country": "SEN",
+        "match_status": "context_only",
+        "matched_project_ids": "",
+        "notes": "Separate roles/contracts may coexist; relationship unresolved.",
+        "section": "Printed p.6",
+        "source_id": "sen-scout-ouarkhokh-pepp"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-scout-ouarkhokh-pepp",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "sen-scout-claim-sen-scout-genertec-ouarkhokh",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-scout-claim-sen-scout-genertec-ouarkhokh",
+        "claim_summary": "Reports recent groundbreaking at Ouarkhokh in a June2026 publication.",
+        "country": "SEN",
+        "match_status": "context_only",
+        "matched_project_ids": "",
+        "notes": "No exact ceremony date or Champions Nationaux SPV identity established; no canonical implementation event for QW2.",
+        "section": "Groundbreaking narrative",
+        "source_id": "sen-scout-genertec-ouarkhokh"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-scout-genertec-ouarkhokh",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "sen-scout-claim-sen-scout-aner-fiches-ice",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-scout-claim-sen-scout-aner-fiches-ice",
+        "claim_summary": "D2B17SN01 covers192health structures; broad public-institution solarisation is programme context.",
+        "country": "SEN",
+        "match_status": "context_only",
+        "matched_project_ids": "",
+        "notes": "No programme-wide cost/status transfer.",
+        "section": "PDF p.19",
+        "source_id": "sen-scout-aner-fiches-ice"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-scout-aner-fiches-ice",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "sen-scout-claim-sen-scout-cesag-aner-thesis",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-scout-claim-sen-scout-cesag-aner-thesis",
+        "claim_summary": "Exact-title secondary leads for TURBULENT and solar desalination.",
+        "country": "SEN",
+        "match_status": "context_only",
+        "matched_project_ids": "",
+        "notes": "Cover2021-2022 and PDFcreation2026 do not establish publication date or project implementation.",
+        "section": "Printed pp.41 and43 footnotes28 and31",
+        "source_id": "sen-scout-cesag-aner-thesis"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-scout-cesag-aner-thesis",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "sen-round2-puelec-contracts",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-round2-puelec-contracts",
+        "claim_summary": "Lots T0038/T0039 to Global Engineering SARL: FCFA867233917 and FCFA562761206 TTC, signed15December2023, approved5January2024, BCI2022 funding, start orders5February2024.",
+        "country": "SEN",
+        "match_status": "partial",
+        "matched_project_ids": "sen-project-qw-04",
+        "notes": "Exact sum FCFA1429995123 matches ministry component amount, agency/contractor/geography align; inferred cross-document package join. No JETP/IPG attribution; no financial event in either scope. Ordinary curl GET archived after requests HTTP406; both retrieval outcomes retained.",
+        "section": "PDF/printed pp.55-56 T_ASER_003",
+        "source_id": "sen-arcop-aser-audit-2023"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-arcop-aser-audit-2023",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "sen-round2-puelec-orders",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-round2-puelec-orders",
+        "claim_summary": "Transfer order29February2024 and OP0083/0082 dated27February2024 cover FCFA285999023 startup advances on the two lots.",
+        "country": "SEN",
+        "match_status": "partial",
+        "matched_project_ids": "sen-project-qw-04",
+        "notes": "Issued payment orders, not proof of bank settlement or disbursement. Does not establish completed works for all villages or link to ASER350/330/600 proposals.",
+        "section": "PDF/printed p.56 Paiement",
+        "source_id": "sen-arcop-aser-audit-2023"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-arcop-aser-audit-2023",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "sen-round2-irve-acf",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-round2-irve-acf",
+        "claim_summary": "Senelec lists ACF-DON funding for its mobility-electrification master-plan procurement.",
+        "country": "SEN",
+        "match_status": "partial",
+        "matched_project_ids": "sen-project-annex-35",
+        "notes": "ACF is African Climate Foundation; no amount, executed grant or JETP/IPG attribution. AFD dgMarket hosting metadata must not substitute for the named funder. Exact Annex35 identity remains inferred and unconfirmed; procurement preparation is context, not a canonical project milestone.",
+        "section": "PDF p.13 C_DEG_155",
+        "source_id": "sen-senelec-ppm-2026-v2"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-senelec-ppm-2026-v2",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "sen-round2-solar-contracts",
+      "date_relation": "after_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-round2-solar-contracts",
+        "claim_summary": "Ministry reports two contracts signed by Senelec and CNTIC in partnership with Huawei, two50MWc plants and storage30MW90MWh, EPC+F.",
+        "country": "SEN",
+        "match_status": "context_only",
+        "matched_project_ids": "",
+        "notes": "No plant locations or legal vehicle; storage per-plant/aggregate wording ambiguous. No financialcounterparty, amount, effectiveness or JETP attribution. Date differs from provisional PAR24July2024; possible different instruments or date error unresolved.",
+        "section": "28July2025 mission and contract paragraphs",
+        "source_id": "sen-mepm-cntic-huawei-contracts-2025"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-mepm-cntic-huawei-contracts-2025",
+      "source_publication_date": "2025-07-28"
+    },
+    {
+      "claim_id": "sen-round2-solar-groundbreaking",
+      "date_relation": "after_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-round2-solar-groundbreaking",
+        "claim_summary": "Ministry reports groundbreaking for Linguere50MW plant with30MW90MWh storage.",
+        "country": "SEN",
+        "match_status": "context_only",
+        "matched_project_ids": "",
+        "notes": "Physical-site evidence only; exact ceremony date and Champions Nationaux ownership join unresolved.",
+        "section": "Publication10April2026 and opening plant description",
+        "source_id": "sen-mepm-ouarkhokh-groundbreaking-2026"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-mepm-ouarkhokh-groundbreaking-2026",
+      "source_publication_date": "2026-04-10"
+    },
+    {
+      "claim_id": "sen-round2-solar-contractor",
+      "date_relation": "after_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-round2-solar-contractor",
+        "claim_summary": "Genertec reports recent groundbreaking at Ouarkhokh/Linguere and names Senelec as project owner.",
+        "country": "SEN",
+        "match_status": "context_only",
+        "matched_project_ids": "",
+        "notes": "No exact ceremony day or IPP/SPV identity. Does not assign physical progress to QW2.",
+        "section": "Publication26May2026, opening paragraphs",
+        "source_id": "sen-genertec-ouarkhokh-chinese-2026"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-genertec-ouarkhokh-chinese-2026",
+      "source_publication_date": "2026-05-26"
+    },
+    {
+      "claim_id": "sen-round2-solar-sites",
+      "date_relation": "after_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-round2-solar-sites",
+        "claim_summary": "Ministry reports Senelec/Huawei memorandum covering two50MW plants at Linguere and Koungheul with storage30MW90MWh.",
+        "country": "SEN",
+        "match_status": "context_only",
+        "matched_project_ids": "",
+        "notes": "Visit began11August2026. Memorandum follows earlier contract and construction reports; role/date relationship unresolved. Per-plant/aggregate storage amount unspecified; no JETP legal identity or finance.",
+        "section": "Publication13August2026; final paragraph",
+        "source_id": "sen-mepm-huawei-sites-mou-2026"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-mepm-huawei-sites-mou-2026",
+      "source_publication_date": "2026-08-13"
+    },
+    {
+      "claim_id": "sen-round3-agpm-public-buildings-feasibility",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-round3-agpm-public-buildings-feasibility",
+        "claim_summary": "ANER's 2025 procurement programme plans a consultant for feasibility studies for a public-buildings electrical-autonomy project.",
+        "country": "SEN",
+        "match_status": "partial",
+        "matched_project_ids": "sen-project-annex-23",
+        "notes": "Name-family evidence and preparation stage only. No sites, budget, award or explicit Annex23 identifier; do not transfer D2B17SN01's 192-health-facility scope.",
+        "section": "Consultant services bullet",
+        "source_id": "sen-aner-archive-agpm-2025"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-aner-archive-agpm-2025",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "sen-round3-annex8-desalination-evaluation",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-round3-annex8-desalination-evaluation",
+        "claim_summary": "Exact-title ANER received-project #25 has eligibility score10 and EnerPRL maturity8, with level2 in all four maturity categories.",
+        "country": "SEN",
+        "match_status": "matched",
+        "matched_project_ids": "sen-project-annex-28",
+        "notes": "Identity and evaluation only. Working project#25 is renumbered Annex2 ordinal28; no independent support here for 200 units, FCFA42473593646, duration or sites.",
+        "section": "Printed p.172, section 8.5.2.4",
+        "source_id": "sen-annex8-project-analysis"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-annex8-project-analysis",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "sen-round3-annex8-turbulent-evaluation",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-round3-annex8-turbulent-evaluation",
+        "claim_summary": "Exact-title ANER received-project #27 has eligibility10, EnerPRL maturity12 and priority1; evaluators require integration with existing programmes.",
+        "country": "SEN",
+        "match_status": "matched",
+        "matched_project_ids": "sen-project-annex-30",
+        "notes": "Identity and evaluation only. Working project#27 is renumbered Annex2 ordinal30; no vendor link or independent support for FCFA350m, 36months or sites.",
+        "section": "Printed pp.58-61, section 8.4.2.9 and prioritisation",
+        "source_id": "sen-annex8-project-analysis"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-annex8-project-analysis",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "sen-round4-boad-linguere-approved",
+      "date_relation": "after_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-round4-boad-linguere-approved",
+        "claim_summary": "BOAD board25-26March2026 approved a FCFA41500000000 loan for partial financing of the Senelec Linguere50MWc solar plant with30MW90MWh storage.",
+        "country": "SEN",
+        "match_status": "context_only",
+        "matched_project_ids": "",
+        "notes": "Approved loan only. Exact approval day within the two-day meeting is unspecified. No signed agreement, financial terms, effectiveness or disbursement proved. No JETP/IPG attribution or Champions Nationaux legal-vehicle join: neither financial scope admits this event. Separate from the May office-inauguration report.",
+        "section": "PDF p.2 approved-loans heading; p.3 Linguere item; report27March2026",
+        "source_id": "sen-boad-linguere-loan-2026"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-boad-linguere-loan-2026",
+      "source_publication_date": "2026-03-27"
+    },
+    {
+      "claim_id": "sen-round4-boad-office",
+      "date_relation": "after_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-round4-boad-office",
+        "claim_summary": "BOAD identifies the50MW Linguere solar project among projects it supports.",
+        "country": "SEN",
+        "match_status": "context_only",
+        "matched_project_ids": "",
+        "notes": "Corroborates institution and site only; the March board document supplies the approved amount. No signing or disbursement inferred.",
+        "section": "PDF p.1 final paragraph,7May2026",
+        "source_id": "sen-boad-dakar-office-2026"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-boad-dakar-office-2026",
+      "source_publication_date": "2026-05-07"
+    },
+    {
+      "claim_id": "sen-round3-giz-ped2",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-round3-giz-ped2",
+        "claim_summary": "GIZ2025 award listing records EUR199340 PEDII Senegal consulting, contract term1July-31December2025.",
+        "country": "SEN",
+        "match_status": "context_only",
+        "matched_project_ids": "",
+        "notes": "No MRV, ASER,350-village or10MW contract join. Distinct from GFA-alone2024 listing; do not combine values or infer Annex5 financing.",
+        "section": "PDF p.14, ARGE Speedykom GmbH-GFA Consulting Group GmbH",
+        "source_id": "sen-giz-ped2-awards-2025"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-giz-ped2-awards-2025",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "sen-round3-isdb-133-exclusion",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-round3-isdb-133-exclusion",
+        "claim_summary": "ASER award notification covers133villages in four lots.",
+        "country": "SEN",
+        "match_status": "context_only",
+        "matched_project_ids": "",
+        "notes": "Different village count and tender package; no identity join to Annex6 solar330localities plus150repowering or Annex7 600villages.",
+        "section": "PDF pp.1-2, T_ASER_013/2020",
+        "source_id": "sen-isdb-aser-133-award"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-isdb-aser-133-award",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "sen-round3-aner-d2b-api",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-round3-aner-d2b-api",
+        "claim_summary": "ANER describes solar autonomy for192health facilities in Ziguinchor, Sedhiou and Kolda.",
+        "country": "SEN",
+        "match_status": "partial",
+        "matched_project_ids": "sen-project-annex-23",
+        "notes": "Narrower health component with broad public-building programme context; no exact crosswalk to the whole Annex23 proposal. Database timestamps are not publication or implementation dates.",
+        "section": "JSON project id24, D2B17SN01",
+        "source_id": "sen-aner-d2b-live-api"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-aner-d2b-live-api",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "sen-round3-archive-autonomisation-public-buildings",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-round3-archive-autonomisation-public-buildings",
+        "claim_summary": "Historical ANER public-building autonomy page lists FCFA270million but does not identify the full Annex23 project.",
+        "country": "SEN",
+        "match_status": "partial",
+        "matched_project_ids": "sen-project-annex-23",
+        "notes": "Historical capture, not current live content. No transfer of component budget or outputs to the whole Annex23 proposal. WARC and verified payload hashes preserved; source registry contains original URL and byte-range locator. No scoped financial or physical event.",
+        "section": "Historical ANER response captured 2023-12-07T02:46:50Z",
+        "source_id": "sen-aner-archive-autonomisation-public-buildings"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-aner-archive-autonomisation-public-buildings",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "sen-round3-archive-esipc",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-round3-archive-esipc",
+        "claim_summary": "Historical ANER ESIP1-3 pages describe public and community infrastructure phases, not an exact Annex23 project crosswalk.",
+        "country": "SEN",
+        "match_status": "partial",
+        "matched_project_ids": "sen-project-annex-23",
+        "notes": "Historical capture, not current live content. No transfer of component budget or outputs to the whole Annex23 proposal. WARC and verified payload hashes preserved; source registry contains original URL and byte-range locator. No scoped financial or physical event.",
+        "section": "Historical ANER response captured 2024-12-10T15:35:55Z",
+        "source_id": "sen-aner-archive-esipc"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-aner-archive-esipc",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "sen-round3-archive-esipc-v4",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-round3-archive-esipc-v4",
+        "claim_summary": "Historical ANER ESIP4 record describes700sites and FCFA861957954 with July2020 project date.",
+        "country": "SEN",
+        "match_status": "partial",
+        "matched_project_ids": "sen-project-annex-23",
+        "notes": "Historical capture, not current live content. No transfer of component budget or outputs to the whole Annex23 proposal. WARC and verified payload hashes preserved; source registry contains original URL and byte-range locator. No scoped financial or physical event.",
+        "section": "Historical ANER response captured 2025-05-25T01:48:46Z",
+        "source_id": "sen-aner-archive-esipc-v4"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-aner-archive-esipc-v4",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "sen-round3-archive-d2b",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-round3-archive-d2b",
+        "claim_summary": "Historical ANER D2B record describes September2018 feasibility/tender preparation at FCFA249263660; no exact D2B17SN01 crosswalk.",
+        "country": "SEN",
+        "match_status": "partial",
+        "matched_project_ids": "sen-project-annex-23",
+        "notes": "Historical capture, not current live content. No transfer of component budget or outputs to the whole Annex23 proposal. WARC and verified payload hashes preserved; source registry contains original URL and byte-range locator. No scoped financial or physical event.",
+        "section": "Historical ANER response captured 2025-05-25T02:01:57Z",
+        "source_id": "sen-aner-archive-d2b"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-aner-archive-d2b",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "sen-round3-archive-gandiaye",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-round3-archive-gandiaye",
+        "claim_summary": "Historical ANER Gandiaye record describes a single50m3/day desalination pilot, five smart fountains and FCFA134.33million PED/GIZ support.",
+        "country": "SEN",
+        "match_status": "partial",
+        "matched_project_ids": "sen-project-annex-28",
+        "notes": "Historical capture, not current live content. Single pilot is not the Annex28 200-unit proposal. WARC and verified payload hashes preserved; source registry contains original URL and byte-range locator. No scoped financial or physical event.",
+        "section": "Historical ANER response captured 2024-12-10T15:38:29Z",
+        "source_id": "sen-aner-archive-gandiaye"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-aner-archive-gandiaye",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "sen-docfollow-aner-identity-budget",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-docfollow-aner-identity-budget",
+        "claim_summary": "ANER lists the solar-autonomy project for universities, hospitals and public institutions with a FCFA60400000000 budget marked Conditionnel.",
+        "country": "SEN",
+        "match_status": "matched",
+        "matched_project_ids": "sen-project-annex-23",
+        "notes": "Independent identity review confirms distinctive title/promoter and approximate EUR92m budget consistency. Conditional strategic budget, not approved/signed finance. No duplicate financial-need row added. Cover monthJuly2025, API dateJuly1 and PDFmetadata are preserved without inventing an exact publication day.",
+        "section": "PDF pp.22 and48; final version July2025",
+        "source_id": "sen-aner-psd-2025-2029"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-aner-psd-2025-2029",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "sen-docfollow-aner-axis-targets",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-docfollow-aner-axis-targets",
+        "claim_summary": "Objective2.1 targets100public-building PV minicentrals totaling60MWc.",
+        "country": "SEN",
+        "match_status": "partial",
+        "matched_project_ids": "sen-project-annex-23",
+        "notes": "Axis/objective-level target, not a project-specific delivered capacity or site list. No canonical implementation event or capacity allocation.",
+        "section": "PDF p.21, Objective2.1 expected results",
+        "source_id": "sen-aner-psd-2025-2029"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-aner-psd-2025-2029",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "sen-docfollow-rooftop-predecessor",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-docfollow-rooftop-predecessor",
+        "claim_summary": "Preliminary rooftop survey for MPE, financed by World Bank and prepared by GOPA/Akilee, lists25candidate buildings and a narrower eligible design set of roughly1MWc.",
+        "country": "SEN",
+        "match_status": "partial",
+        "matched_project_ids": "sen-project-annex-23",
+        "notes": "Possible earlier design input, not exact programme join; candidate/eligible buildings and cost estimate are not installed outputs or secured Annex23 finance. No precise publication date inferred from normalized API or PDFmetadata.",
+        "section": "Printed pp.3,12-13,19-20; tables2 and8",
+        "source_id": "sen-aner-rooftop-preliminary-report"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-aner-rooftop-preliminary-report",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "sen-docfollow-wp2-gandiaye",
+      "date_relation": "unknown",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-docfollow-wp2-gandiaye",
+        "claim_summary": "Productive-use study examines the Gandiaye desalination pilot and notes insufficient financial information.",
+        "country": "SEN",
+        "match_status": "partial",
+        "matched_project_ids": "sen-project-annex-28",
+        "notes": "No200-unit project or TURBULENT fiche; cannot establish proposed broadprogramme identity or finance.",
+        "section": "Gandiaye desalination case",
+        "source_id": "sen-aner-wp2-productive-use"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-aner-wp2-productive-use",
+      "source_publication_date": null
+    },
+    {
+      "claim_id": "sen-docfollow-arcop928-contract",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-docfollow-arcop928-contract",
+        "claim_summary": "ARCOP describes an ASER-AEE Power EPC contract for928localities at FCFA91833980000 excluding tax, a25November2023 tripartite engagement and21December2023 subcontract.",
+        "country": "SEN",
+        "match_status": "context_only",
+        "matched_project_ids": "",
+        "notes": "Exact document references sharpen the village-schedule request; no600village/24MWc/injection or Annex7 join. Decision recites EUR56m advance, not independent settlement proof. December disposition closes conciliation and refers parties to courts; no current2026 status or established criminal guilt inferred.",
+        "section": "PDF p.3 factual background; pp.8-9 disposition",
+        "source_id": "sen-arcop-aeepower-decision138-2024"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-arcop-aeepower-decision138-2024",
+      "source_publication_date": "2024-12-24"
+    },
+    {
+      "claim_id": "sen-docfollow-arcop107-history",
+      "date_relation": "before_principal",
+      "factual_promotion": false,
+      "origin_assessment": {
+        "independence": "unknown",
+        "intelligence_role": "unknown",
+        "upstream_status": "unknown"
+      },
+      "original_claim": {
+        "claim_id": "sen-docfollow-arcop107-history",
+        "claim_summary": "ARCOP records a30September2024 Santander letter and orders temporary suspension pending decision; its disposition mentions a FCFA37733592000 advance figure.",
+        "country": "SEN",
+        "match_status": "context_only",
+        "matched_project_ids": "",
+        "notes": "Historical procedural evidence, not current suspension or independently verified bank settlement. Amount differs from EUR56m recited in Decemberdecision138; do not harmonize. Distinguish party submissions from findings; no Annex7 financing event.",
+        "section": "PDF pp.2 and5, Santander letter and disposition",
+        "source_id": "sen-arcop-aeepower-decision107-2024"
+      },
+      "principal_publication_date": "2025-04-02",
+      "principal_source_id": "sen-investment-plan-l4",
+      "review_state": "pending_review",
+      "source_id": "sen-arcop-aeepower-decision107-2024",
+      "source_publication_date": "2024-10-02"
+    }
+  ],
+  "discoveries": [],
+  "handoff_ticket": "0728",
+  "inputs": {
+    "config/jetp-source-watches.yaml": {
+      "sha256": "c5521ba75fc449396300acf221fea71520d17894c76b333a820e01c66f12bae2"
+    },
+    "data/jetp/authority-coverage.csv": {
+      "row_count": 64,
+      "sha256": "282f72f77f12dadde11e707746ab33e33c29f5f7d5b95cd2f8b976e8120afa1e"
+    },
+    "data/jetp/documents.dvc": {
+      "sha256": "a321a6f2708edd80b7d2aed1f1c493a0cd846948b088435ce3f7de21e9d427ea"
+    },
+    "data/jetp/dry-searches.csv": {
+      "row_count": 109,
+      "sha256": "73b38b325614c9baf2e85e7abf49f3abecf03ae364e130d36b3c85e8c4db0e99"
+    },
+    "data/jetp/event-timing.csv": {
+      "row_count": 451,
+      "sha256": "e6ef01bb8f854307b6a0b15ca9749e18669041671bdfebb0c76113918e567071"
+    },
+    "data/jetp/events.csv": {
+      "row_count": 380,
+      "sha256": "dfe8a635c4f6408fecea2f17bf9a50fc16449f16e961457cebf64b6552c42062"
+    },
+    "data/jetp/idn-portfolio-observations.csv": {
+      "row_count": 46,
+      "sha256": "812244c891ed8ae184d1a1959351fa5fabfbea5683613fa3803cc0a9b05aea8b"
+    },
+    "data/jetp/implementation-events.csv": {
+      "row_count": 71,
+      "sha256": "aca4d7d2a773919b12de872cd2436040c449a52c1d30e0024cd7d8b48300043d"
+    },
+    "data/jetp/manifest.csv": {
+      "row_count": 307,
+      "sha256": "6de8f6510723ff776ba6ea3980c01edf98fdae59fab569cc570aab06e4307660"
+    },
+    "data/jetp/news-leads.csv": {
+      "row_count": 18,
+      "sha256": "515fff3faf86b858df5a01f14d4dce4d3d732955df4051028bfa00b6895babbe"
+    },
+    "data/jetp/plan-projects.csv": {
+      "row_count": 1628,
+      "sha256": "723b24f1e67da7420122bede26a997b002d2ff9683f3e7623da8c74f372ba5ca"
+    },
+    "data/jetp/project-coverage.csv": {
+      "row_count": 141,
+      "sha256": "56c62b10723b4e0c9c350160b920be865168449b2ee2a7a44ef35c0a00d428b3"
+    },
+    "data/jetp/project-source-links.csv": {
+      "row_count": 315,
+      "sha256": "5de3367b7d88eb083ce0d8b74503e7466a4eac87815ab17e4bf10c1bf31c0518"
+    },
+    "data/jetp/projects.csv": {
+      "row_count": 404,
+      "sha256": "aa048ed7ba496ae698ced9d5906ab11ebc318403a03afc3e525c75b7a888a540"
+    },
+    "data/jetp/source-claims.csv": {
+      "row_count": 149,
+      "sha256": "2c6975af75d2022d994318e2925d846fb64363a248974a7c247ee6ebd421287a"
+    },
+    "data/jetp/sources.csv": {
+      "row_count": 301,
+      "sha256": "f07be2a2a253560a2b065c60b4ff9e69d8a688151d246ea314ddb3a7902403f3"
+    },
+    "data/jetp/vnm-pilot-manifest.csv": {
+      "row_count": 66,
+      "sha256": "b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818"
+    },
+    "data/jetp/vnm-pilot-observations.csv": {
+      "row_count": 46,
+      "sha256": "0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917"
+    },
+    "scripts/jetp/_contracts.py": {
+      "sha256": "8787611f0f4815e3cf705fafcbcb466717e2dfadc110f981254475ac53d03d67"
+    },
+    "scripts/jetp/_source_crosswalk.py": {
+      "sha256": "63a341f8822afdf5bbe2f6bf21312865b2962bc08126101b93043379a55555ef"
+    },
+    "scripts/jetp/_source_watch.py": {
+      "sha256": "cf1087121d19abe3ba0aec0b0d7e29f5d7a7e0e6957ad500db1a5fa1d0950e67"
+    },
+    "scripts/jetp/build_source_sweep.py": {
+      "sha256": "e9b669241f3feb7638b51422a5151cfe3360c7c0e6704e9b60c14cc100fa9fb7"
+    },
+    "scripts/jetp/corpus_harvest_documents.py": {
+      "sha256": "c5c81dd7b5018120ec6c81023c81d20ccabc6dbe4b842d8311a050f2515e4ea3"
+    }
+  },
+  "plan": {
+    "budget": {
+      "calls": 4,
+      "seconds": 240
+    },
+    "configuration_revision": "c5521ba75fc449396300acf221fea71520d17894c76b333a820e01c66f12bae2",
+    "created_at": "2026-09-14T18:37:57Z",
+    "owner": "ticket-0728-editor",
+    "plan_digest": "plan-a1f3a67fa738145f87715b63a4ba200c47727a035d9475e1ce5842c5b4ebadf1",
+    "purpose": "Review principal-source watches and existing claim updates before a deliberate refresh",
+    "registry_revision": "f07be2a2a253560a2b065c60b4ff9e69d8a688151d246ea314ddb3a7902403f3",
+    "supplements": null,
+    "sweep_id": "source-watch-rehearsal-0770",
+    "targets": [
+      {
+        "deferral_reason": "Publisher refresh deferred until this proposed watch policy is reviewed; archive verification only.",
+        "initial_due_at": "2026-09-14T18:37:57Z",
+        "prior_checks": [],
+        "source": {
+          "admission_status": "unadmitted_candidate",
+          "legacy_source_revision_id": "source_revision-36ed3f23646581103339fa0be13326dc46743cbb13526d9dfa41aabf71ac228b",
+          "metadata": {
+            "active": "true",
+            "authority_category": "ipg",
+            "country": "VNM",
+            "expected_format": "pdf",
+            "notes": "Official RMP linked from the EEAS launch page",
+            "priority": "1",
+            "project_id": "",
+            "published_date": "2023-12-01",
+            "publisher": "European External Action Service",
+            "source_id": "vnm-rmp-2023",
+            "source_kind": "document",
+            "source_type": "investment_plan",
+            "title": "Viet Nam JETP Resource Mobilisation Plan",
+            "url": "https://climate.ec.europa.eu/system/files/2023-12/RMP_Viet%20Nam_Eng_%28Final%20to%20publication%29.pdf"
+          },
+          "recorded_at": "2026-09-14T18:37:57Z",
+          "source_id": "vnm-rmp-2023",
+          "source_kind": "document",
+          "source_revision_id": "source-revision-96575a5f86c15c1caa3861f1ac1d137c4b621377433e08e5a294dc5a1dec8106",
+          "supersedes": null,
+          "triage_state": "unknown"
+        },
+        "watch": {
+          "acceptance_criteria": "One named document at the pinned URL; byte change is a review candidate only",
+          "access_limitations": [
+            "No credentials",
+            "No automatic redirects",
+            "No link crawling"
+          ],
+          "active": true,
+          "budget": {
+            "calls": 1,
+            "seconds": 60
+          },
+          "check_interval_days": 30,
+          "expected_publication_cadence": "unknown",
+          "max_retry_days": 14,
+          "method": "http_get",
+          "owner": "ticket-0728-editor",
+          "priority": 1,
+          "purpose": "Check the pinned principal document route for changed bytes; no national coverage inference",
+          "recorded_at": "2026-09-14T18:37:57Z",
+          "retry_days": 2,
+          "review_reference": null,
+          "review_state": "pending_review",
+          "route": "https://climate.ec.europa.eu/system/files/2023-12/RMP_Viet%20Nam_Eng_%28Final%20to%20publication%29.pdf",
+          "scope": {
+            "countries": [
+              "VNM"
+            ],
+            "languages": [
+              "en"
+            ],
+            "sectors": [],
+            "topics": [
+              "JETP"
+            ]
+          },
+          "source_id": "vnm-rmp-2023",
+          "source_kind": "document",
+          "source_revision_id": "source-revision-96575a5f86c15c1caa3861f1ac1d137c4b621377433e08e5a294dc5a1dec8106",
+          "watch_id": "vnm-principal-rmp",
+          "watch_revision_id": "watch-revision-3d1d0eb4396c38f25d7c08aea76c2f3213e6e9d9bf16b7e217f32f3a0380b43b"
+        }
+      },
+      {
+        "deferral_reason": "Publisher refresh deferred until this proposed watch policy is reviewed; archive verification only.",
+        "initial_due_at": "2026-09-14T18:37:57Z",
+        "prior_checks": [],
+        "source": {
+          "admission_status": "unadmitted_candidate",
+          "legacy_source_revision_id": "source_revision-6912b8c47ee1fecfa507c1b0b6ef46eeac1477332ebb6cd07799e671e535c4c5",
+          "metadata": {
+            "active": "true",
+            "authority_category": "jetp_secretariat",
+            "country": "ZAF",
+            "expected_format": "pdf",
+            "notes": "Latest official report found at 2026-09-12 collection",
+            "priority": "1",
+            "project_id": "",
+            "published_date": "2026-03-31",
+            "publisher": "JET Project Management Unit",
+            "source_id": "zaf-jet-quarterly-2026-q1",
+            "source_kind": "document",
+            "source_type": "progress_update",
+            "title": "JET IP Quarterly Progress Report 31 March 2026",
+            "url": "https://justenergytransition.co.za/wp-content/uploads/2026/06/JET-IP-2026-Q1-Progress-Report-final.pdf"
+          },
+          "recorded_at": "2026-09-14T18:37:57Z",
+          "source_id": "zaf-jet-quarterly-2026-q1",
+          "source_kind": "document",
+          "source_revision_id": "source-revision-5a8d4f7bede0f16d85f05dd75b610c4303ad3c7cae93d2a1a360f0a8efe366bb",
+          "supersedes": null,
+          "triage_state": "unknown"
+        },
+        "watch": {
+          "acceptance_criteria": "One named document at the pinned URL; byte change is a review candidate only",
+          "access_limitations": [
+            "No credentials",
+            "No automatic redirects",
+            "No link crawling"
+          ],
+          "active": true,
+          "budget": {
+            "calls": 1,
+            "seconds": 60
+          },
+          "check_interval_days": 30,
+          "expected_publication_cadence": "unknown",
+          "max_retry_days": 14,
+          "method": "http_get",
+          "owner": "ticket-0728-editor",
+          "priority": 1,
+          "purpose": "Check the pinned principal document route for changed bytes; no national coverage inference",
+          "recorded_at": "2026-09-14T18:37:57Z",
+          "retry_days": 2,
+          "review_reference": null,
+          "review_state": "pending_review",
+          "route": "https://justenergytransition.co.za/wp-content/uploads/2026/06/JET-IP-2026-Q1-Progress-Report-final.pdf",
+          "scope": {
+            "countries": [
+              "ZAF"
+            ],
+            "languages": [
+              "en"
+            ],
+            "sectors": [],
+            "topics": [
+              "JETP"
+            ]
+          },
+          "source_id": "zaf-jet-quarterly-2026-q1",
+          "source_kind": "document",
+          "source_revision_id": "source-revision-5a8d4f7bede0f16d85f05dd75b610c4303ad3c7cae93d2a1a360f0a8efe366bb",
+          "watch_id": "zaf-principal-quarterly",
+          "watch_revision_id": "watch-revision-7788dbcc40967772e11daa3bf48294992314484e73b708f95991f76e36828849"
+        }
+      },
+      {
+        "deferral_reason": "Publisher refresh deferred until this proposed watch policy is reviewed; archive verification only.",
+        "initial_due_at": "2026-09-14T18:37:57Z",
+        "prior_checks": [],
+        "source": {
+          "admission_status": "unadmitted_candidate",
+          "legacy_source_revision_id": "source_revision-8311af266ffc4a666dbc10584fb98a9a396e24c0661c3be5336437520feeb595",
+          "metadata": {
+            "active": "true",
+            "authority_category": "jetp_secretariat",
+            "country": "IDN",
+            "expected_format": "pdf",
+            "notes": "English final report; direct file identifier resolved from the official JETP report index",
+            "priority": "1",
+            "project_id": "",
+            "published_date": "2025-12-02",
+            "publisher": "JETP Indonesia Secretariat",
+            "source_id": "idn-jetp-progress-report-2025",
+            "source_kind": "document",
+            "source_type": "annual_report",
+            "title": "JETP Progress Report 2025",
+            "url": "https://drive.usercontent.google.com/download?id=1RhW5MLzbza69uaZHfho4bnQLSmjnAjWO&export=download&confirm=t"
+          },
+          "recorded_at": "2026-09-14T18:37:57Z",
+          "source_id": "idn-jetp-progress-report-2025",
+          "source_kind": "document",
+          "source_revision_id": "source-revision-85e7ea2a901e4b1f1a87c2774184d264f8987eb34177c5d32f241bbfc294518e",
+          "supersedes": null,
+          "triage_state": "unknown"
+        },
+        "watch": {
+          "acceptance_criteria": "One named document at the pinned URL; byte change is a review candidate only",
+          "access_limitations": [
+            "No credentials",
+            "No automatic redirects",
+            "No link crawling"
+          ],
+          "active": true,
+          "budget": {
+            "calls": 1,
+            "seconds": 60
+          },
+          "check_interval_days": 30,
+          "expected_publication_cadence": "unknown",
+          "max_retry_days": 14,
+          "method": "http_get",
+          "owner": "ticket-0728-editor",
+          "priority": 1,
+          "purpose": "Check the pinned principal document route for changed bytes; no national coverage inference",
+          "recorded_at": "2026-09-14T18:37:57Z",
+          "retry_days": 2,
+          "review_reference": null,
+          "review_state": "pending_review",
+          "route": "https://drive.usercontent.google.com/download?id=1RhW5MLzbza69uaZHfho4bnQLSmjnAjWO&export=download&confirm=t",
+          "scope": {
+            "countries": [
+              "IDN"
+            ],
+            "languages": [
+              "en",
+              "id"
+            ],
+            "sectors": [],
+            "topics": [
+              "JETP"
+            ]
+          },
+          "source_id": "idn-jetp-progress-report-2025",
+          "source_kind": "document",
+          "source_revision_id": "source-revision-85e7ea2a901e4b1f1a87c2774184d264f8987eb34177c5d32f241bbfc294518e",
+          "watch_id": "idn-principal-progress",
+          "watch_revision_id": "watch-revision-254ee360c40f5deefd2e3e700f5aa57f2165cee1a2e38d5b99aeae630b232808"
+        }
+      },
+      {
+        "deferral_reason": "Publisher refresh deferred until this proposed watch policy is reviewed; archive verification only.",
+        "initial_due_at": "2026-09-14T18:37:57Z",
+        "prior_checks": [],
+        "source": {
+          "admission_status": "unadmitted_candidate",
+          "legacy_source_revision_id": "source_revision-a738b0645521e338a7dc782fc3a3405bdb408707582b1f85015e07a04a1f8cbc",
+          "metadata": {
+            "active": "true",
+            "authority_category": "national_government",
+            "country": "SEN",
+            "expected_format": "pdf",
+            "notes": "Official-host copy of the national investment plan; retain outages as collection evidence",
+            "priority": "1",
+            "project_id": "",
+            "published_date": "2025-04-02",
+            "publisher": "Ministry of Energy Petroleum and Mines",
+            "source_id": "sen-investment-plan-l4",
+            "source_kind": "document",
+            "source_type": "investment_plan",
+            "title": "Plan d'Investissement de la Transition energetique juste",
+            "url": "https://www.itie.sn/wp-content/uploads/2025/06/20250402-ENERCAP-Livrable-L4-v5-clean-1.pdf"
+          },
+          "recorded_at": "2026-09-14T18:37:57Z",
+          "source_id": "sen-investment-plan-l4",
+          "source_kind": "document",
+          "source_revision_id": "source-revision-6f0ef640634a1f01bc3f228083be3ca12c79309e15fecbf4a0563e5c3853b6a7",
+          "supersedes": null,
+          "triage_state": "unknown"
+        },
+        "watch": {
+          "acceptance_criteria": "One named document at the pinned URL; byte change is a review candidate only",
+          "access_limitations": [
+            "No credentials",
+            "No automatic redirects",
+            "No link crawling"
+          ],
+          "active": true,
+          "budget": {
+            "calls": 1,
+            "seconds": 60
+          },
+          "check_interval_days": 30,
+          "expected_publication_cadence": "unknown",
+          "max_retry_days": 14,
+          "method": "http_get",
+          "owner": "ticket-0728-editor",
+          "priority": 1,
+          "purpose": "Check the pinned principal document route for changed bytes; no national coverage inference",
+          "recorded_at": "2026-09-14T18:37:57Z",
+          "retry_days": 2,
+          "review_reference": null,
+          "review_state": "pending_review",
+          "route": "https://www.itie.sn/wp-content/uploads/2025/06/20250402-ENERCAP-Livrable-L4-v5-clean-1.pdf",
+          "scope": {
+            "countries": [
+              "SEN"
+            ],
+            "languages": [
+              "fr"
+            ],
+            "sectors": [],
+            "topics": [
+              "JETP"
+            ]
+          },
+          "source_id": "sen-investment-plan-l4",
+          "source_kind": "document",
+          "source_revision_id": "source-revision-6f0ef640634a1f01bc3f228083be3ca12c79309e15fecbf4a0563e5c3853b6a7",
+          "watch_id": "sen-principal-plan",
+          "watch_revision_id": "watch-revision-271de040f18cde1325b1a8d81645f06b6cfe37dcef32923c6abb52bd8aa1f4ba"
+        }
+      }
+    ]
+  },
+  "publication_action": "none",
+  "schema_version": "source-sweep/1",
+  "source_revisions": [
+    {
+      "admission_status": "unadmitted_candidate",
+      "legacy_source_revision_id": "source_revision-36ed3f23646581103339fa0be13326dc46743cbb13526d9dfa41aabf71ac228b",
+      "metadata": {
+        "active": "true",
+        "authority_category": "ipg",
+        "country": "VNM",
+        "expected_format": "pdf",
+        "notes": "Official RMP linked from the EEAS launch page",
+        "priority": "1",
+        "project_id": "",
+        "published_date": "2023-12-01",
+        "publisher": "European External Action Service",
+        "source_id": "vnm-rmp-2023",
+        "source_kind": "document",
+        "source_type": "investment_plan",
+        "title": "Viet Nam JETP Resource Mobilisation Plan",
+        "url": "https://climate.ec.europa.eu/system/files/2023-12/RMP_Viet%20Nam_Eng_%28Final%20to%20publication%29.pdf"
+      },
+      "recorded_at": "2026-09-14T18:37:57Z",
+      "source_id": "vnm-rmp-2023",
+      "source_kind": "document",
+      "source_revision_id": "source-revision-96575a5f86c15c1caa3861f1ac1d137c4b621377433e08e5a294dc5a1dec8106",
+      "supersedes": null,
+      "triage_state": "unknown"
+    },
+    {
+      "admission_status": "unadmitted_candidate",
+      "legacy_source_revision_id": "source_revision-6912b8c47ee1fecfa507c1b0b6ef46eeac1477332ebb6cd07799e671e535c4c5",
+      "metadata": {
+        "active": "true",
+        "authority_category": "jetp_secretariat",
+        "country": "ZAF",
+        "expected_format": "pdf",
+        "notes": "Latest official report found at 2026-09-12 collection",
+        "priority": "1",
+        "project_id": "",
+        "published_date": "2026-03-31",
+        "publisher": "JET Project Management Unit",
+        "source_id": "zaf-jet-quarterly-2026-q1",
+        "source_kind": "document",
+        "source_type": "progress_update",
+        "title": "JET IP Quarterly Progress Report 31 March 2026",
+        "url": "https://justenergytransition.co.za/wp-content/uploads/2026/06/JET-IP-2026-Q1-Progress-Report-final.pdf"
+      },
+      "recorded_at": "2026-09-14T18:37:57Z",
+      "source_id": "zaf-jet-quarterly-2026-q1",
+      "source_kind": "document",
+      "source_revision_id": "source-revision-5a8d4f7bede0f16d85f05dd75b610c4303ad3c7cae93d2a1a360f0a8efe366bb",
+      "supersedes": null,
+      "triage_state": "unknown"
+    },
+    {
+      "admission_status": "unadmitted_candidate",
+      "legacy_source_revision_id": "source_revision-8311af266ffc4a666dbc10584fb98a9a396e24c0661c3be5336437520feeb595",
+      "metadata": {
+        "active": "true",
+        "authority_category": "jetp_secretariat",
+        "country": "IDN",
+        "expected_format": "pdf",
+        "notes": "English final report; direct file identifier resolved from the official JETP report index",
+        "priority": "1",
+        "project_id": "",
+        "published_date": "2025-12-02",
+        "publisher": "JETP Indonesia Secretariat",
+        "source_id": "idn-jetp-progress-report-2025",
+        "source_kind": "document",
+        "source_type": "annual_report",
+        "title": "JETP Progress Report 2025",
+        "url": "https://drive.usercontent.google.com/download?id=1RhW5MLzbza69uaZHfho4bnQLSmjnAjWO&export=download&confirm=t"
+      },
+      "recorded_at": "2026-09-14T18:37:57Z",
+      "source_id": "idn-jetp-progress-report-2025",
+      "source_kind": "document",
+      "source_revision_id": "source-revision-85e7ea2a901e4b1f1a87c2774184d264f8987eb34177c5d32f241bbfc294518e",
+      "supersedes": null,
+      "triage_state": "unknown"
+    },
+    {
+      "admission_status": "unadmitted_candidate",
+      "legacy_source_revision_id": "source_revision-a738b0645521e338a7dc782fc3a3405bdb408707582b1f85015e07a04a1f8cbc",
+      "metadata": {
+        "active": "true",
+        "authority_category": "national_government",
+        "country": "SEN",
+        "expected_format": "pdf",
+        "notes": "Official-host copy of the national investment plan; retain outages as collection evidence",
+        "priority": "1",
+        "project_id": "",
+        "published_date": "2025-04-02",
+        "publisher": "Ministry of Energy Petroleum and Mines",
+        "source_id": "sen-investment-plan-l4",
+        "source_kind": "document",
+        "source_type": "investment_plan",
+        "title": "Plan d'Investissement de la Transition energetique juste",
+        "url": "https://www.itie.sn/wp-content/uploads/2025/06/20250402-ENERCAP-Livrable-L4-v5-clean-1.pdf"
+      },
+      "recorded_at": "2026-09-14T18:37:57Z",
+      "source_id": "sen-investment-plan-l4",
+      "source_kind": "document",
+      "source_revision_id": "source-revision-6f0ef640634a1f01bc3f228083be3ca12c79309e15fecbf4a0563e5c3853b6a7",
+      "supersedes": null,
+      "triage_state": "unknown"
+    }
+  ],
+  "summary": {
+    "complete": true,
+    "evidence_action": "preserve",
+    "publication_action": "none",
+    "targets": [
+      {
+        "check_ids": [],
+        "deferral_reason": "Publisher refresh deferred until this proposed watch policy is reviewed; archive verification only.",
+        "failure_streak": 0,
+        "last_attempt_at": null,
+        "last_changed_at": null,
+        "last_successful_check_at": null,
+        "next_check_at": "2026-09-14T18:37:57Z",
+        "status": "deferred",
+        "watch_id": "vnm-principal-rmp",
+        "watch_revision_id": "watch-revision-3d1d0eb4396c38f25d7c08aea76c2f3213e6e9d9bf16b7e217f32f3a0380b43b"
+      },
+      {
+        "check_ids": [],
+        "deferral_reason": "Publisher refresh deferred until this proposed watch policy is reviewed; archive verification only.",
+        "failure_streak": 0,
+        "last_attempt_at": null,
+        "last_changed_at": null,
+        "last_successful_check_at": null,
+        "next_check_at": "2026-09-14T18:37:57Z",
+        "status": "deferred",
+        "watch_id": "zaf-principal-quarterly",
+        "watch_revision_id": "watch-revision-7788dbcc40967772e11daa3bf48294992314484e73b708f95991f76e36828849"
+      },
+      {
+        "check_ids": [],
+        "deferral_reason": "Publisher refresh deferred until this proposed watch policy is reviewed; archive verification only.",
+        "failure_streak": 0,
+        "last_attempt_at": null,
+        "last_changed_at": null,
+        "last_successful_check_at": null,
+        "next_check_at": "2026-09-14T18:37:57Z",
+        "status": "deferred",
+        "watch_id": "idn-principal-progress",
+        "watch_revision_id": "watch-revision-254ee360c40f5deefd2e3e700f5aa57f2165cee1a2e38d5b99aeae630b232808"
+      },
+      {
+        "check_ids": [],
+        "deferral_reason": "Publisher refresh deferred until this proposed watch policy is reviewed; archive verification only.",
+        "failure_streak": 0,
+        "last_attempt_at": null,
+        "last_changed_at": null,
+        "last_successful_check_at": null,
+        "next_check_at": "2026-09-14T18:37:57Z",
+        "status": "deferred",
+        "watch_id": "sen-principal-plan",
+        "watch_revision_id": "watch-revision-271de040f18cde1325b1a8d81645f06b6cfe37dcef32923c6abb52bd8aa1f4ba"
+      }
+    ]
+  }
+}

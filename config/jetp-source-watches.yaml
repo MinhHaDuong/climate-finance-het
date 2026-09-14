@@ -1,0 +1,36 @@
+# Proposed bounded policies; local Terra review does not invent historical admission.
+sweep_id: source-watch-rehearsal-0770
+recorded_at: '2026-09-14T18:37:57Z'
+owner: ticket-0728-editor
+purpose: Review principal-source watches and existing claim updates before a deliberate refresh
+budget: {calls: 4, seconds: 240}
+defaults:
+  owner: ticket-0728-editor
+  purpose: Check the pinned principal document route for changed bytes; no national coverage inference
+  active: true
+  priority: 1
+  expected_publication_cadence: unknown
+  check_interval_days: 30
+  retry_days: 2
+  max_retry_days: 14
+  method: http_get
+  access_limitations: [No credentials, No automatic redirects, No link crawling]
+  acceptance_criteria: One named document at the pinned URL; byte change is a review candidate only
+  budget: {calls: 1, seconds: 60}
+watches:
+  - watch_id: vnm-principal-rmp
+    source_id: vnm-rmp-2023
+    source_kind: document
+    scope: {countries: [VNM], sectors: [], languages: [en], topics: [JETP]}
+  - watch_id: zaf-principal-quarterly
+    source_id: zaf-jet-quarterly-2026-q1
+    source_kind: document
+    scope: {countries: [ZAF], sectors: [], languages: [en], topics: [JETP]}
+  - watch_id: idn-principal-progress
+    source_id: idn-jetp-progress-report-2025
+    source_kind: document
+    scope: {countries: [IDN], sectors: [], languages: [en, id], topics: [JETP]}
+  - watch_id: sen-principal-plan
+    source_id: sen-investment-plan-l4
+    source_kind: document
+    scope: {countries: [SEN], sectors: [], languages: [fr], topics: [JETP]}
