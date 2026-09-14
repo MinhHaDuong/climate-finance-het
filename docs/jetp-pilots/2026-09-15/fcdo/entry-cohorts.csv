@@ -1,290 +1,297 @@
 country,unit,stage,cohort,count,validation
-AF,component,actual_start,unvalidated_or_missing,5,"source reported, not document validated"
-AF,programme,actual_start,unvalidated_or_missing,2,"source reported, not document validated"
-AG,programme,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-AL,component,actual_start,unvalidated_or_missing,15,"source reported, not document validated"
-AL,programme,actual_start,unvalidated_or_missing,25,"source reported, not document validated"
-AM,component,actual_start,unvalidated_or_missing,35,"source reported, not document validated"
-AM,programme,actual_start,unvalidated_or_missing,22,"source reported, not document validated"
-AO,component,actual_start,unvalidated_or_missing,14,"source reported, not document validated"
-AO,programme,actual_start,unvalidated_or_missing,25,"source reported, not document validated"
-AR,component,actual_start,unvalidated_or_missing,5,"source reported, not document validated"
-AR,programme,actual_start,unvalidated_or_missing,17,"source reported, not document validated"
-AS,component,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-AS,programme,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-AZ,component,actual_start,unvalidated_or_missing,7,"source reported, not document validated"
-AZ,programme,actual_start,unvalidated_or_missing,8,"source reported, not document validated"
-BA,component,actual_start,unvalidated_or_missing,50,"source reported, not document validated"
-BA,programme,actual_start,unvalidated_or_missing,24,"source reported, not document validated"
-BD,component,actual_start,unvalidated_or_missing,414,"source reported, not document validated"
-BD,programme,actual_start,unvalidated_or_missing,112,"source reported, not document validated"
-BF,component,actual_start,unvalidated_or_missing,2,"source reported, not document validated"
-BF,programme,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-BH,component,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-BI,component,actual_start,unvalidated_or_missing,53,"source reported, not document validated"
-BI,programme,actual_start,unvalidated_or_missing,29,"source reported, not document validated"
-BJ,component,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-BJ,programme,actual_start,unvalidated_or_missing,2,"source reported, not document validated"
-BO,component,actual_start,unvalidated_or_missing,2,"source reported, not document validated"
-BO,programme,actual_start,unvalidated_or_missing,16,"source reported, not document validated"
-BR,component,actual_start,unvalidated_or_missing,46,"source reported, not document validated"
-BR,programme,actual_start,unvalidated_or_missing,47,"source reported, not document validated"
-BS,component,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-BS,programme,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-BT,programme,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-BW,component,actual_start,unvalidated_or_missing,3,"source reported, not document validated"
-BW,programme,actual_start,unvalidated_or_missing,14,"source reported, not document validated"
-BY,component,actual_start,unvalidated_or_missing,8,"source reported, not document validated"
-BY,programme,actual_start,unvalidated_or_missing,21,"source reported, not document validated"
-BZ,component,actual_start,unvalidated_or_missing,4,"source reported, not document validated"
-BZ,programme,actual_start,unvalidated_or_missing,15,"source reported, not document validated"
-CA,component,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-CD,component,actual_start,unvalidated_or_missing,293,"source reported, not document validated"
-CD,programme,actual_start,unvalidated_or_missing,93,"source reported, not document validated"
-CF,component,actual_start,unvalidated_or_missing,40,"source reported, not document validated"
-CF,programme,actual_start,unvalidated_or_missing,5,"source reported, not document validated"
-CG,component,actual_start,unvalidated_or_missing,3,"source reported, not document validated"
-CG,programme,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-CI,component,actual_start,unvalidated_or_missing,7,"source reported, not document validated"
-CI,programme,actual_start,unvalidated_or_missing,12,"source reported, not document validated"
-CL,component,actual_start,unvalidated_or_missing,12,"source reported, not document validated"
-CL,programme,actual_start,unvalidated_or_missing,8,"source reported, not document validated"
-CM,component,actual_start,unvalidated_or_missing,16,"source reported, not document validated"
-CM,programme,actual_start,unvalidated_or_missing,15,"source reported, not document validated"
-CN,component,actual_start,unvalidated_or_missing,308,"source reported, not document validated"
-CN,programme,actual_start,unvalidated_or_missing,190,"source reported, not document validated"
-CO,component,actual_start,unvalidated_or_missing,64,"source reported, not document validated"
-CO,programme,actual_start,unvalidated_or_missing,42,"source reported, not document validated"
-CR,component,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-CR,programme,actual_start,unvalidated_or_missing,15,"source reported, not document validated"
-CU,component,actual_start,unvalidated_or_missing,2,"source reported, not document validated"
-CU,programme,actual_start,unvalidated_or_missing,23,"source reported, not document validated"
-CV,component,actual_start,unvalidated_or_missing,2,"source reported, not document validated"
-CV,programme,actual_start,unvalidated_or_missing,3,"source reported, not document validated"
-DJ,component,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-DJ,programme,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-DM,component,actual_start,unvalidated_or_missing,6,"source reported, not document validated"
-DM,programme,actual_start,unvalidated_or_missing,7,"source reported, not document validated"
-DO,component,actual_start,unvalidated_or_missing,2,"source reported, not document validated"
-DO,programme,actual_start,unvalidated_or_missing,10,"source reported, not document validated"
-DZ,component,actual_start,unvalidated_or_missing,3,"source reported, not document validated"
-DZ,programme,actual_start,unvalidated_or_missing,15,"source reported, not document validated"
-EC,component,actual_start,unvalidated_or_missing,2,"source reported, not document validated"
-EC,programme,actual_start,unvalidated_or_missing,9,"source reported, not document validated"
-EG,component,actual_start,unvalidated_or_missing,18,"source reported, not document validated"
-EG,programme,actual_start,unvalidated_or_missing,18,"source reported, not document validated"
-ER,component,actual_start,unvalidated_or_missing,9,"source reported, not document validated"
-ER,programme,actual_start,unvalidated_or_missing,13,"source reported, not document validated"
-ET,component,actual_start,unvalidated_or_missing,465,"source reported, not document validated"
-ET,programme,actual_start,unvalidated_or_missing,128,"source reported, not document validated"
-FJ,component,actual_start,unvalidated_or_missing,7,"source reported, not document validated"
-FJ,programme,actual_start,unvalidated_or_missing,12,"source reported, not document validated"
-GA,programme,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-GB,component,actual_start,unvalidated_or_missing,11,"source reported, not document validated"
-GB,programme,actual_start,unvalidated_or_missing,8,"source reported, not document validated"
-GD,component,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-GD,programme,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-GE,component,actual_start,unvalidated_or_missing,30,"source reported, not document validated"
-GE,programme,actual_start,unvalidated_or_missing,17,"source reported, not document validated"
-GH,component,actual_start,unvalidated_or_missing,315,"source reported, not document validated"
-GH,programme,actual_start,unvalidated_or_missing,88,"source reported, not document validated"
-GM,component,actual_start,unvalidated_or_missing,11,"source reported, not document validated"
-GM,programme,actual_start,unvalidated_or_missing,15,"source reported, not document validated"
-GN,component,actual_start,unvalidated_or_missing,3,"source reported, not document validated"
-GN,programme,actual_start,unvalidated_or_missing,6,"source reported, not document validated"
-GR,component,actual_start,unvalidated_or_missing,4,"source reported, not document validated"
-GR,programme,actual_start,unvalidated_or_missing,3,"source reported, not document validated"
-GT,component,actual_start,unvalidated_or_missing,3,"source reported, not document validated"
-GT,programme,actual_start,unvalidated_or_missing,20,"source reported, not document validated"
-GW,programme,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-GY,component,actual_start,unvalidated_or_missing,9,"source reported, not document validated"
-GY,programme,actual_start,unvalidated_or_missing,16,"source reported, not document validated"
-HN,component,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-HN,programme,actual_start,unvalidated_or_missing,6,"source reported, not document validated"
-HT,component,actual_start,unvalidated_or_missing,43,"source reported, not document validated"
-HT,programme,actual_start,unvalidated_or_missing,21,"source reported, not document validated"
-ID,component,actual_start,unvalidated_or_missing,218,"source reported, not document validated"
-ID,programme,actual_start,unvalidated_or_missing,89,"source reported, not document validated"
-IL,component,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-IN,component,actual_start,unvalidated_or_missing,492,"source reported, not document validated"
-IN,programme,actual_start,unvalidated_or_missing,166,"source reported, not document validated"
-IQ,component,actual_start,unvalidated_or_missing,64,"source reported, not document validated"
-IQ,programme,actual_start,unvalidated_or_missing,45,"source reported, not document validated"
-IR,component,actual_start,unvalidated_or_missing,2,"source reported, not document validated"
-IR,programme,actual_start,unvalidated_or_missing,3,"source reported, not document validated"
-JM,component,actual_start,unvalidated_or_missing,59,"source reported, not document validated"
-JM,programme,actual_start,unvalidated_or_missing,29,"source reported, not document validated"
-JO,component,actual_start,unvalidated_or_missing,113,"source reported, not document validated"
-JO,programme,actual_start,unvalidated_or_missing,50,"source reported, not document validated"
-JP,component,actual_start,unvalidated_or_missing,3,"source reported, not document validated"
-JP,programme,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-KE,component,actual_start,unvalidated_or_missing,507,"source reported, not document validated"
-KE,programme,actual_start,unvalidated_or_missing,105,"source reported, not document validated"
-KG,component,actual_start,unvalidated_or_missing,47,"source reported, not document validated"
-KG,programme,actual_start,unvalidated_or_missing,47,"source reported, not document validated"
-KH,component,actual_start,unvalidated_or_missing,46,"source reported, not document validated"
-KH,programme,actual_start,unvalidated_or_missing,33,"source reported, not document validated"
-KI,programme,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-KM,component,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-KP,component,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-KP,programme,actual_start,unvalidated_or_missing,8,"source reported, not document validated"
-KZ,component,actual_start,unvalidated_or_missing,7,"source reported, not document validated"
-KZ,programme,actual_start,unvalidated_or_missing,15,"source reported, not document validated"
-LA,component,actual_start,unvalidated_or_missing,23,"source reported, not document validated"
-LA,programme,actual_start,unvalidated_or_missing,26,"source reported, not document validated"
-LB,component,actual_start,unvalidated_or_missing,86,"source reported, not document validated"
-LB,programme,actual_start,unvalidated_or_missing,48,"source reported, not document validated"
-LC,component,actual_start,unvalidated_or_missing,3,"source reported, not document validated"
-LC,programme,actual_start,unvalidated_or_missing,5,"source reported, not document validated"
-LK,component,actual_start,unvalidated_or_missing,42,"source reported, not document validated"
-LK,programme,actual_start,unvalidated_or_missing,32,"source reported, not document validated"
-LR,component,actual_start,unvalidated_or_missing,35,"source reported, not document validated"
-LR,programme,actual_start,unvalidated_or_missing,24,"source reported, not document validated"
-LS,component,actual_start,unvalidated_or_missing,18,"source reported, not document validated"
-LS,programme,actual_start,unvalidated_or_missing,12,"source reported, not document validated"
-LY,component,actual_start,unvalidated_or_missing,71,"source reported, not document validated"
-LY,programme,actual_start,unvalidated_or_missing,26,"source reported, not document validated"
-MA,component,actual_start,unvalidated_or_missing,7,"source reported, not document validated"
-MA,programme,actual_start,unvalidated_or_missing,25,"source reported, not document validated"
-MD,component,actual_start,unvalidated_or_missing,51,"source reported, not document validated"
-MD,programme,actual_start,unvalidated_or_missing,27,"source reported, not document validated"
-ME,component,actual_start,unvalidated_or_missing,11,"source reported, not document validated"
-ME,programme,actual_start,unvalidated_or_missing,29,"source reported, not document validated"
-MG,component,actual_start,unvalidated_or_missing,11,"source reported, not document validated"
-MG,programme,actual_start,unvalidated_or_missing,15,"source reported, not document validated"
-MK,component,actual_start,unvalidated_or_missing,14,"source reported, not document validated"
-MK,programme,actual_start,unvalidated_or_missing,8,"source reported, not document validated"
-ML,component,actual_start,unvalidated_or_missing,15,"source reported, not document validated"
-ML,programme,actual_start,unvalidated_or_missing,10,"source reported, not document validated"
-MM,component,actual_start,unvalidated_or_missing,183,"source reported, not document validated"
-MM,programme,actual_start,unvalidated_or_missing,61,"source reported, not document validated"
-MN,component,actual_start,unvalidated_or_missing,4,"source reported, not document validated"
-MN,programme,actual_start,unvalidated_or_missing,13,"source reported, not document validated"
-MR,component,actual_start,unvalidated_or_missing,3,"source reported, not document validated"
-MR,programme,actual_start,unvalidated_or_missing,2,"source reported, not document validated"
-MS,component,actual_start,unvalidated_or_missing,129,"source reported, not document validated"
-MS,programme,actual_start,unvalidated_or_missing,73,"source reported, not document validated"
-MU,component,actual_start,unvalidated_or_missing,17,"source reported, not document validated"
-MU,programme,actual_start,unvalidated_or_missing,9,"source reported, not document validated"
-MV,component,actual_start,unvalidated_or_missing,4,"source reported, not document validated"
-MV,programme,actual_start,unvalidated_or_missing,12,"source reported, not document validated"
-MW,component,actual_start,unvalidated_or_missing,357,"source reported, not document validated"
-MW,programme,actual_start,unvalidated_or_missing,95,"source reported, not document validated"
-MX,component,actual_start,unvalidated_or_missing,76,"source reported, not document validated"
-MX,programme,actual_start,unvalidated_or_missing,19,"source reported, not document validated"
-MY,component,actual_start,unvalidated_or_missing,26,"source reported, not document validated"
-MY,programme,actual_start,unvalidated_or_missing,25,"source reported, not document validated"
-MZ,component,actual_start,unvalidated_or_missing,276,"source reported, not document validated"
-MZ,programme,actual_start,unvalidated_or_missing,99,"source reported, not document validated"
-NA,component,actual_start,unvalidated_or_missing,6,"source reported, not document validated"
-NA,programme,actual_start,unvalidated_or_missing,13,"source reported, not document validated"
-NE,component,actual_start,unvalidated_or_missing,11,"source reported, not document validated"
-NE,programme,actual_start,unvalidated_or_missing,5,"source reported, not document validated"
-NG,component,actual_start,unvalidated_or_missing,492,"source reported, not document validated"
-NG,programme,actual_start,unvalidated_or_missing,130,"source reported, not document validated"
-NI,component,actual_start,unvalidated_or_missing,4,"source reported, not document validated"
-NI,programme,actual_start,unvalidated_or_missing,7,"source reported, not document validated"
-NP,component,actual_start,unvalidated_or_missing,415,"source reported, not document validated"
-NP,programme,actual_start,unvalidated_or_missing,114,"source reported, not document validated"
-NR,component,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-PA,component,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-PA,programme,actual_start,unvalidated_or_missing,23,"source reported, not document validated"
-PE,component,actual_start,unvalidated_or_missing,28,"source reported, not document validated"
-PE,programme,actual_start,unvalidated_or_missing,24,"source reported, not document validated"
-PG,component,actual_start,unvalidated_or_missing,13,"source reported, not document validated"
-PG,programme,actual_start,unvalidated_or_missing,15,"source reported, not document validated"
-PH,component,actual_start,unvalidated_or_missing,51,"source reported, not document validated"
-PH,programme,actual_start,unvalidated_or_missing,35,"source reported, not document validated"
-PK,component,actual_start,unvalidated_or_missing,512,"source reported, not document validated"
-PK,programme,actual_start,unvalidated_or_missing,119,"source reported, not document validated"
-PN,component,actual_start,unvalidated_or_missing,24,"source reported, not document validated"
-PN,programme,actual_start,unvalidated_or_missing,17,"source reported, not document validated"
-PS,component,actual_start,unvalidated_or_missing,196,"source reported, not document validated"
-PS,programme,actual_start,unvalidated_or_missing,83,"source reported, not document validated"
-PY,component,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-PY,programme,actual_start,unvalidated_or_missing,10,"source reported, not document validated"
-RS,component,actual_start,unvalidated_or_missing,38,"source reported, not document validated"
-RS,programme,actual_start,unvalidated_or_missing,39,"source reported, not document validated"
-RU,component,actual_start,unvalidated_or_missing,5,"source reported, not document validated"
-RU,programme,actual_start,unvalidated_or_missing,5,"source reported, not document validated"
-RW,component,actual_start,unvalidated_or_missing,230,"source reported, not document validated"
-RW,programme,actual_start,unvalidated_or_missing,100,"source reported, not document validated"
-SB,component,actual_start,unvalidated_or_missing,10,"source reported, not document validated"
-SB,programme,actual_start,unvalidated_or_missing,16,"source reported, not document validated"
-SC,component,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-SC,programme,actual_start,unvalidated_or_missing,9,"source reported, not document validated"
-SD,component,actual_start,unvalidated_or_missing,216,"source reported, not document validated"
-SD,programme,actual_start,unvalidated_or_missing,86,"source reported, not document validated"
-SH,component,actual_start,unvalidated_or_missing,145,"source reported, not document validated"
-SH,programme,actual_start,unvalidated_or_missing,95,"source reported, not document validated"
-SL,component,actual_start,unvalidated_or_missing,366,"source reported, not document validated"
-SL,programme,actual_start,unvalidated_or_missing,138,"source reported, not document validated"
-SN,component,actual_start,unvalidated_or_missing,10,"source reported, not document validated"
-SN,programme,actual_start,unvalidated_or_missing,16,"source reported, not document validated"
-SO,component,actual_start,unvalidated_or_missing,390,"source reported, not document validated"
-SO,programme,actual_start,unvalidated_or_missing,93,"source reported, not document validated"
-SR,component,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-SR,programme,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-SS,component,actual_start,unvalidated_or_missing,249,"source reported, not document validated"
-SS,programme,actual_start,unvalidated_or_missing,58,"source reported, not document validated"
-ST,programme,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-SV,component,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-SV,programme,actual_start,unvalidated_or_missing,14,"source reported, not document validated"
-SY,component,actual_start,unvalidated_or_missing,166,"source reported, not document validated"
-SY,programme,actual_start,unvalidated_or_missing,55,"source reported, not document validated"
-SZ,component,actual_start,unvalidated_or_missing,3,"source reported, not document validated"
-SZ,programme,actual_start,unvalidated_or_missing,2,"source reported, not document validated"
-TC,component,actual_start,unvalidated_or_missing,7,"source reported, not document validated"
-TC,programme,actual_start,unvalidated_or_missing,6,"source reported, not document validated"
-TD,component,actual_start,unvalidated_or_missing,14,"source reported, not document validated"
-TD,programme,actual_start,unvalidated_or_missing,9,"source reported, not document validated"
-TH,component,actual_start,unvalidated_or_missing,27,"source reported, not document validated"
-TH,programme,actual_start,unvalidated_or_missing,26,"source reported, not document validated"
-TJ,component,actual_start,unvalidated_or_missing,69,"source reported, not document validated"
-TJ,programme,actual_start,unvalidated_or_missing,50,"source reported, not document validated"
-TL,component,actual_start,unvalidated_or_missing,8,"source reported, not document validated"
-TL,programme,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-TM,component,actual_start,unvalidated_or_missing,2,"source reported, not document validated"
-TM,programme,actual_start,unvalidated_or_missing,10,"source reported, not document validated"
-TN,component,actual_start,unvalidated_or_missing,7,"source reported, not document validated"
-TN,programme,actual_start,unvalidated_or_missing,20,"source reported, not document validated"
-TO,component,actual_start,unvalidated_or_missing,7,"source reported, not document validated"
-TO,programme,actual_start,unvalidated_or_missing,3,"source reported, not document validated"
-TR,component,actual_start,unvalidated_or_missing,61,"source reported, not document validated"
-TR,programme,actual_start,unvalidated_or_missing,63,"source reported, not document validated"
-TZ,component,actual_start,unvalidated_or_missing,374,"source reported, not document validated"
-TZ,programme,actual_start,unvalidated_or_missing,113,"source reported, not document validated"
-UA,component,actual_start,unvalidated_or_missing,95,"source reported, not document validated"
-UA,programme,actual_start,unvalidated_or_missing,15,"source reported, not document validated"
-UG,component,actual_start,unvalidated_or_missing,321,"source reported, not document validated"
-UG,programme,actual_start,unvalidated_or_missing,95,"source reported, not document validated"
-UY,programme,actual_start,unvalidated_or_missing,7,"source reported, not document validated"
-UZ,component,actual_start,unvalidated_or_missing,9,"source reported, not document validated"
-UZ,programme,actual_start,unvalidated_or_missing,14,"source reported, not document validated"
-VC,component,actual_start,unvalidated_or_missing,2,"source reported, not document validated"
-VC,programme,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-VE,component,actual_start,unvalidated_or_missing,11,"source reported, not document validated"
-VE,programme,actual_start,unvalidated_or_missing,21,"source reported, not document validated"
-VG,component,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-VG,programme,actual_start,unvalidated_or_missing,1,"source reported, not document validated"
-VN,component,actual_start,unvalidated_or_missing,91,"source reported, not document validated"
-VN,programme,actual_start,unvalidated_or_missing,65,"source reported, not document validated"
-VU,component,actual_start,unvalidated_or_missing,10,"source reported, not document validated"
-VU,programme,actual_start,unvalidated_or_missing,8,"source reported, not document validated"
-WS,component,actual_start,unvalidated_or_missing,8,"source reported, not document validated"
-WS,programme,actual_start,unvalidated_or_missing,9,"source reported, not document validated"
-XK,component,actual_start,unvalidated_or_missing,50,"source reported, not document validated"
-XK,programme,actual_start,unvalidated_or_missing,39,"source reported, not document validated"
-YE,component,actual_start,unvalidated_or_missing,181,"source reported, not document validated"
-YE,programme,actual_start,unvalidated_or_missing,73,"source reported, not document validated"
-ZA,component,actual_start,unvalidated_or_missing,127,"source reported, not document validated"
-ZA,programme,actual_start,unvalidated_or_missing,76,"source reported, not document validated"
-ZM,component,actual_start,unvalidated_or_missing,261,"source reported, not document validated"
-ZM,programme,actual_start,unvalidated_or_missing,73,"source reported, not document validated"
-ZW,component,actual_start,unvalidated_or_missing,185,"source reported, not document validated"
-ZW,programme,actual_start,unvalidated_or_missing,72,"source reported, not document validated"
-multi-country,programme,actual_start,unvalidated_or_missing,150,"source reported, not document validated"
-regional-or-unspecified,component,actual_start,2007,1,"source reported, not document validated"
-regional-or-unspecified,component,actual_start,unvalidated_or_missing,7057,"source reported, not document validated"
-regional-or-unspecified,programme,actual_start,2007,1,"source reported, not document validated"
-regional-or-unspecified,programme,actual_start,unvalidated_or_missing,2489,"source reported, not document validated"
+AF,component,actual_start,unvalidated_or_missing,5,source_reported_or_unvalidated
+AF,programme,actual_start,unvalidated_or_missing,2,source_reported_or_unvalidated
+AG,programme,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+AL,component,actual_start,unvalidated_or_missing,15,source_reported_or_unvalidated
+AL,programme,actual_start,2005,2,source_reported_or_unvalidated
+AL,programme,actual_start,unvalidated_or_missing,23,source_reported_or_unvalidated
+AM,component,actual_start,unvalidated_or_missing,35,source_reported_or_unvalidated
+AM,programme,actual_start,unvalidated_or_missing,22,source_reported_or_unvalidated
+AO,component,actual_start,unvalidated_or_missing,14,source_reported_or_unvalidated
+AO,programme,actual_start,unvalidated_or_missing,25,source_reported_or_unvalidated
+AR,component,actual_start,unvalidated_or_missing,5,source_reported_or_unvalidated
+AR,programme,actual_start,unvalidated_or_missing,17,source_reported_or_unvalidated
+AS,component,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+AS,programme,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+AZ,component,actual_start,unvalidated_or_missing,7,source_reported_or_unvalidated
+AZ,programme,actual_start,unvalidated_or_missing,8,source_reported_or_unvalidated
+BA,component,actual_start,unvalidated_or_missing,50,source_reported_or_unvalidated
+BA,programme,actual_start,unvalidated_or_missing,24,source_reported_or_unvalidated
+BD,component,actual_start,unvalidated_or_missing,414,source_reported_or_unvalidated
+BD,programme,actual_start,unvalidated_or_missing,112,source_reported_or_unvalidated
+BF,component,actual_start,unvalidated_or_missing,2,source_reported_or_unvalidated
+BF,programme,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+BH,component,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+BI,component,actual_start,unvalidated_or_missing,53,source_reported_or_unvalidated
+BI,programme,actual_start,unvalidated_or_missing,29,source_reported_or_unvalidated
+BJ,component,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+BJ,programme,actual_start,unvalidated_or_missing,2,source_reported_or_unvalidated
+BO,component,actual_start,unvalidated_or_missing,2,source_reported_or_unvalidated
+BO,programme,actual_start,unvalidated_or_missing,16,source_reported_or_unvalidated
+BR,component,actual_start,unvalidated_or_missing,46,source_reported_or_unvalidated
+BR,programme,actual_start,unvalidated_or_missing,47,source_reported_or_unvalidated
+BS,component,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+BS,programme,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+BT,programme,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+BW,component,actual_start,unvalidated_or_missing,3,source_reported_or_unvalidated
+BW,programme,actual_start,unvalidated_or_missing,14,source_reported_or_unvalidated
+BY,component,actual_start,unvalidated_or_missing,8,source_reported_or_unvalidated
+BY,programme,actual_start,unvalidated_or_missing,21,source_reported_or_unvalidated
+BZ,component,actual_start,unvalidated_or_missing,4,source_reported_or_unvalidated
+BZ,programme,actual_start,unvalidated_or_missing,15,source_reported_or_unvalidated
+CA,component,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+CD,component,actual_start,unvalidated_or_missing,293,source_reported_or_unvalidated
+CD,programme,actual_start,unvalidated_or_missing,93,source_reported_or_unvalidated
+CF,component,actual_start,unvalidated_or_missing,40,source_reported_or_unvalidated
+CF,programme,actual_start,unvalidated_or_missing,5,source_reported_or_unvalidated
+CG,component,actual_start,unvalidated_or_missing,3,source_reported_or_unvalidated
+CG,programme,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+CI,component,actual_start,unvalidated_or_missing,7,source_reported_or_unvalidated
+CI,programme,actual_start,unvalidated_or_missing,12,source_reported_or_unvalidated
+CL,component,actual_start,unvalidated_or_missing,12,source_reported_or_unvalidated
+CL,programme,actual_start,unvalidated_or_missing,8,source_reported_or_unvalidated
+CM,component,actual_start,unvalidated_or_missing,16,source_reported_or_unvalidated
+CM,programme,actual_start,unvalidated_or_missing,15,source_reported_or_unvalidated
+CN,component,actual_start,unvalidated_or_missing,308,source_reported_or_unvalidated
+CN,programme,actual_start,unvalidated_or_missing,190,source_reported_or_unvalidated
+CO,component,actual_start,unvalidated_or_missing,64,source_reported_or_unvalidated
+CO,programme,actual_start,unvalidated_or_missing,42,source_reported_or_unvalidated
+CR,component,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+CR,programme,actual_start,unvalidated_or_missing,15,source_reported_or_unvalidated
+CU,component,actual_start,unvalidated_or_missing,2,source_reported_or_unvalidated
+CU,programme,actual_start,unvalidated_or_missing,23,source_reported_or_unvalidated
+CV,component,actual_start,unvalidated_or_missing,2,source_reported_or_unvalidated
+CV,programme,actual_start,unvalidated_or_missing,3,source_reported_or_unvalidated
+DJ,component,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+DJ,programme,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+DM,component,actual_start,unvalidated_or_missing,6,source_reported_or_unvalidated
+DM,programme,actual_start,unvalidated_or_missing,7,source_reported_or_unvalidated
+DO,component,actual_start,unvalidated_or_missing,2,source_reported_or_unvalidated
+DO,programme,actual_start,unvalidated_or_missing,10,source_reported_or_unvalidated
+DZ,component,actual_start,unvalidated_or_missing,3,source_reported_or_unvalidated
+DZ,programme,actual_start,unvalidated_or_missing,15,source_reported_or_unvalidated
+EC,component,actual_start,unvalidated_or_missing,2,source_reported_or_unvalidated
+EC,programme,actual_start,unvalidated_or_missing,9,source_reported_or_unvalidated
+EG,component,actual_start,unvalidated_or_missing,18,source_reported_or_unvalidated
+EG,programme,actual_start,unvalidated_or_missing,18,source_reported_or_unvalidated
+ER,component,actual_start,unvalidated_or_missing,9,source_reported_or_unvalidated
+ER,programme,actual_start,unvalidated_or_missing,13,source_reported_or_unvalidated
+ET,component,actual_start,unvalidated_or_missing,465,source_reported_or_unvalidated
+ET,programme,actual_start,unvalidated_or_missing,128,source_reported_or_unvalidated
+FJ,component,actual_start,unvalidated_or_missing,7,source_reported_or_unvalidated
+FJ,programme,actual_start,unvalidated_or_missing,12,source_reported_or_unvalidated
+GA,programme,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+GB,component,actual_start,unvalidated_or_missing,11,source_reported_or_unvalidated
+GB,programme,actual_start,unvalidated_or_missing,8,source_reported_or_unvalidated
+GD,component,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+GD,programme,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+GE,component,actual_start,unvalidated_or_missing,30,source_reported_or_unvalidated
+GE,programme,actual_start,unvalidated_or_missing,17,source_reported_or_unvalidated
+GH,component,actual_start,unvalidated_or_missing,315,source_reported_or_unvalidated
+GH,programme,actual_start,unvalidated_or_missing,88,source_reported_or_unvalidated
+GM,component,actual_start,unvalidated_or_missing,11,source_reported_or_unvalidated
+GM,programme,actual_start,unvalidated_or_missing,15,source_reported_or_unvalidated
+GN,component,actual_start,unvalidated_or_missing,3,source_reported_or_unvalidated
+GN,programme,actual_start,unvalidated_or_missing,6,source_reported_or_unvalidated
+GR,component,actual_start,unvalidated_or_missing,4,source_reported_or_unvalidated
+GR,programme,actual_start,unvalidated_or_missing,3,source_reported_or_unvalidated
+GT,component,actual_start,unvalidated_or_missing,3,source_reported_or_unvalidated
+GT,programme,actual_start,unvalidated_or_missing,20,source_reported_or_unvalidated
+GW,programme,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+GY,component,actual_start,unvalidated_or_missing,9,source_reported_or_unvalidated
+GY,programme,actual_start,unvalidated_or_missing,16,source_reported_or_unvalidated
+HN,component,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+HN,programme,actual_start,unvalidated_or_missing,6,source_reported_or_unvalidated
+HT,component,actual_start,unvalidated_or_missing,43,source_reported_or_unvalidated
+HT,programme,actual_start,unvalidated_or_missing,21,source_reported_or_unvalidated
+ID,component,actual_start,unvalidated_or_missing,218,source_reported_or_unvalidated
+ID,programme,actual_start,2006,1,source_reported_or_unvalidated
+ID,programme,actual_start,unvalidated_or_missing,88,source_reported_or_unvalidated
+IL,component,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+IN,component,actual_start,unvalidated_or_missing,492,source_reported_or_unvalidated
+IN,programme,actual_start,2007,1,document_corroborated
+IN,programme,actual_start,unvalidated_or_missing,165,source_reported_or_unvalidated
+IQ,component,actual_start,unvalidated_or_missing,64,source_reported_or_unvalidated
+IQ,programme,actual_start,unvalidated_or_missing,45,source_reported_or_unvalidated
+IR,component,actual_start,unvalidated_or_missing,2,source_reported_or_unvalidated
+IR,programme,actual_start,unvalidated_or_missing,3,source_reported_or_unvalidated
+JM,component,actual_start,unvalidated_or_missing,59,source_reported_or_unvalidated
+JM,programme,actual_start,unvalidated_or_missing,29,source_reported_or_unvalidated
+JO,component,actual_start,unvalidated_or_missing,113,source_reported_or_unvalidated
+JO,programme,actual_start,unvalidated_or_missing,50,source_reported_or_unvalidated
+JP,component,actual_start,unvalidated_or_missing,3,source_reported_or_unvalidated
+JP,programme,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+KE,component,actual_start,unvalidated_or_missing,507,source_reported_or_unvalidated
+KE,programme,actual_start,unvalidated_or_missing,105,source_reported_or_unvalidated
+KG,component,actual_start,unvalidated_or_missing,47,source_reported_or_unvalidated
+KG,programme,actual_start,unvalidated_or_missing,47,source_reported_or_unvalidated
+KH,component,actual_start,unvalidated_or_missing,46,source_reported_or_unvalidated
+KH,programme,actual_start,unvalidated_or_missing,33,source_reported_or_unvalidated
+KI,programme,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+KM,component,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+KP,component,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+KP,programme,actual_start,unvalidated_or_missing,8,source_reported_or_unvalidated
+KZ,component,actual_start,unvalidated_or_missing,7,source_reported_or_unvalidated
+KZ,programme,actual_start,unvalidated_or_missing,15,source_reported_or_unvalidated
+LA,component,actual_start,unvalidated_or_missing,23,source_reported_or_unvalidated
+LA,programme,actual_start,unvalidated_or_missing,26,source_reported_or_unvalidated
+LB,component,actual_start,unvalidated_or_missing,86,source_reported_or_unvalidated
+LB,programme,actual_start,unvalidated_or_missing,48,source_reported_or_unvalidated
+LC,component,actual_start,unvalidated_or_missing,3,source_reported_or_unvalidated
+LC,programme,actual_start,unvalidated_or_missing,5,source_reported_or_unvalidated
+LK,component,actual_start,unvalidated_or_missing,42,source_reported_or_unvalidated
+LK,programme,actual_start,unvalidated_or_missing,32,source_reported_or_unvalidated
+LR,component,actual_start,unvalidated_or_missing,35,source_reported_or_unvalidated
+LR,programme,actual_start,unvalidated_or_missing,24,source_reported_or_unvalidated
+LS,component,actual_start,unvalidated_or_missing,18,source_reported_or_unvalidated
+LS,programme,actual_start,unvalidated_or_missing,12,source_reported_or_unvalidated
+LY,component,actual_start,unvalidated_or_missing,71,source_reported_or_unvalidated
+LY,programme,actual_start,unvalidated_or_missing,26,source_reported_or_unvalidated
+MA,component,actual_start,unvalidated_or_missing,7,source_reported_or_unvalidated
+MA,programme,actual_start,2017,1,source_reported_or_unvalidated
+MA,programme,actual_start,unvalidated_or_missing,24,source_reported_or_unvalidated
+MD,component,actual_start,unvalidated_or_missing,51,source_reported_or_unvalidated
+MD,programme,actual_start,unvalidated_or_missing,27,source_reported_or_unvalidated
+ME,component,actual_start,unvalidated_or_missing,11,source_reported_or_unvalidated
+ME,programme,actual_start,unvalidated_or_missing,29,source_reported_or_unvalidated
+MG,component,actual_start,unvalidated_or_missing,11,source_reported_or_unvalidated
+MG,programme,actual_start,unvalidated_or_missing,15,source_reported_or_unvalidated
+MK,component,actual_start,unvalidated_or_missing,14,source_reported_or_unvalidated
+MK,programme,actual_start,unvalidated_or_missing,8,source_reported_or_unvalidated
+ML,component,actual_start,unvalidated_or_missing,15,source_reported_or_unvalidated
+ML,programme,actual_start,unvalidated_or_missing,10,source_reported_or_unvalidated
+MM,component,actual_start,unvalidated_or_missing,183,source_reported_or_unvalidated
+MM,programme,actual_start,unvalidated_or_missing,61,source_reported_or_unvalidated
+MN,component,actual_start,unvalidated_or_missing,4,source_reported_or_unvalidated
+MN,programme,actual_start,unvalidated_or_missing,13,source_reported_or_unvalidated
+MR,component,actual_start,unvalidated_or_missing,3,source_reported_or_unvalidated
+MR,programme,actual_start,unvalidated_or_missing,2,source_reported_or_unvalidated
+MS,component,actual_start,unvalidated_or_missing,129,source_reported_or_unvalidated
+MS,programme,actual_start,unvalidated_or_missing,73,source_reported_or_unvalidated
+MU,component,actual_start,unvalidated_or_missing,17,source_reported_or_unvalidated
+MU,programme,actual_start,unvalidated_or_missing,9,source_reported_or_unvalidated
+MV,component,actual_start,unvalidated_or_missing,4,source_reported_or_unvalidated
+MV,programme,actual_start,unvalidated_or_missing,12,source_reported_or_unvalidated
+MW,component,actual_start,unvalidated_or_missing,357,source_reported_or_unvalidated
+MW,programme,actual_start,unvalidated_or_missing,95,source_reported_or_unvalidated
+MX,component,actual_start,unvalidated_or_missing,76,source_reported_or_unvalidated
+MX,programme,actual_start,unvalidated_or_missing,19,source_reported_or_unvalidated
+MY,component,actual_start,unvalidated_or_missing,26,source_reported_or_unvalidated
+MY,programme,actual_start,unvalidated_or_missing,25,source_reported_or_unvalidated
+MZ,component,actual_start,unvalidated_or_missing,276,source_reported_or_unvalidated
+MZ,programme,actual_start,unvalidated_or_missing,99,source_reported_or_unvalidated
+NA,component,actual_start,unvalidated_or_missing,6,source_reported_or_unvalidated
+NA,programme,actual_start,unvalidated_or_missing,13,source_reported_or_unvalidated
+NE,component,actual_start,unvalidated_or_missing,11,source_reported_or_unvalidated
+NE,programme,actual_start,unvalidated_or_missing,5,source_reported_or_unvalidated
+NG,component,actual_start,unvalidated_or_missing,492,source_reported_or_unvalidated
+NG,programme,actual_start,unvalidated_or_missing,130,source_reported_or_unvalidated
+NI,component,actual_start,unvalidated_or_missing,4,source_reported_or_unvalidated
+NI,programme,actual_start,unvalidated_or_missing,7,source_reported_or_unvalidated
+NP,component,actual_start,unvalidated_or_missing,415,source_reported_or_unvalidated
+NP,programme,actual_start,unvalidated_or_missing,114,source_reported_or_unvalidated
+NR,component,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+PA,component,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+PA,programme,actual_start,unvalidated_or_missing,23,source_reported_or_unvalidated
+PE,component,actual_start,unvalidated_or_missing,28,source_reported_or_unvalidated
+PE,programme,actual_start,unvalidated_or_missing,24,source_reported_or_unvalidated
+PG,component,actual_start,unvalidated_or_missing,13,source_reported_or_unvalidated
+PG,programme,actual_start,unvalidated_or_missing,15,source_reported_or_unvalidated
+PH,component,actual_start,unvalidated_or_missing,51,source_reported_or_unvalidated
+PH,programme,actual_start,unvalidated_or_missing,35,source_reported_or_unvalidated
+PK,component,actual_start,unvalidated_or_missing,512,source_reported_or_unvalidated
+PK,programme,actual_start,unvalidated_or_missing,119,source_reported_or_unvalidated
+PN,component,actual_start,unvalidated_or_missing,24,source_reported_or_unvalidated
+PN,programme,actual_start,unvalidated_or_missing,17,source_reported_or_unvalidated
+PS,component,actual_start,unvalidated_or_missing,196,source_reported_or_unvalidated
+PS,programme,actual_start,unvalidated_or_missing,83,source_reported_or_unvalidated
+PY,component,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+PY,programme,actual_start,unvalidated_or_missing,10,source_reported_or_unvalidated
+RS,component,actual_start,unvalidated_or_missing,38,source_reported_or_unvalidated
+RS,programme,actual_start,unvalidated_or_missing,39,source_reported_or_unvalidated
+RU,component,actual_start,unvalidated_or_missing,5,source_reported_or_unvalidated
+RU,programme,actual_start,unvalidated_or_missing,5,source_reported_or_unvalidated
+RW,component,actual_start,unvalidated_or_missing,230,source_reported_or_unvalidated
+RW,programme,actual_start,unvalidated_or_missing,100,source_reported_or_unvalidated
+SB,component,actual_start,unvalidated_or_missing,10,source_reported_or_unvalidated
+SB,programme,actual_start,unvalidated_or_missing,16,source_reported_or_unvalidated
+SC,component,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+SC,programme,actual_start,unvalidated_or_missing,9,source_reported_or_unvalidated
+SD,component,actual_start,unvalidated_or_missing,216,source_reported_or_unvalidated
+SD,programme,actual_start,unvalidated_or_missing,86,source_reported_or_unvalidated
+SH,component,actual_start,unvalidated_or_missing,145,source_reported_or_unvalidated
+SH,programme,actual_start,unvalidated_or_missing,95,source_reported_or_unvalidated
+SL,component,actual_start,unvalidated_or_missing,366,source_reported_or_unvalidated
+SL,programme,actual_start,unvalidated_or_missing,138,source_reported_or_unvalidated
+SN,component,actual_start,unvalidated_or_missing,10,source_reported_or_unvalidated
+SN,programme,actual_start,2007,1,source_reported_or_unvalidated
+SN,programme,actual_start,unvalidated_or_missing,15,source_reported_or_unvalidated
+SO,component,actual_start,unvalidated_or_missing,390,source_reported_or_unvalidated
+SO,programme,actual_start,unvalidated_or_missing,93,source_reported_or_unvalidated
+SR,component,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+SR,programme,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+SS,component,actual_start,unvalidated_or_missing,249,source_reported_or_unvalidated
+SS,programme,actual_start,unvalidated_or_missing,58,source_reported_or_unvalidated
+ST,programme,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+SV,component,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+SV,programme,actual_start,unvalidated_or_missing,14,source_reported_or_unvalidated
+SY,component,actual_start,unvalidated_or_missing,166,source_reported_or_unvalidated
+SY,programme,actual_start,unvalidated_or_missing,55,source_reported_or_unvalidated
+SZ,component,actual_start,unvalidated_or_missing,3,source_reported_or_unvalidated
+SZ,programme,actual_start,unvalidated_or_missing,2,source_reported_or_unvalidated
+TC,component,actual_start,unvalidated_or_missing,7,source_reported_or_unvalidated
+TC,programme,actual_start,unvalidated_or_missing,6,source_reported_or_unvalidated
+TD,component,actual_start,unvalidated_or_missing,14,source_reported_or_unvalidated
+TD,programme,actual_start,unvalidated_or_missing,9,source_reported_or_unvalidated
+TH,component,actual_start,unvalidated_or_missing,27,source_reported_or_unvalidated
+TH,programme,actual_start,unvalidated_or_missing,26,source_reported_or_unvalidated
+TJ,component,actual_start,unvalidated_or_missing,69,source_reported_or_unvalidated
+TJ,programme,actual_start,unvalidated_or_missing,50,source_reported_or_unvalidated
+TL,component,actual_start,unvalidated_or_missing,8,source_reported_or_unvalidated
+TL,programme,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+TM,component,actual_start,unvalidated_or_missing,2,source_reported_or_unvalidated
+TM,programme,actual_start,unvalidated_or_missing,10,source_reported_or_unvalidated
+TN,component,actual_start,unvalidated_or_missing,7,source_reported_or_unvalidated
+TN,programme,actual_start,unvalidated_or_missing,20,source_reported_or_unvalidated
+TO,component,actual_start,unvalidated_or_missing,7,source_reported_or_unvalidated
+TO,programme,actual_start,unvalidated_or_missing,3,source_reported_or_unvalidated
+TR,component,actual_start,unvalidated_or_missing,61,source_reported_or_unvalidated
+TR,programme,actual_start,unvalidated_or_missing,63,source_reported_or_unvalidated
+TZ,component,actual_start,unvalidated_or_missing,374,source_reported_or_unvalidated
+TZ,programme,actual_start,unvalidated_or_missing,113,source_reported_or_unvalidated
+UA,component,actual_start,unvalidated_or_missing,95,source_reported_or_unvalidated
+UA,programme,actual_start,unvalidated_or_missing,15,source_reported_or_unvalidated
+UG,component,actual_start,unvalidated_or_missing,321,source_reported_or_unvalidated
+UG,programme,actual_start,unvalidated_or_missing,95,source_reported_or_unvalidated
+UY,programme,actual_start,unvalidated_or_missing,7,source_reported_or_unvalidated
+UZ,component,actual_start,unvalidated_or_missing,9,source_reported_or_unvalidated
+UZ,programme,actual_start,unvalidated_or_missing,14,source_reported_or_unvalidated
+VC,component,actual_start,unvalidated_or_missing,2,source_reported_or_unvalidated
+VC,programme,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+VE,component,actual_start,unvalidated_or_missing,11,source_reported_or_unvalidated
+VE,programme,actual_start,unvalidated_or_missing,21,source_reported_or_unvalidated
+VG,component,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+VG,programme,actual_start,unvalidated_or_missing,1,source_reported_or_unvalidated
+VN,component,actual_start,unvalidated_or_missing,91,source_reported_or_unvalidated
+VN,programme,actual_start,2003,1,source_reported_or_unvalidated
+VN,programme,actual_start,unvalidated_or_missing,64,source_reported_or_unvalidated
+VU,component,actual_start,unvalidated_or_missing,10,source_reported_or_unvalidated
+VU,programme,actual_start,unvalidated_or_missing,8,source_reported_or_unvalidated
+WS,component,actual_start,unvalidated_or_missing,8,source_reported_or_unvalidated
+WS,programme,actual_start,unvalidated_or_missing,9,source_reported_or_unvalidated
+XK,component,actual_start,unvalidated_or_missing,50,source_reported_or_unvalidated
+XK,programme,actual_start,unvalidated_or_missing,39,source_reported_or_unvalidated
+YE,component,actual_start,unvalidated_or_missing,181,source_reported_or_unvalidated
+YE,programme,actual_start,unvalidated_or_missing,73,source_reported_or_unvalidated
+ZA,component,actual_start,unvalidated_or_missing,127,source_reported_or_unvalidated
+ZA,programme,actual_start,2008,1,source_reported_or_unvalidated
+ZA,programme,actual_start,unvalidated_or_missing,75,source_reported_or_unvalidated
+ZM,component,actual_start,unvalidated_or_missing,261,source_reported_or_unvalidated
+ZM,programme,actual_start,unvalidated_or_missing,73,source_reported_or_unvalidated
+ZW,component,actual_start,unvalidated_or_missing,185,source_reported_or_unvalidated
+ZW,programme,actual_start,unvalidated_or_missing,72,source_reported_or_unvalidated
+multi-country,programme,actual_start,unvalidated_or_missing,150,source_reported_or_unvalidated
+regional-or-unspecified,component,actual_start,2007,1,source_reported_or_unvalidated
+regional-or-unspecified,component,actual_start,unvalidated_or_missing,7057,source_reported_or_unvalidated
+regional-or-unspecified,programme,actual_start,2007,1,source_reported_or_unvalidated
+regional-or-unspecified,programme,actual_start,unvalidated_or_missing,2489,source_reported_or_unvalidated

@@ -1,28 +1,28 @@
 case_id,role,source_unit,stage,structured_record_available,linked_documents,local_stage_document,attempted,retrieved,validates_stage,observation,missingness_reason
-GB-1-109635,sample,programme,approval,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-1-109635,sample,programme,procurement,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-1-109635,sample,programme,start,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-1-107154,sample,programme,approval,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-1-107154,sample,programme,procurement,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-1-107154,sample,programme,start,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-1-107859,sample,programme,approval,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-1-107859,sample,programme,procurement,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-1-107859,sample,programme,start,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-GOV-3-Chevening Scholarships-MA,sample,programme,approval,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-GOV-3-Chevening Scholarships-MA,sample,programme,procurement,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-GOV-3-Chevening Scholarships-MA,sample,programme,start,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-1-110657,sample,programme,approval,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-1-110657,sample,programme,procurement,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-1-110657,sample,programme,start,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-1-108984,sample,programme,approval,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-1-108984,sample,programme,procurement,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-1-108984,sample,programme,start,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-1-104836,sample,programme,approval,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-1-104836,sample,programme,procurement,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-1-104836,sample,programme,start,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-1-109636,sample,programme,approval,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-1-109636,sample,programme,procurement,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-1-109636,sample,programme,start,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-1-109635,sample,programme,approval,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-1-109635,sample,programme,procurement,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-1-109635,sample,programme,start,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-1-107154,sample,programme,approval,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-1-107154,sample,programme,procurement,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-1-107154,sample,programme,start,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-1-107859,sample,programme,approval,true,4,not_established,true,true,false,retrieved_documents_do_not_validate_stage,intervention summary and completion review lack dated programme approval / procurement instrument
+GB-1-107859,sample,programme,procurement,true,4,not_established,true,true,false,retrieved_documents_do_not_validate_stage,intervention summary and completion review lack dated programme approval / procurement instrument
+GB-1-107859,sample,programme,start,true,4,true,true,true,true,document_corroborated_activity_start,
+GB-GOV-3-Chevening Scholarships-MA,sample,programme,approval,true,16,not_established,false,false,false,pointers_only,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-GOV-3-Chevening Scholarships-MA,sample,programme,procurement,true,16,not_established,false,false,false,pointers_only,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-GOV-3-Chevening Scholarships-MA,sample,programme,start,true,16,not_established,false,false,false,pointers_only,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-1-110657,sample,programme,approval,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-1-110657,sample,programme,procurement,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-1-110657,sample,programme,start,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-1-108984,sample,programme,approval,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-1-108984,sample,programme,procurement,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-1-108984,sample,programme,start,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-1-104836,sample,programme,approval,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-1-104836,sample,programme,procurement,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-1-104836,sample,programme,start,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-1-109636,sample,programme,approval,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-1-109636,sample,programme,procurement,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-1-109636,sample,programme,start,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
 GB-1-107160,sample,programme,approval,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
 GB-1-107160,sample,programme,procurement,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
 GB-1-107160,sample,programme,start,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
@@ -41,21 +41,21 @@ GB-1-112151,challenge,programme,start,true,1,not_established,false,false,false,p
 GB-1-112151-101,challenge,component,approval,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
 GB-1-112151-101,challenge,component,procurement,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
 GB-1-112151-101,challenge,component,start,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-GOV-1-400032,challenge,programme,approval,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-GOV-1-400032,challenge,programme,procurement,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-GOV-1-400032,challenge,programme,start,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-GOV-1-400142,challenge,programme,approval,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-GOV-1-400142,challenge,programme,procurement,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-GOV-1-400142,challenge,programme,start,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-GOV-1-400343,challenge,programme,approval,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-GOV-1-400343,challenge,programme,procurement,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-GOV-1-400343,challenge,programme,start,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-GOV-1-400032,challenge,programme,approval,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-GOV-1-400032,challenge,programme,procurement,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-GOV-1-400032,challenge,programme,start,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-GOV-1-400142,challenge,programme,approval,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-GOV-1-400142,challenge,programme,procurement,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-GOV-1-400142,challenge,programme,start,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-GOV-1-400343,challenge,programme,approval,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-GOV-1-400343,challenge,programme,procurement,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-GOV-1-400343,challenge,programme,start,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
 GB-GOV-1-400397,challenge,programme,approval,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
 GB-GOV-1-400397,challenge,programme,procurement,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
 GB-GOV-1-400397,challenge,programme,start,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-GOV-1-400542,challenge,programme,approval,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-GOV-1-400542,challenge,programme,procurement,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-GOV-1-400542,challenge,programme,start,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-GOV-1-400717,challenge,programme,approval,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-GOV-1-400717,challenge,programme,procurement,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
-GB-GOV-1-400717,challenge,programme,start,false,,not_established,false,false,false,not_attempted,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-GOV-1-400542,challenge,programme,approval,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-GOV-1-400542,challenge,programme,procurement,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-GOV-1-400542,challenge,programme,start,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-GOV-1-400717,challenge,programme,approval,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-GOV-1-400717,challenge,programme,procurement,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference
+GB-GOV-1-400717,challenge,programme,start,true,0,not_established,false,false,false,no_links_in_payload,consult document-assessment.csv for fetched originals; no automatic title-to-stage inference

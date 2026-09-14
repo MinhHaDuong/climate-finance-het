@@ -8,7 +8,7 @@
     "merge_commit": "8d989b9bedc0cf8b265d811d7d3fe83a333cddaf"
   },
   "base_resolution": "Started from main containing merged updated audit and prospective pilot protocol; no unmerged audit dependency remains",
-  "freeze_sha": "first parent of acquisition commit; see git log -- selection.csv acquisition-routes.md",
+  "freeze_sha": "b7457964",
   "bundle_verification": [
     {
       "bundle": "0735-round2",
@@ -280,5 +280,13 @@
   ],
   "environment": "Python 3.11.15",
   "external_units_cap": 20,
-  "selection_projection_limit": "sector vocabulary and financing codes absent; all candidates unmapped/missing; no outcome-dependent enrichment"
+  "selection_projection_limit": "sector vocabulary and financing codes absent; all candidates unmapped/missing; no outcome-dependent enrichment",
+  "new_originals_manifest_sha256": "c84f1361bcdf312e4697591ac31bdb525cbe9ce211e5a6a3993c76bb15a451bd",
+  "acquisition_units": 20,
+  "input_paths": {
+    "archive": "data/jetp/audit-evidence/0735-round3",
+    "new_archive": "data/jetp/audit-evidence/0739-pilot",
+    "assessment": "docs/jetp-pilots/2026-09-15/fcdo/document-assessment.csv",
+    "reviewed_evidence": "docs/jetp-pilots/2026-09-15/fcdo/reviewed-evidence.csv"
+  }
 }
