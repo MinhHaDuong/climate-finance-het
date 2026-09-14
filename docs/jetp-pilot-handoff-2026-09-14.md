@@ -5,6 +5,33 @@ designs; a defensible primary causal design is not yet selected.** The author
 requested a checkpoint now and pilot execution in a fresh session. No pilot,
 effect estimate, institutional outreach or merge is launched by this handoff.
 
+## Tomorrow's prepared protocol
+
+For the 15 September session, use the [common protocol](jetp-pilots/2026-09-15/protocol.md)
+and frozen lender briefs: [AFD](jetp-pilots/2026-09-15/afd-brief.md) (0737),
+[KfW/BMZ](jetp-pilots/2026-09-15/kfw-brief.md) (0738), and
+[FCDO](jetp-pilots/2026-09-15/fcdo-brief.md) (0739). These additions supersede the
+sketches below wherever more specific. They fix the diagnostic country set,
+baseline sensitivity grid, deterministic documentary selection, deliverable
+schemas, acquisition allocation and GO/NARROW/DEFER rules. No pilot is scheduled
+or launched by this preparation.
+
+Recommended staffing: Sol at high effort leads; Terra at high effort may own a
+bounded lender pilot. Use an independent Sol/Astra scientific review before
+causal-design selection. The protocol records the recommendation's basis and limits.
+Historical membership, not export size, remains the principal feasibility risk.
+A missing denominator is an admissible DEFER result. Carry forward all seven
+AFD award/signature reversals. First-payment intervals need verified earlier
+coverage. Synthetic-control and support-allocation candidates remain deferred,
+not rejected by their absence from the first-wave comparison below.
+
+Read-only preflight on 14 September verified both open PR heads against local
+clean worktrees, all 33 round-3 SHA-256 entries (406,032,031 bytes), and both
+round-2/round-3 DVC object sets in both local caches. The audit Python environment
+imports successfully and the existing AFD checker reproduces pivotal counts.
+Remote DVC recovery was not retested; two local caches are not off-machine backup.
+The preparation commit follows audit head `84904ef4`; resolve it at launch.
+
 ## Resume here
 
 1. Read this handoff, [round-3 decision memo](jetp-audits/0735/round3/report.md),
@@ -156,8 +183,11 @@ speed is not the near-term JETP outcome. No publication text or estimator is fro
 
 ## Suggested fresh-session instruction
 
-> Read docs/jetp-pilot-handoff-2026-09-14.md from PR #1347 and the selection/design
-> tracker from PR #1348. Launch the bounded AFD design-feasibility pilot first;
-> use independent agents for the KfW and FCDO pilots as useful. Freeze briefs
-> before retrieval, reuse archived sources, and return the comparative
-> design-feasibility matrix before selecting an estimator.
+> Resume the prepared 15 September pilot protocol from the updated PR #1347.
+> Read docs/jetp-pilots/2026-09-15/protocol.md and ticket 0737; use the pinned
+> selection/design inputs from PR #1348. Sol at high effort leads. Launch AFD
+> first in a fresh worktree; independent Terra agents may execute tickets 0738
+> and 0739 in their own worktrees. Before retrieval, verify input hashes and
+> commit the deterministic selection and route list. Return the common
+> feasibility matrix and an independent scientific review; stop before primary
+> estimation or merging. JICA/USAID expansion remains deferred.

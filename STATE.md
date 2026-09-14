@@ -1,6 +1,6 @@
 # State
 
-Last updated: 2026-09-14T10:59Z
+Last updated: 2026-09-14T12:18Z
 
 ## Current goal
 
@@ -23,6 +23,11 @@ exists to compare designs; no primary causal design is selected. AFD first,
 KfW/FCDO complementary pilots are prepared **for a fresh session, not launched**.
 Start with [the pilot handoff](docs/jetp-pilot-handoff-2026-09-14.md): exact branches,
 source bundles, first tests, bounded budgets and three candidate comparisons.
+For 15 September, the [prepared protocol](docs/jetp-pilots/2026-09-15/protocol.md)
+and child tickets **0737–0739** supply baseline alternatives, sample rules,
+output schemas and stopping decisions. Recommended: Sol high leads, Terra high
+for bounded lender work; independent scientific review before design selection.
+No pilot is scheduled or launched.
 DVC source bytes are preserved in primary/local caches; remote replication remains
 pending. Preserve caches and the open worktrees until recovery is verified.
 
