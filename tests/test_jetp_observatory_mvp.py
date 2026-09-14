@@ -153,13 +153,16 @@ def test_real_provisional_source_link_and_claim_verdict_survive_export():
     assert 'JETP' in link['notes']
     from jetp.build_observatory import ROOT, read_inputs
     tables = read_inputs(ROOT)
-    for claim in project['claims']:
+    claims = actual_project('zaf-register-gr039')['claims']
+    assert any(r['claim_id'] == 'zaf-annex25-dpo3' for r in claims)
+    for claim in claims:
         raw = next(r for r in tables['source-claims'] if r['claim_id'] == claim['claim_id'])
         assert claim['match_status'] == raw['match_status']
 
 
 def test_historical_acquisition_dates_do_not_follow_edition_cutoff():
     import json
+
     import yaml
     from jetp.build_observatory import ROOT, comparison_data
     config = yaml.safe_load((ROOT / 'config/jetp_observatory.yaml').read_text())
@@ -172,3 +175,31 @@ def test_historical_acquisition_dates_do_not_follow_edition_cutoff():
         assert snapshot['retrieved_on'] == raw['retrieved_on']
         assert snapshot['pages'] == raw['pages']
         assert snapshot['source_updated_on'] is None
+
+
+def test_current_timing_registry_covers_each_observation_and_is_independent_of_authority():
+    from jetp.build_observatory import ROOT, read_inputs
+    tables = read_inputs(ROOT)
+    ids = {r['event_id'] for r in tables['events']} | {
+        r['implementation_event_id'] for r in tables['implementation-events']}
+    assert {r['event_id'] for r in tables['event-timing']} == ids
+    day = {'date_role': 'event', 'event_precision': 'day',
+           'event_start': '2025-08-08', 'event_end': '2025-08-08'}
+    for authority in ('official_report', 'primary_source', 'official_portal_snapshot'):
+        assert public_event({'verification_status': authority}, day)['date'] == '2025-08-08'
+    assert public_event({'verification_status': 'primary_source',
+                         'event_date': '2026-01-01'})['date'] is None
+
+
+def test_invalid_timing_cannot_silently_become_an_event():
+    import pytest
+    for timing in ({'date_role': 'typo'}, {'event_precision': 'typo'},
+                   {'event_precision': 'unknown', 'event_start': '2025-01-01'},
+                   {'date_role': 'publication', 'event_precision': 'day',
+                    'event_start': '2025-01-01', 'event_end': '2025-01-01'},
+                   {'date_role': 'event', 'event_precision': 'day',
+                    'event_start': '2025-01-01', 'event_end': '2025-01-02'},
+                   {'event_precision': 'interval', 'event_start': '2025-02-01',
+                    'event_end': '2025-01-01'}):
+        with pytest.raises(ValueError):
+            public_event({}, timing)

@@ -33,6 +33,17 @@ def check_site(url, output):
         page.locator('#results tbody tr a').click()
         page.wait_for_selector('.project-layout')
         assert page.locator('.sources a').count() > 0
+        page.goto(url + '/#project/sen-project-qw-02')
+        link = page.locator('[data-link-id="round4-boad-linguere"]')
+        link.wait_for()
+        assert 'possible match' in link.inner_text()
+        assert 'provisional' in link.inner_text()
+        assert 'JETP' in link.inner_text()
+        page.goto(url + '/#project/sen-project-qw-04')
+        report = page.locator('[data-event-id="sen-puelec-three-villages-reported-20251109"]')
+        report.wait_for()
+        assert 'Event date not established' in report.inner_text()
+        assert 'Source published' in report.inner_text()
         page.goto(url + '/#comparison')
         page.wait_for_selector('#history-country')
         assert page.locator('#history-table tbody tr').count() == count

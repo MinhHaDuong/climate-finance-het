@@ -14,7 +14,7 @@ from jetp._observatory_data import historical_record, public_event, timeline
 
 ROOT = Path(__file__).resolve().parents[2]
 TABLES = ('projects', 'events', 'implementation-events', 'sources', 'source-claims',
-          'project-source-links', 'project-coverage', 'manifest')
+          'project-source-links', 'project-coverage', 'manifest', 'event-timing')
 STAGES = ('Signed', 'Approved', 'Registered financing', 'Mou', 'Announced', 'Need')
 
 
@@ -24,6 +24,11 @@ def read_inputs(root):
     for name in TABLES:
         with (root / 'data/jetp' / f'{name}.csv').open() as stream:
             tables[name] = list(csv.DictReader(stream))
+    timing = unique_rows(tables['event-timing'], 'event_id')
+    ids = {r['event_id'] for r in tables['events']} | {r['implementation_event_id'] for r in tables['implementation-events']}
+    if any(r['event_id'] not in ids for r in timing):
+        raise ValueError('Timing registry references an unknown event')
+    tables['event-timing'] = timing
     return tables
 
 
@@ -46,7 +51,7 @@ def source_map(tables):
         attempt = attempts.get(row['source_id'], {})
         sources[row['source_id']] = {
             'id': row['source_id'], 'title': row['title'], 'url': row['url'],
-            'publisher': row.get('publisher', ''), 'date': row.get('publication_date', ''),
+            'publisher': row.get('publisher', ''), 'date': row.get('published_date', ''),
             'retrieved': attempt.get('retrieved_at', ''),
             'collection': attempt.get('status', 'Not collected'),
             'sha256': attempt.get('sha256', ''),
@@ -57,8 +62,15 @@ def source_map(tables):
 def project_data(row, tables):
     """Expose project observations without summing currencies or repeated stages."""
     pid = row['project_id']
-    financial = [public_event(r) for r in unique_rows(tables['events'], 'event_id') if r['project_id'] == pid]
-    physical = [public_event(r) for r in tables['implementation-events'] if r['project_id'] == pid]
+    timings = {r['event_id']: r for r in tables.get('event-timing', [])}
+    sources = source_map(tables)
+
+    def export_event(r):
+        eid = r.get('event_id', r.get('implementation_event_id'))
+        return public_event(r, timings.get(eid), sources.get(r['source_id']))
+
+    financial = [export_event(r) for r in unique_rows(tables['events'], 'event_id') if r['project_id'] == pid]
+    physical = [export_event(r) for r in tables['implementation-events'] if r['project_id'] == pid]
     claims = [r for r in tables['source-claims'] if pid in r.get('matched_project_ids', '').split(';')]
     links = [r for r in tables['project-source-links'] if r['project_id'] == pid]
     coverage = next((r for r in tables['project-coverage'] if r['project_id'] == pid), {})
@@ -75,7 +87,8 @@ def project_data(row, tables):
         'finance_stage': next((s for s in STAGES if s in stages), 'Not documented'),
         'funders': sorted({e['funder'] for e in financial if e['funder']}),
         'events': timeline(financial + physical),
-        'claims': [{k: r[k] for k in ('claim_id', 'claim_summary', 'source_id', 'section', 'notes')} for r in claims],
+        'claims': [{k: r[k] for k in ('claim_id', 'claim_summary', 'source_id', 'section', 'match_status', 'matched_project_ids', 'notes')} for r in claims],
+        'source_links': links,
         'sources': sorted(source_ids - {''}),
     }
 
@@ -118,9 +131,12 @@ def country_data(root, code, config, tables):
 def comparison_data(root, config):
     """Build the descriptive closed-operation cohort from frozen API projections."""
     projects = []
+    snapshots = {}
     for code, country in config['countries'].items():
         source = root / 'data/jetp/comparison' / f"{country['iso2']}.json"
         snapshot = json.loads(source.read_text())
+        snapshots[code] = {k: snapshot[k] for k in ('retrieved_on', 'pages', 'country_code', 'source_total')}
+        snapshots[code]['source_updated_on'] = None
         for row in snapshot['records']:
             record = historical_record(row, code, country['signed_on'])
             if record:
@@ -129,7 +145,7 @@ def comparison_data(root, config):
             'method': 'World Bank status Closed; approved before the country JETP announcement; at least one sector label contains energy, power or electric. All available approval years. Additional-financing operations are labelled separately. This is a descriptive pool, not a matched control group.',
             'date_note': 'Approval to reported closing date is an administrative financing window. Closed is not proof of physical completion. Only closed operations enter this view, so its distribution cannot estimate the speed of all projects.',
             'source': 'https://search.worldbank.org/api/v2/projects?format=json',
-            'retrieved_on': config['cutoff']}
+            'snapshots': snapshots}
 
 
 def provenance(root, config):

@@ -1,0 +1,452 @@
+event_id,date_role,event_precision,event_start,event_end,observed_on,reported_on,date_note
+zaf-register-actip001-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-actip002-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-can001-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-can002-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-can003-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-can004-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-can005-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-can006-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-can007-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-can008-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-dk001-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-dk002-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-dk003-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-dk004-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-dk005-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-dk006-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-dk008-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-dk009-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-dk010-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-dk011-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-dk012-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-dk013-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-dk014-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-dk015-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-dk018-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-dk019-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-dk020-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-eu001-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-eu002-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-eu003-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-eu004-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-eu005-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-eu006-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-eu007-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-eu008-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-eu010-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-eu011-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-eu012-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-eu013-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-eu014-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-eu015-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-eu016-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-eu017-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-eu018-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-eu019-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-eu020-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-eu021-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-fr001-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-fr002-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-fr003-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-fr004-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-fr005-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-fr006-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-fr007-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-fr009-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-fr010-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-fr011-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-fr012-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-fr013-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-fr014-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-fr015-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-fr016-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-fr017-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-fr019-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-fr020-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-fr021-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-fr022-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-fp001-1-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-fp001-2-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-fp001-3-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-fp001-4-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-fp001-5-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr001-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr002-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr003-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr004-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr006-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr007-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr008-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr009-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr011-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr012-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr013-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr014-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr014b-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr015-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr016-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr017-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr018-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr019-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr020-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr021-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr022-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr023-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr024-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr025-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr026-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr026b-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr027-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr028-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr028b-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr029-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr029b-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr030-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr031-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr032-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr033-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr034-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr035-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr036-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr037-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr038-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr039-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr040-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-gr041-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-nl001-1-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-nl001-2-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-nl001-3-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-nl001-4-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-nl001-5-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-nl001-6-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-nl001-7-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-nl001-8-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-nl001-9-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-nl002-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-nl003-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-nl004-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-nl005-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-nl006-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-nl007-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-nl008-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-nl009-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-nl010-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-nl011-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-nl012-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-sw001-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-sw002-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-sw003-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-sw004-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-sw005-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-sw006-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-sw007-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-sw008-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-sw009-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk001-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk002-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk003-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk005-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk006-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk007-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk008-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk009-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk011-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk012-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk013-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk014-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk015-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk016-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk017-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk018-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk019-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk020-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk021-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk022-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk023-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk024-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk025-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk026-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk027-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk028-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk029-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk030-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk031-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk033-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk034-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk035-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk037-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk039-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk042-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk043-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk044-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk045-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk046-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk047-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk048-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk049-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk050-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk051-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk052-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk053-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk054-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk055-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk056-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk057-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk058-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk059-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk060-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk061-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk062-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk063-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk064-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk065-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk066-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk067-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk068-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk069-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk070-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk071-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk072-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk073-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk074-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk075-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk076-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-uk077-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us001-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us002-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us003-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us004-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us006-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us007-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us008-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us009-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us010-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us011-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us012-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us013-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us014-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us015-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us017-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us018-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us019-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us020-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us021-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us022-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us023-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us024-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us026-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us027-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us028-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us029-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us030-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us031-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us032-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us033-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us034-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us035-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us037-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us038-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-us039-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-afdb001-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-afdb002-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-afdb003-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-afdb004-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-sp001-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-idc001-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-idc002-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-register-idc003-2026-03-30,register,unknown,,,,2026-03-30,Register date; financing signature timing unverified.
+zaf-murp-afdb-approved-2026,event,day,2026-07-16,2026-07-16,,2026-07-16,Source identifies this milestone day separately from publication.
+zaf-eepbip-maf-approved-2018,other_milestone,unknown,,,,,"August 2018 is an implementation start month, not a dated financing approval; the first day is a legacy placeholder."
+idn-approved-isle1-canada-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-sreap-kfw-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-xurya-norfund-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-xurya-bii-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-aset-kfw-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-aset-afd-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-aicet-afd-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-aicet-uk-adb-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-aicet-eu-acgf-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-muara-laboh-jbic-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-saguling-blended-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-mrt-north-south-jica-2025,reporting_cutoff,year,2022-01-01,2022-12-31,2025-11-30,2025-12-02,"Report explicitly gives the approval year; bounds represent year precision, not two events."
+idn-approved-mrt-east-west-jica-2025,reporting_cutoff,year,2024-01-01,2024-12-31,2025-11-30,2025-12-02,"Report explicitly gives the approval year; bounds represent year precision, not two events."
+idn-approved-wolcot-canada-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-esmap-canada-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-etp-canada-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-cefim-canada-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-cetp-canada-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-enerkey-canada-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-euicf-eu-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-s4i-eu-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-sdg-one-eu-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-ietf-eu-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-ipdf-eu-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-efsd-eu-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-ietf-france-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-etmptf-germany-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-seti-germany-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-etap-germany-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-iki-jet-germany-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-low-carbon-buildings-germany-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-gesit-germany-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-reep2-germany-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-case-germany-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-entri-germany-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-explore-germany-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-candi-umbul-germany-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-hydropower2-germany-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-esia-germany-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-perform-germany-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-finance-facilitation-germany-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-re2grid-germany-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-re2cool-germany-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-carbon-monetization-germany-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-energy-hub-germany-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-iki-flex-germany-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-secretariat-japan-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-patuha2-japan-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-mentari-policy-uk-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-etp-uk-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-green-energy-transition-uk-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-uk-pact-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-jt-framework-uk-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-mentari-vgf-uk-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-growth-gateway-uk-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-esmap-uk-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-smi-retirement-cif-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-cfpp-repurposing-cif-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-approved-jt-coal-regions-cif-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-pipeline-green-corridors-kfw-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-pipeline-aicet-kfw-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-pipeline-cirebon-adb-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-pipeline-hululais-jica-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-pipeline-nagajaya-norfund-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-pipeline-dediesel-east-private-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-pipeline-dediesel-west-private-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-pipeline-tanah-laut-private-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-pipeline-legok-nangka-private-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-pipeline-singkarak-private-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-pipeline-sustainable-infrastructure-eib-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-pipeline-sutami-private-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-pipeline-solar-manufacturing-private-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-pipeline-e-taxi-private-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-pipeline-hijaunesia2-private-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-pipeline-hydro-sumatra-private-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-pipeline-hydro-sulawesi-private-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-pipeline-dieng34-adb-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-pipeline-rscm-private-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-pipeline-rsud-private-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-portal-gecs-kfw-2026,observation,unknown,,,2026-09-12,,Undated profile observed on this date; this is not project initiation or approval.
+idn-portal-nagajaya-norfund-2026,observation,unknown,,,2026-09-12,,Undated profile observed on this date; this is not project initiation or approval.
+idn-portal-hululais-jica-2026,observation,unknown,,,2026-09-12,,Undated profile observed on this date; this is not project initiation or approval.
+sen-qw2-plan-need-2025,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-qw3-plan-need-2025,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-diass-kfw-reported-funding,unknown,unknown,,,,,No event date established in the coded evidence.
+sen-diass-afd-reported-funding,unknown,unknown,,,,,No event date established in the coded evidence.
+sen-saloum-reported-german-allocation-2026,publication,unknown,,,,2026-09-09,Dated source reports this status; the milestone day is not established.
+sen-plan-cost-annex-03,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-plan-cost-annex-05,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-plan-cost-annex-06,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-plan-cost-annex-07,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-plan-cost-annex-08,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-plan-cost-annex-09,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-plan-cost-annex-10,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-plan-cost-annex-11,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-plan-cost-annex-12,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-plan-cost-annex-13,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-plan-cost-annex-14,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-plan-cost-annex-15,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-plan-cost-annex-16,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-plan-cost-annex-17,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-plan-cost-annex-19,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-plan-cost-annex-20,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-plan-cost-annex-21,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-plan-cost-annex-22,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-plan-cost-annex-23,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-plan-cost-annex-24,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-plan-cost-annex-25,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-plan-cost-annex-26,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-plan-cost-annex-27,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-plan-cost-annex-28,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-plan-cost-annex-29,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-plan-cost-annex-31,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-plan-cost-annex-33,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-plan-cost-annex-36,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-plan-cost-annex-37,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-plan-allocation-qw-04,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-plan-allocation-qw-08,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-plan-allocation-qw-10,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-diass-kfw-reported-20260420,publication,unknown,,,,2026-04-20,Dated source reports this status; the milestone day is not established.
+sen-diass-afd-reported-20260420,publication,unknown,,,,2026-04-20,Dated source reports this status; the milestone day is not established.
+idn-impl-green-corridors-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-impl-aicet-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-impl-cirebon-closure-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-impl-hululais-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-impl-nagajaya-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-impl-dediesel-east-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-impl-dediesel-west-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-impl-tanah-laut-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-impl-legok-nangka-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-impl-singkarak-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-impl-eib-framework-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-impl-sutami-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-impl-solar-manufacturing-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-impl-e-taxi-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-impl-hijaunesia2-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-impl-hydro-sumatra-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-impl-hydro-sulawesi-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-impl-dieng34-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-impl-rscm-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-impl-rsud-2025,reporting_cutoff,unknown,,,2025-11-30,2025-12-02,November 2025 report cutoff; event day not established.
+idn-impl-nagajaya-portal-2026,observation,unknown,,,2026-09-12,,Undated profile observed on this date; this is not project initiation or approval.
+idn-impl-cirebon-suspended-2025,publication,unknown,,,,2025-12-05,Dated source reports this status; the milestone day is not established.
+idn-impl-seg-operational-2025,event,day,2025-08-08,2025-08-08,,2025-08-15,Source identifies this milestone day separately from publication.
+idn-impl-sutami-construction-2026,event,day,2026-02-10,2026-02-10,,2026-03-06,Source identifies this milestone day separately from publication.
+idn-impl-legok-construction-2026,event,day,2026-07-29,2026-07-29,,2026-07-29,Source identifies this milestone day separately from publication.
+sen-project-qw-02-proposed-2025-04-02,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-project-qw-03-proposed-2025-04-02,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-project-annex-15-preparation-2024-10-18,publication,unknown,,,,2024-10-18,Dated source reports this status; the milestone day is not established.
+sen-project-annex-16-procurement-2026-09-09,ambiguous,unknown,,,,2026-09-09,Notice index date equals its printed bid deadline; procurement launch day remains unknown.
+sen-project-annex-20-proposed-2026-09-13,observation,unknown,,,2026-09-13,,Undated profile observed on this date; this is not project initiation or approval.
+sen-project-annex-22-proposed-2026-09-13,observation,unknown,,,2026-09-13,,Undated profile observed on this date; this is not project initiation or approval.
+sen-project-annex-27-proposed-2026-09-13,observation,unknown,,,2026-09-13,,Undated profile observed on this date; this is not project initiation or approval.
+sen-project-annex-31-proposed-2026-09-13,observation,unknown,,,2026-09-13,,Undated profile observed on this date; this is not project initiation or approval.
+sen-diass-groundbreaking-20260331,event,day,2026-03-31,2026-03-31,,2026-04-20,Source identifies this milestone day separately from publication.
+sen-biognv-ppp-preparation-20250508,event,day,2025-05-08,2025-05-08,,2025-05-08,Source identifies this milestone day separately from publication.
+sen-project-annex-01-plan-proposal,unknown,unknown,,,,2025-03-17,No event date established in the coded evidence.
+sen-project-annex-02-plan-proposal,unknown,unknown,,,,2025-03-17,No event date established in the coded evidence.
+sen-project-annex-03-plan-proposal,unknown,unknown,,,,2025-03-17,No event date established in the coded evidence.
+sen-project-annex-04-plan-proposal,unknown,unknown,,,,2025-03-17,No event date established in the coded evidence.
+sen-project-annex-05-plan-proposal,unknown,unknown,,,,2025-03-17,No event date established in the coded evidence.
+sen-project-annex-06-plan-proposal,unknown,unknown,,,,2025-03-17,No event date established in the coded evidence.
+sen-project-annex-07-plan-proposal,unknown,unknown,,,,2025-03-17,No event date established in the coded evidence.
+sen-project-annex-08-plan-proposal,unknown,unknown,,,,2025-03-17,No event date established in the coded evidence.
+sen-project-annex-09-plan-proposal,unknown,unknown,,,,2025-03-17,No event date established in the coded evidence.
+sen-project-annex-10-plan-proposal,unknown,unknown,,,,2025-03-17,No event date established in the coded evidence.
+sen-project-annex-11-plan-proposal,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-project-annex-12-plan-proposal,unknown,unknown,,,,2025-03-17,No event date established in the coded evidence.
+sen-project-annex-13-plan-proposal,unknown,unknown,,,,2025-03-17,No event date established in the coded evidence.
+sen-project-annex-14-plan-proposal,unknown,unknown,,,,2025-03-17,No event date established in the coded evidence.
+sen-project-annex-17-plan-proposal,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-project-annex-18-plan-proposal,unknown,unknown,,,,2025-03-17,No event date established in the coded evidence.
+sen-project-annex-19-plan-proposal,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-project-annex-21-plan-proposal,unknown,unknown,,,,2025-03-17,No event date established in the coded evidence.
+sen-project-annex-23-plan-proposal,unknown,unknown,,,,2025-03-17,No event date established in the coded evidence.
+sen-project-annex-24-plan-proposal,unknown,unknown,,,,2025-03-17,No event date established in the coded evidence.
+sen-project-annex-25-plan-proposal,unknown,unknown,,,,2025-03-17,No event date established in the coded evidence.
+sen-project-annex-26-plan-proposal,unknown,unknown,,,,2025-03-17,No event date established in the coded evidence.
+sen-project-annex-28-plan-proposal,unknown,unknown,,,,2025-03-17,No event date established in the coded evidence.
+sen-project-annex-29-plan-proposal,unknown,unknown,,,,2025-03-17,No event date established in the coded evidence.
+sen-project-annex-30-plan-proposal,unknown,unknown,,,,2025-03-17,No event date established in the coded evidence.
+sen-project-annex-32-plan-proposal,unknown,unknown,,,,2025-03-17,No event date established in the coded evidence.
+sen-project-annex-33-plan-proposal,unknown,unknown,,,,2025-03-17,No event date established in the coded evidence.
+sen-project-annex-34-plan-proposal,unknown,unknown,,,,2025-03-17,No event date established in the coded evidence.
+sen-project-annex-35-plan-proposal,unknown,unknown,,,,2025-03-17,No event date established in the coded evidence.
+sen-project-annex-36-plan-proposal,unknown,unknown,,,,2025-03-17,No event date established in the coded evidence.
+sen-project-annex-37-plan-proposal,unknown,unknown,,,,2025-03-17,No event date established in the coded evidence.
+sen-project-annex-38-plan-proposal,unknown,unknown,,,,2025-03-17,No event date established in the coded evidence.
+sen-project-qw-04-plan-proposal,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-project-qw-08-plan-proposal,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-project-qw-10-plan-proposal,unknown,unknown,,,,2025-04-02,No event date established in the coded evidence.
+sen-puelec-three-villages-reported-20251109,publication,unknown,,,,2025-11-09,"Publication reports three village commissionings; the two-day tour began 6 November, but village milestone days are not established."

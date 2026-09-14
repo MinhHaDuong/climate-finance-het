@@ -2,7 +2,7 @@
 JETP_OBSERVATORY := deliverables/jetp-observatory
 JETP_OBSERVATORY_VIEWS := overview comparison ZAF IDN VNM SEN
 JETP_OBSERVATORY_JSON := $(addprefix $(JETP_OBSERVATORY)/data/,$(addsuffix .json,$(JETP_OBSERVATORY_VIEWS)))
-JETP_OBSERVATORY_INPUTS := $(addprefix data/jetp/,$(addsuffix .csv,projects events implementation-events sources source-claims project-source-links project-coverage manifest)) \
+JETP_OBSERVATORY_INPUTS := $(addprefix data/jetp/,$(addsuffix .csv,projects events implementation-events sources source-claims project-source-links project-coverage manifest event-timing)) \
     $(wildcard data/jetp/comparison/*.json) \
     $(wildcard data/jetp/editorial/countries/*.md) \
     data/jetp/documents.dvc config/jetp_observatory.yaml \
