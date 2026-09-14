@@ -27,12 +27,18 @@ Starting from the accepted `2026-09` archive, build a second reviewed rehearsal
 edition from the same frozen source facts. Restore both archives into separate
 offline directories, then assert each restored site contains all four country
 JSON downloads, the overview/comparison handoffs, and the stable routes listed
-by its manifest. Simulate an interrupted second-edition candidate build and
-assert the byte hash of the accepted `2026-09` archive remains unchanged.
+by its manifest.
+
+Run two independent failure controls against the second edition: (1) interrupt
+the builder while it writes the candidate; (2) let the builder finish, then
+reject the candidate during validation. For **each** control, assert that the
+`2026-09` descriptor and archive retain their exact pre-failure SHA-256 and
+bytes, then restore and replay its routes/downloads offline again. The two
+controls must not share a single assertion that could pass after only one path.
 
 The RED must fail if a second descriptor/archive is absent, if either restoration
-needs Git, DVC, network access, or source documents, or if a candidate failure
-can alter the first archive.
+needs Git, DVC, network access, or source documents, or if either candidate
+failure path can alter or prevent offline replay of the first archive.
 
 ## Scope
 
@@ -56,8 +62,12 @@ between prepared local packages and a public deployment.
       change.
 - [ ] Each package restores offline without Git, DVC, network, or raw source
       documents, and exposes four-country downloads plus manifest-listed routes.
-- [ ] A failed or interrupted second-edition candidate leaves the first archive
-      byte-identical and replayable.
+- [ ] An interrupted second-edition builder leaves the first descriptor/archive
+      byte-identical by SHA-256 and bytes, and its offline routes/downloads
+      replay after the interruption.
+- [ ] A completed but validation-rejected second-edition candidate independently
+      leaves the first descriptor/archive byte-identical by SHA-256 and bytes,
+      and its offline routes/downloads replay after rejection.
 - [ ] Release history presents both editions with accurate state, cutoff, and
       preparation metadata; prior download references remain available.
 - [ ] No canonical JETP facts, source archive, candidate ownership, MVP public
