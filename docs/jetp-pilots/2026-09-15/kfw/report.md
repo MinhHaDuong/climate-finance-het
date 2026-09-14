@@ -13,7 +13,10 @@ contains that head and the prospective protocol. Selection PR #1348 remains at
 `63bb738ef8f8bf7c96db3201a8ce48b717136075`. Input hashes are in
 [input-manifest.json](input-manifest.json). Both DVC directory MD5s match the
 protocol. Freeze commit `5a307735` precedes new evidence retrieval; it contains
-all candidate ranks, selected flags and routes. Moving the identical sampling
+all candidate ranks, selected flags and routes. Tag `pilot-0738-selection-freeze`
+preserves that original commit across the subsequent rebase onto main
+`0f97bbf6cf1820ed410af82d9764e6c4350b6644`; the rebased equivalent is
+`467e7fab`. Moving the identical sampling
 constants into config/analysis.yaml is a refactor, not a sample amendment.
 
 The archived Country export has SHA-256

@@ -69,5 +69,8 @@
       "sha256": "50737277bcce048c339db89bdac1dce8b5be31bcee17663d0e87e8ed3c61e298"
     }
   ],
-  "archive_xml_sha256": "106dcca9e8cbe791fc0aa933b8c0567aef71f363534f21cffe08a6de9a9d9016"
+  "archive_xml_sha256": "106dcca9e8cbe791fc0aa933b8c0567aef71f363534f21cffe08a6de9a9d9016",
+  "integrated_base": "0f97bbf6cf1820ed410af82d9764e6c4350b6644",
+  "freeze_tag": "pilot-0738-selection-freeze",
+  "rebased_freeze_sha": "467e7fab"
 }
