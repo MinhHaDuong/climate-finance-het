@@ -9,7 +9,11 @@ from pathlib import Path
 
 from jetp._compatibility import MVP_VIEWS, read_mvp_view
 from jetp._contracts import validate_evidence_tuple
-from jetp._country_migration import SCHEMA_VERSION, inventory_positions, legacy_dispositions
+from jetp._country_migration import (
+    SCHEMA_VERSION,
+    inventory_positions,
+    legacy_dispositions,
+)
 from jetp._idn_positions import migrate_positions
 from jetp._observatory_bundle import _protect_output, _protect_replacement
 from jetp._source_crosswalk import _identity, migrate_sources
@@ -55,8 +59,12 @@ def build_migration(root: Path, *, source_root: Path | None = None) -> dict:
     crosswalk = migrate_sources(root, source_root=source_root)
     # The writer guards are importable without the PDF parser; extraction is only
     # needed once source bytes have passed the selected-acquisition checks.
-    from jetp.build_idn_cipp_priority_projects import extract_priority_projects as extract_cipp
-    from jetp.build_idn_progress_priority_projects import extract_priority_projects as extract_progress
+    from jetp.build_idn_cipp_priority_projects import (
+        extract_priority_projects as extract_cipp,
+    )
+    from jetp.build_idn_progress_priority_projects import (
+        extract_priority_projects as extract_progress,
+    )
     by_source = {entry['source_id']: entry for entry in policy['sources']}
     objects = source_root / 'data/jetp/documents/objects'
     cipp = extract_cipp(objects / '74/747283facac512780ad757313c493d1080c39705824e72c4b231e87ecb4102b5.pdf')
