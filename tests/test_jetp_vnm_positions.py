@@ -10,6 +10,17 @@ from jetp import build_vnm_positions as builder
 from jetp._compatibility import MVP_VIEWS, read_mvp_view
 
 
+def candidate_fixture():
+    """Small structurally complete candidate, without real-data extraction."""
+    return dict(schema_version='country-migration/1', country='VNM',
+                admission_status='unadmitted_candidate', writer_owner='legacy',
+                publication_mode='legacy', inputs={}, recipe_inputs={}, recovery_inputs={},
+                selected_acquisition={}, edition_snapshot={}, extraction={},
+                inventory_positions=[], legacy_dispositions=[], legacy_position_candidates=[],
+                legacy_evidence=[], legacy_unresolved=[], inventory_boundaries=[],
+                identity_review=[], mvp_views={view: {} for view in MVP_VIEWS}, comparison={})
+
+
 @pytest.mark.parametrize('alias_kind', ['direct', 'symlink', 'hardlink'])
 @pytest.mark.parametrize('relative', ['data/jetp/releases/recovery.json',
                                       'data/jetp/releases/candidate.json.dvc',
@@ -34,8 +45,7 @@ def test_writer_preserves_accepted_files_and_aliases(tmp_path, alias_kind, relat
 
 def test_interruption_preserves_previous_candidate(tmp_path, monkeypatch):
     output = tmp_path / 'data/jetp/releases/candidate.json'
-    candidate = dict(schema_version='country-migration/1', country='VNM',
-                     admission_status='unadmitted_candidate')
+    candidate = candidate_fixture()
     monkeypatch.setattr(builder, 'build_migration', lambda *args, **kwargs: candidate)
     builder.write_migration(tmp_path, output)
     before = output.read_bytes()
@@ -54,8 +64,7 @@ def test_interruption_preserves_previous_candidate(tmp_path, monkeypatch):
 @pytest.mark.parametrize('alias_kind', ['symlink', 'hardlink'])
 def test_recognized_candidate_alias_is_rejected_before_build(tmp_path, monkeypatch, alias_kind):
     output = tmp_path / 'candidates/previous.json'
-    candidate = dict(schema_version='country-migration/1', country='VNM',
-                     admission_status='unadmitted_candidate')
+    candidate = candidate_fixture()
     monkeypatch.setattr(builder, 'build_migration', lambda *args, **kwargs: candidate)
     builder.write_migration(tmp_path, output)
     before = output.read_bytes()
@@ -75,6 +84,30 @@ def test_recognized_candidate_alias_is_rejected_before_build(tmp_path, monkeypat
     assert alias.read_bytes() == before
     if alias_kind == 'symlink':
         assert alias.is_symlink()
+
+
+@pytest.mark.parametrize('alias_kind', ['direct', 'symlink', 'hardlink'])
+def test_malformed_candidate_markers_are_not_replacement_permission(tmp_path, monkeypatch, alias_kind):
+    target = tmp_path / 'malformed.json'
+    target.write_text(json.dumps(dict(schema_version='country-migration/1', country='VNM',
+                                     admission_status='unadmitted_candidate')))
+    output = target
+    if alias_kind != 'direct':
+        output = tmp_path / 'alias.json'
+        if alias_kind == 'symlink':
+            output.symlink_to(target)
+        else:
+            output.hardlink_to(target)
+    before = target.read_bytes()
+
+    def unexpected_build(*args, **kwargs):
+        pytest.fail('Malformed predecessor must be rejected before building')
+
+    monkeypatch.setattr(builder, 'build_migration', unexpected_build)
+    with pytest.raises(ValueError):
+        builder.write_migration(tmp_path, output)
+    assert target.read_bytes() == before
+    assert output.read_bytes() == before
 
 
 @pytest.mark.slow
