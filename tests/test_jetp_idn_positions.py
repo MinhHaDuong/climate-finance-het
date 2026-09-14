@@ -1,6 +1,8 @@
 """Indonesian plan and approval observations retain their separate meanings."""
 
 from pathlib import Path
+import copy
+import json
 
 import pytest
 
@@ -125,6 +127,33 @@ def test_writer_refuses_full_field_empty_lookalike_before_build(tmp_path, monkey
     }
     target = tmp_path / "previous.json"
     target.write_text(builder.encoded(candidate).decode())
+    output = target
+    if alias_kind != "direct":
+        output = tmp_path / "candidate.json"
+        if alias_kind == "symlink":
+            output.symlink_to(target)
+        else:
+            output.hardlink_to(target)
+    monkeypatch.setattr(builder, "build_migration", lambda *args, **kwargs: pytest.fail("must not build"))
+    with pytest.raises(ValueError):
+        builder.write_migration(tmp_path, output)
+    assert target.read_bytes() == builder.encoded(candidate)
+
+
+@pytest.mark.parametrize("alias_kind", ["direct", "symlink", "hardlink"])
+def test_writer_refuses_real_candidate_without_approval_positions_before_build(
+        tmp_path, monkeypatch, alias_kind):
+    """The real IDN contract requires a populated structured approval ledger."""
+    from jetp import build_idn_positions as builder
+
+    root = Path(__file__).resolve().parents[1]
+    source = root / "data/jetp/releases/idn-migration-0766.json"
+    if not source.exists():
+        pytest.skip("DVC checkout required for complete-candidate recognition audit")
+    candidate = copy.deepcopy(json.loads(source.read_text()))
+    candidate["approval_positions"] = []
+    target = tmp_path / "previous.json"
+    target.write_bytes(builder.encoded(candidate))
     output = target
     if alias_kind != "direct":
         output = tmp_path / "candidate.json"
