@@ -1,0 +1,26 @@
+unit,retrieved,method,url_or_query,outcome
+1,2026-09-14,search,site.foreignassistance.gov data download transaction USAID obligations disbursements,Catalogue/API found
+2,2026-09-14,search,site.devtracker.fcdo.gov.uk download IATI data projects,Official about page found
+3,2026-09-14,search,site.iatiregistry.org publisher USAID data,USAID payload not yet identified
+4,2026-09-14,web-open,https://foreignassistance.gov/data,Empty rendered text
+5,2026-09-14,web-open,https://devtracker.fcdo.gov.uk/about,Download route and monthly update policy
+6,2026-09-14,web-open,https://foreignassistance.gov/api-docs,Empty rendered text
+7,2026-09-14,web-click,https://fcdo.iati.cloud/search/activity/?fl=iati_identifier%2Ctitle_narrative_text%2Cdescription_narrative_text%2Cactivity_date_iso_date%2Cactivity_date_type%2Cactivity_plus_child_aggregation_budget_value_gbp%2Clocation_name_narrative_text%2Clocation_point_pos%2Clocation.point.srsName&q=reporting_org_ref%3AGB-GOV-1&rows=80000&wt=csv,Response exceeds web tool 4MB limit
+8,2026-09-14,web-click,https://devtracker.fcdo.gov.uk/docs/Guidance-and-FAQ-on-FCDO-Data.docx,Unsupported DOCX content
+9,2026-09-14,web-open,https://devtracker.fcdo.gov.uk/programme/GB-1-112151/summary,Historical post-completion programme
+10,2026-09-14,curl,https://foreignassistance.gov/data,fa-data.html downloaded
+11,2026-09-14,web-click,https://fcdo.iati.cloud/search/activity/?fl=%2A&format=json&q=iati_identifier%3AGB-1-112151,Cache miss
+12,2026-09-14,curl,"https://fcdo.iati.cloud/search/activity/?q=reporting_org_ref%3AGB-GOV-1&rows=80000&fl=iati_identifier,title_narrative_text,activity_status_code,activity_date_iso_date,activity_date_type,recipient_country_code,sector_code,hierarchy,related_activity_ref,related_activity_type&wt=json",25282/25282 returned; fcdo-catalogue.json
+13,2026-09-14,curl,https://fcdo.iati.cloud/search/activity/?fl=%2A&format=json&q=iati_identifier%3AGB-1-112151,fcdo-112151.json
+14,2026-09-14,curl,https://foreignassistance.gov/assets/main.4482f18e5f4e2cbb49e6.js,fa-main.js public application source
+15,2026-09-14,curl,https://foreignassistance.gov/data-api/complete-data.json?limit=5,100 records; limit parameter ignored; fa-api-probe.json
+16,2026-09-14,curl,https://fcdo.iati.cloud/search/activity/?fl=%2A&format=json&q=iati_identifier%3AGB-1-112151-101,fcdo-112151-101.json component transactions
+17,2026-09-14,curl-range,https://s3.amazonaws.com/files.explorer.devtechlab.com/us_foreign_aid_complete.csv,206 bytes0-2999999 of3753448682; fa-complete-prefix.csv
+18,2026-09-14,curl,https://s3.amazonaws.com/files.explorer.devtechlab.com/DataDictionary_ForeignAssistancegov.pdf,fa-dictionary.pdf
+19,2026-09-14,curl,https://devtracker.fcdo.gov.uk/docs/Guidance-and-FAQ-on-FCDO-Data.docx,fcdo-guidance.docx
+20,2026-09-14,web-open,https://iatistandard.org/en/iati-standard/203/codelists/transactiontype/,Definitions types2/3/4 verified
+21,2026-09-14,web-open,https://iatistandard.org/en/iati-standard/203/codelists/activitystatus/,Timeout
+22,2026-09-14,search,site.iatiregistry.org/dataset USAID Kenya Download,USAID dashboard lead; no exact Kenya dataset
+23,2026-09-14,web-open,https://dev-dashboard.iatistandard.org/datasets/usaid-multiple-11/,Official dashboard metadata and source route; no payload acquired
+24,2026-09-14,curl,https://fcdo.iati.cloud/search/activity/?fl=%2A&format=json&q=iati_identifier%3AGB-GOV-1-400397,fcdo-400397.json pipeline record
+25,2026-09-14,curl,https://s3.amazonaws.com/files.explorer.devtechlab.com/iati-activities-Multiple%20Countries-11.xml,usaid-multiple-11.xml downloaded;190 activities; July2026 generation

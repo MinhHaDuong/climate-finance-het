@@ -1,0 +1,21 @@
+unit,retrieved,method,url_or_query,outcome
+1,2026-09-14,search,site.jica.go.jp ODA loan project data search signing date loan agreement database,official catalogue found
+2,2026-09-14,search,site.jica.go.jp IATI data XML loan projects,official activity link found
+3,2026-09-14,open,https://www.jica.go.jp/english/activities/achievement/,verified official link
+4,2026-09-14,open,https://www.jica.go.jp/oda/guide/index.html,verified inclusion rules
+5,2026-09-14,open,https://www2.jica.go.jp/en/yen_loan/index.php/module/search,verified filters and caveat
+6,2026-09-14,click,https://iatipublisher-prod.s3.amazonaws.com/xml/mergedActivityXml/jica-activities.xml,web internal error
+7,2026-09-14,search,"site.jica.go.jp ""Loan Agreement"" ""Exchange of Notes"" ""Morocco"" ""2015""",watershed original lead
+8,2026-09-14,search,"site.jica.go.jp ""first disbursement"" ""India"" evaluation",no accepted JICA first-disbursement result
+9,2026-09-14,download,https://www.jica.go.jp/english/activities/achievement/,"success; python executable absent after download, parsed using rg"
+10,2026-09-14,download,https://iatipublisher-prod.s3.amazonaws.com/xml/mergedActivityXml/jica-activities.xml,success; 474 activities
+11,2026-09-14,open,https://www2.jica.go.jp/en/evaluation/pdf/2017_MR-P24_4_f.pdf,original PDF read
+12,2026-09-14,search,"site.jica.go.jp ""India"" ""Exchange of Notes Date"" ""2018"" water evaluation",Rengali original lead
+13,2026-09-14,download,https://www2.jica.go.jp/en/evaluation/pdf/2017_MR-P24_4_f.pdf,success; pdftotext table read
+14,2026-09-14,download,https://www2.jica.go.jp/en/evaluation/pdf/2018_ID-P154_4_f.pdf,success; pdftotext table read
+15,2026-09-14,download,https://www.jica.go.jp/oda/guide/index.html,success
+16,2026-09-14,open,https://iatistandard.org/en/iati-standard/203/codelists/activitydate-type/,wrong route; safe-open failure
+17,2026-09-14,open,https://iatistandard.org/en/iati-standard/203/codelists/transactiontype/,verified outgoing commitment code2
+18,2026-09-14,click,https://iatistandard.org/en/iati-standard/203/codelists/activitydatetype/,web timeout
+19,2026-09-14,download,https://iatistandard.org/en/iati-standard/203/codelists/activitydatetype/,success; codes1 and3 verified planned
+20,2026-09-14,download,https://openjicareport.jica.go.jp/pdf/12395323.pdf,success; annual signature cohort table read

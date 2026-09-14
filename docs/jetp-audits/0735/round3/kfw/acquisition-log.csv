@@ -1,0 +1,21 @@
+unit,retrieved,method,url_or_query,outcome
+1,2026-09-14,search,site.kfw-entwicklungsbank.de IATI open data transparency portal project data download,Official KfW and GovData routes identified
+2,2026-09-14,open,https://data.gov.de/suche/daten/bmz-projektdaten-iati-meldung,Read metadata and XML links
+3,2026-09-14,open,https://www.kfw-entwicklungsbank.de/International-financing/KfW-Development-Bank/Transparency/,Read signed-since-2013 scope
+4,2026-09-14,click,https://teamwork.bmz.de/pub/bscw.cgi/2018133/DE-1-BMZ-RecipientCountry.xml,Web unsupported XML content type
+5,2026-09-14,click,https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Projekte/Projektdatenbank/index.jsp,Javascript shell only
+6,2026-09-14,click,https://teamwork.bmz.de/pub/bscw.cgi/2018133/DE-1-BMZ-RecipientRegion.xml,Web unsupported XML content type
+7,2026-09-14,curl,https://teamwork.bmz.de/pub/bscw.cgi/2018133/DE-1-BMZ-RecipientCountry.xml,Downloaded and parsed 322808758 bytes
+8,2026-09-14,open,https://www.kfw-entwicklungsbank.de/International-financing/KfW-Development-Bank/About-us/News/News-Details_593728.html,Read 2020 statement of IATI historical scope
+9,2026-09-14,search,site.transparenzportal.bund.de IATI KfW Auszahlungen Datum Transaktionen,Official BMZ and Bundestag results; unrelated domestic results discarded
+10,2026-09-14,open,https://www.bmz.de/de/ministerium/zahlen-fakten/internationale-transparenzstandards-59280,Read disclosure context and FAQ link
+11,2026-09-14,open,https://www.bundestag.de/presse/hib/kurzmeldungen-1155384,Read March 2026 government explanation of missing decision-date field
+12,2026-09-14,curl,https://teamwork.bmz.de/pub/bscw.cgi/2018133/DE-1-BMZ-RecipientRegion.xml,Downloaded; identical SHA256 to Country endpoint
+13,2026-09-14,click,https://www.transparenzportal.bund.de/de/FAQ,Javascript shell only
+14,2026-09-14,open,https://iatistandard.org/en/iati-standard/203/codelists/transactiontype/,Official transaction definitions
+15,2026-09-14,open,https://iatistandard.org/en/iati-standard/203/codelists/activitydatetype/,Internal error
+16,2026-09-14,open,https://iatistandard.org/en/iati-standard/203/codelists/transactiontype/,Read exact code 2 and 3 definitions
+17,2026-09-14,open,https://www.kfw-entwicklungsbank.de/ipfz/Projektdatenbank/Windprogramm-Marokko-Iklu-Phase-Iii-32652.htm,Web non-retryable safe-open error; identity remains verified in XML only
+18,2026-09-14,open,https://www.kfw-entwicklungsbank.de/ipfz/Projektdatenbank/Klimaanpassung-In-Waldoekosystemen-Himachal-Pradesh-30347.htm,Web non-retryable safe-open error; identity remains verified in XML only
+19,2026-09-14,open,https://iatistandard.org/en/iati-standard/203/codelists/activitydatetype/,Timeout retry
+20,2026-09-14,curl,https://www.transparenzportal.bund.de/de/FAQ,671-byte javascript application shell; no semantic definitions obtained

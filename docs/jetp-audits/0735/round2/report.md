@@ -1,5 +1,9 @@
 # Broader lifecycle-data audit: second-pass findings
 
+Follow-up: [round 3](../round3/report.md) reconciles current AFD sources and adds
+JICA, KfW, USAID and UK FCDO. The 2024 AFD export below is not the only available
+AFD publication route.
+
 14 September 2026. **Substantially stronger observations exist beyond World Bank,
 energy and JETP countries. Prioritize an AFD panel feasibility pilot, with ADB and
 EIB as complementary stage-history sources. No causal design is selected.**

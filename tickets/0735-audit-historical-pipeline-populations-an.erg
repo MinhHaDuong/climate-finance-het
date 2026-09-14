@@ -120,3 +120,26 @@ Eight original payloads are DVC-tracked in a separate provisional audit bundle.
 Remote replication failed (padme connection refused); all nine cache objects are
 preserved in the primary local cache. The canonical source archive was not
 rewritten from its partial checkout. No website or ledger data changed.
+
+## Author-directed bilateral pass, 14 September 2026
+
+Round 3 extends AFD to current XML/portal reconciliation and adds JICA, KfW,
+USAID and UK FCDO. Report: `docs/jetp-audits/0735/round3/report.md`.
+91 bounded external units, original payload checks and source manifests.
+
+AFD current portal has 3,277 financing IDs; fixed-country XML retains 223 of
+224 legacy IDs, including completed and payment-missing records, but loses
+CMA123501. Full flat-table comparison has 19 missing IDs and two signature
+discrepancies. Exact legacy first-payment dates do not match earliest periodic
+XML transactions. KfW/BMZ supplies 4,036 activities with coarsened payment dates;
+FCDO supplies 7,327 programmes plus components and actual pipeline entries.
+JICA annual signature lists are a better cohort lead than its planned-date XML.
+USAID access is demonstrated, but the acquired XML is an older administrative
+slice, not a project-level comparison pool.
+
+Next acceptance tests and ordering are specified in the round-3 memo: AFD
+missing-ID/date reconciliation first; KfW reporting-period and FCDO documentary
+pilots alongside; JICA older annual cohort; USAID identity/granularity before
+large extraction. The delivered populations are not added across institutions.
+No design or single lifecycle outcome is selected. Explicit disclosure, version
+and unit checks are required before these observations enter the paper or site.

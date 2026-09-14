@@ -1,0 +1,86 @@
+[
+  {
+    "path": "/tmp/jetp-round3-us-uk/fa-api-probe.json",
+    "filename": "fa-api-probe.json",
+    "bytes": 175955,
+    "sha256": "8206d56c3209c6aed31483bcd459507bd9fd24de7088cfd0f2910b85f55fac71"
+  },
+  {
+    "path": "/tmp/jetp-round3-us-uk/fa-complete-headers.txt",
+    "filename": "fa-complete-headers.txt",
+    "bytes": 509,
+    "sha256": "c29c69070b2bcadc28808ffd7b3f86b1b8333ca94d6227e9a89b0f0e4950670e"
+  },
+  {
+    "path": "/tmp/jetp-round3-us-uk/fa-complete-prefix.csv",
+    "filename": "fa-complete-prefix.csv",
+    "bytes": 3000000,
+    "sha256": "3a43d56dc5e878a502ca4f0d65600194e98e5d35d085c4b1c14aa75f94e87bcf"
+  },
+  {
+    "path": "/tmp/jetp-round3-us-uk/fa-data.html",
+    "filename": "fa-data.html",
+    "bytes": 3234,
+    "sha256": "b8697762de0f2fe931835cc6516cf94cdf294a777c11ecaf2922da176e40e91a"
+  },
+  {
+    "path": "/tmp/jetp-round3-us-uk/fa-dictionary.pdf",
+    "filename": "fa-dictionary.pdf",
+    "bytes": 218265,
+    "sha256": "3f3d6f03830736a5c190be93920e7e07b444da0cf0752993e3005f8812933ac8"
+  },
+  {
+    "path": "/tmp/jetp-round3-us-uk/fa-dictionary.txt",
+    "filename": "fa-dictionary.txt",
+    "bytes": 15413,
+    "sha256": "520a209ae8d635397dbbb35be9adc677528ee5eac7d33470019534952fe645dc"
+  },
+  {
+    "path": "/tmp/jetp-round3-us-uk/fa-main.js",
+    "filename": "fa-main.js",
+    "bytes": 594277,
+    "sha256": "f18401ffff522c799af3d08151ad9b43809163618606606a47a93a2523a426dc"
+  },
+  {
+    "path": "/tmp/jetp-round3-us-uk/fcdo-112151-101.json",
+    "filename": "fcdo-112151-101.json",
+    "bytes": 35935,
+    "sha256": "7e9ad9e29532983b9663c18a7d9a748b55a0f2920114a893976972d8ba87437e"
+  },
+  {
+    "path": "/tmp/jetp-round3-us-uk/fcdo-112151.json",
+    "filename": "fcdo-112151.json",
+    "bytes": 21839,
+    "sha256": "db18eb53980d6a8c369de131cac41a1267ee10d3780a2eee635db6fd9a74d9d9"
+  },
+  {
+    "path": "/tmp/jetp-round3-us-uk/fcdo-400397.json",
+    "filename": "fcdo-400397.json",
+    "bytes": 19438,
+    "sha256": "5efdb774cdf59d5e3404536a1e732ad08a3faef4a1f21b43774b3466321d3d40"
+  },
+  {
+    "path": "/tmp/jetp-round3-us-uk/fcdo-catalogue.json",
+    "filename": "fcdo-catalogue.json",
+    "bytes": 17527313,
+    "sha256": "53a0af1bdee2ed8c0355f9e7bdf3bbcc3e4a8e8773433a6432d8e069df480830"
+  },
+  {
+    "path": "/tmp/jetp-round3-us-uk/fcdo-guidance.docx",
+    "filename": "fcdo-guidance.docx",
+    "bytes": 30008,
+    "sha256": "ba441973fa3b0038ae640def61a5734ec8194143d4b2ba78d066d2d03a2fd338"
+  },
+  {
+    "path": "/tmp/jetp-round3-us-uk/fcdo-guidance.txt",
+    "filename": "fcdo-guidance.txt",
+    "bytes": 8188,
+    "sha256": "2ae116ec5dee90e82e19a4bb7c1ed37b52a5143cb8e8ddfb31b704ed92d81c81"
+  },
+  {
+    "path": "/tmp/jetp-round3-us-uk/usaid-multiple-11.xml",
+    "filename": "usaid-multiple-11.xml",
+    "bytes": 38359081,
+    "sha256": "da437d8c7edaa9e9c52484ca007cf493ba79a8e410ca978fc46288db085b7be4"
+  }
+]

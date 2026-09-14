@@ -1,0 +1,58 @@
+[
+  {
+    "file": "achievement.html",
+    "local_path": "/tmp/jetp-round3-jica/achievement.html",
+    "url": "https://www.jica.go.jp/english/activities/achievement/",
+    "retrieved": "2026-09-14",
+    "bytes": 45216,
+    "sha256": "116c5fec8e27fd2a2581eb00bcedfeef19b93024e362d4fb5f0ea9ad4db165db"
+  },
+  {
+    "file": "jica-activities.xml",
+    "local_path": "/tmp/jetp-round3-jica/jica-activities.xml",
+    "url": "https://iatipublisher-prod.s3.amazonaws.com/xml/mergedActivityXml/jica-activities.xml",
+    "retrieved": "2026-09-14",
+    "bytes": 2350081,
+    "sha256": "4f5644c847b29be3b6b89422cde9372369592965ff4828d2288a2a11ee0ea914"
+  },
+  {
+    "file": "morocco-MR-P24.pdf",
+    "local_path": "/tmp/jetp-round3-jica/morocco-MR-P24.pdf",
+    "url": "https://www2.jica.go.jp/en/evaluation/pdf/2017_MR-P24_4_f.pdf",
+    "retrieved": "2026-09-14",
+    "bytes": 1002940,
+    "sha256": "f549bac1ad1c76ad1932e6c2bb31ea2f3c5f26c98fb4dc584596a57db43d1b9b"
+  },
+  {
+    "file": "india-ID-P154.pdf",
+    "local_path": "/tmp/jetp-round3-jica/india-ID-P154.pdf",
+    "url": "https://www2.jica.go.jp/en/evaluation/pdf/2018_ID-P154_4_f.pdf",
+    "retrieved": "2026-09-14",
+    "bytes": 1030734,
+    "sha256": "17dfc8aea0ec0792e699d51297d7de81a3c0fcfccc373475f2ff1283bb997191"
+  },
+  {
+    "file": "guide.html",
+    "local_path": "/tmp/jetp-round3-jica/guide.html",
+    "url": "https://www.jica.go.jp/oda/guide/index.html",
+    "retrieved": "2026-09-14",
+    "bytes": 23857,
+    "sha256": "aa19a10412410bb3ced8d05659152cd15b19a00001fd58a90b2d63b08b59d9bd"
+  },
+  {
+    "file": "activity-date-types.html",
+    "local_path": "/tmp/jetp-round3-jica/activity-date-types.html",
+    "url": "https://iatistandard.org/en/iati-standard/203/codelists/activitydatetype/",
+    "retrieved": "2026-09-14",
+    "bytes": 281051,
+    "sha256": "41558664d7601930fca9ff479b473b4e630bd7d2c982f7ec25caf5c803d1b4c2"
+  },
+  {
+    "file": "databook2025.pdf",
+    "local_path": "/tmp/jetp-round3-jica/databook2025.pdf",
+    "url": "https://openjicareport.jica.go.jp/pdf/12395323.pdf",
+    "retrieved": "2026-09-14",
+    "bytes": 593084,
+    "sha256": "3419c6d573c4b003e2a4298772dc285ef4e44ff78ded23cbc6cef9db71fd9488"
+  }
+]

@@ -1,0 +1,202 @@
+[
+  {
+    "id": "DE-1-201366764",
+    "title": "Windprogramm Marokko (IKLU) Phase III / Wind Programme Morocco (IKLU) Phase III",
+    "country": "MA",
+    "status": "3",
+    "sector": [
+      {
+        "code": "23240",
+        "percentage": "100.00",
+        "vocabulary": "1"
+      }
+    ],
+    "dates": [
+      {
+        "iso-date": "2016-08-04",
+        "type": "1"
+      },
+      {
+        "iso-date": "2016-08-04",
+        "type": "2"
+      },
+      {
+        "iso-date": "2021-12-01",
+        "type": "3"
+      },
+      {
+        "iso-date": "2021-12-01",
+        "type": "4"
+      }
+    ],
+    "transactions": [
+      {
+        "type": "2",
+        "date": "2016-08-04",
+        "value": "54000000.00"
+      },
+      {
+        "type": "3",
+        "date": "2018-12-31",
+        "value": "12876923.08"
+      },
+      {
+        "type": "3",
+        "date": "2019-12-31",
+        "value": "19523076.92"
+      },
+      {
+        "type": "3",
+        "date": "2020-12-31",
+        "value": "21600000.00"
+      }
+    ],
+    "documents": [
+      "https://www.kfw-entwicklungsbank.de/ipfz/Projektdatenbank/Windprogramm-Marokko-Iklu-Phase-Iii-32652.htm",
+      "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Evaluierungen/Ergebnisse/",
+      "https://www.kfw-entwicklungsbank.de/International-financing/KfW-Development-Bank/Evaluations/Results/",
+      "https://www.gtai.de/KfW-Ausschreibungen",
+      "https://www.gtai.de/kfw-tender",
+      "https://www.gtai.de/KfW-Ausschreibungen",
+      "https://www.gtai.de/kfw-tender",
+      "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Evaluierungen/Ergebnisse/",
+      "https://www.kfw-entwicklungsbank.de/International-financing/KfW-Development-Bank/Evaluations/Results/",
+      "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Projekte/Projektdatenbank/index.jsp",
+      "https://www.bmz.de/de/laender/marokko",
+      "https://www.bmz.de/en/countries/morocco"
+    ]
+  },
+  {
+    "id": "DE-1-201365154",
+    "title": "Klimaanpassung in Wald\u00f6kosystemen Himachal Pradesh / Himachal Pradesh Forest Ecosystems Climate Proofing Project",
+    "country": "IN",
+    "status": "2",
+    "sector": [
+      {
+        "code": "41010",
+        "percentage": "100.00",
+        "vocabulary": "1"
+      }
+    ],
+    "dates": [
+      {
+        "iso-date": "2015-12-29",
+        "type": "1"
+      },
+      {
+        "iso-date": "2015-12-29",
+        "type": "2"
+      },
+      {
+        "iso-date": "2026-10-30",
+        "type": "3"
+      }
+    ],
+    "transactions": [
+      {
+        "type": "2",
+        "date": "2015-12-29",
+        "value": "25988987.80"
+      },
+      {
+        "type": "3",
+        "date": "2017-12-31",
+        "value": "51463.39"
+      },
+      {
+        "type": "3",
+        "date": "2018-12-31",
+        "value": "347673.04"
+      },
+      {
+        "type": "3",
+        "date": "2019-12-31",
+        "value": "1174581.00"
+      },
+      {
+        "type": "3",
+        "date": "2020-12-31",
+        "value": "2111953.22"
+      },
+      {
+        "type": "3",
+        "date": "2021-12-31",
+        "value": "2990481.84"
+      },
+      {
+        "type": "3",
+        "date": "2022-12-31",
+        "value": "1548992.36"
+      },
+      {
+        "type": "3",
+        "date": "2023-03-31",
+        "value": "90000.00"
+      },
+      {
+        "type": "3",
+        "date": "2023-06-30",
+        "value": "3698313.54"
+      },
+      {
+        "type": "3",
+        "date": "2023-12-31",
+        "value": "1386650.42"
+      },
+      {
+        "type": "3",
+        "date": "2024-03-31",
+        "value": "2833941.43"
+      },
+      {
+        "type": "3",
+        "date": "2024-06-30",
+        "value": "2400164.06"
+      },
+      {
+        "type": "3",
+        "date": "2024-12-31",
+        "value": "1413363.48"
+      },
+      {
+        "type": "3",
+        "date": "2025-06-30",
+        "value": "2677937.74"
+      },
+      {
+        "type": "3",
+        "date": "2025-09-30",
+        "value": "1339599.23"
+      },
+      {
+        "type": "3",
+        "date": "2025-12-31",
+        "value": "113814.66"
+      },
+      {
+        "type": "3",
+        "date": "2026-03-31",
+        "value": "1498867.76"
+      },
+      {
+        "type": "3",
+        "date": "2026-06-30",
+        "value": "311190.63"
+      }
+    ],
+    "documents": [
+      "https://www.kfw-entwicklungsbank.de/ipfz/Projektdatenbank/Klimaanpassung-In-Waldoekosystemen-Himachal-Pradesh-30347.htm",
+      "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Evaluierungen/Ergebnisse/",
+      "https://www.kfw-entwicklungsbank.de/International-financing/KfW-Development-Bank/Evaluations/Results/",
+      "https://www.gtai.de/KfW-Ausschreibungen",
+      "https://www.gtai.de/kfw-tender",
+      "https://www.gtai.de/KfW-Ausschreibungen",
+      "https://www.gtai.de/kfw-tender",
+      "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Evaluierungen/Ergebnisse/",
+      "https://www.kfw-entwicklungsbank.de/International-financing/KfW-Development-Bank/Evaluations/Results/",
+      "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Projekte/Projektdatenbank/index.jsp",
+      "https://www.bmz.de/de/laender/indien",
+      "https://www.bmz.de/en/countries/india"
+    ]
+  }
+]

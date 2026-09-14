@@ -1,0 +1,98 @@
+{
+  "retrieved": "2026-09-14",
+  "query": "reporting_org_ref:GB-GOV-1",
+  "records": 25282,
+  "unique_ids": 25282,
+  "hierarchy": {
+    "2": 17955,
+    "1": 7327
+  },
+  "status_by_hierarchy": {
+    "1": {
+      "4": 6770,
+      "2": 551,
+      "1": 6
+    },
+    "2": {
+      "4": 13748,
+      "2": 4200,
+      "1": 7
+    }
+  },
+  "country_codes": 148,
+  "sector_codes": 198,
+  "us_prefix": {
+    "complete_width_rows": 3885,
+    "countries": {
+      "AFG": 3885
+    },
+    "agencies": {
+      "USAID": 3885
+    },
+    "transaction_types": {
+      "Obligations": 1397,
+      "Disbursements": 2488
+    },
+    "unique_activity_ids": 422,
+    "negative_amount_rows": 312,
+    "sample_not_representative": true
+  },
+  "date_type_occurrences_by_hierarchy": {
+    "1": {
+      "1": 6000,
+      "2": 7600,
+      "3": 7660,
+      "4": 3279
+    },
+    "2": {
+      "1": 17955,
+      "2": 17955,
+      "3": 17955,
+      "4": 13796
+    }
+  },
+  "records_with_date_type_by_hierarchy": {
+    "1": {
+      "1": 6000,
+      "4": 3246,
+      "3": 7318,
+      "2": 7258
+    },
+    "2": {
+      "1": 17955,
+      "4": 13796,
+      "3": 17955,
+      "2": 17955
+    }
+  },
+  "usaid_multiple_11": {
+    "activities": 190,
+    "unique_ids": 190,
+    "reporting_orgs": {
+      "US-GOV-1": 190
+    },
+    "statuses": {
+      "3": 188,
+      "2": 2
+    },
+    "root_metadata": {
+      "generated-datetime": "2026-07-31T16:49:00.712Z",
+      "version": "2.03"
+    },
+    "activity_update_dates": {
+      "2026-07-31T16:49:00.712Z": 190
+    },
+    "transaction_types": {
+      "2": 20079,
+      "3": 19762
+    },
+    "default_finance_types": {
+      "110": 190
+    },
+    "negative_transaction_values": 9647,
+    "transaction_date_range": [
+      "2015-12-31",
+      "2017-09-30"
+    ]
+  }
+}

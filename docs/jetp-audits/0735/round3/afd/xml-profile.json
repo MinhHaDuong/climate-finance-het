@@ -1,0 +1,269 @@
+{
+  "fr-afd-al.xml": {
+    "generated": {
+      "version": "2.03",
+      "generated-datetime": "2026-08-17T08:37:16"
+    },
+    "activities": 18,
+    "financings": 12,
+    "projects": 6,
+    "countries": {
+      "AL": 12
+    },
+    "status": {
+      "4": 5,
+      "2": 7
+    },
+    "date_types": {
+      "1": 12,
+      "2": 12,
+      "3": 12,
+      "4": 5
+    },
+    "transaction_types": {
+      "2": 12,
+      "3": 23
+    },
+    "disbursement_dates_count": 23,
+    "disbursements_dec31": 19,
+    "disbursement_date_range": [
+      "2022-12-31",
+      "2026-07-31"
+    ],
+    "legacy_overlap": 8,
+    "legacy_country_count": 8,
+    "legacy_missing_ids": []
+  },
+  "fr-afd-id.xml": {
+    "generated": {
+      "version": "2.03",
+      "generated-datetime": "2026-08-17T08:37:16"
+    },
+    "activities": 40,
+    "financings": 21,
+    "projects": 19,
+    "countries": {
+      "ID": 21
+    },
+    "status": {
+      "4": 10,
+      "2": 11
+    },
+    "date_types": {
+      "1": 21,
+      "2": 21,
+      "3": 21,
+      "4": 10
+    },
+    "transaction_types": {
+      "2": 21,
+      "3": 35
+    },
+    "disbursement_dates_count": 35,
+    "disbursements_dec31": 32,
+    "disbursement_date_range": [
+      "2018-12-31",
+      "2026-07-31"
+    ],
+    "legacy_overlap": 14,
+    "legacy_country_count": 14,
+    "legacy_missing_ids": []
+  },
+  "fr-afd-in.xml": {
+    "generated": {
+      "version": "2.03",
+      "generated-datetime": "2026-08-17T08:37:07"
+    },
+    "activities": 51,
+    "financings": 31,
+    "projects": 20,
+    "countries": {
+      "IN": 31
+    },
+    "status": {
+      "4": 14,
+      "2": 17
+    },
+    "date_types": {
+      "1": 31,
+      "2": 31,
+      "3": 31,
+      "4": 14
+    },
+    "transaction_types": {
+      "2": 31,
+      "3": 65
+    },
+    "disbursement_dates_count": 65,
+    "disbursements_dec31": 59,
+    "disbursement_date_range": [
+      "2019-12-31",
+      "2026-07-31"
+    ],
+    "legacy_overlap": 20,
+    "legacy_country_count": 20,
+    "legacy_missing_ids": []
+  },
+  "fr-afd-ma.xml": {
+    "generated": {
+      "version": "2.03",
+      "generated-datetime": "2026-08-17T08:40:44"
+    },
+    "activities": 141,
+    "financings": 88,
+    "projects": 53,
+    "countries": {
+      "MA": 88
+    },
+    "status": {
+      "4": 34,
+      "2": 54
+    },
+    "date_types": {
+      "1": 88,
+      "2": 88,
+      "3": 88,
+      "4": 34
+    },
+    "transaction_types": {
+      "2": 88,
+      "3": 194
+    },
+    "disbursement_dates_count": 194,
+    "disbursements_dec31": 178,
+    "disbursement_date_range": [
+      "2019-12-31",
+      "2026-07-31"
+    ],
+    "legacy_overlap": 67,
+    "legacy_country_count": 68,
+    "legacy_missing_ids": [
+      "CMA123501"
+    ]
+  },
+  "fr-afd-sn.xml": {
+    "generated": {
+      "version": "2.03",
+      "generated-datetime": "2026-08-17T08:36:37"
+    },
+    "activities": 206,
+    "financings": 117,
+    "projects": 89,
+    "countries": {
+      "SN": 117
+    },
+    "status": {
+      "2": 65,
+      "4": 52
+    },
+    "date_types": {
+      "1": 117,
+      "2": 117,
+      "3": 117,
+      "4": 52
+    },
+    "transaction_types": {
+      "2": 117,
+      "3": 237
+    },
+    "disbursement_dates_count": 237,
+    "disbursements_dec31": 217,
+    "disbursement_date_range": [
+      "2019-12-31",
+      "2026-07-31"
+    ],
+    "legacy_overlap": 86,
+    "legacy_country_count": 86,
+    "legacy_missing_ids": []
+  },
+  "fr-afd-vn.xml": {
+    "generated": {
+      "version": "2.03",
+      "generated-datetime": "2026-08-17T08:36:34"
+    },
+    "activities": 70,
+    "financings": 40,
+    "projects": 30,
+    "countries": {
+      "VN": 40
+    },
+    "status": {
+      "4": 11,
+      "2": 29
+    },
+    "date_types": {
+      "1": 40,
+      "2": 40,
+      "3": 40,
+      "4": 11
+    },
+    "transaction_types": {
+      "2": 40,
+      "3": 79
+    },
+    "disbursement_dates_count": 79,
+    "disbursements_dec31": 60,
+    "disbursement_date_range": [
+      "2020-12-31",
+      "2026-07-31"
+    ],
+    "legacy_overlap": 23,
+    "legacy_country_count": 23,
+    "legacy_missing_ids": []
+  },
+  "fr-afd-za.xml": {
+    "generated": {
+      "version": "2.03",
+      "generated-datetime": "2026-08-17T08:40:36"
+    },
+    "activities": 16,
+    "financings": 8,
+    "projects": 8,
+    "countries": {
+      "ZA": 8
+    },
+    "status": {
+      "2": 5,
+      "4": 3
+    },
+    "date_types": {
+      "1": 8,
+      "2": 8,
+      "3": 8,
+      "4": 3
+    },
+    "transaction_types": {
+      "2": 8,
+      "3": 14
+    },
+    "disbursement_dates_count": 14,
+    "disbursements_dec31": 12,
+    "disbursement_date_range": [
+      "2019-12-31",
+      "2026-07-31"
+    ],
+    "legacy_overlap": 5,
+    "legacy_country_count": 5,
+    "legacy_missing_ids": []
+  },
+  "totals": {
+    "financing_rows": 317,
+    "unique_financing_ids": 317,
+    "legacy_overlap": 223,
+    "legacy_signature_matches_any_commitment_transaction_date": 223,
+    "legacy_award_matches_any_commitment_value_date": 210,
+    "legacy_first_payment_matches_earliest_reported_disbursement": 0,
+    "legacy_country_count": 224,
+    "legacy_missing_ids": [
+      "CMA123501"
+    ],
+    "retained_legacy_completed": 61,
+    "retained_legacy_missing_payment": 30,
+    "legacy_nonmissing_award": 210,
+    "legacy_nonmissing_first_payment": 193,
+    "disbursement_records": 647,
+    "disbursement_dec31": 577,
+    "retained_legacy_zero_payments_now_positive": 24,
+    "retained_legacy_zero_payments_no_type3": 6
+  }
+}
