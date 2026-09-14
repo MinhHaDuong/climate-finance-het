@@ -131,6 +131,7 @@ def freeze_bundle(root, output, *, source_root=None, include_sources=False):
     _protect_output(root, output)
     manifest, payloads = _capture(root, root / SITE, Path(source_root or root), include_sources)
     manifest['kind'] = 'baseline'
+    _protect_output(root, output, inputs=(row['recovery_location'] for row in manifest['sources']))
     return _write_bundle(output, manifest, payloads)
 
 
@@ -167,6 +168,8 @@ def build_candidate(root, output, *, accepted, builder=None, source_root=None, i
             (builder or _build_view)(root, view, site / 'data' / f'{view}.json')
         manifest, payloads = _capture(root, site, Path(source_root or root), include_sources)
         manifest.update(kind='candidate', accepted_sha256=digest(Path(accepted).read_bytes()))
+        _protect_output(root, output, inputs=(accepted, *(row['recovery_location']
+                                                        for row in manifest['sources'])))
         return _write_bundle(output, manifest, payloads)
 
 
