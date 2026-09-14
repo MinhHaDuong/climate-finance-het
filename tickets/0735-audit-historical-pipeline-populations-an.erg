@@ -44,11 +44,11 @@ must fail. Record missing frames and dates rather than filling them from reports
 
 ## Deliverables and exit criteria
 
-- [ ] Frozen selection/scout brief and dated acquisition log with locators/hashes
-- [ ] Frame-and-endpoint coverage matrix including missing, active and cancelled cases
-- [ ] Event dates/bounds distinct from reporting and collection; no success-conditioned frame
-- [ ] Evidence on comparable energy/non-energy definitions, baseline maturity and calendar coverage
-- [ ] Go/narrow/defer memo for incumbent-pipeline, throughput, sector-gap and synthetic-history candidates; no effect estimate
+- [x] Frozen selection/scout brief and dated acquisition log with locators/hashes
+- [x] Frame-and-endpoint coverage matrix including missing, active and cancelled cases
+- [x] Event dates/bounds distinct from reporting and collection; no success-conditioned frame
+- [x] Evidence on comparable energy/non-energy definitions, baseline maturity and calendar coverage
+- [x] Go/narrow/defer memo for incumbent-pipeline, throughput, sector-gap and synthetic-history candidates; no effect estimate
 
 A sparse result is acceptable. Stop at the evidence checkpoint; do not enlarge a
 pool merely to improve a prospective estimate. No primary estimator is selected
@@ -76,3 +76,12 @@ verified for 2020; listed presence cannot prove pending-signature state. Current
 snapshot status is separate from historical membership. Triad retained as
 unverified protocol candidates; no causal design selected. Ticket stays open
 until review; unmet archive, frame and endpoint criteria remain visible.
+
+## Independent review
+
+All five documentary exit criteria are addressed as a bounded evidence audit;
+this does not establish a usable causal design or complete historical population.
+An independent scientific reviewer accepted the report and matrices. Fast gate:
+1549 passed, ten skipped; adherence:330 passed, thirteen skipped. The report
+records the missing-DVC environment failure and successful hydrated rerun.
+Ticket remains open until the report PR is accepted.
