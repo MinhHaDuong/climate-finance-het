@@ -75,7 +75,9 @@ def tiny_bundle(path, *, headline='Accepted headline', revision='before', event_
         payloads[f'site/data/{code}.json'] = json.dumps({
             'country': {'headline': headline if code == 'ZAF' else 'Unchanged'},
             'projects': [{'id': code + '-one', 'date': event_date}]}).encode()
-    manifest = {'routes': ['#project/ZAF-one'], 'files': {
+    from jetp._bundle_inventory import routes
+
+    manifest = {**routes(payloads), 'files': {
         name: {'sha256': hashlib.sha256(data).hexdigest(), 'size_bytes': len(data)}
         for name, data in payloads.items()}}
     with zipfile.ZipFile(path, 'w') as archive:
@@ -128,3 +130,120 @@ def test_inventory_preserves_duplicate_rows_and_nonwebsite_keys():
     assert inventory['row_keys']['project_id'] == ['p1', 'p1', 'p2']
     assert inventory['duplicate_rows'][0]['count'] == 2
     assert inventory['row_locators'] == [2, 3, 4]
+
+
+@pytest.mark.parametrize('before,after', [(True, 1), (False, 0), (1, True), (0, False), (1, 1.0)])
+@pytest.mark.parametrize('container', ['scalar', 'list', 'dict'])
+def test_semantic_comparison_retains_json_type_changes(before, after, container):
+    from jetp._observatory_bundle import _changes
+
+    if container == 'list':
+        before, after = [before], [after]
+    elif container == 'dict':
+        before, after = {'value': before}, {'value': after}
+    changes = list(_changes(before, after, 'field'))
+    assert len(changes) == 1
+    assert type(changes[0]['before']) is not type(changes[0]['after'])
+
+
+@pytest.mark.parametrize('field', ['routes', 'downloads'])
+@pytest.mark.parametrize('change', ['add', 'remove'])
+def test_bundle_rejects_fabricated_or_stale_derived_inventory(tmp_path, field, change):
+    import json
+    import zipfile
+
+    from jetp._observatory_bundle import compare_bundles, restore_bundle
+
+    accepted, altered = tmp_path / 'accepted.zip', tmp_path / 'altered.zip'
+    tiny_bundle(accepted)
+    with zipfile.ZipFile(accepted) as source, zipfile.ZipFile(altered, 'w') as dest:
+        for name in source.namelist():
+            data = source.read(name)
+            if name == 'manifest.json':
+                manifest = json.loads(data)
+                if change == 'add':
+                    manifest[field].append('#fabricated' if field == 'routes' else 'data/fake.json')
+                else:
+                    manifest[field].pop()
+                data = json.dumps(manifest).encode()
+            dest.writestr(name, data)
+    with pytest.raises(ValueError, match='inventory'):
+        compare_bundles(accepted, altered)
+    with pytest.raises(ValueError, match='inventory'):
+        restore_bundle(altered, tmp_path / 'restored')
+    assert not (tmp_path / 'restored').exists()
+
+
+@pytest.mark.parametrize('alias', ['same', 'resolved', 'symlink', 'hardlink'])
+@pytest.mark.parametrize('input_index', [0, 1])
+def test_diff_cli_cannot_overwrite_either_archive(tmp_path, monkeypatch, alias, input_index):
+    import sys
+
+    from jetp.build_observatory_bundle import main
+
+    archives = [tmp_path / 'accepted.zip', tmp_path / 'candidate.zip']
+    for archive in archives:
+        tiny_bundle(archive)
+    target = archives[input_index]
+    output = target
+    if alias == 'resolved':
+        (tmp_path / 'child').mkdir()
+        output = tmp_path / 'child' / '..' / target.name
+    elif alias in ('symlink', 'hardlink'):
+        output = tmp_path / 'alias.zip'
+        if alias == 'symlink':
+            output.symlink_to(target)
+        else:
+            output.hardlink_to(target)
+    before = [archive.read_bytes() for archive in archives]
+    monkeypatch.setattr(sys, 'argv', ['bundle', '--mode', 'diff', '--root', str(tmp_path),
+                                     '--input', *map(str, archives), '--output', str(output)])
+    with pytest.raises(ValueError, match='separate|protected|alias'):
+        main()
+    assert [archive.read_bytes() for archive in archives] == before
+    assert output.read_bytes() == before[input_index]
+
+
+@pytest.mark.parametrize('name', ['config/jetp_observatory.yaml', 'scripts/jetp/build_observatory.py',
+                                  'scripts/jetp/_observatory_data.py', 'data/jetp/projects.csv',
+                                  'deliverables/jetp-observatory/data/ZAF.json'])
+@pytest.mark.parametrize('alias', ['same', 'symlink', 'hardlink'])
+def test_all_canonical_inputs_are_protected_from_output(tmp_path, name, alias):
+    from jetp._observatory_bundle import _protect_output
+
+    target = tmp_path / name
+    target.parent.mkdir(parents=True)
+    target.write_bytes(b'canonical input bytes')
+    output = target
+    if alias != 'same':
+        output = tmp_path / 'outside-output.zip'
+        if alias == 'symlink':
+            output.symlink_to(target)
+        else:
+            output.hardlink_to(target)
+    with pytest.raises(ValueError, match='separate|protected|alias'):
+        _protect_output(tmp_path, output)
+    assert target.read_bytes() == b'canonical input bytes'
+
+
+def test_diff_cli_atomic_report_failure_preserves_prior_report(tmp_path, monkeypatch):
+    import sys
+
+    from jetp.build_observatory_bundle import main
+
+    accepted, candidate = tmp_path / 'accepted.zip', tmp_path / 'candidate.zip'
+    tiny_bundle(accepted)
+    tiny_bundle(candidate)
+    output = tmp_path / 'report.json'
+    output.write_bytes(b'previous complete report')
+
+    def interrupted_replace(source, destination):
+        assert output.read_bytes() == b'previous complete report'
+        raise OSError('interrupted report publication')
+
+    monkeypatch.setattr('os.replace', interrupted_replace)
+    monkeypatch.setattr(sys, 'argv', ['bundle', '--mode', 'diff', '--root', str(tmp_path),
+                                     '--input', str(accepted), str(candidate), '--output', str(output)])
+    with pytest.raises(OSError, match='interrupted report publication'):
+        main()
+    assert output.read_bytes() == b'previous complete report'
