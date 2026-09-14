@@ -2,11 +2,13 @@
 Title: Freeze a recoverable MVP baseline and isolate candidate builds
 Created: 2026-09-14
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1365
 
 --- log ---
 2026-09-14T13:51Z HDMX-coding-agent created
 
 2026-09-14T14:33Z bump verify-reroll — round 1: unsafe output destinations and missing semantic/inventory validation
+2026-09-14T16:09Z HDMX-coding-agent closed — autoclosed — PR #1365
 --- body ---
 
 ## Context
