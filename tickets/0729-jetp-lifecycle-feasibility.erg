@@ -1,0 +1,82 @@
+%erg 0.1
+Title: Select a feasible causal design from the JETP evidence audits
+Created: 2026-09-13
+Author: HDMX-coding-agent
+Blocked-by: 0735
+Blocked-by: 0736
+
+--- log ---
+2026-09-13T19:18Z HDMX-coding-agent created
+2026-09-14T06:51Z HDMX-coding-agent decision Consolidate Astra/Fable options; no design selected. Two bounded evidence audits feed the design checkpoint.
+
+--- body ---
+
+## Context
+
+The author wants a causal short paper on JETP acceleration. Country selection is
+nonrandom. The independent Astra/Fable proposals and cross-review are in
+conception/jetp-causal-design-options-2026-09-14.md; original reports are retained,
+including corrections. This ticket makes a design decision after evidence discovery,
+not an estimator choice based on apparent effect size. Parent programme: 0725.
+
+## First documentary acceptance check
+
+Challenge a naive JETP-labelled versus old-completed-project comparison with
+maturity-based selection and a shared calendar shock. It must fail causal
+acceptance despite balanced observed income groups. State what actual assignment
+or historical evidence could distinguish these biases from an effect.
+
+## Inputs and candidate designs
+
+0735 / GitHub #1345 audits historical populations, milestone observations and contemporaneous
+comparison support. 0736 / GitHub #1346 audits country selection, negotiations, anticipation,
+concurrent interventions and any genuine allocation mechanism. Each supplies
+locators, contrary evidence and named missing documents, with bounded search logs.
+
+Compare the supported options: exposure of an incumbent pipeline fixed before
+intervention; overall pipeline throughput; energy/non-energy triple differences;
+country-specific synthetic controls; and a narrower support-component effect if
+an actual allocation mechanism exists. A project-support comparison requires an
+explicit confounding argument and is distinct from the country partnership effect.
+Countries considered but not concluding a JETP are discovery leads, not automatic
+controls. No mandatory permutation method, numerical pre-period threshold or
+donor-count target is adopted from the initial model reports.
+
+## Design decision
+
+Choose a primary estimand, intervention, population, unit, time zero, outcome and
+follow-up horizon only after reviewing the evidence matrices. Country comparability
+uses pre-treatment income, financing eligibility and energy-sector conditions;
+project comparison uses baseline lender, instrument, technology and maturity.
+Across sectors use relevant scale/complexity/procurement characteristics rather
+than fictitious technology matches. Define indicators, dates and overlap rules.
+
+Do not condition an incumbent-pipeline effect on approval or survival after JETP.
+Earlier comparable landmark populations can provide history; rolling post-onset
+risk sets can still contain treatment-induced composition. A throughput estimand
+may include new projects, but is not a waiting-time effect. Non-energy spillovers
+can make a sector contrast relative rather than total acceleration.
+
+Assess counterfactual assumptions, anticipation, concurrent reforms, spillovers,
+measurement change, common support, missingness, cancellation and right/interval
+censoring. Good pre-period fit or observed balance supports but does not prove
+identification. Few treated countries require a justified country-level uncertainty
+procedure; placebo ranks are not exact randomisation p-values without exchangeability.
+Distinguish precision/power limitations from failed identification.
+
+## Exit criteria
+
+- [ ] Both bounded evidence audits reviewed, including contrary and unavailable evidence
+- [ ] Candidate-design matrix links each identifying assumption to evidence and unresolved threats
+- [ ] One primary estimand/design proposed with population, treatment, time zero and supported outcomes, or causal DEFER justified
+- [ ] Comparator definitions, falsification/placebos, sensitivity and uncertainty plan specified
+- [ ] Protocol proposal records prior outcome inspection and is ready to freeze before 0730 primary estimation
+- [ ] GO/NARROW decision recorded with author, or explicit author scope decision requested on DEFER; no descriptive substitution
+
+No positive or statistically significant effect is required. A narrower valid
+causal question is acceptable if named and agreed. If no credible design survives,
+return the scope decision to the author. Observatory/data-paper work continues.
+
+## GitHub planning issue
+
+https://github.com/MinhHaDuong/climate-finance-het/issues/1337

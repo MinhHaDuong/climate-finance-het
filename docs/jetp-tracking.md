@@ -4,6 +4,10 @@ OECD CRS is the lagged comparison layer. The current state of the four JETPs
 comes from dated official documents and project records. This contract keeps
 the two roles separate and makes every aggregate reversible.
 
+Publication storage and the Markdown editorial layer are specified in
+[the programme storage contract](jetp-storage.md). Existing registry paths and
+source-evidence rules below remain authoritative.
+
 ## Objects and ownership
 
 | Object | Canonical location | Versioning | Meaning |

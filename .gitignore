@@ -120,6 +120,8 @@ code/doifetch/
 # Quarto scratch are regenerable. The top-level output/ dir was retired.
 .quarto/
 *.html
+# Hand-authored static observatory entry point.
+!deliverables/jetp-observatory/index.html
 *_files/
 **/*.quarto_ipynb
 deliverables/*/*.pdf

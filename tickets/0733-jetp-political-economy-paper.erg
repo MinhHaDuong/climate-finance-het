@@ -1,0 +1,44 @@
+%erg 0.1
+Title: Reframe and write the JETP political-economy paper with Christophe
+Created: 2026-09-13
+Author: HDMX-coding-agent
+Blocked-by: 0726
+Blocked-by: 0729
+Blocked-by: 0711
+
+--- log ---
+2026-09-13T19:18Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+The long paper explains observed country and project trajectories. Earlier absorption, instrument-substitution and national-ownership arguments are working hypotheses; the author asks to reimagine the paper to fit the data.
+
+Plan: `conception/jetp-observatory-and-papers-plan.md`. Parent tracker: 0725.
+
+## First test
+
+First claim-audit exercise: for one proposed mechanism, link each premise to a dated source, state a rival explanation and identify evidence that would disconfirm it. An inference presented as an observation or selected success case standing in for the portfolio must fail review.
+
+## Actions
+
+Rewrite conception/jetp-papier-long-economie-politique.md and the LaTeX manuscript in deliverables/jetp-econpol. Build a comparative evidence matrix on financial instruments, domestic institutions, negotiation and ownership arrangements; select cases transparently and include stalled or contradictory cases. Incorporate 0730 results when available without blocking initial case analysis. Coordinate the analytical framing with Christophe through the author; this ticket does not authorise sending messages. Keep construction, emissions and justice outcomes outside demonstrated claims unless directly evidenced.
+
+## Exit criteria
+
+- [ ] Comparative argument grounded in frozen source-backed observations
+- [ ] Mechanisms, rival explanations and negative cases explicit
+- [ ] No predetermined absorption or substitution conclusion
+- [ ] Connection to short-paper findings and limits stated without duplication
+- [ ] Reviewable LaTeX manuscript and claim-evidence matrix for author/Christophe discussion
+
+## Validation
+
+Apply the repository gates for the actual diff. Code work starts with the failing
+fixture above; prose/data work records the documentary acceptance check. Preserve
+source evidence and report limits rather than manufacturing a successful result.
+
+## GitHub planning issue
+
+https://github.com/MinhHaDuong/climate-finance-het/issues/1341

@@ -1,0 +1,69 @@
+%erg 0.1
+Title: Implement the approved causal JETP lifecycle design
+Created: 2026-09-13
+Author: HDMX-coding-agent
+Blocked-by: 0729
+
+--- log ---
+2026-09-13T19:18Z HDMX-coding-agent created
+
+2026-09-13T20:18Z HDMX-coding-agent decision Markdown-first storage; DVC evidence archive; static website; SQLite optional derived export.
+
+--- body ---
+
+## Context
+
+After 0729 selects a defensible causal design, build and analyse only the data
+needed for that estimand. The 0735/0736 evidence audits and Astra/Fable proposals
+are inputs, not a selected protocol. Parent programme: 0725. Reuse 0713/0721
+where relevant; the website's 97 closed operations are a descriptive discovery pool.
+
+## First test
+
+A design-specific null-effect fixture with baseline maturity selection and a
+shared calendar shock must expose the naive comparison's bias. Verify the chosen
+implementation under its stated assumptions, then include a violated-assumption
+fixture showing its limit. Simulation success does not validate real assignment.
+Include unfinished/cancelled, interval-dated and mature-on-entry observations.
+
+## Actions
+
+Freeze the 0729 GO/NARROW protocol before primary estimation: estimand, treatment,
+population/time zero, outcomes/horizons, sample and overlap rules, estimator,
+weights, censoring/cancellation, uncertainty and falsification/sensitivity checks.
+Record prior outcome inspection and later deviations. Preregistration cannot
+repair weak identification. Do not condition on treatment-induced approval,
+instrument choice or survival when estimating a total or incumbent-pipeline effect.
+
+Build source-linked operation and project histories with historical country-status
+variables and dates. Implement the selected country/sector comparison and retain
+supported alternatives as sensitivity analyses. For sector contrasts, justify
+non-energy admissibility and state whether spillovers imply a relative effect.
+For staggered exposure/covariate adjustment, use an appropriate estimator rather
+than a naive difference of adjusted contrasts. No estimator is selected by this ticket.
+
+Report sample support, effective weights, country/lender concentration, missingness,
+uncertainty at the treatment-assignment level, falsification checks and robustness
+to date bounds, anticipation, concurrent policies and comparator exclusions. Four
+beneficiary countries do not become hundreds of independent treatment assignments.
+Produce reproducible analysis artifacts for 0732, tied to frozen inputs.
+
+## Exit criteria
+
+- [ ] 0729 causal GO/NARROW decision and immutable protocol recorded before primary estimation
+- [ ] Cohort, treatment, time zero and estimator target the same declared population/effect
+- [ ] Source-linked data retain unfinished, cancelled, missing and interval-dated observations appropriately
+- [ ] Main effect and uncertainty, including null/adverse results, reproducible from frozen inputs
+- [ ] Design-appropriate falsification, sensitivity and country-level inference assumptions reported
+- [ ] Analysis/figure handoff ready for 0732; identification failure returns to the author instead of descriptive substitution
+
+## Storage
+
+Historical/comparator inputs remain separate from the JETP portfolio. Derived
+analysis or SQLite exports under data/derived/jetp are regenerable, never editable
+authorities. A project-support effect, total pipeline effect and relative sector
+contrast must not share an ambiguous outcome label.
+
+## GitHub planning issue
+
+https://github.com/MinhHaDuong/climate-finance-het/issues/1338

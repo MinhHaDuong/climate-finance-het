@@ -1,0 +1,56 @@
+version: 1
+edition: 2026-09-preview
+cutoff: '2026-09-13'
+countries:
+  ZAF:
+    name: South Africa
+    short: South Africa
+    iso2: ZA
+    signed_on: '2021-11-02'
+    pledge_label: '$8.5bn'
+    headline: '$6.12bn allocated'
+    headline_detail: '42.6% of the revised $14.36bn pledge, as reported in March 2026. Allocation is not disbursement.'
+    headline_date: '2026-03-31'
+    headline_source: zaf-jet-quarterly-2026-q1
+    stage_label: Allocation
+    stage_percent: 42.6
+    colour: '#bd641d'
+  IDN:
+    name: Indonesia
+    short: Indonesia
+    iso2: ID
+    signed_on: '2022-11-15'
+    pledge_label: '$20bn'
+    headline: '≈$3.1bn approved'
+    headline_detail: 'Five programmes, four projects and 44 grants against a revised $21.4bn pledge. Approval is not payment.'
+    headline_date: '2025-11-30'
+    headline_source: idn-jetp-progress-report-2025
+    stage_label: Approval
+    stage_percent: null
+    colour: '#238074'
+  VNM:
+    name: Viet Nam
+    short: Viet Nam
+    iso2: VN
+    signed_on: '2022-12-14'
+    pledge_label: '$15.5bn'
+    headline: '3 publicly named projects'
+    headline_detail: 'The July 2025 portfolio reports 24 projects. Twenty-one identities remain unpublished in this reconciled snapshot; later aggregate reports are not treated as named projects.'
+    headline_date: '2025-07-09'
+    headline_source: vnm-eeas-jetp-project-progress-2025
+    stage_label: Portfolio disclosure
+    stage_percent: null
+    colour: '#6b6ea5'
+  SEN:
+    name: Senegal
+    short: Senegal
+    iso2: SN
+    signed_on: '2023-06-22'
+    pledge_label: '€2.5bn'
+    headline: '43 project / programme records'
+    headline_detail: 'Reconciled from 49 investment-plan lines. Some programmes contain other records; costs cannot be added across these levels. A project-level disbursement total is not established.'
+    headline_date: '2026-09-13'
+    headline_source: sen-investment-plan-l4-mirror
+    stage_label: Investment plan
+    stage_percent: null
+    colour: '#a95568'

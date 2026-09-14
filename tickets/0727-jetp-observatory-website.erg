@@ -1,0 +1,77 @@
+%erg 0.1
+Title: Build and publish the JETP observatory website
+Created: 2026-09-13
+Author: HDMX-coding-agent
+Blocked-by: 0726
+
+--- log ---
+2026-09-13T19:18Z HDMX-coding-agent created
+
+2026-09-13T20:18Z HDMX-coding-agent decision Markdown-first storage; DVC evidence archive; static website; SQLite optional derived export.
+
+--- body ---
+
+## Context
+
+The observatory is an independent public research output: country portfolios and project descriptions with sources, timelines, totals and useful visual exploration. Its usefulness must not depend on demonstrating acceleration.
+
+Plan: `conception/jetp-observatory-and-papers-plan.md`. Parent tracker: 0725.
+
+## First test
+
+First browser acceptance test on a small release fixture: navigate country → filtered project → milestone source, and country total → constituent records. Include missing dates, a disputed amount and overlapping components; these must be legible and must not appear as zero progress or duplicate financing.
+
+## Actions
+
+Choose the simplest maintainable site approach after inspecting existing publishing infrastructure. Build accessible country and project pages, filters, portfolio/stage visualisations, timelines, source links and downloadable release access. Display last-reviewed and release dates. Produce a concrete preview, hosting proposal and public URL decision before launch; publish the reviewed site and verify the live route. Do not require interactive complexity where a clear table suffices.
+
+## Exit criteria
+
+- [ ] Four country pages and stable project URLs expose essential features and evidence
+- [ ] Totals and filters reconcile exactly with the selected dataset edition
+- [ ] Timelines separate dated events from status-only observations and missing data
+- [ ] Readable mobile/desktop and keyboard navigation; meaningful visualisations
+- [ ] Preview reviewed, hosting/URL resolved and public site verified with release metadata
+
+## Validation
+
+Apply the repository gates for the actual diff. Code work starts with the failing
+fixture above; prose/data work records the documentary acceptance check. Preserve
+source evidence and report limits rather than manufacturing a successful result.
+
+## Storage implementation contract
+
+Build from Markdown dossiers plus frozen CSV/JSON. Initial hosting is static; no live SQLite service and no browser access to DVC. Reuse generated registry features and timelines rather than duplicating facts in Markdown. Test a render without network or DVC from the frozen package.
+
+## GitHub planning issue
+
+https://github.com/MinhHaDuong/climate-finance-het/issues/1335
+
+## Progress audit, 14 September 2026
+
+The local static MVP exists in PR #1343 and exercises country synthesis, project
+pages, filters, source links, downloads and historical browsing. This does not
+close the public-site ticket. After the scientific fixes and 0726 release checks,
+review keyboard navigation, stable deep links, edition metadata and reconciliation
+of displayed aggregates. Resolve hosting/public URL using the concrete preview,
+then verify the deployed route. The 97 closed World Bank operations remain a
+labelled descriptive reference pool; analytical cohort work belongs to 0730.
+
+Check export size as the portfolio grows: the corrected ZAF JSON is approximately
+508 KB, close to the repository's 512,000-byte file cap. Before expanding it,
+measure payload/load costs and split country/project handoffs if needed while
+preserving offline downloads and complete provenance. This is not a reason to
+introduce a live database.
+
+## Independent checkpoint review follow-ups
+
+Before monthly refreshes, add regression fixtures for a project with both a year
+interval and a later point event, and for an unreviewed timing row carrying
+bounds. Define interval-aware display order and reject unsupported established
+bounds without converting reviewed intervals into invented point dates. Current
+451 timing rows contain neither problematic combination; these are refresh
+hardening tasks identified by the PR #1343 correctness review.
+
+Derive undisclosed counts in all views from the exported overview; the current
+three hardcoded mentions agree at 21 but create future refresh drift. First test:
+change the fixture's undisclosed count and require all three views to follow it.

@@ -1,0 +1,59 @@
+%erg 0.1
+Title: Establish reviewed monthly JETP observatory editions
+Created: 2026-09-13
+Author: HDMX-coding-agent
+Blocked-by: 0726
+Blocked-by: 0727
+
+--- log ---
+2026-09-13T19:18Z HDMX-coding-agent created
+
+2026-09-13T20:18Z HDMX-coding-agent decision Markdown-first storage; DVC evidence archive; static website; SQLite optional derived export.
+
+--- body ---
+
+## Context
+
+The user requests monthly updates. Collection already exists; the missing publication workflow must preserve old editions, expose changes and give a named release owner a repeatable procedure.
+
+Plan: `conception/jetp-observatory-and-papers-plan.md`. Parent tracker: 0725.
+
+## First test
+
+First failing release-diff fixture: one unchanged source, one revised amount, one newly observed older event, one blocked source and one retracted claim. The new edition must classify the changes correctly and keep the prior edition reproducible; a failed retrieval must not erase a project.
+
+## Actions
+
+Reuse make jetp-harvest, docs/jetp-tracking.md and refresh guidance in 0722. Inventory existing release/automation capabilities before introducing any scheduler. Specify monthly calendar, owner, review cutoff, correction policy and safe publication procedure. Rehearse two editions, expose what changed and document failed-refresh handling. Respect existing DVC ownership; archive references need not redistribute raw documents.
+
+## Exit criteria
+
+- [ ] Calendar, release owner and reviewed publication procedure documented
+- [ ] Edition comparison distinguishes real events, late reports and corrections
+- [ ] Two-edition rehearsal preserves old downloads and source references
+- [ ] Website exposes monthly changes and release history
+- [ ] Monthly routine exercised with recorded effort and unresolved coverage; no silent publication on failed validation
+
+## Validation
+
+Apply the repository gates for the actual diff. Code work starts with the failing
+fixture above; prose/data work records the documentary acceptance check. Preserve
+source evidence and report limits rather than manufacturing a successful result.
+
+## Storage implementation contract
+
+Use `data/jetp/editorial/editions/` and versioned descriptors under `data/jetp/releases/`. Preserve immutable downloads, distinguish late reports from new events, and review narratives affected by changed observations. No descriptor may refer to its own commit hash.
+
+## GitHub planning issue
+
+https://github.com/MinhHaDuong/climate-finance-het/issues/1336
+
+## Progress audit, 14 September 2026
+
+Storage directories and conventions exist, but no immutable edition descriptors,
+public edition history or two-edition rehearsal has been delivered. A refreshed
+preview is not a monthly release. Next: freeze edition one under 0726, then exercise
+this ticket's correction/late-report/failed-retrieval fixture before publication.
+Use source-specific acquisition metadata; advancing an edition cutoff must not
+redate unchanged source snapshots. Report release review effort and nominate an
+owner; unattended scheduling remains outside the agreed first implementation.

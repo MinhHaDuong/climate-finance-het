@@ -1,0 +1,56 @@
+%erg 0.1
+Title: Deliver the JETP observatory and academic programme
+Created: 2026-09-13
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-13T19:18Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+The author agreed two tracks: a monthly public observatory and three academic contributions (JETP data paper, short historical comparison, long political economy with Christophe). The shared question is where JETPs stand and whether they accelerated project preparation and financing. Construction comparisons are premature.
+
+Plan: `conception/jetp-observatory-and-papers-plan.md`. Programme tracker.
+
+## First test
+
+Integration acceptance exercise: follow one country total to project events and source locators, then reproduce a paper result from the exact frozen edition. A mismatched release, missing source or unsupported causal claim must fail review.
+
+## Actions
+
+Coordinate children 0726–0733 in the dependency order in the plan. Reuse 0715–0722 and 0711; do not duplicate collection or turn 0723 into a prerequisite. Record feasibility-led scope changes. This tracker remains open through an integration review.
+
+## Exit criteria
+
+- [ ] Children 0726–0733 delivered, or scope changes explicitly adjudicated
+- [ ] Public observatory and repeatable monthly editions operational
+- [ ] Citable dataset and three reviewable manuscripts linked to frozen releases
+- [ ] Integration review checks source traceability, reproducibility and separation of observation from inference
+
+## Validation
+
+Apply the repository gates for the actual diff. Code work starts with the failing
+fixture above; prose/data work records the documentary acceptance check. Preserve
+source evidence and report limits rather than manufacturing a successful result.
+
+## GitHub planning issue
+
+https://github.com/MinhHaDuong/climate-finance-het/issues/1333
+
+## First visible implementation slice
+
+0734 implements the local website MVP for steps 1–4, with aggregate synthesis
+and a historical closed-operation pool. It contributes to 0726/0727 without
+closing them or replacing the matched historical study. GitHub: #1342.
+
+## September 14 strategy checkpoint
+
+PR #1343 delivers the local observatory slice and scientific export corrections.
+The causal design is not selected. First execute independent bounded evidence
+audits 0735 (historical populations and milestone observation) and 0736 (country
+selection and intervention timing); 0729 is their design-decision checkpoint, then
+0730 performs analysis and 0732 writing. Release/publication work0726–0728/0731
+continues separately. Astra/Fable reports are proposals with recorded corrections,
+not a ratified protocol. Keep this tracker open after the MVP merge.

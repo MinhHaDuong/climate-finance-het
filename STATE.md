@@ -1,6 +1,6 @@
 # State
 
-Last updated: 2026-09-10T09:10Z
+Last updated: 2026-09-14T07:06Z
 
 ## Current goal
 
@@ -10,16 +10,25 @@ non-overlap guard) are the two ready children, the rest queue behind them.
 RDJ-26561 rev. 1 and Œconomia v2.0.5 have been with their editors since late
 July — nothing to do but wait.
 
-## Status
-<!-- generated 2026-09-10T09:10Z · as of b7f184cd -->
+## JETP checkpoint
 
-**Tickets:** 42 ready · 48 blocked · 8 awaiting author — `erg ready tickets/` for full list
-  next: 0272 Extract shared derive_companion_path() helper f… · 0273 load_cluster_labels() ignores --input, reads cl…
-**In flight:** no open PRs
-**Recent (first-parent):**
-  b7f184cd Merge pull request #1315 from MinhHaDuong/worktree-erg-refresh-20260910
-  e73e7510 Merge pull request #1314 from MinhHaDuong/worktree-housekeeping-20260910-quarto-gitignore
-  2b701435 Merge pull request #1313 — revue de littérature REL, dossier ouvert et découpé
+Local observatory and scientific export corrections: PR #1343; validation and
+scope in `docs/jetp-observatory-mvp-validation.md`. 383 named records, 21 unnamed
+slots, 301 registered sources, 97 historical closed operations. Public release,
+hosting and monthly editions remain 0726–0728; this is not a causal result.
+
+Next wave: **0735** historical pipeline populations/dates and **0736** country
+selection/intervention chronology. Both feed **0729**, where a causal design is
+selected only after the evidence audit. **0730 → 0732** then analyse and write;
+**0731** data paper follows the citable release; **0733** is the long paper with
+Christophe. No estimator chosen; Astra/Fable proposals and corrections retained.
+Current strategy: `conception/jetp-observatory-and-papers-plan.md`.
+
+## Status
+
+Use `erg ready tickets/` for live work. The separate prose PR #1322 is outside
+this checkpoint. Programme tracker 0725 stays open. MVP slice 0734 passed its independent
+evidence gate (10/10 criteria); closure applies only to the local preview. Existing untracked `data/book/` is user material, preserved.
 
 ## Submissions
 
