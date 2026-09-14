@@ -121,3 +121,17 @@ def test_malformed_candidate_markers_are_not_replacement_permission(
         builder.write_migration(tmp_path, output)
     assert target.read_bytes() == before
     assert output.read_bytes() == before
+
+
+def test_empty_top_level_lookalike_is_not_replacement_permission(tmp_path, monkeypatch):
+    candidate = candidate_fixture()
+    for key, value in candidate.items():
+        if isinstance(value, list):
+            candidate[key] = []
+    output = tmp_path / 'empty-descriptor.json'
+    output.write_text(json.dumps(candidate))
+    before = output.read_bytes()
+    monkeypatch.setattr(builder, 'build_migration', lambda *args, **kwargs: candidate_fixture())
+    with pytest.raises(ValueError):
+        builder.write_migration(tmp_path, output)
+    assert output.read_bytes() == before
