@@ -47,3 +47,28 @@ def test_monthly_report_rejects_reused_or_out_of_order_editions():
     edition = {'edition': '2026-09', 'cutoff': '2026-09-13', 'records': [], 'sources': []}
     with pytest.raises(ValueError, match='later'):
         compare_editions(edition, edition)
+
+
+def test_release_history_lists_frozen_editions_for_static_site(tmp_path):
+    import json
+    from jetp._monthly_editions import release_history
+
+    releases = tmp_path / 'releases'
+    for edition, cutoff, state in [('2026-09', '2026-09-13', 'prepared'),
+                                   ('2026-10', '2026-10-13', 'published')]:
+        target = releases / edition
+        target.mkdir(parents=True)
+        (target / 'release.json').write_text(json.dumps({
+            'edition': edition, 'observation_cutoff': cutoff,
+            'release_state': state, 'release_prepared_date': cutoff,
+            'publication_date': cutoff if state == 'published' else None,
+        }))
+
+    assert release_history(releases)['editions'] == [
+        {'edition': '2026-10', 'observation_cutoff': '2026-10-13',
+         'release_state': 'published', 'release_prepared_date': '2026-10-13',
+         'publication_date': '2026-10-13'},
+        {'edition': '2026-09', 'observation_cutoff': '2026-09-13',
+         'release_state': 'prepared', 'release_prepared_date': '2026-09-13',
+         'publication_date': None},
+    ]

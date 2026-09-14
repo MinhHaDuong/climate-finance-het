@@ -148,6 +148,11 @@ def comparison_data(root, config):
             'snapshots': snapshots}
 
 
+def edition_history(root):
+    from jetp._monthly_editions import release_history
+    return release_history(root / 'data/jetp/releases')
+
+
 def provenance(root, config):
     """Hash every input and record the code checkout; make file bytes authoritative."""
     paths = [root / 'data/jetp' / f'{name}.csv' for name in TABLES]
@@ -186,7 +191,7 @@ def overview(root, config, tables):
 def main():
     """Write one requested JSON view deterministically."""
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--view', choices=['overview', 'comparison', 'ZAF', 'IDN', 'VNM', 'SEN'], required=True)
+    parser.add_argument('--view', choices=['overview', 'comparison', 'editions', 'ZAF', 'IDN', 'VNM', 'SEN'], required=True)
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     config = yaml.safe_load((ROOT / 'config/jetp_observatory.yaml').read_text())
@@ -195,6 +200,8 @@ def main():
         result = overview(ROOT, config, tables)
     elif args.view == 'comparison':
         result = comparison_data(ROOT, config)
+    elif args.view == 'editions':
+        result = edition_history(ROOT)
     else:
         result = country_data(ROOT, args.view, config, tables)
     args.output.parent.mkdir(parents=True, exist_ok=True)

@@ -214,3 +214,12 @@ def test_invalid_timing_cannot_silently_become_an_event():
                     'event_end': '2025-01-01'}):
         with pytest.raises(ValueError):
             public_event({}, timing)
+
+
+def test_static_renderer_exposes_release_history_and_monthly_change_route():
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[1]
+    renderer = (root / 'deliverables/jetp-observatory/app.js').read_text()
+    assert 'editionHistoryPage' in renderer
+    assert 'data/editions.json' in renderer
+    assert '#editions' in (root / 'deliverables/jetp-observatory/index.html').read_text()
