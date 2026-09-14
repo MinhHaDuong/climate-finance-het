@@ -38,7 +38,10 @@ in this direction.
 **AIRLET remains an unresolved source in this assessment.** Public-repository,
 web and local CNRS searches found no identifiable project specification. Two
 local notes mention it, but neither is an authoritative AIRLET design document.
-A repository/path clarification has been requested. The user's statement that
+The user subsequently identified CIRED and possibly doudou. The accessible
+CIRED repository list and code search did not expose AIRLET, and a direct
+`CIRED/AIRLET` lookup returned 404. A read-only SSH attempt to doudou failed
+with `No route to host`; no remote files were read. The user's statement that
 these projects share a way of thinking is the premise; I cannot yet attribute
 particular mechanisms or findings to AIRLET.
 
