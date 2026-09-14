@@ -117,3 +117,24 @@ conflicts occurred. The premature run on the previous base was stopped after
 1,028 passes and is not counted as a completed gate. Input revision IDs remain
 pinned to their genuine source commits, and the freeze pointer was updated as
 a complete object ID (not by prefix replacement).
+
+## Final-head qualification
+
+The complete suite was rerun at FCDO code-and-output head
+`ab6fa762f827a177cda169e8b4f6810f90129fdb`: **2,801 passed, 88 skipped,
+16 failed** in 272.27 seconds. This is not a clean suite result. The retained
+log is `/tmp/t1374-fcdo-full-final.log`. The failures are unavailable corpus
+artifacts, four unavailable Indonesia/Vietnam/South Africa document objects,
+a CUDA allocation failure, offline `uv` subprocesses without `numpy`, and the
+integration worktree's absent local `.venv`; none exercises or fails the FCDO
+pilot.
+
+The descendant `b6bf145442ce72aced55da1b09f18260dc67c771` changes only the
+three FCDO DVC pointers so they identify the LF bytes emitted at the qualified
+code head. The pointers were regenerated from the pinned inputs, pushed, and
+recovered in a fresh worktree with matching MD5 and SHA-256 values. No Python
+or test-bearing file changed in that descendant, so the full suite was not
+rerun for the pointer-only delta. The final focused FCDO module passed **10**
+tests; the final lint run passed **330**, with **13 skipped**. The final fast
+run had **1,900 passed, 10 skipped**, plus two unrelated missing Indonesia and
+Vietnam document objects.
