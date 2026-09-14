@@ -51,6 +51,32 @@ def test_interruption_preserves_previous_candidate(tmp_path, monkeypatch):
     assert output.read_bytes() == before
 
 
+@pytest.mark.parametrize('alias_kind', ['symlink', 'hardlink'])
+def test_recognized_candidate_alias_is_rejected_before_build(tmp_path, monkeypatch, alias_kind):
+    output = tmp_path / 'candidates/previous.json'
+    candidate = dict(schema_version='country-migration/1', country='VNM',
+                     admission_status='unadmitted_candidate')
+    monkeypatch.setattr(builder, 'build_migration', lambda *args, **kwargs: candidate)
+    builder.write_migration(tmp_path, output)
+    before = output.read_bytes()
+    alias = tmp_path / 'alias.json'
+    if alias_kind == 'symlink':
+        alias.symlink_to(output)
+    else:
+        alias.hardlink_to(output)
+
+    def unexpected_build(*args, **kwargs):
+        pytest.fail('Alias must be rejected before building')
+
+    monkeypatch.setattr(builder, 'build_migration', unexpected_build)
+    with pytest.raises(ValueError, match='alias'):
+        builder.write_migration(tmp_path, alias)
+    assert output.read_bytes() == before
+    assert alias.read_bytes() == before
+    if alias_kind == 'symlink':
+        assert alias.is_symlink()
+
+
 @pytest.mark.slow
 def test_real_candidate_covers_inventory_legacy_and_all_country_views():
     root = Path(__file__).resolve().parents[1]
