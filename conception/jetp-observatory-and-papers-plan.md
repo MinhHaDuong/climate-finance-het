@@ -119,11 +119,14 @@ before another round. A blocked source is an access finding, not absence of a
 project. Discovery does not automatically promote ledger facts. These audits are
 ticketed for the next wave, not executed as part of the website checkpoint.
 
-**Decision checkpoint (0729):** review both evidence matrices; compare feasible
-estimands, populations, outcomes and counterfactual assumptions; propose GO/NARROW
-or explain DEFER. Select the design with the author, then freeze the primary
-protocol before effect estimation. Identify what missing evidence could change
-that choice; do not expand data merely to chase an attractive result.
+**Decision checkpoint (0729):** review both evidence matrices and the merged
+[causal-pilot synthesis](../docs/jetp-pilots/2026-09-15/synthesis.md); compare
+feasible estimands, populations, outcomes and counterfactual assumptions; propose
+GO/NARROW or explain DEFER. The next decision artifact is a comparative
+country-quarter concessional-approval feasibility screen, not a lender-only
+effect study. Select the design with the author, then freeze the primary protocol
+before effect estimation. Identify what missing evidence could change that
+choice; do not expand data merely to chase an attractive result.
 
 **Analysis (0730):** implement the chosen design with source-linked risk sets,
 censoring/cancellation handling, appropriate uncertainty, falsification and
