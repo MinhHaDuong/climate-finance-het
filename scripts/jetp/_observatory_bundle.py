@@ -130,6 +130,36 @@ def _protect_output(root, output, inputs=()):
         raise ValueError('Output aliases a protected input; choose a separate destination')
 
 
+def _protect_replacement(output, recognized):
+    """Only replace a recognized prior output, never a filesystem alias."""
+    output = Path(output)
+    if output.is_symlink() or (output.exists() and output.stat().st_nlink > 1):
+        raise ValueError('Output aliases an existing artifact; choose a separate destination')
+    if os.path.lexists(output) and not recognized:
+        raise ValueError('Existing output is protected: expected a recognized prior output')
+
+
+def _candidate_output(output):
+    """Recognize a complete candidate archive, excluding frozen baselines."""
+    try:
+        manifest, _ = _read_bundle(output)
+        return manifest.get('kind') == 'candidate' and bool(manifest.get('accepted_sha256'))
+    except (OSError, ValueError, KeyError, TypeError, zipfile.BadZipFile):
+        return False
+
+
+def _comparison_output(output):
+    """Recognize the complete five-list comparison report contract."""
+    try:
+        previous = json.loads(Path(output).read_bytes())
+        fields = {'intentional_scientific', 'unexplained', 'metadata_only',
+                  'routes_added', 'routes_removed'}
+        return (isinstance(previous, dict) and previous.keys() == fields
+                and all(isinstance(value, list) for value in previous.values()))
+    except (OSError, ValueError, UnicodeError):
+        return False
+
+
 def freeze_bundle(root, output, *, source_root=None, include_sources=False):
     """Freeze existing website bytes; never run an exporter or regenerate data."""
     root = Path(root).resolve()
@@ -167,6 +197,7 @@ def build_candidate(root, output, *, accepted, builder=None, source_root=None, i
     """Build all six views in isolation; failures preserve both archive destinations."""
     root = Path(root).resolve()
     _protect_output(root, output, inputs=(accepted,))
+    _protect_replacement(output, _candidate_output(output))
     _read_bundle(accepted)
     with tempfile.TemporaryDirectory() as scratch:
         site = Path(scratch) / 'site'
@@ -223,6 +254,7 @@ def _changes(before, after, path):
 def write_comparison(root, accepted, candidate, output, *, intentional_paths=None, extra_inputs=()):
     """Validate destinations, then atomically replace one complete difference report."""
     _protect_output(root, output, inputs=(accepted, candidate, *extra_inputs))
+    _protect_replacement(output, _comparison_output(output))
     report = compare_bundles(accepted, candidate, intentional_paths=intentional_paths)
     output = Path(output)
     output.parent.mkdir(parents=True, exist_ok=True)

@@ -212,3 +212,13 @@ def test_existing_release_candidate_remains_replaceable(tmp_path, suffix):
     before = output.read_bytes()
     builder.write_crosswalk(tmp_path, output)
     assert output.read_bytes() == before
+
+
+def test_crosswalk_preserves_unrelated_existing_output_outside_releases(tmp_path):
+    fixture(tmp_path)
+    output = tmp_path / 'unrelated.json'
+    output.write_text('{"release_id":"accepted"}')
+    before = output.read_bytes()
+    with pytest.raises(ValueError, match='recognized'):
+        builder.write_crosswalk(tmp_path, output)
+    assert output.read_bytes() == before
