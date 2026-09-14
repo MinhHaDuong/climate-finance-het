@@ -328,12 +328,12 @@ def run(archive, output, new_archive=None, assessment_path=None, evidence_path=N
         for a in assessments
         if a["validates_stage"] == "true" and a["stage"] == "start"
     }
+    catalogue_by_id = {record["iati_identifier"]: record for record in records}
     cohorts = Counter(
         (
             u["country"],
             u["source_unit"],
-            clocks(detailed.get(u["unit_id"], {}))["actual_start"][:4]
-            or "unvalidated_or_missing",
+            entry_cohort(catalogue_by_id[u["unit_id"]], detailed.get(u["unit_id"], {})),
             "document_corroborated"
             if u["unit_id"] in corroborated
             else "source_reported_or_unvalidated",
@@ -385,6 +385,15 @@ def run(archive, output, new_archive=None, assessment_path=None, evidence_path=N
         frozen_instrument="missing: catalogue projection omitted finance type",
     )
     (output / "profile.json").write_text(json.dumps(profile, indent=2) + "\n")
+
+
+def entry_cohort(record, detail):
+    date = clocks(detail)["actual_start"]
+    if date:
+        return date[:4]
+    if any(str(code) == "2" for code in record.get("activity_date_type", [])):
+        return "unvalidated_unpaired_or_conflicting"
+    return "missing_actual_start"
 
 
 def build_coverage(units, detailed):

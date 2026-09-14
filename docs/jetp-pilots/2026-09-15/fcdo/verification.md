@@ -2,11 +2,11 @@
 
 ## Acceptance and independent original check
 
-First red commit `969c4c50` failed both the component/date and pipeline/financing
+First red commit `c680ae49` failed both the component/date and pipeline/financing
 acceptance tests under `make check-fast`; a third test rejected flattened date
-pairing. Green commit `b7457964` passed all three. The final suite additionally
+pairing. Green commit `1824b9df` passed all three. The final suite additionally
 checks status-independent sample selection and blank unsupported historical
-membership denominators (`tests/test_jetp_fcdo_pilot.py`, five named tests).
+membership denominators (`tests/test_jetp_fcdo_pilot.py`, six named tests).
 
 A separate read-only scientific reviewer independently parsed the original
 catalogue and structured payloads and reran the first three acceptance tests
@@ -56,11 +56,31 @@ archive; no fixture or canonical bytes were edited.
 
 The `/verify-adherence` mechanical gate used the verified audit interpreter and
 writable lint caches as the protocol permits. No scripts/ module or manuscript
-reference changes required import/reference scanning; five matching tests passed
-in 0.03 s. The adherence suite (`make lint`) passed 330 tests, 15 skipped, after
+reference changes required import/reference scanning; the matching acceptance tests passed. The adherence suite (`make lint`) passed 330 tests, 15 skipped, after
 splitting the calculation into smaller functions to satisfy complexity rules.
 No rules or shared architecture changed, so semantic fallback was unnecessary.
 No trace file was supplied. Result: `adherence: PASS`, no mechanical failures or
 semantic findings. The existing ruff adherence test covers the new calculation.
 
-Full-suite result is recorded below after the mandatory pre-PR run completes.
+Final fast gate after the base rebase and cohort missingness refinement: **1,803
+passed, 12 skipped**. The 183 tests covering the pilot plus upstream changed
+modules also passed. The final acceptance module contains six tests.
+
+The mandatory full run completed: **2,591 passed, 94 skipped, 18 failed** in
+411 seconds. These failures were investigated rather than treated as a green
+full suite: eight missing-corpus failures, one socket restriction, two isolated
+package-install/cache permission failures, three worktree permission failures,
+two subprocess uv-cache permission failures, one ten-second subprocess timeout,
+and one repeated-archive byte mismatch during concurrent workspace changes.
+All failed checks passed on targeted reruns with local corpus access and the
+required permissions, without code/test changes: corpus acceptance/flow **66
+passed, 14 skipped**; localhost server **1 passed**; remaining affected modules
+and tests **22 passed**. The latter run used `UV_NO_SYNC=1 UV_OFFLINE=1` outside
+the filesystem/socket-restricted sandbox. The byte comparison also passed with
+the workspace stable. No unresolved main-code failure was reproduced.
+
+The named DVC originals/table objects were uploaded successfully (**22 objects**)
+through the machine's configured local `padme` remote. The first upload attempt
+using the repository SSH URL failed; copying the existing machine-local DVC
+configuration restored the intended route. No additional research requests
+were made.

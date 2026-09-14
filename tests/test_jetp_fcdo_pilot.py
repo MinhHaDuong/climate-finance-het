@@ -89,3 +89,14 @@ def test_unknown_membership_denominator_is_not_measured_zero():
     unsupported = [r for r in rows if r["count_kind"] in {"member", "pending"}]
     assert unsupported
     assert all(r["count"] == "" and r["missing_count"] == "" for r in unsupported)
+
+
+def test_entry_cohort_separates_unpaired_dates_from_missing_start():
+    assert (
+        pilot.entry_cohort({"activity_date_type": ["1", "3"]}, {})
+        == "missing_actual_start"
+    )
+    assert (
+        pilot.entry_cohort({"activity_date_type": ["1", "2", "3"]}, {})
+        == "unvalidated_unpaired_or_conflicting"
+    )
