@@ -9,6 +9,7 @@ from pathlib import Path
 
 from script_io_args import parse_io_args, validate_io
 
+from jetp._contracts import SCHEMA_VERSION as CORE_SCHEMA_VERSION
 from jetp._observatory_bundle import _protect_output, _protect_replacement
 from jetp._source_crosswalk import SCHEMA_VERSION, migrate_sources
 
@@ -22,9 +23,19 @@ def _crosswalk_output(output: Path) -> bool:
             if output.suffix == '.gz':
                 payload = gzip.decompress(payload)
             previous = json.loads(payload)
-            replaceable = (isinstance(previous, dict)
-                           and previous.get('schema_version') == SCHEMA_VERSION
-                           and previous.get('admission_status') == 'unadmitted_candidate')
+            records = {'mappings', 'sources', 'acquisitions', 'editions', 'edition_snapshots',
+                       'extractions', 'evidence', 'unresolved', 'retained'}
+            fields = records | {'schema_version', 'core_contract_schema_version',
+                                'admission_status', 'inputs', 'recovery_inputs'}
+            replaceable = (isinstance(previous, dict) and previous.keys() == fields
+                           and previous['schema_version'] == SCHEMA_VERSION
+                           and previous['core_contract_schema_version'] == CORE_SCHEMA_VERSION
+                           and previous['admission_status'] == 'unadmitted_candidate'
+                           and all(isinstance(previous[key], dict)
+                                   for key in ('inputs', 'recovery_inputs'))
+                           and all(isinstance(previous[key], list)
+                                   and all(isinstance(row, dict) for row in previous[key])
+                                   for key in records))
         except (OSError, ValueError, EOFError, UnicodeError):
             pass
     return replaceable

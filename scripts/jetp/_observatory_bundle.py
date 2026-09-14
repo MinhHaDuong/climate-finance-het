@@ -131,7 +131,7 @@ def _protect_output(root, output, inputs=()):
 
 
 def _protect_replacement(output, recognized):
-    """Only replace a recognized prior output, never a filesystem alias."""
+    """Only replace a recognized prior output, rejecting final-file aliases."""
     output = Path(output)
     if output.is_symlink() or (output.exists() and output.stat().st_nlink > 1):
         raise ValueError('Output aliases an existing artifact; choose a separate destination')
