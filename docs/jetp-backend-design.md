@@ -1002,7 +1002,7 @@ Migrate in bounded slices: (1) prove schema, temporal and metric contracts with
 hand-written fixtures before mass crosswalks; (2) identity/evidence crosswalks,
 reported positions and official inventory ingestion, starting with Vietnam's RMP;
 (3) agreement/occurrence/flow reconciliation; (4) account exports and editorial/display
-provenance; (5) frozen release/update rehearsal. From slice 2, preserve full source
+provenance; (5) frozen release and update rehearsal. From slice 2, preserve full source
 inventories, exclusions, timing uncertainty, historical identities and search
 coverage needed for study frames. Evidence audits and study work implement the
 research contracts alongside these slices, before their analytical outputs are
@@ -1118,7 +1118,7 @@ Audit source availability and comparability across treated and candidate compari
 populations before estimating durations or effects. The outstanding choices in
 [0729](../tickets/0729-jetp-lifecycle-feasibility.erg) follow the historical-population
 and selection/anticipation audits in
-[0735](../tickets/0735-audit-historical-pipeline-populations-an.erg) and 0736.
+[0735](../tickets/closed/0735-audit-historical-pipeline-populations-an.erg) and 0736.
 Selection bias, concurrent reforms, spillovers, measurement changes and the limited
 number of independent treated countries remain research problems. If no supported
 causal design survives, record DEFER and return the scope decision to the author;

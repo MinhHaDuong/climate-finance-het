@@ -8,9 +8,7 @@ The later [revision 4 response](source-registry-response.md) records the explici
 source-management specification requested after that revision.
 
 - [Consolidated assessment and proposed revisions](assessment.md)
-  ([local HTML reading copy](assessment.html))
 - [Research on comparable observatories and tools](comparables.md)
-  ([local HTML reading copy](comparables.html))
 - [Comparison matrix](comparison.csv)
 - [Source inventory](sources.csv)
 - [Research and verification log](research-log.md)

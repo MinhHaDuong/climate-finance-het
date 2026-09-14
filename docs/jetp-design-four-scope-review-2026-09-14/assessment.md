@@ -150,7 +150,7 @@ ladder.[^cpi][^cfu]
 
 **For publication engineering,** Our World in Data's staged ETL is the closest
 pattern: preserved source snapshots feed harmonised datasets and publication
-outputs. Open Contracting supplies a useful release/record model. Neither requires
+outputs. Open Contracting supplies a useful model of releases and records. Neither requires
 copying its complete software stack to adopt the principle.[^owid][^ocds]
 
 **For future energy-system work,** Open Energy Platform connects studies,
