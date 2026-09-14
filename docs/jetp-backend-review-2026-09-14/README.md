@@ -9,6 +9,21 @@ Revision follow-up: [revision 2 response](revision-response.md) records the
 subsequent design changes and research-sufficiency assessment. The panel findings
 below describe revision 1 at the reviewed commit, not a review of revision 2.
 
+## Latest review: revision 4
+
+A [fresh independent Astra review](astra-revision4.md) covers revision 4 at
+`e801442211498a3d9b9f9d467dbcaf49cffc02ce`. Its verdict is **APPROVE for planning
+bounded implementation**, with one medium, nonblocking display-occurrence
+cardinality finding (A4-1). Two rendered locations must remain distinct even when
+they share a payload field and rendering role. The coordinator confirmed the
+ambiguity in the two uniqueness statements; no design repair is applied here.
+
+The reviewer did not consult the earlier reports, assessment or response notes.
+[Input hashes and review metadata](astra-revision4-inputs.json) pin the inspected
+revision and distinguish header-only inspection from full-file inputs. This is
+not implementation validation, approval of a causal design or a merge-gate result.
+The earlier panel outcome below remains a historical review of revision 1.
+
 ## Outcome and independence
 
 Both requested reviewers completed independent reviews and recommend **REVISE
