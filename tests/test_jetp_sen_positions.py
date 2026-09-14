@@ -1,5 +1,10 @@
 """Senegal plan and programme positions retain their original uncertainty."""
 
+import hashlib
+from pathlib import Path
+
+import pytest
+
 
 def test_programme_components_and_provisional_match_cannot_create_finance_total():
     """Overlapping plan needs are positions, not additive financed amounts."""
@@ -43,3 +48,34 @@ def test_programme_components_and_provisional_match_cannot_create_finance_total(
     assert result["provisional_matches"][0]["transition_date"] is None
     assert result["payment_candidates"] == []
     assert result["account_total"] is None
+
+
+@pytest.mark.slow
+def test_real_candidate_covers_pinned_inventories_and_keeps_mvp_legacy_owned():
+    """Both saved plan editions remain distinct from every legacy finance assertion."""
+    from jetp._compatibility import MVP_VIEWS, read_mvp_view
+    from jetp.build_sen_positions import build_migration
+
+    root = Path(__file__).resolve().parents[1]
+    annexes = root / "data/jetp/documents/objects/dc/dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21.pdf"
+    plan = root / "data/jetp/documents/objects/97/97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca.pdf"
+    if not annexes.exists() or not plan.exists():
+        pytest.skip("DVC checkout required for Senegal inventory audit")
+    before = {path: hashlib.sha256(path.read_bytes()).hexdigest()
+              for path in (root / "data/jetp").glob("*.csv")}
+
+    result = build_migration(root)
+
+    assert len(result["inventory_positions"]) == 49
+    assert result["comparison"]["inventory_rows_by_source"] == {
+        "sen-investment-plan-annexes-mirror": 38,
+        "sen-investment-plan-l4-mirror": 11,
+    }
+    assert result["payment_candidates"] == []
+    assert result["account_total"] is None
+    assert result["writer_owner"] == result["publication_mode"] == "legacy"
+    assert all(row["match_status"] == "provisional" for row in result["provisional_matches"])
+    for view in MVP_VIEWS:
+        assert result["mvp_views"][view] == read_mvp_view(root, view, supported_versions={"mvp/1"})
+    assert all(hashlib.sha256(path.read_bytes()).hexdigest() == digest
+               for path, digest in before.items())
