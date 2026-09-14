@@ -255,7 +255,7 @@ def test_frozen_frame_retains_active_and_cancelled_units_despite_later_exclusion
                row('study', 'history', name='Historical operation visibility'),
                row('protocol_revision', 'protocol-1', study=ref('study', 'history'),
                    eligibility_rule='Operations present before intervention, including cancelled',
-                   frozen_at=JULY, reviewer='researcher'),
+                   frozen_at=JULY, reviewer='researcher', policy_version='fixture-v1'),
                row('frame', 'pre-intervention', protocol=ref('protocol_revision', 'protocol-1'),
                    evidence_cutoff=AUGUST, eligibility_rule='Both operations in original inventory',
                    population_coverage='reconstructed')]

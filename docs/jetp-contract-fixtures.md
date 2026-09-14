@@ -8,7 +8,9 @@ kinds and their fields. References are exact objects with `record_kind` and
 `record_id`; financial and implementation IDs occupy separate namespaces.
 `store.to_dict()` returns an independent lossless copy suitable for JSON encoding.
 Decimals are strings in whole currency units; original values, scales, labels,
-uncertainty bounds and date roles remain separate fields.
+uncertainty bounds and date roles remain separate fields. Month/quarter/year
+precision requires a complete calendar interval; other intervals use `range`.
+An exact multiday coverage interval may use `day` precision.
 
 `store.at(evidence_cutoff, policy_version=...)` projects admitted dependencies and
 review decisions under an explicit policy version. Both review and recording time
@@ -24,7 +26,8 @@ The financial reconciliation work remains ticket 0768.
 knowledge selection and validates active cycles/cardinality. `open` is an explicit
 unbounded relation endpoint; `unknown` blocks resolution. Aliases cannot chain.
 `view.frozen_frame(frame_reference)` uses the frame's own evidence cutoff and
-frozen protocol; later membership decisions cannot rewrite it. A completed-only
+frozen protocol and its mandatory policy version; later membership decisions or
+caller policy choices cannot rewrite it. A completed-only
 population is not a reconstructed historical frame. Failed observation attempts
 remain distinct from a `not_sought` coverage assessment.
 
@@ -67,7 +70,15 @@ publication path changes. Candidate-core records are not an alternative writer.
   exact account is inferred from these foundational fixtures.
 - `test_all_mvp_views_match_authoritative_builder_and_frozen_baseline` (six views): legacy
   builder equality and frozen 0761 output equivalence. Only the overview's two
-  checkout revision fields are excluded from the frozen-byte comparison.
+  checkout revision fields are excluded from the frozen comparison. Equivalent
+  `tests/../scripts` import-path spelling is normalized in the overview provenance
+  keys; all input hashes remain compared.
+
+`test_frozen_frame_pins_policy_even_when_called_under_later_policy` and
+`test_calendar_precision_rejects_partial_calendar_intervals` additionally pin the
+review-discovered policy/precision boundaries across cutoff, event and coverage
+roles. Calendar quarters here are ordinary January/April/July/October quarters;
+a source-defined fiscal interval must use explicit `range` bounds.
 
 The immutable reference is `data/jetp/releases/mvp-baseline-0761.zip`, SHA-256
 `dbdc45b8f6d5dccce1c378b15a3d92a766f87ad26231751fca7ebf963716f574`.

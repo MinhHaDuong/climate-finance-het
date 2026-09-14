@@ -5,6 +5,7 @@ replacement chains. It validates fixture/candidate inputs without publishing or
 migrating them. Unknown versions and record kinds fail closed.
 """
 
+from calendar import monthrange
 from collections.abc import Collection
 from copy import deepcopy
 from datetime import date, datetime
@@ -31,7 +32,7 @@ REQUIRED = {
     'evidence': {'target', 'edition', 'acquisition', 'document_sha256', 'locator',
                  'extraction', 'support_role'},
     'study': {'name'},
-    'protocol_revision': {'study', 'eligibility_rule', 'frozen_at', 'reviewer'},
+    'protocol_revision': {'study', 'eligibility_rule', 'frozen_at', 'reviewer', 'policy_version'},
     'frame': {'protocol', 'evidence_cutoff', 'eligibility_rule', 'population_coverage'},
     'frame_member': {'frame', 'unit', 'verdict', 'reason', 'baseline_maturity'},
     'observation_attempt': {'subject', 'sought', 'route', 'check_date', 'result'},
@@ -119,6 +120,13 @@ def _bounds(record: dict, first: str, last: str, precision: str) -> None:
              f'{precision} is required')
     if record[precision] == 'day' and first != 'coverage_start':
         _require(start == end, 'day precision requires one exact day')
+    if record[precision] in {'month', 'quarter', 'year'}:
+        lower, upper = _day(start), _day(end)
+        months = {'month': 1, 'quarter': 3, 'year': 12}[record[precision]]
+        _require(lower.day == 1 and (lower.month - 1) % months == 0
+                 and upper.year == lower.year and upper.month == lower.month + months - 1
+                 and upper.day == monthrange(upper.year, upper.month)[1],
+                 'precision requires a complete calendar interval; use range for other bounds')
 
 
 def _validate_value(record: dict) -> None:
@@ -309,6 +317,8 @@ class ContractStore:
             _require(record['support_role'] in {'supporting', 'contradicting', 'contextual'}, 'invalid support role')
         elif kind == 'protocol_revision':
             _time(record['frozen_at'])
+            _require(isinstance(record['policy_version'], str) and bool(record['policy_version']),
+                     'frozen protocol requires policy version')
         elif kind == 'frame':
             _time(record['evidence_cutoff'])
             _require(record['population_coverage'] in {'reconstructed', 'unresolved', 'completed_only'},
@@ -368,7 +378,7 @@ class ContractView:
         admitted = {key: deepcopy(record) for key, record in records.items()
                     if _time(record['recorded_at']) <= limit
                     and (key[0] != 'adjudication' or
-                         (_time(record['reviewed_at']) <= limit and record['policy_version'] == policy))}
+                         _time(record['reviewed_at']) <= limit)}
         # Dependency cycles (assertion <-> evidence) are intentional. Prune to a
         # fixed point instead of recursive traversal that mistakes them for history.
         while True:
@@ -380,7 +390,7 @@ class ContractView:
                 del admitted[key]
         self.records = admitted
         decisions = {key: r for key, r in admitted.items()
-                     if key[0] == 'adjudication' and r['verdict'] != 'pending'}
+                     if key[0] == 'adjudication' and r['verdict'] != 'pending' and r['policy_version'] == policy}
         decisions = self._live(decisions, admitted, 'decision supersession')
         self.decisions = decisions
         states: dict[tuple[str, str], str] = {}
@@ -482,7 +492,7 @@ class ContractView:
         _require(_time(frame['evidence_cutoff']) <= _time(self.evidence_cutoff), 'frame freeze is in the future')
         protocol = self.records[_key(frame['protocol'])]
         _require(_time(protocol['frozen_at']) <= _time(frame['evidence_cutoff']), 'protocol not frozen at cutoff')
-        frozen = ContractView(self.records, frame['evidence_cutoff'], self.policy_version)
+        frozen = ContractView(self.records, frame['evidence_cutoff'], protocol['policy_version'])
         members = [record for key, record in frozen._accepted.items()
                    if key[0] == 'frame_member' and record['frame'] == reference]
         units = [_key(record['unit']) for record in members]

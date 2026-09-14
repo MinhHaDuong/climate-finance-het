@@ -1,6 +1,7 @@
 """Version negotiation and unchanged MVP output at the migration boundary."""
 
 import json
+import os
 from pathlib import Path
 from zipfile import ZipFile
 
@@ -55,4 +56,11 @@ def test_all_mvp_views_match_authoritative_builder_and_frozen_baseline(view):
         for key in ('input_git_sha', 'build_base_git_sha'):
             actual['provenance'].pop(key)
             frozen['provenance'].pop(key)
+        # Full-suite collection can import the legacy module via tests/../scripts.
+        # Canonicalize only equivalent path spellings; preserve every byte hash.
+        for payload in (actual, frozen):
+            hashes = payload['provenance']['input_sha256']
+            normalized = {os.path.normpath(path): digest for path, digest in hashes.items()}
+            assert len(normalized) == len(hashes)
+            payload['provenance']['input_sha256'] = normalized
         assert actual == frozen
