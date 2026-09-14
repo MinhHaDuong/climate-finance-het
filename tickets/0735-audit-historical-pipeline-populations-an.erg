@@ -6,6 +6,8 @@ Author: HDMX-coding-agent
 --- log ---
 2026-09-14T06:47Z HDMX-coding-agent created
 
+2026-09-14T08:03Z HDMX-coding-agent evidence Round 1 stopped at 20 acquisition units; two original monthly rosters read; documentary partial pass, causal DEFER. Artifacts docs/jetp-audits/0735/report.md; review pending.
+
 --- body ---
 
 ## Context
@@ -55,3 +57,22 @@ here. Candidate and blocked sources remain separate from adjudicated ledger fact
 ## GitHub planning issue
 
 https://github.com/MinhHaDuong/climate-finance-het/issues/1345
+
+## Round 1 evidence checkpoint (review pending)
+
+Frozen brief committed before search: 6eead17a. Report and matrices:
+`docs/jetp-audits/0735/report.md`, `landmark-coverage.csv`,
+`operation-coverage.csv`, `acquisition-log.csv`, `archive-manifest.json`,
+`local-input-manifest.json` in the same directory.
+
+20/20 acquisition units; no expansion. June 2010 and June 2020 original rosters
+support listed membership, including unfinished projects; June 2015 remains
+unlocated and June 2021 inaccessible. Three HTTP archives failed DNS: no original
+byte hashes invented. Existing local discovery inputs are hashed. Dates and
+missing endpoints are explicit; zero original approval/signature pairs.
+
+The 2010 roster removes entries after signing OR withdrawal. That rule is not
+verified for 2020; listed presence cannot prove pending-signature state. Current
+snapshot status is separate from historical membership. Triad retained as
+unverified protocol candidates; no causal design selected. Ticket stays open
+until review; unmet archive, frame and endpoint criteria remain visible.

@@ -1,0 +1,21 @@
+unit,approx_utc,route,query_or_url,outcome
+1,2026-09-14T07:51Z,search,"site.documents.worldbank.org ""Monthly Operational Summary"" ""June 2021""",2021 DOCX URL discovered via third-party bibliography; unrelated AI-request summary rejected
+2,2026-09-14T07:51Z,search,"site:documents.worldbank.org ""Monthly Operational Summary"" ""June 2015""",No exact original located
+3,2026-09-14T07:51Z,search,"site:documents.worldbank.org ""Monthly Operational Summary"" ""June 2010""",No exact original located
+4,2026-09-14T07:51Z,search,"World Bank ""June 2010"" ""Operational Summary"" pdf",No exact original located
+5,2026-09-14T07:51Z,search,"World Bank ""June 2015"" ""Operational Summary"" pdf",No exact original located
+6,2026-09-14T07:51Z,search,"World Bank ""June 2020"" ""Operational Summary"" pdf",S2020 located
+7,2026-09-14T07:51Z,web open,https://thedocs.worldbank.org/en/doc/abb919dc744efce823806739e429b2ac-0290032021/original/June-2021-Monthly-Operational-summary.docx,Internal Error; no original text
+8,2026-09-14T07:52Z,web open,https://documents1.worldbank.org/curated/en/640001594937579014/pdf/The-World-Bank-Monthly-Operational-Summary.pdf,Original PDF read
+9,2026-09-14T07:52Z,search,"domain worldbank.org: ""monthly operational"" ""2010"" ""June""",S2010 located
+10,2026-09-14T07:52Z,search,"domain worldbank.org: ""monthly operational"" ""2015"" ""June""",No exact original located
+11,2026-09-14T07:52Z,search,"""World Bank"" ""income"" ""2021"" ""Indonesia"" ""lower-middle""",Income source located
+12,2026-09-14T07:53Z,web open,https://documents1.worldbank.org/curated/en/838421468162558660/pdf/The-World-Bank-monthly-operational-summary.pdf,Original PDF read; guide p3
+13,2026-09-14T07:53Z,web open,https://blogs.worldbank.org/en/opendata/new-world-bank-country-classifications-income-level-2021-2022,Original institution page read
+14,2026-09-14T07:53Z,HTTP archive,https://documents1.worldbank.org/curated/en/838421468162558660/pdf/The-World-Bank-monthly-operational-summary.pdf,DNS failure; no bytes
+15,2026-09-14T07:53Z,HTTP archive,https://documents1.worldbank.org/curated/en/640001594937579014/pdf/The-World-Bank-Monthly-Operational-Summary.pdf,DNS failure; no bytes
+16,2026-09-14T07:53Z,HTTP archive,https://thedocs.worldbank.org/en/doc/abb919dc744efce823806739e429b2ac-0290032021/original/June-2021-Monthly-Operational-summary.docx,DNS failure; no bytes
+17,2026-09-14T07:54Z,web find,https://documents1.worldbank.org/curated/en/838421468162558660/pdf/The-World-Bank-monthly-operational-summary.pdf | Upper Cisokan,Original pp31–32 read
+18,2026-09-14T07:54Z,web find,https://documents1.worldbank.org/curated/en/640001594937579014/pdf/The-World-Bank-Monthly-Operational-Summary.pdf | Indonesia,Original pp84–86 read
+19,2026-09-14T07:55Z,web open,https://documents1.worldbank.org/curated/en/838421468162558660/pdf/The-World-Bank-monthly-operational-summary.pdf | line2740,Original p31 read incl energy boundary and withdrawn education entry
+20,2026-09-14T07:55Z,web find,https://documents1.worldbank.org/curated/en/640001594937579014/pdf/The-World-Bank-Monthly-Operational-Summary.pdf | Philippines,Original pp93–95 read

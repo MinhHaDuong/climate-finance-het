@@ -1,0 +1,14 @@
+[
+  {
+    "path": "data/jetp/comparison/ID.json",
+    "sha256": "076d775af298ea3236ab503a434e68ef805dd139b7e79be2d59b9b61987f5b42",
+    "bytes": 265104,
+    "role": "existing discovery input; not original-document verification"
+  },
+  {
+    "path": "data/jetp/plan-projects.csv",
+    "sha256": "723b24f1e67da7420122bede26a997b002d2ff9683f3e7623da8c74f372ba5ca",
+    "bytes": 561968,
+    "role": "existing discovery input; not original-document verification"
+  }
+]
