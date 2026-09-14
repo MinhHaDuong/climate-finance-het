@@ -9,7 +9,11 @@ from pathlib import Path
 
 from jetp._compatibility import MVP_VIEWS, read_mvp_view
 from jetp._contracts import validate_evidence_tuple
-from jetp._country_migration import SCHEMA_VERSION, inventory_positions, legacy_dispositions
+from jetp._country_migration import (
+    SCHEMA_VERSION,
+    inventory_positions,
+    legacy_dispositions,
+)
 from jetp._observatory_bundle import _protect_output, _protect_replacement
 from jetp._sen_positions import migrate_positions
 from jetp._source_crosswalk import _identity, migrate_sources
