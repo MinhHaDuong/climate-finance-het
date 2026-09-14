@@ -50,3 +50,17 @@ These three roles are retained as **protocol candidates**, not three verified JE
 | Synthetic history | DEFER | Three-country historical frame and eligibility/energy covariates, measurement stability and 0736 exposure histories; fit cannot resolve assignment |
 
 Next bounded round should target **June 2015 MOS catalogue identifier and June 2021 original DOCX via an authorized network/archive route**, plus P158310 withdrawal and P117323 signed agreement. World Bank Documents & Reports/project teams are likely custodians. Update the brief before another round; no institutional message has been sent. Public-search saturation is not claimed. Parent review should independently read the cited originals before accepting documentary facts or closing the ticket.
+
+## Repository validation
+
+Fast gate: **1,549 passed, ten skipped**; adherence/lint: **330 passed, thirteen
+skipped** in the isolated checkout. The first fast run failed two existing
+source-snapshot tests because the worktree had no DVC document objects. Copying
+the already available local source archive into the ignored worktree directory
+resolved both; no code or test was changed. No full-suite run is required for
+this documentation/ticket diff.
+
+The acquisition log contains exactly 20 units; CSV structures and both local-input
+hashes were checked. Original-source verification by the parent read the 2010
+guide and 2020 energy/water entries separately and prompted the explicit
+vintage-comparability warning above. This is not a claim of original byte archival.
