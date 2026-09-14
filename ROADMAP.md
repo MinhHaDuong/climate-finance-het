@@ -9,8 +9,10 @@ Building toward a book on international climate finance between solidarity and p
 - [x] Local observatory preview with country synthesis, project evidence and
   historical browsing; scientific date/link/acquisition corrections in PR #1343.
 - [ ] Citable data release0726 → public website0727 → reviewed monthly editions0728.
-- [ ] Independent evidence audits0735 (historical populations/dates) and0736
-  (selection/intervention chronology) → causal-design checkpoint0729.
+- [ ] Accept evidence audit PRs #1347/#1348 → bounded AFD, KfW and FCDO
+  design-feasibility pilots → causal-design checkpoint 0729. Source discovery
+  is checkpointed; pilots await a fresh session. See
+  [handoff](docs/jetp-pilot-handoff-2026-09-14.md).
 - [ ] Selected protocol → causal analysis0730 → short paper0732; no design selected yet.
 - [ ] JETP data paper0731 after0726; long political-economy paper0733 with Christophe.
   LaTeX scaffolds0711 remain required for the two analytical manuscripts.

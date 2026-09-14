@@ -1,6 +1,6 @@
 # State
 
-Last updated: 2026-09-14T07:06Z
+Last updated: 2026-09-14T10:59Z
 
 ## Current goal
 
@@ -17,12 +17,18 @@ scope in `docs/jetp-observatory-mvp-validation.md`. 383 named records, 21 unname
 slots, 301 registered sources, 97 historical closed operations. Public release,
 hosting and monthly editions remain 0726–0728; this is not a causal result.
 
-Next wave: **0735** historical pipeline populations/dates and **0736** country
-selection/intervention chronology. Both feed **0729**, where a causal design is
-selected only after the evidence audit. **0730 → 0732** then analyse and write;
-**0731** data paper follows the citable release; **0733** is the long paper with
-Christophe. No estimator chosen; Astra/Fable proposals and corrections retained.
-Current strategy: `conception/jetp-observatory-and-papers-plan.md`.
+Evidence audits are checkpointed in open PRs **#1347** (historical/bilateral
+sources) and **#1348** (selection chronology and design tracker). Enough evidence
+exists to compare designs; no primary causal design is selected. AFD first,
+KfW/FCDO complementary pilots are prepared **for a fresh session, not launched**.
+Start with [the pilot handoff](docs/jetp-pilot-handoff-2026-09-14.md): exact branches,
+source bundles, first tests, bounded budgets and three candidate comparisons.
+DVC source bytes are preserved in primary/local caches; remote replication remains
+pending. Preserve caches and the open worktrees until recovery is verified.
+
+Pilots feed **0729**, then **0730 → 0732** analysis and short paper. **0731** data
+paper follows the citable release; **0733** is the long paper with Christophe.
+Strategy: `conception/jetp-observatory-and-papers-plan.md`.
 
 ## Status
 
