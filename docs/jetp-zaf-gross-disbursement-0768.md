@@ -1,9 +1,9 @@
 # South Africa: gross-disbursement account unavailable (0768)
 
-**Review date:** 2026-09-14  
-**Metric:** `gross_disbursement_original_currency_v1`  
-**Subject proposed:** a single financing agreement or tranche  
-**Result:** unavailable; no reconstructed closing or residual is published.
+- **Review date:** 2026-09-14
+- **Metric:** `gross_disbursement_original_currency_v1`
+- **Subject proposed:** a single financing agreement or tranche
+- **Result:** unavailable; no reconstructed closing or residual is published.
 
 The bounded South African migration intentionally retains no payment candidate:
 `config/jetp-zaf-migration.json` has `payments: []`. Its retained register is a

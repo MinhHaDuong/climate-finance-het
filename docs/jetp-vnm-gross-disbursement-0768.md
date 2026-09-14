@@ -1,9 +1,9 @@
 # Viet Nam: gross-disbursement account unavailable (0768)
 
-**Review date:** 2026-09-14  
-**Metric:** `gross_disbursement_original_currency_v1`  
-**Subject proposed:** a single financing agreement or tranche  
-**Result:** unavailable; no reconstructed closing, residual, or payment subtotal is published.
+- **Review date:** 2026-09-14
+- **Metric:** `gross_disbursement_original_currency_v1`
+- **Subject proposed:** a single financing agreement or tranche
+- **Result:** unavailable; no reconstructed closing, residual, or payment subtotal is published.
 
 The VNM migration retains financial claims and positions in
 `config/jetp-vnm-migration.json`, but it does not admit them as dated
