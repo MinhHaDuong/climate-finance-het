@@ -2,7 +2,7 @@
 
 Ticket 0765 stages source observations beside the legacy writer. It does not
 admit financial events, change canonical CSVs, or publish new website data.
-The implementation recipe starts at commit `4c850305`; the artifact records
+The implementation recipe starts at commit `977096ec`; the artifact records
 exact input, policy and parser hashes.
 
 ## Reproduction and recovery
@@ -16,8 +16,8 @@ UV_NO_SYNC=1 PYTHONPATH=scripts:libs/openalex-corpus/src uv run python \
 
 The optional `--source-root CHECKOUT` reads saved source bytes from another
 checkout. No retrieval is performed. The 5,728,079-byte JSON is a separate DVC
-sidecar, object `e1d7cb16488a1665ef9e1bbdec90b96c`, SHA-256
-`b6fc32cc7dd3cf11dc9cdeeddf9efcfb9f97e9d5c82bc028fba628fecce6fb22`.
+sidecar, object `45ed9fa8f6d35cbe5565b2b30dc365b4`, SHA-256
+`fc0e483facf3ff93dc25684112f77e6a8b93f602133a07c3953bddadbceabc59`.
 Retrieve it with `uv run dvc pull data/jetp/releases/zaf-migration-0765.json.dvc`.
 An independent repository with an empty cache recovered identical candidate
 bytes and the pinned document directory from the local project archive.
