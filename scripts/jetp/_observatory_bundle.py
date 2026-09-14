@@ -155,7 +155,13 @@ def _comparison_output(output):
         fields = {'intentional_scientific', 'unexplained', 'metadata_only',
                   'routes_added', 'routes_removed'}
         return (isinstance(previous, dict) and previous.keys() == fields
-                and all(isinstance(value, list) for value in previous.values()))
+                and all(isinstance(value, list) for value in previous.values())
+                and all(isinstance(route, str) for key in ('routes_added', 'routes_removed')
+                        for route in previous[key])
+                and all(isinstance(change, dict) and isinstance(change.get('path'), str)
+                        and isinstance(change.get('evidence', {}), dict)
+                        for key in ('intentional_scientific', 'unexplained', 'metadata_only')
+                        for change in previous[key]))
     except (OSError, ValueError, UnicodeError):
         return False
 

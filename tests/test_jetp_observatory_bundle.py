@@ -455,3 +455,19 @@ def test_comparison_preserves_malformed_report_lookalikes(tmp_path, field, value
     with pytest.raises(ValueError, match='recognized'):
         bundles.write_comparison(tmp_path, accepted, accepted, output)
     assert output.read_bytes() == before
+
+
+def test_nonempty_comparison_report_remains_replaceable(tmp_path):
+    from jetp import _observatory_bundle as bundles
+
+    accepted, candidate = tmp_path / 'accepted.zip', tmp_path / 'candidate.zip'
+    tiny_bundle(accepted)
+    tiny_bundle(candidate, headline='Changed', revision='after', event_date='2026-01-01')
+    evidence = {'site/data/ZAF.json/country/headline': {
+        'source': 'fixture', 'reviewer': 'test', 'rationale': 'Documented correction'}}
+    output = tmp_path / 'report.json'
+    report = bundles.write_comparison(tmp_path, accepted, candidate, output, intentional_paths=evidence)
+    assert all(report[key] for key in ('intentional_scientific', 'unexplained', 'metadata_only'))
+    before = output.read_bytes()
+    bundles.write_comparison(tmp_path, accepted, candidate, output, intentional_paths=evidence)
+    assert output.read_bytes() == before
