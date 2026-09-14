@@ -14,8 +14,8 @@ approvals, implementation states, and portal observations remain separate
 assertions; no sum across those meanings is permitted.
 
 `data/jetp/releases/idn-migration-0766.json.dvc` points to the 15,050,778-byte
-candidate (MD5 `c47c1dbda867005eeee76ee89443900e`; SHA-256
-`8b5e499fdefa9aee832688fe53d623cb5c709b1f58df406b0ea53391a067a775`). The
+candidate (MD5 `d0eb02ee1611307866c0d807ed5a57c9`; SHA-256
+`82af321cab9a504007d5b03a76ddb8f812970dfb1ab2a39aba54d50045470139`). The
 recipe checks the selected CIPP bytes
 `747283facac512780ad757313c493d1080c39705824e72c4b231e87ecb4102b5` and the
 Progress Report bytes
