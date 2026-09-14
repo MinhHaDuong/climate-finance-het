@@ -54,3 +54,16 @@ def test_legacy_states_and_unknown_count_slots_survive_losslessly(tmp_path):
     assert all(r['disposition'] == 'retained_legacy_authority' for r in result)
     with pytest.raises(ValueError, match='Missing observation disposition'):
         legacy_dispositions(crosswalk, 'VNM', {})
+
+
+def test_country_disposition_follows_financial_and_implementation_timing_links(tmp_path):
+    table(tmp_path, 'projects.csv', [dict(project_id='zaf-p', country='ZAF')])
+    table(tmp_path, 'events.csv', [dict(event_id='finance', project_id='zaf-p', country='ZAF')])
+    table(tmp_path, 'implementation-events.csv', [dict(event_id='physical', project_id='zaf-p', country='ZAF')])
+    table(tmp_path, 'event-timing.csv', [dict(event_id='finance', date_role='register'),
+                                      dict(event_id='physical', date_role='observed'),
+                                      dict(event_id='foreign', date_role='event')])
+    result = legacy_dispositions(migrate_sources(tmp_path), 'ZAF', {})
+    timing = [row for row in result if row['path'].endswith('event-timing.csv')]
+    assert {row['original']['event_id'] for row in timing} == {'finance', 'physical'}
+    assert all(row['classification'] == 'legacy_timing_retained' for row in timing)
