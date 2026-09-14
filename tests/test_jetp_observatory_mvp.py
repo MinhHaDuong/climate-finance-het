@@ -3,6 +3,17 @@
 from jetp._observatory_data import historical_record, public_event, timeline
 
 
+def test_static_renderer_exposes_current_route_and_derived_disclosure_count():
+    """The preview follows coverage supplied by the frozen release handoff."""
+    from pathlib import Path
+
+    renderer = (Path(__file__).resolve().parents[1] /
+                'deliverables/jetp-observatory/app.js').read_text()
+    assert 'aria-current' in renderer
+    assert 'overview.countries.reduce((total, c) => total + c.undisclosed, 0)' in renderer
+    assert '21 unnamed Viet Nam' not in renderer
+
+
 def test_register_dates_are_observations_not_verified_signatures():
     event = public_event({
         'event_id': 'e', 'financial_status': 'signed', 'event_date': '2021-01-01',
