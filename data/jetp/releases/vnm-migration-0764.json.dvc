@@ -1,0 +1,5 @@
+outs:
+- md5: ded31c451a9dcb0b640bd5bc6487f8ee
+  size: 2554708
+  hash: md5
+  path: vnm-migration-0764.json
