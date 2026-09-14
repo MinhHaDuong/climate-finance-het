@@ -21,8 +21,8 @@ The subsequent unchanged retrieval and all earlier pilot searches survive.
 
 The 2,554,708-byte JSON is DVC-managed through
 `data/jetp/releases/vnm-migration-0764.json.dvc`, object
-`e257ad8523e4c05d8b1739ffaeed3ee2`, SHA-256
-`5cd55a719ddbd611f818b8fe9110a09b58eb337ecee578ecfe7686ec9cd2fec3`.
+`ded31c451a9dcb0b640bd5bc6487f8ee`, SHA-256
+`b70c356d726d3938898119f1a2495f42093f02b23a5fd74b85f066e103b621d8`.
 Use `uv run dvc pull data/jetp/releases/vnm-migration-0764.json.dvc` to retrieve
 it. It is not compressed into Git. An independent DVC repository with a new
 empty cache recovered identical candidate bytes and the full pinned document
@@ -132,13 +132,14 @@ The three other country views remain unchanged. No renderer changes or live
 files are required to inspect or download the candidate JSON.
 
 The writer validates before atomic replacement, protects accepted site/input
-files and every release descriptor/pointer, rejects aliases, and replaces only
-a recognized previous Vietnam candidate. A failing build preserves its preceding
+files and every release descriptor/pointer, rejects final-file aliases before resolution, and replaces only
+a structurally complete previous Vietnam candidate; identifying markers alone
+do not permit replacement. A failing build preserves its preceding
 candidate. Tests exercise direct, symlink and hardlink targets and interruption.
 
-First RED commits after rebasing are `bfcae33b` (missing page, explicit mapping,
-unnamed count) and `07dff1d5` (complete PDF extraction). Implementation began in
-`91113ac7`. Discriminating tests include:
+First RED commits after rebasing are `85db49e9` (missing page, explicit mapping,
+unnamed count) and `4186e0b7` (complete PDF extraction). Implementation began in
+`d36835b5`. Discriminating tests include:
 
 - `test_official_rows_without_pages_exact_mapping_and_unnamed_count`
 - `test_tri_an_solar_does_not_join_hydropower_by_place`
@@ -151,3 +152,15 @@ unnamed count) and `07dff1d5` (complete PDF extraction). Implementation began in
 The real candidate rerun is byte-identical. The 16-file primary-workspace
 preservation snapshot still matches, including unrelated `data/book/` files and
 all accepted site assets. Local gate and browser results accompany the PR.
+
+The round-2 regressions `test_recognized_candidate_alias_is_rejected_before_build`
+and `test_malformed_candidate_markers_are_not_replacement_permission` exercise
+recognized symlink/hardlink targets and malformed marker/record/view shapes before
+builder entry. Replacement uses the shared release-safety guard from ticket 0771;
+legitimate candidate reruns through symlinked parent directories remain allowed.
+
+Final artifact generation used input/code Git revision
+`9deed983b6cb46f70f9da03839e20681c3c7dd09`. Reproduce at that revision for
+byte-identical Git provenance. Relative to the earlier candidate, only the
+overview’s `input_git_sha` and `build_base_git_sha` change within MVP payloads;
+all scientific fields and the four country payloads remain identical.
