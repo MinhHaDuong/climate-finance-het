@@ -83,7 +83,7 @@ def _site_payloads(root, input_git_sha):
     return payloads
 
 
-def _descriptor(edition, input_git_sha, cutoff, prepared_on, reviewer, payloads):
+def _descriptor(edition, input_git_sha, cutoff, prepared_on, reviewer, payloads, *, rehearsal_of=None):
     if not isinstance(edition, str) or not EDITION.fullmatch(edition):
         raise ValueError('edition must be YYYY-MM or YYYY-MM-rN')
     _required_date(cutoff, 'cutoff')
@@ -95,7 +95,7 @@ def _descriptor(edition, input_git_sha, cutoff, prepared_on, reviewer, payloads)
                      'coverage.json': (json.dumps(coverage, indent=2, sort_keys=True) + '\n').encode()})
     files = [{'path': name, 'sha256': _digest(data), 'size_bytes': len(data)}
              for name, data in sorted(payloads.items())]
-    return {
+    descriptor = {
         'format_version': FORMAT_VERSION,
         'edition': edition,
         'release_state': 'prepared',
@@ -120,15 +120,22 @@ def _descriptor(edition, input_git_sha, cutoff, prepared_on, reviewer, payloads)
         'coverage': coverage,
         'files': files,
     }
+    if rehearsal_of is not None:
+        if not isinstance(rehearsal_of, str) or not EDITION.fullmatch(rehearsal_of):
+            raise ValueError('rehearsal_of must name an edition')
+        descriptor.update(rehearsal_of=rehearsal_of, no_scientific_change=True)
+    return descriptor
 
 
-def build_release(root, output, *, edition, input_git_sha, cutoff, prepared_on, reviewer):
+def build_release(root, output, *, edition, input_git_sha, cutoff, prepared_on, reviewer,
+                  rehearsal_of=None):
     """Write a deterministic offline archive from site bytes pinned at one commit."""
     output = Path(output)
     if os.path.lexists(output):
         raise FileExistsError(f'Release destination already exists: {output}')
     payloads = _site_payloads(root, input_git_sha)
-    descriptor = _descriptor(edition, input_git_sha, cutoff, prepared_on, reviewer, payloads)
+    descriptor = _descriptor(edition, input_git_sha, cutoff, prepared_on, reviewer, payloads,
+                             rehearsal_of=rehearsal_of)
     output.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(dir=output.parent) as scratch:
         staged = Path(scratch) / 'release.zip'
@@ -153,6 +160,11 @@ def read_release(path):
         payloads = {name: archive.read(name) for name in names if name != 'release.json'}
     if descriptor.get('format_version') != FORMAT_VERSION:
         raise ValueError('Unknown public release format')
+    if 'rehearsal_of' in descriptor:
+        if (not isinstance(descriptor['rehearsal_of'], str)
+                or not EDITION.fullmatch(descriptor['rehearsal_of'])
+                or descriptor.get('no_scientific_change') is not True):
+            raise ValueError('Invalid rehearsal relationship')
     actual = [{'path': name, 'sha256': _digest(data), 'size_bytes': len(data)}
               for name, data in sorted(payloads.items())]
     if descriptor.get('files') != actual:

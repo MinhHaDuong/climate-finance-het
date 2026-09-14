@@ -1,0 +1,15 @@
+{
+  "archive": "jetp-observatory-2026-10.zip",
+  "archive_sha256": "f6fae7c9121758e43ebe02ef42e1a303e6dbe39874cf3264b6be240143aaf874",
+  "edition": "2026-10",
+  "rehearsal_of": "2026-09",
+  "no_scientific_change": true,
+  "status": "prepared rehearsal; external deposit and public URL are later publication actions",
+  "validated_checks": [
+    "complete_file_hash_inventory",
+    "four_country_downloads",
+    "offline_restore",
+    "interrupted_candidate_preserves_2026_09",
+    "rejected_candidate_preserves_2026_09"
+  ]
+}

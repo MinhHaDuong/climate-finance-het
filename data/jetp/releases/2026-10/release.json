@@ -1,0 +1,142 @@
+{
+  "aggregation_policy": {
+    "currency_rule": "retain_reported_currency_no_cross_country_sum",
+    "financial_stage_rule": "select_one_stage_per_claim",
+    "programme_component_rule": "do_not_sum_across_levels",
+    "reported_headlines": "not_additive"
+  },
+  "coverage": {
+    "countries": {
+      "IDN": {
+        "headline_date": "2025-11-30",
+        "headline_source": "idn-jetp-progress-report-2025",
+        "headline_stage": "Approval",
+        "name": "Indonesia",
+        "named_records": 74,
+        "unpublished_identity_slots": 0
+      },
+      "SEN": {
+        "headline_date": "2026-09-13",
+        "headline_source": "sen-investment-plan-l4-mirror",
+        "headline_stage": "Investment plan",
+        "name": "Senegal",
+        "named_records": 43,
+        "unpublished_identity_slots": 0
+      },
+      "VNM": {
+        "headline_date": "2025-07-09",
+        "headline_source": "vnm-eeas-jetp-project-progress-2025",
+        "headline_stage": "Portfolio disclosure",
+        "name": "Viet Nam",
+        "named_records": 3,
+        "unpublished_identity_slots": 21
+      },
+      "ZAF": {
+        "headline_date": "2026-03-31",
+        "headline_source": "zaf-jet-quarterly-2026-q1",
+        "headline_stage": "Allocation",
+        "name": "South Africa",
+        "named_records": 263,
+        "unpublished_identity_slots": 0
+      }
+    },
+    "curated_source_count": 301,
+    "gaps_policy": "Recorded gaps are not zero values or negative findings.",
+    "historical_reference_count": 97
+  },
+  "currency_policy": {
+    "conversion": "none",
+    "reported_headlines": "not_additive"
+  },
+  "date_semantics": {
+    "event_date": "date of the observed event when reviewed",
+    "observation_cutoff": "latest evidence admitted to this edition",
+    "release_prepared_date": "date this package was prepared",
+    "retrieval_date": "date the source was retrieved",
+    "source_publication_date": "date the source published"
+  },
+  "edition": "2026-10",
+  "files": [
+    {
+      "path": "TERMS.md",
+      "sha256": "57d6f7ada952b397718098df2378bf6cd0add8f934d88d2ac20c0cfe3ce987fc",
+      "size_bytes": 572
+    },
+    {
+      "path": "coverage.json",
+      "sha256": "feeb88afcea99fb534ef04c19846fce815b2ab543381920e8279fd03e98b5c78",
+      "size_bytes": 1163
+    },
+    {
+      "path": "dictionary.md",
+      "sha256": "2aca7b177389c498180e0e0614c1100ddc4631b911d0830509ea3fa49c03220f",
+      "size_bytes": 1669
+    },
+    {
+      "path": "site/README.md",
+      "sha256": "8b4d6bfae83bbb6bfca883053d77b2987d52cbc7fab6c06eaed4d36f0ca613b2",
+      "size_bytes": 2641
+    },
+    {
+      "path": "site/app.js",
+      "sha256": "afa01ae4a7310170d3e59e49b4b5ab9fc122eff8be542018d7b50440cc79add4",
+      "size_bytes": 31999
+    },
+    {
+      "path": "site/data/IDN.json",
+      "sha256": "7382b07defe7d746a122c03c7f1317be3c7589cf69a74e42761c16492f0be328",
+      "size_bytes": 182658
+    },
+    {
+      "path": "site/data/SEN.json",
+      "sha256": "d6bd65c0425970ee9e7e1f8a5058a1f21de39f91fc644eb4421485115c6d3a51",
+      "size_bytes": 210399
+    },
+    {
+      "path": "site/data/VNM.json",
+      "sha256": "13b8fb76f0a90d6531b52e574e85af091e2fbff6a3333654280d2651dc449afc",
+      "size_bytes": 9644
+    },
+    {
+      "path": "site/data/ZAF.json",
+      "sha256": "9df481b178e0525cbf9298f07451b1f38cb4a4aae64548961257d0e18c7a2c44",
+      "size_bytes": 508002
+    },
+    {
+      "path": "site/data/comparison.json",
+      "sha256": "f95b3196a68a9070082a5bd15d9c4a2856e04b9a6991c4677c14d91d97b41181",
+      "size_bytes": 42233
+    },
+    {
+      "path": "site/data/overview.json",
+      "sha256": "e1c9ca01b13707fab9f4902f167697eecf876ab2e6987cdf8f5b320ff05b0a36",
+      "size_bytes": 9104
+    },
+    {
+      "path": "site/data/provenance.json",
+      "sha256": "459aa53ce8d20763e7f0e126c166139e34bcffb74e7b4d6252192a30fc7a5f05",
+      "size_bytes": 8158
+    },
+    {
+      "path": "site/index.html",
+      "sha256": "924d021bd793cd83ca7aa452d762cec09392b895729ef33ece46cee02e3a78bb",
+      "size_bytes": 1460
+    },
+    {
+      "path": "site/styles.css",
+      "sha256": "b032402aae0291dcafc68242ee5117d69d37ba5bb91b50a0024fe72741a10880",
+      "size_bytes": 14304
+    }
+  ],
+  "format_version": "jetp-public-release/1",
+  "input_git_sha": "fba8e63ff6a8ad44076cd054871e60d99db6bd3f",
+  "no_scientific_change": true,
+  "observation_cutoff": "2026-09-13",
+  "publication_date": null,
+  "rehearsal_of": "2026-09",
+  "release_prepared_date": "2026-09-15",
+  "release_state": "prepared",
+  "reviewer": "JETP release reviewer",
+  "schema_version": "jetp-contract/1",
+  "source_redistribution": "excluded"
+}
