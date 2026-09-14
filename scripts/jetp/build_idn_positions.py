@@ -162,6 +162,45 @@ def _country_output(output: Path) -> bool:
                 or not all(isinstance(previous[key], dict) for key in objects)
                 or not all(isinstance(value, dict) for value in previous['mvp_views'].values())):
             return False
+        if (len(previous['selected_sources']) != 2
+                or not all(isinstance(source.get('policy'), dict) and source['policy']
+                           and isinstance(source.get('acquisition'), dict) and source['acquisition']
+                           and isinstance(source.get('edition_snapshot'), dict) and source['edition_snapshot']
+                           and isinstance(source.get('extraction'), dict) and source['extraction']
+                           for source in previous['selected_sources'])
+                or not previous['inputs'] or not previous['recipe_inputs'] or not previous['recovery_inputs']
+                or not previous['inventory_boundaries'] or not previous['source_regime']
+                or not previous['comparison']):
+            return False
+        if (not previous['inventory_positions'] or not previous['plan_positions']
+                or not previous['legacy_dispositions']
+                or not all(isinstance(row.get('source_fields'), dict) and row['source_fields']
+                           and isinstance(row.get('evidence'), dict) and row['evidence']
+                           and isinstance(row.get('inventory_id'), str) and row['inventory_id']
+                           and isinstance(row.get('locator'), str) and row['locator']
+                           for row in previous['inventory_positions'])
+                or not all(isinstance(row.get('source_row'), dict) and row['source_row']
+                           and row.get('measure') == 'planned_investment'
+                           for row in previous['plan_positions'])
+                or not all(isinstance(row.get('original'), dict) and row['original']
+                           and row.get('disposition') == 'retained_legacy_authority'
+                           for row in previous['legacy_dispositions'])):
+            return False
+        for view in ('ZAF', 'IDN', 'VNM', 'SEN'):
+            payload = previous['mvp_views'][view]
+            if (not isinstance(payload.get('projects'), list) or not payload['projects']
+                    or not all(isinstance(row, dict) for row in payload['projects'])
+                    or not isinstance(payload.get('record_count'), int)
+                    or not isinstance(payload.get('country'), dict) or not payload['country']):
+                return False
+        comparison = previous['mvp_views']['comparison']
+        overview = previous['mvp_views']['overview']
+        if (not isinstance(comparison.get('projects'), list)
+                or not isinstance(comparison.get('snapshots'), list)
+                or not comparison.get('source')
+                or not isinstance(overview.get('provenance'), dict)
+                or not overview.get('provenance')):
+            return False
         validate_migration(previous)
         return bool(previous['inventory_positions'] and previous['legacy_dispositions'])
     except (OSError, ValueError, KeyError, TypeError):
