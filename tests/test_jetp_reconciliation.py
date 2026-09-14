@@ -112,6 +112,43 @@ def test_reported_zero_without_reviewed_evidence_cannot_be_an_opening():
     assert 'opening evidence' in result['reasons']
 
 
+@pytest.mark.parametrize('agreement_id, perimeter_id', [
+    (None, 'vnm-jetp'), ('', 'vnm-jetp'),
+    ('vnm-agreement-a', None), ('vnm-agreement-a', ''),
+    (None, None),
+])
+def test_unkeyed_requested_account_cannot_manufacture_a_reviewed_zero(
+        agreement_id, perimeter_id):
+    """A request needs both ownership keys before compatible inputs can close it."""
+    result = reconcile_gross_disbursement(
+        agreement_id=agreement_id, perimeter_id=perimeter_id, currency='EUR',
+        opening=dict(amount='0', currency='EUR', cutoff='2024-01-01',
+                     basis='gross_disbursement', accepted=True,
+                     review_decision_id='r', evidence_ids=['e']),
+        movements=[], flows=[],
+        coverage=dict(complete=True, reviewer='r', decision_id='c'),
+        cutoff='2024-02-01', reported_closing=None,
+    )
+    assert result['status'] == 'unavailable'
+    assert result['reconstructed_closing'] is None
+    assert result['residual'] is None
+
+
+def test_keyed_requested_account_retains_reviewed_zero_control():
+    result = reconcile_gross_disbursement(
+        agreement_id='vnm-agreement-a', perimeter_id='vnm-jetp', currency='EUR',
+        opening=dict(amount='0', currency='EUR', cutoff='2024-01-01',
+                     agreement_id='vnm-agreement-a', perimeter_id='vnm-jetp',
+                     basis='gross_disbursement', accepted=True,
+                     review_decision_id='r', evidence_ids=['e']),
+        movements=[], flows=[],
+        coverage=dict(complete=True, reviewer='r', decision_id='c'),
+        cutoff='2024-02-01', reported_closing=None,
+    )
+    assert result['status'] == 'exact'
+    assert result['reconstructed_closing'] == Decimal('0')
+
+
 def test_vnm_migration_has_a_documented_no_payment_account_result():
     root = Path(__file__).resolve().parents[1]
     policy = json.loads((root / 'config/jetp-vnm-migration.json').read_text(encoding='utf-8'))
