@@ -153,6 +153,10 @@ def _targets(plan: dict) -> dict:
         _require(target.keys() == {'watch', 'source', 'initial_due_at', 'deferral_reason', 'prior_checks'},
                  'incomplete frozen target')
         validate_watch(target['watch'], allow_pending=True)
+        source = target['source']
+        _require({'source_id', 'source_revision_id', 'recorded_at', 'source_kind', 'triage_state', 'metadata'}
+                 <= source.keys() and isinstance(source['metadata'], dict), 'incomplete source snapshot')
+        _time(source['recorded_at'])
         _require(target['watch']['review_state'] == 'reviewed' or bool(target['deferral_reason']),
                  'pending watch cannot execute')
         _require(target['source']['source_id'] == target['watch']['source_id'] and

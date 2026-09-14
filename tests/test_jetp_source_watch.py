@@ -399,3 +399,36 @@ def test_actual_registry_handoff_keeps_all_claims_and_offline_scope():
     assert len(result['claim_review_queue']) == result['inputs']['data/jetp/source-claims.csv']['row_count']
     assert {row['date_relation'] for row in result['claim_review_queue']} >= {'after_principal', 'before_principal'}
     assert all(row['origin_assessment']['intelligence_role'] == 'unknown' for row in result['claim_review_queue'])
+
+
+@pytest.mark.parametrize('alias', ['direct', 'symlink', 'hardlink'])
+def test_ids_only_snapshot_lookalike_rejected_before_builder(tmp_path, monkeypatch, alias):
+    import json
+    import os
+
+    from jetp import build_source_sweep as builder
+    from jetp._source_crosswalk import _identity
+
+    payload = candidate()
+    original = payload['plan']['targets'][0]['source']
+    malformed = {key: original[key] for key in ('source_id', 'source_revision_id')}
+    payload['plan']['targets'][0]['source'] = malformed
+    payload['source_revisions'][0] = malformed
+    body = {key: value for key, value in payload['plan'].items() if key != 'plan_digest'}
+    payload['plan']['plan_digest'] = _identity('plan', body)
+    protected = tmp_path / 'source-snapshot.json'
+    protected.write_text(json.dumps(payload))
+    output = tmp_path / 'output.json'
+    if alias == 'symlink':
+        output.symlink_to(protected)
+    elif alias == 'hardlink':
+        os.link(protected, output)
+    else:
+        output = protected
+    before = protected.read_bytes()
+    calls = []
+    monkeypatch.setattr(builder, 'build_sweep', lambda *_args: calls.append(True) or candidate())
+    with pytest.raises(ValueError):
+        builder.write_sweep(tmp_path, output, policy_path=tmp_path / 'policy.yaml')
+    assert not calls
+    assert protected.read_bytes() == before
