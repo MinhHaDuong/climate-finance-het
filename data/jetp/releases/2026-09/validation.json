@@ -1,0 +1,13 @@
+{
+  "archive": "jetp-observatory-2026-09.zip",
+  "archive_sha256": "06df22ca8c0050842ef26accabea484df35305fdad9d4c9b33d5186eba341e80",
+  "edition": "2026-09",
+  "status": "prepared; external deposit and public URL are a later publication action",
+  "validated_checks": [
+    "complete_file_hash_inventory",
+    "four_country_downloads",
+    "coverage_matches_site",
+    "raw_sources_excluded",
+    "offline_restore"
+  ]
+}
