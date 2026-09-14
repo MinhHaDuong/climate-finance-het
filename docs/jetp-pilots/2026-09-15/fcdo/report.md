@@ -6,7 +6,7 @@ The archived query delivers 7,327 programmes and 17,955 components: 25,282 disti
 
 ## Source and selection freeze
 
-[Input manifest](input-manifest.json) records the merged audit PR head, pinned selection-audit inputs, environment and verified DVC hashes. Base main already contained the updated audit PR and prospective protocol. Commit `1824b9df` froze [selection](selection.csv) and [routes](acquisition-routes.md) before research retrieval. The first failing-test commit is `c680ae49`.
+[Input manifest](input-manifest.json) records the merged audit PR head, pinned selection-audit inputs, environment and verified DVC hashes. Base main already contained the updated audit PR and prospective protocol. Commit `fc9badc0` froze [selection](selection.csv) and [routes](acquisition-routes.md) before research retrieval. The first failing-test commit is `5e21bfb0`.
 
 All 462 single-country programme candidates are retained: AL 25, MA 25, IN 166, SN 16, ZA 76, ID 89 and VN 65. Lexicographic stratum round robin selects 12. Completed programmes remain eligible. The 7 challenge programmes and 1 challenge component are separate and do not increase sample N. Regional/multi-country records remain separately profiled and are not replicated into country totals.
 

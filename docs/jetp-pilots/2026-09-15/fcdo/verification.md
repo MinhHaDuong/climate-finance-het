@@ -2,9 +2,9 @@
 
 ## Acceptance and independent original check
 
-First red commit `c680ae49` failed both the component/date and pipeline/financing
+First red commit `5e21bfb0` failed both the component/date and pipeline/financing
 acceptance tests under `make check-fast`; a third test rejected flattened date
-pairing. Green commit `1824b9df` passed all three. The final suite additionally
+pairing. Green commit `fc9badc0` passed all three. The final suite additionally
 checks status-independent sample selection and blank unsupported historical
 membership denominators (`tests/test_jetp_fcdo_pilot.py`, six initial named tests).
 
@@ -106,7 +106,14 @@ challenge has an explicit unknown actual-start event. Reviewed document events
 retain their stage, including hypothetical validated approvals. The matrix now
 specifies each candidate's own population, clock, comparison gap and next evidence.
 
-Regression commit `5f39d006` first demonstrated three failing tests; all nine
+Regression commit `13895b34` first demonstrated three failing tests; all nine
 acceptance/provenance tests then passed after correction (the Git-object test
 is integration-tier). The independent scientific verdict and observed dates,
 selection, denominators and request count did not change.
+
+Main advanced during the second review (Vietnam inventory PR #1371). The
+branch was rebased to that current base before the final gate; no FCDO file
+conflicts occurred. The premature run on the previous base was stopped after
+1,028 passes and is not counted as a completed gate. Input revision IDs remain
+pinned to their genuine source commits, and the freeze pointer was updated as
+a complete object ID (not by prefix replacement).

@@ -8,7 +8,7 @@
     "merge_commit": "8d989b9bedc0cf8b265d811d7d3fe83a333cddaf"
   },
   "base_resolution": "Started from main containing merged updated audit and prospective pilot protocol; no unmerged audit dependency remains",
-  "freeze_sha": "1824b9df",
+  "freeze_sha": "fc9badc04f8c1899f13cd90a8c2ea180299657dd",
   "bundle_verification": [
     {
       "bundle": "0735-round2",
@@ -289,7 +289,7 @@
     "assessment": "docs/jetp-pilots/2026-09-15/fcdo/document-assessment.csv",
     "reviewed_evidence": "docs/jetp-pilots/2026-09-15/fcdo/reviewed-evidence.csv"
   },
-  "gate_base": "0f97bbf6",
+  "gate_base": "7401f01d758090d62ecf64b78f5cf5588363d85f",
   "original_freeze_sha_before_rebase": "b7457964",
   "input_revision_correction": "Round-2/3 audit paths pinned to the actual initial base commit; every git_sha:path SHA-256 verified after correcting rebase prefix substitution."
 }
