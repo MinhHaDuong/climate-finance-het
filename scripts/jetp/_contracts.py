@@ -55,6 +55,16 @@ DECISION_ROLES = {
         'occurrence': ({'occurrence'}, 1, 1)},
     'flow_coverage': {'covering_flow': ({'position'}, 1, 1),
                       'covered_movement': (ASSERTIONS - {'implementation_event'}, 1, None)},
+    'account_opening': {'opening': ({'position'}, 1, 1),
+                        'agreement': ({'agreement'}, 1, 1),
+                        'perimeter': ({'perimeter'}, 1, 1)},
+    'account_closing': {'closing': ({'position'}, 1, 1),
+                        'agreement': ({'agreement'}, 1, 1),
+                        'perimeter': ({'perimeter'}, 1, 1)},
+    'account_coverage': {'agreement': ({'agreement'}, 1, 1),
+                         'perimeter': ({'perimeter'}, 1, 1),
+                         'covering_flow': ({'position'}, 0, None),
+                         'covered_movement': ({'financial_event'}, 0, None)},
 }
 REF_FIELDS = {
     'subject': SUBJECTS, 'from': SUBJECTS, 'to': SUBJECTS,
@@ -298,6 +308,9 @@ class ContractStore:
         roles = DECISION_ROLES.get(record['decision_type'])
         _require(roles is not None, 'unsupported decision type')
         _require(isinstance(record['members'], list), 'members must be a list')
+        if record['decision_type'] == 'account_coverage':
+            _require(isinstance(record.get('complete'), bool),
+                     'account coverage needs explicit completeness')
         seen = set()
         for member in record['members']:
             _require(isinstance(member, dict) and set(member) == {'role', 'target'}, 'invalid decision member')

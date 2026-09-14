@@ -36,6 +36,11 @@ def _compatible(item, *, agreement_id, perimeter_id, currency):
             and item.get('basis') == METRIC_BASIS)
 
 
+def _reviewed(item):
+    return (item.get('accepted') is True and bool(item.get('review_decision_id'))
+            and isinstance(item.get('evidence_ids'), list) and bool(item['evidence_ids']))
+
+
 def _unavailable(reasons, *, included_ids=None, excluded_ids=None, subtotal='0'):
     return {
         'status': 'unavailable', 'reasons': sorted(set(reasons)),
@@ -54,6 +59,9 @@ def _opening_and_coverage(opening, coverage, *, agreement_id, perimeter_id, curr
                          currency=currency):
         reasons.append('opening compatibility')
         opening_cutoff = None
+    elif not _reviewed(opening):
+        reasons.append('opening evidence')
+        opening_cutoff = None
     else:
         opening_cutoff = opening.get('cutoff')
         if not opening_cutoff or opening_cutoff >= cutoff:
@@ -70,6 +78,9 @@ def _compatible_items(items, kind, *, agreement_id, perimeter_id, currency, open
     for item in items:
         if not _compatible(item, agreement_id=agreement_id, perimeter_id=perimeter_id, currency=currency):
             reasons.append('currency' if item.get('currency') != currency else f'{kind} compatibility')
+            continue
+        if not _reviewed(item):
+            reasons.append(f'{kind} evidence')
             continue
         start, end = ('date', 'date') if kind == 'movement' else ('coverage_start', 'coverage_end')
         if not item.get(start) or not item.get(end):
@@ -150,8 +161,9 @@ def reconcile_gross_disbursement(*, agreement_id, perimeter_id, currency, openin
               'reconstructed_closing': _money(opening['amount'], 'opening') + subtotal,
               'residual': None, 'coverage_decision_id': coverage['decision_id']}
     if reported_closing:
-        if _compatible(reported_closing, agreement_id=agreement_id, perimeter_id=perimeter_id,
-                       currency=currency) and reported_closing.get('cutoff') == cutoff:
+        if (_compatible(reported_closing, agreement_id=agreement_id, perimeter_id=perimeter_id,
+                        currency=currency) and _reviewed(reported_closing)
+                and reported_closing.get('cutoff') == cutoff):
             result['residual'] = _money(reported_closing['amount'], 'reported closing') - result['reconstructed_closing']
         else:
             result['reported_closing_comparability'] = 'failed'
