@@ -3,7 +3,37 @@
 14 September 2026. Reviewed the branch after merging Senegal PR #1332,
 with generated inputs pinned to `5945a42d`. This is a focused scientific
 review, not the full Imperial Dragon merge gate. Verdict: **changes requested**.
-The Senegal refresh is complete; the issues below are reported, not repaired.
+The Senegal refresh was complete at review time. The findings below preserve the
+original review; their subsequent correction is documented next.
+
+## Correction submitted, 14 September 2026
+
+Implementation commit `e35988a7` addresses all three findings; this is a repair
+record, not an independent approval or the full merge gate.
+
+- A complete `event-timing.csv` adjudication registry separates legacy date role
+  from event precision. Portal and ANER observations, PUELEC publication, Diass
+  financing reports and ambiguous Saloum timing cannot become point events.
+  Diass's actual groundbreaking day remains distinct from its publication day;
+  JICA approval years retain year intervals. The 2018 ZAF implementation-start
+  placeholder is not treated as approval. Unknown or unreviewed timing exports
+  no event date. Enum/bound checks reject inconsistent adjudications.
+- Project JSON and source cards retain every typed source-link decision, locator
+  and note. Claim match verdicts survive export and display. The provisional
+  Linguère join remains explicitly provisional beside its source.
+- Historical JSON exposes each snapshot's original retrieval metadata and query
+  hashes. The UI lists those country acquisition dates. An edition change cannot
+  claim renewed acquisition; substantive source-update dates remain unknown.
+
+Regression evidence is in `tests/test_jetp_observatory_mvp.py`, particularly
+`test_real_portal_and_aner_snapshots_have_no_event_date`,
+`test_real_reports_and_groundbreaking_keep_different_date_roles`,
+`test_real_provisional_source_link_and_claim_verdict_survive_export`, and
+`test_historical_acquisition_dates_do_not_follow_edition_cutoff`.
+The browser acceptance script exercises the actual PUELEC timeline and Linguère
+source card. Final suite results are recorded in the MVP validation report.
+The interpretation limits below remain: descriptive historical context is not an
+acceleration estimate, and the financing composition chart mixes coding regimes.
 
 ## 1. High priority: date provenance is being mistaken for event timing
 

@@ -71,3 +71,36 @@ results above are historical validation, not a fresh full-suite run.
 
 The separate data-science review identifies scientific export issues that these
 software checks do not catch; passing tests is not approval for analytical use.
+
+## Scientific corrections, 14 September 2026
+
+The three review findings are repaired in `e35988a7`; failing regression cases
+were first committed in `95fd9181`. The frozen exports identify clean input
+revision `e35988a7065c628dc75dddde4df18d6658701b40`; all 22 recorded input hashes
+were checked against their files. This includes the explicit timing registry.
+
+- Real-record regression checks cover three Indonesian portal approvals, four
+  ANER observations, PUELEC publication timing, Diass's milestone/publication
+  distinction, and the ZAF implementation-start placeholder. Interval bounds,
+  authority independence, registry coverage and invalid timing are also tested.
+- All 451 published observations have explicit timing classifications: six
+  supported day dates, two approval-year intervals, and 443 with unknown event
+  precision. These counts describe coding coverage, not source exhaustiveness.
+- Typed provisional source links and claim verdicts survive export and rendering.
+  Historical snapshots retain their acquisition dates and query hashes even when
+  the edition cutoff changes; substantive source-update dates remain unknown.
+- Fourteen observatory tests pass. Fast suite: **1,552 passed, seven skipped**.
+  Lint: **337 passed, six skipped**. A test import-order issue was corrected
+  before the successful lint run.
+- Fresh full `make check`: **2,506 passed, 25 skipped**, in 214.52 seconds.
+  This uninterrupted successful run used the existing virtualenv on PATH,
+  writable temporary uv/ruff caches, `UV_NO_SYNC=1`, and permission for local
+  sockets and Git test repositories. No failed-test rerun was needed.
+- Chromium navigation, filters, downloads, mobile layout, the provisional
+  Linguère source card and PUELEC's qualified timeline pass on the final exports.
+  JavaScript syntax and `git diff --check` pass.
+
+This repair does not constitute the independent Imperial Dragon merge gate.
+Ticket 0734 remains open pending verification; the PR remains a draft. Public
+publication, monthly releases, complete financial-stage reconciliation and a
+comparable early-lifecycle cohort remain separate work.
