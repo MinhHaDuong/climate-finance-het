@@ -62,3 +62,24 @@ def test_prepared_2026_09_release_descriptor_matches_the_downloadable_archive():
     assert descriptor['input_git_sha'] == 'fba8e63ff6a8ad44076cd054871e60d99db6bd3f'
     assert set(descriptor['coverage']['countries']) == {'ZAF', 'IDN', 'VNM', 'SEN'}
     assert all(not name.startswith('sources/') for name in payloads)
+
+
+def test_two_real_fact_unchanged_rehearsal_releases_restore_offline():
+    """0760: both immutable rehearsal packages replay without live dependencies."""
+    from jetp._public_release import read_release, restore_release
+
+    root = Path(__file__).resolve().parents[1]
+    releases = root / 'data/jetp/releases'
+    previous_descriptor, _ = read_release(releases / '2026-09/jetp-observatory-2026-09.zip')
+    current_descriptor, _ = read_release(releases / '2026-10/jetp-observatory-2026-10.zip')
+    assert current_descriptor['edition'] == '2026-10'
+    assert current_descriptor['rehearsal_of'] == '2026-09'
+    assert current_descriptor['no_scientific_change'] is True
+    assert current_descriptor['input_git_sha'] == previous_descriptor['input_git_sha']
+
+    for edition in ('2026-09', '2026-10'):
+        restored = root / '.pytest-release-replay' / edition
+        restore_release(releases / edition / f'jetp-observatory-{edition}.zip', restored)
+        assert (restored / 'index.html').is_file()
+        for code in ('ZAF', 'IDN', 'VNM', 'SEN'):
+            assert json.loads((restored / f'data/{code}.json').read_text())['country']['code'] == code
