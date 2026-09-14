@@ -91,3 +91,46 @@ without a signing date or explicit approval. Original amounts and physical
 status wording remain preserved. Senegal regeneration now retains reviewed
 identity links for unchanged source rows and verifies PDF hashes before parsing.
 These corrections leave the 219-document DVC checkpoint unchanged.
+
+## Smaller-model scout checkpoint
+
+The bounded trial adds nine archived documents and one failed retrieval: 270
+registered sources, 272 manifest observations and 228 unique documents. The
+new documents directory is `d701d514d7fd28f700025dead4a67c6e.dir`
+(250,861,262 bytes). All 228 remote document objects and the recovery archive
+were read back and checked by MD5 and SHA-256 against local bytes. Every
+collected manifest entry and both event schemas validate. One PUELEC component
+observation is added; financial events are unchanged. See the
+[trial report](jetp-senegal-scout-trial-2026-09-13.md).
+
+
+## Managed-rounds checkpoint
+
+Rounds 2–4 add 18 registered sources, 19 retrieval observations and 17 unique
+archived objects: totals are 288 sources, 291 manifest observations and 245
+document objects. The documents directory is
+`4dfa34045276bdf14bacc9a002f36178.dir` (256,641,141 bytes).
+All 245 remote document objects and the original recovery archive were read
+back and verified by MD5 and SHA-256. Every collected manifest observation and
+both event schemas validate. Six historical ANER WARC captures additionally
+pass their embedded payload-digest checks; original URLs and byte ranges are
+preserved in the [capture appendix](jetp-senegal-archive-captures-2026-09-13.md).
+Financial and implementation tables are unchanged from the scout checkpoint.
+The [managed-rounds report](jetp-senegal-managed-rounds-2026-09-13.md) records
+the BOAD approval and procurement discoveries, their attribution limits, and
+why exact-identity coverage remains 20 collected / 20 central-only / 3 blocked.
+
+
+## Document-led checkpoint
+
+The follow-up adds 13 source records, 16 retrieval observations and 12 document
+objects: totals are 301 sources, 307 observations and 257 objects. The documents
+directory is `d614b74fc598c74dda6fae0dca4f0c1e.dir` (279,613,906 bytes).
+All 257 objects were read back from the existing local padme archive and verified
+by MD5 and SHA-256; the unchanged recovery archive also passed read-only
+verification. This pass copied only public document objects and did not push
+the recovery archive. Every collected manifest entry and both event schemas
+validate. Financial and implementation tables are byte-identical to the preceding
+checkpoint. ANER's final PSD supplies one additional direct identity, making
+coverage21 collected /19 central-only /3 blocked. See the
+[document-led report](jetp-senegal-document-followup-2026-09-13.md).

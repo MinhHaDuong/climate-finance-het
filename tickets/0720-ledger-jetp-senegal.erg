@@ -21,6 +21,17 @@ Blocked-by: 0716
 
 2026-09-13T18:37Z Codex note Author requested commit and merge after disclosure of 24 unresolved identities; merge delivers reviewed partial snapshot without closing this ticket. Five-perspective review identified and fixed regeneration/provenance and ZAF finance-status defects.
 
+2026-09-13T18:50Z Codex note Author authorized a trial of three smaller-model scouts, each with bounded primary-source searches; parent adjudicates every identity match before changing coverage.
+
+2026-09-13T19:05Z Codex note Three smaller-model scouts used 31 web calls across 24 unresolved identities; parent accepted one PUELEC component match, archived nine documents and verified 228 remote documents plus the recovery archive; 23 direct identities remain unresolved, financial events unchanged
+
+2026-09-13T19:18Z Codex note Author authorized managed multi-round teams; resume solar ownership, ASER contract/village records and ANER original dossiers, with parent checks of OMVG and charging procurement and independent adjudication after each round
+
+2026-09-13T21:43Z Codex note Independent review rejects exact Annex35 identity from the charging master-plan procurement alone; revised regression fails before downgrading to provisional context, preserving 20 collected / 20 central_only / 3 blocked
+2026-09-13T21:45Z Codex note Managed rounds2-4 recover BOAD FCFA41.5bn Linguere loan approval, PUELEC contract/payment-order evidence and six historical ANER captures; no exact QW2 legal/JETP join or new coverage promotion; 288 sources /291 observations /245 remote documents verified, financial and implementation tables unchanged
+2026-09-13T21:48Z Codex note Final independent audit accepts bounded claims and six WARC payloads;102 JETP tests pass, fast25 package plus1534 tests/10 skipped, lint332/10 skipped; ticket and diff hygiene pass; draft PR1332 extended, direct-source criterion remains open
+2026-09-13T20:26Z Codex note Author requests document-led follow-up: target named contracts, village schedules, original ANER fiches and institutional study records; verify contact routes and prepare precise requests after public-repository checks
+2026-09-13T20:46Z Codex note Document-led follow-up independently confirms Annex23 from final ANER PSD;21 collected /19 central_only /3 blocked,22 unresolved;301 sources /307 observations /257 archived objects verified;103 JETP tests and fast25+1535/10skip plus lint332/10skip pass; six reviewed institutional requests prepared but not sent
 --- body ---
 
 ## Context
@@ -152,3 +163,56 @@ All five second-round perspectives approve the fixes. Fast checks pass
 ten skipped). The forge review records the final full-suite result.
 The direct-page exit criterion is still MISSING for 24 identities; author
 merge authorization accepts this partial delivery without claiming closure.
+
+## Bounded scout trial
+
+Three scouts cover all 24 unresolved identities: solar/network (7), rural
+programmes (7), other agencies/promoters (10). Each has a ceiling of 12 web
+tool calls and approximately eight minutes. They return candidate URLs,
+source passages, identity evidence, conflicts and unsuccessful routes.
+
+Acceptance uses the existing contract: corroboration must identify the same
+project/programme or an explicitly delimited component. Similar names,
+capacities or promotional finance offers do not establish identity or finance.
+The parent checks novelty against the 260 registered source URLs, reads primary
+evidence and archives accepted new material. A failed search stays a dated
+search observation. The existing coverage and finance/physical-separation tests
+remain the first checks for any proposed canonical updates.
+
+## Managed follow-up rounds
+
+Continue the same open direct-source criterion. Round 2 assigns solar legal and
+contract identity, ASER village/procurement records and ANER original dossiers
+to three read-only scouts. The parent verifies primary passages and searches
+OMVG STEP and Senelec charging procurement. Round 3 follows only concrete
+identifiers or alternate primary repositories learned from round 2. Searches
+stop when distinct routes repeat without new identifiers; absence remains a
+dated observation, not evidence that a proposal was abandoned.
+
+First tests are the existing 43-identity coverage, direct-source linkage, solar
+proposal and PUELEC component/finance separation checks. Any promoted physical
+or financial milestone gets a source-specific failing regression before data
+integration. Evidence-only rejected leads need no implementation-mirroring test.
+Record accepted and rejected matches, exact locators, retrieval outcomes and
+remaining document needs. Keep the ticket open unless its literal criterion
+is met; public enquiries to institutions are outside this research authorization.
+
+
+Managed-rounds evidence is consolidated in
+`docs/jetp-senegal-managed-rounds-2026-09-13.md` and the historical capture
+appendix. The revised charging identity regression protects provisional
+matching; the initially proposed preparation event was removed after review.
+The BOAD approved loan is preserved as context because neither ledger scope
+admits an unjoined, unattributed loan. Coverage remains 20 collected,
+20 central-only and 3 blocked; the direct-source exit criterion stays open.
+
+
+The document-led follow-up supersedes the preceding current-coverage figure:
+21 collected, 19 central-only and 3 blocked. See
+`docs/jetp-senegal-document-followup-2026-09-13.md` and
+`docs/jetp-senegal-document-requests/README.md`. The ANER identity regression
+failed before integration. Independent source review accepted the exact
+institutional-project match while retaining the conditional budget and objective
+outputs as planning evidence. Financial and physical event tables are unchanged.
+Six institutional requests are complete and independently reviewed, with an
+explicit unsent register. The direct-source exit criterion remains open.
