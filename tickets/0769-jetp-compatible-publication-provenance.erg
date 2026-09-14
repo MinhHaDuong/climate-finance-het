@@ -1,0 +1,41 @@
+%erg 0.1
+Title: Publish migrated combinations through compatible traced website outputs
+Created: 2026-09-14
+Author: HDMX-coding-agent
+Blocked-by: 0764
+
+--- log ---
+2026-09-14T13:51Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+The MVP must remain usable while some measures migrate. Complete provenance must not push the already large ZAF JSON past the repository cap.
+
+Design: `docs/jetp-backend-design.md`, revision 5. Plan: `docs/jetp-backend-implementation-plan.md`. Parent: 0760 (except the tracker itself, which belongs to 0725/#1333). Proposed work; no implementation authorized by filing.
+
+## First test
+
+Export two display IDs sharing a payload/pointer/role across routes plus a repeated same-page instance. Reverse traversal returns all, duplicate display IDs fail, and a partly migrated or duplicate-owned financial combination cannot publish.
+
+## Actions
+
+First deliver traced reported positions from 0764 without waiting for the financial engine. Enabling reconstructed financial combinations additionally requires accepted 0768 outputs. Implement versioned output/renderer compatibility, shared provenance sidecars or bounded chunks, editorial claim evidence, principal/news source roles and accessible glossary. Select publication mode per typed subject/measure/perimeter independently of writer transfer. Preserve routes and complete downloads; consume only accepted candidate inputs. Apply existing 0727 timing-bound/count follow-ups. Implement complete-bundle publication and restoration without reversing evidence ownership.
+
+## Exit criteria
+
+- [ ] All published claims resolve through exact evidence/derivation and display IDs
+- [ ] Mixed migration has one owner per contribution and no partial reconciled totals
+- [ ] Four-country browser routes, filters, timelines and downloads remain viable
+- [ ] Payload sizes meet cap with no missing offline dependencies
+- [ ] Homepage principal link, country two-role links and total-evidence prose semantics hold
+- [ ] Failed candidate leaves accepted bundle intact; rollback preserves newer evidence
+
+## Validation and recovery
+
+Start implementation with the failing fixture. Run make check-fast and make lint; run the full make check for pipeline-surface diffs under AGENTS.md. Run the existing browser exercise for output/renderer changes. Cite exact fixture IDs and input/output commits in the PR. Preserve last accepted static output; candidate failure must not change canonical ownership or publish partial files. No deployment, estimator or PyPSA work is included in this ticket.
+
+## GitHub planning issue
+
+https://github.com/MinhHaDuong/climate-finance-het/issues/1362

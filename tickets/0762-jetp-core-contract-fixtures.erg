@@ -1,0 +1,39 @@
+%erg 0.1
+Title: Implement typed evidence and temporal contracts behind compatibility readers
+Created: 2026-09-14
+Author: HDMX-coding-agent
+Blocked-by: 0761
+
+--- log ---
+2026-09-14T13:51Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Prove design sections 3–6 and 10 on small fixtures before mass migration; existing consumers must remain viable.
+
+Design: `docs/jetp-backend-design.md`, revision 5. Plan: `docs/jetp-backend-implementation-plan.md`. Parent: 0760 (except the tracker itself, which belongs to 0725/#1333). Proposed work; no implementation authorized by filing.
+
+## First test
+
+Use equal raw IDs for a financial and implementation assertion, a late duplicate decision and a pending replacement. Typed joins must remain separate and an earlier cutoff must retain its earlier accepted state.
+
+## Actions
+
+Implement versioned validation/read interfaces, stable identity/relation/perimeter contracts, evidence tuples and bitemporal decision resolution. Include money-unit/precision and unsupported-closure fixtures. Add only the present study/frame/coverage contract fixtures needed to preserve research history; no empty future registries. Keep current CSV readers authoritative for unmigrated data.
+
+## Exit criteria
+
+- [ ] Typed reference/cycle/cardinality validation rejects invalid fixtures
+- [ ] Late acceptance, withdrawal and pending supersession preserve cutoff results
+- [ ] Original values, whole-unit money and date roles survive round trips
+- [ ] Compatibility reader supplies the existing MVP contract without unexplained output change
+
+## Validation and recovery
+
+Start implementation with the failing fixture. Run make check-fast and make lint; run the full make check for pipeline-surface diffs under AGENTS.md. Run the existing browser exercise for output/renderer changes. Cite exact fixture IDs and input/output commits in the PR. Preserve last accepted static output; candidate failure must not change canonical ownership or publish partial files. No deployment, estimator or PyPSA work is included in this ticket.
+
+## GitHub planning issue
+
+https://github.com/MinhHaDuong/climate-finance-het/issues/1355

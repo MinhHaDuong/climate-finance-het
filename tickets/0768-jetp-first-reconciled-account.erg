@@ -1,0 +1,41 @@
+%erg 0.1
+Title: Implement bounded agreement and gross-disbursement reconciliation
+Created: 2026-09-14
+Author: HDMX-coding-agent
+Blocked-by: 0764
+Blocked-by: 0765
+
+--- log ---
+2026-09-14T13:51Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Design section 5 defines a first original-currency gross-disbursement account. It is a new derived view, not a reason to sum the legacy financial ledger.
+
+Design: `docs/jetp-backend-design.md`, revision 5. Plan: `docs/jetp-backend-implementation-plan.md`. Parent: 0760 (except the tracker itself, which belongs to 0725/#1333). Proposed work; no implementation authorized by filing.
+
+## First test
+
+Two reports describe one payment, a quarterly flow covers itemised payments and an opening is missing. Count each movement once and withhold exact closing/residual until coverage and a compatible opening support it.
+
+## Actions
+
+Implement agreement/perimeter/occurrence and flow-coverage decisions with explicit completeness. Reconcile a bounded real VNM or ZAF subject if evidence permits; otherwise publish the documented unavailable result while fixtures prove supported cases. Compare reported positions against reconstructed amounts without erasing disagreement. Reject currency/basis and programme-component overlaps.
+
+## Exit criteria
+
+- [ ] Supported fixture closes exactly with traceable contributions
+- [ ] Duplicate reports/covered flows do not inflate movements
+- [ ] Missing openings, partial coverage and incompatible currencies/bases block exact closure
+- [ ] At least one real bounded case has a reviewed account or evidence-based unavailability report
+- [ ] Legacy headlines remain available until publication selection accepts a combination
+
+## Validation and recovery
+
+Start implementation with the failing fixture. Run make check-fast and make lint; run the full make check for pipeline-surface diffs under AGENTS.md. Run the existing browser exercise for output/renderer changes. Cite exact fixture IDs and input/output commits in the PR. Preserve last accepted static output; candidate failure must not change canonical ownership or publish partial files. No deployment, estimator or PyPSA work is included in this ticket.
+
+## GitHub planning issue
+
+https://github.com/MinhHaDuong/climate-finance-het/issues/1361

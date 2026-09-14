@@ -1,0 +1,39 @@
+%erg 0.1
+Title: Migrate South African register states and legacy observations
+Created: 2026-09-14
+Author: HDMX-coding-agent
+Blocked-by: 0764
+
+--- log ---
+2026-09-14T13:51Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Reuse the Vietnam pilot interfaces for the South African official register/report inventories; register categories and start dates are not automatically transactions.
+
+Design: `docs/jetp-backend-design.md`, revision 5. Plan: `docs/jetp-backend-implementation-plan.md`. Parent: 0760 (except the tracker itself, which belongs to 0725/#1333). Proposed work; no implementation authorized by filing.
+
+## First test
+
+A register start date and allocation share a project with a separately documented payment. Migration must retain reported positions and establish only the evidenced payment event, with no duplicate amount.
+
+## Actions
+
+Pin the selected official report/register editions, enumerate their inventories and reconcile all ZAF legacy rows. Preserve programme/components, agreement references and uncertain dates. Record source-regime mapping decisions and unresolved finance. Provide candidate semantic/payload-size report with the old public contract.
+
+## Exit criteria
+
+- [ ] Official and legacy rows have complete disposition reports
+- [ ] Register dates and financial categories retain source meaning
+- [ ] IDs/routes/relationships survive without programme-component double counting
+- [ ] Candidate payload respects file limit or waits for compatible chunking before publication
+
+## Validation and recovery
+
+Start implementation with the failing fixture. Run make check-fast and make lint; run the full make check for pipeline-surface diffs under AGENTS.md. Run the existing browser exercise for output/renderer changes. Cite exact fixture IDs and input/output commits in the PR. Preserve last accepted static output; candidate failure must not change canonical ownership or publish partial files. No deployment, estimator or PyPSA work is included in this ticket.
+
+## GitHub planning issue
+
+https://github.com/MinhHaDuong/climate-finance-het/issues/1358

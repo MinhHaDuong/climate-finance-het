@@ -1,0 +1,40 @@
+%erg 0.1
+Title: Pilot official-inventory and legacy-position migration in Vietnam
+Created: 2026-09-14
+Author: HDMX-coding-agent
+Blocked-by: 0763
+
+--- log ---
+2026-09-14T13:51Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Vietnam has major inventory coverage gaps. Start with the saved principal official RMP inventories, retaining the distinction between named projects, plans and unnamed disclosure slots.
+
+Design: `docs/jetp-backend-design.md`, revision 5. Plan: `docs/jetp-backend-implementation-plan.md`. Parent: 0760 (except the tracker itself, which belongs to 0725/#1333). Proposed work; no implementation authorized by filing.
+
+## First test
+
+An official inventory row lacks a project page, another maps to an existing ID and one describes an unnamed count. All receive explicit dispositions; the count creates no fabricated named project or financing event.
+
+## Actions
+
+Inventory all relevant saved official RMP tables and their boundaries; ingest source rows as positions/membership with row locators. Classify existing events, implementation rows, source claims, plan rows and VNM pilot observations without invented transition dates. Review joins and one-to-many crosswalks. Preserve unknowns, cancelled/nonselected observations and search history. Produce candidate website differences and a migration/writer-transfer report; leave publication legacy until accepted.
+
+## Exit criteria
+
+- [ ] Every selected official inventory row and VNM legacy row has a traceable disposition
+- [ ] Legacy IDs/routes and source wording survive; any count change is explained
+- [ ] Positions/cutoffs never become unsupported event dates or payments
+- [ ] Candidate VNM export works beside all three unchanged country views
+- [ ] Importer and crosswalk conventions are reusable for the next countries
+
+## Validation and recovery
+
+Start implementation with the failing fixture. Run make check-fast and make lint; run the full make check for pipeline-surface diffs under AGENTS.md. Run the existing browser exercise for output/renderer changes. Cite exact fixture IDs and input/output commits in the PR. Preserve last accepted static output; candidate failure must not change canonical ownership or publish partial files. No deployment, estimator or PyPSA work is included in this ticket.
+
+## GitHub planning issue
+
+https://github.com/MinhHaDuong/climate-finance-het/issues/1357
