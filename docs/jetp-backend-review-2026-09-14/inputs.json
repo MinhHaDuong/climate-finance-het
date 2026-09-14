@@ -1,0 +1,88 @@
+{
+  "reviewed_commit": "962f4bb1ef65eaee564fa1f27cde1e8116c153f9",
+  "files": [
+    {
+      "path": "docs/jetp-backend-design.md",
+      "sha256": "8332c7816a5bff7f1ef5be4b4573202ae3ad0e8d8b4ed198a4c6a0be83607ebc"
+    },
+    {
+      "path": "docs/jetp-storage.md",
+      "sha256": "776c7d3303aab10b00dd430a1a47a227b754adffa71fbfed91164410d038d5eb"
+    },
+    {
+      "path": "docs/jetp-tracking.md",
+      "sha256": "0c85172b0e87e92c3f2a446515a77189f029bc7e8794af450e64245500556596"
+    },
+    {
+      "path": "docs/jetp-country-source-policy.md",
+      "sha256": "e9e0a92bdf7c0208d4d65523b1f1f5aef6a297258945f58cbf16d9114095b53b"
+    },
+    {
+      "path": "config/jetp_tracking.yaml",
+      "sha256": "fd11109129c459c0e968a4a449d7b3783f1f422e4730de133778eb3a99b2e9d2"
+    },
+    {
+      "path": "scripts/jetp/build_observatory.py",
+      "sha256": "abdb434819c92abc23a283c5cfe0399cbbf76ef9ff77f0612f697919367e17dd"
+    },
+    {
+      "path": "scripts/jetp/_observatory_data.py",
+      "sha256": "f3efa056997cf6df12c77ce4d785dcb065a7bd5927f98677435278f3cb9c5167"
+    },
+    {
+      "path": "scripts/jetp/corpus_harvest_documents.py",
+      "sha256": "c5c81dd7b5018120ec6c81023c81d20ccabc6dbe4b842d8311a050f2515e4ea3"
+    },
+    {
+      "path": "scripts/analysis/jetp_observatory.mk",
+      "sha256": "8f81044db270357ac8e81f6004b6ffb0ecc2c5ba6bfd45e9622a4978f281b18c"
+    }
+  ],
+  "fable_prompt_sha256": "ff7fe04922463fd282bf71c3365a7196b87174fe37dad558309ca936234377da",
+  "requested_reviewers": {
+    "astra": "gpt-6-astra",
+    "fable": "claude-fable-5-1"
+  },
+  "review_mode": "Independent first reports; read-only; no report supplied to the other reviewer",
+  "fable_payload_authorization": {
+    "status": "explicitly approved by user",
+    "date": "2026-09-14",
+    "scope": "Design note, eight supporting backend files and CSV column headers, approximately 106 KB, sent through external Claude service; no credentials or raw source documents."
+  },
+  "fable_result": {
+    "status": "success",
+    "raw_response_sha256": "ede35a4f0626b15140b2cc40d50501e24e9b1c8b8760e3c9d1453c62c8cde96c",
+    "duration_ms": 191665,
+    "model_usage": {
+      "claude-haiku-4-5-20251001": {
+        "inputTokens": 29875,
+        "outputTokens": 22,
+        "cacheReadInputTokens": 0,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 0.029984999999999998,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "thinkingTokens": 0,
+        "canonicalModel": "claude-haiku-4-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      },
+      "claude-fable-5-1": {
+        "inputTokens": 2,
+        "outputTokens": 13140,
+        "cacheReadInputTokens": 0,
+        "cacheCreationInputTokens": 55455,
+        "webSearchRequests": 0,
+        "costUSD": 1.76612,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 64000,
+        "thinkingTokens": 8762,
+        "canonicalModel": "claude-fable-5-1",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "note": "CLI reports auxiliary Haiku usage as well as the requested Fable reviewer; no tool calls or web searches requested."
+  }
+}

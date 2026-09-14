@@ -4,6 +4,10 @@ Decision: 13 September 2026, Plan phase. This document organises the existing
 corpus and specifies the publication boundary for tickets 0726–0728 and 0730.
 It does not implement an exporter, migrate registries or deploy a website.
 
+The [backend design note](jetp-backend-design.md) develops the journal,
+reported-position and reconciliation schemas, migration path and complete
+source-to-page provenance. Its extensions are proposed, not implemented.
+
 ## Choice
 
 Authors work in Markdown and review changes in Git. Structured observations

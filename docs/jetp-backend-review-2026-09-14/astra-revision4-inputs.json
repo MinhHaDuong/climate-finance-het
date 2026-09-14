@@ -1,0 +1,167 @@
+{
+  "reviewed_commit": "e801442211498a3d9b9f9d467dbcaf49cffc02ce",
+  "reviewed_branch": "explore-jetp-backend-design-pr",
+  "pull_request": 1352,
+  "requested_model": "gpt-6-astra",
+  "reasoning_effort": "high",
+  "started_at": "2026-09-14T13:17:00.395227+00:00",
+  "design_file": "docs/jetp-backend-design.md",
+  "design_sha256": "e8efb48c2ba82476cd42b32c71231b4f2ec65efca698725c6178cae1aefb3931",
+  "independence": "Fresh context; previous reports and revision responses withheld; read-only design and implementation context; review report is the only delegated write.",
+  "completed_at": "2026-09-14T13:21:44.580194+00:00",
+  "verdict": "APPROVE for planning bounded implementation",
+  "merge_gate": false,
+  "findings": [
+    {
+      "id": "A4-1",
+      "severity": "medium",
+      "blocking_for_planning": false,
+      "summary": "Display-occurrence uniqueness must distinguish rendered instances sharing a data locator."
+    }
+  ],
+  "files": [
+    {
+      "path": "docs/jetp-backend-design.md",
+      "sha256": "e8efb48c2ba82476cd42b32c71231b4f2ec65efca698725c6178cae1aefb3931",
+      "inspection_scope": "full file"
+    },
+    {
+      "path": "docs/jetp-storage.md",
+      "sha256": "776c7d3303aab10b00dd430a1a47a227b754adffa71fbfed91164410d038d5eb",
+      "inspection_scope": "full file"
+    },
+    {
+      "path": "docs/jetp-tracking.md",
+      "sha256": "6da083928ceeec8fd90e7661cf7aa4af3c35c46f34741782ed7b7701c170d55f",
+      "inspection_scope": "full file"
+    },
+    {
+      "path": "conception/jetp-observatory-and-papers-plan.md",
+      "sha256": "9771e48af82575480ca6ba78587947932bbc8fbbd903700f2b6fdab92f9fa4d2",
+      "inspection_scope": "full file"
+    },
+    {
+      "path": "scripts/jetp/build_observatory.py",
+      "sha256": "abdb434819c92abc23a283c5cfe0399cbbf76ef9ff77f0612f697919367e17dd",
+      "inspection_scope": "lines 1–135 and targeted text matches"
+    },
+    {
+      "path": "scripts/jetp/_observatory_data.py",
+      "sha256": "f3efa056997cf6df12c77ce4d785dcb065a7bd5927f98677435278f3cb9c5167",
+      "inspection_scope": "lines 1–85 and targeted text matches"
+    },
+    {
+      "path": "scripts/jetp/corpus_harvest_documents.py",
+      "sha256": "c5c81dd7b5018120ec6c81023c81d20ccabc6dbe4b842d8311a050f2515e4ea3",
+      "inspection_scope": "lines 1–235"
+    },
+    {
+      "path": "scripts/analysis/jetp_observatory.mk",
+      "sha256": "8f81044db270357ac8e81f6004b6ffb0ecc2c5ba6bfd45e9622a4978f281b18c",
+      "inspection_scope": "full file"
+    },
+    {
+      "path": "config/jetp_tracking.yaml",
+      "sha256": "fd11109129c459c0e968a4a449d7b3783f1f422e4730de133778eb3a99b2e9d2",
+      "inspection_scope": "full file"
+    },
+    {
+      "path": "data/jetp/projects.csv",
+      "sha256": "aa048ed7ba496ae698ced9d5906ab11ebc318403a03afc3e525c75b7a888a540",
+      "inspection_scope": "header only",
+      "header_sha256": "9e46893f7f60b750e6031149eae54d6ddea4eae5d41d52bb42162352cf3cd7c0"
+    },
+    {
+      "path": "data/jetp/events.csv",
+      "sha256": "dfe8a635c4f6408fecea2f17bf9a50fc16449f16e961457cebf64b6552c42062",
+      "inspection_scope": "header only",
+      "header_sha256": "0b055cd5b2e78ecd9b3688e405b9bd1b750ce2a1c8cd879118a24ea5ee629edc"
+    },
+    {
+      "path": "data/jetp/implementation-events.csv",
+      "sha256": "aca4d7d2a773919b12de872cd2436040c449a52c1d30e0024cd7d8b48300043d",
+      "inspection_scope": "header only",
+      "header_sha256": "084bceb799c74fd729b0f25e6b08a99264ddd0d99dff3378768d97ae6c9bc432"
+    },
+    {
+      "path": "data/jetp/event-timing.csv",
+      "sha256": "e6ef01bb8f854307b6a0b15ca9749e18669041671bdfebb0c76113918e567071",
+      "inspection_scope": "header only",
+      "header_sha256": "6188e203bedcde99a6a40e9604256632df41e19b6750b209eb06539bf58e7655"
+    },
+    {
+      "path": "data/jetp/sources.csv",
+      "sha256": "f07be2a2a253560a2b065c60b4ff9e69d8a688151d246ea314ddb3a7902403f3",
+      "inspection_scope": "header only",
+      "header_sha256": "53f6c78e8853d6b466f6d459933d4e6c690cdb4c65511d924aed1962021af863"
+    },
+    {
+      "path": "data/jetp/manifest.csv",
+      "sha256": "6de8f6510723ff776ba6ea3980c01edf98fdae59fab569cc570aab06e4307660",
+      "inspection_scope": "header only",
+      "header_sha256": "7a46acc6297fea6a9a532c430746e9bc97c95668488c160b13c04aa4d3155315"
+    },
+    {
+      "path": "data/jetp/project-coverage.csv",
+      "sha256": "56c62b10723b4e0c9c350160b920be865168449b2ee2a7a44ef35c0a00d428b3",
+      "inspection_scope": "header only",
+      "header_sha256": "e254c5dd1ca36c0f9ff29dceb6607d6f4ec735c04f76250745990cce4a64c03f"
+    },
+    {
+      "path": "data/jetp/dry-searches.csv",
+      "sha256": "73b38b325614c9baf2e85e7abf49f3abecf03ae364e130d36b3c85e8c4db0e99",
+      "inspection_scope": "header only",
+      "header_sha256": "91211b51221181db281a03971e11a8ca69efa6ef7ff33bfe72e347ea7604b52b"
+    },
+    {
+      "path": "data/jetp/source-claims.csv",
+      "sha256": "2c6975af75d2022d994318e2925d846fb64363a248974a7c247ee6ebd421287a",
+      "inspection_scope": "header only",
+      "header_sha256": "d0b91da8471e2d74f75126bc0e5d00d1a1ab25d89d3f1a3bb813a62ba4263319"
+    },
+    {
+      "path": "data/jetp/plan-projects.csv",
+      "sha256": "723b24f1e67da7420122bede26a997b002d2ff9683f3e7623da8c74f372ba5ca",
+      "inspection_scope": "header only",
+      "header_sha256": "99cfa992b6d9c04a06f67dd4636cb608c92ee9e49820ae0ec0f7ce24338573dd"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "edd10bf3a74ecfc84cccfcf1092f349574a6b318a7376e9fde1204f3358a2b89",
+      "inspection_scope": "full file"
+    },
+    {
+      "path": ".claude/rules/architecture.md",
+      "sha256": "419d2957f7fdbfd9671ff8f0c7bad0bcc17362fb021a8aca191db021b0463802",
+      "inspection_scope": "full file"
+    },
+    {
+      "path": ".claude/rules/workflow.md",
+      "sha256": "d6d093d4b055d9e89e2cc3a31eaf4b29b8447ce28a51c0a3e1b82719a07cbdef",
+      "inspection_scope": "full file"
+    },
+    {
+      "path": ".claude/rules/review-checklist.md",
+      "sha256": "e33aa85cc1a3e2221e01a41412dd22dfb8e81485661d3adfbd24ea598070f2cd",
+      "inspection_scope": "full file"
+    },
+    {
+      "path": ".claude/rules/jetp-research.md",
+      "sha256": "b8e7a952f53a769ba363d2377375cb9877d0b07594ff916720ae4851fc04001c",
+      "inspection_scope": "full file"
+    },
+    {
+      "path": ".claude/rules/writing.md",
+      "sha256": "03ef97341ca4f5c64c7b26736e7f8eda5b41924db87c6c5607079e2a670595e1",
+      "inspection_scope": "full file"
+    },
+    {
+      "path": ".claude/rules/git.md",
+      "sha256": "d28154b8cfcfe9f83fae1745d8873235eca23d6e899301276742278a21f122fc",
+      "inspection_scope": "full file"
+    }
+  ],
+  "report_path": "docs/jetp-backend-review-2026-09-14/astra-revision4.md",
+  "report_sha256": "a32d0b916de0e1619375b5cdb4723e788de0d45ad11d7a9d020c94b712f2b302",
+  "verification": "Parent confirmed the omitted route/instance distinction in both occurrence-key statements; design unchanged. Proposed schemas remain unimplemented."
+}
