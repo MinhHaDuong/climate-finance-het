@@ -6,7 +6,7 @@ First red commit `c680ae49` failed both the component/date and pipeline/financin
 acceptance tests under `make check-fast`; a third test rejected flattened date
 pairing. Green commit `1824b9df` passed all three. The final suite additionally
 checks status-independent sample selection and blank unsupported historical
-membership denominators (`tests/test_jetp_fcdo_pilot.py`, six named tests).
+membership denominators (`tests/test_jetp_fcdo_pilot.py`, six initial named tests).
 
 A separate read-only scientific reviewer independently parsed the original
 catalogue and structured payloads and reran the first three acceptance tests
@@ -64,7 +64,7 @@ semantic findings. The existing ruff adherence test covers the new calculation.
 
 Final fast gate after the base rebase and cohort missingness refinement: **1,803
 passed, 12 skipped**. The 183 tests covering the pilot plus upstream changed
-modules also passed. The final acceptance module contains six tests.
+modules also passed. The acceptance module contained six tests at that pre-review point.
 
 The mandatory full run completed: **2,591 passed, 94 skipped, 18 failed** in
 411 seconds. These failures were investigated rather than treated as a green
@@ -84,3 +84,29 @@ through the machine's configured local `padme` remote. The first upload attempt
 using the repository SSH URL failed; copying the existing machine-local DVC
 configuration restored the intended route. No additional research requests
 were made.
+
+## PR review and corrected evidence
+
+At stable PR revision `730f94e8`, the complete review run passed **2,734 tests,
+51 skipped** in 230 seconds. Command: `PATH=.venv/bin:$PATH UV_NO_SYNC=1
+UV_OFFLINE=1 RUFF_CACHE_DIR=/tmp/t0739-ruff MYPY_CACHE_DIR=/tmp/t0739-mypy
+make check PYTHON=/tmp/jetp-audit-0735/.venv/bin/python`, with required local
+filesystem/socket permissions. The earlier full-run failures above are historical
+environment diagnostics, not the final result on that revision. The latest
+adherence run before that PR passed **333 tests, 12 skipped**.
+
+The five-perspective round-one review found a damaged full Git ID caused by
+replacing an eight-character prefix during rebase metadata editing; a bare-Python
+command assumption; missing actual-start rows for planned-only pipeline records;
+and a generic downstream matrix. These were corrected. All 51 recorded
+`git_sha:path` pairs now resolve and match their SHA-256; the audit files are
+pinned to the genuine initial-base revision rather than a rewritten transient
+test commit. The offline command names `.venv/bin/python`. Every pipeline
+challenge has an explicit unknown actual-start event. Reviewed document events
+retain their stage, including hypothetical validated approvals. The matrix now
+specifies each candidate's own population, clock, comparison gap and next evidence.
+
+Regression commit `5f39d006` first demonstrated three failing tests; all nine
+acceptance/provenance tests then passed after correction (the Git-object test
+is integration-tier). The independent scientific verdict and observed dates,
+selection, denominators and request count did not change.

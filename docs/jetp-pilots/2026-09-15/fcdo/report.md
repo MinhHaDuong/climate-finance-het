@@ -58,7 +58,7 @@ The next discriminating evidence is a programme-ID-linked dated approval/busines
 DVC-tracked large tables are delivered at their protocol paths via adjacent `.dvc` pointers; `dvc pull` restores them and the separate originals bundle. No canonical data are changed. Run from the repository root with the verified audit environment (or equivalent project environment):
 
 ```bash
-python docs/jetp-pilots/2026-09-15/fcdo/calculate.py \
+.venv/bin/python docs/jetp-pilots/2026-09-15/fcdo/calculate.py \
   --input data/jetp/audit-evidence/0735-round3 \
   --new-archive data/jetp/audit-evidence/0739-pilot \
   --assessment docs/jetp-pilots/2026-09-15/fcdo/document-assessment.csv \

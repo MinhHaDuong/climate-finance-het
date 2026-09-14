@@ -239,41 +239,7 @@ def run(archive, output, new_archive=None, assessment_path=None, evidence_path=N
                 evidence_id=ident if detail else "catalogue",
             )
         )
-        dates = structured(detail, "activity-date")
-        for number, date in enumerate(dates):
-            stage = {
-                "1": "planned_start",
-                "2": "actual_start",
-                "3": "planned_end",
-                "4": "actual_end",
-            }.get(str(date.get("type")), "unknown")
-            events.append(
-                event(
-                    ident,
-                    stage,
-                    "json.activity-date[" + str(number) + "]",
-                    date,
-                    date.get("iso-date", ""),
-                    "day",
-                    ident,
-                    "source_reported_activity_date",
-                    "",
-                )
-            )
-        if not dates:
-            events.append(
-                event(
-                    ident,
-                    "actual_start",
-                    "activity_date_type;activity_date_iso_date",
-                    "",
-                    "",
-                    "",
-                    "catalogue",
-                    "unvalidated",
-                    "structured dates unavailable; parallel arrays not paired",
-                )
-            )
+        events.extend(activity_events(ident, detail))
         for number, transaction in enumerate(structured(detail, "transaction")):
             events.append(
                 event(
@@ -305,19 +271,7 @@ def run(archive, output, new_archive=None, assessment_path=None, evidence_path=N
                 )
     for assessment in assessments:
         if assessment["validates_stage"] == "true":
-            events.append(
-                event(
-                    assessment["case_id"],
-                    "actual_start",
-                    assessment["locator"],
-                    assessment["normalized_date"],
-                    assessment["normalized_date"],
-                    "day",
-                    assessment["evidence_id"],
-                    "document_corroborated_activity_start",
-                    "",
-                )
-            )
+            events.append(assessment_event(assessment))
     write_csv(output / "units.csv", units)
     write_csv(output / "events.csv", events)
     evidence.extend(csv.DictReader(evidence_path.open()) if evidence_path else [])
@@ -385,6 +339,70 @@ def run(archive, output, new_archive=None, assessment_path=None, evidence_path=N
         frozen_instrument="missing: catalogue projection omitted finance type",
     )
     (output / "profile.json").write_text(json.dumps(profile, indent=2) + "\n")
+
+
+def activity_events(ident, detail):
+    events = []
+    dates = structured(detail, "activity-date")
+    for number, date in enumerate(dates):
+        stage = {
+            "1": "planned_start",
+            "2": "actual_start",
+            "3": "planned_end",
+            "4": "actual_end",
+        }.get(str(date.get("type")), "unknown")
+        events.append(
+            event(
+                ident,
+                stage,
+                "json.activity-date[" + str(number) + "]",
+                date,
+                date.get("iso-date", ""),
+                "day",
+                ident,
+                "source_reported_activity_date",
+                "",
+            )
+        )
+    if not any(str(date.get("type")) == "2" for date in dates):
+        events.append(
+            event(
+                ident,
+                "actual_start",
+                "json.activity-date"
+                if dates
+                else "activity_date_type;activity_date_iso_date",
+                "",
+                "",
+                "",
+                ident if detail else "catalogue",
+                "unvalidated",
+                "actual start absent from structured activity dates"
+                if dates
+                else "structured dates unavailable; parallel arrays not paired",
+            )
+        )
+    return events
+
+
+def assessment_event(assessment):
+    stage = "actual_start" if assessment["stage"] == "start" else assessment["stage"]
+    validation = (
+        "document_corroborated_activity_start"
+        if stage == "actual_start"
+        else "document_corroborated_" + stage
+    )
+    return event(
+        assessment["case_id"],
+        stage,
+        assessment["locator"],
+        assessment["normalized_date"],
+        assessment["normalized_date"],
+        "day",
+        assessment["evidence_id"],
+        validation,
+        "",
+    )
 
 
 def entry_cohort(record, detail):
