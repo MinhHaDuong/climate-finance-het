@@ -4,7 +4,7 @@ import hashlib
 from copy import deepcopy
 
 import pytest
-from jetp._contracts import ContractError
+from jetp._contracts import ContractError, validate_evidence_tuple
 from test_jetp_contracts import (
     AUGUST,
     JULY,
@@ -58,6 +58,20 @@ def test_evidence_tuple_round_trips_matching_bytes_edition_extraction_and_locato
     exported = store.to_dict()
     find(exported['records'], 'evidence')['document_sha256'] = OTHER_DIGEST
     assert find(store.to_dict()['records'], 'evidence')['document_sha256'] == DIGEST
+
+
+def test_tuple_bridge_validates_material_without_fabricating_legacy_admission():
+    records = evidence_records()
+    for record in records:
+        record['recorded_at'] = None
+    original = deepcopy(records)
+    validate_evidence_tuple(find(records, 'evidence'), find(records, 'acquisition'),
+                            find(records, 'extraction'), records)
+    assert records == original
+    find(records, 'extraction')['document_sha256'] = OTHER_DIGEST
+    with pytest.raises(ContractError, match='hash'):
+        validate_evidence_tuple(find(records, 'evidence'), find(records, 'acquisition'),
+                                find(records, 'extraction'), records)
 
 
 @pytest.mark.parametrize('kind', ['acquisition', 'extraction', 'edition_snapshot', 'evidence'])

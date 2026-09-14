@@ -206,6 +206,18 @@ def _acyclic(edges: dict[tuple, list[tuple]], label: str) -> None:
         visit(node)
 
 
+def validate_evidence_tuple(evidence: dict, acquisition: dict, extraction: dict,
+                            edition_snapshots: Collection[dict]) -> None:
+    """Validate exact material references without asserting admission or review."""
+    digest = evidence['document_sha256']
+    _require(acquisition.get('document_sha256') == digest, 'evidence acquisition hash mismatch')
+    _require(extraction['document_sha256'] == digest, 'evidence extraction hash mismatch')
+    _require(evidence['locator'] in extraction['locators'], 'evidence locator not in extraction')
+    _require(any(r['record_kind'] == 'edition_snapshot' and r['edition'] == evidence['edition']
+                 and r['document_sha256'] == digest for r in edition_snapshots),
+             'evidence hash not mapped to edition')
+
+
 class ContractStore:
     """Validated immutable input copy; all query results are independent copies."""
 
@@ -342,13 +354,7 @@ class ContractStore:
     def _validate_evidence(self, record: dict) -> None:
         acquisition = self._resolve(record['acquisition'], {'acquisition'})
         extraction = self._resolve(record['extraction'], {'extraction'})
-        digest = record['document_sha256']
-        _require(acquisition.get('document_sha256') == digest, 'evidence acquisition hash mismatch')
-        _require(extraction['document_sha256'] == digest, 'evidence extraction hash mismatch')
-        _require(record['locator'] in extraction['locators'], 'evidence locator not in extraction')
-        _require(any(r['record_kind'] == 'edition_snapshot' and r['edition'] == record['edition']
-                     and r['document_sha256'] == digest for r in self._records.values()),
-                 'evidence hash not mapped to edition')
+        validate_evidence_tuple(record, acquisition, extraction, self._records.values())
         target = self._resolve(record['target'], set(REQUIRED) - {'adjudication'})
         if target['record_kind'] in ASSERTIONS:
             _require({'record_kind': 'evidence', 'record_id': record['record_id']} in target.get('evidence', []),
