@@ -1,0 +1,10 @@
+{
+  "adherence": "PASS",
+  "branch": "t0737-afd-feasibility",
+  "cheap_static_checks": "Touched module imports and five matching acceptance tests pass; no manuscript references changed",
+  "suite": "333 passed, 12 skipped",
+  "mechanical_failures": [],
+  "semantic_findings": [],
+  "untested_rules": [],
+  "notes": "Pilot protocol explicitly permits verified existing interpreter; no rule files or canonical pipeline data changed. Scientific methodology independently reviewed."
+}

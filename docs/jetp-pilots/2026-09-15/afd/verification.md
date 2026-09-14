@@ -58,3 +58,12 @@ JETP tracking instructions additionally reserve pushes for padme after review.
 All generated CSVs and response bodies remain local and hash-addressed. The PR
 is reproducible from the existing local source bundles, but remote replication
 has not been verified. This limitation is separate from the scientific DEFER.
+
+Naive-mapping mutation check deliberately substituted cancellation/nonpayment
+for disappearance, parent acceptance/value-date imputation for exact-ID joins,
+and minimum XML payment endpoints for first-payment dates. All four corresponding
+acceptance functions failed with AssertionError; the corrected implementations
+pass. The per-test outcome is in `naive-mapping-check.json`.
+
+Pre-PR adherence: **333 passed, 12 skipped**, import and matching-module checks
+passed; structured verdict in `adherence.json`. No unresolved adherence blocker.

@@ -118,3 +118,11 @@ its disclosure-removal record; CTN129703/CZZ276103 contract amendments; approval
 records for reversals and missing awards; and the transaction transformation
 specification defining annual periods and negative corrections. New retrieval
 requires a separately bounded assignment, not extension of this exhausted cap.
+
+The machine-readable [design matrix](design-feasibility.csv),
+[source-specific annual cohorts](source-cohorts.csv),
+[full-export profile](full-export-profile.json) and
+[independent verification](verification.md) carry the evidence and gate limits
+needed by the coordinator. The profile includes all 2,319 portal projects and
+9,696 portal transactions; country labels and product codes are not silently
+collapsed into diagnostic-country totals.

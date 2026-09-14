@@ -1,0 +1,6 @@
+{
+  "test_cma123501_disappearance_is_not_an_outcome": "naive mapping rejected (AssertionError)",
+  "test_exact_payment_is_preserved_and_no_uncovered_interval": "naive mapping rejected (AssertionError)",
+  "test_value_date_never_imputes_award_and_parent_never_joins": "naive mapping rejected (AssertionError)",
+  "test_all_193_legacy_exact_payment_dates_survive": "naive mapping rejected (AssertionError)"
+}
