@@ -3957,7 +3957,7 @@
       "sha256": "63a341f8822afdf5bbe2f6bf21312865b2962bc08126101b93043379a55555ef"
     },
     "scripts/jetp/_source_watch.py": {
-      "sha256": "775ab8c32e5a3ad0387a715445be58b2c7497d560b1af617f5fee10031875d24"
+      "sha256": "cf1087121d19abe3ba0aec0b0d7e29f5d7a7e0e6957ad500db1a5fa1d0950e67"
     },
     "scripts/jetp/build_source_sweep.py": {
       "sha256": "e9b669241f3feb7638b51422a5151cfe3360c7c0e6704e9b60c14cc100fa9fb7"

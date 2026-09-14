@@ -7,11 +7,11 @@ plans and review candidates; it has no publication or evidence-admission operati
 ## Actual bounded rehearsal
 
 `data/jetp/releases/source-sweep-0770.json` was generated with code/input commit
-`2c5d03ed` from the committed source registry, acquisition manifests and source
+`f2356dbe` from the committed source registry, acquisition manifests and source
 claims. It pins their hashes, the relevant implementation files, the document DVC
 pointer and `config/jetp-source-watches.yaml`. The artifact is 189,725 bytes, below
 the 512,000-byte Git cap; SHA-256:
-`d632bf7b130d2b4f9fd5a16278ad5de174eb5a89dbbe5441c3c4bf190ba2015c`.
+`dcccf301fbacaa6bd29cda1800bf6b61a67ac6874ac9c06d0b771b329f83b90e`.
 
 Four proposed document watches cover the Vietnam RMP, South Africa Q1 2026
 report, Indonesia 2025 progress report and Senegal official investment-plan
