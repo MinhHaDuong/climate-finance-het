@@ -20,6 +20,7 @@ def test_complete_flow_replaces_itemised_payments_and_duplicate_report_once():
     account = reconcile_gross_disbursement(
         agreement_id='vnm-agreement-a', perimeter_id='vnm-jetp', currency='EUR',
         opening=dict(id='opening', amount='0', currency='EUR', cutoff='2024-03-31',
+        agreement_id='vnm-agreement-a', perimeter_id='vnm-jetp',
                      basis='gross_disbursement', accepted=True, review_decision_id='opening-review',
                      evidence_ids=['opening-evidence']),
         movements=[payment('payment-1a', 'payment-1', 5),
@@ -34,6 +35,7 @@ def test_complete_flow_replaces_itemised_payments_and_duplicate_report_once():
         coverage=dict(complete=True, reviewer='fixture-reviewer', decision_id='coverage-q2'),
         cutoff='2024-06-30',
         reported_closing=dict(id='closing', amount='15', currency='EUR', cutoff='2024-06-30',
+        agreement_id='vnm-agreement-a', perimeter_id='vnm-jetp',
                               basis='gross_disbursement', accepted=True, review_decision_id='opening-review',
                      evidence_ids=['opening-evidence']),
     )
@@ -53,6 +55,7 @@ def test_missing_opening_partial_coverage_or_incompatible_currency_blocks_exact_
     kwargs = dict(
         agreement_id='vnm-agreement-a', perimeter_id='vnm-jetp', currency='EUR',
         opening=dict(id='opening', amount='0', currency='EUR', cutoff='2024-03-31',
+        agreement_id='vnm-agreement-a', perimeter_id='vnm-jetp',
                      basis='gross_disbursement', accepted=True, review_decision_id='opening-review',
                      evidence_ids=['opening-evidence']),
         movements=[payment('payment-1', 'payment-1', 5)], flows=[],
@@ -70,6 +73,7 @@ def test_overlapping_flow_and_uncovered_movement_are_rejected():
         reconcile_gross_disbursement(
             agreement_id='vnm-agreement-a', perimeter_id='vnm-jetp', currency='EUR',
             opening=dict(id='opening', amount='0', currency='EUR', cutoff='2024-03-31',
+            agreement_id='vnm-agreement-a', perimeter_id='vnm-jetp',
                          basis='gross_disbursement', accepted=True, review_decision_id='opening-review',
                      evidence_ids=['opening-evidence']),
             movements=[payment('payment-1', 'payment-1', 5)],
@@ -98,6 +102,7 @@ def test_reported_zero_without_reviewed_evidence_cannot_be_an_opening():
     result = reconcile_gross_disbursement(
         agreement_id='vnm-agreement-a', perimeter_id='vnm-jetp', currency='EUR',
         opening=dict(id='reported-zero', amount='0', currency='EUR', cutoff='2024-03-31',
+        agreement_id='vnm-agreement-a', perimeter_id='vnm-jetp',
                      basis='gross_disbursement', accepted=True),
         movements=[], flows=[],
         coverage=dict(complete=True, reviewer='fixture-reviewer', decision_id='coverage-q2'),
@@ -116,3 +121,41 @@ def test_vnm_migration_has_a_documented_no_payment_account_result():
     assert any('no zero payment history or complete observation coverage' in reason for reason in reasons)
     assert 'reported zero would not repair this absence' in report
     assert 'no reconstructed closing, residual, or payment subtotal is published' in report
+
+
+@pytest.mark.parametrize('field, value', [
+    ('agreement_id', None), ('perimeter_id', None),
+    ('agreement_id', 'other-agreement'), ('perimeter_id', 'other-perimeter'),
+])
+def test_missing_or_mismatched_account_ownership_cannot_close(field, value):
+    movement = payment('payment-1', 'payment-1', 5)
+    if value is None:
+        del movement[field]
+    else:
+        movement[field] = value
+    result = reconcile_gross_disbursement(
+        agreement_id='vnm-agreement-a', perimeter_id='vnm-jetp', currency='EUR',
+        opening=dict(id='opening', amount='0', currency='EUR', cutoff='2024-03-31',
+        agreement_id='vnm-agreement-a', perimeter_id='vnm-jetp',
+                     basis='gross_disbursement', accepted=True, review_decision_id='opening-review',
+                     evidence_ids=['opening-evidence']),
+        movements=[movement], flows=[],
+        coverage=dict(complete=True, reviewer='fixture-reviewer', decision_id='coverage-q2'),
+        cutoff='2024-06-30', reported_closing=None,
+    )
+    assert result['status'] == 'unavailable'
+    assert 'movement compatibility' in result['reasons']
+
+
+def test_unknown_selected_flow_id_is_rejected():
+    with pytest.raises(ReconciliationError, match='selected input'):
+        reconcile_gross_disbursement(
+            agreement_id='vnm-agreement-a', perimeter_id='vnm-jetp', currency='EUR',
+            opening=dict(id='opening', amount='0', currency='EUR', cutoff='2024-03-31',
+                         agreement_id='vnm-agreement-a', perimeter_id='vnm-jetp',
+                         basis='gross_disbursement', accepted=True, review_decision_id='opening-review',
+                         evidence_ids=['opening-evidence']),
+            movements=[], flows=[],
+            coverage=dict(complete=True, reviewer='fixture-reviewer', decision_id='coverage-q2'),
+            cutoff='2024-06-30', reported_closing=None, include_flow_ids=['unknown-flow'],
+        )

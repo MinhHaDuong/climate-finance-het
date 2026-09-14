@@ -30,8 +30,8 @@ def _inside(item, opening_cutoff, cutoff, *, start='date', end='date'):
 
 def _compatible(item, *, agreement_id, perimeter_id, currency):
     return (item and item.get('accepted') is True
-            and item.get('agreement_id', agreement_id) == agreement_id
-            and item.get('perimeter_id', perimeter_id) == perimeter_id
+            and item.get('agreement_id') == agreement_id
+            and item.get('perimeter_id') == perimeter_id
             and item.get('currency') == currency
             and item.get('basis') == METRIC_BASIS)
 
@@ -96,6 +96,8 @@ def _compatible_items(items, kind, *, agreement_id, perimeter_id, currency, open
 def _selected(items, requested):
     explicit = requested is not None
     ids = set(requested if explicit else [item['id'] for item in items])
+    if not ids <= {item['id'] for item in items}:
+        raise ReconciliationError('selected input is not compatible')
     return [item for item in items if item['id'] in ids], ids, explicit
 
 
