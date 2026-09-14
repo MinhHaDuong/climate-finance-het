@@ -30,7 +30,7 @@ const STAGE_COLOURS = {
   Need: "#bc9c7d",
   "Not documented": "#dce0d5",
 };
-let overview, countries, comparison, projects;
+let overview, countries, comparison, editions, projects;
 const country = (code) => overview.countries.find((c) => c.code === code);
 const undisclosedCount = () =>
   overview.countries.reduce((total, c) => total + c.undisclosed, 0);
@@ -275,6 +275,11 @@ function comparisonPage(params) {
     );
   update();
 }
+function editionHistoryPage() {
+  const rows = editions.editions;
+  main.innerHTML = header("Monthly editions", "What changed, and what did not.", "Each edition is frozen after review. A failed refresh remains a recorded gap and never removes evidence from an earlier download.") +
+    `<div class="table-wrap"><table><thead><tr><th>Edition</th><th>Evidence cutoff</th><th>Prepared</th><th>State</th><th>Published</th></tr></thead><tbody>${rows.map((row) => `<tr><td>${esc(row.edition)}</td><td>${date(row.observation_cutoff)}</td><td>${date(row.release_prepared_date)}</td><td>${esc(row.release_state)}</td><td>${row.publication_date ? date(row.publication_date) : "Not published"}</td></tr>`).join("")}</tbody></table></div><p class="note">A correction uses a new <code>YYYY-MM-rN</code> edition and preserves the prior archive. Later reports are labelled by their original event date; they are not treated as new events.</p><div class="downloads"><a class="button light" href="data/editions.json" download>Download release history ↓</a></div>`;
+}
 function methodsPage() {
   main.innerHTML =
     header(
@@ -309,6 +314,7 @@ function render() {
   else if (page === "projects") cataloguePage(params);
   else if (page === "project") projectPage(decodeURIComponent(id || ""));
   else if (page === "comparison") comparisonPage(params);
+  else if (page === "editions") editionHistoryPage();
   else methodsPage();
   document.title =
     (page === "overview"
@@ -330,9 +336,10 @@ async function start() {
       if (!response.ok) throw Error(`${file}: ${response.status}`);
       return response.json();
     };
-    [overview, comparison] = await Promise.all([
+    [overview, comparison, editions] = await Promise.all([
       load("overview"),
       load("comparison"),
+      load("editions").catch(() => ({ editions: [] })),
     ]);
     countries = Object.fromEntries(
       await Promise.all(
