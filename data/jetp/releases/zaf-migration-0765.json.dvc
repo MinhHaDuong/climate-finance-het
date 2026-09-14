@@ -1,0 +1,5 @@
+outs:
+- md5: e1d7cb16488a1665ef9e1bbdec90b96c
+  size: 5728079
+  hash: md5
+  path: zaf-migration-0765.json
