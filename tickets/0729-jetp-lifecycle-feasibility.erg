@@ -98,3 +98,25 @@ accepted/rejected project lists; and comparator exposure histories. A further
 round needs a revised bounded brief. Neither baseline matching nor an absence
 of retrieved allocation rules establishes or refutes causality by itself.
 No design, exposure baseline or primary outcome is frozen by these audits.
+
+## Broader second pass, 14 September 2026
+
+The author requested coverage beyond World Bank, energy and JETP countries.
+The new0735round2report demonstrates ADB/EIB milestone pairs and a downloaded
+AFD export:2080financing IDs,1492project IDs,1911award/signature pairs;366loans
+and1714grants. See `docs/jetp-audits/0735/round2/report.md` in PR1347.
+
+Prioritize an AFD coverage/retention pilot with ADB/EIB complementary histories,
+not a preselected estimator. All AFD rows have signatures, so this export alone
+cannot supply approved-but-unsigned risk sets. Missing payment dates, counterparty
+consent,2024metadata, multi-country rows and seven reversed award/signature pairs
+require investigation. Country location is not JETP attribution or untreated
+status. The source data now warrant a broader feasibility exercise; they do not
+settle identification. Absence of a randomized allocation rule is not a blanket
+rejection of other causal designs.
+
+Next discriminators: an older AFD snapshot and inclusion/removal rules; source
+records for date anomalies; stage-specific baseline populations; lender and
+sector harmonization; broader-country negotiation/parallel-programme exposure.
+Newly archived source bytes are locally DVC-tracked; padme remote replication
+remains pending after connection refusal. No primary protocol is frozen.
