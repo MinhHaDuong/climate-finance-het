@@ -1,0 +1,36 @@
+{
+  "schema_version": "idn-migration-policy/1",
+  "recorded_at": "2026-09-14T20:20:00Z",
+  "recorded_by": "HDMX-coding-agent",
+  "sources": [
+    {
+      "role": "cipp_plan",
+      "source_id": "idn-cipp-2023-cpr-mirror",
+      "retrieved_at": "2026-09-11T20:47:57Z",
+      "document_sha256": "747283facac512780ad757313c493d1080c39705824e72c4b231e87ecb4102b5",
+      "edition_id": "idn-cipp-2023-cpr-mirror",
+      "row_count": 437,
+      "source_status": "secondary_mirror_of_unavailable_official_endpoint"
+    },
+    {
+      "role": "progress_plan_and_approval",
+      "source_id": "idn-jetp-progress-report-2025",
+      "retrieved_at": "2026-09-12T07:12:12Z",
+      "document_sha256": "74fb460fd09e76607e3cff308f5ba2754f2ebd91b0c9b7613c1a041e7b361162",
+      "edition_id": "idn-jetp-progress-report-2025",
+      "row_count": 1142,
+      "source_status": "official_saved_report"
+    }
+  ],
+  "publication_limit_bytes": 512000,
+  "source_regime": [
+    {
+      "topic": "CIPP source role",
+      "rule": "The pinned CIPP PDF is a Climate Policy Radar mirror. The official endpoint was unavailable during the preserved acquisition attempts; the candidate does not represent the mirror as an official retrieval or infer equivalence beyond its saved bytes."
+    },
+    {
+      "topic": "plan and approval meanings",
+      "rule": "Plan inventory estimates, approval events, implementation states and portfolio observations remain separate positions. None establishes a disbursement, and no additive total is generated."
+    }
+  ]
+}

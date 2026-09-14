@@ -50,10 +50,10 @@ def legacy_dispositions(crosswalk: dict, country: str, policies: dict) -> list[d
     originals = {row['legacy_row_id']: row for row in crosswalk['retained']}
     project_ids = {r['row']['project_id'] for r in originals.values()
                    if r['owner'] == 'projects' and r['row'].get('country') == country}
-    event_ids = {r['row']['event_id'] for r in originals.values()
+    event_ids = {r['row'].get('event_id') for r in originals.values()
                  if r['owner'] in {'financial_event', 'implementation_event'}
                  and (r['row'].get('country') == country
-                      or r['row'].get('project_id') in project_ids)}
+                      or r['row'].get('project_id') in project_ids)} - {None}
     result = []
     for mapping in crosswalk['mappings']:
         original = originals[mapping['row_id']]
@@ -74,6 +74,11 @@ def legacy_dispositions(crosswalk: dict, country: str, policies: dict) -> list[d
             'source-claims.csv': 'legacy_claim_needs_measure_review',
             'plan-projects.csv': 'reported_inventory_position'}.get(name)
         policy = policies.get(row.get('observation_id'))
+        # Older country-observation ledgers can have no durable observation_id.
+        # A reviewed, file-wide policy retains those source rows without inventing
+        # an identity from their title, amount or matched event.
+        if policy is None and name.endswith('-observations.csv'):
+            policy = policies.get('__all__')
         if name.endswith('-observations.csv'):
             if not policy:
                 raise ValueError(f"Missing observation disposition: {row.get('observation_id')}")
@@ -89,6 +94,6 @@ def legacy_dispositions(crosswalk: dict, country: str, policies: dict) -> list[d
                        'reason': policy['reason'] if policy else
                            'Original fields and owner retained; no inferred transition or ownership transfer'})
     used = {r['original'].get('observation_id') for r in result}
-    if set(policies) - used:
+    if set(policies) - used - {'__all__'}:
         raise ValueError('Observation policy refers to absent country rows')
     return result
