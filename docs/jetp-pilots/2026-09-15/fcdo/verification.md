@@ -1,0 +1,140 @@
+# Verification of ticket 0739
+
+## Acceptance and independent original check
+
+First red commit `5e21bfb0` failed both the component/date and pipeline/financing
+acceptance tests under `make check-fast`; a third test rejected flattened date
+pairing. Green commit `fc9badc0` passed all three. The final suite additionally
+checks status-independent sample selection and blank unsupported historical
+membership denominators (`tests/test_jetp_fcdo_pilot.py`, six initial named tests).
+
+A separate read-only scientific reviewer independently parsed the original
+catalogue and structured payloads and reran the first three acceptance tests
+(3 passed in 0.02 s). It reproduced 25,282 distinct IDs; hierarchy counts
+7,327/17,955; programme status 4/2/1 counts 6,770/551/6; component counts
+13,748/4,200/7. It reconstructed all 462 ranks independently from the export,
+including the selected 12. Country frame counts: AL25 MA25 IN166 SN16 ZA76
+ID89 VN65. No external reviewer retrieval consumed additional units.
+
+The reviewer checked the component original's own start 2007-02-01 against the
+parent's 2007-03-09, aggregated expenditure 2007-03-31 against first observed
+transfer 2010-08-11, and confirmed first spending remains unknown. It inspected
+both ODT originals as ZIP/XML: completion review `3716713.odt`, content.xml
+zero-based text:p index 4, corroborates 5 July 2007 programme start and March
+2012 review; paragraphs 289/338 discuss procurement without a dated award
+milestone. Intervention Summary `3735372.odt`, paragraph 6, supplies an amount
+and support period, not a dated approval. Document-link indices 1 and 3 in the
+GB-1-107859 payload give exact document linkage and 2014-04-06 publication dates.
+
+Original SHA-256 checks:
+
+- Completion review: `b17b81a35f04b261fbbe7734a8f2253f77e81dcbe4212aa5053619ef42d063e0`.
+- Intervention Summary: `ecf8c2b4ab257c6f3429c3d1ef95f1795cb861c22cf6e3112157348aea8a644c`.
+
+The reviewer also inspected current update/status guidance, found no historical
+retention/census support, and checked table uniqueness/count sums and acquired
+hashes. Its verdict was NARROW for individual programme start, DEFER for
+approval/procurement transitions and historical risk sets.
+
+Two reviewer concerns were corrected: unsupported member/pending missing counts
+are now blank (with an acceptance test), and final document-coverage flags now
+read explicit reviewed assessments rather than preliminary placeholders.
+
+## Offline and repository checks
+
+Both input bundles' DVC directory objects and every local constituent MD5 were
+verified against `6cd6406b227e6860cae66906cce21d9c.dir` and
+`4b1a54b98d1ff7df92afe3e7b95ec07e.dir`. Input SHA-256s and pinned Git revisions
+are in input-manifest.json. The final offline command in report.md regenerated
+all eight outputs byte-for-byte in a separate directory; source originals were
+reused, with no network. New originals have per-file SHA-256 and DVC manifests.
+
+`make check-fast` passed 1,719 tests, with 12 skipped before the two additional
+acceptance tests (which separately passed). Initial missing-document failures
+were resolved by restoring local access to the existing canonical document
+archive; no fixture or canonical bytes were edited.
+
+The `/verify-adherence` mechanical gate used the verified audit interpreter and
+writable lint caches as the protocol permits. No scripts/ module or manuscript
+reference changes required import/reference scanning; the matching acceptance tests passed. The adherence suite (`make lint`) passed 330 tests, 15 skipped, after
+splitting the calculation into smaller functions to satisfy complexity rules.
+No rules or shared architecture changed, so semantic fallback was unnecessary.
+No trace file was supplied. Result: `adherence: PASS`, no mechanical failures or
+semantic findings. The existing ruff adherence test covers the new calculation.
+
+Final fast gate after the base rebase and cohort missingness refinement: **1,803
+passed, 12 skipped**. The 183 tests covering the pilot plus upstream changed
+modules also passed. The acceptance module contained six tests at that pre-review point.
+
+The mandatory full run completed: **2,591 passed, 94 skipped, 18 failed** in
+411 seconds. These failures were investigated rather than treated as a green
+full suite: eight missing-corpus failures, one socket restriction, two isolated
+package-install/cache permission failures, three worktree permission failures,
+two subprocess uv-cache permission failures, one ten-second subprocess timeout,
+and one repeated-archive byte mismatch during concurrent workspace changes.
+All failed checks passed on targeted reruns with local corpus access and the
+required permissions, without code/test changes: corpus acceptance/flow **66
+passed, 14 skipped**; localhost server **1 passed**; remaining affected modules
+and tests **22 passed**. The latter run used `UV_NO_SYNC=1 UV_OFFLINE=1` outside
+the filesystem/socket-restricted sandbox. The byte comparison also passed with
+the workspace stable. No unresolved main-code failure was reproduced.
+
+The named DVC originals/table objects were uploaded successfully (**22 objects**)
+through the machine's configured local `padme` remote. The first upload attempt
+using the repository SSH URL failed; copying the existing machine-local DVC
+configuration restored the intended route. No additional research requests
+were made.
+
+## PR review and corrected evidence
+
+At stable PR revision `730f94e8`, the complete review run passed **2,734 tests,
+51 skipped** in 230 seconds. Command: `PATH=.venv/bin:$PATH UV_NO_SYNC=1
+UV_OFFLINE=1 RUFF_CACHE_DIR=/tmp/t0739-ruff MYPY_CACHE_DIR=/tmp/t0739-mypy
+make check PYTHON=/tmp/jetp-audit-0735/.venv/bin/python`, with required local
+filesystem/socket permissions. The earlier full-run failures above are historical
+environment diagnostics, not the final result on that revision. The latest
+adherence run before that PR passed **333 tests, 12 skipped**.
+
+The five-perspective round-one review found a damaged full Git ID caused by
+replacing an eight-character prefix during rebase metadata editing; a bare-Python
+command assumption; missing actual-start rows for planned-only pipeline records;
+and a generic downstream matrix. These were corrected. All 51 recorded
+`git_sha:path` pairs now resolve and match their SHA-256; the audit files are
+pinned to the genuine initial-base revision rather than a rewritten transient
+test commit. The offline command names `.venv/bin/python`. Every pipeline
+challenge has an explicit unknown actual-start event. Reviewed document events
+retain their stage, including hypothetical validated approvals. The matrix now
+specifies each candidate's own population, clock, comparison gap and next evidence.
+
+Regression commit `13895b34` first demonstrated three failing tests; all nine
+acceptance/provenance tests then passed after correction (the Git-object test
+is integration-tier). The independent scientific verdict and observed dates,
+selection, denominators and request count did not change.
+
+Main advanced during the second review (Vietnam inventory PR #1371). The
+branch was rebased to that current base before the final gate; no FCDO file
+conflicts occurred. The premature run on the previous base was stopped after
+1,028 passes and is not counted as a completed gate. Input revision IDs remain
+pinned to their genuine source commits, and the freeze pointer was updated as
+a complete object ID (not by prefix replacement).
+
+## Final-head qualification
+
+The complete suite was rerun at FCDO code-and-output head
+`ab6fa762f827a177cda169e8b4f6810f90129fdb`: **2,801 passed, 88 skipped,
+16 failed** in 272.27 seconds. This is not a clean suite result. The retained
+log is `/tmp/t1374-fcdo-full-final.log`. The failures are unavailable corpus
+artifacts, four unavailable Indonesia/Vietnam/South Africa document objects,
+a CUDA allocation failure, offline `uv` subprocesses without `numpy`, and the
+integration worktree's absent local `.venv`; none exercises or fails the FCDO
+pilot.
+
+The descendant `b6bf145442ce72aced55da1b09f18260dc67c771` changes only the
+three FCDO DVC pointers so they identify the LF bytes emitted at the qualified
+code head. The pointers were regenerated from the pinned inputs, pushed, and
+recovered in a fresh worktree with matching MD5 and SHA-256 values. No Python
+or test-bearing file changed in that descendant, so the full suite was not
+rerun for the pointer-only delta. The final focused FCDO module passed **10**
+tests; the final lint run passed **330**, with **13 skipped**. The final fast
+run had **1,900 passed, 10 skipped**, plus two unrelated missing Indonesia and
+Vietnam document objects.
