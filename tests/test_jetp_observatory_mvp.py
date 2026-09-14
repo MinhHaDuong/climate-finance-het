@@ -222,4 +222,5 @@ def test_static_renderer_exposes_release_history_and_monthly_change_route():
     renderer = (root / 'deliverables/jetp-observatory/app.js').read_text()
     assert 'editionHistoryPage' in renderer
     assert 'data/editions.json' in renderer
+    assert 'catch(() => ({ editions: [] }))' in renderer
     assert '#editions' in (root / 'deliverables/jetp-observatory/index.html').read_text()

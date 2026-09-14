@@ -339,7 +339,7 @@ async function start() {
     [overview, comparison, editions] = await Promise.all([
       load("overview"),
       load("comparison"),
-      load("editions"),
+      load("editions").catch(() => ({ editions: [] })),
     ]);
     countries = Object.fromEntries(
       await Promise.all(
