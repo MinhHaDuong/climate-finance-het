@@ -79,6 +79,18 @@ def check_site(url, output):
             page.goto(url + '/#country/' + code)
             page.wait_for_selector('.markdown h2')
             assert page.locator('.markdown').inner_text().strip()
+        # Hash routes must remain usable with a keyboard and expose the current
+        # location to assistive technology, including a restored release.
+        page.goto(url + '/#country/IDN')
+        page.wait_for_selector('.page-head h1')
+        active = page.locator('nav a[aria-current="page"]')
+        assert active.count() == 1
+        assert active.get_attribute('href') == '#countries'
+        page.locator('.skip').focus()
+        page.keyboard.press('Enter')
+        assert page.evaluate('document.activeElement.id') == 'main'
+        page.keyboard.press('Tab')
+        assert page.evaluate('document.activeElement.tagName') == 'A'
         page.set_viewport_size({'width': 390, 'height': 844})
         for route in ('overview', 'countries', 'projects', 'comparison', 'methods'):
             page.goto(url + '/#' + route)
