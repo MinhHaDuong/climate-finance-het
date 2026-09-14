@@ -12,13 +12,31 @@ from jetp._compatibility import MVP_VIEWS, read_mvp_view
 
 def candidate_fixture():
     """Small structurally complete candidate, without real-data extraction."""
+    digest = 'a' * 64
+    edition = {'record_kind': 'edition', 'record_id': 'fixture'}
+    evidence = {'document_sha256': digest, 'edition': edition, 'locator': 'fixture:1'}
     return dict(schema_version='country-migration/1', country='VNM',
                 admission_status='unadmitted_candidate', writer_owner='legacy',
-                publication_mode='legacy', inputs={}, recipe_inputs={}, recovery_inputs={},
-                selected_acquisition={}, edition_snapshot={}, extraction={},
-                inventory_positions=[], legacy_dispositions=[], legacy_position_candidates=[],
-                legacy_evidence=[], legacy_unresolved=[], inventory_boundaries=[],
-                identity_review=[], mvp_views={view: {} for view in MVP_VIEWS}, comparison={})
+                publication_mode='legacy', inputs={'fixture': {}}, recipe_inputs={'fixture': digest},
+                recovery_inputs={'fixture': {}}, selected_acquisition={'document_sha256': digest},
+                edition_snapshot={'record_kind': 'edition_snapshot', 'edition': edition,
+                                  'document_sha256': digest},
+                extraction={'document_sha256': digest, 'locators': ['fixture:1']},
+                inventory_positions=[{'annex': 'fixture', 'ordinal': 1,
+                                      'transition_date': None, 'payment_amount': None,
+                                      'evidence': evidence}],
+                legacy_dispositions=[{'disposition': 'retained_legacy_authority',
+                                      'original': {'project_id': 'fixture'}}],
+                legacy_position_candidates=[{'record_id': 'fixture'}],
+                legacy_evidence=[{'legacy_row_id': 'fixture'}],
+                legacy_unresolved=[{'legacy_row_id': 'fixture'}],
+                inventory_boundaries=[{'annex': 'fixture', 'row_count': 1,
+                                       'disposition': 'selected'}],
+                identity_review=[{'fixture': True}],
+                mvp_views={**{view: {'projects': [], 'record_count': 24, 'country': {}}
+                              for view in {'ZAF', 'IDN', 'VNM', 'SEN'}},
+                           'overview': {'countries': 4}, 'comparison': {'projects': []}},
+                comparison={'reason': 'fixture'})
 
 
 @pytest.mark.parametrize('alias_kind', ['direct', 'symlink', 'hardlink'])
@@ -115,6 +133,25 @@ def test_malformed_candidate_markers_are_not_replacement_permission(
     with pytest.raises(ValueError):
         builder.write_migration(tmp_path, output)
     assert target.read_bytes() == before
+    assert output.read_bytes() == before
+
+
+def test_empty_top_level_lookalike_is_rejected_before_build(tmp_path, monkeypatch):
+    """Identifying fields alone never authorize replacing an existing file."""
+    output = tmp_path / 'empty-descriptor.json'
+    candidate = candidate_fixture()
+    for key, value in candidate.items():
+        if isinstance(value, (dict, list)):
+            candidate[key] = type(value)()
+    output.write_text(json.dumps(candidate))
+    before = output.read_bytes()
+
+    def unexpected_build(*args, **kwargs):
+        pytest.fail('Empty predecessor must be rejected before building')
+
+    monkeypatch.setattr(builder, 'build_migration', unexpected_build)
+    with pytest.raises(ValueError):
+        builder.write_migration(tmp_path, output)
     assert output.read_bytes() == before
 
 
