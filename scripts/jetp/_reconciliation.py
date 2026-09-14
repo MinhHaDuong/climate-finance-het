@@ -7,7 +7,6 @@ nor writes the canonical observatory payload.
 
 from decimal import Decimal, InvalidOperation
 
-
 METRIC_BASIS = 'gross_disbursement'
 
 
@@ -39,25 +38,14 @@ def _compatible(item, *, agreement_id, perimeter_id, currency):
 
 def _unavailable(reasons, *, included_ids=None, excluded_ids=None, subtotal='0'):
     return {
-        'status': 'unavailable',
-        'reasons': sorted(set(reasons)),
-        'included_ids': included_ids or [],
-        'excluded_ids': excluded_ids or [],
-        'documented_subtotal': Decimal(subtotal),
-        'reconstructed_closing': None,
+        'status': 'unavailable', 'reasons': sorted(set(reasons)),
+        'included_ids': included_ids or [], 'excluded_ids': excluded_ids or [],
+        'documented_subtotal': Decimal(subtotal), 'reconstructed_closing': None,
         'residual': None,
     }
 
 
-def reconcile_gross_disbursement(*, agreement_id, perimeter_id, currency, opening,
-                                  movements, flows, coverage, cutoff, reported_closing,
-                                  include_flow_ids=None, include_movement_ids=None):
-    """Construct one bounded original-currency gross-disbursement account.
-
-    The caller supplies accepted agreement/perimeter/occurrence decisions.  A flow
-    replaces, rather than adds to, each explicitly covered occurrence.  The result
-    is exact only with a reviewed opening and complete movement coverage.
-    """
+def _opening_and_coverage(opening, coverage, *, agreement_id, perimeter_id, currency, cutoff):
     reasons = []
     if not opening:
         reasons.append('opening')
@@ -74,86 +62,97 @@ def reconcile_gross_disbursement(*, agreement_id, perimeter_id, currency, openin
         reasons.append('coverage decision')
     elif coverage.get('complete') is not True:
         reasons.append('coverage')
+    return opening_cutoff, reasons
 
-    compatible_movements = []
-    for movement in movements:
-        if not _compatible(movement, agreement_id=agreement_id, perimeter_id=perimeter_id,
-                           currency=currency):
-            reasons.append('currency' if movement.get('currency') != currency else 'movement compatibility')
+
+def _compatible_items(items, kind, *, agreement_id, perimeter_id, currency, opening_cutoff, cutoff):
+    compatible, reasons = [], []
+    for item in items:
+        if not _compatible(item, agreement_id=agreement_id, perimeter_id=perimeter_id, currency=currency):
+            reasons.append('currency' if item.get('currency') != currency else f'{kind} compatibility')
             continue
-        if not movement.get('occurrence_id') or not movement.get('date'):
+        start, end = ('date', 'date') if kind == 'movement' else ('coverage_start', 'coverage_end')
+        if not item.get(start) or not item.get(end):
+            raise ReconciliationError(f'{kind} needs exact {"date" if kind == "movement" else "coverage"}')
+        if kind == 'movement' and not item.get('occurrence_id'):
             raise ReconciliationError('movement needs reviewed occurrence and exact date')
-        if opening_cutoff and not _inside(movement, opening_cutoff, cutoff):
-            raise ReconciliationError('movement lies outside account interval')
-        compatible_movements.append(movement)
+        if opening_cutoff and not _inside(item, opening_cutoff, cutoff, start=start, end=end):
+            raise ReconciliationError(f'{kind} lies outside account interval')
+        compatible.append(item)
+    return compatible, reasons
 
-    compatible_flows = []
+
+def _selected(items, requested):
+    explicit = requested is not None
+    ids = set(requested if explicit else [item['id'] for item in items])
+    return [item for item in items if item['id'] in ids], ids, explicit
+
+
+def _cover(flows, movements, movement_ids, movements_explicit):
+    covered, excluded = set(), []
     for flow in flows:
-        if not _compatible(flow, agreement_id=agreement_id, perimeter_id=perimeter_id, currency=currency):
-            reasons.append('currency' if flow.get('currency') != currency else 'flow compatibility')
-            continue
-        if not flow.get('coverage_start') or not flow.get('coverage_end'):
-            raise ReconciliationError('flow needs exact coverage')
-        if opening_cutoff and not _inside(flow, opening_cutoff, cutoff,
-                                          start='coverage_start', end='coverage_end'):
-            raise ReconciliationError('flow lies outside account interval')
-        compatible_flows.append(flow)
-
-    if reasons:
-        return _unavailable(reasons)
-
-    movements_were_selected = include_movement_ids is not None
-    requested_flows = set(include_flow_ids if include_flow_ids is not None
-                          else [f['id'] for f in compatible_flows])
-    requested_movements = set(include_movement_ids if movements_were_selected
-                              else [m['id'] for m in compatible_movements])
-    selected_flows = [f for f in compatible_flows if f['id'] in requested_flows]
-    movement_by_id = {m['id']: m for m in compatible_movements}
-    covered = set()
-    for flow in selected_flows:
         occurrences = flow.get('covered_occurrence_ids')
         if not isinstance(occurrences, list) or not occurrences:
             raise ReconciliationError('flow needs explicit covered occurrences')
-        overlap = covered & set(occurrences)
-        if overlap:
+        if covered & set(occurrences):
             raise ReconciliationError('overlap between selected flows')
         covered.update(occurrences)
-
-    selected_movements = []
-    seen_occurrences = {}
-    excluded = []
-    for movement in compatible_movements:
-        if movement['id'] not in requested_movements or movement['occurrence_id'] in covered:
+    if movements_explicit and movement_ids & {m['id'] for m in movements if m['occurrence_id'] in covered}:
+        raise ReconciliationError('overlap between selected flow and movement')
+    selected, occurrences = [], {}
+    for movement in movements:
+        if movement['id'] not in movement_ids or movement['occurrence_id'] in covered:
             excluded.append(movement['id'])
             continue
-        prior = seen_occurrences.get(movement['occurrence_id'])
+        prior = occurrences.get(movement['occurrence_id'])
         if prior:
             if (_money(prior['amount'], 'movement') != _money(movement['amount'], 'movement')
                     or prior['date'] != movement['date']):
                 raise ReconciliationError('duplicate occurrence has incompatible reports')
             excluded.append(movement['id'])
             continue
-        seen_occurrences[movement['occurrence_id']] = movement
-        selected_movements.append(movement)
+        occurrences[movement['occurrence_id']] = movement
+        selected.append(movement)
+    return selected, excluded
 
-    if set(movement_by_id) & requested_movements != requested_movements:
+
+def reconcile_gross_disbursement(*, agreement_id, perimeter_id, currency, opening,
+                                  movements, flows, coverage, cutoff, reported_closing,
+                                  include_flow_ids=None, include_movement_ids=None):
+    """Construct one bounded original-currency gross-disbursement account.
+
+    The caller supplies accepted agreement/perimeter/occurrence decisions. A flow
+    replaces, rather than adds to, each explicitly covered occurrence. The result
+    is exact only with a reviewed opening and complete movement coverage.
+    """
+    opening_cutoff, reasons = _opening_and_coverage(
+        opening, coverage, agreement_id=agreement_id, perimeter_id=perimeter_id,
+        currency=currency, cutoff=cutoff)
+    accepted_movements, item_reasons = _compatible_items(
+        movements, 'movement', agreement_id=agreement_id, perimeter_id=perimeter_id,
+        currency=currency, opening_cutoff=opening_cutoff, cutoff=cutoff)
+    accepted_flows, flow_reasons = _compatible_items(
+        flows, 'flow', agreement_id=agreement_id, perimeter_id=perimeter_id,
+        currency=currency, opening_cutoff=opening_cutoff, cutoff=cutoff)
+    if reasons + item_reasons + flow_reasons:
+        return _unavailable(reasons + item_reasons + flow_reasons)
+    selected_flows, flow_ids, _ = _selected(accepted_flows, include_flow_ids)
+    selected_movements, movement_ids, movements_explicit = _selected(
+        accepted_movements, include_movement_ids)
+    if set(item['id'] for item in accepted_movements) & movement_ids != movement_ids:
         raise ReconciliationError('selected movement is not compatible')
-    if movements_were_selected and (set(requested_movements)
-                                    & {m['id'] for m in compatible_movements
-                                       if m['occurrence_id'] in covered}):
-        raise ReconciliationError('overlap between selected flow and movement')
-
+    selected_movements, excluded = _cover(
+        selected_flows, accepted_movements, movement_ids, movements_explicit)
     included = selected_flows + selected_movements
     subtotal = sum((_money(item['amount'], 'movement') for item in included), Decimal('0'))
-    reconstructed = _money(opening['amount'], 'opening') + subtotal
     result = {'status': 'exact', 'reasons': [], 'included_ids': [x['id'] for x in included],
               'excluded_ids': excluded, 'documented_subtotal': subtotal,
-              'reconstructed_closing': reconstructed, 'residual': None,
-              'coverage_decision_id': coverage['decision_id']}
+              'reconstructed_closing': _money(opening['amount'], 'opening') + subtotal,
+              'residual': None, 'coverage_decision_id': coverage['decision_id']}
     if reported_closing:
         if _compatible(reported_closing, agreement_id=agreement_id, perimeter_id=perimeter_id,
                        currency=currency) and reported_closing.get('cutoff') == cutoff:
-            result['residual'] = _money(reported_closing['amount'], 'reported closing') - reconstructed
+            result['residual'] = _money(reported_closing['amount'], 'reported closing') - result['reconstructed_closing']
         else:
             result['reported_closing_comparability'] = 'failed'
     return result

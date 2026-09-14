@@ -1,9 +1,10 @@
 """First bounded original-currency gross-disbursement account (ticket 0768)."""
 
+import json
 from decimal import Decimal
+from pathlib import Path
 
 import pytest
-
 from jetp._reconciliation import ReconciliationError, reconcile_gross_disbursement
 
 
@@ -78,9 +79,6 @@ def test_overlapping_flow_and_uncovered_movement_are_rejected():
 
 def test_zaf_migration_is_an_evidence_based_unavailable_account_case():
     """The real candidate does not silently turn pledges or register dates into payments."""
-    import json
-    from pathlib import Path
-
     root = Path(__file__).resolve().parents[1]
     policy = json.loads((root / 'config/jetp-zaf-migration.json').read_text(encoding='utf-8'))
     report = (root / 'docs/jetp-zaf-gross-disbursement-0768.md').read_text(encoding='utf-8')
