@@ -67,10 +67,38 @@ def test_prepared_2026_09_release_descriptor_matches_the_downloadable_archive():
 
 
 def _assert_offline_release_replay(releases, edition, destination):
-    from jetp._public_release import restore_release
+    """Replay every declared static handoff and navigation route without a browser."""
+    from jetp._public_release import read_release, restore_release
 
-    restore_release(releases / edition / f'jetp-observatory-{edition}.zip', destination)
+    archive = releases / edition / f'jetp-observatory-{edition}.zip'
+    descriptor, payloads = read_release(archive)
+    declared_downloads = {
+        item['path'] for item in descriptor['files']
+        if item['path'].startswith('site/data/') and item['path'] != 'site/data/provenance.json'
+    }
+    expected_downloads = {
+        'site/data/overview.json', 'site/data/comparison.json',
+        *(f'site/data/{code}.json' for code in ('ZAF', 'IDN', 'VNM', 'SEN')),
+    }
+    assert declared_downloads == expected_downloads
+    # This is the released site's local hash-navigation contract.  Edition
+    # history is delivered through editions.json, rather than a separate page.
+    static_routes = {
+        '#overview': 'overviewPage',
+        '#countries': 'countriesPage',
+        '#projects': 'cataloguePage',
+        '#comparison': 'comparisonPage',
+        '#methods': 'methodsPage',
+    }
+    index, app = payloads['site/index.html'].decode(), payloads['site/app.js'].decode()
+    assert all(f'href="{route}"' in index for route in static_routes)
+    assert all(renderer in app for renderer in static_routes.values())
+
+    restore_release(archive, destination)
     assert (destination / 'index.html').is_file()
+    for member in sorted(expected_downloads):
+        restored = destination / member.removeprefix('site/')
+        assert restored.read_bytes() == payloads[member]
     for code in ('ZAF', 'IDN', 'VNM', 'SEN'):
         assert json.loads((destination / f'data/{code}.json').read_text())['country']['code'] == code
 
