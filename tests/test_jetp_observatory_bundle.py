@@ -310,7 +310,8 @@ def test_external_source_recovery_bytes_cannot_be_archive_output(tmp_path, monke
         raise AssertionError('Archive writer reached a protected source destination')
 
     monkeypatch.setattr(bundles, '_write_bundle', unsafe_write)
-    with pytest.raises(ValueError, match='separate|protected|alias'):
+    rejection = FileExistsError if mode == 'freeze' else ValueError
+    with pytest.raises(rejection):
         if mode == 'freeze':
             bundles.freeze_bundle(root, output, source_root=tmp_path)
         else:

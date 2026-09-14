@@ -64,8 +64,8 @@ def _archive_member(archive, name, data):
     archive.writestr(member, data)
 
 
-def _write_bundle(output, manifest, payloads):
-    """Publish one fully written archive through an atomic rename."""
+def _write_bundle(output, manifest, payloads, *, replace=True):
+    """Publish a complete archive, optionally requiring an unoccupied destination."""
     output = Path(output)
     output.parent.mkdir(parents=True, exist_ok=True)
     manifest['files'] = {name: {'sha256': digest(data), 'size_bytes': len(data)}
@@ -77,7 +77,12 @@ def _write_bundle(output, manifest, payloads):
                 _archive_member(archive, name, data)
             _archive_member(archive, 'manifest.json', json.dumps(manifest, indent=2, sort_keys=True) + '\n')
         _read_bundle(archive_path)
-        os.replace(archive_path, output)
+        if replace:
+            os.replace(archive_path, output)
+        else:
+            # Same-filesystem linking publishes complete bytes atomically and
+            # fails if any entry appeared since the initial freshness check.
+            os.link(archive_path, output)
     return manifest
 
 
@@ -129,10 +134,12 @@ def freeze_bundle(root, output, *, source_root=None, include_sources=False):
     """Freeze existing website bytes; never run an exporter or regenerate data."""
     root = Path(root).resolve()
     _protect_output(root, output)
+    if os.path.lexists(output):
+        raise FileExistsError(f'Freeze destination already exists: {output}')
     manifest, payloads = _capture(root, root / SITE, Path(source_root or root), include_sources)
     manifest['kind'] = 'baseline'
     _protect_output(root, output, inputs=(row['recovery_location'] for row in manifest['sources']))
-    return _write_bundle(output, manifest, payloads)
+    return _write_bundle(output, manifest, payloads, replace=False)
 
 
 def _build_view(root, view, output):

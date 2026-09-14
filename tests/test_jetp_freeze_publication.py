@@ -3,7 +3,6 @@
 import copy
 
 import pytest
-
 from jetp import _observatory_bundle as bundles
 from test_jetp_observatory_bundle import tiny_bundle
 
@@ -63,14 +62,14 @@ def test_freeze_publication_cannot_clobber_a_late_destination(capture, tmp_path,
     root, accepted = capture
     before = accepted.read_bytes()
     output = tmp_path / 'new-baseline.zip'
-    original_capture = bundles._capture
+    original_read = bundles._read_bundle
 
-    def racing_capture(*args):
-        snapshot = original_capture(*args)
+    def racing_validation(path):
+        snapshot = original_read(path)
         occupy(output, accepted, kind)
         return snapshot
 
-    monkeypatch.setattr(bundles, '_capture', racing_capture)
+    monkeypatch.setattr(bundles, '_read_bundle', racing_validation)
     with pytest.raises(FileExistsError):
         bundles.freeze_bundle(root, output)
     assert_preserved(output, accepted, kind, before)

@@ -18,6 +18,12 @@ retains every row locator, candidate identifier, duplicate row/key, 400 routes,
 six downloads and source-recovery status. Historical build inputs reference
 identical archived corpus bytes; differing historical bytes get their own entry.
 
+Freeze requires a fresh destination: existing files, symlinks (including dangling
+ones) and hardlinks are rejected before capture. Publication never replaces an
+entry that appears while the archive is being built or validated. Deliberate
+recapture therefore uses a new filename; candidate archives retain their explicit
+replacement behavior.
+
 All 16 CSV registries are inventoried, including failed searches, coverage,
 country observations and Vietnam pilot tables. A repeated identifier is recorded,
 not deduplicated or interpreted as another asset. Source-document hashes and
