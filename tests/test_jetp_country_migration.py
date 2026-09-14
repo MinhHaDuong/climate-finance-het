@@ -62,8 +62,14 @@ def test_country_disposition_follows_financial_and_implementation_timing_links(t
     table(tmp_path, 'implementation-events.csv', [dict(event_id='physical', project_id='zaf-p', country='ZAF')])
     table(tmp_path, 'event-timing.csv', [dict(event_id='finance', date_role='register'),
                                       dict(event_id='physical', date_role='observed'),
+                                      dict(event_id='finance', date_role='register'),
                                       dict(event_id='foreign', date_role='event')])
-    result = legacy_dispositions(migrate_sources(tmp_path), 'ZAF', {})
+    crosswalk = migrate_sources(tmp_path)
+    result = legacy_dispositions(crosswalk, 'ZAF', {})
     timing = [row for row in result if row['path'].endswith('event-timing.csv')]
     assert {row['original']['event_id'] for row in timing} == {'finance', 'physical'}
     assert all(row['classification'] == 'legacy_timing_retained' for row in timing)
+
+    assert len(timing) == 3
+    assert len({row['row_id'] for row in timing}) == 3
+    assert any(row['row'].get('event_id') == 'foreign' for row in crosswalk['retained'])

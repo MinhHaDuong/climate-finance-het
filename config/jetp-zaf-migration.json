@@ -1,0 +1,190 @@
+{
+  "schema_version": "zaf-migration-policy/1",
+  "recorded_at": "2026-09-14T18:42:37Z",
+  "recorded_by": "HDMX-coding-agent",
+  "parser_version": "0.11.9",
+  "register_row_count": 257,
+  "sources": [
+    {
+      "role": "register",
+      "source_id": "zaf-jet-investment-register-q1-2026",
+      "retrieved_at": "2026-09-12T05:26:22Z",
+      "document_sha256": "5b5d6442da4e9e57b3c83b7bfc04a19135b2c5bf750c2480685d9d084dc093f4",
+      "storage_path": "objects/5b/5b5d6442da4e9e57b3c83b7bfc04a19135b2c5bf750c2480685d9d084dc093f4.html",
+      "edition_id": "zaf-register-q1-2026",
+      "cutoff_date": null,
+      "publication_date": null,
+      "date_note": "Q1 2026 edition; legacy 2026-03-30 source date retained separately without promoting publication or event timing."
+    },
+    {
+      "role": "report",
+      "source_id": "zaf-jet-quarterly-2026-q1",
+      "retrieved_at": "2026-09-12T05:33:00Z",
+      "document_sha256": "1b62a65fd70c70b0234379fcc4fcda064e9175fc9aee21a37c97b283e1b8dc13",
+      "storage_path": "objects/1b/1b62a65fd70c70b0234379fcc4fcda064e9175fc9aee21a37c97b283e1b8dc13.pdf",
+      "edition_id": "zaf-jet-quarterly-q1-2026",
+      "cutoff_date": "2026-03-31",
+      "publication_date": null,
+      "date_note": "31 March is the stated reporting cutoff, not independently verified publication or historical admission."
+    }
+  ],
+  "report_tables": [
+    {
+      "table_id": "Table 1",
+      "page": 4,
+      "table_rows": 8,
+      "columns": 4,
+      "header_rows": 1,
+      "first_header": "Instrument",
+      "perimeter": "all_partner_instrument_pledges_and_allocations"
+    },
+    {
+      "table_id": "Table 2",
+      "page": 12,
+      "table_rows": 8,
+      "columns": 7,
+      "header_rows": 1,
+      "first_header": "USD millions",
+      "perimeter": "original_2021_ipg_pledge"
+    },
+    {
+      "table_id": "Table 3",
+      "page": 12,
+      "table_rows": 18,
+      "columns": 15,
+      "header_rows": 2,
+      "first_header": "Partner",
+      "perimeter": "current_instrument_pledges_and_allocations"
+    },
+    {
+      "table_id": "Table 4",
+      "page": 13,
+      "table_rows": 12,
+      "columns": 8,
+      "header_rows": 1,
+      "first_header": "Classification",
+      "perimeter": "registered_portfolio_funding_by_implementation_status"
+    },
+    {
+      "table_id": "Table 5",
+      "page": 14,
+      "table_rows": 12,
+      "columns": 7,
+      "header_rows": 1,
+      "first_header": "Classification",
+      "perimeter": "registered_records_by_implementation_status"
+    },
+    {
+      "table_id": "Table 6",
+      "page": 16,
+      "table_rows": 6,
+      "columns": 4,
+      "header_rows": 1,
+      "first_header": "Status",
+      "perimeter": "portfolio_funding_by_implementation_status"
+    },
+    {
+      "table_id": "Table 7",
+      "page": 17,
+      "table_rows": 6,
+      "columns": 4,
+      "header_rows": 1,
+      "first_header": "Status",
+      "perimeter": "portfolio_funding_by_implementation_status"
+    },
+    {
+      "table_id": "Table 8",
+      "page": 18,
+      "table_rows": 6,
+      "columns": 5,
+      "header_rows": 1,
+      "first_header": "Status",
+      "perimeter": "portfolio_funding_by_implementation_status"
+    },
+    {
+      "table_id": "Table 9",
+      "page": 19,
+      "table_rows": 6,
+      "columns": 4,
+      "header_rows": 1,
+      "first_header": "Status",
+      "perimeter": "portfolio_funding_by_implementation_status"
+    },
+    {
+      "table_id": "Table 10",
+      "page": 20,
+      "table_rows": 6,
+      "columns": 4,
+      "header_rows": 1,
+      "first_header": "Status",
+      "perimeter": "portfolio_funding_by_implementation_status"
+    },
+    {
+      "table_id": "Table 11",
+      "page": 21,
+      "table_rows": 6,
+      "columns": 4,
+      "header_rows": 1,
+      "first_header": "Status",
+      "perimeter": "portfolio_funding_by_implementation_status"
+    }
+  ],
+  "inventory_exclusions": [
+    {
+      "label": "Table 12",
+      "physical_pages": [
+        23,
+        31
+      ],
+      "disposition": "retained_source_not_financial_inventory",
+      "reason": "Outcome milestones and implementation indicators; these are not funding positions or project identities."
+    },
+    {
+      "label": "Table 13",
+      "physical_pages": [
+        32,
+        32
+      ],
+      "disposition": "retained_source_not_financial_inventory",
+      "reason": "Core indicator definitions, not projects or financial observations."
+    },
+    {
+      "label": "Table 14",
+      "physical_pages": [
+        33,
+        34
+      ],
+      "disposition": "retained_source_not_financial_inventory",
+      "reason": "24-project indicator snapshot is explicitly not representative of the register; indicator achievements cannot establish payments."
+    },
+    {
+      "label": "Other prose, figures and historical register/report editions",
+      "disposition": "retained_source_history",
+      "reason": "Current migration selects complete Q1 financial tables and register rows; other saved editions, source claims and attempts remain in legacy dispositions, without source refresh or invented equivalence."
+    }
+  ],
+  "source_regime": [
+    {
+      "topic": "register dates",
+      "rule": "Preserve Date of Financing Agreement Signed* and End Date verbatim; legacy event-timing explicitly treats register dates as unverified financing timing. Do not infer signature, implementation or payment dates."
+    },
+    {
+      "topic": "register amounts",
+      "rule": "Preserve Amount: Pledged, Currency: Pledged, reported USD/ZAR and implementation category separately. No conversion or payment inference."
+    },
+    {
+      "topic": "report perimeters",
+      "rule": "Table 3 instrument allocations USD6.12bn and Table 4 portfolio allocations USD4.32bn describe different perimeters (page14); do not force a balance or sum them."
+    },
+    {
+      "topic": "register/report discrepancy",
+      "rule": "Preserve register128 implementation/88 completed versus report129/87, both257; leave membership/timing reconciliation unresolved."
+    },
+    {
+      "topic": "programme and components",
+      "rule": "Preserve each Unique ID and original programme/component wording. Shared names do not establish identity, parentage, disjoint finance or independent asset counts."
+    }
+  ],
+  "payments": [],
+  "publication_limit_bytes": 512000
+}
