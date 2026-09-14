@@ -87,10 +87,18 @@ def test_recognized_candidate_alias_is_rejected_before_build(tmp_path, monkeypat
 
 
 @pytest.mark.parametrize('alias_kind', ['direct', 'symlink', 'hardlink'])
-def test_malformed_candidate_markers_are_not_replacement_permission(tmp_path, monkeypatch, alias_kind):
+@pytest.mark.parametrize('malformation', ['markers_only', 'record_member', 'view_member'])
+def test_malformed_candidate_markers_are_not_replacement_permission(
+        tmp_path, monkeypatch, alias_kind, malformation):
     target = tmp_path / 'malformed.json'
-    target.write_text(json.dumps(dict(schema_version='country-migration/1', country='VNM',
-                                     admission_status='unadmitted_candidate')))
+    candidate = candidate_fixture()
+    if malformation == 'markers_only':
+        candidate = {key: candidate[key] for key in ('schema_version', 'country', 'admission_status')}
+    elif malformation == 'record_member':
+        candidate['inventory_positions'] = ['not a position object']
+    else:
+        candidate['mvp_views']['VNM'] = 'not an MVP payload'
+    target.write_text(json.dumps(candidate))
     output = target
     if alias_kind != 'direct':
         output = tmp_path / 'alias.json'

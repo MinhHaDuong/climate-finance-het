@@ -17,7 +17,7 @@ from jetp._country_migration import (
     inventory_positions,
     legacy_dispositions,
 )
-from jetp._observatory_bundle import _protect_output
+from jetp._observatory_bundle import _protect_output, _protect_replacement
 from jetp._source_crosswalk import _identity, migrate_sources
 from jetp._vnm_inventory import extract_inventory
 
@@ -128,17 +128,39 @@ def validate_migration(result: dict) -> None:
             raise ValueError('Missing legacy disposition or source wording')
 
 
+def _country_output(output: Path) -> bool:
+    """Recognize the bounded candidate contract, not just identifying markers."""
+    try:
+        previous = json.loads(output.read_bytes())
+        records = {'inventory_positions', 'legacy_dispositions', 'legacy_position_candidates',
+                   'legacy_evidence', 'legacy_unresolved', 'inventory_boundaries', 'identity_review'}
+        objects = {'inputs', 'recipe_inputs', 'recovery_inputs', 'selected_acquisition',
+                   'edition_snapshot', 'extraction', 'mvp_views', 'comparison'}
+        fields = records | objects | {'schema_version', 'country', 'admission_status',
+                                      'writer_owner', 'publication_mode'}
+        if (not isinstance(previous, dict) or previous.keys() != fields
+                or previous['schema_version'] != SCHEMA_VERSION or previous['country'] != 'VNM'
+                or previous['admission_status'] != 'unadmitted_candidate'
+                or not all(isinstance(previous[key], dict) for key in objects)
+                or not all(isinstance(view, dict) for view in previous['mvp_views'].values())
+                or not all(isinstance(previous[key], list)
+                           and all(isinstance(row, dict) for row in previous[key]) for key in records)):
+            return False
+        validate_migration(previous)
+        return True
+    except (OSError, ValueError, KeyError, TypeError):
+        return False
+
+
 def write_migration(root: Path, output: Path, *, source_root: Path | None = None) -> dict:
     """Protect all accepted artifacts and atomically replace only our candidate."""
-    root, output = Path(root).resolve(), Path(output).resolve()
+    root, output = Path(root).resolve(), Path(output)
+    # Shared guard sees the lexical file before resolution can erase its alias.
+    _protect_replacement(output, _country_output(output))
+    output = output.resolve()
     source_root = Path(source_root or root).resolve()
     if output.suffix != '.json':
         raise ValueError('Country candidate output must end in .json')
-    if output.exists():
-        previous = json.loads(output.read_bytes())
-        if (previous.get('schema_version') != SCHEMA_VERSION or previous.get('country') != 'VNM'
-                or previous.get('admission_status') != 'unadmitted_candidate'):
-            raise ValueError('Existing output is not a Vietnam migration candidate')
     for checkout in {root, source_root}:
         releases = [p for p in (checkout / 'data/jetp/releases').rglob('*')
                     if p.is_file() and p != output]
