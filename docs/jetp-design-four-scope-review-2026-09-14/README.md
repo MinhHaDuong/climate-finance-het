@@ -1,7 +1,9 @@
 # JETP backend design review
 
 Review of revision 2 at `68fd404cb55242ab38430e6bcbcd31b470285259`, assessed on
-14 September 2026 against the four agreed scopes. The design itself is unchanged.
+14 September 2026 against the four agreed scopes. The review left the design
+unchanged; the subsequently authorised revision is recorded in the
+[revision 3 response](design-revision-response.md).
 
 - [Consolidated assessment and proposed revisions](assessment.md)
   ([local HTML reading copy](assessment.html))
