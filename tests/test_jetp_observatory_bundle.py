@@ -288,3 +288,34 @@ def test_boolean_numeric_changes_need_explicit_scientific_review(tmp_path):
         'source': 'fixture-source', 'reviewer': 'fixture-reviewer', 'rationale': 'Explicit test change'}})
     assert [row['path'] for row in documented['intentional_scientific']] == [path]
     assert len(documented['unexplained']) == 3
+
+
+@pytest.mark.parametrize('mode', ['freeze', 'candidate'])
+@pytest.mark.parametrize('alias', ['same', 'hardlink'])
+def test_external_source_recovery_bytes_cannot_be_archive_output(tmp_path, monkeypatch, mode, alias):
+    from jetp import _observatory_bundle as bundles
+
+    root = tmp_path / 'checkout'
+    (root / 'deliverables/jetp-observatory').mkdir(parents=True)
+    source = tmp_path / 'external-cache-object'
+    source.write_bytes(b'verified source bytes')
+    output = source
+    if alias == 'hardlink':
+        output = tmp_path / 'output.zip'
+        output.hardlink_to(source)
+    monkeypatch.setattr(bundles, '_capture', lambda *args: (
+        {'sources': [{'recovery_location': str(source)}]}, {}))
+
+    def unsafe_write(*args):
+        raise AssertionError('Archive writer reached a protected source destination')
+
+    monkeypatch.setattr(bundles, '_write_bundle', unsafe_write)
+    with pytest.raises(ValueError, match='separate|protected|alias'):
+        if mode == 'freeze':
+            bundles.freeze_bundle(root, output, source_root=tmp_path)
+        else:
+            accepted = tmp_path / 'accepted.zip'
+            tiny_bundle(accepted)
+            bundles.build_candidate(root, output, accepted=accepted, source_root=tmp_path,
+                                    builder=lambda *args: None)
+    assert source.read_bytes() == b'verified source bytes'
