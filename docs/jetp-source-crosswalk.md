@@ -40,6 +40,10 @@ does not establish claim-level primary origin.
 
 The writer validates the candidate before atomic replacement. Canonical inputs,
 source bytes, the current static website and frozen ZIP releases are protected.
+Outputs must end in `.json` or `.json.gz`. All existing release files, including
+recovery pointers, README/ignore files and nested descriptors, are protected
+against direct and alias writes. Only a recognized previous unadmitted
+`source-crosswalk/1` candidate at the selected path may be replaced.
 A failed candidate leaves the preceding candidate artifact and accepted MVP
 unchanged. No renderer output changes, so the existing browser remains outside
 this ticket's change surface.

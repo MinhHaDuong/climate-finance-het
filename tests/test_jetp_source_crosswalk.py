@@ -183,7 +183,8 @@ def test_tuple_cross_source_and_origin_are_not_inferred(tmp_path):
     assert result['acquisitions'][0]['independence'] == 'unknown'
 
 
-@pytest.mark.parametrize('filename', ['source-crosswalk-0763.json.gz.dvc', 'README.md', '.gitignore', 'release.json'])
+@pytest.mark.parametrize('filename', ['source-crosswalk-0763.json.gz.dvc', 'README.md',
+                                      '.gitignore', 'release.json', 'edition-1/release.json'])
 @pytest.mark.parametrize('alias_kind', ['direct', 'symlink', 'hardlink'])
 def test_candidate_preserves_release_recovery_metadata(tmp_path, filename, alias_kind):
     fixture(tmp_path)
@@ -201,3 +202,13 @@ def test_candidate_preserves_release_recovery_metadata(tmp_path, filename, alias
     with pytest.raises(ValueError):
         builder.write_crosswalk(tmp_path, output)
     assert metadata.read_bytes() == before
+
+
+@pytest.mark.parametrize('suffix', ['.json', '.json.gz'])
+def test_existing_release_candidate_remains_replaceable(tmp_path, suffix):
+    fixture(tmp_path)
+    output = tmp_path / 'data/jetp/releases' / ('candidate' + suffix)
+    builder.write_crosswalk(tmp_path, output)
+    before = output.read_bytes()
+    builder.write_crosswalk(tmp_path, output)
+    assert output.read_bytes() == before
