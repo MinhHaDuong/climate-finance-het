@@ -77,7 +77,6 @@ def test_release_history_lists_frozen_editions_for_static_site(tmp_path):
 
 def test_monthly_report_rejects_candidate_that_drops_prior_record():
     import pytest
-
     from jetp._monthly_editions import compare_editions
 
     previous = {'edition': '2026-09', 'cutoff': '2026-09-13',
