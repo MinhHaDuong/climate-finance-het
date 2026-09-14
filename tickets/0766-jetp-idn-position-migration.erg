@@ -1,0 +1,39 @@
+%erg 0.1
+Title: Migrate Indonesian portfolio positions and legacy observations
+Created: 2026-09-14
+Author: HDMX-coding-agent
+Blocked-by: 0765
+
+--- log ---
+2026-09-14T13:51Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Reuse the pilot to reconcile Indonesian official plan/progress inventories and country observations without conflating approval, commitment and payment.
+
+Design: `docs/jetp-backend-design.md`, revision 5. Plan: `docs/jetp-backend-implementation-plan.md`. Parent: 0760 (except the tracker itself, which belongs to 0725/#1333). Proposed work; no implementation authorized by filing.
+
+## First test
+
+The same programme appears in a plan and later approval inventory with a component and no payment evidence. Preserve both positions and scopes; no disbursement or additive double count may be generated.
+
+## Actions
+
+Pin official editions; enumerate inventories and IDN portfolio observation rows; classify/crosswalk all legacy inputs with explicit source locations, date roles, amounts and perimeter decisions. Retain useful editorial evidence and unresolved identities. Produce candidate differences and writer-transfer report.
+
+## Exit criteria
+
+- [ ] All official inventory and IDN legacy rows have reviewed dispositions
+- [ ] Plan/approval/payment meanings and component relations remain distinct
+- [ ] Existing routes and source links remain viable
+- [ ] Unexplained candidate differences block transfer
+
+## Validation and recovery
+
+Start implementation with the failing fixture. Run make check-fast and make lint; run the full make check for pipeline-surface diffs under AGENTS.md. Run the existing browser exercise for output/renderer changes. Cite exact fixture IDs and input/output commits in the PR. Preserve last accepted static output; candidate failure must not change canonical ownership or publish partial files. No deployment, estimator or PyPSA work is included in this ticket.
+
+## GitHub planning issue
+
+https://github.com/MinhHaDuong/climate-finance-het/issues/1359

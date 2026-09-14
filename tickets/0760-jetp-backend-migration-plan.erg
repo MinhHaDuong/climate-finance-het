@@ -1,0 +1,53 @@
+%erg 0.1
+Title: Coordinate backend migration while preserving the JETP MVP
+Created: 2026-09-14
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-14T13:51Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Track the staged implementation of backend design revision 5 as a contribution to 0725/#1333; preserve the website while migrating the existing evidence.
+
+Design: `docs/jetp-backend-design.md`, revision 5. Plan: `docs/jetp-backend-implementation-plan.md`. Parent: 0760 (except the tracker itself, which belongs to 0725/#1333). Proposed work; no implementation authorized by filing.
+
+## First test
+
+Integration fixture: migrate one reported position and its evidence, keep another combination legacy, publish a candidate, then simulate a failed second edition. No duplicate ownership is allowed; the accepted site and earlier evidence chain must still replay.
+
+## Actions
+
+Coordinate 0761–0770 in the plan waves; reconcile the four country reports; hand accepted outputs to existing 0726–0728. Add the proposed research and release handoffs before those owners next execute. Do not close the programme tracker or start whole-transition/PyPSA work.
+
+## Exit criteria
+
+- [ ] Every legacy table and row has a documented migration disposition
+- [ ] Four official-inventory migration reports are accepted with explicit unresolved coverage
+- [ ] Writer ownership and publication selection have no duplicate authority
+- [ ] Existing 0726–0728 acceptance includes two-edition replay and restoration with working routes/downloads
+- [ ] Research-critical history is retained; scientific and future-model work remains under its own owners
+
+## Validation and recovery
+
+Start implementation with the failing fixture. Run make check-fast and make lint; run the full make check for pipeline-surface diffs under AGENTS.md. Run the existing browser exercise for output/renderer changes. Cite exact fixture IDs and input/output commits in the PR. Preserve last accepted static output; candidate failure must not change canonical ownership or publish partial files. No deployment, estimator or PyPSA work is included in this ticket.
+
+## GitHub planning issue
+
+https://github.com/MinhHaDuong/climate-finance-het/issues/1353
+
+## Proposed work packages
+
+- [0760: Coordinate backend migration while preserving the JETP MVP](https://github.com/MinhHaDuong/climate-finance-het/issues/1353)
+- [0761: Freeze a recoverable MVP baseline and isolate candidate builds](https://github.com/MinhHaDuong/climate-finance-het/issues/1354)
+- [0762: Implement typed evidence and temporal contracts behind compatibility readers](https://github.com/MinhHaDuong/climate-finance-het/issues/1355)
+- [0763: Migrate source and acquisition identity with immutable evidence crosswalks](https://github.com/MinhHaDuong/climate-finance-het/issues/1356)
+- [0764: Pilot official-inventory and legacy-position migration in Vietnam](https://github.com/MinhHaDuong/climate-finance-het/issues/1357)
+- [0765: Migrate South African register states and legacy observations](https://github.com/MinhHaDuong/climate-finance-het/issues/1358)
+- [0766: Migrate Indonesian portfolio positions and legacy observations](https://github.com/MinhHaDuong/climate-finance-het/issues/1359)
+- [0767: Migrate Senegal plan and programme positions with explicit scope](https://github.com/MinhHaDuong/climate-finance-het/issues/1360)
+- [0768: Implement bounded agreement and gross-disbursement reconciliation](https://github.com/MinhHaDuong/climate-finance-het/issues/1361)
+- [0769: Publish migrated combinations through compatible traced website outputs](https://github.com/MinhHaDuong/climate-finance-het/issues/1362)
+- [0770: Implement source-registry sweeps and reviewable evidence refreshes](https://github.com/MinhHaDuong/climate-finance-het/issues/1363)

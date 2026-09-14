@@ -1,0 +1,39 @@
+%erg 0.1
+Title: Migrate Senegal plan and programme positions with explicit scope
+Created: 2026-09-14
+Author: HDMX-coding-agent
+Blocked-by: 0766
+
+--- log ---
+2026-09-14T13:51Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Senegal plan needs and programme/component inventories must remain distinguishable from financed or implemented events.
+
+Design: `docs/jetp-backend-design.md`, revision 5. Plan: `docs/jetp-backend-implementation-plan.md`. Parent: 0760 (except the tracker itself, which belongs to 0725/#1333). Proposed work; no implementation authorized by filing.
+
+## First test
+
+A plan contains a programme amount and overlapping component needs plus a provisional project match. No additive financing total or confirmed match may be inferred from those entries.
+
+## Actions
+
+Pin the official plan/report editions and enumerate inventories. Reconcile all SEN legacy events, implementation rows, plan rows, claims and links. Preserve provisional matches, needs, programme hierarchy, date uncertainty and failed searches. Produce candidate differences and writer-transfer report.
+
+## Exit criteria
+
+- [ ] Every selected official inventory and SEN legacy row has a disposition
+- [ ] Needs and programme/components cannot become duplicate financed amounts
+- [ ] Provisional matches and unsupported dates retain their uncertainty
+- [ ] Existing country/project routes and useful summaries remain viable
+
+## Validation and recovery
+
+Start implementation with the failing fixture. Run make check-fast and make lint; run the full make check for pipeline-surface diffs under AGENTS.md. Run the existing browser exercise for output/renderer changes. Cite exact fixture IDs and input/output commits in the PR. Preserve last accepted static output; candidate failure must not change canonical ownership or publish partial files. No deployment, estimator or PyPSA work is included in this ticket.
+
+## GitHub planning issue
+
+https://github.com/MinhHaDuong/climate-finance-het/issues/1360

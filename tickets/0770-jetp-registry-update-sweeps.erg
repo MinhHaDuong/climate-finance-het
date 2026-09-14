@@ -1,0 +1,40 @@
+%erg 0.1
+Title: Implement source-registry sweeps and reviewable evidence refreshes
+Created: 2026-09-14
+Author: HDMX-coding-agent
+Blocked-by: 0763
+
+--- log ---
+2026-09-14T13:51Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Source monitoring must record what was attempted and what succeeded, while producing candidates for existing monthly-edition ticket 0728.
+
+Design: `docs/jetp-backend-design.md`, revision 5. Plan: `docs/jetp-backend-implementation-plan.md`. Parent: 0760 (except the tracker itself, which belongs to 0725/#1333). Proposed work; no implementation authorized by filing.
+
+## First test
+
+A frozen sweep contains unchanged, revised, blocked and deferred targets. Every target has a result; only successful coverage advances; a blocked target cannot erase evidence or trigger publication.
+
+## Actions
+
+Implement reviewed watch policies, immutable source revisions, frozen sweep targets/checks/discoveries, schedule derivation and idempotent acquisition links. Distinguish discovery-page and document targets. Produce changes since principal reports with claim-specific origin/dependency assessments, not automatic factual promotion. Preserve late reports/corrections and editorial impact queues; hand results to 0728.
+
+## Exit criteria
+
+- [ ] Every frozen target has a check or explicit deferral
+- [ ] Failed/repeated checks preserve attempts and successful-coverage semantics
+- [ ] Changed metadata cannot rewrite older sweeps or cutoff views
+- [ ] Same discovery retains identity with multiple discovery links
+- [ ] Candidate change report identifies affected claims and never publishes unattended
+
+## Validation and recovery
+
+Start implementation with the failing fixture. Run make check-fast and make lint; run the full make check for pipeline-surface diffs under AGENTS.md. Run the existing browser exercise for output/renderer changes. Cite exact fixture IDs and input/output commits in the PR. Preserve last accepted static output; candidate failure must not change canonical ownership or publish partial files. No deployment, estimator or PyPSA work is included in this ticket.
+
+## GitHub planning issue
+
+https://github.com/MinhHaDuong/climate-finance-het/issues/1363

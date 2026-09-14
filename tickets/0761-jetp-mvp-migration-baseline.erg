@@ -1,0 +1,38 @@
+%erg 0.1
+Title: Freeze a recoverable MVP baseline and isolate candidate builds
+Created: 2026-09-14
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-14T13:51Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+The current exporter writes six JSON payloads consumed together by the static renderer. Migration needs a recoverable complete website and precise differences, not merely passing unit tests.
+
+Design: `docs/jetp-backend-design.md`, revision 5. Plan: `docs/jetp-backend-implementation-plan.md`. Parent: 0760 (except the tracker itself, which belongs to 0725/#1333). Proposed work; no implementation authorized by filing.
+
+## First test
+
+Interrupt a candidate build after one output and assert the accepted complete bundle, country/project routes and downloads are unchanged. Restore a prior bundle and serve it offline with no DVC or network access.
+
+## Actions
+
+Inventory/hash all inputs, row keys and routes at the accepted commit; freeze matching rendering assets and outputs; add separate candidate output location and semantic difference report. Reuse existing browser tests. Measure the 508002-byte ZAF payload and record the 512000-byte constraint. Do not regenerate canonical data during baseline capture.
+
+## Exit criteria
+
+- [ ] Baseline pins input and output hashes, headers, row counts and stable routes
+- [ ] Candidate failure cannot partially replace accepted files
+- [ ] Restoration and offline browser navigation/downloads pass
+- [ ] Difference report separates intentional scientific changes from metadata-only differences
+
+## Validation and recovery
+
+Start implementation with the failing fixture. Run make check-fast and make lint; run the full make check for pipeline-surface diffs under AGENTS.md. Run the existing browser exercise for output/renderer changes. Cite exact fixture IDs and input/output commits in the PR. Preserve last accepted static output; candidate failure must not change canonical ownership or publish partial files. No deployment, estimator or PyPSA work is included in this ticket.
+
+## GitHub planning issue
+
+https://github.com/MinhHaDuong/climate-finance-het/issues/1354

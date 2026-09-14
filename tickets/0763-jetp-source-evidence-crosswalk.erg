@@ -1,0 +1,40 @@
+%erg 0.1
+Title: Migrate source and acquisition identity with immutable evidence crosswalks
+Created: 2026-09-14
+Author: HDMX-coding-agent
+Blocked-by: 0762
+
+--- log ---
+2026-09-14T13:51Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+The catalogue/manifest currently resolve latest retrieval by source ID. Assertion evidence needs exact historical acquisition, edition, extraction and saved bytes; old coverage and failed searches must survive.
+
+Design: `docs/jetp-backend-design.md`, revision 5. Plan: `docs/jetp-backend-implementation-plan.md`. Parent: 0760 (except the tracker itself, which belongs to 0725/#1333). Proposed work; no implementation authorized by filing.
+
+## First test
+
+Acquire changed bytes from the same URL plus a mirror, repeated timestamp and failed attempt. The old assertion must still resolve to its original hash; each attempt remains distinct and mirrors do not become independent support.
+
+## Actions
+
+Crosswalk existing sources, manifest, project-source links, claims and pilot acquisition tables into source revisions/attempts/editions/extractions/evidence. Inventory authority coverage, project coverage, dry searches, news leads and country observations for preserved ownership. Retain unknown admission times and origin roles; legacy attempts have no invented sweep IDs. Produce idempotent migration manifests and unresolved-evidence reports. Reuse DVC objects and harvester with compatibility for exact existing headers.
+
+## Exit criteria
+
+- [ ] Every input row has a retained mapping or explicit disposition
+- [ ] Exact evidence tuples resolve to available bytes or explicit unresolved status
+- [ ] Source refresh cannot redirect old assertions or manufacture historical knowledge
+- [ ] Coverage/search attempts and primary-secondary uncertainty remain recoverable
+- [ ] Same-input rerun preserves identities and output hashes
+
+## Validation and recovery
+
+Start implementation with the failing fixture. Run make check-fast and make lint; run the full make check for pipeline-surface diffs under AGENTS.md. Run the existing browser exercise for output/renderer changes. Cite exact fixture IDs and input/output commits in the PR. Preserve last accepted static output; candidate failure must not change canonical ownership or publish partial files. No deployment, estimator or PyPSA work is included in this ticket.
+
+## GitHub planning issue
+
+https://github.com/MinhHaDuong/climate-finance-het/issues/1356
