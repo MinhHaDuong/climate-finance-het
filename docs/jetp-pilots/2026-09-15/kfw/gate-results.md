@@ -63,3 +63,8 @@ removed. With the hydrated inputs, `make check-fast` passed **1,805 tests**
 (9 skipped); final naive-mapping mutation still yields four intended failures.
 The extra fast cases relative to the earlier 1,721-pass run are enabled by the
 now-present corpus inputs. No production output mapping changed.
+
+Final adherence after review cleanup: **330 passed, 15 skipped**. The five-
+perspective [PR review](pr-review.md) reports unanimous approval, with its one
+nonblocking test suggestion fixed and independently rechecked at `2eca971b`.
+This is review evidence, not authorization to merge or a `/verify` merge verdict.

@@ -162,3 +162,7 @@ contract register including withdrawn/closed contracts and retention rules;
 changes, historical opening balances and 26 August 2026; (3) lender evidence
 mapping approval, signed agreement and administrative start fields. Further
 broad searching is not proposed, and no institutional contact was made.
+
+The subsequent [PR review](pr-review.md) reports five approving perspectives.
+Its sole test-boundary suggestion was fixed and rechecked; numerical outputs
+and the scientific NARROW/DEFER decisions are unchanged.
