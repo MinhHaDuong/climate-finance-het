@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 
 from script_io_args import parse_io_args, validate_io
+
 from jetp._monthly_editions import compare_editions, release_history
 
 

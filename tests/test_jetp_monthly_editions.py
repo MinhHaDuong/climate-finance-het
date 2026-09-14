@@ -51,6 +51,7 @@ def test_monthly_report_rejects_reused_or_out_of_order_editions():
 
 def test_release_history_lists_frozen_editions_for_static_site(tmp_path):
     import json
+
     from jetp._monthly_editions import release_history
 
     releases = tmp_path / 'releases'
