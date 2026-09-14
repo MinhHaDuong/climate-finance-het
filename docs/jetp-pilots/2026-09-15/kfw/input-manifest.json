@@ -1,0 +1,68 @@
+{
+  "pilot_base": "7f89c356021cdbd3a10e6b14e6e3106938a846d5",
+  "audit_pr_1347_head": "137a96160add8ddb8c339ae17eae3853948f45bb",
+  "audit_pr_state": "MERGED; base contains head",
+  "selection_sha": "63bb738ef8f8bf7c96db3201a8ce48b717136075",
+  "environment": "Python 3.11.15; existing audit venv; offline standard library calculations",
+  "archive_md5_verified": {
+    "0735-round2": "6cd6406b227e6860cae66906cce21d9c.dir",
+    "0735-round3": "4b1a54b98d1ff7df92afe3e7b95ec07e.dir"
+  },
+  "selection_inputs": [
+    {
+      "path": "docs/jetp-audits/0736/chronology.md",
+      "sha256": "117f6c9adccf21346518c16dd8ce4844fcb770234c5cc441400d2257c5e8dff8"
+    },
+    {
+      "path": "docs/jetp-audits/0736/comparators.md",
+      "sha256": "931ae97c10565bae7890bc05a0f7b54c3617b25afdd3e091b85c4d6247acb0bc"
+    },
+    {
+      "path": "docs/jetp-audits/0736/rivals.md",
+      "sha256": "36e81c28832d43fe27932bd6d0c5c6ed05ee3115fa81b850da95a0a178d92a2c"
+    },
+    {
+      "path": "docs/jetp-audits/0736/report.md",
+      "sha256": "112ffa26f477859fef51b608be1db108e9075222d3bb01b0e506a4ebb302dc63"
+    },
+    {
+      "path": "docs/jetp-audits/0736/sources.csv",
+      "sha256": "d69aded6e0bd24f2bd0bc4f9813f5e13ddf5a7a9ff49f88e74e131ca6ff5a9ff"
+    },
+    {
+      "path": "tickets/0729-jetp-lifecycle-feasibility.erg",
+      "sha256": "8d71418508943658e001e09d12d0a975ecdc8ddd7ca91d845a48471235237575"
+    },
+    {
+      "path": "conception/jetp-causal-design-options-2026-09-14.md",
+      "sha256": "1e76ee7be03d512d6a70ea2b37b1846c8763a0cfdb6ebe7dd52f0e90386c08d2"
+    }
+  ],
+  "freeze_sha": "Commit introducing selection.csv and acquisition-routes.md; resolved in report",
+  "local_inputs": [
+    {
+      "path": "docs/jetp-pilots/2026-09-15/protocol.md",
+      "sha256": "23cb39bdaf9201a7fbba5e0d85f0dccc6369317de476a5754580b8f6c56a6fcb"
+    },
+    {
+      "path": "tickets/0738-jetp-kfw-feasibility-pilot.erg",
+      "sha256": "c4aeea057b95cbde5547cecdcba70ff54628d35a7204cdf474dfd9e97ed82a10"
+    },
+    {
+      "path": "docs/jetp-audits/0735/round3/kfw/report.md",
+      "sha256": "22cbb1567ee329d6e69201a95aaf0dc9df2f8ed9bead781f7dacfc29e3db61f8"
+    },
+    {
+      "path": "docs/jetp-audits/0735/round3/kfw/profile.json",
+      "sha256": "c8d2ac1b7d23b85d5cc4489ecdc35219a9c19a18ec44d8e83f461d217c107e22"
+    },
+    {
+      "path": "docs/jetp-audits/0735/round3/kfw/examples.json",
+      "sha256": "7015328555c0209e63f1617345b46e1ecdc78904afaf64ae5e9d972040b6394f"
+    },
+    {
+      "path": "docs/jetp-audits/0735/round3/source-byte-manifest.json",
+      "sha256": "3c845475ebfffebcba14bd9850710a0bb3506ba98ec67650df4ec15f1515e72f"
+    }
+  ]
+}
