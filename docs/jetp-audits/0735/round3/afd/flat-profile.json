@@ -1,0 +1,144 @@
+{
+  "les-projets-de-l-afd": {
+    "rows": 2319,
+    "unique_ids": 2319
+  },
+  "les-concours-de-l-afd": {
+    "rows": 3277,
+    "unique_ids": 3277,
+    "legacy_id_overlap": 2061,
+    "date_ranges": {
+      "date": [
+        "2015-10-28",
+        "2026-08-17"
+      ],
+      "date_achevement": [
+        "2019-01-31",
+        "2034-03-31"
+      ],
+      "min_transaction_transaction_date_iso_date": [
+        "2016-11-17",
+        "2026-08-05"
+      ]
+    },
+    "legacy_missing_records": [
+      {
+        "id": "CBF136002",
+        "country": "BURKINA FASO",
+        "status": "Exécution"
+      },
+      {
+        "id": "CBF139201",
+        "country": "BURKINA FASO",
+        "status": "Exécution"
+      },
+      {
+        "id": "CMA123501",
+        "country": "MAROC",
+        "status": "Exécution"
+      },
+      {
+        "id": "CEG112509",
+        "country": "EGYPTE",
+        "status": "Exécution"
+      },
+      {
+        "id": "CBF136001",
+        "country": "BURKINA FASO",
+        "status": "Exécution"
+      },
+      {
+        "id": "CEG112504",
+        "country": "EGYPTE",
+        "status": "Exécution"
+      },
+      {
+        "id": "CPS117501",
+        "country": "TERRITOIRES AUTONOMES PALESTINIENS",
+        "status": "Achevé"
+      },
+      {
+        "id": "CBF139602",
+        "country": "BURKINA FASO",
+        "status": "Exécution"
+      },
+      {
+        "id": "CTN122106",
+        "country": "TUNISIE",
+        "status": "Exécution"
+      },
+      {
+        "id": "CAF108901",
+        "country": "AFGHANISTAN",
+        "status": "Achevé"
+      },
+      {
+        "id": "CBF135201",
+        "country": "BURKINA FASO",
+        "status": "Exécution"
+      },
+      {
+        "id": "CCM160102",
+        "country": "CAMEROUN",
+        "status": "Exécution"
+      },
+      {
+        "id": "CUG106203",
+        "country": "OUGANDA",
+        "status": "Exécution"
+      },
+      {
+        "id": "CVU106101",
+        "country": "VANUATU",
+        "status": "Exécution"
+      },
+      {
+        "id": "CCN108901",
+        "country": "CHINE",
+        "status": "Exécution"
+      },
+      {
+        "id": "CEG112507",
+        "country": "EGYPTE",
+        "status": "Exécution"
+      },
+      {
+        "id": "CZZ282701",
+        "country": "MULTI-PAYS",
+        "status": "Exécution"
+      },
+      {
+        "id": "CBF139601",
+        "country": "BURKINA FASO",
+        "status": "Exécution"
+      },
+      {
+        "id": "CEG112506",
+        "country": "EGYPTE",
+        "status": "Exécution"
+      }
+    ],
+    "legacy_signature_agreement": 2059,
+    "signature_nonmatches": [
+      {
+        "id": "CTN129703",
+        "legacy_signature": "2022-11-19",
+        "current_signature_label": null
+      },
+      {
+        "id": "CZZ276103",
+        "legacy_signature": "2021-11-16",
+        "current_signature_label": "2024-10-29"
+      }
+    ]
+  },
+  "les-transactions-de-l-afd": {
+    "rows": 9696,
+    "unique_ids": null,
+    "types": {
+      "2": 3276,
+      "3": 6420
+    },
+    "disbursement_dates_dec31": 5771
+  }
+}

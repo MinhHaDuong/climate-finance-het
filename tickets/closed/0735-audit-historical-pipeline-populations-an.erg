@@ -1,0 +1,163 @@
+%erg 0.1
+Title: Audit lifecycle evidence across lenders, sectors and countries
+Created: 2026-09-14
+Author: HDMX-coding-agent
+Closed: autoclosed — PR #1347
+
+--- log ---
+2026-09-14T06:47Z HDMX-coding-agent created
+
+2026-09-14T08:03Z HDMX-coding-agent evidence Round 1 stopped at 20 acquisition units; two original monthly rosters read; documentary partial pass, causal DEFER. Artifacts docs/jetp-audits/0735/report.md; review pending.
+
+2026-09-14T12:34Z HDMX-coding-agent closed — autoclosed — PR #1347
+--- body ---
+
+## Context
+
+Next evidence checkpoint for the causal short paper; parent 0729, programme 0725.
+The Astra/Fable discussion selected no design. Before choosing one, establish
+whether past project populations can be reconstructed, not just completed-project
+histories. The current 97 closed World Bank operations are discovery leads.
+
+## First documentary acceptance check
+
+Reconstruct one historical lender pipeline at a specified pre-intervention date.
+Include an unfinished or cancelled operation and trace its membership to a dated
+source. A current closed-only API list masquerading as that historical population
+must fail. Record missing frames and dates rather than filling them from reports.
+
+## First-round bounded actions (historical scope)
+
+1. Write a scout brief using docs/jetp-scout-brief.md: one lender/instrument stratum,
+   one JETP country and two provisional comparator countries; energy and an
+   administratively comparable non-energy sector. Choose countries by baseline
+   income/financing eligibility/energy conditions, not observed outcomes.
+2. First round: at most 20 source-search/retrieval calls or 90 minutes, whichever
+   comes first. Seek dated project lists, pipeline archives, financing agreements
+   and evaluation reports. A subsequent round needs a named unresolved document
+   or new route and an updated brief; this is not a saturation claim.
+3. Test three earlier landmark populations plus a proposed exposure baseline,
+   with follow-up ending before anticipation for historical checks where possible.
+   Record whether membership, both stage endpoints, precision, cancellation and
+   loss of visibility can be determined. Keep operation and parent-project IDs.
+4. Retain the 0729 triad (mature-on-entry, pending JETP, ordinary historical case)
+   as a protocol check, then audit 10–15 JETP cases only if the frame test supports
+   useful expansion. Record acquisition effort and unavailable fields.
+
+## Deliverables and exit criteria
+
+- [x] Frozen selection/scout brief and dated acquisition log with locators/hashes
+- [x] Frame-and-endpoint coverage matrix including missing, active and cancelled cases
+- [x] Event dates/bounds distinct from reporting and collection; no success-conditioned frame
+- [x] Evidence on comparable energy/non-energy definitions, baseline maturity and calendar coverage
+- [x] Go/narrow/defer memo for incumbent-pipeline, throughput, sector-gap and synthetic-history candidates; no effect estimate
+
+A sparse result is acceptable. Stop at the evidence checkpoint; do not enlarge a
+pool merely to improve a prospective estimate. No primary estimator is selected
+here. Candidate and blocked sources remain separate from adjudicated ledger facts.
+
+## GitHub planning issue
+
+https://github.com/MinhHaDuong/climate-finance-het/issues/1345
+
+## Round 1 evidence checkpoint (scientific review accepted)
+
+Frozen brief committed before search: 6eead17a. Report and matrices:
+`docs/jetp-audits/0735/report.md`, `landmark-coverage.csv`,
+`operation-coverage.csv`, `acquisition-log.csv`, `archive-manifest.json`,
+`local-input-manifest.json` in the same directory.
+
+20/20 acquisition units; no expansion. June 2010 and June 2020 original rosters
+support listed membership, including unfinished projects; June 2015 remains
+unlocated and June 2021 inaccessible. Three HTTP archives failed DNS: no original
+byte hashes invented. Existing local discovery inputs are hashed. Dates and
+missing endpoints are explicit; zero original approval/signature pairs.
+
+The 2010 roster removes entries after signing OR withdrawal. That rule is not
+verified for 2020; listed presence cannot prove pending-signature state. Current
+snapshot status is separate from historical membership. Triad retained as
+unverified protocol candidates; no causal design selected. Ticket stays open
+until PR acceptance; underlying archive, frame and endpoint gaps remain visible.
+
+## Independent review
+
+All five documentary exit criteria are addressed as a bounded evidence audit;
+this does not establish a usable causal design or complete historical population.
+An independent scientific reviewer accepted the report and matrices. Fast gate:
+1549 passed, ten skipped; adherence:330 passed, thirteen skipped. The report
+records the missing-DVC environment failure and successful hydrated rerun.
+Ticket remains open until the report PR is accepted.
+
+## Author-directed second pass, 14 September 2026
+
+The author requests broader coverage beyond World Bank, energy and JETP
+countries. Execute the frozen round-2 brief at
+`docs/jetp-audits/0735/round2/brief.md`: ADB, AfDB, EIB and AFD routes,
+all-sector catalogues and multiple non-JETP borrower strata. This replaces
+the first round's single-lender restriction for the new pass only.
+
+Additional acceptance: institution-by-stage availability matrix; documented
+non-energy/non-JETP examples; actual milestone pairs where available; explicit
+historical-population and dropped/cancelled coverage; costed next acquisition
+priorities. Sparse findings remain valid, but narrow WB results are not taken
+as evidence about the wider source landscape. No design is selected.
+
+## Second-pass handoff
+
+Current report: `docs/jetp-audits/0735/round2/report.md`. Three institutional scouts
+used30units each; parentverification used12units. ADB andEIB originals demonstrate
+paired lifecycle dates. The officialAFD bulk export contains2080financing IDs,
+1492project IDs and1911award/signature pairs across sectors and borrower countries.
+Loan/grant strata, multi-country rows, dated2024metadata, missing values and
+reversed chronology remain explicit. AfDB individual leads remain unverified.
+
+The prioritized next acquisition is AFD historical inclusion/retention rules and
+an older snapshot, then original exceptions behind the seven reversed award/
+signature pairs. Approved-but-unsigned coverage is needed for that stage; the
+signed-to-first-payment route needs unpaid-contract retention checks. ADB/EIB
+provide complementary milestone and population probes. Continue country/sector
+exposure work under0736; no causal design is selected by this broader audit.
+
+Eight original payloads are DVC-tracked in a separate provisional audit bundle.
+Remote replication failed (padme connection refused); all nine cache objects are
+preserved in the primary local cache. The canonical source archive was not
+rewritten from its partial checkout. No website or ledger data changed.
+
+## Author-directed bilateral pass, 14 September 2026
+
+Round 3 extends AFD to current XML/portal reconciliation and adds JICA, KfW,
+USAID and UK FCDO. Report: `docs/jetp-audits/0735/round3/report.md`.
+91 bounded external units, original payload checks and source manifests.
+
+AFD current portal has 3,277 financing IDs; fixed-country XML retains 223 of
+224 legacy IDs, including completed and payment-missing records, but loses
+CMA123501. Full flat-table comparison has 19 missing IDs and two signature
+discrepancies. Exact legacy first-payment dates do not match earliest periodic
+XML transactions. KfW/BMZ supplies 4,036 activities with coarsened payment dates;
+FCDO supplies 7,327 programmes plus components and actual pipeline entries.
+JICA annual signature lists are a better cohort lead than its planned-date XML.
+USAID access is demonstrated, but the acquired XML is an older administrative
+slice, not a project-level comparison pool.
+
+Next acceptance tests and ordering are specified in the round-3 memo: AFD
+missing-ID/date reconciliation first; KfW reporting-period and FCDO documentary
+pilots alongside; JICA older annual cohort; USAID identity/granularity before
+large extraction. The delivered populations are not added across institutions.
+No design or single lifecycle outcome is selected. Explicit disclosure, version
+and unit checks are required before these observations enter the paper or site.
+
+## Fresh-session checkpoint
+
+Author paused before launching pilots. Resume from
+`docs/jetp-pilot-handoff-2026-09-14.md`: AFD first, KfW/FCDO complementary
+pilots, explicit first tests and source budgets, then a comparative design
+feasibility matrix. No pilot, primary estimator or merge was launched here.
+
+## Prepared pilot wave, 15 September 2026
+
+Child assignments: 0737 AFD; 0738 KfW/BMZ; 0739 FCDO. Each carries the first
+acceptance test, bounded routes and exit criteria. Common protocol:
+`docs/jetp-pilots/2026-09-15/protocol.md`. They feed this historical audit and
+0729's design matrix; no primary estimator or pilot has been launched. Sol high
+is the recommended lead, Terra high for bounded assignments, with independent
+scientific review. Historical denominators may remain explicitly unresolved.

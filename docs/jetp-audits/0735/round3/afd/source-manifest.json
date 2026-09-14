@@ -1,0 +1,106 @@
+[
+  {
+    "file": "catalog.json",
+    "local_path": "/tmp/jetp-round3-afd/catalog.json",
+    "url": "https://opendata.afd.fr/api/explore/v2.1/catalog/datasets?limit=100",
+    "retrieved": "2026-09-14",
+    "bytes": 124906,
+    "sha256": "cc85842f5f80cf18cac3973217984e334a64a81edb135455edffe9f8923e61ea"
+  },
+  {
+    "file": "les-projets-de-l-afd.json",
+    "local_path": "/tmp/jetp-round3-afd/les-projets-de-l-afd.json",
+    "url": "https://opendata.afd.fr/api/explore/v2.1/catalog/datasets/les-projets-de-l-afd/exports/json",
+    "retrieved": "2026-09-14",
+    "bytes": 4804214,
+    "sha256": "eb120e9690493e62c2426e3963212069bd6fa772a50448558b71e77ebb065a24"
+  },
+  {
+    "file": "les-concours-de-l-afd.json",
+    "local_path": "/tmp/jetp-round3-afd/les-concours-de-l-afd.json",
+    "url": "https://opendata.afd.fr/api/explore/v2.1/catalog/datasets/les-concours-de-l-afd/exports/json",
+    "retrieved": "2026-09-14",
+    "bytes": 5739650,
+    "sha256": "23d86842e464dd4f6b239a05f46923a3ae6654c077446fc78c6d997ff3406cd2"
+  },
+  {
+    "file": "les-transactions-de-l-afd.json",
+    "local_path": "/tmp/jetp-round3-afd/les-transactions-de-l-afd.json",
+    "url": "https://opendata.afd.fr/api/explore/v2.1/catalog/datasets/les-transactions-de-l-afd/exports/json",
+    "retrieved": "2026-09-14",
+    "bytes": 2790306,
+    "sha256": "408ed8fdb9f10693b79229707ac1352ce51dc75f334c45a00e03d7c360e64864"
+  },
+  {
+    "file": "datagouv-metadata.json",
+    "local_path": "/tmp/jetp-round3-afd/datagouv-metadata.json",
+    "url": "https://www.data.gouv.fr/api/1/datasets/donnees-de-laide-au-developpement-de-lafd-1/",
+    "retrieved": "2026-09-14",
+    "bytes": 216236,
+    "sha256": "ecb0b3bc4831b75a3467294d34de7bd27f866fb7e3946601e35934180c2c161e"
+  },
+  {
+    "file": "fr-afd-al.xml",
+    "local_path": "/tmp/jetp-round3-afd/fr-afd-al.xml",
+    "url": "https://static.data.gouv.fr/resources/donnees-de-laide-au-developpement-de-lafd-1/20260819-111822/fr-afd-al.xml",
+    "retrieved": "2026-09-14",
+    "bytes": 118642,
+    "sha256": "2f30eb30830f8a51de64035cd112b26543ff5f0a137f6f980626ef54b4c6fbf5"
+  },
+  {
+    "file": "fr-afd-ma.xml",
+    "local_path": "/tmp/jetp-round3-afd/fr-afd-ma.xml",
+    "url": "https://static.data.gouv.fr/resources/donnees-de-laide-au-developpement-de-lafd-1/20260825-133231/fr-afd-ma.xml",
+    "retrieved": "2026-09-14",
+    "bytes": 946892,
+    "sha256": "df5a24162d489952339fd2a843cabcc524d3f910a3ad66cdc8a7b47e67ccf51e"
+  },
+  {
+    "file": "fr-afd-za.xml",
+    "local_path": "/tmp/jetp-round3-afd/fr-afd-za.xml",
+    "url": "https://static.data.gouv.fr/resources/donnees-de-laide-au-developpement-de-lafd-1/20260819-111605/fr-afd-za.xml",
+    "retrieved": "2026-09-14",
+    "bytes": 77561,
+    "sha256": "f0c44335c1bef2e7de592dfdb5cb0525527539d6cc944d18aad0da492428e897"
+  },
+  {
+    "file": "fr-afd-id.xml",
+    "local_path": "/tmp/jetp-round3-afd/fr-afd-id.xml",
+    "url": "https://static.data.gouv.fr/resources/donnees-de-laide-au-developpement-de-lafd-1/20260819-114506/fr-afd-id.xml",
+    "retrieved": "2026-09-14",
+    "bytes": 256801,
+    "sha256": "46ff508f1db12911c5ee9c50e3e4c4174b1bff842694eda53490827c4036ce96"
+  },
+  {
+    "file": "fr-afd-vn.xml",
+    "local_path": "/tmp/jetp-round3-afd/fr-afd-vn.xml",
+    "url": "https://static.data.gouv.fr/resources/donnees-de-laide-au-developpement-de-lafd-1/20260819-111347/fr-afd-vn.xml",
+    "retrieved": "2026-09-14",
+    "bytes": 573752,
+    "sha256": "8c39e1f7e6f49c6731e942005c87ee6004d4864101997693615d1b4370cda966"
+  },
+  {
+    "file": "fr-afd-in.xml",
+    "local_path": "/tmp/jetp-round3-afd/fr-afd-in.xml",
+    "url": "https://static.data.gouv.fr/resources/donnees-de-laide-au-developpement-de-lafd-1/20260819-114552/fr-afd-in.xml",
+    "retrieved": "2026-09-14",
+    "bytes": 383286,
+    "sha256": "e6d3767543a77a3a01077ddcc9413174948434d023b9c8c755454479ad3f9fc2"
+  },
+  {
+    "file": "fr-afd-sn.xml",
+    "local_path": "/tmp/jetp-round3-afd/fr-afd-sn.xml",
+    "url": "https://static.data.gouv.fr/resources/donnees-de-laide-au-developpement-de-lafd-1/20260819-110327/fr-afd-sn.xml",
+    "retrieved": "2026-09-14",
+    "bytes": 1218897,
+    "sha256": "8377112fbd7804b45f23caa1efea162103c36c14a056190db109a075c15c490e"
+  },
+  {
+    "file": "policy.pdf",
+    "local_path": "/tmp/jetp-round3-afd/policy.pdf",
+    "url": "https://www.afd.fr/sites/default/files/2025-04/politique-transparence-afd.pdf",
+    "retrieved": "2026-09-14",
+    "bytes": 659313,
+    "sha256": "60a74cf19255168f25400a55ea7a463a749bed44eeef36ff027b87fc87dd3c40"
+  }
+]

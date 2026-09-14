@@ -1,0 +1,13 @@
+unit,method,url,outcome,archived_source_id,retrieved_on
+1,web open,https://www.adb.org/sites/default/files/project-documents/42362/42362-013-pcr-en.pdf,original extraction read; pivotal dates checked,adb-idn,2026-09-14
+2,web screenshot,https://www.adb.org/sites/default/files/project-documents/42362/42362-013-pcr-en.pdf#page=7,cache miss; no image,,2026-09-14
+3,escalated public GET,https://www.adb.org/sites/default/files/project-documents/42362/42362-013-pcr-en.pdf,HTTP200; table checked from locally extracted bytes,adb-idn,2026-09-14
+4,escalated public GET,https://www.adb.org/sites/default/files/project-documents/40031/40031-013-pcr-en.pdf,HTTP200; tranche3 dates verified locally,adb-ind,2026-09-14
+5,escalated public GET,https://www.eib.org/en/projects/all/20170028,HTTP200; DOM columns explicitly align Approved13December2023 and Signed30December2023,eib-tun,2026-09-14
+6,escalated public GET,https://opendata.afd.fr/api/explore/v2.1/catalog/datasets/donnees-aide-au-developpement-afd/records?limit=2,HTTP200; actual records obtained rather than schema only,afd-record-probe,2026-09-14
+7,escalated public GET,https://opendata.afd.fr/api/explore/v2.1/catalog/datasets/donnees-aide-au-developpement-afd,"HTTP200; scope, consent and2024modified metadata read",afd-metadata,2026-09-14
+8,escalated public GET,https://opendata.afd.fr/api/explore/v2.1/catalog/datasets/donnees-aide-au-developpement-afd/exports/json,HTTP200; all2080unique financing IDs reconcile to metadata count,afd-full-export,2026-09-14
+9,escalated public GET,https://evrd.afdb.org/documents/docs/PN11076_SR_EN.pdf,HTTP403; no original verified,,2026-09-14
+10,escalated public GET,https://libraryir.parliament.go.ke/bitstreams/62ed5b67-0bd2-443a-95d5-d2d1adc8517b/download,HTTP200; borrower audit names grouped loan agreements; no unambiguous same-loan milestone pair verified,afdb-kenya-audit,2026-09-14
+11,escalated public GET,https://idev.afdb.org/sites/default/files/Evaluations/2020-03/Morocco-%20Review%20of%20The%20Bank%E2%80%99s%20Assistance%20to%20the%20Health%20Sector%2C%201994-2004.pdf,HTTP403; no original verified,,2026-09-14
+12,escalated public GET,https://www.eib.org/en/projects/pipelines/notice/index,HTTP200; original inclusion and removal notes checked,eib-population-notice,2026-09-14

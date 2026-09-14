@@ -2,13 +2,13 @@
 Title: Select a feasible causal design from the JETP evidence audits
 Created: 2026-09-13
 Author: HDMX-coding-agent
-Blocked-by: 0735
 Blocked-by: 0736
 
 --- log ---
 2026-09-13T19:18Z HDMX-coding-agent created
 2026-09-14T06:51Z HDMX-coding-agent decision Consolidate Astra/Fable options; no design selected. Two bounded evidence audits feed the design checkpoint.
 
+2026-09-14T12:34Z HDMX-coding-agent note blocker 0735 closed — Blocked-by removed.
 --- body ---
 
 ## Context

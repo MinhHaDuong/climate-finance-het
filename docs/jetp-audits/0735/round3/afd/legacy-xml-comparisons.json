@@ -1,0 +1,3347 @@
+[
+  {
+    "id": "CAL100301",
+    "legacy_award": "2019-12-04",
+    "legacy_signature": "2021-11-25",
+    "legacy_first_payment": "2022-08-30",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2021-11-25",
+        "value_date": "2019-12-04"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CAL100302",
+    "legacy_award": "2019-12-04",
+    "legacy_signature": "2019-12-05",
+    "legacy_first_payment": "2022-04-19",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2019-12-05",
+        "value_date": "2019-12-04"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CAL100303",
+    "legacy_award": "2019-12-04",
+    "legacy_signature": "2023-03-02",
+    "legacy_first_payment": "2023-05-25",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2023-03-02",
+        "value_date": "2019-12-04"
+      }
+    ],
+    "earliest_reported_disbursement": "2023-12-31"
+  },
+  {
+    "id": "CAL100401",
+    "legacy_award": "2019-12-18",
+    "legacy_signature": "2021-11-12",
+    "legacy_first_payment": "2022-06-29",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2021-11-12",
+        "value_date": "2019-12-18"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CAL100402",
+    "legacy_award": "2019-12-18",
+    "legacy_signature": "2019-12-19",
+    "legacy_first_payment": "2022-02-02",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2019-12-19",
+        "value_date": "2019-12-18"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CAL101201",
+    "legacy_award": "2020-11-05",
+    "legacy_signature": "2022-11-15",
+    "legacy_first_payment": "2023-11-20",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2022-11-15",
+        "value_date": "2020-11-05"
+      }
+    ],
+    "earliest_reported_disbursement": "2023-12-31"
+  },
+  {
+    "id": "CAL101202",
+    "legacy_award": "2020-11-05",
+    "legacy_signature": "2022-11-15",
+    "legacy_first_payment": null,
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2022-11-15",
+        "value_date": "2020-11-05"
+      }
+    ],
+    "earliest_reported_disbursement": "2024-12-31"
+  },
+  {
+    "id": "CAL101901",
+    "legacy_award": "2021-11-17",
+    "legacy_signature": "2023-06-06",
+    "legacy_first_payment": "2023-12-13",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2023-06-06",
+        "value_date": "2021-11-17"
+      }
+    ],
+    "earliest_reported_disbursement": "2023-12-31"
+  },
+  {
+    "id": "CID107101",
+    "legacy_award": "2018-06-14",
+    "legacy_signature": "2018-10-13",
+    "legacy_first_payment": "2018-12-06",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2018-10-13",
+        "value_date": "2018-06-14"
+      }
+    ],
+    "earliest_reported_disbursement": "2018-12-31"
+  },
+  {
+    "id": "CID107702",
+    "legacy_award": null,
+    "legacy_signature": "2021-06-08",
+    "legacy_first_payment": "2021-12-06",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2021-06-08",
+        "value_date": "2026-04-23"
+      }
+    ],
+    "earliest_reported_disbursement": "2021-12-31"
+  },
+  {
+    "id": "CID108001",
+    "legacy_award": "2019-04-18",
+    "legacy_signature": "2019-12-19",
+    "legacy_first_payment": null,
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2019-12-19",
+        "value_date": "2019-04-18"
+      }
+    ],
+    "earliest_reported_disbursement": "2024-12-31"
+  },
+  {
+    "id": "CID108301",
+    "legacy_award": "2019-07-11",
+    "legacy_signature": "2020-05-20",
+    "legacy_first_payment": "2020-06-22",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-05-20",
+        "value_date": "2019-07-11"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CID108801",
+    "legacy_award": "2019-07-11",
+    "legacy_signature": "2020-01-14",
+    "legacy_first_payment": "2020-03-20",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-01-14",
+        "value_date": "2019-07-11"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CID108901",
+    "legacy_award": "2020-11-20",
+    "legacy_signature": "2021-01-27",
+    "legacy_first_payment": "2021-07-08",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2021-01-27",
+        "value_date": "2020-11-20"
+      }
+    ],
+    "earliest_reported_disbursement": "2021-12-31"
+  },
+  {
+    "id": "CID109001",
+    "legacy_award": "2019-07-11",
+    "legacy_signature": "2020-12-02",
+    "legacy_first_payment": "2022-02-22",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2020-12-02",
+        "value_date": "2019-07-11"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CID109002",
+    "legacy_award": "2019-07-11",
+    "legacy_signature": "2020-12-02",
+    "legacy_first_payment": "2021-09-03",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2020-12-02",
+        "value_date": "2019-07-11"
+      }
+    ],
+    "earliest_reported_disbursement": "2021-12-31"
+  },
+  {
+    "id": "CID109201",
+    "legacy_award": "2019-04-30",
+    "legacy_signature": "2019-05-07",
+    "legacy_first_payment": "2019-08-14",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2019-05-07",
+        "value_date": "2019-04-30"
+      }
+    ],
+    "earliest_reported_disbursement": "2019-12-31"
+  },
+  {
+    "id": "CID110001",
+    "legacy_award": "2020-12-18",
+    "legacy_signature": "2021-07-28",
+    "legacy_first_payment": "2021-11-19",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2021-07-28",
+        "value_date": "2020-12-18"
+      }
+    ],
+    "earliest_reported_disbursement": "2021-12-31"
+  },
+  {
+    "id": "CID111101",
+    "legacy_award": "2020-06-18",
+    "legacy_signature": "2020-11-26",
+    "legacy_first_payment": "2020-12-10",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-11-26",
+        "value_date": "2020-06-18"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CID111701",
+    "legacy_award": "2022-07-06",
+    "legacy_signature": "2023-03-03",
+    "legacy_first_payment": "2023-09-07",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2023-03-03",
+        "value_date": "2022-07-06"
+      }
+    ],
+    "earliest_reported_disbursement": "2023-12-31"
+  },
+  {
+    "id": "CID111801",
+    "legacy_award": "2021-09-16",
+    "legacy_signature": "2022-07-29",
+    "legacy_first_payment": "2022-11-21",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2022-07-29",
+        "value_date": "2021-09-16"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CID112301",
+    "legacy_award": "2022-06-16",
+    "legacy_signature": "2023-04-14",
+    "legacy_first_payment": "2023-10-02",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2023-04-14",
+        "value_date": "2022-06-16"
+      }
+    ],
+    "earliest_reported_disbursement": "2023-12-31"
+  },
+  {
+    "id": "CIN107401",
+    "legacy_award": "2016-12-15",
+    "legacy_signature": "2019-12-27",
+    "legacy_first_payment": "2020-06-18",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2019-12-27",
+        "value_date": "2016-12-15"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CIN107503",
+    "legacy_award": null,
+    "legacy_signature": "2018-10-22",
+    "legacy_first_payment": "2019-01-18",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2018-10-22",
+        "value_date": "2026-08-17"
+      }
+    ],
+    "earliest_reported_disbursement": "2019-12-31"
+  },
+  {
+    "id": "CIN107505",
+    "legacy_award": null,
+    "legacy_signature": "2019-12-11",
+    "legacy_first_payment": "2020-03-25",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2019-12-11",
+        "value_date": "2026-08-17"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CIN107506",
+    "legacy_award": null,
+    "legacy_signature": "2019-12-17",
+    "legacy_first_payment": "2020-09-23",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2019-12-17",
+        "value_date": "2026-08-17"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CIN107507",
+    "legacy_award": null,
+    "legacy_signature": "2020-01-17",
+    "legacy_first_payment": "2021-05-19",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-01-17",
+        "value_date": "2026-08-17"
+      }
+    ],
+    "earliest_reported_disbursement": "2021-12-31"
+  },
+  {
+    "id": "CIN107508",
+    "legacy_award": null,
+    "legacy_signature": "2020-03-04",
+    "legacy_first_payment": "2021-03-10",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-03-04",
+        "value_date": "2026-08-17"
+      }
+    ],
+    "earliest_reported_disbursement": "2021-12-31"
+  },
+  {
+    "id": "CIN107509",
+    "legacy_award": null,
+    "legacy_signature": "2020-09-17",
+    "legacy_first_payment": "2021-11-30",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-09-17",
+        "value_date": "2026-08-17"
+      }
+    ],
+    "earliest_reported_disbursement": "2021-12-31"
+  },
+  {
+    "id": "CIN107510",
+    "legacy_award": null,
+    "legacy_signature": "2021-03-03",
+    "legacy_first_payment": "2021-08-16",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2021-03-03",
+        "value_date": "2026-08-17"
+      }
+    ],
+    "earliest_reported_disbursement": "2021-12-31"
+  },
+  {
+    "id": "CIN109001",
+    "legacy_award": "2020-12-16",
+    "legacy_signature": "2022-09-14",
+    "legacy_first_payment": "2024-04-02",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2022-09-14",
+        "value_date": "2020-12-16"
+      }
+    ],
+    "earliest_reported_disbursement": "2024-12-31"
+  },
+  {
+    "id": "CIN109002",
+    "legacy_award": "2020-12-16",
+    "legacy_signature": "2022-11-29",
+    "legacy_first_payment": null,
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2022-11-29",
+        "value_date": "2020-12-16"
+      }
+    ],
+    "earliest_reported_disbursement": null
+  },
+  {
+    "id": "CIN110101",
+    "legacy_award": "2018-12-19",
+    "legacy_signature": "2019-08-19",
+    "legacy_first_payment": "2020-02-26",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2019-08-19",
+        "value_date": "2018-12-19"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CIN110401",
+    "legacy_award": "2018-07-12",
+    "legacy_signature": "2019-01-28",
+    "legacy_first_payment": "2019-07-23",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2019-01-28",
+        "value_date": "2018-07-12"
+      }
+    ],
+    "earliest_reported_disbursement": "2019-12-31"
+  },
+  {
+    "id": "CIN111301",
+    "legacy_award": "2021-12-16",
+    "legacy_signature": "2023-03-03",
+    "legacy_first_payment": "2023-12-15",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2023-03-03",
+        "value_date": "2021-12-16"
+      }
+    ],
+    "earliest_reported_disbursement": "2023-12-31"
+  },
+  {
+    "id": "CIN112201",
+    "legacy_award": "2021-12-16",
+    "legacy_signature": "2022-11-16",
+    "legacy_first_payment": "2023-03-09",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2022-11-16",
+        "value_date": "2021-12-16"
+      }
+    ],
+    "earliest_reported_disbursement": "2023-12-31"
+  },
+  {
+    "id": "CIN112501",
+    "legacy_award": "2019-12-19",
+    "legacy_signature": "2021-01-28",
+    "legacy_first_payment": "2022-01-26",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2021-01-28",
+        "value_date": "2019-12-19"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CIN113301",
+    "legacy_award": "2021-11-18",
+    "legacy_signature": "2023-12-06",
+    "legacy_first_payment": null,
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2023-12-06",
+        "value_date": "2021-11-18"
+      }
+    ],
+    "earliest_reported_disbursement": "2024-12-31"
+  },
+  {
+    "id": "CIN113303",
+    "legacy_award": "2021-11-18",
+    "legacy_signature": "2021-11-19",
+    "legacy_first_payment": null,
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2021-11-19",
+        "value_date": "2021-11-18"
+      }
+    ],
+    "earliest_reported_disbursement": "2025-12-31"
+  },
+  {
+    "id": "CIN114701",
+    "legacy_award": "2022-09-22",
+    "legacy_signature": "2023-03-03",
+    "legacy_first_payment": "2023-06-28",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2023-03-03",
+        "value_date": "2022-09-22"
+      }
+    ],
+    "earliest_reported_disbursement": "2023-12-31"
+  },
+  {
+    "id": "CIN115901",
+    "legacy_award": "2022-07-07",
+    "legacy_signature": "2022-09-29",
+    "legacy_first_payment": "2023-06-29",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2022-09-29",
+        "value_date": "2022-07-07"
+      }
+    ],
+    "earliest_reported_disbursement": "2023-12-31"
+  },
+  {
+    "id": "CIN116401",
+    "legacy_award": "2021-12-16",
+    "legacy_signature": "2023-02-13",
+    "legacy_first_payment": "2023-07-24",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2023-02-13",
+        "value_date": "2021-12-16"
+      }
+    ],
+    "earliest_reported_disbursement": "2023-12-31"
+  },
+  {
+    "id": "CMA121301",
+    "legacy_award": "2021-10-13",
+    "legacy_signature": "2021-12-09",
+    "legacy_first_payment": "2022-05-20",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2021-12-09",
+        "value_date": "2021-10-13"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CMA122103",
+    "legacy_award": "2016-09-29",
+    "legacy_signature": "2018-12-12",
+    "legacy_first_payment": "2019-02-19",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2018-12-12",
+        "value_date": "2016-09-29"
+      }
+    ],
+    "earliest_reported_disbursement": "2019-12-31"
+  },
+  {
+    "id": "CMA123201",
+    "legacy_award": "2016-12-14",
+    "legacy_signature": "2019-07-19",
+    "legacy_first_payment": "2020-06-25",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2019-07-19",
+        "value_date": "2016-12-14"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CMA123202",
+    "legacy_award": "2016-12-14",
+    "legacy_signature": "2019-07-19",
+    "legacy_first_payment": null,
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2019-07-19",
+        "value_date": "2016-12-14"
+      }
+    ],
+    "earliest_reported_disbursement": "2024-12-31"
+  },
+  {
+    "id": "CMA123801",
+    "legacy_award": "2019-10-24",
+    "legacy_signature": "2019-12-19",
+    "legacy_first_payment": "2020-07-17",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2019-12-19",
+        "value_date": "2019-10-24"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CMA123805",
+    "legacy_award": "2019-10-24",
+    "legacy_signature": "2019-10-25",
+    "legacy_first_payment": "2020-12-14",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2019-10-25",
+        "value_date": "2019-10-24"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CMA124502",
+    "legacy_award": "2017-10-26",
+    "legacy_signature": "2019-04-12",
+    "legacy_first_payment": "2020-07-24",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2019-04-12",
+        "value_date": "2017-10-26"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CMA125001",
+    "legacy_award": "2023-12-14",
+    "legacy_signature": "2023-12-15",
+    "legacy_first_payment": "2024-01-29",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2023-12-15",
+        "value_date": "2023-12-14"
+      }
+    ],
+    "earliest_reported_disbursement": "2024-12-31"
+  },
+  {
+    "id": "CMA125006",
+    "legacy_award": "2023-12-14",
+    "legacy_signature": "2024-03-18",
+    "legacy_first_payment": null,
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2024-03-18",
+        "value_date": "2023-12-14"
+      }
+    ],
+    "earliest_reported_disbursement": "2025-12-31"
+  },
+  {
+    "id": "CMA125301",
+    "legacy_award": "2018-09-28",
+    "legacy_signature": "2019-06-27",
+    "legacy_first_payment": "2020-05-04",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2019-06-27",
+        "value_date": "2018-09-28"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CMA125302",
+    "legacy_award": "2018-09-28",
+    "legacy_signature": "2019-06-27",
+    "legacy_first_payment": "2020-07-14",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2019-06-27",
+        "value_date": "2018-09-28"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CMA125401",
+    "legacy_award": "2018-12-20",
+    "legacy_signature": "2020-11-02",
+    "legacy_first_payment": "2021-06-25",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2020-11-02",
+        "value_date": "2018-12-20"
+      }
+    ],
+    "earliest_reported_disbursement": "2021-12-31"
+  },
+  {
+    "id": "CMA126001",
+    "legacy_award": "2018-11-22",
+    "legacy_signature": "2019-07-23",
+    "legacy_first_payment": "2019-12-03",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2019-07-23",
+        "value_date": "2018-11-22"
+      }
+    ],
+    "earliest_reported_disbursement": "2019-12-31"
+  },
+  {
+    "id": "CMA126002",
+    "legacy_award": "2018-11-22",
+    "legacy_signature": "2019-07-23",
+    "legacy_first_payment": "2019-10-03",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2019-07-23",
+        "value_date": "2018-11-22"
+      }
+    ],
+    "earliest_reported_disbursement": "2019-12-31"
+  },
+  {
+    "id": "CMA126201",
+    "legacy_award": "2018-05-17",
+    "legacy_signature": "2018-12-21",
+    "legacy_first_payment": "2019-05-14",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2018-12-21",
+        "value_date": "2018-05-17"
+      }
+    ],
+    "earliest_reported_disbursement": "2019-12-31"
+  },
+  {
+    "id": "CMA126202",
+    "legacy_award": "2018-05-17",
+    "legacy_signature": "2019-07-17",
+    "legacy_first_payment": "2019-12-17",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2019-07-17",
+        "value_date": "2018-05-17"
+      }
+    ],
+    "earliest_reported_disbursement": "2019-12-31"
+  },
+  {
+    "id": "CMA126203",
+    "legacy_award": "2018-05-17",
+    "legacy_signature": "2019-07-17",
+    "legacy_first_payment": "2020-01-09",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2019-07-17",
+        "value_date": "2018-05-17"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CMA126801",
+    "legacy_award": "2019-04-17",
+    "legacy_signature": "2019-12-19",
+    "legacy_first_payment": "2020-04-03",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2019-12-19",
+        "value_date": "2019-04-17"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CMA126802",
+    "legacy_award": "2019-04-17",
+    "legacy_signature": "2020-04-07",
+    "legacy_first_payment": "2021-07-09",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2020-04-07",
+        "value_date": "2019-04-17"
+      }
+    ],
+    "earliest_reported_disbursement": "2021-12-31"
+  },
+  {
+    "id": "CMA126901",
+    "legacy_award": "2020-11-05",
+    "legacy_signature": "2021-07-12",
+    "legacy_first_payment": "2021-09-20",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2021-07-12",
+        "value_date": "2020-11-05"
+      }
+    ],
+    "earliest_reported_disbursement": "2021-12-31"
+  },
+  {
+    "id": "CMA126902",
+    "legacy_award": "2020-11-05",
+    "legacy_signature": "2021-07-12",
+    "legacy_first_payment": "2023-05-03",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2021-07-12",
+        "value_date": "2020-11-05"
+      }
+    ],
+    "earliest_reported_disbursement": "2023-12-31"
+  },
+  {
+    "id": "CMA126903",
+    "legacy_award": "2020-11-05",
+    "legacy_signature": "2022-06-13",
+    "legacy_first_payment": "2023-01-26",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2022-06-13",
+        "value_date": "2020-11-05"
+      }
+    ],
+    "earliest_reported_disbursement": "2023-12-31"
+  },
+  {
+    "id": "CMA127101",
+    "legacy_award": "2018-07-10",
+    "legacy_signature": "2018-12-03",
+    "legacy_first_payment": "2019-02-12",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2018-12-03",
+        "value_date": "2018-07-10"
+      }
+    ],
+    "earliest_reported_disbursement": "2019-12-31"
+  },
+  {
+    "id": "CMA127301",
+    "legacy_award": "2018-10-23",
+    "legacy_signature": "2019-02-20",
+    "legacy_first_payment": "2019-04-08",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2019-02-20",
+        "value_date": "2018-10-23"
+      }
+    ],
+    "earliest_reported_disbursement": "2019-12-31"
+  },
+  {
+    "id": "CMA127401",
+    "legacy_award": "2019-12-19",
+    "legacy_signature": "2020-06-22",
+    "legacy_first_payment": "2020-07-22",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-06-22",
+        "value_date": "2019-12-19"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CMA127402",
+    "legacy_award": "2019-12-19",
+    "legacy_signature": "2020-07-02",
+    "legacy_first_payment": "2022-06-23",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-07-02",
+        "value_date": "2019-12-19"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CMA127701",
+    "legacy_award": "2019-12-13",
+    "legacy_signature": "2020-03-10",
+    "legacy_first_payment": "2021-03-22",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-03-10",
+        "value_date": "2019-12-13"
+      }
+    ],
+    "earliest_reported_disbursement": "2021-12-31"
+  },
+  {
+    "id": "CMA127801",
+    "legacy_award": "2019-12-02",
+    "legacy_signature": "2020-05-27",
+    "legacy_first_payment": "2022-06-03",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-05-27",
+        "value_date": "2019-12-02"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CMA127802",
+    "legacy_award": "2019-12-02",
+    "legacy_signature": "2020-05-27",
+    "legacy_first_payment": "2021-06-02",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-05-27",
+        "value_date": "2019-12-02"
+      }
+    ],
+    "earliest_reported_disbursement": "2021-12-31"
+  },
+  {
+    "id": "CMA128201",
+    "legacy_award": "2021-11-18",
+    "legacy_signature": "2021-12-07",
+    "legacy_first_payment": "2021-12-22",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2021-12-07",
+        "value_date": "2021-11-18"
+      }
+    ],
+    "earliest_reported_disbursement": "2021-12-31"
+  },
+  {
+    "id": "CMA128202",
+    "legacy_award": "2021-11-18",
+    "legacy_signature": "2021-11-19",
+    "legacy_first_payment": "2023-10-06",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2021-11-19",
+        "value_date": "2021-11-18"
+      }
+    ],
+    "earliest_reported_disbursement": "2023-12-31"
+  },
+  {
+    "id": "CMA128401",
+    "legacy_award": "2020-11-20",
+    "legacy_signature": "2021-04-01",
+    "legacy_first_payment": "2022-11-30",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2021-04-01",
+        "value_date": "2020-11-20"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CMA128501",
+    "legacy_award": "2019-09-19",
+    "legacy_signature": "2020-04-01",
+    "legacy_first_payment": "2020-05-07",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2020-04-01",
+        "value_date": "2019-09-19"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CMA129101",
+    "legacy_award": "2019-09-18",
+    "legacy_signature": "2020-04-30",
+    "legacy_first_payment": "2020-10-16",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-04-30",
+        "value_date": "2019-09-18"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CMA129301",
+    "legacy_award": "2019-07-09",
+    "legacy_signature": "2019-10-11",
+    "legacy_first_payment": "2019-10-29",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2019-10-11",
+        "value_date": "2019-07-09"
+      }
+    ],
+    "earliest_reported_disbursement": "2019-12-31"
+  },
+  {
+    "id": "CMA129401",
+    "legacy_award": "2021-12-16",
+    "legacy_signature": "2022-04-25",
+    "legacy_first_payment": "2022-11-17",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2022-04-25",
+        "value_date": "2021-12-16"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CMA129402",
+    "legacy_award": "2021-12-16",
+    "legacy_signature": "2021-12-17",
+    "legacy_first_payment": "2022-10-24",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2021-12-17",
+        "value_date": "2021-12-16"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CMA129701",
+    "legacy_award": "2022-12-15",
+    "legacy_signature": "2023-11-16",
+    "legacy_first_payment": null,
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2023-11-16",
+        "value_date": "2022-12-15"
+      }
+    ],
+    "earliest_reported_disbursement": "2024-12-31"
+  },
+  {
+    "id": "CMA129801",
+    "legacy_award": "2020-12-18",
+    "legacy_signature": "2021-07-28",
+    "legacy_first_payment": "2021-12-23",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2021-07-28",
+        "value_date": "2020-12-18"
+      }
+    ],
+    "earliest_reported_disbursement": "2021-12-31"
+  },
+  {
+    "id": "CMA129802",
+    "legacy_award": "2020-12-18",
+    "legacy_signature": "2021-07-28",
+    "legacy_first_payment": "2024-04-09",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2021-07-28",
+        "value_date": "2020-12-18"
+      }
+    ],
+    "earliest_reported_disbursement": "2024-12-31"
+  },
+  {
+    "id": "CMA130501",
+    "legacy_award": "2020-07-07",
+    "legacy_signature": "2020-10-22",
+    "legacy_first_payment": "2020-12-03",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-10-22",
+        "value_date": "2020-07-07"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CMA130701",
+    "legacy_award": "2021-09-16",
+    "legacy_signature": "2022-07-27",
+    "legacy_first_payment": "2022-11-24",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2022-07-27",
+        "value_date": "2021-09-16"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CMA130702",
+    "legacy_award": "2021-09-16",
+    "legacy_signature": "2022-05-10",
+    "legacy_first_payment": "2022-12-15",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2022-05-10",
+        "value_date": "2021-09-16"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CMA130703",
+    "legacy_award": "2021-09-16",
+    "legacy_signature": "2023-06-15",
+    "legacy_first_payment": "2023-12-11",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2023-06-15",
+        "value_date": "2021-09-16"
+      }
+    ],
+    "earliest_reported_disbursement": "2023-12-31"
+  },
+  {
+    "id": "CMA130704",
+    "legacy_award": "2021-09-16",
+    "legacy_signature": "2023-11-29",
+    "legacy_first_payment": "2024-04-02",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2023-11-29",
+        "value_date": "2021-09-16"
+      }
+    ],
+    "earliest_reported_disbursement": "2024-12-31"
+  },
+  {
+    "id": "CMA130705",
+    "legacy_award": "2021-09-16",
+    "legacy_signature": "2023-12-07",
+    "legacy_first_payment": "2024-02-16",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2023-12-07",
+        "value_date": "2021-09-16"
+      }
+    ],
+    "earliest_reported_disbursement": "2024-12-31"
+  },
+  {
+    "id": "CMA130706",
+    "legacy_award": "2021-09-16",
+    "legacy_signature": "2023-08-24",
+    "legacy_first_payment": null,
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2023-08-24",
+        "value_date": "2021-09-16"
+      }
+    ],
+    "earliest_reported_disbursement": null
+  },
+  {
+    "id": "CMA130707",
+    "legacy_award": "2021-09-16",
+    "legacy_signature": "2023-10-17",
+    "legacy_first_payment": null,
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2023-10-17",
+        "value_date": "2021-09-16"
+      }
+    ],
+    "earliest_reported_disbursement": "2024-12-31"
+  },
+  {
+    "id": "CMA130708",
+    "legacy_award": "2021-09-16",
+    "legacy_signature": "2021-09-17",
+    "legacy_first_payment": "2023-05-30",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2021-09-17",
+        "value_date": "2021-09-16"
+      }
+    ],
+    "earliest_reported_disbursement": "2023-12-31"
+  },
+  {
+    "id": "CMA130709",
+    "legacy_award": "2021-09-16",
+    "legacy_signature": "2022-05-10",
+    "legacy_first_payment": "2022-12-22",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2022-05-10",
+        "value_date": "2021-09-16"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CMA130710",
+    "legacy_award": "2021-09-16",
+    "legacy_signature": "2022-07-20",
+    "legacy_first_payment": "2023-07-12",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2022-07-20",
+        "value_date": "2021-09-16"
+      }
+    ],
+    "earliest_reported_disbursement": "2023-12-31"
+  },
+  {
+    "id": "CMA130711",
+    "legacy_award": "2021-09-16",
+    "legacy_signature": "2023-09-05",
+    "legacy_first_payment": "2024-04-02",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2023-09-05",
+        "value_date": "2021-09-16"
+      }
+    ],
+    "earliest_reported_disbursement": "2024-12-31"
+  },
+  {
+    "id": "CMA130712",
+    "legacy_award": "2021-09-16",
+    "legacy_signature": "2021-09-17",
+    "legacy_first_payment": "2023-06-22",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2021-09-17",
+        "value_date": "2021-09-16"
+      }
+    ],
+    "earliest_reported_disbursement": "2023-12-31"
+  },
+  {
+    "id": "CMA131001",
+    "legacy_award": "2020-10-06",
+    "legacy_signature": "2020-11-23",
+    "legacy_first_payment": "2020-12-21",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-11-23",
+        "value_date": "2020-10-06"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CMA131901",
+    "legacy_award": "2021-03-30",
+    "legacy_signature": "2021-05-21",
+    "legacy_first_payment": "2021-07-02",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2021-05-21",
+        "value_date": "2021-03-30"
+      }
+    ],
+    "earliest_reported_disbursement": "2021-12-31"
+  },
+  {
+    "id": "CMA132001",
+    "legacy_award": "2021-03-30",
+    "legacy_signature": "2021-06-24",
+    "legacy_first_payment": "2021-08-20",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2021-06-24",
+        "value_date": "2021-03-30"
+      }
+    ],
+    "earliest_reported_disbursement": "2021-12-31"
+  },
+  {
+    "id": "CMA132301",
+    "legacy_award": "2021-10-13",
+    "legacy_signature": "2021-12-07",
+    "legacy_first_payment": "2021-12-22",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2021-12-07",
+        "value_date": "2021-10-13"
+      }
+    ],
+    "earliest_reported_disbursement": "2021-12-31"
+  },
+  {
+    "id": "CMA132801",
+    "legacy_award": "2022-12-14",
+    "legacy_signature": "2023-11-16",
+    "legacy_first_payment": null,
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2023-11-16",
+        "value_date": "2022-12-14"
+      }
+    ],
+    "earliest_reported_disbursement": "2025-12-31"
+  },
+  {
+    "id": "CMA132802",
+    "legacy_award": "2022-12-14",
+    "legacy_signature": "2022-12-15",
+    "legacy_first_payment": null,
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2022-12-15",
+        "value_date": "2022-12-14"
+      }
+    ],
+    "earliest_reported_disbursement": null
+  },
+  {
+    "id": "CMA133101",
+    "legacy_award": "2023-07-05",
+    "legacy_signature": "2023-10-16",
+    "legacy_first_payment": null,
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2023-10-16",
+        "value_date": "2023-07-05"
+      }
+    ],
+    "earliest_reported_disbursement": "2024-12-31"
+  },
+  {
+    "id": "CMA133102",
+    "legacy_award": "2023-07-05",
+    "legacy_signature": "2023-07-06",
+    "legacy_first_payment": null,
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2023-07-06",
+        "value_date": "2023-07-05"
+      }
+    ],
+    "earliest_reported_disbursement": "2024-12-31"
+  },
+  {
+    "id": "CMA133301",
+    "legacy_award": "2021-12-14",
+    "legacy_signature": "2022-04-20",
+    "legacy_first_payment": "2022-06-15",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2022-04-20",
+        "value_date": "2021-12-14"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CMA133605",
+    "legacy_award": "2023-11-22",
+    "legacy_signature": "2024-04-22",
+    "legacy_first_payment": null,
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2024-04-22",
+        "value_date": "2023-11-22"
+      }
+    ],
+    "earliest_reported_disbursement": "2025-12-31"
+  },
+  {
+    "id": "CMA133701",
+    "legacy_award": "2022-12-13",
+    "legacy_signature": "2023-04-05",
+    "legacy_first_payment": "2023-06-20",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2023-04-05",
+        "value_date": "2022-12-13"
+      }
+    ],
+    "earliest_reported_disbursement": "2023-12-31"
+  },
+  {
+    "id": "CMA134401",
+    "legacy_award": "2023-12-14",
+    "legacy_signature": "2024-04-30",
+    "legacy_first_payment": null,
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2024-04-30",
+        "value_date": "2023-12-14"
+      }
+    ],
+    "earliest_reported_disbursement": "2025-12-31"
+  },
+  {
+    "id": "CMA134701",
+    "legacy_award": "2023-07-04",
+    "legacy_signature": "2023-09-23",
+    "legacy_first_payment": "2023-11-30",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2023-09-23",
+        "value_date": "2023-07-04"
+      }
+    ],
+    "earliest_reported_disbursement": "2023-12-31"
+  },
+  {
+    "id": "CMA135301",
+    "legacy_award": "2023-12-12",
+    "legacy_signature": "2024-03-13",
+    "legacy_first_payment": "2024-04-24",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2024-03-13",
+        "value_date": "2023-12-12"
+      }
+    ],
+    "earliest_reported_disbursement": "2024-12-31"
+  },
+  {
+    "id": "CSN140402",
+    "legacy_award": "2021-04-07",
+    "legacy_signature": "2021-06-25",
+    "legacy_first_payment": null,
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2021-06-25",
+        "value_date": "2021-04-07"
+      }
+    ],
+    "earliest_reported_disbursement": "2024-12-31"
+  },
+  {
+    "id": "CSN140502",
+    "legacy_award": "2017-09-27",
+    "legacy_signature": "2018-11-06",
+    "legacy_first_payment": "2020-04-07",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2018-11-06",
+        "value_date": "2017-09-27"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CSN146803",
+    "legacy_award": "2018-12-19",
+    "legacy_signature": "2019-09-16",
+    "legacy_first_payment": "2020-08-31",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2019-09-16",
+        "value_date": "2018-12-19"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CSN148602",
+    "legacy_award": "2018-10-25",
+    "legacy_signature": "2019-01-11",
+    "legacy_first_payment": "2019-11-05",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2019-01-11",
+        "value_date": "2018-10-25"
+      }
+    ],
+    "earliest_reported_disbursement": "2019-12-31"
+  },
+  {
+    "id": "CSN148603",
+    "legacy_award": "2020-09-16",
+    "legacy_signature": "2021-02-16",
+    "legacy_first_payment": "2021-06-11",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2021-02-16",
+        "value_date": "2020-09-16"
+      }
+    ],
+    "earliest_reported_disbursement": "2021-12-31"
+  },
+  {
+    "id": "CSN154501",
+    "legacy_award": "2018-11-23",
+    "legacy_signature": "2019-11-22",
+    "legacy_first_payment": "2020-12-17",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2019-11-22",
+        "value_date": "2018-11-23"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CSN154601",
+    "legacy_award": "2019-12-04",
+    "legacy_signature": "2020-06-30",
+    "legacy_first_payment": "2023-01-05",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2020-06-30",
+        "value_date": "2019-12-04"
+      }
+    ],
+    "earliest_reported_disbursement": "2023-12-31"
+  },
+  {
+    "id": "CSN154602",
+    "legacy_award": "2019-12-04",
+    "legacy_signature": "2020-06-30",
+    "legacy_first_payment": "2022-12-22",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2020-06-30",
+        "value_date": "2019-12-04"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CSN154901",
+    "legacy_award": "2017-12-19",
+    "legacy_signature": "2019-01-16",
+    "legacy_first_payment": "2019-02-05",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2019-01-16",
+        "value_date": "2017-12-19"
+      }
+    ],
+    "earliest_reported_disbursement": "2019-12-31"
+  },
+  {
+    "id": "CSN155001",
+    "legacy_award": "2018-10-19",
+    "legacy_signature": "2019-04-01",
+    "legacy_first_payment": "2020-04-08",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2019-04-01",
+        "value_date": "2018-10-19"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CSN155101",
+    "legacy_award": "2018-12-22",
+    "legacy_signature": "2019-07-03",
+    "legacy_first_payment": "2019-12-20",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2019-07-03",
+        "value_date": "2018-12-22"
+      }
+    ],
+    "earliest_reported_disbursement": "2019-12-31"
+  },
+  {
+    "id": "CSN155102",
+    "legacy_award": "2018-11-22",
+    "legacy_signature": "2019-07-03",
+    "legacy_first_payment": "2020-02-20",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2019-07-03",
+        "value_date": "2018-11-22"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CSN155106",
+    "legacy_award": "2018-11-22",
+    "legacy_signature": "2019-07-03",
+    "legacy_first_payment": null,
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2019-07-03",
+        "value_date": "2018-11-22"
+      }
+    ],
+    "earliest_reported_disbursement": "2024-12-31"
+  },
+  {
+    "id": "CSN155701",
+    "legacy_award": "2019-12-18",
+    "legacy_signature": "2020-06-30",
+    "legacy_first_payment": null,
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2020-06-30",
+        "value_date": "2019-12-18"
+      }
+    ],
+    "earliest_reported_disbursement": null
+  },
+  {
+    "id": "CSN156101",
+    "legacy_award": "2018-09-26",
+    "legacy_signature": "2018-11-06",
+    "legacy_first_payment": "2019-12-20",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2018-11-06",
+        "value_date": "2018-09-26"
+      }
+    ],
+    "earliest_reported_disbursement": "2019-12-31"
+  },
+  {
+    "id": "CSN156102",
+    "legacy_award": "2018-09-26",
+    "legacy_signature": "2018-11-06",
+    "legacy_first_payment": "2019-10-10",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2018-11-06",
+        "value_date": "2018-09-26"
+      }
+    ],
+    "earliest_reported_disbursement": "2019-12-31"
+  },
+  {
+    "id": "CSN156201",
+    "legacy_award": "2020-12-02",
+    "legacy_signature": "2021-05-07",
+    "legacy_first_payment": "2022-09-14",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2021-05-07",
+        "value_date": "2020-12-02"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CSN156202",
+    "legacy_award": "2020-12-02",
+    "legacy_signature": "2021-05-07",
+    "legacy_first_payment": null,
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2021-05-07",
+        "value_date": "2020-12-02"
+      }
+    ],
+    "earliest_reported_disbursement": "2025-12-31"
+  },
+  {
+    "id": "CSN156601",
+    "legacy_award": "2018-12-10",
+    "legacy_signature": "2019-03-18",
+    "legacy_first_payment": "2019-06-24",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2019-03-18",
+        "value_date": "2018-12-10"
+      }
+    ],
+    "earliest_reported_disbursement": "2019-12-31"
+  },
+  {
+    "id": "CSN157101",
+    "legacy_award": "2018-12-18",
+    "legacy_signature": "2019-02-25",
+    "legacy_first_payment": "2019-08-08",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2019-02-25",
+        "value_date": "2018-12-18"
+      }
+    ],
+    "earliest_reported_disbursement": "2019-12-31"
+  },
+  {
+    "id": "CSN157601",
+    "legacy_award": "2019-12-04",
+    "legacy_signature": "2021-06-25",
+    "legacy_first_payment": "2022-07-25",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2021-06-25",
+        "value_date": "2019-12-04"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CSN157602",
+    "legacy_award": "2019-12-04",
+    "legacy_signature": "2021-06-25",
+    "legacy_first_payment": "2022-07-25",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2021-06-25",
+        "value_date": "2019-12-04"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CSN158501",
+    "legacy_award": "2019-03-28",
+    "legacy_signature": "2019-11-17",
+    "legacy_first_payment": "2020-09-04",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2019-11-17",
+        "value_date": "2019-03-28"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CSN159201",
+    "legacy_award": "2018-12-18",
+    "legacy_signature": "2019-04-25",
+    "legacy_first_payment": "2019-08-08",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2019-04-25",
+        "value_date": "2018-12-18"
+      }
+    ],
+    "earliest_reported_disbursement": "2019-12-31"
+  },
+  {
+    "id": "CSN159601",
+    "legacy_award": "2018-11-22",
+    "legacy_signature": "2019-07-03",
+    "legacy_first_payment": "2020-12-04",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2019-07-03",
+        "value_date": "2018-11-22"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CSN159602",
+    "legacy_award": "2018-11-22",
+    "legacy_signature": "2019-07-03",
+    "legacy_first_payment": "2020-02-20",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2019-07-03",
+        "value_date": "2018-11-22"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CSN159603",
+    "legacy_award": "2018-11-22",
+    "legacy_signature": "2018-11-23",
+    "legacy_first_payment": "2020-04-16",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2018-11-23",
+        "value_date": "2018-11-22"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CSN160603",
+    "legacy_award": "2019-11-13",
+    "legacy_signature": "2021-12-28",
+    "legacy_first_payment": "2022-12-15",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2021-12-28",
+        "value_date": "2019-11-13"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CSN161202",
+    "legacy_award": "2019-12-11",
+    "legacy_signature": "2020-05-07",
+    "legacy_first_payment": "2020-07-31",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-05-07",
+        "value_date": "2019-12-11"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CSN161301",
+    "legacy_award": "2019-10-16",
+    "legacy_signature": "2020-10-14",
+    "legacy_first_payment": "2021-12-22",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2020-10-14",
+        "value_date": "2019-10-16"
+      }
+    ],
+    "earliest_reported_disbursement": "2021-12-31"
+  },
+  {
+    "id": "CSN161501",
+    "legacy_award": "2020-11-04",
+    "legacy_signature": "2021-03-12",
+    "legacy_first_payment": "2021-04-22",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2021-03-12",
+        "value_date": "2020-11-04"
+      }
+    ],
+    "earliest_reported_disbursement": "2021-12-31"
+  },
+  {
+    "id": "CSN161502",
+    "legacy_award": "2023-10-17",
+    "legacy_signature": "2023-11-23",
+    "legacy_first_payment": null,
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2023-11-23",
+        "value_date": "2023-10-17"
+      }
+    ],
+    "earliest_reported_disbursement": "2024-12-31"
+  },
+  {
+    "id": "CSN162001",
+    "legacy_award": "2022-07-06",
+    "legacy_signature": "2022-11-04",
+    "legacy_first_payment": "2024-01-19",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2022-11-04",
+        "value_date": "2022-07-06"
+      }
+    ],
+    "earliest_reported_disbursement": "2024-12-31"
+  },
+  {
+    "id": "CSN162002",
+    "legacy_award": "2022-07-06",
+    "legacy_signature": "2023-04-28",
+    "legacy_first_payment": null,
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2023-04-28",
+        "value_date": "2022-07-06"
+      }
+    ],
+    "earliest_reported_disbursement": "2024-12-31"
+  },
+  {
+    "id": "CSN162003",
+    "legacy_award": "2022-07-06",
+    "legacy_signature": "2022-07-07",
+    "legacy_first_payment": "2023-04-13",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2022-07-07",
+        "value_date": "2022-07-06"
+      }
+    ],
+    "earliest_reported_disbursement": "2023-12-31"
+  },
+  {
+    "id": "CSN162101",
+    "legacy_award": "2019-05-14",
+    "legacy_signature": "2019-07-31",
+    "legacy_first_payment": "2019-08-26",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2019-07-31",
+        "value_date": "2019-05-14"
+      }
+    ],
+    "earliest_reported_disbursement": "2019-12-31"
+  },
+  {
+    "id": "CSN162401",
+    "legacy_award": "2019-05-14",
+    "legacy_signature": "2019-12-03",
+    "legacy_first_payment": "2020-05-25",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2019-12-03",
+        "value_date": "2019-05-14"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CSN163801",
+    "legacy_award": "2020-07-07",
+    "legacy_signature": "2020-10-29",
+    "legacy_first_payment": "2020-11-27",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-10-29",
+        "value_date": "2020-07-07"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CSN164401",
+    "legacy_award": "2022-07-06",
+    "legacy_signature": "2022-11-04",
+    "legacy_first_payment": "2024-01-31",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2022-11-04",
+        "value_date": "2022-07-06"
+      }
+    ],
+    "earliest_reported_disbursement": "2024-12-31"
+  },
+  {
+    "id": "CSN164403",
+    "legacy_award": "2023-03-15",
+    "legacy_signature": "2023-11-06",
+    "legacy_first_payment": "2024-01-31",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2023-11-06",
+        "value_date": "2023-03-15"
+      }
+    ],
+    "earliest_reported_disbursement": "2024-12-31"
+  },
+  {
+    "id": "CSN165001",
+    "legacy_award": "2020-12-01",
+    "legacy_signature": "2021-06-21",
+    "legacy_first_payment": "2021-12-06",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2021-06-21",
+        "value_date": "2020-12-01"
+      }
+    ],
+    "earliest_reported_disbursement": "2021-12-31"
+  },
+  {
+    "id": "CSN165101",
+    "legacy_award": "2019-12-18",
+    "legacy_signature": "2020-06-30",
+    "legacy_first_payment": "2020-11-05",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2020-06-30",
+        "value_date": "2019-12-18"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CSN165501",
+    "legacy_award": "2019-12-16",
+    "legacy_signature": "2021-04-08",
+    "legacy_first_payment": "2021-06-23",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2021-04-08",
+        "value_date": "2019-12-16"
+      }
+    ],
+    "earliest_reported_disbursement": "2021-12-31"
+  },
+  {
+    "id": "CSN165801",
+    "legacy_award": "2019-12-18",
+    "legacy_signature": "2020-01-16",
+    "legacy_first_payment": "2020-03-24",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-01-16",
+        "value_date": "2019-12-18"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CSN166101",
+    "legacy_award": "2020-01-28",
+    "legacy_signature": "2020-04-15",
+    "legacy_first_payment": "2020-05-18",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-04-15",
+        "value_date": "2020-01-28"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CSN166301",
+    "legacy_award": "2020-05-05",
+    "legacy_signature": "2020-11-12",
+    "legacy_first_payment": "2020-12-18",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-11-12",
+        "value_date": "2020-05-05"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CSN167601",
+    "legacy_award": "2020-03-31",
+    "legacy_signature": "2020-09-09",
+    "legacy_first_payment": "2020-10-16",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-09-09",
+        "value_date": "2020-03-31"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CSN167901",
+    "legacy_award": "2021-10-13",
+    "legacy_signature": "2021-11-25",
+    "legacy_first_payment": "2022-08-12",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2021-11-25",
+        "value_date": "2021-10-13"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CSN168001",
+    "legacy_award": "2021-12-08",
+    "legacy_signature": "2021-12-28",
+    "legacy_first_payment": null,
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2021-12-28",
+        "value_date": "2021-12-08"
+      }
+    ],
+    "earliest_reported_disbursement": "2025-12-31"
+  },
+  {
+    "id": "CSN168301",
+    "legacy_award": "2020-07-07",
+    "legacy_signature": "2020-07-28",
+    "legacy_first_payment": "2020-09-24",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-07-28",
+        "value_date": "2020-07-07"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CSN168901",
+    "legacy_award": "2020-06-17",
+    "legacy_signature": "2020-06-30",
+    "legacy_first_payment": "2020-09-04",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2020-06-30",
+        "value_date": "2020-06-17"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CSN168902",
+    "legacy_award": "2020-06-17",
+    "legacy_signature": "2020-06-18",
+    "legacy_first_payment": "2020-10-30",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2020-06-18",
+        "value_date": "2020-06-17"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CSN169201",
+    "legacy_award": "2020-06-23",
+    "legacy_signature": "2020-07-23",
+    "legacy_first_payment": "2020-08-27",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-07-23",
+        "value_date": "2020-06-23"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CSN169202",
+    "legacy_award": "2020-06-23",
+    "legacy_signature": "2020-07-23",
+    "legacy_first_payment": "2020-08-19",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-07-23",
+        "value_date": "2020-06-23"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CSN169301",
+    "legacy_award": "2020-06-23",
+    "legacy_signature": "2020-07-23",
+    "legacy_first_payment": "2020-08-20",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-07-23",
+        "value_date": "2020-06-23"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CSN169401",
+    "legacy_award": "2020-10-06",
+    "legacy_signature": "2020-11-04",
+    "legacy_first_payment": "2020-11-27",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-11-04",
+        "value_date": "2020-10-06"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CSN169701",
+    "legacy_award": "2020-10-22",
+    "legacy_signature": "2020-11-27",
+    "legacy_first_payment": "2020-12-08",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-11-27",
+        "value_date": "2020-10-22"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CSN169801",
+    "legacy_award": "2020-10-22",
+    "legacy_signature": "2020-11-04",
+    "legacy_first_payment": "2020-12-02",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-11-04",
+        "value_date": "2020-10-22"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CSN170101",
+    "legacy_award": "2020-10-22",
+    "legacy_signature": "2020-10-26",
+    "legacy_first_payment": "2020-12-03",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-10-26",
+        "value_date": "2020-10-22"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CSN170201",
+    "legacy_award": "2020-12-16",
+    "legacy_signature": "2021-05-07",
+    "legacy_first_payment": "2022-07-25",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2021-05-07",
+        "value_date": "2020-12-16"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CSN170501",
+    "legacy_award": "2020-11-19",
+    "legacy_signature": "2021-01-04",
+    "legacy_first_payment": "2021-05-11",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2021-01-04",
+        "value_date": "2020-11-19"
+      }
+    ],
+    "earliest_reported_disbursement": "2021-12-31"
+  },
+  {
+    "id": "CSN170601",
+    "legacy_award": "2020-11-19",
+    "legacy_signature": "2021-05-25",
+    "legacy_first_payment": "2021-08-11",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2021-05-25",
+        "value_date": "2020-11-19"
+      }
+    ],
+    "earliest_reported_disbursement": "2021-12-31"
+  },
+  {
+    "id": "CSN170701",
+    "legacy_award": "2020-11-19",
+    "legacy_signature": "2020-12-17",
+    "legacy_first_payment": "2021-07-16",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-12-17",
+        "value_date": "2020-11-19"
+      }
+    ],
+    "earliest_reported_disbursement": "2021-12-31"
+  },
+  {
+    "id": "CSN170901",
+    "legacy_award": "2021-02-09",
+    "legacy_signature": "2021-05-10",
+    "legacy_first_payment": "2021-10-04",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2021-05-10",
+        "value_date": "2021-02-09"
+      }
+    ],
+    "earliest_reported_disbursement": "2021-12-31"
+  },
+  {
+    "id": "CSN171101",
+    "legacy_award": "2022-04-26",
+    "legacy_signature": "2022-10-24",
+    "legacy_first_payment": "2024-04-16",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2022-10-24",
+        "value_date": "2022-04-26"
+      }
+    ],
+    "earliest_reported_disbursement": "2024-12-31"
+  },
+  {
+    "id": "CSN171901",
+    "legacy_award": "2022-05-18",
+    "legacy_signature": "2022-06-16",
+    "legacy_first_payment": "2022-10-20",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2022-06-16",
+        "value_date": "2022-05-18"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CSN171903",
+    "legacy_award": "2022-11-10",
+    "legacy_signature": "2023-04-28",
+    "legacy_first_payment": "2023-06-29",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2023-04-28",
+        "value_date": "2022-11-10"
+      }
+    ],
+    "earliest_reported_disbursement": "2023-12-31"
+  },
+  {
+    "id": "CSN172501",
+    "legacy_award": "2021-07-06",
+    "legacy_signature": "2022-09-23",
+    "legacy_first_payment": "2022-10-17",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2022-09-23",
+        "value_date": "2021-07-06"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CSN173301",
+    "legacy_award": "2021-06-30",
+    "legacy_signature": "2021-07-26",
+    "legacy_first_payment": "2021-08-27",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2021-07-26",
+        "value_date": "2021-06-30"
+      }
+    ],
+    "earliest_reported_disbursement": "2021-12-31"
+  },
+  {
+    "id": "CSN173501",
+    "legacy_award": "2021-10-31",
+    "legacy_signature": "2021-12-22",
+    "legacy_first_payment": "2022-12-08",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2021-12-22",
+        "value_date": "2021-10-31"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CSN174001",
+    "legacy_award": "2021-12-14",
+    "legacy_signature": "2022-11-09",
+    "legacy_first_payment": "2022-12-01",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2022-11-09",
+        "value_date": "2021-12-14"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CSN174701",
+    "legacy_award": "2022-03-22",
+    "legacy_signature": "2022-04-25",
+    "legacy_first_payment": "2022-06-08",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2022-04-25",
+        "value_date": "2022-03-22"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CSN175401",
+    "legacy_award": "2022-07-05",
+    "legacy_signature": "2022-10-04",
+    "legacy_first_payment": "2022-10-18",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2022-10-04",
+        "value_date": "2022-07-05"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CSN175501",
+    "legacy_award": "2022-07-05",
+    "legacy_signature": "2022-10-25",
+    "legacy_first_payment": "2022-12-06",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2022-10-25",
+        "value_date": "2022-07-05"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CSN175601",
+    "legacy_award": "2022-07-05",
+    "legacy_signature": "2022-12-06",
+    "legacy_first_payment": "2023-01-23",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2022-12-06",
+        "value_date": "2022-07-05"
+      }
+    ],
+    "earliest_reported_disbursement": "2023-12-31"
+  },
+  {
+    "id": "CSN176201",
+    "legacy_award": "2023-09-14",
+    "legacy_signature": "2024-02-20",
+    "legacy_first_payment": null,
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2024-02-20",
+        "value_date": "2023-09-14"
+      }
+    ],
+    "earliest_reported_disbursement": "2025-12-31"
+  },
+  {
+    "id": "CSN176202",
+    "legacy_award": "2023-09-14",
+    "legacy_signature": "2023-09-15",
+    "legacy_first_payment": "2024-04-03",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2023-09-15",
+        "value_date": "2023-09-14"
+      }
+    ],
+    "earliest_reported_disbursement": "2024-12-31"
+  },
+  {
+    "id": "CSN177601",
+    "legacy_award": "2022-12-13",
+    "legacy_signature": "2023-04-11",
+    "legacy_first_payment": "2023-06-28",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2023-04-11",
+        "value_date": "2022-12-13"
+      }
+    ],
+    "earliest_reported_disbursement": "2023-12-31"
+  },
+  {
+    "id": "CSN177701",
+    "legacy_award": "2022-12-13",
+    "legacy_signature": "2023-05-16",
+    "legacy_first_payment": "2023-07-11",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2023-05-16",
+        "value_date": "2022-12-13"
+      }
+    ],
+    "earliest_reported_disbursement": "2023-12-31"
+  },
+  {
+    "id": "CSN178701",
+    "legacy_award": "2023-02-14",
+    "legacy_signature": "2023-12-06",
+    "legacy_first_payment": "2023-12-18",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2023-12-06",
+        "value_date": "2023-02-14"
+      }
+    ],
+    "earliest_reported_disbursement": "2023-12-31"
+  },
+  {
+    "id": "CSN179001",
+    "legacy_award": "2023-02-14",
+    "legacy_signature": "2023-05-03",
+    "legacy_first_payment": "2023-06-20",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2023-05-03",
+        "value_date": "2023-02-14"
+      }
+    ],
+    "earliest_reported_disbursement": "2023-12-31"
+  },
+  {
+    "id": "CSN179701",
+    "legacy_award": "2023-05-23",
+    "legacy_signature": "2023-07-27",
+    "legacy_first_payment": "2023-10-17",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2023-07-27",
+        "value_date": "2023-05-23"
+      }
+    ],
+    "earliest_reported_disbursement": "2023-12-31"
+  },
+  {
+    "id": "CSN180401",
+    "legacy_award": "2023-10-17",
+    "legacy_signature": "2023-11-22",
+    "legacy_first_payment": "2023-12-07",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2023-11-22",
+        "value_date": "2023-10-17"
+      }
+    ],
+    "earliest_reported_disbursement": "2023-12-31"
+  },
+  {
+    "id": "CSN180601",
+    "legacy_award": "2023-11-21",
+    "legacy_signature": "2024-01-31",
+    "legacy_first_payment": null,
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2024-01-31",
+        "value_date": "2023-11-21"
+      }
+    ],
+    "earliest_reported_disbursement": "2024-12-31"
+  },
+  {
+    "id": "CSN180701",
+    "legacy_award": "2023-11-21",
+    "legacy_signature": "2024-02-12",
+    "legacy_first_payment": "2024-04-08",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2024-02-12",
+        "value_date": "2023-11-21"
+      }
+    ],
+    "earliest_reported_disbursement": "2024-12-31"
+  },
+  {
+    "id": "CSN603606",
+    "legacy_award": "2021-10-13",
+    "legacy_signature": "2021-12-28",
+    "legacy_first_payment": "2022-12-15",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2021-12-28",
+        "value_date": "2021-10-13"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CVN119301",
+    "legacy_award": "2017-12-21",
+    "legacy_signature": "2019-10-28",
+    "legacy_first_payment": "2020-05-04",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2019-10-28",
+        "value_date": "2017-12-21"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CVN119303",
+    "legacy_award": "2017-12-21",
+    "legacy_signature": "2021-06-29",
+    "legacy_first_payment": "2022-08-12",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2021-06-29",
+        "value_date": "2017-12-21"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CVN119701",
+    "legacy_award": "2018-12-20",
+    "legacy_signature": "2020-11-16",
+    "legacy_first_payment": "2022-05-10",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2020-11-16",
+        "value_date": "2018-12-20"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CVN119702",
+    "legacy_award": "2018-12-20",
+    "legacy_signature": "2020-11-16",
+    "legacy_first_payment": "2022-10-20",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2020-11-16",
+        "value_date": "2018-12-20"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CVN121401",
+    "legacy_award": "2019-09-09",
+    "legacy_signature": "2020-03-09",
+    "legacy_first_payment": "2021-12-10",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-03-09",
+        "value_date": "2019-09-09"
+      }
+    ],
+    "earliest_reported_disbursement": "2021-12-31"
+  },
+  {
+    "id": "CVN121701",
+    "legacy_award": "2022-11-16",
+    "legacy_signature": "2023-12-29",
+    "legacy_first_payment": null,
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2023-12-29",
+        "value_date": "2022-11-16"
+      }
+    ],
+    "earliest_reported_disbursement": "2025-12-31"
+  },
+  {
+    "id": "CVN121801",
+    "legacy_award": "2018-12-20",
+    "legacy_signature": "2022-03-28",
+    "legacy_first_payment": "2022-10-13",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2022-03-28",
+        "value_date": "2018-12-20"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CVN122801",
+    "legacy_award": "2019-12-19",
+    "legacy_signature": "2019-12-20",
+    "legacy_first_payment": "2020-12-17",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2019-12-20",
+        "value_date": "2019-12-19"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CVN123201",
+    "legacy_award": "2019-10-15",
+    "legacy_signature": "2020-01-02",
+    "legacy_first_payment": "2020-01-27",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-01-02",
+        "value_date": "2019-10-15"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CVN123401",
+    "legacy_award": "2021-03-11",
+    "legacy_signature": "2021-11-10",
+    "legacy_first_payment": "2022-06-02",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2021-11-10",
+        "value_date": "2021-03-11"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CVN123604",
+    "legacy_award": null,
+    "legacy_signature": "2021-11-03",
+    "legacy_first_payment": "2023-03-17",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2021-11-03",
+        "value_date": "2026-08-17"
+      }
+    ],
+    "earliest_reported_disbursement": "2023-12-31"
+  },
+  {
+    "id": "CVN123605",
+    "legacy_award": null,
+    "legacy_signature": "2023-12-29",
+    "legacy_first_payment": null,
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2023-12-29",
+        "value_date": "2026-08-17"
+      }
+    ],
+    "earliest_reported_disbursement": null
+  },
+  {
+    "id": "CVN123606",
+    "legacy_award": null,
+    "legacy_signature": "2023-12-29",
+    "legacy_first_payment": null,
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2023-12-29",
+        "value_date": "2026-08-17"
+      }
+    ],
+    "earliest_reported_disbursement": null
+  },
+  {
+    "id": "CVN123701",
+    "legacy_award": "2020-03-06",
+    "legacy_signature": "2020-06-18",
+    "legacy_first_payment": "2020-09-15",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-06-18",
+        "value_date": "2020-03-06"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CVN123901",
+    "legacy_award": "2020-07-09",
+    "legacy_signature": "2021-05-26",
+    "legacy_first_payment": "2021-09-14",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2021-05-26",
+        "value_date": "2020-07-09"
+      }
+    ],
+    "earliest_reported_disbursement": "2021-12-31"
+  },
+  {
+    "id": "CVN124101",
+    "legacy_award": "2020-07-07",
+    "legacy_signature": "2020-10-05",
+    "legacy_first_payment": "2020-11-10",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2020-10-05",
+        "value_date": "2020-07-07"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CVN124501",
+    "legacy_award": "2022-12-14",
+    "legacy_signature": "2023-12-29",
+    "legacy_first_payment": null,
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2023-12-29",
+        "value_date": "2022-12-14"
+      }
+    ],
+    "earliest_reported_disbursement": "2025-12-31"
+  },
+  {
+    "id": "CVN124701",
+    "legacy_award": "2021-09-16",
+    "legacy_signature": "2021-11-03",
+    "legacy_first_payment": "2022-12-22",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2021-11-03",
+        "value_date": "2021-09-16"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CVN125201",
+    "legacy_award": "2022-03-10",
+    "legacy_signature": "2022-05-12",
+    "legacy_first_payment": "2023-06-09",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2022-05-12",
+        "value_date": "2022-03-10"
+      }
+    ],
+    "earliest_reported_disbursement": "2023-12-31"
+  },
+  {
+    "id": "CVN125901",
+    "legacy_award": "2021-10-12",
+    "legacy_signature": "2021-11-25",
+    "legacy_first_payment": "2021-12-15",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2021-11-25",
+        "value_date": "2021-10-12"
+      }
+    ],
+    "earliest_reported_disbursement": "2021-12-31"
+  },
+  {
+    "id": "CVN127101",
+    "legacy_award": "2023-07-06",
+    "legacy_signature": "2023-07-07",
+    "legacy_first_payment": "2024-03-19",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2023-07-07",
+        "value_date": "2023-07-06"
+      }
+    ],
+    "earliest_reported_disbursement": "2024-12-31"
+  },
+  {
+    "id": "CVN128301",
+    "legacy_award": "2023-05-02",
+    "legacy_signature": "2023-09-06",
+    "legacy_first_payment": "2024-04-24",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2023-09-06",
+        "value_date": "2023-05-02"
+      }
+    ],
+    "earliest_reported_disbursement": "2024-12-31"
+  },
+  {
+    "id": "CVN129401",
+    "legacy_award": "2024-02-20",
+    "legacy_signature": "2024-05-06",
+    "legacy_first_payment": null,
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2024-05-06",
+        "value_date": "2024-02-20"
+      }
+    ],
+    "earliest_reported_disbursement": "2024-12-31"
+  },
+  {
+    "id": "CZA112104",
+    "legacy_award": null,
+    "legacy_signature": "2018-12-13",
+    "legacy_first_payment": "2022-01-28",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2018-12-13",
+        "value_date": "2026-08-17"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CZA116004",
+    "legacy_award": null,
+    "legacy_signature": "2019-02-28",
+    "legacy_first_payment": "2020-12-08",
+    "legacy_status": "Exécution",
+    "xml_status": "2",
+    "commitments": [
+      {
+        "transaction_date": "2019-02-28",
+        "value_date": "2026-08-17"
+      }
+    ],
+    "earliest_reported_disbursement": "2020-12-31"
+  },
+  {
+    "id": "CZA116101",
+    "legacy_award": "2019-06-05",
+    "legacy_signature": "2019-06-10",
+    "legacy_first_payment": "2019-07-19",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2019-06-10",
+        "value_date": "2019-06-05"
+      }
+    ],
+    "earliest_reported_disbursement": "2019-12-31"
+  },
+  {
+    "id": "CZA122001",
+    "legacy_award": "2022-10-27",
+    "legacy_signature": "2022-11-04",
+    "legacy_first_payment": "2022-12-22",
+    "legacy_status": "Achevé",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2022-11-04",
+        "value_date": "2022-10-27"
+      }
+    ],
+    "earliest_reported_disbursement": "2022-12-31"
+  },
+  {
+    "id": "CZA127301",
+    "legacy_award": "2023-11-21",
+    "legacy_signature": "2024-02-12",
+    "legacy_first_payment": "2024-04-02",
+    "legacy_status": "Exécution",
+    "xml_status": "4",
+    "commitments": [
+      {
+        "transaction_date": "2024-02-12",
+        "value_date": "2023-11-21"
+      }
+    ],
+    "earliest_reported_disbursement": "2024-12-31"
+  }
+]

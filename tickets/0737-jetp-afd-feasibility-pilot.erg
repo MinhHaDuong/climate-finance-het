@@ -1,0 +1,113 @@
+%erg 0.1
+Title: AFD historical membership and lifecycle feasibility
+Created: 2026-09-14
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-14T12:14Z HDMX-coding-agent created
+
+--- body ---
+
+# AFD historical membership and lifecycle feasibility
+
+Prepared 14 September for 15 September 2026. Phase: Plan; not launched.
+
+## Question, inputs and unit
+
+Which pre-exposure financing populations and transitions can be reconstructed
+without assuming permanent disclosure? Unit: exact AFD financing ID, with a
+separate project-parent join. Use the full legacy export (source ID
+`afd-full-export` in round-2 manifest), round-3 `afd/` portal tables, country XML,
+policy and metadata. Read the round-3 AFD report and profiles. Baseline facts:
+3,277 current portal financing IDs; 317 financing/225 project XML IDs in seven
+countries; 223/224 legacy records retained. These are observed export counts.
+
+## First test and mandatory challenges
+
+First failing test: CMA123501, missing from current portal/XML, must produce
+`lost_visibility` with last-observed information and unknown outcome; it must
+not become cancelled or known still unpaid. Second: none of the 193 exact legacy
+payment dates may be replaced by an exact minimum XML payment date. Include a
+case with missing earlier coverage that must NOT become a first-payment interval.
+
+Locally reconcile all 19 missing IDs listed in `round3/afd/flat-profile.json`,
+CTN129703 (missing signature), CZZ276103 (changed signature), all seven legacy
+award/signature reversals, and all 13 missing awards in the matched XML set.
+Keep original values and join provenance. Assert `value-date` cannot fill missing
+awards. Known duplicate parent/component identities cannot substitute for an ID.
+All anomaly rows require a disposition, not necessarily a documentary resolution.
+For the 12-case sample, use the legacy seven-country financing frame, excluding
+these challenge IDs. Publish the exact country-label mapping before selection.
+
+## Routes, budget and stop decisions
+
+Maximum 30 external units, failures included:
+
+1. Up to 12 for publisher transformation/inclusion/retention specifications and
+   dated predecessor snapshots: acquired AFD/data.gouv resource identifiers and
+   version history first, then official transparency/publication documentation,
+   then archive indexes for those exact URLs. A 2024 snapshot cannot alone
+   establish pre-JETP membership. An archive crawl timestamp alone is not proof
+   of unchanged content or complete portfolio disclosure.
+2. Up to 12 for originals: first CMA123501, CTN129703 and CZZ276103; then the
+   first two reversal IDs in lexical order; then first missing-award ID; then
+   the fixed sample in rank order. Use archived project links and exact financing
+   identifiers to seek contract/project fiches or dated decision records. Related
+   components are contrary-identity checks, not substitute observations.
+3. Reserve 6 for source verification or a discriminating follow-up on these routes.
+   Unused earlier allocations may move forward; never take the verification
+   reserve for broad discovery. Log allocation changes before the next request.
+
+Stop a route after its listed alternatives fail; no broad financing search.
+Without an independently justified historical denominator, incumbent-population
+membership is DEFER. Retrospective event and signature-throughput coverage may
+still be assessed, conditional on disclosure stability. Signed-only data cannot
+support the pending approval-to-signature risk set. Separate loans/grants and
+policy/investment; do not infer strata solely from titles.
+
+## Fixed documentary sample
+
+Profile all acquired records locally. For documentary coverage, restrict the
+sample frame to AL, MA, IN, SN, ZA, ID, VN at the lender unit below. Partition by
+country, DAC energy/non-energy/mixed-or-unmapped, and raw instrument code (missing
+is its own value). Sort strata lexicographically, then IDs within each stratum.
+Take one ID from each stratum per round, cycling until 12 distinct IDs are chosen
+or the frame is exhausted. Save all candidates, ranks and selected flags; no
+outcome/date/status filtering or replacement after failed retrieval. Exclude
+mandatory challenge IDs from this sample and report them separately. This is a
+purposive coverage probe, not an estimate of population document availability.
+Report local-document coverage for all 12, and external-attempt coverage with
+its own denominator. If the call cap prevents inspecting a selected case, label
+it not attempted. Continue first in sample rank order within the assigned budget.
+
+Read and apply `docs/jetp-pilots/2026-09-15/protocol.md` for baseline alternatives,
+observation states, source/selection freeze, output schemas and review. That
+protocol is part of this assignment, not optional background. Parent trackers:
+0735 / GitHub #1345 and 0729 / #1337. No effect estimation or outreach. A DEFER
+with precise missing evidence can satisfy every pilot exit criterion.
+
+## Exit criteria
+
+- First acceptance tests fail on naive mappings and pass on the corrected implementation.
+- Input hashes, frozen selection and the common units/events/coverage/evidence tables are delivered.
+- Every mandatory challenge has an evidenced disposition or a precise unresolved gap.
+- Acquisition stays within the cap with failed/not-attempted cases retained.
+- Versioned calculations rerun offline from archive paths, with relevant repository gates recorded.
+- A separate verification pass reproduces pivotal counts and checks originals.
+- Report returns GO/NARROW/DEFER by stage and inputs to the common design matrix.
+
+Outputs: `docs/jetp-pilots/2026-09-15/afd/`; new originals in a separate
+`data/jetp/audit-evidence/0737-pilot` DVC bundle. No canonical data changes.
+
+## Fresh-session inputs
+
+Start from the updated audit PR #1347 branch `t0735-historical-pipeline-audit`;
+read selection PR #1348 at `63bb738ef8f8bf7c96db3201a8ce48b717136075`.
+Protocol: `docs/jetp-pilots/2026-09-15/protocol.md`. Source reports and raw bundle
+manifests: `docs/jetp-audits/0735/round2/` and `round3/`. The full protocol's
+baseline grid, schemas, observation rules and verification requirements apply.
+Use a separate worktree/PR; these parent links do not mean waiting for trackers
+0735 or 0729 to close. AFD is the first launch; KfW/FCDO are optional parallel
+assignments under explicit launch authorization. No pilot runs during preparation.
+
+Planning issue: https://github.com/MinhHaDuong/climate-finance-het/issues/1349

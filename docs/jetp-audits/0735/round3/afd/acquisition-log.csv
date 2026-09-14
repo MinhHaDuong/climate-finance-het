@@ -1,0 +1,27 @@
+unit,route,outcome,retrieved
+1,search: site.afd.fr opendata données projets octobre 2018 consentement achevé historique,official leads,2026-09-14
+2,search: site.data.gouv.fr AFD projets données aide développement historique,two distinct dataset leads,2026-09-14
+3,https://opendata.afd.fr/api/explore/v2.1/catalog/datasets?limit=100,JSON acquired,2026-09-14
+4,https://www.data.gouv.fr/organizations/agence-francaise-de-developpement-afd/datasets,official catalogue read,2026-09-14
+5,https://www.data.gouv.fr/datasets/donnees-de-laide-au-developpement-de-lafd-1,official current XML publication read,2026-09-14
+6,https://opendata.afd.fr/page/accueil/,page read; little rendered content,2026-09-14
+7,https://opendata.afd.fr/api/explore/v2.1/catalog/datasets/les-projets-de-l-afd/exports/json,complete delivered JSON acquired,2026-09-14
+8,https://opendata.afd.fr/api/explore/v2.1/catalog/datasets/les-concours-de-l-afd/exports/json,complete delivered JSON acquired,2026-09-14
+9,https://opendata.afd.fr/api/explore/v2.1/catalog/datasets/les-transactions-de-l-afd/exports/json,complete delivered JSON acquired,2026-09-14
+10,https://www.data.gouv.fr/api/1/datasets/donnees-de-laide-au-developpement-de-lafd-1/,metadata acquired; 97 resources,2026-09-14
+11,search: site.afd.fr transparence IATI 2018 publication signature octroi données,official policy lead,2026-09-14
+12,search: site.op endata.afd.fr historique données IATI,malformed domain query retained; no accepted finding,2026-09-14
+13,https://static.data.gouv.fr/resources/donnees-de-laide-au-developpement-de-lafd-1/20260819-111822/fr-afd-al.xml,success,2026-09-14
+14,https://static.data.gouv.fr/resources/donnees-de-laide-au-developpement-de-lafd-1/20260825-133231/fr-afd-ma.xml,success,2026-09-14
+15,https://static.data.gouv.fr/resources/donnees-de-laide-au-developpement-de-lafd-1/20260819-111605/fr-afd-za.xml,success,2026-09-14
+16,https://static.data.gouv.fr/resources/donnees-de-laide-au-developpement-de-lafd-1/20260819-114506/fr-afd-id.xml,success,2026-09-14
+17,https://static.data.gouv.fr/resources/donnees-de-laide-au-developpement-de-lafd-1/20260819-111347/fr-afd-vn.xml,success,2026-09-14
+18,https://static.data.gouv.fr/resources/donnees-de-laide-au-developpement-de-lafd-1/20260819-114552/fr-afd-in.xml,success,2026-09-14
+19,https://static.data.gouv.fr/resources/donnees-de-laide-au-developpement-de-lafd-1/20260819-110327/fr-afd-sn.xml,success,2026-09-14
+20,https://www.afd.fr/sites/default/files/2025-04/politique-transparence-afd.pdf,success,2026-09-14
+21,https://iatistandard.org/en/iati-standard/203/activity-standard/iati-activities/iati-activity/transaction/value/,definition read,2026-09-14
+22,https://iatistandard.org/en/iati-standard/203/codelists/ActivityDateType/,web internal error; casing route failed,2026-09-14
+23,https://iatistandard.org/en/iati-standard/203/codelists/TransactionType/,web internal error; casing route failed,2026-09-14
+24,https://iatistandard.org/en/iati-standard/203/activity-standard/iati-activities/iati-activity/transaction/value/ [find exchange rate],definition locator verified; counted as unit conservatively,2026-09-14
+25,IATI value page link275 ActivityDateType,web internal error,2026-09-14
+26,IATI value page link277 ActivityStatus,web internal error,2026-09-14

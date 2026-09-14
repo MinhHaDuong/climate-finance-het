@@ -1,0 +1,112 @@
+{
+  "source_id": "afd-full-export",
+  "metadata_record_count": 2080,
+  "export_records": 2080,
+  "distinct_financing_ids": 2080,
+  "metadata_modified": "2024-05-27T09:33:04+00:00",
+  "geography_labels": 80,
+  "multicountry_records": 620,
+  "status_counts": {
+    "Exécution": 1468,
+    "Achevé": 612
+  },
+  "product_counts": {
+    "Subvention": 1714,
+    "Prêt": 366
+  },
+  "profiles": {
+    "all": {
+      "records": 2080,
+      "unique_projects": 1492,
+      "award_signature_pairs": 1911,
+      "signature_first_payment_pairs": 1820,
+      "all_three_dates": 1663
+    },
+    "loans": {
+      "records": 366,
+      "unique_projects": 336,
+      "award_signature_pairs": 346,
+      "signature_first_payment_pairs": 311,
+      "all_three_dates": 294
+    },
+    "grants": {
+      "records": 1714,
+      "unique_projects": 1262,
+      "award_signature_pairs": 1565,
+      "signature_first_payment_pairs": 1509,
+      "all_three_dates": 1369
+    },
+    "four_jetp_country_labels": {
+      "records": 128,
+      "unique_projects": 106,
+      "award_signature_pairs": 122,
+      "signature_first_payment_pairs": 113,
+      "all_three_dates": 109
+    }
+  },
+  "dates": {
+    "date_d_octroi": {
+      "present": 1911,
+      "min": "2014-12-17",
+      "max": "2024-02-27"
+    },
+    "date_de_signature_de_convention": {
+      "present": 2080,
+      "min": "2018-10-02",
+      "max": "2024-05-14"
+    },
+    "date_de_1er_versement_concours": {
+      "present": 1820,
+      "min": "2018-11-14",
+      "max": "2024-05-07"
+    }
+  },
+  "anomalies": {
+    "signature_before_award": [
+      {
+        "id_concours": "CZZ297902",
+        "date_d_octroi": "2021-07-07",
+        "date_de_signature_de_convention": "2019-12-05"
+      },
+      {
+        "id_concours": "CNE122403",
+        "date_d_octroi": "2020-12-18",
+        "date_de_signature_de_convention": "2020-05-08"
+      },
+      {
+        "id_concours": "CEG115406",
+        "date_d_octroi": "2023-04-26",
+        "date_de_signature_de_convention": "2021-12-17"
+      },
+      {
+        "id_concours": "CDO108404",
+        "date_d_octroi": "2021-06-16",
+        "date_de_signature_de_convention": "2020-12-03"
+      },
+      {
+        "id_concours": "CBJ126404",
+        "date_d_octroi": "2022-06-15",
+        "date_de_signature_de_convention": "2021-12-09"
+      },
+      {
+        "id_concours": "CCI168103",
+        "date_d_octroi": "2021-06-16",
+        "date_de_signature_de_convention": "2019-12-20"
+      },
+      {
+        "id_concours": "CZZ240803",
+        "date_d_octroi": "2019-09-19",
+        "date_de_signature_de_convention": "2018-12-21"
+      }
+    ],
+    "first_payment_before_signature": [],
+    "first_payment_before_award": [
+      {
+        "id_concours": "CEG115406",
+        "date_d_octroi": "2023-04-26",
+        "date_de_1er_versement_concours": "2023-03-16"
+      }
+    ]
+  },
+  "interpretation": "Coverage counts, not duration estimates, population completeness, treatment attribution or an effect. Multi-country and loan/grant differences remain explicit."
+}
