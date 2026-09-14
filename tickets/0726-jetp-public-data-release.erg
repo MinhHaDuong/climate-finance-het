@@ -60,3 +60,13 @@ new total; freeze a release descriptor, dictionary, validation report and reuse
 terms. Keep source coverage distinct from implementation. Explicitly decide which
 aggregates are defensible and which remain unavailable. Do not treat 301 registered
 sources as 301 independent confirmations.
+
+## Audit source replication follow-up
+
+The broader0735audit added `data/jetp/audit-evidence/0735-round2.dvc` with eight
+original payloads and a SHA-256 manifest. Its padme push failed on14September2026
+(connection refused at127.0.1.1:22). All nine DVCcacheobjects are preserved in the
+primary local cache. Before relying on this bundle in a citable remote release,
+retry the configured push and verify a clean-cache retrieval/hash comparison.
+Do not infer remote availability from the committed pointer. Source publication
+terms remain part of this release ticket; the audit did not deploy raw payloads.
