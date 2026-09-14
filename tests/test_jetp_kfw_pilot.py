@@ -32,7 +32,18 @@ def test_identical_starts_do_not_validate_zero_delay():
         '<iati-activity><activity-date type="1" iso-date="2016-01-01"/>'
         '<activity-date type="2" iso-date="2016-01-01"/></iati-activity>'
     )
-    assert pilot.start_delay(node) is None
+    events = pilot.events_for("case", node)
+    starts = [
+        event for event in events if event["stage"] in {"planned_start", "actual_start"}
+    ]
+    assert len(starts) == 2
+    assert all(event["raw_value"] == "2016-01-01" for event in starts)
+    assert all(event["normalized_date"] == "" for event in starts)
+    assert all(
+        event["validation_status"] == "administrative_semantics_unverified"
+        for event in starts
+    )
+    assert not any(event["stage"] == "start_delay" for event in events)
 
 
 def test_negative_entry_is_not_cancellation():

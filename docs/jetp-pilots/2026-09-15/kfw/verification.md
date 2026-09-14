@@ -164,3 +164,14 @@ participant reference, challenge IDs/cutoff and all landmark dates. The original
 freeze is retained by tag `pilot-0738-selection-freeze`; the author records
 `467e7fab` as its equivalent after rebase. No implementation edits or git
 mutations were made by this reviewer.
+
+## Author post-review note
+
+The subsequent PR correctness review identified that the equal-start acceptance
+test exercised an unused helper. That helper was removed and the test now
+checks the actual `events_for` output. No calculation mapping or generated table
+changed. This final test-boundary cleanup follows the scientific fingerprints
+above; its fingerprints are:
+
+- `scripts/analyze_jetp_kfw_pilot.py`: `ff4a462d27e7041fd0d6fd9380bb6ae544402638f2725249128b275cdbc20ce2`.
+- `tests/test_jetp_kfw_pilot.py`: `0d0222aa0f2c25463a99e0c36290edea3a6fbd9f1e28e4ff161d6da5467d8516`.

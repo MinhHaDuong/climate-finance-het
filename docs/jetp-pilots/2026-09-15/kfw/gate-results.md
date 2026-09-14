@@ -56,3 +56,10 @@ remote `/data/projets/dvc/oeconomia-climate-finance`. The default SSH route fail
 because this machine resolves padme to localhost with no SSH listener; copying
 the existing primary worktree's `.dvc/config.local` selected its working local
 remote. No new remote was invented and the override is untracked.
+
+The PR correctness review prompted a test-only boundary improvement: the equal-
+start assertion now checks emitted events directly, and its unused helper was
+removed. With the hydrated inputs, `make check-fast` passed **1,805 tests**
+(9 skipped); final naive-mapping mutation still yields four intended failures.
+The extra fast cases relative to the earlier 1,721-pass run are enabled by the
+now-present corpus inputs. No production output mapping changed.

@@ -51,11 +51,6 @@ def parse_exports(payloads):
     return records
 
 
-def start_delay(node):
-    """Current planned and actual labels do not validate original plans."""
-    return None
-
-
 def payment_event(key, day, value, locator):
     negative = Decimal(value) < 0
     return {
