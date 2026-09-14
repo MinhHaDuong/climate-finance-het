@@ -1,8 +1,8 @@
 """Indonesian plan and approval observations retain their separate meanings."""
 
-from pathlib import Path
 import copy
 import json
+from pathlib import Path
 
 import pytest
 
