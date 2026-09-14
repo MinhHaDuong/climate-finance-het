@@ -87,12 +87,14 @@ def reported_position_sidecar(config, countries):
     displays, combinations = [], []
     for code, country in sorted(countries.items()):
         source = country['country']['headline_source']
-        for route, display_id in (('#overview', f'overview-{code}-headline'),
-                                  (f'#country/{code}', f'country-{code}-headline'),
-                                  (f'#country/{code}', f'country-{code}-headline-context')):
-            displays.append({'display_id': display_id, 'route': route,
-                             'payload': f'data/{code}.json', 'pointer': '/country/headline',
-                             'role': 'reported_position', 'evidence': [source]})
+        # The overview card and country header each render these four fields.
+        # They deliberately receive distinct display identities even when they
+        # point to the same country payload and evidence record.
+        for field in ('headline', 'headline_detail', 'stage_label', 'headline_date'):
+            for route, prefix in (('#overview', 'overview'), (f'#country/{code}', 'country')):
+                displays.append({'display_id': f'{prefix}-{code}-{field}', 'route': route,
+                                 'payload': f'data/{code}.json', 'pointer': f'/country/{field}',
+                                 'role': 'reported_position', 'evidence': [source]})
         combinations.append({'subject': code, 'measure': 'reported_position',
                              'perimeter': 'national_headline', 'owner': 'legacy'})
     result = publish(config['edition'], displays, combinations)
