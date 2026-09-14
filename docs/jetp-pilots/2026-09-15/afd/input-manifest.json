@@ -31,5 +31,7 @@
     "docs/jetp-audits/0735/round3/afd/legacy-xml-comparisons.json": "bfacac282b928f7f0185b9bc8bd61c3d376484b2d805de5a8b543ed1a96769a5",
     "docs/jetp-audits/0735/round3/afd/flat-profile.json": "3758ba19f4339abc626a9d4003f6383018dc497a66c8917e53628303602b6e7c",
     "docs/jetp-audits/0735/round3/afd/acquisition-log.csv": "4f96fdc7b44ede4c61ecf50885f8f88912c59588ab84746d8a7cbeb9a32e9b9f"
-  }
+  },
+  "selection_freeze_sha": "9904cd5b",
+  "table_storage": "DVC-tracked CSVs due repository 500KB git limit; offline regeneration identical"
 }
