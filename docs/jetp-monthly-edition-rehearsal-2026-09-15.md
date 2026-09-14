@@ -1,15 +1,18 @@
 # JETP monthly-edition rehearsal — 15 September 2026
 
-This rehearsal exercised the release-diff fixture required by ticket 0728,
-without changing a JETP fact or fabricating a second real edition. It compared a
-frozen `2026-09` snapshot to a synthetic `2026-10` candidate with one unchanged
-record, a source-backed amount correction, a report of an older event, a blocked
-refresh and a retracted claim.
+This rehearsal exercised the release-diff fixture required by ticket 0728 and
+then froze a second real static package, `2026-10`, from the same fact snapshot
+as `2026-09`. The second descriptor names `2026-09` as its rehearsal predecessor
+and records `no_scientific_change=true`; it does not manufacture a correction,
+event, or new source observation merely to create an edition.
 
-The report classifies the cases as unchanged, correction, late report, failed
-refresh and retraction. It retains all IDs from the previous edition, so a
-failed retrieval cannot erase a project. `tests/test_jetp_monthly_editions.py`
-records this fixture and verifies the classification.
+The comparison fixture separately classifies unchanged, correction, late report,
+failed refresh and retraction. It retains all IDs from the previous edition, so
+a failed retrieval cannot erase a project. The two committed packages each
+restore offline with all four country downloads and manifest-listed static
+routes. Independent interrupted-build and post-build validation-rejection
+checks then confirm that `2026-09` archive and descriptor bytes remain
+unchanged and replayable.
 
 The release owner is the named JETP release reviewer. On the first working day
 after a monthly cutoff, the owner freezes reviewed registry and editorial inputs,
@@ -22,4 +25,5 @@ replaces the preceding archive, and is published only after the same review.
 Recorded rehearsal effort: 35 minutes for fixture review, report inspection and
 offline archive/recovery checks. Unresolved coverage remains the existing
 blocked or unavailable source-byte records and the 21 Viet Nam identity slots.
-No unattended scheduler or external publication was exercised.
+Both editions are prepared local packages; no unattended scheduler or external
+publication was exercised.
