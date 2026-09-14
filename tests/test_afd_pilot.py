@@ -58,6 +58,7 @@ def test_all_193_legacy_exact_payment_dates_survive():
 
 def test_amounts_are_not_normalized_as_dates():
     import xml.etree.ElementTree as ET
+
     from build_afd_pilot import build_observations
 
     activity = ET.fromstring("""<iati-activity><default-finance-type code="110"/>
