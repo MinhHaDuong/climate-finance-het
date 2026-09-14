@@ -434,3 +434,24 @@ def test_recognized_output_aliases_are_not_rerun_destinations(tmp_path, monkeypa
     with pytest.raises(ValueError, match='alias'):
         write(output)
     assert site_hashes(tmp_path) == before
+
+
+@pytest.mark.parametrize('field,value', [('unexplained', 1), ('routes_added', {}),
+                                       ('metadata_only', {}),
+                                       ('intentional_scientific', {'path': 3})])
+def test_comparison_preserves_malformed_report_lookalikes(tmp_path, field, value):
+    import json
+
+    from jetp import _observatory_bundle as bundles
+
+    accepted = tmp_path / 'accepted.zip'
+    tiny_bundle(accepted)
+    previous = bundles.compare_bundles(accepted, accepted)
+    previous[field] = [value]
+    output = tmp_path / 'data/jetp/releases/release.json'
+    output.parent.mkdir(parents=True)
+    output.write_text(json.dumps(previous))
+    before = output.read_bytes()
+    with pytest.raises(ValueError, match='recognized'):
+        bundles.write_comparison(tmp_path, accepted, accepted, output)
+    assert output.read_bytes() == before
