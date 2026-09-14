@@ -89,7 +89,8 @@ def validate_watch(watch: dict, *, allow_pending: bool = False) -> None:
 def freeze_sweep(sources: list[dict], watches: list[dict], *, sweep_id: str,
                  created_at: str, owner: str, purpose: str, registry_revision: str,
                  configuration_revision: str, budget: dict, deferrals: dict | None = None,
-                 allow_pending: bool = False, previous_sweeps: list[dict] | None = None) -> dict:
+                 allow_pending: bool = False, previous_sweeps: list[dict] | None = None,
+                 supplements: str | None = None) -> dict:
     """Freeze selected revisions and deferrals before acquisition starts."""
     instant = _time(created_at)
     _require(all((sweep_id, owner, purpose, registry_revision, configuration_revision)), 'incomplete plan identity')
@@ -97,12 +98,18 @@ def freeze_sweep(sources: list[dict], watches: list[dict], *, sweep_id: str,
     _require(len(selected) == len(sources), 'duplicate source revisions')
     deferrals = deferrals or {}
     prior_checks = []
+    previous_watches, previous_sources = {}, {}
+    _require(supplements is None or any(prior['plan']['sweep_id'] == supplements for prior in previous_sweeps or []),
+             'supplemental plan must link a validated prior sweep')
     for prior in previous_sweeps or []:
         summarize(prior['plan'], prior['checks'])
         _require(_time(prior['plan']['created_at']) < instant, 'prior sweep must precede new plan')
         for check in prior['checks']:
             _require(_time(check['recorded_at']) <= instant, 'future check cannot enter plan')
             prior_checks = _append(prior_checks, check, 'check_id')
+        for target in prior['plan']['targets']:
+            previous_watches[target['watch']['watch_revision_id']] = target['watch']
+            previous_sources[target['source']['source_revision_id']] = target['source']
     targets, ids = [], set()
     for watch in watches:
         validate_watch(watch, allow_pending=allow_pending)
@@ -110,6 +117,8 @@ def freeze_sweep(sources: list[dict], watches: list[dict], *, sweep_id: str,
         ids.add(watch['watch_id'])
         source = selected.get(watch['source_revision_id'])
         _require(source is not None and source['source_id'] == watch['source_id'], 'watch source revision mismatch')
+        _require(previous_watches.get(watch['watch_revision_id'], watch) == watch, 'immutable watch revision collision')
+        _require(previous_sources.get(source['source_revision_id'], source) == source, 'immutable source revision collision')
         _require(_time(source['recorded_at']) <= instant and _time(watch['recorded_at']) <= instant,
                  'future metadata cannot enter frozen sweep')
         reason = deferrals.get(watch['watch_id'])
@@ -127,7 +136,7 @@ def freeze_sweep(sources: list[dict], watches: list[dict], *, sweep_id: str,
                  'selected targets exceed frozen budget')
     plan = dict(sweep_id=sweep_id, created_at=created_at, owner=owner, purpose=purpose,
                 registry_revision=registry_revision, configuration_revision=configuration_revision,
-                budget=deepcopy(budget), targets=targets)
+                budget=deepcopy(budget), targets=targets, supplements=supplements)
     plan['plan_digest'] = _identity('plan', plan)
     due = {row['watch_id']: row['next_check_at'] for row in summarize(plan, [])['targets']}
     for target in plan['targets']:
@@ -138,7 +147,7 @@ def freeze_sweep(sources: list[dict], watches: list[dict], *, sweep_id: str,
 
 def _targets(plan: dict) -> dict:
     _require(plan.keys() == {'sweep_id', 'created_at', 'owner', 'purpose', 'registry_revision',
-                             'configuration_revision', 'budget', 'targets', 'plan_digest'}, 'incomplete frozen plan')
+                             'configuration_revision', 'budget', 'targets', 'plan_digest', 'supplements'}, 'incomplete frozen plan')
     _require(isinstance(plan['targets'], list) and bool(plan['targets']), 'nonempty targets required')
     for target in plan['targets']:
         _require(target.keys() == {'watch', 'source', 'initial_due_at', 'deferral_reason', 'prior_checks'},
