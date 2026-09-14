@@ -1,0 +1,538 @@
+{
+  "archive_bytes": 487884,
+  "archive_sha256": "dbdc45b8f6d5dccce1c378b15a3d92a766f87ad26231751fca7ebf963716f574",
+  "captured_git_sha": "9568989284688e8acbc99db6bc863076d609c150",
+  "files": {
+    "inputs/config/jetp_observatory.yaml": {
+      "sha256": "f536877082c10e27f119a9a86794e6c584898f8c5f25283e3aa5812f855a86f3",
+      "size_bytes": 1981
+    },
+    "inputs/data/jetp/.gitignore": {
+      "sha256": "0da1ce77409bbfa9e3445e9b535be47f1413e4fcdaa9c5fcc4a2f2468f0f8a66",
+      "size_bytes": 169
+    },
+    "inputs/data/jetp/README.md": {
+      "sha256": "c8d4427bcd61be8bce3971de5dcf9802f79de35a41639985fcd687e74aa2a4f5",
+      "size_bytes": 2890
+    },
+    "inputs/data/jetp/audit-evidence/.gitignore": {
+      "sha256": "0bc579a55b233148e3c51991bc5b12174736239bfa3ccf0a7876e220334e9ce5",
+      "size_bytes": 26
+    },
+    "inputs/data/jetp/audit-evidence/0735-round2.dvc": {
+      "sha256": "44de2f233d26f53edebc0d60698319abef8d1bc69ca1c0ba74bbc089195e5858",
+      "size_bytes": 111
+    },
+    "inputs/data/jetp/audit-evidence/0735-round3.dvc": {
+      "sha256": "ad9e256257196e42e9fbcbd8a95b86f58a779ea20440f63d7b4f2a0e6fcbde4d",
+      "size_bytes": 113
+    },
+    "inputs/data/jetp/audit-evidence/README.md": {
+      "sha256": "dad8bd646928878467ef897e760e7d41254a6f0a9863bdb5d0475c41083e5201",
+      "size_bytes": 1411
+    },
+    "inputs/data/jetp/authority-coverage.csv": {
+      "sha256": "282f72f77f12dadde11e707746ab33e33c29f5f7d5b95cd2f8b976e8120afa1e",
+      "size_bytes": 13963
+    },
+    "inputs/data/jetp/comparison/ID.json": {
+      "sha256": "076d775af298ea3236ab503a434e68ef805dd139b7e79be2d59b9b61987f5b42",
+      "size_bytes": 265104
+    },
+    "inputs/data/jetp/comparison/README.md": {
+      "sha256": "a10717ddb8047e01bc2b5e33d2d6e0ff900e9da05fde1e1b8518fa3999c824ff",
+      "size_bytes": 2287
+    },
+    "inputs/data/jetp/comparison/SN.json": {
+      "sha256": "6cbe786b9bb60d149700a45c35ec7ee50c17cee0a1e6b33f0da1383228a621bc",
+      "size_bytes": 100509
+    },
+    "inputs/data/jetp/comparison/VN.json": {
+      "sha256": "86d69979839b161cffc23d09725e1df93011e578f555f217e8de9f6f749fb058",
+      "size_bytes": 126638
+    },
+    "inputs/data/jetp/comparison/ZA.json": {
+      "sha256": "dd31671c6188de6839b10021eadd88b711077076eb47aad541266596fd7e13aa",
+      "size_bytes": 21795
+    },
+    "inputs/data/jetp/decisions.md": {
+      "sha256": "efdfd41be02da719923d95205b320ee26da9f6b12777a131d78cb2cd5b72ed6e",
+      "size_bytes": 1904
+    },
+    "inputs/data/jetp/documents.dvc": {
+      "sha256": "a321a6f2708edd80b7d2aed1f1c493a0cd846948b088435ce3f7de21e9d427ea",
+      "size_bytes": 112
+    },
+    "inputs/data/jetp/dry-searches.csv": {
+      "sha256": "73b38b325614c9baf2e85e7abf49f3abecf03ae364e130d36b3c85e8c4db0e99",
+      "size_bytes": 45455
+    },
+    "inputs/data/jetp/editorial/README.md": {
+      "sha256": "aeee183d028736453e6b36c3aabdec84569e5800791401875685477c3be31572",
+      "size_bytes": 924
+    },
+    "inputs/data/jetp/editorial/countries/IDN.md": {
+      "sha256": "5dca073dea79b1187f05bcfc7928f470678c8e41db191001106ea7dd30567e22",
+      "size_bytes": 781
+    },
+    "inputs/data/jetp/editorial/countries/README.md": {
+      "sha256": "932545db41fa2aaf592fd2abc301dc72ac1349ce0db40442b417802e771fea74",
+      "size_bytes": 456
+    },
+    "inputs/data/jetp/editorial/countries/SEN.md": {
+      "sha256": "2baaeb7d2a4a5070ccabbd00eabad4684fc751b840b1556805672e07ff0f404d",
+      "size_bytes": 1719
+    },
+    "inputs/data/jetp/editorial/countries/VNM.md": {
+      "sha256": "59861cf855c531e207e75fe18d37d9e28a8b3b8a5fce36e21b4776f8943b90a6",
+      "size_bytes": 830
+    },
+    "inputs/data/jetp/editorial/countries/ZAF.md": {
+      "sha256": "67592649badf8b813b5c53112b28d1cdda4c833281cab1fc2dcc52f3a75aeaa7",
+      "size_bytes": 737
+    },
+    "inputs/data/jetp/editorial/editions/README.md": {
+      "sha256": "93ebff659986968dca0003e0112eb6d7a457b2b39c9a1723ada18b50301dc60c",
+      "size_bytes": 299
+    },
+    "inputs/data/jetp/editorial/projects/README.md": {
+      "sha256": "e37d442282c6d1a0135bbc136037fbdd81724289edd56606af0f502b6ba5a3fe",
+      "size_bytes": 279
+    },
+    "inputs/data/jetp/editorial/templates/country.md": {
+      "sha256": "ef7aee691dc828f7e181e53a67a387ce58548d9a42550f3b6fd783c484bc14da",
+      "size_bytes": 578
+    },
+    "inputs/data/jetp/editorial/templates/edition.md": {
+      "sha256": "0a129b97ba9aa4f58ebc5d8c89d5230188a75d0713a33a053a4716e39edd8145",
+      "size_bytes": 532
+    },
+    "inputs/data/jetp/editorial/templates/project.md": {
+      "sha256": "44b5a35bb37ab5a05bf459147c1dcb6b2755c08df21745c56370ba0c6d9fb99f",
+      "size_bytes": 729
+    },
+    "inputs/data/jetp/event-timing.csv": {
+      "sha256": "e6ef01bb8f854307b6a0b15ca9749e18669041671bdfebb0c76113918e567071",
+      "size_bytes": 54614
+    },
+    "inputs/data/jetp/events.csv": {
+      "sha256": "dfe8a635c4f6408fecea2f17bf9a50fc16449f16e961457cebf64b6552c42062",
+      "size_bytes": 176196
+    },
+    "inputs/data/jetp/idn-portfolio-observations.csv": {
+      "sha256": "812244c891ed8ae184d1a1959351fa5fabfbea5683613fa3803cc0a9b05aea8b",
+      "size_bytes": 26926
+    },
+    "inputs/data/jetp/implementation-events.csv": {
+      "sha256": "aca4d7d2a773919b12de872cd2436040c449a52c1d30e0024cd7d8b48300043d",
+      "size_bytes": 23585
+    },
+    "inputs/data/jetp/manifest.csv": {
+      "sha256": "6de8f6510723ff776ba6ea3980c01edf98fdae59fab569cc570aab06e4307660",
+      "size_bytes": 105793
+    },
+    "inputs/data/jetp/news-leads.csv": {
+      "sha256": "515fff3faf86b858df5a01f14d4dce4d3d732955df4051028bfa00b6895babbe",
+      "size_bytes": 7094
+    },
+    "inputs/data/jetp/plan-projects.csv": {
+      "sha256": "723b24f1e67da7420122bede26a997b002d2ff9683f3e7623da8c74f372ba5ca",
+      "size_bytes": 561968
+    },
+    "inputs/data/jetp/project-coverage.csv": {
+      "sha256": "56c62b10723b4e0c9c350160b920be865168449b2ee2a7a44ef35c0a00d428b3",
+      "size_bytes": 48110
+    },
+    "inputs/data/jetp/project-source-links.csv": {
+      "sha256": "5de3367b7d88eb083ce0d8b74503e7466a4eac87815ab17e4bf10c1bf31c0518",
+      "size_bytes": 70217
+    },
+    "inputs/data/jetp/projects.csv": {
+      "sha256": "aa048ed7ba496ae698ced9d5906ab11ebc318403a03afc3e525c75b7a888a540",
+      "size_bytes": 253180
+    },
+    "inputs/data/jetp/recovery.dvc": {
+      "sha256": "6b9fb02c5a638a7fb949fd91a7490631028a47cc79282792bb00e0ac6a2c2fae",
+      "size_bytes": 109
+    },
+    "inputs/data/jetp/source-claims.csv": {
+      "sha256": "2c6975af75d2022d994318e2925d846fb64363a248974a7c247ee6ebd421287a",
+      "size_bytes": 45856
+    },
+    "inputs/data/jetp/sources.csv": {
+      "sha256": "f07be2a2a253560a2b065c60b4ff9e69d8a688151d246ea314ddb3a7902403f3",
+      "size_bytes": 105661
+    },
+    "inputs/data/jetp/vnm-pilot-manifest.csv": {
+      "sha256": "b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818",
+      "size_bytes": 25746
+    },
+    "inputs/data/jetp/vnm-pilot-observations.csv": {
+      "sha256": "0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917",
+      "size_bytes": 39592
+    },
+    "inputs/scripts/jetp/_observatory_data.py": {
+      "sha256": "f3efa056997cf6df12c77ce4d785dcb065a7bd5927f98677435278f3cb9c5167",
+      "size_bytes": 4367
+    },
+    "inputs/scripts/jetp/build_observatory.py": {
+      "sha256": "abdb434819c92abc23a283c5cfe0399cbbf76ef9ff77f0612f697919367e17dd",
+      "size_bytes": 10688
+    },
+    "site/README.md": {
+      "sha256": "8b4d6bfae83bbb6bfca883053d77b2987d52cbc7fab6c06eaed4d36f0ca613b2",
+      "size_bytes": 2641
+    },
+    "site/app.js": {
+      "sha256": "af279737aef92d22834f15368ec55e77b72aa7e4307fe25136f4a5156f8dc1a5",
+      "size_bytes": 31903
+    },
+    "site/data/IDN.json": {
+      "sha256": "7382b07defe7d746a122c03c7f1317be3c7589cf69a74e42761c16492f0be328",
+      "size_bytes": 182658
+    },
+    "site/data/SEN.json": {
+      "sha256": "d6bd65c0425970ee9e7e1f8a5058a1f21de39f91fc644eb4421485115c6d3a51",
+      "size_bytes": 210399
+    },
+    "site/data/VNM.json": {
+      "sha256": "13b8fb76f0a90d6531b52e574e85af091e2fbff6a3333654280d2651dc449afc",
+      "size_bytes": 9644
+    },
+    "site/data/ZAF.json": {
+      "sha256": "9df481b178e0525cbf9298f07451b1f38cb4a4aae64548961257d0e18c7a2c44",
+      "size_bytes": 508002
+    },
+    "site/data/comparison.json": {
+      "sha256": "f95b3196a68a9070082a5bd15d9c4a2856e04b9a6991c4677c14d91d97b41181",
+      "size_bytes": 42233
+    },
+    "site/data/overview.json": {
+      "sha256": "83a541739d9bfa719a2164d2308b86d8bb0618381295f8308c731bc04930e48d",
+      "size_bytes": 9104
+    },
+    "site/index.html": {
+      "sha256": "924d021bd793cd83ca7aa452d762cec09392b895729ef33ece46cee02e3a78bb",
+      "size_bytes": 1460
+    },
+    "site/styles.css": {
+      "sha256": "b032402aae0291dcafc68242ee5117d69d37ba5bb91b50a0024fe72741a10880",
+      "size_bytes": 14304
+    }
+  },
+  "missing_hashed_sources": [],
+  "recorded_input_git_sha": "e35988a7065c628dc75dddde4df18d6658701b40",
+  "route_count": 400,
+  "source_count": 307,
+  "source_locations": {
+    "dvc_cache": 38,
+    "unavailable": 41,
+    "working_tree": 228
+  },
+  "tables": {
+    "data/jetp/authority-coverage.csv": {
+      "duplicate_rows": 0,
+      "headers": [
+        "country",
+        "authority_id",
+        "authority",
+        "authority_category",
+        "verdict",
+        "source_ids",
+        "checked_at",
+        "notes"
+      ],
+      "row_count": 64
+    },
+    "data/jetp/dry-searches.csv": {
+      "duplicate_rows": 0,
+      "headers": [
+        "search_id",
+        "country",
+        "authority",
+        "query_or_route",
+        "checked_at",
+        "outcome",
+        "next_step",
+        "notes"
+      ],
+      "row_count": 109
+    },
+    "data/jetp/event-timing.csv": {
+      "duplicate_rows": 0,
+      "headers": [
+        "event_id",
+        "date_role",
+        "event_precision",
+        "event_start",
+        "event_end",
+        "observed_on",
+        "reported_on",
+        "date_note"
+      ],
+      "row_count": 451
+    },
+    "data/jetp/events.csv": {
+      "duplicate_rows": 0,
+      "headers": [
+        "event_id",
+        "project_id",
+        "country",
+        "event_date",
+        "scope",
+        "financial_status",
+        "funder",
+        "window",
+        "instrument",
+        "amount_original",
+        "currency_original",
+        "amount_usd",
+        "conversion_method",
+        "source_id",
+        "document_sha256",
+        "locator",
+        "verification_status",
+        "notes"
+      ],
+      "row_count": 380
+    },
+    "data/jetp/idn-portfolio-observations.csv": {
+      "duplicate_rows": 0,
+      "headers": [
+        "country",
+        "project_id",
+        "source_id",
+        "document_sha256",
+        "title",
+        "period",
+        "ipg_entity",
+        "beneficiary",
+        "implementing_partner",
+        "specific_focus",
+        "modality",
+        "financing_type",
+        "financing_source",
+        "financing_intermediary",
+        "amount_home_currency",
+        "amount_home",
+        "amount_usd",
+        "part_of_jetp_pledge",
+        "matched_event_id",
+        "report_currency_home",
+        "report_amount_home",
+        "reconciliation_status",
+        "notes"
+      ],
+      "row_count": 46
+    },
+    "data/jetp/implementation-events.csv": {
+      "duplicate_rows": 0,
+      "headers": [
+        "implementation_event_id",
+        "project_id",
+        "country",
+        "event_date",
+        "implementation_status",
+        "capacity_mw",
+        "source_id",
+        "document_sha256",
+        "locator",
+        "verification_status",
+        "notes"
+      ],
+      "row_count": 71
+    },
+    "data/jetp/manifest.csv": {
+      "duplicate_rows": 0,
+      "headers": [
+        "source_id",
+        "country",
+        "retrieved_at",
+        "status",
+        "http_status",
+        "content_type",
+        "etag",
+        "last_modified",
+        "sha256",
+        "size_bytes",
+        "storage_path",
+        "final_url",
+        "error"
+      ],
+      "row_count": 307
+    },
+    "data/jetp/news-leads.csv": {
+      "duplicate_rows": 0,
+      "headers": [
+        "lead_id",
+        "country",
+        "published_date",
+        "publisher",
+        "title",
+        "url",
+        "lead_type",
+        "topics",
+        "related_project_ids",
+        "discovery_source_id",
+        "evidence_role",
+        "review_status",
+        "notes"
+      ],
+      "row_count": 18
+    },
+    "data/jetp/plan-projects.csv": {
+      "duplicate_rows": 0,
+      "headers": [
+        "plan_project_id",
+        "country",
+        "source_id",
+        "technology_group",
+        "priority_tier",
+        "ordinal",
+        "project_name",
+        "system",
+        "estimated_start",
+        "capacity_value",
+        "capacity_unit",
+        "estimated_investment_usd_mn",
+        "natural_retirement_year",
+        "estimated_retirement_year",
+        "ruptl",
+        "canonical_project_id",
+        "reconciliation_status",
+        "document_sha256",
+        "locator",
+        "notes"
+      ],
+      "row_count": 1628
+    },
+    "data/jetp/project-coverage.csv": {
+      "duplicate_rows": 0,
+      "headers": [
+        "country",
+        "project_id",
+        "review_status",
+        "source_ids",
+        "checked_at",
+        "query_or_route",
+        "notes"
+      ],
+      "row_count": 141
+    },
+    "data/jetp/project-source-links.csv": {
+      "duplicate_rows": 0,
+      "headers": [
+        "link_id",
+        "country",
+        "project_id",
+        "source_id",
+        "relationship",
+        "locator",
+        "review_status",
+        "notes"
+      ],
+      "row_count": 315
+    },
+    "data/jetp/projects.csv": {
+      "duplicate_rows": 0,
+      "headers": [
+        "project_id",
+        "country",
+        "canonical_name",
+        "aliases",
+        "technology",
+        "location",
+        "operator",
+        "first_seen_date",
+        "last_seen_date",
+        "verification_status",
+        "notes"
+      ],
+      "row_count": 404
+    },
+    "data/jetp/source-claims.csv": {
+      "duplicate_rows": 0,
+      "headers": [
+        "claim_id",
+        "country",
+        "source_id",
+        "section",
+        "claim_summary",
+        "matched_project_ids",
+        "match_status",
+        "notes"
+      ],
+      "row_count": 149
+    },
+    "data/jetp/sources.csv": {
+      "duplicate_rows": 0,
+      "headers": [
+        "source_id",
+        "country",
+        "authority_category",
+        "publisher",
+        "source_type",
+        "title",
+        "published_date",
+        "url",
+        "project_id",
+        "expected_format",
+        "priority",
+        "active",
+        "notes"
+      ],
+      "row_count": 301
+    },
+    "data/jetp/vnm-pilot-manifest.csv": {
+      "duplicate_rows": 0,
+      "headers": [
+        "pilot_row_id",
+        "source_id",
+        "country",
+        "pilot_snapshot_date",
+        "source_class",
+        "legacy_filename",
+        "url",
+        "legacy_status",
+        "collection_status",
+        "http_status",
+        "sha256",
+        "size_bytes",
+        "notes"
+      ],
+      "row_count": 66
+    },
+    "data/jetp/vnm-pilot-observations.csv": {
+      "duplicate_rows": 0,
+      "headers": [
+        "observation_id",
+        "country",
+        "ratified",
+        "operation",
+        "funder",
+        "instrument",
+        "amount_original",
+        "currency_original",
+        "event_date",
+        "legacy_status",
+        "source_filename",
+        "locator",
+        "confidence",
+        "notes",
+        "verification_verdict",
+        "verification_note",
+        "matched_snippet",
+        "project_count",
+        "portfolio_role"
+      ],
+      "row_count": 46
+    }
+  },
+  "verified_sources": 266,
+  "working_tree_status": [],
+  "zaf_payload": {
+    "limit_bytes": 512000,
+    "size_bytes": 508002,
+    "within_limit": true
+  }
+}

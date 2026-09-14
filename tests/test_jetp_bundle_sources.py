@@ -33,6 +33,8 @@ def test_missing_checkout_recovers_verified_source_from_pinned_cache(tmp_path):
     payloads = {}
     source, = source_inventory(tmp_path, tmp_path, payloads, True)
     assert source['verified'] is True
+    assert source['working_tree_available'] is False
+    assert source['location_kind'] == 'dvc_cache'
     assert source['embedded'] is True
     assert source['recovery_location'] == str(cached)
     assert source['dvc_md5'] == hashlib.md5(cached.read_bytes()).hexdigest()
