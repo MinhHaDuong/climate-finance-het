@@ -1,0 +1,20 @@
+=========================== short test summary info ============================
+FAILED tests/test_corpus_acceptance.py::TestFileExistence::test_refined_works_exists
+FAILED tests/test_corpus_acceptance.py::TestFileExistence::test_corpus_audit_exists
+FAILED tests/test_corpus_acceptance.py::TestFileExistence::test_embeddings_exist
+FAILED tests/test_corpus_acceptance.py::TestFileExistence::test_citations_exist
+FAILED tests/test_corpus_acceptance.py::TestFileExistence::test_reranker_cache_exists
+FAILED tests/test_corpus_acceptance.py::TestCorpusAlign::test_refined_embeddings_exist
+FAILED tests/test_corpus_acceptance.py::TestCorpusAlign::test_refined_citations_exist
+FAILED tests/test_corpus_flow.py::test_generated_flow_closes_to_the_refined_corpus
+FAILED tests/test_jetp_documents.py::test_cli_harvests_from_a_local_http_server
+FAILED tests/test_post_checkout_hook.py::test_worktree_creation_is_fast_and_light
+FAILED tests/test_post_checkout_hook.py::test_hook_never_clobbers_a_real_dvc_cache_directory
+FAILED tests/test_post_checkout_hook.py::test_fresh_worktree_shares_the_primary_dvc_cache
+FAILED tests/test_reference_counts.py::TestReferenceCountsSubprocess::test_runs_and_produces_output
+FAILED tests/test_openalex_corpus_installability.py::test_installs_cleanly_with_declared_deps
+FAILED tests/test_openalex_corpus_installability.py::test_installability_guard_catches_undeclared_dep
+FAILED tests/test_venue_concentration.py::TestVenueConcentrationSubprocess::test_runs_and_produces_output
+FAILED tests/test_robustness_observability.py::TestResumePreview::test_enrich_citations_batch_preview_on_empty_corpus
+===== 17 failed, 2593 passed, 94 skipped, 31 warnings in 263.52s (0:04:23) =====
+make: *** [Makefile:862: check] Error 1

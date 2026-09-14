@@ -1,0 +1,42 @@
+unit_id,kind,legacy_award,legacy_signature,portal_signature,xml_commitment_value_dates,legacy_status,parent_id,join,disposition,evidence_id
+CAF108901,missing_portal,2020-07-07,2020-09-24,,,Achevé,CAF1089,exact financing ID only,lost_visibility; outcome unknown; inclusion/retention history required,legacy|portal
+CBF135201,missing_portal,2021-03-10,2021-11-22,,,Exécution,CBF1352,exact financing ID only,lost_visibility; outcome unknown; inclusion/retention history required,legacy|portal
+CBF136001,missing_portal,2021-12-08,2022-07-19,,,Exécution,CBF1360,exact financing ID only,lost_visibility; outcome unknown; inclusion/retention history required,legacy|portal
+CBF136002,missing_portal,2021-12-08,2021-12-09,,,Exécution,CBF1360,exact financing ID only,lost_visibility; outcome unknown; inclusion/retention history required,legacy|portal
+CBF139201,missing_portal,2021-09-16,2021-12-21,,,Exécution,CBF1392,exact financing ID only,lost_visibility; outcome unknown; inclusion/retention history required,legacy|portal
+CBF139601,missing_portal,2021-03-10,2021-05-21,,,Exécution,CBF1396,exact financing ID only,lost_visibility; outcome unknown; inclusion/retention history required,legacy|portal
+CBF139602,missing_portal,2021-03-10,2022-08-25,,,Exécution,CBF1396,exact financing ID only,lost_visibility; outcome unknown; inclusion/retention history required,legacy|portal
+CBJ126404,award_signature_reversal,2022-06-15,2021-12-09,2021-12-09,,Exécution,CBJ1264,exact financing ID only,preserve order; approval meaning and legal instrument unresolved,legacy|portal
+CCI168103,award_signature_reversal,2021-06-16,2019-12-20,2019-12-20,,Exécution,CCI1681,exact financing ID only,preserve order; approval meaning and legal instrument unresolved,legacy|portal
+CCM160102,missing_portal,2022-12-14,2023-01-30,,,Exécution,CCM1601,exact financing ID only,lost_visibility; outcome unknown; inclusion/retention history required,legacy|portal
+CCN108901,missing_portal,2019-04-17,2019-11-05,,,Exécution,CCN1089,exact financing ID only,lost_visibility; outcome unknown; inclusion/retention history required,legacy|portal
+CDO108404,award_signature_reversal,2021-06-16,2020-12-03,2020-12-03,,Exécution,CDO1084,exact financing ID only,preserve order; approval meaning and legal instrument unresolved,legacy|portal
+CEG112504,missing_portal,2021-12-16,2022-11-03,,,Exécution,CEG1125,exact financing ID only,lost_visibility; outcome unknown; inclusion/retention history required,legacy|portal
+CEG112506,missing_portal,2021-12-16,2022-11-03,,,Exécution,CEG1125,exact financing ID only,lost_visibility; outcome unknown; inclusion/retention history required,legacy|portal
+CEG112507,missing_portal,2021-12-16,2022-11-03,,,Exécution,CEG1125,exact financing ID only,lost_visibility; outcome unknown; inclusion/retention history required,legacy|portal
+CEG112509,missing_portal,2021-12-16,2021-12-17,,,Exécution,CEG1125,exact financing ID only,lost_visibility; outcome unknown; inclusion/retention history required,legacy|portal
+CEG115406,award_signature_reversal,2023-04-26,2021-12-17,2021-12-17,,Exécution,CEG1154,exact financing ID only,preserve order; approval meaning and legal instrument unresolved,legacy|portal
+CID107702,missing_award_matched_xml,,2021-06-08,2021-06-08,2026-04-23,Exécution,CID1077,exact financing ID only,no value-date imputation; dated approval decision required,legacy|portal|0735-round3/afd/fr-afd-id.xml
+CIN107503,missing_award_matched_xml,,2018-10-22,2018-10-22,2026-08-17,Exécution,CIN1075,exact financing ID only,no value-date imputation; dated approval decision required,legacy|portal|0735-round3/afd/fr-afd-in.xml
+CIN107505,missing_award_matched_xml,,2019-12-11,2019-12-11,2026-08-17,Exécution,CIN1075,exact financing ID only,no value-date imputation; dated approval decision required,legacy|portal|0735-round3/afd/fr-afd-in.xml
+CIN107506,missing_award_matched_xml,,2019-12-17,2019-12-17,2026-08-17,Exécution,CIN1075,exact financing ID only,no value-date imputation; dated approval decision required,legacy|portal|0735-round3/afd/fr-afd-in.xml
+CIN107507,missing_award_matched_xml,,2020-01-17,2020-01-17,2026-08-17,Exécution,CIN1075,exact financing ID only,no value-date imputation; dated approval decision required,legacy|portal|0735-round3/afd/fr-afd-in.xml
+CIN107508,missing_award_matched_xml,,2020-03-04,2020-03-04,2026-08-17,Exécution,CIN1075,exact financing ID only,no value-date imputation; dated approval decision required,legacy|portal|0735-round3/afd/fr-afd-in.xml
+CIN107509,missing_award_matched_xml,,2020-09-17,2020-09-17,2026-08-17,Exécution,CIN1075,exact financing ID only,no value-date imputation; dated approval decision required,legacy|portal|0735-round3/afd/fr-afd-in.xml
+CIN107510,missing_award_matched_xml,,2021-03-03,2021-03-03,2026-08-17,Exécution,CIN1075,exact financing ID only,no value-date imputation; dated approval decision required,legacy|portal|0735-round3/afd/fr-afd-in.xml
+CMA123501,missing_portal,2017-06-15,2019-06-28,,,Exécution,CMA1235,exact financing ID only,lost_visibility; outcome unknown; inclusion/retention history required,legacy|portal
+CNE122403,award_signature_reversal,2020-12-18,2020-05-08,2020-05-08,,Exécution,CNE1224,exact financing ID only,preserve order; approval meaning and legal instrument unresolved,legacy|portal
+CPS117501,missing_portal,2018-08-24,2019-03-27,,,Achevé,CPS1175,exact financing ID only,lost_visibility; outcome unknown; inclusion/retention history required,legacy|portal
+CTN122106,missing_portal,,2019-01-03,,,Exécution,CTN1221,exact financing ID only,lost_visibility; outcome unknown; inclusion/retention history required,legacy|portal
+CTN129703,signature_nonmatch,2022-11-17,2022-11-19,,,Exécution,CTN1297,exact financing ID only,preserve both; dated exact financing contract required,legacy|portal
+CUG106203,missing_portal,2018-12-20,2018-12-21,,,Exécution,CUG1062,exact financing ID only,lost_visibility; outcome unknown; inclusion/retention history required,legacy|portal
+CVN123604,missing_award_matched_xml,,2021-11-03,2021-11-03,2026-08-17,Exécution,CVN1236,exact financing ID only,no value-date imputation; dated approval decision required,legacy|portal|0735-round3/afd/fr-afd-vn.xml
+CVN123605,missing_award_matched_xml,,2023-12-29,2023-12-29,2026-08-17,Exécution,CVN1236,exact financing ID only,no value-date imputation; dated approval decision required,legacy|portal|0735-round3/afd/fr-afd-vn.xml
+CVN123606,missing_award_matched_xml,,2023-12-29,2023-12-29,2026-08-17,Exécution,CVN1236,exact financing ID only,no value-date imputation; dated approval decision required,legacy|portal|0735-round3/afd/fr-afd-vn.xml
+CVU106101,missing_portal,2020-11-18,2021-12-21,,,Exécution,CVU1061,exact financing ID only,lost_visibility; outcome unknown; inclusion/retention history required,legacy|portal
+CZA112104,missing_award_matched_xml,,2018-12-13,2018-12-13,2026-08-17,Exécution,CZA1121,exact financing ID only,no value-date imputation; dated approval decision required,legacy|portal|0735-round3/afd/fr-afd-za.xml
+CZA116004,missing_award_matched_xml,,2019-02-28,2019-02-28,2026-08-17,Exécution,CZA1160,exact financing ID only,no value-date imputation; dated approval decision required,legacy|portal|0735-round3/afd/fr-afd-za.xml
+CZZ240803,award_signature_reversal,2019-09-19,2018-12-21,2018-12-21,,Exécution,CZZ2408,exact financing ID only,preserve order; approval meaning and legal instrument unresolved,legacy|portal
+CZZ276103,signature_nonmatch,2021-11-15,2021-11-16,2024-10-29,,Exécution,CZZ2761,exact financing ID only,preserve both; dated exact financing contract required,legacy|portal
+CZZ282701,missing_portal,2021-10-13,2021-10-14,,,Exécution,CZZ2827,exact financing ID only,lost_visibility; outcome unknown; inclusion/retention history required,legacy|portal
+CZZ297902,award_signature_reversal,2021-07-07,2019-12-05,2019-12-05,,Exécution,CZZ2979,exact financing ID only,preserve order; approval meaning and legal instrument unresolved,legacy|portal

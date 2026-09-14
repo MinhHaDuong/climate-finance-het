@@ -1,0 +1,13 @@
+case_id,rank,local_legacy_record,local_xml_record,local_exact_contract,external_attempted,external_units,external_exact_contract,disposition
+CAL100402,1,True,True,False,True,15,False,redirect; target not inspected within allocated originals route
+CAL100401,2,True,True,False,True,16,False,redirect; target not inspected within allocated originals route
+CAL100302,3,True,True,False,True,17,False,redirect; target not inspected within allocated originals route
+CAL100301,4,True,True,False,True,18,False,redirect; target not inspected within allocated originals route
+CID108901,5,True,True,False,True,19,False,redirect; target not inspected within allocated originals route
+CID107101,6,True,True,False,True,20,False,redirect; target not inspected within allocated originals route
+CIN116401,7,True,True,False,True,21,False,redirect; target not inspected within allocated originals route
+CIN109002,8,True,True,False,True,22,False,redirect; target not inspected within allocated originals route
+CIN107401,9,True,True,False,True,23,False,redirect; target not inspected within allocated originals route
+CMA122103,10,True,True,False,True,24,False,redirect; target not inspected within allocated originals route
+CMA121301,11,True,True,False,False,,False,not attempted; cap allocated to mandatory verification
+CSN162002,12,True,True,False,False,,False,not attempted; cap allocated to mandatory verification

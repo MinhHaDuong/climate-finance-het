@@ -1,0 +1,146 @@
+"""Acceptance contracts for the AFD historical observation pilot."""
+
+from build_afd_pilot import payment_observation, reconcile
+
+
+def test_cma123501_disappearance_is_not_an_outcome():
+    row = {
+        "id_concours": "CMA123501",
+        "date_de_1er_versement_concours": None,
+        "etat_du_projet": "Exécution",
+        "date_de_signature_de_convention": "2019-06-28",
+    }
+    result = reconcile(row, None)
+    assert result["observation_status"] == "lost_visibility"
+    assert result["outcome"] == "unknown"
+    assert result["last_observed_stage"] == "signature"
+    assert result["last_observed_snapshot"] == "legacy-retrieved-2026-09-14"
+
+
+def test_exact_payment_is_preserved_and_no_uncovered_interval():
+    result = payment_observation("2022-08-30", ["2022-12-31"])
+    assert result["date"] == "2022-08-30"
+    assert result["precision"] == "day"
+    missing = payment_observation(None, ["2022-12-31"])
+    assert missing["date"] is None
+    assert missing["precision"] == "unknown"
+    assert missing["interval"] is None
+
+
+def test_value_date_never_imputes_award_and_parent_never_joins():
+    row = {"id_concours": "CMA123501", "date_d_octroi": None}
+    result = reconcile(
+        row, {"code_concours_simple": "CMA123502", "value_date": "2020-01-01"}
+    )
+    assert result["award"] is None
+    assert result["observation_status"] == "lost_visibility"
+
+
+def test_all_193_legacy_exact_payment_dates_survive():
+    import json
+    from pathlib import Path
+
+    comparisons = json.loads(
+        (
+            Path(__file__).resolve().parents[1]
+            / "docs/jetp-audits/0735/round3/afd/legacy-xml-comparisons.json"
+        ).read_text()
+    )
+    paid = [r for r in comparisons if r["legacy_first_payment"]]
+    assert len(paid) == 193
+    for row in paid:
+        result = payment_observation(
+            row["legacy_first_payment"], [row["earliest_reported_disbursement"]]
+        )
+        assert result["date"] == row["legacy_first_payment"]
+        assert result["date"] != row["earliest_reported_disbursement"]
+
+
+def test_amounts_are_not_normalized_as_dates():
+    import xml.etree.ElementTree as ET
+
+    from build_afd_pilot import build_observations
+
+    activity = ET.fromstring("""<iati-activity><default-finance-type code="110"/>
+      <sector vocabulary="1" code="23010"/><transaction><transaction-type code="3"/>
+      <transaction-date iso-date="2023-12-31"/><value value-date="2023-12-31">-12</value>
+      </transaction></iati-activity>""")
+    units, events = build_observations(
+        {},
+        {"X": {"iati_identifier": "FR-3-P", "recipient_country_narrative": "MAROC"}},
+        {"X": (activity, "xml", "MA")},
+    )
+    amount = next(r for r in events if r["raw_field"] == "value")
+    assert amount["raw_value"] == "-12"
+    assert amount["normalized_date"] is None
+    assert units[0]["xml_sector_raw"] == "1:23010"
+
+
+def test_multicountry_portal_unit_preserves_allocation_and_instrument():
+    from build_afd_pilot import build_observations
+
+    raw = "MAROC\nINDE\nMULTI-PAYS"
+    units, _ = build_observations(
+        {},
+        {
+            "X": {
+                "iati_identifier": "FR-3-P",
+                "recipient_country_narrative": raw,
+                "default_finance_type_code": "Prêt",
+            }
+        },
+        {},
+    )
+    assert len(units) == 1
+    assert units[0]["country"] == "regional"
+    assert units[0]["country_raw"] == raw
+    assert units[0]["portal_finance_type_raw"] == "Prêt"
+
+
+def test_equal_xml_amounts_keep_distinct_transaction_locators():
+    import xml.etree.ElementTree as ET
+
+    from build_afd_pilot import build_observations
+
+    activity = ET.fromstring("""<iati-activity><default-finance-type code="110"/>
+    <transaction><transaction-type code="3"/><transaction-date iso-date="2022-12-31"/>
+      <value value-date="2022-12-31">25000000</value></transaction>
+    <transaction><transaction-type code="3"/><transaction-date iso-date="2023-12-31"/>
+      <value value-date="2023-12-31">25000000</value></transaction></iati-activity>""")
+    _, events = build_observations(
+        {}, {"X": {"iati_identifier": "FR-3-P"}}, {"X": (activity, "xml", "MA")}
+    )
+    amounts = [r for r in events if r["raw_field"] == "value"]
+    assert len({r["source_locator"] for r in amounts}) == 2
+    for amount, expected_date in zip(amounts, ["2022-12-31", "2023-12-31"]):
+        group = [r for r in events if r["source_locator"] == amount["source_locator"]]
+        assert len(group) == 3
+        assert (
+            next(r["raw_value"] for r in group if r["raw_field"] == "transaction-date")
+            == expected_date
+        )
+
+
+def test_legacy_loader_uses_source_id_and_rejects_wrong_hash(tmp_path):
+    import hashlib
+    import json
+
+    import pytest
+    from build_afd_pilot import load_legacy
+
+    payload = b'[{"id_concours":"X"}]'
+    archive = tmp_path / "0735-round2"
+    archive.mkdir()
+    (archive / "source.json").write_bytes(payload)
+    manifest = tmp_path / "manifest.json"
+    selected = {
+        "source_id": "afd-full-export",
+        "path": "data/jetp/audit-evidence/0735-round2/source.json",
+        "sha256": hashlib.sha256(payload).hexdigest(),
+    }
+    manifest.write_text(json.dumps([{"source_id": "unrelated"}, selected]))
+    assert load_legacy(tmp_path, manifest) == [{"id_concours": "X"}]
+    selected["sha256"] = "wrong"
+    manifest.write_text(json.dumps([selected]))
+    with pytest.raises(ValueError, match="SHA-256 mismatch"):
+        load_legacy(tmp_path, manifest)

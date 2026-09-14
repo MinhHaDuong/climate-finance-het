@@ -1,0 +1,40 @@
+{
+  "audit_live_head": "137a96160add8ddb8c339ae17eae3853948f45bb",
+  "audit_state": "MERGED",
+  "base": "7f89c356",
+  "selection_live_head": "63bb738ef8f8bf7c96db3201a8ce48b717136075",
+  "selection_state": "OPEN",
+  "protocol_freeze": "1e5329758669358248f27e61fd7302a5c9857d5d",
+  "environment": {
+    "python": "Python 3.11.15",
+    "interpreter": "audit environment linked as .venv; no new installation"
+  },
+  "input_hashes": {
+    "docs/jetp-audits/0736/chronology.md": "117f6c9adccf21346518c16dd8ce4844fcb770234c5cc441400d2257c5e8dff8",
+    "docs/jetp-audits/0736/comparators.md": "931ae97c10565bae7890bc05a0f7b54c3617b25afdd3e091b85c4d6247acb0bc",
+    "docs/jetp-audits/0736/rivals.md": "36e81c28832d43fe27932bd6d0c5c6ed05ee3115fa81b850da95a0a178d92a2c",
+    "docs/jetp-audits/0736/report.md": "112ffa26f477859fef51b608be1db108e9075222d3bb01b0e506a4ebb302dc63",
+    "docs/jetp-audits/0736/sources.csv": "d69aded6e0bd24f2bd0bc4f9813f5e13ddf5a7a9ff49f88e74e131ca6ff5a9ff",
+    "tickets/0729-jetp-lifecycle-feasibility.erg": "8d71418508943658e001e09d12d0a975ecdc8ddd7ca91d845a48471235237575",
+    "conception/jetp-causal-design-options-2026-09-14.md": "1e76ee7be03d512d6a70ea2b37b1846c8763a0cfdb6ebe7dd52f0e90386c08d2"
+  },
+  "local_files": {
+    "docs/jetp-audits/0735/round2/source-byte-manifest.json": "d78fccbf23c79c9295d9971a5d8c0ac355857e03bc670bffb1ac850ad31362cd",
+    "docs/jetp-audits/0735/round2/report.md": "2027c7903e38fc8f283e8ad63ec761e66ae3855b383994524483f62924c66d40",
+    "docs/jetp-audits/0735/round2/parent-verification-log.csv": "67061b11f9601527dabee2981a42a4c128a526546c96548473dfee2a215cdce0",
+    "docs/jetp-audits/0735/round2/brief.md": "b068a82a44effc0429e5fbed394a2283aea42ee00fcaf7af72932fc993cdf928",
+    "docs/jetp-audits/0735/round2/afd-example-records.csv": "153b54e3e224ebeb9623b6489408df8550aeb8e74ca7e4374f65df35e05a0dad",
+    "docs/jetp-audits/0735/round2/afd-data-profile.json": "b56dd5d10902adea05af30c4a2a72966cc0d108118dca52a96ed4250793fd649",
+    "docs/jetp-audits/0735/round3/afd/xml-profile.json": "01dad9a6af0b7ba8a7e584e5205a2e83fd54dba2c8a22e8457c72db60fdc78fa",
+    "docs/jetp-audits/0735/round3/afd/source-manifest.json": "2515d484e553373aa6072c0a9aa7e99088ebbf67370e1fb0c870d13456a8c99b",
+    "docs/jetp-audits/0735/round3/afd/report.md": "230fe48c08e36daba3de59621dc0b879cae4290e84649e76f40e45aa2a8a353b",
+    "docs/jetp-audits/0735/round3/afd/legacy-xml-comparisons.json": "bfacac282b928f7f0185b9bc8bd61c3d376484b2d805de5a8b543ed1a96769a5",
+    "docs/jetp-audits/0735/round3/afd/flat-profile.json": "3758ba19f4339abc626a9d4003f6383018dc497a66c8917e53628303602b6e7c",
+    "docs/jetp-audits/0735/round3/afd/acquisition-log.csv": "4f96fdc7b44ede4c61ecf50885f8f88912c59588ab84746d8a7cbeb9a32e9b9f"
+  },
+  "selection_freeze_sha": "9904cd5b",
+  "table_storage": "DVC-tracked CSVs due repository 500KB git limit; offline regeneration identical",
+  "gate_base": "0f97bbf6cf1820ed410af82d9764e6c4350b6644",
+  "rebased_freeze_commit": "4371aba2f1c3035e27f6b80b8833b334c3b323dd",
+  "freeze_note": "Original pre-retrieval SHA retained; rebased commit carries identical selection bytes and author date."
+}
