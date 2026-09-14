@@ -1,0 +1,17 @@
+unit_id,role,rank,local_xml,local_independent_document_before_pilot,xml_document_links,external_attempt,acquisition_unit,retrieved_exact_identity_document,stage_clock_validated,evidence_ids,disposition
+DE-1-200466276,sample,1,present,absent,present_leads_only,attempted,15,no,no,E_XML,No exact-ID original returned
+DE-1-200366617,sample,2,present,absent,present_leads_only,attempted,16,yes,no,E16,Identity verified; stage clocks unresolved
+DE-1-201968361,sample,3,present,absent,present_leads_only,not_attempted,,no,no,E_XML,Stopped after historical denominator and period-definition gaps; reserved verification tranche retained
+DE-1-200166785,sample,4,present,absent,present_leads_only,not_attempted,,no,no,E_XML,Stopped after historical denominator and period-definition gaps; reserved verification tranche retained
+DE-1-200466433,sample,5,present,absent,present_leads_only,not_attempted,,no,no,E_XML,Stopped after historical denominator and period-definition gaps; reserved verification tranche retained
+DE-1-200866871,sample,6,present,absent,present_leads_only,not_attempted,,no,no,E_XML,Stopped after historical denominator and period-definition gaps; reserved verification tranche retained
+DE-1-200966358,sample,7,present,absent,present_leads_only,not_attempted,,no,no,E_XML,Stopped after historical denominator and period-definition gaps; reserved verification tranche retained
+DE-1-199870106,sample,8,present,absent,present_leads_only,not_attempted,,no,no,E_XML,Stopped after historical denominator and period-definition gaps; reserved verification tranche retained
+DE-1-200266973,sample,9,present,absent,present_leads_only,not_attempted,,no,no,E_XML,Stopped after historical denominator and period-definition gaps; reserved verification tranche retained
+DE-1-200270538,sample,10,present,absent,present_leads_only,not_attempted,,no,no,E_XML,Stopped after historical denominator and period-definition gaps; reserved verification tranche retained
+DE-1-200366757,sample,11,present,absent,present_leads_only,not_attempted,,no,no,E_XML,Stopped after historical denominator and period-definition gaps; reserved verification tranche retained
+DE-1-201870245,sample,12,present,absent,present_leads_only,not_attempted,,no,no,E_XML,Stopped after historical denominator and period-definition gaps; reserved verification tranche retained
+DE-1-199170366,challenge,,present,absent,present_leads_only,attempted,11,no,no,E_XML,No exact-ID original returned
+DE-1-199370321,challenge,,present,absent,present_leads_only,attempted,12,no,no,E_XML,No exact-ID original returned
+DE-1-201365154,challenge,,present,absent,present_leads_only,attempted,14,yes,no,E14,Identity verified; stage clocks unresolved
+DE-1-201366764,challenge,,present,absent,present_leads_only,attempted,13,yes,no,E13,Identity verified; stage clocks unresolved

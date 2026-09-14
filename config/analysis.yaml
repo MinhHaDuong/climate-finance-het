@@ -284,3 +284,17 @@ lit_confirmations:
   sem_seed: 42          # KMeans random_state (shared project seed)
   sem_n_init: 20        # baseline restarts (compute_clusters.py geometry)
   sem_n_init_variant: 10  # variant restarts for the stability check
+
+# Ticket 0738: protocol-fixed diagnostic frame; not an admissible control pool.
+jetp_kfw_pilot:
+  countries: [AL, MA, IN, SN, ZA, ID, VN]
+  sample_size: 12
+  participant_ref: XM-DAC-5-2
+  mandatory_ids: [DE-1-201366764, DE-1-201365154]
+  old_start_challenge_countries: [MA, IN]
+  old_start_cutoff: '2013-01-01'
+  landmarks:
+    ZA: ['2020-12-31', '2021-09-28', '2021-11-01']
+    ID: ['2021-12-31', '2022-03-15', '2022-11-14']
+    VN: ['2021-12-31', '2022-03-15', '2022-12-13']
+    SN: ['2021-12-31', '2022-03-15', '2023-06-21']
