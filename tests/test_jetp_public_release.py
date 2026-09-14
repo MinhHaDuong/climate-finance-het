@@ -44,3 +44,18 @@ def test_public_release_keeps_four_country_downloads_traceable_and_replays_offli
     with zipfile.ZipFile(release) as archive:
         assert hashlib.sha256(archive.read('site/data/ZAF.json')).hexdigest() == next(
             item['sha256'] for item in descriptor['files'] if item['path'] == 'site/data/ZAF.json')
+
+
+def test_prepared_2026_09_release_descriptor_matches_the_downloadable_archive():
+    from jetp._public_release import read_release
+
+    root = Path(__file__).resolve().parents[1]
+    release_path = root / 'data/jetp/releases/2026-09/jetp-observatory-2026-09.zip'
+    descriptor_path = root / 'data/jetp/releases/2026-09/release.json'
+    descriptor, payloads = read_release(release_path)
+
+    assert json.loads(descriptor_path.read_text()) == descriptor
+    assert descriptor['release_state'] == 'prepared'
+    assert descriptor['input_git_sha'] == 'fba8e63ff6a8ad44076cd054871e60d99db6bd3f'
+    assert set(descriptor['coverage']['countries']) == {'ZAF', 'IDN', 'VNM', 'SEN'}
+    assert all(not name.startswith('sources/') for name in payloads)
