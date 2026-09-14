@@ -62,3 +62,16 @@ Check export size as the portfolio grows: the corrected ZAF JSON is approximatel
 measure payload/load costs and split country/project handoffs if needed while
 preserving offline downloads and complete provenance. This is not a reason to
 introduce a live database.
+
+## Independent checkpoint review follow-ups
+
+Before monthly refreshes, add regression fixtures for a project with both a year
+interval and a later point event, and for an unreviewed timing row carrying
+bounds. Define interval-aware display order and reject unsupported established
+bounds without converting reviewed intervals into invented point dates. Current
+451 timing rows contain neither problematic combination; these are refresh
+hardening tasks identified by the PR #1343 correctness review.
+
+Derive undisclosed counts in all views from the exported overview; the current
+three hardcoded mentions agree at 21 but create future refresh drift. First test:
+change the fixture's undisclosed count and require all three views to follow it.

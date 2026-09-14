@@ -38,13 +38,14 @@ unnecessary for the initial site.
 | Collection attempts | `data/jetp/manifest.csv` | Git; append-only, including failed retrievals |
 | Release descriptors | `data/jetp/releases/<edition_id>/release.json` | Git; planned output of 0726/0728 |
 | Analysis intermediates | `data/derived/jetp/` | Regenerable; gitignored; planned under 0730 |
-| Site sources and selected-release handoff | `deliverables/jetp-observatory/` | Planned under 0727; source and small handoff assets in Git |
+| Site sources and selected-release handoff | `deliverables/jetp-observatory/` | Local MVP under 0734; public deployment under 0727; source and small handoff assets in Git |
 | Frozen downloadable editions | Versioned public release or deposit archives | Immutable files, checksums and public URLs in release descriptor |
 | Optional SQLite export | `data/derived/jetp/<edition_id>.sqlite` | Regenerable; never edited or required by the website |
 
-Only editorial README/templates and release guidance are scaffolded now. Country
-and project dossiers are added through reviewed work, rather than creating
-hundreds of empty profiles that look like coverage. The website can generate a
+The local MVP now includes four reviewed country narratives and generated project
+pages; see the [MVP README](../deliverables/jetp-observatory/README.md). Further
+project dossiers are added through reviewed work, rather than creating hundreds
+of empty profiles that look like coverage. The website can generate a
 basic source-backed project page from the registries when no narrative exists.
 No directory move or new DVC target is needed to adopt this organisation.
 
