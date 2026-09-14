@@ -7,8 +7,6 @@ This is a hash/version-bound transcription: PDF character decoding and whitespac
 reconstruction are not a facsimile. The saved PDF remains the original evidence.
 """
 
-from __future__ import annotations
-
 import hashlib
 from pathlib import Path
 
