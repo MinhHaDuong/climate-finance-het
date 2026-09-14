@@ -138,6 +138,13 @@ def reconcile_gross_disbursement(*, agreement_id, perimeter_id, currency, openin
     replaces, rather than adds to, each explicitly covered occurrence. The result
     is exact only with a reviewed opening and complete movement coverage.
     """
+    request_reasons = []
+    if not agreement_id:
+        request_reasons.append('request agreement identity')
+    if not perimeter_id:
+        request_reasons.append('request perimeter identity')
+    if request_reasons:
+        return _unavailable(request_reasons)
     opening_cutoff, reasons = _opening_and_coverage(
         opening, coverage, agreement_id=agreement_id, perimeter_id=perimeter_id,
         currency=currency, cutoff=cutoff)
