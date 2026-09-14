@@ -58,7 +58,7 @@ here. Candidate and blocked sources remain separate from adjudicated ledger fact
 
 https://github.com/MinhHaDuong/climate-finance-het/issues/1345
 
-## Round 1 evidence checkpoint (review pending)
+## Round 1 evidence checkpoint (scientific review accepted)
 
 Frozen brief committed before search: 6eead17a. Report and matrices:
 `docs/jetp-audits/0735/report.md`, `landmark-coverage.csv`,
@@ -75,7 +75,7 @@ The 2010 roster removes entries after signing OR withdrawal. That rule is not
 verified for 2020; listed presence cannot prove pending-signature state. Current
 snapshot status is separate from historical membership. Triad retained as
 unverified protocol candidates; no causal design selected. Ticket stays open
-until review; unmet archive, frame and endpoint criteria remain visible.
+until PR acceptance; underlying archive, frame and endpoint gaps remain visible.
 
 ## Independent review
 
