@@ -48,3 +48,12 @@ def test_interrupted_candidate_preserves_accepted_and_restores_offline(tmp_path,
     restored = tmp_path / 'restored'
     restore_bundle(accepted, restored)
     assert site_hashes(restored) == canonical
+
+
+def test_semantic_diff_requires_evidence_for_intentional_changes(tmp_path):
+    """A declared scientific change needs source, reviewer and rationale."""
+    from jetp._observatory_bundle import compare_bundles
+
+    with pytest.raises(ValueError, match='source|reviewer|rationale'):
+        compare_bundles(tmp_path / 'accepted.zip', tmp_path / 'candidate.zip',
+                        intentional_paths={'site/data/ZAF.json/country/headline': {}})
