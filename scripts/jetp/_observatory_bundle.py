@@ -20,6 +20,7 @@ from jetp._bundle_inventory import (
     routes,
     source_inventory,
 )
+from jetp.build_observatory_provenance import build as build_publication_provenance
 
 
 def _read_bundle(path):
@@ -210,6 +211,10 @@ def build_candidate(root, output, *, accepted, builder=None, source_root=None, i
         shutil.copytree(root / SITE, site)
         for view in VIEWS:
             (builder or _build_view)(root, view, site / 'data' / f'{view}.json')
+        # Older accepted bundles remain renderer-compatible.  A publication-aware
+        # checkout regenerates its sidecar from the just-built country payloads.
+        if (root / 'config/jetp_observatory.yaml').is_file():
+            build_publication_provenance(root, site / 'data' / 'provenance.json')
         manifest, payloads = _capture(root, site, Path(source_root or root), include_sources)
         manifest.update(kind='candidate', accepted_sha256=digest(Path(accepted).read_bytes()))
         _protect_output(root, output, inputs=(accepted, *(row['recovery_location']

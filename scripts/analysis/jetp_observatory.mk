@@ -2,17 +2,21 @@
 JETP_OBSERVATORY := deliverables/jetp-observatory
 JETP_OBSERVATORY_VIEWS := overview comparison ZAF IDN VNM SEN
 JETP_OBSERVATORY_JSON := $(addprefix $(JETP_OBSERVATORY)/data/,$(addsuffix .json,$(JETP_OBSERVATORY_VIEWS)))
+JETP_OBSERVATORY_PROVENANCE := $(JETP_OBSERVATORY)/data/provenance.json
 JETP_OBSERVATORY_INPUTS := $(addprefix data/jetp/,$(addsuffix .csv,projects events implementation-events sources source-claims project-source-links project-coverage manifest event-timing)) \
     $(wildcard data/jetp/comparison/*.json) \
     $(wildcard data/jetp/editorial/countries/*.md) \
     data/jetp/documents.dvc config/jetp_observatory.yaml \
-    scripts/jetp/_observatory_data.py scripts/jetp/build_observatory.py
+    scripts/jetp/_observatory_data.py scripts/jetp/build_observatory.py scripts/jetp/_publication.py scripts/jetp/build_observatory_provenance.py
 
 .PHONY: jetp-observatory jetp-observatory-preview
-jetp-observatory: $(JETP_OBSERVATORY_JSON)
+jetp-observatory: $(JETP_OBSERVATORY_JSON) $(JETP_OBSERVATORY_PROVENANCE)
 
 $(JETP_OBSERVATORY)/data/%.json: $(JETP_OBSERVATORY_INPUTS)
 	$(PYTHON) scripts/jetp/build_observatory.py --view $* --output $@
+
+$(JETP_OBSERVATORY_PROVENANCE): $(JETP_OBSERVATORY_JSON) $(JETP_OBSERVATORY_INPUTS)
+	$(PYTHON) scripts/jetp/build_observatory_provenance.py --output $@
 
 # Preview only. Publication is a separate reviewed action.
 jetp-observatory-preview: jetp-observatory
