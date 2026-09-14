@@ -93,3 +93,18 @@ Exit additions:
 - [ ] Design-appropriate placebo/falsification, sensitivity and treatment-level uncertainty reported
 - [ ] Main effect and uncertainty reproducible, including null/adverse outcomes; no causal claim based on matching alone
 - [ ] Identification failures trigger a recorded author scope decision, not an unannounced descriptive substitution
+
+## Conditional cross-sector implementation
+
+If supported by 0729, implement a non-energy comparator and potentially triple
+differences, using the same stage outcome and comparable at-risk project cohorts
+across energy/non-energy, JETP/comparator countries and pre/post periods. Define
+sector membership before outcome analysis and handle mixed projects explicitly.
+Freeze cross-sector admissibility and baseline matching rules rather than forcing
+technology matches across unrelated sectors. Use an estimator appropriate to the
+actual covariate adjustment and staggered policy timing; a naive difference of
+separately adjusted estimates is not automatically valid. State whether the contrast
+identifies a total energy effect or an energy-minus-non-energy effect under spillovers.
+Report gap-trend diagnostics, sector reallocation sensitivities and uncertainty at
+the country assignment level. Preserve the cross-country energy comparison as a
+design alternative/sensitivity result, not an automatically superior causal answer.

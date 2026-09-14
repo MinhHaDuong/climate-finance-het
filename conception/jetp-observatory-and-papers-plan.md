@@ -166,3 +166,12 @@ A broader beneficiary-country pool is a candidate comparator strategy, not a
 predetermined synthetic-control method. If no credible design is supported, the
 audit returns to the author for an explicit decision. The observatory, monthly
 editions and data paper remain useful and can proceed regardless of that outcome.
+
+## Additional comparator option: non-energy sectors
+
+The author proposes non-energy projects as a possible comparator. Tickets 0729/0730
+now audit within-country sector contrasts and a possible triple-difference design
+(energy/non-energy × JETP/comparator countries × pre/post). This is a candidate,
+not a selected estimator: sector-gap counterfactual trends, project comparability
+and JETP spillovers into other sectors must be assessed first. A relative sectoral
+effect must not be presented as total energy-project acceleration.

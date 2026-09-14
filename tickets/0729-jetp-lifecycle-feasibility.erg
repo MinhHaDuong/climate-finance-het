@@ -172,3 +172,29 @@ future acceleration or a coincident shock. Matching project characteristics does
 not remove country-level confounding, and project counts do not increase the
 number of independent country treatment assignments. A good pre-treatment fit is
 supporting evidence, never proof that the untreated post-JETP trajectory is valid.
+
+## Non-energy comparator option, author suggestion 14 September 2026
+
+Audit non-energy-sector operations as an additional comparator, not an automatic
+untreated group. Construct feasibility cells for energy/non-energy × JETP/non-JETP
+countries × before/after treatment. Consider a within-country sector comparison
+and a triple-difference design alongside the broader cross-country energy pool.
+For cross-sector matching, replace technology equivalence with appropriate baseline
+project scale, complexity and procurement characteristics; retain comparable lender,
+financial instrument and lifecycle definitions. Avoid all-sector pooling without
+an explicit admissibility rule; mixed-sector/energy-linked operations need flags.
+
+The identifying question is whether the energy-minus-comparator-sector outcome gap
+would have changed similarly across treated and comparison countries without JETP.
+Country selection based on an impending energy-specific change can still violate
+this assumption. Audit sector-specific reforms, funding reallocation, lender-capacity
+competition and broader JETP reforms that could affect non-energy operations.
+Do not call non-energy projects negative controls unless non-exposure is justified.
+If spillovers exist, the contrast may identify a relative sectoral effect rather
+than total energy-project acceleration. Retain all at-risk observations and inspect
+pre-treatment gap trajectories, composition and measurement comparability.
+
+Method reference: Olden and Moen (2022), The triple difference estimator,
+https://doi.org/10.1093/ectj/utac010 . The identifying restriction concerns trends
+in the sector gap; two separately valid simple difference-in-differences designs
+are not required. Design validity still requires contextual evidence.
