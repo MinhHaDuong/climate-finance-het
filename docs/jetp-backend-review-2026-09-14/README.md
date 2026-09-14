@@ -16,7 +16,9 @@ A [fresh independent Astra review](astra-revision4.md) covers revision 4 at
 bounded implementation**, with one medium, nonblocking display-occurrence
 cardinality finding (A4-1). Two rendered locations must remain distinct even when
 they share a payload field and rendering role. The coordinator confirmed the
-ambiguity in the two uniqueness statements; no design repair is applied here.
+ambiguity in the two uniqueness statements. The subsequent
+[revision 5 response](display-identity-response.md) records the applied design repair;
+the independent report and its input hashes remain unchanged.
 
 The reviewer did not consult the earlier reports, assessment or response notes.
 [Input hashes and review metadata](astra-revision4-inputs.json) pin the inspected

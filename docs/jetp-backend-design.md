@@ -1,12 +1,15 @@
 # JETP backend: evidence, reported positions and reconciled accounts
 
-Design note — 14 September 2026, revision 4 after the
+Design note — 14 September 2026, revision 5 after the
 [Astra and Fable review](jetp-backend-review-2026-09-14/README.md) and the
 [four-scope research review](jetp-design-four-scope-review-2026-09-14/assessment.md).
 Plan phase. The [revision response](jetp-design-four-scope-review-2026-09-14/design-revision-response.md)
 records how the four scopes are addressed. Revision 4 adds the explicit source
 registry, sweep and intelligence-origin contracts described in the
 [source-registry response](jetp-design-four-scope-review-2026-09-14/source-registry-response.md).
+Revision 5 resolves display-occurrence identity from the
+[fresh Astra review](jetp-backend-review-2026-09-14/astra-revision4.md); the
+[response](jetp-backend-review-2026-09-14/display-identity-response.md) records the repair.
 This specifies extensions to the existing backend; it does not claim that the proposed schemas or migrations are
 implemented. It develops the [storage contract](jetp-storage.md) and the
 [tracking contract](jetp-tracking.md). The publication programme remains under
@@ -827,10 +830,15 @@ Every published number, status and substantive narrative claim must resolve to
 assertion IDs or an explicitly identified calculation. Add an exported provenance
 index keyed by stable semantic `claim_id`, with assertion IDs, derivation/policy
 ID, input/output hashes and editorial evidence. For website output, each claim has one or more display
-occurrences, each with `display_id`, `payload`, `json_pointer`, page route and
-rendering role. `display_id` is unique within an edition; `(payload, json_pointer,
-rendering role)` identifies one occurrence. Several occurrences may reference the
-same claim; never overwrite the homepage location with the country-page location.
+occurrences, each with `display_id`, `payload`, `json_pointer`, `page_route`,
+`rendered_instance_locator` and rendering role. `(release_id, display_id)` is the
+occurrence identity; the enclosing release descriptor supplies `release_id`.
+A display ID is unique across all publications in that release. The route and
+stable rendered-instance locator identify its rendered location, including repeated
+components on the same page. Payload, JSON pointer and rendering role are
+non-unique attributes: several occurrences may reuse the same field and role.
+Several occurrences may reference the same claim; never overwrite the homepage
+location with the country-page location.
 Generated HTML carries both claim and display IDs. Reverse dependency traversal
 finds every affected occurrence and authored claim after a correction. The page
 provides a quiet evidence link/popover rather than internal build details.
@@ -872,10 +880,13 @@ routes and JSON pointers. Manuscript
 occurrences use a stable figure/table/block label plus a cell, series or paragraph
 locator where applicable. A PDF page number alone is not a durable semantic key.
 Use a discriminated website/manuscript occurrence schema so manuscript entries
-need no fictitious JSON pointer. Within a release, the publication, artifact,
-locator and rendering role identify one occurrence. `display_id` remains unique
-within the release; generalise its role to publication occurrence without changing
-existing website IDs.
+need no fictitious JSON pointer. Both variants use `(release_id, display_id)` as
+the occurrence identity, preserving existing website IDs. Publication, artifact,
+data locator and rendering role are non-unique attributes, not an alternative
+key. Each manuscript occurrence retains a stable rendered-instance locator within
+its publication artifact, distinguishing repeated uses of the same figure, cell
+or claim. Reverse traversal enumerates display IDs rather than deduplicating by
+a shared data locator.
 
 A research claim resolves through its artifact/run manifest to the protocol,
 frame membership decisions, accepted assertions and exact source bytes. Qualitative
@@ -939,12 +950,14 @@ and pointers; the exporter validates each location against its actual payload):
      "publication_id": "jetp-observatory-202609",
      "artifact_id": "artifact-idn-json-202609", "payload": "data/IDN.json",
      "json_pointer": "/country/headline", "page_route": "country/IDN",
+     "rendered_instance_locator": "country-summary/headline",
      "rendering_role": "headline"},
     {"display_id": "idn-overview-headline",
      "publication_id": "jetp-observatory-202609",
-     "artifact_id": "artifact-overview-json-202609", "payload": "data/overview.json",
-     "json_pointer": "/countries/1/headline", "page_route": "/",
-     "rendering_role": "country-card"}
+     "artifact_id": "artifact-idn-json-202609", "payload": "data/IDN.json",
+     "json_pointer": "/country/headline", "page_route": "/",
+     "rendered_instance_locator": "country-grid/IDN/headline",
+     "rendering_role": "headline"}
   ],
   "assertions": [{"record_kind": "position",
                   "record_id": "position-idn-jdu-approved-20260908"}],
@@ -954,6 +967,14 @@ and pointers; the exporter validates each location against its actual payload):
   "editorial_claim_id": null
 }
 ```
+
+The two displays intentionally share a payload, pointer and role. Required export
+acceptance cases: both validate and reverse traversal returns both after a shared
+assertion changes; a third display on the same route with a different display ID
+and rendered-instance locator also remains distinct. A duplicate display ID
+anywhere in the release fails validation, even across publications. Apply these
+same cases to manuscript occurrences sharing a data locator. These are future
+schema and traversal tests, not claims about the current exporter.
 
 The evidence ID resolves to a document hash, acquisition and paragraph locator;
 the release descriptor supplies the input revision and payload/code hashes. For
