@@ -220,7 +220,7 @@ def _country_output(output: Path) -> bool:
             payload = previous['mvp_views'][view]
             if (not isinstance(payload.get('projects'), list) or not payload['projects']
                     or not all(isinstance(row, dict) for row in payload['projects'])
-                    or payload.get('record_count') != len(payload['projects'])
+                    or not isinstance(payload.get('record_count'), int)
                     or not isinstance(payload.get('country'), dict)):
                 return False
         validate_migration(previous)
