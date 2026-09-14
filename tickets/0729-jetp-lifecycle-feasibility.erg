@@ -198,3 +198,12 @@ Method reference: Olden and Moen (2022), The triple difference estimator,
 https://doi.org/10.1093/ectj/utac010 . The identifying restriction concerns trends
 in the sector gap; two separately valid simple difference-in-differences designs
 are not required. Design validity still requires contextual evidence.
+
+## Independent design proposals, 14 September 2026
+
+The author requested Astra and Fable to generate competing proposals; no design
+has been selected. Read `conception/jetp-causal-design-options-2026-09-14.md` and
+the linked independent reports, including Fable's cross-review corrections.
+The first reports' estimator preferences and numerical targets are not adopted
+protocol requirements. The incumbent-pipeline versus changing-population estimand
+remains a substantive decision for this feasibility exercise.
