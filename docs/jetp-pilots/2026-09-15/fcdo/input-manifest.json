@@ -1,0 +1,284 @@
+{
+  "pilot": "0739",
+  "retrieval_authorization": "User: Hunt ticket 739",
+  "base": "7f89c356",
+  "audit_pr_1347": {
+    "live_head": "137a96160add8ddb8c339ae17eae3853948f45bb",
+    "state": "MERGED",
+    "merge_commit": "8d989b9bedc0cf8b265d811d7d3fe83a333cddaf"
+  },
+  "base_resolution": "Started from main containing merged updated audit and prospective pilot protocol; no unmerged audit dependency remains",
+  "freeze_sha": "first parent of acquisition commit; see git log -- selection.csv acquisition-routes.md",
+  "bundle_verification": [
+    {
+      "bundle": "0735-round2",
+      "directory_md5": "6cd6406b227e6860cae66906cce21d9c.dir",
+      "files_verified": 8
+    },
+    {
+      "bundle": "0735-round3",
+      "directory_md5": "4b1a54b98d1ff7df92afe3e7b95ec07e.dir",
+      "files_verified": 33
+    }
+  ],
+  "inputs": [
+    {
+      "git_sha": "63bb738ef8f8bf7c96db3201a8ce48b717136075",
+      "path": "docs/jetp-audits/0736/chronology.md",
+      "sha256": "117f6c9adccf21346518c16dd8ce4844fcb770234c5cc441400d2257c5e8dff8"
+    },
+    {
+      "git_sha": "63bb738ef8f8bf7c96db3201a8ce48b717136075",
+      "path": "docs/jetp-audits/0736/comparators.md",
+      "sha256": "931ae97c10565bae7890bc05a0f7b54c3617b25afdd3e091b85c4d6247acb0bc"
+    },
+    {
+      "git_sha": "63bb738ef8f8bf7c96db3201a8ce48b717136075",
+      "path": "docs/jetp-audits/0736/rivals.md",
+      "sha256": "36e81c28832d43fe27932bd6d0c5c6ed05ee3115fa81b850da95a0a178d92a2c"
+    },
+    {
+      "git_sha": "63bb738ef8f8bf7c96db3201a8ce48b717136075",
+      "path": "docs/jetp-audits/0736/report.md",
+      "sha256": "112ffa26f477859fef51b608be1db108e9075222d3bb01b0e506a4ebb302dc63"
+    },
+    {
+      "git_sha": "63bb738ef8f8bf7c96db3201a8ce48b717136075",
+      "path": "docs/jetp-audits/0736/sources.csv",
+      "sha256": "d69aded6e0bd24f2bd0bc4f9813f5e13ddf5a7a9ff49f88e74e131ca6ff5a9ff"
+    },
+    {
+      "git_sha": "63bb738ef8f8bf7c96db3201a8ce48b717136075",
+      "path": "tickets/0729-jetp-lifecycle-feasibility.erg",
+      "sha256": "8d71418508943658e001e09d12d0a975ecdc8ddd7ca91d845a48471235237575"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round2/adb/brief-adaptation.md",
+      "sha256": "593fac6067f4544c11e88a4a25685902097766372f7def6206a79db49bf804d0"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round2/adb/call-log.csv",
+      "sha256": "dc560a277857df5b66cb4db7d30461dd60a60f927cff0aac61f0f89a3a3bf950"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round2/adb/evidence.csv",
+      "sha256": "4ac3039317b576c8947955c33113f74d3bdf67764ca60b93c4a1716ae5a37e72"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round2/adb/report.md",
+      "sha256": "2f7d59e6aa3164150d7275caba7aa4bbdd62f00f9285b2f60fc3cedb09769855"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round2/afd-data-profile.json",
+      "sha256": "b56dd5d10902adea05af30c4a2a72966cc0d108118dca52a96ed4250793fd649"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round2/afd-example-records.csv",
+      "sha256": "153b54e3e224ebeb9623b6489408df8550aeb8e74ca7e4374f65df35e05a0dad"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round2/afdb/acquisition-log.csv",
+      "sha256": "720049bae5890b0cc0c28624295a058b9dc27d51917a93f12331d5a934fdf67c"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round2/afdb/brief.md",
+      "sha256": "0d778361ad44e9a30592797e7352cab1cc03adec1e7f7833a85e08774150e251"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round2/afdb/event-evidence.csv",
+      "sha256": "c24bb0d0e638b3f08255eec918f660e010096b72a43fe43d842e8d2c7f79addb"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round2/afdb/report.md",
+      "sha256": "1fb7ab639a496239f8240a8a20304ba1f576baa52bf0be1a3a8b2e8e67d9f0d0"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round2/afdb/sources.csv",
+      "sha256": "d98509962373d6abef1ca92398b4995034e9ed2005512d0a905b2a04ca45006d"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round2/brief.md",
+      "sha256": "b068a82a44effc0429e5fbed394a2283aea42ee00fcaf7af72932fc993cdf928"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round2/eib-afd/call-log.json",
+      "sha256": "118f4ad68502b876f06b88fd1b4770fc6a334020f6e374584788c73f713f2ded"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round2/eib-afd/evidence.csv",
+      "sha256": "3e6deb797fe9512df922bd7e71f90f4f66b2a8ef359f903c24c540258294dc47"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round2/eib-afd/report.md",
+      "sha256": "d832a48b0cbc95a4a2958e943439ce709cb44c765a1cd3198f87d9494e111d6a"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round2/eib-afd/selection-brief.md",
+      "sha256": "8f5601625cd2a3f1720f5dd40234a56d9a66371f2462c6f9babe8be406393d64"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round2/parent-verification-log.csv",
+      "sha256": "67061b11f9601527dabee2981a42a4c128a526546c96548473dfee2a215cdce0"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round2/report.md",
+      "sha256": "2027c7903e38fc8f283e8ad63ec761e66ae3855b383994524483f62924c66d40"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round2/source-byte-manifest.json",
+      "sha256": "d78fccbf23c79c9295d9971a5d8c0ac355857e03bc670bffb1ac850ad31362cd"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round3/afd/acquisition-log.csv",
+      "sha256": "4f96fdc7b44ede4c61ecf50885f8f88912c59588ab84746d8a7cbeb9a32e9b9f"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round3/afd/flat-profile.json",
+      "sha256": "3758ba19f4339abc626a9d4003f6383018dc497a66c8917e53628303602b6e7c"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round3/afd/legacy-xml-comparisons.json",
+      "sha256": "bfacac282b928f7f0185b9bc8bd61c3d376484b2d805de5a8b543ed1a96769a5"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round3/afd/report.md",
+      "sha256": "230fe48c08e36daba3de59621dc0b879cae4290e84649e76f40e45aa2a8a353b"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round3/afd/source-manifest.json",
+      "sha256": "2515d484e553373aa6072c0a9aa7e99088ebbf67370e1fb0c870d13456a8c99b"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round3/afd/xml-profile.json",
+      "sha256": "01dad9a6af0b7ba8a7e584e5205a2e83fd54dba2c8a22e8457c72db60fdc78fa"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round3/brief.md",
+      "sha256": "d1eb05593909cdde8d72c964c43a521b9aa339d86fdf786f6b5addc28c9e0b3c"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round3/jica/acquisition-log.csv",
+      "sha256": "f1a83687ab733c58dfaa6e2bead730af7152f1c57dc494bcf079f2336f37a277"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round3/jica/brief.md",
+      "sha256": "cfc9e7f182f5e54d0a42da14c28d50c4e44ab06d9b31532e4e8fe234c617343e"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round3/jica/bulk-profile.json",
+      "sha256": "af5648f8a0afdc58bcdbbf3df86bdb08ad0e4332516b7841fe3e5ef21602f5a4"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round3/jica/event-evidence.csv",
+      "sha256": "e8822c4c9991ab13e7dc59b7e9accd3abd20ea183b13bac1295e84d8da1bec58"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round3/jica/report.md",
+      "sha256": "cad1ff71105fb0ee2337d9d2753143b9aef65dc51c4b9821e083ce9912feaa3e"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round3/jica/source-manifest.json",
+      "sha256": "f95bb58740b265160e545b8c6cd9a8b7d7cde7e6a146f1208d133a6b545eadb5"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round3/kfw/acquisition-log.csv",
+      "sha256": "56e2a169d40eb16a008319018d96114b7d0e953ca8e93582d881d40131789f35"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round3/kfw/brief.md",
+      "sha256": "10833bde9909afbefab04cbd8dc19723bc560f7d8302c691ad1fddfedb985cf9"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round3/kfw/examples.json",
+      "sha256": "7015328555c0209e63f1617345b46e1ecdc78904afaf64ae5e9d972040b6394f"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round3/kfw/profile.json",
+      "sha256": "c8d2ac1b7d23b85d5cc4489ecdc35219a9c19a18ec44d8e83f461d217c107e22"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round3/kfw/report.md",
+      "sha256": "22cbb1567ee329d6e69201a95aaf0dc9df2f8ed9bead781f7dacfc29e3db61f8"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round3/report.md",
+      "sha256": "2cc896383035757fb12a81f31b071a41b6dfa4e61967183bb8c65d8f82b305d0"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round3/source-byte-manifest.json",
+      "sha256": "3c845475ebfffebcba14bd9850710a0bb3506ba98ec67650df4ec15f1515e72f"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round3/us-uk/acquisition-log.csv",
+      "sha256": "70f742e24a2ac112995076d981a3fbf7beb1eecb65ea5f2f8baedca3177a28aa"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round3/us-uk/brief.md",
+      "sha256": "03946df7853dba599e5b3ce8cbeeb03bdac67c6b1b166c42ec569d983019b268"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round3/us-uk/data-profile.json",
+      "sha256": "02c3158cda883f93fd5a6f7737bc8d4dfa56c14b3c6c8bb3864ca97032fe9918"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round3/us-uk/report.md",
+      "sha256": "5ef5d45b1ed2780282b623fca7dd892c2a4e23f1b9bec2a3ff78e9685622042a"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round3/us-uk/source-byte-manifest.json",
+      "sha256": "fee4fcadd0219737c10de662f0f2d3b553df14f72e529668cb516c4e0288ad4a"
+    },
+    {
+      "git_sha": "969c4c50c0b403bb4842d2a7288b2b3f97f3acca",
+      "path": "docs/jetp-audits/0735/round3/verification.md",
+      "sha256": "7531be61ff947bcc132e4365bcc5358f5860a443632589de54161bc71f5ff1f5"
+    }
+  ],
+  "environment": "Python 3.11.15",
+  "external_units_cap": 20,
+  "selection_projection_limit": "sector vocabulary and financing codes absent; all candidates unmapped/missing; no outcome-dependent enrichment"
+}

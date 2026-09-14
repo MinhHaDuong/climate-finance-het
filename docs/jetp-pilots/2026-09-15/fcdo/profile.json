@@ -1,0 +1,26 @@
+{
+  "records": 25282,
+  "hierarchy": {
+    "2": 17955,
+    "1": 7327
+  },
+  "status_by_hierarchy": {
+    "1": {
+      "4": 6770,
+      "2": 551,
+      "1": 6
+    },
+    "2": {
+      "4": 13748,
+      "2": 4200,
+      "1": 7
+    }
+  },
+  "sample_candidates": 462,
+  "sample_selected": 12,
+  "challenge_programmes": 7,
+  "challenge_components": 1,
+  "detailed_records": 3,
+  "frozen_sector": "mixed-or-unmapped: catalogue omitted vocabulary",
+  "frozen_instrument": "missing: catalogue projection omitted finance type"
+}
