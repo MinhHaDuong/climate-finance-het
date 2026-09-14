@@ -8,9 +8,9 @@ from script_io_args import parse_io_args, validate_io
 
 from jetp._observatory_bundle import (
     build_candidate,
-    compare_bundles,
     freeze_bundle,
     restore_bundle,
+    write_comparison,
 )
 
 
@@ -34,8 +34,8 @@ def main():
         if len(inputs) != 2:
             parser.error('diff requires --input ACCEPTED CANDIDATE')
         evidence = json.loads(args.intentional.read_text()) if args.intentional else {}
-        report = compare_bundles(*inputs, intentional_paths=evidence)
-        Path(io_args.output).write_text(json.dumps(report, indent=2, sort_keys=True) + '\n')
+        write_comparison(args.root, *inputs, io_args.output, intentional_paths=evidence,
+                         extra_inputs=(args.intentional,) if args.intentional else ())
     elif args.mode == 'candidate':
         if len(inputs) != 1:
             parser.error('candidate requires --input ACCEPTED')

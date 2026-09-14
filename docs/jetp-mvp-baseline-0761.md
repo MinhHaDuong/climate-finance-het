@@ -75,11 +75,17 @@ All six candidate views are built in a temporary directory. The single complete
 archive replaces its candidate destination atomically after validation. A failed
 build leaves the accepted site, baseline archive and any previous candidate
 archive intact. Candidate output cannot be the accepted archive or a path inside
-the canonical site or corpus registries. Restore does not overwrite an existing
+the canonical site, corpus registries, configuration or exporter inputs, including
+symlink and hardlink aliases. Difference reports protect both compared archives
+and canonical inputs, and replace their destination only after the complete
+report is written. Restore does not overwrite an existing
 site; publication switching is outside this ticket.
 
 The difference report compares rendered JSON values and asset bytes, and lists
-route additions/removals. Only the named build-provenance fields are treated as
+route additions/removals. Route and download declarations must match the verified
+payloads. Boolean, integer and floating-point values remain distinct, including
+`true` versus `1` and `1` versus `1.0`, even inside lists or objects.
+Only the named build-provenance fields are treated as
 metadata. Scientific fields, dates, amounts, source targets, wording and unknown
 changes remain `unexplained`. To record an intentional scientific change, pass
 `--intentional decisions.json` with an exact reported path as the key and

@@ -247,3 +247,44 @@ def test_diff_cli_atomic_report_failure_preserves_prior_report(tmp_path, monkeyp
     with pytest.raises(OSError, match='interrupted report publication'):
         main()
     assert output.read_bytes() == b'previous complete report'
+
+
+@pytest.mark.parametrize('mode', ['freeze', 'candidate', 'diff'])
+@pytest.mark.parametrize('name', ['config/jetp_observatory.yaml', 'scripts/jetp/build_observatory.py',
+                                  'scripts/jetp/_observatory_data.py'])
+def test_cli_modes_preserve_canonical_config_and_code(tmp_path, monkeypatch, mode, name):
+    import sys
+
+    from jetp.build_observatory_bundle import main
+
+    target = tmp_path / name
+    target.parent.mkdir(parents=True)
+    target.write_bytes(b'canonical bytes')
+    accepted, candidate = tmp_path / 'accepted.zip', tmp_path / 'candidate.zip'
+    tiny_bundle(accepted)
+    tiny_bundle(candidate)
+    arguments = ['bundle', '--mode', mode, '--root', str(tmp_path), '--output', str(target)]
+    if mode == 'candidate':
+        arguments += ['--input', str(accepted)]
+    elif mode == 'diff':
+        arguments += ['--input', str(accepted), str(candidate)]
+    monkeypatch.setattr(sys, 'argv', arguments)
+    with pytest.raises(ValueError, match='separate|protected|alias'):
+        main()
+    assert target.read_bytes() == b'canonical bytes'
+
+
+def test_boolean_numeric_changes_need_explicit_scientific_review(tmp_path):
+    from jetp._observatory_bundle import compare_bundles
+
+    accepted, candidate = tmp_path / 'accepted.zip', tmp_path / 'candidate.zip'
+    tiny_bundle(accepted, event_date=True)
+    tiny_bundle(candidate, event_date=1)
+    unexplained = compare_bundles(accepted, candidate)
+    assert len(unexplained['unexplained']) == 4
+    assert not unexplained['metadata_only']
+    path = 'site/data/ZAF.json/projects/0/date'
+    documented = compare_bundles(accepted, candidate, intentional_paths={path: {
+        'source': 'fixture-source', 'reviewer': 'fixture-reviewer', 'rationale': 'Explicit test change'}})
+    assert [row['path'] for row in documented['intentional_scientific']] == [path]
+    assert len(documented['unexplained']) == 3

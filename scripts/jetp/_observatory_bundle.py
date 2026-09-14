@@ -10,6 +10,7 @@ from pathlib import Path
 import yaml
 
 from jetp._bundle_inventory import (
+    EXTRA_INPUTS,
     SITE,
     VIEWS,
     build_input_inventory,
@@ -38,7 +39,10 @@ def _read_bundle(path):
     for name, data in payloads.items():
         if digest(data) != manifest['files'][name]['sha256']:
             raise ValueError(f'Archive hash mismatch: {name}')
-    _validate_site(payloads)
+    inventory = _validate_site(payloads)
+    for key, expected in inventory.items():
+        if manifest.get(key) != expected:
+            raise ValueError(f'Archive {key} inventory mismatch')
     return manifest, payloads
 
 
@@ -49,7 +53,7 @@ def _validate_site(payloads):
             raise ValueError(f'Missing rendering asset: {asset}')
     for view in VIEWS:
         json.loads(payloads[f'site/data/{view}.json'])
-    routes(payloads)
+    return routes(payloads)
 
 
 def _archive_member(archive, name, data):
@@ -81,7 +85,7 @@ def _capture(root, site, source_root, include_sources):
     """Collect bytes once, so the inventory describes exactly what is archived."""
     payloads = {'site/' + path.relative_to(site).as_posix(): path.read_bytes()
                 for path in sorted(site.rglob('*')) if path.is_file()}
-    _validate_site(payloads)
+    site_inventory = _validate_site(payloads)
     tables = input_inventory(root, payloads)
     build_inputs = build_input_inventory(root, payloads)
     sources = source_inventory(root, source_root, payloads, include_sources)
@@ -89,7 +93,7 @@ def _capture(root, site, source_root, include_sources):
                 'working_tree_status': git(root, 'status', '--porcelain', '--', 'data/jetp',
                                            str(SITE), 'config/jetp_observatory.yaml',
                                            'scripts/jetp').decode().splitlines(), 'captured_git_sha': git(root, 'rev-parse', 'HEAD').decode().strip(),
-                'tables': tables, **routes(payloads), 'build_inputs': build_inputs,
+                'tables': tables, **site_inventory, 'build_inputs': build_inputs,
                 'sources': sources, 'source_bytes_embedded': include_sources,
                 'source_recovery_complete': all(r['embedded'] for r in sources if r['sha256']),
                 'zaf_payload': {'size_bytes': len(payloads['site/data/ZAF.json']),
@@ -98,13 +102,27 @@ def _capture(root, site, source_root, include_sources):
     return manifest, payloads
 
 
-def _protect_output(root, output):
-    """Reject destinations inside the accepted static site or canonical inputs."""
+def _aliases(path, other):
+    """Recognize lexical, symlink and existing hardlink aliases."""
+    other = Path(other).resolve()
+    return path == other or (path.exists() and other.exists() and path.samefile(other))
+
+
+def _protect_output(root, output, inputs=()):
+    """Reject canonical destinations and aliases of any protected input."""
+    root = Path(root).resolve()
     output = Path(output).resolve()
     if output.is_relative_to((root / SITE).resolve()) or (
             output.is_relative_to((root / 'data/jetp').resolve())
             and not output.is_relative_to((root / 'data/jetp/releases').resolve())):
         raise ValueError('Bundle output must be separate from accepted site and canonical inputs')
+    protected = [root / name for name in EXTRA_INPUTS]
+    protected.extend((root / SITE).rglob('*'))
+    protected.extend(path for path in (root / 'data/jetp').rglob('*')
+                     if not path.is_relative_to(root / 'data/jetp/releases'))
+    protected.extend(Path(path) for path in inputs)
+    if any(_aliases(output, path) for path in protected if path.is_file()):
+        raise ValueError('Output aliases a protected input; choose a separate destination')
 
 
 def freeze_bundle(root, output, *, source_root=None, include_sources=False):
@@ -140,9 +158,7 @@ def _build_view(root, view, output):
 def build_candidate(root, output, *, accepted, builder=None, source_root=None, include_sources=False):
     """Build all six views in isolation; failures preserve both archive destinations."""
     root = Path(root).resolve()
-    _protect_output(root, output)
-    if Path(output).resolve() == Path(accepted).resolve():
-        raise ValueError('Candidate must be separate from accepted bundle')
+    _protect_output(root, output, inputs=(accepted,))
     _read_bundle(accepted)
     with tempfile.TemporaryDirectory() as scratch:
         site = Path(scratch) / 'site'
@@ -177,9 +193,7 @@ def restore_bundle(bundle, destination):
 
 
 def _changes(before, after, path):
-    """Yield exact semantic paths, preserving meaningful array order."""
-    if before == after:
-        return
+    """Preserve JSON types, including integer/float representation, and array order."""
     if isinstance(before, dict) and isinstance(after, dict):
         for key in sorted(before.keys() | after.keys()):
             escaped = key.replace('~', '~0').replace('/', '~1')
@@ -192,8 +206,21 @@ def _changes(before, after, path):
     elif isinstance(before, list) and isinstance(after, list) and len(before) == len(after):
         for index, (old, new) in enumerate(zip(before, after, strict=True)):
             yield from _changes(old, new, f'{path}/{index}')
-    else:
+    elif type(before) is not type(after) or before != after:
         yield {'path': path, 'before': before, 'after': after, 'operation': 'replace'}
+
+
+def write_comparison(root, accepted, candidate, output, *, intentional_paths=None, extra_inputs=()):
+    """Validate destinations, then atomically replace one complete difference report."""
+    _protect_output(root, output, inputs=(accepted, candidate, *extra_inputs))
+    report = compare_bundles(accepted, candidate, intentional_paths=intentional_paths)
+    output = Path(output)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(dir=output.parent) as scratch:
+        staged = Path(scratch) / 'report.json'
+        staged.write_text(json.dumps(report, indent=2, sort_keys=True) + '\n')
+        os.replace(staged, output)
+    return report
 
 
 def compare_bundles(accepted, candidate, *, intentional_paths=None):

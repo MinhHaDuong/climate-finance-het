@@ -13,6 +13,8 @@ import yaml
 
 VIEWS = ('overview', 'comparison', 'ZAF', 'IDN', 'VNM', 'SEN')
 SITE = Path('deliverables/jetp-observatory')
+EXTRA_INPUTS = ('config/jetp_observatory.yaml', 'scripts/jetp/build_observatory.py',
+                'scripts/jetp/_observatory_data.py')
 
 
 def digest(data):
@@ -137,8 +139,7 @@ def input_inventory(root, payloads):
     paths.update(str(p.relative_to(root)) for pattern in ('*.csv', '*.json', '*.md', '*.dvc')
                  for p in (root / 'data/jetp').rglob(pattern)
                  if 'documents' not in p.relative_to(root / 'data/jetp').parts)
-    paths.update(['config/jetp_observatory.yaml', 'scripts/jetp/build_observatory.py',
-                  'scripts/jetp/_observatory_data.py'])
+    paths.update(EXTRA_INPUTS)
     tables = {}
     for name in sorted(paths):
         path = root / name
