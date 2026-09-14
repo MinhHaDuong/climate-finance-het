@@ -1,6 +1,6 @@
 # JETP selection and intervention timing — bounded audit 0736
 
-2026-09-14 · Phase: Execute, documentary review pending · ticket remains open.
+2026-09-14 · Phase: Verify, independent scientific review accepted · ticket remains open.
 
 The documentary acceptance check passes: South Africa has distinct negotiation,
 declaration, plan-release and offer records, and India cannot be automatically
