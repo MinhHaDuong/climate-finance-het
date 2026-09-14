@@ -2,6 +2,8 @@
 
 import hashlib
 import json
+import os
+import tempfile
 from collections import Counter
 from pathlib import Path
 
@@ -9,6 +11,7 @@ from jetp._compatibility import MVP_VIEWS, read_mvp_view
 from jetp._contracts import validate_evidence_tuple
 from jetp._country_migration import SCHEMA_VERSION, inventory_positions, legacy_dispositions
 from jetp._idn_positions import migrate_positions
+from jetp._observatory_bundle import _protect_output, _protect_replacement
 from jetp._source_crosswalk import _identity, migrate_sources
 from jetp.build_idn_cipp_priority_projects import extract_priority_projects as extract_cipp
 from jetp.build_idn_progress_priority_projects import extract_priority_projects as extract_progress
@@ -129,3 +132,54 @@ def validate_migration(result: dict) -> None:
         raise ValueError('Plan and approval candidate cannot create a payment account')
     if any(row['disposition'] != 'retained_legacy_authority' for row in result['legacy_dispositions']):
         raise ValueError('Incomplete legacy disposition')
+
+
+def _country_output(output: Path) -> bool:
+    """Only a complete prior IDN sidecar may be atomically replaced."""
+    try:
+        previous = json.loads(output.read_bytes())
+        records = {'selected_sources', 'inventory_positions', 'plan_positions', 'approval_positions',
+                   'payment_candidates', 'legacy_dispositions', 'legacy_evidence', 'legacy_unresolved',
+                   'inventory_boundaries', 'source_regime'}
+        objects = {'inputs', 'recipe_inputs', 'recovery_inputs', 'mvp_views', 'comparison'}
+        fields = records | objects | {'schema_version', 'country', 'admission_status', 'writer_owner',
+                                      'publication_mode', 'account_total'}
+        if (not isinstance(previous, dict) or previous.keys() != fields
+                or previous['schema_version'] != SCHEMA_VERSION or previous['country'] != 'IDN'
+                or previous['admission_status'] != 'unadmitted_candidate'
+                or not all(isinstance(previous[key], list) and all(isinstance(row, dict) for row in previous[key])
+                           for key in records)
+                or not all(isinstance(previous[key], dict) for key in objects)
+                or not all(isinstance(value, dict) for value in previous['mvp_views'].values())):
+            return False
+        validate_migration(previous)
+        return bool(previous['inventory_positions'] and previous['legacy_dispositions'])
+    except (OSError, ValueError, KeyError, TypeError):
+        return False
+
+
+def write_migration(root: Path, output: Path, *, source_root: Path | None = None) -> dict:
+    """Write only one complete candidate, preserving accepted routes and assets."""
+    root, output = Path(root).resolve(), Path(output)
+    _protect_replacement(output, _country_output(output))
+    output = output.resolve()
+    source_root = Path(source_root or root).resolve()
+    if output.suffix != '.json':
+        raise ValueError('Country candidate output must end in .json')
+    for checkout in {root, source_root}:
+        releases = [path for path in (checkout / 'data/jetp/releases').rglob('*')
+                    if path.is_file() and path != output]
+        _protect_output(checkout, output, inputs=releases)
+    result = build_migration(root, source_root=source_root)
+    payload = encoded(result)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.NamedTemporaryFile(dir=output.parent, delete=False) as stream:
+        temporary = Path(stream.name)
+        try:
+            stream.write(payload)
+            stream.flush()
+            os.fsync(stream.fileno())
+            os.replace(temporary, output)
+        finally:
+            temporary.unlink(missing_ok=True)
+    return result
