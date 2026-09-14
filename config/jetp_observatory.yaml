@@ -22,7 +22,7 @@ countries:
     signed_on: '2022-11-15'
     pledge_label: '$20bn'
     headline: '≈$3.1bn approved'
-    headline_detail: 'Five programmes, four projects and 44 grants against a revised $21.4bn pledge. Approval is not payment.'
+    headline_detail: '2025 Secretariat Progress Report: five programmes, four projects and 44 grants against a revised $21.4bn pledge. This is the report snapshot; a September 2026 newsletter provides a later update. Approval is not payment.'
     headline_date: '2025-11-30'
     headline_source: idn-jetp-progress-report-2025
     stage_label: Approval
@@ -34,11 +34,11 @@ countries:
     iso2: VN
     signed_on: '2022-12-14'
     pledge_label: '$15.5bn'
-    headline: '3 publicly named projects'
-    headline_detail: 'The July 2025 portfolio reports 24 projects. Twenty-one identities remain unpublished in this reconciled snapshot; later aggregate reports are not treated as named projects.'
-    headline_date: '2025-07-09'
-    headline_source: vnm-eeas-jetp-project-progress-2025
-    stage_label: Portfolio disclosure
+    headline: 'Secretariat newsletter · March 2026'
+    headline_detail: 'Latest Secretariat newsletter found: issue 13, March 2026. Interim source while a comprehensive state-of-JETP report remains unlocated; it does not establish a complete project inventory.'
+    headline_date: '2026-03-31'
+    headline_source: vnm-moit-newsletter-13-2026-03
+    stage_label: Newsletter period (fallback)
     stage_percent: null
     colour: '#6b6ea5'
   SEN:
@@ -48,9 +48,9 @@ countries:
     signed_on: '2023-06-22'
     pledge_label: '€2.5bn'
     headline: '43 project / programme records'
-    headline_detail: 'Reconciled from 49 investment-plan lines. Some programmes contain other records; costs cannot be added across these levels. A project-level disbursement total is not established.'
+    headline_detail: 'Investment-plan fallback, accessed through a public mirror of the ministry document; no progress report is linked. Our 13 September reconciliation yields 43 records from 49 plan lines, with overlapping programmes and components.'
     headline_date: '2026-09-13'
     headline_source: sen-investment-plan-l4-mirror
-    stage_label: Investment plan
+    stage_label: Plan reconciliation (fallback)
     stage_percent: null
     colour: '#a95568'
