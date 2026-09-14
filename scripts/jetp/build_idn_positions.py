@@ -196,7 +196,7 @@ def _country_output(output: Path) -> bool:
         comparison = previous['mvp_views']['comparison']
         overview = previous['mvp_views']['overview']
         if (not isinstance(comparison.get('projects'), list)
-                or not isinstance(comparison.get('snapshots'), list)
+                or not isinstance(comparison.get('snapshots'), dict)
                 or not comparison.get('source')
                 or not isinstance(overview.get('provenance'), dict)
                 or not overview.get('provenance')):
