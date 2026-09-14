@@ -48,9 +48,10 @@ remain unresolved.
 The successful Council extraction is web reference `turn19view0`, URL in S01,
 PDF p.2 lines 27–39 and p.3 lines 67–78 (web extraction locators), opened at
 acquisition unit 3. These internal locators are supplementary reproducibility
-metadata, not public links. The parent subsequently could not independently
-reopen that URL (internal retrieval error); its independent source-verification
-gap remains open. The parent did verify the Indian government original.
+metadata, not public links. Direct URL reopens by the parent failed, but opening the retained web reference
+subsequently returned the original three-page extraction. The parent independently
+checked its shortlist, negotiation and expected-demand passages, as well as the
+Indian government original. This verifies the cited text, not original byte archival.
 
 ## New documents that could justify a further round
 
@@ -72,3 +73,17 @@ gap remains open. The parent did verify the Indian government original.
    original to inspect, not yet an attribution result.
 
 These are proposed discriminating routes, not a silently started second round.
+
+## Repository validation
+
+Fast gate: **1,549 passed, ten skipped**; adherence/lint: **330 passed, thirteen
+skipped** in the isolated checkout. Two existing source-snapshot tests initially
+failed because DVC document objects were absent from this worktree. Copying the
+already available local archive into its ignored directory resolved both on a
+fresh fast run; no code or tests changed. The full suite is not required for
+this documentation/ticket diff.
+
+The acquisition log contains exactly 20 units; CSV structure checks pass.
+Review normalization to LF preserved every parsed CSV cell. The independent
+scientific reviewer found all five documentary exit criteria addressed, with
+no causal design approved. Source-byte archival remains a documented gap.
