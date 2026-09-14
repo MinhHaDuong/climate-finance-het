@@ -1,0 +1,1947 @@
+{
+  "DE-1-200466276": {
+    "selection": {
+      "unit_id": "DE-1-200466276",
+      "country": "AL",
+      "source_unit": "IATI activity",
+      "role": "sample",
+      "stratum": "AL|energy|110",
+      "rank": 1,
+      "selected": "true",
+      "selection_reason": "round_robin_strata_then_lexicographic_ID",
+      "baseline_alternatives": "{\"ID\": [\"2021-12-31\", \"2022-03-15\", \"2022-11-14\"], \"SN\": [\"2021-12-31\", \"2022-03-15\", \"2023-06-21\"], \"VN\": [\"2021-12-31\", \"2022-03-15\", \"2022-12-13\"], \"ZA\": [\"2020-12-31\", \"2021-09-28\", \"2021-11-01\"]}"
+    },
+    "title": [
+      "Sektorprogramm Energie (F\u00f6rd. v. Energieeffiz. und/oder erneuerb. Energien) (EE)",
+      "Sector Programme for the Promotion of Renewable Energies and Energy Efficiency"
+    ],
+    "dates": [
+      {
+        "iso-date": "2006-01-10",
+        "type": "1"
+      },
+      {
+        "iso-date": "2006-01-10",
+        "type": "2"
+      },
+      {
+        "iso-date": "2021-12-31",
+        "type": "3"
+      },
+      {
+        "iso-date": "2021-12-31",
+        "type": "4"
+      }
+    ],
+    "documents": [
+      {
+        "format": "text/html",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Projekte/Projektdatenbank/index.jsp"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Evaluierungen/Ergebnisse/"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/International-financing/KfW-Development-Bank/Evaluations/Results/"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/KfW-Ausschreibungen"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/kfw-tender"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/KfW-Ausschreibungen"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/kfw-tender"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Evaluierungen/Ergebnisse/"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/International-financing/KfW-Development-Bank/Evaluations/Results/"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Projekte/Projektdatenbank/index.jsp"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.bmz.de/de/laender/albanien"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.bmz.de/en/countries/albania"
+      }
+    ],
+    "transactions": [
+      {
+        "type": "2",
+        "date": "2006-01-10",
+        "value_date": "2006-01-10",
+        "amount": "6976225.90"
+      },
+      {
+        "type": "3",
+        "date": "2012-12-31",
+        "value_date": "2012-12-31",
+        "amount": "1204624.00"
+      },
+      {
+        "type": "3",
+        "date": "2015-12-31",
+        "value_date": "2015-12-31",
+        "amount": "28217.94"
+      },
+      {
+        "type": "3",
+        "date": "2016-12-31",
+        "value_date": "2016-12-31",
+        "amount": "780125.87"
+      },
+      {
+        "type": "3",
+        "date": "2017-12-31",
+        "value_date": "2017-12-31",
+        "amount": "951596.83"
+      },
+      {
+        "type": "3",
+        "date": "2018-12-31",
+        "value_date": "2018-12-31",
+        "amount": "1143731.05"
+      },
+      {
+        "type": "3",
+        "date": "2019-12-31",
+        "value_date": "2019-12-31",
+        "amount": "1393020.33"
+      },
+      {
+        "type": "3",
+        "date": "2020-12-31",
+        "value_date": "2020-12-31",
+        "amount": "497785.07"
+      },
+      {
+        "type": "3",
+        "date": "2021-12-31",
+        "value_date": "2021-12-31",
+        "amount": "804086.13"
+      },
+      {
+        "type": "3",
+        "date": "2022-12-31",
+        "value_date": "2022-12-31",
+        "amount": "173038.68"
+      }
+    ]
+  },
+  "DE-1-200366617": {
+    "selection": {
+      "unit_id": "DE-1-200366617",
+      "country": "AL",
+      "source_unit": "IATI activity",
+      "role": "sample",
+      "stratum": "AL|energy|421",
+      "rank": 2,
+      "selected": "true",
+      "selection_reason": "round_robin_strata_then_lexicographic_ID",
+      "baseline_alternatives": "{\"ID\": [\"2021-12-31\", \"2022-03-15\", \"2022-11-14\"], \"SN\": [\"2021-12-31\", \"2022-03-15\", \"2023-06-21\"], \"VN\": [\"2021-12-31\", \"2022-03-15\", \"2022-12-13\"], \"ZA\": [\"2020-12-31\", \"2021-09-28\", \"2021-11-01\"]}"
+    },
+    "title": [
+      "Electricity Supply Southern Albania - Bistrica II",
+      "Elektrizit\u00e4tsversorgung S\u00fcdalbanien Bistrica II"
+    ],
+    "dates": [
+      {
+        "iso-date": "2005-01-11",
+        "type": "1"
+      },
+      {
+        "iso-date": "2005-01-11",
+        "type": "2"
+      },
+      {
+        "iso-date": "2014-11-14",
+        "type": "3"
+      },
+      {
+        "iso-date": "2014-11-14",
+        "type": "4"
+      }
+    ],
+    "documents": [
+      {
+        "format": "text/html",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Projekte/Projektdatenbank/index.jsp"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/PDF/Evaluierung/Ergebnisse-und-Publikationen/PDF-Dokumente-A-D/Albanien_\u00dcbertragungsleitung_2016_D.pdf"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/PDF/Evaluierung/Ergebnisse-und-Publikationen/PDF-Dokumente-A-D_EN/Albanien_\u00dcbertragungsleitung_2016_E.pdf"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/KfW-Ausschreibungen"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/kfw-tender"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/KfW-Ausschreibungen"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/PDF/Evaluierung/Ergebnisse-und-Publikationen/PDF-Dokumente-A-D/Albanien_\u00dcbertragungsleitung_2016_D.pdf"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/kfw-tender"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/PDF/Evaluierung/Ergebnisse-und-Publikationen/PDF-Dokumente-A-D_EN/Albanien_\u00dcbertragungsleitung_2016_E.pdf"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Projekte/Projektdatenbank/index.jsp"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.bmz.de/de/laender/albanien"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.bmz.de/en/countries/albania"
+      }
+    ],
+    "transactions": [
+      {
+        "type": "2",
+        "date": "2005-01-11",
+        "value_date": "2005-01-11",
+        "amount": "13283922.37"
+      },
+      {
+        "type": "3",
+        "date": "2012-12-31",
+        "value_date": "2012-12-31",
+        "amount": "12087027.31"
+      },
+      {
+        "type": "3",
+        "date": "2013-12-31",
+        "value_date": "2013-12-31",
+        "amount": "1196895.06"
+      }
+    ]
+  },
+  "DE-1-201968361": {
+    "selection": {
+      "unit_id": "DE-1-201968361",
+      "country": "AL",
+      "source_unit": "IATI activity",
+      "role": "sample",
+      "stratum": "AL|mixed-or-unmapped|421",
+      "rank": 3,
+      "selected": "true",
+      "selection_reason": "round_robin_strata_then_lexicographic_ID",
+      "baseline_alternatives": "{\"ID\": [\"2021-12-31\", \"2022-03-15\", \"2022-11-14\"], \"SN\": [\"2021-12-31\", \"2022-03-15\", \"2023-06-21\"], \"VN\": [\"2021-12-31\", \"2022-03-15\", \"2022-12-13\"], \"ZA\": [\"2020-12-31\", \"2021-09-28\", \"2021-11-01\"]}"
+    },
+    "title": [
+      "Nachhaltiger Transport Tirana (DKTI)",
+      "Sustainable Transport Tirana (DKTI)"
+    ],
+    "dates": [
+      {
+        "iso-date": "2023-12-28",
+        "type": "1"
+      },
+      {
+        "iso-date": "2023-12-28",
+        "type": "2"
+      },
+      {
+        "iso-date": "2029-12-31",
+        "type": "3"
+      }
+    ],
+    "documents": [
+      {
+        "format": "text/html",
+        "url": "https://www.kfw-entwicklungsbank.de/ipfz/Projektdatenbank/Nachhaltiger-Transport-Tirana-Dkti-42944.htm"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Evaluierungen/Ergebnisse/"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/International-financing/KfW-Development-Bank/Evaluations/Results/"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/KfW-Ausschreibungen"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/kfw-tender"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/KfW-Ausschreibungen"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/kfw-tender"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Evaluierungen/Ergebnisse/"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/International-financing/KfW-Development-Bank/Evaluations/Results/"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.kfw-entwicklungsbank.de/ipfz/Projektdatenbank/Nachhaltiger-Transport-Tirana-Dkti-42944.htm"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.bmz.de/de/laender/albanien"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.bmz.de/en/countries/albania"
+      }
+    ],
+    "transactions": [
+      {
+        "type": "2",
+        "date": "2023-12-28",
+        "value_date": "2023-12-28",
+        "amount": "50000000.00"
+      }
+    ]
+  },
+  "DE-1-200166785": {
+    "selection": {
+      "unit_id": "DE-1-200166785",
+      "country": "AL",
+      "source_unit": "IATI activity",
+      "role": "sample",
+      "stratum": "AL|non-energy|110",
+      "rank": 4,
+      "selected": "true",
+      "selection_reason": "round_robin_strata_then_lexicographic_ID",
+      "baseline_alternatives": "{\"ID\": [\"2021-12-31\", \"2022-03-15\", \"2022-11-14\"], \"SN\": [\"2021-12-31\", \"2022-03-15\", \"2023-06-21\"], \"VN\": [\"2021-12-31\", \"2022-03-15\", \"2022-12-13\"], \"ZA\": [\"2020-12-31\", \"2021-09-28\", \"2021-11-01\"]}"
+    },
+    "title": [
+      "Grenz\u00fcberschreitendes Biosph\u00e4renreservat Prespa",
+      "Transboundary Biosphere Reserve Prespa"
+    ],
+    "dates": [
+      {
+        "iso-date": "2006-12-21",
+        "type": "1"
+      },
+      {
+        "iso-date": "2006-12-21",
+        "type": "2"
+      },
+      {
+        "iso-date": "2016-11-24",
+        "type": "3"
+      },
+      {
+        "iso-date": "2016-11-24",
+        "type": "4"
+      }
+    ],
+    "documents": [
+      {
+        "format": "text/html",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Projekte/Projektdatenbank/index.jsp"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/PDF/Evaluierung/Ergebnisse-und-Publikationen/PDF-Dokumente-L-P/Mazedonien_Prespa_2018_D.pdf"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/PDF/Evaluierung/Ergebnisse-und-Publikationen/PDF-Dokumente-L-P_EN/Mazedonien_Prespa_2018_E.pdf"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/KfW-Ausschreibungen"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/kfw-tender"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/KfW-Ausschreibungen"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/kfw-tender"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/PDF/Evaluierung/Ergebnisse-und-Publikationen/PDF-Dokumente-L-P/Mazedonien_Prespa_2018_D.pdf"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/PDF/Evaluierung/Ergebnisse-und-Publikationen/PDF-Dokumente-L-P_EN/Mazedonien_Prespa_2018_E.pdf"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Projekte/Projektdatenbank/index.jsp"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.bmz.de/de/laender/albanien"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.bmz.de/en/countries/albania"
+      }
+    ],
+    "transactions": [
+      {
+        "type": "2",
+        "date": "2006-12-21",
+        "value_date": "2006-12-21",
+        "amount": "2556459.41"
+      },
+      {
+        "type": "3",
+        "date": "2012-12-31",
+        "value_date": "2012-12-31",
+        "amount": "1253077.80"
+      },
+      {
+        "type": "3",
+        "date": "2013-12-31",
+        "value_date": "2013-12-31",
+        "amount": "598508.27"
+      },
+      {
+        "type": "3",
+        "date": "2014-12-31",
+        "value_date": "2014-12-31",
+        "amount": "519514.81"
+      },
+      {
+        "type": "3",
+        "date": "2015-12-31",
+        "value_date": "2015-12-31",
+        "amount": "145892.87"
+      },
+      {
+        "type": "3",
+        "date": "2016-12-31",
+        "value_date": "2016-12-31",
+        "amount": "39465.66"
+      }
+    ]
+  },
+  "DE-1-200466433": {
+    "selection": {
+      "unit_id": "DE-1-200466433",
+      "country": "AL",
+      "source_unit": "IATI activity",
+      "role": "sample",
+      "stratum": "AL|non-energy|421",
+      "rank": 5,
+      "selected": "true",
+      "selection_reason": "round_robin_strata_then_lexicographic_ID",
+      "baseline_alternatives": "{\"ID\": [\"2021-12-31\", \"2022-03-15\", \"2022-11-14\"], \"SN\": [\"2021-12-31\", \"2022-03-15\", \"2023-06-21\"], \"VN\": [\"2021-12-31\", \"2022-03-15\", \"2022-12-13\"], \"ZA\": [\"2020-12-31\", \"2021-09-28\", \"2021-11-01\"]}"
+    },
+    "title": [
+      "Sektorprogramm Wassser (Inv.)(VP) (L\u00e4ndliche Regionen)",
+      "Sector Programme Water (Rural Areas)"
+    ],
+    "dates": [
+      {
+        "iso-date": "2007-12-13",
+        "type": "1"
+      },
+      {
+        "iso-date": "2007-12-13",
+        "type": "2"
+      },
+      {
+        "iso-date": "2015-11-10",
+        "type": "3"
+      },
+      {
+        "iso-date": "2015-11-10",
+        "type": "4"
+      }
+    ],
+    "documents": [
+      {
+        "format": "text/html",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Projekte/Projektdatenbank/index.jsp"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/PDF/Evaluierung/Ergebnisse-und-Publikationen/PDF-Dokumente-A-D/Albanien_Wasser_2017_D.pdf"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/PDF/Evaluierung/Ergebnisse-und-Publikationen/PDF-Dokumente-A-D_EN/Albanien_Wasser_2017_E.pdf"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/KfW-Ausschreibungen"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/kfw-tender"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/KfW-Ausschreibungen"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/kfw-tender"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/PDF/Evaluierung/Ergebnisse-und-Publikationen/PDF-Dokumente-A-D/Albanien_Wasser_2017_D.pdf"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/PDF/Evaluierung/Ergebnisse-und-Publikationen/PDF-Dokumente-A-D_EN/Albanien_Wasser_2017_E.pdf"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Projekte/Projektdatenbank/index.jsp"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.bmz.de/en/countries/albania"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.bmz.de/de/laender/albanien"
+      }
+    ],
+    "transactions": [
+      {
+        "type": "2",
+        "date": "2007-12-13",
+        "value_date": "2007-12-13",
+        "amount": "7500000.00"
+      },
+      {
+        "type": "3",
+        "date": "2012-12-31",
+        "value_date": "2012-12-31",
+        "amount": "5786422.78"
+      },
+      {
+        "type": "3",
+        "date": "2013-12-31",
+        "value_date": "2013-12-31",
+        "amount": "979672.75"
+      },
+      {
+        "type": "3",
+        "date": "2014-12-31",
+        "value_date": "2014-12-31",
+        "amount": "302242.11"
+      },
+      {
+        "type": "3",
+        "date": "2015-12-31",
+        "value_date": "2015-12-31",
+        "amount": "431662.36"
+      }
+    ]
+  },
+  "DE-1-200866871": {
+    "selection": {
+      "unit_id": "DE-1-200866871",
+      "country": "ID",
+      "source_unit": "IATI activity",
+      "role": "sample",
+      "stratum": "ID|energy|110",
+      "rank": 6,
+      "selected": "true",
+      "selection_reason": "round_robin_strata_then_lexicographic_ID",
+      "baseline_alternatives": "{\"ID\": [\"2021-12-31\", \"2022-03-15\", \"2022-11-14\"], \"SN\": [\"2021-12-31\", \"2022-03-15\", \"2023-06-21\"], \"VN\": [\"2021-12-31\", \"2022-03-15\", \"2022-12-13\"], \"ZA\": [\"2020-12-31\", \"2021-09-28\", \"2021-11-01\"]}"
+    },
+    "title": [
+      "Erschlie\u00dfung geothermischer Ressourcen",
+      "Exploration of Geothermal Ressources"
+    ],
+    "dates": [
+      {
+        "iso-date": "2011-01-21",
+        "type": "1"
+      },
+      {
+        "iso-date": "2011-01-21",
+        "type": "2"
+      },
+      {
+        "iso-date": "2018-07-19",
+        "type": "3"
+      },
+      {
+        "iso-date": "2018-07-19",
+        "type": "4"
+      }
+    ],
+    "documents": [
+      {
+        "format": "text/html",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Projekte/Projektdatenbank/index.jsp"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/PDF/Evaluierung/Ergebnisse-und-Publikationen/PDF-Dokumente-E-K/Indonesien_Geothermie_2021_D.pdf"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/PDF/Evaluierung/Ergebnisse-und-Publikationen/PDF-Dokumente-E-K_EN/Indonesien_Geothermie_2021_E.pdf"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/KfW-Ausschreibungen"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/kfw-tender"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/KfW-Ausschreibungen"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/kfw-tender"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/PDF/Evaluierung/Ergebnisse-und-Publikationen/PDF-Dokumente-E-K/Indonesien_Geothermie_2021_D.pdf"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/PDF/Evaluierung/Ergebnisse-und-Publikationen/PDF-Dokumente-E-K_EN/Indonesien_Geothermie_2021_E.pdf"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Projekte/Projektdatenbank/index.jsp"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.bmz.de/de/laender/indonesien"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.bmz.de/en/countries/indonesia"
+      }
+    ],
+    "transactions": [
+      {
+        "type": "2",
+        "date": "2011-01-21",
+        "value_date": "2011-01-21",
+        "amount": "1083048.06"
+      },
+      {
+        "type": "3",
+        "date": "2012-12-31",
+        "value_date": "2012-12-31",
+        "amount": "792012.09"
+      },
+      {
+        "type": "3",
+        "date": "2013-12-31",
+        "value_date": "2013-12-31",
+        "amount": "157477.88"
+      },
+      {
+        "type": "3",
+        "date": "2014-12-31",
+        "value_date": "2014-12-31",
+        "amount": "133558.09"
+      }
+    ]
+  },
+  "DE-1-200966358": {
+    "selection": {
+      "unit_id": "DE-1-200966358",
+      "country": "ID",
+      "source_unit": "IATI activity",
+      "role": "sample",
+      "stratum": "ID|energy|421",
+      "rank": 7,
+      "selected": "true",
+      "selection_reason": "round_robin_strata_then_lexicographic_ID",
+      "baseline_alternatives": "{\"ID\": [\"2021-12-31\", \"2022-03-15\", \"2022-11-14\"], \"SN\": [\"2021-12-31\", \"2022-03-15\", \"2023-06-21\"], \"VN\": [\"2021-12-31\", \"2022-03-15\", \"2022-12-13\"], \"ZA\": [\"2020-12-31\", \"2021-09-28\", \"2021-11-01\"]}"
+    },
+    "title": [
+      "Geothermieprogramm",
+      "Geothermal Energy Program"
+    ],
+    "dates": [
+      {
+        "iso-date": "2015-05-08",
+        "type": "1"
+      },
+      {
+        "iso-date": "2015-05-08",
+        "type": "2"
+      },
+      {
+        "iso-date": "2032-12-31",
+        "type": "3"
+      }
+    ],
+    "documents": [
+      {
+        "format": "text/html",
+        "url": "https://www.kfw-entwicklungsbank.de/ipfz/Projektdatenbank/Geothermieprogramm-23661.htm"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Evaluierungen/Ergebnisse/"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/International-financing/KfW-Development-Bank/Evaluations/Results/"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/KfW-Ausschreibungen"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/kfw-tender"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/KfW-Ausschreibungen"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/kfw-tender"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Evaluierungen/Ergebnisse/"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/International-financing/KfW-Development-Bank/Evaluations/Results/"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Projekte/Projektdatenbank/index.jsp"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.bmz.de/de/laender/indonesien"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.bmz.de/en/countries/indonesia"
+      }
+    ],
+    "transactions": [
+      {
+        "type": "2",
+        "date": "2015-05-08",
+        "value_date": "2015-05-08",
+        "amount": "210000000.00"
+      },
+      {
+        "type": "3",
+        "date": "2017-12-31",
+        "value_date": "2017-12-31",
+        "amount": "651141.00"
+      },
+      {
+        "type": "3",
+        "date": "2018-12-31",
+        "value_date": "2018-12-31",
+        "amount": "189423.00"
+      },
+      {
+        "type": "3",
+        "date": "2019-12-31",
+        "value_date": "2019-12-31",
+        "amount": "171392.00"
+      },
+      {
+        "type": "3",
+        "date": "2020-12-31",
+        "value_date": "2020-12-31",
+        "amount": "232848.18"
+      },
+      {
+        "type": "3",
+        "date": "2021-12-31",
+        "value_date": "2021-12-31",
+        "amount": "1428462.51"
+      },
+      {
+        "type": "3",
+        "date": "2023-09-30",
+        "value_date": "2023-09-30",
+        "amount": "255456.41"
+      },
+      {
+        "type": "3",
+        "date": "2023-12-31",
+        "value_date": "2023-12-31",
+        "amount": "745772.74"
+      },
+      {
+        "type": "3",
+        "date": "2024-09-30",
+        "value_date": "2024-09-30",
+        "amount": "678637.07"
+      },
+      {
+        "type": "3",
+        "date": "2025-09-30",
+        "value_date": "2025-09-30",
+        "amount": "340229.30"
+      }
+    ]
+  },
+  "DE-1-199870106": {
+    "selection": {
+      "unit_id": "DE-1-199870106",
+      "country": "ID",
+      "source_unit": "IATI activity",
+      "role": "sample",
+      "stratum": "ID|non-energy|110",
+      "rank": 8,
+      "selected": "true",
+      "selection_reason": "round_robin_strata_then_lexicographic_ID",
+      "baseline_alternatives": "{\"ID\": [\"2021-12-31\", \"2022-03-15\", \"2022-11-14\"], \"SN\": [\"2021-12-31\", \"2022-03-15\", \"2023-06-21\"], \"VN\": [\"2021-12-31\", \"2022-03-15\", \"2022-12-13\"], \"ZA\": [\"2020-12-31\", \"2021-09-28\", \"2021-11-01\"]}"
+    },
+    "title": [
+      "Studien- und Fachkr\u00e4ftefonds V",
+      "Studies and Experts Fund V"
+    ],
+    "dates": [
+      {
+        "iso-date": "1998-12-07",
+        "type": "1"
+      },
+      {
+        "iso-date": "1998-12-07",
+        "type": "2"
+      },
+      {
+        "iso-date": "2015-10-13",
+        "type": "3"
+      },
+      {
+        "iso-date": "2015-10-13",
+        "type": "4"
+      }
+    ],
+    "documents": [
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Evaluierungen/Ergebnisse/"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Projekte/Projektdatenbank/index.jsp"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/International-financing/KfW-Development-Bank/Evaluations/Results/"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/KfW-Ausschreibungen"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/kfw-tender"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/KfW-Ausschreibungen"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/kfw-tender"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Evaluierungen/Ergebnisse/"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/International-financing/KfW-Development-Bank/Evaluations/Results/"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Projekte/Projektdatenbank/index.jsp"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.bmz.de/de/laender/indonesien"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.bmz.de/en/countries/indonesia"
+      }
+    ],
+    "transactions": [
+      {
+        "type": "2",
+        "date": "1998-12-07",
+        "value_date": "1998-12-07",
+        "amount": "4101816.46"
+      },
+      {
+        "type": "3",
+        "date": "2012-12-31",
+        "value_date": "2012-12-31",
+        "amount": "4052184.92"
+      },
+      {
+        "type": "3",
+        "date": "2013-12-31",
+        "value_date": "2013-12-31",
+        "amount": "6000.00"
+      },
+      {
+        "type": "3",
+        "date": "2015-12-31",
+        "value_date": "2015-12-31",
+        "amount": "43631.54"
+      }
+    ]
+  },
+  "DE-1-200266973": {
+    "selection": {
+      "unit_id": "DE-1-200266973",
+      "country": "ID",
+      "source_unit": "IATI activity",
+      "role": "sample",
+      "stratum": "ID|non-energy|421",
+      "rank": 9,
+      "selected": "true",
+      "selection_reason": "round_robin_strata_then_lexicographic_ID",
+      "baseline_alternatives": "{\"ID\": [\"2021-12-31\", \"2022-03-15\", \"2022-11-14\"], \"SN\": [\"2021-12-31\", \"2022-03-15\", \"2023-06-21\"], \"VN\": [\"2021-12-31\", \"2022-03-15\", \"2022-12-13\"], \"ZA\": [\"2020-12-31\", \"2021-09-28\", \"2021-11-01\"]}"
+    },
+    "title": [
+      "S-Bahn-Nahverkehrsystem Jabotabek",
+      "Commuter Railways Jabotabek"
+    ],
+    "dates": [
+      {
+        "iso-date": "2005-01-19",
+        "type": "1"
+      },
+      {
+        "iso-date": "2005-01-19",
+        "type": "2"
+      },
+      {
+        "iso-date": "2013-07-25",
+        "type": "3"
+      },
+      {
+        "iso-date": "2013-07-25",
+        "type": "4"
+      }
+    ],
+    "documents": [
+      {
+        "format": "text/html",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Projekte/Projektdatenbank/index.jsp"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Evaluierungen/Ergebnisse/"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/International-financing/KfW-Development-Bank/Evaluations/Results/"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/KfW-Ausschreibungen"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/kfw-tender"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/KfW-Ausschreibungen"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/kfw-tender"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Evaluierungen/Ergebnisse/"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/International-financing/KfW-Development-Bank/Evaluations/Results/"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Projekte/Projektdatenbank/index.jsp"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.bmz.de/de/laender/indonesien"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.bmz.de/en/countries/indonesia"
+      }
+    ],
+    "transactions": [
+      {
+        "type": "2",
+        "date": "2005-01-19",
+        "value_date": "2005-01-19",
+        "amount": "48496003.31"
+      },
+      {
+        "type": "3",
+        "date": "2012-12-31",
+        "value_date": "2012-12-31",
+        "amount": "45451719.13"
+      },
+      {
+        "type": "3",
+        "date": "2013-12-31",
+        "value_date": "2013-12-31",
+        "amount": "3044284.18"
+      }
+    ]
+  },
+  "DE-1-200270538": {
+    "selection": {
+      "unit_id": "DE-1-200270538",
+      "country": "IN",
+      "source_unit": "IATI activity",
+      "role": "sample",
+      "stratum": "IN|energy|110",
+      "rank": 10,
+      "selected": "true",
+      "selection_reason": "round_robin_strata_then_lexicographic_ID",
+      "baseline_alternatives": "{\"ID\": [\"2021-12-31\", \"2022-03-15\", \"2022-11-14\"], \"SN\": [\"2021-12-31\", \"2022-03-15\", \"2023-06-21\"], \"VN\": [\"2021-12-31\", \"2022-03-15\", \"2022-12-13\"], \"ZA\": [\"2020-12-31\", \"2021-09-28\", \"2021-11-01\"]}"
+    },
+    "title": [
+      "Wasserkraftwerksrehabilitierungsprogramm PFC II (BM)",
+      "Renewable Energy (Hydropower/PFC II)"
+    ],
+    "dates": [
+      {
+        "iso-date": "2005-12-28",
+        "type": "1"
+      },
+      {
+        "iso-date": "2005-12-28",
+        "type": "2"
+      },
+      {
+        "iso-date": "2015-11-30",
+        "type": "3"
+      },
+      {
+        "iso-date": "2015-11-30",
+        "type": "4"
+      }
+    ],
+    "documents": [
+      {
+        "format": "text/html",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Projekte/Projektdatenbank/index.jsp"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Evaluierungen/Ergebnisse/"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/International-financing/KfW-Development-Bank/Evaluations/Results/"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/KfW-Ausschreibungen"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/kfw-tender"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/KfW-Ausschreibungen"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/kfw-tender"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Evaluierungen/Ergebnisse/"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/International-financing/KfW-Development-Bank/Evaluations/Results/"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Projekte/Projektdatenbank/index.jsp"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.bmz.de/de/laender/indien"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.bmz.de/en/countries/india"
+      }
+    ],
+    "transactions": [
+      {
+        "type": "2",
+        "date": "2005-12-28",
+        "value_date": "2005-12-28",
+        "amount": "1205084.58"
+      },
+      {
+        "type": "3",
+        "date": "2012-12-31",
+        "value_date": "2012-12-31",
+        "amount": "1018454.65"
+      },
+      {
+        "type": "3",
+        "date": "2013-12-31",
+        "value_date": "2013-12-31",
+        "amount": "186629.93"
+      }
+    ]
+  },
+  "DE-1-200366757": {
+    "selection": {
+      "unit_id": "DE-1-200366757",
+      "country": "IN",
+      "source_unit": "IATI activity",
+      "role": "sample",
+      "stratum": "IN|energy|421",
+      "rank": 11,
+      "selected": "true",
+      "selection_reason": "round_robin_strata_then_lexicographic_ID",
+      "baseline_alternatives": "{\"ID\": [\"2021-12-31\", \"2022-03-15\", \"2022-11-14\"], \"SN\": [\"2021-12-31\", \"2022-03-15\", \"2023-06-21\"], \"VN\": [\"2021-12-31\", \"2022-03-15\", \"2022-12-13\"], \"ZA\": [\"2020-12-31\", \"2021-09-28\", \"2021-11-01\"]}"
+    },
+    "title": [
+      "Nutzung von Biomasse zur Energieerzeugung",
+      "Removal of Barriers to Biomass Power Generation in India"
+    ],
+    "dates": [
+      {
+        "iso-date": "2009-10-08",
+        "type": "1"
+      },
+      {
+        "iso-date": "2009-10-08",
+        "type": "2"
+      },
+      {
+        "iso-date": "2016-04-06",
+        "type": "3"
+      },
+      {
+        "iso-date": "2016-04-06",
+        "type": "4"
+      }
+    ],
+    "documents": [
+      {
+        "format": "text/html",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Projekte/Projektdatenbank/index.jsp"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/PDF/Evaluierung/Ergebnisse-und-Publikationen/PDF-Dokumente-E-K/Indien_Biomasse_2019_D.pdf"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/PDF/Evaluierung/Ergebnisse-und-Publikationen/PDF-Dokumente-E-K_EN/Indien_Biomasse_2019_E.pdf"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/KfW-Ausschreibungen"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/kfw-tender"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/KfW-Ausschreibungen"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/kfw-tender"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/PDF/Evaluierung/Ergebnisse-und-Publikationen/PDF-Dokumente-E-K/Indien_Biomasse_2019_D.pdf"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/PDF/Evaluierung/Ergebnisse-und-Publikationen/PDF-Dokumente-E-K_EN/Indien_Biomasse_2019_E.pdf"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Projekte/Projektdatenbank/index.jsp"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.bmz.de/de/laender/indien"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.bmz.de/en/countries/india"
+      }
+    ],
+    "transactions": [
+      {
+        "type": "2",
+        "date": "2009-10-08",
+        "value_date": "2009-10-08",
+        "amount": "19971000.00"
+      },
+      {
+        "type": "3",
+        "date": "2012-12-31",
+        "value_date": "2012-12-31",
+        "amount": "18856093.97"
+      },
+      {
+        "type": "3",
+        "date": "2014-12-31",
+        "value_date": "2014-12-31",
+        "amount": "1114906.03"
+      }
+    ]
+  },
+  "DE-1-201870245": {
+    "selection": {
+      "unit_id": "DE-1-201870245",
+      "country": "IN",
+      "source_unit": "IATI activity",
+      "role": "sample",
+      "stratum": "IN|mixed-or-unmapped|110",
+      "rank": 12,
+      "selected": "true",
+      "selection_reason": "round_robin_strata_then_lexicographic_ID",
+      "baseline_alternatives": "{\"ID\": [\"2021-12-31\", \"2022-03-15\", \"2022-11-14\"], \"SN\": [\"2021-12-31\", \"2022-03-15\", \"2023-06-21\"], \"VN\": [\"2021-12-31\", \"2022-03-15\", \"2022-12-13\"], \"ZA\": [\"2020-12-31\", \"2021-09-28\", \"2021-11-01\"]}"
+    },
+    "title": [
+      "Encourage Solarfonds (BM)",
+      "Encourage Solar Fund (TA)"
+    ],
+    "dates": [
+      {
+        "iso-date": "2020-03-20",
+        "type": "1"
+      },
+      {
+        "iso-date": "2020-03-20",
+        "type": "2"
+      },
+      {
+        "iso-date": "2028-04-30",
+        "type": "3"
+      }
+    ],
+    "documents": [
+      {
+        "format": "text/html",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Projekte/Projektdatenbank/index.jsp"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Evaluierungen/Ergebnisse/"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/International-financing/KfW-Development-Bank/Evaluations/Results/"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/KfW-Ausschreibungen"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/kfw-tender"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/KfW-Ausschreibungen"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/kfw-tender"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Evaluierungen/Ergebnisse/"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/International-financing/KfW-Development-Bank/Evaluations/Results/"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Projekte/Projektdatenbank/index.jsp"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.bmz.de/de/laender/indien"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.bmz.de/en/countries/india"
+      }
+    ],
+    "transactions": [
+      {
+        "type": "2",
+        "date": "2020-03-20",
+        "value_date": "2020-03-20",
+        "amount": "1000000.00"
+      },
+      {
+        "type": "3",
+        "date": "2020-12-31",
+        "value_date": "2020-12-31",
+        "amount": "138484.61"
+      },
+      {
+        "type": "3",
+        "date": "2021-12-31",
+        "value_date": "2021-12-31",
+        "amount": "38374.32"
+      },
+      {
+        "type": "3",
+        "date": "2022-12-31",
+        "value_date": "2022-12-31",
+        "amount": "231840.86"
+      },
+      {
+        "type": "3",
+        "date": "2023-09-30",
+        "value_date": "2023-09-30",
+        "amount": "249279.47"
+      },
+      {
+        "type": "3",
+        "date": "2024-09-30",
+        "value_date": "2024-09-30",
+        "amount": "200886.04"
+      },
+      {
+        "type": "3",
+        "date": "2025-12-31",
+        "value_date": "2025-12-31",
+        "amount": "53900.13"
+      },
+      {
+        "type": "3",
+        "date": "2026-03-31",
+        "value_date": "2026-03-31",
+        "amount": "-276.17"
+      }
+    ]
+  },
+  "DE-1-199170366": {
+    "selection": {
+      "unit_id": "DE-1-199170366",
+      "country": "MA",
+      "source_unit": "IATI activity",
+      "role": "challenge",
+      "stratum": "MA|non-energy|110",
+      "rank": "",
+      "selected": "true",
+      "selection_reason": "mandatory_ID_or_smallest_pre2013_start_proxy",
+      "baseline_alternatives": "{\"ID\": [\"2021-12-31\", \"2022-03-15\", \"2022-11-14\"], \"SN\": [\"2021-12-31\", \"2022-03-15\", \"2023-06-21\"], \"VN\": [\"2021-12-31\", \"2022-03-15\", \"2022-12-13\"], \"ZA\": [\"2020-12-31\", \"2021-09-28\", \"2021-11-01\"]}"
+    },
+    "title": [
+      "Studien- und Fachkr\u00e4ftefonds VI"
+    ],
+    "dates": [
+      {
+        "iso-date": "1992-10-26",
+        "type": "1"
+      },
+      {
+        "iso-date": "1992-10-26",
+        "type": "2"
+      },
+      {
+        "iso-date": "2023-01-27",
+        "type": "3"
+      },
+      {
+        "iso-date": "2023-01-27",
+        "type": "4"
+      }
+    ],
+    "documents": [
+      {
+        "format": "text/html",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Projekte/Projektdatenbank/index.jsp"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Evaluierungen/Ergebnisse/"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/International-financing/KfW-Development-Bank/Evaluations/Results/"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/KfW-Ausschreibungen"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/kfw-tender"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/KfW-Ausschreibungen"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/kfw-tender"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Evaluierungen/Ergebnisse/"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/International-financing/KfW-Development-Bank/Evaluations/Results/"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Projekte/Projektdatenbank/index.jsp"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.bmz.de/de/laender/marokko"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.bmz.de/en/countries/morocco"
+      }
+    ],
+    "transactions": [
+      {
+        "type": "2",
+        "date": "1992-10-26",
+        "value_date": "1992-10-26",
+        "amount": "2556459.41"
+      },
+      {
+        "type": "3",
+        "date": "2012-12-31",
+        "value_date": "2012-12-31",
+        "amount": "1798425.20"
+      },
+      {
+        "type": "3",
+        "date": "2013-12-31",
+        "value_date": "2013-12-31",
+        "amount": "8695.76"
+      },
+      {
+        "type": "3",
+        "date": "2020-12-31",
+        "value_date": "2020-12-31",
+        "amount": "749338.45"
+      }
+    ]
+  },
+  "DE-1-199370321": {
+    "selection": {
+      "unit_id": "DE-1-199370321",
+      "country": "IN",
+      "source_unit": "IATI activity",
+      "role": "challenge",
+      "stratum": "IN|non-energy|110",
+      "rank": "",
+      "selected": "true",
+      "selection_reason": "mandatory_ID_or_smallest_pre2013_start_proxy",
+      "baseline_alternatives": "{\"ID\": [\"2021-12-31\", \"2022-03-15\", \"2022-11-14\"], \"SN\": [\"2021-12-31\", \"2022-03-15\", \"2023-06-21\"], \"VN\": [\"2021-12-31\", \"2022-03-15\", \"2022-12-13\"], \"ZA\": [\"2020-12-31\", \"2021-09-28\", \"2021-11-01\"]}"
+    },
+    "title": [
+      "Studien- und Fachkr\u00e4ftefonds VI",
+      "Studies and Experts Fund VI"
+    ],
+    "dates": [
+      {
+        "iso-date": "1993-12-28",
+        "type": "1"
+      },
+      {
+        "iso-date": "1993-12-28",
+        "type": "2"
+      },
+      {
+        "iso-date": "2024-06-27",
+        "type": "3"
+      },
+      {
+        "iso-date": "2024-06-27",
+        "type": "4"
+      }
+    ],
+    "documents": [
+      {
+        "format": "text/html",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Projekte/Projektdatenbank/index.jsp"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Evaluierungen/Ergebnisse/"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/International-financing/KfW-Development-Bank/Evaluations/Results/"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/KfW-Ausschreibungen"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/kfw-tender"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/KfW-Ausschreibungen"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/kfw-tender"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Evaluierungen/Ergebnisse/"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/International-financing/KfW-Development-Bank/Evaluations/Results/"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Projekte/Projektdatenbank/index.jsp"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.bmz.de/de/laender/indien"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.bmz.de/en/countries/india"
+      }
+    ],
+    "transactions": [
+      {
+        "type": "2",
+        "date": "1993-12-28",
+        "value_date": "1993-12-28",
+        "amount": "4807493.97"
+      },
+      {
+        "type": "3",
+        "date": "2012-12-31",
+        "value_date": "2012-12-31",
+        "amount": "3759735.66"
+      },
+      {
+        "type": "3",
+        "date": "2013-12-31",
+        "value_date": "2013-12-31",
+        "amount": "-857.53"
+      },
+      {
+        "type": "3",
+        "date": "2015-12-31",
+        "value_date": "2015-12-31",
+        "amount": "73977.44"
+      },
+      {
+        "type": "3",
+        "date": "2016-12-31",
+        "value_date": "2016-12-31",
+        "amount": "24832.24"
+      },
+      {
+        "type": "3",
+        "date": "2017-12-31",
+        "value_date": "2017-12-31",
+        "amount": "22962.78"
+      },
+      {
+        "type": "3",
+        "date": "2018-12-31",
+        "value_date": "2018-12-31",
+        "amount": "449094.03"
+      },
+      {
+        "type": "3",
+        "date": "2019-12-31",
+        "value_date": "2019-12-31",
+        "amount": "424294.35"
+      },
+      {
+        "type": "3",
+        "date": "2022-12-31",
+        "value_date": "2022-12-31",
+        "amount": "53455.00"
+      }
+    ]
+  },
+  "DE-1-201365154": {
+    "selection": {
+      "unit_id": "DE-1-201365154",
+      "country": "IN",
+      "source_unit": "IATI activity",
+      "role": "challenge",
+      "stratum": "IN|non-energy|421",
+      "rank": "",
+      "selected": "true",
+      "selection_reason": "mandatory_ID_or_smallest_pre2013_start_proxy",
+      "baseline_alternatives": "{\"ID\": [\"2021-12-31\", \"2022-03-15\", \"2022-11-14\"], \"SN\": [\"2021-12-31\", \"2022-03-15\", \"2023-06-21\"], \"VN\": [\"2021-12-31\", \"2022-03-15\", \"2022-12-13\"], \"ZA\": [\"2020-12-31\", \"2021-09-28\", \"2021-11-01\"]}"
+    },
+    "title": [
+      "Klimaanpassung in Wald\u00f6kosystemen Himachal Pradesh",
+      "Himachal Pradesh Forest Ecosystems Climate Proofing Project"
+    ],
+    "dates": [
+      {
+        "iso-date": "2015-12-29",
+        "type": "1"
+      },
+      {
+        "iso-date": "2015-12-29",
+        "type": "2"
+      },
+      {
+        "iso-date": "2026-10-30",
+        "type": "3"
+      }
+    ],
+    "documents": [
+      {
+        "format": "text/html",
+        "url": "https://www.kfw-entwicklungsbank.de/ipfz/Projektdatenbank/Klimaanpassung-In-Waldoekosystemen-Himachal-Pradesh-30347.htm"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Evaluierungen/Ergebnisse/"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/International-financing/KfW-Development-Bank/Evaluations/Results/"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/KfW-Ausschreibungen"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/kfw-tender"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/KfW-Ausschreibungen"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/kfw-tender"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Evaluierungen/Ergebnisse/"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/International-financing/KfW-Development-Bank/Evaluations/Results/"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Projekte/Projektdatenbank/index.jsp"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.bmz.de/de/laender/indien"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.bmz.de/en/countries/india"
+      }
+    ],
+    "transactions": [
+      {
+        "type": "2",
+        "date": "2015-12-29",
+        "value_date": "2015-12-29",
+        "amount": "25988987.80"
+      },
+      {
+        "type": "3",
+        "date": "2017-12-31",
+        "value_date": "2017-12-31",
+        "amount": "51463.39"
+      },
+      {
+        "type": "3",
+        "date": "2018-12-31",
+        "value_date": "2018-12-31",
+        "amount": "347673.04"
+      },
+      {
+        "type": "3",
+        "date": "2019-12-31",
+        "value_date": "2019-12-31",
+        "amount": "1174581.00"
+      },
+      {
+        "type": "3",
+        "date": "2020-12-31",
+        "value_date": "2020-12-31",
+        "amount": "2111953.22"
+      },
+      {
+        "type": "3",
+        "date": "2021-12-31",
+        "value_date": "2021-12-31",
+        "amount": "2990481.84"
+      },
+      {
+        "type": "3",
+        "date": "2022-12-31",
+        "value_date": "2022-12-31",
+        "amount": "1548992.36"
+      },
+      {
+        "type": "3",
+        "date": "2023-03-31",
+        "value_date": "2023-03-31",
+        "amount": "90000.00"
+      },
+      {
+        "type": "3",
+        "date": "2023-06-30",
+        "value_date": "2023-06-30",
+        "amount": "3698313.54"
+      },
+      {
+        "type": "3",
+        "date": "2023-12-31",
+        "value_date": "2023-12-31",
+        "amount": "1386650.42"
+      },
+      {
+        "type": "3",
+        "date": "2024-03-31",
+        "value_date": "2024-03-31",
+        "amount": "2833941.43"
+      },
+      {
+        "type": "3",
+        "date": "2024-06-30",
+        "value_date": "2024-06-30",
+        "amount": "2400164.06"
+      },
+      {
+        "type": "3",
+        "date": "2024-12-31",
+        "value_date": "2024-12-31",
+        "amount": "1413363.48"
+      },
+      {
+        "type": "3",
+        "date": "2025-06-30",
+        "value_date": "2025-06-30",
+        "amount": "2677937.74"
+      },
+      {
+        "type": "3",
+        "date": "2025-09-30",
+        "value_date": "2025-09-30",
+        "amount": "1339599.23"
+      },
+      {
+        "type": "3",
+        "date": "2025-12-31",
+        "value_date": "2025-12-31",
+        "amount": "113814.66"
+      },
+      {
+        "type": "3",
+        "date": "2026-03-31",
+        "value_date": "2026-03-31",
+        "amount": "1498867.76"
+      },
+      {
+        "type": "3",
+        "date": "2026-06-30",
+        "value_date": "2026-06-30",
+        "amount": "311190.63"
+      }
+    ]
+  },
+  "DE-1-201366764": {
+    "selection": {
+      "unit_id": "DE-1-201366764",
+      "country": "MA",
+      "source_unit": "IATI activity",
+      "role": "challenge",
+      "stratum": "MA|energy|421",
+      "rank": "",
+      "selected": "true",
+      "selection_reason": "mandatory_ID_or_smallest_pre2013_start_proxy",
+      "baseline_alternatives": "{\"ID\": [\"2021-12-31\", \"2022-03-15\", \"2022-11-14\"], \"SN\": [\"2021-12-31\", \"2022-03-15\", \"2023-06-21\"], \"VN\": [\"2021-12-31\", \"2022-03-15\", \"2022-12-13\"], \"ZA\": [\"2020-12-31\", \"2021-09-28\", \"2021-11-01\"]}"
+    },
+    "title": [
+      "Windprogramm Marokko (IKLU) Phase III",
+      "Wind Programme Morocco (IKLU) Phase III"
+    ],
+    "dates": [
+      {
+        "iso-date": "2016-08-04",
+        "type": "1"
+      },
+      {
+        "iso-date": "2016-08-04",
+        "type": "2"
+      },
+      {
+        "iso-date": "2021-12-01",
+        "type": "3"
+      },
+      {
+        "iso-date": "2021-12-01",
+        "type": "4"
+      }
+    ],
+    "documents": [
+      {
+        "format": "text/html",
+        "url": "https://www.kfw-entwicklungsbank.de/ipfz/Projektdatenbank/Windprogramm-Marokko-Iklu-Phase-Iii-32652.htm"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Evaluierungen/Ergebnisse/"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/International-financing/KfW-Development-Bank/Evaluations/Results/"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/KfW-Ausschreibungen"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/kfw-tender"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/KfW-Ausschreibungen"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.gtai.de/kfw-tender"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Evaluierungen/Ergebnisse/"
+      },
+      {
+        "format": "application/pdf",
+        "url": "https://www.kfw-entwicklungsbank.de/International-financing/KfW-Development-Bank/Evaluations/Results/"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.kfw-entwicklungsbank.de/Internationale-Finanzierung/KfW-Entwicklungsbank/Projekte/Projektdatenbank/index.jsp"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.bmz.de/de/laender/marokko"
+      },
+      {
+        "format": "text/html",
+        "url": "https://www.bmz.de/en/countries/morocco"
+      }
+    ],
+    "transactions": [
+      {
+        "type": "2",
+        "date": "2016-08-04",
+        "value_date": "2016-08-04",
+        "amount": "54000000.00"
+      },
+      {
+        "type": "3",
+        "date": "2018-12-31",
+        "value_date": "2018-12-31",
+        "amount": "12876923.08"
+      },
+      {
+        "type": "3",
+        "date": "2019-12-31",
+        "value_date": "2019-12-31",
+        "amount": "19523076.92"
+      },
+      {
+        "type": "3",
+        "date": "2020-12-31",
+        "value_date": "2020-12-31",
+        "amount": "21600000.00"
+      }
+    ]
+  }
+}

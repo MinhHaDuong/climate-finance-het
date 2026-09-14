@@ -38,7 +38,7 @@
       "sha256": "1e76ee7be03d512d6a70ea2b37b1846c8763a0cfdb6ebe7dd52f0e90386c08d2"
     }
   ],
-  "freeze_sha": "Commit introducing selection.csv and acquisition-routes.md; resolved in report",
+  "freeze_sha": "5a307735",
   "local_inputs": [
     {
       "path": "docs/jetp-pilots/2026-09-15/protocol.md",
@@ -63,6 +63,11 @@
     {
       "path": "docs/jetp-audits/0735/round3/source-byte-manifest.json",
       "sha256": "3c845475ebfffebcba14bd9850710a0bb3506ba98ec67650df4ec15f1515e72f"
+    },
+    {
+      "path": "config/analysis.yaml",
+      "sha256": "50737277bcce048c339db89bdac1dce8b5be31bcee17663d0e87e8ed3c61e298"
     }
-  ]
+  ],
+  "archive_xml_sha256": "106dcca9e8cbe791fc0aa933b8c0567aef71f363534f21cffe08a6de9a9d9016"
 }
