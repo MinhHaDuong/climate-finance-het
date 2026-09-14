@@ -7,6 +7,9 @@ exact input, policy and parser hashes.
 
 ## Reproduction and recovery
 
+For byte-identical reconstruction, use a checkout at input commit `977096ec`
+(the commit before the refreshed DVC pointer), then run:
+
 ```sh
 UV_NO_SYNC=1 make data
 UV_NO_SYNC=1 PYTHONPATH=scripts:libs/openalex-corpus/src uv run python \
