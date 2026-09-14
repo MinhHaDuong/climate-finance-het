@@ -120,3 +120,27 @@ records for date anomalies; stage-specific baseline populations; lender and
 sector harmonization; broader-country negotiation/parallel-programme exposure.
 Newly archived source bytes are locally DVC-tracked; padme remote replication
 remains pending after connection refusal. No primary protocol is frozen.
+
+## Bilateral source reconciliation, third pass
+
+Author-directed AFD/JICA/KfW/USAID/UK audit: see
+`docs/jetp-audits/0735/round3/report.md` in PR #1347. AFD current tables contain
+3,277 financing IDs; seven-country XML retains 223 of 224 legacy IDs. One
+payment-unobserved financing is absent. Payment entries are reporting-period
+observations and cannot replace exact legacy first-payment dates. Full-table
+reconciliation identifies 19 missing IDs, one missing and one changed signature
+proxy. AFD remains the first population/date-semantics pilot.
+
+Complementary routes: 4,036 KfW/BMZ activities with periodic payments; 7,327
+FCDO programmes plus 17,955 components, including pipeline and completed cases;
+JICA dated annual signing/amendment lists. USAID accounting access is established
+but the acquired XML is a historical administrative slice requiring a project-ID
+crosswalk. FCDO does not cover every UK financing institution. Do not add these
+incommensurate record counts or label non-energy observations untreated.
+
+Next work uses the round-3 memo's explicit first tests: disappearing unpaid-field
+records remain loss-to-observation; periodic dates are not exact payment days;
+parent/component and signing/amendment entries stay distinct. Build lender- and
+stage-specific feasibility tables before selecting identification, with country
+conditions and project matching plus the independent selection/exposure audit.
+No primary estimator, outcome or exposure baseline is frozen.
