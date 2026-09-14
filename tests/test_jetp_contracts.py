@@ -4,7 +4,7 @@ import json
 from copy import deepcopy
 
 import pytest
-from jetp.contracts import ContractError, read_contract
+from jetp._contracts import ContractError, read_contract
 
 JULY = '2026-07-01T00:00:00Z'
 AUGUST = '2026-08-31T00:00:00Z'
@@ -347,3 +347,19 @@ def test_found_document_requires_evidence_but_not_sought_assessment_does_not():
                   sought='Commissioning report', route='Official site', check_date='2026-07-01', result='found')
     with pytest.raises(ContractError, match='evidence'):
         read([entity, attempt])
+
+
+def test_dated_classification_changes_without_renaming_subject_or_route():
+    unknown = assertion('implementation_event', 'unknown-kind', measure='entity_type', value_text='unknown')
+    programme = assertion('implementation_event', 'programme-kind', measure='entity_type', value_text='programme',
+                          supersedes=ref('implementation_event', 'unknown-kind'), correction_reason='Inventory clarified')
+    accepted = decision('programme-reviewed', ref('implementation_event', 'programme-kind'))
+    accepted['reviewed_at'] = '2026-09-03T00:00:00Z'
+    store = read([row('entity', 'project-a', country='VNM'), unknown, programme,
+                  decision('unknown-reviewed', ref('implementation_event', 'unknown-kind')), accepted])
+    early = store.at(AUGUST, policy_version='fixture-v1')
+    late = store.at(SEPTEMBER, policy_version='fixture-v1')
+    assert early.accepted(ref('implementation_event', 'unknown-kind'))
+    assert late.accepted(ref('implementation_event', 'programme-kind'))
+    assert early.records[('entity', 'project-a')] == late.records[('entity', 'project-a')]
+    assert unknown['subject'] == programme['subject'] == ref('entity', 'project-a')

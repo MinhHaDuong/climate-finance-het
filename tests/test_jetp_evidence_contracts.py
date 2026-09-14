@@ -4,7 +4,7 @@ import hashlib
 from copy import deepcopy
 
 import pytest
-from jetp.contracts import ContractError
+from jetp._contracts import ContractError
 from test_jetp_contracts import (
     AUGUST,
     JULY,

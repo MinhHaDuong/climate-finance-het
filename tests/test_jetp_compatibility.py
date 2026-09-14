@@ -7,7 +7,7 @@ from zipfile import ZipFile
 import pytest
 import yaml
 from jetp import build_observatory as legacy
-from jetp.compatibility import MVP_SCHEMA_VERSION, read_mvp_view
+from jetp._compatibility import MVP_SCHEMA_VERSION, read_mvp_view
 
 ROOT = Path(__file__).resolve().parents[1]
 VIEWS = ('overview', 'comparison', 'ZAF', 'IDN', 'VNM', 'SEN')
