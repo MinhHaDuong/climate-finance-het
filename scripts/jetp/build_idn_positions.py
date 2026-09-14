@@ -173,6 +173,7 @@ def _country_output(output: Path) -> bool:
                 or not previous['comparison']):
             return False
         if (not previous['inventory_positions'] or not previous['plan_positions']
+                or not previous['approval_positions']
                 or not previous['legacy_dispositions']
                 or not all(isinstance(row.get('source_fields'), dict) and row['source_fields']
                            and isinstance(row.get('evidence'), dict) and row['evidence']
@@ -182,6 +183,10 @@ def _country_output(output: Path) -> bool:
                 or not all(isinstance(row.get('source_row'), dict) and row['source_row']
                            and row.get('measure') == 'planned_investment'
                            for row in previous['plan_positions'])
+                or not all(isinstance(row.get('source_row'), dict) and row['source_row']
+                           and row.get('measure') == 'approved_finance'
+                           and row['source_row'].get('event_id')
+                           for row in previous['approval_positions'])
                 or not all(isinstance(row.get('original'), dict) and row['original']
                            and row.get('disposition') == 'retained_legacy_authority'
                            for row in previous['legacy_dispositions'])):
