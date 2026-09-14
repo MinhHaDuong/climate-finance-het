@@ -1,10 +1,12 @@
 # JETP backend: evidence, reported positions and reconciled accounts
 
-Design note — 14 September 2026, revision 3 after the
+Design note — 14 September 2026, revision 4 after the
 [Astra and Fable review](jetp-backend-review-2026-09-14/README.md) and the
 [four-scope research review](jetp-design-four-scope-review-2026-09-14/assessment.md).
 Plan phase. The [revision response](jetp-design-four-scope-review-2026-09-14/design-revision-response.md)
-records how the four scopes are addressed.
+records how the four scopes are addressed. Revision 4 adds the explicit source
+registry, sweep and intelligence-origin contracts described in the
+[source-registry response](jetp-design-four-scope-review-2026-09-14/source-registry-response.md).
 This specifies extensions to the existing backend; it does not claim that the proposed schemas or migrations are
 implemented. It develops the [storage contract](jetp-storage.md) and the
 [tracking contract](jetp-tracking.md). The publication programme remains under
@@ -63,7 +65,10 @@ second editable copy of the event history.
 | Store | Format and location | Authority and persistence |
 |---|---|---|
 | Observation coverage and dry searches | Existing `project-coverage.csv`, `dry-searches.csv`, extended with immutable review/attempt IDs | Git; preserve search effort and unavailable evidence independently of project progress |
-| Source catalogue and retrieval history | `data/jetp/sources.csv`, `manifest.csv` | Git; catalogue identifies publications/URLs, manifest preserves each acquisition attempt |
+| Source catalogue and retrieval history | `data/jetp/sources.csv`, `manifest.csv` | Git; stable source identities, immutable metadata revisions and triage; manifest preserves acquisitions |
+| Source watches and sweep plans | `config/jetp-source-watches.yaml`; `data/jetp/source-sweeps/<sweep_id>/plan.json` | Git; reviewed monitoring policies and immutable planned target lists, including deferred targets |
+| Source checks and discoveries | `source-checks.csv`, `source-discoveries.csv` | Git; append-only check attempts, discovered-source links and explicit outcomes; scheduling summaries are derived |
+| Claim-specific source dependencies | `evidence-dependencies.csv` | Git; reviewed, dated dependencies between evidence links, distinct from document-wide edition relations |
 | Source editions and dependencies | New `source-editions.csv`, `edition-snapshots.csv`, `edition-relations.csv` | Git; mandatory mapping between logical editions, exact bytes and upstream editions |
 | Original documents and register snapshots | `data/jetp/documents/objects/<prefix>/<sha256>.<ext>` | Immutable bytes; existing `documents.dvc` pointer in Git; archive ownership remains on padme |
 | Extracted text, OCR and table intermediates | Content-addressed extraction artifacts under `data/derived/jetp/` | Regenerable; retain extraction recipe, tool/version and input/output hashes |
@@ -241,7 +246,10 @@ migration. The core record kinds are `entity`, `agreement`, `perimeter`,
 `occurrence`, `financial_event`, `implementation_event`, `position`, `relation`,
 `evidence`, `editorial_claim`, `adjudication`, `edition`, `edition_snapshot` and
 `edition_relation`, plus `country` and `partnership` subjects and
-`concept_mapping` for reviewed profile entries. Research adds
+`concept_mapping` for reviewed profile entries. Source management adds `source`,
+`source_revision`, `source_watch`, `source_watch_revision`, `source_sweep`,
+`source_check`, `source_discovery` and `evidence_dependency`, resolved by the
+catalogue, watch configuration, sweep plans and corresponding tables. Research adds
 `study`, `protocol_revision`, `frame`, `frame_member`, `observation_attempt`,
 `codebook_revision`, `annotation`, `analysis_run`, `release` and `artifact`. Each kind has a
 registered resolver and schema; generated kinds resolve through pinned manifests
@@ -323,13 +331,111 @@ One inventory row can yield several positions sharing the original row locator.
 An identified project may lack money or financing evidence. Preserve every source
 row, original label and inventory order through extraction and mapping.
 
+### Source registry, monitoring policy and intelligence origin
+
+The registry is both a catalogue of acquired publications and a directory of
+places worth checking. A Secretariat reports page, lender register, newsletter
+feed or a specific document can be a source even before useful bytes are acquired.
+A publication channel is not a document edition, and a publisher's institutional
+status is not a judgement that every claim it publishes is firsthand or correct.
+
+**Catalogue.** Preserve existing `source_id` values and the current fields
+`country`, `authority_category`, `publisher`, `source_type`, `title`,
+`published_date`, `url`, `project_id`, `expected_format`, `priority`, `active` and
+`notes`. Add `source_revision_id`, `source_kind` (`channel` or `document`),
+`intelligence_role_default` (`primary`, `secondary`, `mixed`, `unknown`), rationale,
+triage state/reason, and recording/supersession fields. Source revisions are
+immutable; `source_id` groups their history and `source_revision_id` uniquely keys
+a row. Compatibility readers expose one selected revision per source ID. URLs and
+publisher names are descriptive metadata, not identity keys. Unknown legacy
+classification stays unknown until reviewed.
+
+Triage distinguishes `discovered`, `accepted_for_use`, `context_only` and `rejected`.
+Acquisition is a separate dimension, derived from the manifest: a source can be
+retrieved yet rejected, or accepted as worth using but not yet accessible.
+`active` concerns monitoring eligibility; it does not delete evidence or invalidate
+an older citation. Priority controls search effort, not credibility. Review
+decisions about revisions follow the existing adjudication contract; any status
+column is a validated current-view cache. Rejection/deactivation retains the reason
+and prior history. Register a new source for a distinct channel or publication;
+revise metadata for the same source and preserve redirects through acquisitions.
+
+**Watches.** `config/jetp-source-watches.yaml` defines stable `watch_id` and immutable
+`watch_revision_id`, target `source_id`, owner, purpose, active state, priority,
+expected publication cadence, check interval, optional expected-publication window,
+retrieval method/adapter, route or query, access limitations and call/time budget.
+It also records scope as validated country, sector, language and topic arrays,
+acceptance criteria, recording/supersession fields and reviewed scheduling rules.
+Expected publisher cadence and our check interval are separate: neither promises
+that a report will appear. A watch may target a channel or a changing document URL;
+several watches may share a source for different scopes/routes. Static archived
+editions need not be polled individually. Credentials never belong in the registry.
+
+**Checks and discoveries.** A sweep plan pins `sweep_id`, creation time, owner,
+purpose, registry/configuration revision, budget and the selected watch revisions.
+Its target list includes initial due dates and reasons for explicit deferrals.
+`source-checks.csv` records immutable `check_id`, sweep and watch revision, start/end
+times, actual route/method, outcome, coverage limit, error/retry information and
+recording fields. A check may have multiple acquisition attempts; each manifest
+attempt carries its nullable `check_id`. `source-discoveries.csv` records immutable
+`discovery_id`, `check_id`, discovered `source_id`, discovery locator and
+recording/supersession fields. Repeated sightings of one source remain separate
+check links and do not create duplicate source identities.
+
+Outcomes distinguish `new_candidate`, `changed`, `checked_no_change`, `blocked`,
+`error` and `partial`; a deferred target is not a completed check. A new candidate
+can be logged without fetched bytes. A claim about its contents still requires
+acquisition and the ordinary evidence contract. Listing pagination, date filters
+and other limits determine whether a check was complete. No change means no change
+found through that route and scope, not proof of no national progress or no new
+publication anywhere. Source checks link to study observation attempts where
+relevant, but a successful channel check alone does not establish project follow-up.
+
+**Primary and secondary intelligence.** `authority_category` identifies the kind
+of publisher; `intelligence_role_default` describes expected information origin
+for discovery/triage. Neither replaces claim-level assessment. Extend each
+`evidence-links.csv` row with a reviewed `intelligence_role` using the same four
+values, `origin_rationale` and `upstream_status` (`linked`, `cited_not_acquired`,
+`unknown`, `not_applicable`), with an upstream citation description when useful.
+The link concerns one source's support for one assertion: the same document can
+be primary for one claim and secondary for another. Missing assessment is unknown;
+no catalogue default silently becomes a verified claim classification.
+
+Primary evidence originates the relevant record, observation or testimony;
+secondary evidence relays or interprets another origin. These labels do not rank
+truthfulness or imply direct physical measurement. A newspaper interview can be
+primary evidence of an official's statement, without proving a payment settled.
+An official report repeating a lender's total is secondary for that total. A
+source's own estimated series still needs its estimation method and qualifiers.
+When a passage combines origins, split evidence links where possible; otherwise
+retain `mixed` and explain the ambiguity. Accepted secondary evidence can support
+an attributed position; metric eligibility remains governed by section 5.
+
+`evidence-dependencies.csv` has stable dependency IDs, downstream/upstream evidence
+IDs, relation (`quotes`, `reproduces`, `derived_from`, `translation_of`), rationale,
+recording/supersession fields and review decisions. Both ends must resolve to
+acquired evidence. If the upstream is known only by citation, retain that citation
+and `cited_not_acquired` status rather than inventing an evidence ID. An unknown
+origin remains `unknown`; `linked` requires a reviewed dependency row.
+Use `edition-relations.csv` for broader document dependencies. Neither a different
+publisher nor a different URL proves independent confirmation. Dependency and
+occurrence decisions prevent copied claims from inflating support or amounts;
+unknown independence remains explicit. These fields describe origin, not the
+supporting/contradicting/contextual role already carried by evidence links.
+
 ### Evidence, editions and acquisitions
 
 `sources.csv` keeps its curated source/URL IDs. An acquisition attempt has a stable
-`acquisition_id`, `source_id`, `retrieved_at`, `recorded_at`, outcome and, when material exists,
-`document_sha256`. Allocate collision-resistant attempt IDs; timestamps alone are
+`acquisition_id`, `source_id`, `source_revision_id`, nullable `check_id`,
+`retrieved_at`, `recorded_at`, outcome and, when material exists,
+`document_sha256`. A check-linked acquisition also has `check_role` (`target` or
+`discovered_document`): target acquisitions resolve to the pinned watch source;
+discovered-document acquisitions require a discovery link for that check/source.
+Direct acquisitions outside a sweep leave check fields null. Allocate collision-resistant attempt IDs; timestamps alone are
 not unique across runs. Migrate old attempts with a committed row-to-ID crosswalk,
-retaining repeated and failed attempts. A 304 acquisition may reference the prior
+retaining repeated and failed attempts. Pin the consulted source revision and the
+actual requested/final URL, including redirects; validate its source identity.
+A 304 acquisition may reference the prior
 material hash; a failed attempt without bytes cannot support document evidence.
 
 The following Git tables are mandatory for snapshot-backed assertions:
@@ -605,6 +711,9 @@ specifies whether historical eligibility may use subsequently discovered evidenc
 and which publication/admission constraints apply; retrospective reconstruction
 must not masquerade as information known before intervention. A source correction,
 a protocol amendment and a codebook/mapping revision are different change reasons.
+Source classifications, watch policies and evidence-origin/dependency decisions
+also obey immutable revisions and knowledge cutoffs. Changing today's priority,
+owner or origin assessment cannot rewrite an earlier sweep plan or released claim.
 Each receives a new immutable revision and a dependency impact report. A corrected
 current account cannot silently refresh a released study, its frame or its results.
 A revised study export/run receives a new descriptor while retaining the old one.
@@ -621,7 +730,36 @@ mutable locator nor a row-content hash alone defines enduring identity.
 
 ## 7. Updating and publication
 
-1. **Discover:** check official report inventories and subsequent official news.
+### Registry-driven sweeps
+
+At a deliberate refresh, derive a queue from active sources with triage
+`accepted_for_use` or `context_only` and reviewed watches, plus discovered
+candidates explicitly selected for triage.
+Freeze the target watch revisions and scheduling policy before checks start.
+For each watch, derive `last_attempt_at`, `last_successful_check_at`,
+`last_changed_at`, failure streak and `next_check_at` from its policy and check log.
+These are generated views, not separately editable catalogue fields.
+
+A complete successful check advances the normal check interval; blocked, failed
+or partial checks follow the pinned retry policy and retain the previous successful
+coverage date. Expected-publication windows can accelerate checks only by an
+explicit policy rule. A manual scheduling override is a new reviewed watch revision
+with a reason. Retired watches remain in history. Due-date rules specify UTC,
+calendar/interval handling and retry bounds so replaying a queue is deterministic.
+
+The sweep summary is generated against the frozen plan. Every target resolves to
+completed, partial/failed or explicitly deferred, with check IDs and reasons;
+new out-of-plan targets require a linked supplemental plan. Report new candidates,
+changed documents, unchanged checks and access gaps separately. Acquisition hashes
+trigger candidate review, not automatic promotion of content. Triage discoveries
+before use; a rejected source stays discoverable in history. Sweep completion
+means the planned effort is accounted for, not that all sources were accessible
+or all assertions have been reviewed. No unattended scheduler is implied.
+
+### Evidence refresh and publication
+
+1. **Discover:** run the planned source checks, including official report
+   inventories, subsequent official news and relevant secondary leads.
    Record the named document, routes, search date, budget and acceptance criteria.
    Recheck South Africa Q2 and other successor reports during refreshes; do not
    imply background monitoring merely because a refresh policy exists.
@@ -848,6 +986,9 @@ implement this data model. The two-link UI increment is also still pending.
 | `source-claims.csv` includes structured facts in text and semicolon joins | Promote measurable assertions to typed positions and relational evidence links; preserve prose claims and legacy IDs |
 | `project-source-links.csv` is broad, project-level linkage | Keep it for discovery/context; add assertion-specific evidence links and snapshot identity |
 | Sources and manifest preserve hashes but lack stable acquisition IDs | Crosswalk attempt IDs; add mandatory edition/snapshot/dependency mapping and tuple validation |
+| Source catalogue has authority/type/priority/active fields but no explicit watch contract | Preserve source IDs, introduce immutable metadata revisions and reviewed watch policies; derive scheduling from check logs |
+| Old retrievals predate registry-driven sweeps | Retain attempts with null check IDs and explicit unknown historical metadata; never invent completed sweeps |
+| Primary/secondary origin is not systematically coded | Initialise unknown roles, review claim-level origin and add specific dependency links without treating official status as firsthand evidence |
 | Exporter picks most advanced coded financing stage | Generate as-of multidimensional accounts; retain reported versus inferred distinctions |
 | Country headline is manually configured with one source | Separate principal/news roles from headline claim IDs and its multiple evidence inputs |
 | Country Markdown is exported without statement-level dependencies | Add editorial claim IDs and evidence joins, preserving useful existing prose |
@@ -925,6 +1066,19 @@ Then test these independent failure cases:
 - A completed-state observation creates neither commissioning nor payment dates.
   A frozen edition renders without network/DVC access; raw-evidence replay is a
   separate check against the pinned internal archive where access is allowed.
+
+Source-management implementation must additionally prove that a blocked check
+records an attempt without advancing successful coverage; a complete unchanged
+check advances scheduling without creating an event; and every frozen sweep target
+has a check result or explicit deferral. Repeated discovery preserves one source
+identity with multiple discovery links. A publisher/cadence/classification revision
+must leave an old sweep and evidence-cutoff query unchanged. Acquisitions referencing
+a mismatched source revision or check/watch target fail validation; discovery-page
+and linked-document acquisitions distinguish their actual source IDs and roles.
+A newspaper interview and an official reprint must permit different claim-level
+origin classifications, while copied reports cannot create independent support
+or duplicate payments. An unresolved upstream citation must not manufacture an
+archived evidence reference.
 
 Research implementation adds a small substantive fixture: reconstruct a
 pre-intervention frame with one active and one cancelled operation, retain both
