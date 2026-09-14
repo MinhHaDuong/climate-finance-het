@@ -46,3 +46,19 @@ Build from Markdown dossiers plus frozen CSV/JSON. Initial hosting is static; no
 ## GitHub planning issue
 
 https://github.com/MinhHaDuong/climate-finance-het/issues/1335
+
+## Progress audit, 14 September 2026
+
+The local static MVP exists in PR #1343 and exercises country synthesis, project
+pages, filters, source links, downloads and historical browsing. This does not
+close the public-site ticket. After the scientific fixes and 0726 release checks,
+review keyboard navigation, stable deep links, edition metadata and reconciliation
+of displayed aggregates. Resolve hosting/public URL using the concrete preview,
+then verify the deployed route. The 97 closed World Bank operations remain a
+labelled descriptive reference pool; analytical cohort work belongs to 0730.
+
+Check export size as the portfolio grows: the corrected ZAF JSON is approximately
+508 KB, close to the repository's 512,000-byte file cap. Before expanding it,
+measure payload/load costs and split country/project handoffs if needed while
+preserving offline downloads and complete provenance. This is not a reason to
+introduce a live database.

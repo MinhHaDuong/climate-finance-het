@@ -1,3 +1,9 @@
+> **Statut — matériau historique, 14 septembre 2026.** Le [programme adopté le
+> 13 septembre](jetp-observatory-and-papers-plan.md) remplace le cadrage et les
+> conclusions prédéterminées ci-dessous. Ces notes ne constituent pas les résultats
+> des nouveaux papiers. Le recadrage suit les tickets 0729–0733 ; les comparaisons
+> porteront sur les étapes observables de préparation et de financement.
+
 <!-- Atterri (ticket 0709, 2026-09-10), matériau de conception pour un
      livrable futur (0711) — pas encore câblé. Composé depuis
      `jetp-cr-reunion-2026-09-08.md` et les notes du 2026-09-08/2026-08-10 de

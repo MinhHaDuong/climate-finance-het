@@ -45,3 +45,18 @@ Implement the Markdown/CSV publication boundary in `docs/jetp-storage.md`. Valid
 ## GitHub planning issue
 
 https://github.com/MinhHaDuong/climate-finance-het/issues/1334
+
+## Progress audit, 14 September 2026
+
+PR #1343 supplies an offline preview, 383 named portfolio identities, 21 unnamed
+slots, source-linked country exports and national reported headlines. This is
+partial delivery, not a citable release. The scientific fixes in that PR remain
+part of 0734 until validated.
+
+Next release work: audit the register-to-financial-status mapping, especially the
+South African source-regime category; encode programme/component and tranche
+relationships needed for additive aggregates; expose constituent records for any
+new total; freeze a release descriptor, dictionary, validation report and reuse
+terms. Keep source coverage distinct from implementation. Explicitly decide which
+aggregates are defensible and which remain unavailable. Do not treat 301 registered
+sources as 301 independent confirmations.

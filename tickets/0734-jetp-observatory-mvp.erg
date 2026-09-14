@@ -2,12 +2,13 @@
 Title: Build a visible JETP observatory MVP with historical comparison
 Created: 2026-09-13
 Author: HDMX-coding-agent
-Closed: Local MVP steps 1–4 implemented and validated; public deployment remains in 0727
 
 --- log ---
 2026-09-13T21:00Z HDMX-coding-agent created User authorises steps 1–4, aggregate synthesis and a large completed-project comparison bundle.
 
 2026-09-13T20:55Z HDMX-coding-agent closed — Local MVP steps 1–4 implemented and validated; public deployment remains in 0727
+2026-09-14T04:24Z HDMX-coding-agent reopened — Scientific export review requires fixes in PR #1343; GitHub #1342 remains open.
+
 --- body ---
 
 ## Context
@@ -53,3 +54,10 @@ https://github.com/MinhHaDuong/climate-finance-het/issues/1342
 Source/transform commit 58e21737; frozen handoff b690b25e. See
 `docs/jetp-observatory-mvp-validation.md` for test IDs, browser checks and the
 full-suite environment rerun. Local preview: http://127.0.0.1:8765.
+
+## Reopened scientific acceptance
+
+- [ ] Date roles and precision preserve real event versus observation/report timing
+- [ ] Confirmed/provisional/contextual link adjudication survives CSV, JSON and browser display
+- [ ] Historical acquisition dates and page provenance come from source snapshots
+- [ ] Real-record regressions, regenerated views and required checks pass; review findings have evidence of resolution

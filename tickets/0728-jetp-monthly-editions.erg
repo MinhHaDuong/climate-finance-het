@@ -47,3 +47,13 @@ Use `data/jetp/editorial/editions/` and versioned descriptors under `data/jetp/r
 ## GitHub planning issue
 
 https://github.com/MinhHaDuong/climate-finance-het/issues/1336
+
+## Progress audit, 14 September 2026
+
+Storage directories and conventions exist, but no immutable edition descriptors,
+public edition history or two-edition rehearsal has been delivered. A refreshed
+preview is not a monthly release. Next: freeze edition one under 0726, then exercise
+this ticket's correction/late-report/failed-retrieval fixture before publication.
+Use source-specific acquisition metadata; advancing an edition cutoff must not
+redate unchanged source snapshots. Report release review effort and nominate an
+owner; unattended scheduling remains outside the agreed first implementation.
