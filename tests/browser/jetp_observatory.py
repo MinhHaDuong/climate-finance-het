@@ -7,6 +7,7 @@ collected by the Python unit suite: browser installation is a developer tool.
 import argparse
 import json
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from playwright.sync_api import sync_playwright
 
@@ -17,6 +18,16 @@ def check_site(url, output):
         browser = playwright.chromium.launch(headless=True, args=['--no-sandbox'])
         page = browser.new_page(viewport={'width': 1440, 'height': 1100})
         errors = []
+        external_requests = []
+
+        def local_only(route):
+            if urlsplit(route.request.url).netloc == urlsplit(url).netloc:
+                route.continue_()
+            else:
+                external_requests.append(route.request.url)
+                route.abort()
+
+        page.route('**/*', local_only)
         page.on('pageerror', lambda error: errors.append(str(error)))
         page.goto(url)
         page.wait_for_selector('.country-grid')
@@ -59,6 +70,11 @@ def check_site(url, output):
             page.locator('a[download][href="data/comparison.json"]').click()
         downloaded = json.loads(Path(download.value.path()).read_text())
         assert len(downloaded['projects']) == count
+        for view in ('overview', 'comparison', 'ZAF', 'IDN', 'VNM', 'SEN'):
+            with page.expect_download() as download:
+                page.locator(f'a[download][href="data/{view}.json"]').click()
+            actual = Path(download.value.path()).read_bytes()
+            assert actual == page.request.get(url + f'/data/{view}.json').body()
         for code in ('ZAF', 'IDN', 'VNM', 'SEN'):
             page.goto(url + '/#country/' + code)
             page.wait_for_selector('.markdown h2')
@@ -69,6 +85,7 @@ def check_site(url, output):
             page.wait_for_timeout(150)
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'), route
         assert not errors, errors
+        assert not external_requests, external_requests
         browser.close()
         print(f'Browser checks passed; {count} historical records; screenshot: {output}')
 
