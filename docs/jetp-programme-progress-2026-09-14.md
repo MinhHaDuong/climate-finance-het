@@ -64,3 +64,34 @@ candidates too. Do not wait for construction, full website deployment or complet
 four-country reconciliation. Do not use the closed-only pool as the analytical
 sampling frame. The feasibility memo chooses the short paper's defensible scope;
 0730 then estimates comparisons and 0732 builds the central figure/manuscript.
+
+## Scientific corrections and comparator discussion
+
+Agent correction commit `f8a407de` records completed fixes and regenerated outputs
+from `e35988a7`. Parent probes confirm observation/publication versus event dates,
+provisional Linguere links and source-specific historical acquisition metadata.
+The agent reports an uninterrupted full suite: 2,506 passed /25 skipped, alongside
+1,552 fast passes /7 skipped, 337 lint passes /6 skipped and browser checks. This
+is focused verification evidence; the draft PR has not passed the full formal
+merge gate and the MVP ticket remains open.
+
+The corrected 451-observation timing registry has six exact event days, two
+approval-year intervals and 443 observations with unknown event precision. This
+measures current coding, not the availability of all source histories; it is a
+reason to execute 0729 before constructing duration comparisons.
+
+The user proposed a broader synthetic pool of comparable beneficiary countries
+and asked what would make the comparison causal. Tickets 0729/0730 now explicitly
+audit that alternative, including contemporary non-JETP operations, admission rules
+and pre-treatment trajectories where available. Country-status criteria remain
+to be chosen. Matching improves a benchmark but does not itself identify a causal
+effect; project admission and partnership-wide effects must be distinguished.
+
+## Author decision following this audit
+
+The author subsequently requested a causal short paper and asked to revise the
+tickets. 0729, 0730 and 0732 now make identification mandatory along the short-paper
+path, with a frozen viable design before primary estimation and a return-to-author
+decision if it is not feasible. Earlier optional-causal wording is superseded.
+The next action is an identification-and-observation feasibility dossier, not
+immediate causal estimation and not merely enlargement of the historical pool.

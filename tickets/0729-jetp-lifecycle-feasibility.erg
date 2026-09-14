@@ -1,5 +1,5 @@
 %erg 0.1
-Title: Audit feasibility of JETP versus historical lifecycle comparisons
+Title: Establish a feasible causal design for JETP project acceleration
 Created: 2026-09-13
 Author: HDMX-coding-agent
 
@@ -10,11 +10,18 @@ Author: HDMX-coding-agent
 
 ## Context
 
-The intended short paper compares regular pre-JETP energy projects with explicitly attributed JETP projects. We need comparable transition dates, not more aggregate mobilisation figures. Pre-approval histories may be selectively missing.
+The short paper now targets a causal estimate of JETP acceleration (author decision, 14 September 2026). Establish a credible counterfactual and observable early-stage outcomes before selecting an estimator. More dates or a better matched pool alone do not establish identification. Pre-approval histories and JETP admission may be selectively observed.
 
 Plan: `conception/jetp-observatory-and-papers-plan.md`. Parent tracker: 0725.
 
 ## First test
+
+First identification challenge: a lender selects projects already near approval
+into JETP, while a common calendar shock speeds up every country. A simple
+JETP-versus-old-completed-project comparison must fail the causal acceptance
+check even if observed country covariates balance. State what additional
+assignment or longitudinal evidence could distinguish either bias from an effect.
+
 
 First documentary acceptance exercise: trace one mature-on-JETP-entry project, one pending proposal and one historical comparator from sources into dated stages. A publication date substituted for an event date, or a pending proposal dropped as missing, must be detected. Record a failed initial extraction before refining the coding protocol.
 
@@ -28,7 +35,7 @@ Select 10–15 named JETP investment projects by explicit lender/technology rule
 - [ ] Both endpoints and source locators audited for each proposed interval
 - [ ] Historical pending/withdrawn proposal coverage and survivorship bias assessed
 - [ ] JETP entry and earlier project history distinguished
-- [ ] Stage-specific go/narrow/defer decision and justified scope for 0730; no acceleration claim required
+- [ ] Stage-specific observation decision AND a documented causal-design go/narrow/defer decision for 0730; positive acceleration is never required
 
 ## Validation
 
@@ -68,3 +75,85 @@ each comparable interval and why others do not. It precedes any acceleration
 figure. Prefer approval→signature as a candidate to audit alongside the other
 agreed transitions, not a predetermined outcome. If identification histories are
 unobservable, explicitly narrow the question rather than substituting pledge age.
+
+## Broader comparator pool and causal-identification audit
+
+User discussion on 14 September opens a pooled/weighted reference from other
+beneficiary countries with comparable pre-treatment conditions. Audit this option
+alongside within-country comparisons; do not restrict discovery to four countries.
+The precise meaning of comparable status remains to be settled in the protocol.
+Candidate dimensions include historical income/lending eligibility and energy-sector
+conditions, alongside project lender/instrument/technology and maturity. Match
+country characteristics at the relevant historical baseline, not today's status;
+do not condition on subsequent project success or post-JETP financing choices.
+
+Distinguish two estimands before selecting a design: the effect of project-specific
+JETP support, and the total effect of a partnership on a country's eligible energy
+pipeline. Audit dated eligibility/admission rules, candidate lists including
+rejected/deferred proposals, and any genuine discontinuity or exogenous rollout.
+Do not presume such an assignment mechanism exists. For a country-level design,
+audit repeated pre- and post-JETP outcomes in both treated and candidate comparator
+countries, concurrent reforms, anticipation, spillovers and consistent measurement.
+Record donor-pool overlap and exclusions. Four treated countries limit inference;
+large project counts are not large numbers of independent policy assignments.
+
+A matched historical pool is not automatically a formal synthetic control.
+Old completed operations alone cannot distinguish treatment effects from calendar
+changes without further assumptions. Include contemporary non-JETP operations in
+the feasibility search where appropriate, and retain unfinished observations.
+Deliver a causal-design go/narrow/defer assessment separately from the endpoint
+coverage decision. A descriptive benchmark can remain an observatory output if causal
+identification is not credible, but it does not complete the causal short-paper path.
+
+Method pointers: World Bank Impact Evaluation in Practice (assignment rules and
+counterfactual designs), https://www.worldbank.org/en/programs/sief-trust-fund/publication/impact-evaluation-in-practice ;
+Abadie, Diamond and Hainmueller, https://www.nber.org/papers/t0335 ; historical
+country classifications, https://datahelpdesk.worldbank.org/knowledgebase/articles/906519-world-bank-country-and-lending-groups .
+
+## Author decision: causal short paper, 14 September 2026
+
+Causal identification is the target, not an optional interpretation added after
+estimating historical differences. This requirement supersedes earlier language
+in this ticket allowing a descriptive benchmark to complete the short-paper path.
+The observatory and data paper can proceed independently.
+
+Required design dossier before closing this ticket:
+
+- Define one primary estimand, population, unit and treatment onset: the total
+  partnership effect on an eligible pipeline, or a narrower project-support effect.
+  Explain which substantive question that choice answers and which it cannot.
+  A loan signature cannot define treatment when signature speed is the outcome.
+- Compare evidence for candidate designs: a genuine allocation cutoff/exogenous
+  rollout if documented; otherwise longitudinal difference-in-differences or a
+  synthetic-country comparison with adequate pre-treatment outcomes. Matching
+  alone needs an explicit, defensible no-unmeasured-confounding assumption; a
+  large donor pool or good balance is not proof of it. Do not invent an instrument.
+- Identify the candidate population before observing treatment outcomes. Record
+  admission rules, maturity and treatment timing without immortal-time bias;
+  separate project selection from policy-wide treatment. Do not match on outcomes
+  or variables changed by the JETP when estimating its total effect.
+- Audit contemporary untreated comparators and earlier outcomes, common support,
+  measurement stability, concurrent policies, anticipation, spillovers and attrition.
+  Distinguish missing events from right/interval censoring and cancellation.
+- Specify falsification/placebo and sensitivity checks, the level of treatment
+  assignment for uncertainty, minimum useful outcome precision and a feasibility
+  assessment of statistical power. Four treated countries are not hundreds of
+  independent treatments merely because they contain many projects.
+- Deliver the evidence audit (including the three-case check and 10–15 JETP cases),
+  a short identification memo, and a proposed protocol to freeze before primary
+  effect estimation. Record existing outcome inspection; already-read material
+  is development evidence, not a prospectively held-out test.
+
+GO means a defensible design with obtainable data. NARROW means a credible causal
+claim for a smaller population, intervention or stage, explicitly justified.
+DEFER means explain the missing identifying evidence and return an author scope
+choice; do not silently substitute a descriptive short paper. Null or adverse
+causal effects remain fully acceptable. No completion criterion requires a
+statistically significant or positive effect.
+
+Additional exit criteria:
+
+- [ ] Primary estimand/treatment and identification assumptions stated before effect estimation
+- [ ] Candidate designs judged against actual assignment/longitudinal evidence
+- [ ] Contemporary comparator support, threats, falsification and uncertainty plan documented
+- [ ] Frozen-protocol proposal and causal go/narrow/defer memo linked for 0730

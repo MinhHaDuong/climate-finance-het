@@ -80,8 +80,9 @@ cannot identify the probability or speed of approval among all proposals.
 
 Historical comparisons establish relative speed, not automatically a causal
 JETP effect. Instrument substitution, absorption constraints and ownership
-arrangements are hypotheses to investigate, not findings to manufacture. A null,
-mixed or unidentifiable acceleration result is publishable if bounded honestly.
+arrangements are hypotheses to investigate, not findings to manufacture. A null or mixed effect remains publishable under a credible design. If causal
+identification is unavailable, return the short-paper scope decision to the author
+rather than automatically substituting a descriptive paper.
 
 ## Feasibility decision before scaling analysis
 
@@ -137,3 +138,27 @@ merely because their individual tickets are closed.
 
 [GitHub issue #1333](https://github.com/MinhHaDuong/climate-finance-het/issues/1333)
 links the eight implementation and publication issues (#1334–#1341).
+
+## Comparator extension considered on 14 September 2026
+
+The feasibility audit will also examine a synthetic (pooled or weighted) reference
+of other beneficiary countries with comparable pre-treatment conditions, rather
+than restricting the candidate universe to the four JETP countries. Country-status
+criteria remain a protocol decision. Within-country comparisons remain a useful
+sensitivity reference, not an exclusive constraint. Tickets 0729/0730 now carry
+the expanded pool and a separate causal-identification audit. A project-support
+effect and a country-wide partnership effect require different treatments and
+sampling frames. No formal synthetic-control design or causal interpretation is
+automatically adopted by widening the pool.
+
+## Short-paper decision, 14 September 2026
+
+The author now targets a **causal short paper**. Ticket 0729 selects and audits
+identification alongside endpoint availability; 0730 implements the frozen viable
+design; 0732 writes the causal argument and central figure. Stronger comparative
+coverage alone is insufficient. The treatment may be partnership-wide or a more
+limited project-support intervention, but that choice must precede estimation.
+A broader beneficiary-country pool is a candidate comparator strategy, not a
+predetermined synthetic-control method. If no credible design is supported, the
+audit returns to the author for an explicit decision. The observatory, monthly
+editions and data paper remain useful and can proceed regardless of that outcome.

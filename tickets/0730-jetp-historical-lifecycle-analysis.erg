@@ -1,5 +1,5 @@
 %erg 0.1
-Title: Build comparable JETP and pre-JETP lifecycle observations
+Title: Implement the approved causal JETP lifecycle design
 Created: 2026-09-13
 Author: HDMX-coding-agent
 Blocked-by: 0729
@@ -13,7 +13,7 @@ Blocked-by: 0729
 
 ## Context
 
-After the pilot, build only the comparisons that have credible observation on both sides. Reuse the CRS pipeline 0713 and reconciliation 0721; lender histories complement rather than silently replace those data.
+After 0729 establishes a defensible causal design, build and analyse the observations required by that design. Reuse the CRS pipeline 0713 and reconciliation 0721; lender histories complement rather than silently replace those data.
 
 Plan: `conception/jetp-observatory-and-papers-plan.md`. Parent tracker: 0725.
 
@@ -23,7 +23,7 @@ First failing analysis fixture: an unfinished project, a cancelled project, an i
 
 ## Actions
 
-Freeze the pilot-approved cohort protocol before estimating effects. Extract source-linked dated histories and choose matching/stratification by country, lender, instrument and technology as sample support permits. Separate financial operations/tranches from project histories. Produce risk sets, sample counts, missingness and milestone-attainment/duration comparisons with uncertainty. Test sensitivity to maturity on entry, period composition and attribution. Keep post-signature execution distinct from pre-approval selection. If the pilot defers all duration comparisons, deliver a reproducible coverage result and record why no estimate is defensible.
+Freeze the pilot-approved cohort protocol before estimating effects. Extract source-linked dated histories and choose matching/stratification by country, lender, instrument and technology as sample support permits. Separate financial operations/tranches from project histories. Produce risk sets, sample counts, missingness and milestone-attainment/duration comparisons with uncertainty. Test sensitivity to maturity on entry, period composition and attribution. Keep post-signature execution distinct from pre-approval selection. If 0729 defers causal identification, stop primary effect estimation and return the scope decision to the author. A coverage result may document the blockage but does not complete the causal short-paper analysis.
 
 ## Exit criteria
 
@@ -46,3 +46,47 @@ Keep historical comparator observations separate from the JETP portfolio and ver
 ## GitHub planning issue
 
 https://github.com/MinhHaDuong/climate-finance-het/issues/1338
+
+## Comparator design extension, 14 September 2026
+
+Implement the 0729 decision on a wider pooled/weighted beneficiary-country
+reference, with a within-country sensitivity comparison where supported. Freeze
+historical country-status definitions, project strata, calendar windows, overlap
+rules and weights before outcome estimation. Report effective sample size,
+country/lender concentration, balance, unsupported strata and sensitivity to
+excluding individual comparator countries. Retain active/cancelled observations.
+Do not extrapolate silently from unsupported matches.
+
+Following 0729's credible causal-design decision, state the exact treatment and target
+population, assignment/counterfactual assumptions and policy-level uncertainty.
+For pre/post designs, use contemporary untreated outcomes as well as history;
+account for different adoption dates and common shocks. Check anticipation,
+spillovers and concurrent policies. Good pre-period fit does not prove identification.
+Do not adjust for instrument or maturity measured after treatment when estimating
+the partnership's total effect; baseline matching and mediator analysis answer
+different questions. Otherwise report failure to establish the causal design and seek an author scope decision; a separately labelled descriptive benchmark does not satisfy this ticket.
+A formal synthetic-control study requires a supported longitudinal outcome design,
+not merely a weighted pool of closed operations.
+
+## Causal implementation gate, author decision 14 September 2026
+
+This gate supersedes earlier optional-causal wording. Do not start primary effect
+estimation until 0729 has a documented GO/NARROW design and its protocol is frozen.
+Record the primary estimand/outcome/horizon, treatment rule, population, comparator
+selection/weights, estimator, censoring/cancellation handling, uncertainty and
+falsification/sensitivity procedures. Label exploratory changes and deviations.
+A preregistration may improve transparency but cannot repair weak identification.
+
+First design-specific test: a null-effect fixture with baseline maturity selection
+and a shared calendar shock must expose the naive comparison's bias and verify
+that the chosen implementation targets the declared contrast under its stated
+assumptions. Add a violated-assumption fixture to demonstrate the method's limit;
+simulation success is not validation of the real assignment mechanism.
+
+Exit additions:
+
+- [ ] 0729 causal design decision and immutable protocol recorded before primary estimation
+- [ ] Cohort and estimator implement the same treatment, time zero and target population
+- [ ] Design-appropriate placebo/falsification, sensitivity and treatment-level uncertainty reported
+- [ ] Main effect and uncertainty reproducible, including null/adverse outcomes; no causal claim based on matching alone
+- [ ] Identification failures trigger a recorded author scope decision, not an unannounced descriptive substitution
