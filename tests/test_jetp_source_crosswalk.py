@@ -181,3 +181,23 @@ def test_tuple_cross_source_and_origin_are_not_inferred(tmp_path):
     assert evidence['upstream_status'] == 'cited_not_acquired'
     assert result['acquisitions'][0]['support_group_id'] == result['acquisitions'][1]['support_group_id']
     assert result['acquisitions'][0]['independence'] == 'unknown'
+
+
+@pytest.mark.parametrize('filename', ['source-crosswalk-0763.json.gz.dvc', 'README.md', '.gitignore', 'release.json'])
+@pytest.mark.parametrize('alias_kind', ['direct', 'symlink', 'hardlink'])
+def test_candidate_preserves_release_recovery_metadata(tmp_path, filename, alias_kind):
+    fixture(tmp_path)
+    metadata = tmp_path / 'data/jetp/releases' / filename
+    metadata.parent.mkdir(parents=True)
+    metadata.write_text('{"release_id": "accepted"}\n')
+    output = metadata
+    if alias_kind != 'direct':
+        output = tmp_path / 'candidate-alias.json'
+        if alias_kind == 'symlink':
+            output.symlink_to(metadata)
+        else:
+            output.hardlink_to(metadata)
+    before = metadata.read_bytes()
+    with pytest.raises(ValueError):
+        builder.write_crosswalk(tmp_path, output)
+    assert metadata.read_bytes() == before
