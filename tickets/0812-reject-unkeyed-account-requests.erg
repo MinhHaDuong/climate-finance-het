@@ -1,0 +1,43 @@
+%erg 0.1
+Title: Reject unkeyed requested accounts before compatibility matching
+Created: 2026-09-14
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-14T21:45Z HDMX-coding-agent created
+--- body ---
+
+## Context
+
+The ticket0768 /roar sweep at main 6e9bbde0408f9749c6293913a842b69314345dbc found a remaining compatibility gap in scripts/jetp/_reconciliation.py. The final movement-ownership regression requires a keyed request, but the request itself is not validated. _compatible compares missing opening agreement/perimeter fields to None request identifiers, so both comparisons succeed. A reviewed zero opening with complete empty coverage then produces an exact closing for an unidentified account. This is a false financial assertion, not a claim that the source establishes a real zero account.
+
+Discovery follows merged PR1383. Keep its fail-closed movement checks, disjoint occurrence cover, original-currency boundary, and unavailable real-country results. Parent migration tracker0760 remains open. This ticket authorizes planning only until execution is launched.
+
+## First test
+
+Execute the following equivalent fixture against reconcile_gross_disbursement:
+
+- agreement_id=None, perimeter_id=None, currency='EUR'.
+- opening={'accepted': True, 'basis': 'gross_disbursement', 'currency': 'EUR', 'amount': '0', 'cutoff': '2024-01-01', 'review_decision_id': 'r', 'evidence_ids': ['e']}; both ownership keys absent.
+- movements=[], flows=[], coverage={'complete': True, 'reviewer': 'r', 'decision_id': 'c'}, cutoff='2024-02-01', reported_closing=None.
+
+Current main returns status='exact', reconstructed_closing=Decimal('0'). The first RED must require rejection or unavailable status with reconstructed_closing=None before ownership matching can manufacture an account. Parameterize missing/empty agreement and perimeter request IDs independently; include the fully unkeyed case. Retain a positive reviewed, keyed zero-account control so actual zeros do not become categorically forbidden.
+
+## Scope
+
+Validate the requested agreement and perimeter identities at the public reconciliation boundary before comparing them with input ownership. Keep the existing explicit-key comparison for opening, movements, flows and reported closing. Do not infer identity from input rows, invent admissions, broaden account metrics, change canonical publication, or regenerate country migration artifacts for this isolated helper fix.
+
+## Exit criteria
+
+- [ ] Missing or empty requested agreement/perimeter identities cannot return an exact account, reconstructed closing, or residual.
+- [ ] Each independently invalid request identifier and the both-invalid case have regression coverage, including absent ownership on input rows.
+- [ ] Reviewed keyed zero accounts and existing disjoint-cover, duplicate-occurrence, currency and missing-ownership controls retain their intended results.
+- [ ] No canonical CSV, migration sidecar, accepted MVP view, or ownership/publication setting changes.
+
+## Validation and recovery
+
+Commit the first failing fixture, then the minimum GREEN fix. Run focused reconciliation and contract tests, make check-fast and make lint; apply AGENTS.md pipeline-surface full-suite requirements and qualify any unavailable-input/environment failures honestly. The fix must preserve the accepted MVP and require no data recovery or source refresh. No estimator or additional pilot work is included.
+
+## GitHub planning issue
+
+https://github.com/MinhHaDuong/climate-finance-het/issues/1384
