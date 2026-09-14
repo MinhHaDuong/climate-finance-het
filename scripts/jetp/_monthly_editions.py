@@ -51,6 +51,9 @@ def compare_editions(previous, current):
     if edition == prior_edition:
         raise ValueError('current edition must be later than previous edition')
     before, after = _records(previous), _records(current)
+    missing = sorted(before.keys() - after.keys())
+    if missing:
+        raise ValueError(f"candidate omits prior record IDs: {', '.join(missing)}")
     _sources(previous)
     current_sources = _sources(current)
     unchanged, corrections, late_reports, retractions = [], [], [], []

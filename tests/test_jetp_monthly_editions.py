@@ -73,3 +73,16 @@ def test_release_history_lists_frozen_editions_for_static_site(tmp_path):
          'release_state': 'prepared', 'release_prepared_date': '2026-09-13',
          'publication_date': None},
     ]
+
+
+def test_monthly_report_rejects_candidate_that_drops_prior_record():
+    import pytest
+
+    from jetp._monthly_editions import compare_editions
+
+    previous = {'edition': '2026-09', 'cutoff': '2026-09-13',
+                'records': [{'id': 'retained', 'event_date': '2026-09-01'}], 'sources': []}
+    current = {'edition': '2026-10', 'cutoff': '2026-10-13', 'records': [], 'sources': []}
+
+    with pytest.raises(ValueError, match='omits prior record IDs: retained'):
+        compare_editions(previous, current)
