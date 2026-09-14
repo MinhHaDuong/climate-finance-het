@@ -65,7 +65,7 @@ Reviewed source fingerprints:
 - XML `data/jetp/audit-evidence/0735-round3/kfw/bmz-country.xml`:
   `106dcca9e8cbe791fc0aa933b8c0567aef71f363534f21cffe08a6de9a9d9016`.
 - `scripts/analyze_jetp_kfw_pilot.py`:
-  `97641ec603594c89b867a232a64531e36d92412272a95ad0d3a01b726c884dcf`.
+  `44a1f4fc9ecb13b0950065cc090885f231ec9bcf7234d7145110d4b53e17fd04`.
 - `tests/test_jetp_kfw_pilot.py`:
   `da55a7fc71c515a17a0480cfe6f60d98cad93ef0e0142ac859c71242abf1f67e`.
 - Frozen `selection.csv`:
@@ -155,5 +155,12 @@ selection-freeze commit before final delivery. The author subsequently supplied
 `document-coverage.csv` and resolved the freeze commit as `5a307735`. Acceptance
 tests were rerun after the calculation was renamed to
 `scripts/analyze_jetp_kfw_pilot.py`: 5 passed. The fingerprints above reflect that
-renamed version. No implementation edits or git mutations were made by this
-reviewer.
+final version. A subsequent wrapper-only diff imports `parse_io_args` and
+`validate_io`, keeps explicit `--xml`, requires shared `--output`, validates
+paths and forwards the same arguments to `run`; no calculation change was
+introduced by that diff. Acceptance tests again passed (5/5). The settings
+extracted to `config/analysis.yaml` retain the frozen country list, 12-case size,
+participant reference, challenge IDs/cutoff and all landmark dates. The original
+freeze is retained by tag `pilot-0738-selection-freeze`; the author records
+`467e7fab` as its equivalent after rebase. No implementation edits or git
+mutations were made by this reviewer.

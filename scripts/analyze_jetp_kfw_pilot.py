@@ -15,6 +15,7 @@ from pathlib import Path
 from xml.etree import ElementTree as ET
 
 from pipeline_loaders import load_analysis_config
+from script_io_args import parse_io_args, validate_io
 
 CONFIG = load_analysis_config()["jetp_kfw_pilot"]
 COUNTRIES = set(CONFIG["countries"])
@@ -399,10 +400,15 @@ def run(args):
 
 
 def main():
+    io_args, extra = parse_io_args()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--xml", type=Path, required=True)
-    parser.add_argument("--output", type=Path, required=True)
-    run(parser.parse_args())
+    args = parser.parse_args(extra)
+    if io_args.input:
+        parser.error("Use --xml to identify the immutable BMZ export")
+    validate_io(output=io_args.output, inputs=[str(args.xml)])
+    args.output = Path(io_args.output)
+    run(args)
 
 
 if __name__ == "__main__":
