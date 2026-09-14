@@ -212,3 +212,37 @@ def test_existing_release_candidate_remains_replaceable(tmp_path, suffix):
     before = output.read_bytes()
     builder.write_crosswalk(tmp_path, output)
     assert output.read_bytes() == before
+
+
+def test_crosswalk_preserves_unrelated_existing_output_outside_releases(tmp_path):
+    fixture(tmp_path)
+    output = tmp_path / 'unrelated.json'
+    output.write_text('{"release_id":"accepted"}')
+    before = output.read_bytes()
+    with pytest.raises(ValueError, match='recognized'):
+        builder.write_crosswalk(tmp_path, output)
+    assert output.read_bytes() == before
+
+
+@pytest.mark.parametrize('malformation', ['markers_only', 'missing_inputs', 'bad_sources',
+                                        'bad_recovery_inputs', 'wrong_core_version'])
+def test_crosswalk_preserves_malformed_candidate_lookalikes(tmp_path, malformation):
+    fixture(tmp_path)
+    previous = migrate_sources(tmp_path)
+    if malformation == 'markers_only':
+        previous = {key: previous[key] for key in ('schema_version', 'admission_status')}
+    elif malformation == 'missing_inputs':
+        del previous['inputs']
+    elif malformation == 'bad_sources':
+        previous['sources'] = ['not a source record']
+    elif malformation == 'bad_recovery_inputs':
+        previous['recovery_inputs'] = []
+    else:
+        previous['core_contract_schema_version'] = 'unrelated/1'
+    output = tmp_path / 'data/jetp/releases/release.json'
+    output.parent.mkdir()
+    output.write_text(json.dumps(previous))
+    before = output.read_bytes()
+    with pytest.raises(ValueError, match='recognized'):
+        builder.write_crosswalk(tmp_path, output)
+    assert output.read_bytes() == before

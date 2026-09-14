@@ -90,9 +90,11 @@ def test_candidate_still_replaces_an_existing_complete_bundle(capture, tmp_path)
     root, accepted = capture
     before = accepted.read_bytes()
     output = tmp_path / 'candidate.zip'
-    output.write_bytes(before)
+    bundles.build_candidate(root, output, accepted=accepted, builder=lambda *args: None)
+    previous = output.read_bytes()
     bundles.build_candidate(root, output, accepted=accepted, builder=lambda *args: None)
     manifest, _ = bundles._read_bundle(output)
     assert manifest['kind'] == 'candidate'
+    assert output.read_bytes() == previous
     assert output.read_bytes() != before
     assert accepted.read_bytes() == before

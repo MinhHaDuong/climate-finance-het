@@ -26,7 +26,8 @@ def test_interrupted_candidate_preserves_accepted_and_restores_offline(tmp_path,
     archive_hash = hashlib.sha256(accepted.read_bytes()).hexdigest()
     canonical = site_hashes(ROOT / 'deliverables/jetp-observatory')
     candidate = tmp_path / 'candidate.zip'
-    candidate.write_bytes(b'previous complete candidate')
+    build_candidate(ROOT, candidate, accepted=accepted)
+    previous_candidate = candidate.read_bytes()
     calls = []
 
     def interrupted(root, view, output):
@@ -38,7 +39,7 @@ def test_interrupted_candidate_preserves_accepted_and_restores_offline(tmp_path,
     with pytest.raises(RuntimeError, match='interrupted'):
         build_candidate(ROOT, candidate, accepted=accepted, builder=interrupted)
     assert len(calls) == 1
-    assert candidate.read_bytes() == b'previous complete candidate'
+    assert candidate.read_bytes() == previous_candidate
     assert hashlib.sha256(accepted.read_bytes()).hexdigest() == archive_hash
     assert site_hashes(ROOT / 'deliverables/jetp-observatory') == canonical
 
@@ -235,10 +236,13 @@ def test_diff_cli_atomic_report_failure_preserves_prior_report(tmp_path, monkeyp
     tiny_bundle(accepted)
     tiny_bundle(candidate)
     output = tmp_path / 'report.json'
-    output.write_bytes(b'previous complete report')
+    from jetp._observatory_bundle import write_comparison
+
+    write_comparison(tmp_path, accepted, candidate, output)
+    previous_report = output.read_bytes()
 
     def interrupted_replace(source, destination):
-        assert output.read_bytes() == b'previous complete report'
+        assert output.read_bytes() == previous_report
         raise OSError('interrupted report publication')
 
     monkeypatch.setattr('os.replace', interrupted_replace)
@@ -246,7 +250,7 @@ def test_diff_cli_atomic_report_failure_preserves_prior_report(tmp_path, monkeyp
                                      '--input', str(accepted), str(candidate), '--output', str(output)])
     with pytest.raises(OSError, match='interrupted report publication'):
         main()
-    assert output.read_bytes() == b'previous complete report'
+    assert output.read_bytes() == previous_report
 
 
 @pytest.mark.parametrize('mode', ['freeze', 'candidate', 'diff'])
@@ -320,3 +324,150 @@ def test_external_source_recovery_bytes_cannot_be_archive_output(tmp_path, monke
             bundles.build_candidate(root, output, accepted=accepted, source_root=tmp_path,
                                     builder=lambda *args: None)
     assert source.read_bytes() == b'verified source bytes'
+
+
+@pytest.mark.parametrize('writer', ['candidate', 'comparison'])
+@pytest.mark.parametrize('filename', ['candidate.zip.dvc', 'README.md', '.gitignore',
+                                      'release.json', 'other.zip'])
+@pytest.mark.parametrize('alias', ['direct', 'symlink', 'hardlink'])
+@pytest.mark.parametrize('directory', ['data/jetp/releases', 'scratch'])
+def test_writers_preserve_unrelated_outputs(tmp_path, monkeypatch, writer, filename, alias, directory):
+    from jetp import _observatory_bundle as bundles
+
+    accepted = tmp_path / 'accepted.zip'
+    tiny_bundle(accepted)
+    target = tmp_path / directory / filename
+    target.parent.mkdir(parents=True)
+    target.write_bytes(b'{"release_id":"accepted"}\n')
+    output = target
+    if alias != 'direct':
+        output = tmp_path / 'output-alias'
+        if alias == 'symlink':
+            output.symlink_to(target)
+        else:
+            output.hardlink_to(target)
+    (tmp_path / bundles.SITE).mkdir(parents=True)
+    manifest, payloads = bundles._read_bundle(accepted)
+    monkeypatch.setattr(bundles, '_capture', lambda *args: ({**manifest, 'sources': []}, payloads))
+    before = site_hashes(tmp_path)
+    with pytest.raises(ValueError, match='protected|recognized|alias'):
+        if writer == 'candidate':
+            bundles.build_candidate(tmp_path, output, accepted=accepted, builder=lambda *args: None)
+        else:
+            bundles.write_comparison(tmp_path, accepted, accepted, output)
+    assert site_hashes(tmp_path) == before
+
+
+@pytest.mark.parametrize('writer', ['candidate', 'comparison'])
+def test_recognized_outputs_allow_deterministic_reruns(tmp_path, monkeypatch, writer):
+    from jetp import _observatory_bundle as bundles
+
+    accepted = tmp_path / 'accepted.zip'
+    tiny_bundle(accepted)
+    (tmp_path / bundles.SITE).mkdir(parents=True)
+    manifest, payloads = bundles._read_bundle(accepted)
+    monkeypatch.setattr(bundles, '_capture', lambda *args: ({**manifest, 'sources': []}, payloads))
+    output = tmp_path / 'data/jetp/releases' / ('candidate.zip' if writer == 'candidate' else 'report.json')
+
+    def write():
+        if writer == 'candidate':
+            bundles.build_candidate(tmp_path, output, accepted=accepted, builder=lambda *args: None)
+        else:
+            bundles.write_comparison(tmp_path, accepted, accepted, output)
+
+    write()
+    before = output.read_bytes()
+    write()
+    assert output.read_bytes() == before
+
+
+@pytest.mark.parametrize('writer,previous_kind', [('candidate', 'baseline'),
+                                                ('candidate', 'comparison'),
+                                                ('comparison', 'baseline'),
+                                                ('comparison', 'candidate')])
+def test_writers_refuse_other_output_kinds(tmp_path, monkeypatch, writer, previous_kind):
+    from jetp import _observatory_bundle as bundles
+
+    accepted = tmp_path / 'accepted.zip'
+    tiny_bundle(accepted)
+    manifest, payloads = bundles._read_bundle(accepted)
+    output = tmp_path / 'prior-output'
+    if previous_kind == 'comparison':
+        bundles.write_comparison(tmp_path, accepted, accepted, output)
+    else:
+        bundles._write_bundle(output, {**manifest, 'kind': previous_kind,
+                                      'accepted_sha256': 'fixture'}, payloads)
+    before = output.read_bytes()
+    with pytest.raises(ValueError, match='recognized'):
+        if writer == 'candidate':
+            bundles.build_candidate(tmp_path, output, accepted=accepted)
+        else:
+            bundles.write_comparison(tmp_path, accepted, accepted, output)
+    assert output.read_bytes() == before
+
+
+@pytest.mark.parametrize('writer', ['candidate', 'comparison'])
+@pytest.mark.parametrize('alias', ['symlink', 'hardlink'])
+def test_recognized_output_aliases_are_not_rerun_destinations(tmp_path, monkeypatch, writer, alias):
+    from jetp import _observatory_bundle as bundles
+
+    accepted = tmp_path / 'accepted.zip'
+    tiny_bundle(accepted)
+    (tmp_path / bundles.SITE).mkdir(parents=True)
+    manifest, payloads = bundles._read_bundle(accepted)
+    monkeypatch.setattr(bundles, '_capture', lambda *args: ({**manifest, 'sources': []}, payloads))
+    prior = tmp_path / 'data/jetp/releases/prior-output'
+
+    def write(output):
+        if writer == 'candidate':
+            bundles.build_candidate(tmp_path, output, accepted=accepted, builder=lambda *args: None)
+        else:
+            bundles.write_comparison(tmp_path, accepted, accepted, output)
+
+    write(prior)
+    output = tmp_path / 'alias'
+    if alias == 'symlink':
+        output.symlink_to(prior)
+    else:
+        output.hardlink_to(prior)
+    before = site_hashes(tmp_path)
+    with pytest.raises(ValueError, match='alias'):
+        write(output)
+    assert site_hashes(tmp_path) == before
+
+
+@pytest.mark.parametrize('field,value', [('unexplained', 1), ('routes_added', {}),
+                                       ('metadata_only', {}),
+                                       ('intentional_scientific', {'path': 3})])
+def test_comparison_preserves_malformed_report_lookalikes(tmp_path, field, value):
+    import json
+
+    from jetp import _observatory_bundle as bundles
+
+    accepted = tmp_path / 'accepted.zip'
+    tiny_bundle(accepted)
+    previous = bundles.compare_bundles(accepted, accepted)
+    previous[field] = [value]
+    output = tmp_path / 'data/jetp/releases/release.json'
+    output.parent.mkdir(parents=True)
+    output.write_text(json.dumps(previous))
+    before = output.read_bytes()
+    with pytest.raises(ValueError, match='recognized'):
+        bundles.write_comparison(tmp_path, accepted, accepted, output)
+    assert output.read_bytes() == before
+
+
+def test_nonempty_comparison_report_remains_replaceable(tmp_path):
+    from jetp import _observatory_bundle as bundles
+
+    accepted, candidate = tmp_path / 'accepted.zip', tmp_path / 'candidate.zip'
+    tiny_bundle(accepted)
+    tiny_bundle(candidate, headline='Changed', revision='after', event_date='2026-01-01')
+    evidence = {'site/data/ZAF.json/country/headline': {
+        'source': 'fixture', 'reviewer': 'test', 'rationale': 'Documented correction'}}
+    output = tmp_path / 'report.json'
+    report = bundles.write_comparison(tmp_path, accepted, candidate, output, intentional_paths=evidence)
+    assert all(report[key] for key in ('intentional_scientific', 'unexplained', 'metadata_only'))
+    before = output.read_bytes()
+    bundles.write_comparison(tmp_path, accepted, candidate, output, intentional_paths=evidence)
+    assert output.read_bytes() == before
