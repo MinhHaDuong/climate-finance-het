@@ -9,7 +9,7 @@ from jetp._compatibility import MVP_VIEWS
 
 def candidate_fixture():
     """Small structurally complete candidate, without real-data extraction."""
-    return dict(schema_version='country-migration/1', country='ZAF',
+    candidate = dict(schema_version='country-migration/1', country='ZAF',
                 admission_status='unadmitted_candidate', writer_owner='legacy',
                 publication_mode='legacy', inputs={}, recipe_inputs={}, recovery_inputs={},
                 selected_sources=[], reported_positions=[], event_candidates=[],
@@ -18,6 +18,28 @@ def candidate_fixture():
                 identity_review=[], source_regime=[], report_context={},
                 mvp_views={view: {} for view in MVP_VIEWS},
                 comparison={'public_payload_limit_bytes': 512000, 'public_payload_bytes': {}})
+    for role in ('register', 'report'):
+        digest = 'a' * 64
+        edition = {'record_kind': 'edition', 'record_id': role}
+        evidence = {'document_sha256': digest, 'edition': edition, 'locator': role}
+        candidate['selected_sources'].append({'role': role, 'policy': {'role': role},
+            'acquisition': {'document_sha256': digest},
+            'extraction': {'document_sha256': digest, 'locators': [role]},
+            'edition_snapshot': {'record_kind': 'edition_snapshot', 'edition': edition,
+                                 'document_sha256': digest}})
+        candidate['inventory_positions'].append({'inventory_id': role, 'ordinal': 1,
+            'source_role': role, 'source_fields': {'original': role}, 'locator': role,
+            'transition_date': None, 'payment_amount': None, 'evidence': evidence})
+        candidate['reported_positions'].append({'eligible_for_account': False})
+        candidate['inventory_boundaries'].append({'inventory_id': role, 'row_count': 1,
+                                                   'disposition': 'selected'})
+    candidate['legacy_dispositions'] = [{'disposition': 'retained_legacy_authority',
+                                         'original': {'project_id': 'retained'}}]
+    for view in ('ZAF', 'IDN', 'VNM', 'SEN'):
+        candidate['mvp_views'][view] = {'projects': [{'project_id': 'retained'}],
+                                        'record_count': 1, 'country': {}}
+    return candidate
+
 
 
 @pytest.mark.parametrize('alias_kind', ['direct', 'symlink', 'hardlink'])

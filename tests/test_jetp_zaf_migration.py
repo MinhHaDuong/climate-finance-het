@@ -7,13 +7,16 @@ import pytest
 
 
 @pytest.mark.slow
-def test_zaf_candidate_reconciles_inventory_legacy_and_unchanged_views():
+def test_zaf_candidate_reconciles_inventory_legacy_and_unchanged_views(tmp_path):
     from jetp._compatibility import MVP_VIEWS, read_mvp_view
-    from jetp.build_zaf_positions import build_migration
+    from jetp.build_zaf_positions import _country_output, build_migration, encoded
 
     root = Path(__file__).resolve().parents[1]
     before = {p: hashlib.sha256(p.read_bytes()).hexdigest() for p in (root / 'data/jetp').glob('*.csv')}
     result = build_migration(root)
+    output = tmp_path / "candidate.json"
+    output.write_bytes(encoded(result))
+    assert _country_output(output)
     assert len(result['inventory_positions']) == 339
     assert len(result['reported_positions']) == 339
     assert len(result['legacy_dispositions']) == 1084

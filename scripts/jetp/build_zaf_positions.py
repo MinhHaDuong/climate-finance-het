@@ -204,6 +204,25 @@ def _country_output(output: Path) -> bool:
                 or not all(isinstance(previous[key], list)
                            and all(isinstance(row, dict) for row in previous[key]) for key in records)):
             return False
+        sources = previous['selected_sources']
+        inventory = previous['inventory_positions']
+        if (len(sources) != 2 or {row.get('role') for row in sources} != {'register', 'report'}
+                or not all(all(isinstance(row.get(key), dict) and row[key]
+                               for key in ('policy', 'acquisition', 'edition_snapshot', 'extraction'))
+                           for row in sources)
+                or not inventory or {row.get('source_role') for row in inventory} != {'register', 'report'}
+                or not all(isinstance(row.get('source_fields'), dict) and row['source_fields']
+                           and isinstance(row.get('locator'), str) and row['locator'] for row in inventory)
+                or len(previous['reported_positions']) != len(inventory)
+                or not previous['legacy_dispositions'] or not previous['inventory_boundaries']):
+            return False
+        for view in ('ZAF', 'IDN', 'VNM', 'SEN'):
+            payload = previous['mvp_views'][view]
+            if (not isinstance(payload.get('projects'), list) or not payload['projects']
+                    or not all(isinstance(row, dict) for row in payload['projects'])
+                    or payload.get('record_count') != len(payload['projects'])
+                    or not isinstance(payload.get('country'), dict)):
+                return False
         validate_migration(previous)
         return True
     except (OSError, ValueError, KeyError, TypeError):
