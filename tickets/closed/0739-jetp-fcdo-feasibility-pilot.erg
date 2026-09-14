@@ -2,10 +2,13 @@
 Title: FCDO programme component and documentary-stage feasibility
 Created: 2026-09-14
 Author: HDMX-coding-agent
+Closed: completed — merged PR #1374; dropped close claim repaired
 
 --- log ---
 2026-09-14T12:14Z HDMX-coding-agent created
 
+2026-09-14T20:42Z note Closure repair: merged PR #1374 at 30d9a9a9; final head 44edfa04931932df9b7d81ca9cd658ea191f2623. Terra approved final pointers and qualified evidence; all eight outputs recovered identically and focused FCDO tests: 10 passed. Full suite at ab6fa762 was 2,801 passed / 88 skipped / 16 failed and explicitly non-clean; final changes were pointers/docs. Consolidated roar confirmed three final DVC MD5/size pairs.
+2026-09-14T20:42Z HDMX-coding-agent closed — completed — merged PR #1374; dropped close claim repaired
 --- body ---
 
 # FCDO programme component and documentary-stage feasibility
