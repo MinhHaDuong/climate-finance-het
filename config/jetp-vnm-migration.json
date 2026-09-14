@@ -1,0 +1,392 @@
+{
+  "document_sha256": "b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c",
+  "edition_id": "vnm-rmp-2023-en-20231201",
+  "identity_joins": {},
+  "identity_review": [
+    {
+      "decision": "not_same_entity",
+      "inventory_row": "I.1:22",
+      "legacy_project_id": "vnm-project-tri-an-expansion",
+      "reason": "KN Tri An floating solar and Tri An hydropower expansion differ in technology and asset identity."
+    },
+    {
+      "decision": "not_same_entity",
+      "inventory_row": "I.2:43",
+      "legacy_project_id": "vnm-project-binh-duong-dong-nai-transmission",
+      "reason": "BWID DPPA solar is not the substations/transmission proposal, despite shared provinces."
+    }
+  ],
+  "inventory_boundaries": [
+    {
+      "annex": "I.1",
+      "disposition": "selected",
+      "physical_pages": [
+        155,
+        158
+      ],
+      "printed_pages": [
+        139,
+        142
+      ],
+      "reason": "Complete numbered source inventory; rows are proposals/task groups, not necessarily named assets.",
+      "row_count": 37
+    },
+    {
+      "annex": "I.2",
+      "disposition": "selected",
+      "physical_pages": [
+        159,
+        174
+      ],
+      "printed_pages": [
+        143,
+        158
+      ],
+      "reason": "Complete numbered source inventory; rows are proposals/task groups, not necessarily named assets.",
+      "row_count": 181
+    },
+    {
+      "annex": "II",
+      "disposition": "selected",
+      "physical_pages": [
+        175,
+        186
+      ],
+      "printed_pages": [
+        159,
+        170
+      ],
+      "reason": "Complete numbered source inventory; rows are proposals/task groups, not necessarily named assets.",
+      "row_count": 61
+    },
+    {
+      "disposition": "excluded_from_inventory",
+      "label": "Table 5",
+      "physical_pages": [
+        54,
+        59
+      ],
+      "printed_pages": [
+        38,
+        43
+      ],
+      "reason": "Investment options and potential; contextual alternatives, not additional project identities."
+    },
+    {
+      "disposition": "excluded_from_inventory",
+      "label": "Table 8",
+      "physical_pages": [
+        67,
+        68
+      ],
+      "printed_pages": [
+        51,
+        52
+      ],
+      "reason": "JETP Scheme Investment Priorities: strategic priorities, outside the selected numbered source inventories."
+    },
+    {
+      "disposition": "excluded_from_inventory",
+      "label": "Table 9",
+      "physical_pages": [
+        69,
+        69
+      ],
+      "printed_pages": [
+        53,
+        53
+      ],
+      "reason": "Overview of Concept Notes in relation to JETP categories: concept-note summary, not additive project identities."
+    },
+    {
+      "disposition": "excluded_from_inventory",
+      "label": "Table 10",
+      "physical_pages": [
+        70,
+        71
+      ],
+      "printed_pages": [
+        54,
+        55
+      ],
+      "reason": "Additional Investment Priorities: contextual priorities, outside selected numbered source inventories."
+    },
+    {
+      "disposition": "excluded_from_inventory",
+      "label": "Table 12",
+      "physical_pages": [
+        113,
+        113
+      ],
+      "printed_pages": [
+        97,
+        97
+      ],
+      "reason": "Indicative Breakdown of IPG Public Finance by Sources and Instruments: financial envelope, not project membership."
+    },
+    {
+      "disposition": "excluded_from_inventory",
+      "label": "Table 13",
+      "physical_pages": [
+        125,
+        125
+      ],
+      "printed_pages": [
+        109,
+        109
+      ],
+      "reason": "Framework for overview of JETP financial commitments: accounting framework, not project membership."
+    },
+    {
+      "disposition": "excluded_from_inventory",
+      "label": "Table 14",
+      "physical_pages": [
+        139,
+        141
+      ],
+      "printed_pages": [
+        123,
+        125
+      ],
+      "reason": "Priority Policy Actions for 2024: policy actions excluded from investment/technical-assistance row scope."
+    },
+    {
+      "disposition": "excluded_from_inventory",
+      "label": "Annex III",
+      "physical_pages": [
+        187,
+        193
+      ],
+      "printed_pages": [
+        171,
+        177
+      ],
+      "reason": "Policy actions excluded from the investment and technical-assistance inventory scope."
+    },
+    {
+      "disposition": "excluded_from_inventory",
+      "label": "Annex IV",
+      "physical_pages": [
+        194,
+        210
+      ],
+      "printed_pages": [
+        178,
+        194
+      ],
+      "reason": "Ten concept notes excluded from row inventory; no assumed one-to-one link or additive project count."
+    },
+    {
+      "disposition": "excluded_from_inventory",
+      "label": "Annex V",
+      "physical_pages": [
+        211,
+        223
+      ],
+      "printed_pages": [
+        195,
+        207
+      ],
+      "reason": "Political declaration and accompanying end matter retained as contextual evidence, not project membership."
+    },
+    {
+      "disposition": "retained_not_extracted",
+      "document_sha256": "d1a306394a19acd576b39e34d0ba8cf7a947fc1cefa07550f35217a943927959",
+      "label": "Vietnamese counterpart vnm-rmp-2023-vi",
+      "reason": "English annexes selected explicitly; Vietnamese counterpart remains saved without assumed row/edition equivalence."
+    }
+  ],
+  "legacy_observations": {
+    "vnm-pilot-observation-001": {
+      "classification": "reported_financing_envelope",
+      "reason": "Reported announcement or envelope, not settled finance; competing scope and totals remain separate."
+    },
+    "vnm-pilot-observation-002": {
+      "classification": "reported_financing_envelope",
+      "reason": "Reported announcement or envelope, not settled finance; competing scope and totals remain separate."
+    },
+    "vnm-pilot-observation-003": {
+      "classification": "reported_financing_envelope",
+      "reason": "Reported announcement or envelope, not settled finance; competing scope and totals remain separate."
+    },
+    "vnm-pilot-observation-004": {
+      "classification": "reported_financing_envelope",
+      "reason": "Reported announcement or envelope, not settled finance; competing scope and totals remain separate."
+    },
+    "vnm-pilot-observation-005": {
+      "classification": "reported_financing_envelope",
+      "reason": "Reported announcement or envelope, not settled finance; competing scope and totals remain separate."
+    },
+    "vnm-pilot-observation-006": {
+      "classification": "reported_financing_envelope",
+      "reason": "Reported announcement or envelope, not settled finance; competing scope and totals remain separate."
+    },
+    "vnm-pilot-observation-007": {
+      "classification": "reported_financing_envelope",
+      "reason": "Reported announcement or envelope, not settled finance; competing scope and totals remain separate."
+    },
+    "vnm-pilot-observation-008": {
+      "classification": "reported_financing_envelope",
+      "reason": "Reported announcement or envelope, not settled finance; competing scope and totals remain separate."
+    },
+    "vnm-pilot-observation-009": {
+      "classification": "reported_financing_envelope",
+      "reason": "Reported announcement or envelope, not settled finance; competing scope and totals remain separate."
+    },
+    "vnm-pilot-observation-010": {
+      "classification": "reported_financing_envelope",
+      "reason": "Reported announcement or envelope, not settled finance; competing scope and totals remain separate."
+    },
+    "vnm-pilot-observation-011": {
+      "classification": "reported_financing_envelope",
+      "reason": "Reported announcement or envelope, not settled finance; competing scope and totals remain separate."
+    },
+    "vnm-pilot-observation-012": {
+      "classification": "reported_financing_envelope",
+      "reason": "Reported announcement or envelope, not settled finance; competing scope and totals remain separate."
+    },
+    "vnm-pilot-observation-013": {
+      "classification": "reported_financing_envelope",
+      "reason": "Reported announcement or envelope, not settled finance; competing scope and totals remain separate."
+    },
+    "vnm-pilot-observation-014": {
+      "classification": "reported_financing_envelope",
+      "reason": "Reported announcement or envelope, not settled finance; competing scope and totals remain separate."
+    },
+    "vnm-pilot-observation-015": {
+      "classification": "reported_financing_envelope",
+      "reason": "Reported announcement or envelope, not settled finance; competing scope and totals remain separate."
+    },
+    "vnm-pilot-observation-016": {
+      "classification": "event_assertion_pending_evidence",
+      "reason": "Legacy signature or approval claim retained; source timing and occurrence identity need adjudication before any event admission."
+    },
+    "vnm-pilot-observation-017": {
+      "classification": "reported_financial_position",
+      "reason": "Reported valuation, cost or mobilised position; reporting date is not a signature or payment date."
+    },
+    "vnm-pilot-observation-018": {
+      "classification": "event_assertion_pending_evidence",
+      "reason": "Legacy signature or approval claim retained; source timing and occurrence identity need adjudication before any event admission."
+    },
+    "vnm-pilot-observation-019": {
+      "classification": "reported_financial_position",
+      "reason": "Reported valuation, cost or mobilised position; reporting date is not a signature or payment date."
+    },
+    "vnm-pilot-observation-020": {
+      "classification": "reported_financing_proposal",
+      "reason": "Proposal, memorandum, assistance or announced facility retained without upgrading status or payment."
+    },
+    "vnm-pilot-observation-021": {
+      "classification": "reported_financing_proposal",
+      "reason": "Proposal, memorandum, assistance or announced facility retained without upgrading status or payment."
+    },
+    "vnm-pilot-observation-022": {
+      "classification": "reported_financing_proposal",
+      "reason": "Proposal, memorandum, assistance or announced facility retained without upgrading status or payment."
+    },
+    "vnm-pilot-observation-023": {
+      "classification": "event_assertion_pending_evidence",
+      "reason": "Legacy signature or approval claim retained; source timing and occurrence identity need adjudication before any event admission."
+    },
+    "vnm-pilot-observation-024": {
+      "classification": "reported_financial_position",
+      "reason": "Reported valuation, cost or mobilised position; reporting date is not a signature or payment date."
+    },
+    "vnm-pilot-observation-025": {
+      "classification": "reported_financial_position",
+      "reason": "Reported valuation, cost or mobilised position; reporting date is not a signature or payment date."
+    },
+    "vnm-pilot-observation-026": {
+      "classification": "reported_financing_proposal",
+      "reason": "Proposal, memorandum, assistance or announced facility retained without upgrading status or payment."
+    },
+    "vnm-pilot-observation-027": {
+      "classification": "reported_financing_proposal",
+      "reason": "Proposal, memorandum, assistance or announced facility retained without upgrading status or payment."
+    },
+    "vnm-pilot-observation-028": {
+      "classification": "reported_financing_proposal",
+      "reason": "Proposal, memorandum, assistance or announced facility retained without upgrading status or payment."
+    },
+    "vnm-pilot-observation-029": {
+      "classification": "reported_cumulative_position",
+      "reason": "Cumulative lender history has a wider perimeter and mixed stages; unavailable for a JETP disbursement sum."
+    },
+    "vnm-pilot-observation-030": {
+      "classification": "reported_cumulative_position",
+      "reason": "Cumulative lender history has a wider perimeter and mixed stages; unavailable for a JETP disbursement sum."
+    },
+    "vnm-pilot-observation-031": {
+      "classification": "reported_cumulative_position",
+      "reason": "Cumulative lender history has a wider perimeter and mixed stages; unavailable for a JETP disbursement sum."
+    },
+    "vnm-pilot-observation-032": {
+      "classification": "reported_financing_proposal",
+      "reason": "Proposal, memorandum, assistance or announced facility retained without upgrading status or payment."
+    },
+    "vnm-pilot-observation-033": {
+      "classification": "reported_programme_position",
+      "reason": "Programme status is reported without supported transition timing."
+    },
+    "vnm-pilot-observation-034": {
+      "classification": "reported_portfolio_count",
+      "reason": "Preserve count and portfolio role: 7 initial plus 17 new equals 24 in 2025; 50 belongs to the later 2026 portfolio. No invented project identities."
+    },
+    "vnm-pilot-observation-035": {
+      "classification": "reported_portfolio_count",
+      "reason": "Preserve count and portfolio role: 7 initial plus 17 new equals 24 in 2025; 50 belongs to the later 2026 portfolio. No invented project identities."
+    },
+    "vnm-pilot-observation-036": {
+      "classification": "reported_portfolio_count",
+      "reason": "Preserve count and portfolio role: 7 initial plus 17 new equals 24 in 2025; 50 belongs to the later 2026 portfolio. No invented project identities."
+    },
+    "vnm-pilot-observation-037": {
+      "classification": "reported_portfolio_count",
+      "reason": "Preserve count and portfolio role: 7 initial plus 17 new equals 24 in 2025; 50 belongs to the later 2026 portfolio. No invented project identities."
+    },
+    "vnm-pilot-observation-038": {
+      "classification": "reported_financial_position",
+      "reason": "Reported valuation, cost or mobilised position; reporting date is not a signature or payment date."
+    },
+    "vnm-pilot-observation-039": {
+      "classification": "reported_absence_position",
+      "reason": "Source-reported absence is bounded to its report; no zero payment history or complete observation coverage inferred."
+    },
+    "vnm-pilot-observation-040": {
+      "classification": "withdrawal_assertion_pending_evidence",
+      "reason": "Retain cancellation/withdrawal and source date; no erased history or inferred monetary reversal."
+    },
+    "vnm-pilot-observation-041": {
+      "classification": "reported_financing_proposal",
+      "reason": "Proposal, memorandum, assistance or announced facility retained without upgrading status or payment."
+    },
+    "vnm-pilot-observation-042": {
+      "classification": "reported_financing_proposal",
+      "reason": "Proposal, memorandum, assistance or announced facility retained without upgrading status or payment."
+    },
+    "vnm-pilot-observation-043": {
+      "classification": "event_assertion_pending_evidence",
+      "reason": "Legacy signature or approval claim retained; source timing and occurrence identity need adjudication before any event admission."
+    },
+    "vnm-pilot-observation-044": {
+      "classification": "event_assertion_pending_evidence",
+      "reason": "Legacy signature or approval claim retained; source timing and occurrence identity need adjudication before any event admission."
+    },
+    "vnm-pilot-observation-045": {
+      "classification": "event_assertion_pending_evidence",
+      "reason": "Legacy signature or approval claim retained; source timing and occurrence identity need adjudication before any event admission."
+    },
+    "vnm-pilot-observation-046": {
+      "classification": "event_assertion_pending_evidence",
+      "reason": "Legacy signature or approval claim retained; source timing and occurrence identity need adjudication before any event admission."
+    }
+  },
+  "publication_date": "2023-12-01",
+  "recorded_at": "2026-09-14T17:36:05Z",
+  "recorded_by": "HDMX-coding-agent",
+  "retrieved_at": "2026-09-11T20:39:00Z",
+  "review_state": "pending",
+  "schema_version": "vnm-migration-policy/1",
+  "source_id": "vnm-rmp-2023"
+}
