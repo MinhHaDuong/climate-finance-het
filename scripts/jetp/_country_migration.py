@@ -50,13 +50,18 @@ def legacy_dispositions(crosswalk: dict, country: str, policies: dict) -> list[d
     originals = {row['legacy_row_id']: row for row in crosswalk['retained']}
     project_ids = {r['row']['project_id'] for r in originals.values()
                    if r['owner'] == 'projects' and r['row'].get('country') == country}
+    event_ids = {r['row']['event_id'] for r in originals.values()
+                 if r['owner'] in {'financial_event', 'implementation_event'}
+                 and (r['row'].get('country') == country
+                      or r['row'].get('project_id') in project_ids)}
     result = []
     for mapping in crosswalk['mappings']:
         original = originals[mapping['row_id']]
         row = original['row']
-        if row.get('country') != country and row.get('project_id') not in project_ids:
-            continue
         name = Path(mapping['path']).name
+        linked_timing = name == 'event-timing.csv' and row.get('event_id') in event_ids
+        if row.get('country') != country and row.get('project_id') not in project_ids and not linked_timing:
+            continue
         classification = {'projects.csv': 'identity_retained',
             'project-coverage.csv': 'observation_coverage',
             'authority-coverage.csv': 'observation_coverage',
