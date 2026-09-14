@@ -80,7 +80,7 @@ def check_site(url, output):
             page.wait_for_selector('.markdown h2')
             assert page.locator('.markdown').inner_text().strip()
         # Hash routes must remain usable with a keyboard and expose the current
-        # location to assistive technology, including a restored release.
+        # location to assistive technology.
         page.goto(url + '/#country/IDN')
         page.wait_for_selector('.page-head h1')
         active = page.locator('nav a[aria-current="page"]')

@@ -4,7 +4,7 @@ from jetp._observatory_data import historical_record, public_event, timeline
 
 
 def test_static_renderer_exposes_current_route_and_derived_disclosure_count():
-    """The frozen release stays navigable when its coverage count changes."""
+    """The preview follows coverage supplied by the frozen release handoff."""
     from pathlib import Path
 
     renderer = (Path(__file__).resolve().parents[1] /
