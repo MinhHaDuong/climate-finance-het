@@ -22,3 +22,10 @@ release/deposit archive, not as repeated copies of all source PDFs in Git.
 The input commit cannot contain its own SHA. Commit inputs first, build and verify
 the package, then commit the descriptor. Keep published descriptors and payloads
 immutable; issue a new correction edition instead of changing the old files.
+
+## Internal migration baseline
+
+`mvp-baseline-0761.zip` freezes the accepted complete static MVP and small inputs
+for offline recovery before migration. It is not a public edition. Its capture
+revision, embedded input revision, source-recovery limitations and candidate
+workflow are documented in [the recovery note](../../../docs/jetp-mvp-baseline-0761.md).
