@@ -363,3 +363,47 @@ def test_dated_classification_changes_without_renaming_subject_or_route():
     assert late.accepted(ref('implementation_event', 'programme-kind'))
     assert early.records[('entity', 'project-a')] == late.records[('entity', 'project-a')]
     assert unknown['subject'] == programme['subject'] == ref('entity', 'project-a')
+
+
+def test_frozen_frame_pins_policy_even_when_called_under_later_policy():
+    records = [row('entity', 'project-a', country='VNM'), row('study', 's', name='History'),
+               row('protocol_revision', 'p', study=ref('study', 's'), eligibility_rule='Original population',
+                   frozen_at=JULY, reviewer='researcher', policy_version='fixture-v1'),
+               row('frame', 'f', protocol=ref('protocol_revision', 'p'), evidence_cutoff=AUGUST,
+                   eligibility_rule='Original population', population_coverage='reconstructed'),
+               row('frame_member', 'm', frame=ref('frame', 'f'), unit=ref('entity', 'project-a'),
+                   verdict='included', reason='Original population', baseline_maturity='active'),
+               decision('include', ref('frame_member', 'm'))]
+    store = read(records)
+    old = store.at(SEPTEMBER, policy_version='fixture-v1').frozen_frame(ref('frame', 'f'))
+    revised = store.at(SEPTEMBER, policy_version='changed-policy').frozen_frame(ref('frame', 'f'))
+    assert len(old) == 1 and revised == old
+
+
+@pytest.mark.parametrize('precision,start,end', [
+    ('month', '2026-06-15', '2026-06-20'), ('month', '2026-06-01', '2026-06-29'),
+    ('quarter', '2026-04-01', '2026-05-31'), ('year', '2026-02-01', '2026-12-31'),
+])
+@pytest.mark.parametrize('role', ['cutoff', 'coverage', 'event'])
+def test_calendar_precision_rejects_partial_calendar_intervals(precision, start, end, role):
+    if role == 'event':
+        record = assertion('implementation_event', 'bad-calendar', timing=[dict(
+            date_role='event', event_start=start, event_end=end, event_precision=precision)])
+    elif role == 'cutoff':
+        record = assertion('position', 'bad-calendar', basis='cumulative_amount',
+                           cutoff_earliest=start, cutoff_latest=end, cutoff_precision=precision)
+    else:
+        record = assertion('position', 'bad-calendar', basis='period_flow',
+                           coverage_start=start, coverage_end=end, coverage_precision=precision)
+    with pytest.raises(ContractError, match='calendar'):
+        read([row('entity', 'project-a', country='VNM'), record])
+
+
+@pytest.mark.parametrize('precision,start,end', [
+    ('month', '2024-02-01', '2024-02-29'), ('quarter', '2026-04-01', '2026-06-30'),
+    ('year', '2026-01-01', '2026-12-31'), ('range', '2026-06-15', '2026-06-20'),
+])
+def test_calendar_precision_and_explicit_ranges_remain_available(precision, start, end):
+    record = assertion('position', 'calendar', basis='cumulative_amount',
+                       cutoff_earliest=start, cutoff_latest=end, cutoff_precision=precision)
+    assert read([row('entity', 'project-a', country='VNM'), record]).to_dict()['records'][1] == record
