@@ -1,0 +1,89 @@
+%erg 0.1
+Title: Rehearse two immutable JETP release editions and offline replay
+Created: 2026-09-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-15T00:00Z HDMX-coding-agent created from tracker 0760 acceptance audit
+
+--- body ---
+
+## Context
+
+Tracker 0760 cannot yet demonstrate its fourth exit criterion. The repository
+has one prepared real archive, `2026-09`; the current `2026-10` comparison is
+deliberately synthetic and has no immutable package, descriptor, routes, or
+downloads to replay. The next rehearsal must demonstrate the release mechanics
+without fabricating a changed JETP fact or publishing anything.
+
+Parent: 0760 / GitHub #1353. Reuse the prepared 2026-09 package and the existing
+release/bundle utilities from 0726--0728. This ticket authorizes no source
+collection, data expansion, publication, deployment, estimator, MVP v0.2 work,
+or short-paper work.
+
+## First test
+
+Starting from the accepted `2026-09` archive, build a second reviewed rehearsal
+edition from the same frozen source facts. Restore both archives into separate
+offline directories, then assert each restored site contains all four country
+JSON downloads, the overview/comparison handoffs, and the stable routes listed
+by its manifest.
+
+Run two independent failure controls against the second edition: (1) interrupt
+the builder while it writes the candidate; (2) let the builder finish, then
+reject the candidate during validation. For **each** control, assert that the
+`2026-09` descriptor and archive retain their exact pre-failure SHA-256 and
+bytes, then restore and replay its routes/downloads offline again. The two
+controls must not share a single assertion that could pass after only one path.
+
+The RED must fail if a second descriptor/archive is absent, if either restoration
+needs Git, DVC, network access, or source documents, or if either candidate
+failure path can alter or prevent offline replay of the first archive.
+
+## Scope
+
+Create two immutable static release packages and descriptors with distinct
+edition identities and explicit prepared/rehearsal state. The second package may
+reuse unchanged facts and downloads, but must record its exact input Git revision,
+cutoff, predecessor identity, and a transparent no-scientific-change result. It
+must not relabel an unchanged observation as a new event or manufacture a
+correction merely to populate the second edition.
+
+Extend the release-history and offline-replay checks only as needed to prove that
+both packages restore independently and preserve routes/downloads. Retain the
+first archive byte-for-byte after an interrupted or rejected candidate. Document
+the rehearsal, named release reviewer, unresolved coverage, and the distinction
+between prepared local packages and a public deployment.
+
+## Exit criteria
+
+- [ ] Two distinct immutable release descriptors and self-contained static
+      packages exist, with a documented relationship and no invented scientific
+      change.
+- [ ] Each package restores offline without Git, DVC, network, or raw source
+      documents, and exposes four-country downloads plus manifest-listed routes.
+- [ ] An interrupted second-edition builder leaves the first descriptor/archive
+      byte-identical by SHA-256 and bytes, and its offline routes/downloads
+      replay after the interruption.
+- [ ] A completed but validation-rejected second-edition candidate independently
+      leaves the first descriptor/archive byte-identical by SHA-256 and bytes,
+      and its offline routes/downloads replay after rejection.
+- [ ] Release history presents both editions with accurate state, cutoff, and
+      preparation metadata; prior download references remain available.
+- [ ] No canonical JETP facts, source archive, candidate ownership, MVP public
+      claims, deployment state, research protocol, MVP v0.2, or paper result is
+      added or altered.
+
+## Validation and recovery
+
+Begin with the failing two-archive replay fixture. Run focused public-release,
+bundle, monthly-edition, and observatory-route tests; run `make check-fast` and
+`make lint`. This touches pipeline/release code, so run the full `make check`
+under AGENTS.md and qualify unavailable environment inputs honestly. Run the
+existing browser exercise if renderer output changes. Cite descriptor/archive
+SHA-256 values and the exact input revision in the PR. Preserve the frozen MVP
+baseline and unrelated workspace files. No deployment or external publication.
+
+## GitHub planning issue
+
+https://github.com/MinhHaDuong/climate-finance-het/issues/1392
