@@ -143,8 +143,12 @@ links the eight implementation and publication issues (#1334–#1341).
 
 The feasibility audit will also examine a synthetic (pooled or weighted) reference
 of other beneficiary countries with comparable pre-treatment conditions, rather
-than restricting the candidate universe to the four JETP countries. Country-status
-criteria remain a protocol decision. Within-country comparisons remain a useful
+than restricting the candidate universe to the four JETP countries. The author confirms pre-JETP country income, financing eligibility and
+energy-sector conditions, plus project matching by lender, instrument and
+technology. Pre-entry maturity remains an additional baseline characteristic.
+The protocol must specify indicators, reference years and matching tolerances;
+matching uses baseline characteristics, not financing choices induced by JETP.
+Within-country comparisons remain a useful
 sensitivity reference, not an exclusive constraint. Tickets 0729/0730 now carry
 the expanded pool and a separate causal-identification audit. A project-support
 effect and a country-wide partnership effect require different treatments and

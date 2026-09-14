@@ -50,7 +50,10 @@ https://github.com/MinhHaDuong/climate-finance-het/issues/1338
 ## Comparator design extension, 14 September 2026
 
 Implement the 0729 decision on a wider pooled/weighted beneficiary-country
-reference, with a within-country sensitivity comparison where supported. Freeze
+reference, with a within-country sensitivity comparison where supported. The
+author-selected dimensions are baseline country income, financing eligibility and
+energy-sector conditions, plus project lender, instrument and technology. Retain
+pre-entry maturity as an additional baseline characteristic. Freeze
 historical country-status definitions, project strata, calendar windows, overlap
 rules and weights before outcome estimation. Report effective sample size,
 country/lender concentration, balance, unsupported strata and sensitivity to

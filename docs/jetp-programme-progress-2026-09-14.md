@@ -83,8 +83,9 @@ reason to execute 0729 before constructing duration comparisons.
 The user proposed a broader synthetic pool of comparable beneficiary countries
 and asked what would make the comparison causal. Tickets 0729/0730 now explicitly
 audit that alternative, including contemporary non-JETP operations, admission rules
-and pre-treatment trajectories where available. Country-status criteria remain
-to be chosen. Matching improves a benchmark but does not itself identify a causal
+and pre-treatment trajectories where available. The author confirms baseline country income, financing eligibility and energy-sector
+conditions, plus lender/instrument/technology project matching; exact indicators
+and tolerances remain to be fixed. Matching improves a benchmark but does not itself identify a causal
 effect; project admission and partnership-wide effects must be distinguished.
 
 ## Author decision following this audit

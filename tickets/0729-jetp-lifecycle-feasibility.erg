@@ -27,7 +27,7 @@ First documentary acceptance exercise: trace one mature-on-JETP-entry project, o
 
 ## Actions
 
-Select 10–15 named JETP investment projects by explicit lender/technology rules, covering different disclosure conditions without claiming representativeness. Define a historical candidate cohort in the same countries/lenders/instruments where feasible. Audit identification→approval, approval→signature and signature→effectiveness/first payment. Track event precision, pre-existing maturity, cancellations, reporting delay and censoring. Coordinate 0721 matching; do not wait for construction or complete four-country reconciliation. Record a feasibility matrix, extraction effort and go/narrow/defer recommendation for each stage.
+Select 10–15 named JETP investment projects by explicit lender/technology rules, covering different disclosure conditions without claiming representativeness. Define a candidate pool across beneficiary countries with comparable baseline conditions, matching projects by lender, instrument and technology; retain within-country comparisons where feasible. Audit identification→approval, approval→signature and signature→effectiveness/first payment. Track event precision, pre-existing maturity, cancellations, reporting delay and censoring. Coordinate 0721 matching; do not wait for construction or complete four-country reconciliation. Record a feasibility matrix, extraction effort and go/narrow/defer recommendation for each stage.
 
 ## Exit criteria
 
@@ -81,9 +81,11 @@ unobservable, explicitly narrow the question rather than substituting pledge age
 User discussion on 14 September opens a pooled/weighted reference from other
 beneficiary countries with comparable pre-treatment conditions. Audit this option
 alongside within-country comparisons; do not restrict discovery to four countries.
-The precise meaning of comparable status remains to be settled in the protocol.
-Candidate dimensions include historical income/lending eligibility and energy-sector
-conditions, alongside project lender/instrument/technology and maturity. Match
+The author confirms country conditions plus project matching: pre-JETP income,
+financing eligibility and energy-sector conditions, with projects matched by lender,
+instrument and technology. Retain pre-entry project maturity as a baseline
+characteristic, not a substitute for country comparability. Operational indicators,
+baseline years and matching tolerances must be fixed in the protocol. Match
 country characteristics at the relevant historical baseline, not today's status;
 do not condition on subsequent project success or post-JETP financing choices.
 
@@ -157,3 +159,16 @@ Additional exit criteria:
 - [ ] Candidate designs judged against actual assignment/longitudinal evidence
 - [ ] Contemporary comparator support, threats, falsification and uncertainty plan documented
 - [ ] Frozen-protocol proposal and causal go/narrow/defer memo linked for 0730
+
+## Country selection is the primary assignment problem
+
+The author clarifies that nonrandom selection concerns JETP beneficiary countries.
+For a partnership-wide effect, reconstruct why these countries were selected and
+when negotiations/anticipation began. Seek contemporaneous selection criteria,
+other countries considered, deferred negotiations and pre-existing reforms or
+lender programmes. These are candidate sources, not facts assumed to exist.
+Distinguish selection on persistent baseline conditions from selection on expected
+future acceleration or a coincident shock. Matching project characteristics does
+not remove country-level confounding, and project counts do not increase the
+number of independent country treatment assignments. A good pre-treatment fit is
+supporting evidence, never proof that the untreated post-JETP trajectory is valid.
