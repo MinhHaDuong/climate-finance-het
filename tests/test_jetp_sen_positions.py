@@ -79,3 +79,24 @@ def test_real_candidate_covers_pinned_inventories_and_keeps_mvp_legacy_owned():
         assert result["mvp_views"][view] == read_mvp_view(root, view, supported_versions={"mvp/1"})
     assert all(hashlib.sha256(path.read_bytes()).hexdigest() == digest
                for path, digest in before.items())
+
+
+@pytest.mark.parametrize("alias_kind", ["direct", "symlink", "hardlink"])
+def test_writer_rejects_accepted_route_or_alias_before_build(tmp_path, monkeypatch, alias_kind):
+    """No Senegal candidate path may replace an accepted route through an alias."""
+    from jetp import build_sen_positions as builder
+
+    accepted = tmp_path / "deliverables/jetp-observatory/data/SEN.json"
+    accepted.parent.mkdir(parents=True)
+    accepted.write_text('{"accepted": true}\n')
+    output = accepted
+    if alias_kind != "direct":
+        output = tmp_path / "candidate.json"
+        if alias_kind == "symlink":
+            output.symlink_to(accepted)
+        else:
+            output.hardlink_to(accepted)
+    monkeypatch.setattr(builder, "build_migration", lambda *args, **kwargs: pytest.fail("must not build"))
+    with pytest.raises(ValueError):
+        builder.write_migration(tmp_path, output)
+    assert accepted.read_text() == '{"accepted": true}\n'
