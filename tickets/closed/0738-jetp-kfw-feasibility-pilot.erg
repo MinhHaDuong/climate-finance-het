@@ -2,10 +2,13 @@
 Title: KfW BMZ historical cohort and reporting-period feasibility
 Created: 2026-09-14
 Author: HDMX-coding-agent
+Closed: completed — merged PR #1375; dropped close claim repaired
 
 --- log ---
 2026-09-14T12:14Z HDMX-coding-agent created
 
+2026-09-14T20:42Z note Closure repair: merged PR #1375 at 6dfac152; final head 6e0c140993221cb40170ba06f9b00b0cf728d4e1. Independent pilot review approved; isolated rebase preserved AFD/KfW artifacts and 13 combined pilot tests passed. All three KfW DVC output MD5/size pairs verified against local archive during consolidated roar at main 30d9a9a9.
+2026-09-14T20:42Z HDMX-coding-agent closed — completed — merged PR #1375; dropped close claim repaired
 --- body ---
 
 # KfW BMZ historical cohort and reporting-period feasibility
