@@ -54,3 +54,20 @@ older API update; the selected cohort is descriptive, not a matched causal contr
 The website uses reviewed country Markdown but does not yet render optional
 project-specific Markdown dossiers. Monthly edition/deposit validation remains
 in 0726/0728; this preview is not claimed to be an immutable public release.
+
+## Senegal refresh, 14 September 2026
+
+Merged main through PR #1332 (`b6d5f761`); #1322 is a different, open prose PR.
+Updated the Senegal narrative and regenerated the preview from input revision
+`5945a42d`. The preview retains 383 named records and 97 historical operations;
+source coverage grows from 260 to 301. Senegal has 21 collected, 19 central-only
+and three blocked project identities. The ANER conditional budget remains a
+need; no project-level disbursement total is inferred.
+
+Validation: 1,545 fast tests passed (seven skipped); lint passed; Chromium
+navigation, filtering, downloads and mobile checks passed. This refresh changes
+source data, prose and generated views, not the builder. The earlier full-suite
+results above are historical validation, not a fresh full-suite run.
+
+The separate data-science review identifies scientific export issues that these
+software checks do not catch; passing tests is not approval for analytical use.
