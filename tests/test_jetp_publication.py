@@ -50,3 +50,31 @@ def test_partial_or_duplicate_owned_reconciled_financial_combination_cannot_publ
     ]}
     with pytest.raises(ValueError, match='Duplicate contributor'):
         publish('2026-09-preview', [display], [duplicate])
+
+
+def test_real_sidecar_traces_each_visible_country_headline():
+    from pathlib import Path
+
+    from jetp.build_observatory_provenance import build
+
+    root = Path(__file__).resolve().parents[1]
+    result = build(root, root / 'deliverables/jetp-observatory/data/provenance.json')
+    assert result['format_version'] == 'jetp-publication/1'
+    assert len(result['displays']) == 12
+    assert {row['owner'] for row in result['combinations']} == {'legacy'}
+    assert all(row['evidence'] for row in result['displays'])
+
+
+def test_candidate_bundle_keeps_provenance_sidecar_with_matching_release_bytes(tmp_path):
+    from pathlib import Path
+
+    from jetp._observatory_bundle import _read_bundle, build_candidate, freeze_bundle
+
+    root = Path(__file__).resolve().parents[1]
+    accepted, candidate = tmp_path / 'accepted.zip', tmp_path / 'candidate.zip'
+    freeze_bundle(root, accepted)
+    build_candidate(root, candidate, accepted=accepted)
+    manifest, payloads = _read_bundle(candidate)
+    sidecar = payloads['site/data/provenance.json']
+    assert manifest['files']['site/data/provenance.json']['size_bytes'] == len(sidecar)
+    assert b'jetp-publication/1' in sidecar
