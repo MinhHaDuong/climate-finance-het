@@ -1,0 +1,40 @@
+%erg 0.1
+Title: Protect release metadata across candidate writers
+Created: 2026-09-14
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-14T17:33Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Roar for merged 0763 / PR #1367 found the release-output overwrite class in the older bundle writers on main d3504f3f29281f606889601b44119263eef6eb69. The shared `scripts/jetp/_observatory_bundle.py::_protect_output` exempts the releases directory. `build_candidate` and `write_comparison` then atomically replace the requested destination, including unrelated release metadata. The 0763 crosswalk writer now protects those files, but these sibling callers do not. Severity: P2, recovery metadata corruption from an erroneous output path.
+
+A disposable reproduction created `data/jetp/releases/candidate.json.gz.dvc` with an `outs` pointer, then called `write_comparison(temp_root, baseline, baseline, pointer)`. The pointer became report JSON. The baseline was only read; no real pointer or accepted-site file was modified. `build_candidate` has the same unrestricted replacement path. `freeze_bundle` already refuses existing destinations.
+
+Parent: 0760 / #1353. This is a bounded safety prerequisite before expanding migrated publication under 0769; country migration can continue independently.
+
+## First test
+
+Parametrize existing-file destinations for `write_comparison` and `build_candidate`: a DVC pointer, release README, .gitignore, and unrelated release descriptor, including symlink and hardlink aliases. Each call must raise before publication and preserve exact original bytes. The current comparison writer must fail this regression on the disposable pointer fixture. Keep recognized prior candidate/report replacement as a positive control.
+
+## Actions
+
+Audit every bundle/crosswalk output-writing entry point for the same class. Define a shared release protection boundary or equivalently consistent caller guards, allowing replacement only of the intended recognized prior output while preserving other release artifacts and accepted bundles. Preserve current deterministic writes and candidate failure isolation. Add standing class-level regression coverage across affected writers; do not generate or deploy a new accepted release.
+
+## Exit criteria
+
+- [ ] Every public candidate/report writer rejects release recovery metadata destinations and aliases without changing bytes.
+- [ ] Legitimate reruns replace only recognized prior outputs of the intended kind; unrelated archives/descriptors remain protected.
+- [ ] Accepted site, frozen MVP archive, canonical input tables, and DVC recovery pointers remain unchanged after failed writes.
+- [ ] Class regression tests cover both affected callers, aliases, and successful deterministic reruns; freeze no-clobber and crosswalk protections still pass.
+
+## Validation
+
+Use a fresh worktree and TDD. Run focused output-safety/bundle/crosswalk tests, make check-fast, make lint, and full make check for the pipeline changes. Cite concrete test IDs and the reviewed SHA. No deployment or canonical ownership transfer is included.
+
+## GitHub issue
+
+https://github.com/MinhHaDuong/climate-finance-het/issues/1368
