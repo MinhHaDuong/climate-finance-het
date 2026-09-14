@@ -102,3 +102,37 @@ def test_writer_refuses_malformed_prior_candidate_before_build(tmp_path, monkeyp
     with pytest.raises(ValueError):
         builder.write_migration(tmp_path, output)
     assert target.read_text() == '{"country": "IDN", "schema_version": "country-migration/1"}\n'
+
+
+@pytest.mark.parametrize("alias_kind", ["direct", "symlink", "hardlink"])
+def test_writer_refuses_full_field_empty_lookalike_before_build(tmp_path, monkeypatch, alias_kind):
+    """Every declared field must be populated before replacement is permitted."""
+    from jetp import build_idn_positions as builder
+
+    candidate = {
+        "schema_version": "country-migration/1", "country": "IDN",
+        "admission_status": "unadmitted_candidate", "writer_owner": "legacy",
+        "publication_mode": "legacy", "inputs": {}, "recipe_inputs": {},
+        "recovery_inputs": {}, "selected_sources": [],
+        "inventory_positions": [{"inventory_id": "lookalike", "ordinal": 1}],
+        "plan_positions": [{}], "approval_positions": [], "payment_candidates": [],
+        "account_total": None,
+        "legacy_dispositions": [{"disposition": "retained_legacy_authority"}],
+        "legacy_evidence": [], "legacy_unresolved": [], "inventory_boundaries": [],
+        "source_regime": [],
+        "mvp_views": {view: {} for view in ("overview", "comparison", "ZAF", "IDN", "VNM", "SEN")},
+        "comparison": {},
+    }
+    target = tmp_path / "previous.json"
+    target.write_text(builder.encoded(candidate).decode())
+    output = target
+    if alias_kind != "direct":
+        output = tmp_path / "candidate.json"
+        if alias_kind == "symlink":
+            output.symlink_to(target)
+        else:
+            output.hardlink_to(target)
+    monkeypatch.setattr(builder, "build_migration", lambda *args, **kwargs: pytest.fail("must not build"))
+    with pytest.raises(ValueError):
+        builder.write_migration(tmp_path, output)
+    assert target.read_bytes() == builder.encoded(candidate)
