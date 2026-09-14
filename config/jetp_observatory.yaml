@@ -1,6 +1,6 @@
 version: 1
 edition: 2026-09-preview
-cutoff: '2026-09-13'
+cutoff: '2026-09-14'
 countries:
   ZAF:
     name: South Africa
@@ -9,7 +9,7 @@ countries:
     signed_on: '2021-11-02'
     pledge_label: '$8.5bn'
     headline: '$6.12bn allocated'
-    headline_detail: '42.6% of the revised $14.36bn pledge, as reported in March 2026. Allocation is not disbursement.'
+    headline_detail: 'Q1 2026: 42.6% of the revised $14.36bn pledge at 31 March 2026; report published 26 June 2026. Allocation is not disbursement.'
     headline_date: '2026-03-31'
     headline_source: zaf-jet-quarterly-2026-q1
     stage_label: Allocation
