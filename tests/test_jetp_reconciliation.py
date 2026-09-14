@@ -74,3 +74,17 @@ def test_overlapping_flow_and_uncovered_movement_are_rejected():
             cutoff='2024-06-30', reported_closing=None,
             include_flow_ids=['flow'], include_movement_ids=['payment-1'],
         )
+
+
+def test_zaf_migration_is_an_evidence_based_unavailable_account_case():
+    """The real candidate does not silently turn pledges or register dates into payments."""
+    import json
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    policy = json.loads((root / 'config/jetp-zaf-migration.json').read_text(encoding='utf-8'))
+    report = (root / 'docs/jetp-zaf-gross-disbursement-0768.md').read_text(encoding='utf-8')
+    assert policy['payments'] == []
+    assert 'gross-disbursement account unavailable' in report
+    assert 'register dates are not payment dates' in report
+    assert 'no reconstructed closing or residual is published' in report
