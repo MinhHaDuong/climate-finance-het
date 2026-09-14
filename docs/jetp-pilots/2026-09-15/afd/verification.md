@@ -9,8 +9,9 @@ retention, and 19+2+7+13 anomaly rows (41 distinct challenge IDs).
 It independently reconstructed all 210 sample ranks and all 12 selected IDs,
 checked all 193 legacy/XML first-payment discrepancies, verified all 193 exact
 legacy dates remain in events, and reproduced six retained legacy-payment-missing
-IDs without XML type-3 entries. It counted 3,296 union financing IDs and 709
-regional records without duplicating them into diagnostic countries.
+IDs without XML type-3 entries. It counted 3,296 union financing IDs and initially 709 regional records. The PR
+correctness review subsequently found 238 additional multi-country labels; their
+corrected allocation yields 947 regional units without country replication.
 
 The reviewer initially found three defects: amounts in normalized_date, omitted
 raw XML sector/aid classification fields, and unresolved generic XML evidence
@@ -83,3 +84,18 @@ After rebase onto `0f97bbf6`, refreshed gates passed: **1,802 fast tests, 12
 skipped; 333 adherence tests, 12 skipped**. Original freeze author date and
 selection bytes were retained; `input-manifest.json` records both the original
 freeze identity and its rebased commit locator.
+
+PR round 1 required a regional-classification fix, LF CSV output, ticket closure
+and stage-specific design-resolution wording. The regional regression test fails
+on the old mapping and passes after recognizing multi-country labels. Selection
+CSV line endings changed only for Git hygiene; parsed ranks/selected flags remain
+identical to the pre-retrieval freeze. No additional acquisition occurred.
+
+The adversarial review also found dropped portal instrument values and missing
+transaction grouping. The corrected units retain `portal_finance_type_raw`, and
+all 964 XML transactions now produce three rows sharing a source-path, financing-ID
+and ordinal locator. Equal amounts remain distinguishable. Legacy loading now
+selects `afd-full-export` from the explicit manifest and rejects a wrong SHA-256.
+Eight acceptance tests pass. Final review-fix fast gate: 1,805 passed, 12 skipped.
+All ten calculation outputs reproduce byte-identically; parsed selection still
+matches the pre-retrieval freeze exactly. No new external unit was used.

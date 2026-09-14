@@ -1,6 +1,6 @@
 """Offline AFD pilot: retain source observations without inventing outcomes.
 
-Usage: python scripts/build_afd_pilot.py --input data/jetp/audit-evidence --output DIR
+Usage: python scripts/build_afd_pilot.py --input ARCHIVE_ROOT SOURCE_MANIFEST --output DIR
 """
 
 import csv
@@ -69,12 +69,29 @@ def write_csv(path, rows):
     if not rows:
         return
     with path.open("w", newline="") as stream:
-        writer = csv.DictWriter(stream, fieldnames=list(rows[0]))
+        writer = csv.DictWriter(stream, fieldnames=list(rows[0]), lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
 
 
-def load_inputs(root):
+def load_legacy(root, source_manifest):
+    """Resolve the required source identity and verify its archived bytes."""
+    matches = [
+        r
+        for r in json.loads(source_manifest.read_text())
+        if r.get("source_id") == "afd-full-export"
+    ]
+    if len(matches) != 1:
+        raise ValueError("Expected exactly one afd-full-export source entry")
+    source = matches[0]
+    path = root / Path(source["path"]).relative_to("data/jetp/audit-evidence")
+    payload = path.read_bytes()
+    if hashlib.sha256(payload).hexdigest() != source["sha256"]:
+        raise ValueError("afd-full-export SHA-256 mismatch")
+    return json.loads(payload)
+
+
+def load_inputs(root, source_manifest):
     """Validate immutable bundles before inspecting records."""
     expected = {
         "0735-round2": "6cd6406b227e6860cae66906cce21d9c.dir",
@@ -99,12 +116,7 @@ def load_inputs(root):
         )
         if actual != digest:
             raise ValueError(f"Bundle mismatch {name}: {actual}")
-    legacy = json.loads(
-        (
-            root
-            / "0735-round2/f7d4454ff2f20926fe8407a5aaf101d2fe37537dfb17ffe55692bcc400851e87.json"
-        ).read_text()
-    )
+    legacy = load_legacy(root, source_manifest)
     afd = root / "0735-round3/afd"
     portal = json.loads((afd / "les-concours-de-l-afd.json").read_text())
     xml = {}
@@ -265,6 +277,14 @@ def select_cases(old, xml, anomalies):
     return selection
 
 
+def country_allocation(label):
+    """Retain multi-country financing as one regional unit, without replication."""
+    labels = {part.strip() for part in label.splitlines() if part.strip()}
+    if "MULTI-PAYS" in labels or len(labels) > 1:
+        return "regional"
+    return COUNTRIES.get(next(iter(labels), ""), "outside-diagnostic-or-unmapped")
+
+
 def build_observations(old, current, xml):
     units, events = [], []
     for identifier in sorted(set(old) | set(current) | set(xml)):
@@ -275,10 +295,7 @@ def build_observations(old, current, xml):
             if row
             else now.get("recipient_country_narrative", "")
         )
-        country = country or COUNTRIES.get(
-            label,
-            "regional" if label == "MULTI-PAYS" else "outside-diagnostic-or-unmapped",
-        )
+        country = country or country_allocation(label)
         instrument = (
             ""
             if activity is None
@@ -318,6 +335,9 @@ def build_observations(old, current, xml):
                     for x in activity.findall("sector")
                 ),
                 "legacy_aid_type_raw": row.get("valeur_fixe1", "") if row else "",
+                "portal_finance_type_raw": now.get("default_finance_type_code", "")
+                if now
+                else "",
                 "portal_aid_type_raw": now.get("default_aid_type_code", "")
                 if now
                 else "",
@@ -344,6 +364,7 @@ def build_observations(old, current, xml):
             evidence,
             precision="day",
             validation="source-reported; legal meaning unvalidated",
+            locator="",
         ):
             events.append(
                 {
@@ -355,6 +376,8 @@ def build_observations(old, current, xml):
                     "interval": "",
                     "precision": precision if value else "unknown",
                     "source_coverage": "earlier completeness unknown",
+                    "source_locator": locator
+                    or f"{evidence}:financing={identifier};field={field}",
                     "validation_status": validation,
                     "evidence_id": evidence,
                     "missingness_reason": ""
@@ -381,7 +404,8 @@ def build_observations(old, current, xml):
                     date.get("iso-date"),
                     path,
                 )
-            for transaction in activity.findall("transaction"):
+            for ordinal, transaction in enumerate(activity.findall("transaction"), 1):
+                locator = f"{path}#FR-3-{identifier}/transaction[{ordinal}]"
                 kind = transaction.find("transaction-type").get("code")
                 date = transaction.find("transaction-date").get("iso-date")
                 value = transaction.find("value")
@@ -394,6 +418,7 @@ def build_observations(old, current, xml):
                     "first-payment time unknown"
                     if kind == "3"
                     else "source-reported signature proxy",
+                    locator=locator,
                 )
                 event(
                     "currency_conversion",
@@ -401,6 +426,7 @@ def build_observations(old, current, xml):
                     value.get("value-date"),
                     path,
                     validation="not an approval imputation",
+                    locator=locator,
                 )
                 event(
                     "transaction_value_type_" + kind,
@@ -409,6 +435,7 @@ def build_observations(old, current, xml):
                     path,
                     precision="amount",
                     validation="reported amount; negative corrections preserved",
+                    locator=locator,
                 )
     return units, events
 
@@ -555,8 +582,8 @@ def profile_exports(root, output, legacy, portal):
     write_csv(output / "source-cohorts.csv", cohorts)
 
 
-def run(root, output):
-    legacy, portal, xml, parents, hashes = load_inputs(root)
+def run(root, output, source_manifest):
+    legacy, portal, xml, parents, hashes = load_inputs(root, source_manifest)
     output.mkdir(parents=True, exist_ok=True)
     current = {r["code_concours_simple"]: r for r in portal}
     old = {r["id_concours"]: r for r in legacy}
@@ -596,10 +623,10 @@ def run(root, output):
 
 def main():
     args, extra = parse_io_args()
-    if extra or not args.input or len(args.input) != 1:
-        raise ValueError("Supply exactly one archive root with --input")
+    if extra or not args.input or len(args.input) != 2:
+        raise ValueError("Supply archive root and round-2 source manifest with --input")
     validate_io(args.output, args.input)
-    run(Path(args.input[0]), Path(args.output))
+    run(Path(args.input[0]), Path(args.output), Path(args.input[1]))
 
 
 if __name__ == "__main__":

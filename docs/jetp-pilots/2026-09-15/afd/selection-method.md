@@ -37,3 +37,7 @@ CTN129703 and CZZ276103, restricted to the AFD publisher. This tests whether a
 moved financing-specific original survives despite the broken parent locator.
 The resulting search extraction is not an archived publisher original. No further
 retrieval is authorized by this pilot after unit 30.
+
+Review amendment: normalize delivered CSV record endings from CRLF to LF. Parsed
+selection rows are unchanged from the prospective freeze; this is serialization
+only, with no candidate, rank, selected flag or acquisition-order change.

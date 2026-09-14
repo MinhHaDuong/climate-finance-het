@@ -79,13 +79,22 @@ def test_amounts_are_not_normalized_as_dates():
 def test_multicountry_portal_unit_preserves_allocation_and_instrument():
     from build_afd_pilot import build_observations
 
-    raw = 'MAROC\nINDE\nMULTI-PAYS'
-    units, _ = build_observations({}, {'X': {'iati_identifier': 'FR-3-P',
-        'recipient_country_narrative': raw, 'default_finance_type_code': 'Prêt'}}, {})
+    raw = "MAROC\nINDE\nMULTI-PAYS"
+    units, _ = build_observations(
+        {},
+        {
+            "X": {
+                "iati_identifier": "FR-3-P",
+                "recipient_country_narrative": raw,
+                "default_finance_type_code": "Prêt",
+            }
+        },
+        {},
+    )
     assert len(units) == 1
-    assert units[0]['country'] == 'regional'
-    assert units[0]['country_raw'] == raw
-    assert units[0]['portal_finance_type_raw'] == 'Prêt'
+    assert units[0]["country"] == "regional"
+    assert units[0]["country_raw"] == raw
+    assert units[0]["portal_finance_type_raw"] == "Prêt"
 
 
 def test_equal_xml_amounts_keep_distinct_transaction_locators():
@@ -93,16 +102,45 @@ def test_equal_xml_amounts_keep_distinct_transaction_locators():
 
     from build_afd_pilot import build_observations
 
-    activity = ET.fromstring('''<iati-activity><default-finance-type code="110"/>
+    activity = ET.fromstring("""<iati-activity><default-finance-type code="110"/>
     <transaction><transaction-type code="3"/><transaction-date iso-date="2022-12-31"/>
       <value value-date="2022-12-31">25000000</value></transaction>
     <transaction><transaction-type code="3"/><transaction-date iso-date="2023-12-31"/>
-      <value value-date="2023-12-31">25000000</value></transaction></iati-activity>''')
-    _, events = build_observations({}, {'X': {'iati_identifier': 'FR-3-P'}},
-                                  {'X': (activity, 'xml', 'MA')})
-    amounts = [r for r in events if r['raw_field'] == 'value']
-    assert len({r['source_locator'] for r in amounts}) == 2
-    for amount, expected_date in zip(amounts, ['2022-12-31', '2023-12-31']):
-        group = [r for r in events if r['source_locator'] == amount['source_locator']]
+      <value value-date="2023-12-31">25000000</value></transaction></iati-activity>""")
+    _, events = build_observations(
+        {}, {"X": {"iati_identifier": "FR-3-P"}}, {"X": (activity, "xml", "MA")}
+    )
+    amounts = [r for r in events if r["raw_field"] == "value"]
+    assert len({r["source_locator"] for r in amounts}) == 2
+    for amount, expected_date in zip(amounts, ["2022-12-31", "2023-12-31"]):
+        group = [r for r in events if r["source_locator"] == amount["source_locator"]]
         assert len(group) == 3
-        assert next(r['raw_value'] for r in group if r['raw_field'] == 'transaction-date') == expected_date
+        assert (
+            next(r["raw_value"] for r in group if r["raw_field"] == "transaction-date")
+            == expected_date
+        )
+
+
+def test_legacy_loader_uses_source_id_and_rejects_wrong_hash(tmp_path):
+    import hashlib
+    import json
+
+    import pytest
+    from build_afd_pilot import load_legacy
+
+    payload = b'[{"id_concours":"X"}]'
+    archive = tmp_path / "0735-round2"
+    archive.mkdir()
+    (archive / "source.json").write_bytes(payload)
+    manifest = tmp_path / "manifest.json"
+    selected = {
+        "source_id": "afd-full-export",
+        "path": "data/jetp/audit-evidence/0735-round2/source.json",
+        "sha256": hashlib.sha256(payload).hexdigest(),
+    }
+    manifest.write_text(json.dumps([{"source_id": "unrelated"}, selected]))
+    assert load_legacy(tmp_path, manifest) == [{"id_concours": "X"}]
+    selected["sha256"] = "wrong"
+    manifest.write_text(json.dumps([selected]))
+    with pytest.raises(ValueError, match="SHA-256 mismatch"):
+        load_legacy(tmp_path, manifest)

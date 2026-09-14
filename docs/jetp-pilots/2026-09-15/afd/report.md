@@ -75,7 +75,8 @@ the repository's 500KB git-file limit. They rerun offline using explicit paths:
 
 ```bash
 PYTHONPATH=scripts:libs/openalex-corpus/src .venv/bin/python scripts/build_afd_pilot.py \
-  --input data/jetp/audit-evidence --output docs/jetp-pilots/2026-09-15/afd
+  --input data/jetp/audit-evidence docs/jetp-audits/0735/round2/source-byte-manifest.json \
+  --output docs/jetp-pilots/2026-09-15/afd
 ```
 
 Use the verified audit environment linked as `.venv`, as permitted by the pilot
@@ -126,3 +127,10 @@ The machine-readable [design matrix](design-feasibility.csv),
 needed by the coordinator. The profile includes all 2,319 portal projects and
 9,696 portal transactions; country labels and product codes are not silently
 collapsed into diagnostic-country totals.
+
+PR review strengthened preservation without changing the selected cases: portal
+instrument classifications now remain in their own raw field, and every XML
+transaction's date/value-date/amount rows share a financing-plus-ordinal source
+locator. Equal amounts therefore remain distinct observations. The loader resolves
+legacy bytes through the explicit `afd-full-export` source-manifest entry and
+checks its SHA-256 in addition to the complete bundle hash.
