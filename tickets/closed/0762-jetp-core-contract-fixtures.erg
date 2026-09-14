@@ -2,11 +2,13 @@
 Title: Implement typed evidence and temporal contracts behind compatibility readers
 Created: 2026-09-14
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1366
 
 --- log ---
 2026-09-14T13:51Z HDMX-coding-agent created
 
 2026-09-14T16:09Z HDMX-coding-agent note blocker 0761 closed — Blocked-by removed.
+2026-09-14T16:58Z HDMX-coding-agent closed — autoclosed — PR #1366
 --- body ---
 
 ## Context
