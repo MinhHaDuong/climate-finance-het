@@ -61,3 +61,44 @@ def test_real_candidate_covers_both_pinned_plan_inventories_and_legacy_rows():
     assert result["writer_owner"] == result["publication_mode"] == "legacy"
     for view in MVP_VIEWS:
         assert result["mvp_views"][view] == read_mvp_view(root, view, supported_versions={"mvp/1"})
+
+
+@pytest.mark.parametrize("alias_kind", ["direct", "symlink", "hardlink"])
+def test_writer_rejects_accepted_targets_and_aliases_before_build(tmp_path, monkeypatch, alias_kind):
+    """A candidate path cannot be used to replace a public/recovery artifact."""
+    from jetp import build_idn_positions as builder
+
+    accepted = tmp_path / "deliverables/jetp-observatory/data/IDN.json"
+    accepted.parent.mkdir(parents=True)
+    accepted.write_text('{"accepted": true}\n')
+    output = accepted
+    if alias_kind != "direct":
+        output = tmp_path / "candidate.json"
+        if alias_kind == "symlink":
+            output.symlink_to(accepted)
+        else:
+            output.hardlink_to(accepted)
+    monkeypatch.setattr(builder, "build_migration", lambda *args, **kwargs: pytest.fail("must not build"))
+    with pytest.raises(ValueError):
+        builder.write_migration(tmp_path, output)
+    assert accepted.read_text() == '{"accepted": true}\n'
+
+
+@pytest.mark.parametrize("alias_kind", ["direct", "symlink", "hardlink"])
+def test_writer_refuses_malformed_prior_candidate_before_build(tmp_path, monkeypatch, alias_kind):
+    """Markers alone never grant replacement authority to an existing file."""
+    from jetp import build_idn_positions as builder
+
+    target = tmp_path / "previous.json"
+    target.write_text('{"country": "IDN", "schema_version": "country-migration/1"}\n')
+    output = target
+    if alias_kind != "direct":
+        output = tmp_path / "candidate.json"
+        if alias_kind == "symlink":
+            output.symlink_to(target)
+        else:
+            output.hardlink_to(target)
+    monkeypatch.setattr(builder, "build_migration", lambda *args, **kwargs: pytest.fail("must not build"))
+    with pytest.raises(ValueError):
+        builder.write_migration(tmp_path, output)
+    assert target.read_text() == '{"country": "IDN", "schema_version": "country-migration/1"}\n'
