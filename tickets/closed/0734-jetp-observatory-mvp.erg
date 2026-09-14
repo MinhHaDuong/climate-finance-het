@@ -2,6 +2,7 @@
 Title: Build a visible JETP observatory MVP with historical comparison
 Created: 2026-09-13
 Author: HDMX-coding-agent
+Closed: Local MVP accepted by independent gate round 1; public release and programme remain open
 
 --- log ---
 2026-09-13T21:00Z HDMX-coding-agent created User authorises steps 1–4, aggregate synthesis and a large completed-project comparison bundle.
@@ -9,6 +10,7 @@ Author: HDMX-coding-agent
 2026-09-13T20:55Z HDMX-coding-agent closed — Local MVP steps 1–4 implemented and validated; public deployment remains in 0727
 2026-09-14T04:24Z HDMX-coding-agent reopened — Scientific export review requires fixes in PR #1343; GitHub #1342 remains open.
 
+2026-09-14T07:03Z HDMX-coding-agent closed — Local MVP accepted by independent gate round 1; public release and programme remain open
 --- body ---
 
 ## Context
@@ -57,7 +59,16 @@ full-suite environment rerun. Local preview: http://127.0.0.1:8765.
 
 ## Reopened scientific acceptance
 
-- [ ] Date roles and precision preserve real event versus observation/report timing
-- [ ] Confirmed/provisional/contextual link adjudication survives CSV, JSON and browser display
-- [ ] Historical acquisition dates and page provenance come from source snapshots
-- [ ] Real-record regressions, regenerated views and required checks pass; review findings have evidence of resolution
+- [x] Date roles and precision preserve real event versus observation/report timing
+- [x] Confirmed/provisional/contextual link adjudication survives CSV, JSON and browser display
+- [x] Historical acquisition dates and page provenance come from source snapshots
+- [x] Real-record regressions, regenerated views and required checks pass; review findings have evidence of resolution
+
+## Final verification
+
+Independent gate round1 APPROVED at `8a3aa373`: all ten criteria addressed.
+Scientific correction `e35988a7` and the real-record test IDs in
+`docs/jetp-observatory-mvp-validation.md` resolve the reopened acceptance items.
+Fresh checkpoint:1552 fast,337 adherence and2506 full tests pass;14 focused
+regressions and Chromium checks pass. Review resolutions and criterion evidence
+are recorded on PR #1343. Only the bounded local MVP is complete.

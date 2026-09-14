@@ -1,6 +1,6 @@
 # State
 
-Last updated: 2026-09-14T06:51Z
+Last updated: 2026-09-14T07:06Z
 
 ## Current goal
 
@@ -27,8 +27,8 @@ Current strategy: `conception/jetp-observatory-and-papers-plan.md`.
 ## Status
 
 Use `erg ready tickets/` for live work. The separate prose PR #1322 is outside
-this checkpoint. Programme tracker0725 stays open; MVP slice0734 closes only on
-its verified merge. Existing untracked `data/book/` is user material, preserved.
+this checkpoint. Programme tracker 0725 stays open. MVP slice 0734 passed its independent
+evidence gate (10/10 criteria); closure applies only to the local preview. Existing untracked `data/book/` is user material, preserved.
 
 ## Submissions
 

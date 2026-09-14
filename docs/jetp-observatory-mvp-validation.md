@@ -104,3 +104,32 @@ This repair does not constitute the independent Imperial Dragon merge gate.
 Ticket 0734 remains open pending verification; the PR remains a draft. Public
 publication, monthly releases, complete financial-stage reconciliation and a
 comparable early-lifecycle cohort remain separate work.
+
+## Independent checkpoint validation, 14 September 2026
+
+Fresh checks on checkpoint `f417998b`: fast **1,552 passed, seven skipped**;
+lint/adherence **337 passed, six skipped**; full suite **2,506 passed, 25
+skipped**, uninterrupted in 204.78 seconds. The environment is the same documented
+virtualenv, temporary caches, local-socket and Git-test configuration above.
+All 14 observatory regressions also passed independently in 0.38 seconds.
+
+Three independent reviews covered correctness/adversarial data, documentation/
+architecture, and scope/scientific interpretation. They independently reconciled
+all 22 input hashes and the current exported counts. They did not re-adjudicate
+301 original sources or recompute absent raw World Bank response bytes.
+
+Review correction `8a3aa373` updates storage status and removes two website
+phrases implying matching was already selected. Only documentation, ticket0727
+and those two display strings changed after the tests started; Python, tests
+and all data bytes remained unchanged. Chromium was rerun successfully after
+that correction, covering navigation, filtering, downloads, qualified source
+cards/timelines and mobile layout. No page errors were reported.
+
+Optional future-refresh hardening is recorded in 0727: interval-aware chronology,
+rejecting unsupported unreviewed bounds, and deriving all undisclosed counts from
+the export. The current observations contain neither identified timing edge case.
+The existing financial-stage coding caveat remains part of release work0726.
+
+The final independent evidence-gate verdict and per-criterion references are
+recorded on PR #1343. Public release, deployment, monthly operation and causal
+identification remain outside the completed local MVP scope.
