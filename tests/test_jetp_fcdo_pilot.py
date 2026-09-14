@@ -143,3 +143,9 @@ def test_document_assessment_keeps_approval_distinct_from_start():
     row = pilot.assessment_event(assessment)
     assert row["stage"] == "approval"
     assert row["validation_status"] == "document_corroborated_approval"
+
+
+def test_generated_csv_uses_lf_records(tmp_path):
+    output = tmp_path / "output.csv"
+    pilot.write_csv(output, [{"field": "value"}])
+    assert b"\r\n" not in output.read_bytes()

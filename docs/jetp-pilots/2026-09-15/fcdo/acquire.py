@@ -61,7 +61,7 @@ def acquire(url, name, case, purpose, route, output, log):
         row.update(status=getattr(exc, "code", "failed"), error=str(exc))
     rows.append(row)
     with log.open("w", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=FIELDS)
+        writer = csv.DictWriter(handle, fieldnames=FIELDS, lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
     print(row["unit"], case, row["status"], row["bytes"], flush=True)
