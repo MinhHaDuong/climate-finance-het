@@ -1,5 +1,5 @@
 %erg 0.1
-Title: Audit historical pipeline populations and milestone observation
+Title: Audit lifecycle evidence across lenders, sectors and countries
 Created: 2026-09-14
 Author: HDMX-coding-agent
 
@@ -85,3 +85,17 @@ An independent scientific reviewer accepted the report and matrices. Fast gate:
 1549 passed, ten skipped; adherence:330 passed, thirteen skipped. The report
 records the missing-DVC environment failure and successful hydrated rerun.
 Ticket remains open until the report PR is accepted.
+
+## Author-directed second pass, 14 September 2026
+
+The author requests broader coverage beyond World Bank, energy and JETP
+countries. Execute the frozen round-2 brief at
+`docs/jetp-audits/0735/round2/brief.md`: ADB, AfDB, EIB and AFD routes,
+all-sector catalogues and multiple non-JETP borrower strata. This replaces
+the first round's single-lender restriction for the new pass only.
+
+Additional acceptance: institution-by-stage availability matrix; documented
+non-energy/non-JETP examples; actual milestone pairs where available; explicit
+historical-population and dropped/cancelled coverage; costed next acquisition
+priorities. Sparse findings remain valid, but narrow WB results are not taken
+as evidence about the wider source landscape. No design is selected.
