@@ -21,13 +21,11 @@ The subsequent unchanged retrieval and all earlier pilot searches survive.
 
 The 2,554,708-byte JSON is DVC-managed through
 `data/jetp/releases/vnm-migration-0764.json.dvc`, object
-`ded31c451a9dcb0b640bd5bc6487f8ee`, SHA-256
-`b70c356d726d3938898119f1a2495f42093f02b23a5fd74b85f066e103b621d8`.
-Use `uv run dvc pull data/jetp/releases/vnm-migration-0764.json.dvc` to retrieve
-it. It is not compressed into Git. An independent DVC repository with a new
-empty cache recovered identical candidate bytes and the full pinned document
-directory from the configured local project archive. Both principal PDF hashes
-were independently checked after recovery:
+`180429d7c6b882fdc2871b9fa6fbf003`, SHA-256
+`ef7538d2af534d31877634bd42f28c5fae1c20b192e6647fc030146a7492eb34`.
+It is not compressed into Git. Recovery was performed from the local DVC cache:
+after removing the generated candidate, `dvc checkout` restored byte-identical
+content. Both principal PDF hashes were independently checked after recovery:
 
 | Source | SHA-256 |
 |---|---|
