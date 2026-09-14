@@ -1,5 +1,7 @@
 # ADB second-pass source audit
 
+Source trail: [30-unit call log](call-log.csv), [operation/event evidence](evidence.csv), and [pre-search adaptation](brief-adaptation.md).
+
 Candidate findings for parent verification, 14 September 2026. Execute phase;
 30/30 external query/URL units consumed, including failures, repeated opens and
 screenshots. No further discovery within this assignment. No source bytes were

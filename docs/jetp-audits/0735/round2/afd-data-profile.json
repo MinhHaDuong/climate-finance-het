@@ -65,46 +65,46 @@
     "signature_before_award": [
       {
         "id_concours": "CZZ297902",
-        "earlier_stage_value": "2021-07-07",
-        "later_stage_value": "2019-12-05"
+        "date_d_octroi": "2021-07-07",
+        "date_de_signature_de_convention": "2019-12-05"
       },
       {
         "id_concours": "CNE122403",
-        "earlier_stage_value": "2020-12-18",
-        "later_stage_value": "2020-05-08"
+        "date_d_octroi": "2020-12-18",
+        "date_de_signature_de_convention": "2020-05-08"
       },
       {
         "id_concours": "CEG115406",
-        "earlier_stage_value": "2023-04-26",
-        "later_stage_value": "2021-12-17"
+        "date_d_octroi": "2023-04-26",
+        "date_de_signature_de_convention": "2021-12-17"
       },
       {
         "id_concours": "CDO108404",
-        "earlier_stage_value": "2021-06-16",
-        "later_stage_value": "2020-12-03"
+        "date_d_octroi": "2021-06-16",
+        "date_de_signature_de_convention": "2020-12-03"
       },
       {
         "id_concours": "CBJ126404",
-        "earlier_stage_value": "2022-06-15",
-        "later_stage_value": "2021-12-09"
+        "date_d_octroi": "2022-06-15",
+        "date_de_signature_de_convention": "2021-12-09"
       },
       {
         "id_concours": "CCI168103",
-        "earlier_stage_value": "2021-06-16",
-        "later_stage_value": "2019-12-20"
+        "date_d_octroi": "2021-06-16",
+        "date_de_signature_de_convention": "2019-12-20"
       },
       {
         "id_concours": "CZZ240803",
-        "earlier_stage_value": "2019-09-19",
-        "later_stage_value": "2018-12-21"
+        "date_d_octroi": "2019-09-19",
+        "date_de_signature_de_convention": "2018-12-21"
       }
     ],
     "first_payment_before_signature": [],
     "first_payment_before_award": [
       {
         "id_concours": "CEG115406",
-        "earlier_stage_value": "2023-04-26",
-        "later_stage_value": "2023-03-16"
+        "date_d_octroi": "2023-04-26",
+        "date_de_1er_versement_concours": "2023-03-16"
       }
     ]
   },

@@ -30,12 +30,12 @@ returned successfully. Export length and unique `id_concours` count both equal
 the metadata count, 2,080. This verifies completeness of this delivered export,
 **not completeness of the lender's portfolio**.
 
-| Record group | Financing records | Distinct project IDs within group | Award + signature | Signature + first payment |
-|---|---:|---:|---:|---:|
-| All | 2,080 | 1,492 | 1,911 | 1,820 |
-| Loans | 366 | 336 | 346 | 311 |
-| Grants | 1,714 | 1,262 | 1,565 | 1,509 |
-| Four JETP country labels | 128 | 106 | 122 | 113 |
+| Record group | Financing records | Distinct project IDs within group | Award + signature | Signature + first payment | All three dates |
+|---|---:|---:|---:|---:|---:|
+| All | 2,080 | 1,492 | 1,911 | 1,820 | 1,663 |
+| Loans | 366 | 336 | 346 | 311 | 294 |
+| Grants | 1,714 | 1,262 | 1,565 | 1,509 | 1,369 |
+| Four JETP country labels | 128 | 106 | 122 | 113 | 109 |
 
 Project IDs can occur under both loan and grant groups; do not add their distinct
 counts. The four-country row describes location, not JETP attribution. It includes
@@ -61,7 +61,8 @@ complete histories for those periods.
 All 2,080 rows have signatures, 169 lack awards and 260 lack first-payment dates.
 No pending-signature population is demonstrated. There are **seven signatures
 preceding the recorded award** and one first payment preceding award; none precedes
-signature. The profile preserves the exact financing IDs. These could involve
+signature. The profile preserves the exact financing IDs and source field names for each
+anomalous pair, so process order cannot be mistaken for chronological order. These could involve
 recording errors, amendments or administrative semantics; do not repair them by
 sorting dates or silently dropping rows. Missing payment dates do not prove no
 payment. Actual field definitions, coverage revisions and exceptions need checking
@@ -137,3 +138,17 @@ new cache objects (eight payloads plus directory metadata) are preserved in both
 the audit worktree cache and the primary local DVC cache. **Remote replication is
 pending**; the Git pointer alone does not make these bytes remotely retrievable.
 Original source URLs and observed API routes remain in the manifest.
+
+## Reproducible checks
+
+The parent recomputed the profile from the archived full JSON: unique financing/
+project counts, instrument/status groups, date presence/ranges, anomalous ID lists
+and fixed-country first-ID examples. All eight payload hashes were recalculated.
+Each scout log contains30units and the parent log12. CSV parsing and date-format
+checks pass; these are coverage checks, not tests of identification.
+
+Fresh branch gates: **1,549 fast tests passed, ten skipped;330 adherence checks
+passed, thirteen skipped**. Specific DVC bundle status is clean. The documentation
+and provisional-data diff does not require a full pipeline suite. Raw bundle
+replication failure is disclosed above rather than treated as successful archival
+on the remote. Independent review is recorded separately on PR1347.
