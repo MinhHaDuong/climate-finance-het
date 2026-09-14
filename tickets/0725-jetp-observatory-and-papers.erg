@@ -44,3 +44,13 @@ https://github.com/MinhHaDuong/climate-finance-het/issues/1333
 0734 implements the local website MVP for steps 1–4, with aggregate synthesis
 and a historical closed-operation pool. It contributes to 0726/0727 without
 closing them or replacing the matched historical study. GitHub: #1342.
+
+## September 14 strategy checkpoint
+
+PR #1343 delivers the local observatory slice and scientific export corrections.
+The causal design is not selected. First execute independent bounded evidence
+audits 0735 (historical populations and milestone observation) and 0736 (country
+selection and intervention timing); 0729 is their design-decision checkpoint, then
+0730 performs analysis and 0732 writing. Release/publication work0726–0728/0731
+continues separately. Astra/Fable reports are proposals with recorded corrections,
+not a ratified protocol. Keep this tracker open after the MVP merge.

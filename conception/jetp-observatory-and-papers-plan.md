@@ -1,177 +1,145 @@
 # JETP observatory and academic programme
 
-Decision agreed with Minh, 13 September 2026. Phase: Plan.
+Agreed programme, consolidated at the 14 September 2026 checkpoint. Earlier
+conception notes and independent model reports remain historical/design inputs;
+this file states the current strategy. Tracker: 0725 / GitHub #1333.
 
-## Shared question and two tracks
+## Question, products and present boundary
 
-**Where do JETPs stand, and have they accelerated energy-transition projects?**
+**Where do JETPs stand, and did they accelerate energy-project progress?**
 
-Track one is a public, source-backed observatory for South Africa, Indonesia,
-Viet Nam and Senegal. Readers explore country portfolios, individual projects,
-essential features, references, progress timelines and meaningful totals.
-Monthly editions make changes visible and preserve the previous state.
+Two tracks share a source-backed evidence base. The observatory is a useful public
+research product in its own right. The academic programme comprises a JETP data
+paper, a short causal paper, and a longer political-economy paper with Christophe
+Cassen. All papers consume frozen, citable dataset editions. Construction comparisons
+are premature for the short paper; preparation and financing are the candidate stages.
 
-Track two is academic publication: a JETP data paper and the two analytical
-papers discussed with Christophe Cassen. The short paper compares project
-progress against regular pre-JETP energy projects. The long paper investigates
-why the observed trajectories differ. Papers analyse frozen observatory releases;
-the observatory remains useful regardless of the analytical result.
+The current local website provides country synthesis and reported headlines,
+portfolio visualisations, four country pages, project/source timelines, filters,
+downloads and historical browsing. It contains 383 named portfolio identities,
+21 unnamed Vietnamese slots, 301 registered sources and 97 historical closed World
+Bank operations. Programme/component records are not distinct additive assets;
+source count is not independent-confirmation count. Historical administrative
+closure is not physical completion or a matched causal comparison group.
 
-This decision supersedes the disbursement-only framing and predetermined
-mechanism claims in `jetp-papier-court-mesure.md` and
-`jetp-papier-long-economie-politique.md`. Those notes and the September 8 meeting
-record remain historical inputs, not agreed conclusions. LaTeX remains the
-chosen format for the two analytical manuscripts (0711). No journal change is
-decided here.
+The scientific export fixes preserve date roles/precision, typed identity-link
+adjudication and actual source-snapshot acquisition metadata. Most coded dates are
+observations or reports: the 451 timing records currently contain six exact event
+days and two year-bounded events. That is coding coverage, not a claim that the
+underlying sources contain no further dates. No acceleration effect is estimated.
 
-## Storage decision (13 September 2026)
+## Track one: release and operate the observatory
 
-Markdown dossiers and small CSV registries stay in Git; binary evidence stays in
-the existing DVC archive. The website renders static HTML with release-bound
-JSON/CSV, without a live SQLite backend. SQLite may later be a derived export.
-See [storage contract](../docs/jetp-storage.md) and `data/jetp/README.md`.
+1. **Citable release (0726):** finish identity hierarchy and financial-status
+   review, define defensible aggregate perimeters, and provide dictionary,
+   validation, provenance manifest, immutable downloads and reuse terms. Every
+   reported total needs sources, constituents or an explicitly attributed national
+   report, stage, currency treatment and observation date. Unknown is not zero.
+2. **Public website (0727):** complete release reconciliation and accessibility
+   review, resolve hosting/URL from the concrete preview, deploy and verify the
+   public route. The local MVP slice is 0734; its completion does not close 0727.
+   Monitor JSON growth and shard static handoffs if needed before file-size limits.
+3. **Monthly editions (0728):** name an owner/calendar, rehearse two editions,
+   preserve earlier downloads, show genuine events versus late reports/corrections,
+   and record failed retrievals without deleting evidence. Begin with reviewed
+   publication, not an unattended scheduler.
 
-## Track one: the observatory
+Markdown dossiers and small CSV registries stay in Git. Binary source evidence
+stays in the existing DVC archive. The website consumes static HTML/CSS/JavaScript
+and frozen JSON; SQLite is an optional derived query export, not a required backend.
+Raw-document access/redistribution rights remain distinct from public references.
+See docs/jetp-storage.md and data/jetp/README.md for the storage contract.
 
-- Country pages: pledge history, portfolio composition, financing stages,
-  coverage and observation dates.
-- Project pages: stable identity, purpose, technology, location, promoter,
-  funders, instruments, original-currency amounts and linked source locators.
-- Timelines distinguish event date, publication date and retrieval date;
-  approximate dates and status-only observations remain explicit.
-- Filters cover country, technology, funder and stage. Initial visualisations
-  show portfolio composition, preparation/financing stages and monthly changes.
-- Every total exposes its constituent records, perimeter, stage, currency
-  treatment and cutoff. Programme/component overlap and repeated financing
-  observations must not inflate totals. Unknown is not zero.
-- Monthly releases include a change log, correction history, versioned downloads,
-  coverage report and source archive references. Start with a documented reviewed
-  release process; do not introduce an unattended publication scheduler by default.
+## Track two: three publications
 
-Physical milestones may appear when actually documented, but construction,
-commissioning and retirement comparisons are not prerequisites for this programme's
-first analytical release. An agency's generic implementation label is not a
-construction date. Public access to source references does not imply permission
-to redistribute every archived document; specify release terms explicitly.
-
-## Track two: three academic contributions
-
-| Paper | Question | Evidence and deliverable |
+| Paper | Contribution | Dependency |
 |---|---|---|
-| JETP data paper | How can partnership progress be observed consistently? | Versioned dataset, schema, provenance, identity decisions, coverage, validation and uncertainty; distinct from the repository's existing non-JETP data paper. |
-| Short paper | Are JETP projects progressing faster than comparable pre-JETP energy projects? | Preparation and financing intervals, milestone attainment and historical benchmarks, selected after a feasibility audit. |
-| Long paper with Christophe | What explains the observed trajectories? | Comparative process evidence on instruments, institutions and negotiations; explicit rival explanations and negative cases. |
+| JETP data paper (0731) | Collection, identity decisions, provenance, validation, coverage, uncertainty and maintenance; distinct from the existing corpus data paper | Citable release 0726 |
+| Short causal paper (0732) | Estimate a clearly defined JETP effect on supported preparation/financing outcomes, with a defensible counterfactual | Design checkpoint 0729, analysis 0730, LaTeX scaffold 0711 |
+| Long political-economy paper (0733) | Explain observed trajectories through comparative institutional, instrument, negotiation and ownership evidence, with rivals and negative cases | 0726, 0729, 0711; use 0730 when available |
 
-The short paper considers formal identification to approval, approval to
-signature, and signature to effectiveness or first payment. Disbursement remains
-one possible outcome, not the sole measure. Construction is too early for the
-comparative question at this stage.
+The short paper's causal ambition is explicit. A null or adverse effect is acceptable;
+a matched descriptive gap must not silently become a causal result. If no credible
+design survives, return the scope decision to the author. The observatory and data
+paper can proceed independently. The long paper must not presuppose absorption,
+instrument substitution or national ownership as established explanations.
 
-The comparator is ordinary pre-JETP energy projects, preferably within the same
-country, lender, instrument and broad technology. A political pledge is not a
-project commitment. Partnership announcement dates do not substitute for each
-project's lifecycle origin. Record projects' pre-existing maturity when they
-enter JETP; do not credit the partnership with their entire preparation history.
+## No causal design has been selected
 
-Retain pending, withdrawn and cancelled proposals where observable. Distinguish
-right-censoring, unknown dates, interval-known transitions and reporting delays.
-Do not compare only successful completed transitions. Approval databases alone
-cannot identify the probability or speed of approval among all proposals.
+Astra and Fable generated competing proposals and a cross-review, retained in
+[the options note](jetp-causal-design-options-2026-09-14.md). Numerical acquisition
+targets and early model claims are not adopted protocol requirements.
 
-Historical comparisons establish relative speed, not automatically a causal
-JETP effect. Instrument substitution, absorption constraints and ownership
-arrangements are hypotheses to investigate, not findings to manufacture. A null or mixed effect remains publishable under a credible design. If causal
-identification is unavailable, return the short-paper scope decision to the author
-rather than automatically substituting a descriptive paper.
+The choice concerns different questions as well as different estimators:
 
-## Feasibility decision before scaling analysis
+- **Incumbent pipeline:** did exposure advance operations already awaiting a
+  milestone before JETP? Freeze the baseline population before intervention.
+- **Overall pipeline:** did entry or milestone throughput change? This can include
+  composition and new projects; it is not automatically a waiting-time effect.
+- **Relative sector progress:** did energy advance relative to comparable non-energy
+  projects? A triple difference requires a credible untreated sector-gap trajectory;
+  spillovers may make its estimand relative rather than total energy acceleration.
+- **Country-specific synthetic history:** can a stable pre-treatment outcome series
+  and admissible donors support a credible synthetic counterfactual?
+- **Narrow support component:** can a real allocation mechanism identify a local
+  effect? No cutoff, lottery, instrument or exogenous rollout is established yet.
 
-Audit 10–15 named JETP investment projects selected by explicit lender/project-type
-rules, alongside a defined historical candidate cohort. Include stalled proposals
-where sources expose them; document selection and unavailable histories. This is
-a coverage diagnostic, not a powered effect estimate or a representative sample.
+Beneficiary-country selection is nonrandom. The comparator search may span other
+beneficiary countries, using pre-treatment income, financing eligibility and energy
+conditions; project comparison uses baseline lender, instrument, technology and
+maturity. Cross-sector comparisons need appropriate scale/complexity/procurement
+criteria. Do not match away financing choices or maturity changes induced by JETP.
+Countries considered but not concluding negotiations are leads, not automatically
+untreated controls. Contemporary operations are needed to address calendar effects;
+old completed operations alone cannot provide the counterfactual.
 
-For each stage record both endpoints, source precision and historical-comparator
-availability. Prefer comparable lender records, including World Bank and ADB
-records where relevant, without silently excluding bilateral finance. Deliver a
-stage-by-stage go/narrow/defer decision. If pre-approval histories cannot be
-reconstructed, keep pipeline descriptions and restrict duration inference to the
-financing transitions that are supported. Observatory publication must not wait
-for complete four-country causal analysis.
+Retain pending/cancelled cases, uncertainty, reporting delays and original project
+history. Approval after treatment and post-onset risk-set membership can themselves
+be treatment-selected. Good balance/pre-period fit is evidence, not proof. Four
+countries remain four policy assignments; permutation and other uncertainty
+procedures require explicit assumptions. Poor precision differs from failed
+identification.
 
-## Delivery plan and dependencies
+## Next checkpoint: two bounded evidence audits, then a design decision
 
-Tracker 0725 governs integration. It reuses the collection programme 0715 and its
-children, especially 0721 (CRS/IATI reconciliation) and 0722 (refresh guidance).
-Physical-asset work 0723 remains a separate extension, not an analysis blocker.
+**First wave, independent tasks:**
 
-| Ticket | Deliverable | Prerequisites |
-|---|---|---|
-| 0726 | Public dataset release and auditable totals | Existing corpus; bounded reconciliation within release scope |
-| 0727 | Observatory website ready for public release | 0726 |
-| 0728 | Reviewed monthly release process and edition comparison | 0726, 0727; reuse 0722 and existing harvester |
-| 0729 | Lifecycle/comparator feasibility pilot | Existing corpus; coordinate matching with 0721 |
-| 0730 | Historical comparison dataset and reproducible analysis | 0729 go/narrow decision; reuse 0713 and 0721 |
-| 0731 | JETP data-paper manuscript | 0726 |
-| 0732 | Reimagined short comparative manuscript and figure | 0730, 0711 |
-| 0733 | Reimagined comparative political-economy manuscript | 0726, 0729, 0711; incorporate 0730 when available |
+- **0735 — historical populations and dates:** test whether a lender's energy and
+  comparable non-energy pipeline can be reconstructed at past dates, including
+  stalled/cancelled operations. Check earlier landmark populations, contemporary
+  comparator support, milestone bounds and baseline maturity. Begin with the
+  three-case documentary exercise, expanding to 10–15 JETP cases only where useful.
+- **0736 — selection and intervention chronology:** reconstruct country selection,
+  negotiations/anticipation, concurrent reforms and comparator exposure. Search
+  separately for actual project-support allocation rules and candidate lists.
 
-First wave: release preparation and feasibility pilot. Second wave: website,
-comparison dataset and data paper. Third wave: monthly operation and analytical
-manuscripts. This is dependency ordering, not a promise of publication dates.
-Each ticket specifies its first test or falsifiable documentary acceptance check.
-Implementation runs in separate ticket contexts with the repository's usual gates.
-Hosting, public URL and recurring release ownership are resolved in the website
-and monthly-process tickets using a concrete preview; no deployment occurs in
-this planning task. Journal submission remains a separate action.
+Both use docs/jetp-scout-brief.md: named documents and routes, explicit acceptance
+criteria, at most 20 source calls or 90 minutes in the first round, and a new brief
+before another round. A blocked source is an access finding, not absence of a
+project. Discovery does not automatically promote ledger facts. These audits are
+ticketed for the next wave, not executed as part of the website checkpoint.
 
-## Integration acceptance
+**Decision checkpoint (0729):** review both evidence matrices; compare feasible
+estimands, populations, outcomes and counterfactual assumptions; propose GO/NARROW
+or explain DEFER. Select the design with the author, then freeze the primary
+protocol before effect estimation. Identify what missing evidence could change
+that choice; do not expand data merely to chase an attractive result.
 
-The programme is delivered when the website and a repeatable monthly release
-process are live, a citable dataset release exists, and the three manuscripts are
-reviewable with reproducible evidence. Scientific scope may narrow after the
-pilot, with the decision recorded; positive acceleration is never an exit criterion.
-Close the tracker only after reviewing the integrated child deliverables, not
-merely because their individual tickets are closed.
+**Analysis (0730):** implement the chosen design with source-linked risk sets,
+censoring/cancellation handling, appropriate uncertainty, falsification and
+sensitivity. **Writing (0732):** produce the causal argument and central figure
+from those reproducible results. There is no preselected figure shape or effect.
 
-## Public planning tracker
+Collection/reconciliation 0715–0722, CRS work 0713 and manuscript scaffold 0711
+remain reusable dependencies. Physical-asset work 0723 and the AEDIST methods
+pilot are separate extensions. The AEDIST pilot remains Imagine-only: no pipeline
+experiment or shared architecture is authorised by this strategy checkpoint.
 
-[GitHub issue #1333](https://github.com/MinhHaDuong/climate-finance-het/issues/1333)
-links the eight implementation and publication issues (#1334–#1341).
+## Completion and governance
 
-## Comparator extension considered on 14 September 2026
-
-The feasibility audit will also examine a synthetic (pooled or weighted) reference
-of other beneficiary countries with comparable pre-treatment conditions, rather
-than restricting the candidate universe to the four JETP countries. The author confirms pre-JETP country income, financing eligibility and
-energy-sector conditions, plus project matching by lender, instrument and
-technology. Pre-entry maturity remains an additional baseline characteristic.
-The protocol must specify indicators, reference years and matching tolerances;
-matching uses baseline characteristics, not financing choices induced by JETP.
-Within-country comparisons remain a useful
-sensitivity reference, not an exclusive constraint. Tickets 0729/0730 now carry
-the expanded pool and a separate causal-identification audit. A project-support
-effect and a country-wide partnership effect require different treatments and
-sampling frames. No formal synthetic-control design or causal interpretation is
-automatically adopted by widening the pool.
-
-## Short-paper decision, 14 September 2026
-
-The author now targets a **causal short paper**. Ticket 0729 selects and audits
-identification alongside endpoint availability; 0730 implements the frozen viable
-design; 0732 writes the causal argument and central figure. Stronger comparative
-coverage alone is insufficient. The treatment may be partnership-wide or a more
-limited project-support intervention, but that choice must precede estimation.
-A broader beneficiary-country pool is a candidate comparator strategy, not a
-predetermined synthetic-control method. If no credible design is supported, the
-audit returns to the author for an explicit decision. The observatory, monthly
-editions and data paper remain useful and can proceed regardless of that outcome.
-
-## Additional comparator option: non-energy sectors
-
-The author proposes non-energy projects as a possible comparator. Tickets 0729/0730
-now audit within-country sector contrasts and a possible triple-difference design
-(energy/non-energy × JETP/comparator countries × pre/post). This is a candidate,
-not a selected estimator: sector-gap counterfactual trends, project comparability
-and JETP spillovers into other sectors must be assessed first. A relative sectoral
-effect must not be presented as total energy-project acceleration.
+The programme closes when a citable release, public observatory and repeatable
+monthly process exist and three manuscripts are reviewable against frozen evidence.
+Journal submission is separate. The current checkpoint closes only the visible
+MVP slice after its merge gate; it neither closes the parent programme nor asserts
+that a causal design is feasible. Ticket exit criteria and source evidence govern
+completion, not a positive acceleration result or a count of merged PRs.

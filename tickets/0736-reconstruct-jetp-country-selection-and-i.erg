@@ -1,0 +1,56 @@
+%erg 0.1
+Title: Reconstruct JETP country selection and intervention timing
+Created: 2026-09-14
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-14T06:47Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Independent evidence track feeding 0729, programme 0725. Beneficiary countries
+were not randomly selected; matching country/project characteristics cannot by
+itself identify an effect. Reconstruct the assignment process and intervention
+boundaries before committing to a causal claim.
+
+## First documentary acceptance check
+
+For one country, distinguish first documented negotiation, political declaration,
+investment-plan publication and a dated support offer. A declaration date assumed
+to rule out all anticipation must fail. A country considered but not concluding a
+JETP must not automatically become an untreated or quasi-random control.
+
+## Bounded actions
+
+1. Use docs/jetp-scout-brief.md, adapted to country/partnership identity. Seek dated
+   official G7/IPG/government statements, selection criteria, country partnership
+   frameworks and public audit/parliamentary records. Secondary reporting is a
+   lead to verify; document disagreements and unavailable originals.
+2. First round: at most 20 source-search/retrieval calls or 90 minutes. Record
+   exactly what new document/route could justify another round. No institutional
+   messages are authorised by this ticket.
+3. Build a chronology for four JETP countries and documented candidate/non-concluded
+   countries. Distinguish selection on persistent conditions from expected future
+   energy changes. Audit concurrent reforms, shared-lender reallocations and
+   exposure of non-energy sectors or comparator countries.
+4. Search separately for an actual support-allocation mechanism: rules, candidate
+   lists, scores, thresholds or externally scheduled rollout. Do not infer an
+   instrument from political relationships, or a discontinuity from an arbitrary
+   date. State when no usable mechanism is established.
+
+## Deliverables and exit criteria
+
+- [ ] Dated source-linked selection/negotiation/intervention chronology with uncertainties
+- [ ] Comparator admissibility matrix flags negotiations, parallel programmes and other exposure
+- [ ] Rival explanations and evidence distinguishing them from JETP treatment recorded
+- [ ] Any allocation-rule candidate supported by original rules and a list of remaining identification gaps
+- [ ] Go/narrow/defer implications for each candidate design; no assumption that a funnel establishes assignment
+
+Unknown is a valid finding. These results guide 0729's definition of treatment,
+time zero, eligible population and counterfactual; they do not estimate an effect.
+
+## GitHub planning issue
+
+https://github.com/MinhHaDuong/climate-finance-het/issues/1346

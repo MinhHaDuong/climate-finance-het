@@ -1,209 +1,82 @@
 %erg 0.1
-Title: Establish a feasible causal design for JETP project acceleration
+Title: Select a feasible causal design from the JETP evidence audits
 Created: 2026-09-13
 Author: HDMX-coding-agent
+Blocked-by: 0735
+Blocked-by: 0736
 
 --- log ---
 2026-09-13T19:18Z HDMX-coding-agent created
+2026-09-14T06:51Z HDMX-coding-agent decision Consolidate Astra/Fable options; no design selected. Two bounded evidence audits feed the design checkpoint.
 
 --- body ---
 
 ## Context
 
-The short paper now targets a causal estimate of JETP acceleration (author decision, 14 September 2026). Establish a credible counterfactual and observable early-stage outcomes before selecting an estimator. More dates or a better matched pool alone do not establish identification. Pre-approval histories and JETP admission may be selectively observed.
+The author wants a causal short paper on JETP acceleration. Country selection is
+nonrandom. The independent Astra/Fable proposals and cross-review are in
+conception/jetp-causal-design-options-2026-09-14.md; original reports are retained,
+including corrections. This ticket makes a design decision after evidence discovery,
+not an estimator choice based on apparent effect size. Parent programme: 0725.
 
-Plan: `conception/jetp-observatory-and-papers-plan.md`. Parent tracker: 0725.
+## First documentary acceptance check
 
-## First test
+Challenge a naive JETP-labelled versus old-completed-project comparison with
+maturity-based selection and a shared calendar shock. It must fail causal
+acceptance despite balanced observed income groups. State what actual assignment
+or historical evidence could distinguish these biases from an effect.
 
-First identification challenge: a lender selects projects already near approval
-into JETP, while a common calendar shock speeds up every country. A simple
-JETP-versus-old-completed-project comparison must fail the causal acceptance
-check even if observed country covariates balance. State what additional
-assignment or longitudinal evidence could distinguish either bias from an effect.
+## Inputs and candidate designs
 
+0735 / GitHub #1345 audits historical populations, milestone observations and contemporaneous
+comparison support. 0736 / GitHub #1346 audits country selection, negotiations, anticipation,
+concurrent interventions and any genuine allocation mechanism. Each supplies
+locators, contrary evidence and named missing documents, with bounded search logs.
 
-First documentary acceptance exercise: trace one mature-on-JETP-entry project, one pending proposal and one historical comparator from sources into dated stages. A publication date substituted for an event date, or a pending proposal dropped as missing, must be detected. Record a failed initial extraction before refining the coding protocol.
+Compare the supported options: exposure of an incumbent pipeline fixed before
+intervention; overall pipeline throughput; energy/non-energy triple differences;
+country-specific synthetic controls; and a narrower support-component effect if
+an actual allocation mechanism exists. A project-support comparison requires an
+explicit confounding argument and is distinct from the country partnership effect.
+Countries considered but not concluding a JETP are discovery leads, not automatic
+controls. No mandatory permutation method, numerical pre-period threshold or
+donor-count target is adopted from the initial model reports.
 
-## Actions
+## Design decision
 
-Select 10–15 named JETP investment projects by explicit lender/technology rules, covering different disclosure conditions without claiming representativeness. Define a candidate pool across beneficiary countries with comparable baseline conditions, matching projects by lender, instrument and technology; retain within-country comparisons where feasible. Audit identification→approval, approval→signature and signature→effectiveness/first payment. Track event precision, pre-existing maturity, cancellations, reporting delay and censoring. Coordinate 0721 matching; do not wait for construction or complete four-country reconciliation. Record a feasibility matrix, extraction effort and go/narrow/defer recommendation for each stage.
+Choose a primary estimand, intervention, population, unit, time zero, outcome and
+follow-up horizon only after reviewing the evidence matrices. Country comparability
+uses pre-treatment income, financing eligibility and energy-sector conditions;
+project comparison uses baseline lender, instrument, technology and maturity.
+Across sectors use relevant scale/complexity/procurement characteristics rather
+than fictitious technology matches. Define indicators, dates and overlap rules.
+
+Do not condition an incumbent-pipeline effect on approval or survival after JETP.
+Earlier comparable landmark populations can provide history; rolling post-onset
+risk sets can still contain treatment-induced composition. A throughput estimand
+may include new projects, but is not a waiting-time effect. Non-energy spillovers
+can make a sector contrast relative rather than total acceleration.
+
+Assess counterfactual assumptions, anticipation, concurrent reforms, spillovers,
+measurement change, common support, missingness, cancellation and right/interval
+censoring. Good pre-period fit or observed balance supports but does not prove
+identification. Few treated countries require a justified country-level uncertainty
+procedure; placebo ranks are not exact randomisation p-values without exchangeability.
+Distinguish precision/power limitations from failed identification.
 
 ## Exit criteria
 
-- [ ] Selection rules and exclusions documented before outcome comparison
-- [ ] Both endpoints and source locators audited for each proposed interval
-- [ ] Historical pending/withdrawn proposal coverage and survivorship bias assessed
-- [ ] JETP entry and earlier project history distinguished
-- [ ] Stage-specific observation decision AND a documented causal-design go/narrow/defer decision for 0730; positive acceleration is never required
+- [ ] Both bounded evidence audits reviewed, including contrary and unavailable evidence
+- [ ] Candidate-design matrix links each identifying assumption to evidence and unresolved threats
+- [ ] One primary estimand/design proposed with population, treatment, time zero and supported outcomes, or causal DEFER justified
+- [ ] Comparator definitions, falsification/placebos, sensitivity and uncertainty plan specified
+- [ ] Protocol proposal records prior outcome inspection and is ready to freeze before 0730 primary estimation
+- [ ] GO/NARROW decision recorded with author, or explicit author scope decision requested on DEFER; no descriptive substitution
 
-## Validation
-
-Apply the repository gates for the actual diff. Code work starts with the failing
-fixture above; prose/data work records the documentary acceptance check. Preserve
-source evidence and report limits rather than manufacturing a successful result.
+No positive or statistically significant effect is required. A narrower valid
+causal question is acceptable if named and agreed. If no credible design survives,
+return the scope decision to the author. Observatory/data-paper work continues.
 
 ## GitHub planning issue
 
 https://github.com/MinhHaDuong/climate-finance-het/issues/1337
-
-## Next executable slice, 14 September 2026
-
-This is the next scientific task for the short paper and is ready to start from
-the source registries without waiting for public hosting or manuscript scaffolds.
-The observatory date-role fixes improve export safety but do not establish the
-missing historical endpoints.
-
-1. Write selection rules before inspecting duration differences. Begin with a
-   lender/instrument stratum shared by named JETP and ordinary historical energy
-   operations; expand only where the documentary evidence supports it.
-2. Execute the first-test triad above: one mature-on-entry JETP project, one pending
-   JETP proposal, and one ordinary historical operation. Locate original lifecycle
-   documents and record failed/ambiguous extractions. This is a protocol check,
-   not the final sample or a speed estimate.
-3. Apply the corrected protocol to the agreed 10–15 JETP cases and a defined
-   historical candidate frame. Include observable active/withdrawn/cancelled cases;
-   the MVP's 97 closed operations are discovery leads, not the sampling frame.
-4. Deliver a row-level endpoint/source matrix, a selection-and-exclusion log, and
-   a stage-by-stage go/narrow/defer memo for 0730. At minimum record operation and
-   project IDs, attribution and entry date, instrument, maturity at entry, both
-   endpoints with role/precision/bounds, source locator, observation cutoff,
-   censoring/cancellation and extraction effort.
-
-The first useful figure is a coverage diagnostic showing how many cases support
-each comparable interval and why others do not. It precedes any acceleration
-figure. Prefer approval→signature as a candidate to audit alongside the other
-agreed transitions, not a predetermined outcome. If identification histories are
-unobservable, explicitly narrow the question rather than substituting pledge age.
-
-## Broader comparator pool and causal-identification audit
-
-User discussion on 14 September opens a pooled/weighted reference from other
-beneficiary countries with comparable pre-treatment conditions. Audit this option
-alongside within-country comparisons; do not restrict discovery to four countries.
-The author confirms country conditions plus project matching: pre-JETP income,
-financing eligibility and energy-sector conditions, with projects matched by lender,
-instrument and technology. Retain pre-entry project maturity as a baseline
-characteristic, not a substitute for country comparability. Operational indicators,
-baseline years and matching tolerances must be fixed in the protocol. Match
-country characteristics at the relevant historical baseline, not today's status;
-do not condition on subsequent project success or post-JETP financing choices.
-
-Distinguish two estimands before selecting a design: the effect of project-specific
-JETP support, and the total effect of a partnership on a country's eligible energy
-pipeline. Audit dated eligibility/admission rules, candidate lists including
-rejected/deferred proposals, and any genuine discontinuity or exogenous rollout.
-Do not presume such an assignment mechanism exists. For a country-level design,
-audit repeated pre- and post-JETP outcomes in both treated and candidate comparator
-countries, concurrent reforms, anticipation, spillovers and consistent measurement.
-Record donor-pool overlap and exclusions. Four treated countries limit inference;
-large project counts are not large numbers of independent policy assignments.
-
-A matched historical pool is not automatically a formal synthetic control.
-Old completed operations alone cannot distinguish treatment effects from calendar
-changes without further assumptions. Include contemporary non-JETP operations in
-the feasibility search where appropriate, and retain unfinished observations.
-Deliver a causal-design go/narrow/defer assessment separately from the endpoint
-coverage decision. A descriptive benchmark can remain an observatory output if causal
-identification is not credible, but it does not complete the causal short-paper path.
-
-Method pointers: World Bank Impact Evaluation in Practice (assignment rules and
-counterfactual designs), https://www.worldbank.org/en/programs/sief-trust-fund/publication/impact-evaluation-in-practice ;
-Abadie, Diamond and Hainmueller, https://www.nber.org/papers/t0335 ; historical
-country classifications, https://datahelpdesk.worldbank.org/knowledgebase/articles/906519-world-bank-country-and-lending-groups .
-
-## Author decision: causal short paper, 14 September 2026
-
-Causal identification is the target, not an optional interpretation added after
-estimating historical differences. This requirement supersedes earlier language
-in this ticket allowing a descriptive benchmark to complete the short-paper path.
-The observatory and data paper can proceed independently.
-
-Required design dossier before closing this ticket:
-
-- Define one primary estimand, population, unit and treatment onset: the total
-  partnership effect on an eligible pipeline, or a narrower project-support effect.
-  Explain which substantive question that choice answers and which it cannot.
-  A loan signature cannot define treatment when signature speed is the outcome.
-- Compare evidence for candidate designs: a genuine allocation cutoff/exogenous
-  rollout if documented; otherwise longitudinal difference-in-differences or a
-  synthetic-country comparison with adequate pre-treatment outcomes. Matching
-  alone needs an explicit, defensible no-unmeasured-confounding assumption; a
-  large donor pool or good balance is not proof of it. Do not invent an instrument.
-- Identify the candidate population before observing treatment outcomes. Record
-  admission rules, maturity and treatment timing without immortal-time bias;
-  separate project selection from policy-wide treatment. Do not match on outcomes
-  or variables changed by the JETP when estimating its total effect.
-- Audit contemporary untreated comparators and earlier outcomes, common support,
-  measurement stability, concurrent policies, anticipation, spillovers and attrition.
-  Distinguish missing events from right/interval censoring and cancellation.
-- Specify falsification/placebo and sensitivity checks, the level of treatment
-  assignment for uncertainty, minimum useful outcome precision and a feasibility
-  assessment of statistical power. Four treated countries are not hundreds of
-  independent treatments merely because they contain many projects.
-- Deliver the evidence audit (including the three-case check and 10–15 JETP cases),
-  a short identification memo, and a proposed protocol to freeze before primary
-  effect estimation. Record existing outcome inspection; already-read material
-  is development evidence, not a prospectively held-out test.
-
-GO means a defensible design with obtainable data. NARROW means a credible causal
-claim for a smaller population, intervention or stage, explicitly justified.
-DEFER means explain the missing identifying evidence and return an author scope
-choice; do not silently substitute a descriptive short paper. Null or adverse
-causal effects remain fully acceptable. No completion criterion requires a
-statistically significant or positive effect.
-
-Additional exit criteria:
-
-- [ ] Primary estimand/treatment and identification assumptions stated before effect estimation
-- [ ] Candidate designs judged against actual assignment/longitudinal evidence
-- [ ] Contemporary comparator support, threats, falsification and uncertainty plan documented
-- [ ] Frozen-protocol proposal and causal go/narrow/defer memo linked for 0730
-
-## Country selection is the primary assignment problem
-
-The author clarifies that nonrandom selection concerns JETP beneficiary countries.
-For a partnership-wide effect, reconstruct why these countries were selected and
-when negotiations/anticipation began. Seek contemporaneous selection criteria,
-other countries considered, deferred negotiations and pre-existing reforms or
-lender programmes. These are candidate sources, not facts assumed to exist.
-Distinguish selection on persistent baseline conditions from selection on expected
-future acceleration or a coincident shock. Matching project characteristics does
-not remove country-level confounding, and project counts do not increase the
-number of independent country treatment assignments. A good pre-treatment fit is
-supporting evidence, never proof that the untreated post-JETP trajectory is valid.
-
-## Non-energy comparator option, author suggestion 14 September 2026
-
-Audit non-energy-sector operations as an additional comparator, not an automatic
-untreated group. Construct feasibility cells for energy/non-energy × JETP/non-JETP
-countries × before/after treatment. Consider a within-country sector comparison
-and a triple-difference design alongside the broader cross-country energy pool.
-For cross-sector matching, replace technology equivalence with appropriate baseline
-project scale, complexity and procurement characteristics; retain comparable lender,
-financial instrument and lifecycle definitions. Avoid all-sector pooling without
-an explicit admissibility rule; mixed-sector/energy-linked operations need flags.
-
-The identifying question is whether the energy-minus-comparator-sector outcome gap
-would have changed similarly across treated and comparison countries without JETP.
-Country selection based on an impending energy-specific change can still violate
-this assumption. Audit sector-specific reforms, funding reallocation, lender-capacity
-competition and broader JETP reforms that could affect non-energy operations.
-Do not call non-energy projects negative controls unless non-exposure is justified.
-If spillovers exist, the contrast may identify a relative sectoral effect rather
-than total energy-project acceleration. Retain all at-risk observations and inspect
-pre-treatment gap trajectories, composition and measurement comparability.
-
-Method reference: Olden and Moen (2022), The triple difference estimator,
-https://doi.org/10.1093/ectj/utac010 . The identifying restriction concerns trends
-in the sector gap; two separately valid simple difference-in-differences designs
-are not required. Design validity still requires contextual evidence.
-
-## Independent design proposals, 14 September 2026
-
-The author requested Astra and Fable to generate competing proposals; no design
-has been selected. Read `conception/jetp-causal-design-options-2026-09-14.md` and
-the linked independent reports, including Fable's cross-review corrections.
-The first reports' estimator preferences and numerical targets are not adopted
-protocol requirements. The incumbent-pipeline versus changing-population estimand
-remains a substantive decision for this feasibility exercise.

@@ -4,6 +4,22 @@
 
 Building toward a book on international climate finance between solidarity and profit. This repo is the research infrastructure: a 30K-work corpus, analysis pipeline, and the articles that test each piece of the argument before it becomes a chapter.
 
+## JETP observatory and papers
+
+- [x] Local observatory preview with country synthesis, project evidence and
+  historical browsing; scientific date/link/acquisition corrections in PR #1343.
+- [ ] Citable data release0726 → public website0727 → reviewed monthly editions0728.
+- [ ] Independent evidence audits0735 (historical populations/dates) and0736
+  (selection/intervention chronology) → causal-design checkpoint0729.
+- [ ] Selected protocol → causal analysis0730 → short paper0732; no design selected yet.
+- [ ] JETP data paper0731 after0726; long political-economy paper0733 with Christophe.
+  LaTeX scaffolds0711 remain required for the two analytical manuscripts.
+
+See `conception/jetp-observatory-and-papers-plan.md`. A null effect is acceptable;
+failed identification returns to an author scope decision. The website and data
+paper do not depend on demonstrating acceleration. AEDIST methods pilot remains
+Imagine-only, separate from this operational programme.
+
 ## Oeconomia manuscript next steps
 
 Submitted to Oeconomia (Varia) on 2026-03-18. Revise-and-resubmit received;
