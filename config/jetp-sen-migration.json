@@ -1,0 +1,40 @@
+{
+  "schema_version": "sen-migration-policy/1",
+  "recorded_at": "2026-09-14T22:00:00Z",
+  "recorded_by": "HDMX-coding-agent",
+  "sources": [
+    {
+      "source_id": "sen-investment-plan-annexes-mirror",
+      "retrieved_at": "2026-09-12T08:27:00Z",
+      "document_sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
+      "edition_id": "sen-investment-plan-annexes-2025-mirror",
+      "row_count": 38,
+      "role": "received_project_inventory",
+      "source_status": "secondary_mirror_of_ministry_plan_annexes"
+    },
+    {
+      "source_id": "sen-investment-plan-l4-mirror",
+      "retrieved_at": "2026-09-11T20:42:35Z",
+      "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
+      "edition_id": "sen-investment-plan-l4-2025-mirror",
+      "row_count": 11,
+      "role": "quick_win_inventory",
+      "source_status": "secondary_mirror_after_official_host_failures"
+    }
+  ],
+  "source_regime": [
+    {
+      "topic": "edition and host status",
+      "rule": "The selected saved bytes are public mirrors. Preserved official-host fetch failures remain legacy acquisition history; this candidate never represents either mirror as an official-host retrieval."
+    },
+    {
+      "topic": "inventory meanings",
+      "rule": "The 38 Annex 2 received projects and 11 Quick Wins are separate plan inventories. Receipt, priority, similar wording, and a legacy project link do not establish selection, finance, payment, implementation, or a one-to-one identity."
+    },
+    {
+      "topic": "programme and component amounts",
+      "rule": "Programme envelopes, component needs, prospective allocations, and plan estimates remain source positions. They are not summed, netted, or promoted to an account total."
+    }
+  ],
+  "publication_limit_bytes": 512000
+}
