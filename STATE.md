@@ -1,6 +1,6 @@
 # State
 
-Last updated: 2026-09-14T12:18Z
+Last updated: 2026-09-14T12:30Z
 
 ## Current goal
 
@@ -17,19 +17,26 @@ scope in `docs/jetp-observatory-mvp-validation.md`. 383 named records, 21 unname
 slots, 301 registered sources, 97 historical closed operations. Public release,
 hosting and monthly editions remain 0726–0728; this is not a causal result.
 
-Evidence audits are checkpointed in open PRs **#1347** (historical/bilateral
-sources) and **#1348** (selection chronology and design tracker). Enough evidence
-exists to compare designs; no primary causal design is selected. AFD first,
-KfW/FCDO complementary pilots are prepared **for a fresh session, not launched**.
+Historical/bilateral audit **0735** and tomorrow's pilot preparation land through
+**PR #1347**; 0735 closes with that merge. Selection/design-tracker **PR #1348**
+remains open at `63bb738ef8f8bf7c96db3201a8ce48b717136075`; use that pinned
+version for selection inputs and the updated 0729 ticket until it lands.
+Enough evidence exists to compare designs; no primary causal design is selected.
+AFD first, KfW/FCDO complementary pilots are prepared **for a fresh session, not launched**.
 Start with [the pilot handoff](docs/jetp-pilot-handoff-2026-09-14.md): exact branches,
 source bundles, first tests, bounded budgets and three candidate comparisons.
 For 15 September, the [prepared protocol](docs/jetp-pilots/2026-09-15/protocol.md)
 and child tickets **0737–0739** supply baseline alternatives, sample rules,
 output schemas and stopping decisions. Recommended: Sol high leads, Terra high
 for bounded lender work; independent scientific review before design selection.
-No pilot is scheduled or launched.
+Next session: **15 September — start AFD 0737 / #1349**; KfW 0738 / #1350
+and FCDO 0739 / #1351 are independent complements. Preparation freeze:
+`1e532975`; use subsequent reviewed corrections on main if present. The handoff
+contains a ready-to-use launch instruction. No pilot is scheduled or launched.
 DVC source bytes are preserved in primary/local caches; remote replication remains
-pending. Preserve caches and the open worktrees until recovery is verified.
+pending. Preserve the audit source worktrees and caches until recovery is
+verified, including `/tmp/jetp-audit-0735` after its branch merges. Closing the
+audit does not close replication ticket 0726 or design tracker 0729.
 
 Pilots feed **0729**, then **0730 → 0732** analysis and short paper. **0731** data
 paper follows the citable release; **0733** is the long paper with Christophe.
