@@ -5,6 +5,10 @@ commit `962f4bb1ef65eaee564fa1f27cde1e8116c153f9`.
 Input hashes, payload authorization and model metadata are in
 [`inputs.json`](inputs.json).
 
+Revision follow-up: [revision 2 response](revision-response.md) records the
+subsequent design changes and research-sufficiency assessment. The panel findings
+below describe revision 1 at the reviewed commit, not a review of revision 2.
+
 ## Outcome and independence
 
 Both requested reviewers completed independent reviews and recommend **REVISE
