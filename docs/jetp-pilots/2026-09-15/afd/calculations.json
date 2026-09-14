@@ -1,0 +1,29 @@
+{
+  "anomalies": {
+    "award_signature_reversal": 7,
+    "missing_award_matched_xml": 13,
+    "missing_portal": 19,
+    "signature_nonmatch": 2
+  },
+  "candidate_count": 210,
+  "legacy": 2080,
+  "legacy_diagnostic": 224,
+  "legacy_xml_overlap": 223,
+  "portal": 3277,
+  "sample": [
+    "CAL100402",
+    "CAL100401",
+    "CAL100302",
+    "CAL100301",
+    "CID108901",
+    "CID107101",
+    "CIN116401",
+    "CIN109002",
+    "CIN107401",
+    "CMA122103",
+    "CMA121301",
+    "CSN162002"
+  ],
+  "xml_financings": 317,
+  "xml_parents": 225
+}

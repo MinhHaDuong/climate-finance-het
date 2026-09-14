@@ -1,0 +1,25 @@
+rank,route,case_id,purpose,url
+1,specifications,,resource-history,https://www.data.gouv.fr/api/1/datasets/5492f3e8c751df24dc04805c/resources/69d27393-baab-40e4-8cef-8061ff6f4639/
+2,specifications,,dataset-history,https://www.data.gouv.fr/api/1/datasets/5492f3e8c751df24dc04805c/activities/
+3,specifications,,legacy-dictionary,https://opendata.afd.fr/api/explore/v2.1/catalog/datasets/donnees-aide-au-developpement-afd
+4,specifications,,financing-dictionary,https://opendata.afd.fr/api/explore/v2.1/catalog/datasets/les-concours-de-l-afd
+5,specifications,,transaction-dictionary,https://opendata.afd.fr/api/explore/v2.1/catalog/datasets/les-transactions-de-l-afd
+6,specifications,,official-transparency,https://www.afd.fr/fr/la-transparence
+7,specifications,,archive-legacy,https://web.archive.org/cdx/search/cdx?url=opendata.afd.fr/api/explore/v2.1/catalog/datasets/donnees-aide-au-developpement-afd/exports/json&output=json&filter=statuscode:200&collapse=timestamp:4
+8,specifications,,archive-xml,https://web.archive.org/cdx/search/cdx?url=static.data.gouv.fr/resources/donnees-de-laide-au-developpement-de-lafd-1/*/fr-afd-ma.xml&output=json&filter=statuscode:200&collapse=timestamp:4
+9,original,CMA123501,exact financing contract/decision; parent link is contrary-identity check only,http://www.afd.fr/base-projets/consulterProjet.action?idProjet=CMA1235
+10,original,CTN129703,exact financing contract/decision; parent link is contrary-identity check only,http://www.afd.fr/base-projets/consulterProjet.action?idProjet=CTN1297
+11,original,CZZ276103,exact financing contract/decision; parent link is contrary-identity check only,http://www.afd.fr/base-projets/consulterProjet.action?idProjet=CZZ2761
+12,original,CBJ126404,exact financing contract/decision; parent link is contrary-identity check only,http://www.afd.fr/base-projets/consulterProjet.action?idProjet=CBJ1264
+13,original,CCI168103,exact financing contract/decision; parent link is contrary-identity check only,http://www.afd.fr/base-projets/consulterProjet.action?idProjet=CCI1681
+14,original,CID107702,exact financing contract/decision; parent link is contrary-identity check only,http://www.afd.fr/base-projets/consulterProjet.action?idProjet=CID1077
+15,original,CAL100402,exact financing contract/decision; parent link is contrary-identity check only,http://www.afd.fr/base-projets/consulterProjet.action?idProjet=CAL1004
+16,original,CAL100401,exact financing contract/decision; parent link is contrary-identity check only,http://www.afd.fr/base-projets/consulterProjet.action?idProjet=CAL1004
+17,original,CAL100302,exact financing contract/decision; parent link is contrary-identity check only,http://www.afd.fr/base-projets/consulterProjet.action?idProjet=CAL1003
+18,original,CAL100301,exact financing contract/decision; parent link is contrary-identity check only,http://www.afd.fr/base-projets/consulterProjet.action?idProjet=CAL1003
+19,original,CID108901,exact financing contract/decision; parent link is contrary-identity check only,http://www.afd.fr/base-projets/consulterProjet.action?idProjet=CID1089
+20,original,CID107101,exact financing contract/decision; parent link is contrary-identity check only,http://www.afd.fr/base-projets/consulterProjet.action?idProjet=CID1071
+21,original,CIN116401,exact financing contract/decision; parent link is contrary-identity check only,http://www.afd.fr/base-projets/consulterProjet.action?idProjet=CIN1164
+22,original,CIN109002,exact financing contract/decision; parent link is contrary-identity check only,http://www.afd.fr/base-projets/consulterProjet.action?idProjet=CIN1090
+23,original,CIN107401,exact financing contract/decision; parent link is contrary-identity check only,http://www.afd.fr/base-projets/consulterProjet.action?idProjet=CIN1074
+24,original,CMA122103,exact financing contract/decision; parent link is contrary-identity check only,http://www.afd.fr/base-projets/consulterProjet.action?idProjet=CMA1221
