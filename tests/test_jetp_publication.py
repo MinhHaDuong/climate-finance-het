@@ -60,9 +60,16 @@ def test_real_sidecar_traces_each_visible_country_headline():
     root = Path(__file__).resolve().parents[1]
     result = build(root, root / 'deliverables/jetp-observatory/data/provenance.json')
     assert result['format_version'] == 'jetp-publication/1'
-    assert len(result['displays']) == 12
+    assert len(result['displays']) == 32
     assert {row['owner'] for row in result['combinations']} == {'legacy'}
     assert all(row['evidence'] for row in result['displays'])
+    expected = {'/country/headline', '/country/headline_detail',
+                '/country/stage_label', '/country/headline_date'}
+    for code, country in result['by_evidence'].items():
+        displays = [row for row in result['displays'] if row['display_id'] in country]
+        assert len(displays) == 8, code
+        assert {row['pointer'] for row in displays} == expected
+        assert {row['route'] for row in displays} == {'#overview', '#country/' + displays[0]['payload'][5:8]}
 
 
 def test_candidate_bundle_keeps_provenance_sidecar_with_matching_release_bytes(tmp_path):
