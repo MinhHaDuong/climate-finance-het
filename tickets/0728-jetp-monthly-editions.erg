@@ -2,7 +2,6 @@
 Title: Establish reviewed monthly JETP observatory editions
 Created: 2026-09-13
 Author: HDMX-coding-agent
-Blocked-by: 0726
 Blocked-by: 0727
 
 --- log ---
@@ -10,6 +9,7 @@ Blocked-by: 0727
 
 2026-09-13T20:18Z HDMX-coding-agent decision Markdown-first storage; DVC evidence archive; static website; SQLite optional derived export.
 
+2026-09-14T22:21Z HDMX-coding-agent note blocker 0726 closed — Blocked-by removed.
 --- body ---
 
 ## Context
