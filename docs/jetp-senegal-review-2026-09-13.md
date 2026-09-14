@@ -1,10 +1,10 @@
 # Senegal JETP — documentary review, 13 September 2026
 
 All 49 plan lines have been reconciled to 43 project/programme identities.
-The public-source review now has 19 direct corroborations, 20 `central_only`
-verdicts and four `blocked` ASER routes. These are not 43 additive assets or
+The public-source review now has 21 direct corroborations, 19 `central_only`
+verdicts and three `blocked` ASER routes. These are not 43 additive assets or
 43 financed projects. The literal requirement for a direct page for every
-project remains unmet for 24 identities.
+project remains unmet for 22 identities.
 
 Financial needs, reported funding and physical implementation are separate
 observations. Project estimates below are not secured finance. Programmes and
@@ -13,8 +13,11 @@ or absence of activity. The plan's precise issue date remains unresolved.
 
 The [deeper case analysis](jetp-senegal-case-analysis-2026-09-13.md) adds
 solar site evidence, a rural feasibility-study lead and financial-design analysis.
-The 24 unresolved direct identities remain open; new possible matches do not
-change the coverage verdicts.
+The [managed research rounds](jetp-senegal-managed-rounds-2026-09-13.md)
+record the earlier procurement, contract and archive checks and their
+adjudication. At that checkpoint, 23 direct identities remained unresolved. The
+later [document follow-up](jetp-senegal-document-followup-2026-09-13.md)
+promotes Annex 23 on an exact ANER planning record; 22 identities remain open.
 
 ## Findings from the resumed pass
 
@@ -33,6 +36,20 @@ change the coverage verdicts.
 - Saloum has a EUR30m summary cost and a EUR20m prospective allocation in the
   plan. These are different quantities; neither proves a signed loan.
 - The unconfirmed AFD–Senelec EUR 670 million claim remains excluded.
+- A Senelec procurement plan names a planned ACF-supported mobility-
+  electrification master plan. This is a preparation candidate for Annex 35,
+  without an exact plan-project identifier, award or installed charger.
+- ARCOP's ASER audit identifies the two contracts behind the reported PUELEC
+  component. Issued advance-payment orders are not proof of settlement.
+- BOAD approved FCFA41.5bn for partial financing of the single Linguère solar-
+  storage plant. The approval is context for QW2, without a Champions Nationaux
+  ownership crosswalk or JETP/IPG attribution.
+- An archived ANER 2025 procurement notice preserves a feasibility-study route
+  for public-building electrical autonomy; it does not define Annex 23's full
+  institutional scope or establish an award.
+- ANER's final July 2025 PSD later confirms Annex 23's broad project family and
+  conditional planning budget; it establishes neither finance nor a physical
+  event.
 
 ## Project-by-project evidence
 
@@ -178,12 +195,14 @@ No avoided-emissions estimates are promoted to measured outcomes.
 
 **Documented implementation:** `proposed` (date unresolved ; sen-investment-plan-annexes-mirror). A proposal observation does not date the actual start of works.
 
-**Verification and limitation:** Portal connection refused; 24MWc and 600 villages are proposal targets. No separate finance or delivery evidence.
+**Verification and limitation:** Portal connection refused; 24MWc and 600 villages are proposal targets. ARCOP decisions 107 and 138 document a negotiated ASER–AEE Power EPC contract for 928 localities in five regions, with a stated FCFA91,833,980,000 pre-tax value. They contain no 600-village, 24MWc, grid-injection or village-schedule marker, so the contract remains context and is not joined to Annex 7. No separate finance or delivery evidence is assigned here. See the [document follow-up](jetp-senegal-document-followup-2026-09-13.md).
 
 **Sources and locators:**
 
 - [sen-investment-plan-annexes-mirror](https://www.vie-publique.sn/docs/f003f026-01ff-4996-8959-6d01c9139b91/annexes-plan-dinvestissement-transition-energetique-juste-jetp-senegal-mepm.pdf) — Annex 2, p. 13, row 7 ; retrieval `collected`.
 - [sen-aser-www-retry](https://www.aser.sn/) — Connection refused ; retrieval `fetch_error`.
+- [sen-arcop-aeepower-decision107-2024](https://arcop.sn/wp-content/uploads/2024/10/DECISION-107-2024-ARCOP-DEF-DU-02-OCTOBRE-2024.pdf) — Printed pp.1–2 and 5; procedural record for the separate 928-locality contract; retrieval `collected`.
+- [sen-arcop-aeepower-decision138-2024](https://arcop.sn/wp-content/uploads/2025/01/DECISION-N%C2%B0138-2024-du-24-ARCOP-CRD-DEF-du-24-DEC-2024.pdf) — Printed pp.1 and 3; 928-locality scope and stated contract value, without Annex 7 markers; retrieval `collected`.
 - [sen-investment-plan-l4-mirror](https://www.vie-publique.sn/docs/002da0bc-10a7-458c-9111-09accbd0f255/plan-investissement-transition-energetique-juste-jet-senegal-mepm.pdf) — Printed p.42, named project cost ; retrieval `collected`.
 
 ### sen-project-annex-08 — Eclairage général efficace
@@ -492,22 +511,24 @@ No avoided-emissions estimates are promoted to measured outcomes.
 
 ### sen-project-annex-23 — Autonomisation en énergie électrique des universités, hôpitaux et bâtiments abritant des institutions, ministères et autres services de l’administration
 
-**Promoter:** ANER. **Coverage:** `central_only`.
+**Promoter:** ANER. **Coverage:** `collected`.
 
 **Technology:** Solar electricity for public institutions. **Location:** not specified in the verified evidence.
 
-**Need/estimate:** 92 M EUR (Printed p.42, named project in summary cost table, M EUR). This estimate does not establish secured finance.
+**Need/estimate:** 92 M EUR (Printed p.42, named project in summary cost table, M EUR). ANER's later PSD separately assigns a conditional FCFA60.4bn planning budget. Neither estimate establishes secured finance, and they are not summed.
 
 **Secured finance:** no quantified commitment established in this review.
 
 **Documented implementation:** `proposed` (date unresolved ; sen-investment-plan-annexes-mirror). A proposal observation does not date the actual start of works.
 
-**Verification and limitation:** Public-facility schemes have narrower scopes; no document identifies the whole submitted programme.
+**Verification and limitation:** ANER's final July 2025 PSD names the solar-photovoltaic autonomy project for universities, hospitals and public institutions on printed p.22 and marks its FCFA60.4bn budget conditional on p.48. The distinctive promoter, purpose and broad beneficiary classes establish the project family at planning stage; the PSD proves no secured finance, award, construction or operation. The 100 public sites/60MWc on p.21 are an Axis 2.1 objective-level target, not this project's output. The narrower health project is listed separately on p.22, while the earlier rooftop study remains a possible predecessor rather than a canonical join. The archived 2025 procurement notice remains preparation context only.
 
 **Sources and locators:**
 
 - [sen-investment-plan-annexes-mirror](https://www.vie-publique.sn/docs/f003f026-01ff-4996-8959-6d01c9139b91/annexes-plan-dinvestissement-transition-energetique-juste-jetp-senegal-mepm.pdf) — Annex 2, p. 14, row 23 ; retrieval `collected`.
 - [sen-aner-project-api](https://aner.sn/api/projects) — Related programme or geographic lead ; retrieval `collected`.
+- [ANER AGPM 2025](https://www.aner.sn/wp-content/uploads/2025/01/AGPM-2025.pdf) — Consultant-services row for feasibility studies of public-building electrical autonomy; historical PDF recovered from a 16 March 2025 Common Crawl capture.
+- [sen-aner-psd-2025-2029](https://www.aner.sn/uploads/plan_strategique_developpement_aner_2025_2029.pdf) — Final July 2025 PSD, printed pp.22 and 48; exact project-family name and conditional planning budget; retrieval `collected`.
 - [sen-investment-plan-l4-mirror](https://www.vie-publique.sn/docs/002da0bc-10a7-458c-9111-09accbd0f255/plan-investissement-transition-energetique-juste-jet-senegal-mepm.pdf) — Printed p.42, named project cost ; retrieval `collected`.
 
 ### sen-project-annex-24 — Renforcement de l'Infrastructure Qualité pour des services énergétiques innovateurs
@@ -739,12 +760,13 @@ No avoided-emissions estimates are promoted to measured outcomes.
 
 **Documented implementation:** `proposed` (date unresolved ; sen-investment-plan-annexes-mirror). A proposal observation does not date the actual start of works.
 
-**Verification and limitation:** Framework-study notice is archive-blocked; earlier charger-pilot evidence cannot establish national rollout or its funding.
+**Verification and limitation:** Senelec's PPM row `C_DEG_155` plans consultant selection for a mobility-electrification master plan concerning EV-charging infrastructure and names ACF grant support. The promoter and subject make it a strong preparation candidate, but the row does not name the Annex 35 proposal, public chargers or a rollout project identifier. It is not an award, completed study, installed-charger record or quantified/JETP-attributed finance.
 
 **Sources and locators:**
 
 - [sen-investment-plan-annexes-mirror](https://www.vie-publique.sn/docs/f003f026-01ff-4996-8959-6d01c9139b91/annexes-plan-dinvestissement-transition-energetique-juste-jetp-senegal-mepm.pdf) — Annex 2, p. 15, row 35 ; retrieval `collected`.
 - [sen-senelec-procurement-2026](https://www.senelec.sn/marches/passation/?tab=appels) — Related programme or geographic lead ; retrieval `collected`.
+- [sen-senelec-ppm-2026-v2](https://www.senelec.sn/media/marches/documents/PPM_SENELEC_2026_VERSION_2_VALIDE_LE_13_03_2026.pdf) — PDF p.13, `C_DEG_155`; scheduled consultant selection and ACF-DON funding source; retrieval `collected`.
 - [sen-irve-framework-tender-2026](https://www.dgmarket.com/tenders/np-notice.do?keywords=&noticeId=107072743) — Notice 107072743; archive HTTP403 ; retrieval `blocked`.
 
 ### sen-project-annex-36 — SUNU Agri-Solaire 2025 - 2027
@@ -809,7 +831,7 @@ No avoided-emissions estimates are promoted to measured outcomes.
 
 ### sen-project-qw-02 — Projet Quick Win 2: 100 MWc + BESS 60 MW x 3h IPP "Champions nationaux"
 
-**Deeper follow-up:** Main plan p.53 explicitly names Koungheul and Linguere. BOAD’s February 2026 Ouarkhokh ESIA and the August Senelec/Huawei announcement are possible matches. Neither establishes continuity of the proposed Champions Nationaux investment vehicle. See the case analysis for the earlier-MoU chronology discrepancy.
+**Deeper follow-up:** Main plan p.53 explicitly names Koungheul and Linguere. BOAD's February 2026 Ouarkhokh ESIA, its March loan approval and the Senelec/CNTIC/Huawei records concern corresponding solar development. None establishes continuity of the proposed Champions Nationaux investment vehicle. See the case analysis for the contract/MoU chronology discrepancy.
 
 **Promoter:** Senelec. **Coverage:** `central_only`.
 
@@ -821,12 +843,16 @@ No avoided-emissions estimates are promoted to measured outcomes.
 
 **Documented implementation:** `proposed` (date unresolved ; sen-investment-plan-l4-mirror). A proposal observation does not date the actual start of works.
 
-**Verification and limitation:** Same-site Senelec/Huawei development evidence located, but continuity of the proposed Champions Nationaux ownership and financing vehicle remains unconfirmed.
+**Verification and limitation:** The ministry reports that Senelec and CNTIC signed two EPC+F contracts, in partnership with Huawei, in July 2025. Later records document a Linguère foundation-stone report and a Senelec/Huawei memorandum for both sites. BOAD approved FCFA41.5bn for partial financing of Senelec's single 50MWc plus 30MW/90MWh Linguère plant. These are strong same-site records, but neither the loan approval nor the contractor documents identify the proposed Champions Nationaux SPV, shareholders or JETP/IPG attribution. Storage wording for the two-plant package is also ambiguous between aggregate and per-plant capacity.
 
 **Sources and locators:**
 
 - [sen-investment-plan-l4-mirror](https://www.vie-publique.sn/docs/002da0bc-10a7-458c-9111-09accbd0f255/plan-investissement-transition-energetique-juste-jet-senegal-mepm.pdf) — p. 33, QW2 ; retrieval `collected`.
 - [sen-senelec-procurement-2026](https://www.senelec.sn/marches/passation/?tab=appels) — named entry or recorded search route ; retrieval `collected`.
+- [Ministry Senelec/CNTIC/Huawei report](https://energie-mines.gouv.sn/partenariat-senelec-et-huawei/) — 28 July 2025; two EPC+F contracts, with CNTIC as named counterparty and Huawei as partner; archived.
+- [Ministry Linguère foundation-stone report](https://energie-mines.gouv.sn/pose-de-la-premiere-pierre-de-la-centrale-solaire-photovoltaique-a-linguere-le-senegal-accelere-sa-souverainete-energetique/) — published 10 April 2026; 50MW plus 30MW/90MWh site record; archived.
+- [BOAD 150th board-session communiqué](https://admin.boad.org/wp-content/uploads/2026/03/COMPRESS-CA-150-1.pdf) — printed pp.2–3; FCFA41.5bn loan approval for partial financing of the Linguère plant; contextual, not joined finance for QW2.
+- [Ministry Senelec/Huawei memorandum report](https://energie-mines.gouv.sn/visite-de-travail-sur-invitation-du-groupe-huawei-technologies-co-ltd/) — published 13 August 2026; both sites named; archived.
 
 ### sen-project-qw-03 — Projet Quick Win 3: 100 MWc + BESS 60 MW x 3h IPP IPP "Leral"
 
@@ -849,7 +875,7 @@ No avoided-emissions estimates are promoted to measured outcomes.
 
 ### sen-project-qw-04 — PUELEC
 
-**Promoter:** ASER. **Coverage:** `blocked`.
+**Promoter:** ASER. **Coverage:** `collected`.
 
 **Technology:** Grid extension, mini-grids and solar home systems. **Location:** not specified in the verified evidence.
 
@@ -857,15 +883,18 @@ No avoided-emissions estimates are promoted to measured outcomes.
 
 **Secured finance:** no quantified commitment established in this review.
 
-**Documented implementation:** `proposed` (date unresolved ; sen-investment-plan-l4-mirror). A proposal observation does not date the actual start of works.
+**Documented implementation:** three villages reported operational on 9 November 2025. This is a component observation, not completion of PUELEC or the 39-locality package. The tour began on 6 November; individual commissioning dates are unresolved.
 
-**Verification and limitation:** Operator access still blocked; prospective programme allocations overlap the three ASER submissions and other access measures.
+**Verification and limitation:** The ministry directly reports this state-funded PUELEC component under ASER supervision. ARCOP's procurement audit identifies tender `T_ASER_003` and contracts `T0038` and `T0039` awarded to Global Engineering SARL. Their FCFA867,233,917 and FCFA562,761,206 TTC values sum exactly to the ministry's FCFA1,429,995,123 package value. The audit records signing on 15 December 2023, start orders on 5 February 2024 and payment orders for a 20% advance; the orders do not prove bank settlement. BCI state funding is not JETP/IPG attribution, and the separate 350-, 330- and 600-village proposal identities remain unresolved. See the [managed research rounds](jetp-senegal-managed-rounds-2026-09-13.md).
 
 **Sources and locators:**
 
 - [sen-investment-plan-l4-mirror](https://www.vie-publique.sn/docs/002da0bc-10a7-458c-9111-09accbd0f255/plan-investissement-transition-energetique-juste-jet-senegal-mepm.pdf) — p. 33, QW4 ; retrieval `collected`.
 - [sen-aser-programmes](https://aser.sn/) — named entry or recorded search route ; retrieval `fetch_error`.
 - [sen-aser-www-retry](https://www.aser.sn/) — Connection refused ; retrieval `fetch_error`.
+
+- [Ministry PUELEC commissioning report](https://energie-mines.gouv.sn/programme-durgence-delectrification-puelec-medina-kenioto-magnankanti-et-matakoussi-illumines-pour-la-premiere-fois-depuis-lindependance-du-senegal/) — 9 November 2025, title and contractor/state-funding paragraph; archived.
+- [ARCOP ASER 2023 procurement audit](https://arcop.sn/wp-content/uploads/2025/10/RAPPORT-AGENCE-SENEGALAISE-DELECTRIFICATION-RURALE-ASER-2023-1.pdf) — PDF/printed pp.55–56, `T_ASER_003`, contracts `T0038`/`T0039`; archived.
 
 ### sen-project-qw-08 — Etude de stabilité du réseau et des besoins en stockage
 

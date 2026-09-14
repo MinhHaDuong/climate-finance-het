@@ -113,9 +113,20 @@ def test_collected_project_verdicts_resolve_to_direct_sources() -> None:
             source_id
             for source_id in row["source_ids"].split(";")
             if source_id in sources
-            and sources[source_id]["authority_category"] in {
-                "operator", "bilateral_funder", "multilateral_funder"
-            }
+            and (
+                sources[source_id]["authority_category"] in {
+                    "operator", "bilateral_funder", "multilateral_funder"
+                }
+                or (
+                    # The state can fund a project directly. Its project report
+                    # corroborates identity; central plan membership does not.
+                    sources[source_id]["authority_category"] == "national_government"
+                    and sources[source_id]["source_type"] in {
+                        "official_news", "project_page", "financing_agreement",
+                        "approval_document",
+                    }
+                )
+            )
             and (row["project_id"], source_id) in links
         }
         assert direct, row["project_id"]
@@ -221,3 +232,57 @@ def test_solar_site_evidence_does_not_establish_the_investment_vehicle() -> None
     assert not any(row["source_id"] in {"sen-artelia-thiestouba-gbif",
                                          "sen-boad-ouarkhokh-esia"}
                    for row in read_csv(DATA / "events.csv"))
+
+
+def test_puelec_state_report_corroborates_parent_without_completing_components():
+    source_id = "sen-scout-puelec-commissioning-2025"
+    coverage = {row["project_id"]: row for row in read_csv(DATA / "project-coverage.csv")}
+    assert coverage["sen-project-qw-04"]["review_status"] == "collected"
+    observations = [row for row in read_csv(DATA / "implementation-events.csv")
+                    if row["source_id"] == source_id]
+    assert len(observations) == 1
+    assert observations[0]["project_id"] == "sen-project-qw-04"
+    assert observations[0]["implementation_status"] == "operational"
+    assert observations[0]["capacity_mw"] == ""
+    assert observations[0]["document_sha256"]
+    # The article does not establish JETP/IPG attribution for state spending.
+    assert not any(row["source_id"] == source_id
+                   for row in read_csv(DATA / "events.csv"))
+    for number in (5, 6, 7):
+        assert coverage[f"sen-project-annex-{number:02d}"]["review_status"] == "blocked"
+
+
+def test_charging_masterplan_remains_provisional_without_exact_identity() -> None:
+    source_id = "sen-senelec-ppm-2026-v2"
+    project_id = "sen-project-annex-35"
+    coverage = {row["project_id"]: row for row in read_csv(DATA / "project-coverage.csv")}
+    assert coverage[project_id]["review_status"] == "central_only"
+    links = [row for row in read_csv(DATA / "project-source-links.csv")
+             if row["source_id"] == source_id and row["project_id"] == project_id]
+    assert len(links) == 1
+    assert links[0]["relationship"] == "possible_match"
+    assert links[0]["review_status"] == "provisional"
+    assert "C_DEG_155" in links[0]["locator"]
+    # A planned national study does not identify the exact JETP proposal.
+    for filename in ("implementation-events.csv", "events.csv"):
+        assert not any(row["source_id"] == source_id
+                       and row["project_id"] == project_id
+                       for row in read_csv(DATA / filename))
+
+
+def test_aner_public_institutions_identity_keeps_conditional_budget_unfunded() -> None:
+    project_id = "sen-project-annex-23"
+    source_id = "sen-aner-psd-2025-2029"
+    coverage = {row["project_id"]: row for row in read_csv(DATA / "project-coverage.csv")}
+    assert coverage[project_id]["review_status"] == "collected"
+    assert any(row["source_id"] == source_id
+               and row["project_id"] == project_id
+               and row["review_status"] == "confirmed"
+               for row in read_csv(DATA / "project-source-links.csv"))
+    # A conditional strategic budget is not an approved financing instrument.
+    assert not any(row["source_id"] == source_id
+                   for row in read_csv(DATA / "events.csv"))
+    # Axis-level targets and the separate 192-health-site operation do not
+    # establish completed outputs for this proposal.
+    assert not any(row["source_id"] == source_id
+                   for row in read_csv(DATA / "implementation-events.csv"))
