@@ -26,3 +26,22 @@ def test_frozen_four_country_protocol_is_a_valid_descriptive_measurement_design(
     protocol = json.loads(path.read_text(encoding="utf-8"))
 
     validate_protocol(protocol)
+
+
+@pytest.mark.parametrize(
+    ("field", "value", "message"),
+    [
+        ("aggregate", ["pledge", "signature"], "aggregate"),
+        ("missingness_policy", "zero", "missingness"),
+        ("evidence_cutoff", "to be decided", "cutoff"),
+        ("unit", None, "unit"),
+    ],
+)
+def test_protocol_rejects_each_unsupported_measurement_rule(field, value, message):
+    protocol = json.loads(
+        Path("docs/jetp-study/0816-comparative-measurement-protocol.json").read_text()
+    )
+    protocol[field] = value
+
+    with pytest.raises(ProtocolError, match=message):
+        validate_protocol(protocol)

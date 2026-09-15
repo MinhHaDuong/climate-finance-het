@@ -10,9 +10,14 @@
     "disbursement",
     "implementation"
   ],
+  "unit": "country-source-lifecycle-state observation",
   "aggregate": [],
   "missingness_policy": "explicit",
-  "evidence_cutoff": "to be frozen by ticket 0817",
+  "coverage_states": ["observed", "unavailable", "lost_visibility", "excluded"],
+  "evidence_cutoff": "2026-09-15T00:00:00Z",
+  "denominator_policy": "Each lifecycle state reports only its own named denominator; cross-state ratios require a separately evidenced common basis.",
+  "money_policy": "Retain source currency and accounting basis; do not sum currencies or incompatible bases without a separately frozen conversion rule.",
+  "date_policy": "Keep event, publication and retrieval dates separate; retain date precision and do not infer an event date from a register timestamp.",
   "permitted_claim": "Trace publicly reported JETP finance to distinct lifecycle states and disclose denominator and coverage differences across the four countries.",
   "prohibited_claims": [
     "JETP causal effect",
