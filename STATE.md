@@ -1,6 +1,6 @@
 # State
 
-Last updated: 2026-09-14T12:30Z
+Last updated: 2026-09-15T00:15Z
 
 ## Current goal
 
@@ -12,35 +12,22 @@ July — nothing to do but wait.
 
 ## JETP checkpoint
 
-Local observatory and scientific export corrections: PR #1343; validation and
-scope in `docs/jetp-observatory-mvp-validation.md`. 383 named records, 21 unnamed
-slots, 301 registered sources, 97 historical closed operations. Public release,
-hosting and monthly editions remain 0726–0728; this is not a causal result.
+The backend migration train is acceptance-ready at `b6b6f697`. Tickets
+0761–0770 and the 0726–0728 handoffs are merged; tracker 0760 remains open by
+design. The recoverable MVP baseline is retained, four country migrations have
+documented dispositions, publication provenance is sidecar-based, and the
+prepared `2026-09` and fact-unchanged `2026-10` packages restore offline with
+their routes and downloads. Both interruption and validation-rejection paths
+preserve the earlier package byte-for-byte. No site deployment occurred.
 
-Historical/bilateral audit **0735** and tomorrow's pilot preparation land through
-**PR #1347**; 0735 closes with that merge. Selection/design-tracker **PR #1348**
-remains open at `63bb738ef8f8bf7c96db3201a8ce48b717136075`; use that pinned
-version for selection inputs and the updated 0729 ticket until it lands.
-Enough evidence exists to compare designs; no primary causal design is selected.
-AFD first, KfW/FCDO complementary pilots are prepared **for a fresh session, not launched**.
-Start with [the pilot handoff](docs/jetp-pilot-handoff-2026-09-14.md): exact branches,
-source bundles, first tests, bounded budgets and three candidate comparisons.
-For 15 September, the [prepared protocol](docs/jetp-pilots/2026-09-15/protocol.md)
-and child tickets **0737–0739** supply baseline alternatives, sample rules,
-output schemas and stopping decisions. Recommended: Sol high leads, Terra high
-for bounded lender work; independent scientific review before design selection.
-Next session: **15 September — start AFD 0737 / #1349**; KfW 0738 / #1350
-and FCDO 0739 / #1351 are independent complements. Preparation freeze:
-`1e532975`; use subsequent reviewed corrections on main if present. The handoff
-contains a ready-to-use launch instruction. No pilot is scheduled or launched.
-DVC source bytes are preserved in primary/local caches; remote replication remains
-pending. Preserve the audit source worktrees and caches until recovery is
-verified, including `/tmp/jetp-audit-0735` after its branch merges. Closing the
-audit does not close replication ticket 0726 or design tracker 0729.
-
-Pilots feed **0729**, then **0730 → 0732** analysis and short paper. **0731** data
-paper follows the citable release; **0733** is the long paper with Christophe.
-Strategy: `conception/jetp-observatory-and-papers-plan.md`.
+The AFD, KfW and FCDO lender pilots are merged and synthesized in
+`docs/jetp-pilots/2026-09-15/synthesis.md`. They establish bounded measurement
+findings, not a JETP causal effect. The next research decision is the
+design-only country-quarter concessional-approval feasibility screen in 0729;
+it may return GO, NARROW or DEFER. MVP v0.2, estimation and the short paper
+remain unexecuted pending that decision and author approval. Strategy and
+handoff: `conception/jetp-observatory-and-papers-plan.md` and
+`docs/jetp-pilots/2026-09-15/v0.2-and-short-paper-handoff.md`.
 
 ## Status
 

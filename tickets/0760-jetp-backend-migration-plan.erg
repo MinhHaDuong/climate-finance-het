@@ -6,6 +6,8 @@ Author: HDMX-coding-agent
 --- log ---
 2026-09-14T13:51Z HDMX-coding-agent created
 
+2026-09-15T00:15Z HDMX-coding-agent acceptance-ready — 0761–0770 and 0726–0728 merged; tracker remains open; no deployment, estimator or PyPSA work.
+
 --- body ---
 
 ## Context
@@ -24,11 +26,11 @@ Coordinate 0761–0770 in the plan waves; reconcile the four country reports; ha
 
 ## Exit criteria
 
-- [ ] Every legacy table and row has a documented migration disposition
-- [ ] Four official-inventory migration reports are accepted with explicit unresolved coverage
-- [ ] Writer ownership and publication selection have no duplicate authority
-- [ ] Existing 0726–0728 acceptance includes two-edition replay and restoration with working routes/downloads
-- [ ] Research-critical history is retained; scientific and future-model work remains under its own owners
+- [x] Every legacy table and row has a documented migration disposition
+- [x] Four official-inventory migration reports are accepted with explicit unresolved coverage
+- [x] Writer ownership and publication selection have no duplicate authority
+- [x] Existing 0726–0728 acceptance includes two-edition replay and restoration with working routes/downloads
+- [x] Research-critical history is retained; scientific and future-model work remains under its own owners
 
 ## Validation and recovery
 
