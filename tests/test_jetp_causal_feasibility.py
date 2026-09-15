@@ -3,6 +3,7 @@
 import pytest
 
 from jetp._causal_feasibility import (
+    load_country_quarter_observations,
     validate_comparison_countries,
     validate_country_quarter_observations,
 )
@@ -57,3 +58,11 @@ def test_comparison_contract_rejects_untreated_country_with_unknown_negotiation(
 
     with pytest.raises(ValueError, match="negotiation_exposure"):
         validate_comparison_countries(countries)
+
+
+def test_observation_loader_validates_records_before_returning_them(tmp_path):
+    path = tmp_path / "observations.json"
+    path.write_text('[{"country": "Indonesia"}]', encoding="utf-8")
+
+    with pytest.raises(ValueError, match="source_version"):
+        load_country_quarter_observations(path)
