@@ -5,6 +5,8 @@ derive approval values, country contrasts, or treatment effects.
 """
 
 from collections.abc import Mapping, Sequence
+import json
+from pathlib import Path
 from typing import Any
 
 
@@ -37,6 +39,17 @@ def validate_country_quarter_observations(
     for observation in observations:
         for field in OBSERVATION_REQUIRED_FIELDS:
             _require_nonempty(observation, field)
+
+
+def load_country_quarter_observations(path: Path) -> list[dict[str, Any]]:
+    """Load and validate a prospective observation list before it can be used."""
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, list) or not all(
+        isinstance(observation, dict) for observation in payload
+    ):
+        raise ValueError("observation file must contain a JSON list of objects")
+    validate_country_quarter_observations(payload)
+    return payload
 
 
 def validate_comparison_countries(countries: Sequence[Mapping[str, Any]]) -> None:

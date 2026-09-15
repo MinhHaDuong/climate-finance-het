@@ -1,5 +1,7 @@
 """Contracts for the pre-outcome JETP causal-feasibility screen."""
 
+import json
+
 import pytest
 
 from jetp._causal_feasibility import (
@@ -62,7 +64,9 @@ def test_comparison_contract_rejects_untreated_country_with_unknown_negotiation(
 
 def test_observation_loader_validates_records_before_returning_them(tmp_path):
     path = tmp_path / "observations.json"
-    path.write_text('[{"country": "Indonesia"}]', encoding="utf-8")
+    observation = valid_observation()
+    observation["source_version"] = None
+    path.write_text(json.dumps([observation]), encoding="utf-8")
 
     with pytest.raises(ValueError, match="source_version"):
         load_country_quarter_observations(path)
