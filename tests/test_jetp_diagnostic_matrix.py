@@ -81,7 +81,7 @@ def test_frozen_matrix_is_four_country_but_not_a_four_country_joint_sample() -> 
 
     validate_0816_acceptance(protocol, matrix)
     assert {row["country"] for row in matrix} == {"ZAF", "IDN", "VNM", "SEN"}
-    assert sum(row["supports_A_B_C"] == "yes" for row in matrix) == 1
+    assert sum(row["supports_A_B_C"] == "yes" for row in matrix) == 0
     assert not any(
         row["country"] == "SEN" and row["supports_B_strict"] == "yes"
         for row in matrix

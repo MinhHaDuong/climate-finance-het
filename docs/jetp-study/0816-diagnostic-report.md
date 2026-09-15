@@ -19,14 +19,16 @@ répétées soutenant la même contribution ne créent pas de seconde contributi
 |---|---|---|---:|
 | A | fonction + état documenté | ZAF 2; IDN 2; VNM 2; SEN 2 | 8/8 |
 | B strict | finance rattachée au JETP + propriété documentée | ZAF 2; IDN 2; VNM 2; SEN 0 | 6/8 |
-| C | jalon pré-JETP **et** post-JETP | IDN 1 | 1/8 |
-| A ∩ B ∩ C | mêmes opérations | IDN 1 (Cirebon-1) | 1/8 |
+| C | jalon pré-JETP **et** post-JETP, chacun à date d'événement source-liée | aucun | 0/8 |
+| A ∩ B ∩ C | mêmes opérations | aucun | 0/8 |
 
 La matrice établit donc une conclusion de faisabilité, pas un résultat
 substantiel : la population raccordée n'est pas, à ce stade, une comparaison à
-quatre pays. Le seul raccord complet est Cirebon-1; il documente une séquence
-pré/post et une finance annoncée, mais ni une accélération causale, ni une
-retraite effective de la centrale.
+quatre pays. Cirebon-1 n'est plus compté comme raccord complet : ses lignes
+locales documentent des états à une date de coupe, une publication ou une date
+de revendication non vérifiée, pas deux jalons opérationnels datés de part et
+d'autre du JETP. Elles n'établissent ni accélération causale, ni retraite
+effective de la centrale.
 
 Les dénominateurs restent séparés. Le Sénégal n'apparaît pas comme zéro finance :
 Diass est une observation énergétique *extended-only* sans rattachement JETP

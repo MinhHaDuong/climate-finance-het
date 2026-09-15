@@ -70,3 +70,36 @@ def validate_0816_acceptance(protocol: dict, matrix: Iterable[dict[str, str]]) -
     for row in matrix:
         if row.get("finance_observation", "").strip() == "0":
             raise ValueError("zero-filled missing finance is prohibited for 0816")
+
+
+def validate_date_roles(matrix: Iterable[dict[str, str]]) -> None:
+    """Reject administrative dates presented as operational history.
+
+    A register timestamp, report cutoff or publication timestamp can describe
+    when evidence was observed, but cannot supply either end of a pre/post
+    event sequence.  The diagnostic only accepts a sequence made from two
+    documented event dates.
+    """
+    for row in matrix:
+        roles = {row.get("pre_date_role", ""), row.get("post_date_role", "")}
+        has_history_text = bool(row.get("pre_jetp_milestone") or row.get("post_jetp_milestone"))
+        administrative = roles & {"registered", "observed_state", "publication"}
+        if has_history_text and administrative:
+            raise ValueError("registered, observed-state, or publication date cannot be history evidence")
+        if row.get("supports_C_sequence") == "yes":
+            if not row.get("pre_jetp_milestone") or not row.get("post_jetp_milestone"):
+                raise ValueError("history sequence needs pre- and post-JETP milestones")
+            if roles != {"event"}:
+                raise ValueError("history sequence needs two documented event dates")
+
+
+def summarize_diagnostic(matrix: Iterable[dict[str, str]]) -> dict[str, int]:
+    """Derive, rather than hand-type, the diagnostic denominators from rows."""
+    rows = list(matrix)
+    validate_date_roles(rows)
+    return {
+        "A": sum(row.get("supports_A") == "yes" for row in rows),
+        "B_strict": sum(row.get("supports_B_strict") == "yes" for row in rows),
+        "C_sequence": sum(row.get("supports_C_sequence") == "yes" for row in rows),
+        "A_B_C": sum(row.get("supports_A_B_C") == "yes" for row in rows),
+    }

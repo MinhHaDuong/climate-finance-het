@@ -14,11 +14,21 @@
   "lifecycle_taxonomy": {
     "financial": ["need", "announced", "MoU_or_term_sheet", "approved", "signed"],
     "implementation": ["unknown", "proposed", "preparation", "construction", "operating", "suspended", "cancelled"],
-    "rule": "Financial and implementation states are separate fields and may not be aggregated into a single maturity score. Denominators are unique documented operations, reported separately for each dimension and scope."
+    "rule": "Financial and implementation states are separate fields and may not be aggregated into a single maturity score. The denominator for each financial state is unique strict-scope operations with a source-linked financing observation; the denominator for each implementation state is unique selected operations with a source-linked implementation observation. A, B and C each retain their own denominator; no aggregate or figure may combine them."
   },
-  "money_semantics": "A contribution is counted once by its documented accounting identity. Project cost, plan need, successive snapshots and contributions are not summed. Cross-currency totals require a stated common basis and deduplication decision; this diagnostic reports source currencies only.",
+  "money_semantics": "A pledge is an announced intention, an allocation is a designated prospective resource, an approval is a financing decision, a signed contribution is a documented agreement, and a disbursement is a payment. They are distinct lifecycle observations. A contribution is counted once by its documented accounting identity. Project cost, plan need, successive snapshots and contributions are not summed. Cross-currency totals require a stated common basis and deduplication decision; this diagnostic reports source currencies only.",
   "date_semantics": "Event dates, publication dates and observation dates are distinct. Unknown event timing remains unknown; a publication date cannot be recoded as a signature or implementation date.",
-  "coverage_universe": "Existing local structured registers and archived-source claims present in data/jetp at the evidence cutoff, limited in this diagnostic to the eight selected named operation records. Disposition vocabulary: included, included_extended_only, excluded_not_named, excluded_no_strict_link, missing_finance, missing_history, unresolved_identity.",
+  "coverage_universe": {
+    "definition": "Eight selected named operations, two per country, in the local structured evidence available by 2026-09-15. This is a finite diagnostic frame, not the partnership portfolio.",
+    "source_country_periods": [
+      "ZAF | zaf-jet-investment-register-q1-2026 | 2026-Q1 register edition | projects.csv and events.csv",
+      "IDN | idn-jetp-progress-report-2025 | report cutoff 2025-11-30 | events.csv and implementation-events.csv",
+      "IDN | idn-gfanz-saguling-2025; idn-project-cirebon-framework-marubeni; idn-news-cirebon-retirement-reuters-2025 | source editions held in source-claims.csv | source-claims.csv",
+      "VNM | vnm-pilot-observation-018; vnm-pilot-observation-020 | local pilot source observations through 2026-09-15 | vnm-pilot-observations.csv",
+      "SEN | sen-investment-plan-l4-mirror; sen-afd-diass-storage; sen-diass-groundbreaking-2026; sen-aner-project-27 | local source editions through 2026-09-15 | events.csv and implementation-events.csv"
+    ],
+    "disposition_vocabulary": ["included", "included_extended_only", "excluded_not_named", "excluded_no_strict_link", "missing_finance", "missing_history", "unresolved_identity"]
+  },
   "permitted_comparisons": ["documentary coverage by country and dimension", "contrasting operation histories", "reported financing states and ownership where source-linked"],
   "prohibited_claims": ["causal acceleration", "additionality", "total investment", "physical delivery", "private amount inferred from mixed package", "zero-filled missing finance"],
   "0817_handoff": "Acquire or reconcile only the missing strict-link, ownership, event-date, pre/post-history and duplicate/snapshot evidence revealed by the matrix; do not treat these eight cases as a portfolio census."
