@@ -149,7 +149,7 @@ ALL_FIGS := $(MANUSCRIPT_FIGS) $(DATAPAPER_FIGS) $(CORPUS_REPORT_FIGS) \
             $(MULTILAYER_FIGS) $(SLIDES_FIGS) $(ORPHANED_FIGS) $(NCC_FIGS)
 
 # ── Default target ────────────────────────────────────────
-.PHONY: all setup manuscript papers corpus-report technical-report data-paper multilayer-detection multilayer-techrep zoo figures figures-manuscript figures-datapaper figures-corpusreport figures-companion figures-techrep figures-ncc stats check check-package check-fast lint test-durations venv-canonicalize smoke benchmark determinism-check regression regression-update audit-pdf-content check-corpus check-manuscript-data data corpus corpus-sync corpus-discover corpus-enrich corpus-extend corpus-filter corpus-align corpus-filter-all corpus-tables corpus-validate deploy-corpus clean rebuild archive-analysis archive-manuscript archive-datapaper analysis-figures analysis-tables analysis-stats manuscript-render manuscript-figures datapaper-render datapaper-figures corpus-handoff deposit-descriptors deposit-validate jetp-harvest jetp-zaf-news-leads jetp-idn-portfolio jetp-documents-track
+.PHONY: all setup manuscript papers corpus-report technical-report data-paper multilayer-detection multilayer-techrep zoo figures figures-manuscript figures-datapaper figures-corpusreport figures-companion figures-techrep figures-ncc stats check check-package check-fast lint test-durations venv-canonicalize full-gate-preflight smoke benchmark determinism-check regression regression-update audit-pdf-content check-corpus check-manuscript-data data corpus corpus-sync corpus-discover corpus-enrich corpus-extend corpus-filter corpus-align corpus-filter-all corpus-tables corpus-validate deploy-corpus clean rebuild archive-analysis archive-manuscript archive-datapaper analysis-figures analysis-tables analysis-stats manuscript-render manuscript-figures datapaper-render datapaper-figures corpus-handoff deposit-descriptors deposit-validate jetp-harvest jetp-zaf-news-leads jetp-idn-portfolio jetp-documents-track
 
 .DEFAULT_GOAL := manuscript
 
@@ -858,7 +858,11 @@ venv-canonicalize:
 check-package: | venv-canonicalize
 	$(PYTHON) -m pytest libs/openalex-corpus/tests -v --tb=short
 
-check: check-package | venv-canonicalize
+full-gate-preflight:
+	@# Use host Python: uv itself cannot start while its configured cache is read-only.
+	python3 scripts/qa_full_gate_preflight.py
+
+check: full-gate-preflight check-package | venv-canonicalize
 	$(PYTHON) -m pytest tests/ -v --tb=short -n 4
 
 # Fast inner loop: pure-Python logic only. Deselects slow (network / real data /
