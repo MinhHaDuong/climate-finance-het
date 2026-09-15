@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-import sys
 import csv
 import json
+import sys
 from pathlib import Path
 
 import pytest
@@ -12,7 +12,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from jetp.diagnostic_matrix import documentary_rows, validate_0816_acceptance
+from jetp.build_0816_diagnostic import documentary_rows, validate_0816_acceptance
 
 
 def test_documentary_rules_do_not_invent_a_private_share_or_event_date() -> None:
