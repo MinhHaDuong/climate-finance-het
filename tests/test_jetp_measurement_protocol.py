@@ -35,6 +35,8 @@ def test_frozen_four_country_protocol_is_a_valid_descriptive_measurement_design(
         ("missingness_policy", "zero", "missingness"),
         ("evidence_cutoff", "to be decided", "cutoff"),
         ("unit", None, "unit"),
+        ("countries", ["USA"], "countries"),
+        ("permitted_claim", "JETP caused additional investment", "claim"),
     ],
 )
 def test_protocol_rejects_each_unsupported_measurement_rule(field, value, message):

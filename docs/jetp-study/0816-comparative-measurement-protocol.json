@@ -18,11 +18,29 @@
   "denominator_policy": "Each lifecycle state reports only its own named denominator; cross-state ratios require a separately evidenced common basis.",
   "money_policy": "Retain source currency and accounting basis; do not sum currencies or incompatible bases without a separately frozen conversion rule.",
   "date_policy": "Keep event, publication and retrieval dates separate; retain date precision and do not infer an event date from a register timestamp.",
-  "permitted_claim": "Trace publicly reported JETP finance to distinct lifecycle states and disclose denominator and coverage differences across the four countries.",
+  "permitted_claim": "traceability_and_coverage_comparison",
   "prohibited_claims": [
     "JETP causal effect",
     "finance additionality",
     "total investment",
     "physical delivery"
-  ]
+  ],
+  "lifecycle_definitions": {
+    "pledge": "A publicly reported political or financial commitment, retained with its stated perimeter and without treating it as an operation.",
+    "allocation": "A source identifies an amount reserved, programmed or offered under its own stated allocation terminology.",
+    "approval": "A source explicitly records a financing approval or board-equivalent decision; a signature, payment or priority list alone is insufficient.",
+    "signature": "A source explicitly records a signed financing agreement or contract.",
+    "disbursement": "A source explicitly reports a paid amount or transaction, preserving whether it is a flow or cumulative position.",
+    "implementation": "A separately evidenced reported implementation status, not proof of physical delivery or an inferred earlier financial transition."
+  },
+  "comparison_rules": [
+    "no_cross_state_aggregation",
+    "no_cumulative_flow_mix",
+    "no_inferred_transition"
+  ],
+  "source_census_handoff": {
+    "finite_universe": true,
+    "required_dispositions": ["admitted", "duplicate", "excluded", "unavailable", "lost_visibility"],
+    "window_rule": "0817 must freeze source-country-period inventories and observation windows before retrieval."
+  }
 }
