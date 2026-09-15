@@ -1,0 +1,25 @@
+{
+  "protocol_id": "jetp-progression-finance-history-0816-r1",
+  "study_question": "Which components of a just transition become concrete within JETPs, with what public/private financing, and from which pre-existing operations?",
+  "countries": ["ZAF", "IDN", "VNM", "SEN"],
+  "evidence_cutoff": "2026-09-15",
+  "unit": "canonical operation or documented component; sources are evidence rather than additional units",
+  "scope": "public and private finance explicitly linked to a JETP; extended-only observations remain visible but cannot enter the strict finance panel",
+  "selection_rule": "Diagnostic, not representative: select two named operations per country from existing local registers, covering energy infrastructure plus either fossil exit or social accompaniment where a named record exists. Include an incomplete, unsigned, extended-only or plan-only case when it is the contrasting named record. This rule was recorded after prior inspection of local sources; the exercise is not blind or preregistered before outcome inspection.",
+  "dimensions": {
+    "A": "documented transition function plus financial or implementation state",
+    "B": "strict-scope, source-linked financing observation with ownership classification; mixed unallocated is not split",
+    "C": "at least one pre-JETP and one post-JETP operational milestone, with event dates distinct from publication/observation dates"
+  },
+  "lifecycle_taxonomy": {
+    "financial": ["need", "announced", "MoU_or_term_sheet", "approved", "signed"],
+    "implementation": ["unknown", "proposed", "preparation", "construction", "operating", "suspended", "cancelled"],
+    "rule": "Financial and implementation states are separate fields and may not be aggregated into a single maturity score. Denominators are unique documented operations, reported separately for each dimension and scope."
+  },
+  "money_semantics": "A contribution is counted once by its documented accounting identity. Project cost, plan need, successive snapshots and contributions are not summed. Cross-currency totals require a stated common basis and deduplication decision; this diagnostic reports source currencies only.",
+  "date_semantics": "Event dates, publication dates and observation dates are distinct. Unknown event timing remains unknown; a publication date cannot be recoded as a signature or implementation date.",
+  "coverage_universe": "Existing local structured registers and archived-source claims present in data/jetp at the evidence cutoff, limited in this diagnostic to the eight selected named operation records. Disposition vocabulary: included, included_extended_only, excluded_not_named, excluded_no_strict_link, missing_finance, missing_history, unresolved_identity.",
+  "permitted_comparisons": ["documentary coverage by country and dimension", "contrasting operation histories", "reported financing states and ownership where source-linked"],
+  "prohibited_claims": ["causal acceleration", "additionality", "total investment", "physical delivery", "private amount inferred from mixed package", "zero-filled missing finance"],
+  "0817_handoff": "Acquire or reconcile only the missing strict-link, ownership, event-date, pre/post-history and duplicate/snapshot evidence revealed by the matrix; do not treat these eight cases as a portfolio census."
+}

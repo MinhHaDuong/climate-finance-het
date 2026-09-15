@@ -56,3 +56,18 @@ def documentary_rows(
             "date_precision": milestone.get("date_precision", "unknown"),
         })
     return rows
+
+
+def validate_0816_acceptance(protocol: dict, matrix: Iterable[dict[str, str]]) -> None:
+    """Fail closed on the two claims that would invalidate this diagnostic.
+
+    This is deliberately not a general protocol validator: it protects the
+    fixed 0816 diagnostic from causal scope creep and from converting an absent
+    financing observation into a numerical zero.
+    """
+    comparisons = protocol.get("permitted_comparisons", [])
+    if any("causal" in item.lower() for item in comparisons):
+        raise ValueError("causal comparison is prohibited for 0816")
+    for row in matrix:
+        if row.get("finance_observation", "").strip() == "0":
+            raise ValueError("zero-filled missing finance is prohibited for 0816")
