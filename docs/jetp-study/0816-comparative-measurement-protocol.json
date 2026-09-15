@@ -1,0 +1,23 @@
+{
+  "claim_class": "descriptive_comparison",
+  "study_id": "jetp-four-country-lifecycle-measurement",
+  "countries": ["ZAF", "IDN", "VNM", "SEN"],
+  "lifecycle_states": [
+    "pledge",
+    "allocation",
+    "approval",
+    "signature",
+    "disbursement",
+    "implementation"
+  ],
+  "aggregate": [],
+  "missingness_policy": "explicit",
+  "evidence_cutoff": "to be frozen by ticket 0817",
+  "permitted_claim": "Trace publicly reported JETP finance to distinct lifecycle states and disclose denominator and coverage differences across the four countries.",
+  "prohibited_claims": [
+    "JETP causal effect",
+    "finance additionality",
+    "total investment",
+    "physical delivery"
+  ]
+}
