@@ -61,3 +61,11 @@ acceptation 0736 / 0729 / 0814
 Le MVP dépend seulement des faits canoniques admis; il n'attend pas le papier.
 Une éventuelle visualisation analytique ne peut s'ajouter qu'après 0730 et reste
 clairement séparée des faits.
+
+## Sélection du résultat central
+
+0823 développe trois résultats candidats, puis les compare selon leur intérêt
+scientifique intrinsèque, leur robustesse aux choix de définition, leur couverture
+empirique et leur apport vis-à-vis de la littérature publiée. Le classement,
+les résultats écartés et les éléments contraires sont conservés. Astra réalise
+une revue indépendante; l'auteur choisit ensuite le résultat et la figure centraux.

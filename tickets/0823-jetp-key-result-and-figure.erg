@@ -6,13 +6,34 @@ Blocked-by: 0730
 
 --- body ---
 
+## Selection rule
+
+Do not promote the first available pattern. Develop three distinct candidate
+results from the frozen 0730 snapshot. For each, document its intrinsic research
+interest, the evidence and definition coverage supporting it, sensitivity to
+reasonable accounting/date/perimeter choices, and what published literature it
+extends, contradicts or leaves open. Search the published literature before
+selection; a familiar descriptive statistic is not a contribution by itself.
+Rank the three using those four criteria and retain the ranking, rejected
+candidates and contrary evidence. Astra independently reviews the ranking before
+the author selects one central result.
+
 ## First test
 
 A null or mixed fixture with missing data must render legibly, show coverage, and contain no causal vocabulary. The graphic is reproducible from its run manifest and data extract.
 
 ## Actions and exit criteria
 
-Select one result sentence supported by 0730's pre-specified statistic; render one central figure with lifecycle states, denominators and coverage visible; deliver caption, plotted data, hashes and sensitivity references. Astra performs an independent scientific review focused on claim/figure alignment.
+Develop and compare three result/figure candidates before selection. Select one
+result sentence supported by 0730's pre-specified statistics; render one central
+figure with lifecycle states, denominators and coverage visible; deliver caption,
+plotted data, hashes and sensitivity references. Astra performs an independent
+scientific review focused on claim/figure alignment and candidate ranking.
+
+- [ ] Three substantively distinct candidate results assessed against published literature
+- [ ] Candidate ranking records intrinsic interest, robustness, coverage and contrary evidence
+- [ ] Author selects the central result after Astra's independent review
+- [ ] Selected figure and claim reproduce from the frozen run and preserve non-causal language
 
 ## Links
 
