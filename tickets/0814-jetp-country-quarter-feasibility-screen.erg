@@ -1,0 +1,64 @@
+%erg 0.1
+Title: Test feasibility of a country-quarter JETP approval comparison
+Created: 2026-09-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-15T00:01Z HDMX-coding-agent created after the author authorised 0729's bounded pre-outcome feasibility screen.
+--- body ---
+
+## Context
+
+Ticket 0729 reached a causal DEFER: neither historical project clocks, sector
+comparisons nor a country comparison currently has defended identification. The
+author has authorised one narrow next step, a design-only feasibility screen for
+a possible country-quarter concessional-approval comparison. The screen may
+return GO, NARROW or DEFER. It is not an estimator, a causal result, or an
+authorisation for 0730 implementation.
+
+## First test (Red)
+
+Write a failing contract test proving that the feasibility-screen loader rejects
+any country-quarter observation that lacks a source version and locator, approval
+date semantics, currency basis, concessionality/instrument rule, or an explicit
+missingness and denominator/lost-visibility state. The test must also reject a
+country marked as untreated when its negotiation-exposure field is unknown.
+Only then implement the smallest loader/validator needed to make it pass.
+
+## Scope and protocol
+
+Freeze before looking at treated-minus-comparison outcomes:
+
+1. Candidate-country universe with inclusion/exclusion reasons; JETP and
+   negotiation exposure; income, financing eligibility, coal/power context;
+   shared lenders; and concurrent policy, debt, election, crisis and finance
+   interventions.
+2. Treatment calendar retaining distinct negotiation, declaration, plan,
+   operational/facility and first-approval dates, with sources and defensible
+   alternatives. Do not substitute an announcement date silently.
+3. Country-quarter approval contract retaining source version/locator, lender,
+   instrument, concessionality rule, currency basis, status, identifiers, date
+   precision, missingness, lost visibility and historical-denominator state.
+   Pledges, approvals, signatures, payments and delivery stay distinct.
+4. Coverage and comparability review before any outcome contrast. The screen
+   may use already authorised, bounded source routes only; any new collection
+   requires a named source, route, budget and stop condition.
+
+No country, estimator, follow-up horizon, transformation or effect is selected
+in advance. The source knowledge base remains authoritative; a derived snapshot
+must be versioned and separate from canonical facts.
+
+## Exit criteria
+
+- [ ] Frozen candidate-country and treatment-date records, completed before outcome comparison
+- [ ] Validated country-quarter contract with source and missingness/denominator provenance
+- [ ] Comparison admissibility assessment covering negotiation, concurrent interventions and spillovers
+- [ ] Pre-specified falsifications, sensitivities and country-level uncertainty limits
+- [ ] Evidence-backed GO, NARROW or DEFER, with exact failed conditions and next discriminating evidence if not GO
+- [ ] No effect estimate, causal figure or descriptive substitution before a GO and separate author approval
+
+## Links
+
+- Parent decision: `docs/jetp-causal-design-decision-0729.md`
+- Pilot synthesis: `docs/jetp-pilots/2026-09-15/synthesis.md`
+- GitHub planning issue: https://github.com/MinhHaDuong/climate-finance-het/issues/1337

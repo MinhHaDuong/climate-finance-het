@@ -133,3 +133,12 @@ Please choose one scope:
 
 Until that decision, 0730 must not construct an effect estimate or present
 descriptive differences as causal acceleration.
+
+## Author decision — 15 September 2026
+
+The author selected option 1: **authorise the bounded feasibility screen**.
+This authorises a new design-only ticket to test the country-quarter approval
+data contract and comparison admissibility before outcome comparison. It does
+not change the causal DEFER, authorise new unbounded collection, select an
+estimator, or authorise 0730 estimation. Its recorded GO, NARROW or DEFER is
+the next decision point.

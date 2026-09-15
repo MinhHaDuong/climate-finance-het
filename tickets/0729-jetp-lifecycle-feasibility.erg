@@ -9,9 +9,9 @@ Author: HDMX-coding-agent
 
 2026-09-14T12:34Z HDMX-coding-agent note blocker 0735 closed — Blocked-by removed.
 
-2026-09-15T00:00Z HDMX-coding-agent decision CAUSAL DEFER — reviewed the accepted
-0735 lifecycle work, merged lender pilots and the accepted 0736 selection audit;
-an author scope decision is required before any 0730 estimation.
+2026-09-15T00:00Z HDMX-coding-agent decision CAUSAL DEFER — reviewed 0735, merged lender pilots and accepted 0736; author scope decision required before 0730 estimation.
+
+2026-09-15T00:01Z HDMX-coding-agent decision author selected the bounded pre-outcome feasibility screen; separate design-only ticket will determine GO, NARROW or DEFER before 0730 estimation.
 --- body ---
 
 ## Context
@@ -74,7 +74,7 @@ Distinguish precision/power limitations from failed identification.
 - [x] Causal DEFER justified; no primary estimand/design is authorised
 - [x] Comparator definitions, falsification/placebos, sensitivity and uncertainty plan specified
 - [x] Protocol proposal records prior outcome inspection and is ready to freeze before 0730 primary estimation
-- [ ] GO/NARROW decision recorded with author, or explicit author scope decision requested on DEFER; no descriptive substitution
+- [x] Author scope decision recorded on DEFER: bounded feasibility screen authorised; no descriptive substitution
 
 No positive or statistically significant effect is required. A narrower valid
 causal question is acceptable if named and agreed. If no credible design survives,
@@ -93,3 +93,11 @@ select an estimator, construct a panel or estimate an effect. The outstanding
 exit criterion is the author's selection among a bounded pre-outcome feasibility
 screen, a clearly descriptive narrowing, or ending the causal-paper path for
 now.
+
+## Author decision — 15 September 2026
+
+The author selected the bounded, pre-outcome feasibility screen. This closes
+0729's design checkpoint while preserving its causal DEFER: no estimator, panel
+or effect estimate is authorised. The next ticket must test the common
+country-quarter approval contract and comparison admissibility, then record
+GO, NARROW or DEFER before 0730 can begin.
