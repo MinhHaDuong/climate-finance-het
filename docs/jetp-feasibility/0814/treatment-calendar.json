@@ -1,0 +1,19 @@
+{
+  "frozen_on": "2026-09-15",
+  "outcome_inspection": "none",
+  "source_version": "0736-selection-audit@0287d39f",
+  "records": [
+    {"country": "South Africa", "event": "first_documented_negotiation", "date": "2021-09-29", "precision": "day", "source_locator": "0736 chronology S04", "qualification": "first private negotiation unknown"},
+    {"country": "South Africa", "event": "political_declaration", "date": "2021-11-02", "precision": "day", "source_locator": "0736 chronology S02", "qualification": "conditional offer, not signed support"},
+    {"country": "South Africa", "event": "plan_release", "date": "2022-11-04", "precision": "day", "source_locator": "0736 chronology S03", "qualification": "first server-publication timestamp unverified"},
+    {"country": "Indonesia", "event": "donor_selection", "date": "2022-03-16", "precision": "day", "source_locator": "0736 chronology S01", "qualification": "not first bilateral negotiation"},
+    {"country": "Indonesia", "event": "political_declaration", "date": "2022-11-15", "precision": "day", "source_locator": "0736 chronology S05", "qualification": "support offer conditional"},
+    {"country": "Indonesia", "event": "plan_release", "date": "2023-11-21", "precision": "day", "source_locator": "0736 chronology S08", "qualification": "earliest draft publication unverified"},
+    {"country": "Viet Nam", "event": "donor_selection", "date": "2022-03-16", "precision": "day", "source_locator": "0736 chronology S01", "qualification": "negotiation start unresolved"},
+    {"country": "Viet Nam", "event": "political_declaration", "date": "2022-12-14", "precision": "day", "source_locator": "0736 chronology S06", "qualification": "conditional mobilization"},
+    {"country": "Viet Nam", "event": "plan_release", "date": "2023-12-01", "precision": "day", "source_locator": "0736 chronology S09", "qualification": "page subsequently updated"},
+    {"country": "Senegal", "event": "donor_selection", "date": "2022-03-16", "precision": "day", "source_locator": "0736 chronology S01", "qualification": "negotiation start unresolved"},
+    {"country": "Senegal", "event": "political_declaration", "date": "2023-06-22", "precision": "day", "source_locator": "0736 chronology S07", "qualification": "conditional offer, not settlement"}
+  ],
+  "operational_or_facility_date": "unobserved for every candidate; no treatment time zero selected"
+}
