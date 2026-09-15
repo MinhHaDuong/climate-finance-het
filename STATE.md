@@ -25,8 +25,12 @@ a JETP causal effect. Reviewed branches add the completed 0736 selection audit,
 0729 CAUSAL DEFER and 0814 DEFER. The author has selected a JETP-only,
 non-causal comparative measurement programme: protocol0816, source census0817,
 country ingestion0818–0821, frozen snapshot0822, statistics0730, key figure0823,
-MVP extension0824 and paper0732. The plan is
-`conception/jetp-execution-replan-2026-09-15.md`.
+MVP extension0824 and paper0732. Current scientific framing:
+`conception/jetp-short-paper-framing-2026-09-15.md`: progression of transition
+functions, public/private finance, and histories of the same operations; one
+dominant result and three coordinated figure panels. Next 0816 deliverable is a
+diagnostic joinability matrix from existing evidence. The v3 worktree protocol
+is unapproved; the source census and primary analysis are not frozen.
 
 ## Status
 

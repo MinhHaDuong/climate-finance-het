@@ -1,5 +1,5 @@
 %erg 0.1
-Title: Freeze the non-causal comparative JETP measurement protocol
+Title: Freeze the JETP progression-finance-history protocol using actual operations
 Created: 2026-09-15
 Author: Codex with author authorisation
 
@@ -10,18 +10,26 @@ Author: Codex with author authorisation
 ## Context
 
 0729 and 0814 deferred a causal country comparison. The author has selected a
-publishable non-causal comparative measurement paper across South Africa,
-Indonesia, Viet Nam and Senegal. This ticket freezes its question before
-acquisition or descriptive result inspection.
+study of progression by transition function, public/private finance and operation
+histories across South Africa, Indonesia, Viet Nam and Senegal. The adopted
+framing is conception/jetp-short-paper-framing-2026-09-15.md.
+Use a documented diagnostic sample of existing evidence to test whether all
+three dimensions join on the same operations. Record this prior inspection
+before freezing the primary analysis. The v3 validator in the execution worktree
+is not an approved scientific protocol.
 
 ## First test
 
-Write a protocol validator fixture in which a claimed comparable total mixes a
-pledge with a signature, silently turns a missing quarter into zero, or calls a
-cross-country gap an effect. The validator must reject all three.
+First documentary check: reconcile two sources for one financing, a mixed
+public/private amount without a split, and a milestone with only a publication
+date. Count the financing once; retain unknown allocation and event time.
+If transformation code is required, encode that fixture before implementation.
 
 ## Actions
 
+Deliver a source-linked diagnostic matrix, selected by a documented rule before
+examining results, spanning the four countries and incomplete/unsigned cases.
+Record the common A/B/C sample, marginal coverage and missing documents.
 Define the study question, unit, countries, evidence cutoff, lifecycle-state
 taxonomy, per-state denominators, source universe, inclusion/exclusion rules,
 money and date semantics, missingness/lost-visibility vocabulary, and permitted
@@ -32,7 +40,8 @@ cross-country result table is made.
 
 ## Exit criteria
 
-- [ ] Immutable study/protocol revision names the four-country scope and every permitted claim
+- [ ] Diagnostic matrix establishes which operations support progression, finance and history together
+- [ ] Immutable study/protocol revision names the four-country public/private scope and permitted claims
 - [ ] Lifecycle states and denominators cannot be mixed in an aggregate or figure
 - [ ] Completeness has a finite source-country-period universe and disposition vocabulary
 - [ ] Causal language and zero-filled missingness fail the protocol acceptance check

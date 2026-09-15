@@ -1,69 +1,60 @@
 %erg 0.1
-Title: Implement the approved JETP comparative measurement analysis
+Title: Analyse JETP progression, public-private finance and operation histories
 Created: 2026-09-13
 Author: HDMX-coding-agent
-Blocked-by: 0729
 Blocked-by: 0822
 
 --- log ---
 2026-09-13T19:18Z HDMX-coding-agent created
-
 2026-09-13T20:18Z HDMX-coding-agent decision Markdown-first storage; DVC evidence archive; static website; SQLite optional derived export.
-
 --- body ---
 
 ## Context
 
-0729 and 0814 deferred causal identification. Implement only the non-causal
-comparative measurement protocol and frozen snapshot selected in 0816/0822.
-The audits remain constraints, not causal validation. Parent programme: 0725.
+The author adopted the joint three-dimension framing in
+conception/jetp-short-paper-framing-2026-09-15.md. Analyse which just-transition
+functions progress, who finances them, and the prior history of the same JETP
+operations. Public and private finance are in scope. The earlier causal designs
+remain deferred; 0816 defines this descriptive protocol and 0822 supplies inputs.
+Parent programme: 0725.
 
 ## First test
 
-A design-specific null-effect fixture with baseline maturity selection and a
-shared calendar shock must expose the naive comparison's bias. Verify the chosen
-implementation under its stated assumptions, then include a violated-assumption
-fixture showing its limit. Simulation success does not validate real assignment.
-Include unfinished/cancelled, interval-dated and mature-on-entry observations.
+A hand-calculated fixture contains two sources for one contribution, a mixed
+package without a lender split, an undated milestone and a cancelled operation.
+Count the contribution once, preserve unknown private amounts and dates, retain
+the cancelled case, and reproduce the known counts and monetary subtotals.
+The joined sample and exclusions must be explicit for all three dimensions.
 
 ## Actions
 
-Freeze the 0816 measurement protocol before primary analysis: question,
-population/time zero, outcomes/horizons, sample and overlap rules, estimator,
-weights, censoring/cancellation, uncertainty and falsification/sensitivity checks.
-Record prior outcome inspection and later deviations. Preregistration cannot
-repair weak identification. Do not condition on treatment-induced approval,
-instrument choice or survival when estimating a total or incumbent-pipeline effect.
+Implement the frozen 0816 protocol on the 0822 snapshot. Analyse:
+A progression by transition function, B public/private contributions and
+instruments, C documented pre/post-JETP operation histories.
+Separate physical implementation from financial status. Retain overlapping
+functions without double-counting amounts. Use ownership evidence to classify
+financiers; retain unallocated mixed amounts. Compute durations only from
+comparable evidenced endpoints and bounds. Report dates and partnership ages.
 
-Build source-linked operation and project histories with historical country-status
-variables and dates. Implement the selected country/sector comparison and retain
-supported alternatives as sensitivity analyses. For sector contrasts, justify
-non-energy admissibility and state whether spillovers imply a relative effect.
-For staggered exposure/covariate adjustment, use an appropriate estimator rather
-than a naive difference of adjusted contrasts. No estimator is selected by this ticket.
-
-Report sample support, effective weights, country/lender concentration, missingness,
-uncertainty at the treatment-assignment level, falsification checks and robustness
-to date bounds, anticipation, concurrent policies and comparator exclusions. Four
-beneficiary countries do not become hundreds of independent treatment assignments.
-Produce reproducible descriptive statistics and preliminary results for 0823 and
-0732, tied to frozen inputs. Do not estimate or report a JETP effect.
+Report unique operation denominators, missingness by dimension, intersection of
+the three samples, coverage by country, and sensitivity to scope, monetary bases,
+date bounds, source changes and large operations. Do not infer a causal
+acceleration, private additionality, social outcomes or verified absence from
+unobserved records. Record prior inspection and protocol amendments.
 
 ## Exit criteria
 
-- [ ] 0816 protocol and 0822 immutable snapshot recorded before primary analysis
-- [ ] Cohort, treatment, time zero and estimator target the same declared population/effect
-- [ ] Source-linked data retain unfinished, cancelled, missing and interval-dated observations appropriately
-- [ ] Main descriptive result, coverage and uncertainty of measurement, including null/mixed results, reproducible from frozen inputs
-- [ ] Design-appropriate falsification, sensitivity and country-level inference assumptions reported
-- [ ] Analysis handoff ready for 0823/0732; causal language is prohibited
+- [ ] Protocol and snapshot revisions pinned before primary analysis
+- [ ] Three dimensions reproduced with explicit common sample and excluded/unknown cases
+- [ ] Public/private classifications, overlaps and amounts traceable to evidence
+- [ ] Progression and history use event semantics, not reporting dates or fictitious clocks
+- [ ] Null/mixed findings and scope/date/coverage/concentration sensitivities retained
+- [ ] Run manifest, tables and plotted-data handoff ready for 0823
 
 ## Storage
 
-Historical/comparator inputs remain separate from the JETP portfolio. Derived
-analysis or SQLite exports under data/derived/jetp are regenerable, never editable
-authorities. A project-support effect, total pipeline effect and relative sector
-contrast must not share an ambiguous outcome label.
+Use existing canonical evidence; derived outputs are regenerable under
+data/derived/jetp. Do not promote research estimates into canonical facts.
 
 ## GitHub planning issue
 

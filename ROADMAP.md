@@ -21,7 +21,9 @@ Building toward a book on international climate finance between solidarity and p
 - [ ] Execute the author-authorised non-causal JETP measurement programme:
   protocol0816 → source census0817 → country ingestion0818–0821 → frozen
   snapshot0822 → statistics0730/figure0823 and MVP0824 → short paper0732.
-  See `conception/jetp-execution-replan-2026-09-15.md`.
+  Current framing: `conception/jetp-short-paper-framing-2026-09-15.md`.
+  First establish a common operation sample for progression, public/private
+  finance and history under 0816; 0823 combines these in three figure panels.
 - [ ] JETP data paper0731 after0726; long political-economy paper0733 with Christophe.
   LaTeX scaffolds0711 remain required for the two analytical manuscripts.
 

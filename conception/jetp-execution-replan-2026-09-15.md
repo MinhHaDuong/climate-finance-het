@@ -1,5 +1,10 @@
 # Replanification d'exécution — papier court et MVP JETP
 
+> Cadrage scientifique remplacé par le
+> [cadrage adopté sur les opérations](jetp-short-paper-framing-2026-09-15.md) :
+> progression, public–privé et histoire, avec figure à trois panneaux.
+> Le graphe de tickets ci-dessous reste le support d'exécution.
+
 15 septembre 2026 · autorisation de l'auteur · Phase : Plan.
 
 ## Décision

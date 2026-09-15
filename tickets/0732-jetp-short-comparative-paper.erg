@@ -1,5 +1,5 @@
 %erg 0.1
-Title: Write the short comparative JETP measurement paper
+Title: Write the short JETP paper on progression, financing and operation histories
 Created: 2026-09-13
 Author: HDMX-coding-agent
 Blocked-by: 0730
@@ -8,79 +8,48 @@ Blocked-by: 0823
 
 --- log ---
 2026-09-13T19:18Z HDMX-coding-agent created
-
 --- body ---
 
 ## Context
 
-The author targets a non-causal comparative paper on traceable JETP finance,
-lifecycle states, denominators and coverage across four countries. The old figure
-mixes political-pledge denominators with historical commitment denominators and
-cannot answer this question.
+Adopted framing: conception/jetp-short-paper-framing-2026-09-15.md.
+Which components of a just transition progress within JETPs, with which public
+and private finance, and from which pre-existing operations?
+Acceleration is the motivating question; the observed financial and operation
+histories delimit the empirical answer. Parent programme: 0725.
+Earlier causal-only acceptance criteria are superseded by the author's adopted
+descriptive study. Historical decisions remain in Git and the feasibility notes.
 
-Plan: `conception/jetp-observatory-and-papers-plan.md`. Parent tracker: 0725.
+## First documentary acceptance check
 
-## First test
-
-First figure acceptance check: every JETP and historical mark uses the same defined transition and clock, with cohort size and missingness traceable to 0730. A pledge-normalised flow or partnership-age proxy must fail this check. A null or mixed difference must render and remain reportable.
+Trace the central sentence and each figure panel to the frozen 0730 run.
+If panels use different samples, their labels and claims must expose that fact.
+A stage difference cannot be described as speed or causal acceleration; a
+documentary gap cannot be described as an actual absence of private finance.
 
 ## Actions
 
-Rewrite conception/jetp-papier-court-mesure.md around 0730/0823 and produce the
-LaTeX manuscript in deliverables/jetp-mesure via 0711. Replace the old figure
-with the supported comparative figure. Explain lifecycle definitions, coverage
-and limits. Do not make instrument substitution or acceleration a claim.
+Write the short manuscript in deliverables/jetp-mesure using 0711, with one
+dominant finding supported by the other two dimensions in 0823. Explain the
+contribution relative to published JETP research and retain contrary evidence.
+Discuss transition functions, the documented social objectives and beneficiaries,
+public/private instruments, and pre-existing project histories. Distinguish
+funding objectives from realised justice outcomes and association from catalysis.
+
+Replace the old disbursement-only conception framing with reproducible results.
+Do not predetermine instrument substitution or failure. The data paper describes
+infrastructure; this short paper establishes the substantive empirical finding.
 
 ## Exit criteria
 
-- [ ] Question, methods and central figure implement the frozen non-causal measurement protocol
-- [ ] Manuscript reports supported descriptive findings including null/mixed outcomes
-- [ ] Preparation bottlenecks distinguished from execution among approved projects
-- [ ] Old disbursement-only and predetermined-mechanism claims reconciled
-- [ ] Reproducible LaTeX manuscript with evidence-linked tables and limitations, ready for review
-
-## Validation
-
-Apply the repository gates for the actual diff. Code work starts with the failing
-fixture above; prose/data work records the documentary acceptance check. Preserve
-source evidence and report limits rather than manufacturing a successful result.
+- [ ] Question and contribution implement the adopted framing and frozen protocol
+- [ ] Literature comparison explains what the empirical result adds or revises
+- [ ] Three dimensions support one coherent argument with sample limits explicit
+- [ ] Central figure and all quantitative claims reproduce from pinned outputs
+- [ ] Social objectives, physical outcomes and financial milestones remain distinct
+- [ ] Null/mixed findings, missingness and sensitivities reported
+- [ ] LaTeX manuscript builds with resolved sources and is ready for review
 
 ## GitHub planning issue
 
 https://github.com/MinhHaDuong/climate-finance-het/issues/1340
-
-## Progress audit, 14 September 2026
-
-Historical conception notes and a CRS/disbursement figure exist, but they are not
-the new comparative result. The September 13 programme decision supersedes their
-disbursement-only framing and asserted instrument-substitution conclusion.
-No new comparable lifecycle figure or LaTeX manuscript is delivered yet; 0711,
-0729 and 0730 remain the relevant dependencies (0729 through 0730).
-
-Next manuscript work follows the 0729 feasibility memo: state the supported
-estimand and population, then use the 0730 analysis for the central figure. Do not
-relabel the MVP's approval-to-closing histogram as a JETP acceleration comparison.
-Retain the old figure only as explicitly historical material unless it separately
-passes the common-clock/common-denominator acceptance check.
-
-## Causal manuscript acceptance, 14 September 2026
-
-The introduction must state the intervention and target population; the methods
-must explain why the comparison approximates the untreated counterfactual, not
-merely name an estimator. Distinguish the total partnership effect from a selected
-project-support effect. Use a broader comparable-country pool only as supported by
-the 0729/0730 design, with the relevant pre/post outcomes and assignment assumptions.
-
-The central figure should display the primary effect and uncertainty at supported
-early-stage horizons, or the corresponding longitudinal contrast where the design
-requires it. Include cohort/risk-set support and a companion identification
-diagnostic. Fix the figure form after the design decision, not before it.
-
-First additional acceptance check: a reader can trace each causal sentence to the
-estimand, identifying assumption, evidence supporting that assumption and its
-sensitivity result. A descriptive stage gap presented as an effect must fail.
-
-- [ ] Identification argument and most serious alternative explanation are explicit
-- [ ] Main figure, uncertainty and robustness correspond to 0730's prespecified analysis
-- [ ] Causal language is limited to the design's population, intervention and assumptions
-- [ ] Null/adverse results remain publishable; loss of identification returns to the author
