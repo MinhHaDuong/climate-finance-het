@@ -17,6 +17,7 @@ from jetp.build_0816_diagnostic import (
     summarize_diagnostic,
     validate_0816_acceptance,
     validate_date_roles,
+    write_summary,
 )
 
 
@@ -119,3 +120,27 @@ def test_summary_is_derived_and_cutoff_dates_cannot_create_a_history_sequence() 
                 "post_date_role": "observed_state",
             }
         ])
+
+
+def test_duplicate_evidence_must_agree_and_summary_is_written_from_rows(tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match="conflicting contribution"):
+        documentary_rows(
+            operations=[{"operation_id": "x", "country": "IDN"}],
+            finance=[
+                {"operation_id": "x", "contribution_id": "same", "amount_original": "1"},
+                {"operation_id": "x", "contribution_id": "same", "amount_original": "2"},
+            ],
+            milestones=[],
+        )
+
+    output = tmp_path / "summary.json"
+    write_summary(
+        ROOT / "docs/jetp-study/0816-diagnostic-matrix.csv",
+        output,
+    )
+    assert json.loads(output.read_text()) == {
+        "A": 8,
+        "A_B_C": 0,
+        "B_strict": 6,
+        "C_sequence": 0,
+    }
