@@ -14,9 +14,8 @@ REQUIRED_CORPUS_ARTIFACTS = (
     "catalogs/refined_works.csv", "catalogs/corpus_audit.csv",
     "catalogs/embeddings.npz", "catalogs/citations.csv",
     "catalogs/refined_embeddings.npz", "catalogs/refined_citations.csv",
-    # Corpus acceptance reads this; its provenance/recovery belongs to 0592.
-    "catalogs/llm_relevance_cache.csv",
 )
+RERANKER_CACHE = "catalogs/llm_relevance_cache.csv"
 
 
 def _default_cache_dir() -> Path:
@@ -66,6 +65,12 @@ def check(args: argparse.Namespace) -> list[str]:
             + ". Provision existing DVC data locally with `make data` "
             + "(`uv run dvc checkout`); use `make corpus-sync` only when the "
             + "shared cache lacks the current data."
+        )
+    if not (args.data_dir / RERANKER_CACHE).is_file():
+        failures.append(
+            "Reranker cache is absent: llm_relevance_cache.csv. It is required "
+            "by the existing acceptance check but is not a DVC artifact; its "
+            "source ownership and recovery route are tracked by ticket 0592."
         )
     if not _is_writable_directory(args.uv_cache_dir):
         failures.append(
