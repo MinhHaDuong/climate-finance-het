@@ -12,7 +12,12 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from jetp.build_0816_diagnostic import documentary_rows, validate_0816_acceptance
+from jetp.build_0816_diagnostic import (
+    documentary_rows,
+    summarize_diagnostic,
+    validate_0816_acceptance,
+    validate_date_roles,
+)
 
 
 def test_documentary_rules_do_not_invent_a_private_share_or_event_date() -> None:
@@ -91,3 +96,26 @@ def test_acceptance_rejects_causal_scope_and_zero_filled_missing_finance() -> No
     protocol = {"permitted_comparisons": ["documentary coverage"]}
     with pytest.raises(ValueError, match="zero"):
         validate_0816_acceptance(protocol, [{"finance_observation": "0"}])
+
+
+def test_summary_is_derived_and_cutoff_dates_cannot_create_a_history_sequence() -> None:
+    matrix = list(csv.DictReader((ROOT / "docs/jetp-study/0816-diagnostic-matrix.csv").open()))
+    summary = summarize_diagnostic(matrix)
+
+    cirebon = next(row for row in matrix if row["operation_id"] == "idn-pipe-cirebon-1-retirement")
+    assert cirebon["supports_C_sequence"] == "no"
+    assert summary["A"] == 8
+    assert summary["B_strict"] == 6
+    assert summary["C_sequence"] == 0
+    assert summary["A_B_C"] == 0
+
+    with pytest.raises(ValueError, match="registered"):
+        validate_date_roles([
+            {
+                "pre_jetp_milestone": "2021-11-01: register row",
+                "post_jetp_milestone": "2025-11-30: report cutoff",
+                "history_precision": "day",
+                "pre_date_role": "registered",
+                "post_date_role": "observed_state",
+            }
+        ])
