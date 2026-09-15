@@ -1,4 +1,7 @@
-"""Red tests for the non-causal comparative JETP measurement protocol."""
+"""Tests for the non-causal comparative JETP measurement protocol."""
+
+import json
+from pathlib import Path
 
 import pytest
 
@@ -15,3 +18,11 @@ def test_protocol_rejects_mixed_lifecycle_states_missing_as_zero_and_causal_clai
 
     with pytest.raises(ProtocolError, match="non-causal|lifecycle|missing"):
         validate_protocol(protocol)
+
+
+def test_frozen_four_country_protocol_is_a_valid_descriptive_measurement_design():
+    path = Path("docs/jetp-study/0816-comparative-measurement-protocol.json")
+
+    protocol = json.loads(path.read_text(encoding="utf-8"))
+
+    validate_protocol(protocol)
