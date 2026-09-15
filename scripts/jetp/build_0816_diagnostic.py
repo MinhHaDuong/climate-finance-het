@@ -1,7 +1,11 @@
-"""Small, transparent transformations for the 0816 documentary diagnostic."""
+"""Build the small, transparent transformations for the 0816 diagnostic."""
 
+import argparse
+import csv
+import json
 from collections import defaultdict
 from collections.abc import Iterable
+from pathlib import Path
 
 
 def documentary_rows(
@@ -20,13 +24,26 @@ def documentary_rows(
     contributions: dict[tuple[str, str], dict[str, str]] = {}
     for item in finance:
         key = (item["operation_id"], item["contribution_id"])
-        contributions.setdefault(key, item)
+        existing = contributions.get(key)
+        if existing is None:
+            contributions[key] = item
+        elif any(
+            existing.get(field) != item.get(field)
+            for field in ("funder", "ownership", "instrument", "amount_original", "currency_original")
+        ):
+            raise ValueError(f"conflicting contribution evidence for {key!r}")
 
     milestone_by_operation: dict[str, dict[str, str]] = {}
     for item in milestones:
-        existing = milestone_by_operation.get(item["operation_id"])
-        if existing is None or (not existing.get("event_date") and item.get("event_date")):
+        operation_id = item["operation_id"]
+        existing = milestone_by_operation.get(operation_id)
+        if existing is None:
             milestone_by_operation[item["operation_id"]] = item
+        elif any(
+            existing.get(field) != item.get(field)
+            for field in ("milestone", "event_date", "publication_date", "date_precision")
+        ):
+            raise ValueError(f"conflicting milestone evidence for {operation_id!r}")
 
     by_operation: dict[str, list[dict[str, str]]] = defaultdict(list)
     for (operation_id, _), item in contributions.items():
@@ -103,3 +120,23 @@ def summarize_diagnostic(matrix: Iterable[dict[str, str]]) -> dict[str, int]:
         "C_sequence": sum(row.get("supports_C_sequence") == "yes" for row in rows),
         "A_B_C": sum(row.get("supports_A_B_C") == "yes" for row in rows),
     }
+
+
+def write_summary(matrix_path: Path, output_path: Path) -> None:
+    """Write the frozen denominator summary directly from the diagnostic rows."""
+    with matrix_path.open(encoding="utf-8", newline="") as stream:
+        summary = summarize_diagnostic(csv.DictReader(stream))
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("matrix", type=Path)
+    parser.add_argument("--output", type=Path, required=True)
+    args = parser.parse_args()
+    write_summary(args.matrix, args.output)
+
+
+if __name__ == "__main__":
+    main()

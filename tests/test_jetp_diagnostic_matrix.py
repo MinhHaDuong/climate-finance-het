@@ -102,7 +102,9 @@ def test_acceptance_rejects_causal_scope_and_zero_filled_missing_finance() -> No
 def test_summary_is_derived_and_cutoff_dates_cannot_create_a_history_sequence() -> None:
     matrix = list(csv.DictReader((ROOT / "docs/jetp-study/0816-diagnostic-matrix.csv").open()))
     summary = summarize_diagnostic(matrix)
+    frozen_summary = json.loads((ROOT / "docs/jetp-study/0816-diagnostic-summary.json").read_text())
 
+    assert frozen_summary == summary
     cirebon = next(row for row in matrix if row["operation_id"] == "idn-pipe-cirebon-1-retirement")
     assert cirebon["supports_C_sequence"] == "no"
     assert summary["A"] == 8

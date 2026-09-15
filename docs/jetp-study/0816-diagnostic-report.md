@@ -9,9 +9,12 @@ mesure ni un portefeuille national, ni l'effet d'un JETP. Les registres locaux
 avaient déjà été inspectés avant cette révision; il serait donc faux de le
 présenter comme aveugle ou comme une pré-inscription antérieure aux résultats.
 
-La matrice est [0816-diagnostic-matrix.csv](0816-diagnostic-matrix.csv). Chaque
-champ d'état possède un locator vers une ligne structurée existante. Les sources
-répétées soutenant la même contribution ne créent pas de seconde contribution.
+La matrice est [0816-diagnostic-matrix.csv](0816-diagnostic-matrix.csv) et ses
+effectifs sont calculés dans
+[0816-diagnostic-summary.json](0816-diagnostic-summary.json). Chaque champ
+d'état possède un locator vers une ligne structurée existante. Les sources
+répétées soutenant la même contribution ne créent pas de seconde contribution;
+des valeurs contradictoires font échouer la génération au lieu d'être écrasées.
 
 ## Résultat diagnostique
 
