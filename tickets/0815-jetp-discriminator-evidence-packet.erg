@@ -1,0 +1,63 @@
+%erg 0.1
+Title: Acquire discriminator evidence for the JETP country-quarter feasibility screen
+Created: 2026-09-15
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-15T00:03Z HDMX-coding-agent created after the author requested more data following 0814's causal DEFER.
+--- body ---
+
+## Context
+
+0814 deferred the country-quarter approval comparison because it lacks four
+things: a common approval source contract, historical retention/denominator
+evidence, operational JETP timing, and an eligible comparator-exposure record.
+More rows alone would not change that decision. This ticket acquires only a
+bounded discriminator packet that can pass or fail those conditions.
+
+## First documentary acceptance check
+
+An alleged common approval source must fail unless its original documentation
+states the event meaning, snapshot/version and inclusion/removal rule, and its
+records cover at least one JETP candidate and one prospectively comparable
+country without treating country location as JETP attribution. A conditional
+offer, signature, payment or current closed-only export must not be promoted to
+an approval observation. Record the first source that passes or the exact
+missing field that makes every route fail.
+
+## Bounded acquisition packet
+
+Use at most 24 external retrieval/search units or 90 minutes, whichever comes
+first. Split the budget into three independently logged eight-unit routes:
+
+1. **Common approval/retention route:** official AFD and/or a lender's original
+   catalogue metadata and versioned exports. Seek event definitions, historic
+   inclusion/removal rules and country coverage; do not pool lenders.
+2. **Operational-timing route:** official JETP/IPG, government or lender support
+   instruments for Indonesia and South Africa. Seek dated operational/facility
+   activation or signed support, distinct from negotiation, declaration and
+   plan publication.
+3. **Comparator-exposure route:** official India and Philippines government,
+   ADB or lender records. Seek negotiation closure/non-conclusion, parallel
+   energy-transition support and country-sector lender exposure histories.
+
+Each route stops after eight units even if the others have unused units. Record
+URLs, issuer, date, locator, source role, contrary evidence, byte hash whenever
+an original payload is retained, and the next document that could discriminate
+if it fails. No institutional messages, ledger edits, country-quarter outcome
+construction or effect estimation are authorised.
+
+## Exit criteria
+
+- [ ] Frozen brief and dated, route-level acquisition log before retrieval
+- [ ] Common-source assessment distinguishes event semantics, retention and country location from attribution
+- [ ] Operational-timing chronology preserves every distinct milestone and uncertainty
+- [ ] Comparator matrix resolves or explicitly retains negotiation and parallel-programme exposure
+- [ ] GO/NARROW/DEFER update names exactly which 0814 condition changed, if any
+- [ ] No causal estimate, outcome contrast or descriptive substitute
+
+## Links
+
+- Parent feasibility result: `docs/jetp-feasibility/0814/report.md`
+- Parent ticket: 0814
+- GitHub planning issue: https://github.com/MinhHaDuong/climate-finance-het/issues/1398
