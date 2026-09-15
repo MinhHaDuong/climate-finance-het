@@ -18,3 +18,26 @@ FAILED tests/test_venue_concentration.py::TestVenueConcentrationSubprocess::test
 FAILED tests/test_robustness_observability.py::TestResumePreview::test_enrich_citations_batch_preview_on_empty_corpus
 ===== 17 failed, 2593 passed, 94 skipped, 31 warnings in 263.52s (0:04:23) =====
 make: *** [Makefile:862: check] Error 1
+
+===== 2026-09-15 Issue #1373 environment classification =====
+
+The complete suite was not rerun after this classification: `make check` now
+stops at `full-gate-preflight` when a prerequisite is absent, so it does not
+misrepresent an unrun acceptance check as passing.
+
+- The eight corpus-dependent failures (the seven explicit acceptance-artifact
+  checks plus `test_generated_flow_closes_to_the_refined_corpus`) need this
+  worktree's existing DVC artifacts materialized. Run `make data` (`uv run dvc
+  checkout`) against the shared cache; if that cache lacks current data, use
+  `make corpus-sync`. Neither condition calls for rebuilding or harvesting.
+- `test_cli_harvests_from_a_local_http_server` needs permission to bind a local
+  TCP socket; run outside a socket-restricted sandbox.
+- The three post-checkout-hook failures need writable Git worktree
+  administration; run from a clone whose common `.git/worktrees` area is
+  writable.
+- The four isolated subprocess/installability failures need a writable uv task
+  cache. Set `UV_CACHE_DIR` to a directory owned by the current user before
+  running the gate.
+
+The reranker cache remains an acceptance prerequisite, but its provenance and
+recovery guarantee remain ticket 0592's scope.

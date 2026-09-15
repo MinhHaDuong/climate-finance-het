@@ -8,14 +8,15 @@ several minutes on failures that cannot answer whether a change regressed.
 
 from __future__ import annotations
 
-import os
 import subprocess
 import sys
 from pathlib import Path
 
+import pytest
 
 REPO = Path(__file__).resolve().parent.parent
-PREFLIGHT = REPO / "scripts" / "full_gate_preflight.py"
+PREFLIGHT = REPO / "scripts" / "qa_full_gate_preflight.py"
+pytestmark = pytest.mark.integration
 
 
 def test_preflight_reports_missing_corpus_and_unwritable_configured_cache(tmp_path):
@@ -50,5 +51,5 @@ def test_preflight_reports_missing_corpus_and_unwritable_configured_cache(tmp_pa
     assert "dvc checkout" in result.stderr
     assert "writable" in result.stderr.lower()
     assert "UV_CACHE_DIR" in result.stderr
-    assert "make corpus" not in result.stderr
+    assert "`make corpus`" not in result.stderr
     assert "harvest" not in result.stderr.lower()

@@ -39,6 +39,24 @@ uv run dvc cache dir /data/projets/dvc-cache/oeconomia
 
 ## Usage
 
+### Full test gate in a worktree
+
+`make check` runs corpus acceptance and integration tests that create temporary
+Git worktrees and local HTTP servers. Before starting pytest it checks that the
+worktree has its DVC corpus artifacts materialized, `UV_CACHE_DIR` is writable,
+local TCP binding is allowed, and Git can administer temporary worktrees. In a
+new worktree, populate data already present in the shared DVC cache with `make
+data` (equivalent to `uv run dvc checkout`); this is not a reason to rebuild or
+harvest the corpus. If the cache belongs to another user or is mounted
+read-only, choose one you own, for example:
+
+```bash
+export UV_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/uv"
+make check
+```
+
+The reranker-cache provenance guarantee is tracked separately in ticket 0592.
+
 **Padme is the data authority.** The corpus pipeline (Phase 1) runs on padme. Doudou only pulls data — never pushes.
 
 ```bash
