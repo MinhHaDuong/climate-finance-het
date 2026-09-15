@@ -12,9 +12,9 @@ July — nothing to do but wait.
 
 ## JETP checkpoint
 
-The backend migration train is acceptance-ready at `b6b6f697`. Tickets
-0761–0770 and the 0726–0728 handoffs are merged; tracker 0760 remains open by
-design. The recoverable MVP baseline is retained, four country migrations have
+The backend migration train is accepted and tracker 0760 is closed. Tickets
+0761–0770 and the 0726–0728 handoffs are merged; programme tracker 0725 remains
+open. The recoverable MVP baseline is retained, four country migrations have
 documented dispositions, publication provenance is sidecar-based, and the
 prepared `2026-09` and fact-unchanged `2026-10` packages restore offline with
 their routes and downloads. Both interruption and validation-rejection paths
