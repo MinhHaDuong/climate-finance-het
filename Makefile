@@ -229,6 +229,12 @@ corpus-sync:
 data:
 	$(UV_RUN) dvc checkout
 
+# Materialize only the pinned JETP snapshots from the shared local DVC cache.
+# The checkout hook tries a reflink first; this also works without reflink support.
+.PHONY: jetp-data
+jetp-data:
+	$(UV_RUN) dvc checkout data/jetp/documents.dvc
+
 # Individual stage aliases.
 corpus-discover:
 	$(UV_RUN) dvc repro catalog_merge

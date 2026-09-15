@@ -109,13 +109,20 @@ def test_unavailable_snapshot_warns_without_leaving_partial_data(snapshot_worktr
         bindir = main / "bin"
         bindir.mkdir()
         copier = bindir / "cp"
-        copier.write_text('#!/bin/sh\nfor last do :; done\nmkdir -p "$last"\ntouch "$last/partial"\nexit 1\n')
+        copier.write_text(
+            '#!/bin/sh\n'
+            f'echo called >> "{main}/cp-calls"\n'
+            'for last do :; done\nmkdir -p "$last"\ntouch "$last/partial"\n'
+            'case " $* " in *" --reflink=always "*) exit 1 ;; esac\n'
+        )
         copier.chmod(0o755)
         overrides["PATH"] = f"{bindir}:{os.environ['PATH']}"
     result = invoke_hook(worktree, **overrides)
     assert not (worktree / DOCUMENTS).exists()
     assert "make jetp-data" in result.stderr
     assert sorted(path.name for path in (worktree / "data/jetp").iterdir()) == ["documents.dvc"]
+    if unavailable == "no_reflink":
+        assert (main / "cp-calls").read_text().splitlines() == ["called"]
 
 
 def test_configured_snapshot_source_is_cloned(snapshot_worktree):

@@ -6,6 +6,8 @@ import csv
 import hashlib
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data" / "jetp"
 
@@ -78,6 +80,7 @@ def test_all_thirteen_moit_newsletters_are_registered_as_one_series() -> None:
     )
 
 
+@pytest.mark.slow
 def test_official_document_series_has_content_addressed_snapshots() -> None:
     latest: dict[str, dict[str, str]] = {}
     for row in read_csv(DATA / "manifest.csv"):

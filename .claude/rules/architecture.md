@@ -173,8 +173,11 @@ setting `CLIMATE_FINANCE_DATA` in `.env`. `scripts/utils.py` re-exports `DATA_DI
 `CATALOGS_DIR`, `DERIVED_TABLES_DIR`, `EMBEDDINGS_PATH` from `pipeline_loaders`.
 Resolve paths through those constants — never hardcode `data/catalogs/` in a script.
 
-**A worktree needs `make data` once.** `data/` is DVC-managed, so a fresh
-worktree checks out none of it. `.githooks/post-checkout` symlinks the
+**A worktree needs `make data` for the bulk corpus.** DVC-managed data is
+normally absent in a fresh worktree. The exception is JETP documents: the hook
+attempts a private reflink from the primary checkout when `documents.dvc`
+matches; otherwise use `make jetp-data` (see `docs/jetp-storage.md`).
+`.githooks/post-checkout` symlinks the
 worktree's `.dvc/cache` at the primary checkout's cache, which is what lets
 `make data` (a `dvc checkout`, no network) populate `data/` from local blobs.
 Corpus work therefore belongs in a worktree like any other work. Running Phase 1
