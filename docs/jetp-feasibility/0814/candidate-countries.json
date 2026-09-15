@@ -1,0 +1,73 @@
+{
+  "frozen_on": "2026-09-15",
+  "outcome_inspection": "none",
+  "source_version": "0736-selection-audit@0287d39f",
+  "countries": [
+    {
+      "country": "South Africa",
+      "comparison_status": "treated_candidate",
+      "negotiation_exposure": "documented_before_declaration",
+      "inclusion_disposition": "candidate only",
+      "income_finance_eligibility": "not harmonized in the audited record",
+      "coal_power_context": "selection-relevant but not coded for comparison",
+      "shared_lender_risk": "unknown",
+      "concurrent_interventions": "electricity reform and Eskom debt measures documented",
+      "source_locator": "0736 chronology S02,S04; rivals domestic reform row"
+    },
+    {
+      "country": "Indonesia",
+      "comparison_status": "treated_candidate",
+      "negotiation_exposure": "documented_before_declaration",
+      "inclusion_disposition": "candidate only",
+      "income_finance_eligibility": "not harmonized in the audited record",
+      "coal_power_context": "selection-relevant but not coded for comparison",
+      "shared_lender_risk": "World Bank guarantee channel documented; reallocation unknown",
+      "concurrent_interventions": "revisable CIPP and industrialisation plans documented",
+      "source_locator": "0736 chronology S01,S05,S08; comparators shared-lender row"
+    },
+    {
+      "country": "Viet Nam",
+      "comparison_status": "treated_candidate",
+      "negotiation_exposure": "documented_before_declaration",
+      "inclusion_disposition": "candidate only",
+      "income_finance_eligibility": "not harmonized in the audited record",
+      "coal_power_context": "not coded for comparison",
+      "shared_lender_risk": "unknown",
+      "concurrent_interventions": "regulatory change in declaration; causal role unresolved",
+      "source_locator": "0736 chronology S01,S06,S09; rivals domestic reform row"
+    },
+    {
+      "country": "Senegal",
+      "comparison_status": "treated_candidate",
+      "negotiation_exposure": "documented_before_declaration",
+      "inclusion_disposition": "candidate only",
+      "income_finance_eligibility": "not harmonized in the audited record",
+      "coal_power_context": "expected energy-demand growth is a selection rationale",
+      "shared_lender_risk": "unknown",
+      "concurrent_interventions": "not coded sufficiently for comparison",
+      "source_locator": "0736 chronology S01,S07; rivals anticipated future change row"
+    },
+    {
+      "country": "India",
+      "comparison_status": "ineligible",
+      "negotiation_exposure": "ongoing_or_unresolved",
+      "inclusion_disposition": "not an untreated comparator",
+      "income_finance_eligibility": "not harmonized in the audited record",
+      "coal_power_context": "not coded for comparison",
+      "shared_lender_risk": "unknown",
+      "concurrent_interventions": "distinct Indo-German green partnership documented",
+      "source_locator": "0736 chronology S01,S05,S11; comparators India row"
+    },
+    {
+      "country": "Philippines",
+      "comparison_status": "ineligible",
+      "negotiation_exposure": "unknown",
+      "inclusion_disposition": "not an untreated comparator",
+      "income_finance_eligibility": "not verified in the audited record",
+      "coal_power_context": "not verified in the audited record",
+      "shared_lender_risk": "unknown",
+      "concurrent_interventions": "not searched specifically within the audit cap",
+      "source_locator": "0736 comparators Philippines row"
+    }
+  ]
+}
