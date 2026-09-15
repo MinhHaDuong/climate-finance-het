@@ -1,9 +1,10 @@
 %erg 0.1
-Title: Write the short causal paper on JETP project acceleration
+Title: Write the short comparative JETP measurement paper
 Created: 2026-09-13
 Author: HDMX-coding-agent
 Blocked-by: 0730
 Blocked-by: 0711
+Blocked-by: 0823
 
 --- log ---
 2026-09-13T19:18Z HDMX-coding-agent created
@@ -12,7 +13,10 @@ Blocked-by: 0711
 
 ## Context
 
-The author targets a causal short paper on whether JETP accelerates project preparation or financing, with a defensible comparator drawn from ordinary projects and potentially a synthetic pool of comparable beneficiary countries. The old figure mixes political-pledge denominators with historical commitment denominators and cannot answer this question.
+The author targets a non-causal comparative paper on traceable JETP finance,
+lifecycle states, denominators and coverage across four countries. The old figure
+mixes political-pledge denominators with historical commitment denominators and
+cannot answer this question.
 
 Plan: `conception/jetp-observatory-and-papers-plan.md`. Parent tracker: 0725.
 
@@ -22,12 +26,15 @@ First figure acceptance check: every JETP and historical mark uses the same defi
 
 ## Actions
 
-Rewrite conception/jetp-papier-court-mesure.md around the frozen analysis and produce the LaTeX manuscript in deliverables/jetp-mesure via 0711. Replace the old figure with supported stage comparisons; preserve it only as clearly labelled historical material if useful. Explain selection, pre-existing maturity and limits of historical causal inference. Do not make instrument substitution or a positive acceleration result an exit condition. If no credible causal design survives 0729/0730, return an explicit scope decision to the author before drafting a different paper; an adjusted descriptive comparison is not the agreed substitute.
+Rewrite conception/jetp-papier-court-mesure.md around 0730/0823 and produce the
+LaTeX manuscript in deliverables/jetp-mesure via 0711. Replace the old figure
+with the supported comparative figure. Explain lifecycle definitions, coverage
+and limits. Do not make instrument substitution or acceleration a claim.
 
 ## Exit criteria
 
-- [ ] Question, methods and central figure implement the frozen causal estimand and genuinely comparable lifecycle stages
-- [ ] Manuscript reports supported findings including null/mixed outcomes
+- [ ] Question, methods and central figure implement the frozen non-causal measurement protocol
+- [ ] Manuscript reports supported descriptive findings including null/mixed outcomes
 - [ ] Preparation bottlenecks distinguished from execution among approved projects
 - [ ] Old disbursement-only and predetermined-mechanism claims reconciled
 - [ ] Reproducible LaTeX manuscript with evidence-linked tables and limitations, ready for review

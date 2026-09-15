@@ -1,8 +1,9 @@
 %erg 0.1
-Title: Implement the approved causal JETP lifecycle design
+Title: Implement the approved JETP comparative measurement analysis
 Created: 2026-09-13
 Author: HDMX-coding-agent
 Blocked-by: 0729
+Blocked-by: 0822
 
 --- log ---
 2026-09-13T19:18Z HDMX-coding-agent created
@@ -13,10 +14,9 @@ Blocked-by: 0729
 
 ## Context
 
-After 0729 selects a defensible causal design, build and analyse only the data
-needed for that estimand. The 0735/0736 evidence audits and Astra/Fable proposals
-are inputs, not a selected protocol. Parent programme: 0725. Reuse 0713/0721
-where relevant; the website's 97 closed operations are a descriptive discovery pool.
+0729 and 0814 deferred causal identification. Implement only the non-causal
+comparative measurement protocol and frozen snapshot selected in 0816/0822.
+The audits remain constraints, not causal validation. Parent programme: 0725.
 
 ## First test
 
@@ -28,7 +28,7 @@ Include unfinished/cancelled, interval-dated and mature-on-entry observations.
 
 ## Actions
 
-Freeze the 0729 GO/NARROW protocol before primary estimation: estimand, treatment,
+Freeze the 0816 measurement protocol before primary analysis: question,
 population/time zero, outcomes/horizons, sample and overlap rules, estimator,
 weights, censoring/cancellation, uncertainty and falsification/sensitivity checks.
 Record prior outcome inspection and later deviations. Preregistration cannot
@@ -46,16 +46,17 @@ Report sample support, effective weights, country/lender concentration, missingn
 uncertainty at the treatment-assignment level, falsification checks and robustness
 to date bounds, anticipation, concurrent policies and comparator exclusions. Four
 beneficiary countries do not become hundreds of independent treatment assignments.
-Produce reproducible analysis artifacts for 0732, tied to frozen inputs.
+Produce reproducible descriptive statistics and preliminary results for 0823 and
+0732, tied to frozen inputs. Do not estimate or report a JETP effect.
 
 ## Exit criteria
 
-- [ ] 0729 causal GO/NARROW decision and immutable protocol recorded before primary estimation
+- [ ] 0816 protocol and 0822 immutable snapshot recorded before primary analysis
 - [ ] Cohort, treatment, time zero and estimator target the same declared population/effect
 - [ ] Source-linked data retain unfinished, cancelled, missing and interval-dated observations appropriately
-- [ ] Main effect and uncertainty, including null/adverse results, reproducible from frozen inputs
+- [ ] Main descriptive result, coverage and uncertainty of measurement, including null/mixed results, reproducible from frozen inputs
 - [ ] Design-appropriate falsification, sensitivity and country-level inference assumptions reported
-- [ ] Analysis/figure handoff ready for 0732; identification failure returns to the author instead of descriptive substitution
+- [ ] Analysis handoff ready for 0823/0732; causal language is prohibited
 
 ## Storage
 

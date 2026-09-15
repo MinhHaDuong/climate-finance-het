@@ -20,14 +20,13 @@ prepared `2026-09` and fact-unchanged `2026-10` packages restore offline with
 their routes and downloads. Both interruption and validation-rejection paths
 preserve the earlier package byte-for-byte. No site deployment occurred.
 
-The AFD, KfW and FCDO lender pilots are merged and synthesized in
-`docs/jetp-pilots/2026-09-15/synthesis.md`. They establish bounded measurement
-findings, not a JETP causal effect. The next research decision is the
-design-only country-quarter concessional-approval feasibility screen in 0729;
-it may return GO, NARROW or DEFER. MVP v0.2, estimation and the short paper
-remain unexecuted pending that decision and author approval. Strategy and
-handoff: `conception/jetp-observatory-and-papers-plan.md` and
-`docs/jetp-pilots/2026-09-15/v0.2-and-short-paper-handoff.md`.
+The AFD, KfW and FCDO lender pilots establish bounded measurement findings, not
+a JETP causal effect. Reviewed branches add the completed 0736 selection audit,
+0729 CAUSAL DEFER and 0814 DEFER. The author has selected a JETP-only,
+non-causal comparative measurement programme: protocol0816, source census0817,
+country ingestion0818–0821, frozen snapshot0822, statistics0730, key figure0823,
+MVP extension0824 and paper0732. The plan is
+`conception/jetp-execution-replan-2026-09-15.md`.
 
 ## Status
 

@@ -16,11 +16,12 @@ Building toward a book on international climate finance between solidarity and p
 - [x] Run and merge bounded AFD 0737, KfW 0738 and FCDO 0739 feasibility pilots.
   Their synthesis preserves NARROW/DEFER conclusions and rules out a
   single-donor JETP-effect claim.
-- [ ] Run the design-only comparative country-quarter feasibility screen in 0729
-  → author-approved protocol before any causal analysis0730 or short paper0732.
-  See [synthesis](docs/jetp-pilots/2026-09-15/synthesis.md) and
-  [handoff](docs/jetp-pilots/2026-09-15/v0.2-and-short-paper-handoff.md).
-- [ ] Selected protocol → causal analysis0730 → short paper0732; no design selected yet.
+- [ ] Accept the reviewed 0736 selection audit, 0729 causal DEFER and 0814
+  feasibility DEFER from their branches; do not repeat them as open decisions.
+- [ ] Execute the author-authorised non-causal JETP measurement programme:
+  protocol0816 → source census0817 → country ingestion0818–0821 → frozen
+  snapshot0822 → statistics0730/figure0823 and MVP0824 → short paper0732.
+  See `conception/jetp-execution-replan-2026-09-15.md`.
 - [ ] JETP data paper0731 after0726; long political-economy paper0733 with Christophe.
   LaTeX scaffolds0711 remain required for the two analytical manuscripts.
 

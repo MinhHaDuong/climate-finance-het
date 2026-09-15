@@ -1,0 +1,43 @@
+%erg 0.1
+Title: Freeze the non-causal comparative JETP measurement protocol
+Created: 2026-09-15
+Author: Codex with author authorisation
+
+--- log ---
+2026-09-15T00:30Z Codex created under the author-authorised JETP-only replan.
+--- body ---
+
+## Context
+
+0729 and 0814 deferred a causal country comparison. The author has selected a
+publishable non-causal comparative measurement paper across South Africa,
+Indonesia, Viet Nam and Senegal. This ticket freezes its question before
+acquisition or descriptive result inspection.
+
+## First test
+
+Write a protocol validator fixture in which a claimed comparable total mixes a
+pledge with a signature, silently turns a missing quarter into zero, or calls a
+cross-country gap an effect. The validator must reject all three.
+
+## Actions
+
+Define the study question, unit, countries, evidence cutoff, lifecycle-state
+taxonomy, per-state denominators, source universe, inclusion/exclusion rules,
+money and date semantics, missingness/lost-visibility vocabulary, and permitted
+comparisons. Register prohibited claims: causal acceleration, additionality,
+total investment and physical delivery. Retain the 0815 routes as named source
+leads, not causal tests. Freeze the protocol and independent review before any
+cross-country result table is made.
+
+## Exit criteria
+
+- [ ] Immutable study/protocol revision names the four-country scope and every permitted claim
+- [ ] Lifecycle states and denominators cannot be mixed in an aggregate or figure
+- [ ] Completeness has a finite source-country-period universe and disposition vocabulary
+- [ ] Causal language and zero-filled missingness fail the protocol acceptance check
+- [ ] Source census handoff for 0817 is frozen before acquisition
+
+## Links
+
+`conception/jetp-execution-replan-2026-09-15.md`; parent programme 0725.
