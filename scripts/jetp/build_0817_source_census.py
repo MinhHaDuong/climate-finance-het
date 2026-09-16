@@ -1,12 +1,10 @@
 """Freeze the local JETP source inventory into the 0817 acquisition census."""
 
-from __future__ import annotations
-
+import argparse
 import csv
 from pathlib import Path
 
 from jetp._source_census import COUNTRY_OWNERS, REQUIRED_FIELDS
-
 
 FINANCIAL_SEMANTICS = {
     "investment_plan": "plan_priority_not_finance",
@@ -74,10 +72,23 @@ def write_census(output_path: Path, sources_path: Path, manifest_path: Path) -> 
         writer.writerows(build_rows(sources_path, manifest_path))
 
 
-if __name__ == "__main__":
+def main() -> None:
+    """Write the census from local source metadata; never retrieve a source."""
     root = Path(__file__).resolve().parents[2]
+    parser = argparse.ArgumentParser(description=main.__doc__)
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=root / "docs" / "jetp-study" / "0817-source-census.csv",
+        help="CSV census destination",
+    )
+    args = parser.parse_args()
     write_census(
-        root / "docs" / "jetp-study" / "0817-source-census.csv",
+        args.output,
         root / "data" / "jetp" / "sources.csv",
         root / "data" / "jetp" / "manifest.csv",
     )
+
+
+if __name__ == "__main__":
+    main()

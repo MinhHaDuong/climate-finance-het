@@ -2,7 +2,6 @@
 
 from collections.abc import Iterable
 
-
 REQUIRED_FIELDS = (
     "item_id",
     "country",
