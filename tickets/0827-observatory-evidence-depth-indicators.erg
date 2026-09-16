@@ -1,0 +1,49 @@
+%erg 0.1
+Title: Show canonical and analytical evidence depth in the JETP MVP
+Created: 2026-09-16
+Author: Codex under author-authorised autonomous orchestration
+Blocked-by: 0824
+
+--- log ---
+2026-09-16T00:00Z Created after author feedback that the MVP hid recently structured evidence.
+--- body ---
+
+## Context
+
+The prepared 2026-11 MVP keeps the analytical snapshot out of the canonical
+public edition, correctly. Its "What changed, and what did not" page therefore
+makes recent progress invisible: visitors see only three reviewed canonical
+records rather than the difference between canonical evidence, frozen document
+coverage and analytical staging. Expose those layers without aggregating or
+promoting staging data.
+
+## First test
+
+With a fixture containing 3 reviewed canonical records, 301 frozen sources and
+1,740 staged atomic observations, render the edition page. It must show each
+count with its layer, state that the staged observations are not deployed as
+canonical facts, and must not present their sum as one common record total.
+
+## Actions
+
+Add an explicit evidence-depth summary to "What changed, and what did not":
+canonical reviewed records, frozen source documents and structured analytical
+observations, including country coverage where available. Link the staged
+snapshot/manifest as a derived local research artifact only if this can be done
+without deploying it as a canonical data route. Explain that the 279 Vietnam
+RMP positions and other extracted records are structured observations, not
+automatically reconciled operations or payments. Preserve offline replay,
+release immutability, non-aggregation and snapshot `not_deployed` boundary.
+
+## Exit criteria
+
+- [ ] Page exposes canonical, source and analytical counts as separate layers
+- [ ] Vietnamese 279-position extraction is visible as staging coverage, not a new canonical portfolio count
+- [ ] No analytical amount, reconciliation or estimate is presented as canonical fact
+- [ ] Prior archive and current release remain internally reproducible
+- [ ] UI tests cover labels, counts and non-aggregation boundary
+
+## Links
+
+Follows 0824. The analytical inputs remain owned by 0822/0730 and are not a
+public release promotion.
