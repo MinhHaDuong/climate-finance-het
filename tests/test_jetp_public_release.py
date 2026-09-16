@@ -73,6 +73,14 @@ def test_prepared_2026_11_reviewed_evidence_extension_is_offline_and_non_aggrega
     release = root / 'data/jetp/releases/2026-11/jetp-observatory-2026-11.zip'
     descriptor, payloads = read_release(release)
     assert json.loads((release.parent / 'release.json').read_text()) == descriptor
+    edition_history = json.loads(payloads['site/data/editions.json'])['editions']
+    assert descriptor['edition'] in {row['edition'] for row in edition_history}
+    overview = json.loads(payloads['site/data/overview.json'])
+    data_build = overview['provenance']['data_build']
+    assert data_build == descriptor['data_build']
+    assert data_build['observation_cutoff'] == '2026-09-13'
+    assert data_build['observation_cutoff'] != descriptor['observation_cutoff']
+    assert data_build['relationship_to_release'] == 'canonical_data_build_precedes_release_extension'
     assert descriptor['reviewed_evidence'] == {
         'record_count': 3, 'by_status': {'reviewed_fact': 3},
         'aggregation': 'record_level_non_aggregate', 'analytical_snapshot': 'not_deployed',
