@@ -115,11 +115,19 @@ def country_data(root, code, config, tables):
     projects = [project_data(r, tables) for r in named]
     sources = source_map(tables)
     needed = {sid for p in projects for sid in p['sources']}
-    needed.add(config['countries'][code]['headline_source'])
+    country_config = config['countries'][code]
+    needed.update(
+        source_id
+        for source_id in (
+            country_config.get('headline_source'),
+            country_config.get('latest_news_source'),
+        )
+        if source_id
+    )
     missing = needed - sources.keys() - {''}
     if missing:
         raise ValueError(f'Unknown source references: {missing}')
-    metadata = dict(config['countries'][code], code=code)
+    metadata = dict(country_config, code=code)
     return {'country': metadata, 'projects': projects,
             'undisclosed': len(slots), 'record_count': len(rows),
             'sources': {sid: sources[sid] for sid in sorted(needed) if sid},
