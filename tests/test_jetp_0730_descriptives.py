@@ -1,10 +1,10 @@
 """Ticket 0730 must preserve the snapshot's documentary denominators."""
 
+import gzip
 import json
 import sys
 from copy import deepcopy
 from pathlib import Path
-import gzip
 
 import pytest
 
@@ -97,6 +97,23 @@ def test_snapshot_loader_rejects_tampered_payload_even_when_declared_digest_surv
     (target_dir / source_manifest.name).write_bytes(source_manifest.read_bytes())
 
     with pytest.raises(ValueError, match="canonical digest"):
+        _snapshot(tmp_path)
+
+
+def test_snapshot_loader_rejects_rewritten_manifest_bytes(tmp_path: Path) -> None:
+    """The 0730 freeze pins the reviewed 0822 manifest as an input, too."""
+    source_archive = ROOT / "docs/jetp-study/0822-comparative-snapshot.json.gz"
+    source_manifest = ROOT / "docs/jetp-study/0822-comparative-snapshot-manifest.json"
+    target_dir = tmp_path / "docs/jetp-study"
+    target_dir.mkdir(parents=True)
+    (target_dir / source_archive.name).write_bytes(source_archive.read_bytes())
+    rewritten = json.loads(source_manifest.read_text(encoding="utf-8"))
+    rewritten["reproduction"] = "rewritten manifest"
+    (target_dir / source_manifest.name).write_text(
+        json.dumps(rewritten, sort_keys=True) + "\n", encoding="utf-8"
+    )
+
+    with pytest.raises(ValueError, match="manifest bytes"):
         _snapshot(tmp_path)
 
 

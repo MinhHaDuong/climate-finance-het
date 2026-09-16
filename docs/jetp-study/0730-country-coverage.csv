@@ -1,5 +1,5 @@
-country,atomic_observations,event_assertions,position_assertions,coverage_assertions,source_function_labels,source_finance_instrument_labels,source_reported_money_positions,reconciled_atomic_observations,unreconciled_atomic_observations
-ZAF,257,0,257,0,257,257,255,0,257
-IDN,1148,0,1148,0,1142,0,0,0,1148
-VNM,325,7,318,0,0,46,42,14,311
-SEN,10,0,6,4,0,0,0,1,9
+country,atomic_observations,event_assertions,position_assertions,coverage_assertions,source_function_labels,source_finance_instrument_labels,source_reported_money_positions,source_date_values,named_reconciliations,reconciled_atomic_observations,unreconciled_atomic_observations
+ZAF,257,0,257,0,257,257,255,235,0,0,257
+IDN,1148,0,1148,0,1142,0,0,1129,0,0,1148
+VNM,325,7,318,0,0,46,42,46,3,14,311
+SEN,10,0,6,4,0,0,0,4,1,1,9

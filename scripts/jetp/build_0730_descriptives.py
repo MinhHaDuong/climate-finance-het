@@ -18,22 +18,45 @@ from typing import Any
 SNAPSHOT = Path("docs/jetp-study/0822-comparative-snapshot.json.gz")
 SNAPSHOT_MANIFEST = Path("docs/jetp-study/0822-comparative-snapshot-manifest.json")
 SCHEMA_VERSION = "jetp-0730-descriptives/1"
+# 0822 is a frozen, reviewed handoff.  Pin its manifest bytes as well as the
+# manifest's content signature so an analysis run cannot silently accept a
+# rewritten manifest alongside a rewritten archive.
+SNAPSHOT_MANIFEST_SHA256 = "2167cd896de908bdf6f0b5fb8d380e8ba5a9c83ed4a65f2677de302787bd9b2b"
 
 
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _canonical_snapshot_digest(snapshot: dict[str, Any]) -> str:
+    """Recompute 0822's signed canonical JSON digest without its signature field."""
+    unsigned = dict(snapshot)
+    unsigned.pop("snapshot_sha256", None)
+    return hashlib.sha256(
+        json.dumps(unsigned, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+
+
 def _snapshot(root: Path) -> tuple[dict[str, Any], dict[str, Any]]:
     """Load only the frozen archive and verify it against its 0822 manifest."""
     archive = root / SNAPSHOT
     manifest_path = root / SNAPSHOT_MANIFEST
-    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    snapshot = json.loads(gzip.decompress(archive.read_bytes()))
-    # 0822 pins the canonical JSON content signature (not gzip container bytes).
-    actual = snapshot.get("snapshot_sha256")
-    if actual != manifest["snapshot_sha256"]:
-        raise ValueError("0822 snapshot hash does not match its frozen manifest")
+    manifest_bytes = manifest_path.read_bytes()
+    if hashlib.sha256(manifest_bytes).hexdigest() != SNAPSHOT_MANIFEST_SHA256:
+        raise ValueError("0822 manifest bytes do not match the pinned 0730 input")
+    manifest = json.loads(manifest_bytes)
+    archive_bytes = archive.read_bytes()
+    snapshot = json.loads(gzip.decompress(archive_bytes))
+    actual = _canonical_snapshot_digest(snapshot)
+    if snapshot.get("snapshot_sha256") != actual:
+        raise ValueError("0822 snapshot canonical digest is invalid")
+    if manifest["snapshot_sha256"] != actual:
+        raise ValueError("0822 manifest does not match the snapshot canonical digest")
+    expected_archive = gzip.compress(
+        (json.dumps(snapshot, indent=2, sort_keys=True) + "\n").encode(), mtime=0
+    )
+    if archive_bytes != expected_archive:
+        raise ValueError("0822 archive bytes are not the canonical frozen rendering")
     return snapshot, manifest
 
 
@@ -100,6 +123,12 @@ def build_analysis(root: Path) -> dict[str, Any]:
     country_rows: dict[str, dict[str, Any]] = {}
     for country in ("ZAF", "IDN", "VNM", "SEN"):
         rows = [row for row in atomic if row["country"] == country]
+        country_ids = {row["source_candidate_id"] for row in rows}
+        country_reconciliations = [
+            reconciliation
+            for reconciliation in snapshot["reconciliations"]
+            if set(reconciliation["input_candidate_ids"]).issubset(country_ids)
+        ]
         country_rows[country] = {
             "atomic_observations": len(rows),
             "event_assertions": sum(row["journal"] == "events" for row in rows),
@@ -110,6 +139,8 @@ def build_analysis(root: Path) -> dict[str, Any]:
             "source_reported_money_positions": sum(
                 row["financial_bound_type"] != "unknown" for row in rows
             ),
+            "source_date_values": sum(row["date_lower"] is not None for row in rows),
+            "named_reconciliations": len(country_reconciliations),
             "reconciled_atomic_observations": sum(
                 row["source_candidate_id"] in reconciled_ids for row in rows
             ),
@@ -245,14 +276,14 @@ def build_analysis(root: Path) -> dict[str, Any]:
                 "candidate_id": "zaf-reported-lifecycle",
                 "claim": "South African register positions expose reported implementation-status coverage without establishing transition timing or payment.",
                 "result": "reported_lifecycle_labels_only",
-                "evidence": "257 source-register positions with an implementation-status field; all retain a non-transition register date label.",
+                "evidence": "257 implementation-status semantic labels; 235 source register-date values (not transition dates), while 22 positions have no date value.",
                 "scope": "ZAF source-register candidates only.",
             },
             {
                 "candidate_id": "vnm-finance-history-pedigree",
                 "claim": "Vietnam provides the only event assertions, alongside explicit financial conflicts that cannot be pooled.",
                 "result": "mixed_and_nonadditive",
-                "evidence": "7 event assertions; 4 named reconciliations, all incompatible or unavailable; 15 atomic inputs are named by reconciliation records.",
+                "evidence": "7 event assertions; 3 named VNM reconciliations cover 14 VNM atomic inputs and are all incompatible. The global snapshot has 4 reconciliations/15 inputs because it also retains one unavailable Senegal reconciliation.",
                 "scope": "VNM staged observations and their named reconciliations; not a national finance total.",
             },
         ],
@@ -271,6 +302,7 @@ def build_manifest(root: Path, analysis: dict[str, Any]) -> dict[str, Any]:
         "input_snapshot": str(SNAPSHOT),
         "input_snapshot_sha256": analysis["source"]["snapshot_sha256"],
         "input_snapshot_manifest": str(SNAPSHOT_MANIFEST),
+        "input_snapshot_manifest_sha256": SNAPSHOT_MANIFEST_SHA256,
         "output_schema_version": SCHEMA_VERSION,
         "reproduction": "python3 scripts/jetp/build_0730_descriptives.py --root .",
         "scope": "Descriptive analysis of frozen 0822 source assertions and reconciliations only; no acquisition or currency conversion.",
@@ -280,7 +312,7 @@ def build_manifest(root: Path, analysis: dict[str, Any]) -> dict[str, Any]:
 def _write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
     fields = list(rows[0]) if rows else ["no_rows"]
     with path.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fields)
+        writer = csv.DictWriter(handle, fieldnames=fields, lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
 
@@ -349,7 +381,10 @@ def _report(analysis: dict[str, Any]) -> str:
             "## Handoff 0823",
             "",
             "Trois candidats restent ouverts : asymétrie de couverture (résultat nul du join), cycle de vie "
-            "rapporté ZAF, et pedigree finance/histoire VNM. La sélection de la figure centrale doit comparer "
+            "rapporté ZAF, et pedigree finance/histoire VNM. ZAF fournit 257 labels sémantiques de statut "
+            "d'implémentation mais seulement 235 valeurs de date de registre, qui ne sont pas des dates de "
+            "transition. VNM fournit 3 rapprochements nommés couvrant 14 assertions (le total global de 4/15 "
+            "inclut un rapprochement Sénégal). La sélection de la figure centrale doit comparer "
             "leur intérêt substantiel et leur lisibilité, sans transformer l'un en résultat causal ou en total financier.",
             "",
             "Fichiers associés : `0730-descriptives.json`, `0730-run-manifest.json`, les tables CSV et "

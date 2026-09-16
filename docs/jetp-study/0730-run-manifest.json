@@ -1,6 +1,7 @@
 {
   "input_snapshot": "docs/jetp-study/0822-comparative-snapshot.json.gz",
   "input_snapshot_manifest": "docs/jetp-study/0822-comparative-snapshot-manifest.json",
+  "input_snapshot_manifest_sha256": "2167cd896de908bdf6f0b5fb8d380e8ba5a9c83ed4a65f2677de302787bd9b2b",
   "input_snapshot_sha256": "e76e706704b0040f7142124ed5dc569a2f2c7b61708b75d5ad2188fcb0514171",
   "output_schema_version": "jetp-0730-descriptives/1",
   "reproduction": "python3 scripts/jetp/build_0730_descriptives.py --root .",

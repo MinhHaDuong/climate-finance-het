@@ -31,6 +31,6 @@ L'attribution public/privé n'est littérale dans le snapshot que pour 4 des 303
 
 ## Handoff 0823
 
-Trois candidats restent ouverts : asymétrie de couverture (résultat nul du join), cycle de vie rapporté ZAF, et pedigree finance/histoire VNM. La sélection de la figure centrale doit comparer leur intérêt substantiel et leur lisibilité, sans transformer l'un en résultat causal ou en total financier.
+Trois candidats restent ouverts : asymétrie de couverture (résultat nul du join), cycle de vie rapporté ZAF, et pedigree finance/histoire VNM. ZAF fournit 257 labels sémantiques de statut d'implémentation mais seulement 235 valeurs de date de registre, qui ne sont pas des dates de transition. VNM fournit 3 rapprochements nommés couvrant 14 assertions (le total global de 4/15 inclut un rapprochement Sénégal). La sélection de la figure centrale doit comparer leur intérêt substantiel et leur lisibilité, sans transformer l'un en résultat causal ou en total financier.
 
 Fichiers associés : `0730-descriptives.json`, `0730-run-manifest.json`, les tables CSV et `0730-plot-data.csv`. Tous sont régénérables via le script 0730 à partir du snapshot 0822 épinglé.
