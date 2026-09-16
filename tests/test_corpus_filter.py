@@ -27,6 +27,8 @@ HARVEST_DIR = os.path.join(SCRIPTS_DIR, "harvest")
 PYTHON = sys.executable
 FIXTURE_DIR = os.path.join(os.path.dirname(__file__), "fixtures")
 DVC_YAML = os.path.join(os.path.dirname(__file__), "..", "dvc.yaml")
+FILTER_YAML = os.path.join(
+    os.path.dirname(__file__), "..", "config", "corpus_filter.yaml")
 
 
 def run_script(*args, cwd=None):
