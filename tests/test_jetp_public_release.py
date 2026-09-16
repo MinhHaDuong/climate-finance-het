@@ -95,6 +95,31 @@ def test_prepared_2026_11_reviewed_evidence_extension_is_offline_and_non_aggrega
     assert (tmp_path / 'offline-2026-11/data/reviewed-evidence.json').is_file()
 
 
+def test_prepared_2026_11_r1_exposes_staged_depth_without_deploying_snapshot(tmp_path):
+    from jetp._public_release import read_release, restore_release
+
+    root = Path(__file__).resolve().parents[1]
+    release = root / 'data/jetp/releases/2026-11-r1/jetp-observatory-2026-11-r1.zip'
+    descriptor, payloads = read_release(release)
+    assert json.loads((release.parent / 'release.json').read_text()) == descriptor
+    assert descriptor['edition'] == '2026-11-r1'
+    assert descriptor['reviewed_evidence']['evidence_depth'] == {
+        'reviewed_canonical_records': 3,
+        'canonical_named_records': 383,
+        'frozen_source_documents': 301,
+        'structured_atomic_observations': {
+            'total': 1740,
+            'by_country': {'ZAF': 257, 'IDN': 1148, 'VNM': 325, 'SEN': 10},
+            'vnm_rmp_positions': 279,
+            'status': 'not_deployed',
+        },
+    }
+    assert '0822-comparative-snapshot' not in payloads
+    restore_release(release, tmp_path / 'offline-2026-11-r1')
+    restored = (tmp_path / 'offline-2026-11-r1/data/reviewed-evidence.json').read_text()
+    assert '"vnm_rmp_positions": 279' in restored
+
+
 def test_reviewed_evidence_records_are_distinct_non_aggregate_and_traceable(tmp_path):
     """A reviewed fact and a pending candidate never become one released total."""
     from jetp._public_release import build_release, read_release
@@ -182,7 +207,7 @@ def test_two_real_fact_unchanged_rehearsal_releases_restore_offline(tmp_path):
     assert validation['archive_sha256'] == hashlib.sha256(
         (releases / '2026-10/jetp-observatory-2026-10.zip').read_bytes()).hexdigest()
     editions = json.loads((root / 'deliverables/jetp-observatory/data/editions.json').read_text())
-    assert [row['edition'] for row in editions['editions']] == ['2026-11', '2026-10', '2026-09']
+    assert [row['edition'] for row in editions['editions']] == ['2026-11-r1', '2026-11', '2026-10', '2026-09']
 
     for edition in ('2026-09', '2026-10'):
         _assert_offline_release_replay(releases, edition, tmp_path / edition)
