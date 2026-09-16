@@ -1,14 +1,16 @@
 # State
 
-Last updated: 2026-09-15T00:15Z
+Last updated: 2026-09-16T14:29Z
 
 ## Current goal
 
 **REL literature review — the only work on a clock, due ~2026-12-06.**
 Ticket 0700 is the tracker; 0701 (agreed outline) and 0705 (Œconomia
 non-overlap guard) are the two ready children, the rest queue behind them.
-RDJ-26561 rev. 1 and Œconomia v2.0.5 have been with their editors since late
-July — nothing to do but wait.
+The RDJ-26561 data paper is published. Its corpus v2.0.0 source and archive
+remain fixed at the pushed annotated tag `rdj26561-revision1`; development on
+the corpus is open again on `main` for v3. Œconomia v2.0.5 remains with its
+editor.
 
 ## JETP checkpoint
 
@@ -52,9 +54,13 @@ evidence gate (10/10 criteria); closure applies only to the local preview. Exist
   promise of publication**. Agreed scope, the four accounting controversies and
   the timeline are in ticket 0700. Hard constraint declared to the editor: no
   shared text or analyses with the Œconomia manuscript — same corpus, opposite direction.
-- RDJ-26561 rev. 1 resubmitted 2026-07-29; Œconomia v2.0.5 resubmitted 2026-07-21 — both awaiting editor
+- RDJ-26561 data paper published; corpus v2.0.0 preserved at the pushed tag
+  `rdj26561-revision1` (`9af9dc08`).
+- Œconomia v2.0.5 resubmitted 2026-07-21 — awaiting editor.
 
-## Corpus (v2, built 2026-07-24, frozen 2026-07-27)
+## Corpus (v2 frozen release; v3 development unfrozen 2026-09-16)
+- The published v2 corpus remains immutable at `rdj26561-revision1`; new
+  pipeline, data and documentation changes belong to the v3 lineage on `main`.
 - 8 sources; 43,179 unified → 33,344 refined; 38,736×1024 embeddings;
   1,087,209 refined citations; core (≥50 cites) 2,644
 - Citation coverage 40/47/69% by period (all-works denominator), driven by
