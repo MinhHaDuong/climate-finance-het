@@ -7,6 +7,7 @@ Author: HDMX-coding-agent
 2026-09-16T13:10Z HDMX-coding-agent created
 2026-09-16T13:13Z HDMX-coding-agent red test_no_god_modules fails on build_0822_freeze_snapshot.py (1163L)
 2026-09-16T13:16Z HDMX-coding-agent green split modules are 618/268/312 lines; 7 targeted tests and binary output comparison pass
+2026-09-16T13:19Z HDMX-coding-agent refactor Ruff import formatting applied; check-fast and lint pass
 
 --- body ---
 ## Context

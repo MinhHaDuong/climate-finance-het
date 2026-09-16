@@ -10,6 +10,7 @@ from jetp._freeze_0822_sources import (
     _rows,
 )
 
+
 def _validate_records(records: list[dict]) -> None:
     """Guard the minimal comparative contract without promoting source claims."""
     ids = [record.get("source_candidate_id") for record in records]
