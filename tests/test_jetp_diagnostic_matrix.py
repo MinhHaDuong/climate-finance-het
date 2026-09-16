@@ -16,8 +16,8 @@ from jetp.build_0816_diagnostic import (
     documentary_rows,
     summarize_diagnostic,
     validate_0816_acceptance,
-    validate_diagnostic_rows,
     validate_date_roles,
+    validate_diagnostic_rows,
     write_summary,
 )
 
