@@ -1,9 +1,8 @@
-"""Version negotiation and unchanged MVP output at the migration boundary."""
+"""Version negotiation and MVP output contracts at the migration boundary."""
 
+import hashlib
 import json
-import os
 from pathlib import Path
-from zipfile import ZipFile
 
 import pytest
 import yaml
@@ -33,7 +32,7 @@ def test_reader_rejects_unknown_view_before_reading(tmp_path):
 
 @pytest.mark.slow
 @pytest.mark.parametrize('view', VIEWS)
-def test_all_mvp_views_match_authoritative_builder_and_frozen_baseline(view):
+def test_all_mvp_views_match_authoritative_builder(view):
     config = yaml.safe_load((ROOT / 'config/jetp_observatory.yaml').read_text())
     tables = legacy.read_inputs(ROOT)
     if view == 'overview':
@@ -44,23 +43,11 @@ def test_all_mvp_views_match_authoritative_builder_and_frozen_baseline(view):
         expected = legacy.country_data(ROOT, view, config, tables)
     actual = read_mvp_view(ROOT, view, supported_versions=(MVP_SCHEMA_VERSION,))
     assert actual == expected
-    serialized = json.dumps(actual, ensure_ascii=False, separators=(',', ':')) + '\n'
-    with ZipFile(ROOT / 'data/jetp/releases/mvp-baseline-0761.zip') as bundle:
-        frozen_bytes = bundle.read(f'site/data/{view}.json')
-    if view != 'overview':
-        assert serialized.encode() == frozen_bytes
-    else:
-        frozen = json.loads(frozen_bytes)
-        # Only checkout identity changes: all input hashes and scientific fields
-        # must still equal the accepted, immutable publication.
-        for key in ('input_git_sha', 'build_base_git_sha'):
-            actual['provenance'].pop(key)
-            frozen['provenance'].pop(key)
-        # Full-suite collection can import the legacy module via tests/../scripts.
-        # Canonicalize only equivalent path spellings; preserve every byte hash.
-        for payload in (actual, frozen):
-            hashes = payload['provenance']['input_sha256']
-            normalized = {os.path.normpath(path): digest for path, digest in hashes.items()}
-            assert len(normalized) == len(hashes)
-            payload['provenance']['input_sha256'] = normalized
-        assert actual == frozen
+
+
+def test_frozen_mvp_baseline_matches_recorded_inspection():
+    """Pin 0761 independently of the later canonical preview."""
+    baseline = (ROOT / 'data/jetp/releases/mvp-baseline-0761.zip').read_bytes()
+    inspection = json.loads((ROOT / 'docs/jetp-mvp-baseline-0761.json').read_text())
+    assert len(baseline) == inspection['archive_bytes']
+    assert hashlib.sha256(baseline).hexdigest() == inspection['archive_sha256']

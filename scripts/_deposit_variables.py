@@ -38,11 +38,9 @@ COLUMNS_TO_DROP = [
     "abstract",       # publisher redistribution restrictions
     "doi_norm",       # intermediate
     "action",         # redundant with is_flagged/is_protected
-    # Flag 5 (semantic outlier) was inactive in the v2 build and its columns
-    # are not part of the deposit contract; drop them if an older extended
-    # file still carries them (ticket 0361, author decision 2026-07-29).
+    # Flag 5 is diagnostic in v3: the all-False mask is an implementation
+    # detail, while its distance is a published analytical column.
     "semantic_outlier",
-    "semantic_outlier_dist",
     # Not in the deposit: the column exists only in refined_works.csv, so the
     # v2 deposit (built from extended_works.csv) never carried it; the contract
     # describes exactly the shipped file (author decision 2026-07-29).
@@ -193,6 +191,11 @@ DEPOSIT_VARIABLES: list[Variable] = [
     Variable("near_duplicate_group", "integer",
              "Group id of near-identical content under several DOIs", _FILTER,
              group=_CURATION, nullable=True),
+    Variable("semantic_outlier_dist", "number",
+             "Cosine distance to the embedding centroid of the work's own "
+             "language, or to the corpus centroid where a language holds too "
+             "few works; diagnostic only", _FILTER,
+             required=False, group=_CURATION, nullable=True),
     Variable("is_flagged", "boolean",
              "Any quality flag raised (refined-subset rule: Section 3)",
              _FILTER, group=_CURATION),

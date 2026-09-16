@@ -2,12 +2,14 @@
 Title: Coordinate backend migration while preserving the JETP MVP
 Created: 2026-09-14
 Author: HDMX-coding-agent
+Closed: All five migration acceptance criteria verified: dispositions, four country reports, exclusive ownership, two-edition replay and retained research history.
 
 --- log ---
 2026-09-14T13:51Z HDMX-coding-agent created
 
 2026-09-15T00:15Z HDMX-coding-agent acceptance-ready — 0761–0770 and 0726–0728 merged; tracker remains open; no deployment, estimator or PyPSA work.
 
+2026-09-15T05:12Z HDMX-coding-agent closed — All five migration acceptance criteria verified: dispositions, four country reports, exclusive ownership, two-edition replay and retained research history.
 --- body ---
 
 ## Context

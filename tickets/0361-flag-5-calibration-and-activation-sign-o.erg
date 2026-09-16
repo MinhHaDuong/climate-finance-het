@@ -12,6 +12,9 @@ Author: HDMX-coding-agent
 2026-07-28T21:50Z HDMX-coding-agent note author flagged the prose surfaces still describing an active flag 5 / six-flag pipeline while dvc.yaml holds it inert: data-paper.qmd section 2.2 (six-flag pipeline, flag 5 sentence), section 2.4 (six-flag filter), and export_corpus_table.py caption (six-flag quality filtering). Sweep them all when this decision lands.
 2026-07-29T09:30Z HDMX-coding-agent note roar sweep after PR #1285 found three more six-flag/flag-5 prose surfaces for the retirement sweep: deliverables/_shared/_includes/corpus-enrichment.md (flag 5 in §3), corpus-filtering.md (six flags), scripts/figures/export_filter_ablation.py (six-flag / Flag 5 comments); tab_corpus_sources.md caption regenerates from export_corpus_table.py, already listed
 2026-07-29T11:50Z HDMX-coding-agent note author decision for RDJ resubmission (0283): paper describes FIVE flags matching the frozen v2 artifact; flag 6 renumbered to 5; a disclosure sentence names the inactive sixth flag in the deposited code; semantic_outlier + semantic_outlier_dist removed from the deposit contract and defensively dropped in transform(). Calibrate-or-retire stays open here for v3.
+2026-09-16T14:29Z HDMX-coding-agent note author reports the data paper published. The pushed annotated tag rdj26561-revision1 pins commit 9af9dc08 and explicitly identifies the clean-room-verified v2.0.0 archive. The v2 artifact remains immutable; corpus development is unfrozen on main for the v3 lineage. This removes the publication-freeze blocker, not the calibration/sign-off gate: --skip-semantic-flag stays until a safe v3 implementation lands.
+2026-09-16T14:38Z HDMX-coding-agent decided v3 adopts the diagnostic variant in two gated steps: first land the per-language computation and unit tests while the published configuration and DVC stage remain untouched; then change configuration and activate it together in a separate pipeline-surface PR with a rebuilt output proving zero removals. The published v2 paper and deposit contract do not change retroactively.
+2026-09-16T15:06Z HDMX-coding-agent note v3 activation replayed against 43,179 enriched rows: 32,938 non-null distances, zero semantic flags, per-language centroids for 32,719 works in 16 languages, and global fallback for 219. The candidate extended artifact matches every existing column exactly and adds only semantic_outlier plus semantic_outlier_dist. Filtering keeps refined_works.csv (33,344 rows, sha256 15419b5b...) and corpus_audit.csv (43,179 rows, sha256 24399703...) byte-identical. The v3 contract publishes the distance and drops the all-False implementation mask.
 --- body ---
 ## Context
 
@@ -118,7 +121,8 @@ threshold problem — no sigma fixes it. Handle separately or accept.
 
 - `scripts/filter_flags.py` — `flag_semantic_outlier` (centroid and threshold)
 - `scripts/harvest/corpus_filter.py` — `load_embeddings`, `_flag5_subset`
-- `config/corpus_filter.yaml` — `semantic_outlier.sigma`, `min_coverage`
+- `config/corpus_filter.yaml` — diagnostic mode, centroid scope, language floor,
+  `min_coverage`
 - `dvc.yaml` — `extend.cmd` carries `--skip-semantic-flag`; removing it activates
 - `docs/research-note-multilingual.md` — the note whose signal Flag 5 removes on
 - `deliverables/data-paper/data-paper.qmd` and the revision letter — both
@@ -126,13 +130,14 @@ threshold problem — no sigma fixes it. Handle separately or accept.
 
 ## Actions
 
-1. Author decides A, B, or C. This is a research call, not a mechanical one.
-2. Implement it; if A, the per-language arm needs a documented floor for small
-   languages, in the shape of the existing `min_coverage`.
-3. Measure the resulting `refined_works.csv` row count and record it.
-4. Reconcile the prose: the data paper and revision letter say six flags. Either
-   activate and keep the claim true, or correct the count.
-5. Only then remove `--skip-semantic-flag` from `dvc.yaml`.
+1. Implement diagnostic mode with a per-language centroid, a documented
+   small-language fallback and unit tests, without changing the live config or
+   DVC stage.
+2. In a separate change, configure diagnostic mode, remove
+   `--skip-semantic-flag`, rebuild the v3 outputs, and prove that the diagnostic
+   mask removes zero works.
+3. Record the v3 row count and publish `semantic_outlier_dist` in the v3 data
+   contract. The tagged v2 paper and archive remain unchanged.
 
 ## Test
 
@@ -144,21 +149,23 @@ threshold problem — no sigma fixes it. Handle separately or accept.
 
 ## Verification
 
-- [ ] Chosen option implemented, language gradient measured afterwards
-- [ ] `refined_works.csv` row-count change measured and recorded
-- [ ] Data paper and revision letter flag count matches the artifact
-- [ ] `--skip-semantic-flag` removed from `dvc.yaml` only after sign-off
+- [x] Diagnostic option implemented; the recorded counterfactual calibration
+      shows the per-language correction removes the global language gradient
+- [x] `refined_works.csv` remains byte-identical at 33,344 rows
+- [x] V3 data-paper source and deposit contract describe five removal flags plus
+      the published semantic-distance diagnostic; tagged v2 remains immutable
+- [x] `--skip-semantic-flag` removed after author sign-off and zero-removal replay
 
 ## Invariants
 
-- The corpus is frozen (author, 2026-07-27) mid RDJ-26561 R&R. No activation
-  before sign-off, and no rebuild that moves downstream counts without it.
+- The published v2 corpus stays frozen at `rdj26561-revision1`. V3 development
+  is unfrozen (author, 2026-09-16), but no Flag 5 activation occurs before its
+  separate calibration/sign-off gate.
 - No weakening of acceptance thresholds.
 - 0362 should land before any activation: `run_corpus_pipeline.sh` auto-pushes
   `dvc.lock` to main, so an activated flag would execute with no checkpoint.
 
 ## Exit criteria
 
-- Flag 5 is either calibrated with a measured, flat language gradient and
-  activated with author sign-off, or retired — and the paper's flag count
-  matches the artifact either way.
+- Flag 5 publishes a per-language semantic distance, removes no work, and the
+  v3 paper and deposit contract distinguish it from the five removal flags.

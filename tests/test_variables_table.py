@@ -120,6 +120,11 @@ class TestContract:
         cols = [c for c in contract_names() if c not in optional]
         assert check_columns(cols) == []
 
+    def test_semantic_distance_is_the_only_flag5_deposit_column(self):
+        names = contract_names()
+        assert "semantic_outlier_dist" in names
+        assert "semantic_outlier" not in names
+
 
 class TestDataDictionary:
     """Ticket 0287: formal data dictionary — group, allowed values, missingness."""
@@ -180,6 +185,11 @@ class TestDepositTransformMatchesContract:
         required = [v.name for v in DEPOSIT_VARIABLES if v.required]
         missing = [c for c in required if c not in out.columns]
         assert not missing, f"required contract columns absent: {missing}"
+
+    def test_transform_preserves_the_diagnostic_distance(self, extended_df):
+        extended_df["semantic_outlier_dist"] = 0.25
+        out = transform(extended_df)
+        assert out["semantic_outlier_dist"].tolist() == [0.25]
 
 
 class TestMarkdownTable:

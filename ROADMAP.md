@@ -16,11 +16,14 @@ Building toward a book on international climate finance between solidarity and p
 - [x] Run and merge bounded AFD 0737, KfW 0738 and FCDO 0739 feasibility pilots.
   Their synthesis preserves NARROW/DEFER conclusions and rules out a
   single-donor JETP-effect claim.
-- [ ] Run the design-only comparative country-quarter feasibility screen in 0729
-  → author-approved protocol before any causal analysis0730 or short paper0732.
-  See [synthesis](docs/jetp-pilots/2026-09-15/synthesis.md) and
-  [handoff](docs/jetp-pilots/2026-09-15/v0.2-and-short-paper-handoff.md).
-- [ ] Selected protocol → causal analysis0730 → short paper0732; no design selected yet.
+- [ ] Accept the reviewed 0736 selection audit, 0729 causal DEFER and 0814
+  feasibility DEFER from their branches; do not repeat them as open decisions.
+- [ ] Execute the author-authorised non-causal JETP measurement programme:
+  protocol0816 → source census0817 → country ingestion0818–0821 → frozen
+  snapshot0822 → statistics0730/figure0823 and MVP0824 → short paper0732.
+  Current framing: `conception/jetp-short-paper-framing-2026-09-15.md`.
+  First establish a common operation sample for progression, public/private
+  finance and history under 0816; 0823 combines these in three figure panels.
 - [ ] JETP data paper0731 after0726; long political-economy paper0733 with Christophe.
   LaTeX scaffolds0711 remain required for the two analytical manuscripts.
 
@@ -44,7 +47,8 @@ Submitted data paper to RDJ4HSS (diamond OA).
 
 - [x] Wait for reviewers feedback (R&R received)
 - [x] Revise (revision 1 released 2026-07-29: Zenodo v2.0.0, HAL v2, tag `rdj26561-revision1`)
-- [ ] Resubmit on the journal platform (author, from doudou: rsync release dir, homepage bib update, platform upload; then move `papiers/actif` → `papiers/sent`)
+- [x] Resubmit on the journal platform — publication confirmed by the author
+  on 2026-09-16.
 - [ ] Present at conference
 
 ## Charles Gide conference (Vannes, July 2-4)

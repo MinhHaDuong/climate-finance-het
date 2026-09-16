@@ -1,4 +1,4 @@
-"""No unresolved reference reaches a rendered deliverable (tickets 0363, 0420).
+"""No unresolved reference reaches a rendered Quarto deliverable (tickets 0363, 0420).
 
 Quarto publishes a document that is missing an input rather than failing on it.
 An undeclared `{{< meta >}}` key becomes the literal `?meta:key`; a crossref to
@@ -54,6 +54,9 @@ from _qmd_meta import (
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "analysis"))
 import compute_vars
+
+# The JETP measure and political-economy papers are plain LaTeX (ticket 0711),
+# so scripts/qa_latex_log.py, rather than Quarto's resolver, guards them.
 
 #: Documents that render `?meta:` placeholders today, pinned to the exact keys.
 #:

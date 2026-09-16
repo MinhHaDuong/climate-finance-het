@@ -113,11 +113,18 @@ year_floor: 1960
 citation_isolation:
   max_year: 2019
 
-# Distance to the corpus centroid is compared against a mean and standard
-# deviation taken over the WHOLE corpus — one global centroid, one global
-# mean/SD, no language, source, or year strata (see flag_semantic_outlier).
+# Flag 5 is a diagnostic, not a removal rule (ticket 0361). A global centroid
+# on this English-dominated corpus confounds semantic isolation with language;
+# the per-language centroid corrects that geometry. Languages below the floor
+# fall back to the corpus centroid because too few vectors cannot locate a
+# stable language-specific centre. There is deliberately no sigma: the old
+# threshold was calibrated on another embedding model and never validated on
+# its output. Filter mode remains available in code, but requires an explicit,
+# separately calibrated sigma.
 semantic_outlier:
-  sigma: 2
+  mode: diagnostic
+  centroid: per_language
+  min_language_count: 30
   # Fraction of Flag 5 candidates that must resolve to an embedding vector.
   # Below it the flag is scoring a rump of the corpus against a centroid built
   # from that same rump, which is a dead flag with a number attached — so it is

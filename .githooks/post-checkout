@@ -6,10 +6,12 @@
 #
 # This hook wires the worktree to two shared, off-tree resources: the uv
 # environment beside the uv cache, and the primary checkout's DVC cache. Both
-# are symlinks, so worktree creation stays fast. It still does NOT populate DVC
-# data — doing that eagerly copied ~1.7 GB into every worktree and timed out
+# are symlinks, so worktree creation stays fast. Bulk DVC data stays on demand
+# — populating it eagerly copied ~1.7 GB into every worktree and timed out
 # creation. Data is fetched on demand with `make data` (see the Makefile),
 # which needs the shared cache below to find anything.
+# JETP source snapshots are also initialized, using only cheap private reflinks
+# from a checkout with the same DVC pointer. See the final section below.
 
 # Co-locate the uv project environment with the uv cache on /data.
 # uv hardlinks wheels from its cache into the environment, but only when both
@@ -84,3 +86,38 @@ if [ -d "$SHARED_CACHE" ] && [ "$SHARED_CACHE" != "$(pwd)/.dvc/cache" ] &&
    { [ ! -e .dvc/cache ] || [ -L .dvc/cache ]; }; then
     ln -sfn "$SHARED_CACHE" .dvc/cache || true
 fi
+
+# Initialize JETP snapshots without aliasing writable source files. A symlink
+# is not read-only: harvesting or DVC operations through it can change another
+# checkout. Reflinks share disk extents but keep independent inodes and writes.
+# This is deliberately reflink-only: unsupported filesystems, missing snapshots
+# and differing DVC revisions fall back to explicit `make jetp-data`.
+# JETP_SNAPSHOT_SOURCE optionally names another documents directory; its sibling
+# <directory>.dvc must match the worktree's documents.dvc. It is never modified.
+initialize_jetp_snapshots() (
+    JETP_DOCUMENTS=data/jetp/documents
+    # A primary checkout owns its data; only linked worktrees are initialized.
+    [ -f .git ] && [ -f "$JETP_DOCUMENTS.dvc" ] || exit 0
+    [ ! -e "$JETP_DOCUMENTS" ] && [ ! -L "$JETP_DOCUMENTS" ] || exit 0
+    JETP_PRIMARY=$(CDPATH= cd -- "$(git rev-parse --git-common-dir)/.." && pwd)
+    JETP_SOURCE=${JETP_SNAPSHOT_SOURCE:-$JETP_PRIMARY/$JETP_DOCUMENTS}
+    if [ ! -d "$JETP_SOURCE" ] || ! cmp -s "$JETP_SOURCE.dvc" "$JETP_DOCUMENTS.dvc"; then
+        echo 'JETP snapshots unavailable or at another revision; run make jetp-data.' >&2
+        exit 0
+    fi
+    JETP_STAGE=$(mktemp -d data/jetp/.documents-init.XXXXXX) || {
+        echo 'JETP snapshot staging failed; run make jetp-data.' >&2
+        exit 0
+    }
+    # The only recursive removal is our freshly allocated staging directory.
+    trap 'rm -rf -- "$JETP_STAGE"' 0
+    trap 'exit 1' HUP INT TERM
+    if cp -RL --reflink=always -- "$JETP_SOURCE" "$JETP_STAGE/documents" 2>/dev/null &&
+       cmp -s "$JETP_SOURCE.dvc" "$JETP_DOCUMENTS.dvc" &&
+       mv -Tn -- "$JETP_STAGE/documents" "$JETP_DOCUMENTS"; then
+        :
+    else
+        echo 'JETP snapshot reflink unavailable; run make jetp-data.' >&2
+    fi
+)
+initialize_jetp_snapshots || true

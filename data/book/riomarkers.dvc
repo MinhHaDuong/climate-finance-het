@@ -1,0 +1,6 @@
+outs:
+- md5: 848b8c66cd50ba348d4c0a39533f118e.dir
+  size: 527651025
+  nfiles: 6
+  hash: md5
+  path: riomarkers

@@ -30,7 +30,7 @@ const STAGE_COLOURS = {
   Need: "#bc9c7d",
   "Not documented": "#dce0d5",
 };
-let overview, countries, comparison, editions, projects;
+let overview, countries, comparison, editions, evidence, projects;
 const country = (code) => overview.countries.find((c) => c.code === code);
 const undisclosedCount = () =>
   overview.countries.reduce((total, c) => total + c.undisclosed, 0);
@@ -275,10 +275,29 @@ function comparisonPage(params) {
     );
   update();
 }
+function evidenceDepthSummary() {
+  const depth = evidence.evidence_depth;
+  if (!depth) return "";
+  const staged = depth.structured_atomic_observations || {};
+  const countries = staged.by_country || {};
+  const countryCounts = ["ZAF", "IDN", "VNM", "SEN"]
+    .filter((code) => countries[code] != null)
+    .map((code) => `${esc(country(code)?.short || code)} ${fmt(countries[code])}`)
+    .join(" · ");
+  return `<section class="section" aria-label="Evidence depth"><div class="section-head"><div><p class="eyebrow">Evidence depth</p><h2>What the data work added.</h2></div><p>These are distinct layers. They are not a common record total.</p></div><div class="metrics"><div class="metric"><strong>${fmt(depth.canonical_named_records)}</strong><span>named canonical portfolio records</span><small>Existing catalogue identities</small></div><div class="metric"><strong>${fmt(depth.frozen_source_documents)}</strong><span>frozen source documents</span><small>Curated documentary corpus</small></div><div class="metric"><strong>${fmt(depth.reviewed_canonical_records)}</strong><span>reviewed canonical assertions</span><small>Released as non-aggregate facts</small></div><div class="metric"><strong>${fmt(staged.total)}</strong><span>structured analytical observations</span><small>Staged research, not deployed</small></div></div><div class="callout"><h3>Staged extraction, kept separate</h3><p>${fmt(staged.total)} atomic observations: ${esc(countryCounts)}. This includes ${fmt(staged.vnm_rmp_positions)} Viet Nam RMP positions. They are structured observations, not automatically reconciled operations, payments, or canonical facts; the snapshot is not deployed as canonical facts.</p></div></section>`;
+}
 function editionHistoryPage() {
   const rows = editions.editions;
   main.innerHTML = header("Monthly editions", "What changed, and what did not.", "Each edition is frozen after review. A failed refresh remains a recorded gap and never removes evidence from an earlier download.") +
-    `<div class="table-wrap"><table><thead><tr><th>Edition</th><th>Evidence cutoff</th><th>Prepared</th><th>State</th><th>Published</th></tr></thead><tbody>${rows.map((row) => `<tr><td>${esc(row.edition)}</td><td>${date(row.observation_cutoff)}</td><td>${date(row.release_prepared_date)}</td><td>${esc(row.release_state)}</td><td>${row.publication_date ? date(row.publication_date) : "Not published"}</td></tr>`).join("")}</tbody></table></div><p class="note">A correction uses a new <code>YYYY-MM-rN</code> edition and preserves the prior archive. Later reports are labelled by their original event date; they are not treated as new events.</p><div class="downloads"><a class="button light" href="data/editions.json" download>Download release history ↓</a></div>`;
+    `<div class="table-wrap"><table><thead><tr><th>Edition</th><th>Evidence cutoff</th><th>Prepared</th><th>State</th><th>Published</th></tr></thead><tbody>${rows.map((row) => `<tr><td>${esc(row.edition)}</td><td>${date(row.observation_cutoff)}</td><td>${date(row.release_prepared_date)}</td><td>${esc(row.release_state)}</td><td>${row.publication_date ? date(row.publication_date) : "Not published"}</td></tr>`).join("")}</tbody></table></div><p class="note">A correction uses a new <code>YYYY-MM-rN</code> edition and preserves the prior archive. Later reports are labelled by their original event date; they are not treated as new events.</p><div class="downloads"><a class="button light" href="data/editions.json" download>Download release history ↓</a></div>` + evidenceDepthSummary();
+}
+function evidencePage() {
+  const records = evidence.records || [];
+  main.innerHTML = header(
+    "Reviewed evidence",
+    "Source assertions, kept separate",
+    "Each row is one reviewed source assertion or pending candidate. It is not an account, a payment total, or an estimate.",
+  ) + `<div class="callout"><h3>Analytical snapshot: ${esc(evidence.analytical_snapshot?.status || "not available")}</h3><p>The comparative staging snapshot is derived research material and is not deployed in this MVP edition.</p></div><section class="section"><div class="table-wrap"><table><thead><tr><th>Record</th><th>Country</th><th>Review state</th><th>Pedigree</th><th>Reading note</th></tr></thead><tbody>${records.map((record) => `<tr data-reviewed-evidence-id="${esc(record.id)}"><td>${esc(record.label)}</td><td>${esc(country(record.country)?.name || record.country)}</td><td>${esc(record.status.replaceAll("_", " "))}</td><td>${record.evidence.map((proof) => `<code>${esc(proof.source_id)}</code> · ${esc(proof.locator)} · <code>${esc(proof.sha256.slice(0, 12))}…</code>`).join("<br>")}</td><td>${esc(record.notes)}<br><small>Non-aggregate record.</small></td></tr>`).join("")}</tbody></table></div>${records.length ? "" : '<p class="note">No separately releasable reviewed evidence rows are available in this edition. That is a coverage statement, not evidence of no activity.</p>'}<div class="downloads"><a class="button light" href="data/reviewed-evidence.json" download>Download reviewed evidence ↓</a></div></section>`;
 }
 function methodsPage() {
   main.innerHTML =
@@ -314,6 +333,7 @@ function render() {
   else if (page === "projects") cataloguePage(params);
   else if (page === "project") projectPage(decodeURIComponent(id || ""));
   else if (page === "comparison") comparisonPage(params);
+  else if (page === "evidence") evidencePage();
   else if (page === "editions") editionHistoryPage();
   else methodsPage();
   document.title =
@@ -336,10 +356,11 @@ async function start() {
       if (!response.ok) throw Error(`${file}: ${response.status}`);
       return response.json();
     };
-    [overview, comparison, editions] = await Promise.all([
+    [overview, comparison, editions, evidence] = await Promise.all([
       load("overview"),
       load("comparison"),
       load("editions").catch(() => ({ editions: [] })),
+      load("reviewed-evidence").catch(() => ({ records: [], analytical_snapshot: { status: "not available" } })),
     ]);
     countries = Object.fromEntries(
       await Promise.all(

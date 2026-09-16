@@ -5,6 +5,7 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 
+import pytest
 from jetp.build_idn_portfolio_pages import parse_portfolio_html
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -26,6 +27,7 @@ def archived_page(source_id: str) -> str:
     return (DATA / "documents" / row["storage_path"]).read_text(encoding="utf-8")
 
 
+@pytest.mark.slow
 def test_parser_preserves_two_multi_donor_modalities() -> None:
     rows = parse_portfolio_html(archived_page("idn-portfolio-etp"))
 

@@ -149,9 +149,23 @@ ALL_FIGS := $(MANUSCRIPT_FIGS) $(DATAPAPER_FIGS) $(CORPUS_REPORT_FIGS) \
             $(MULTILAYER_FIGS) $(SLIDES_FIGS) $(ORPHANED_FIGS) $(NCC_FIGS)
 
 # ── Default target ────────────────────────────────────────
-.PHONY: all setup manuscript papers corpus-report technical-report data-paper multilayer-detection multilayer-techrep zoo figures figures-manuscript figures-datapaper figures-corpusreport figures-companion figures-techrep figures-ncc stats check check-package check-fast lint test-durations venv-canonicalize smoke benchmark determinism-check regression regression-update audit-pdf-content check-corpus check-manuscript-data data corpus corpus-sync corpus-discover corpus-enrich corpus-extend corpus-filter corpus-align corpus-filter-all corpus-tables corpus-validate deploy-corpus clean rebuild archive-analysis archive-manuscript archive-datapaper analysis-figures analysis-tables analysis-stats manuscript-render manuscript-figures datapaper-render datapaper-figures corpus-handoff deposit-descriptors deposit-validate jetp-harvest jetp-zaf-news-leads jetp-idn-portfolio jetp-documents-track
+.PHONY: all setup manuscript papers corpus-report technical-report data-paper multilayer-detection multilayer-techrep zoo jetp-mesure jetp-econpol jetp-vars jetp-crs jetp-crs-data figures figures-manuscript figures-datapaper figures-corpusreport figures-companion figures-techrep figures-ncc stats check check-package check-fast lint test-durations venv-canonicalize full-gate-preflight smoke benchmark determinism-check regression regression-update audit-pdf-content check-corpus check-manuscript-data data corpus corpus-sync corpus-discover corpus-enrich corpus-extend corpus-filter corpus-align corpus-filter-all corpus-tables corpus-validate deploy-corpus clean rebuild archive-analysis archive-manuscript archive-datapaper analysis-figures analysis-tables analysis-stats manuscript-render manuscript-figures datapaper-render datapaper-figures corpus-handoff deposit-descriptors deposit-validate jetp-harvest jetp-zaf-news-leads jetp-idn-portfolio jetp-documents-track
 
 .DEFAULT_GOAL := manuscript
+
+# ── Papier court JETP — courbe de référence du décaissement (ticket 0713) ──
+# Chaîne CRS portée sous scripts/jetp/, quatre étapes dans dvc.yaml. Les sorties
+# atterrissent sous data/jetp/derived/ ; le livrable que consomme le papier est
+# data/jetp/derived/courbe-reference-decaissement.csv.
+#
+# `jetp-crs-data` récupère le tirage OCDE archivé depuis le remote DVC — l'étape
+# jetp_pull est frozen à dessein (API à débit limité, millésimes révisés par
+# l'OCDE), donc le tirage ne se rejoue jamais tout seul.
+jetp-crs-data:
+	dvc pull data/jetp/crs
+
+jetp-crs: jetp-crs-data
+	dvc repro jetp_cohortes jetp_livrable jetp_synthese
 
 all: manuscript papers
 
@@ -228,6 +242,12 @@ corpus-sync:
 # corpus-sync instead to also fetch from the padme remote.
 data:
 	$(UV_RUN) dvc checkout
+
+# Materialize only the pinned JETP snapshots from the shared local DVC cache.
+# The checkout hook tries a reflink first; this also works without reflink support.
+.PHONY: jetp-data
+jetp-data:
+	$(UV_RUN) dvc checkout data/jetp/documents.dvc
 
 # Individual stage aliases.
 corpus-discover:
@@ -752,7 +772,7 @@ analysis-stats: stats
 manuscript:
 	$(MAKE) -f deliverables/manuscript/manuscript.mk deliverables/manuscript/manuscript.pdf deliverables/manuscript/manuscript.docx
 
-papers: corpus-report technical-report data-paper multilayer-detection multilayer-techrep zoo
+papers: corpus-report technical-report data-paper multilayer-detection multilayer-techrep zoo jetp-mesure jetp-econpol
 
 corpus-report:
 	$(MAKE) -f deliverables/corpus-report/corpus-report.mk deliverables/corpus-report/corpus-report.pdf
@@ -771,6 +791,18 @@ multilayer-techrep:
 
 zoo:
 	$(MAKE) -f deliverables/zoo/zoo.mk deliverables/zoo/breakpoint-detect-method-zoo.pdf
+
+# The JETP papers are plain LaTeX live documents. Their macro handoffs are
+# generated from the same document registry as the Quarto vars, but their
+# render workpackages remain TeX Live + latexmk only.
+jetp-vars: scripts/analysis/build_latex_vars.py scripts/analysis/_vars_registry.py
+	$(PYTHON) scripts/analysis/build_latex_vars.py --output deliverables
+
+jetp-mesure:
+	$(MAKE) -f deliverables/jetp-mesure/jetp-mesure.mk deliverables/jetp-mesure/jetp-mesure.pdf
+
+jetp-econpol:
+	$(MAKE) -f deliverables/jetp-econpol/jetp-econpol.mk deliverables/jetp-econpol/jetp-econpol.pdf
 
 # ── Namespaced aliases (Phase 3) ────────────────────────
 manuscript-render: manuscript
@@ -856,21 +888,25 @@ venv-canonicalize:
 # `pytest tests/` never collects (norecursedirs=["libs"]). Run it explicitly so
 # host CI gates it. Pure-logic / mocked-HTTP — belongs in the fast tier too.
 check-package: | venv-canonicalize
-	$(PYTHON) -m pytest libs/openalex-corpus/tests -v --tb=short
+	$(PYTHON) -m pytest libs/openalex-corpus/tests -q --tb=short
 
-check: check-package | venv-canonicalize
-	$(PYTHON) -m pytest tests/ -v --tb=short -n 4
+full-gate-preflight:
+	@# Use host Python: uv itself cannot start while its configured cache is read-only.
+	python3 scripts/qa_full_gate_preflight.py
+
+check: full-gate-preflight check-package | venv-canonicalize
+	$(PYTHON) -m pytest tests/ -q --tb=short -n 4
 
 # Fast inner loop: pure-Python logic only. Deselects slow (network / real data /
 # heavy numerical dep / heavy compute), integration (subprocess / sleep), and
 # adherence (lint — ruff/mypy/hygiene, run via `make lint`). Ticket 0214.
 check-fast: check-package | venv-canonicalize
-	$(PYTHON) -m pytest tests/ -v --tb=short -m "not slow and not integration and not adherence" -n 4
+	$(PYTHON) -m pytest tests/ -q --tb=short -m "not slow and not integration and not adherence" -n 4
 
 # Lint / rule-enforcement tier (ruff, mypy, hygiene, contracts). Run alongside
 # tests, not inside the inner loop — a warm mypy cache makes it ~1s. Ticket 0214.
 lint: | venv-canonicalize
-	$(PYTHON) -m pytest tests/ --tb=short -m adherence -n 4
+	$(PYTHON) -m pytest tests/ -q --tb=short -m adherence -n 4
 
 # Record per-test durations for the fast-path ratchet (ticket 0216) into the
 # gitignored .test_durations.json. Serial (-n0) and opt-in so timings reflect

@@ -1,0 +1,71 @@
+%erg 0.1
+Title: Design a provenance-first OECD CRS and development-agency finance layer
+Created: 2026-09-16
+Author: Codex at author request
+
+--- log ---
+2026-09-16T00:00Z Created from the exploration of a full OECD CRS and agency-data layer.
+--- body ---
+
+## Context
+
+The JETP pipeline now distinguishes immutable raw documents, structured
+observations, best-effort reconciliation with uncertainty, and descriptive
+outputs. Extend that architecture only after a bounded feasibility design for
+the OECD CRS and selected OECD-country development-agency datasets. The aim is
+not to claim a universal climate-finance account: CRS markers, official-flow
+records, agency systems, private mobilisation and domestic finance have
+different coverage and accounting semantics.
+
+Preserve the JETP short-paper train. This is a separate data-programme design
+ticket; it must not trigger a bulk download or re-scope the current paper.
+
+## First test
+
+Create a small CRS fixture with two releases of one activity, a Rio-marker
+field, a commitment and a disbursement, plus one agency record that cannot be
+linked exactly. The prototype must retain both source versions, preserve the
+agency record as unresolved, and reject a combined climate-finance total across
+incompatible reporting bases.
+
+## Actions
+
+Design and prototype a provider-adapter contract for:
+
+1. immutable source snapshot and licence/terms metadata;
+2. provider-native structured observations with mandatory free-text `notes`;
+3. versioned CRS activity records, including flow type, marker semantics,
+   currencies, commitments/disbursements and revision identity;
+4. best-effort cross-source reconciliation with `exact`, `interval`,
+   `incompatible`, `unavailable` and `unknown` outcomes; and
+5. frozen descriptive views by explicitly declared accounting definition.
+
+Map the smallest viable **prototype** wave: a bounded, documented CRS sample,
+then a ranked set of JETP-relevant development-agency samples. Rank agencies
+by JETP-country coverage, availability of activity-level identifiers,
+revision/disbursement semantics, licence clarity and expected reconciliation
+value. Specify volume, refresh cadence, raw-byte retention, DVC/partitioning,
+source licensing, identifier strategy, rate-limit and reproducibility risks.
+Assess whether IATI is a complement rather than an assumed complete common
+denominator. Define a measurable prototype decision rule: which semantic or
+linkage failures remain tolerable as explicit uncertainty, and which prevent a
+future full-snapshot acquisition.
+
+## Exit criteria
+
+- [ ] A CRS fixture proves source revisions, flow semantics and missing links survive ingestion
+- [ ] Every structured observation has provenance, semantic fields and nonempty notes
+- [ ] Cross-provider joins cannot silently add incompatible bases or double-count records
+- [ ] The design distinguishes official reported climate-related flows from private mobilisation and domestic finance
+- [ ] A phased acquisition plan names a first provider wave, storage budget and stop conditions
+- [ ] Agency prioritisation is reproducible from stated coverage, identifier, semantic, licence and reconciliation criteria
+- [ ] A prototype decision rule distinguishes retained uncertainty from a blocker to full-snapshot ingestion
+- [ ] Licence, retention and redistribution compatibility are recorded before any real source snapshot enters storage
+- [ ] A separate implementation ticket and explicit approval are required before any full-CRS or agency acquisition
+- [ ] The design states whether existing DVC/object storage and snapshot contracts suffice, and names only necessary extensions
+
+## Links
+
+Separate programme from 0816–0827 JETP short-paper chain. Existing CRS
+comparison infrastructure is relevant context, not proof that full ingestion
+is ready.

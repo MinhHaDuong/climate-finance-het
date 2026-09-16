@@ -1,0 +1,7 @@
+inventory_id,source_id,edition,raw_disposition,extraction_disposition,document_sha256,candidate_count,notes
+sen-senelec-2019,sen-senelec-reports-index,2019,index_retained_file_not_retained,not_extracted,,0,The official index exposed this edition, but its file is outside this bounded retained corpus.
+sen-senelec-2020,sen-senelec-reports-index,2020,index_retained_file_not_retained,not_extracted,,0,The official index exposed this edition, but its file is outside this bounded retained corpus.
+sen-senelec-2021,sen-senelec-reports-index,2021,index_retained_file_not_retained,not_extracted,,0,The official index exposed this edition, but its file is outside this bounded retained corpus.
+sen-senelec-2022,sen-senelec-reports-index,2022,index_retained_file_not_retained,not_extracted,,0,The official index exposed this edition, but its file is outside this bounded retained corpus.
+sen-senelec-2023,sen-senelec-annual-report-2023,2023,raw_retained,reviewed,678983d77cadf0b0fcf509a3fef555b90dcad045ddeee217018432d2e7da6e61,5,Locators were extracted from the retained PDF with pdftotext -layout; candidates remain unmatched leads.
+sen-senelec-2024,sen-senelec-annual-report-2024,2024,raw_retained,reviewed,d3e6ed4890f3829b853a02d49c752b18c5c5450350184679c9a284b6f862825f,1,Locator was extracted from the retained PDF with pdftotext -layout; the Diass label is not an identity match.

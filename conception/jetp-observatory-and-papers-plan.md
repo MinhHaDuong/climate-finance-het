@@ -1,5 +1,10 @@
 # JETP observatory and academic programme
 
+> Short-paper update, author-approved 15 September 2026:
+> [progression, public/private finance and operation histories](jetp-short-paper-framing-2026-09-15.md).
+> This supersedes the causal-only short-paper requirements below. Historical
+> feasibility decisions remain evidence; the observatory/data-paper tracks continue.
+
 Agreed programme, consolidated at the 14 September 2026 checkpoint. Earlier
 conception notes and independent model reports remain historical/design inputs;
 this file states the current strategy. Tracker: 0725 / GitHub #1333.
