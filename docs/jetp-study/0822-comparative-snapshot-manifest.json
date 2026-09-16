@@ -2,6 +2,15 @@
   "dvc_boundary": "0822 consumes the reviewed Git artifacts. Their source links retain DVC document hashes where applicable; this freeze does not materialize or reinterpret DVC bytes.",
   "input_git_sha": "fed33609",
   "input_sha256": {
+    "data/jetp/plan-projects.csv": {
+      "sha256": "723b24f1e67da7420122bede26a997b002d2ff9683f3e7623da8c74f372ba5ca"
+    },
+    "data/jetp/vnm-pilot-manifest.csv": {
+      "sha256": "b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818"
+    },
+    "data/jetp/vnm-pilot-observations.csv": {
+      "sha256": "0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917"
+    },
     "docs/jetp-study/0818-zaf-q1-2026-rows.csv": {
       "sha256": "f2ababa6b9c006a133aea32dad73e50c4bfa05f03d9b1b9575a94ffcd596273f"
     },
@@ -20,6 +29,6 @@
   },
   "reproduction": "Run this builder with --input-git-sha at the recorded revision; inputs are content-hashed and output rendering is deterministic.",
   "schema_version": "jetp-0822-run-manifest/1",
-  "snapshot_path": "docs/jetp-study/0822-comparative-snapshot.json",
-  "snapshot_sha256": "bda8ef306a0964b94fc4031e0705e3eefd239d7d29f963e324cfac3edc7a96ff"
+  "snapshot_path": "docs/jetp-study/0822-comparative-snapshot.json.gz",
+  "snapshot_sha256": "92825fdd34321efc06bc0a3a084bfbd18f2c825bcf84ba892eff3a1cc168e3cc"
 }
