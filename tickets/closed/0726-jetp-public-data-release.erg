@@ -22,12 +22,46 @@ Plan: `conception/jetp-observatory-and-papers-plan.md`. Parent tracker: 0725.
 
 First failing fixture: a programme and its component share financing, a loan has approval and signature observations, and a missing payment sits beside a true zero. An export must not double-count either overlap, mix stages, or turn the missing payment into zero; each reported amount must resolve to source evidence.
 
+## Official-report inventory requirement (author decision, 14 September 2026)
+
+Start records from official JETP reports and ingest their inventories across all
+four countries. Project pages and lender searches enrich and verify that starting
+population. Their availability must not determine which report-listed entries
+exist in the dataset.
+
+The archived Viet Nam RMP (source `vnm-rmp-2023`, SHA-256
+`b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c`)
+contains named investment inventories in Annex I.1/I.2 (starting at printed page
+139), technical-assistance projects/task groups in Annex II, and IPG concept notes
+in Annex IV. Its executive summary, printed page 6, explicitly describes differing
+endorsement and preparation stages. The current `plan-projects.csv` contains no
+Vietnamese entries. Three portal-profile identities therefore measure only that
+registry's coverage, not the report inventory or all available named evidence.
+
+Ingest every inventory entry with original label, report edition/date, source hash,
+page/table/row locator, entry type and source-stated status. Preserve project,
+programme, component, technical-assistance task and concept-note distinctions;
+reconcile repeated entries and later revisions without silently deleting history.
+Reuse `plan-projects.csv` and existing identity/link registries, extending their
+contract where needed. Keep unmapped entries visible without requiring a project
+page. Report inclusion establishes a listed candidate, not financing approval,
+signature, disbursement or admission to a later implementation cohort. The July
+2025 unnamed count slots must not be assigned RMP names without linking evidence.
+
+Additional first failing fixture: an official-report named project with no portal
+profile must survive ingestion and export with its locator and plan-only status;
+a repeated concept-note/project reference must not inflate a distinct-project or
+financial total. Documentary acceptance compares the full inventory, section by
+section, with ingested rows and explicit exclusions/unresolved mappings. This
+completeness check precedes claims about country coverage or sample feasibility.
+
 ## Actions
 
 Reuse docs/jetp-tracking.md and 0715–0721. Define release schema, identity hierarchy, lifecycle date semantics, strict versus extended attribution, aggregation and currency policies. Audit imported financial-status mappings against source meanings; a register start date is not automatically a signature date. Publish versioned machine-readable exports with coverage, unresolved/conflicting observations and release terms. Keep unavailable payments explicit. Support original and revised pledge perimeters without mixing them.
 
 ## Exit criteria
 
+- [ ] Official report inventories reconciled section by section to ingested entries, with explicit exclusions and unresolved identities
 - [ ] Release export and dictionary cover four countries with explicit gaps
 - [ ] Project/programme/component and multi-tranche rules prevent duplicate totals
 - [ ] Event, publication and retrieval dates and date precision remain distinct
