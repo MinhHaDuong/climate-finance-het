@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import sys
+import csv
 from pathlib import Path
 
 import pytest
@@ -11,6 +12,24 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from jetp._source_census import validate_census
+
+
+def test_frozen_census_covers_every_active_local_source_once() -> None:
+    """The four country tickets inherit a finite, replayable source universe."""
+    census_path = ROOT / "docs" / "jetp-study" / "0817-source-census.csv"
+    with census_path.open(newline="", encoding="utf-8") as handle:
+        census = list(csv.DictReader(handle))
+
+    validate_census(census)
+    assert {row["country"] for row in census} == {"ZAF", "IDN", "VNM", "SEN"}
+    assert {row["country_owner"] for row in census} == {"0818", "0819", "0820", "0821"}
+    assert len(census) == 301
+    assert {row["source_id"] for row in census} == {
+        row["source_id"]
+        for row in csv.DictReader((ROOT / "data" / "jetp" / "sources.csv").open(encoding="utf-8"))
+        if row["country"] in {"ZAF", "IDN", "VNM", "SEN"}
+    }
+    assert all(row["source_version"] != "unversioned" for row in census)
 
 
 def test_census_requires_a_disposition_and_preserves_source_semantics() -> None:
