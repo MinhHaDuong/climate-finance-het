@@ -1,8 +1,8 @@
 # WARNING: AI-generated, not human-reviewed
 """Synthese : reference groupee (portefeuille) et dispersion.
 
-Entree : out/<pays>_activites.csv produit par cohortes.py --out-act.
-Sortie : --output, CSV de dispersion par bailleur ; tableaux texte sur stdout.
+Entree : out/<pays>_activites.csv produit par compute_cohortes.py --out-act.
+Sortie : --output, CSV de dispersion par bailleur ; tableaux texte journalises.
 """
 import argparse
 import csv
@@ -11,6 +11,9 @@ from collections import defaultdict
 from pathlib import Path
 
 from script_io_args import parse_io_args, validate_io
+from utils import get_logger
+
+log = get_logger("summarize_bailleurs")
 
 
 def load(p):
@@ -43,37 +46,37 @@ def main():
     a.out_donneur = Path(io_args.output)
     acts = [r for r in load(a.act) if r["pays"] == a.pays]
 
-    print(f"### {a.pays} — reference groupee, engagements {a.tmin}-{a.tmax}\n")
-    print("instrument | h | n | engage M$ | decaisse M$ | taux pondere %")
+    log.info(f"### {a.pays} — reference groupee, engagements {a.tmin}-{a.tmax}\n")
+    log.info("instrument | h | n | engage M$ | decaisse M$ | taux pondere %")
     for instr in [None, "pret", "don", "autre_officiel"]:
         for h in range(5):
             sel, num, den, r = pooled(acts, h, instr, a.tmin, a.tmax)
             if not sel:
                 continue
-            print(f"{instr or 'tous':16s} | {h} | {len(sel):3d} | {den:9.1f} | "
+            log.info(f"{instr or 'tous':16s} | {h} | {len(sel):3d} | {den:9.1f} | "
                   f"{num:9.1f} | {r:6.1f}")
-        print()
+        log.info("")
 
     # dispersion entre cohortes annuelles (prets)
-    print(f"### {a.pays} — dispersion entre cohortes annuelles, prets, h=4\n")
+    log.info(f"### {a.pays} — dispersion entre cohortes annuelles, prets, h=4\n")
     per_year = {}
     for y in range(a.tmin, a.tmax + 1):
         sel, num, den, r = pooled(acts, 4, "pret", y, y)
         if sel and den > 0:
             per_year[y] = (len(sel), den, r)
     for y, (n, den, r) in sorted(per_year.items()):
-        print(f"  {y}  n={n:2d}  engage={den:8.1f} M$  taux={r:6.1f} %")
+        log.info(f"  {y}  n={n:2d}  engage={den:8.1f} M$  taux={r:6.1f} %")
     vals = [v[2] for v in per_year.values()]
     if vals:
         vals_s = sorted(vals)
-        print(f"\n  min={min(vals):.1f}  Q1={statistics.quantiles(vals_s, n=4)[0]:.1f} "
+        log.info(f"\n  min={min(vals):.1f}  Q1={statistics.quantiles(vals_s, n=4)[0]:.1f} "
               f" mediane={statistics.median(vals_s):.1f} "
               f" Q3={statistics.quantiles(vals_s, n=4)[2]:.1f}  max={max(vals):.1f}")
-        print(f"  moyenne non ponderee={statistics.mean(vals):.1f}  "
+        log.info(f"  moyenne non ponderee={statistics.mean(vals):.1f}  "
               f"ecart-type={statistics.pstdev(vals):.1f}  n_cohortes={len(vals)}")
 
     # dispersion entre bailleurs (prets)
-    print(f"\n### {a.pays} — dispersion entre bailleurs, prets, h=4, "
+    log.info(f"\n### {a.pays} — dispersion entre bailleurs, prets, h=4, "
           f"engagements {a.tmin}-{a.tmax}\n")
     sel, _, _, _ = pooled(acts, 4, "pret", a.tmin, a.tmax)
     byd = defaultdict(lambda: [0.0, 0.0, 0])
@@ -89,7 +92,7 @@ def main():
                      "engage_MUSD": round(den, 1),
                      "decaisse_h4_MUSD": round(num, 1),
                      "taux_h4_pct": round(r, 1) if r is not None else ""})
-        print(f"  {d[:42]:42s} n={n:2d} engage={den:8.1f} taux={r:6.1f} %")
+        log.info(f"  {d[:42]:42s} n={n:2d} engage={den:8.1f} taux={r:6.1f} %")
     if a.out_donneur and rows:
         with open(a.out_donneur, "w", newline="", encoding="utf-8") as fh:
             w = csv.DictWriter(fh, fieldnames=list(rows[0]))

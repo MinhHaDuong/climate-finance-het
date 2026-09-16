@@ -1,8 +1,8 @@
 # WARNING: AI-generated, not human-reviewed
 """Tableau final : reference groupee par pays, instrument et modalite.
 
-Entree : out/activites.csv (cohortes.py --out-act).
-Sortie : --output, CSV livrable ; tableaux texte sur stdout.
+Entree : out/activites.csv (compute_cohortes.py --out-act).
+Sortie : --output, CSV livrable ; tableaux texte journalises.
 """
 import argparse
 import csv
@@ -10,8 +10,11 @@ import statistics
 from pathlib import Path
 
 from script_io_args import parse_io_args, validate_io
+from utils import get_logger
 
 LAST = 2024
+
+log = get_logger("summarize_reference_groupee")
 
 
 def pool(acts, h, pays=None, instr=None, mod=None, t0=2006, t1=2020):
@@ -49,7 +52,7 @@ def main():
         ("tous instruments, type projet (C01)", None, {"C01"}),
         ("prets ODA, appui budgetaire (A01/A02)", "pret", {"A01", "A02"}),
     ]
-    print(f"{'pays':5s} {'perimetre':40s} {'n':>4s} {'engage M$':>10s} "
+    log.info(f"{'pays':5s} {'perimetre':40s} {'n':>4s} {'engage M$':>10s} "
           + " ".join(f"h={h:1d}" for h in range(5)))
     for pays in a.pays + [None]:
         for label, instr, mod in combos:
@@ -79,9 +82,9 @@ def main():
                 line["h4_ecart_type"] = round(statistics.pstdev(ps), 1)
             if n0:
                 rows.append(line)
-                print(f"{line['pays']:5s} {label:40s} {n0:4d} {den0:10.1f} "
+                log.info(f"{line['pays']:5s} {label:40s} {n0:4d} {den0:10.1f} "
                       + " ".join(vals))
-        print()
+        log.info("")
 
     cols = ["pays", "perimetre", "n_activites", "engage_MUSD"] + \
            [f"taux_h{h}_pct" for h in range(5)] + \

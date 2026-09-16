@@ -11,9 +11,9 @@ Deux tiers :
 - tier rapide : le résultat central du papier (98,6 % appui budgétaire contre
   37,3 % type projet, à quatre ans) est pinné sur la référence versionnée, de
   sorte qu'une réécriture silencieuse de la référence se voie ;
-- tier `slow` : la chaîne portée est rejouée depuis `data/jetp/crs/` et sa
-  sortie est comparée à la référence. Le test **échoue** si les données DVC
-  sont absentes — un skip silencieux rendrait « tout va bien » indiscernable
+- tier `integration` : la chaîne portée est rejouée en sous-processus depuis
+  `data/jetp/crs/` et sa sortie est comparée à la référence. Le test **échoue**
+  si les données DVC sont absentes — un skip silencieux rendrait « tout va bien » indiscernable
   de « je n'ai pas pu regarder ».
 """
 
@@ -62,9 +62,9 @@ def test_reference_porte_le_resultat_central():
     assert _central(_read(REFERENCE)) == RESULTAT_CENTRAL
 
 
-@pytest.mark.slow
+@pytest.mark.integration
 def test_chaine_portee_reproduit_la_reference(tmp_path):
-    """`cohortes.py` puis `livrable_csv.py` rendent la référence à l'identique."""
+    """`compute_cohortes.py` puis `export_courbe_reference.py` rendent la référence à l'identique."""
     assert os.path.isdir(CRS_DIR), (
         f"{CRS_DIR} absent : lancer `dvc pull data/jetp/crs` avant ce test. "
         "Pas de skip — une donnée manquante n'est pas une non-régression."
@@ -75,7 +75,7 @@ def test_chaine_portee_reproduit_la_reference(tmp_path):
     env = dict(os.environ, **source_root_env())
     act = tmp_path / "activites.csv"
     subprocess.run(
-        [sys.executable, os.path.join(JETP_SCRIPTS, "cohortes.py"),
+        [sys.executable, os.path.join(JETP_SCRIPTS, "compute_cohortes.py"),
          "--datadir", CRS_DIR,
          "--output", str(tmp_path / "cohortes_bloc.csv"),
          "--out-act", str(act),
@@ -84,7 +84,7 @@ def test_chaine_portee_reproduit_la_reference(tmp_path):
     )
     produit = tmp_path / "courbe-reference-decaissement.csv"
     subprocess.run(
-        [sys.executable, os.path.join(JETP_SCRIPTS, "livrable_csv.py"),
+        [sys.executable, os.path.join(JETP_SCRIPTS, "export_courbe_reference.py"),
          "--act", str(act), "--output", str(produit)],
         check=True, env=env,
     )

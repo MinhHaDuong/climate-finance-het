@@ -1,7 +1,7 @@
 # WARNING: AI-generated, not human-reviewed
 """Construit le CSV livrable : une ligne par pays x cohorte x perimetre x horizon.
 
-Entree  : out/activites.csv (produit par cohortes.py --out-act)
+Entree  : out/activites.csv (produit par compute_cohortes.py --out-act)
 Sortie  : --output, le CSV livrable courbe-reference-decaissement.csv
 
 Colonnes : taux ponderes par les montants, plus la dispersion inter-activites
@@ -15,7 +15,7 @@ from pathlib import Path
 from script_io_args import parse_io_args, validate_io
 from utils import get_logger
 
-log = get_logger("livrable_csv")
+log = get_logger("export_courbe_reference")
 
 LAST = 2024
 COHORTES = [("2006-2009", 2006, 2009), ("2010-2013", 2010, 2013),

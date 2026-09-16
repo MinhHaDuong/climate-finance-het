@@ -410,18 +410,18 @@ stages:
   jetp_pull:
     frozen: true
     cmd: >-
-      uv run --env-file .env python scripts/jetp/pull_crs.py --output data/jetp/crs --start 2005 --end 2024 --md-dim DD --pause 20
+      uv run --env-file .env python scripts/jetp/catalog_crs.py --output data/jetp/crs --start 2005 --end 2024 --md-dim DD --pause 20
     deps:
-      - scripts/jetp/pull_crs.py
+      - scripts/jetp/catalog_crs.py
     outs:
       - data/jetp/crs
 
   # Étape 2 : reconstitution des activités et profils par cohorte d'engagement.
   jetp_cohortes:
     cmd: >-
-      uv run --env-file .env python scripts/jetp/cohortes.py --datadir data/jetp/crs --output data/jetp/derived/cohortes_bloc.csv --out-act data/jetp/derived/activites.csv --out-diag data/jetp/derived/diag.json
+      uv run --env-file .env python scripts/jetp/compute_cohortes.py --datadir data/jetp/crs --output data/jetp/derived/cohortes_bloc.csv --out-act data/jetp/derived/activites.csv --out-diag data/jetp/derived/diag.json
     deps:
-      - scripts/jetp/cohortes.py
+      - scripts/jetp/compute_cohortes.py
       - scripts/utils.py
       - scripts/script_io_args.py
       - data/jetp/crs
@@ -434,9 +434,9 @@ stages:
   # C'est l'artefact que 0711 consomme, à la place du fichier daté à la main.
   jetp_livrable:
     cmd: >-
-      uv run --env-file .env python scripts/jetp/livrable_csv.py --act data/jetp/derived/activites.csv --output data/jetp/derived/courbe-reference-decaissement.csv
+      uv run --env-file .env python scripts/jetp/export_courbe_reference.py --act data/jetp/derived/activites.csv --output data/jetp/derived/courbe-reference-decaissement.csv
     deps:
-      - scripts/jetp/livrable_csv.py
+      - scripts/jetp/export_courbe_reference.py
       - scripts/utils.py
       - scripts/script_io_args.py
       - data/jetp/derived/activites.csv
@@ -446,10 +446,10 @@ stages:
   # Étape 4 : tableaux de synthèse — référence groupée et ventilation bailleurs.
   jetp_synthese:
     cmd: >-
-      uv run --env-file .env python scripts/jetp/final.py --act data/jetp/derived/activites.csv --output data/jetp/derived/reference_groupee.csv && uv run --env-file .env python scripts/jetp/synthese.py --act data/jetp/derived/activites.csv --pays VNM --output data/jetp/derived/vnm_bailleurs_h4.csv && uv run --env-file .env python scripts/jetp/synthese.py --act data/jetp/derived/activites.csv --pays ZAF --output data/jetp/derived/zaf_bailleurs_h4.csv
+      uv run --env-file .env python scripts/jetp/summarize_reference_groupee.py --act data/jetp/derived/activites.csv --output data/jetp/derived/reference_groupee.csv && uv run --env-file .env python scripts/jetp/summarize_bailleurs.py --act data/jetp/derived/activites.csv --pays VNM --output data/jetp/derived/vnm_bailleurs_h4.csv && uv run --env-file .env python scripts/jetp/summarize_bailleurs.py --act data/jetp/derived/activites.csv --pays ZAF --output data/jetp/derived/zaf_bailleurs_h4.csv
     deps:
-      - scripts/jetp/final.py
-      - scripts/jetp/synthese.py
+      - scripts/jetp/summarize_reference_groupee.py
+      - scripts/jetp/summarize_bailleurs.py
       - scripts/script_io_args.py
       - data/jetp/derived/activites.csv
     outs:

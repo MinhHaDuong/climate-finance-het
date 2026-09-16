@@ -1063,13 +1063,13 @@ stages:
       md5: 9662d287849b5cbbb78d50107b0eaa92
       size: 98295
   jetp_pull:
-    cmd: uv run --env-file .env python scripts/jetp/pull_crs.py --output 
+    cmd: uv run --env-file .env python scripts/jetp/catalog_crs.py --output 
       data/jetp/crs --start 2005 --end 2024 --md-dim DD --pause 20
     deps:
-    - path: scripts/jetp/pull_crs.py
+    - path: scripts/jetp/catalog_crs.py
       hash: md5
-      md5: d419afc74867065492b65e025afe3822
-      size: 5239
+      md5: bdc5072b75b61aa234ec4dab6b21527e
+      size: 5242
     outs:
     - path: data/jetp/crs
       hash: md5
@@ -1077,19 +1077,20 @@ stages:
       size: 1315519
       nfiles: 80
   jetp_cohortes:
-    cmd: uv run --env-file .env python scripts/jetp/cohortes.py --datadir 
-      data/jetp/crs --output data/jetp/derived/cohortes_bloc.csv --out-act 
-      data/jetp/derived/activites.csv --out-diag data/jetp/derived/diag.json
+    cmd: uv run --env-file .env python scripts/jetp/compute_cohortes.py 
+      --datadir data/jetp/crs --output data/jetp/derived/cohortes_bloc.csv 
+      --out-act data/jetp/derived/activites.csv --out-diag 
+      data/jetp/derived/diag.json
     deps:
     - path: data/jetp/crs
       hash: md5
       md5: 936675fd267801956b96b404dd181988.dir
       size: 1315519
       nfiles: 80
-    - path: scripts/jetp/cohortes.py
+    - path: scripts/jetp/compute_cohortes.py
       hash: md5
-      md5: e328722e2ffb9406552710e7105931cd
-      size: 11652
+      md5: 14aac9df0aa2f698845dc60765727c45
+      size: 11663
     - path: scripts/script_io_args.py
       hash: md5
       md5: 886023362bbf42e268e7aeadd944a5f6
@@ -1112,18 +1113,18 @@ stages:
       md5: db35db77c09afddbf309956c4c2f0797
       size: 1783
   jetp_livrable:
-    cmd: uv run --env-file .env python scripts/jetp/livrable_csv.py --act 
-      data/jetp/derived/activites.csv --output 
+    cmd: uv run --env-file .env python scripts/jetp/export_courbe_reference.py 
+      --act data/jetp/derived/activites.csv --output 
       data/jetp/derived/courbe-reference-decaissement.csv
     deps:
     - path: data/jetp/derived/activites.csv
       hash: md5
       md5: 52d530b793bc4db0b606fa5bd9d08758
       size: 346641
-    - path: scripts/jetp/livrable_csv.py
+    - path: scripts/jetp/export_courbe_reference.py
       hash: md5
-      md5: badff63aadad6ba624e5dac2667ec2d8
-      size: 4291
+      md5: c44097b12dd14ca4f764f04a67d24161
+      size: 4310
     - path: scripts/script_io_args.py
       hash: md5
       md5: 886023362bbf42e268e7aeadd944a5f6
@@ -1138,26 +1139,28 @@ stages:
       md5: f707681233eaca3b74679ae6855ea791
       size: 98213
   jetp_synthese:
-    cmd: uv run --env-file .env python scripts/jetp/final.py --act 
+    cmd: uv run --env-file .env python 
+      scripts/jetp/summarize_reference_groupee.py --act 
       data/jetp/derived/activites.csv --output 
       data/jetp/derived/reference_groupee.csv && uv run --env-file .env python 
-      scripts/jetp/synthese.py --act data/jetp/derived/activites.csv --pays VNM 
-      --output data/jetp/derived/vnm_bailleurs_h4.csv && uv run --env-file .env 
-      python scripts/jetp/synthese.py --act data/jetp/derived/activites.csv 
-      --pays ZAF --output data/jetp/derived/zaf_bailleurs_h4.csv
+      scripts/jetp/summarize_bailleurs.py --act data/jetp/derived/activites.csv 
+      --pays VNM --output data/jetp/derived/vnm_bailleurs_h4.csv && uv run 
+      --env-file .env python scripts/jetp/summarize_bailleurs.py --act 
+      data/jetp/derived/activites.csv --pays ZAF --output 
+      data/jetp/derived/zaf_bailleurs_h4.csv
     deps:
     - path: data/jetp/derived/activites.csv
       hash: md5
       md5: 52d530b793bc4db0b606fa5bd9d08758
       size: 346641
-    - path: scripts/jetp/final.py
+    - path: scripts/jetp/summarize_bailleurs.py
       hash: md5
-      md5: 7f1815edabce1c8db4a43a2b9c9d764a
-      size: 4015
-    - path: scripts/jetp/synthese.py
+      md5: 6b04de3478bd48dce2ee2b1df01f6632
+      size: 4311
+    - path: scripts/jetp/summarize_reference_groupee.py
       hash: md5
-      md5: 6729d3d37de7c7a1ad630301b0e5237c
-      size: 4199
+      md5: edef964aad1f91fef3c849e08d3abd06
+      size: 4113
     - path: scripts/script_io_args.py
       hash: md5
       md5: 886023362bbf42e268e7aeadd944a5f6

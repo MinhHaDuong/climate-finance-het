@@ -58,7 +58,7 @@ LEGACY_SECTORS = [
 
 COUNTRIES = ["ZAF", "IDN", "VNM", "SEN"]
 
-log = get_logger("pull_crs")
+log = get_logger("catalog_crs")
 
 
 def build_key(**kw) -> str:

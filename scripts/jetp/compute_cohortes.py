@@ -4,7 +4,7 @@
 Entrees
 -------
 data/crs_<PAYS>_<ANNEE>_micro.csv.gz : microdonnees CRS (une ligne par
-activite x annee x flux x mesure x base de prix), tirees par pull_crs.py
+activite x annee x flux x mesure x base de prix), tirees par catalog_crs.py
 depuis OECD.DCD.FSD:DSD_CRS@DF_CRS(1.6). Secteur = codes objet energie
 (230xx). Pays = ZAF, IDN, VNM, SEN.
 
@@ -42,7 +42,7 @@ from pathlib import Path
 from script_io_args import parse_io_args, validate_io
 from utils import get_logger
 
-log = get_logger("cohortes")
+log = get_logger("compute_cohortes")
 
 # MEASURE du CRS -> instrument
 MEASURE_LABEL = {
