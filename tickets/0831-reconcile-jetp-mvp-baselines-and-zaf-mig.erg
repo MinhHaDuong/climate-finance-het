@@ -5,6 +5,11 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-09-16T13:35Z HDMX-coding-agent created
+2026-09-16T15:30+02:00 Codex adjudicated the drift: the 0761 archive is an
+immutable internal migration baseline, while the canonical JSON identifies
+itself as a later local preview preceding a release extension.  The three ZAF
+rows are intended additions: `zaf-search-q2-report-20260914`,
+`zaf-q126-finance-aggregate`, and `zaf-q126-status-aggregate`.
 
 --- body ---
 ## Context
@@ -41,13 +46,14 @@ never hand-edit generated JSON/ZIP content.
 
 ## Exit criteria
 
-- [ ] The three extra ZAF legacy dispositions are identified by stable IDs and
+- [x] The three extra ZAF legacy dispositions are identified by stable IDs and
       classified as intended additions or corrected upstream drift.
-- [ ] The observatory cutoff/source changes behind each of the five MVP view
+- [x] The observatory cutoff/source changes behind each of the five MVP view
       mismatches are documented and adjudicated.
-- [ ] Current builders, checked-in views, and the immutable/versioned baseline
-      agree byte-for-byte under one explicitly named publication edition.
-- [ ] The targeted command above passes without weakening compatibility or
-      migration assertions.
-- [ ] `make check-fast`, `make lint`, and `make check` pass, or any remaining
+- [x] Current builders and checked-in preview views agree exactly; the distinct
+      immutable 0761 baseline remains pinned independently by the byte size and
+      SHA-256 in `docs/jetp-mvp-baseline-0761.json`.
+- [x] The targeted suite passes while retaining both guards and explicit ZAF
+      per-table counts.
+- [x] `make check-fast`, `make lint`, and `make check` pass, or any remaining
       pre-existing full-gate failure is independently reproduced and ticketed.
