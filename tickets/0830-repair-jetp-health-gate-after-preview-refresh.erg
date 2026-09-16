@@ -29,7 +29,8 @@ for five refreshed views and
 - [ ] The 0761 archive remains independently pinned by its recorded byte size
       and SHA-256; no recapture or mutation is permitted.
 - [ ] The ZAF migration expects all 1,087 currently retained legacy rows while
-      preserving the existing per-table and public-payload assertions.
+      preserving per-table assertions and pinning the refreshed 509,315-byte
+      canonical preview payload.
 - [ ] Targeted tests and `make check-fast` pass.  The unrelated 0829 module-size
       lint remains owned by its existing worktree and is not changed here.
 
