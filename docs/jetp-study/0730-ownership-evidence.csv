@@ -1,0 +1,5 @@
+ownership_evidence,observations,denominator,share_of_documented_observations
+not_documented,299,303,0.986799
+source_stated_private,2,303,0.006601
+source_stated_mixed_unallocated,1,303,0.0033
+source_stated_public,1,303,0.0033

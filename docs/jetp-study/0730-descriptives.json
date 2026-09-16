@@ -1,0 +1,583 @@
+{
+  "countries": {
+    "IDN": {
+      "atomic_observations": 1148,
+      "coverage_assertions": 0,
+      "event_assertions": 0,
+      "position_assertions": 1148,
+      "reconciled_atomic_observations": 0,
+      "source_finance_instrument_labels": 0,
+      "source_function_labels": 1142,
+      "source_reported_money_positions": 0,
+      "unreconciled_atomic_observations": 1148
+    },
+    "SEN": {
+      "atomic_observations": 10,
+      "coverage_assertions": 4,
+      "event_assertions": 0,
+      "position_assertions": 6,
+      "reconciled_atomic_observations": 1,
+      "source_finance_instrument_labels": 0,
+      "source_function_labels": 0,
+      "source_reported_money_positions": 0,
+      "unreconciled_atomic_observations": 9
+    },
+    "VNM": {
+      "atomic_observations": 325,
+      "coverage_assertions": 0,
+      "event_assertions": 7,
+      "position_assertions": 318,
+      "reconciled_atomic_observations": 14,
+      "source_finance_instrument_labels": 46,
+      "source_function_labels": 0,
+      "source_reported_money_positions": 42,
+      "unreconciled_atomic_observations": 311
+    },
+    "ZAF": {
+      "atomic_observations": 257,
+      "coverage_assertions": 0,
+      "event_assertions": 0,
+      "position_assertions": 257,
+      "reconciled_atomic_observations": 0,
+      "source_finance_instrument_labels": 257,
+      "source_function_labels": 257,
+      "source_reported_money_positions": 255,
+      "unreconciled_atomic_observations": 257
+    }
+  },
+  "denominators": {
+    "atomic_observations": 1740,
+    "document_coverage": 4,
+    "event_journal": 7,
+    "position_journal": 1729,
+    "reconciled_atomic_observations": 15,
+    "unreconciled_atomic_observations": 1725
+  },
+  "dimensions": {
+    "common_explicit_unit_note": "No atomic assertion contains all three frozen, explicitly coded dimensions; this is a coverage result, not evidence of absence in JETPs.",
+    "common_explicit_unit_observations": 0,
+    "finance": {
+      "documented_observations": 303,
+      "instrument_counts": [
+        {
+          "denominator": 303,
+          "instrument": "Grants",
+          "observations": 237,
+          "share_of_documented_observations": 0.782178
+        },
+        {
+          "denominator": 303,
+          "instrument": "Commercial Debt, Equity & Guarantees",
+          "observations": 11,
+          "share_of_documented_observations": 0.036304
+        },
+        {
+          "denominator": 303,
+          "instrument": "Concessional loans",
+          "observations": 6,
+          "share_of_documented_observations": 0.019802
+        },
+        {
+          "denominator": 303,
+          "instrument": "besoin de financement, non engag\u00e9",
+          "observations": 4,
+          "share_of_documented_observations": 0.013201
+        },
+        {
+          "denominator": 303,
+          "instrument": "Policy Loans",
+          "observations": 3,
+          "share_of_documented_observations": 0.009901
+        },
+        {
+          "denominator": 303,
+          "instrument": "non pr\u00e9cis\u00e9",
+          "observations": 3,
+          "share_of_documented_observations": 0.009901
+        },
+        {
+          "denominator": 303,
+          "instrument": "pr\u00eat",
+          "observations": 3,
+          "share_of_documented_observations": 0.009901
+        },
+        {
+          "denominator": 303,
+          "instrument": "cumul tous instruments",
+          "observations": 2,
+          "share_of_documented_observations": 0.006601
+        },
+        {
+          "denominator": 303,
+          "instrument": "mixte",
+          "observations": 2,
+          "share_of_documented_observations": 0.006601
+        },
+        {
+          "denominator": 303,
+          "instrument": "pr\u00eats",
+          "observations": 2,
+          "share_of_documented_observations": 0.006601
+        },
+        {
+          "denominator": 303,
+          "instrument": "ODA, pr\u00eats concessionnels et pr\u00eats sans garantie souveraine",
+          "observations": 1,
+          "share_of_documented_observations": 0.0033
+        },
+        {
+          "denominator": 303,
+          "instrument": "cr\u00e9dit concessionnel IDA",
+          "observations": 1,
+          "share_of_documented_observations": 0.0033
+        },
+        {
+          "denominator": 303,
+          "instrument": "cr\u00e9dit concessionnel IDA (development policy financing)",
+          "observations": 1,
+          "share_of_documented_observations": 0.0033
+        },
+        {
+          "denominator": 303,
+          "instrument": "don (assistance technique)",
+          "observations": 1,
+          "share_of_documented_observations": 0.0033
+        },
+        {
+          "denominator": 303,
+          "instrument": "don (grant, assistance technique)",
+          "observations": 1,
+          "share_of_documented_observations": 0.0033
+        },
+        {
+          "denominator": 303,
+          "instrument": "don / pr\u00eat sur fonds budg\u00e9taires (\u00ab Zuschuss / Darlehen aus Haushaltsmitteln \u00bb)",
+          "observations": 1,
+          "share_of_documented_observations": 0.0033
+        },
+        {
+          "denominator": 303,
+          "instrument": "dons, pr\u00eats concessionnels et commerciaux, instruments",
+          "observations": 1,
+          "share_of_documented_observations": 0.0033
+        },
+        {
+          "denominator": 303,
+          "instrument": "dons, pr\u00eats concessionnels, instruments de partage de risque",
+          "observations": 1,
+          "share_of_documented_observations": 0.0033
+        },
+        {
+          "denominator": 303,
+          "instrument": "finance priv\u00e9e",
+          "observations": 1,
+          "share_of_documented_observations": 0.0033
+        },
+        {
+          "denominator": 303,
+          "instrument": "finance priv\u00e9e (mobilisation/facilitation)",
+          "observations": 1,
+          "share_of_documented_observations": 0.0033
+        },
+        {
+          "denominator": 303,
+          "instrument": "finance publique, termes plus favorables que le march\u00e9",
+          "observations": 1,
+          "share_of_documented_observations": 0.0033
+        },
+        {
+          "denominator": 303,
+          "instrument": "lettre d'intention (LOI)",
+          "observations": 1,
+          "share_of_documented_observations": 0.0033
+        },
+        {
+          "denominator": 303,
+          "instrument": "mixte, non ventil\u00e9",
+          "observations": 1,
+          "share_of_documented_observations": 0.0033
+        },
+        {
+          "denominator": 303,
+          "instrument": "n/a",
+          "observations": 1,
+          "share_of_documented_observations": 0.0033
+        },
+        {
+          "denominator": 303,
+          "instrument": "n/a \u2014 investissement total",
+          "observations": 1,
+          "share_of_documented_observations": 0.0033
+        },
+        {
+          "denominator": 303,
+          "instrument": "n/a \u2014 retrait",
+          "observations": 1,
+          "share_of_documented_observations": 0.0033
+        },
+        {
+          "denominator": 303,
+          "instrument": "non ventil\u00e9",
+          "observations": 1,
+          "share_of_documented_observations": 0.0033
+        },
+        {
+          "denominator": 303,
+          "instrument": "paquet mixte non ventil\u00e9",
+          "observations": 1,
+          "share_of_documented_observations": 0.0033
+        },
+        {
+          "denominator": 303,
+          "instrument": "pledges (non ventil\u00e9)",
+          "observations": 1,
+          "share_of_documented_observations": 0.0033
+        },
+        {
+          "denominator": 303,
+          "instrument": "pr\u00eat (credit agreement)",
+          "observations": 1,
+          "share_of_documented_observations": 0.0033
+        },
+        {
+          "denominator": 303,
+          "instrument": "pr\u00eat (credit facility agreement)",
+          "observations": 1,
+          "share_of_documented_observations": 0.0033
+        },
+        {
+          "denominator": 303,
+          "instrument": "pr\u00eat ODA concessionnel",
+          "observations": 1,
+          "share_of_documented_observations": 0.0033
+        },
+        {
+          "denominator": 303,
+          "instrument": "pr\u00eat ODA concessionnel (1,5 %/an, 15 ans, 5 ans de diff\u00e9r\u00e9, untied)",
+          "observations": 1,
+          "share_of_documented_observations": 0.0033
+        },
+        {
+          "denominator": 303,
+          "instrument": "pr\u00eat long terme (MoU / term sheet)",
+          "observations": 1,
+          "share_of_documented_observations": 0.0033
+        },
+        {
+          "denominator": 303,
+          "instrument": "pr\u00eat sans garantie souveraine",
+          "observations": 1,
+          "share_of_documented_observations": 0.0033
+        },
+        {
+          "denominator": 303,
+          "instrument": "pr\u00eat-cadre (framework loan)",
+          "observations": 1,
+          "share_of_documented_observations": 0.0033
+        },
+        {
+          "denominator": 303,
+          "instrument": "pr\u00eat-cadre / ligne de cr\u00e9dit \u00e0 une banque commerciale",
+          "observations": 1,
+          "share_of_documented_observations": 0.0033
+        },
+        {
+          "denominator": 303,
+          "instrument": "pr\u00eats ODA et dons (9 accords)",
+          "observations": 1,
+          "share_of_documented_observations": 0.0033
+        },
+        {
+          "denominator": 303,
+          "instrument": "pr\u00eats concessionnels",
+          "observations": 1,
+          "share_of_documented_observations": 0.0033
+        },
+        {
+          "denominator": 303,
+          "instrument": "pr\u00eats \u00e0 conditions plus attractives que le march\u00e9",
+          "observations": 1,
+          "share_of_documented_observations": 0.0033
+        }
+      ],
+      "note": "Ownership is only source-stated wording; a funder name is not recoded into public or private ownership.",
+      "ownership_evidence_counts": [
+        {
+          "denominator": 303,
+          "observations": 299,
+          "ownership_evidence": "not_documented",
+          "share_of_documented_observations": 0.986799
+        },
+        {
+          "denominator": 303,
+          "observations": 2,
+          "ownership_evidence": "source_stated_private",
+          "share_of_documented_observations": 0.006601
+        },
+        {
+          "denominator": 303,
+          "observations": 1,
+          "ownership_evidence": "source_stated_mixed_unallocated",
+          "share_of_documented_observations": 0.0033
+        },
+        {
+          "denominator": 303,
+          "observations": 1,
+          "ownership_evidence": "source_stated_public",
+          "share_of_documented_observations": 0.0033
+        }
+      ],
+      "unknown_or_uncoded_observations": 1437
+    },
+    "function": {
+      "documented_observations": 1399,
+      "note": "Portfolio and technology labels are retained as source labels, not harmonised just-transition functions.",
+      "source_label_counts": [
+        {
+          "denominator": 1399,
+          "observations": 340,
+          "share_of_documented_observations": 0.243031,
+          "source_label": "transmission"
+        },
+        {
+          "denominator": 1399,
+          "observations": 281,
+          "share_of_documented_observations": 0.200858,
+          "source_label": "solar"
+        },
+        {
+          "denominator": 1399,
+          "observations": 183,
+          "share_of_documented_observations": 0.130808,
+          "source_label": "hydro"
+        },
+        {
+          "denominator": 1399,
+          "observations": 134,
+          "share_of_documented_observations": 0.095783,
+          "source_label": "geothermal"
+        },
+        {
+          "denominator": 1399,
+          "observations": 74,
+          "share_of_documented_observations": 0.052895,
+          "source_label": "Electricity"
+        },
+        {
+          "denominator": 1399,
+          "observations": 70,
+          "share_of_documented_observations": 0.050036,
+          "source_label": "other_dispatchable"
+        },
+        {
+          "denominator": 1399,
+          "observations": 63,
+          "share_of_documented_observations": 0.045032,
+          "source_label": "JT-Mpumalanga"
+        },
+        {
+          "denominator": 1399,
+          "observations": 58,
+          "share_of_documented_observations": 0.041458,
+          "source_label": "bioenergy"
+        },
+        {
+          "denominator": 1399,
+          "observations": 55,
+          "share_of_documented_observations": 0.039314,
+          "source_label": "wind"
+        },
+        {
+          "denominator": 1399,
+          "observations": 53,
+          "share_of_documented_observations": 0.037884,
+          "source_label": "Skills"
+        },
+        {
+          "denominator": 1399,
+          "observations": 31,
+          "share_of_documented_observations": 0.022159,
+          "source_label": "Municipalities"
+        },
+        {
+          "denominator": 1399,
+          "observations": 19,
+          "share_of_documented_observations": 0.013581,
+          "source_label": "Green hydrogen"
+        },
+        {
+          "denominator": 1399,
+          "observations": 13,
+          "share_of_documented_observations": 0.009292,
+          "source_label": "energy_efficiency"
+        },
+        {
+          "denominator": 1399,
+          "observations": 8,
+          "share_of_documented_observations": 0.005718,
+          "source_label": "NEVs"
+        },
+        {
+          "denominator": 1399,
+          "observations": 8,
+          "share_of_documented_observations": 0.005718,
+          "source_label": "supply_chain"
+        },
+        {
+          "denominator": 1399,
+          "observations": 7,
+          "share_of_documented_observations": 0.005004,
+          "source_label": "Energy Efficiency"
+        },
+        {
+          "denominator": 1399,
+          "observations": 2,
+          "share_of_documented_observations": 0.00143,
+          "source_label": "Road to Rail"
+        }
+      ],
+      "unknown_or_uncoded_observations": 341
+    },
+    "history": {
+      "documented_observations": 7,
+      "event_date_precision": [
+        {
+          "date_precision": "point_date",
+          "denominator": 7,
+          "observations": 6,
+          "share_of_documented_observations": 0.857143
+        },
+        {
+          "date_precision": "bounded_or_year_only",
+          "denominator": 7,
+          "observations": 1,
+          "share_of_documented_observations": 0.142857
+        }
+      ],
+      "note": "Events are reported assertions pending independent operation identity; dates are not transition clocks.",
+      "unknown_or_uncoded_observations": 1733
+    }
+  },
+  "history": {
+    "event_assertions": 7,
+    "note": "No operation has comparable, evidenced pre/post transition endpoints in this frozen snapshot.",
+    "point_dated_event_assertions": 6,
+    "transition_duration": "not_computable"
+  },
+  "limitations": [
+    "No causal acceleration, additionality, payment, social outcome, or absence claim is identified.",
+    "Unknown values and unresolved identities remain in denominators rather than becoming zero or exclusions.",
+    "Country coverage is structurally uneven; cross-country count comparisons are documentary coverage comparisons."
+  ],
+  "money": {
+    "currency_counts": [
+      {
+        "currency": "EUR",
+        "denominator": 297,
+        "observations": 121,
+        "share_of_documented_observations": 0.407407
+      },
+      {
+        "currency": "USD",
+        "denominator": 297,
+        "observations": 81,
+        "share_of_documented_observations": 0.272727
+      },
+      {
+        "currency": "GBP",
+        "denominator": 297,
+        "observations": 50,
+        "share_of_documented_observations": 0.16835
+      },
+      {
+        "currency": "DKK",
+        "denominator": 297,
+        "observations": 16,
+        "share_of_documented_observations": 0.053872
+      },
+      {
+        "currency": "ZAR",
+        "denominator": 297,
+        "observations": 10,
+        "share_of_documented_observations": 0.03367
+      },
+      {
+        "currency": "CHF",
+        "denominator": 297,
+        "observations": 9,
+        "share_of_documented_observations": 0.030303
+      },
+      {
+        "currency": "CAD",
+        "denominator": 297,
+        "observations": 8,
+        "share_of_documented_observations": 0.026936
+      },
+      {
+        "currency": "JPY",
+        "denominator": 297,
+        "observations": 1,
+        "share_of_documented_observations": 0.003367
+      },
+      {
+        "currency": "VND",
+        "denominator": 297,
+        "observations": 1,
+        "share_of_documented_observations": 0.003367
+      }
+    ],
+    "note": "Amounts are source positions in multiple currencies and may overlap; no cross-source or cross-country sum is valid.",
+    "pooled_total": "not_computable",
+    "source_reported_positions": 297,
+    "unknown_money_observations": 1443
+  },
+  "reconciliations": {
+    "named_records": 4,
+    "note": "Reconciliations identify compatibility or conflict; they do not pool monetary amounts unless their rule explicitly permits it. None does here.",
+    "status_counts": [
+      {
+        "denominator": 4,
+        "observations": 3,
+        "share_of_documented_observations": 0.75,
+        "status": "incompatible"
+      },
+      {
+        "denominator": 4,
+        "observations": 1,
+        "share_of_documented_observations": 0.25,
+        "status": "unavailable"
+      }
+    ]
+  },
+  "result_candidates": [
+    {
+      "candidate_id": "coverage-asymmetry",
+      "claim": "The frozen corpus supports distinct descriptive panels, not a common operation-level A/B/C panel.",
+      "evidence": "1,399 source function labels, 303 source instrument labels, and 7 event assertions; 0 atomic assertions contain all three dimensions.",
+      "result": "null_common_sample",
+      "scope": "Atomic assertions, not operations or JETP portfolios."
+    },
+    {
+      "candidate_id": "zaf-reported-lifecycle",
+      "claim": "South African register positions expose reported implementation-status coverage without establishing transition timing or payment.",
+      "evidence": "257 source-register positions with an implementation-status field; all retain a non-transition register date label.",
+      "result": "reported_lifecycle_labels_only",
+      "scope": "ZAF source-register candidates only."
+    },
+    {
+      "candidate_id": "vnm-finance-history-pedigree",
+      "claim": "Vietnam provides the only event assertions, alongside explicit financial conflicts that cannot be pooled.",
+      "evidence": "7 event assertions; 4 named reconciliations, all incompatible or unavailable; 15 atomic inputs are named by reconciliation records.",
+      "result": "mixed_and_nonadditive",
+      "scope": "VNM staged observations and their named reconciliations; not a national finance total."
+    }
+  ],
+  "schema_version": "jetp-0730-descriptives/1",
+  "source": {
+    "method": "Frozen 0822 atomic journals plus named reconciliations; no external acquisition.",
+    "snapshot_input_git_sha": "e90ff6fe",
+    "snapshot_path": "docs/jetp-study/0822-comparative-snapshot.json.gz",
+    "snapshot_schema_version": "jetp-0822-comparative-snapshot/2",
+    "snapshot_sha256": "e76e706704b0040f7142124ed5dc569a2f2c7b61708b75d5ad2188fcb0514171"
+  }
+}

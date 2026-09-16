@@ -10,7 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from jetp.build_0730_descriptives import build_analysis, build_manifest
+from jetp.build_0730_descriptives import build_analysis, build_manifest, render_outputs
 
 
 def test_descriptives_keep_atomic_reconciled_and_unreconciled_denominators() -> None:
@@ -63,6 +63,10 @@ def test_rendered_outputs_are_replayable_and_handoff_retains_null_candidates(tmp
     }
     assert any(row["result"] == "null_common_sample" for row in analysis["result_candidates"])
 
+    render_outputs(ROOT, tmp_path)
     output = tmp_path / "0730-descriptives.json"
-    output.write_text(json.dumps(analysis, sort_keys=True, indent=2) + "\n", encoding="utf-8")
     assert json.loads(output.read_text(encoding="utf-8"))["denominators"]["atomic_observations"] == 1740
+    assert (tmp_path / "0730-plot-data.csv").is_file()
+    assert "cohorte commune opérationnelle A/B/C" in (
+        tmp_path / "0730-descriptives-report.md"
+    ).read_text(encoding="utf-8")

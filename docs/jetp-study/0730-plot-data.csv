@@ -1,0 +1,5 @@
+panel,documented_observations,unknown_or_uncoded_observations,atomic_denominator,interpretation
+function,1399,341,1740,"Portfolio and technology labels are retained as source labels, not harmonised just-transition functions."
+finance,303,1437,1740,Ownership is only source-stated wording; a funder name is not recoded into public or private ownership.
+history,7,1733,1740,Events are reported assertions pending independent operation identity; dates are not transition clocks.
+common_explicit_unit,0,,1740,"No atomic assertion contains all three frozen, explicitly coded dimensions; this is a coverage result, not evidence of absence in JETPs."
