@@ -11,9 +11,8 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from jetp._source_census import validate_census
+from jetp._source_census import validate_census, validate_inventory_manifest
 from jetp.build_0817_source_census import build_rows
-from jetp._source_census import validate_inventory_manifest
 
 
 def test_frozen_census_covers_every_local_source_once() -> None:

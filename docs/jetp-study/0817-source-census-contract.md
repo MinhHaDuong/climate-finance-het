@@ -37,3 +37,15 @@ Ce n'est jamais un zéro de finance, d'activité ou de couverture.
 Les sources transnationales sont rangées selon leur `country` déclaré; aucun
 ticket ne modifie les lignes ou l'admission d'un autre pays. Les huit cas 0816
 servent uniquement de pistes de revue, jamais de census de portefeuille.
+
+## Inventaire extractible borné
+
+`0817-inventory-manifest.csv` isole les objets dont l'extraction est attendue
+dans la première vague : la table ZAF Q1-2026 (257 lignes matérielles), le
+rapport final indonésien et ses six études liées, et les fichiers annuels
+Senelec 2019–2024. Il distingue `retrieval_status` de
+`content_disposition` : un index ou un octet retenu n'est pas une extraction
+ni un fait admis. Sa règle exécutable de date interdit de convertir une date de
+publication ou de cutoff en date d'événement sans énoncé explicite de
+l'événement. Les tickets 0818, 0819 et 0821 s'arrêtent aux comptes et éditions
+déclarés; 0820 n'acquiert aucun objet de cet inventaire initial.
