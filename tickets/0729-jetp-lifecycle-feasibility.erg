@@ -2,13 +2,16 @@
 Title: Select a feasible causal design from the JETP evidence audits
 Created: 2026-09-13
 Author: HDMX-coding-agent
-Blocked-by: 0736
 
 --- log ---
 2026-09-13T19:18Z HDMX-coding-agent created
 2026-09-14T06:51Z HDMX-coding-agent decision Consolidate Astra/Fable options; no design selected. Two bounded evidence audits feed the design checkpoint.
 
 2026-09-14T12:34Z HDMX-coding-agent note blocker 0735 closed — Blocked-by removed.
+
+2026-09-15T00:00Z HDMX-coding-agent decision CAUSAL DEFER — reviewed 0735, merged lender pilots and accepted 0736; author scope decision required before 0730 estimation.
+
+2026-09-15T00:01Z HDMX-coding-agent decision author selected the bounded pre-outcome feasibility screen; separate design-only ticket will determine GO, NARROW or DEFER before 0730 estimation.
 --- body ---
 
 ## Context
@@ -66,12 +69,12 @@ Distinguish precision/power limitations from failed identification.
 
 ## Exit criteria
 
-- [ ] Both bounded evidence audits reviewed, including contrary and unavailable evidence
-- [ ] Candidate-design matrix links each identifying assumption to evidence and unresolved threats
-- [ ] One primary estimand/design proposed with population, treatment, time zero and supported outcomes, or causal DEFER justified
-- [ ] Comparator definitions, falsification/placebos, sensitivity and uncertainty plan specified
-- [ ] Protocol proposal records prior outcome inspection and is ready to freeze before 0730 primary estimation
-- [ ] GO/NARROW decision recorded with author, or explicit author scope decision requested on DEFER; no descriptive substitution
+- [x] Both bounded evidence audits reviewed, including contrary and unavailable evidence
+- [x] Candidate-design matrix links each identifying assumption to evidence and unresolved threats
+- [x] Causal DEFER justified; no primary estimand/design is authorised
+- [x] Comparator definitions, falsification/placebos, sensitivity and uncertainty plan specified
+- [x] Protocol proposal records prior outcome inspection and is ready to freeze before 0730 primary estimation
+- [x] Author scope decision recorded on DEFER: bounded feasibility screen authorised; no descriptive substitution
 
 No positive or statistically significant effect is required. A narrower valid
 causal question is acceptable if named and agreed. If no credible design survives,
@@ -144,3 +147,21 @@ parent/component and signing/amendment entries stay distinct. Build lender- and
 stage-specific feasibility tables before selecting identification, with country
 conditions and project matching plus the independent selection/exposure audit.
 No primary estimator, outcome or exposure baseline is frozen.
+
+## Design checkpoint — 15 September 2026
+
+`docs/jetp-causal-design-decision-0729.md` records the completed documentary
+acceptance check, evidence review, candidate-design matrix, causal DEFER,
+conditional feasibility protocol and explicit author scope request. It does not
+select an estimator, construct a panel or estimate an effect. The outstanding
+exit criterion is the author's selection among a bounded pre-outcome feasibility
+screen, a clearly descriptive narrowing, or ending the causal-paper path for
+now.
+
+## Author decision — 15 September 2026
+
+The author selected the bounded, pre-outcome feasibility screen. This closes
+0729's design checkpoint while preserving its causal DEFER: no estimator, panel
+or effect estimate is authorised. The next ticket must test the common
+country-quarter approval contract and comparison admissibility, then record
+GO, NARROW or DEFER before 0730 can begin.
