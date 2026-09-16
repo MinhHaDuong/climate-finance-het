@@ -18,7 +18,6 @@ INPUTS = (
     "data/jetp/vnm-pilot-manifest.csv",
     "data/jetp/releases/vnm-migration-0764.json",
 )
-SCHEMA_VERSION = "jetp-0822-comparative-snapshot/2"
 DVC_MIGRATION_PATH = "data/jetp/releases/vnm-migration-0764.json"
 DVC_MIGRATION_POINTER = f"{DVC_MIGRATION_PATH}.dvc"
 
@@ -50,9 +49,13 @@ def _dvc_migration_input(root: Path) -> dict[str, str | int]:
     if not md5 or not size or "hash: md5" not in pointer:
         raise ValueError("VNM DVC migration pointer is malformed")
     if not migration_path.is_file():
-        raise ValueError("VNM DVC migration input is not materialized; run dvc checkout")
+        raise ValueError(
+            "VNM DVC migration input is not materialized; run dvc checkout"
+        )
     actual_md5 = hashlib.md5(migration_path.read_bytes()).hexdigest()
-    if actual_md5 != md5.group(1) or migration_path.stat().st_size != int(size.group(1)):
+    if actual_md5 != md5.group(1) or migration_path.stat().st_size != int(
+        size.group(1)
+    ):
         raise ValueError("VNM DVC migration input does not match its pinned pointer")
     return {
         "pointer_path": DVC_MIGRATION_POINTER,
@@ -65,7 +68,11 @@ def _dvc_migration_input(root: Path) -> dict[str, str | int]:
 
 def _numeric(value: str | None) -> int | float | None:
     """Keep source wording separately while making reported numeric bounds computable."""
-    if value is None or not value.strip() or not re.fullmatch(r"-?\d+(?:\.\d+)?", value):
+    if (
+        value is None
+        or not value.strip()
+        or not re.fullmatch(r"-?\d+(?:\.\d+)?", value)
+    ):
         return None
     return int(value) if "." not in value else float(value)
 
@@ -279,6 +286,8 @@ def _zaf(root: Path) -> tuple[dict, list[dict]]:
             {"source_id": next(iter(sources)), "document_sha256": next(iter(hashes))}
         ],
     }, records
+
+
 def _idn(root: Path) -> tuple[dict, list[dict]]:
     report = _document(root / INPUTS[1])
     if report.get("country") != "IDN" or report.get("source_count") != 7:
