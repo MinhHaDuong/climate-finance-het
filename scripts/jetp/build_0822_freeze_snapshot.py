@@ -10,6 +10,7 @@ import csv
 import gzip
 import hashlib
 import json
+import re
 from collections import Counter
 from copy import deepcopy
 from pathlib import Path
@@ -23,8 +24,11 @@ INPUTS = (
     "data/jetp/plan-projects.csv",
     "data/jetp/vnm-pilot-observations.csv",
     "data/jetp/vnm-pilot-manifest.csv",
+    "data/jetp/releases/vnm-migration-0764.json",
 )
-SCHEMA_VERSION = "jetp-0822-comparative-snapshot/1"
+SCHEMA_VERSION = "jetp-0822-comparative-snapshot/2"
+DVC_MIGRATION_PATH = "data/jetp/releases/vnm-migration-0764.json"
+DVC_MIGRATION_POINTER = f"{DVC_MIGRATION_PATH}.dvc"
 
 
 def _sha256(path: Path) -> str:
@@ -42,6 +46,36 @@ def _document(path: Path) -> dict:
 
 def _input_hashes(root: Path) -> dict[str, dict[str, str]]:
     return {name: {"sha256": _sha256(root / name)} for name in INPUTS}
+
+
+def _dvc_migration_input(root: Path) -> dict[str, str | int]:
+    """Validate the tracked DVC pointer and the materialized migration bytes."""
+    pointer_path = root / DVC_MIGRATION_POINTER
+    migration_path = root / DVC_MIGRATION_PATH
+    pointer = pointer_path.read_text(encoding="utf-8")
+    md5 = re.search(r"^\s*- md5: ([0-9a-f]{32})$", pointer, re.MULTILINE)
+    size = re.search(r"^\s+size: (\d+)$", pointer, re.MULTILINE)
+    if not md5 or not size or "hash: md5" not in pointer:
+        raise ValueError("VNM DVC migration pointer is malformed")
+    if not migration_path.is_file():
+        raise ValueError("VNM DVC migration input is not materialized; run dvc checkout")
+    actual_md5 = hashlib.md5(migration_path.read_bytes()).hexdigest()
+    if actual_md5 != md5.group(1) or migration_path.stat().st_size != int(size.group(1)):
+        raise ValueError("VNM DVC migration input does not match its pinned pointer")
+    return {
+        "pointer_path": DVC_MIGRATION_POINTER,
+        "hash": "md5",
+        "md5": actual_md5,
+        "size": migration_path.stat().st_size,
+        "sha256": _sha256(migration_path),
+    }
+
+
+def _numeric(value: str | None) -> int | float | None:
+    """Keep source wording separately while making reported numeric bounds computable."""
+    if value is None or not value.strip() or not re.fullmatch(r"-?\d+(?:\.\d+)?", value):
+        return None
+    return int(value) if "." not in value else float(value)
 
 
 def _record(
@@ -70,14 +104,15 @@ def _record(
     missingness_reason: str | None,
 ) -> dict:
     """One source-linked descriptive record; unknown is retained, never zeroed."""
+    amount = _numeric(financial_amount_original)
     financial_lower = (
-        financial_amount_original
+        amount
         if financial_bound_type
         in {"point_as_reported", "point_as_reported_millions", "lower_bound"}
         else None
     )
     financial_upper = (
-        financial_amount_original
+        amount
         if financial_bound_type in {"point_as_reported", "point_as_reported_millions"}
         else None
     )
@@ -454,7 +489,11 @@ def _vnm(root: Path) -> tuple[dict, list[dict]]:
                 financial_amount_original=row["amount_original"] or None,
                 financial_currency=row["currency_original"] or None,
                 financial_bound_type=(
-                    "lower_bound" if lower_bound else "point_as_reported"
+                    "lower_bound"
+                    if lower_bound and _numeric(row["amount_original"])
+                    else "point_as_reported"
+                    if _numeric(row["amount_original"])
+                    else "unknown"
                 ),
                 date_semantic_status="reported_event_assertion_pending_evidence",
                 date_value=row["event_date"] or None,
@@ -629,6 +668,10 @@ def _validate_records(records: list[dict]) -> None:
             or record["financial_upper_original"] is not None
         ):
             raise ValueError("unknown money cannot become a bound or zero")
+        if record["financial_bound_type"] != "unknown" and not isinstance(
+            record["financial_lower_original"], (int, float)
+        ):
+            raise ValueError("reported money bounds must be numeric with separate currency")
         if record["date_bound_type"] == "unknown" and (
             record["date_lower"] is not None or record["date_upper"] is not None
         ):
@@ -645,10 +688,16 @@ def _atomic_journals(
 ) -> tuple[list[dict], list[dict], list[dict]]:
     """Keep document assertions atomic before any reconciliation or operation link."""
     root = Path(root)
-    migration = _document(root / "data/jetp/releases/vnm-migration-0764.json")
+    _dvc_migration_input(root)
+    migration = _document(root / DVC_MIGRATION_PATH)
     rmp = migration["inventory_positions"]
     if len(rmp) != 279:
         raise ValueError("all 279 VNM RMP rows must remain individually retained")
+    event_ids = {
+        row["source_assertion"]["observation_id"]
+        for row in migration["legacy_position_candidates"]
+        if row["classification"] == "event_assertion_pending_evidence"
+    }
     raw = {}
     for path, key in (
         (INPUTS[0], "project_id"),
@@ -668,7 +717,7 @@ def _atomic_journals(
                 "source_candidate_id": source_id,
                 "country": record["country"],
                 "source_layer": "approved_0818_0821",
-                "journal": "positions",
+                "journal": "events" if source_id in event_ids else "positions",
                 "unit_identity_status": record["entity_link_status"],
                 "kind": record["record_type"],
                 "measure": record["measure"],
@@ -679,7 +728,7 @@ def _atomic_journals(
                 "financial_upper_original": record["financial_upper_original"],
                 "currency": record["financial_currency"],
                 "date_role": record["date_role"],
-                "event_date": None,
+                "event_date": record["date_lower"] if source_id in event_ids else None,
                 "date_lower": record["date_lower"],
                 "date_upper": record["date_upper"],
                 "disposition": record["disposition"],
@@ -755,21 +804,7 @@ def _atomic_journals(
     if len({row["source_candidate_id"] for row in atomic}) != len(atomic):
         raise ValueError("atomic source candidate identity collision")
     positions = [row for row in atomic if row["journal"] == "positions"]
-    event_ids = {
-        row["source_assertion"]["observation_id"]
-        for row in migration["legacy_position_candidates"]
-        if row["classification"] == "event_assertion_pending_evidence"
-    }
-    events = [
-        dict(
-            row,
-            journal="events",
-            event_date=row["date_lower"],
-            linked_position_candidate_id=row["source_candidate_id"],
-        )
-        for row in atomic
-        if row["source_candidate_id"] in event_ids
-    ]
+    events = [row for row in atomic if row["journal"] == "events"]
     return atomic, events, positions
 
 
@@ -803,7 +838,7 @@ def _reconciliations() -> list[dict]:
                 f"vnm-pilot-observation-{n:03d}" for n in range(20, 27)
             ],
             "lower_original": None,
-            "upper_original": "480000000 EUR",
+            "upper_original": 480000000,
             "currency": "EUR",
             "basis": "facility/package/TA/AFD loan/cost/LOI",
             "perimeter": "Bac Ai",
@@ -821,7 +856,7 @@ def _reconciliations() -> list[dict]:
             "input_candidate_ids": [
                 f"vnm-pilot-observation-{n:03d}" for n in range(1, 6)
             ],
-            "lower_original": "15500000000 USD",
+            "lower_original": 15500000000,
             "upper_original": None,
             "currency": "USD",
             "basis": "public/private envelopes with distinct stated perimeters",
@@ -875,24 +910,33 @@ def build_snapshot(root: Path, *, input_git_sha: str) -> dict:
         for country in ("ZAF", "IDN", "VNM", "SEN")
         for record in country_results[country][1]
     ]
-    financial_points = sum(
-        record["financial_bound_type"] != "unknown" for record in records
-    )
-    date_observations = sum(
-        record["date_bound_type"] != "unknown" for record in records
-    )
-    unknown_money = sum(
-        record["financial_bound_type"] == "unknown" for record in records
-    )
-    unknown_dates = sum(record["date_bound_type"] == "unknown" for record in records)
-    conflicts = sum(
-        record["conflict_status"] == "explicit_conflict" for record in records
-    )
     _validate_records(records)
     atomic_observations, event_journal, position_journal = _atomic_journals(
         root, records
     )
     reconciliations = _reconciliations()
+    reconciled_ids = {
+        candidate_id
+        for reconciliation in reconciliations
+        for candidate_id in reconciliation["input_candidate_ids"]
+    }
+    atomic_ids = {row["source_candidate_id"] for row in atomic_observations}
+    if not reconciled_ids <= atomic_ids:
+        raise ValueError("reconciliation refers to a non-atomic observation")
+    financial_points = sum(
+        row["financial_bound_type"] != "unknown" for row in atomic_observations
+    )
+    date_observations = sum(
+        row["date_lower"] is not None or row["event_date"] is not None
+        for row in atomic_observations
+    )
+    unknown_money = sum(
+        row["financial_bound_type"] == "unknown" for row in atomic_observations
+    )
+    unknown_dates = sum(
+        row["date_lower"] is None and row["event_date"] is None
+        for row in atomic_observations
+    )
     snapshot = {
         "schema_version": SCHEMA_VERSION,
         "input_git_sha": input_git_sha,
@@ -916,7 +960,7 @@ def build_snapshot(root: Path, *, input_git_sha: str) -> dict:
                 "country": "VNM",
                 "group_id": "vnm-rmp-inventory-positions",
                 "count": 279,
-                "record_materialization": "group_only_source_rows_not_available_in_this_worktree",
+                "record_materialization": "279 source rows are materialized in atomic_observations; this is a documentary coverage denominator, not an extra observation.",
                 "pedigree": {
                     "raw_source_id": "vnm-migration-0764",
                     "raw_document_sha256": countries["VNM"]["source_links"][0][
@@ -925,15 +969,27 @@ def build_snapshot(root: Path, *, input_git_sha: str) -> dict:
                     "locator": "rmp_inventory_positions",
                     "extraction_method": "0820 staged migration summary",
                     "semantic_interpretation": "Inventory membership only; neither operation identity nor finance fact.",
-                    "link_dedup_rule": "No individual row is inferred from the aggregate staging summary.",
+                    "link_dedup_rule": "The 279 individually extracted assertions retain their source IDs; this group is not additive.",
                     "confidence": "source_only",
                 },
             }
         ],
         "analysis_subsets": {
-            "all_source_linked_records": {
-                "count": len(records),
-                "rule": "Every structured record with raw source/version and locator, including unknown money/date.",
+            "all_atomic_observations": {
+                "count": len(atomic_observations),
+                "rule": "Every extracted assertion, including document coverage and unknown money/date; no reconciliation removes an observation.",
+            },
+            "routed_event_or_position_observations": {
+                "count": len(event_journal) + len(position_journal),
+                "rule": "Assertions routed once to the disjoint event or position journals; documentary coverage remains outside both journals.",
+            },
+            "reconciled_atomic_observations": {
+                "count": len(reconciled_ids),
+                "rule": "Atomic observations named by one or more documentary reconciliation records; values are not pooled unless that reconciliation says so.",
+            },
+            "unreconciled_atomic_observations": {
+                "count": len(atomic_ids - reconciled_ids),
+                "rule": "Atomic observations not named by a reconciliation; retained explicitly for descriptive coverage and later adjudication.",
             },
             "source_reported_money_positions": {
                 "count": financial_points,
@@ -951,13 +1007,9 @@ def build_snapshot(root: Path, *, input_git_sha: str) -> dict:
                 "count": unknown_dates,
                 "rule": "Retained records whose bounded source artifact does not report a date value.",
             },
-            "explicit_conflicts": {
-                "count": conflicts,
-                "rule": "Source notes explicitly flag incompatible amount, perimeter, date, nature, or duplicate claims.",
-            },
             "vnm_rmp_inventory_coverage": {
                 "count": 279,
-                "rule": "Coverage group retained separately because individual RMP rows are not materialized in this worktree.",
+                "rule": "Documentary denominator corresponding to 279 individually materialized RMP position assertions; not an additional group-only observation.",
             },
         },
         "aggregation": {
@@ -1023,10 +1075,24 @@ def validate_snapshot(snapshot: dict, root: Path, *, input_git_sha: str) -> None
         )
     if snapshot.get("reconciliations") != _reconciliations():
         raise ValueError("reconciliation adjudication changed")
-    if snapshot.get("analysis_subsets", {}).get("all_source_linked_records", {}).get(
-        "count"
-    ) != len(expected_records):
-        raise ValueError("descriptive record denominator changed")
+    subsets = snapshot.get("analysis_subsets", {})
+    atomic_ids = {row["source_candidate_id"] for row in expected_atomic}
+    reconciled_ids = {
+        candidate_id
+        for reconciliation in _reconciliations()
+        for candidate_id in reconciliation["input_candidate_ids"]
+    }
+    if (
+        subsets.get("all_atomic_observations", {}).get("count")
+        != len(expected_atomic)
+        or subsets.get("routed_event_or_position_observations", {}).get("count")
+        != len(expected_events) + len(expected_positions)
+        or subsets.get("reconciled_atomic_observations", {}).get("count")
+        != len(reconciled_ids)
+        or subsets.get("unreconciled_atomic_observations", {}).get("count")
+        != len(atomic_ids - reconciled_ids)
+    ):
+        raise ValueError("descriptive atomic denominator changed")
     if (
         snapshot.get("aggregation", {}).get("financial_total") != "not_computable"
         or snapshot.get("aggregation", {}).get("transition_date_total")
@@ -1051,10 +1117,15 @@ def build_manifest(snapshot: dict) -> dict:
         "schema_version": "jetp-0822-run-manifest/1",
         "input_git_sha": snapshot["input_git_sha"],
         "input_sha256": snapshot["inputs"],
+        "dvc_inputs": {
+            DVC_MIGRATION_PATH: _dvc_migration_input(
+                Path(__file__).resolve().parents[2]
+            )
+        },
         "snapshot_path": "docs/jetp-study/0822-comparative-snapshot.json.gz",
         "snapshot_sha256": snapshot["snapshot_sha256"],
         "reproduction": "Run this builder with --input-git-sha at the recorded revision; inputs are content-hashed and output rendering is deterministic.",
-        "dvc_boundary": "0822 consumes the reviewed Git artifacts. Their source links retain DVC document hashes where applicable; this freeze does not materialize or reinterpret DVC bytes.",
+        "dvc_boundary": "The VNM migration bytes remain DVC-managed and unstaged. Replay validates the tracked DVC pointer (MD5 and size) plus the materialized JSON SHA-256.",
     }
 
 

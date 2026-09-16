@@ -23,7 +23,7 @@ from jetp.build_0822_freeze_snapshot import (
 
 def test_freeze_preserves_denominators_without_mixed_stage_arithmetic() -> None:
     """Candidate, context, and staging rows cannot become a financial total."""
-    snapshot = build_snapshot(ROOT, input_git_sha="fed33609")
+    snapshot = build_snapshot(ROOT, input_git_sha="e90ff6fe")
 
     assert snapshot["countries"]["ZAF"]["dispositions"] == {
         "unadmitted_register_candidate": 257,
@@ -40,7 +40,11 @@ def test_freeze_preserves_denominators_without_mixed_stage_arithmetic() -> None:
         "indexed_file_not_retained": 4,
         "unresolved_annual_report_candidate": 6,
     }
-    assert snapshot["analysis_subsets"]["all_source_linked_records"]["count"] == 1458
+    assert snapshot["analysis_subsets"]["all_atomic_observations"]["count"] == 1740
+    assert (
+        snapshot["analysis_subsets"]["routed_event_or_position_observations"]["count"]
+        == 1736
+    )
     assert snapshot["coverage_groups"][0]["count"] == 279
     assert snapshot["aggregation"]["financial_total"] == "not_computable"
     assert snapshot["aggregation"]["transition_date_total"] == "not_computable"
@@ -52,14 +56,14 @@ def test_freeze_preserves_denominators_without_mixed_stage_arithmetic() -> None:
         "transition_date",
         "operation_identity",
     ]
-    validate_snapshot(snapshot, ROOT, input_git_sha="fed33609")
+    validate_snapshot(snapshot, ROOT, input_git_sha="e90ff6fe")
 
 
 def test_unknown_fields_stay_in_descriptive_records_and_conflicts_stay_explicit() -> (
     None
 ):
     """Missing money/date is coverage, not an exclusion; conflicting evidence survives."""
-    snapshot = build_snapshot(ROOT, input_git_sha="fed33609")
+    snapshot = build_snapshot(ROOT, input_git_sha="e90ff6fe")
     records = snapshot["records"]
 
     indonesia_unknown = next(
@@ -81,7 +85,7 @@ def test_unknown_fields_stay_in_descriptive_records_and_conflicts_stay_explicit(
         row for row in records if row["record_id"] == "vnm-pilot-observation-001"
     )
     assert lower_bound["financial_bound_type"] == "lower_bound"
-    assert lower_bound["financial_lower_original"] == "15500000000"
+    assert lower_bound["financial_lower_original"] == 15500000000
     assert lower_bound["financial_upper_original"] is None
     year_bound = next(
         row for row in records if row["record_id"] == "idn-progress25-bioenergy-001"
@@ -91,18 +95,15 @@ def test_unknown_fields_stay_in_descriptive_records_and_conflicts_stay_explicit(
         "2022-01-01",
         "2022-12-31",
     )
-    assert snapshot["analysis_subsets"]["all_source_linked_records"]["count"] == len(
-        records
-    )
-    assert snapshot["analysis_subsets"]["all_source_linked_records"]["count"] > 0
-    assert snapshot["analysis_subsets"]["records_with_unknown_money"]["count"] == 1157
-    assert snapshot["analysis_subsets"]["records_with_unknown_date"]["count"] == 48
-    validate_snapshot(snapshot, ROOT, input_git_sha="fed33609")
+    assert snapshot["analysis_subsets"]["all_atomic_observations"]["count"] == 1740
+    assert snapshot["analysis_subsets"]["records_with_unknown_money"]["count"] == 1443
+    assert snapshot["analysis_subsets"]["records_with_unknown_date"]["count"] == 326
+    validate_snapshot(snapshot, ROOT, input_git_sha="e90ff6fe")
 
 
 def test_atomic_journals_keep_all_rmp_rows_and_incompatible_inputs() -> None:
     """Coverage is not an operation count; events and positions never silently merge."""
-    snapshot = build_snapshot(ROOT, input_git_sha="fed33609")
+    snapshot = build_snapshot(ROOT, input_git_sha="e90ff6fe")
 
     rmp = [
         row
@@ -129,21 +130,21 @@ def test_atomic_journals_keep_all_rmp_rows_and_incompatible_inputs() -> None:
 
 
 def test_freeze_fails_closed_if_a_source_link_or_count_changes() -> None:
-    snapshot = build_snapshot(ROOT, input_git_sha="fed33609")
+    snapshot = build_snapshot(ROOT, input_git_sha="e90ff6fe")
 
     broken = deepcopy(snapshot)
     broken["countries"]["SEN"]["dispositions"]["unresolved_annual_report_candidate"] = 7
     with pytest.raises(ValueError, match="Senegal candidate count"):
-        validate_snapshot(broken, ROOT, input_git_sha="fed33609")
+        validate_snapshot(broken, ROOT, input_git_sha="e90ff6fe")
 
     broken = deepcopy(snapshot)
     broken["inputs"]["docs/jetp-study/0820-vietnam-staging.json"]["sha256"] = "0" * 64
     with pytest.raises(ValueError, match="input hash"):
-        validate_snapshot(broken, ROOT, input_git_sha="fed33609")
+        validate_snapshot(broken, ROOT, input_git_sha="e90ff6fe")
 
 
 def test_checked_in_snapshot_and_run_manifest_replay_byte_for_byte() -> None:
-    snapshot = build_snapshot(ROOT, input_git_sha="fed33609")
+    snapshot = build_snapshot(ROOT, input_git_sha="e90ff6fe")
     snapshot_path = ROOT / "docs/jetp-study/0822-comparative-snapshot.json.gz"
     manifest_path = ROOT / "docs/jetp-study/0822-comparative-snapshot-manifest.json"
 
@@ -155,13 +156,14 @@ def test_checked_in_snapshot_and_run_manifest_replay_byte_for_byte() -> None:
 
 def test_replay_pins_dvc_input_and_partitions_atomic_journals_for_0730() -> None:
     """The 0730 handoff starts from all assertions, not copied journal rows."""
-    snapshot = build_snapshot(ROOT, input_git_sha="fed33609")
+    snapshot = build_snapshot(ROOT, input_git_sha="e90ff6fe")
     manifest = build_manifest(snapshot)
 
     assert manifest["dvc_inputs"] == {
         "data/jetp/releases/vnm-migration-0764.json": {
             "hash": "md5",
             "md5": "180429d7c6b882fdc2871b9fa6fbf003",
+            "sha256": "ef7538d2af534d31877634bd42f28c5fae1c20b192e6647fc030146a7492eb34",
             "size": 2554708,
             "pointer_path": "data/jetp/releases/vnm-migration-0764.json.dvc",
         }

@@ -1,9 +1,21 @@
 {
-  "dvc_boundary": "0822 consumes the reviewed Git artifacts. Their source links retain DVC document hashes where applicable; this freeze does not materialize or reinterpret DVC bytes.",
-  "input_git_sha": "fed33609",
+  "dvc_boundary": "The VNM migration bytes remain DVC-managed and unstaged. Replay validates the tracked DVC pointer (MD5 and size) plus the materialized JSON SHA-256.",
+  "dvc_inputs": {
+    "data/jetp/releases/vnm-migration-0764.json": {
+      "hash": "md5",
+      "md5": "180429d7c6b882fdc2871b9fa6fbf003",
+      "pointer_path": "data/jetp/releases/vnm-migration-0764.json.dvc",
+      "sha256": "ef7538d2af534d31877634bd42f28c5fae1c20b192e6647fc030146a7492eb34",
+      "size": 2554708
+    }
+  },
+  "input_git_sha": "e90ff6fe",
   "input_sha256": {
     "data/jetp/plan-projects.csv": {
       "sha256": "723b24f1e67da7420122bede26a997b002d2ff9683f3e7623da8c74f372ba5ca"
+    },
+    "data/jetp/releases/vnm-migration-0764.json": {
+      "sha256": "ef7538d2af534d31877634bd42f28c5fae1c20b192e6647fc030146a7492eb34"
     },
     "data/jetp/vnm-pilot-manifest.csv": {
       "sha256": "b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818"
@@ -30,5 +42,5 @@
   "reproduction": "Run this builder with --input-git-sha at the recorded revision; inputs are content-hashed and output rendering is deterministic.",
   "schema_version": "jetp-0822-run-manifest/1",
   "snapshot_path": "docs/jetp-study/0822-comparative-snapshot.json.gz",
-  "snapshot_sha256": "430fde0f1714e4abeb6e1679d5b8c359ba4ddb9b926dc083d4853f62742e9c9e"
+  "snapshot_sha256": "e76e706704b0040f7142124ed5dc569a2f2c7b61708b75d5ad2188fcb0514171"
 }
