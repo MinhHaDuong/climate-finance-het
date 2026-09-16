@@ -54,7 +54,7 @@ which case the event is marked `secondary_only` during verification.
 
 | Country | Project review | Current checkpoint |
 |---|---:|---|
-| South Africa | 263/263 | Complete; register, reports, project pages and dry searches reconciled |
+| South Africa | 263/263 | Q1 2026 baseline checked 14 September; report/register implementation-status discrepancy remains explicit (see [baseline audit](jetp-zaf-q1-baseline-2026-09-14.md)) |
 | Indonesia | 74/74 | Complete; 66 collected, 6 central-only after explicit search, 2 archive-blocked |
 | Viet Nam | 24/24 July 2025 records | 3 named projects followed to direct MOIT and funder sources; 21 identities explicitly not published |
 | Senegal | 43 project/programme records reviewed | 49 plan lines retained; 21 direct corroborations, 19 central-only reviews and 3 blocked ASER routes as of the latest 13 September 2026 review |

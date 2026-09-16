@@ -1062,3 +1062,119 @@ stages:
       hash: md5
       md5: 9662d287849b5cbbb78d50107b0eaa92
       size: 98295
+  jetp_pull:
+    cmd: uv run --env-file .env python scripts/jetp/catalog_crs.py --output
+      data/jetp/crs --start 2005 --end 2024 --md-dim DD --pause 20
+    deps:
+    - path: scripts/jetp/catalog_crs.py
+      hash: md5
+      md5: bdc5072b75b61aa234ec4dab6b21527e
+      size: 5242
+    outs:
+    - path: data/jetp/crs
+      hash: md5
+      md5: 936675fd267801956b96b404dd181988.dir
+      size: 1315519
+      nfiles: 80
+  jetp_cohortes:
+    cmd: uv run --env-file .env python scripts/jetp/compute_cohortes.py
+      --datadir data/jetp/crs --output data/jetp/derived/cohortes_bloc.csv
+      --out-act data/jetp/derived/activites.csv --out-diag
+      data/jetp/derived/diag.json
+    deps:
+    - path: data/jetp/crs
+      hash: md5
+      md5: 936675fd267801956b96b404dd181988.dir
+      size: 1315519
+      nfiles: 80
+    - path: scripts/jetp/compute_cohortes.py
+      hash: md5
+      md5: 14aac9df0aa2f698845dc60765727c45
+      size: 11663
+    - path: scripts/script_io_args.py
+      hash: md5
+      md5: 886023362bbf42e268e7aeadd944a5f6
+      size: 2052
+    - path: scripts/utils.py
+      hash: md5
+      md5: 29d2e795d9aafd45b97ded048c3be0f4
+      size: 6054
+    outs:
+    - path: data/jetp/derived/activites.csv
+      hash: md5
+      md5: 52d530b793bc4db0b606fa5bd9d08758
+      size: 346641
+    - path: data/jetp/derived/cohortes_bloc.csv
+      hash: md5
+      md5: 5c3550fd47b2a59536892d52a68251d1
+      size: 20031
+    - path: data/jetp/derived/diag.json
+      hash: md5
+      md5: db35db77c09afddbf309956c4c2f0797
+      size: 1783
+  jetp_livrable:
+    cmd: uv run --env-file .env python scripts/jetp/export_courbe_reference.py
+      --act data/jetp/derived/activites.csv --output
+      data/jetp/derived/courbe-reference-decaissement.csv
+    deps:
+    - path: data/jetp/derived/activites.csv
+      hash: md5
+      md5: 52d530b793bc4db0b606fa5bd9d08758
+      size: 346641
+    - path: scripts/jetp/export_courbe_reference.py
+      hash: md5
+      md5: c44097b12dd14ca4f764f04a67d24161
+      size: 4310
+    - path: scripts/script_io_args.py
+      hash: md5
+      md5: 886023362bbf42e268e7aeadd944a5f6
+      size: 2052
+    - path: scripts/utils.py
+      hash: md5
+      md5: 29d2e795d9aafd45b97ded048c3be0f4
+      size: 6054
+    outs:
+    - path: data/jetp/derived/courbe-reference-decaissement.csv
+      hash: md5
+      md5: f707681233eaca3b74679ae6855ea791
+      size: 98213
+  jetp_synthese:
+    cmd: uv run --env-file .env python
+      scripts/jetp/summarize_reference_groupee.py --act
+      data/jetp/derived/activites.csv --output
+      data/jetp/derived/reference_groupee.csv && uv run --env-file .env python
+      scripts/jetp/summarize_bailleurs.py --act data/jetp/derived/activites.csv
+      --pays VNM --output data/jetp/derived/vnm_bailleurs_h4.csv && uv run
+      --env-file .env python scripts/jetp/summarize_bailleurs.py --act
+      data/jetp/derived/activites.csv --pays ZAF --output
+      data/jetp/derived/zaf_bailleurs_h4.csv
+    deps:
+    - path: data/jetp/derived/activites.csv
+      hash: md5
+      md5: 52d530b793bc4db0b606fa5bd9d08758
+      size: 346641
+    - path: scripts/jetp/summarize_bailleurs.py
+      hash: md5
+      md5: 6b04de3478bd48dce2ee2b1df01f6632
+      size: 4311
+    - path: scripts/jetp/summarize_reference_groupee.py
+      hash: md5
+      md5: edef964aad1f91fef3c849e08d3abd06
+      size: 4113
+    - path: scripts/script_io_args.py
+      hash: md5
+      md5: 886023362bbf42e268e7aeadd944a5f6
+      size: 2052
+    outs:
+    - path: data/jetp/derived/reference_groupee.csv
+      hash: md5
+      md5: a1ca5bb54c5dc667061c0593d7acb297
+      size: 2959
+    - path: data/jetp/derived/vnm_bailleurs_h4.csv
+      hash: md5
+      md5: b02adff0bd3e263746cc456c5d38da19
+      size: 485
+    - path: data/jetp/derived/zaf_bailleurs_h4.csv
+      hash: md5
+      md5: 70d7260b065ecdc317b56f3af8df638d
+      size: 362

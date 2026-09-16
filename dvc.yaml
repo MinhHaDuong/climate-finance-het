@@ -395,3 +395,64 @@ stages:
       - data/catalogs/refined_citations.csv
 
 
+
+  # ── Papier court JETP : courbe de référence du décaissement (ticket 0713) ──
+  # Chaîne portée depuis ~/CNRS/projets/actifs/jetp/papier-court-mesure/analyse-crs/
+  # par décision 0710. Périmètre distinct de data/book/riomarkers/, qui appartient
+  # au chapitre de livre et n'est pas touché ici.
+
+  # Étape 1 : tirage OCDE CRS. **frozen** à dessein — l'API SDMX limite le débit
+  # (~30 min avec --pause 20) et l'OCDE révise ses millésimes, donc un `dvc repro`
+  # qui retirerait les données mesurerait les révisions de l'OCDE et non la chaîne.
+  # Le tirage archivé sous data/jetp/crs/ est l'entrée de référence ; il vit dans
+  # le remote DVC, poussé depuis padme. Pour rafraîchir volontairement :
+  #   dvc repro --force jetp_pull   (puis relire la non-régression)
+  jetp_pull:
+    frozen: true
+    cmd: >-
+      uv run --env-file .env python scripts/jetp/catalog_crs.py --output data/jetp/crs --start 2005 --end 2024 --md-dim DD --pause 20
+    deps:
+      - scripts/jetp/catalog_crs.py
+    outs:
+      - data/jetp/crs
+
+  # Étape 2 : reconstitution des activités et profils par cohorte d'engagement.
+  jetp_cohortes:
+    cmd: >-
+      uv run --env-file .env python scripts/jetp/compute_cohortes.py --datadir data/jetp/crs --output data/jetp/derived/cohortes_bloc.csv --out-act data/jetp/derived/activites.csv --out-diag data/jetp/derived/diag.json
+    deps:
+      - scripts/jetp/compute_cohortes.py
+      - scripts/utils.py
+      - scripts/script_io_args.py
+      - data/jetp/crs
+    outs:
+      - data/jetp/derived/cohortes_bloc.csv
+      - data/jetp/derived/activites.csv
+      - data/jetp/derived/diag.json
+
+  # Étape 3 : CSV livrable (pays × cohorte × périmètre × horizon).
+  # C'est l'artefact que 0711 consomme, à la place du fichier daté à la main.
+  jetp_livrable:
+    cmd: >-
+      uv run --env-file .env python scripts/jetp/export_courbe_reference.py --act data/jetp/derived/activites.csv --output data/jetp/derived/courbe-reference-decaissement.csv
+    deps:
+      - scripts/jetp/export_courbe_reference.py
+      - scripts/utils.py
+      - scripts/script_io_args.py
+      - data/jetp/derived/activites.csv
+    outs:
+      - data/jetp/derived/courbe-reference-decaissement.csv
+
+  # Étape 4 : tableaux de synthèse — référence groupée et ventilation bailleurs.
+  jetp_synthese:
+    cmd: >-
+      uv run --env-file .env python scripts/jetp/summarize_reference_groupee.py --act data/jetp/derived/activites.csv --output data/jetp/derived/reference_groupee.csv && uv run --env-file .env python scripts/jetp/summarize_bailleurs.py --act data/jetp/derived/activites.csv --pays VNM --output data/jetp/derived/vnm_bailleurs_h4.csv && uv run --env-file .env python scripts/jetp/summarize_bailleurs.py --act data/jetp/derived/activites.csv --pays ZAF --output data/jetp/derived/zaf_bailleurs_h4.csv
+    deps:
+      - scripts/jetp/summarize_reference_groupee.py
+      - scripts/jetp/summarize_bailleurs.py
+      - scripts/script_io_args.py
+      - data/jetp/derived/activites.csv
+    outs:
+      - data/jetp/derived/reference_groupee.csv
+      - data/jetp/derived/vnm_bailleurs_h4.csv
+      - data/jetp/derived/zaf_bailleurs_h4.csv

@@ -11,7 +11,7 @@ LATEXMK ?= latexmk
 LATEXMK_FLAGS ?= -cd -pdf -halt-on-error -interaction=nonstopmode
 PYTHON ?= python3
 
-deliverables/jetp-mesure/jetp-mesure.pdf: deliverables/jetp-mesure/jetp-mesure.tex deliverables/jetp-mesure/jetp-mesure-vars.tex $(BIB) deliverables/_shared/bibliography/OEconomia_EN_2.bst scripts/check_latex_log.py
+deliverables/jetp-mesure/jetp-mesure.pdf: deliverables/jetp-mesure/jetp-mesure.tex deliverables/jetp-mesure/jetp-mesure-vars.tex docs/jetp-study/0823-central-figure.svg docs/jetp-study/0823-figure-manifest.json docs/jetp-study/0730-descriptives.json docs/jetp-study/0730-run-manifest.json $(BIB) deliverables/_shared/bibliography/OEconomia_EN_2.bst scripts/check_latex_log.py
 	$(LATEXMK) $(LATEXMK_FLAGS) $<
 	$(PYTHON) scripts/check_latex_log.py deliverables/jetp-mesure/jetp-mesure.log
 
