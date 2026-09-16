@@ -338,7 +338,7 @@ def flag_semantic_outlier(df, config, *, embeddings, emb_df):
     outlier_dists.loc[emb_df.index] = cos_dist
 
     if mode == "diagnostic":
-        # The distance ships; the removals do not. Returning a real
+        # The distance is returned; the removals are not. Returning a real
         # measurement next to an empty mask is the point of the mode, so this
         # early return sits after the computation, never in place of it.
         return pd.Series(False, index=df.index), outlier_dists

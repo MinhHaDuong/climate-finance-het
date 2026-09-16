@@ -651,7 +651,7 @@ class TestSkipSemanticFlagCLI:
         )
 
 
-class TestFlag5DiagnosticActivation:
+class TestFlag5DiagnosticCapability:
     """Flag 5's safe configuration is diagnostic (ticket 0361).
 
     Pipeline activation is a separate v3 step.  These tests pin the capability

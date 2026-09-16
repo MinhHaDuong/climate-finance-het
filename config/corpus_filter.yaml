@@ -114,7 +114,7 @@ citation_isolation:
   max_year: 2019
 
 # Flag 5 annotates, it does not remove (ticket 0361). The distance is a useful
-# inspection signal to publish with the deposit, but it is unsound as a
+# inspection signal that a future v3 build can publish, but it is unsound as a
 # threshold: the distribution is skewed and heavy-tailed, so mean + k*SD
 # carries no probabilistic meaning, and the one human validation of a cut on it
 # found no discrimination. Filtering on it also thinned the multilingual tail
@@ -127,7 +127,8 @@ citation_isolation:
 # human had ever seen produce output. `mode: filter` still works but demands an
 # explicit, calibrated sigma.
 semantic_outlier:
-  # diagnostic = compute and publish the distance, flag nothing.
+  # diagnostic = compute and return the distance, flag nothing. The v3 DVC
+  # activation is deliberately separate from this safe configuration change.
   # filter = flag beyond mean + sigma*SD of the work's own stratum.
   mode: diagnostic
   # per_language = measure each work against the centroid of its own language;
