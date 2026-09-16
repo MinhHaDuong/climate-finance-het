@@ -63,7 +63,53 @@ def _coverage(payloads):
     return result
 
 
-def _reviewed_evidence(records):
+def _evidence_depth(value, records):
+    """Validate analytical depth without promoting it into the public ledger."""
+    if value is None:
+        return None
+    if not isinstance(value, dict):
+        raise ValueError('evidence_depth must be an object')
+    required = {'reviewed_canonical_records', 'canonical_named_records',
+                'frozen_source_documents', 'structured_atomic_observations'}
+    if set(value) != required:
+        raise ValueError('evidence_depth has unknown or missing fields')
+    for field in required - {'structured_atomic_observations'}:
+        if not isinstance(value[field], int) or value[field] < 0:
+            raise ValueError(f'evidence_depth requires non-negative {field}')
+    reviewed = sum(record['status'] == 'reviewed_fact' for record in records)
+    if value['reviewed_canonical_records'] != reviewed:
+        raise ValueError('reviewed canonical count must match reviewed records')
+    staged = value['structured_atomic_observations']
+    staged_required = {'total', 'by_country', 'vnm_rmp_positions', 'status'}
+    if not isinstance(staged, dict) or set(staged) != staged_required:
+        raise ValueError('structured analytical observations are incomplete')
+    if staged['status'] != 'not_deployed':
+        raise ValueError('analytical observations cannot be deployed as canonical facts')
+    if not isinstance(staged['total'], int) or staged['total'] < 0:
+        raise ValueError('structured analytical total must be non-negative')
+    if not isinstance(staged['vnm_rmp_positions'], int) or staged['vnm_rmp_positions'] < 0:
+        raise ValueError('VNM RMP position count must be non-negative')
+    country_counts = staged['by_country']
+    if not isinstance(country_counts, dict) or set(country_counts) != set(COUNTRIES):
+        raise ValueError('structured analytical observations require four-country coverage')
+    if any(not isinstance(count, int) or count < 0 for count in country_counts.values()):
+        raise ValueError('structured analytical country counts must be non-negative')
+    if sum(country_counts.values()) != staged['total']:
+        raise ValueError('structured analytical country counts must match total')
+    if staged['vnm_rmp_positions'] > country_counts['VNM']:
+        raise ValueError('VNM RMP positions exceed Vietnamese staged observations')
+    return {'reviewed_canonical_records': value['reviewed_canonical_records'],
+            'canonical_named_records': value['canonical_named_records'],
+            'frozen_source_documents': value['frozen_source_documents'],
+            'structured_atomic_observations': {
+                'total': staged['total'],
+                'by_country': {code: country_counts[code] for code in COUNTRIES},
+                'vnm_rmp_positions': staged['vnm_rmp_positions'],
+                'status': staged['status'],
+            }}
+
+
+def _reviewed_evidence(records, evidence_depth=None):
     """Keep reviewed source assertions visible without making them a ledger."""
     if not isinstance(records, list):
         raise ValueError('reviewed_evidence must be a list')
@@ -93,16 +139,23 @@ def _reviewed_evidence(records):
         item['evidence'] = sorted(evidence, key=lambda proof: (proof['source_id'], proof['locator']))
         item['aggregation'] = 'non_aggregate'
         normalized.append(item)
-    return {'format_version': 'jetp-reviewed-evidence/1',
+    payload = {'format_version': 'jetp-reviewed-evidence/1',
             'records': sorted(normalized, key=lambda item: item['id']),
             'analytical_snapshot': {'status': 'not_deployed'}}
+    depth = _evidence_depth(evidence_depth, payload['records'])
+    if depth is not None:
+        payload['evidence_depth'] = depth
+    return payload
 
 
 def _reviewed_evidence_summary(payload):
-    return {'record_count': len(payload['records']),
+    summary = {'record_count': len(payload['records']),
             'by_status': dict(sorted(Counter(item['status'] for item in payload['records']).items())),
             'aggregation': 'record_level_non_aggregate',
             'analytical_snapshot': payload['analytical_snapshot']['status']}
+    if 'evidence_depth' in payload:
+        summary['evidence_depth'] = payload['evidence_depth']
+    return summary
 
 
 def _data_build(payloads, release_cutoff):
@@ -199,10 +252,11 @@ def build_release(root, output, *, edition, input_git_sha, cutoff, prepared_on, 
     if os.path.lexists(output):
         raise FileExistsError(f'Release destination already exists: {output}')
     payloads = _site_payloads(root, input_git_sha)
+    existing_payload = json.loads(payloads.get('site/data/reviewed-evidence.json', b'{}'))
     if reviewed_evidence is None:
-        existing = payloads.get('site/data/reviewed-evidence.json')
-        reviewed_evidence = json.loads(existing)['records'] if existing else []
-    evidence_payload = _reviewed_evidence(reviewed_evidence)
+        reviewed_evidence = existing_payload.get('records', [])
+    evidence_payload = _reviewed_evidence(reviewed_evidence,
+                                          existing_payload.get('evidence_depth'))
     payloads['site/data/reviewed-evidence.json'] = (
         json.dumps(evidence_payload, indent=2, sort_keys=True) + '\n').encode()
     descriptor = _descriptor(edition, input_git_sha, cutoff, prepared_on, reviewer, payloads,
@@ -250,7 +304,7 @@ def read_release(path):
         raise ValueError('Release data-build provenance mismatch')
     evidence = json.loads(payloads.get('site/data/reviewed-evidence.json', b'{}'))
     if evidence:
-        if evidence != _reviewed_evidence(evidence.get('records')):
+        if evidence != _reviewed_evidence(evidence.get('records'), evidence.get('evidence_depth')):
             raise ValueError('Invalid reviewed evidence payload')
         if descriptor.get('reviewed_evidence') != _reviewed_evidence_summary(evidence):
             raise ValueError('Reviewed evidence summary mismatch')

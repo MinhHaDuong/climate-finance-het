@@ -249,6 +249,7 @@ def test_edition_history_distinguishes_canonical_sources_and_staged_depth():
 
     assert 'evidenceDepthSummary' in renderer
     assert evidence['evidence_depth'] == {
+        'reviewed_canonical_records': 3,
         'canonical_named_records': 383,
         'frozen_source_documents': 301,
         'structured_atomic_observations': {

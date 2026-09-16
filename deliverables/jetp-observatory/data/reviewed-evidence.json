@@ -2,6 +2,22 @@
   "analytical_snapshot": {
     "status": "not_deployed"
   },
+  "evidence_depth": {
+    "canonical_named_records": 383,
+    "frozen_source_documents": 301,
+    "reviewed_canonical_records": 3,
+    "structured_atomic_observations": {
+      "by_country": {
+        "IDN": 1148,
+        "SEN": 10,
+        "VNM": 325,
+        "ZAF": 257
+      },
+      "status": "not_deployed",
+      "total": 1740,
+      "vnm_rmp_positions": 279
+    }
+  },
   "format_version": "jetp-reviewed-evidence/1",
   "records": [
     {

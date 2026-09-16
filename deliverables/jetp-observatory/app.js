@@ -275,10 +275,21 @@ function comparisonPage(params) {
     );
   update();
 }
+function evidenceDepthSummary() {
+  const depth = evidence.evidence_depth;
+  if (!depth) return "";
+  const staged = depth.structured_atomic_observations || {};
+  const countries = staged.by_country || {};
+  const countryCounts = ["ZAF", "IDN", "VNM", "SEN"]
+    .filter((code) => countries[code] != null)
+    .map((code) => `${esc(country(code)?.short || code)} ${fmt(countries[code])}`)
+    .join(" · ");
+  return `<section class="section" aria-label="Evidence depth"><div class="section-head"><div><p class="eyebrow">Evidence depth</p><h2>What the data work added.</h2></div><p>These are distinct layers. They are not a common record total.</p></div><div class="metrics"><div class="metric"><strong>${fmt(depth.canonical_named_records)}</strong><span>named canonical portfolio records</span><small>Existing catalogue identities</small></div><div class="metric"><strong>${fmt(depth.frozen_source_documents)}</strong><span>frozen source documents</span><small>Curated documentary corpus</small></div><div class="metric"><strong>${fmt(depth.reviewed_canonical_records)}</strong><span>reviewed canonical assertions</span><small>Released as non-aggregate facts</small></div><div class="metric"><strong>${fmt(staged.total)}</strong><span>structured analytical observations</span><small>Staged research, not deployed</small></div></div><div class="callout"><h3>Staged extraction, kept separate</h3><p>${fmt(staged.total)} atomic observations: ${esc(countryCounts)}. This includes ${fmt(staged.vnm_rmp_positions)} Viet Nam RMP positions. They are structured observations, not automatically reconciled operations, payments, or canonical facts; the snapshot is not deployed as canonical facts.</p></div></section>`;
+}
 function editionHistoryPage() {
   const rows = editions.editions;
   main.innerHTML = header("Monthly editions", "What changed, and what did not.", "Each edition is frozen after review. A failed refresh remains a recorded gap and never removes evidence from an earlier download.") +
-    `<div class="table-wrap"><table><thead><tr><th>Edition</th><th>Evidence cutoff</th><th>Prepared</th><th>State</th><th>Published</th></tr></thead><tbody>${rows.map((row) => `<tr><td>${esc(row.edition)}</td><td>${date(row.observation_cutoff)}</td><td>${date(row.release_prepared_date)}</td><td>${esc(row.release_state)}</td><td>${row.publication_date ? date(row.publication_date) : "Not published"}</td></tr>`).join("")}</tbody></table></div><p class="note">A correction uses a new <code>YYYY-MM-rN</code> edition and preserves the prior archive. Later reports are labelled by their original event date; they are not treated as new events.</p><div class="downloads"><a class="button light" href="data/editions.json" download>Download release history ↓</a></div>`;
+    `<div class="table-wrap"><table><thead><tr><th>Edition</th><th>Evidence cutoff</th><th>Prepared</th><th>State</th><th>Published</th></tr></thead><tbody>${rows.map((row) => `<tr><td>${esc(row.edition)}</td><td>${date(row.observation_cutoff)}</td><td>${date(row.release_prepared_date)}</td><td>${esc(row.release_state)}</td><td>${row.publication_date ? date(row.publication_date) : "Not published"}</td></tr>`).join("")}</tbody></table></div><p class="note">A correction uses a new <code>YYYY-MM-rN</code> edition and preserves the prior archive. Later reports are labelled by their original event date; they are not treated as new events.</p><div class="downloads"><a class="button light" href="data/editions.json" download>Download release history ↓</a></div>` + evidenceDepthSummary();
 }
 function evidencePage() {
   const records = evidence.records || [];
