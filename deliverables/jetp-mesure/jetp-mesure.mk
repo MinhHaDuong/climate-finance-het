@@ -5,13 +5,14 @@
 
 .DELETE_ON_ERROR:
 
-TECTONIC ?= tectonic
-# ``-cd`` is retained as the path-resolution contract tested for this package:
-# the Tectonic recipe below actually changes to the source directory.
+LATEXMK ?= latexmk
+# ``-cd`` makes sibling macro files and ../_shared bibliography paths resolve
+# from this document's directory, while the target still names the root path.
+LATEXMK_FLAGS ?= -cd -pdf -halt-on-error -interaction=nonstopmode
 PYTHON ?= python3
 
 deliverables/jetp-mesure/jetp-mesure.pdf: deliverables/jetp-mesure/jetp-mesure.tex deliverables/jetp-mesure/jetp-mesure-vars.tex docs/jetp-study/0823-central-figure.svg docs/jetp-study/0823-figure-manifest.json docs/jetp-study/0730-descriptives.json docs/jetp-study/0730-run-manifest.json $(BIB) deliverables/_shared/bibliography/OEconomia_EN_2.bst scripts/check_latex_log.py
-	cd deliverables/jetp-mesure && $(TECTONIC) -X compile --keep-logs jetp-mesure.tex
+	$(LATEXMK) $(LATEXMK_FLAGS) $<
 	$(PYTHON) scripts/check_latex_log.py deliverables/jetp-mesure/jetp-mesure.log
 
 .PHONY: jetp-mesure
