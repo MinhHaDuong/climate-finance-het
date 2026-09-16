@@ -1063,7 +1063,7 @@ stages:
       md5: 9662d287849b5cbbb78d50107b0eaa92
       size: 98295
   jetp_pull:
-    cmd: uv run --env-file .env python scripts/jetp/catalog_crs.py --output 
+    cmd: uv run --env-file .env python scripts/jetp/catalog_crs.py --output
       data/jetp/crs --start 2005 --end 2024 --md-dim DD --pause 20
     deps:
     - path: scripts/jetp/catalog_crs.py
@@ -1077,9 +1077,9 @@ stages:
       size: 1315519
       nfiles: 80
   jetp_cohortes:
-    cmd: uv run --env-file .env python scripts/jetp/compute_cohortes.py 
-      --datadir data/jetp/crs --output data/jetp/derived/cohortes_bloc.csv 
-      --out-act data/jetp/derived/activites.csv --out-diag 
+    cmd: uv run --env-file .env python scripts/jetp/compute_cohortes.py
+      --datadir data/jetp/crs --output data/jetp/derived/cohortes_bloc.csv
+      --out-act data/jetp/derived/activites.csv --out-diag
       data/jetp/derived/diag.json
     deps:
     - path: data/jetp/crs
@@ -1113,8 +1113,8 @@ stages:
       md5: db35db77c09afddbf309956c4c2f0797
       size: 1783
   jetp_livrable:
-    cmd: uv run --env-file .env python scripts/jetp/export_courbe_reference.py 
-      --act data/jetp/derived/activites.csv --output 
+    cmd: uv run --env-file .env python scripts/jetp/export_courbe_reference.py
+      --act data/jetp/derived/activites.csv --output
       data/jetp/derived/courbe-reference-decaissement.csv
     deps:
     - path: data/jetp/derived/activites.csv
@@ -1139,14 +1139,14 @@ stages:
       md5: f707681233eaca3b74679ae6855ea791
       size: 98213
   jetp_synthese:
-    cmd: uv run --env-file .env python 
-      scripts/jetp/summarize_reference_groupee.py --act 
-      data/jetp/derived/activites.csv --output 
-      data/jetp/derived/reference_groupee.csv && uv run --env-file .env python 
-      scripts/jetp/summarize_bailleurs.py --act data/jetp/derived/activites.csv 
-      --pays VNM --output data/jetp/derived/vnm_bailleurs_h4.csv && uv run 
-      --env-file .env python scripts/jetp/summarize_bailleurs.py --act 
-      data/jetp/derived/activites.csv --pays ZAF --output 
+    cmd: uv run --env-file .env python
+      scripts/jetp/summarize_reference_groupee.py --act
+      data/jetp/derived/activites.csv --output
+      data/jetp/derived/reference_groupee.csv && uv run --env-file .env python
+      scripts/jetp/summarize_bailleurs.py --act data/jetp/derived/activites.csv
+      --pays VNM --output data/jetp/derived/vnm_bailleurs_h4.csv && uv run
+      --env-file .env python scripts/jetp/summarize_bailleurs.py --act
+      data/jetp/derived/activites.csv --pays ZAF --output
       data/jetp/derived/zaf_bailleurs_h4.csv
     deps:
     - path: data/jetp/derived/activites.csv
