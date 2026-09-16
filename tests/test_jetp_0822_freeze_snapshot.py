@@ -53,6 +53,30 @@ def test_freeze_preserves_denominators_without_mixed_stage_arithmetic() -> None:
     validate_snapshot(snapshot, ROOT, input_git_sha="fed33609")
 
 
+def test_unknown_fields_stay_in_descriptive_records_and_conflicts_stay_explicit() -> None:
+    """Missing money/date is coverage, not an exclusion; conflicting evidence survives."""
+    snapshot = build_snapshot(ROOT, input_git_sha="fed33609")
+    records = snapshot["records"]
+
+    indonesia_unknown = next(
+        row for row in records
+        if row["country"] == "IDN"
+        and row["financial_semantic_status"] == "unknown"
+        and row["date_semantic_status"] == "unknown"
+    )
+    assert indonesia_unknown["record_id"].startswith("idn-")
+    assert indonesia_unknown["included_in_descriptive_subset"] is True
+    assert any(
+        row["record_id"] == "vnm-pilot-observation-002"
+        and row["conflict_status"] == "explicit_conflict"
+        and "Trois valeurs" in row["conflict_note"]
+        for row in records
+    )
+    assert snapshot["analysis_subsets"]["all_source_linked_records"]["count"] == len(records)
+    assert snapshot["analysis_subsets"]["all_source_linked_records"]["count"] > 0
+    validate_snapshot(snapshot, ROOT, input_git_sha="fed33609")
+
+
 def test_freeze_fails_closed_if_a_source_link_or_count_changes() -> None:
     snapshot = build_snapshot(ROOT, input_git_sha="fed33609")
 
