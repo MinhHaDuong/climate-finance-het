@@ -12,6 +12,7 @@ Author: HDMX-coding-agent
 2026-07-28T21:50Z HDMX-coding-agent note author flagged the prose surfaces still describing an active flag 5 / six-flag pipeline while dvc.yaml holds it inert: data-paper.qmd section 2.2 (six-flag pipeline, flag 5 sentence), section 2.4 (six-flag filter), and export_corpus_table.py caption (six-flag quality filtering). Sweep them all when this decision lands.
 2026-07-29T09:30Z HDMX-coding-agent note roar sweep after PR #1285 found three more six-flag/flag-5 prose surfaces for the retirement sweep: deliverables/_shared/_includes/corpus-enrichment.md (flag 5 in §3), corpus-filtering.md (six flags), scripts/figures/export_filter_ablation.py (six-flag / Flag 5 comments); tab_corpus_sources.md caption regenerates from export_corpus_table.py, already listed
 2026-07-29T11:50Z HDMX-coding-agent note author decision for RDJ resubmission (0283): paper describes FIVE flags matching the frozen v2 artifact; flag 6 renumbered to 5; a disclosure sentence names the inactive sixth flag in the deposited code; semantic_outlier + semantic_outlier_dist removed from the deposit contract and defensively dropped in transform(). Calibrate-or-retire stays open here for v3.
+2026-09-16T14:29Z HDMX-coding-agent note author reports the data paper published. The pushed annotated tag rdj26561-revision1 pins commit 9af9dc08 and explicitly identifies the clean-room-verified v2.0.0 archive. The v2 artifact remains immutable; corpus development is unfrozen on main for the v3 lineage. This removes the publication-freeze blocker, not the calibration/sign-off gate: --skip-semantic-flag stays until a safe v3 implementation lands.
 --- body ---
 ## Context
 
@@ -151,8 +152,9 @@ threshold problem — no sigma fixes it. Handle separately or accept.
 
 ## Invariants
 
-- The corpus is frozen (author, 2026-07-27) mid RDJ-26561 R&R. No activation
-  before sign-off, and no rebuild that moves downstream counts without it.
+- The published v2 corpus stays frozen at `rdj26561-revision1`. V3 development
+  is unfrozen (author, 2026-09-16), but no Flag 5 activation occurs before its
+  separate calibration/sign-off gate.
 - No weakening of acceptance thresholds.
 - 0362 should land before any activation: `run_corpus_pipeline.sh` auto-pushes
   `dvc.lock` to main, so an activated flag would execute with no checkpoint.
