@@ -1,29 +1,33 @@
-"""Record the bounded 0820 Viet Nam availability result without acquisition.
+"""Stage the locally retained Viet Nam corpus without financial promotion.
 
-The 0817 first-wave inventory deliberately names no Viet Nam object.  This
-builder makes that absence explicit as an unmeasured coverage state; it does
-not turn the empty extraction queue into a zero-finance or complete-coverage
-finding.
+This is a bounded reconciliation of the existing 0764 RMP candidate and the
+legacy pilot observations. It neither retrieves sources nor writes canonical
+finance, payment, implementation, or project-identity facts.
 """
 
 from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
+from collections import Counter
 from pathlib import Path
 
 COUNTRY = "VNM"
-NO_INITIAL_INVENTORY = "no_initial_extractable_inventory"
-NOT_MEASURED = "not_measured_not_zero"
-LEAD_IDS = (
-    "vnm-rmp-2023",
-    "vnm-decision-458-2026",
-    "vnm-moit-project-index-2026",
-    "vnm-evn-afd-transmission-2025",
-    "vnm-evn-kfw-tri-an-2025",
-    "vnm-eib-bac-ai-package-2025",
-)
+MIGRATION_PATH = Path("data/jetp/releases/vnm-migration-0764.json")
+RMP_CLASSIFICATIONS = {"named": 25, "programme": 73, "unknown": 181}
+PILOT_CLASSIFICATIONS = {
+    "event_assertion_pending_evidence": 7,
+    "reported_absence_position": 1,
+    "reported_cumulative_position": 3,
+    "reported_financial_position": 5,
+    "reported_financing_envelope": 15,
+    "reported_financing_proposal": 9,
+    "reported_portfolio_count": 4,
+    "reported_programme_position": 1,
+    "withdrawal_assertion_pending_evidence": 1,
+}
 
 
 def _rows(path: Path) -> list[dict[str, str]]:
@@ -31,100 +35,111 @@ def _rows(path: Path) -> list[dict[str, str]]:
         return list(csv.DictReader(handle))
 
 
-def validate_report(report: dict, root: Path) -> None:
-    """Fail closed if an empty queue is described as a substantive null."""
-    if report.get("country") != COUNTRY:
-        raise ValueError("availability result must be Viet Nam")
-    initial = report.get("initial_inventory")
-    if not isinstance(initial, dict):
-        raise ValueError("missing initial inventory")
-    if initial.get("expected_objects") != 0 or initial.get("extracted_objects") != 0:
-        raise ValueError("Viet Nam first-wave inventory must remain empty")
-    if initial.get("evidence_disposition") == "zero_evidence":
-        raise ValueError("empty inventory cannot be reported as zero evidence")
-    if initial.get("coverage_disposition") == "complete":
-        raise ValueError("empty inventory cannot be reported as complete coverage")
-    if initial.get("coverage_disposition") != NO_INITIAL_INVENTORY:
-        raise ValueError("invalid empty-inventory coverage disposition")
-    if initial.get("evidence_disposition") != NOT_MEASURED:
-        raise ValueError("empty inventory must remain not measured")
-    if not initial.get("reason", "").strip():
-        raise ValueError("empty inventory requires a finite reason")
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
-    census = _rows(Path(root) / "docs" / "jetp-study" / "0817-source-census.csv")
-    source_ids = {row["source_id"] for row in census if row["country"] == COUNTRY}
-    leads = report.get("required_next_source_leads")
-    if not isinstance(leads, list) or not leads:
-        raise ValueError("empty inventory requires next source leads")
-    lead_ids = tuple(
-        lead.get("source_id", "") for lead in leads if isinstance(lead, dict)
-    )
-    if lead_ids != LEAD_IDS or not set(lead_ids) <= source_ids:
-        raise ValueError("next source leads must be declared Viet Nam census sources")
-    for lead in leads:
-        if not lead.get("purpose", "").strip() or not lead.get("boundary", "").strip():
-            raise ValueError("next source lead lacks purpose or boundary")
+
+def _migration(root: Path) -> dict:
+    path = Path(root) / MIGRATION_PATH
+    if not path.is_file():
+        raise ValueError("materialized local 0764 Vietnam candidate is required")
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _counter(rows: list[dict], field: str) -> dict[str, int]:
+    return dict(sorted(Counter(row[field] for row in rows).items()))
+
+
+def validate_report(report: dict, root: Path) -> None:
+    """Reject an empty or promoted rendition of the bounded candidate corpus."""
+    if report.get("country") != COUNTRY:
+        raise ValueError("staging result must be Viet Nam")
+    if report.get("availability_disposition") != "nonempty_unadmitted_staging":
+        raise ValueError("nonempty corpus needs an unadmitted staging disposition")
+    rmp = report.get("rmp_inventory_positions")
+    pilot = report.get("pilot_observations")
+    if not isinstance(rmp, dict) or rmp.get("count") == 0:
+        raise ValueError("zero extraction contradicts the retained RMP inventory")
+    if rmp.get("count") != 279 or rmp.get("classifications") != RMP_CLASSIFICATIONS:
+        raise ValueError("RMP inventory count or classifications changed")
+    if rmp.get("admission_status") != "unadmitted_candidate":
+        raise ValueError("RMP inventory cannot be promoted to admitted facts")
+    if not isinstance(pilot, dict) or pilot.get("count") != 46:
+        raise ValueError("pilot observation count changed")
+    if pilot.get("classifications") != PILOT_CLASSIFICATIONS:
+        raise ValueError("pilot classifications changed")
+    if pilot.get("eligible_for_account") is not False:
+        raise ValueError("pilot observations cannot enter a financial account")
+    migration = _migration(root)
+    source = report.get("source_artifact", {})
+    if source.get("path") != str(MIGRATION_PATH) or source.get("sha256") != _sha256(
+        Path(root) / MIGRATION_PATH
+    ):
+        raise ValueError(
+            "staging report does not identify the retained candidate bytes"
+        )
+    positions = migration.get("inventory_positions", [])
+    candidates = migration.get("legacy_position_candidates", [])
+    if len(positions) != rmp["count"] or len(candidates) != pilot["count"]:
+        raise ValueError("staging counts do not replay the retained candidate")
+    if any(
+        row.get("transition_date") is not None or row.get("payment_amount") is not None
+        for row in [*positions, *candidates]
+    ):
+        raise ValueError("staging must not promote dates or payments")
 
 
 def build_report(root: Path) -> dict:
-    """Build the finite availability disposition from the frozen 0817 files."""
+    """Build a deterministic, source-qualified staging availability result."""
     root = Path(root)
-    inventory = _rows(root / "docs" / "jetp-study" / "0817-inventory-manifest.csv")
-    vnm_inventory = [row for row in inventory if row["country"] == COUNTRY]
-    if vnm_inventory:
-        raise ValueError("0820 scope changed: Viet Nam now has an inventory object")
-    census = _rows(root / "docs" / "jetp-study" / "0817-source-census.csv")
-    vnm_census = [row for row in census if row["country"] == COUNTRY]
-    if not vnm_census or {row["country_owner"] for row in vnm_census} != {"0820"}:
-        raise ValueError("Viet Nam census ownership is not frozen for 0820")
+    migration = _migration(root)
+    positions = migration.get("inventory_positions", [])
+    candidates = migration.get("legacy_position_candidates", [])
+    if (
+        migration.get("schema_version") != "country-migration/1"
+        or migration.get("country") != COUNTRY
+    ):
+        raise ValueError("0764 candidate is not the Viet Nam migration contract")
+    if _counter(positions, "classification") != RMP_CLASSIFICATIONS:
+        raise ValueError("0764 RMP inventory is not the declared 279-row population")
+    if _counter(candidates, "classification") != PILOT_CLASSIFICATIONS:
+        raise ValueError("0764 pilot candidates are not the declared 46-row population")
+    pilot_rows = _rows(root / "data" / "jetp" / "vnm-pilot-observations.csv")
+    candidate_ids = {row["source_assertion"]["observation_id"] for row in candidates}
+    if len(pilot_rows) != 46 or candidate_ids != {
+        row["observation_id"] for row in pilot_rows
+    }:
+        raise ValueError(
+            "pilot candidate identities do not replay the retained observation CSV"
+        )
     report = {
-        "schema_version": "jetp-0820-availability/1",
+        "schema_version": "jetp-0820-staging/1",
         "country": COUNTRY,
-        "scope": "0817 initial extractable inventory only; no acquisition",
-        "initial_inventory": {
-            "expected_objects": 0,
-            "extracted_objects": 0,
-            "coverage_disposition": NO_INITIAL_INVENTORY,
-            "evidence_disposition": NOT_MEASURED,
-            "reason": (
-                "The frozen 0817 inventory manifest declares no Viet Nam object for "
-                "the first extraction wave; the empty queue cannot measure operation, "
-                "finance, implementation, or their coverage."
-            ),
+        "scope": "locally retained 0764 candidate and pilot CSV only; no acquisition",
+        "availability_disposition": "nonempty_unadmitted_staging",
+        "source_artifact": {
+            "path": str(MIGRATION_PATH),
+            "sha256": _sha256(root / MIGRATION_PATH),
         },
-        "frozen_census_source_count": len(vnm_census),
-        "required_next_source_leads": [
-            {
-                "source_id": "vnm-rmp-2023",
-                "purpose": "Review named plan priorities as candidates, not finance or payments.",
-                "boundary": "A resource-mobilisation plan cannot by itself establish allocation, approval, or disbursement.",
-            },
-            {
-                "source_id": "vnm-decision-458-2026",
-                "purpose": "Review the updated implementation scheme for programme and project references.",
-                "boundary": "A policy decision is not operation-level financing evidence without an explicit linked statement.",
-            },
-            {
-                "source_id": "vnm-moit-project-index-2026",
-                "purpose": "Retain and review the current official project index when its source byte is available.",
-                "boundary": "The census currently marks this index unavailable; it cannot be treated as an empty portfolio.",
-            },
-            {
-                "source_id": "vnm-evn-afd-transmission-2025",
-                "purpose": "Adjudicate the transmission financing announcement with its operation identity and event wording.",
-                "boundary": "An announcement is not a payment and must retain its stated financial stage.",
-            },
-            {
-                "source_id": "vnm-evn-kfw-tri-an-2025",
-                "purpose": "Adjudicate the Tri An financing announcement and potential pre-JETP history.",
-                "boundary": "A named project cannot be linked to JETP or dated as a transition without explicit evidence.",
-            },
-            {
-                "source_id": "vnm-eib-bac-ai-package-2025",
-                "purpose": "Adjudicate the Bac Ai package while separating package total, contributors, and financing state.",
-                "boundary": "A reported package must not be summed with its components or treated as a disbursement.",
-            },
-        ],
+        "rmp_inventory_positions": {
+            "count": len(positions),
+            "classifications": _counter(positions, "classification"),
+            "admission_status": "unadmitted_candidate",
+            "identity_disposition": "unresolved_inventory_membership",
+            "financial_disposition": "not_financial_facts",
+        },
+        "pilot_observations": {
+            "count": len(candidates),
+            "classifications": _counter(candidates, "classification"),
+            "admission_status": "unadmitted_candidate",
+            "eligible_for_account": False,
+            "financial_disposition": "reported_positions_not_payments",
+        },
+        "boundary": (
+            "RMP rows remain source inventory membership and pilot rows remain pending "
+            "reported positions or assertions; proposals, needs, envelopes, and mobilised "
+            "amounts are not promoted to payments or canonical financial facts."
+        ),
     }
     validate_report(report, root)
     return report
@@ -144,7 +159,7 @@ def main() -> None:
     parser.add_argument(
         "--output",
         type=Path,
-        default=root / "docs" / "jetp-study" / "0820-vietnam-availability.json",
+        default=root / "docs" / "jetp-study" / "0820-vietnam-staging.json",
     )
     args = parser.parse_args()
     write_report(root, args.output)

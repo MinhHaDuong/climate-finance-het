@@ -4,7 +4,10 @@ from __future__ import annotations
 
 import json
 import sys
+from copy import deepcopy
 from pathlib import Path
+
+import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -18,10 +21,16 @@ def test_retained_vietnam_corpus_invalidates_zero_extraction() -> None:
 
     assert report["rmp_inventory_positions"]["count"] == 279
     assert report["pilot_observations"]["count"] == 46
-    assert report["rmp_inventory_positions"]["admission_status"] == "unadmitted_candidate"
+    assert (
+        report["rmp_inventory_positions"]["admission_status"] == "unadmitted_candidate"
+    )
     assert report["pilot_observations"]["eligible_for_account"] is False
     assert report["availability_disposition"] == "nonempty_unadmitted_staging"
     validate_report(report, ROOT)
+    zeroed = deepcopy(report)
+    zeroed["rmp_inventory_positions"]["count"] = 0
+    with pytest.raises(ValueError, match="zero extraction"):
+        validate_report(zeroed, ROOT)
 
 
 def test_checked_in_staging_result_is_a_clean_replay() -> None:
