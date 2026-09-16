@@ -66,6 +66,37 @@ def test_prepared_2026_09_release_descriptor_matches_the_downloadable_archive():
     assert all(not name.startswith('sources/') for name in payloads)
 
 
+def test_reviewed_evidence_records_are_distinct_non_aggregate_and_traceable(tmp_path):
+    """A reviewed fact and a pending candidate never become one released total."""
+    from jetp._public_release import build_release, read_release
+
+    root = Path(__file__).resolve().parents[1]
+    release = tmp_path / 'reviewed-evidence.zip'
+    records = [
+        {'id': 'reviewed-1', 'country': 'VNM', 'status': 'reviewed_fact',
+         'label': 'Reviewed position', 'notes': 'A source-specific position.',
+         'evidence': [{'source_id': 'source-1', 'sha256': 'a' * 64, 'locator': 'p. 1'}]},
+        {'id': 'candidate-1', 'country': 'VNM', 'status': 'pending_candidate',
+         'label': 'Pending position', 'notes': 'Needs identity adjudication.',
+         'evidence': [{'source_id': 'source-2', 'sha256': 'b' * 64, 'locator': 'p. 2'}]},
+    ]
+    descriptor = build_release(
+        root, release, edition='2026-11', input_git_sha='3b432ef322ed9a1bb099089b24b793f6d791842a',
+        cutoff='2026-09-15', prepared_on='2026-09-16', reviewer='JETP release review',
+        reviewed_evidence=records,
+    )
+
+    _, payloads = read_release(release)
+    evidence = json.loads(payloads['site/data/reviewed-evidence.json'])
+    assert [row['id'] for row in evidence['records']] == ['candidate-1', 'reviewed-1']
+    assert {row['aggregation'] for row in evidence['records']} == {'non_aggregate'}
+    assert evidence['analytical_snapshot'] == {'status': 'not_deployed'}
+    assert descriptor['reviewed_evidence']['record_count'] == 2
+    assert descriptor['reviewed_evidence']['by_status'] == {
+        'pending_candidate': 1, 'reviewed_fact': 1,
+    }
+
+
 def _assert_offline_release_replay(releases, edition, destination):
     """Replay every declared static handoff and navigation route without a browser."""
     from jetp._public_release import read_release, restore_release
