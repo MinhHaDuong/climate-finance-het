@@ -30,5 +30,5 @@
   "reproduction": "Run this builder with --input-git-sha at the recorded revision; inputs are content-hashed and output rendering is deterministic.",
   "schema_version": "jetp-0822-run-manifest/1",
   "snapshot_path": "docs/jetp-study/0822-comparative-snapshot.json.gz",
-  "snapshot_sha256": "92825fdd34321efc06bc0a3a084bfbd18f2c825bcf84ba892eff3a1cc168e3cc"
+  "snapshot_sha256": "e9da7b6b5df06bf52e0bb2df0defed84c129b6a9d91d2ec8ff9544b9ffd14872"
 }

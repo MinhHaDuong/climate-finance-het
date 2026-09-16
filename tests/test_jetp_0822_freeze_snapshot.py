@@ -104,12 +104,26 @@ def test_atomic_journals_keep_all_rmp_rows_and_incompatible_inputs() -> None:
     """Coverage is not an operation count; events and positions never silently merge."""
     snapshot = build_snapshot(ROOT, input_git_sha="fed33609")
 
-    rmp = [row for row in snapshot["atomic_observations"] if row["source_layer"] == "vnm_rmp"]
+    rmp = [
+        row
+        for row in snapshot["atomic_observations"]
+        if row["source_layer"] == "vnm_rmp"
+    ]
     assert len(rmp) == 279
     assert len({row["source_candidate_id"] for row in rmp}) == 279
-    assert all(row["journal"] == "positions" and row["event_date"] is None for row in rmp)
-    assert any(row["source_candidate_id"] == "vnm-pilot-observation-018" and row["journal"] == "events" for row in snapshot["event_journal"])
-    tri_an = next(row for row in snapshot["reconciliations"] if row["reconciliation_id"] == "vnm-tri-an-018-019")
+    assert all(
+        row["journal"] == "positions" and row["event_date"] is None for row in rmp
+    )
+    assert any(
+        row["source_candidate_id"] == "vnm-pilot-observation-018"
+        and row["journal"] == "events"
+        for row in snapshot["event_journal"]
+    )
+    tri_an = next(
+        row
+        for row in snapshot["reconciliations"]
+        if row["reconciliation_id"] == "vnm-tri-an-018-019"
+    )
     assert tri_an["status"] == "incompatible"
     assert len(tri_an["input_candidate_ids"]) == 2
 
