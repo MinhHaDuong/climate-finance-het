@@ -35,6 +35,7 @@ Variable & Description \\
 \midrule
 \texttt{abstract\_status} & Fate of the undistributed abstract (Section 3) \\
 \texttt{near\_duplicate\_group} & Group id of near-identical content under several DOIs \\
+\texttt{semantic\_outlier\_dist} & Cosine distance to the embedding centroid of the work's own language, or to the corpus centroid where a language holds too few works; diagnostic only \\
 \texttt{is\_flagged} & Any quality flag raised (refined-subset rule: Section 3) \\
 \texttt{flag\_reason} & Comma-separated raised quality flags; empty when unflagged \\
 \texttt{is\_protected} & Protection from removal (key papers kept despite flags) \\
@@ -77,6 +78,7 @@ Variables of `climate_finance_corpus.csv`, in four groups: record identity, bibl
 | `source_count` | Number of sources that contributed the record |
 | `abstract_status` | Fate of the undistributed abstract (Section 3) |
 | `near_duplicate_group` | Group id of near-identical content under several DOIs |
+| `semantic_outlier_dist` | Cosine distance to the embedding centroid of the work's own language, or to the corpus centroid where a language holds too few works; diagnostic only |
 | `is_flagged` | Any quality flag raised (refined-subset rule: Section 3) |
 | `flag_reason` | Comma-separated raised quality flags; empty when unflagged |
 | `is_protected` | Protection from removal (key papers kept despite flags) |

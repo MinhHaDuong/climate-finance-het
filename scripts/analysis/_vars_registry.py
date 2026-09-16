@@ -131,7 +131,7 @@ DOC_VARS = {
         "corpus_with_embeddings",
         # Flag 6 and Phase B thresholds, read from config (ticket 0357).
         *FLAG_RULE_VARS,
-        "filter_outlier_sigma",
+        "filter_outlier_min_lang",
         "filter_reranker_threshold",
         "protect_min_cited",
         "protect_min_sources",
@@ -193,12 +193,8 @@ DOC_VARS = {
         "filter_protected",
         "filter_title_blacklist",
         *ABLATION_VARS,  # §2.3 language ablation (ticket 0337)
-        # §2.2 thresholds, read from config (ticket 0329) — minus the
-        # semantic-outlier sigma: flag 5 left the data paper with the
-        # five-flag decision (author 2026-07-29, ticket 0361); the sigma
-        # stays computed for the corpus-report, which describes the
-        # implemented (inactive) flag.
-        *[k for k in RETRIEVAL_VARS if k != "filter_outlier_sigma"],
+        # §2.2 thresholds, read from config (tickets 0329, 0361).
+        *RETRIEVAL_VARS,
         "dedup_doi_removed",
         "dedup_fn_pairs",
         "dedup_fn_pairs_pct",

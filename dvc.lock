@@ -144,13 +144,13 @@ stages:
       size: 68988609
   extend:
     cmd: uv run --env-file .env python scripts/harvest/corpus_filter.py --extend
-      --skip-semantic-flag --works-input data/catalogs/enriched_works.csv 
+      --works-input data/catalogs/enriched_works.csv
       --works-output data/catalogs/extended_works.csv
     deps:
     - path: config/corpus_filter.yaml
       hash: md5
-      md5: 9754ca59ab36205f713aa37ab427a839
-      size: 5303
+      md5: b53ac811d054e38e1bbb681f2993d534
+      size: 5707
     - path: data/catalogs/embeddings.npz
       hash: md5
       md5: 57abfdb38f18e2be8b787d4a129bf30b
@@ -161,16 +161,16 @@ stages:
       size: 82439508
     - path: scripts/filter_flags.py
       hash: md5
-      md5: 4c4864558d1ec0728ebd0cfa3e1a0570
-      size: 11755
+      md5: 546208646af855e7f98b0aa91687a0a2
+      size: 17418
     - path: scripts/filter_flags_llm.py
       hash: md5
       md5: 0a6a29c46be84752c162fbc1d11df675
       size: 18627
     - path: scripts/harvest/corpus_filter.py
       hash: md5
-      md5: 1b7cf5f40a736d549aaed0dffe54453e
-      size: 33426
+      md5: 06983ec6e3eebc3165bcdcb4a725bb37
+      size: 33988
     - path: scripts/pipeline_io.py
       hash: md5
       md5: 3372fe9d3660cd23e701e4a12a3a4356
@@ -194,8 +194,8 @@ stages:
     outs:
     - path: data/catalogs/extended_works.csv
       hash: md5
-      md5: 75d1b4249e0145e59758065e975eb2b8
-      size: 85416578
+      md5: ba45adeb6020f034972271ab5060d7a5
+      size: 86327159
   filter:
     cmd: uv run --env-file .env python scripts/harvest/corpus_filter.py --filter
       --works-input data/catalogs/extended_works.csv --works-output 
@@ -203,28 +203,28 @@ stages:
     deps:
     - path: config/corpus_filter.yaml
       hash: md5
-      md5: 9754ca59ab36205f713aa37ab427a839
-      size: 5303
+      md5: b53ac811d054e38e1bbb681f2993d534
+      size: 5707
     - path: config/v1_identifiers.txt.gz
       hash: md5
       md5: dbe033ea6935eec5d4f379fb3484a2eb
       size: 186713
     - path: data/catalogs/extended_works.csv
       hash: md5
-      md5: 75d1b4249e0145e59758065e975eb2b8
-      size: 85416578
+      md5: ba45adeb6020f034972271ab5060d7a5
+      size: 86327159
     - path: scripts/filter_flags.py
       hash: md5
-      md5: 4c4864558d1ec0728ebd0cfa3e1a0570
-      size: 11755
+      md5: 546208646af855e7f98b0aa91687a0a2
+      size: 17418
     - path: scripts/filter_flags_llm.py
       hash: md5
       md5: 0a6a29c46be84752c162fbc1d11df675
       size: 18627
     - path: scripts/harvest/corpus_filter.py
       hash: md5
-      md5: 1b7cf5f40a736d549aaed0dffe54453e
-      size: 33426
+      md5: 06983ec6e3eebc3165bcdcb4a725bb37
+      size: 33988
     - path: scripts/pipeline_io.py
       hash: md5
       md5: 3372fe9d3660cd23e701e4a12a3a4356
