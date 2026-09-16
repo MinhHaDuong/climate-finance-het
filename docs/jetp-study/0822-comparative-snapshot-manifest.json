@@ -1,0 +1,25 @@
+{
+  "dvc_boundary": "0822 consumes the reviewed Git artifacts. Their source links retain DVC document hashes where applicable; this freeze does not materialize or reinterpret DVC bytes.",
+  "input_git_sha": "fed33609",
+  "input_sha256": {
+    "docs/jetp-study/0818-zaf-q1-2026-rows.csv": {
+      "sha256": "f2ababa6b9c006a133aea32dad73e50c4bfa05f03d9b1b9575a94ffcd596273f"
+    },
+    "docs/jetp-study/0819-indonesia-ingestion.json": {
+      "sha256": "b6a94c2590c41800aa4bed97f63d55124219d79e34b6e006413ce63a4d43e17e"
+    },
+    "docs/jetp-study/0820-vietnam-staging.json": {
+      "sha256": "3d37a6357cdee7737eb28cad82a18d23f48c1a28bce8090eab23ba784a84068a"
+    },
+    "docs/jetp-study/0821-senelec-annual-candidates.csv": {
+      "sha256": "626809fe2408fa27b800d63a45df696cb365deaa5ea12cd37ad9f43225ff1717"
+    },
+    "docs/jetp-study/0821-senelec-annual-editions.csv": {
+      "sha256": "298cf3a1d414e535dc8a997e032099c0d5975fe5112bfda6a89573c5e32a5fbc"
+    }
+  },
+  "reproduction": "Run this builder with --input-git-sha at the recorded revision; inputs are content-hashed and output rendering is deterministic.",
+  "schema_version": "jetp-0822-run-manifest/1",
+  "snapshot_path": "docs/jetp-study/0822-comparative-snapshot.json",
+  "snapshot_sha256": "bda8ef306a0964b94fc4031e0705e3eefd239d7d29f963e324cfac3edc7a96ff"
+}

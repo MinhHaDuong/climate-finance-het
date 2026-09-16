@@ -12,7 +12,12 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from jetp.build_0822_freeze_snapshot import build_snapshot, validate_snapshot
+from jetp.build_0822_freeze_snapshot import (
+    build_manifest,
+    build_snapshot,
+    render_snapshot,
+    validate_snapshot,
+)
 
 
 def test_freeze_preserves_denominators_without_mixed_stage_arithmetic() -> None:
@@ -37,9 +42,13 @@ def test_freeze_preserves_denominators_without_mixed_stage_arithmetic() -> None:
     assert snapshot["admitted_comparative_units"] == 0
     assert snapshot["aggregation"]["financial_total"] == "not_computable"
     assert snapshot["aggregation"]["transition_date_total"] == "not_computable"
-    assert snapshot["countries"]["VNM"]["admissibility"] == "nonempty_unadmitted_staging"
+    assert (
+        snapshot["countries"]["VNM"]["admissibility"] == "nonempty_unadmitted_staging"
+    )
     assert snapshot["countries"]["VNM"]["prohibited_inferences"] == [
-        "payment", "transition_date", "operation_identity",
+        "payment",
+        "transition_date",
+        "operation_identity",
     ]
     validate_snapshot(snapshot, ROOT, input_git_sha="fed33609")
 
@@ -63,7 +72,6 @@ def test_checked_in_snapshot_and_run_manifest_replay_byte_for_byte() -> None:
     snapshot_path = ROOT / "docs/jetp-study/0822-comparative-snapshot.json"
     manifest_path = ROOT / "docs/jetp-study/0822-comparative-snapshot-manifest.json"
 
-    assert json.loads(snapshot_path.read_text(encoding="utf-8")) == snapshot
+    assert snapshot_path.read_bytes() == render_snapshot(snapshot)
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    assert manifest["snapshot_sha256"] == snapshot["snapshot_sha256"]
-    assert manifest["input_git_sha"] == "fed33609"
+    assert manifest == build_manifest(snapshot)
