@@ -105,6 +105,22 @@ def _reviewed_evidence_summary(payload):
             'analytical_snapshot': payload['analytical_snapshot']['status']}
 
 
+def _data_build(payloads, release_cutoff):
+    """Expose an older canonical data cutoff rather than silently relabelling it."""
+    overview = json.loads(payloads['site/data/overview.json'])
+    provenance = overview.get('provenance', {})
+    data_cutoff = provenance.get('cutoff')
+    if data_cutoff == release_cutoff:
+        return None
+    data_build = provenance.get('data_build')
+    required = {'identity', 'observation_cutoff', 'relationship_to_release'}
+    if not isinstance(data_build, dict) or required - data_build.keys():
+        raise ValueError('release cutoff differs from overview; explicit data_build is required')
+    if data_build['observation_cutoff'] != data_cutoff:
+        raise ValueError('data_build cutoff must match overview provenance cutoff')
+    return {key: data_build[key] for key in sorted(required)}
+
+
 def _site_payloads(root, input_git_sha):
     root = Path(root)
     try:
@@ -166,6 +182,9 @@ def _descriptor(edition, input_git_sha, cutoff, prepared_on, reviewer, payloads,
             json.loads(payloads['site/data/reviewed-evidence.json'])),
         'files': files,
     }
+    data_build = _data_build(payloads, cutoff)
+    if data_build is not None:
+        descriptor['data_build'] = data_build
     if rehearsal_of is not None:
         if not isinstance(rehearsal_of, str) or not EDITION.fullmatch(rehearsal_of):
             raise ValueError('rehearsal_of must name an edition')
@@ -226,6 +245,9 @@ def read_release(path):
     coverage = _coverage(payloads)
     if descriptor.get('coverage') != coverage or json.loads(payloads['coverage.json']) != coverage:
         raise ValueError('Release coverage mismatch')
+    data_build = _data_build(payloads, descriptor.get('observation_cutoff'))
+    if descriptor.get('data_build') != data_build:
+        raise ValueError('Release data-build provenance mismatch')
     evidence = json.loads(payloads.get('site/data/reviewed-evidence.json', b'{}'))
     if evidence:
         if evidence != _reviewed_evidence(evidence.get('records')):

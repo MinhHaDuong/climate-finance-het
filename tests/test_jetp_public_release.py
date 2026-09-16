@@ -111,7 +111,7 @@ def test_reviewed_evidence_records_are_distinct_non_aggregate_and_traceable(tmp_
     ]
     descriptor = build_release(
         root, release, edition='2026-11', input_git_sha='3b432ef322ed9a1bb099089b24b793f6d791842a',
-        cutoff='2026-09-15', prepared_on='2026-09-16', reviewer='JETP release review',
+        cutoff='2026-09-13', prepared_on='2026-09-16', reviewer='JETP release review',
         reviewed_evidence=records,
     )
 

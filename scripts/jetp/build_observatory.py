@@ -167,6 +167,11 @@ def provenance(root, config):
     clean = subprocess.run(['git', 'diff', '--quiet', 'HEAD', '--', *relative],
                            cwd=root, check=False).returncode == 0
     return {'edition': config['edition'], 'cutoff': config['cutoff'],
+            'data_build': {
+                'identity': 'canonical_observatory_preview',
+                'observation_cutoff': config['cutoff'],
+                'relationship_to_release': 'canonical_data_build_precedes_release_extension',
+            },
             'input_git_sha': revision if tracked and clean else None,
             'build_base_git_sha': revision,
             'input_sha256': {str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths},
