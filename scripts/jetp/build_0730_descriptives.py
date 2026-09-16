@@ -6,8 +6,6 @@ conversion, source-amount pooling, event inference, or causal comparison is
 performed here.
 """
 
-from __future__ import annotations
-
 import argparse
 import csv
 import gzip
@@ -16,7 +14,6 @@ import json
 from collections import Counter
 from pathlib import Path
 from typing import Any
-
 
 SNAPSHOT = Path("docs/jetp-study/0822-comparative-snapshot.json.gz")
 SNAPSHOT_MANIFEST = Path("docs/jetp-study/0822-comparative-snapshot-manifest.json")

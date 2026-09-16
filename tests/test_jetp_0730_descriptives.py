@@ -1,11 +1,8 @@
 """Ticket 0730 must preserve the snapshot's documentary denominators."""
 
-from __future__ import annotations
-
 import json
 import sys
 from pathlib import Path
-
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
