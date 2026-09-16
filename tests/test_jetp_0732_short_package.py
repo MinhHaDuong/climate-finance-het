@@ -2,7 +2,6 @@
 
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 TEX = ROOT / "deliverables" / "jetp-mesure" / "jetp-mesure.tex"
 RECIPE = ROOT / "deliverables" / "jetp-mesure" / "jetp-mesure.mk"

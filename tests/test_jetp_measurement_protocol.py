@@ -4,7 +4,6 @@ import json
 from pathlib import Path
 
 import pytest
-
 from jetp._measurement_protocol import ProtocolError, validate_protocol
 
 
