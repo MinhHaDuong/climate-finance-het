@@ -3,13 +3,20 @@
 from __future__ import annotations
 
 import csv
+import hashlib
 import sys
 from pathlib import Path
+
+import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from jetp._senelec_annual_review import validate_candidates, validate_editions
+from jetp._senelec_annual_review import (
+    validate_candidate_evidence,
+    validate_candidates,
+    validate_editions,
+)
 
 
 def read_csv(path: Path) -> list[dict[str, str]]:
@@ -51,3 +58,35 @@ def test_annual_report_candidates_cannot_merge_with_a_plan_slot_by_similarity() 
         ("2023", "sen-senelec-2023-padaes-best-crd"),
         ("2024", "sen-senelec-2024-diass-generation"),
     }
+
+
+def test_candidate_replay_rejects_wrong_pdf_hash_page_or_excerpt(tmp_path: Path) -> None:
+    """A candidate is reproducible only from its own retained PDF page."""
+    payload = b"retained PDF bytes"
+    digest = hashlib.sha256(payload).hexdigest()
+    document = tmp_path / "objects" / digest[:2] / f"{digest}.pdf"
+    document.parent.mkdir(parents=True)
+    document.write_bytes(payload)
+    editions = [{
+        "inventory_id": "sen-senelec-2023", "source_id": "sen-senelec-annual-report-2023",
+        "edition": "2023", "raw_disposition": "raw_retained",
+        "extraction_disposition": "reviewed", "document_sha256": digest,
+        "candidate_count": "1", "notes": "fixture",
+    }]
+    candidate = {
+        "candidate_id": "candidate", "source_id": "sen-senelec-annual-report-2023",
+        "edition": "2023", "document_sha256": digest, "locator": "PDF p.2",
+        "candidate_type": "lead", "candidate_summary": "fixture",
+        "verifiable_excerpt": "exact source text", "candidate_disposition": "unresolved_no_identity",
+        "canonical_project_id": "", "reason": "fixture",
+    }
+    extract = lambda _path, page: {2: "prefix exact source text suffix"}[page]
+
+    validate_candidate_evidence([candidate], editions, tmp_path, extract_page=extract)
+
+    with pytest.raises(ValueError, match="hash"):
+        validate_candidate_evidence([{**candidate, "document_sha256": "0" * 64}], editions, tmp_path, extract_page=extract)
+    with pytest.raises(ValueError, match="page"):
+        validate_candidate_evidence([{**candidate, "locator": "PDF p.3"}], editions, tmp_path, extract_page=extract)
+    with pytest.raises(ValueError, match="excerpt"):
+        validate_candidate_evidence([{**candidate, "verifiable_excerpt": "not in source"}], editions, tmp_path, extract_page=extract)
