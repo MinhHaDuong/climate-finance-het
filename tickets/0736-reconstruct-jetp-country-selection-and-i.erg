@@ -5,6 +5,7 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-09-14T06:47Z HDMX-coding-agent created
+2026-09-14T07:56Z HDMX-coding-agent recorded bounded documentary audit; review pending
 
 --- body ---
 
@@ -42,11 +43,11 @@ JETP must not automatically become an untreated or quasi-random control.
 
 ## Deliverables and exit criteria
 
-- [ ] Dated source-linked selection/negotiation/intervention chronology with uncertainties
-- [ ] Comparator admissibility matrix flags negotiations, parallel programmes and other exposure
-- [ ] Rival explanations and evidence distinguishing them from JETP treatment recorded
-- [ ] Any allocation-rule candidate supported by original rules and a list of remaining identification gaps
-- [ ] Go/narrow/defer implications for each candidate design; no assumption that a funnel establishes assignment
+- [x] Dated source-linked selection/negotiation/intervention chronology with uncertainties
+- [x] Comparator admissibility matrix flags negotiations, parallel programmes and other exposure
+- [x] Rival explanations and evidence distinguishing them from JETP treatment recorded
+- [x] Any allocation-rule candidate supported by original rules and a list of remaining identification gaps
+- [x] Go/narrow/defer implications for each candidate design; no assumption that a funnel establishes assignment
 
 Unknown is a valid finding. These results guide 0729's definition of treatment,
 time zero, eligible population and counterfactual; they do not estimate an effect.
@@ -54,3 +55,27 @@ time zero, eligible population and counterfactual; they do not estimate an effec
 ## GitHub planning issue
 
 https://github.com/MinhHaDuong/climate-finance-het/issues/1346
+
+## First-round evidence — 2026-09-14
+
+Frozen acceptance brief committed as 844888af before external research.
+Documentary artifacts: docs/jetp-audits/0736/report.md and linked chronology,
+comparator/rival/allocation matrices, sources.csv and acquisition-log.csv.
+
+Exactly 20 external units used (7 queries, 12 web opens, 1 failed shell URL
+retrieval); no second round. First documentary check passes with stated gaps:
+South Africa events separated; India not automatically untreated. Senegal plan
+publication unverified through failed original route; no usable country
+allocation rule established. Direct Council URL reopens failed, but the parent
+subsequently verified the cached original extraction independently. No source
+bytes archived, no ledger changes, no estimation. Documentary exit criteria
+passed scientific review; ticket stays open until PR acceptance.
+
+## Independent review
+
+All five documentary exit criteria are addressed as a bounded evidence audit;
+this does not establish a usable causal design or complete historical population.
+An independent scientific reviewer accepted the report and matrices. Fast gate:
+1549 passed, ten skipped; adherence:330 passed, thirteen skipped. The report
+records the missing-DVC environment failure and successful hydrated rerun.
+Ticket remains open until the report PR is accepted.

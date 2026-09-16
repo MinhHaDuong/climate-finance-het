@@ -80,3 +80,67 @@ return the scope decision to the author. Observatory/data-paper work continues.
 ## GitHub planning issue
 
 https://github.com/MinhHaDuong/climate-finance-het/issues/1337
+
+## First bounded audit checkpoint, 14 September 2026
+
+0735 and 0736 completed their first 20-unit rounds and received independent
+scientific review; report acceptance is tracked in their PRs. The source audits
+do not authorize primary estimation. Historical work found two dated World Bank
+rosters but no original approval/signature pairs, incomplete landmark coverage
+and uncertain stability of roster inclusion rules. Selection work documents
+pre-declaration discussions, India's parallel support, and selection partly on
+expected energy changes; no usable allocation mechanism was established.
+
+Before a design decision, review the reports under docs/jetp-audits/0735 and0736.
+Discriminating next documents are the missing 2015/2021 rosters and original
+operation agreements/withdrawals; G7 selection records; dated CIPP screening and
+accepted/rejected project lists; and comparator exposure histories. A further
+round needs a revised bounded brief. Neither baseline matching nor an absence
+of retrieved allocation rules establishes or refutes causality by itself.
+No design, exposure baseline or primary outcome is frozen by these audits.
+
+## Broader second pass, 14 September 2026
+
+The author requested coverage beyond World Bank, energy and JETP countries.
+The new0735round2report demonstrates ADB/EIB milestone pairs and a downloaded
+AFD export:2080financing IDs,1492project IDs,1911award/signature pairs;366loans
+and1714grants. See `docs/jetp-audits/0735/round2/report.md` in PR1347.
+
+Prioritize an AFD coverage/retention pilot with ADB/EIB complementary histories,
+not a preselected estimator. All AFD rows have signatures, so this export alone
+cannot supply approved-but-unsigned risk sets. Missing payment dates, counterparty
+consent,2024metadata, multi-country rows and seven reversed award/signature pairs
+require investigation. Country location is not JETP attribution or untreated
+status. The source data now warrant a broader feasibility exercise; they do not
+settle identification. Absence of a randomized allocation rule is not a blanket
+rejection of other causal designs.
+
+Next discriminators: an older AFD snapshot and inclusion/removal rules; source
+records for date anomalies; stage-specific baseline populations; lender and
+sector harmonization; broader-country negotiation/parallel-programme exposure.
+Newly archived source bytes are locally DVC-tracked; padme remote replication
+remains pending after connection refusal. No primary protocol is frozen.
+
+## Bilateral source reconciliation, third pass
+
+Author-directed AFD/JICA/KfW/USAID/UK audit: see
+`docs/jetp-audits/0735/round3/report.md` in PR #1347. AFD current tables contain
+3,277 financing IDs; seven-country XML retains 223 of 224 legacy IDs. One
+payment-unobserved financing is absent. Payment entries are reporting-period
+observations and cannot replace exact legacy first-payment dates. Full-table
+reconciliation identifies 19 missing IDs, one missing and one changed signature
+proxy. AFD remains the first population/date-semantics pilot.
+
+Complementary routes: 4,036 KfW/BMZ activities with periodic payments; 7,327
+FCDO programmes plus 17,955 components, including pipeline and completed cases;
+JICA dated annual signing/amendment lists. USAID accounting access is established
+but the acquired XML is a historical administrative slice requiring a project-ID
+crosswalk. FCDO does not cover every UK financing institution. Do not add these
+incommensurate record counts or label non-energy observations untreated.
+
+Next work uses the round-3 memo's explicit first tests: disappearing unpaid-field
+records remain loss-to-observation; periodic dates are not exact payment days;
+parent/component and signing/amendment entries stay distinct. Build lender- and
+stage-specific feasibility tables before selecting identification, with country
+conditions and project matching plus the independent selection/exposure audit.
+No primary estimator, outcome or exposure baseline is frozen.
