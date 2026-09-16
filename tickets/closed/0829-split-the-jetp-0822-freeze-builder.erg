@@ -2,10 +2,16 @@
 Title: Split the JETP 0822 freeze builder
 Created: 2026-09-16
 Author: HDMX-coding-agent
+Closed: implemented and verified in t0829-split-0822-freeze-builder
 
 --- log ---
 2026-09-16T13:10Z HDMX-coding-agent created
+2026-09-16T13:13Z HDMX-coding-agent red test_no_god_modules fails on build_0822_freeze_snapshot.py (1163L)
+2026-09-16T13:16Z HDMX-coding-agent green split modules are 618/268/312 lines; 7 targeted tests and binary output comparison pass
+2026-09-16T13:19Z HDMX-coding-agent refactor Ruff import formatting applied; check-fast and lint pass
+2026-09-16T13:22Z HDMX-coding-agent verified make check passes after local DVC and reranker-cache provisioning
 
+2026-09-16T13:20Z HDMX-coding-agent closed — implemented and verified in t0829-split-0822-freeze-builder
 --- body ---
 ## Context
 
@@ -45,14 +51,14 @@ private module names.
 
 ## Exit criteria
 
-- [ ] The module-length test passes and every touched Python module remains
+- [x] The module-length test passes and every touched Python module remains
       below 800 lines.
-- [ ] The six tests in `tests/test_jetp_0822_freeze_snapshot.py` pass without
+- [x] The six tests in `tests/test_jetp_0822_freeze_snapshot.py` pass without
       changing their semantic assertions or the public imports.
-- [ ] Running `write_outputs` before and after the refactor with
+- [x] Running `write_outputs` before and after the refactor with
       `input_git_sha="e90ff6fe"` produces byte-identical gzip snapshot and JSON
       manifest files.
-- [ ] `make check-fast`, `make lint`, and, because the diff touches `scripts/`,
+- [x] `make check-fast`, `make lint`, and, because the diff touches `scripts/`,
       the full `make check` pass.
-- [ ] The ticket is closed in the implementation PR, whose diff contains no
+- [x] The ticket is closed in the implementation PR, whose diff contains no
       documentary artifact changes.
