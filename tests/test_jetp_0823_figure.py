@@ -1,0 +1,52 @@
+"""The central JETP figure must remain a coverage figure, not a causal claim."""
+
+import csv
+import json
+import sys
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "scripts"))
+
+from jetp.build_0823_figure import build_figure_data, render_outputs
+
+
+def test_figure_data_keeps_one_denominator_and_the_null_join_visible() -> None:
+    """Different documentary panels cannot be made to look like a joint sample."""
+    data = build_figure_data(ROOT)
+
+    assert [row["panel_id"] for row in data["panels"]] == [
+        "A_function_labels",
+        "B_finance_instruments",
+        "C_event_history",
+    ]
+    assert {row["atomic_denominator"] for row in data["panels"]} == {1740}
+    assert data["common_explicit_unit_observations"] == 0
+    assert data["central_result"] == (
+        "The frozen corpus documents the three dimensions at sharply different "
+        "coverage levels and contains no atomic assertion explicitly coded on all three."
+    )
+    assert all("causal" not in row["panel_note"].lower() for row in data["panels"])
+
+
+def test_rendered_figure_exposes_unknowns_and_replays_from_manifest(tmp_path: Path) -> None:
+    """A zero or missing panel renders legibly and records exact inputs and outputs."""
+    render_outputs(ROOT, tmp_path)
+
+    plotted = list(csv.DictReader((tmp_path / "0823-central-figure-data.csv").open()))
+    assert len(plotted) == 3
+    assert plotted[2]["documented_observations"] == "7"
+    assert plotted[2]["unknown_or_uncoded_observations"] == "1733"
+
+    svg = (tmp_path / "0823-central-figure.svg").read_text(encoding="utf-8")
+    assert "A. Function labels" in svg
+    assert "B. Finance instruments" in svg
+    assert "C. Event history" in svg
+    assert "No common explicit A/B/C atomic assertion: 0 / 1,740" in svg
+    assert "causal" not in svg.lower()
+
+    manifest = json.loads((tmp_path / "0823-figure-manifest.json").read_text())
+    assert manifest["reproduction"].endswith("build_0823_figure.py --root .")
+    assert manifest["files"]["0823-central-figure.svg"]["sha256"]
+    assert manifest["input_0730_sha256"]
