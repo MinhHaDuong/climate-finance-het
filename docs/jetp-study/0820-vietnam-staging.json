@@ -1,0 +1,39 @@
+{
+  "availability_disposition": "nonempty_unadmitted_staging",
+  "boundary": "RMP rows remain source inventory membership and pilot rows remain pending reported positions or assertions; proposals, needs, envelopes, and mobilised amounts are not promoted to payments or canonical financial facts.",
+  "country": "VNM",
+  "pilot_observations": {
+    "admission_status": "unadmitted_candidate",
+    "classifications": {
+      "event_assertion_pending_evidence": 7,
+      "reported_absence_position": 1,
+      "reported_cumulative_position": 3,
+      "reported_financial_position": 5,
+      "reported_financing_envelope": 15,
+      "reported_financing_proposal": 9,
+      "reported_portfolio_count": 4,
+      "reported_programme_position": 1,
+      "withdrawal_assertion_pending_evidence": 1
+    },
+    "count": 46,
+    "eligible_for_account": false,
+    "financial_disposition": "reported_positions_not_payments"
+  },
+  "rmp_inventory_positions": {
+    "admission_status": "unadmitted_candidate",
+    "classifications": {
+      "named": 25,
+      "programme": 73,
+      "unknown": 181
+    },
+    "count": 279,
+    "financial_disposition": "not_financial_facts",
+    "identity_disposition": "unresolved_inventory_membership"
+  },
+  "schema_version": "jetp-0820-staging/1",
+  "scope": "locally retained 0764 candidate and pilot CSV only; no acquisition",
+  "source_artifact": {
+    "path": "data/jetp/releases/vnm-migration-0764.json",
+    "sha256": "ef7538d2af534d31877634bd42f28c5fae1c20b192e6647fc030146a7492eb34"
+  }
+}

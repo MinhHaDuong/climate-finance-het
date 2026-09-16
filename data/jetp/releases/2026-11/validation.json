@@ -1,0 +1,13 @@
+{
+  "archive": "jetp-observatory-2026-11.zip",
+  "archive_sha256": "7d00a1e513348bdc8bf70d4946c548a6f454a0c6041e2f92b989b3458fc75dc2",
+  "edition": "2026-11",
+  "status": "prepared; external deposit and public URL are later publication actions",
+  "validated_checks": [
+    "complete_file_hash_inventory",
+    "four_country_downloads",
+    "reviewed_evidence_is_record_level_non_aggregate",
+    "derived_0822_snapshot_not_deployed",
+    "offline_restore"
+  ]
+}

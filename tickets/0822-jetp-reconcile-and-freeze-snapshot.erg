@@ -1,0 +1,29 @@
+%erg 0.1
+Title: Reconcile JETP evidence and freeze the comparative analysis snapshot
+Created: 2026-09-15
+Author: Codex with author authorisation
+Blocked-by: 0818
+Blocked-by: 0819
+Blocked-by: 0820
+Blocked-by: 0821
+
+--- log ---
+--- body ---
+
+## First test
+
+Two assertions of one financing may not count twice, while an incompatible
+cumulative position and flow must stop aggregation. The fixture preserves their
+source links and reports the incompatibility.
+
+## Actions and exit criteria
+
+Reconcile all country dispositions; admit reviewed facts using the existing
+canonical contracts; preserve duplicates, hierarchies, currencies, accounting
+bases, corrections, coverage and unknowns. Build a signed immutable derived
+snapshot and run manifest from pinned Git/DVC inputs. A clean reproduction must
+rebuild it byte-for-byte without a second editable authority.
+
+## Links
+
+`conception/jetp-execution-replan-2026-09-15.md`; parent programme 0725.

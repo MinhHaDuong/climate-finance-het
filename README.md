@@ -12,8 +12,10 @@ How economists and institutions co-produced the categories, metrics, and account
 | Data paper | `deliverables/data-paper/data-paper.qmd` | RDJ4HSS (diamond OA) | Revision 1 released 2026-07-29, resubmission in progress |
 | Technical report | `deliverables/technical-report/technical-report.qmd` | HAL working paper | Complete |
 | Method paper | `deliverables/multilayer/multilayer-detection.qmd` | Scientometrics / QSS | Outline |
+| JETP measurement paper | `deliverables/jetp-mesure/jetp-mesure.tex` | Climate Policy | Live skeleton |
+| JETP political-economy paper | `deliverables/jetp-econpol/jetp-econpol.tex` | Development Policy Review | Live skeleton |
 
-Each is its own Quarto project under `deliverables/<x>/`, sharing fragments and assets via `deliverables/_shared/_includes/`.
+Most documents are Quarto projects under `deliverables/<x>/`, sharing fragments and assets via `deliverables/_shared/_includes/`. The two live JETP papers are deliberately plain LaTeX documents: their submission classes are not yet confirmed and their macro files are generated from the document-variable registry.
 
 ## Setup
 
@@ -99,7 +101,11 @@ the repo:
   of their declared keys. `tests/test_render_placeholders.py` renders every
   deliverable and fails on the whole unresolved-reference class — meta keys,
   crossrefs, citations — so an unregistered document cannot quietly ship one
-  (tickets 0357, 0420).
+  (tickets 0357, 0420). The live JETP measurement and political-economy papers
+  are the intentional second render chain: plain `.tex` sources and committed
+  `*-vars.tex` macro handoffs, built with **TeX Live + latexmk only**. Their
+  `.log` files are checked for unresolved references, citations, and control
+  sequences; they do not use Quarto or Pandoc.
 
 An already-submitted paper's frozen, reproducible form is its **external deposit**,
 not an in-repo copy: the data paper's is `papiers/sent/RDJ4HSS_…/` plus its Zenodo
@@ -109,12 +115,13 @@ keeps only the live working copy.
 ## Repository structure
 
 ```
-├── deliverables/                     # One Quarto project per document
+├── deliverables/                     # Quarto projects plus two plain-LaTeX JETP papers
 │   ├── manuscript/                    #   manuscript.qmd + -Gide.qmd + manuscript.mk
 │   ├── technical-report/              #   Full pipeline documentation
 │   ├── data-paper/                    #   Corpus data paper
 │   ├── multilayer/                    #   Method paper + techrep variant
 │   ├── corpus-report/  agentic/  zoo/ #   Other papers
+│   ├── jetp-mesure/ jetp-econpol/      #   Live LaTeX JETP paper skeletons
 │   ├── slides-gide/  slides-eshet/    #   Conference slide decks
 │   └── _shared/                       #   _includes/, bibliography/, figures/, tables/ (generated)
 │                                      #   (each deliverable's PDF/DOCX renders next to its .qmd, gitignored)

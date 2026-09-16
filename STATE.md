@@ -20,14 +20,23 @@ prepared `2026-09` and fact-unchanged `2026-10` packages restore offline with
 their routes and downloads. Both interruption and validation-rejection paths
 preserve the earlier package byte-for-byte. No site deployment occurred.
 
-The AFD, KfW and FCDO lender pilots are merged and synthesized in
-`docs/jetp-pilots/2026-09-15/synthesis.md`. They establish bounded measurement
-findings, not a JETP causal effect. The next research decision is the
-design-only country-quarter concessional-approval feasibility screen in 0729;
-it may return GO, NARROW or DEFER. MVP v0.2, estimation and the short paper
-remain unexecuted pending that decision and author approval. Strategy and
-handoff: `conception/jetp-observatory-and-papers-plan.md` and
-`docs/jetp-pilots/2026-09-15/v0.2-and-short-paper-handoff.md`.
+The AFD, KfW and FCDO lender pilots establish bounded measurement findings, not
+a JETP causal effect. Reviewed branches add the completed 0736 selection audit,
+0729 CAUSAL DEFER and 0814 DEFER. The author has selected a JETP-only,
+non-causal comparative measurement programme: protocol0816, source census0817,
+country ingestion0818–0821, frozen snapshot0822, statistics0730, key figure0823,
+MVP extension0824 and paper0732. Current scientific framing:
+`conception/jetp-short-paper-framing-2026-09-15.md`: progression of transition
+functions, public/private finance, and histories of the same operations; one
+dominant result and three coordinated figure panels. Next 0816 deliverable is a
+diagnostic joinability matrix from existing evidence. The v3 worktree protocol
+is unapproved; the source census and primary analysis are not frozen.
+
+Current iterative milestones: **M1** is a sourced four-country inventory of
+proposed JETP objects; **M2** records the documentary state of each object with
+date role, source and uncertainty; **M3** reconciles finance and histories only
+where the evidence supports it. The MVP exposes the same evidence layers and
+their coverage; it is not a parallel datastore or proof of an analytical result.
 
 ## Status
 

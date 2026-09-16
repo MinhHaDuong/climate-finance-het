@@ -66,6 +66,91 @@ def test_prepared_2026_09_release_descriptor_matches_the_downloadable_archive():
     assert all(not name.startswith('sources/') for name in payloads)
 
 
+def test_prepared_2026_11_reviewed_evidence_extension_is_offline_and_non_aggregate(tmp_path):
+    from jetp._public_release import read_release, restore_release
+
+    root = Path(__file__).resolve().parents[1]
+    release = root / 'data/jetp/releases/2026-11/jetp-observatory-2026-11.zip'
+    descriptor, payloads = read_release(release)
+    assert json.loads((release.parent / 'release.json').read_text()) == descriptor
+    edition_history = json.loads(payloads['site/data/editions.json'])['editions']
+    assert descriptor['edition'] in {row['edition'] for row in edition_history}
+    overview = json.loads(payloads['site/data/overview.json'])
+    data_build = overview['provenance']['data_build']
+    assert data_build == descriptor['data_build']
+    assert data_build['observation_cutoff'] == '2026-09-13'
+    assert data_build['observation_cutoff'] != descriptor['observation_cutoff']
+    assert data_build['relationship_to_release'] == 'canonical_data_build_precedes_release_extension'
+    assert descriptor['reviewed_evidence'] == {
+        'record_count': 3, 'by_status': {'reviewed_fact': 3},
+        'aggregation': 'record_level_non_aggregate', 'analytical_snapshot': 'not_deployed',
+    }
+    evidence = json.loads(payloads['site/data/reviewed-evidence.json'])
+    assert {row['country'] for row in evidence['records']} == {'ZAF', 'IDN', 'SEN'}
+    assert len({row['id'] for row in evidence['records']}) == len(evidence['records'])
+    assert {row['aggregation'] for row in evidence['records']} == {'non_aggregate'}
+    assert evidence['analytical_snapshot'] == {'status': 'not_deployed'}
+    assert '0822-comparative-snapshot' not in payloads
+    restore_release(release, tmp_path / 'offline-2026-11')
+    assert (tmp_path / 'offline-2026-11/data/reviewed-evidence.json').is_file()
+
+
+def test_prepared_2026_11_r1_exposes_staged_depth_without_deploying_snapshot(tmp_path):
+    from jetp._public_release import read_release, restore_release
+
+    root = Path(__file__).resolve().parents[1]
+    release = root / 'data/jetp/releases/2026-11-r1/jetp-observatory-2026-11-r1.zip'
+    descriptor, payloads = read_release(release)
+    assert json.loads((release.parent / 'release.json').read_text()) == descriptor
+    assert descriptor['edition'] == '2026-11-r1'
+    assert descriptor['reviewed_evidence']['evidence_depth'] == {
+        'reviewed_canonical_records': 3,
+        'canonical_named_records': 383,
+        'frozen_source_documents': 301,
+        'structured_atomic_observations': {
+            'total': 1740,
+            'by_country': {'ZAF': 257, 'IDN': 1148, 'VNM': 325, 'SEN': 10},
+            'vnm_rmp_positions': 279,
+            'status': 'not_deployed',
+        },
+    }
+    assert '0822-comparative-snapshot' not in payloads
+    restore_release(release, tmp_path / 'offline-2026-11-r1')
+    restored = (tmp_path / 'offline-2026-11-r1/data/reviewed-evidence.json').read_text()
+    assert '"vnm_rmp_positions": 279' in restored
+
+
+def test_reviewed_evidence_records_are_distinct_non_aggregate_and_traceable(tmp_path):
+    """A reviewed fact and a pending candidate never become one released total."""
+    from jetp._public_release import build_release, read_release
+
+    root = Path(__file__).resolve().parents[1]
+    release = tmp_path / 'reviewed-evidence.zip'
+    records = [
+        {'id': 'reviewed-1', 'country': 'VNM', 'status': 'reviewed_fact',
+         'label': 'Reviewed position', 'notes': 'A source-specific position.',
+         'evidence': [{'source_id': 'source-1', 'sha256': 'a' * 64, 'locator': 'p. 1'}]},
+        {'id': 'candidate-1', 'country': 'VNM', 'status': 'pending_candidate',
+         'label': 'Pending position', 'notes': 'Needs identity adjudication.',
+         'evidence': [{'source_id': 'source-2', 'sha256': 'b' * 64, 'locator': 'p. 2'}]},
+    ]
+    descriptor = build_release(
+        root, release, edition='2026-11', input_git_sha='3b432ef322ed9a1bb099089b24b793f6d791842a',
+        cutoff='2026-09-13', prepared_on='2026-09-16', reviewer='JETP release review',
+        reviewed_evidence=records,
+    )
+
+    _, payloads = read_release(release)
+    evidence = json.loads(payloads['site/data/reviewed-evidence.json'])
+    assert [row['id'] for row in evidence['records']] == ['candidate-1', 'reviewed-1']
+    assert {row['aggregation'] for row in evidence['records']} == {'non_aggregate'}
+    assert evidence['analytical_snapshot'] == {'status': 'not_deployed'}
+    assert descriptor['reviewed_evidence']['record_count'] == 2
+    assert descriptor['reviewed_evidence']['by_status'] == {
+        'pending_candidate': 1, 'reviewed_fact': 1,
+    }
+
+
 def _assert_offline_release_replay(releases, edition, destination):
     """Replay every declared static handoff and navigation route without a browser."""
     from jetp._public_release import read_release, restore_release
@@ -122,7 +207,7 @@ def test_two_real_fact_unchanged_rehearsal_releases_restore_offline(tmp_path):
     assert validation['archive_sha256'] == hashlib.sha256(
         (releases / '2026-10/jetp-observatory-2026-10.zip').read_bytes()).hexdigest()
     editions = json.loads((root / 'deliverables/jetp-observatory/data/editions.json').read_text())
-    assert [row['edition'] for row in editions['editions']] == ['2026-10', '2026-09']
+    assert [row['edition'] for row in editions['editions']] == ['2026-11-r1', '2026-11', '2026-10', '2026-09']
 
     for edition in ('2026-09', '2026-10'):
         _assert_offline_release_replay(releases, edition, tmp_path / edition)
