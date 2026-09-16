@@ -224,3 +224,15 @@ def test_static_renderer_exposes_release_history_and_monthly_change_route():
     assert 'data/editions.json' in renderer
     assert 'catch(() => ({ editions: [] }))' in renderer
     assert '#editions' in (root / 'deliverables/jetp-observatory/index.html').read_text()
+
+
+def test_static_renderer_has_a_non_aggregate_reviewed_evidence_route():
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    renderer = (root / 'deliverables/jetp-observatory/app.js').read_text()
+    assert 'function evidencePage()' in renderer
+    assert 'data-reviewed-evidence-id' in renderer
+    assert 'Non-aggregate record.' in renderer
+    assert 'comparative staging snapshot is derived research material' in renderer
+    assert '#evidence' in (root / 'deliverables/jetp-observatory/index.html').read_text()

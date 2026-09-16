@@ -6,12 +6,14 @@ import os
 import re
 import tempfile
 import zipfile
+from collections import Counter
 from pathlib import Path
 
 FORMAT_VERSION = 'jetp-public-release/1'
 COUNTRIES = ('ZAF', 'IDN', 'VNM', 'SEN')
 EDITION = re.compile(r'^\d{4}-\d{2}(?:-r[1-9]\d*)?$')
 SITE = Path('deliverables/jetp-observatory')
+REVIEWED_STATUSES = {'reviewed_fact', 'pending_candidate'}
 
 
 def _digest(data):
@@ -59,6 +61,48 @@ def _coverage(payloads):
     result['curated_source_count'] = overview['source_count']
     result['historical_reference_count'] = overview['historical_count']
     return result
+
+
+def _reviewed_evidence(records):
+    """Keep reviewed source assertions visible without making them a ledger."""
+    if not isinstance(records, list):
+        raise ValueError('reviewed_evidence must be a list')
+    normalized, ids = [], set()
+    for record in records:
+        if not isinstance(record, dict):
+            raise ValueError('reviewed evidence record must be an object')
+        item = dict(record)
+        for key in ('id', 'country', 'status', 'label', 'notes'):
+            if not isinstance(item.get(key), str) or not item[key]:
+                raise ValueError(f'reviewed evidence requires {key}')
+        if item['id'] in ids:
+            raise ValueError('reviewed evidence IDs must be unique')
+        ids.add(item['id'])
+        if item['country'] not in COUNTRIES or item['status'] not in REVIEWED_STATUSES:
+            raise ValueError('unknown reviewed evidence country or status')
+        evidence = item.get('evidence')
+        if not isinstance(evidence, list) or not evidence:
+            raise ValueError('reviewed evidence requires source pedigree')
+        for proof in evidence:
+            if not isinstance(proof, dict) or any(
+                    not isinstance(proof.get(key), str) or not proof[key]
+                    for key in ('source_id', 'sha256', 'locator')):
+                raise ValueError('reviewed evidence proof requires source_id, sha256 and locator')
+            if not re.fullmatch(r'[0-9a-f]{64}', proof['sha256']):
+                raise ValueError('reviewed evidence proof requires a SHA-256')
+        item['evidence'] = sorted(evidence, key=lambda proof: (proof['source_id'], proof['locator']))
+        item['aggregation'] = 'non_aggregate'
+        normalized.append(item)
+    return {'format_version': 'jetp-reviewed-evidence/1',
+            'records': sorted(normalized, key=lambda item: item['id']),
+            'analytical_snapshot': {'status': 'not_deployed'}}
+
+
+def _reviewed_evidence_summary(payload):
+    return {'record_count': len(payload['records']),
+            'by_status': dict(sorted(Counter(item['status'] for item in payload['records']).items())),
+            'aggregation': 'record_level_non_aggregate',
+            'analytical_snapshot': payload['analytical_snapshot']['status']}
 
 
 def _site_payloads(root, input_git_sha):
@@ -118,6 +162,8 @@ def _descriptor(edition, input_git_sha, cutoff, prepared_on, reviewer, payloads,
                             'conversion': 'none'},
         'source_redistribution': 'excluded',
         'coverage': coverage,
+        'reviewed_evidence': _reviewed_evidence_summary(
+            json.loads(payloads['site/data/reviewed-evidence.json'])),
         'files': files,
     }
     if rehearsal_of is not None:
@@ -128,12 +174,18 @@ def _descriptor(edition, input_git_sha, cutoff, prepared_on, reviewer, payloads,
 
 
 def build_release(root, output, *, edition, input_git_sha, cutoff, prepared_on, reviewer,
-                  rehearsal_of=None):
+                  rehearsal_of=None, reviewed_evidence=None):
     """Write a deterministic offline archive from site bytes pinned at one commit."""
     output = Path(output)
     if os.path.lexists(output):
         raise FileExistsError(f'Release destination already exists: {output}')
     payloads = _site_payloads(root, input_git_sha)
+    if reviewed_evidence is None:
+        existing = payloads.get('site/data/reviewed-evidence.json')
+        reviewed_evidence = json.loads(existing)['records'] if existing else []
+    evidence_payload = _reviewed_evidence(reviewed_evidence)
+    payloads['site/data/reviewed-evidence.json'] = (
+        json.dumps(evidence_payload, indent=2, sort_keys=True) + '\n').encode()
     descriptor = _descriptor(edition, input_git_sha, cutoff, prepared_on, reviewer, payloads,
                              rehearsal_of=rehearsal_of)
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -174,6 +226,12 @@ def read_release(path):
     coverage = _coverage(payloads)
     if descriptor.get('coverage') != coverage or json.loads(payloads['coverage.json']) != coverage:
         raise ValueError('Release coverage mismatch')
+    evidence = json.loads(payloads.get('site/data/reviewed-evidence.json', b'{}'))
+    if evidence:
+        if evidence != _reviewed_evidence(evidence.get('records')):
+            raise ValueError('Invalid reviewed evidence payload')
+        if descriptor.get('reviewed_evidence') != _reviewed_evidence_summary(evidence):
+            raise ValueError('Reviewed evidence summary mismatch')
     if not {'dictionary.md', 'TERMS.md', 'site/data/provenance.json'} <= payloads.keys():
         raise ValueError('Release documentation missing')
     return descriptor, payloads
