@@ -16,6 +16,7 @@ from jetp.build_0816_diagnostic import (
     documentary_rows,
     summarize_diagnostic,
     validate_0816_acceptance,
+    validate_diagnostic_rows,
     validate_date_roles,
     write_summary,
 )
@@ -146,3 +147,23 @@ def test_duplicate_evidence_must_agree_and_summary_is_written_from_rows(tmp_path
         "B_strict": 6,
         "C_sequence": 0,
     }
+
+
+def test_summary_rejects_duplicate_id_and_strict_finance_without_an_observation() -> None:
+    """The reviewed matrix cannot claim a strict B row without its evidence."""
+    valid = {
+        "operation_id": "idn-saguling",
+        "jetp_link": "jetp_strict",
+        "finance_observation": "mixed package 60000000 USD",
+        "finance_ownership": "mixed_unallocated",
+        "supports_A": "yes",
+        "supports_B_strict": "yes",
+        "supports_C_sequence": "no",
+        "supports_A_B_C": "no",
+    }
+    with pytest.raises(ValueError, match="duplicate operation_id"):
+        validate_diagnostic_rows([valid, valid.copy()])
+
+    unsupported_b = valid | {"operation_id": "zaf-register", "finance_observation": ""}
+    with pytest.raises(ValueError, match="strict finance"):
+        summarize_diagnostic([unsupported_b])
