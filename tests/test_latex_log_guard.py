@@ -9,7 +9,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
-from check_latex_log import assert_clean_log
+from qa_latex_log import assert_clean_log
 
 REPO = Path(__file__).resolve().parents[1]
 TECTONIC = shutil.which("tectonic") or "/home/haduong/.local/bin/tectonic"

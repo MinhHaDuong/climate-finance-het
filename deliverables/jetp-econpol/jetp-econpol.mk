@@ -11,9 +11,9 @@ LATEXMK ?= latexmk
 LATEXMK_FLAGS ?= -cd -pdf -halt-on-error -interaction=nonstopmode
 PYTHON ?= python3
 
-deliverables/jetp-econpol/jetp-econpol.pdf: deliverables/jetp-econpol/jetp-econpol.tex deliverables/jetp-econpol/jetp-econpol-vars.tex $(BIB) deliverables/_shared/bibliography/OEconomia_EN_2.bst scripts/check_latex_log.py
+deliverables/jetp-econpol/jetp-econpol.pdf: deliverables/jetp-econpol/jetp-econpol.tex deliverables/jetp-econpol/jetp-econpol-vars.tex $(BIB) deliverables/_shared/bibliography/OEconomia_EN_2.bst scripts/qa_latex_log.py
 	$(LATEXMK) $(LATEXMK_FLAGS) $<
-	$(PYTHON) scripts/check_latex_log.py deliverables/jetp-econpol/jetp-econpol.log
+	$(PYTHON) scripts/qa_latex_log.py deliverables/jetp-econpol/jetp-econpol.log
 
 .PHONY: jetp-econpol
 jetp-econpol: deliverables/jetp-econpol/jetp-econpol.pdf

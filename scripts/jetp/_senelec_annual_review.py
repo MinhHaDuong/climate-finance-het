@@ -1,7 +1,5 @@
 """Fail-closed checks for the bounded Senelec annual-report review."""
 
-from __future__ import annotations
-
 import hashlib
 import re
 import subprocess

@@ -5,8 +5,6 @@ legacy pilot observations. It neither retrieves sources nor writes canonical
 finance, payment, implementation, or project-identity facts.
 """
 
-from __future__ import annotations
-
 import argparse
 import csv
 import hashlib

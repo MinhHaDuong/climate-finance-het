@@ -56,7 +56,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "ana
 import compute_vars
 
 # The JETP measure and political-economy papers are plain LaTeX (ticket 0711),
-# so scripts/check_latex_log.py, rather than Quarto's resolver, guards them.
+# so scripts/qa_latex_log.py, rather than Quarto's resolver, guards them.
 
 #: Documents that render `?meta:` placeholders today, pinned to the exact keys.
 #:
