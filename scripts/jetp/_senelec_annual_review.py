@@ -2,7 +2,11 @@
 
 from __future__ import annotations
 
+import hashlib
+import re
+import subprocess
 from collections.abc import Iterable
+from pathlib import Path
 
 EDITION_FIELDS = (
     "inventory_id", "source_id", "edition", "raw_disposition",
@@ -11,7 +15,7 @@ EDITION_FIELDS = (
 CANDIDATE_FIELDS = (
     "candidate_id", "source_id", "edition", "document_sha256", "locator",
     "candidate_type", "candidate_summary", "candidate_disposition",
-    "canonical_project_id", "reason",
+    "verifiable_excerpt", "canonical_project_id", "reason",
 )
 RAW_DISPOSITIONS = {"raw_retained", "index_retained_file_not_retained"}
 EXTRACTION_DISPOSITIONS = {"reviewed", "not_extracted"}
@@ -73,3 +77,56 @@ def validate_candidates(candidates: Iterable[dict[str, str]], editions: Iterable
         observed[row["edition"]] += 1
     if observed != counts:
         raise ValueError("candidate count does not match edition review")
+
+
+def extract_pdf_page(document: Path, page: int) -> str:
+    """Extract one numbered PDF page locally, preserving the cited pagination."""
+    result = subprocess.run(
+        ["pdftotext", "-layout", "-f", str(page), "-l", str(page), str(document), "-"],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    return result.stdout
+
+
+def _page_number(locator: str) -> int:
+    match = re.fullmatch(r"PDF p\.(\d+)", locator)
+    if not match:
+        raise ValueError("candidate locator must be a single PDF page")
+    return int(match.group(1))
+
+
+def validate_candidate_evidence(
+    candidates: Iterable[dict[str, str]],
+    editions: Iterable[dict[str, str]],
+    storage_root: Path,
+    *,
+    extract_page=extract_pdf_page,
+) -> None:
+    """Replay every candidate against its hashed local PDF page and excerpt."""
+    edition_by_source = {
+        (row["source_id"], row["edition"]): row
+        for row in editions
+        if row["raw_disposition"] == "raw_retained"
+    }
+    for candidate in candidates:
+        key = (candidate["source_id"], candidate["edition"])
+        edition = edition_by_source.get(key)
+        if edition is None:
+            raise ValueError("candidate source edition is not retained")
+        expected_hash = edition["document_sha256"]
+        if candidate["document_sha256"] != expected_hash:
+            raise ValueError("candidate hash does not match its retained edition")
+        document = storage_root / "objects" / expected_hash[:2] / f"{expected_hash}.pdf"
+        if not document.is_file():
+            raise ValueError("retained candidate PDF is unavailable")
+        if hashlib.sha256(document.read_bytes()).hexdigest() != expected_hash:
+            raise ValueError("retained candidate PDF hash does not match its edition")
+        page = _page_number(candidate["locator"])
+        try:
+            text = extract_page(document, page)
+        except (KeyError, subprocess.CalledProcessError) as exc:
+            raise ValueError("candidate page cannot be extracted") from exc
+        if candidate["verifiable_excerpt"] not in text:
+            raise ValueError("candidate excerpt is not on its cited PDF page")

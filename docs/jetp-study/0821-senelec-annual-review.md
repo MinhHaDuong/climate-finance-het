@@ -6,8 +6,9 @@ observations d'index, pas des octets à extraire. Les PDF 2023 et 2024 sont
 déjà archivés dans DVC, avec les empreintes conservées dans
 `0821-senelec-annual-editions.csv`.
 
-L'extraction reproductible des deux PDF a été faite avec `pdftotext -layout`.
-Les six candidats et leurs pages sont dans
+L'extraction reproductible des deux PDF est rejouée localement avec
+`pdftotext -layout`, page par page : chaque candidat conserve l'empreinte du
+PDF et un extrait vérifiable sur sa page. Les six candidats sont dans
 `0821-senelec-annual-candidates.csv`. Aucun n'est admis comme fait canonique
 JETP : les rapports ne donnent pas l'identité exacte d'une ligne du plan ni
 une attribution de financement JETP. En particulier, un lieu (Diass), une
@@ -20,6 +21,7 @@ candidat et une proposition du plan.
 | 2023 | PDF retenu, revu | 5 | 0 |
 | 2024 | PDF retenu, revu | 1 | 0 |
 
-Ce résultat est une limite de jointure documentaire, non une mesure nulle de
-finance, de réalisation ou d'effet JETP. Les candidats restent disponibles
+Cette sélection vise seulement les deux rapports retenus de l'inventaire 0817,
+pas tous les travaux de Senelec. Le résultat est une limite de jointure
+documentaire, non une mesure nulle de finance, de réalisation ou d'effet JETP. Les candidats restent disponibles
 pour une future source qui établira une identité et une attribution exactes.
