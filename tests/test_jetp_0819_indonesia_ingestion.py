@@ -1,12 +1,9 @@
 """Bounded replay contract for the seven Indonesia 0819 documents."""
 
-from __future__ import annotations
-
 import json
 from pathlib import Path
 
 from jetp.build_0819_indonesia_ingestion import build_report
-
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -25,6 +22,8 @@ def test_seven_document_review_keeps_priority_separate_from_finance() -> None:
         if row["source_id"] == "idn-jetp-progress-report-2025"
     )
     assert progress["candidate_kind"] == "plan_priority_candidate"
+    assert len(progress["candidate_ids"]) == 1142
+    assert len(set(progress["candidate_ids"])) == 1142
     assert progress["canonical_finance_admitted"] == 0
     assert progress["date_precision"] == "reporting_cutoff_or_publication_review_required"
     assert all(row["review_disposition"] == "reviewed_no_operation_candidate"

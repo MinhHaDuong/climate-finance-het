@@ -6,14 +6,11 @@ thematic reports are contextual analysis and do not by themselves identify an
 operation, allocation, approval, or payment.
 """
 
-from __future__ import annotations
-
 import argparse
 import csv
 import hashlib
 import json
 from pathlib import Path
-
 
 INVENTORY_IDS = {
     "idn-progress-report-2025",
@@ -82,6 +79,7 @@ def build_report(root: Path) -> dict:
             ),
             "candidate_kind": "plan_priority_candidate" if progress else "contextual_analysis_only",
             "candidate_count": len(plans) if progress else 0,
+            "candidate_ids": sorted(row["plan_project_id"] for row in plans) if progress else [],
             "canonical_finance_admitted": 0,
             "review_disposition": (
                 "reviewed_plan_candidates_not_finance" if progress
