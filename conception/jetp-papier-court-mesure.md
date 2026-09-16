@@ -38,9 +38,13 @@ comparable de prêts concessionnels énergie (mêmes pays, mêmes bailleurs,
 même secteur, cohortes d'engagement 2006-2020) — facteur **5,3**. Pris seul,
 ce chiffre invite la lecture réflexe : le JETP est lent.
 
-**Ce n'est pas le résultat. Le résultat est que ce n'est pas de la
-lenteur — c'est une substitution d'instrument**, mesurable et généralisable
-aux quatre pays. Décomposé par modalité CRS :
+**Ce chiffre n'est pas le résultat. Le résultat est l'étalon et la séparation
+qu'il impose entre paquet annoncé, engagement signé et décaissement.** À
+horizon apparié, l'écart d'exécution n'apparaît que dans deux pays sur quatre ;
+le résultat commun est en amont, puisque 60 à 98 % des paquets annoncés ne
+deviennent jamais des engagements signés. La décomposition par modalité CRS
+teste ensuite une explication — la substitution d'instrument — sans la
+confondre avec la mesure :
 
 - Appui budgétaire (A01/A02, décaisse contre déclencheurs de réforme, pas
   contre travaux) : **98,6 %** à un an, structurellement quasi instantané.
@@ -142,16 +146,15 @@ court cesse d'être une fragilité à couvrir.
 - **Anonymisation** : Climate Policy exige un manuscrit anonymisé identique
   au nominatif — le dépôt HAL doit sortir complètement du texte (7/7
   éditeurs simulés le demandent de toute façon, voir le papier long).
-- **Réconciliation de l'infrastructure de tirage CRS** avec celle déjà
-  présente dans ce dépôt (`data/book/riomarkers/`, `config/corpus_filter.yaml`)
-  — ticket 0710, préalable à tout tirage supplémentaire pour l'annexe
-  comptable ou une extension à d'autres pays.
+- **Vérifier qu'aucun tirage CRS équivalent n'existe déjà** ailleurs dans mes
+  projets en cours avant tout nouveau tirage pour l'annexe comptable ou une
+  extension à d'autres pays.
 - **La comparaison à quatre pays est faite** — figure 1 ci-dessous. Reste à
   en tirer la section d'interprétation, qui revient à Christophe.
 
 ## Résultats préliminaires
 
-![**Figure 1.** Le décaissé du paquet annoncé, contre la norme d'exécution du
+![Le décaissé du paquet annoncé, contre la norme d'exécution du
 pays. Chaque panneau est lu au temps écoulé depuis la signature de son JETP, la
 norme du pays y étant prise au même horizon. Deux dénominateurs : la
 distribution rapporte le décaissé à l'engagement signé, la barre le rapporte au
@@ -211,15 +214,17 @@ court, et la mesure centrale du papier long est elle-même fragilisée). La
 courbe construite le soir même a tranché dans le sens favorable — 37,3 %
 contre 9 %, facteur 5,3.
 
-Trois raisons de partir vite et indépendamment :
+Trois raisons de partir vite avec un calendrier borné :
 
 - **Vitesse.** 20 à 33 jours de premier retour contre plusieurs mois pour le
   papier long ; le court peut circuler en une semaine de rédaction.
 - **Priorité.** Deux préprints concurrents (Do et al., avril 2026 ; Kruger
   et al., 3 septembre 2026) menacent la mesure, pas l'analyse politique.
   Publier la mesure vite protège précisément ce qui est contesté.
-- **Indépendance.** Ce papier ne dépend d'aucune tierce disponibilité — la
-  matière est entièrement produite et entièrement due à Minh.
+- **Calendrier maîtrisable.** La matière quantitative est entièrement
+  produite par Minh ; la contribution de Christophe est bornée à une section
+  d'interprétation, aux *key policy insights* et à une passe de validation,
+  avec une date de soumission fixée d'avance.
 
 Repli non nécessaire à ce stade : la variante Global Environmental Change
 « courte » a été examinée et écartée. Son seul format sous 8 000 mots, la
@@ -294,6 +299,8 @@ contrepartie proposée : un périmètre borné — une section, les key policy
 insights, une passe de validation — et une date de soumission fixée d'avance,
 le papier partant à cette date avec ce qui est prêt.
 
-À noter : Ha-Duong est déjà auteur publié en solo dans *Climate Policy*
-(*Power system...*, référence exacte à vérifier dans le CR complet) — un
-antécédent qui joue positivement sur cette cible.
+À noter : Ha-Duong est déjà auteur publié en solo dans *Climate Policy* —
+*Power system planning in the energy transition era: the case of Vietnam's
+power development plan 8*, 12 septembre 2024, pp. 562-577, DOI
+10.1080/14693062.2024.2401857 — un antécédent qui joue positivement sur cette
+cible.
