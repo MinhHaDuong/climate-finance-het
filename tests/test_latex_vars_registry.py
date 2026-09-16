@@ -12,6 +12,7 @@ from _vars_registry import (
     latex_macro_name,
     write_latex_vars,
 )
+from build_latex_vars import write_registered_latex_vars
 
 
 def test_each_jetp_latex_document_has_a_generated_witness_macro():
@@ -33,3 +34,12 @@ def test_latex_macro_emitter_escapes_tex_special_delimiters(tmp_path: Path):
     assert r"\newcommand{\SourceNote}{a\textbackslash{}b\{c\}}" in target.read_text(
         encoding="utf-8"
     )
+
+
+def test_registered_latex_vars_write_below_requested_output(tmp_path: Path):
+    write_registered_latex_vars(tmp_path)
+
+    for document, values in LATEX_DOC_VARS.items():
+        rendered = (tmp_path / document / f"{document}-vars.tex").read_text()
+        for key, value in values.items():
+            assert rf"\newcommand{{\{latex_macro_name(key)}}}{{{value}}}" in rendered

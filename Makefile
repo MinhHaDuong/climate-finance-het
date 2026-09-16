@@ -795,8 +795,8 @@ zoo:
 # The JETP papers are plain LaTeX live documents. Their macro handoffs are
 # generated from the same document registry as the Quarto vars, but their
 # render workpackages remain TeX Live + latexmk only.
-jetp-vars: scripts/write_latex_vars.py scripts/analysis/_vars_registry.py
-	$(PYTHON) scripts/write_latex_vars.py
+jetp-vars: scripts/analysis/build_latex_vars.py scripts/analysis/_vars_registry.py
+	$(PYTHON) scripts/analysis/build_latex_vars.py --output deliverables
 
 jetp-mesure:
 	$(MAKE) -f deliverables/jetp-mesure/jetp-mesure.mk deliverables/jetp-mesure/jetp-mesure.pdf

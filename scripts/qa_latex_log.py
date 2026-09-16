@@ -5,8 +5,6 @@ or cross-reference.  The JETP papers are plain LaTeX, so their render guard
 must read the LaTeX log rather than reuse Quarto's placeholder resolver.
 """
 
-from __future__ import annotations
-
 import argparse
 import re
 from pathlib import Path
