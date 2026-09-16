@@ -13,6 +13,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from jetp._source_census import validate_census
 from jetp.build_0817_source_census import build_rows
+from jetp._source_census import validate_inventory_manifest
 
 
 def test_frozen_census_covers_every_local_source_once() -> None:
@@ -33,6 +34,26 @@ def test_frozen_census_covers_every_local_source_once() -> None:
     assert all(row["source_version"] != "unversioned" for row in census)
     assert census == build_rows(
         ROOT / "data" / "jetp" / "sources.csv", ROOT / "data" / "jetp" / "manifest.csv"
+    )
+
+
+def test_inventory_manifest_separates_retrieval_content_and_dates() -> None:
+    """The bounded extraction inventory cannot turn publication into an event."""
+    path = ROOT / "docs" / "jetp-study" / "0817-inventory-manifest.csv"
+    with path.open(newline="", encoding="utf-8") as handle:
+        rows = list(csv.DictReader(handle))
+
+    validate_inventory_manifest(rows)
+    assert len(rows) == 14
+    assert next(row for row in rows if row["inventory_id"] == "zaf-register-q1-2026")[
+        "expected_count"
+    ] == "257"
+    assert {row["edition"] for row in rows if row["country"] == "SEN"} == {
+        str(year) for year in range(2019, 2025)
+    }
+    assert all(
+        row["date_rule"] == "publication_or_cutoff_not_event_without_explicit_event_statement"
+        for row in rows
     )
 
 
