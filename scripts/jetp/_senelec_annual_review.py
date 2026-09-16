@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 
-
 EDITION_FIELDS = (
     "inventory_id", "source_id", "edition", "raw_disposition",
     "extraction_disposition", "document_sha256", "candidate_count", "notes",
