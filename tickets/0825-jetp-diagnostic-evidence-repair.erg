@@ -1,0 +1,49 @@
+%erg 0.1
+Title: Repair the eight-case JETP diagnostic evidence contract
+Created: 2026-09-16
+Author: Codex under author-authorised autonomous orchestration
+
+--- log ---
+2026-09-16T00:00Z Created after Astra escalation of the two-round 0816 review.
+--- body ---
+
+## Context
+
+0816 established a useful availability diagnostic, not a portfolio finding:
+the inspected cases do not currently provide a complete operation-level join of
+transition function, strict finance evidence and genuine dated history. Its
+second review found a small set of semantic and reproducibility defects. Astra
+recommends this bounded repair, followed immediately by 0817; do not redesign
+the protocol or build a universal validator.
+
+## First test
+
+Add a failing fixture in which a mixed, source-linked financing observation
+(Saguling) supports B, a South African register entry cannot be promoted to a
+signed financial state, and the derived summary rejects duplicate IDs or a
+`supports_B_strict=yes` row without a finance observation.
+
+## Actions
+
+Correct the eight source-linked rows and their report so that every field is
+faithful to its evidence. Add the minimal consistency assertions needed to
+derive counts from the reviewed CSV. State plainly that the CSV is a manually
+coded, source-reviewed diagnostic and that the script reproduces its summary,
+not an automatic reconstruction of histories. Complete only the collection
+vocabulary required by 0817: allocation, disbursement, duplicate, unavailable
+and lost visibility. Preserve `announced` as the explicit pledge equivalent if
+used. Do not make a before/after history a paper inclusion criterion.
+
+## Exit criteria
+
+- [ ] Saguling has its existing mixed, unallocated finance observation and no private-share inference
+- [ ] ZAF register-derived entries are not labelled signed without signature evidence
+- [ ] Summary counts are generated from rows and reject incompatible flags or duplicate identities
+- [ ] Report makes no claim that the matrix or histories are automatically reconstructed
+- [ ] Lifecycle and source-disposition vocabulary is sufficient for the 0817 census
+- [ ] 0817 can use the repaired diagnostic as a limited source lead, not as a four-country result
+
+## Links
+
+Supersedes the unresolved repair residue of 0816. Astra escalation 2026-09-16;
+adopted framing `conception/jetp-short-paper-framing-2026-09-15.md`.

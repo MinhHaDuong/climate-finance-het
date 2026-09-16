@@ -21,6 +21,7 @@ import os
 import numpy as np
 import pandas as pd
 from filter_flags import (
+    DEFAULT_SEMANTIC_MODE,
     _load_config,
     compute_protection,
     flag_citation_isolated,
@@ -592,7 +593,15 @@ def run_flagging(df, args, config, citations_df, embeddings, emb_df, has_embeddi
         # it was how a dead Flag 5 stayed quiet for months (ticket 0336).
         df["semantic_outlier"], df["semantic_outlier_dist"] = flag_semantic_outlier(
             df, config, embeddings=embeddings, emb_df=emb_df)
-        log.info("  Flag 5 (semantic outlier): %d", df["semantic_outlier"].sum())
+        # Report the mode and the distance count, not the flag count alone. In
+        # diagnostic mode the flag count is 0 by design — which is also the
+        # signature of the dead flag ticket 0336 spent three review rounds on,
+        # so a bare "Flag 5: 0" would make the two indistinguishable in a log.
+        mode = config["semantic_outlier"].get("mode", DEFAULT_SEMANTIC_MODE)
+        log.info("  Flag 5 (semantic outlier, mode=%s): %d flagged, "
+                 "%d distances computed", mode,
+                 df["semantic_outlier"].sum(),
+                 df["semantic_outlier_dist"].notna().sum())
     elif getattr(args, "skip_semantic_flag", False):
         log.info("  Flag 5: skipped (--skip-semantic-flag)")
     elif cheap:

@@ -1,0 +1,20 @@
+%erg 0.1
+Title: Extend the JETP MVP with the reviewed four-country evidence
+Created: 2026-09-15
+Author: Codex with author authorisation
+Blocked-by: 0822
+
+--- log ---
+--- body ---
+
+## First test
+
+A new reviewed observation and a pending candidate enter a release fixture. The site shows the reviewed fact once, retains the candidate as non-aggregate, exposes provenance and coverage, and replays the prior edition after a failed candidate build.
+
+## Actions and exit criteria
+
+Build a new immutable static edition from accepted canonical facts only. Extend country/project routes, downloads, provenance and coverage indicators while preserving old editions and offline replay. No estimate or analytical snapshot becomes a canonical fact; any later analytical exhibit requires 0730 and an explicit derived label. No deployment is authorised.
+
+## Links
+
+`conception/jetp-execution-replan-2026-09-15.md`; parent programme 0725.

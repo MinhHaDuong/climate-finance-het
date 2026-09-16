@@ -1,0 +1,50 @@
+%erg 0.1
+Title: Repair replay and journal partition in the JETP comparative snapshot
+Created: 2026-09-16
+Author: Codex under author-authorised autonomous orchestration
+Blocked-by: 0822
+
+--- log ---
+2026-09-16T00:00Z Created after the two-round 0822 verification limit was reached.
+--- body ---
+
+## Context
+
+0822 now materializes the intended atomic source observations and a small set
+of documentary reconciliations, but its final review found mechanical defects
+that make its frozen snapshot unsafe as an analytical input. This repair is not
+a redesign: preserve the raw-document → extraction → reconciliation pipeline
+and correct only replay pinning, journal routing, descriptive subsets and typed
+bounds.
+
+## First test
+
+Build from a fixture with a pinned VNM migration input, one event assertion and
+one position assertion. The run must fail when the migration hash is absent or
+wrong; each assertion must appear in exactly one journal; and the generated
+descriptive/unreconciled subset counts must equal the atomic observations from
+which they are derived.
+
+## Actions
+
+Pin and validate every non-Git snapshot input, including the DVC-managed VNM
+migration artifact, in the run manifest. Partition event and position journals
+without copying any atomic assertion into both. Rebuild coverage and 0730
+descriptive subsets from the 1,740 atomic observations, including an explicit
+unreconciled subset, and remove stale group-only language. Store numeric bounds
+as numeric values with their currency in the dedicated field. Retain all source
+observations, notes, provenance, uncertainty and reconciliations unchanged
+except where a correction requires a regenerated snapshot.
+
+## Exit criteria
+
+- [ ] Every non-Git input is hash-pinned and validated by replay
+- [ ] Event and position journal IDs are disjoint and exhaust routed assertions
+- [ ] 0730 subsets and denominators derive from atomic observations and expose unreconciled records
+- [ ] Numeric bounds are machine-readable and never contain currency text
+- [ ] Snapshot remains exhaustive across ZAF 257, IDN 1,148, VNM 325 and SEN 10 observations
+- [ ] The repaired snapshot is ready to merge and consume in 0730
+
+## Links
+
+Follows 0822; unblocks 0730, 0823, 0824 and 0732.

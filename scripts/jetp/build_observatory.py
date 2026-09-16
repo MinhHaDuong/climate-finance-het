@@ -115,11 +115,19 @@ def country_data(root, code, config, tables):
     projects = [project_data(r, tables) for r in named]
     sources = source_map(tables)
     needed = {sid for p in projects for sid in p['sources']}
-    needed.add(config['countries'][code]['headline_source'])
+    country_config = config['countries'][code]
+    needed.update(
+        source_id
+        for source_id in (
+            country_config.get('headline_source'),
+            country_config.get('latest_news_source'),
+        )
+        if source_id
+    )
     missing = needed - sources.keys() - {''}
     if missing:
         raise ValueError(f'Unknown source references: {missing}')
-    metadata = dict(config['countries'][code], code=code)
+    metadata = dict(country_config, code=code)
     return {'country': metadata, 'projects': projects,
             'undisclosed': len(slots), 'record_count': len(rows),
             'sources': {sid: sources[sid] for sid in sorted(needed) if sid},
@@ -167,6 +175,11 @@ def provenance(root, config):
     clean = subprocess.run(['git', 'diff', '--quiet', 'HEAD', '--', *relative],
                            cwd=root, check=False).returncode == 0
     return {'edition': config['edition'], 'cutoff': config['cutoff'],
+            'data_build': {
+                'identity': 'canonical_observatory_preview',
+                'observation_cutoff': config['cutoff'],
+                'relationship_to_release': 'canonical_data_build_precedes_release_extension',
+            },
             'input_git_sha': revision if tracked and clean else None,
             'build_base_git_sha': revision,
             'input_sha256': {str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths},

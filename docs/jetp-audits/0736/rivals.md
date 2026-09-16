@@ -1,0 +1,16 @@
+# Rival explanations and discriminating evidence
+
+This is a documentary risk inventory, not a model or effect estimate. Source IDs
+resolve in [sources.csv](sources.csv).
+
+| Rival / ambiguity | Observed documentary anchor | Evidence that could distinguish it from a JETP effect | Finding |
+|---|---|---|---|
+| Selection on persistent conditions | S01 pp.2–3 describes general coal/emissions/political-commitment rationale but Senegal as a different case. | Actual candidate evaluation records and pre-selection country conditions; rejected candidates and reasons. | Qualitative rationale established; exchangeability not established. |
+| Selection on anticipated future change | S01 p.3 invokes Senegal's expected energy-demand increase. S02 recognizes pre-existing national transition intentions. | Pre-negotiation forecasts, project commitments and contemporaneous selection memoranda. | Future-path selection is documented; matching only current characteristics cannot remove it by assumption. |
+| Anticipation and negotiated timing | S04 financing talks precede South African declaration; S01 expected Senegal launch at COP27, whereas S07 records June 2023. | Dated negotiation versions, first private offers and preparatory procurement/technical-assistance records. | Announcement is an observed milestone; planned versus actual timing differs. |
+| Domestic reform continuation versus induced reform | S02 §17c includes Eskom debt and electricity reform; S06 §§20–24 includes regulatory change; S08 calls the CIPP revisable. | Legislation and implementation dates, pre-JETP policy plans, financing conditions, traceable reform decisions. | Reforms may be antecedents, co-interventions or mediators; cannot indiscriminately control them away. |
+| Concurrent bilateral or lender programmes | S11 describes Indian renewable cooperation and earlier mobility/energy initiatives. | Operation IDs, signatures, funds, purpose and timing against each JETP-linked operation. | Parallel cooperation documented; financial additionality and overlap unmeasured. |
+| Lender reallocation / displacement elsewhere | S05's World Bank guarantee offer identifies a potential shared-lender channel. | Lender lending envelopes, pipeline revisions and counterpart-sector/country approvals; source-of-funds evidence. | Channel plausible; displacement not demonstrated. |
+| Cross-sector effects | S02's industrial scope and S08's demand-side work extend beyond electricity supply. | Sector-specific financing and implementation schedules; input-use links; water/industry project histories. | “Non-energy” label alone cannot establish non-exposure. |
+| Macroeconomic/commodity changes | No dedicated original series or shock document retrieved. | Dated fuel-price, exchange-rate, debt and demand data; country reform/energy-security decisions. | Unexamined rival; neither confirmed nor ruled out by this round. |
+| Offer relabeling versus new financial resources | Conditional political offers and plan need are different records (S02/S05/S06/S07). | Signed instruments, original approval dates and fund-level accounting linking old/new commitments and settlement. | No declaration amount is promoted to new disbursement. |

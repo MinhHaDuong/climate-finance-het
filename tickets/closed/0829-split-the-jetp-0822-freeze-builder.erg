@@ -1,0 +1,64 @@
+%erg 0.1
+Title: Split the JETP 0822 freeze builder
+Created: 2026-09-16
+Author: HDMX-coding-agent
+Closed: implemented and verified in t0829-split-0822-freeze-builder
+
+--- log ---
+2026-09-16T13:10Z HDMX-coding-agent created
+2026-09-16T13:13Z HDMX-coding-agent red test_no_god_modules fails on build_0822_freeze_snapshot.py (1163L)
+2026-09-16T13:16Z HDMX-coding-agent green split modules are 618/268/312 lines; 7 targeted tests and binary output comparison pass
+2026-09-16T13:19Z HDMX-coding-agent refactor Ruff import formatting applied; check-fast and lint pass
+2026-09-16T13:22Z HDMX-coding-agent verified make check passes after local DVC and reranker-cache provisioning
+
+2026-09-16T13:20Z HDMX-coding-agent closed — implemented and verified in t0829-split-0822-freeze-builder
+--- body ---
+## Context
+
+`make lint` fails at
+`tests/test_script_hygiene.py::TestModuleLength::test_no_god_modules` because
+`scripts/jetp/build_0822_freeze_snapshot.py` is 1,163 lines, above the hard
+800-line limit.  This is a pure structural repair: the public builder API, CLI,
+semantic safeguards, and checked-in snapshot/manifests must remain unchanged.
+
+Astra independently reviewed the proposed boundary and validated three cohesive
+layers.  Dependency ownership is important: source paths and DVC validation
+belong with the source readers, so extracted modules never import the public
+builder.
+
+## Plan
+
+1. Extract `INPUTS`, the VNM DVC path constants, read/hash/DVC helpers,
+   `_record`, and `_zaf`/`_idn`/`_vnm`/`_sen` to
+   `scripts/jetp/_freeze_0822_sources.py`.
+2. Extract `_validate_records`, `_atomic_journals`, and `_reconciliations` to
+   `scripts/jetp/_freeze_0822_journals.py`.  It may import from `sources`; it
+   must not import the public builder.
+3. Keep `SCHEMA_VERSION`, `_digest`, all public functions, root resolution, and
+   the CLI in `build_0822_freeze_snapshot.py`.  The dependency graph is
+   `builder -> journals -> sources` plus `builder -> sources`.
+4. Preserve deterministic outputs byte-for-byte at pinned input Git SHA
+   `e90ff6fe`.
+
+## First test (Red)
+
+Run
+`uv run --env-file .env python -m pytest tests/test_script_hygiene.py::TestModuleLength::test_no_god_modules -q`.
+It must fail before the extraction and identify
+`jetp/build_0822_freeze_snapshot.py (1163L)`.  This existing adherence test is
+the behavioral specification for the refactor; do not add tests that pin
+private module names.
+
+## Exit criteria
+
+- [x] The module-length test passes and every touched Python module remains
+      below 800 lines.
+- [x] The six tests in `tests/test_jetp_0822_freeze_snapshot.py` pass without
+      changing their semantic assertions or the public imports.
+- [x] Running `write_outputs` before and after the refactor with
+      `input_git_sha="e90ff6fe"` produces byte-identical gzip snapshot and JSON
+      manifest files.
+- [x] `make check-fast`, `make lint`, and, because the diff touches `scripts/`,
+      the full `make check` pass.
+- [x] The ticket is closed in the implementation PR, whose diff contains no
+      documentary artifact changes.

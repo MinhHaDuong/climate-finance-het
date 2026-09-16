@@ -1177,6 +1177,8 @@ class TestOutputFlag:
         "qa_detect_type.py",
         "qa_word_count.py",
         "qa_llm_judge_guards.py",
+        "qa_full_gate_preflight.py",
+        "qa_latex_log.py",
         # Catalog harvesters (DVC-managed)
         "catalog_bibcnrs.py",
         "catalog_grey.py",

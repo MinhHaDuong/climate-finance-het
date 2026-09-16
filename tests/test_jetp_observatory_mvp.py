@@ -224,3 +224,86 @@ def test_static_renderer_exposes_release_history_and_monthly_change_route():
     assert 'data/editions.json' in renderer
     assert 'catch(() => ({ editions: [] }))' in renderer
     assert '#editions' in (root / 'deliverables/jetp-observatory/index.html').read_text()
+
+
+def test_static_renderer_has_a_non_aggregate_reviewed_evidence_route():
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    renderer = (root / 'deliverables/jetp-observatory/app.js').read_text()
+    assert 'function evidencePage()' in renderer
+    assert 'data-reviewed-evidence-id' in renderer
+    assert 'Non-aggregate record.' in renderer
+    assert 'comparative staging snapshot is derived research material' in renderer
+    assert '#evidence' in (root / 'deliverables/jetp-observatory/index.html').read_text()
+
+
+def test_edition_history_distinguishes_canonical_sources_and_staged_depth():
+    """The MVP must make recent extraction visible without promoting it."""
+    import json
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    renderer = (root / 'deliverables/jetp-observatory/app.js').read_text()
+    evidence = json.loads((root / 'deliverables/jetp-observatory/data/reviewed-evidence.json').read_text())
+
+    assert 'evidenceDepthSummary' in renderer
+    assert evidence['evidence_depth'] == {
+        'reviewed_canonical_records': 3,
+        'canonical_named_records': 383,
+        'frozen_source_documents': 301,
+        'structured_atomic_observations': {
+            'total': 1740,
+            'by_country': {'ZAF': 257, 'IDN': 1148, 'VNM': 325, 'SEN': 10},
+            'vnm_rmp_positions': 279,
+            'status': 'not_deployed',
+        },
+    }
+    assert 'not deployed as canonical facts' in renderer
+    assert 'not a common record total' in renderer
+
+
+def test_country_preserves_principal_and_news_without_project_links():
+    """A newer headline must not replace the principal reference or lose its news."""
+    from pathlib import Path
+
+    from jetp.build_observatory import country_data
+
+    tables = {
+        key: []
+        for key in (
+            "projects",
+            "events",
+            "implementation-events",
+            "source-claims",
+            "project-source-links",
+            "project-coverage",
+            "manifest",
+        )
+    }
+    tables["sources"] = [
+        {
+            "source_id": source_id,
+            "title": source_id,
+            "url": f"https://example.org/{source_id}",
+            "publisher": "Secretariat",
+            "published_date": day,
+        }
+        for source_id, day in (("report", "2025-12-02"), ("news", "2026-09-08"))
+    ]
+    config = {
+        "countries": {
+            "IDN": {
+                "headline": "$3.92bn approved",
+                "headline_date": "2026-09-08",
+                "headline_source": "report",
+                "latest_news_source": "news",
+            }
+        }
+    }
+
+    result = country_data(Path("/nonexistent"), "IDN", config, tables)
+
+    assert set(result["sources"]) == {"report", "news"}
+    assert result["country"]["headline_source"] == "report"
+    assert result["country"]["headline"] == "$3.92bn approved"

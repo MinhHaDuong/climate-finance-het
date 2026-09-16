@@ -1,0 +1,46 @@
+{
+  "dvc_boundary": "The VNM migration bytes remain DVC-managed and unstaged. Replay validates the tracked DVC pointer (MD5 and size) plus the materialized JSON SHA-256.",
+  "dvc_inputs": {
+    "data/jetp/releases/vnm-migration-0764.json": {
+      "hash": "md5",
+      "md5": "180429d7c6b882fdc2871b9fa6fbf003",
+      "pointer_path": "data/jetp/releases/vnm-migration-0764.json.dvc",
+      "sha256": "ef7538d2af534d31877634bd42f28c5fae1c20b192e6647fc030146a7492eb34",
+      "size": 2554708
+    }
+  },
+  "input_git_sha": "e90ff6fe",
+  "input_sha256": {
+    "data/jetp/plan-projects.csv": {
+      "sha256": "723b24f1e67da7420122bede26a997b002d2ff9683f3e7623da8c74f372ba5ca"
+    },
+    "data/jetp/releases/vnm-migration-0764.json": {
+      "sha256": "ef7538d2af534d31877634bd42f28c5fae1c20b192e6647fc030146a7492eb34"
+    },
+    "data/jetp/vnm-pilot-manifest.csv": {
+      "sha256": "b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818"
+    },
+    "data/jetp/vnm-pilot-observations.csv": {
+      "sha256": "0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917"
+    },
+    "docs/jetp-study/0818-zaf-q1-2026-rows.csv": {
+      "sha256": "f2ababa6b9c006a133aea32dad73e50c4bfa05f03d9b1b9575a94ffcd596273f"
+    },
+    "docs/jetp-study/0819-indonesia-ingestion.json": {
+      "sha256": "b6a94c2590c41800aa4bed97f63d55124219d79e34b6e006413ce63a4d43e17e"
+    },
+    "docs/jetp-study/0820-vietnam-staging.json": {
+      "sha256": "3d37a6357cdee7737eb28cad82a18d23f48c1a28bce8090eab23ba784a84068a"
+    },
+    "docs/jetp-study/0821-senelec-annual-candidates.csv": {
+      "sha256": "626809fe2408fa27b800d63a45df696cb365deaa5ea12cd37ad9f43225ff1717"
+    },
+    "docs/jetp-study/0821-senelec-annual-editions.csv": {
+      "sha256": "298cf3a1d414e535dc8a997e032099c0d5975fe5112bfda6a89573c5e32a5fbc"
+    }
+  },
+  "reproduction": "Run this builder with --input-git-sha at the recorded revision; inputs are content-hashed and output rendering is deterministic.",
+  "schema_version": "jetp-0822-run-manifest/1",
+  "snapshot_path": "docs/jetp-study/0822-comparative-snapshot.json.gz",
+  "snapshot_sha256": "e76e706704b0040f7142124ed5dc569a2f2c7b61708b75d5ad2188fcb0514171"
+}

@@ -1,9 +1,13 @@
 ---
 country: VNM
 editorial_status: reviewed
-reviewed_on: 2026-09-13
+reviewed_on: 2026-09-14
 reviewed_by: HDMX-coding-agent
 ---
+
+## Secretariat source and coverage limit
+
+The country-box source is the Ministry of Industry and Trade Secretariat's newsletter issue 13 for March 2026, published on 13 April 2026 and still listed as the latest issue on the official homepage checked on 14 September. It is an interim update, not a comprehensive progress report. The three named records below belong to our reconciled July 2025 implementation cohort; they do not exhaust the RMP's report-listed candidates, whose inventory ingestion remains outstanding.
 
 ## A portfolio with limited public identities
 

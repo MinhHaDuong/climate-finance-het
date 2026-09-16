@@ -174,6 +174,7 @@ def test_paper_names_no_language_it_did_not_query():
 # --------------------------------------------------------------------------- #
 # Every threshold §2.2 quotes, with the config path it must come from.
 THRESHOLD_VARS = {
+    "filter_outlier_min_lang": ("semantic_outlier", "min_language_count"),
     "filter_reranker_threshold": ("llm_relevance", "reranker_threshold"),
     "neardup_prefix_chars": ("near_duplicate", "prefix_length"),
     "neardup_min_group_size": ("near_duplicate", "min_group_size"),
@@ -255,10 +256,7 @@ def test_declared_vars_match_what_the_collector_emits():
         "the two lists must partition the collector's output — a name in both "
         "would be registered twice for a document that quotes it once"
     )
-    # filter_outlier_sigma stays computed for the corpus-report and the
-    # multilayer techrep, which describe the implemented (inactive) flag 5;
-    # the data paper dropped it with the five-flag decision (2026-07-29).
-    assert set(RETRIEVAL_VARS) - {"filter_outlier_sigma"} == set(THRESHOLD_VARS), (
+    assert set(RETRIEVAL_VARS) == set(THRESHOLD_VARS), (
         "this test file's registry has drifted from the collector's"
     )
 
@@ -722,14 +720,9 @@ def test_paper_states_the_key_document_selection_rule():
         assert token in sources, f"§2.1 key-document rule missing {token!r}"
 
 
-def test_paper_discloses_the_inactive_semantic_outlier_flag():
-    """Five flags shipped in the v2 build; the code implements a sixth.
-
-    The paper is the entry point to the codebase, so a reader meeting
-    flag_semantic_outlier in the deposited code must have been told it was
-    not active in this build (author decision, 2026-07-29; ticket 0361).
-    """
+def test_paper_describes_the_semantic_diagnostic():
+    """V3 prose must distinguish the diagnostic from five removal flags."""
     pipeline = _section(_qmd_text(), "2.2")
-    assert "semantic-outlier" in pipeline and "not active" in pipeline, (
-        "§2.2 must disclose the inactive semantic-outlier flag in the code"
-    )
+    assert "diagnostic" in pipeline.lower()
+    assert "own language" in pipeline.lower()
+    assert "not active" not in pipeline.lower()

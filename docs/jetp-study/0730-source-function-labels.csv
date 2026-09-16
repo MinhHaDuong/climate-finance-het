@@ -1,0 +1,18 @@
+source_label,observations,denominator,share_of_documented_observations
+transmission,340,1399,0.243031
+solar,281,1399,0.200858
+hydro,183,1399,0.130808
+geothermal,134,1399,0.095783
+Electricity,74,1399,0.052895
+other_dispatchable,70,1399,0.050036
+JT-Mpumalanga,63,1399,0.045032
+bioenergy,58,1399,0.041458
+wind,55,1399,0.039314
+Skills,53,1399,0.037884
+Municipalities,31,1399,0.022159
+Green hydrogen,19,1399,0.013581
+energy_efficiency,13,1399,0.009292
+NEVs,8,1399,0.005718
+supply_chain,8,1399,0.005718
+Energy Efficiency,7,1399,0.005004
+Road to Rail,2,1399,0.00143

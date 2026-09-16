@@ -1,0 +1,4 @@
+panel_id,title,documented_observations,unknown_or_uncoded_observations,atomic_denominator,panel_note
+A_function_labels,A. Function labels,1399,341,1740,"Portfolio and technology labels are retained as source labels, not harmonised just-transition functions."
+B_finance_instruments,B. Finance instruments,303,1437,1740,Ownership is only source-stated wording; a funder name is not recoded into public or private ownership.
+C_event_history,C. Event history,7,1733,1740,Events are reported assertions pending independent operation identity; dates are not transition clocks.

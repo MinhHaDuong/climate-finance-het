@@ -1,0 +1,59 @@
+%erg 0.1
+Title: Reconcile JETP MVP baselines and ZAF migration counts
+Created: 2026-09-16
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-16T13:35Z HDMX-coding-agent created
+2026-09-16T15:30+02:00 Codex adjudicated the drift: the 0761 archive is an
+immutable internal migration baseline, while the canonical JSON identifies
+itself as a later local preview preceding a release extension.  The three ZAF
+rows are intended additions: `zaf-search-q2-report-20260914`,
+`zaf-q126-finance-aggregate`, and `zaf-q126-status-aggregate`.
+
+--- body ---
+## Context
+
+The post-review full gate for ticket 0829 exposed six failures that reproduce
+unchanged on `main` at `51c451d4`.  Five failures compare the current
+authoritative JETP observatory views (overview, ZAF, IDN, VNM, SEN) with the
+frozen `mvp-baseline-0761.zip`; the current source cutoff/content has moved
+beyond that baseline.  The sixth rebuilds the ZAF migration and obtains 1,087
+legacy dispositions while the test expects 1,084.
+
+This is a science-lane consistency defect between live JETP data, frozen
+publication artifacts, and acceptance assertions.  It is not caused by the
+0829 module extraction: the exact failures were reproduced in the unmodified
+primary checkout, while the 0822 snapshot tests and byte replay remain green.
+
+## First test (Red)
+
+Run:
+
+`uv run --env-file .env python -m pytest tests/test_jetp_compatibility.py tests/test_jetp_zaf_migration.py::test_zaf_candidate_reconciles_inventory_legacy_and_unchanged_views -q`
+
+The expected current result is `6 failed, 5 passed`: overview plus four country
+views diverge from the 0761 baseline, and the ZAF migration reports 1,087
+legacy dispositions instead of 1,084.
+
+## Investigation boundary
+
+Determine whether the current authoritative inputs are an intended new
+publication edition or accidental drift.  Do not update a baseline or relax a
+count until the source revisions, cutoff, and three additional ZAF dispositions
+have been identified and adjudicated.  Regenerate artifacts from their source;
+never hand-edit generated JSON/ZIP content.
+
+## Exit criteria
+
+- [x] The three extra ZAF legacy dispositions are identified by stable IDs and
+      classified as intended additions or corrected upstream drift.
+- [x] The observatory cutoff/source changes behind each of the five MVP view
+      mismatches are documented and adjudicated.
+- [x] Current builders and checked-in preview views agree exactly; the distinct
+      immutable 0761 baseline remains pinned independently by the byte size and
+      SHA-256 in `docs/jetp-mvp-baseline-0761.json`.
+- [x] The targeted suite passes while retaining both guards and explicit ZAF
+      per-table counts.
+- [x] `make check-fast`, `make lint`, and `make check` pass, or any remaining
+      pre-existing full-gate failure is independently reproduced and ticketed.

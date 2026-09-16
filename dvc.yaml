@@ -312,13 +312,11 @@ stages:
   # embeddings.npz is a real input: Flag 5 (semantic isolation) reads it. Left
   # undeclared, DVC never re-ran extend when the embeddings changed, so a dead
   # Flag 5 could not be told from a cached one (ticket 0336).
-  # --skip-semantic-flag holds Flag 5 (semantic isolation) inert pending
-  # calibration sign-off (ticket 0361): the fix that revived it is merged, but
-  # sigma has never been calibrated against live output and activating it would
-  # remove 361 works. Remove this flag only after the author signs off.
+  # Flag 5 runs in diagnostic mode (ticket 0361): it emits a per-language
+  # semantic distance but its mask is all-False, so it removes no work.
   extend:
     cmd: >-
-      uv run --env-file .env python scripts/harvest/corpus_filter.py --extend --skip-semantic-flag --works-input data/catalogs/enriched_works.csv --works-output data/catalogs/extended_works.csv
+      uv run --env-file .env python scripts/harvest/corpus_filter.py --extend --works-input data/catalogs/enriched_works.csv --works-output data/catalogs/extended_works.csv
     deps:
       - scripts/harvest/corpus_filter.py
       - scripts/filter_flags.py
@@ -395,3 +393,64 @@ stages:
       - data/catalogs/refined_citations.csv
 
 
+
+  # ── Papier court JETP : courbe de référence du décaissement (ticket 0713) ──
+  # Chaîne portée depuis ~/CNRS/projets/actifs/jetp/papier-court-mesure/analyse-crs/
+  # par décision 0710. Périmètre distinct de data/book/riomarkers/, qui appartient
+  # au chapitre de livre et n'est pas touché ici.
+
+  # Étape 1 : tirage OCDE CRS. **frozen** à dessein — l'API SDMX limite le débit
+  # (~30 min avec --pause 20) et l'OCDE révise ses millésimes, donc un `dvc repro`
+  # qui retirerait les données mesurerait les révisions de l'OCDE et non la chaîne.
+  # Le tirage archivé sous data/jetp/crs/ est l'entrée de référence ; il vit dans
+  # le remote DVC, poussé depuis padme. Pour rafraîchir volontairement :
+  #   dvc repro --force jetp_pull   (puis relire la non-régression)
+  jetp_pull:
+    frozen: true
+    cmd: >-
+      uv run --env-file .env python scripts/jetp/catalog_crs.py --output data/jetp/crs --start 2005 --end 2024 --md-dim DD --pause 20
+    deps:
+      - scripts/jetp/catalog_crs.py
+    outs:
+      - data/jetp/crs
+
+  # Étape 2 : reconstitution des activités et profils par cohorte d'engagement.
+  jetp_cohortes:
+    cmd: >-
+      uv run --env-file .env python scripts/jetp/compute_cohortes.py --datadir data/jetp/crs --output data/jetp/derived/cohortes_bloc.csv --out-act data/jetp/derived/activites.csv --out-diag data/jetp/derived/diag.json
+    deps:
+      - scripts/jetp/compute_cohortes.py
+      - scripts/utils.py
+      - scripts/script_io_args.py
+      - data/jetp/crs
+    outs:
+      - data/jetp/derived/cohortes_bloc.csv
+      - data/jetp/derived/activites.csv
+      - data/jetp/derived/diag.json
+
+  # Étape 3 : CSV livrable (pays × cohorte × périmètre × horizon).
+  # C'est l'artefact que 0711 consomme, à la place du fichier daté à la main.
+  jetp_livrable:
+    cmd: >-
+      uv run --env-file .env python scripts/jetp/export_courbe_reference.py --act data/jetp/derived/activites.csv --output data/jetp/derived/courbe-reference-decaissement.csv
+    deps:
+      - scripts/jetp/export_courbe_reference.py
+      - scripts/utils.py
+      - scripts/script_io_args.py
+      - data/jetp/derived/activites.csv
+    outs:
+      - data/jetp/derived/courbe-reference-decaissement.csv
+
+  # Étape 4 : tableaux de synthèse — référence groupée et ventilation bailleurs.
+  jetp_synthese:
+    cmd: >-
+      uv run --env-file .env python scripts/jetp/summarize_reference_groupee.py --act data/jetp/derived/activites.csv --output data/jetp/derived/reference_groupee.csv && uv run --env-file .env python scripts/jetp/summarize_bailleurs.py --act data/jetp/derived/activites.csv --pays VNM --output data/jetp/derived/vnm_bailleurs_h4.csv && uv run --env-file .env python scripts/jetp/summarize_bailleurs.py --act data/jetp/derived/activites.csv --pays ZAF --output data/jetp/derived/zaf_bailleurs_h4.csv
+    deps:
+      - scripts/jetp/summarize_reference_groupee.py
+      - scripts/jetp/summarize_bailleurs.py
+      - scripts/script_io_args.py
+      - data/jetp/derived/activites.csv
+    outs:
+      - data/jetp/derived/reference_groupee.csv
+      - data/jetp/derived/vnm_bailleurs_h4.csv
+      - data/jetp/derived/zaf_bailleurs_h4.csv

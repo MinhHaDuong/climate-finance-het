@@ -1,0 +1,13 @@
+{
+  "archive": "jetp-observatory-2026-11-r1.zip",
+  "archive_sha256": "f689bdc880134bc1a8e7917ca220c80a7fe42df023b0a759e628f8af9ca59ff6",
+  "edition": "2026-11-r1",
+  "status": "prepared; offline inventory and restore replay verified",
+  "validated_checks": [
+    "complete_file_hash_inventory",
+    "four_country_downloads",
+    "evidence_depth_layers_remain_separate",
+    "derived_0822_snapshot_not_deployed",
+    "offline_restore"
+  ]
+}

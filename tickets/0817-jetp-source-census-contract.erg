@@ -1,0 +1,44 @@
+%erg 0.1
+Title: Freeze the four-country JETP source census and acquisition contract
+Created: 2026-09-15
+Author: Codex with author authorisation
+Blocked-by: 0816
+
+--- log ---
+2026-09-15T00:30Z Codex created under the author-authorised JETP-only replan.
+--- body ---
+
+## Context
+
+This ticket turns the measurement protocol into a finite acquisition universe.
+It prevents a broad collection from becoming an untestable claim of exhaustive
+JETP finance.
+
+## First test
+
+Create a census fixture with a paginated inventory, a revised file, a blocked
+URL and an unnamed slot. It must require a disposition for each expected item,
+retain the source/version/route, and fail if an unresolved item is reported as
+zero or complete.
+
+## Actions
+
+For each country and lifecycle state, freeze named official inventories, issuer,
+version/snapshot, coverage period, retrieval route, item identity, expected page
+or file count, event semantics, retention rule and stop condition. Include the
+0815 common-source, operational-timing and comparator routes only where they
+improve source interpretation; do not treat them as identification tests.
+Specify raw-byte/DVC handling, review queue, controlled vocabulary and country
+ticket workloads.
+
+## Exit criteria
+
+- [ ] Country/source/period census is finite, versioned and reviewable
+- [ ] Every expected item can receive admitted, duplicate, excluded, unavailable or lost-visibility disposition
+- [ ] Each source documents financial-state and date semantics, not just a title or country label
+- [ ] Candidate extraction, raw-byte retention and reviewed canonical admission remain distinct
+- [ ] Four independent country ingestion handoffs are ready without overlapping authority
+
+## Links
+
+`conception/jetp-execution-replan-2026-09-15.md`; parent programme 0725.
