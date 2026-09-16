@@ -6,7 +6,9 @@
 .DELETE_ON_ERROR:
 
 LATEXMK ?= latexmk
-LATEXMK_FLAGS ?= -pdf -halt-on-error -interaction=nonstopmode
+# ``-cd`` makes sibling macro files and ../_shared bibliography paths resolve
+# from this document's directory, while the target still names the root path.
+LATEXMK_FLAGS ?= -cd -pdf -halt-on-error -interaction=nonstopmode
 PYTHON ?= python3
 
 deliverables/jetp-mesure/jetp-mesure.pdf: deliverables/jetp-mesure/jetp-mesure.tex deliverables/jetp-mesure/jetp-mesure-vars.tex $(BIB) deliverables/_shared/bibliography/OEconomia_EN_2.bst scripts/check_latex_log.py
