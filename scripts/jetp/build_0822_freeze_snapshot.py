@@ -690,6 +690,40 @@ def _atomic_journals(
                 "source_fields": source_fields,
             }
         )
+    for edition in _rows(root / INPUTS[4]):
+        if edition["raw_disposition"] == "index_retained_file_not_retained":
+            atomic.append(
+                {
+                    "source_candidate_id": f"sen-senelec-coverage-{edition['edition']}",
+                    "country": "SEN",
+                    "source_layer": "senelec_index_coverage",
+                    "journal": "coverage",
+                    "unit_identity_status": "file_not_retained",
+                    "kind": "document_coverage",
+                    "measure": "indexed_annual_edition",
+                    "original_label": edition["edition"],
+                    "original_value": None,
+                    "financial_bound_type": "unknown",
+                    "financial_lower_original": None,
+                    "financial_upper_original": None,
+                    "currency": None,
+                    "date_role": "publication_year_not_event",
+                    "event_date": None,
+                    "date_lower": f"{edition['edition']}-01-01",
+                    "date_upper": f"{edition['edition']}-12-31",
+                    "disposition": "indexed_file_not_retained",
+                    "reason": edition["notes"],
+                    "notes": edition["notes"],
+                    "evidence_ref": {
+                        "source_id": edition["source_id"],
+                        "edition": edition["edition"],
+                    },
+                    "evidence_gap": "Indexed edition file was not retained in the bounded corpus.",
+                    "source_fields": {
+                        key: value for key, value in edition.items() if key is not None
+                    },
+                }
+            )
     for row in rmp:
         atomic.append(
             {
@@ -720,7 +754,7 @@ def _atomic_journals(
         )
     if len({row["source_candidate_id"] for row in atomic}) != len(atomic):
         raise ValueError("atomic source candidate identity collision")
-    positions = list(atomic)
+    positions = [row for row in atomic if row["journal"] == "positions"]
     event_ids = {
         row["source_assertion"]["observation_id"]
         for row in migration["legacy_position_candidates"]
