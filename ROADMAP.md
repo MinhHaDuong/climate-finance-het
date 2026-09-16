@@ -12,12 +12,12 @@ Building toward a book on international climate finance between solidarity and p
   acceptance0727 → reviewed monthly-edition/replay handoff0728. Two immutable
   releases replay offline; deployment remains an author decision.
 - [x] Historical/bilateral evidence audit 0735 and pilot protocol prepared in PR #1347.
-- [ ] Accept selection audit PR #1348; its pinned evidence remains available.
+- [x] Selection audit PR #1348 accepted; its pinned evidence remains available.
 - [x] Run and merge bounded AFD 0737, KfW 0738 and FCDO 0739 feasibility pilots.
   Their synthesis preserves NARROW/DEFER conclusions and rules out a
   single-donor JETP-effect claim.
-- [ ] Accept the reviewed 0736 selection audit, 0729 causal DEFER and 0814
-  feasibility DEFER from their branches; do not repeat them as open decisions.
+- [x] Accepted the reviewed 0736 selection audit, 0729 causal DEFER and 0814
+  feasibility DEFER; do not repeat them as open decisions.
 - [ ] Execute the author-authorised non-causal JETP measurement programme:
   protocol0816 → source census0817 → country ingestion0818–0821 → frozen
   snapshot0822 → statistics0730/figure0823 and MVP0824 → short paper0732.
