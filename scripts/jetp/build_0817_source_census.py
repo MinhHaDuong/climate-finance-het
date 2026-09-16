@@ -67,7 +67,7 @@ def build_rows(sources_path: Path, manifest_path: Path) -> list[dict[str, str]]:
 def write_census(output_path: Path, sources_path: Path, manifest_path: Path) -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with output_path.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=REQUIRED_FIELDS)
+        writer = csv.DictWriter(handle, fieldnames=REQUIRED_FIELDS, lineterminator="\n")
         writer.writeheader()
         writer.writerows(build_rows(sources_path, manifest_path))
 
