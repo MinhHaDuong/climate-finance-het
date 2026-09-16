@@ -40,11 +40,16 @@ Design and prototype a provider-adapter contract for:
    `incompatible`, `unavailable` and `unknown` outcomes; and
 5. frozen descriptive views by explicitly declared accounting definition.
 
-Map the smallest viable first wave: full OECD CRS, then a ranked set of
-JETP-relevant development agencies. Specify volume, refresh cadence, raw-byte
-retention, DVC/partitioning, source licensing, identifier strategy, rate-limit
-and reproducibility risks. Assess whether IATI is a complement rather than an
-assumed complete common denominator.
+Map the smallest viable **prototype** wave: a bounded, documented CRS sample,
+then a ranked set of JETP-relevant development-agency samples. Rank agencies
+by JETP-country coverage, availability of activity-level identifiers,
+revision/disbursement semantics, licence clarity and expected reconciliation
+value. Specify volume, refresh cadence, raw-byte retention, DVC/partitioning,
+source licensing, identifier strategy, rate-limit and reproducibility risks.
+Assess whether IATI is a complement rather than an assumed complete common
+denominator. Define a measurable prototype decision rule: which semantic or
+linkage failures remain tolerable as explicit uncertainty, and which prevent a
+future full-snapshot acquisition.
 
 ## Exit criteria
 
@@ -53,6 +58,10 @@ assumed complete common denominator.
 - [ ] Cross-provider joins cannot silently add incompatible bases or double-count records
 - [ ] The design distinguishes official reported climate-related flows from private mobilisation and domestic finance
 - [ ] A phased acquisition plan names a first provider wave, storage budget and stop conditions
+- [ ] Agency prioritisation is reproducible from stated coverage, identifier, semantic, licence and reconciliation criteria
+- [ ] A prototype decision rule distinguishes retained uncertainty from a blocker to full-snapshot ingestion
+- [ ] Licence, retention and redistribution compatibility are recorded before any real source snapshot enters storage
+- [ ] A separate implementation ticket and explicit approval are required before any full-CRS or agency acquisition
 - [ ] The design states whether existing DVC/object storage and snapshot contracts suffice, and names only necessary extensions
 
 ## Links
