@@ -16,7 +16,6 @@ from pathlib import Path
 
 from jetp.build_zaf_investment_register import _project_id, _text, parse_register_html
 
-
 FIELDS = (
     "ordinal",
     "project_id",
