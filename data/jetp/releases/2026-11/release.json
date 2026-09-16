@@ -48,6 +48,11 @@
     "conversion": "none",
     "reported_headlines": "not_additive"
   },
+  "data_build": {
+    "identity": "canonical_observatory_preview",
+    "observation_cutoff": "2026-09-13",
+    "relationship_to_release": "canonical_data_build_precedes_release_extension"
+  },
   "date_semantics": {
     "event_date": "date of the observed event when reviewed",
     "observation_cutoff": "latest evidence admitted to this edition",
@@ -109,13 +114,13 @@
     },
     {
       "path": "site/data/editions.json",
-      "sha256": "5aff9b42ec1e20cf5403ecfcab35562e724bb6bbeca7d008b7153c6f5a28c106",
-      "size_bytes": 303
+      "sha256": "73226533a7128d04078cdbc63e1515eedb4a16d29208f6338212a26dbc0d69c0",
+      "size_bytes": 447
     },
     {
       "path": "site/data/overview.json",
-      "sha256": "e1c9ca01b13707fab9f4902f167697eecf876ab2e6987cdf8f5b320ff05b0a36",
-      "size_bytes": 9104
+      "sha256": "41695089e03726b0d5e4f8f2ab5b29b61b6bf90967cfd00d2adddf2534693f7f",
+      "size_bytes": 9272
     },
     {
       "path": "site/data/provenance.json",
@@ -139,7 +144,7 @@
     }
   ],
   "format_version": "jetp-public-release/1",
-  "input_git_sha": "d071cc961043716229f024989fb26e9b1022b3d5",
+  "input_git_sha": "84bafbd1504aacb67ffb6e6a96b7bb488f2bfcfb",
   "observation_cutoff": "2026-09-15",
   "publication_date": null,
   "release_prepared_date": "2026-09-16",
