@@ -279,7 +279,6 @@ def _zaf(root: Path) -> tuple[dict, list[dict]]:
             {"source_id": next(iter(sources)), "document_sha256": next(iter(hashes))}
         ],
     }, records
-
 def _idn(root: Path) -> tuple[dict, list[dict]]:
     report = _document(root / INPUTS[1])
     if report.get("country") != "IDN" or report.get("source_count") != 7:
@@ -613,4 +612,3 @@ def _sen(root: Path) -> tuple[dict, list[dict]]:
             for row in sorted(reviewed, key=lambda row: row["edition"])
         ],
     }, records
-
