@@ -1,7 +1,7 @@
 """The JETP LaTeX renderer rejects warnings that leave broken references."""
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 import pytest
 

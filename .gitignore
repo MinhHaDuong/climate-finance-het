@@ -144,6 +144,8 @@ deliverables/*/.gitignore
 *.log
 deliverables/*/*.tex
 !deliverables/manuscript/author-footnote.tex
+!deliverables/jetp-mesure/*.tex
+!deliverables/jetp-econpol/*.tex
 
 # OS and editor artifacts
 .DS_Store

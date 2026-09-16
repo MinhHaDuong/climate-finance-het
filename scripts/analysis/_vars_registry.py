@@ -43,6 +43,53 @@ DOC_VARS_FILE = {
     ),
 }
 
+# Plain-LaTeX JETP papers use the same document-keyed registry as Quarto
+# deliverables, but their live skeleton values do not depend on Phase-2 corpus
+# computation.  The generated macro files are committed handoffs for the
+# render-only workpackages.  New paper variables belong here, not in a .tex
+# source file, so their provenance remains inspectable in one place.
+LATEX_DOC_VARS_FILE = {
+    "jetp-mesure": os.path.join(
+        BASE_DIR, "deliverables", "jetp-mesure", "jetp-mesure-vars.tex"
+    ),
+    "jetp-econpol": os.path.join(
+        BASE_DIR, "deliverables", "jetp-econpol", "jetp-econpol-vars.tex"
+    ),
+}
+
+LATEX_DOC_VARS = {
+    "jetp-mesure": {"jetp_data_status": "Documentary evidence under review"},
+    "jetp-econpol": {"jetp_data_status": "Documentary evidence under review"},
+}
+
+_LATEX_ESCAPE = {
+    "\\": r"\textbackslash{}",
+    "{": r"\{",
+    "}": r"\}",
+    "#": r"\#",
+    "$": r"\$",
+    "%": r"\%",
+    "&": r"\&",
+    "_": r"\_",
+    "^": r"\textasciicircum{}",
+    "~": r"\textasciitilde{}",
+}
+
+
+def latex_macro_name(key: str) -> str:
+    """Derive a stable CamelCase LaTeX macro name from a registry key."""
+    return "".join(piece.capitalize() for piece in key.split("_"))
+
+
+def write_latex_vars(values: dict[str, str], path: str) -> None:
+    """Emit registry variables as inputable ``\\newcommand`` definitions."""
+    lines = ["% Auto-generated from scripts/analysis/_vars_registry.py — do not edit."]
+    for key, value in sorted(values.items()):
+        escaped = "".join(_LATEX_ESCAPE.get(char, char) for char in value)
+        lines.append(rf"\newcommand{{\{latex_macro_name(key)}}}{{{escaped}}}")
+    with open(path, "w", encoding="utf-8") as handle:
+        handle.write("\n".join(lines) + "\n")
+
 # Which variables each document uses (direct + {{< include >}}'d files).
 # Each document gets a sibling -vars.yml containing only its variables.
 DOC_VARS = {

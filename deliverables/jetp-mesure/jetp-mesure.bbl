@@ -1,0 +1,23 @@
+\begin{thebibliography}{1}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{URL }
+\providecommand{\selectlanguage}[1]{\relax}
+\providecommand{\bibAnnoteFile}[1]{%
+  \IfFileExists{#1}{\begin{quotation}\noindent\textsc{Key:} #1\\
+  \textsc{Annotation:}\ \input{#1}\end{quotation}}{}}
+\providecommand{\bibAnnote}[2]{%
+  \begin{quotation}\noindent\textsc{Key:} #1\\
+  \textsc{Annotation:}\ #2\end{quotation}}
+
+\bibitem[{Desrosières(1998)}]{desrosieres1998}
+Desrosières, Alain. 1998.
+\newblock \emph{The Politics of Large Numbers: A History of Statistical
+  Reasoning}.
+\newblock Cambridge, MA: Harvard University Press.
+\newblock Translated by Camille Naish. Originally published as {\emph{La
+  politique des grands nombres: Histoire de la raison statistique}}, Éditions
+  La Découverte, Paris, 1993.
+\bibAnnoteFile{desrosieres1998}
+
+\end{thebibliography}
