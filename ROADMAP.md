@@ -47,7 +47,8 @@ Submitted data paper to RDJ4HSS (diamond OA).
 
 - [x] Wait for reviewers feedback (R&R received)
 - [x] Revise (revision 1 released 2026-07-29: Zenodo v2.0.0, HAL v2, tag `rdj26561-revision1`)
-- [ ] Resubmit on the journal platform (author, from doudou: rsync release dir, homepage bib update, platform upload; then move `papiers/actif` → `papiers/sent`)
+- [x] Resubmit on the journal platform — publication confirmed by the author
+  on 2026-09-16.
 - [ ] Present at conference
 
 ## Charles Gide conference (Vannes, July 2-4)
