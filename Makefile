@@ -888,25 +888,25 @@ venv-canonicalize:
 # `pytest tests/` never collects (norecursedirs=["libs"]). Run it explicitly so
 # host CI gates it. Pure-logic / mocked-HTTP — belongs in the fast tier too.
 check-package: | venv-canonicalize
-	$(PYTHON) -m pytest libs/openalex-corpus/tests -v --tb=short
+	$(PYTHON) -m pytest libs/openalex-corpus/tests -q --tb=short
 
 full-gate-preflight:
 	@# Use host Python: uv itself cannot start while its configured cache is read-only.
 	python3 scripts/qa_full_gate_preflight.py
 
 check: full-gate-preflight check-package | venv-canonicalize
-	$(PYTHON) -m pytest tests/ -v --tb=short -n 4
+	$(PYTHON) -m pytest tests/ -q --tb=short -n 4
 
 # Fast inner loop: pure-Python logic only. Deselects slow (network / real data /
 # heavy numerical dep / heavy compute), integration (subprocess / sleep), and
 # adherence (lint — ruff/mypy/hygiene, run via `make lint`). Ticket 0214.
 check-fast: check-package | venv-canonicalize
-	$(PYTHON) -m pytest tests/ -v --tb=short -m "not slow and not integration and not adherence" -n 4
+	$(PYTHON) -m pytest tests/ -q --tb=short -m "not slow and not integration and not adherence" -n 4
 
 # Lint / rule-enforcement tier (ruff, mypy, hygiene, contracts). Run alongside
 # tests, not inside the inner loop — a warm mypy cache makes it ~1s. Ticket 0214.
 lint: | venv-canonicalize
-	$(PYTHON) -m pytest tests/ --tb=short -m adherence -n 4
+	$(PYTHON) -m pytest tests/ -q --tb=short -m adherence -n 4
 
 # Record per-test durations for the fast-path ratchet (ticket 0216) into the
 # gitignored .test_durations.json. Serial (-n0) and opt-in so timings reflect
