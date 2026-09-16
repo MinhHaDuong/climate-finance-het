@@ -5,8 +5,6 @@ This is deliberately a source-layer extraction.  The JET PMU register's
 promoted to an event, signature, or payment in the comparative account.
 """
 
-from __future__ import annotations
-
 import argparse
 import csv
 import hashlib
