@@ -2,7 +2,6 @@
 
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -15,4 +14,3 @@ def test_published_data_paper_is_not_listed_as_awaiting_resubmission():
 
     assert "data paper is published" in state
     assert "- [ ] Resubmit on the journal platform" not in data_paper
-
