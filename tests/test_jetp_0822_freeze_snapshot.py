@@ -151,3 +151,44 @@ def test_checked_in_snapshot_and_run_manifest_replay_byte_for_byte() -> None:
     assert json.loads(gzip.decompress(snapshot_path.read_bytes())) == snapshot
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     assert manifest == build_manifest(snapshot)
+
+
+def test_replay_pins_dvc_input_and_partitions_atomic_journals_for_0730() -> None:
+    """The 0730 handoff starts from all assertions, not copied journal rows."""
+    snapshot = build_snapshot(ROOT, input_git_sha="fed33609")
+    manifest = build_manifest(snapshot)
+
+    assert manifest["dvc_inputs"] == {
+        "data/jetp/releases/vnm-migration-0764.json": {
+            "hash": "md5",
+            "md5": "180429d7c6b882fdc2871b9fa6fbf003",
+            "size": 2554708,
+            "pointer_path": "data/jetp/releases/vnm-migration-0764.json.dvc",
+        }
+    }
+
+    event_ids = {row["source_candidate_id"] for row in snapshot["event_journal"]}
+    position_ids = {
+        row["source_candidate_id"] for row in snapshot["position_journal"]
+    }
+    routed_ids = {
+        row["source_candidate_id"]
+        for row in snapshot["atomic_observations"]
+        if row["journal"] in {"events", "positions"}
+    }
+    assert event_ids.isdisjoint(position_ids)
+    assert event_ids | position_ids == routed_ids
+
+    subsets = snapshot["analysis_subsets"]
+    assert subsets["all_atomic_observations"]["count"] == 1740
+    assert subsets["unreconciled_atomic_observations"]["count"] == 1725
+    assert subsets["reconciled_atomic_observations"]["count"] == 15
+    assert all(
+        isinstance(value, (int, float))
+        for reconciliation in snapshot["reconciliations"]
+        for value in (
+            reconciliation["lower_original"],
+            reconciliation["upper_original"],
+        )
+        if value is not None
+    )
