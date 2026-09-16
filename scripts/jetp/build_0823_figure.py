@@ -88,7 +88,7 @@ def build_figure_data(root: Path) -> dict[str, Any]:
                 "candidate_id": "vnm-finance-history-pedigree",
                 "rank": 3,
                 "decision": "context_panel",
-                "intrinsic_interest": "The only frozen event assertions and named finance-history conflicts make provenance visible at operation scale.",
+                "intrinsic_interest": "The only frozen event assertions and named finance-history conflicts make provenance visible at source-assertion and named-reconciliation scale.",
                 "robustness": "High for the existence of 7 events and 3 named incompatible reconciliations; low for a national interpretation because the cases are few and amounts are non-additive.",
                 "coverage": "VNM staged observations: 7 events; 3 named reconciliations covering 14 atomic inputs; none permits pooling.",
                 "contrary_evidence": "The global snapshot has 4 reconciliations/15 inputs because one Senegal record is also retained; Vietnam is not a finance total or representative national history.",
@@ -99,12 +99,24 @@ def build_figure_data(root: Path) -> dict[str, Any]:
     }
 
 
+def _text(x: float, y: float, css_class: str, content: str, max_width: float) -> str:
+    """Constrain every painted label within the viewBox, including long notes."""
+    font_sizes = {"title": 25, "subtitle": 15, "panel": 17, "value": 15, "note": 13, "foot": 16}
+    estimated_width = len(content) * font_sizes[css_class] * 0.62
+    text_length = min(max_width, max(1, estimated_width))
+    return (
+        f'<text x="{x}" y="{y}" class="{css_class}" textLength="{text_length:.3f}" '
+        f'lengthAdjust="spacingAndGlyphs">{escape(content)}</text>'
+    )
+
+
 def _svg(data: dict[str, Any]) -> str:
     """Render a compact, dependency-free SVG with legible zero and unknown states."""
-    width, height, left, bar_width = 1160, 630, 82, 760
+    width, height, left, bar_width = 1160, 690, 82, 860
+    max_text_width = width - 2 * left
     rows = []
     for index, panel in enumerate(data["panels"]):
-        y = 150 + index * 118
+        y = 150 + index * 130
         documented = panel["documented_observations"]
         unknown = panel["unknown_or_uncoded_observations"]
         denominator = panel["atomic_denominator"]
@@ -112,14 +124,15 @@ def _svg(data: dict[str, Any]) -> str:
         unknown_width = bar_width * unknown / denominator
         rows.extend(
             [
-                f'<text x="{left}" y="{y - 22}" class="panel">{escape(panel["title"])}</text>',
+                _text(left, y - 22, "panel", panel["title"], max_text_width),
                 f'<rect x="{left}" y="{y}" width="{doc_width:.3f}" height="32" class="documented"/>',
                 f'<rect x="{left + doc_width:.3f}" y="{y}" width="{unknown_width:.3f}" height="32" class="unknown"/>',
-                f'<text x="{left + bar_width + 16}" y="{y + 22}" class="value">{documented:,} documented · {unknown:,} unknown/uncoded · n={denominator:,}</text>',
-                f'<text x="{left}" y="{y + 56}" class="note">{escape(panel["panel_note"])}</text>',
+                _text(left, y + 56, "value", f"{documented:,} documented · {unknown:,} unknown/uncoded · n={denominator:,}", max_text_width),
+                _text(left, y + 82, "note", panel["panel_note"], max_text_width),
             ]
         )
     common = data["common_explicit_unit_observations"]
+    common_denominator = data["panels"][0]["atomic_denominator"]
     return "\n".join(
         [
             '<?xml version="1.0" encoding="UTF-8"?>',
@@ -128,12 +141,12 @@ def _svg(data: dict[str, Any]) -> str:
             "<desc id=\"desc\">Three bars use the same denominator of frozen atomic source assertions. Their unequal coverage does not form a common operation-level sample.</desc>",
             "<style>.title{font:700 25px sans-serif;fill:#12233d}.subtitle{font:15px sans-serif;fill:#405266}.panel{font:700 17px sans-serif;fill:#12233d}.value{font:15px sans-serif;fill:#12233d}.note{font:13px sans-serif;fill:#405266}.foot{font:700 16px sans-serif;fill:#9a3412}.documented{fill:#147d92}.unknown{fill:#d6dce2}</style>",
             '<rect width="100%" height="100%" fill="white"/>',
-            '<text x="82" y="50" class="title">What the frozen JETP record can jointly describe</text>',
-            '<text x="82" y="78" class="subtitle">Atomic source assertions, not operations or portfolio totals. Teal = documented; grey = unknown or uncoded.</text>',
+            _text(82, 50, "title", "What the frozen JETP record can jointly describe", max_text_width),
+            _text(82, 78, "subtitle", "Atomic source assertions, not operations or portfolio totals. Teal = documented; grey = unknown or uncoded.", max_text_width),
             *rows,
-            f'<text x="82" y="542" class="foot">No common explicit A/B/C atomic assertion: {common} / {data["panels"][0]["atomic_denominator"]:,}</text>',
-            '<text x="82" y="570" class="note">The panels share an assertion denominator but are not a joint operation-level sample; the zero is a coverage result, not absence in JETPs.</text>',
-            '<text x="82" y="602" class="note">Source: frozen 0822 snapshot, rendered through approved 0730 descriptives. No amounts are pooled; no transition duration is calculated.</text>',
+            _text(82, 586, "foot", f"No common explicit A/B/C atomic assertion: {common} / {common_denominator:,}", max_text_width),
+            _text(82, 618, "note", "The panels share an assertion denominator but are not a joint operation-level sample; the zero is a coverage result, not absence in JETPs.", max_text_width),
+            _text(82, 648, "note", "Source: frozen 0822 snapshot, rendered through approved 0730 descriptives. No amounts are pooled; no transition duration is calculated.", max_text_width),
             "</svg>",
         ]
     ) + "\n"
@@ -164,7 +177,7 @@ def _selection_report(data: dict[str, Any]) -> str:
             "",
             "## Lecture des panneaux secondaires",
             "",
-            "Le contexte ZAF rappelle que 257 libellés de statut de registre ne sont pas des jalons temporels. Le contexte VNM conserve 7 événements et trois rapprochements incompatibles, sans les agréger. Ces deux observations motivent le besoin de pedigree et de rapprochement ; elles ne modifient pas le résultat de couverture sélectionné.",
+            "Le contexte ZAF rappelle que 257 libellés de statut de registre ne sont pas des jalons temporels. Le contexte VNM conserve 7 événements et trois rapprochements incompatibles à l'échelle des assertions et des rapprochements nommés, sans les agréger. Ces deux observations motivent le besoin de pedigree et de rapprochement ; elles ne modifient pas le résultat de couverture sélectionné.",
             "",
             "## Limites",
             "",
