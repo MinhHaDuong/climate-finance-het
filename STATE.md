@@ -1,6 +1,6 @@
 # State
 
-Last updated: 2026-09-16T14:29Z
+Last updated: 2026-09-16T15:41Z
 
 ## Current goal
 
@@ -61,6 +61,10 @@ evidence gate (10/10 criteria); closure applies only to the local preview. Exist
 ## Corpus (v2 frozen release; v3 development unfrozen 2026-09-16)
 - The published v2 corpus remains immutable at `rdj26561-revision1`; new
   pipeline, data and documentation changes belong to the v3 lineage on `main`.
+- V3 now computes Flag 5 as a non-removing semantic-distance diagnostic using
+  per-language centroids (global fallback below 30 works). The distance is
+  published as `semantic_outlier_dist`; the rebuilt extended catalog is on
+  Padme, while the 33,344-row refined corpus remains byte-identical.
 - 8 sources; 43,179 unified → 33,344 refined; 38,736×1024 embeddings;
   1,087,209 refined citations; core (≥50 cites) 2,644
 - Citation coverage 40/47/69% by period (all-works denominator), driven by
