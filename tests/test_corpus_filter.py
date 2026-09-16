@@ -651,6 +651,30 @@ class TestSkipSemanticFlagCLI:
         )
 
 
+class TestFlag5DiagnosticActivation:
+    """V3 computes Flag 5's diagnostic but never removes on it (ticket 0361)."""
+
+    def _semantic_block(self):
+        with open(FILTER_YAML) as f:
+            return yaml.safe_load(f)["semantic_outlier"]
+
+    def test_config_declares_diagnostic_mode(self):
+        assert self._semantic_block().get("mode") == "diagnostic"
+
+    def test_config_declares_the_per_language_centroid(self):
+        assert self._semantic_block().get("centroid") == "per_language"
+
+    def test_config_carries_no_unused_sigma(self):
+        assert "sigma" not in self._semantic_block(), (
+            "diagnostic mode must not retain the uncalibrated legacy threshold"
+        )
+
+    def test_extend_no_longer_skips_the_semantic_flag(self):
+        with open(DVC_YAML) as f:
+            dvc = yaml.safe_load(f)
+        assert "--skip-semantic-flag" not in dvc["stages"]["extend"]["cmd"]
+
+
 class TestExtendDeclaresEmbeddingsDep:
     """`extend` consumes embeddings.npz, so DVC must know it (ticket 0336).
 
