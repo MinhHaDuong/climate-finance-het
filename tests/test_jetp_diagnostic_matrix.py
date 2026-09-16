@@ -88,6 +88,17 @@ def test_frozen_matrix_is_four_country_but_not_a_four_country_joint_sample() -> 
         row["country"] == "SEN" and row["supports_B_strict"] == "yes"
         for row in matrix
     )
+    saguling = next(row for row in matrix if row["operation_id"] == "idn-fin-saguling-floating-solar")
+    assert saguling["finance_observation"] == "DEG, Proparco and Standard Chartered package 60000000 USD"
+    assert saguling["finance_ownership"] == "mixed_unallocated"
+    assert all(
+        row["financial_state"] == "allocation"
+        for row in matrix
+        if row["operation_id"] in {"zaf-register-actip001", "zaf-register-nl002"}
+    )
+    vocabulary = protocol["lifecycle_taxonomy"]
+    assert {"allocation", "disbursed", "unavailable", "lost_visibility"} <= set(vocabulary["financial"])
+    assert "duplicate" in protocol["coverage_universe"]["disposition_vocabulary"]
 
 
 def test_acceptance_rejects_causal_scope_and_zero_filled_missing_finance() -> None:

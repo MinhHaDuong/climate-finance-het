@@ -15,6 +15,9 @@ effectifs sont calculés dans
 d'état possède un locator vers une ligne structurée existante. Les sources
 répétées soutenant la même contribution ne créent pas de seconde contribution;
 des valeurs contradictoires font échouer la génération au lieu d'être écrasées.
+La matrice est toutefois un codage manuel, revu à partir de ces sources : le
+script reproduit ses effectifs et ses contrôles de cohérence, il ne reconstruit
+pas automatiquement les opérations, leurs finances ou leurs histoires.
 
 ## Résultat diagnostique
 
@@ -45,7 +48,8 @@ pas une absence de finance ou d'activité.
 Saguling illustre les trois règles de sécurité : les deux sources décrivent le
 même package de 60 M USD; il demeure une contribution mixte non ventilée
 (DEG, Proparco, Standard Chartered), sans montant privé imputé. La source GFANZ
-rapporte une signature mais ne fournit pas sa date; aucune date de publication
+rapporte une signature mais ne fournit pas sa date; le rapport JETP fournit un
+état d'approbation à sa date de coupe. Aucune date de publication
 n'est transformée en date d'événement. Diass conserve de même le jalon de
 chantier du 31 mars 2026 distinct de la publication du 20 avril, et ses snapshots
 KfW de 18 M puis 28 M EUR ne sont pas additionnés.

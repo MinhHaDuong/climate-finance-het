@@ -110,9 +110,40 @@ def validate_date_roles(matrix: Iterable[dict[str, str]]) -> None:
                 raise ValueError("history sequence needs two documented event dates")
 
 
+def validate_diagnostic_rows(matrix: Iterable[dict[str, str]]) -> None:
+    """Reject claims that the manually reviewed rows cannot support.
+
+    The CSV remains a small, manually coded diagnostic.  These checks only
+    protect the published denominators from impossible combinations; they do
+    not attempt to reconstruct operations, finance, or histories automatically.
+    """
+    seen_operation_ids: set[str] = set()
+    for row in matrix:
+        operation_id = row.get("operation_id", "").strip()
+        if not operation_id:
+            raise ValueError("operation_id is required")
+        if operation_id in seen_operation_ids:
+            raise ValueError(f"duplicate operation_id: {operation_id}")
+        seen_operation_ids.add(operation_id)
+
+        if row.get("supports_B_strict") == "yes":
+            if not row.get("finance_observation", "").strip():
+                raise ValueError("strict finance support needs a finance observation")
+            if row.get("jetp_link") != "jetp_strict":
+                raise ValueError("strict finance support needs a strict JETP link")
+            if row.get("finance_ownership") in {"", "unknown"}:
+                raise ValueError("strict finance support needs ownership classification")
+        if row.get("supports_A_B_C") == "yes" and not all(
+            row.get(field) == "yes"
+            for field in ("supports_A", "supports_B_strict", "supports_C_sequence")
+        ):
+            raise ValueError("joint support needs A, strict finance, and history support")
+
+
 def summarize_diagnostic(matrix: Iterable[dict[str, str]]) -> dict[str, int]:
     """Derive, rather than hand-type, the diagnostic denominators from rows."""
     rows = list(matrix)
+    validate_diagnostic_rows(rows)
     validate_date_roles(rows)
     return {
         "A": sum(row.get("supports_A") == "yes" for row in rows),
