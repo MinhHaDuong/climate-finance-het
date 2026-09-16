@@ -5,6 +5,7 @@ import json
 import sys
 from copy import deepcopy
 from pathlib import Path
+from xml.etree import ElementTree
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -63,3 +64,23 @@ def test_zero_documented_panel_remains_visible_in_a_mixed_fixture() -> None:
     assert "0 documented · 1,740 unknown/uncoded · n=1,740" in svg
     assert "C. Event history" in svg
     assert "causal" not in svg.lower()
+
+
+def test_every_rendered_label_declares_a_bounding_width_inside_the_viewbox(tmp_path: Path) -> None:
+    """A long count or provenance label cannot run beyond the SVG canvas again."""
+    render_outputs(ROOT, tmp_path)
+    root = ElementTree.parse(tmp_path / "0823-central-figure.svg").getroot()
+    _, _, viewbox_width, viewbox_height = map(float, root.attrib["viewBox"].split())
+
+    for label in root.findall("{http://www.w3.org/2000/svg}text"):
+        assert "textLength" in label.attrib
+        assert float(label.attrib["x"]) + float(label.attrib["textLength"]) <= viewbox_width
+        assert float(label.attrib["y"]) <= viewbox_height
+
+
+def test_vietnam_context_stays_at_assertion_and_reconciliation_scale() -> None:
+    """The small VNM reconciliation set is not silently promoted to operations."""
+    vnm = build_figure_data(ROOT)["candidate_assessment"][2]
+
+    assert "source-assertion" in vnm["intrinsic_interest"]
+    assert "operation scale" not in vnm["intrinsic_interest"]
