@@ -3,7 +3,6 @@
 import json
 
 import pytest
-
 from jetp._causal_feasibility import (
     load_country_quarter_observations,
     validate_comparison_countries,

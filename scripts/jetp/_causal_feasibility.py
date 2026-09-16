@@ -4,11 +4,10 @@ This module validates provenance and comparison admissibility only. It must not
 derive approval values, country contrasts, or treatment effects.
 """
 
-from collections.abc import Mapping, Sequence
 import json
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
-
 
 OBSERVATION_REQUIRED_FIELDS = (
     "country",
