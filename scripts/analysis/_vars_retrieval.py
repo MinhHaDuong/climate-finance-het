@@ -17,7 +17,7 @@ from filter_flags import _load_config
 # The §2.2 thresholds the data paper quotes. compute_vars splices this into
 # DOC_VARS, so the emitter and the registration cannot drift apart.
 RETRIEVAL_VARS = [
-    "filter_outlier_sigma",
+    "filter_outlier_min_lang",
     "filter_reranker_threshold",
     "neardup_min_group_size",
     "neardup_overlap_pct",
@@ -52,7 +52,8 @@ def _pct0(value: float) -> str:
 def retrieval_protocol_stats(v: dict) -> None:
     """Add every filtering threshold a deliverable quotes from config."""
     cfg = _load_config()
-    v["filter_outlier_sigma"] = str(cfg["semantic_outlier"]["sigma"])
+    v["filter_outlier_min_lang"] = str(
+        cfg["semantic_outlier"]["min_language_count"])
     v["filter_reranker_threshold"] = str(cfg["llm_relevance"]["reranker_threshold"])
 
     nd = cfg["near_duplicate"]
