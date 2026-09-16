@@ -1,0 +1,110 @@
+{
+  "candidate_counts": {
+    "canonical_finance_admitted": 0,
+    "plan_priority_candidate": 1142
+  },
+  "country": "IDN",
+  "schema_version": "jetp-0819-ingestion/1",
+  "scope": "seven frozen 0817 inventory documents only",
+  "source_count": 7,
+  "sources": [
+    {
+      "candidate_count": 0,
+      "candidate_kind": "contextual_analysis_only",
+      "canonical_finance_admitted": 0,
+      "date_precision": "publication_or_cutoff_not_event_without_explicit_event_statement",
+      "document_sha256": "b45a7437b601ed2a61c39123c2d35b04ccd49a73d75543e067a7c772c0db6bdf",
+      "inventory_id": "idn-study-captive-power-2025",
+      "retrieval_status": "raw_retained",
+      "review_disposition": "reviewed_no_operation_candidate",
+      "review_note": "The retained thematic report is contextual analysis; this bounded review admits no operation-level fact from it.",
+      "source_id": "idn-jetp-captive-power-study-2025",
+      "source_version": "b45a7437b601ed2a61c39123c2d35b04ccd49a73d75543e067a7c772c0db6bdf",
+      "storage_path": "objects/b4/b45a7437b601ed2a61c39123c2d35b04ccd49a73d75543e067a7c772c0db6bdf.pdf"
+    },
+    {
+      "candidate_count": 0,
+      "candidate_kind": "contextual_analysis_only",
+      "canonical_finance_admitted": 0,
+      "date_precision": "publication_or_cutoff_not_event_without_explicit_event_statement",
+      "document_sha256": "debd93518e560c8db0614059c2b550b2f75914fb4bb16038267d6bbc259026a2",
+      "inventory_id": "idn-study-carbon-pricing-2025",
+      "retrieval_status": "raw_retained",
+      "review_disposition": "reviewed_no_operation_candidate",
+      "review_note": "The retained thematic report is contextual analysis; this bounded review admits no operation-level fact from it.",
+      "source_id": "idn-jetp-carbon-pricing-2025",
+      "source_version": "debd93518e560c8db0614059c2b550b2f75914fb4bb16038267d6bbc259026a2",
+      "storage_path": "objects/de/debd93518e560c8db0614059c2b550b2f75914fb4bb16038267d6bbc259026a2.pdf"
+    },
+    {
+      "candidate_count": 0,
+      "candidate_kind": "contextual_analysis_only",
+      "canonical_finance_admitted": 0,
+      "date_precision": "publication_or_cutoff_not_event_without_explicit_event_statement",
+      "document_sha256": "4e7ce1c8fb6ada0fc020ba5590a9bf46ce678e6f663f0b150aa063c5e0f105cc",
+      "inventory_id": "idn-study-energy-efficiency-2025",
+      "retrieval_status": "raw_retained",
+      "review_disposition": "reviewed_no_operation_candidate",
+      "review_note": "The retained thematic report is contextual analysis; this bounded review admits no operation-level fact from it.",
+      "source_id": "idn-jetp-energy-efficiency-electrification-2025",
+      "source_version": "4e7ce1c8fb6ada0fc020ba5590a9bf46ce678e6f663f0b150aa063c5e0f105cc",
+      "storage_path": "objects/4e/4e7ce1c8fb6ada0fc020ba5590a9bf46ce678e6f663f0b150aa063c5e0f105cc.pdf"
+    },
+    {
+      "candidate_count": 0,
+      "candidate_kind": "contextual_analysis_only",
+      "canonical_finance_admitted": 0,
+      "date_precision": "publication_or_cutoff_not_event_without_explicit_event_statement",
+      "document_sha256": "fe8af4acbb6fccf83ea8a3ad0b608ec870c93e967f9e59ff23078ef5e4ec42a7",
+      "inventory_id": "idn-study-guarantees-2025",
+      "retrieval_status": "raw_retained",
+      "review_disposition": "reviewed_no_operation_candidate",
+      "review_note": "The retained thematic report is contextual analysis; this bounded review admits no operation-level fact from it.",
+      "source_id": "idn-jetp-guarantees-insurance-2025",
+      "source_version": "fe8af4acbb6fccf83ea8a3ad0b608ec870c93e967f9e59ff23078ef5e4ec42a7",
+      "storage_path": "objects/fe/fe8af4acbb6fccf83ea8a3ad0b608ec870c93e967f9e59ff23078ef5e4ec42a7.pdf"
+    },
+    {
+      "candidate_count": 0,
+      "candidate_kind": "contextual_analysis_only",
+      "canonical_finance_admitted": 0,
+      "date_precision": "publication_or_cutoff_not_event_without_explicit_event_statement",
+      "document_sha256": "901d08e8589ba37ba50891e453d7b4138282d13c4d0f27403ded2aa363125378",
+      "inventory_id": "idn-study-just-transition-2025",
+      "retrieval_status": "raw_retained",
+      "review_disposition": "reviewed_no_operation_candidate",
+      "review_note": "The retained thematic report is contextual analysis; this bounded review admits no operation-level fact from it.",
+      "source_id": "idn-jetp-just-transition-study-2025",
+      "source_version": "901d08e8589ba37ba50891e453d7b4138282d13c4d0f27403ded2aa363125378",
+      "storage_path": "objects/90/901d08e8589ba37ba50891e453d7b4138282d13c4d0f27403ded2aa363125378.pdf"
+    },
+    {
+      "candidate_count": 1142,
+      "candidate_kind": "plan_priority_candidate",
+      "canonical_finance_admitted": 0,
+      "date_precision": "reporting_cutoff_or_publication_review_required",
+      "document_sha256": "74fb460fd09e76607e3cff308f5ba2754f2ebd91b0c9b7613c1a041e7b361162",
+      "inventory_id": "idn-progress-report-2025",
+      "retrieval_status": "raw_retained",
+      "review_disposition": "reviewed_plan_candidates_not_finance",
+      "review_note": "The 1,142 appendix lines remain plan priorities; no allocation, approval, or payment is admitted.",
+      "source_id": "idn-jetp-progress-report-2025",
+      "source_version": "74fb460fd09e76607e3cff308f5ba2754f2ebd91b0c9b7613c1a041e7b361162",
+      "storage_path": "objects/74/74fb460fd09e76607e3cff308f5ba2754f2ebd91b0c9b7613c1a041e7b361162.pdf"
+    },
+    {
+      "candidate_count": 0,
+      "candidate_kind": "contextual_analysis_only",
+      "canonical_finance_admitted": 0,
+      "date_precision": "publication_or_cutoff_not_event_without_explicit_event_statement",
+      "document_sha256": "93d4fe15da7d6afa651d3ffb93ed23ef12a75d8312c320b9418d037aa8738583",
+      "inventory_id": "idn-study-small-renewables-2025",
+      "retrieval_status": "raw_retained",
+      "review_disposition": "reviewed_no_operation_candidate",
+      "review_note": "The retained thematic report is contextual analysis; this bounded review admits no operation-level fact from it.",
+      "source_id": "idn-jetp-small-scale-renewables-finance-2025",
+      "source_version": "93d4fe15da7d6afa651d3ffb93ed23ef12a75d8312c320b9418d037aa8738583",
+      "storage_path": "objects/93/93d4fe15da7d6afa651d3ffb93ed23ef12a75d8312c320b9418d037aa8738583.pdf"
+    }
+  ]
+}
