@@ -140,6 +140,25 @@ social objectives, beneficiaries, and realised outcomes separately. Re-run the
 same three-panel descriptive output after each increment, while publishing both
 coverage and the linked subset denominator.
 
+\begin{center}\small
+\begin{tabular}{@{}p{0.25\linewidth}p{0.65\linewidth}@{}}
+\toprule
+Coding field & Next-iteration rule \\
+\midrule
+\texttt{unit\_kind} & Record whether the assertion concerns a project/operation,
+or an envelope, programme, or component. Do not silently promote one kind into
+another. \\
+\texttt{JETP\_relation} & Preserve the evidence-backed relation as
+\texttt{explicit\_JETP}, \texttt{JETP\_linked},
+\texttt{adjacent\_transition}, \texttt{non\_JETP}, or \texttt{unknown}; this
+is not a binary inference from country, funder, or timing. \\
+Rio markers & If ``Rio'' means OECD DAC Rio mitigation/adaptation markers,
+record 0/1/2/\texttt{unreported}/\texttt{not\_applicable}, with the source,
+edition, and scope of the marker rather than imputing it from a technology label. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
 \section*{Traceability and limits}
 The frozen inputs are \texttt{docs/jetp-study/0730-descriptives.json}, its run
 manifest, and the 0823 figure manifest; their SHA-256 values are recorded in
