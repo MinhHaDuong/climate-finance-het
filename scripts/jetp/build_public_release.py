@@ -1,6 +1,7 @@
 """Build one immutable, offline JETP public-release archive."""
 
 import argparse
+import json
 from pathlib import Path
 
 from jetp._public_release import build_release
@@ -15,9 +16,14 @@ def main():
     parser.add_argument('--cutoff', required=True)
     parser.add_argument('--prepared-on', required=True)
     parser.add_argument('--reviewer', required=True)
+    parser.add_argument('--descriptor-output', type=Path,
+                        help='Optional immutable descriptor path written with the archive.')
     args = parser.parse_args()
-    build_release(args.root, args.output, edition=args.edition, input_git_sha=args.input_git_sha,
-                  cutoff=args.cutoff, prepared_on=args.prepared_on, reviewer=args.reviewer)
+    descriptor = build_release(args.root, args.output, edition=args.edition,
+                               input_git_sha=args.input_git_sha, cutoff=args.cutoff,
+                               prepared_on=args.prepared_on, reviewer=args.reviewer)
+    if args.descriptor_output:
+        args.descriptor_output.write_text(json.dumps(descriptor, indent=2, sort_keys=True) + '\n')
 
 
 if __name__ == '__main__':
