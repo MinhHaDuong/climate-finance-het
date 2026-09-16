@@ -41,3 +41,15 @@ def test_zaf_q1_reconciliation_replays_all_material_rows_without_event_promotion
     with output.open(encoding="utf-8", newline="") as handle:
         assert list(csv.DictReader(handle)) == rows
     assert "257" in report.read_text(encoding="utf-8")
+
+
+def test_checked_in_q1_candidate_table_is_the_replayable_result() -> None:
+    from jetp.build_0818_zaf_q1_reconciliation import build_rows
+
+    policy = json.loads((ROOT / "config/jetp-zaf-migration.json").read_text())
+    source = next(row for row in policy["sources"] if row["role"] == "register")
+    expected = build_rows(ROOT / "data/jetp/documents" / source["storage_path"], policy)
+    with (ROOT / "docs/jetp-study/0818-zaf-q1-2026-rows.csv").open(
+        encoding="utf-8", newline=""
+    ) as handle:
+        assert list(csv.DictReader(handle)) == expected
