@@ -32,6 +32,12 @@ dominant result and three coordinated figure panels. Next 0816 deliverable is a
 diagnostic joinability matrix from existing evidence. The v3 worktree protocol
 is unapproved; the source census and primary analysis are not frozen.
 
+Current iterative milestones: **M1** is a sourced four-country inventory of
+proposed JETP objects; **M2** records the documentary state of each object with
+date role, source and uncertainty; **M3** reconciles finance and histories only
+where the evidence supports it. The MVP exposes the same evidence layers and
+their coverage; it is not a parallel datastore or proof of an analytical result.
+
 ## Status
 
 Use `erg ready tickets/` for live work. The separate prose PR #1322 is outside

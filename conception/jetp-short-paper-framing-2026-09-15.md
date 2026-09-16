@@ -94,6 +94,39 @@ Première épreuve documentaire : deux sources d'un même financement doivent do
 une seule contribution; un ensemble mixte non ventilé ne doit produire aucun
 montant privé inventé; une date de publication ne devient pas une signature.
 
+## Jalons itératifs : données, résultat et MVP
+
+Les jalons ne sont pas une cascade : chaque jalon peut faire apparaître une
+lacune qui déclenche une récolte ciblée, puis une nouvelle édition des résultats.
+L'extraction conserve l'incertitude et les notes; la réconciliation est une vue
+supérieure qui ne remplace ni ne supprime les assertions extraites.
+
+| Jalon | Question à laquelle il permet de répondre | Produit vérifiable | Place du MVP |
+|---|---|---|---|
+| **M1 — inventaire** | Quels projets, opérations, composantes, programmes ou enveloppes sont proposés dans les quatre JETP ? | Un registre sourcé : nom ou emplacement anonyme, `unit_kind`, pays, secteur/fonction, technologie, opérateur, relation JETP, caractéristiques connues, source et locator. | Exploration du périmètre et liens vers les documents; les objets non résolus restent visibles comme tels. |
+| **M2 — état documentaire daté** | Que documentent les sources de l'état de chaque objet, et à quelle date ? | Journal d'événements et journal de positions avec rôle et précision de date, état rapporté, source/locator et notes d'incertitude. L'état observé n'est jamais confondu avec sa date de publication. | Chronologies et fiches de preuve; elles affichent la date, son rôle et la source plutôt qu'un statut prétendument actuel. |
+| **M3 — finance et réconciliation** | Quels financements, instruments et trajectoires peut-on rapprocher sans double compte ? | Vue de rapprochement par projet/opération quand la preuve le permet, sinon par programme/enveloppe : entrées liées, règle, pedigree, intervalle ou incompatibilité, et couverture A/B/C. | Agrégats seulement avec périmètre, constituants et incertitude explicites; aucune somme ni part privée implicite. |
+
+`unit_kind` distingue au minimum `project_or_operation`, `component`,
+`programme`, `envelope` et `unresolved`. La relation au JETP est une assertion
+documentée (`explicit_JETP`, `JETP_linked`, `adjacent_transition`, `non_JETP`,
+`unknown`), non une inférence binaire. Les marqueurs Rio, s'ils sont disponibles,
+restent des champs de source séparés, avec édition et périmètre; leur absence ne
+devient pas un zéro.
+
+Le MVP est donc la surface de lecture et de contrôle de qualité de M1–M3, pas une
+base concurrente ni un jalon scientifique indépendant. Chaque édition du MVP
+rend visibles sa couverture (objets, sources, assertions), ses faits revus et ce
+qui demeure au niveau d'extraction ou sans rapprochement. Une amélioration de
+l'interface ne vaut pas validation scientifique; inversement, une nouvelle
+récolte doit pouvoir améliorer M1 ou M2 avant de prétendre à M3.
+
+**Contrat d'interface :** M3 ne lit que des assertions M2 révisées et
+provenancées; il ne rapproche jamais directement des lignes brutes d'extraction.
+Les lignes brutes restent consultables et liées à l'assertion révisée, afin que
+la décision de rapprochement et le compteur de faits revus du MVP soient
+auditables.
+
 ## Suite
 
 0816 protocole et tableau de raccordabilité → 0817 census des sources ciblé sur
@@ -104,4 +137,3 @@ manuscrit. 0824 met à jour le MVP depuis les faits admis après 0822.
 Ce cadrage remplace les passages incompatibles du plan antérieur et des handoffs
 de faisabilité concernant le papier court. Le data paper reste consacré au jeu
 de données; le papier long conserve son analyse institutionnelle propre.
-
