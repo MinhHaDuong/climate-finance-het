@@ -13,7 +13,6 @@ from html import escape
 from pathlib import Path
 from typing import Any
 
-
 INPUT = Path("docs/jetp-study/0730-descriptives.json")
 INPUT_MANIFEST = Path("docs/jetp-study/0730-run-manifest.json")
 SCHEMA_VERSION = "jetp-0823-central-figure/1"
