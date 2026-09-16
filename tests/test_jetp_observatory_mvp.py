@@ -261,3 +261,49 @@ def test_edition_history_distinguishes_canonical_sources_and_staged_depth():
     }
     assert 'not deployed as canonical facts' in renderer
     assert 'not a common record total' in renderer
+
+
+def test_country_preserves_principal_and_news_without_project_links():
+    """A newer headline must not replace the principal reference or lose its news."""
+    from pathlib import Path
+
+    from jetp.build_observatory import country_data
+
+    tables = {
+        key: []
+        for key in (
+            "projects",
+            "events",
+            "implementation-events",
+            "source-claims",
+            "project-source-links",
+            "project-coverage",
+            "manifest",
+        )
+    }
+    tables["sources"] = [
+        {
+            "source_id": source_id,
+            "title": source_id,
+            "url": f"https://example.org/{source_id}",
+            "publisher": "Secretariat",
+            "published_date": day,
+        }
+        for source_id, day in (("report", "2025-12-02"), ("news", "2026-09-08"))
+    ]
+    config = {
+        "countries": {
+            "IDN": {
+                "headline": "$3.92bn approved",
+                "headline_date": "2026-09-08",
+                "headline_source": "report",
+                "latest_news_source": "news",
+            }
+        }
+    }
+
+    result = country_data(Path("/nonexistent"), "IDN", config, tables)
+
+    assert set(result["sources"]) == {"report", "news"}
+    assert result["country"]["headline_source"] == "report"
+    assert result["country"]["headline"] == "$3.92bn approved"
