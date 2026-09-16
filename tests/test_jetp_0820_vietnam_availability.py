@@ -1,4 +1,4 @@
-"""Availability result for Viet Nam's intentionally empty first inventory."""
+"""Bounded staging result for the retained Viet Nam corpus."""
 
 from __future__ import annotations
 
@@ -6,46 +6,24 @@ import json
 import sys
 from pathlib import Path
 
-import pytest
-
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from jetp.build_0820_vietnam_availability import build_report, validate_report
 
 
-def test_empty_initial_inventory_is_not_zero_evidence_or_complete_coverage() -> None:
-    """No declared object means no measurement, not a null finding."""
+def test_retained_vietnam_corpus_invalidates_zero_extraction() -> None:
+    """The local RMP candidate and 46 pilot rows are a nonempty staging corpus."""
     report = build_report(ROOT)
 
-    initial = report["initial_inventory"]
-    assert initial["expected_objects"] == 0
-    assert initial["extracted_objects"] == 0
-    assert initial["coverage_disposition"] == "no_initial_extractable_inventory"
-    assert initial["evidence_disposition"] == "not_measured_not_zero"
-    assert report["required_next_source_leads"]
-
-    with pytest.raises(ValueError, match="zero evidence"):
-        validate_report(
-            {
-                **report,
-                "initial_inventory": {
-                    **initial,
-                    "evidence_disposition": "zero_evidence",
-                },
-            },
-            ROOT,
-        )
-    with pytest.raises(ValueError, match="complete coverage"):
-        validate_report(
-            {
-                **report,
-                "initial_inventory": {**initial, "coverage_disposition": "complete"},
-            },
-            ROOT,
-        )
+    assert report["rmp_inventory_positions"]["count"] == 279
+    assert report["pilot_observations"]["count"] == 46
+    assert report["rmp_inventory_positions"]["admission_status"] == "unadmitted_candidate"
+    assert report["pilot_observations"]["eligible_for_account"] is False
+    assert report["availability_disposition"] == "nonempty_unadmitted_staging"
+    validate_report(report, ROOT)
 
 
-def test_checked_in_availability_result_is_a_clean_replay() -> None:
-    path = ROOT / "docs" / "jetp-study" / "0820-vietnam-availability.json"
+def test_checked_in_staging_result_is_a_clean_replay() -> None:
+    path = ROOT / "docs" / "jetp-study" / "0820-vietnam-staging.json"
     assert json.loads(path.read_text(encoding="utf-8")) == build_report(ROOT)
