@@ -5,6 +5,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 TEX = ROOT / "deliverables" / "jetp-mesure" / "jetp-mesure.tex"
+RECIPE = ROOT / "deliverables" / "jetp-mesure" / "jetp-mesure.mk"
 
 
 def test_short_package_exposes_frozen_result_figure_and_next_iteration() -> None:
@@ -32,3 +33,13 @@ def test_short_package_does_not_promote_coverage_into_a_substantive_effect() -> 
     assert "does not establish acceleration" in source
     assert "does not establish private-finance mobilisation" in source
     assert "sought substantive result" in source
+
+
+def test_short_package_keeps_the_standard_latexmk_source_directory_recipe() -> None:
+    """A document-content ticket must not substitute the established renderer."""
+    recipe = RECIPE.read_text(encoding="utf-8")
+
+    assert "LATEXMK ?= latexmk" in recipe
+    assert "LATEXMK_FLAGS ?= -cd -pdf -halt-on-error -interaction=nonstopmode" in recipe
+    assert "$(LATEXMK) $(LATEXMK_FLAGS) $<" in recipe
+    assert "TECTONIC" not in recipe
