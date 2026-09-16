@@ -18,6 +18,10 @@ def test_short_package_exposes_frozen_result_figure_and_next_iteration() -> None
     assert "Evidence slot" in source
     assert "Citation slot" in source
     assert "Iteration and re-harvesting agenda" in source
+    assert r"unit\_kind" in source
+    assert r"explicit\_JETP" in source
+    assert r"adjacent\_transition" in source
+    assert "Rio mitigation/adaptation markers" in source
     assert "not a causal estimate" in source
 
 
