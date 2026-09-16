@@ -1,6 +1,7 @@
 {
   "claim_class": "descriptive_comparison",
   "study_id": "jetp-four-country-lifecycle-measurement",
+  "question": "What explicitly JETP-linked finance is publicly traceable to each lifecycle state in the four countries, with what denominators and coverage?",
   "countries": ["ZAF", "IDN", "VNM", "SEN"],
   "lifecycle_states": [
     "pledge",
@@ -16,14 +17,22 @@
   "coverage_states": ["observed", "unavailable", "lost_visibility", "excluded"],
   "evidence_cutoff": "2026-09-15T00:00:00Z",
   "denominator_policy": "Each lifecycle state reports only its own named denominator; cross-state ratios require a separately evidenced common basis.",
+  "denominator_contract": {
+    "pledge": "Source-stated JETP package perimeter only.",
+    "allocation": "Source-stated allocation perimeter only.",
+    "approval": "Explicitly approved financing records only.",
+    "signature": "Explicitly signed financing records only.",
+    "disbursement": "Reported flow or one labelled cumulative snapshot, never both.",
+    "implementation": "Count of separately reported statuses, not monetary delivery."
+  },
   "money_policy": "Retain source currency and accounting basis; do not sum currencies or incompatible bases without a separately frozen conversion rule.",
   "date_policy": "Keep event, publication and retrieval dates separate; retain date precision and do not infer an event date from a register timestamp.",
   "permitted_claim": "traceability_and_coverage_comparison",
   "prohibited_claims": [
-    "JETP causal effect",
-    "finance additionality",
-    "total investment",
-    "physical delivery"
+    "causal_effect",
+    "additionality",
+    "total_investment",
+    "physical_delivery"
   ],
   "lifecycle_definitions": {
     "pledge": "A publicly reported political or financial commitment, retained with its stated perimeter and without treating it as an operation.",
@@ -36,8 +45,22 @@
   "comparison_rules": [
     "no_cross_state_aggregation",
     "no_cumulative_flow_mix",
-    "no_inferred_transition"
+    "no_inferred_transition",
+    "deduplicate_same_financing",
+    "no_programme_component_double_count",
+    "select_one_cumulative_snapshot"
   ],
+  "jetp_attribution_rule": {
+    "explicit_source_link_required": true,
+    "rule": "Admit finance only when an original source explicitly identifies it as JETP-linked or explicitly places it in a named JETP package; country, sector, lender or timing alone never establishes attribution."
+  },
+  "cutoff_semantics": {
+    "event": "Retain the reported event date and its precision; do not infer one from a publication or register date.",
+    "publication": "A document published by the cutoff is eligible for review.",
+    "retrieval": "Record retrieval separately; a later retrieval does not move a source's publication date.",
+    "undated": "Retain as undated and exclude from time-ordered comparisons requiring a date.",
+    "revision": "Later corrections create a new version linked to the earlier record; they do not overwrite it."
+  },
   "source_census_handoff": {
     "finite_universe": true,
     "required_dispositions": ["admitted", "duplicate", "excluded", "unavailable", "lost_visibility"],

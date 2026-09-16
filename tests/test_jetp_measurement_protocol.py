@@ -37,6 +37,10 @@ def test_frozen_four_country_protocol_is_a_valid_descriptive_measurement_design(
         ("unit", None, "unit"),
         ("countries", ["USA"], "countries"),
         ("permitted_claim", "JETP caused additional investment", "claim"),
+        ("denominator_contract", {}, "denominator"),
+        ("coverage_states", [], "coverage"),
+        ("evidence_cutoff", "invalidZ", "cutoff"),
+        ("prohibited_claims", [], "prohibited"),
     ],
 )
 def test_protocol_rejects_each_unsupported_measurement_rule(field, value, message):
