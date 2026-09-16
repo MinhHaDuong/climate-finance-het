@@ -1,0 +1,20 @@
+{
+  "files": {
+    "0823-central-figure-data.csv": {
+      "sha256": "d7e56435f1a9b82a16e7794da8d0e307e4c25bb61a75c260528ac2ce0739cc23"
+    },
+    "0823-central-figure.svg": {
+      "sha256": "1e38958ed77b90d2c69a300360903fa815673ef56d8f9e5564007c1fc237598a"
+    },
+    "0823-result-selection.md": {
+      "sha256": "b8664c5ac250d0de7db7480624de64f5328360d8d40daa6ff5a6b313fcca7c04"
+    }
+  },
+  "input_0730": "docs/jetp-study/0730-descriptives.json",
+  "input_0730_manifest": "docs/jetp-study/0730-run-manifest.json",
+  "input_0730_manifest_sha256": "74bcafc0edcb14d488ae9c188359047d26448e51a42290ddd46fd431567bf8e2",
+  "input_0730_sha256": "73af6c335cd5d375ca505d4018d88a7563c405a154d7dc8c8376afe1c1059b6a",
+  "reproduction": "python3 scripts/jetp/build_0823_figure.py --root .",
+  "schema_version": "jetp-0823-figure-manifest/1",
+  "scope": "Frozen 0730 descriptive output only; no acquisition, pooling, currency conversion, ownership inference, operation-level join, or causal estimation."
+}

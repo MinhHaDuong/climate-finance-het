@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="630" viewBox="0 0 1160 630" role="img" aria-labelledby="title desc">
+<title id="title">Documentary coverage of three JETP dimensions</title>
+<desc id="desc">Three bars use the same denominator of frozen atomic source assertions. Their unequal coverage does not form a common operation-level sample.</desc>
+<style>.title{font:700 25px sans-serif;fill:#12233d}.subtitle{font:15px sans-serif;fill:#405266}.panel{font:700 17px sans-serif;fill:#12233d}.value{font:15px sans-serif;fill:#12233d}.note{font:13px sans-serif;fill:#405266}.foot{font:700 16px sans-serif;fill:#9a3412}.documented{fill:#147d92}.unknown{fill:#d6dce2}</style>
+<rect width="100%" height="100%" fill="white"/>
+<text x="82" y="50" class="title">What the frozen JETP record can jointly describe</text>
+<text x="82" y="78" class="subtitle">Atomic source assertions, not operations or portfolio totals. Teal = documented; grey = unknown or uncoded.</text>
+<text x="82" y="128" class="panel">A. Function labels</text>
+<rect x="82" y="150" width="611.057" height="32" class="documented"/>
+<rect x="693.057" y="150" width="148.943" height="32" class="unknown"/>
+<text x="858" y="172" class="value">1,399 documented · 341 unknown/uncoded · n=1,740</text>
+<text x="82" y="206" class="note">Portfolio and technology labels are retained as source labels, not harmonised just-transition functions.</text>
+<text x="82" y="246" class="panel">B. Finance instruments</text>
+<rect x="82" y="268" width="132.345" height="32" class="documented"/>
+<rect x="214.345" y="268" width="627.655" height="32" class="unknown"/>
+<text x="858" y="290" class="value">303 documented · 1,437 unknown/uncoded · n=1,740</text>
+<text x="82" y="324" class="note">Ownership is only source-stated wording; a funder name is not recoded into public or private ownership.</text>
+<text x="82" y="364" class="panel">C. Event history</text>
+<rect x="82" y="386" width="3.057" height="32" class="documented"/>
+<rect x="85.057" y="386" width="756.943" height="32" class="unknown"/>
+<text x="858" y="408" class="value">7 documented · 1,733 unknown/uncoded · n=1,740</text>
+<text x="82" y="442" class="note">Events are reported assertions pending independent operation identity; dates are not transition clocks.</text>
+<text x="82" y="542" class="foot">No common explicit A/B/C atomic assertion: 0 / 1,740</text>
+<text x="82" y="570" class="note">The panels share an assertion denominator but are not a joint operation-level sample; the zero is a coverage result, not absence in JETPs.</text>
+<text x="82" y="602" class="note">Source: frozen 0822 snapshot, rendered through approved 0730 descriptives. No amounts are pooled; no transition duration is calculated.</text>
+</svg>

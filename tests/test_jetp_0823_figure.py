@@ -3,13 +3,14 @@
 import csv
 import json
 import sys
+from copy import deepcopy
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from jetp.build_0823_figure import build_figure_data, render_outputs
+from jetp.build_0823_figure import _svg, build_figure_data, render_outputs
 
 
 def test_figure_data_keeps_one_denominator_and_the_null_join_visible() -> None:
@@ -50,3 +51,16 @@ def test_rendered_figure_exposes_unknowns_and_replays_from_manifest(tmp_path: Pa
     assert manifest["reproduction"].endswith("build_0823_figure.py --root .")
     assert manifest["files"]["0823-central-figure.svg"]["sha256"]
     assert manifest["input_0730_sha256"]
+
+
+def test_zero_documented_panel_remains_visible_in_a_mixed_fixture() -> None:
+    """A future empty panel must say zero, not disappear or become a causal gap."""
+    data = deepcopy(build_figure_data(ROOT))
+    data["panels"][2]["documented_observations"] = 0
+    data["panels"][2]["unknown_or_uncoded_observations"] = 1740
+
+    svg = _svg(data)
+
+    assert "0 documented · 1,740 unknown/uncoded · n=1,740" in svg
+    assert "C. Event history" in svg
+    assert "causal" not in svg.lower()
