@@ -26,15 +26,24 @@ def test_empty_initial_inventory_is_not_zero_evidence_or_complete_coverage() -> 
     assert report["required_next_source_leads"]
 
     with pytest.raises(ValueError, match="zero evidence"):
-        validate_report({
-            **report,
-            "initial_inventory": {**initial, "evidence_disposition": "zero_evidence"},
-        }, ROOT)
+        validate_report(
+            {
+                **report,
+                "initial_inventory": {
+                    **initial,
+                    "evidence_disposition": "zero_evidence",
+                },
+            },
+            ROOT,
+        )
     with pytest.raises(ValueError, match="complete coverage"):
-        validate_report({
-            **report,
-            "initial_inventory": {**initial, "coverage_disposition": "complete"},
-        }, ROOT)
+        validate_report(
+            {
+                **report,
+                "initial_inventory": {**initial, "coverage_disposition": "complete"},
+            },
+            ROOT,
+        )
 
 
 def test_checked_in_availability_result_is_a_clean_replay() -> None:
