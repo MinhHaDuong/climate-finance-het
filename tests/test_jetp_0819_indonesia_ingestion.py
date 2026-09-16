@@ -4,7 +4,6 @@ import json
 from pathlib import Path
 
 import pytest
-
 from jetp.build_0819_indonesia_ingestion import build_report, validate_adjudications
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -28,7 +27,7 @@ def test_seven_document_review_keeps_priority_separate_from_finance() -> None:
     assert len(set(progress["candidate_ids"])) == 1142
     assert progress["canonical_finance_admitted"] == 0
     assert progress["date_precision"] == "reporting_cutoff_or_publication_review_required"
-    assert all(row["review_disposition"] == "reviewed_no_operation_candidate"
+    assert all(row["review_disposition"] == "no_operation_candidate"
                for row in report["sources"] if row is not progress)
 
 

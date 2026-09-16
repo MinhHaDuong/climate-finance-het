@@ -9,6 +9,13 @@
   "source_count": 7,
   "sources": [
     {
+      "adjudication": {
+        "disposition": "no_operation_candidate",
+        "excerpt": "three harmonised scenarios were developed",
+        "page": "85",
+        "reason": "The passage defines modelled scenarios and case-study assumptions rather than a committed project or finance event.",
+        "source_id": "idn-jetp-captive-power-study-2025"
+      },
       "candidate_count": 0,
       "candidate_ids": [],
       "candidate_kind": "contextual_analysis_only",
@@ -17,13 +24,20 @@
       "document_sha256": "b45a7437b601ed2a61c39123c2d35b04ccd49a73d75543e067a7c772c0db6bdf",
       "inventory_id": "idn-study-captive-power-2025",
       "retrieval_status": "raw_retained",
-      "review_disposition": "reviewed_no_operation_candidate",
-      "review_note": "The retained thematic report is contextual analysis; this bounded review admits no operation-level fact from it.",
+      "review_disposition": "no_operation_candidate",
+      "review_note": "The passage defines modelled scenarios and case-study assumptions rather than a committed project or finance event.",
       "source_id": "idn-jetp-captive-power-study-2025",
       "source_version": "b45a7437b601ed2a61c39123c2d35b04ccd49a73d75543e067a7c772c0db6bdf",
       "storage_path": "objects/b4/b45a7437b601ed2a61c39123c2d35b04ccd49a73d75543e067a7c772c0db6bdf.pdf"
     },
     {
+      "adjudication": {
+        "disposition": "no_operation_candidate",
+        "excerpt": "The proposed reforms",
+        "page": "25",
+        "reason": "The passage is a proposed regulatory roadmap rather than evidence of an operation allocation approval or payment.",
+        "source_id": "idn-jetp-carbon-pricing-2025"
+      },
       "candidate_count": 0,
       "candidate_ids": [],
       "candidate_kind": "contextual_analysis_only",
@@ -32,13 +46,20 @@
       "document_sha256": "debd93518e560c8db0614059c2b550b2f75914fb4bb16038267d6bbc259026a2",
       "inventory_id": "idn-study-carbon-pricing-2025",
       "retrieval_status": "raw_retained",
-      "review_disposition": "reviewed_no_operation_candidate",
-      "review_note": "The retained thematic report is contextual analysis; this bounded review admits no operation-level fact from it.",
+      "review_disposition": "no_operation_candidate",
+      "review_note": "The passage is a proposed regulatory roadmap rather than evidence of an operation allocation approval or payment.",
       "source_id": "idn-jetp-carbon-pricing-2025",
       "source_version": "debd93518e560c8db0614059c2b550b2f75914fb4bb16038267d6bbc259026a2",
       "storage_path": "objects/de/debd93518e560c8db0614059c2b550b2f75914fb4bb16038267d6bbc259026a2.pdf"
     },
     {
+      "adjudication": {
+        "disposition": "no_operation_candidate",
+        "excerpt": "proposed reform roadmap",
+        "page": "78",
+        "reason": "The passage is a sectoral policy roadmap; it identifies neither a named operation nor an allocation approval or payment.",
+        "source_id": "idn-jetp-energy-efficiency-electrification-2025"
+      },
       "candidate_count": 0,
       "candidate_ids": [],
       "candidate_kind": "contextual_analysis_only",
@@ -47,13 +68,20 @@
       "document_sha256": "4e7ce1c8fb6ada0fc020ba5590a9bf46ce678e6f663f0b150aa063c5e0f105cc",
       "inventory_id": "idn-study-energy-efficiency-2025",
       "retrieval_status": "raw_retained",
-      "review_disposition": "reviewed_no_operation_candidate",
-      "review_note": "The retained thematic report is contextual analysis; this bounded review admits no operation-level fact from it.",
+      "review_disposition": "no_operation_candidate",
+      "review_note": "The passage is a sectoral policy roadmap; it identifies neither a named operation nor an allocation approval or payment.",
       "source_id": "idn-jetp-energy-efficiency-electrification-2025",
       "source_version": "4e7ce1c8fb6ada0fc020ba5590a9bf46ce678e6f663f0b150aa063c5e0f105cc",
       "storage_path": "objects/4e/4e7ce1c8fb6ada0fc020ba5590a9bf46ce678e6f663f0b150aa063c5e0f105cc.pdf"
     },
     {
+      "adjudication": {
+        "disposition": "no_operation_candidate",
+        "excerpt": "This chapter presents a set of key recommendations",
+        "page": "27",
+        "reason": "The passage introduces recommendations for instruments; it does not evidence an operation-specific guarantee allocation approval or payment.",
+        "source_id": "idn-jetp-guarantees-insurance-2025"
+      },
       "candidate_count": 0,
       "candidate_ids": [],
       "candidate_kind": "contextual_analysis_only",
@@ -62,13 +90,20 @@
       "document_sha256": "fe8af4acbb6fccf83ea8a3ad0b608ec870c93e967f9e59ff23078ef5e4ec42a7",
       "inventory_id": "idn-study-guarantees-2025",
       "retrieval_status": "raw_retained",
-      "review_disposition": "reviewed_no_operation_candidate",
-      "review_note": "The retained thematic report is contextual analysis; this bounded review admits no operation-level fact from it.",
+      "review_disposition": "no_operation_candidate",
+      "review_note": "The passage introduces recommendations for instruments; it does not evidence an operation-specific guarantee allocation approval or payment.",
       "source_id": "idn-jetp-guarantees-insurance-2025",
       "source_version": "fe8af4acbb6fccf83ea8a3ad0b608ec870c93e967f9e59ff23078ef5e4ec42a7",
       "storage_path": "objects/fe/fe8af4acbb6fccf83ea8a3ad0b608ec870c93e967f9e59ff23078ef5e4ec42a7.pdf"
     },
     {
+      "adjudication": {
+        "disposition": "no_operation_candidate",
+        "excerpt": "guidelines for implementing the JT Framework",
+        "page": "28",
+        "reason": "The passage gives a general project-cycle framework; it contains no identified operation-level commitment approval or payment.",
+        "source_id": "idn-jetp-just-transition-study-2025"
+      },
       "candidate_count": 0,
       "candidate_ids": [],
       "candidate_kind": "contextual_analysis_only",
@@ -77,13 +112,14 @@
       "document_sha256": "901d08e8589ba37ba50891e453d7b4138282d13c4d0f27403ded2aa363125378",
       "inventory_id": "idn-study-just-transition-2025",
       "retrieval_status": "raw_retained",
-      "review_disposition": "reviewed_no_operation_candidate",
-      "review_note": "The retained thematic report is contextual analysis; this bounded review admits no operation-level fact from it.",
+      "review_disposition": "no_operation_candidate",
+      "review_note": "The passage gives a general project-cycle framework; it contains no identified operation-level commitment approval or payment.",
       "source_id": "idn-jetp-just-transition-study-2025",
       "source_version": "901d08e8589ba37ba50891e453d7b4138282d13c4d0f27403ded2aa363125378",
       "storage_path": "objects/90/901d08e8589ba37ba50891e453d7b4138282d13c4d0f27403ded2aa363125378.pdf"
     },
     {
+      "adjudication": null,
       "candidate_count": 1142,
       "candidate_ids": [
         "idn-progress25-bioenergy-001",
@@ -1242,6 +1278,13 @@
       "storage_path": "objects/74/74fb460fd09e76607e3cff308f5ba2754f2ebd91b0c9b7613c1a041e7b361162.pdf"
     },
     {
+      "adjudication": {
+        "disposition": "no_operation_candidate",
+        "excerpt": "Key recommendations",
+        "page": "23",
+        "reason": "The passage discusses proposed financing approaches in aggregate and does not identify an operation-level finance event.",
+        "source_id": "idn-jetp-small-scale-renewables-finance-2025"
+      },
       "candidate_count": 0,
       "candidate_ids": [],
       "candidate_kind": "contextual_analysis_only",
@@ -1250,8 +1293,8 @@
       "document_sha256": "93d4fe15da7d6afa651d3ffb93ed23ef12a75d8312c320b9418d037aa8738583",
       "inventory_id": "idn-study-small-renewables-2025",
       "retrieval_status": "raw_retained",
-      "review_disposition": "reviewed_no_operation_candidate",
-      "review_note": "The retained thematic report is contextual analysis; this bounded review admits no operation-level fact from it.",
+      "review_disposition": "no_operation_candidate",
+      "review_note": "The passage discusses proposed financing approaches in aggregate and does not identify an operation-level finance event.",
       "source_id": "idn-jetp-small-scale-renewables-finance-2025",
       "source_version": "93d4fe15da7d6afa651d3ffb93ed23ef12a75d8312c320b9418d037aa8738583",
       "storage_path": "objects/93/93d4fe15da7d6afa651d3ffb93ed23ef12a75d8312c320b9418d037aa8738583.pdf"

@@ -10,6 +10,7 @@ import argparse
 import csv
 import hashlib
 import json
+import subprocess
 from pathlib import Path
 
 INVENTORY_IDS = {
@@ -22,6 +23,7 @@ INVENTORY_IDS = {
     "idn-study-carbon-pricing-2025",
 }
 PROGRESS_SOURCE = "idn-jetp-progress-report-2025"
+NO_OPERATION_CANDIDATE = "no_operation_candidate"
 
 
 def _rows(path: Path) -> list[dict[str, str]]:
@@ -40,6 +42,37 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _page_text(path: Path, page: int) -> str:
+    """Extract one reviewed page from the retained PDF; never retrieve a source."""
+    completed = subprocess.run(
+        ["pdftotext", "-f", str(page), "-l", str(page), "-layout", str(path), "-"],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    return " ".join(completed.stdout.lower().split())
+
+
+def validate_adjudications(rows: list[dict[str, str]], required_sources: set[str]) -> None:
+    """Require one reviewed, page-located conclusion for each thematic PDF."""
+    by_source = {row["source_id"]: row for row in rows}
+    missing = required_sources - by_source.keys()
+    if missing:
+        raise ValueError(f"missing page adjudication: {', '.join(sorted(missing))}")
+    if by_source.keys() != required_sources:
+        raise ValueError("page adjudications fall outside the frozen thematic source scope")
+    for source_id, row in by_source.items():
+        if row["disposition"] != NO_OPERATION_CANDIDATE:
+            raise ValueError(f"invalid thematic disposition: {source_id}")
+        if not row["excerpt"].strip() or not row["reason"].strip():
+            raise ValueError(f"page adjudication lacks excerpt or reason: {source_id}")
+        try:
+            if int(row["page"]) < 1:
+                raise ValueError
+        except ValueError as error:
+            raise ValueError(f"invalid adjudication page: {source_id}") from error
+
+
 def build_report(root: Path) -> dict:
     """Build a deterministic, source-qualified disposition for the 0819 intake."""
     root = Path(root)
@@ -51,6 +84,10 @@ def build_report(root: Path) -> dict:
     if {row["inventory_id"] for row in inventory} != INVENTORY_IDS:
         raise ValueError("0819 inventory is not the frozen seven-document scope")
     manifests = _rows(data / "manifest.csv")
+    adjudications = _rows(root / "docs" / "jetp-study" / "0819-indonesia-thematic-adjudications.csv")
+    thematic_sources = {row["source_id"] for row in inventory} - {PROGRESS_SOURCE}
+    validate_adjudications(adjudications, thematic_sources)
+    by_adjudication = {row["source_id"]: row for row in adjudications}
     plans = [
         row for row in _rows(data / "plan-projects.csv")
         if row["source_id"] == PROGRESS_SOURCE
@@ -66,6 +103,13 @@ def build_report(root: Path) -> dict:
         if not raw_path.is_file() or _sha256(raw_path) != manifest["sha256"]:
             raise ValueError(f"retained raw byte does not match manifest: {source_id}")
         progress = source_id == PROGRESS_SOURCE
+        adjudication = None
+        if not progress:
+            adjudication = by_adjudication[source_id]
+            if " ".join(adjudication["excerpt"].lower().split()) not in _page_text(
+                raw_path, int(adjudication["page"])
+            ):
+                raise ValueError(f"adjudication excerpt not found on reviewed page: {source_id}")
         sources.append({
             "inventory_id": item["inventory_id"],
             "source_id": source_id,
@@ -83,13 +127,14 @@ def build_report(root: Path) -> dict:
             "canonical_finance_admitted": 0,
             "review_disposition": (
                 "reviewed_plan_candidates_not_finance" if progress
-                else "reviewed_no_operation_candidate"
+                else adjudication["disposition"]
             ),
             "review_note": (
                 "The 1,142 appendix lines remain plan priorities; no allocation, approval, or payment is admitted."
                 if progress else
-                "The retained thematic report is contextual analysis; this bounded review admits no operation-level fact from it."
+                adjudication["reason"]
             ),
+            "adjudication": adjudication,
         })
     return {
         "schema_version": "jetp-0819-ingestion/1",
