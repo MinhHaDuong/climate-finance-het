@@ -7,6 +7,7 @@ Blocked-by: 0835
 --- log ---
 2026-09-17T16:56Z HDMX-coding-agent created
 
+2026-09-17T17:18Z HDMX-coding-agent note raid Imagine : annoté, recette corrigée page 155 vers 156
 --- body ---
 
 ## Context
@@ -56,7 +57,7 @@ une colonne de plus, sans erreur.
 
 ## Verification
 
-- [ ] Recette VN : filtrer VNM sur l'annexe I.1 donne 37 lignes ; la ligne 22 « KN Tri An Floating Solar Farm » ouvre le RMP à la page PDF 155
+- [ ] Recette VN : filtrer VNM sur l'annexe I.1 donne 37 lignes ; la ligne 22 « KN Tri An Floating Solar Farm » ouvre le RMP à la page PDF 156
 - [ ] Recette SA : filtrer ZAF sur « D. Completed » donne 88 lignes ; une ligne ouvre le snapshot du registre
 - [ ] `tests/test_jetp_m1a_inventories.py` reste vert : les CSV n'ont pas changé
 - [ ] `tests/browser/jetp_observatory.py` exerce un filtre et une ouverture de ligne
@@ -81,3 +82,23 @@ une colonne de plus, sans erreur.
 
 Élargissement des colonnes ZAF (0837), ledger d'observations (0838), liens
 entre lignes de sous-couches différentes (0833).
+
+## Imagine (raid 2026-09-17)
+
+Verdict : exécuter, avec simplification et une correction de recette.
+`app.js` ne lit aucun CSV ; tout arrive en JSON. Les CSV M1a portent des
+champs entre guillemets avec sauts de ligne (VNM : 318 champs), qu'un
+analyseur maison passerait sur le fixture et casserait en réel. Le générateur
+`build_m1a_inventories.py` émet en plus `data/m1a/<PAYS>.json` (les mêmes
+dictionnaires de lignes, clés dynamiques préservées) et la page charge ce
+JSON ; le CSV reste l'artefact de téléchargement. Après 0837, ZAF.csv et les
+trois autres n'ont plus le même en-tête : la page ne code en dur que les cinq
+facettes stables (`source_layer`, `record_type`, `identity_status`,
+`reported_status`, recherche sur `label`). Le manifeste porte « layer » en
+clés JSON (`layers`, `layer_id`), donc le renommage touche la même région du
+générateur que 0837 : lire le fichier après la fusion de 0837 avant d'y
+toucher. Correction : la ligne 22 de VNM (KN Tri An) porte
+`PDF pages 156; printed pages 140; ordinal 22` ; la page 155 est l'ordinal 1.
+Recette corrigée ci-dessus. Les 279 localisateurs VNM suivent un seul format ;
+IDN (1 579 lignes) n'a pas de numéro de page, SEN a une autre forme : le
+localisateur textuel sans page est le cas général, pas l'exception.

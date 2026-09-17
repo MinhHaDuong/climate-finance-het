@@ -8,6 +8,7 @@ Blocked-by: 0838
 --- log ---
 2026-09-17T16:56Z HDMX-coding-agent created
 
+2026-09-17T17:18Z HDMX-coding-agent note raid Imagine : annoté, voir section Imagine
 --- body ---
 
 ## Context
@@ -85,3 +86,18 @@ même projet depuis chacun de ses deux documents.
 
 Réconciliation et taxonomie (0833), fusion RMP et portefeuille, veille et
 rafraîchissement (M2), déploiement public (0727).
+
+## Imagine (raid 2026-09-17)
+
+Verdict : exécuter tel quel. Les nombres de la recette correspondent à l'arbre
+(383 nommés, 3 revus, 279 positions RMP, VNM 3 + 21 = 24).
+`build_observatory.py::project_data()` lie déjà les étages par filtre linéaire
+sur `project_id` ; l'étendre sur place, plus un regroupement `by_source_id`
+pour le sens document → faits. Aucun module de relations. `TABLES` n'inclut
+pas `idn-portfolio-observations.csv` : ne pas supposer que 0838 l'a câblé.
+`evidencePage()` rend déjà le pedigree en `<code>` ; le rendre cliquable est un
+appel `sourceLink()`. Environ 380 faits sur 383 afficheront « en attente »,
+comme le ticket l'annonce. Le dernier critère de sortie se réalise par un
+artefact — une ligne de log sur 0834 et un paragraphe du corps de PR demandant
+la revue d'intégration à l'auteur — non par la signature de l'auteur. Si 0838
+est recadré, la descente ne liste que les tables réellement servies.

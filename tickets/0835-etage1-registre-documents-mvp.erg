@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-09-17T16:56Z HDMX-coding-agent created
 
+2026-09-17T17:18Z HDMX-coding-agent note raid Imagine : annoté, voir section Imagine
 --- body ---
 
 ## Context
@@ -89,3 +90,22 @@ URL, et aucune entrée n'est inventée ni fusionnée.
 
 Extraction de contenu, liens entre lignes et documents (0836), déploiement
 public (0727).
+
+## Imagine (raid 2026-09-17)
+
+Verdict : exécuter, avec simplification. `app.js` code déjà deux fois le
+motif filtre + tableau (`cataloguePage`, `comparisonPage`) : entrées de
+filtre, prédicat, compteur `aria-live`, repli `.empty`, sans fonction
+commune. Le composant de l'action 2 est l'extraction de cette forme, pas une
+conception nouvelle ; les deux pages existantes ne sont reprises que si le
+diff reste petit, sinon ticket de suite. Aucune bibliothèque : pas de
+`package.json`, le README interdit les dépendances JavaScript. API initiale
+étroite (facettes, recherche, pagination, compte). L'exclusion du bundle
+(action 4) vit dans `scripts/jetp/_bundle_inventory.py` (`VIEWS`, `SITE`,
+pointeur `documents.dvc`). Angle mort : le pipeline d'édition citable
+(`scripts/jetp/_public_release.py`, copie de l'arbre entier à un commit
+épinglé) ne passe pas par cette exclusion ; le choix « registre + URL
+d'origine seulement » doit être écrit pour lui aussi, ou déclaré hors
+périmètre jusqu'à la prochaine édition. Descente à la page : seules les 279
+lignes VNM portent un localisateur `PDF pages N` ; l'ouverture à la page est
+SA (HTML) et VN (PDF) par construction, pas un trait à quatre pays.

@@ -7,6 +7,7 @@ Blocked-by: 0836
 --- log ---
 2026-09-17T16:56Z HDMX-coding-agent created
 
+2026-09-17T17:18Z HDMX-coding-agent note raid Imagine : objection de prémisse, retourné à l'auteur, voir section Imagine
 --- body ---
 
 ## Context
@@ -84,3 +85,30 @@ le total déclaré dans `evidence_depth`.
 
 Réconciliation entre observations et inventaires M1a (0833), faits canoniques
 (0839), CRS et IATI (0721).
+
+## Imagine (raid 2026-09-17) — objection de prémisse, retourné à l'auteur
+
+Le compte 1 740 et le statut « not deployed » existent, mais leur provenance
+n'est pas celle du ticket. Les quatre CSV nommés totalisent 812 lignes
+(events 380, implementation-events 71, project-source-links 315,
+idn-portfolio-observations 46) et ne peuvent produire ni 1 740 ni la
+répartition IDN 1148 / SEN 10 / VNM 325 / ZAF 257. Cette répartition est
+identique à la colonne `atomic_observations` de
+`docs/jetp-study/0730-country-coverage.csv`, sortie du ticket clos 0730 : le
+pipeline d'analyse du papier (`build_0822_freeze_snapshot.py`,
+`_freeze_0822_sources.py`, `_freeze_0822_journals.py`) sur un jeu d'entrées
+épinglé par SHA256. `idn-portfolio-observations.csv` n'est lu par aucun
+script. Deux verrous délibérés tiennent le statut :
+`scripts/jetp/_public_release.py::_evidence_depth` lève si le statut n'est
+pas `not_deployed` (commit 8d9abcce, « analytical observations cannot be
+deployed as canonical facts ») et l'édition gelée
+`data/jetp/releases/2026-11-r1/release.json`, testée octet pour octet par
+`tests/test_jetp_public_release.py`, cite ce statut. L'action 4 n'est pas un
+changement de drapeau ; c'est soit remplacer une édition citée, soit décider
+que sa prétention était fausse.
+
+Décision demandée : (a) recadrer 0838 sur les lignes réelles du ledger
+(events, implementation-events, project-source-links) sous leur propre
+compte, sans toucher `structured_atomic_observations` ni son statut ; ou (b)
+autoriser explicitement la levée de l'invariant pour l'instantané 0730, avec
+une nouvelle édition. Le ticket ne s'exécute pas avant cette réponse.

@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-09-17T16:56Z HDMX-coding-agent created
 
+2026-09-17T17:18Z HDMX-coding-agent note raid Imagine : annoté, voir section Imagine
 --- body ---
 
 ## Context
@@ -83,3 +84,20 @@ justification dans le rapport.
 
 Registre des subventions JET et rapports trimestriels (M2), interprétation des
 statuts ou des dates (0818 les garde en libellés source), affichage (0836).
+
+## Imagine (raid 2026-09-17)
+
+Verdict : exécuter, avec simplification. Le vrai travail est de rendre
+`write_inventories()` à largeur variable par pays : aujourd'hui un seul tuple
+`FIELDS` et un seul `DictWriter` (`extrasaction="raise"`) pour les quatre
+pays. Les 21 clés brutes sont confirmées sur les 258 enregistrements ; leur
+forme slugifiée (`project_name`, `portfolios`, `funding_partners`,
+`funding_instrument`) entre en collision avec des colonnes 0818 existantes :
+préfixer toutes les colonnes de passage uniformément (`raw_<slug>`), jamais
+une partie. Valeurs passées en chaînes, sans coercition. La ligne exclue est
+l'index brut 257 (ordinal 258) : `Unique ID: 248` en entier, nom et
+portefeuilles nuls, totaux US$/ZAR renseignés — la ligne de totaux du tableau
+de bord, filtrée par `parse_register_html` (`isinstance(str)` + nom non
+vide) ; à citer verbatim dans le rapport et le manifeste (action 2).
+`config/jetp-zaf-migration.json` (`register_row_count` = 257) est une entrée
+et ne change pas.
