@@ -20,12 +20,11 @@ JETP_OBSERVATORY_INPUTS := $(addprefix data/jetp/,$(addsuffix .csv,projects even
 JETP_OBSERVATIONS_DIR := $(JETP_OBSERVATORY)/data/observations
 JETP_OBSERVATIONS_FILES := $(addprefix $(JETP_OBSERVATIONS_DIR)/,ZAF.json IDN.json VNM.json SEN.json)
 # Every table, not only the three served: build_observations.py goes through
-# read_inputs, which loads and cross-validates all nine. And the DVC pointer,
-# because the registry is collapsed by which collection attempt is archived on
-# disk — two served source identifiers carry attempts with different
-# fingerprints, so the snapshot decides a published value.
+# read_inputs, which loads and cross-validates all nine. No DVC pointer, and
+# that is a property of the build rather than an omission: the registry is
+# collapsed on the recorded digest, so the four views are identical whether or
+# not the document snapshot is checked out.
 JETP_OBSERVATIONS_INPUTS := $(filter data/jetp/%.csv,$(JETP_OBSERVATORY_INPUTS)) \
-    data/jetp/documents.dvc \
     scripts/jetp/build_observations.py scripts/jetp/build_observatory.py \
     scripts/jetp/_observatory_data.py scripts/jetp/_m1a_document_links.py
 

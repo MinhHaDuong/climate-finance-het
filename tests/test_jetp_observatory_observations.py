@@ -9,9 +9,12 @@ import json
 from pathlib import Path
 
 import pytest
-from jetp._m1a_document_links import index_documents
 from jetp._observatory_data import observation_entry
-from jetp.build_observations import COUNTRIES, observations_by_country
+from jetp.build_observations import (
+    COUNTRIES,
+    build_registry,
+    observations_by_country,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 OBSERVATIONS = ROOT / "deliverables" / "jetp-observatory" / "data" / "observations"
@@ -226,10 +229,10 @@ def test_a_row_without_a_fingerprint_is_one_of_two_named_collection_gaps() -> No
     # source the registry never recorded at all, and twenty-two rows name one
     # it recorded but never archived. Neither is a renderer defect, and a new
     # one cannot reach the page unnoticed.
-    documents = json.loads(
-        (OBSERVATIONS.parent / "documents.json").read_text(encoding="utf-8")
-    )["documents"]
-    registry = index_documents(documents)
+    import csv
+
+    with (ROOT / "data/jetp/manifest.csv").open(encoding="utf-8") as stream:
+        registry = build_registry({"manifest": list(csv.DictReader(stream))})
 
     unregistered, unarchived = [], []
     for code in COUNTRIES:
@@ -239,24 +242,65 @@ def test_a_row_without_a_fingerprint_is_one_of_two_named_collection_gaps() -> No
             target = unarchived if entry["source_id"] in registry else unregistered
             target.append((code, entry["table"], entry["source_id"]))
 
-    assert {code for code, _, _ in unregistered} == {"VNM"}
-    assert {table for _, table, _ in unregistered} == {"project-source-links"}
-    assert len(unregistered) == 7
-    assert len(unarchived) == 22
+    # Pinned by identity, not by count: a count is repaired by bumping the
+    # number, which is how a new gap gets waved through. These seven are named,
+    # so an eighth source — in any country, in any of the three tables — fails
+    # here with its own identifier in the message.
+    assert {source_id for _, _, source_id in unregistered} == {
+        "vnm-eib-bac-ai-package-2025",
+        "vnm-evn-afd-transmission-2025",
+        "vnm-evn-cdp-bac-ai-2025",
+        "vnm-evn-kfw-tri-an-2025",
+        "vnm-moit-project-bac-ai",
+        "vnm-moit-project-binh-duong-dong-nai",
+        "vnm-moit-project-tri-an",
+    }
+    assert {(code, table) for code, table, _ in unregistered} == {
+        ("VNM", "project-source-links")
+    }
+    # The second gap is a collection outcome, not a join failure: these sources
+    # are in the registry and no attempt of theirs recorded a digest.
+    assert unarchived
+    assert all(registry[source_id]["sha256"] is None for _, _, source_id in unarchived)
 
 
 def test_the_shipped_views_resolve_against_the_shipped_registry() -> None:
+    # Every published fingerprint is one the collection recorded for that same
+    # source, so the renderer's sha256 index always finds the row's document.
     documents = json.loads(
         (OBSERVATIONS.parent / "documents.json").read_text(encoding="utf-8")
     )["documents"]
-    registry = index_documents(documents)
-    by_sha = {entry["sha256"] for entry in documents if entry["sha256"]}
+    by_source = {}
+    for entry in documents:
+        by_source.setdefault(entry["id"], set()).add(entry["sha256"])
 
     for code in COUNTRIES:
         for entry in json.loads((OBSERVATIONS / f"{code}.json").read_text("utf-8")):
             if entry["sha256"]:
-                assert entry["sha256"] in by_sha, entry["source_id"]
-                assert registry[entry["source_id"]]["sha256"] == entry["sha256"]
+                assert entry["sha256"] in by_source[entry["source_id"]], entry[
+                    "source_id"
+                ]
+
+
+def test_the_published_fingerprint_does_not_depend_on_the_local_snapshot() -> None:
+    # The registry is collapsed on what the collection recorded, not on what is
+    # staged on disk, so two builds of the same manifest agree whether or not
+    # the DVC snapshot is checked out. One Senegal source flipped this way
+    # during development: its collected attempt carries the digest, a sibling
+    # attempt none, and disk availability decided which one won.
+    manifest = [
+        {"source_id": "shared", "status": "blocked", "sha256": ""},
+        {"source_id": "shared", "status": "collected", "sha256": "cc" * 32},
+        {"source_id": "shared", "status": "not_modified", "sha256": "cc" * 32},
+    ]
+
+    assert build_registry({"manifest": manifest}) == {"shared": {"sha256": "cc" * 32}}
+    assert build_registry({"manifest": list(reversed(manifest))}) == {
+        "shared": {"sha256": "cc" * 32}
+    }
+    # A source whose every attempt failed keeps a null fingerprint rather than
+    # an empty string, which would read as a digest of nothing.
+    assert build_registry({"manifest": manifest[:1]}) == {"shared": {"sha256": None}}
 
 
 def test_the_public_bundle_carries_the_observations_without_a_new_view() -> None:
