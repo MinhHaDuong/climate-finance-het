@@ -378,7 +378,7 @@ function inventoryUnknowns(details) {
           `<div class="metric"><strong>${fmt(layer.row_count)}</strong><span>${esc(layer.sublayer_id)}</span><small>${esc(layer.edition)} · cutoff ${esc(layer.cutoff)}<br>${fmt(layer.unknowns.field_values)} unknown field values · ${fmt(layer.unknowns.identity_rows)} unknown identities · ${fmt(layer.unknowns.unavailable_source_rows)} unavailable source rows</small></div>`,
       )
       .join("")}</div>` +
-    `<p class="note">Unknowns are reported for each extraction sub-layer separately. They are not added across sub-layers, and never across countries: the sub-layers overlap and count different things.</p>`
+    `<p class="note">Each figure counts one extraction sub-layer of this country. This page adds none of them together: the sub-layers overlap, count different things, and a country is not the unit any of them measures.</p>`
   );
 }
 function inventoryRowDetail(row) {

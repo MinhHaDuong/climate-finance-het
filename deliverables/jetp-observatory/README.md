@@ -44,8 +44,10 @@ Routes: `#overview`, `#countries`, `#country/IDN`, `#projects`,
   does not go through that exclusion; it is out of scope until the next edition.
 - Frozen M1a inventories for ZAF, IDN, VNM and SEN. These retain every
   selected source row, edition and cutoff without merging identities. Their
-  manifest displays field, identity and source-availability unknowns separately,
-  for each extraction sub-layer and never added across sub-layers or countries.
+  manifest displays field, identity and source-availability unknowns separately
+  for each extraction sub-layer, and again as a per-country count of the same
+  export. The inventory page shows the per-sub-layer figures only and adds none
+  of them together.
   `#inventory/<CODE>` explores them row by row: the CSV stays the download
   artefact, while the page reads the `<CODE>.json` companion the same build
   writes from the same rows — column names once, then one array of values per
