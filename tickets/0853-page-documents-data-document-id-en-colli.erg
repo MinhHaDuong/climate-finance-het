@@ -1,0 +1,56 @@
+%erg 0.1
+Title: Page Documents : data-document-id en collision sur 21 source_id doublons et codes ISO bruts dans le filtre pays
+Created: 2026-09-17
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-17T21:31Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Deux constats de la revue de code de la PR #1429 (ticket [[0835]]), dispositionnés
+TICKETED par la porte de vérification, sous le seuil de blocage à la fusion.
+
+1. `deliverables/jetp-observatory/app.js`, `documentsPage()` : le lien « Open
+   archived copy » porte `data-document-id="${r.id}"`, où `r.id` est le
+   `source_id` du registre. Le registre `data/jetp/manifest.csv` compte 21
+   lignes dont le `source_id` est partagé avec une autre ligne, plusieurs en
+   statut `collected` de part et d'autre. L'attribut n'est donc pas une clé :
+   la recette navigateur `tests/browser/jetp_observatory.py` qui sélectionne
+   par cet attribut peut cibler la mauvaise ligne, et tout lien ligne →
+   document de [[0836]] qui résoudrait par `source_id` seul héritera de
+   l'ambiguïté.
+2. Le filtre pays de la page Documents affiche les codes ISO bruts (`ZAF`,
+   `VNM`) là où `cataloguePage()` affiche les noms via `overview.countries`.
+
+## Relevant files
+
+- `deliverables/jetp-observatory/app.js` — `documentsPage()`, `filterTable`
+- `scripts/jetp/build_observatory.py` — `documents_data()` : la vue peut porter une clé de ligne
+- `data/jetp/manifest.csv` — 307 lignes, 21 `source_id` partagés
+- `tests/test_jetp_observatory_documents.py`, `tests/browser/jetp_observatory.py`
+
+## Actions
+
+1. Donner à chaque entrée de `documents.json` une clé de ligne unique
+   (par exemple `source_id` + empreinte, ou l'ordinal du registre) et
+   l'utiliser pour `data-document-id` ; conserver `source_id` en clair.
+2. Afficher les noms de pays dans le filtre de la page Documents comme dans
+   `cataloguePage()`.
+3. Dire à [[0836]] laquelle des deux clés résout une ligne d'inventaire vers
+   son document quand le `source_id` est partagé.
+
+## Test
+
+Red : `tests/test_jetp_observatory_documents.py` construit la vue depuis un
+registre fixture où deux lignes partagent un `source_id` et vérifie que les
+deux entrées portent des clés de ligne distinctes et que chacune garde son
+`source_id`.
+
+## Exit criteria
+
+- [ ] Aucune collision de `data-document-id` sur les 307 lignes
+- [ ] Le filtre pays de la page Documents affiche les noms de pays
+- [ ] `make check-fast` et `make lint` passent
