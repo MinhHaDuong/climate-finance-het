@@ -396,6 +396,23 @@ p {
   color: white;
   border-color: var(--ink);
 }
+/* The two stage-two products of one country share a page and never a table, so
+ * the switch between them is a tab, not a route. */
+.country-tabs button {
+  border: 1px solid var(--line);
+  background: none;
+  color: inherit;
+  padding: 6px 14px;
+  border-radius: 30px;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.country-tabs button[aria-selected="true"] {
+  background: var(--ink);
+  color: white;
+  border-color: var(--ink);
+}
 .metrics {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
