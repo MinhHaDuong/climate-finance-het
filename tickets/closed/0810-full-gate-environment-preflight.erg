@@ -2,12 +2,14 @@
 Title: Make full-gate worktree environment prerequisites explicit
 Created: 2026-09-14
 Author: HDMX-coding-agent
+Closed: Delivered full-gate preflight and first-run worktree provisioning for environment, writable UV/Ruff/DVC caches, DVC corpus data, sockets, and Git administration; coordinated reranker provenance with 0592.
 
 --- log ---
 2026-09-14T20:30Z HDMX-coding-agent created
 
 2026-09-14T18:19Z HDMX-coding-agent note Timestamp correction: the initial created line used an erroneous clock value; first commit 3a0cd250 was recorded at 2026-09-14T18:10:56Z.
 
+2026-09-17T07:33Z HDMX-coding-agent closed — Delivered full-gate preflight and first-run worktree provisioning for environment, writable UV/Ruff/DVC caches, DVC corpus data, sockets, and Git administration; coordinated reranker provenance with 0592.
 --- body ---
 ## Context
 
