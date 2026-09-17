@@ -5,7 +5,8 @@ JETP_OBSERVATORY_EDITION_HISTORY := $(JETP_OBSERVATORY)/data/editions.json
 JETP_OBSERVATORY_JSON := $(addprefix $(JETP_OBSERVATORY)/data/,$(addsuffix .json,$(JETP_OBSERVATORY_VIEWS)))
 JETP_OBSERVATORY_PROVENANCE := $(JETP_OBSERVATORY)/data/provenance.json
 JETP_M1A_DIR := $(JETP_OBSERVATORY)/data/m1a
-JETP_M1A_FILES := $(addprefix $(JETP_M1A_DIR)/,ZAF.csv IDN.csv VNM.csv SEN.csv manifest.json)
+JETP_M1A_FILES := $(addprefix $(JETP_M1A_DIR)/,ZAF.csv IDN.csv VNM.csv SEN.csv \
+    ZAF.json IDN.json VNM.json SEN.json manifest.json)
 JETP_M1A_INPUTS := config/jetp-m1a-inventories.json scripts/jetp/build_m1a_inventories.py \
     docs/jetp-study/0818-zaf-q1-2026-rows.csv docs/jetp-study/0818-zaf-q1-2026-fields.csv \
     data/jetp/plan-projects.csv \

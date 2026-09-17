@@ -1,7 +1,7 @@
-"""Build the frozen, source-layer M1a JETP inventories.
+"""Build the frozen, extraction sub-layer M1a JETP inventories.
 
 M1a is a presentation export, not an identity reconciliation.  Every supplied
-source row is written once, with its layer and original payload intact.
+source row is written once, with its sub-layer and original payload intact.
 """
 
 import argparse
@@ -33,7 +33,7 @@ FIELDS = (
 
 @dataclass(frozen=True)
 class FrozenLayer:
-    """One bounded source layer whose rows must not be reconciled or merged."""
+    """One bounded extraction sub-layer whose rows must not be reconciled or merged."""
 
     country: str
     layer_id: str
@@ -129,7 +129,7 @@ def _render_layer(layer: FrozenLayer) -> tuple[list[dict[str, str]], dict[str, o
         )
     return output, {
         "excluded_source_rows": list(layer.excluded_source_rows),
-        "layer_id": layer.layer_id,
+        "sublayer_id": layer.layer_id,
         "source_id": layer.source_id,
         "edition": layer.edition,
         "cutoff": layer.cutoff,
@@ -147,8 +147,49 @@ def _render_layer(layer: FrozenLayer) -> tuple[list[dict[str, str]], dict[str, o
     }
 
 
+def _write_json_companion(
+    destination: Path,
+    country: str,
+    header: Sequence[str],
+    rows: Sequence[Mapping[str, str]],
+) -> None:
+    """Write the renderer's copy of one country's rows: header once, then values.
+
+    Built from the in-memory rows, never by re-reading the CSV back: the Viet
+    Nam locators carry commas and newlines inside quoted fields, which a
+    browser-side splitter breaks on the real file while passing on a fixture.
+
+    Header-plus-values rather than one object per row.  The keys are identical
+    for every row of a country by construction — ``csv.DictWriter`` would raise
+    otherwise — so repeating them 1 579 times only costs bytes: Indonesia came
+    to 761 720 bytes under ``json.dumps(rows, ensure_ascii=False, indent=2)`` —
+    the figure moves with the indentation, so the spelling is named — over the
+    repository's 512 000 byte ceiling for a committed file, against 414 564
+    here for the same rows in the same order.  One row per line keeps a
+    regeneration readable as a diff.
+    """
+    values = ",\n    ".join(
+        json.dumps([row[key] for key in header], ensure_ascii=False) for row in rows
+    )
+    destination.write_text(
+        "{\n"
+        f'  "country": {json.dumps(country)},\n'
+        f'  "fields": {json.dumps(list(header), ensure_ascii=False)},\n'
+        '  "rows": [\n'
+        f"    {values}\n"
+        "  ]\n"
+        "}\n",
+        encoding="utf-8",
+    )
+
+
 def write_inventories(layers: Iterable[FrozenLayer], output_dir: Path) -> dict[str, object]:
-    """Write one deterministic CSV per country plus a source/unknown manifest."""
+    """Write a deterministic CSV and JSON per country plus a source/unknown manifest.
+
+    The CSV is the download artefact; the JSON companion carries the same rows,
+    in the same order and under the same column names, for the Inventories page
+    to read without parsing CSV text in the browser.
+    """
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     by_country: dict[str, list[FrozenLayer]] = {country: [] for country in COUNTRIES}
@@ -173,17 +214,19 @@ def write_inventories(layers: Iterable[FrozenLayer], output_dir: Path) -> dict[s
         # first and then the pass-through keys, in the same order for every row
         # of a country, so the first row's key order is the header.
         extra = list(rows[0].keys())[len(FIELDS):] if rows else []
+        header = FIELDS + tuple(extra)
         with destination.open("w", encoding="utf-8", newline="") as handle:
             writer = csv.DictWriter(
-                handle, fieldnames=FIELDS + tuple(extra), lineterminator="\n"
+                handle, fieldnames=header, lineterminator="\n"
             )
             writer.writeheader()
             writer.writerows(rows)
+        _write_json_companion(output_dir / f"{country}.json", country, header, rows)
         countries[country] = {
             "file": destination.name,
             "sha256": _sha256(destination),
             "row_count": len(rows),
-            "layers": summaries,
+            "sublayers": summaries,
             "unknowns": {
                 key: sum(int(layer["unknowns"][key]) for layer in summaries)
                 for key in ("field_values", "identity_rows", "unavailable_source_rows")
@@ -192,7 +235,7 @@ def write_inventories(layers: Iterable[FrozenLayer], output_dir: Path) -> dict[s
 
     manifest: dict[str, object] = {
         "schema_version": "jetp-m1a-frozen-inventories/1",
-        "scope": "frozen source-layer inventories; no identity reconciliation or live refresh",
+        "scope": "frozen extraction sub-layer inventories; no identity reconciliation or live refresh",
         "countries": countries,
     }
     (output_dir / "manifest.json").write_text(
