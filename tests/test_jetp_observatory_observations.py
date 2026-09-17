@@ -260,19 +260,30 @@ def test_a_row_without_a_fingerprint_is_one_of_two_named_collection_gaps() -> No
     }
     # The second gap is a collection outcome, not a join failure: these sources
     # are in the registry and no attempt of theirs recorded a digest.
-    assert unarchived
+    # Twenty-one, not the twenty-two measured before the registry rule stopped
+    # ranking on disk state: sen-arcop-aser-audit-2023 has a recorded digest
+    # and only looked archive-less because its bytes were absent here.
+    assert len(unarchived) == 21
     assert all(registry[source_id]["sha256"] is None for _, _, source_id in unarchived)
 
 
 def test_the_shipped_views_resolve_against_the_shipped_registry() -> None:
-    # Every published fingerprint is one the collection recorded for that same
-    # source, so the renderer's sha256 index always finds the row's document.
+    # Two assertions, because either alone passes a defect the other catches.
+    # Membership: every published fingerprint is one the collection recorded
+    # for that same source, so the renderer's sha256 index finds the document.
+    # Equality: it is the fingerprint the registry rule selects, so a view
+    # regenerated from a different rule — or not regenerated at all — reddens
+    # here instead of shipping a stale digest that still exists somewhere.
+    import csv
+
     documents = json.loads(
         (OBSERVATIONS.parent / "documents.json").read_text(encoding="utf-8")
     )["documents"]
     by_source = {}
     for entry in documents:
         by_source.setdefault(entry["id"], set()).add(entry["sha256"])
+    with (ROOT / "data/jetp/manifest.csv").open(encoding="utf-8") as stream:
+        registry = build_registry({"manifest": list(csv.DictReader(stream))})
 
     for code in COUNTRIES:
         for entry in json.loads((OBSERVATIONS / f"{code}.json").read_text("utf-8")):
@@ -280,6 +291,7 @@ def test_the_shipped_views_resolve_against_the_shipped_registry() -> None:
                 assert entry["sha256"] in by_source[entry["source_id"]], entry[
                     "source_id"
                 ]
+                assert registry[entry["source_id"]]["sha256"] == entry["sha256"]
 
 
 def test_the_published_fingerprint_does_not_depend_on_the_local_snapshot() -> None:
@@ -301,6 +313,45 @@ def test_the_published_fingerprint_does_not_depend_on_the_local_snapshot() -> No
     # A source whose every attempt failed keeps a null fingerprint rather than
     # an empty string, which would read as a digest of nothing.
     assert build_registry({"manifest": manifest[:1]}) == {"shared": {"sha256": None}}
+    # A collection that recorded nothing does not outrank one that did, whatever
+    # its status word says.
+    hollow = [
+        {"source_id": "shared", "status": "collected", "sha256": ""},
+        {"source_id": "shared", "status": "not_modified", "sha256": "dd" * 32},
+    ]
+    assert build_registry({"manifest": hollow}) == {"shared": {"sha256": "dd" * 32}}
+
+
+def test_two_equally_ranked_attempts_that_disagree_resolve_by_content() -> None:
+    # One registry identifier carries two attempts tied on status with
+    # different digests (zaf-ntcsa-transmission-plans; no ledger row cites it
+    # today). A rank alone leaves that pair to the order of manifest.csv, so
+    # the retrieval date and then the digest itself close the order: the answer
+    # is a property of the rows, not of how they were filed.
+    tied = [
+        {
+            "source_id": "shared",
+            "status": "collected",
+            "sha256": "ee" * 32,
+            "retrieved_at": "2026-01-01T00:00:00Z",
+        },
+        {
+            "source_id": "shared",
+            "status": "collected",
+            "sha256": "ff" * 32,
+            "retrieved_at": "2026-06-01T00:00:00Z",
+        },
+    ]
+
+    assert build_registry({"manifest": tied}) == {"shared": {"sha256": "ff" * 32}}
+    assert build_registry({"manifest": list(reversed(tied))}) == {
+        "shared": {"sha256": "ff" * 32}
+    }
+    # Same date too: the digest is the last term, and it is still order-free.
+    same_day = [dict(row, retrieved_at="2026-06-01T00:00:00Z") for row in tied]
+    assert build_registry({"manifest": same_day}) == build_registry(
+        {"manifest": list(reversed(same_day))}
+    )
 
 
 def test_the_public_bundle_carries_the_observations_without_a_new_view() -> None:
