@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 
 from jetp.build_m1a_inventories import (
+    FIELDS,
     FrozenLayer,
     build_existing_layers,
     write_inventories,
@@ -163,3 +164,81 @@ def test_checked_in_m1a_release_and_mvp_downloads_match_clean_replay(
     for country in ("ZAF", "IDN", "VNM", "SEN"):
         assert f'data/m1a/{country}.csv' in renderer
     assert 'data/m1a/manifest.json' in renderer
+
+
+def _raw_row(row_id: str, **raw: object) -> dict[str, object]:
+    row = _row(row_id, f"Operation {row_id}", "register_row", "completed")
+    row["source_fields"] = dict(row["source_fields"]) | raw
+    return row
+
+
+def test_csv_width_is_per_country_and_excluded_rows_reach_the_manifest(
+    tmp_path: Path,
+) -> None:
+    excluded = (
+        {
+            "raw_index": 0,
+            "ordinal": 1,
+            "unique_id_raw": 248,
+            "project_name_raw": None,
+            "portfolios_raw": None,
+            "amount_reported_usd_raw": 100.5,
+            "amount_reported_zar_raw": 200.5,
+        },
+    )
+    layers = [
+        FrozenLayer(
+            country="ZAF",
+            layer_id="register",
+            source_id="zaf-register",
+            edition="Q1 2026",
+            cutoff="2026-03-31",
+            source_sha256="a" * 64,
+            rows=(_raw_row("1", raw_example_field="carried verbatim"),),
+            excluded_source_rows=excluded,
+        ),
+        FrozenLayer(
+            country="IDN",
+            layer_id="priority-list",
+            source_id="idn-plan",
+            edition="2025",
+            cutoff="2025-12-31",
+            source_sha256="b" * 64,
+            rows=(_row("2", "Plan project", "project", "priority"),),
+        ),
+        FrozenLayer(
+            country="VNM",
+            layer_id="rmp",
+            source_id="vnm-rmp",
+            edition="2023",
+            cutoff="2023-12-01",
+            source_sha256="c" * 64,
+            rows=(_row("3", "Grid programme", "programme", "listed"),),
+        ),
+        FrozenLayer(
+            country="SEN",
+            layer_id="annex",
+            source_id="sen-plan",
+            edition="2025",
+            cutoff="2025-04-02",
+            source_sha256="d" * 64,
+            rows=(_row("4", "Rural component", "component", "listed"),),
+        ),
+    ]
+
+    manifest = write_inventories(layers, tmp_path)
+
+    with (tmp_path / "ZAF.csv").open(encoding="utf-8", newline="") as handle:
+        zaf = csv.reader(handle)
+        assert tuple(next(zaf)) == FIELDS + ("raw_example_field",)
+        assert next(zaf)[-1] == "carried verbatim"
+    for country in ("IDN", "VNM", "SEN"):
+        with (tmp_path / f"{country}.csv").open(encoding="utf-8", newline="") as handle:
+            assert tuple(next(csv.reader(handle))) == FIELDS
+
+    assert manifest["countries"]["ZAF"]["layers"][0]["excluded_source_rows"] == list(
+        excluded
+    )
+    for country in ("IDN", "VNM", "SEN"):
+        assert manifest["countries"][country]["layers"][0]["excluded_source_rows"] == []
+    assert json.loads((tmp_path / "manifest.json").read_text()) == manifest
