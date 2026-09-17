@@ -1,0 +1,87 @@
+%erg 0.1
+Title: Étage 3 : faits réconciliés explorables avec descente vers leurs preuves
+Created: 2026-09-17
+Author: HDMX-coding-agent
+Blocked-by: 0836
+Blocked-by: 0838
+
+--- log ---
+2026-09-17T16:56Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Cinquième et dernier enfant de [[0834]]. L'étage 3 est ce que le MVP montre
+déjà : les vues pays (projets, montants, statuts, 3 nommés et 21 non publiés
+pour le Vietnam), les 383 enregistrements canoniques nommés du ledger et les
+3 enregistrements revus de `reviewed-evidence.json`. Ce qui manque est la
+descente : depuis un fait, voir les observations d'étage 2 qui le fondent,
+puis le document.
+
+L'étage 3 est presque vide de faits revus. La vue doit le dire : chaque fait
+porte son état de revue, et la majorité l'affichera « en attente ». C'est
+[[0833]] qui le remplira ; ce ticket ne réconcilie rien.
+
+## Relevant files
+
+- `data/jetp/projects.csv` — enregistrements canoniques nommés
+- `deliverables/jetp-observatory/data/{ZAF,IDN,VNM,SEN}.json` — vues pays, `projects`, `undisclosed`, `sources`
+- `deliverables/jetp-observatory/data/reviewed-evidence.json` — `records` revus avec pedigree
+- `deliverables/jetp-observatory/app.js` — `projectTable()`, `eventView()`, section reviewed evidence
+- Vues `data/observations/<pays>.json` de 0838 et registre de 0835
+- `tests/browser/jetp_observatory.py` — recette navigateur
+
+## Actions
+
+1. Sur chaque fiche projet de la vue pays, ajouter un dépliage « Preuves »
+   qui liste les observations atomiques d'étage 2 liées par `project_id`,
+   avec leur table d'origine, leur état de vérification, et le lien vers le
+   document et sa page.
+2. Sur chaque enregistrement revu de reviewed-evidence, rendre le pedigree
+   cliquable : `source_id` et localisateur ouvrent le document.
+3. Afficher sur chaque fait son état de revue et, pour les identités non
+   publiées, le compte sans fiche fabriquée, comme aujourd'hui.
+4. Sur la page pays Vietnam, présenter côte à côte la table initiale du RMP
+   2023 (lien vers l'inventaire M1a, 279 positions) et le portefeuille de
+   juillet 2025 (24 enregistrements), avec une phrase disant qu'aucun lien
+   entre les deux n'est établi avant M1b.
+5. Faire de la remontée l'autre sens : depuis la page Documents, un document
+   liste les lignes d'étage 2 qui en sont extraites et les faits qui s'y
+   appuient.
+
+## Test
+
+Red : `tests/test_jetp_observatory_facts.py` construit la vue depuis un
+fixture d'un projet nommé lié à deux observations (une vérifiée, une
+`secondary_only`) et d'une identité non publiée sans observation, et vérifie
+que le projet expose ses deux preuves avec leur état, que l'identité non
+publiée reste un compte sans fiche, et que l'inverse document → faits rend le
+même projet depuis chacun de ses deux documents.
+
+## Verification
+
+- [ ] Recette VN : depuis Bac Ai, le dépliage montre ses quatre sources (EEAS, BEI, EVN, bulletin MOIT 5) et ouvre le bulletin PDF ; la page Vietnam montre RMP 2023 et portefeuille 2025 côte à côte sans lien
+- [ ] Recette SA : depuis un projet de la vue pays, la descente atteint sa ligne de registre puis le snapshot du tableau de bord
+- [ ] Depuis le RMP dans la page Documents, la remontée liste les 279 positions et aucun fait de 2025
+- [ ] `tests/browser/jetp_observatory.py` exerce un dépliage et une remontée
+
+## Invariants
+
+- Aucun fait nouveau, aucune réconciliation, aucun lien entre sous-couches ou entre RMP et portefeuille.
+- Les comptes affichés aujourd'hui (3 + 21 pour le Vietnam) restent identiques.
+- Les JSON de vue existants ne perdent aucun champ.
+- `make check-fast` et `make lint` passent.
+
+## Exit criteria
+
+- [ ] Chaque fait d'étage 3 déplie ses preuves d'étage 2 et ouvre leurs documents
+- [ ] Chaque document liste ce qui en est extrait et ce qui s'y appuie
+- [ ] L'état de revue est visible sur chaque fait
+- [ ] Recettes SA et VN de 0834 réussies de bout en bout
+- [ ] Revue d'intégration de 0834 demandée à l'auteur
+
+## Out of scope
+
+Réconciliation et taxonomie (0833), fusion RMP et portefeuille, veille et
+rafraîchissement (M2), déploiement public (0727).

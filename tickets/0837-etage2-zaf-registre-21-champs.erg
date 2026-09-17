@@ -1,0 +1,85 @@
+%erg 0.1
+Title: Étage 2 : conserver les 21 champs du registre JET sud-africain dans M1a
+Created: 2026-09-17
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-17T16:56Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Troisième enfant de [[0834]], données seulement, parallèle à [[0836]]. Le
+snapshot du tableau de bord du registre d'investissement JET (édition Q1 2026,
+`zaf-jet-investment-register-q1-2026`) embarque 258 enregistrements de 21
+champs. L'extraction 0818 en retient 257 lignes et l'inventaire M1a ZAF en
+publie 8 champs : nom, portefeuilles, bailleurs, instrument, montant promis,
+USD, ZAR, statut, libellé de date d'accord. Les 13 autres champs restent dans
+le brut : canal de décaissement, cofinanceur, devise promise, entité de mise
+en œuvre, partenaire sud-africain, bénéficiaire, objet, domaines prioritaires,
+description, date de fin, identifiant unique en clair.
+
+Le principe M1a conserve les lignes sources sans les appauvrir. Sur ce pays il
+a été appliqué aux lignes, pas aux colonnes. Le registre est la base de suivi
+entière : la recette Afrique du Sud de 0834 exige que l'étage 2 la montre
+telle quelle.
+
+## Relevant files
+
+- `data/jetp/documents/objects/5b/5b5d6442….html` — snapshot du tableau de bord (JSON embarqué « Overall - Data »)
+- `scripts/jetp/build_zaf_investment_register.py` — lit déjà 18 des 21 champs vers le ledger
+- `scripts/jetp/build_0818_zaf_q1_reconciliation.py`, `docs/jetp-study/0818-zaf-q1-2026-rows.csv`, `docs/jetp-study/0818-zaf-q1-2026-report.md` — extraction 0818, entrée épinglée de M1a
+- `scripts/jetp/build_m1a_inventories.py`, `config/jetp-m1a-inventories.json` — adaptateur `register_row` et empreintes épinglées
+- `deliverables/jetp-observatory/data/m1a/ZAF.csv`, `manifest.json` — sortie gelée
+- `tests/test_jetp_m1a_inventories.py`, `tests/test_jetp_0818*.py` — rejeu
+
+## Actions
+
+1. Étendre l'extraction 0818 aux 21 champs du JSON embarqué, en gardant les
+   noms de champ source tels quels dans une colonne par champ, valeurs vides
+   conservées vides.
+2. Documenter dans le rapport 0818 et dans le manifeste M1a la ligne exclue
+   entre 258 et 257 : quelle ligne, pourquoi, avec son identifiant unique.
+3. Faire suivre les colonnes par l'adaptateur `register_row` de M1a : les
+   colonnes communes du schéma de présentation restent en tête, les champs
+   source suivent, préfixés de façon stable.
+4. Mettre à jour les empreintes épinglées de `config/jetp-m1a-inventories.json`
+   et le manifeste, puis rejouer les tests octet pour octet.
+5. Vérifier que les identifiants de ligne (`source_row_id`), l'ordre et les
+   comptes de ZAF.csv sont inchangés, pour que [[0833]] ne soit pas perturbé.
+
+## Test
+
+Red : `tests/test_jetp_0818_zaf_fields.py` extrait un fixture HTML avec deux
+enregistrements de 21 champs dont un champ vide, et vérifie que la table de
+sortie porte 21 colonnes source, que la valeur vide reste vide, et que
+l'identifiant unique et le nom correspondent au JSON embarqué. Un second cas
+avec un enregistrement exclu produit une ligne de moins et une entrée de
+justification dans le rapport.
+
+## Verification
+
+- [ ] `ZAF.csv` porte 257 lignes, mêmes `source_row_id`, mêmes statuts, et 21 champs source en plus
+- [ ] `tests/test_jetp_m1a_inventories.py` passe avec les nouvelles empreintes
+- [ ] Le manifeste M1a nomme la ligne exclue et sa raison
+- [ ] Recette SA de 0834 : filtrer « D. Completed » donne 88 lignes avec bénéficiaire et entité de mise en œuvre visibles
+
+## Invariants
+
+- Aucune valeur n'est convertie, additionnée ou promue ; l'absence reste vide.
+- Les lignes et leurs identifiants restent stables ; seules des colonnes sont ajoutées.
+- IDN, VNM et SEN restent identiques octet pour octet.
+- `make check-fast` et `make lint` passent ; le diff touche la surface pipeline, donc `make check` complet avant la PR.
+
+## Exit criteria
+
+- [ ] L'inventaire M1a ZAF conserve les 21 champs du registre
+- [ ] La ligne 258 → 257 est documentée dans le rapport 0818 et le manifeste
+- [ ] Les empreintes épinglées sont mises à jour et le rejeu est vert
+- [ ] Une note de log dans [[0833]] signale le changement de colonnes
+
+## Out of scope
+
+Registre des subventions JET et rapports trimestriels (M2), interprétation des
+statuts ou des dates (0818 les garde en libellés source), affichage (0836).

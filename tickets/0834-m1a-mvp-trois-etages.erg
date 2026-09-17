@@ -1,0 +1,111 @@
+%erg 0.1
+Title: M1a redéfinie : le MVP explore les données en trois étages
+Created: 2026-09-17
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-17T16:56Z HDMX-coding-agent created
+2026-09-17T17:00Z HDMX-coding-agent note Décision de l'auteur (session du 2026-09-17) : M1a n'est pas atteinte tant que le MVP ne permet pas d'explorer les données ; recette sur l'Afrique du Sud et le Vietnam ; train de tickets d'une unité de signature chacun
+
+--- body ---
+
+## Context
+
+Le ticket [[0832]] a livré quatre inventaires gelés en CSV téléchargeables et
+un tableau de synthèse dans le MVP. L'auteur a précisé le 2026-09-17 que ce
+n'est pas M1a : l'idée de M1a est que le MVP permette d'explorer les données.
+Le ticket 0832 encodait « exposer les tables en téléchargement », et
+l'exécution a livré fidèlement une spécification qui ne portait pas cette idée.
+
+Les données s'organisent en trois étages d'un pipeline, définis par l'auteur :
+
+1. **Documents bruts** : les fichiers téléchargés, PDF et HTML, archivés par
+   empreinte dans DVC (`data/jetp/documents/`, registre `data/jetp/manifest.csv`,
+   307 sources dont 262 collectées).
+2. **Extraction structurée** : les tables tirées de ces documents. Deux
+   produits coexistent : les inventaires M1a (2 164 lignes, six sous-couches)
+   et les observations atomiques du ledger (1 740, marquées « not deployed »
+   dans `reviewed-evidence.json`).
+3. **Faits réconciliés** : les enregistrements canoniques (383 nommés, 3
+   revus) et les vues pays actuelles (projets, montants, statuts).
+
+Ces mots remplacent l'usage de « layer » dans 0832 et dans le manifeste M1a,
+où « six source layers » désigne des sous-couches de l'étage 2. Les tickets
+enfants renomment ce vocabulaire là où ils passent.
+
+Le MVP expose aujourd'hui l'étage 3 seulement, sans descente possible vers
+l'étage 2 ni vers le document. L'étage 1 n'est pas lisible : des cartes source
+avec URL et empreinte tronquée.
+
+## Critère d'acceptation de M1a
+
+Depuis n'importe quel fait, on descend à ses lignes d'extraction, puis au
+document et à la page. Depuis n'importe quel document, on remonte à ce qui en
+a été extrait. Aucune fusion entre étages ni entre sous-couches : seulement les
+liens de provenance déjà présents dans les données (`source_id`, localisateur,
+empreinte). La fusion d'identités reste M1b ([[0833]]).
+
+## Recette
+
+Deux pays, choisis parce qu'ils sont les cas extrêmes.
+
+**Afrique du Sud** : le document est un tableau de bord dont la table extraite
+est la base entière (registre d'investissement JET, édition Q1 2026, 258
+enregistrements, 21 champs).
+
+- Ouvrir le snapshot HTML archivé du registre depuis le registre des documents.
+- Filtrer l'inventaire M1a ZAF sur le statut « D. Completed » et obtenir 88
+  lignes, chacune avec ses 21 champs source.
+- Depuis un projet de la vue pays, descendre à sa ligne de registre puis au
+  snapshot.
+
+**Vietnam** : le document est un plan de 2023 dont les annexes forment la
+table initiale, et le portefeuille approuvé de 2025 est un autre objet.
+
+- Ouvrir le PDF du RMP 2023 à la page imprimée 139 depuis le registre des
+  documents.
+- Filtrer l'inventaire M1a VNM sur l'annexe I.1 et obtenir 37 lignes ; cliquer
+  la ligne 22 (KN Tri An Floating Solar Farm) ouvre le PDF à sa page.
+- Depuis Bac Ai dans la vue pays, remonter à ses quatre sources et ouvrir le
+  bulletin 5 du MOIT (juillet 2025).
+- Constater que la table initiale et les 24 enregistrements de 2025 sont
+  présentés côte à côte, sans lien fabriqué entre eux.
+
+## Enfants
+
+Ordre d'exécution ; chaque enfant est bloqué par son vrai prérequis, jamais par
+ce suiveur.
+
+1. [[0835]] — Étage 1 : registre des documents explorable. Fournit le composant
+   de tableau filtrable réutilisé ensuite.
+2. [[0836]] — Étage 2 : inventaires M1a explorables ligne à ligne. Bloqué par 0835.
+3. [[0837]] — Étage 2 : conserver les 21 champs du registre JET sud-africain
+   dans M1a. Données seulement, parallèle à 0836.
+4. [[0838]] — Étage 2 : observations atomiques du ledger explorables. Bloqué par 0836.
+5. [[0839]] — Étage 3 : faits réconciliés avec descente vers leurs preuves.
+   Bloqué par 0836 et 0838.
+
+## Relation avec M1b
+
+[[0833]] démarre en parallèle : la taxonomie commune ne dépend pas de
+l'interface. 0837 ajoute des colonnes à l'inventaire ZAF sans changer ses
+identifiants de ligne ni ses comptes ; 0833 doit rejouer ses tests après la
+fusion de 0837. Deux observations faites pendant la session, à traiter dans
+0833 et non ici : l'adaptateur RMP classe les 181 lignes de l'annexe I.2 en
+bloc « sans identité », dont des lignes nommées (« 43 BWID DPPA Solar Farm ») ;
+le fichier de release VNM porte `admission_status: unadmitted_candidate` et un
+instantané d'édition `review_state: pending`.
+
+## Hors périmètre
+
+Le registre des subventions JET (quatre éditions archivées, aucun extracteur)
+et les rapports trimestriels sud-africains restent à l'étage 1 ; leur
+extraction est M2. Le déploiement public est [[0727]].
+
+## Exit criteria
+
+- [ ] Les cinq enfants sont fermés
+- [ ] La recette Afrique du Sud passe de bout en bout dans le navigateur
+- [ ] La recette Vietnam passe de bout en bout dans le navigateur
+- [ ] Aucun étage n'agrège ni ne fusionne les lignes d'un autre
+- [ ] La ligne M1a de [[0725]] et de [[0715]] est cochée par l'auteur après revue d'intégration
