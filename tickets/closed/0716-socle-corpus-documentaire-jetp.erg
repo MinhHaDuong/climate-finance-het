@@ -2,12 +2,16 @@
 Title: Installer le socle du corpus documentaire JETP
 Created: 2026-09-11
 Author: Minh
+Closed: Delivered the reproducible frozen corpus foundation; all local gates pass, while live monitoring is explicitly deferred until after M1.
 
 --- log ---
 2026-09-11T21:32Z Minh created — première tranche du suivi vivant quatre pays
 2026-09-11T20:56Z Codex implemented — registre, stockage par contenu, manifeste append-only, ciblage par source et contrôles hors ligne
 2026-09-11T20:56Z Codex verified — 12 tests ciblés et 328 contrôles lint passent ; quatre plans d'ancrage collectés ; check-fast bloqué par 0724
 
+2026-09-17T08:48Z HDMX-coding-agent decision Scope frozen to the reproducible M1 corpus foundation; live source watching and refresh orchestration belong after M1. Current main passes the complete local gate.
+
+2026-09-17T08:51Z HDMX-coding-agent closed — Delivered the reproducible frozen corpus foundation; all local gates pass, while live monitoring is explicitly deferred until after M1.
 --- body ---
 
 ## Context
@@ -54,8 +58,12 @@ quatre valeurs et un statut financier hors taxonomie.
 - [x] Un run hors ligne sur fixtures démontre versionnage et reprise
 - [x] Le schéma distingue source, document collecté, projet et événement
 - [x] Le pool binaire est séparé des registres git et prêt pour DVC/padme
-- [ ] `make check-fast`, `make lint` et le test d'intégration ciblé passent
+- [x] `make check-fast`, `make lint` et le test d'intégration ciblé passent
 
 `make lint` et le test d'intégration passent. `make check-fast` échoue
 uniquement sur le test préexistant consigné dans le ticket 0724 ; le corpus
 JETP n'a pas modifié le code ni la fixture concernés.
+
+La vérification de clôture sur `main` au 17 septembre 2026 passe le préflight et
+la suite complète (25 tests package, 3 066 tests projet, 29 ignorés). Le socle
+est l'entrée figée de M1a / [[0832]] ; il ne porte pas la veille M2.

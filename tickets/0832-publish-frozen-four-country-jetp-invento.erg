@@ -1,0 +1,57 @@
+%erg 0.1
+Title: Publish frozen four-country JETP inventories for M1a
+Created: 2026-09-17
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-17T08:48Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+M1a establishes the healthy documentary base before any live monitoring. Use
+only the existing frozen ZAF, IDN, VNM and SEN inventories and their retained
+source bytes. Publish their source-defined layers without reconciling identities
+across rows, resolving possible matches or refreshing the web. This child
+delivers the bounded M1 milestone of [[0715]] using the corpus foundation in
+[[0716]] and supplies the source-preserving input to [[0833]] and [[0725]].
+
+## First test
+
+Given four fixture inventories containing a named row, an anonymous row, a
+programme/component row and missing values, the exporter writes exactly one
+table per country. Every input row survives once with its original source row
+identity, layer, source ID, evidence locator, source edition/cutoff, record type
+and reported status. No rows merge. A companion summary reports field-level
+unknowns, unknown identities and unavailable source rows separately by country
+and layer.
+
+## Actions
+
+1. Pin the existing country input files, source editions, cutoffs and hashes in
+   one M1a manifest. No network acquisition or DVC push is authorised.
+2. Export four deterministic country tables with a common presentation schema
+   while retaining each source layer and original row identity.
+3. Make missing values explicit and publish separate unknown counts; absence is
+   never converted to zero, inactivity or non-existence.
+4. Expose the four tables and their manifest as downloadable local MVP data,
+   with a concise methods note explaining the asymmetric country universes.
+5. Add replay, row-conservation, provenance and UI/download tests. Run the
+   required pipeline-surface gates.
+
+## Exit criteria
+
+- [ ] One frozen table exists for each of ZAF, IDN, VNM and SEN
+- [ ] Every row exposes source, source layer, type and reported status
+- [ ] Edition and cutoff are explicit per country and source layer
+- [ ] No source rows are fused, dropped or promoted into a stronger status
+- [ ] Field unknowns, identity unknowns and unavailable sources are counted and displayed separately
+- [ ] Clean replay from pinned existing inputs reproduces all four tables and manifest byte-for-byte
+- [ ] The local MVP links the M1a tables and states that they are frozen inventories, not a live status service
+
+## Out of scope
+
+Canonical identity consolidation, `possible_match` resolution, new harvesting,
+source watching, CRS/IATI linkage, disbursement reconstruction and physical
+implementation analysis belong to M1b or M2, not this ticket.
