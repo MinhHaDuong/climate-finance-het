@@ -17,28 +17,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-SOURCE_KEYS = (
-    "Unique ID",
-    "Project Name",
-    "Portfolios",
-    "Purpose",
-    "Priority Areas",
-    "Funder/Source",
-    "Funding Instrument",
-    "Disbursement Channel",
-    "Co-Financing: Name",
-    "Currency: Pledged",
-    "Amount: Pledged",
-    "Total US$",
-    "Total ZAR",
-    "Funding Partners",
-    "Implementing Entity",
-    "Institutional / South African Partner",
-    "Beneficiary",
-    "Status",
-    "Project Description",
-    "Date of Financing Agreement Signed*",
-    "End Date",
+from jetp.build_0818_zaf_q1_reconciliation import (
+    SOURCE_FIELDS as SOURCE_KEYS,
 )
 
 
@@ -133,6 +113,7 @@ def test_sidecar_table_carries_all_twenty_one_source_fields(tmp_path: Path) -> N
     field_rows = build_field_rows(document, policy)
 
     assert len(FIELDS) == 21
+    assert len(SOURCE_KEYS) == 21
     assert not set(FIELDS) & set(SOURCE_KEYS)
     assert FIELD_TABLE_FIELDS == ("ordinal",) + SOURCE_KEYS
     assert len(field_rows) == len(rows) == 2
