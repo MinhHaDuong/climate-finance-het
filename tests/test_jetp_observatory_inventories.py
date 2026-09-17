@@ -5,14 +5,11 @@ is hand-written, so the last test pins the strings that must stay in step with
 this module rather than generating one from the other.
 """
 
-from __future__ import annotations
-
 import csv
 import io
 from pathlib import Path
 
 import pytest
-
 from jetp._m1a_document_links import (
     index_documents,
     resolve_document_link,

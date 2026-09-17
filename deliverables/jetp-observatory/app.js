@@ -30,7 +30,7 @@ const STAGE_COLOURS = {
   Need: "#bc9c7d",
   "Not documented": "#dce0d5",
 };
-let overview, countries, comparison, editions, evidence, m1a, projects, documentsData;
+let overview, countries, comparison, editions, evidence, m1a, projects, documentsData, documentIndex;
 const country = (code) => overview.countries.find((c) => c.code === code);
 const undisclosedCount = () =>
   overview.countries.reduce((total, c) => total + c.undisclosed, 0);
@@ -120,7 +120,7 @@ function countryPage(code) {
     c = country(code);
   if (!d) return notFound();
   const refs = Object.keys(d.sources).length;
-  main.innerHTML = `<div class="page-head"><div class="breadcrumb"><a href="#countries">Countries</a> / ${esc(c.name)}</div><p class="eyebrow">${c.code} · Partnership announced ${date(c.signed_on)}</p><h1>${esc(c.name)}</h1><p class="lede">${esc(c.headline_detail)}</p>${countryTabs(code)}</div><div class="callout"><h3>${esc(c.headline)}</h3><p>${esc(c.stage_label)} · ${date(c.headline_date)} · ${sourceLink(c.headline_source_record, "Read the source")}</p></div><div class="metrics"><div class="metric"><strong>${c.named}</strong><span>Named portfolio records</span></div><div class="metric"><strong>${c.undisclosed}</strong><span>Unpublished identities</span></div><div class="metric"><strong>${refs}</strong><span>Linked sources</span></div><div class="metric"><strong>${esc(c.pledge_label)}</strong><span>Original political pledge</span></div></div><div class="split"><div><h2>Reading this portfolio</h2><div class="markdown">${markdown(d.editorial)}</div><div class="actions"><a class="button" href="#projects?country=${code}">Explore ${c.named} records ↗</a><a class="text-link" href="#comparison?country=${code}">Historical reference →</a></div></div><div class="panel"><h3>Financing evidence</h3>${stageChart([c])}<p class="note" style="margin-top:20px">Counts show the most advanced coded evidence for a record, not the stage of every financing tranche. Programme overlaps prevent summing record-level amounts.</p><h3 style="margin-top:25px">Portfolio composition</h3>${technologyChart(d.projects)}</div></div><section class="section" style="margin-top:35px"><div class="section-head"><h2>Inside the portfolio</h2><a class="text-link" href="#projects?country=${code}">View all →</a></div>${projectTable(d.projects.slice(0, 8))}<div class="downloads"><a class="button light" href="data/${code}.json" download>Download ${c.name} data ↓</a></div></section>`;
+  main.innerHTML = `<div class="page-head"><div class="breadcrumb"><a href="#countries">Countries</a> / ${esc(c.name)}</div><p class="eyebrow">${c.code} · Partnership announced ${date(c.signed_on)}</p><h1>${esc(c.name)}</h1><p class="lede">${esc(c.headline_detail)}</p>${countryTabs(code)}</div><div class="callout"><h3>${esc(c.headline)}</h3><p>${esc(c.stage_label)} · ${date(c.headline_date)} · ${sourceLink(c.headline_source_record, "Read the source")}</p></div><div class="metrics"><div class="metric"><strong>${c.named}</strong><span>Named portfolio records</span></div><div class="metric"><strong>${c.undisclosed}</strong><span>Unpublished identities</span></div><div class="metric"><strong>${refs}</strong><span>Linked sources</span></div><div class="metric"><strong>${esc(c.pledge_label)}</strong><span>Original political pledge</span></div></div><div class="split"><div><h2>Reading this portfolio</h2><div class="markdown">${markdown(d.editorial)}</div><div class="actions"><a class="button" href="#projects?country=${code}">Explore ${c.named} records ↗</a><a class="text-link" href="#comparison?country=${code}">Historical reference →</a></div></div><div class="panel"><h3>Financing evidence</h3>${stageChart([c])}<p class="note" style="margin-top:20px">Counts show the most advanced coded evidence for a record, not the stage of every financing tranche. Programme overlaps prevent summing record-level amounts.</p><h3 style="margin-top:25px">Portfolio composition</h3>${technologyChart(d.projects)}</div></div><section class="section" style="margin-top:35px"><div class="section-head"><h2>Inside the portfolio</h2><a class="text-link" href="#projects?country=${code}">View all →</a></div>${projectTable(d.projects.slice(0, 8))}<div class="downloads"><a class="button light" href="#inventory/${code}">Explore the frozen M1a source rows ↗</a><a class="button light" href="data/${code}.json" download>Download ${c.name} data ↓</a></div></section>`;
 }
 function projectTable(rows) {
   if (!rows.length)
@@ -244,6 +244,39 @@ function filterTable(id, rows, opts) {
 }
 const documentHref = (entry, page) =>
   entry.local_path ? entry.local_path + (page ? "#page=" + page : "") : null;
+/* Hand-written port of scripts/jetp/_m1a_document_links.py. The two are kept in
+ * step by tests/test_jetp_observatory_inventories.py, never generated from one
+ * another. Only the Viet Nam locators publish a PDF page, and they publish
+ * three numbers — PDF page, printed page, ordinal — so the pattern is anchored
+ * on its own label rather than on "the first number in the string". */
+const PDF_PAGE = /PDF pages? (\d+)/;
+/* Ticket 0853: one source id can carry several collection attempts. A row link
+ * has to open one file, so the archived, collected attempt wins; where nothing
+ * was archived, the first attempt is kept so the id still resolves and the page
+ * can show what the collection recorded instead. */
+const collectionRank = (entry) =>
+  entry.local_path ? (entry.status === "collected" ? 2 : 1) : 0;
+function indexDocuments(entries) {
+  const index = {};
+  entries.forEach((entry) => {
+    const kept = index[entry.id];
+    if (!kept || collectionRank(entry) > collectionRank(kept))
+      index[entry.id] = entry;
+  });
+  return index;
+}
+/* Returns null where the Python raises: a renderer cannot abort a page over one
+ * row, so an unresolved id degrades to its locator text. */
+function resolveDocumentLink(sourceId, locator, registry) {
+  const entry = registry[sourceId];
+  if (!entry) return null;
+  const match = PDF_PAGE.exec(locator || "");
+  return {
+    sha256: entry.sha256,
+    pdf_page: match ? Number(match[1]) : null,
+    local_path: entry.local_path,
+  };
+}
 const byteSize = (n) =>
   n == null
     ? "Not recorded"
@@ -318,6 +351,110 @@ function documentsPage() {
     table.head +
     `<div class="downloads"><a class="button light" href="data/documents.json" download>Download the collection registry ↓</a></div>`;
   table.mount();
+}
+/* The five facets wired here are the ones every country's inventory carries.
+ * Everything else a row holds — the ZAF register's pass-through raw_ columns
+ * included — is shown in the row detail, in the order the generator wrote it,
+ * so a widened export needs no change here. */
+const INVENTORY_FACETS = [
+  ["source_layer", "Extraction sub-layer", "All sub-layers"],
+  ["record_type", "Record type", "All record types"],
+  ["reported_status", "Reported status", "All reported statuses"],
+  ["identity_status", "Identity", "All identity outcomes"],
+];
+const inventoryCache = {};
+/* The companion file carries the column names once and then one array of
+ * values per row, so the row objects are rebuilt here in the generator's own
+ * column order — pass-through columns included. */
+const inventoryRows = (payload) =>
+  payload.rows.map((values) =>
+    Object.fromEntries(payload.fields.map((field, i) => [field, values[i]])),
+  );
+function inventoryUnknowns(details) {
+  return (
+    `<div class="metrics">${details.sublayers
+      .map(
+        (layer) =>
+          `<div class="metric"><strong>${fmt(layer.row_count)}</strong><span>${esc(layer.sublayer_id)}</span><small>${esc(layer.edition)} · cutoff ${esc(layer.cutoff)}<br>${fmt(layer.unknowns.field_values)} unknown field values · ${fmt(layer.unknowns.identity_rows)} unknown identities · ${fmt(layer.unknowns.unavailable_source_rows)} unavailable source rows</small></div>`,
+      )
+      .join("")}</div>` +
+    `<p class="note">Unknowns are reported for each extraction sub-layer separately. They are not added across sub-layers, and never across countries: the sub-layers overlap and count different things.</p>`
+  );
+}
+function inventoryRowDetail(row) {
+  return `<details><summary>${esc(row.label || "Identity not published")}</summary><dl class="facts">${Object.entries(
+    row,
+  )
+    .map(
+      ([key, value]) =>
+        `<dt>${esc(key)}</dt><dd>${esc(value === "" || value == null ? "Not published" : value)}</dd>`,
+    )
+    .join("")}</dl></details>`;
+}
+function inventoryEvidence(row) {
+  const entry = documentIndex[row.source_id];
+  const locator = esc(row.evidence_locator || "No locator recorded");
+  if (!entry) return `<span class="note">${locator}</span>`;
+  const link = resolveDocumentLink(
+    row.source_id,
+    row.evidence_locator,
+    documentIndex,
+  );
+  const href = documentHref(entry, link.pdf_page);
+  return href
+    ? `<a href="${esc(href)}" data-inventory-source="${esc(row.source_id)}" data-inventory-row="${esc(row.source_row_id)}" target="_blank" rel="noopener">${locator}${link.pdf_page ? " · PDF page " + link.pdf_page : ""} ↗</a>`
+    : `<span class="note">${locator}<br>${esc(entry.error || "Not in the local snapshot")}</span>`;
+}
+function renderInventory(code, rows) {
+  const details = m1a.countries[code];
+  const c = country(code);
+  const values = (key) =>
+    [...new Set(rows.map((row) => row[key]).filter(Boolean))].sort();
+  const table = filterTable("inventory", rows, {
+    facets: INVENTORY_FACETS.map(([key, label, all]) => ({
+      key,
+      label,
+      all,
+      options: values(key),
+    })),
+    search: {
+      label: "Search the source label",
+      placeholder: "Try Tri An, transmission, solar…",
+      text: (row) => (row.label || "").toLowerCase(),
+    },
+    columns: [
+      { label: "Source row", cell: (row) => `<code>${esc(row.source_row_id)}</code>` },
+      { label: "Label and source columns", cell: inventoryRowDetail },
+      { label: "Sub-layer", cell: (row) => esc(row.source_layer) },
+      { label: "Record type", cell: (row) => esc(row.record_type) },
+      { label: "Reported status", cell: (row) => pill(row.reported_status) },
+      { label: "Identity", cell: (row) => pill(row.identity_status) },
+      { label: "Evidence", cell: inventoryEvidence },
+    ],
+    empty: "No source rows match these filters.",
+    resultNoun: "source rows",
+    pageSize: 50,
+  });
+  main.innerHTML =
+    `<div class="page-head"><div class="breadcrumb"><a href="#countries">Countries</a> / <a href="#country/${code}">${esc(c?.name || code)}</a> / Inventory</div><p class="eyebrow">Frozen M1a inventory · ${code}</p><h1>${esc(c?.name || code)} source rows</h1><p class="lede">Every selected row of this country's extraction sub-layers, as its source published it, before any identity matching. Row counts are not comparable project totals.</p></div>` +
+    inventoryUnknowns(details) +
+    `<div class="callout">Each row opens the archived source document, at its PDF page where the source publishes one. Archived copies open locally only; the published edition carries the registry and the publisher's address.</div>` +
+    table.head +
+    `<div class="downloads"><a class="button light" href="data/m1a/${code}.csv" download>Download the ${code} M1a inventory (CSV) ↓</a></div>`;
+  table.mount();
+}
+function inventoryPage(code) {
+  if (!m1a.countries[code]) return notFound();
+  main.innerHTML = `<p class="note">Loading the ${esc(code)} source rows…</p>`;
+  inventoryCache[code] = inventoryCache[code] || load("m1a/" + code);
+  inventoryCache[code]
+    .then((payload) => {
+      if (location.hash.startsWith("#inventory/" + code))
+        renderInventory(code, inventoryRows(payload));
+    })
+    .catch((error) => {
+      main.innerHTML = `<div class="error"><h1>The ${esc(code)} inventory could not load.</h1><p>${esc(error.message)}</p></div>`;
+    });
 }
 function cataloguePage(params) {
   main.innerHTML =
@@ -487,13 +624,13 @@ function m1aSection() {
   const rows = ["ZAF", "IDN", "VNM", "SEN"]
     .map((code) => {
       const item = m1a.countries[code];
-      const layers = item.layers
+      const sublayers = item.sublayers
         .map((layer) => `${esc(layer.edition)} · cutoff ${esc(layer.cutoff)}`)
         .join("<br>");
-      return `<tr><td>${esc(country(code)?.name || code)}</td><td>${fmt(item.row_count)}</td><td>${layers}</td><td>${fmt(item.unknowns.field_values)}</td><td>${fmt(item.unknowns.identity_rows)}</td><td>${fmt(item.unknowns.unavailable_source_rows)}</td></tr>`;
+      return `<tr><td><a href="#inventory/${code}">${esc(country(code)?.name || code)}</a></td><td>${fmt(item.row_count)}</td><td>${sublayers}</td><td>${fmt(item.unknowns.field_values)}</td><td>${fmt(item.unknowns.identity_rows)}</td><td>${fmt(item.unknowns.unavailable_source_rows)}</td></tr>`;
     })
     .join("");
-  return `<h2>Frozen M1a source inventories</h2><p>These four tables preserve every row of six selected extraction sub-layers before canonical matching. They are frozen inventories, not a live status service, and their row counts are not comparable project totals.</p><div class="table-wrap"><table><thead><tr><th>Country</th><th>Rows</th><th>Source edition · cutoff</th><th>Unknown fields</th><th>Unknown identities</th><th>Unavailable source rows</th></tr></thead><tbody>${rows}</tbody></table></div><div class="downloads"><a class="button light" href="data/m1a/ZAF.csv" download>South Africa M1a ↓</a><a class="button light" href="data/m1a/IDN.csv" download>Indonesia M1a ↓</a><a class="button light" href="data/m1a/VNM.csv" download>Viet Nam M1a ↓</a><a class="button light" href="data/m1a/SEN.csv" download>Senegal M1a ↓</a><a class="button light" href="data/m1a/manifest.json" download>M1a manifest ↓</a></div><p>The manifest pins input and source hashes and reports <code>field_values</code>, <code>identity_rows</code> and <code>unavailable_source_rows</code> separately for every layer.</p>`;
+  return `<h2>Frozen M1a source inventories</h2><p>These four tables preserve every row of six selected extraction sub-layers before canonical matching. They are frozen inventories, not a live status service, and their row counts are not comparable project totals.</p><div class="table-wrap"><table><thead><tr><th>Country</th><th>Rows</th><th>Source edition · cutoff</th><th>Unknown fields</th><th>Unknown identities</th><th>Unavailable source rows</th></tr></thead><tbody>${rows}</tbody></table></div><div class="downloads"><a class="button light" href="data/m1a/ZAF.csv" download>South Africa M1a ↓</a><a class="button light" href="data/m1a/IDN.csv" download>Indonesia M1a ↓</a><a class="button light" href="data/m1a/VNM.csv" download>Viet Nam M1a ↓</a><a class="button light" href="data/m1a/SEN.csv" download>Senegal M1a ↓</a><a class="button light" href="data/m1a/manifest.json" download>M1a manifest ↓</a></div><p>The manifest pins input and source hashes and reports <code>field_values</code>, <code>identity_rows</code> and <code>unavailable_source_rows</code> separately for every extraction sub-layer. Country names above open the row-by-row inventory.</p>`;
 }
 function methodsPage() {
   main.innerHTML =
@@ -532,6 +669,7 @@ function render() {
   else if (page === "evidence") evidencePage();
   else if (page === "editions") editionHistoryPage();
   else if (page === "documents") documentsPage();
+  else if (page === "inventory") inventoryPage(id);
   else methodsPage();
   document.title =
     (page === "overview"
@@ -542,17 +680,19 @@ function render() {
           ? "Project evidence"
           : page === "comparison"
             ? "Historical comparison"
-            : page.charAt(0).toUpperCase() + page.slice(1)) +
+            : page === "inventory"
+              ? (country(id)?.name || id) + " M1a inventory"
+              : page.charAt(0).toUpperCase() + page.slice(1)) +
     " · JETP Observatory";
   window.scrollTo(0, 0);
 }
+const load = async (file) => {
+  const response = await fetch("data/" + file + ".json");
+  if (!response.ok) throw Error(`${file}: ${response.status}`);
+  return response.json();
+};
 async function start() {
   try {
-    const load = async (file) => {
-      const response = await fetch("data/" + file + ".json");
-      if (!response.ok) throw Error(`${file}: ${response.status}`);
-      return response.json();
-    };
     [overview, comparison, documentsData, editions, evidence, m1a] = await Promise.all([
       load("overview"),
       load("comparison"),
@@ -567,6 +707,7 @@ async function start() {
       ),
     );
     projects = Object.values(countries).flatMap((c) => c.projects);
+    documentIndex = indexDocuments(documentsData.documents);
     window.addEventListener("hashchange", render);
     render();
   } catch (error) {

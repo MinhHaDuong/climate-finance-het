@@ -136,7 +136,7 @@ def test_existing_inputs_replay_without_fusion_and_with_pinned_layer_dates(
     assert all(
         layer["edition"] and layer["cutoff"] and layer["input_sha256"]
         for details in manifest["countries"].values()
-        for layer in details["layers"]
+        for layer in details["sublayers"]
     )
     for country in ("ZAF", "IDN", "VNM", "SEN"):
         with (first / f"{country}.csv").open(encoding="utf-8", newline="") as handle:
@@ -236,9 +236,9 @@ def test_csv_width_is_per_country_and_excluded_rows_reach_the_manifest(
         with (tmp_path / f"{country}.csv").open(encoding="utf-8", newline="") as handle:
             assert tuple(next(csv.reader(handle))) == FIELDS
 
-    assert manifest["countries"]["ZAF"]["layers"][0]["excluded_source_rows"] == list(
+    assert manifest["countries"]["ZAF"]["sublayers"][0]["excluded_source_rows"] == list(
         excluded
     )
     for country in ("IDN", "VNM", "SEN"):
-        assert manifest["countries"][country]["layers"][0]["excluded_source_rows"] == []
+        assert manifest["countries"][country]["sublayers"][0]["excluded_source_rows"] == []
     assert json.loads((tmp_path / "manifest.json").read_text()) == manifest

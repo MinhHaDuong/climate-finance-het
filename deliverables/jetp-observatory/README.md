@@ -19,8 +19,9 @@ Use `PYTHON=.venv/bin/python` on the make commands to reuse the installed
 interpreter when the machine's uv cache is unavailable.
 
 Routes: `#overview`, `#countries`, `#country/IDN`, `#projects`,
-`#project/<project_id>`, `#comparison`, `#documents`, `#methods`. Country-filter links use
-`#projects?country=IDN` and `#comparison?country=IDN`.
+`#project/<project_id>`, `#comparison`, `#documents`, `#inventory/<CODE>`,
+`#methods`. Country-filter links use `#projects?country=IDN` and
+`#comparison?country=IDN`.
 
 ## What is included
 
@@ -41,9 +42,18 @@ Routes: `#overview`, `#countries`, `#country/IDN`, `#projects`,
   from any public release, which carry the registry and the origin URL alone.
   `scripts/jetp/_public_release.py` copies the whole tree at a pinned commit and
   does not go through that exclusion; it is out of scope until the next edition.
-- Frozen M1a CSV inventories for ZAF, IDN, VNM and SEN. These retain every
+- Frozen M1a inventories for ZAF, IDN, VNM and SEN. These retain every
   selected source row, edition and cutoff without merging identities. Their
-  manifest displays field, identity and source-availability unknowns separately.
+  manifest displays field, identity and source-availability unknowns separately,
+  for each extraction sub-layer and never added across sub-layers or countries.
+  `#inventory/<CODE>` explores them row by row: the CSV stays the download
+  artefact, while the page reads the `<CODE>.json` companion the same build
+  writes from the same rows — column names once, then one array of values per
+  row, so the browser parses no CSV text and the file stays under the
+  repository's committed-file ceiling. Each row opens its archived source document, at
+  its PDF page where the source publishes one. The export width is per country,
+  so the page wires only the five facets every country carries and shows every
+  other column in the row detail.
 
 This is a preview, not the complete public release of 0726 or deployment of 0727.
 There is no pooled disbursement rate or causal acceleration estimate. Headline
