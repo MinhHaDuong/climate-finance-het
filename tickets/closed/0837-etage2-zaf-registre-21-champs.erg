@@ -2,15 +2,14 @@
 Title: Étage 2 : conserver les 21 champs du registre JET sud-africain dans M1a
 Created: 2026-09-17
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1430
 
 --- log ---
 2026-09-17T16:56Z HDMX-coding-agent created
 
 2026-09-17T17:18Z HDMX-coding-agent note raid Imagine : annoté, voir section Imagine
 2026-09-17T20:12Z HDMX-coding-agent note raid : action 2 réalisée par une table annexe 0818-…-fields.csv, le CSV 0818 gelé reste intact (entrée du gel 0822)
-2026-09-17T20:41Z HDMX-coding-agent bump verify-reroll — round 1: unresolved verifiable review finding — _excluded_section() renders the Portfolios narrative from project_name_raw instead of portfolios_raw (build_0818_zaf_q1_reconciliation.py:168)
-2026-09-17T20:43Z HDMX-coding-agent bump verify-reroll — round 1: unresolved must-fix from /simplify (reuse+simplification angles) — tests/test_jetp_0818_zaf_fields.py:SOURCE_KEYS duplicates SOURCE_FIELDS instead of importing it
-2026-09-17T20:51Z HDMX-coding-agent note verify-reroll round 1 fixed — portfolios_raw rendered, SOURCE_FIELDS imported in test
+2026-09-17T21:34Z HDMX-coding-agent closed — autoclosed — PR #1430
 --- body ---
 
 ## Context

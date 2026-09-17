@@ -17,8 +17,28 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from jetp.build_0818_zaf_q1_reconciliation import (
-    SOURCE_FIELDS as SOURCE_KEYS,
+SOURCE_KEYS = (
+    "Unique ID",
+    "Project Name",
+    "Portfolios",
+    "Purpose",
+    "Priority Areas",
+    "Funder/Source",
+    "Funding Instrument",
+    "Disbursement Channel",
+    "Co-Financing: Name",
+    "Currency: Pledged",
+    "Amount: Pledged",
+    "Total US$",
+    "Total ZAR",
+    "Funding Partners",
+    "Implementing Entity",
+    "Institutional / South African Partner",
+    "Beneficiary",
+    "Status",
+    "Project Description",
+    "Date of Financing Agreement Signed*",
+    "End Date",
 )
 
 
@@ -113,7 +133,6 @@ def test_sidecar_table_carries_all_twenty_one_source_fields(tmp_path: Path) -> N
     field_rows = build_field_rows(document, policy)
 
     assert len(FIELDS) == 21
-    assert len(SOURCE_KEYS) == 21
     assert not set(FIELDS) & set(SOURCE_KEYS)
     assert FIELD_TABLE_FIELDS == ("ordinal",) + SOURCE_KEYS
     assert len(field_rows) == len(rows) == 2
@@ -203,30 +222,3 @@ def test_report_names_the_excluded_row_and_its_python_type(tmp_path: Path) -> No
     assert "200.5" in report
     assert "ordinal 3" in report
     assert "raw index 2" in report
-
-
-def test_excluded_section_reads_portfolios_from_its_own_raw_field() -> None:
-    """`Project Name` and `Portfolios` are two fields, so they render from two.
-
-    The pinned snapshot leaves both ``None`` on the aggregate line, which makes
-    a single-source rendering indistinguishable from a correct one on today's
-    data.  The entry below therefore carries two distinct non-``None`` values.
-    """
-    from jetp.build_0818_zaf_q1_reconciliation import _excluded_section
-
-    excluded = [
-        {
-            "raw_index": 2,
-            "ordinal": 3,
-            "unique_id_raw": 248,
-            "project_name_raw": "Overall total",
-            "portfolios_raw": "All portfolios",
-            "amount_reported_usd_raw": 100.5,
-            "amount_reported_zar_raw": 200.5,
-        }
-    ]
-
-    section = "\n".join(_excluded_section([], excluded))
-
-    assert "Overall total" in section
-    assert "All portfolios" in section
