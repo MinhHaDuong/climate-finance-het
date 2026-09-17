@@ -10,6 +10,7 @@ from pathlib import Path
 
 import yaml
 
+from jetp._bundle_inventory import resolve_within
 from jetp._observatory_data import (
     document_entry,
     historical_record,
@@ -171,10 +172,9 @@ def documents_data(root, tables):
         if not relative:
             continue
         # A registry path that escapes the snapshot must stop the build rather
-        # than become a link out of the site, as _source_record already does.
-        archived = (snapshot / relative).resolve()
-        if not archived.is_relative_to(snapshot):
-            raise ValueError(f'Unsafe source path: {relative}')
+        # than become a link out of the site; resolve_within is the same guard
+        # _source_record applies to the same field.
+        archived = resolve_within(snapshot, relative)
         if archived.is_file():
             available.add(relative)
     return {'documents': [document_entry(row, available) for row in rows]}
