@@ -8,9 +8,12 @@ import argparse
 import csv
 import hashlib
 import json
+import re
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
+
+from jetp.build_0818_zaf_q1_reconciliation import SOURCE_FIELDS as _RAW_FIELD_ORDER
 
 COUNTRIES = ("ZAF", "IDN", "VNM", "SEN")
 FIELDS = (
@@ -42,10 +45,29 @@ class FrozenLayer:
     unavailable_source_rows: int = 0
     input_path: str = "fixture"
     input_sha256: str = "fixture"
+    excluded_source_rows: tuple = ()
+
+
+def _raw_slug(name: str) -> str:
+    """Prefix one source label into a pass-through column name.
+
+    Uniform by construction: ``Total US$`` becomes ``raw_total_us``, the ``$``
+    dropping out like any other non-alphanumeric character.  The rule is applied
+    to every label or to none — a hand-corrected ``raw_total_usd`` would make the
+    column set unreproducible from the source header.
+    """
+    return "raw_" + re.sub(r"[^a-z0-9]+", "_", name.lower()).strip("_")
 
 
 def _unknown_source_fields(fields: Mapping[str, object]) -> list[str]:
-    return sorted(key for key, value in fields.items() if value is None or value == "")
+    # Pass-through ``raw_`` columns restate values the adapter already exposes
+    # under its own labels, so counting their blanks would report one absence
+    # twice and move a published statistic for a change that adds no unknown.
+    return sorted(
+        key
+        for key, value in fields.items()
+        if not key.startswith("raw_") and (value is None or value == "")
+    )
 
 
 def _sha256(path: Path) -> str:
@@ -76,6 +98,14 @@ def _render_layer(layer: FrozenLayer) -> tuple[list[dict[str, str]], dict[str, o
         field_unknowns += len(unknown_fields)
         identity_status = str(source_row.get("identity_status", "unknown")) or "unknown"
         identity_unknowns += identity_status == "unknown"
+        # Pass-through columns, if the adapter produced any: every key the
+        # adapter prefixed ``raw_``, in its own order, copied without reading or
+        # converting the value.  Countries whose adapter produces none keep the
+        # eleven presentation columns, which is what makes the export width
+        # per-country rather than global.
+        passthrough = {
+            key: value for key, value in source_fields.items() if key.startswith("raw_")
+        }
         output.append(
             {
                 "country": layer.country,
@@ -89,9 +119,11 @@ def _render_layer(layer: FrozenLayer) -> tuple[list[dict[str, str]], dict[str, o
                 "reported_status": str(source_row.get("reported_status", "")),
                 "identity_status": identity_status,
                 "evidence_locator": str(source_row.get("evidence_locator", "")),
+                **passthrough,
             }
         )
     return output, {
+        "excluded_source_rows": list(layer.excluded_source_rows),
         "layer_id": layer.layer_id,
         "source_id": layer.source_id,
         "edition": layer.edition,
@@ -130,8 +162,14 @@ def write_inventories(layers: Iterable[FrozenLayer], output_dir: Path) -> dict[s
             rows.extend(layer_rows)
             summaries.append(summary)
         destination = output_dir / f"{country}.csv"
+        # Width is per country: _render_layer emits the eleven presentation keys
+        # first and then the pass-through keys, in the same order for every row
+        # of a country, so the first row's key order is the header.
+        extra = list(rows[0].keys())[len(FIELDS):] if rows else []
         with destination.open("w", encoding="utf-8", newline="") as handle:
-            writer = csv.DictWriter(handle, fieldnames=FIELDS, lineterminator="\n")
+            writer = csv.DictWriter(
+                handle, fieldnames=FIELDS + tuple(extra), lineterminator="\n"
+            )
             writer.writeheader()
             writer.writerows(rows)
         countries[country] = {
@@ -190,6 +228,15 @@ def _plan_rows(rows: Sequence[Mapping[str, str]], specification: Mapping[str, ob
 
 
 def _zaf_rows(rows: Sequence[Mapping[str, str]], specification: Mapping[str, object]) -> list[dict[str, object]]:
+    def _fields(row: Mapping[str, str]) -> dict[str, object]:
+        # The 21 register labels ride along under slugged names.  The values
+        # are already the strings the 0818 CSV holds; passing them through
+        # ``_text`` again would be a second normalisation of the same data.
+        fields = dict(row)
+        for source_key in _RAW_FIELD_ORDER:
+            fields[_raw_slug(source_key)] = row[source_key]
+        return fields
+
     return [
         {
             "source_row_id": row["ordinal"],
@@ -198,7 +245,7 @@ def _zaf_rows(rows: Sequence[Mapping[str, str]], specification: Mapping[str, obj
             "reported_status": row["implementation_status"] or "unknown",
             "identity_status": "named" if row["project_name"] else "unknown",
             "evidence_locator": row["locator"],
-            "source_fields": dict(row),
+            "source_fields": _fields(row),
         }
         for row in rows
     ]
@@ -273,6 +320,9 @@ def build_existing_layers(root: Path, config_path: Path | None = None) -> list[F
                 unavailable_source_rows=specification["unavailable_source_rows"],
                 input_path=specification["input_path"],
                 input_sha256=specification["input_sha256"],
+                excluded_source_rows=tuple(
+                    specification.get("excluded_source_rows", ())
+                ),
             )
         )
     return layers

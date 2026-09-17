@@ -12,7 +12,39 @@ import json
 from collections import Counter
 from pathlib import Path
 
-from jetp.build_zaf_investment_register import _project_id, _text, parse_register_html
+from jetp.build_zaf_investment_register import (
+    _project_id,
+    _text,
+    excluded_register_rows,
+    parse_register_html,
+)
+
+# The 21 field names the dashboard's embedded ``Overall - Data`` array ships,
+# verbatim and in source order.  They are appended to the derived columns so
+# the extraction carries the whole register row, never a selection of it.
+SOURCE_FIELDS = (
+    "Unique ID",
+    "Project Name",
+    "Portfolios",
+    "Purpose",
+    "Priority Areas",
+    "Funder/Source",
+    "Funding Instrument",
+    "Disbursement Channel",
+    "Co-Financing: Name",
+    "Currency: Pledged",
+    "Amount: Pledged",
+    "Total US$",
+    "Total ZAR",
+    "Funding Partners",
+    "Implementing Entity",
+    "Institutional / South African Partner",
+    "Beneficiary",
+    "Status",
+    "Project Description",
+    "Date of Financing Agreement Signed*",
+    "End Date",
+)
 
 FIELDS = (
     "ordinal",
@@ -36,7 +68,7 @@ FIELDS = (
     "transition_date",
     "payment_amount",
     "eligible_for_account",
-)
+) + SOURCE_FIELDS
 
 
 def _register_source(policy: dict) -> dict:
@@ -79,12 +111,44 @@ def build_rows(document: Path, policy: dict) -> list[dict[str, str]]:
             "transition_date": "",
             "payment_amount": "",
             "eligible_for_account": "false",
+            # The whole source row, under its own labels and with the same
+            # ``_text`` treatment as the derived columns: absence stays empty,
+            # nothing is converted, summed or promoted.
+            **{key: _text(row.get(key)) for key in SOURCE_FIELDS},
         }
         for ordinal, row in enumerate(register, 1)
     ]
 
 
-def _report(rows: list[dict[str, str]], policy: dict) -> str:
+def _excluded_section(rows: list[dict[str, str]], excluded: list[dict]) -> list[str]:
+    """Name each raw entry the material-row predicate drops, and say why.
+
+    The reason is a Python type, not a value, so the type is spelled out: an
+    ``int`` identifier is the dashboard's own aggregate line, never a project.
+    """
+    lines = [
+        "",
+        "## Excluded rows",
+        "",
+        f"The embedded `Overall - Data` array carries {len(rows) + len(excluded)} raw entries.  {len(rows)} are material register rows; the {'entry' if len(excluded) == 1 else 'entries'} below {'is' if len(excluded) == 1 else 'are'} not.  Exclusion is decided by the source types alone, before any string conversion.",
+        "",
+    ]
+    for entry in excluded:
+        unique_id = entry["unique_id_raw"]
+        lines.append(
+            f"- `Unique ID` = `{unique_id}` at ordinal {entry['ordinal']} "
+            f"(raw index {entry['raw_index']}): excluded because that value is a "
+            f"Python `{type(unique_id).__name__}`, not a `str` — the dashboard's own "
+            f"aggregate line, whose `Project Name` and `Portfolios` are "
+            f"`{entry['project_name_raw']}`.  It reports `Total US$` "
+            f"`{entry['amount_reported_usd_raw']}` and `Total ZAR` "
+            f"`{entry['amount_reported_zar_raw']}`; these totals are the register's "
+            "own, are not recomputed here, and are not admitted to any account."
+        )
+    return lines
+
+
+def _report(rows: list[dict[str, str]], excluded: list[dict], policy: dict) -> str:
     statuses = Counter(row["implementation_status"] or "blank" for row in rows)
     source = _register_source(policy)
     lines = [
@@ -110,6 +174,7 @@ def _report(rows: list[dict[str, str]], policy: dict) -> str:
         "",
     ]
     lines.extend(f"- `{label}`: {count}" for label, count in sorted(statuses.items()))
+    lines.extend(_excluded_section(rows, excluded))
     lines.extend([
         "",
         "## Handoff",
@@ -120,7 +185,13 @@ def _report(rows: list[dict[str, str]], policy: dict) -> str:
     return "\n".join(lines)
 
 
-def write_outputs(rows: list[dict[str, str]], output: Path, report: Path, policy: dict) -> None:
+def write_outputs(
+    rows: list[dict[str, str]],
+    output: Path,
+    report: Path,
+    policy: dict,
+    excluded: list[dict] | None = None,
+) -> None:
     """Write a deterministic candidate table and concise reconciliation report."""
     output.parent.mkdir(parents=True, exist_ok=True)
     with output.open("w", encoding="utf-8", newline="") as handle:
@@ -128,7 +199,7 @@ def write_outputs(rows: list[dict[str, str]], output: Path, report: Path, policy
         writer.writeheader()
         writer.writerows(rows)
     report.parent.mkdir(parents=True, exist_ok=True)
-    report.write_text(_report(rows, policy), encoding="utf-8")
+    report.write_text(_report(rows, excluded or [], policy), encoding="utf-8")
 
 
 def main() -> None:
@@ -139,8 +210,10 @@ def main() -> None:
     args = parser.parse_args()
     policy = json.loads((root / "config/jetp-zaf-migration.json").read_text(encoding="utf-8"))
     source = _register_source(policy)
-    rows = build_rows(root / "data/jetp/documents" / source["storage_path"], policy)
-    write_outputs(rows, args.output, args.report, policy)
+    document = root / "data/jetp/documents" / source["storage_path"]
+    rows = build_rows(document, policy)
+    excluded = excluded_register_rows(document.read_text(encoding="utf-8"))
+    write_outputs(rows, args.output, args.report, policy, excluded)
 
 
 if __name__ == "__main__":

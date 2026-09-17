@@ -10,10 +10,21 @@
       "cutoff": "2026-03-31",
       "record_type": "register_row",
       "input_path": "docs/jetp-study/0818-zaf-q1-2026-rows.csv",
-      "input_sha256": "f2ababa6b9c006a133aea32dad73e50c4bfa05f03d9b1b9575a94ffcd596273f",
+      "input_sha256": "4c789aad25074dd67289b5309b9ba233c1a1874b48928fe6d8f6c30f5d1bde5c",
       "source_sha256": "5b5d6442da4e9e57b3c83b7bfc04a19135b2c5bf750c2480685d9d084dc093f4",
       "expected_rows": 257,
-      "unavailable_source_rows": 0
+      "unavailable_source_rows": 0,
+      "excluded_source_rows": [
+        {
+          "raw_index": 257,
+          "ordinal": 258,
+          "unique_id_raw": 248,
+          "project_name_raw": null,
+          "portfolios_raw": null,
+          "amount_reported_usd_raw": 3953240805.08088,
+          "amount_reported_zar_raw": 69917380338.46097
+        }
+      ]
     },
     {
       "adapter": "plan_projects",

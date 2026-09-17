@@ -23,6 +23,12 @@ The retained `zaf-register-q1-2026` snapshot yields **257** material register ro
 - `C. Implementation Phase`: 128
 - `D. Completed`: 88
 
+## Excluded rows
+
+The embedded `Overall - Data` array carries 258 raw entries.  257 are material register rows; the entry below is not.  Exclusion is decided by the source types alone, before any string conversion.
+
+- `Unique ID` = `248` at ordinal 258 (raw index 257): excluded because that value is a Python `int`, not a `str` — the dashboard's own aggregate line, whose `Project Name` and `Portfolios` are `None`.  It reports `Total US$` `3953240805.08088` and `Total ZAR` `69917380338.46097`; these totals are the register's own, are not recomputed here, and are not admitted to any account.
+
 ## Handoff
 
 The reconciled CSV is a replayable source-layer input for 0822. A later review may link candidates to operations only with explicit evidence; it must preserve this table's identifiers and must not infer payments or causality from register status.
