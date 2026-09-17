@@ -144,3 +144,24 @@ def test_existing_inputs_replay_without_fusion_and_with_pinned_layer_dates(
         assert all(row["source_id"] and row["source_layer"] for row in rows)
         assert all(row["record_type"] and row["reported_status"] for row in rows)
         assert len({row["inventory_row_id"] for row in rows}) == len(rows)
+
+
+def test_checked_in_m1a_release_and_mvp_downloads_match_clean_replay(
+    tmp_path: Path,
+) -> None:
+    expected = tmp_path / "m1a"
+    write_inventories(build_existing_layers(ROOT), expected)
+    published = ROOT / "deliverables" / "jetp-observatory" / "data" / "m1a"
+    assert {path.name: path.read_bytes() for path in published.iterdir()} == {
+        path.name: path.read_bytes() for path in expected.iterdir()
+    }
+
+    renderer = (ROOT / "deliverables" / "jetp-observatory" / "app.js").read_text()
+    assert "Frozen M1a source inventories" in renderer
+    assert "not a live status service" in renderer
+    assert "identity_rows" in renderer
+    assert "unavailable_source_rows" in renderer
+    for country in ("ZAF", "IDN", "VNM", "SEN"):
+        assert f'data/m1a/${{{country.lower()}}}' not in renderer
+        assert f'data/m1a/{country}.csv' in renderer
+    assert 'data/m1a/manifest.json' in renderer
