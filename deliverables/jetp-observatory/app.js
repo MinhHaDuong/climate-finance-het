@@ -394,37 +394,30 @@ function inventoryRowDetail(row) {
     .join("")}</dl></details>`;
 }
 function inventoryEvidence(row) {
+  const entry = documentIndex[row.source_id];
   const locator = esc(row.evidence_locator || "No locator recorded");
+  if (!entry) return `<span class="note">${locator}</span>`;
   const link = resolveDocumentLink(
     row.source_id,
     row.evidence_locator,
     documentIndex,
   );
-  if (!link) return `<span class="note">${locator}</span>`;
-  const href = documentHref(link, link.pdf_page);
+  const href = documentHref(entry, link.pdf_page);
   return href
     ? `<a href="${esc(href)}" data-inventory-row="${esc(row.source_row_id)}" target="_blank" rel="noopener">${locator}${link.pdf_page ? " · PDF page " + link.pdf_page : ""} ↗</a>`
-    : `<span class="note">${locator}<br>${esc(documentIndex[row.source_id].error || "Not in the local snapshot")}</span>`;
+    : `<span class="note">${locator}<br>${esc(entry.error || "Not in the local snapshot")}</span>`;
 }
 function renderInventory(code, rows) {
   const details = m1a.countries[code];
   const c = country(code);
-  // One pass over the rows builds all four facet option sets together, rather
-  // than one full pass per facet.
-  const facetValues = Object.fromEntries(
-    INVENTORY_FACETS.map(([key]) => [key, new Set()]),
-  );
-  rows.forEach((row) =>
-    INVENTORY_FACETS.forEach(([key]) => {
-      if (row[key]) facetValues[key].add(row[key]);
-    }),
-  );
+  const values = (key) =>
+    [...new Set(rows.map((row) => row[key]).filter(Boolean))].sort();
   const table = filterTable("inventory", rows, {
     facets: INVENTORY_FACETS.map(([key, label, all]) => ({
       key,
       label,
       all,
-      options: [...facetValues[key]].sort(),
+      options: values(key),
     })),
     search: {
       // The label and the evidence locator, because the locator is how a
