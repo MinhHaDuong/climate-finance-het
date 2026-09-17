@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Select a writable cache directory before Make launches uv or Ruff."""
+"""Select writable cache directories before Make launches task tools."""
 
 import os
 import sys

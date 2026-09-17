@@ -104,7 +104,7 @@ export BASH_ENV := $(wildcard $(KEYSTORE_LOADER))
 UV      ?= uv
 UV_RUN  ?= $(UV) run $(if $(wildcard .env),--env-file .env,)
 # A machine-level cache may exist but be read-only inside an agent sandbox.
-# Resolve both task caches before uv or Ruff starts, retaining the configured
+# Resolve task caches before uv, Ruff, or DVC starts, retaining the configured
 # path when usable and otherwise falling back to a per-user directory in TMPDIR.
 TASK_CACHE_RESOLVER := .githooks/resolve-task-cache.py
 override UV_CACHE_DIR := $(shell python3 $(TASK_CACHE_RESOLVER) uv)
