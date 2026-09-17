@@ -6,6 +6,7 @@ source row is written once, with its layer and original payload intact.
 
 from __future__ import annotations
 
+import argparse
 import csv
 import hashlib
 import json
@@ -45,6 +46,8 @@ class FrozenLayer:
     source_sha256: str
     rows: Sequence[Mapping[str, object]]
     unavailable_source_rows: int = 0
+    input_path: str = "fixture"
+    input_sha256: str = "fixture"
 
 
 def _json(value: object) -> str:
@@ -108,6 +111,8 @@ def _render_layer(layer: FrozenLayer) -> tuple[list[dict[str, str]], dict[str, o
         "edition": layer.edition,
         "cutoff": layer.cutoff,
         "source_sha256": layer.source_sha256,
+        "input_path": layer.input_path,
+        "input_sha256": layer.input_sha256,
         "row_count": len(output),
         "unknowns": {
             "field_values": field_unknowns,
@@ -164,3 +169,136 @@ def write_inventories(layers: Iterable[FrozenLayer], output_dir: Path) -> dict[s
         encoding="utf-8",
     )
     return manifest
+
+
+def _read_csv(path: Path) -> list[dict[str, str]]:
+    with path.open(encoding="utf-8", newline="") as handle:
+        return list(csv.DictReader(handle))
+
+
+def _require_input(root: Path, specification: Mapping[str, object]) -> Path:
+    path = root / str(specification["input_path"])
+    if not path.is_file() or _sha256(path) != specification["input_sha256"]:
+        raise ValueError(f"frozen M1a input hash mismatch: {path}")
+    return path
+
+
+def _plan_rows(rows: Sequence[Mapping[str, str]], specification: Mapping[str, object]) -> list[dict[str, object]]:
+    selected = [
+        row for row in rows
+        if row["country"] == specification["country"]
+        and row["source_id"] == specification["source_id"]
+    ]
+    return [
+        {
+            "source_row_id": row["plan_project_id"],
+            "label": row["project_name"],
+            "record_type": specification["record_type"],
+            "reported_status": row["priority_tier"] or "unknown",
+            "identity_status": "named" if row["project_name"] else "unknown",
+            "evidence_locator": row["locator"],
+            "source_fields": dict(row),
+        }
+        for row in selected
+    ]
+
+
+def _zaf_rows(rows: Sequence[Mapping[str, str]], specification: Mapping[str, object]) -> list[dict[str, object]]:
+    return [
+        {
+            "source_row_id": row["ordinal"],
+            "label": row["project_name"],
+            "record_type": specification["record_type"],
+            "reported_status": row["implementation_status"] or "unknown",
+            "identity_status": "named" if row["project_name"] else "unknown",
+            "evidence_locator": row["locator"],
+            "source_fields": dict(row),
+        }
+        for row in rows
+    ]
+
+
+def _vnm_rows(payload: Mapping[str, object], specification: Mapping[str, object]) -> list[dict[str, object]]:
+    positions = payload.get("inventory_positions")
+    if not isinstance(positions, list):
+        raise ValueError("Viet Nam migration lacks inventory_positions")
+    return [
+        {
+            "source_row_id": row["inventory_id"],
+            "label": row["source_wording"],
+            "record_type": row["classification"],
+            "reported_status": row.get("value") or "unknown",
+            "identity_status": "unknown" if row["classification"] == "unknown" else "named",
+            "evidence_locator": row["locator"],
+            "source_fields": dict(row),
+        }
+        for row in positions
+    ]
+
+
+def build_existing_layers(root: Path, config_path: Path | None = None) -> list[FrozenLayer]:
+    """Adapt only the pinned, already-extracted country inputs into M1a layers."""
+    root = Path(root)
+    config_path = config_path or root / "config" / "jetp-m1a-inventories.json"
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    layers: list[FrozenLayer] = []
+    csv_cache: dict[Path, list[dict[str, str]]] = {}
+    json_cache: dict[Path, Mapping[str, object]] = {}
+    for specification in config["layers"]:
+        path = _require_input(root, specification)
+        adapter = specification["adapter"]
+        if adapter == "plan_projects":
+            rows = _plan_rows(csv_cache.setdefault(path, _read_csv(path)), specification)
+        elif adapter == "zaf_register":
+            rows = _zaf_rows(csv_cache.setdefault(path, _read_csv(path)), specification)
+        elif adapter == "vnm_rmp":
+            if path not in json_cache:
+                json_cache[path] = json.loads(path.read_text(encoding="utf-8"))
+            rows = _vnm_rows(json_cache[path], specification)
+        else:
+            raise ValueError(f"unknown M1a adapter: {adapter}")
+        if len(rows) != specification["expected_rows"]:
+            raise ValueError(f"frozen layer row count changed: {specification['layer_id']}")
+        if any(
+            row["source_fields"].get("document_sha256") != specification["source_sha256"]
+            for row in rows
+            if adapter != "vnm_rmp"
+        ):
+            raise ValueError(f"source document hash changed: {specification['layer_id']}")
+        if adapter == "vnm_rmp" and any(
+            row["source_fields"]["evidence"]["document_sha256"] != specification["source_sha256"]
+            for row in rows
+        ):
+            raise ValueError("Viet Nam source document hash changed")
+        layers.append(
+            FrozenLayer(
+                country=specification["country"],
+                layer_id=specification["layer_id"],
+                source_id=specification["source_id"],
+                edition=specification["edition"],
+                cutoff=specification["cutoff"],
+                source_sha256=specification["source_sha256"],
+                rows=tuple(rows),
+                unavailable_source_rows=specification["unavailable_source_rows"],
+                input_path=specification["input_path"],
+                input_sha256=specification["input_sha256"],
+            )
+        )
+    return layers
+
+
+def main() -> None:
+    root = Path(__file__).resolve().parents[2]
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=root / "deliverables" / "jetp-observatory" / "data" / "m1a",
+    )
+    parser.add_argument("--config", type=Path)
+    args = parser.parse_args()
+    write_inventories(build_existing_layers(root, args.config), args.output_dir)
+
+
+if __name__ == "__main__":
+    main()
