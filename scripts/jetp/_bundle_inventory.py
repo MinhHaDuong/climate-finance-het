@@ -97,21 +97,15 @@ def _dvc_sources(root, source_root):
     return result
 
 
-def resolve_within(base, relative):
-    """Resolve `relative` under `base`; a path that would escape it stops the build."""
-    resolved = (base / relative).resolve()
-    if not resolved.is_relative_to(base):
-        raise ValueError(f'Unsafe source path: {relative}')
-    return resolved
-
-
 def _source_record(row, source_root, cached):
     """Identify a checkout file or its pinned cache object without writing either."""
     item = {key: row.get(key, '') for key in ('source_id', 'status', 'sha256', 'storage_path')}
     item.update(verified=False, embedded=False)
     relative = Path(row.get('storage_path') or '.')
     base = (source_root / 'data/jetp/documents').resolve()
-    source = resolve_within(base, relative)
+    source = (base / relative).resolve()
+    if not source.is_relative_to(base):
+        raise ValueError(f'Unsafe source path: {relative}')
     item['working_tree_available'] = source.is_file()
     item['location_kind'] = 'working_tree' if source.is_file() else 'unavailable'
     cache_entry = cached.get(relative.as_posix())
