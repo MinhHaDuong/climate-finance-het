@@ -1,8 +1,9 @@
 #!/bin/sh
 # Post-checkout hook for worktrees.
 #
-# .env and .dvc/config.local are handled by .worktreeinclude (auto-copied
-# into worktrees created by EnterWorktree / `claude --worktree`).
+# .worktreeinclude copies .env and .dvc/config.local for harness-created
+# worktrees. The hook also provisions them below so a plain `git worktree add`
+# has the same machine configuration instead of failing only when a gate runs.
 #
 # This hook wires the worktree to two shared, off-tree resources: the uv
 # environment beside the uv cache, and the primary checkout's DVC cache. Both
@@ -13,7 +14,23 @@
 # JETP source snapshots are also initialized, using only cheap private reflinks
 # from a checkout with the same DVC pointer. See the final section below.
 
-# Co-locate the uv project environment with the uv cache on /data.
+PROJECT_PRIMARY=$(CDPATH= cd -- "$(git rev-parse --git-common-dir)/.." 2>/dev/null && pwd)
+
+initialize_machine_config() (
+    # A standalone checkout owns its configuration already. Copy only into a
+    # linked worktree, and never overwrite a worktree-local choice.
+    [ -f .git ] || exit 0
+    CONFIG_SOURCE=${WORKTREE_CONFIG_SOURCE:-$PROJECT_PRIMARY}
+    for CONFIG_PATH in .env .dvc/config.local; do
+        [ ! -e "$CONFIG_PATH" ] && [ -f "$CONFIG_SOURCE/$CONFIG_PATH" ] || continue
+        mkdir -p "$(dirname "$CONFIG_PATH")" || exit 1
+        cp -p -- "$CONFIG_SOURCE/$CONFIG_PATH" "$CONFIG_PATH" || exit 1
+    done
+)
+initialize_machine_config || echo 'Worktree machine configuration was not provisioned.' >&2
+
+# Prefer the primary checkout's already validated environment. If it has none,
+# co-locate a shared environment with the uv cache on /data.
 # uv hardlinks wheels from its cache into the environment, but only when both
 # share a filesystem; across filesystems it falls back to copying the whole
 # torch closure (~1.8 GB) into every worktree, which is slow enough to exceed
@@ -22,22 +39,26 @@
 # this worktree's default `.venv` location at it via a symlink. A dangling
 # symlink makes `uv run` error, so the shared env is created first. Skipped
 # where /data is absent (the default local .venv is then used).
-SHARED_ENV=/data/envs/venv/oeconomia
-if [ -d /data/envs ]; then
+PRIMARY_ENV=${WORKTREE_ENV_SOURCE:-$PROJECT_PRIMARY/.venv}
+DATA_ENV=/data/envs/venv/oeconomia
+if [ ! -x "$PRIMARY_ENV/bin/python3" ] && [ -d /data/envs ]; then
     # Create the shared env once. flock serializes the first-ever creation so
     # concurrent worktree checkouts (parallel raids) don't race to build the
     # same path; it is best-effort — without flock the env is still created.
     {
         flock 9 2>/dev/null || true
-        [ -d "$SHARED_ENV" ] || uv venv "$SHARED_ENV" >/dev/null 2>&1 || true
+        [ -d "$DATA_ENV" ] || uv venv "$DATA_ENV" >/dev/null 2>&1 || true
     } 9>/data/envs/.oeconomia-env.lock
-    # Point .venv at the shared env when it is absent or a (possibly stale)
-    # symlink; leave a real local .venv directory untouched. ln -sfn is
-    # idempotent and replaces a dangling link, and may lose the race with a
-    # concurrent checkout harmlessly — the link ends up present either way.
-    if [ -d "$SHARED_ENV" ] && { [ ! -e .venv ] || [ -L .venv ]; }; then
-        ln -sfn "$SHARED_ENV" .venv 2>/dev/null || true
-    fi
+fi
+if [ -x "$PRIMARY_ENV/bin/python3" ]; then
+    SHARED_ENV=$PRIMARY_ENV
+else
+    SHARED_ENV=$DATA_ENV
+fi
+# Point .venv at a usable shared env when it is absent or a stale symlink;
+# leave a real local .venv directory untouched.
+if [ -x "$SHARED_ENV/bin/python3" ] && { [ ! -e .venv ] || [ -L .venv ]; }; then
+    ln -sfn "$SHARED_ENV" .venv 2>/dev/null || true
 fi
 
 # Share the primary checkout's DVC cache.
@@ -81,7 +102,7 @@ fi
 # in consequence: a failed .venv share still leaves a working local env, while a
 # failed cache link leaves exactly the empty private cache this exists to
 # eliminate. `|| true` still keeps a checkout from failing over it.
-SHARED_CACHE=$(CDPATH= cd -- "$(git rev-parse --git-common-dir)/.." 2>/dev/null && pwd)/.dvc/cache
+SHARED_CACHE=$PROJECT_PRIMARY/.dvc/cache
 if [ -d "$SHARED_CACHE" ] && [ "$SHARED_CACHE" != "$(pwd)/.dvc/cache" ] &&
    { [ ! -e .dvc/cache ] || [ -L .dvc/cache ]; }; then
     ln -sfn "$SHARED_CACHE" .dvc/cache || true
@@ -121,3 +142,28 @@ initialize_jetp_snapshots() (
     fi
 )
 initialize_jetp_snapshots || true
+
+initialize_jetp_vnm_migration() (
+    JETP_MIGRATION=data/jetp/releases/vnm-migration-0764.json
+    [ -f .git ] && [ -f "$JETP_MIGRATION.dvc" ] || exit 0
+    [ ! -e "$JETP_MIGRATION" ] && [ ! -L "$JETP_MIGRATION" ] || exit 0
+    JETP_SOURCE=${JETP_MIGRATION_SOURCE:-$PROJECT_PRIMARY/$JETP_MIGRATION}
+    if [ ! -f "$JETP_SOURCE" ] || ! cmp -s "$JETP_SOURCE.dvc" "$JETP_MIGRATION.dvc"; then
+        echo 'JETP VNM migration unavailable or at another revision; run make jetp-data.' >&2
+        exit 0
+    fi
+    JETP_STAGE=$(mktemp -d data/jetp/releases/.vnm-migration-init.XXXXXX) || {
+        echo 'JETP VNM migration staging failed; run make jetp-data.' >&2
+        exit 0
+    }
+    trap 'rm -rf -- "$JETP_STAGE"' 0
+    trap 'exit 1' HUP INT TERM
+    if cp --reflink=always -- "$JETP_SOURCE" "$JETP_STAGE/vnm-migration-0764.json" 2>/dev/null &&
+       cmp -s "$JETP_SOURCE.dvc" "$JETP_MIGRATION.dvc" &&
+       mv -n -- "$JETP_STAGE/vnm-migration-0764.json" "$JETP_MIGRATION"; then
+        :
+    else
+        echo 'JETP VNM migration reflink unavailable; run make jetp-data.' >&2
+    fi
+)
+initialize_jetp_vnm_migration || true
