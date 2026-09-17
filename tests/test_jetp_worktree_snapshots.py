@@ -10,6 +10,7 @@ import pytest
 REPO = Path(__file__).resolve().parents[1]
 HOOK = REPO / ".githooks" / "post-checkout"
 DOCUMENTS = Path("data/jetp/documents")
+VNM_MIGRATION = Path("data/jetp/releases/vnm-migration-0764.json")
 pytestmark = pytest.mark.integration
 
 
@@ -30,12 +31,28 @@ def snapshot_worktree():
         pointer = main / "data/jetp/documents.dvc"
         pointer.parent.mkdir(parents=True)
         pointer.write_text("outs:\n- md5: pinned.dir\n  path: documents\n")
+        migration_pointer = main / VNM_MIGRATION.with_suffix(".json.dvc")
+        migration_pointer.parent.mkdir(parents=True)
+        migration_pointer.write_text(
+            "outs:\n- md5: pinned.file\n  size: 18\n  hash: md5\n"
+            "  path: vnm-migration-0764.json\n"
+        )
         run("git", "add", ".", cwd=main)
         run("git", "-c", "core.hooksPath=/dev/null", "-c", "user.name=Test",
             "-c", "user.email=test@example.invalid", "commit", "-qm", "fixture", cwd=main)
         source = main / DOCUMENTS
         (source / "objects/aa").mkdir(parents=True)
         (source / "objects/aa/snapshot.pdf").write_bytes(b"%PDF-fixture")
+        migration = main / VNM_MIGRATION
+        migration.write_bytes(b'{"country":"VNM"}')
+        (main / ".env").write_text("CLIMATE_FINANCE_DATA=data\n")
+        config_local = main / ".dvc/config.local"
+        config_local.parent.mkdir(exist_ok=True)
+        config_local.write_text("[remote \"fixture\"]\nurl = /fixture\n")
+        python = main / ".venv/bin/python3"
+        python.parent.mkdir(parents=True)
+        python.write_text("#!/bin/sh\nexit 0\n")
+        python.chmod(0o755)
         worktree = Path(parent) / "feature checkout"
         run("git", "-c", "core.hooksPath=/dev/null", "worktree", "add",
             "--detach", str(worktree), cwd=main)
@@ -70,10 +87,24 @@ def test_initialization_clones_bytes_with_private_inodes_and_is_idempotent(snaps
     assert document.read_bytes() == original.read_bytes()
     assert document.stat().st_ino != original.stat().st_ino
     assert not (fresh / DOCUMENTS).is_symlink()
+    migration = fresh / VNM_MIGRATION
+    original_migration = main / VNM_MIGRATION
+    assert migration.read_bytes() == original_migration.read_bytes()
+    assert migration.stat().st_ino != original_migration.stat().st_ino
+    assert (fresh / ".env").read_text() == "CLIMATE_FINANCE_DATA=data\n"
+    assert (fresh / ".dvc/config.local").read_text() == (
+        '[remote "fixture"]\nurl = /fixture\n'
+    )
+    assert (fresh / ".venv").is_symlink()
+    assert (fresh / ".venv").resolve() == (main / ".venv").resolve()
     document.write_bytes(b"local edit")
     invoke_hook(fresh)
     assert document.read_bytes() == b"local edit"
     assert original.read_bytes() == b"%PDF-fixture"
+    migration.write_bytes(b"local migration edit")
+    invoke_hook(fresh)
+    assert migration.read_bytes() == b"local migration edit"
+    assert original_migration.read_bytes() == b'{"country":"VNM"}'
 
 
 @pytest.mark.parametrize("existing", ["directory", "file", "symlink", "dangling"])
@@ -111,18 +142,23 @@ def test_unavailable_snapshot_warns_without_leaving_partial_data(snapshot_worktr
         copier = bindir / "cp"
         copier.write_text(
             '#!/bin/sh\n'
-            f'echo called >> "{main}/cp-calls"\n'
-            'for last do :; done\nmkdir -p "$last"\ntouch "$last/partial"\n'
-            'case " $* " in *" --reflink=always "*) exit 1 ;; esac\n'
+            'case " $* " in\n'
+            f'  *" --reflink=always "*) echo called >> "{main}/cp-calls"; '
+            'for last do :; done; mkdir -p "$last"; touch "$last/partial"; exit 1 ;;\n'
+            'esac\n'
+            'exec /bin/cp "$@"\n'
         )
         copier.chmod(0o755)
         overrides["PATH"] = f"{bindir}:{os.environ['PATH']}"
     result = invoke_hook(worktree, **overrides)
     assert not (worktree / DOCUMENTS).exists()
     assert "make jetp-data" in result.stderr
-    assert sorted(path.name for path in (worktree / "data/jetp").iterdir()) == ["documents.dvc"]
+    assert sorted(path.name for path in (worktree / "data/jetp").iterdir()) == [
+        "documents.dvc",
+        "releases",
+    ]
     if unavailable == "no_reflink":
-        assert (main / "cp-calls").read_text().splitlines() == ["called"]
+        assert (main / "cp-calls").read_text().splitlines() == ["called", "called"]
 
 
 def test_configured_snapshot_source_is_cloned(snapshot_worktree):
