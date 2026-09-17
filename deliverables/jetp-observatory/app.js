@@ -153,6 +153,13 @@ function options(values, selected) {
  *   `#<id>-results` div) to splice into main.innerHTML.
  * mount(): call once head is in the DOM. It wires the listeners, resets to
  *   page 1 on every filter change, and renders the first pass.
+ *
+ * cataloguePage and comparisonPage keep their hand-written filters. Retrofitting
+ * them would widen this API before its first reuse: the catalogue needs facet
+ * options whose value and label differ (country code vs name), array-membership
+ * matching (funders) and preselection from the URL; the comparison needs a
+ * numeric threshold facet, a negated one and a summary block above the table.
+ * The narrow shape is what 0836, 0838 and 0839 were promised.
  */
 function filterTable(id, rows, opts) {
   const facets = opts.facets || [];
