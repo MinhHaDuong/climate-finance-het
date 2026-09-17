@@ -35,30 +35,145 @@ porte son état de revue, et la majorité l'affichera « en attente ». C'est
 
 ## Actions
 
-1. Sur chaque fiche projet de la vue pays, ajouter un dépliage « Preuves »
-   qui liste les observations atomiques d'étage 2 liées par `project_id`,
-   avec leur table d'origine, leur état de vérification, et le lien vers le
-   document et sa page.
-2. Sur chaque enregistrement revu de reviewed-evidence, rendre le pedigree
-   cliquable : `source_id` et localisateur ouvrent le document.
-3. Afficher sur chaque fait son état de revue et, pour les identités non
-   publiées, le compte sans fiche fabriquée, comme aujourd'hui.
-4. Sur la page pays Vietnam, présenter côte à côte la table initiale du RMP
-   2023 (lien vers l'inventaire M1a, 279 positions) et le portefeuille de
-   juillet 2025 (24 enregistrements), avec une phrase disant qu'aucun lien
-   entre les deux n'est établi avant M1b.
-5. Faire de la remontée l'autre sens : depuis la page Documents, un document
-   liste les lignes d'étage 2 qui en sont extraites et les faits qui s'y
-   appuient.
+1. **Étendre `country_data()` / `project_data()`** (`scripts/jetp/build_observatory.py`)
+   pour exposer les preuves d'étage 2 par projet, sans nouveau module de
+   relations.
+   - Dans `country_data(root, code, config, tables)`, construire une fois par
+     pays la liste des observations du ledger via la fonction que [[0838]]
+     ajoute (au générateur ou à `_observatory_data.py`) — reprendre son vrai
+     nom tel que livré par 0838 ; ne jamais ré-écrire la correspondance
+     table → `kind` → `verification`. Passer cette liste à
+     `project_data(row, tables, observations)`.
+   - Dans `project_data()`, ajouter le paramètre `observations` et le champ
+     de sortie `'evidence': [o for o in observations if o['project_id'] == pid]`
+     — filtrage seul, aucune transformation, aucun regroupement, aucun total.
+     Les entrées gardent exactement les champs de 0838 (`table`, `kind`,
+     `source_id`, `sha256`, `locator`, `verification`, `project_id`).
+   - `financial`, `physical`, `links`, `claims`, `sources`, `coverage` restent
+     inchangés : `evidence` est purement additif au dict retourné par
+     `project_data()`.
+
+2. **Dépliage « Preuves » et résolution document**, dans `app.js` :
+   - Ajouter sur `projectPage()` une section `<details>`/`<summary>` par
+     élément de `p.evidence` (natif, aucun nouveau state JS), résumé « N
+     preuves », affichant `table` et `verification` par entrée.
+   - Résoudre chaque entrée vers son document : chercher `source_id` dans
+     `documentsData.documents` (0835, `Array.find`, premier élément si
+     doublon — le registre n'est pas déduppliqué par 0835), calculer la page
+     comme dans 0836 (`/PDF pages? (\d+)/` sur `locator`), ouvrir via
+     `documentHref(entry, page)`. Repli texte seul (pas de lien) si
+     `source_id` est absent du registre ou si `entry.local_path` est nul —
+     cas attendu (édition publique), pas une erreur.
+
+3. **Pedigree cliquable sur `evidencePage()`** : remplacer le rendu actuel
+   `<code>${proof.source_id}</code> · locator · <code>sha256…</code>` par la
+   même résolution qu'à l'action 2 (recherche dans `documentsData.documents`,
+   page via le même motif, `documentHref`), avec le même repli texte si non
+   résolu. Aucun champ nouveau sur `reviewed-evidence.json`.
+
+4. **État de revue et comptes** : sur `projectPage()`, afficher `p.coverage`
+   (déjà présent, ex. `reviewed` / `not_assessed`) en badge à côté du titre —
+   champ existant, rien à ajouter côté données. Ne rien changer aux identités
+   non publiées : `undisclosed` reste un entier affiché tel quel, jamais une
+   fiche.
+
+5. **Côte-à-côte Vietnam**, rendu seul, aucun nouveau champ JSON — les deux
+   nombres existent déjà (`m1a.countries.VNM.row_count === 279`,
+   `countries.VNM.record_count === 24`) : dans `countryPage(code)`, quand
+   `code === 'VNM'`, insérer avant « Inside the portfolio » un bloc à deux
+   colonnes — « RMP 2023 initial table » (lien `#inventory/VNM`, 279
+   positions, source `vnm-rmp-2023`) et « 2025 portfolio » (lien
+   `#projects?country=VNM`, le compte réel) — suivi d'une phrase explicite :
+   aucun lien entre la table de 2023 et le portefeuille de 2025 n'est établi
+   ici ; la réconciliation est le travail de [[0833]].
+
+6. **Remontée document → faits** : `data/documents.json` (0835) gagne une clé
+   de premier niveau `by_source_id`.
+   - Étendre la signature de `documents_data()` (0835) en
+     `documents_data(root, tables, config)` et ajouter, dans le même fichier,
+     `extraction_index(root, tables, config)` qui fusionne trois sources déjà
+     construites ailleurs, sans les recalculer :
+     a. Ledger : les listes d'observations par pays du point 1, regroupées
+        par `source_id`.
+     b. M1a : lire une fois chacun des quatre
+        `deliverables/jetp-observatory/data/m1a/<CODE>.json` (écrits par
+        [[0836]]) et regrouper leurs lignes par `source_id` ; si un fichier
+        est absent, lever une erreur explicite (ordre de build imposé au
+        point 7) plutôt que de dégrader silencieusement à une liste vide.
+     c. Faits : pour chaque pays, `country_data()` (déjà appelée pour
+        `overview`) donne, par projet, `sources` déjà déduplié ; indexer
+        `{project_id, name, country}` sous chacune. Ajouter les
+        enregistrements de `reviewed-evidence.json`, indexés sous chaque
+        `evidence[].source_id`.
+     d. Fusionner en `{source_id: {'extracted': [...ledger + M1a...],
+        'facts': [...projets + faits revus...]}}` — deux listes séparées,
+        jamais de total ni de fusion d'identité entre elles.
+   - Sur `documentsPage()` (0835), quand `by_source_id[entry.id]` existe,
+     afficher deux dépliages : « Extrait d'ici » (`extracted`) et « Faits qui
+     s'appuient dessus » (`facts`, lien `#project/<id>` ou vers `#evidence`
+     pour un fait revu) ; sinon un texte disant qu'aucune ligne ni fait ne
+     cite ce document dans cette édition — jamais une liste fabriquée.
+
+7. **Ordre de build** : dans `scripts/analysis/jetp_observatory.mk`, ajouter
+   les quatre `data/m1a/<CODE>.json` comme prérequis de la règle qui produit
+   `data/documents.json`, pour que `extraction_index()` les trouve toujours
+   déjà écrits.
+
+8. **Artefact du dernier critère de sortie** : à la fin du travail, ajouter
+   une entrée de log sur [[0834]] (`erg log 0834 "note raid: revue
+   d'intégration M1a demandée — voir PR #<n>"`) et un paragraphe de corps de
+   PR demandant explicitement la revue d'intégration à l'auteur, citant les
+   deux recettes SA et VN. Ni l'un ni l'autre n'est une case cochée par
+   l'auteur : ce critère se ferme par ces deux artefacts, jamais par une
+   signature dans ce ticket.
 
 ## Test
 
-Red : `tests/test_jetp_observatory_facts.py` construit la vue depuis un
-fixture d'un projet nommé lié à deux observations (une vérifiée, une
-`secondary_only`) et d'une identité non publiée sans observation, et vérifie
-que le projet expose ses deux preuves avec leur état, que l'identité non
-publiée reste un compte sans fiche, et que l'inverse document → faits rend le
-même projet depuis chacun de ses deux documents.
+Red : `tests/test_jetp_observatory_facts.py`, palier rapide (fixtures Python
+pures en mémoire, aucun fichier réel, aucun sous-processus).
+
+Fixture : un pays fictif `QQ`, deux lignes `tables['projects']` — une nommée
+`qq-project-a` et une slot `qq-slot-1` (`verification_status ==
+'official_count_slot'`) ; deux entrées d'observations fixture pour
+`qq-project-a` dans la forme livrée par 0838 (`table`, `kind`, `source_id`,
+`sha256`, `locator`, `verification`, `project_id`) — une `table="events"`,
+`verification="official_report"`, `source_id="qq-src-a"` ; une
+`table="implementation-events"`, `verification="secondary_only"`,
+`source_id="qq-src-b"` ; aucune observation pour `qq-slot-1` ; deux lignes M1a
+fixture, une par source (`source_id="qq-src-a"` et `"qq-src-b"`).
+
+1. `project_data(named_row, tables, observations)['evidence']` a exactement
+   deux éléments, dans l'ordre d'entrée, avec `verification` préservé
+   **verbatim** (`"official_report"` et `"secondary_only"` — jamais rewrité,
+   jamais fusionné en une seule entrée) et `source_id` correspondant chacun à
+   `qq-src-a`/`qq-src-b`. Antipattern couvert : un test qui ne vérifierait que
+   `len(evidence) == 2` passerait une implémentation qui double la même ligne
+   ou qui réécrit `"secondary_only"` en `"confirmed"` — comparer les deux
+   dictionnaires complets, pas seulement leur nombre.
+2. `country_data(...)` sur la fixture : `result['undisclosed'] == 1` **et**
+   `len(result['projects']) == 1` **et** `result['projects'][0]['id'] ==
+   'qq-project-a'` — l'identité non publiée ne gagne aucune fiche même si son
+   compte est juste. Antipattern couvert : un total correct avec une fiche
+   fabriquée en plus passerait un test qui ne vérifie que le total.
+3. `extraction_index(...)` sur la même fixture (tables + M1a fixture) :
+   `by_source_id['qq-src-a']['facts']` et `by_source_id['qq-src-b']['facts']`
+   contiennent chacun exactement un fait, et c'est **le même** projet
+   `qq-project-a` des deux côtés — comparaison structurelle des deux
+   dictionnaires, pas seulement « non vide ». Antipattern couvert : un index
+   qui renverrait une liste non vide mais un projet différent, ou un
+   substitut arbitraire, passerait un test qui ne vérifierait que la
+   présence.
+4. Sous-ensemble de champs : l'ensemble des clés produites par
+   `country_data()` avant ce ticket (capturé sur la même fixture sans
+   `observations`) est un sous-ensemble strict de l'ensemble des clés après —
+   et de même au niveau de chaque projet (`evidence` est la seule clé
+   ajoutée) : aucune clé existante ne disparaît.
+5. Une assertion texte légère sur `app.js` confirme le port synchronisé
+   (même style que le test 0836) : les motifs `by_source_id`,
+   `documentHref(`, un `<details` dans la zone de `projectPage`, et la phrase
+   annonçant l'absence de lien RMP/portefeuille apparaissent dans le fichier.
+
+Aucune dépendance lourde, aucun sous-processus : palier rapide, `make check-fast`.
 
 ## Verification
 
@@ -86,6 +201,21 @@ même projet depuis chacun de ses deux documents.
 
 Réconciliation et taxonomie (0833), fusion RMP et portefeuille, veille et
 rafraîchissement (M2), déploiement public (0727).
+
+## Dependencies
+
+- Amont, bloquant (déjà `Blocked-by` en tête de fiche) : [[0836]] — fournit
+  `data/m1a/<CODE>.json` (schéma dynamique, `source_id`, `evidence_locator`)
+  et le motif `/PDF pages? (\d+)/` repris ici pour la page Documents ;
+  [[0838]] — fournit la fonction de construction des observations (`table`,
+  `kind`, `source_id`, `sha256`, `locator`, `verification`, `project_id`)
+  réutilisée telle quelle dans `project_data()`.
+- Transitivement : [[0835]] — `data/documents.json`, `filterTable`,
+  `documentHref` (déjà bloqueur de 0836 et 0838, jamais bloqueur direct de ce
+  ticket).
+- Aval : aucun. Dernier enfant du train [[0834]] ; sa fermeture, avec celle
+  des quatre autres enfants, ferme [[0834]] après la revue d'intégration de
+  l'auteur (dernier critère de sortie de 0834, non coché par ce ticket).
 
 ## Imagine (raid 2026-09-17)
 
