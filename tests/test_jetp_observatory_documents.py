@@ -1,5 +1,6 @@
 """Registry-preserving checks for the observatory documents view."""
 
+import pytest
 from jetp._bundle_inventory import VIEWS, site_files
 from jetp.build_observatory import documents_data
 
@@ -87,6 +88,14 @@ def test_documents_view_is_ordered_deterministically_by_source_id(tmp_path):
     result = build(tmp_path)
     assert [entry['id'] for entry in result['documents']] == sorted(
         row['source_id'] for row in ROWS)
+
+
+def test_a_registry_path_escaping_the_snapshot_stops_the_build(tmp_path):
+    """A link out of the site is a build failure, not a rendered anchor."""
+    (tmp_path / 'data/jetp/documents').mkdir(parents=True)
+    escaping = dict(ROWS[0], storage_path='../../../etc/passwd')
+    with pytest.raises(ValueError, match='Unsafe source path'):
+        documents_data(tmp_path, {'manifest': [escaping]})
 
 
 def test_bundle_publishes_the_registry_view_but_never_archived_bytes(tmp_path):

@@ -164,9 +164,19 @@ def comparison_data(root, config):
 def documents_data(root, tables):
     """List every collection attempt, marking availability from the snapshot on disk."""
     rows = sorted(tables['manifest'], key=lambda row: row['source_id'])
-    snapshot = Path(root) / 'data/jetp/documents'
-    available = {row['storage_path'] for row in rows
-                 if row.get('storage_path') and (snapshot / row['storage_path']).is_file()}
+    snapshot = (Path(root) / 'data/jetp/documents').resolve()
+    available = set()
+    for row in rows:
+        relative = row.get('storage_path') or ''
+        if not relative:
+            continue
+        # A registry path that escapes the snapshot must stop the build rather
+        # than become a link out of the site, as _source_record already does.
+        archived = (snapshot / relative).resolve()
+        if not archived.is_relative_to(snapshot):
+            raise ValueError(f'Unsafe source path: {relative}')
+        if archived.is_file():
+            available.add(relative)
     return {'documents': [document_entry(row, available) for row in rows]}
 
 

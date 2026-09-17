@@ -35,7 +35,9 @@ Routes: `#overview`, `#countries`, `#country/IDN`, `#projects`,
 - A Documents page listing every collection attempt in `data/jetp/manifest.csv`
   with its status, content type, size and origin URL. The archived copies
   themselves are staged locally by `make jetp-observatory-documents` into
-  `documents/`, which is local-preview only: it is excluded from the bundle and
+  `documents/`. That staging happens once; after a `dvc checkout` moves the
+  snapshot to another revision, `make jetp-observatory-refresh` restages it.
+  `documents/` is local-preview only: it is excluded from the bundle and
   from any public release, which carry the registry and the origin URL alone.
   `scripts/jetp/_public_release.py` copies the whole tree at a pinned commit and
   does not go through that exclusion; it is out of scope until the next edition.

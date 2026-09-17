@@ -159,7 +159,8 @@ function options(values, selected) {
  * options whose value and label differ (country code vs name), array-membership
  * matching (funders) and preselection from the URL; the comparison needs a
  * numeric threshold facet, a negated one and a summary block above the table.
- * The narrow shape is what 0836, 0838 and 0839 were promised.
+ * The narrow shape is what 0836, 0838 and 0839 were promised. Ticket 0852 revisits
+ * the retrofit once 0836 has exercised this API.
  */
 function filterTable(id, rows, opts) {
   const facets = opts.facets || [];
