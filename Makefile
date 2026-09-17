@@ -109,7 +109,8 @@ UV_RUN  ?= $(UV) run $(if $(wildcard .env),--env-file .env,)
 TASK_CACHE_RESOLVER := .githooks/resolve-task-cache.py
 override UV_CACHE_DIR := $(shell python3 $(TASK_CACHE_RESOLVER) uv)
 override RUFF_CACHE_DIR := $(shell python3 $(TASK_CACHE_RESOLVER) ruff)
-export UV_CACHE_DIR RUFF_CACHE_DIR
+override DVC_SITE_CACHE_DIR := $(shell python3 $(TASK_CACHE_RESOLVER) dvc)
+export UV_CACHE_DIR RUFF_CACHE_DIR DVC_SITE_CACHE_DIR
 # Run Python through uv (via `python -m`, never the generated console scripts —
 # their shebangs point at the building worktree and break when it is removed).
 PYTHON  ?= $(UV_RUN) python

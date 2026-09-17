@@ -7,6 +7,7 @@ import tempfile
 from pathlib import Path
 
 ENVIRONMENTS = {
+    "dvc": "DVC_SITE_CACHE_DIR",
     "ruff": "RUFF_CACHE_DIR",
     "uv": "UV_CACHE_DIR",
 }
@@ -50,7 +51,7 @@ def resolve(kind: str) -> Path:
 
 def main() -> int:
     if len(sys.argv) != 2 or sys.argv[1] not in ENVIRONMENTS:
-        print("usage: resolve-task-cache.py {uv|ruff}", file=sys.stderr)
+        print("usage: resolve-task-cache.py {dvc|uv|ruff}", file=sys.stderr)
         return 2
     try:
         selected = resolve(sys.argv[1])
