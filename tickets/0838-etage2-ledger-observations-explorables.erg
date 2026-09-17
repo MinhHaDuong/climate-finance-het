@@ -12,6 +12,7 @@ Author: HDMX-coding-agent
 2026-09-17T22:51Z HDMX-coding-agent note blocker 0836 closed — Blocked-by removed.
 2026-09-17T23:04Z HDMX-coding-agent execute : libellés en anglais, non en français (action 6/9) — la page 0836 livrée est anglophone ; registre construit via documents_data+index_documents (21 ids à tentatives multiples) ; 7 liens VNM nomment des sources jamais collectées, servies avec empreinte nulle au lieu de lever
 2026-09-17T23:04Z HDMX-coding-agent verification : recette VN (bailleur BEI) satisfaite par recherche plein texte sur source_id, pas par facette funder — tranché en Execute comme prévu par la note du 2026-09-17T20:10Z
+2026-09-17T23:58Z HDMX-coding-agent revue round 1-2 : registre reconstruit sur l'empreinte enregistrée, non sur la copie archivée sur disque (index_documents écarté) — une empreinte SEN basculait selon que l'instantané DVC était sorti ; ordre total (statut, date, empreinte) pour les tentatives ex aequo
 --- body ---
 
 ## Context

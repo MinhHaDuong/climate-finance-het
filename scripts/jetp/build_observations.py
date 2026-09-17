@@ -27,14 +27,23 @@ OBSERVATION_TABLES = ('events', 'implementation-events', 'project-source-links')
 
 
 def attempt_rank(row):
-    """Rank one collection attempt by what it can address, never by disk state.
+    """Order collection attempts by what each can address, never by disk state.
 
     An attempt that recorded no digest cannot address a document at all; among
-    those that did, a completed collection outranks a revalidation.
+    those that did, a completed collection outranks a revalidation, and a later
+    retrieval outranks an earlier one.  The digest closes the order: two
+    attempts alike on every other term still resolve the same way whatever
+    order ``manifest.csv`` lists them in, which is the whole point of ranking
+    rather than keeping the last row seen.
     """
-    if not row.get('sha256'):
-        return 0
-    return 2 if row.get('status') == 'collected' else 1
+    digest = row.get('sha256') or ''
+    if not digest:
+        return (0, row.get('retrieved_at') or '', '')
+    return (
+        2 if row.get('status') == 'collected' else 1,
+        row.get('retrieved_at') or '',
+        digest,
+    )
 
 
 def build_registry(tables):
