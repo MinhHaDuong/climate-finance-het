@@ -46,6 +46,11 @@ class FrozenLayer:
     input_path: str = "fixture"
     input_sha256: str = "fixture"
     excluded_source_rows: tuple = ()
+    # Second pinned input, where the layer has one: the file the pass-through
+    # ``raw_`` columns come from.  Empty for the layers that have none, so the
+    # manifest key exists for every layer and the absence is readable.
+    fields_input_path: str = ""
+    fields_input_sha256: str = ""
 
 
 def _raw_slug(name: str) -> str:
@@ -131,6 +136,8 @@ def _render_layer(layer: FrozenLayer) -> tuple[list[dict[str, str]], dict[str, o
         "source_sha256": layer.source_sha256,
         "input_path": layer.input_path,
         "input_sha256": layer.input_sha256,
+        "fields_input_path": layer.fields_input_path,
+        "fields_input_sha256": layer.fields_input_sha256,
         "row_count": len(output),
         "unknowns": {
             "field_values": field_unknowns,
@@ -200,9 +207,14 @@ def _read_csv(path: Path) -> list[dict[str, str]]:
         return list(csv.DictReader(handle))
 
 
-def _require_input(root: Path, specification: Mapping[str, object]) -> Path:
-    path = root / str(specification["input_path"])
-    if not path.is_file() or _sha256(path) != specification["input_sha256"]:
+def _require_input(
+    root: Path,
+    specification: Mapping[str, object],
+    path_key: str = "input_path",
+    sha_key: str = "input_sha256",
+) -> Path:
+    path = root / str(specification[path_key])
+    if not path.is_file() or _sha256(path) != specification[sha_key]:
         raise ValueError(f"frozen M1a input hash mismatch: {path}")
     return path
 
@@ -227,14 +239,27 @@ def _plan_rows(rows: Sequence[Mapping[str, str]], specification: Mapping[str, ob
     ]
 
 
-def _zaf_rows(rows: Sequence[Mapping[str, str]], specification: Mapping[str, object]) -> list[dict[str, object]]:
-    def _fields(row: Mapping[str, str]) -> dict[str, object]:
-        # The 21 register labels ride along under slugged names.  The values
-        # are already the strings the 0818 CSV holds; passing them through
-        # ``_text`` again would be a second normalisation of the same data.
+def _zaf_rows(
+    rows: Sequence[Mapping[str, str]],
+    specification: Mapping[str, object],
+    field_rows: Sequence[Mapping[str, str]],
+) -> list[dict[str, object]]:
+    # The 21 register labels live in the 0818 sidecar table, not in the
+    # reconciled CSV, which is a content-hashed input of the 0822 freeze.  The
+    # join is positional and checked: same builder, same row order, same
+    # ``ordinal``.
+    if len(field_rows) != len(rows):
+        raise ValueError("South Africa register sidecar row count does not match")
+
+    def _fields(row: Mapping[str, str], field_row: Mapping[str, str]) -> dict[str, object]:
+        if field_row["ordinal"] != row["ordinal"]:
+            raise ValueError("South Africa register sidecar is not aligned by ordinal")
+        # The values are already the strings the sidecar holds; passing them
+        # through ``_text`` again would be a second normalisation of the same
+        # data.
         fields = dict(row)
         for source_key in _RAW_FIELD_ORDER:
-            fields[_raw_slug(source_key)] = row[source_key]
+            fields[_raw_slug(source_key)] = field_row[source_key]
         return fields
 
     return [
@@ -245,9 +270,9 @@ def _zaf_rows(rows: Sequence[Mapping[str, str]], specification: Mapping[str, obj
             "reported_status": row["implementation_status"] or "unknown",
             "identity_status": "named" if row["project_name"] else "unknown",
             "evidence_locator": row["locator"],
-            "source_fields": _fields(row),
+            "source_fields": _fields(row, field_row),
         }
-        for row in rows
+        for row, field_row in zip(rows, field_rows, strict=True)
     ]
 
 
@@ -288,7 +313,14 @@ def build_existing_layers(root: Path, config_path: Path | None = None) -> list[F
         if adapter == "plan_projects":
             rows = _plan_rows(csv_cache.setdefault(path, _read_csv(path)), specification)
         elif adapter == "zaf_register":
-            rows = _zaf_rows(csv_cache.setdefault(path, _read_csv(path)), specification)
+            fields_path = _require_input(
+                root, specification, "fields_input_path", "fields_input_sha256"
+            )
+            rows = _zaf_rows(
+                csv_cache.setdefault(path, _read_csv(path)),
+                specification,
+                csv_cache.setdefault(fields_path, _read_csv(fields_path)),
+            )
         elif adapter == "vnm_rmp":
             if path not in json_cache:
                 json_cache[path] = json.loads(path.read_text(encoding="utf-8"))
@@ -323,6 +355,8 @@ def build_existing_layers(root: Path, config_path: Path | None = None) -> list[F
                 excluded_source_rows=tuple(
                     specification.get("excluded_source_rows", ())
                 ),
+                fields_input_path=str(specification.get("fields_input_path", "")),
+                fields_input_sha256=str(specification.get("fields_input_sha256", "")),
             )
         )
     return layers

@@ -32,3 +32,5 @@ The embedded `Overall - Data` array carries 258 raw entries.  257 are material r
 ## Handoff
 
 The reconciled CSV is a replayable source-layer input for 0822. A later review may link candidates to operations only with explicit evidence; it must preserve this table's identifiers and must not infer payments or causality from register status.
+
+The 21 register fields are carried verbatim in the sidecar table `0818-zaf-q1-2026-fields.csv`, one row per candidate and keyed by the same `ordinal`. It is a second file, not a widening of the reconciled CSV, because that CSV is a content-hashed input of the 0822 comparative freeze.

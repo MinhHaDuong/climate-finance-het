@@ -1,15 +1,21 @@
 """The 0818 extraction carries every register field and names what it drops.
 
-Fast tier by construction: the fixture below is a three-row stand-in for the
-744 kB pinned dashboard snapshot, whose byte-for-byte replay already lives in
-``test_jetp_0818_zaf_q1_reconciliation.py`` and ``test_jetp_m1a_inventories.py``.
+Behaviour is pinned on a three-row fixture standing in for the 744 kB dashboard
+snapshot; only the last test reads the pinned snapshot itself, to check that the
+shipped sidecar is its replayable result and joins the frozen rows table 1:1 —
+the same shape, and the same tier, as ``test_jetp_0818_zaf_q1_reconciliation.py``.
 """
 
 from __future__ import annotations
 
+import csv
 import hashlib
 import json
+import sys
 from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "scripts"))
 
 SOURCE_KEYS = (
     "Unique ID",
@@ -104,27 +110,93 @@ def test_excluded_register_rows_reports_the_total_line_without_coercing_it() -> 
     assert entry["amount_reported_zar_raw"] == 200.5
 
 
-def test_build_rows_carries_all_twenty_one_source_fields(tmp_path: Path) -> None:
-    from jetp.build_0818_zaf_q1_reconciliation import FIELDS, build_rows
+def test_sidecar_table_carries_all_twenty_one_source_fields(tmp_path: Path) -> None:
+    """The register's own 21 fields ride in the sidecar, keyed by ``ordinal``.
+
+    They are deliberately not columns of ``FIELDS``: the reconciled CSV is a
+    content-hashed input of the 0822 comparative freeze, so widening it would
+    mutate a frozen artifact.  The pin below is therefore two-sided — 21 source
+    columns in the sidecar, and the derived table left at its frozen width.
+    """
+    from jetp.build_0818_zaf_q1_reconciliation import (
+        FIELD_TABLE_FIELDS,
+        FIELDS,
+        build_field_rows,
+        build_rows,
+    )
 
     document_text, overall = _fixture_document()
     document = tmp_path / "register.html"
     document.write_text(document_text, encoding="utf-8")
-    rows = build_rows(document, _policy(document))
+    policy = _policy(document)
+    rows = build_rows(document, policy)
+    field_rows = build_field_rows(document, policy)
 
-    assert len(FIELDS) == 42
-    assert FIELDS[21:] == SOURCE_KEYS
-    assert len(rows) == 2
-    for row in rows:
-        assert set(row) == set(FIELDS)
-        assert len(row) == 42
+    assert len(FIELDS) == 21
+    assert not set(FIELDS) & set(SOURCE_KEYS)
+    assert FIELD_TABLE_FIELDS == ("ordinal",) + SOURCE_KEYS
+    assert len(field_rows) == len(rows) == 2
+    for field_row in field_rows:
+        assert set(field_row) == set(FIELD_TABLE_FIELDS)
+        assert len(field_row) == 22
 
-    assert rows[0]["Purpose"] == ""
-    assert rows[1]["Priority Areas"] == ""
-    for row, source in zip(rows, overall[:2], strict=True):
-        assert row["Unique ID"] == source["Unique ID"]
-        assert row["Project Name"] == source["Project Name"]
-        assert row["Beneficiary"] == source["Beneficiary"]
+    # The join key is shared, so the two tables line up 1:1 by construction.
+    assert [field_row["ordinal"] for field_row in field_rows] == [
+        row["ordinal"] for row in rows
+    ]
+
+    assert field_rows[0]["Purpose"] == ""
+    assert field_rows[1]["Priority Areas"] == ""
+    for field_row, source in zip(field_rows, overall[:2], strict=True):
+        assert field_row["Unique ID"] == source["Unique ID"]
+        assert field_row["Project Name"] == source["Project Name"]
+        assert field_row["Beneficiary"] == source["Beneficiary"]
+
+
+def test_write_field_table_round_trips_the_sidecar(tmp_path: Path) -> None:
+    from jetp.build_0818_zaf_q1_reconciliation import (
+        FIELD_TABLE_FIELDS,
+        build_field_rows,
+        write_field_table,
+    )
+
+    document_text, _ = _fixture_document()
+    document = tmp_path / "register.html"
+    document.write_text(document_text, encoding="utf-8")
+    field_rows = build_field_rows(document, _policy(document))
+
+    sidecar = tmp_path / "0818-zaf-q1-2026-fields.csv"
+    write_field_table(field_rows, sidecar)
+    with sidecar.open(encoding="utf-8", newline="") as handle:
+        reader = csv.DictReader(handle)
+        assert tuple(reader.fieldnames or ()) == FIELD_TABLE_FIELDS
+        assert list(reader) == field_rows
+
+
+def test_checked_in_sidecar_replays_and_joins_the_frozen_rows_table() -> None:
+    """The shipped sidecar is the replayable result and joins the frozen CSV 1:1."""
+    from jetp.build_0818_zaf_q1_reconciliation import build_field_rows
+
+    policy = json.loads((ROOT / "config/jetp-zaf-migration.json").read_text())
+    source = next(item for item in policy["sources"] if item["role"] == "register")
+    expected = build_field_rows(
+        ROOT / "data/jetp/documents" / source["storage_path"], policy
+    )
+    with (ROOT / "docs/jetp-study/0818-zaf-q1-2026-fields.csv").open(
+        encoding="utf-8", newline=""
+    ) as handle:
+        shipped = list(csv.DictReader(handle))
+    assert shipped == expected
+    assert len(shipped) == 257
+
+    with (ROOT / "docs/jetp-study/0818-zaf-q1-2026-rows.csv").open(
+        encoding="utf-8", newline=""
+    ) as handle:
+        frozen = list(csv.DictReader(handle))
+    assert [row["ordinal"] for row in shipped] == [row["ordinal"] for row in frozen]
+    assert [row["Unique ID"] for row in shipped] == [
+        row["official_unique_id"] for row in frozen
+    ]
 
 
 def test_report_names_the_excluded_row_and_its_python_type(tmp_path: Path) -> None:

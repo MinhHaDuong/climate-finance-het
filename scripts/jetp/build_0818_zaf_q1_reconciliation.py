@@ -68,7 +68,13 @@ FIELDS = (
     "transition_date",
     "payment_amount",
     "eligible_for_account",
-) + SOURCE_FIELDS
+)
+
+# The sidecar table's columns: the join key, then the 21 source labels verbatim.
+# The register's own fields ride in a second file and not in ``FIELDS`` because
+# the derived table is a content-hashed input of the 0822 comparative freeze;
+# widening it would mutate a frozen artifact.
+FIELD_TABLE_FIELDS = ("ordinal",) + SOURCE_FIELDS
 
 
 def _register_source(policy: dict) -> dict:
@@ -78,8 +84,8 @@ def _register_source(policy: dict) -> dict:
     return matches[0]
 
 
-def build_rows(document: Path, policy: dict) -> list[dict[str, str]]:
-    """Return one unadmitted source candidate per material official row."""
+def _register(document: Path, policy: dict) -> tuple[dict, str, list[dict]]:
+    """Return the pinned register source, its hash and its material rows."""
     source = _register_source(policy)
     actual_hash = hashlib.sha256(document.read_bytes()).hexdigest()
     if actual_hash != source["document_sha256"]:
@@ -87,6 +93,12 @@ def build_rows(document: Path, policy: dict) -> list[dict[str, str]]:
     register = parse_register_html(document.read_text(encoding="utf-8"))
     if len(register) != policy["register_row_count"]:
         raise ValueError("incomplete selected register inventory")
+    return source, actual_hash, register
+
+
+def build_rows(document: Path, policy: dict) -> list[dict[str, str]]:
+    """Return one unadmitted source candidate per material official row."""
+    source, actual_hash, register = _register(document, policy)
 
     return [
         {
@@ -111,11 +123,24 @@ def build_rows(document: Path, policy: dict) -> list[dict[str, str]]:
             "transition_date": "",
             "payment_amount": "",
             "eligible_for_account": "false",
-            # The whole source row, under its own labels and with the same
-            # ``_text`` treatment as the derived columns: absence stays empty,
-            # nothing is converted, summed or promoted.
-            **{key: _text(row.get(key)) for key in SOURCE_FIELDS},
         }
+        for ordinal, row in enumerate(register, 1)
+    ]
+
+
+def build_field_rows(document: Path, policy: dict) -> list[dict[str, str]]:
+    """Return the whole source row per material register row, under its own labels.
+
+    Same rows, same order and the same ``ordinal`` key as :func:`build_rows`, so
+    the two tables join 1:1.  Values get the ``_text`` treatment the derived
+    columns get and nothing more: absence stays empty, nothing is converted,
+    summed or promoted.  ``Unique ID`` stays a string here as everywhere else —
+    the one raw entry whose identifier is an ``int`` is excluded upstream and
+    documented in the report, never coerced into this table.
+    """
+    _source, _actual_hash, register = _register(document, policy)
+    return [
+        {"ordinal": str(ordinal), **{key: _text(row.get(key)) for key in SOURCE_FIELDS}}
         for ordinal, row in enumerate(register, 1)
     ]
 
@@ -181,6 +206,8 @@ def _report(rows: list[dict[str, str]], excluded: list[dict], policy: dict) -> s
         "",
         "The reconciled CSV is a replayable source-layer input for 0822. A later review may link candidates to operations only with explicit evidence; it must preserve this table's identifiers and must not infer payments or causality from register status.",
         "",
+        "The 21 register fields are carried verbatim in the sidecar table `0818-zaf-q1-2026-fields.csv`, one row per candidate and keyed by the same `ordinal`. It is a second file, not a widening of the reconciled CSV, because that CSV is a content-hashed input of the 0822 comparative freeze.",
+        "",
     ])
     return "\n".join(lines)
 
@@ -202,11 +229,21 @@ def write_outputs(
     report.write_text(_report(rows, excluded or [], policy), encoding="utf-8")
 
 
+def write_field_table(field_rows: list[dict[str, str]], output: Path) -> None:
+    """Write the sidecar table of raw register fields, keyed by ``ordinal``."""
+    output.parent.mkdir(parents=True, exist_ok=True)
+    with output.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=FIELD_TABLE_FIELDS, lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(field_rows)
+
+
 def main() -> None:
     root = Path(__file__).resolve().parents[2]
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=root / "docs/jetp-study/0818-zaf-q1-2026-rows.csv")
     parser.add_argument("--report", type=Path, default=root / "docs/jetp-study/0818-zaf-q1-2026-report.md")
+    parser.add_argument("--fields", type=Path, default=root / "docs/jetp-study/0818-zaf-q1-2026-fields.csv")
     args = parser.parse_args()
     policy = json.loads((root / "config/jetp-zaf-migration.json").read_text(encoding="utf-8"))
     source = _register_source(policy)
@@ -214,6 +251,7 @@ def main() -> None:
     rows = build_rows(document, policy)
     excluded = excluded_register_rows(document.read_text(encoding="utf-8"))
     write_outputs(rows, args.output, args.report, policy, excluded)
+    write_field_table(build_field_rows(document, policy), args.fields)
 
 
 if __name__ == "__main__":
