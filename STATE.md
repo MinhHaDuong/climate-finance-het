@@ -1,6 +1,6 @@
 # State
 
-Last updated: 2026-09-17T08:12Z
+Last updated: 2026-09-17T09:43Z
 
 ## Current goal
 
@@ -17,21 +17,24 @@ credible assignment mechanism, common operational time zero or untreated
 country comparison supports a JETP causal-effect estimate.
 
 The author selected a JETP-only, non-causal comparative measurement programme.
-Its protocol, source census, four-country ingestion, frozen snapshot, central
-figure and MVP evidence layers are on `main`. Next work is synthesis into the
-short comparative paper, without turning documentary stages into treatment
-effects. Programme tracker 0725 remains open.
+M1a is now accepted on `main`: four downloadable frozen country inventories
+preserve 2,164 rows across six source layers, their editions and cutoffs, with
+unknowns displayed separately and no identity fusion. Ticket 0833 is ready for
+the bounded M1b overlay: stable IDs, common taxonomy, sourced `same_as` and
+`component_of` only; `possible_match` remains a separate counted result. Live
+refresh and match-resolution campaigns remain M2. Programme tracker 0725 stays
+open through integration and the short comparative paper.
 
 ## Status
-<!-- generated 2026-09-17T08:13Z · as of ab194da2 -->
+<!-- generated 2026-09-17T09:43Z · as of f796644a -->
 
-**Tickets:** 49 ready · 56 blocked · 9 awaiting author — `erg ready tickets/` for full list
+**Tickets:** 54 ready · 51 blocked · 9 awaiting author — `erg ready tickets/` for full list
   next: 0272 Extract shared derive_companion_path() helper f… · 0273 load_cluster_labels() ignores --input, reads cl…
 **In flight:** no open PRs
 **Recent (first-parent):**
-  ab194da2 Merge pull request #1418 from MinhHaDuong/t0810-worktree-scaffolding
-  afa07543 Merge pull request #1419 from MinhHaDuong/chore/erg-propagation-2026-09-17
-  e425ad31 Merge pull request #1417 from MinhHaDuong/explore-pilotage-reconcile-2026-09-17
+  f796644a chore(jetp): close delivered M1a ticket (#1423)
+  9ec04d92 feat(jetp): publish frozen M1a source inventories (#1422)
+  00547461 plan(jetp): split frozen M1a from bounded M1b (#1421)
 
 ## Corpus and submissions
 
