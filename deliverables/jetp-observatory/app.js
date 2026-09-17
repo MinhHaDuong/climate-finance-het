@@ -248,8 +248,10 @@ const documentHref = (entry, page) =>
  * step by tests/test_jetp_observatory_inventories.py, never generated from one
  * another. Only the Viet Nam locators publish a PDF page, and they publish
  * three numbers — PDF page, printed page, ordinal — so the pattern is anchored
- * on its own label rather than on "the first number in the string". */
-const PDF_PAGE = /PDF pages? (\d+)/;
+ * on its own label rather than on "the first number in the string". [0-9]
+ * rather than \d, which is ASCII-only here and every Unicode decimal in
+ * Python: the two would read an OCR'd fullwidth digit differently. */
+const PDF_PAGE = /PDF pages? ([0-9]+)/;
 /* Ticket 0853: one source id can carry several collection attempts. A row link
  * has to open one file, so the archived, collected attempt wins; where nothing
  * was archived, the first attempt is kept so the id still resolves and the page
@@ -402,7 +404,7 @@ function inventoryEvidence(row) {
   );
   const href = documentHref(entry, link.pdf_page);
   return href
-    ? `<a href="${esc(href)}" data-inventory-source="${esc(row.source_id)}" data-inventory-row="${esc(row.source_row_id)}" target="_blank" rel="noopener">${locator}${link.pdf_page ? " · PDF page " + link.pdf_page : ""} ↗</a>`
+    ? `<a href="${esc(href)}" data-inventory-row="${esc(row.source_row_id)}" target="_blank" rel="noopener">${locator}${link.pdf_page ? " · PDF page " + link.pdf_page : ""} ↗</a>`
     : `<span class="note">${locator}<br>${esc(entry.error || "Not in the local snapshot")}</span>`;
 }
 function renderInventory(code, rows) {
@@ -459,6 +461,9 @@ function inventoryPage(code) {
         renderInventory(code, inventoryRows(payload));
     })
     .catch((error) => {
+      // Drop the rejected promise, or one transient failure would be replayed
+      // from the cache for the rest of the session without ever retrying.
+      delete inventoryCache[code];
       main.innerHTML = `<div class="error"><h1>The ${esc(code)} inventory could not load.</h1><p>${esc(error.message)}</p></div>`;
     });
 }
@@ -661,7 +666,13 @@ function render() {
     params = new URLSearchParams(query || "");
   const [page, id] = path.split("/");
   document.querySelectorAll("nav a").forEach((a) => {
-    const active = a.hash === "#" + (page === "country" ? "countries" : page === "project" ? "projects" : page);
+    const active = a.hash ===
+      "#" +
+        (page === "country" || page === "inventory"
+          ? "countries"
+          : page === "project"
+            ? "projects"
+            : page);
     a.classList.toggle("active", active);
     a.toggleAttribute("aria-current", active);
     if (active) a.setAttribute("aria-current", "page");

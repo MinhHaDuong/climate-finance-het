@@ -13,8 +13,11 @@ from collections.abc import Iterable, Mapping
 # The Viet Nam locators are the only ones that publish a PDF page, and they
 # publish three numbers: ``PDF pages 156; printed pages 140; ordinal 22``.  Only
 # the first addresses the archived file, so the pattern is anchored on its own
-# label rather than on "the first number in the string".
-PDF_PAGE = re.compile(r"PDF pages? (\d+)")
+# label rather than on "the first number in the string".  ``[0-9]`` rather than
+# ``\d``, which in Python matches every Unicode decimal and in JavaScript only
+# ASCII: the hand-written port in ``app.js`` would then read an OCR'd fullwidth
+# digit differently from this module.
+PDF_PAGE = re.compile(r"PDF pages? ([0-9]+)")
 
 
 def index_documents(documents: Iterable[Mapping[str, object]]) -> dict[str, dict]:

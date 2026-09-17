@@ -7,6 +7,7 @@ this module rather than generating one from the other.
 
 import csv
 import io
+import json
 from pathlib import Path
 
 import pytest
@@ -47,6 +48,15 @@ def test_pdf_page_comes_from_the_pdf_locator_never_the_printed_page_or_ordinal()
 
     assert link["sha256"] == "aa" * 32
     assert link["pdf_page"] == 156
+
+    # Every real locator lists the PDF page first, so a pattern weakened to
+    # "pages? (number)" would still return 156 on the line above — the leftmost
+    # match. Reversed, that weakened pattern returns 140; only an anchored one
+    # survives both orders.
+    reversed_locator = "Annex I.1; printed pages 140; PDF pages 156; ordinal 22"
+    assert (
+        resolve_document_link("source-a", reversed_locator, REGISTRY)["pdf_page"] == 156
+    )
 
 
 def test_a_locator_without_a_pdf_page_still_resolves_its_document() -> None:
@@ -138,12 +148,36 @@ def test_a_registry_id_collected_but_never_archived_keeps_its_first_entry() -> N
     assert resolve_document_link("source-b", "Appendix 3", index)["local_path"] is None
 
 
+def test_every_published_inventory_row_resolves_against_the_published_registry() -> None:
+    # The fixtures above hold two registry entries; this reads the four shipped
+    # companions and the shipped registry, so a source the collection never
+    # recorded cannot reach the page as a row pointing at nothing. Pure file
+    # reads, no subprocess: still the fast tier.
+    observatory = ROOT / "deliverables" / "jetp-observatory" / "data"
+    registry = index_documents(
+        json.loads((observatory / "documents.json").read_text(encoding="utf-8"))[
+            "documents"
+        ]
+    )
+
+    resolved = 0
+    for code in ("ZAF", "IDN", "VNM", "SEN"):
+        payload = json.loads((observatory / "m1a" / f"{code}.json").read_text("utf-8"))
+        locator = payload["fields"].index("evidence_locator")
+        source = payload["fields"].index("source_id")
+        for values in payload["rows"]:
+            link = resolve_document_link(values[source], values[locator], registry)
+            assert link["sha256"], (code, values[source])
+            resolved += 1
+    assert resolved == 2164
+
+
 def test_the_javascript_port_keeps_the_same_contract() -> None:
     renderer = (ROOT / "deliverables" / "jetp-observatory" / "app.js").read_text(
         encoding="utf-8"
     )
 
-    assert "PDF pages? (\\d+)" in renderer
+    assert "PDF pages? ([0-9]+)" in renderer
     for field in (
         "source_layer",
         "record_type",
