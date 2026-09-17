@@ -162,9 +162,11 @@ def _write_json_companion(
     Header-plus-values rather than one object per row.  The keys are identical
     for every row of a country by construction — ``csv.DictWriter`` would raise
     otherwise — so repeating them 1 579 times only costs bytes: Indonesia came
-    to 761 720 bytes that way, over the repository's 512 000 byte ceiling for a
-    committed file, against 414 564 here for the same rows in the same order.
-    One row per line keeps a regeneration readable as a diff.
+    to 761 720 bytes under ``json.dumps(rows, ensure_ascii=False, indent=2)`` —
+    the figure moves with the indentation, so the spelling is named — over the
+    repository's 512 000 byte ceiling for a committed file, against 414 564
+    here for the same rows in the same order.  One row per line keeps a
+    regeneration readable as a diff.
     """
     values = ",\n    ".join(
         json.dumps([row[key] for key in header], ensure_ascii=False) for row in rows
