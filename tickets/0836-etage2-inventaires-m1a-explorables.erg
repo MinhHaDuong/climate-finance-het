@@ -7,6 +7,7 @@ Blocked-by: 0835
 --- log ---
 2026-09-17T16:56Z HDMX-coding-agent created
 
+2026-09-17T17:18Z HDMX-coding-agent note raid Imagine : annoté, recette corrigée page 155 vers 156
 --- body ---
 
 ## Context
@@ -30,33 +31,139 @@ l'inventaire ZAF en parallèle, et la vue doit les afficher sans modification.
 
 ## Actions
 
-1. Ajouter une page « Inventaires » par pays qui charge le CSV M1a et
-   l'affiche dans le composant de tableau : toutes les colonnes présentes,
-   filtres sur sous-couche, type d'enregistrement, statut d'identité, statut
-   rapporté, recherche sur le libellé.
-2. Rendre chaque ligne cliquable vers son document : `source_id` résout
-   l'empreinte via le registre, `evidence_locator` fournit la page PDF ; la
-   ligne s'ouvre à `documents/<empreinte>.pdf#page=<page PDF>` en local et
-   affiche le localisateur en clair en public.
-3. Afficher en tête de page les comptes d'inconnus du manifeste par
-   sous-couche, jamais additionnés entre pays ni entre sous-couches.
-4. Remplacer « six source layers » par « sous-couches d'extraction » dans le
-   MVP, le README et le manifeste, sans toucher aux lignes de données.
-5. Lier les pages pays vers la page Inventaires de leur pays.
+1. Générateur (`scripts/jetp/build_m1a_inventories.py`, à lire **après la
+   fusion de 0837**, qui le rend à largeur variable par pays) : dans
+   `write_inventories()`, émettre en plus, pour chaque pays,
+   `deliverables/jetp-observatory/data/m1a/<CODE>.json` — un tableau JSON, un
+   objet par ligne, dans l'ordre du CSV, avec exactement les mêmes clés et
+   valeurs (chaînes) que les colonnes CSV de ce pays pour cette ligne, clés
+   dynamiques préservées (les `raw_<slug>` de ZAF y compris). Construire ce
+   JSON depuis la liste `rows` déjà assemblée en mémoire avant l'écriture CSV
+   (`json.dumps(rows, ensure_ascii=False, indent=2)` + saut de ligne final,
+   `encoding="utf-8"`, sans `sort_keys` pour préserver l'ordre des colonnes du
+   pays) — jamais en réanalysant le texte du CSV : les champs VNM portent des
+   sauts de ligne et virgules entre guillemets (318 champs), qu'un analyseur
+   maison casse sur les vraies données tout en passant sur un fixture. Le CSV
+   reste l'artefact de téléchargement, inchangé par cette action.
+2. Renommage de vocabulaire, à faire d'un seul geste sur les quatre
+   emplacements suivants, pour rester cohérent :
+   a. Le texte de `app.js` (`m1aSection()` et toute autre occurrence de
+      « source layer(s) » touchée par ce ticket) → « sous-couche(s)
+      d'extraction ».
+   b. Le texte de `deliverables/jetp-observatory/README.md`.
+   c. Les **clés structurelles** de `manifest.json`, écrites par
+      `_render_layer()`/`write_inventories()` : `layer_id` → `sublayer_id`,
+      `layers` → `sublayers` ; et sa chaîne `scope` (« frozen source-layer
+      inventories… ») reformulée sans « source-layer ».
+   d. Chaque lecteur de ces deux clés renommées, dans le même commit :
+      `app.js` (`item.layers` → `item.sublayers`, dans `m1aSection()` et dans
+      la nouvelle page Inventaires de l'action 5), et les deux occurrences de
+      `details["layers"]` dans `tests/test_jetp_m1a_inventories.py` (renommer
+      en `details["sublayers"]`, sans autre changement : ses assertions de
+      comptage et de rejeu ne dépendent pas du nom de la clé).
+   Ne pas toucher : le nom de colonne CSV/JSON `source_layer` (donnée protégée
+   par l'invariant, pas du vocabulaire de manifeste), ni les clés
+   `layers`/`layer_id` internes à `config/jetp-m1a-inventories.json`
+   (configuration de build, jamais servie au MVP).
+3. Régénérer les sorties (`make jetp-data jetp-m1a`, ou l'appel direct au
+   script avec les racines source sur `PYTHONPATH` par convention du projet) :
+   les quatre CSV doivent ressortir octet pour octet identiques (sinon le
+   renommage a débordé sur les données de ligne — à corriger avant de
+   continuer), les quatre `<CODE>.json` apparaissent, et `manifest.json` porte
+   désormais `sublayers`/`sublayer_id` et le `scope` reformulé. Committer ces
+   sorties régénérées avec le code. Les empreintes épinglées de
+   `config/jetp-m1a-inventories.json` (`input_sha256`, `source_sha256`) ne
+   changent pas ici — 0837 a déjà repointé les siennes avant que cette branche
+   ne parte ; une différence à cet endroit signale un rebase manquant sur
+   `main` post-0837, pas une correction à faire à la main.
+4. Après régénération, rejouer `tests/test_jetp_m1a_inventories.py` (une fois
+   ses deux références à `details["layers"]` renommées) : ses assertions de
+   comptage et de rejeu octet pour octet passent sans autre changement — le
+   test de « clean replay » compare déjà le contenu entier des deux dossiers,
+   donc les nouveaux `<CODE>.json` y sont couverts sans assertion
+   supplémentaire à écrire.
+5. Page « Inventaires » par pays dans `app.js`, réutilisant le composant de
+   tableau filtrable de 0835 : une route par pays (ex. `#inventory/<CODE>`)
+   qui charge `data/m1a/<CODE>.json` (jamais le CSV) et l'affiche avec
+   exactement cinq facettes câblées en dur — `source_layer` (étiquetée
+   « sous-couche d'extraction »), `record_type`, `identity_status`,
+   `reported_status` — plus une recherche plein texte sur `label`. Aucune
+   autre colonne n'est câblée en dur : chaque clé présente sur une ligne (les
+   `raw_<slug>` de ZAF après 0837 y compris) s'affiche dans le détail de
+   ligne, dans l'ordre où le générateur l'a écrite.
+6. Résolution ligne → document, utilisée par la page Inventaires : `source_id`
+   cherche son entrée dans le registre de 0835 (`data/documents.json`, chargé
+   une fois avec les autres fetches de `start()`) pour obtenir l'empreinte
+   (sha256) et, quand il est présent, le chemin de la copie archivée.
+   `evidence_locator` est ensuite testé contre `/PDF pages? (\d+)/` : sur une
+   correspondance (seules les 279 lignes VNM en portent une — IDN n'a aucun
+   numéro de page, la forme SEN « p. NN » est un autre système de pagination
+   non vérifié et ne doit pas être traitée comme une page PDF dans ce ticket),
+   la ligne ouvre `documents/<empreinte>.pdf#page=<N>` ; sinon, elle ouvre le
+   document sans fragment de page quand un chemin archivé existe, et affiche
+   seulement le texte du localisateur sinon. La distinction local/public
+   n'est pas un branchement de code : elle découle de la présence ou non du
+   chemin archivé dans le registre chargé, qui diffère déjà entre l'édition
+   locale et le bundle public par construction de 0835. Vérifier la forme
+   exacte livrée par 0835 (registre indexé par `source_id`, ou tableau avec un
+   champ `source_id` ; nom exact du champ d'empreinte) avant de câbler cette
+   résolution — la description ci-dessus vient du texte du ticket 0835, pas
+   encore de son code livré.
+7. En tête de chaque page Inventaires, afficher les comptes d'inconnus du
+   manifeste (renommé) par sous-couche (`unknowns.field_values`,
+   `unknowns.identity_rows`, `unknowns.unavailable_source_rows` de chaque
+   entrée `sublayers`), jamais additionnés entre sous-couches ni entre pays.
+8. Lier chaque page pays (`countryPage()`) vers la page Inventaires de son
+   pays.
 
 ## Test
 
-Red : `tests/test_jetp_observatory_inventories.py` charge un CSV fixture de
-trois lignes (une nommée avec localisateur de page, une programme, une sans
-identité) et un registre fixture, et vérifie que la résolution ligne → document
-produit l'empreinte et la page attendues pour la première ligne, un
-localisateur textuel sans page pour les deux autres, et qu'aucune ligne n'est
-perdue ni dédoublonnée. Un CSV fixture avec une colonne supplémentaire produit
-une colonne de plus, sans erreur.
+Red : un module pur `scripts/jetp/_m1a_document_links.py` expose
+`resolve_document_link(source_id, evidence_locator, registry)` — lève si
+`source_id` est absent du registre, sinon retourne
+`{"sha256": ..., "pdf_page": int | None}` en testant `evidence_locator` contre
+`/PDF pages? (\d+)/`. `app.js` en porte une traduction manuelle (jamais générée
+depuis le Python) pour la page Inventaires.
+
+`tests/test_jetp_observatory_inventories.py` (fixture Python pur, palier
+rapide) :
+
+1. Un registre fixture à deux entrées (`{"source-a": {"sha256": "aa"*32},
+   "source-b": {"sha256": "bb"*32}}`) et un CSV fixture de trois lignes : une
+   nommée, `source_id="source-a"`, localisateur
+   `"Annex I.1; PDF pages 156; printed pages 140; ordinal 22"` ; une
+   « programme », `source_id="source-a"`, localisateur sans page
+   `"Appendix 3, row 4"` ; une sans identité, `source_id="source-b"`,
+   localisateur `"Annex 2, p. 13, row 9"` (forme SEN, sans page PDF).
+2. Première ligne : `resolve_document_link` retourne `sha256 == "aa"*32` et
+   `pdf_page == 156` — **jamais 155 ni 140** : une implémentation qui
+   confondrait page PDF, page imprimée ou ordinal doit échouer ce test, pas
+   seulement en produire une différente.
+3. Deux autres lignes : `pdf_page is None` (cas général, pas l'exception) et
+   `sha256` reste résolu.
+4. Aucune ligne perdue ni dédoublonnée : résoudre les trois lignes lues via
+   `csv.DictReader` produit exactement trois résultats, et l'ensemble des
+   couples `(sha256, source_row_id)` obtenus a une taille de trois — un code
+   qui itérerait deux fois sur une source (concaténation CSV+JSON) ou
+   sauterait une ligne (erreur de découpage) échoue ici.
+5. Un quatrième fixture CSV, identique au premier plus une colonne
+   `raw_extra_field` (simulant les colonnes ZAF de 0837), traverse la même
+   résolution sans lever et sans que la colonne en trop soit rejetée ou
+   tronquée : la ligne obtenue contient `raw_extra_field` intact en plus des
+   clés connues.
+6. Une assertion texte légère sur `app.js` confirme le port JS reste
+   synchronisé : le motif `PDF pages? (\d+)`, les cinq champs de facette
+   (`source_layer`, `record_type`, `identity_status`, `reported_status`,
+   `label`), la référence `data/m1a/` + `.json` (jamais `.csv`, pour la page
+   Inventaires) et le gabarit `documents/` + `#page=` apparaissent tous dans
+   le fichier.
+
+Aucune dépendance lourde, aucun sous-processus : palier rapide,
+`make check-fast`.
 
 ## Verification
 
-- [ ] Recette VN : filtrer VNM sur l'annexe I.1 donne 37 lignes ; la ligne 22 « KN Tri An Floating Solar Farm » ouvre le RMP à la page PDF 155
+- [ ] Recette VN : filtrer VNM sur l'annexe I.1 donne 37 lignes ; la ligne 22 « KN Tri An Floating Solar Farm » ouvre le RMP à la page PDF 156
 - [ ] Recette SA : filtrer ZAF sur « D. Completed » donne 88 lignes ; une ligne ouvre le snapshot du registre
 - [ ] `tests/test_jetp_m1a_inventories.py` reste vert : les CSV n'ont pas changé
 - [ ] `tests/browser/jetp_observatory.py` exerce un filtre et une ouverture de ligne
@@ -81,3 +188,37 @@ une colonne de plus, sans erreur.
 
 Élargissement des colonnes ZAF (0837), ledger d'observations (0838), liens
 entre lignes de sous-couches différentes (0833).
+
+## Dependencies
+
+- Amont, bloquant (déjà `Blocked-by` en tête de fiche) : [[0835]] — fournit le
+  composant de tableau filtrable réutilisé ici (action 5) et la vue registre
+  `data/documents.json` dont la résolution ligne → document dépend (action 6).
+- Amont, non bloquant mais livré avant par ordre de vague : [[0837]] — rend le
+  générateur à largeur variable par pays et ajoute les colonnes `raw_<slug>`
+  de ZAF. Cette branche démarre rebasée sur `main` après la fusion de 0837 et
+  relit le générateur tel qu'il existe alors, jamais tel que décrit ici.
+- Aval : [[0838]] (bloqué par 0836) réutilise la résolution ligne → document
+  et le composant de tableau pour le second tableau d'étage 2 (ledger).
+  [[0839]] (bloqué par 0836 et 0838) réutilise la descente vers les preuves
+  construite ici pour la vue étage 3.
+
+## Imagine (raid 2026-09-17)
+
+Verdict : exécuter, avec simplification et une correction de recette.
+`app.js` ne lit aucun CSV ; tout arrive en JSON. Les CSV M1a portent des
+champs entre guillemets avec sauts de ligne (VNM : 318 champs), qu'un
+analyseur maison passerait sur le fixture et casserait en réel. Le générateur
+`build_m1a_inventories.py` émet en plus `data/m1a/<PAYS>.json` (les mêmes
+dictionnaires de lignes, clés dynamiques préservées) et la page charge ce
+JSON ; le CSV reste l'artefact de téléchargement. Après 0837, ZAF.csv et les
+trois autres n'ont plus le même en-tête : la page ne code en dur que les cinq
+facettes stables (`source_layer`, `record_type`, `identity_status`,
+`reported_status`, recherche sur `label`). Le manifeste porte « layer » en
+clés JSON (`layers`, `layer_id`), donc le renommage touche la même région du
+générateur que 0837 : lire le fichier après la fusion de 0837 avant d'y
+toucher. Correction : la ligne 22 de VNM (KN Tri An) porte
+`PDF pages 156; printed pages 140; ordinal 22` ; la page 155 est l'ordinal 1.
+Recette corrigée ci-dessus. Les 279 localisateurs VNM suivent un seul format ;
+IDN (1 579 lignes) n'a pas de numéro de page, SEN a une autre forme : le
+localisateur textuel sans page est le cas général, pas l'exception.

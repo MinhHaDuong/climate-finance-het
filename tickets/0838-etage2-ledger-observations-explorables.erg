@@ -7,17 +7,23 @@ Blocked-by: 0836
 --- log ---
 2026-09-17T16:56Z HDMX-coding-agent created
 
+2026-09-17T17:18Z HDMX-coding-agent note raid Imagine : objection de prémisse, retourné à l'auteur, voir section Imagine
+2026-09-17T19:44Z HDMX-coding-agent note décision de l'auteur : recadré sur events, implementation-events, project-source-links ; structured_atomic_observations et not_deployed intacts
+2026-09-17T20:10Z HDMX-coding-agent note plan : Actions/Test/Dependencies réécrits (schéma data/observations/<CODE>.json, resolve_document_link réutilisé). Verification laissée inchangée par mandat de cette passe, mais un risque de prémisse y est signalé ici : « filtrer VNM sur bailleur = BEI » ne peut passer par une facette funder — project-source-links (seule table portant des lignes VNM, 7 au total) n'a pas de colonne funder, et les trois lignes Bac Ai ne portent que le mot anglais « eib » (source_id vnm-link-eib-bac-ai, notes) jamais « BEI ». La recherche plein texte de l'action 6 (notes/locator/source_id) couvre l'intention de la recette ; la facette funder ne le peut pas pour VNM. À trancher par l'auteur ou en Execute, pas rewordé ici.
 --- body ---
 
 ## Context
 
-Quatrième enfant de [[0834]]. L'étage 2 a un second produit : les observations
-atomiques du ledger 0717–0720, comptées 1 740 dans `reviewed-evidence.json`
-sous `structured_atomic_observations` avec le statut « not deployed ». Elles
-proviennent de `data/jetp/events.csv` (380 événements financiers),
-`implementation-events.csv` (71), `project-source-links.csv` (315) et
-`idn-portfolio-observations.csv`, chacune avec `source_id`, empreinte du
-document et localisateur.
+Quatrième enfant de [[0834]]. L'étage 2 a un second produit : les lignes
+atomiques du ledger 0717–0720, `data/jetp/events.csv` (380 événements
+financiers), `implementation-events.csv` (71) et `project-source-links.csv`
+(315), chacune avec `source_id`, empreinte du document et localisateur.
+Recadrage de l'auteur (2026-09-17, raid 0834) : le compte 1 740 de
+`reviewed-evidence.json` est l'instantané d'analyse 0730, pas ces tables ;
+`structured_atomic_observations`, son statut `not_deployed` et le verrou
+`_evidence_depth` restent intacts. Les lignes servies portent leur propre
+compte par table et par pays. `idn-portfolio-observations.csv`, lu par aucun
+script, reste hors périmètre.
 
 Les vues pays actuelles montrent des faits construits depuis ces lignes sans
 que l'on puisse les voir. Ce ticket les expose comme deuxième tableau
@@ -26,44 +32,265 @@ mêmes documents sous deux schémas, présentées séparément, jamais additionn
 
 ## Relevant files
 
-- `data/jetp/events.csv`, `implementation-events.csv`, `project-source-links.csv`, `idn-portfolio-observations.csv` — observations atomiques
+- `data/jetp/events.csv` (`event_id,project_id,country,event_date,scope,financial_status,funder,window,instrument,amount_original,currency_original,amount_usd,conversion_method,source_id,document_sha256,locator,verification_status,notes`; 380 lignes, aucune VNM), `implementation-events.csv` (`implementation_event_id,project_id,country,event_date,implementation_status,capacity_mw,source_id,document_sha256,locator,verification_status,notes`; 71 lignes, aucune VNM/ZAF), `project-source-links.csv` (`link_id,country,project_id,source_id,relationship,locator,review_status,notes`; 315 lignes, 7 VNM — pas de colonne `funder`) — en-têtes exacts vérifiés ; `verification_status` (events, implementation-events) et `review_status` (project-source-links) diffèrent de nom d'une table à l'autre
+- `data/jetp/manifest.csv` (`source_id,country,retrieved_at,status,http_status,content_type,etag,last_modified,sha256,size_bytes,storage_path,final_url,error`) — déjà dans `TABLES` de `build_observatory.py`, seule source de l'empreinte pour les trois tables ci-dessus
 - `data/jetp/README.md`, `data/jetp/decisions.md` — contrat du ledger
-- `scripts/jetp/build_observatory.py`, `_observatory_data.py` — génération des vues ; `evidence_depth` dans reviewed-evidence
-- `deliverables/jetp-observatory/app.js` — composant de tableau de 0835, page Inventaires de 0836
+- `scripts/jetp/build_observatory.py` (`TABLES`, `read_inputs`), `scripts/jetp/_observatory_data.py` (`public_event`/`historical_record`/`timeline`, et `document_entry` livré par 0835) — fonctions et lecture de tables à réutiliser, jamais dupliquer
+- `scripts/jetp/build_m1a_inventories.py`, `scripts/jetp/_m1a_document_links.py` (`resolve_document_link`, livré par 0836) — résolution ligne → document à réutiliser telle quelle
+- `scripts/analysis/jetp_observatory.mk` — cibles `jetp-m1a`, `jetp-observatory`, `jetp-observatory-preview` ; aucune n'est prérequis d'une autre aujourd'hui, et rien dans le Makefile racine n'appelle `jetp-m1a`/`jetp-observatory` (seul `jetp-data` y figure)
+- `scripts/jetp/_bundle_inventory.py` (`VIEWS`, `SITE`, `site_files`/`SITE_EXCLUDE` livrés par 0835), `scripts/jetp/_observatory_bundle.py` (`_capture`) — édition publique
+- `deliverables/jetp-observatory/app.js` — composant `filterTable` de 0835, page Inventaires (`#inventory/<CODE>`) de 0836
+- `deliverables/jetp-observatory/README.md` — sections « What is included » et « Validation »
 - `tests/browser/jetp_observatory.py` — recette navigateur
+- `tests/test_jetp_public_release.py`, `scripts/jetp/_public_release.py::_evidence_depth` — invariant à ne pas toucher
 
 ## Actions
 
-1. Générer une vue `data/observations/<pays>.json` : une entrée par
-   observation atomique, avec sa table d'origine, son type (événement
-   financier, événement physique, lien projet-source, observation de
-   portefeuille), ses champs source, `source_id`, empreinte, localisateur et
-   état de vérification.
-2. Ajouter un onglet « Observations du ledger » à la page Inventaires de
-   chaque pays, dans le même composant de tableau, avec filtres sur table
-   d'origine, type, bailleur, état de vérification, et recherche.
-3. Rendre chaque observation cliquable vers son document et sa page comme
-   dans 0836.
-4. Passer `structured_atomic_observations.status` à « deployed » dans
-   `reviewed-evidence.json` et faire correspondre le total affiché au nombre de
-   lignes servies, par pays.
-5. Indiquer en tête d'onglet que ces lignes et les inventaires M1a sont deux
-   extractions distinctes et que leurs comptes ne s'additionnent pas.
+1. **Registre d'empreintes** : dans `scripts/jetp/build_observations.py`
+   (nouveau, calqué sur `scripts/jetp/build_m1a_inventories.py` — plusieurs
+   fichiers de sortie par invocation, pas sur le `--view` unique de
+   `build_observatory.py`), construire une fois `registry = {row['source_id']:
+   {'sha256': row['sha256']} for row in tables['manifest']}` depuis
+   `tables['manifest']` (déjà chargé par `read_inputs`, réutilisé, jamais relu).
+
+2. **Entrée d'observation** : ajouter `observation_entry(row, table, registry)`
+   dans `scripts/jetp/_observatory_data.py`, à côté de
+   `public_event`/`document_entry` — transformation pure, aucun accès disque.
+   Retourne `dict(row)` (toutes les colonnes CSV de la ligne source, verbatim,
+   en chaînes — `csv.DictReader` ne les convertit jamais, donc `"12.5"` reste
+   `"12.5"`) augmenté de quatre clés :
+   - `table` : la valeur reçue, une des trois chaînes `"events"`,
+     `"implementation-events"`, `"project-source-links"` — les mêmes libellés
+     que dans `TABLES` de `build_observatory.py`, jamais un nouveau vocabulaire ;
+   - `kind` : dérivé uniquement de `table` par une correspondance fixe (jamais
+     lue depuis une colonne, aucune des trois tables n'en a une) :
+     `"events" → "financial_event"`, `"implementation-events" →
+     "implementation_event"`, `"project-source-links" →
+     "project_source_link"` ;
+   - `verification` : copie verbatim de `row['verification_status']` pour
+     `events`/`implementation-events`, de `row['review_status']` pour
+     `project-source-links` — jamais reformulée ni recodée (un `secondary_only`
+     en entrée ressort `secondary_only`, à la différence de `public_event` qui
+     capitalise `financial_status`). La colonne source d'origine
+     (`verification_status` ou `review_status`) reste par ailleurs dans
+     l'entrée telle quelle comme toute autre colonne verbatim — `verification`
+     est un alias de lecture uniforme entre tables, pas un remplacement ;
+   - `sha256` / `pdf_page` : `resolve_document_link(row['source_id'],
+     row['locator'], registry)` de [[0836]] (`scripts/jetp/_m1a_document_links.py`)
+     — la même fonction, le même format de registre
+     (`{source_id: {"sha256": ...}}`), sur les trois tables, jamais une
+     résolution ad hoc ; lève si `source_id` est absent du registre, comme
+     pour M1a. Le `document_sha256` déjà présent en colonne native sur
+     `events`/`implementation-events` n'est ni lu ni comparé par cette clé :
+     `sha256` vient toujours du registre, uniformément sur les trois tables
+     (y compris `project-source-links`, qui n'a pas de colonne
+     `document_sha256` propre).
+   Vérifier la signature exacte de `resolve_document_link` livrée par 0836
+   avant de câbler cet appel — ce ticket est planifié avant l'exécution de
+   0836 ; la description ci-dessus vient de son texte, pas encore de son code
+   livré.
+
+3. **Construction par pays** : `observations_by_country(tables, registry)`
+   dans `scripts/jetp/build_observations.py` — parcourt `tables['events']`,
+   puis `tables['implementation-events']`, puis
+   `tables['project-source-links']`, dans cet ordre fixe, transforme chaque
+   ligne via `observation_entry`, groupe par `row['country']`, et retourne
+   `{code: [...] for code in ('ZAF', 'IDN', 'VNM', 'SEN')}` — liste vide
+   acceptée et attendue (`implementation-events` n'a aucune ligne VNM ni ZAF ;
+   VNM n'a que 7 lignes `project-source-links`, aucune `events` ni
+   `implementation-events` — une liste vide pour une table/pays est un
+   résultat correct, jamais une erreur à masquer). Dans chaque pays, l'ordre
+   est table puis ordre du CSV (sortie déterministe, aucun tri supplémentaire
+   requis). `main()` appelle `read_inputs(ROOT)` (réutilisé depuis
+   `build_observatory.py`, jamais dupliqué), écrit un fichier JSON par pays
+   sous `--output-dir` :
+   `(output_dir / f'{code}.json').write_text(json.dumps(entries, ensure_ascii=False, indent=2) + '\n')`.
+
+4. **Makefile** (`scripts/analysis/jetp_observatory.mk`) : ajouter
+   ```
+   JETP_OBSERVATIONS_DIR := $(JETP_OBSERVATORY)/data/observations
+   JETP_OBSERVATIONS_FILES := $(addprefix $(JETP_OBSERVATIONS_DIR)/,ZAF.json IDN.json VNM.json SEN.json)
+   .PHONY: jetp-observations
+   jetp-observations: $(JETP_OBSERVATIONS_FILES)
+
+   $(JETP_OBSERVATIONS_FILES) &: data/jetp/events.csv data/jetp/implementation-events.csv \
+       data/jetp/project-source-links.csv data/jetp/manifest.csv \
+       scripts/jetp/build_observations.py scripts/jetp/_observatory_data.py \
+       scripts/jetp/_m1a_document_links.py
+   	$(PYTHON) scripts/jetp/build_observations.py --output-dir $(JETP_OBSERVATIONS_DIR)
+   ```
+   suivant le précédent `JETP_M1A_FILES` : `jetp-observations` reste une cible
+   indépendante, non un prérequis de `jetp-observatory` — ni `jetp-m1a` ne
+   l'est aujourd'hui, et rien dans le Makefile racine n'appelle ces deux
+   cibles. Committer les quatre fichiers régénérés avec le code, comme les
+   CSV/JSON M1a.
+
+5. **Bundle public** : vérifier, ne pas supposer, que
+   `data/observations/<CODE>.json` est déjà repris par
+   `_capture()`/`site_files(site)` de 0835 (`SITE_EXCLUDE = ('documents',)`
+   n'exclut que `documents/`, pas `observations/`) — comme `data/m1a/*.json`
+   l'est déjà sans entrée dans `VIEWS` (`VIEWS` ne sert que pour
+   `_validate_site()` et `routes()`, sur les vues top-level `data/<view>.json`,
+   jamais les sous-répertoires). N'ajouter `'observations'` à `VIEWS` que si le
+   test d'intégration bundle de la section Test échoue en le prouvant — ne pas
+   l'ajouter par précaution. Ajouter une phrase dans
+   `deliverables/jetp-observatory/README.md` § « What is included » à côté de
+   celle sur les inventaires M1a, et une ligne dans § Validation à côté de
+   « Rebuild the frozen inventories alone with `make jetp-data jetp-m1a` » :
+   « Rebuild the ledger observations alone with `make jetp-data jetp-observations`. »
+
+6. **Onglet « Observations du ledger »** dans `app.js`, sur la page
+   Inventaires par pays de 0836 (même route `#inventory/<CODE>`, un onglet
+   plutôt qu'une nouvelle route), construit sur `filterTable("observations",
+   observationsData[code], …)` de 0835 (`data/observations/<CODE>.json`,
+   chargé dans `start()` aux côtés des autres vues, un objet module-level
+   `observationsData` indexé par code pays comme le sont déjà
+   `documentsData`/`m1a`). Cinq facettes/recherche câblées en dur :
+   - `table` (étiquetée « table d'origine ») ;
+   - `kind` (étiquetée « type », options affichées via un dictionnaire de
+     libellés français : `financial_event` → « Événement financier »,
+     `implementation_event` → « Événement physique », `project_source_link`
+     → « Lien projet-source ») ;
+   - `funder` — absente des colonnes de `implementation-events` et de
+     `project-source-links` (`dict(row)` ne pose alors pas cette clé) :
+     vérifier avant de câbler comment le composant `filterTable` de 0835 traite
+     une facette dont la clé est absente sur certaines lignes (options
+     `undefined` vs chaîne vide) et adapter au comportement réel, ne pas le
+     supposer ;
+   - `verification` (étiquetée « état de vérification », valeurs verbatim —
+     `official_register`, `official_report`, `primary_source`, `confirmed`,
+     `provisional`, etc. — jamais reformulées, jamais un sous-ensemble
+     recodé) ;
+   - recherche plein texte sur `notes`/`locator`/`source_id` concaténés
+     (même convention que `text(row)` dans `cataloguePage`).
+
+7. **Cliquable vers document et page** : `sha256`/`pdf_page` sont déjà posés
+   sur chaque entrée par l'étape 2, donc pas de seconde résolution côté JS
+   comme celle que la page Inventaires M1a de 0836 doit faire (elle n'a pas de
+   registre disponible au moment de la génération de ses CSV) : ici,
+   `documentHref(entry, observation.pdf_page)` de 0835 suffit directement, où
+   `entry` est l'enregistrement de `documentsData` correspondant à
+   `observation.sha256`. Vérifier si `documentsData` (livré par 0835) est
+   indexable par `sha256` ou seulement par `source_id`/`id` avant de câbler ;
+   si seulement par `source_id`, indexer côté JS par `sha256` une fois au
+   chargement (fonction pure, testable) plutôt que de parcourir le tableau à
+   chaque clic.
+
+8. **Compte en tête d'onglet** : afficher, par table et par pays (jamais
+   additionné entre tables ni entre pays), le nombre d'entrées de
+   `observationsData[code]` filtré sur chaque valeur de `table` — calculé
+   depuis la vue chargée, jamais depuis une constante ni depuis
+   `reviewed-evidence.json` (`evidence_depth.structured_atomic_observations`,
+   intact, non lu par ce code).
+
+9. **Phrase de séparation** : en tête d'onglet, une phrase fixe (français,
+   cohérente avec le renommage « sous-couche d'extraction » de 0836) reprenant
+   le dernier paragraphe de la section Context ci-dessus — ces lignes et les
+   inventaires M1a sont deux extractions distinctes des mêmes documents sous
+   deux schémas, jamais additionnées — sans jamais calculer de chiffre agrégé
+   pour l'illustrer.
 
 ## Test
 
-Red : `tests/test_jetp_observatory_observations.py` construit la vue depuis
-des fixtures de deux événements financiers (un vérifié, un `secondary_only`),
-un événement physique et un lien projet-source, et vérifie quatre entrées avec
-leur table d'origine, l'état de vérification conservé tel quel, les montants
-en devise d'origine non convertis, et que la somme des entrées par pays égale
-le total déclaré dans `evidence_depth`.
+Red : `tests/test_jetp_observatory_observations.py` (fixture Python pur,
+palier rapide — pas de sous-processus, pas de `tmp_path` requis).
+
+Fixtures construites à la main (jamais lues depuis les vrais CSV) plus un
+registre fixture à deux entrées, `registry = {"source-a": {"sha256": "aa" *
+32}, "source-b": {"sha256": "bb" * 32}}` :
+
+1. `events`, ligne vérifiée : `event_id="e1", project_id="p1", country="ZAF",
+   event_date="2021-01-01", scope="jetp_strict", financial_status="signed",
+   funder="BEI", window="Skills", instrument="Grants",
+   amount_original="12.5", currency_original="EUR", amount_usd="14.0",
+   conversion_method="x", source_id="source-a", document_sha256="aa"*32,
+   locator="PDF pages 10", verification_status="official_register",
+   notes="n1"`.
+2. `events`, ligne `secondary_only` : mêmes champs que 1 sauf
+   `event_id="e2", verification_status="secondary_only", source_id="source-b",
+   locator="Appendix 3, row 4"`.
+3. `implementation-events`, une ligne : `implementation_event_id="i1",
+   project_id="p1", country="ZAF", event_date="2025-01-01",
+   implementation_status="preparation", capacity_mw="10",
+   source_id="source-a", document_sha256="aa"*32,
+   locator="Table 4.3-3 pp.72-73", verification_status="primary_source",
+   notes="n3"`.
+4. `project-source-links`, une ligne : `link_id="l1", country="ZAF",
+   project_id="p1", source_id="source-b", relationship="project_report",
+   locator="whole report", review_status="provisional", notes="n4"`.
+
+Appeler `observations_by_country({'events': [row1, row2],
+'implementation-events': [row3], 'project-source-links': [row4]}, registry)`
+et vérifier :
+
+- Quatre entrées pour `ZAF`, liste vide pour les trois autres pays :
+  `{k: len(v) for k, v in result.items()} == {'ZAF': 4, 'IDN': 0, 'VNM': 0,
+  'SEN': 0}` — antipattern fermé : un test qui ne vérifierait que
+  `len(result['ZAF']) == 4` sans les clés des trois autres pays laisserait
+  passer une implémentation qui omet les pays vides au lieu d'y placer une
+  liste vide.
+- `table` vaut respectivement `'events', 'events', 'implementation-events',
+  'project-source-links'` dans cet ordre exact — un mélange ou un tri par
+  `event_id`/`source_id` échouerait ce test.
+- Entrée `e1` : `verification == 'official_register'` **et**
+  `verification_status == 'official_register'` toujours présent (la clé
+  source n'est pas supprimée) ; `amount_original == '12.5'` de type `str`,
+  jamais `12.5` flottant — antipattern explicite nommé dans le corps du
+  ticket : une implémentation qui convertit les montants
+  (`float(row['amount_original'])`) doit échouer ici, pas seulement produire
+  une valeur différente.
+- Entrée `e2` : `verification == 'secondary_only'` — **jamais réécrit** en une
+  autre valeur (par exemple `'unverified'`, ou capitalisé à la manière de
+  `public_event` sur `financial_status`) ; c'est l'antipattern central de ce
+  ticket : une implémentation qui recode l'état de vérification via une table
+  de correspondance doit échouer précisément sur cette ligne, pas seulement
+  produire un résultat divergent.
+- Aucune ligne perdue ni dupliquée : `[e['table'] for e in
+  result['ZAF']].count('events') == 2` malgré le même `project_id` sur les
+  deux lignes `events` — une implémentation qui fusionne par `project_id` doit
+  échouer ici.
+- `sha256` résolu vaut `"aa"*32` pour `e1`/`i1` (source-a) et `"bb"*32` pour
+  `e2`/`l1` (source-b). Antipattern fermé : falsifier le fixture registry
+  (`registry['source-a']['sha256'] = 'zz'*32`) et rappeler
+  `observations_by_country` ; `sha256` doit suivre le registre falsifié, pas
+  rester `"aa"*32` — une implémentation qui recopie `row['document_sha256']`
+  au lieu d'appeler `resolve_document_link` passerait la première assertion et
+  échouerait celle-ci.
+- `pdf_page == 10` pour `e1` (locator `"PDF pages 10"`), `pdf_page is None`
+  pour `e2`/`i1`/`l1` (locators sans motif `PDF pages? (\d+)`).
+- `kind` vaut `'financial_event'`, `'financial_event'`,
+  `'implementation_event'`, `'project_source_link'` respectivement — dérivé de
+  `table`, jamais lu depuis une colonne source (aucune des trois tables n'a de
+  colonne `kind`).
+- Le compte par table affiché en tête d'onglet (`{'events': 2,
+  'implementation-events': 1, 'project-source-links': 1}`, calculé en filtrant
+  `result['ZAF']` sur `table`) somme à `len(result['ZAF'])` — l'invariant nommé
+  dans le corps du ticket : le compte en tête d'onglet ne doit jamais diverger
+  de la vue qu'il résume.
+
+Test bundle (même fichier, ou `tests/test_jetp_observatory_bundle.py` — un
+seul des deux, jamais les deux à la fois) : après un
+`freeze_bundle`/`build_candidate` réel contre ce dépôt (comme
+`test_interrupted_candidate_preserves_accepted_and_restores_offline`
+existant), asserter que `site/data/observations/ZAF.json` (et les trois autres
+pays) apparaît dans les payloads capturés, sans qu'`'observations'` ait été
+ajouté à `VIEWS` — ce test gèle le comportement vérifié à l'action 5.
+
+Playwright (`tests/browser/jetp_observatory.py`), ajouté après les
+vérifications de 0836 : sur `#inventory/ZAF`, cliquer l'onglet Observations,
+sélectionner un filtre sur `table` ou `verification`, et vérifier que le
+nombre de lignes affiché (`page.locator('#observations-results tbody
+tr').count()`) change en conséquence.
+
+Aucune dépendance lourde, aucun sous-processus pour le test Python pur :
+palier rapide, `make check-fast`.
 
 ## Verification
 
 - [ ] Recette VN : filtrer VNM sur bailleur = BEI montre les observations de Bac Ai avec leur bulletin ou fiche source, ouvrable en local
 - [ ] Recette SA : les observations issues du registre Q1 2026 renvoient au snapshot du registre
-- [ ] `evidence_depth.structured_atomic_observations.total` égale le nombre de lignes servies
+- [ ] Le compte en tête d'onglet égale le nombre de lignes servies, par table et par pays
+- [ ] `reviewed-evidence.json` et `tests/test_jetp_public_release.py` sont inchangés
 - [ ] `tests/browser/jetp_observatory.py` exerce un filtre sur l'onglet Observations
 
 ## Invariants
@@ -76,7 +303,7 @@ le total déclaré dans `evidence_depth`.
 
 - [ ] Les observations atomiques sont explorables par pays avec filtres et recherche
 - [ ] Chaque observation renvoie à son document et à son localisateur
-- [ ] Le statut « not deployed » de reviewed-evidence est levé et le total correspond
+- [ ] Le compte de lignes servies par table et par pays est affiché et exact ; `reviewed-evidence.json` est intact
 - [ ] La séparation entre les deux produits d'étage 2 est affichée
 - [ ] Recettes SA et VN de 0834 réussies pour les observations
 
@@ -84,3 +311,49 @@ le total déclaré dans `evidence_depth`.
 
 Réconciliation entre observations et inventaires M1a (0833), faits canoniques
 (0839), CRS et IATI (0721).
+
+## Dependencies
+
+- Amont, bloquant (déjà `Blocked-by` en tête de fiche) : [[0836]] — fournit
+  `resolve_document_link` (`scripts/jetp/_m1a_document_links.py`) et la page
+  Inventaires (`#inventory/<CODE>`) dans laquelle l'onglet de ce ticket
+  s'insère.
+- Amont, transitif via 0836 : [[0835]] — fournit `filterTable`,
+  `document_entry`/`documents_data` (`data/documents.json`), `documentHref()`,
+  et l'exclusion de bundle (`site_files`/`SITE_EXCLUDE` dans
+  `scripts/jetp/_bundle_inventory.py`) dont ce ticket vérifie qu'elle couvre
+  déjà `data/observations/` sans modification.
+- Aval : [[0839]] (bloqué par 0836 et 0838) réutilise la vue
+  `data/observations/<CODE>.json` et la résolution document/page construites
+  ici pour la descente vers les preuves depuis l'étage 3.
+
+## Imagine (raid 2026-09-17) — objection de prémisse, tranchée par l'auteur
+
+Décision de l'auteur (2026-09-17) : option (a). Le contexte, l'action 4, la
+vérification et le critère de sortie ci-dessus sont recadrés en conséquence.
+Constat d'origine :
+
+Le compte 1 740 et le statut « not deployed » existent, mais leur provenance
+n'est pas celle du ticket. Les quatre CSV nommés totalisent 812 lignes
+(events 380, implementation-events 71, project-source-links 315,
+idn-portfolio-observations 46) et ne peuvent produire ni 1 740 ni la
+répartition IDN 1148 / SEN 10 / VNM 325 / ZAF 257. Cette répartition est
+identique à la colonne `atomic_observations` de
+`docs/jetp-study/0730-country-coverage.csv`, sortie du ticket clos 0730 : le
+pipeline d'analyse du papier (`build_0822_freeze_snapshot.py`,
+`_freeze_0822_sources.py`, `_freeze_0822_journals.py`) sur un jeu d'entrées
+épinglé par SHA256. `idn-portfolio-observations.csv` n'est lu par aucun
+script. Deux verrous délibérés tiennent le statut :
+`scripts/jetp/_public_release.py::_evidence_depth` lève si le statut n'est
+pas `not_deployed` (commit 8d9abcce, « analytical observations cannot be
+deployed as canonical facts ») et l'édition gelée
+`data/jetp/releases/2026-11-r1/release.json`, testée octet pour octet par
+`tests/test_jetp_public_release.py`, cite ce statut. L'action 4 n'est pas un
+changement de drapeau ; c'est soit remplacer une édition citée, soit décider
+que sa prétention était fausse.
+
+Décision demandée : (a) recadrer 0838 sur les lignes réelles du ledger
+(events, implementation-events, project-source-links) sous leur propre
+compte, sans toucher `structured_atomic_observations` ni son statut ; ou (b)
+autoriser explicitement la levée de l'invariant pour l'instantané 0730, avec
+une nouvelle édition. Le ticket ne s'exécute pas avant cette réponse.
