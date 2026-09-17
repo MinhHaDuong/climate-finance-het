@@ -15,9 +15,8 @@ import argparse
 import json
 from pathlib import Path
 
-from jetp._m1a_document_links import index_documents
 from jetp._observatory_data import observation_entry
-from jetp.build_observatory import documents_data, read_inputs
+from jetp.build_observatory import read_inputs
 
 ROOT = Path(__file__).resolve().parents[2]
 COUNTRIES = ('ZAF', 'IDN', 'VNM', 'SEN')
@@ -27,16 +26,41 @@ COUNTRIES = ('ZAF', 'IDN', 'VNM', 'SEN')
 OBSERVATION_TABLES = ('events', 'implementation-events', 'project-source-links')
 
 
-def build_registry(root, tables):
-    """Collapse the collection registry the way the Documents page does.
+def attempt_rank(row):
+    """Rank one collection attempt by what it can address, never by disk state.
 
-    ``documents_data`` already reads ``tables['manifest']`` and marks what is
-    archived on disk; ``index_documents`` then applies the shared-identifier
-    tie-break of ticket 0853.  Going through both means a row here and the same
-    row on the Documents page resolve to the same file, rather than to whichever
-    collection attempt a dict comprehension happened to keep last.
+    An attempt that recorded no digest cannot address a document at all; among
+    those that did, a completed collection outranks a revalidation.
     """
-    return index_documents(documents_data(root, tables)['documents'])
+    if not row.get('sha256'):
+        return 0
+    return 2 if row.get('status') == 'collected' else 1
+
+
+def build_registry(tables):
+    """Collapse the collection registry to one attempt per source identifier.
+
+    Twenty-one identifiers carry several attempts (ticket 0853) and six of them
+    disagree on the digest, so the choice has to be made rather than left to the
+    order of ``manifest.csv``.
+
+    It is made on the digest, not on what happens to be staged on disk.  What
+    this view publishes is a fingerprint; the local path is the renderer's
+    business, resolved from ``data/documents.json`` in the browser.  Ranking on
+    an archived copy — as ``index_documents`` does, correctly, for a page whose
+    job is to open a file — would make the published value depend on whether
+    the DVC snapshot happened to be checked out when the build ran, and one
+    Senegal source did flip that way during this ticket's own development.
+    """
+    chosen = {}
+    for row in tables['manifest']:
+        source_id = row['source_id']
+        if source_id not in chosen or attempt_rank(row) > attempt_rank(chosen[source_id]):
+            chosen[source_id] = row
+    return {
+        source_id: {'sha256': row['sha256'] or None}
+        for source_id, row in chosen.items()
+    }
 
 
 def observations_by_country(tables, registry):
@@ -66,7 +90,7 @@ def main():
     )
     args = parser.parse_args()
     tables = read_inputs(ROOT)
-    by_country = observations_by_country(tables, build_registry(ROOT, tables))
+    by_country = observations_by_country(tables, build_registry(tables))
     args.output_dir.mkdir(parents=True, exist_ok=True)
     for code, entries in by_country.items():
         (args.output_dir / f'{code}.json').write_text(
