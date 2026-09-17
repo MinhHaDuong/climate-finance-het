@@ -418,9 +418,15 @@ function renderInventory(code, rows) {
       options: values(key),
     })),
     search: {
-      label: "Search the source label",
-      placeholder: "Try Tri An, transmission, solar…",
-      text: (row) => (row.label || "").toLowerCase(),
+      // The label and the evidence locator, because the locator is how a
+      // source addresses its own rows: "Annex I.1" selects the 37 Viet Nam
+      // rows of that annex, which no facet can express — the annex is not a
+      // sub-layer, and hard-wiring a fifth select for it would bind this page
+      // to one country's locator vocabulary.
+      label: "Search the source label or locator",
+      placeholder: "Try Tri An, Annex I.1, transmission…",
+      text: (row) =>
+        ((row.label || "") + " " + (row.evidence_locator || "")).toLowerCase(),
     },
     columns: [
       { label: "Source row", cell: (row) => `<code>${esc(row.source_row_id)}</code>` },

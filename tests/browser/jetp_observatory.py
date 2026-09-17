@@ -53,6 +53,61 @@ def check_documents(page, url):
     opened.close()
 
 
+def check_inventory(page, url):
+    """Exercise an M1a inventory page: a filter, and a row opening its document.
+
+    The two recipes of ticket 0834: Viet Nam annex I.1 holds 37 rows, and its
+    ordinal 22 opens the RMP at PDF page 156 — not the printed page 140, not the
+    ordinal. South Africa's completed rows are 88 of 257.
+    """
+    registry = page.request.get(url + '/data/documents.json').json()['documents']
+    payload = page.request.get(url + '/data/m1a/VNM.json').json()
+    rows = [dict(zip(payload['fields'], values)) for values in payload['rows']]
+    page.goto(url + '/#inventory/VNM')
+    page.wait_for_selector('#inventory-filters')
+    assert str(len(rows)) in page.locator('#inventory-count').inner_text()
+    page.locator('#inventory-search').fill('Annex I.1')
+    annex = [row for row in rows if 'Annex I.1' in row['evidence_locator']]
+    assert len(annex) == 37, len(annex)
+    assert page.locator('#inventory-results tbody tr').count() == len(annex)
+
+    page.locator('#inventory-search').fill('Tri An')
+    link = page.locator('a[data-inventory-row="vnm-rmp-2023:annex-I.1:022"]')
+    link.wait_for()
+    entry = next(row for row in registry
+                 if row['id'] == 'vnm-rmp-2023' and row['local_path'])
+    assert entry['local_path'], 'Archived RMP absent; run make jetp-observatory-documents'
+    # The address the row resolves to, then the fact that it really opens. The
+    # target is a 30 MB PDF handed to the browser's own viewer, which reports
+    # neither a load state nor a URL back to the driver, so the assertion is on
+    # the href and the popup is only checked to exist.
+    assert link.get_attribute('href') == entry['local_path'] + '#page=156', \
+        link.get_attribute('href')
+    with page.expect_popup() as popup:
+        link.click()
+    assert popup.value is not None
+    popup.value.close()
+
+    # A per-country column set must not need a renderer change: the 21 ZAF
+    # pass-through columns appear in the row detail, in the export's own order.
+    page.goto(url + '/#inventory/ZAF')
+    page.wait_for_selector('#inventory-filters')
+    page.locator('#inventory-filter-reported_status').select_option('D. Completed')
+    assert '88 of 257' in page.locator('#inventory-count').inner_text()
+    detail = page.locator('#inventory-results tbody tr details').first
+    detail.locator('summary').click()
+    keys = detail.locator('dt').all_inner_texts()
+    assert keys[:2] == ['country', 'source_layer'], keys[:2]
+    assert 'raw_project_name' in keys
+    # Unknowns are shown per sub-layer, never pooled: one metric per sub-layer,
+    # each naming the sub-layer it counts.
+    manifest = page.request.get(url + '/data/m1a/manifest.json').json()
+    sublayers = manifest['countries']['ZAF']['sublayers']
+    unknowns = page.locator('.metrics .metric')
+    assert unknowns.count() == len(sublayers)
+    assert sublayers[0]['sublayer_id'] in unknowns.first.inner_text()
+
+
 def check_site(url, output):
     """Exercise data navigation, filtering, downloads and mobile layout."""
     with sync_playwright() as playwright:
@@ -117,6 +172,7 @@ def check_site(url, output):
             download_matches(page, url, f'data/m1a/{code}.csv')
         download_matches(page, url, 'data/m1a/manifest.json')
         check_documents(page, url)
+        check_inventory(page, url)
         for code in ('ZAF', 'IDN', 'VNM', 'SEN'):
             page.goto(url + '/#country/' + code)
             page.wait_for_selector('.markdown h2')
@@ -134,7 +190,8 @@ def check_site(url, output):
         page.keyboard.press('Tab')
         assert page.evaluate('document.activeElement.tagName') == 'A'
         page.set_viewport_size({'width': 390, 'height': 844})
-        for route in ('overview', 'countries', 'documents', 'projects', 'comparison', 'methods'):
+        for route in ('overview', 'countries', 'documents', 'projects', 'comparison',
+                      'inventory/SEN', 'methods'):
             page.goto(url + '/#' + route)
             page.wait_for_timeout(150)
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'), route
