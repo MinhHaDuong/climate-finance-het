@@ -33,35 +33,208 @@ registre et l'URL d'origine.
 - `tests/browser/jetp_observatory.py` — recette navigateur Playwright
 - `docs/jetp-storage.md` — règles de provisionnement des snapshots
 
+## Dependencies
+
+Aucun ticket amont : premier de la vague 1 issue de [[0834]], sans bloqueur.
+En aval, [[0836]], [[0838]] et [[0839]] réutilisent la vue `data/documents.json`
+et le composant `filterTable` livrés ici ; ils sont bloqués par ce ticket,
+jamais l'inverse.
+
 ## Actions
 
-1. Générer une vue `data/documents.json` depuis le registre : une entrée par
-   source avec pays, date de collecte, statut, type de contenu, taille,
-   empreinte complète, URL d'origine, et le chemin local de la copie archivée
-   quand elle est présente dans le snapshot.
-2. Écrire un composant de tableau filtrable réutilisable dans `app.js` :
-   filtres à facettes sur les colonnes déclarées, recherche plein texte,
-   pagination, compte des lignes visibles sur total, sans dépendance externe.
-3. Ajouter une page « Documents » : le tableau des 307 sources, avec un bouton
-   « copie archivée » actif seulement si le fichier est servi, et un lien
-   « origine » toujours présent.
-4. En prévisualisation locale, servir les objets archivés sous
-   `deliverables/jetp-observatory/documents/` par reflink ou lien symbolique
-   vers le snapshot DVC, dossier ignoré par git, créé par la cible make et
-   absent du bundle public.
-5. Accepter un fragment `#page=N` sur les PDF pour que les tickets suivants
-   ouvrent un document à sa page.
-6. Remplacer « source layer » par « sous-couche d'extraction » dans les textes
-   du MVP touchés par ce ticket.
+1. **Vue `data/documents.json`** (une entrée par ligne de
+   `data/jetp/manifest.csv`, aucune jointure avec `sources.csv` — le registre
+   porte déjà tous les champs demandés : `country`, `retrieved_at`, `status`,
+   `content_type`, `sha256`, `size_bytes`, `storage_path`, `final_url`).
+   - Ajouter `document_entry(row, available)` dans `scripts/jetp/_observatory_data.py`,
+     à côté de `public_event`/`historical_record`/`timeline` : transformation
+     pure (aucun accès disque), qui construit une entrée depuis une ligne du
+     registre. Champs de sortie : `id` (`source_id`), `country`,
+     `collected_on` (`retrieved_at` ou `None`), `status` (valeur brute,
+     jamais reformulée), `content_type` (ou `None`), `size_bytes` (entier ou
+     `None`), `sha256` (ou `None`), `url` (`final_url` ou `None`), `error`
+     (ou `None`), `local_path` — `f"documents/{storage_path}"` seulement si
+     `storage_path` est non vide **et** figure dans `available` ; sinon `None`.
+   - Ajouter `documents_data(root, tables)` dans `scripts/jetp/build_observatory.py`,
+     à côté de `comparison_data` : construit `available` en vérifiant, pour
+     chaque `storage_path` non vide de `tables['manifest']`, si
+     `(root / 'data/jetp/documents' / storage_path).is_file()` ; trie les
+     lignes par `source_id` (sortie déterministe) ; retourne
+     `{'documents': [document_entry(row, available) for row in rows]}`.
+     `tables['manifest']` est déjà chargé par `read_inputs` (`'manifest'` est
+     déjà dans `TABLES`) — ne pas relire le CSV.
+   - Étendre les choix `--view` de `main()` avec `'documents'` et la branche
+     `elif args.view == 'documents': result = documents_data(ROOT, tables)`.
+   - Ajouter `'documents'` à `JETP_OBSERVATORY_VIEWS` dans
+     `scripts/analysis/jetp_observatory.mk` : la règle générique
+     `$(JETP_OBSERVATORY)/data/%.json` produit alors `documents.json` sans
+     changement supplémentaire (`manifest.csv` et `documents.dvc` sont déjà
+     dans `JETP_OBSERVATORY_INPUTS`).
+
+2. **Composant de tableau filtrable**, dans `app.js`, signature figée pour
+   0836/0838/0839 :
+
+   ```js
+   // filterTable(id, rows, opts) -> { head, mount }
+   //   id          unique DOM id prefix, e.g. "documents"
+   //   rows        full unfiltered row array (caller already scoped the data)
+   //   opts.facets [{ key, label, options }]  one <select> per facet;
+   //               `options` is the caller-supplied, already-deduped/sorted
+   //               value list (reuse the existing `options()` helper);
+   //               a row matches when row[facet.key] === selected value.
+   //   opts.search { placeholder, text(row) }  `text(row)` returns the
+   //               lower-cased haystack string for the free-text field
+   //               (mirrors cataloguePage's `[p.name, p.operator, ...]`).
+   //   opts.columns [{ label, cell(row) }]     one <th>/<td> pair each;
+   //               `cell` returns an already-`esc()`-escaped HTML string.
+   //   opts.empty  message for the `.empty` fallback (no rows match)
+   //   opts.resultNoun  plural noun for the count line, e.g. "sources"
+   //   opts.pageSize    rows per page (new capability; neither existing
+   //               page paginates today)
+   // head: HTML string (filters block + `#${id}-count` aria-live paragraph +
+   //   `#${id}-results` div) to splice into main.innerHTML.
+   // mount(): call once head is in the DOM; wires listeners on
+   //   `#${id}-search` / `#${id}-filter-<key>` / pager controls, resets to
+   //   page 1 on every filter change, and renders the first pass.
+   ```
+
+   Reuse this shape for the new Documents page. Retrofit `cataloguePage` and
+   `comparisonPage` onto `filterTable` only if the resulting diff stays small
+   (per Imagine); otherwise leave them and open a follow-up ticket — do not
+   let that retrofit block this ticket's exit criteria. No new CSS classes
+   required beyond pager controls reusing `.button light`; no dependency
+   (`package.json` stays absent).
+
+3. **Page « Documents »**: add `documentsPage()` (dispatched from `render()`
+   via `else if (page === "documents") documentsPage();`, inserted before the
+   `methodsPage()` fallback) built on `filterTable("documents", documentsData.documents, …)`
+   with facets on `country`, `status`, `content_type` and free-text search on
+   `id`/`url`. Columns: source id, country, status (pill), content type, size,
+   an « copie archivée » cell (see action 5 — link only when `local_path` is
+   non-null, otherwise plain disabled-looking text), an « origine » cell
+   (always present, `<a target="_blank" rel="noopener">` on `url`, reusing
+   `cleanURL()`/`esc()`). Insert `<a href="#documents">Documents</a>` into
+   `index.html`'s `<nav>` right after `<a href="#countries">Countries</a>` and
+   before `<a href="#projects">Projects</a>`. In `start()`, add
+   `load("documents")` to the `Promise.all` alongside the existing views and
+   assign it to a new module-level `documentsData` (not `documents`, to avoid
+   reading like the DOM `document` global), declared alongside the existing
+   `let overview, countries, comparison, editions, evidence, m1a, projects;`.
+
+4. **Local-preview document folder** (`deliverables/jetp-observatory/documents/`):
+   - Add a `jetp-observatory-documents` target in `scripts/analysis/jetp_observatory.mk`,
+     prerequisite of `jetp-observatory-preview` only (not of `jetp-observatory`,
+     so the JSON build and the public bundle never depend on whether a local
+     snapshot happens to exist). Reuse the reflink idiom already in
+     `.githooks/post-checkout`'s `initialize_jetp_snapshots()`: stage with
+     `cp -RL --reflink=always` into a `mktemp -d` sibling, then `mv -Tn` into
+     place; fall back to `ln -s` (symlink) when reflink is unsupported; warn
+     and exit 0 (never fail the build) when `data/jetp/documents/` itself is
+     absent (offline/no-DVC machine).
+   - Add `deliverables/jetp-observatory/documents/` to `.gitignore` as a
+     directory entry — the existing `deliverables/*/*.pdf` / `*.docx` globs
+     are one level too shallow for `documents/objects/<prefix>/<sha>.<ext>`.
+   - Fix the real bundle-exclusion risk this folder creates: `_capture()` in
+     `scripts/jetp/_observatory_bundle.py` walks `site.rglob('*')` over the
+     **whole** `SITE` tree with no exclusion, so once this folder exists on a
+     machine, every `freeze_bundle`/`build_candidate` call — including the
+     existing `test_interrupted_candidate_preserves_accepted_and_restores_offline`
+     in `tests/test_jetp_observatory_bundle.py`, which runs `freeze_bundle`
+     against this real repo — would start embedding archived document bytes
+     into the bundle. Add `SITE_EXCLUDE = ('documents',)` and a
+     `site_files(site)` generator to `scripts/jetp/_bundle_inventory.py` that
+     yields files under `site` skipping any path under an excluded top-level
+     name; change `_capture()` to call `site_files(site)` instead of
+     `site.rglob('*')` directly.
+   - Add `'documents'` to `VIEWS` in `_bundle_inventory.py` so `documents.json`
+     (registry + origin URL, never the archived bytes) stays in the public
+     edition, per the README's stated boundary. `routes()` currently iterates
+     `VIEWS[2:]` assuming those entries are country codes with a `projects`
+     key — introduce `COUNTRIES = ('ZAF', 'IDN', 'VNM', 'SEN')` and make
+     `routes()` iterate `COUNTRIES` directly, so `'documents'` can join `VIEWS`
+     without breaking that assumption.
+   - Out of scope, write down instead of fixing: `scripts/jetp/_public_release.py`
+     (whole-tree copy at a pinned commit) does not go through this exclusion
+     path at all. Add one sentence to `deliverables/jetp-observatory/README.md`
+     (near "What is included") stating that `documents/` is local-preview only,
+     excluded from the bundle and from any public release — nothing more; do
+     not modify `_public_release.py` in this ticket.
+
+5. **`#page=N` fragment**: this is native PDF-viewer behaviour (Chromium/Firefox
+   both honour `file.pdf#page=N`); nothing server-side to implement. Add a
+   small `documentHref(entry, page)` helper in `app.js` —
+   `entry.local_path ? entry.local_path + (page ? '#page=' + page : '') : null`
+   — and use it for the Documents table's « copie archivée » cell, so 0836 can
+   call the same helper with a computed page number instead of re-deriving
+   link construction. No JSON field encodes a printed-page-to-PDF-page offset
+   in this ticket (per Imagine, only 279 VNM rows carry a `PDF pages N`
+   locator, and computing that mapping is 0836's job) — verify the fragment
+   manually per the Verification checklist.
+
+6. **Lexical replacement**: grep confirms exactly one reader-facing instance
+   in a file this ticket touches — `m1aSection()` in `app.js`: "These four
+   tables preserve every row of six selected source layers before canonical
+   matching." → "…six selected extraction sub-layers…" (the site is
+   English-language throughout; "sous-couche d'extraction" names the concept,
+   not a literal string to insert). `build_m1a_inventories.py`'s docstring
+   ("one bounded source layer") is an internal comment, not MVP reader text —
+   leave it out of scope for this ticket.
 
 ## Test
 
-Red : `tests/test_jetp_observatory_documents.py` construit la vue depuis un
-registre fixture de quatre sources (une collectée en PDF, une collectée en
-HTML, une bloquée, une en erreur de collecte) et un snapshot fixture qui ne
-contient que le PDF. La vue compte quatre entrées, seule l'entrée PDF porte un
-chemin de copie archivée, les deux échecs gardent leur statut source et leur
-URL, et aucune entrée n'est inventée ni fusionnée.
+Red : `tests/test_jetp_observatory_documents.py`, fast tier (pure Python +
+`tmp_path`, no subprocess, no marker needed).
+
+Fixture — four `manifest.csv`-shaped rows and a `tmp_path/'data/jetp/documents'`
+directory containing **only** the PDF's bytes at its `storage_path`:
+
+- `vnm-collected-pdf`: `status='collected'`, `content_type='application/pdf'`,
+  `storage_path='objects/aa/pdf.pdf'`, `sha256='a'*64`, `size_bytes='120000'`,
+  `final_url='https://example.test/rmp.pdf'`.
+- `zaf-collected-html`: `status='collected'`, `content_type='text/html'`,
+  `storage_path='objects/bb/reg.html'` — **not** written to the fixture
+  snapshot directory, despite `status='collected'`.
+- `sen-blocked`: `status='blocked'`, `storage_path=''`, `error='HTTP 403'`.
+- `idn-fetch-error`: `status='fetch_error'`, `storage_path=''`,
+  `error='RetryError: ...'`.
+
+Call `documents_data(tmp_path, {'manifest': rows})` and assert:
+
+- `{d['id'] for d in result['documents']} == {'vnm-collected-pdf', 'zaf-collected-html', 'sen-blocked', 'idn-fetch-error'}`
+  — exactly these four, nothing merged (e.g. by shared `sha256`) or invented.
+- PDF entry: `local_path == 'documents/objects/aa/pdf.pdf'` (the registry's own
+  path, never reconstructed from `sha256`/`content_type`), and `country`,
+  `sha256`, `size_bytes == 120000`, `content_type` equal the source row
+  verbatim.
+- HTML entry: `status == 'collected'` **and** `local_path is None` — this is
+  the assertion that distinguishes "preserved" from "invented/different": an
+  implementation that derives availability from `status` alone (instead of
+  checking the snapshot directory) would wrongly set `local_path` here and
+  must fail until the disk check exists. This is the antipattern check: a
+  first-draft test asserting only `len(result['documents']) == 4` would be a
+  tautology that a "merge the two failures into one row" or "invent a filler
+  row" implementation could also satisfy; comparing the exact id set plus this
+  same-status-different-outcome pair closes that gap.
+- `sen-blocked` and `idn-fetch-error`: `local_path is None`, `status` and
+  `error` preserved verbatim, `url` (from `final_url`) preserved — neither is
+  dropped or folded into a generic "unavailable" status.
+- Determinism: `[d['id'] for d in result['documents']] == sorted(row['source_id'] for row in rows)`.
+
+Playwright (`tests/browser/jetp_observatory.py`) additions, appended after the
+existing checks, against the real running preview (307 manifest rows):
+
+- `page.goto(url + '/#documents')`; wait for the filters selector; assert the
+  count line shows `307` before any filter is applied.
+- Select country=SEN and status=blocked; assert
+  `page.locator('#documents-results tbody tr').count() == 5` (exact count on
+  the real registry: `country=='SEN' and status=='blocked'`).
+- Click the « copie archivée » link for `zaf-jet-investment-register-q1-2026`
+  and assert the response/download is the archived HTML snapshot — covers the
+  0834 recipe line "le snapshot HTML du registre JET ZAF s'ouvre depuis la
+  page Documents".
+- Do not encode the VNM page-139→155 mapping in Playwright — no such data
+  exists in this ticket's scope; keep it as the existing manual Verification
+  checklist item.
 
 ## Verification
 

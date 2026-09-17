@@ -37,27 +37,166 @@ telle quelle.
 
 ## Actions
 
-1. Étendre l'extraction 0818 aux 21 champs du JSON embarqué, en gardant les
-   noms de champ source tels quels dans une colonne par champ, valeurs vides
-   conservées vides.
-2. Documenter dans le rapport 0818 et dans le manifeste M1a la ligne exclue
-   entre 258 et 257 : quelle ligne, pourquoi, avec son identifiant unique.
-3. Faire suivre les colonnes par l'adaptateur `register_row` de M1a : les
-   colonnes communes du schéma de présentation restent en tête, les champs
-   source suivent, préfixés de façon stable.
-4. Mettre à jour les empreintes épinglées de `config/jetp-m1a-inventories.json`
-   et le manifeste, puis rejouer les tests octet pour octet.
-5. Vérifier que les identifiants de ligne (`source_row_id`), l'ordre et les
-   comptes de ZAF.csv sont inchangés, pour que [[0833]] ne soit pas perturbé.
+1. `scripts/jetp/build_zaf_investment_register.py` : extraire le prédicat de
+   ligne matérielle de `parse_register_html` (l.93-100) dans
+   `_is_material_row(row) -> bool` ; factoriser l'extraction JSON brute
+   (regex + `json.loads`) dans un utilitaire privé partagé, réutilisé par
+   `parse_register_html` et par une nouvelle fonction
+   `excluded_register_rows(document: str) -> list[dict]` qui renvoie, pour
+   chaque entrée brute échouant `_is_material_row`, un dict `{"raw_index":
+   <index 0-based>, "ordinal": <index + 1>, "unique_id_raw":
+   row.get("Unique ID"), "project_name_raw": row.get("Project Name"),
+   "portfolios_raw": row.get("Portfolios"), "amount_reported_usd_raw":
+   row.get("Total US$"), "amount_reported_zar_raw": row.get("Total ZAR")}` —
+   valeurs gardées dans leur type JSON natif (int/float/None), jamais passées
+   dans `_text()` : c'est ce qui permet au test de repérer une coercition
+   précoce. Vérifié directement contre le snapshot épinglé, présent sur cette
+   machine (`data/jetp/documents/objects/5b/5b5d6442…html`, 727 Ko,
+   258 entrées brutes, 257 matérielles) : une seule ligne exclue, `raw_index
+   = 257`, `ordinal = 258`, `unique_id_raw = 248` (type `int`),
+   `project_name_raw` / `portfolios_raw` = `None`, `amount_reported_usd_raw =
+   3953240805.08088`, `amount_reported_zar_raw = 69917380338.46097`.
+
+2. `scripts/jetp/build_0818_zaf_q1_reconciliation.py` :
+   - Étendre `FIELDS` (21 colonnes dérivées aujourd'hui) de 21 colonnes
+     supplémentaires portant les noms JSON verbatim, dans l'ordre du JSON
+     embarqué : `"Unique ID", "Project Name", "Portfolios", "Purpose",
+     "Priority Areas", "Funder/Source", "Funding Instrument", "Disbursement
+     Channel", "Co-Financing: Name", "Currency: Pledged", "Amount: Pledged",
+     "Total US$", "Total ZAR", "Funding Partners", "Implementing Entity",
+     "Institutional / South African Partner", "Beneficiary", "Status",
+     "Project Description", "Date of Financing Agreement Signed*", "End
+     Date"` (42 colonnes au total ; les 21 colonnes dérivées existantes ne
+     changent pas).
+   - Dans `build_rows()`, ajouter une entrée par nouveau champ avec le même
+     `_text()` déjà importé de `build_zaf_investment_register` — même
+     traitement que les 8 champs déjà mappés, aucune normalisation nouvelle
+     (`_text(None) == ""`).
+   - Appeler `excluded_register_rows()` sur le texte déjà lu du document et
+     transmettre le résultat à `_report()` : ajouter une section `## Excluded
+     rows` qui cite verbatim `unique_id_raw` (`248`) et nomme explicitement
+     son type Python (« int, pas str ») comme raison de l'exclusion, plus les
+     deux totaux, `ordinal` et `raw_index`. `write_outputs()`/`main()`
+     transmettent `excluded`.
+
+3. `scripts/jetp/build_m1a_inventories.py` :
+   - `_RAW_FIELD_ORDER` = les 21 mêmes noms JSON verbatim, importés de
+     `build_0818_zaf_q1_reconciliation.FIELDS[21:]` (source unique, pas de
+     tuple dupliqué).
+   - `_raw_slug(name)`: `"raw_" + re.sub(r"[^a-z0-9]+", "_",
+     name.lower()).strip("_")`. Note : `"Total US$"` donne `raw_total_us` (le
+     `$` final disparaît) — c'est la règle mécanique appliquée uniformément,
+     pas un bug à corriger à la main en `raw_total_usd`.
+   - Dans `_zaf_rows()`, après `fields = dict(row)` (inchangé), ajouter `for
+     source_key in _RAW_FIELD_ORDER: fields[_raw_slug(source_key)] =
+     row[source_key]` avant `"source_fields": fields`. Les valeurs sont déjà
+     des chaînes (lecture `csv.DictReader` du CSV 0818) : ne pas les repasser
+     dans `_text()`.
+   - Dans `_render_layer()`, après avoir construit les 11 colonnes de
+     présentation, copier dans la ligne de sortie toute clé de
+     `source_fields` préfixée `raw_`, dans l'ordre d'itération (donc
+     `_RAW_FIELD_ORDER`). Générique : IDN/VNM/SEN n'ont aujourd'hui aucune clé
+     `raw_`, donc inchangés.
+   - Dans `write_inventories()`, remplacer le `FIELDS` unique du
+     `csv.DictWriter` par une largeur par pays : `extra =
+     list(rows[0].keys())[len(FIELDS):] if rows else []`, écrire avec
+     `fieldnames=FIELDS + tuple(extra)`. Sûr car `_render_layer` insère
+     toujours les 11 clés de base en premier puis les clés `raw_` dans le
+     même ordre pour chaque ligne d'un même pays.
+   - Ajouter `excluded_source_rows: tuple = ()` à `FrozenLayer` ; le lire
+     depuis une nouvelle clé `"excluded_source_rows"` de la spécification ZAF
+     dans `config/jetp-m1a-inventories.json` (action 4) dans
+     `build_existing_layers()`, et le recopier verbatim dans le résumé de
+     couche renvoyé par `_render_layer()` (donc dans `manifest.json` sous
+     `countries.ZAF.layers[0].excluded_source_rows`). Tuple vide pour les
+     trois autres pays — aucun changement visible là.
+
+4. `config/jetp-m1a-inventories.json` : ajouter à la spécification de la
+   couche ZAF une clé littérale `"excluded_source_rows"` avec exactement une
+   entrée, copiant verbatim les valeurs de l'action 1 (`raw_index: 257,
+   ordinal: 258, unique_id_raw: 248` comme **nombre** JSON et non une chaîne,
+   `project_name_raw` / `portfolios_raw: null`, les deux totaux comme
+   nombres). Ne pas toucher `input_sha256` maintenant — action 5.
+
+5. Régénérer, dans cet ordre, ne jamais éditer les fichiers générés à la
+   main :
+   1. `python scripts/jetp/build_0818_zaf_q1_reconciliation.py` (réécrit
+      `docs/jetp-study/0818-zaf-q1-2026-rows.csv` et
+      `0818-zaf-q1-2026-report.md`).
+   2. `sha256sum docs/jetp-study/0818-zaf-q1-2026-rows.csv` → coller la
+      nouvelle empreinte dans `input_sha256` de la couche ZAF de
+      `config/jetp-m1a-inventories.json`.
+   3. `python scripts/jetp/build_m1a_inventories.py` (réécrit les quatre CSV
+      M1a et `manifest.json`). Vérifier par `git diff --stat` que `IDN.csv`,
+      `VNM.csv`, `SEN.csv` ne bougent pas (invariant).
+   4. Rejouer `tests/test_jetp_0818_zaf_q1_reconciliation.py`, la nouvelle
+      `tests/test_jetp_0818_zaf_fields.py`, `tests/test_jetp_m1a_inventories.py`,
+      `tests/test_jetp_zaf_register.py` — tous verts contre les fichiers
+      régénérés et commités.
+
+6. Ce diff touche `scripts/jetp/` et régénère des données de livrable
+   (surface pipeline) : `make check-fast` + `make lint` avant de committer,
+   puis `make check` complet avant d'ouvrir la PR (règle Execute d'AGENTS.md
+   pour un diff touchant la surface pipeline — pas seulement le duo rapide).
+
+7. Ajouter une entrée de log dans
+   `tickets/0833-build-the-bounded-canonical-jetp-catalog.erg` (`--- log
+   ---`) une fois la PR de ce ticket mergée : ZAF.csv porte désormais 21
+   colonnes `raw_*` en plus, `source_row_id`/ordre/comptes inchangés, tests à
+   rejouer.
 
 ## Test
 
-Red : `tests/test_jetp_0818_zaf_fields.py` extrait un fixture HTML avec deux
-enregistrements de 21 champs dont un champ vide, et vérifie que la table de
-sortie porte 21 colonnes source, que la valeur vide reste vide, et que
-l'identifiant unique et le nom correspondent au JSON embarqué. Un second cas
-avec un enregistrement exclu produit une ligne de moins et une entrée de
-justification dans le rapport.
+Red 1, nouveau `tests/test_jetp_0818_zaf_fields.py`, pur Python, tier rapide
+(aucune I/O hors `tmp_path`, aucun réseau, ne lit pas le vrai snapshot HTML de
+727 Ko — ce rejeu octet pour octet existe déjà dans
+`test_jetp_0818_zaf_q1_reconciliation.py` et `test_jetp_m1a_inventories.py`) :
+
+- Fixture `const OVERALL = [...]` avec 3 entrées brutes : (a) une ligne
+  matérielle avec les 21 clés renseignées dont un champ à chaîne vide
+  (`"Purpose": ""`) ; (b) une ligne matérielle avec un champ `null` dans le
+  JSON (`"Priority Areas": null`) ; (c) la ligne d'exclusion : `"Unique ID":
+  248` (entier), `"Project Name": null`, `"Portfolios": null`, `"Total US$":
+  100.5`, `"Total ZAR": 200.5`, autres champs `null`.
+- `parse_register_html(fixture)` → 2 lignes. `excluded_register_rows(fixture)`
+  → 1 entrée, `raw_index == 2`, `ordinal == 3`, `unique_id_raw == 248` **et**
+  `isinstance(unique_id_raw, int)` (pas la chaîne `"248"` — piège de
+  coercition précoce), `project_name_raw is None` et `portfolios_raw is None`
+  (pas `""` — piège de coercition en chaîne vide).
+- Écrire la fixture dans un fichier `tmp_path`, construire un `policy` minimal
+  avec le `document_sha256` calculé sur ce fichier (pas copié d'ailleurs) et
+  `register_row_count: 2`, appeler `build_rows()` : les deux lignes retenues
+  portent exactement 42 clés (`set(rows[0]) == set(FIELDS)` — échoue si un
+  champ est oublié, « jamais une partie »), `row["Purpose"] == ""` pour la
+  ligne (a) et `row["Priority Areas"] == ""` pour la ligne (b) (l'absence
+  reste vide dans les deux cas, chaîne vide et `None` source), `row["Unique
+  ID"]` et `row["Project Name"]` correspondent à la ligne fixture
+  correspondante (aucune colonne perdue ni dédoublée).
+- `_report(rows, excluded, policy)` (fil `excluded` dans la signature) : le
+  texte rendu contient `"248"` **et** une justification typée (« int », «
+  pas une chaîne », ou équivalent) — pas seulement la valeur brute, sinon un
+  test faible passerait même si l'exclusion réelle n'a plus rien à voir avec
+  le type.
+
+Red 2, extension de `tests/test_jetp_m1a_inventories.py` : un nouveau cas
+`FrozenLayer` pour `"ZAF"` dont les lignes portent `source_fields` avec une
+clé déjà préfixée (`raw_example_field`), passé à `write_inventories()` aux
+côtés de couches IDN/VNM/SEN sans clé `raw_` : le CSV ZAF a pour en-tête
+`FIELDS + ("raw_example_field",)`, les trois autres gardent l'en-tête à 11
+colonnes inchangé (prouve la largeur variable par pays, pas globale). Un
+`FrozenLayer` avec `excluded_source_rows=({"raw_index": 0, ...},)` fait
+apparaître cette entrée verbatim dans
+`manifest["countries"]["ZAF"]["layers"][0]["excluded_source_rows"]` ; les
+trois autres pays gardent `()`.
+
+Antipattern scan appliqué (« la ferait-elle passer une implémentation
+fausse ? ») : le risque réel n'est pas la double coercition des valeurs 0818
+(déjà des chaînes, non retestable utilement) mais (i) la coercition précoce
+du type de `Unique ID` sur le chemin d'exclusion, (ii) l'oubli d'une des 21
+colonnes source dans `build_rows()`, (iii) une exclusion non nommée dans le
+rapport, (iv) une largeur de colonnes qui fuiterait vers IDN/VNM/SEN. Les
+quatre sont couverts ci-dessus par des assertions qui échouent sur une
+implémentation partielle, pas seulement sur une implémentation absente.
 
 ## Verification
 
@@ -84,6 +223,18 @@ justification dans le rapport.
 
 Registre des subventions JET et rapports trimestriels (M2), interprétation des
 statuts ou des dates (0818 les garde en libellés source), affichage (0836).
+
+## Dependencies
+
+Amont : aucun. Étage 2, Wave 1, données seulement ; ne dépend d'aucun autre
+enfant de [[0834]] et tourne en parallèle de [[0836]] (fichiers disjoints).
+
+Aval : [[0836]] (Wave 2, après la fusion de celui-ci) lit le schéma par-pays
+résultant — sa propre section Imagine dit déjà « lire le fichier après la
+fusion de 0837 avant d'y toucher » pour le renommage de vocabulaire dans la
+même région du générateur (`build_m1a_inventories.py`) ; ne pas fusionner 0836
+avant ce ticket. [[0833]] rejoue ses tests après la fusion de celui-ci
+(action 7, note de log) ; il ne bloque pas ce ticket, ce ticket le notifie.
 
 ## Imagine (raid 2026-09-17)
 
