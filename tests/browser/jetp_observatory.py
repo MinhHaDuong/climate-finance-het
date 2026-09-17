@@ -5,6 +5,7 @@ collected by the Python unit suite: browser installation is a developer tool.
 """
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -19,6 +20,37 @@ def download_matches(page, url, href):
     assert Path(download.value.path()).read_bytes() == page.request.get(
         url + '/' + href
     ).body()
+
+
+def check_documents(page, url):
+    """Exercise the registry page: full count, a filter, and an archived copy."""
+    registry = page.request.get(url + '/data/documents.json').json()['documents']
+    page.goto(url + '/#documents')
+    page.wait_for_selector('#documents-filters')
+    assert str(len(registry)) in page.locator('#documents-count').inner_text()
+    page.locator('#documents-filter-country').select_option('SEN')
+    page.locator('#documents-filter-status').select_option('blocked')
+    blocked = [row for row in registry
+               if row['country'] == 'SEN' and row['status'] == 'blocked']
+    assert page.locator('#documents-results tbody tr').count() == len(blocked)
+    # The archived ZAF register must open from this page, byte-identical to the
+    # snapshot the registry pins. A missing local copy is a provisioning gap
+    # (make jetp-observatory-documents), not a renderer defect.
+    page.locator('#documents-filter-status').select_option('')
+    page.locator('#documents-filter-country').select_option('ZAF')
+    entry = next(row for row in registry
+                 if row['id'] == 'zaf-jet-investment-register-q1-2026')
+    link = page.locator('a[data-document-id="zaf-jet-investment-register-q1-2026"]')
+    assert entry['local_path'], 'Archived ZAF register absent; run make jetp-observatory-documents'
+    with page.expect_popup() as popup:
+        link.click()
+    opened = popup.value
+    opened.wait_for_load_state()
+    assert opened.url.endswith(entry['local_path'])
+    assert hashlib.sha256(
+        page.request.get(url + '/' + entry['local_path']).body()
+    ).hexdigest() == entry['sha256']
+    opened.close()
 
 
 def check_site(url, output):
@@ -79,11 +111,12 @@ def check_site(url, output):
             page.locator('a[download][href="data/comparison.json"]').click()
         downloaded = json.loads(Path(download.value.path()).read_text())
         assert len(downloaded['projects']) == count
-        for view in ('overview', 'comparison', 'ZAF', 'IDN', 'VNM', 'SEN'):
+        for view in ('overview', 'comparison', 'documents', 'ZAF', 'IDN', 'VNM', 'SEN'):
             download_matches(page, url, f'data/{view}.json')
         for code in ('ZAF', 'IDN', 'VNM', 'SEN'):
             download_matches(page, url, f'data/m1a/{code}.csv')
         download_matches(page, url, 'data/m1a/manifest.json')
+        check_documents(page, url)
         for code in ('ZAF', 'IDN', 'VNM', 'SEN'):
             page.goto(url + '/#country/' + code)
             page.wait_for_selector('.markdown h2')
@@ -101,7 +134,7 @@ def check_site(url, output):
         page.keyboard.press('Tab')
         assert page.evaluate('document.activeElement.tagName') == 'A'
         page.set_viewport_size({'width': 390, 'height': 844})
-        for route in ('overview', 'countries', 'projects', 'comparison', 'methods'):
+        for route in ('overview', 'countries', 'documents', 'projects', 'comparison', 'methods'):
             page.goto(url + '/#' + route)
             page.wait_for_timeout(150)
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'), route

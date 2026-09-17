@@ -11,8 +11,12 @@ from urllib.parse import quote
 
 import yaml
 
-VIEWS = ('overview', 'comparison', 'ZAF', 'IDN', 'VNM', 'SEN')
+VIEWS = ('overview', 'comparison', 'documents', 'ZAF', 'IDN', 'VNM', 'SEN')
+COUNTRIES = ('ZAF', 'IDN', 'VNM', 'SEN')
 SITE = Path('deliverables/jetp-observatory')
+# The archived document bytes are a local preview convenience; the public
+# edition carries the registry and the origin URL only.
+SITE_EXCLUDE = ('documents',)
 EXTRA_INPUTS = ('config/jetp_observatory.yaml', 'scripts/jetp/build_observatory.py',
                 'scripts/jetp/_observatory_data.py', 'scripts/jetp/_publication.py',
                 'scripts/jetp/build_observatory_provenance.py')
@@ -45,10 +49,17 @@ def table_inventory(data):
                                       if count > 1} for name, values in keys.items()}}
 
 
+def site_files(site):
+    """Walk the preview tree, leaving locally staged document bytes behind."""
+    for path in sorted(site.rglob('*')):
+        if path.is_file() and path.relative_to(site).parts[0] not in SITE_EXCLUDE:
+            yield path
+
+
 def routes(payloads):
-    """Enumerate the renderer's stable hash routes and six downloads."""
-    result = ['#overview', '#countries', '#projects', '#comparison', '#methods']
-    for view in VIEWS[2:]:
+    """Enumerate the renderer's stable hash routes and every view download."""
+    result = ['#overview', '#countries', '#projects', '#comparison', '#documents', '#methods']
+    for view in COUNTRIES:
         country = json.loads(payloads[f'site/data/{view}.json'])
         result.extend((f'#country/{view}', f'#projects?country={view}', f'#comparison?country={view}'))
         result.extend('#project/' + quote(row['id'], safe='') for row in country['projects'])

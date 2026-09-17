@@ -10,7 +10,12 @@ from pathlib import Path
 
 import yaml
 
-from jetp._observatory_data import historical_record, public_event, timeline
+from jetp._observatory_data import (
+    document_entry,
+    historical_record,
+    public_event,
+    timeline,
+)
 
 ROOT = Path(__file__).resolve().parents[2]
 TABLES = ('projects', 'events', 'implementation-events', 'sources', 'source-claims',
@@ -156,6 +161,15 @@ def comparison_data(root, config):
             'snapshots': snapshots}
 
 
+def documents_data(root, tables):
+    """List every collection attempt, marking availability from the snapshot on disk."""
+    rows = sorted(tables['manifest'], key=lambda row: row['source_id'])
+    snapshot = Path(root) / 'data/jetp/documents'
+    available = {row['storage_path'] for row in rows
+                 if row.get('storage_path') and (snapshot / row['storage_path']).is_file()}
+    return {'documents': [document_entry(row, available) for row in rows]}
+
+
 def edition_history(root):
     from jetp._monthly_editions import release_history
     return release_history(root / 'data/jetp/releases')
@@ -204,7 +218,8 @@ def overview(root, config, tables):
 def main():
     """Write one requested JSON view deterministically."""
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--view', choices=['overview', 'comparison', 'editions', 'ZAF', 'IDN', 'VNM', 'SEN'], required=True)
+    parser.add_argument('--view', choices=['overview', 'comparison', 'documents', 'editions',
+                                           'ZAF', 'IDN', 'VNM', 'SEN'], required=True)
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     config = yaml.safe_load((ROOT / 'config/jetp_observatory.yaml').read_text())
@@ -213,6 +228,8 @@ def main():
         result = overview(ROOT, config, tables)
     elif args.view == 'comparison':
         result = comparison_data(ROOT, config)
+    elif args.view == 'documents':
+        result = documents_data(ROOT, tables)
     elif args.view == 'editions':
         result = edition_history(ROOT)
     else:

@@ -9,9 +9,11 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def site_hashes(root):
-    """Include rendering assets and every download in the byte comparison."""
+    """Compare exactly what a bundle carries: assets and downloads, no documents."""
+    from jetp._bundle_inventory import site_files
+
     return {str(path.relative_to(root)): hashlib.sha256(path.read_bytes()).hexdigest()
-            for path in root.rglob('*') if path.is_file()}
+            for path in site_files(root)}
 
 
 @pytest.mark.integration
@@ -72,6 +74,7 @@ def tiny_bundle(path, *, headline='Accepted headline', revision='before', event_
     payloads['site/data/overview.json'] = json.dumps({
         'provenance': {'input_git_sha': revision}}).encode()
     payloads['site/data/comparison.json'] = b'{"projects":[]}'
+    payloads['site/data/documents.json'] = b'{"documents":[]}'
     for code in ('ZAF', 'IDN', 'VNM', 'SEN'):
         payloads[f'site/data/{code}.json'] = json.dumps({
             'country': {'headline': headline if code == 'ZAF' else 'Unchanged'},
