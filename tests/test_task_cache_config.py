@@ -13,11 +13,17 @@ REPO = Path(__file__).resolve().parents[1]
 RESOLVER = REPO / ".githooks/resolve-task-cache.py"
 pytestmark = pytest.mark.adherence
 
+CACHE_VARIABLES = {
+    "dvc": "DVC_SITE_CACHE_DIR",
+    "ruff": "RUFF_CACHE_DIR",
+    "uv": "UV_CACHE_DIR",
+}
+
 
 def _resolve(kind: str, configured: Path, tmp_path: Path) -> subprocess.CompletedProcess:
     env = {
         **os.environ,
-        f"{kind.upper()}_CACHE_DIR": str(configured),
+        CACHE_VARIABLES[kind]: str(configured),
         "TMPDIR": str(tmp_path),
     }
     return subprocess.run(
@@ -31,7 +37,7 @@ def _resolve(kind: str, configured: Path, tmp_path: Path) -> subprocess.Complete
 
 def test_unwritable_configured_caches_fall_back_to_task_owned_tmp(tmp_path):
     configured = Path("/proc/climate-finance-read-only-cache")
-    for kind in ("uv", "ruff"):
+    for kind in ("uv", "ruff", "dvc"):
         result = _resolve(kind, configured, tmp_path)
         assert result.returncode == 0, result.stderr
         resolved = Path(result.stdout.strip())
@@ -53,6 +59,7 @@ def test_make_exports_resolved_caches_before_tools_start(tmp_path):
         **os.environ,
         "UV_CACHE_DIR": configured,
         "RUFF_CACHE_DIR": configured,
+        "DVC_SITE_CACHE_DIR": configured,
         "TMPDIR": str(tmp_path),
     }
     result = subprocess.run(
@@ -60,7 +67,7 @@ def test_make_exports_resolved_caches_before_tools_start(tmp_path):
             "make",
             "--no-print-directory",
             "--eval",
-            "print-task-caches:\n\t@printf '%s\\n' \"$$UV_CACHE_DIR\" \"$$RUFF_CACHE_DIR\"",
+            "print-task-caches:\n\t@printf '%s\\n' \"$$UV_CACHE_DIR\" \"$$RUFF_CACHE_DIR\" \"$$DVC_SITE_CACHE_DIR\"",
             "print-task-caches",
         ],
         cwd=REPO,
@@ -70,5 +77,5 @@ def test_make_exports_resolved_caches_before_tools_start(tmp_path):
     )
     assert result.returncode == 0, result.stderr
     caches = [Path(line) for line in result.stdout.splitlines()]
-    assert len(caches) == 2
+    assert len(caches) == 3
     assert all(path.is_dir() and path.is_relative_to(tmp_path) for path in caches)
