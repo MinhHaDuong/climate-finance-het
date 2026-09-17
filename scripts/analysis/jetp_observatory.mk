@@ -11,17 +11,23 @@ JETP_M1A_INPUTS := config/jetp-m1a-inventories.json scripts/jetp/build_m1a_inven
     docs/jetp-study/0818-zaf-q1-2026-rows.csv docs/jetp-study/0818-zaf-q1-2026-fields.csv \
     data/jetp/plan-projects.csv \
     data/jetp/releases/vnm-migration-0764.json
-JETP_OBSERVATIONS_DIR := $(JETP_OBSERVATORY)/data/observations
-JETP_OBSERVATIONS_FILES := $(addprefix $(JETP_OBSERVATIONS_DIR)/,ZAF.json IDN.json VNM.json SEN.json)
-JETP_OBSERVATIONS_INPUTS := data/jetp/events.csv data/jetp/implementation-events.csv \
-    data/jetp/project-source-links.csv data/jetp/manifest.csv \
-    scripts/jetp/build_observations.py scripts/jetp/build_observatory.py \
-    scripts/jetp/_observatory_data.py scripts/jetp/_m1a_document_links.py
 JETP_OBSERVATORY_INPUTS := $(addprefix data/jetp/,$(addsuffix .csv,projects events implementation-events sources source-claims project-source-links project-coverage manifest event-timing)) \
     $(wildcard data/jetp/comparison/*.json) \
     $(wildcard data/jetp/editorial/countries/*.md) $(wildcard data/jetp/releases/*/release.json) \
     data/jetp/documents.dvc config/jetp_observatory.yaml \
     scripts/jetp/_observatory_data.py scripts/jetp/build_observatory.py scripts/jetp/_publication.py scripts/jetp/build_observatory_provenance.py
+
+JETP_OBSERVATIONS_DIR := $(JETP_OBSERVATORY)/data/observations
+JETP_OBSERVATIONS_FILES := $(addprefix $(JETP_OBSERVATIONS_DIR)/,ZAF.json IDN.json VNM.json SEN.json)
+# Every table, not only the three served: build_observations.py goes through
+# read_inputs, which loads and cross-validates all nine. And the DVC pointer,
+# because the registry is collapsed by which collection attempt is archived on
+# disk — two served source identifiers carry attempts with different
+# fingerprints, so the snapshot decides a published value.
+JETP_OBSERVATIONS_INPUTS := $(filter data/jetp/%.csv,$(JETP_OBSERVATORY_INPUTS)) \
+    data/jetp/documents.dvc \
+    scripts/jetp/build_observations.py scripts/jetp/build_observatory.py \
+    scripts/jetp/_observatory_data.py scripts/jetp/_m1a_document_links.py
 
 .PHONY: jetp-m1a jetp-observations jetp-observatory jetp-observatory-documents \
     jetp-observatory-refresh jetp-observatory-preview
