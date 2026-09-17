@@ -7,8 +7,11 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
+
 REPO = Path(__file__).resolve().parents[1]
-RESOLVER = REPO / "scripts/resolve_task_cache.py"
+RESOLVER = REPO / ".githooks/resolve-task-cache.py"
+pytestmark = pytest.mark.adherence
 
 
 def _resolve(kind: str, configured: Path, tmp_path: Path) -> subprocess.CompletedProcess:

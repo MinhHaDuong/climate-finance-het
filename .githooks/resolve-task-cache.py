@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 """Select a writable cache directory before Make launches uv or Ruff."""
 
-from __future__ import annotations
-
 import os
 import sys
 import tempfile
@@ -52,7 +50,7 @@ def resolve(kind: str) -> Path:
 
 def main() -> int:
     if len(sys.argv) != 2 or sys.argv[1] not in ENVIRONMENTS:
-        print("usage: resolve_task_cache.py {uv|ruff}", file=sys.stderr)
+        print("usage: resolve-task-cache.py {uv|ruff}", file=sys.stderr)
         return 2
     try:
         selected = resolve(sys.argv[1])

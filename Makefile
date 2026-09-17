@@ -106,7 +106,7 @@ UV_RUN  ?= $(UV) run $(if $(wildcard .env),--env-file .env,)
 # A machine-level cache may exist but be read-only inside an agent sandbox.
 # Resolve both task caches before uv or Ruff starts, retaining the configured
 # path when usable and otherwise falling back to a per-user directory in TMPDIR.
-TASK_CACHE_RESOLVER := scripts/resolve_task_cache.py
+TASK_CACHE_RESOLVER := .githooks/resolve-task-cache.py
 override UV_CACHE_DIR := $(shell python3 $(TASK_CACHE_RESOLVER) uv)
 override RUFF_CACHE_DIR := $(shell python3 $(TASK_CACHE_RESOLVER) ruff)
 export UV_CACHE_DIR RUFF_CACHE_DIR
