@@ -2,12 +2,14 @@
 Title: Publish frozen four-country JETP inventories for M1a
 Created: 2026-09-17
 Author: HDMX-coding-agent
+Closed: Delivered four deterministic frozen source-layer inventories with explicit editions, cutoffs and unknown counts; PR 1422 merged after two-round review and all local gates.
 
 --- log ---
 2026-09-17T08:48Z HDMX-coding-agent created
 
 2026-09-17T09:27Z HDMX-coding-agent implemented — published 2,164 frozen rows across six source layers; deterministic replay, MVP downloads, unknown counts and all required local gates pass
 
+2026-09-17T09:36Z HDMX-coding-agent closed — Delivered four deterministic frozen source-layer inventories with explicit editions, cutoffs and unknown counts; PR 1422 merged after two-round review and all local gates.
 --- body ---
 
 ## Context
