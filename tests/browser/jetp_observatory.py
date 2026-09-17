@@ -76,6 +76,11 @@ def check_site(url, output):
             actual = Path(download.value.path()).read_bytes()
             assert actual == page.request.get(url + f'/data/{view}.json').body()
         for code in ('ZAF', 'IDN', 'VNM', 'SEN'):
+            with page.expect_download() as download:
+                page.locator(f'a[download][href="data/m1a/{code}.csv"]').click()
+            actual = Path(download.value.path()).read_bytes()
+            assert actual == page.request.get(url + f'/data/m1a/{code}.csv').body()
+        for code in ('ZAF', 'IDN', 'VNM', 'SEN'):
             page.goto(url + '/#country/' + code)
             page.wait_for_selector('.markdown h2')
             assert page.locator('.markdown').inner_text().strip()

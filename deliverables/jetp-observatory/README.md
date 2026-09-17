@@ -32,6 +32,9 @@ Routes: `#overview`, `#countries`, `#country/IDN`, `#projects`,
   with instrument, vintage, country, name and additional-finance filters.
 - Downloadable JSON and input SHA-256 hashes. Country prose lives in
   `data/jetp/editorial/countries/`; headline policy is in `config/jetp_observatory.yaml`.
+- Frozen M1a CSV inventories for ZAF, IDN, VNM and SEN. These retain every
+  selected source row, edition and cutoff without merging identities. Their
+  manifest displays field, identity and source-availability unknowns separately.
 
 This is a preview, not the complete public release of 0726 or deployment of 0727.
 There is no pooled disbursement rate or causal acceleration estimate. Headline
@@ -55,3 +58,6 @@ remote. Every build invocation writes exactly one JSON view. Rebuild with
 `make -B jetp-observatory` after changing source inputs; the input hash manifest
 makes changed bytes explicit. A non-null input Git SHA is emitted only when all
 listed input files match that commit. Uncommitted previews rely on file hashes.
+Rebuild the frozen inventories alone with `make jetp-data jetp-m1a`; this is an
+offline replay from pinned local inputs and never refreshes a source. The
+ordinary observatory build serves the committed export without requiring DVC.

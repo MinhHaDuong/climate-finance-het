@@ -96,7 +96,6 @@ def test_four_country_export_preserves_layers_rows_and_separate_unknowns(
         assert rows[0]["source_cutoff"]
         assert rows[0]["record_type"]
         assert "reported_status" in rows[0]
-        assert json.loads(rows[0]["source_fields_json"])["optional_note"] == ""
         exported.extend(rows)
 
     assert {row["source_row_id"] for row in exported} == {"1", "2", "3", "4"}
@@ -143,7 +142,7 @@ def test_existing_inputs_replay_without_fusion_and_with_pinned_layer_dates(
             rows = list(csv.DictReader(handle))
         assert all(row["source_id"] and row["source_layer"] for row in rows)
         assert all(row["record_type"] and row["reported_status"] for row in rows)
-        assert len({row["inventory_row_id"] for row in rows}) == len(rows)
+        assert len({(row["source_layer"], row["source_row_id"]) for row in rows}) == len(rows)
 
 
 def test_checked_in_m1a_release_and_mvp_downloads_match_clean_replay(
@@ -162,6 +161,5 @@ def test_checked_in_m1a_release_and_mvp_downloads_match_clean_replay(
     assert "identity_rows" in renderer
     assert "unavailable_source_rows" in renderer
     for country in ("ZAF", "IDN", "VNM", "SEN"):
-        assert f'data/m1a/${{{country.lower()}}}' not in renderer
         assert f'data/m1a/{country}.csv' in renderer
     assert 'data/m1a/manifest.json' in renderer

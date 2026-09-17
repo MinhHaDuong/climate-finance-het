@@ -16,21 +16,17 @@ from typing import Iterable, Mapping, Sequence
 
 COUNTRIES = ("ZAF", "IDN", "VNM", "SEN")
 FIELDS = (
-    "inventory_row_id",
     "country",
     "source_layer",
     "source_id",
     "source_edition",
     "source_cutoff",
-    "source_document_sha256",
     "source_row_id",
     "label",
     "record_type",
     "reported_status",
     "identity_status",
     "evidence_locator",
-    "unknown_fields",
-    "source_fields_json",
 )
 
 
@@ -48,10 +44,6 @@ class FrozenLayer:
     unavailable_source_rows: int = 0
     input_path: str = "fixture"
     input_sha256: str = "fixture"
-
-
-def _json(value: object) -> str:
-    return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
 
 
 def _unknown_source_fields(fields: Mapping[str, object]) -> list[str]:
@@ -88,21 +80,17 @@ def _render_layer(layer: FrozenLayer) -> tuple[list[dict[str, str]], dict[str, o
         identity_unknowns += identity_status == "unknown"
         output.append(
             {
-                "inventory_row_id": f"{layer.country}:{layer.layer_id}:{row_id}",
                 "country": layer.country,
                 "source_layer": layer.layer_id,
                 "source_id": layer.source_id,
                 "source_edition": layer.edition,
                 "source_cutoff": layer.cutoff,
-                "source_document_sha256": layer.source_sha256,
                 "source_row_id": row_id,
                 "label": str(source_row.get("label", "")),
                 "record_type": str(source_row.get("record_type", "unknown")) or "unknown",
                 "reported_status": str(source_row.get("reported_status", "")),
                 "identity_status": identity_status,
                 "evidence_locator": str(source_row.get("evidence_locator", "")),
-                "unknown_fields": "|".join(unknown_fields),
-                "source_fields_json": _json(dict(source_fields)),
             }
         )
     return output, {
