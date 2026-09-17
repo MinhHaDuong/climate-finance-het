@@ -4,15 +4,13 @@ M1a is a presentation export, not an identity reconciliation.  Every supplied
 source row is written once, with its layer and original payload intact.
 """
 
-from __future__ import annotations
-
 import argparse
 import csv
 import hashlib
 import json
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable, Mapping, Sequence
 
 COUNTRIES = ("ZAF", "IDN", "VNM", "SEN")
 FIELDS = (

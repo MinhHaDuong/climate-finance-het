@@ -12,6 +12,15 @@ from urllib.parse import urlsplit
 from playwright.sync_api import sync_playwright
 
 
+def download_matches(page, url, href):
+    """Assert that a browser download is the byte-identical served artifact."""
+    with page.expect_download() as download:
+        page.locator(f'a[download][href="{href}"]').click()
+    assert Path(download.value.path()).read_bytes() == page.request.get(
+        url + '/' + href
+    ).body()
+
+
 def check_site(url, output):
     """Exercise data navigation, filtering, downloads and mobile layout."""
     with sync_playwright() as playwright:
@@ -71,15 +80,9 @@ def check_site(url, output):
         downloaded = json.loads(Path(download.value.path()).read_text())
         assert len(downloaded['projects']) == count
         for view in ('overview', 'comparison', 'ZAF', 'IDN', 'VNM', 'SEN'):
-            with page.expect_download() as download:
-                page.locator(f'a[download][href="data/{view}.json"]').click()
-            actual = Path(download.value.path()).read_bytes()
-            assert actual == page.request.get(url + f'/data/{view}.json').body()
+            download_matches(page, url, f'data/{view}.json')
         for code in ('ZAF', 'IDN', 'VNM', 'SEN'):
-            with page.expect_download() as download:
-                page.locator(f'a[download][href="data/m1a/{code}.csv"]').click()
-            actual = Path(download.value.path()).read_bytes()
-            assert actual == page.request.get(url + f'/data/m1a/{code}.csv').body()
+            download_matches(page, url, f'data/m1a/{code}.csv')
         for code in ('ZAF', 'IDN', 'VNM', 'SEN'):
             page.goto(url + '/#country/' + code)
             page.wait_for_selector('.markdown h2')
