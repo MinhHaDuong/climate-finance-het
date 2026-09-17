@@ -2,6 +2,7 @@
 Title: Squelettes de livrables LaTeX pour les papiers JETP mesure et econpol
 Created: 2026-09-10
 Author: Minh
+Closed: Delivered by PR #1403: both LaTeX skeletons, variable generation, build wiring and log guard.
 
 --- log ---
 2026-09-10T16:02Z Minh created
@@ -9,6 +10,7 @@ Author: Minh
 2026-09-11T16:18Z HDMX-coding-agent note blocker 0710 closed — Blocked-by removed.
 2026-09-11T18:40Z Minh decision les deux papiers JETP sont rediges en LaTeX simple, pas en Quarto — le ticket est réécrit en conséquence (titre, actions, test, invariants)
 
+2026-09-17T06:57Z HDMX-coding-agent closed — Delivered by PR #1403: both LaTeX skeletons, variable generation, build wiring and log guard.
 --- body ---
 
 ## Context

@@ -1,6 +1,6 @@
 # State
 
-Last updated: 2026-09-16T16:20Z
+Last updated: 2026-09-17T06:58Z
 
 ## Current goal
 
@@ -24,13 +24,13 @@ short comparative paper, without turning documentary stages into treatment
 effects. Programme tracker 0725 remains open.
 
 ## Status
-<!-- generated 2026-09-16T16:20Z · as of 406f06ef -->
-**Tickets:** 57 ready · 69 blocked · 9 awaiting author — `erg ready tickets/` for full list
+<!-- generated 2026-09-17T06:58Z · as of b58d457a -->
+**Tickets:** 50 ready · 47 blocked · 9 awaiting author — `erg ready tickets/` for full list
   next: 0272 Extract shared derive_companion_path() helper f… · 0273 load_cluster_labels() ignores --input, reads cl…
 **Recent (first-parent):**
+  b58d457a chore(pilotage): close delivered work
+  f093a906 Merge pull request #1416 from MinhHaDuong/housekeeping-state-2026-09-16
   406f06ef Merge pull request #1400 from MinhHaDuong/t0814-country-quarter-feasibility
-  59e6f5a8 Merge pull request #1397 from MinhHaDuong/t0729-causal-design
-  c0e7e50f Merge pull request #1348 from MinhHaDuong/t0736-selection-timing-audit
 
 ## Corpus and submissions
 

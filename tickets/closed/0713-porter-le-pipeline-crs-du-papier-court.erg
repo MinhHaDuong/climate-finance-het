@@ -2,11 +2,13 @@
 Title: Porter le pipeline CRS du papier court JETP sous DVC
 Created: 2026-09-11
 Author: Minh
+Closed: Delivered by PR #1404: CRS pipeline ported under DVC with reference replay coverage.
 
 --- log ---
 2026-09-11T16:30Z Minh created — exécution de la décision arbitrée en 0710
 2026-09-11T18:30Z Minh note reference de non-regression repointee vers conception/jetp/ — l'original jetp/ est passe en .bak lecture seule
 
+2026-09-17T06:57Z HDMX-coding-agent closed — Delivered by PR #1404: CRS pipeline ported under DVC with reference replay coverage.
 --- body ---
 
 ## Context

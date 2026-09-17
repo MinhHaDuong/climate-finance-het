@@ -2,12 +2,14 @@
 Title: Reconcile JETP evidence and freeze the comparative analysis snapshot
 Created: 2026-09-15
 Author: Codex with author authorisation
-Blocked-by: 0818
-Blocked-by: 0819
-Blocked-by: 0820
-Blocked-by: 0821
+Closed: Delivered by PR #1403: comparative snapshot frozen with provenance and reconciliation guards.
 
 --- log ---
+2026-09-17T06:57Z HDMX-coding-agent note blocker 0818 closed — Blocked-by removed.
+2026-09-17T06:57Z HDMX-coding-agent note blocker 0819 closed — Blocked-by removed.
+2026-09-17T06:57Z HDMX-coding-agent note blocker 0820 closed — Blocked-by removed.
+2026-09-17T06:57Z HDMX-coding-agent note blocker 0821 closed — Blocked-by removed.
+2026-09-17T06:57Z HDMX-coding-agent closed — Delivered by PR #1403: comparative snapshot frozen with provenance and reconciliation guards.
 --- body ---
 
 ## First test

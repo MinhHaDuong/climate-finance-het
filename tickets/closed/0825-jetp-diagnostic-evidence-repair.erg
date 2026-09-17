@@ -2,9 +2,11 @@
 Title: Repair the eight-case JETP diagnostic evidence contract
 Created: 2026-09-16
 Author: Codex under author-authorised autonomous orchestration
+Closed: Delivered by PR #1403: diagnostic evidence semantics and derived-summary guards repaired.
 
 --- log ---
 2026-09-16T00:00Z Created after Astra escalation of the two-round 0816 review.
+2026-09-17T06:57Z HDMX-coding-agent closed — Delivered by PR #1403: diagnostic evidence semantics and derived-summary guards repaired.
 --- body ---
 
 ## Context
