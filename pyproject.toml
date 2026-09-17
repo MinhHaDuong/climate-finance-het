@@ -70,6 +70,7 @@ dev = [
     "mypy>=1.10",
     "pytest-xdist>=3.5",
     "ruff>=0.11.12,<0.12",
+    "playwright>=1.55",
 ]
 
 [tool.pytest.ini_options]
