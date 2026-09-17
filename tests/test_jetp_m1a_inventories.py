@@ -6,7 +6,13 @@ import csv
 import json
 from pathlib import Path
 
-from jetp.build_m1a_inventories import FrozenLayer, write_inventories
+from jetp.build_m1a_inventories import (
+    FrozenLayer,
+    build_existing_layers,
+    write_inventories,
+)
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def _row(
@@ -99,3 +105,42 @@ def test_four_country_export_preserves_layers_rows_and_separate_unknowns(
     assert manifest["countries"]["SEN"]["unknowns"]["field_values"] >= 1
     assert manifest["countries"]["SEN"]["unknowns"]["unavailable_source_rows"] == 2
     assert json.loads((tmp_path / "manifest.json").read_text()) == manifest
+
+
+def test_existing_inputs_replay_without_fusion_and_with_pinned_layer_dates(
+    tmp_path: Path,
+) -> None:
+    layers = build_existing_layers(ROOT)
+
+    assert {(layer.country, layer.layer_id): len(layer.rows) for layer in layers} == {
+        ("ZAF", "register-q1-2026"): 257,
+        ("IDN", "cipp-2023-priority-projects"): 437,
+        ("IDN", "progress-2025-priority-projects"): 1142,
+        ("VNM", "rmp-2023-inventory"): 279,
+        ("SEN", "investment-plan-annex-submissions"): 38,
+        ("SEN", "investment-plan-quick-wins"): 11,
+    }
+    first = tmp_path / "first"
+    second = tmp_path / "second"
+    manifest = write_inventories(layers, first)
+    write_inventories(build_existing_layers(ROOT), second)
+
+    assert {path.name: path.read_bytes() for path in first.iterdir()} == {
+        path.name: path.read_bytes() for path in second.iterdir()
+    }
+    assert {
+        country: details["row_count"]
+        for country, details in manifest["countries"].items()
+    } == {"ZAF": 257, "IDN": 1579, "VNM": 279, "SEN": 49}
+    assert manifest["countries"]["VNM"]["unknowns"]["identity_rows"] == 181
+    assert all(
+        layer["edition"] and layer["cutoff"] and layer["input_sha256"]
+        for details in manifest["countries"].values()
+        for layer in details["layers"]
+    )
+    for country in ("ZAF", "IDN", "VNM", "SEN"):
+        with (first / f"{country}.csv").open(encoding="utf-8", newline="") as handle:
+            rows = list(csv.DictReader(handle))
+        assert all(row["source_id"] and row["source_layer"] for row in rows)
+        assert all(row["record_type"] and row["reported_status"] for row in rows)
+        assert len({row["inventory_row_id"] for row in rows}) == len(rows)
