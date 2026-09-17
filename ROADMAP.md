@@ -18,14 +18,14 @@ Building toward a book on international climate finance between solidarity and p
   single-donor JETP-effect claim.
 - [x] Accepted the reviewed 0736 selection audit, 0729 causal DEFER and 0814
   feasibility DEFER; do not repeat them as open decisions.
-- [ ] Execute the author-authorised non-causal JETP measurement programme:
+- [x] Built the author-authorised non-causal JETP measurement foundation:
   protocol0816 → source census0817 → country ingestion0818–0821 → frozen
-  snapshot0822 → statistics0730/figure0823 and MVP0824 → short paper0732.
-  Current framing: `conception/jetp-short-paper-framing-2026-09-15.md`.
-  First establish a common operation sample for progression, public/private
-  finance and history under 0816; 0823 combines these in three figure panels.
+  snapshot0822 → statistics0730/figure0823 and MVP0824.
+- [ ] Write the short comparative paper0732 from the frozen progression,
+  public/private finance and operation-history evidence. Current framing:
+  `conception/jetp-short-paper-framing-2026-09-15.md`.
 - [ ] JETP data paper0731 after0726; long political-economy paper0733 with Christophe.
-  LaTeX scaffolds0711 remain required for the two analytical manuscripts.
+  LaTeX scaffolds0711 are available for the two analytical manuscripts.
 
 See `conception/jetp-observatory-and-papers-plan.md`. A null effect is acceptable;
 failed identification returns to an author scope decision. The website and data
