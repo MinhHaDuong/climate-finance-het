@@ -220,18 +220,29 @@ def test_the_shipped_views_carry_every_ledger_row_once() -> None:
     assert served == ledger == 766
 
 
-def test_only_the_seven_known_uncollected_viet_nam_links_lack_a_fingerprint() -> None:
-    # The gap is in the collection registry, not the renderer. Pinning it here
-    # means a new uncollected source cannot reach the page unnoticed.
-    unresolved = []
+def test_a_row_without_a_fingerprint_is_one_of_two_named_collection_gaps() -> None:
+    # Two different absences, and the page cannot show either as a link, so
+    # both are pinned rather than pooled: seven Viet Nam link rows name a
+    # source the registry never recorded at all, and twenty-two rows name one
+    # it recorded but never archived. Neither is a renderer defect, and a new
+    # one cannot reach the page unnoticed.
+    documents = json.loads(
+        (OBSERVATIONS.parent / "documents.json").read_text(encoding="utf-8")
+    )["documents"]
+    registry = index_documents(documents)
+
+    unregistered, unarchived = [], []
     for code in COUNTRIES:
         for entry in json.loads((OBSERVATIONS / f"{code}.json").read_text("utf-8")):
-            if not entry["sha256"]:
-                unresolved.append((code, entry["table"], entry["source_id"]))
+            if entry["sha256"]:
+                continue
+            target = unarchived if entry["source_id"] in registry else unregistered
+            target.append((code, entry["table"], entry["source_id"]))
 
-    assert {code for code, _, _ in unresolved} == {"VNM"}
-    assert {table for _, table, _ in unresolved} == {"project-source-links"}
-    assert len(unresolved) == 7
+    assert {code for code, _, _ in unregistered} == {"VNM"}
+    assert {table for _, table, _ in unregistered} == {"project-source-links"}
+    assert len(unregistered) == 7
+    assert len(unarchived) == 22
 
 
 def test_the_shipped_views_resolve_against_the_shipped_registry() -> None:
@@ -273,8 +284,13 @@ def test_the_javascript_port_serves_the_same_observation_contract() -> None:
     # are shown verbatim: no recoding table may appear beside them.
     for kind in ("financial_event", "implementation_event", "project_source_link"):
         assert kind in renderer
-    assert "#observations-results" in renderer or "observations-results" in renderer
+    # The shared component of ticket 0835, under the id the browser recipe
+    # addresses (#observations-filters, #observations-count, …).
+    assert 'filterTable("observations"' in renderer
+    # No recoding table: the verification words reach the page as the ledger
+    # wrote them, so none of them can be spelled out in the renderer.
     assert "secondary_only" not in renderer
+    assert "official_register" not in renderer
 
 
 def test_the_two_stage_two_products_are_declared_distinct_on_the_page() -> None:

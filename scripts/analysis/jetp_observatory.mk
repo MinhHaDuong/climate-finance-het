@@ -11,18 +11,31 @@ JETP_M1A_INPUTS := config/jetp-m1a-inventories.json scripts/jetp/build_m1a_inven
     docs/jetp-study/0818-zaf-q1-2026-rows.csv docs/jetp-study/0818-zaf-q1-2026-fields.csv \
     data/jetp/plan-projects.csv \
     data/jetp/releases/vnm-migration-0764.json
+JETP_OBSERVATIONS_DIR := $(JETP_OBSERVATORY)/data/observations
+JETP_OBSERVATIONS_FILES := $(addprefix $(JETP_OBSERVATIONS_DIR)/,ZAF.json IDN.json VNM.json SEN.json)
+JETP_OBSERVATIONS_INPUTS := data/jetp/events.csv data/jetp/implementation-events.csv \
+    data/jetp/project-source-links.csv data/jetp/manifest.csv \
+    scripts/jetp/build_observations.py scripts/jetp/build_observatory.py \
+    scripts/jetp/_observatory_data.py scripts/jetp/_m1a_document_links.py
 JETP_OBSERVATORY_INPUTS := $(addprefix data/jetp/,$(addsuffix .csv,projects events implementation-events sources source-claims project-source-links project-coverage manifest event-timing)) \
     $(wildcard data/jetp/comparison/*.json) \
     $(wildcard data/jetp/editorial/countries/*.md) $(wildcard data/jetp/releases/*/release.json) \
     data/jetp/documents.dvc config/jetp_observatory.yaml \
     scripts/jetp/_observatory_data.py scripts/jetp/build_observatory.py scripts/jetp/_publication.py scripts/jetp/build_observatory_provenance.py
 
-.PHONY: jetp-m1a jetp-observatory jetp-observatory-documents jetp-observatory-refresh \
-    jetp-observatory-preview
+.PHONY: jetp-m1a jetp-observations jetp-observatory jetp-observatory-documents \
+    jetp-observatory-refresh jetp-observatory-preview
 jetp-m1a: $(JETP_M1A_FILES)
 
 $(JETP_M1A_FILES) &: $(JETP_M1A_INPUTS)
 	$(PYTHON) scripts/jetp/build_m1a_inventories.py --output-dir $(JETP_M1A_DIR)
+
+# Independent of jetp-observatory, as jetp-m1a already is: the four views are a
+# second reading of the same ledger, not an input of the country JSON.
+jetp-observations: $(JETP_OBSERVATIONS_FILES)
+
+$(JETP_OBSERVATIONS_FILES) &: $(JETP_OBSERVATIONS_INPUTS)
+	$(PYTHON) scripts/jetp/build_observations.py --output-dir $(JETP_OBSERVATIONS_DIR)
 
 jetp-observatory: $(JETP_OBSERVATORY_JSON) $(JETP_OBSERVATORY_EDITION_HISTORY) $(JETP_OBSERVATORY_PROVENANCE)
 
