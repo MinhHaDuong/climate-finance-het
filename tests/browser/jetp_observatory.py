@@ -103,7 +103,9 @@ def check_inventory(page, url):
     # each naming the sub-layer it counts.
     manifest = page.request.get(url + '/data/m1a/manifest.json').json()
     sublayers = manifest['countries']['ZAF']['sublayers']
-    unknowns = page.locator('.metrics .metric')
+    # Scoped to the inventory panel: the ledger observations tab of the same
+    # page carries its own per-table metrics, in the DOM though hidden.
+    unknowns = page.locator('#panel-inventory .metrics .metric')
     assert unknowns.count() == len(sublayers)
     assert sublayers[0]['sublayer_id'] in unknowns.first.inner_text()
 
@@ -127,9 +129,14 @@ def check_observations(page, url):
         metric = page.locator(f'.metric[data-observation-table="{table}"]')
         assert str(len(served)) in metric.inner_text(), table
 
+    # The table is paged at 50 rows, so the count line carries the filtered
+    # total and the tbody carries the page.
     page.locator('#observations-filter-table').select_option('project-source-links')
     links = [row for row in rows if row['table'] == 'project-source-links']
-    assert page.locator('#observations-results tbody tr').count() == len(links)
+    assert page.locator('#observations-results tbody tr').count() == min(50, len(links))
+    assert f'{len(links)} of {len(rows)}' in page.locator(
+        '#observations-count'
+    ).inner_text()
     page.locator('#observations-filter-table').select_option('')
     page.locator('#observations-filter-verification').select_option('official_register')
     registered = [row for row in rows if row['verification'] == 'official_register']
