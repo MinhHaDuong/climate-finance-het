@@ -2,7 +2,6 @@
 Title: Recenser le JETP Sénégal projet par projet
 Created: 2026-09-11
 Author: Minh
-Blocked-by: 0716
 
 --- log ---
 2026-09-11T21:37Z Minh created
@@ -32,6 +31,7 @@ Blocked-by: 0716
 2026-09-13T21:48Z Codex note Final independent audit accepts bounded claims and six WARC payloads;102 JETP tests pass, fast25 package plus1534 tests/10 skipped, lint332/10 skipped; ticket and diff hygiene pass; draft PR1332 extended, direct-source criterion remains open
 2026-09-13T20:26Z Codex note Author requests document-led follow-up: target named contracts, village schedules, original ANER fiches and institutional study records; verify contact routes and prepare precise requests after public-repository checks
 2026-09-13T20:46Z Codex note Document-led follow-up independently confirms Annex23 from final ANER PSD;21 collected /19 central_only /3 blocked,22 unresolved;301 sources /307 observations /257 archived objects verified;103 JETP tests and fast25+1535/10skip plus lint332/10skip pass; six reviewed institutional requests prepared but not sent
+2026-09-17T08:51Z HDMX-coding-agent note blocker 0716 closed — Blocked-by removed.
 --- body ---
 
 ## Context

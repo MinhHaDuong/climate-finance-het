@@ -2,7 +2,6 @@
 Title: Étendre et fermer les trous du ledger JETP Viêt Nam
 Created: 2026-09-11
 Author: Minh
-Blocked-by: 0716
 
 --- log ---
 2026-09-11T21:36Z Minh created
@@ -12,6 +11,7 @@ Blocked-by: 0716
 2026-09-12T13:08Z Codex covered ADB and BII through direct pages, borrower confirmation and the IATI publisher gap without forcing non-JETP leads into the strict portfolio
 2026-09-12T13:32Z Codex closed the country gate: 74 JETP tests and the full lint suite pass; renamed seven ledger builders and split shared Indonesia parsing helpers to satisfy repository hygiene rules
 
+2026-09-17T08:51Z HDMX-coding-agent note blocker 0716 closed — Blocked-by removed.
 --- body ---
 
 ## Context

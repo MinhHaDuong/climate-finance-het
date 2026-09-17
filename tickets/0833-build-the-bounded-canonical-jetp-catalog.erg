@@ -1,0 +1,54 @@
+%erg 0.1
+Title: Build the bounded canonical JETP catalogue for M1b
+Created: 2026-09-17
+Author: HDMX-coding-agent
+Blocked-by: 0832
+
+--- log ---
+2026-09-17T08:48Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+M1b overlays a stable navigation schema on the immutable M1a inventories from
+[[0832]]. It does not manufacture a homogeneous project population. Canonical
+IDs and a small common taxonomy are decided once; only source-documented
+`same_as` and `component_of` relations enter the catalogue. Probable matches
+remain a separate counted result rather than a research backlog. This is the
+first bounded catalogue milestone of [[0725]].
+
+## First test
+
+A fixture contains an exact duplicate documented by a source locator, a
+source-documented component, and a plausible but unproven name/capacity match.
+The build emits respectively `same_as`, `component_of`, and one unchanged row
+in `possible_matches`. The probable match does not alter canonical membership,
+counts or M1a bytes. Removing the evidence locator makes either certain
+relation fail validation.
+
+## Actions
+
+1. Freeze the common record taxonomy and deterministic canonical-ID rules.
+2. Build an overlay catalogue without editing or deleting M1a inventory rows.
+3. Admit only `same_as` and `component_of` with source ID, locator and concise
+   justification.
+4. Export all other candidate relations to a separate `possible_matches` table
+   with country, candidate IDs, reason and evidence references; do not resolve
+   them through new research.
+5. Display catalogue and unresolved-match counts without presenting objects
+   from different source layers as a comparable statistical population.
+
+## Exit criteria
+
+- [ ] Canonical-ID and taxonomy rules are versioned, deterministic and tested
+- [ ] M1a tables remain byte-identical and every catalogue record links back to their rows
+- [ ] Every admitted relation is `same_as` or `component_of` with source ID and locator
+- [ ] `possible_matches` is separate, non-operative and counted by country
+- [ ] No new source acquisition or match-resolution campaign occurs
+- [ ] Catalogue, relation and uncertainty downloads reproduce from the frozen M1a release
+
+## Out of scope
+
+Resolving `possible_matches`, following newer sources, updating lifecycle
+states, reconciling CRS/IATI, payments or physical assets are M2 work.
