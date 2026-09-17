@@ -10,7 +10,12 @@ from pathlib import Path
 
 import yaml
 
-from jetp._observatory_data import historical_record, public_event, timeline
+from jetp._observatory_data import (
+    document_entry,
+    historical_record,
+    public_event,
+    timeline,
+)
 
 ROOT = Path(__file__).resolve().parents[2]
 TABLES = ('projects', 'events', 'implementation-events', 'sources', 'source-claims',
@@ -156,6 +161,25 @@ def comparison_data(root, config):
             'snapshots': snapshots}
 
 
+def documents_data(root, tables):
+    """List every collection attempt, marking availability from the snapshot on disk."""
+    rows = sorted(tables['manifest'], key=lambda row: row['source_id'])
+    snapshot = (Path(root) / 'data/jetp/documents').resolve()
+    available = set()
+    for row in rows:
+        relative = row.get('storage_path') or ''
+        if not relative:
+            continue
+        # A registry path that escapes the snapshot must stop the build rather
+        # than become a link out of the site, as _source_record already does.
+        archived = (snapshot / relative).resolve()
+        if not archived.is_relative_to(snapshot):
+            raise ValueError(f'Unsafe source path: {relative}')
+        if archived.is_file():
+            available.add(relative)
+    return {'documents': [document_entry(row, available) for row in rows]}
+
+
 def edition_history(root):
     from jetp._monthly_editions import release_history
     return release_history(root / 'data/jetp/releases')
@@ -204,7 +228,8 @@ def overview(root, config, tables):
 def main():
     """Write one requested JSON view deterministically."""
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--view', choices=['overview', 'comparison', 'editions', 'ZAF', 'IDN', 'VNM', 'SEN'], required=True)
+    parser.add_argument('--view', choices=['overview', 'comparison', 'documents', 'editions',
+                                           'ZAF', 'IDN', 'VNM', 'SEN'], required=True)
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     config = yaml.safe_load((ROOT / 'config/jetp_observatory.yaml').read_text())
@@ -213,6 +238,8 @@ def main():
         result = overview(ROOT, config, tables)
     elif args.view == 'comparison':
         result = comparison_data(ROOT, config)
+    elif args.view == 'documents':
+        result = documents_data(ROOT, tables)
     elif args.view == 'editions':
         result = edition_history(ROOT)
     else:

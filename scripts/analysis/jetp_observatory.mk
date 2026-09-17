@@ -1,6 +1,6 @@
 # Static observatory handoffs: one invocation, one JSON output; no collection.
 JETP_OBSERVATORY := deliverables/jetp-observatory
-JETP_OBSERVATORY_VIEWS := overview comparison ZAF IDN VNM SEN
+JETP_OBSERVATORY_VIEWS := overview comparison documents ZAF IDN VNM SEN
 JETP_OBSERVATORY_EDITION_HISTORY := $(JETP_OBSERVATORY)/data/editions.json
 JETP_OBSERVATORY_JSON := $(addprefix $(JETP_OBSERVATORY)/data/,$(addsuffix .json,$(JETP_OBSERVATORY_VIEWS)))
 JETP_OBSERVATORY_PROVENANCE := $(JETP_OBSERVATORY)/data/provenance.json
@@ -16,7 +16,8 @@ JETP_OBSERVATORY_INPUTS := $(addprefix data/jetp/,$(addsuffix .csv,projects even
     data/jetp/documents.dvc config/jetp_observatory.yaml \
     scripts/jetp/_observatory_data.py scripts/jetp/build_observatory.py scripts/jetp/_publication.py scripts/jetp/build_observatory_provenance.py
 
-.PHONY: jetp-m1a jetp-observatory jetp-observatory-preview
+.PHONY: jetp-m1a jetp-observatory jetp-observatory-documents jetp-observatory-refresh \
+    jetp-observatory-preview
 jetp-m1a: $(JETP_M1A_FILES)
 
 $(JETP_M1A_FILES) &: $(JETP_M1A_INPUTS)
@@ -30,6 +31,31 @@ $(JETP_OBSERVATORY)/data/%.json: $(JETP_OBSERVATORY_INPUTS)
 $(JETP_OBSERVATORY_PROVENANCE): $(JETP_OBSERVATORY_JSON) $(JETP_OBSERVATORY_INPUTS)
 	$(PYTHON) scripts/jetp/build_observatory_provenance.py --output $@
 
+# Local reading convenience only: never a prerequisite of the JSON build or of
+# the public bundle, so neither depends on whether a snapshot happens to exist.
+# The staged copy is initialized once, not tracked: after a `dvc checkout` moves
+# data/jetp/documents to another revision, `make jetp-observatory-refresh`
+# restages it. A reflink copy would otherwise keep serving the old bytes.
+jetp-observatory-documents:
+	@set -eu; \
+	if [ -e $(JETP_OBSERVATORY)/documents ] || [ -L $(JETP_OBSERVATORY)/documents ]; then exit 0; fi; \
+	if [ ! -d data/jetp/documents ]; then \
+	    echo 'JETP snapshots absent; run make jetp-data to read documents locally.' >&2; \
+	    exit 0; \
+	fi; \
+	stage=$$(mktemp -d $(JETP_OBSERVATORY)/.documents-init.XXXXXX) || exit 0; \
+	trap 'rm -rf -- "$$stage"' 0; \
+	if cp -RL --reflink=always -- data/jetp/documents "$$stage/documents" 2>/dev/null; then \
+	    mv -Tn -- "$$stage/documents" $(JETP_OBSERVATORY)/documents; \
+	else \
+	    ln -s ../../data/jetp/documents $(JETP_OBSERVATORY)/documents; \
+	fi
+
+# The only recursive removal is the staged copy this file created.
+jetp-observatory-refresh:
+	rm -rf -- $(JETP_OBSERVATORY)/documents
+	$(MAKE) jetp-observatory-documents
+
 # Preview only. Publication is a separate reviewed action.
-jetp-observatory-preview: jetp-observatory
+jetp-observatory-preview: jetp-observatory jetp-observatory-documents
 	$(PYTHON) -m http.server 8765 --bind 127.0.0.1 --directory $(JETP_OBSERVATORY)

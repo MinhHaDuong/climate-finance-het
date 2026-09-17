@@ -61,6 +61,24 @@ def timeline(rows):
     return sorted(rows, key=lambda row: (row.get('date') is None, row.get('date') or ''))
 
 
+def document_entry(row, available):
+    """Report a registry row's own collection outcome, never a derived verdict."""
+    storage_path = row.get('storage_path') or ''
+    return {
+        'id': row.get('source_id', ''),
+        'country': row.get('country', ''),
+        'collected_on': row.get('retrieved_at') or None,
+        'status': row.get('status', ''),
+        'content_type': row.get('content_type') or None,
+        'size_bytes': int(row['size_bytes']) if row.get('size_bytes') else None,
+        'sha256': row.get('sha256') or None,
+        'url': row.get('final_url') or None,
+        'error': row.get('error') or None,
+        'local_path': (f'documents/{storage_path}'
+                       if storage_path and storage_path in available else None),
+    }
+
+
 def historical_record(row, country, jetp_date):
     """Select administratively closed pre-JETP energy-related operations."""
     approval = iso_date(row.get('boardapprovaldate'))

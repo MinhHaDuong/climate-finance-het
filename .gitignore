@@ -122,6 +122,13 @@ code/doifetch/
 *.html
 # Hand-authored static observatory entry point.
 !deliverables/jetp-observatory/index.html
+# Local-preview copy of the archived source documents (make jetp-observatory-documents).
+# The deliverables/*/*.pdf globs below are one level too shallow for
+# documents/objects/<prefix>/<sha>.<ext>. Both spellings, as in data/jetp/.gitignore:
+# the trailing slash matches the reflinked directory, the bare name the symlink
+# that the target falls back to where reflinks are unsupported.
+deliverables/jetp-observatory/documents/
+deliverables/jetp-observatory/documents
 *_files/
 **/*.quarto_ipynb
 deliverables/*/*.pdf

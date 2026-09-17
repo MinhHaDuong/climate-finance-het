@@ -19,7 +19,7 @@ Use `PYTHON=.venv/bin/python` on the make commands to reuse the installed
 interpreter when the machine's uv cache is unavailable.
 
 Routes: `#overview`, `#countries`, `#country/IDN`, `#projects`,
-`#project/<project_id>`, `#comparison`, `#methods`. Country-filter links use
+`#project/<project_id>`, `#comparison`, `#documents`, `#methods`. Country-filter links use
 `#projects?country=IDN` and `#comparison?country=IDN`.
 
 ## What is included
@@ -32,6 +32,15 @@ Routes: `#overview`, `#countries`, `#country/IDN`, `#projects`,
   with instrument, vintage, country, name and additional-finance filters.
 - Downloadable JSON and input SHA-256 hashes. Country prose lives in
   `data/jetp/editorial/countries/`; headline policy is in `config/jetp_observatory.yaml`.
+- A Documents page listing every collection attempt in `data/jetp/manifest.csv`
+  with its status, content type, size and origin URL. The archived copies
+  themselves are staged locally by `make jetp-observatory-documents` into
+  `documents/`. That staging happens once; after a `dvc checkout` moves the
+  snapshot to another revision, `make jetp-observatory-refresh` restages it.
+  `documents/` is local-preview only: it is excluded from the bundle and
+  from any public release, which carry the registry and the origin URL alone.
+  `scripts/jetp/_public_release.py` copies the whole tree at a pinned commit and
+  does not go through that exclusion; it is out of scope until the next edition.
 - Frozen M1a CSV inventories for ZAF, IDN, VNM and SEN. These retain every
   selected source row, edition and cutoff without merging identities. Their
   manifest displays field, identity and source-availability unknowns separately.

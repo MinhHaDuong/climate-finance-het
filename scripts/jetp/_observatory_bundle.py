@@ -12,12 +12,14 @@ import yaml
 from jetp._bundle_inventory import (
     EXTRA_INPUTS,
     SITE,
+    SITE_EXCLUDE,
     VIEWS,
     build_input_inventory,
     digest,
     git,
     input_inventory,
     routes,
+    site_files,
     source_inventory,
 )
 from jetp.build_observatory_provenance import build as build_publication_provenance
@@ -90,7 +92,7 @@ def _write_bundle(output, manifest, payloads, *, replace=True):
 def _capture(root, site, source_root, include_sources):
     """Collect bytes once, so the inventory describes exactly what is archived."""
     payloads = {'site/' + path.relative_to(site).as_posix(): path.read_bytes()
-                for path in sorted(site.rglob('*')) if path.is_file()}
+                for path in site_files(site)}
     site_inventory = _validate_site(payloads)
     tables = input_inventory(root, payloads)
     build_inputs = build_input_inventory(root, payloads)
@@ -184,6 +186,7 @@ def _build_view(root, view, output):
     from jetp.build_observatory import (
         comparison_data,
         country_data,
+        documents_data,
         overview,
         read_inputs,
     )
@@ -194,6 +197,8 @@ def _build_view(root, view, output):
         result = overview(root, config, tables)
     elif view == 'comparison':
         result = comparison_data(root, config)
+    elif view == 'documents':
+        result = documents_data(root, tables)
     else:
         result = country_data(root, view, config, tables)
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -201,14 +206,16 @@ def _build_view(root, view, output):
 
 
 def build_candidate(root, output, *, accepted, builder=None, source_root=None, include_sources=False):
-    """Build all six views in isolation; failures preserve both archive destinations."""
+    """Build every view in isolation; failures preserve both archive destinations."""
     root = Path(root).resolve()
     _protect_output(root, output, inputs=(accepted,))
     _protect_replacement(output, _candidate_output(output))
     _read_bundle(accepted)
     with tempfile.TemporaryDirectory() as scratch:
         site = Path(scratch) / 'site'
-        shutil.copytree(root / SITE, site)
+        # Skip the local document staging at the copy, not only at the capture:
+        # it can hold the whole archived snapshot.
+        shutil.copytree(root / SITE, site, ignore=shutil.ignore_patterns(*SITE_EXCLUDE))
         for view in VIEWS:
             (builder or _build_view)(root, view, site / 'data' / f'{view}.json')
         # Older accepted bundles remain renderer-compatible.  A publication-aware

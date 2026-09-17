@@ -30,7 +30,7 @@ const STAGE_COLOURS = {
   Need: "#bc9c7d",
   "Not documented": "#dce0d5",
 };
-let overview, countries, comparison, editions, evidence, m1a, projects;
+let overview, countries, comparison, editions, evidence, m1a, projects, documentsData;
 const country = (code) => overview.countries.find((c) => c.code === code);
 const undisclosedCount = () =>
   overview.countries.reduce((total, c) => total + c.undisclosed, 0);
@@ -134,6 +134,190 @@ function options(values, selected) {
         `<option value="${esc(v)}" ${v === selected ? "selected" : ""}>${esc(v)}</option>`,
     )
     .join("");
+}
+/* filterTable(id, rows, opts) -> { head, mount }
+ *   id            unique DOM id prefix, e.g. "documents"
+ *   rows          full unfiltered row array (the caller already scoped the data)
+ *   opts.facets   [{ key, label, options, all }] one <select> per facet; a row
+ *                 matches when row[facet.key] === the selected value. `options`
+ *                 is the caller's already-deduped, sorted value list; `all` is
+ *                 the optional label of the unfiltered choice.
+ *   opts.search   { placeholder, text(row), label } where text(row) returns the
+ *                 lower-cased haystack for the free-text field.
+ *   opts.columns  [{ label, cell(row) }] one <th>/<td> pair each; `cell`
+ *                 returns an already-esc()-escaped HTML string.
+ *   opts.empty    message for the `.empty` fallback when no row matches.
+ *   opts.resultNoun  plural noun for the count line, e.g. "sources".
+ *   opts.pageSize    rows per page; 0 or absent renders every matching row.
+ * head: HTML string (filters block + `#<id>-count` aria-live paragraph +
+ *   `#<id>-results` div) to splice into main.innerHTML.
+ * mount(): call once head is in the DOM. It wires the listeners, resets to
+ *   page 1 on every filter change, and renders the first pass.
+ *
+ * cataloguePage and comparisonPage keep their hand-written filters. Retrofitting
+ * them would widen this API before its first reuse: the catalogue needs facet
+ * options whose value and label differ (country code vs name), array-membership
+ * matching (funders) and preselection from the URL; the comparison needs a
+ * numeric threshold facet, a negated one and a summary block above the table.
+ * The narrow shape is what 0836, 0838 and 0839 were promised. Ticket 0852 revisits
+ * the retrofit once 0836 has exercised this API.
+ */
+function filterTable(id, rows, opts) {
+  const facets = opts.facets || [];
+  const pageSize = opts.pageSize || 0;
+  let page = 1;
+  const searchField = opts.search
+    ? `<label class="search">${esc(opts.search.label || opts.search.placeholder)}<input id="${id}-search" type="search" placeholder="${esc(opts.search.placeholder)}"></label>`
+    : "";
+  const head =
+    `<div class="filters" id="${id}-filters">${searchField}${facets
+      .map(
+        (f) =>
+          `<label>${esc(f.label)}<select id="${id}-filter-${f.key}"><option value="">${esc(f.all || "All " + f.label.toLowerCase())}</option>${options(f.options)}</select></label>`,
+      )
+      .join(
+        "",
+      )}</div><p id="${id}-count" class="result-count" aria-live="polite"></p><div id="${id}-results"></div>`;
+  const table = (visible) =>
+    `<div class="table-wrap"><table><thead><tr>${opts.columns
+      .map((c) => `<th>${esc(c.label)}</th>`)
+      .join("")}</tr></thead><tbody>${visible
+      .map(
+        (row) =>
+          `<tr>${opts.columns.map((c) => `<td>${c.cell(row)}</td>`).join("")}</tr>`,
+      )
+      .join("")}</tbody></table></div>`;
+  const pager = (pages) =>
+    pages < 2
+      ? ""
+      : `<div class="downloads"><button type="button" class="button light" id="${id}-prev"${page === 1 ? " disabled" : ""}>← Previous</button><span>Page ${page} of ${pages}</span><button type="button" class="button light" id="${id}-next"${page === pages ? " disabled" : ""}>Next →</button></div>`;
+  const matching = () => {
+    const q = opts.search
+      ? document.getElementById(id + "-search").value.toLowerCase()
+      : "";
+    const chosen = facets.map((f) => [
+      f.key,
+      document.getElementById(`${id}-filter-${f.key}`).value,
+    ]);
+    return rows.filter(
+      (row) =>
+        (!q || opts.search.text(row).includes(q)) &&
+        chosen.every(([key, value]) => !value || row[key] === value),
+    );
+  };
+  const draw = () => {
+    const filtered = matching();
+    const pages = pageSize
+      ? Math.max(1, Math.ceil(filtered.length / pageSize))
+      : 1;
+    if (page > pages) page = pages;
+    const visible = pageSize
+      ? filtered.slice((page - 1) * pageSize, page * pageSize)
+      : filtered;
+    document.getElementById(id + "-count").textContent =
+      `${filtered.length} of ${rows.length} ${opts.resultNoun}` +
+      (pages > 1 ? ` · page ${page} of ${pages}` : "");
+    document.getElementById(id + "-results").innerHTML = filtered.length
+      ? table(visible) + pager(pages)
+      : `<div class="empty">${esc(opts.empty)}</div>`;
+    const step = (delta) => () => {
+      page += delta;
+      draw();
+    };
+    const prev = document.getElementById(id + "-prev");
+    const next = document.getElementById(id + "-next");
+    if (prev) prev.addEventListener("click", step(-1));
+    if (next) next.addEventListener("click", step(1));
+  };
+  const mount = () => {
+    document
+      .querySelectorAll(`#${id}-filters input,#${id}-filters select`)
+      .forEach((el) =>
+        el.addEventListener(el.tagName === "INPUT" ? "input" : "change", () => {
+          page = 1;
+          draw();
+        }),
+      );
+    draw();
+  };
+  return { head, mount };
+}
+const documentHref = (entry, page) =>
+  entry.local_path ? entry.local_path + (page ? "#page=" + page : "") : null;
+const byteSize = (n) =>
+  n == null
+    ? "Not recorded"
+    : n >= 1e6
+      ? (n / 1e6).toFixed(1) + " MB"
+      : Math.max(1, Math.round(n / 1000)) + " kB";
+function documentsPage() {
+  const rows = documentsData.documents;
+  const values = (key) =>
+    [...new Set(rows.map((r) => r[key]).filter(Boolean))].sort();
+  const archived = (r) => {
+    const href = documentHref(r);
+    return href
+      ? `<a href="${esc(href)}" data-document-id="${esc(r.id)}" target="_blank" rel="noopener">Open archived copy ↗</a>`
+      : `<span class="note">${esc(r.error || "Not in the local snapshot")}</span>`;
+  };
+  const table = filterTable("documents", rows, {
+    facets: [
+      {
+        key: "country",
+        label: "Country",
+        all: "All four countries",
+        options: values("country"),
+      },
+      {
+        key: "status",
+        label: "Collection status",
+        all: "All collection outcomes",
+        options: values("status"),
+      },
+      {
+        key: "content_type",
+        label: "Content type",
+        all: "All content types",
+        options: values("content_type"),
+      },
+    ],
+    search: {
+      label: "Search source identifiers and addresses",
+      placeholder: "Try jet-investment-register, .pdf…",
+      text: (r) => (r.id + " " + (r.url || "")).toLowerCase(),
+    },
+    columns: [
+      { label: "Source", cell: (r) => `<code>${esc(r.id)}</code>` },
+      {
+        label: "Country",
+        cell: (r) => esc(country(r.country)?.short || r.country),
+      },
+      { label: "Collection", cell: (r) => pill(r.status) },
+      { label: "Content type", cell: (r) => esc(r.content_type || "Not recorded") },
+      { label: "Size", cell: (r) => esc(byteSize(r.size_bytes)) },
+      { label: "Archived copy", cell: archived },
+      {
+        label: "Origin",
+        cell: (r) =>
+          r.url
+            ? `<a href="${esc(cleanURL(r.url))}" target="_blank" rel="noopener">Publisher ↗</a>`
+            : '<span class="note">No address recorded</span>',
+      },
+    ],
+    empty: "No sources match these filters.",
+    resultNoun: "sources",
+    pageSize: 50,
+  });
+  main.innerHTML =
+    header(
+      "Source documents",
+      "Every collection attempt, kept on the record",
+      "The collection registry lists each source we tried to retrieve, with the outcome recorded at the time. A blocked or failed attempt stays listed; it is not evidence that the document does not exist.",
+    ) +
+    `<div class="callout"><strong>Archived copies open locally only.</strong> The preview serves them from <code>documents/</code> after <code>make jetp-observatory-documents</code>. The published edition carries this registry and the publisher's address, never the archived bytes; source documents retain their publishers' rights.</div>` +
+    table.head +
+    `<div class="downloads"><a class="button light" href="data/documents.json" download>Download the collection registry ↓</a></div>`;
+  table.mount();
 }
 function cataloguePage(params) {
   main.innerHTML =
@@ -309,7 +493,7 @@ function m1aSection() {
       return `<tr><td>${esc(country(code)?.name || code)}</td><td>${fmt(item.row_count)}</td><td>${layers}</td><td>${fmt(item.unknowns.field_values)}</td><td>${fmt(item.unknowns.identity_rows)}</td><td>${fmt(item.unknowns.unavailable_source_rows)}</td></tr>`;
     })
     .join("");
-  return `<h2>Frozen M1a source inventories</h2><p>These four tables preserve every row of six selected source layers before canonical matching. They are frozen inventories, not a live status service, and their row counts are not comparable project totals.</p><div class="table-wrap"><table><thead><tr><th>Country</th><th>Rows</th><th>Source edition · cutoff</th><th>Unknown fields</th><th>Unknown identities</th><th>Unavailable source rows</th></tr></thead><tbody>${rows}</tbody></table></div><div class="downloads"><a class="button light" href="data/m1a/ZAF.csv" download>South Africa M1a ↓</a><a class="button light" href="data/m1a/IDN.csv" download>Indonesia M1a ↓</a><a class="button light" href="data/m1a/VNM.csv" download>Viet Nam M1a ↓</a><a class="button light" href="data/m1a/SEN.csv" download>Senegal M1a ↓</a><a class="button light" href="data/m1a/manifest.json" download>M1a manifest ↓</a></div><p>The manifest pins input and source hashes and reports <code>field_values</code>, <code>identity_rows</code> and <code>unavailable_source_rows</code> separately for every layer.</p>`;
+  return `<h2>Frozen M1a source inventories</h2><p>These four tables preserve every row of six selected extraction sub-layers before canonical matching. They are frozen inventories, not a live status service, and their row counts are not comparable project totals.</p><div class="table-wrap"><table><thead><tr><th>Country</th><th>Rows</th><th>Source edition · cutoff</th><th>Unknown fields</th><th>Unknown identities</th><th>Unavailable source rows</th></tr></thead><tbody>${rows}</tbody></table></div><div class="downloads"><a class="button light" href="data/m1a/ZAF.csv" download>South Africa M1a ↓</a><a class="button light" href="data/m1a/IDN.csv" download>Indonesia M1a ↓</a><a class="button light" href="data/m1a/VNM.csv" download>Viet Nam M1a ↓</a><a class="button light" href="data/m1a/SEN.csv" download>Senegal M1a ↓</a><a class="button light" href="data/m1a/manifest.json" download>M1a manifest ↓</a></div><p>The manifest pins input and source hashes and reports <code>field_values</code>, <code>identity_rows</code> and <code>unavailable_source_rows</code> separately for every layer.</p>`;
 }
 function methodsPage() {
   main.innerHTML =
@@ -318,7 +502,7 @@ function methodsPage() {
       "Evidence you can follow.",
       "A transparent view of four partnerships, with source-specific dates, explicit gaps and downloadable observations.",
     ) +
-    `<div class="method-list"><h2>What this first edition contains</h2><p>${projects.length} named portfolio records, ${undisclosedCount()} unpublished identity slots, ${overview.source_count} curated sources and ${comparison.projects.length} historical closed operations. The named records include programmes and components; they are not ${projects.length} distinct physical assets. Evidence cutoff: ${date(overview.provenance.cutoff)}. National snapshots retain their own dates.</p>${m1aSection()}<h2>Three different kinds of progress</h2><p>Financial observations distinguish needs, announcements, memoranda, approvals, signatures and disbursements. Implementation observations are a separate layer. Documentary coverage describes what we could locate, not what a project achieved. Register-derived dates are not presented as verified signature dates.</p><h2>How the aggregate views work</h2><p>Headline financing amounts reproduce attributed national reports; they are not computed by adding project events. The stages differ across countries, so headline amounts must not be pooled. Portfolio bars count each named registry identity once and assign its most advanced coded financing evidence; multiple tranches may be at different stages. “Not coded in ledger” does not mean “no finance”. No project-level disbursement total is available in this release.</p><h2>Historical comparison: useful context, not an effect estimate</h2><p>${esc(comparison.method)} ${esc(comparison.date_note)} The API may contain older status snapshots; retrieval date is not the date of its latest substantive update. Energy-related includes mixed-sector operations, and additional-financing records may refer to the same underlying investment. Comparisons of preparation speed require a credible causal design from the separate lifecycle research programme.</p><h2>Dates, conflicts and missing observations</h2><p>Event dates, date intervals, dated status reports and collection dates remain distinct. Timing is explicitly adjudicated independently of source authority; unreviewed timing is labelled and cannot supply an event date. Source cards retain provisional, contextual and confirmed link decisions. Historical downloads preserve each acquisition date and query-page hash; the substantive update date is unknown unless separately documented. Conflicting source values are preserved in notes; we do not average them. Unpublished identities appear in country disclosure counts rather than fabricated project pages. Original-currency amounts remain canonical. Missing payment data is not a zero payment.</p><h2>Download this snapshot</h2><div class="downloads">${overview.countries.map((c) => `<a class="button light" href="data/${c.code}.json" download>${esc(c.name)} ↓</a>`).join("")}<a class="button light" href="data/comparison.json" download>Historical cohort ↓</a><a class="button light" href="data/overview.json" download>Overview & input hashes ↓</a><a class="button light" href="data/provenance.json" download>Claim provenance & glossary ↓</a></div><p>JSON downloads include project records, source URLs and locators. Input SHA-256 hashes identify the files used to build this preview. This is a local preview, not yet a formally deposited monthly release. Original source documents retain their publishers' rights; their bulk redistribution is not implied.</p><h2>Reproducible, without a live database</h2><p>Markdown provides editorial context; CSV registries provide structured evidence. The static website reads generated JSON. DVC preserves the research source archive, independently of the website. No visitor needs access to the archive or a database service.</p><p class="note">Input Git revision: <code>${esc(overview.provenance.input_git_sha || "Uncommitted preview inputs; use the file hashes")}</code><br>Edition: ${esc(overview.provenance.edition)}</p></div>`;
+    `<div class="method-list"><h2>What this first edition contains</h2><p>${projects.length} named portfolio records, ${undisclosedCount()} unpublished identity slots, ${overview.source_count} curated sources and ${comparison.projects.length} historical closed operations. The named records include programmes and components; they are not ${projects.length} distinct physical assets. Evidence cutoff: ${date(overview.provenance.cutoff)}. National snapshots retain their own dates.</p>${m1aSection()}<h2>Three different kinds of progress</h2><p>Financial observations distinguish needs, announcements, memoranda, approvals, signatures and disbursements. Implementation observations are a separate layer. Documentary coverage describes what we could locate, not what a project achieved. Register-derived dates are not presented as verified signature dates.</p><h2>How the aggregate views work</h2><p>Headline financing amounts reproduce attributed national reports; they are not computed by adding project events. The stages differ across countries, so headline amounts must not be pooled. Portfolio bars count each named registry identity once and assign its most advanced coded financing evidence; multiple tranches may be at different stages. “Not coded in ledger” does not mean “no finance”. No project-level disbursement total is available in this release.</p><h2>Historical comparison: useful context, not an effect estimate</h2><p>${esc(comparison.method)} ${esc(comparison.date_note)} The API may contain older status snapshots; retrieval date is not the date of its latest substantive update. Energy-related includes mixed-sector operations, and additional-financing records may refer to the same underlying investment. Comparisons of preparation speed require a credible causal design from the separate lifecycle research programme.</p><h2>Dates, conflicts and missing observations</h2><p>Event dates, date intervals, dated status reports and collection dates remain distinct. Timing is explicitly adjudicated independently of source authority; unreviewed timing is labelled and cannot supply an event date. Source cards retain provisional, contextual and confirmed link decisions. Historical downloads preserve each acquisition date and query-page hash; the substantive update date is unknown unless separately documented. Conflicting source values are preserved in notes; we do not average them. Unpublished identities appear in country disclosure counts rather than fabricated project pages. Original-currency amounts remain canonical. Missing payment data is not a zero payment.</p><h2>Download this snapshot</h2><div class="downloads">${overview.countries.map((c) => `<a class="button light" href="data/${c.code}.json" download>${esc(c.name)} ↓</a>`).join("")}<a class="button light" href="data/comparison.json" download>Historical cohort ↓</a><a class="button light" href="data/documents.json" download>Collection registry ↓</a><a class="button light" href="data/overview.json" download>Overview & input hashes ↓</a><a class="button light" href="data/provenance.json" download>Claim provenance & glossary ↓</a></div><p>JSON downloads include project records, source URLs and locators. Input SHA-256 hashes identify the files used to build this preview. This is a local preview, not yet a formally deposited monthly release. Original source documents retain their publishers' rights; their bulk redistribution is not implied.</p><h2>Reproducible, without a live database</h2><p>Markdown provides editorial context; CSV registries provide structured evidence. The static website reads generated JSON. DVC preserves the research source archive, independently of the website. No visitor needs access to the archive or a database service.</p><p class="note">Input Git revision: <code>${esc(overview.provenance.input_git_sha || "Uncommitted preview inputs; use the file hashes")}</code><br>Edition: ${esc(overview.provenance.edition)}</p></div>`;
 }
 function notFound() {
   main.innerHTML =
@@ -347,6 +531,7 @@ function render() {
   else if (page === "comparison") comparisonPage(params);
   else if (page === "evidence") evidencePage();
   else if (page === "editions") editionHistoryPage();
+  else if (page === "documents") documentsPage();
   else methodsPage();
   document.title =
     (page === "overview"
@@ -368,9 +553,10 @@ async function start() {
       if (!response.ok) throw Error(`${file}: ${response.status}`);
       return response.json();
     };
-    [overview, comparison, editions, evidence, m1a] = await Promise.all([
+    [overview, comparison, documentsData, editions, evidence, m1a] = await Promise.all([
       load("overview"),
       load("comparison"),
+      load("documents"),
       load("editions").catch(() => ({ editions: [] })),
       load("reviewed-evidence").catch(() => ({ records: [], analytical_snapshot: { status: "not available" } })),
       load("m1a/manifest"),
