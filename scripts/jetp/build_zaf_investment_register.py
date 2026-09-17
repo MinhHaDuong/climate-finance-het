@@ -81,23 +81,57 @@ def _project_id(unique_id: str) -> str:
     return f"zaf-register-{slug}"
 
 
-def parse_register_html(document: str) -> list[dict]:
-    """Parse material project rows from one official dashboard snapshot."""
+def _is_material_row(row) -> bool:
+    """Tell a project row from the dashboard's own aggregate and filler rows."""
+    return (
+        isinstance(row, dict)
+        and isinstance(row.get("Unique ID"), str)
+        and bool(row.get("Project Name"))
+        and bool(row.get("Portfolios"))
+    )
+
+
+def _raw_register_rows(document: str) -> list:
+    """Return the embedded ``Overall - Data`` array exactly as the page ships it."""
     match = REGISTER_PATTERN.search(html.unescape(document))
     if not match:
         raise ValueError("official register JSON array not found")
     try:
-        raw_rows = json.loads(match.group(1))
+        return json.loads(match.group(1))
     except json.JSONDecodeError as exc:
         raise ValueError("official register JSON array is invalid") from exc
-    rows = [
-        row
-        for row in raw_rows
-        if isinstance(row, dict)
-        and isinstance(row.get("Unique ID"), str)
-        and row.get("Project Name")
-        and row.get("Portfolios")
-    ]
+
+
+def excluded_register_rows(document: str) -> list[dict]:
+    """Name every raw entry the material-row predicate drops, in source types.
+
+    Values are reported as the JSON carries them — an ``int`` stays an ``int``,
+    an absent field stays ``None``.  They never pass through ``_text()``: the
+    exclusion reason is the source type itself, so coercing it here would erase
+    the evidence.
+    """
+    excluded = []
+    for index, row in enumerate(_raw_register_rows(document)):
+        if _is_material_row(row):
+            continue
+        fields = row if isinstance(row, dict) else {}
+        excluded.append(
+            {
+                "raw_index": index,
+                "ordinal": index + 1,
+                "unique_id_raw": fields.get("Unique ID"),
+                "project_name_raw": fields.get("Project Name"),
+                "portfolios_raw": fields.get("Portfolios"),
+                "amount_reported_usd_raw": fields.get("Total US$"),
+                "amount_reported_zar_raw": fields.get("Total ZAR"),
+            }
+        )
+    return excluded
+
+
+def parse_register_html(document: str) -> list[dict]:
+    """Parse material project rows from one official dashboard snapshot."""
+    rows = [row for row in _raw_register_rows(document) if _is_material_row(row)]
     identifiers = [_text(row["Unique ID"]) for row in rows]
     duplicates = sorted(
         {identifier for identifier in identifiers if identifiers.count(identifier) > 1}

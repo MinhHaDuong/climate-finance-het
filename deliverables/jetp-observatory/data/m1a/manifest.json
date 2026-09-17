@@ -6,6 +6,9 @@
         {
           "cutoff": "2023-11-21",
           "edition": "CIPP 2023",
+          "excluded_source_rows": [],
+          "fields_input_path": "",
+          "fields_input_sha256": "",
           "input_path": "data/jetp/plan-projects.csv",
           "input_sha256": "723b24f1e67da7420122bede26a997b002d2ff9683f3e7623da8c74f372ba5ca",
           "layer_id": "cipp-2023-priority-projects",
@@ -21,6 +24,9 @@
         {
           "cutoff": "2025-11-30",
           "edition": "Progress Report 2025",
+          "excluded_source_rows": [],
+          "fields_input_path": "",
+          "fields_input_sha256": "",
           "input_path": "data/jetp/plan-projects.csv",
           "input_sha256": "723b24f1e67da7420122bede26a997b002d2ff9683f3e7623da8c74f372ba5ca",
           "layer_id": "progress-2025-priority-projects",
@@ -48,6 +54,9 @@
         {
           "cutoff": "2025-03-17",
           "edition": "Investment Plan Annexes 2025",
+          "excluded_source_rows": [],
+          "fields_input_path": "",
+          "fields_input_sha256": "",
           "input_path": "data/jetp/plan-projects.csv",
           "input_sha256": "723b24f1e67da7420122bede26a997b002d2ff9683f3e7623da8c74f372ba5ca",
           "layer_id": "investment-plan-annex-submissions",
@@ -63,6 +72,9 @@
         {
           "cutoff": "2025-04-02",
           "edition": "Investment Plan 2025",
+          "excluded_source_rows": [],
+          "fields_input_path": "",
+          "fields_input_sha256": "",
           "input_path": "data/jetp/plan-projects.csv",
           "input_sha256": "723b24f1e67da7420122bede26a997b002d2ff9683f3e7623da8c74f372ba5ca",
           "layer_id": "investment-plan-quick-wins",
@@ -90,6 +102,9 @@
         {
           "cutoff": "2023-12-01",
           "edition": "Resource Mobilisation Plan 2023",
+          "excluded_source_rows": [],
+          "fields_input_path": "",
+          "fields_input_sha256": "",
           "input_path": "data/jetp/releases/vnm-migration-0764.json",
           "input_sha256": "ef7538d2af534d31877634bd42f28c5fae1c20b192e6647fc030146a7492eb34",
           "layer_id": "rmp-2023-inventory",
@@ -117,6 +132,19 @@
         {
           "cutoff": "2026-03-31",
           "edition": "Q1 2026",
+          "excluded_source_rows": [
+            {
+              "amount_reported_usd_raw": 3953240805.08088,
+              "amount_reported_zar_raw": 69917380338.46097,
+              "ordinal": 258,
+              "portfolios_raw": null,
+              "project_name_raw": null,
+              "raw_index": 257,
+              "unique_id_raw": 248
+            }
+          ],
+          "fields_input_path": "docs/jetp-study/0818-zaf-q1-2026-fields.csv",
+          "fields_input_sha256": "78ab407c06752ef502dccfa83e6bcf736a597e760e65d52553a1eba8d755fb14",
           "input_path": "docs/jetp-study/0818-zaf-q1-2026-rows.csv",
           "input_sha256": "f2ababa6b9c006a133aea32dad73e50c4bfa05f03d9b1b9575a94ffcd596273f",
           "layer_id": "register-q1-2026",
@@ -131,7 +159,7 @@
         }
       ],
       "row_count": 257,
-      "sha256": "7e52d487d634e6e9ab059caaac230883bbddd3579cece28ebb44c591a3b8eb16",
+      "sha256": "b102d32bb97757001cbce209bc73bf73b0c53137718cc3b77167e273afc5daed",
       "unknowns": {
         "field_values": 540,
         "identity_rows": 0,
