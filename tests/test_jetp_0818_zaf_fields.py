@@ -222,3 +222,30 @@ def test_report_names_the_excluded_row_and_its_python_type(tmp_path: Path) -> No
     assert "200.5" in report
     assert "ordinal 3" in report
     assert "raw index 2" in report
+
+
+def test_excluded_section_reads_portfolios_from_its_own_raw_field() -> None:
+    """`Project Name` and `Portfolios` are two fields, so they render from two.
+
+    The pinned snapshot leaves both ``None`` on the aggregate line, which makes
+    a single-source rendering indistinguishable from a correct one on today's
+    data.  The entry below therefore carries two distinct non-``None`` values.
+    """
+    from jetp.build_0818_zaf_q1_reconciliation import _excluded_section
+
+    excluded = [
+        {
+            "raw_index": 2,
+            "ordinal": 3,
+            "unique_id_raw": 248,
+            "project_name_raw": "Overall total",
+            "portfolios_raw": "All portfolios",
+            "amount_reported_usd_raw": 100.5,
+            "amount_reported_zar_raw": 200.5,
+        }
+    ]
+
+    section = "\n".join(_excluded_section([], excluded))
+
+    assert "Overall total" in section
+    assert "All portfolios" in section
