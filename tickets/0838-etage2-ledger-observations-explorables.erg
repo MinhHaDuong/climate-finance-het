@@ -1,0 +1,86 @@
+%erg 0.1
+Title: Étage 2 : observations atomiques du ledger explorables dans le MVP
+Created: 2026-09-17
+Author: HDMX-coding-agent
+Blocked-by: 0836
+
+--- log ---
+2026-09-17T16:56Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Quatrième enfant de [[0834]]. L'étage 2 a un second produit : les observations
+atomiques du ledger 0717–0720, comptées 1 740 dans `reviewed-evidence.json`
+sous `structured_atomic_observations` avec le statut « not deployed ». Elles
+proviennent de `data/jetp/events.csv` (380 événements financiers),
+`implementation-events.csv` (71), `project-source-links.csv` (315) et
+`idn-portfolio-observations.csv`, chacune avec `source_id`, empreinte du
+document et localisateur.
+
+Les vues pays actuelles montrent des faits construits depuis ces lignes sans
+que l'on puisse les voir. Ce ticket les expose comme deuxième tableau
+d'étage 2, distinct des inventaires M1a de [[0836]] : deux extractions des
+mêmes documents sous deux schémas, présentées séparément, jamais additionnées.
+
+## Relevant files
+
+- `data/jetp/events.csv`, `implementation-events.csv`, `project-source-links.csv`, `idn-portfolio-observations.csv` — observations atomiques
+- `data/jetp/README.md`, `data/jetp/decisions.md` — contrat du ledger
+- `scripts/jetp/build_observatory.py`, `_observatory_data.py` — génération des vues ; `evidence_depth` dans reviewed-evidence
+- `deliverables/jetp-observatory/app.js` — composant de tableau de 0835, page Inventaires de 0836
+- `tests/browser/jetp_observatory.py` — recette navigateur
+
+## Actions
+
+1. Générer une vue `data/observations/<pays>.json` : une entrée par
+   observation atomique, avec sa table d'origine, son type (événement
+   financier, événement physique, lien projet-source, observation de
+   portefeuille), ses champs source, `source_id`, empreinte, localisateur et
+   état de vérification.
+2. Ajouter un onglet « Observations du ledger » à la page Inventaires de
+   chaque pays, dans le même composant de tableau, avec filtres sur table
+   d'origine, type, bailleur, état de vérification, et recherche.
+3. Rendre chaque observation cliquable vers son document et sa page comme
+   dans 0836.
+4. Passer `structured_atomic_observations.status` à « deployed » dans
+   `reviewed-evidence.json` et faire correspondre le total affiché au nombre de
+   lignes servies, par pays.
+5. Indiquer en tête d'onglet que ces lignes et les inventaires M1a sont deux
+   extractions distinctes et que leurs comptes ne s'additionnent pas.
+
+## Test
+
+Red : `tests/test_jetp_observatory_observations.py` construit la vue depuis
+des fixtures de deux événements financiers (un vérifié, un `secondary_only`),
+un événement physique et un lien projet-source, et vérifie quatre entrées avec
+leur table d'origine, l'état de vérification conservé tel quel, les montants
+en devise d'origine non convertis, et que la somme des entrées par pays égale
+le total déclaré dans `evidence_depth`.
+
+## Verification
+
+- [ ] Recette VN : filtrer VNM sur bailleur = BEI montre les observations de Bac Ai avec leur bulletin ou fiche source, ouvrable en local
+- [ ] Recette SA : les observations issues du registre Q1 2026 renvoient au snapshot du registre
+- [ ] `evidence_depth.structured_atomic_observations.total` égale le nombre de lignes servies
+- [ ] `tests/browser/jetp_observatory.py` exerce un filtre sur l'onglet Observations
+
+## Invariants
+
+- Aucun montant n'est additionné, converti ou promu ; `secondary_only` reste visible tel quel.
+- Les CSV du ledger et les inventaires M1a restent identiques octet pour octet.
+- `make check-fast` et `make lint` passent.
+
+## Exit criteria
+
+- [ ] Les observations atomiques sont explorables par pays avec filtres et recherche
+- [ ] Chaque observation renvoie à son document et à son localisateur
+- [ ] Le statut « not deployed » de reviewed-evidence est levé et le total correspond
+- [ ] La séparation entre les deux produits d'étage 2 est affichée
+- [ ] Recettes SA et VN de 0834 réussies pour les observations
+
+## Out of scope
+
+Réconciliation entre observations et inventaires M1a (0833), faits canoniques
+(0839), CRS et IATI (0721).

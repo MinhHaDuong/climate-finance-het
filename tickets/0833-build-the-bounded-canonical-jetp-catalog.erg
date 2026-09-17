@@ -7,6 +7,7 @@ Author: HDMX-coding-agent
 2026-09-17T08:48Z HDMX-coding-agent created
 
 2026-09-17T09:36Z HDMX-coding-agent note blocker 0832 closed — Blocked-by removed.
+2026-09-17T17:05Z HDMX-coding-agent note runs in parallel with the M1a train (0834): 0837 adds the 21 register fields as columns to ZAF.csv without changing row ids or counts, replay tests after it merges; first action should also review the RMP adapter classing all annex I.2 rows as identity-unknown (e.g. '43 BWID DPPA Solar Farm' is named) and the VNM release still at admission_status unadmitted_candidate / review_state pending
 --- body ---
 
 ## Context

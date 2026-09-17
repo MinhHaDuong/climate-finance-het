@@ -8,6 +8,7 @@ Author: HDMX-coding-agent
 
 2026-09-17T08:48Z HDMX-coding-agent decision Added an explicit M1 gate before monthly/live operation: 0832 publishes frozen source-layer inventories; 0833 adds only bounded canonical identity and certain relations. Live refresh is M2.
 
+2026-09-17T17:05Z HDMX-coding-agent note M1a redefined by the author: exploration in the MVP, not downloads — tracker 0834, children 0835–0839
 --- body ---
 
 ## Context
@@ -25,7 +26,7 @@ Integration acceptance exercise: follow one country total to project events and 
 Coordinate children 0726–0733 in the dependency order in the plan. Reuse 0715–0722 and 0711; do not duplicate collection or turn 0723 into a prerequisite. Record feasibility-led scope changes. This tracker remains open through an integration review.
 
 The first programme milestone is now **M1**, accepted in two bounded steps:
-[[0832]] / M1a publishes the four frozen country inventories without fusion;
+[[0832]] published the four frozen country inventories without fusion; M1a itself is redefined by [[0834]] (2026-09-17): the MVP explores the data in three stages, documents, structured extraction and reconciled facts, with South Africa and Viet Nam as acceptance cases;
 [[0833]] / M1b overlays stable canonical IDs, a common taxonomy and only
 source-documented `same_as` / `component_of` relations. `possible_match` rows
 remain separate and counted. Monthly refresh, source watching and match
@@ -33,7 +34,7 @@ resolution begin only in M2 after this base is accepted.
 
 ## Exit criteria
 
-- [ ] M1a frozen inventories accepted with source, type, reported status, edition/cutoff and displayed unknown counts
+- [ ] M1a accepted: the MVP explores documents, extractions and facts end to end on the SA and VN acceptance cases ([[0834]]); the frozen inventories of [[0832]] are its input, not its result
 - [ ] M1b bounded catalogue accepted without changing M1a or resolving `possible_match`
 - [ ] Children 0726–0733 delivered, or scope changes explicitly adjudicated
 - [ ] Public observatory and repeatable monthly editions operational

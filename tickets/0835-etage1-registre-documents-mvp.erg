@@ -1,0 +1,91 @@
+%erg 0.1
+Title: Étage 1 : registre des documents explorable dans le MVP
+Created: 2026-09-17
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-17T16:56Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Premier enfant de [[0834]]. Le MVP ne donne aucun accès aux documents bruts :
+les cartes source affichent une URL d'origine et une empreinte tronquée. Le
+registre `data/jetp/manifest.csv` (307 sources, 262 collectées, 84 PDF et
+154 HTML archivés) et le snapshot DVC `data/jetp/documents/` existent déjà.
+Ce ticket les rend lisibles, et livre au passage le composant de tableau
+filtrable que [[0836]], [[0838]] et [[0839]] réutilisent.
+
+Les documents s'ouvrent en local seulement. `deliverables/jetp-observatory/README.md`
+exclut leur redistribution publique ; l'édition publique ne sert que le
+registre et l'URL d'origine.
+
+## Relevant files
+
+- `data/jetp/manifest.csv` — registre des sources : id, pays, date de collecte, statut, type, empreinte, chemin de stockage, URL finale
+- `data/jetp/documents/` — objets archivés par empreinte (DVC, `make jetp-data` après `dvc pull`)
+- `deliverables/jetp-observatory/app.js`, `index.html`, `styles.css` — site statique
+- `scripts/jetp/build_observatory.py`, `scripts/jetp/_observatory_data.py` — génération des JSON de vue
+- `scripts/jetp/build_observatory_bundle.py` — édition publique, doit exclure les documents
+- `scripts/analysis/jetp_observatory.mk` — cibles `jetp-observatory` et `jetp-observatory-preview`
+- `tests/browser/jetp_observatory.py` — recette navigateur Playwright
+- `docs/jetp-storage.md` — règles de provisionnement des snapshots
+
+## Actions
+
+1. Générer une vue `data/documents.json` depuis le registre : une entrée par
+   source avec pays, date de collecte, statut, type de contenu, taille,
+   empreinte complète, URL d'origine, et le chemin local de la copie archivée
+   quand elle est présente dans le snapshot.
+2. Écrire un composant de tableau filtrable réutilisable dans `app.js` :
+   filtres à facettes sur les colonnes déclarées, recherche plein texte,
+   pagination, compte des lignes visibles sur total, sans dépendance externe.
+3. Ajouter une page « Documents » : le tableau des 307 sources, avec un bouton
+   « copie archivée » actif seulement si le fichier est servi, et un lien
+   « origine » toujours présent.
+4. En prévisualisation locale, servir les objets archivés sous
+   `deliverables/jetp-observatory/documents/` par reflink ou lien symbolique
+   vers le snapshot DVC, dossier ignoré par git, créé par la cible make et
+   absent du bundle public.
+5. Accepter un fragment `#page=N` sur les PDF pour que les tickets suivants
+   ouvrent un document à sa page.
+6. Remplacer « source layer » par « sous-couche d'extraction » dans les textes
+   du MVP touchés par ce ticket.
+
+## Test
+
+Red : `tests/test_jetp_observatory_documents.py` construit la vue depuis un
+registre fixture de quatre sources (une collectée en PDF, une collectée en
+HTML, une bloquée, une en erreur de collecte) et un snapshot fixture qui ne
+contient que le PDF. La vue compte quatre entrées, seule l'entrée PDF porte un
+chemin de copie archivée, les deux échecs gardent leur statut source et leur
+URL, et aucune entrée n'est inventée ni fusionnée.
+
+## Verification
+
+- [ ] `make jetp-observatory-preview` sert la page Documents et le PDF du RMP VNM s'ouvre à la page 139 via `documents/<empreinte>.pdf#page=155`
+- [ ] Le snapshot HTML du registre JET ZAF s'ouvre depuis la page Documents
+- [ ] Filtrer sur pays = SEN et statut = bloqué donne les lignes attendues du registre
+- [ ] Le bundle public ne contient aucun objet archivé
+- [ ] `tests/browser/jetp_observatory.py` exerce un filtre et une ouverture de document
+
+## Invariants
+
+- Le registre reste la seule source de vérité ; la vue n'ajoute aucune ligne.
+- Un document absent du snapshot reste listé avec son statut, jamais retiré.
+- Les autres vues du MVP et les tables M1a restent identiques octet pour octet.
+- `make check-fast` et `make lint` passent.
+
+## Exit criteria
+
+- [ ] La page Documents liste les 307 sources avec filtres et recherche
+- [ ] Chaque source collectée et présente dans le snapshot s'ouvre en local
+- [ ] Le composant de tableau est exporté et documenté pour les tickets suivants
+- [ ] Le bundle public exclut les documents et le README le dit
+- [ ] Recette 0834 : ouverture du RMP VNM page 139 et du registre ZAF réussie
+
+## Out of scope
+
+Extraction de contenu, liens entre lignes et documents (0836), déploiement
+public (0727).

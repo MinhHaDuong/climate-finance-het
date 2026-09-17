@@ -1,0 +1,83 @@
+%erg 0.1
+Title: Étage 2 : inventaires M1a explorables ligne à ligne dans le MVP
+Created: 2026-09-17
+Author: HDMX-coding-agent
+Blocked-by: 0835
+
+--- log ---
+2026-09-17T16:56Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Deuxième enfant de [[0834]]. Les quatre inventaires M1a
+(`deliverables/jetp-observatory/data/m1a/*.csv`, 2 164 lignes) ne sont
+visibles dans le MVP que par un tableau de synthèse de quatre lignes et des
+boutons de téléchargement. Ce ticket les rend explorables ligne à ligne, chaque
+ligne renvoyant à son document et à sa page via le registre de [[0835]].
+
+Le tableau doit être agnostique du schéma : [[0837]] ajoute des colonnes à
+l'inventaire ZAF en parallèle, et la vue doit les afficher sans modification.
+
+## Relevant files
+
+- `deliverables/jetp-observatory/data/m1a/{ZAF,IDN,VNM,SEN}.csv`, `manifest.json` — tables gelées et manifeste
+- `scripts/jetp/build_m1a_inventories.py`, `config/jetp-m1a-inventories.json` — générateur et configuration
+- `deliverables/jetp-observatory/app.js` — section `m1aSection()` et composant de tableau de 0835
+- `tests/test_jetp_m1a_inventories.py` — rejeu octet pour octet
+- `tests/browser/jetp_observatory.py` — recette navigateur
+
+## Actions
+
+1. Ajouter une page « Inventaires » par pays qui charge le CSV M1a et
+   l'affiche dans le composant de tableau : toutes les colonnes présentes,
+   filtres sur sous-couche, type d'enregistrement, statut d'identité, statut
+   rapporté, recherche sur le libellé.
+2. Rendre chaque ligne cliquable vers son document : `source_id` résout
+   l'empreinte via le registre, `evidence_locator` fournit la page PDF ; la
+   ligne s'ouvre à `documents/<empreinte>.pdf#page=<page PDF>` en local et
+   affiche le localisateur en clair en public.
+3. Afficher en tête de page les comptes d'inconnus du manifeste par
+   sous-couche, jamais additionnés entre pays ni entre sous-couches.
+4. Remplacer « six source layers » par « sous-couches d'extraction » dans le
+   MVP, le README et le manifeste, sans toucher aux lignes de données.
+5. Lier les pages pays vers la page Inventaires de leur pays.
+
+## Test
+
+Red : `tests/test_jetp_observatory_inventories.py` charge un CSV fixture de
+trois lignes (une nommée avec localisateur de page, une programme, une sans
+identité) et un registre fixture, et vérifie que la résolution ligne → document
+produit l'empreinte et la page attendues pour la première ligne, un
+localisateur textuel sans page pour les deux autres, et qu'aucune ligne n'est
+perdue ni dédoublonnée. Un CSV fixture avec une colonne supplémentaire produit
+une colonne de plus, sans erreur.
+
+## Verification
+
+- [ ] Recette VN : filtrer VNM sur l'annexe I.1 donne 37 lignes ; la ligne 22 « KN Tri An Floating Solar Farm » ouvre le RMP à la page PDF 155
+- [ ] Recette SA : filtrer ZAF sur « D. Completed » donne 88 lignes ; une ligne ouvre le snapshot du registre
+- [ ] `tests/test_jetp_m1a_inventories.py` reste vert : les CSV n'ont pas changé
+- [ ] `tests/browser/jetp_observatory.py` exerce un filtre et une ouverture de ligne
+
+## Invariants
+
+- Les CSV M1a et le manifeste restent identiques octet pour octet, sauf le
+  libellé de vocabulaire si le manifeste porte le mot « layer » en clair ; dans
+  ce cas, le générateur change et le rejeu est revalidé.
+- Aucun total inter-sous-couches ni inter-pays.
+- `make check-fast` et `make lint` passent.
+
+## Exit criteria
+
+- [ ] Les quatre inventaires sont explorables avec filtres et recherche
+- [ ] Chaque ligne renvoie à son document et, quand la source le permet, à sa page
+- [ ] Les comptes d'inconnus sont affichés par sous-couche
+- [ ] Le vocabulaire « sous-couche d'extraction » remplace « source layer » dans le MVP
+- [ ] Recettes SA et VN de 0834 réussies pour l'étage 2
+
+## Out of scope
+
+Élargissement des colonnes ZAF (0837), ledger d'observations (0838), liens
+entre lignes de sous-couches différentes (0833).

@@ -10,6 +10,7 @@ Author: Minh
 
 2026-09-17T08:48Z HDMX-coding-agent decision M1 is a healthy frozen base before live monitoring: 0832 publishes source-layer inventories and 0833 adds only bounded canonical IDs and certain relations; refresh infrastructure begins in M2.
 
+2026-09-17T17:05Z HDMX-coding-agent note M1a redéfinie par l'auteur : exploration dans le MVP, pas téléchargement — suiveur 0834
 --- body ---
 
 ## Context
@@ -41,7 +42,10 @@ les quatre pays doivent être traités avec le même contrat de preuve.
    l'ingestion reproductible des sources déjà bornées.
 2. **0717–0720** — fournir les inventaires et preuves pays existants, sans faire
    de leur actualisation ou de la résolution de toutes les identités un verrou.
-3. **0832 (M1a)** — publier quatre inventaires gelés par couche, sans fusion.
+3. **0832** — publier quatre inventaires gelés par sous-couche, sans fusion
+   (livré). **0834 (M1a)** — le MVP explore les données en trois étages :
+   documents bruts, extraction structurée, faits réconciliés ; recette
+   Afrique du Sud et Vietnam ; enfants 0835–0839.
 4. **0833 (M1b)** — ajouter identifiants canoniques, taxonomie commune et
    relations certaines ; compter séparément les `possible_match` non résolus.
 
@@ -72,7 +76,7 @@ les quatre pays doivent être traités avec le même contrat de preuve.
 
 ## Exit criteria
 
-- [ ] M1a / 0832 publie quatre tables gelées conservant toutes les lignes et leurs inconnues
+- [ ] M1a / 0834 : le MVP explore documents, extractions et faits de bout en bout sur les recettes SA et VN ; les tables gelées de 0832 en sont l'entrée
 - [ ] M1b / 0833 publie le catalogue borné et compte les correspondances non résolues
 - [ ] Le jalon M1 de 0725 accepte la base avant tout démarrage de la veille M2
 - [ ] Les quatre pays ont un registre de sources borné, un manifeste de
