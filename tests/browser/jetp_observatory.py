@@ -83,6 +83,7 @@ def check_site(url, output):
             download_matches(page, url, f'data/{view}.json')
         for code in ('ZAF', 'IDN', 'VNM', 'SEN'):
             download_matches(page, url, f'data/m1a/{code}.csv')
+        download_matches(page, url, 'data/m1a/manifest.json')
         for code in ('ZAF', 'IDN', 'VNM', 'SEN'):
             page.goto(url + '/#country/' + code)
             page.wait_for_selector('.markdown h2')

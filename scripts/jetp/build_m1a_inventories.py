@@ -205,6 +205,8 @@ def _zaf_rows(rows: Sequence[Mapping[str, str]], specification: Mapping[str, obj
 
 
 def _vnm_rows(payload: Mapping[str, object], specification: Mapping[str, object]) -> list[dict[str, object]]:
+    if specification["record_type"] != "from_source_classification":
+        raise ValueError("Viet Nam M1a record type must preserve source classification")
     positions = payload.get("inventory_positions")
     if not isinstance(positions, list):
         raise ValueError("Viet Nam migration lacks inventory_positions")
@@ -213,7 +215,10 @@ def _vnm_rows(payload: Mapping[str, object], specification: Mapping[str, object]
             "source_row_id": row["inventory_id"],
             "label": row["source_wording"],
             "record_type": row["classification"],
-            "reported_status": row.get("value") or "unknown",
+            "reported_status": (
+                "unknown" if row.get("value") is None or row.get("value") == ""
+                else str(row["value"])
+            ),
             "identity_status": "unknown" if row["classification"] == "unknown" else "named",
             "evidence_locator": row["locator"],
             "source_fields": dict(row),
