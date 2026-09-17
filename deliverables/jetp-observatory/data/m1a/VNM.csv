@@ -1,0 +1,644 @@
+country,source_layer,source_id,source_edition,source_cutoff,source_row_id,label,record_type,reported_status,identity_status,evidence_locator
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:001,1 Long Tao Hydropower plan Dien Bien 44 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named,listed,named,Annex I.1; PDF pages 155; printed pages 139; ordinal 1
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:002,2 Yen Son Hydropower plan Tuyen Quang 90 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named,listed,named,Annex I.1; PDF pages 155; printed pages 139; ordinal 2
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:003,3 Song Lo 6 Hydropower plan Tuyen Quang 60 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named,listed,named,Annex I.1; PDF pages 155; printed pages 139; ordinal 3
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:004,4 Song Lo 7 Hydropower plan Tuyen Quang 36 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named,listed,named,Annex I.1; PDF pages 155; printed pages 139; ordinal 4
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:005,5 Pac Ma Hydropower plan Lai Chau 160 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named,listed,named,Annex I.1; PDF pages 155; printed pages 139; ordinal 5
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:006,"6 Nam Cum 1,4,5 Hydropower plan Lai Chau 95.8 MW 2021-2030 Decision No. 500/QD-TTg PDP8",programme,listed,named,Annex I.1; PDF pages 155; printed pages 139; ordinal 6
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:007,"7 Nam Cum 2,3,6 Hydropower plan Lai Chau 79.5 MW 2021-2030 Decision No. 500/QD-TTg PDP8",programme,listed,named,Annex I.1; PDF pages 155; printed pages 139; ordinal 7
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:008,8 Hoi Xuan Hydropower plan Thanh Hoa 102 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named,listed,named,Annex I.1; PDF pages 155; printed pages 139; ordinal 8
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:009,9 Song Hieu (Ban Mong) Hydropower plan Nghe An 45 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named,listed,named,Annex I.1; PDF pages 155; printed pages 139; ordinal 9
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:010,10 Phu Tan 2 Hydropower plan Dong Nai 93 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named,listed,named,Annex I.1; PDF pages 155; printed pages 139; ordinal 10
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:011,11 Duc Thanh Hydropower plan Binh Phuoc 40 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named,listed,named,Annex I.1; PDF pages 155; printed pages 139; ordinal 11
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:012,12 La Ngau Hydropower plan Binh Thuan 46 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named,listed,named,Annex I.1; PDF pages 155; printed pages 139; ordinal 12
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:013,13 Thanh Son Hydropower plan Dong Nai 40 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named,listed,named,Annex I.1; PDF pages 155; printed pages 139; ordinal 13
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:014,14 Cam Thuy 2 Hydropower plan Thanh Hoa 38 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named,listed,named,Annex I.1; PDF pages 155; printed pages 139; ordinal 14
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:015,15 My Ly Hydropower plan Nghe An 120 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named,listed,named,Annex I.1; PDF pages 155; printed pages 139; ordinal 15
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:016,16 Nam Mo 1 Hydropower plan Nghe An 51 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named,listed,named,Annex I.1; PDF pages 155; printed pages 139; ordinal 16
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:017,17 Đak Mi 2 Hydropower plan Kon Tum 147 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named,listed,named,Annex I.1; PDF pages 155; printed pages 139; ordinal 17
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:018,18 Song Tranh 4 Hydropower plan Quang Nam 48 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named,listed,named,Annex I.1; PDF pages 156; printed pages 140; ordinal 18
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:019,19 Đak Mi 1 Hydropower plan Kon Tum 84 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named,listed,named,Annex I.1; PDF pages 156; printed pages 140; ordinal 19
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:020,20 Thuong Kon Tum Hydropower plan Kon Tum 220 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named,listed,named,Annex I.1; PDF pages 156; printed pages 140; ordinal 20
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:021,21 Thien Tan 1.4 Solar Farm Ninh Thuan 79 MW 2030 Decision No. 500/QD-TTg PDP8,named,listed,named,Annex I.1; PDF pages 156; printed pages 140; ordinal 21
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:022,22 KN Tri An Floating Solar Farm Dong Nai 928 MW 2030 Decision No. 500/QD-TTg PDP8,named,listed,named,Annex I.1; PDF pages 156; printed pages 140; ordinal 22
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:023,23 Buon Tua Srah Floating Solar Farm 312 MW 2030 Decision No. 500/QD-TTg PDP8,named,listed,named,Annex I.1; PDF pages 156; printed pages 140; ordinal 23
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:024,24 Mi Floating Solar Farm 80 MW 2030 Decision No. 500/QD-TTg PDP8,named,listed,named,Annex I.1; PDF pages 156; printed pages 140; ordinal 24
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:025,25 Ialy Gia Lai Floating Solar Farm Gia Lai 400 MW 2030 Decision No. 500/QD-TTg PDP8,named,listed,named,Annex I.1; PDF pages 156; printed pages 140; ordinal 25
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:026,26 Vuc Mau Floating Solar Farm Nghe An 160 MW 2030 Decision No. 500/QD-TTg PDP8,named,listed,named,Annex I.1; PDF pages 156; printed pages 140; ordinal 26
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:027,27 Khe Go Reservoir Floating Solar Farm Nghe An 200 MW 2030 Decision No. 500/QD-TTg PDP8,named,listed,named,Annex I.1; PDF pages 156; printed pages 140; ordinal 27
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:028,"28 Bio-fuel Manufacture in Northern region 100,000-200,000 2021-2030 Decision No. 893/QD-TTg
+ton per year National energy master plan",programme,listed,named,Annex I.1; PDF pages 156; printed pages 140; ordinal 28
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:029,"29 Bio-fuel Manufacture in Central region 100,000-200,000 2021-2030 Decision No. 893/QD-TTg
+ton per year National energy master plan",programme,listed,named,Annex I.1; PDF pages 156; printed pages 140; ordinal 29
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:030,"30 Bio-fuel Manufacture in Southern region 100,000-200,000 2021-2030 Decision No. 893/QD-TTg
+ton per year National energy master plan",programme,listed,named,Annex I.1; PDF pages 156; printed pages 140; ordinal 30
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:031,"31 Bio-fuel Manufacture in Northern region 2,000,000-6,000,000 2031-2050 Decision No. 893/QD-TTg
+ton per year National energy master plan",programme,listed,named,Annex I.1; PDF pages 156; printed pages 140; ordinal 31
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:032,"32 Bio-fuel Manufacture in Central region 1,000,000-4,000,000 2031-2050 Decision No. 893/QD-TTg
+ton per year National energy master plan",programme,listed,named,Annex I.1; PDF pages 156; printed pages 140; ordinal 32
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:033,"33 Bio-fuel Manufacture in Southern region 2,000,000-8,000,000 2031-2050 Decision No. 893/QD-TTg
+ton per year National energy master plan",programme,listed,named,Annex I.1; PDF pages 156; printed pages 140; ordinal 33
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:034,"- New development: 49.350 MVA,
+Renovation: 38.168 MVA
+transmission station 500 kV;
+- New development: 12.300 km,
+Revolution: 1.324 km transmission
+Projects belong to Transmission line de-
+line 500 kV;
+34 velopment program under National Power National 2030 Decision No. 500/QDD-TTg PDP8
+- New development: 78.525 MVA,
+Development Plan in 2021 - 2030
+Renovation: 34.997 MVA
+transmission station 220 kV;
+- New development 16.285 km,
+Renovation: 6.484 km
+transmission line 220 kV.",programme,listed,named,Annex I.1; PDF pages 157; printed pages 141; ordinal 34
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:035,"35 Develop infrastructure for electric vehi- National - 2022 - 2030 Decision No. 876/QD-TTg in
+cles, including: electric charging system, 2022
+power supply, depot for vehicles.",programme,listed,named,Annex I.1; PDF pages 157; printed pages 141; ordinal 35
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:036,"36 Convert and replace 244 locomotives and National 2031 - 2050 Decision No. 876/QD-TTg in
+80 generator cars to use electricity and - 2022
+green energy",programme,listed,named,Annex I.1; PDF pages 157; printed pages 141; ordinal 36
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.1:037,"37 Pilot project for the application of the Thai Binh – 5 MW 2024 – 2030 Resolution No. 10 NQ/TW;
+coal gasification technology, carbon Nam Dinh Decision No. 888/QD-TTg dated
+recovery and carbon capture under the 25/7/2022
+Red River basin coal seams (ouside of the
+dike)",unknown,listed,unknown,Annex I.1; PDF pages 158; printed pages 142; ordinal 37
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:001,"1 Pilot testing for 3-4 suitable coal-fired power plants (CFPPs) TBD 2023-2025 IPG Danish Embassy - Technical CN
+with different characteristics to operate more flexibility and on Coal Power Plant Flexibility
+integrate higher shares of renewable energy production.",programme,listed,named,Annex I.2; PDF pages 159; printed pages 143; ordinal 1
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:002,"2 Transition of the Cao Ngan Coal-Thermal Power Plant to Thai Nguyen 115 MW 2028-2045 UNDP-Institute of Energy - CN on
+100% biomass and establishing a biomass supply chain Transition of the Cao Ngan Coal-
+Thermal Power Plant",unknown,listed,unknown,Annex I.2; PDF pages 159; printed pages 143; ordinal 2
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:003,"3 Transition of the Na Duong Coal-Thermal Power Plant to Lang Son 110 MW 2028 - 2045 Vietnam National Coal - Mineral
+100% biomass and establishing a biomass supply chain Industries Holding Corporation
+Limited - Proposal",unknown,listed,unknown,Annex I.2; PDF pages 159; printed pages 143; ordinal 3
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:004,"4 Transition of the Cam Pha Coal-Thermal Power Plant to Quang Ninh 670 MW 2028 - 2045 Vietnam National Coal - Mineral
+100% biomass and establishing a biomass supply chain Industries Holding Corporation
+Limited - Proposal",unknown,listed,unknown,Annex I.2; PDF pages 159; printed pages 143; ordinal 4
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:005,"5 Transition of the Dong Trieu Coal-Thermal Power Plant to Quang Ninh 440 MW 2028 - 2045 Vietnam National Coal - Mineral
+100% biomass and establishing a biomass supply chain Industries Holding Corporation
+Limited - Proposal",unknown,listed,unknown,Annex I.2; PDF pages 159; printed pages 143; ordinal 5
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:006,"6 Transition of the Son Dong Coal-Thermal Power Plant to Bac Giang 220 MW 2028 - 2045 Vietnam National Coal - Mineral
+100% biomass and establishing a biomass supply chain Industries Holding Corporation
+Limited - Proposal",unknown,listed,unknown,Annex I.2; PDF pages 159; printed pages 143; ordinal 6
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:007,"7 Transition of the Nong Son Coal-Thermal Power Plant to Quang Nam 30 MW 2028 - 2045 Vietnam National Coal - Mineral
+100% biomass and establishing a biomass supply chain Industries Holding Corporation
+Limited - Proposal",unknown,listed,unknown,Annex I.2; PDF pages 160; printed pages 144; ordinal 7
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:008,"8 Transitioning of the Pha Lai 1 Coal-Thermal Power Plant to Pha Lai Ward, 440 MW 2023-2045 UNDP-Institute of Energy CN on
+100% green hydrogen for 2 x 100 MW units if technology is Chi Linh Transitioning of the Pha Lai Coal-
+economically feasible and readily available Town, Hai Thermal Power Plant
+Duong Prov-
+ince",unknown,listed,unknown,Annex I.2; PDF pages 160; printed pages 144; ordinal 8
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:009,"9 Transitioning of the Pha Lai 2 Coal-Thermal Power Plant to Pha Lai Ward, 600 MW 2023-2045 UNDP-Institute of Energy CN on
+100% green ammonia through gradually shifting co-firing to Chi Linh Transitioning of the Pha Lai Coal-
+increasing GNH3 uptake Town, Hai Thermal Power Plant
+Duong Prov-
+ince",unknown,listed,unknown,Annex I.2; PDF pages 160; printed pages 144; ordinal 9
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:010,"10 Transitioning of the Van Phong Coal-Thermal Power Plant Phan Phong, 1,000 MW 2024-2045 UNDP-Institute of Energy CN on
+to partly biomass and building in Carbon Capture, Use, and Nha Trang, Transitioning of the Van Phong
+Storage (CCUS) Khanh Hoa Coal-Thermal Power Plant",unknown,listed,unknown,Annex I.2; PDF pages 160; printed pages 144; ordinal 10
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:011,"11 Duyen Hai 1 Coal-Thermal Power Plant (ST Unit 1) Tra Vinh 600 MW Standard Chartered Bank
+(Viet Nam)",unknown,listed,unknown,Annex I.2; PDF pages 160; printed pages 144; ordinal 11
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:012,"12 Duyen Hai 1 Coal-Thermal Power Plant (ST Unit 2) Tra Vinh 600 MW Standard Chartered Bank
+(Viet Nam)",unknown,listed,unknown,Annex I.2; PDF pages 160; printed pages 144; ordinal 12
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:013,"13 Hai Phong 2 Coal-Thermal Power Plant (ST Unit 2.1) Hai Phong 300 MW Standard Chartered Bank
+(Viet Nam)",unknown,listed,unknown,Annex I.2; PDF pages 160; printed pages 144; ordinal 13
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:014,"14 Hai Phong 2 Coal-Thermal Power Plant (ST Unit 2.2) Hai Phong 300 MW Standard Chartered Bank
+(Viet Nam)",unknown,listed,unknown,Annex I.2; PDF pages 160; printed pages 144; ordinal 14
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:015,"15 Mong Duong 1 Coal-Thermal Power Plant (ST Unit 1) Quang Ninh 540 MW Standard Chartered Bank
+(Viet Nam)",unknown,listed,unknown,Annex I.2; PDF pages 161; printed pages 145; ordinal 15
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:016,"16 Mong Duong 1 Coal-Thermal Power Plant (ST Unit 2) Quang Ninh 540 MW Standard Chartered Bank
+(Viet Nam)",unknown,listed,unknown,Annex I.2; PDF pages 161; printed pages 145; ordinal 16
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:017,"17 Mong Duong 2 Coal-Thermal Power Plant (ST Unit 1) Quang Ninh 621 MW Standard Chartered Bank
+(Viet Nam)",unknown,listed,unknown,Annex I.2; PDF pages 161; printed pages 145; ordinal 17
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:018,"18 Mong Duong 2 Coal-Thermal Power Plant (ST Unit 2) Quang Ninh 621 MW Standard Chartered Bank
+(Viet Nam)",unknown,listed,unknown,Annex I.2; PDF pages 161; printed pages 145; ordinal 18
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:019,"19 Nghi Son 1 Coal-Thermal Power Plant (ST Unit 1) Thanh Hoa 300 MW Standard Chartered Bank
+(Viet Nam)",unknown,listed,unknown,Annex I.2; PDF pages 161; printed pages 145; ordinal 19
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:020,"20 Nghi Son 1 Coal-Thermal Power Plant (ST Unit 2) Thanh Hoa 300 MW Standard Chartered Bank
+(Viet Nam)",unknown,listed,unknown,Annex I.2; PDF pages 161; printed pages 145; ordinal 20
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:021,"21 Quang Ninh Coal-Thermal Power Plant (ST Unit 2.1) Quang Ninh 300 MW Standard Chartered Bank
+(Viet Nam)",unknown,listed,unknown,Annex I.2; PDF pages 161; printed pages 145; ordinal 21
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:022,"22 Quang Ninh Coal-Thermal Power Plant (ST Unit 2.2) Quang Ninh 300 Standard Chartered Bank
+(Viet Nam)",unknown,listed,unknown,Annex I.2; PDF pages 161; printed pages 145; ordinal 22
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:023,"23 Thai Binh 1 Coal-Thermal Power Plant (ST Unit 1) Thai Binh 300 MW Standard Chartered Bank
+(Viet Nam)",unknown,listed,unknown,Annex I.2; PDF pages 161; printed pages 145; ordinal 23
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:024,"24 Thai Binh 1 Coal-Thermal Power Plant (ST Unit 2) Thai Binh 300 MW Standard Chartered Bank
+(Viet Nam)",unknown,listed,unknown,Annex I.2; PDF pages 161; printed pages 145; ordinal 24
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:025,"25 Thang Long Coal-Thermal Power Plant (ST Unit 1) Quang Ninh 300 MW Standard Chartered Bank
+(Viet Nam)",unknown,listed,unknown,Annex I.2; PDF pages 161; printed pages 145; ordinal 25
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:026,"26 Thang Long Coal-Thermal Power Plant (ST Unit 2) Quang Ninh 300 MW Standard Chartered Bank
+(Viet Nam)",unknown,listed,unknown,Annex I.2; PDF pages 162; printed pages 146; ordinal 26
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:027,"27 Vinh Tan 1 Coal-Thermal Power Plant (ST Unit 1) Binh Thuan 620 MW Standard Chartered Bank
+(Viet Nam)",unknown,listed,unknown,Annex I.2; PDF pages 162; printed pages 146; ordinal 27
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:028,"28 Vinh Tan 1 Coal-Thermal Power Plant (ST Unit 2) Binh Thuan 620 MW Standard Chartered Bank
+(Viet Nam)",unknown,listed,unknown,Annex I.2; PDF pages 162; printed pages 146; ordinal 28
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:029,"29 Vinh Tan 2 Coal-Thermal Power Plant (ST Unit 1) Binh Thuan 622 MW Standard Chartered Bank
+(Viet Nam)",unknown,listed,unknown,Annex I.2; PDF pages 162; printed pages 146; ordinal 29
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:030,"30 Vinh Tan 2 Coal-Thermal Power Plant (ST Unit 2) Binh Thuan 622 MW Standard Chartered Bank
+(Viet Nam)",unknown,listed,unknown,Annex I.2; PDF pages 162; printed pages 146; ordinal 30
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:031,"31 Vinh Tan 4 Coal-Thermal Power Plant (ST Unit 1) Binh Thuan 600 MW Standard Chartered Bank
+(Viet Nam)",unknown,listed,unknown,Annex I.2; PDF pages 162; printed pages 146; ordinal 31
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:032,"32 Vinh Tan 4 Coal-Thermal Power Plant (ST Unit 2) Binh Thuan 600 MW Standard Chartered Bank
+(Viet Nam)",unknown,listed,unknown,Annex I.2; PDF pages 162; printed pages 146; ordinal 32
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:033,"33 Vung Ang 1 Coal-Thermal Power Plant (ST Unit 1) Ha Tinh 600 MW Standard Chartered Bank
+(Viet Nam)",unknown,listed,unknown,Annex I.2; PDF pages 162; printed pages 146; ordinal 33
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:034,"34 Vung Ang 1 Coal-Thermal Power Plant (ST Unit 2) Ha Tinh 600 MW Standard Chartered Bank
+(Viet Nam)",unknown,listed,unknown,Annex I.2; PDF pages 162; printed pages 146; ordinal 34
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:035,"35 Dai Ninh Floating Solar Farm 49,9 +130 MW 2030 PDP8-Technical Report",unknown,listed,unknown,Annex I.2; PDF pages 162; printed pages 146; ordinal 35
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:036,36 Thac Mo 1 Floating Solar Farm 200 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 162; printed pages 146; ordinal 36
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:037,37 Thac Mo 2 Floating Solar Farm 150 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 163; printed pages 147; ordinal 37
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:038,38 Solar Farm on the Srepok 3 hydropower reservoir 50 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 163; printed pages 147; ordinal 38
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:039,39 Ham Thuan Floating Solar Farm 325 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 163; printed pages 147; ordinal 39
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:040,"40 Phu My 1, 2, 3 Solar Farm Project Binh Dinh 160 MW 2030 VietinBank",unknown,listed,unknown,Annex I.2; PDF pages 163; printed pages 147; ordinal 40
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:041,41 Thanh Long Phu Yen Solar Farm Project Phu Yen 50 MW 2030 VietinBank,unknown,listed,unknown,Annex I.2; PDF pages 163; printed pages 147; ordinal 41
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:042,42 Europlast Phu Yen Solar Farm Project Phu Yen 50 MW 2030 VietinBank,unknown,listed,unknown,Annex I.2; PDF pages 163; printed pages 147; ordinal 42
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:043,"43 BWID DPPA Solar Farm Project in industrial park in Binh Binh Duong, 36 MW 2030 VietinBank
+Duong, Dong Nai Dong Nai",unknown,listed,unknown,Annex I.2; PDF pages 163; printed pages 147; ordinal 43
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:044,"44 DPPA Rooftop Solar plant in VSIP industrial park Hai Phong, 22 MW 2030 VietinBank
+Nghe An,
+Binh Duong",unknown,listed,unknown,Annex I.2; PDF pages 163; printed pages 147; ordinal 44
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:045,"45 TTC Hue Duc 2 Solar Farm Southern 49 MW 2030 Standard Chartered (Viet Nam)
+Region",unknown,listed,unknown,Annex I.2; PDF pages 163; printed pages 147; ordinal 45
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:046,"46 LEGO Corporation Solar Farm next to Viet Nam LEGO Manu- Binh Duong 50 MW 2024-2030 LEGO
+facture, capacity testing for BESS application",unknown,listed,unknown,Annex I.2; PDF pages 163; printed pages 147; ordinal 46
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:047,"47 Investment project on rooftop solar panel installation in Provinces 20 MW 2025 - 2030 Vietnam National Petroleum Group
+more than 2.700 Petrolimex gasoil stations, 43 company and Cities – Petrolimex (PLX)
+offices and more that 30 petroleum warehouses",unknown,listed,unknown,Annex I.2; PDF pages 163; printed pages 147; ordinal 47
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:048,48 Dau Tieng 5 Solar Power Plant Tay Ninh 450 MW 2024 BIDV,unknown,listed,unknown,Annex I.2; PDF pages 163; printed pages 147; ordinal 48
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:049,49 Rooftop Solar plant Ha Noi 2024-2026 BIDV,unknown,listed,unknown,Annex I.2; PDF pages 163; printed pages 147; ordinal 49
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:050,"50 Rooftop solar power system belongs to Saigon Steel Pipe Ba Ria- 3 MW 2024-2026 BIDV
+Factory project Vung Tau",unknown,listed,unknown,Annex I.2; PDF pages 164; printed pages 148; ordinal 50
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:051,"51 Rooftop Solar plant in VSIP industrial park VSIP 2023-2030 BIDV
+industrial
+park",unknown,listed,unknown,Annex I.2; PDF pages 164; printed pages 148; ordinal 51
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:052,52 V.P.L Ben Tre Solar Farm 42 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 164; printed pages 148; ordinal 52
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:053,53 Thuan Nhien Phong wind power Famr 32 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 164; printed pages 148; ordinal 53
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:054,54 Tan Phu Dong Windpower Farm 150 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 164; printed pages 148; ordinal 54
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:055,55 Yang Trung Windpower Farm 145 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 164; printed pages 148; ordinal 55
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:056,56 Xanh Song Cau Windpower Farm – Phase 1 50 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 164; printed pages 148; ordinal 56
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:057,57 Vien An Windpower Farm (remain part without COD) 25.2 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 164; printed pages 148; ordinal 57
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:058,58 TNC Quang Tri 1 Windpower Farm 50 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 164; printed pages 148; ordinal 58
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:059,59 TNC Quang Tri 2 Windpower Farm 50 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 164; printed pages 148; ordinal 59
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:060,60 Thien Phu 2 Windpower Farm 30 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 164; printed pages 148; ordinal 60
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:061,61 Thien Phu Windpower Farm 30 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 164; printed pages 148; ordinal 61
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:062,62 Thach Phu Windpower Farm 120 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 164; printed pages 148; ordinal 62
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:063,63 Thanh Phong Windpower Farm – Phase 1 29.7 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 164; printed pages 148; ordinal 63
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:064,64 Tan Tan Nhat – Dak Glei Windpower Farm 50 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 164; printed pages 148; ordinal 64
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:065,65 Tan Hop Windpower Farm 38 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 164; printed pages 148; ordinal 65
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:066,66 Tan An 1 Windpower Farm – Phase 2021-2025 45 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 165; printed pages 149; ordinal 66
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:067,67 Sunpro Windpower Farm 29.4 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 165; printed pages 149; ordinal 67
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:068,68 Song An Windpower Farm 46.2 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 165; printed pages 149; ordinal 68
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:069,69 No. 7 Windpower Farm – Phase 2 88.2 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 165; printed pages 149; ordinal 69
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:070,70 No. 5 Windpower Farm - Thach Hai 4 30 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 165; printed pages 149; ordinal 70
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:071,71 No. 5 Windpower Farm - Thach Hai 3 30 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 165; printed pages 149; ordinal 71
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:072,72 No. 5 Windpower Farm - Thach Hai 2 28 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 165; printed pages 149; ordinal 72
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:073,73 Soc Trang (V2-1) No. 3 Windpower Farm 29.4 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 165; printed pages 149; ordinal 73
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:074,74 Ben Tre No. 20 Windpower Farm 50 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 165; printed pages 149; ordinal 74
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:075,75 Soc Trang No. 2 Windpower Farm 30 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 165; printed pages 149; ordinal 75
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:076,76 Ben Tre No. 19 Windpower Farm 50 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 165; printed pages 149; ordinal 76
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:077,77 Soc Trang No. 18 Windpower Farm 22 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 165; printed pages 149; ordinal 77
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:078,78 Phuoc The Windpower Farm 26 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 165; printed pages 149; ordinal 78
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:079,79 Phong Dien 1 – Binh Thuan Windpower Farm – Phase 2 30 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 165; printed pages 149; ordinal 79
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:080,80 Windpower Farm for the mountainous development 50 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 165; printed pages 149; ordinal 80
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:081,"81 Nhon Hoi Windpower Farm – Phase 2 30 MW 2030 PDP8-Technical Report, Vietinbank",unknown,listed,unknown,Annex I.2; PDF pages 165; printed pages 149; ordinal 81
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:082,"82 Nexif Energy Ben Tre Windpower Farm – Phase 2, 3 50 MW 2030 PDP8-Technical Report, BIDV",unknown,listed,unknown,Annex I.2; PDF pages 165; printed pages 149; ordinal 82
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:083,"83 Nexif Energy Ben Tre Windpower Farm 30 MW 2030 PDP8-Technical Report, BIDV",unknown,listed,unknown,Annex I.2; PDF pages 166; printed pages 150; ordinal 83
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:084,84 Nam Binh 1 Windpower Farm 30 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 166; printed pages 150; ordinal 84
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:085,85 Lig Huong Hoa 2 Windpower Farm 48 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 166; printed pages 150; ordinal 85
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:086,86 Lig Huong Hoa 1 Windpower Farm 48 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 166; printed pages 150; ordinal 86
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:087,87 Lac Hoa Windpower Farm 30 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 166; printed pages 150; ordinal 87
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:088,88 Krong Buk 2 Windpower Farm 50 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 166; printed pages 150; ordinal 88
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:089,89 Krong Buk 1 Windpower Farm 50 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 166; printed pages 150; ordinal 89
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:090,90 Ia Pech 2 Windpower Farm 50 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 166; printed pages 150; ordinal 90
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:091,91 Huong Linh 4 Windpower Farm 30 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 166; printed pages 150; ordinal 91
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:092,92 Huong Linh 3 Windpower Farm 30 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 166; printed pages 150; ordinal 92
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:093,93 Hoa Thang 2.2 Windpower Farm 19.8 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 166; printed pages 150; ordinal 93
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:094,94 Hoa Thang 2.1 Windpower Farm 100 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 166; printed pages 150; ordinal 94
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:095,95 Hoa Dong Windpower Farm 30 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 166; printed pages 150; ordinal 95
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:096,"96 HBRE Ha Tinh Windpower Farm 120 MW 2030 PDP8-Technical Report, Vietinbank",unknown,listed,unknown,Annex I.2; PDF pages 166; printed pages 150; ordinal 96
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:097,"97 Hai Anh Windpower Farm 40 MW 2030 PDP8-Technical Report, Vietinbank",unknown,listed,unknown,Annex I.2; PDF pages 166; printed pages 150; ordinal 97
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:098,98 Duyen Hai (V1-4) Windpower Farm 48 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 166; printed pages 150; ordinal 98
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:099,99 Dak N’Drung 3 Windpower Farm 100 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 166; printed pages 150; ordinal 99
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:100,100 Dak N’Drung 2 Windpower Farm 100 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 166; printed pages 150; ordinal 100
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:101,101 Dak N’Drung 1 Windpower Farm 100 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 167; printed pages 151; ordinal 101
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:102,102 Cu Ne 2 Windpower Farm 50 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 167; printed pages 151; ordinal 102
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:103,103 Cu Ne 1 Windpower Farm 50 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 167; printed pages 151; ordinal 103
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:104,104 Cong Ly Soc Trang Windpower Farm – Phase 1 30 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 167; printed pages 151; ordinal 104
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:105,105 Tay Nguyen Processing Windpower Farm 50 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 167; printed pages 151; ordinal 105
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:106,106 Cau Dat Windpower Farm 68 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 167; printed pages 151; ordinal 106
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:107,107 Ca Mau 1D Windpower Farm 86 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 167; printed pages 151; ordinal 107
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:108,108 Ca Mau 1C Windpower Farm 88 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 167; printed pages 151; ordinal 108
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:109,109 Ca Mau 1B Windpower Farm 88 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 167; printed pages 151; ordinal 109
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:110,110 Ca Mau 1A Windpower Farm 88 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 167; printed pages 151; ordinal 110
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:111,111 Bac Lieu Windpower Farm – Phase 3 140.6 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 167; printed pages 151; ordinal 111
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:112,112 Asia Dak Song 1 Windpower Farm 50 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 167; printed pages 151; ordinal 112
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:113,"113 Yale 1 Windpower Farm Gia Lai 47,2 MW has 2030 PDP8-Technical Report, Vietinbank
+COD; 52,8 MW
+has not COD",unknown,listed,unknown,Annex I.2; PDF pages 167; printed pages 151; ordinal 113
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:114,114 IA Pet - Dak Doa 2 Windpower Farm Gia Lai 100 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 167; printed pages 151; ordinal 114
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:115,115 IA Pet - Dak Doa 1 Windpower Farm Gia Lai 100 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 167; printed pages 151; ordinal 115
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:116,"116 Tra Vinh 1, 2 Windpower Farm Project Tra Vinh 200 MW 2030 Standard Chartered (Viet Nam)",unknown,listed,unknown,Annex I.2; PDF pages 167; printed pages 151; ordinal 116
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:117,"117 Ca Mau 1,2,3 Windpower Farm Project Ca Mau 300 MW 2030 Standard Chartered (Viet Nam)",unknown,listed,unknown,Annex I.2; PDF pages 168; printed pages 152; ordinal 117
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:118,118 Cho Long Windpower Farm Project Gia Lai 105.5 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 168; printed pages 152; ordinal 118
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:119,119 Lac Hoa Windpower Farm Project – Phase 1 Soc Trang 5 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 168; printed pages 152; ordinal 119
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:120,120 Ie Pech Windpower Farm Project Gia Lai 33.5 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 168; printed pages 152; ordinal 120
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:121,121 Khai Long - Ca Mau Windpower Farm Project - Phase 1 Ca Mau 100 MW 2030 PDP8-Technical Report,unknown,listed,unknown,Annex I.2; PDF pages 168; printed pages 152; ordinal 121
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:122,122 Binh Dinh Offshore windpower Farm Project Binh Dinh 3200 MW 2025-2027 BIDV,unknown,listed,unknown,Annex I.2; PDF pages 168; printed pages 152; ordinal 122
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:123,123 Tan An 1 Windpower Farm Project Ca Mau 30 MW 2023-2025 BIDV,unknown,listed,unknown,Annex I.2; PDF pages 168; printed pages 152; ordinal 123
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:124,124 Lien Lap Windpower Farm Project Quang Tri 48 MW 2030 VietinBank,unknown,listed,unknown,Annex I.2; PDF pages 168; printed pages 152; ordinal 124
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:125,125 Phong Huy Windpower Farm Project Quang Tri 48 MW 2030 VietinBank,unknown,listed,unknown,Annex I.2; PDF pages 168; printed pages 152; ordinal 125
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:126,126 Phong Nguyen Windpower Farm Project Quang Tri 48 MW 2030 VietinBank,unknown,listed,unknown,Annex I.2; PDF pages 168; printed pages 152; ordinal 126
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:127,"127 Dak Nong Offshore windpower Farm Project Dak Nong 660 MW 2026-2027 Total Energies Renewables
+Corporation và Viet Phuong
+Corporation",unknown,listed,unknown,Annex I.2; PDF pages 168; printed pages 152; ordinal 127
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:128,128 Binh Đai Offshore windpower Farm Project Ben Tre 30 MW - BIDV,unknown,listed,unknown,Annex I.2; PDF pages 168; printed pages 152; ordinal 128
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:129,129 Binh Đai 2 Offshore windpower Farm Project Ben Tre 30 MW - BIDV,unknown,listed,unknown,Annex I.2; PDF pages 168; printed pages 152; ordinal 129
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:130,130 Binh Đai 3 Offshore windpower Farm Project Ben Tre 30 MW - BIDV,unknown,listed,unknown,Annex I.2; PDF pages 168; printed pages 152; ordinal 130
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:131,"131 Offshore windpower Farm and Green hydrogen Manufacture Vung Tau/ 130 MW 2024-2030 GIZ
+Phu My",unknown,listed,unknown,Annex I.2; PDF pages 168; printed pages 152; ordinal 131
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:132,132 Quang Ninh Offshore windpower Farm Project Quang Ninh 3.000 MW 2029-2035 SOVICO - BP,unknown,listed,unknown,Annex I.2; PDF pages 168; printed pages 152; ordinal 132
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:133,133 Hai Phong Windpower offshore Farm Project Hai Phong 3.000 MW 2029-2035 SOVICO - BP,unknown,listed,unknown,Annex I.2; PDF pages 169; printed pages 153; ordinal 133
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:134,134 Ben Tre 500MW Offshore windpower Farm Project Ben Tre 500MW 2023-2025 Mainstream AIT Corporation,unknown,listed,unknown,Annex I.2; PDF pages 169; printed pages 153; ordinal 134
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:135,"135 Binh Thuan Offshore windpower Farm Project, connect at Binh Thuan 3.000 MW 2030-2035 BP
+Vinh Tan",unknown,listed,unknown,Annex I.2; PDF pages 169; printed pages 153; ordinal 135
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:136,"136 Nhà máy điện gió ngoài khơi Thăng Long Offshore windpow- Binh Thuan 3.400 MW 2029 Enterprize Energy
+er Farm Project includes transmission line from Ham Thuan Pte. Corporation Ltd
+Nam (Binh Thuan) to Long Thanh (Dong Nai), heading to
+Binh Duong",unknown,listed,unknown,Annex I.2; PDF pages 169; printed pages 153; ordinal 136
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:137,"137 Thang Long Wind 2 Offshore windpower Farm Binh Thuan 2.000 MW 2029 Enterprize Energy
+Pte. Corporation Ltd",unknown,listed,unknown,Annex I.2; PDF pages 169; printed pages 153; ordinal 137
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:138,"138 DEEP C Industrial Park combines Solar, windpower energy Hai Phong, 100 MW 2023-2030 DEEP C.
+and storage Quang Ninh",unknown,listed,unknown,Annex I.2; PDF pages 169; printed pages 153; ordinal 138
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:139,"139 Pilot Green Ammonia and Hydrogen Initiative to Enable Ca Mau ~1,095 tGH2 2024-2025 UNDP
+Production (GAHIEP) at a Fertilizer Producer and Enhance per year
+Resilience of Smallholder Agriculture in Cà Mau Province,
+Viet Nam - Promoting the development and application of
+green hydrogen and ammonia as well as regulatory/policy
+development of GH2",unknown,listed,unknown,Annex I.2; PDF pages 169; printed pages 153; ordinal 139
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:140,"140 Green hydrogen production pilot project in Viet Nam, National - 2030 Vietnam National Petroleum Group
+infrastructure investment engineering (tanks, warehouses, – Petrolimex (PLX)
+transportation fleets, gas pipelines, distribution stations,
+hydrogen filling, etc.);",unknown,listed,unknown,Annex I.2; PDF pages 169; printed pages 153; ordinal 140
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:141,"141 Pilot construction of centres/facilities for the production of National - 2030 Vietnam National Petroleum Group
+specialized equipment for hydrogen transportation, storage – Petrolimex (PLX)
+and distribution;",unknown,listed,unknown,Annex I.2; PDF pages 170; printed pages 154; ordinal 141
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:142,"142 Building a pilot hydrogen distribution station integrating National - 2030 Vietnam National Petroleum Group
+into Petrolimex petroleum stations to supply hydrogen buses – Petrolimex (PLX)
+in the immediate future;",unknown,listed,unknown,Annex I.2; PDF pages 170; printed pages 154; ordinal 142
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:143,143 Tra Vinh Green hydrogen Project Tra Vinh - 2024 - 2027 Standard Chartered (Viet Nam),unknown,listed,unknown,Annex I.2; PDF pages 170; printed pages 154; ordinal 143
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:144,"144 Development of hybrid power plant of renewable energy 3 potential - 2023-2028 HDF Energy Company
+combined with hydrogen and battery storage. sites identi-
+fied: Phu Quy
+Island, Phu
+Quoc Island,
+At a site rec-
+ommended by
+PTSC",unknown,listed,unknown,Annex I.2; PDF pages 170; printed pages 154; ordinal 144
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:145,"145 PVN Fertilizer Plant Solar + Electrolyzer Vung Tau/ 400 MW PV 2024-2030 GIZ
+Phu My and 100 MW
+Electrolyzer",unknown,listed,unknown,Annex I.2; PDF pages 170; printed pages 154; ordinal 145
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:146,"146 PVN Fertilizer Plant Solar + Electrolyzer Ca Mau/ Can 400 MW PV 2024-2030 GIZ
+Tho and 100 MW
+Electrolyzer",unknown,listed,unknown,Annex I.2; PDF pages 170; printed pages 154; ordinal 146
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:147,"147 Xuan Thien Nghia Hung Green Steel Factory Project Nam Dinh 2,000,000 TPA - Xuan Thien Group",unknown,listed,unknown,Annex I.2; PDF pages 170; printed pages 154; ordinal 147
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:148,"148 Xuan Thien Nam Green Steel Factory No. 1 Project Nam Dinh 7,500,000 TPA - Xuan Thien Group",unknown,listed,unknown,Annex I.2; PDF pages 171; printed pages 155; ordinal 148
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:149,"149 Renewable energy for glass manufacturer Solar + Electro- Vung Tau/Phy 8 MW PV / 2 2024-2030 GIZ
+lyzer My MW electro-
+lyzer",unknown,listed,unknown,Annex I.2; PDF pages 171; printed pages 155; ordinal 149
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:150,"150 Renewable energy for various companies such as NSG (float Vung Tau/Phy 80 MW PV/20 2024-2030
+glass) and Nippon Sanso (industrial gas) My MW electro- GIZ
+lyzer",unknown,listed,unknown,Annex I.2; PDF pages 171; printed pages 155; ordinal 150
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:151,"151 Renewable energy for various companies such as Ho Chi Minh 80 MW PV/20 2024-2030
+semiconductor manufacturing and Air Liquide (industrial City/ Binh MW electro- GIZ
+gas). Duong lyzer",unknown,listed,unknown,Annex I.2; PDF pages 171; printed pages 155; ordinal 151
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:152,"152 Waste to Energy Power Plant Ho Chi Minh 3.000 ton per - Standard Chartered (Viet Nam)
+City day",unknown,listed,unknown,Annex I.2; PDF pages 171; printed pages 155; ordinal 152
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:153,"153 Baigoc Ammonia Complex Phu Yen 270.000 ton - Standard Chartered (Viet Nam)
+per year",unknown,listed,unknown,Annex I.2; PDF pages 171; printed pages 155; ordinal 153
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:154,154 LNG O Mon II Project Can Tho 1.050 2026-2027 VietinBank,unknown,listed,unknown,Annex I.2; PDF pages 171; printed pages 155; ordinal 154
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:155,155 Establish and operate Credit Enhancement Facility (CEF) National - 2024-2025 UK,unknown,listed,unknown,Annex I.2; PDF pages 171; printed pages 155; ordinal 155
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:156,"156 Project to utilize residual heat to generate electricity - Lam Quang Ninh - 2023 - 2025 BIDV
+Thach Cement Plant",unknown,listed,unknown,Annex I.2; PDF pages 171; printed pages 155; ordinal 156
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:157,157 Investment project for solar panel manufacturing factory Thai Binh - 2023 - 2025 BIDV,unknown,listed,unknown,Annex I.2; PDF pages 171; printed pages 155; ordinal 157
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:158,"158 EaTih Hydropower Project 8,6 MW 2024 BIDV",unknown,listed,unknown,Annex I.2; PDF pages 172; printed pages 156; ordinal 158
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:159,"159 South-East Asia Link Project to reduce transmission loss and Ha Tinh, Tra - 2030 Electricité de France (EDF)
+increase transmission capacity in North – South Vinh",unknown,listed,unknown,Annex I.2; PDF pages 172; printed pages 156; ordinal 159
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:160,"160 Northern battery energy storage system development – Northern Viet 50MW/ 2023 ~ 2025 ADB
+Phase 1 Nam 50MWh",unknown,listed,unknown,Annex I.2; PDF pages 172; printed pages 156; ordinal 160
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:161,"161 Northern battery energy storage system development – Northern Viet 100MW/ 2026 ~ 2030 ADB
+Phase 2 Nam 200MWh",unknown,listed,unknown,Annex I.2; PDF pages 172; printed pages 156; ordinal 161
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:162,"162 Southern battery energy storage system development Southern Viet 150MW/ 2031 - 2050 ADB
+Nam 300MWh",unknown,listed,unknown,Annex I.2; PDF pages 172; printed pages 156; ordinal 162
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:163,"163 Development of Dong Phu Yen pumped storage hydropower Son La 1.200 2031 - 2050 ADB
+plant",unknown,listed,unknown,Annex I.2; PDF pages 172; printed pages 156; ordinal 163
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:164,"164 Development of Tay Phu Yen pumped storage hydropower Son La 1.000 2031 - 2050 ADB
+plant",unknown,listed,unknown,Annex I.2; PDF pages 172; printed pages 156; ordinal 164
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:165,"165 Development of Moc Chau pumped storage hydropower Son La 900 2031 - 2050 ADB
+plant",unknown,listed,unknown,Annex I.2; PDF pages 172; printed pages 156; ordinal 165
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:166,"166 Development of Chau Thon pumped storage hydropower Thanh Hoa 1.000 2031 - 2050 ADB
+plant",unknown,listed,unknown,Annex I.2; PDF pages 172; printed pages 156; ordinal 166
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:167,"167 Development of Don Duong pumped storage hydropower Lam Đong 1.200 2031 - 2050 ADB
+plant",unknown,listed,unknown,Annex I.2; PDF pages 172; printed pages 156; ordinal 167
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:168,168 Development of Ninh Son pumped storage hydropower plant Ninh Thuan 1.200 2031 - 2050 ADB,unknown,listed,unknown,Annex I.2; PDF pages 172; printed pages 156; ordinal 168
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:169,"169 Development of Ham Thuan Bac pumped storage Binh Thuan 1.200 2031 - 2050 ADB
+hydropower plant",unknown,listed,unknown,Annex I.2; PDF pages 173; printed pages 157; ordinal 169
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:170,"170 Development of Phuoc Hoa pumped storage hydropower Ninh Thuan 3.600 2031 - 2050 ADB
+plant",unknown,listed,unknown,Annex I.2; PDF pages 173; printed pages 157; ordinal 170
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:171,"171 Phong Phu pumped storage hydropower plant project Binh Thuan 150 MW 2025-2028 Ecotech Vietnam Technology
+Investment and Trading Joint Stock
+Company",unknown,listed,unknown,Annex I.2; PDF pages 173; printed pages 157; ordinal 171
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:172,172 Smart and Energy Efficiency city Project (SEECP) National - 2023-2025 ADB Proposal,unknown,listed,unknown,Annex I.2; PDF pages 173; printed pages 157; ordinal 172
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:173,"173 Energy efficiency and electrification in administrative, National, and - 2024-2027 MOC-MOIT-UNDP and City people’s
+commercial, and residential buildings in Ha Noi, Committees
+Ho Chi Minh,
+and Da Nang
+cities",unknown,listed,unknown,Annex I.2; PDF pages 173; printed pages 157; ordinal 173
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:174,174 Scaling up co-processing in cement sector in Vietnam National - 2024-2030 Norway Embassy Proposal,unknown,listed,unknown,Annex I.2; PDF pages 173; printed pages 157; ordinal 174
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:175,"175 Installing 110/22 kV power lines and stations, using part of Quang Ngai - 2024-2026 Viet Nam Oil and Gas Group -(PVN)
+the EVN grid to operate Dung Quat oil refinery",unknown,listed,unknown,Annex I.2; PDF pages 173; printed pages 157; ordinal 175
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:176,"176 Additional power capacity for Block 09-1 with wind turbines, Vung Tau - 2024-2026 Viet Nam Oil and Gas Group -(PVN)
+serving the needs of oil and gas exploitation",unknown,listed,unknown,Annex I.2; PDF pages 173; printed pages 157; ordinal 176
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:177,"177 Investment project in electric charging station system National 500 Grade 2025-2030 Vietnam National Petroleum Group
+providing charging services for electric cars of different 3 charging – Petrolimex (PLX)
+brands – Phase 1 stations",unknown,listed,unknown,Annex I.2; PDF pages 174; printed pages 158; ordinal 177
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:178,"178 Investment project in electric charging station system pro- National 500 Grade 2030 Vietnam National Petroleum Group
+viding charging services for electric cars of different brands 3 charging – Petrolimex (PLX)
+– Phase 2 stations",unknown,listed,unknown,Annex I.2; PDF pages 174; printed pages 158; ordinal 178
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:179,"179 Several heavy-duty trucks and corresponding hydrogen Ca Mau/ - 2024-2030 GIZ Proposal
+refueling stations to connect in order to demonstrate Can Tho
+heavy-duty road transport",unknown,listed,unknown,Annex I.2; PDF pages 174; printed pages 158; ordinal 179
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:180,"180 Build laboratories for new products such as hydrogen, National - - Vietnam National Petroleum Group
+biofuel, synthetic fuel, etc. – Petrolimex (PLX)",unknown,listed,unknown,Annex I.2; PDF pages 174; printed pages 158; ordinal 180
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-I.2:181,"181 Support the development of a database that is integrated National - 2022-2030 Decision 896/QD-TTg:
+and synchronized with the national database system on National Climate Change Strategy
+greenhouse gas emission reduction",unknown,listed,unknown,Annex I.2; PDF pages 174; printed pages 158; ordinal 181
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:001,"1 Technical support for the Secretariat to implement the JETP 2023-2030 Grant ODA, and JETP Political Declaration
+Declaration, the Secretariat’s standing agency and working support from
+groups supporting JETP implementation GFANZ and other
+stakeholders",programme,listed,named,Annex II; PDF pages 175; printed pages 159; ordinal 1
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:002,"2 Support the review of relevant legal documents and propose 2023-2030 Grant ODA, and Decision
+to competent authorities to amend, supplement, abolish or support from 1009/QD-TTg: Scheme to Implement the
+promulgate new regulations, ensuring compliance with the GFANZ and other JETP Declaration
+process of implementing the JETP Declaration stakeholders",programme,listed,named,Annex II; PDF pages 175; printed pages 159; ordinal 2
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:003,"3 Support research and propose a roadmap to build and 2024-2025 Grant ODA, and Decision
+complete a long-term legal framework in accordance with support from 1009/QD-TTg: Scheme to Implement the
+the roadmap to achieve net zero emissions and meet the GFANZ and other JETP Declaration
+requirements of low-emission development, transition from stakeholders
+exploitation and use of fossil fuel to renewable energy or
+low-emission energy",programme,listed,named,Annex II; PDF pages 175; printed pages 159; ordinal 3
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:004,"4 Support the development and completion of regulations to 2024-2025 Grant ODA, and Decision
+create conditions for businesses implementing energy support from 1009/QD-TTg: Scheme to Implement the
+transition projects to directly access financial resources from GFANZ and other JETP Declaration
+international support sources without government stakeholders
+guarantees.",programme,listed,named,Annex II; PDF pages 175; printed pages 159; ordinal 4
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:005,"5 Conduct impact assessment for JETP implementation on Viet 2022-2025 Grant ODA, and MOF proposal
+Nam’s public finance. support from
+GFANZ and other
+stakeholders",programme,listed,named,Annex II; PDF pages 176; printed pages 160; ordinal 5
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:006,"6 Complete the measurement, reporting, verification (MRV) 2022-2030 State Budget, Decree 06/2022/ND-CP,
+system and conduct greenhouse gas inventories at facility, grant ODA National Climate Change Strategy,
+sector and area levels. business capital Green Growth Action Plan
+and other
+support sources",programme,listed,named,Annex II; PDF pages 176; printed pages 160; ordinal 6
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:007,"7 Support proposals to develop reasonable price and fee 2022-2025 State Budget, Decison 882/QD-TTg:
+mechanisms for shared energy infrastructure (power grant ODA National Green Growth Strategy
+transmission lines, gas pipelines, liquefied natural gas
+warehouses...).",programme,listed,named,Annex II; PDF pages 176; printed pages 160; ordinal 7
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:008,"8 Support reviewing, proposing the development and completion 2022-2025 State Budget, Decision 1009/QD-TTg:
+of incentive policies and support for disadvantaged groups and grant ODA Scheme to Implement the JETP Declaration
+groups negatively affected by employment during the energy
+transition process.",programme,listed,named,Annex II; PDF pages 176; printed pages 160; ordinal 8
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:009,"9 Support the construction, establishment and operation of a 2022-2030 State Budget, Decision 882/QD-TTg:
+domestic carbon credit exchange and connect with the world grant ODA National Green Growth Strategy 2021-2030
+carbon market",programme,listed,named,Annex II; PDF pages 176; printed pages 160; ordinal 9
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:010,"10 Support the proposal and implementation of measures to 2024-2030 German GIZ- Concept Note
+promote economic restructuring towards long-term carbon Government Decision 896/QD-TTg:
+neutrality beyond fossil fuel-based growth National Climate Change Strategy to 2050",programme,listed,named,Annex II; PDF pages 176; printed pages 160; ordinal 10
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:011,"11 Support the development and implementation of the Green 2024-2030 Grant ODA IPG proposal
+Hydrogen Development in Viet Nam",programme,listed,named,Annex II; PDF pages 177; printed pages 161; ordinal 11
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:012,"12 Negotiate the suspension of investment in coal-fired power 2023-2030 Grant ODA, and Decision 1009/QD-TTg:
+plants that are behind schedule and facing difficulties in support from Scheme to Implement the JETP Declaration
+changing shareholders and arranging capital; negotiate the GFANZ and
+closure of inefficient and old coal-fired power plants other
+stakeholders",programme,listed,named,Annex II; PDF pages 177; printed pages 161; ordinal 12
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:013,"13 Develop a roadmap to reduce greenhouse gas emissions from 2023-2030 Grant ODA, and Decision 1009/QD-TTg:
+coal-fired power plants in sync with the carbon market support from Scheme to Implement the JETP Declaration
+development roadmap in Vietnam, connecting with the global GFANZ and
+carbon market. other
+stakeholders",programme,listed,named,Annex II; PDF pages 177; printed pages 161; ordinal 13
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:014,"14 Select coal power plants to pilot energy conversion to learn from 2026-2028 IPG, and other IPG proposal
+experiences and propose a roadmap to apply to other coal power Development
+plants through the JETP Flexible Platform Partners",programme,listed,named,Annex II; PDF pages 177; printed pages 161; ordinal 14
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:015,"15 Research and develop proposed mechanisms to support 2023-2030 Grant ODA, and Decision 1009/QD-TTg:
+domestic enterprises in developing, manufacturing, and support from Scheme to Implement the JETP Declaration
+maintaining renewable energy equipment GFANZ and
+other
+stakeholders",programme,listed,named,Annex II; PDF pages 178; printed pages 162; ordinal 15
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:016,"16 Research and develop two inter-regional renewable energy 2024-2025 Grant ODA, and Decision 1009/QD-TTg:
+industrial and service centres, including electricity production, support from Scheme to Implement the JETP Declaration
+transmission and consumptionrenewable energy equipment GFANZ and
+manufacturing industry, construction, installation, related other
+services, building renewable energy industrial ecosystems in stakeholders
+areas with great potential such as the North, South Central,
+and South.",programme,listed,named,Annex II; PDF pages 178; printed pages 162; ordinal 16
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:017,"17 Support the development and implementation of the project to 2024-2030 Grant ODA, state
+establish the National Renewable Energy Center the budget,
+development of renewable energy industry. corporate
+capital and
+other sources",programme,listed,named,Annex II; PDF pages 178; printed pages 162; ordinal 17
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:018,"18 Research and establish the Vietnam Energy Data Center. 2025-2030 State Budget, Decision 280/QD-TTg:
+and other National Energy Efficiency Programme
+support sources",programme,listed,named,Annex II; PDF pages 178; printed pages 162; ordinal 18
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:019,"19 Develop and implement regulations on renewable energy ratio 2023-2025 Grant ODA, and Decision 1009/QĐ-TTg:
+for electric distribution organizations, combined with building support from Scheme to Implement the JETP Declaration
+renewable energy credit markets GFANZ and
+other
+stakeholders",programme,listed,named,Annex II; PDF pages 178; printed pages 162; ordinal 19
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:020,"20 Develop a map of potential off-shore wind in Vietnam 2024-2027 Grant ODA, and Petrovietnam
+support from
+GFANZ and
+other
+stakeholders",programme,listed,named,Annex II; PDF pages 179; printed pages 163; ordinal 20
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:021,"21 Develop and implement the Offshore Wind Power Development 2024-2030 Federal Republic IPG proposal
+Support Program of Germany",programme,listed,named,Annex II; PDF pages 179; printed pages 163; ordinal 21
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:022,"22 Supporting the development of offshore wind power capacities 2024 - 2028 Grant ODA, and Decision 1009/QD-TTg:
+and provide technical assistance to MOIT, MONRE, on marine support from Scheme to Implement the JETP Declaration
+spatial planning and offshore wind power policies GFANZ and
+other
+stakeholders",programme,listed,named,Annex II; PDF pages 179; printed pages 163; ordinal 22
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:023,"23 Technical support for wind speed measurement, geophysical 2024 - 2028 Grant ODA, and Decision 1009/QD-TTg:
+survey for pilot installation of 2 GW of offshore wind power; support from Scheme to Implement the JETP Declaration
+propose measures to complete processes and regulations GFANZ and
+related to offshore wind power monitoring other
+stakeholders",programme,listed,named,Annex II; PDF pages 179; printed pages 163; ordinal 23
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:024,"24 Support to Offshore windpower development and National 2023-2029 Grant ODA, and UNDP - Norway
+marine spatial masterplan - Phase 1 support from
+GFANZ and other
+stakeholders",programme,listed,named,Annex II; PDF pages 179; printed pages 163; ordinal 24
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:025,"25 Support to Offshore windpower development and National ma- 2024-2029 Grant ODA, and UNDP - Norway
+rine spatial masterplan - Phase 2 support from
+GFANZ and other
+stakeholders",programme,listed,named,Annex II; PDF pages 179; printed pages 163; ordinal 25
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:026,"26 Support the development and application of the energy saving 2023 - 2025 Grant ODA, and Decision 1009/QD-TTg:
+service company (ESCO) business model support from Scheme to Implement the JETP Declaration
+GFANZ and
+other
+stakeholders",programme,listed,named,Annex II; PDF pages 180; printed pages 164; ordinal 26
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:027,"27 Technical support to determine energy consumption and GHG 2022-2025 Grant ODA, state Decision 385/QD-BXD:
+emissions targets, propose measures to save and improve budget and Construction Sector Action Plan on
+energy efficiency for different types of housing, construction other sources Responding to Climate Change
+projects, and construction material production facilities",programme,listed,named,Annex II; PDF pages 180; printed pages 164; ordinal 27
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:028,"28 Strengthen the capacity of businesses and other stakeholders 2023 - 2030 State budget, Decree 06/2022/ND-CP:
+to prepare and participate in domestic and international carbon grant ODA, Decision 896/QD-TTg: National Climate
+markets corporate Change Strategy
+capital and
+Decison 882/QD-TTg: National Green
+other sources
+Growth Strategy",programme,listed,named,Annex II; PDF pages 180; printed pages 164; ordinal 28
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:029,"29 Support the development of the smart grid to enhance the 2024 – 2025 Grant ODA, and Decision 1009/QD-TTg:
+ability to integrate renewable energy into the power system and support from Scheme to Implement the JETP Declaration
+reduce power losses on the grid GFANZ and
+other
+stakeholders",programme,listed,named,Annex II; PDF pages 180; printed pages 164; ordinal 29
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:030,"30 Research, propose a mechanism to encourage load reduction 2024 - 2026 Grant ODA, and Decision 1009/QD-TTg:
+during peak hours of the power system or change management support from Scheme to Implement the JETP Declaration
+methods to operate during periods of low electricity prices GFANZ and
+other
+stakeholders",programme,listed,named,Annex II; PDF pages 181; printed pages 165; ordinal 30
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:031,"31 Research and propose the scope, priorities and models of 2024 - 2026 Grant ODA, and Decision 1009/QD-TTg:
+private sector investment in the power grid support from Scheme to Implement the JETP Declaration
+GFANZ and
+other
+stakeholders",programme,listed,named,Annex II; PDF pages 181; printed pages 165; ordinal 31
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:032,"32 Support to review and propose improvements to the legal 2024 - 2026 Grant ODA, and Decison 882/QD-TTg:
+framework to facilitate private sector investment support from National Green Growth Strategy
+GFANZ and
+other
+stakeholders",programme,listed,named,Annex II; PDF pages 181; printed pages 165; ordinal 32
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:033,"33 Support the development of a policy framework and improve the 2024 - 2026 Grant ODA, and Decision 1009/QD-TTg:
+capacity of officials and technicians to develop energy storage support from Scheme to Implement the JETP Declaration
+systems GFANZ and
+other
+stakeholders",programme,listed,named,Annex II; PDF pages 181; printed pages 165; ordinal 33
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:034,"34 Assess the need for Battery Energy Storage Systems (BESS) and 2024 - 2026 Grant ODA, and Decision 1009/QD-TTg:
+other storage units; support Feasibility Studies support from Scheme to Implement the JETP Declaration
+GFANZ and
+other
+stakeholders",programme,listed,named,Annex II; PDF pages 181; printed pages 165; ordinal 34
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:035,"35 Support the development and implementation of regulations 2025-2030 Grant ODA, and Decision 1009/QD-TTg:
+and preferential policies for the development of shared charging support from Scheme to Implement the JETP Declaration
+systems providing green energy for transport vehicles GFANZ and
+other
+stakeholders",programme,listed,named,Annex II; PDF pages 182; printed pages 166; ordinal 35
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:036,"36 Support the proposal of measures to restructure the 2022-2030 State budget, Decision 896/QD-TTg:
+transport market, promote individuals and transport enterprises grant ODA National Climate Change Strategy
+to convert to electric and high-volume transport vehicles;
+enhance the connection of transport modes, reduce costs, Decison 882/QD-TTg:
+improve the quality of transport services National Green Growth Strategy",programme,listed,named,Annex II; PDF pages 182; printed pages 166; ordinal 36
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:037,"37 Promote bus and taxi transportation business to convert to 2022 - 2030 State budget, Decision No. 876/QD-TTg in 2022
+electric vehicles grant ODA",programme,listed,named,Annex II; PDF pages 182; printed pages 166; ordinal 37
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:038,"38 Support the establishment of a Centre of Excellence (CoE) for 2023-2024 UK Government IPG proposal
+offshore wind power",programme,listed,named,Annex II; PDF pages 182; printed pages 166; ordinal 38
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:039,"39 Research and propose national criteria, standards, and 2024-2026 Grant ODA, and Decision 1009/QD-TTg:
+technical regulations for identifying clean technologies and support from Scheme to Implement the JETP Declaration
+green transformation projects; supplement national standards GFANZ and
+and regulations in the field of recycling and waste utilization other
+from energy production stakeholders",programme,listed,named,Annex II; PDF pages 182; printed pages 166; ordinal 39
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:040,"40 Research and develop applications of new energy sources (green 2024-2028 Grant ODA, and Decision 1009/QD-TTg:
+hydrogen, green ammonia); pilot study for carbon capture, use support from Scheme to Implement
+and storage (CCUS); co-firing with ammonia for boilers GFANZ and the JETP Declaration;
+(coal-fired power), methane recovery in coal mining and oil and other
+gas exploitation, storage, processing, and transportation of stakeholders Petrovietnam
+coal, petroleum, and other fuel, include on-shore, off-shore, and
+continental shelf of Vietnam.",programme,listed,named,Annex II; PDF pages 182; printed pages 166; ordinal 40
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:041,"41 Pilot project on green hydrogen production 2024-2028 Grant ODA, and Petrovietnam
+support from
+GFANZ and
+other
+stakeholders",programme,listed,named,Annex II; PDF pages 183; printed pages 167; ordinal 41
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:042,"42 Pilot project on integrating green hydrogen into Ca Mau 2024-2028 Grant ODA, and Petrovietnam
+Fertilizer Plant support from
+GFANZ and
+other
+stakeholders",programme,listed,named,Annex II; PDF pages 183; printed pages 167; ordinal 42
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:043,"43 Support research on international experience to propose 2024-2028 Grant ODA, state Decision 1009/QD-TTg:
+roadmaps, solutions for transfer and application of green budget and Scheme to Implement
+hydrogen technology, green ammonia, carbon capture, use and other sources the JETP Declaration;
+storage.
+Petrovietnam",programme,listed,named,Annex II; PDF pages 183; printed pages 167; ordinal 43
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:044,"44 Develop and update a list of GHG emission reduction 2022-2025 State budget, Decision 1009/QD-TTg:
+technologies to propose solutions and cooperation mechanisms grant ODA Scheme to Implement the JETP Declaration
+for transfer and application to promote energy transition
+in Viet Nam.",programme,listed,named,Annex II; PDF pages 183; printed pages 167; ordinal 44
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:045,"45 Research on technology and solutions to adjust the combustion 2024-2025 Grant ODA, state Decision 500/QD-TTg PDP8
+mode in boilers of the thermal power plant when the actual load budget and
+and fuel supply vary unpredictably from the original design, in other sources
+order to increase operational and energy efficiency and reduce
+greenhouse gas emissions.",programme,listed,named,Annex II; PDF pages 183; printed pages 167; ordinal 45
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:046,"46 Research on technology and solutions to co-burn biomass 2024-2025 Grant ODA, state Decision 500/QD-TTg PDP8
+pellets with coal in thermal power plants to contribute to budget and
+proactive fuel sources and reduce emissions other sources",programme,listed,named,Annex II; PDF pages 184; printed pages 168; ordinal 46
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:047,"47 Research of using heat from exhaust fumes of thermal 2024-2026 Grant ODA, state Decision 1009/QĐ-TTg:
+power plants to co-generate and supply refrigeration to reduce budget and Scheme to Implement the JETP Declaration
+self-consumption and promote energy efficiency. other sources",programme,listed,named,Annex II; PDF pages 184; printed pages 168; ordinal 47
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:048,"48 Investigate and evaluate overall geothermal potential for green 2024-2030 State budget, Decision 680/QD-TTg:
+energy production. grant ODA and Master plan for geological baseline survey
+other sources on minerals for the period 2021-2030, with
+a vision to 2050",programme,listed,named,Annex II; PDF pages 184; printed pages 168; ordinal 48
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:049,"49 Assess and forecast human resource needs and the ability to 2022-2030 State budget, Decision 896/QD-TTg:
+supply human resources to meet the energy transition needs of grant ODA and National Climate Change Strategy
+different sectors; support the development of a national labour other sources
+market information system for green industries, connecting Decison 882/QD-TTg:
+supply and demand in the green labour market. National Green Growth Strategy",programme,listed,named,Annex II; PDF pages 184; printed pages 168; ordinal 49
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:050,"50 Research and propose a support mechanisms to ensure reason- 2024-2026 Grant ODA, and Decision 1009/QD-TTg:
+able electricity prices for affected, vulnerable, and low-income support from Scheme to Implement the JETP Declaration
+groups. GFANZ and
+other
+stakeholders",programme,listed,named,Annex II; PDF pages 184; printed pages 168; ordinal 50
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:051,"51 Support the development and application of guidance on impact 2024-2027 State budget, Decision 1009/QD-TTg:
+assessment, readiness to participate in a just energy transition grant ODA Scheme to Implement the JETP Declaration
+and capacity building needs of target groups",programme,listed,named,Annex II; PDF pages 184; printed pages 168; ordinal 51
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:052,"52 Review and analyze the statistics of workers who have lost 2024-2028 Grant ODA, IPG, IPG proposal;
+their jobs due to the energy transition; develop and implement GFANZ Decision 1009/QD-TTg:
+training and retraining programs for employees; promote social Scheme to Implement the JETP Declaration
+dialogue that ensures a just energy transition",programme,listed,named,Annex II; PDF pages 185; printed pages 169; ordinal 52
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:053,"53 Support research and propose measures towards equitable and 2024-2029 UNDP, IPG IPG: Concept Note 6
+sustainable energy transition of Quang Ninh and Thai Nguyen
+coal power plants",programme,listed,named,Annex II; PDF pages 185; printed pages 169; ordinal 53
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:054,"54 Support the implementation of economic, social and 2024-2026 Grant ODA, and Decision 1009/QD-TTg:
+environmental impact assessments in the process of just energy support from Scheme to Implement the JETP Declaration
+transition for relevant stakeholders GFANZ and
+other
+stakeholders",programme,listed,named,Annex II; PDF pages 185; printed pages 169; ordinal 54
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:055,"55 Establish vocational training and career centers to ensure the 2024-2028 Grant ODA Decision 1009/QD-TTg:
+objectives of a just energy transition Scheme to Implement the JETP Declaration",programme,listed,named,Annex II; PDF pages 185; printed pages 169; ordinal 55
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:056,"56 Improve the capacity of organizations and enterprises in 2024-2030 State Budget, Decision 1009/QD-TTg:
+proposing and implementing projects using resources from grant ODA Scheme to Implement the JETP Declaration
+financial institutions, funds and international private investors",programme,listed,named,Annex II; PDF pages 185; printed pages 169; ordinal 56
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:057,"57 Develop and propose advocacy programs to raise awareness of 2024-2030 Grant ODA, and Decision 1009/QD-TTg:
+implementing a just energy transition support from Scheme to Implement the JETP Declaration
+GFANZ and
+other
+stakeholders",programme,listed,named,Annex II; PDF pages 185; printed pages 169; ordinal 57
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:058,"58 Capacity building for the National Innovation Center on green 2024-2030 Grant ODA,
+hydrogen and related vocational training and support
+from GFANZ
+and other
+stakeholders",programme,listed,named,Annex II; PDF pages 185; printed pages 169; ordinal 58
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:059,"59 Support the development and implementation of traceability 2024-2029 State budget, IPG proposal
+and carbon monitoring in the production, preservation, grant ODA
+processing and transportation of pangasius, shrimp and dragon
+fruit, contributing to promoting the application of renewable
+energy and improving energy efficiency",programme,listed,named,Annex II; PDF pages 186; printed pages 170; ordinal 59
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:060,"60 Establishment of the International Center for Renewable Energy 2024 - 2025 Grant ODA, and Decision 1009/QD-TTg:
+located in Viet Nam support from Scheme to Implement the JETP Declaration
+GFANZ and
+other
+stakeholders",programme,listed,named,Annex II; PDF pages 186; printed pages 170; ordinal 60
+VNM,rmp-2023-inventory,vnm-rmp-2023,Resource Mobilisation Plan 2023,2023-12-01,vnm-rmp-2023:annex-II:061,"61 Research and propose solutions and roadmaps to promote 2024 - 2025 Grant ODA, and Decision 1009/QD-TTg:
+cooperation in connecting power grids with countries in the re- support from Scheme to Implement the JETP Declaration
+gion to enhance system connectivity, power exchange, and take GFANZ and
+advantage of countries’ resource strengths other
+stakeholders",programme,listed,named,Annex II; PDF pages 186; printed pages 170; ordinal 61

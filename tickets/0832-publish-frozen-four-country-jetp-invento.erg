@@ -6,6 +6,8 @@ Author: HDMX-coding-agent
 --- log ---
 2026-09-17T08:48Z HDMX-coding-agent created
 
+2026-09-17T09:27Z HDMX-coding-agent implemented — published 2,164 frozen rows across six source layers; deterministic replay, MVP downloads, unknown counts and all required local gates pass
+
 --- body ---
 
 ## Context
@@ -42,13 +44,13 @@ and layer.
 
 ## Exit criteria
 
-- [ ] One frozen table exists for each of ZAF, IDN, VNM and SEN
-- [ ] Every row exposes source, source layer, type and reported status
-- [ ] Edition and cutoff are explicit per country and source layer
-- [ ] No source rows are fused, dropped or promoted into a stronger status
-- [ ] Field unknowns, identity unknowns and unavailable sources are counted and displayed separately
-- [ ] Clean replay from pinned existing inputs reproduces all four tables and manifest byte-for-byte
-- [ ] The local MVP links the M1a tables and states that they are frozen inventories, not a live status service
+- [x] One frozen table exists for each of ZAF, IDN, VNM and SEN
+- [x] Every row exposes source, source layer, type and reported status
+- [x] Edition and cutoff are explicit per country and source layer
+- [x] No source rows are fused, dropped or promoted into a stronger status
+- [x] Field unknowns, identity unknowns and unavailable sources are counted and displayed separately
+- [x] Clean replay from pinned existing inputs reproduces all four tables and manifest byte-for-byte
+- [x] The local MVP links the M1a tables and states that they are frozen inventories, not a live status service
 
 ## Out of scope
 
