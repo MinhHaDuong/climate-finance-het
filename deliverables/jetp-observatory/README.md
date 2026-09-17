@@ -46,11 +46,12 @@ summed. Historical financing windows are not construction durations.
 Unit evidence-boundary checks are in `tests/test_jetp_observatory_mvp.py`.
 Manual Chromium checks live in `tests/browser/jetp_observatory.py` and cover
 navigation, filtering, source access, download payloads and mobile overflow.
-Install Playwright and its Chromium browser in a developer environment, start
-the preview, then run:
+Playwright is a development dependency; its browser is installed once per
+machine. Start the preview, then run:
 
 ```bash
-python tests/browser/jetp_observatory.py --screenshot /tmp/jetp-overview.png
+uv sync && uv run playwright install chromium
+uv run python tests/browser/jetp_observatory.py --screenshot /tmp/jetp-overview.png
 ```
 
 The initial data export is committed as a small handoff, not hidden in a DVC
