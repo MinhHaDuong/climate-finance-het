@@ -2,6 +2,7 @@
 Title: Select a feasible causal design from the JETP evidence audits
 Created: 2026-09-13
 Author: HDMX-coding-agent
+Closed: Resolved by PR #1397: causal design DEFER and author scope decision recorded.
 
 --- log ---
 2026-09-13T19:18Z HDMX-coding-agent created
@@ -12,6 +13,7 @@ Author: HDMX-coding-agent
 2026-09-15T00:00Z HDMX-coding-agent decision CAUSAL DEFER — reviewed 0735, merged lender pilots and accepted 0736; author scope decision required before 0730 estimation.
 
 2026-09-15T00:01Z HDMX-coding-agent decision author selected the bounded pre-outcome feasibility screen; separate design-only ticket will determine GO, NARROW or DEFER before 0730 estimation.
+2026-09-17T06:57Z HDMX-coding-agent closed — Resolved by PR #1397: causal design DEFER and author scope decision recorded.
 --- body ---
 
 ## Context

@@ -2,10 +2,12 @@
 Title: Repair replay and journal partition in the JETP comparative snapshot
 Created: 2026-09-16
 Author: Codex under author-authorised autonomous orchestration
-Blocked-by: 0822
+Closed: Delivered by PR #1403: snapshot replay, journal partition and scoped facts repaired.
 
 --- log ---
 2026-09-16T00:00Z Created after the two-round 0822 verification limit was reached.
+2026-09-17T06:57Z HDMX-coding-agent note blocker 0822 closed — Blocked-by removed.
+2026-09-17T06:57Z HDMX-coding-agent closed — Delivered by PR #1403: snapshot replay, journal partition and scoped facts repaired.
 --- body ---
 
 ## Context

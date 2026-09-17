@@ -2,10 +2,12 @@
 Title: Freeze the four-country JETP source census and acquisition contract
 Created: 2026-09-15
 Author: Codex with author authorisation
-Blocked-by: 0816
+Closed: Delivered by PR #1403: finite four-country source census frozen and replay-tested.
 
 --- log ---
 2026-09-15T00:30Z Codex created under the author-authorised JETP-only replan.
+2026-09-17T06:57Z HDMX-coding-agent note blocker 0816 closed — Blocked-by removed.
+2026-09-17T06:57Z HDMX-coding-agent closed — Delivered by PR #1403: finite four-country source census frozen and replay-tested.
 --- body ---
 
 ## Context

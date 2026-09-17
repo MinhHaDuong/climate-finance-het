@@ -2,6 +2,7 @@
 Title: Flag 5 calibration and activation sign-off: per-language centroid, sigma, or retire
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: Delivered by PRs #1413 and #1414: v3 semantic diagnostic activated and verified.
 
 --- log ---
 2026-07-27T14:40Z HDMX-coding-agent created split from 0336 — the fix that revived Flag 5 stands on its own; deciding what the flag should do is a separate author-owned call
@@ -15,6 +16,7 @@ Author: HDMX-coding-agent
 2026-09-16T14:29Z HDMX-coding-agent note author reports the data paper published. The pushed annotated tag rdj26561-revision1 pins commit 9af9dc08 and explicitly identifies the clean-room-verified v2.0.0 archive. The v2 artifact remains immutable; corpus development is unfrozen on main for the v3 lineage. This removes the publication-freeze blocker, not the calibration/sign-off gate: --skip-semantic-flag stays until a safe v3 implementation lands.
 2026-09-16T14:38Z HDMX-coding-agent decided v3 adopts the diagnostic variant in two gated steps: first land the per-language computation and unit tests while the published configuration and DVC stage remain untouched; then change configuration and activate it together in a separate pipeline-surface PR with a rebuilt output proving zero removals. The published v2 paper and deposit contract do not change retroactively.
 2026-09-16T15:06Z HDMX-coding-agent note v3 activation replayed against 43,179 enriched rows: 32,938 non-null distances, zero semantic flags, per-language centroids for 32,719 works in 16 languages, and global fallback for 219. The candidate extended artifact matches every existing column exactly and adds only semantic_outlier plus semantic_outlier_dist. Filtering keeps refined_works.csv (33,344 rows, sha256 15419b5b...) and corpus_audit.csv (43,179 rows, sha256 24399703...) byte-identical. The v3 contract publishes the distance and drops the all-False implementation mask.
+2026-09-17T06:57Z HDMX-coding-agent closed — Delivered by PRs #1413 and #1414: v3 semantic diagnostic activated and verified.
 --- body ---
 ## Context
 

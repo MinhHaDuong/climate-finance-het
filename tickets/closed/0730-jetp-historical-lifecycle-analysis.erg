@@ -3,10 +3,12 @@ Title: Analyse JETP progression, public-private finance and operation histories
 Created: 2026-09-13
 Author: HDMX-coding-agent
 Blocked-by: 0822
+Closed: Delivered by PR #1403: pinned descriptive snapshot, manifest, tables and plot-data handoff.
 
 --- log ---
 2026-09-13T19:18Z HDMX-coding-agent created
 2026-09-13T20:18Z HDMX-coding-agent decision Markdown-first storage; DVC evidence archive; static website; SQLite optional derived export.
+2026-09-17T06:57Z HDMX-coding-agent closed — Delivered by PR #1403: pinned descriptive snapshot, manifest, tables and plot-data handoff.
 --- body ---
 
 ## Context

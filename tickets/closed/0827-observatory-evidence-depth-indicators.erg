@@ -2,10 +2,12 @@
 Title: Show canonical and analytical evidence depth in the JETP MVP
 Created: 2026-09-16
 Author: Codex under author-authorised autonomous orchestration
-Blocked-by: 0824
+Closed: Delivered by PR #1403: canonical, source and analytical evidence-depth layers exposed.
 
 --- log ---
 2026-09-16T00:00Z Created after author feedback that the MVP hid recently structured evidence.
+2026-09-17T06:57Z HDMX-coding-agent note blocker 0824 closed — Blocked-by removed.
+2026-09-17T06:57Z HDMX-coding-agent closed — Delivered by PR #1403: canonical, source and analytical evidence-depth layers exposed.
 --- body ---
 
 ## Context

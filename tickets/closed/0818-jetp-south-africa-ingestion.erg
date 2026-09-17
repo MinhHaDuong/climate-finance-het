@@ -2,9 +2,11 @@
 Title: Ingest the frozen South Africa JETP source census
 Created: 2026-09-15
 Author: Codex with author authorisation
-Blocked-by: 0817
+Closed: Delivered by PR #1403: bounded South Africa ingestion and reconciliation.
 
 --- log ---
+2026-09-17T06:57Z HDMX-coding-agent note blocker 0817 closed — Blocked-by removed.
+2026-09-17T06:57Z HDMX-coding-agent closed — Delivered by PR #1403: bounded South Africa ingestion and reconciliation.
 --- body ---
 
 ## First test
