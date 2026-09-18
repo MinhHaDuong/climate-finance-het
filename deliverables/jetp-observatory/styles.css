@@ -397,8 +397,16 @@ p {
   border-color: var(--ink);
 }
 /* The two stage-two products of one country share a page and never a table, so
- * the switch between them is a tab, not a route. */
-.country-tabs button {
+ * the switch between them is a tab, not a route — a different component from
+ * the anchor pills above that switch between countries, so it keeps its own
+ * class rather than overloading .country-tabs with a second selector shape. */
+.view-tabs {
+  display: flex;
+  gap: 10px;
+  margin: 22px 0;
+  flex-wrap: wrap;
+}
+.view-tabs button {
   border: 1px solid var(--line);
   background: none;
   color: inherit;
@@ -408,7 +416,7 @@ p {
   font-size: 12px;
   cursor: pointer;
 }
-.country-tabs button[aria-selected="true"] {
+.view-tabs button[aria-selected="true"] {
   background: var(--ink);
   color: white;
   border-color: var(--ink);

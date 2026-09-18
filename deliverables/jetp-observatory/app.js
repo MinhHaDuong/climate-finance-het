@@ -258,29 +258,29 @@ const PDF_PAGE = /PDF pages? ([0-9]+)/;
  * can show what the collection recorded instead. */
 const collectionRank = (entry) =>
   entry.local_path ? (entry.status === "collected" ? 2 : 1) : 0;
-function indexDocuments(entries) {
+/* One tie-break, keyed either way: an inventory row addresses a document by
+ * source id, a ledger observation by the fingerprint build_observations.py
+ * already resolved. A falsy key is skipped rather than indexed, so a document
+ * with no sha256 recorded cannot collide under a shared "" key. */
+function indexDocumentsBy(entries, keyOf) {
   const index = {};
   entries.forEach((entry) => {
-    const kept = index[entry.id];
-    if (!kept || collectionRank(entry) > collectionRank(kept))
-      index[entry.id] = entry;
+    const key = keyOf(entry);
+    if (!key) return;
+    const kept = index[key];
+    if (!kept || collectionRank(entry) > collectionRank(kept)) index[key] = entry;
   });
   return index;
+}
+function indexDocuments(entries) {
+  return indexDocumentsBy(entries, (entry) => entry.id);
 }
 /* The ledger observations arrive with the fingerprint already resolved by
  * scripts/jetp/build_observations.py, so they address a document by sha256
  * where an inventory row addresses it by source id. One pass at load time
- * rather than a scan of the registry per rendered row. Same 0853 tie-break:
- * the archived, collected attempt is the one whose bytes a link can open. */
+ * rather than a scan of the registry per rendered row. */
 function indexDocumentsBySha256(entries) {
-  const index = {};
-  entries.forEach((entry) => {
-    if (!entry.sha256) return;
-    const kept = index[entry.sha256];
-    if (!kept || collectionRank(entry) > collectionRank(kept))
-      index[entry.sha256] = entry;
-  });
-  return index;
+  return indexDocumentsBy(entries, (entry) => entry.sha256);
 }
 /* Returns null where the Python raises: a renderer cannot abort a page over one
  * row, so an unresolved id degrades to its locator text. */
@@ -398,8 +398,10 @@ function inventoryUnknowns(details) {
     `<p class="note">Each figure counts one extraction sub-layer of this country. This page adds none of them together: the sub-layers overlap, count different things, and a country is not the unit any of them measures.</p>`
   );
 }
-function inventoryRowDetail(row) {
-  return `<details><summary>${esc(row.label || "Identity not published")}</summary><dl class="facts">${Object.entries(
+/* A row's own fields, listed under whichever summary its caller names — an
+ * inventory row and a ledger observation share every column but the label. */
+function rowDetail(row, summary) {
+  return `<details><summary>${summary}</summary><dl class="facts">${Object.entries(
     row,
   )
     .map(
@@ -407,6 +409,9 @@ function inventoryRowDetail(row) {
         `<dt>${esc(key)}</dt><dd>${esc(value === "" || value == null ? "Not published" : value)}</dd>`,
     )
     .join("")}</dl></details>`;
+}
+function inventoryRowDetail(row) {
+  return rowDetail(row, esc(row.label || "Identity not published"));
 }
 function inventoryEvidence(row) {
   const entry = documentIndex[row.source_id];
@@ -458,14 +463,10 @@ function observationTotals(rows, code) {
   );
 }
 function observationDetail(row) {
-  return `<details><summary>${esc(OBSERVATION_KINDS[row.kind] || row.kind)} · ${esc(observationId(row))}</summary><dl class="facts">${Object.entries(
+  return rowDetail(
     row,
-  )
-    .map(
-      ([key, value]) =>
-        `<dt>${esc(key)}</dt><dd>${esc(value === "" || value == null ? "Not published" : value)}</dd>`,
-    )
-    .join("")}</dl></details>`;
+    `${esc(OBSERVATION_KINDS[row.kind] || row.kind)} · ${esc(observationId(row))}`,
+  );
 }
 /* The fingerprint is resolved once, in the generator, so the row addresses its
  * document directly. A source the collection never archived keeps its locator
@@ -480,9 +481,13 @@ function observationEvidence(row) {
     ? `<a href="${esc(href)}" data-observation-id="${esc(observationId(row))}" target="_blank" rel="noopener">${locator}${row.pdf_page ? " · PDF page " + row.pdf_page : ""} ↗</a>`
     : `<span class="note">${locator}<br>${esc(entry.error || "Not in the local snapshot")}</span>`;
 }
+/* A facet's option list is the values a column actually carries, sorted and
+ * deduplicated: shared by every table's facet setup rather than closed over
+ * each one's own `rows` afresh. */
+const distinctValues = (rows, key) =>
+  [...new Set(rows.map((row) => row[key]).filter(Boolean))].sort();
 function observationsTable(rows) {
-  const values = (key) =>
-    [...new Set(rows.map((row) => row[key]).filter(Boolean))].sort();
+  const values = (key) => distinctValues(rows, key);
   return filterTable("observations", rows, {
     facets: [
       {
@@ -549,10 +554,23 @@ function observationsTable(rows) {
     pageSize: 50,
   });
 }
+/* Mount draws the whole table, so mounting every panel up front pays for the
+ * hidden one too on every visit. A panel mounts once, at the point it first
+ * becomes visible: the one already marked selected in the static markup, or
+ * whichever tab a click reveals — never both, on either path. */
 function mountTabs(panels) {
+  const mounted = new Set();
+  const mountOnce = (panel) => {
+    if (panel.mount && !mounted.has(panel.key)) {
+      panel.mount();
+      mounted.add(panel.key);
+    }
+  };
   panels.forEach(({ key, mount }) => {
-    if (mount) mount();
-    document.getElementById("tab-" + key).addEventListener("click", () => {
+    const tab = document.getElementById("tab-" + key);
+    if (tab.getAttribute("aria-selected") === "true") mountOnce({ key, mount });
+    tab.addEventListener("click", () => {
+      mountOnce({ key, mount });
       panels.forEach((panel) => {
         const selected = panel.key === key;
         document
@@ -568,8 +586,7 @@ function mountTabs(panels) {
 function renderInventory(code, rows, observations) {
   const details = m1a.countries[code];
   const c = country(code);
-  const values = (key) =>
-    [...new Set(rows.map((row) => row[key]).filter(Boolean))].sort();
+  const values = (key) => distinctValues(rows, key);
   const table = filterTable("inventory", rows, {
     facets: INVENTORY_FACETS.map(([key, label, all]) => ({
       key,
@@ -604,7 +621,7 @@ function renderInventory(code, rows, observations) {
   const observationsView = observationsTable(observations);
   main.innerHTML =
     `<div class="page-head"><div class="breadcrumb"><a href="#countries">Countries</a> / <a href="#country/${code}">${esc(c?.name || code)}</a> / Inventory</div><p class="eyebrow">Source rows · ${code}</p><h1>${esc(c?.name || code)} source rows</h1><p class="lede">Two separate readings of this country's documents: the frozen M1a inventory of what a source published about its own projects, and the ledger rows recorded from those same documents. They are kept in separate tabs because they are not comparable, and never added together.</p></div>` +
-    `<div class="country-tabs" role="tablist"><button type="button" role="tab" id="tab-inventory" aria-controls="panel-inventory" aria-selected="true">Frozen M1a inventory</button><button type="button" role="tab" id="tab-observations" aria-controls="panel-observations" aria-selected="false">Ledger observations</button></div>` +
+    `<div class="view-tabs" role="tablist"><button type="button" role="tab" id="tab-inventory" aria-controls="panel-inventory" aria-selected="true">Frozen M1a inventory</button><button type="button" role="tab" id="tab-observations" aria-controls="panel-observations" aria-selected="false">Ledger observations</button></div>` +
     `<section id="panel-inventory" role="tabpanel" aria-labelledby="tab-inventory">` +
     inventoryUnknowns(details) +
     `<div class="callout">Each row opens the archived source document, at its PDF page where the source publishes one. Archived copies open locally only; the published edition carries the registry and the publisher's address.</div>` +
