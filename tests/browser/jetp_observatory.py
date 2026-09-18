@@ -103,9 +103,78 @@ def check_inventory(page, url):
     # each naming the sub-layer it counts.
     manifest = page.request.get(url + '/data/m1a/manifest.json').json()
     sublayers = manifest['countries']['ZAF']['sublayers']
-    unknowns = page.locator('.metrics .metric')
+    # Scoped to the inventory panel: the ledger observations tab of the same
+    # page carries its own per-table metrics, in the DOM though hidden.
+    unknowns = page.locator('#panel-inventory .metrics .metric')
     assert unknowns.count() == len(sublayers)
     assert sublayers[0]['sublayer_id'] in unknowns.first.inner_text()
+
+
+def check_observations(page, url):
+    """Exercise the ledger observations tab: the counts, a facet, and a search.
+
+    Recipe VN of ticket 0834, adjusted to what the ledger holds: Viet Nam's
+    only rows are seven project-source links, and none of the three tables
+    carries a funder column for them, so the European Investment Bank package
+    is reached by the free-text field and not by the funder facet.
+    """
+    rows = page.request.get(url + '/data/observations/ZAF.json').json()
+    page.goto(url + '/#inventory/ZAF')
+    page.locator('#tab-observations').click()
+    page.wait_for_selector('#observations-filters')
+    assert str(len(rows)) in page.locator('#observations-count').inner_text()
+    # The head-of-tab figures are per table and per country, never pooled.
+    for table in ('events', 'implementation-events', 'project-source-links'):
+        served = [row for row in rows if row['table'] == table]
+        metric = page.locator(f'.metric[data-observation-table="{table}"]')
+        assert str(len(served)) in metric.inner_text(), table
+
+    # The table is paged at 50 rows, so the count line carries the filtered
+    # total and the tbody carries the page.
+    page.locator('#observations-filter-table').select_option('project-source-links')
+    links = [row for row in rows if row['table'] == 'project-source-links']
+    assert page.locator('#observations-results tbody tr').count() == min(50, len(links))
+    assert f'{len(links)} of {len(rows)}' in page.locator(
+        '#observations-count'
+    ).inner_text()
+    page.locator('#observations-filter-table').select_option('')
+    page.locator('#observations-filter-verification').select_option('official_register')
+    registered = [row for row in rows if row['verification'] == 'official_register']
+    assert page.locator('#observations-results tbody tr').count() == min(
+        50, len(registered)
+    )
+    assert f'{len(registered)} of {len(rows)}' in page.locator(
+        '#observations-count'
+    ).inner_text()
+
+    # Recipe VN: the Bac Ai package, found through the source identifier.
+    vietnam = page.request.get(url + '/data/observations/VNM.json').json()
+    page.goto(url + '/#inventory/VNM')
+    page.locator('#tab-observations').click()
+    page.wait_for_selector('#observations-filters')
+    assert str(len(vietnam)) in page.locator('#observations-count').inner_text()
+    page.locator('#observations-search').fill('eib')
+    eib = [row for row in vietnam if 'eib' in row['source_id']]
+    assert len(eib) == 1, len(eib)
+    assert page.locator('#observations-results tbody tr').count() == len(eib)
+
+    # Recipe SA: a row read from the Q1 2026 register opens that register's
+    # archived snapshot, at the page the locator names where it names one.
+    page.goto(url + '/#inventory/ZAF')
+    page.locator('#tab-observations').click()
+    page.wait_for_selector('#observations-filters')
+    registry = page.request.get(url + '/data/documents.json').json()['documents']
+    register = next(row for row in rows
+                    if row['source_id'] == 'zaf-jet-investment-register-q1-2026')
+    entry = next(row for row in registry
+                 if row['id'] == register['source_id'] and row['local_path'])
+    assert register['sha256'] == entry['sha256']
+    page.locator('#observations-search').fill(register['source_id'])
+    link = page.locator(
+        f'a[data-observation-id="{register.get("event_id") or register.get("link_id")}"]'
+    ).first
+    link.wait_for()
+    assert link.get_attribute('href').startswith(entry['local_path'])
 
 
 def check_projects(page, url):
@@ -178,6 +247,7 @@ def check_site(url, output):
         download_matches(page, url, 'data/m1a/manifest.json')
         check_documents(page, url)
         check_inventory(page, url)
+        check_observations(page, url)
         for code in ('ZAF', 'IDN', 'VNM', 'SEN'):
             page.goto(url + '/#country/' + code)
             page.wait_for_selector('.markdown h2')

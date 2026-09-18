@@ -30,7 +30,7 @@ const STAGE_COLOURS = {
   Need: "#bc9c7d",
   "Not documented": "#dce0d5",
 };
-let overview, countries, comparison, editions, evidence, m1a, projects, documentsData, documentIndex;
+let overview, countries, comparison, editions, evidence, m1a, projects, documentsData, documentIndex, documentsBySha;
 const country = (code) => overview.countries.find((c) => c.code === code);
 const undisclosedCount = () =>
   overview.countries.reduce((total, c) => total + c.undisclosed, 0);
@@ -258,14 +258,29 @@ const PDF_PAGE = /PDF pages? ([0-9]+)/;
  * can show what the collection recorded instead. */
 const collectionRank = (entry) =>
   entry.local_path ? (entry.status === "collected" ? 2 : 1) : 0;
-function indexDocuments(entries) {
+/* One tie-break, keyed either way: an inventory row addresses a document by
+ * source id, a ledger observation by the fingerprint build_observations.py
+ * already resolved. A falsy key is skipped rather than indexed, so a document
+ * with no sha256 recorded cannot collide under a shared "" key. */
+function indexDocumentsBy(entries, keyOf) {
   const index = {};
   entries.forEach((entry) => {
-    const kept = index[entry.id];
-    if (!kept || collectionRank(entry) > collectionRank(kept))
-      index[entry.id] = entry;
+    const key = keyOf(entry);
+    if (!key) return;
+    const kept = index[key];
+    if (!kept || collectionRank(entry) > collectionRank(kept)) index[key] = entry;
   });
   return index;
+}
+function indexDocuments(entries) {
+  return indexDocumentsBy(entries, (entry) => entry.id);
+}
+/* The ledger observations arrive with the fingerprint already resolved by
+ * scripts/jetp/build_observations.py, so they address a document by sha256
+ * where an inventory row addresses it by source id. One pass at load time
+ * rather than a scan of the registry per rendered row. */
+function indexDocumentsBySha256(entries) {
+  return indexDocumentsBy(entries, (entry) => entry.sha256);
 }
 /* Returns null where the Python raises: a renderer cannot abort a page over one
  * row, so an unresolved id degrades to its locator text. */
@@ -383,8 +398,10 @@ function inventoryUnknowns(details) {
     `<p class="note">Each figure counts one extraction sub-layer of this country. This page adds none of them together: the sub-layers overlap, count different things, and a country is not the unit any of them measures.</p>`
   );
 }
-function inventoryRowDetail(row) {
-  return `<details><summary>${esc(row.label || "Identity not published")}</summary><dl class="facts">${Object.entries(
+/* A row's own fields, listed under whichever summary its caller names — an
+ * inventory row and a ledger observation share every column but the label. */
+function rowDetail(row, summary) {
+  return `<details><summary>${summary}</summary><dl class="facts">${Object.entries(
     row,
   )
     .map(
@@ -392,6 +409,9 @@ function inventoryRowDetail(row) {
         `<dt>${esc(key)}</dt><dd>${esc(value === "" || value == null ? "Not published" : value)}</dd>`,
     )
     .join("")}</dl></details>`;
+}
+function inventoryRowDetail(row) {
+  return rowDetail(row, esc(row.label || "Identity not published"));
 }
 function inventoryEvidence(row) {
   const entry = documentIndex[row.source_id];
@@ -407,11 +427,166 @@ function inventoryEvidence(row) {
     ? `<a href="${esc(href)}" data-inventory-row="${esc(row.source_row_id)}" target="_blank" rel="noopener">${locator}${link.pdf_page ? " · PDF page " + link.pdf_page : ""} ↗</a>`
     : `<span class="note">${locator}<br>${esc(entry.error || "Not in the local snapshot")}</span>`;
 }
-function renderInventory(code, rows) {
+/* The second stage-two product: the ledger rows analysts wrote from the same
+ * documents, under a different schema. The three tables keep their own names,
+ * the ones data/jetp uses, rather than a display vocabulary invented here. */
+const OBSERVATION_TABLES = [
+  "events",
+  "implementation-events",
+  "project-source-links",
+];
+const OBSERVATION_KINDS = {
+  financial_event: "Financial event",
+  implementation_event: "Implementation event",
+  project_source_link: "Project–source link",
+};
+/* Each table names its rows with its own key. */
+const observationId = (row) =>
+  row.event_id || row.implementation_event_id || row.link_id || "";
+/* Counted from the rows this tab serves, never from a stored total: a head
+ * count that can drift from the table below it is a claim, not a summary. */
+const observationCounts = (rows) =>
+  OBSERVATION_TABLES.map((table) => ({
+    table,
+    count: rows.filter((row) => row.table === table).length,
+  }));
+function observationTotals(rows, code) {
+  const c = country(code);
+  return (
+    `<div class="metrics">${observationCounts(rows)
+      .map(
+        ({ table, count }) =>
+          `<div class="metric" data-observation-table="${esc(table)}"><strong>${fmt(count)}</strong><span>${esc(table)}</span><small>rows recorded for ${esc(c?.short || code)}</small></div>`,
+      )
+      .join("")}</div>` +
+    `<p class="note">These rows and the frozen M1a inventory in the other tab are two extractions of the same documents under two schemas. They are read separately and never added together: one ledger row and one inventory row can describe the same paragraph of the same file. Each figure counts one table, for this country alone.</p>`
+  );
+}
+function observationDetail(row) {
+  return rowDetail(
+    row,
+    `${esc(OBSERVATION_KINDS[row.kind] || row.kind)} · ${esc(observationId(row))}`,
+  );
+}
+/* The fingerprint is resolved once, in the generator, so the row addresses its
+ * document directly. A source the collection never archived keeps its locator
+ * as text, exactly as an unresolved inventory row does. */
+function observationEvidence(row) {
+  const locator = esc(row.locator || "No locator recorded");
+  const entry = row.sha256 ? documentsBySha[row.sha256] : null;
+  if (!entry)
+    return `<span class="note">${locator}<br>No archived copy of this source</span>`;
+  const href = documentHref(entry, row.pdf_page);
+  return href
+    ? `<a href="${esc(href)}" data-observation-id="${esc(observationId(row))}" target="_blank" rel="noopener">${locator}${row.pdf_page ? " · PDF page " + row.pdf_page : ""} ↗</a>`
+    : `<span class="note">${locator}<br>${esc(entry.error || "Not in the local snapshot")}</span>`;
+}
+/* A facet's option list is the values a column actually carries, sorted and
+ * deduplicated: shared by every table's facet setup rather than closed over
+ * each one's own `rows` afresh. */
+const distinctValues = (rows, key) =>
+  [...new Set(rows.map((row) => row[key]).filter(Boolean))].sort();
+function observationsTable(rows) {
+  const values = (key) => distinctValues(rows, key);
+  return filterTable("observations", rows, {
+    facets: [
+      {
+        key: "table",
+        label: "Ledger table",
+        all: "All three tables",
+        options: values("table"),
+      },
+      {
+        key: "kind",
+        label: "Kind",
+        all: "All kinds",
+        options: values("kind"),
+      },
+      // Only the financial events publish a funder. The other two tables have
+      // no such column, so their rows carry no such key and can never match a
+      // chosen funder — which is the honest answer: the ledger does not record
+      // one for them, and inventing a blank would make the absence look like a
+      // value.
+      {
+        key: "funder",
+        label: "Funder",
+        all: "All funders",
+        options: values("funder"),
+      },
+      {
+        key: "verification",
+        label: "Verification state",
+        all: "All verification states",
+        options: values("verification"),
+      },
+    ],
+    search: {
+      // The notes, the locator and the source identifier, because that is
+      // where a row names things no column holds: the Viet Nam link rows name
+      // their funder only inside the source identifier.
+      label: "Search notes, locators and source identifiers",
+      placeholder: "Try eib, Annex, Bac Ai…",
+      text: (row) =>
+        (
+          (row.notes || "") +
+          " " +
+          (row.locator || "") +
+          " " +
+          (row.source_id || "")
+        ).toLowerCase(),
+    },
+    columns: [
+      { label: "Table", cell: (row) => esc(row.table) },
+      { label: "Row", cell: observationDetail },
+      {
+        label: "Kind",
+        cell: (row) => esc(OBSERVATION_KINDS[row.kind] || row.kind),
+      },
+      { label: "Project", cell: (row) => `<code>${esc(row.project_id)}</code>` },
+      { label: "Funder", cell: (row) => esc(row.funder || "Not recorded here") },
+      // Verbatim, as the ledger wrote it: this is the word a reader has to be
+      // able to check against the source, not a grade assigned here.
+      { label: "Verification", cell: (row) => pill(row.verification) },
+      { label: "Evidence", cell: observationEvidence },
+    ],
+    empty: "No ledger rows match these filters.",
+    resultNoun: "ledger rows",
+    pageSize: 50,
+  });
+}
+/* Mount draws the whole table, so mounting every panel up front pays for the
+ * hidden one too on every visit. A panel mounts once, at the point it first
+ * becomes visible: the one already marked selected in the static markup, or
+ * whichever tab a click reveals — never both, on either path. */
+function mountTabs(panels) {
+  const mounted = new Set();
+  const mountOnce = (panel) => {
+    if (panel.mount && !mounted.has(panel.key)) {
+      panel.mount();
+      mounted.add(panel.key);
+    }
+  };
+  panels.forEach(({ key, mount }) => {
+    const tab = document.getElementById("tab-" + key);
+    if (tab.getAttribute("aria-selected") === "true") mountOnce({ key, mount });
+    tab.addEventListener("click", () => {
+      mountOnce({ key, mount });
+      panels.forEach((panel) => {
+        const selected = panel.key === key;
+        document
+          .getElementById("tab-" + panel.key)
+          .setAttribute("aria-selected", String(selected));
+        document
+          .getElementById("panel-" + panel.key)
+          .toggleAttribute("hidden", !selected);
+      });
+    });
+  });
+}
+function renderInventory(code, rows, observations) {
   const details = m1a.countries[code];
   const c = country(code);
-  const values = (key) =>
-    [...new Set(rows.map((row) => row[key]).filter(Boolean))].sort();
+  const values = (key) => distinctValues(rows, key);
   const table = filterTable("inventory", rows, {
     facets: INVENTORY_FACETS.map(([key, label, all]) => ({
       key,
@@ -443,22 +618,34 @@ function renderInventory(code, rows) {
     resultNoun: "source rows",
     pageSize: 50,
   });
+  const observationsView = observationsTable(observations);
   main.innerHTML =
-    `<div class="page-head"><div class="breadcrumb"><a href="#countries">Countries</a> / <a href="#country/${code}">${esc(c?.name || code)}</a> / Inventory</div><p class="eyebrow">Frozen M1a inventory · ${code}</p><h1>${esc(c?.name || code)} source rows</h1><p class="lede">Every selected row of this country's extraction sub-layers, as its source published it, before any identity matching. Row counts are not comparable project totals.</p></div>` +
+    `<div class="page-head"><div class="breadcrumb"><a href="#countries">Countries</a> / <a href="#country/${code}">${esc(c?.name || code)}</a> / Inventory</div><p class="eyebrow">Source rows · ${code}</p><h1>${esc(c?.name || code)} source rows</h1><p class="lede">Two separate readings of this country's documents: the frozen M1a inventory of what a source published about its own projects, and the ledger rows recorded from those same documents. They are kept in separate tabs because they are not comparable, and never added together.</p></div>` +
+    `<div class="view-tabs" role="tablist"><button type="button" role="tab" id="tab-inventory" aria-controls="panel-inventory" aria-selected="true">Frozen M1a inventory</button><button type="button" role="tab" id="tab-observations" aria-controls="panel-observations" aria-selected="false">Ledger observations</button></div>` +
+    `<section id="panel-inventory" role="tabpanel" aria-labelledby="tab-inventory">` +
     inventoryUnknowns(details) +
     `<div class="callout">Each row opens the archived source document, at its PDF page where the source publishes one. Archived copies open locally only; the published edition carries the registry and the publisher's address.</div>` +
     table.head +
-    `<div class="downloads"><a class="button light" href="data/m1a/${code}.csv" download>Download the ${code} M1a inventory (CSV) ↓</a></div>`;
-  table.mount();
+    `<div class="downloads"><a class="button light" href="data/m1a/${code}.csv" download>Download the ${code} M1a inventory (CSV) ↓</a></div></section>` +
+    `<section id="panel-observations" role="tabpanel" aria-labelledby="tab-observations" hidden>` +
+    observationTotals(observations, code) +
+    observationsView.head +
+    `<div class="downloads"><a class="button light" href="data/observations/${code}.json" download>Download the ${code} ledger observations (JSON) ↓</a></div></section>`;
+  mountTabs([
+    { key: "inventory", mount: table.mount },
+    { key: "observations", mount: observationsView.mount },
+  ]);
 }
 function inventoryPage(code) {
   if (!m1a.countries[code]) return notFound();
   main.innerHTML = `<p class="note">Loading the ${esc(code)} source rows…</p>`;
-  inventoryCache[code] = inventoryCache[code] || load("m1a/" + code);
+  inventoryCache[code] =
+    inventoryCache[code] ||
+    Promise.all([load("m1a/" + code), load("observations/" + code)]);
   inventoryCache[code]
-    .then((payload) => {
+    .then(([payload, observations]) => {
       if (location.hash.startsWith("#inventory/" + code))
-        renderInventory(code, inventoryRows(payload));
+        renderInventory(code, inventoryRows(payload), observations);
     })
     .catch((error) => {
       // Drop the rejected promise, or one transient failure would be replayed
@@ -725,6 +912,7 @@ async function start() {
     );
     projects = Object.values(countries).flatMap((c) => c.projects);
     documentIndex = indexDocuments(documentsData.documents);
+    documentsBySha = indexDocumentsBySha256(documentsData.documents);
     window.addEventListener("hashchange", render);
     render();
   } catch (error) {

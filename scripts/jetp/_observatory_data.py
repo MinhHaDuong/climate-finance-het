@@ -2,6 +2,25 @@
 
 from datetime import datetime
 
+from jetp._m1a_document_links import resolve_document_link
+
+# The three ledger tables served as explorable observations, and the kind each
+# one carries.  Derived from the table, never read from a row: none of the
+# three publishes a kind column, so a row cannot supply one.
+OBSERVATION_KINDS = {
+    'events': 'financial_event',
+    'implementation-events': 'implementation_event',
+    'project-source-links': 'project_source_link',
+}
+# The same decision under two column names, because the two ledgers were
+# written years apart.  ``verification`` aliases whichever one a table
+# publishes; the source column stays in the entry under its own name.
+VERIFICATION_COLUMNS = {
+    'events': 'verification_status',
+    'implementation-events': 'verification_status',
+    'project-source-links': 'review_status',
+}
+
 
 def iso_date(value):
     """Parse a source date without inventing a missing date."""
@@ -76,6 +95,39 @@ def document_entry(row, available):
         'error': row.get('error') or None,
         'local_path': (f'documents/{storage_path}'
                        if storage_path and storage_path in available else None),
+    }
+
+
+def observation_entry(row, table, registry):
+    """Serve one ledger row as it was written, addressed to its document.
+
+    Every source column passes through verbatim, as the string ``csv.DictReader``
+    read: an amount is never parsed, a status never recoded.  ``public_event``
+    capitalises a financial status for a headline; this view must not, because
+    what it publishes is the ledger's own word — ``secondary_only`` reaches the
+    page as ``secondary_only``.
+
+    The fingerprint comes from the collection registry, uniformly across the
+    three tables, never from the ``document_sha256`` column two of them carry:
+    one resolution path, one answer.  A source the collection never recorded
+    (seven Viet Nam link rows) resolves to a null fingerprint rather than
+    aborting the build — the page then shows the locator as text, which is what
+    the renderer does for the same case, and the gap stays visible instead of
+    emptying a country.
+    """
+    if table not in OBSERVATION_KINDS:
+        raise ValueError(f'Unknown observation table: {table}')
+    source_id = row['source_id']
+    link = resolve_document_link(
+        source_id, row.get('locator', ''), {source_id: registry.get(source_id, {})}
+    )
+    return {
+        **dict(row),
+        'table': table,
+        'kind': OBSERVATION_KINDS[table],
+        'verification': row[VERIFICATION_COLUMNS[table]],
+        'sha256': link['sha256'],
+        'pdf_page': link['pdf_page'],
     }
 
 

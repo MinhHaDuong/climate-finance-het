@@ -56,6 +56,15 @@ Routes: `#overview`, `#countries`, `#country/IDN`, `#projects`,
   its PDF page where the source publishes one. The export width is per country,
   so the page wires only the five facets every country carries and shows every
   other column in the row detail.
+- Ledger observations for the same four countries, in the second tab of
+  `#inventory/<CODE>`: the 766 rows of `data/jetp/events.csv`,
+  `implementation-events.csv` and `project-source-links.csv`, served verbatim
+  under `data/observations/<CODE>.json` with the table, the kind, the
+  verification word the ledger wrote, and the fingerprint and PDF page of the
+  document each was read from. Counts are shown per table and per country. The
+  inventories and these rows are two extractions of the same documents under
+  two schemas; they are read separately and are never added together. No amount
+  is summed, converted or promoted here, and no verification state is recoded.
 
 This is a preview, not the complete public release of 0726 or deployment of 0727.
 There is no pooled disbursement rate or causal acceleration estimate. Headline
@@ -81,5 +90,6 @@ remote. Every build invocation writes exactly one JSON view. Rebuild with
 makes changed bytes explicit. A non-null input Git SHA is emitted only when all
 listed input files match that commit. Uncommitted previews rely on file hashes.
 Rebuild the frozen inventories alone with `make jetp-data jetp-m1a`; this is an
-offline replay from pinned local inputs and never refreshes a source. The
+offline replay from pinned local inputs and never refreshes a source.
+Rebuild the ledger observations alone with `make jetp-data jetp-observations`. The
 ordinary observatory build serves the committed export without requiring DVC.
