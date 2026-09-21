@@ -65,6 +65,19 @@ Routes: `#overview`, `#countries`, `#country/IDN`, `#projects`,
   inventories and these rows are two extractions of the same documents under
   two schemas; they are read separately and are never added together. No amount
   is summed, converted or promoted here, and no verification state is recoded.
+- The descent from a fact to its evidence, and the climb from a document to
+  what cites it. Each named record's page carries a review-state badge and a
+  "Ledger evidence" fold-out: the ledger observations addressed to that
+  identity, served under `evidence` in `<CODE>.json` exactly as the
+  Observations tab serves them, each opening its archived document where the
+  collection holds one. Each Documents row lists, from `by_source_id` in
+  `documents.json`, what was extracted from that source (ledger rows and frozen
+  M1a rows, as references to their own views) and which facts rely on it
+  (named records and reviewed records) — two lists, never a total, and a
+  source nothing cites says so. The reviewed-evidence pedigree opens the bytes
+  its fingerprint pins. The Viet Nam page shows the 279 positions of the RMP
+  2023 table and the 24 records of the 2025 portfolio side by side; no link
+  between them is established here.
 
 This is a preview, not the complete public release of 0726 or deployment of 0727.
 There is no pooled disbursement rate or causal acceleration estimate. Headline
