@@ -15,6 +15,15 @@ from playwright.sync_api import sync_playwright
 
 def download_matches(page, url, href):
     """Assert that a browser download is the byte-identical served artifact."""
+    # Headless Chromium honours at most ten `<a download>` clicks per loaded
+    # document: the eleventh never leaves the browser (the server logs no
+    # request) and Playwright's download event never fires, which is where
+    # the full recipe stalled — on data/m1a/VNM.csv, its eleventh download.
+    # The local-only route handler and the automatic-downloads content
+    # setting were each varied without effect; a document navigation resets
+    # the count, so every download here starts from a freshly loaded page.
+    page.reload()
+    page.wait_for_selector('.downloads')
     with page.expect_download() as download:
         page.locator(f'a[download][href="{href}"]').click()
     assert Path(download.value.path()).read_bytes() == page.request.get(
