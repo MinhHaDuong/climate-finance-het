@@ -28,12 +28,12 @@ ROWS = [
 ]
 
 
-def build(tmp_path):
+def build(tmp_path, rows=ROWS):
     """Write only the PDF's bytes, so availability cannot be read off status."""
     archived = tmp_path / 'data/jetp/documents/objects/aa'
     archived.mkdir(parents=True)
     (archived / 'pdf.pdf').write_bytes(b'%PDF-1.4\n')
-    return documents_data(tmp_path, {'manifest': [dict(row) for row in ROWS]})
+    return documents_data(tmp_path, {'manifest': [dict(row) for row in rows]})
 
 
 def entries(result):
@@ -124,24 +124,15 @@ SHARED_ROWS = [
 ]
 
 
-def build_shared(tmp_path):
-    (tmp_path / 'data/jetp/documents').mkdir(parents=True, exist_ok=True)
-    return documents_data(tmp_path, {'manifest': [dict(r) for r in SHARED_ROWS]})
-
-
 def test_shared_source_id_rows_get_distinct_row_keys_and_keep_their_source_id(tmp_path):
-    """Two attempts of one source are two rows: distinct keys, same identifier."""
-    result = build_shared(tmp_path)
+    """Two attempts of one source are two rows: distinct keys, same identifier,
+    and the same keys again when the same registry is rebuilt."""
+    result = build(tmp_path, rows=SHARED_ROWS)
     keys = [entry['row_key'] for entry in result['documents']]
     assert len(set(keys)) == len(SHARED_ROWS), keys
     assert [entry['id'] for entry in result['documents']] == sorted(
         row['source_id'] for row in SHARED_ROWS)
     for entry in result['documents']:
         assert entry['id'] in entry['row_key']
-
-
-def test_row_key_is_a_stable_function_of_the_registry(tmp_path):
-    """Rebuilding from the same registry yields the same keys, in the same order."""
-    first = [e['row_key'] for e in build_shared(tmp_path)['documents']]
-    second = [e['row_key'] for e in build_shared(tmp_path)['documents']]
-    assert first == second
+    rebuilt = documents_data(tmp_path, {'manifest': [dict(r) for r in SHARED_ROWS]})
+    assert [entry['row_key'] for entry in rebuilt['documents']] == keys
