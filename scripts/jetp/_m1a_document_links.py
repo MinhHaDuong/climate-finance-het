@@ -46,14 +46,19 @@ def resolve_document_link(
     source_id: str,
     evidence_locator: str,
     registry: Mapping[str, Mapping[str, object]],
+    *,
+    required: bool = True,
 ) -> dict[str, object]:
     """Resolve one inventory row to its document fingerprint and PDF page.
 
     Raises ``KeyError`` when the identifier is absent from the registry: a row
     whose source was never collected is a registry gap to repair, not a link to
-    render blank.
+    render blank.  The ledger observations view (ticket 0838) is the one caller
+    that passes ``required=False``: there a never-collected source resolves to
+    a null fingerprint, so the gap stays visible on the page instead of
+    emptying a country.
     """
-    entry = registry[source_id]
+    entry = registry[source_id] if required else registry.get(source_id, {})
     match = PDF_PAGE.search(evidence_locator or "")
     return {
         "sha256": entry.get("sha256"),

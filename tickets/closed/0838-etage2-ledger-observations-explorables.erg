@@ -2,6 +2,7 @@
 Title: Étage 2 : observations atomiques du ledger explorables dans le MVP
 Created: 2026-09-17
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1433
 
 --- log ---
 2026-09-17T16:56Z HDMX-coding-agent created
@@ -10,6 +11,12 @@ Author: HDMX-coding-agent
 2026-09-17T19:44Z HDMX-coding-agent note décision de l'auteur : recadré sur events, implementation-events, project-source-links ; structured_atomic_observations et not_deployed intacts
 2026-09-17T20:10Z HDMX-coding-agent note plan : Actions/Test/Dependencies réécrits (schéma data/observations/<CODE>.json, resolve_document_link réutilisé). Verification laissée inchangée par mandat de cette passe, mais un risque de prémisse y est signalé ici : « filtrer VNM sur bailleur = BEI » ne peut passer par une facette funder — project-source-links (seule table portant des lignes VNM, 7 au total) n'a pas de colonne funder, et les trois lignes Bac Ai ne portent que le mot anglais « eib » (source_id vnm-link-eib-bac-ai, notes) jamais « BEI ». La recherche plein texte de l'action 6 (notes/locator/source_id) couvre l'intention de la recette ; la facette funder ne le peut pas pour VNM. À trancher par l'auteur ou en Execute, pas rewordé ici.
 2026-09-17T22:51Z HDMX-coding-agent note blocker 0836 closed — Blocked-by removed.
+2026-09-17T23:04Z HDMX-coding-agent execute : libellés en anglais, non en français (action 6/9) — la page 0836 livrée est anglophone ; registre construit via documents_data+index_documents (21 ids à tentatives multiples) ; 7 liens VNM nomment des sources jamais collectées, servies avec empreinte nulle au lieu de lever
+2026-09-17T23:04Z HDMX-coding-agent verification : recette VN (bailleur BEI) satisfaite par recherche plein texte sur source_id, pas par facette funder — tranché en Execute comme prévu par la note du 2026-09-17T20:10Z
+2026-09-17T23:58Z HDMX-coding-agent revue round 1-2 : registre reconstruit sur l'empreinte enregistrée, non sur la copie archivée sur disque (index_documents écarté) — une empreinte SEN basculait selon que l'instantané DVC était sorti ; ordre total (statut, date, empreinte) pour les tentatives ex aequo
+2026-09-18T00:41Z HDMX-coding-agent bump verify-reroll — round 1: Recette VN (bailleur=BEI) doit être ouvrable en local ; les 7 lignes VNM ont une empreinte nulle (source jamais collectée) et /review-pr round 1 §2 demande une acceptation explicite de l'auteur pour la lecture restreinte du critère de sortie
+2026-09-21T20:53Z HDMX-coding-agent note décision de l'auteur (2026-09-18, consignée dans le corps de la PR #1434 qui dépose 0854, réaffirmée en session le 2026-09-21) : lecture restreinte de la recette VN acceptée — « ouvrable en local » vaut pour l'Afrique du Sud ; pour le Vietnam, les lignes de Bac Ai sont trouvables et portent leur localisateur, et la collecte des sept sources jamais archivées est [[0854]]. La vérification et le critère de sortie ci-dessous sont annotés en conséquence.
+2026-09-21T21:46Z HDMX-coding-agent closed — autoclosed — PR #1433
 --- body ---
 
 ## Context
@@ -287,7 +294,7 @@ palier rapide, `make check-fast`.
 
 ## Verification
 
-- [ ] Recette VN : filtrer VNM sur bailleur = BEI montre les observations de Bac Ai avec leur bulletin ou fiche source, ouvrable en local
+- [ ] Recette VN : filtrer VNM sur bailleur = BEI montre les observations de Bac Ai avec leur bulletin ou fiche source, ouvrable en local — lecture restreinte acceptée par l'auteur le 2026-09-18 : trouvables avec leur localisateur ; l'ouverture en local suit la collecte [[0854]]
 - [ ] Recette SA : les observations issues du registre Q1 2026 renvoient au snapshot du registre
 - [ ] Le compte en tête d'onglet égale le nombre de lignes servies, par table et par pays
 - [ ] `reviewed-evidence.json` et `tests/test_jetp_public_release.py` sont inchangés
@@ -305,7 +312,7 @@ palier rapide, `make check-fast`.
 - [ ] Chaque observation renvoie à son document et à son localisateur
 - [ ] Le compte de lignes servies par table et par pays est affiché et exact ; `reviewed-evidence.json` est intact
 - [ ] La séparation entre les deux produits d'étage 2 est affichée
-- [ ] Recettes SA et VN de 0834 réussies pour les observations
+- [ ] Recettes SA et VN de 0834 réussies pour les observations — VN en lecture restreinte (décision de l'auteur du 2026-09-18, journal), ouverture en local reportée à [[0854]]
 
 ## Out of scope
 
