@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-09-17T21:31Z HDMX-coding-agent created
 2026-09-18T00:20Z HDMX-coding-agent note 0836 a dû trancher avant cette fiche : sa page Inventaires résout un source_id partagé vers la tentative `collected` portant un `local_path`, puis la première archivée, puis la première entrée (scripts/jetp/_m1a_document_links.py:index_documents). Un seul source_id M1a est concerné aujourd'hui, `vnm-rmp-2023`, dont les deux entrées ont même empreinte et même chemin. Le cas arbitraire existe ailleurs dans le registre (`zaf-ntcsa-transmission-plans` : deux entrées `collected` de sha256 et local_path différents), inerte tant qu'aucune ligne M1a ne le référence. La clôture de 0853 doit vérifier que son action 1 ne change pas silencieusement le document vers lequel une ligne d'inventaire résout.
+2026-09-21T22:30Z HDMX-coding-agent note Action 3, réponse à 0836 : quand un source_id est partagé, une ligne d'inventaire résout son document par le source_id (champ `id` de documents.json) via index_documents — tentative `collected` portant un local_path, puis première archivée, puis première entrée — et jamais par la nouvelle clé `row_key` (`source_id:ordinal` de la tentative dans l'ordre du registre), qui n'adresse qu'une ligne de la page Documents (data-document-id). Vérifié sur la branche : les 2164 lignes M1a résolvent au même sha256/local_path avant et après ; m1a/*.json et observations/*.json régénérés identiques à l'octet ; documents.json ne diffère que par le champ ajouté (307 lignes, 307 clés, 285 identifiants).
 
 --- body ---
 
@@ -52,6 +53,10 @@ deux entrées portent des clés de ligne distinctes et que chacune garde son
 
 ## Exit criteria
 
-- [ ] Aucune collision de `data-document-id` sur les 307 lignes
-- [ ] Le filtre pays de la page Documents affiche les noms de pays
-- [ ] `make check-fast` et `make lint` passent
+- [x] Aucune collision de `data-document-id` sur les 307 lignes — `row_key`
+      `source_id:ordinal`, 307 clés distinctes pour 285 identifiants
+      (`documents.json` régénéré ; `test_shared_source_id_rows_get_distinct_row_keys_and_keep_their_source_id`)
+- [x] Le filtre pays de la page Documents affiche les noms de pays —
+      `options()` accepte `{ value, label }`, recette navigateur vérifie
+      l'option ZAF = « South Africa »
+- [x] `make check-fast` et `make lint` passent
