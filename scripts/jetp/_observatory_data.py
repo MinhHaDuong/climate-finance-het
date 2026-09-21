@@ -117,9 +117,8 @@ def observation_entry(row, table, registry):
     """
     if table not in OBSERVATION_KINDS:
         raise ValueError(f'Unknown observation table: {table}')
-    source_id = row['source_id']
     link = resolve_document_link(
-        source_id, row.get('locator', ''), {source_id: registry.get(source_id, {})}
+        row['source_id'], row.get('locator', ''), registry, required=False
     )
     return {
         **dict(row),

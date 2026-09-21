@@ -90,6 +90,15 @@ def test_an_unknown_source_id_is_an_error_not_a_silent_blank() -> None:
         resolve_document_link("source-missing", "Appendix 3, row 4", REGISTRY)
 
 
+def test_a_caller_that_opts_out_of_the_gap_check_gets_a_null_fingerprint() -> None:
+    link = resolve_document_link(
+        "source-missing", "PDF pages 12", REGISTRY, required=False
+    )
+    assert link["sha256"] is None
+    assert link["local_path"] is None
+    assert link["pdf_page"] == 12
+
+
 def test_a_per_country_extra_column_passes_through_resolution_untouched() -> None:
     widened = FIXTURE_CSV.replace(
         "evidence_locator\n", "evidence_locator,raw_extra_field\n"

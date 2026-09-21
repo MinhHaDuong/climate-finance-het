@@ -413,19 +413,32 @@ function rowDetail(row, summary) {
 function inventoryRowDetail(row) {
   return rowDetail(row, esc(row.label || "Identity not published"));
 }
+/* One evidence cell for both stage-two tables: the locator as a link into the
+ * archived copy when the snapshot holds one, as text otherwise. The callers
+ * differ only in how they find the document entry and what they say when
+ * there is none. */
+function evidenceLink(locator, entry, pdfPage, dataAttr, dataValue, noEntry) {
+  const text = esc(locator || "No locator recorded");
+  if (!entry)
+    return `<span class="note">${text}${noEntry ? "<br>" + noEntry : ""}</span>`;
+  const href = documentHref(entry, pdfPage);
+  return href
+    ? `<a href="${esc(href)}" ${dataAttr}="${esc(dataValue)}" target="_blank" rel="noopener">${text}${pdfPage ? " · PDF page " + pdfPage : ""} ↗</a>`
+    : `<span class="note">${text}<br>${esc(entry.error || "Not in the local snapshot")}</span>`;
+}
 function inventoryEvidence(row) {
   const entry = documentIndex[row.source_id];
-  const locator = esc(row.evidence_locator || "No locator recorded");
-  if (!entry) return `<span class="note">${locator}</span>`;
-  const link = resolveDocumentLink(
-    row.source_id,
+  const pdfPage = entry
+    ? resolveDocumentLink(row.source_id, row.evidence_locator, documentIndex).pdf_page
+    : null;
+  return evidenceLink(
     row.evidence_locator,
-    documentIndex,
+    entry,
+    pdfPage,
+    "data-inventory-row",
+    row.source_row_id,
+    "",
   );
-  const href = documentHref(entry, link.pdf_page);
-  return href
-    ? `<a href="${esc(href)}" data-inventory-row="${esc(row.source_row_id)}" target="_blank" rel="noopener">${locator}${link.pdf_page ? " · PDF page " + link.pdf_page : ""} ↗</a>`
-    : `<span class="note">${locator}<br>${esc(entry.error || "Not in the local snapshot")}</span>`;
 }
 /* The second stage-two product: the ledger rows analysts wrote from the same
  * documents, under a different schema. The three tables keep their own names,
@@ -472,14 +485,14 @@ function observationDetail(row) {
  * document directly. A source the collection never archived keeps its locator
  * as text, exactly as an unresolved inventory row does. */
 function observationEvidence(row) {
-  const locator = esc(row.locator || "No locator recorded");
-  const entry = row.sha256 ? documentsBySha[row.sha256] : null;
-  if (!entry)
-    return `<span class="note">${locator}<br>No archived copy of this source</span>`;
-  const href = documentHref(entry, row.pdf_page);
-  return href
-    ? `<a href="${esc(href)}" data-observation-id="${esc(observationId(row))}" target="_blank" rel="noopener">${locator}${row.pdf_page ? " · PDF page " + row.pdf_page : ""} ↗</a>`
-    : `<span class="note">${locator}<br>${esc(entry.error || "Not in the local snapshot")}</span>`;
+  return evidenceLink(
+    row.locator,
+    row.sha256 ? documentsBySha[row.sha256] : null,
+    row.pdf_page,
+    "data-observation-id",
+    observationId(row),
+    "No archived copy of this source",
+  );
 }
 /* A facet's option list is the values a column actually carries, sorted and
  * deduplicated: shared by every table's facet setup rather than closed over
