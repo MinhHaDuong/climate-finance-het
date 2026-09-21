@@ -1,0 +1,85 @@
+%erg 0.1
+Title: Page Documents : les deux produits d'étage 2 sont additionnés dans « Extracted here »
+Created: 2026-09-21
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-21T23:38Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Enfant de suite de [[0834]], ouvert par la revue d'intégration du 2026-09-22.
+Le critère 4 du tracker interdit l'agrégation entre sous-couches autant
+qu'entre étages. La page Documents affiche pourtant « Extracted here · 514 »
+pour `zaf-jet-investment-register-q1-2026` : 257 observations du ledger plus
+les 257 mêmes lignes de registre sous le schéma M1a. Dans le DOM, `li[1]` et
+`li[258]` portent tous deux `Unique ID ACTIP001`. Même défaut sur
+`idn-jetp-progress-report-2025` (113 + 1 142 = 1 255),
+`sen-investment-plan-annexes-mirror` (67 + 38 = 105) et
+`sen-investment-plan-l4-mirror` (82 + 11 = 93).
+
+La donnée est défendable : `scripts/jetp/build_observatory.py:271` et `:278`
+empilent les deux produits dans `extracted` avec un discriminant `product`.
+C'est le rendu qui fusionne : `app.js:334-335` passe la liste à `foldout()`,
+dont le résumé est `items.length`. `app.js:525` énonce pourtant la règle
+violée (« never added together »). Le test
+`test_extracted_lists_hold_the_ledger_row_and_the_m1a_row_separately` garde
+la donnée, pas l'écran.
+
+Second total en faute, mineur : `build_m1a_inventories.py:228-233` publie un
+`row_count` et une somme d'inconnus par pays à travers les sous-couches
+(IDN 1 579 = 437 + 1 142), rendus en `app.js:232` et `:923`, trente pixels
+sous la note de `app.js:448` qui affirme « This page adds none of them
+together ». Les lignes sont disjointes, le nombre est vrai de l'export, la
+note est fausse de la page.
+
+Contre-modèle dans le même code : `vietnamSideBySide` (`app.js:130-133`),
+deux panneaux, aucun champ de jointure, non-relation écrite.
+
+## Relevant files
+
+- `deliverables/jetp-observatory/app.js` — `documentsPage()` dépliages, `foldout()`, note `:448`, ligne de compte `:232`, tableau Methods `:923`
+- `scripts/jetp/build_observatory.py:265-285` — `extraction_index()`
+- `tests/test_jetp_observatory_facts.py` — le test à angle mort
+- `README.md:48-50, :76` — reprend les deux formules
+
+## Actions
+
+1. Sur la page Documents, scinder « Extracted here » en deux dépliages
+   nommés par produit, « Ledger rows · N » et « M1a rows · M », jamais de
+   total ; un document qui n'a qu'un produit n'affiche qu'un dépliage.
+2. Sur la page d'inventaire et la page Methods, renommer le nombre par pays
+   « rows in this export » (ou équivalent) et reformuler la note de
+   `app.js:448` pour qu'elle dise ce que le nombre est, sans prétendre qu'il
+   n'existe pas. Ne rien changer aux données.
+3. Aligner `README.md` sur les deux rendus.
+
+## Test
+
+Red : un test de rendu, pas de donnée. Reprendre le harnais Node de 0852 ou
+de 0838 (charger `app.js` contre les JSON livrés, capturer `innerHTML`) et
+vérifier que le rendu de `zaf-jet-investment-register-q1-2026` sur la page
+Documents ne contient aucun résumé égal à la somme des deux produits, et
+contient un résumé par produit avec son compte propre. Si le harnais n'est
+pas disponible, une assertion texte sur `app.js` du style de 0836 est le
+minimum, en la clef sur le trait distinctif (un résumé par `product`), pas
+sur le vocabulaire.
+
+## Verification
+
+- [ ] Page Documents, registre JET ZAF : deux dépliages, 257 et 257, aucun 514
+- [ ] Page inventaire IDN : le libellé du nombre 1 579 dit ce qu'il compte et la note ne le contredit plus
+- [ ] Recette navigateur `check_documents` verte
+
+## Invariants
+
+- `documents.json` et les vues M1a sont inchangés octet pour octet
+- Le critère 4 de 0834 reste vérifiable à l'écran, pas seulement dans la donnée
+
+## Exit criteria
+
+- [ ] Aucun compte affiché n'additionne deux produits d'étage 2 ni deux sous-couches présentées comme se recouvrant
+- [ ] Le test de rendu passe et échoue si l'on remet un résumé unique
+- [ ] `make check-fast` et `make lint` passent

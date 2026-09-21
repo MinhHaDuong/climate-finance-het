@@ -1,0 +1,79 @@
+%erg 0.1
+Title: Plafond de publication ZAF franchi par 0839 : servir evidence depuis les vues observations
+Created: 2026-09-21
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-21T23:38Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Enfant de suite de [[0834]], ouvert par la revue d'intégration du 2026-09-22
+sur `main` (3231d3e0). La suite complète (`make check`) échoue sur
+`test_zaf_candidate_reconciles_inventory_legacy_and_current_views` :
+`ValueError: Public payload needs compatible chunking before publication`,
+levée par `scripts/jetp/build_zaf_positions.py:186-188`. La vue MVP
+`deliverables/jetp-observatory/data/ZAF.json` pesait 509 315 octets avant le
+train et jusqu'à 3d442189 (PR #1435), soit 2 685 octets sous le plafond
+`publication_limit_bytes` de 512 000 octets (`config/jetp-zaf-migration.json:189`).
+Elle pèse 792 434 octets depuis 3231d3e0, la fusion de PR #1436 ([[0839]]), qui
+recopie la clé `evidence` dans chaque projet de la vue pays : 283 119 octets
+pour 338 observations ZAF.
+
+Le plafond garde la publication, donc le déploiement public suivi par [[0727]].
+`main` est rouge sur ce point et rien ne l'a signalé : pas de CI (0321), palier
+lent vérifié ex post seulement. Ce ticket ne rouvre pas 0839.
+
+## Relevant files
+
+- `scripts/jetp/build_observatory.py` — `project_data(..., observations)` écrit `evidence` (0839)
+- `deliverables/jetp-observatory/app.js` — `projectPage()` lit `p.evidence` pour le dépliage « Ledger evidence »
+- `deliverables/jetp-observatory/data/observations/<CODE>.json` — les mêmes lignes, déjà servies par 0838
+- `scripts/jetp/build_zaf_positions.py:186-188`, `config/jetp-zaf-migration.json:189` — le garde
+- `tests/test_jetp_observatory_facts.py::test_a_fact_carries_its_evidence_rows_verbatim_and_in_order` — établit que `evidence` et les vues observations sont les mêmes lignes
+
+## Actions
+
+1. Ne plus recopier les lignes dans la vue pays : `project_data()` n'émet plus
+   `evidence` comme liste de lignes. Choisir la forme la plus légère qui garde
+   la descente : soit rien (le client filtre `observations/<CODE>.json` sur
+   `project_id`, ce qu'il charge déjà pour l'onglet Observations), soit une
+   liste de références minimales (`table`, `source_id`, `sha256`) si le test 4
+   de 0839 (aucune clé perdue) l'exige — le décider sur le test, pas sur le
+   goût.
+2. `projectPage()` construit le dépliage « Ledger evidence » depuis la vue
+   observations du pays, filtrée sur `project_id`, avec le même rendu et le
+   même repli texte si la vue est absente.
+3. Régénérer les vues pays et `overview.json` ; mesurer `ZAF.json` avant et
+   après et citer les deux tailles dans la PR.
+4. Ne pas relever `publication_limit_bytes` : le plafond n'est pas
+   l'arbitraire, la duplication l'est.
+
+## Test
+
+Red : `tests/test_jetp_observatory_facts.py` — sur la fixture QQ de 0839, le
+dict retourné par `project_data()` ne porte plus de lignes d'observation
+verbatim (ou n'en porte que des références, selon l'action 1), et un test de
+taille sur la vue ZAF réelle : `len(json.dumps(ZAF)) <= publication_limit_bytes`
+lu depuis `config/jetp-zaf-migration.json`, pour que le plafond soit gardé au
+palier rapide et non seulement par le test lent.
+
+## Verification
+
+- [ ] `make check` complet : `test_zaf_candidate_reconciles_inventory_legacy_and_current_views` passe
+- [ ] Recette SA de 0834, pas 3 : depuis un projet de la vue pays, la descente atteint sa ligne de registre puis le snapshot
+- [ ] Recette VN, pas 3 : depuis Bac Ai, le dépliage montre ses trois observations du ledger
+
+## Invariants
+
+- Les comptes affichés (VNM 3 + 21, 383 nommés, 766 observations) sont inchangés
+- Aucune clé de `country_data()` d'avant 0839 ne disparaît
+- `make check-fast` et `make lint` passent
+
+## Exit criteria
+
+- [ ] `ZAF.json` repasse sous 512 000 octets sans changement du plafond
+- [ ] La descente fait → observation → document fonctionne comme avant depuis `projectPage()`
+- [ ] `make check` complet ne rapporte plus que les échecs environnementaux
