@@ -935,7 +935,7 @@ h1 .badge {
   display: block;
   color: var(--muted);
 }
-#project-evidence summary {
+.foldout > summary {
   cursor: pointer;
   font-size: 13px;
 }
