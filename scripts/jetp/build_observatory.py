@@ -65,13 +65,15 @@ def source_map(tables):
     return sources
 
 
-def project_data(row, tables, observations=()):
+def project_data(row, tables):
     """Expose project observations without summing currencies or repeated stages.
 
-    ``observations`` are the country's ledger rows as ``build_observations``
-    serves them (ticket 0838).  The fact keeps the ones addressed to it, as
-    they are: a filter on ``project_id``, no regrouping, no total, no recoding
-    of a verification word.
+    The fact carries no copy of its ledger rows: they are served once, in
+    ``observations/<CODE>.json`` (ticket 0838), and the renderer filters that
+    view on ``project_id`` for the fold-out.  Ticket 0839 copied them here as
+    ``evidence``; the copy put the ZAF view 280 kB over the publication cap
+    that ``build_zaf_positions`` enforces, and any per-row reference would
+    still (ticket 0855).
     """
     pid = row['project_id']
     timings = {r['event_id']: r for r in tables.get('event-timing', [])}
@@ -102,7 +104,6 @@ def project_data(row, tables, observations=()):
         'claims': [{k: r[k] for k in ('claim_id', 'claim_summary', 'source_id', 'section', 'match_status', 'matched_project_ids', 'notes')} for r in claims],
         'source_links': links,
         'sources': sorted(source_ids - {''}),
-        'evidence': [o for o in observations if o['project_id'] == pid],
     }
 
 
@@ -120,20 +121,12 @@ def editorial(root, code):
     return ''
 
 
-def country_data(root, code, config, tables, observations=None):
-    """Build a country package with separate named records and disclosure slots.
-
-    ``observations`` are the country's ledger rows as the 0838 builder serves
-    them; a caller that has already built them passes them in, the others get
-    them built here.  Either way a fact's evidence is the same reading of the
-    ledger as the Observations tab.
-    """
+def country_data(root, code, config, tables):
+    """Build a country package with separate named records and disclosure slots."""
     rows = [r for r in unique_rows(tables['projects'], 'project_id') if r['country'] == code]
     slots = [r for r in rows if r['verification_status'] == 'official_count_slot']
     named = [r for r in rows if r not in slots]
-    if observations is None:
-        observations = country_observations(tables, build_registry(tables), code)
-    projects = [project_data(r, tables, observations) for r in named]
+    projects = [project_data(r, tables) for r in named]
     sources = source_map(tables)
     needed = {sid for p in projects for sid in p['sources']}
     country_config = config['countries'][code]
@@ -276,7 +269,7 @@ def extraction_index(root, tables, config):
         for values in payload['rows']:
             row = dict(zip(payload['fields'], values))
             bucket(row['source_id'])['extracted'].append(m1a_reference(row))
-        for project in country_data(root, code, config, tables, observations)['projects']:
+        for project in country_data(root, code, config, tables)['projects']:
             for source_id in project['sources']:
                 bucket(source_id)['facts'].append(
                     {'project_id': project['id'], 'name': project['name'], 'country': code})

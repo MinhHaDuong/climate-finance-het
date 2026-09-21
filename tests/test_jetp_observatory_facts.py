@@ -204,11 +204,12 @@ def test_renderer_ports_the_descent_and_the_climb() -> None:
 
     assert "by_source_id" in renderer
     assert "documentHref(" in renderer
-    project_page = renderer[renderer.index("function projectPage("):]
-    project_page = project_page[:project_page.index("\nfunction ")]
-    assert "<details" in project_page
+    descent = renderer[renderer.index("function projectEvidenceRow("):]
+    descent = descent[:descent.index("\nfunction median(")]
+    assert "<details" in descent
     # The fold-out is built from the country's observations view, the one the
     # Observations tab loads, not from a copy in the country view (0855).
-    assert "p.evidence" not in project_page
+    assert "p.evidence" not in descent
+    assert "observationsView(p.country)" in descent
     assert 'load("observations/" + ' in renderer
     assert "No link between the 2023 table and the 2025 portfolio" in renderer

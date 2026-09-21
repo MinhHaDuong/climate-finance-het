@@ -210,11 +210,12 @@ def check_facts(page, url):
                   if p['id'] == 'vnm-project-bac-ai-pumped-hydro')
     observations = page.request.get(url + '/data/observations/VNM.json').json()
     served = [row for row in observations if row['project_id'] == bac_ai['id']]
-    # The fact's evidence is the observations view's own rows, verbatim.
-    assert bac_ai['evidence'] == served and len(served) == 3, len(served)
+    # The fact's evidence is the observations view's own rows, read from that
+    # view in the browser and never copied into the country view (0855).
+    assert 'evidence' not in bac_ai and len(served) == 3, len(served)
 
     page.goto(url + '/#project/' + bac_ai['id'])
-    page.wait_for_selector('#project-evidence')
+    page.wait_for_selector('#project-evidence details[data-evidence-count]')
     assert bac_ai['coverage'] in page.locator('h1 [data-review-state]').inner_text()
     # The fold-out itself, not the per-row detail elements nested inside it.
     fold = page.locator('#project-evidence details[data-evidence-count]')

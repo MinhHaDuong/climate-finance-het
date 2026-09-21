@@ -433,6 +433,20 @@ const INVENTORY_FACETS = [
   ["identity_status", "Identity", "All identity outcomes"],
 ];
 const inventoryCache = {};
+/* One load per country per session, shared by the Observations tab and every
+ * project page of that country (ticket 0855): the ledger rows are served once,
+ * in observations/<CODE>.json, and a fact's fold-out is a filter on them. A
+ * rejected load is dropped so a transient failure is retried, not replayed. */
+const observationsCache = {};
+function observationsView(code) {
+  if (!observationsCache[code]) {
+    observationsCache[code] = load("observations/" + code).catch((error) => {
+      delete observationsCache[code];
+      throw error;
+    });
+  }
+  return observationsCache[code];
+}
 /* The companion file carries the column names once and then one array of
  * values per row, so the row objects are rebuilt here in the generator's own
  * column order — pass-through columns included. */
@@ -707,7 +721,7 @@ function inventoryPage(code) {
   main.innerHTML = `<p class="note">Loading the ${esc(code)} source rows…</p>`;
   inventoryCache[code] =
     inventoryCache[code] ||
-    Promise.all([load("m1a/" + code), load("observations/" + code)]);
+    Promise.all([load("m1a/" + code), observationsView(code)]);
   inventoryCache[code]
     .then(([payload, observations]) => {
       if (location.hash.startsWith("#inventory/" + code))
@@ -784,12 +798,35 @@ function sourceAdjudication(p, id) {
     )
     .join("");
 }
-/* The descent, fact → its stage-two rows. `p.evidence` is the country's ledger
- * observations addressed to this record, filtered in project_data() and served
- * exactly as the Observations tab serves them — same detail, same evidence
- * cell, same fingerprint resolution — so the two pages are one reading. */
+/* The descent, fact → its stage-two rows: the country's ledger observations
+ * addressed to this record, read from observations/<CODE>.json — the view the
+ * Observations tab loads — and filtered on project_id here, never copied into
+ * the country view (ticket 0855). Same detail, same evidence cell, same
+ * fingerprint resolution, so the two pages are one reading. */
 function projectEvidenceRow(row) {
   return `<tr data-evidence-row="${esc(observationId(row))}"><td>${esc(row.table)}</td><td>${observationDetail(row)}</td><td>${pill(row.verification)}</td><td>${observationEvidence(row)}</td></tr>`;
+}
+function projectEvidence(rows) {
+  return rows.length
+    ? `<details class="foldout" data-evidence-count="${rows.length}"><summary>${fmt(rows.length)} ledger ${rows.length === 1 ? "observation" : "observations"}</summary><div class="table-wrap"><table><thead><tr><th>Table</th><th>Row</th><th>Verification</th><th>Evidence</th></tr></thead><tbody>${rows.map(projectEvidenceRow).join("")}</tbody></table></div></details>`
+    : '<p class="note" data-evidence-count="0">No ledger observation is addressed to this identity in this edition.</p>';
+}
+/* Fills the section once the view arrives, if the reader is still on this
+ * page. The view absent, the section says so and points at the tab that
+ * would have shown the same rows, rather than showing an empty list. */
+function fillProjectEvidence(p) {
+  const still = () =>
+    location.hash.slice(1).split("?")[0] === "project/" + encodeURIComponent(p.id);
+  const section = () => document.getElementById("project-evidence-rows");
+  observationsView(p.country)
+    .then((rows) => {
+      if (!still() || !section()) return;
+      section().innerHTML = projectEvidence(rows.filter((row) => row.project_id === p.id));
+    })
+    .catch((error) => {
+      if (!still() || !section()) return;
+      section().innerHTML = `<p class="note" data-evidence-count="unavailable">The ${esc(p.country)} ledger observations could not load (${esc(error.message)}). They are the rows of the <a href="#inventory/${esc(p.country)}">Ledger observations tab</a> addressed to <code>${esc(p.id)}</code>.</p>`;
+    });
 }
 /* A source card opens the archived copy where the registry holds one. Resolved
  * by source identifier through the same ranked index as an inventory row: the
@@ -805,9 +842,8 @@ function projectPage(id) {
   const p = projects.find((p) => p.id === id);
   if (!p) return notFound();
   const c = country(p.country),
-    sources = countries[p.country].sources,
-    evidenceRows = p.evidence || [];
-  main.innerHTML = `<div class="page-head"><div class="breadcrumb"><a href="#projects">Projects</a> / <a href="#country/${c.code}">${esc(c.name)}</a></div><p class="eyebrow">${esc(p.technology)} · ${c.code}</p><h1>${esc(p.name)} <span class="badge" data-review-state="${esc(p.coverage)}">Review state · ${esc(p.coverage.replaceAll("_", " "))}</span></h1><p class="lede">${esc(p.location)}</p>${pill(p.finance_stage === "Not documented" ? "Financial events not yet coded" : p.finance_stage)}</div><div class="project-layout"><div><h2>Essential features</h2><dl class="facts"><dt>Operator</dt><dd>${esc(p.operator)}</dd><dt>Funders</dt><dd>${esc(p.funders.join("; ") || "See individual sources; no reconciled funder entry")}</dd><dt>Project ID</dt><dd>${esc(p.id)}</dd><dt>Source follow-up</dt><dd>${esc(p.coverage.replaceAll("_", " "))}</dd></dl><p class="note">${esc(p.notes)}</p><section class="section"><h2>Documented timeline</h2><p class="note">Events and dated status reports are distinguished. A financing amount at approval and again at signature is not two separate amounts to add.</p>${p.events.length ? `<ol class="timeline">${p.events.map((e) => eventView(e, sources)).join("")}</ol>` : '<div class="callout">No financial or implementation events have yet been reconciled into this record. The linked sources may establish more; absence from this timeline is not zero progress.</div>'}</section><section class="section" id="project-evidence"><h2>Ledger evidence</h2><p class="note">The ledger rows recorded for this identity, as the ledger wrote them: each opens its archived document where the collection holds one. They are not added together, and a row here is not a reconciled fact.</p>${evidenceRows.length ? `<details class="foldout" data-evidence-count="${evidenceRows.length}"><summary>${fmt(evidenceRows.length)} ledger ${evidenceRows.length === 1 ? "observation" : "observations"}</summary><div class="table-wrap"><table><thead><tr><th>Table</th><th>Row</th><th>Verification</th><th>Evidence</th></tr></thead><tbody>${evidenceRows.map(projectEvidenceRow).join("")}</tbody></table></div></details>` : '<p class="note" data-evidence-count="0">No ledger observation is addressed to this identity in this edition.</p>'}</section>${p.claims.length ? `<section class="section"><h2>Further source observations</h2>${p.claims.map((r) => `<article style="margin:20px 0"><p>${esc(r.claim_summary)}</p><p class="note">Match verdict: ${esc(r.match_status.replaceAll("_", " "))} · ${esc(r.notes)}</p>${sourceLink(sources[r.source_id], "Source")} <span class="date-tag">${esc(r.section)}</span></article>`).join("")}</section>` : ""}</div><aside><div class="panel"><h3>Evidence & references</h3><p class="note">${esc(p.coverage_note)}</p><ul class="sources">${p.sources
+    sources = countries[p.country].sources;
+  main.innerHTML = `<div class="page-head"><div class="breadcrumb"><a href="#projects">Projects</a> / <a href="#country/${c.code}">${esc(c.name)}</a></div><p class="eyebrow">${esc(p.technology)} · ${c.code}</p><h1>${esc(p.name)} <span class="badge" data-review-state="${esc(p.coverage)}">Review state · ${esc(p.coverage.replaceAll("_", " "))}</span></h1><p class="lede">${esc(p.location)}</p>${pill(p.finance_stage === "Not documented" ? "Financial events not yet coded" : p.finance_stage)}</div><div class="project-layout"><div><h2>Essential features</h2><dl class="facts"><dt>Operator</dt><dd>${esc(p.operator)}</dd><dt>Funders</dt><dd>${esc(p.funders.join("; ") || "See individual sources; no reconciled funder entry")}</dd><dt>Project ID</dt><dd>${esc(p.id)}</dd><dt>Source follow-up</dt><dd>${esc(p.coverage.replaceAll("_", " "))}</dd></dl><p class="note">${esc(p.notes)}</p><section class="section"><h2>Documented timeline</h2><p class="note">Events and dated status reports are distinguished. A financing amount at approval and again at signature is not two separate amounts to add.</p>${p.events.length ? `<ol class="timeline">${p.events.map((e) => eventView(e, sources)).join("")}</ol>` : '<div class="callout">No financial or implementation events have yet been reconciled into this record. The linked sources may establish more; absence from this timeline is not zero progress.</div>'}</section><section class="section" id="project-evidence"><h2>Ledger evidence</h2><p class="note">The ledger rows recorded for this identity, as the ledger wrote them: each opens its archived document where the collection holds one. They are not added together, and a row here is not a reconciled fact.</p><div id="project-evidence-rows"><p class="note">Loading the ${esc(c.short)} ledger observations…</p></div></section>${p.claims.length ? `<section class="section"><h2>Further source observations</h2>${p.claims.map((r) => `<article style="margin:20px 0"><p>${esc(r.claim_summary)}</p><p class="note">Match verdict: ${esc(r.match_status.replaceAll("_", " "))} · ${esc(r.notes)}</p>${sourceLink(sources[r.source_id], "Source")} <span class="date-tag">${esc(r.section)}</span></article>`).join("")}</section>` : ""}</div><aside><div class="panel"><h3>Evidence & references</h3><p class="note">${esc(p.coverage_note)}</p><ul class="sources">${p.sources
     .map((id) => {
       const s = sources[id];
       return s
@@ -817,6 +853,7 @@ function projectPage(id) {
     .join(
       "",
     )}</ul></div><p class="note" style="margin-top:20px">Observations retain source-specific scopes. An agreement, approval or register entry does not establish a payment or physical delivery.</p><a class="button light" href="data/${c.code}.json" download>Download country evidence ↓</a></aside></div>`;
+  fillProjectEvidence(p);
 }
 function median(values) {
   if (!values.length) return null;

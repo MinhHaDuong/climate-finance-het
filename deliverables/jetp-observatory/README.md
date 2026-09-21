@@ -68,9 +68,12 @@ Routes: `#overview`, `#countries`, `#country/IDN`, `#projects`,
 - The descent from a fact to its evidence, and the climb from a document to
   what cites it. Each named record's page carries a review-state badge and a
   "Ledger evidence" fold-out: the ledger observations addressed to that
-  identity, served under `evidence` in `<CODE>.json` exactly as the
-  Observations tab serves them, each opening its archived document where the
-  collection holds one. Each Documents row lists, from `by_source_id` in
+  identity, read from `data/observations/<CODE>.json` — the view the
+  Observations tab loads — and filtered on `project_id` in the browser, each
+  opening its archived document where the collection holds one. The country
+  view carries no copy of them: `ZAF.json` has a publication cap of 512 000
+  bytes (`config/jetp-zaf-migration.json`), and the 338 ZAF rows copied under
+  an `evidence` key put it 280 kB over (ticket 0855). Each Documents row lists, from `by_source_id` in
   `documents.json`, what was extracted from that source (ledger rows and frozen
   M1a rows, as references to their own views) and which facts rely on it
   (named records and reviewed records) — two lists, never a total, and a
