@@ -2,6 +2,7 @@
 Title: Étage 2 : observations atomiques du ledger explorables dans le MVP
 Created: 2026-09-17
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1433
 
 --- log ---
 2026-09-17T16:56Z HDMX-coding-agent created
@@ -15,6 +16,7 @@ Author: HDMX-coding-agent
 2026-09-17T23:58Z HDMX-coding-agent revue round 1-2 : registre reconstruit sur l'empreinte enregistrée, non sur la copie archivée sur disque (index_documents écarté) — une empreinte SEN basculait selon que l'instantané DVC était sorti ; ordre total (statut, date, empreinte) pour les tentatives ex aequo
 2026-09-18T00:41Z HDMX-coding-agent bump verify-reroll — round 1: Recette VN (bailleur=BEI) doit être ouvrable en local ; les 7 lignes VNM ont une empreinte nulle (source jamais collectée) et /review-pr round 1 §2 demande une acceptation explicite de l'auteur pour la lecture restreinte du critère de sortie
 2026-09-21T20:53Z HDMX-coding-agent note décision de l'auteur (2026-09-18, consignée dans le corps de la PR #1434 qui dépose 0854, réaffirmée en session le 2026-09-21) : lecture restreinte de la recette VN acceptée — « ouvrable en local » vaut pour l'Afrique du Sud ; pour le Vietnam, les lignes de Bac Ai sont trouvables et portent leur localisateur, et la collecte des sept sources jamais archivées est [[0854]]. La vérification et le critère de sortie ci-dessous sont annotés en conséquence.
+2026-09-21T21:46Z HDMX-coding-agent closed — autoclosed — PR #1433
 --- body ---
 
 ## Context
