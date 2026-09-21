@@ -16,7 +16,6 @@ import json
 from pathlib import Path
 
 from jetp._observatory_data import observation_entry
-from jetp.build_observatory import read_inputs
 
 ROOT = Path(__file__).resolve().parents[2]
 COUNTRIES = ('ZAF', 'IDN', 'VNM', 'SEN')
@@ -72,6 +71,21 @@ def build_registry(tables):
     }
 
 
+def country_observations(tables, registry, code):
+    """One country's ledger rows, in served order: table, then the CSV's own.
+
+    The same rows the country's observations view serves, so a fact's evidence
+    (ticket 0839) and the Observations tab (ticket 0838) are one reading of the
+    ledger, not two.
+    """
+    return [
+        observation_entry(row, table, registry)
+        for table in OBSERVATION_TABLES
+        for row in tables[table]
+        if row['country'] == code
+    ]
+
+
 def observations_by_country(tables, registry):
     """Group every ledger row under the country its own row names.
 
@@ -91,6 +105,11 @@ def observations_by_country(tables, registry):
 
 
 def main():
+    # Imported here, not at the top: build_observatory now consumes this module
+    # for the country views, and a module-level import in both directions would
+    # fail whichever side is loaded first.
+    from jetp.build_observatory import read_inputs
+
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         '--output-dir',

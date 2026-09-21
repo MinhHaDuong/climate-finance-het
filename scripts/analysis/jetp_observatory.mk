@@ -15,7 +15,8 @@ JETP_OBSERVATORY_INPUTS := $(addprefix data/jetp/,$(addsuffix .csv,projects even
     $(wildcard data/jetp/comparison/*.json) \
     $(wildcard data/jetp/editorial/countries/*.md) $(wildcard data/jetp/releases/*/release.json) \
     data/jetp/documents.dvc config/jetp_observatory.yaml \
-    scripts/jetp/_observatory_data.py scripts/jetp/build_observatory.py scripts/jetp/_publication.py scripts/jetp/build_observatory_provenance.py
+    scripts/jetp/_observatory_data.py scripts/jetp/build_observatory.py scripts/jetp/_publication.py scripts/jetp/build_observatory_provenance.py \
+    scripts/jetp/build_observations.py scripts/jetp/_m1a_document_links.py
 
 JETP_OBSERVATIONS_DIR := $(JETP_OBSERVATORY)/data/observations
 JETP_OBSERVATIONS_FILES := $(addprefix $(JETP_OBSERVATIONS_DIR)/,ZAF.json IDN.json VNM.json SEN.json)
@@ -46,6 +47,13 @@ jetp-observatory: $(JETP_OBSERVATORY_JSON) $(JETP_OBSERVATORY_EDITION_HISTORY) $
 
 $(JETP_OBSERVATORY)/data/%.json: $(JETP_OBSERVATORY_INPUTS)
 	$(PYTHON) scripts/jetp/build_observatory.py --view $* --output $@
+
+# The documents view indexes what the four M1a views and the reviewed records
+# cite (ticket 0839), so they are read, never rebuilt, by its recipe: listed
+# here as prerequisites so extraction_index() always finds them written. The
+# recipe stays the pattern rule's above.
+$(JETP_OBSERVATORY)/data/documents.json: $(filter %.json,$(JETP_M1A_FILES)) \
+    $(JETP_OBSERVATORY)/data/reviewed-evidence.json
 
 $(JETP_OBSERVATORY_PROVENANCE): $(JETP_OBSERVATORY_JSON) $(JETP_OBSERVATORY_INPUTS)
 	$(PYTHON) scripts/jetp/build_observatory_provenance.py --output $@

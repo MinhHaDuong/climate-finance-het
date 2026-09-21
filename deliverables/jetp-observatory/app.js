@@ -120,7 +120,17 @@ function countryPage(code) {
     c = country(code);
   if (!d) return notFound();
   const refs = Object.keys(d.sources).length;
-  main.innerHTML = `<div class="page-head"><div class="breadcrumb"><a href="#countries">Countries</a> / ${esc(c.name)}</div><p class="eyebrow">${c.code} · Partnership announced ${date(c.signed_on)}</p><h1>${esc(c.name)}</h1><p class="lede">${esc(c.headline_detail)}</p>${countryTabs(code)}</div><div class="callout"><h3>${esc(c.headline)}</h3><p>${esc(c.stage_label)} · ${date(c.headline_date)} · ${sourceLink(c.headline_source_record, "Read the source")}</p></div><div class="metrics"><div class="metric"><strong>${c.named}</strong><span>Named portfolio records</span></div><div class="metric"><strong>${c.undisclosed}</strong><span>Unpublished identities</span></div><div class="metric"><strong>${refs}</strong><span>Linked sources</span></div><div class="metric"><strong>${esc(c.pledge_label)}</strong><span>Original political pledge</span></div></div><div class="split"><div><h2>Reading this portfolio</h2><div class="markdown">${markdown(d.editorial)}</div><div class="actions"><a class="button" href="#projects?country=${code}">Explore ${c.named} records ↗</a><a class="text-link" href="#comparison?country=${code}">Historical reference →</a></div></div><div class="panel"><h3>Financing evidence</h3>${stageChart([c])}<p class="note" style="margin-top:20px">Counts show the most advanced coded evidence for a record, not the stage of every financing tranche. Programme overlaps prevent summing record-level amounts.</p><h3 style="margin-top:25px">Portfolio composition</h3>${technologyChart(d.projects)}</div></div><section class="section" style="margin-top:35px"><div class="section-head"><h2>Inside the portfolio</h2><a class="text-link" href="#projects?country=${code}">View all →</a></div>${projectTable(d.projects.slice(0, 8))}<div class="downloads"><a class="button light" href="#inventory/${code}">Explore the frozen M1a source rows ↗</a><a class="button light" href="data/${code}.json" download>Download ${c.name} data ↓</a></div></section>`;
+  main.innerHTML = `<div class="page-head"><div class="breadcrumb"><a href="#countries">Countries</a> / ${esc(c.name)}</div><p class="eyebrow">${c.code} · Partnership announced ${date(c.signed_on)}</p><h1>${esc(c.name)}</h1><p class="lede">${esc(c.headline_detail)}</p>${countryTabs(code)}</div><div class="callout"><h3>${esc(c.headline)}</h3><p>${esc(c.stage_label)} · ${date(c.headline_date)} · ${sourceLink(c.headline_source_record, "Read the source")}</p></div><div class="metrics"><div class="metric"><strong>${c.named}</strong><span>Named portfolio records</span></div><div class="metric"><strong>${c.undisclosed}</strong><span>Unpublished identities</span></div><div class="metric"><strong>${refs}</strong><span>Linked sources</span></div><div class="metric"><strong>${esc(c.pledge_label)}</strong><span>Original political pledge</span></div></div><div class="split"><div><h2>Reading this portfolio</h2><div class="markdown">${markdown(d.editorial)}</div><div class="actions"><a class="button" href="#projects?country=${code}">Explore ${c.named} records ↗</a><a class="text-link" href="#comparison?country=${code}">Historical reference →</a></div></div><div class="panel"><h3>Financing evidence</h3>${stageChart([c])}<p class="note" style="margin-top:20px">Counts show the most advanced coded evidence for a record, not the stage of every financing tranche. Programme overlaps prevent summing record-level amounts.</p><h3 style="margin-top:25px">Portfolio composition</h3>${technologyChart(d.projects)}</div></div>${code === "VNM" ? vietnamSideBySide(d) : ""}<section class="section" style="margin-top:35px"><div class="section-head"><h2>Inside the portfolio</h2><a class="text-link" href="#projects?country=${code}">View all →</a></div>${projectTable(d.projects.slice(0, 8))}<div class="downloads"><a class="button light" href="#inventory/${code}">Explore the frozen M1a source rows ↗</a><a class="button light" href="data/${code}.json" download>Download ${c.name} data ↓</a></div></section>`;
+}
+/* Rendering only: both figures already exist — the RMP row count in the M1a
+ * manifest and the portfolio record count in the country view — and no field
+ * joins them. The two columns are two objects of two dates, shown side by side
+ * because that is the recipe of ticket 0834; matching a 2023 position to a 2025
+ * record is the reconciliation work of ticket 0833, not this page's. */
+function vietnamSideBySide(d) {
+  const rmp = m1a.countries.VNM;
+  const source = rmp.sublayers[0]?.source_id || "vnm-rmp-2023";
+  return `<section class="section" id="vnm-side-by-side" style="margin-top:35px"><div class="section-head"><h2>Two objects, kept apart</h2></div><div class="split"><div class="panel" data-side="rmp-2023"><h3>RMP 2023 initial table</h3><p><strong>${fmt(rmp.row_count)}</strong> positions listed in the annexes of the Resource Mobilisation Plan, source <code>${esc(source)}</code>.</p><a class="text-link" href="#inventory/VNM">Browse the ${fmt(rmp.row_count)} positions →</a></div><div class="panel" data-side="portfolio-2025"><h3>2025 portfolio</h3><p><strong>${fmt(d.record_count)}</strong> records: ${fmt(d.projects.length)} named and ${fmt(d.undisclosed)} unpublished identities.</p><a class="text-link" href="#projects?country=VNM">Browse the named records →</a></div></div><p class="note" style="margin-top:15px">No link between the 2023 table and the 2025 portfolio is established here: a position in the plan and a record in the portfolio are neither matched, nor counted together, nor reconciled. That reconciliation is the work of ticket 0833.</p></section>`;
 }
 function projectTable(rows) {
   if (!rows.length)
@@ -304,6 +314,37 @@ const byteSize = (n) =>
     : n >= 1e6
       ? (n / 1e6).toFixed(1) + " MB"
       : Math.max(1, Math.round(n / 1000)) + " kB";
+/* The climb, document → what cites it. `by_source_id` is written by
+ * extraction_index() in build_observatory.py: per source identifier, the
+ * stage-two rows extracted from it (ledger observations and frozen M1a rows,
+ * each named by the key its own view gives it) and the stage-three facts that
+ * rely on it (named projects, reviewed records). Two lists, never a total;
+ * an absent identifier is rendered as the statement that nothing cites the
+ * document in this edition, never as an empty list dressed as one. */
+function extractedItem(row) {
+  if (row.product === "m1a")
+    return `<li><a href="#inventory/${esc(row.country)}"><code>${esc(row.source_row_id)}</code></a> ${esc(row.label || "Identity not published")}<small>${esc(row.source_layer)} · ${esc(row.evidence_locator || "No locator recorded")}</small></li>`;
+  return `<li><a href="#inventory/${esc(row.country)}">${esc(OBSERVATION_KINDS[row.kind] || row.kind)} <code>${esc(row.id)}</code></a> · ${pill(row.verification)}<small>${esc(row.table)} · <a href="#project/${encodeURIComponent(row.project_id)}">${esc(row.project_id)}</a> · ${esc(row.locator || "No locator recorded")}</small></li>`;
+}
+function factItem(fact) {
+  return fact.record_id
+    ? `<li><a href="#evidence">${esc(fact.label)}</a><small>Reviewed record · ${esc(fact.status.replaceAll("_", " "))} · ${esc(country(fact.country)?.short || fact.country)}</small></li>`
+    : `<li><a href="#project/${encodeURIComponent(fact.project_id)}">${esc(fact.name)}</a><small>Named record · ${esc(country(fact.country)?.short || fact.country)}</small></li>`;
+}
+function foldout(label, items, item, key, none) {
+  return `<details data-${key}-count="${items.length}"><summary>${esc(label)} · ${fmt(items.length)}</summary>${items.length ? `<ul class="citing">${items.map(item).join("")}</ul>` : `<p class="note">${esc(none)}</p>`}</details>`;
+}
+function extractionCell(entry) {
+  const linked = (documentsData.by_source_id || {})[entry.id];
+  if (!linked)
+    return `<span class="note" data-uncited="${esc(entry.id)}">No extracted row and no fact cites this source in this edition.</span>`;
+  return (
+    foldout("Extracted here", linked.extracted, extractedItem, "extracted",
+      "Nothing extracted from this source in this edition.") +
+    foldout("Facts relying on it", linked.facts, factItem, "facts",
+      "No fact relies on this source in this edition.")
+  );
+}
 function documentsPage() {
   const rows = documentsData.documents;
   const values = (key) =>
@@ -354,6 +395,7 @@ function documentsPage() {
       { label: "Content type", cell: (r) => esc(r.content_type || "Not recorded") },
       { label: "Size", cell: (r) => esc(byteSize(r.size_bytes)) },
       { label: "Archived copy", cell: archived },
+      { label: "Extracted here · relied on by", cell: extractionCell },
       {
         label: "Origin",
         cell: (r) =>
@@ -739,16 +781,34 @@ function sourceAdjudication(p, id) {
     )
     .join("");
 }
+/* The descent, fact → its stage-two rows. `p.evidence` is the country's ledger
+ * observations addressed to this record, filtered in project_data() and served
+ * exactly as the Observations tab serves them — same detail, same evidence
+ * cell, same fingerprint resolution — so the two pages are one reading. */
+function projectEvidenceRow(row) {
+  return `<tr data-evidence-row="${esc(observationId(row))}"><td>${esc(row.table)}</td><td>${observationDetail(row)}</td><td>${pill(row.verification)}</td><td>${observationEvidence(row)}</td></tr>`;
+}
+/* A source card opens the archived copy where the registry holds one. Resolved
+ * by source identifier through the same ranked index as an inventory row: the
+ * card names a source, not a fingerprint. Text only where nothing is archived,
+ * the expected case of the public edition. */
+function archivedCopy(id) {
+  const href = documentIndex[id] ? documentHref(documentIndex[id]) : null;
+  return href
+    ? `<small><a href="${esc(href)}" data-archived-source="${esc(id)}" target="_blank" rel="noopener">Open archived copy ↗</a></small>`
+    : "";
+}
 function projectPage(id) {
   const p = projects.find((p) => p.id === id);
   if (!p) return notFound();
   const c = country(p.country),
-    sources = countries[p.country].sources;
-  main.innerHTML = `<div class="page-head"><div class="breadcrumb"><a href="#projects">Projects</a> / <a href="#country/${c.code}">${esc(c.name)}</a></div><p class="eyebrow">${esc(p.technology)} · ${c.code}</p><h1>${esc(p.name)}</h1><p class="lede">${esc(p.location)}</p>${pill(p.finance_stage === "Not documented" ? "Financial events not yet coded" : p.finance_stage)}</div><div class="project-layout"><div><h2>Essential features</h2><dl class="facts"><dt>Operator</dt><dd>${esc(p.operator)}</dd><dt>Funders</dt><dd>${esc(p.funders.join("; ") || "See individual sources; no reconciled funder entry")}</dd><dt>Project ID</dt><dd>${esc(p.id)}</dd><dt>Source follow-up</dt><dd>${esc(p.coverage.replaceAll("_", " "))}</dd></dl><p class="note">${esc(p.notes)}</p><section class="section"><h2>Documented timeline</h2><p class="note">Events and dated status reports are distinguished. A financing amount at approval and again at signature is not two separate amounts to add.</p>${p.events.length ? `<ol class="timeline">${p.events.map((e) => eventView(e, sources)).join("")}</ol>` : '<div class="callout">No financial or implementation events have yet been reconciled into this record. The linked sources may establish more; absence from this timeline is not zero progress.</div>'}</section>${p.claims.length ? `<section class="section"><h2>Further source observations</h2>${p.claims.map((r) => `<article style="margin:20px 0"><p>${esc(r.claim_summary)}</p><p class="note">Match verdict: ${esc(r.match_status.replaceAll("_", " "))} · ${esc(r.notes)}</p>${sourceLink(sources[r.source_id], "Source")} <span class="date-tag">${esc(r.section)}</span></article>`).join("")}</section>` : ""}</div><aside><div class="panel"><h3>Evidence & references</h3><p class="note">${esc(p.coverage_note)}</p><ul class="sources">${p.sources
+    sources = countries[p.country].sources,
+    evidenceRows = p.evidence || [];
+  main.innerHTML = `<div class="page-head"><div class="breadcrumb"><a href="#projects">Projects</a> / <a href="#country/${c.code}">${esc(c.name)}</a></div><p class="eyebrow">${esc(p.technology)} · ${c.code}</p><h1>${esc(p.name)} <span class="badge" data-review-state="${esc(p.coverage)}">Review state · ${esc(p.coverage.replaceAll("_", " "))}</span></h1><p class="lede">${esc(p.location)}</p>${pill(p.finance_stage === "Not documented" ? "Financial events not yet coded" : p.finance_stage)}</div><div class="project-layout"><div><h2>Essential features</h2><dl class="facts"><dt>Operator</dt><dd>${esc(p.operator)}</dd><dt>Funders</dt><dd>${esc(p.funders.join("; ") || "See individual sources; no reconciled funder entry")}</dd><dt>Project ID</dt><dd>${esc(p.id)}</dd><dt>Source follow-up</dt><dd>${esc(p.coverage.replaceAll("_", " "))}</dd></dl><p class="note">${esc(p.notes)}</p><section class="section"><h2>Documented timeline</h2><p class="note">Events and dated status reports are distinguished. A financing amount at approval and again at signature is not two separate amounts to add.</p>${p.events.length ? `<ol class="timeline">${p.events.map((e) => eventView(e, sources)).join("")}</ol>` : '<div class="callout">No financial or implementation events have yet been reconciled into this record. The linked sources may establish more; absence from this timeline is not zero progress.</div>'}</section><section class="section" id="project-evidence"><h2>Ledger evidence</h2><p class="note">The ledger rows recorded for this identity, as the ledger wrote them: each opens its archived document where the collection holds one. They are not added together, and a row here is not a reconciled fact.</p>${evidenceRows.length ? `<details data-evidence-count="${evidenceRows.length}"><summary>${fmt(evidenceRows.length)} ledger ${evidenceRows.length === 1 ? "observation" : "observations"}</summary><div class="table-wrap"><table><thead><tr><th>Table</th><th>Row</th><th>Verification</th><th>Evidence</th></tr></thead><tbody>${evidenceRows.map(projectEvidenceRow).join("")}</tbody></table></div></details>` : '<p class="note" data-evidence-count="0">No ledger observation is addressed to this identity in this edition.</p>'}</section>${p.claims.length ? `<section class="section"><h2>Further source observations</h2>${p.claims.map((r) => `<article style="margin:20px 0"><p>${esc(r.claim_summary)}</p><p class="note">Match verdict: ${esc(r.match_status.replaceAll("_", " "))} · ${esc(r.notes)}</p>${sourceLink(sources[r.source_id], "Source")} <span class="date-tag">${esc(r.section)}</span></article>`).join("")}</section>` : ""}</div><aside><div class="panel"><h3>Evidence & references</h3><p class="note">${esc(p.coverage_note)}</p><ul class="sources">${p.sources
     .map((id) => {
       const s = sources[id];
       return s
-        ? `<li>${sourceLink(s)}<small>${esc(s.publisher)} · ${esc(s.collection.replaceAll("_", " "))}</small>${s.retrieved ? `<small>Retrieved ${esc(s.retrieved.slice(0, 10))}</small>` : ""}${sourceAdjudication(p, id)}</li>`
+        ? `<li>${sourceLink(s)}<small>${esc(s.publisher)} · ${esc(s.collection.replaceAll("_", " "))}</small>${s.retrieved ? `<small>Retrieved ${esc(s.retrieved.slice(0, 10))}</small>` : ""}${archivedCopy(id)}${sourceAdjudication(p, id)}</li>`
         : "";
     })
     .join(
@@ -831,13 +891,27 @@ function editionHistoryPage() {
   main.innerHTML = header("Monthly editions", "What changed, and what did not.", "Each edition is frozen after review. A failed refresh remains a recorded gap and never removes evidence from an earlier download.") +
     `<div class="table-wrap"><table><thead><tr><th>Edition</th><th>Evidence cutoff</th><th>Prepared</th><th>State</th><th>Published</th></tr></thead><tbody>${rows.map((row) => `<tr><td>${esc(row.edition)}</td><td>${date(row.observation_cutoff)}</td><td>${date(row.release_prepared_date)}</td><td>${esc(row.release_state)}</td><td>${row.publication_date ? date(row.publication_date) : "Not published"}</td></tr>`).join("")}</tbody></table></div><p class="note">A correction uses a new <code>YYYY-MM-rN</code> edition and preserves the prior archive. Later reports are labelled by their original event date; they are not treated as new events.</p><div class="downloads"><a class="button light" href="data/editions.json" download>Download release history ↓</a></div>` + evidenceDepthSummary();
 }
+/* A reviewed record pins a fingerprint, so its pedigree opens the archived copy
+ * of those bytes and no other attempt of the same source identifier: resolved
+ * by sha256, as a ledger observation is, through the same evidence cell. Text
+ * where the snapshot holds no such copy. The record itself gains no field. */
+function reviewedProof(proof) {
+  return `<code>${esc(proof.source_id)}</code> · ${evidenceLink(
+    proof.locator,
+    documentsBySha[proof.sha256] || null,
+    null,
+    "data-reviewed-source",
+    proof.source_id,
+    "No archived copy of this source",
+  )} · <code>${esc(proof.sha256.slice(0, 12))}…</code>`;
+}
 function evidencePage() {
   const records = evidence.records || [];
   main.innerHTML = header(
     "Reviewed evidence",
     "Source assertions, kept separate",
     "Each row is one reviewed source assertion or pending candidate. It is not an account, a payment total, or an estimate.",
-  ) + `<div class="callout"><h3>Analytical snapshot: ${esc(evidence.analytical_snapshot?.status || "not available")}</h3><p>The comparative staging snapshot is derived research material and is not deployed in this MVP edition.</p></div><section class="section"><div class="table-wrap"><table><thead><tr><th>Record</th><th>Country</th><th>Review state</th><th>Pedigree</th><th>Reading note</th></tr></thead><tbody>${records.map((record) => `<tr data-reviewed-evidence-id="${esc(record.id)}"><td>${esc(record.label)}</td><td>${esc(country(record.country)?.name || record.country)}</td><td>${esc(record.status.replaceAll("_", " "))}</td><td>${record.evidence.map((proof) => `<code>${esc(proof.source_id)}</code> · ${esc(proof.locator)} · <code>${esc(proof.sha256.slice(0, 12))}…</code>`).join("<br>")}</td><td>${esc(record.notes)}<br><small>Non-aggregate record.</small></td></tr>`).join("")}</tbody></table></div>${records.length ? "" : '<p class="note">No separately releasable reviewed evidence rows are available in this edition. That is a coverage statement, not evidence of no activity.</p>'}<div class="downloads"><a class="button light" href="data/reviewed-evidence.json" download>Download reviewed evidence ↓</a></div></section>`;
+  ) + `<div class="callout"><h3>Analytical snapshot: ${esc(evidence.analytical_snapshot?.status || "not available")}</h3><p>The comparative staging snapshot is derived research material and is not deployed in this MVP edition.</p></div><section class="section"><div class="table-wrap"><table><thead><tr><th>Record</th><th>Country</th><th>Review state</th><th>Pedigree</th><th>Reading note</th></tr></thead><tbody>${records.map((record) => `<tr data-reviewed-evidence-id="${esc(record.id)}"><td>${esc(record.label)}</td><td>${esc(country(record.country)?.name || record.country)}</td><td>${esc(record.status.replaceAll("_", " "))}</td><td>${record.evidence.map(reviewedProof).join("<br>")}</td><td>${esc(record.notes)}<br><small>Non-aggregate record.</small></td></tr>`).join("")}</tbody></table></div>${records.length ? "" : '<p class="note">No separately releasable reviewed evidence rows are available in this edition. That is a coverage statement, not evidence of no activity.</p>'}<div class="downloads"><a class="button light" href="data/reviewed-evidence.json" download>Download reviewed evidence ↓</a></div></section>`;
 }
 function m1aSection() {
   const rows = ["ZAF", "IDN", "VNM", "SEN"]
