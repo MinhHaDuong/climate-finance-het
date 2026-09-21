@@ -11,6 +11,7 @@ Author: HDMX-coding-agent
 2026-09-21T21:46Z HDMX-coding-agent note blocker 0838 closed — Blocked-by removed.
 2026-09-21T22:10Z HDMX-coding-agent note PR #1436 ouverte — descente fait → preuves → document et remontée document → faits ; recettes SA et VN vérifiées par check_facts ; revue d'intégration de 0834 demandée dans le corps de PR
 2026-09-21T22:10Z HDMX-coding-agent note écarts : by_source_id.extracted porte des références et non les lignes complètes (poids de documents.json) ; résolution vers le document par l'empreinte livrée par 0838, non par source_id ; le bulletin MOIT s'ouvre depuis la carte source de Bac Ai, les trois observations du ledger nommant des sources jamais archivées (0854) ; config optionnel sur documents_data() ; reviewed-evidence.json lu par extraction_index, pas prérequis Make
+2026-09-21T23:09Z HDMX-coding-agent bump verify-reroll — round 1: deliverables/jetp-observatory/README.md not updated for the by_source_id / evidence fold-out feature, breaking the 3/3 sibling precedent (0835, 0836, 0838 each added a bullet) — one README bullet needed
 --- body ---
 
 ## Context
