@@ -38,9 +38,15 @@ def check_documents(page, url):
     # (make jetp-observatory-documents), not a renderer defect.
     page.locator('#documents-filter-status').select_option('')
     page.locator('#documents-filter-country').select_option('ZAF')
+    # The filter carries the code as value and the name as label (ticket 0853).
+    assert page.locator(
+        '#documents-filter-country option[value="ZAF"]'
+    ).inner_text() == 'South Africa'
     entry = next(row for row in registry
                  if row['id'] == 'zaf-jet-investment-register-q1-2026')
-    link = page.locator('a[data-document-id="zaf-jet-investment-register-q1-2026"]')
+    # Addressed by the row key, not the source id: 21 identifiers carry more
+    # than one collection attempt, so the id alone is not a selector.
+    link = page.locator(f'a[data-document-id="{entry["row_key"]}"]')
     assert entry['local_path'], 'Archived ZAF register absent; run make jetp-observatory-documents'
     with page.expect_popup() as popup:
         link.click()

@@ -127,12 +127,14 @@ function projectTable(rows) {
     return '<div class="empty">No records match these filters.</div>';
   return `<div class="table-wrap"><table><thead><tr><th>Project / programme</th><th>Country</th><th>Theme / technology</th><th>Financing evidence</th><th>Sources</th></tr></thead><tbody>${rows.map((p) => `<tr><td><a href="#project/${encodeURIComponent(p.id)}">${esc(p.name)}</a><small>${esc(p.location)}</small></td><td>${esc(country(p.country).short)}</td><td>${esc(p.technology)}</td><td>${pill(p.finance_stage === "Not documented" ? "Not coded in ledger" : p.finance_stage)}</td><td>${p.sources.length}</td></tr>`).join("")}</tbody></table></div>`;
 }
+/* A value is a string, or { value, label } where the two differ (a country
+ * code and its name, ticket 0853). */
 function options(values, selected) {
   return values
-    .map(
-      (v) =>
-        `<option value="${esc(v)}" ${v === selected ? "selected" : ""}>${esc(v)}</option>`,
-    )
+    .map((v) => {
+      const { value, label } = typeof v === "object" ? v : { value: v, label: v };
+      return `<option value="${esc(value)}" ${value === selected ? "selected" : ""}>${esc(label)}</option>`;
+    })
     .join("");
 }
 /* filterTable(id, rows, opts) -> { head, mount }
@@ -140,8 +142,10 @@ function options(values, selected) {
  *   rows          full unfiltered row array (the caller already scoped the data)
  *   opts.facets   [{ key, label, options, all }] one <select> per facet; a row
  *                 matches when row[facet.key] === the selected value. `options`
- *                 is the caller's already-deduped, sorted value list; `all` is
- *                 the optional label of the unfiltered choice.
+ *                 is the caller's already-deduped, sorted value list — strings,
+ *                 or { value, label } pairs where the two differ (see
+ *                 options()); `all` is the optional label of the unfiltered
+ *                 choice.
  *   opts.search   { placeholder, text(row), label } where text(row) returns the
  *                 lower-cased haystack for the free-text field.
  *   opts.columns  [{ label, cell(row) }] one <th>/<td> pair each; `cell`
@@ -307,7 +311,7 @@ function documentsPage() {
   const archived = (r) => {
     const href = documentHref(r);
     return href
-      ? `<a href="${esc(href)}" data-document-id="${esc(r.id)}" target="_blank" rel="noopener">Open archived copy ↗</a>`
+      ? `<a href="${esc(href)}" data-document-id="${esc(r.row_key)}" target="_blank" rel="noopener">Open archived copy ↗</a>`
       : `<span class="note">${esc(r.error || "Not in the local snapshot")}</span>`;
   };
   const table = filterTable("documents", rows, {
@@ -316,7 +320,11 @@ function documentsPage() {
         key: "country",
         label: "Country",
         all: "All four countries",
-        options: values("country"),
+        // Names, as cataloguePage shows them; the value stays the code the
+        // row carries (ticket 0853).
+        options: overview.countries
+          .filter((c) => rows.some((r) => r.country === c.code))
+          .map((c) => ({ value: c.code, label: c.name })),
       },
       {
         key: "status",

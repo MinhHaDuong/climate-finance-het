@@ -28,12 +28,12 @@ ROWS = [
 ]
 
 
-def build(tmp_path):
+def build(tmp_path, rows=ROWS):
     """Write only the PDF's bytes, so availability cannot be read off status."""
     archived = tmp_path / 'data/jetp/documents/objects/aa'
     archived.mkdir(parents=True)
     (archived / 'pdf.pdf').write_bytes(b'%PDF-1.4\n')
-    return documents_data(tmp_path, {'manifest': [dict(row) for row in ROWS]})
+    return documents_data(tmp_path, {'manifest': [dict(row) for row in rows]})
 
 
 def entries(result):
@@ -108,3 +108,31 @@ def test_bundle_publishes_the_registry_view_but_never_archived_bytes(tmp_path):
     (site / 'documents/objects/aa/pdf.pdf').write_bytes(b'%PDF-1.4\n')
     collected = {path.relative_to(site).as_posix() for path in site_files(site)}
     assert collected == {'data/documents.json'}
+
+
+# Ticket 0853: twenty-one source identifiers carry more than one collection
+# attempt, so the identifier is not a row key.  Two attempts of one source,
+# in the two shapes the registry holds: same fingerprint (vnm-rmp-2023) and a
+# different one (zaf-ntcsa-transmission-plans).
+SHARED_ROWS = [
+    dict(ROWS[0], sha256='c' * 64, storage_path='objects/cc/first.pdf'),
+    dict(ROWS[0], retrieved_at='2026-09-13T08:00:00Z', sha256='c' * 64,
+         storage_path='objects/cc/first.pdf'),
+    dict(ROWS[1], sha256='d' * 64, storage_path='objects/dd/second.html'),
+    dict(ROWS[1], retrieved_at='2026-09-14T08:00:00Z', sha256='e' * 64,
+         storage_path='objects/ee/third.html'),
+]
+
+
+def test_shared_source_id_rows_get_distinct_row_keys_and_keep_their_source_id(tmp_path):
+    """Two attempts of one source are two rows: distinct keys, same identifier,
+    and the same keys again when the same registry is rebuilt."""
+    result = build(tmp_path, rows=SHARED_ROWS)
+    keys = [entry['row_key'] for entry in result['documents']]
+    assert len(set(keys)) == len(SHARED_ROWS), keys
+    assert [entry['id'] for entry in result['documents']] == sorted(
+        row['source_id'] for row in SHARED_ROWS)
+    for entry in result['documents']:
+        assert entry['id'] in entry['row_key']
+    rebuilt = documents_data(tmp_path, {'manifest': [dict(r) for r in SHARED_ROWS]})
+    assert [entry['row_key'] for entry in rebuilt['documents']] == keys
