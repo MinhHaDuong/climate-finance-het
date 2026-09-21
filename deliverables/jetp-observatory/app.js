@@ -168,13 +168,16 @@ function options(values, selected) {
  * mount(): call once head is in the DOM. It wires the listeners, resets to
  *   page 1 on every filter change, and renders the first pass.
  *
- * cataloguePage and comparisonPage keep their hand-written filters. Retrofitting
- * them would widen this API before its first reuse: the catalogue needs facet
- * options whose value and label differ (country code vs name), array-membership
- * matching (funders) and preselection from the URL; the comparison needs a
- * numeric threshold facet, a negated one and a summary block above the table.
- * The narrow shape is what 0836, 0838 and 0839 were promised. Ticket 0852 revisits
- * the retrofit once 0836 has exercised this API.
+ * cataloguePage and comparisonPage keep their hand-written filters, and that
+ * is settled (ticket 0852, measured once 0836, 0838 and 0839 had made three
+ * callers of this API). Of the traits those two pages need, only facet
+ * preselection from the URL is shared, and only by the two of them; the
+ * others — array membership, a numeric threshold, a negated facet, a summary
+ * redrawn on every filter, and above all their own element ids, which the
+ * browser recipe asserts — each serve one page. The retrofit that keeps their
+ * HTML byte-identical costs this API seven options, most for a single caller,
+ * and leaves the two pages longer than they are. Two readable pages beat a
+ * component with seven options.
  */
 function filterTable(id, rows, opts) {
   const facets = opts.facets || [];
