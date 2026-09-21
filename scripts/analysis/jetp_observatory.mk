@@ -7,6 +7,8 @@ JETP_OBSERVATORY_PROVENANCE := $(JETP_OBSERVATORY)/data/provenance.json
 JETP_M1A_DIR := $(JETP_OBSERVATORY)/data/m1a
 JETP_M1A_FILES := $(addprefix $(JETP_M1A_DIR)/,ZAF.csv IDN.csv VNM.csv SEN.csv \
     ZAF.json IDN.json VNM.json SEN.json manifest.json)
+# The four country views alone: what extraction_index() reads (ticket 0839).
+JETP_M1A_VIEWS := $(addprefix $(JETP_M1A_DIR)/,ZAF.json IDN.json VNM.json SEN.json)
 JETP_M1A_INPUTS := config/jetp-m1a-inventories.json scripts/jetp/build_m1a_inventories.py \
     docs/jetp-study/0818-zaf-q1-2026-rows.csv docs/jetp-study/0818-zaf-q1-2026-fields.csv \
     data/jetp/plan-projects.csv \
@@ -15,7 +17,8 @@ JETP_OBSERVATORY_INPUTS := $(addprefix data/jetp/,$(addsuffix .csv,projects even
     $(wildcard data/jetp/comparison/*.json) \
     $(wildcard data/jetp/editorial/countries/*.md) $(wildcard data/jetp/releases/*/release.json) \
     data/jetp/documents.dvc config/jetp_observatory.yaml \
-    scripts/jetp/_observatory_data.py scripts/jetp/build_observatory.py scripts/jetp/_publication.py scripts/jetp/build_observatory_provenance.py
+    scripts/jetp/_observatory_data.py scripts/jetp/build_observatory.py scripts/jetp/_publication.py scripts/jetp/build_observatory_provenance.py \
+    scripts/jetp/build_observations.py scripts/jetp/_m1a_document_links.py
 
 JETP_OBSERVATIONS_DIR := $(JETP_OBSERVATORY)/data/observations
 JETP_OBSERVATIONS_FILES := $(addprefix $(JETP_OBSERVATIONS_DIR)/,ZAF.json IDN.json VNM.json SEN.json)
@@ -46,6 +49,14 @@ jetp-observatory: $(JETP_OBSERVATORY_JSON) $(JETP_OBSERVATORY_EDITION_HISTORY) $
 
 $(JETP_OBSERVATORY)/data/%.json: $(JETP_OBSERVATORY_INPUTS)
 	$(PYTHON) scripts/jetp/build_observatory.py --view $* --output $@
+
+# The documents view indexes what the four M1a views cite (ticket 0839), so
+# they are read, never rebuilt, by its recipe: listed here as prerequisites so
+# extraction_index() always finds them written. The recipe stays the pattern
+# rule's above. reviewed-evidence.json, also read, is a committed artifact of
+# the release pipeline and not a target of this file: naming it here would
+# hand it to the pattern rule, which has no such view.
+$(JETP_OBSERVATORY)/data/documents.json: $(JETP_M1A_VIEWS)
 
 $(JETP_OBSERVATORY_PROVENANCE): $(JETP_OBSERVATORY_JSON) $(JETP_OBSERVATORY_INPUTS)
 	$(PYTHON) scripts/jetp/build_observatory_provenance.py --output $@

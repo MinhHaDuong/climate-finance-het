@@ -198,7 +198,7 @@ def _build_view(root, view, output):
     elif view == 'comparison':
         result = comparison_data(root, config)
     elif view == 'documents':
-        result = documents_data(root, tables)
+        result = documents_data(root, tables, config)
     else:
         result = country_data(root, view, config, tables)
     output.parent.mkdir(parents=True, exist_ok=True)

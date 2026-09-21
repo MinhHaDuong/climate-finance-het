@@ -16,6 +16,7 @@ from jetp._observatory_data import (
     public_event,
     timeline,
 )
+from jetp.build_observations import build_registry, country_observations
 
 ROOT = Path(__file__).resolve().parents[2]
 TABLES = ('projects', 'events', 'implementation-events', 'sources', 'source-claims',
@@ -64,8 +65,14 @@ def source_map(tables):
     return sources
 
 
-def project_data(row, tables):
-    """Expose project observations without summing currencies or repeated stages."""
+def project_data(row, tables, observations=()):
+    """Expose project observations without summing currencies or repeated stages.
+
+    ``observations`` are the country's ledger rows as ``build_observations``
+    serves them (ticket 0838).  The fact keeps the ones addressed to it, as
+    they are: a filter on ``project_id``, no regrouping, no total, no recoding
+    of a verification word.
+    """
     pid = row['project_id']
     timings = {r['event_id']: r for r in tables.get('event-timing', [])}
     sources = source_map(tables)
@@ -95,6 +102,7 @@ def project_data(row, tables):
         'claims': [{k: r[k] for k in ('claim_id', 'claim_summary', 'source_id', 'section', 'match_status', 'matched_project_ids', 'notes')} for r in claims],
         'source_links': links,
         'sources': sorted(source_ids - {''}),
+        'evidence': [o for o in observations if o['project_id'] == pid],
     }
 
 
@@ -112,12 +120,20 @@ def editorial(root, code):
     return ''
 
 
-def country_data(root, code, config, tables):
-    """Build a country package with separate named records and disclosure slots."""
+def country_data(root, code, config, tables, observations=None):
+    """Build a country package with separate named records and disclosure slots.
+
+    ``observations`` are the country's ledger rows as the 0838 builder serves
+    them; a caller that has already built them passes them in, the others get
+    them built here.  Either way a fact's evidence is the same reading of the
+    ledger as the Observations tab.
+    """
     rows = [r for r in unique_rows(tables['projects'], 'project_id') if r['country'] == code]
     slots = [r for r in rows if r['verification_status'] == 'official_count_slot']
     named = [r for r in rows if r not in slots]
-    projects = [project_data(r, tables) for r in named]
+    if observations is None:
+        observations = country_observations(tables, build_registry(tables), code)
+    projects = [project_data(r, tables, observations) for r in named]
     sources = source_map(tables)
     needed = {sid for p in projects for sid in p['sources']}
     country_config = config['countries'][code]
@@ -161,8 +177,14 @@ def comparison_data(root, config):
             'snapshots': snapshots}
 
 
-def documents_data(root, tables):
-    """List every collection attempt, marking availability from the snapshot on disk."""
+def documents_data(root, tables, config=None):
+    """List every collection attempt, marking availability from the snapshot on disk.
+
+    With a ``config``, the view also carries ``by_source_id``: what stage two
+    extracted from each document and which stage-three facts rely on it
+    (ticket 0839).  Without one — the registry-only callers and their tests —
+    the key is absent, not empty, so a consumer can tell the two apart.
+    """
     rows = sorted(tables['manifest'], key=lambda row: row['source_id'])
     snapshot = (Path(root) / 'data/jetp/documents').resolve()
     available = set()
@@ -190,7 +212,83 @@ def documents_data(root, tables):
         entry = document_entry(row, available)
         attempts[entry['id']] += 1
         entries.append({'id': entry['id'], 'row_key': f"{entry['id']}:{attempts[entry['id']]}", **entry})
-    return {'documents': entries}
+    result = {'documents': entries}
+    if config is not None:
+        result['by_source_id'] = extraction_index(root, tables, config)
+    return result
+
+
+def ledger_reference(entry):
+    """Address one served ledger row from its document, without re-serving it.
+
+    The row itself lives in ``data/observations/<CODE>.json``; here it is named
+    by the key its table gives it, with the fields a reader needs to find it
+    there.  Every value is the entry's own, none is recoded.
+    """
+    return {
+        'product': 'ledger', 'country': entry['country'],
+        'table': entry['table'], 'kind': entry['kind'],
+        'id': entry.get('event_id') or entry.get('implementation_event_id') or entry.get('link_id', ''),
+        'project_id': entry['project_id'], 'locator': entry.get('locator', ''),
+        'verification': entry['verification'],
+    }
+
+
+def m1a_reference(row):
+    """Address one frozen M1a row from its document, by the identity it carries."""
+    return {
+        'product': 'm1a', 'country': row['country'],
+        'source_layer': row['source_layer'], 'source_row_id': row['source_row_id'],
+        'label': row.get('label', ''), 'evidence_locator': row.get('evidence_locator', ''),
+    }
+
+
+def extraction_index(root, tables, config):
+    """Index, per source identifier, what was extracted from it and what relies on it.
+
+    Three inputs already built elsewhere, merged and never recomputed: the
+    ledger observations of each country (the 0838 builder), the four frozen
+    M1a views (written by ``build_m1a_inventories.py``, ticket 0836), and the
+    facts — each country's named projects under each of their sources, plus
+    the reviewed records of ``reviewed-evidence.json`` under each proof.  Two
+    lists per source, ``extracted`` and ``facts``: never a total across them,
+    never an identity merged between them.
+
+    A missing M1a view is a build-order error and stops the build: the make
+    rule for ``documents.json`` lists the four views as prerequisites, and an
+    empty list here would read as "nothing extracted", which is a claim.
+    """
+    root = Path(root)
+    registry = build_registry(tables)
+    index = {}
+
+    def bucket(source_id):
+        return index.setdefault(source_id, {'extracted': [], 'facts': []})
+
+    for code in config['countries']:
+        observations = country_observations(tables, registry, code)
+        for entry in observations:
+            bucket(entry['source_id'])['extracted'].append(ledger_reference(entry))
+        view = root / 'deliverables/jetp-observatory/data/m1a' / f'{code}.json'
+        if not view.is_file():
+            raise FileNotFoundError(f'M1a view not built yet: {view}; run make jetp-m1a first')
+        payload = json.loads(view.read_text())
+        for values in payload['rows']:
+            row = dict(zip(payload['fields'], values))
+            bucket(row['source_id'])['extracted'].append(m1a_reference(row))
+        for project in country_data(root, code, config, tables, observations)['projects']:
+            for source_id in project['sources']:
+                bucket(source_id)['facts'].append(
+                    {'project_id': project['id'], 'name': project['name'], 'country': code})
+    reviewed = root / 'deliverables/jetp-observatory/data/reviewed-evidence.json'
+    if not reviewed.is_file():
+        raise FileNotFoundError(f'Reviewed evidence absent: {reviewed}')
+    for record in json.loads(reviewed.read_text()).get('records', []):
+        for proof in record['evidence']:
+            bucket(proof['source_id'])['facts'].append(
+                {'record_id': record['id'], 'label': record['label'],
+                 'country': record['country'], 'status': record['status']})
+    return index
 
 
 def edition_history(root):
@@ -204,7 +302,9 @@ def provenance(root, config):
     paths += sorted((root / 'data/jetp/comparison').glob('*.json'))
     paths += sorted((root / 'data/jetp/editorial/countries').glob('*.md'))
     paths += [root / 'config/jetp_observatory.yaml', root / 'data/jetp/documents.dvc',
-              Path(__file__), root / 'scripts/jetp/_observatory_data.py']
+              Path(__file__), root / 'scripts/jetp/_observatory_data.py',
+              root / 'scripts/jetp/build_observations.py',
+              root / 'scripts/jetp/_m1a_document_links.py']
     revision = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip()
     relative = [str(p.relative_to(root)) for p in paths]
     tracked = subprocess.run(['git', 'ls-files', '--error-unmatch', '--', *relative],
@@ -252,7 +352,7 @@ def main():
     elif args.view == 'comparison':
         result = comparison_data(ROOT, config)
     elif args.view == 'documents':
-        result = documents_data(ROOT, tables)
+        result = documents_data(ROOT, tables, config)
     elif args.view == 'editions':
         result = edition_history(ROOT)
     else:

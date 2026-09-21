@@ -910,3 +910,32 @@ footer {
 .split > * {
   min-width: 0;
 }
+/* Ticket 0839: the review-state badge beside a fact's title, the citing lists
+ * on the Documents page and the evidence fold-out on a fact. */
+h1 .badge {
+  font: 500 11px/1.6 var(--sans);
+  letter-spacing: 0;
+  vertical-align: middle;
+  margin-left: 8px;
+  white-space: nowrap;
+}
+.citing {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+  max-height: 320px;
+  overflow: auto;
+  font-size: 12px;
+}
+.citing li {
+  padding: 5px 0;
+  border-top: 1px solid var(--line);
+}
+.citing small {
+  display: block;
+  color: var(--muted);
+}
+.foldout > summary {
+  cursor: pointer;
+  font-size: 13px;
+}

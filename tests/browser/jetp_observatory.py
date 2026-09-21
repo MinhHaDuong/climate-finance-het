@@ -183,6 +183,126 @@ def check_observations(page, url):
     assert link.get_attribute('href').startswith(entry['local_path'])
 
 
+def check_facts(page, url):
+    """Exercise stage three: a fact's fold-out, its descent, and a document's climb.
+
+    Recipe VN of ticket 0834: from Bac Ai, the fold-out lists its ledger rows
+    verbatim and a source card opens MOIT bulletin 5 (July 2025); the Viet Nam
+    page shows the RMP 2023 table and the 2025 portfolio side by side, with the
+    sentence that no link is established. Recipe SA: from a register project,
+    the descent reaches its ledger row and opens the Q1 2026 register snapshot.
+    From the RMP on the Documents page, the climb lists the 279 positions and
+    no fact of 2025.
+    """
+    registry = page.request.get(url + '/data/documents.json').json()
+    documents, index = registry['documents'], registry['by_source_id']
+    vietnam = page.request.get(url + '/data/VNM.json').json()
+    bac_ai = next(p for p in vietnam['projects']
+                  if p['id'] == 'vnm-project-bac-ai-pumped-hydro')
+    observations = page.request.get(url + '/data/observations/VNM.json').json()
+    served = [row for row in observations if row['project_id'] == bac_ai['id']]
+    # The fact's evidence is the observations view's own rows, verbatim.
+    assert bac_ai['evidence'] == served and len(served) == 3, len(served)
+
+    page.goto(url + '/#project/' + bac_ai['id'])
+    page.wait_for_selector('#project-evidence')
+    assert bac_ai['coverage'] in page.locator('h1 [data-review-state]').inner_text()
+    # The fold-out itself, not the per-row detail elements nested inside it.
+    fold = page.locator('#project-evidence details[data-evidence-count]')
+    assert fold.get_attribute('data-evidence-count') == str(len(served))
+    fold.locator('> summary').click()
+    assert page.locator('#project-evidence tbody tr').count() == len(served)
+    # The ledger's own words, one pill per row, never recoded.
+    assert page.locator('#project-evidence tbody .pill').all_inner_texts() == [
+        row['verification'] for row in served
+    ]
+    # Bac Ai's ledger rows name sources the collection never archived (ticket
+    # 0854): their locator is text, and the count of links says exactly that.
+    assert page.locator('#project-evidence a[data-observation-id]').count() == sum(
+        1 for row in served if row['sha256']
+    )
+    # The bulletin is reached through the source card, the one place the
+    # record names it; it opens the archived PDF.
+    assert page.locator('.sources > li').count() == len(bac_ai['sources'])
+    bulletin = next(row for row in documents
+                    if row['id'] == 'vnm-moit-newsletter-05-2025-07' and row['local_path'])
+    link = page.locator('a[data-archived-source="vnm-moit-newsletter-05-2025-07"]')
+    assert link.get_attribute('href') == bulletin['local_path'], link.get_attribute('href')
+    with page.expect_popup() as popup:
+        link.click()
+    assert popup.value is not None
+    popup.value.close()
+
+    # Side by side, no link: the two figures come from the M1a manifest and the
+    # country view, and the page counts stay 3 named + 21 unpublished.
+    manifest = page.request.get(url + '/data/m1a/manifest.json').json()
+    page.goto(url + '/#country/VNM')
+    page.wait_for_selector('#vnm-side-by-side')
+    block = page.locator('#vnm-side-by-side')
+    assert str(manifest['countries']['VNM']['row_count']) in block.locator(
+        '[data-side="rmp-2023"]'
+    ).inner_text()
+    assert str(vietnam['record_count']) in block.locator(
+        '[data-side="portfolio-2025"]'
+    ).inner_text()
+    assert 'No link between the 2023 table and the 2025 portfolio' in block.inner_text()
+    assert page.locator('.metrics .metric strong').all_inner_texts()[:2] == ['3', '21']
+
+    # Recipe SA: from a register project, the fold-out row opens the snapshot.
+    zaf = page.request.get(url + '/data/observations/ZAF.json').json()
+    register = next(row for row in zaf
+                    if row['source_id'] == 'zaf-jet-investment-register-q1-2026')
+    entry = next(row for row in documents
+                 if row['id'] == register['source_id'] and row['local_path'])
+    page.goto(url + '/#project/' + register['project_id'])
+    page.wait_for_selector('#project-evidence details[data-evidence-count]')
+    page.locator('#project-evidence details[data-evidence-count] > summary').click()
+    link = page.locator(
+        f'#project-evidence a[data-observation-id="{register["event_id"]}"]'
+    )
+    link.wait_for()
+    assert link.get_attribute('href').startswith(entry['local_path'])
+    with page.expect_popup() as popup:
+        link.click()
+    opened = popup.value
+    opened.wait_for_load_state()
+    assert opened.url.endswith(entry['local_path'])
+    opened.close()
+
+    # The climb: the RMP lists its 279 positions and no fact of 2025.
+    assert index['vnm-rmp-2023']['facts'] == []
+    assert len(index['vnm-rmp-2023']['extracted']) == 279
+    page.goto(url + '/#documents')
+    page.wait_for_selector('#documents-filters')
+    page.locator('#documents-search').fill('vnm-rmp-2023')
+    # The link is keyed by the attempt's row key (ticket 0853), not by the
+    # source identifier: the RMP has two attempts, and either row climbs.
+    rmp = next(row for row in documents if row['id'] == 'vnm-rmp-2023' and row['local_path'])
+    row = page.locator('#documents-results tbody tr').filter(
+        has=page.locator(f'a[data-document-id="{rmp["row_key"]}"]')
+    ).first
+    extracted = row.locator('details[data-extracted-count]')
+    assert extracted.get_attribute('data-extracted-count') == '279'
+    facts = row.locator('details[data-facts-count]')
+    assert facts.get_attribute('data-facts-count') == '0'
+    extracted.locator('summary').click()
+    assert extracted.locator('li').count() == 279
+    assert facts.locator('a[href^="#project/"]').count() == 0
+    # A registry row nothing cites says so, rather than showing empty lists.
+    uncited = next(row for row in documents if row['id'] not in index)
+    page.locator('#documents-search').fill(uncited['id'])
+    assert page.locator(f'[data-uncited="{uncited["id"]}"]').count() >= 1
+
+    # A reviewed record's pedigree opens the archived bytes it pins.
+    page.goto(url + '/#evidence')
+    page.wait_for_selector('[data-reviewed-evidence-id]')
+    evidence = page.request.get(url + '/data/reviewed-evidence.json').json()
+    archived = {row['sha256'] for row in documents if row['local_path']}
+    expected = sum(1 for record in evidence['records'] for proof in record['evidence']
+                   if proof['sha256'] in archived)
+    assert page.locator('a[data-reviewed-source]').count() == expected
+
+
 def check_projects(page, url):
     """Exercise the catalogue search, a project page, and its adjudicated links."""
     page.goto(url + '/#projects')
@@ -254,6 +374,7 @@ def check_site(url, output):
         check_documents(page, url)
         check_inventory(page, url)
         check_observations(page, url)
+        check_facts(page, url)
         for code in ('ZAF', 'IDN', 'VNM', 'SEN'):
             page.goto(url + '/#country/' + code)
             page.wait_for_selector('.markdown h2')
@@ -272,7 +393,8 @@ def check_site(url, output):
         assert page.evaluate('document.activeElement.tagName') == 'A'
         page.set_viewport_size({'width': 390, 'height': 844})
         for route in ('overview', 'countries', 'documents', 'projects', 'comparison',
-                      'inventory/SEN', 'methods'):
+                      'inventory/SEN', 'country/VNM',
+                      'project/vnm-project-bac-ai-pumped-hydro', 'methods'):
             page.goto(url + '/#' + route)
             page.wait_for_timeout(150)
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'), route
