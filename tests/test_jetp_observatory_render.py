@@ -88,8 +88,9 @@ def test_a_document_with_one_product_gets_one_fold_out() -> None:
 
 
 def anchors(html):
-    """(href, text) of every anchor, in order."""
-    return re.findall(r'<a href="([^"]*)"[^>]*>([^<]*)<', html)
+    """(href, text) of every anchor, in order, the text stripped of its tags."""
+    return [(href, re.sub(r"<[^>]+>", "", text))
+            for href, text in re.findall(r'<a href="([^"]*)"[^>]*>(.*?)</a>', html)]
 
 
 def test_the_rmp_opens_at_its_first_extracted_page_and_each_position_at_its_own() -> None:
@@ -109,7 +110,7 @@ def test_the_rmp_opens_at_its_first_extracted_page_and_each_position_at_its_own(
 
     archived = [href for href, text in anchors(row) if "Open archived copy" in text]
     assert archived == [rmp["local_path"] + "#page=155"], archived
-    items = re.findall(r"<li>.*?</li>", row)
+    items = re.findall(r"<li>.*?</li>", row, re.DOTALL)
     assert len(items) == len(positions)
     assert anchors(items[21]) == [
         ("#inventory/VNM?row=22", "vnm-rmp-2023:annex-I.1:022"),

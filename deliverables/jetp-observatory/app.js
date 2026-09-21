@@ -324,10 +324,22 @@ const byteSize = (n) =>
  * rely on it (named projects, reviewed records). Two lists, never a total;
  * an absent identifier is rendered as the statement that nothing cites the
  * document in this edition, never as an empty list dressed as one. */
-function extractedItem(row) {
+/* Ticket 0857: an M1a position links to its own inventory row — ?row=N is the
+ * row's rank in the export the inventory page loads, written by the generator
+ * with the reference — and, where its locator names a PDF page, to that page
+ * of the archived copy; the page too comes from the generator, never re-read
+ * from the locator here. A ledger row gets the same page link when it carries
+ * one. No page named, no link: an absent page is not page 1. */
+function extractedPageLink(row, entry, key) {
+  const href = row.pdf_page ? documentHref(entry, row.pdf_page) : null;
+  return href
+    ? ` · <a href="${esc(href)}" data-extracted-page="${esc(key)}" target="_blank" rel="noopener">PDF page ${row.pdf_page} ↗</a>`
+    : "";
+}
+function extractedItem(row, entry) {
   if (row.product === "m1a")
-    return `<li><a href="#inventory/${esc(row.country)}"><code>${esc(row.source_row_id)}</code></a> ${esc(row.label || "Identity not published")}<small>${esc(row.source_layer)} · ${esc(row.evidence_locator || "No locator recorded")}</small></li>`;
-  return `<li><a href="#inventory/${esc(row.country)}">${esc(OBSERVATION_KINDS[row.kind] || row.kind)} <code>${esc(row.id)}</code></a> · ${pill(row.verification)}<small>${esc(row.table)} · <a href="#project/${encodeURIComponent(row.project_id)}">${esc(row.project_id)}</a> · ${esc(row.locator || "No locator recorded")}</small></li>`;
+    return `<li><a href="#inventory/${esc(row.country)}?row=${Number(row.row)}"><code>${esc(row.source_row_id)}</code></a> ${esc(row.label || "Identity not published")}${extractedPageLink(row, entry, row.source_row_id)}<small>${esc(row.source_layer)} · ${esc(row.evidence_locator || "No locator recorded")}</small></li>`;
+  return `<li><a href="#inventory/${esc(row.country)}">${esc(OBSERVATION_KINDS[row.kind] || row.kind)} <code>${esc(row.id)}</code></a> · ${pill(row.verification)}${extractedPageLink(row, entry, row.id)}<small>${esc(row.table)} · <a href="#project/${encodeURIComponent(row.project_id)}">${esc(row.project_id)}</a> · ${esc(row.locator || "No locator recorded")}</small></li>`;
 }
 function factItem(fact) {
   return fact.record_id
@@ -344,14 +356,14 @@ function foldout(label, items, item, key, none) {
  * has no row of gets no fold-out, not an empty one; a product this table does
  * not name is still listed, under its own name, rather than dropped. */
 const PRODUCT_LABELS = { ledger: "Ledger rows", m1a: "M1a rows" };
-function extractedFoldouts(extracted) {
+function extractedFoldouts(extracted, entry) {
   const products = [...new Set(extracted.map((row) => row.product))];
   if (!products.length)
     return '<p class="note" data-extracted-count="0">Nothing extracted from this source in this edition.</p>';
   return products
     .map((product) => {
       const rows = extracted.filter((row) => row.product === product);
-      return `<details class="foldout" data-extracted-product="${esc(product)}" data-extracted-count="${rows.length}"><summary>${esc(PRODUCT_LABELS[product] || product)} · ${fmt(rows.length)}</summary><ul class="citing">${rows.map(extractedItem).join("")}</ul></details>`;
+      return `<details class="foldout" data-extracted-product="${esc(product)}" data-extracted-count="${rows.length}"><summary>${esc(PRODUCT_LABELS[product] || product)} · ${fmt(rows.length)}</summary><ul class="citing">${rows.map((row) => extractedItem(row, entry)).join("")}</ul></details>`;
     })
     .join("");
 }
@@ -360,7 +372,7 @@ function extractionCell(entry) {
   if (!linked)
     return `<span class="note" data-uncited="${esc(entry.id)}">No extracted row and no fact cites this source in this edition.</span>`;
   return (
-    extractedFoldouts(linked.extracted) +
+    extractedFoldouts(linked.extracted, entry) +
     foldout("Facts relying on it", linked.facts, factItem, "facts",
       "No fact relies on this source in this edition.")
   );
@@ -369,8 +381,11 @@ function documentsPage() {
   const rows = documentsData.documents;
   const values = (key) =>
     [...new Set(rows.map((r) => r[key]).filter(Boolean))].sort();
+  // The archived copy opens at the first page its extracted rows name, when
+  // every product that names one agrees (first_pdf_page, written by the
+  // generator, ticket 0857); at its own first page otherwise.
   const archived = (r) => {
-    const href = documentHref(r);
+    const href = documentHref(r, (documentsData.by_source_id || {})[r.id]?.first_pdf_page);
     return href
       ? `<a href="${esc(href)}" data-document-id="${esc(r.row_key)}" target="_blank" rel="noopener">Open archived copy ↗</a>`
       : `<span class="note">${esc(r.error || "Not in the local snapshot")}</span>`;
@@ -484,8 +499,8 @@ function inventoryUnknowns(details) {
 }
 /* A row's own fields, listed under whichever summary its caller names — an
  * inventory row and a ledger observation share every column but the label. */
-function rowDetail(row, summary) {
-  return `<details><summary>${summary}</summary><dl class="facts">${Object.entries(
+function rowDetail(row, summary, open) {
+  return `<details${open ? " open" : ""}><summary>${summary}</summary><dl class="facts">${Object.entries(
     row,
   )
     .map(
@@ -494,8 +509,8 @@ function rowDetail(row, summary) {
     )
     .join("")}</dl></details>`;
 }
-function inventoryRowDetail(row) {
-  return rowDetail(row, esc(row.label || "Identity not published"));
+function inventoryRowDetail(row, open) {
+  return rowDetail(row, esc(row.label || "Identity not published"), open);
 }
 /* One evidence cell for both stage-two tables: the locator as a link into the
  * archived copy when the snapshot holds one, as text otherwise. The callers
@@ -680,11 +695,29 @@ function mountTabs(panels) {
     });
   });
 }
-function renderInventory(code, rows, observations) {
+/* Ticket 0857: the Documents page cites a row by its rank in this export, and
+ * #inventory/<CODE>?row=N opens the page on that one row, unfolded, with the
+ * whole export one link away. A rank the export has no row for shows the whole
+ * export and says so, rather than an empty table dressed as a result. */
+function inventoryFocus(code, rows, focus) {
+  if (!focus) return { shown: rows, note: "" };
+  const row = rows[focus - 1];
+  if (!row)
+    return {
+      shown: rows,
+      note: `<p class="note" data-inventory-focus="none">This export has no row ${fmt(focus)}; showing all ${fmt(rows.length)} rows.</p>`,
+    };
+  return {
+    shown: [row],
+    note: `<p class="note" data-inventory-focus="${focus}">Row ${fmt(focus)} of the ${fmt(rows.length)} rows in this export, as the Documents page cites it. <a href="#inventory/${code}">Show all ${fmt(rows.length)} rows →</a></p>`,
+  };
+}
+function renderInventory(code, rows, observations, focus) {
   const details = m1a.countries[code];
   const c = country(code);
-  const values = (key) => distinctValues(rows, key);
-  const table = filterTable("inventory", rows, {
+  const { shown, note } = inventoryFocus(code, rows, focus);
+  const values = (key) => distinctValues(shown, key);
+  const table = filterTable("inventory", shown, {
     facets: INVENTORY_FACETS.map(([key, label, all]) => ({
       key,
       label,
@@ -704,7 +737,10 @@ function renderInventory(code, rows, observations) {
     },
     columns: [
       { label: "Source row", cell: (row) => `<code>${esc(row.source_row_id)}</code>` },
-      { label: "Label and source columns", cell: inventoryRowDetail },
+      {
+        label: "Label and source columns",
+        cell: (row) => inventoryRowDetail(row, shown !== rows),
+      },
       { label: "Sub-layer", cell: (row) => esc(row.source_layer) },
       { label: "Record type", cell: (row) => esc(row.record_type) },
       { label: "Reported status", cell: (row) => pill(row.reported_status) },
@@ -722,6 +758,7 @@ function renderInventory(code, rows, observations) {
     `<section id="panel-inventory" role="tabpanel" aria-labelledby="tab-inventory">` +
     inventoryUnknowns(details) +
     `<div class="callout">Each row opens the archived source document, at its PDF page where the source publishes one. Archived copies open locally only; the published edition carries the registry and the publisher's address.</div>` +
+    note +
     table.head +
     `<div class="downloads"><a class="button light" href="data/m1a/${code}.csv" download>Download the ${code} M1a inventory (CSV) ↓</a></div></section>` +
     `<section id="panel-observations" role="tabpanel" aria-labelledby="tab-observations" hidden>` +
@@ -733,16 +770,17 @@ function renderInventory(code, rows, observations) {
     { key: "observations", mount: observationsView.mount },
   ]);
 }
-function inventoryPage(code) {
+function inventoryPage(code, params) {
   if (!m1a.countries[code]) return notFound();
   main.innerHTML = `<p class="note">Loading the ${esc(code)} source rows…</p>`;
+  const focus = Math.trunc(Number(params.get("row"))) || 0;
   inventoryCache[code] =
     inventoryCache[code] ||
     Promise.all([load("m1a/" + code), observationsView(code)]);
   inventoryCache[code]
     .then(([payload, observations]) => {
       if (location.hash.startsWith("#inventory/" + code))
-        renderInventory(code, inventoryRows(payload), observations);
+        renderInventory(code, inventoryRows(payload), observations, focus > 0 ? focus : 0);
     })
     .catch((error) => {
       // Drop the rejected promise, or one transient failure would be replayed
@@ -1025,7 +1063,7 @@ function render() {
   else if (page === "evidence") evidencePage();
   else if (page === "editions") editionHistoryPage();
   else if (page === "documents") documentsPage();
-  else if (page === "inventory") inventoryPage(id);
+  else if (page === "inventory") inventoryPage(id, params);
   else methodsPage();
   document.title =
     (page === "overview"

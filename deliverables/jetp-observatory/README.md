@@ -81,7 +81,13 @@ Routes: `#overview`, `#countries`, `#country/IDN`, `#projects`,
   product — never their sum, since a ledger row and an M1a row can describe
   the same paragraph of the same file, ticket 0856) and which facts rely on it
   (named records and reviewed records) — separate lists, never a total, and a
-  source nothing cites says so. The reviewed-evidence pedigree opens the bytes
+  source nothing cites says so. Each M1a position in that fold-out links to
+  its own inventory row (`#inventory/<CODE>?row=N`, `N` the row's rank in the
+  export, written with the reference) and, where its locator names a PDF
+  page, to that page of the archived copy; the copy's own link opens at the
+  first page the extracted rows name, when every product that names one
+  agrees (`first_pdf_page`), and at page 1 otherwise — no page is ever
+  fabricated (ticket 0857). The reviewed-evidence pedigree opens the bytes
   its fingerprint pins. The Viet Nam page shows the 279 positions of the RMP
   2023 table and the 24 records of the 2025 portfolio side by side; no link
   between them is established here.

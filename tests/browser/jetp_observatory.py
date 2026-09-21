@@ -82,6 +82,39 @@ def check_documents(page, url):
     ).hexdigest() == entry['sha256']
     opened.close()
 
+    # Ticket 0857, recipe VN step 1: from this page the RMP 2023 opens at
+    # printed page 139 — PDF page 155, the first page its extracted positions
+    # name — and each position links to its own inventory row and, where its
+    # locator names one, to its own page: the 22nd (KN Tri An) to page 156.
+    page.locator('#documents-filter-country').select_option('')
+    page.locator('#documents-search').fill('vnm-rmp-2023')
+    rmp = next(row for row in registry if row['id'] == 'vnm-rmp-2023' and row['local_path'])
+    link = page.locator(f'a[data-document-id="{rmp["row_key"]}"]')
+    link.wait_for()
+    assert link.get_attribute('href') == rmp['local_path'] + '#page=155', link.get_attribute('href')
+    with page.expect_popup() as popup:
+        link.click()
+    assert popup.value is not None
+    popup.value.close()
+    row = page.locator('#documents-results tbody tr').filter(has=link).first
+    fold = row.locator('details[data-extracted-product="m1a"]')
+    fold.locator('summary').click()
+    position = fold.locator('li').nth(21)
+    assert 'KN Tri An' in position.inner_text(), position.inner_text()
+    pdf = position.locator('a[data-extracted-page="vnm-rmp-2023:annex-I.1:022"]')
+    assert pdf.get_attribute('href') == rmp['local_path'] + '#page=156', pdf.get_attribute('href')
+    with page.expect_popup() as popup:
+        pdf.click()
+    assert popup.value is not None
+    popup.value.close()
+    # The climb lands on the one row, not on the 279.
+    position.locator('a[href="#inventory/VNM?row=22"]').click()
+    page.wait_for_selector('[data-inventory-focus="22"]')
+    assert page.locator('#inventory-count').inner_text().startswith('1 of 1 ')
+    focused = page.locator('a[data-inventory-row="vnm-rmp-2023:annex-I.1:022"]')
+    assert focused.get_attribute('href') == rmp['local_path'] + '#page=156'
+    assert page.locator('#inventory-results details[open]').count() == 1
+
 
 def check_inventory(page, url):
     """Exercise an M1a inventory page: a filter, and a row opening its document.
