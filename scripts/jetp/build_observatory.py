@@ -182,7 +182,8 @@ def documents_data(root, tables):
     # ordinal among that identifier's rows, in registry order — not the
     # fingerprint, which two attempts of vnm-rmp-2023 share, and not the
     # registry line, which no reader can check. ``id`` stays the identifier,
-    # because it is what an inventory row resolves by (index_documents).
+    # because it is what an inventory row resolves by (index_documents); it is
+    # named first only so a reader of the JSON meets it before the key.
     attempts = Counter()
     entries = []
     for row in rows:
