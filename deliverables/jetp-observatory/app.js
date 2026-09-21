@@ -307,7 +307,7 @@ function documentsPage() {
   const archived = (r) => {
     const href = documentHref(r);
     return href
-      ? `<a href="${esc(href)}" data-document-id="${esc(r.id)}" target="_blank" rel="noopener">Open archived copy ↗</a>`
+      ? `<a href="${esc(href)}" data-document-id="${esc(r.row_key)}" target="_blank" rel="noopener">Open archived copy ↗</a>`
       : `<span class="note">${esc(r.error || "Not in the local snapshot")}</span>`;
   };
   const table = filterTable("documents", rows, {

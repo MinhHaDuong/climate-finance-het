@@ -40,7 +40,9 @@ def check_documents(page, url):
     page.locator('#documents-filter-country').select_option('ZAF')
     entry = next(row for row in registry
                  if row['id'] == 'zaf-jet-investment-register-q1-2026')
-    link = page.locator('a[data-document-id="zaf-jet-investment-register-q1-2026"]')
+    # Addressed by the row key, not the source id: 21 identifiers carry more
+    # than one collection attempt, so the id alone is not a selector.
+    link = page.locator(f'a[data-document-id="{entry["row_key"]}"]')
     assert entry['local_path'], 'Archived ZAF register absent; run make jetp-observatory-documents'
     with page.expect_popup() as popup:
         link.click()
