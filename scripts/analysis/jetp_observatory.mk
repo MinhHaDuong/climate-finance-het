@@ -48,12 +48,13 @@ jetp-observatory: $(JETP_OBSERVATORY_JSON) $(JETP_OBSERVATORY_EDITION_HISTORY) $
 $(JETP_OBSERVATORY)/data/%.json: $(JETP_OBSERVATORY_INPUTS)
 	$(PYTHON) scripts/jetp/build_observatory.py --view $* --output $@
 
-# The documents view indexes what the four M1a views and the reviewed records
-# cite (ticket 0839), so they are read, never rebuilt, by its recipe: listed
-# here as prerequisites so extraction_index() always finds them written. The
-# recipe stays the pattern rule's above.
-$(JETP_OBSERVATORY)/data/documents.json: $(filter %.json,$(JETP_M1A_FILES)) \
-    $(JETP_OBSERVATORY)/data/reviewed-evidence.json
+# The documents view indexes what the four M1a views cite (ticket 0839), so
+# they are read, never rebuilt, by its recipe: listed here as prerequisites so
+# extraction_index() always finds them written. The recipe stays the pattern
+# rule's above. reviewed-evidence.json, also read, is a committed artifact of
+# the release pipeline and not a target of this file: naming it here would
+# hand it to the pattern rule, which has no such view.
+$(JETP_OBSERVATORY)/data/documents.json: $(filter %.json,$(JETP_M1A_FILES))
 
 $(JETP_OBSERVATORY_PROVENANCE): $(JETP_OBSERVATORY_JSON) $(JETP_OBSERVATORY_INPUTS)
 	$(PYTHON) scripts/jetp/build_observatory_provenance.py --output $@
