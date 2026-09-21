@@ -1,10 +1,11 @@
-"""Stage-three facts carry their stage-two evidence; a document lists what cites it.
+"""Stage-three facts descend to their stage-two evidence; a document lists what cites it.
 
 Pure in-memory fixtures for the transforms, a temporary root for the two files
 ``extraction_index`` reads: the fast tier, no subprocess, none of the real
 data.  One fictional country ``QQ`` with one named project and one disclosure
-slot; two ledger observations for the named project, in the shape ticket 0838
-serves; two M1a rows, one per source.
+slot; two M1a rows, one per source.  One test reads the shipped ZAF view: the
+publication cap (ticket 0855) is a property of the real bytes, and the slow
+tier was the only thing guarding it.
 """
 
 import json
@@ -64,15 +65,6 @@ MANIFEST = [
     {"source_id": "qq-src-b", "status": "collected", "retrieved_at": "2026-01-01T00:00:00Z",
      "sha256": "bb" * 32},
 ]
-# The shape ticket 0838 serves: the ledger row verbatim, plus the five fields
-# build_observations.py adds.
-OBSERVATIONS = [
-    dict(EVENT, table="events", kind="financial_event",
-         verification="official_report", sha256="aa" * 32, pdf_page=12),
-    dict(IMPLEMENTATION_EVENT, table="implementation-events",
-         kind="implementation_event", verification="secondary_only",
-         sha256="bb" * 32, pdf_page=None),
-]
 M1A_ROWS = [
     ["QQ", "plan-inventory", "qq-src-a", "qq-src-a:row:001", "Row from source A",
      "Annex 1; PDF pages 12"],
@@ -83,8 +75,13 @@ M1A_FIELDS = ["country", "source_layer", "source_id", "source_row_id", "label",
               "evidence_locator"]
 CONFIG = {"countries": {"QQ": {"headline_source": ""}}}
 
-# The keys country_data() and project_data() produced before this ticket,
-# captured on this fixture: no existing key may disappear.
+# The keys country_data() and project_data() produced before ticket 0839,
+# captured on this fixture: no existing key may disappear.  0839 added
+# ``evidence`` to each project, a verbatim copy of the country's ledger rows;
+# ticket 0855 removed it again, because the copy put the ZAF view 280 kB over
+# the publication cap while ``observations/<CODE>.json`` already served the
+# same rows.  The descent now reads that view, so a project carries exactly
+# the keys it carried before 0839.
 COUNTRY_KEYS_BEFORE = {"country", "projects", "undisclosed", "record_count",
                        "sources", "editorial", "stages", "technologies"}
 PROJECT_KEYS_BEFORE = {"id", "country", "name", "technology", "location",
@@ -123,25 +120,23 @@ def fixture_root(tmp_path, *, m1a=True):
     return tmp_path
 
 
-def test_a_fact_carries_its_evidence_rows_verbatim_and_in_order() -> None:
-    evidence = project_data(dict(NAMED), fixture_tables(), OBSERVATIONS)["evidence"]
+def test_a_fact_carries_no_copy_of_its_observation_rows() -> None:
+    # Neither the rows nor a per-row reference list: 338 ZAF observations at
+    # eight spare bytes each is the whole margin under the cap (ticket 0855).
+    # The descent reads observations/<CODE>.json, filtered on project_id.
+    project = project_data(dict(NAMED), fixture_tables())
 
-    # The two complete dictionaries, not their number: a count of two would
-    # pass an implementation that doubled one row or recoded secondary_only.
-    assert evidence == OBSERVATIONS
-    assert [entry["source_id"] for entry in evidence] == ["qq-src-a", "qq-src-b"]
-    assert [entry["verification"] for entry in evidence] == [
-        "official_report", "secondary_only",
-    ]
+    assert "evidence" not in project
 
 
-def test_evidence_is_filtered_on_project_id_only() -> None:
-    foreign = dict(OBSERVATIONS[0], project_id="qq-other", event_id="qq-event-9")
+def test_the_shipped_zaf_view_stays_under_the_publication_cap() -> None:
+    # The slow tier guards this through build_zaf_positions.validate_migration;
+    # main went red for a day before anyone ran it (ticket 0855).  Same limit,
+    # same file, read at the fast tier.
+    policy = json.loads((ROOT / "config/jetp-zaf-migration.json").read_text())
+    view = ROOT / "deliverables/jetp-observatory/data/ZAF.json"
 
-    evidence = project_data(dict(NAMED), fixture_tables(),
-                            [foreign, *OBSERVATIONS])["evidence"]
-
-    assert evidence == OBSERVATIONS
+    assert view.stat().st_size <= policy["publication_limit_bytes"]
 
 
 def test_a_disclosure_slot_gains_no_fact_page_even_with_a_correct_count(tmp_path) -> None:
@@ -150,21 +145,13 @@ def test_a_disclosure_slot_gains_no_fact_page_even_with_a_correct_count(tmp_path
     assert result["undisclosed"] == 1
     assert len(result["projects"]) == 1
     assert result["projects"][0]["id"] == "qq-project-a"
-    # Built from the tables, through the 0838 builder: the same two rows.
-    assert [(e["table"], e["verification"], e["source_id"])
-            for e in result["projects"][0]["evidence"]] == [
-        ("events", "official_report", "qq-src-a"),
-        ("implementation-events", "secondary_only", "qq-src-b"),
-    ]
 
 
-def test_every_pre_ticket_key_survives_and_evidence_is_the_only_addition(tmp_path) -> None:
+def test_every_pre_ticket_key_survives_and_none_is_added(tmp_path) -> None:
     result = country_data(tmp_path, "QQ", CONFIG, fixture_tables())
 
     assert COUNTRY_KEYS_BEFORE <= set(result)
-    project = result["projects"][0]
-    assert PROJECT_KEYS_BEFORE < set(project)
-    assert set(project) - PROJECT_KEYS_BEFORE == {"evidence"}
+    assert set(result["projects"][0]) == PROJECT_KEYS_BEFORE
 
 
 def test_a_document_indexes_the_same_project_under_each_of_its_sources(tmp_path) -> None:
@@ -220,4 +207,8 @@ def test_renderer_ports_the_descent_and_the_climb() -> None:
     project_page = renderer[renderer.index("function projectPage("):]
     project_page = project_page[:project_page.index("\nfunction ")]
     assert "<details" in project_page
+    # The fold-out is built from the country's observations view, the one the
+    # Observations tab loads, not from a copy in the country view (0855).
+    assert "p.evidence" not in project_page
+    assert 'load("observations/" + ' in renderer
     assert "No link between the 2023 table and the 2025 portfolio" in renderer
