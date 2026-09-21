@@ -275,8 +275,11 @@ def check_facts(page, url):
     page.goto(url + '/#documents')
     page.wait_for_selector('#documents-filters')
     page.locator('#documents-search').fill('vnm-rmp-2023')
+    # The link is keyed by the attempt's row key (ticket 0853), not by the
+    # source identifier: the RMP has two attempts, and either row climbs.
+    rmp = next(row for row in documents if row['id'] == 'vnm-rmp-2023' and row['local_path'])
     row = page.locator('#documents-results tbody tr').filter(
-        has=page.locator('a[data-document-id="vnm-rmp-2023"]')
+        has=page.locator(f'a[data-document-id="{rmp["row_key"]}"]')
     ).first
     extracted = row.locator('details[data-extracted-count]')
     assert extracted.get_attribute('data-extracted-count') == '279'
