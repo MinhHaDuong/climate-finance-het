@@ -7,6 +7,8 @@ JETP_OBSERVATORY_PROVENANCE := $(JETP_OBSERVATORY)/data/provenance.json
 JETP_M1A_DIR := $(JETP_OBSERVATORY)/data/m1a
 JETP_M1A_FILES := $(addprefix $(JETP_M1A_DIR)/,ZAF.csv IDN.csv VNM.csv SEN.csv \
     ZAF.json IDN.json VNM.json SEN.json manifest.json)
+# The four country views alone: what extraction_index() reads (ticket 0839).
+JETP_M1A_VIEWS := $(addprefix $(JETP_M1A_DIR)/,ZAF.json IDN.json VNM.json SEN.json)
 JETP_M1A_INPUTS := config/jetp-m1a-inventories.json scripts/jetp/build_m1a_inventories.py \
     docs/jetp-study/0818-zaf-q1-2026-rows.csv docs/jetp-study/0818-zaf-q1-2026-fields.csv \
     data/jetp/plan-projects.csv \
@@ -54,7 +56,7 @@ $(JETP_OBSERVATORY)/data/%.json: $(JETP_OBSERVATORY_INPUTS)
 # rule's above. reviewed-evidence.json, also read, is a committed artifact of
 # the release pipeline and not a target of this file: naming it here would
 # hand it to the pattern rule, which has no such view.
-$(JETP_OBSERVATORY)/data/documents.json: $(filter %.json,$(JETP_M1A_FILES))
+$(JETP_OBSERVATORY)/data/documents.json: $(JETP_M1A_VIEWS)
 
 $(JETP_OBSERVATORY_PROVENANCE): $(JETP_OBSERVATORY_JSON) $(JETP_OBSERVATORY_INPUTS)
 	$(PYTHON) scripts/jetp/build_observatory_provenance.py --output $@

@@ -120,14 +120,19 @@ def editorial(root, code):
     return ''
 
 
-def country_data(root, code, config, tables):
-    """Build a country package with separate named records and disclosure slots."""
+def country_data(root, code, config, tables, observations=None):
+    """Build a country package with separate named records and disclosure slots.
+
+    ``observations`` are the country's ledger rows as the 0838 builder serves
+    them; a caller that has already built them passes them in, the others get
+    them built here.  Either way a fact's evidence is the same reading of the
+    ledger as the Observations tab.
+    """
     rows = [r for r in unique_rows(tables['projects'], 'project_id') if r['country'] == code]
     slots = [r for r in rows if r['verification_status'] == 'official_count_slot']
     named = [r for r in rows if r not in slots]
-    # Built once per country through the 0838 builder, so a fact's evidence is
-    # the same reading of the ledger as the Observations tab.
-    observations = country_observations(tables, build_registry(tables), code)
+    if observations is None:
+        observations = country_observations(tables, build_registry(tables), code)
     projects = [project_data(r, tables, observations) for r in named]
     sources = source_map(tables)
     needed = {sid for p in projects for sid in p['sources']}
@@ -261,7 +266,8 @@ def extraction_index(root, tables, config):
         return index.setdefault(source_id, {'extracted': [], 'facts': []})
 
     for code in config['countries']:
-        for entry in country_observations(tables, registry, code):
+        observations = country_observations(tables, registry, code)
+        for entry in observations:
             bucket(entry['source_id'])['extracted'].append(ledger_reference(entry))
         view = root / 'deliverables/jetp-observatory/data/m1a' / f'{code}.json'
         if not view.is_file():
@@ -270,7 +276,7 @@ def extraction_index(root, tables, config):
         for values in payload['rows']:
             row = dict(zip(payload['fields'], values))
             bucket(row['source_id'])['extracted'].append(m1a_reference(row))
-        for project in country_data(root, code, config, tables)['projects']:
+        for project in country_data(root, code, config, tables, observations)['projects']:
             for source_id in project['sources']:
                 bucket(source_id)['facts'].append(
                     {'project_id': project['id'], 'name': project['name'], 'country': code})
