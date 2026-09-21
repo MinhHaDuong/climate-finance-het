@@ -7,6 +7,7 @@ Author: HDMX-coding-agent
 2026-09-17T00:00Z HDMX-coding-agent created
 
 2026-09-17T22:51Z HDMX-coding-agent note blocker 0836 closed — Blocked-by removed.
+2026-09-21T23:39Z HDMX-coding-agent note recensement sur cinq appelants (0836, 0838, 0853, 0839 livrés) et deux reprises prototypées et mesurées au harnais HTML : refermé sans reprise, action 2 — voir « Décision ».
 --- body ---
 
 ## Context
@@ -55,13 +56,59 @@ Aucun test neuf. Le refactor est pur : les sélecteurs DOM
 `tests/browser/jetp_observatory.py` vérifie déjà sont l'oracle. Rendre les deux
 pages avant et après sur les mêmes données et comparer le HTML de `main`.
 
+## Décision (2026-09-22) — refermé sans reprise, action 2
+
+Recensement sur les cinq appelants que `main` porte désormais : les trois
+qui passent par `filterTable` (Documents 0836/0853, observations 0838,
+inventaire 0839) et les deux pages écrites à la main.
+
+| Trait | Documents | Observations | Inventaire | Catalogue | Comparaison | Partagé |
+|---|---|---|---|---|---|---|
+| Option valeur ≠ libellé | oui (0853) | – | – | oui | oui | déjà dans `options()` |
+| Présélection depuis le hash | – | – | – | oui | oui | 2, aucun appelant existant |
+| Appartenance à un tableau | – | – | – | oui (bailleurs) | – | 1 |
+| Seuil numérique | – | – | – | – | oui (millésime) | 1 |
+| Facette négative | – | – | – | – | oui (fin. additionnel) | 1 |
+| Synthèse redessinée au filtrage | – | – | – | – | oui | 1 |
+| Identifiants DOM propres (`#search`, `#history-table`…) | – | – | – | oui | oui | 2, figés par la recette |
+
+Le trait absent du recensement initial — les identifiants d'éléments — est
+celui qui coûte le plus : `filterTable` nomme tout `<id>-filter-<clé>`,
+`<id>-count`, `<id>-results`, et la recette navigateur asserte sept
+sélecteurs des deux pages.
+
+Deux reprises prototypées sur une branche jetable et mesurées avec
+`tests/browser/jetp_observatory_html_snapshot.py` (13 états de filtre,
+innerHTML de `#main`) :
+
+- **A, traits partagés seulement** (`facet.selected`, rien d'autre) :
+  `app.js` +112 lignes, les deux pages passent de 83 à 160 lignes ;
+  0 état identique sur 13 ; 5 des 7 sélecteurs de la recette cassés ;
+  le dénominateur du compte bailleurs change (43 sur 43 au lieu de 43 sur
+  383). Échoue aux critères 1 et 2.
+- **B, identique octet pour octet** : 13 états identiques sur 13, mais
+  `app.js` +100 lignes, `filterTable` +26 lignes et sept options
+  (`selected`, `id`, `match`, `ids`, `all` en objet, `count:false`,
+  `summary`), dont trois entières et deux clés d'`ids` ne servent qu'un
+  appelant. Échoue au critère 3, et reste plus grosse que les 83 lignes
+  qu'elle remplace.
+
+Seul changement à `app.js` : le commentaire de `filterTable` enregistre
+la décision au lieu d'annoncer ce ticket. Les deux pages rendent le même
+HTML avant et après (13/13 identiques).
+
 ## Exit criteria
 
-- [ ] Les deux pages rendent le même HTML qu'avant, ou le ticket est refermé
-      sans changement avec la raison écrite
-- [ ] `tests/browser/jetp_observatory.py` passe sans modification de ses
-      assertions existantes
-- [ ] `filterTable` n'a pas gagné d'option servant un seul appelant
+- [x] Les deux pages rendent le même HTML qu'avant, ou le ticket est refermé
+      sans changement avec la raison écrite — les deux : 13/13 états
+      identiques, et la raison ci-dessus
+- [x] `tests/browser/jetp_observatory.py` passe sans modification de ses
+      assertions existantes — vert de bout en bout, après un correctif de
+      la recette elle-même (rechargement avant chaque téléchargement, plafond
+      de dix téléchargements par document dans Chromium sans tête), sans
+      toucher une assertion
+- [x] `filterTable` n'a pas gagné d'option servant un seul appelant — elle
+      n'en a gagné aucune
 
 ## Out of scope
 
