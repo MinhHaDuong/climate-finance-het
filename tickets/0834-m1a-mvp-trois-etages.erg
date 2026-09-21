@@ -8,6 +8,7 @@ Author: HDMX-coding-agent
 2026-09-17T17:00Z HDMX-coding-agent note Décision de l'auteur (session du 2026-09-17) : M1a n'est pas atteinte tant que le MVP ne permet pas d'explorer les données ; recette sur l'Afrique du Sud et le Vietnam ; train de tickets d'une unité de signature chacun
 
 2026-09-21T22:10Z HDMX-coding-agent note raid: revue d'intégration M1a demandée — voir PR #1436
+2026-09-22T00:05Z HDMX-coding-agent note revue d'intégration sur main (3231d3e0), verdict NE PAS FERMER. Recette ZAF verte de bout en bout ; recette VNM verte sauf le pas 1 (depuis le registre des documents le RMP 2023 n'ouvre pas à la page imprimée 139 : ancre sans fragment #page=, les 279 positions du dépliage pointent vers #inventory/VNM non filtré) ; pas 3 vert sous la lecture restreinte de 0838 (Bac Ai porte six sources, une seule archivée). Critère 4 en échec à l'écran : la page Documents affiche « Extracted here · 514 » pour le registre JET ZAF, 257 lignes de ledger plus les 257 mêmes lignes M1a (app.js:334-335), même défaut IDN 1255, SEN 105 et 93. make check complet : 3 failed, 3092 passed — deux échecs environnementaux (data/jetp/crs absent, commit 3b432ef3 absent du clone) et une régression du train, test_zaf_candidate_reconciles_inventory_legacy_and_current_views : ZAF.json passe de 509 315 à 792 434 octets en 3231d3e0 (clé evidence de 0839), au-dessus du plafond de publication de 512 000 octets. Trois enfants de suite ouverts : [[0855]] plafond, [[0856]] comptes fusionnés, [[0857]] navigation RMP. Rapport complet : docs/jetp-study/0834-integration-review-2026-09-22.md (déposé par la PR de réparation).
 --- body ---
 
 ## Context
@@ -86,6 +87,15 @@ ce suiveur.
 5. [[0839]] — Étage 3 : faits réconciliés avec descente vers leurs preuves.
    Bloqué par 0836 et 0838.
 
+Enfants de suite, ouverts par la revue d'intégration du 2026-09-22 :
+
+6. [[0855]] — Plafond de publication ZAF franchi par 0839 : servir `evidence`
+   depuis les vues observations. Bloque [[0727]].
+7. [[0856]] — Page Documents : les deux produits d'étage 2 additionnés dans
+   « Extracted here » ; totaux M1a inter-sous-couches contredits par la note.
+8. [[0857]] — Depuis le registre des documents, le RMP 2023 n'ouvre pas à la
+   page extraite (pas 1 de la recette Vietnam).
+
 ## Relation avec M1b
 
 [[0833]] démarre en parallèle : la taxonomie commune ne dépend pas de
@@ -105,8 +115,8 @@ extraction est M2. Le déploiement public est [[0727]].
 
 ## Exit criteria
 
-- [ ] Les cinq enfants sont fermés
-- [ ] La recette Afrique du Sud passe de bout en bout dans le navigateur
+- [x] Les cinq enfants sont fermés
+- [x] La recette Afrique du Sud passe de bout en bout dans le navigateur
 - [ ] La recette Vietnam passe de bout en bout dans le navigateur
 - [ ] Aucun étage n'agrège ni ne fusionne les lignes d'un autre
 - [ ] La ligne M1a de [[0725]] et de [[0715]] est cochée par l'auteur après revue d'intégration

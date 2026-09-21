@@ -1,0 +1,70 @@
+%erg 0.1
+Title: Depuis le registre des documents, le RMP 2023 n'ouvre pas à la page extraite
+Created: 2026-09-21
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-21T23:38Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Enfant de suite de [[0834]], ouvert par la revue d'intégration du 2026-09-22.
+Premier pas de la recette Vietnam : « Ouvrir le PDF du RMP 2023 à la page
+imprimée 139 depuis le registre des documents ». Il ne passe pas tel
+qu'écrit. Sur la page Documents, l'ancre « Open archived copy » de
+`vnm-rmp-2023` ne porte pas de fragment `#page=`, et les 279 positions du
+dépliage « Extracted here » pointent toutes vers `#inventory/VNM` non filtré.
+La page n'est atteignable qu'en éditant l'URL ou en passant par l'inventaire.
+La donnée est juste (`pdftotext` : PDF 155 = imprimée 139 ; PDF 156 porte
+« KN Tri An Floating Solar Farm », ordinal 22) ; l'écart est de navigation.
+
+La revue recommande de faire pointer chaque `<li>` du dépliage vers sa propre
+ligne d'inventaire, ce qui répare aussi la remontée, qui dépose aujourd'hui
+le lecteur sur 279 lignes non filtrées. Décision prise en session autonome
+(2026-09-22) sur cette recommandation, sans l'auteur : à re-arbitrer au matin
+si le pas de recette doit plutôt être reformulé.
+
+## Relevant files
+
+- `deliverables/jetp-observatory/app.js` — `documentsPage()` dépliage « Extracted here », `documentHref(entry, page)`, page inventaire et son routage par hash
+- `scripts/jetp/build_observatory.py::m1a_reference()` — ce que chaque référence M1a porte (localisateur, `pdf_page` ?)
+- `tests/browser/jetp_observatory.py` — `check_documents`, `check_facts`
+
+## Actions
+
+1. Donner à chaque référence M1a de `by_source_id[...].extracted` de quoi
+   cibler sa ligne : ordinal de ligne et page PDF si le localisateur en porte
+   une (motif `/PDF pages? (\d+)/` de 0836), sans recalcul côté client.
+2. Chaque `<li>` M1a du dépliage lie vers sa ligne d'inventaire (hash avec
+   l'ordinal, la page d'inventaire déplie la ligne ciblée) et, quand une page
+   PDF est connue, propose aussi le lien direct `documentHref(entry, page)`.
+3. Sur l'ancre « Open archived copy » d'un PDF, si toutes les lignes
+   extraites s'accordent sur une première page, poser `#page=` de cette
+   page ; sinon rien. Ne jamais fabriquer une page.
+
+## Test
+
+Red : `tests/test_jetp_observatory_facts.py` — sur la fixture QQ, une
+référence M1a dont le localisateur porte « PDF page 156 » sort avec
+`pdf_page == 156` et son ordinal ; une référence sans page sort sans clé
+`pdf_page`. Plus la recette navigateur : depuis `#documents`, cliquer la
+22e position extraite de `vnm-rmp-2023` ouvre le PDF à `#page=156`.
+
+## Verification
+
+- [ ] Recette VN pas 1 : depuis le registre des documents, le RMP 2023 s'ouvre à la page imprimée 139 (PDF 155) en un clic
+- [ ] Remontée : depuis le RMP, chaque position mène à sa ligne, pas à la liste entière
+- [ ] `tests/browser/jetp_observatory.py::check_documents` exerce ce clic
+
+## Invariants
+
+- Aucun lien fabriqué entre RMP 2023 et portefeuille 2025
+- `documents.json` ne gagne que des champs de navigation (ordinal, page), aucune valeur recodée
+
+## Exit criteria
+
+- [ ] Le pas 1 de la recette Vietnam de 0834 passe tel qu'écrit
+- [ ] Chaque position extraite d'un PDF est cliquable vers sa page quand elle est connue
+- [ ] `make check-fast`, `make lint` et la recette navigateur passent
