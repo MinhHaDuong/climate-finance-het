@@ -104,13 +104,13 @@ def fixture_tables():
     }
 
 
-def fixture_root(tmp_path, *, m1a=True):
+def fixture_root(tmp_path, *, m1a=True, m1a_rows=M1A_ROWS):
     """A root holding only what extraction_index reads besides the tables."""
     data = tmp_path / "deliverables/jetp-observatory/data"
     (data / "m1a").mkdir(parents=True)
     if m1a:
         (data / "m1a/QQ.json").write_text(json.dumps(
-            {"country": "QQ", "fields": M1A_FIELDS, "rows": M1A_ROWS}))
+            {"country": "QQ", "fields": M1A_FIELDS, "rows": m1a_rows}))
     (data / "reviewed-evidence.json").write_text(json.dumps({"records": [
         {"id": "canonical-QQ-headline", "label": "QQ reported position",
          "country": "QQ", "status": "reviewed_fact",
@@ -178,8 +178,37 @@ def test_extracted_lists_hold_the_ledger_row_and_the_m1a_row_separately(tmp_path
     assert [row["product"] for row in index["qq-src-b"]["extracted"]] == [
         "ledger", "m1a",
     ]
-    # Two lists per source, never a total across them.
-    assert set(index["qq-src-a"]) == {"extracted", "facts"}
+    # Two lists per source, never a total across them; the only other key a
+    # source can carry is the page its archived copy opens at (0857).
+    assert set(index["qq-src-a"]) == {"extracted", "facts", "first_pdf_page"}
+    assert set(index["qq-src-b"]) == {"extracted", "facts"}
+
+
+def test_an_m1a_reference_carries_its_row_ordinal_and_the_pdf_page_its_locator_names(tmp_path) -> None:
+    # Ticket 0857: computed once here, so the Documents page can address the
+    # inventory row and the PDF page without re-reading a locator.
+    index = extraction_index(fixture_root(tmp_path), fixture_tables(), CONFIG)
+
+    with_page = next(r for r in index["qq-src-a"]["extracted"] if r["product"] == "m1a")
+    without = next(r for r in index["qq-src-b"]["extracted"] if r["product"] == "m1a")
+    assert with_page["row"] == 1 and with_page["pdf_page"] == 12
+    # No page named, no key: an absent page is not a page.
+    assert without["row"] == 2 and "pdf_page" not in without
+
+
+def test_a_document_opens_at_the_first_page_only_when_every_product_agrees(tmp_path) -> None:
+    # Source A: the ledger row says PDF page 12, the M1a locator says PDF
+    # pages 12 — one first page.  Source B: nobody names a page.
+    index = extraction_index(fixture_root(tmp_path), fixture_tables(), CONFIG)
+    assert index["qq-src-a"]["first_pdf_page"] == 12
+    assert "first_pdf_page" not in index["qq-src-b"]
+
+    # The M1a reading starts at page 30 where the ledger's starts at 12: the
+    # two products disagree, and no page is fabricated from either.
+    disagreeing = [[*M1A_ROWS[0][:5], "Annex 1; PDF pages 30"], M1A_ROWS[1]]
+    index = extraction_index(fixture_root(tmp_path / "b", m1a_rows=disagreeing),
+                             fixture_tables(), CONFIG)
+    assert "first_pdf_page" not in index["qq-src-a"]
 
 
 def test_a_missing_m1a_view_stops_the_build_instead_of_serving_an_empty_list(tmp_path) -> None:

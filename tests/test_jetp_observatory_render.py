@@ -87,6 +87,62 @@ def test_a_document_with_one_product_gets_one_fold_out() -> None:
     assert extracted_foldouts(row) == [("m1a", str(len(index[RMP]["extracted"])))]
 
 
+def anchors(html):
+    """(href, text) of every anchor, in order."""
+    return re.findall(r'<a href="([^"]*)"[^>]*>([^<]*)<', html)
+
+
+def test_the_rmp_opens_at_its_first_extracted_page_and_each_position_at_its_own() -> None:
+    # Ticket 0857, recipe VN step 1: from the Documents page, the RMP 2023
+    # opens at printed page 139, PDF page 155, the first page any of its 279
+    # extracted positions names; position 22 (KN Tri An) opens at its own
+    # page 156 and links to its own inventory row, not to the whole list.
+    registry = json.loads((SITE / "data/documents.json").read_text())
+    index = registry["by_source_id"]
+    rmp = next(d for d in registry["documents"] if d["row_key"] == RMP + ":1")
+    positions = [r for r in index[RMP]["extracted"] if r["product"] == "m1a"]
+    pages = sorted({r["pdf_page"] for r in positions if "pdf_page" in r})
+    assert pages and pages[0] == 155, pages[:3]
+    assert positions[21]["source_row_id"] == "vnm-rmp-2023:annex-I.1:022"
+
+    row = documents_row(RMP, RMP + ":1")
+
+    archived = [href for href, text in anchors(row) if "Open archived copy" in text]
+    assert archived == [rmp["local_path"] + "#page=155"], archived
+    items = re.findall(r"<li>.*?</li>", row)
+    assert len(items) == len(positions)
+    assert anchors(items[21]) == [
+        ("#inventory/VNM?row=22", "vnm-rmp-2023:annex-I.1:022"),
+        (rmp["local_path"] + "#page=156", "PDF page 156 ↗"),
+    ], anchors(items[21])
+
+
+def test_a_document_without_a_page_gets_no_fragment() -> None:
+    registry = json.loads((SITE / "data/documents.json").read_text())
+    entry = next(d for d in registry["documents"] if d["row_key"] == ZAF_REGISTER + ":1")
+    assert not any("pdf_page" in r for r in registry["by_source_id"][ZAF_REGISTER]["extracted"])
+
+    row = documents_row(ZAF_REGISTER, ZAF_REGISTER + ":1")
+
+    archived = [href for href, text in anchors(row) if "Open archived copy" in text]
+    assert archived == [entry["local_path"]], archived
+
+
+def test_the_inventory_page_opens_on_the_row_the_documents_page_cites() -> None:
+    payload = json.loads((SITE / "data/m1a/VNM.json").read_text())
+    rows = [dict(zip(payload["fields"], values)) for values in payload["rows"]]
+    assert rows[21]["source_row_id"] == "vnm-rmp-2023:annex-I.1:022"
+
+    rendered = render("inventory/VNM?row=22")
+
+    assert rendered["elements"]["inventory-count"]["textContent"].startswith("1 of 1 ")
+    results = rendered["elements"]["inventory-results"]["innerHTML"]
+    assert 'data-inventory-row="vnm-rmp-2023:annex-I.1:022"' in results
+    assert "<details open>" in results
+    # The way back to the whole export is one link away.
+    assert 'href="#inventory/VNM"' in rendered["main"]
+
+
 def test_a_fact_page_lists_the_observations_view_rows_addressed_to_it() -> None:
     # Ticket 0855: the fold-out is the observations view filtered on the
     # project, fetched by the page, not a copy carried by the country view.
