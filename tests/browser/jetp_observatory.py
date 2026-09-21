@@ -57,6 +57,21 @@ def check_documents(page, url):
     # than one collection attempt, so the id alone is not a selector.
     link = page.locator(f'a[data-document-id="{entry["row_key"]}"]')
     assert entry['local_path'], 'Archived ZAF register absent; run make jetp-observatory-documents'
+    # Ticket 0856: the register was read twice, once per stage-two product,
+    # and the two readings are shown as two counts, never added (257 + 257
+    # is not 514 rows).
+    index = page.request.get(url + '/data/documents.json').json()['by_source_id']
+    per_product = {}
+    for reference in index[entry['id']]['extracted']:
+        per_product[reference['product']] = per_product.get(reference['product'], 0) + 1
+    assert set(per_product) == {'ledger', 'm1a'}, per_product
+    row = page.locator('#documents-results tbody tr').filter(has=link).first
+    for product, count in per_product.items():
+        fold = row.locator(f'details[data-extracted-product="{product}"]')
+        assert fold.get_attribute('data-extracted-count') == str(count), product
+    assert str(sum(per_product.values())) not in ' '.join(
+        row.locator('details > summary').all_inner_texts()
+    )
     with page.expect_popup() as popup:
         link.click()
     opened = popup.value

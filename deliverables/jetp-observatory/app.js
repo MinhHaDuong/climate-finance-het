@@ -337,13 +337,30 @@ function factItem(fact) {
 function foldout(label, items, item, key, none) {
   return `<details class="foldout" data-${key}-count="${items.length}"><summary>${esc(label)} · ${fmt(items.length)}</summary>${items.length ? `<ul class="citing">${items.map(item).join("")}</ul>` : `<p class="note">${esc(none)}</p>`}</details>`;
 }
+/* Ticket 0856: one fold-out per stage-two product, each with its own count in
+ * its own summary. A ledger row and an M1a row can describe the same paragraph
+ * of the same file, so "Extracted here · 514" for the ZAF register — 257 of
+ * each — was the sum this site forbids everywhere else. A product the document
+ * has no row of gets no fold-out, not an empty one; a product this table does
+ * not name is still listed, under its own name, rather than dropped. */
+const PRODUCT_LABELS = { ledger: "Ledger rows", m1a: "M1a rows" };
+function extractedFoldouts(extracted) {
+  const products = [...new Set(extracted.map((row) => row.product))];
+  if (!products.length)
+    return '<p class="note" data-extracted-count="0">Nothing extracted from this source in this edition.</p>';
+  return products
+    .map((product) => {
+      const rows = extracted.filter((row) => row.product === product);
+      return `<details class="foldout" data-extracted-product="${esc(product)}" data-extracted-count="${rows.length}"><summary>${esc(PRODUCT_LABELS[product] || product)} · ${fmt(rows.length)}</summary><ul class="citing">${rows.map(extractedItem).join("")}</ul></details>`;
+    })
+    .join("");
+}
 function extractionCell(entry) {
   const linked = (documentsData.by_source_id || {})[entry.id];
   if (!linked)
     return `<span class="note" data-uncited="${esc(entry.id)}">No extracted row and no fact cites this source in this edition.</span>`;
   return (
-    foldout("Extracted here", linked.extracted, extractedItem, "extracted",
-      "Nothing extracted from this source in this edition.") +
+    extractedFoldouts(linked.extracted) +
     foldout("Facts relying on it", linked.facts, factItem, "facts",
       "No fact relies on this source in this edition.")
   );
@@ -398,7 +415,7 @@ function documentsPage() {
       { label: "Content type", cell: (r) => esc(r.content_type || "Not recorded") },
       { label: "Size", cell: (r) => esc(byteSize(r.size_bytes)) },
       { label: "Archived copy", cell: archived },
-      { label: "Extracted here · relied on by", cell: extractionCell },
+      { label: "Extracted here, per product · relied on by", cell: extractionCell },
       {
         label: "Origin",
         cell: (r) =>
@@ -462,7 +479,7 @@ function inventoryUnknowns(details) {
           `<div class="metric"><strong>${fmt(layer.row_count)}</strong><span>${esc(layer.sublayer_id)}</span><small>${esc(layer.edition)} · cutoff ${esc(layer.cutoff)}<br>${fmt(layer.unknowns.field_values)} unknown field values · ${fmt(layer.unknowns.identity_rows)} unknown identities · ${fmt(layer.unknowns.unavailable_source_rows)} unavailable source rows</small></div>`,
       )
       .join("")}</div>` +
-    `<p class="note">Each figure counts one extraction sub-layer of this country. This page adds none of them together: the sub-layers overlap, count different things, and a country is not the unit any of them measures.</p>`
+    `<p class="note">Each figure counts one extraction sub-layer of this country. The count line under the filters is the size of this export, the sub-layers laid end to end: it says how many rows the file holds, not how many projects the country has, because the sub-layers overlap and count different things, and a country is not the unit any of them measures.</p>`
   );
 }
 /* A row's own fields, listed under whichever summary its caller names — an
@@ -695,7 +712,7 @@ function renderInventory(code, rows, observations) {
       { label: "Evidence", cell: inventoryEvidence },
     ],
     empty: "No source rows match these filters.",
-    resultNoun: "source rows",
+    resultNoun: "rows in this export",
     pageSize: 50,
   });
   const observationsView = observationsTable(observations);
@@ -963,7 +980,7 @@ function m1aSection() {
       return `<tr><td><a href="#inventory/${code}">${esc(country(code)?.name || code)}</a></td><td>${fmt(item.row_count)}</td><td>${sublayers}</td><td>${fmt(item.unknowns.field_values)}</td><td>${fmt(item.unknowns.identity_rows)}</td><td>${fmt(item.unknowns.unavailable_source_rows)}</td></tr>`;
     })
     .join("");
-  return `<h2>Frozen M1a source inventories</h2><p>These four tables preserve every row of six selected extraction sub-layers before canonical matching. They are frozen inventories, not a live status service, and their row counts are not comparable project totals.</p><div class="table-wrap"><table><thead><tr><th>Country</th><th>Rows</th><th>Source edition · cutoff</th><th>Unknown fields</th><th>Unknown identities</th><th>Unavailable source rows</th></tr></thead><tbody>${rows}</tbody></table></div><div class="downloads"><a class="button light" href="data/m1a/ZAF.csv" download>South Africa M1a ↓</a><a class="button light" href="data/m1a/IDN.csv" download>Indonesia M1a ↓</a><a class="button light" href="data/m1a/VNM.csv" download>Viet Nam M1a ↓</a><a class="button light" href="data/m1a/SEN.csv" download>Senegal M1a ↓</a><a class="button light" href="data/m1a/manifest.json" download>M1a manifest ↓</a></div><p>The manifest pins input and source hashes and reports <code>field_values</code>, <code>identity_rows</code> and <code>unavailable_source_rows</code> separately for every extraction sub-layer. Country names above open the row-by-row inventory.</p>`;
+  return `<h2>Frozen M1a source inventories</h2><p>These four tables preserve every row of six selected extraction sub-layers before canonical matching. They are frozen inventories, not a live status service, and their row counts are not comparable project totals.</p><div class="table-wrap"><table><thead><tr><th>Country</th><th>Rows in this export</th><th>Source edition · cutoff</th><th>Unknown field values</th><th>Unknown identities</th><th>Unavailable source rows</th></tr></thead><tbody>${rows}</tbody></table></div><p class="note">The per-country figures are the sub-layer figures of one export laid end to end — the size of a file, not a count of projects: the sub-layers overlap and count different things. Each sub-layer's own figures are on the inventory page.</p><div class="downloads"><a class="button light" href="data/m1a/ZAF.csv" download>South Africa M1a ↓</a><a class="button light" href="data/m1a/IDN.csv" download>Indonesia M1a ↓</a><a class="button light" href="data/m1a/VNM.csv" download>Viet Nam M1a ↓</a><a class="button light" href="data/m1a/SEN.csv" download>Senegal M1a ↓</a><a class="button light" href="data/m1a/manifest.json" download>M1a manifest ↓</a></div><p>The manifest pins input and source hashes and reports <code>field_values</code>, <code>identity_rows</code> and <code>unavailable_source_rows</code> separately for every extraction sub-layer. Country names above open the row-by-row inventory.</p>`;
 }
 function methodsPage() {
   main.innerHTML =
