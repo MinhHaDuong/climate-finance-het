@@ -94,14 +94,12 @@ def observations_by_country(tables, registry):
     neither Viet Nam nor South Africa has an implementation event — and a view
     that dropped it would make the page unreachable for that country.
     """
-    result = {code: [] for code in COUNTRIES}
-    for table in OBSERVATION_TABLES:
-        for row in tables[table]:
-            country = row['country']
-            if country not in result:
-                raise ValueError(f'Unsupported observation country: {country}')
-            result[country].append(observation_entry(row, table, registry))
-    return result
+    unsupported = {
+        row['country'] for table in OBSERVATION_TABLES for row in tables[table]
+    } - set(COUNTRIES)
+    if unsupported:
+        raise ValueError(f'Unsupported observation country: {sorted(unsupported)[0]}')
+    return {code: country_observations(tables, registry, code) for code in COUNTRIES}
 
 
 def main():
