@@ -14,6 +14,7 @@ Author: HDMX-coding-agent
 2026-09-17T23:04Z HDMX-coding-agent verification : recette VN (bailleur BEI) satisfaite par recherche plein texte sur source_id, pas par facette funder — tranché en Execute comme prévu par la note du 2026-09-17T20:10Z
 2026-09-17T23:58Z HDMX-coding-agent revue round 1-2 : registre reconstruit sur l'empreinte enregistrée, non sur la copie archivée sur disque (index_documents écarté) — une empreinte SEN basculait selon que l'instantané DVC était sorti ; ordre total (statut, date, empreinte) pour les tentatives ex aequo
 2026-09-18T00:41Z HDMX-coding-agent bump verify-reroll — round 1: Recette VN (bailleur=BEI) doit être ouvrable en local ; les 7 lignes VNM ont une empreinte nulle (source jamais collectée) et /review-pr round 1 §2 demande une acceptation explicite de l'auteur pour la lecture restreinte du critère de sortie
+2026-09-21T20:53Z HDMX-coding-agent note décision de l'auteur (2026-09-18, consignée dans le corps de la PR #1434 qui dépose 0854, réaffirmée en session le 2026-09-21) : lecture restreinte de la recette VN acceptée — « ouvrable en local » vaut pour l'Afrique du Sud ; pour le Vietnam, les lignes de Bac Ai sont trouvables et portent leur localisateur, et la collecte des sept sources jamais archivées est [[0854]]. La vérification et le critère de sortie ci-dessous sont annotés en conséquence.
 --- body ---
 
 ## Context
@@ -291,7 +292,7 @@ palier rapide, `make check-fast`.
 
 ## Verification
 
-- [ ] Recette VN : filtrer VNM sur bailleur = BEI montre les observations de Bac Ai avec leur bulletin ou fiche source, ouvrable en local
+- [ ] Recette VN : filtrer VNM sur bailleur = BEI montre les observations de Bac Ai avec leur bulletin ou fiche source, ouvrable en local — lecture restreinte acceptée par l'auteur le 2026-09-18 : trouvables avec leur localisateur ; l'ouverture en local suit la collecte [[0854]]
 - [ ] Recette SA : les observations issues du registre Q1 2026 renvoient au snapshot du registre
 - [ ] Le compte en tête d'onglet égale le nombre de lignes servies, par table et par pays
 - [ ] `reviewed-evidence.json` et `tests/test_jetp_public_release.py` sont inchangés
@@ -309,7 +310,7 @@ palier rapide, `make check-fast`.
 - [ ] Chaque observation renvoie à son document et à son localisateur
 - [ ] Le compte de lignes servies par table et par pays est affiché et exact ; `reviewed-evidence.json` est intact
 - [ ] La séparation entre les deux produits d'étage 2 est affichée
-- [ ] Recettes SA et VN de 0834 réussies pour les observations
+- [ ] Recettes SA et VN de 0834 réussies pour les observations — VN en lecture restreinte (décision de l'auteur du 2026-09-18, journal), ouverture en local reportée à [[0854]]
 
 ## Out of scope
 
