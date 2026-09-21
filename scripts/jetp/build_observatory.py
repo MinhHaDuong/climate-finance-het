@@ -177,7 +177,19 @@ def documents_data(root, tables):
             raise ValueError(f'Unsafe source path: {relative}')
         if archived.is_file():
             available.add(relative)
-    return {'documents': [document_entry(row, available) for row in rows]}
+    # A source identifier is not a row key: 21 of them carry several collection
+    # attempts (ticket 0853). The key is the identifier plus the attempt's
+    # ordinal among that identifier's rows, in registry order — not the
+    # fingerprint, which two attempts of vnm-rmp-2023 share, and not the
+    # registry line, which no reader can check. ``id`` stays the identifier,
+    # because it is what an inventory row resolves by (index_documents).
+    attempts = Counter()
+    entries = []
+    for row in rows:
+        entry = document_entry(row, available)
+        attempts[entry['id']] += 1
+        entries.append({'id': entry['id'], 'row_key': f"{entry['id']}:{attempts[entry['id']]}", **entry})
+    return {'documents': entries}
 
 
 def edition_history(root):
