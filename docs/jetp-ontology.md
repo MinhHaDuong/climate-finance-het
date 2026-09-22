@@ -19,6 +19,8 @@ Four decisions by the author on 2026-09-22 shape it:
    verbatim and crosswalked; it is never overwritten or inferred.
 4. Design the target, then migrate. No incremental patching of the current
    tables.
+5. Line identifiers are minted, not keyed on fingerprint and locator
+   (section 5).
 
 ## 1. Why the current model fails
 
@@ -246,6 +248,15 @@ Rules that the validator enforces:
 
 - An observation cites exactly one line and its subject exists.
 - A line's `sha256` exists in `snapshots` and the bytes exist in the store.
+- A `line_id` is minted by the extractor as `<document_id>-<table>-<ordinal>`,
+  in extraction order, appended only and never renumbered: a re-extraction
+  that finds a dropped row appends it under the next ordinal. The pair
+  (`sha256`, `locator`) is unique across `lines` as a check, not as the key,
+  so no two lines claim the same place in the same bytes and a locator too
+  coarse to be unique, such as a whole report, is refused at ingestion.
+  Decided by the author on 2026-09-22: a minted key keeps the row's identity
+  independent of its attributes, which is the normal form; the fingerprint and
+  locator stay on the row as provenance.
 - A referent is minted only by a `line-referents` row with a basis; no
   ingestion script writes to `projects`, `assets`, `agreements`, `parties` or
   `perimeters`.
@@ -339,9 +350,6 @@ readers are retired at step 7.
 
 ## 9. Open questions for the author
 
-- Whether a `line_id` is minted (`<document_id>-<ordinal>`) or the pair
-  (`sha256`, `locator`) is the key. Minting is proposed, because a locator is
-  the publisher's text and two editions can print the same one.
 - Whether `party` is built in step 4 or deferred to the first metric that
   needs funder identity. Building it is proposed, because the register's funder
   prefix is already a party key and the 61 free-text strings are the main
