@@ -1,0 +1,100 @@
+%erg 0.1
+Title: documents.json est une table : la remontée document → faits devient une jointure à la lecture
+Created: 2026-09-22
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-22T07:13Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Enfant de [[0834]], décidé par l'auteur le 2026-09-22 (session interactive,
+question « réduire l'index, relever le garde, ou sqlite ? », réponse : forme
+normale, un fichier = une table). Depuis [[0839]], `documents.json` porte deux
+clés : `documents`, la table des 307 tentatives de collecte du registre
+(159 Ko), et `by_source_id`, une jointure matérialisée (874 Ko) qui recopie,
+pour 204 sources, des références vers 2 930 lignes M1a ou du ledger et 699
+faits. Ces lignes sont déjà servies, une table par fichier :
+`m1a/<CODE>.json`, `observations/<CODE>.json`, `<CODE>.json` (projets),
+`reviewed-evidence.json`. L'index fait passer le fichier à 975 Ko : le garde
+« fichier volumineux » du pre-commit (512 Ko) refuse sa régénération sur
+padme, où les hooks tournent, ce que [[0854]] a contourné en relevant le
+plafond dans sa branche (commit à abandonner au rebase).
+
+Trois options écartées, avec la raison : relever le garde fige un index de
+874 Ko chargé à chaque route et qui grossit à chaque collecte ; le découper
+par pays garde une copie qui peut diverger de ses tables ; SQLite dans le
+navigateur ajoute une dépendance et un binaire pour 3 Mo de JSON, à revoir à
+M2 seulement.
+
+## Relevant files
+
+- `scripts/jetp/build_observatory.py` — `documents_data(root, tables, config)`, `extraction_index()`, `ledger_reference()`, `m1a_reference()` (0839, 0857)
+- `deliverables/jetp-observatory/app.js` — `extractionCell()`, `extractedFoldouts()`, `factItem()`, `documentsPage()`, chargement des vues pays
+- `scripts/analysis/jetp_observatory.mk` — prérequis `JETP_M1A_VIEWS` de `documents.json` (0839 action 7)
+- `tests/test_jetp_observatory_facts.py` — tests d'`extraction_index()` (0839 test 3)
+- `tests/test_jetp_observatory_render.py`, `tests/_jetp_observatory_render.js` — harnais de rendu (0856)
+- `tests/browser/jetp_observatory.py` — `check_documents`, `check_facts`
+- `deliverables/jetp-observatory/README.md` — décrit la remontée
+
+## Actions
+
+1. `documents_data()` n'émet plus `by_source_id` ; `extraction_index()`,
+   `ledger_reference()`, `m1a_reference()` disparaissent du générateur. Les
+   champs de navigation que 0857 posait sur les références (`row`, `pdf_page`,
+   `first_pdf_page`) sont calculés là où vivent les lignes : `pdf_page` sur
+   chaque ligne M1a de `m1a/<CODE>.json` si elle n'y est pas déjà, et
+   `first_pdf_page` par source dérivé côté client de ces lignes. Aucune page
+   fabriquée.
+2. `documents.json` redevient la table des tentatives de collecte, une clé
+   `documents`, 307 lignes, sous 200 Ko. Le prérequis `JETP_M1A_VIEWS` de sa
+   règle Make est retiré.
+3. Dans `app.js`, le dépliage d'un document fait la jointure à la lecture :
+   charger à la demande, une fois par pays, `m1a/<CODE>.json`,
+   `observations/<CODE>.json` et `<CODE>.json` du pays de la tentative, puis
+   filtrer sur `source_id` (lignes M1a, observations) et sur les sources des
+   projets et les preuves de `reviewed-evidence.json`. Le rendu reste celui de
+   0856 et 0857 : un dépliage par produit avec son compte, jamais de total, la
+   note pour une source sans ligne extraite, chaque ligne M1a liée à sa ligne
+   d'inventaire et à sa page PDF, l'ancre « Open archived copy » à la première
+   page quand les lignes s'accordent.
+4. Les tests d'`extraction_index()` de 0839 deviennent des tests de rendu sur
+   le harnais Node : même projet des deux côtés, deux listes jamais un total.
+   Les tests de rendu de 0856 et 0857 passent sans changement d'assertion.
+5. Régénérer `documents.json` et les vues M1a touchées ; les diff des autres
+   vues sont vides. README aligné.
+
+## Test
+
+Red : `tests/test_jetp_observatory_render.py` — le rendu de
+`zaf-jet-investment-register-q1-2026` sur la page Documents porte encore un
+dépliage par produit avec 257 et 257, alors que `documents.json` ne contient
+plus la clé `by_source_id` (assertion sur le fichier livré). Et un test de
+taille : `documents.json` sous 512 000 octets, lu depuis le même plafond que
+le pre-commit.
+
+## Verification
+
+- [ ] Recette SA pas 1 et VN pas 1 de 0834 inchangées dans le navigateur
+- [ ] Depuis le RMP, la remontée liste 279 positions et 0 fait ; depuis le registre JET ZAF, 257 lignes de ledger, 257 lignes M1a, 257 faits, jamais 514
+- [ ] `tests/browser/jetp_observatory.py::check_documents` et `check_facts` verts
+- [ ] Le pre-commit accepte `documents.json` régénéré sans changement du plafond
+
+## Invariants
+
+- Aucun fait nouveau, aucune fusion entre étages ni entre produits
+- Les vues M1a ne perdent aucune colonne ; `observations/*.json` inchangés
+- `make check-fast`, `make lint` passent
+
+## Exit criteria
+
+- [ ] `documents.json` est une table, sans clé dérivée, sous le plafond du pre-commit
+- [ ] La remontée document → faits est une jointure à la lecture sur les vues servies, vérifiée par un test de rendu
+- [ ] [[0854]] se rebase dessus et abandonne son commit sur `.githooks/pre-commit`
+
+## Out of scope
+
+Normaliser les vues pays `<CODE>.json` (projets, sources, couverture) : second
+pas, à décider avec le format public de [[0727]]. SQLite : M2.
