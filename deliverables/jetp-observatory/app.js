@@ -354,7 +354,10 @@ function foldout(label, items, item, key, none, attrs = "") {
  * of the same file, so "Extracted here · 514" for the ZAF register — 257 of
  * each — was the sum this site forbids everywhere else. A product the document
  * has no row of gets no fold-out, not an empty one; a product this table does
- * not name is still listed, under its own name, rather than dropped. */
+ * not name is still listed, under its own name, rather than dropped. A source
+ * nothing was extracted from (55 in this edition, cited by facts only) gets
+ * one sentence and no fold-out at all — an empty list is still a list, and
+ * this site never fabricates one (author's decision, 2026-09-22, PR #1439). */
 const PRODUCT_LABELS = { ledger: "Ledger rows", m1a: "M1a rows" };
 function extractedFoldouts(extracted, entry) {
   const products = [...new Set(extracted.map((row) => row.product))];

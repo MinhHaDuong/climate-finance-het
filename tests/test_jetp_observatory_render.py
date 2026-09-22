@@ -87,6 +87,24 @@ def test_a_document_with_one_product_gets_one_fold_out() -> None:
     assert extracted_foldouts(row) == [("m1a", str(len(index[RMP]["extracted"])))]
 
 
+def test_a_document_nothing_was_extracted_from_gets_a_note_not_an_empty_fold_out() -> None:
+    # Author's decision, 2026-09-22 (PR #1439 gate): a source that facts rely
+    # on but that no ledger row nor M1a row was extracted from says so in one
+    # sentence, and gets no "Extracted here · 0" fold-out — an empty list is
+    # still a list, and this site never fabricates one (ticket 0839, action 6).
+    index = json.loads((SITE / "data/documents.json").read_text())["by_source_id"]
+    silent = sorted(k for k, v in index.items() if not v["extracted"] and v["facts"])
+    assert silent, "no shipped source has facts but no extracted row; the fixture is gone"
+    source_id = silent[0]
+
+    row = documents_row(source_id, source_id + ":1")
+
+    assert extracted_foldouts(row) == [], extracted_foldouts(row)
+    assert re.search(r'<p class="note" data-extracted-count="0">[^<]+</p>', row), row
+    # The facts side keeps its fold-out: the note replaces one list, not both.
+    assert re.findall(r'data-facts-count="(\d+)"', row) == [str(len(index[source_id]["facts"]))]
+
+
 def anchors(html):
     """(href, text) of every anchor, in order, the text stripped of its tags."""
     return [(href, re.sub(r"<[^>]+>", "", text))
