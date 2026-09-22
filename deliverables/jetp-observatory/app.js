@@ -301,13 +301,16 @@ function indexDocumentsBySha256(entries) {
 }
 /* Returns null where the Python raises: a renderer cannot abort a page over one
  * row, so an unresolved id degrades to its locator text. */
+const pdfPageOf = (locator) => {
+  const match = PDF_PAGE.exec(locator || "");
+  return match ? Number(match[1]) : null;
+};
 function resolveDocumentLink(sourceId, locator, registry) {
   const entry = registry[sourceId];
   if (!entry) return null;
-  const match = PDF_PAGE.exec(locator || "");
   return {
     sha256: entry.sha256,
-    pdf_page: match ? Number(match[1]) : null,
+    pdf_page: pdfPageOf(locator),
     local_path: entry.local_path,
   };
 }
@@ -317,19 +320,24 @@ const byteSize = (n) =>
     : n >= 1e6
       ? (n / 1e6).toFixed(1) + " MB"
       : Math.max(1, Math.round(n / 1000)) + " kB";
-/* The climb, document → what cites it. `by_source_id` is written by
- * extraction_index() in build_observatory.py: per source identifier, the
- * stage-two rows extracted from it (ledger observations and frozen M1a rows,
- * each named by the key its own view gives it) and the stage-three facts that
- * rely on it (named projects, reviewed records). Two lists, never a total;
- * an absent identifier is rendered as the statement that nothing cites the
- * document in this edition, never as an empty list dressed as one. */
+/* The climb, document → what cites it, is a join made here at read time
+ * (ticket 0858; author's decision of 2026-09-22: one served file is one
+ * table). documents.json names nothing a source yielded. The rows live in the
+ * views that serve them — m1a/<CODE>.json and observations/<CODE>.json,
+ * loaded once per country and filtered on source_id — and the facts in the
+ * country views and reviewed-evidence.json, in memory since start(), filtered
+ * on their sources and their proofs. Two stage-two products and two kinds of
+ * fact, four filters, never a total across any of them; a source nothing
+ * cites is rendered as that statement, never as an empty list dressed as one.
+ * Until 0858 the generator wrote this join into documents.json as
+ * `by_source_id`, 874 kB that grew with every collection and that every
+ * route loaded; the pre-commit's file ceiling refused it. */
 /* Ticket 0857: an M1a position links to its own inventory row — ?row=N is the
- * row's rank in the export the inventory page loads, written by the generator
- * with the reference — and, where its locator names a PDF page, to that page
- * of the archived copy; the page too comes from the generator, never re-read
- * from the locator here. A ledger row gets the same page link when it carries
- * one. No page named, no link: an absent page is not page 1. */
+ * row's rank in the export the inventory page loads, the rank the join gives
+ * it — and, where its locator names a PDF page, to that page of the archived
+ * copy, read by the same port the inventory page reads the same rows with. A
+ * ledger row gets the same page link when it carries one. No page named, no
+ * link: an absent page is not page 1. */
 function extractedPageLink(row, entry, key) {
   const href = row.pdf_page ? documentHref(entry, row.pdf_page) : null;
   return href
@@ -378,29 +386,96 @@ function extractedFoldouts(extracted, entry) {
         ` data-extracted-product="${esc(product)}"`))
     .join("");
 }
+/* Port of the rule ticket 0857 wrote in the generator: each product's first
+ * page is the lowest its rows name, and the file gets one only when every
+ * product that names a page starts at the same one. A ledger reading that
+ * starts at page 12 beside an M1a reading that starts at page 30 names no
+ * first page. Rows naming no page are silent, not zero: no page comes from
+ * nowhere. */
+function firstPdfPage(extracted) {
+  const starts = {};
+  extracted.forEach((row) => {
+    if (row.pdf_page)
+      starts[row.product] = Math.min(starts[row.product] ?? row.pdf_page, row.pdf_page);
+  });
+  const firsts = new Set(Object.values(starts));
+  return firsts.size === 1 ? [...firsts][0] : null;
+}
+/* The rows one source yielded, ledger first, each in its own view's shape
+ * plus what the fold-out addresses it by: `product`; for an M1a row its rank
+ * in the export and the page its locator names, null when it names none; for
+ * a ledger row the key its table gave it (its page it already carries). No
+ * value is recoded, no row is copied that the filter did not select. */
+function extractedRows(sourceId, { rows, observations }) {
+  const ledger = observations
+    .filter((row) => row.source_id === sourceId)
+    .map((row) => ({ ...row, product: "ledger", id: observationId(row) }));
+  const positions = rows.flatMap((row, i) =>
+    row.source_id === sourceId
+      ? [{ ...row, product: "m1a", row: i + 1, pdf_page: pdfPageOf(row.evidence_locator) }]
+      : []);
+  return [...ledger, ...positions];
+}
+/* The facts relying on one source: every named record whose sources name it,
+ * then every reviewed record one of whose proofs names it. A record is one
+ * fact however many of its proofs cite the same file. */
+function factsRelyingOn(sourceId) {
+  const named = projects
+    .filter((p) => p.sources.includes(sourceId))
+    .map((p) => ({ project_id: p.id, name: p.name, country: p.country }));
+  const reviewed = (evidence.records || [])
+    .filter((record) => record.evidence.some((proof) => proof.source_id === sourceId))
+    .map((record) => ({ record_id: record.id, label: record.label,
+      country: record.country, status: record.status }));
+  return [...named, ...reviewed];
+}
+const archivedCopyLink = (entry, page) =>
+  `<a href="${esc(documentHref(entry, page))}" data-document-id="${esc(entry.row_key)}" target="_blank" rel="noopener">Open archived copy ↗</a>`;
+/* Drawn with the page as a placeholder, filled once the attempt's country has
+ * its two stage-two views — one load per country per session, shared with
+ * the inventory page — so a reader filtering one country loads that
+ * country's rows and no other's. Filled by id: when the reader has moved on,
+ * the placeholder is gone and nothing is written. The archived copy's link is
+ * refilled with the first page the rows agree on, where the snapshot holds a
+ * copy and the rows name one (ticket 0857): the fold-outs land after it, so
+ * a reader who sees them sees the page too. */
 function extractionCell(entry) {
-  const linked = (documentsData.by_source_id || {})[entry.id];
-  if (!linked)
-    return `<span class="note" data-uncited="${esc(entry.id)}">No extracted row and no fact cites this source in this edition.</span>`;
-  return (
-    extractedFoldouts(linked.extracted, entry) +
-    foldout("Facts relying on it", linked.facts, factItem, "facts",
-      "No fact relies on this source in this edition.")
-  );
+  const key = "extraction-" + entry.row_key;
+  stageTwo(entry.country)
+    .then((views) => {
+      const cell = document.getElementById(key);
+      if (!cell) return;
+      const extracted = extractedRows(entry.id, views);
+      const relying = factsRelyingOn(entry.id);
+      const page = firstPdfPage(extracted);
+      const archived = document.getElementById("archived-" + entry.row_key);
+      if (archived && entry.local_path && page)
+        archived.innerHTML = archivedCopyLink(entry, page);
+      cell.innerHTML =
+        !extracted.length && !relying.length
+          ? `<span class="note" data-uncited="${esc(entry.id)}">No extracted row and no fact cites this source in this edition.</span>`
+          : extractedFoldouts(extracted, entry) +
+            foldout("Facts relying on it", relying, factItem, "facts",
+              "No fact relies on this source in this edition.");
+    })
+    .catch((error) => {
+      const cell = document.getElementById(key);
+      if (cell)
+        cell.innerHTML = emptyNote("extracted-count", "unavailable", `The ${esc(entry.country)} stage-two views could not load (${esc(error.message)}). What this source yielded is in the <a href="#inventory/${esc(entry.country)}">${esc(entry.country)} inventory</a>, under <code>${esc(entry.id)}</code>.`);
+    });
+  return `<span id="${esc(key)}" class="note">Loading what this source yielded…</span>`;
 }
 function documentsPage() {
   const rows = documentsData.documents;
   const values = (key) =>
     [...new Set(rows.map((r) => r[key]).filter(Boolean))].sort();
-  // The archived copy opens at the first page its extracted rows name, when
-  // every product that names one agrees (first_pdf_page, written by the
-  // generator, ticket 0857); at its own first page otherwise.
-  const archived = (r) => {
-    const href = documentHref(r, (documentsData.by_source_id || {})[r.id]?.first_pdf_page);
-    return href
-      ? `<a href="${esc(href)}" data-document-id="${esc(r.row_key)}" target="_blank" rel="noopener">Open archived copy ↗</a>`
+  // Opens at the file's own first page until the join says otherwise: the
+  // link sits in a placeholder extractionCell() refills with the first page
+  // the extracted rows agree on (ticket 0857), never with a page of its own.
+  const archived = (r) =>
+    r.local_path
+      ? `<span id="archived-${esc(r.row_key)}">${archivedCopyLink(r)}</span>`
       : `<span class="note">${esc(r.error || "Not in the local snapshot")}</span>`;
-  };
   const table = filterTable("documents", rows, {
     facets: [
       {
@@ -486,7 +561,6 @@ function cached(cache, key, make) {
     });
   return cache[key];
 }
-const inventoryCache = {};
 /* One load per country per session, shared by the Observations tab and every
  * project page of that country (ticket 0855): the ledger rows are served once,
  * in observations/<CODE>.json, and a fact's fold-out is a filter on them. */
@@ -499,6 +573,17 @@ const observationsView = (code) =>
 const inventoryRows = (payload) =>
   payload.rows.map((values) =>
     Object.fromEntries(payload.fields.map((field, i) => [field, values[i]])),
+  );
+/* Both stage-two views of one country, loaded once per session and shared by
+ * the inventory page and the Documents page's fold-outs (ticket 0858): the
+ * M1a export rebuilt into row objects once, in export order, beside the
+ * ledger observations. */
+const stageTwoCache = {};
+const stageTwo = (code) =>
+  cached(stageTwoCache, code, () =>
+    Promise.all([load("m1a/" + code), observationsView(code)]).then(
+      ([payload, observations]) => ({ rows: inventoryRows(payload), observations }),
+    ),
   );
 function inventoryUnknowns(details) {
   return (
@@ -788,11 +873,10 @@ function inventoryPage(code, params) {
   if (!m1a.countries[code]) return notFound();
   main.innerHTML = `<p class="note">Loading the ${esc(code)} source rows…</p>`;
   const focus = Math.trunc(Number(params.get("row"))) || 0;
-  cached(inventoryCache, code, () =>
-    Promise.all([load("m1a/" + code), observationsView(code)]))
-    .then(([payload, observations]) => {
+  stageTwo(code)
+    .then(({ rows, observations }) => {
       if (location.hash.startsWith("#inventory/" + code))
-        renderInventory(code, inventoryRows(payload), observations, focus > 0 ? focus : 0);
+        renderInventory(code, rows, observations, focus > 0 ? focus : 0);
     })
     .catch((error) => {
       main.innerHTML = `<div class="error"><h1>The ${esc(code)} inventory could not load.</h1><p>${esc(error.message)}</p></div>`;
