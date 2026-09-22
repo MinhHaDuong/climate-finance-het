@@ -9,6 +9,7 @@ Author: HDMX-coding-agent
 2026-09-17T08:48Z HDMX-coding-agent decision Added an explicit M1 gate before monthly/live operation: 0832 publishes frozen source-layer inventories; 0833 adds only bounded canonical identity and certain relations. Live refresh is M2.
 
 2026-09-17T17:05Z HDMX-coding-agent note M1a redefined by the author: exploration in the MVP, not downloads — tracker 0834, children 0835–0839
+2026-09-22T11:05Z HDMX-coding-agent note M1a accepted by the author on 2026-09-22 after the final integration review of [[0834]] (docs/jetp-study/0834-integration-review-final-2026-09-22.md) and a four-country provenance measurement; page-level anchors exist for Viet Nam only, follow-up [[0861]]. M1b ([[0833]]) may start.
 --- body ---
 
 ## Context
@@ -34,7 +35,7 @@ resolution begin only in M2 after this base is accepted.
 
 ## Exit criteria
 
-- [ ] M1a accepted: the MVP explores documents, extractions and facts end to end on the SA and VN acceptance cases ([[0834]]); the frozen inventories of [[0832]] are its input, not its result
+- [x] M1a accepted: the MVP explores documents, extractions and facts end to end on the SA and VN acceptance cases ([[0834]]); the frozen inventories of [[0832]] are its input, not its result
 - [ ] M1b bounded catalogue accepted without changing M1a or resolving `possible_match`
 - [ ] Children 0726–0733 delivered, or scope changes explicitly adjudicated
 - [ ] Public observatory and repeatable monthly editions operational
