@@ -1,12 +1,15 @@
 /* Render one observatory route with the shipped app.js against the shipped
  * JSON, without a browser, and print what the renderer wrote (ticket 0856).
  *
- *   node tests/_jetp_observatory_render.js <site-dir> <route> [<state-json>]
+ *   node tests/_jetp_observatory_render.js <site-dir> <route> [<state-json>] [<expression>]
  *
  * <route> is the hash without "#" ("documents", "project/<id>", ...); the
  * optional state is {"<element id>": "<value>"} — what a reader would have
  * typed into a search field or chosen in a select before the page rendered,
  * keyed as filterTable() reads them (document.getElementById(id).value).
+ * The optional expression is evaluated in app.js's own scope once the page
+ * has settled, for a rule the shipped data exercises on one side only (the
+ * first-page agreement of ticket 0857: no shipped source disagrees).
  *
  * The DOM is a stub, not a parser: app.js writes HTML strings into
  * `.innerHTML` and reads back only element values, an aria attribute of the
@@ -16,14 +19,17 @@
  * then does the right thing with it. Fetches read files under <site-dir>.
  *
  * Output: one JSON object, {"main": <#main innerHTML>, "elements": {id:
- * {"innerHTML", "textContent"}}} for every element the renderer touched.
+ * {"innerHTML", "textContent"}}} for every element the renderer touched —
+ * a fold-out filled after a fetch lands in the element the renderer
+ * addressed by id, not inside the results block that holds its placeholder —
+ * plus "eval", the expression's value, when one was given.
  */
 "use strict";
 const fs = require("fs");
 const path = require("path");
 const vm = require("vm");
 
-const [site, route, stateJson] = process.argv.slice(2);
+const [site, route, stateJson, expression] = process.argv.slice(2);
 if (!site || !route) {
   console.error("usage: node _jetp_observatory_render.js <site-dir> <route> [<state-json>]");
   process.exit(2);
@@ -88,5 +94,7 @@ settle().then(() => {
   for (const [id, el] of Object.entries(elements)) {
     out[id] = { innerHTML: el.innerHTML, textContent: el.textContent };
   }
-  process.stdout.write(JSON.stringify({ main: main.innerHTML, elements: out }));
+  const result = { main: main.innerHTML, elements: out };
+  if (expression) result.eval = vm.runInContext(expression, context);
+  process.stdout.write(JSON.stringify(result));
 });
