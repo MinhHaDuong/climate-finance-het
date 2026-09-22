@@ -35,6 +35,15 @@ Four decisions by the author on 2026-09-22 shape it:
    adjudications and accounts layer of the backend design keeps its tables;
    rates and deflators are sourced records. Section 10's volume projection is
    corrected.
+10. After the proofing review (review 6, 36 random pages of 12 documents):
+    sector is a shared axis coded with the OECD DAC purpose list and reached
+    by crosswalk from each publisher's own scheme; Rio and policy markers
+    are a measure with a sourced coefficient table; targets and counts in
+    publisher units are measures; roles exist on any subject; lines relate
+    to lines; locator syntax is defined per format; a delivery axis for
+    agreements is aligned to the IATI activity status list; ranges have
+    bounds; a publisher's own modality scheme stays a verbatim field. What
+    stays out of scope is named in section 13.
 
 ## 1. Why the current model fails
 
@@ -257,6 +266,9 @@ decided it and when.
 | `finances` | agreement | project | many-to-many |
 | `tranche_of` | agreement | agreement | at most one active parent |
 | `party_in` | party | agreement | one row per role; a party may fund one agreement and channel another |
+| `role_in` | party | project, asset, perimeter, document, line | a mandate outside any agreement: lead agency, coordinating agency, guarantor, endorser, signatory, host, standards body; one row per role |
+| `same_as` (line) | line | line | the same published item in two places: a CRS activity across reporting years (keyed on donor and donor project id), one amount printed in a headline, a table and a chart |
+| `cites` (line) | line | document, line | a document's reference to another document or to a line of it, held or not |
 | `member_of` | line, project, asset, agreement | perimeter | dated evidence of membership; a line may be a member before any identity is minted |
 | `same_as` | any | same kind | equality evidence; does not choose a route |
 | `about` | observation | any subject | typed |
@@ -274,14 +286,40 @@ own terms, from a closed list:
 The list is grown when a publisher's practice needs a value; it is never
 inferred from the label.
 
+**Sector** is a shared axis, coded with the OECD DAC CRS purpose list (five
+digits; the 231 to 236 group covers energy policy, generation by source,
+distribution and efficiency), because CRS records carry it, IATI uses it by
+default and the World Bank taxonomy crosswalks to it. It is handled like a
+status axis: the publisher's own word, a South African window, an
+Indonesian technology group, a plan appendix's label, a World Bank sector
+code, stays verbatim on the line, and a reviewed, dated `sector-crosswalk`
+row maps each publisher scheme onto a purpose code. Sector appears on a line
+as `own_sector`, on an agreement and a project as `sector` assigned through
+a referent decision, and on an observation by inheritance from its subject.
+Technology is a separate attribute of assets, aligned to the Global Energy
+Monitor list: a sector says what the money is for, a technology says what
+the plant is.
+
 The `measure` of an observation is from a closed list, extended by decision:
 
 | Axis | Measures |
 |---|---|
 | money | `amount` (a state's amount, with `own_status`), `flow` (with `flow_type`: pledge, commitment, disbursement, expenditure, from IATI), `estimate` (a plan cost, no funder), `envelope` (a partnership or portfolio total), `interest_rate`, `maturity_years`, `grace_years`, `grant_element`, `condition` |
-| physical | `capacity` (with unit), `length`, `state` |
-| counting | `count`, `absence` |
+| physical | `capacity` (with unit), `length`, `state`, `target` (a physical or social objective with a `target` timing, such as a renewable share by 2030) |
+| counting | `count` (with the publisher's unit named: rows, locomotives, officials trained, households), `absence` |
 | macro | `indicator` (with the publisher's indicator code) |
+| marker | `marker` (the publisher's policy-marker score: Rio mitigation, adaptation, biodiversity, desertification, and non-Rio markers such as gender; value 0, 1 or 2, or `not_screened` when the field is blank, which is not 0) |
+
+A marker is the donor's own scoring of an activity, at a reporting year,
+under the marker definition of that year. The "climate finance" that a
+marker yields is the score times a coefficient, 100 percent for principal
+and 40, 50 or 100 percent for significant depending on the donor and the
+year; the coefficient is a rule, not evidence, recorded in the sourced
+`marker-coefficients` table and applied only in a derived account, so that
+the same loan can be shown moving from 40 to 100 percent climate finance
+without any change in the loan. A value may be a range: `value_low` and
+`value_high` bound it, as the timing bounds bound a date, and a scalar has
+both equal.
 
 Money observations carry a `basis`, gross, net or unknown, and a flow carries
 its interval through two timing roles, `period_start` and `period_end`, so a
@@ -289,7 +327,7 @@ quarterly register total states the quarter it covers and the reconciliation
 of section 5 of the backend design can test coverage. A point flow has one
 `event` timing.
 
-Three shared status axes, each sourced from an external list and extended only
+Four shared status axes, each sourced from an external list and extended only
 where the four publishers' practice requires it:
 
 | Axis | Subject | External list | Local additions |
@@ -297,12 +335,16 @@ where the four publishers' practice requires it:
 | project stage | project | OC4IDS `projectStatus`: identification, preparation, implementation, completion, maintenance, decommissioning, decommissioned, cancelled | none |
 | asset state | asset | Global Energy Monitor: announced, pre-permit, permitted, construction, shelved, cancelled, operating, mothballed, retired | `retirement_proposed`, `retirement_agreed` |
 | money | agreement | states: announced, mou, approved, signed, cancelled, withdrawn; flows: IATI pledge, commitment, disbursement, expenditure | none |
-| comparator statuses | comparator lines | World Bank project status (pipeline, active, closed, dropped), CRS and IATI activity status | crosswalked onto the three axes above, never merged |
+| delivery | agreement | IATI activity status: pipeline, implementation, finalisation, closed, cancelled, suspended | none; the South African register's letters A to D crosswalk here |
+| comparator statuses | comparator lines | World Bank project status (pipeline, active, closed, dropped), CRS and IATI activity status | crosswalked onto the axes above, never merged |
 
 The publisher's own words, all of them, are kept: the register's `A. Planned`
 to `D. Completed`, Indonesia's modality and approval, Viet Nam's published or
 not published, Senegal's submitted, evaluated and quick win. Each maps through
-the crosswalk to at most one axis. Where a publisher reports one axis only, the
+the crosswalk to at most one axis. A publisher's own scheme that reuses a
+word of this design, such as Indonesia's "Modality A" and "Modality B",
+stays a verbatim field of the line; `modality` on an agreement is only ever
+the DAC type-of-aid code. Where a publisher reports one axis only, the
 other two are absent for that line. The reviews established that today each
 country populates one axis: South Africa the money axis with the delivery axis
 discarded, Indonesia approval, Senegal estimates, Viet Nam none. The ledger
@@ -312,8 +354,9 @@ states this rather than filling it.
 
 One file is one table, joins happen at read time, nothing is materialised
 (ticket 0858, kept). Tables under `data/jetp/`, CSV, columns in this order.
-A table too large for the repository's file ceiling is chunked by country
-into `<table>/<CODE>.csv`, which stays one table.
+A table too large for the repository's file ceiling, 512 000 bytes per
+file in `.githooks/pre-commit`, is chunked by country and year into
+`<table>/<CODE>-<year>.csv`, which stays one table.
 
 | Table | Key | Columns |
 |---|---|---|
@@ -322,23 +365,25 @@ into `<table>/<CODE>.csv`, which stays one table.
 | `document-publishers` | (document_id, publisher_id) | role |
 | `retrievals` | `retrieval_id` | document_id, retrieved_at, status, http_status, content_type, etag, last_modified, final_url, error, sha256 (nullable) |
 | `snapshots` | `sha256` | storage_path, size_bytes, content_type |
-| `lines` | `line_id` | country, sha256, locator, ordinal, label, classification, own_status, own_status_axis, groups, recorded_at, notes |
+| `lines` | `line_id` | country, sha256, locator, ordinal, label, classification, own_status, own_status_axis, own_sector, groups, recorded_at, notes |
 | `line-fields/<document_id>` | `line_id` | the document's own columns, verbatim, header as printed |
-| `projects` | `project_id` | country, canonical_name, aliases, classification, classified_at, notes |
+| `projects` | `project_id` | country, canonical_name, aliases, classification, classified_at, sector, notes |
 | `assets` | `asset_id` | country, name, technology, location, operator_party_id, part_of, notes (capacity is an observation, never a column) |
-| `agreements` | `agreement_id` | country, instrument, modality, currency, tranche_of, notes |
+| `agreements` | `agreement_id` | country, instrument, modality, sector, currency, tranche_of, notes |
 | `parties` | `party_id` | name, kind, country, publisher_id |
 | `perimeters` | `perimeter_id` | country, name, scope, definition, notes |
 | `line-referents` | `referent_row_id` | line_id, referent_kind, referent_id, status, method, method_version, confidence, evidence_line_ids, decided_at, decided_by, supersedes, notes |
 | `relations` | `relation_id` | from_kind, from_id, relation, to_kind, to_id, role, valid_from, valid_to, status, method, method_version, confidence, decided_at, decided_by, supersedes, line_id |
-| `observations` | `observation_id` | subject_kind, subject_id, axis, measure, flow_type, basis, value, unit, currency, own_status, indicator_code, line_id, method, method_version, recorded_at, status, supersedes, notes |
+| `observations` | `observation_id` | subject_kind, subject_id, axis, measure, flow_type, basis, value, value_low, value_high, unit, currency, own_status, indicator_code, line_id, method, method_version, recorded_at, status, supersedes, notes |
 | `timings` | `timing_id` | observation_id, date_role, date, date_precision, lower_bound, upper_bound, line_id, recorded_at |
 | `external-ids` | (scheme, external_id) | kind, id, line_id, recorded_at |
 | `adjudications` | `adjudication_id` | decision_type (occurrence membership, flow coverage, perimeter compatibility, identity), subject_kind, subject_id, verdict, status, decided_at, decided_by, supersedes, notes |
 | `adjudication-members` | (adjudication_id, kind, id) | role |
-| `rates` | (currency, date, basis) | rate_to_usd, line_id, recorded_at |
+| `rates` | (currency, date, basis) | rate_to_usd, line_id, recorded_at (a publisher's own conversion, printed beside the original, is a `rates` row citing that line, so the ledger records that the publisher converted, at what rate) |
 | `deflators` | (series, year) | value, line_id, recorded_at |
 | `status-crosswalk` | (publisher_id, own_status) | axis, shared_status, decided_at, decided_by, notes |
+| `sector-crosswalk` | (publisher_id, own_sector) | purpose_code, decided_at, decided_by, notes |
+| `marker-coefficients` | (donor_party_id, marker, score, year) | coefficient, line_id, recorded_at |
 | `line-field-specs` | `document_id` | the ordered list of a document's own column names, written at extraction, against which each `line-fields/<document_id>` header is validated |
 | `routes` | `old_id` | kind, new_id |
 | `coverage` | (referent_kind, referent_id) | review_status, checked_at, route, document_ids, notes |
@@ -377,6 +422,21 @@ Rules that the validator enforces:
   lists of sections 2 and 4; a new value is a decision recorded in
   `decisions.md` before the validator accepts it.
 - A monetary conversion cites a `rates` row; a script never carries a rate.
+- A locator has a syntax per format, and the validator checks it: for a
+  PDF, the PDF page index and the printed folio when one exists, then the
+  table and row for a table cell or a text anchor of at most 80 characters
+  for prose; for HTML, a CSS path or a text anchor, never a byte offset;
+  for an API snapshot, the record key (an SDMX key for CRS, a P-number for
+  the World Bank, an activity identifier for IATI). A value printed in three
+  places is three lines related by `same_as`.
+- A publisher's cell that lists several names stays verbatim in the
+  per-document fields table; the no-list rule applies to the ledger's own
+  columns, and the parties in such a cell are minted through `role_in` or
+  `party_in` rows, one per name, citing the line.
+- A publisher's method note that governs a page or a table (a pro-rating,
+  an exchange-rate policy, a footnote conditioning every row) is a line of
+  classification `heading` that `groups` the lines it governs, so that an
+  observation reads the note through its line.
 - A `line_id` is minted by the extractor as `<document_id>-<table>-<ordinal>`,
   in extraction order, appended only and never renumbered: a re-extraction
   that finds a dropped row appends it under the next ordinal. The pair
@@ -669,4 +729,30 @@ or a summary; evidence is the line in the publisher's language, at its
 locator, in its snapshot. The first implementation is the language column and
 the translation relation; the two derived tables are nice-to-have and wait for
 a reader who needs them.
+
+## 13. Out of scope, by decision
+
+The proofing review read 36 random pages of 12 documents and found 23
+percent of their information items not representable. The following classes
+are out of scope by decision on 2026-09-22, because no paper reads them, and
+the ledger says so rather than holding them badly:
+
+- institutional events (a body founded, launched, staffed, merged) and
+  party-to-party relations other than `role_in` and `party_in`;
+- natural persons as signatories or delegates, distribution lists, seals
+  and embedded signatures;
+- values that exist only in a chart with no byte in the snapshot's text
+  layer, until a transcription with provenance (section 12) is a line;
+- a document as the subject of a statement (what a regulation says or is
+  silent on), which is a citation between lines, not an observation;
+- recurrence ("every year") and dates deferred to another plan's schedule;
+- a publisher's own liabilities and budget;
+- physical outcomes beyond capacity, length and state: emissions, jobs,
+  people, generation, tonnage, hectares. When a paper needs one, it enters
+  as a measure by decision with its unit and the IPCC or ILO list it maps to.
+
+A scan with no text layer (the Vietnamese decision of 2026 is one) is
+extracted by transcription, and each of its lines names the transcription
+as its method and version, so that the label has the provenance the
+translation tables give derived text.
 
