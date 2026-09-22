@@ -75,19 +75,26 @@ Routes: `#overview`, `#countries`, `#country/IDN`, `#projects`,
   opening its archived document where the collection holds one. The country
   view carries no copy of them: `ZAF.json` has a publication cap of 512 000
   bytes (`config/jetp-zaf-migration.json`), and the 338 ZAF rows copied under
-  an `evidence` key put it 280 kB over (ticket 0855). Each Documents row lists, from `by_source_id` in
-  `documents.json`, what was extracted from that source (ledger rows and frozen
-  M1a rows, as references to their own views, one fold-out and one count per
-  product — never their sum, since a ledger row and an M1a row can describe
-  the same paragraph of the same file, ticket 0856) and which facts rely on it
-  (named records and reviewed records) — separate lists, never a total, and a
-  source nothing cites says so. Each M1a position in that fold-out links to
-  its own inventory row (`#inventory/<CODE>?row=N`, `N` the row's rank in the
-  export, written with the reference) and, where its locator names a PDF
-  page, to that page of the archived copy; the copy's own link opens at the
-  first page the extracted rows name, when every product that names one
-  agrees (`first_pdf_page`), and at its own first page otherwise — no page is ever
-  fabricated (ticket 0857). The reviewed-evidence pedigree opens the bytes
+  an `evidence` key put it 280 kB over (ticket 0855). Each Documents row lists
+  what was extracted from that source (ledger rows and frozen M1a rows, one
+  fold-out and one count per product — never their sum, since a ledger row
+  and an M1a row can describe the same paragraph of the same file, ticket
+  0856) and which facts rely on it (named records and reviewed records) —
+  separate lists, never a total, and a source nothing cites says so. That
+  climb is a join the page makes at read time (ticket 0858; one served file
+  is one table, so `documents.json` is the collection registry alone and
+  carries no index of it): the fold-outs load, once per country and per
+  session, `data/m1a/<CODE>.json` and `data/observations/<CODE>.json` for
+  the attempt's country — the same views the inventory page reads, through
+  the same cache — and filter them on `source_id`; the facts are the country
+  views' records whose sources name it and the reviewed records one of whose
+  proofs does. Each M1a position in that fold-out links to its own inventory
+  row (`#inventory/<CODE>?row=N`, `N` the row's rank in the export) and,
+  where its locator names a PDF page, to that page of the archived copy —
+  the page read by the same port of `_m1a_document_links.py` the inventory
+  page uses; the copy's own link opens at the first page the extracted rows
+  name, when every product that names one agrees, and at its own first page
+  otherwise — no page is ever fabricated (ticket 0857). The reviewed-evidence pedigree opens the bytes
   its fingerprint pins. The Viet Nam page shows the 279 positions of the RMP
   2023 table and the 24 records of the 2025 portfolio side by side; no link
   between them is established here.

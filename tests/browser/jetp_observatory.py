@@ -31,6 +31,38 @@ def download_matches(page, url, href):
     ).body()
 
 
+COUNTRIES = ('ZAF', 'IDN', 'VNM', 'SEN')
+
+
+def served_tables(page, url):
+    """The tables the Documents page joins at read time (ticket 0858)."""
+    m1a = {}
+    for code in COUNTRIES:
+        payload = page.request.get(url + f'/data/m1a/{code}.json').json()
+        m1a[code] = [dict(zip(payload['fields'], values)) for values in payload['rows']]
+    return {
+        'm1a': m1a,
+        'observations': {code: page.request.get(url + f'/data/observations/{code}.json').json()
+                         for code in COUNTRIES},
+        'projects': [p for code in COUNTRIES
+                     for p in page.request.get(url + f'/data/{code}.json').json()['projects']],
+        'reviewed': page.request.get(url + '/data/reviewed-evidence.json').json()['records'],
+    }
+
+
+def climb(tables, source_id, code):
+    """What one Documents row must show, from the served tables: the two
+    stage-two products of the attempt's country filtered on source_id, and
+    the facts whose sources or proofs name it — three lists, never a total."""
+    return {
+        'm1a': [r for r in tables['m1a'][code] if r['source_id'] == source_id],
+        'ledger': [r for r in tables['observations'][code] if r['source_id'] == source_id],
+        'facts': [p for p in tables['projects'] if source_id in p['sources']]
+        + [r for r in tables['reviewed']
+           if any(e['source_id'] == source_id for e in r['evidence'])],
+    }
+
+
 def check_documents(page, url):
     """Exercise the registry page: full count, a filter, and an archived copy."""
     registry = page.request.get(url + '/data/documents.json').json()['documents']
@@ -59,15 +91,17 @@ def check_documents(page, url):
     assert entry['local_path'], 'Archived ZAF register absent; run make jetp-observatory-documents'
     # Ticket 0856: the register was read twice, once per stage-two product,
     # and the two readings are shown as two counts, never added (257 + 257
-    # is not 514 rows).
-    index = page.request.get(url + '/data/documents.json').json()['by_source_id']
-    per_product = {}
-    for reference in index[entry['id']]['extracted']:
-        per_product[reference['product']] = per_product.get(reference['product'], 0) + 1
-    assert set(per_product) == {'ledger', 'm1a'}, per_product
+    # is not 514 rows). The counts come from the served views the page joins
+    # at read time (ticket 0858), never from an index in the registry view.
+    tables = served_tables(page, url)
+    linked = climb(tables, entry['id'], entry['country'])
+    per_product = {'ledger': len(linked['ledger']), 'm1a': len(linked['m1a'])}
+    assert all(per_product.values()), per_product
     row = page.locator('#documents-results tbody tr').filter(has=link).first
     for product, count in per_product.items():
         fold = row.locator(f'details[data-extracted-product="{product}"]')
+        # The fold-out lands once the ZAF views have loaded; get_attribute
+        # waits for it.
         assert fold.get_attribute('data-extracted-count') == str(count), product
     assert str(sum(per_product.values())) not in ' '.join(
         row.locator('details > summary').all_inner_texts()
@@ -90,14 +124,16 @@ def check_documents(page, url):
     page.locator('#documents-search').fill('vnm-rmp-2023')
     rmp = next(row for row in registry if row['id'] == 'vnm-rmp-2023' and row['local_path'])
     link = page.locator(f'a[data-document-id="{rmp["row_key"]}"]')
-    link.wait_for()
+    row = page.locator('#documents-results tbody tr').filter(has=link).first
+    fold = row.locator('details[data-extracted-product="m1a"]')
+    # The page is set on the link once the VNM views have loaded, just before
+    # the fold-outs land (ticket 0858): wait for those, then read the link.
+    fold.wait_for()
     assert link.get_attribute('href') == rmp['local_path'] + '#page=155', link.get_attribute('href')
     with page.expect_popup() as popup:
         link.click()
     assert popup.value is not None
     popup.value.close()
-    row = page.locator('#documents-results tbody tr').filter(has=link).first
-    fold = row.locator('details[data-extracted-product="m1a"]')
     fold.locator('summary').click()
     position = fold.locator('li').nth(21)
     assert 'KN Tri An' in position.inner_text(), position.inner_text()
@@ -251,8 +287,8 @@ def check_facts(page, url):
     From the RMP on the Documents page, the climb lists the 279 positions and
     no fact of 2025.
     """
-    registry = page.request.get(url + '/data/documents.json').json()
-    documents, index = registry['documents'], registry['by_source_id']
+    documents = page.request.get(url + '/data/documents.json').json()['documents']
+    tables = served_tables(page, url)
     vietnam = page.request.get(url + '/data/VNM.json').json()
     bac_ai = next(p for p in vietnam['projects']
                   if p['id'] == 'vnm-project-bac-ai-pumped-hydro')
@@ -327,9 +363,11 @@ def check_facts(page, url):
     assert opened.url.endswith(entry['local_path'])
     opened.close()
 
-    # The climb: the RMP lists its 279 positions and no fact of 2025.
-    assert index['vnm-rmp-2023']['facts'] == []
-    assert len(index['vnm-rmp-2023']['extracted']) == 279
+    # The climb: the RMP lists its 279 positions and no fact of 2025, joined
+    # at read time from the served VNM views (ticket 0858).
+    linked = climb(tables, 'vnm-rmp-2023', 'VNM')
+    assert linked['facts'] == [] and linked['ledger'] == []
+    assert len(linked['m1a']) == 279
     page.goto(url + '/#documents')
     page.wait_for_selector('#documents-filters')
     page.locator('#documents-search').fill('vnm-rmp-2023')
@@ -347,9 +385,11 @@ def check_facts(page, url):
     assert extracted.locator('li').count() == 279
     assert facts.locator('a[href^="#project/"]').count() == 0
     # A registry row nothing cites says so, rather than showing empty lists.
-    uncited = next(row for row in documents if row['id'] not in index)
+    uncited = next(row for row in documents
+                   if not any(climb(tables, row['id'], row['country']).values()))
     page.locator('#documents-search').fill(uncited['id'])
-    assert page.locator(f'[data-uncited="{uncited["id"]}"]').count() >= 1
+    # The note lands once the row's country views have loaded.
+    page.locator(f'[data-uncited="{uncited["id"]}"]').first.wait_for()
 
     # A reviewed record's pedigree opens the archived bytes it pins.
     page.goto(url + '/#evidence')
