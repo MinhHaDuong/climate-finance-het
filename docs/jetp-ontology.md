@@ -25,6 +25,9 @@ Four decisions by the author on 2026-09-22 shape it:
    channel roles populated first (section 6, step 4).
 7. Reconciliation is a tiered, defeasible, traceable process (section 11).
    The record format is designed now; the matcher starts at its simplest tier.
+8. Translations are managed as document relations and derived text
+   (section 12). Automatic summaries and translations are derived aids, never
+   evidence, and are nice-to-have.
 
 ## 1. Why the current model fails
 
@@ -231,7 +234,7 @@ into `<table>/<CODE>.csv`, which stays one table.
 | Table | Key | Columns |
 |---|---|---|
 | `publishers` | `publisher_id` | name, authority_category, country, notes |
-| `documents` | `document_id` | country, document_type, title, url, published_date, edition_of, active, notes |
+| `documents` | `document_id` | country, document_type, language, title, url, published_date, edition_of, active, notes |
 | `document-publishers` | (document_id, publisher_id) | role |
 | `snapshots` | `sha256` | document_id, retrieved_at, status, http_status, content_type, size_bytes, storage_path, final_url, error |
 | `lines` | `line_id` | country, sha256, locator, ordinal, label, classification, own_status, own_status_axis, groups, notes |
@@ -490,4 +493,32 @@ shape and with the same defeasibility:
 The first implementation is tiers 1 and 2 at harvest time, so a snapshot
 whose text already exists is registered as a `same_as` candidate before it is
 extracted; tier 3 as a candidate generator on the current 301 documents.
+
+## 12. Language, translation and summaries
+
+The four partnerships publish in Indonesian, Vietnamese, French and English,
+and some documents exist in two languages. The ledger records the language of
+every document and keeps every line's label in the language it was printed
+in. A translation pair is two documents related by `translation_of`, with one
+of them canonical for extraction (section 11). Nothing in the ledger is a
+translation presented as an original.
+
+Translated labels and summaries are derived text, produced by a model or a
+person, stored under `data/derived/jetp/` in two tables, regenerable and
+outside the system of record:
+
+| Table | Key | Columns |
+|---|---|---|
+| `line-translations` | (line_id, language) | text, method, method_version, produced_at |
+| `document-summaries` | (document_id, language) | text, method, method_version, produced_at, snapshot_sha256 |
+
+Both carry the provenance columns of the reconciliation record, so a served
+translation can say which model produced it from which bytes. The observatory
+may show a translated label beside the original and a machine summary on a
+document's page, each marked as derived, and a reader who clicks through
+reaches the snapshot in its own language. No observation cites a translation
+or a summary; evidence is the line in the publisher's language, at its
+locator, in its snapshot. The first implementation is the language column and
+the translation relation; the two derived tables are nice-to-have and wait for
+a reader who needs them.
 
