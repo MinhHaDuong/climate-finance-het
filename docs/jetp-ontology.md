@@ -175,6 +175,8 @@ decided it and when.
 |---|---|---|---|
 | `published_by` | document | publisher | many-to-many; role optional (author, co-signatory, host) |
 | `edition_of` | document | document | succeeds a previous edition |
+| `same_as` (document) | document | document | one publication under two URLs or two exports; the lines belong to the canonical one |
+| `translation_of` | document | document | the same publication in another language; lines are extracted from one and cross-referenced, never doubled |
 | `snapshot_of` | snapshot | document | bytes of one retrieval |
 | `in_snapshot` | line | snapshot | with locator and ordinal |
 | `groups` | line | line | a heading line groups the lines under it in the same document |
@@ -460,4 +462,32 @@ names reserved in the vocabulary. The Indonesian edition relation between the
 437 CIPP lines and the 1 142 progress-report lines, where the literal name
 intersection is 3, is the test bed for tier 2 and the first case for tier 3,
 and it is not attempted in the migration.
+
+**Document deduplication.** The same reconciliation record applies one level
+up, to documents, and runs before any line is extracted, because a duplicate
+document extracted twice doubles every line and every count downstream. The
+registry already holds three mirrors and two repeated titles; the harvests
+will add re-exported PDFs, pages that change a timestamp on every retrieval,
+and the Vietnamese and English versions of one plan. The relations are
+`same_as` between documents for one publication under two URLs or two exports,
+`edition_of` for succession, and `translation_of` for the same publication in
+another language. Lines are extracted from the canonical document of a
+`same_as` cluster and from one language of a translation pair, and the other
+members keep their snapshots as citable bytes. The tiers, in the same row
+shape and with the same defeasibility:
+
+1. Identical fingerprint under two documents: one snapshot, two URLs.
+   Confidence 1.
+2. Identical extracted text after normalisation, or a near-duplicate hash of
+   the text layer with the same page count. Catches the re-export and the
+   timestamped page.
+3. Metadata agreement: title, publisher, publication date, page count, and
+   any identifier the document prints. Catches the mirror hosted by a partner
+   and the translation, when paired with a language detector.
+4. Language-model adjudication of the remaining pairs, given both first pages.
+5. Human adjudication.
+
+The first implementation is tiers 1 and 2 at harvest time, so a snapshot
+whose text already exists is registered as a `same_as` candidate before it is
+extracted; tier 3 as a candidate generator on the current 301 documents.
 
