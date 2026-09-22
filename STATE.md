@@ -18,8 +18,8 @@ recipes end to end and ticked criteria 3 and 4. Left to the author: criterion 5
 (the M1a line of 0725 and 0715, the "four vs six sources" wording for Bac Ai,
 the 1 740 vs 766 observations wording), then closing 0834. Served views are in
 normal form since 0858 (one file = one table; SQLite deferred to M2). 0833 is
-ready for the bounded M1b overlay; tracker 0725 stays open through the paper. Pending author decisions: the M1b taxonomy (0833) and
-the 0732 angle. Slow-tier pins on registry row counts move with every
+ready for the bounded M1b overlay; tracker 0725 stays open through the paper.
+Pending author decisions: the M1b taxonomy (0833) and the 0732 angle. Slow-tier pins on registry row counts move with every
 collection (0854 broke one); `/lair` step 9 is the only watch.
 
 ## Status
