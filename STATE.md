@@ -1,6 +1,6 @@
 # State
 
-Last updated: 2026-09-17T15:37Z
+Last updated: 2026-09-22T09:36Z
 
 ## Current goal
 
@@ -10,30 +10,28 @@ The RDJ-26561 data paper is published; Œconomia v2.0.5 remains with its editor.
 
 ## JETP checkpoint
 
-Backend migration and local observatory baseline are on `main`, no deployment.
-The 0736 audit and the 0729/0814 DEFERs record that no credible assignment
-mechanism or untreated comparison supports a causal JETP estimate; the author
-chose a non-causal comparative programme. M1a is accepted on `main` (four frozen
-inventories, 2,164 rows, six layers, unknowns shown, no identity fusion); its
-session closed 2026-09-17, gate green, `t0820-jetp-discriminator-packet` pushed
-for the M1b resume on doudou. 0833 is ready for the bounded M1b overlay; live
-refresh and match resolution stay M2; tracker 0725 stays open through the paper.
-Pending author decisions: the M1b taxonomy (0833, first action) and the 0732
-angle (advisor recommendation logged in the ticket: angles 1 and 2, angle 3 as
-an M2 child of 0725). The manual browser acceptance passed on padme on
-2026-09-17 (97 historical records); Playwright is now a dev dependency, and
-`uv run playwright install chromium` fetches its browser once per machine.
+No deployment; non-causal comparative programme (0736 audit, 0729/0814 DEFERs).
+M1a was redefined on 2026-09-17 as the three-stage explorable MVP (tracker
+0834). Its nine children (0835–0839, 0855–0858) and 0852–0854 are all merged as
+of 2026-09-22; the final integration review passed both recipes end to end and
+ticked criteria 3 and 4. Left to the author: criterion 5 (the M1a line of 0725
+and 0715, the "four vs six sources" wording for Bac Ai, the 1 740 vs 766
+observations wording), then closing 0834. Views are in normal form since 0858
+(SQLite deferred to M2). 0833 is ready for the bounded M1b overlay; 0725 stays
+open through the paper. Pending: the M1b taxonomy (0833), the 0732 angle. Slow-
+tier pins on registry row counts move with every collection (0854 broke one);
+`/lair` step 9 is the only watch.
 
 ## Status
-<!-- generated 2026-09-17T15:37Z · as of 3a5c32c9 -->
+<!-- generated 2026-09-22T09:37Z · as of bf31b3ee -->
 
-**Tickets:** 54 ready · 51 blocked · 9 awaiting author — `erg ready tickets/` for full list
+**Tickets:** 55 ready · 51 blocked · 9 awaiting author — `erg ready tickets/` for full list
   next: 0272 Extract shared derive_companion_path() helper f… · 0273 load_cluster_labels() ignores --input, reads cl…
 **In flight:** no open PRs
 **Recent (first-parent):**
-  3a5c32c9 Merge pull request #1425 from MinhHaDuong/state-2026-09-17
-  2969e72e Merge pull request #1424 from MinhHaDuong/housekeeping-state-2026-09-17-m1a
-  f796644a chore(jetp): close delivered M1a ticket (#1423)
+  bf31b3ee Merge pull request #1441 from MinhHaDuong/t0854-sources-vnm
+  4216fd75 Merge pull request #1443 from MinhHaDuong/t0858-documents-table
+  a22035ef Merge pull request #1442 from MinhHaDuong/tickets-0858
 
 ## Corpus and submissions
 

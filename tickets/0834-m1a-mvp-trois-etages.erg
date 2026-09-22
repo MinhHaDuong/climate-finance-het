@@ -10,6 +10,7 @@ Author: HDMX-coding-agent
 2026-09-21T22:10Z HDMX-coding-agent note raid: revue d'intégration M1a demandée — voir PR #1436
 2026-09-22T00:05Z HDMX-coding-agent note revue d'intégration sur main (3231d3e0), verdict NE PAS FERMER. Recette ZAF verte de bout en bout ; recette VNM verte sauf le pas 1 (depuis le registre des documents le RMP 2023 n'ouvre pas à la page imprimée 139 : ancre sans fragment #page=, les 279 positions du dépliage pointent vers #inventory/VNM non filtré) ; pas 3 vert sous la lecture restreinte de 0838 (Bac Ai porte six sources, une seule archivée). Critère 4 en échec à l'écran : la page Documents affiche « Extracted here · 514 » pour le registre JET ZAF, 257 lignes de ledger plus les 257 mêmes lignes M1a (app.js:334-335), même défaut IDN 1255, SEN 105 et 93. make check complet : 3 failed, 3092 passed — deux échecs environnementaux (data/jetp/crs absent, commit 3b432ef3 absent du clone) et une régression du train, test_zaf_candidate_reconciles_inventory_legacy_and_current_views : ZAF.json passe de 509 315 à 792 434 octets en 3231d3e0 (clé evidence de 0839), au-dessus du plafond de publication de 512 000 octets. Trois enfants de suite ouverts : [[0855]] plafond, [[0856]] comptes fusionnés, [[0857]] navigation RMP. Rapport complet : docs/jetp-study/0834-integration-review-2026-09-22.md (déposé par la PR de réparation).
 2026-09-22T07:15Z HDMX-coding-agent note PR #1439 fusionnée (0855-0857 fermés) après décision de l'auteur : une source sans ligne extraite rend une note, pas un dépliage vide. Décision du même matin sur le poids de documents.json (975 Ko, refusé par le garde du pre-commit sur padme) : forme normale, un fichier = une table, l'index by_source_id disparaît au profit d'une jointure à la lecture — enfant [[0858]]. 0854 livré en PR #1441 depuis padme, à rebaser sur 0858.
+2026-09-22T09:40Z HDMX-coding-agent note revue d'intégration finale sur main (bf31b3ee) : les trois prises du 2026-09-22T00:05Z sont réparées et vérifiées (ZAF.json 509 315 o ; Ledger rows · 257 et M1a rows · 257, jamais 514 ; RMP en un clic à #page=155 ; documents.json une clé, 314 lignes, 155 720 o ; sept documents vietnamiens ouverts 7/7). Recettes SA1-SA3 et VN1-VN4 vertes pas à pas, recette navigateur complète verte 3/3. Critères 3 et 4 cochés. make check : 3 failed — deux environnementaux (data/jetp/crs, commit 3b432ef3 absents du clone) et un épinglage périmé par 0854, tests/test_jetp_vnm_positions.py:168 227 → 234 (sept lignes de registre), re-épinglé dans la PR de clôture. Rapport : docs/jetp-study/0834-integration-review-final-2026-09-22.md. Reste à l'auteur, critère 5 : la fiche dit « quatre sources » pour Bac Ai, la donnée en porte six dont quatre archivées ; la page Editions dit 1 740 observations et les vues en servent 766, deux populations étiquetées, jamais additionnées.
 --- body ---
 
 ## Context
@@ -118,8 +119,8 @@ extraction est M2. Le déploiement public est [[0727]].
 
 ## Exit criteria
 
-- [x] Les cinq enfants sont fermés
+- [x] Les cinq enfants sont fermés, et les quatre enfants de suite ([[0855]] à [[0858]]) aussi
 - [x] La recette Afrique du Sud passe de bout en bout dans le navigateur
-- [ ] La recette Vietnam passe de bout en bout dans le navigateur
-- [ ] Aucun étage n'agrège ni ne fusionne les lignes d'un autre
+- [x] La recette Vietnam passe de bout en bout dans le navigateur
+- [x] Aucun étage n'agrège ni ne fusionne les lignes d'un autre
 - [ ] La ligne M1a de [[0725]] et de [[0715]] est cochée par l'auteur après revue d'intégration
