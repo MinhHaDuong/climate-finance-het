@@ -1,0 +1,19 @@
+{
+ "pull_request": 1449,
+ "reviewed_commit": "7d891e7671ca58fe68e855b0f11cc228cc529f64",
+ "reviewer": "gpt-6-astra via Codex CLI, review-pr skill, launched by the author",
+ "posted_as": "MinhHaDuong",
+ "review_submitted_at": "2026-09-22T15:53:14Z",
+ "design_file": "docs/jetp-ontology.md",
+ "design_sha256_at_reviewed_commit": "b65510cf22d51192c56996082ad3c137e2414ac6b04500201e9e0df3e51c9263",
+ "findings": [
+  {"id": "P1-a", "comment": 4073624177, "summary": "Separate retrieval identity from content identity"},
+  {"id": "P1-b", "comment": 4073624183, "summary": "Resolve supersession before filtering for accepted decisions"},
+  {"id": "P2-a", "comment": 4073624190, "summary": "Store each party's role on its agreement relation"},
+  {"id": "P2-b", "comment": 4073624196, "summary": "Preserve event timing separately from the reporting cutoff"},
+  {"id": "P2-c", "comment": 4073624203, "summary": "Allow unmatched plan lines to carry perimeter membership"}
+ ],
+ "response_commit": "9bbcbe45",
+ "replies": [4075244350, 4075244686, 4075244989, 4075245250, 4075245516],
+ "archived_at": "2026-09-22T16:40:00+00:00"
+}
