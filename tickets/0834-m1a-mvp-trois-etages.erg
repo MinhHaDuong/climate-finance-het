@@ -30,8 +30,11 @@ Les données s'organisent en trois étages d'un pipeline, définis par l'auteur 
    depuis [[0854]]).
 2. **Extraction structurée** : les tables tirées de ces documents. Deux
    produits coexistent : les inventaires M1a (2 164 lignes, six sous-couches)
-   et les observations atomiques du ledger (1 740, marquées « not deployed »
-   dans `reviewed-evidence.json`).
+   et les lignes du ledger (766 servies depuis [[0838]] : events,
+   implementation-events, project-source-links). À part, et non servies : les
+   1 740 observations atomiques de l'instantané d'analyse 0730, marquées
+   « not deployed » dans `reviewed-evidence.json` (l'attribution au ledger
+   écrite ici le 2026-09-17 était fausse, voir 0838 § Imagine).
 3. **Faits réconciliés** : les enregistrements canoniques (383 nommés, 3
    revus) et les vues pays actuelles (projets, montants, statuts).
 
