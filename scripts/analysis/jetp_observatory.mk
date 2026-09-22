@@ -7,8 +7,6 @@ JETP_OBSERVATORY_PROVENANCE := $(JETP_OBSERVATORY)/data/provenance.json
 JETP_M1A_DIR := $(JETP_OBSERVATORY)/data/m1a
 JETP_M1A_FILES := $(addprefix $(JETP_M1A_DIR)/,ZAF.csv IDN.csv VNM.csv SEN.csv \
     ZAF.json IDN.json VNM.json SEN.json manifest.json)
-# The four country views alone: what extraction_index() reads (ticket 0839).
-JETP_M1A_VIEWS := $(addprefix $(JETP_M1A_DIR)/,ZAF.json IDN.json VNM.json SEN.json)
 JETP_M1A_INPUTS := config/jetp-m1a-inventories.json scripts/jetp/build_m1a_inventories.py \
     docs/jetp-study/0818-zaf-q1-2026-rows.csv docs/jetp-study/0818-zaf-q1-2026-fields.csv \
     data/jetp/plan-projects.csv \
@@ -47,16 +45,12 @@ $(JETP_OBSERVATIONS_FILES) &: $(JETP_OBSERVATIONS_INPUTS)
 
 jetp-observatory: $(JETP_OBSERVATORY_JSON) $(JETP_OBSERVATORY_EDITION_HISTORY) $(JETP_OBSERVATORY_PROVENANCE)
 
+# The documents view is the collection registry alone (ticket 0858): it reads
+# no other view, so it has no prerequisite beyond the inputs above. The join
+# between a document and what was extracted from it is made by the page, at
+# read time, on the M1a and observations views served beside it.
 $(JETP_OBSERVATORY)/data/%.json: $(JETP_OBSERVATORY_INPUTS)
 	$(PYTHON) scripts/jetp/build_observatory.py --view $* --output $@
-
-# The documents view indexes what the four M1a views cite (ticket 0839), so
-# they are read, never rebuilt, by its recipe: listed here as prerequisites so
-# extraction_index() always finds them written. The recipe stays the pattern
-# rule's above. reviewed-evidence.json, also read, is a committed artifact of
-# the release pipeline and not a target of this file: naming it here would
-# hand it to the pattern rule, which has no such view.
-$(JETP_OBSERVATORY)/data/documents.json: $(JETP_M1A_VIEWS)
 
 $(JETP_OBSERVATORY_PROVENANCE): $(JETP_OBSERVATORY_JSON) $(JETP_OBSERVATORY_INPUTS)
 	$(PYTHON) scripts/jetp/build_observatory_provenance.py --output $@
