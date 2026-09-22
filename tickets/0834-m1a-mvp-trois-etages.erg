@@ -9,6 +9,7 @@ Author: HDMX-coding-agent
 
 2026-09-21T22:10Z HDMX-coding-agent note raid: revue d'intégration M1a demandée — voir PR #1436
 2026-09-22T00:05Z HDMX-coding-agent note revue d'intégration sur main (3231d3e0), verdict NE PAS FERMER. Recette ZAF verte de bout en bout ; recette VNM verte sauf le pas 1 (depuis le registre des documents le RMP 2023 n'ouvre pas à la page imprimée 139 : ancre sans fragment #page=, les 279 positions du dépliage pointent vers #inventory/VNM non filtré) ; pas 3 vert sous la lecture restreinte de 0838 (Bac Ai porte six sources, une seule archivée). Critère 4 en échec à l'écran : la page Documents affiche « Extracted here · 514 » pour le registre JET ZAF, 257 lignes de ledger plus les 257 mêmes lignes M1a (app.js:334-335), même défaut IDN 1255, SEN 105 et 93. make check complet : 3 failed, 3092 passed — deux échecs environnementaux (data/jetp/crs absent, commit 3b432ef3 absent du clone) et une régression du train, test_zaf_candidate_reconciles_inventory_legacy_and_current_views : ZAF.json passe de 509 315 à 792 434 octets en 3231d3e0 (clé evidence de 0839), au-dessus du plafond de publication de 512 000 octets. Trois enfants de suite ouverts : [[0855]] plafond, [[0856]] comptes fusionnés, [[0857]] navigation RMP. Rapport complet : docs/jetp-study/0834-integration-review-2026-09-22.md (déposé par la PR de réparation).
+2026-09-22T07:15Z HDMX-coding-agent note PR #1439 fusionnée (0855-0857 fermés) après décision de l'auteur : une source sans ligne extraite rend une note, pas un dépliage vide. Décision du même matin sur le poids de documents.json (975 Ko, refusé par le garde du pre-commit sur padme) : forme normale, un fichier = une table, l'index by_source_id disparaît au profit d'une jointure à la lecture — enfant [[0858]]. 0854 livré en PR #1441 depuis padme, à rebaser sur 0858.
 --- body ---
 
 ## Context
@@ -95,6 +96,8 @@ Enfants de suite, ouverts par la revue d'intégration du 2026-09-22 :
    « Extracted here » ; totaux M1a inter-sous-couches contredits par la note.
 8. [[0857]] — Depuis le registre des documents, le RMP 2023 n'ouvre pas à la
    page extraite (pas 1 de la recette Vietnam).
+9. [[0858]] — `documents.json` est une table : la remontée document → faits
+   devient une jointure à la lecture (forme normale, décision du 2026-09-22).
 
 ## Relation avec M1b
 
