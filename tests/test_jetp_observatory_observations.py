@@ -242,14 +242,13 @@ def test_a_row_without_a_fingerprint_is_one_of_two_named_collection_gaps() -> No
             target = unarchived if entry["source_id"] in registry else unregistered
             target.append((code, entry["table"], entry["source_id"]))
 
-    # Pinned by identity, not by count: a count is repaired by bumping the
-    # number, which is how a new gap gets waved through. The set is empty
-    # since ticket 0854 collected the seven Viet Nam link sources it used to
-    # name (all `collected`, none failed), so any source — in any country, in
-    # any of the three tables — that a link row cites without a registry
-    # attempt fails here with its own identifier in the message. A source
-    # whose attempt failed belongs in `unarchived` below, with its status.
-    assert {source_id for _, _, source_id in unregistered} == set()
+    # Empty, not a count: ticket 0854 collected the seven Viet Nam link
+    # sources this list used to name (all `collected`, none failed), so any
+    # source — in any country, in any of the three tables — that a link row
+    # cites without a registry attempt fails here with its own identifier in
+    # the message. A source whose attempt failed belongs in `unarchived`
+    # below, with its status.
+    assert unregistered == []
     # The second gap is a collection outcome, not a join failure: these sources
     # are in the registry and no attempt of theirs recorded a digest.
     # Twenty-one, not the twenty-two measured before the registry rule stopped

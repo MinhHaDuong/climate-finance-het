@@ -312,8 +312,7 @@ def check_facts(page, url):
     ]
     # A ledger row links to its document only when the collection archived
     # its source; a row whose source was never archived shows its locator as
-    # text, so the count of links says exactly how many were (ticket 0854
-    # collected all three of Bac Ai's).
+    # text, so the count of links says exactly how many were.
     assert page.locator('#project-evidence a[data-observation-id]').count() == sum(
         1 for row in served if row['sha256']
     )
