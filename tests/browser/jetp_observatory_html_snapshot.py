@@ -54,8 +54,6 @@ STATES = [
 def apply(page, selector, action, value):
     if action == 'fill':
         page.locator(selector).fill(value)
-    elif value.startswith('index:'):
-        page.locator(selector).select_option(index=int(value[6:]))
     else:
         page.locator(selector).select_option(value)
 
