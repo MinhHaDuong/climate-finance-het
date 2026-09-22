@@ -10,14 +10,12 @@ from pathlib import Path
 
 import yaml
 
-from jetp._m1a_document_links import pdf_page_of
 from jetp._observatory_data import (
     document_entry,
     historical_record,
     public_event,
     timeline,
 )
-from jetp.build_observations import build_registry, country_observations
 
 ROOT = Path(__file__).resolve().parents[2]
 TABLES = ('projects', 'events', 'implementation-events', 'sources', 'source-claims',
@@ -172,13 +170,19 @@ def comparison_data(root, config):
             'snapshots': snapshots}
 
 
-def documents_data(root, tables, config=None):
+def documents_data(root, tables):
     """List every collection attempt, marking availability from the snapshot on disk.
 
-    With a ``config``, the view also carries ``by_source_id``: what stage two
-    extracted from each document and which stage-three facts rely on it
-    (ticket 0839).  Without one — the registry-only callers and their tests —
-    the key is absent, not empty, so a consumer can tell the two apart.
+    One table, one key: the view is the collection registry and nothing
+    derived from other tables.  What each document yielded and which facts
+    rely on it is a join the Documents page makes at read time on the views
+    that already serve those rows — ``m1a/<CODE>.json``,
+    ``observations/<CODE>.json``, the country views and
+    ``reviewed-evidence.json`` — filtered on ``source_id`` (ticket 0858).
+    Ticket 0839 wrote that join here as ``by_source_id``: 874 kB copied out
+    of tables served beside it, loaded on every route, growing with every
+    collection, and refused by the pre-commit's 512 000 byte ceiling on the
+    machine where the hooks run.
     """
     rows = sorted(tables['manifest'], key=lambda row: row['source_id'])
     snapshot = (Path(root) / 'data/jetp/documents').resolve()
@@ -207,122 +211,7 @@ def documents_data(root, tables, config=None):
         entry = document_entry(row, available)
         attempts[entry['id']] += 1
         entries.append({'id': entry['id'], 'row_key': f"{entry['id']}:{attempts[entry['id']]}", **entry})
-    result = {'documents': entries}
-    if config is not None:
-        result['by_source_id'] = extraction_index(root, tables, config)
-    return result
-
-
-def ledger_reference(entry):
-    """Address one served ledger row from its document, without re-serving it.
-
-    The row itself lives in ``data/observations/<CODE>.json``; here it is named
-    by the key its table gives it, with the fields a reader needs to find it
-    there.  Every value is the entry's own, none is recoded.
-    """
-    reference = {
-        'product': 'ledger', 'country': entry['country'],
-        'table': entry['table'], 'kind': entry['kind'],
-        'id': entry.get('event_id') or entry.get('implementation_event_id') or entry.get('link_id', ''),
-        'project_id': entry['project_id'], 'locator': entry.get('locator', ''),
-        'verification': entry['verification'],
-    }
-    if entry.get('pdf_page'):
-        reference['pdf_page'] = entry['pdf_page']
-    return reference
-
-
-def m1a_reference(row, ordinal):
-    """Address one frozen M1a row from its document, by the identity it carries.
-
-    ``row`` is the row's rank in its country's export, the file the inventory
-    page loads, so the Documents page can open that page on this one row
-    (ticket 0857); ``pdf_page`` is the page the locator names, read here once
-    rather than in the browser, and absent when it names none.
-    """
-    reference = {
-        'product': 'm1a', 'country': row['country'],
-        'source_layer': row['source_layer'], 'source_row_id': row['source_row_id'],
-        'label': row.get('label', ''), 'evidence_locator': row.get('evidence_locator', ''),
-        'row': ordinal,
-    }
-    page = pdf_page_of(row.get('evidence_locator'))
-    if page is not None:
-        reference['pdf_page'] = page
-    return reference
-
-
-def first_pdf_page(extracted):
-    """The page a document's archived copy opens at, when its readings agree.
-
-    Each product's first page is the lowest its rows name; the document gets
-    one only when every product that names a page starts at the same one.  A
-    ledger reading that starts at page 12 beside an M1a reading that starts at
-    page 30 names no first page for the file, and the archived copy then opens
-    at its own first page rather than at one that nobody's rows begin on.
-    Rows that name no page are silent, not zero: no page comes from nowhere.
-    """
-    starts = {}
-    for row in extracted:
-        page = row.get('pdf_page')
-        if page:
-            starts[row['product']] = min(starts.get(row['product'], page), page)
-    firsts = set(starts.values())
-    return firsts.pop() if len(firsts) == 1 else None
-
-
-def extraction_index(root, tables, config):
-    """Index, per source identifier, what was extracted from it and what relies on it.
-
-    Three inputs already built elsewhere, merged and never recomputed: the
-    ledger observations of each country (the 0838 builder), the four frozen
-    M1a views (written by ``build_m1a_inventories.py``, ticket 0836), and the
-    facts — each country's named projects under each of their sources, plus
-    the reviewed records of ``reviewed-evidence.json`` under each proof.  Two
-    lists per source, ``extracted`` and ``facts``: never a total across them,
-    never an identity merged between them.  The one other key a source can
-    carry is ``first_pdf_page`` (ticket 0857): the page its archived copy
-    opens at, when its readings agree on one — see ``first_pdf_page``.
-
-    A missing M1a view is a build-order error and stops the build: the make
-    rule for ``documents.json`` lists the four views as prerequisites, and an
-    empty list here would read as "nothing extracted", which is a claim.
-    """
-    root = Path(root)
-    registry = build_registry(tables)
-    index = {}
-
-    def bucket(source_id):
-        return index.setdefault(source_id, {'extracted': [], 'facts': []})
-
-    for code in config['countries']:
-        observations = country_observations(tables, registry, code)
-        for entry in observations:
-            bucket(entry['source_id'])['extracted'].append(ledger_reference(entry))
-        view = root / 'deliverables/jetp-observatory/data/m1a' / f'{code}.json'
-        if not view.is_file():
-            raise FileNotFoundError(f'M1a view not built yet: {view}; run make jetp-m1a first')
-        payload = json.loads(view.read_text())
-        for ordinal, values in enumerate(payload['rows'], 1):
-            row = dict(zip(payload['fields'], values))
-            bucket(row['source_id'])['extracted'].append(m1a_reference(row, ordinal))
-        for project in country_data(root, code, config, tables)['projects']:
-            for source_id in project['sources']:
-                bucket(source_id)['facts'].append(
-                    {'project_id': project['id'], 'name': project['name'], 'country': code})
-    reviewed = root / 'deliverables/jetp-observatory/data/reviewed-evidence.json'
-    if not reviewed.is_file():
-        raise FileNotFoundError(f'Reviewed evidence absent: {reviewed}')
-    for record in json.loads(reviewed.read_text()).get('records', []):
-        for proof in record['evidence']:
-            bucket(proof['source_id'])['facts'].append(
-                {'record_id': record['id'], 'label': record['label'],
-                 'country': record['country'], 'status': record['status']})
-    for entry in index.values():
-        page = first_pdf_page(entry['extracted'])
-        if page is not None:
-            entry['first_pdf_page'] = page
-    return index
+    return {'documents': entries}
 
 
 def edition_history(root):
@@ -386,7 +275,7 @@ def main():
     elif args.view == 'comparison':
         result = comparison_data(ROOT, config)
     elif args.view == 'documents':
-        result = documents_data(ROOT, tables, config)
+        result = documents_data(ROOT, tables)
     elif args.view == 'editions':
         result = edition_history(ROOT)
     else:

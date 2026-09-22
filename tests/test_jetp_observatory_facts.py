@@ -1,23 +1,21 @@
-"""Stage-three facts descend to their stage-two evidence; a document lists what cites it.
+"""Stage-three facts carry no copy of their evidence, and a document view no index of it.
 
-Pure in-memory fixtures for the transforms, a temporary root for the two files
-``extraction_index`` reads: the fast tier, no subprocess, none of the real
-data.  One fictional country ``QQ`` with one named project and one disclosure
-slot; two M1a rows, one per source.  One test reads the shipped ZAF view: the
+Pure in-memory fixtures for the transforms: the fast tier, no subprocess,
+none of the real data.  One fictional country ``QQ`` with one named project
+and one disclosure slot.  One test reads the shipped ZAF view: the
 publication cap (ticket 0855) is a property of the real bytes, and the slow
 tier was the only thing guarding it.
+
+The climb, document → what cites it, was ``extraction_index()`` here until
+ticket 0858; it is a read-time join in the renderer now, and its tests —
+the same project under each of its sources, two lists never a total — are
+render tests in ``test_jetp_observatory_render.py``.
 """
 
 import json
 from pathlib import Path
 
-import pytest
-from jetp.build_observatory import (
-    country_data,
-    documents_data,
-    extraction_index,
-    project_data,
-)
+from jetp.build_observatory import country_data, documents_data, project_data
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -65,14 +63,6 @@ MANIFEST = [
     {"source_id": "qq-src-b", "status": "collected", "retrieved_at": "2026-01-01T00:00:00Z",
      "sha256": "bb" * 32},
 ]
-M1A_ROWS = [
-    ["QQ", "plan-inventory", "qq-src-a", "qq-src-a:row:001", "Row from source A",
-     "Annex 1; PDF pages 12"],
-    ["QQ", "plan-inventory", "qq-src-b", "qq-src-b:row:001", "Row from source B",
-     "Section 2"],
-]
-M1A_FIELDS = ["country", "source_layer", "source_id", "source_row_id", "label",
-              "evidence_locator"]
 CONFIG = {"countries": {"QQ": {"headline_source": ""}}}
 
 # The keys country_data() and project_data() produced before ticket 0839,
@@ -102,22 +92,6 @@ def fixture_tables():
         "manifest": [dict(row) for row in MANIFEST],
         "event-timing": [],
     }
-
-
-def fixture_root(tmp_path, *, m1a=True, m1a_rows=M1A_ROWS):
-    """A root holding only what extraction_index reads besides the tables."""
-    data = tmp_path / "deliverables/jetp-observatory/data"
-    (data / "m1a").mkdir(parents=True)
-    if m1a:
-        (data / "m1a/QQ.json").write_text(json.dumps(
-            {"country": "QQ", "fields": M1A_FIELDS, "rows": m1a_rows}))
-    (data / "reviewed-evidence.json").write_text(json.dumps({"records": [
-        {"id": "canonical-QQ-headline", "label": "QQ reported position",
-         "country": "QQ", "status": "reviewed_fact",
-         "evidence": [{"source_id": "qq-src-a", "sha256": "aa" * 32,
-                       "locator": "Headline"}]},
-    ]}))
-    return tmp_path
 
 
 def test_a_fact_carries_no_copy_of_its_observation_rows() -> None:
@@ -154,84 +128,19 @@ def test_every_pre_ticket_key_survives_and_none_is_added(tmp_path) -> None:
     assert set(result["projects"][0]) == PROJECT_KEYS_BEFORE
 
 
-def test_a_document_indexes_the_same_project_under_each_of_its_sources(tmp_path) -> None:
-    index = extraction_index(fixture_root(tmp_path), fixture_tables(), CONFIG)
+def test_the_documents_view_is_the_registry_and_nothing_derived(tmp_path) -> None:
+    # Ticket 0858: one served file is one table.  The view takes no config
+    # and reads no other view; what a document yielded is a join the page
+    # makes on the views served beside it, never a key written here.
+    view = documents_data(tmp_path, fixture_tables())
 
-    fact = {"project_id": "qq-project-a", "name": "Project A", "country": "QQ"}
-    assert index["qq-src-b"]["facts"] == [fact]
-    # Source A also carries the reviewed record; the project fact is the same
-    # dictionary on both sides, not a substitute.
-    assert index["qq-src-a"]["facts"][0] == fact
-    assert index["qq-src-a"]["facts"][0] == index["qq-src-b"]["facts"][0]
-    assert [f for f in index["qq-src-a"]["facts"] if "record_id" in f] == [
-        {"record_id": "canonical-QQ-headline", "label": "QQ reported position",
-         "country": "QQ", "status": "reviewed_fact"},
-    ]
-
-
-def test_extracted_lists_hold_the_ledger_row_and_the_m1a_row_separately(tmp_path) -> None:
-    index = extraction_index(fixture_root(tmp_path), fixture_tables(), CONFIG)
-
-    products = [(row["product"], row.get("id") or row.get("source_row_id"))
-                for row in index["qq-src-a"]["extracted"]]
-    assert products == [("ledger", "qq-event-1"), ("m1a", "qq-src-a:row:001")]
-    assert [row["product"] for row in index["qq-src-b"]["extracted"]] == [
-        "ledger", "m1a",
-    ]
-    # Two lists per source, never a total across them; the only other key a
-    # source can carry is the page its archived copy opens at (0857).
-    assert set(index["qq-src-a"]) == {"extracted", "facts", "first_pdf_page"}
-    assert set(index["qq-src-b"]) == {"extracted", "facts"}
-
-
-def test_an_m1a_reference_carries_its_row_ordinal_and_the_pdf_page_its_locator_names(tmp_path) -> None:
-    # Ticket 0857: computed once here, so the Documents page can address the
-    # inventory row and the PDF page without re-reading a locator.
-    index = extraction_index(fixture_root(tmp_path), fixture_tables(), CONFIG)
-
-    with_page = next(r for r in index["qq-src-a"]["extracted"] if r["product"] == "m1a")
-    without = next(r for r in index["qq-src-b"]["extracted"] if r["product"] == "m1a")
-    assert with_page["row"] == 1 and with_page["pdf_page"] == 12
-    # No page named, no key: an absent page is not a page.
-    assert without["row"] == 2 and "pdf_page" not in without
-
-
-def test_a_document_opens_at_the_first_page_only_when_every_product_agrees(tmp_path) -> None:
-    # Source A: the ledger row says PDF page 12, the M1a locator says PDF
-    # pages 12 — one first page.  Source B: nobody names a page.
-    index = extraction_index(fixture_root(tmp_path), fixture_tables(), CONFIG)
-    assert index["qq-src-a"]["first_pdf_page"] == 12
-    assert "first_pdf_page" not in index["qq-src-b"]
-
-    # The M1a reading starts at page 30 where the ledger's starts at 12: the
-    # two products disagree, and no page is fabricated from either.
-    disagreeing = [[*M1A_ROWS[0][:5], "Annex 1; PDF pages 30"], M1A_ROWS[1]]
-    index = extraction_index(fixture_root(tmp_path / "b", m1a_rows=disagreeing),
-                             fixture_tables(), CONFIG)
-    assert "first_pdf_page" not in index["qq-src-a"]
-
-
-def test_a_missing_m1a_view_stops_the_build_instead_of_serving_an_empty_list(tmp_path) -> None:
-    with pytest.raises(FileNotFoundError, match="m1a/QQ.json"):
-        extraction_index(fixture_root(tmp_path, m1a=False), fixture_tables(), CONFIG)
-
-
-def test_the_documents_view_carries_the_index_when_given_the_config(tmp_path) -> None:
-    root = fixture_root(tmp_path)
-    tables = fixture_tables()
-
-    with_index = documents_data(root, tables, CONFIG)
-    registry_only = documents_data(root, tables)
-
-    assert set(with_index["by_source_id"]) == {"qq-src-a", "qq-src-b"}
-    assert with_index["documents"] == registry_only["documents"]
-    assert "by_source_id" not in registry_only
+    assert set(view) == {"documents"}
+    assert [row["id"] for row in view["documents"]] == ["qq-src-a", "qq-src-b"]
 
 
 def test_renderer_ports_the_descent_and_the_climb() -> None:
     renderer = (ROOT / "deliverables/jetp-observatory/app.js").read_text()
 
-    assert "by_source_id" in renderer
     assert "documentHref(" in renderer
     descent = renderer[renderer.index("function projectEvidenceRow("):]
     descent = descent[:descent.index("\nfunction median(")]
@@ -241,4 +150,12 @@ def test_renderer_ports_the_descent_and_the_climb() -> None:
     assert "p.evidence" not in descent
     assert "observationsView(p.country)" in descent
     assert 'load("observations/" + ' in renderer
+    # The climb is a join on the served stage-two views, loaded per country
+    # (0858): the Documents cell reads them through the same cache as the
+    # inventory page, and reads nothing from the registry view but the row.
+    climb = renderer[renderer.index("function extractionCell("):]
+    climb = climb[:climb.index("\nfunction documentsPage(")]
+    assert "stageTwo(entry.country)" in climb
+    assert "documentsData." not in climb
+    assert 'load("m1a/" + ' in renderer
     assert "No link between the 2023 table and the 2025 portfolio" in renderer
