@@ -2,6 +2,7 @@
 Title: Collecter les sept sources vietnamiennes citées par les liens projet-source du ledger
 Created: 2026-09-18
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1441
 
 --- log ---
 2026-09-18T05:31Z HDMX-coding-agent created
@@ -9,6 +10,7 @@ Author: HDMX-coding-agent
 2026-09-22T06:39Z HDMX-coding-agent note collecte : 7/7 collected (HTTP 200, HTML) — moit-bac-ai 07ce7f91, evn-cdp-bac-ai 81f8b5b5, eib-bac-ai 3331f31e, moit-binh-duong-dong-nai e5ebf05d, evn-afd-transmission 1f100c4b, moit-tri-an aa580602, evn-kfw-tri-an 87441e68 ; aucun échec ; fiches MOIT rendues côté serveur (titre, montants, partenaires dans le texte extrait). Snapshot DVC 257 → 264 fichiers, poussé, cache et remote padme en phase. Vues régénérées (observations/VNM.json, VNM.json, documents.json 307 → 314, overview.json) et recensement 0817 (unavailable → admitted). Recette VN pas 3 rejouée en Playwright depuis #project/vnm-project-bac-ai-pumped-hydro puis Binh Duong–Dong Nai et Tri An : 7/7 observations ouvrent leur document local (href = local_path, 200, titre lu). check-fast 2104 passed, lint 338 passed. Déviation : plafond pre-commit relevé à 1 Mo pour deliverables/jetp-observatory/data/*.json (documents.json 949 Ko déjà dans l'historique depuis 0839 ; garde à sens unique, même remède que 0610).
 2026-09-22T08:50Z HDMX-coding-agent note rebase sur origin/main 4216fd75 (0858 fusionné) : le commit dee039ea sur .githooks/pre-commit est abandonné, .githooks identique à main ; vues régénérées en 9a9ad724 — documents.json une clé, 314 lignes, 155 720 octets sous le plafond de 512 000 ; observations/VNM.json 7 lignes, aucune empreinte nulle ; m1a/* inchangés. Recette VN pas 3 rejouée sur la tête rebasée : 7/7. bump verify-reroll — round 1 : SHA d'avant rebase dans les critères et paragraphe de déviation périmé, corrigés ici et dans le corps de la PR.
 2026-09-22T09:03Z HDMX-coding-agent bump verify-reroll — round 2: la ligne de journal 06:39Z avait été réécrite sur place par 1d928a9c (journal en ajout seul, tickets/AGENTS.md) ; libellé d'origine rétabli, la ligne 08:50Z porte déjà la correction
+2026-09-22T09:14Z HDMX-coding-agent closed — autoclosed — PR #1441
 --- body ---
 
 ## Context
