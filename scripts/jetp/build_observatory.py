@@ -73,8 +73,9 @@ def project_data(row, tables):
     ``observations/<CODE>.json`` (ticket 0838), and the renderer filters that
     view on ``project_id`` for the fold-out.  Ticket 0839 copied them here as
     ``evidence``; the copy put the ZAF view 280 kB over the publication cap
-    that ``build_zaf_positions`` enforces, and any per-row reference would
-    still (ticket 0855).
+    that ``build_zaf_positions`` enforces, and even the lightest per-row
+    reference list, about 42 kB for the ZAF view, would still cross it
+    (ticket 0855).
     """
     pid = row['project_id']
     timings = {r['event_id']: r for r in tables.get('event-timing', [])}

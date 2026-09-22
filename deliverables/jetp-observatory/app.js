@@ -346,8 +346,8 @@ function factItem(fact) {
     ? `<li><a href="#evidence">${esc(fact.label)}</a><small>Reviewed record · ${esc(fact.status.replaceAll("_", " "))} · ${esc(country(fact.country)?.short || fact.country)}</small></li>`
     : `<li><a href="#project/${encodeURIComponent(fact.project_id)}">${esc(fact.name)}</a><small>Named record · ${esc(country(fact.country)?.short || fact.country)}</small></li>`;
 }
-function foldout(label, items, item, key, none) {
-  return `<details class="foldout" data-${key}-count="${items.length}"><summary>${esc(label)} · ${fmt(items.length)}</summary>${items.length ? `<ul class="citing">${items.map(item).join("")}</ul>` : `<p class="note">${esc(none)}</p>`}</details>`;
+function foldout(label, items, item, key, none, attrs = "") {
+  return `<details class="foldout"${attrs} data-${key}-count="${items.length}"><summary>${esc(label)} · ${fmt(items.length)}</summary>${items.length ? `<ul class="citing">${items.map(item).join("")}</ul>` : `<p class="note">${esc(none)}</p>`}</details>`;
 }
 /* Ticket 0856: one fold-out per stage-two product, each with its own count in
  * its own summary. A ledger row and an M1a row can describe the same paragraph
@@ -361,10 +361,11 @@ function extractedFoldouts(extracted, entry) {
   if (!products.length)
     return '<p class="note" data-extracted-count="0">Nothing extracted from this source in this edition.</p>';
   return products
-    .map((product) => {
-      const rows = extracted.filter((row) => row.product === product);
-      return `<details class="foldout" data-extracted-product="${esc(product)}" data-extracted-count="${rows.length}"><summary>${esc(PRODUCT_LABELS[product] || product)} · ${fmt(rows.length)}</summary><ul class="citing">${rows.map((row) => extractedItem(row, entry)).join("")}</ul></details>`;
-    })
+    .map((product) =>
+      foldout(PRODUCT_LABELS[product] || product,
+        extracted.filter((row) => row.product === product),
+        (row) => extractedItem(row, entry), "extracted", "",
+        ` data-extracted-product="${esc(product)}"`))
     .join("");
 }
 function extractionCell(entry) {
@@ -464,21 +465,24 @@ const INVENTORY_FACETS = [
   ["reported_status", "Reported status", "All reported statuses"],
   ["identity_status", "Identity", "All identity outcomes"],
 ];
+/* One load per key per session. A rejected load is dropped from the cache so a
+ * transient failure is retried on the next visit, not replayed for the rest
+ * of the session. */
+function cached(cache, key, make) {
+  if (!cache[key])
+    cache[key] = make().catch((error) => {
+      delete cache[key];
+      throw error;
+    });
+  return cache[key];
+}
 const inventoryCache = {};
 /* One load per country per session, shared by the Observations tab and every
  * project page of that country (ticket 0855): the ledger rows are served once,
- * in observations/<CODE>.json, and a fact's fold-out is a filter on them. A
- * rejected load is dropped so a transient failure is retried, not replayed. */
+ * in observations/<CODE>.json, and a fact's fold-out is a filter on them. */
 const observationsCache = {};
-function observationsView(code) {
-  if (!observationsCache[code]) {
-    observationsCache[code] = load("observations/" + code).catch((error) => {
-      delete observationsCache[code];
-      throw error;
-    });
-  }
-  return observationsCache[code];
-}
+const observationsView = (code) =>
+  cached(observationsCache, code, () => load("observations/" + code));
 /* The companion file carries the column names once and then one array of
  * values per row, so the row objects are rebuilt here in the generator's own
  * column order — pass-through columns included. */
@@ -751,7 +755,7 @@ function renderInventory(code, rows, observations, focus) {
     resultNoun: "rows in this export",
     pageSize: 50,
   });
-  const observationsView = observationsTable(observations);
+  const observationsPanel = observationsTable(observations);
   main.innerHTML =
     `<div class="page-head"><div class="breadcrumb"><a href="#countries">Countries</a> / <a href="#country/${code}">${esc(c?.name || code)}</a> / Inventory</div><p class="eyebrow">Source rows · ${code}</p><h1>${esc(c?.name || code)} source rows</h1><p class="lede">Two separate readings of this country's documents: the frozen M1a inventory of what a source published about its own projects, and the ledger rows recorded from those same documents. They are kept in separate tabs because they are not comparable, and never added together.</p></div>` +
     `<div class="view-tabs" role="tablist"><button type="button" role="tab" id="tab-inventory" aria-controls="panel-inventory" aria-selected="true">Frozen M1a inventory</button><button type="button" role="tab" id="tab-observations" aria-controls="panel-observations" aria-selected="false">Ledger observations</button></div>` +
@@ -763,29 +767,24 @@ function renderInventory(code, rows, observations, focus) {
     `<div class="downloads"><a class="button light" href="data/m1a/${code}.csv" download>Download the ${code} M1a inventory (CSV) ↓</a></div></section>` +
     `<section id="panel-observations" role="tabpanel" aria-labelledby="tab-observations" hidden>` +
     observationTotals(observations, code) +
-    observationsView.head +
+    observationsPanel.head +
     `<div class="downloads"><a class="button light" href="data/observations/${code}.json" download>Download the ${code} ledger observations (JSON) ↓</a></div></section>`;
   mountTabs([
     { key: "inventory", mount: table.mount },
-    { key: "observations", mount: observationsView.mount },
+    { key: "observations", mount: observationsPanel.mount },
   ]);
 }
 function inventoryPage(code, params) {
   if (!m1a.countries[code]) return notFound();
   main.innerHTML = `<p class="note">Loading the ${esc(code)} source rows…</p>`;
   const focus = Math.trunc(Number(params.get("row"))) || 0;
-  inventoryCache[code] =
-    inventoryCache[code] ||
-    Promise.all([load("m1a/" + code), observationsView(code)]);
-  inventoryCache[code]
+  cached(inventoryCache, code, () =>
+    Promise.all([load("m1a/" + code), observationsView(code)]))
     .then(([payload, observations]) => {
       if (location.hash.startsWith("#inventory/" + code))
         renderInventory(code, inventoryRows(payload), observations, focus > 0 ? focus : 0);
     })
     .catch((error) => {
-      // Drop the rejected promise, or one transient failure would be replayed
-      // from the cache for the rest of the session without ever retrying.
-      delete inventoryCache[code];
       main.innerHTML = `<div class="error"><h1>The ${esc(code)} inventory could not load.</h1><p>${esc(error.message)}</p></div>`;
     });
 }
