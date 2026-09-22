@@ -225,9 +225,9 @@ def test_the_shipped_views_carry_every_ledger_row_once() -> None:
 
 def test_a_row_without_a_fingerprint_is_one_of_two_named_collection_gaps() -> None:
     # Two different absences, and the page cannot show either as a link, so
-    # both are pinned rather than pooled: seven Viet Nam link rows name a
-    # source the registry never recorded at all, and twenty-two rows name one
-    # it recorded but never archived. Neither is a renderer defect, and a new
+    # both are pinned rather than pooled: link rows naming a source the
+    # registry never recorded at all, and twenty-one rows naming one it
+    # recorded but never archived. Neither is a renderer defect, and a new
     # one cannot reach the page unnoticed.
     import csv
 
@@ -242,22 +242,13 @@ def test_a_row_without_a_fingerprint_is_one_of_two_named_collection_gaps() -> No
             target = unarchived if entry["source_id"] in registry else unregistered
             target.append((code, entry["table"], entry["source_id"]))
 
-    # Pinned by identity, not by count: a count is repaired by bumping the
-    # number, which is how a new gap gets waved through. These seven are named,
-    # so an eighth source — in any country, in any of the three tables — fails
-    # here with its own identifier in the message.
-    assert {source_id for _, _, source_id in unregistered} == {
-        "vnm-eib-bac-ai-package-2025",
-        "vnm-evn-afd-transmission-2025",
-        "vnm-evn-cdp-bac-ai-2025",
-        "vnm-evn-kfw-tri-an-2025",
-        "vnm-moit-project-bac-ai",
-        "vnm-moit-project-binh-duong-dong-nai",
-        "vnm-moit-project-tri-an",
-    }
-    assert {(code, table) for code, table, _ in unregistered} == {
-        ("VNM", "project-source-links")
-    }
+    # Empty, not a count: ticket 0854 collected the seven Viet Nam link
+    # sources this list used to name (all `collected`, none failed), so any
+    # source — in any country, in any of the three tables — that a link row
+    # cites without a registry attempt fails here with its own identifier in
+    # the message. A source whose attempt failed belongs in `unarchived`
+    # below, with its status.
+    assert unregistered == []
     # The second gap is a collection outcome, not a join failure: these sources
     # are in the registry and no attempt of theirs recorded a digest.
     # Twenty-one, not the twenty-two measured before the registry rule stopped

@@ -1,0 +1,60 @@
+%erg 0.1
+Title: Collecter les sept sources vietnamiennes citées par les liens projet-source du ledger
+Created: 2026-09-18
+Author: HDMX-coding-agent
+Closed: autoclosed — PR #1441
+
+--- log ---
+2026-09-18T05:31Z HDMX-coding-agent created
+
+2026-09-22T06:39Z HDMX-coding-agent note collecte : 7/7 collected (HTTP 200, HTML) — moit-bac-ai 07ce7f91, evn-cdp-bac-ai 81f8b5b5, eib-bac-ai 3331f31e, moit-binh-duong-dong-nai e5ebf05d, evn-afd-transmission 1f100c4b, moit-tri-an aa580602, evn-kfw-tri-an 87441e68 ; aucun échec ; fiches MOIT rendues côté serveur (titre, montants, partenaires dans le texte extrait). Snapshot DVC 257 → 264 fichiers, poussé, cache et remote padme en phase. Vues régénérées (observations/VNM.json, VNM.json, documents.json 307 → 314, overview.json) et recensement 0817 (unavailable → admitted). Recette VN pas 3 rejouée en Playwright depuis #project/vnm-project-bac-ai-pumped-hydro puis Binh Duong–Dong Nai et Tri An : 7/7 observations ouvrent leur document local (href = local_path, 200, titre lu). check-fast 2104 passed, lint 338 passed. Déviation : plafond pre-commit relevé à 1 Mo pour deliverables/jetp-observatory/data/*.json (documents.json 949 Ko déjà dans l'historique depuis 0839 ; garde à sens unique, même remède que 0610).
+2026-09-22T08:50Z HDMX-coding-agent note rebase sur origin/main 4216fd75 (0858 fusionné) : le commit dee039ea sur .githooks/pre-commit est abandonné, .githooks identique à main ; vues régénérées en 9a9ad724 — documents.json une clé, 314 lignes, 155 720 octets sous le plafond de 512 000 ; observations/VNM.json 7 lignes, aucune empreinte nulle ; m1a/* inchangés. Recette VN pas 3 rejouée sur la tête rebasée : 7/7. bump verify-reroll — round 1 : SHA d'avant rebase dans les critères et paragraphe de déviation périmé, corrigés ici et dans le corps de la PR.
+2026-09-22T09:03Z HDMX-coding-agent bump verify-reroll — round 2: la ligne de journal 06:39Z avait été réécrite sur place par 1d928a9c (journal en ajout seul, tickets/AGENTS.md) ; libellé d'origine rétabli, la ligne 08:50Z porte déjà la correction
+2026-09-22T09:14Z HDMX-coding-agent closed — autoclosed — PR #1441
+--- body ---
+
+## Context
+
+Suite de [[0838]], décidée par l'auteur le 2026-09-18. Les sept lignes
+vietnamiennes de `data/jetp/project-source-links.csv` citent des sources
+présentes dans `data/jetp/sources.csv` mais jamais collectées, donc absentes
+de `data/jetp/manifest.csv` : `vnm-moit-project-bac-ai`,
+`vnm-evn-cdp-bac-ai-2025`, `vnm-eib-bac-ai-package-2025`,
+`vnm-moit-project-binh-duong-dong-nai`, `vnm-evn-afd-transmission-2025`,
+`vnm-moit-project-tri-an`, `vnm-evn-kfw-tri-an-2025`. L'onglet Observations
+du MVP les sert avec une empreinte nulle et affiche le localisateur en texte ;
+la recette VN de [[0834]] (« ouvrable en local ») reste ouverte tant que ces
+documents ne sont pas archivés. Le bulletin 5 du MOIT
+(`vnm-moit-newsletter-05-2025-07`) est déjà collecté.
+
+## Relevant files
+
+- `data/jetp/sources.csv` — les sept entrées avec leur URL
+- `data/jetp/manifest.csv`, `data/jetp/documents/` — registre et snapshot DVC
+- `scripts/jetp/corpus_harvest_documents.py` — collecteur
+- `deliverables/jetp-observatory/data/observations/VNM.json` — les sept lignes servies
+- `tests/test_jetp_observatory_observations.py` — le test qui épingle les sept identifiants comme non collectés
+
+## Actions
+
+1. Lancer le collecteur sur les sept sources ; consigner les échecs (URL
+   morte, page dynamique) avec leur statut dans le registre, jamais une ligne
+   inventée.
+2. Régénérer le registre, `documents.json`, la vue `observations/VNM.json` ;
+   `make jetp-data` puis `dvc commit`.
+3. Mettre à jour le test qui épingle les sept identifiants : ceux collectés
+   sortent de la liste, les échecs y restent avec leur statut.
+4. Rejouer la recette VN de 0834 sur l'onglet Observations : les lignes de
+   Bac Ai ouvrent leur document en local.
+
+## Test
+
+Red : `tests/test_jetp_observatory_observations.py` — la liste des
+identifiants non collectés ne contient plus ceux que le registre porte en
+statut `collected`.
+
+## Exit criteria
+
+- [x] Chaque source collectée ouvre en local depuis l'onglet Observations VNM — 7/7, Playwright depuis les trois fiches projet (log 2026-09-22), empreintes servies dans `deliverables/jetp-observatory/data/observations/VNM.json` (commits ffae0f86 puis 9a9ad724 après rebase sur 0858)
+- [x] Chaque échec de collecte est consigné dans le registre avec son statut — aucun échec : sept lignes `collected` dans `data/jetp/manifest.csv` (commit 43b6fc4d) ; `tests/test_jetp_observatory_observations.py::test_a_row_without_a_fingerprint_is_one_of_two_named_collection_gaps` vide la liste des non enregistrés (commit 0069463a)
+- [x] `make check-fast` et `make lint` passent — sur la tête rebasée 9ece2d98 : check-fast 2111 passed, 1 échec environnemental (3b432ef3 absent du clone, identique sur origin/main), lint 338 passed ; recensement 0817 régénéré en 18c80d2b

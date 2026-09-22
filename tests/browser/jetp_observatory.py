@@ -310,8 +310,9 @@ def check_facts(page, url):
     assert page.locator('#project-evidence tbody .pill').all_inner_texts() == [
         row['verification'] for row in served
     ]
-    # Bac Ai's ledger rows name sources the collection never archived (ticket
-    # 0854): their locator is text, and the count of links says exactly that.
+    # A ledger row links to its document only when the collection archived
+    # its source; a row whose source was never archived shows its locator as
+    # text, so the count of links says exactly how many were.
     assert page.locator('#project-evidence a[data-observation-id]').count() == sum(
         1 for row in served if row['sha256']
     )
