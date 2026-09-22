@@ -1,6 +1,6 @@
 # State
 
-Last updated: 2026-09-17T15:37Z
+Last updated: 2026-09-22T06:30Z
 
 ## Current goal
 
@@ -10,30 +10,28 @@ The RDJ-26561 data paper is published; Œconomia v2.0.5 remains with its editor.
 
 ## JETP checkpoint
 
-Backend migration and local observatory baseline are on `main`, no deployment.
-The 0736 audit and the 0729/0814 DEFERs record that no credible assignment
-mechanism or untreated comparison supports a causal JETP estimate; the author
-chose a non-causal comparative programme. M1a is accepted on `main` (four frozen
-inventories, 2,164 rows, six layers, unknowns shown, no identity fusion); its
-session closed 2026-09-17, gate green, `t0820-jetp-discriminator-packet` pushed
-for the M1b resume on doudou. 0833 is ready for the bounded M1b overlay; live
-refresh and match resolution stay M2; tracker 0725 stays open through the paper.
-Pending author decisions: the M1b taxonomy (0833, first action) and the 0732
-angle (advisor recommendation logged in the ticket: angles 1 and 2, angle 3 as
-an M2 child of 0725). The manual browser acceptance passed on padme on
-2026-09-17 (97 historical records); Playwright is now a dev dependency, and
-`uv run playwright install chromium` fetches its browser once per machine.
+No deployment; the author chose a non-causal comparative programme (0736 audit,
+0729/0814 DEFERs). M1a was redefined on 2026-09-17 as the three-stage
+explorable MVP (tracker 0834): its five children and 0852/0853 landed
+2026-09-21/22, but the integration review kept the tracker open on three finds
+fixed in PR #1439 (0855–0857), in ESCALATE on one author decision (rendering of
+sources with no extracted row). `main` is red on the slow tier until #1439
+merges (ZAF.json over the 512 kB publication cap since 0839). 0854 (seven VNM
+sources) needs padme, halted overnight, rebooted 2026-09-22. 0833 is ready for the bounded
+M1b overlay; tracker 0725 stays open through the paper. Pending author
+decisions: #1439, the M1b taxonomy (0833), the 0732 angle. Primary checkout:
+`git config core.hooksPath .githooks` (it points at a missing `hooks/`).
 
 ## Status
-<!-- generated 2026-09-17T15:37Z · as of 3a5c32c9 -->
+<!-- generated 2026-09-22T06:30Z · as of 146d76ef -->
 
-**Tickets:** 54 ready · 51 blocked · 9 awaiting author — `erg ready tickets/` for full list
+**Tickets:** 59 ready · 51 blocked · 9 awaiting author — `erg ready tickets/` for full list
   next: 0272 Extract shared derive_companion_path() helper f… · 0273 load_cluster_labels() ignores --input, reads cl…
-**In flight:** no open PRs
+**In flight:** 1 open PR, oldest #1439 0d
 **Recent (first-parent):**
-  3a5c32c9 Merge pull request #1425 from MinhHaDuong/state-2026-09-17
-  2969e72e Merge pull request #1424 from MinhHaDuong/housekeeping-state-2026-09-17-m1a
-  f796644a chore(jetp): close delivered M1a ticket (#1423)
+  146d76ef Merge pull request #1438 from MinhHaDuong/t0852-filtertable-retrofit
+  ebb29f88 Merge pull request #1437 from MinhHaDuong/tickets-0834-integration
+  3231d3e0 Merge pull request #1436 from MinhHaDuong/t0839-etage3-faits-reconcilies
 
 ## Corpus and submissions
 
