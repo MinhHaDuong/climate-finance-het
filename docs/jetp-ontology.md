@@ -76,12 +76,21 @@ a report issued jointly by a secretariat and a ministry, names every publisher.
 A document may have editions; an edition is a document row related to its
 predecessor.
 
+### Retrieval
+
+One attempt to fetch one document at one time: the date, the HTTP outcome,
+the headers that matter and, when bytes came back, the fingerprint of the
+snapshot they form. This is the current manifest row. A retrieval may fail
+and hold no snapshot; two retrievals may return the same bytes and share one
+snapshot, as the manifest already shows with a `not_modified` re-fetch three
+minutes after a collection.
+
 ### Snapshot
 
-One retrieval of one document: exact bytes under a SHA-256 fingerprint, the
-retrieval date, the HTTP outcome and the storage path. This is the current
-manifest row. A statement in the ledger cites a snapshot, never a URL, so that
-what was read can be re-read.
+Exact bytes under a SHA-256 fingerprint, with the storage path. A snapshot
+belongs to the documents whose retrievals returned it, which for a mirror is
+two. A statement in the ledger cites a snapshot, never a URL or a retrieval,
+so that what was read can be re-read.
 
 ### Line
 
@@ -161,9 +170,12 @@ One dated statement about one subject, cited to one line: a flow on an
 agreement, a state of an asset, a stage of a project, a capacity, an estimate
 on a plan line, a count on a perimeter, an envelope on a partnership. The
 subject is typed, `(subject_kind, subject_id)`, and may be a line itself when
-no identity has been minted. The date carries a role (event, reporting cutoff,
-register date, planned) and a precision. Values are the publisher's, in the
-publisher's unit and currency; conversion is a derivation.
+no identity has been minted. An observation has one or more timings, each
+with a role (event, approval, reporting cutoff, register date, report date,
+planned), a precision and bounds, so that an approval known only to the year
+and the cutoff of the report that states it are both kept. Values are the
+publisher's, in the publisher's unit and currency; conversion is a
+derivation.
 
 ### Crosswalk
 
@@ -180,7 +192,8 @@ decided it and when.
 | `edition_of` | document | document | succeeds a previous edition |
 | `same_as` (document) | document | document | one publication under two URLs or two exports; the lines belong to the canonical one |
 | `translation_of` | document | document | the same publication in another language; lines are extracted from one and cross-referenced, never doubled |
-| `snapshot_of` | snapshot | document | bytes of one retrieval |
+| `retrieval_of` | retrieval | document | one fetch attempt |
+| `yields` | retrieval | snapshot | the bytes a successful retrieval returned; absent on failure |
 | `in_snapshot` | line | snapshot | with locator and ordinal |
 | `groups` | line | line | a heading line groups the lines under it in the same document |
 | `refers_to` | line | project, asset, agreement, party, perimeter | the reviewed match that minted or attached an identity; dated; never deletes the line |
@@ -189,11 +202,12 @@ decided it and when.
 | `concerns` | project | asset | zero or more |
 | `finances` | agreement | project | many-to-many |
 | `tranche_of` | agreement | agreement | at most one active parent |
-| `party_in` | party | agreement | with role |
-| `member_of` | project, asset, agreement | perimeter | dated evidence of membership |
+| `party_in` | party | agreement | one row per role; a party may fund one agreement and channel another |
+| `member_of` | line, project, asset, agreement | perimeter | dated evidence of membership; a line may be a member before any identity is minted |
 | `same_as` | any | same kind | equality evidence; does not choose a route |
 | `about` | observation | any subject | typed |
 | `cites` | observation | line | exactly one |
+| `timed` | observation | timing | one row per date role; the amount lives once on the observation |
 
 ## 4. Line classifications and status axes
 
@@ -236,7 +250,8 @@ into `<table>/<CODE>.csv`, which stays one table.
 | `publishers` | `publisher_id` | name, authority_category, country, notes |
 | `documents` | `document_id` | country, document_type, language, title, url, published_date, edition_of, active, notes |
 | `document-publishers` | (document_id, publisher_id) | role |
-| `snapshots` | `sha256` | document_id, retrieved_at, status, http_status, content_type, size_bytes, storage_path, final_url, error |
+| `retrievals` | `retrieval_id` | document_id, retrieved_at, status, http_status, content_type, etag, last_modified, final_url, error, sha256 (nullable) |
+| `snapshots` | `sha256` | storage_path, size_bytes, content_type |
 | `lines` | `line_id` | country, sha256, locator, ordinal, label, classification, own_status, own_status_axis, groups, notes |
 | `line-fields/<document_id>` | `line_id` | the document's own columns, verbatim, header as printed |
 | `projects` | `project_id` | country, canonical_name, aliases, classification, classified_at, notes |
@@ -245,8 +260,9 @@ into `<table>/<CODE>.csv`, which stays one table.
 | `parties` | `party_id` | name, kind, country, publisher_id |
 | `perimeters` | `perimeter_id` | country, name, scope, definition, notes |
 | `line-referents` | `referent_row_id` | line_id, referent_kind, referent_id, status, method, method_version, confidence, evidence_line_ids, decided_at, decided_by, supersedes, notes |
-| `relations` | `relation_id` | from_kind, from_id, relation, to_kind, to_id, valid_from, valid_to, status, method, method_version, confidence, decided_at, decided_by, supersedes, line_id |
-| `observations` | `observation_id` | subject_kind, subject_id, axis, measure, value, unit, currency, own_status, date, date_role, date_precision, line_id, notes |
+| `relations` | `relation_id` | from_kind, from_id, relation, to_kind, to_id, role, valid_from, valid_to, status, method, method_version, confidence, decided_at, decided_by, supersedes, line_id |
+| `observations` | `observation_id` | subject_kind, subject_id, axis, measure, value, unit, currency, own_status, line_id, notes |
+| `timings` | `timing_id` | observation_id, date_role, date, date_precision, lower_bound, upper_bound, line_id |
 | `status-crosswalk` | (publisher_id, own_status) | axis, shared_status, decided_at, decided_by, notes |
 | `routes` | `old_id` | kind, new_id |
 | `coverage` | (referent_kind, referent_id) | review_status, checked_at, route, document_ids, notes |
@@ -256,7 +272,19 @@ into `<table>/<CODE>.csv`, which stays one table.
 Rules that the validator enforces:
 
 - An observation cites exactly one line and its subject exists.
-- A line's `sha256` exists in `snapshots` and the bytes exist in the store.
+- A line's `sha256` exists in `snapshots`, the bytes exist in the store, and
+  at least one retrieval of the line's document yields that snapshot.
+- A decision row (`line-referents`, `relations`) is in force only when it is
+  the terminal row of its supersession chain and its status is `accepted`.
+  A chain is linear: a row supersedes at most one row and is superseded by at
+  most one. A terminal `rejected` row revokes whatever its chain previously
+  accepted, with no replacement needed; a terminal `candidate` row is
+  pending and not in force; an `accepted` row that any row supersedes is no
+  longer in force. The same rule governs document deduplication, so a
+  rejected `same_as` re-enables extraction of the document it had folded.
+- An observation carries no date of its own. Each date it reports is a
+  `timings` row with its role, precision and bounds; a value is stored once
+  and never repeated per date role.
 - A `line_id` is minted by the extractor as `<document_id>-<table>-<ordinal>`,
   in extraction order, appended only and never renumbered: a re-extraction
   that finds a dropped row appends it under the next ordinal. The pair
@@ -279,7 +307,7 @@ Rules that the validator enforces:
   kind, or a perimeter observation.
 
 What disappears: `sources.csv` (becomes `publishers`, `documents`,
-`document-publishers`), `manifest.csv` (becomes `snapshots`),
+`document-publishers`), `manifest.csv` (becomes `retrievals` and `snapshots`),
 `plan-projects.csv` (lines), `events.csv` and `implementation-events.csv`
 (observations), `project-source-links.csv` (lines with classification
 `named_item` and a `refers_to` of basis `discovery`), `source-claims.csv`
@@ -287,7 +315,7 @@ What disappears: `sources.csv` (becomes `publishers`, `documents`,
 observations), `idn-portfolio-observations.csv`, `vnm-pilot-manifest.csv` and
 `vnm-pilot-observations.csv` (lines and observations of their documents),
 `project-coverage.csv` and `authority-coverage.csv` (`coverage`),
-`event-timing.csv` (date_role and date_precision on the observation). The M1a
+`event-timing.csv` (becomes `timings`, one row per date role of an observation). The M1a
 inventory builder becomes the line ingestion for its four documents; the
 frozen M1a release stays as the archived edition it is.
 
@@ -302,16 +330,17 @@ before the current tables are removed. Counts below are from the tables on
 | Current | Rows | Target | Notes |
 |---|---|---|---|
 | `sources.csv` | 301 | 103 publishers, 301 documents, 301 publications | joint publications added by review, none derivable from the free text |
-| `manifest.csv` | 314 | 314 snapshots | unchanged content |
+| `manifest.csv` | 314 | 314 retrievals, 264 snapshots | 41 failed retrievals carry no snapshot; 9 snapshots are yielded by two retrievals each |
 | `projects.csv` ZAF register | 257 | 257 lines of the Q1 2026 register, `register_allocation`; 257 agreements minted by basis `register_row`; projects minted only where the reviewed name match holds | the register's own status letter becomes `own_status`, axis delivery |
 | `projects.csv` VNM count slots | 21 | 1 perimeter, 2 observations of measure `count` (7 initial, 17 screened) citing the portfolio lines | routes for the 21 slot identifiers point at the perimeter |
 | `projects.csv` SEN | 43 | 49 lines already exist; 43 referents re-decided from the plan's own submission and quick-win lines | quick win is a classification of a line, not a kind |
 | `projects.csv` IDN | 74 | 44 grant lines become agreements; 19 pipeline and 9 finance rows become projects or agreements on review; 2 monitoring rows become lines | |
 | `projects.csv` remainder | 9 | projects | |
-| `plan-projects.csv` | 1 628 | 1 628 lines in two IDN and two SEN documents; 67 `matched` become `refers_to` rows; capacity and estimates become observations on the line | `ruptl` becomes `member_of` a RUPTL perimeter |
+| `plan-projects.csv` | 1 628 | 1 628 lines in two IDN and two SEN documents; 67 `matched` become `refers_to` rows; capacity and estimates become observations on the line | the 230 `plan_only` lines flagged `ruptl` become `member_of` a RUPTL perimeter from the line itself, with no identity minted |
 | Viet Nam RMP release | 279 | 279 lines; the 73 programme rows are `heading`, the 181 unresolved are `unnamed_item` | |
 | `events.csv` | 380 | 380 observations, axis money; the 34 `need` rows become observations of measure `estimate` on their plan lines | subject is the agreement minted from the same line |
 | `implementation-events.csv` | 71 | 71 observations on assets or projects after the subject review | `suspended` on a retirement becomes an asset state, not a project stage |
+| `event-timing.csv` | 451 | 451 timings, one per date role, on the observations migrated from the two event tables | an approval bounded to a year and the cutoff of the report that states it become two rows of one observation |
 | `project-source-links.csv` | 315 | 315 `refers_to` rows of basis `discovery` or `possible_match` | the 11 `project_page_component` rows become `component_of` relations |
 | `source-claims.csv` | 151 | lines and observations; the two finance aggregates become perimeter observations that replace the hard-coded headlines | |
 | `config/jetp_observatory.yaml` headlines | 4 | perimeter observations citing their lines | configuration keeps only display choices |
@@ -342,8 +371,8 @@ Order of work, each step a ticket with its own byte-level check:
 
 ## 7. What the observatory serves
 
-The three-stage MVP (ticket 0834) keeps its shape. Stage one is documents and
-snapshots. Stage two is lines, per document, with the publisher's own fields.
+The three-stage MVP (ticket 0834) keeps its shape. Stage one is documents,
+retrievals and snapshots. Stage two is lines, per document, with the publisher's own fields.
 Stage three is identities with their observations, each observation opening
 the line and the snapshot page it cites. The inventory tab is a view on lines;
 the Observations tab is a view on observations; a record page joins at read
@@ -427,10 +456,13 @@ carries who or what decided (`decided_by`: a script name, a model identifier,
 or a person), by which method and version, with what confidence in [0, 1], on
 which evidence lines, and when. Its `status` is `accepted`, `candidate` or
 `rejected`. A decision is never edited or deleted: a later row names the
-earlier one in `supersedes`, and the ledger serves the newest accepted row
-while keeping the chain. A candidate below the acceptance threshold stays a
-candidate, counted and visible, as ticket 0833 already requires for its
-`possible_matches`; it never alters a count of accepted identities.
+earlier one in `supersedes`, and what is in force is the terminal row of the
+chain when its status is `accepted` (section 5, rules). A reviewer revokes a
+false match by appending a `rejected` row that supersedes it; nothing else
+has to be minted for the revocation to take effect. A candidate below the
+acceptance threshold stays a candidate, counted and visible, as ticket 0833
+already requires for its `possible_matches`; it never alters a count of
+accepted identities.
 
 **The tiers.** Each tier runs only on what the previous one left undecided,
 and each writes its rows with its own method name.
