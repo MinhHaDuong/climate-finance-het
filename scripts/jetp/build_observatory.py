@@ -10,7 +10,7 @@ from pathlib import Path
 
 import yaml
 
-from jetp._m1a_document_links import PDF_PAGE
+from jetp._m1a_document_links import pdf_page_of
 from jetp._observatory_data import (
     document_entry,
     historical_record,
@@ -246,9 +246,9 @@ def m1a_reference(row, ordinal):
         'label': row.get('label', ''), 'evidence_locator': row.get('evidence_locator', ''),
         'row': ordinal,
     }
-    match = PDF_PAGE.search(row.get('evidence_locator') or '')
-    if match:
-        reference['pdf_page'] = int(match.group(1))
+    page = pdf_page_of(row.get('evidence_locator'))
+    if page is not None:
+        reference['pdf_page'] = page
     return reference
 
 

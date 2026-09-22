@@ -349,6 +349,13 @@ function factItem(fact) {
 function foldout(label, items, item, key, none, attrs = "") {
   return `<details class="foldout"${attrs} data-${key}-count="${items.length}"><summary>${esc(label)} · ${fmt(items.length)}</summary>${items.length ? `<ul class="citing">${items.map(item).join("")}</ul>` : `<p class="note">${esc(none)}</p>`}</details>`;
 }
+/* One sentence where a list has nothing to show, in place of the list: the
+ * same shape wherever a fold-out's source is empty, carrying the data
+ * attribute a test or the browser recipe reads. The body is HTML the caller
+ * has already escaped, since some notes carry a link. */
+function emptyNote(key, value, html) {
+  return `<p class="note" data-${key}="${esc(value)}">${html}</p>`;
+}
 /* Ticket 0856: one fold-out per stage-two product, each with its own count in
  * its own summary. A ledger row and an M1a row can describe the same paragraph
  * of the same file, so "Extracted here · 514" for the ZAF register — 257 of
@@ -362,7 +369,7 @@ const PRODUCT_LABELS = { ledger: "Ledger rows", m1a: "M1a rows" };
 function extractedFoldouts(extracted, entry) {
   const products = [...new Set(extracted.map((row) => row.product))];
   if (!products.length)
-    return '<p class="note" data-extracted-count="0">Nothing extracted from this source in this edition.</p>';
+    return emptyNote("extracted-count", 0, "Nothing extracted from this source in this edition.");
   return products
     .map((product) =>
       foldout(PRODUCT_LABELS[product] || product,
@@ -712,11 +719,11 @@ function inventoryFocus(code, rows, focus) {
   if (!row)
     return {
       shown: rows,
-      note: `<p class="note" data-inventory-focus="none">This export has no row ${fmt(focus)}; showing all ${fmt(rows.length)} rows.</p>`,
+      note: emptyNote("inventory-focus", "none", `This export has no row ${fmt(focus)}; showing all ${fmt(rows.length)} rows.`),
     };
   return {
     shown: [row],
-    note: `<p class="note" data-inventory-focus="${focus}">Row ${fmt(focus)} of the ${fmt(rows.length)} rows in this export, as the Documents page cites it. <a href="#inventory/${code}">Show all ${fmt(rows.length)} rows →</a></p>`,
+    note: emptyNote("inventory-focus", focus, `Row ${fmt(focus)} of the ${fmt(rows.length)} rows in this export, as the Documents page cites it. <a href="#inventory/${code}">Show all ${fmt(rows.length)} rows →</a>`),
   };
 }
 function renderInventory(code, rows, observations, focus) {
@@ -866,7 +873,7 @@ function projectEvidenceRow(row) {
 function projectEvidence(rows) {
   return rows.length
     ? `<details class="foldout" data-evidence-count="${rows.length}"><summary>${fmt(rows.length)} ledger ${rows.length === 1 ? "observation" : "observations"}</summary><div class="table-wrap"><table><thead><tr><th>Table</th><th>Row</th><th>Verification</th><th>Evidence</th></tr></thead><tbody>${rows.map(projectEvidenceRow).join("")}</tbody></table></div></details>`
-    : '<p class="note" data-evidence-count="0">No ledger observation is addressed to this identity in this edition.</p>';
+    : emptyNote("evidence-count", 0, "No ledger observation is addressed to this identity in this edition.");
 }
 /* Fills the section once the view arrives, if the reader is still on this
  * page. The view absent, the section says so and points at the tab that
@@ -882,7 +889,7 @@ function fillProjectEvidence(p) {
     })
     .catch((error) => {
       if (!still() || !section()) return;
-      section().innerHTML = `<p class="note" data-evidence-count="unavailable">The ${esc(p.country)} ledger observations could not load (${esc(error.message)}). They are the rows of the <a href="#inventory/${esc(p.country)}">Ledger observations tab</a> addressed to <code>${esc(p.id)}</code>.</p>`;
+      section().innerHTML = emptyNote("evidence-count", "unavailable", `The ${esc(p.country)} ledger observations could not load (${esc(error.message)}). They are the rows of the <a href="#inventory/${esc(p.country)}">Ledger observations tab</a> addressed to <code>${esc(p.id)}</code>.`);
     });
 }
 /* A source card opens the archived copy where the registry holds one. Resolved
