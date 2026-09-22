@@ -1,0 +1,67 @@
+%erg 0.1
+Title: Collecter les deux sources non archivées des 21 places comptées du Viet Nam
+Created: 2026-09-22
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-09-22T10:22Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Décidé par l'auteur le 2026-09-22, en explorant le MVP après la fusion de
+[[0854]]. Le Viet Nam affiche « 3 named · 21 unpublished » : quatre places
+de projets initiaux et dix-sept propositions présélectionnées, annoncées par
+la divulgation officielle de juillet 2025, portées par `data/jetp/projects.csv`
+en `verification_status = official_count_slot` et documentées ligne par ligne
+dans `data/jetp/project-coverage.csv`. Chacune de ces 21 lignes de couverture
+cite le même triplet de sources : `vnm-moit-newsletter-05-2025-07` (archivé),
+`vnm-eeas-jetp-project-progress-2025` (note du Service européen pour l'action
+extérieure du 2025-07-09) et `vnm-moit-project-index-2026` (index des projets
+sur le site du MOIT). Les deux derniers sont dans `data/jetp/sources.csv` mais
+absents de `data/jetp/manifest.csv` : jamais collectés. Deux des trois sources
+qui fondent le 21 ne sont donc pas archivées. Même geste que [[0854]].
+
+Ne pas lancer avant que l'auteur le demande.
+
+## Relevant files
+
+- `data/jetp/sources.csv` — les deux entrées et leur URL
+- `data/jetp/manifest.csv`, `data/jetp/documents/` — registre et snapshot DVC
+- `scripts/jetp/corpus_harvest_documents.py`, cible `jetp-harvest` — collecteur
+- `data/jetp/project-coverage.csv` — les 21 lignes qui citent ces sources
+- `tests/test_jetp_observatory_observations.py` — épingle les observations sans empreinte ; vérifier si ces deux sources y comptent
+
+## Actions
+
+1. Sur padme (la capture DVC y est contrainte par `jetp-documents-track`),
+   `make jetp-harvest JETP_SOURCE_ID=<id>` pour chacune des deux sources ;
+   consigner le résultat tel qu'écrit par le collecteur, jamais une ligne
+   inventée. L'index MOIT est une page de liste, possiblement paginée ou
+   dynamique : un échec est un résultat.
+2. `make jetp-documents-track`, `dvc push`, commit du registre et du pointeur.
+3. Régénérer `documents.json` et les vues touchées ; le pre-commit reste à
+   512 000 octets.
+4. Rejouer le pas qui compte : depuis la page Documents, chaque source
+   collectée ouvre en local, et sa remontée liste ce qui la cite.
+
+## Test
+
+Red : le test qui épingle les lignes sans empreinte
+(`tests/test_jetp_observatory_observations.py`) ou, si ces sources n'y
+figurent pas, un test de registre : les deux `source_id` ont une tentative
+de collecte consignée, `collected` ou un statut d'échec nommé.
+
+## Verification
+
+- [ ] Registre : une ligne par source, statut consigné
+- [ ] Page Documents : les sources collectées ouvrent en local
+- [ ] `dvc status -c` en phase après push
+
+## Exit criteria
+
+- [ ] Les deux sources ont une tentative de collecte dans le registre, avec son résultat
+- [ ] Les vues servies sont régénérées sur ce registre
+- [ ] `make check-fast` et `make lint` passent

@@ -1,0 +1,94 @@
+%erg 0.1
+Title: Le MVP sert toutes les tables du ledger : recensement, puis la couverture en premier
+Created: 2026-09-22
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-09-22T10:22Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Principe posé par l'auteur le 2026-09-22 : **le MVP doit servir toutes les
+données**. Le cas qui l'a fait dire : le Viet Nam affiche « 21 unpublished »
+et rien ne permet, depuis le site, de descendre de ces 21 places comptées à
+leurs sources, alors que `data/jetp/project-coverage.csv` porte pour chacune
+une ligne (`review_status = not_published`, trois `source_ids`, date de
+vérification, route, note). La couverture n'est pas une des tables servies.
+
+État des tables du ledger (`data/jetp/*.csv`) au 2026-09-22 :
+
+| Table | Lignes | Servie par le MVP |
+|---|---|---|
+| `projects` | 404 | oui, vues pays `<CODE>.json` (nommés + places comptées) |
+| `events`, `implementation-events`, `project-source-links` | 380 / 71 / 315 | oui, `observations/<CODE>.json` (0838) |
+| `manifest` | 314 | oui, `documents.json` (0835, 0858) |
+| `sources` | 301 | partiellement : cartes source des fiches projet, compte d'accueil ; pas comme table |
+| `project-coverage` | 141 | **non** |
+| `source-claims` | 151 | **non** (lue par le générateur, jamais rendue) |
+| `event-timing` | 451 | **non** (lue par le générateur pour dater, jamais rendue) |
+| `authority-coverage`, `dry-searches`, `news-leads` | 64 / 110 / 18 | non ; fichiers de travail de la veille |
+| `plan-projects` | 1 628 | non ; entrée des inventaires M1a (IDN) |
+| `idn-portfolio-observations`, `vnm-pilot-*` | 46 / 66 / 46 | non ; pilotes, hors compte par décision (0838 § Imagine) |
+
+Ce ticket est un suiveur : son action 1 tranche la ligne à tracer entre les
+tables du ledger (à servir) et les fichiers de travail (à documenter comme non
+servis, avec la raison) ; ses enfants servent une table chacun, en forme
+normale (un fichier = une table, jointure à la lecture, [[0858]]), sans
+fabriquer d'identité ni de total. Le premier enfant est la couverture.
+
+Ne pas lancer avant que l'auteur le demande.
+
+## Relevant files
+
+- `scripts/jetp/build_observatory.py` — `TABLES`, `country_data()`, `project_data()`
+- `scripts/jetp/build_observations.py` — modèle d'une table servie par pays
+- `deliverables/jetp-observatory/app.js` — `countryPage()`, onglets d'inventaire, `stageTwo()` (jointure à la lecture)
+- `deliverables/jetp-observatory/README.md` — « What is included »
+- `tests/test_jetp_observatory_render.py`, `tests/_jetp_observatory_render.js` — harnais de rendu
+
+## Actions
+
+1. Recensement : pour chaque fichier de `data/jetp/*.csv`, dire s'il est une
+   table du ledger ou un fichier de travail, avec la raison, dans une note du
+   corps de ce ticket ; l'auteur arbitre la ligne. Les fichiers de travail
+   sont nommés sur la page Methods comme non servis, avec la raison.
+2. Enfant 1, la couverture : servir `data/jetp/project-coverage.csv` en
+   `coverage/<CODE>.json` (une table, colonnes verbatim). Sur la page pays, les
+   places comptées gagnent un dépliage « Sources of this count » qui liste
+   leurs lignes de couverture et ouvre chaque source par le registre
+   (`documentHref`, repli texte si non archivée). Aucune fiche pour une place
+   comptée : le dépliage vit sur la page pays, sous le compte.
+3. Enfant 2, les revendications de sources (`source-claims`) : une table par
+   pays, dépliage sur la carte source et sur la page Documents (« Claims made
+   by this source »), `match_status` verbatim.
+4. Enfant 3, la datation (`event-timing`) : une table par pays, jointe à la
+   lecture sur l'observation qu'elle date ; le rôle de date et la précision
+   deviennent lisibles sur la ligne d'observation.
+5. Enfant 4, `sources` comme table : la page Documents gagne l'onglet des
+   sources curées (301) à côté des tentatives de collecte (314), jointure sur
+   `source_id`, jamais un total des deux.
+6. Chaque enfant : test de rendu sur le harnais Node (la table servie porte
+   ses lignes verbatim ; le dépliage n'additionne rien), recette navigateur
+   étendue, README aligné.
+
+## Test
+
+Le recensement n'a pas de test. Enfant 1, red :
+`tests/test_jetp_observatory_render.py` — la page Viet Nam rend, sous le
+compte des 21 places, 21 dépliages dont chacun cite les trois `source_ids`
+de sa ligne de couverture et aucun nom de projet.
+
+## Verification
+
+- [ ] Recensement arbitré par l'auteur, consigné dans le corps
+- [ ] Depuis « 21 unpublished » sur la page Viet Nam, chaque place descend à sa ligne de couverture et à ses sources
+- [ ] Aucun compte affiché n'additionne deux tables
+
+## Exit criteria
+
+- [ ] Toute table du ledger est servie, une table par fichier, ou nommée comme non servie avec sa raison sur la page Methods
+- [ ] Les enfants sont fermés
+- [ ] La descente depuis les places comptées du Viet Nam fonctionne dans le navigateur
