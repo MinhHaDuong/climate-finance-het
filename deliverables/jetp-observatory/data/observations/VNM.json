@@ -11,7 +11,7 @@
     "table": "project-source-links",
     "kind": "project_source_link",
     "verification": "confirmed",
-    "sha256": null,
+    "sha256": "07ce7f91c621e9de6d59a581d4ef17fc20b61f58277fb34bf9567fd558103692",
     "pdf_page": null
   },
   {
@@ -26,7 +26,7 @@
     "table": "project-source-links",
     "kind": "project_source_link",
     "verification": "confirmed",
-    "sha256": null,
+    "sha256": "81f8b5b58bd1cf49e513164d6405f2c0365a7d4e7595c6a4bcd4a2c140ed5a6f",
     "pdf_page": null
   },
   {
@@ -41,7 +41,7 @@
     "table": "project-source-links",
     "kind": "project_source_link",
     "verification": "confirmed",
-    "sha256": null,
+    "sha256": "3331f31e52f14bfb1868e462d9a156fa4fb7bdb9720e5712b6329722dff45aea",
     "pdf_page": null
   },
   {
@@ -56,7 +56,7 @@
     "table": "project-source-links",
     "kind": "project_source_link",
     "verification": "confirmed",
-    "sha256": null,
+    "sha256": "e5ebf05d9af5ad45d0e7649bb535ea9182144503b31e1202441b9e323d8d49fc",
     "pdf_page": null
   },
   {
@@ -71,7 +71,7 @@
     "table": "project-source-links",
     "kind": "project_source_link",
     "verification": "confirmed",
-    "sha256": null,
+    "sha256": "1f100c4b8718f302a905676aed83bcd724dd11803db50ef7680a18e49c542cd8",
     "pdf_page": null
   },
   {
@@ -86,7 +86,7 @@
     "table": "project-source-links",
     "kind": "project_source_link",
     "verification": "confirmed",
-    "sha256": null,
+    "sha256": "aa580602d8cdc667737ea98bff66ec576f1c722c3715393eb176f225c7916920",
     "pdf_page": null
   },
   {
@@ -101,7 +101,7 @@
     "table": "project-source-links",
     "kind": "project_source_link",
     "verification": "confirmed",
-    "sha256": null,
+    "sha256": "87441e68421e4322f61d31809f084e346e77b18b6995b8a24411d028a5757994",
     "pdf_page": null
   }
 ]
