@@ -324,26 +324,66 @@ const byteSize = (n) =>
  * rely on it (named projects, reviewed records). Two lists, never a total;
  * an absent identifier is rendered as the statement that nothing cites the
  * document in this edition, never as an empty list dressed as one. */
-function extractedItem(row) {
+/* Ticket 0857: an M1a position links to its own inventory row — ?row=N is the
+ * row's rank in the export the inventory page loads, written by the generator
+ * with the reference — and, where its locator names a PDF page, to that page
+ * of the archived copy; the page too comes from the generator, never re-read
+ * from the locator here. A ledger row gets the same page link when it carries
+ * one. No page named, no link: an absent page is not page 1. */
+function extractedPageLink(row, entry, key) {
+  const href = row.pdf_page ? documentHref(entry, row.pdf_page) : null;
+  return href
+    ? ` · <a href="${esc(href)}" data-extracted-page="${esc(key)}" target="_blank" rel="noopener">PDF page ${row.pdf_page} ↗</a>`
+    : "";
+}
+function extractedItem(row, entry) {
   if (row.product === "m1a")
-    return `<li><a href="#inventory/${esc(row.country)}"><code>${esc(row.source_row_id)}</code></a> ${esc(row.label || "Identity not published")}<small>${esc(row.source_layer)} · ${esc(row.evidence_locator || "No locator recorded")}</small></li>`;
-  return `<li><a href="#inventory/${esc(row.country)}">${esc(OBSERVATION_KINDS[row.kind] || row.kind)} <code>${esc(row.id)}</code></a> · ${pill(row.verification)}<small>${esc(row.table)} · <a href="#project/${encodeURIComponent(row.project_id)}">${esc(row.project_id)}</a> · ${esc(row.locator || "No locator recorded")}</small></li>`;
+    return `<li><a href="#inventory/${esc(row.country)}?row=${Number(row.row)}"><code>${esc(row.source_row_id)}</code></a> ${esc(row.label || "Identity not published")}${extractedPageLink(row, entry, row.source_row_id)}<small>${esc(row.source_layer)} · ${esc(row.evidence_locator || "No locator recorded")}</small></li>`;
+  return `<li><a href="#inventory/${esc(row.country)}">${esc(OBSERVATION_KINDS[row.kind] || row.kind)} <code>${esc(row.id)}</code></a> · ${pill(row.verification)}${extractedPageLink(row, entry, row.id)}<small>${esc(row.table)} · <a href="#project/${encodeURIComponent(row.project_id)}">${esc(row.project_id)}</a> · ${esc(row.locator || "No locator recorded")}</small></li>`;
 }
 function factItem(fact) {
   return fact.record_id
     ? `<li><a href="#evidence">${esc(fact.label)}</a><small>Reviewed record · ${esc(fact.status.replaceAll("_", " "))} · ${esc(country(fact.country)?.short || fact.country)}</small></li>`
     : `<li><a href="#project/${encodeURIComponent(fact.project_id)}">${esc(fact.name)}</a><small>Named record · ${esc(country(fact.country)?.short || fact.country)}</small></li>`;
 }
-function foldout(label, items, item, key, none) {
-  return `<details class="foldout" data-${key}-count="${items.length}"><summary>${esc(label)} · ${fmt(items.length)}</summary>${items.length ? `<ul class="citing">${items.map(item).join("")}</ul>` : `<p class="note">${esc(none)}</p>`}</details>`;
+function foldout(label, items, item, key, none, attrs = "") {
+  return `<details class="foldout"${attrs} data-${key}-count="${items.length}"><summary>${esc(label)} · ${fmt(items.length)}</summary>${items.length ? `<ul class="citing">${items.map(item).join("")}</ul>` : `<p class="note">${esc(none)}</p>`}</details>`;
+}
+/* One sentence where a list has nothing to show, in place of the list: the
+ * same shape wherever a fold-out's source is empty, carrying the data
+ * attribute a test or the browser recipe reads. The body is HTML the caller
+ * has already escaped, since some notes carry a link. */
+function emptyNote(key, value, html) {
+  return `<p class="note" data-${key}="${esc(value)}">${html}</p>`;
+}
+/* Ticket 0856: one fold-out per stage-two product, each with its own count in
+ * its own summary. A ledger row and an M1a row can describe the same paragraph
+ * of the same file, so "Extracted here · 514" for the ZAF register — 257 of
+ * each — was the sum this site forbids everywhere else. A product the document
+ * has no row of gets no fold-out, not an empty one; a product this table does
+ * not name is still listed, under its own name, rather than dropped. A source
+ * nothing was extracted from (55 in this edition, cited by facts only) gets
+ * one sentence and no fold-out at all — an empty list is still a list, and
+ * this site never fabricates one (author's decision, 2026-09-22, PR #1439). */
+const PRODUCT_LABELS = { ledger: "Ledger rows", m1a: "M1a rows" };
+function extractedFoldouts(extracted, entry) {
+  const products = [...new Set(extracted.map((row) => row.product))];
+  if (!products.length)
+    return emptyNote("extracted-count", 0, "Nothing extracted from this source in this edition.");
+  return products
+    .map((product) =>
+      foldout(PRODUCT_LABELS[product] || product,
+        extracted.filter((row) => row.product === product),
+        (row) => extractedItem(row, entry), "extracted", "",
+        ` data-extracted-product="${esc(product)}"`))
+    .join("");
 }
 function extractionCell(entry) {
   const linked = (documentsData.by_source_id || {})[entry.id];
   if (!linked)
     return `<span class="note" data-uncited="${esc(entry.id)}">No extracted row and no fact cites this source in this edition.</span>`;
   return (
-    foldout("Extracted here", linked.extracted, extractedItem, "extracted",
-      "Nothing extracted from this source in this edition.") +
+    extractedFoldouts(linked.extracted, entry) +
     foldout("Facts relying on it", linked.facts, factItem, "facts",
       "No fact relies on this source in this edition.")
   );
@@ -352,8 +392,11 @@ function documentsPage() {
   const rows = documentsData.documents;
   const values = (key) =>
     [...new Set(rows.map((r) => r[key]).filter(Boolean))].sort();
+  // The archived copy opens at the first page its extracted rows name, when
+  // every product that names one agrees (first_pdf_page, written by the
+  // generator, ticket 0857); at its own first page otherwise.
   const archived = (r) => {
-    const href = documentHref(r);
+    const href = documentHref(r, (documentsData.by_source_id || {})[r.id]?.first_pdf_page);
     return href
       ? `<a href="${esc(href)}" data-document-id="${esc(r.row_key)}" target="_blank" rel="noopener">Open archived copy ↗</a>`
       : `<span class="note">${esc(r.error || "Not in the local snapshot")}</span>`;
@@ -398,7 +441,7 @@ function documentsPage() {
       { label: "Content type", cell: (r) => esc(r.content_type || "Not recorded") },
       { label: "Size", cell: (r) => esc(byteSize(r.size_bytes)) },
       { label: "Archived copy", cell: archived },
-      { label: "Extracted here · relied on by", cell: extractionCell },
+      { label: "Extracted here, per product · relied on by", cell: extractionCell },
       {
         label: "Origin",
         cell: (r) =>
@@ -432,7 +475,24 @@ const INVENTORY_FACETS = [
   ["reported_status", "Reported status", "All reported statuses"],
   ["identity_status", "Identity", "All identity outcomes"],
 ];
+/* One load per key per session. A rejected load is dropped from the cache so a
+ * transient failure is retried on the next visit, not replayed for the rest
+ * of the session. */
+function cached(cache, key, make) {
+  if (!cache[key])
+    cache[key] = make().catch((error) => {
+      delete cache[key];
+      throw error;
+    });
+  return cache[key];
+}
 const inventoryCache = {};
+/* One load per country per session, shared by the Observations tab and every
+ * project page of that country (ticket 0855): the ledger rows are served once,
+ * in observations/<CODE>.json, and a fact's fold-out is a filter on them. */
+const observationsCache = {};
+const observationsView = (code) =>
+  cached(observationsCache, code, () => load("observations/" + code));
 /* The companion file carries the column names once and then one array of
  * values per row, so the row objects are rebuilt here in the generator's own
  * column order — pass-through columns included. */
@@ -448,13 +508,13 @@ function inventoryUnknowns(details) {
           `<div class="metric"><strong>${fmt(layer.row_count)}</strong><span>${esc(layer.sublayer_id)}</span><small>${esc(layer.edition)} · cutoff ${esc(layer.cutoff)}<br>${fmt(layer.unknowns.field_values)} unknown field values · ${fmt(layer.unknowns.identity_rows)} unknown identities · ${fmt(layer.unknowns.unavailable_source_rows)} unavailable source rows</small></div>`,
       )
       .join("")}</div>` +
-    `<p class="note">Each figure counts one extraction sub-layer of this country. This page adds none of them together: the sub-layers overlap, count different things, and a country is not the unit any of them measures.</p>`
+    `<p class="note">Each figure counts one extraction sub-layer of this country. The count line under the filters is the size of this export, the sub-layers laid end to end: it says how many rows the file holds, not how many projects the country has, because the sub-layers overlap and count different things, and a country is not the unit any of them measures.</p>`
   );
 }
 /* A row's own fields, listed under whichever summary its caller names — an
  * inventory row and a ledger observation share every column but the label. */
-function rowDetail(row, summary) {
-  return `<details><summary>${summary}</summary><dl class="facts">${Object.entries(
+function rowDetail(row, summary, open) {
+  return `<details${open ? " open" : ""}><summary>${summary}</summary><dl class="facts">${Object.entries(
     row,
   )
     .map(
@@ -463,8 +523,8 @@ function rowDetail(row, summary) {
     )
     .join("")}</dl></details>`;
 }
-function inventoryRowDetail(row) {
-  return rowDetail(row, esc(row.label || "Identity not published"));
+function inventoryRowDetail(row, open) {
+  return rowDetail(row, esc(row.label || "Identity not published"), open);
 }
 /* One evidence cell for both stage-two tables: the locator as a link into the
  * archived copy when the snapshot holds one, as text otherwise. The callers
@@ -649,11 +709,29 @@ function mountTabs(panels) {
     });
   });
 }
-function renderInventory(code, rows, observations) {
+/* Ticket 0857: the Documents page cites a row by its rank in this export, and
+ * #inventory/<CODE>?row=N opens the page on that one row, unfolded, with the
+ * whole export one link away. A rank the export has no row for shows the whole
+ * export and says so, rather than an empty table dressed as a result. */
+function inventoryFocus(code, rows, focus) {
+  if (!focus) return { shown: rows, note: "" };
+  const row = rows[focus - 1];
+  if (!row)
+    return {
+      shown: rows,
+      note: emptyNote("inventory-focus", "none", `This export has no row ${fmt(focus)}; showing all ${fmt(rows.length)} rows.`),
+    };
+  return {
+    shown: [row],
+    note: emptyNote("inventory-focus", focus, `Row ${fmt(focus)} of the ${fmt(rows.length)} rows in this export, as the Documents page cites it. <a href="#inventory/${code}">Show all ${fmt(rows.length)} rows →</a>`),
+  };
+}
+function renderInventory(code, rows, observations, focus) {
   const details = m1a.countries[code];
   const c = country(code);
-  const values = (key) => distinctValues(rows, key);
-  const table = filterTable("inventory", rows, {
+  const { shown, note } = inventoryFocus(code, rows, focus);
+  const values = (key) => distinctValues(shown, key);
+  const table = filterTable("inventory", shown, {
     facets: INVENTORY_FACETS.map(([key, label, all]) => ({
       key,
       label,
@@ -673,7 +751,10 @@ function renderInventory(code, rows, observations) {
     },
     columns: [
       { label: "Source row", cell: (row) => `<code>${esc(row.source_row_id)}</code>` },
-      { label: "Label and source columns", cell: inventoryRowDetail },
+      {
+        label: "Label and source columns",
+        cell: (row) => inventoryRowDetail(row, shown !== rows),
+      },
       { label: "Sub-layer", cell: (row) => esc(row.source_layer) },
       { label: "Record type", cell: (row) => esc(row.record_type) },
       { label: "Reported status", cell: (row) => pill(row.reported_status) },
@@ -681,42 +762,39 @@ function renderInventory(code, rows, observations) {
       { label: "Evidence", cell: inventoryEvidence },
     ],
     empty: "No source rows match these filters.",
-    resultNoun: "source rows",
+    resultNoun: "rows in this export",
     pageSize: 50,
   });
-  const observationsView = observationsTable(observations);
+  const observationsPanel = observationsTable(observations);
   main.innerHTML =
     `<div class="page-head"><div class="breadcrumb"><a href="#countries">Countries</a> / <a href="#country/${code}">${esc(c?.name || code)}</a> / Inventory</div><p class="eyebrow">Source rows · ${code}</p><h1>${esc(c?.name || code)} source rows</h1><p class="lede">Two separate readings of this country's documents: the frozen M1a inventory of what a source published about its own projects, and the ledger rows recorded from those same documents. They are kept in separate tabs because they are not comparable, and never added together.</p></div>` +
     `<div class="view-tabs" role="tablist"><button type="button" role="tab" id="tab-inventory" aria-controls="panel-inventory" aria-selected="true">Frozen M1a inventory</button><button type="button" role="tab" id="tab-observations" aria-controls="panel-observations" aria-selected="false">Ledger observations</button></div>` +
     `<section id="panel-inventory" role="tabpanel" aria-labelledby="tab-inventory">` +
     inventoryUnknowns(details) +
     `<div class="callout">Each row opens the archived source document, at its PDF page where the source publishes one. Archived copies open locally only; the published edition carries the registry and the publisher's address.</div>` +
+    note +
     table.head +
     `<div class="downloads"><a class="button light" href="data/m1a/${code}.csv" download>Download the ${code} M1a inventory (CSV) ↓</a></div></section>` +
     `<section id="panel-observations" role="tabpanel" aria-labelledby="tab-observations" hidden>` +
     observationTotals(observations, code) +
-    observationsView.head +
+    observationsPanel.head +
     `<div class="downloads"><a class="button light" href="data/observations/${code}.json" download>Download the ${code} ledger observations (JSON) ↓</a></div></section>`;
   mountTabs([
     { key: "inventory", mount: table.mount },
-    { key: "observations", mount: observationsView.mount },
+    { key: "observations", mount: observationsPanel.mount },
   ]);
 }
-function inventoryPage(code) {
+function inventoryPage(code, params) {
   if (!m1a.countries[code]) return notFound();
   main.innerHTML = `<p class="note">Loading the ${esc(code)} source rows…</p>`;
-  inventoryCache[code] =
-    inventoryCache[code] ||
-    Promise.all([load("m1a/" + code), load("observations/" + code)]);
-  inventoryCache[code]
+  const focus = Math.trunc(Number(params.get("row"))) || 0;
+  cached(inventoryCache, code, () =>
+    Promise.all([load("m1a/" + code), observationsView(code)]))
     .then(([payload, observations]) => {
       if (location.hash.startsWith("#inventory/" + code))
-        renderInventory(code, inventoryRows(payload), observations);
+        renderInventory(code, inventoryRows(payload), observations, focus > 0 ? focus : 0);
     })
     .catch((error) => {
-      // Drop the rejected promise, or one transient failure would be replayed
-      // from the cache for the rest of the session without ever retrying.
-      delete inventoryCache[code];
       main.innerHTML = `<div class="error"><h1>The ${esc(code)} inventory could not load.</h1><p>${esc(error.message)}</p></div>`;
     });
 }
@@ -784,12 +862,35 @@ function sourceAdjudication(p, id) {
     )
     .join("");
 }
-/* The descent, fact → its stage-two rows. `p.evidence` is the country's ledger
- * observations addressed to this record, filtered in project_data() and served
- * exactly as the Observations tab serves them — same detail, same evidence
- * cell, same fingerprint resolution — so the two pages are one reading. */
+/* The descent, fact → its stage-two rows: the country's ledger observations
+ * addressed to this record, read from observations/<CODE>.json — the view the
+ * Observations tab loads — and filtered on project_id here, never copied into
+ * the country view (ticket 0855). Same detail, same evidence cell, same
+ * fingerprint resolution, so the two pages are one reading. */
 function projectEvidenceRow(row) {
   return `<tr data-evidence-row="${esc(observationId(row))}"><td>${esc(row.table)}</td><td>${observationDetail(row)}</td><td>${pill(row.verification)}</td><td>${observationEvidence(row)}</td></tr>`;
+}
+function projectEvidence(rows) {
+  return rows.length
+    ? `<details class="foldout" data-evidence-count="${rows.length}"><summary>${fmt(rows.length)} ledger ${rows.length === 1 ? "observation" : "observations"}</summary><div class="table-wrap"><table><thead><tr><th>Table</th><th>Row</th><th>Verification</th><th>Evidence</th></tr></thead><tbody>${rows.map(projectEvidenceRow).join("")}</tbody></table></div></details>`
+    : emptyNote("evidence-count", 0, "No ledger observation is addressed to this identity in this edition.");
+}
+/* Fills the section once the view arrives, if the reader is still on this
+ * page. The view absent, the section says so and points at the tab that
+ * would have shown the same rows, rather than showing an empty list. */
+function fillProjectEvidence(p) {
+  const still = () =>
+    location.hash.slice(1).split("?")[0] === "project/" + encodeURIComponent(p.id);
+  const section = () => document.getElementById("project-evidence-rows");
+  observationsView(p.country)
+    .then((rows) => {
+      if (!still() || !section()) return;
+      section().innerHTML = projectEvidence(rows.filter((row) => row.project_id === p.id));
+    })
+    .catch((error) => {
+      if (!still() || !section()) return;
+      section().innerHTML = emptyNote("evidence-count", "unavailable", `The ${esc(p.country)} ledger observations could not load (${esc(error.message)}). They are the rows of the <a href="#inventory/${esc(p.country)}">Ledger observations tab</a> addressed to <code>${esc(p.id)}</code>.`);
+    });
 }
 /* A source card opens the archived copy where the registry holds one. Resolved
  * by source identifier through the same ranked index as an inventory row: the
@@ -805,9 +906,8 @@ function projectPage(id) {
   const p = projects.find((p) => p.id === id);
   if (!p) return notFound();
   const c = country(p.country),
-    sources = countries[p.country].sources,
-    evidenceRows = p.evidence || [];
-  main.innerHTML = `<div class="page-head"><div class="breadcrumb"><a href="#projects">Projects</a> / <a href="#country/${c.code}">${esc(c.name)}</a></div><p class="eyebrow">${esc(p.technology)} · ${c.code}</p><h1>${esc(p.name)} <span class="badge" data-review-state="${esc(p.coverage)}">Review state · ${esc(p.coverage.replaceAll("_", " "))}</span></h1><p class="lede">${esc(p.location)}</p>${pill(p.finance_stage === "Not documented" ? "Financial events not yet coded" : p.finance_stage)}</div><div class="project-layout"><div><h2>Essential features</h2><dl class="facts"><dt>Operator</dt><dd>${esc(p.operator)}</dd><dt>Funders</dt><dd>${esc(p.funders.join("; ") || "See individual sources; no reconciled funder entry")}</dd><dt>Project ID</dt><dd>${esc(p.id)}</dd><dt>Source follow-up</dt><dd>${esc(p.coverage.replaceAll("_", " "))}</dd></dl><p class="note">${esc(p.notes)}</p><section class="section"><h2>Documented timeline</h2><p class="note">Events and dated status reports are distinguished. A financing amount at approval and again at signature is not two separate amounts to add.</p>${p.events.length ? `<ol class="timeline">${p.events.map((e) => eventView(e, sources)).join("")}</ol>` : '<div class="callout">No financial or implementation events have yet been reconciled into this record. The linked sources may establish more; absence from this timeline is not zero progress.</div>'}</section><section class="section" id="project-evidence"><h2>Ledger evidence</h2><p class="note">The ledger rows recorded for this identity, as the ledger wrote them: each opens its archived document where the collection holds one. They are not added together, and a row here is not a reconciled fact.</p>${evidenceRows.length ? `<details class="foldout" data-evidence-count="${evidenceRows.length}"><summary>${fmt(evidenceRows.length)} ledger ${evidenceRows.length === 1 ? "observation" : "observations"}</summary><div class="table-wrap"><table><thead><tr><th>Table</th><th>Row</th><th>Verification</th><th>Evidence</th></tr></thead><tbody>${evidenceRows.map(projectEvidenceRow).join("")}</tbody></table></div></details>` : '<p class="note" data-evidence-count="0">No ledger observation is addressed to this identity in this edition.</p>'}</section>${p.claims.length ? `<section class="section"><h2>Further source observations</h2>${p.claims.map((r) => `<article style="margin:20px 0"><p>${esc(r.claim_summary)}</p><p class="note">Match verdict: ${esc(r.match_status.replaceAll("_", " "))} · ${esc(r.notes)}</p>${sourceLink(sources[r.source_id], "Source")} <span class="date-tag">${esc(r.section)}</span></article>`).join("")}</section>` : ""}</div><aside><div class="panel"><h3>Evidence & references</h3><p class="note">${esc(p.coverage_note)}</p><ul class="sources">${p.sources
+    sources = countries[p.country].sources;
+  main.innerHTML = `<div class="page-head"><div class="breadcrumb"><a href="#projects">Projects</a> / <a href="#country/${c.code}">${esc(c.name)}</a></div><p class="eyebrow">${esc(p.technology)} · ${c.code}</p><h1>${esc(p.name)} <span class="badge" data-review-state="${esc(p.coverage)}">Review state · ${esc(p.coverage.replaceAll("_", " "))}</span></h1><p class="lede">${esc(p.location)}</p>${pill(p.finance_stage === "Not documented" ? "Financial events not yet coded" : p.finance_stage)}</div><div class="project-layout"><div><h2>Essential features</h2><dl class="facts"><dt>Operator</dt><dd>${esc(p.operator)}</dd><dt>Funders</dt><dd>${esc(p.funders.join("; ") || "See individual sources; no reconciled funder entry")}</dd><dt>Project ID</dt><dd>${esc(p.id)}</dd><dt>Source follow-up</dt><dd>${esc(p.coverage.replaceAll("_", " "))}</dd></dl><p class="note">${esc(p.notes)}</p><section class="section"><h2>Documented timeline</h2><p class="note">Events and dated status reports are distinguished. A financing amount at approval and again at signature is not two separate amounts to add.</p>${p.events.length ? `<ol class="timeline">${p.events.map((e) => eventView(e, sources)).join("")}</ol>` : '<div class="callout">No financial or implementation events have yet been reconciled into this record. The linked sources may establish more; absence from this timeline is not zero progress.</div>'}</section><section class="section" id="project-evidence"><h2>Ledger evidence</h2><p class="note">The ledger rows recorded for this identity, as the ledger wrote them: each opens its archived document where the collection holds one. They are not added together, and a row here is not a reconciled fact.</p><div id="project-evidence-rows"><p class="note">Loading the ${esc(c.short)} ledger observations…</p></div></section>${p.claims.length ? `<section class="section"><h2>Further source observations</h2>${p.claims.map((r) => `<article style="margin:20px 0"><p>${esc(r.claim_summary)}</p><p class="note">Match verdict: ${esc(r.match_status.replaceAll("_", " "))} · ${esc(r.notes)}</p>${sourceLink(sources[r.source_id], "Source")} <span class="date-tag">${esc(r.section)}</span></article>`).join("")}</section>` : ""}</div><aside><div class="panel"><h3>Evidence & references</h3><p class="note">${esc(p.coverage_note)}</p><ul class="sources">${p.sources
     .map((id) => {
       const s = sources[id];
       return s
@@ -817,6 +917,7 @@ function projectPage(id) {
     .join(
       "",
     )}</ul></div><p class="note" style="margin-top:20px">Observations retain source-specific scopes. An agreement, approval or register entry does not establish a payment or physical delivery.</p><a class="button light" href="data/${c.code}.json" download>Download country evidence ↓</a></aside></div>`;
+  fillProjectEvidence(p);
 }
 function median(values) {
   if (!values.length) return null;
@@ -926,7 +1027,7 @@ function m1aSection() {
       return `<tr><td><a href="#inventory/${code}">${esc(country(code)?.name || code)}</a></td><td>${fmt(item.row_count)}</td><td>${sublayers}</td><td>${fmt(item.unknowns.field_values)}</td><td>${fmt(item.unknowns.identity_rows)}</td><td>${fmt(item.unknowns.unavailable_source_rows)}</td></tr>`;
     })
     .join("");
-  return `<h2>Frozen M1a source inventories</h2><p>These four tables preserve every row of six selected extraction sub-layers before canonical matching. They are frozen inventories, not a live status service, and their row counts are not comparable project totals.</p><div class="table-wrap"><table><thead><tr><th>Country</th><th>Rows</th><th>Source edition · cutoff</th><th>Unknown fields</th><th>Unknown identities</th><th>Unavailable source rows</th></tr></thead><tbody>${rows}</tbody></table></div><div class="downloads"><a class="button light" href="data/m1a/ZAF.csv" download>South Africa M1a ↓</a><a class="button light" href="data/m1a/IDN.csv" download>Indonesia M1a ↓</a><a class="button light" href="data/m1a/VNM.csv" download>Viet Nam M1a ↓</a><a class="button light" href="data/m1a/SEN.csv" download>Senegal M1a ↓</a><a class="button light" href="data/m1a/manifest.json" download>M1a manifest ↓</a></div><p>The manifest pins input and source hashes and reports <code>field_values</code>, <code>identity_rows</code> and <code>unavailable_source_rows</code> separately for every extraction sub-layer. Country names above open the row-by-row inventory.</p>`;
+  return `<h2>Frozen M1a source inventories</h2><p>These four tables preserve every row of six selected extraction sub-layers before canonical matching. They are frozen inventories, not a live status service, and their row counts are not comparable project totals.</p><div class="table-wrap"><table><thead><tr><th>Country</th><th>Rows in this export</th><th>Source edition · cutoff</th><th>Unknown field values</th><th>Unknown identities</th><th>Unavailable source rows</th></tr></thead><tbody>${rows}</tbody></table></div><p class="note">The per-country figures are the sub-layer figures of one export laid end to end — the size of a file, not a count of projects: the sub-layers overlap and count different things. Each sub-layer's own figures are on the inventory page.</p><div class="downloads"><a class="button light" href="data/m1a/ZAF.csv" download>South Africa M1a ↓</a><a class="button light" href="data/m1a/IDN.csv" download>Indonesia M1a ↓</a><a class="button light" href="data/m1a/VNM.csv" download>Viet Nam M1a ↓</a><a class="button light" href="data/m1a/SEN.csv" download>Senegal M1a ↓</a><a class="button light" href="data/m1a/manifest.json" download>M1a manifest ↓</a></div><p>The manifest pins input and source hashes and reports <code>field_values</code>, <code>identity_rows</code> and <code>unavailable_source_rows</code> separately for every extraction sub-layer. Country names above open the row-by-row inventory.</p>`;
 }
 function methodsPage() {
   main.innerHTML =
@@ -971,7 +1072,7 @@ function render() {
   else if (page === "evidence") evidencePage();
   else if (page === "editions") editionHistoryPage();
   else if (page === "documents") documentsPage();
-  else if (page === "inventory") inventoryPage(id);
+  else if (page === "inventory") inventoryPage(id, params);
   else methodsPage();
   document.title =
     (page === "overview"

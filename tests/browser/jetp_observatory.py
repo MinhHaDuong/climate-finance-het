@@ -57,6 +57,21 @@ def check_documents(page, url):
     # than one collection attempt, so the id alone is not a selector.
     link = page.locator(f'a[data-document-id="{entry["row_key"]}"]')
     assert entry['local_path'], 'Archived ZAF register absent; run make jetp-observatory-documents'
+    # Ticket 0856: the register was read twice, once per stage-two product,
+    # and the two readings are shown as two counts, never added (257 + 257
+    # is not 514 rows).
+    index = page.request.get(url + '/data/documents.json').json()['by_source_id']
+    per_product = {}
+    for reference in index[entry['id']]['extracted']:
+        per_product[reference['product']] = per_product.get(reference['product'], 0) + 1
+    assert set(per_product) == {'ledger', 'm1a'}, per_product
+    row = page.locator('#documents-results tbody tr').filter(has=link).first
+    for product, count in per_product.items():
+        fold = row.locator(f'details[data-extracted-product="{product}"]')
+        assert fold.get_attribute('data-extracted-count') == str(count), product
+    assert str(sum(per_product.values())) not in ' '.join(
+        row.locator('details > summary').all_inner_texts()
+    )
     with page.expect_popup() as popup:
         link.click()
     opened = popup.value
@@ -66,6 +81,39 @@ def check_documents(page, url):
         page.request.get(url + '/' + entry['local_path']).body()
     ).hexdigest() == entry['sha256']
     opened.close()
+
+    # Ticket 0857, recipe VN step 1: from this page the RMP 2023 opens at
+    # printed page 139 — PDF page 155, the first page its extracted positions
+    # name — and each position links to its own inventory row and, where its
+    # locator names one, to its own page: the 22nd (KN Tri An) to page 156.
+    page.locator('#documents-filter-country').select_option('')
+    page.locator('#documents-search').fill('vnm-rmp-2023')
+    rmp = next(row for row in registry if row['id'] == 'vnm-rmp-2023' and row['local_path'])
+    link = page.locator(f'a[data-document-id="{rmp["row_key"]}"]')
+    link.wait_for()
+    assert link.get_attribute('href') == rmp['local_path'] + '#page=155', link.get_attribute('href')
+    with page.expect_popup() as popup:
+        link.click()
+    assert popup.value is not None
+    popup.value.close()
+    row = page.locator('#documents-results tbody tr').filter(has=link).first
+    fold = row.locator('details[data-extracted-product="m1a"]')
+    fold.locator('summary').click()
+    position = fold.locator('li').nth(21)
+    assert 'KN Tri An' in position.inner_text(), position.inner_text()
+    pdf = position.locator('a[data-extracted-page="vnm-rmp-2023:annex-I.1:022"]')
+    assert pdf.get_attribute('href') == rmp['local_path'] + '#page=156', pdf.get_attribute('href')
+    with page.expect_popup() as popup:
+        pdf.click()
+    assert popup.value is not None
+    popup.value.close()
+    # The climb lands on the one row, not on the 279.
+    position.locator('a[href="#inventory/VNM?row=22"]').click()
+    page.wait_for_selector('[data-inventory-focus="22"]')
+    assert page.locator('#inventory-count').inner_text().startswith('1 of 1 ')
+    focused = page.locator('a[data-inventory-row="vnm-rmp-2023:annex-I.1:022"]')
+    assert focused.get_attribute('href') == rmp['local_path'] + '#page=156'
+    assert page.locator('#inventory-results details[open]').count() == 1
 
 
 def check_inventory(page, url):
@@ -210,11 +258,12 @@ def check_facts(page, url):
                   if p['id'] == 'vnm-project-bac-ai-pumped-hydro')
     observations = page.request.get(url + '/data/observations/VNM.json').json()
     served = [row for row in observations if row['project_id'] == bac_ai['id']]
-    # The fact's evidence is the observations view's own rows, verbatim.
-    assert bac_ai['evidence'] == served and len(served) == 3, len(served)
+    # The fact's evidence is the observations view's own rows, read from that
+    # view in the browser and never copied into the country view (0855).
+    assert 'evidence' not in bac_ai and len(served) == 3, len(served)
 
     page.goto(url + '/#project/' + bac_ai['id'])
-    page.wait_for_selector('#project-evidence')
+    page.wait_for_selector('#project-evidence details[data-evidence-count]')
     assert bac_ai['coverage'] in page.locator('h1 [data-review-state]').inner_text()
     # The fold-out itself, not the per-row detail elements nested inside it.
     fold = page.locator('#project-evidence details[data-evidence-count]')

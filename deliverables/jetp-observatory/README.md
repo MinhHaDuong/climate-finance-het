@@ -46,8 +46,10 @@ Routes: `#overview`, `#countries`, `#country/IDN`, `#projects`,
   selected source row, edition and cutoff without merging identities. Their
   manifest displays field, identity and source-availability unknowns separately
   for each extraction sub-layer, and again as a per-country count of the same
-  export. The inventory page shows the per-sub-layer figures only and adds none
-  of them together.
+  export. The inventory page shows the per-sub-layer figures and, on its count
+  line, the size of the export ("rows in this export"), labelled as such: the
+  sub-layers overlap, so that number is a file size, not a project count
+  (ticket 0856).
   `#inventory/<CODE>` explores them row by row: the CSV stays the download
   artefact, while the page reads the `<CODE>.json` companion the same build
   writes from the same rows — column names once, then one array of values per
@@ -68,13 +70,24 @@ Routes: `#overview`, `#countries`, `#country/IDN`, `#projects`,
 - The descent from a fact to its evidence, and the climb from a document to
   what cites it. Each named record's page carries a review-state badge and a
   "Ledger evidence" fold-out: the ledger observations addressed to that
-  identity, served under `evidence` in `<CODE>.json` exactly as the
-  Observations tab serves them, each opening its archived document where the
-  collection holds one. Each Documents row lists, from `by_source_id` in
+  identity, read from `data/observations/<CODE>.json` — the view the
+  Observations tab loads — and filtered on `project_id` in the browser, each
+  opening its archived document where the collection holds one. The country
+  view carries no copy of them: `ZAF.json` has a publication cap of 512 000
+  bytes (`config/jetp-zaf-migration.json`), and the 338 ZAF rows copied under
+  an `evidence` key put it 280 kB over (ticket 0855). Each Documents row lists, from `by_source_id` in
   `documents.json`, what was extracted from that source (ledger rows and frozen
-  M1a rows, as references to their own views) and which facts rely on it
-  (named records and reviewed records) — two lists, never a total, and a
-  source nothing cites says so. The reviewed-evidence pedigree opens the bytes
+  M1a rows, as references to their own views, one fold-out and one count per
+  product — never their sum, since a ledger row and an M1a row can describe
+  the same paragraph of the same file, ticket 0856) and which facts rely on it
+  (named records and reviewed records) — separate lists, never a total, and a
+  source nothing cites says so. Each M1a position in that fold-out links to
+  its own inventory row (`#inventory/<CODE>?row=N`, `N` the row's rank in the
+  export, written with the reference) and, where its locator names a PDF
+  page, to that page of the archived copy; the copy's own link opens at the
+  first page the extracted rows name, when every product that names one
+  agrees (`first_pdf_page`), and at its own first page otherwise — no page is ever
+  fabricated (ticket 0857). The reviewed-evidence pedigree opens the bytes
   its fingerprint pins. The Viet Nam page shows the 279 positions of the RMP
   2023 table and the 24 records of the 2025 portfolio side by side; no link
   between them is established here.

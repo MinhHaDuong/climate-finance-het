@@ -20,6 +20,12 @@ from collections.abc import Iterable, Mapping
 PDF_PAGE = re.compile(r"PDF pages? ([0-9]+)")
 
 
+def pdf_page_of(evidence_locator: str | None) -> int | None:
+    """The page of the archived file an evidence locator names, or None when it names none."""
+    match = PDF_PAGE.search(evidence_locator or "")
+    return int(match.group(1)) if match else None
+
+
 def index_documents(documents: Iterable[Mapping[str, object]]) -> dict[str, dict]:
     """Collapse the collection registry to one entry per source identifier.
 
@@ -59,9 +65,8 @@ def resolve_document_link(
     emptying a country.
     """
     entry = registry[source_id] if required else registry.get(source_id, {})
-    match = PDF_PAGE.search(evidence_locator or "")
     return {
         "sha256": entry.get("sha256"),
-        "pdf_page": int(match.group(1)) if match else None,
+        "pdf_page": pdf_page_of(evidence_locator),
         "local_path": entry.get("local_path"),
     }
