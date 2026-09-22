@@ -43,7 +43,9 @@ Four decisions by the author on 2026-09-22 shape it:
     to lines; locator syntax is defined per format; a delivery axis for
     agreements is aligned to the IATI activity status list; ranges have
     bounds; a publisher's own modality scheme stays a verbatim field. What
-    stays out of scope is named in section 13.
+    stays out of scope is named in section 13. The delivery axis and the
+    section 13 list were proposed as defaults and approved by the author on
+    2026-09-22.
 
 ## 1. Why the current model fails
 
