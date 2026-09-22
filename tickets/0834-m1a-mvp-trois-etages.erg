@@ -11,6 +11,7 @@ Author: HDMX-coding-agent
 2026-09-22T00:05Z HDMX-coding-agent note revue d'intégration sur main (3231d3e0), verdict NE PAS FERMER. Recette ZAF verte de bout en bout ; recette VNM verte sauf le pas 1 (depuis le registre des documents le RMP 2023 n'ouvre pas à la page imprimée 139 : ancre sans fragment #page=, les 279 positions du dépliage pointent vers #inventory/VNM non filtré) ; pas 3 vert sous la lecture restreinte de 0838 (Bac Ai porte six sources, une seule archivée). Critère 4 en échec à l'écran : la page Documents affiche « Extracted here · 514 » pour le registre JET ZAF, 257 lignes de ledger plus les 257 mêmes lignes M1a (app.js:334-335), même défaut IDN 1255, SEN 105 et 93. make check complet : 3 failed, 3092 passed — deux échecs environnementaux (data/jetp/crs absent, commit 3b432ef3 absent du clone) et une régression du train, test_zaf_candidate_reconciles_inventory_legacy_and_current_views : ZAF.json passe de 509 315 à 792 434 octets en 3231d3e0 (clé evidence de 0839), au-dessus du plafond de publication de 512 000 octets. Trois enfants de suite ouverts : [[0855]] plafond, [[0856]] comptes fusionnés, [[0857]] navigation RMP. Rapport complet : docs/jetp-study/0834-integration-review-2026-09-22.md (déposé par la PR de réparation).
 2026-09-22T07:15Z HDMX-coding-agent note PR #1439 fusionnée (0855-0857 fermés) après décision de l'auteur : une source sans ligne extraite rend une note, pas un dépliage vide. Décision du même matin sur le poids de documents.json (975 Ko, refusé par le garde du pre-commit sur padme) : forme normale, un fichier = une table, l'index by_source_id disparaît au profit d'une jointure à la lecture — enfant [[0858]]. 0854 livré en PR #1441 depuis padme, à rebaser sur 0858.
 2026-09-22T09:40Z HDMX-coding-agent note revue d'intégration finale sur main (bf31b3ee) : les trois prises du 2026-09-22T00:05Z sont réparées et vérifiées (ZAF.json 509 315 o ; Ledger rows · 257 et M1a rows · 257, jamais 514 ; RMP en un clic à #page=155 ; documents.json une clé, 314 lignes, 155 720 o ; sept documents vietnamiens ouverts 7/7). Recettes SA1-SA3 et VN1-VN4 vertes pas à pas, recette navigateur complète verte 3/3. Critères 3 et 4 cochés. make check : 3 failed — deux environnementaux (data/jetp/crs, commit 3b432ef3 absents du clone) et un épinglage périmé par 0854, tests/test_jetp_vnm_positions.py:168 227 → 234 (sept lignes de registre), re-épinglé dans la PR de clôture. Rapport : docs/jetp-study/0834-integration-review-final-2026-09-22.md. Reste à l'auteur, critère 5 : la fiche dit « quatre sources » pour Bac Ai, la donnée en porte six dont quatre archivées ; la page Editions dit 1 740 observations et les vues en servent 766, deux populations étiquetées, jamais additionnées.
+2026-09-22T10:00Z HDMX-coding-agent note prose réconciliée à la demande de l'auteur : la recette VN dit « ses sources » (six dans la donnée) au lieu de « quatre » ; le contexte porte 314 tentatives / 269 collectées depuis 0854 ; la page Editions explique que ses 1 740 observations de l'instantané d'analyse ne sont pas les lignes du ledger servies dans l'onglet Observations, deux populations jamais additionnées.
 --- body ---
 
 ## Context
@@ -25,11 +26,15 @@ Les données s'organisent en trois étages d'un pipeline, définis par l'auteur 
 
 1. **Documents bruts** : les fichiers téléchargés, PDF et HTML, archivés par
    empreinte dans DVC (`data/jetp/documents/`, registre `data/jetp/manifest.csv`,
-   307 sources dont 262 collectées).
+   307 tentatives de collecte dont 262 collectées à l'ouverture ; 314 et 269
+   depuis [[0854]]).
 2. **Extraction structurée** : les tables tirées de ces documents. Deux
    produits coexistent : les inventaires M1a (2 164 lignes, six sous-couches)
-   et les observations atomiques du ledger (1 740, marquées « not deployed »
-   dans `reviewed-evidence.json`).
+   et les lignes du ledger (766 servies depuis [[0838]] : events,
+   implementation-events, project-source-links). À part, et non servies : les
+   1 740 observations atomiques de l'instantané d'analyse 0730, marquées
+   « not deployed » dans `reviewed-evidence.json` (l'attribution au ledger
+   écrite ici le 2026-09-17 était fausse, voir 0838 § Imagine).
 3. **Faits réconciliés** : les enregistrements canoniques (383 nommés, 3
    revus) et les vues pays actuelles (projets, montants, statuts).
 
@@ -70,8 +75,9 @@ table initiale, et le portefeuille approuvé de 2025 est un autre objet.
   documents.
 - Filtrer l'inventaire M1a VNM sur l'annexe I.1 et obtenir 37 lignes ; cliquer
   la ligne 22 (KN Tri An Floating Solar Farm) ouvre le PDF à sa page.
-- Depuis Bac Ai dans la vue pays, remonter à ses quatre sources et ouvrir le
-  bulletin 5 du MOIT (juillet 2025).
+- Depuis Bac Ai dans la vue pays, remonter à ses sources (six dans la donnée,
+  dont le bulletin 5 du MOIT de juillet 2025 et, depuis [[0854]], les trois
+  fiches et annonces de 2025 collectées) et ouvrir le bulletin.
 - Constater que la table initiale et les 24 enregistrements de 2025 sont
   présentés côte à côte, sans lien fabriqué entre eux.
 
