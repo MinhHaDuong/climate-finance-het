@@ -23,6 +23,8 @@ Four decisions by the author on 2026-09-22 shape it:
    (section 5).
 6. The party table is built in the identity split, minimal, with funder and
    channel roles populated first (section 6, step 4).
+7. Reconciliation is a tiered, defeasible, traceable process (section 11).
+   The record format is designed now; the matcher starts at its simplest tier.
 
 ## 1. Why the current model fails
 
@@ -237,8 +239,8 @@ into `<table>/<CODE>.csv`, which stays one table.
 | `agreements` | `agreement_id` | country, instrument, currency, tranche_of, notes |
 | `parties` | `party_id` | name, kind, country, publisher_id |
 | `perimeters` | `perimeter_id` | country, name, scope, definition, notes |
-| `line-referents` | (line_id, referent_kind, referent_id) | decided_at, decided_by, basis, notes |
-| `relations` | `relation_id` | from_kind, from_id, relation, to_kind, to_id, valid_from, valid_to, decided_at, decided_by, line_id |
+| `line-referents` | `referent_row_id` | line_id, referent_kind, referent_id, status, method, method_version, confidence, evidence_line_ids, decided_at, decided_by, supersedes, notes |
+| `relations` | `relation_id` | from_kind, from_id, relation, to_kind, to_id, valid_from, valid_to, status, method, method_version, confidence, decided_at, decided_by, supersedes, line_id |
 | `observations` | `observation_id` | subject_kind, subject_id, axis, measure, value, unit, currency, own_status, date, date_role, date_precision, line_id, notes |
 | `status-crosswalk` | (publisher_id, own_status) | axis, shared_status, decided_at, decided_by, notes |
 | `routes` | `old_id` | kind, new_id |
@@ -360,8 +362,10 @@ readers are retired at step 7.
 
 ## 9. Open questions for the author
 
-- Which of the two Indonesian editions' lines are `edition_of` each other. The
-  name intersection is 3 of 437; the relation will be sparse and reviewed.
+None at 2026-09-22 end of day. The three questions this section held, line
+identifiers, the party table and the Indonesian edition relation, were decided
+the same day (decisions 5 and 6, and section 11).
+
 
 ## 10. Engine
 
@@ -400,3 +404,60 @@ SQLite file over PROV-O for the evidence chain and SKOS for the status
 crosswalk is a derived export, built when a consumer asks for it, and it costs
 one script. If that consumer ever runs SPARQL over several ledgers, the
 engine question reopens on their data, not on this one.
+
+## 11. Reconciliation
+
+Reconciliation is the step that mints an identity from lines, attaches a line
+to an existing identity, or relates a line to a line in another edition. The
+author named it on 2026-09-22 as one of the hard points and set its
+requirements: multilingual named-entity recognition over the labels, matching
+with a confidence, escalation to a language model and then to human
+adjudication, defeasibility, and traceability. The perfect system is not the
+target now. What is fixed now is the record, so that a decision taken by the
+simplest matcher today and one taken by a person in two years sit in the same
+table with the same columns and can be overturned the same way.
+
+**The record.** A `line-referents` row or a `relations` row is a decision. It
+carries who or what decided (`decided_by`: a script name, a model identifier,
+or a person), by which method and version, with what confidence in [0, 1], on
+which evidence lines, and when. Its `status` is `accepted`, `candidate` or
+`rejected`. A decision is never edited or deleted: a later row names the
+earlier one in `supersedes`, and the ledger serves the newest accepted row
+while keeping the chain. A candidate below the acceptance threshold stays a
+candidate, counted and visible, as ticket 0833 already requires for its
+`possible_matches`; it never alters a count of accepted identities.
+
+**The tiers.** Each tier runs only on what the previous one left undecided,
+and each writes its rows with its own method name.
+
+1. Exact identifier: the register's unique id, a plan's ordinal within an
+   edition, an operator's project code. Confidence 1. This is the first
+   implementation and covers the 257 register rows and the 67 plan lines
+   already matched by hand.
+2. Normalised label: case, diacritics, technology prefixes and units stripped
+   (PLTU, PLTS, PLTBg; Nhà máy Thuỷ điện; centrale, poste), tokens compared
+   within a country and a technology group. Confidence from the string
+   distance and the agreement of capacity and location where both lines
+   carry them.
+3. Named-entity recognition over the four label languages, Indonesian,
+   Vietnamese, French and English, yielding place, operator, technology and
+   capacity as typed spans, matched as tuples. Confidence from the tuple
+   agreement.
+4. Language-model adjudication of the remaining candidates, given both lines
+   and their snapshot pages, returning a verdict, a confidence and a quoted
+   basis. The model identifier is the `decided_by`.
+5. Human adjudication of what the model declines or contradicts, recorded in
+   the same row shape and in `decisions.md`.
+
+Thresholds per tier live in configuration, are versioned with the method, and
+are tested on the hand-matched rows as a held-out set before a tier is allowed
+to write `accepted` rows. Until a tier passes that test it writes candidates
+only.
+
+**Scope of the first implementation.** Tier 1 in the identity split, tier 2 as
+a candidate generator whose rows are reviewed by hand, tiers 3 to 5 as method
+names reserved in the vocabulary. The Indonesian edition relation between the
+437 CIPP lines and the 1 142 progress-report lines, where the literal name
+intersection is 3, is the test bed for tier 2 and the first case for tier 3,
+and it is not attempted in the migration.
+
