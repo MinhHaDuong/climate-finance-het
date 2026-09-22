@@ -21,6 +21,8 @@ Four decisions by the author on 2026-09-22 shape it:
    tables.
 5. Line identifiers are minted, not keyed on fingerprint and locator
    (section 5).
+6. The party table is built in the identity split, minimal, with funder and
+   channel roles populated first (section 6, step 4).
 
 ## 1. Why the current model fails
 
@@ -316,7 +318,15 @@ Order of work, each step a ticket with its own byte-level check:
    tab is the check: same rows, same order, same fields.
 3. Lines for the remaining documents (plan-projects, portfolio, pilot, claims).
 4. Identity split: referents, routes, the five identity tables. Every old
-   identifier resolves through `routes`.
+   identifier resolves through `routes`. The party table is built here with
+   its minimum shape (identifier, name, kind, country, optional external
+   identifier from the IATI organisation registry) and the `party_in` relation
+   with a role. The 61 funder strings and the register's 14 funder prefixes
+   are adjudicated into funder and channel roles in this step; promoter,
+   implementing entity, beneficiary and contractor are filled only as their
+   lines are reviewed. A party is minted from a line like every other
+   identity, so the table cannot grow ahead of the evidence. Decided by the
+   author on 2026-09-22.
 5. Observations and the status crosswalk, replacing events, implementation
    events and event timing. The Observations tab and each record's evidence
    fold-out are the check.
@@ -350,10 +360,6 @@ readers are retired at step 7.
 
 ## 9. Open questions for the author
 
-- Whether `party` is built in step 4 or deferred to the first metric that
-  needs funder identity. Building it is proposed, because the register's funder
-  prefix is already a party key and the 61 free-text strings are the main
-  source of double counting risk.
 - Which of the two Indonesian editions' lines are `edition_of` each other. The
   name intersection is 3 of 437; the relation will be sparse and reviewed.
 
