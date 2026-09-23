@@ -22,7 +22,7 @@ from pipeline_loaders import (
 from scipy import stats
 from script_io_args import parse_io_args, validate_io
 from sklearn.neighbors import NearestNeighbors
-from utils import get_logger
+from utils import get_logger, text_or_empty
 
 log = get_logger("analyze_multilingual")
 
@@ -38,12 +38,12 @@ def classify_quadrant(row):
 
     Returns None if classification is impossible (missing language or affiliation).
     """
-    lang = str(row.get("language", "") or "").lower().strip()
+    lang = text_or_empty(row.get("language", "")).lower().strip()
     if not lang:
         return None
 
     is_en = not is_non_english(row)
-    aff = str(row.get("affiliations", "") or "").lower().strip()
+    aff = text_or_empty(row.get("affiliations", "")).lower().strip()
     if not aff:
         return None  # Cannot determine geography without affiliations
 

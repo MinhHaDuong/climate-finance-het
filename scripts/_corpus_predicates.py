@@ -12,6 +12,8 @@ pattern). The keyword set and function bodies are relocated verbatim from
 `build_het_core.py` — output is byte-identical by construction.
 """
 
+from pipeline_text import text_or_empty
+
 GLOBAL_SOUTH_KEYWORDS = {
     "china", "india", "brazil", "indonesia", "mexico", "nigeria",
     "bangladesh", "pakistan", "vietnam", "ethiopia", "egypt",
@@ -43,7 +45,7 @@ GLOBAL_SOUTH_KEYWORDS = {
 
 def is_non_english(row):
     """Check if paper is non-English."""
-    lang = str(row.get("language", "") or "").lower().strip()
+    lang = text_or_empty(row.get("language", "")).lower().strip()
     if not lang:
         return False
     return lang not in ("en", "eng", "en_us", "english")
@@ -51,7 +53,7 @@ def is_non_english(row):
 
 def is_global_south(row):
     """Detect Global South affiliation from affiliations field."""
-    aff = str(row.get("affiliations", "") or "").lower()
+    aff = text_or_empty(row.get("affiliations", "")).lower()
     if not aff:
         return False
     for kw in GLOBAL_SOUTH_KEYWORDS:

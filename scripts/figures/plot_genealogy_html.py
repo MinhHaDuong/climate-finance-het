@@ -25,6 +25,7 @@ from utils import (
     load_analysis_periods,
     load_refined_citations,
     normalize_doi,
+    text_or_empty,
 )
 
 log = get_logger("plot_genealogy_html")
@@ -89,8 +90,8 @@ def load_model(lineages_path):
         lineage[d] = int(row["lineage"])
         positions[d] = (float(row["x"]), float(row["y"]))
         doi_meta[d] = {
-            "title": str(row.get("title", "") or ""),
-            "first_author": str(row.get("first_author", "") or ""),
+            "title": text_or_empty(row.get("title", "")),
+            "first_author": text_or_empty(row.get("first_author", "")),
             "year": row["year"] if pd.notna(row["year"]) else None,
             "cited_by_count": row.get("cited_by_count", 0),
         }

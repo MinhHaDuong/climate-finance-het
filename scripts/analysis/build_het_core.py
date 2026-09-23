@@ -32,6 +32,7 @@ from utils import (
     load_refined_citations,
     normalize_doi,
     save_csv,
+    text_or_empty,
 )
 
 log = get_logger("build_het_core")
@@ -116,11 +117,18 @@ QUOTAS = {
 def text_blob(row):
     """Concatenate title + abstract + keywords into one lowercase string."""
     parts = [
-        str(row.get("title", "") or ""),
-        str(row.get("abstract", "") or ""),
-        str(row.get("keywords", "") or ""),
+        text_or_empty(row.get("title", "")),
+        text_or_empty(row.get("abstract", "")),
+        text_or_empty(row.get("keywords", "")),
     ]
     return " ".join(parts).lower()
+
+
+def report_missing_titles(frame):
+    """Keep missing titles visible while matching uses blank text for them."""
+    count = int(frame["title"].map(lambda value: not text_or_empty(value)).sum())
+    if count:
+        log.warning("Corpus has %d missing titles; blank text is excluded from matching", count)
 
 
 def matches_theme(blob):
@@ -161,9 +169,9 @@ def matches_theme(blob):
 
 def is_institutional_report(row):
     """Detect institutional reports from source, journal, first_author."""
-    source = str(row.get("source", "") or "").lower()
-    journal = str(row.get("journal", "") or "").lower()
-    author = str(row.get("first_author", "") or "").lower()
+    source = text_or_empty(row.get("source", "")).lower()
+    journal = text_or_empty(row.get("journal", "")).lower()
+    author = text_or_empty(row.get("first_author", "")).lower()
 
     if "grey" in source:
         return True
@@ -180,7 +188,7 @@ def field_score(row):
     Uses substring matching to handle both OpenAlex concept tags
     ("Economics") and topic tags ("Climate Change Policy and Economics").
     """
-    cats_raw = str(row.get("categories", "") or "").lower()
+    cats_raw = text_or_empty(row.get("categories", "")).lower()
     if not cats_raw.strip():
         return "unknown"
 
@@ -446,6 +454,7 @@ def main():
     n_undated = int(df["year_num"].isna().sum())
     log.info("Corpus: %d papers (%d undated — no citations-per-year credit)",
              len(df), n_undated)
+    report_missing_titles(df)
 
     # Identify teaching works via from_teaching column (bypass theme gate).
     # Zero for an absent flag is a measurement, not a guess, so this fillna

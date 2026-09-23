@@ -16,7 +16,13 @@ import os
 import numpy as np
 import pandas as pd
 from script_io_args import parse_io_args, validate_io
-from utils import BASE_DIR, DERIVED_TABLES_DIR, get_logger, load_analysis_config
+from utils import (
+    BASE_DIR,
+    DERIVED_TABLES_DIR,
+    get_logger,
+    load_analysis_config,
+    text_or_empty,
+)
 
 log = get_logger("plot_alluvial_html")
 
@@ -134,11 +140,11 @@ def collect_top_papers(df, period_labels, n_clusters):
             cell_sorted = cell.sort_values("cited_by_count", ascending=False).head(3)
             papers = []
             for _, row in cell_sorted.iterrows():
-                author = str(row.get("first_author", "?"))
+                author = text_or_empty(row.get("first_author", "?")) or "?"
                 if len(author) > 25:
                     author = author[:23] + "…"
                 yr = int(row["year"]) if pd.notna(row["year"]) else "?"
-                title = str(row.get("title", ""))
+                title = text_or_empty(row.get("title", ""))
                 if len(title) > 80:
                     title = title[:78] + "…"
                 cites = int(row["cited_by_count"]) if pd.notna(row["cited_by_count"]) else 0

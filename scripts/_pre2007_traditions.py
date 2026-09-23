@@ -25,6 +25,7 @@ from utils import (
     get_logger,
     load_refined_citations,
     normalize_doi,
+    text_or_empty,
 )
 
 log = get_logger("_pre2007_traditions")
@@ -72,16 +73,16 @@ def _load_data(works_path, cit_path):
         d = row["doi_norm"]
         if d and d not in ("nan", "none"):
             doi_meta[d] = {
-                "title": str(row.get("title", "") or ""),
-                "author": str(row.get("first_author", "") or ""),
+                "title": text_or_empty(row.get("title", "")),
+                "author": text_or_empty(row.get("first_author", "")),
                 "year": row.get("year", ""),
             }
     for _, row in cit.iterrows():
         d = row["ref_doi"]
         if d and d not in ("nan", "none") and d not in doi_meta:
             doi_meta[d] = {
-                "title": str(row.get("ref_title", "") or ""),
-                "author": str(row.get("ref_first_author", "") or ""),
+                "title": text_or_empty(row.get("ref_title", "")),
+                "author": text_or_empty(row.get("ref_first_author", "")),
                 "year": row.get("ref_year", "") or "",
             }
     return cit, doi_meta

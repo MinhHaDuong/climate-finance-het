@@ -35,7 +35,13 @@ from sklearn.metrics.pairwise import cosine_distances
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 MAIN_REPO = os.path.dirname(SCRIPT_DIR)
 
-from utils import CATALOGS_DIR, get_logger, normalize_doi, normalize_title
+from utils import (
+    CATALOGS_DIR,
+    get_logger,
+    normalize_doi,
+    normalize_title,
+    text_or_empty,
+)
 
 log = get_logger("detect_traditions_v3")
 
@@ -134,9 +140,9 @@ def match_seed(seed, works_df):
         author = seed.get("author", "").lower()
         year = seed.get("year")
         for idx, row in works_df.iterrows():
-            t = normalize_title(str(row.get("title", "") or ""))
-            fa = str(row.get("first_author", "") or "").lower()
-            aa = str(row.get("all_authors", "") or "").lower()
+            t = normalize_title(text_or_empty(row.get("title", "")))
+            fa = text_or_empty(row.get("first_author", "")).lower()
+            aa = text_or_empty(row.get("all_authors", "")).lower()
             y = row.get("year")
             if frag in t:
                 if author in fa or author in aa:
@@ -336,7 +342,7 @@ else:
         subset = pre2007_df[mask].nlargest(8, "cited_by_count")
         log.info(f"\n  {t} — Top 8:")
         for _, row in subset.iterrows():
-            title_short = str(row.get("title", "") or "")[:65]
+            title_short = text_or_empty(row.get("title", ""))[:65]
             log.info(f"    [{int(row['cited_by_count']):5d}] {str(row.get('first_author',''))[:20]:20s} "
                   f"({int(row['year'])}) {title_short}")
 
@@ -456,7 +462,7 @@ for k in [3, 4, 5]:
         subset = pre2007_df[mask].nlargest(5, "cited_by_count")
         log.info(f"\n  Cluster {c} top 5:")
         for _, row in subset.iterrows():
-            title_short = str(row.get("title", "") or "")[:60]
+            title_short = text_or_empty(row.get("title", ""))[:60]
             log.info(f"    [{int(row['cited_by_count']):5d}] {str(row.get('first_author',''))[:18]:18s} "
                   f"({int(row['year'])}) {title_short}")
 
