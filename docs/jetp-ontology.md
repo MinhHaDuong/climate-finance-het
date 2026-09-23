@@ -10,7 +10,7 @@ be revised (section 8 below), and the reference the observatory
 ([`../deliverables/jetp-observatory/README.md`](../deliverables/jetp-observatory/README.md))
 serves.
 
-Four decisions by the author on 2026-09-22 shape it:
+The author's decisions of 2026-09-22 and 2026-09-23 shape it:
 
 1. Split the identity registry now rather than tag it. The current
    `projects.csv` mixes four kinds of row; a column would only name the mix.
@@ -23,16 +23,16 @@ Four decisions by the author on 2026-09-22 shape it:
    (section 5).
 6. The party table is built in the identity split, minimal, with funder and
    channel roles populated first (section 6, step 4).
-7. Reconciliation is a tiered, defeasible, traceable process (section 11).
+7. Matching is a tiered, defeasible, traceable process (section 11).
    The record format is designed now; the matcher starts at its simplest tier.
 8. Translations are managed as document relations and derived text
    (section 12). Automatic summaries and translations are derived aids, never
-   evidence, and are nice-to-have.
+   justification, and are nice-to-have.
 9. After the fit-for-purpose review (review 5): amount semantics are closed
    vocabularies (measure, basis, flow type, modality, period roles); every
    record row carries `recorded_at`; external identifiers and the comparator
    pools (World Bank, CRS, IATI) enter as lines of API snapshots; the
-   adjudications and accounts layer of the backend design keeps its tables;
+   adjudications and accounts of the backend design keep their tables;
    rates and deflators are sourced records. Section 10's volume projection is
    corrected.
 10. After the proofing review (review 6, 36 random pages of 12 documents):
@@ -46,10 +46,71 @@ Four decisions by the author on 2026-09-22 shape it:
     stays out of scope is named in section 13. The delivery axis and the
     section 13 list were proposed as defaults and approved by the author on
     2026-09-22.
+11. On 2026-09-23, after the ODEM acceptance review
+    ([`jetp-odem-acceptance-review-2026-09-23.md`](jetp-odem-acceptance-review-2026-09-23.md)):
+    the ledger's language is pinned to the ODEM frame (section 0), and five
+    confusing terms are retired or restricted, starting with evidence, which
+    becomes justification. The observatory has no Model. It is Data guided by
+    Ontology, and Evidence comes on top. Its pages show the four objects
+    apart and show Data as a pipeline. The ontology is a set of tables with
+    definitions, external mappings and revisions (section 5), and it is
+    presented in the observatory.
 
-## 1. Why the current model fails
+## 0. Language: the ODEM frame
 
-The evidence is in the four reviews; the short form is this. The four
+ODEM (Ontology, Data, Evidence, Models) is the framework of the author's
+design note of 22 September 2026 on interactive causal inquiry. It names four
+objects, each versioned, and keeps them apart. The ledger adopts its four
+words and uses them in no other sense.
+
+| ODEM object | In the JETP observatory | Where it lives |
+|---|---|---|
+| **O, Ontology** | What the ledger talks about and how it records it: classes, relations, closed value lists, status and sector axes, perimeter definitions, crosswalks and conversion rules. Every term has a definition, an external mapping where one exists, and a revision history | `data/jetp/ontology/` (section 5); the observatory's Ontology page |
+| **D, Data** | What publishers said, as the ledger read it. A pipeline of four steps, below | `data/jetp/` tables; the observatory's Documents, Lines, Observations and record pages |
+| **E, Evidence** | Results computed from D under a declared O version: every count shown with its unit and perimeter, the accounts of backend-design section 5, descriptive tables. E comes on top of D and never edits it | `data/derived/jetp/`, with a run record naming its inputs, cutoffs and ontology version |
+| **M, Models** | Candidate causal explanations. The observatory has none. A causal study, deferred in ticket 0729, would consume a frozen release from outside the ledger | none |
+
+The observatory is Data, guided by Ontology. Evidence comes on top.
+
+**D is a pipeline.** Each step reads the steps before it, writes its own
+tables and never edits an upstream row.
+
+| Step | Name | Content | Tables |
+|---|---|---|---|
+| D1 | Register | What was fetched, byte for byte: publishers, documents, retrieval attempts, snapshots, and the record of how they were sought | `publishers`, `documents`, `document-publishers`, `retrievals`, `snapshots`, `coverage`, `dry-searches` |
+| D2 | Lines | One publisher's statement at one locator in one snapshot, with its own fields verbatim | `lines`, `line-fields/<document_id>`, `line-field-specs` |
+| D3 | Observations | A line read into a typed statement, measure, value and timings, by a named method version | `observations`, `timings`, `external-ids`, `rates`, `deflators` |
+| D4 | Referents | Identities minted by matching decisions over lines, and the relations between them | `projects`, `assets`, `agreements`, `parties`, `line-referents`, `relations`, `adjudications`, `adjudication-members`, `routes` |
+
+D3 and D4 both read D2. An observation's subject is a line until matching
+attaches that line to a referent. The migration order of section 6 builds D4
+before rewriting D3 because the old tables key observations on old
+identities.
+
+**Five terms retired or restricted.**
+
+| Term | Use instead | Why |
+|---|---|---|
+| *evidence*, for documentary support | **justification**: the line and locator a row cites (a justification link, justification lines). *Evidence cutoff* becomes **knowledge cutoff**: rows recorded on or before K | In ODEM, Evidence is the computed result. Documentary support belongs to D |
+| *model*, for a schema or a language model | **schema** for tables and columns; **LLM** for a language model used in matching or translation | Model is reserved for ODEM's M, which the observatory does not contain |
+| *reconciliation* | **matching** for D4 decisions that mint or attach identities (section 11); **account** for the E computation of opening, movements, closing and residual | One word named two operations at two ODEM levels |
+| *edition*, for the ledger's own output | **release** for a frozen package of ledger and site (`data/jetp/releases/<release_id>/`). *Edition* keeps only its document sense: a publisher's successive issue (`edition_of`) | "Evidence edition", "monthly edition" and "document edition" were three different objects |
+| *layer*, *stage* (*étage*), *fact* | **step D1 to D4** for the levels of the pipeline; **observation** for what a publisher stated | *Layer* named M1a sub-tables and *stage* the MVP levels; a ledger row is a publisher's statement read by a method, not a fact |
+
+Domain words that coincide are unaffected: a *project stage* is a value of
+the OC4IDS axis, and a PDF's *text layer* is its extractable text.
+
+This section governs this document, the observatory's page copy and the
+schema: the DDL (ticket 0871) declares no table or column named `evidence`,
+`model`, `reconcil*`, `layer` or `fact`. The older design documents
+([`jetp-backend-design.md`](jetp-backend-design.md),
+[`jetp-backend-implementation-plan.md`](jetp-backend-implementation-plan.md),
+[`jetp-storage.md`](jetp-storage.md), [`jetp-tracking.md`](jetp-tracking.md))
+predate it and carry a note mapping their terms onto this one.
+
+## 1. Why the current schema fails
+
+The four reviews make the case; the short form is this. The four
 partnerships never publish a project registry. They publish lists: a grants
 register keyed by funder and sequence (South Africa, 257 rows), plan appendices
 of capacity lines by system (Indonesia, 1 579 rows over two editions), plan
@@ -67,7 +128,7 @@ storages with three schemas.
 
 ## 2. Vocabulary
 
-Terms are ordered from the evidence outward: who says it, in what, then what it
+Terms are ordered from the register outward: who says it, in what, then what it
 is about.
 
 ### Publisher
@@ -199,7 +260,7 @@ they do.
 A coverage definition the ledger can count against: the partnership pledge
 envelope and its revisions, a source-defined portfolio of 24 records of which
 21 are unnamed, a procurement quota of 250 MW, a plan's list at a cutoff.
-Membership is evidence, not a list. A count slot is a perimeter observation,
+Membership is a justified relation, not a list. A count slot is a perimeter observation,
 "this publisher counted 24 at this date", not 21 rows in a registry.
 
 ### External identifier
@@ -212,7 +273,7 @@ identity meet on a key rather than on a name.
 
 ### Comparator record
 
-A record from an external database admitted as evidence: a World Bank
+A record from an external database admitted to the register: a World Bank
 project from the projects API, a CRS activity, an IATI activity. It is a
 line of a snapshot whose document is the dataset edition and whose publisher
 is the institution, with its own fields verbatim, its identifiers in the
@@ -271,8 +332,8 @@ decided it and when.
 | `role_in` | party | project, asset, perimeter, document, line | a mandate outside any agreement: lead agency, coordinating agency, guarantor, endorser, signatory, host, standards body; one row per role |
 | `same_as` (line) | line | line | the same published item in two places: a CRS activity across reporting years (keyed on donor and donor project id), one amount printed in a headline, a table and a chart |
 | `cites` (line) | line | document, line | a document's reference to another document or to a line of it, held or not |
-| `member_of` | line, project, asset, agreement | perimeter | dated evidence of membership; a line may be a member before any identity is minted |
-| `same_as` | any | same kind | equality evidence; does not choose a route |
+| `member_of` | line, project, asset, agreement | perimeter | dated, justified membership; a line may be a member before any identity is minted |
+| `same_as` | any | same kind | a justified equality claim; does not choose a route |
 | `about` | observation | any subject | typed |
 | `cites` | observation | line | exactly one |
 | `timed` | observation | timing | one row per date role; the amount lives once on the observation |
@@ -316,16 +377,16 @@ A marker is the donor's own scoring of an activity, at a reporting year,
 under the marker definition of that year. The "climate finance" that a
 marker yields is the score times a coefficient, 100 percent for principal
 and 40, 50 or 100 percent for significant depending on the donor and the
-year; the coefficient is a rule, not evidence, recorded in the sourced
-`marker-coefficients` table and applied only in a derived account, so that
-the same loan can be shown moving from 40 to 100 percent climate finance
+year; the coefficient is a rule, not an observation, so it belongs to the
+ontology (section 0). It is recorded in the sourced `marker-coefficients`
+table and applied only in a derived account, so that the same loan can be shown moving from 40 to 100 percent climate finance
 without any change in the loan. A value may be a range: `value_low` and
 `value_high` bound it, as the timing bounds bound a date, and a scalar has
 both equal.
 
 Money observations carry a `basis`, gross, net or unknown, and a flow carries
 its interval through two timing roles, `period_start` and `period_end`, so a
-quarterly register total states the quarter it covers and the reconciliation
+quarterly register total states the quarter it covers and the account
 of section 5 of the backend design can test coverage. A point flow has one
 `event` timing.
 
@@ -355,7 +416,8 @@ states this rather than filling it.
 ## 5. Storage contract
 
 One file is one table, joins happen at read time, nothing is materialised
-(ticket 0858, kept). Tables under `data/jetp/`, CSV, columns in this order.
+(ticket 0858, kept). Data tables under `data/jetp/`, ontology tables under
+`data/jetp/ontology/` (below), CSV, columns in this order.
 A table too large for the repository's file ceiling, 512 000 bytes per
 file in `.githooks/pre-commit`, is chunked by country and year into
 `<table>/<CODE>-<year>.csv`, which stays one table.
@@ -373,8 +435,7 @@ file in `.githooks/pre-commit`, is chunked by country and year into
 | `assets` | `asset_id` | country, name, technology, location, operator_party_id, part_of, notes (capacity is an observation, never a column) |
 | `agreements` | `agreement_id` | country, instrument, modality, sector, currency, tranche_of, notes |
 | `parties` | `party_id` | name, kind, country, publisher_id |
-| `perimeters` | `perimeter_id` | country, name, scope, definition, notes |
-| `line-referents` | `referent_row_id` | line_id, referent_kind, referent_id, status, method, method_version, confidence, evidence_line_ids, decided_at, decided_by, supersedes, notes |
+| `line-referents` | `referent_row_id` | line_id, referent_kind, referent_id, status, method, method_version, confidence, justification_line_ids, decided_at, decided_by, supersedes, notes |
 | `relations` | `relation_id` | from_kind, from_id, relation, to_kind, to_id, role, valid_from, valid_to, status, method, method_version, confidence, decided_at, decided_by, supersedes, line_id |
 | `observations` | `observation_id` | subject_kind, subject_id, axis, measure, flow_type, basis, value, value_low, value_high, unit, currency, own_status, indicator_code, line_id, method, method_version, recorded_at, status, supersedes, notes |
 | `timings` | `timing_id` | observation_id, date_role, date, date_precision, lower_bound, upper_bound, line_id, recorded_at |
@@ -383,21 +444,83 @@ file in `.githooks/pre-commit`, is chunked by country and year into
 | `adjudication-members` | (adjudication_id, kind, id) | role |
 | `rates` | (currency, date, basis) | rate_to_usd, line_id, recorded_at (a publisher's own conversion, printed beside the original, is a `rates` row citing that line, so the ledger records that the publisher converted, at what rate) |
 | `deflators` | (series, year) | value, line_id, recorded_at |
-| `status-crosswalk` | (publisher_id, own_status) | axis, shared_status, decided_at, decided_by, notes |
-| `sector-crosswalk` | (publisher_id, own_sector) | purpose_code, decided_at, decided_by, notes |
-| `marker-coefficients` | (donor_party_id, marker, score, year) | coefficient, line_id, recorded_at |
 | `line-field-specs` | `document_id` | the ordered list of a document's own column names, written at extraction, against which each `line-fields/<document_id>` header is validated |
 | `routes` | `old_id` | kind, new_id |
 | `coverage` | (referent_kind, referent_id) | review_status, checked_at, route, document_ids, notes |
 | `dry-searches` | as today | |
 | `decisions.md` | as today | |
 
-Accounts, the reconciled openings, movements, closings, residuals and
+### Ontology tables
+
+The ontology is data about the ledger's words, stored like the ledger itself:
+one CSV per table under `data/jetp/ontology/`, reviewed by diff, revised by
+supersession and never edited in place. Each table is keyed by a row
+identifier; the column in *italics* is the chain key that successive
+revisions of one entry share.
+
+| Table | Key | Columns |
+|---|---|---|
+| `terms` | `term_row_id` | *term_id*, kind, list, label, definition, scope_note, domain, range, external_scheme, external_uri, mapping_relation, recorded_at, decided_by, status, supersedes, notes |
+| `status-crosswalk` | `crosswalk_row_id` | *(publisher_id, own_status)*, axis, shared_status, recorded_at, decided_by, status, supersedes, notes |
+| `sector-crosswalk` | `crosswalk_row_id` | *(publisher_id, own_sector)*, purpose_code, recorded_at, decided_by, status, supersedes, notes |
+| `perimeters` | `perimeter_row_id` | *perimeter_id*, country, name, scope, definition, recorded_at, decided_by, status, supersedes, notes |
+| `marker-coefficients` | `coefficient_row_id` | *(donor_party_id, marker, score, year)*, coefficient, line_id, recorded_at, status, supersedes |
+
+**Definition.** Every word the schema admits as a value is a `terms` row: the
+classes and relations of sections 2 and 3, the line classifications, measures,
+bases, flow types, modalities, date roles, roles, axes and axis values of
+section 4. `kind` says which (class, relation, value); `list` names the closed
+list a value belongs to. The definition is plain English, one or two
+sentences, written for a reader of the observatory. A relation term also
+states its `domain` and `range`. The DDL's checks read the terms in force; no
+script or configuration file carries its own copy of a list.
+
+**Traceability.** A term taken from an external vocabulary names its scheme
+(IATI, OC4IDS, GEM, OECD DAC, PROV-O, SKOS), the concept's URI or code, and a
+`mapping_relation` from SKOS: `exactMatch`, `closeMatch`, `broadMatch`,
+`narrowMatch`, `relatedMatch`, or `local` for a word the ledger defines
+itself. Similar labels do not justify `exactMatch`. A crosswalk row maps a
+publisher's word onto a term; a perimeter row defines a population that
+counts are made against. Both name who decided and when.
+
+**Revision.** The in-force rule of the decision tables applies: a row is in
+force when it is the accepted terminal row of its chain. Rewording a
+definition or correcting a mapping supersedes the row under the same chain
+key. A change of meaning mints a new `term_id` or `perimeter_id`, and the old
+one stays valid for every row that used it; a count made against the old
+perimeter is never silently moved to the new one. The ontology as of cutoff K
+is the set of rows in force at K, so an as-of query reconstructs the words as
+well as the data. `decisions.md` keeps the reasons in prose and cites the row
+it explains.
+
+**Reference from E.** Every derived result records an `ontology_ref`, the
+hash of `data/jetp/ontology/` and of the DDL it was computed under, beside its
+run identifier and its two cutoffs. A result is never recomputed under a
+later ontology without a new run record.
+
+### English and formal specification
+
+This document is the English specification: it gives the reasons and the
+rules. The formal specification is the DDL of section 10 together with the
+`terms` table. Nothing else is: no OWL file, no SHACL shapes and no second
+prose glossary. Alignment is checked, not trusted. A test (ticket 0880) fails
+when a value listed in sections 2 to 4 is not a term in force, or a term in
+force appears nowhere in this document, and when a table or column declared
+here differs from the DDL. The observatory's Ontology page and a SKOS export
+(section 10) are generated from the `terms` table, so the words a reader sees
+are the words the validator enforces.
+
+LinkML was considered as the single source instead, generating the DDL, JSON
+Schema, OWL and documentation from one YAML file. It is not adopted now,
+because it adds a toolchain whose extra outputs have no consumer. The question
+reopens when an external consumer asks for OWL or JSON Schema.
+
+Accounts, the openings, movements, closings, residuals and
 coverage gaps per agreement or perimeter that section 5 of the backend
 design defines, are derived: they are computed from observations, timings,
 rates and adjudications at build time, written under `data/derived/jetp/`
-with the run identifier and the two cutoffs (valid and evidence), and never
-edited. The adjudications they depend on are records, in the table above.
+with the run identifier, the two cutoffs (valid time and knowledge) and
+the `ontology_ref`, and never edited. The adjudications they depend on are records, in the table above.
 
 Rules that the validator enforces:
 
@@ -420,9 +543,10 @@ Rules that the validator enforces:
   `rates`, `deflators` and every decision table carries `recorded_at`. An
   as-of state at cutoff K is the set of rows with `recorded_at` on or
   before K that are in force under the supersession rule.
-- `measure`, `basis`, `flow_type` and `modality` take values from the closed
-  lists of sections 2 and 4; a new value is a decision recorded in
-  `decisions.md` before the validator accepts it.
+- `measure`, `basis`, `flow_type`, `modality`, `classification`, `relation`,
+  `date_role` and every axis take values from the terms in force (ontology
+  tables, above); a new value is a `terms` row, with its definition, before
+  the validator accepts it.
 - A monetary conversion cites a `rates` row; a script never carries a rate.
 - A locator has a syntax per format, and the validator checks it: for a
   PDF, the PDF page index and the printed folio when one exists, then the
@@ -473,7 +597,7 @@ observations), `idn-portfolio-observations.csv`, `vnm-pilot-manifest.csv` and
 per API response, lines per record, P-numbers in `external-ids`),
 `event-timing.csv` (becomes `timings`, one row per date role of an observation). The M1a
 inventory builder becomes the line ingestion for its four documents; the
-frozen M1a release stays as the archived edition it is.
+frozen M1a release stays as the archived release it is.
 
 ## 6. Migration
 
@@ -501,12 +625,19 @@ before the current tables are removed. Counts below are from the tables on
 | `source-claims.csv` | 151 | lines and observations; the two finance aggregates become perimeter observations that replace the hard-coded headlines | |
 | `config/jetp_observatory.yaml` headlines | 4 | perimeter observations citing their lines | configuration keeps only display choices |
 | `data/jetp/comparison/*.json` | 1 119 records, 97 in the reference pool | lines of World Bank API snapshots, external identifiers, comparator status crosswalk | the reference pool is a perimeter whose members are those lines |
+| `config/jetp_tracking.yaml` vocabularies and the value lists of sections 2 to 4 | about 98 lines of YAML | `terms` rows under `data/jetp/ontology/`, each with a definition and, where one exists, an external mapping | the YAML keeps display choices only |
+| `news-leads.csv` | 18 | kept as today: a working file of the watch, not a ledger table | named as not served, with that reason, on the observatory's Methods page |
 | figure scripts' inline exchange rates | 1 known (`2500 * 1.09`) | `rates` rows citing their source line | a script never carries a rate |
 
 Order of work, each step a ticket with its own byte-level check:
 
+0. Ontology tables: `terms`, the two crosswalks, perimeters and marker
+   coefficients under `data/jetp/ontology/`, with their revision columns and
+   the alignment test of section 5 (ticket 0880). Built right after the DDL
+   tooling (ticket 0871), whose value checks then read the terms in force.
+
 1. Publishers, documents, publications, snapshots. Read-only rename of the
-   evidence layer; the observatory's Documents page is the check.
+   register (step D1); the observatory's Documents page is the check.
 2. Lines and line fields for the four M1a documents, replacing the M1a
    builder's product with the same rows under the new contract. The inventory
    tab is the check: same rows, same order, same fields.
@@ -519,22 +650,37 @@ Order of work, each step a ticket with its own byte-level check:
    are adjudicated into funder and channel roles in this step; promoter,
    implementing entity, beneficiary and contractor are filled only as their
    lines are reviewed. A party is minted from a line like every other
-   identity, so the table cannot grow ahead of the evidence. Decided by the
+   identity, so the table cannot grow ahead of its justification. Decided by the
    author on 2026-09-22.
 5. Observations and the status crosswalk, replacing events, implementation
-   events and event timing. The Observations tab and each record's evidence
+   events and event timing. The Observations tab and each record's justification
    fold-out are the check.
 6. Perimeter observations replace configured headlines.
 7. Remove the retired tables and the compatibility readers.
 
 ## 7. What the observatory serves
 
-The three-stage MVP (ticket 0834) keeps its shape. Stage one is documents,
-retrievals and snapshots. Stage two is lines, per document, with the publisher's own fields.
-Stage three is identities with their observations, each observation opening
-the line and the snapshot page it cites. The inventory tab is a view on lines;
-the Observations tab is a view on observations; a record page joins at read
-time. Every count on a page states its unit. Nothing on a page adds lines of
+The observatory shows the four ODEM objects apart (section 0), so that a
+reader always knows whether a page states a definition, a publisher's
+statement or a computed result.
+
+- **O, Ontology page.** The terms in force, grouped by list: each class,
+  relation and value with its definition, its external mapping and its
+  revision history. Relations show their domain and range. Every term shown
+  elsewhere on the site links here. Generated from `data/jetp/ontology/`.
+- **D, the pipeline.** The Data pages are presented as the four steps D1 to
+  D4, in order, and a reader can walk them both ways: from a referent to its
+  observations, their lines and the snapshot page; from a snapshot to what
+  was read from it. The M1a explorer of ticket 0834 becomes this pipeline:
+  its Documents page is D1, its inventory tabs are D2, its Observations tab
+  is D3, and its record pages are D4.
+- **E, results.** Every count and total is marked as a result: it names its
+  unit, its perimeter and the D rows it was computed from. Accounts, when
+  they exist, appear here and nowhere in the D pages.
+- **M.** Absent, and the Methods page says so.
+
+Every table of section 5 is served, one file per table, or named on the
+Methods page as not served, with the reason. Nothing on a page adds lines of
 one document to lines of another or to referents.
 
 ## 8. Consequences for the backend design
@@ -545,11 +691,11 @@ identity kinds; `subject_type` gains `line`; `source` becomes publisher,
 document and snapshot; `reported-positions` and the event journal merge into
 `observations`. Its section 5 accounts keep their adjudications as the
 `adjudications` and `adjudication-members` tables and their accounts as
-derived outputs (section 5 above). Section 9 adopts the migration table above. Per the model
+derived outputs (section 5 above). Section 9 adopts the migration table above. Per the schema
 review, the first executable metric is restated as a commitment measure until
 a disbursement observation exists, the provenance index of section 8 is
 declared a build-time validation artifact and never a served file, and the
-editions triple, the alias chain rules, the evidence-dependencies table and the
+source-editions triple, the alias chain rules, the dependency table between justifications (`evidence-dependencies` there) and the
 concept-mapping profile leave the implementation scope until a metric needs
 them. Tickets 0762, 0768 and 0769 closed on the previous contract; their
 readers are retired at step 7.
@@ -567,7 +713,7 @@ The author asked on 2026-09-22 whether the settled ontology is the moment to
 move from CSV files to a graph or SQLite engine. The answer is a division of
 labour, not a replacement.
 
-**CSV in git stays the system of record.** The ledger's facts are adjudicated
+**CSV in git stays the system of record.** The ledger's rows are adjudicated
 by reading a diff in a pull request; a database file has no diff, and a
 database that is regenerated from files is not a record of anything. The
 tables in section 5 hold about 8 000 rows today, but they will not stay
@@ -596,11 +742,11 @@ under `config/` declares every table, key, foreign key and check of section 5.
 The CSV headers are generated from it, so a column exists in one place. At
 build time the CSVs load into a SQLite file under `data/derived/jetp/`, the
 foreign-key and check constraints run as the validator, and the observatory's
-served JSON views and the reconciled accounts are SQL queries over that file.
+served JSON views and the accounts (E) are SQL queries over that file.
 The file is deterministic for a given input, disposable, and may ship as a
-downloadable edition artifact through the release mechanism, never as a
+downloadable release artifact, never as a
 committed file. This is what the backend design already reserves as an optional
-`<edition_id>.sqlite`, promoted from optional to the build's only query
+`<release_id>.sqlite` (`<edition_id>` there), promoted from optional to the build's only query
 engine. In the browser the observatory keeps serving one JSON file per table
 and joining at read time; at this volume an in-browser SQL engine would add a
 dependency without a query that needs it.
@@ -612,27 +758,27 @@ design bounds to depth one. A property graph or triple store wins on
 unbounded traversal and on schema-free ingestion, and the ledger wants neither:
 its ingestion is the controlled classification of section 4. What the graph
 world offers that is worth taking is its vocabulary. An RDF projection of the
-SQLite file over PROV-O for the evidence chain and SKOS for the status
+SQLite file over PROV-O for the justification chain and SKOS for the status
 crosswalk is a derived export, built when a consumer asks for it, and it costs
 one script. If that consumer ever runs SPARQL over several ledgers, the
 engine question reopens on their data, not on this one.
 
-## 11. Reconciliation
+## 11. Matching
 
-Reconciliation is the step that mints an identity from lines, attaches a line
+Matching is the step that mints an identity from lines, attaches a line
 to an existing identity, or relates a line to a line in another edition. The
 author named it on 2026-09-22 as one of the hard points and set its
 requirements: multilingual named-entity recognition over the labels, matching
-with a confidence, escalation to a language model and then to human
+with a confidence, escalation to a large language model (LLM) and then to human
 adjudication, defeasibility, and traceability. The perfect system is not the
 target now. What is fixed now is the record, so that a decision taken by the
 simplest matcher today and one taken by a person in two years sit in the same
 table with the same columns and can be overturned the same way.
 
 **The record.** A `line-referents` row or a `relations` row is a decision. It
-carries who or what decided (`decided_by`: a script name, a model identifier,
+carries who or what decided (`decided_by`: a script name, an LLM identifier,
 or a person), by which method and version, with what confidence in [0, 1], on
-which evidence lines, and when. Its `status` is `accepted`, `candidate` or
+which justification lines, and when. Its `status` is `accepted`, `candidate` or
 `rejected`. A decision is never edited or deleted: a later row names the
 earlier one in `supersedes`, and what is in force is the terminal row of the
 chain when its status is `accepted` (section 5, rules). A reviewer revokes a
@@ -658,10 +804,10 @@ and each writes its rows with its own method name.
    Vietnamese, French and English, yielding place, operator, technology and
    capacity as typed spans, matched as tuples. Confidence from the tuple
    agreement.
-4. Language-model adjudication of the remaining candidates, given both lines
+4. LLM adjudication of the remaining candidates, given both lines
    and their snapshot pages, returning a verdict, a confidence and a quoted
-   basis. The model identifier is the `decided_by`.
-5. Human adjudication of what the model declines or contradicts, recorded in
+   basis. The LLM identifier is the `decided_by`.
+5. Human adjudication of what the LLM declines or contradicts, recorded in
    the same row shape and in `decisions.md`.
 
 Thresholds per tier live in configuration, are versioned with the method, and
@@ -676,7 +822,7 @@ names reserved in the vocabulary. The Indonesian edition relation between the
 intersection is 3, is the test bed for tier 2 and the first case for tier 3,
 and it is not attempted in the migration.
 
-**Document deduplication.** The same reconciliation record applies one level
+**Document deduplication.** The same matching record applies one level
 up, to documents, and runs before any line is extracted, because a duplicate
 document extracted twice doubles every line and every count downstream. The
 registry already holds three mirrors and two repeated titles; the harvests
@@ -697,7 +843,7 @@ shape and with the same defeasibility:
 3. Metadata agreement: title, publisher, publication date, page count, and
    any identifier the document prints. Catches the mirror hosted by a partner
    and the translation, when paired with a language detector.
-4. Language-model adjudication of the remaining pairs, given both first pages.
+4. LLM adjudication of the remaining pairs, given both first pages.
 5. Human adjudication.
 
 The first implementation is tiers 1 and 2 at harvest time, so a snapshot
@@ -713,7 +859,7 @@ in. A translation pair is two documents related by `translation_of`, with one
 of them canonical for extraction (section 11). Nothing in the ledger is a
 translation presented as an original.
 
-Translated labels and summaries are derived text, produced by a model or a
+Translated labels and summaries are derived text, produced by an LLM or a
 person, stored under `data/derived/jetp/` in two tables, regenerable and
 outside the system of record:
 
@@ -722,12 +868,12 @@ outside the system of record:
 | `line-translations` | (line_id, language) | text, method, method_version, produced_at |
 | `document-summaries` | (document_id, language) | text, method, method_version, produced_at, snapshot_sha256 |
 
-Both carry the provenance columns of the reconciliation record, so a served
-translation can say which model produced it from which bytes. The observatory
+Both carry the provenance columns of the matching record, so a served
+translation can say which LLM produced it from which bytes. The observatory
 may show a translated label beside the original and a machine summary on a
 document's page, each marked as derived, and a reader who clicks through
 reaches the snapshot in its own language. No observation cites a translation
-or a summary; evidence is the line in the publisher's language, at its
+or a summary; the justification is the line in the publisher's language, at its
 locator, in its snapshot. The first implementation is the language column and
 the translation relation; the two derived tables are nice-to-have and wait for
 a reader who needs them.
