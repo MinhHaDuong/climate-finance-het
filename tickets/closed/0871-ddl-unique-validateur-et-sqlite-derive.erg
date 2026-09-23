@@ -2,11 +2,13 @@
 Title: DDL unique, validateur et SQLite dérivé du ledger
 Created: 2026-09-22
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1457
 
 --- log ---
 2026-09-22T17:30Z HDMX-coding-agent created
 2026-09-23T10:30Z HDMX-coding-agent note revue du train (2026-09-23) : les listes closes référencent `terms` au lieu d'être énumérées en CHECK, pour tenir l'invariant de 0880 (aucune liste hors de `terms`)
-
+2026-09-23T09:04Z HDMX-coding-agent note scripts named by the repo conventions: scripts/jetp/build_ledger.py (CLI) and scripts/jetp/_ledger_headers.py (library); SQLite at data/derived/jetp/ledger.sqlite; closed-list columns checked by view violation_closed_list against terms_in_force; legacy data/jetp/projects.csv skipped by name until 0875
+2026-09-23T09:28Z HDMX-coding-agent closed — autoclosed — PR #1457
 --- body ---
 ## Context
 
