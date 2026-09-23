@@ -17,6 +17,7 @@ must show is computed here from those same tables, never from an index in
 ``documents.json`` — there is none.
 """
 
+import csv
 import json
 import re
 import shutil
@@ -39,13 +40,13 @@ BAC_AI = "vnm-project-bac-ai-pumped-hydro"
 COUNTRIES = ("ZAF", "IDN", "VNM", "SEN")
 
 
-def render(route, state=None, expression=None):
+def render(route, state=None, expression=None, site=SITE):
     """The elements app.js wrote for one route, with a reader's inputs preset."""
     node = shutil.which("node")
     if node is None:
         pytest.skip("node is not installed; the render harness needs it")
     completed = subprocess.run(
-        [node, str(HARNESS), str(SITE), route, json.dumps(state or {}),
+        [node, str(HARNESS), str(site), route, json.dumps(state or {}),
          *([expression] if expression else [])],
         capture_output=True, text=True, check=True, timeout=60,
     )
@@ -432,9 +433,14 @@ def data_strings():
     # A bare word ("evidence", a key of reviewed-evidence.json) or a short
     # phrase is not a proper name: excusing it would excuse the page copy's
     # own use of it. What is excused is a title, a note, an identifier.
-    return sorted((s for s in found if FORBIDDEN.search(s) and len(s) >= 12
-                   and not re.fullmatch(r"[A-Za-z]+", s)),
-                  key=len, reverse=True)
+    excused = {s for s in found if FORBIDDEN.search(s) and len(s) >= 12
+               and not re.fullmatch(r"[A-Za-z]+", s)}
+    # A term's label is the ledger's own defined word, which the Glossary and
+    # every link to it must print verbatim, however short ("edition of").
+    terms = json.loads((SITE / "data/ontology/terms.json").read_text())
+    label = terms["fields"].index("label")
+    excused.update(row[label] for row in terms["rows"] if FORBIDDEN.search(row[label]))
+    return sorted(excused, key=len, reverse=True)
 
 
 def page_copy(html):
@@ -592,14 +598,24 @@ def test_the_glossary_group_headings_are_sub_heading_size() -> None:
     assert size == h3, (size, h3)
 
 
+GLOSSARY_THEMES = ["What we track", "How documents are read", "Statuses", "Measures", "Relations"]
+
+
+def glossary_groups(main):
+    return re.findall(r'data-glossary-group="([^"]+)"><h2>[^<]*</h2>(.*?)</section>', main, re.DOTALL)
+
+
+def glossary_entries(html):
+    """(term key, label) of each Glossary entry, in page order."""
+    return re.findall(r'<dt id="term-[^"]*" data-term="([^"]+)"[^>]*><span class="term-label">([^<]*)</span>', html)
+
+
 def test_the_glossary_is_grouped_by_theme_and_alphabetical_within_each_group() -> None:
-    main = render("glossary")["main"]
-    groups = re.findall(r'data-glossary-group="([^"]+)"><h2>[^<]*</h2>(.*?)</section>', main, re.DOTALL)
-    assert [unescape(g) for g, _ in groups] == [
-        "What we track", "How documents are read", "Statuses", "Measures", "Relations"]
+    groups = glossary_groups(render("glossary")["main"])
+    assert [unescape(g) for g, _ in groups] == GLOSSARY_THEMES
     for group, body in groups:
-        terms = [unescape(t) for t in re.findall(r"<dt>([^<]+)</dt>", body)]
-        assert len(terms) >= 3 and terms == sorted(terms, key=str.casefold), (group, terms)
+        labels = [unescape(label) for _, label in glossary_entries(body)]
+        assert len(labels) >= 3 and labels == sorted(labels, key=str.casefold), (group, labels)
 
 
 @pytest.mark.parametrize(("old", "new"), FORWARDS.items())
@@ -796,3 +812,178 @@ def test_the_static_shell_names_no_framework_and_no_retired_term() -> None:
     meta = " ".join(re.findall(r'content="([^"]+)"', shell))
     words = sorted({m.group(0).lower() for m in FORBIDDEN.finditer(text_of(shell) + " " + meta)})
     assert not words, words
+
+
+
+# --- The Glossary, generated from the ontology tables (ticket 0882) -----------
+#
+# A fixture ledger gives the cases the real one does not have yet: a reworded
+# term, a status crosswalk row (the crosswalks are written in ticket 0876).
+# Its five tables go through the same builder as the shipped views, into a
+# copy of the site, and the shipped app.js renders them.
+
+ZAF_PUBLISHER = "zaf-jet-pmu"
+
+
+def _term(list_name, term_id, definition, row=1, kind="value", supersedes=None, **extra):
+    return {"term_row_id": f"{list_name}.{term_id}.{row}", "term_id": term_id, "kind": kind,
+            "list": list_name, "label": term_id.replace("_", " "), "definition": definition,
+            "mapping_relation": "local", "recorded_at": f"2026-0{row}-01",
+            "decided_by": "fixture", "status": "accepted", "supersedes": supersedes, **extra}
+
+
+GLOSSARY_FIXTURE = {
+    "terms": [
+        _term("class", "agreement", "A financing arrangement.", kind="class"),
+        _term("class", "project", "A project, programme or component.", kind="class"),
+        _term("relation", "finances", "An agreement finances a project.", kind="relation",
+              domain="agreement", range="project"),
+        _term("axis", "delivery", "The IATI activity status axis."),
+        _term("delivery", "closed", "The activity is closed.", external_scheme="IATI",
+              external_uri="https://iatistandard.org/en/iati-standard/203/codelists/activitystatus/",
+              mapping_relation="closeMatch"),
+        _term("mapping_relation", "closeMatch", "Close enough to substitute in most uses."),
+        _term("mapping_relation", "local", "Defined for this ledger only."),
+        _term("line_classification", "named_item", "A line that names one item."),
+        _term("line_classification", "named_item",
+              "A line whose publisher names the one item it states.", row=2,
+              supersedes="line_classification.named_item.1"),
+        _term("money", "signed", "The agreement is signed."),
+        _term("measure", "amount", "A sum as its document prints it."),
+        dict(_term("measure", "withdrawn_idea", "Never accepted."), status="rejected"),
+    ],
+    "status_crosswalk": [
+        {"crosswalk_row_id": "cw-zaf-d", "publisher_id": ZAF_PUBLISHER,
+         "own_status": "D. Completed", "axis": "delivery", "shared_status": "closed",
+         "recorded_at": "2026-01-01", "decided_by": "fixture", "status": "accepted"},
+    ],
+}
+
+
+@cache
+def glossary_site():
+    """A copy of the site whose ontology views are built from the fixture."""
+    import tempfile
+
+    from jetp import _ledger_headers as ledger_headers
+    from jetp.build_ontology_views import write_views
+
+    base = Path(tempfile.mkdtemp(prefix="glossary-0882-"))
+    site, ledger = base / "site", base / "ledger"
+    shutil.copytree(SITE, site, ignore=shutil.ignore_patterns("documents"))
+    schema = ledger_headers.load_schema()
+    for table, rows in GLOSSARY_FIXTURE.items():
+        path = ledger_headers.table_path(ledger, table)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        header = schema.header(table)
+        with path.open("w", newline="", encoding="utf-8") as handle:
+            writer = csv.writer(handle, lineterminator="\n")
+            writer.writerow(header)
+            writer.writerows([[row.get(c) or "" for c in header] for row in rows])
+    write_views(ledger, site / "data/ontology")
+    return site
+
+
+def fixture_glossary(route="glossary"):
+    return render(route, site=glossary_site())["main"]
+
+
+def entry_of_term(main, key):
+    """The <dt>…</dd> pair of one Glossary entry."""
+    match = re.search(rf'<dt id="term-[^"]*" data-term="{re.escape(key)}".*?</dd>', main, re.DOTALL)
+    assert match, key
+    return match.group(0)
+
+
+def test_every_ontology_table_is_served_one_file_each_with_its_columns_verbatim() -> None:
+    from jetp import _ledger_headers as ledger_headers
+    from jetp._ontology import ontology_as_of
+
+    schema = ledger_headers.load_schema()
+    current = ontology_as_of()
+    for table in ledger_headers.ONTOLOGY_TABLES:
+        view = served(f"ontology/{ledger_headers.file_stem(table)}")
+        assert view["fields"] == schema.header(table), table
+        rows, _ = ledger_headers.read_table(ledger_headers.LEDGER_DIR, table, schema)
+        # Every row, superseded ones included, as the CSV holds it.
+        assert view["rows"] == [list(row) for row in rows], table
+        assert view["in_force"] == [row[view["key"]] for row in current[table]], table
+    # A table with no row yet is served, empty, not left out.
+    assert served("ontology/perimeters")["rows"] == []
+
+
+def test_the_glossary_renders_each_term_in_force_with_its_definition() -> None:
+    main = fixture_glossary()
+    in_force = [t for t in GLOSSARY_FIXTURE["terms"]
+                if t["status"] == "accepted" and t["term_row_id"] != "line_classification.named_item.1"]
+    keys = [key for key, _ in glossary_entries(main)]
+    assert sorted(keys) == sorted(f"{t['list']}/{t['term_id']}" for t in in_force)
+    for term in in_force:
+        entry = text_of(entry_of_term(main, f"{term['list']}/{term['term_id']}"))
+        assert term["definition"] in entry, term
+    assert "Never accepted." not in main
+
+
+def test_a_superseded_term_appears_only_in_its_successors_history() -> None:
+    main = fixture_glossary()
+    old = "A line that names one item."
+    assert text_of(main).count(old) == 1
+    entry = entry_of_term(main, "line_classification/named_item")
+    history = re.search(r'<details class="term-history">.*?</details>', entry, re.DOTALL)
+    assert history and old in text_of(history.group(0)), entry
+
+
+def test_a_relation_shows_what_it_connects() -> None:
+    entry = entry_of_term(fixture_glossary(), "relation/finances")
+    assert re.search(r"data-domain>.*?agreement.*?</span>", entry), entry
+    assert re.search(r"data-range>.*?project.*?</span>", entry), entry
+    # The classes it connects are terms too, and link to their entries.
+    assert 'href="#glossary?term=class%2Fagreement"' in entry
+
+
+def test_an_external_mapping_shows_its_scheme_and_skos_relation() -> None:
+    entry = entry_of_term(fixture_glossary(), "delivery/closed")
+    assert 'href="https://iatistandard.org/' in entry and "IATI" in text_of(entry)
+    assert 'href="#glossary?term=mapping_relation%2FcloseMatch"' in entry
+
+
+def test_a_zaf_status_links_to_its_definition_through_the_crosswalk() -> None:
+    rendered = render("entries/ZAF", site=glossary_site())
+    results = rendered["elements"]["inventory-results"]["innerHTML"]
+    assert re.search(r'<a href="#glossary\?term=delivery%2Fclosed"[^>]*>(<span class="pill">)?'
+                     r"D\. Completed", results), results[:2000]
+    # The link opens the entry, which shows the definition and the words
+    # mapped to it, the publisher's own word among them.
+    main = render("glossary?term=delivery%2Fclosed", site=glossary_site())["main"]
+    entry = entry_of_term(main, "delivery/closed")
+    assert "data-targeted" in entry
+    assert "The activity is closed." in text_of(entry)
+    crosswalk = re.search(r"<p data-crosswalk>.*?</p>", entry, re.DOTALL).group(0)
+    assert "D. Completed" in text_of(crosswalk) and ZAF_PUBLISHER in text_of(crosswalk)
+
+
+def test_a_status_on_the_record_links_to_its_term() -> None:
+    rendered = render("on-the-record/ZAF")
+    results = rendered["elements"]["observations-results"]["innerHTML"]
+    assert re.search(r'<dt>financial_status</dt><dd><a href="#glossary\?term=money%2Fsigned"',
+                     results), results[:2000]
+
+
+def test_the_shipped_glossary_shows_as_many_entries_as_terms_in_force() -> None:
+    from jetp._ontology import ontology_as_of
+
+    current = ontology_as_of()["terms"]
+    keys = [key for key, _ in glossary_entries(render("glossary")["main"])]
+    assert len(keys) == len(set(keys)) == len(current)
+
+
+def test_no_hand_written_definition_remains_on_the_glossary() -> None:
+    renderer = (SITE / "app.js").read_text()
+    assert 'data-glossary="handwritten"' not in renderer
+    assert "const GLOSSARY = [" not in renderer
+    main = render("glossary")["main"]
+    terms = served("ontology/terms")
+    definitions = {row[terms["fields"].index("definition")] for row in terms["rows"]}
+    for dd in re.findall(r'<p class="term-definition">(.*?)</p>', main, re.DOTALL):
+        assert unescape(dd) in definitions, dd
+    assert main.count('class="term-definition"') == len(glossary_entries(main))
