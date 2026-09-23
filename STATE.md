@@ -1,6 +1,6 @@
 # State
 
-Last updated: 2026-09-23T07:00Z
+Last updated: 2026-09-23T18:58Z
 
 ## Current goal
 
@@ -10,26 +10,26 @@ The RDJ-26561 data paper is published; Œconomia v2.0.5 remains with its editor.
 
 ## JETP checkpoint
 
-No deployment; no causal model (0729 DEFER). Language pinned to ODEM on
-2026-09-23 (`docs/jetp-language.md`): the observatory is Data guided by
-Ontology, Evidence on top; "evidence" for documentary support is now
-"justification". M1a is ticked by the author (#1448). 0760–0770 left write
-ownership legacy; the ledger migration is 0870 (ontology v2, #1449, awaiting
-approval; #1450 stacks on it), which absorbed 0860 and gains 0880 (revisable
-ontology tables), 0881 (MVP organised by O-D-E-M in plain words, D as a
-path) and 0882 (Glossary). 0833 (M1b) is restated on v2, blocked by
-0873/0875/0880. Pending: the 0732 angle. `/lair` step 9 is the only watch on slow-tier pins.
+No deployment; no causal model (0729 DEFER). M1a ticked (#1448). Ledger
+migration 0870 (ontology v2, 19 children) runs autonomously by author decision
+of 2026-09-23: merge on a checklist review, stop only on a change of meaning.
+Merged: 0871 DDL/validator, 0880 ontology tables, 0872 evidence layer with
+organisation authority control (parties + party-names, decision 12), 0873
+M1a lines (2,164). Site: 0881 navigation, 0882 generated Glossary. **Paused;
+next wave ready: 0874, 0887, 0888** (parallel). Then 0875 (tier 2 by LLM,
+low confidence to `decisions.md`), 0876→0877→0889→0890, 0884, 0879→0885/0886,
+0878, 0833 (M1b). Codex takes the non-JETP queue.
 
 ## Status
-<!-- generated 2026-09-22T09:37Z · as of bf31b3ee -->
+<!-- generated 2026-09-23T18:58Z · as of 35de9325 -->
 
-**Tickets:** 55 ready · 51 blocked · 9 awaiting author — `erg ready tickets/` for full list
+**Tickets:** 56 ready · 64 blocked · 11 awaiting author — `erg ready tickets/` for full list
   next: 0272 Extract shared derive_companion_path() helper f… · 0273 load_cluster_labels() ignores --input, reads cl…
 **In flight:** no open PRs
 **Recent (first-parent):**
-  bf31b3ee Merge pull request #1441 from MinhHaDuong/t0854-sources-vnm
-  4216fd75 Merge pull request #1443 from MinhHaDuong/t0858-documents-table
-  a22035ef Merge pull request #1442 from MinhHaDuong/tickets-0858
+  35de9325 Merge pull request #1467 from MinhHaDuong/t0873-lines-m1a
+  de71a3d7 Merge pull request #1466 from MinhHaDuong/t0872-joint-publishers
+  0618c984 fix: prevent NaN row text leakage (0550) (#1465)
 
 ## Corpus and submissions
 
