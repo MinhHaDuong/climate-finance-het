@@ -6,6 +6,7 @@ Blocked-by: 0874
 
 --- log ---
 2026-09-22T17:30Z HDMX-coding-agent created
+2026-09-23T10:30Z HDMX-coding-agent note revue du train (2026-09-23) : `relations` ajoutée aux critères de sortie ([[0833]] en dépend) ; le palier 2 tourne ici une seule fois
 
 --- body ---
 ## Context
@@ -64,6 +65,7 @@ préfixes du registre. `routes` fait résoudre chaque ancien identifiant.
 
 ## Exit criteria
 
-- [ ] Cinq tables d'identité, `line-referents`, `routes`, `parties` validées par [[0871]]
+- [ ] Cinq tables d'identité, `line-referents`, `relations` (dont les 11 `component_of`), `routes`, `parties` validées par [[0871]]
+- [ ] Les candidats de palier 2 sont écrits pour les lignes des quatre documents M1a ; [[0833]] les revoit sans relancer le palier 2
 - [ ] Rapport de scission : comptes par disposition, candidats en attente
 - [ ] `make check-fast` et `make lint` verts

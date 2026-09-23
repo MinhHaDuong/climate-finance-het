@@ -1,0 +1,57 @@
+%erg 0.1
+Title: Table `coverage` : couverture documentaire des référents, depuis project-coverage et authority-coverage
+Created: 2026-09-23
+Author: HDMX-coding-agent
+Blocked-by: 0875
+
+--- log ---
+2026-09-23T10:30Z HDMX-coding-agent created revue du train de migration (2026-09-23) : `coverage` figure au contrat de stockage § 1 et 0878 retire ses deux tables sources, mais aucun enfant de [[0870]] ne la construisait
+
+--- body ---
+## Context
+
+Contrat de stockage (`docs/jetp-ledger-storage.md`) § 1 : `coverage`, clé
+(referent_kind, referent_id), colonnes review_status, checked_at, route,
+document_ids, notes. La migration (`docs/jetp-ledger-migration.md`, « What
+disappears ») la dérive de `project-coverage.csv` et `authority-coverage.csv`,
+que [[0878]] retire. Le dernier critère de sortie de [[0870]] (repris de
+[[0860]]) fait descendre le lecteur du compte des places non publiées du
+Viet Nam jusqu'aux « lignes de couverture » : sans cette table, il n'a pas
+de destination. Les clés sont des référents, donc la table vient après la
+scission des identités ([[0875]]).
+
+## Relevant files
+
+- `data/jetp/project-coverage.csv`, `data/jetp/authority-coverage.csv` — entrées, lues jamais écrites
+- `docs/jetp-ledger-storage.md` § 1 — les colonnes
+- `deliverables/jetp-observatory/` — la vue servie, une table par fichier ([[0858]])
+
+## Actions
+
+1. Une ligne `coverage` par référent couvert : l'ancien identifiant de
+   projet résolu par `routes` ([[0875]]), les autorités par `parties`.
+2. `document_ids` pointe vers `documents` ([[0872]]) ; `route` garde la voie
+   de recherche consignée.
+3. Servir la table ; lecture de compatibilité jusqu'à [[0878]].
+
+## Test
+
+- `tests/test_jetp_coverage.py` : depuis une fixture de trois lignes de
+  couverture (un projet, une autorité, une ligne dont l'ancien identifiant
+  est une place comptée VNM), la construction donne deux lignes `coverage`
+  sur des référents et route la troisième vers le périmètre ; une ligne sans
+  référent est refusée.
+
+## Verification
+
+- [ ] Chaque ligne des deux tables sources retrouve sa ligne `coverage` ou une disposition nommée
+- [ ] Recettes ZAF et VNM de [[0834]] vertes
+
+## Invariants
+
+- Les tables sources restent lues, jamais écrites, jusqu'à [[0878]].
+
+## Exit criteria
+
+- [ ] `coverage` validée par [[0871]] et servie
+- [ ] `make check-fast` et `make lint` verts

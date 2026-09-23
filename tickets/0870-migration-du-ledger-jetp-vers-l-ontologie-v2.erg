@@ -2,10 +2,10 @@
 Title: Migration du ledger JETP vers l'ontologie v2 (suiveur)
 Created: 2026-09-22
 Author: HDMX-coding-agent
-Label: needs-human
 
 --- log ---
 2026-09-22T17:30Z HDMX-coding-agent created
+2026-09-23T10:30Z HDMX-coding-agent note revue du train (2026-09-23) : PR #1449 fusionnée (0ddf30e2), la porte de lancement est levée, label needs-human retiré ; 0880 en vague 0b (bloqué par 0871) ; [[0884]] ajouté (`coverage` sans propriétaire) ; [[0879]] scindé en 0879, [[0885]], [[0886]] ; quinze enfants
 
 --- body ---
 ## Context
@@ -34,24 +34,27 @@ viennent au-dessus ; il n'y a pas de M. Trois enfants s'ajoutent : les tables
 d'ontologie révisables ([[0880]]), l'organisation du MVP selon O-D-E-M, sans en
 afficher les mots, avec D en parcours ([[0881]]) et le Glossary ([[0882]]).
 
-Ne pas lancer avant que l'auteur ait approuvé PR #1449.
+PR #1449 fusionnée le 2026-09-23 (0ddf30e2) : le train peut partir. `line-translations` et `document-summaries` (contrat de stockage § 5) sont hors du train : textes dérivés, « nice-to-have », en attente d'un lecteur qui en a besoin.
 
 ## Enfants, dans l'ordre des vagues
 
 | Vague | Enfant | Étape de la migration |
 |---|---|---|
 | 0 | [[0871]] | DDL unique, validateur, SQLite dérivé (contrat de stockage § 3) |
-| 0 | [[0880]] | tables d'ontologie : termes, correspondances, périmètres, révisions, test d'alignement (étape 0) |
+| 0b | [[0880]] | tables d'ontologie : termes, correspondances, périmètres, révisions, test d'alignement (étape 0) |
 | 1 | [[0872]] | publishers, documents, publications, retrievals, snapshots (étape 1) |
 | 2 | [[0873]] | lignes et champs des quatre documents M1a (étape 2) |
 | 3 | [[0874]] | lignes des autres documents (étape 3) |
 | 4 | [[0875]] | scission des identités, référents, routes, parties (étape 4) |
 | 5 | [[0876]] | observations, timings, crosswalks de statut et de secteur (étape 5) |
+| 5 | [[0884]] | `coverage` depuis les deux tables de couverture (après 0875) |
 | 6 | [[0877]] | observations de périmètre, comptes dérivés, adjudications (étape 6) |
 | 7 | [[0878]] | retrait des tables anciennes et des lecteurs de compatibilité (étape 7) |
 | — | [[0881]] | le MVP s'organise selon O, D, E, M sans en afficher les mots ; D en parcours (`docs/jetp-observatory-presentation.md`) ; présentation seule, parallèle aux vagues |
 | après 0 | [[0882]] | Glossary du MVP, générée des tables de 0880 |
-| 5' | [[0879]] | enregistrements comparateurs : Banque mondiale, CRS énergie quatre pays, IATI, identifiants externes, marqueurs |
+| 5' | [[0879]] | contrat de ligne comparateur, Banque mondiale, pool de référence et courbe du papier court |
+| 5'' | [[0885]] | CRS énergie quatre pays, marqueurs, déflateurs, voie vrac sous DVC |
+| 5'' | [[0886]] | tranche IATI énergie quatre pays |
 
 ## Relevant files
 
@@ -70,7 +73,7 @@ Ne pas lancer avant que l'auteur ait approuvé PR #1449.
 
 ## Exit criteria
 
-- [ ] Les douze enfants sont fermés
+- [ ] Les quinze enfants sont fermés
 - [ ] Revue d'intégration : diffs des enfants relus, `make check` complet, recettes ZAF et VNM vertes
 - [ ] `docs/jetp-ledger-migration.md` mis à jour avec les comptes réels de la migration
 - [ ] Aucune route publique cassée : chaque ancien identifiant résout par `routes`

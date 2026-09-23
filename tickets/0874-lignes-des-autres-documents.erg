@@ -6,6 +6,7 @@ Blocked-by: 0873
 
 --- log ---
 2026-09-22T17:30Z HDMX-coding-agent created
+2026-09-23T10:30Z HDMX-coding-agent note revue du train (2026-09-23) : les 1 628 lignes de plan sont frappées en 0873 ; ici elles sont enrichies, pas recomptées
 
 --- body ---
 ## Context
@@ -47,7 +48,7 @@ ou `possible_match` (les 11 `project_page_component` deviennent des
 
 ## Verification
 
-- [ ] Comptes : 1 628 + 46 + 66 + 46 + 151 lignes ; 315 référents
+- [ ] Comptes : 46 + 66 + 46 + 151 = 309 lignes nouvelles ; les 1 628 lignes de plan de [[0873]] enrichies de leurs colonnes, sans ligne ajoutée ; 315 référents
 - [ ] Aucune ligne de `projects.csv` créée ou modifiée
 
 ## Invariants

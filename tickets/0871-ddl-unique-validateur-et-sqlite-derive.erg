@@ -5,6 +5,7 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-09-22T17:30Z HDMX-coding-agent created
+2026-09-23T10:30Z HDMX-coding-agent note revue du train (2026-09-23) : les listes closes référencent `terms` au lieu d'être énumérées en CHECK, pour tenir l'invariant de 0880 (aucune liste hors de `terms`)
 
 --- body ---
 ## Context
@@ -21,7 +22,7 @@ migre ici, l'outillage est posé sur des tables vides.
 
 ## Relevant files
 
-- `config/jetp-ledger.sql` — à créer, le DDL
+- `config/jetp-ledger.sql` — à créer, le DDL ; déclare aussi le schéma de `terms` ([[0880]])
 - `scripts/jetp/ledger_build.py` — à créer : charge les CSV, applique le DDL, écrit le SQLite
 - `scripts/jetp/ledger_headers.py` — à créer : génère et vérifie les en-têtes CSV depuis le DDL
 - `scripts/analysis/jetp_observatory.mk` — cibles `jetp-ledger-db` et `jetp-ledger-check`
@@ -31,7 +32,10 @@ migre ici, l'outillage est posé sur des tables vides.
 
 1. Écrire le DDL des tables du contrat de stockage § 1, avec les règles de la
    section comme contraintes CHECK là où SQLite le permet, et les autres
-   comme requêtes de validation nommées.
+   comme requêtes de validation nommées. Une colonne à liste close n'énumère
+   pas ses valeurs dans un CHECK : elle référence la table `terms` (schéma
+   déclaré ici, vide ; [[0880]] la peuple), de sorte qu'aucune liste de
+   valeurs n'existe hors de `terms`.
 2. Générer les en-têtes CSV depuis le DDL ; un test vérifie que chaque CSV
    présent porte l'en-tête généré.
 3. Charger, valider, écrire le SQLite ; déterministe à entrée égale
@@ -44,7 +48,8 @@ migre ici, l'outillage est posé sur des tables vides.
 
 - `tests/test_jetp_ledger_ddl.py` : une fixture de cinq tables minuscules
   avec une clé étrangère cassée, une valeur hors liste close et un en-tête
-  divergent ; la construction échoue trois fois pour trois raisons nommées,
+  divergent (la valeur hors liste est refusée par la référence à une
+  table `terms` de fixture, pas par un CHECK) ; la construction échoue trois fois pour trois raisons nommées,
   puis passe une fois les trois corrigées ; deux constructions consécutives
   donnent le même SQLite octet pour octet.
 

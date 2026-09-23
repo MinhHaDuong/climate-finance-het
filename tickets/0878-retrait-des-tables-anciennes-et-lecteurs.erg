@@ -3,9 +3,12 @@ Title: Retrait des tables anciennes et des lecteurs de compatibilité
 Created: 2026-09-22
 Author: HDMX-coding-agent
 Blocked-by: 0877
+Blocked-by: 0879
+Blocked-by: 0884
 
 --- log ---
 2026-09-22T17:30Z HDMX-coding-agent created
+2026-09-23T10:30Z HDMX-coding-agent note revue du train (2026-09-23) : bloqué par 0884 (`coverage` remplace les deux tables de couverture) et 0879 (les projets Banque mondiale remplacent `comparison/*.json`, ajouté à la liste de retrait)
 
 --- body ---
 ## Context
@@ -16,7 +19,7 @@ les nouvelles tables et comparée, les tables retirées par la migration
 `manifest.csv`, `plan-projects.csv`, `events.csv`,
 `implementation-events.csv`, `event-timing.csv`, `project-source-links.csv`,
 `source-claims.csv`, `idn-portfolio-observations.csv`, `vnm-pilot-*.csv`,
-`project-coverage.csv`, `authority-coverage.csv` ; les lecteurs de
+`project-coverage.csv`, `authority-coverage.csv`, `data/jetp/comparison/*.json` ; les lecteurs de
 compatibilité de [[0762]], [[0768]], [[0769]] ; `_contracts.py` et
 `schemas.py` côté JETP. Le vocabulaire `storage` de `config/jetp_tracking.yaml`
 liste les tables de l'ontologie.
