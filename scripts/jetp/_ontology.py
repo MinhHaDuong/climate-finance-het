@@ -22,10 +22,13 @@ A library: the builders of derived results call it.
 import hashlib
 from pathlib import Path
 
-from jetp._ledger_headers import DDL_PATH, LEDGER_DIR, load_schema, read_table
-
-ONTOLOGY_TABLES = ('terms', 'status_crosswalk', 'sector_crosswalk', 'perimeters',
-                   'marker_coefficients')
+from jetp._ledger_headers import (
+    DDL_PATH,
+    LEDGER_DIR,
+    ONTOLOGY_TABLES,
+    load_schema,
+    read_table,
+)
 
 
 def _on_or_before(recorded_at, cutoff):
