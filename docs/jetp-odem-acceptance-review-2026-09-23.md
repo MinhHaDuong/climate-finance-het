@@ -175,3 +175,14 @@ that exist. They add no author load and stop the replay debt from growing.
 - It reads the six v2 review reports only through v2's own summary of them.
 - It does not judge ODEM itself. ODEM is a preproject with no prototype, so the comparison is about concepts, not software.
 - Row counts come from ticket bodies and from v2 §6, dated 14–22 September.
+
+## 7. Outcome, 2026-09-23
+
+The author decided the following the same day. They are recorded in
+`jetp-ontology.md` (decision 11 and section 0) and in the tickets:
+
+- the ledger's language is pinned to ODEM, and five terms are retired or restricted: *evidence* becomes *justification*, and *model*, *reconciliation*, *edition* and *layer/stage/fact* are replaced as well;
+- the observatory has no Model: it is Data guided by Ontology, and Evidence comes on top;
+- the ontology gets revisable tables with definitions and external mappings, and an alignment test against this English specification (0880);
+- the MVP shows O, D, E and M apart, with D as a pipeline (0881), and it presents the ontology (0882);
+- 0833 is restated on the v2 contract, 0860 is closed as absorbed by 0870 after verification, and 0760 carries a log note on what it did and did not migrate.
