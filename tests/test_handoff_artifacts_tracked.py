@@ -15,6 +15,7 @@ import os
 import re
 import subprocess
 import sys
+from pathlib import Path
 
 import pytest
 import yaml
@@ -49,6 +50,17 @@ def _is_tracked(relpath):
         cwd=BASE_DIR, capture_output=True,
     )
     return result.returncode == 0
+
+
+@pytest.mark.adherence
+@pytest.mark.integration
+def test_multilayer_embedded_figures_are_tracked():
+    """A clean checkout must contain every figure the multilayer paper embeds."""
+    paper = Path(BASE_DIR) / "deliverables/multilayer/multilayer-detection.qmd"
+    figures = set(re.findall(r"\.\./_shared/figures/(fig_companion_[\w-]+\.png)", paper.read_text()))
+    assert figures, "the multilayer figure guard found no embedded figures"
+    missing = [name for name in sorted(figures) if not _is_tracked(f"deliverables/_shared/figures/{name}")]
+    assert not missing, f"companion figures unavailable in a clean checkout: {missing}"
 
 
 @pytest.mark.adherence
