@@ -143,8 +143,6 @@ CORPUS_REPORT_FIGS := deliverables/_shared/figures/fig_bars.png \
 
 MULTILAYER_FIGS  := deliverables/_shared/figures/fig_companion_zseries.png \
                    deliverables/_shared/figures/fig_companion_heatmap.png \
-                   deliverables/_shared/figures/fig_companion_terms.png \
-                   deliverables/_shared/figures/fig_companion_community.png \
                    deliverables/_shared/figures/fig_companion_sensitivity.png
 
 # The two conference decks embed pipeline figures like any other deliverable;

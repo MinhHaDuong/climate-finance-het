@@ -2,10 +2,12 @@
 Title: figure scripts fall back to synthetic placeholder data and the render exits 0
 Created: 2026-07-28
 Author: HDMX-coding-agent
+Closed: Synthetic fallback removed; missing interpretation tables now stop figure generation, and unsupported figures are withheld
 
 --- log ---
 2026-07-28T15:26Z HDMX-coding-agent created
 
+2026-09-23T16:48Z HDMX-coding-agent closed — Synthetic fallback removed; missing interpretation tables now stop figure generation, and unsupported figures are withheld
 --- body ---
 ## Context
 

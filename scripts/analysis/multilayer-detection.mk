@@ -11,7 +11,7 @@
 #   $(COMP_TABLES)/tab_summary_{S2_energy,L1,G9_community,G2_spectral}.csv
 #   $(COMP_TABLES)/tab_div_C2ST_{embedding,lexical}.csv
 #
-# Optional inputs (ticket 0056 interpretation layer; stub fallback if absent):
+# Interpretation inputs (ticket 0064; scripts fail if absent):
 #   deliverables/_shared/tables/tab_discrim_terms*.csv
 #   deliverables/_shared/tables/tab_community_shifts*.csv
 
@@ -45,15 +45,15 @@ $(COMP_FIGS)/fig_companion_heatmap.png: \
 	$(PYTHON) scripts/figures/plot_companion_heatmap.py --output $@
 
 # ── Figure 3: Discriminative terms ───────────────────────────────────────
-# No hard dependency on tab_discrim_terms*.csv: the script degrades to a
-# TODO(t0064)-annotated stub when the interpretation layer is absent.
+# The interpretation table has no producing rule yet (ticket 0064).
+# The script fails instead of inventing values when it is absent.
 
 $(COMP_FIGS)/fig_companion_terms.png: \
     scripts/figures/plot_companion_terms.py $(COMP_UTILS) $(COMP_STYLE) $(COMP_CFG)
 	$(PYTHON) scripts/figures/plot_companion_terms.py --output $@
 
 # ── Figure 4: Community shifts ───────────────────────────────────────────
-# Same stub-fallback rationale as Figure 3.
+# Same missing-input behavior as Figure 3.
 
 $(COMP_FIGS)/fig_companion_community.png: \
     scripts/figures/plot_companion_community.py $(COMP_UTILS) $(COMP_STYLE) $(COMP_CFG)

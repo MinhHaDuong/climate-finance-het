@@ -69,11 +69,14 @@ def test_no_old_method_includes():
     assert not present, f"Old includes still referenced: {present}"
 
 
-def test_results_stubs_figure_refs():
-    """§5 must reference the four figures ticket 0058 will materialise."""
+def test_results_figures_require_real_inputs():
+    """§5 shows computed figures and withholds the missing interpretation layer."""
     text = _text()
-    for ref in ["@fig-zseries", "@fig-heatmap", "@fig-terms", "@fig-community"]:
+    for ref in ["@fig-zseries", "@fig-heatmap"]:
         assert ref in text, f"Missing figure reference: {ref}"
+    for ref in ["@fig-terms", "@fig-community", "fig_companion_terms.png", "fig_companion_community.png"]:
+        assert ref not in text, f"Uncomputed interpretation figure shown: {ref}"
+    assert "ticket 0064" in text
 
 
 def test_results_uses_meta_placeholders():
