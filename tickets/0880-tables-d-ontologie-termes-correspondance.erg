@@ -2,13 +2,13 @@
 Title: Tables d'ontologie : termes, correspondances et périmètres révisables, test d'alignement avec la spécification
 Created: 2026-09-23
 Author: HDMX-coding-agent
-Blocked-by: 0871
 
 --- log ---
 2026-09-23T06:45Z HDMX-coding-agent created
 2026-09-23T10:30Z HDMX-coding-agent note revue du train (2026-09-23) : partage explicite — 0880 possède le schéma des cinq tables et peuple `terms` ; les vagues suivantes peuplent les autres
 
 2026-09-23T09:17Z HDMX-coding-agent note gaze/1457: 0871's violation_closed_list names its closed lists (line_classification, project_classification, axis, measure, flow_type, basis, modality, relation, date_role, date_precision, decision_status, kind, decision_type) as an interim choice; confirm or rename them against the terms populated here
+2026-09-23T09:28Z HDMX-coding-agent note blocker 0871 closed — Blocked-by removed.
 --- body ---
 
 ## Context
