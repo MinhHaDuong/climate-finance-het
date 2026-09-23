@@ -39,7 +39,7 @@ Markers gate which `make` target runs a test. Pick the tier by **cost**, not by 
 | slow | `@pytest.mark.slow` | network, real data, a heavy numerical dependency (dcor/torch/ot/sentence_transformers), or heavy compute | `make check` |
 | adherence | `@pytest.mark.adherence` | ruff / mypy / hygiene / contracts | `make lint` |
 
-`make check-fast` = `-m "not slow and not integration and not adherence"` (the inner loop — must stay pure logic). `make lint` = `-m adherence`. `make check` runs everything. No coverage is lost by moving a test to a slower tier — the full `make check` still runs it: ex post on main (`/lair` step 9), and pre-PR when the diff touches the pipeline surface (AGENTS.md § Execute).
+`make check-fast` = `-m "not slow and not integration and not adherence"` (the inner loop — must stay pure logic). `make lint` = `-m adherence`. `make check` runs everything. No coverage is lost by moving a test to a slower tier — the full `make check` still runs it: ex post on main (`/lair` step 9), and pre-PR when the diff touches the pipeline surface (AGENTS.md § Merge gate).
 
 Two guards keep the fast tier honest (ticket 0216, owned by `tests/test_fast_path_budget.py` + `tests/conftest.py`):
 
@@ -54,3 +54,4 @@ Two guards keep the fast tier honest (ticket 0216, owned by `tests/test_fast_pat
 
 - `make` builds all documents. `make manuscript` builds manuscript only. `make papers` builds the 3 companions. `make figures` regenerates all figures (byte-reproducible).
 - Add `*.stamp` to `.gitignore` for sentinel stamps.
+- **Makefile truth**: prerequisites and targets must match each script's actual file reads and writes.

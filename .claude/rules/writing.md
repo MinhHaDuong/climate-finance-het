@@ -1,5 +1,6 @@
 ---
-globs: ["deliverables/**"]
+paths:
+  - "deliverables/**"
 ---
 
 # Writing Rules

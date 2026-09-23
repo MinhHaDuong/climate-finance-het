@@ -1,5 +1,6 @@
 ---
-globs: ["scripts/**"]
+paths:
+  - "scripts/**"
 ---
 
 # Script I/O Discipline

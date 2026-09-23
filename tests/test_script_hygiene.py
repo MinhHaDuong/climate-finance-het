@@ -1118,8 +1118,10 @@ class TestAlwaysLoadedContextBudget:
 
     Claude Code loads ~150-200 instructions before compliance drops.
     AGENTS.md + unscoped rule files form the always-on context. Path-scoped
-    rules (those with globs: or paths: frontmatter) load only when relevant
-    files are touched, so they don't count against the budget.
+    rules (those with paths: frontmatter) load only when relevant files are
+    touched, so they don't count against the budget. A globs: key is not
+    honoured by the runtime: such a file loads every session, and counting it
+    as scoped let three rule files sit resident while this test passed.
 
     Budget: <= 300 lines total for always-loaded context.
     """
@@ -1130,10 +1132,10 @@ class TestAlwaysLoadedContextBudget:
 
     @staticmethod
     def _has_path_scope(filepath: str) -> bool:
-        """Return True if the rule file has globs: or paths: frontmatter."""
+        """Return True if the rule file has paths: frontmatter."""
         with open(filepath) as f:
             content = f.read()
-        # Check for YAML frontmatter with globs: or paths:
+        # Check for YAML frontmatter with paths: (globs: is not honoured)
         if not content.startswith("---"):
             return False
         # Find closing ---
@@ -1141,12 +1143,12 @@ class TestAlwaysLoadedContextBudget:
         if end == -1:
             return False
         frontmatter = content[3:end]
-        return "globs:" in frontmatter or "paths:" in frontmatter
+        return "paths:" in frontmatter
 
     def test_always_loaded_line_budget(self):
         """AGENTS.md + unscoped .claude/rules/*.md must be <= 300 lines.
 
-        Path-scoped rules (with globs: or paths: frontmatter) don't count
+        Path-scoped rules (with paths: frontmatter) don't count
         because they load only when the agent touches matching files.
         """
         total = 0
@@ -1171,7 +1173,7 @@ class TestAlwaysLoadedContextBudget:
             f"Always-loaded context is {total} lines "
             f"(budget: {self.MAX_ALWAYS_LOADED_LINES}).\n"
             f"Breakdown: {', '.join(contributors)}.\n"
-            f"Fix: add globs: frontmatter to path-scope a rule file, "
+            f"Fix: add paths: frontmatter to path-scope a rule file, "
             f"or trim content."
         )
 
