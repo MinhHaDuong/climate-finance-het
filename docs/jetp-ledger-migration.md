@@ -33,7 +33,7 @@ before the current tables are removed. Counts below are from the tables on
 
 | Current | Rows | Target | Notes |
 |---|---|---|---|
-| `sources.csv` | 301 | 101 parties with 103 name forms, 301 documents, 304 publications | case variants merged at minting; three joint publisher texts split into two parties each; acronym pairs are tier-2 candidates |
+| `sources.csv` | 301 | 94 parties with 95 name forms, 301 documents, 307 publications | case variants merged at minting; three joint publisher texts split into two parties each; "X via Y" and "X / Y" texts resolved to publisher X, three consulting firms linked as `author`; acronym pairs are tier-2 candidates |
 | `manifest.csv` | 314 | 314 retrievals, 264 snapshots | 41 failed retrievals carry no snapshot; 9 snapshots are yielded by two retrievals each |
 | `projects.csv` ZAF register | 257 | 257 lines of the Q1 2026 register, `register_allocation`; 257 agreements minted by basis `register_row`; projects minted only where the reviewed name match holds | the register's own status letter becomes `own_status`, axis delivery |
 | `projects.csv` VNM count slots | 21 | 1 perimeter, 2 observations of measure `count` (7 initial, 17 screened) citing the portfolio lines | routes for the 21 slot identifiers point at the perimeter |

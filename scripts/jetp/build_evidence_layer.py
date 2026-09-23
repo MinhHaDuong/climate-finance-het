@@ -16,7 +16,8 @@ visible in its output:
   diacritics or spacing are one party with several name forms, never two
   parties and a ``same_as`` (storage contract section 4, organisations).
 - Every form a document carries is a ``party-names`` row, justified by the
-  first document, in identifier order, that carries it. The most used form of
+  first document, in identifier order, that carries it, a document printing
+  it as its whole publisher text first. The most used form of
   a party is its preferred form, ties going to a form not written in capitals,
   then to alphabetical order; the others are ``spelling_or_case_variant``.
 - A publisher text that names two bodies (``JOINT_LABELS``) is a joint
@@ -34,8 +35,19 @@ visible in its output:
   ``country`` is set only for a national government or a JETP secretariat,
   whose country is the partnership's; for any other category the documents'
   country is where the party wrote about, not where it sits.
+- A publisher text ``X via Y`` names publisher X and the channel Y it was
+  retrieved through, a procurement portal, a mirror or a platform. Y is
+  never a party: it is written in the document's notes. A text ``X / Y``
+  names publisher X and Y, a consulting firm or a named person who wrote the
+  document for X (``WRITERS``, by review). A firm is a party linked to the
+  document as ``author``, and X as ``commissioner``; a natural person is not
+  a party of the ledger (``docs/jetp-ontology.md`` section 6) and is written
+  in the document's notes instead. A slash text whose second part is not a
+  reviewed writer stays one party. The registry's text of a split label is
+  kept in the document's notes (author's decision of 2026-09-23).
 - A publication's role is ``author``, except for a party that only hosts a
-  copy (``HOST_PUBLISHERS``). Further joint publications may be declared by
+  copy (``HOST_PUBLISHERS``) and the publisher that commissioned the writer
+  of an ``X / Y`` text. Further joint publications may be declared by
   review (``JOINT_PUBLICATIONS``).
 - The known mirrors receive a ``same_as`` candidate towards the document they
   copy (``MIRRORS``; storage contract section 4, document deduplication).
@@ -95,6 +107,16 @@ JOINT_LABELS = {
         ('JETP Indonesia Secretariat', 'International Energy Agency'),
 }
 
+# Second parts of ``X / Y`` publisher texts reviewed as the document's writer:
+# name -> 'firm' (a party in the author role) or 'person' (document notes only).
+# A slash text whose second part is absent here stays one party.
+WRITERS = {
+    'ENERCAP': 'firm',
+    'Grant Thornton': 'firm',
+    'Pyramide Environmental Consultants': 'firm',
+    'Fatou Ndiaye': 'person',
+}
+
 # Parties named only inside a joint text: (authority_category, country, note).
 PART_ATTRIBUTES = {
     'Government of Indonesia': ('national_government', 'IDN', None),
@@ -142,40 +164,74 @@ def _is_acronym(form):
     return re.fullmatch(r'[A-Z]{2,}', form.strip()) is not None
 
 
-def _printed_forms(sources, joint_labels, joint):
-    """``(row, form, origin)`` for every name a document carries.
+def split_label(label, writers):
+    """``(publisher, writer, channel)`` read from one publisher text.
 
-    ``origin`` is ``None`` for the document's own publisher text, the joint
-    text a part was read from, or ``'review'`` for a joint publication added
-    by review.
+    ``X via Y`` gives the channel Y; ``X / Y`` gives the writer Y when Y is a
+    reviewed writer. A text fitting neither is its own publisher.
+    """
+    publisher, channel = label, None
+    if ' via ' in label:
+        publisher, channel = (part.strip() for part in label.rsplit(' via ', 1))
+    writer = None
+    if publisher.count(' / ') == 1:
+        first, second = (part.strip() for part in publisher.split(' / '))
+        if second in writers:
+            publisher, writer = first, second
+    return publisher, writer, channel
+
+
+def _printed_forms(sources, joint_labels, joint, writers):
+    """``(row, form, origin, role)`` for every party name a document carries.
+
+    ``origin`` is ``None`` for a form that is the document's whole publisher
+    text, ``(text, how)`` for a form read out of a longer text (``how`` is
+    ``joint``, ``via``, ``slash`` for the publisher of an ``X / Y`` text or
+    ``writer`` for its Y), or ``'review'`` for a joint publication added by
+    review. ``role`` is the publication role, ``None`` for the default.
     """
     for row in sources:
         label = row['publisher']
-        for part in joint_labels.get(label, (label,)):
-            yield row, part, (label if part != label else None)
+        if label in joint_labels:
+            for part in joint_labels[label]:
+                yield row, part, (label, 'joint'), None
+        else:
+            publisher, writer, channel = split_label(label, writers)
+            how = 'slash' if writer else 'via' if channel else None
+            yield row, publisher, ((label, how) if how else None), (
+                'commissioner' if writer else None)
+            if writer and writers[writer] == 'firm':
+                yield row, writer, (label, 'writer'), 'author'
         for extra in joint.get(row['source_id'], ()):
-            yield row, extra, 'review'
+            yield row, extra, 'review', None
+
+
+def _own(origin):
+    """Whether a form names the party that published the document."""
+    return origin is None or (isinstance(origin, tuple) and origin[1] in ('via', 'slash'))
 
 
 def _preferred(uses):
     return min(uses, key=lambda form: (-uses[form], form.isupper(), form))
 
 
-def _parties(sources, joint_labels, joint, part_attributes):
-    printed = list(_printed_forms(sources, joint_labels, joint))
+def _parties(sources, joint_labels, joint, part_attributes, writers):
+    printed = list(_printed_forms(sources, joint_labels, joint, writers))
     uses = defaultdict(Counter)       # key -> form -> documents carrying it
     first_document = {}               # form -> first document carrying it
     origins = defaultdict(set)        # form -> origins it was read from
     categories = defaultdict(Counter)  # key -> category -> own documents
     countries = defaultdict(set)
     documents = defaultdict(list)     # key -> own documents, for the notes
-    for row, form, origin in printed:
+    for row, form, origin, _ in printed:
         key = name_key(form)
         uses[key][form] += 1
-        first_document[form] = min(first_document.get(form, row['source_id']),
-                                   row['source_id'])
+        # A document printing the form as its whole publisher text justifies
+        # it before one printing it inside a longer text.
+        justification = (origin is not None, row['source_id'])
+        first_document[form] = min(first_document.get(form, justification), justification)
         origins[form].add(origin)
-        if origin is None:
+        if _own(origin):
             categories[key][row['authority_category']] += 1
             countries[key].add(row['country'])
             documents[key].append(row)
@@ -201,6 +257,12 @@ def _parties(sources, joint_labels, joint, part_attributes):
                                if r['authority_category'] == other)
                 notes.append(f"sources.csv gave authority_category {other} to "
                              f"{', '.join(cited)}")
+        elif all(isinstance(o, tuple) and o[1] == 'writer'
+                 for form in uses[key] for o in origins[form]):
+            category, country = None, None
+            notes.append('named only as the writer of a document its publisher '
+                         'commissioned; no authority category of the list fits a '
+                         'consulting firm')
         else:
             category, country, note = attributes.get(key, (None, None, None))
             notes.append('named only in a joint publication; authority category and '
@@ -211,31 +273,52 @@ def _parties(sources, joint_labels, joint, part_attributes):
                         'country': country, 'notes': '; '.join(notes) or None})
         forms = sorted(uses[key], key=lambda form: (form != preferred, form))
         for number, form in enumerate(forms, start=1):
-            read_from = sorted(o for o in origins[form] if o not in (None, 'review'))
+            read_from = sorted(o for o in origins[form] if isinstance(o, tuple))
             note = None
             if None not in origins[form]:
-                note = ('; '.join(f"read from the joint publisher text '{o}'"
-                                  for o in read_from)
+                note = ('; '.join(f"read from the joint publisher text '{text}'"
+                                  if how == 'joint' else
+                                  f"read from the publisher text '{text}'"
+                                  for text, how in read_from)
                         or 'added by review as a joint publisher')
             names.append({
                 'name_row_id': f'{party_id}.name.{number}', 'party_id': party_id,
                 'name': form,
                 'form_type': 'preferred' if form == preferred else 'spelling_or_case_variant',
-                'language': None, 'document_id': first_document[form], 'line_id': None,
+                'language': None, 'document_id': first_document[form][1], 'line_id': None,
                 'recorded_at': DECIDED_AT, 'decided_by': DECIDED_BY, 'status': 'accepted',
                 'supersedes': None, 'notes': note,
             })
     return parties, names, printed, ids
 
 
-def _documents(sources, languages):
+def _label_notes(label, joint_labels, writers):
+    """What a split publisher text says beyond its parties, for the notes."""
+    if label in joint_labels:
+        return []
+    _, writer, channel = split_label(label, writers)
+    if not (writer or channel):
+        return []
+    notes = [f"publisher text in the registry: '{label}'"]
+    if channel:
+        notes.append(f'retrieved through {channel}, a channel and not a party')
+    if writer and writers[writer] == 'person':
+        notes.append(f'written by {writer}, a natural person, not held as a party '
+                     '(docs/jetp-ontology.md section 6)')
+    return notes
+
+
+def _documents(sources, languages, joint_labels, writers):
     return [{
         'document_id': row['source_id'], 'country': row['country'] or None,
         'document_type': row['source_type'] or None,
         'language': languages.get(row['source_id']),
         'title': row['title'], 'url': row['url'] or None,
         'published_date': row['published_date'] or None, 'edition_of': None,
-        'active': row['active'] or None, 'notes': row['notes'] or None,
+        'active': row['active'] or None,
+        'notes': '; '.join(([row['notes']] if row['notes'] else [])
+                           + _label_notes(row['publisher'], joint_labels, writers))
+                 or None,
     } for row in sources]
 
 
@@ -243,13 +326,13 @@ def _publications(printed, ids, names):
     """One row per document and party, naming the form the document prints."""
     form_rows = {name['name']: name['name_row_id'] for name in names}
     rows, seen = [], set()
-    for row, form, _ in printed:
+    for row, form, _, role in printed:
         pair = (row['source_id'], ids[name_key(form)])
         if pair in seen:
             continue
         seen.add(pair)
         rows.append({'document_id': pair[0], 'party_id': pair[1],
-                     'role': 'host' if form in HOST_PUBLISHERS else 'author',
+                     'role': 'host' if form in HOST_PUBLISHERS else role or 'author',
                      'name_row_id': form_rows[form]})
     return rows
 
@@ -315,7 +398,7 @@ def _same_as(from_kind, from_id, to_id, method):
 
 def reconstruct(sources, manifest, languages=None, joint_publications=None,
                 mirrors=None, joint_labels=None, name_candidates=None,
-                part_attributes=None):
+                part_attributes=None, writers=None):
     """The evidence tables, as lists of rows keyed by column, from the old two."""
     languages = languages or {}
     joint = JOINT_PUBLICATIONS if joint_publications is None else joint_publications
@@ -323,12 +406,14 @@ def reconstruct(sources, manifest, languages=None, joint_publications=None,
     joint_labels = JOINT_LABELS if joint_labels is None else joint_labels
     reviewed = NAME_VARIANT_CANDIDATES if name_candidates is None else name_candidates
     part_attributes = PART_ATTRIBUTES if part_attributes is None else part_attributes
+    writers = WRITERS if writers is None else writers
     known = {row['source_id'] for row in sources}
     unknown = ({r['source_id'] for r in manifest} | set(mirrors) | set(mirrors.values())
                | set(joint)) - known
     if unknown:
         raise ValueError(f'unknown documents: {sorted(unknown)}')
-    parties, names, printed, ids = _parties(sources, joint_labels, joint, part_attributes)
+    parties, names, printed, ids = _parties(sources, joint_labels, joint, part_attributes,
+                                             writers)
     retrievals, snapshots = _retrievals_and_snapshots(manifest)
     relations = [_same_as('document', mirror, original, 'mirror_review')
                  for mirror, original in sorted(mirrors.items())]
@@ -337,7 +422,7 @@ def reconstruct(sources, manifest, languages=None, joint_publications=None,
     return {
         'parties': parties,
         'party_names': names,
-        'documents': _documents(sources, languages),
+        'documents': _documents(sources, languages, joint_labels, writers),
         'document_publishers': _publications(printed, ids, names),
         'snapshots': snapshots,
         'retrievals': retrievals,

@@ -117,9 +117,14 @@ report and the one that funds a loan are one organisation. The party carries
 an authority category, `national_government`, `jetp_secretariat`, `ipg`,
 `bilateral_funder`, `multilateral_funder`, `private_finance`, `operator` or
 `secondary_source`, and a country (`ZAF`, `IDN`, `VNM`, `SEN`) or
-`international`. The registry's 103 distinct publisher texts resolve to 101
-parties: two case variants merge, and three texts that name two bodies are
-joint publications.
+`international`. The registry's 103 distinct publisher texts resolve to 94
+parties: two case variants merge, three texts that name two bodies are joint
+publications, and thirteen texts of the forms "X via Y" and "X / Y" resolve by
+rule to their publisher X. The channel Y of a "via" text is a retrieval
+route, written in the document's notes and never a party; the Y of a slash
+text is the consulting firm that wrote the document, linked as `author` with
+X as `commissioner`, or a natural person, written in the notes. Six slash
+texts whose second part is not a reviewed writer stay single parties.
 
 A publisher is what the project has so far called a source. The word source is
 retired from column names and page copy, because it has meant a URL since the
@@ -311,7 +316,7 @@ decided it and when.
 
 | Relation | From | To | Meaning |
 |---|---|---|---|
-| `published_by` | document | party | many-to-many; role optional (`author`, `co_signatory`, `host`); a joint publication is one row per party |
+| `published_by` | document | party | many-to-many; role optional (`author`, `co_signatory`, `host`, `commissioner`); a joint publication is one row per party; in a text "X / Y" the publisher X is `commissioner` and the consulting firm Y `author` |
 | `edition_of` | document | document | succeeds a previous edition |
 | `same_as` (document) | document | document | one publication under two URLs or two exports; the lines belong to the canonical one |
 | `translation_of` | document | document | the same publication in another language; lines are extracted from one and cross-referenced, never doubled |

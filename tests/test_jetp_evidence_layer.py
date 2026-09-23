@@ -171,6 +171,65 @@ def test_the_mirror_receives_a_same_as_candidate(tables):
     assert relation['status'] == 'candidate'
 
 
+SPLIT_SOURCES = [
+    _source('sen-plan', 'SEN', 'operator', 'Senelec', 'investment_plan', 'Plan'),
+    _source('sen-notice', 'SEN', 'operator', 'SENELEC via AFD dgMarket', 'project_page',
+            'Notice'),
+    _source('sen-audit', 'SEN', 'national_government', 'ARCOP / Grant Thornton', 'report',
+            'Audit'),
+    _source('sen-thesis', 'SEN', 'secondary_source', 'CESAG / Fatou Ndiaye', 'report',
+            'Thesis'),
+    _source('sen-esia', 'SEN', 'multilateral_funder', 'BOAD / Senelec', 'report', 'ESIA'),
+]
+SPLIT_WRITERS = {'Grant Thornton': 'firm', 'Fatou Ndiaye': 'person'}
+
+
+@pytest.fixture
+def split():
+    return evidence.reconstruct(SPLIT_SOURCES, [], joint_publications={}, mirrors={},
+                                joint_labels={}, name_candidates=(), part_attributes={},
+                                writers=SPLIT_WRITERS)
+
+
+def _roles(tables, document_id):
+    return {r['party_id']: r['role'] for r in tables['document_publishers']
+            if r['document_id'] == document_id}
+
+
+def test_x_via_y_is_published_by_x_and_names_y_only_as_the_channel(split):
+    # The channel is neither a party nor a name form; the publisher merges
+    # with the party its own texts already name.
+    assert _roles(split, 'sen-notice') == {'senelec': 'author'}
+    assert _names(split, 'senelec') == {'Senelec': 'preferred',
+                                        'SENELEC': 'spelling_or_case_variant'}
+    assert not any('dgMarket' in n['name'] for n in split['party_names'])
+    (document,) = [d for d in split['documents'] if d['document_id'] == 'sen-notice']
+    assert "'SENELEC via AFD dgMarket'" in document['notes']
+    assert 'retrieved through AFD dgMarket' in document['notes']
+
+
+def test_x_slash_firm_links_the_firm_as_author_and_x_as_commissioner(split):
+    assert _roles(split, 'sen-audit') == {'arcop': 'commissioner',
+                                          'grant-thornton': 'author'}
+    (firm,) = [p for p in split['parties'] if p['party_id'] == 'grant-thornton']
+    assert firm['authority_category'] is None
+    (arcop,) = [p for p in split['parties'] if p['party_id'] == 'arcop']
+    assert arcop['authority_category'] == 'national_government'
+
+
+def test_x_slash_person_keeps_the_person_in_the_document_notes(split):
+    assert _roles(split, 'sen-thesis') == {'cesag': 'commissioner'}
+    assert not any('Ndiaye' in n['name'] for n in split['party_names'])
+    (document,) = [d for d in split['documents'] if d['document_id'] == 'sen-thesis']
+    assert 'written by Fatou Ndiaye, a natural person' in document['notes']
+
+
+def test_a_slash_text_without_a_reviewed_writer_stays_one_party(split):
+    assert _roles(split, 'sen-esia') == {'boad-senelec': 'author'}
+    (document,) = [d for d in split['documents'] if d['document_id'] == 'sen-esia']
+    assert document['notes'] is None
+
+
 def _write_ledger(ledger_dir, tables):
     for table, rows in tables.items():
         ledger_headers.write_table(ledger_dir, table, rows)
@@ -235,11 +294,23 @@ def test_the_committed_layer_matches_its_inputs():
     publications, _ = ledger_headers.read_table(ledger, 'document_publishers', schema)
     assert len(documents) == len(sources)
     assert len(snapshots) == len({r['sha256'] for r in manifest if r['sha256']})
-    # Every publisher text is a name form, or a joint text whose parts are.
+    # Every publisher text is a name form, or a joint, "via" or "/" text whose
+    # parties' parts are.
     forms = {row[2] for row in names}
     for text in {r['publisher'] for r in sources}:
-        assert set(evidence.JOINT_LABELS.get(text, (text,))) <= forms, text
-    assert len(publications) == len(sources) + len(evidence.JOINT_LABELS)
+        if text in evidence.JOINT_LABELS:
+            parts = set(evidence.JOINT_LABELS[text])
+        else:
+            publisher, writer, _ = evidence.split_label(text, evidence.WRITERS)
+            parts = {publisher}
+            if writer and evidence.WRITERS[writer] == 'firm':
+                parts.add(writer)
+        assert parts <= forms, text
+    firm_written = sum(
+        1 for r in sources if r['publisher'] not in evidence.JOINT_LABELS
+        and (writer := evidence.split_label(r['publisher'], evidence.WRITERS)[1])
+        and evidence.WRITERS[writer] == 'firm')
+    assert len(publications) == len(sources) + len(evidence.JOINT_LABELS) + firm_written
     assert evidence.reconstruct(sources, manifest)['parties'] == [
         dict(zip(schema.header('parties'), row)) for row in
         ledger_headers.read_table(ledger, 'parties', schema)[0]]
