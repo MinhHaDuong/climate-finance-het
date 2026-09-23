@@ -7,19 +7,26 @@ Blocked-by: 0873
 --- log ---
 2026-09-22T17:30Z HDMX-coding-agent created
 2026-09-23T10:30Z HDMX-coding-agent note revue du train (2026-09-23) : les 1 628 lignes de plan sont frappées en 0873 ; ici elles sont enrichies, pas recomptées
+2026-09-23T16:00Z HDMX-coding-agent note plan (raid prep) : chemins vérifiés (`build_lines.py` à créer, confirmé absent d'origin/main) ; comptes confirmés contre les tables au dépôt (2026-09-23) : idn-portfolio-observations.csv 46, vnm-pilot-manifest.csv 66, vnm-pilot-observations.csv 46, source-claims.csv 151, project-source-links.csv 315 dont 11 `project_page_component` (le reste : named_in 109, possible_match 71, project_report 62, project_page 37, cmea_selected_monitoring 14, approval_document 9, data_portal 2)
+2026-09-23T16:00Z HDMX-coding-agent question (raid prep) : l'action 3 frappait des `line-referents` dont le `referent_id` est l'identifiant `project_id` actuel de `projects.csv` ; ce n'est pas une identité valide de la nouvelle `projects` tant que [[0875]] (vague 4, après ce ticket en vague 3) n'a pas frappé les identités et rempli `routes` — `violation_typed_reference` refuserait la ligne dès son écriture. De plus, chaque `source_id` cité par ces 304 liens (hors les 11 `project_page_component`) est un document (page projet, rapport), pas encore une `lines` row : aucune action de ce ticket n'en extrait une. Reformulé ci-dessous pour ne pas frapper ces `line-referents` ici ; question pour l'auteur, à trancher avant l'exécution : soit ce ticket mine une ligne minimale par document cité (classification `named_item`, locator le plus court disponible) et dépose les 304 décisions en candidates référençant l'ancien `project_id` dans `notes` pour re-résolution par [[0875]], soit [[0875]] absorbe cette action une fois les identités et `routes` en place. Les 11 `project_page_component` restent comme prévu à [[0875]] (relations, pas ce ticket).
 
 --- body ---
 ## Context
 
 Étape 3 de la migration (`docs/jetp-ledger-migration.md`). Tout ce qui reste d'assertion publiée devient
 ligne : les 1 628 lignes de plan (déjà lues en [[0873]] pour IDN et SEN, ici
-leurs colonnes propres et le drapeau `ruptl` en `member_of` d'un périmètre
-RUPTL depuis la ligne), les 46 observations de portefeuille IDN, les 66
-tentatives et 46 observations du pilote VN, les 151 `source-claims`
-(classification `envelope`, `count`, `absence`, `heading`), et les 315
-`project-source-links` qui deviennent des `refers_to` de base `discovery`
-ou `possible_match` (les 11 `project_page_component` deviennent des
-`component_of` en [[0875]]).
+leurs colonnes propres et le drapeau `ruptl` marqué pour un `member_of`
+d'un périmètre RUPTL frappé par [[0877]]), les 46 observations de
+portefeuille IDN, les 66 tentatives et 46 observations du pilote VN, les
+151 `source-claims` (classification `envelope`, `count`, `absence`,
+`heading`), et les 315 `project-source-links` : les 11
+`project_page_component` deviennent des `component_of` en [[0875]] ; les
+304 autres reçoivent ici une ligne minimale par document cité (quand il
+n'en a pas déjà une) et sont déposés pour que [[0875]] les frappe en
+`refers_to` de base `discovery` ou `possible_match`, une fois les
+identités et `routes` en place (voir la question du journal : le
+`referent_id` de ces liens est un ancien identifiant de `projects.csv`,
+pas encore une identité valide avant [[0875]]).
 
 ## Relevant files
 
@@ -32,24 +39,39 @@ ou `possible_match` (les 11 `project_page_component` deviennent des
 1. Une règle d'ingestion par document, nommée et versionnée sur chaque ligne.
 2. Les claims agrégés (les deux totaux financiers) deviennent des lignes
    `envelope` ; leurs observations viennent en [[0877]].
-3. Les liens deviennent des `line-referents` candidats ou acceptés selon
-   `review_status` (confirmed → accepted, provisional → candidate), avec
-   méthode `legacy_link` et la date du lien.
-4. Les 230 lignes `plan_only` à `ruptl = YES` deviennent membres du
-   périmètre RUPTL depuis la ligne, sans identité.
+3. Pour les 304 `project-source-links` autres que les 11
+   `project_page_component` ([[0875]]) : extraire une ligne minimale par
+   document cité qui n'en a pas encore (classification `named_item`,
+   locator le plus court disponible sur la page, jamais « document
+   entier »). Ne pas frapper les `line-referents` ici — voir la question du
+   journal ci-dessus ; noter l'ancien `project_id`, la `relationship` et le
+   `review_status` (confirmed/provisional) dans les `notes` de la ligne
+   pour que [[0875]] les reprenne, avec méthode `legacy_link` et la date du
+   lien.
+4. Marquer les 230 lignes `plan_only` à `ruptl = YES` (`notes`, ou une
+   colonne du fichier de champs propre à la ligne) ; le `member_of` vers le
+   périmètre RUPTL est frappé par [[0877]] (son action 1 mine ce périmètre
+   et les appartenances « depuis lignes et identités »), pas ici : le
+   périmètre RUPTL n'existe pas encore en vague 3.
 
 ## Test
 
 - `tests/test_jetp_lines_rest.py` : une fixture avec un claim agrégé, un
-  lien confirmé, un lien provisoire et une ligne de plan `ruptl` ; la
-  reconstruction donne une ligne `envelope`, un référent accepté, un
-  référent candidat, une appartenance de ligne ; aucune identité n'est
-  frappée.
+  lien confirmé sur un document sans ligne encore extraite, un lien
+  provisoire sur un document qui en a déjà une, et une ligne de plan
+  `ruptl` ; la reconstruction donne une ligne `envelope`, une ligne
+  `named_item` minée pour le document sans ligne (et aucune ligne
+  dupliquée pour celui qui en avait déjà une), une ligne de plan marquée
+  `ruptl` sans `member_of` frappé ; aucun `line-referents` et aucune
+  identité ne sont frappés par ce ticket ; un test négatif vérifie qu'écrire
+  un `line-referents` avec un `referent_id` d'ancien `projects.csv` est
+  refusé par `violation_typed_reference` (ce que ce ticket évite précisément).
 
 ## Verification
 
-- [ ] Comptes : 46 + 66 + 46 + 151 = 309 lignes nouvelles ; les 1 628 lignes de plan de [[0873]] enrichies de leurs colonnes, sans ligne ajoutée ; 315 référents
+- [ ] Comptes des tables au dépôt (2026-09-23) : 46 + 66 + 46 + 151 = 309 lignes nouvelles ; les 1 628 lignes de plan de [[0873]] enrichies de leurs colonnes, sans ligne ajoutée ; jusqu'à 304 lignes minimales nouvelles pour les documents de `project-source-links.csv` qui n'en avaient pas (315 liens moins les 11 `project_page_component` de [[0875]], moins ceux dont le document a déjà une ligne)
 - [ ] Aucune ligne de `projects.csv` créée ou modifiée
+- [ ] Aucun `line-referents` frappé par ce ticket (validé par l'absence de lignes dans `data/jetp/line-referents.csv` attribuables à sa méthode)
 
 ## Invariants
 
@@ -57,5 +79,5 @@ ou `possible_match` (les 11 `project_page_component` deviennent des
 
 ## Exit criteria
 
-- [ ] Toutes les assertions publiées sont des lignes validées par [[0871]]
-- [ ] `make check-fast` et `make lint` verts
+- [ ] Toutes les assertions publiées sont des lignes validées par [[0871]] (`make jetp-ledger-check`)
+- [ ] `tests/test_jetp_lines_rest.py`, `make check-fast` et `make lint` verts (pas `make check` complet : ex post sur main)

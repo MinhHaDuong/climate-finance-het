@@ -7,6 +7,8 @@ Author: HDMX-coding-agent
 2026-09-22T17:30Z HDMX-coding-agent created
 2026-09-23T10:30Z HDMX-coding-agent note revue du train (2026-09-23) : PR #1449 fusionnée (0ddf30e2), la porte de lancement est levée, label needs-human retiré ; 0880 en vague 0b (bloqué par 0871) ; [[0884]] ajouté (`coverage` sans propriétaire) ; [[0879]] scindé en 0879, [[0885]], [[0886]] ; quinze enfants
 
+2026-09-23T15:29Z HDMX-coding-agent note décision de l'auteur, 2026-09-23 (interactif, répondu avant de partir) : (1) le train tourne en autonomie complète — chaque PR fusionne sur un feu vert APPROVED ; arrêt seulement sur un changement de ce que signifie l'ontologie ou le contrat de stockage, ou sur un octet de vue servie que le ticket ne demande pas ; les tests longs peuvent tourner sur padme (ssh padme ; ~/.local/bin en tête de PATH) ; les scissions de tickets monstres sont déposées directement. (2) palier 2 de correspondance ([[0833]], pour [[0875]]) : arbitré par un LLM muni des pages d'instantané, decided_by porte l'identifiant du modèle ; les correspondances de faible confiance sont remontées à l'auteur dans decisions.md (contrat de stockage : adjudication humaine enregistrée dans decisions.md), jamais acceptées en silence ; le seuil est configuré et versionné (contrat de stockage paragraphe 4). (3) flux de données ([[0885]], [[0879]]) : petits tirages (Banque mondiale, CRS énergie quatre pays, tranche IATI) versionnés directement sur doudou ; le CRS tous secteurs en vrac s'ajoute et se pousse sous DVC sur padme par ssh, puis se tire sur doudou (padme vers doudou seulement). (4) [[0879]] : le script de figure du papier court peut lire le ledger et abandonner le taux en dur 2500 * 1.09 ; tout écart avec la figure actuelle est documenté dans la PR, le manuscrit n'est pas touché. (5) [[0878]] : la question du make check complet est tranchée par la décision d'autonomie — portes étroites + balayage grep + recette navigateur, suite complète lancée une fois sur padme à la revue d'intégration de ce suiveur
+2026-09-23T15:31Z HDMX-coding-agent note scission monstre exécutée (raid, tickets-migration-prep, 2026-09-23) : 0876 scindé en 0876 (observations, timings) plus [[0887]] (status-crosswalk) et [[0888]] (sector-crosswalk), tous deux Blocked-by [[0873]] pas 0876 (lisent des lignes et les tables de 0880, jamais une observation) ; 0877 scindé en 0877 (périmètres et observations de périmètre) plus [[0889]] (adjudications, Blocked-by 0877) et [[0890]] (comptes dérivés et service overview.json, Blocked-by 0889) ; dix-neuf enfants au lieu de quinze. Blocked-by de [[0878]] mis à jour : [[0887]], [[0888]], [[0890]], 0879, 0884 (pointes de chaque branche)
 --- body ---
 ## Context
 
@@ -44,11 +46,15 @@ PR #1449 fusionnée le 2026-09-23 (0ddf30e2) : le train peut partir. `line-trans
 | 0b | [[0880]] | tables d'ontologie : termes, correspondances, périmètres, révisions, test d'alignement (étape 0) |
 | 1 | [[0872]] | publishers, documents, publications, retrievals, snapshots (étape 1) |
 | 2 | [[0873]] | lignes et champs des quatre documents M1a (étape 2) |
+| 2' | [[0887]] | `status-crosswalk` (scindé de 0876 le 2026-09-23 ; ne lit que les lignes de 0873 et les tables de 0880, en parallèle de 0874–0876) |
+| 2'' | [[0888]] | `sector-crosswalk` (scindé de 0876 le 2026-09-23 ; même raison que 0887) |
 | 3 | [[0874]] | lignes des autres documents (étape 3) |
 | 4 | [[0875]] | scission des identités, référents, routes, parties (étape 4) |
-| 5 | [[0876]] | observations, timings, crosswalks de statut et de secteur (étape 5) |
+| 5 | [[0876]] | observations, timings (étape 5 ; les crosswalks de statut et de secteur sont scindés en 0887/0888) |
 | 5 | [[0884]] | `coverage` depuis les deux tables de couverture (après 0875) |
-| 6 | [[0877]] | observations de périmètre, comptes dérivés, adjudications (étape 6) |
+| 6 | [[0877]] | périmètres et observations de périmètre (étape 6 ; adjudications et comptes dérivés scindés en 0889/0890) |
+| 6' | [[0889]] | adjudications et adjudication-members (scindé de 0877 le 2026-09-23 ; dépend de 0877, `perimeter_compatibility` cite un `perimeter_id`) |
+| 6'' | [[0890]] | comptes dérivés (`build_accounts.py`) et service `overview.json` (scindé de 0877 le 2026-09-23 ; dépend de 0889) |
 | 7 | [[0878]] | retrait des tables anciennes et des lecteurs de compatibilité (étape 7) |
 | — | [[0881]] | le MVP s'organise selon O, D, E, M sans en afficher les mots ; D en parcours (`docs/jetp-observatory-presentation.md`) ; présentation seule, parallèle aux vagues |
 | après 0 | [[0882]] | Glossary du MVP, générée des tables de 0880 |
@@ -73,7 +79,7 @@ PR #1449 fusionnée le 2026-09-23 (0ddf30e2) : le train peut partir. `line-trans
 
 ## Exit criteria
 
-- [ ] Les quinze enfants sont fermés
+- [ ] Les dix-neuf enfants sont fermés
 - [ ] Revue d'intégration : diffs des enfants relus, `make check` complet, recettes ZAF et VNM vertes
 - [ ] `docs/jetp-ledger-migration.md` mis à jour avec les comptes réels de la migration
 - [ ] Aucune route publique cassée : chaque ancien identifiant résout par `routes`

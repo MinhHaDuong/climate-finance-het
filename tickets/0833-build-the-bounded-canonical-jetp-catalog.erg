@@ -14,6 +14,9 @@ Blocked-by: 0875
 2026-09-23T06:47Z HDMX-coding-agent note restated on the ontology v2 contract at the author's request (2026-09-23): M1b is an acceptance milestone on top of 0870 (D4 over the four M1a documents, candidates counted, O v1 frozen); possible_matches become candidate rows; Blocked-by 0873, 0875, 0880
 2026-09-23T10:30Z HDMX-coding-agent note train review (2026-09-23 session): tier 2 is run once, by 0875; M1b reviews its candidates, it does not rerun matching
 2026-09-23T10:26Z HDMX-coding-agent note blocker 0880 closed — Blocked-by removed.
+2026-09-23T16:00Z HDMX-coding-agent note plan (raid prep): paths verified against origin/main — `data/jetp/lines.csv`, `line-referents.csv`, `relations.csv` and `data/jetp/ontology/` do not exist yet (correctly marked "after 0873"/"after 0875"/"after 0880" in Relevant files, which are this ticket's Blocked-by chain); `docs/jetp-ledger-storage.md` sections 1 and 4 and `docs/jetp-ontology.md` section 5 confirmed to match. Named the first test file and added the scoped gates, absent from the original text.
+
+2026-09-23T15:29Z HDMX-coding-agent note décision de l'auteur, 2026-09-23 : le palier 2 de correspondance est arbitré par un LLM muni des pages d'instantané, enregistré avec l'identifiant du modèle comme decided_by ; les correspondances de faible confiance sont remontées à l'auteur dans le journal de décision decisions.md (contrat de stockage : l'adjudication humaine s'y enregistre), jamais acceptées en silence ; le seuil de confiance est configuré et versionné (contrat de stockage paragraphe 4). Cette décision porte sur le palier 2 de [[0875]] (qui y tourne une seule fois) ; consignée ici et sur [[0870]] puisque 0875 n'est pas modifiable dans cette session (PR #1461)
 --- body ---
 ## Context
 
@@ -72,14 +75,15 @@ ontology in force is frozen as its first release (O v1).
 
 ## Test
 
-Red: a fixture with an exact duplicate justified by two lines, a
-component justified by a heading line that `groups` it, and a plausible
-name-and-capacity match without justification. Matching writes `same_as`
-accepted, `component_of` accepted, and one `candidate` row. The candidate
-changes no count of accepted referents and no byte of `lines` or
-`line-fields`. Removing the justification line makes either accepted
-relation fail validation. Superseding the candidate with a `rejected` row
-leaves the catalogue unchanged.
+`tests/test_jetp_m1b_catalog.py`. Red: a fixture with an exact duplicate
+justified by two lines, a component justified by a heading line that
+`groups` it, and a plausible name-and-capacity match without
+justification. Matching writes `same_as` accepted, `component_of`
+accepted, and one `candidate` row. The candidate changes no count of
+accepted referents and no byte of `lines` or `line-fields`. Removing the
+justification line makes either accepted relation fail validation.
+Superseding the candidate with a `rejected` row leaves the catalogue
+unchanged.
 
 ## Exit criteria
 
@@ -89,6 +93,7 @@ leaves the catalogue unchanged.
 - [ ] O v1 is frozen: the M1b release cites its `ontology_ref`
 - [ ] No new source acquisition and no match-resolution campaign occurred
 - [ ] The M1b release reproduces from its inputs
+- [ ] `tests/test_jetp_m1b_catalog.py`, `make jetp-ledger-check`, `make check-fast` and `make lint` green (not the full `make check`: ex post on main)
 
 ## Out of scope
 

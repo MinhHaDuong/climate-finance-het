@@ -10,6 +10,7 @@ Blocked-by: 0872
 2026-09-23T09:17Z HDMX-coding-agent note gaze/1457: 0871 left lines.groups without a foreign key (the contract does not say which way the column points); decide the direction here when line-fields/lines land
 2026-09-23T09:22Z HDMX-coding-agent gaze/1457 red team: an empty terms rejects every closed-list value, so 0873 cannot land lines rows before 0880 populates terms; added Blocked-by: 0880 (was only transitively ordered via 0870's wave table)
 2026-09-23T10:26Z HDMX-coding-agent note blocker 0880 closed — Blocked-by removed.
+2026-09-23T16:00Z HDMX-coding-agent note plan (raid prep) : chemins et fonctions vérifiés contre origin/main (build_m1a_inventories.py, les fichiers 0818, le json vnm-migration-0764, app.js `inventoryRows()`/`?row=N` — la route est déjà `#entries/<CODE>?row=N` post-0881) ; comptes (257/1 579/49/279) confirmés contre les tables au dépôt (2026-09-23) ; `lines.groups` n'a pas de FK dans la DDL (config/jetp-ledger.sql le documente : « no key yet ») — la règle « pas de liste » du contrat de stockage § 1 force le sens ligne membre → ligne d'en-tête (une ligne ne peut porter qu'un seul `groups`), donc l'action 4 est réécrite pour l'expliciter ; ce ticket peut ajouter la contrainte FK correspondante en écrivant `lines`
 --- body ---
 ## Context
 
@@ -40,7 +41,12 @@ statut du registre gardées verbatim avec `own_status_axis = delivery`.
    résolus, `register_allocation` pour ZAF, `submission` pour SEN).
 3. Servir `m1a/<CODE>.json` depuis les lignes ; même ordre, mêmes champs.
 4. Les notes de méthode du registre (pro-rata, taux Oanda) deviennent des
-   lignes `heading` qui `groups` les lignes qu'elles régissent.
+   lignes `heading` qui `groups` les lignes qu'elles régissent : chaque
+   ligne membre porte dans sa colonne `groups` le `line_id` de sa ligne
+   d'en-tête (sens membre → en-tête, imposé par la règle « pas de liste »
+   du contrat de stockage § 1, puisque `groups` est une colonne à valeur
+   unique). Ajouter la contrainte `FOREIGN KEY (groups) REFERENCES
+   lines (line_id)` à `config/jetp-ledger.sql` dans ce même ticket.
 
 ## Test
 
@@ -52,7 +58,7 @@ statut du registre gardées verbatim avec `own_status_axis = delivery`.
 
 - [ ] Quatre vues `m1a/*.json` identiques aux actuelles
 - [ ] `?row=N` ouvre la même ligne qu'avant
-- [ ] Comptes : 257 / 1 579 / 279 / 49 lignes
+- [ ] Comptes des tables au dépôt (2026-09-23) : 257 (ZAF, `projects.csv` registre) / 1 579 (IDN, `plan-projects.csv`) / 279 (VNM, `releases/vnm-migration-0764.json`) / 49 (SEN, `plan-projects.csv`) lignes
 
 ## Invariants
 
@@ -61,6 +67,6 @@ statut du registre gardées verbatim avec `own_status_axis = delivery`.
 
 ## Exit criteria
 
-- [ ] `lines`, `line-fields/*`, `line-field-specs` validés par [[0871]]
+- [ ] `lines`, `line-fields/*`, `line-field-specs` validés par [[0871]] (`make jetp-ledger-check`)
 - [ ] Recettes ZAF et VNM de [[0834]] vertes
-- [ ] `make check-fast` et `make lint` verts
+- [ ] `tests/test_jetp_lines_m1a.py`, `make check-fast` et `make lint` verts (pas `make check` complet : ex post sur main)

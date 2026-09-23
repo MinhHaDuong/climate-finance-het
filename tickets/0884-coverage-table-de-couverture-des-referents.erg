@@ -6,6 +6,8 @@ Blocked-by: 0875
 
 --- log ---
 2026-09-23T10:30Z HDMX-coding-agent created revue du train de migration (2026-09-23) : `coverage` figure au contrat de stockage § 1 et 0878 retire ses deux tables sources, mais aucun enfant de [[0870]] ne la construisait
+2026-09-23T16:00Z HDMX-coding-agent note plan (raid prep) : comptes confirmés contre les tables au dépôt (2026-09-23) : project-coverage.csv 141 lignes (`country`, `project_id`, `review_status`, `source_ids`, `checked_at`, `query_or_route`, `notes`), authority-coverage.csv 64 lignes (`country`, `authority_id`, `authority`, `authority_category`, `verdict`, `source_ids`, `checked_at`, `notes`)
+2026-09-23T16:00Z HDMX-coding-agent note plan (raid prep) : l'action 2 route les autorités vers `parties` ; #1461 (0872 en cours de refonte) replie `publishers` dans `parties` avec un rôle de publication et ajoute `party-names` — si la forme de `parties` change avant l'exécution de ce ticket, relire #1461 avant de fixer la correspondance `authority_id` → `party_id`
 
 --- body ---
 ## Context
@@ -53,5 +55,5 @@ scission des identités ([[0875]]).
 
 ## Exit criteria
 
-- [ ] `coverage` validée par [[0871]] et servie
-- [ ] `make check-fast` et `make lint` verts
+- [ ] `coverage` validée par [[0871]] (`make jetp-ledger-check`) et servie
+- [ ] `tests/test_jetp_coverage.py`, `make check-fast` et `make lint` verts (pas `make check` complet : ex post sur main)
