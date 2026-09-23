@@ -22,6 +22,7 @@ import re
 import shutil
 import subprocess
 from functools import cache
+from html import unescape
 from pathlib import Path
 
 import pytest
@@ -348,3 +349,127 @@ def test_every_senegal_row_names_a_pdf_page_and_no_other_non_rmp_country_does() 
     sen = positions("SEN")
     assert len(sen) == 49 and all(r["pdf_page"] for r in sen)
     assert not any(r["pdf_page"] for code in ("IDN", "ZAF") for r in positions(code))
+
+
+# Ticket 0881: the pages are organised by the four objects of
+# docs/jetp-language.md (O, D, E, M) without ever naming them, in the newsroom
+# vocabulary of docs/jetp-observatory-presentation.md.
+
+NAVIGATION = ["Glossary", "The paper trail", "Documents", "Entries", "On the record",
+              "Projects", "Funding", "Who's who", "By the numbers", "How we did this"]
+
+# The framework's names, the retired terms of docs/jetp-language.md and the
+# words docs/jetp-observatory-presentation.md keeps off the pages.  A word
+# inside a string the served JSON carries (a document's title, an analyst's
+# note, a column name) is the data's, not the page's, and is not counted.
+FORBIDDEN = re.compile(
+    r"ontolog|evidence|model|layer|reconcil|\bD[1-4]\b|\bstages?\b|\beditions?\b"
+    r"|\bfacts?\b|\bclaims?\b|\bdeals?\b|\bplayers?\b|\bsources\b|\bentities\b|\brecords\b",
+    re.IGNORECASE,
+)
+ROUTES = ("overview", "glossary", "documents", "entries", "evidence", "projects",
+          "countries", "whos-who", "numbers", "methods", "editions", "comparison",
+          *(f"country/{code}" for code in COUNTRIES), "inventory/VNM",
+          "inventory/ZAF?tab=record", "project/" + BAC_AI)
+
+
+def text_of(html):
+    return unescape(re.sub(r"<[^>]+>", " ", html))
+
+
+@cache
+def data_strings():
+    """Every string the served JSON carries that holds a forbidden word, keys
+    included, with the two transformations the renderer applies to a value
+    before showing it (underscores to spaces, Markdown paragraphs)."""
+    found = set()
+
+    def walk(value):
+        if isinstance(value, dict):
+            for key, item in value.items():
+                found.add(key)
+                walk(item)
+        elif isinstance(value, list):
+            for item in value:
+                walk(item)
+        elif isinstance(value, str):
+            found.update({value, value.replace("_", " ")})
+            found.update(p.removeprefix("## ").replace("\n", " ")
+                         for p in re.split(r"\n\n+", value))
+
+    for path in (SITE / "data").rglob("*.json"):
+        walk(json.loads(path.read_text()))
+    # A bare word ("evidence", a key of reviewed-evidence.json) is not a
+    # proper name: excusing it would excuse the page copy's own use of it.
+    return sorted((s for s in found if FORBIDDEN.search(s) and not re.fullmatch(r"[A-Za-z]+", s)),
+                  key=len, reverse=True)
+
+
+def page_copy(html):
+    text = text_of(html)
+    for value in data_strings():
+        if value in text:
+            text = text.replace(value, " ")
+    return text
+
+
+def nav_html():
+    index = (SITE / "index.html").read_text()
+    return re.search(r"<nav[^>]*>.*?</nav>", index, re.DOTALL).group(0)
+
+
+def test_the_navigation_follows_glossary_paper_trail_numbers_and_methods() -> None:
+    nav = nav_html()
+    labels = [unescape(t).strip() for t in re.findall(r">([^<>]+)<", nav) if t.strip()]
+    assert labels == NAVIGATION, labels
+    # Organised by the objects, which stay in the attributes: nothing for M.
+    assert re.findall(r'data-object="([^"]+)"', nav) == ["O", "D", "E", "methods"]
+    assert 'data-object="M"' not in nav
+
+
+def test_a_page_of_the_paper_trail_shows_its_step_and_links_to_its_neighbours() -> None:
+    main = render("inventory/VNM")["main"]
+    trail = re.search(r'<nav class="trail"[^>]*data-trail-step="D2".*?</nav>', main, re.DOTALL)
+    assert trail, main[:400]
+    links = {key: href for href, key in re.findall(
+        r'<a href="([^"]+)" data-trail-link="([^"]+)"', trail.group(0))}
+    assert links == {"toward-documents": "#documents",
+                     "toward-projects": "#inventory/VNM?tab=record"}, links
+    assert re.search(r'aria-current="step">Entries<', trail.group(0))
+
+
+def test_an_item_on_the_record_reads_according_to_its_publisher_with_the_date() -> None:
+    rendered = render("inventory/VNM?tab=record")
+    results = rendered["elements"]["observations-results"]["innerHTML"]
+    row = next(r for r in observations("VNM") if r["project_id"] == BAC_AI)
+    source = served("VNM")["sources"][row["source_id"]]
+    assert source["publisher"] and source["date"]
+    item = next(chunk for chunk in re.split(r"(?=<tr>)", results) if row["link_id"] in chunk)
+    said = re.sub(r"\s+", " ", text_of(item))
+    assert f"According to {source['publisher']}, " in said, said
+    day, month, year = source["date"][8:], source["date"][5:7], source["date"][:4]
+    assert re.search(rf"{int(day)} \w+ {year}", said), (said, month)
+
+
+def test_a_count_on_the_viet_nam_page_is_marked_computed_with_its_unit() -> None:
+    main = render("country/VNM")["main"]
+    assert "named projects" in re.findall(r'<div class="metric computed" data-unit="([^"]+)"', main)
+    metric = re.search(r'<div class="metric computed" data-unit="named projects">.*?</div>',
+                       main, re.DOTALL).group(0)
+    assert "Counted by us" in text_of(metric)
+    assert 'href="#projects?country=VNM"' in metric
+
+
+@pytest.mark.parametrize("route", ROUTES)
+def test_the_page_copy_names_no_framework_and_no_retired_term(route) -> None:
+    rendered = render(route)
+    html = "".join(el["innerHTML"] for el in rendered["elements"].values())
+    words = sorted({m.group(0).lower() for m in FORBIDDEN.finditer(page_copy(html))})
+    assert not words, (route, words)
+
+
+def test_the_static_shell_names_no_framework_and_no_retired_term() -> None:
+    shell = re.sub(r"<script.*?</script>", "", (SITE / "index.html").read_text(), flags=re.DOTALL)
+    meta = " ".join(re.findall(r'content="([^"]+)"', shell))
+    words = sorted({m.group(0).lower() for m in FORBIDDEN.finditer(text_of(shell) + " " + meta)})
+    assert not words, words
