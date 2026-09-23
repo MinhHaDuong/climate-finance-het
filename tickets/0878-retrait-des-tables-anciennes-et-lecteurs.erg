@@ -2,16 +2,20 @@
 Title: Retrait des tables anciennes et des lecteurs de compatibilité
 Created: 2026-09-22
 Author: HDMX-coding-agent
-Blocked-by: 0877
+Blocked-by: 0887
+Blocked-by: 0888
+Blocked-by: 0890
 Blocked-by: 0879
 Blocked-by: 0884
 
 --- log ---
 2026-09-22T17:30Z HDMX-coding-agent created
 2026-09-23T10:30Z HDMX-coding-agent note revue du train (2026-09-23) : bloqué par 0884 (`coverage` remplace les deux tables de couverture) et 0879 (les projets Banque mondiale remplacent `comparison/*.json`, ajouté à la liste de retrait)
+2026-09-23T15:23Z HDMX-coding-agent note [[0877]] scindé (raid, tickets-migration-prep) en [[0877]] (périmètres), [[0889]] (adjudications) et [[0890]] (comptes dérivés, service overview.json) ; et [[0876]] scindé en [[0876]] (observations, timings) et ses crosswalks [[0887]]/[[0888]]. Blocked-by remplacé par les pointes de chaque branche : [[0890]] couvre transitivement [[0877]] et [[0889]] ([[0890]] Blocked-by [[0889]] Blocked-by [[0877]]) ; [[0887]] et [[0888]] sont ajoutés séparément (branches parallèles depuis [[0873]], non couvertes par la chaîne [[0876]]→[[0877]]→[[0889]]→[[0890]]). Motif direct : `financial_statuses` et `implementation_statuses` de `config/jetp_tracking.yaml`, que ce ticket retire, ne sont remplacées comme lecture que par `status-crosswalk` ([[0887]]) ; ce ticket comparait ses vues servies à celles de [[0877]], désormais celles de [[0890]] (comptes, `overview.json`).
 2026-09-23T13:00Z HDMX-coding-agent note 0880 : les listes `authority_categories`, `source_types`, `collection_statuses`, `financial_statuses`, `implementation_statuses`, `scopes` et `priority_tiers` de `config/jetp_tracking.yaml` restent pour les lecteurs anciens (`scripts/jetp/schemas.py`) ; les retirer avec eux, le YAML ne gardant que des choix d'affichage (les trois premières sont déjà des lignes de `terms`)
 2026-09-23T16:00Z HDMX-coding-agent note plan (raid prep) : chemins vérifiés (`scripts/analysis/jetp_observatory.mk` cite `data/jetp/plan-projects.csv` en prérequis, confirmé à mettre à jour ; `_contracts.py` et `schemas.py` présents) ; ce ticket clôt la vague et touche `scripts/`, les `.mk` et `tests/` sur tout le périmètre JETP, donc la portée de `make check` complet dépasse les autres enfants — narrowé ci-dessous aux passerelles étroites (tests ciblés, `make check-fast`, `make lint`) plus le balayage grep et la recette navigateur, qui sont les vérifications qui détectent réellement un lecteur oublié ; question pour l'auteur : garder `make check` complet comme un passage manuel avant de fusionner ce ticket précis (dernière vague, périmètre large), sans en faire un critère de sortie bloquant du train
 
+2026-09-23T15:30Z HDMX-coding-agent note décision de l'auteur, 2026-09-23 : la question posée en plan (raid prep) sur le make check complet est tranchée par la décision d'autonomie du train — portes étroites (tests ciblés, make check-fast, make lint), balayage grep et recette navigateur restent le critère de sortie de ce ticket ; la suite complète tourne une fois sur padme à la revue d'intégration de [[0870]], jamais comme critère de sortie bloquant de ce ticket
 --- body ---
 ## Context
 
@@ -42,7 +46,7 @@ liste les tables de l'ontologie.
 3. `docs/jetp-tracking.md` : la table des objets renvoie à
    `docs/jetp-ledger-storage.md` § 1 ; les règles de comptage restent.
 4. `make clean` puis `make all` ; comparaison des vues servies avec celles
-   de [[0877]].
+   de [[0890]] (comptes, `overview.json`).
 
 ## Test
 
@@ -53,7 +57,7 @@ liste les tables de l'ontologie.
 ## Verification
 
 - [ ] `grep` de chaque nom retiré ne trouve rien hors `docs/jetp-study/` et `tickets/closed/`
-- [ ] Vues servies identiques à celles de [[0877]]
+- [ ] Vues servies identiques à celles de [[0890]]
 
 ## Invariants
 

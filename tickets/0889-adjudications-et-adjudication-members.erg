@@ -1,0 +1,63 @@
+%erg 0.1
+Title: Adjudications et adjudication-members
+Created: 2026-09-23
+Author: HDMX-coding-agent
+Blocked-by: 0877
+
+--- log ---
+2026-09-23T15:23Z HDMX-coding-agent created
+2026-09-23T15:23Z HDMX-coding-agent note scindé de [[0877]] (raid, tickets-migration-prep) : les types de décision d'`adjudications` incluent `perimeter_compatibility` (docs/jetp-ledger-storage.md § 1, table `adjudications`) — une décision ne peut nommer un périmètre qu'une fois `perimeters` peuplée par [[0877]]. Blocked-by mis sur [[0877]], le prérequis réel (pas le suiveur [[0870]]).
+
+--- body ---
+
+## Context
+
+Scindé de [[0877]] au constat (raid prep, 2026-09-23) que ce ticket empile
+une unité de signature testable séparément de `perimeters` : les décisions
+d'arbitrage (`adjudications`) et leurs membres typés
+(`adjudication-members`), types de décision `occurrence_membership`,
+`flow_coverage`, `perimeter_compatibility` et `identity`
+(`docs/jetp-ledger-storage.md` § 1). `perimeter_compatibility` cite un
+`perimeter_id`, donc ce ticket ne peut écrire une décision de ce type
+qu'une fois [[0877]] fusionné. Étape 6 de la migration
+(`docs/jetp-ledger-migration.md`), décision 9, dessin backend § 5.
+
+## Relevant files
+
+- `docs/jetp-ledger-storage.md` § 1 — table `adjudications` (decision_type, subject_kind, subject_id, verdict, status, decided_at, decided_by, supersedes, notes) et `adjudication-members` (adjudication_id, kind, id, role)
+- `docs/jetp-backend-design.md` § 5 — types de décision et leur usage dans les comptes
+- `data/jetp/ontology/perimeters.csv` — cible des décisions `perimeter_compatibility` ([[0877]])
+- `scripts/jetp/_reconciliation.py` — lecteur de compatibilité de [[0768]] à remplacer (retrait en [[0878]])
+
+## Actions
+
+1. Écrire les tables `adjudications` et `adjudication-members` (contrat de
+   stockage § 1) ; les quatre types de décision du dessin backend § 5.
+2. Une décision peut superseder une décision antérieure (`supersedes`) ;
+   une décision supplantée n'est plus en vigueur.
+3. `decided_by` cite l'identifiant du réviseur ou du modèle qui a tranché.
+
+## Test
+
+`tests/test_jetp_adjudications.py`. Red : depuis une fixture de deux flux
+en doublon adjugés `occurrence_membership` accepté et un flux exclu d'une
+couverture par `flow_coverage` rejeté, les deux décisions sont écrites
+avec leurs membres ; une décision `perimeter_compatibility` citant un
+`perimeter_id` absent est refusée ; superseder une décision acceptée par
+une décision `rejected` la retire de la vue en vigueur sans effacer la
+ligne.
+
+## Verification
+
+- [ ] Chaque décision cite au moins un membre typé (`adjudication-members`)
+- [ ] Une décision supplantée n'apparaît plus dans la vue en vigueur mais reste lisible dans l'historique
+
+## Invariants
+
+- Une adjudication ne modifie jamais une observation ni une ligne.
+- Recettes ZAF et VNM de [[0834]] vertes.
+
+## Exit criteria
+
+- [ ] `adjudications` et `adjudication-members` validées par [[0871]] (`make jetp-ledger-check`)
+- [ ] `tests/test_jetp_adjudications.py`, `make check-fast` et `make lint` verts (pas `make check` complet : ex post sur main)

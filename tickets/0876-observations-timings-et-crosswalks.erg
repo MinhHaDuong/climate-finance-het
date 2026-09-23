@@ -1,5 +1,5 @@
 %erg 0.1
-Title: Observations, timings, crosswalks de statut et de secteur
+Title: Observations et timings
 Created: 2026-09-22
 Author: HDMX-coding-agent
 Blocked-by: 0875
@@ -11,6 +11,7 @@ Blocked-by: 0875
 2026-09-23T16:00Z HDMX-coding-agent note plan (raid prep) : chemins vérifiés (`build_observations.py`, `_observatory_data.py` avec `OBSERVATION_KINDS`/`VERIFICATION_COLUMNS` confirmés présents) ; comptes confirmés contre les tables au dépôt (2026-09-23) : events.csv 380 (`financial_status` : signed 235, approved 65, announced 45, need 34, mou 1), implementation-events.csv 71, event-timing.csv 451 ; 0 valeur `disbursement`/`disbursed` dans `financial_status` aujourd'hui, confirmé par lecture directe (pas seulement absent du dessin)
 2026-09-23T16:00Z HDMX-coding-agent note plan (raid prep) : `status-crosswalk` et `sector-crosswalk` sont keyed sur `publisher_id` (DDL) ; #1461 (0872 en cours de refonte) replie `publishers` dans `parties` avec un rôle de publication — si `publisher_id` change de forme avant que ce ticket ne s'exécute, relire #1461 et adapter la clé du crosswalk en conséquence ; ne pas coder en dur la forme actuelle de `publishers` au-delà de cette écriture
 2026-09-23T16:00Z HDMX-coding-agent note plan (raid prep), vérification monstre : ce ticket empile trois unités de signature indépendamment testables — (a) observations + timings depuis events/implementation-events/event-timing, (b) status-crosswalk (lettres ZAF, approbation IDN, retraite VNM), (c) sector-crosswalk (fenêtres ZAF, groupes IDN, libellés VNM → CRS 231-236) — chacune avec sa propre fixture et sa propre table cible ; proposition : scinder en 0876a (observations/timings), 0876b (status-crosswalk), 0876c (sector-crosswalk), 0876b bloquant la vérification navigateur de [[0882]] et 0876a bloquant [[0877]] et [[0884]] comme aujourd'hui. Non exécuté ici, signalé à l'auteur.
+2026-09-23T15:23Z HDMX-coding-agent note scission exécutée (raid, tickets-migration-prep) : status-crosswalk vers [[0887]], sector-crosswalk vers [[0888]], chacun Blocked-by [[0873]] (pas ce ticket) puisque les deux lisent des champs de ligne et les tables de [[0880]], jamais une observation — ce qui les laisse tourner en parallèle de [[0874]]–[[0876]]. Ce ticket garde observations, timings et rates ; la vérification du clic Glossary réel déplacée vers [[0887]].
 
 --- body ---
 ## Context
@@ -22,9 +23,11 @@ typées par sujet et axe, avec mesure d'une liste close, `basis`,
 des lignes `timings` (451 depuis `event-timing.csv`, une par rôle de date,
 avec précision et bornes ; `period_start` et `period_end` pour un flux). Les
 34 `need` deviennent des `estimate` sur leur ligne de plan. Le mot du
-publisher reste ; `status-crosswalk` et `sector-crosswalk` sont les seuls
-lieux d'un statut ou d'un secteur partagé. La lecture ligne → observation
-est une règle versionnée par type de document.
+publisher reste ; `status-crosswalk` ([[0887]]) et `sector-crosswalk`
+([[0888]]) restent les seuls lieux d'un statut ou d'un secteur partagé,
+scindés de ce ticket (2026-09-23) car ils lisent des champs de ligne et
+les tables de [[0880]], jamais une observation. La lecture ligne →
+observation est une règle versionnée par type de document.
 
 ## Relevant files
 
@@ -42,13 +45,11 @@ est une règle versionnée par type de document.
 2. `timings` depuis `event-timing.csv` ; l'approbation IDN bornée à 2022
    et sa date de coupure 2025-11-30 deviennent deux lignes d'une
    observation.
-3. `status-crosswalk` : lettres A–D du registre → axe delivery (statut
-   d'activité IATI) ; IDN approbation → money ; `suspended` sur une
-   retraite → état d'actif.
-4. `sector-crosswalk` : fenêtres ZAF, groupes technologiques IDN, libellés
-   des annexes → codes objet CRS 231–236.
-5. Servir `observations/<CODE>.json` depuis les nouvelles tables ; même
-   contenu par ligne citée.
+3. Servir `observations/<CODE>.json` depuis les nouvelles tables ; même
+   contenu par ligne citée. `status-crosswalk` ([[0887]]) et
+   `sector-crosswalk` ([[0888]]) n'ont pas à avoir fusionné avant cette
+   action ; s'ils sont déjà en place, `build_observations.py` les utilise,
+   sinon la vue attend leurs lignes.
 
 ## Test
 
@@ -63,7 +64,9 @@ est une règle versionnée par type de document.
 - [ ] Comptes des tables au dépôt (2026-09-23) : 380 + 71 = 451 observations, 451 timings ; 0 valeur `disbursement`/`disbursed` dans `financial_status` ou dans un `flow_type` d'observation (vérifié par requête sur les données écrites, pas seulement absent du dessin)
 - [ ] `observations/*.json` : chaque ligne d'avant retrouve son observation par sa ligne citée
 - [ ] Aucune conversion monétaire dans un script ; `rates` cite ses lignes
-- [ ] Glossary ([[0882]]) : depuis une observation ZAF, un clic sur le statut ouvre sa définition et sa correspondance IATI (recette navigateur)
+
+Déplacé vers [[0887]] (status-crosswalk) : la vérification du clic Glossary
+réel depuis une observation ZAF.
 
 ## Invariants
 
@@ -72,5 +75,9 @@ est une règle versionnée par type de document.
 
 ## Exit criteria
 
-- [ ] `observations`, `timings`, `rates` validées par [[0871]] (`make jetp-ledger-check`) ; lignes de `status-crosswalk` et `sector-crosswalk` écrites dans les tables de [[0880]]
+- [ ] `observations`, `timings`, `rates` validées par [[0871]] (`make jetp-ledger-check`)
 - [ ] `tests/test_jetp_observations.py`, `make check-fast` et `make lint` verts (pas `make check` complet : ex post sur main)
+
+`status-crosswalk` et `sector-crosswalk` sont scindés en [[0887]] et
+[[0888]] (2026-09-23) : leur écriture n'est plus un critère de sortie de ce
+ticket.

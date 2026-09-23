@@ -9,6 +9,7 @@ Blocked-by: 0879
 2026-09-23T16:00Z HDMX-coding-agent note plan (raid prep) : `conception/jetp/papier-3-ledger/pilote-ledger-vn/rapport-pilote-vn.md` confirmé décrire le format du tirage CRS (`iati-crs/crs_*`, Vietnam seul, 167 Mo brut) — le tirage quatre pays lui-même n'est pas dans le dépôt (à tirer par ce ticket). Le compte « 9 337 lignes, 5,9 Mo » et les « 51 colonnes » viennent de la projection de volume du contrat de stockage § 3 (« about 8 000 CRS rows ») et n'ont pas pu être vérifiés localement, aucun tirage CRS quatre-pays n'existant sur cette machine ; à confirmer contre le tirage réel au lancement plutôt qu'à prendre pour acquis. `deflators` confirmé sans propriétaire avant ce ticket (table déclarée au contrat de stockage § 1, aucun enfant du train ne l'alimentait avant celui-ci).
 2026-09-23T16:00Z HDMX-coding-agent note plan (raid prep) : le CRS est ingéré avec l'institution comme publisher ([[0879]] § contrat de ligne) ; #1461 (0872 en cours de refonte) replie `publishers` dans `parties` avec un rôle de publication — relire #1461 avant de fixer la forme de ce publisher si ce ticket s'exécute après que #1461 a fusionné.
 
+2026-09-23T15:30Z HDMX-coding-agent note décision de l'auteur, 2026-09-23 : les petits tirages (Banque mondiale, CRS énergie quatre pays, tranche IATI) sont versionnés directement sur doudou ; le CRS tous secteurs quatre pays, en vrac, s'ajoute et se pousse sous DVC sur padme par ssh, puis se tire sur doudou (les données ne circulent que de padme vers doudou, jamais l'inverse)
 --- body ---
 ## Context
 

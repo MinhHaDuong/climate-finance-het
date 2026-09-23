@@ -1,0 +1,64 @@
+%erg 0.1
+Title: Correspondance de secteur (sector-crosswalk)
+Created: 2026-09-23
+Author: HDMX-coding-agent
+Blocked-by: 0873
+
+--- log ---
+2026-09-23T15:23Z HDMX-coding-agent created
+2026-09-23T15:23Z HDMX-coding-agent note scindé de [[0876]] (raid, tickets-migration-prep) : `sector-crosswalk` lit les fenêtres ZAF, les groupes technologiques IDN et les libellés d'annexe — des champs verbatim des lignes M1a ([[0873]]) — vers les codes objet CRS 231–236 des tables de [[0880]] (déjà fusionné), jamais une observation. Blocked-by mis sur [[0873]], pas sur [[0876]], ce qui permet à ce ticket de tourner en parallèle de [[0874]]–[[0876]]. Preuve : l'action 4 de [[0876]] ne cite aucune donnée d'observation, seulement des valeurs de ligne ; comme pour `status-crosswalk` ([[0887]]), la clé est `publisher_id` (DDL).
+
+--- body ---
+
+## Context
+
+Scindé de [[0876]] au constat (raid prep, 2026-09-23) que `sector-crosswalk`
+lit les valeurs verbatim des lignes des quatre documents M1a (fenêtres
+technologiques ZAF, groupes IDN, libellés des annexes) et les tables
+d'ontologie de [[0880]] (déjà fusionné), pas les observations que [[0876]]
+construit depuis `events.csv`. Même raisonnement et même clé
+(`publisher_id`, DDL, contrat de stockage § 1) que [[0887]] (status-crosswalk),
+scindé du même ticket pour la même raison. #1461 (0872 en cours de refonte)
+replie `publishers` dans `parties` avec un rôle de publication — si
+`publisher_id` change de forme avant que ce ticket ne s'exécute, relire
+#1461 et adapter la clé en conséquence, sans coder en dur la forme actuelle
+de `publishers`. Étape 5 de la migration (`docs/jetp-ledger-migration.md`),
+décisions 3, 9 et 10.
+
+## Relevant files
+
+- `data/jetp/lines.csv`, `line-fields/<document_id>.csv` — champs verbatim des quatre documents ([[0873]])
+- `data/jetp/ontology/` — table `sector-crosswalk` ([[0880]])
+- `scripts/jetp/build_observations.py` — lit `sector-crosswalk` pour le code objet CRS
+- `config/jetp_tracking.yaml` — correspondances actuelles à reprendre
+
+## Actions
+
+1. `sector-crosswalk` : fenêtres technologiques ZAF, groupes technologiques
+   IDN, libellés des annexes → codes objet CRS 231–236.
+2. Servir `sector-crosswalk` depuis la table de [[0880]] pour les lecteurs
+   qui en ont besoin (`build_observations.py` notamment, sans attendre que
+   [[0876]] ait fusionné).
+
+## Test
+
+`tests/test_jetp_sector_crosswalk.py`. Red : une fixture de trois lignes
+(une fenêtre ZAF, un groupe technologique IDN, un libellé d'annexe non
+couvert) donne deux lignes de `sector-crosswalk` aux codes objet CRS
+attendus et rejette le libellé non couvert.
+
+## Verification
+
+- [ ] Comptes des correspondances écrites correspondent aux fenêtres,
+  groupes et libellés distincts des quatre documents (comparaison directe
+  contre `line-fields/*`, pas seulement contre le dessin)
+
+## Invariants
+
+- Le mot du publisher n'est jamais normalisé dans `own_status`.
+- Recettes ZAF et VNM de [[0834]] vertes.
+
+## Exit criteria
+
+- [ ] Lignes de `sector-crosswalk` écrites dans la table de [[0880]], validées par [[0871]] (`make jetp-ledger-check`)
+- [ ] `tests/test_jetp_sector_crosswalk.py`, `make check-fast` et `make lint` verts (pas `make check` complet : ex post sur main)
