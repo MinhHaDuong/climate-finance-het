@@ -2,7 +2,6 @@
 Title: Lignes et champs des quatre documents M1a
 Created: 2026-09-22
 Author: HDMX-coding-agent
-Blocked-by: 0872
 
 --- log ---
 2026-09-22T17:30Z HDMX-coding-agent created
@@ -11,6 +10,7 @@ Blocked-by: 0872
 2026-09-23T09:22Z HDMX-coding-agent gaze/1457 red team: an empty terms rejects every closed-list value, so 0873 cannot land lines rows before 0880 populates terms; added Blocked-by: 0880 (was only transitively ordered via 0870's wave table)
 2026-09-23T10:26Z HDMX-coding-agent note blocker 0880 closed — Blocked-by removed.
 2026-09-23T16:00Z HDMX-coding-agent note plan (raid prep) : chemins et fonctions vérifiés contre origin/main (build_m1a_inventories.py, les fichiers 0818, le json vnm-migration-0764, app.js `inventoryRows()`/`?row=N` — la route est déjà `#entries/<CODE>?row=N` post-0881) ; comptes (257/1 579/49/279) confirmés contre les tables au dépôt (2026-09-23) ; `lines.groups` n'a pas de FK dans la DDL (config/jetp-ledger.sql le documente : « no key yet ») — la règle « pas de liste » du contrat de stockage § 1 force le sens ligne membre → ligne d'en-tête (une ligne ne peut porter qu'un seul `groups`), donc l'action 4 est réécrite pour l'expliciter ; ce ticket peut ajouter la contrainte FK correspondante en écrivant `lines`
+2026-09-23T16:43Z HDMX-coding-agent note blocker 0872 closed — Blocked-by removed.
 --- body ---
 ## Context
 
