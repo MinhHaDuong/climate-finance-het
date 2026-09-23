@@ -1,0 +1,164 @@
+Return-Path: <christophe.cassen@cnrs.fr>
+Received: from zmtaauth04.partage.renater.fr (LHLO
+ zmtaauth04.partage.renater.fr) (194.254.241.26) by
+ zstore-b1-060.partage.renater.fr with LMTP; Wed, 16 Sep 2026 18:17:36 +0200
+ (CEST)
+Received: from zmtaauth04.partage.renater.fr (localhost [127.0.0.1])
+	by zmtaauth04.partage.renater.fr (Postfix) with ESMTPS id 31BFB1C0F94;
+	Wed, 16 Sep 2026 18:17:36 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by zmtaauth04.partage.renater.fr (Postfix) with ESMTP id 1CB141C103E;
+	Wed, 16 Sep 2026 18:17:36 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.10.3 zmtaauth04.partage.renater.fr 1CB141C103E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cnrs.fr;
+	s=E1A29881-9007-4750-9D7B-64C5D371967E; t=1789575456;
+	bh=M+xkbXJPOHHfVBd4rg//IsOHgg6/SFYsKdixbatjlao=;
+	h=Message-ID:Date:MIME-Version:To:From;
+	b=MSSwmL2Hs+lpsAcfx7sqpL4D2WpzidVSq6zO9GCkbcbVpDyLLMm9knnPTcLHgANR/
+	 V4YF+VjzCySvtiRmTWklko9RylCL+OH4e8SQ09ZLRWhvC4Ryl+PP4wNqiQ35ZU5vgG
+	 e3RLMVxTLkoCXqKJlGnVNp/W6p0jUh4OtXXaYByxsyZRYFztvLkKk1qn4jIHdoSFpf
+	 zH3kqx0g9UMt3rEmvAUDvIkj0TtL6N3aO5H5gbeNdqHCAgmEPM0r26FzhyKrf9LZdu
+	 7wLfIFUtvv9hymN0dijwnn6yBmk1U4nGwmBs8JU4xVK1eMlcHtuAecMgvvuqhkNjjE
+	 uj3OZohP9GfmA==
+Received: from zmtaauth04.partage.renater.fr ([127.0.0.1])
+ by localhost (zmtaauth04.partage.renater.fr [127.0.0.1]) (amavis, port 10026)
+ with ESMTP id IQkVhtzun0NE; Wed, 16 Sep 2026 18:17:36 +0200 (CEST)
+Received: from 193.51.120.250 (unknown [194.254.241.248])
+	by zmtaauth04.partage.renater.fr (Postfix) with ESMTPA id EA78E1C0F94;
+	Wed, 16 Sep 2026 18:17:35 +0200 (CEST)
+Message-ID: <ed671603-c50b-4d23-9ee1-5ce55c65f33d@cnrs.fr>
+Date: Wed, 16 Sep 2026 18:17:35 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: =?UTF-8?Q?Re=3A_=5BSPAM=5D_JETP_=3F_deux_papiers_plut=C3=B4t_qu=27u?=
+ =?UTF-8?Q?n=2C_et_une_proposition_de_signature?=
+To: Minh Ha Duong <haduong@doudou.netbird.cloud>
+Cc: minh.ha-duong@cnrs.fr
+References: <aqQ2jC7DL5-vesP1@doudou.netbird.cloud>
+Content-Language: fr
+From: CASSEN Christophe <christophe.cassen@cnrs.fr>
+In-Reply-To: <aqQ2jC7DL5-vesP1@doudou.netbird.cloud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-Virus-Scanned: clamav-milter 0.103.12 at clamav03
+X-Virus-Status: Clean
+Content-Transfer-Encoding: quoted-printable
+
+Bonsoir Minh,
+
+Voici mes r=C3=A9ponses =C3=A0 tes questions:
+
+Le 11/09/2026 =C3=A0 19:12, Minh Ha Duong a =C3=A9crit=C2=A0:
+> Cher Christophe,
+>
+> Voici les documents promis apr=C3=A8s notre s=C3=A9ance du 8. Trois d=C3=
+=A9cisions y
+> attendent ton avis, et une seule presse.
+>
+> Un mot sur leur statut avant que tu les ouvres : ils cadrent le probl=C3=
+=A8me, ils
+> ne proposent pas la solution. Ce sont des notes de travail, pas des pro=
+jets
+> d'article. Les chiffres qu'elles portent ont boug=C3=A9 trois fois pend=
+ant leur
+> construction, selon les instruments compt=C3=A9s, le d=C3=A9nominateur =
+retenu et
+> l'horizon d'observation =E2=80=94 et cette sensibilit=C3=A9 est elle-m=C3=
+=AAme un des r=C3=A9sultats.
+> Ce que je te soumets, c'est la mani=C3=A8re de poser la question et l'=C3=
+=A9talon qui
+> permet d'y r=C3=A9pondre. La r=C3=A9ponse, nous ne l'avons pas encore, =
+et une partie
+> t'appartient.
+ok
+>
+> Le papier se scinde en deux. Nous avions pos=C3=A9 en s=C3=A9ance une c=
+ondition
+> plut=C3=B4t qu'un choix : le papier court n'existe que si la courbe de =
+r=C3=A9f=C3=A9rence
+> montre un =C3=A9cart. Elle a =C3=A9t=C3=A9 construite le soir m=C3=AAme=
+ et elle en montre un. Le
+> papier court part donc devant =E2=80=94 Climate Policy, format Policy A=
+nalysis,
+> moins de 5 000 mots, trente-trois jours de premi=C3=A8re d=C3=A9cision =
+v=C3=A9rifi=C3=A9s =C3=A0 la
+> source. Le papier long d'=C3=A9conomie politique compar=C3=A9e suit che=
+z Development
+> Policy Review, o=C3=B9 il tient sans coupe.
+ok
+> Je te propose d'=C3=AAtre coauteur du papier court, ce qui revient sur =
+ce que
+> j'avais dit en s=C3=A9ance =E2=80=94 j'y envisageais de le porter seul.=
+ Deux choses m'ont
+> fait changer d'avis, et aucune n'est de politesse.
+ok
+>
+> La premi=C3=A8re tient au format. La Policy Analysis de Climate Policy =
+est
+> d=C3=A9finie comme une evidence-based objective analysis of particular =
+policy
+> approaches : la couche d'analyse de politique publique y est constituti=
+ve, pas
+> d=C3=A9corative. La seconde tient au r=C3=A9sultat lui-m=C3=AAme, et c'=
+est le point d=C3=A9licat
+> de ce courrier.
+ok, =C3=A0 voir en effet comment bien =C3=A9laborer cette couche d'analys=
+e de=20
+politique publique
+>
+> La comparaison =C3=A0 quatre pays ne donne pas le r=C3=A9sultat simple =
+que j'attendais.
+> Les quatre JETP n'ayant pas =C3=A9t=C3=A9 sign=C3=A9s la m=C3=AAme ann=C3=
+=A9e, chaque pays doit =C3=AAtre lu
+> au temps r=C3=A9ellement =C3=A9coul=C3=A9 depuis sa signature =E2=80=94=
+ trois ans pour l'Afrique du
+> Sud, un seul pour le S=C3=A9n=C3=A9gal. =C3=80 ces horizons appari=C3=A9=
+s, et en rapportant le
+> d=C3=A9caiss=C3=A9 au paquet annonc=C3=A9 : Vi=C3=AAt Nam 1,1 % contre =
+une norme d'ex=C3=A9cution de
+> 25,8 %, Indon=C3=A9sie 5,4 % contre 25,5 %. Mais l'Afrique du Sud est =C3=
+=A0 26,2 %
+> contre 30,5 %, et le S=C3=A9n=C3=A9gal =C3=A0 7,2 % contre 7,2 % : tous=
+ deux au niveau de leur
+> propre norme. La figure jointe le montre sans le farder.
+>
+> Ce qui vaut pour les quatre, en revanche, c'est que le paquet n'est jam=
+ais
+> devenu des engagements sign=C3=A9s : 98 % au Vi=C3=AAt Nam, 91 % au S=C3=
+=A9n=C3=A9gal, 89 % en
+> Indon=C3=A9sie, 60 % en Afrique du Sud. Le goulot est =C3=A0 l'engageme=
+nt, pas au
+> d=C3=A9caissement. C'est le r=C3=A9sultat le plus solide du lot, et il =
+est nouveau pour
+> trois des quatre pays.
+ok
+>
+> Notre apport est donc l'=C3=A9talon qui permet d'en juger, et la mesure=
+ de ce qui
+> n'a jamais quitt=C3=A9 l'annonce. D'o=C3=B9 le titre de travail : How s=
+low is slow?
+ok
+>
+> Le co=C3=BBt, que je pr=C3=A9f=C3=A8re =C3=A9noncer. L'ind=C3=A9pendanc=
+e de calendrier =C3=A9tait une des
+> raisons de partir vite. Je propose donc un p=C3=A9rim=C3=A8tre born=C3=A9=
+ : une section, les
+> trois =C3=A0 cinq key policy insights qu'exige la revue, l'investigatio=
+n qui les
+> =C3=A9taye. Et une date de soumission fix=C3=A9e d'avance, le papier pa=
+rtant =C3=A0 cette
+> date avec ce qui est pr=C3=AAt.
+ok
+>
+> Deux questions qui ne pressent pas. Le tableau CRediT du papier long es=
+t =C3=A0
+> valider ou corriger. Et ton r=C3=B4le sur le registre comptable n'a pas=
+ =C3=A9t=C3=A9 abord=C3=A9 en s=C3=A9ance :
+> cosignature d'un =C3=A9ventuel data paper, relecture, ou rien.
+>
+> Si l'un de ces p=C3=A9rim=C3=A8tres ne te convient pas, dis-le simpleme=
+nt : chaque
+> livrable a le sien.
+>
+> Minh
+>
+>
