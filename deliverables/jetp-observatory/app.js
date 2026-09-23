@@ -30,7 +30,7 @@ const STAGE_COLOURS = {
   Need: "#bc9c7d",
   "Not documented": "#dce0d5",
 };
-let overview, countries, comparison, editions, evidence, m1a, projects, documentsData, documentIndex, documentsBySha;
+let overview, countries, comparison, editions, evidence, m1a, projects, documentsData, documentIndex, documentsBySha, ontology;
 const country = (code) => overview.countries.find((c) => c.code === code);
 const undisclosedCount = () =>
   overview.countries.reduce((total, c) => total + c.undisclosed, 0);
@@ -718,7 +718,9 @@ function rowDetail(row, summary, open) {
   )
     .map(
       ([key, value]) =>
-        `<dt>${esc(key)}</dt><dd>${esc(value === "" || value == null ? "Not published" : value)}</dd>`,
+        `<dt>${esc(key)}</dt><dd>${
+          value === "" || value == null ? "Not published" : FIELD_TERMS[key] ? FIELD_TERMS[key](value) : esc(value)
+        }</dd>`,
     )
     .join("")}</dl></details>`;
 }
@@ -931,7 +933,7 @@ function renderInventory(code, rows, observations, focus, tab) {
       },
       { label: "Extract", cell: (row) => esc(row.source_layer) },
       { label: "Entry type", cell: (row) => esc(row.record_type) },
-      { label: "Reported status", cell: (row) => pill(row.reported_status) },
+      { label: "Reported status", cell: (row) => statusPill(row.reported_status) },
       { label: "Identity", cell: (row) => pill(row.identity_status) },
       { label: "Document page", cell: inventoryEvidence },
     ],
@@ -1314,67 +1316,158 @@ function whosWhoPage(params) {
     table.head;
   table.mount();
 }
-/* A first list of the words the pages use, written by hand. The Glossary
- * generated from the ledger's term tables (ticket 0882) replaces it, with each
- * term's external mapping and revision history; until then this list is
- * marked as the hand-written one. Grouped by theme, A–Z inside each group
- * (author's cold read, 2026-09-23), the way 0882 groups the generated terms
- * by list: the classes the ledger tracks, how documents are read, statuses,
- * measures, relations. The order is computed, so a new term cannot break it. */
-const GLOSSARY = [
-  ["What we track", [
-    ["Agreement", "A financing arrangement — a grant, a loan, a guarantee — between funders and a recipient. A partnership is the umbrella agreement; the financing under it are agreements too."],
-    ["Asset", "A physical installation a project concerns: a power plant, a unit within it, a transmission line."],
-    ["Party", "An organisation that funds, receives, operates or oversees: a government, a development bank, a utility. Who's who lists them as the documents spell them."],
-    ["Perimeter", "A defined population that counts are made against: a country's portfolio at a date, a plan's list at a cutoff, a set of unnamed slots."],
-    ["Project", "A project, programme or component that the documents name. Programmes and components may overlap, so projects are not physical assets and are not added up."],
-    ["Unpublished identity", "A project a country counts in its portfolio without publishing its name."],
-  ]],
-  ["How documents are read", [
-    ["Archived copy", "The bytes a retrieval returned, kept as fetched, with their fingerprint. They open locally in this preview only."],
-    ["Document", "A file a publisher released — a report, a register, a plan, a web page — and our record of each attempt to retrieve it."],
-    ["Entry", "One row of a register, one line of a plan annex or one submission in a list, kept as its document prints it, before any matching."],
-    ["Locator", "Where in a document an entry or an item sits: a table row, an annex, a PDF page."],
-    ["On the record", "One statement a publisher made in one document, read by the ledger as a date, a status or an amount. It reads “according to” its publisher, with the date."],
-    ["Publisher", "The organisation a document comes from, named on every item read from it."],
-    ["Knowledge cutoff", "The last date on which a document entered the ledger for a release."],
-    ["Release", "A frozen package of the ledger and these pages, prepared up to a knowledge cutoff."],
-  ]],
-  ["Statuses", [
-    ["Financing milestone", "Need, announcement, memorandum, approval, signature, disbursement: the steps a financing goes through, each on the record only when a document says so."],
-    ["Not coded in ledger", "No financing milestone has yet been read from the project's documents. It does not mean there is no finance."],
-    ["Registered financing", "A financing line in an official register. It is not an independently verified signature or payment."],
-    ["Review state", "How far a project's documents have been followed up, as the ledger recorded it."],
-    ["Verification state", "The word the ledger recorded for how an item was checked, shown exactly as written."],
-  ]],
-  ["Measures", [
-    ["Amount", "A sum as its document prints it, in its original currency. Amounts are never converted, and never added across documents."],
-    ["As published", "A number printed by a publisher, shown as printed, with its publisher and date."],
-    ["Our calculation", "A number computed from the paper trail, as opposed to a number a publisher printed. It states its unit and what it covers, and links to what was counted."],
-    ["Financing window", "For a closed historical operation, the years from approval to the closing date the World Bank reports. It is not a construction time."],
-  ]],
-  ["Relations", [
-    ["Component of", "A project within a programme. A component and its programme are never counted twice as one."],
-    ["Finances", "An agreement finances a project; one agreement may finance several projects, and one project draw on several agreements."],
-    ["Party to", "An organisation's role in an agreement: funder, recipient, channel. One organisation may hold different roles in different agreements."],
-    ["Published by", "A document and the organisation that released it; some documents have several."],
-    ["Refers to", "An entry or an item and the project, agreement or organisation it names, once a reviewed match has attached it."],
-  ]],
+/* The Glossary (ticket 0882), generated from the ontology tables served one
+ * file per table under data/ontology/: each term in force with its
+ * definition, its external mapping and its revision history. No definition
+ * is written here. The page's one choice is the theme each list sits under:
+ * grouped by theme, A–Z inside each group (author's cold read, 2026-09-23).
+ * Classes are split between the first two themes by name, as the author's
+ * grouping does; a list or class no theme names lands in "Other lists", so a
+ * new list can never drop its terms from the page. */
+const GLOSSARY_THEMES = [
+  ["What we track", {
+    classes: ["agreement", "asset", "country", "party", "perimeter", "project"],
+    lists: ["authority_category", "country", "project_classification", "role"],
+  }],
+  ["How documents are read", {
+    classes: ["comparator_record", "crosswalk", "document", "external_identifier", "line",
+      "observation", "publisher", "retrieval", "snapshot", "timing"],
+    lists: ["date_precision", "date_role", "decision_status", "decision_type", "document_type",
+      "line_classification", "mapping_relation", "retrieval_status", "term_kind"],
+  }],
+  ["Statuses", { lists: ["asset_state", "axis", "delivery", "money", "project_stage"] }],
+  ["Measures", { lists: ["basis", "flow_type", "marker", "marker_score", "measure", "modality"] }],
+  ["Relations", { lists: ["relation"] }],
 ];
-const byTerm = ([a], [b]) => a.localeCompare(b, "en");
-function glossaryPage() {
+const themeOf = (t) =>
+  GLOSSARY_THEMES.find(([, sel]) =>
+    t.kind === "class" ? (sel.classes || []).includes(t.term_id) : (sel.lists || []).includes(t.list),
+  )?.[0] || "Other lists";
+/* A term is addressed by its list and its identifier, which is unique within
+ * the list only; the classes without a list go under their kind. */
+const termKey = (t) => `${t.list || t.kind}/${t.term_id}`;
+const termHref = (key) => "#glossary?term=" + encodeURIComponent(key);
+/* The served view as row objects, with the rows in force as the builder
+ * decided them: the page never re-derives the revision rule. */
+function ontologyTable(view) {
+  const rows = view.rows.map((values) => Object.fromEntries(view.fields.map((f, i) => [f, values[i]])));
+  const live = new Set(view.in_force);
+  return { rows, inForce: rows.filter((row) => live.has(row[view.key])), key: view.key };
+}
+function readOntology(termsView, statusView) {
+  const terms = ontologyTable(termsView);
+  return {
+    terms: new Map(terms.inForce.map((t) => [termKey(t), t])),
+    termRows: new Map(terms.rows.map((row) => [row.term_row_id, row])),
+    statusCrosswalk: ontologyTable(statusView).inForce,
+  };
+}
+/* Every term shown elsewhere links to its entry; a word that is not a term
+ * in force stays plain text. */
+function termLink(list, id, text) {
+  const key = `${list}/${id}`;
+  const shown = esc(text ?? id);
+  return ontology.terms.has(key)
+    ? `<a href="${esc(termHref(key))}" data-term-link="${esc(key)}">${shown}</a>`
+    : shown;
+}
+/* A publisher's own status word reaches its shared status through the status
+ * crosswalk. The served rows do not yet name the publisher of an entry (the
+ * publishers table arrives with the ledger migration), so the lookup is on
+ * the word alone, and a word two publishers map differently stays unlinked
+ * rather than linked to one of them. */
+function statusKey(word) {
+  const targets = new Set(
+    ontology.statusCrosswalk
+      .filter((row) => row.own_status === word)
+      .map((row) => `${row.axis}/${row.shared_status}`),
+  );
+  const [key] = targets;
+  return targets.size === 1 && ontology.terms.has(key) ? key : null;
+}
+function statusPill(word) {
+  const key = word ? statusKey(word) : null;
+  return key ? `<a href="${esc(termHref(key))}" data-term-link="${esc(key)}">${pill(word)}</a>` : pill(word);
+}
+/* Ledger columns whose value is a term: the financial events' status words
+ * are the money axis's states (docs/jetp-ontology.md section 4), so each
+ * links to the term of the same identifier when one is in force. */
+const FIELD_TERMS = {
+  financial_status: (value) => termLink("money", value),
+  reported_status: (value) => (statusKey(value) ? statusPill(value) : esc(value)),
+};
+/* A relation's domain and range name classes, which are terms too. */
+const classNames = (value) =>
+  String(value || "")
+    .split(/,\s*/)
+    .filter(Boolean)
+    .map((name) => termLink("class", name.replace(/ /g, "_"), name))
+    .join(", ");
+function termMapping(t) {
+  if (!t.external_scheme) return `Defined for this ledger · ${termLink("mapping_relation", t.mapping_relation)}`;
+  const scheme = t.external_uri
+    ? `<a href="${esc(cleanURL(t.external_uri))}" target="_blank" rel="noopener">${esc(t.external_scheme)} ↗</a>`
+    : esc(t.external_scheme);
+  return `External reference: ${scheme} · ${termLink("mapping_relation", t.mapping_relation)}`;
+}
+/* The rows a term's in-force row superseded, newest first. */
+function termHistory(t) {
+  const history = [];
+  const seen = new Set([t.term_row_id]);
+  let row = ontology.termRows.get(t.supersedes);
+  while (row && !seen.has(row.term_row_id)) {
+    history.push(row);
+    seen.add(row.term_row_id);
+    row = ontology.termRows.get(row.supersedes);
+  }
+  return history;
+}
+function glossaryEntry(t, target) {
+  const key = termKey(t);
+  const words = ontology.statusCrosswalk.filter((row) => row.axis === t.list && row.shared_status === t.term_id);
+  const history = termHistory(t);
+  return (
+    `<dt id="term-${esc(key)}" data-term="${esc(key)}"${key === target ? ' data-targeted aria-current="true"' : ""}><span class="term-label">${esc(t.label)}</span> <span class="term-list">${esc((t.list || t.kind).replace(/_/g, " "))}</span></dt>` +
+    `<dd><p class="term-definition">${esc(t.definition)}</p>` +
+    (t.scope_note ? `<p class="note">${esc(t.scope_note)}</p>` : "") +
+    (t.kind === "relation"
+      ? `<p class="term-connects">Connects <span data-domain>${classNames(t.domain)}</span> to <span data-range>${classNames(t.range)}</span></p>`
+      : "") +
+    `<p class="term-mapping">${termMapping(t)}</p>` +
+    (words.length
+      ? `<p data-crosswalk>Publishers' own words mapped here: ${words.map((row) => `${pill(row.own_status)} <small>${esc(row.publisher_id)}</small>`).join(", ")}</p>`
+      : "") +
+    `<p class="note">Recorded ${date(t.recorded_at)}, decided by ${esc(t.decided_by)}</p>` +
+    (history.length
+      ? `<details class="term-history"><summary>Revision history</summary><ol>${history
+          .map((row) => `<li>${date(row.recorded_at)}, decided by ${esc(row.decided_by)}: ${esc(row.definition)}</li>`)
+          .join("")}</ol></details>`
+      : "") +
+    `</dd>`
+  );
+}
+const byLabel = (a, b) => {
+  const [x, y] = [a.label.toLowerCase(), b.label.toLowerCase()];
+  return x < y ? -1 : x > y ? 1 : termKey(a) < termKey(b) ? -1 : 1;
+};
+function glossaryPage(target) {
+  const themes = [...GLOSSARY_THEMES.map(([name]) => name), "Other lists"];
+  const terms = [...ontology.terms.values()];
   main.innerHTML =
     header(
       "The words these pages use",
-      "What each word on these pages means, grouped by theme and alphabetical within each group. This first list is written by hand; definitions generated from the ledger's own term tables, with their external references and revision history, will replace it.",
+      "What each word on these pages means, grouped by theme and alphabetical within each group. Every entry is generated from the ledger's own term tables: its definition, the external reference it maps to, and its revision history. A status also lists the publishers' own words that map to it.",
     ) +
-    GLOSSARY.map(
-      ([group, terms]) =>
-        `<section class="section" data-glossary-group="${esc(group)}"><h2>${esc(group)}</h2><dl class="facts glossary" data-glossary="handwritten">${[...terms]
-          .sort(byTerm)
-          .map(([term, definition]) => `<dt>${esc(term)}</dt><dd>${esc(definition)}</dd>`)
-          .join("")}</dl></section>`,
-    ).join("");
+    themes
+      .map((name) => [name, terms.filter((t) => themeOf(t) === name).sort(byLabel)])
+      .filter(([, members]) => members.length)
+      .map(
+        ([name, members]) =>
+          `<section class="section" data-glossary-group="${esc(name)}"><h2>${esc(name)}</h2><dl class="facts glossary">${members
+            .map((t) => glossaryEntry(t, target))
+            .join("")}</dl></section>`,
+      )
+      .join("");
 }
 /* About's landing page: one line per page under it, as #the-paper-trail. */
 const ABOUT_NOTES = {
@@ -1621,12 +1714,15 @@ function render() {
   else if (page === "entries") id ? inventoryPage(id, params, "") : entriesPage();
   else if (page === "whos-who") whosWhoPage(params);
   else if (page === "counts") numbersPage();
-  else if (page === "glossary") glossaryPage();
+  else if (page === "glossary") glossaryPage(params.get("term"));
   else if (page === "about") aboutPage();
   else if (page === "who-we-are") whoWeArePage();
   else methodsPage();
   document.title = pageTitle(page, id);
   window.scrollTo(0, 0);
+  // A link to one term opens the Glossary at its entry.
+  if (page === "glossary" && params.get("term"))
+    document.getElementById("term-" + params.get("term"))?.scrollIntoView?.();
 }
 const load = async (file) => {
   const response = await fetch("data/" + file + ".json");
@@ -1635,14 +1731,18 @@ const load = async (file) => {
 };
 async function start() {
   try {
-    [overview, comparison, documentsData, editions, evidence, m1a] = await Promise.all([
+    let termsView, statusCrosswalkView;
+    [overview, comparison, documentsData, editions, evidence, m1a, termsView, statusCrosswalkView] = await Promise.all([
       load("overview"),
       load("comparison"),
       load("documents"),
       load("editions").catch(() => ({ editions: [] })),
       load("reviewed-evidence").catch(() => ({ records: [], analytical_snapshot: { status: "not available" } })),
       load("m1a/manifest"),
+      load("ontology/terms"),
+      load("ontology/status-crosswalk"),
     ]);
+    ontology = readOntology(termsView, statusCrosswalkView);
     countries = Object.fromEntries(
       await Promise.all(
         overview.countries.map(async (c) => [c.code, await load(c.code)]),
