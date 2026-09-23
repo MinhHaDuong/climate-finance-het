@@ -1,0 +1,9 @@
+relation_id,from_kind,from_id,relation,to_kind,to_id,role,valid_from,valid_to,status,method,method_version,confidence,decided_at,decided_by,supersedes,line_id
+same_as-document-idn-cipp-2023-cpr-mirror--idn-cipp-2023,document,idn-cipp-2023-cpr-mirror,same_as,document,idn-cipp-2023,,,,candidate,mirror_review,1,,2026-09-23,scripts/jetp/build_evidence_layer.py,,
+same_as-document-sen-annex8-project-analysis--sen-investment-plan-annex8-official,document,sen-annex8-project-analysis,same_as,document,sen-investment-plan-annex8-official,,,,candidate,mirror_review,1,,2026-09-23,scripts/jetp/build_evidence_layer.py,,
+same_as-document-sen-investment-plan-l4-mirror--sen-investment-plan-l4,document,sen-investment-plan-l4-mirror,same_as,document,sen-investment-plan-l4,,,,candidate,mirror_review,1,,2026-09-23,scripts/jetp/build_evidence_layer.py,,
+same_as-publisher-senelec--senelec-2,publisher,senelec,same_as,publisher,senelec-2,,,,candidate,label_review,1,,2026-09-23,scripts/jetp/build_evidence_layer.py,,
+same_as-publisher-senelec-via-afd-dgmarket-2--senelec-via-afd-dgmarket,publisher,senelec-via-afd-dgmarket-2,same_as,publisher,senelec-via-afd-dgmarket,,,,candidate,label_review,1,,2026-09-23,scripts/jetp/build_evidence_layer.py,,
+same_as-publisher-afd--agence-francaise-de-developpement,publisher,afd,same_as,publisher,agence-francaise-de-developpement,,,,candidate,label_review,1,,2026-09-23,scripts/jetp/build_evidence_layer.py,,
+same_as-publisher-mepm--senegal-mepm,publisher,mepm,same_as,publisher,senegal-mepm,,,,candidate,label_review,1,,2026-09-23,scripts/jetp/build_evidence_layer.py,,
+same_as-publisher-mepm--ministry-of-energy-petroleum-and-mines,publisher,mepm,same_as,publisher,ministry-of-energy-petroleum-and-mines,,,,candidate,label_review,1,,2026-09-23,scripts/jetp/build_evidence_layer.py,,

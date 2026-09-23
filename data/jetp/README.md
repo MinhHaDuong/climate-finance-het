@@ -16,6 +16,16 @@ timelines and totals are generated from a pinned release, not hand-maintained he
 This directory is shared by the observatory and academic work; it is not a website
 backend. Existing registries and DVC objects have not been moved.
 
+The evidence layer of the ledger (ticket 0872, migration step 1 of
+[`jetp-ledger-migration.md`](../../docs/jetp-ledger-migration.md)) is
+`publishers.csv`, `documents.csv`, `document-publishers.csv`, `retrievals.csv`
+and `snapshots.csv`, with the `same_as` candidates for mirrors and near-duplicate
+publisher labels in `relations.csv`. They were rebuilt once from `sources.csv`
+and `manifest.csv` by `scripts/jetp/build_evidence_layer.py`, and the Documents
+view reads them. The two old tables stay, read only, until ticket 0878
+retires them with their readers; a new collection is not yet written to the new
+tables.
+
 A local observatory MVP now lives in `deliverables/jetp-observatory/`; its
 committed JSON handoffs are a preview, not a deposited monthly edition.
 
