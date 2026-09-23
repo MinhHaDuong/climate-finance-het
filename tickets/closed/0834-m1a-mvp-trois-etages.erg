@@ -2,6 +2,7 @@
 Title: M1a redéfinie : le MVP explore les données en trois étages
 Created: 2026-09-17
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1448
 
 --- log ---
 2026-09-17T16:56Z HDMX-coding-agent created
@@ -13,6 +14,7 @@ Author: HDMX-coding-agent
 2026-09-22T09:40Z HDMX-coding-agent note revue d'intégration finale sur main (bf31b3ee) : les trois prises du 2026-09-22T00:05Z sont réparées et vérifiées (ZAF.json 509 315 o ; Ledger rows · 257 et M1a rows · 257, jamais 514 ; RMP en un clic à #page=155 ; documents.json une clé, 314 lignes, 155 720 o ; sept documents vietnamiens ouverts 7/7). Recettes SA1-SA3 et VN1-VN4 vertes pas à pas, recette navigateur complète verte 3/3. Critères 3 et 4 cochés. make check : 3 failed — deux environnementaux (data/jetp/crs, commit 3b432ef3 absents du clone) et un épinglage périmé par 0854, tests/test_jetp_vnm_positions.py:168 227 → 234 (sept lignes de registre), re-épinglé dans la PR de clôture. Rapport : docs/jetp-study/0834-integration-review-final-2026-09-22.md. Reste à l'auteur, critère 5 : la fiche dit « quatre sources » pour Bac Ai, la donnée en porte six dont quatre archivées ; la page Editions dit 1 740 observations et les vues en servent 766, deux populations étiquetées, jamais additionnées.
 2026-09-22T10:00Z HDMX-coding-agent note prose réconciliée à la demande de l'auteur : la recette VN dit « ses sources » (six dans la donnée) au lieu de « quatre » ; le contexte porte 314 tentatives / 269 collectées depuis 0854 ; la page Editions explique que ses 1 740 observations de l'instantané d'analyse ne sont pas les lignes du ledger servies dans l'onglet Observations, deux populations jamais additionnées.
 2026-09-22T11:05Z HDMX-coding-agent note M1a cochée sur décision de l'auteur (session du 2026-09-22, « Ok, tick M1a ») après le rapport docs/jetp-study/0834-integration-review-final-2026-09-22.md et une mesure des liens de provenance sur les quatre pays dans les vues servies de main (d1f60f00) : descente fait → lignes → document complète pour 383 enregistrements nommés (ZAF 263, IDN 74, VNM 3, SEN 43) ; 745 des 766 lignes de ledger ouvrent un fichier archivé, les 21 autres citent une source dont la collecte a échoué et rendent ce résultat ; 2 164 lignes M1a ouvrent leur plan ; ancre de page PDF sur le Viet Nam seulement. Suites hors M1a : [[0859]] (deux sources VNM), [[0860]] (toutes les tables), [[0861]] (ancres de page Sénégal, recette navigateur IDN et SEN). Fermeture par la PR.
+2026-09-23T08:22Z HDMX-coding-agent closed — autoclosed — PR #1448
 --- body ---
 
 ## Context
