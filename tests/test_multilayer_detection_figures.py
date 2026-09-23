@@ -249,14 +249,10 @@ def test_community_runs(tmp_path: Path, companion_tables: Path):
     _assert_png(out)
 
 
-# ─── Stub-fallback smoke (no interpretation CSV → PNG still rendered) ────
-#
-# Figures 3 and 4 promise in scripts/analysis/multilayer-detection.mk that the Make target succeeds
-# even when ticket 0056's interpretation layer is absent. Drive the
-# fallback path by pointing --tables-dir at an empty directory.
+# Missing interpretation tables must stop the render (ticket 0651).
 
 
-def test_terms_stub_fallback(tmp_path: Path):
+def test_terms_missing_table_fails(tmp_path: Path):
     empty_tables = tmp_path / "empty_tables"
     empty_tables.mkdir()
     out = tmp_path / "fig_companion_terms.png"
@@ -269,11 +265,13 @@ def test_terms_stub_fallback(tmp_path: Path):
             str(empty_tables),
         ],
     )
-    assert proc.returncode == 0, proc.stderr
-    _assert_png(out)
+    assert proc.returncode != 0
+    assert "tab_discrim_terms.csv" in proc.stderr
+    assert "0064" in proc.stderr
+    assert not out.exists()
 
 
-def test_community_stub_fallback(tmp_path: Path):
+def test_community_missing_table_fails(tmp_path: Path):
     empty_tables = tmp_path / "empty_tables"
     empty_tables.mkdir()
     out = tmp_path / "fig_companion_community.png"
@@ -286,5 +284,7 @@ def test_community_stub_fallback(tmp_path: Path):
             str(empty_tables),
         ],
     )
-    assert proc.returncode == 0, proc.stderr
-    _assert_png(out)
+    assert proc.returncode != 0
+    assert "tab_community_shifts.csv" in proc.stderr
+    assert "0064" in proc.stderr
+    assert not out.exists()
