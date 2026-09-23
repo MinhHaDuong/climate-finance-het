@@ -181,7 +181,7 @@ Applying the two-layer agreement rule yields one validated transition zone, runn
 
 The Z-scores also rise broadly with time on all three layers. One possible explanation is that detection power tracks the yearly document count, which grows across the window; separating that from a genuine acceleration would require a permutation scheme conditioning on year-specific sample sizes, which this design does not use.
 
-Two downstream steps are therefore not reported. The censored-gap confirmation of §4.7 does not apply to a zone that spans the analysis window, since excising its years leaves no before-and-after to compare. The interpretive outputs of §4.9 are withheld for the same reason: @fig-terms and @fig-community are placeholders pending the interpretation layer, not results.
+Two downstream steps are therefore not reported. The censored-gap confirmation of §4.7 does not apply to a zone that spans the analysis window, since excising its years leaves no before-and-after to compare. The interpretive outputs of §4.9 are withheld for the same reason. The discriminative-term and community-shift figures require interpretation tables that have not been built (ticket 0064).
 
 ### 5.2 No break in the core subset
 
@@ -211,9 +211,7 @@ An earlier draft of this analysis placed the structure on PC1; the corrected com
 
 ![Transition-zone validation heatmap. Rows are the six detection methods; columns are years from 1998 to 2021. Cell colour encodes the signed signal — Z-score for the four distance detectors, and $(\mathrm{AUC} - 0.5) \times 20$ for the two C2ST rows so that all rows share a comparable scale. Vertical rectangles mark years where at least two rows exceed the threshold ($|Z| > 2$, or rescaled AUC $> 2$) simultaneously (validated zones).](../_shared/figures/fig_companion_heatmap.png){#fig-heatmap}
 
-![Top ten discriminative terms per validated zone, ranked by log-odds ratio. Bars leaning right correspond to terms gaining weight after the zone; bars leaning left, to terms losing weight. Terms are taken from the intersection of the log-odds ranking and the logistic classifier ranking (§4.9).](../_shared/figures/fig_companion_terms.png){#fig-terms}
-
-![Louvain community sizes on either side of each validated zone. Bar height gives the number of documents assigned to a community; the *before* bar (light) and *after* bar (dark) are plotted side by side per community identifier. Communities whose share of total documents shifts most strongly across the zone are the ones driving the graph-layer signal (G9 is a JSD on community-share distributions).](../_shared/figures/fig_companion_community.png){#fig-community}
+The discriminative-term and community-shift plots are withheld until the interpretation tables are computed (ticket 0064). No figure is shown for either result.
 
 
 ## 6. Discussion
@@ -230,7 +228,7 @@ The framework differs from LDA, STM, and BERTopic on four properties relevant to
 
 *Multilingual coverage.* LDA and STM require language-specific stopword lists and tokenisation. Multilingual sentence-transformers (here `BAAI/bge-m3`) are trained to place documents in a shared semantic space regardless of language, and the citation graph is language-agnostic by construction.
 
-Topic models retain advantages in labeled interpretability: a topic defined by its top-$k$ words is immediately readable. The framework recovers this through its L1 lexical layer and the discriminative-term interpretation outputs (§4.9); it does not generate a full topic labelling.
+Topic models retain advantages in labeled interpretability: a topic defined by its top-$k$ words is immediately readable. The framework's L1 lexical layer can support a discriminative-term interpretation (§4.9), but that output is not yet available; it does not generate a full topic labelling.
 
 ### 6.2 Methodological contributions
 
@@ -263,7 +261,7 @@ Candidate applications include AI ethics (where rapid field growth since 2018 ma
 
 We presented a framework for detecting structural change in scientific literatures that combines three independent document representations --- sentence-transformer embeddings, TF--IDF lexical distributions, and a temporally consistent citation graph --- with a classifier two-sample test as a robustness reference. Statistical inference uses permutation Z-scores for the distance statistics and cross-validation fold variance for the classifier, two primitives chosen to match each method's source of variation. Candidate years with $Z > 2$ are grouped into transition zones and validated only when at least two independent layers agree; a censored-gap test then separates genuine discontinuities from gradual redistributions.
 
-The framework does not claim to recover a unique true periodization. It produces a reproducible ledger of validated zones, each annotated with the layers that support it and the discriminative terms, documents, and community shifts that characterise it. Applied to climate finance scholarship (1998--2021, {{< meta corpus_total >}} works), it returns one zone spanning the analysis window. That is a null result for localisation rather than a periodization: at these thresholds the agreement rule selects every year, and the layers agree on continuous movement rather than on a date.
+The framework does not claim to recover a unique true periodization. It produces a reproducible ledger of validated zones annotated with the layers that support them. The planned discriminative-term, document, and community-shift annotations remain unavailable. Applied to climate finance scholarship (1998--2021, {{< meta corpus_total >}} works), it returns one zone spanning the analysis window. That is a null result for localisation rather than a periodization: at these thresholds the agreement rule selects every year, and the layers agree on continuous movement rather than on a date.
 
 Future work should test sensitivity to embedding model choice (SPECTER2, ClimateBERT, SciBERT), implement a stratified permutation scheme that conditions on year-specific sample sizes, and apply the framework to other fields where endogenous periodization across multiple layers is desirable.
 
