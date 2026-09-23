@@ -1,0 +1,49 @@
+%erg 0.1
+Title: Comparateurs IATI : tranche énergie des quatre pays
+Created: 2026-09-23
+Author: HDMX-coding-agent
+Blocked-by: 0879
+
+--- log ---
+2026-09-23T10:30Z HDMX-coding-agent created scindé de [[0879]] à la revue du train (2026-09-23), décision de l'auteur
+
+--- body ---
+## Context
+
+Troisième pool comparateur, sur le contrat de ligne de [[0879]] : la tranche
+IATI énergie des quatre pays (~1 800 activités). Le vrac IATI (831 Mo) reste
+en requête à la demande.
+
+## Relevant files
+
+- `conception/jetp/papier-3-ledger/pilote-ledger-vn/` — le tirage IATI du pilote, son format
+- `scripts/jetp/ingest_comparators.py` — l'adaptateur IATI, sur le contrat de [[0879]]
+
+## Actions
+
+1. Ingestion de la tranche, identifiant d'activité IATI comme locator et
+   dans `external-ids` (avec GEM quand l'activité le porte).
+2. Crosswalk des statuts d'activité IATI dans `status-crosswalk`.
+3. Transactions IATI en observations `flow`, `flow_type` depuis le code de
+   transaction.
+
+## Test
+
+- `tests/test_jetp_comparators_iati.py` : depuis une fixture de deux
+  activités (un engagement, deux décaissements), l'ingestion donne deux
+  lignes, trois observations `flow` aux `flow_type` attendus, deux
+  identifiants IATI dans `external-ids`, et aucun projet du partenariat frappé.
+
+## Verification
+
+- [ ] ~1 800 lignes IATI, chacune avec son identifiant
+- [ ] Aucun fichier de `data/jetp/` au-dessus du plafond du hook
+
+## Invariants
+
+- Aucun enregistrement comparateur n'est un projet du partenariat.
+
+## Exit criteria
+
+- [ ] Tranche IATI ingérée, validée par [[0871]]
+- [ ] `make check-fast` et `make lint` verts

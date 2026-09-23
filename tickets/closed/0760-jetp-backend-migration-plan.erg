@@ -10,6 +10,7 @@ Closed: All five migration acceptance criteria verified: dispositions, four coun
 2026-09-15T00:15Z HDMX-coding-agent acceptance-ready — 0761–0770 and 0726–0728 merged; tracker remains open; no deployment, estimator or PyPSA work.
 
 2026-09-15T05:12Z HDMX-coding-agent closed — All five migration acceptance criteria verified: dispositions, four country reports, exclusive ownership, two-edition replay and retained research history.
+2026-09-23T06:47Z HDMX-coding-agent note acceptance review 2026-09-23 (docs/jetp-odem-acceptance-review-2026-09-23.md § 4): 0761-0770 delivered contract validators, a source crosswalk, one staging JSON per country and release rehearsals; write and publication ownership stayed with the legacy tables, so criteria 1 and 3 were met by retained-authority dispositions, not by a transfer. The migration of the ledger is 0870 (ontology v2).
 --- body ---
 
 ## Context

@@ -1,0 +1,77 @@
+%erg 0.1
+Title: REL — audit de reproductibilité des études d'efficacité émissions, au-delà de Gavard & Schoch
+Created: 2026-09-23
+Author: haduong
+Label: needs-human
+
+--- log ---
+2026-09-23T06:41Z haduong created
+
+--- body ---
+## Context
+
+L'audit de Gavard & Schoch (2026) a trouvé, dans les données mêmes des
+auteurs, des défauts de mesure qui changent le résultat :
+
+- pondération 40 % annoncée pour le marqueur « significatif », mais non
+  appliquée (vérifié sur deux prêts JICA) ;
+- rupture de 2013 : entrée des BMD, dont IBRD, IDA et IFC, et du FEM dans les
+  déclarations ;
+- prêts comptés en valeur faciale (76 % de l'atténuation) ;
+- chevauchement atténuation/adaptation compté deux fois ;
+- permutation des deux Congo ;
+- tableau A2 mal étiqueté.
+
+Sur un ensemble de fournisseurs constant, l'effet cumulé d'atténuation perd
+sa significativité (z = 1,7, et 0,4 en modèle joint). L'effet d'adaptation résiste.
+
+Un seul papier fait une anecdote. La question pour la controverse 2 (0704) est
+de savoir si c'est un schéma : les études d'efficacité prennent-elles les
+marqueurs de Rio au pied de la lettre, et leurs résultats en dépendent-ils ?
+
+## Périmètre : deux niveaux, le second est à arbitrer
+
+1. **Codage des mesures (dans le périmètre agréé).** Pour chaque étude du lot,
+   relever depuis la section données :
+   - la pondération Rio annoncée et appliquée ;
+   - les fournisseurs couverts et le traitement de la rupture de 2013 ;
+   - engagements ou décaissements ;
+   - valeur faciale ou équivalent-don ;
+   - le traitement du chevauchement ;
+   - le millésime ;
+   - la disponibilité des données et du code.
+   Le résultat est un tableau comparatif, sans nouvelle estimation.
+2. **Réplication (hors périmètre agréé : décision de l'auteur, peut-être de
+   l'éditeur).** Réestimer les études dont les données sont disponibles sous
+   mesure cohérente, comme pour Gavard & Schoch. Ce travail relève plutôt d'un
+   papier séparé ou d'un complément au commentaire que de la revue : 0700 dit
+   « ne pas élargir sans en reparler à l'éditeur ».
+
+## Relevant files
+
+- `~/CNRS/papiers/actif/Gavard Scotch 2026 Climate finance counterproductive/`, hors dépôt :
+  - `ReproductibilityNotes.md` (RN-011) : les constats et leurs preuves ;
+  - `audit/provider-check-2026-09-23/`, `audit/provider-sensitivity-2026-09-23/` : méthode et script réutilisables ;
+  - `audit/climate-finance-composition-2026-09-23/REPORT.md` : composition et bibliographie de la critique ;
+  - `audit/research-note-international-climate-finance-causality-2026.md` : revue des 15 études ;
+  - `docs/` : les textes du lot.
+
+## Actions
+
+1. Coder les 15 études sur la grille du niveau 1 (Gavard & Schoch servent de ligne de référence).
+2. Inventorier les paquets de réplication publics (Zenodo, Dataverse, suppléments).
+3. Soumettre à l'auteur le choix du niveau 2, étude par étude, avec coût estimé.
+
+## Invariants
+
+- Symétrie : les résultats favorables passent la même grille que les défavorables.
+- Un constat de mesure publié sur un tiers passe d'abord par les auteurs,
+  comme les questions envoyées à Schoch.
+- Ce lot est un échantillon de lecture, pas une mesure sur le corpus
+  (invariant de 0704).
+
+## Exit criteria
+
+- [ ] Tableau de codage des 15 études, sources citées par page
+- [ ] Inventaire des paquets de réplication
+- [ ] Décision de l'auteur sur le niveau 2 consignée dans ce ticket

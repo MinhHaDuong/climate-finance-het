@@ -1,0 +1,61 @@
+%erg 0.1
+Title: REL — données de la finance climat : combler l'avant-2013 et prolonger après 2017
+Created: 2026-09-23
+Author: haduong
+
+--- log ---
+2026-09-23T08:01Z haduong created
+
+--- body ---
+## Context
+
+Enfant de 0700, alimente 0704 (controverses 1 et 2). Le jeu Rio / CRDF de
+l'OCDE, point de vue bénéficiaire, sur lequel reposent la plupart des études
+d'efficacité, n'est pas une série homogène :
+
+- avant 2013, les BMD (IBRD, IDA, IFC, BAfD, BEI…) et le FEM n'y figurent pas ;
+  les CIF entrent en 2012, le FVC en 2015, le marqueur d'adaptation en 2010 ;
+- deux règles de comptage coexistent : marqueurs de Rio en valeur faciale,
+  composantes climat des BMD.
+
+Les études qui s'arrêtent vers 2017 (Gavard & Schoch, 2000–2017) mesurent donc
+surtout un changement de déclaration autour de 2013. Pour la revue REL, on
+présente les données, les éléments de preuve et les modèles sur une série
+reconstruite de façon cohérente. **Ce travail relève de REL, pas du commentaire
+Gavard & Schoch**, qui s'en tient au papier publié.
+
+## Relevant files
+
+- `~/CNRS/papiers/actif/Gavard Scotch 2026 Climate finance counterproductive/audit/`,
+  hors dépôt : `provider-check-2026-09-23/` (constat), `provider-sensitivity-2026-09-23/run.py`
+  (méthode de reconstruction par fournisseur),
+  `climate-finance-composition-2026-09-23/` (millésime OCDE 2026, 2000–2017, dans `raw/`).
+- 0828 (faisabilité d'un entrepôt CRS par agence) : ne pas dupliquer l'ingestion CRS.
+
+## Actions
+
+1. **Combler l'avant-2013** : co-bénéfices climat Banque mondiale par projet
+   (à partir de l'exercice 2011 environ, à vérifier) ; base projets du FEM ;
+   Climate Funds Update pour les fonds dédiés ; rapports conjoints BMD (agrégats
+   seulement). Documenter ce qui reste impossible à combler.
+2. **Prolonger après 2017** : millésime CRDF le plus récent ; noter les
+   changements de règles comptables OCDE et la montée des flux post-Paris.
+3. Construire une série à couverture de fournisseurs constante et une série
+   complète, avec les deux règles de comptage séparées.
+4. Présenter dans REL : données, éléments de preuve (ruptures, composition),
+   et modèles (qu'est-ce qui change dans les résultats d'efficacité quand la
+   mesure est cohérente).
+
+## Invariants
+
+- Le périmètre agréé avec l'éditeur (0700) : la partie modèles s'en tient à
+  montrer la sensibilité des conclusions publiées à la mesure ; pas d'étude
+  empirique nouvelle sans en reparler à l'éditeur.
+- Discipline EDM et séparation des workpackages : données et scripts côté
+  analyse, le manuscrit consomme des artefacts.
+
+## Exit criteria
+
+- [ ] Sources de comblement inventoriées, couverture par année documentée
+- [ ] Série cohérente et série complète construites, reproductibles
+- [ ] Section REL (données, preuves, modèles) rédigée

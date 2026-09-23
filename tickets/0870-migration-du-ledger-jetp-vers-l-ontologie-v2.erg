@@ -1,0 +1,81 @@
+%erg 0.1
+Title: Migration du ledger JETP vers l'ontologie v2 (suiveur)
+Created: 2026-09-22
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-22T17:30Z HDMX-coding-agent created
+2026-09-23T10:30Z HDMX-coding-agent note revue du train (2026-09-23) : PR #1449 fusionnée (0ddf30e2), la porte de lancement est levée, label needs-human retiré ; 0880 en vague 0b (bloqué par 0871) ; [[0884]] ajouté (`coverage` sans propriétaire) ; [[0879]] scindé en 0879, [[0885]], [[0886]] ; quinze enfants
+
+--- body ---
+## Context
+
+`docs/jetp-ontology.md` (PR #1449) fixe le vocabulaire et les axes de
+statut, `docs/jetp-ledger-storage.md` le contrat de stockage et
+`docs/jetp-ledger-migration.md` la migration du ledger (trois documents depuis
+le 2026-09-23), après six revues indépendantes et les décisions de l'auteur
+des 22 et 23 septembre. Ce suiveur porte cette migration : une reconstruction depuis les instantanés,
+pas un renommage de colonnes. Chaque enfant est une unité de validation
+avec sa vérification au bit près contre les vues servies actuelles.
+
+Rayon d'action : toutes les tables `data/jetp/*.csv`, les générateurs
+`scripts/jetp/build_*.py`, les vues servies `deliverables/jetp-observatory/data/`,
+les tests `tests/test_jetp_*`. Décision d'architecture prise en amont :
+CSV dans git reste l'enregistrement, SQLite dérivé est le moteur de
+validation et de construction (contrat de stockage § 3), forme normale maintenue
+([[0858]]). Le principe « le MVP sert toutes les tables » ([[0860]]) est
+absorbé : chaque table de l'ontologie est servie, une par fichier, ou nommée
+comme non servie avec sa raison sur la page How we did this (contrat de stockage § 2 ; présentation dans `docs/jetp-observatory-presentation.md`) ; les
+critères de sortie de 0860 sont repris ci-dessous.
+
+Langage et cadre ODEM (décision 11 du 2026-09-23, `docs/jetp-language.md`) : le ledger
+est l'objet D, guidé par l'ontologie O ; les résultats E (comptes, totaux)
+viennent au-dessus ; il n'y a pas de M. Trois enfants s'ajoutent : les tables
+d'ontologie révisables ([[0880]]), l'organisation du MVP selon O-D-E-M, sans en
+afficher les mots, avec D en parcours ([[0881]]) et le Glossary ([[0882]]).
+
+PR #1449 fusionnée le 2026-09-23 (0ddf30e2) : le train peut partir. `line-translations` et `document-summaries` (contrat de stockage § 5) sont hors du train : textes dérivés, « nice-to-have », en attente d'un lecteur qui en a besoin.
+
+## Enfants, dans l'ordre des vagues
+
+| Vague | Enfant | Étape de la migration |
+|---|---|---|
+| 0 | [[0871]] | DDL unique, validateur, SQLite dérivé (contrat de stockage § 3) |
+| 0b | [[0880]] | tables d'ontologie : termes, correspondances, périmètres, révisions, test d'alignement (étape 0) |
+| 1 | [[0872]] | publishers, documents, publications, retrievals, snapshots (étape 1) |
+| 2 | [[0873]] | lignes et champs des quatre documents M1a (étape 2) |
+| 3 | [[0874]] | lignes des autres documents (étape 3) |
+| 4 | [[0875]] | scission des identités, référents, routes, parties (étape 4) |
+| 5 | [[0876]] | observations, timings, crosswalks de statut et de secteur (étape 5) |
+| 5 | [[0884]] | `coverage` depuis les deux tables de couverture (après 0875) |
+| 6 | [[0877]] | observations de périmètre, comptes dérivés, adjudications (étape 6) |
+| 7 | [[0878]] | retrait des tables anciennes et des lecteurs de compatibilité (étape 7) |
+| — | [[0881]] | le MVP s'organise selon O, D, E, M sans en afficher les mots ; D en parcours (`docs/jetp-observatory-presentation.md`) ; présentation seule, parallèle aux vagues |
+| après 0 | [[0882]] | Glossary du MVP, générée des tables de 0880 |
+| 5' | [[0879]] | contrat de ligne comparateur, Banque mondiale, pool de référence et courbe du papier court |
+| 5'' | [[0885]] | CRS énergie quatre pays, marqueurs, déflateurs, voie vrac sous DVC |
+| 5'' | [[0886]] | tranche IATI énergie quatre pays |
+
+## Relevant files
+
+- `docs/jetp-ontology.md` — l'ontologie : classes, relations, listes, tables d'ontologie
+- `docs/jetp-ledger-storage.md` — le contrat de stockage : tables et règles
+- `docs/jetp-ledger-migration.md` — la migration, étape par étape
+- `docs/jetp-backend-design.md` — révisé contre l'ontologie dans PR #1449
+- `docs/jetp-study/ontology-review-2026-09-22/` — les six revues et leurs réponses
+
+## Invariants
+
+- Les recettes ZAF et VNM de [[0834]] passent de bout en bout à chaque vague.
+- Aucune vue servie ne change d'octets tant que sa vague n'est pas celle
+  qui la remplace ; la comparaison est faite avant retrait.
+- `tests/browser/jetp_observatory.py` vert à chaque vague.
+
+## Exit criteria
+
+- [ ] Les quinze enfants sont fermés
+- [ ] Revue d'intégration : diffs des enfants relus, `make check` complet, recettes ZAF et VNM vertes
+- [ ] `docs/jetp-ledger-migration.md` mis à jour avec les comptes réels de la migration
+- [ ] Aucune route publique cassée : chaque ancien identifiant résout par `routes`
+- [ ] Repris de [[0860]] : toute table du contrat de stockage § 1 est servie, une table par fichier, ou nommée comme non servie avec sa raison sur la page How we did this ; aucun compte affiché n'additionne deux tables
+- [ ] Repris de [[0860]] : depuis le compte des places non publiées du Viet Nam, le lecteur descend dans le navigateur à l'observation de périmètre, à sa ligne, à ses lignes de couverture et à leurs documents

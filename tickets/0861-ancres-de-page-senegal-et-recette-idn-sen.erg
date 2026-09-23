@@ -1,0 +1,70 @@
+%erg 0.1
+Title: Ancrer les lignes M1a du Sénégal à leur page PDF et marcher la recette navigateur sur l'Indonésie et le Sénégal
+Created: 2026-09-22
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-22T11:05Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Ouvert à la clôture de [[0834]] (M1a cochée le 2026-09-22). La mesure des liens
+de provenance sur les vues servies de `main` (d1f60f00) a montré que la
+descente fait → ligne → document tient sur les quatre pays, mais que l'ancre de
+page PDF n'existe qu'au Viet Nam : `app.js` ne lit que le motif « PDF page N »
+(`PDF_PAGE`, port de `scripts/jetp/_m1a_document_links.py`), publié par le
+seul adaptateur RMP depuis [[0857]].
+
+Les 49 lignes M1a du Sénégal portent pourtant une page imprimée dans leur
+localisateur (« Annex 2, p. 13, row 1 »), que l'application ignore : le lien
+ouvre le PDF archivé à la page 1. La donnée est là, la surface ne la sert pas.
+Les 1 579 lignes indonésiennes ne nomment qu'une table et une ligne imprimée
+(« Appendix 1, table 4, printed row 48 ») : sans page, l'ancre demanderait une
+ré-extraction des annexes, hors périmètre ici (M2). Les 257 lignes
+sud-africaines viennent d'un instantané HTML sans notion de page.
+
+Second constat : la recette navigateur (`tests/browser/jetp_observatory.py`)
+et le harnais de rendu (`tests/test_jetp_observatory_render.py`) n'exercent
+que l'Afrique du Sud et le Viet Nam ; l'Indonésie et le Sénégal n'ont jamais
+été marchés dans un navigateur. La mesure de 0834 porte sur les jointures de
+données, pas sur la page rendue ; ce ticket fournit le contrôle positif.
+
+## Relevant files
+
+- `scripts/jetp/_m1a_document_links.py` — résolution page PDF côté Python ; `deliverables/jetp-observatory/app.js` `PDF_PAGE`, `pdfPageOf` — son port
+- `scripts/jetp/m1a/` — adaptateur Sénégal (annexes du plan d'investissement) : c'est lui qui écrit `evidence_locator`
+- `deliverables/jetp-observatory/data/m1a/SEN.json` — 49 lignes, deux sous-couches, sources `sen-investment-plan-annexes-mirror` et `sen-investment-plan-l4-mirror`
+- `tests/test_jetp_observatory_inventories.py` — tient Python et JS en phase
+- `tests/browser/jetp_observatory.py`, `tests/test_jetp_observatory_render.py` — recettes existantes ZAF et VNM à étendre
+
+## Actions
+
+1. Mesurer sur les deux PDF sénégalais archivés le décalage page imprimée →
+   page PDF, comme [[0857]] l'a fait pour le RMP (139 → 155), et l'écrire
+   dans l'adaptateur Sénégal sous la même forme « PDF page N » ; ne pas
+   inventer d'ancre pour l'Indonésie ni l'Afrique du Sud.
+2. Régénérer `m1a/SEN.json` et `SEN.csv` ; les identifiants de ligne, les
+   comptes et les champs ne bougent pas, seul `evidence_locator` gagne le
+   numéro de page PDF.
+3. Étendre la recette navigateur d'un pas Sénégal (une ligne de l'annexe 2
+   ouvre le PDF à sa page) et d'un pas Indonésie (un projet descend à ses
+   lignes de ledger puis au rapport de progrès 2025 archivé).
+
+## Test
+
+Red : `tests/test_jetp_observatory_render.py` — la page `#inventory/SEN` rend
+pour la ligne 1 de l'annexe 2 un lien dont le `href` porte `#page=` et le
+numéro mesuré à l'action 1.
+
+## Verification
+
+- [ ] Les 49 lignes SEN portent une page PDF ; ZAF et IDN en portent zéro, comme avant
+- [ ] Recette navigateur verte sur les quatre pays
+- [ ] `make check-fast` et `make lint` passent
+
+## Exit criteria
+
+- [ ] Depuis l'inventaire M1a du Sénégal, chaque ligne ouvre le PDF archivé à sa page
+- [ ] La recette navigateur couvre les quatre pays

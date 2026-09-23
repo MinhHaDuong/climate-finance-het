@@ -1,0 +1,67 @@
+%erg 0.1
+Title: Observations de périmètre, comptes dérivés, adjudications
+Created: 2026-09-22
+Author: HDMX-coding-agent
+Blocked-by: 0876
+
+--- log ---
+2026-09-22T17:30Z HDMX-coding-agent created
+2026-09-23T10:30Z HDMX-coding-agent note revue du train (2026-09-23) : `perimeters` est une table de 0880, peuplée ici
+
+--- body ---
+## Context
+
+Étape 6 de la migration (`docs/jetp-ledger-migration.md`), décision 9. Les quatre titres de page pays
+(engagement, part allouée) codés en dur dans `config/jetp_observatory.yaml`
+deviennent des observations `envelope` sur le périmètre du partenariat,
+citant leurs lignes (les deux claims agrégés de [[0874]] et les lignes des
+déclarations politiques) ; les 21 places comptées VNM deviennent deux
+observations `count` sur le périmètre du portefeuille. Les comptes
+réconciliés du dessin backend § 5 (ouverture, mouvements, clôture, résidu,
+lacune de couverture) deviennent des sorties dérivées sous
+`data/derived/jetp/` avec identifiant de run et deux dates de coupure ; les
+adjudications qu'ils exigent sont des tables d'enregistrement. Première
+métrique : engagement brut par accord en devise d'origine, jusqu'à ce
+qu'une observation de décaissement existe.
+
+## Relevant files
+
+- `config/jetp_observatory.yaml` — ne garde que les choix d'affichage
+- `scripts/jetp/build_accounts.py` — à créer : comptes dérivés depuis SQLite
+- `scripts/jetp/_reconciliation.py` — lecteur de compatibilité de [[0768]] à remplacer
+- `deliverables/jetp-observatory/data/overview.json` — titres à comparer
+
+## Actions
+
+1. `perimeters` : un par partenariat, un pour le portefeuille VNM 2025, un
+   RUPTL ; `member_of` depuis lignes et identités.
+2. Observations `envelope` et `count` citant leurs lignes ; le titre ZAF
+   « 6,12 Md$ alloués » cite sa ligne et l'écart avec la somme des
+   événements (4,32 Md$) est un résidu de compte, pas une correction.
+3. `adjudications` et `adjudication-members` ; les types de décision du
+   dessin backend § 5.
+4. `build_accounts.py` : engagement brut par accord ; résidus et lacunes
+   écrits, jamais comblés.
+5. `overview.json` lit les observations de périmètre ; comparaison.
+
+## Test
+
+- `tests/test_jetp_accounts.py` : depuis une fixture de trois accords et
+  cinq flux dont un doublon adjugé, le compte d'engagement brut donne la
+  somme attendue, écrit le résidu, et change quand l'adjudication est
+  supplantée par un rejet.
+
+## Verification
+
+- [ ] `overview.json` : mêmes titres, désormais cités
+- [ ] Aucune constante monétaire dans `config/jetp_observatory.yaml`
+- [ ] Un compte régénéré deux fois est identique
+
+## Invariants
+
+- Un compte ne modifie jamais une observation.
+
+## Exit criteria
+
+- [ ] Lignes de `perimeters` écrites dans la table de [[0880]] ; `adjudications`, comptes dérivés validés par [[0871]]
+- [ ] `make check-fast` et `make lint` verts

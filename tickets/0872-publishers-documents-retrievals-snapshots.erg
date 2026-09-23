@@ -1,0 +1,67 @@
+%erg 0.1
+Title: Couche de preuve : publishers, documents, publications, retrievals, snapshots
+Created: 2026-09-22
+Author: HDMX-coding-agent
+Blocked-by: 0871
+
+--- log ---
+2026-09-22T17:30Z HDMX-coding-agent created
+2026-09-23T10:30Z HDMX-coding-agent note revue du train (2026-09-23) : les comptes sont ceux des tables au lancement ; PR #1447 (0859) ajoute deux tentatives et deux instantanés
+
+--- body ---
+## Context
+
+Étape 1 de la migration (`docs/jetp-ledger-migration.md`). « Source » cesse de désigner une URL :
+`sources.csv` (301 lignes, 103 publishers en texte libre) devient
+`publishers`, `documents` et `document-publishers` (relation, une
+publication conjointe a plusieurs publishers) ; `manifest.csv` (314
+tentatives, 264 empreintes distinctes, 41 échecs sans octets, 9 empreintes
+rendues deux fois) devient `retrievals` et `snapshots`. Le contenu ne
+change pas ; la page Documents de l'observatoire est la vérification.
+
+## Relevant files
+
+- `data/jetp/sources.csv`, `data/jetp/manifest.csv` — entrées
+- `scripts/jetp/build_evidence_layer.py` — à créer : la reconstruction
+- `scripts/jetp/build_observatory.py` — la page Documents lit les nouvelles tables via une lecture de compatibilité
+- `deliverables/jetp-observatory/data/documents.json` — la vue à comparer
+- `config/jetp_tracking.yaml` — `source_types` renommé `document_types`
+
+## Actions
+
+1. Extraire les 103 publishers, leur donner un identifiant et leur
+   `authority_category` ; revue à la main des libellés proches.
+2. Une ligne `documents` par ancienne source, `language` renseigné ; une
+   ligne `document-publishers` par publisher ; les trois miroirs connus
+   reçoivent un `same_as` candidat (contrat de stockage § 4, déduplication).
+3. `retrievals` depuis le manifeste, `sha256` nul sur échec ; `snapshots`
+   par empreinte distincte.
+4. Lecture de compatibilité dans le générateur, puis régénération de
+   `documents.json` ; comparaison au bit près avec la vue actuelle.
+5. Renommer `source_types` en `document_types` dans le vocabulaire et le
+   code ; balayer les libellés du site (« source » → « publisher » ou
+   « document » selon le sens).
+
+## Test
+
+- `tests/test_jetp_evidence_layer.py` : depuis une fixture de cinq sources
+  et huit tentatives dont deux échecs et une empreinte partagée, la
+  reconstruction donne 5 documents, 8 retrievals, 5 snapshots, et un
+  document co-publié porte deux lignes de publication.
+
+## Verification
+
+- [ ] `documents.json` régénéré identique à l'actuel (octets), avant le balayage des libellés
+- [ ] Comptes égaux à ceux des tables au lancement (au dépôt : 314 retrievals, 264 snapshots, 301 documents, 103 publishers ; 316 et 266 après PR #1447, ticket [[0859]])
+- [ ] Recettes ZAF et VNM de [[0834]] vertes
+
+## Invariants
+
+- Aucune ligne, aucun événement ne bouge dans ce ticket.
+- Les octets sous DVC ne sont ni déplacés ni renommés.
+
+## Exit criteria
+
+- [ ] Les cinq tables existent, validées par [[0871]]
+- [ ] `sources.csv` et `manifest.csv` restent en place jusqu'à [[0878]], en lecture seule
+- [ ] `make check-fast` et `make lint` verts

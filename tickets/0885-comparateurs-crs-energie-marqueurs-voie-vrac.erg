@@ -1,0 +1,62 @@
+%erg 0.1
+Title: Comparateurs CRS : énergie quatre pays, marqueurs Rio, déflateurs et voie vrac sous DVC
+Created: 2026-09-23
+Author: HDMX-coding-agent
+Blocked-by: 0879
+
+--- log ---
+2026-09-23T10:30Z HDMX-coding-agent created scindé de [[0879]] à la revue du train (2026-09-23), décision de l'auteur
+
+--- body ---
+## Context
+
+Deuxième pool comparateur, sur le contrat de ligne de [[0879]]. Le CRS
+énergie des quatre pays (9 337 lignes, 5,9 Mo) tient dans git découpé par
+pays et année. Le CRS tous secteurs quatre pays (401 k lignes) va sous DVC
+avec manifeste, lignes matérialisées dans le SQLite seulement ; le CRS
+entier (~6,6 M lignes) reste en requête à la demande. Marqueurs Rio en
+mesure `marker` avec `not_screened` distinct de 0 ; coefficients dans
+`marker-coefficients` sourcés ; `PRICE_BASE=Q` enregistré comme déflation du
+publisher, dans `deflators`, table du contrat de stockage § 1 qui n'avait pas
+de propriétaire.
+
+## Relevant files
+
+- `conception/jetp/papier-3-ledger/pilote-ledger-vn/` — le tirage CRS du pilote, ses formats
+- `scripts/jetp/ingest_comparators.py` — l'adaptateur CRS SDMX, sur le contrat de [[0879]]
+- `docs/jetp-storage.md` — la voie DVC + manifeste pour le vrac
+
+## Actions
+
+1. Ingestion CRS énergie quatre pays (51 colonnes, `line-field-specs`),
+   clé SDMX comme locator ; `same_as` à travers les années, clé
+   (donneur, donor_project_id) ; `crs_id` et `donor_project_id` dans
+   `external-ids`.
+2. Crosswalk des codes objet (identité pour le CRS) dans `sector-crosswalk`.
+3. Marqueurs Rio en observations `marker` ; lignes de `marker-coefficients`
+   (table de [[0880]]) avec leur source ; `deflators` pour la base de prix du
+   publisher.
+4. Voie vrac : CRS tous secteurs quatre pays sous DVC, manifeste revu.
+
+## Test
+
+- `tests/test_jetp_comparators_crs.py` : depuis une fixture de trois lignes
+  CRS (une activité sur deux années, C et D), l'ingestion donne quatre
+  lignes, deux `same_as`, quatre observations `flow` aux `flow_type`
+  attendus, un marqueur `not_screened` et un à 2, et une conversion nulle
+  (déflation du publisher enregistrée, aucun taux appliqué).
+
+## Verification
+
+- [ ] 9 337 lignes CRS, chacune avec identifiant externe
+- [ ] Aucun fichier de `data/jetp/` au-dessus du plafond du hook
+
+## Invariants
+
+- Aucun enregistrement comparateur n'est un projet du partenariat.
+- Les octets d'API sous DVC ne sont pas commis dans git.
+
+## Exit criteria
+
+- [ ] CRS énergie ingéré, `deflators` et lignes de `marker-coefficients` validés par [[0871]] ; vrac sous DVC avec manifeste
+- [ ] `make check-fast` et `make lint` verts

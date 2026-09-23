@@ -1,6 +1,6 @@
 # State
 
-Last updated: 2026-09-22T09:36Z
+Last updated: 2026-09-23T07:00Z
 
 ## Current goal
 
@@ -10,17 +10,15 @@ The RDJ-26561 data paper is published; Œconomia v2.0.5 remains with its editor.
 
 ## JETP checkpoint
 
-No deployment; non-causal comparative programme (0736 audit, 0729/0814 DEFERs).
-M1a was redefined on 2026-09-17 as the three-stage explorable MVP (tracker
-0834). Its nine children (0835–0839, 0855–0858) and 0852–0854 are all merged as
-of 2026-09-22; the final integration review passed both recipes end to end and
-ticked criteria 3 and 4. Left to the author: criterion 5 (the M1a line of 0725
-and 0715, the "four vs six sources" wording for Bac Ai, the 1 740 vs 766
-observations wording), then closing 0834. Views are in normal form since 0858
-(SQLite deferred to M2). 0833 is ready for the bounded M1b overlay; 0725 stays
-open through the paper. Pending: the M1b taxonomy (0833), the 0732 angle. Slow-
-tier pins on registry row counts move with every collection (0854 broke one);
-`/lair` step 9 is the only watch.
+No deployment; no causal model (0729 DEFER). Language pinned to ODEM on
+2026-09-23 (`docs/jetp-language.md`): the observatory is Data guided by
+Ontology, Evidence on top; "evidence" for documentary support is now
+"justification". M1a is ticked by the author (#1448). 0760–0770 left write
+ownership legacy; the ledger migration is 0870 (ontology v2, #1449, awaiting
+approval; #1450 stacks on it), which absorbed 0860 and gains 0880 (revisable
+ontology tables), 0881 (MVP organised by O-D-E-M in plain words, D as a
+path) and 0882 (Glossary). 0833 (M1b) is restated on v2, blocked by
+0873/0875/0880. Pending: the 0732 angle. `/lair` step 9 is the only watch on slow-tier pins.
 
 ## Status
 <!-- generated 2026-09-22T09:37Z · as of bf31b3ee -->

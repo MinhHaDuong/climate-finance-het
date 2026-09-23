@@ -1,0 +1,71 @@
+%erg 0.1
+Title: Scission des identités : référents, routes, projets, actifs, accords, parties, périmètres
+Created: 2026-09-22
+Author: HDMX-coding-agent
+Blocked-by: 0874
+
+--- log ---
+2026-09-22T17:30Z HDMX-coding-agent created
+2026-09-23T10:30Z HDMX-coding-agent note revue du train (2026-09-23) : `relations` ajoutée aux critères de sortie ([[0833]] en dépend) ; le palier 2 tourne ici une seule fois
+
+--- body ---
+## Context
+
+Étape 4 de la migration (`docs/jetp-ledger-migration.md`), décisions 1 et 6. `projects.csv` (404 lignes)
+mélange quatre genres : 257 allocations de bailleur du registre ZAF (166
+noms distincts), 21 places comptées VNM, 43 soumissions SEN, 4 en-têtes de
+programme, et le reste des projets. Chaque ligne reçoit une disposition
+et une identité n'est frappée que par une ligne `line-referents` avec sa
+base (contrat de stockage § 4, palier 1 : identifiant exact ; palier 2 : libellé normalisé, en
+candidats revus à la main). La table `parties` est construite ici, forme
+minimale, rôles bailleur et canal d'abord depuis les 61 libellés et les 14
+préfixes du registre. `routes` fait résoudre chaque ancien identifiant.
+
+## Relevant files
+
+- `data/jetp/projects.csv` — l'entrée à scinder
+- `scripts/jetp/reconcile.py` — à créer : paliers 1 et 2, enregistrement des décisions
+- `deliverables/jetp-observatory/data/<CODE>.json` — vues pays à comparer par `routes`
+- `deliverables/jetp-observatory/app.js` — `#project/<id>` résout par `routes`
+
+## Actions
+
+1. Disposition par ligne de `projects.csv` depuis `verification_status`
+   (official_register → agreement, official_count_slot → observation de
+   périmètre, official_plan → ligne submission, official_programme →
+   classification programme), revue à la main des 9 restants.
+2. Palier 1 : frapper les 257 accords (`modality` depuis la ligne,
+   `sector` par crosswalk de la fenêtre), les projets par nom exact
+   confirmé, les 3 projets VNM nommés, les actifs nommés par les lignes de
+   plan IDN (Cirebon-1, Pelabuhan Ratu comme actifs sans projet).
+3. Palier 2 en candidats : libellés normalisés dans un pays et un groupe
+   technologique ; aucun `accepted` sans revue.
+4. `parties` : bailleur et canal depuis les libellés ; `party_in` un rôle
+   par ligne ; `role_in` pour les entités de mise en œuvre du registre.
+5. `routes` : 404 anciens identifiants → (genre, identifiant).
+6. Les 11 `project_page_component` deviennent `component_of`.
+
+## Test
+
+- `tests/test_jetp_identity_split.py` : depuis une fixture de dix lignes
+  de `projects.csv` couvrant les cinq dispositions, la scission frappe les
+  identités attendues, n'en frappe aucune sans référent, et chaque ancien
+  identifiant résout par `routes` vers une page qui existe.
+
+## Verification
+
+- [ ] Aucune identité sans ligne `line-referents` acceptée
+- [ ] `COUNT(projects)` nomme son unité ; les 21 places ne sont plus des lignes de registre
+- [ ] Chaque `#project/<ancien id>` ouvre une page (test navigateur sur les 404)
+
+## Invariants
+
+- Les recettes ZAF et VNM de [[0834]] vertes, par `routes`.
+- La ligne M1a de 0725 et 0715 cochée par l'auteur n'est pas retouchée.
+
+## Exit criteria
+
+- [ ] Cinq tables d'identité, `line-referents`, `relations` (dont les 11 `component_of`), `routes`, `parties` validées par [[0871]]
+- [ ] Les candidats de palier 2 sont écrits pour les lignes des quatre documents M1a ; [[0833]] les revoit sans relancer le palier 2
+- [ ] Rapport de scission : comptes par disposition, candidats en attente
+- [ ] `make check-fast` et `make lint` verts

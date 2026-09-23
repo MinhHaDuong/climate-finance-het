@@ -11,6 +11,7 @@ Author: Minh
 2026-09-17T08:48Z HDMX-coding-agent decision M1 is a healthy frozen base before live monitoring: 0832 publishes source-layer inventories and 0833 adds only bounded canonical IDs and certain relations; refresh infrastructure begins in M2.
 
 2026-09-17T17:05Z HDMX-coding-agent note M1a redéfinie par l'auteur : exploration dans le MVP, pas téléchargement — suiveur 0834
+2026-09-22T11:05Z HDMX-coding-agent note M1a cochée par l'auteur le 2026-09-22 après la revue d'intégration finale de [[0834]] ; les quatre pays descendent jusqu'au document, la page PDF n'est ancrée qu'au Viet Nam ([[0861]]).
 --- body ---
 
 ## Context
@@ -76,7 +77,7 @@ les quatre pays doivent être traités avec le même contrat de preuve.
 
 ## Exit criteria
 
-- [ ] M1a / 0834 : le MVP explore documents, extractions et faits de bout en bout sur les recettes SA et VN ; les tables gelées de 0832 en sont l'entrée
+- [x] M1a / 0834 : le MVP explore documents, extractions et faits de bout en bout sur les recettes SA et VN ; les tables gelées de 0832 en sont l'entrée
 - [ ] M1b / 0833 publie le catalogue borné et compte les correspondances non résolues
 - [ ] Le jalon M1 de 0725 accepte la base avant tout démarrage de la veille M2
 - [ ] Les quatre pays ont un registre de sources borné, un manifeste de

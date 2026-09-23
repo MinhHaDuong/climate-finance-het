@@ -1,0 +1,64 @@
+%erg 0.1
+Title: Enregistrements comparateurs : contrat de ligne, Banque mondiale, pool de référence et courbe du papier court
+Created: 2026-09-22
+Author: HDMX-coding-agent
+Blocked-by: 0876
+
+--- log ---
+2026-09-22T17:30Z HDMX-coding-agent created
+2026-09-23T10:30Z HDMX-coding-agent note revue du train (2026-09-23), décision de l'auteur : scindé en trois unités de signature — ici le contrat de ligne comparateur, la Banque mondiale, le pool de référence et la courbe du papier court ; CRS énergie, marqueurs et voie vrac en [[0885]] ; IATI en [[0886]]
+
+--- body ---
+## Context
+
+Décisions 9 et 10 de l'ontologie ; revue 6 pour la portée. Les
+enregistrements externes entrent comme lignes d'un instantané d'API dont
+le document est l'édition du jeu de données et le publisher l'institution.
+Ce ticket pose le contrat de ligne comparateur et l'applique au premier
+pool : les 1 119 projets Banque mondiale de `data/jetp/comparison/` (97 dans
+le pool de référence, désormais un périmètre). Le papier court lit sa
+courbe de référence depuis le ledger. Scindé le 2026-09-23 : le CRS énergie
+des quatre pays, les marqueurs Rio et la voie vrac sous DVC sont en
+[[0885]] ; la tranche IATI en [[0886]]. Les états historiques BM (3,2 M)
+restent en requête à la demande.
+
+## Relevant files
+
+- `data/jetp/comparison/*.json` — projets BM déjà tirés (9 champs ; les 45 de l'API v3 à reprendre)
+- `scripts/jetp/ingest_comparators.py` — à créer : le contrat de ligne et l'adaptateur BM ; [[0885]] et [[0886]] y ajoutent le leur
+- `conception/jetp/papier-3-ledger/` — le script de figure du papier court
+
+## Actions
+
+1. Contrat de ligne comparateur : édition du jeu de données comme
+   document, P-number (ou clé SDMX, identifiant d'activité pour les pools
+   suivants) comme locator ; `flow_type` C/D → commitment/disbursement ;
+   règle `same_as` entre lignes d'une même activité à travers les éditions.
+2. Ingestion BM (45 champs), `line-field-specs` ; P-numbers dans
+   `external-ids` ; crosswalk des statuts BM dans `status-crosswalk`.
+3. Le pool de référence des 97 opérations devient un périmètre membre par
+   ligne ; le papier court lit ses courbes depuis les observations.
+
+## Test
+
+- `tests/test_jetp_comparators.py` : depuis une fixture de deux projets BM
+  sur deux éditions de l'API, l'ingestion donne quatre lignes, deux
+  `same_as`, les P-numbers dans `external-ids`, un statut BM rattaché par
+  correspondance, et aucun projet du partenariat frappé.
+
+## Verification
+
+- [ ] 1 119 lignes BM, chacune avec son P-number
+- [ ] Le script de figure du papier court n'a plus de taux en dur (`2500 * 1.09`)
+- [ ] Aucun fichier de `data/jetp/` au-dessus du plafond du hook
+
+## Invariants
+
+- Aucun enregistrement comparateur n'est un projet du partenariat.
+- Les octets d'API sous DVC ne sont pas commis dans git.
+
+## Exit criteria
+
+- [ ] Contrat de ligne comparateur écrit et appliqué au pool BM, validé par [[0871]]
+- [ ] Courbe de référence du papier court reproduite depuis le ledger, écart documenté
+- [ ] `make check-fast` et `make lint` verts
