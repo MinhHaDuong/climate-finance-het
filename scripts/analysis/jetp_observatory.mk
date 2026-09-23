@@ -91,7 +91,7 @@ jetp-observatory-preview: jetp-observatory jetp-observatory-documents
 JETP_LEDGER_DIR ?= data/jetp
 JETP_LEDGER_DB := data/derived/jetp/ledger.sqlite
 JETP_LEDGER_INPUTS := config/jetp-ledger.sql .githooks/pre-commit \
-    scripts/jetp/build_ledger.py scripts/jetp/_ledger_headers.py \
+    scripts/jetp/build_ledger.py scripts/jetp/_ledger_headers.py scripts/utils.py \
     $(wildcard $(JETP_LEDGER_DIR)/*.csv $(JETP_LEDGER_DIR)/*/*.csv)
 
 .PHONY: jetp-ledger-db jetp-ledger-check
