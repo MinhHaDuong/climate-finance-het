@@ -36,5 +36,5 @@ Review time to merge, follow-up fixes, and `/lair` failures after a week or two.
 
 ## Corpus and submissions
 
-- Published v2 remains immutable at tag `rdj26561-revision1` (`9af9dc08`).
+- The data paper is published; v2 remains immutable at tag `rdj26561-revision1` (`9af9dc08`).
 - V3 is unfrozen: Flag 5 publishes a non-removing per-language semantic distance; the Padme artifact is current and the 33,344-row refined corpus is unchanged.
