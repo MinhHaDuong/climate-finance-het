@@ -24,18 +24,25 @@ interpreter when the machine's uv cache is unavailable.
 The pages follow the four objects of [`docs/jetp-language.md`](../../docs/jetp-language.md)
 without naming them, in the vocabulary of
 [`docs/jetp-observatory-presentation.md`](../../docs/jetp-observatory-presentation.md)
-(ticket 0881). The navigation reads, in this order:
+(ticket 0881). The page top is two bars (author's cold read, 2026-09-23): the
+header holds the four sections as tabs, in this order, and a paper-trail page
+adds the step bar under it.
 
-- **The paper trail**: **Documents** → **Entries** → **On the record** →
-  **Projects**, **Funding** and **Who's who** (funders and operators as the
-  project documents spell them, not yet matched to one another — that is the
-  parties table of ticket 0875). Every page of the trail shows its step and
-  links one step toward the documents and one toward the projects, keeping
-  the country where it has one.
+- **The paper trail** (`#the-paper-trail`, a short page on what each step
+  holds). Its step bar reads **Documents** › **Entries** › **On the record** ›
+  **Projects** · **Funding** · **Who's who**; the last three are parallel
+  siblings. Who's who lists funders and operators as the project documents
+  spell them, not yet matched to one another (the parties table of ticket
+  0875). The bar marks the current step, and its neighbours are the links one
+  step either way. A page scoped to a country shows it at the bar's right as a
+  removable chip, and the step links keep the country. A breadcrumb appears
+  on detail pages only; the title block is an h1 and a one-sentence lede, with
+  the page's longer explanation folded under "About this page".
 - **By the numbers**: every count we computed, each with its unit, its
-  perimeter and a link to what it counts. A number we counted carries a
-  "Counted by us" mark; a number a publisher printed reads "according to"
-  that publisher, with the date. The historical comparison sits here.
+  perimeter and a link to what it counts. A number we calculated carries
+  "Our calculation"; a number a publisher printed carries "As published" and
+  reads "according to" that publisher, with the date. The historical
+  comparison sits here.
 - **Glossary**: the words the pages use, grouped by theme (what we track, how
   documents are read, statuses, measures, relations) and alphabetical within
   each group. A first, hand-written list until the Glossary generated from the
@@ -55,12 +62,13 @@ emit only the new names.
 | Page | Address | Earlier address, forwarded |
 |---|---|---|
 | Landing page | `#overview` | |
-| Documents | `#documents` | |
+| The paper trail | `#the-paper-trail` | |
+| Documents | `#documents`, `#documents?country=<CODE>` | |
 | Entries | `#entries`, `#entries/<CODE>`, `#entries/<CODE>?row=N` | `#inventory/<CODE>`, `#inventory/<CODE>?row=N` |
 | On the record | `#on-the-record`, `#on-the-record/<CODE>` | `#evidence`, `#inventory/<CODE>?tab=record` |
 | Projects | `#projects`, `#projects?country=<CODE>`, `#project/<project_id>` | |
 | Funding | `#funding`, `#funding/<CODE>` | `#countries`, `#country/<CODE>` |
-| Who's who | `#whos-who` | |
+| Who's who | `#whos-who`, `#whos-who?country=<CODE>` | |
 | By the numbers | `#by-the-numbers` | `#numbers` |
 | Historical comparison | `#historical-comparison`, `#historical-comparison?country=<CODE>` | `#comparison`, `#comparison?country=<CODE>` |
 | Glossary | `#glossary` | |
@@ -108,7 +116,7 @@ names `#country/<CODE>` routes — and those forward like any other.
   so the page wires only the five facets every country carries and shows every
   other column in the row detail.
 - What is on the record for the same four countries, at
-  `#on-the-record/<CODE>` — the second tab of the entries page: the 766 rows of `data/jetp/events.csv`,
+  `#on-the-record/<CODE>`, the step after the entries: the 766 rows of `data/jetp/events.csv`,
   `implementation-events.csv` and `project-source-links.csv`, served verbatim
   under `data/observations/<CODE>.json` with the table, the kind, the
   verification word the ledger wrote, and the fingerprint and PDF page of the
@@ -122,7 +130,7 @@ names `#country/<CODE>` routes — and those forward like any other.
   step up from a document to what relies on it. Each named project's page
   carries a review-state badge and an "On the record about this project"
   fold-out: the items addressed to that identity, read from
-  `data/observations/<CODE>.json` — the view the On the record tab loads —
+  `data/observations/<CODE>.json` — the view `#on-the-record/<CODE>` loads —
   and filtered on `project_id` in the browser, each opening its archived
   document where the collection holds one. The country view carries no copy
   of them: `ZAF.json` has a publication cap of 512 000 bytes
