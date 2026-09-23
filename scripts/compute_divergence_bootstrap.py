@@ -86,7 +86,7 @@ def bootstrap_one_window(X_before, Y_after, statistic_fn, k, seed):
 # ---------------------------------------------------------------------------
 
 
-def _collect_bootstrap_rows(window_iter, method_name, statistic_fn, k, seed, log):
+def _collect_bootstrap_rows(window_iter, method_name, statistic_fn, k, seed, log, cached_energy=False):
     """Run bootstrap over window iterator, collecting replicate rows.
 
     Shared logic for both semantic and lexical channels.
@@ -97,7 +97,12 @@ def _collect_bootstrap_rows(window_iter, method_name, statistic_fn, k, seed, log
         # null model uses seed + y*100 + w (subsample) and +50000 (perm).
         # Bootstrap uses seed + y*100000 + w*1000 + offset per replicate.
         boot_seed = seed + y * 100_000 + w * 1000
-        values = bootstrap_one_window(X, Y, statistic_fn, k, boot_seed)
+        if cached_energy:
+            from _energy_resample import bootstrap_energy
+
+            values = bootstrap_energy(X, Y, k, boot_seed)
+        else:
+            values = bootstrap_one_window(X, Y, statistic_fn, k, boot_seed)
 
         for rep, val in enumerate(values):
             rows.append(
@@ -116,12 +121,14 @@ def _collect_bootstrap_rows(window_iter, method_name, statistic_fn, k, seed, log
 
 def _run_semantic_bootstrap(method_name, div_df, cfg, k):
     """Bootstrap for semantic methods (S1-S4)."""
+    from _divergence_backend import get_backend
     from _divergence_io import iter_semantic_windows
 
     statistic_fn = _make_semantic_statistic(method_name, cfg)
     seed = cfg["divergence"]["random_seed"]
     return _collect_bootstrap_rows(
-        iter_semantic_windows(div_df, cfg), method_name, statistic_fn, k, seed, log
+        iter_semantic_windows(div_df, cfg), method_name, statistic_fn, k, seed, log,
+        cached_energy=method_name == "S2_energy" and get_backend(cfg) == "numpy",
     )
 
 
