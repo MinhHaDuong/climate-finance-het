@@ -482,6 +482,10 @@ def _read(path):
 
 
 def main(argv=None):
+    # Deliberate script-io exception: this writes seven named tables into one
+    # directory, not one file to one path, so the single --output contract of
+    # script_io_args.parse_io_args/validate_io does not fit. Same multi-output
+    # precedent as build_0730_descriptives.py.
     parser = argparse.ArgumentParser(description=__doc__.split('\n\n')[0])
     parser.add_argument('--ledger-dir', type=Path, default=LEDGER_DIR,
                         help='directory holding sources.csv and manifest.csv')
