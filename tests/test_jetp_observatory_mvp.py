@@ -259,8 +259,9 @@ def test_edition_history_distinguishes_canonical_sources_and_staged_depth():
             'status': 'not_deployed',
         },
     }
-    assert 'not deployed as canonical facts' in renderer
-    assert 'not a common record total' in renderer
+    # Worded without the retired terms since ticket 0881.
+    assert 'this snapshot is not published on these pages' in renderer
+    assert 'They are not a common total.' in renderer
 
 
 def test_country_preserves_principal_and_news_without_project_links():

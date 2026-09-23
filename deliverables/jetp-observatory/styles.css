@@ -939,3 +939,96 @@ h1 .badge {
   cursor: pointer;
   font-size: 13px;
 }
+
+/* Ticket 0881: the navigation groups the paper trail, each trail page shows
+ * its step, and a number we counted is set apart from a number a publisher
+ * printed — a dashed rule and a "Counted by us" tag against a solid rule. */
+.nav-group {
+  display: flex;
+  gap: 16px;
+  align-items: baseline;
+  padding: 0 14px;
+  border-left: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+}
+.nav-group-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+/* A <nav>, so the header's nav rules are undone here. */
+.trail {
+  display: block;
+  margin: 0 0 24px;
+  font-size: 13px;
+  overflow: visible;
+  padding: 0;
+}
+.trail a {
+  font-size: 13px;
+  white-space: normal;
+}
+.trail ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 8px;
+}
+.trail li + li::before {
+  content: "→";
+  color: var(--muted);
+  margin-right: 6px;
+}
+.trail a[aria-current="step"] {
+  font-weight: 650;
+  color: var(--green);
+}
+.trail-steps {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 20px;
+  margin: 0;
+  color: var(--muted);
+}
+.trail-intro li {
+  margin: 8px 0;
+}
+.computed-tag {
+  display: inline-block;
+  font: 600 10px/1.6 var(--sans);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--green);
+  border: 1px dashed var(--green);
+  padding: 0 5px;
+  margin-right: 4px;
+}
+.metric.computed,
+.stat.computed {
+  border-left: 2px dashed var(--green);
+  padding-left: 12px;
+}
+.metric.published {
+  border-left: 2px solid var(--ink);
+}
+.callout.published {
+  border-left: 3px solid var(--ink);
+}
+.country-links {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+@media (max-width: 680px) {
+  .nav-group {
+    padding: 0 10px;
+    gap: 14px;
+  }
+}

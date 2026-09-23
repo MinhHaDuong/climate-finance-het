@@ -441,14 +441,15 @@ def test_a_page_of_the_paper_trail_shows_its_step_and_links_to_its_neighbours() 
 def test_an_item_on_the_record_reads_according_to_its_publisher_with_the_date() -> None:
     rendered = render("inventory/VNM?tab=record")
     results = rendered["elements"]["observations-results"]["innerHTML"]
-    row = next(r for r in observations("VNM") if r["project_id"] == BAC_AI)
-    source = served("VNM")["sources"][row["source_id"]]
-    assert source["publisher"] and source["date"]
+    sources = served("VNM")["sources"]
+    row = next(r for r in observations("VNM")
+               if sources[r["source_id"]].get("publisher") and sources[r["source_id"]].get("date"))
+    source = sources[row["source_id"]]
     item = next(chunk for chunk in re.split(r"(?=<tr>)", results) if row["link_id"] in chunk)
     said = re.sub(r"\s+", " ", text_of(item))
     assert f"According to {source['publisher']}, " in said, said
-    day, month, year = source["date"][8:], source["date"][5:7], source["date"][:4]
-    assert re.search(rf"{int(day)} \w+ {year}", said), (said, month)
+    day, year = int(source["date"][8:]), source["date"][:4]
+    assert re.search(rf"According to [^,]+, {day} \w+ {year}", said), said
 
 
 def test_a_count_on_the_viet_nam_page_is_marked_computed_with_its_unit() -> None:

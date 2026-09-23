@@ -159,7 +159,8 @@ def test_checked_in_m1a_release_and_mvp_downloads_match_clean_replay(
     }
 
     renderer = (ROOT / "deliverables" / "jetp-observatory" / "app.js").read_text()
-    assert "Frozen M1a source inventories" in renderer
+    # The inventories are the Entries step of the paper trail (ticket 0881).
+    assert "function entriesPage()" in renderer
     assert "not a live status service" in renderer
     assert "identity_rows" in renderer
     assert "unavailable_source_rows" in renderer

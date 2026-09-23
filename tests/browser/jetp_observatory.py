@@ -452,6 +452,54 @@ def check_facts(page, url):
     assert page.locator('a[data-reviewed-source]').count() == expected
 
 
+def check_paper_trail(page, url):
+    """Walk the paper trail both ways on the organisation of ticket 0881.
+
+    The navigation reads Glossary, the paper trail, By the numbers and How we
+    did this. From Bac Ai, each step toward the documents lands one step
+    down — what is on the record for Viet Nam, its entries, the Documents
+    page — and each step toward the projects climbs back. A Viet Nam count
+    is marked as counted by us and opens what it counted.
+    """
+    page.goto(url + '/#overview')
+    page.wait_for_selector('.country-grid')
+    labels = [t.strip() for t in page.locator('header nav a, header nav .nav-group-label')
+              .all_text_contents()]  # the group label is upper-cased by CSS only
+    assert labels == ['Glossary', 'The paper trail', 'Documents', 'Entries', 'On the record',
+                      'Projects', 'Funding', "Who's who", 'By the numbers',
+                      'How we did this'], labels
+
+    page.goto(url + '/#project/vnm-project-bac-ai-pumped-hydro')
+    page.wait_for_selector('.trail[data-trail-step="D4"]')
+    page.locator('[data-trail-link="toward-documents"]').click()
+    page.wait_for_selector('.trail[data-trail-step="D3"]')
+    assert page.locator('#tab-observations').get_attribute('aria-selected') == 'true'
+    assert page.locator('#panel-observations').is_visible()
+    assert page.locator('nav a[aria-current="page"]').get_attribute('href') == '#evidence'
+    assert 'According to' in page.locator('#observations-results tbody tr').first.inner_text()
+    page.locator('[data-trail-link="toward-documents"]').click()
+    page.wait_for_selector('.trail[data-trail-step="D2"]')
+    assert page.locator('#panel-inventory').is_visible()
+    page.locator('[data-trail-link="toward-documents"]').click()
+    page.wait_for_selector('.trail[data-trail-step="D1"]')
+    assert page.locator('[data-trail-link="toward-documents"]').count() == 0
+    page.locator('[data-trail-link="toward-projects"]').click()
+    page.wait_for_selector('.trail[data-trail-step="D2"]')
+    page.locator('[data-trail-link="toward-projects"]').click()
+    page.wait_for_selector('.trail[data-trail-step="D3"]')
+    page.locator('[data-trail-link="toward-projects"]').click()
+    page.wait_for_selector('#results tbody tr')
+    assert page.locator('.trail[data-trail-step="D4"]').count() == 1
+
+    page.goto(url + '/#country/VNM')
+    page.wait_for_selector('.metric.computed')
+    counted = page.locator('.metric.computed[data-unit="named projects"]')
+    assert 'Counted by us' in counted.text_content()
+    counted.locator('a').click()
+    page.wait_for_selector('#results tbody tr')
+    assert page.locator('#country-filter').input_value() == 'VNM'
+
+
 def check_projects(page, url):
     """Exercise the catalogue search, a project page, and its adjudicated links."""
     page.goto(url + '/#projects')
@@ -471,7 +519,7 @@ def check_projects(page, url):
     report = page.locator('[data-event-id="sen-puelec-three-villages-reported-20251109"]')
     report.wait_for()
     assert 'Event date not established' in report.inner_text()
-    assert 'Source published' in report.inner_text()
+    assert 'Document published' in report.inner_text()
 
 
 def check_site(url, output):
@@ -525,6 +573,7 @@ def check_site(url, output):
         check_senegal_and_indonesia(page, url)
         check_observations(page, url)
         check_facts(page, url)
+        check_paper_trail(page, url)
         for code in ('ZAF', 'IDN', 'VNM', 'SEN'):
             page.goto(url + '/#country/' + code)
             page.wait_for_selector('.markdown h2')
@@ -543,7 +592,8 @@ def check_site(url, output):
         assert page.evaluate('document.activeElement.tagName') == 'A'
         page.set_viewport_size({'width': 390, 'height': 844})
         for route in ('overview', 'countries', 'documents', 'projects', 'comparison',
-                      'inventory/SEN', 'country/VNM',
+                      'inventory/SEN', 'country/VNM', 'entries', 'evidence',
+                      'whos-who', 'numbers', 'glossary',
                       'project/vnm-project-bac-ai-pumped-hydro', 'methods'):
             page.goto(url + '/#' + route)
             page.wait_for_timeout(150)
