@@ -940,65 +940,110 @@ h1 .badge {
   font-size: 13px;
 }
 
-/* Ticket 0881: the navigation groups the paper trail, each trail page shows
- * its step, and a number we counted is set apart from a number a publisher
- * printed — a dashed rule and a "Counted by us" tag against a solid rule. */
-.nav-group {
+/* Ticket 0881, author's cold read of 2026-09-23: the page top is two bars of
+ * tabs — the four sections in the header, the steps of the paper trail in
+ * the bar under it, with a removable country chip at its right — and a
+ * number we calculated is set apart from a number a publisher printed: a
+ * dashed rule and "Our calculation" against a solid rule and "As published". */
+header nav.section-tabs {
+  gap: 4px;
+  align-self: stretch;
+  align-items: stretch;
+  margin: -23px 0;
+}
+header nav.section-tabs a {
   display: flex;
-  gap: 16px;
-  align-items: baseline;
-  padding: 0 14px;
-  border-left: 1px solid var(--line);
-  border-right: 1px solid var(--line);
+  align-items: center;
+  padding: 0 16px;
+  font-size: 14px;
+  border-bottom: 3px solid transparent;
 }
-.nav-group-label {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  color: var(--muted);
-  white-space: nowrap;
+header nav.section-tabs a.active {
+  color: var(--green);
+  font-weight: 650;
+  box-shadow: none;
+  border-bottom-color: var(--green);
+  background: var(--white);
 }
-/* A <nav>, so the header's nav rules are undone here. */
-.trail {
-  display: block;
-  margin: 0 0 24px;
-  font-size: 13px;
-  overflow: visible;
-  padding: 0;
-}
-.trail a {
-  font-size: 13px;
-  white-space: normal;
-}
-.trail ol {
+.step-bar {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 10px 4.3%;
+  background: #edf0e7;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+}
+.step-bar[hidden] {
+  display: none;
+}
+.step-bar ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 6px;
   list-style: none;
+  margin: 0;
   padding: 0;
-  margin: 0 0 8px;
 }
-.trail li + li::before {
-  content: "→";
+.step-bar li + li::before {
+  content: "›";
   color: var(--muted);
   margin-right: 6px;
 }
-.trail a[aria-current="step"] {
-  font-weight: 650;
-  color: var(--green);
-}
-.trail-steps {
+.step-bar .siblings {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 8px 20px;
-  margin: 0;
+  gap: 4px;
+}
+.step-bar a[data-step] {
+  display: inline-block;
+  padding: 4px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--white);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.step-bar a[aria-current="page"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--lime);
+  font-weight: 650;
+}
+.scope-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 4px 3px 12px;
+  border-radius: 999px;
+  background: var(--lime);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.scope-chip a {
+  text-decoration: none;
+  padding: 0 7px;
+  border-radius: 50%;
+}
+.scope-chip a:hover {
+  background: var(--white);
+}
+details.about {
+  margin: -6px 0 18px;
+  font-size: 14px;
   color: var(--muted);
+}
+details.about summary {
+  cursor: pointer;
 }
 .trail-intro li {
   margin: 8px 0;
 }
-.computed-tag {
+.computed-tag,
+.published-tag {
   display: inline-block;
   font: 600 10px/1.6 var(--sans);
   letter-spacing: 0.4px;
@@ -1007,6 +1052,10 @@ h1 .badge {
   border: 1px dashed var(--green);
   padding: 0 5px;
   margin-right: 4px;
+}
+.published-tag {
+  color: var(--ink);
+  border: 1px solid var(--ink);
 }
 .metric.computed,
 .stat.computed {
@@ -1034,9 +1083,33 @@ h1 .badge {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 10px;
 }
+@media (min-width: 1550px) {
+  .step-bar {
+    padding-left: calc((100vw - 1260px) / 2);
+    padding-right: calc((100vw - 1260px) / 2);
+  }
+}
+@media (max-width: 1100px) {
+  header nav.section-tabs {
+    margin: 0;
+  }
+  header nav.section-tabs a {
+    padding: 8px 12px;
+  }
+}
 @media (max-width: 680px) {
-  .nav-group {
-    padding: 0 10px;
-    gap: 14px;
+  /* All four sections stay in view: the tabs wrap rather than scroll. */
+  header nav.section-tabs {
+    flex-wrap: wrap;
+    overflow-x: visible;
+    gap: 2px;
+    padding-bottom: 0;
+  }
+  header nav.section-tabs a {
+    padding: 6px 8px;
+    font-size: 13px;
+  }
+  .step-bar {
+    padding: 8px 5%;
   }
 }

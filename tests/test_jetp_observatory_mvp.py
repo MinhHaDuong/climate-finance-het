@@ -235,7 +235,8 @@ def test_static_renderer_has_a_non_aggregate_reviewed_evidence_route():
     assert 'data-reviewed-evidence-id' in renderer
     assert 'Non-aggregate record.' in renderer
     assert 'comparative staging snapshot is derived research material' in renderer
-    assert '#on-the-record' in (root / 'deliverables/jetp-observatory/index.html').read_text()
+    # Reached through the paper trail's step bar, which app.js draws (0881).
+    assert '"#on-the-record"' in renderer
 
 
 def test_edition_history_distinguishes_canonical_sources_and_staged_depth():

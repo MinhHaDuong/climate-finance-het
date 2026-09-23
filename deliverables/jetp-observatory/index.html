@@ -19,24 +19,20 @@
       >
       <!-- Ticket 0881: grouped by the four objects of docs/jetp-language.md,
            which stay in data-object and never reach the page copy. M has no
-           entry: the observatory tests no causal explanation. The Glossary
-           sits last, beside How we did this, and every address is its
-           label's slug (author's cold read, 2026-09-23). -->
-      <nav aria-label="Main navigation">
-        <span class="nav-group" data-object="D"
-          ><span class="nav-group-label">The paper trail</span
-          ><a href="#documents">Documents</a
-          ><a href="#entries">Entries</a
-          ><a href="#on-the-record">On the record</a
-          ><a href="#projects">Projects</a
-          ><a href="#funding">Funding</a
-          ><a href="#whos-who">Who&#39;s who</a></span
+           entry: the observatory tests no causal explanation. The page top is
+           two bars (author's cold read, 2026-09-23): these four sections as
+           tabs, the Glossary last beside How we did this, each at its
+           label's slug; and, on a paper-trail page, the step bar below,
+           which app.js draws. -->
+      <nav class="section-tabs" aria-label="Sections">
+        <a href="#the-paper-trail" data-object="D">The paper trail</a
         ><a href="#by-the-numbers" data-object="E">By the numbers</a
         ><a href="#glossary" data-object="O">Glossary</a
         ><a href="#how-we-did-this" data-object="methods">How we did this</a>
       </nav>
       <span class="edition"><i></i> September 2026 · Preview</span>
     </header>
+    <nav id="step-bar" class="step-bar" aria-label="The paper trail" hidden></nav>
     <main id="main" tabindex="-1">
       <p class="loading">Opening the paper trail…</p>
     </main>

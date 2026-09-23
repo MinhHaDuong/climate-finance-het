@@ -268,8 +268,7 @@ def check_observations(page, url):
     is reached by the free-text field and not by the funder facet.
     """
     rows = page.request.get(url + '/data/observations/ZAF.json').json()
-    page.goto(url + '/#entries/ZAF')
-    page.locator('#tab-observations').click()
+    page.goto(url + '/#on-the-record/ZAF')
     page.wait_for_selector('#observations-filters')
     assert str(len(rows)) in page.locator('#observations-count').inner_text()
     # The head-of-tab figures are per table and per country, never pooled.
@@ -298,8 +297,7 @@ def check_observations(page, url):
 
     # Recipe VN: the Bac Ai package, found through the source identifier.
     vietnam = page.request.get(url + '/data/observations/VNM.json').json()
-    page.goto(url + '/#entries/VNM')
-    page.locator('#tab-observations').click()
+    page.goto(url + '/#on-the-record/VNM')
     page.wait_for_selector('#observations-filters')
     assert str(len(vietnam)) in page.locator('#observations-count').inner_text()
     page.locator('#observations-search').fill('eib')
@@ -309,8 +307,7 @@ def check_observations(page, url):
 
     # Recipe SA: a row read from the Q1 2026 register opens that register's
     # archived snapshot, at the page the locator names where it names one.
-    page.goto(url + '/#entries/ZAF')
-    page.locator('#tab-observations').click()
+    page.goto(url + '/#on-the-record/ZAF')
     page.wait_for_selector('#observations-filters')
     registry = page.request.get(url + '/data/documents.json').json()['documents']
     register = next(row for row in rows
@@ -465,11 +462,10 @@ def check_paper_trail(page, url):
     """
     page.goto(url + '/#overview')
     page.wait_for_selector('.country-grid')
-    labels = [t.strip() for t in page.locator('header nav a, header nav .nav-group-label')
-              .all_text_contents()]  # the group label is upper-cased by CSS only
-    assert labels == ['The paper trail', 'Documents', 'Entries', 'On the record',
-                      'Projects', 'Funding', "Who's who", 'By the numbers', 'Glossary',
-                      'How we did this'], labels
+    labels = page.locator('header nav a').all_text_contents()
+    assert labels == ['The paper trail', 'By the numbers', 'Glossary', 'How we did this'], labels
+    # The step bar belongs to the paper trail only.
+    assert page.locator('#step-bar').is_hidden()
 
     # Old addresses forward in place, deep links and tabs included, and the
     # back button does not bounce between the two names.
@@ -492,40 +488,58 @@ def check_paper_trail(page, url):
         assert page.url.endswith('#overview'), (old, page.url)
     assert page.evaluate('location.hash') == '#overview'
 
+    # The step bar is the position indicator: the current step is marked, its
+    # neighbours are links, the country rides along as a removable chip, and
+    # the header keeps the paper trail's tab selected throughout.
+    def at_step(label, address):
+        page.wait_for_selector(f'#step-bar a[aria-current="page"]:text-is("{label}")')
+        assert page.url.endswith('#' + address), (label, page.url)
+        tab = page.locator('header nav a.active')
+        assert tab.count() == 1 and tab.get_attribute('href') == '#the-paper-trail'
+        assert page.locator('main .eyebrow, main nav.trail, main [role="tablist"]').count() == 0
+
+    def step(label):
+        page.locator(f'#step-bar a[data-step]:text-is("{label}")').click()
+
     page.goto(url + '/#project/vnm-project-bac-ai-pumped-hydro')
-    page.wait_for_selector('.trail[data-trail-step="D4"]')
-    page.locator('[data-trail-link="toward-documents"]').click()
-    page.wait_for_selector('.trail[data-trail-step="D3"]')
-    assert page.locator('#tab-observations').get_attribute('aria-selected') == 'true'
-    assert page.locator('#panel-observations').is_visible()
-    assert page.locator('nav a[aria-current="page"]').get_attribute('href') == '#on-the-record'
+    at_step('Projects', 'project/vnm-project-bac-ai-pumped-hydro')
+    assert 'Viet Nam' in page.locator('#step-bar .scope-chip').inner_text()
+    step('On the record')
+    at_step('On the record', 'on-the-record/VNM')
+    page.wait_for_selector('#observations-results tbody tr')
     assert 'According to' in page.locator('#observations-results tbody tr').first.inner_text()
-    page.locator('[data-trail-link="toward-documents"]').click()
-    page.wait_for_selector('.trail[data-trail-step="D2"]')
-    assert page.locator('#panel-inventory').is_visible()
-    # A tab click moves the address, the trail and the navigation with it.
-    page.locator('#tab-observations').click()
-    page.wait_for_selector('.trail[data-trail-step="D3"]')
-    assert page.url.endswith('#on-the-record/VNM'), page.url
-    assert page.locator('header nav a[aria-current="page"]').get_attribute('href') == '#on-the-record'
-    page.locator('#tab-inventory').click()
-    page.wait_for_selector('.trail[data-trail-step="D2"]')
-    assert page.url.endswith('#entries/VNM'), page.url
-    page.locator('[data-trail-link="toward-documents"]').click()
-    page.wait_for_selector('.trail[data-trail-step="D1"]')
-    assert page.locator('[data-trail-link="toward-documents"]').count() == 0
-    page.locator('[data-trail-link="toward-projects"]').click()
-    page.wait_for_selector('.trail[data-trail-step="D2"]')
-    page.locator('[data-trail-link="toward-projects"]').click()
-    page.wait_for_selector('.trail[data-trail-step="D3"]')
-    page.locator('[data-trail-link="toward-projects"]').click()
+    step('Entries')
+    at_step('Entries', 'entries/VNM')
+    page.wait_for_selector('#panel-inventory')
+    step('Documents')
+    at_step('Documents', 'documents?country=VNM')
+    page.wait_for_selector('#documents-results')
+    assert page.locator('#documents-filter-country').input_value() == 'VNM'
+    step('Who\'s who')
+    at_step("Who's who", 'whos-who?country=VNM')
+    assert page.locator('#parties-filter-country').input_value() == 'VNM'
+    step('Funding')
+    at_step('Funding', 'funding/VNM')
+    step('Projects')
+    at_step('Projects', 'projects?country=VNM')
     page.wait_for_selector('#results tbody tr')
-    assert page.locator('.trail[data-trail-step="D4"]').count() == 1
+    # Removing the chip opens the same step for the whole site.
+    page.locator('#step-bar [data-scope-remove="VNM"]').click()
+    at_step('Projects', 'projects')
+    assert page.locator('#step-bar .scope-chip').count() == 0
+    assert page.locator('#country-filter').input_value() == ''
+    # The longer explanation is folded under the one-sentence lede.
+    page.goto(url + '/#documents')
+    about = page.locator('main .page-head details.about')
+    about.wait_for()
+    assert about.get_attribute('open') is None
+    assert page.locator('main .page-head .lede').count() == 1
 
     page.goto(url + '/#funding/VNM')
     page.wait_for_selector('.metric.computed')
     counted = page.locator('.metric.computed[data-unit="named projects"]')
-    assert 'Counted by us' in counted.text_content()
+    assert 'Our calculation' in counted.text_content()
+    assert 'As published' in page.locator('.callout.published').text_content()
     counted.locator('a').click()
     page.wait_for_selector('#results tbody tr')
     assert page.locator('#country-filter').input_value() == 'VNM'
@@ -613,16 +627,19 @@ def check_site(url, output):
         # location to assistive technology.
         page.goto(url + '/#funding/IDN')
         page.wait_for_selector('.page-head h1')
-        active = page.locator('nav a[aria-current="page"]')
+        active = page.locator('#step-bar a[aria-current="page"]')
         assert active.count() == 1
-        assert active.get_attribute('href') == '#funding'
+        assert active.get_attribute('href') == '#funding/IDN'
+        section = page.locator('header nav a[aria-current]')
+        assert section.count() == 1 and section.get_attribute('href') == '#the-paper-trail'
         page.locator('.skip').focus()
         page.keyboard.press('Enter')
         assert page.evaluate('document.activeElement.id') == 'main'
         page.keyboard.press('Tab')
         assert page.evaluate('document.activeElement.tagName') == 'A'
         page.set_viewport_size({'width': 390, 'height': 844})
-        for route in ('overview', 'funding', 'documents', 'projects', 'historical-comparison',
+        for route in ('overview', 'the-paper-trail', 'funding', 'documents', 'projects',
+                      'historical-comparison', 'documents?country=VNM', 'whos-who?country=SEN',
                       'entries/SEN', 'funding/VNM', 'entries', 'on-the-record',
                       'on-the-record/ZAF', 'whos-who', 'by-the-numbers', 'glossary',
                       'release-history', 'project/vnm-project-bac-ai-pumped-hydro',

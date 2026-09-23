@@ -355,10 +355,13 @@ def test_every_senegal_row_names_a_pdf_page_and_no_other_non_rmp_country_does() 
 # docs/jetp-language.md (O, D, E, M) without ever naming them, in the newsroom
 # vocabulary of docs/jetp-observatory-presentation.md.
 
-# Order of the author's cold read, 2026-09-23: the Glossary sits last, beside
-# How we did this.
-NAVIGATION = ["The paper trail", "Documents", "Entries", "On the record", "Projects",
-              "Funding", "Who's who", "By the numbers", "Glossary", "How we did this"]
+# Author's cold read, 2026-09-23: the header holds the four sections as tabs,
+# the Glossary last beside How we did this; the paper trail's steps sit in a
+# second bar, the last three as parallel siblings.
+NAVIGATION = ["The paper trail", "By the numbers", "Glossary", "How we did this"]
+STEPS = ["Documents", "Entries", "On the record", "Projects", "Funding", "Who's who"]
+TRAIL_ROUTES = ("documents", "entries", "entries/VNM", "on-the-record", "on-the-record/ZAF",
+                "projects", "project/" + BAC_AI, "funding", "funding/VNM", "whos-who")
 
 # The framework's names, the retired terms of docs/jetp-language.md and the
 # words docs/jetp-observatory-presentation.md keeps off the pages.  A word
@@ -369,7 +372,7 @@ FORBIDDEN = re.compile(
     r"|\bfacts?\b|\bclaims?\b|\bdeals?\b|\bplayers?\b|\bsources\b|\bentities\b|\brecords\b",
     re.IGNORECASE,
 )
-ROUTES = ("overview", "glossary", "documents", "entries", "on-the-record", "projects",
+ROUTES = ("overview", "the-paper-trail", "glossary", "documents", "entries", "on-the-record", "projects",
           "funding", "whos-who", "by-the-numbers", "how-we-did-this", "release-history",
           "historical-comparison", *(f"funding/{code}" for code in COUNTRIES),
           "entries/VNM", "on-the-record/ZAF", "project/" + BAC_AI)
@@ -396,6 +399,10 @@ def data_strings():
                 walk(item)
         elif isinstance(value, str):
             found.update({value, value.replace("_", " ")})
+            # titleBlock() splits a description after its first sentence.
+            split = re.match(r"^(.+?[.!?])\s+(.+)$", value, re.DOTALL)
+            if split:
+                found.update(split.groups())
             found.update(p.removeprefix("## ").replace("\n", " ")
                          for p in re.split(r"\n\n+", value))
 
@@ -484,30 +491,65 @@ def test_the_pages_emit_only_the_new_addresses() -> None:
         assert not OLD_ADDRESS.search(html), (route, OLD_ADDRESS.search(html).group(0))
 
 
+def step_bar(route):
+    return render(route)["elements"].get("step-bar", {}).get("innerHTML", "")
+
+
 def test_a_page_of_the_paper_trail_shows_its_step_and_links_to_its_neighbours() -> None:
-    main = render("entries/VNM")["main"]
-    trail = re.search(r'<nav class="trail"[^>]*data-trail-step="D2".*?</nav>', main, re.DOTALL)
-    assert trail, main[:400]
-    links = {key: href for href, key in re.findall(
-        r'<a href="([^"]+)" data-trail-link="([^"]+)"', trail.group(0))}
-    assert links == {"toward-documents": "#documents",
-                     "toward-projects": "#on-the-record/VNM"}, links
-    assert re.search(r'aria-current="step">Entries<', trail.group(0))
+    # The step bar is the position indicator (ticket 0881's test, as the cold
+    # read reshaped it): the current step is marked, and the neighbouring
+    # steps are links in the same bar, each keeping the country.
+    bar = step_bar("entries/VNM")
+    links = re.findall(r'<a href="([^"]+)" data-step="(D\d)"( aria-current="page")?>([^<]+)</a>', bar)
+    assert [unescape(label) for *_, label in links] == STEPS, links
+    assert [(href, step) for href, step, current, _ in links if current] == [("#entries/VNM", "D2")]
+    hrefs = {unescape(label): href for href, _, _, label in links}
+    assert hrefs["Documents"] == "#documents?country=VNM"
+    assert hrefs["On the record"] == "#on-the-record/VNM"
+    assert re.search(r'<li class="siblings">(<a [^>]+>[^<]+</a>){3}</li>', bar), bar
+    # The scope is a chip; removing it opens the same step, unscoped.
+    chip = re.search(r'<span class="scope-chip">([^<]+)<a href="([^"]+)"', bar)
+    assert chip and chip.group(1).strip() == "Viet Nam" and chip.group(2) == "#entries", bar
 
 
-def test_a_country_read_from_the_address_cannot_inject_markup_into_the_trail() -> None:
-    # PR #1459 review: #projects?country=… reached trail()'s href unescaped.
+@pytest.mark.parametrize("route", TRAIL_ROUTES)
+def test_a_trail_page_carries_no_second_position_indicator(route) -> None:
+    # The step bar replaces the eyebrow, the trail block and the in-page tabs.
+    main = render(route)["main"]
+    assert 'class="eyebrow"' not in main.split("</div>", 1)[0]
+    assert 'class="trail"' not in main and 'role="tablist"' not in main
+    assert 'aria-current="page"' in step_bar(route)
+
+
+@pytest.mark.parametrize("route", ["overview", "by-the-numbers", "glossary", "how-we-did-this",
+                                   "historical-comparison", "the-paper-trail"])
+def test_the_step_bar_is_drawn_on_trail_pages_only(route) -> None:
+    assert step_bar(route) == ""
+
+
+@pytest.mark.parametrize("route", ["documents", "on-the-record", "entries", "whos-who",
+                                   "by-the-numbers", "how-we-did-this"])
+def test_the_title_block_is_one_sentence_with_the_rest_folded(route) -> None:
+    head = re.search(r'<div class="page-head">(.*?)</div>', render(route)["main"], re.DOTALL).group(1)
+    lede = re.search(r'<p class="lede">(.*?)</p>', head, re.DOTALL).group(1)
+    assert len(re.findall(r"[.!?](\s|$)", lede)) == 1, lede
+    if "<details" in head:
+        assert re.search(r'<details class="about"><summary>About this page</summary>', head)
+
+
+def test_a_country_read_from_the_address_cannot_inject_markup_into_the_step_bar() -> None:
+    # PR #1459 review: #projects?country=… reached the trail's href unescaped.
     payload = '"><img src=x onerror=alert(1)>'
-    main = render("projects?country=" + payload)["main"]
-    trail = re.search(r'<nav class="trail".*?</nav>', main, re.DOTALL).group(0)
-    assert "<img" not in trail, trail
-    # An unknown country is no country: the trail falls back to the whole site.
-    assert 'href="#entries"' in trail and 'href="#on-the-record"' in trail, trail
+    bar = step_bar("projects?country=" + payload)
+    assert "<img" not in bar, bar
+    # An unknown country is no country: the bar falls back to the whole site.
+    assert 'href="#entries"' in bar and 'href="#on-the-record"' in bar, bar
+    assert "scope-chip" not in bar
     # And the links are escaped even for a code the site knows, so the guard
     # is not the escaping's only line of defence (round 2 of the review).
     known = json.dumps(payload)
-    escaped = render("overview", {}, f"overview.countries.push({{code: {known}}}), "
-                                     f"trail('D2', {known})")["eval"]
+    escaped = render("overview", {}, f"overview.countries.push({{code: {known}, name: {known}}}), "
+                                     f"stepBar('entries', {known})")["eval"]
     assert "<img" not in escaped and "&lt;img" in escaped, escaped
 
 
@@ -530,7 +572,11 @@ def test_a_count_on_the_viet_nam_page_is_marked_computed_with_its_unit() -> None
     assert "named projects" in re.findall(r'<div class="metric computed" data-unit="([^"]+)"', main)
     metric = re.search(r'<div class="metric computed" data-unit="named projects">.*?</div>',
                        main, re.DOTALL).group(0)
-    assert "Counted by us" in text_of(metric)
+    assert "Our calculation" in text_of(metric)
+    # Its pair: the publisher's headline is marked as published.
+    callout = re.search(r'<div class="callout published">.*?</div>', main, re.DOTALL).group(0)
+    assert "As published" in text_of(callout)
+    assert "Counted by us" not in main
     assert 'href="#projects?country=VNM"' in metric
 
 
