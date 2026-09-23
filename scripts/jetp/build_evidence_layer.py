@@ -1,26 +1,42 @@
 """Rebuild the ledger's evidence layer from the legacy registry (ticket 0872).
 
 Step 1 of the migration (``docs/jetp-ledger-migration.md``): "source" stops
-naming a URL. ``sources.csv`` becomes ``publishers``, ``documents`` and
-``document-publishers``; ``manifest.csv`` becomes ``retrievals`` and
-``snapshots``. Nothing is reinterpreted: every document, retrieval and
-fingerprint of the old tables is one row of the new ones, and the old tables
-stay in place, read only, until ticket 0878 retires them.
+naming a URL. ``sources.csv`` becomes ``parties``, ``party-names``,
+``documents`` and ``document-publishers``; ``manifest.csv`` becomes
+``retrievals`` and ``snapshots``. Nothing is reinterpreted: every document,
+retrieval and fingerprint of the old tables is one row of the new ones, and
+the old tables stay in place, read only, until ticket 0878 retires them.
 
-Decisions the rebuild takes, each visible in its output:
+Organisations are under authority control (author's decision of 2026-09-23,
+``docs/jetp-ontology.md`` decision 12). Decisions the rebuild takes, each
+visible in its output:
 
-- A publisher is one distinct publisher label of ``sources.csv``, verbatim.
-  Labels that differ only by case or abbreviation are not merged: each such
-  pair is a ``same_as`` candidate in ``relations`` (``PUBLISHER_DUPLICATES``),
-  pending review and not in force, so no count moves on a guess.
-- A publisher carries the ``authority_category`` most of its documents gave
-  it; a document that gave another one is named in the publisher's notes.
-  Its ``country`` is set only for a national government or a JETP secretariat,
+- A publisher is a party in a publishing role. Parties are minted from the
+  publisher texts of ``sources.csv``; texts that differ only by case,
+  diacritics or spacing are one party with several name forms, never two
+  parties and a ``same_as`` (storage contract section 4, organisations).
+- Every form a document carries is a ``party-names`` row, justified by the
+  first document, in identifier order, that carries it. The most used form of
+  a party is its preferred form, ties going to a form not written in capitals,
+  then to alphabetical order; the others are ``spelling_or_case_variant``.
+- A publisher text that names two bodies (``JOINT_LABELS``) is a joint
+  publication: the document is linked to each party, and each part is a name
+  form read from that label. A part named nowhere else takes its authority
+  category and country from review (``PART_ATTRIBUTES``).
+- Real variants, an acronym against its expansion or a country-prefixed form,
+  are tier-2 ``same_as`` candidates in ``relations``, pending review and not
+  in force, so no count moves on a guess. An acronym is detected when a form
+  written in capitals is the initials of another party's form, function words
+  aside; other pairs are listed by review (``NAME_VARIANT_CANDIDATES``). No
+  external identifier ties any two parties yet, so none of these is merged.
+- A party carries the ``authority_category`` most of its own documents gave
+  it; a document that gave another one is named in the party's notes. Its
+  ``country`` is set only for a national government or a JETP secretariat,
   whose country is the partnership's; for any other category the documents'
-  country is where the publisher wrote about, not where it sits.
-- A publication's role is ``author``, except for a publisher that only hosts a
-  copy (``HOST_PUBLISHERS``). A joint publication is declared by review
-  (``JOINT_PUBLICATIONS``); none is derivable from the free text.
+  country is where the party wrote about, not where it sits.
+- A publication's role is ``author``, except for a party that only hosts a
+  copy (``HOST_PUBLISHERS``). Further joint publications may be declared by
+  review (``JOINT_PUBLICATIONS``).
 - The known mirrors receive a ``same_as`` candidate towards the document they
   copy (``MIRRORS``; storage contract section 4, document deduplication).
 - A retrieval's identifier is ``<document_id>:<n>``, its ordinal among that
@@ -30,7 +46,8 @@ Decisions the rebuild takes, each visible in its output:
   (a seeded ``langdetect`` over the PDF text layer, the visible HTML text or a
   JSON body), kept only when the detector is confident; a document without
   bytes or without a text layer keeps an empty language rather than a guess
-  from a title the collector wrote in English.
+  from a title the collector wrote in English. A name form's language is left
+  empty: the rebuild does not guess it from the form.
 
 The output is a record, not a derived view: it is written once, reviewed as a
 diff, and from then on edited like any ledger table.
@@ -42,7 +59,7 @@ import html
 import re
 import subprocess
 import unicodedata
-from collections import Counter
+from collections import Counter, defaultdict
 from pathlib import Path
 
 from utils import get_logger
@@ -65,19 +82,39 @@ MIRRORS = {
 # they wrote.
 HOST_PUBLISHERS = frozenset({'Climate Policy Radar', 'Vie-Publique.sn'})
 
-# Joint publications added by review: document_id -> further publisher labels.
+# Joint publications added by review: document_id -> further publisher texts.
 JOINT_PUBLICATIONS = {}
 
-# Publisher labels that read as one publisher, left for review: (label, label).
-PUBLISHER_DUPLICATES = (
-    ('Senelec', 'SENELEC'),
-    ('Senelec via AFD dgMarket', 'SENELEC via AFD dgMarket'),
-    ('AFD', 'Agence Francaise de Developpement'),
+# Publisher texts of sources.csv that name two bodies: text -> the parts.
+JOINT_LABELS = {
+    'Government of Indonesia and International Partners Group':
+        ('Government of Indonesia', 'International Partners Group'),
+    'Government of Viet Nam and International Partners Group':
+        ('Government of Viet Nam', 'International Partners Group'),
+    'JETP Indonesia Secretariat and International Energy Agency':
+        ('JETP Indonesia Secretariat', 'International Energy Agency'),
+}
+
+# Parties named only inside a joint text: (authority_category, country, note).
+PART_ATTRIBUTES = {
+    'Government of Indonesia': ('national_government', 'IDN', None),
+    'International Partners Group': ('ipg', None, None),
+    'International Energy Agency': (
+        None, None, 'no authority category of the list fits an intergovernmental '
+                    'agency that neither funds nor operates; left for review'),
+}
+
+# Pairs of forms that may name one party, listed by review for the tier-2
+# candidates the acronym rule cannot see: (form, form).
+NAME_VARIANT_CANDIDATES = (
     ('MEPM', 'Senegal MEPM'),
-    ('MEPM', 'Ministry of Energy Petroleum and Mines'),
 )
 
-# A publisher of these categories speaks for the partnership's country.
+# Words an acronym leaves out, in the four label languages the registry uses.
+ACRONYM_SKIP = frozenset({'of', 'and', 'the', 'for', 'de', 'du', 'des', 'la', 'le',
+                          'pour', 'et', 'd', 'l'})
+
+# A party of these categories speaks for the partnership's country.
 NATIONAL_CATEGORIES = frozenset({'national_government', 'jetp_secretariat'})
 
 LANGUAGE_MIN_PROBABILITY = 0.8
@@ -89,46 +126,106 @@ def slug(label):
     return re.sub(r'[^a-z0-9]+', '-', text.lower()).strip('-')
 
 
-def _publisher_ids(labels_by_use):
-    """One identifier per label; labels that slug alike are told apart by rank.
+def name_key(form):
+    """A form with case, diacritics and spacing removed: equal keys, one party."""
+    text = unicodedata.normalize('NFKD', form)
+    text = ''.join(c for c in text if not unicodedata.combining(c))
+    return ' '.join(text.casefold().split())
 
-    The most used label keeps the plain slug, ties broken by the label itself,
-    so the assignment does not depend on registry order.
+
+def _initials(form):
+    words = [w for w in re.findall(r'[^\W\d_]+', form) if w.casefold() not in ACRONYM_SKIP]
+    return ''.join(w[0] for w in words).upper() if len(words) >= 2 else None
+
+
+def _is_acronym(form):
+    return re.fullmatch(r'[A-Z]{2,}', form.strip()) is not None
+
+
+def _printed_forms(sources, joint_labels, joint):
+    """``(row, form, origin)`` for every name a document carries.
+
+    ``origin`` is ``None`` for the document's own publisher text, the joint
+    text a part was read from, or ``'review'`` for a joint publication added
+    by review.
     """
-    ids, taken = {}, Counter()
-    for label in sorted(labels_by_use, key=lambda lab: (-labels_by_use[lab], lab)):
-        base = slug(label)
-        taken[base] += 1
-        ids[label] = base if taken[base] == 1 else f'{base}-{taken[base]}'
-    return ids
-
-
-def _publishers(sources, joint):
-    uses = Counter(row['publisher'] for row in sources)
-    for labels in joint.values():
-        uses.update(label for label in labels if label not in uses)
-    ids = _publisher_ids(uses)
-    categories, countries = {}, {}
     for row in sources:
-        categories.setdefault(row['publisher'], Counter())[row['authority_category']] += 1
-        countries.setdefault(row['publisher'], set()).add(row['country'])
-    publishers = []
-    for label in sorted(ids, key=ids.get):
-        counts = categories.get(label, Counter())
-        category = (min(counts, key=lambda c: (-counts[c], c)) if counts else None)
+        label = row['publisher']
+        for part in joint_labels.get(label, (label,)):
+            yield row, part, (label if part != label else None)
+        for extra in joint.get(row['source_id'], ()):
+            yield row, extra, 'review'
+
+
+def _preferred(uses):
+    return min(uses, key=lambda form: (-uses[form], form.isupper(), form))
+
+
+def _parties(sources, joint_labels, joint, part_attributes):
+    printed = list(_printed_forms(sources, joint_labels, joint))
+    uses = defaultdict(Counter)       # key -> form -> documents carrying it
+    first_document = {}               # form -> first document carrying it
+    origins = defaultdict(set)        # form -> origins it was read from
+    categories = defaultdict(Counter)  # key -> category -> own documents
+    countries = defaultdict(set)
+    documents = defaultdict(list)     # key -> own documents, for the notes
+    for row, form, origin in printed:
+        key = name_key(form)
+        uses[key][form] += 1
+        first_document[form] = min(first_document.get(form, row['source_id']),
+                                   row['source_id'])
+        origins[form].add(origin)
+        if origin is None:
+            categories[key][row['authority_category']] += 1
+            countries[key].add(row['country'])
+            documents[key].append(row)
+    ids, taken = {}, Counter()
+    order = sorted(uses, key=lambda k: (-sum(uses[k].values()), _preferred(uses[k])))
+    for key in order:
+        base = slug(_preferred(uses[key]))
+        taken[base] += 1
+        ids[key] = base if taken[base] == 1 else f'{base}-{taken[base]}'
+    parties, names = [], []
+    attributes = {name_key(form): value for form, value in part_attributes.items()}
+    for key in sorted(ids, key=ids.get):
+        party_id, preferred = ids[key], _preferred(uses[key])
+        counts = categories[key]
         notes = []
-        for other in sorted(set(counts) - {category}):
-            documents = sorted(r['source_id'] for r in sources
-                               if r['publisher'] == label and r['authority_category'] == other)
-            notes.append(f"sources.csv gave authority_category {other} to "
-                         f"{', '.join(documents)}")
-        country = None
-        if category in NATIONAL_CATEGORIES and len(countries[label]) == 1:
-            (country,) = countries[label]
-        publishers.append({'publisher_id': ids[label], 'name': label,
-                           'authority_category': category or None, 'country': country,
-                           'notes': '; '.join(notes) or None})
-    return publishers, ids
+        if counts:
+            category = min(counts, key=lambda c: (-counts[c], c))
+            country = None
+            if category in NATIONAL_CATEGORIES and len(countries[key]) == 1:
+                (country,) = countries[key]
+            for other in sorted(set(counts) - {category}):
+                cited = sorted(r['source_id'] for r in documents[key]
+                               if r['authority_category'] == other)
+                notes.append(f"sources.csv gave authority_category {other} to "
+                             f"{', '.join(cited)}")
+        else:
+            category, country, note = attributes.get(key, (None, None, None))
+            notes.append('named only in a joint publication; authority category and '
+                         'country set by review')
+            if note:
+                notes.append(note)
+        parties.append({'party_id': party_id, 'authority_category': category or None,
+                        'country': country, 'notes': '; '.join(notes) or None})
+        forms = sorted(uses[key], key=lambda form: (form != preferred, form))
+        for number, form in enumerate(forms, start=1):
+            read_from = sorted(o for o in origins[form] if o not in (None, 'review'))
+            note = None
+            if None not in origins[form]:
+                note = ('; '.join(f"read from the joint publisher text '{o}'"
+                                  for o in read_from)
+                        or 'added by review as a joint publisher')
+            names.append({
+                'name_row_id': f'{party_id}.name.{number}', 'party_id': party_id,
+                'name': form,
+                'form_type': 'preferred' if form == preferred else 'spelling_or_case_variant',
+                'language': None, 'document_id': first_document[form], 'line_id': None,
+                'recorded_at': DECIDED_AT, 'decided_by': DECIDED_BY, 'status': 'accepted',
+                'supersedes': None, 'notes': note,
+            })
+    return parties, names, printed, ids
 
 
 def _documents(sources, languages):
@@ -142,15 +239,44 @@ def _documents(sources, languages):
     } for row in sources]
 
 
-def _publications(sources, ids, joint):
-    rows = []
-    for row in sources:
-        labels = [row['publisher'], *joint.get(row['source_id'], [])]
-        for label in labels:
-            role = 'host' if label in HOST_PUBLISHERS else 'author'
-            rows.append({'document_id': row['source_id'], 'publisher_id': ids[label],
-                         'role': role})
+def _publications(printed, ids, names):
+    """One row per document and party, naming the form the document prints."""
+    form_rows = {name['name']: name['name_row_id'] for name in names}
+    rows, seen = [], set()
+    for row, form, _ in printed:
+        pair = (row['source_id'], ids[name_key(form)])
+        if pair in seen:
+            continue
+        seen.add(pair)
+        rows.append({'document_id': pair[0], 'party_id': pair[1],
+                     'role': 'host' if form in HOST_PUBLISHERS else 'author',
+                     'name_row_id': form_rows[form]})
     return rows
+
+
+def _name_candidates(names, reviewed):
+    """Tier-2 ``(party, party, method)`` pairs: acronyms, then reviewed pairs."""
+    forms = defaultdict(set)
+    for name in names:
+        forms[name['party_id']].add(name['name'])
+    by_initials = defaultdict(set)
+    for party_id, party_forms in forms.items():
+        for form in party_forms:
+            initials = _initials(form)
+            if initials:
+                by_initials[initials].add(party_id)
+    pairs = {}
+    for party_id, party_forms in sorted(forms.items()):
+        for form in sorted(party_forms):
+            if _is_acronym(form):
+                for other in sorted(by_initials.get(form.strip(), set()) - {party_id}):
+                    pairs.setdefault((party_id, other), 'normalised_label')
+    party_of = {name_key(n['name']): n['party_id'] for n in names}
+    for a, b in reviewed:
+        pair = (party_of[name_key(a)], party_of[name_key(b)])
+        if pair[0] != pair[1]:
+            pairs.setdefault(pair, 'label_review')
+    return sorted((a, b, method) for (a, b), method in pairs.items())
 
 
 def _retrievals_and_snapshots(manifest):
@@ -188,27 +314,31 @@ def _same_as(from_kind, from_id, to_id, method):
 
 
 def reconstruct(sources, manifest, languages=None, joint_publications=None,
-                mirrors=None, publisher_duplicates=None):
+                mirrors=None, joint_labels=None, name_candidates=None,
+                part_attributes=None):
     """The evidence tables, as lists of rows keyed by column, from the old two."""
     languages = languages or {}
     joint = JOINT_PUBLICATIONS if joint_publications is None else joint_publications
     mirrors = MIRRORS if mirrors is None else mirrors
-    duplicates = PUBLISHER_DUPLICATES if publisher_duplicates is None else publisher_duplicates
+    joint_labels = JOINT_LABELS if joint_labels is None else joint_labels
+    reviewed = NAME_VARIANT_CANDIDATES if name_candidates is None else name_candidates
+    part_attributes = PART_ATTRIBUTES if part_attributes is None else part_attributes
     known = {row['source_id'] for row in sources}
     unknown = ({r['source_id'] for r in manifest} | set(mirrors) | set(mirrors.values())
                | set(joint)) - known
     if unknown:
         raise ValueError(f'unknown documents: {sorted(unknown)}')
-    publishers, ids = _publishers(sources, joint)
+    parties, names, printed, ids = _parties(sources, joint_labels, joint, part_attributes)
     retrievals, snapshots = _retrievals_and_snapshots(manifest)
     relations = [_same_as('document', mirror, original, 'mirror_review')
                  for mirror, original in sorted(mirrors.items())]
-    relations += [_same_as('publisher', ids[a], ids[b], 'label_review')
-                  for a, b in duplicates]
+    relations += [_same_as('party', a, b, method)
+                  for a, b, method in _name_candidates(names, reviewed)]
     return {
-        'publishers': publishers,
+        'parties': parties,
+        'party_names': names,
         'documents': _documents(sources, languages),
-        'document_publishers': _publications(sources, ids, joint),
+        'document_publishers': _publications(printed, ids, names),
         'snapshots': snapshots,
         'retrievals': retrievals,
         'relations': relations,

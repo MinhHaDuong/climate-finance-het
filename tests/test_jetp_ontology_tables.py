@@ -71,7 +71,11 @@ def _fixture_tables():
                   'A line that names one undertaking with an owner and a scope.',
                   '2026-06-01'),
         ],
-        'publishers': [{'publisher_id': 'pub-1', 'name': 'Secretariat'}],
+        'parties': [{'party_id': 'pub-1'}],
+        'party_names': [{'name_row_id': 'pub-1.name.1', 'party_id': 'pub-1',
+                         'name': 'Secretariat', 'form_type': 'preferred',
+                         'document_id': 'doc-1', 'recorded_at': '2026-01-01',
+                         'decided_by': 'fixture', 'status': 'accepted'}],
         'status_crosswalk': [
             _crosswalk('cw-1', 'A. Planned', 'pipeline', '2026-01-01'),
             _crosswalk('cw-2', 'A. Planned', 'implementation', '2026-06-01',
@@ -106,6 +110,7 @@ def _fixture(tmp_path, tables=None):
     # The fixture's retrieval and crosswalk statuses must themselves be terms.
     tables['terms'] += [
         _term('collected', 'retrieval_status', 'Bytes came back.', '2026-01-01'),
+        _term('preferred', 'form_type', "The party's one preferred name.", '2026-01-01'),
         _term('accepted', 'decision_status', 'In force when terminal.', '2026-01-01')]
     _write(tmp_path, tables)
     return tmp_path

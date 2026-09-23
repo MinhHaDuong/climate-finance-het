@@ -8,8 +8,8 @@ migration's real counts at its close and retired once the old tables are gone.
 
 ## Tables retired
 
-What disappears: `sources.csv` (becomes `publishers`, `documents`,
-`document-publishers`), `manifest.csv` (becomes `retrievals` and `snapshots`),
+What disappears: `sources.csv` (becomes `parties`, `party-names`,
+`documents`, `document-publishers`), `manifest.csv` (becomes `retrievals` and `snapshots`),
 `plan-projects.csv` (lines), `events.csv` and `implementation-events.csv`
 (observations), `project-source-links.csv` (lines with classification
 `named_item` and a `refers_to` of basis `discovery`), `source-claims.csv`
@@ -33,7 +33,7 @@ before the current tables are removed. Counts below are from the tables on
 
 | Current | Rows | Target | Notes |
 |---|---|---|---|
-| `sources.csv` | 301 | 103 publishers, 301 documents, 301 publications | joint publications added by review, none derivable from the free text |
+| `sources.csv` | 301 | 101 parties with 103 name forms, 301 documents, 304 publications | case variants merged at minting; three joint publisher texts split into two parties each; acronym pairs are tier-2 candidates |
 | `manifest.csv` | 314 | 314 retrievals, 264 snapshots | 41 failed retrievals carry no snapshot; 9 snapshots are yielded by two retrievals each |
 | `projects.csv` ZAF register | 257 | 257 lines of the Q1 2026 register, `register_allocation`; 257 agreements minted by basis `register_row`; projects minted only where the reviewed name match holds | the register's own status letter becomes `own_status`, axis delivery |
 | `projects.csv` VNM count slots | 21 | 1 perimeter, 2 observations of measure `count` (7 initial, 17 screened) citing the portfolio lines | routes for the 21 slot identifiers point at the perimeter |
@@ -60,17 +60,20 @@ Order of work, each step a ticket with its own byte-level check:
    the alignment test of the [ontology](jetp-ontology.md), section 5 (ticket 0880). Built right after the DDL
    tooling (ticket 0871), whose value checks then read the terms in force.
 
-1. Publishers, documents, publications, snapshots. Read-only rename of the
-   register (step D1); the observatory's Documents page is the check.
+1. Parties in their publishing role, their name forms, documents,
+   publications, snapshots. Read-only rebuild of the register (step D1); the
+   observatory's Documents page is the check.
 2. Lines and line fields for the four M1a documents, replacing the M1a
    builder's product with the same rows under the new contract. The inventory
    tab is the check: same rows, same order, same fields.
 3. Lines for the remaining documents (plan-projects, portfolio, pilot, claims).
 4. Identity split: referents, routes, the five identity tables. Every old
-   identifier resolves through `routes`. The party table is built here with
-   its minimum shape (identifier, name, kind, country, optional external
-   identifier from the IATI organisation registry) and the `party_in` relation
-   with a role. The 61 funder strings and the register's 14 funder prefixes
+   identifier resolves through `routes`. The party table, which step 1 starts
+   with the publishers under authority control (decision 12 of the
+   [ontology](jetp-ontology.md)), gains the funders and channels here, each
+   with its `party-names` rows and, where one exists, its external identifier
+   (IATI organisation identifier, ROR, LEI, Wikidata), and the `party_in`
+   relation with a role. The 61 funder strings and the register's 14 funder prefixes
    are adjudicated into funder and channel roles in this step; promoter,
    implementing entity, beneficiary and contractor are filled only as their
    lines are reviewed. A party is minted from a line like every other

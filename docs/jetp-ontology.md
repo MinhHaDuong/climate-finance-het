@@ -58,6 +58,20 @@ The author's decisions of 2026-09-22 and 2026-09-23 shape it:
     [`jetp-language.md`](jetp-language.md); the observatory's organisation
     and page vocabulary are
     [`jetp-observatory-presentation.md`](jetp-observatory-presentation.md).
+12. On 2026-09-23, organisations are under authority control, as in a
+    library's name authority file or the ROR and GLEIF registries. The ledger
+    keeps one organisation table: a publisher is a party in a publishing
+    role, and the publishers table folds into `parties`. Every form of an
+    organisation's name is a row of `party-names` with its form type, its
+    language and the document or line it was read from, and one form is
+    preferred. Senelec and SENELEC, EVN, Vietnam Electricity and Tập đoàn
+    Điện lực Việt Nam, PLN and Perusahaan Listrik Negara, AFD and Agence
+    française de développement each resolve to one organisation. An
+    external identifier (IATI organisation identifier, ROR, LEI, Wikidata)
+    is tier 1 of matching for organisations; case, diacritic and spacing
+    variants are merged when the party is minted; acronyms, translations
+    and former names are tier-2 candidates, reviewed
+    ([storage contract](jetp-ledger-storage.md) section 4).
 
 ## 0. Frame
 
@@ -94,14 +108,18 @@ is about.
 
 ### Publisher
 
-The body that publishes a document and answers for what it states: the JETP
+The party that publishes a document and answers for what it states: the JETP
 Indonesia Secretariat, the JET Project Management Unit, the Ministry of Industry
-and Trade, ANER, Senelec, the Asian Development Bank. A publisher has an
-authority category, `national_government`, `jetp_secretariat`, `ipg`,
+and Trade, ANER, Senelec, the Asian Development Bank. A publisher is not a
+table of its own: it is a party (below) in a publishing role, linked to the
+document by a publication row, so the Asian Development Bank that publishes a
+report and the one that funds a loan are one organisation. The party carries
+an authority category, `national_government`, `jetp_secretariat`, `ipg`,
 `bilateral_funder`, `multilateral_funder`, `private_finance`, `operator` or
 `secondary_source`, and a country (`ZAF`, `IDN`, `VNM`, `SEN`) or
-`international`. The registry holds 103 distinct publishers today,
-as free text in a column.
+`international`. The registry's 103 distinct publisher texts resolve to 101
+parties: two case variants merge, and three texts that name two bodies are
+joint publications.
 
 A publisher is what the project has so far called a source. The word source is
 retired from column names and page copy, because it has meant a URL since the
@@ -217,11 +235,19 @@ tariff reform at Senelec is one agreement, one condition, one party.
 
 ### Party
 
-A named organisation in a role: `funder`, `channel`, `promoter`,
-`implementing_entity`, `beneficiary`, `contractor`, `operator`. Replaces 61 free-text funder strings that
-conflate funder with channel ("Canada via World Bank and ADB"). A party may
-also be a publisher; the two registries share an organisation identifier when
-they do.
+One organisation, whatever its roles: `funder`, `channel`, `promoter`,
+`implementing_entity`, `beneficiary`, `contractor`, `operator`, or publisher of
+a document. Replaces 61 free-text funder strings that conflate funder with
+channel ("Canada via World Bank and ADB") and the publisher texts of the
+document registry.
+
+Parties are under authority control (decision 12). A party row holds no name;
+its names are party name rows, one per form as printed, each with a form type,
+`preferred`, `acronym`, `translation`, `spelling_or_case_variant` or
+`former_name`, a language, and the document or line it was read from. Exactly
+one form is preferred at a time; a form is revised by supersession like any
+decision row. A page shows the form the document in front of the reader
+prints, and the preferred form where no document is in view.
 
 ### Perimeter
 
@@ -235,9 +261,11 @@ Membership is a justified relation, not a list. A count slot is a perimeter obse
 
 A code another register uses for one of the ledger's identities or lines: a
 World Bank P-number, a CRS `crs_id` or `donor_project_id`, an IATI activity
-identifier, a GEM unit id, an OECD organisation id for a party. One table
-holds them all, typed by scheme, so a comparator record and a ledger
-identity meet on a key rather than on a name.
+identifier, a GEM unit id; for a party, an IATI organisation identifier, a ROR
+identifier, an LEI or a Wikidata item. One table holds them all, typed by
+scheme, so a comparator record and a ledger identity meet on a key rather than
+on a name. For a party the identifier decides: two names that carry the same
+one are one organisation.
 
 ### Comparator record
 
@@ -283,7 +311,7 @@ decided it and when.
 
 | Relation | From | To | Meaning |
 |---|---|---|---|
-| `published_by` | document | publisher | many-to-many; role optional (`author`, `co_signatory`, `host`) |
+| `published_by` | document | party | many-to-many; role optional (`author`, `co_signatory`, `host`); a joint publication is one row per party |
 | `edition_of` | document | document | succeeds a previous edition |
 | `same_as` (document) | document | document | one publication under two URLs or two exports; the lines belong to the canonical one |
 | `translation_of` | document | document | the same publication in another language; lines are extracted from one and cross-referenced, never doubled |

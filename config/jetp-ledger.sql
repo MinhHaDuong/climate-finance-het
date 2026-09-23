@@ -9,8 +9,10 @@
 --
 -- Conventions the tooling reads:
 --   * A table named foo_bar is stored as data/jetp/foo-bar.csv, or chunked as
---     data/jetp/foo-bar/<CODE>-<year>.csv when one file would exceed the
---     pre-commit file ceiling. Ontology tables live under data/jetp/ontology/.
+--     data/jetp/foo-bar.d/<CODE>-<year>.csv when one file would exceed the
+--     pre-commit file ceiling. The .d suffix keeps a chunk directory apart
+--     from any directory named after a table: data/jetp/documents/ is the
+--     snapshot store. Ontology tables live under data/jetp/ontology/.
 --   * Columns are declared in the CSV column order of the contract.
 --   * Rules SQLite can hold per row are CHECK, NOT NULL, UNIQUE and FOREIGN
 --     KEY constraints. Rules that span rows or tables are named validation
@@ -39,7 +41,8 @@
 -- chain (views *_in_force). The chain key is the set of columns successive
 -- revisions of one entry share: (list, term_id) for terms, since a value's
 -- term_id is unique within its list only; (publisher_id, own_status) and
--- (publisher_id, own_sector) for the crosswalks; perimeter_id; and
+-- (publisher_id, own_sector) for the crosswalks, where publisher_id is the
+-- party whose vocabulary the row maps; perimeter_id; and
 -- (donor_party_id, marker, score, year) for marker coefficients. A change of
 -- meaning mints a new chain key and the old one stays in force.
 -- Rows: `terms` in ticket 0880, the crosswalks in 0876, perimeters in 0877,
@@ -68,7 +71,7 @@ CREATE TABLE terms (
 
 CREATE TABLE status_crosswalk (
     crosswalk_row_id TEXT PRIMARY KEY,
-    publisher_id TEXT NOT NULL REFERENCES publishers (publisher_id),
+    publisher_id TEXT NOT NULL REFERENCES parties (party_id),
     own_status TEXT NOT NULL,
     axis TEXT NOT NULL,
     shared_status TEXT NOT NULL,
@@ -81,7 +84,7 @@ CREATE TABLE status_crosswalk (
 
 CREATE TABLE sector_crosswalk (
     crosswalk_row_id TEXT PRIMARY KEY,
-    publisher_id TEXT NOT NULL REFERENCES publishers (publisher_id),
+    publisher_id TEXT NOT NULL REFERENCES parties (party_id),
     own_sector TEXT NOT NULL,
     -- A five-digit OECD DAC CRS purpose code. The purpose list is an external
     -- enumeration of some 200 codes that the ledger cites, not a closed list
@@ -124,16 +127,42 @@ CREATE TABLE marker_coefficients (
 );
 
 -- ---------------------------------------------------------------------------
--- Publishers, documents, retrievals, snapshots
+-- Parties and their names (authority control, decided 2026-09-23)
+--
+-- One organisation table. A publisher is a party in a publishing role
+-- (document_publishers); a funder, a channel or an operator is the same party
+-- in another role. A party's names are rows of party_names, one per form as
+-- printed, with exactly one preferred form in force; the party row carries
+-- no name of its own.
 -- ---------------------------------------------------------------------------
 
-CREATE TABLE publishers (
-    publisher_id TEXT PRIMARY KEY,
-    name TEXT NOT NULL,
+CREATE TABLE parties (
+    party_id TEXT PRIMARY KEY,
     authority_category TEXT,
     country TEXT,
     notes TEXT
 );
+
+CREATE TABLE party_names (
+    name_row_id TEXT PRIMARY KEY,
+    party_id TEXT NOT NULL REFERENCES parties (party_id),
+    name TEXT NOT NULL CHECK (length(trim(name)) > 0),
+    form_type TEXT NOT NULL,
+    language TEXT,
+    -- The justification: the document or the line the form was read from.
+    document_id TEXT REFERENCES documents (document_id),
+    line_id TEXT REFERENCES lines (line_id),
+    recorded_at TEXT NOT NULL,
+    decided_by TEXT NOT NULL,
+    status TEXT NOT NULL,
+    supersedes TEXT UNIQUE REFERENCES party_names (name_row_id),
+    notes TEXT,
+    CHECK (document_id IS NOT NULL OR line_id IS NOT NULL)
+);
+
+-- ---------------------------------------------------------------------------
+-- Documents, publications, retrievals, snapshots
+-- ---------------------------------------------------------------------------
 
 CREATE TABLE documents (
     document_id TEXT PRIMARY KEY,
@@ -148,11 +177,14 @@ CREATE TABLE documents (
     notes TEXT
 );
 
+-- A joint publication is one row per party. name_row_id is the form of the
+-- party's name this document prints, which is what a page shows beside it.
 CREATE TABLE document_publishers (
     document_id TEXT NOT NULL REFERENCES documents (document_id),
-    publisher_id TEXT NOT NULL REFERENCES publishers (publisher_id),
+    party_id TEXT NOT NULL REFERENCES parties (party_id),
     role TEXT,
-    PRIMARY KEY (document_id, publisher_id)
+    name_row_id TEXT REFERENCES party_names (name_row_id),
+    PRIMARY KEY (document_id, party_id)
 );
 
 CREATE TABLE snapshots (
@@ -220,14 +252,6 @@ CREATE TABLE projects (
     classified_at TEXT,
     sector TEXT,
     notes TEXT
-);
-
-CREATE TABLE parties (
-    party_id TEXT PRIMARY KEY,
-    name TEXT NOT NULL,
-    kind TEXT,
-    country TEXT,
-    publisher_id TEXT REFERENCES publishers (publisher_id)
 );
 
 CREATE TABLE assets (
@@ -477,9 +501,10 @@ UNION ALL SELECT 'sector_crosswalk', crosswalk_row_id FROM sector_crosswalk_in_f
 UNION ALL SELECT 'perimeters', perimeter_row_id FROM perimeters_in_force
 UNION ALL SELECT 'marker_coefficients', coefficient_row_id FROM marker_coefficients_in_force;
 
--- Every identifier a typed reference (kind, id) may point to.
+-- Every identifier a typed reference (kind, id) may point to. A publisher is
+-- a party that publishes at least one document.
 CREATE VIEW ledger_identities AS
-          SELECT 'publisher' AS kind, publisher_id AS id FROM publishers
+          SELECT 'publisher' AS kind, party_id AS id FROM document_publishers
 UNION ALL SELECT 'document', document_id FROM documents
 UNION ALL SELECT 'retrieval', retrieval_id FROM retrievals
 UNION ALL SELECT 'snapshot', sha256 FROM snapshots
@@ -501,7 +526,9 @@ VALUES ('publisher'), ('document'), ('retrieval'), ('snapshot'), ('line'),
 -- Closed lists: each value must be a term in force of the named list.
 CREATE VIEW violation_closed_list AS
 WITH ref (tbl, col, list, value) AS (
-              SELECT 'publishers', 'authority_category', 'authority_category', authority_category FROM publishers
+              SELECT 'parties', 'authority_category', 'authority_category', authority_category FROM parties
+    UNION ALL SELECT 'party_names', 'form_type', 'form_type', form_type FROM party_names
+    UNION ALL SELECT 'party_names', 'status', 'decision_status', status FROM party_names
     UNION ALL SELECT 'documents', 'document_type', 'document_type', document_type FROM documents
     UNION ALL SELECT 'document_publishers', 'role', 'role', role FROM document_publishers
     UNION ALL SELECT 'retrievals', 'status', 'retrieval_status', status FROM retrievals
@@ -632,3 +659,29 @@ SELECT 'terms ' || term_row_id || ': mapping ' || mapping_relation
        || ' names no external scheme or URI'
 FROM terms
 WHERE mapping_relation <> 'local' AND (external_scheme IS NULL OR external_uri IS NULL);
+
+-- A party's name forms are revised by supersession; a form is in force when
+-- it is the accepted terminal row of its chain.
+CREATE VIEW party_names_in_force AS
+SELECT n.*
+FROM party_names AS n
+WHERE n.status = 'accepted'
+  AND NOT EXISTS (SELECT 1 FROM party_names AS s WHERE s.supersedes = n.name_row_id);
+
+-- Exactly one preferred name form in force per party.
+CREATE VIEW violation_party_preferred_name AS
+SELECT 'parties ' || p.party_id || ': ' || count(n.name_row_id)
+       || ' preferred name forms in force, expected exactly one' AS detail
+FROM parties AS p
+LEFT JOIN party_names_in_force AS n
+       ON n.party_id = p.party_id AND n.form_type = 'preferred'
+GROUP BY p.party_id
+HAVING count(n.name_row_id) <> 1;
+
+-- The name form a publication shows is a form of that publication's party.
+CREATE VIEW violation_publication_name_form AS
+SELECT 'document_publishers ' || d.document_id || ' / ' || d.party_id
+       || ': name form ' || d.name_row_id || ' belongs to party ' || n.party_id AS detail
+FROM document_publishers AS d
+JOIN party_names AS n ON n.name_row_id = d.name_row_id
+WHERE n.party_id <> d.party_id;

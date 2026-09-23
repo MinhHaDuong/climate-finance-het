@@ -84,15 +84,15 @@ The tables are those of the storage contract's section 1 ([`jetp-ledger-storage.
 this section; their column lists live there and are not repeated here. Paths are
 repository-relative, and canonical CSV tables are under `data/jetp/` unless
 shown otherwise. A table too large for the repository's file ceiling is chunked
-by country and year into `<table>/<CODE>-<year>.csv`, which stays one table.
+by country and year into `<table>.d/<CODE>-<year>.csv`, which stays one table.
 
 | Store | Location | Authority |
 |---|---|---|
-| Publishers, documents, publication roles | `publishers.csv`, `documents.csv`, `document-publishers.csv` | Git; publication is a relation, not a column |
+| Parties and their name forms, documents, publication roles | `parties.csv`, `party-names.csv`, `documents.csv`, `document-publishers.csv` | Git; publication is a relation, not a column; a publisher is a party in a publishing role |
 | Retrievals and snapshots | `retrievals.csv`, `snapshots.csv` | Git; one row per fetch attempt, one per fingerprint |
 | Original document bytes | `data/jetp/documents/objects/<prefix>/<sha256>.<ext>` | Immutable bytes; `documents.dvc` pointer in Git, archive on padme |
 | Lines and their verbatim fields | `lines.csv`, `line-fields/<document_id>.csv`, `line-field-specs.csv` | Git; the first-class unit, its locator and ordinal, and the publisher's own columns validated against their spec |
-| Identities | `projects.csv`, `assets.csv`, `agreements.csv`, `parties.csv`, `perimeters.csv` | Git; minted only by a reviewed match, never by ingestion |
+| Identities | `projects.csv`, `assets.csv`, `agreements.csv`, `perimeters.csv`, and `parties.csv` above | Git; minted only by a reviewed match, never by ingestion, except a publisher, which the document register mints |
 | Reviewed matches and relations | `line-referents.csv`, `relations.csv` | Git; dated, defeasible decisions with method, confidence and evidence lines |
 | Observations and their dates | `observations.csv`, `timings.csv` | Git; one statement per row citing one line, one timing row per date role |
 | External identifiers | `external-ids.csv` | Git; another register's code, typed by scheme |
@@ -167,9 +167,9 @@ Three identity kinds replace the former single `entity` registry. A **project**
 is an undertaking with a scope, an owner and a duration. An **asset** is a
 physical thing at a site, and may be a unit `part_of` a plant. An **agreement**
 is funder-side money: a party commits an amount under an instrument to a
-counterparty. **Party** and **perimeter** complete the registries; a party may
-also be a publisher, and the two registries share an organisation identifier
-when it is. A project's classification stays a dated assertion with values
+counterparty. **Party** and **perimeter** complete the registries; a party is
+one organisation in any role, publisher included, with its names under
+authority control ([storage contract](jetp-ledger-storage.md) section 4). A project's classification stays a dated assertion with values
 `project`, `programme` and `component`, and a later classification does not
 change observation keys; containment is a `component_of` relation, not a column.
 
@@ -196,7 +196,7 @@ with the decision columns above:
 
 | Relation | From | To | Meaning |
 |---|---|---|---|
-| `published_by` | document | publisher | many-to-many; role optional |
+| `published_by` | document | party | many-to-many; role optional |
 | `edition_of` | document | document | succession |
 | `same_as` (document) | document | document | one publication, two URLs; lines belong to the canonical one |
 | `translation_of` | document | document | lines extracted from one language only |
@@ -704,7 +704,7 @@ counts are those of 2026-09-22.
 
 | Current | Rows | Target | Notes |
 |---|---|---|---|
-| `sources.csv` | 301 | 103 publishers, 301 documents, 301 publications | joint publications added by review, none derivable from the free text |
+| `sources.csv` | 301 | 101 parties with 103 name forms, 301 documents, 304 publications | case variants merged at minting; three joint publisher texts split into two parties each |
 | `manifest.csv` | 314 | 314 retrievals, 264 snapshots | 41 failed retrievals carry no snapshot; 9 snapshots are yielded by two retrievals |
 | `projects.csv` ZAF register | 257 | 257 lines of the Q1 2026 register, `register_allocation`; 257 agreements minted by basis `register_row`; projects only where the reviewed name match holds | the status letter becomes `own_status`, axis delivery |
 | `projects.csv` VNM count slots | 21 | 1 perimeter, 2 observations of measure `count` (7 initial, 17 screened) citing the portfolio lines | routes for the 21 slot identifiers point at the perimeter |
@@ -731,9 +731,10 @@ Order of work, each step a ticket with its own byte-level check:
    tab is the check: same rows, same order, same fields.
 3. Lines for the remaining documents: plan-projects, portfolio, pilot, claims.
 4. Identity split: referents, routes, the five identity tables, every old
-   identifier resolving through `routes`. The party table is built here at its
-   minimum shape, identifier, name, kind, country and optional IATI
-   organisation identifier, with `party_in` carrying the role. The 61 funder
+   identifier resolving through `routes`. The party table, started by step 1
+   with the publishers, gains the funders and channels here, each with its
+   name forms and its external identifiers, with `party_in` carrying the
+   role. The 61 funder
    strings and the register's 14 funder prefixes are adjudicated into funder and
    channel roles now; the other roles are filled as their lines are reviewed. A
    party is minted from a line like every other identity.
