@@ -267,8 +267,9 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.split('\n\n')[0])
     parser.add_argument('--ledger-dir', type=Path, default=LEDGER_DIR,
                         help='directory holding sources.csv and manifest.csv')
-    parser.add_argument('--output-dir', type=Path,
-                        help='ledger directory to write the tables to (default: --ledger-dir)')
+    parser.add_argument('--output-dir', type=Path, required=True,
+                        help='ledger directory to write the tables to (data/jetp to '
+                             'rewrite the committed record)')
     parser.add_argument('--documents-root', type=Path,
                         help='snapshot store to read languages from (data/jetp/documents)')
     args = parser.parse_args(argv)
@@ -277,7 +278,7 @@ def main(argv=None):
     languages = detect_languages(manifest, args.documents_root) if args.documents_root else {}
     schema = load_schema()
     for table, rows in reconstruct(sources, manifest, languages).items():
-        for path in write_table(args.output_dir or args.ledger_dir, table, rows, schema=schema):
+        for path in write_table(args.output_dir, table, rows, schema=schema):
             log.info('%s: %d rows', path, len(rows))
     return 0
 
