@@ -198,6 +198,10 @@ def test_python_in_force_rule_matches_the_ddl_views(tmp_path):
     (lambda t: t['terms'].append(_term('pipeline', 'delivery', 'Twice.', '2026-02-01',
                                        row=9)),
      'more than one row in force'),
+    # A revision recorded before the row it supersedes (2026-03-01 -> 2025-12-01).
+    (lambda t: t['terms'][4].update(recorded_at='2025-12-01'),
+     'terms line_classification.named_item.2: recorded_at 2025-12-01 is before '
+     'that of the row it supersedes, line_classification.named_item.1'),
     (lambda t: t['lines'][0].update(classification='programme'),
      "lines.classification = 'programme'"),
 ])
