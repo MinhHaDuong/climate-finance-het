@@ -1,5 +1,15 @@
 # JETP backend: evidence, reported positions and reconciled accounts
 
+**Terminology note (2026-09-23).** This document predates the ODEM language
+of [`jetp-ontology.md`](jetp-ontology.md) section 0, which governs where the two
+differ. Read *evidence* (a link, a layer, a table of documentary support) as
+**justification**, and *evidence cutoff* as **knowledge cutoff**; *model* (of the
+data) as **schema**; *reconciliation* as **matching** for identities or
+**account** for the balance computation; *edition* of the ledger or site as
+**release**; *layer*, *stage* and *fact* as the pipeline **steps D1 to D4** and
+**observations**. In ODEM terms the observatory is Data guided by Ontology,
+Evidence is computed on top, and there is no Model.
+
 **Revision note (2026-09-22).** [`jetp-ontology.md`](jetp-ontology.md) is now
 the reference for the vocabulary, the storage contract and the migration.
 Sections 2 to 4 and 9 below were rewritten against it, and sections 5 and 8
