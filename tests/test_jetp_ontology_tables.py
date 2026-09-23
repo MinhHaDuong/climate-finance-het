@@ -329,6 +329,15 @@ def test_the_alignment_check_fails_on_a_new_value_without_a_term(terms):
     assert unlisted_values(grown, terms, ledger_headers.load_schema()) == ['pooled_item']
 
 
+def test_the_alignment_check_sees_country_codes(terms):
+    """Uppercase codes count: dropping the ZAF term leaves the spec's `ZAF` unlisted."""
+    text = ONTOLOGY_DOC.read_text(encoding='utf-8')
+    assert '`ZAF`' in _sections(text, 2, 4)
+    without = [t for t in terms if not (t['list'] == 'country' and t['term_id'] == 'ZAF')]
+    assert len(without) == len(terms) - 1
+    assert unlisted_values(text, without, ledger_headers.load_schema()) == ['ZAF']
+
+
 def test_the_line_classification_list_is_the_terms_list(terms):
     text = ONTOLOGY_DOC.read_text(encoding='utf-8')
     listed = set(_list_block(text, 'from a closed list:\n\n'))
