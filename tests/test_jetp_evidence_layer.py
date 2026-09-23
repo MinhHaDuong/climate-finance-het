@@ -21,6 +21,7 @@ import pytest
 from jetp import _ledger_headers as ledger_headers
 from jetp import build_evidence_layer as evidence
 from jetp import build_ledger as ledger_build
+from jetp._evidence_layer_rules import joint_forms
 from jetp.build_observatory import documents_data, retrieval_registry
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -299,7 +300,7 @@ def test_the_committed_layer_matches_its_inputs():
     forms = {row[2] for row in names}
     for text in {r['publisher'] for r in sources}:
         if text in evidence.JOINT_LABELS:
-            parts = set(evidence.JOINT_LABELS[text])
+            parts = set(joint_forms(evidence.JOINT_LABELS[text]))
         else:
             publisher, writer, _ = evidence.split_label(text, evidence.WRITERS)
             parts = {publisher}
@@ -310,7 +311,12 @@ def test_the_committed_layer_matches_its_inputs():
         1 for r in sources if r['publisher'] not in evidence.JOINT_LABELS
         and (writer := evidence.split_label(r['publisher'], evidence.WRITERS)[1])
         and evidence.WRITERS[writer] == 'firm')
-    assert len(publications) == len(sources) + len(evidence.JOINT_LABELS) + firm_written
+    # Each joint text contributes one publication row per part, not one flat
+    # row: a text split three ways (a commissioner between two authors) adds
+    # two rows beyond the base, not one.
+    joint_extra = sum(len(joint_forms(parts)) - 1
+                      for parts in evidence.JOINT_LABELS.values())
+    assert len(publications) == len(sources) + joint_extra + firm_written
     assert evidence.reconstruct(sources, manifest)['parties'] == [
         dict(zip(schema.header('parties'), row)) for row in
         ledger_headers.read_table(ledger, 'parties', schema)[0]]
