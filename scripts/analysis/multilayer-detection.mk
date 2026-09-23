@@ -5,7 +5,7 @@
 # Include from the main Makefile:  -include scripts/analysis/multilayer-detection.mk
 #
 # Targets:
-#   figures-companion  — build the three embedded PNGs
+#   companion-figures — build the three embedded PNGs
 #
 # Inputs (ticket 0042 rerun outputs; produced by divergence-summary):
 #   $(COMP_TABLES)/tab_summary_{S2_energy,L1,G9_community,G2_spectral}.csv
@@ -82,8 +82,7 @@ $(COMP_FIGS)/fig_companion_community.png: \
 companion-figures: \
     $(COMP_FIGS)/fig_companion_zseries.png \
     $(COMP_FIGS)/fig_companion_heatmap.png \
-    $(COMP_FIGS)/fig_companion_terms.png \
-    $(COMP_FIGS)/fig_companion_community.png
+    $(COMP_FIGS)/fig_companion_sensitivity.png
 
 # ── Sensitivity grid (ticket 0083) ──────────────────────────────────────
 $(COMP_TABLES)/tab_sensitivity_grid.csv: \
