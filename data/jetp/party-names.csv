@@ -12,18 +12,17 @@ aser.name.1,aser,ASER,preferred,,sen-aser-programmes,,2026-09-23,scripts/jetp/bu
 asian-development-bank.name.1,asian-development-bank,Asian Development Bank,preferred,,idn-adb-aicet-56140-001,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
 bmn.name.1,bmn,BMN,preferred,,sen-bmn-energy-programme,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
 boad.name.1,boad,BOAD,preferred,,sen-boad-dakar-office-2026,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
-boad-send-senelec-huawei.name.1,boad-send-senelec-huawei,BOAD / SEND Senelec Huawei,preferred,,sen-boad-ouarkhokh-esia,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
-boad-senelec.name.1,boad-senelec,BOAD / Senelec,preferred,,sen-scout-ouarkhokh-pepp,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
 british-international-investment.name.1,british-international-investment,British International Investment,preferred,,vnm-bii-vpbank-2025,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
 c40-cities-finance-facility.name.1,c40-cities-finance-facility,C40 Cities Finance Facility,preferred,,idn-project-rsud-retrofit-c40,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
 cesag.name.1,cesag,CESAG,preferred,,sen-scout-cesag-aner-thesis,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,read from the publisher text 'CESAG / Fatou Ndiaye'
 cetud.name.1,cetud,CETUD,preferred,,sen-cetud-biognv-2021,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
 climate-action-africa.name.1,climate-action-africa,Climate Action Africa,preferred,,sen-caa-aner-capacity-065,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
 climate-policy-radar.name.1,climate-policy-radar,Climate Policy Radar,preferred,,idn-cipp-2023-cpr-mirror,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
+cntic.name.1,cntic,CNTIC,preferred,,sen-scout-genertec-ouarkhokh,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,read from the joint publisher text 'Genertec International / CNTIC'
 coordinating-ministry-for-economic-affairs.name.1,coordinating-ministry-for-economic-affairs,Coordinating Ministry for Economic Affairs,preferred,,idn-cmea-progress-december-2025,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
 department-of-trade-industry-and-competition.name.1,department-of-trade-industry-and-competition,Department of Trade Industry and Competition,preferred,,zaf-dtic-parliament-nev-2025,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
 development-bank-of-southern-africa.name.1,development-bank-of-southern-africa,Development Bank of Southern Africa,preferred,,zaf-dbsa-ntcsa-transmission,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
-enercap.name.1,enercap,ENERCAP,preferred,,sen-annex8-project-analysis,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,read from the publisher text 'MEPM / ENERCAP via Vie-Publique.sn'
+enercap.name.1,enercap,ENERCAP,preferred,,sen-annex8-project-analysis,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,read from the publisher text 'MEPM / ENERCAP via Vie-Publique.sn'; read from the joint publisher text 'Senegal EITI / MEPM ENERCAP'
 energy-efficiency-in-public-buildings-and-infrastructure-programme.name.1,energy-efficiency-in-public-buildings-and-infrastructure-programme,Energy Efficiency in Public Buildings and Infrastructure Programme,preferred,,zaf-eepbip-portal,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
 european-commission.name.1,european-commission,European Commission,preferred,,sen-eu-portal,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
 european-external-action-service.name.1,european-external-action-service,European External Action Service,preferred,,vnm-eeas-jetp-project-progress-2025,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
@@ -35,7 +34,6 @@ fondation-energies-pour-le-monde.name.1,fondation-energies-pour-le-monde,Fondati
 foreign-commonwealth-and-development-office.name.1,foreign-commonwealth-and-development-office,Foreign Commonwealth and Development Office,preferred,,zaf-fcdo-jetp-programme-301523,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
 frontier-rare-earths.name.1,frontier-rare-earths,Frontier Rare Earths,preferred,,zaf-zandkopsdrift-operator,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
 genertec-international.name.1,genertec-international,Genertec International,preferred,,sen-genertec-ouarkhokh-chinese-2026,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
-genertec-international-cntic.name.1,genertec-international-cntic,Genertec International / CNTIC,preferred,,sen-scout-genertec-ouarkhokh,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
 giz.name.1,giz,GIZ,preferred,,sen-giz-ped2-2024,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
 glasgow-financial-alliance-for-net-zero.name.1,glasgow-financial-alliance-for-net-zero,Glasgow Financial Alliance for Net Zero,preferred,,idn-gfanz-saguling-2025,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
 global-energy-alliance-for-people-and-planet.name.1,global-energy-alliance-for-people-and-planet,Global Energy Alliance for People and Planet,preferred,,idn-geapp-diesel-replacement-program,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
@@ -65,8 +63,8 @@ mrv-energie.name.1,mrv-energie,MRV Energie,preferred,,sen-mrv-350-villages,,2026
 national-transmission-company-south-africa.name.1,national-transmission-company-south-africa,National Transmission Company South Africa,preferred,,zaf-ntcsa-transmission-plans,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
 nrgi.name.1,nrgi,NRGI,preferred,,sen-nrgi-jetp-feasibility-2026,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
 oecd-cefim-programme.name.1,oecd-cefim-programme,OECD CEFIM Programme,preferred,,idn-jetp-guarantees-insurance-2025,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
+off-grid-africa.name.1,off-grid-africa,Off-Grid Africa,preferred,,sen-offgrid-mini-grid-2025,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,read from the joint publisher text 'Off-Grid Europe / Off-Grid Africa'
 off-grid-europe.name.1,off-grid-europe,Off-Grid Europe,preferred,,sen-offgrid-africool-mou-2025,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
-off-grid-europe-off-grid-africa.name.1,off-grid-europe-off-grid-africa,Off-Grid Europe / Off-Grid Africa,preferred,,sen-offgrid-mini-grid-2025,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
 omvg.name.1,omvg,OMVG,preferred,,sen-omvg-energy-portal,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
 omvg-projet-energie.name.1,omvg-projet-energie,OMVG Projet Energie,preferred,,sen-omvg-project-contact,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
 pln-nusantara-power.name.1,pln-nusantara-power,PLN Nusantara Power,preferred,,idn-project-sutami-construction-plnnp-2026,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
@@ -79,14 +77,16 @@ reuters.name.1,reuters,Reuters,preferred,,idn-news-cirebon-retirement-reuters-20
 rts.name.1,rts,RTS,preferred,,sen-rts-huawei-mou-2026,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
 seg-solar.name.1,seg-solar,SEG Solar,preferred,,idn-project-seg-construction-2024,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
 semis.name.1,semis,SEMIS,preferred,,sen-semis-storage-study,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
+send-senelec-huawei.name.1,send-senelec-huawei,SEND Senelec Huawei,preferred,,sen-boad-ouarkhokh-esia,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,read from the joint publisher text 'BOAD / SEND Senelec Huawei'
 senegal-budget-ministry.name.1,senegal-budget-ministry,Senegal budget ministry,preferred,,sen-scout-puelec-pip-2026,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
-senegal-eiti-mepm-enercap.name.1,senegal-eiti-mepm-enercap,Senegal EITI / MEPM ENERCAP,preferred,,sen-investment-plan-annex8-official,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
+senegal-eiti.name.1,senegal-eiti,Senegal EITI,preferred,,sen-investment-plan-annex8-official,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,read from the joint publisher text 'Senegal EITI / MEPM ENERCAP'
 senegal-mepm.name.1,senegal-mepm,Senegal MEPM,preferred,,sen-mepm-cntic-huawei-contracts-2025,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
 senego.name.1,senego,Senego,preferred,,sen-senego-mobilised-2026,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
 senelec.name.1,senelec,Senelec,preferred,,sen-diass-groundbreaking-2026,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
 senelec.name.2,senelec,SENELEC,spelling_or_case_variant,,sen-senelec-agpm-2026-contact,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
+senelec-cfpp.name.1,senelec-cfpp,Senelec CFPP,preferred,,sen-uasz-vev-thesis-2024,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,read from the joint publisher text 'UASZ / Senelec CFPP'
 swedfund.name.1,swedfund,Swedfund,preferred,,sen-swedfund-biofuels,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
-uasz-senelec-cfpp.name.1,uasz-senelec-cfpp,UASZ / Senelec CFPP,preferred,,sen-uasz-vev-thesis-2024,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
+uasz.name.1,uasz,UASZ,preferred,,sen-uasz-vev-thesis-2024,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,read from the joint publisher text 'UASZ / Senelec CFPP'
 uk-cop26-presidency.name.1,uk-cop26-presidency,UK COP26 Presidency,preferred,,zaf-jetp-leaders-midyear-2022,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
 united-tractors.name.1,united-tractors,United Tractors,preferred,,idn-project-legok-agreement-ut-2024,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,
 vemar.name.1,vemar,VEMAR,preferred,,sen-vemar-fass-ngom,,2026-09-23,scripts/jetp/build_evidence_layer.py,accepted,,

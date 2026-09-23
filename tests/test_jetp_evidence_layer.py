@@ -137,6 +137,39 @@ def test_a_joint_publisher_text_links_the_document_to_each_party(tables):
     assert party['authority_category'] == 'bilateral_funder'
 
 
+# A joint text split three ways: a commissioner ministry between two authors
+# (follow-up to ticket 0872, author's decision of 2026-09-23: both parts of an
+# "X / Y" text are organisations and neither is marked a consultant, so the
+# text is joint publishers, not one party; a part may be tagged with a role
+# other than the joint default of author).
+ROLE_JOINT_SOURCES = [
+    _source('sen-annex8-role', 'SEN', 'national_government',
+            'Senegal EITI / MEPM ENERCAP', 'investment_plan', 'Annex 8'),
+]
+ROLE_JOINT_LABELS = {
+    'Senegal EITI / MEPM ENERCAP': (
+        'Senegal EITI', ('MEPM', 'commissioner'), ('ENERCAP', 'author')),
+}
+
+
+@pytest.fixture
+def role_tagged():
+    return evidence.reconstruct(ROLE_JOINT_SOURCES, [], joint_publications={}, mirrors={},
+                                joint_labels=ROLE_JOINT_LABELS, name_candidates=(),
+                                part_attributes={}, writers={})
+
+
+def test_a_joint_text_may_tag_one_part_with_a_different_role(role_tagged):
+    assert _roles(role_tagged, 'sen-annex8-role') == {
+        'senegal-eiti': 'author', 'mepm': 'commissioner', 'enercap': 'author'}
+
+
+def test_an_untagged_joint_part_without_review_attributes_is_left_for_review(role_tagged):
+    (party,) = [p for p in role_tagged['parties'] if p['party_id'] == 'senegal-eiti']
+    assert party['authority_category'] is None
+    assert 'set by review' in party['notes']
+
+
 def test_an_acronym_beside_its_expansion_is_a_candidate_not_a_merge(tables):
     assert {'afd', 'agence-francaise-de-developpement'} <= {
         p['party_id'] for p in tables['parties']}

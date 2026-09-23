@@ -40,6 +40,20 @@ JOINT_LABELS = {
         ('Government of Viet Nam', 'International Partners Group'),
     'JETP Indonesia Secretariat and International Energy Agency':
         ('JETP Indonesia Secretariat', 'International Energy Agency'),
+    # Both parts are organisations and nothing in the text marks one of them
+    # a consultant (review of 2026-09-23, ticket 0872 follow-up): the text is
+    # a joint publication, not a single party.
+    'BOAD / Senelec': ('BOAD', 'Senelec'),
+    'Genertec International / CNTIC': ('Genertec International', 'CNTIC'),
+    'Off-Grid Europe / Off-Grid Africa': ('Off-Grid Europe', 'Off-Grid Africa'),
+    'UASZ / Senelec CFPP': ('UASZ', 'Senelec CFPP'),
+    'BOAD / SEND Senelec Huawei': ('BOAD', 'SEND Senelec Huawei'),
+    # The official host's text repeats the ministry-authored analysis whose
+    # Vie-Publique.sn mirror text, ``MEPM / ENERCAP via Vie-Publique.sn``,
+    # already gives MEPM the commissioner role and ENERCAP the author role
+    # (``WRITERS`` below); this text keeps that split and adds the host.
+    'Senegal EITI / MEPM ENERCAP':
+        ('Senegal EITI', ('MEPM', 'commissioner'), ('ENERCAP', 'author')),
 }
 
 # Second parts of ``X / Y`` publisher texts reviewed as the document's writer:

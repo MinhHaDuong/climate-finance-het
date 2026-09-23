@@ -220,7 +220,8 @@ sen-afd-diass-storage,afd,author,afd.name.1
 sen-senelec-thies-touba-par,senelec,author,senelec.name.1
 sen-annex8-project-analysis,mepm,commissioner,mepm.name.1
 sen-annex8-project-analysis,enercap,author,enercap.name.1
-sen-offgrid-mini-grid-2025,off-grid-europe-off-grid-africa,author,off-grid-europe-off-grid-africa.name.1
+sen-offgrid-mini-grid-2025,off-grid-europe,author,off-grid-europe.name.1
+sen-offgrid-mini-grid-2025,off-grid-africa,author,off-grid-africa.name.1
 sen-bmn-energy-programme,bmn,author,bmn.name.1
 sen-pnb-programme,pnb-sn,author,pnb-sn.name.1
 sen-cetud-biognv-2021,cetud,author,cetud.name.1
@@ -228,7 +229,8 @@ sen-aser-programmes,aser,author,aser.name.1
 sen-mha-sambangalou,mha,author,mha.name.1
 sen-vemar-fass-ngom,vemar,author,vemar.name.1
 sen-senelec-saloum-tender-2026,senelec,author,senelec.name.1
-sen-uasz-vev-thesis-2024,uasz-senelec-cfpp,author,uasz-senelec-cfpp.name.1
+sen-uasz-vev-thesis-2024,uasz,author,uasz.name.1
+sen-uasz-vev-thesis-2024,senelec-cfpp,author,senelec-cfpp.name.1
 sen-semis-storage-study,semis,author,semis.name.1
 sen-energy-compact-2025,government-of-senegal,author,government-of-senegal.name.1
 sen-aner-magazine-2026,aner,author,aner.name.1
@@ -245,7 +247,9 @@ sen-pnb-biogas-model,pnb-sn,author,pnb-sn.name.1
 sen-pnb-financing-partners,pnb-sn,author,pnb-sn.name.1
 sen-aner-gandiaye-tender-2020,aner,author,aner.name.1
 sen-afd-arescaleup-2025,afd,author,afd.name.1
-sen-investment-plan-annex8-official,senegal-eiti-mepm-enercap,author,senegal-eiti-mepm-enercap.name.1
+sen-investment-plan-annex8-official,senegal-eiti,author,senegal-eiti.name.1
+sen-investment-plan-annex8-official,mepm,commissioner,mepm.name.1
+sen-investment-plan-annex8-official,enercap,author,enercap.name.1
 sen-irve-framework-tender-2026,mepm,author,mepm.name.1
 sen-caa-aner-capacity-065,climate-action-africa,author,climate-action-africa.name.1
 sen-mha-water-compact-2026,mha,author,mha.name.1
@@ -255,7 +259,8 @@ sen-kasofor-afd,afd,author,afd.name.1
 sen-kasofor-fondem,fondation-energies-pour-le-monde,author,fondation-energies-pour-le-monde.name.1
 sen-giz-ped2-2024,giz,author,giz.name.1
 sen-artelia-thiestouba-gbif,artelia,author,artelia.name.1
-sen-boad-ouarkhokh-esia,boad-send-senelec-huawei,author,boad-send-senelec-huawei.name.1
+sen-boad-ouarkhokh-esia,boad,author,boad.name.1
+sen-boad-ouarkhokh-esia,send-senelec-huawei,author,send-senelec-huawei.name.1
 sen-mrv-350-villages,mrv-energie,author,mrv-energie.name.1
 sen-senelec-huawei-mou-social,senelec,author,senelec.name.1
 sen-rts-huawei-mou-2026,rts,author,rts.name.1
@@ -270,8 +275,10 @@ sen-scout-giz-ped2-project,giz,author,giz.name.1
 sen-scout-clean-cooking-strategy,senegal-mepm,author,senegal-mepm.name.1
 sen-scout-ouarkhokh-par,boad,commissioner,boad.name.1
 sen-scout-ouarkhokh-par,pyramide-environmental-consultants,author,pyramide-environmental-consultants.name.1
-sen-scout-ouarkhokh-pepp,boad-senelec,author,boad-senelec.name.1
-sen-scout-genertec-ouarkhokh,genertec-international-cntic,author,genertec-international-cntic.name.1
+sen-scout-ouarkhokh-pepp,boad,author,boad.name.1
+sen-scout-ouarkhokh-pepp,senelec,author,senelec.name.1
+sen-scout-genertec-ouarkhokh,genertec-international,author,genertec-international.name.1
+sen-scout-genertec-ouarkhokh,cntic,author,cntic.name.1
 sen-scout-aner-fiches-ice,aner,author,aner.name.1
 sen-scout-cesag-aner-thesis,cesag,commissioner,cesag.name.1
 sen-senelec-ppm-2026-v2,senelec,author,senelec.name.2
