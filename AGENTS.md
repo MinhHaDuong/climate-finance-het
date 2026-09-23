@@ -1,6 +1,6 @@
 # AI Agent Guidelines for Climate Finance History Project
 
-> `CLAUDE.md` contains only `@AGENTS.md` — do not modify it (enforced by pre-commit hook).
+> No `CLAUDE.md` here: Claude Code (2.1.277+) loads this file natively, plus the parent `~/CNRS/AGENTS.md`. Do not add a `CLAUDE.md` or `.claude/CLAUDE.md`; either one disables that fallback (enforced by pre-commit hook).
 
 The generic workflow lives in the harness rules (`~/.claude/rules/`) and skill
 catalog; project rules in `.claude/rules/` load when you touch the files they
