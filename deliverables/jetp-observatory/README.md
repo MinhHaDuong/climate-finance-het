@@ -50,9 +50,14 @@ three sections.
   publisher, with the date.
 - **About** (`#about`): **Glossary**, the words the pages use, grouped by
   theme (what we track, how documents are read, statuses, measures,
-  relations) and alphabetical within each group. It is a first, hand-written
-  list until the Glossary generated from the ledger's term tables (ticket
-  0882). **Methods**: what was done, what the observatory does not do, and
+  relations) and alphabetical within each group, generated from the ledger's
+  term tables (ticket 0882): each term in force with its definition, its
+  external scheme and SKOS relation, and the rows it superseded; a relation
+  shows the classes it connects, a shared status the publishers' own words
+  the status crosswalk maps to it. The five ontology tables are served one
+  file each under `data/ontology/`, empty ones included, by
+  `scripts/jetp/build_ontology_views.py` (`make jetp-ontology-views`). A term
+  shown elsewhere links to `#glossary?term=<list>/<term_id>`. **Methods**: what was done, what the observatory does not do, and
   the downloads; the release history is linked from here. **Who we are**:
   the author's own text, from his published homepage bio, with links to his
   homepage and ORCID.
