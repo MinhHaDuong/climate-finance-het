@@ -32,7 +32,9 @@ without naming them, in the vocabulary of
   `#inventory/<CODE>`) → **On the record** (`#evidence`,
   `#inventory/<CODE>?tab=record`) → **Projects** (`#projects`,
   `#project/<project_id>`), **Funding** (`#countries`, `#country/<CODE>`) and
-  **Who's who** (`#whos-who`). Every page of the trail shows its step and links
+  **Who's who** (`#whos-who`: funders and operators as the project documents
+  spell them, not yet matched to one another — that is the parties table of
+  ticket 0875). Every page of the trail shows its step and links
   one step toward the documents and one toward the projects, keeping the
   country where it has one.
 - **By the numbers** (`#numbers`, with `#comparison`): every count we computed,

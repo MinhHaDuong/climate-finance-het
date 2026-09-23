@@ -1362,12 +1362,12 @@ function markNav(target) {
   });
 }
 function pageTitle(page, id, params) {
-  const name = country(id)?.name || id;
+  const name = country(id)?.name;
   return (
     (page === "country"
       ? name || "Country"
       : page === "inventory"
-        ? `${name}: ${params.get("tab") === "record" ? "on the record" : "entries"}`
+        ? `${name || "Country"}: ${params.get("tab") === "record" ? "on the record" : "entries"}`
         : TITLES[page] || TITLES.methods) + " · JETP Observatory"
   );
 }

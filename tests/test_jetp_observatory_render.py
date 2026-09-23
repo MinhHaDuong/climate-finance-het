@@ -448,6 +448,12 @@ def test_a_country_read_from_the_address_cannot_inject_markup_into_the_trail() -
     assert "<img" not in trail, trail
     # An unknown country is no country: the trail falls back to the whole site.
     assert 'href="#entries"' in trail and 'href="#evidence"' in trail, trail
+    # And the links are escaped even for a code the site knows, so the guard
+    # is not the escaping's only line of defence (round 2 of the review).
+    known = json.dumps(payload)
+    escaped = render("overview", {}, f"overview.countries.push({{code: {known}}}), "
+                                     f"trail('D2', {known})")["eval"]
+    assert "<img" not in escaped and "&lt;img" in escaped, escaped
 
 
 def test_an_item_on_the_record_reads_according_to_its_publisher_with_the_date() -> None:
