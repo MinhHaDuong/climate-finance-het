@@ -54,8 +54,8 @@ three sections.
   list until the Glossary generated from the ledger's term tables (ticket
   0882). **Methods**: what was done, what the observatory does not do, and
   the downloads; the release history is linked from here. **Who we are**:
-  the author's name, affiliation and ORCID, and a paragraph the author has
-  yet to write.
+  the author's own text, from his published homepage bio, with links to his
+  homepage and ORCID.
 
 Breadcrumbs appear on detail pages only. The title block is an h1 and a
 one-sentence lede, with the page's longer explanation folded under "About

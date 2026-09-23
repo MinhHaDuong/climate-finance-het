@@ -703,15 +703,31 @@ def test_methods_is_canonical_and_nothing_forwards_in_a_circle() -> None:
         assert len(chain) <= 2, (old, chain)
 
 
-def test_who_we_are_invents_nothing() -> None:
+# The author's own text for Who we are (supplied 2026-09-23, from his
+# homepage bio), kept as written: the page carries these paragraphs, these
+# two links, and nothing else about him — no phone, postal or e-mail address.
+WHO_WE_ARE = [
+    "The JETP Observatory is a research project of Minh Ha-Duong, Directeur de Recherche at CNRS, "
+    "working at CIRED (Centre international de recherche sur l'environnement et le développement) "
+    "near Paris.",
+    "He works on energy, climate change, society, economics and uncertainty. He was a lead author of "
+    "the IPCC's Fourth and Fifth Assessment Reports, founded the Vietnam Initiative for the Energy "
+    "Transition (VIET) in 2018, and set up the Clean Energy and Sustainable Development lab at the "
+    "University of Science and Technology of Hanoi in 2014.",
+    "The observatory reads what the four partnerships and their funders publish, archives every "
+    "document it relies on, and shows how each figure was reached. Its data and code are open.",
+    "Homepage: https://minh.haduong.com · ORCID: https://orcid.org/0000-0001-9988-2100",
+]
+
+
+def test_who_we_are_is_the_authors_text_and_nothing_else() -> None:
     main = render("who-we-are")["main"]
-    text = re.sub(r"\s+", " ", text_of(main))
-    assert "Minh Ha-Duong, CNRS" in text
-    assert 'href="https://orcid.org/0000-0001-9988-2100"' in main
-    assert re.search(r'data-placeholder="author"', main)
-    # Only the ORCID leaves the site: no invented contact, repository or funder.
-    assert re.findall(r'href="(https?://[^"]+)"', main) == ["https://orcid.org/0000-0001-9988-2100"]
-    assert "@" not in text
+    paragraphs = [re.sub(r"\s+", " ", unescape(re.sub(r"<[^>]+>", "", p))).strip()
+                  for p in re.findall(r"<p[^>]*>(.*?)</p>", main, re.DOTALL)]
+    assert paragraphs == WHO_WE_ARE, paragraphs
+    assert re.findall(r'href="(https?://[^"]+)"', main) == [
+        "https://minh.haduong.com", "https://orcid.org/0000-0001-9988-2100"]
+    assert "placeholder" not in main and "@" not in text_of(main)
 
 
 @pytest.mark.parametrize("route", ["documents", "on-the-record", "entries", "whos-who",

@@ -587,7 +587,7 @@ def check_sections(page, url):
     assert page.locator('#step-bar a[data-sub]').all_text_contents() == [
         'Glossary', 'Methods', 'Who we are']
     page.locator('#step-bar a[data-sub="who-we-are"]').click()
-    page.wait_for_selector('[data-placeholder="author"]')
+    page.wait_for_selector('[data-who-we-are]')
     assert page.locator('#step-bar a[aria-current="page"]').inner_text() == 'Who we are'
     page.locator('#step-bar a[data-sub="methods"]').click()
     page.wait_for_selector('.method-list')
@@ -682,7 +682,7 @@ def check_header_menus(page, url):
     assert page.locator('#section-list').is_visible()
     page.locator('#toggle-about').click()
     page.locator('#menu-about a[data-sub="who-we-are"]').click()
-    page.wait_for_selector('[data-placeholder="author"]')
+    page.wait_for_selector('[data-who-we-are]')
     assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
     page.set_viewport_size({'width': 1440, 'height': 1100})
 

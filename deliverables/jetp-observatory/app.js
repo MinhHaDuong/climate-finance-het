@@ -1387,14 +1387,18 @@ function aboutPage() {
     header("About", "What stands behind these pages: their words, their methods and their authors.") +
     `<ol class="trail-intro">${SUB_PAGES.about.map((s) => `<li><a href="#${s.page}"><strong>${esc(s.label)}</strong></a> ${esc(ABOUT_NOTES[s.page])}</li>`).join("")}</ol>`;
 }
-/* Who we are (fourth batch): the author's name, affiliation and ORCID, and
- * a placeholder the author fills. No biography, funding or contact detail is
- * invented here. */
+/* Who we are: the author's own text, from his published homepage bio
+ * (supplied 2026-09-23 for PR #1459), kept as written, with the links he
+ * gave. No phone or postal address. */
 function whoWeArePage() {
   main.innerHTML =
-    header("Who we are", "The JETP Observatory is a research project, and its data and code are open.") +
-    `<p>Minh Ha-Duong, CNRS · <a href="https://orcid.org/0000-0001-9988-2100" target="_blank" rel="noopener">ORCID 0000-0001-9988-2100 ↗</a></p>` +
-    `<p class="callout" data-placeholder="author"><strong>Placeholder, for the author to write.</strong> This paragraph is left empty on purpose until the author supplies it.</p>`;
+    header(
+      "Who we are",
+      "The JETP Observatory is a research project of Minh Ha-Duong, Directeur de Recherche at CNRS, working at CIRED (Centre international de recherche sur l'environnement et le développement) near Paris.",
+    ) +
+    `<div class="who-we-are" data-who-we-are><p>He works on energy, climate change, society, economics and uncertainty. He was a lead author of the IPCC's Fourth and Fifth Assessment Reports, founded the Vietnam Initiative for the Energy Transition (VIET) in 2018, and set up the Clean Energy and Sustainable Development lab at the University of Science and Technology of Hanoi in 2014.</p>` +
+    `<p>The observatory reads what the four partnerships and their funders publish, archives every document it relies on, and shows how each figure was reached. Its data and code are open.</p>` +
+    `<p>Homepage: <a href="https://minh.haduong.com" target="_blank" rel="noopener">https://minh.haduong.com</a> · ORCID: <a href="https://orcid.org/0000-0001-9988-2100" target="_blank" rel="noopener">https://orcid.org/0000-0001-9988-2100</a></p></div>`;
 }
 function methodsPage() {
   main.innerHTML =
