@@ -687,6 +687,29 @@ def check_header_menus(page, url):
     page.set_viewport_size({'width': 1440, 'height': 1100})
 
 
+def check_glossary(page, url):
+    """The generated Glossary (ticket 0882): one entry per term in force, and a
+    link to a term opens its entry, marked and scrolled into view. The click
+    from a publisher's status word needs status-crosswalk rows, which ticket
+    0876 writes; its live check is recorded there."""
+    terms = page.request.get(url + '/data/ontology/terms.json').json()
+    page.goto(url + '/#glossary')
+    page.wait_for_selector('[data-glossary-group]')
+    assert page.locator('dl.glossary > dt').count() == len(terms['in_force'])
+    finances = page.locator('dt[data-term="relation/finances"] + dd')
+    finances.locator('[data-range] a').click()
+    page.wait_for_selector('dt[data-term="class/project"][data-targeted]')
+    assert page.url.endswith('#glossary?term=class%2Fproject'), page.url
+    assert page.locator('dt[data-term="class/project"]').is_visible()
+    in_view = ('(() => { const r = document.querySelector(\'dt[data-term="class/project"]\')'
+               '.getBoundingClientRect(); return r.top >= 0 && r.bottom <= innerHeight; })()')
+    assert page.evaluate(in_view)
+    # A status word on the record links to its term.
+    page.goto(url + '/#on-the-record/ZAF')
+    page.wait_for_selector('#observations-results')
+    assert page.locator('#observations-results a[data-term-link="money/signed"]').count() > 0
+
+
 def check_projects(page, url):
     """Exercise the catalogue search, a project page, and its adjudicated links."""
     page.goto(url + '/#projects')
@@ -764,6 +787,7 @@ def check_site(url, output):
         check_paper_trail(page, url)
         check_sections(page, url)
         check_header_menus(page, url)
+        check_glossary(page, url)
         for code in ('ZAF', 'IDN', 'VNM', 'SEN'):
             page.goto(url + '/#funding/' + code)
             page.wait_for_selector('.markdown h2')

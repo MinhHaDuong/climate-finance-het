@@ -29,7 +29,18 @@ JETP_OBSERVATIONS_INPUTS := $(filter data/jetp/%.csv,$(JETP_OBSERVATORY_INPUTS))
     scripts/jetp/build_observations.py scripts/jetp/build_observatory.py \
     scripts/jetp/_observatory_data.py scripts/jetp/_m1a_document_links.py
 
-.PHONY: jetp-m1a jetp-observations jetp-observatory jetp-observatory-documents \
+# The ontology tables, one served file per table (ticket 0882), empty tables
+# included: the Glossary is generated from them. A separate script from the
+# country views, so those views and their recorded input hashes stay put when
+# a term is revised.
+JETP_ONTOLOGY_VIEWS_DIR := $(JETP_OBSERVATORY)/data/ontology
+JETP_ONTOLOGY_VIEWS := $(addprefix $(JETP_ONTOLOGY_VIEWS_DIR)/,terms.json status-crosswalk.json \
+    sector-crosswalk.json perimeters.json marker-coefficients.json)
+JETP_ONTOLOGY_VIEWS_INPUTS := $(wildcard data/jetp/ontology/*.csv data/jetp/ontology/*/*.csv) \
+    config/jetp-ledger.sql .githooks/pre-commit scripts/jetp/build_ontology_views.py \
+    scripts/jetp/_ontology.py scripts/jetp/_ledger_headers.py
+
+.PHONY: jetp-m1a jetp-observations jetp-ontology-views jetp-observatory jetp-observatory-documents \
     jetp-observatory-refresh jetp-observatory-preview
 jetp-m1a: $(JETP_M1A_FILES)
 
@@ -43,7 +54,12 @@ jetp-observations: $(JETP_OBSERVATIONS_FILES)
 $(JETP_OBSERVATIONS_FILES) &: $(JETP_OBSERVATIONS_INPUTS)
 	$(PYTHON) scripts/jetp/build_observations.py --output-dir $(JETP_OBSERVATIONS_DIR)
 
-jetp-observatory: $(JETP_OBSERVATORY_JSON) $(JETP_OBSERVATORY_EDITION_HISTORY) $(JETP_OBSERVATORY_PROVENANCE)
+jetp-ontology-views: $(JETP_ONTOLOGY_VIEWS)
+
+$(JETP_ONTOLOGY_VIEWS) &: $(JETP_ONTOLOGY_VIEWS_INPUTS)
+	$(PYTHON) scripts/jetp/build_ontology_views.py --output-dir $(JETP_ONTOLOGY_VIEWS_DIR)
+
+jetp-observatory: $(JETP_ONTOLOGY_VIEWS) $(JETP_OBSERVATORY_JSON) $(JETP_OBSERVATORY_EDITION_HISTORY) $(JETP_OBSERVATORY_PROVENANCE)
 
 # The documents view is the collection registry alone (ticket 0858): it reads
 # no other view, so it has no prerequisite beyond the inputs above. The join
