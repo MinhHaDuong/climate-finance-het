@@ -1,7 +1,10 @@
 %erg 0.1
-Title: Build the bounded canonical JETP catalogue for M1b
+Title: M1b: the bounded catalogue of referents on the ontology v2 contract
 Created: 2026-09-17
 Author: HDMX-coding-agent
+Blocked-by: 0873
+Blocked-by: 0875
+Blocked-by: 0880
 
 --- log ---
 2026-09-17T08:48Z HDMX-coding-agent created
@@ -9,48 +12,85 @@ Author: HDMX-coding-agent
 2026-09-17T09:36Z HDMX-coding-agent note blocker 0832 closed — Blocked-by removed.
 2026-09-17T17:05Z HDMX-coding-agent note runs in parallel with the M1a train (0834): 0837 adds the 21 register fields as columns to ZAF.csv without changing row ids or counts, replay tests after it merges; first action should also review the RMP adapter classing all annex I.2 rows as identity-unknown (e.g. '43 BWID DPPA Solar Farm' is named) and the VNM release still at admission_status unadmitted_candidate / review_state pending
 2026-09-17T20:05Z HDMX-coding-agent note M1a ZAF: ZAF.csv porte 21 colonnes raw_* de plus (registre JET complet); source_row_id, ordre et comptes inchanges; rejouer les tests M1a (ticket 0837)
+2026-09-23T06:47Z HDMX-coding-agent note restated on the ontology v2 contract at the author's request (2026-09-23): M1b is an acceptance milestone on top of 0870 (D4 over the four M1a documents, candidates counted, O v1 frozen); possible_matches become candidate rows; Blocked-by 0873, 0875, 0880
 --- body ---
-
 ## Context
 
-M1b overlays a stable navigation schema on the immutable M1a inventories from
-[[0832]]. It does not manufacture a homogeneous project population. Canonical
-IDs and a small common taxonomy are decided once; only source-documented
-`same_as` and `component_of` relations enter the catalogue. Probable matches
-remain a separate counted result rather than a research backlog. This is the
-first bounded catalogue milestone of [[0725]].
+Restated on 2026-09-23 on the ontology v2 contract (`docs/jetp-ontology.md`),
+at the author's request. The first version of this ticket, written on
+2026-09-17 against backend design revision 5, specified an overlay catalogue
+beside the M1a inventories, `same_as` and `component_of` rows, and a separate
+`possible_matches` table. Ontology v2 absorbs each of these into D4 of the
+data pipeline (§ 0): identities are referents minted by matching decisions
+over lines, relations are rows of `relations`, and a probable match is a
+`line-referents` or `relations` row with `status = candidate`. The intent is
+unchanged: a bounded, navigable catalogue that manufactures no homogeneous
+project population and does not start a match-resolution campaign.
 
-## First test
+M1b is therefore an acceptance milestone on top of the migration train
+[[0870]], not a separate build. It is reached when D4 covers the lines of
+the four M1a documents, candidates are counted and visible, and the
+ontology in force is frozen as its first release (O v1).
 
-A fixture contains an exact duplicate documented by a source locator, a
-source-documented component, and a plausible but unproven name/capacity match.
-The build emits respectively `same_as`, `component_of`, and one unchanged row
-in `possible_matches`. The probable match does not alter canonical membership,
-counts or M1a bytes. Removing the evidence locator makes either certain
-relation fail validation.
+## Scope, in the new vocabulary
+
+- **Lines (D2):** the lines of the four M1a documents, after [[0873]]:
+  ZAF Q1 2026 register (257), IDN plan appendices (1 579 over two
+  editions), VNM RMP annexes (279), SEN submissions and quick wins (49).
+  Their bytes do not change.
+- **Referents (D4):** projects, assets, agreements and parties minted from
+  those lines by matching tier 1 (exact identifier) and accepted tier-2
+  decisions (normalised label, reviewed by hand), after [[0875]].
+- **Relations:** `component_of`, `part_of`, `tranche_of`, `finances` and
+  `same_as`, each with its justification lines and decision record (§ 11).
+- **Candidates:** every tier-2 proposal not accepted stays a `candidate`
+  row, counted by country and by relation. This is the former
+  `possible_matches`: it changes no count of accepted referents.
+- **Ontology (O):** the terms, crosswalks and perimeters in force at M1b,
+  after [[0880]], recorded with their `ontology_ref` as O v1.
+
+## Relevant files
+
+- `docs/jetp-ontology.md` § 0, § 5 (tables, ontology tables), § 11 (matching)
+- `data/jetp/lines.csv`, `data/jetp/line-referents.csv`, `data/jetp/relations.csv` — after 0873 and 0875
+- `data/jetp/ontology/` — after 0880
+- `deliverables/jetp-observatory/` — D4 record pages and the candidate counts
 
 ## Actions
 
-1. Freeze the common record taxonomy and deterministic canonical-ID rules.
-2. Build an overlay catalogue without editing or deleting M1a inventory rows.
-3. Admit only `same_as` and `component_of` with source ID, locator and concise
-   justification.
-4. Export all other candidate relations to a separate `possible_matches` table
-   with country, candidate IDs, reason and evidence references; do not resolve
-   them through new research.
-5. Display catalogue and unresolved-match counts without presenting objects
-   from different source layers as a comparable statistical population.
+1. Run tier 2 over the lines of the four documents, per country and
+   technology group; write candidates only.
+2. Review the candidates by hand within a stated budget; accept, reject or
+   leave each as a candidate, with a decision row. No new source
+   acquisition and no search outside the archived snapshots.
+3. Publish the catalogue in the observatory: accepted referents per
+   country and kind, each with its lines; candidates counted by country
+   and relation, listed, and marked as not in force.
+4. Freeze O v1: record the `ontology_ref` of the terms in force, and cite
+   it in the M1b release descriptor.
+
+## Test
+
+Red: a fixture with an exact duplicate justified by two lines, a
+component justified by a heading line that `groups` it, and a plausible
+name-and-capacity match without justification. Matching writes `same_as`
+accepted, `component_of` accepted, and one `candidate` row. The candidate
+changes no count of accepted referents and no byte of `lines` or
+`line-fields`. Removing the justification line makes either accepted
+relation fail validation. Superseding the candidate with a `rejected` row
+leaves the catalogue unchanged.
 
 ## Exit criteria
 
-- [ ] Canonical-ID and taxonomy rules are versioned, deterministic and tested
-- [ ] M1a tables remain byte-identical and every catalogue record links back to their rows
-- [ ] Every admitted relation is `same_as` or `component_of` with source ID and locator
-- [ ] `possible_matches` is separate, non-operative and counted by country
-- [ ] No new source acquisition or match-resolution campaign occurs
-- [ ] Catalogue, relation and uncertainty downloads reproduce from the frozen M1a release
+- [ ] Every accepted referent and relation cites its justification lines and a decision row
+- [ ] The lines of the four M1a documents are byte-identical before and after M1b
+- [ ] Candidates are separate, not in force, and counted by country and relation in the observatory
+- [ ] O v1 is frozen: the M1b release cites its `ontology_ref`
+- [ ] No new source acquisition and no match-resolution campaign occurred
+- [ ] The M1b release reproduces from its inputs
 
 ## Out of scope
 
-Resolving `possible_matches`, following newer sources, updating lifecycle
-states, reconciling CRS/IATI, payments or physical assets are M2 work.
+Tiers 3 to 5 of matching (NER, LLM, human escalation beyond the review
+budget), resolving the remaining candidates, following newer sources,
+lifecycle updates, and CRS or IATI reconciliation belong to M2.
