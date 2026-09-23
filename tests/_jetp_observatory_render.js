@@ -64,7 +64,13 @@ const document = {
   title: "",
 };
 const location = { hash: "#" + route };
-const window = { addEventListener() {}, scrollTo() {} };
+// replaceState moves the address as a browser would, so an old route that
+// forwards to its new name (ticket 0881) is read back under the new one.
+const window = {
+  addEventListener() {},
+  scrollTo() {},
+  history: { replaceState(state, title, url) { location.hash = url; } },
+};
 const fetch = async (file) => {
   const target = path.join(site, file);
   if (!fs.existsSync(target)) return { ok: false, status: 404 };

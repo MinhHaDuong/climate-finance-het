@@ -34,18 +34,18 @@ STATES = [
     ('catalogue-funder', 'projects', [('#funder-filter', 'select', 'Germany')]),
     ('catalogue-technology', 'projects', [('#technology-filter', 'select', 'Electricity')]),
     ('catalogue-empty', 'projects', [('#search', 'fill', 'no-such-project-12345')]),
-    ('comparison-all', 'comparison', []),
-    ('comparison-preselected-ZAF', 'comparison?country=ZAF', []),
-    ('comparison-search', 'comparison', [('#history-search', 'fill', 'transmission')]),
-    ('comparison-instrument', 'comparison', [
+    ('comparison-all', 'historical-comparison', []),
+    ('comparison-preselected-ZAF', 'historical-comparison?country=ZAF', []),
+    ('comparison-search', 'historical-comparison', [('#history-search', 'fill', 'transmission')]),
+    ('comparison-instrument', 'historical-comparison', [
         ('#history-country', 'select', 'IDN'),
         ('#history-instrument', 'select', 'Investment Project Financing'),
     ]),
-    ('comparison-vintage-additional', 'comparison', [
+    ('comparison-vintage-additional', 'historical-comparison', [
         ('#history-vintage', 'select', '2010'),
         ('#history-additional', 'select', 'exclude'),
     ]),
-    ('comparison-empty', 'comparison', [
+    ('comparison-empty', 'historical-comparison', [
         ('#history-search', 'fill', 'no-such-operation-12345'),
     ]),
 ]

@@ -145,7 +145,7 @@ def check_documents(page, url):
     assert popup.value is not None
     popup.value.close()
     # The climb lands on the one row, not on the 279.
-    position.locator('a[href="#inventory/VNM?row=22"]').click()
+    position.locator('a[href="#entries/VNM?row=22"]').click()
     page.wait_for_selector('[data-inventory-focus="22"]')
     assert page.locator('#inventory-count').inner_text().startswith('1 of 1 ')
     focused = page.locator('a[data-inventory-row="vnm-rmp-2023:annex-I.1:022"]')
@@ -163,7 +163,7 @@ def check_inventory(page, url):
     registry = page.request.get(url + '/data/documents.json').json()['documents']
     payload = page.request.get(url + '/data/m1a/VNM.json').json()
     rows = [dict(zip(payload['fields'], values)) for values in payload['rows']]
-    page.goto(url + '/#inventory/VNM')
+    page.goto(url + '/#entries/VNM')
     page.wait_for_selector('#inventory-filters')
     assert str(len(rows)) in page.locator('#inventory-count').inner_text()
     page.locator('#inventory-search').fill('Annex I.1')
@@ -190,7 +190,7 @@ def check_inventory(page, url):
 
     # A per-country column set must not need a renderer change: the 21 ZAF
     # pass-through columns appear in the row detail, in the export's own order.
-    page.goto(url + '/#inventory/ZAF')
+    page.goto(url + '/#entries/ZAF')
     page.wait_for_selector('#inventory-filters')
     page.locator('#inventory-filter-reported_status').select_option('D. Completed')
     assert '88 of 257' in page.locator('#inventory-count').inner_text()
@@ -222,7 +222,7 @@ def check_senegal_and_indonesia(page, url):
 
     annexes = next(row for row in registry
                    if row['id'] == 'sen-investment-plan-annexes-mirror' and row['local_path'])
-    page.goto(url + '/#inventory/SEN?row=1')
+    page.goto(url + '/#entries/SEN?row=1')
     page.wait_for_selector('[data-inventory-focus="1"]')
     link = page.locator('a[data-inventory-row="sen-annex-received-01"]')
     assert link.get_attribute('href') == annexes['local_path'] + '#page=13', \
@@ -268,7 +268,7 @@ def check_observations(page, url):
     is reached by the free-text field and not by the funder facet.
     """
     rows = page.request.get(url + '/data/observations/ZAF.json').json()
-    page.goto(url + '/#inventory/ZAF')
+    page.goto(url + '/#entries/ZAF')
     page.locator('#tab-observations').click()
     page.wait_for_selector('#observations-filters')
     assert str(len(rows)) in page.locator('#observations-count').inner_text()
@@ -298,7 +298,7 @@ def check_observations(page, url):
 
     # Recipe VN: the Bac Ai package, found through the source identifier.
     vietnam = page.request.get(url + '/data/observations/VNM.json').json()
-    page.goto(url + '/#inventory/VNM')
+    page.goto(url + '/#entries/VNM')
     page.locator('#tab-observations').click()
     page.wait_for_selector('#observations-filters')
     assert str(len(vietnam)) in page.locator('#observations-count').inner_text()
@@ -309,7 +309,7 @@ def check_observations(page, url):
 
     # Recipe SA: a row read from the Q1 2026 register opens that register's
     # archived snapshot, at the page the locator names where it names one.
-    page.goto(url + '/#inventory/ZAF')
+    page.goto(url + '/#entries/ZAF')
     page.locator('#tab-observations').click()
     page.wait_for_selector('#observations-filters')
     registry = page.request.get(url + '/data/documents.json').json()['documents']
@@ -381,7 +381,7 @@ def check_facts(page, url):
     # Side by side, no link: the two figures come from the M1a manifest and the
     # country view, and the page counts stay 3 named + 21 unpublished.
     manifest = page.request.get(url + '/data/m1a/manifest.json').json()
-    page.goto(url + '/#country/VNM')
+    page.goto(url + '/#funding/VNM')
     page.wait_for_selector('#vnm-side-by-side')
     block = page.locator('#vnm-side-by-side')
     assert str(manifest['countries']['VNM']['row_count']) in block.locator(
@@ -443,7 +443,7 @@ def check_facts(page, url):
     page.locator(f'[data-uncited="{uncited["id"]}"]').first.wait_for()
 
     # A reviewed record's pedigree opens the archived bytes it pins.
-    page.goto(url + '/#evidence')
+    page.goto(url + '/#on-the-record')
     page.wait_for_selector('[data-reviewed-evidence-id]')
     evidence = page.request.get(url + '/data/reviewed-evidence.json').json()
     archived = {row['sha256'] for row in documents if row['local_path']}
@@ -455,8 +455,10 @@ def check_facts(page, url):
 def check_paper_trail(page, url):
     """Walk the paper trail both ways on the organisation of ticket 0881.
 
-    The navigation reads Glossary, the paper trail, By the numbers and How we
-    did this. From Bac Ai, each step toward the documents lands one step
+    The navigation reads the paper trail, By the numbers, Glossary and How we
+    did this, each at its label's slug, and the addresses of earlier previews
+    forward there (author's cold read, 2026-09-23). From Bac Ai, each step
+    toward the documents lands one step
     down — what is on the record for Viet Nam, its entries, the Documents
     page — and each step toward the projects climbs back. A Viet Nam count
     is marked as counted by us and opens what it counted.
@@ -465,9 +467,30 @@ def check_paper_trail(page, url):
     page.wait_for_selector('.country-grid')
     labels = [t.strip() for t in page.locator('header nav a, header nav .nav-group-label')
               .all_text_contents()]  # the group label is upper-cased by CSS only
-    assert labels == ['Glossary', 'The paper trail', 'Documents', 'Entries', 'On the record',
-                      'Projects', 'Funding', "Who's who", 'By the numbers',
+    assert labels == ['The paper trail', 'Documents', 'Entries', 'On the record',
+                      'Projects', 'Funding', "Who's who", 'By the numbers', 'Glossary',
                       'How we did this'], labels
+
+    # Old addresses forward in place, deep links and tabs included, and the
+    # back button does not bounce between the two names.
+    for old, new, ready in (
+        ('countries', 'funding', '.country-grid'),
+        ('country/IDN', 'funding/IDN', '.markdown h2'),
+        ('evidence', 'on-the-record', '[data-reviewed-evidence-id]'),
+        ('comparison?country=IDN', 'historical-comparison?country=IDN', '#history-table'),
+        ('methods', 'how-we-did-this', '.method-list'),
+        ('inventory/VNM?tab=record', 'on-the-record/VNM', '#observations-filters'),
+        ('inventory/VNM?row=22', 'entries/VNM?row=22', '[data-inventory-focus="22"]'),
+    ):
+        page.goto(url + '/#overview')
+        page.wait_for_selector('.country-grid')
+        page.goto(url + '/#' + old)
+        page.wait_for_selector(ready)
+        assert page.url.endswith('#' + new), (old, page.url)
+        page.go_back()
+        page.wait_for_selector('.country-grid')
+        assert page.url.endswith('#overview'), (old, page.url)
+    assert page.evaluate('location.hash') == '#overview'
 
     page.goto(url + '/#project/vnm-project-bac-ai-pumped-hydro')
     page.wait_for_selector('.trail[data-trail-step="D4"]')
@@ -475,7 +498,7 @@ def check_paper_trail(page, url):
     page.wait_for_selector('.trail[data-trail-step="D3"]')
     assert page.locator('#tab-observations').get_attribute('aria-selected') == 'true'
     assert page.locator('#panel-observations').is_visible()
-    assert page.locator('nav a[aria-current="page"]').get_attribute('href') == '#evidence'
+    assert page.locator('nav a[aria-current="page"]').get_attribute('href') == '#on-the-record'
     assert 'According to' in page.locator('#observations-results tbody tr').first.inner_text()
     page.locator('[data-trail-link="toward-documents"]').click()
     page.wait_for_selector('.trail[data-trail-step="D2"]')
@@ -483,11 +506,11 @@ def check_paper_trail(page, url):
     # A tab click moves the address, the trail and the navigation with it.
     page.locator('#tab-observations').click()
     page.wait_for_selector('.trail[data-trail-step="D3"]')
-    assert page.url.endswith('#inventory/VNM?tab=record'), page.url
-    assert page.locator('header nav a[aria-current="page"]').get_attribute('href') == '#evidence'
+    assert page.url.endswith('#on-the-record/VNM'), page.url
+    assert page.locator('header nav a[aria-current="page"]').get_attribute('href') == '#on-the-record'
     page.locator('#tab-inventory').click()
     page.wait_for_selector('.trail[data-trail-step="D2"]')
-    assert page.url.endswith('#inventory/VNM'), page.url
+    assert page.url.endswith('#entries/VNM'), page.url
     page.locator('[data-trail-link="toward-documents"]').click()
     page.wait_for_selector('.trail[data-trail-step="D1"]')
     assert page.locator('[data-trail-link="toward-documents"]').count() == 0
@@ -499,7 +522,7 @@ def check_paper_trail(page, url):
     page.wait_for_selector('#results tbody tr')
     assert page.locator('.trail[data-trail-step="D4"]').count() == 1
 
-    page.goto(url + '/#country/VNM')
+    page.goto(url + '/#funding/VNM')
     page.wait_for_selector('.metric.computed')
     counted = page.locator('.metric.computed[data-unit="named projects"]')
     assert 'Counted by us' in counted.text_content()
@@ -556,7 +579,7 @@ def check_site(url, output):
         page.wait_for_selector('.country-grid')
         page.screenshot(path=str(output), full_page=True)
         check_projects(page, url)
-        page.goto(url + '/#comparison')
+        page.goto(url + '/#historical-comparison')
         page.wait_for_selector('#history-country')
         assert page.locator('#history-table tbody tr').count() == count
         page.locator('#history-country').select_option('IDN')
@@ -565,7 +588,7 @@ def check_site(url, output):
         assert page.locator('#history-table tbody tr').count() > 0
         page.locator('#history-search').fill('no-such-operation-12345')
         assert page.locator('#history-table .empty').count() == 1
-        page.goto(url + '/#methods')
+        page.goto(url + '/#how-we-did-this')
         page.wait_for_selector('.downloads')
         with page.expect_download() as download:
             page.locator('a[download][href="data/comparison.json"]').click()
@@ -583,26 +606,27 @@ def check_site(url, output):
         check_facts(page, url)
         check_paper_trail(page, url)
         for code in ('ZAF', 'IDN', 'VNM', 'SEN'):
-            page.goto(url + '/#country/' + code)
+            page.goto(url + '/#funding/' + code)
             page.wait_for_selector('.markdown h2')
             assert page.locator('.markdown').inner_text().strip()
         # Hash routes must remain usable with a keyboard and expose the current
         # location to assistive technology.
-        page.goto(url + '/#country/IDN')
+        page.goto(url + '/#funding/IDN')
         page.wait_for_selector('.page-head h1')
         active = page.locator('nav a[aria-current="page"]')
         assert active.count() == 1
-        assert active.get_attribute('href') == '#countries'
+        assert active.get_attribute('href') == '#funding'
         page.locator('.skip').focus()
         page.keyboard.press('Enter')
         assert page.evaluate('document.activeElement.id') == 'main'
         page.keyboard.press('Tab')
         assert page.evaluate('document.activeElement.tagName') == 'A'
         page.set_viewport_size({'width': 390, 'height': 844})
-        for route in ('overview', 'countries', 'documents', 'projects', 'comparison',
-                      'inventory/SEN', 'country/VNM', 'entries', 'evidence',
-                      'whos-who', 'numbers', 'glossary',
-                      'project/vnm-project-bac-ai-pumped-hydro', 'methods'):
+        for route in ('overview', 'funding', 'documents', 'projects', 'historical-comparison',
+                      'entries/SEN', 'funding/VNM', 'entries', 'on-the-record',
+                      'on-the-record/ZAF', 'whos-who', 'by-the-numbers', 'glossary',
+                      'release-history', 'project/vnm-project-bac-ai-pumped-hydro',
+                      'how-we-did-this'):
             page.goto(url + '/#' + route)
             page.wait_for_timeout(150)
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'), route

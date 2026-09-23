@@ -262,7 +262,7 @@ def test_the_rmp_opens_at_its_first_extracted_page_and_each_position_at_its_own(
     items = re.findall(r"<li>.*?</li>", row, re.DOTALL)
     assert len(items) == len(linked["m1a"])
     assert anchors(items[21]) == [
-        ("#inventory/VNM?row=22", "vnm-rmp-2023:annex-I.1:022"),
+        ("#entries/VNM?row=22", "vnm-rmp-2023:annex-I.1:022"),
         (rmp["local_path"] + "#page=156", "PDF page 156 ↗"),
     ], anchors(items[21])
 
@@ -300,14 +300,14 @@ def test_the_inventory_page_opens_on_the_row_the_documents_page_cites() -> None:
     rows = [dict(zip(payload["fields"], values)) for values in payload["rows"]]
     assert rows[21]["source_row_id"] == "vnm-rmp-2023:annex-I.1:022"
 
-    rendered = render("inventory/VNM?row=22")
+    rendered = render("entries/VNM?row=22")
 
     assert rendered["elements"]["inventory-count"]["textContent"].startswith("1 of 1 ")
     results = rendered["elements"]["inventory-results"]["innerHTML"]
     assert 'data-inventory-row="vnm-rmp-2023:annex-I.1:022"' in results
     assert "<details open>" in results
     # The way back to the whole export is one link away.
-    assert 'href="#inventory/VNM"' in rendered["main"]
+    assert 'href="#entries/VNM"' in rendered["main"]
 
 
 def test_a_fact_page_lists_the_observations_view_rows_addressed_to_it() -> None:
@@ -335,7 +335,7 @@ def test_a_senegal_annex_row_opens_the_archived_annexes_at_its_own_page() -> Non
     assert rows[0]["source_row_id"] == "sen-annex-received-01"
     annexes = entry_of("sen-investment-plan-annexes-mirror:1")
 
-    rendered = render("inventory/SEN?row=1")
+    rendered = render("entries/SEN?row=1")
 
     results = rendered["elements"]["inventory-results"]["innerHTML"]
     hrefs = [href for href, _ in anchors(results) if href.startswith(annexes["local_path"])]
@@ -355,8 +355,10 @@ def test_every_senegal_row_names_a_pdf_page_and_no_other_non_rmp_country_does() 
 # docs/jetp-language.md (O, D, E, M) without ever naming them, in the newsroom
 # vocabulary of docs/jetp-observatory-presentation.md.
 
-NAVIGATION = ["Glossary", "The paper trail", "Documents", "Entries", "On the record",
-              "Projects", "Funding", "Who's who", "By the numbers", "How we did this"]
+# Order of the author's cold read, 2026-09-23: the Glossary sits last, beside
+# How we did this.
+NAVIGATION = ["The paper trail", "Documents", "Entries", "On the record", "Projects",
+              "Funding", "Who's who", "By the numbers", "Glossary", "How we did this"]
 
 # The framework's names, the retired terms of docs/jetp-language.md and the
 # words docs/jetp-observatory-presentation.md keeps off the pages.  A word
@@ -367,10 +369,10 @@ FORBIDDEN = re.compile(
     r"|\bfacts?\b|\bclaims?\b|\bdeals?\b|\bplayers?\b|\bsources\b|\bentities\b|\brecords\b",
     re.IGNORECASE,
 )
-ROUTES = ("overview", "glossary", "documents", "entries", "evidence", "projects",
-          "countries", "whos-who", "numbers", "methods", "editions", "comparison",
-          *(f"country/{code}" for code in COUNTRIES), "inventory/VNM",
-          "inventory/ZAF?tab=record", "project/" + BAC_AI)
+ROUTES = ("overview", "glossary", "documents", "entries", "on-the-record", "projects",
+          "funding", "whos-who", "by-the-numbers", "how-we-did-this", "release-history",
+          "historical-comparison", *(f"funding/{code}" for code in COUNTRIES),
+          "entries/VNM", "on-the-record/ZAF", "project/" + BAC_AI)
 
 
 def text_of(html):
@@ -425,18 +427,71 @@ def test_the_navigation_follows_glossary_paper_trail_numbers_and_methods() -> No
     labels = [unescape(t).strip() for t in re.findall(r">([^<>]+)<", nav) if t.strip()]
     assert labels == NAVIGATION, labels
     # Organised by the objects, which stay in the attributes: nothing for M.
-    assert re.findall(r'data-object="([^"]+)"', nav) == ["O", "D", "E", "methods"]
+    assert re.findall(r'data-object="([^"]+)"', nav) == ["D", "E", "O", "methods"]
+    # Every address is its label's slug.
+    for href, label in re.findall(r'<a href="#([^"]+)"[^>]*>([^<]+)<', nav):
+        slug = re.sub(r"[^a-z]+", "-", unescape(label).lower().replace("'", "")).strip("-")
+        assert href == slug, (href, label)
     assert 'data-object="M"' not in nav
 
 
+# Author's cold read, 2026-09-23: addresses match labels, and the addresses of
+# earlier previews — deep links and queries included — forward to them.
+FORWARDS = {
+    "countries": "funding",
+    "country/VNM": "funding/VNM",
+    "evidence": "on-the-record",
+    "numbers": "by-the-numbers",
+    "comparison": "historical-comparison",
+    "comparison?country=IDN": "historical-comparison?country=IDN",
+    "methods": "how-we-did-this",
+    "editions": "release-history",
+    "inventory/VNM": "entries/VNM",
+    "inventory/VNM?row=22": "entries/VNM?row=22",
+    "inventory/ZAF?tab=record": "on-the-record/ZAF",
+}
+OLD_ADDRESS = re.compile(r'href="#(countries|country/|evidence|numbers|comparison|methods'
+                         r'|editions|inventory/)')
+
+
+def test_the_glossary_is_grouped_by_theme_and_alphabetical_within_each_group() -> None:
+    main = render("glossary")["main"]
+    groups = re.findall(r'data-glossary-group="([^"]+)"><h2>[^<]*</h2>(.*?)</section>', main, re.DOTALL)
+    assert [unescape(g) for g, _ in groups] == [
+        "What we track", "How documents are read", "Statuses", "Measures", "Relations"]
+    for group, body in groups:
+        terms = [unescape(t) for t in re.findall(r"<dt>([^<]+)</dt>", body)]
+        assert len(terms) >= 3 and terms == sorted(terms, key=str.casefold), (group, terms)
+
+
+@pytest.mark.parametrize(("old", "new"), FORWARDS.items())
+def test_an_old_address_forwards_to_its_new_name(old, new) -> None:
+    forwarded = render(old, {}, "location.hash")
+    assert forwarded["eval"] == "#" + new
+    assert forwarded["main"] == render(new)["main"]
+
+
+@pytest.mark.parametrize("route", ["projects?country=IDN", "project/" + BAC_AI, "documents",
+                                   "overview", "entries/SEN?row=1"])
+def test_an_address_that_kept_its_name_does_not_move(route) -> None:
+    assert render(route, {}, "location.hash")["eval"] == "#" + route
+
+
+def test_the_pages_emit_only_the_new_addresses() -> None:
+    assert not OLD_ADDRESS.search((SITE / "index.html").read_text())
+    for route in ROUTES:
+        html = "".join(el["innerHTML"] for el in render(route)["elements"].values())
+        assert not OLD_ADDRESS.search(html), (route, OLD_ADDRESS.search(html).group(0))
+
+
 def test_a_page_of_the_paper_trail_shows_its_step_and_links_to_its_neighbours() -> None:
-    main = render("inventory/VNM")["main"]
+    main = render("entries/VNM")["main"]
     trail = re.search(r'<nav class="trail"[^>]*data-trail-step="D2".*?</nav>', main, re.DOTALL)
     assert trail, main[:400]
     links = {key: href for href, key in re.findall(
         r'<a href="([^"]+)" data-trail-link="([^"]+)"', trail.group(0))}
     assert links == {"toward-documents": "#documents",
-                     "toward-projects": "#inventory/VNM?tab=record"}, links
+                     "toward-projects": "#on-the-record/VNM"}, links
     assert re.search(r'aria-current="step">Entries<', trail.group(0))
 
 
@@ -447,7 +502,7 @@ def test_a_country_read_from_the_address_cannot_inject_markup_into_the_trail() -
     trail = re.search(r'<nav class="trail".*?</nav>', main, re.DOTALL).group(0)
     assert "<img" not in trail, trail
     # An unknown country is no country: the trail falls back to the whole site.
-    assert 'href="#entries"' in trail and 'href="#evidence"' in trail, trail
+    assert 'href="#entries"' in trail and 'href="#on-the-record"' in trail, trail
     # And the links are escaped even for a code the site knows, so the guard
     # is not the escaping's only line of defence (round 2 of the review).
     known = json.dumps(payload)
@@ -457,7 +512,7 @@ def test_a_country_read_from_the_address_cannot_inject_markup_into_the_trail() -
 
 
 def test_an_item_on_the_record_reads_according_to_its_publisher_with_the_date() -> None:
-    rendered = render("inventory/VNM?tab=record")
+    rendered = render("on-the-record/VNM")
     results = rendered["elements"]["observations-results"]["innerHTML"]
     sources = served("VNM")["sources"]
     row = next(r for r in observations("VNM")
@@ -471,7 +526,7 @@ def test_an_item_on_the_record_reads_according_to_its_publisher_with_the_date() 
 
 
 def test_a_count_on_the_viet_nam_page_is_marked_computed_with_its_unit() -> None:
-    main = render("country/VNM")["main"]
+    main = render("funding/VNM")["main"]
     assert "named projects" in re.findall(r'<div class="metric computed" data-unit="([^"]+)"', main)
     metric = re.search(r'<div class="metric computed" data-unit="named projects">.*?</div>',
                        main, re.DOTALL).group(0)
