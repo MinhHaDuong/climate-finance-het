@@ -1,12 +1,11 @@
 # State
 
-Last updated: 2026-09-23T20:02Z
+Last updated: 2026-09-23T21:39Z
 
 ## Current goal
 
 **REL literature review — the only work on a clock, due ~2026-12-06.** Ticket 0700
 is the tracker; 0701 (outline) and 0705 (Œconomia non-overlap guard) are ready.
-The RDJ-26561 data paper is published; Œconomia v2.0.5 remains with its editor.
 
 ## JETP checkpoint
 
@@ -22,24 +21,20 @@ low confidence to `decisions.md`), 0876→0877→0889→0890, 0884, 0879→0885/
 
 ## Process pilot
 
-Since #1469, PRs verify in proportion to what can break (AGENTS.md § Verify)
-instead of the full /gaze loop; each PR states its checks. Review after a week
-or two: time to merge, follow-up fix PRs, `/lair` step 9 failures. Then decide
-/gaze's fate in the harness.
+Since #1469, PRs verify in proportion to risk (AGENTS.md § Verify).
+Review time to merge, follow-up fixes, and `/lair` failures after a week or two.
 
 ## Status
-<!-- generated 2026-09-23T20:02Z · as of e35bd2f0 -->
+<!-- generated 2026-09-23T21:39Z · as of eb842b8b -->
 
-**Tickets:** 56 ready · 64 blocked · 11 awaiting author — `erg ready tickets/` for full list
+**Tickets:** 55 ready · 64 blocked · 11 awaiting author — `erg ready tickets/` for full list
   next: 0272 Extract shared derive_companion_path() helper f… · 0273 load_cluster_labels() ignores --input, reads cl…
-**In flight:** no open PRs
 **Recent (first-parent):**
-  e35bd2f0 Merge pull request #1470 from MinhHaDuong/t-workflow-trim
-  7bc3f995 Merge pull request #1469 from MinhHaDuong/explore-gaze-overuse
-  1be40a3b Merge pull request #1468 from MinhHaDuong/state-2026-09-23
+  eb842b8b Merge pull request #1475 from MinhHaDuong/t0385-track-companion-figures
+  c0402a3e Merge pull request #1474 from MinhHaDuong/docs/venue-data-and-corpus
+  872a080b Merge pull request #1473 from MinhHaDuong/chore/jetp-cassen-reply-2026-09-16
 
 ## Corpus and submissions
 
 - Published v2 remains immutable at tag `rdj26561-revision1` (`9af9dc08`).
 - V3 is unfrozen: Flag 5 publishes a non-removing per-language semantic distance; the Padme artifact is current and the 33,344-row refined corpus is unchanged.
-- REL is invited; Œconomia v2.0.5 was resubmitted on 2026-07-21.
