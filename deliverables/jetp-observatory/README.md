@@ -24,31 +24,51 @@ interpreter when the machine's uv cache is unavailable.
 The pages follow the four objects of [`docs/jetp-language.md`](../../docs/jetp-language.md)
 without naming them, in the vocabulary of
 [`docs/jetp-observatory-presentation.md`](../../docs/jetp-observatory-presentation.md)
-(ticket 0881). The navigation reads:
+(ticket 0881). The navigation reads, in this order:
 
-- **Glossary** (`#glossary`): the words the pages use. A first, hand-written
-  list until the Glossary generated from the ledger's term tables (ticket 0882).
-- **The paper trail**: **Documents** (`#documents`) → **Entries** (`#entries`,
-  `#inventory/<CODE>`) → **On the record** (`#evidence`,
-  `#inventory/<CODE>?tab=record`) → **Projects** (`#projects`,
-  `#project/<project_id>`), **Funding** (`#countries`, `#country/<CODE>`) and
-  **Who's who** (`#whos-who`: funders and operators as the project documents
-  spell them, not yet matched to one another — that is the parties table of
-  ticket 0875). Every page of the trail shows its step and links
-  one step toward the documents and one toward the projects, keeping the
-  country where it has one.
-- **By the numbers** (`#numbers`, with `#comparison`): every count we computed,
-  each with its unit, its perimeter and a link to what it counts. A number we
-  counted carries a "Counted by us" mark; a number a publisher printed reads
-  "according to" that publisher, with the date.
-- **How we did this** (`#methods`, with `#editions`): what was done, what the
-  observatory does not do, and the downloads.
+- **The paper trail**: **Documents** → **Entries** → **On the record** →
+  **Projects**, **Funding** and **Who's who** (funders and operators as the
+  project documents spell them, not yet matched to one another — that is the
+  parties table of ticket 0875). Every page of the trail shows its step and
+  links one step toward the documents and one toward the projects, keeping
+  the country where it has one.
+- **By the numbers**: every count we computed, each with its unit, its
+  perimeter and a link to what it counts. A number we counted carries a
+  "Counted by us" mark; a number a publisher printed reads "according to"
+  that publisher, with the date. The historical comparison sits here.
+- **Glossary**: the words the pages use, grouped by theme (what we track, how
+  documents are read, statuses, measures, relations) and alphabetical within
+  each group. A first, hand-written list until the Glossary generated from the
+  ledger's term tables (ticket 0882).
+- **How we did this**: what was done, what the observatory does not do, and
+  the downloads. The release history sits here.
 
-Nothing is there for causal explanations: the observatory tests none. The
-landing page is `#overview`. Country-filter links use
-`#projects?country=IDN` and `#comparison?country=IDN`. The routes of earlier
-previews are unchanged; `#glossary`, `#entries`, `#whos-who`, `#numbers` and
-the `?tab=record` parameter are new.
+Nothing is there for causal explanations: the observatory tests none.
+
+### Addresses
+
+Each page's address is its label's slug (author's cold read, 2026-09-23). The
+addresses of earlier previews forward to the new ones in place
+(`history.replaceState`, no reload), query and deep link included; the pages
+emit only the new names.
+
+| Page | Address | Earlier address, forwarded |
+|---|---|---|
+| Landing page | `#overview` | |
+| Documents | `#documents` | |
+| Entries | `#entries`, `#entries/<CODE>`, `#entries/<CODE>?row=N` | `#inventory/<CODE>`, `#inventory/<CODE>?row=N` |
+| On the record | `#on-the-record`, `#on-the-record/<CODE>` | `#evidence`, `#inventory/<CODE>?tab=record` |
+| Projects | `#projects`, `#projects?country=<CODE>`, `#project/<project_id>` | |
+| Funding | `#funding`, `#funding/<CODE>` | `#countries`, `#country/<CODE>` |
+| Who's who | `#whos-who` | |
+| By the numbers | `#by-the-numbers` | `#numbers` |
+| Historical comparison | `#historical-comparison`, `#historical-comparison?country=<CODE>` | `#comparison`, `#comparison?country=<CODE>` |
+| Glossary | `#glossary` | |
+| How we did this | `#how-we-did-this` | `#methods` |
+| Release history | `#release-history` | `#editions` |
+
+The served views keep the addresses they were built with — `provenance.json`
+names `#country/<CODE>` routes — and those forward like any other.
 
 ## What is included
 
@@ -79,7 +99,7 @@ the `?tab=record` parameter are new.
   and, on its count line, the size of the export ("rows in this export"),
   labelled as such: the extracts overlap, so that number is a file size, not a
   project count (ticket 0856).
-  `#inventory/<CODE>` explores them row by row: the CSV stays the download
+  `#entries/<CODE>` explores them row by row: the CSV stays the download
   artefact, while the page reads the `<CODE>.json` companion the same build
   writes from the same rows — column names once, then one array of values per
   row, so the browser parses no CSV text and the file stays under the
@@ -87,8 +107,8 @@ the `?tab=record` parameter are new.
   its PDF page where the document gives one. The export width is per country,
   so the page wires only the five facets every country carries and shows every
   other column in the row detail.
-- What is on the record for the same four countries, in the second tab of
-  `#inventory/<CODE>`: the 766 rows of `data/jetp/events.csv`,
+- What is on the record for the same four countries, at
+  `#on-the-record/<CODE>` — the second tab of the entries page: the 766 rows of `data/jetp/events.csv`,
   `implementation-events.csv` and `project-source-links.csv`, served verbatim
   under `data/observations/<CODE>.json` with the table, the kind, the
   verification word the ledger wrote, and the fingerprint and PDF page of the
@@ -120,7 +140,7 @@ the `?tab=record` parameter are new.
   the entries page reads, through the same cache — and filter them on
   `source_id`; the projects are the country views' projects whose documents
   name it and the reviewed items one of whose proofs does. Each entry in that
-  fold-out links to its own row (`#inventory/<CODE>?row=N`, `N` the row's rank
+  fold-out links to its own row (`#entries/<CODE>?row=N`, `N` the row's rank
   in the export) and, where its locator names a PDF page, to that page of the
   archived copy — the page read by the same port of `_m1a_document_links.py`
   the entries page uses; the copy's own link opens at the first page the

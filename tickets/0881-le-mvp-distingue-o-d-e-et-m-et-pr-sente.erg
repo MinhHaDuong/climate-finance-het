@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-09-23T06:45Z HDMX-coding-agent created
 
+2026-09-23T12:17Z HDMX-coding-agent note cold read by the author (2026-09-23), decision: the Glossary moves to the end of the navigation, beside How we did this, grouped by theme and A–Z within each group; every address becomes its label's slug (#funding, #on-the-record, #by-the-numbers, #how-we-did-this, #historical-comparison, #release-history, #entries/<CODE>, #on-the-record/<CODE>), and the earlier addresses forward to them by replaceState. Test, Invariants and Exit reworded accordingly (PR #1459).
 --- body ---
 
 ## Context
@@ -34,11 +35,16 @@ soutien documentaire.
 ## Actions
 
 1. Réorganiser la navigation selon les objets, avec le vocabulaire de
-   rédaction décidé le 2026-09-23 (`docs/jetp-observatory-presentation.md`) : **Glossary** (O) ; **The paper
-   trail** (D) : **Documents** → **Entries** → **On the record** →
+   rédaction décidé le 2026-09-23 (`docs/jetp-observatory-presentation.md`),
+   dans l'ordre fixé par la lecture à froid de l'auteur du 2026-09-23 :
+   **The paper trail** (D) : **Documents** → **Entries** → **On the record** →
    **Projects**, **Funding**, **Who's who** ; **By the numbers** (E) ;
+   **Glossary** (O), groupé par thème et A–Z dans chaque groupe ;
    **How we did this** (méthodes). Aucune entrée pour M. Chaque élément
    « On the record » se lit « according to » son éditeur, avec la date.
+   Chaque adresse est le slug de son libellé (`#funding`, `#on-the-record`,
+   `#by-the-numbers`, `#how-we-did-this`, …) ; les anciennes adresses
+   redirigent vers les nouvelles.
 2. D se lit comme une piste documentaire : chaque page montre sa place sur
    la piste et permet de monter ou descendre d'une étape, d'un projet à ce
    qui est « on the record » à son sujet, aux entrées, à la page du
@@ -58,8 +64,12 @@ soutien documentaire.
 ## Test
 
 Red : `tests/test_jetp_observatory_render.py` — la navigation rend, dans cet
-ordre, Glossary, The paper trail (Documents, Entries, On the record,
-Projects, Funding, Who's who), By the numbers et How we did this ; une page
+ordre, The paper trail (Documents, Entries, On the record, Projects,
+Funding, Who's who), By the numbers, Glossary et How we did this, chaque
+lien à l'adresse du slug de son libellé ; chaque ancienne adresse
+(`#countries`, `#country/<CODE>`, `#evidence`, `#numbers`, `#comparison`,
+`#methods`, `#editions`, `#inventory/<CODE>` avec `?row=` et `?tab=record`)
+redirige vers la nouvelle ; une page
 de la piste porte l'indicateur de son étape et des liens vers l'étape
 voisine ; un élément « On the record » porte « according to » et son éditeur ;
 un compte de la page Viet Nam est marqué comme calculé, avec son unité ; aucun
@@ -75,12 +85,14 @@ de documents).
 
 ## Invariants
 
-- Routes publiques inchangées.
+- Les anciennes routes publiques continuent de fonctionner : elles
+  redirigent (`history.replaceState`, sans rechargement) vers l'adresse du
+  libellé ; le site n'émet que les nouvelles.
 - Aucune addition entre lignes de documents différents ni entre lignes et référents.
 
 ## Exit criteria
 
-- [ ] La navigation suit O, D, E sans en afficher les noms ; aucune place pour M
+- [ ] La navigation suit D, E puis O (Glossary en fin, près de How we did this) sans en afficher les noms ; aucune place pour M ; chaque adresse est le slug de son libellé et les anciennes redirigent
 - [ ] La piste Documents → Entries → On the record → Projects / Funding / Who's who se parcourt dans les deux sens
 - [ ] Les nombres calculés se distinguent des nombres publiés, avec unité et périmètre
 - [ ] La copie publique ne contient ni les noms du cadre ni les termes retirés

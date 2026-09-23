@@ -31,7 +31,29 @@ than suspicion, because the readers are researchers as well as journalists.
 | M | Nothing | none |
 | (methods) | What was done, what was not, and which tables are not served | **How we did this** |
 
-- **Glossary.** The terms in force, grouped by list: each class, relation
+**Navigation order.** The paper trail (Documents, Entries, On the record,
+Projects, Funding, Who's who) · By the numbers · Glossary · How we did this.
+The Glossary sits last, beside How we did this: a reader consults it, and
+does not start from it (author's cold read of ticket 0881, 2026-09-23).
+
+**Addresses match labels.** Each page's address is its label's slug:
+`#documents`, `#entries`, `#on-the-record`, `#projects`, `#funding`,
+`#whos-who`, `#by-the-numbers`, `#glossary`, `#how-we-did-this`, and
+`#historical-comparison`, `#release-history` for the two pages reached from
+By the numbers and How we did this. A country's page nests under its step
+(`#funding/<CODE>`, `#entries/<CODE>`, `#on-the-record/<CODE>`); a project is
+`#project/<project_id>`. The addresses of earlier previews (`#countries`,
+`#country/<CODE>`, `#evidence`, `#numbers`, `#comparison`, `#methods`,
+`#editions`, `#inventory/<CODE>` with its `?row=` and `?tab=record`) forward
+in place to the new ones; the pages emit only the new names (same decision).
+The full table is in the observatory's
+[README](../deliverables/jetp-observatory/README.md).
+
+- **Glossary.** Grouped by theme, alphabetical within each group: what the
+  ledger tracks (projects, assets, agreements, parties, perimeters), how
+  documents are read (documents, entries, locators, publishers), statuses,
+  measures, relations. These themes are the lists of the ontology tables, so
+  the hand-written first list and the generated one group alike. The terms in force, grouped by list: each class, relation
   and value with its definition, its external source and its revision
   history. A relation shows what it connects. Every term used elsewhere on
   the site links to its glossary entry. Generated from the ontology tables, `data/jetp/ontology/` ([`jetp-ontology.md`](jetp-ontology.md) section 5).

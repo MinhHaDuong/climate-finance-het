@@ -10,6 +10,7 @@ Blocked-by: 0881
 2026-09-23T10:30Z HDMX-coding-agent note revue du train (2026-09-23) : bloqué aussi par 0876 (la vérification part d'une observation ZAF et de la correspondance de statut peuplée) et 0881 (le Glossary se place dans sa navigation)
 
 2026-09-23T10:26Z HDMX-coding-agent note blocker 0880 closed — Blocked-by removed.
+2026-09-23T12:17Z HDMX-coding-agent note decision of the author's cold read of 0881 (2026-09-23): the Glossary sits last in the navigation, beside How we did this, at #glossary, and is grouped by theme with terms A–Z within each group (what we track, how documents are read, statuses, measures, relations), matching the lists of the terms table; the hand-written first list in PR #1459 already follows that grouping, and the generated one replaces it group for group.
 --- body ---
 
 ## Context
