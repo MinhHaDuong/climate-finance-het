@@ -1,0 +1,60 @@
+%erg 0.1
+Title: REL — obtenir les deux textes manquants du lot efficacité (priorité haute)
+Created: 2026-09-23
+Author: haduong
+Label: needs-human
+
+--- log ---
+2026-09-23T15:00Z haduong created
+
+--- body ---
+## Context
+
+**Priorité haute.** Le lot efficacité réuni pendant l'audit Gavard & Schoch
+(voir 0704, section Matériau amont) nourrit la controverse 2 de la revue REL.
+Il doit aussi servir de base au tableau de codage des mesures, puis à l'audit
+de reproductibilité (0863). Échéance REL : 2026-12-06.
+Trois textes manquaient. La version publiée de Gavard & Schoch (2026) a été
+obtenue le 2026-09-13 en écrivant aux auteurs : c'est la voie qui marche. Elle
+est dans `~/CNRS/papiers/actif/Gavard Scotch 2026 Climate finance counterproductive/2609-PublishedVersion.pdf`.
+
+Restent deux textes, tous deux de signe favorable. Il faut les lire : la
+critique méthodologique doit être symétrique, et un lot fait des seuls
+résultats défavorables serait biaisé.
+
+- **Wang, L. & Tang, J. (2026).** « From Climate Finance to Sustainable
+  Development: The Synergy of Financial Instruments and National Governance for
+  Achieving SDG 13. » *Sustainable Development*, Early View.
+  https://doi.org/10.1002/sd.70738. Double machine learning, 171 pays,
+  2013–2023. C'est le seul texte du lot postérieur à la rupture de déclaration
+  des BMD en 2013.
+- **Zeng, A. et al. (2022).** « The impact of climate aid on carbon emissions
+  reduction and the role of renewable energy: evidence from Belt and Road
+  countries. » *Environmental Science and Pollution Research* 29, 77401–77417.
+  https://doi.org/10.1007/s11356-022-21185-y
+
+## Relevant files
+
+- `~/CNRS/papiers/actif/Gavard Scotch 2026 Climate finance counterproductive/docs/`: staging des PDF (discipline EDM, hors dépôt)
+- même dossier, `docs/missing-papers.html`: liste d'état, à mettre à jour
+- même dossier, `correspondence/request-published-pdf-2026-09-11.md`: modèle de demande qui a abouti
+
+## Actions
+
+1. Repérer l'auteur correspondant de chaque article et une adresse courante
+   (la demande précédente a rebondi deux fois sur des adresses périmées :
+   vérifier la page institutionnelle avant l'envoi).
+2. Rédiger les deux demandes sur le modèle du 11 septembre. L'auteur les envoie.
+3. En parallèle : essayer les accès institutionnels et une version auteur
+   (HAL, ResearchGate, dépôt institutionnel).
+4. À réception : PDF en staging `docs/`, import Zotero, `missing-papers.html` mis à jour.
+
+## Verification
+
+- [ ] Deux PDF présents en staging et dans Zotero
+- [ ] `missing-papers.html` ne liste plus aucun texte en attente
+
+## Exit criteria
+
+- Les deux textes intégraux sont disponibles, ou l'impossibilité est documentée
+  après une relance sans réponse à quinze jours.
