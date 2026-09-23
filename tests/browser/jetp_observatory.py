@@ -209,6 +209,55 @@ def check_inventory(page, url):
     assert sublayers[0]['sublayer_id'] in unknowns.first.inner_text()
 
 
+def check_senegal_and_indonesia(page, url):
+    """Walk the two countries the recipe had never reached (ticket 0861).
+
+    Senegal: row 1 of Annex 2 opens the archived annexes at PDF page 13 — on
+    that file printed page N is PDF page N, measured at ticket 0861. Indonesia:
+    the project the 2025 progress report is cited for most often descends to
+    its ledger rows, and a row read from that report opens its archived copy.
+    """
+    registry = page.request.get(url + '/data/documents.json').json()['documents']
+
+    annexes = next(row for row in registry
+                   if row['id'] == 'sen-investment-plan-annexes-mirror' and row['local_path'])
+    page.goto(url + '/#inventory/SEN?row=1')
+    page.wait_for_selector('[data-inventory-focus="1"]')
+    link = page.locator('a[data-inventory-row="sen-annex-received-01"]')
+    assert link.get_attribute('href') == annexes['local_path'] + '#page=13', \
+        link.get_attribute('href')
+    with page.expect_popup() as popup:
+        link.click()
+    assert popup.value is not None
+    popup.value.close()
+
+    report_id = 'idn-jetp-progress-report-2025'
+    report = next(row for row in registry if row['id'] == report_id and row['local_path'])
+    ledger = page.request.get(url + '/data/observations/IDN.json').json()
+    cited = [row for row in ledger if row['source_id'] == report_id]
+    project_id = max(sorted({row['project_id'] for row in cited}),
+                     key=lambda pid: sum(row['project_id'] == pid for row in cited))
+    served = [row for row in ledger if row['project_id'] == project_id]
+    from_report = next(row for row in served if row['source_id'] == report_id)
+    row_id = (from_report.get('event_id') or from_report.get('implementation_event_id')
+              or from_report['link_id'])
+
+    page.goto(url + '/#project/' + project_id)
+    page.wait_for_selector('#project-evidence details[data-evidence-count]')
+    fold = page.locator('#project-evidence details[data-evidence-count]')
+    assert fold.get_attribute('data-evidence-count') == str(len(served))
+    fold.locator('> summary').click()
+    assert page.locator('#project-evidence tbody tr').count() == len(served)
+    link = page.locator(f'#project-evidence a[data-observation-id="{row_id}"]')
+    link.wait_for()
+    assert link.get_attribute('href').startswith(report['local_path']), \
+        link.get_attribute('href')
+    with page.expect_popup() as popup:
+        link.click()
+    assert popup.value is not None
+    popup.value.close()
+
+
 def check_observations(page, url):
     """Exercise the ledger observations tab: the counts, a facet, and a search.
 
@@ -472,6 +521,7 @@ def check_site(url, output):
         download_matches(page, url, 'data/m1a/manifest.json')
         check_documents(page, url)
         check_inventory(page, url)
+        check_senegal_and_indonesia(page, url)
         check_observations(page, url)
         check_facts(page, url)
         for code in ('ZAF', 'IDN', 'VNM', 'SEN'):
