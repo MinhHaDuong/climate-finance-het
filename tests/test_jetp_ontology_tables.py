@@ -289,7 +289,11 @@ def _sections(text, first, last):
     return text[starts[first]:end]
 
 
-CODE_VALUE = re.compile(r'^(?:[a-z][a-z0-9_]*|[A-F]\d{2})$')
+# A value in code type: a lowercase word, a modality code (A01) or an ISO 3166
+# alpha-3 country code (ZAF). The other uppercase tokens of sections 2 to 4 are
+# deliberately left out: publisher words (`A. Planned` splits into `A.` and
+# `Planned`) and a foreign schema's field name (OC4IDS `projectStatus`).
+CODE_VALUE = re.compile(r'^(?:[a-z][a-z0-9_]*|[A-F]\d{2}|[A-Z]{3})$')
 
 
 def spec_values(text):
