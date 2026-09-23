@@ -2,6 +2,12 @@
 
 M1a is a presentation export, not an identity reconciliation.  Every supplied
 source row is written once, with its sub-layer and original payload intact.
+
+Since ticket 0873 the rows are read from the ledger: the lines of the six
+extracts, their per-document fields and the routes of the identifiers the
+export serves, which ``build_m1a_lines.py`` ingested once from the pinned
+extracts.  The export is a view of those lines, byte for byte the export the
+extracts gave.
 """
 
 import argparse
@@ -13,7 +19,7 @@ from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
-from jetp.build_0818_zaf_q1_reconciliation import SOURCE_FIELDS as _RAW_FIELD_ORDER
+from jetp._ledger_headers import load_schema, read_csv, read_table
 
 COUNTRIES = ("ZAF", "IDN", "VNM", "SEN")
 FIELDS = (
@@ -29,6 +35,20 @@ FIELDS = (
     "identity_status",
     "evidence_locator",
 )
+
+# Viet Nam's source classification of a Resource Mobilisation Plan row and the
+# line classification it is ingested as; the export shows the source word.
+VNM_CLASSIFICATION = {
+    "named": "named_item",
+    "programme": "heading",
+    "unknown": "unnamed_item",
+}
+
+# Appended by the ingestion to a locator whose printed row number the
+# publisher repeated in the same table, so that no two lines claim one place;
+# the export shows the locator as printed.
+PHYSICAL_ROW = "; physical row {}"
+_PHYSICAL_ROW_SUFFIX = re.compile(r"; physical row [0-9]+$")
 
 
 @dataclass(frozen=True)
@@ -245,166 +265,118 @@ def write_inventories(layers: Iterable[FrozenLayer], output_dir: Path) -> dict[s
     return manifest
 
 
-def _read_csv(path: Path) -> list[dict[str, str]]:
-    with path.open(encoding="utf-8", newline="") as handle:
-        return list(csv.DictReader(handle))
-
-
-def _require_input(
-    root: Path,
+def _layer_rows(
     specification: Mapping[str, object],
-    path_key: str = "input_path",
-    sha_key: str = "input_sha256",
-) -> Path:
-    path = root / str(specification[path_key])
-    if not path.is_file() or _sha256(path) != specification[sha_key]:
-        raise ValueError(f"frozen M1a input hash mismatch: {path}")
-    return path
-
-
-# A plan-project locator names the page printed on the source, ``p. 13``.
-# Where the layer declares how that printed page maps onto the archived file,
-# the locator also gets the ``PDF page N`` form ``_m1a_document_links`` reads
-# (ticket 0861); a layer that declares nothing keeps its locator as extracted.
-_PRINTED_PAGE = re.compile(r"\bp\. ([0-9]+)\b")
-
-
-def _with_pdf_page(locator: str, offset: object) -> str:
-    if offset is None:
-        return locator
-    match = _PRINTED_PAGE.search(locator)
-    if not match:
-        raise ValueError(f"locator names no printed page to anchor: {locator!r}")
-    return f"{locator}; PDF page {int(match.group(1)) + int(offset)}"
-
-
-def _plan_rows(rows: Sequence[Mapping[str, str]], specification: Mapping[str, object]) -> list[dict[str, object]]:
-    offset = specification.get("printed_to_pdf_page_offset")
-    selected = [
-        row for row in rows
-        if row["country"] == specification["country"]
-        and row["source_id"] == specification["source_id"]
-    ]
-    return [
-        {
-            "source_row_id": row["plan_project_id"],
-            "label": row["project_name"],
-            "record_type": specification["record_type"],
-            "reported_status": row["priority_tier"] or "unknown",
-            "identity_status": "named" if row["project_name"] else "unknown",
-            "evidence_locator": _with_pdf_page(row["locator"], offset),
-            "source_fields": dict(row),
-        }
-        for row in selected
-    ]
-
-
-def _zaf_rows(
-    rows: Sequence[Mapping[str, str]],
-    specification: Mapping[str, object],
-    field_rows: Sequence[Mapping[str, str]],
+    lines: Sequence[Mapping[str, str | None]],
+    fields: Mapping[str, Mapping[str, str]],
+    columns: Sequence[str],
+    routes: Mapping[str, str],
 ) -> list[dict[str, object]]:
-    # The 21 register labels live in the 0818 sidecar table, not in the
-    # reconciled CSV, which is a content-hashed input of the 0822 freeze.  The
-    # join is positional and checked: same builder, same row order, same
-    # ``ordinal``.
-    if len(field_rows) != len(rows):
-        raise ValueError("South Africa register sidecar row count does not match")
+    """One layer's export rows, read from its document's lines and fields.
 
-    def _fields(row: Mapping[str, str], field_row: Mapping[str, str]) -> dict[str, object]:
-        if field_row["ordinal"] != row["ordinal"]:
-            raise ValueError("South Africa register sidecar is not aligned by ordinal")
-        # The values are already the strings the sidecar holds; passing them
-        # through ``_text`` again would be a second normalisation of the same
-        # data.
-        fields = dict(row)
-        for source_key in _RAW_FIELD_ORDER:
-            fields[_raw_slug(source_key)] = field_row[source_key]
-        return fields
-
-    return [
-        {
-            "source_row_id": row["ordinal"],
-            "label": row["project_name"],
-            "record_type": specification["record_type"],
-            "reported_status": row["implementation_status"] or "unknown",
-            "identity_status": "named" if row["project_name"] else "unknown",
-            "evidence_locator": row["locator"],
-            "source_fields": _fields(row, field_row),
-        }
-        for row, field_row in zip(rows, field_rows, strict=True)
-    ]
-
-
-def _vnm_rows(payload: Mapping[str, object], specification: Mapping[str, object]) -> list[dict[str, object]]:
-    if specification["record_type"] != "from_source_classification":
-        raise ValueError("Viet Nam M1a record type must preserve source classification")
-    positions = payload.get("inventory_positions")
-    if not isinstance(positions, list):
-        raise ValueError("Viet Nam migration lacks inventory_positions")
-    return [
-        {
-            "source_row_id": row["inventory_id"],
-            "label": row["source_wording"],
-            "record_type": row["classification"],
-            "reported_status": (
-                "unknown" if row.get("value") is None or row.get("value") == ""
-                else str(row["value"])
-            ),
-            "identity_status": "unknown" if row["classification"] == "unknown" else "named",
-            "evidence_locator": row["locator"],
-            "source_fields": dict(row),
-        }
-        for row in positions
-    ]
+    ``lines`` are the layer's lines in extraction order, the order the export
+    keeps. The unknown field values of a row are the blank cells among the
+    columns its own table prints, a table printing a column when one of its
+    lines fills it: a Viet Nam annex does not print the columns of the others.
+    """
+    document_id = str(specification["source_id"])
+    adapter = specification["adapter"]
+    table_of = {
+        line["line_id"]: str(line["line_id"])[len(document_id) + 1:].rsplit("-", 1)[0]
+        for line in lines
+    }
+    printed: dict[str, set[str]] = {}
+    for line in lines:
+        filled = {c for c in columns if fields[line["line_id"]][c]}
+        printed.setdefault(table_of[line["line_id"]], set()).update(filled)
+    inverse = {term: source for source, term in VNM_CLASSIFICATION.items()}
+    rows = []
+    for line in lines:
+        line_id = str(line["line_id"])
+        own = fields[line_id]
+        table = printed[table_of[line_id]]
+        source_fields: dict[str, object] = {c: own[c] for c in columns if c in table}
+        if adapter == "zaf_register":
+            source_fields.update({_raw_slug(c): own[c] for c in columns})
+            reported = line["own_status"] or "unknown"
+        elif adapter == "plan_projects":
+            reported = own["priority_tier"] or "unknown"
+        else:
+            reported = str(specification["reported_status"])
+        record_type = specification["record_type"]
+        if record_type == "from_source_classification":
+            record_type = inverse[str(line["classification"])]
+        label = line["label"] or ""
+        rows.append(
+            {
+                "source_row_id": routes.get(line_id, str(line["ordinal"])),
+                "label": label,
+                "record_type": record_type,
+                "reported_status": reported,
+                "identity_status": (
+                    "named" if label and line["classification"] != "unnamed_item"
+                    else "unknown"
+                ),
+                "evidence_locator": _PHYSICAL_ROW_SUFFIX.sub("", str(line["locator"])),
+                "source_fields": source_fields,
+            }
+        )
+    return rows
 
 
-def build_existing_layers(root: Path, config_path: Path | None = None) -> list[FrozenLayer]:
-    """Adapt only the pinned, already-extracted country inputs into M1a layers."""
+def _ledger(ledger_dir: Path) -> tuple[list[dict], dict, dict, dict]:
+    schema = load_schema()
+
+    def table(name: str) -> list[dict]:
+        rows, errors = read_table(ledger_dir, name, schema)
+        if errors:
+            raise ValueError(f"ledger table {name}: {errors[0]}")
+        return [dict(zip(schema.header(name), row)) for row in rows]
+
+    # read_table reunites chunks in file order and keeps each file's row
+    # order, which is extraction order: lines are appended, never reordered.
+    lines = table("lines")
+    specs = {row["document_id"]: json.loads(row["columns"]) for row in table("line_field_specs")}
+    routes = {row["new_id"]: row["old_id"] for row in table("routes") if row["kind"] == "line"}
+    fields: dict[str, dict[str, str]] = {}
+    for document_id, columns in specs.items():
+        header, body = read_csv(Path(ledger_dir) / "line-fields" / f"{document_id}.csv")
+        if header != ["line_id", *columns]:
+            raise ValueError(f"line-fields/{document_id}.csv does not carry its spec's header")
+        fields.update({row[0]: dict(zip(columns, row[1:])) for row in body})
+    return lines, specs, fields, routes
+
+
+def build_existing_layers(
+    root: Path, config_path: Path | None = None, ledger_dir: Path | None = None
+) -> list[FrozenLayer]:
+    """Read the six extracts' lines back into M1a layers (ticket 0873).
+
+    The layer metadata, edition, cutoff and the pinned inputs the lines were
+    ingested from (``build_m1a_lines.py``), stays in the layer manifest; every
+    row comes from the ledger's ``lines``, ``line-fields``,
+    ``line-field-specs`` and ``routes``.
+    """
     root = Path(root)
     config_path = config_path or root / "config" / "jetp-m1a-inventories.json"
     config = json.loads(config_path.read_text(encoding="utf-8"))
+    lines, specs, fields, routes = _ledger(ledger_dir or root / "data" / "jetp")
     layers: list[FrozenLayer] = []
-    csv_cache: dict[Path, list[dict[str, str]]] = {}
-    json_cache: dict[Path, Mapping[str, object]] = {}
     for specification in config["layers"]:
-        path = _require_input(root, specification)
-        adapter = specification["adapter"]
-        if adapter == "plan_projects":
-            rows = _plan_rows(csv_cache.setdefault(path, _read_csv(path)), specification)
-        elif adapter == "zaf_register":
-            fields_path = _require_input(
-                root, specification, "fields_input_path", "fields_input_sha256"
-            )
-            rows = _zaf_rows(
-                csv_cache.setdefault(path, _read_csv(path)),
-                specification,
-                csv_cache.setdefault(fields_path, _read_csv(fields_path)),
-            )
-        elif adapter == "vnm_rmp":
-            if path not in json_cache:
-                json_cache[path] = json.loads(path.read_text(encoding="utf-8"))
-            rows = _vnm_rows(json_cache[path], specification)
-        else:
-            raise ValueError(f"unknown M1a adapter: {adapter}")
-        if len(rows) != specification["expected_rows"]:
+        document_id = specification["source_id"]
+        layer_lines = [
+            line for line in lines
+            if line["sha256"] == specification["source_sha256"]
+            and str(line["line_id"]).startswith(f"{document_id}-")
+        ]
+        if len(layer_lines) != specification["expected_rows"]:
             raise ValueError(f"frozen layer row count changed: {specification['layer_id']}")
-        if any(
-            row["source_fields"].get("document_sha256") != specification["source_sha256"]
-            for row in rows
-            if adapter != "vnm_rmp"
-        ):
-            raise ValueError(f"source document hash changed: {specification['layer_id']}")
-        if adapter == "vnm_rmp" and any(
-            row["source_fields"]["evidence"]["document_sha256"] != specification["source_sha256"]
-            for row in rows
-        ):
-            raise ValueError("Viet Nam source document hash changed")
+        rows = _layer_rows(specification, layer_lines, fields, specs[document_id], routes)
         layers.append(
             FrozenLayer(
                 country=specification["country"],
                 layer_id=specification["layer_id"],
-                source_id=specification["source_id"],
+                source_id=document_id,
                 edition=specification["edition"],
                 cutoff=specification["cutoff"],
                 source_sha256=specification["source_sha256"],
@@ -431,8 +403,11 @@ def main() -> None:
         default=root / "deliverables" / "jetp-observatory" / "data" / "m1a",
     )
     parser.add_argument("--config", type=Path)
+    parser.add_argument("--ledger-dir", type=Path)
     args = parser.parse_args()
-    write_inventories(build_existing_layers(root, args.config), args.output_dir)
+    write_inventories(
+        build_existing_layers(root, args.config, args.ledger_dir), args.output_dir
+    )
 
 
 if __name__ == "__main__":
