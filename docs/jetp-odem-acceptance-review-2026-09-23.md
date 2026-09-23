@@ -179,7 +179,7 @@ that exist. They add no author load and stop the replay debt from growing.
 ## 7. Outcome, 2026-09-23
 
 The author decided the following the same day. They are recorded in
-`jetp-ontology.md` (decision 11 and section 0) and in the tickets:
+`jetp-ontology.md` (decision 11), `jetp-language.md`, `jetp-observatory-presentation.md` and the tickets:
 
 - the ledger's language is pinned to ODEM, and five terms are retired or restricted: *evidence* becomes *justification*, and *model*, *reconciliation*, *edition* and *layer/stage/fact* are replaced as well;
 - the observatory has no Model: it is Data guided by Ontology, and Evidence comes on top;

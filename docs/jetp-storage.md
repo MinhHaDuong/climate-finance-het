@@ -1,7 +1,7 @@
 # JETP programme storage: Markdown first, static publication
 
 **Terminology note (2026-09-23).** This document predates the ODEM language
-of [`jetp-ontology.md`](jetp-ontology.md) section 0, which governs where the two
+of [`jetp-language.md`](jetp-language.md), which governs where the two
 differ. Read *evidence* (a link, a layer, a table of documentary support) as
 **justification**, and *evidence cutoff* as **knowledge cutoff**; *model* (of the
 data) as **schema**; *reconciliation* as **matching** for identities or

@@ -10,8 +10,8 @@ Author: HDMX-coding-agent
 
 ## Context
 
-Décisions de l'auteur du 2026-09-23 (`docs/jetp-ontology.md`, décision 11,
-§ 0 et § 7). Les quatre objets ODEM sont le principe d'organisation du MVP :
+Décisions de l'auteur du 2026-09-23 (`docs/jetp-ontology.md` décision 11,
+`docs/jetp-language.md`, `docs/jetp-observatory-presentation.md`). Les quatre objets ODEM sont le principe d'organisation du MVP :
 ce qui est groupé ensemble, dans quel ordre, et ce qui renvoie à quoi. Ils
 n'en sont pas le vocabulaire. La présentation suppose un lecteur qui sait
 intuitivement comment procède un travail empirique, et ne lui jette pas au
@@ -27,13 +27,14 @@ soutien documentaire.
 
 - `deliverables/jetp-observatory/app.js`, `index.html`, `styles.css` — navigation, pages, libellés
 - `deliverables/jetp-observatory/README.md` — « What is included »
-- `docs/jetp-ontology.md` § 0 (objets, étapes D1 à D4) et § 7 (libellés par défaut)
+- `docs/jetp-language.md` (objets, étapes D1 à D4, termes retirés)
+- `docs/jetp-observatory-presentation.md` (organisation et vocabulaire des pages)
 - `tests/test_jetp_observatory_render.py`, `tests/_jetp_observatory_render.js`, `tests/browser/jetp_observatory.py`
 
 ## Actions
 
 1. Réorganiser la navigation selon les objets, avec le vocabulaire de
-   rédaction décidé le 2026-09-23 (§ 7) : **Glossary** (O) ; **The paper
+   rédaction décidé le 2026-09-23 (`docs/jetp-observatory-presentation.md`) : **Glossary** (O) ; **The paper
    trail** (D) : **Documents** → **Entries** → **On the record** →
    **Projects**, **Funding**, **Who's who** ; **By the numbers** (E) ;
    **How we did this** (méthodes). Aucune entrée pour M. Chaque élément
@@ -46,9 +47,9 @@ soutien documentaire.
    imprimé par un éditeur : il porte son unité, son périmètre et ouvre les
    déclarations dont il est calculé.
 4. Balayage de la copie publique et du README : ni les noms du cadre (O, D,
-   E, M, ontology, evidence, model, D1 à D4) ni les termes retirés du § 0
+   E, M, ontology, evidence, model, D1 à D4) ni les termes retirés de `docs/jetp-language.md`
    (layer, stage, reconciled, edition au sens de publication du ledger), ni
-   les mots écartés au § 7 (claims, deals, players, sources, entities,
+   les mots écartés par `docs/jetp-observatory-presentation.md` (claims, deals, players, sources, entities,
    records). How we did this dit en mots simples ce que l'observatoire ne
    fait pas.
 5. Coordination : `app.js` est aussi touché par [[0873]] et [[0876]] ; ce

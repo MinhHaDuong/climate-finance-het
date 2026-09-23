@@ -11,7 +11,7 @@ The RDJ-26561 data paper is published; Œconomia v2.0.5 remains with its editor.
 ## JETP checkpoint
 
 No deployment; no causal model (0729 DEFER). Language pinned to ODEM on
-2026-09-23 (`docs/jetp-ontology.md` § 0): the observatory is Data guided by
+2026-09-23 (`docs/jetp-language.md`): the observatory is Data guided by
 Ontology, Evidence on top; "evidence" for documentary support is now
 "justification". M1a is ticked by the author (#1448). 0760–0770 left write
 ownership legacy; the ledger migration is 0870 (ontology v2, #1449, awaiting

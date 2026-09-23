@@ -48,67 +48,23 @@ The author's decisions of 2026-09-22 and 2026-09-23 shape it:
     2026-09-22.
 11. On 2026-09-23, after the ODEM acceptance review
     ([`jetp-odem-acceptance-review-2026-09-23.md`](jetp-odem-acceptance-review-2026-09-23.md)):
-    the ledger's language is pinned to the ODEM frame (section 0), and five
-    confusing terms are retired or restricted, starting with evidence, which
-    becomes justification. The observatory has no Model. It is Data guided by
-    Ontology, and Evidence comes on top. The four objects organise the
-    observatory, and Data reads as a pipeline, but the pages speak the
-    reader's language: they assume a reader who knows how empirical work
-    proceeds, and never name the framework (section 7). The ontology is a
-    set of tables with definitions, external mappings and revisions
-    (section 5), and the observatory presents it as its definitions.
+    the ledger is Data guided by Ontology, Evidence comes on top, and there
+    is no Model (section 0). The ontology is a set of tables with
+    definitions, external mappings and revisions (section 5). The builders'
+    language, including five retired terms, is
+    [`jetp-language.md`](jetp-language.md); the observatory's organisation
+    and page vocabulary are
+    [`jetp-observatory-presentation.md`](jetp-observatory-presentation.md).
 
-## 0. Language: the ODEM frame
+## 0. Frame
 
-ODEM (Ontology, Data, Evidence, Models) is the framework of the author's
-design note of 22 September 2026 on interactive causal inquiry. It names four
-objects, each versioned, and keeps them apart. The ledger adopts its four
-words and uses them in no other sense.
-
-| ODEM object | In the JETP observatory | Where it lives |
-|---|---|---|
-| **O, Ontology** | What the ledger talks about and how it records it: classes, relations, closed value lists, status and sector axes, perimeter definitions, crosswalks and conversion rules. Every term has a definition, an external mapping where one exists, and a revision history | `data/jetp/ontology/` (section 5); the observatory's Glossary |
-| **D, Data** | What publishers said, as the ledger read it. A pipeline of four steps, below | `data/jetp/` tables; the observatory's paper trail: Documents, Entries, On the record, Projects / Funding / Who's who |
-| **E, Evidence** | Results computed from D under a declared O version: every count shown with its unit and perimeter, the accounts of backend-design section 5, descriptive tables. E comes on top of D and never edits it | `data/derived/jetp/`, with a run record naming its inputs, cutoffs and ontology version |
-| **M, Models** | Candidate causal explanations. The observatory has none. A causal study, deferred in ticket 0729, would consume a frozen release from outside the ledger | none |
-
-The observatory is Data, guided by Ontology. Evidence comes on top.
-
-**D is a pipeline.** Each step reads the steps before it, writes its own
-tables and never edits an upstream row.
-
-| Step | Name | Content | Tables |
-|---|---|---|---|
-| D1 | Register | What was fetched, byte for byte: publishers, documents, retrieval attempts, snapshots, and the record of how they were sought | `publishers`, `documents`, `document-publishers`, `retrievals`, `snapshots`, `coverage`, `dry-searches` |
-| D2 | Lines | One publisher's statement at one locator in one snapshot, with its own fields verbatim | `lines`, `line-fields/<document_id>`, `line-field-specs` |
-| D3 | Observations | A line read into a typed statement, measure, value and timings, by a named method version | `observations`, `timings`, `external-ids`, `rates`, `deflators` |
-| D4 | Referents | Identities minted by matching decisions over lines, and the relations between them | `projects`, `assets`, `agreements`, `parties`, `line-referents`, `relations`, `adjudications`, `adjudication-members`, `routes` |
-
-D3 and D4 both read D2. An observation's subject is a line until matching
-attaches that line to a referent. The migration order of section 6 builds D4
-before rewriting D3 because the old tables key observations on old
-identities.
-
-**Five terms retired or restricted.**
-
-| Term | Use instead | Why |
-|---|---|---|
-| *evidence*, for documentary support | **justification**: the line and locator a row cites (a justification link, justification lines). *Evidence cutoff* becomes **knowledge cutoff**: rows recorded on or before K | In ODEM, Evidence is the computed result. Documentary support belongs to D |
-| *model*, for a schema or a language model | **schema** for tables and columns; **LLM** for a language model used in matching or translation | Model is reserved for ODEM's M, which the observatory does not contain |
-| *reconciliation* | **matching** for D4 decisions that mint or attach identities (section 11); **account** for the E computation of opening, movements, closing and residual | One word named two operations at two ODEM levels |
-| *edition*, for the ledger's own output | **release** for a frozen package of ledger and site (`data/jetp/releases/<release_id>/`). *Edition* keeps only its document sense: a publisher's successive issue (`edition_of`) | "Evidence edition", "monthly edition" and "document edition" were three different objects |
-| *layer*, *stage* (*étage*), *fact* | **step D1 to D4** for the levels of the pipeline; **observation** for what a publisher stated | *Layer* named M1a sub-tables and *stage* the MVP levels; a ledger row is a publisher's statement read by a method, not a fact |
-
-Domain words that coincide are unaffected: a *project stage* is a value of
-the OC4IDS axis, and a PDF's *text layer* is its extractable text.
-
-This section governs this document, the observatory's page copy and the
-schema: the DDL (ticket 0871) declares no table or column named `evidence`,
-`model`, `reconcil*`, `layer` or `fact`. The older design documents
-([`jetp-backend-design.md`](jetp-backend-design.md),
-[`jetp-backend-implementation-plan.md`](jetp-backend-implementation-plan.md),
-[`jetp-storage.md`](jetp-storage.md), [`jetp-tracking.md`](jetp-tracking.md))
-predate it and carry a note mapping their terms onto this one.
+The ledger is the Data of the ODEM frame (Ontology, Data, Evidence, Models),
+guided by the Ontology this document defines; Evidence is computed on top,
+and there is no Model. Data is a pipeline of four steps: D1 register, D2
+lines, D3 observations, D4 referents. The frame, the step-to-table map and the
+terms the design documents and schema use or avoid are
+[`jetp-language.md`](jetp-language.md). What readers of the observatory see is
+[`jetp-observatory-presentation.md`](jetp-observatory-presentation.md).
 
 ## 1. Why the current schema fails
 
@@ -380,7 +336,7 @@ under the marker definition of that year. The "climate finance" that a
 marker yields is the score times a coefficient, 100 percent for principal
 and 40, 50 or 100 percent for significant depending on the donor and the
 year; the coefficient is a rule, not an observation, so it belongs to the
-ontology (section 0). It is recorded in the sourced `marker-coefficients`
+ontology (section 5, ontology tables). It is recorded in the sourced `marker-coefficients`
 table and applied only in a derived account, so that the same loan can be shown moving from 40 to 100 percent climate finance
 without any change in the loan. A value may be a range: `value_low` and
 `value_high` bound it, as the timing bounds bound a date, and a scalar has
@@ -662,56 +618,12 @@ Order of work, each step a ticket with its own byte-level check:
 
 ## 7. What the observatory serves
 
-The four ODEM objects of section 0 are the observatory's organising
-principle: they decide what is grouped with what, in which order, and what
-may link to what. They are not its vocabulary. The pages assume a reader who
-knows how empirical work proceeds, that a figure rests on documents and that
-words need definitions, and they never put the framework's names in front of
-that reader. "Ontology", "Evidence", "Model", the letters O, D, E, M and the
-step codes D1 to D4 appear in code, data attributes and these documents, not
-in page copy.
-
-The page vocabulary is a newsroom's, decided by the author on 2026-09-23:
-data desks organise document-based work the same way, and their words are
-plain. It keeps to the neutral side of that vocabulary, attribution rather
-than suspicion, because the readers are researchers as well as journalists.
-
-| ODEM object | What the reader sees | Label on the page |
-|---|---|---|
-| O | What each word, status, measure and relation means, where the definition comes from, and when it changed | **Glossary** |
-| D | The documented route from a figure back to the page that supports it, walked in both directions | **The paper trail**: **Documents** → **Entries** → **On the record** → **Projects**, **Funding**, **Who's who** |
-| E | Counts and totals computed by the ledger, each with its unit, its perimeter and a link to what it was computed from | **By the numbers** |
-| M | Nothing | none |
-| (methods) | What was done, what was not, and which tables are not served | **How we did this** |
-
-- **Glossary.** The terms in force, grouped by list: each class, relation
-  and value with its definition, its external source and its revision
-  history. A relation shows what it connects. Every term used elsewhere on
-  the site links to its glossary entry. Generated from `data/jetp/ontology/`.
-- **The paper trail.** Documents is D1 (publishers, documents, retrievals,
-  snapshots). Entries is D2: a row of a register, a line of a plan annex, a
-  submission in a list. On the record is D3: each item reads "according to"
-  its publisher, with the date. Projects, Funding and Who's who are D4:
-  projects and assets, agreements, and parties. Each page shows where it
-  sits on the trail and lets the reader step one stage up or down, from a
-  project to what is on the record about it, to the entries, to the page of
-  the document, and back.
-- **By the numbers.** A number the ledger computes is visibly set apart from
-  a number a publisher printed: it states its unit and perimeter and opens
-  the items on the record it was computed from. Accounts, when they exist,
-  appear only here.
-- **No models.** The observatory tests no causal explanation, and its
-  navigation has no place for one. How we did this says in plain words what
-  the observatory does not do.
-
-Words avoided on the pages: *claims* (it implies doubt about a publisher's
-statement), *deals* and *players* (loaded), *sources* (a source is also a
-person, and the ledger retired the word), *entities* and *records* (opaque to
-a general reader).
-
-Every table of section 5 is served, one file per table, or named on How we
-did this as not served, with the reason. Nothing on a page adds lines of one
-document to lines of another or to referents.
+Every table of section 5 is served, one file per table, or named on the
+observatory's methods page as not served, with the reason. The ontology tables
+are served too, as the observatory's glossary. Nothing on a page adds lines of
+one document to lines of another or to referents, and every count states its
+unit. How the site is organised and worded is
+[`jetp-observatory-presentation.md`](jetp-observatory-presentation.md).
 
 ## 8. Consequences for the backend design
 

@@ -21,7 +21,7 @@ at the author's request. The first version of this ticket, written on
 2026-09-17 against backend design revision 5, specified an overlay catalogue
 beside the M1a inventories, `same_as` and `component_of` rows, and a separate
 `possible_matches` table. Ontology v2 absorbs each of these into D4 of the
-data pipeline (§ 0): identities are referents minted by matching decisions
+data pipeline (`docs/jetp-language.md`): identities are referents minted by matching decisions
 over lines, relations are rows of `relations`, and a probable match is a
 `line-referents` or `relations` row with `status = candidate`. The intent is
 unchanged: a bounded, navigable catalogue that manufactures no homogeneous
@@ -51,7 +51,7 @@ ontology in force is frozen as its first release (O v1).
 
 ## Relevant files
 
-- `docs/jetp-ontology.md` § 0, § 5 (tables, ontology tables), § 11 (matching)
+- `docs/jetp-language.md`; `docs/jetp-ontology.md` § 5 (tables, ontology tables), § 11 (matching)
 - `data/jetp/lines.csv`, `data/jetp/line-referents.csv`, `data/jetp/relations.csv` — after 0873 and 0875
 - `data/jetp/ontology/` — after 0880
 - `deliverables/jetp-observatory/` — D4 record pages and the candidate counts

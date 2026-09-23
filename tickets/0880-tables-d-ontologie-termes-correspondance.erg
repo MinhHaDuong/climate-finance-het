@@ -25,7 +25,7 @@ Le contrat est désormais `docs/jetp-ontology.md` § 5, sous-sections
 
 ## Relevant files
 
-- `docs/jetp-ontology.md` § 0, § 2 à 4 (les listes), § 5 (tables d'ontologie, spécification formelle), § 6 étape 0
+- `docs/jetp-language.md` (termes interdits dans le schéma) ; `docs/jetp-ontology.md` § 2 à 4 (les listes), § 5 (tables d'ontologie, spécification formelle), § 6 étape 0
 - `config/jetp_tracking.yaml` — vocabulaires actuels, qui deviennent des lignes de `terms`
 - `data/jetp/ontology/` — à créer : `terms.csv`, `status-crosswalk.csv`, `sector-crosswalk.csv`, `perimeters.csv`, `marker-coefficients.csv`
 - `config/jetp-ledger.sql` — le DDL de [[0871]]
@@ -48,7 +48,7 @@ Le contrat est désormais `docs/jetp-ontology.md` § 5, sous-sections
    un terme en vigueur, si un terme en vigueur n'apparaît nulle part dans le
    document, si une table ou colonne décrite au § 5 diffère du DDL, ou si le
    DDL déclare une table ou colonne nommée `evidence`, `model`,
-   `reconcil*`, `layer` ou `fact` (§ 0).
+   `reconcil*`, `layer` ou `fact` (`docs/jetp-language.md`).
 
 ## Test
 
