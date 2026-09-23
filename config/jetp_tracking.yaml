@@ -1,7 +1,14 @@
 version: 1
 
-# Canonical controlled vocabularies for the documentary corpus. Code reads
-# these values; do not duplicate a competing taxonomy in prose or scripts.
+# Vocabularies of the legacy documentary tables (sources.csv, manifest.csv,
+# events.csv and their readers in scripts/jetp/schemas.py). The ledger's closed
+# lists live in data/jetp/ontology/terms.csv (ticket 0880): authority
+# categories, document types (source_types here) and retrieval statuses
+# (collection_statuses here) are terms there, and the status lists below are
+# replaced by the shared axes of docs/jetp-ontology.md section 4. These lists
+# stay only while the legacy readers do and go with them (ticket 0878); what
+# remains here afterwards is display choices. Do not add a value here for the
+# ledger: add a terms row.
 countries:
   ZAF: South Africa
   IDN: Indonesia

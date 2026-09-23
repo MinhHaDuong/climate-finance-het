@@ -3,13 +3,13 @@ Title: Lignes et champs des quatre documents M1a
 Created: 2026-09-22
 Author: HDMX-coding-agent
 Blocked-by: 0872
-Blocked-by: 0880
 
 --- log ---
 2026-09-22T17:30Z HDMX-coding-agent created
 
 2026-09-23T09:17Z HDMX-coding-agent note gaze/1457: 0871 left lines.groups without a foreign key (the contract does not say which way the column points); decide the direction here when line-fields/lines land
 2026-09-23T09:22Z HDMX-coding-agent gaze/1457 red team: an empty terms rejects every closed-list value, so 0873 cannot land lines rows before 0880 populates terms; added Blocked-by: 0880 (was only transitively ordered via 0870's wave table)
+2026-09-23T10:26Z HDMX-coding-agent note blocker 0880 closed — Blocked-by removed.
 --- body ---
 ## Context
 

@@ -33,13 +33,14 @@ def _term(term_id, list_name):
 def _valid_tables():
     return {
         'terms': [_term('named_item', 'line_classification'),
-                  _term('heading', 'line_classification')],
+                  _term('heading', 'line_classification'),
+                  _term('collected', 'retrieval_status')],
         'documents': [{'document_id': 'doc-1', 'country': 'ZAF',
                        'title': 'Register', 'language': 'en'}],
         'snapshots': [{'sha256': SHA_A, 'storage_path': 'store/a',
                        'size_bytes': '10'}],
         'retrievals': [{'retrieval_id': 'ret-1', 'document_id': 'doc-1',
-                        'retrieved_at': '2026-09-23T10:00Z', 'status': 'ok',
+                        'retrieved_at': '2026-09-23T10:00Z', 'status': 'collected',
                         'sha256': SHA_A}],
         'lines': [
             {'line_id': 'doc-1-t1-2', 'country': 'ZAF', 'sha256': SHA_A,
@@ -98,7 +99,8 @@ def test_ddl_declares_the_common_tables_in_file_order():
             'assets', 'agreements', 'parties', 'line_referents', 'relations',
             'observations', 'timings', 'external_ids', 'adjudications',
             'adjudication_members', 'rates', 'deflators', 'routes',
-            'coverage'} == set(schema.tables)
+            'coverage', 'status_crosswalk', 'sector_crosswalk', 'perimeters',
+            'marker_coefficients'} == set(schema.tables)
     assert schema.header('lines')[:4] == ['line_id', 'country', 'sha256', 'locator']
     assert schema.header('document_publishers') == ['document_id', 'publisher_id', 'role']
 

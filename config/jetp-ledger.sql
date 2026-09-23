@@ -19,8 +19,11 @@
 --   * A column whose values come from a closed list never enumerates that
 --     list here. It is checked against the terms in force (view
 --     terms_in_force), under the list name given in violation_closed_list.
---     No list of values exists outside the `terms` table (ticket 0880
---     populates it).
+--     No list of values exists outside the `terms` table
+--     (data/jetp/ontology/terms.csv, ticket 0880). The only exception is the
+--     terms table's own kind, status and mapping_relation, which are terms
+--     too but are checked by tests/test_jetp_ontology_tables.py rather than
+--     here, so that a fixture can start from a single term row.
 --   * Per-document field tables (line-fields/<document_id>.csv) are not
 --     declared here: each is declared by its row in line_field_specs and the
 --     builder compares the file header to that row.
@@ -28,7 +31,19 @@
 --     tables of this DDL.
 
 -- ---------------------------------------------------------------------------
--- Ontology: the schema of `terms` (rows: ticket 0880)
+-- Ontology (docs/jetp-ontology.md section 5; ticket 0880)
+--
+-- Five tables under data/jetp/ontology/, revised by supersession and never
+-- edited in place. Each row carries recorded_at, decided_by, status and
+-- supersedes; a row is in force when it is the accepted terminal row of its
+-- chain (views *_in_force). The chain key is the set of columns successive
+-- revisions of one entry share: (list, term_id) for terms, since a value's
+-- term_id is unique within its list only; (publisher_id, own_status) and
+-- (publisher_id, own_sector) for the crosswalks; perimeter_id; and
+-- (donor_party_id, marker, score, year) for marker coefficients. A change of
+-- meaning mints a new chain key and the old one stays in force.
+-- Rows: `terms` in ticket 0880, the crosswalks in 0876, perimeters in 0877,
+-- marker coefficients in 0885.
 -- ---------------------------------------------------------------------------
 
 CREATE TABLE terms (
@@ -49,6 +64,63 @@ CREATE TABLE terms (
     status TEXT NOT NULL,
     supersedes TEXT UNIQUE REFERENCES terms (term_row_id),
     notes TEXT
+);
+
+CREATE TABLE status_crosswalk (
+    crosswalk_row_id TEXT PRIMARY KEY,
+    publisher_id TEXT NOT NULL REFERENCES publishers (publisher_id),
+    own_status TEXT NOT NULL,
+    axis TEXT NOT NULL,
+    shared_status TEXT NOT NULL,
+    recorded_at TEXT NOT NULL,
+    decided_by TEXT NOT NULL,
+    status TEXT NOT NULL,
+    supersedes TEXT UNIQUE REFERENCES status_crosswalk (crosswalk_row_id),
+    notes TEXT
+);
+
+CREATE TABLE sector_crosswalk (
+    crosswalk_row_id TEXT PRIMARY KEY,
+    publisher_id TEXT NOT NULL REFERENCES publishers (publisher_id),
+    own_sector TEXT NOT NULL,
+    -- A five-digit OECD DAC CRS purpose code. The purpose list is an external
+    -- enumeration of some 200 codes that the ledger cites, not a closed list
+    -- of its own, so its shape is checked here and a code is not a term.
+    purpose_code TEXT NOT NULL CHECK (purpose_code GLOB '[0-9][0-9][0-9][0-9][0-9]'),
+    recorded_at TEXT NOT NULL,
+    decided_by TEXT NOT NULL,
+    status TEXT NOT NULL,
+    supersedes TEXT UNIQUE REFERENCES sector_crosswalk (crosswalk_row_id),
+    notes TEXT
+);
+
+CREATE TABLE perimeters (
+    perimeter_row_id TEXT PRIMARY KEY,
+    perimeter_id TEXT NOT NULL,
+    country TEXT,
+    name TEXT NOT NULL,
+    scope TEXT,
+    definition TEXT NOT NULL CHECK (length(trim(definition)) > 0),
+    recorded_at TEXT NOT NULL,
+    decided_by TEXT NOT NULL,
+    status TEXT NOT NULL,
+    supersedes TEXT UNIQUE REFERENCES perimeters (perimeter_row_id),
+    notes TEXT
+);
+
+CREATE TABLE marker_coefficients (
+    coefficient_row_id TEXT PRIMARY KEY,
+    donor_party_id TEXT NOT NULL REFERENCES parties (party_id),
+    marker TEXT NOT NULL,
+    score TEXT NOT NULL,
+    year INTEGER NOT NULL,
+    coefficient REAL NOT NULL CHECK (coefficient BETWEEN 0 AND 1),
+    -- The line that states the donor's coefficient: a rule is sourced.
+    line_id TEXT REFERENCES lines (line_id),
+    recorded_at TEXT NOT NULL,
+    decided_by TEXT NOT NULL,
+    status TEXT NOT NULL,
+    supersedes TEXT UNIQUE REFERENCES marker_coefficients (coefficient_row_id)
 );
 
 -- ---------------------------------------------------------------------------
@@ -348,13 +420,62 @@ CREATE TABLE coverage (
 -- Named validation queries. Each view returns one row per failure.
 -- ===========================================================================
 
--- A term row is in force when it is the terminal row of its supersession
--- chain and its status is `accepted` (storage contract, section 1).
+-- An ontology row is in force when it is the terminal row of its
+-- supersession chain and its status is `accepted` (storage contract,
+-- section 1; ontology section 5). scripts/jetp/_ontology.py applies the same
+-- rule at a knowledge cutoff.
 CREATE VIEW terms_in_force AS
 SELECT t.*
 FROM terms AS t
 WHERE t.status = 'accepted'
   AND NOT EXISTS (SELECT 1 FROM terms AS s WHERE s.supersedes = t.term_row_id);
+
+CREATE VIEW status_crosswalk_in_force AS
+SELECT c.*
+FROM status_crosswalk AS c
+WHERE c.status = 'accepted'
+  AND NOT EXISTS (SELECT 1 FROM status_crosswalk AS s WHERE s.supersedes = c.crosswalk_row_id);
+
+CREATE VIEW sector_crosswalk_in_force AS
+SELECT c.*
+FROM sector_crosswalk AS c
+WHERE c.status = 'accepted'
+  AND NOT EXISTS (SELECT 1 FROM sector_crosswalk AS s WHERE s.supersedes = c.crosswalk_row_id);
+
+CREATE VIEW perimeters_in_force AS
+SELECT p.*
+FROM perimeters AS p
+WHERE p.status = 'accepted'
+  AND NOT EXISTS (SELECT 1 FROM perimeters AS s WHERE s.supersedes = p.perimeter_row_id);
+
+CREATE VIEW marker_coefficients_in_force AS
+SELECT m.*
+FROM marker_coefficients AS m
+WHERE m.status = 'accepted'
+  AND NOT EXISTS (SELECT 1 FROM marker_coefficients AS s
+                  WHERE s.supersedes = m.coefficient_row_id);
+
+-- Every ontology row with its chain key, for the chain rules below.
+CREATE VIEW ontology_chains AS
+          SELECT 'terms' AS tbl, term_row_id AS row_id,
+                 coalesce(list, '') || '/' || term_id AS chain, recorded_at, supersedes
+            FROM terms
+UNION ALL SELECT 'status_crosswalk', crosswalk_row_id, publisher_id || '/' || own_status,
+                 recorded_at, supersedes FROM status_crosswalk
+UNION ALL SELECT 'sector_crosswalk', crosswalk_row_id, publisher_id || '/' || own_sector,
+                 recorded_at, supersedes FROM sector_crosswalk
+UNION ALL SELECT 'perimeters', perimeter_row_id, perimeter_id, recorded_at, supersedes
+            FROM perimeters
+UNION ALL SELECT 'marker_coefficients', coefficient_row_id,
+                 donor_party_id || '/' || marker || '/' || score || '/' || year,
+                 recorded_at, supersedes FROM marker_coefficients;
+
+CREATE VIEW ontology_in_force AS
+          SELECT 'terms' AS tbl, term_row_id AS row_id FROM terms_in_force
+UNION ALL SELECT 'status_crosswalk', crosswalk_row_id FROM status_crosswalk_in_force
+UNION ALL SELECT 'sector_crosswalk', crosswalk_row_id FROM sector_crosswalk_in_force
+UNION ALL SELECT 'perimeters', perimeter_row_id FROM perimeters_in_force
+UNION ALL SELECT 'marker_coefficients', coefficient_row_id FROM marker_coefficients_in_force;
 
 -- Every identifier a typed reference (kind, id) may point to.
 CREATE VIEW ledger_identities AS
@@ -367,29 +488,35 @@ UNION ALL SELECT 'project', project_id FROM projects
 UNION ALL SELECT 'asset', asset_id FROM assets
 UNION ALL SELECT 'agreement', agreement_id FROM agreements
 UNION ALL SELECT 'party', party_id FROM parties
+UNION ALL SELECT 'perimeter', perimeter_id FROM perimeters
 UNION ALL SELECT 'observation', observation_id FROM observations;
 
 -- The kinds that have a table in this DDL. A typed reference to one of them
--- must resolve; a kind without a table (a perimeter, a country) is left to
--- the ticket that declares its table.
+-- must resolve; a kind without a table (a country) is not checked here.
 CREATE VIEW identity_kinds (kind) AS
 VALUES ('publisher'), ('document'), ('retrieval'), ('snapshot'), ('line'),
-       ('project'), ('asset'), ('agreement'), ('party'), ('observation');
+       ('project'), ('asset'), ('agreement'), ('party'), ('perimeter'),
+       ('observation');
 
 -- Closed lists: each value must be a term in force of the named list.
 CREATE VIEW violation_closed_list AS
 WITH ref (tbl, col, list, value) AS (
-              SELECT 'lines', 'classification', 'line_classification', classification FROM lines
+              SELECT 'publishers', 'authority_category', 'authority_category', authority_category FROM publishers
+    UNION ALL SELECT 'documents', 'document_type', 'document_type', document_type FROM documents
+    UNION ALL SELECT 'document_publishers', 'role', 'role', role FROM document_publishers
+    UNION ALL SELECT 'retrievals', 'status', 'retrieval_status', status FROM retrievals
+    UNION ALL SELECT 'lines', 'classification', 'line_classification', classification FROM lines
     UNION ALL SELECT 'lines', 'own_status_axis', 'axis', own_status_axis FROM lines
     UNION ALL SELECT 'projects', 'classification', 'project_classification', classification FROM projects
     UNION ALL SELECT 'agreements', 'modality', 'modality', modality FROM agreements
-    UNION ALL SELECT 'line_referents', 'referent_kind', 'kind', referent_kind FROM line_referents
+    UNION ALL SELECT 'line_referents', 'referent_kind', 'class', referent_kind FROM line_referents
     UNION ALL SELECT 'line_referents', 'status', 'decision_status', status FROM line_referents
-    UNION ALL SELECT 'relations', 'from_kind', 'kind', from_kind FROM relations
+    UNION ALL SELECT 'relations', 'from_kind', 'class', from_kind FROM relations
     UNION ALL SELECT 'relations', 'relation', 'relation', relation FROM relations
-    UNION ALL SELECT 'relations', 'to_kind', 'kind', to_kind FROM relations
+    UNION ALL SELECT 'relations', 'to_kind', 'class', to_kind FROM relations
+    UNION ALL SELECT 'relations', 'role', 'role', role FROM relations
     UNION ALL SELECT 'relations', 'status', 'decision_status', status FROM relations
-    UNION ALL SELECT 'observations', 'subject_kind', 'kind', subject_kind FROM observations
+    UNION ALL SELECT 'observations', 'subject_kind', 'class', subject_kind FROM observations
     UNION ALL SELECT 'observations', 'axis', 'axis', axis FROM observations
     UNION ALL SELECT 'observations', 'measure', 'measure', measure FROM observations
     UNION ALL SELECT 'observations', 'flow_type', 'flow_type', flow_type FROM observations
@@ -397,13 +524,20 @@ WITH ref (tbl, col, list, value) AS (
     UNION ALL SELECT 'observations', 'status', 'decision_status', status FROM observations
     UNION ALL SELECT 'timings', 'date_role', 'date_role', date_role FROM timings
     UNION ALL SELECT 'timings', 'date_precision', 'date_precision', date_precision FROM timings
-    UNION ALL SELECT 'external_ids', 'kind', 'kind', kind FROM external_ids
+    UNION ALL SELECT 'external_ids', 'kind', 'class', kind FROM external_ids
     UNION ALL SELECT 'adjudications', 'decision_type', 'decision_type', decision_type FROM adjudications
-    UNION ALL SELECT 'adjudications', 'subject_kind', 'kind', subject_kind FROM adjudications
+    UNION ALL SELECT 'adjudications', 'subject_kind', 'class', subject_kind FROM adjudications
     UNION ALL SELECT 'adjudications', 'status', 'decision_status', status FROM adjudications
-    UNION ALL SELECT 'adjudication_members', 'kind', 'kind', kind FROM adjudication_members
-    UNION ALL SELECT 'routes', 'kind', 'kind', kind FROM routes
-    UNION ALL SELECT 'coverage', 'referent_kind', 'kind', referent_kind FROM coverage
+    UNION ALL SELECT 'adjudication_members', 'kind', 'class', kind FROM adjudication_members
+    UNION ALL SELECT 'routes', 'kind', 'class', kind FROM routes
+    UNION ALL SELECT 'coverage', 'referent_kind', 'class', referent_kind FROM coverage
+    UNION ALL SELECT 'status_crosswalk', 'axis', 'axis', axis FROM status_crosswalk
+    UNION ALL SELECT 'status_crosswalk', 'status', 'decision_status', status FROM status_crosswalk
+    UNION ALL SELECT 'sector_crosswalk', 'status', 'decision_status', status FROM sector_crosswalk
+    UNION ALL SELECT 'perimeters', 'status', 'decision_status', status FROM perimeters
+    UNION ALL SELECT 'marker_coefficients', 'marker', 'marker', marker FROM marker_coefficients
+    UNION ALL SELECT 'marker_coefficients', 'score', 'marker_score', score FROM marker_coefficients
+    UNION ALL SELECT 'marker_coefficients', 'status', 'decision_status', status FROM marker_coefficients
 )
 SELECT tbl || '.' || col || ' = ''' || value || ''' is not a term in force of list '''
        || list || '''' AS detail
@@ -451,3 +585,50 @@ WHERE o.measure = 'flow'
           AND EXISTS (SELECT 1 FROM timings AS t
                        WHERE t.observation_id = o.observation_id AND t.date_role = 'period_end'))
   );
+
+-- A crosswalk maps a publisher's word onto a value of the axis it names: an
+-- axis's term_id is the name of the list its values belong to.
+CREATE VIEW violation_crosswalk_shared_status AS
+SELECT 'status_crosswalk ' || c.crosswalk_row_id || ': shared_status = '''
+       || c.shared_status || ''' is not a term in force of axis ''' || c.axis || ''''
+       AS detail
+FROM status_crosswalk AS c
+WHERE NOT EXISTS (
+    SELECT 1 FROM terms_in_force AS t WHERE t.list = c.axis AND t.term_id = c.shared_status
+);
+
+-- Ontology chains: a revision keeps its chain key and is not recorded before
+-- the row it supersedes, and a chain key has at most one row in force.
+CREATE VIEW violation_ontology_chain AS
+SELECT r.tbl || ' ' || r.row_id || ': supersedes ' || p.row_id
+       || ' of another chain (' || p.chain || ', not ' || r.chain || ')' AS detail
+FROM ontology_chains AS r
+JOIN ontology_chains AS p ON p.tbl = r.tbl AND p.row_id = r.supersedes
+WHERE p.chain <> r.chain
+UNION ALL
+SELECT r.tbl || ' ' || r.row_id || ': recorded_at ' || r.recorded_at
+       || ' is before that of the row it supersedes, ' || p.row_id
+FROM ontology_chains AS r
+JOIN ontology_chains AS p ON p.tbl = r.tbl AND p.row_id = r.supersedes
+WHERE r.recorded_at < p.recorded_at
+UNION ALL
+SELECT c.tbl || ' ' || c.chain || ': more than one row in force ('
+       || group_concat(c.row_id, ', ') || ')'
+FROM ontology_chains AS c
+JOIN ontology_in_force AS f ON f.tbl = c.tbl AND f.row_id = c.row_id
+GROUP BY c.tbl, c.chain
+HAVING count(*) > 1;
+
+-- A value belongs to a list; a relation states its domain and range; a
+-- mapping other than `local` names its scheme and the concept's URI or code.
+CREATE VIEW violation_term_shape AS
+SELECT 'terms ' || term_row_id || ': a value term names its list' AS detail
+FROM terms WHERE kind = 'value' AND list IS NULL
+UNION ALL
+SELECT 'terms ' || term_row_id || ': a relation term states its domain and range'
+FROM terms WHERE kind = 'relation' AND (domain IS NULL OR range IS NULL)
+UNION ALL
+SELECT 'terms ' || term_row_id || ': mapping ' || mapping_relation
+       || ' names no external scheme or URI'
+FROM terms
+WHERE mapping_relation <> 'local' AND (external_scheme IS NULL OR external_uri IS NULL);
