@@ -463,57 +463,20 @@ def check_paper_trail(page, url):
     """
     page.goto(url + '/#overview')
     page.wait_for_selector('.country-grid')
-    labels = page.locator('header nav a').all_text_contents()
+    labels = page.locator('header nav a[data-section]').all_text_contents()
     assert labels == ['The paper trail', 'The tallies', 'About'], labels
-    # About's sub-bar: plain siblings, the current page marked, the release
-    # history under Methods and in no bar.
-    page.locator('header nav a[href="#about"]').click()
-    page.wait_for_selector('#step-bar [data-sub-bar="about"]')
-    assert page.locator('#step-bar a[data-sub]').all_text_contents() == [
-        'Glossary', 'Methods', 'Who we are']
-    page.locator('#step-bar a[data-sub="who-we-are"]').click()
-    page.wait_for_selector('[data-placeholder="author"]')
-    assert page.locator('#step-bar a[aria-current="page"]').inner_text() == 'Who we are'
-    page.locator('#step-bar a[data-sub="methods"]').click()
-    page.wait_for_selector('.method-list')
-    page.locator('.method-list a[href="#release-history"]').click()
-    page.wait_for_selector('main table')
-    assert page.locator('#step-bar a[aria-current="page"]').inner_text() == 'Methods'
-    assert page.locator('header nav a.active').get_attribute('href') == '#about'
-    page.goto(url + '/#overview')
-    page.wait_for_selector('.country-grid')
-    # The step bar belongs to the paper trail only.
-    assert page.locator('#step-bar').is_hidden()
-    # The tallies: one table grouped by country, then two numbered figures,
-    # and no second copy of the landing page's stat grid.
-    page.locator('header nav a[href="#the-tallies"]').click()
-    page.wait_for_selector('table.counts')
-    assert page.locator('header nav a.active').get_attribute('href') == '#the-tallies'
-    assert page.locator('table.counts tbody[data-country]').count() == 4
-    assert page.locator('main .stat-grid, main .metrics').count() == 0
-    assert page.locator('.counts-figure figcaption strong').all_text_contents() == [
-        'Figure 1.', 'Figure 2.']
-    page.locator('tbody[data-country="VNM"] tr[data-computed-figure="Named projects"] a').click()
-    page.wait_for_selector('#results tbody tr')
-    assert page.locator('#country-filter').input_value() == 'VNM'
-    # Who's who counts each name's projects once.
-    page.goto(url + '/#whos-who')
-    page.wait_for_selector('#parties-results details summary')
-    summary = page.locator('#parties-results details summary').first.inner_text()
-    assert summary.count('·') == 1, summary
-    page.goto(url + '/#overview')
-    page.wait_for_selector('.country-grid')
-
     # Old addresses forward in place, deep links and tabs included, and the
     # back button does not bounce between the two names.
     for old, new, ready in (
         ('countries', 'funding', '.country-grid'),
         ('country/IDN', 'funding/IDN', '.markdown h2'),
         ('evidence', 'on-the-record', '[data-reviewed-evidence-id]'),
-        ('comparison?country=IDN', 'historical-comparison?country=IDN', '#history-table'),
+        ('comparison?country=IDN', 'comparisons?country=IDN', '#history-table'),
         ('how-we-did-this', 'methods', '.method-list'),
-        ('numbers', 'the-tallies', 'table.counts'),
-        ('by-the-numbers', 'the-tallies', 'table.counts'),
+        ('numbers', 'counts', 'table.counts'),
+        ('by-the-numbers', 'counts', 'table.counts'),
+        ('the-tallies', 'counts', 'table.counts'),
+        ('historical-comparison', 'comparisons', '#history-table'),
         ('inventory/VNM?tab=record', 'on-the-record/VNM', '#observations-filters'),
         ('inventory/VNM?row=22', 'entries/VNM?row=22', '[data-inventory-focus="22"]'),
     ):
@@ -533,7 +496,7 @@ def check_paper_trail(page, url):
     def at_step(label, address):
         page.wait_for_selector(f'#step-bar a[aria-current="page"]:text-is("{label}")')
         assert page.url.endswith('#' + address), (label, page.url)
-        tab = page.locator('header nav a.active')
+        tab = page.locator('header nav a[data-section].active')
         assert tab.count() == 1 and tab.get_attribute('href') == '#the-paper-trail'
         assert page.locator('main .eyebrow, main nav.trail, main [role="tablist"]').count() == 0
 
@@ -584,6 +547,118 @@ def check_paper_trail(page, url):
     assert page.locator('#country-filter').input_value() == 'VNM'
 
 
+
+def check_sections(page, url):
+    """About's sub-bar, the tallies' table and the Who's who count (ticket 0881)."""
+    page.goto(url + '/#overview')
+    page.wait_for_selector('.country-grid')
+    # About's sub-bar: plain siblings, the current page marked, the release
+    # history under Methods and in no bar.
+    page.locator('header nav a[data-section="about"]').click()
+    page.wait_for_selector('#step-bar [data-sub-bar="about"]')
+    assert page.locator('#step-bar a[data-sub]').all_text_contents() == [
+        'Glossary', 'Methods', 'Who we are']
+    page.locator('#step-bar a[data-sub="who-we-are"]').click()
+    page.wait_for_selector('[data-placeholder="author"]')
+    assert page.locator('#step-bar a[aria-current="page"]').inner_text() == 'Who we are'
+    page.locator('#step-bar a[data-sub="methods"]').click()
+    page.wait_for_selector('.method-list')
+    page.locator('.method-list a[href="#release-history"]').click()
+    page.wait_for_selector('main table')
+    assert page.locator('#step-bar a[aria-current="page"]').inner_text() == 'Methods'
+    assert page.locator('header nav a[data-section].active').get_attribute('href') == '#about'
+    page.goto(url + '/#overview')
+    page.wait_for_selector('.country-grid')
+    # The step bar belongs to the paper trail only.
+    assert page.locator('#step-bar').is_hidden()
+    # The tallies: one table grouped by country, then two numbered figures,
+    # and no second copy of the landing page's stat grid.
+    page.locator('header nav a[data-section="the-tallies"]').click()
+    page.wait_for_selector('table.counts')
+    assert page.locator('header nav a[data-section].active').get_attribute('href') == '#counts'
+    assert page.locator('table.counts tbody[data-country]').count() == 4
+    assert page.locator('main .stat-grid, main .metrics').count() == 0
+    assert page.locator('.counts-figure figcaption strong').all_text_contents() == [
+        'Figure 1.', 'Figure 2.']
+    page.locator('tbody[data-country="VNM"] tr[data-computed-figure="Named projects"] a').click()
+    page.wait_for_selector('#results tbody tr')
+    assert page.locator('#country-filter').input_value() == 'VNM'
+    # Who's who counts each name's projects once.
+    page.goto(url + '/#whos-who')
+    page.wait_for_selector('#parties-results details summary')
+    summary = page.locator('#parties-results details summary').first.inner_text()
+    assert summary.count('·') == 1, summary
+    page.goto(url + '/#overview')
+    page.wait_for_selector('.country-grid')
+
+
+
+def check_header_menus(page, url):
+    """The three header dropdowns (author, fifth batch, 2026-09-23).
+
+    Each tab's label links to its landing page; its button opens a
+    disclosure of the section's pages, so any page is two clicks away. Open
+    by click and by keyboard (Enter, ArrowDown), close by Escape and by a
+    click outside; hover opens one as an enhancement. At phone width the
+    three stack inside one collapsible nav.
+    """
+    page.goto(url + '/#overview')
+    page.wait_for_selector('.country-grid')
+    trail = page.locator('#toggle-the-paper-trail')
+    trail.focus()
+    page.keyboard.press('Enter')
+    assert trail.get_attribute('aria-expanded') == 'true'
+    menu = page.locator('#menu-the-paper-trail')
+    assert menu.is_visible()
+    assert menu.locator('a').all_text_contents() == [
+        'Documents', 'Entries', 'On the record', 'Projects', 'Funding', "Who's who"]
+    page.keyboard.press('Escape')
+    assert trail.get_attribute('aria-expanded') == 'false' and menu.is_hidden()
+    about = page.locator('#toggle-about')
+    about.focus()
+    page.keyboard.press('ArrowDown')
+    assert about.get_attribute('aria-expanded') == 'true'
+    assert page.evaluate('document.activeElement.textContent') == 'Glossary'
+    page.keyboard.press('Escape')
+    assert about.get_attribute('aria-expanded') == 'false'
+    assert page.evaluate('document.activeElement.id') == 'toggle-about'
+    # One menu at a time, and a click outside closes it.
+    about.click()
+    page.locator('#toggle-the-tallies').click()
+    assert about.get_attribute('aria-expanded') == 'false'
+    assert page.locator('#menu-the-tallies').is_visible()
+    page.locator('main h1').first.click()
+    assert page.locator('#toggle-the-tallies').get_attribute('aria-expanded') == 'false'
+    # Two clicks to a sub-page, from anywhere.
+    page.locator('#toggle-the-tallies').click()
+    page.locator('#menu-the-tallies a[data-sub="comparisons"]').click()
+    page.wait_for_selector('#history-table')
+    assert page.url.endswith('#comparisons')
+    assert page.locator('#toggle-the-tallies').get_attribute('aria-expanded') == 'false'
+    assert page.locator('#menu-the-tallies').get_attribute('hidden') is not None
+    assert page.locator('#step-bar a[aria-current="page"]').inner_text() == 'Comparisons'
+    # Hover opens a menu as an enhancement; the button's state is untouched.
+    page.locator('li.section:has(#toggle-about)').hover()
+    assert page.locator('#menu-about').is_visible()
+    assert about.get_attribute('aria-expanded') == 'false'
+    page.mouse.move(5, 900)
+
+    # Phone width: one collapsible nav, the menus stacked inside it.
+    page.set_viewport_size({'width': 390, 'height': 844})
+    page.goto(url + '/#overview')
+    page.wait_for_selector('.country-grid')
+    toggle = page.locator('#nav-toggle')
+    assert toggle.is_visible() and page.locator('#section-list').is_hidden()
+    toggle.click()
+    assert toggle.get_attribute('aria-expanded') == 'true'
+    assert page.locator('#section-list').is_visible()
+    page.locator('#toggle-about').click()
+    page.locator('#menu-about a[data-sub="who-we-are"]').click()
+    page.wait_for_selector('[data-placeholder="author"]')
+    assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
+    page.set_viewport_size({'width': 1440, 'height': 1100})
+
+
 def check_projects(page, url):
     """Exercise the catalogue search, a project page, and its adjudicated links."""
     page.goto(url + '/#projects')
@@ -632,7 +707,7 @@ def check_site(url, output):
         page.wait_for_selector('.country-grid')
         page.screenshot(path=str(output), full_page=True)
         check_projects(page, url)
-        page.goto(url + '/#historical-comparison')
+        page.goto(url + '/#comparisons')
         page.wait_for_selector('#history-country')
         assert page.locator('#history-table tbody tr').count() == count
         page.locator('#history-country').select_option('IDN')
@@ -658,6 +733,8 @@ def check_site(url, output):
         check_observations(page, url)
         check_facts(page, url)
         check_paper_trail(page, url)
+        check_sections(page, url)
+        check_header_menus(page, url)
         for code in ('ZAF', 'IDN', 'VNM', 'SEN'):
             page.goto(url + '/#funding/' + code)
             page.wait_for_selector('.markdown h2')
@@ -669,18 +746,20 @@ def check_site(url, output):
         active = page.locator('#step-bar a[aria-current="page"]')
         assert active.count() == 1
         assert active.get_attribute('href') == '#funding/IDN'
-        section = page.locator('header nav a[aria-current]')
+        section = page.locator('header nav a[data-section][aria-current]')
         assert section.count() == 1 and section.get_attribute('href') == '#the-paper-trail'
         page.locator('.skip').focus()
         page.keyboard.press('Enter')
         assert page.evaluate('document.activeElement.id') == 'main'
+        # Skipping moves focus, never the page (#main is not a route).
+        assert page.url.endswith('#funding/IDN'), page.url
         page.keyboard.press('Tab')
         assert page.evaluate('document.activeElement.tagName') == 'A'
         page.set_viewport_size({'width': 390, 'height': 844})
         for route in ('overview', 'the-paper-trail', 'funding', 'documents', 'projects',
-                      'historical-comparison', 'documents?country=VNM', 'whos-who?country=SEN',
+                      'comparisons', 'documents?country=VNM', 'whos-who?country=SEN',
                       'entries/SEN', 'funding/VNM', 'entries', 'on-the-record',
-                      'on-the-record/ZAF', 'whos-who', 'the-tallies', 'glossary', 'about',
+                      'on-the-record/ZAF', 'whos-who', 'counts', 'glossary', 'about',
                       'who-we-are',
                       'release-history', 'project/vnm-project-bac-ai-pumped-hydro',
                       'methods'):

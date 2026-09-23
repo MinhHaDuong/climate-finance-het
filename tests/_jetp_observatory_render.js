@@ -48,19 +48,29 @@ const element = (id) =>
     addEventListener() {},
     // The renderer reads back an attribute of markup it wrote itself (the
     // selected tab), so the attribute is read from that markup.
+    // An attribute the renderer set is read back as set (the header's
+    // disclosure buttons, ticket 0881); otherwise from the markup it wrote.
+    attributes: {},
     getAttribute(name) {
+      if (name in this.attributes) return this.attributes[name];
       const pattern = new RegExp(`id="${id}"[^>]*\\s${name}="([^"]*)"`);
       const match = pattern.exec(main.innerHTML);
       return match ? match[1] : null;
     },
-    setAttribute() {},
-    toggleAttribute() {},
+    setAttribute(name, value) {
+      this.attributes[name] = String(value);
+    },
+    toggleAttribute(name, force) {
+      if (force ?? !(name in this.attributes)) this.attributes[name] = "";
+      else this.attributes[name] = null;
+    },
     classList: { toggle() {} },
   });
 const main = element("main");
 const document = {
   getElementById: element,
   querySelectorAll: () => [],
+  addEventListener() {},
   title: "",
 };
 const location = { hash: "#" + route };

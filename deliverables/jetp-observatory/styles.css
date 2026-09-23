@@ -945,33 +945,110 @@ h1 .badge {
  * the bar under it, with a removable country chip at its right — and a
  * number we calculated is set apart from a number a publisher printed: a
  * dashed rule and "Our calculation" against a solid rule and "As published". */
+/* Header: three section tabs, each a link to its landing page beside a
+ * disclosure button that opens the list of its pages (fifth batch). */
 header nav.section-tabs {
-  gap: 4px;
   align-self: stretch;
-  align-items: stretch;
   margin: -23px 0;
+  position: relative;
 }
-header nav.section-tabs a {
+.nav-toggle {
+  display: none;
+}
+.sections {
+  display: flex;
+  gap: 4px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+.sections > .section {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  border-top: 0;
+  padding: 0;
+}
+header nav.section-tabs .sections > .section > a {
   display: flex;
   align-items: center;
-  padding: 0 16px;
+  padding: 0 6px 0 16px;
   font-size: 14px;
   border-bottom: 3px solid transparent;
 }
-header nav.section-tabs a.active {
+header nav.section-tabs .sections > .section > a.active {
   color: var(--green);
   font-weight: 650;
   box-shadow: none;
   border-bottom-color: var(--green);
+}
+.menu-toggle {
+  align-self: center;
+  width: 26px;
+  height: 26px;
+  margin-right: 8px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--ink);
+  padding: 0;
+}
+.menu-toggle::after {
+  content: "▾";
+  font-size: 12px;
+}
+.menu-toggle:hover,
+.menu-toggle[aria-expanded="true"] {
+  border-color: var(--line);
   background: var(--white);
 }
+.menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 20;
+  min-width: 190px;
+  list-style: none;
+  margin: 0;
+  padding: 6px 0;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  box-shadow: 0 6px 18px #2038311f;
+}
+.menu[hidden] {
+  display: none;
+}
+.menu a {
+  display: block;
+  padding: 7px 16px;
+  font-size: 13px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.menu a:hover,
+.menu a:focus-visible {
+  background: #edf0e7;
+}
+/* Hover opens a menu too, as an enhancement only: the button and its
+ * aria-expanded remain the way in. */
+@media (hover: hover) and (min-width: 681px) {
+  .sections > .section:hover > .menu[hidden] {
+    display: block;
+  }
+}
+/* The sub-bar: one component for all three sections — plain sibling tabs,
+ * no separators, the current page underlined — and, on the paper trail, the
+ * country chip at its right. Breadcrumbs, on detail pages, stay small muted
+ * text with arrows, so the two never look alike (sixth batch). */
 .step-bar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 8px 16px;
-  padding: 10px 4.3%;
+  gap: 4px 16px;
+  padding: 0 4.3%;
   background: #edf0e7;
   border-bottom: 1px solid var(--line);
   font-size: 13px;
@@ -979,40 +1056,28 @@ header nav.section-tabs a.active {
 .step-bar[hidden] {
   display: none;
 }
-.step-bar ol {
+.sub-tabs {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 6px;
   list-style: none;
   margin: 0;
   padding: 0;
 }
-.step-bar li + li::before {
-  content: "›";
-  color: var(--muted);
-  margin-right: 6px;
-}
-.step-bar .siblings {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-.step-bar a[data-step],
-.step-bar a[data-sub] {
-  display: inline-block;
-  padding: 4px 12px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: var(--white);
+.sub-tabs a {
+  display: block;
+  padding: 10px 14px 8px;
+  border-bottom: 3px solid transparent;
   text-decoration: none;
   white-space: nowrap;
 }
-.step-bar a[aria-current="page"] {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: var(--lime);
+.sub-tabs a:hover {
+  background: var(--white);
+}
+.sub-tabs a[aria-current="page"] {
+  border-bottom-color: var(--green);
+  color: var(--green);
   font-weight: 650;
+  background: var(--white);
 }
 .scope-chip {
   display: inline-flex;
@@ -1140,23 +1205,55 @@ table.counts td.num {
   header nav.section-tabs {
     margin: 0;
   }
-  header nav.section-tabs a {
-    padding: 8px 12px;
+  header nav.section-tabs .sections > .section > a {
+    padding: 8px 6px 8px 12px;
   }
 }
 @media (max-width: 680px) {
-  /* All four sections stay in view: the tabs wrap rather than scroll. */
+  /* One collapsible nav: the Menu button shows the three sections, and
+   * each section's pages stack under it rather than float. */
   header nav.section-tabs {
-    flex-wrap: wrap;
     overflow-x: visible;
-    gap: 2px;
     padding-bottom: 0;
+    display: block;
   }
-  header nav.section-tabs a {
-    padding: 6px 8px;
+  .nav-toggle {
+    display: inline-block;
+    padding: 6px 12px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: var(--white);
     font-size: 13px;
   }
+  .sections {
+    display: none;
+  }
+  header nav.section-tabs[data-open] .sections {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 8px;
+  }
+  .sections > .section {
+    flex-wrap: wrap;
+    border-top: 1px solid var(--line);
+  }
+  header nav.section-tabs .sections > .section > a {
+    flex: 1;
+    padding: 10px 4px;
+  }
+  .menu {
+    position: static;
+    flex-basis: 100%;
+    box-shadow: none;
+    border: 0;
+    padding: 0 0 8px 12px;
+    background: transparent;
+  }
   .step-bar {
-    padding: 8px 5%;
+    padding: 0 5%;
+  }
+  .sub-tabs a {
+    padding: 8px 10px 6px;
   }
 }

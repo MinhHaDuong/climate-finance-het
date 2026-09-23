@@ -20,14 +20,59 @@
       <!-- Ticket 0881: grouped by the four objects of docs/jetp-language.md,
            which stay in data-object and never reach the page copy. M has no
            entry: the observatory tests no causal explanation. The page top is
-           two bars (author, 2026-09-23): these three sections as tabs, each at
-           its label's slug; and the section's second bar below, which app.js
-           draws: the paper trail's steps, or About's Glossary (O), Methods
-           and Who we are. -->
-      <nav class="section-tabs" aria-label="Sections">
-        <a href="#the-paper-trail" data-object="D">The paper trail</a
-        ><a href="#the-tallies" data-object="E">The tallies</a
-        ><a href="#about" data-object="about">About</a>
+           two bars (author, 2026-09-23): these three sections as tabs, each
+           linking to its landing page and opening a dropdown of its pages
+           (a disclosure: a button with aria-expanded controlling a list,
+           which app.js fills); and the section's sub-bar below, which app.js
+           draws. At phone width the three stack inside one collapsible nav. -->
+      <nav id="site-nav" class="section-tabs" aria-label="Sections">
+        <button
+          type="button"
+          id="nav-toggle"
+          class="nav-toggle"
+          aria-expanded="false"
+          aria-controls="section-list"
+        >
+          Menu
+        </button>
+        <ul id="section-list" class="sections">
+          <li class="section">
+            <a href="#the-paper-trail" data-section="the-paper-trail" data-object="D">The paper trail</a
+            ><button
+              type="button"
+              id="toggle-the-paper-trail"
+              class="menu-toggle"
+              aria-expanded="false"
+              aria-controls="menu-the-paper-trail"
+              aria-label="The paper trail: pages"
+            ></button>
+            <ul id="menu-the-paper-trail" class="menu" hidden></ul>
+          </li>
+          <li class="section">
+            <a href="#counts" data-section="the-tallies" data-object="E">The tallies</a
+            ><button
+              type="button"
+              id="toggle-the-tallies"
+              class="menu-toggle"
+              aria-expanded="false"
+              aria-controls="menu-the-tallies"
+              aria-label="The tallies: pages"
+            ></button>
+            <ul id="menu-the-tallies" class="menu" hidden></ul>
+          </li>
+          <li class="section">
+            <a href="#about" data-section="about" data-object="about">About</a
+            ><button
+              type="button"
+              id="toggle-about"
+              class="menu-toggle"
+              aria-expanded="false"
+              aria-controls="menu-about"
+              aria-label="About: pages"
+            ></button>
+            <ul id="menu-about" class="menu" hidden></ul>
+          </li>
+        </ul>
       </nav>
       <span class="edition"><i></i> September 2026 · Preview</span>
     </header>
@@ -39,7 +84,7 @@
       <a class="brand" href="#overview">JETP Observatory</a
       ><span
         >Four partnerships, one shared question ·
-        <a href="#historical-comparison">Historical comparison</a> ·
+        <a href="#comparisons">Comparisons</a> ·
         <a href="#release-history">Release history</a></span
       ><a href="#methods">Methods ↗</a>
     </footer>

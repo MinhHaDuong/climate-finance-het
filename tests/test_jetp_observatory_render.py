@@ -374,8 +374,8 @@ FORBIDDEN = re.compile(
     re.IGNORECASE,
 )
 ROUTES = ("overview", "the-paper-trail", "about", "who-we-are", "glossary", "documents", "entries", "on-the-record", "projects",
-          "funding", "whos-who", "the-tallies", "methods", "release-history",
-          "historical-comparison", *(f"funding/{code}" for code in COUNTRIES),
+          "funding", "whos-who", "counts", "methods", "release-history",
+          "comparisons", *(f"funding/{code}" for code in COUNTRIES),
           "entries/VNM", "on-the-record/ZAF", "project/" + BAC_AI)
 
 
@@ -430,17 +430,61 @@ def nav_html():
     return re.search(r"<nav[^>]*>.*?</nav>", index, re.DOTALL).group(0)
 
 
+# Each header tab links to its section's landing page: a landing page at the
+# section's slug, or, for The tallies, its first page (fifth batch).
+LANDINGS = {"The paper trail": "the-paper-trail", "The tallies": "counts", "About": "about"}
+SECTION_KEYS = ("the-paper-trail", "the-tallies", "about")
+SUB_PAGES = {
+    "the-paper-trail": list(zip(STEPS, ["#documents", "#entries", "#on-the-record", "#projects",
+                                        "#funding", "#whos-who"])),
+    "the-tallies": [("Counts", "#counts"), ("Comparisons", "#comparisons")],
+    "about": [("Glossary", "#glossary"), ("Methods", "#methods"), ("Who we are", "#who-we-are")],
+}
+
+
 def test_the_navigation_follows_glossary_paper_trail_numbers_and_methods() -> None:
     nav = nav_html()
-    labels = [unescape(t).strip() for t in re.findall(r">([^<>]+)<", nav) if t.strip()]
-    assert labels == NAVIGATION, labels
+    tabs = re.findall(r'<a href="#([^"]+)" data-section="([^"]+)"[^>]*>([^<]+)</a', nav)
+    assert [unescape(label) for *_, label in tabs] == NAVIGATION, tabs
+    assert [s for _, s, _ in tabs] == list(SECTION_KEYS)
+    assert {unescape(label): href for href, _, label in tabs} == LANDINGS
     # Organised by the objects, which stay in the attributes: nothing for M.
     assert re.findall(r'data-object="([^"]+)"', nav) == ["D", "E", "about"]
-    # Every address is its label's slug.
-    for href, label in re.findall(r'<a href="#([^"]+)"[^>]*>([^<]+)<', nav):
-        slug = re.sub(r"[^a-z]+", "-", unescape(label).lower().replace("'", "")).strip("-")
-        assert href == slug, (href, label)
     assert 'data-object="M"' not in nav
+
+
+def test_each_header_tab_has_a_disclosure_of_its_pages() -> None:
+    # A disclosure, not a menu widget: a button with aria-expanded controlling
+    # a list of links, closed until opened.
+    nav = nav_html()
+    assert 'role="menu' not in nav
+    for section in SECTION_KEYS:
+        button = re.search(rf'<button[^>]*id="toggle-{section}"[^>]*>', nav, re.DOTALL).group(0)
+        assert 'aria-expanded="false"' in button and f'aria-controls="menu-{section}"' in button
+        assert re.search(rf'<ul id="menu-{section}" class="menu" hidden>', nav)
+    # One collapsible nav at phone width, with its own disclosure button.
+    assert re.search(r'id="nav-toggle"[^>]*aria-expanded="false"[^>]*aria-controls="section-list"',
+                     re.sub(r"\s+", " ", nav))
+    # app.js fills each list with the section's pages, in order; the paper
+    # trail's six steps in trail order.
+    elements = render("overview")["elements"]
+    for section, pages in SUB_PAGES.items():
+        menu = elements[f"menu-{section}"]["innerHTML"]
+        links = [(unescape(label), href) for href, label in
+                 re.findall(r'<a href="([^"]+)" data-sub="[^"]+">([^<]+)</a>', menu)]
+        assert links == pages, (section, links)
+
+
+def test_a_header_disclosure_toggles_aria_expanded_and_one_menu_is_open_at_a_time() -> None:
+    probe = ("[...['the-paper-trail', 'the-tallies', 'about'].map((s) => ["
+             "document.getElementById('toggle-' + s).getAttribute('aria-expanded'), "
+             "document.getElementById('menu-' + s).getAttribute('hidden')])]")
+    opened = render("overview", {}, f"(openMenu('about'), {probe})")["eval"]
+    assert opened == [["false", ""], ["false", ""], ["true", None]], opened
+    switched = render("overview", {}, f"(openMenu('about'), openMenu('the-tallies'), {probe})")["eval"]
+    assert switched == [["false", ""], ["true", None], ["false", ""]], switched
+    closed = render("overview", {}, f"(openMenu('about'), closeMenus(), {probe})")["eval"]
+    assert closed == [["false", ""], ["false", ""], ["false", ""]], closed
 
 
 # Author's cold read, 2026-09-23: addresses match labels, and the addresses of
@@ -449,20 +493,22 @@ FORWARDS = {
     "countries": "funding",
     "country/VNM": "funding/VNM",
     "evidence": "on-the-record",
-    "numbers": "the-tallies",
-    "by-the-numbers": "the-tallies",
-    "counts-and-totals": "the-tallies",
-    "comparison": "historical-comparison",
-    "comparison?country=IDN": "historical-comparison?country=IDN",
+    "numbers": "counts",
+    "by-the-numbers": "counts",
+    "counts-and-totals": "counts",
+    "the-tallies": "counts",
+    "comparison": "comparisons",
+    "historical-comparison": "comparisons",
+    "comparison?country=IDN": "comparisons?country=IDN",
     "how-we-did-this": "methods",
     "editions": "release-history",
     "inventory/VNM": "entries/VNM",
     "inventory/VNM?row=22": "entries/VNM?row=22",
     "inventory/ZAF?tab=record": "on-the-record/ZAF",
 }
-OLD_ADDRESS = re.compile(r'href="#(countries|country/|evidence|numbers|by-the-numbers'
-                         r'|counts-and-totals|comparison|how-we-did-this'
-                         r'|editions|inventory/)')
+OLD_ADDRESS = re.compile(r'href="#(?:(?:countries|evidence|numbers|by-the-numbers|counts-and-totals'
+                         r'|the-tallies|comparison|historical-comparison|how-we-did-this|editions)'
+                         r'(?=["?])|(?:country|inventory)/)')
 
 
 # Author's cold read, third batch (2026-09-23), as revised: "The tallies" is
@@ -504,7 +550,7 @@ def test_the_homepage_keeps_its_stat_grid_under_the_tallies() -> None:
     main = render("overview")["main"]
     aside = re.search(r'<aside class="evidence-box">.*?</aside>', main, re.DOTALL).group(0)
     assert '<p class="eyebrow">The tallies</p>' in aside
-    assert '<a href="#the-tallies">The tallies</a>' in aside
+    assert '<a href="#counts">The tallies</a>' in aside
     assert aside.count('class="stat computed"') == 4
 
 
@@ -562,17 +608,19 @@ def step_bar(route):
 
 
 def test_a_page_of_the_paper_trail_shows_its_step_and_links_to_its_neighbours() -> None:
-    # The step bar is the position indicator (ticket 0881's test, as the cold
-    # read reshaped it): the current step is marked, and the neighbouring
-    # steps are links in the same bar, each keeping the country.
+    # The sub-bar is the position indicator (ticket 0881's test, as the
+    # author reshaped it on 2026-09-23): the selected tab is the step, and the
+    # tabs beside it are the neighbouring steps, each keeping the country.
     bar = step_bar("entries/VNM")
-    links = re.findall(r'<a href="([^"]+)" data-step="(D\d)"( aria-current="page")?>([^<]+)</a>', bar)
+    links = re.findall(r'<li><a href="([^"]+)" data-sub="[^"]+" data-step="(D\d)"'
+                       r'( aria-current="page")?>([^<]+)</a></li>', bar)
     assert [unescape(label) for *_, label in links] == STEPS, links
     assert [(href, step) for href, step, current, _ in links if current] == [("#entries/VNM", "D2")]
     hrefs = {unescape(label): href for href, _, _, label in links}
     assert hrefs["Documents"] == "#documents?country=VNM"
     assert hrefs["On the record"] == "#on-the-record/VNM"
-    assert re.search(r'<li class="siblings">(<a [^>]+>[^<]+</a>){3}</li>', bar), bar
+    # Six plain sibling tabs: no separator, no grouping of the last three.
+    assert "›" not in bar and "siblings" not in bar and bar.count("<li>") == 6
     # The scope is a chip; removing it opens the same step, unscoped.
     chip = re.search(r'<span class="scope-chip">([^<]+)<a href="([^"]+)"', bar)
     assert chip and chip.group(1).strip() == "Viet Nam" and chip.group(2) == "#entries", bar
@@ -587,7 +635,21 @@ def test_a_trail_page_carries_no_second_position_indicator(route) -> None:
     assert 'aria-current="page"' in step_bar(route)
 
 
-@pytest.mark.parametrize("route", ["overview", "the-tallies", "historical-comparison"])
+@pytest.mark.parametrize(("route", "section"), [
+    ("documents", "the-paper-trail"), ("project/" + BAC_AI, "the-paper-trail"),
+    ("counts", "the-tallies"), ("comparisons", "the-tallies"), ("glossary", "about")])
+def test_every_sub_bar_is_the_same_component(route, section) -> None:
+    # Sixth batch: one markup and one class for the three sections' sub-bars,
+    # plain tabs, no separators; the country chip is the paper trail's alone.
+    bar = step_bar(route)
+    assert bar.startswith(f'<ul class="sub-tabs" data-sub-bar="{section}"><li><a href="#'), bar
+    tabs = re.findall(r"<li><a [^>]+>([^<]+)</a></li>", bar)
+    assert [unescape(t) for t in tabs] == [label for label, _ in SUB_PAGES[section]]
+    assert "›" not in bar and "<ol" not in bar
+    assert bar.count('aria-current="page"') == 1
+
+
+@pytest.mark.parametrize("route", ["overview"])
 def test_no_second_bar_outside_the_paper_trail_and_about(route) -> None:
     assert step_bar(route) == ""
 
@@ -606,7 +668,7 @@ def test_about_pages_show_the_about_sub_bar_as_plain_siblings(route, current) ->
     assert [unescape(label) for *_, label in links] == ABOUT, bar
     assert [unescape(label) for _, mark, label in links if mark] == ([current] if current else [])
     # Plain siblings: one list item, so no arrow separates them.
-    assert bar.count("<li") == 1 and 'data-sub-bar="about"' in bar
+    assert bar.count("<li>") == 3 and 'data-sub-bar="about"' in bar and "›" not in bar
     assert "data-step" not in bar
     # The release history is in no bar.
     assert "release-history" not in bar
@@ -654,7 +716,7 @@ def test_a_country_read_from_the_address_cannot_inject_markup_into_the_step_bar(
     # is not the escaping's only line of defence (round 2 of the review).
     known = json.dumps(payload)
     escaped = render("overview", {}, f"overview.countries.push({{code: {known}, name: {known}}}), "
-                                     f"stepBar('entries', {known})")["eval"]
+                                     f"subBar('the-paper-trail', 'entries', {known})")["eval"]
     assert "<img" not in escaped and "&lt;img" in escaped, escaped
 
 
