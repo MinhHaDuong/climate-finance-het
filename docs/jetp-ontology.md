@@ -51,10 +51,12 @@ The author's decisions of 2026-09-22 and 2026-09-23 shape it:
     the ledger's language is pinned to the ODEM frame (section 0), and five
     confusing terms are retired or restricted, starting with evidence, which
     becomes justification. The observatory has no Model. It is Data guided by
-    Ontology, and Evidence comes on top. Its pages show the four objects
-    apart and show Data as a pipeline. The ontology is a set of tables with
-    definitions, external mappings and revisions (section 5), and it is
-    presented in the observatory.
+    Ontology, and Evidence comes on top. The four objects organise the
+    observatory, and Data reads as a pipeline, but the pages speak the
+    reader's language: they assume a reader who knows how empirical work
+    proceeds, and never name the framework (section 7). The ontology is a
+    set of tables with definitions, external mappings and revisions
+    (section 5), and the observatory presents it as its definitions.
 
 ## 0. Language: the ODEM frame
 
@@ -65,8 +67,8 @@ words and uses them in no other sense.
 
 | ODEM object | In the JETP observatory | Where it lives |
 |---|---|---|
-| **O, Ontology** | What the ledger talks about and how it records it: classes, relations, closed value lists, status and sector axes, perimeter definitions, crosswalks and conversion rules. Every term has a definition, an external mapping where one exists, and a revision history | `data/jetp/ontology/` (section 5); the observatory's Ontology page |
-| **D, Data** | What publishers said, as the ledger read it. A pipeline of four steps, below | `data/jetp/` tables; the observatory's Documents, Lines, Observations and record pages |
+| **O, Ontology** | What the ledger talks about and how it records it: classes, relations, closed value lists, status and sector axes, perimeter definitions, crosswalks and conversion rules. Every term has a definition, an external mapping where one exists, and a revision history | `data/jetp/ontology/` (section 5); the observatory's Definitions page |
+| **D, Data** | What publishers said, as the ledger read it. A pipeline of four steps, below | `data/jetp/` tables; the observatory's Documents, Extracts, Statements and Records pages |
 | **E, Evidence** | Results computed from D under a declared O version: every count shown with its unit and perimeter, the accounts of backend-design section 5, descriptive tables. E comes on top of D and never edits it | `data/derived/jetp/`, with a run record naming its inputs, cutoffs and ontology version |
 | **M, Models** | Candidate causal explanations. The observatory has none. A causal study, deferred in ticket 0729, would consume a frozen release from outside the ledger | none |
 
@@ -506,7 +508,7 @@ rules. The formal specification is the DDL of section 10 together with the
 prose glossary. Alignment is checked, not trusted. A test (ticket 0880) fails
 when a value listed in sections 2 to 4 is not a term in force, or a term in
 force appears nowhere in this document, and when a table or column declared
-here differs from the DDL. The observatory's Ontology page and a SKOS export
+here differs from the DDL. The observatory's Definitions page and a SKOS export
 (section 10) are generated from the `terms` table, so the words a reader sees
 are the words the validator enforces.
 
@@ -660,28 +662,45 @@ Order of work, each step a ticket with its own byte-level check:
 
 ## 7. What the observatory serves
 
-The observatory shows the four ODEM objects apart (section 0), so that a
-reader always knows whether a page states a definition, a publisher's
-statement or a computed result.
+The four ODEM objects of section 0 are the observatory's organising
+principle: they decide what is grouped with what, in which order, and what
+may link to what. They are not its vocabulary. The pages assume a reader who
+knows how empirical work proceeds, that a figure rests on sources and that
+words need definitions, and they never put the framework's names in front of
+that reader. "Ontology", "Evidence", "Model", the letters O, D, E, M and the
+step codes D1 to D4 appear in code, data attributes and these documents, not
+in page copy.
 
-- **O, Ontology page.** The terms in force, grouped by list: each class,
-  relation and value with its definition, its external mapping and its
-  revision history. Relations show their domain and range. Every term shown
-  elsewhere on the site links here. Generated from `data/jetp/ontology/`.
-- **D, the pipeline.** The Data pages are presented as the four steps D1 to
-  D4, in order, and a reader can walk them both ways: from a referent to its
-  observations, their lines and the snapshot page; from a snapshot to what
-  was read from it. The M1a explorer of ticket 0834 becomes this pipeline:
-  its Documents page is D1, its inventory tabs are D2, its Observations tab
-  is D3, and its record pages are D4.
-- **E, results.** Every count and total is marked as a result: it names its
-  unit, its perimeter and the D rows it was computed from. Accounts, when
-  they exist, appear here and nowhere in the D pages.
-- **M.** Absent, and the Methods page says so.
+| ODEM object | What the reader sees | Label on the page (default) |
+|---|---|---|
+| O | What each word, status, measure and relation means, where the definition comes from, and when it changed | **Definitions** |
+| D | The path from a publisher's document to the ledger's records, walked in order and in both directions | **Documents → Extracts → Statements → Records** |
+| E | Counts and totals, each with its unit, its perimeter and a link to what it was computed from | **Figures** |
+| M | Nothing | none |
 
-Every table of section 5 is served, one file per table, or named on the
-Methods page as not served, with the reason. Nothing on a page adds lines of
-one document to lines of another or to referents.
+- **Definitions.** The terms in force, grouped by list: each class,
+  relation and value with its definition, its external source and its
+  revision history. A relation shows what it connects. Every term used
+  elsewhere on the site links to its definition. Generated from
+  `data/jetp/ontology/`.
+- **The path.** Documents is D1, Extracts D2 (the M1a inventory tabs),
+  Statements D3 (the Observations tab), Records D4 (the record pages). Each
+  page shows where it sits on the path and lets the reader step up or down
+  one stage, from a record to its statements, their extracts and the page of
+  the document, or back.
+- **Figures.** A number the ledger computes is visibly set apart from a
+  number a publisher printed: it states its unit and perimeter and opens the
+  statements it was computed from. Accounts, when they exist, appear only
+  here.
+- **No models.** The observatory tests no causal explanation, and its
+  navigation has no place for one. The Methods page says in plain words what
+  the observatory does not do.
+
+The labels are defaults, chosen for a reader who is not a data engineer; the
+organisation is the decision. Every table of section 5 is served, one file
+per table, or named on the Methods page as not served, with the reason.
+Nothing on a page adds lines of one document to lines of another or to
+referents.
 
 ## 8. Consequences for the backend design
 

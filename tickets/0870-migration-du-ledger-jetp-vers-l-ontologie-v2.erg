@@ -30,8 +30,8 @@ critères de sortie de 0860 sont repris ci-dessous.
 Langage et cadre ODEM (décision 11 du 2026-09-23, ontologie § 0) : le ledger
 est l'objet D, guidé par l'ontologie O ; les résultats E (comptes, totaux)
 viennent au-dessus ; il n'y a pas de M. Trois enfants s'ajoutent : les tables
-d'ontologie révisables ([[0880]]), le cadre O-D-E-M du MVP avec D en pipeline
-([[0881]]) et la page Ontologie ([[0882]]).
+d'ontologie révisables ([[0880]]), l'organisation du MVP selon O-D-E-M, sans en
+afficher les mots, avec D en parcours ([[0881]]) et la page Definitions ([[0882]]).
 
 Ne pas lancer avant que l'auteur ait approuvé PR #1449.
 
@@ -48,8 +48,8 @@ Ne pas lancer avant que l'auteur ait approuvé PR #1449.
 | 5 | [[0876]] | observations, timings, crosswalks de statut et de secteur (étape 5) |
 | 6 | [[0877]] | observations de périmètre, comptes dérivés, adjudications (étape 6) |
 | 7 | [[0878]] | retrait des tables anciennes et des lecteurs de compatibilité (étape 7) |
-| — | [[0881]] | le MVP distingue O, D, E, M ; D en pipeline D1 à D4 (§ 7) ; présentation seule, parallèle aux vagues |
-| après 0 | [[0882]] | page Ontologie du MVP, générée des tables de 0880 (§ 7) |
+| — | [[0881]] | le MVP s'organise selon O, D, E, M sans en afficher les mots ; D en parcours (§ 7) ; présentation seule, parallèle aux vagues |
+| après 0 | [[0882]] | page Definitions du MVP, générée des tables de 0880 (§ 7) |
 | 5' | [[0879]] | enregistrements comparateurs : Banque mondiale, CRS énergie quatre pays, IATI, identifiants externes, marqueurs |
 
 ## Relevant files

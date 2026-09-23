@@ -16,9 +16,9 @@ Ontology, Evidence on top; "evidence" for documentary support is now
 "justification". M1a is ticked by the author (#1448). 0760–0770 left write
 ownership legacy; the ledger migration is 0870 (ontology v2, #1449, awaiting
 approval; #1450 stacks on it), which absorbed 0860 and gains 0880 (revisable
-ontology tables), 0881 (MVP shows O-D-E-M, D as pipeline) and 0882 (Ontology
-page). 0833 (M1b) is restated on v2, blocked by 0873/0875/0880. Pending: the
-0732 angle. `/lair` step 9 is the only watch on slow-tier pins.
+ontology tables), 0881 (MVP organised by O-D-E-M in plain words, D as a
+path) and 0882 (Definitions page). 0833 (M1b) is restated on v2, blocked by
+0873/0875/0880. Pending: the 0732 angle. `/lair` step 9 is the only watch on slow-tier pins.
 
 ## Status
 <!-- generated 2026-09-22T09:37Z · as of bf31b3ee -->

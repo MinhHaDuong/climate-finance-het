@@ -184,5 +184,5 @@ The author decided the following the same day. They are recorded in
 - the ledger's language is pinned to ODEM, and five terms are retired or restricted: *evidence* becomes *justification*, and *model*, *reconciliation*, *edition* and *layer/stage/fact* are replaced as well;
 - the observatory has no Model: it is Data guided by Ontology, and Evidence comes on top;
 - the ontology gets revisable tables with definitions and external mappings, and an alignment test against this English specification (0880);
-- the MVP shows O, D, E and M apart, with D as a pipeline (0881), and it presents the ontology (0882);
+- O, D, E and M organise the MVP without their names appearing on its pages, D reads as a path from document to record (0881), and the ontology is presented as Definitions (0882);
 - 0833 is restated on the v2 contract, 0860 is closed as absorbed by 0870 after verification, and 0760 carries a log note on what it did and did not migrate.
