@@ -21,6 +21,7 @@ import pytest
 from jetp import _ledger_headers as ledger_headers
 from jetp import build_evidence_layer as evidence
 from jetp import build_ledger as ledger_build
+from jetp._evidence_layer_rules import joint_forms
 from jetp.build_observatory import documents_data, retrieval_registry
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -134,6 +135,39 @@ def test_a_joint_publisher_text_links_the_document_to_each_party(tables):
     (party,) = [p for p in tables['parties']
                 if p['party_id'] == 'agence-francaise-de-developpement']
     assert party['authority_category'] == 'bilateral_funder'
+
+
+# A joint text split three ways: a commissioner ministry between two authors
+# (follow-up to ticket 0872, author's decision of 2026-09-23: both parts of an
+# "X / Y" text are organisations and neither is marked a consultant, so the
+# text is joint publishers, not one party; a part may be tagged with a role
+# other than the joint default of author).
+ROLE_JOINT_SOURCES = [
+    _source('sen-annex8-role', 'SEN', 'national_government',
+            'Senegal EITI / MEPM ENERCAP', 'investment_plan', 'Annex 8'),
+]
+ROLE_JOINT_LABELS = {
+    'Senegal EITI / MEPM ENERCAP': (
+        'Senegal EITI', ('MEPM', 'commissioner'), ('ENERCAP', 'author')),
+}
+
+
+@pytest.fixture
+def role_tagged():
+    return evidence.reconstruct(ROLE_JOINT_SOURCES, [], joint_publications={}, mirrors={},
+                                joint_labels=ROLE_JOINT_LABELS, name_candidates=(),
+                                part_attributes={}, writers={})
+
+
+def test_a_joint_text_may_tag_one_part_with_a_different_role(role_tagged):
+    assert _roles(role_tagged, 'sen-annex8-role') == {
+        'senegal-eiti': 'author', 'mepm': 'commissioner', 'enercap': 'author'}
+
+
+def test_an_untagged_joint_part_without_review_attributes_is_left_for_review(role_tagged):
+    (party,) = [p for p in role_tagged['parties'] if p['party_id'] == 'senegal-eiti']
+    assert party['authority_category'] is None
+    assert 'set by review' in party['notes']
 
 
 def test_an_acronym_beside_its_expansion_is_a_candidate_not_a_merge(tables):
@@ -299,7 +333,7 @@ def test_the_committed_layer_matches_its_inputs():
     forms = {row[2] for row in names}
     for text in {r['publisher'] for r in sources}:
         if text in evidence.JOINT_LABELS:
-            parts = set(evidence.JOINT_LABELS[text])
+            parts = set(joint_forms(evidence.JOINT_LABELS[text]))
         else:
             publisher, writer, _ = evidence.split_label(text, evidence.WRITERS)
             parts = {publisher}
@@ -310,7 +344,12 @@ def test_the_committed_layer_matches_its_inputs():
         1 for r in sources if r['publisher'] not in evidence.JOINT_LABELS
         and (writer := evidence.split_label(r['publisher'], evidence.WRITERS)[1])
         and evidence.WRITERS[writer] == 'firm')
-    assert len(publications) == len(sources) + len(evidence.JOINT_LABELS) + firm_written
+    # Each joint text contributes one publication row per part, not one flat
+    # row: a text split three ways (a commissioner between two authors) adds
+    # two rows beyond the base, not one.
+    joint_extra = sum(len(joint_forms(parts)) - 1
+                      for parts in evidence.JOINT_LABELS.values())
+    assert len(publications) == len(sources) + joint_extra + firm_written
     assert evidence.reconstruct(sources, manifest)['parties'] == [
         dict(zip(schema.header('parties'), row)) for row in
         ledger_headers.read_table(ledger, 'parties', schema)[0]]

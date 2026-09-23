@@ -20,10 +20,11 @@ visible in its output:
   it as its whole publisher text first. The most used form of
   a party is its preferred form, ties going to a form not written in capitals,
   then to alphabetical order; the others are ``spelling_or_case_variant``.
-- A publisher text that names two bodies (``JOINT_LABELS``) is a joint
-  publication: the document is linked to each party, and each part is a name
-  form read from that label. A part named nowhere else takes its authority
-  category and country from review (``PART_ATTRIBUTES``).
+- A publisher text that names two or more bodies (``JOINT_LABELS``) is a
+  joint publication: the document is linked to each party, and each part is
+  a name form read from that label, in the ``author`` role unless the entry
+  tags a part with another one. A part named nowhere else takes its
+  authority category and country from review (``PART_ATTRIBUTES``).
 - Real variants, an acronym against its expansion or a country-prefixed form,
   are tier-2 ``same_as`` candidates in ``relations``, pending review and not
   in force, so no count moves on a guess. An acronym is detected when a form
@@ -43,7 +44,12 @@ visible in its output:
   document as ``author``, and X as ``commissioner``; a natural person is not
   a party of the ledger (``docs/jetp-ontology.md`` section 6) and is written
   in the document's notes instead. A slash text whose second part is not a
-  reviewed writer stays one party. The registry's text of a split label is
+  reviewed writer, and both parts are organisations with nothing in the text
+  marking one a consultant, is a joint publication instead (``JOINT_LABELS``,
+  below), each part a party in the ``author`` role; one review found split
+  three ways, a commissioner ministry between a hosting publisher and the
+  firm it commissioned (``Senegal EITI / MEPM ENERCAP``). A slash text
+  matching neither stays one party. The registry's text of a split label is
   kept in the document's notes (author's decision of 2026-09-23).
 - A publication's role is ``author``, except for a party that only hosts a
   copy (``HOST_PUBLISHERS``) and the publisher that commissioned the writer
@@ -70,115 +76,34 @@ import csv
 import html
 import re
 import subprocess
-import unicodedata
 from collections import Counter, defaultdict
 from pathlib import Path
 
 from utils import get_logger
 
+from jetp._evidence_layer_rules import (
+    DECIDED_AT,
+    DECIDED_BY,
+    HOST_PUBLISHERS,
+    JOINT_LABELS,
+    JOINT_PUBLICATIONS,
+    MIRRORS,
+    NAME_VARIANT_CANDIDATES,
+    NATIONAL_CATEGORIES,
+    PART_ATTRIBUTES,
+    WRITERS,
+    initials,
+    is_acronym,
+    name_key,
+    slug,
+    split_label,
+)
 from jetp._ledger_headers import LEDGER_DIR, load_schema, write_table
 
 log = get_logger('jetp.build_evidence_layer')
 
-DECIDED_AT = '2026-09-23'
-DECIDED_BY = 'scripts/jetp/build_evidence_layer.py'
-
-# Copies of a document already in the registry: mirror -> original.
-MIRRORS = {
-    'idn-cipp-2023-cpr-mirror': 'idn-cipp-2023',
-    'sen-investment-plan-l4-mirror': 'sen-investment-plan-l4',
-    'sen-annex8-project-analysis': 'sen-investment-plan-annex8-official',
-}
-
-# Publishers whose documents in the registry are copies they host, not texts
-# they wrote.
-HOST_PUBLISHERS = frozenset({'Climate Policy Radar', 'Vie-Publique.sn'})
-
-# Joint publications added by review: document_id -> further publisher texts.
-JOINT_PUBLICATIONS = {}
-
-# Publisher texts of sources.csv that name two bodies: text -> the parts.
-JOINT_LABELS = {
-    'Government of Indonesia and International Partners Group':
-        ('Government of Indonesia', 'International Partners Group'),
-    'Government of Viet Nam and International Partners Group':
-        ('Government of Viet Nam', 'International Partners Group'),
-    'JETP Indonesia Secretariat and International Energy Agency':
-        ('JETP Indonesia Secretariat', 'International Energy Agency'),
-}
-
-# Second parts of ``X / Y`` publisher texts reviewed as the document's writer:
-# name -> 'firm' (a party in the author role) or 'person' (document notes only).
-# A slash text whose second part is absent here stays one party.
-WRITERS = {
-    'ENERCAP': 'firm',
-    'Grant Thornton': 'firm',
-    'Pyramide Environmental Consultants': 'firm',
-    'Fatou Ndiaye': 'person',
-}
-
-# Parties named only inside a joint text: (authority_category, country, note).
-PART_ATTRIBUTES = {
-    'Government of Indonesia': ('national_government', 'IDN', None),
-    'International Partners Group': ('ipg', None, None),
-    'International Energy Agency': (
-        None, None, 'no authority category of the list fits an intergovernmental '
-                    'agency that neither funds nor operates; left for review'),
-}
-
-# Pairs of forms that may name one party, listed by review for the tier-2
-# candidates the acronym rule cannot see: (form, form).
-NAME_VARIANT_CANDIDATES = (
-    ('MEPM', 'Senegal MEPM'),
-)
-
-# Words an acronym leaves out, in the four label languages the registry uses.
-ACRONYM_SKIP = frozenset({'of', 'and', 'the', 'for', 'de', 'du', 'des', 'la', 'le',
-                          'pour', 'et', 'd', 'l'})
-
-# A party of these categories speaks for the partnership's country.
-NATIONAL_CATEGORIES = frozenset({'national_government', 'jetp_secretariat'})
-
 LANGUAGE_MIN_PROBABILITY = 0.8
 LANGUAGE_MIN_CHARS = 300
-
-
-def slug(label):
-    text = unicodedata.normalize('NFKD', label).encode('ascii', 'ignore').decode()
-    return re.sub(r'[^a-z0-9]+', '-', text.lower()).strip('-')
-
-
-def name_key(form):
-    """A form with case, diacritics and spacing removed: equal keys, one party."""
-    text = unicodedata.normalize('NFKD', form)
-    text = ''.join(c for c in text if not unicodedata.combining(c))
-    return ' '.join(text.casefold().split())
-
-
-def _initials(form):
-    words = [w for w in re.findall(r'[^\W\d_]+', form) if w.casefold() not in ACRONYM_SKIP]
-    return ''.join(w[0] for w in words).upper() if len(words) >= 2 else None
-
-
-def _is_acronym(form):
-    return re.fullmatch(r'[A-Z]{2,}', form.strip()) is not None
-
-
-def split_label(label, writers):
-    """``(publisher, writer, channel)`` read from one publisher text.
-
-    ``X via Y`` gives the channel Y; ``X / Y`` gives the writer Y when Y is a
-    reviewed writer. A text fitting neither is its own publisher.
-    """
-    publisher, channel = label, None
-    if ' via ' in label:
-        publisher, channel = (part.strip() for part in label.rsplit(' via ', 1))
-    writer = None
-    if publisher.count(' / ') == 1:
-        first, second = (part.strip() for part in publisher.split(' / '))
-        if second in writers:
-            publisher, writer = first, second
-    return publisher, writer, channel
 
 
 def _printed_forms(sources, joint_labels, joint, writers):
@@ -194,7 +119,8 @@ def _printed_forms(sources, joint_labels, joint, writers):
         label = row['publisher']
         if label in joint_labels:
             for part in joint_labels[label]:
-                yield row, part, (label, 'joint'), None
+                name, role = part if isinstance(part, tuple) else (part, None)
+                yield row, name, (label, 'joint'), role
         else:
             publisher, writer, channel = split_label(label, writers)
             how = 'slash' if writer else 'via' if channel else None
@@ -345,13 +271,13 @@ def _name_candidates(names, reviewed):
     by_initials = defaultdict(set)
     for party_id, party_forms in forms.items():
         for form in party_forms:
-            initials = _initials(form)
-            if initials:
-                by_initials[initials].add(party_id)
+            acronym_letters = initials(form)
+            if acronym_letters:
+                by_initials[acronym_letters].add(party_id)
     pairs = {}
     for party_id, party_forms in sorted(forms.items()):
         for form in sorted(party_forms):
-            if _is_acronym(form):
+            if is_acronym(form):
                 for other in sorted(by_initials.get(form.strip(), set()) - {party_id}):
                     pairs.setdefault((party_id, other), 'normalised_label')
     party_of = {name_key(n['name']): n['party_id'] for n in names}
