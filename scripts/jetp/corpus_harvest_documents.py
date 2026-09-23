@@ -25,7 +25,7 @@ from utils import get_logger
 from jetp.schemas import (
     AUTHORITY_CATEGORIES,
     COUNTRIES,
-    SOURCE_TYPES,
+    DOCUMENT_TYPES,
 )
 
 log = get_logger("jetp.corpus_harvest_documents")
@@ -93,7 +93,7 @@ def _validate_registry_row(row: dict[str, str], line: int) -> dict[str, str]:
     if authority not in AUTHORITY_CATEGORIES:
         raise ValueError(f"line {line}: invalid authority_category {authority!r}")
     source_type = _require(row, "source_type", line)
-    if source_type not in SOURCE_TYPES:
+    if source_type not in DOCUMENT_TYPES:
         raise ValueError(f"line {line}: invalid source_type {source_type!r}")
     expected_format = _require(row, "expected_format", line)
     if expected_format not in EXPECTED_FORMATS:

@@ -14,13 +14,18 @@ One file is one table, joins happen at read time, nothing is materialised
 `data/jetp/ontology/` ([ontology](jetp-ontology.md) section 5), CSV, columns in this order.
 A table too large for the repository's file ceiling, 512 000 bytes per
 file in `.githooks/pre-commit`, is chunked by country and year into
-`<table>/<CODE>-<year>.csv`, which stays one table.
+`<table>.d/<CODE>-<year>.csv`, which stays one table. The `.d` suffix keeps a
+chunk directory apart from a directory that shares a table's name:
+`data/jetp/documents/` is the snapshot store under DVC, not the chunks of the
+`documents` table, and the writer deletes only the `<CODE>-<year>.csv` files of
+its own `.d` directory.
 
 | Table | Key | Columns |
 |---|---|---|
-| `publishers` | `publisher_id` | name, authority_category, country, notes |
+| `parties` | `party_id` | authority_category, country, notes |
+| `party-names` | `name_row_id` | party_id, name, form_type, language, document_id, line_id, recorded_at, decided_by, status, supersedes, notes |
 | `documents` | `document_id` | country, document_type, language, title, url, published_date, edition_of, active, notes |
-| `document-publishers` | (document_id, publisher_id) | role |
+| `document-publishers` | (document_id, party_id) | role, name_row_id (the form of the party's name this document prints) |
 | `retrievals` | `retrieval_id` | document_id, retrieved_at, status, http_status, content_type, etag, last_modified, final_url, error, sha256 (nullable) |
 | `snapshots` | `sha256` | storage_path, size_bytes, content_type |
 | `lines` | `line_id` | country, sha256, locator, ordinal, label, classification, own_status, own_status_axis, own_sector, groups, recorded_at, notes |
@@ -28,12 +33,11 @@ file in `.githooks/pre-commit`, is chunked by country and year into
 | `projects` | `project_id` | country, canonical_name, aliases, classification, classified_at, sector, notes |
 | `assets` | `asset_id` | country, name, technology, location, operator_party_id, part_of, notes (capacity is an observation, never a column) |
 | `agreements` | `agreement_id` | country, instrument, modality, sector, currency, tranche_of, notes |
-| `parties` | `party_id` | name, kind, country, publisher_id |
 | `line-referents` | `referent_row_id` | line_id, referent_kind, referent_id, status, method, method_version, confidence, justification_line_ids, decided_at, decided_by, supersedes, notes |
 | `relations` | `relation_id` | from_kind, from_id, relation, to_kind, to_id, role, valid_from, valid_to, status, method, method_version, confidence, decided_at, decided_by, supersedes, line_id |
 | `observations` | `observation_id` | subject_kind, subject_id, axis, measure, flow_type, basis, value, value_low, value_high, unit, currency, own_status, indicator_code, line_id, method, method_version, recorded_at, status, supersedes, notes |
 | `timings` | `timing_id` | observation_id, date_role, date, date_precision, lower_bound, upper_bound, line_id, recorded_at |
-| `external-ids` | (scheme, external_id) | kind, id, line_id, recorded_at |
+| `external-ids` | (scheme, external_id) | kind, id, line_id, recorded_at (for a party: its IATI organisation identifier, ROR, LEI or Wikidata item, tier 1 of section 4) |
 | `adjudications` | `adjudication_id` | decision_type (`occurrence_membership`, `flow_coverage`, `perimeter_compatibility`, `identity`), subject_kind, subject_id, verdict, status, decided_at, decided_by, supersedes, notes |
 | `adjudication-members` | (adjudication_id, kind, id) | role |
 | `rates` | (currency, date, basis) | rate_to_usd, line_id, recorded_at (a publisher's own conversion, printed beside the original, is a `rates` row citing that line, so the ledger records that the publisher converted, at what rate) |
@@ -69,7 +73,8 @@ Rules that the validator enforces:
   and never repeated per date role. A flow carries `period_start` and
   `period_end` or one `event` timing.
 - Every record row in `lines`, `observations`, `timings`, `external-ids`,
-  `rates`, `deflators` and every decision table carries `recorded_at`. An
+  `rates`, `deflators`, `party-names` and every decision table carries
+  `recorded_at`. An
   as-of state at cutoff K is the set of rows with `recorded_at` on or
   before K that are in force under the supersession rule.
 - `measure`, `basis`, `flow_type`, `modality`, `classification`, `relation`,
@@ -103,7 +108,17 @@ Rules that the validator enforces:
   locator stay on the row as provenance.
 - A referent is minted only by a `line-referents` row with a basis; no
   ingestion script writes to `projects`, `assets`, `agreements`, `parties` or
-  `perimeters`.
+  `perimeters`. The one exception is a party in a publishing role, which the
+  document register mints: its justification is the `party-names` row that
+  cites the document printing its name.
+- One organisation is one `parties` row, whatever its roles: a publisher is a
+  party that `document-publishers` links to a document, and a joint
+  publication is one row per party. A party's names are `party-names` rows,
+  one per form as printed, each citing the document or line it was read from;
+  exactly one `preferred` form is in force per party, under the in-force rule
+  of the decision tables. The party row carries no name of its own. A
+  publication names the form its document prints (`name_row_id`), and a page
+  that shows a document's publisher shows that form, not the preferred one.
 - `own_status` is copied, never normalised. `shared_status` appears only in
   `status-crosswalk`.
 - No column holds a semicolon-separated list; a list is rows in a relation
@@ -236,6 +251,27 @@ names reserved in the vocabulary. The Indonesian edition relation between the
 437 CIPP lines and the 1 142 progress-report lines, where the literal name
 intersection is 3, is the test bed for tier 2 and the first case for tier 3,
 and it is not attempted in the migration.
+
+**Organisations.** Parties are under authority control, in the manner of
+a library's name authority file or the ROR and GLEIF registries: one record
+per organisation, every form of its name attached to it, one form preferred
+(decided by the author on 2026-09-23). The tiers apply with two rules of
+their own.
+
+- Tier 1 is an external identifier: an IATI organisation identifier, a ROR
+  identifier, an LEI or a Wikidata item, held in `external-ids` with kind
+  `party`. Two names carrying the same identifier are one party.
+- Forms that differ only by case, diacritics or spacing (Senelec and
+  SENELEC) are merged when the party is minted: one party, several
+  `party-names` rows of form type `spelling_or_case_variant`, never two
+  parties and a `same_as`.
+- Tier 2 runs only on real variants: an acronym against its expansion (AFD
+  and Agence française de développement, PLN and Perusahaan Listrik Negara),
+  a translation (Vietnam Electricity and Tập đoàn Điện lực Việt Nam), a
+  former name. It writes `same_as` candidates between the two parties,
+  reviewed by hand. Accepting one folds the parties: the retained party
+  gains the other's forms as `party-names` rows of the matching form type,
+  and `routes` sends the retired party identifier to it.
 
 **Document deduplication.** The same matching record applies one level
 up, to documents, and runs before any line is extracted, because a duplicate

@@ -29,7 +29,7 @@ tables and never edits an upstream row.
 
 | Step | Name | Content | Tables |
 |---|---|---|---|
-| D1 | Register | What was fetched, byte for byte: publishers, documents, retrieval attempts, snapshots, and the record of how they were sought | `publishers`, `documents`, `document-publishers`, `retrievals`, `snapshots`, `coverage`, `dry-searches` |
+| D1 | Register | What was fetched, byte for byte: publishers, documents, retrieval attempts, snapshots, and the record of how they were sought | `parties`, `party-names`, `documents`, `document-publishers`, `retrievals`, `snapshots`, `coverage`, `dry-searches` |
 | D2 | Lines | One publisher's statement at one locator in one snapshot, with its own fields verbatim | `lines`, `line-fields/<document_id>`, `line-field-specs` |
 | D3 | Observations | A line read into a typed statement, measure, value and timings, by a named method version | `observations`, `timings`, `external-ids`, `rates`, `deflators` |
 | D4 | Referents | Identities minted by matching decisions over lines, and the relations between them | `projects`, `assets`, `agreements`, `parties`, `line-referents`, `relations`, `adjudications`, `adjudication-members`, `routes` |

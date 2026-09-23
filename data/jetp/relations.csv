@@ -1,0 +1,7 @@
+relation_id,from_kind,from_id,relation,to_kind,to_id,role,valid_from,valid_to,status,method,method_version,confidence,decided_at,decided_by,supersedes,line_id
+same_as-document-idn-cipp-2023-cpr-mirror--idn-cipp-2023,document,idn-cipp-2023-cpr-mirror,same_as,document,idn-cipp-2023,,,,candidate,mirror_review,1,,2026-09-23,scripts/jetp/build_evidence_layer.py,,
+same_as-document-sen-annex8-project-analysis--sen-investment-plan-annex8-official,document,sen-annex8-project-analysis,same_as,document,sen-investment-plan-annex8-official,,,,candidate,mirror_review,1,,2026-09-23,scripts/jetp/build_evidence_layer.py,,
+same_as-document-sen-investment-plan-l4-mirror--sen-investment-plan-l4,document,sen-investment-plan-l4-mirror,same_as,document,sen-investment-plan-l4,,,,candidate,mirror_review,1,,2026-09-23,scripts/jetp/build_evidence_layer.py,,
+same_as-party-afd--agence-francaise-de-developpement,party,afd,same_as,party,agence-francaise-de-developpement,,,,candidate,normalised_label,1,,2026-09-23,scripts/jetp/build_evidence_layer.py,,
+same_as-party-mepm--ministry-of-energy-petroleum-and-mines,party,mepm,same_as,party,ministry-of-energy-petroleum-and-mines,,,,candidate,normalised_label,1,,2026-09-23,scripts/jetp/build_evidence_layer.py,,
+same_as-party-mepm--senegal-mepm,party,mepm,same_as,party,senegal-mepm,,,,candidate,label_review,1,,2026-09-23,scripts/jetp/build_evidence_layer.py,,

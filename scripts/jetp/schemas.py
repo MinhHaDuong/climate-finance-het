@@ -19,7 +19,7 @@ COUNTRIES = frozenset(CONTRACT["countries"])
 FINANCIAL_STATUSES = frozenset(CONTRACT["financial_statuses"])
 IMPLEMENTATION_STATUSES = frozenset(CONTRACT["implementation_statuses"])
 SCOPES = frozenset(CONTRACT["scopes"])
-SOURCE_TYPES = frozenset(CONTRACT["source_types"])
+DOCUMENT_TYPES = frozenset(CONTRACT["document_types"])
 AUTHORITY_CATEGORIES = frozenset(CONTRACT["authority_categories"])
 
 

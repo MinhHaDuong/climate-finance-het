@@ -94,15 +94,16 @@ BREAKAGES = {
 
 def test_ddl_declares_the_common_tables_in_file_order():
     schema = ledger_headers.load_schema()
-    assert {'terms', 'publishers', 'documents', 'document_publishers',
+    assert {'terms', 'parties', 'party_names', 'documents', 'document_publishers',
             'retrievals', 'snapshots', 'lines', 'line_field_specs', 'projects',
-            'assets', 'agreements', 'parties', 'line_referents', 'relations',
+            'assets', 'agreements', 'line_referents', 'relations',
             'observations', 'timings', 'external_ids', 'adjudications',
             'adjudication_members', 'rates', 'deflators', 'routes',
             'coverage', 'status_crosswalk', 'sector_crosswalk', 'perimeters',
             'marker_coefficients'} == set(schema.tables)
     assert schema.header('lines')[:4] == ['line_id', 'country', 'sha256', 'locator']
-    assert schema.header('document_publishers') == ['document_id', 'publisher_id', 'role']
+    assert schema.header('document_publishers') == ['document_id', 'party_id', 'role',
+                                                     'name_row_id']
 
 
 def test_table_paths_follow_the_contract(tmp_path):
@@ -270,9 +271,8 @@ def test_oversized_table_is_chunked_and_reunited(tmp_path):
 
 
 def test_small_table_is_written_as_one_file(tmp_path):
-    written = ledger_headers.write_table(tmp_path, 'publishers',
-                                         [{'publisher_id': 'pub-1', 'name': 'T'}])
-    assert written == [tmp_path / 'publishers.csv']
+    written = ledger_headers.write_table(tmp_path, 'parties', [{'party_id': 'party-1'}])
+    assert written == [tmp_path / 'parties.csv']
     assert ledger_headers.check_headers(tmp_path) == []
 
 
@@ -281,7 +281,58 @@ def test_chunk_country_must_match_its_file(tmp_path):
     lines = tables.pop('lines')
     _write(tmp_path, tables)
     ledger_headers.write_table(tmp_path, 'lines', lines, ceiling=1)
-    chunk = tmp_path / 'lines' / 'ZAF-2026.csv'
-    chunk.rename(tmp_path / 'lines' / 'IDN-2026.csv')
+    chunk = tmp_path / 'lines.d' / 'ZAF-2026.csv'
+    chunk.rename(tmp_path / 'lines.d' / 'IDN-2026.csv')
     errors = ledger_build.build(tmp_path, None)
     assert any(e.startswith('chunk:') and 'IDN-2026.csv' in e for e in errors), errors
+
+
+def test_a_table_shrinking_under_the_ceiling_removes_only_its_own_chunks(tmp_path):
+    tables = _valid_tables()
+    lines = tables.pop('lines')
+    _write(tmp_path, tables)
+    ledger_headers.write_table(tmp_path, 'lines', lines, ceiling=1)
+    directory = ledger_headers.chunk_dir(tmp_path, 'lines')
+    assert directory == tmp_path / 'lines.d'
+    keep = directory / 'README.txt'
+    keep.write_text('not a chunk', encoding='utf-8')
+    assert ledger_headers.write_table(tmp_path, 'lines', lines) == [tmp_path / 'lines.csv']
+    assert sorted(p.name for p in directory.iterdir()) == ['README.txt']
+    assert ledger_build.build(tmp_path, None) == []
+    keep.unlink()
+    ledger_headers.write_table(tmp_path, 'lines', lines)
+    assert not directory.exists()
+
+
+def _store_listing(store):
+    return {str(p.relative_to(store)): p.read_bytes() for p in store.rglob('*') if p.is_file()}
+
+
+def test_the_documents_table_never_touches_the_snapshot_store(tmp_path):
+    """data/jetp/documents/ is the DVC snapshot store, not the table's chunks."""
+    store = tmp_path / 'documents'
+    (store / 'objects' / 'aa').mkdir(parents=True)
+    (store / 'objects' / 'aa' / ('a' * 64 + '.pdf')).write_bytes(b'%PDF-1.7 bytes')
+    # A file in the store that a chunk reader or cleaner would mistake for a chunk.
+    (store / 'ZAF-2026.csv').write_text('not ledger rows\n', encoding='utf-8')
+    before = _store_listing(store)
+    assert ledger_headers.chunk_dir(tmp_path, 'documents') == tmp_path / 'documents.d'
+
+    rows = _valid_tables()['documents']
+    ledger_headers.write_table(tmp_path, 'documents', rows)
+    assert ledger_headers.table_files(tmp_path, 'documents') == (
+        [(tmp_path / 'documents.csv', None, None)], [])
+    # A chunked documents table lives in documents.d/, and a rewrite under the
+    # ceiling cleans documents.d/ only.
+    chunked = tmp_path / 'documents.d'
+    chunked.mkdir()
+    (tmp_path / 'documents.csv').rename(chunked / 'ZAF-2026.csv')
+    files, errors = ledger_headers.table_files(tmp_path, 'documents')
+    assert errors == [] and [p for p, _, _ in files] == [chunked / 'ZAF-2026.csv']
+    ledger_headers.write_table(tmp_path, 'documents', rows)
+    assert not chunked.exists()
+    # Over the ceiling the table cannot be chunked (it has no recorded_at) and
+    # the refusal writes nothing.
+    with pytest.raises(ValueError, match='recorded_at'):
+        ledger_headers.write_table(tmp_path, 'documents', rows, ceiling=1)
+    assert _store_listing(store) == before

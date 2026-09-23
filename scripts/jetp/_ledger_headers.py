@@ -8,7 +8,10 @@ This module also knows where a table lives on disk, which the storage contract
 fixes: ``data/jetp/<table>.csv`` with underscores written as hyphens, ontology
 tables under ``data/jetp/ontology/``, and a table too large for the
 pre-commit file ceiling chunked by country and year into
-``<table>/<CODE>-<year>.csv``, which stays one table.
+``<table>.d/<CODE>-<year>.csv``, which stays one table. The ``.d`` suffix is
+what keeps a chunk directory apart from a directory that merely shares a
+table's name: ``data/jetp/documents/`` is the DVC snapshot store, and the
+``documents`` table must never read from, write to or clean it.
 
 A library: ``build_ledger.py`` is its command line, and a writer of ledger
 rows calls ``write_table`` so its file carries the generated header.
@@ -82,7 +85,8 @@ def table_path(ledger_dir, table):
 
 
 def chunk_dir(ledger_dir, table):
-    return table_path(ledger_dir, table).with_suffix('')
+    """The directory of a chunked table, ``<table>.d/`` beside its single file."""
+    return table_path(ledger_dir, table).with_suffix('.d')
 
 
 def file_ceiling(pre_commit=PRE_COMMIT):
@@ -240,6 +244,7 @@ def write_table(ledger_dir, table, rows, ceiling=None, schema=None):
     if len(text.encode('utf-8')) <= ceiling:
         single.parent.mkdir(parents=True, exist_ok=True)
         single.write_text(text, encoding='utf-8')
+        _remove_stale_chunks(chunk_dir(ledger_dir, table))
         return [single]
     if 'country' not in header or 'recorded_at' not in header:
         raise ValueError(f'{table} is over {ceiling} bytes and has no country '
@@ -254,6 +259,24 @@ def write_table(ledger_dir, table, rows, ceiling=None, schema=None):
         path = directory / f'{country}-{year}.csv'
         path.write_text(_render(header, members), encoding='utf-8')
         written.append(path)
+    _remove_stale_chunks(directory, keep=written)
     single.unlink(missing_ok=True)
     return written
+
+
+def _remove_stale_chunks(directory, keep=()):
+    """Delete the chunk files of a table that the last write did not produce.
+
+    Only ``<CODE>-<year>.csv`` files directly in the table's own ``.d``
+    directory are the writer's; anything else there is left alone, and the
+    directory is removed only once it is empty.
+    """
+    if not directory.is_dir():
+        return
+    keep = {Path(path) for path in keep}
+    for path in directory.glob('*.csv'):
+        if CHUNK_NAME.match(path.name) and path not in keep:
+            path.unlink()
+    if not any(directory.iterdir()):
+        directory.rmdir()
 

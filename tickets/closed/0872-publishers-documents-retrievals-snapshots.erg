@@ -2,12 +2,18 @@
 Title: Couche de preuve : publishers, documents, publications, retrievals, snapshots
 Created: 2026-09-22
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1461
 
 --- log ---
 2026-09-22T17:30Z HDMX-coding-agent created
 2026-09-23T10:30Z HDMX-coding-agent note revue du train (2026-09-23) : les comptes sont ceux des tables au lancement ; PR #1447 (0859) ajoute deux tentatives et deux instantanés
 
 2026-09-23T09:28Z HDMX-coding-agent note blocker 0871 closed — Blocked-by removed.
+2026-09-23T14:17Z HDMX-coding-agent note action 5 en partie différée : source_types renommé document_types dans config/jetp_tracking.yaml et le code Python ; le balayage des libellés du site (« source » → « publisher » ou « document ») dans deliverables/jetp-observatory/app.js, index.html et le README de l'observatoire attend la fin de PR #1459 (0881), qui réécrit ces fichiers
+2026-09-23T14:59Z HDMX-coding-agent note décision de l'auteur (2026-09-23, interactive) : contrôle d'autorité des organisations. PR #1461 retravaillée : publishers fondu dans parties, party-names (103 formes pour 101 parties), trois libellés conjoints scindés (304 publications), candidats de palier 2 AFD/Agence Francaise de Developpement, MEPM/Ministry of Energy Petroleum and Mines, MEPM/Senegal MEPM ; documents.json identique au bit près ; morceaux des tables découpées dans <table>.d/ (data/jetp/documents/ est le magasin DVC).
+2026-09-23T14:59Z HDMX-coding-agent note balayage des libellés du site débloqué (0881 fusionné) et fait dans PR #1461 : la seule copie visible restante (« No archived copy of this source ») devient « document » dans app.js ; index.html n'en porte plus ; les autres occurrences sont des clés JSON (source_id, sources, source_count) liées aux octets de data/ et restent jusqu'à 0878.
+2026-09-23T15:20Z HDMX-coding-agent note textes « X via Y » et « X / Y » résolus par règle dans build_evidence_layer.py (décision de l'auteur 2026-09-23) : 13 textes ramenés à l'éditeur X ; le canal Y en notes du document ; trois cabinets (ENERCAP, Grant Thornton, Pyramide) liés en rôle author, l'éditeur en commissioner (nouveau rôle, role.author.2 supersède role.author.1) ; Fatou Ndiaye, personne physique hors périmètre, en notes du document ; six textes « / » restent une seule partie ; 94 parties, 95 formes, 307 publications ; documents.json identique à l'octet
+2026-09-23T16:43Z HDMX-coding-agent closed — autoclosed — PR #1461
 --- body ---
 ## Context
 
@@ -52,7 +58,7 @@ change pas ; la page Documents de l'observatoire est la vérification.
 ## Verification
 
 - [ ] `documents.json` régénéré identique à l'actuel (octets), avant le balayage des libellés
-- [ ] Comptes égaux à ceux des tables au lancement (au dépôt : 314 retrievals, 264 snapshots, 301 documents, 103 publishers ; 316 et 266 après PR #1447, ticket [[0859]])
+- [ ] Comptes égaux à ceux des tables au lancement (au dépôt : 314 retrievals, 264 snapshots, 301 documents, 103 publishers ; 316 et 266 après PR #1447, ticket [[0859]] ; depuis la décision du 2026-09-23 les 103 textes de publisher donnent 101 parties et 103 formes de nom)
 - [ ] Recettes ZAF et VNM de [[0834]] vertes
 
 ## Invariants

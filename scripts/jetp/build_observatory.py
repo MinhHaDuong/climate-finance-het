@@ -10,6 +10,7 @@ from pathlib import Path
 
 import yaml
 
+from jetp._ledger_headers import load_schema, read_table
 from jetp._observatory_data import (
     document_entry,
     historical_record,
@@ -170,6 +171,44 @@ def comparison_data(root, config):
             'snapshots': snapshots}
 
 
+def retrieval_registry(ledger_dir):
+    """The collection registry read from the evidence layer (ticket 0872).
+
+    A compatibility reader: it joins ``retrievals`` to ``documents`` and
+    ``snapshots`` and returns the rows ``manifest.csv`` held, column for
+    column and as strings, so the Documents view is built from the new tables
+    without changing a byte. A retrieval's ordinal, the ``<n>`` of its
+    ``<document_id>:<n>`` identifier, restores registry order within a
+    document. Retired with the legacy readers (ticket 0878).
+    """
+    schema = load_schema()
+
+    def rows(table):
+        found, errors = read_table(ledger_dir, table, schema)
+        if errors:
+            raise ValueError(f'{table}: {errors[0]}')
+        columns = schema.header(table)
+        return [{c: '' if v is None else v for c, v in zip(columns, row)} for row in found]
+
+    countries = {d['document_id']: d['country'] for d in rows('documents')}
+    snapshots = {s['sha256']: s for s in rows('snapshots')}
+    retrievals = sorted(rows('retrievals'), key=lambda r: (
+        r['document_id'], int(r['retrieval_id'].rsplit(':', 1)[1])))
+    registry = []
+    for r in retrievals:
+        snapshot = snapshots.get(r['sha256'], {})
+        registry.append({
+            'source_id': r['document_id'], 'country': countries[r['document_id']],
+            'retrieved_at': r['retrieved_at'], 'status': r['status'],
+            'http_status': r['http_status'], 'content_type': r['content_type'],
+            'etag': r['etag'], 'last_modified': r['last_modified'], 'sha256': r['sha256'],
+            'size_bytes': snapshot.get('size_bytes', ''),
+            'storage_path': snapshot.get('storage_path', ''),
+            'final_url': r['final_url'], 'error': r['error'],
+        })
+    return registry
+
+
 def documents_data(root, tables):
     """List every collection attempt, marking availability from the snapshot on disk.
 
@@ -269,17 +308,17 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     config = yaml.safe_load((ROOT / 'config/jetp_observatory.yaml').read_text())
-    tables = read_inputs(ROOT)
+    # Only the overview and the country views read the legacy registries.
     if args.view == 'overview':
-        result = overview(ROOT, config, tables)
+        result = overview(ROOT, config, read_inputs(ROOT))
     elif args.view == 'comparison':
         result = comparison_data(ROOT, config)
     elif args.view == 'documents':
-        result = documents_data(ROOT, tables)
+        result = documents_data(ROOT, {'manifest': retrieval_registry(ROOT / 'data/jetp')})
     elif args.view == 'editions':
         result = edition_history(ROOT)
     else:
-        result = country_data(ROOT, args.view, config, tables)
+        result = country_data(ROOT, args.view, config, read_inputs(ROOT))
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, ensure_ascii=False, separators=(',', ':')) + '\n')
 

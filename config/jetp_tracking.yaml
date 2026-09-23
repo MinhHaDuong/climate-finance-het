@@ -3,8 +3,9 @@ version: 1
 # Vocabularies of the legacy documentary tables (sources.csv, manifest.csv,
 # events.csv and their readers in scripts/jetp/schemas.py). The ledger's closed
 # lists live in data/jetp/ontology/terms.csv (ticket 0880): authority
-# categories, document types (source_types here) and retrieval statuses
-# (collection_statuses here) are terms there, and the status lists below are
+# categories, document types (document_types here, checked on the legacy
+# source_type column; renamed from source_types by ticket 0872) and retrieval
+# statuses (collection_statuses here) are terms there, and the status lists below are
 # replaced by the shared axes of docs/jetp-ontology.md section 4. These lists
 # stay only while the legacy readers do and go with them (ticket 0878); what
 # remains here afterwards is display choices. Do not add a value here for the
@@ -25,7 +26,7 @@ authority_categories:
   - operator
   - secondary_source
 
-source_types:
+document_types:
   - political_declaration
   - investment_plan
   - implementation_plan

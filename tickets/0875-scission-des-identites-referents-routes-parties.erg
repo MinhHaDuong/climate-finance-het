@@ -9,6 +9,7 @@ Blocked-by: 0874
 2026-09-23T10:30Z HDMX-coding-agent note revue du train (2026-09-23) : `relations` ajoutée aux critères de sortie ([[0833]] en dépend) ; le palier 2 tourne ici une seule fois
 
 2026-09-23T09:17Z HDMX-coding-agent note gaze/1457: 0871's LEGACY_FILES skips data/jetp/projects.csv by name in the ledger header check so the pre-migration file doesn't fail as 'projects' table header; remove that skip entry (scripts/jetp/_ledger_headers.py) once this ticket's split retires the file
+2026-09-23T14:59Z HDMX-coding-agent note décision de l'auteur (2026-09-23, interactive) : contrôle d'autorité des organisations. La table publishers est fondue dans parties (un publisher est une partie dans un rôle de publication) ; nouvelle table party-names (une ligne par forme imprimée, form_type, langue, justification, une seule forme preferred en vigueur). L'étape 4 de ce ticket part des parties et formes déjà frappées par 0872 (PR #1461) : palier 1 par external-ids (IATI org, ROR, LEI, Wikidata), variantes de casse fusionnées à la frappe, acronymes/traductions/anciens noms en candidats de palier 2. Action 4 réécrite en conséquence.
 --- body ---
 ## Context
 
@@ -18,9 +19,11 @@ noms distincts), 21 places comptées VNM, 43 soumissions SEN, 4 en-têtes de
 programme, et le reste des projets. Chaque ligne reçoit une disposition
 et une identité n'est frappée que par une ligne `line-referents` avec sa
 base (contrat de stockage § 4, palier 1 : identifiant exact ; palier 2 : libellé normalisé, en
-candidats revus à la main). La table `parties` est construite ici, forme
-minimale, rôles bailleur et canal d'abord depuis les 61 libellés et les 14
-préfixes du registre. `routes` fait résoudre chaque ancien identifiant.
+candidats revus à la main). La table `parties` existe déjà : [[0872]] l'a
+ouverte avec les publishers, sous contrôle d'autorité (décision de l'auteur du
+2026-09-23, ontologie décision 12 ; contrat de stockage § 4, organisations).
+Ce ticket y ajoute les rôles bailleur et canal d'abord, depuis les 61 libellés
+et les 14 préfixes du registre. `routes` fait résoudre chaque ancien identifiant.
 
 ## Relevant files
 
@@ -41,8 +44,22 @@ préfixes du registre. `routes` fait résoudre chaque ancien identifiant.
    plan IDN (Cirebon-1, Pelabuhan Ratu comme actifs sans projet).
 3. Palier 2 en candidats : libellés normalisés dans un pays et un groupe
    technologique ; aucun `accepted` sans revue.
-4. `parties` : bailleur et canal depuis les libellés ; `party_in` un rôle
-   par ligne ; `role_in` pour les entités de mise en œuvre du registre.
+4. `parties` et `party-names`, en partant des parties déjà frappées par
+   [[0872]] :
+   - palier 1 : un identifiant externe dans `external-ids` (identifiant
+     d'organisation IATI, ROR, LEI, Wikidata) ; même identifiant, même partie ;
+   - à la frappe, les variantes de casse, de diacritiques ou d'espaces d'un
+     libellé bailleur ou canal sont une seule partie avec plusieurs lignes
+     `party-names` (`spelling_or_case_variant`), jamais deux parties et un
+     `same_as` ; un libellé qui est la forme d'une partie existante (AFD,
+     World Bank…) s'y rattache au lieu d'en frapper une nouvelle ;
+   - palier 2 en candidats : acronymes, traductions, anciens noms (EVN /
+     Vietnam Electricity / Tập đoàn Điện lực Việt Nam, PLN / Perusahaan
+     Listrik Negara) en `same_as` candidats entre parties, revus à la main ;
+   - chaque forme lue est une ligne `party-names` justifiée par sa ligne ;
+     une seule forme `preferred` en vigueur par partie ;
+   - `party_in` un rôle par ligne ; `role_in` pour les entités de mise en
+     œuvre du registre.
 5. `routes` : 404 anciens identifiants → (genre, identifiant).
 6. Les 11 `project_page_component` deviennent `component_of`.
 

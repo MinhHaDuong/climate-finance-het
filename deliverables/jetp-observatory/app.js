@@ -796,7 +796,7 @@ function observationDetail(row) {
   );
 }
 /* The fingerprint is resolved once, in the generator, so the row addresses its
- * document directly. A source the collection never archived keeps its locator
+ * document directly. A document the collection never archived keeps its locator
  * as text, exactly as an unresolved inventory row does. */
 function observationEvidence(row) {
   return evidenceLink(
@@ -805,7 +805,7 @@ function observationEvidence(row) {
     row.pdf_page,
     "data-observation-id",
     observationId(row),
-    "No archived copy of this source",
+    "No archived copy of this document",
   );
 }
 /* A facet's option list is the values a column actually carries, sorted and
@@ -1326,8 +1326,8 @@ function whosWhoPage(params) {
  * new list can never drop its terms from the page. */
 const GLOSSARY_THEMES = [
   ["What we track", {
-    classes: ["agreement", "asset", "country", "party", "perimeter", "project"],
-    lists: ["authority_category", "country", "project_classification", "role"],
+    classes: ["agreement", "asset", "country", "party", "party_name", "perimeter", "project"],
+    lists: ["authority_category", "country", "form_type", "project_classification", "role"],
   }],
   ["How documents are read", {
     classes: ["comparator_record", "crosswalk", "document", "external_identifier", "line",
