@@ -26,6 +26,7 @@ from utils import (
     get_logger,
     load_refined_citations,
     normalize_doi,
+    text_or_empty,
 )
 
 log = get_logger("analyze_cocitation")
@@ -58,8 +59,8 @@ def build_doi_metadata(cit):
         d = row["doi_norm"]
         if d and d not in ("nan", "none"):
             doi_to_meta[d] = {
-                "title": str(row.get("title", "") or ""),
-                "first_author": str(row.get("first_author", "") or ""),
+                "title": text_or_empty(row.get("title", "")),
+                "first_author": text_or_empty(row.get("first_author", "")),
                 "year": row.get("year", ""),
             }
 
@@ -68,8 +69,8 @@ def build_doi_metadata(cit):
         d = row["ref_doi"]
         if d and d not in ("nan", "none") and d not in doi_to_meta:
             doi_to_meta[d] = {
-                "title": str(row.get("ref_title", "") or ""),
-                "first_author": str(row.get("ref_first_author", "") or ""),
+                "title": text_or_empty(row.get("ref_title", "")),
+                "first_author": text_or_empty(row.get("ref_first_author", "")),
                 "year": row.get("ref_year", "") or "",
             }
     return doi_to_meta

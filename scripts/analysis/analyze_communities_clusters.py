@@ -26,6 +26,7 @@ from utils import (
     load_refined_citations,
     load_refined_embeddings,
     normalize_doi,
+    text_or_empty,
 )
 
 log = get_logger("analyze_communities_clusters")
@@ -90,8 +91,8 @@ for _, row in works.iterrows():
     d = row["doi_norm"]
     if d and d not in ("", "nan", "none"):
         doi_meta[d] = {
-            "title": str(row.get("title", "") or ""),
-            "first_author": str(row.get("first_author", "") or ""),
+            "title": text_or_empty(row.get("title", "")),
+            "first_author": text_or_empty(row.get("first_author", "")),
             "year": row["year"] if pd.notna(row["year"]) else None,
             "cited_by_count": row["cited_by_count"],
         }
@@ -119,8 +120,8 @@ for _, row in cit.iterrows():
         else:
             yr = None
         doi_meta[d] = {
-            "title": str(row.get("ref_title", "") or ""),
-            "first_author": str(row.get("ref_first_author", "") or ""),
+            "title": text_or_empty(row.get("ref_title", "")),
+            "first_author": text_or_empty(row.get("ref_first_author", "")),
             "year": yr,
             "cited_by_count": 0,
         }

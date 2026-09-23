@@ -13,6 +13,8 @@ Exports
 normalize_text
     Fix encoding artifacts from aggregator APIs: HTML entities, mojibake,
     zero-width chars, literal escape sequences, whitespace.
+text_or_empty
+    Convert a scalar row value to text without leaking missing-value tokens.
 normalize_doi_safe
     Wrap ``openalex_corpus.text.normalize_doi`` with NaN/None handling for
     pandas ``.apply()``.
@@ -45,6 +47,15 @@ from openalex_corpus.text import normalize_doi  # used by normalize_doi_safe bel
 # ---------------------------------------------------------------------------
 # General text normalization
 # ---------------------------------------------------------------------------
+
+
+def text_or_empty(value: object) -> str:
+    """Return stripped scalar text, blanking nulls and literal null tokens."""
+    if value is None or (pd.api.types.is_scalar(value) and pd.isna(value)):
+        return ""
+    text = str(value).strip()
+    return "" if text.casefold() in {"nan", "none"} else text
+
 
 # Characters that are invisible/zero-width and should be stripped.
 _INVISIBLE_RE = re.compile(r"[\u200b\u200c\u200d\ufeff\u00ad]")

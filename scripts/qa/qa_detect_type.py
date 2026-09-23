@@ -21,7 +21,7 @@ import os
 import re
 
 import pandas as pd
-from utils import CATALOGS_DIR, DERIVED_TABLES_DIR, get_logger, save_csv
+from utils import CATALOGS_DIR, DERIVED_TABLES_DIR, get_logger, save_csv, text_or_empty
 
 log = get_logger("qa_detect_type")
 
@@ -188,11 +188,11 @@ def _classify_from_title(title):
 
 def classify_type(row):
     """Classify document type from metadata heuristics."""
-    title = str(row.get("title", "") or "").lower()
-    journal = str(row.get("journal", "") or "").lower().strip()
-    doi = str(row.get("doi", "") or "").lower()
-    source = str(row.get("source", "") or "").lower()
-    abstract = str(row.get("abstract", "") or "")
+    title = text_or_empty(row.get("title", "")).lower()
+    journal = text_or_empty(row.get("journal", "")).lower().strip()
+    doi = text_or_empty(row.get("doi", "")).lower()
+    source = text_or_empty(row.get("source", "")).lower()
+    abstract = text_or_empty(row.get("abstract", ""))
 
     result = _classify_from_source(source, title, doi, journal)
     if result:

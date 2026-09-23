@@ -16,14 +16,13 @@ Usage:
 """
 
 import argparse
-import math
 import os
 from collections import defaultdict
 
 import pandas as pd
 import yaml
 from _course_dedup import _dedup_course_names
-from utils import DATA_DIR, clean_doi, get_logger
+from utils import DATA_DIR, clean_doi, get_logger, text_or_empty
 
 log = get_logger("build_teaching_yaml")
 
@@ -35,13 +34,6 @@ MIN_COURSES_NO_DOI = 3  # Title-only entries: higher bar (>=3 syllabi)
 MIN_READINGS_DETAILED = 20  # Courses with >=20 DOI readings are "detailed syllabi"
 FUZZY_THRESHOLD = 75  # rapidfuzz token_sort_ratio threshold for title grouping
 FUZZY_MIN_WORDS = 4   # titles shorter than this skip fuzzy matching (too generic)
-
-
-def _clean(val):
-    """Return stripped string or empty string for NaN/None."""
-    if val is None or (isinstance(val, float) and math.isnan(val)):
-        return ""
-    return str(val).strip()
 
 
 def _infer_level(course_name):
@@ -182,15 +174,15 @@ def _fuzzy_dedup_title_only(df):
         all_institutions = set()
         all_countries = set()
         for _, row in group_df.iterrows():
-            for c in str(row.get("courses", "")).split(";"):
+            for c in text_or_empty(row.get("courses", "")).split(";"):
                 c = c.strip()
                 if c:
                     all_courses.add(c)
-            for inst in str(row.get("institutions", "")).split(";"):
+            for inst in text_or_empty(row.get("institutions", "")).split(";"):
                 inst = inst.strip()
                 if inst:
                     all_institutions.add(inst)
-            for country in str(row.get("countries", "")).split(";"):
+            for country in text_or_empty(row.get("countries", "")).split(";"):
                 country = country.strip()
                 if country:
                     all_countries.add(country)
@@ -297,9 +289,9 @@ def load_scraped(csv_path):
 
     records = []
     for _, row in df.iterrows():
-        courses = [c.strip() for c in str(row.get("courses", "")).split(";")]
-        institutions = [i.strip() for i in str(row.get("institutions", "")).split(";")]
-        countries = _clean(row.get("countries", ""))
+        courses = [c.strip() for c in text_or_empty(row.get("courses", "")).split(";")]
+        institutions = [i.strip() for i in text_or_empty(row.get("institutions", "")).split(";")]
+        countries = text_or_empty(row.get("countries", ""))
 
         while len(institutions) < len(courses):
             institutions.append("")
@@ -310,10 +302,10 @@ def load_scraped(csv_path):
             records.append({
                 "institution": inst if inst else "Unknown",
                 "course": course,
-                "doi": _clean(row.get("doi", "")),
-                "title": _clean(row.get("title", "")),
-                "authors": _clean(row.get("authors", "")),
-                "year": _clean(row.get("year", "")),
+                "doi": text_or_empty(row.get("doi", "")),
+                "title": text_or_empty(row.get("title", "")),
+                "authors": text_or_empty(row.get("authors", "")),
+                "year": text_or_empty(row.get("year", "")),
                 "countries": countries,
                 "origin": "scraped",
             })

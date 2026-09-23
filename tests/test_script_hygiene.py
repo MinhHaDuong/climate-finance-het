@@ -81,6 +81,30 @@ def _parse_script(name):
     return ast.parse(_read_script(name), filename=name)
 
 
+def test_row_get_or_empty_is_not_stringified():
+    """`or ""` misses truthy pandas NaN in row fields (ticket 0550)."""
+    offenders = []
+    for name in _all_scripts():
+        for node in ast.walk(_parse_script(name)):
+            if not isinstance(node, ast.Call) or not isinstance(node.func, ast.Name):
+                continue
+            if node.func.id != "str" or len(node.args) != 1:
+                continue
+            fallback = node.args[0]
+            if not isinstance(fallback, ast.BoolOp) or not isinstance(fallback.op, ast.Or):
+                continue
+            if len(fallback.values) != 2:
+                continue
+            source, empty = fallback.values
+            if not isinstance(source, ast.Call) or not isinstance(source.func, ast.Attribute):
+                continue
+            if not isinstance(source.func.value, ast.Name) or source.func.value.id != "row":
+                continue
+            if source.func.attr == "get" and isinstance(empty, ast.Constant) and empty.value == "":
+                offenders.append(f"{name}:{node.lineno}")
+    assert not offenders, f"str(row.get(...) or '') leaks NaN: {offenders}"
+
+
 def _scripts_with_main_guard():
     """Scripts that have if __name__ == '__main__'."""
     result = []

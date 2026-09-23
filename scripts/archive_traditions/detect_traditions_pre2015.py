@@ -27,7 +27,7 @@ import numpy as np
 import pandas as pd
 from scipy.sparse import lil_matrix
 from sklearn.feature_extraction.text import TfidfVectorizer
-from utils import BASE_DIR, CATALOGS_DIR, get_logger, normalize_doi
+from utils import BASE_DIR, CATALOGS_DIR, get_logger, normalize_doi, text_or_empty
 
 log = get_logger("detect_traditions_pre2015")
 
@@ -61,11 +61,11 @@ for _, row in works.iterrows():
     d = row["doi_norm"]
     if d and d not in ("", "nan", "none"):
         doi_meta[d] = {
-            "title": str(row.get("title", "") or ""),
-            "first_author": str(row.get("first_author", "") or ""),
+            "title": text_or_empty(row.get("title", "")),
+            "first_author": text_or_empty(row.get("first_author", "")),
             "year": row["year"] if pd.notna(row["year"]) else None,
             "cited_by_count": row["cited_by_count"],
-            "abstract": str(row.get("abstract", "") or ""),
+            "abstract": text_or_empty(row.get("abstract", "")),
         }
 
 # Load citations
@@ -92,8 +92,8 @@ for _, row in cit.iterrows():
         else:
             yr = None
         doi_meta[d] = {
-            "title": str(row.get("ref_title", "") or ""),
-            "first_author": str(row.get("ref_first_author", "") or ""),
+            "title": text_or_empty(row.get("ref_title", "")),
+            "first_author": text_or_empty(row.get("ref_first_author", "")),
             "year": yr,
             "cited_by_count": 0,
             "abstract": "",
