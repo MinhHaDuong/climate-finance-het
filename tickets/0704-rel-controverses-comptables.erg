@@ -7,7 +7,7 @@ Blocked-by: 0702
 --- log ---
 2026-08-21T12:00Z haduong created
 2026-09-11T16:01Z haduong note materiau amont reuni hors depot pendant l'audit Gavard & Schoch — note de source + lot de 14 articles sur l'efficacite emissions, voir section Materiau amont
-
+2026-09-23T08:01Z HDMX-coding-agent note Audit Gavard & Schoch etendu le 2026-09-23 : rupture de declaration 2013 (BMD, FEM), ponderation 40 % annoncee non appliquee, composition sectorielle ; voir section Materiau amont (suite)
 --- body ---
 ## Contexte
 
@@ -64,6 +64,31 @@ Schoch (2026) version publiée (10.1017/S1355770X26100679), Wang & Tang (2026)
 ciblée, pas une mesure sur le corpus v2. L'invariant ci-dessous s'applique sans
 réserve : ce matériau peut nourrir la lecture de la controverse 2, il ne peut
 pas étayer un constat de présence ou d'absence dans la littérature.
+
+## Matériau amont (suite, 2026-09-23)
+
+L'audit Gavard & Schoch est descendu jusqu'aux lignes projet de l'extraction
+OCDE des auteurs (Zenodo 7149667). Tout est hors dépôt, dans
+`~/CNRS/papiers/actif/Gavard Scotch 2026 Climate finance counterproductive/audit/` :
+
+- `provider-check-2026-09-23/` : couverture par fournisseur et par année. Les
+  BMD (dont IBRD, IDA, IFC) et le FEM ne déclarent au CAD qu'à partir des flux
+  2013. La part multilatérale de l'atténuation passe de 0 % (jusqu'en 2008) à
+  40–54 % (2013–2017). Deux règles de comptage coexistent : marqueurs de Rio en
+  valeur faciale, composantes climat des BMD (médiane 5 % du prêt).
+- `provider-sensitivity-2026-09-23/` : réestimations sur des ensembles de
+  fournisseurs cohérents, avec une revue contradictoire (`REVIEW.md`).
+- `climate-finance-composition-2026-09-23/REPORT.md` : composition sectorielle
+  et bibliographie vérifiée de la critique des marqueurs, directement utile aux
+  controverses 1 (valorisation des prêts) et 2 (crédibilité des marqueurs).
+- `ReproductibilityNotes.md`, RN-011 : pondération 40 % annoncée mais non
+  appliquée (le papier croit la base OCDE déjà pondérée), permutation des deux
+  Congo, tableau A2 mal étiqueté.
+
+Pour la controverse 2, le cas illustre un schéma à établir sur tout le lot
+(0863) : les études d'efficacité reprennent les conventions de mesure sans les
+vérifier. Les erreurs propres à Gavard & Schoch passent par leur corrigendum,
+lettre envoyée le 2026-09-23. La revue cite le schéma, pas les erreurs.
 
 ## Actions
 
