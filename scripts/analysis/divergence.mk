@@ -191,6 +191,11 @@ changepoints: changepoints-tables changepoints-figure
 # GPU auto-detected for S2_energy / S1_MMD (precomputed distance matrix).
 NJOBS ?= -1
 
+# The CPU S2 resampling paths read the cached-distance helper directly.
+$(DIV_TABLES)/tab_null_S2_energy.csv \
+$(DIV_TABLES)/tab_boot_S2_energy.csv \
+$(DIV_TABLES)/tab_subsample_S2_energy.csv: scripts/_energy_resample.py
+
 NULL_DISPATCH := scripts/compute_null_model.py
 NULL_METHODS_SEM := S2_energy
 NULL_METHODS_LEX := L1
