@@ -31,32 +31,48 @@ than suspicion, because the readers are researchers as well as journalists.
 | M | Nothing | none |
 | (methods) | What was done, what was not, and which tables are not served | **Methods** |
 
-**Navigation order.** The paper trail · The tallies · Glossary · How we
-did this. The Glossary sits last, beside Methods: a reader consults
-it, and does not start from it (author's cold read of ticket 0881,
-2026-09-23).
+**Navigation.** Decided by the author on 2026-09-23, over the cold read of
+ticket 0881 and the batches that followed it. The header holds three
+sections: **The paper trail** · **The tallies** · **About**.
 
-**Page top: two bars.** Same decision.
+| Section | Its pages, in sub-bar order | Tab lands on |
+|---|---|---|
+| The paper trail | Documents · Entries · On the record · Projects · Funding · Who's who | `#the-paper-trail`, a short page on what each step holds and why they run in that order |
+| The tallies | Counts · Comparisons (the accounts page of ticket 0877 joins as Money) | `#counts`: two pages need no landing page |
+| About | Glossary · Methods · Who we are | `#about`, one line per page |
 
-- The header holds the four sections as tabs, the current one selected. It
-  does not list the trail's pages.
-- On a paper-trail page, and only there, a second bar holds the steps:
-  Documents › Entries › On the record › Projects · Funding · Who's who. The
-  last three are parallel siblings, and the current step is marked with
-  `aria-current`. This bar is the page's position indicator, and its
-  neighbouring steps are the links one step either way. No page repeats it
-  with an eyebrow, a trail block or in-page tabs, so a country's entries
-  and what is on the record about it are two steps
-  (`#entries/<CODE>`, `#on-the-record/<CODE>`), not two tabs.
-- A page scoped to a country shows the country at the right of the step bar
-  as a removable chip ("Viet Nam ×"). Removing it opens the same step
-  unscoped, and every step link keeps the country.
-- A breadcrumb appears on detail pages only (Projects › Bac Ai, Funding ›
-  Viet Nam), never duplicating the step bar.
-- The title block is an h1 and a one-sentence lede. The page's longer
+The Glossary sits under About: a reader consults it, and does not start
+from it. The release history is in no bar; Methods links to it and is
+marked current when it is open.
+
+**Page top: two bars.**
+
+- **Header tabs with dropdowns.** Each tab's label is a link to its
+  landing page. Beside it, a disclosure button (`aria-expanded`, controlling
+  a list of links; not `role=menu`) opens the section's pages, so every page
+  is two clicks from anywhere. Click, tap, Enter and Space toggle it;
+  ArrowDown opens it on its first link; Escape and a click outside close it.
+  Hover opens one as an enhancement only. At phone width the three sections
+  stack inside one collapsible nav behind a Menu button. The paper trail's
+  dropdown lists the six steps in trail order.
+- **The sub-bar.** On every page of a section, its landing page included, a
+  second bar holds the section's pages as plain sibling tabs, the current one
+  selected (`aria-current="page"`). It is one component for all three
+  sections: no separators, no grouping. On the paper trail the order of the
+  six tabs is the trail's, carried by position left to right and explained
+  on `#the-paper-trail`, not by arrows or numerals. The selected tab is the
+  page's position indicator, and the tabs beside it are the neighbouring
+  steps. No page repeats it with an eyebrow, a trail block or in-page tabs,
+  so a country's entries and what is on the record about it are two steps
+  (`#entries/<CODE>`, `#on-the-record/<CODE>`).
+- **Country chip.** A trail page scoped to a country shows the country at
+  the right of the sub-bar as a removable chip ("Viet Nam ×"). Removing it
+  opens the same step unscoped, and every trail tab keeps the country.
+- **Breadcrumbs** appear on detail pages only (Projects › Bac Ai, Funding ›
+  Viet Nam): small muted text with arrows, which never looks like the
+  sub-bar's tabs.
+- **Title block:** an h1 and a one-sentence lede. The page's longer
   explanation follows, word for word, folded under "About this page".
-- The paper trail's section tab opens `#the-paper-trail`, a short page
-  saying what each step holds.
 
 **Markers.** A number we calculated carries "Our calculation", with its
 unit, its perimeter and a link to what was counted. A number a publisher
@@ -66,17 +82,16 @@ goes unmarked.
 
 **Addresses match labels.** Each page's address is its label's slug:
 `#documents`, `#entries`, `#on-the-record`, `#projects`, `#funding`,
-`#whos-who`, `#the-tallies`, `#glossary`, `#methods`, and
-`#historical-comparison`, `#release-history` for the two pages reached from
-The tallies and Methods. A country's page nests under its step
+`#whos-who`, `#counts`, `#comparisons`, `#glossary`, `#methods`,
+`#who-we-are`, and the landing pages `#the-paper-trail` and `#about`; the
+release history is `#release-history`. A country's page nests under its step
 (`#funding/<CODE>`, `#entries/<CODE>`, `#on-the-record/<CODE>`); a project is
-`#project/<project_id>`. The addresses of earlier previews (`#countries`,
-`#country/<CODE>`, `#evidence`, `#numbers`, `#by-the-numbers`, `#comparison`,
-`#methods`, `#editions`, `#inventory/<CODE>` with its `?row=` and
-`?tab=record`) forward in place to the new ones; the pages emit only the new
-names (same decision). The section first called By the numbers is **The
-tallies**, at `#the-tallies` (author's cold read, third batch, as revised).
-The full table is in the observatory's
+`#project/<project_id>`. The addresses of earlier previews forward in place,
+in one hop, to the new ones: `#countries`, `#country/<CODE>`, `#evidence`,
+`#numbers`, `#by-the-numbers`, `#the-tallies`, `#comparison`,
+`#historical-comparison`, `#how-we-did-this`, `#editions`, and
+`#inventory/<CODE>` with its `?row=` and `?tab=record`. The pages emit only
+the new names. The full table is in the observatory's
 [README](../deliverables/jetp-observatory/README.md).
 
 - **Glossary.** Grouped by theme, alphabetical within each group: what the
@@ -91,7 +106,7 @@ The full table is in the observatory's
   snapshots). Entries is D2: a row of a register, a line of a plan annex, a
   submission in a list. On the record is D3: each item reads "according to"
   its publisher, with the date. Projects, Funding and Who's who are D4:
-  projects and assets, agreements, and parties. The step bar shows where each
+  projects and assets, agreements, and parties. The sub-bar shows where each
   page sits on the trail and lets the reader step one level up or down: from
   a project to what is on the record about it, to the entries, to the page
   of the document, and back.

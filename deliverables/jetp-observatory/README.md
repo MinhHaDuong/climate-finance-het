@@ -24,41 +24,49 @@ interpreter when the machine's uv cache is unavailable.
 The pages follow the four objects of [`docs/jetp-language.md`](../../docs/jetp-language.md)
 without naming them, in the vocabulary of
 [`docs/jetp-observatory-presentation.md`](../../docs/jetp-observatory-presentation.md)
-(ticket 0881). The page top is two bars (author's cold read, 2026-09-23): the
-header holds the four sections as tabs, in this order, and a paper-trail page
-adds the step bar under it.
+(ticket 0881; the author's decisions of 2026-09-23). The header holds three
+sections as tabs. Each tab's label links to the section's landing page, and
+a disclosure button beside it opens a dropdown of the section's pages; at
+phone width the three stack inside one collapsible nav. Under the header, on
+every page of a section, the section's sub-bar lists its pages as plain
+sibling tabs with the current one selected. The same component serves all
+three sections.
 
 - **The paper trail** (`#the-paper-trail`, a short page on what each step
-  holds). Its step bar reads **Documents** › **Entries** › **On the record** ›
-  **Projects** · **Funding** · **Who's who**; the last three are parallel
-  siblings. Who's who lists funders and operators as the project documents
-  spell them, not yet matched to one another (the parties table of ticket
-  0875). The bar marks the current step, and its neighbours are the links one
-  step either way. A page scoped to a country shows it at the bar's right as a
-  removable chip, and the step links keep the country. A breadcrumb appears
-  on detail pages only; the title block is an h1 and a one-sentence lede, with
-  the page's longer explanation folded under "About this page".
-- **The tallies**: one table, a row per figure we computed — what it is,
-  value, unit, what it covers, as of, and a link to what was counted —
-  grouped by country and never summed across countries, then two numbered,
-  captioned figures. A number we calculated carries "Our calculation"; a
-  number a publisher printed carries "As published" and reads "according to"
-  that publisher, with the date. The historical comparison sits here.
-- **Glossary**: the words the pages use, grouped by theme (what we track, how
-  documents are read, statuses, measures, relations) and alphabetical within
-  each group. A first, hand-written list until the Glossary generated from the
-  ledger's term tables (ticket 0882).
-- **Methods**: what was done, what the observatory does not do, and
-  the downloads. The release history sits here.
+  holds and why they run in that order): **Documents** · **Entries** · **On
+  the record** · **Projects** · **Funding** · **Who's who**, in trail order.
+  Who's who lists funders and operators as the project documents spell them,
+  not yet matched to one another (the parties table of ticket 0875). The
+  selected tab marks the step and the tabs beside it are its neighbours. A
+  page scoped to a country shows it at the bar's right as a removable chip,
+  and the trail tabs keep the country.
+- **The tallies** (the tab lands on Counts): **Counts** is one table, a row
+  per figure we computed (what it is, value, unit, what it covers, as of,
+  and a link to what was counted), grouped by country and never summed
+  across countries, then two numbered, captioned figures. **Comparisons** is
+  the historical World Bank pool. The accounts page of ticket 0877 will join
+  as Money. A number we calculated carries "Our calculation"; a number a
+  publisher printed carries "As published" and reads "according to" that
+  publisher, with the date.
+- **About** (`#about`): **Glossary**, the words the pages use, grouped by
+  theme (what we track, how documents are read, statuses, measures,
+  relations) and alphabetical within each group. It is a first, hand-written
+  list until the Glossary generated from the ledger's term tables (ticket
+  0882). **Methods**: what was done, what the observatory does not do, and
+  the downloads; the release history is linked from here. **Who we are**:
+  the author's name, affiliation and ORCID, and a paragraph the author has
+  yet to write.
 
-Nothing is there for causal explanations: the observatory tests none.
+Breadcrumbs appear on detail pages only. The title block is an h1 and a
+one-sentence lede, with the page's longer explanation folded under "About
+this page". Nothing is there for causal explanations: the observatory tests
+none.
 
 ### Addresses
 
-Each page's address is its label's slug (author's cold read, 2026-09-23). The
-addresses of earlier previews forward to the new ones in place
-(`history.replaceState`, no reload), query and deep link included; the pages
-emit only the new names.
+Each page's address is its label's slug. The addresses of earlier previews
+forward to the new ones in place, in one hop (`history.replaceState`, no
+reload), query and deep link included. The pages emit only the new names.
 
 | Page | Address | Earlier address, forwarded |
 |---|---|---|
@@ -70,12 +78,13 @@ emit only the new names.
 | Projects | `#projects`, `#projects?country=<CODE>`, `#project/<project_id>` | |
 | Funding | `#funding`, `#funding/<CODE>` | `#countries`, `#country/<CODE>` |
 | Who's who | `#whos-who`, `#whos-who?country=<CODE>` | |
-| The tallies | `#the-tallies` | `#numbers`, `#by-the-numbers` |
-| Historical comparison | `#historical-comparison`, `#historical-comparison?country=<CODE>` | `#comparison`, `#comparison?country=<CODE>` |
+| Counts | `#counts` | `#numbers`, `#by-the-numbers`, `#the-tallies` |
+| Comparisons | `#comparisons`, `#comparisons?country=<CODE>` | `#comparison`, `#historical-comparison`, with `?country=<CODE>` |
+| About | `#about` | |
 | Glossary | `#glossary` | |
-| Methods | `#methods` | `#methods` |
+| Methods | `#methods` | `#how-we-did-this` |
+| Who we are | `#who-we-are` | |
 | Release history | `#release-history` | `#editions` |
-
 The served views keep the addresses they were built with — `provenance.json`
 names `#country/<CODE>` routes — and those forward like any other.
 

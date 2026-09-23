@@ -10,6 +10,8 @@ Author: HDMX-coding-agent
 2026-09-23T12:28Z HDMX-coding-agent note second batch of the author's cold read (2026-09-23), decision: the page top becomes two bars. The header holds the four sections as tabs (The paper trail, By the numbers, Glossary, How we did this). On paper-trail pages a step bar (Documents › Entries › On the record › Projects · Funding · Who's who) marks the current step with aria-current and shows a removable country chip. It replaces the eyebrow, the trail block and the in-page Entries / On the record tabs, which become two steps (#entries/<CODE>, #on-the-record/<CODE>; ?tab=record still forwards). The breadcrumb appears on detail pages only, and the title block is an h1, a one-sentence lede and a folded 'About this page'. Markers are paired: 'Our calculation' on computed figures and 'As published' on publishers' figures. This Test section's 'l'indicateur de son étape et des liens vers l'étape voisine' is met by the step bar: the marked step is the indicator, and the neighbouring steps are links in the same bar (PR #1459).
 2026-09-23T13:40Z HDMX-coding-agent note third batch of the author's cold read (2026-09-23), with the author's revision of item 7: the Who's who fold-out reads its count once, and the Glossary's group headings are set at sub-heading size. The section first called By the numbers is now 'The tallies' at #the-tallies; #by-the-numbers and #numbers forward to it. Its page is one table: a row per computed figure (what it is, value, unit, what it covers, as of, computed from), grouped by country and never summed across countries, followed by the two charts as numbered figures, each marked 'Our calculation'. It no longer shows the stat grid or the card panels; the landing page keeps its stat grid under the eyebrow 'The tallies' (PR #1459).
 2026-09-23T13:44Z HDMX-coding-agent note fourth batch from the author (2026-09-23), decision: the header has three tabs: The paper trail · The tallies · About. About opens a sub-bar built from the step bar's component, with plain siblings and no arrows: Glossary · Methods · Who we are. #about is a short landing page. Methods is the former How we did this, canonical again at #methods; #how-we-did-this forwards to it, and nothing forwards in a circle. The release history stays at #release-history, is linked from Methods and appears in no bar, with Methods marked current in the sub-bar. The new #who-we-are page gives only 'Minh Ha-Duong, CNRS', the ORCID and a placeholder paragraph the author will write (PR #1459).
+2026-09-23T13:53Z HDMX-coding-agent note fifth batch from the author (2026-09-23), decision: The tallies becomes a section with a sub-bar listing only the pages that have content today: Counts (#counts, the one-table page) and Comparisons (#comparisons, formerly the historical comparison). The tab lands on Counts, and #the-tallies, #historical-comparison and #comparison forward to it in one hop. The Money page comes with 0877. Each of the three header tabs keeps its label as a link to its landing page and opens a dropdown of its pages: a disclosure (a button with aria-expanded controlling a list of links, not role=menu), toggled by click, Enter and Space, opened by ArrowDown, closed by Escape or an outside click, with hover as an enhancement. At phone width the menus stack inside one collapsible nav. The paper trail's dropdown lists the six steps in order (PR #1459).
+2026-09-23T13:53Z HDMX-coding-agent note sixth batch from the author (2026-09-23), decision: the paper trail's second bar no longer reads like a breadcrumb. It uses the same component, markup and styling as the other two sections' sub-bars: six plain sibling tabs in trail order, Documents · Entries · On the record · Projects · Funding · Who's who, with no › separators and no grouping. The current tab is selected (aria-current=page) and the country chip stays at the right. The order is carried by position and explained on #the-paper-trail. This Test section's 'indicateur de son étape et des liens vers l'étape voisine' is met by the selected tab (the indicator) and the tabs adjacent to it (the neighbouring steps); this supersedes the step-bar wording of the second-batch log line. Breadcrumbs remain on detail pages only (PR #1459).
 --- body ---
 
 ## Context
@@ -39,15 +41,17 @@ soutien documentaire.
 
 1. Réorganiser la navigation selon les objets, avec le vocabulaire de
    rédaction décidé le 2026-09-23 (`docs/jetp-observatory-presentation.md`),
-   dans l'ordre fixé par la lecture à froid de l'auteur du 2026-09-23 :
-   **The paper trail** (D) : **Documents** → **Entries** → **On the record** →
-   **Projects**, **Funding**, **Who's who** ; **The tallies** (E) ;
-   **Glossary** (O), groupé par thème et A–Z dans chaque groupe ;
-   **Methods** (méthodes). Aucune entrée pour M. Chaque élément
-   « On the record » se lit « according to » son éditeur, avec la date.
-   Chaque adresse est le slug de son libellé (`#funding`, `#on-the-record`,
-   `#the-tallies`, `#methods`, …) ; les anciennes adresses
-   redirigent vers les nouvelles.
+   dans l'organisation fixée par l'auteur le 2026-09-23 (lecture à froid et
+   lots suivants) : trois onglets d'en-tête, chacun avec son menu déroulant,
+   **The paper trail** (D) : **Documents** · **Entries** · **On the record** ·
+   **Projects** · **Funding** · **Who's who** ; **The tallies** (E) :
+   **Counts** · **Comparisons** ; **About** : **Glossary** (O), groupé par
+   thème et A–Z dans chaque groupe, **Methods** (méthodes), **Who we are**.
+   Sous l'en-tête, la sous-barre de la section (onglets frères, sans
+   séparateur). Aucune entrée pour M. Chaque élément « On the record » se lit
+   « according to » son éditeur, avec la date. Chaque adresse est le slug de
+   son libellé (`#funding`, `#on-the-record`, `#counts`, `#comparisons`,
+   `#methods`, …) ; les anciennes adresses redirigent vers les nouvelles.
 2. D se lit comme une piste documentaire : chaque page montre sa place sur
    la piste et permet de monter ou descendre d'une étape, d'un projet à ce
    qui est « on the record » à son sujet, aux entrées, à la page du
@@ -66,15 +70,16 @@ soutien documentaire.
 
 ## Test
 
-Red : `tests/test_jetp_observatory_render.py` — la navigation rend, dans cet
-ordre, The paper trail (Documents, Entries, On the record, Projects,
-Funding, Who's who), The tallies, Glossary et Methods, chaque
-lien à l'adresse du slug de son libellé ; chaque ancienne adresse
-(`#countries`, `#country/<CODE>`, `#evidence`, `#numbers`, `#comparison`,
-`#methods`, `#editions`, `#inventory/<CODE>` avec `?row=` et `?tab=record`)
-redirige vers la nouvelle ; une page
-de la piste porte l'indicateur de son étape et des liens vers l'étape
-voisine ; un élément « On the record » porte « according to » et son éditeur ;
+Red : `tests/test_jetp_observatory_render.py` — l'en-tête rend, dans cet
+ordre, The paper trail, The tallies et About, chaque onglet lié à sa page
+d'accueil et doté d'un menu déroulant de ses pages (The paper trail : les six
+étapes dans l'ordre) ; chaque ancienne adresse (`#countries`,
+`#country/<CODE>`, `#evidence`, `#numbers`, `#by-the-numbers`,
+`#the-tallies`, `#comparison`, `#historical-comparison`, `#how-we-did-this`,
+`#editions`, `#inventory/<CODE>` avec `?row=` et `?tab=record`) redirige en
+un saut vers la nouvelle ; une page de la piste porte l'indicateur de son
+étape (l'onglet sélectionné de la sous-barre) et des liens vers l'étape
+voisine (les onglets adjacents) ; un élément « On the record » porte « according to » et son éditeur ;
 un compte de la page Viet Nam est marqué comme calculé, avec son unité ; aucun
 texte rendu ne contient « ontology », « evidence », « model », « layer »,
 « reconciled » ni un code D1 à D4 (insensible à la casse, hors noms propres
@@ -95,7 +100,7 @@ de documents).
 
 ## Exit criteria
 
-- [ ] La navigation suit D, E puis O (Glossary en fin, près de Methods) sans en afficher les noms ; aucune place pour M ; chaque adresse est le slug de son libellé et les anciennes redirigent
+- [ ] La navigation suit D, E puis About (Glossary, Methods, Who we are) sans afficher les noms du cadre ; aucune place pour M ; chaque adresse est le slug de son libellé et les anciennes redirigent
 - [ ] La piste Documents → Entries → On the record → Projects / Funding / Who's who se parcourt dans les deux sens
 - [ ] Les nombres calculés se distinguent des nombres publiés, avec unité et périmètre
 - [ ] La copie publique ne contient ni les noms du cadre ni les termes retirés
