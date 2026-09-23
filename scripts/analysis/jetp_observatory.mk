@@ -83,3 +83,22 @@ jetp-observatory-refresh:
 # Preview only. Publication is a separate reviewed action.
 jetp-observatory-preview: jetp-observatory jetp-observatory-documents
 	$(PYTHON) -m http.server 8765 --bind 127.0.0.1 --directory $(JETP_OBSERVATORY)
+
+# Ledger DDL tooling (ticket 0871): config/jetp-ledger.sql is the one schema of
+# the ledger's common tables; the CSVs load into a derived SQLite whose keys,
+# checks and violation_* views are the validator. JETP_LEDGER_DIR points the
+# two targets at another ledger, such as a test fixture.
+JETP_LEDGER_DIR ?= data/jetp
+JETP_LEDGER_DB := data/derived/jetp/ledger.sqlite
+JETP_LEDGER_INPUTS := config/jetp-ledger.sql .githooks/pre-commit \
+    scripts/jetp/ledger_build.py scripts/jetp/ledger_headers.py \
+    $(wildcard $(JETP_LEDGER_DIR)/*.csv $(JETP_LEDGER_DIR)/*/*.csv)
+
+.PHONY: jetp-ledger-db jetp-ledger-check
+jetp-ledger-db: $(JETP_LEDGER_DB)
+
+$(JETP_LEDGER_DB): $(JETP_LEDGER_INPUTS)
+	$(PYTHON) scripts/jetp/ledger_build.py --ledger-dir $(JETP_LEDGER_DIR) --output $@
+
+jetp-ledger-check:
+	$(PYTHON) scripts/jetp/ledger_build.py --ledger-dir $(JETP_LEDGER_DIR) --check
