@@ -296,7 +296,7 @@ fi
 # merging unattended; that trade was declined deliberately.
 # The substantive merge gate is local: `make check-fast` + `make lint` plus
 # /verify (the full `make check` runs ex post on main via /lair step 9, and
-# pre-PR only for pipeline-surface diffs — AGENTS.md § Execute); this hook only
+# pre-PR only for pipeline-surface diffs — AGENTS.md § Merge gate); this hook only
 # stops a merge that skipped the review step entirely.
 #
 # These logins are *reviewer* identity, not repo identity: they say whose

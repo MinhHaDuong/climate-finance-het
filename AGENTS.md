@@ -33,11 +33,17 @@ enforces.
 
 ## Configuration
 
+The generic workflow (phases, worktrees, delegation, escalation, git discipline)
+lives in the harness rules under `~/.claude/rules/`, loaded into every session,
+and skills are listed in each session's skill catalog. This file holds only what
+is specific to this repo. Do not copy harness content back here: the copy drifts.
+The skills table this file used to carry named seven skills that no longer
+existed, and agents routed to their nearest living neighbour.
+
 | Location | Purpose |
 |----------|---------|
-| `~/.claude/rules/` | Generic rules (git, workflow, coding, state-roadmap) |
-| `~/.claude/skills/` | Generic skills (celebrate, review-pr, memory, etc.) |
-| `~/.claude/hooks/` | Generic hooks (on-start identity setup) |
+| `~/.claude/rules/` | Generic rules (workflow, git, runtime) |
+| `~/.claude/skills/` | Generic skills (hunt, raid, roar, lair, review-pr, verify-gate, …) |
 | `.claude/rules/` | Project-specific rules (writing, architecture, oeconomia-style, etc.) |
 | `.claude/skills/` | Project-specific skills (submission-branch, submission-readiness) |
 | `.claude/hooks/` | Project-specific hooks (merge gate review check) |
@@ -45,96 +51,38 @@ enforces.
 | `.githooks/` | Git hooks (pre-commit, pre-push, post-checkout) |
 | `.claude/rules/tickets.md` | %erg v1 ticket format spec and validator rules (scoped to tickets/) |
 
-## Imperial Dragon workflow
+## Imagine: advisor stance
 
-Every task passes through five phases (five claws). Announce transitions inline: `[Phase → Phase] reason`.
+In an Imagine conversation, act as my high-level advisor. Generate a portfolio of
+options with their probabilities, and go beyond conventional habits. Challenge my
+thinking, question my assumptions, and expose blind spots. Stop defaulting to
+agreement. If my reasoning is weak, break it down and show me why.
 
-### Imagine
-Interactive discussion with the user on an `explore-{topic}` branch. Imagine specs, gather information, brainstorm freely. Ask questions, surface motivations, explore what success looks like.
-Generate portfolio of options with their probabilities. Go beyond conventional habits to explore new approaches. Take the high road.
-Act as my high-level advisor. Challenge my thinking, question my assumptions, and expose blind spots. Stop defaulting to agreement. If my reasoning is weak, break it down and show me why.
+## Merge gate
 
-Commits are workspace artifacts unless the conversation produces a small fix. Deliverable: a shared vision, plus one of:
-
-- **Tickets** — non-trivial work gets one ticket per action item (`/new-ticket`).
-- **Small fix** — if it fits in one red/green/refactor cycle, do it on the explore branch. TDD still applies.
-- **Nothing actionable** — delete the branch at session end.
-
-### Plan
-Explore alternatives, design strategies, prototype approaches. Use GitHub Issues as the planning artifact — write tickets with full context (`/new-ticket`). **Specify the first test in the ticket** — the Execute phase enforces TDD. Review tickets for intent over metrics. No production commits yet. Deliverable: a ticket with test spec.
-
-### Execute
-Runs in a fresh context — the ticket is the only input. Launch via `/start-ticket`.
-
-Autonomous execution using test-driven development. The inner cycle is:
-
-1. **Red**: write a failing test that defines the expected behavior. Commit.
-2. **Green**: write the minimum code to make it pass. Commit.
-3. **Refactor**: clean up, then confirm tests still pass. Use `make check-fast` during development. Commit.
-4. **PR**: Pass the merge gate — `make check-fast` + `make lint` (~40 s combined) — then push and open a PR. Run the full `make check` before the PR only when the diff touches the pipeline surface (`scripts/`, `libs/`, `dvc.yaml`, the Makefiles, or `tests/` files marked slow/integration); doc, prose, config, and ticket diffs skip it.
-
-Use `make check-fast` during development. Makefile truth: prerequisites and targets must match each script's actual file reads and writes.
+Pass `make check-fast` + `make lint` (~40 s combined), then push and open a PR.
+Run the full `make check` before the PR only when the diff touches the pipeline
+surface (`scripts/`, `libs/`, `dvc.yaml`, the Makefiles, or `tests/` files marked
+slow/integration); doc, prose, config, and ticket diffs skip it. Makefile truth:
+prerequisites and targets must match each script's actual file reads and writes.
 
 **There is no CI.** This repo has no `.github/workflows/`, by decision (ticket 0321, 2026-07-27). Nothing runs the suite on push or on a pull request: the gate above is purely local, and the slow/integration tier is verified **ex post**, not per PR — `/lair` step 9 runs the full `make check` on main at end of day and opens a ticket for each new failure (gate eased 2026-07-28: 18 days of session logs showed the full suite costing 4–10 min per gate run while catching nothing the fast tiers missed; every observed failure was environmental or fast/adherence-tier). Never read a merged PR as proof that main is green: when a full `make check` surfaces failures your branch did not cause, they belong to main, and they get their own ticket.
 
-### Verify
-Gate each PR before merging via `/verify <pr-number>`. The skill runs the full loop:
+## Verify in proportion to what can break
 
-1. `/verify-adherence` — mechanical-first rule check (hygiene tests + grep ratchet, LLM fallback only for semantic residue).
-2. `/review` (built-in) + `/review-pr` or `/review-pr-prose` (skill) — read-only review fan-out.
-3. `/simplify` — reuse / quality / efficiency, applies fixes.
-4. `/verify-gate` — anti-rubber-stamp gate. Every ticket exit criterion requires concrete evidence (commit SHA + file:line OR test_id). "CI passes" / "simplify ran" are NOT evidence.
+Before merging, decide which checks the change needs and state them on the PR:
 
-Verdict: APPROVED / REROLL / ESCALATE. Two rounds max — round 3 is forbidden. `/verify` never merges; merge is the author's call (interactive) or `/celebrate`'s call (autonomous).
+- **Tickets only**: `erg check` plus the ID-collision scan (`.claude/rules/git.md`).
+- **Docs, config, STATE**: the merge gate above, and a read of the loaded or rendered result.
+- **Prose**: recompile the artifact; `/review-pr-prose` for manuscript text.
+- **Data**: byte-compare the served views, build twice for determinism, check counts.
+- **Code, pipeline, analysis**: tests for the changed behaviour, and the full `make check` when the pipeline surface moved.
 
-`--force-approve` is a loud human override, logged on the PR. Use it sparingly.
+Anything beyond tickets gets at least one independent reviewer on a model other
+than the coder's (`/review-pr`, scoped to the risk). Then run `/verify-gate`:
+every ticket exit criterion needs concrete evidence (commit SHA + file:line, or a
+test id). Two review rounds at most, then escalate to the author. The merge is
+the author's call when interactive, the raid's when autonomous.
 
-### Celebrate (autonomous)
-Runs via `/celebrate`. Celebrating is not a formality — it closes the energy cycle. Reflect on what was accomplished and learned, consolidate memory, dream forward.
-
-### Phase state
-
-The agent must always know and declare its current phase.
-
-- **At conversation start**: workflow rule infers the initial phase and announces it (e.g., `[→ Imagine]`).
-- **At each transition**: announce explicitly with `[Phase → Phase] reason`.
-- **No implicit transitions**: if no announcement was made, the phase hasn't changed.
-
-## Skills (slash commands)
-
-| Skill | When | Purpose |
-|-------|------|---------|
-| `/start-ticket N` | Starting work on a GitHub issue | Create worktree, write first test, transition to Execute |
-| `/celebrate` | After completing a ticket | Reflect, update STATE/ROADMAP, clean up |
-| `/end-session` | User ends a work session | Push branches, run tests, refresh STATE |
-| `/new-ticket` | Creating a GitHub issue | Write handoff document with test spec |
-| `/verify N` | Gating a PR before merge | Full loop: adherence + review + review-pr + simplify + gate; bounces PR for at most one retry |
-| `/verify-adherence N` | Rule-check a branch | Mechanical-first (tests + grep ratchet); LLM fallback emits suggested_test entries |
-| `/verify-gate N` | Standalone merge gate | Anti-rubber-stamp; per-exit-criterion evidence required |
-| `/review-pr N` | Lightweight code review | Multi-perspective agents; posts comments only, no fixes, no gate |
-| `/review-pr-prose N` | Lightweight prose review | Simulated peer review panel |
-| `/memory` | Writing or sweeping persistent memory | Enforce caps, TTLs, staleness |
-| `/autonomous` | Unsupervised autonomous session | Imperial Dragon cycles with 60/40 balance |
-| `/submission-branch` | Creating a submission branch | Sprout, freeze, revision lifecycle |
-| `/submission-readiness` | Pre-submission gate | Checklist before sprouting |
-
-## Autonomous workflow
-
-When issue exploration leads to multiple action items, open one ticket for each under a tracking ticket. Then work in waves, learning from each.
-
-### Wave cycle
-
-1. **Select** — pick ripe tickets (dependencies met, blockers cleared).
-2. **Launch** — each ticket in its own worktree, independent tickets in parallel.
-3. **Verify** — gate each PR via `/verify` (in its own worktree).
-4. **Learn** — for each result:
-   - **Success**: `/celebrate`, save what worked as feedback memory.
-   - **Failure**: diagnose root cause, save lesson, re-ticket with diagnosis.
-5. **Adapt** — read feedback memories before planning the next wave.
-6. **Clean up** — worktrees, branches, stale PRs. Then start the next wave.
-
-## Conversation scope
-
-**Imagine conversations**: may produce zero or many tickets, or inline small fixes. The explore branch is the workspace; the tickets (or PR) are the deliverables.
-
-**Execute conversations**: one ticket per conversation. Transition to Celebrate when the PR is merged and ticket closed. If investigation reveals sub-issues, open them as new tickets — don't scope-creep.
+This replaces a fixed full-battery loop that cost up to an hour and a million
+tokens on diffs a ten-minute check covered (pilot opened 2026-09-23).

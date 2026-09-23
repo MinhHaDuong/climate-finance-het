@@ -165,4 +165,4 @@ After the submission branch is updated and tagged:
 2. Update `ROADMAP.md` if milestones changed
 3. Close the ticket
 4. Delete the ticket branch (keep the submission branch)
-5. `/celebrate`
+5. `/roar`
