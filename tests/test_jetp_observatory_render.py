@@ -169,6 +169,26 @@ def test_the_documents_page_shows_one_extracted_summary_per_product_never_a_sum(
     assert not [s for s in summaries(row) if total in s], summaries(row)
 
 
+def test_a_failed_attempt_shows_a_short_label_with_the_full_message_in_its_title() -> None:
+    # PR #1459 cold read: collector messages run to 300 characters of host
+    # names and URLs, which broke mid-token and set the rows' height.  The
+    # fold-out column is the wide one; short labels do not wrap.
+    failed = next(d for d in registry()
+                  if d["error"] and len(d["error"]) > 100 and not d["local_path"])
+    results = render("documents", {"documents-search": failed["id"]})["elements"][
+        "documents-results"]["innerHTML"]
+    row = next(chunk for chunk in re.split(r"(?=<tr>)", results)
+               if f"<code>{failed['id']}</code>" in chunk)
+    label = re.search(r'<span class="note" data-collection-error title="([^"]*)">([^<]*)</span>', row)
+    assert label, row[:500]
+    assert unescape(label.group(1)) == failed["error"]
+    assert unescape(label.group(2)) == failed["error"].split(":")[0].strip()[:24]
+    head = render("documents")["elements"]["documents-results"]["innerHTML"].split("</thead>")[0]
+    assert re.findall(r'<th class="col-(\w+)">([^<]+)</th>', head) == [
+        ("short", "Size"), ("short", "Archived copy"),
+        ("wide", "Entries and items on the record · relied on by"), ("short", "Origin")]
+
+
 def test_a_document_with_one_product_gets_one_fold_out() -> None:
     linked = climb(RMP, "VNM")
     assert linked["m1a"] and not linked["ledger"]

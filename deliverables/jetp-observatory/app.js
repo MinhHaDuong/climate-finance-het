@@ -259,8 +259,10 @@ function options(values, selected) {
  *                 page opens (a country the address names).
  *   opts.search   { placeholder, text(row), label } where text(row) returns the
  *                 lower-cased haystack for the free-text field.
- *   opts.columns  [{ label, cell(row) }] one <th>/<td> pair each; `cell`
- *                 returns an already-esc()-escaped HTML string.
+ *   opts.columns  [{ label, cell(row), width }] one <th>/<td> pair each; `cell`
+ *                 returns an already-esc()-escaped HTML string. `width`,
+ *                 optional, is "short" (a label that must not wrap) or
+ *                 "wide" (a column that takes the room the others leave).
  *   opts.empty    message for the `.empty` fallback when no row matches.
  *   opts.resultNoun  plural noun for the count line, e.g. "sources".
  *   opts.pageSize    rows per page; 0 or absent renders every matching row.
@@ -298,11 +300,11 @@ function filterTable(id, rows, opts) {
       )}</div><p id="${id}-count" class="result-count" aria-live="polite"></p><div id="${id}-results"></div>`;
   const table = (visible) =>
     `<div class="table-wrap"><table><thead><tr>${opts.columns
-      .map((c) => `<th>${esc(c.label)}</th>`)
+      .map((c) => `<th${c.width ? ` class="col-${c.width}"` : ""}>${esc(c.label)}</th>`)
       .join("")}</tr></thead><tbody>${visible
       .map(
         (row) =>
-          `<tr>${opts.columns.map((c) => `<td>${c.cell(row)}</td>`).join("")}</tr>`,
+          `<tr>${opts.columns.map((c) => `<td${c.width ? ` class="col-${c.width}"` : ""}>${c.cell(row)}</td>`).join("")}</tr>`,
       )
       .join("")}</tbody></table></div>`;
   const pager = (pages) =>
@@ -567,6 +569,15 @@ function extractionCell(entry) {
     });
   return `<span id="${esc(key)}" class="note">Loading what this document yielded…</span>`;
 }
+/* A failed collection attempt as a short label — "HTTP 403", "SSLError" —
+ * with the whole message the collector recorded in its title. The messages
+ * run to 300 characters of host names and URLs, which broke mid-token and
+ * set the Documents rows' height (PR #1459, author's cold read). */
+function collectionFailure(error) {
+  if (!error) return '<span class="note">Not in the local snapshot</span>';
+  const short = error.split(":")[0].trim().slice(0, 24);
+  return `<span class="note" data-collection-error title="${esc(error)}">${esc(short)}</span>`;
+}
 function documentsPage(params) {
   const rows = documentsData.documents;
   const values = (key) =>
@@ -577,7 +588,7 @@ function documentsPage(params) {
   const archived = (r) =>
     r.local_path
       ? `<span id="archived-${esc(r.row_key)}">${archivedCopyLink(r)}</span>`
-      : `<span class="note">${esc(r.error || "Not in the local snapshot")}</span>`;
+      : collectionFailure(r.error);
   const table = filterTable("documents", rows, {
     facets: [
       {
@@ -617,15 +628,16 @@ function documentsPage(params) {
       },
       { label: "Collection", cell: (r) => pill(r.status) },
       { label: "Content type", cell: (r) => esc(r.content_type || "Not recorded") },
-      { label: "Size", cell: (r) => esc(byteSize(r.size_bytes)) },
-      { label: "Archived copy", cell: archived },
-      { label: "Entries and items on the record · relied on by", cell: extractionCell },
+      { label: "Size", cell: (r) => esc(byteSize(r.size_bytes)), width: "short" },
+      { label: "Archived copy", cell: archived, width: "short" },
+      { label: "Entries and items on the record · relied on by", cell: extractionCell, width: "wide" },
       {
         label: "Origin",
         cell: (r) =>
           r.url
             ? `<a href="${esc(cleanURL(r.url))}" target="_blank" rel="noopener">Publisher ↗</a>`
             : '<span class="note">No address recorded</span>',
+        width: "short",
       },
     ],
     empty: "No documents match these filters.",

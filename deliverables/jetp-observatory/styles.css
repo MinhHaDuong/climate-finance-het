@@ -1108,6 +1108,22 @@ details.about summary {
 .trail-intro li {
   margin: 8px 0;
 }
+/* Table column widths a filterTable column can ask for (PR #1459, cold
+ * read: the Documents rows ran to 250 px, because the fold-out column was
+ * squeezed to 100 px and wrapped at every word). A short label never wraps;
+ * a wide column claims the room, and its fold-out summaries stay on one
+ * line. On a phone the table scrolls inside its .table-wrap. */
+td.col-short,
+th.col-short {
+  white-space: nowrap;
+}
+td.col-wide,
+th.col-wide {
+  min-width: 300px;
+}
+td.col-wide summary {
+  white-space: nowrap;
+}
 /* Glossary group headings at the page's sub-heading size (h3), in
  * proportion to the terms under them (cold read, third batch). */
 [data-glossary-group] {

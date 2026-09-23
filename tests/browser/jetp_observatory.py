@@ -153,6 +153,34 @@ def check_documents(page, url):
     assert page.locator('#inventory-results details[open]').count() == 1
 
 
+def check_documents_row_height(page, url):
+    """The Documents rows stay short at desktop width (PR #1459, cold read).
+
+    Measured at 1280 px before the fix: the fold-out column was squeezed to
+    101 px, wrapped at every word and set every row's height (median 255 px,
+    max 276 px). Now a row is at most one line per fold-out: 120 px bounds
+    three fold-outs and the cell padding. A failed attempt shows a short label
+    with the collector's full message in its title, never a broken URL.
+    """
+    page.set_viewport_size({'width': 1280, 'height': 1000})
+    page.goto(url + '/#documents')
+    page.wait_for_selector('#documents-results tbody tr')
+    page.wait_for_function(
+        "!document.querySelector('#documents-results').textContent.includes('Loading what')")
+    heights = page.evaluate("[...document.querySelectorAll('#documents-results tbody tr')]"
+                            ".map((r) => r.getBoundingClientRect().height)")
+    assert max(heights) <= 120, sorted(heights)[-5:]
+    registry = page.request.get(url + '/data/documents.json').json()['documents']
+    failed = next(row for row in registry
+                  if row['error'] and len(row['error']) > 100 and not row['local_path'])
+    page.locator('#documents-search').fill(failed['id'])
+    label = page.locator(f'tr:has(code:text-is("{failed["id"]}")) [data-collection-error]').first
+    label.wait_for()
+    assert label.get_attribute('title') == failed['error']
+    assert len(label.inner_text()) <= 24, label.inner_text()
+    page.set_viewport_size({'width': 1440, 'height': 1100})
+
+
 def check_inventory(page, url):
     """Exercise an M1a inventory page: a filter, and a row opening its document.
 
@@ -728,6 +756,7 @@ def check_site(url, output):
             download_matches(page, url, f'data/m1a/{code}.csv')
         download_matches(page, url, 'data/m1a/manifest.json')
         check_documents(page, url)
+        check_documents_row_height(page, url)
         check_inventory(page, url)
         check_senegal_and_indonesia(page, url)
         check_observations(page, url)
