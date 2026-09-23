@@ -22,6 +22,7 @@ import re
 import shutil
 import subprocess
 from functools import cache
+from html import unescape
 from pathlib import Path
 
 import pytest
@@ -168,6 +169,26 @@ def test_the_documents_page_shows_one_extracted_summary_per_product_never_a_sum(
     assert not [s for s in summaries(row) if total in s], summaries(row)
 
 
+def test_a_failed_attempt_shows_a_short_label_with_the_full_message_in_its_title() -> None:
+    # PR #1459 cold read: collector messages run to 300 characters of host
+    # names and URLs, which broke mid-token and set the rows' height.  The
+    # fold-out column is the wide one; short labels do not wrap.
+    failed = next(d for d in registry()
+                  if d["error"] and len(d["error"]) > 100 and not d["local_path"])
+    results = render("documents", {"documents-search": failed["id"]})["elements"][
+        "documents-results"]["innerHTML"]
+    row = next(chunk for chunk in re.split(r"(?=<tr>)", results)
+               if f"<code>{failed['id']}</code>" in chunk)
+    label = re.search(r'<span class="note" data-collection-error title="([^"]*)">([^<]*)</span>', row)
+    assert label, row[:500]
+    assert unescape(label.group(1)) == failed["error"]
+    assert unescape(label.group(2)) == failed["error"].split(":")[0].strip()[:24]
+    head = render("documents")["elements"]["documents-results"]["innerHTML"].split("</thead>")[0]
+    assert re.findall(r'<th class="col-(\w+)">([^<]+)</th>', head) == [
+        ("short", "Size"), ("short", "Archived copy"),
+        ("wide", "Entries and items on the record · relied on by"), ("short", "Origin")]
+
+
 def test_a_document_with_one_product_gets_one_fold_out() -> None:
     linked = climb(RMP, "VNM")
     assert linked["m1a"] and not linked["ledger"]
@@ -261,7 +282,7 @@ def test_the_rmp_opens_at_its_first_extracted_page_and_each_position_at_its_own(
     items = re.findall(r"<li>.*?</li>", row, re.DOTALL)
     assert len(items) == len(linked["m1a"])
     assert anchors(items[21]) == [
-        ("#inventory/VNM?row=22", "vnm-rmp-2023:annex-I.1:022"),
+        ("#entries/VNM?row=22", "vnm-rmp-2023:annex-I.1:022"),
         (rmp["local_path"] + "#page=156", "PDF page 156 ↗"),
     ], anchors(items[21])
 
@@ -299,14 +320,14 @@ def test_the_inventory_page_opens_on_the_row_the_documents_page_cites() -> None:
     rows = [dict(zip(payload["fields"], values)) for values in payload["rows"]]
     assert rows[21]["source_row_id"] == "vnm-rmp-2023:annex-I.1:022"
 
-    rendered = render("inventory/VNM?row=22")
+    rendered = render("entries/VNM?row=22")
 
     assert rendered["elements"]["inventory-count"]["textContent"].startswith("1 of 1 ")
     results = rendered["elements"]["inventory-results"]["innerHTML"]
     assert 'data-inventory-row="vnm-rmp-2023:annex-I.1:022"' in results
     assert "<details open>" in results
     # The way back to the whole export is one link away.
-    assert 'href="#inventory/VNM"' in rendered["main"]
+    assert 'href="#entries/VNM"' in rendered["main"]
 
 
 def test_a_fact_page_lists_the_observations_view_rows_addressed_to_it() -> None:
@@ -334,7 +355,7 @@ def test_a_senegal_annex_row_opens_the_archived_annexes_at_its_own_page() -> Non
     assert rows[0]["source_row_id"] == "sen-annex-received-01"
     annexes = entry_of("sen-investment-plan-annexes-mirror:1")
 
-    rendered = render("inventory/SEN?row=1")
+    rendered = render("entries/SEN?row=1")
 
     results = rendered["elements"]["inventory-results"]["innerHTML"]
     hrefs = [href for href, _ in anchors(results) if href.startswith(annexes["local_path"])]
@@ -348,3 +369,430 @@ def test_every_senegal_row_names_a_pdf_page_and_no_other_non_rmp_country_does() 
     sen = positions("SEN")
     assert len(sen) == 49 and all(r["pdf_page"] for r in sen)
     assert not any(r["pdf_page"] for code in ("IDN", "ZAF") for r in positions(code))
+
+
+# Ticket 0881: the pages are organised by the four objects of
+# docs/jetp-language.md (O, D, E, M) without ever naming them, in the newsroom
+# vocabulary of docs/jetp-observatory-presentation.md.
+
+# Author, 2026-09-23 (fourth batch): the header holds three sections as tabs;
+# the paper trail's steps sit in a second bar, the last three as parallel
+# siblings, and About's pages in the same bar as plain siblings.
+NAVIGATION = ["The paper trail", "The tallies", "About"]
+ABOUT = ["Glossary", "Methods", "Who we are"]
+STEPS = ["Documents", "Entries", "On the record", "Projects", "Funding", "Who's who"]
+TRAIL_ROUTES = ("documents", "entries", "entries/VNM", "on-the-record", "on-the-record/ZAF",
+                "projects", "project/" + BAC_AI, "funding", "funding/VNM", "whos-who")
+
+# The framework's names, the retired terms of docs/jetp-language.md and the
+# words docs/jetp-observatory-presentation.md keeps off the pages.  A word
+# inside a string the served JSON carries (a document's title, an analyst's
+# note, a column name) is the data's, not the page's, and is not counted.
+FORBIDDEN = re.compile(
+    r"ontolog|evidence|model|layer|reconcil|\bD[1-4]\b|\bstages?\b|\beditions?\b"
+    r"|\bfacts?\b|\bclaims?\b|\bdeals?\b|\bplayers?\b|\bsources\b|\bentities\b|\brecords\b",
+    re.IGNORECASE,
+)
+ROUTES = ("overview", "the-paper-trail", "about", "who-we-are", "glossary", "documents", "entries", "on-the-record", "projects",
+          "funding", "whos-who", "counts", "methods", "release-history",
+          "comparisons", *(f"funding/{code}" for code in COUNTRIES),
+          "entries/VNM", "on-the-record/ZAF", "project/" + BAC_AI)
+
+
+def text_of(html):
+    return unescape(re.sub(r"<[^>]+>", " ", html))
+
+
+@cache
+def data_strings():
+    """Every string the served JSON carries that holds a forbidden word, keys
+    included, with the two transformations the renderer applies to a value
+    before showing it (underscores to spaces, Markdown paragraphs)."""
+    found = set()
+
+    def walk(value):
+        if isinstance(value, dict):
+            for key, item in value.items():
+                found.add(key)
+                walk(item)
+        elif isinstance(value, list):
+            for item in value:
+                walk(item)
+        elif isinstance(value, str):
+            found.update({value, value.replace("_", " ")})
+            # titleBlock() splits a description after its first sentence.
+            split = re.match(r"^(.+?[.!?])\s+(.+)$", value, re.DOTALL)
+            if split:
+                found.update(split.groups())
+            found.update(p.removeprefix("## ").replace("\n", " ")
+                         for p in re.split(r"\n\n+", value))
+
+    for path in (SITE / "data").rglob("*.json"):
+        walk(json.loads(path.read_text()))
+    # A bare word ("evidence", a key of reviewed-evidence.json) or a short
+    # phrase is not a proper name: excusing it would excuse the page copy's
+    # own use of it. What is excused is a title, a note, an identifier.
+    return sorted((s for s in found if FORBIDDEN.search(s) and len(s) >= 12
+                   and not re.fullmatch(r"[A-Za-z]+", s)),
+                  key=len, reverse=True)
+
+
+def page_copy(html):
+    text = text_of(html)
+    for value in data_strings():
+        if value in text:
+            text = text.replace(value, " ")
+    return text
+
+
+def nav_html():
+    index = (SITE / "index.html").read_text()
+    return re.search(r"<nav[^>]*>.*?</nav>", index, re.DOTALL).group(0)
+
+
+# Each header tab links to its section's landing page: a landing page at the
+# section's slug, or, for The tallies, its first page (fifth batch).
+LANDINGS = {"The paper trail": "the-paper-trail", "The tallies": "counts", "About": "about"}
+SECTION_KEYS = ("the-paper-trail", "the-tallies", "about")
+SUB_PAGES = {
+    "the-paper-trail": list(zip(STEPS, ["#documents", "#entries", "#on-the-record", "#projects",
+                                        "#funding", "#whos-who"])),
+    "the-tallies": [("Counts", "#counts"), ("Comparisons", "#comparisons")],
+    "about": [("Glossary", "#glossary"), ("Methods", "#methods"), ("Who we are", "#who-we-are")],
+}
+
+
+def test_the_navigation_follows_glossary_paper_trail_numbers_and_methods() -> None:
+    nav = nav_html()
+    tabs = re.findall(r'<a href="#([^"]+)" data-section="([^"]+)"[^>]*>([^<]+)</a', nav)
+    assert [unescape(label) for *_, label in tabs] == NAVIGATION, tabs
+    assert [s for _, s, _ in tabs] == list(SECTION_KEYS)
+    assert {unescape(label): href for href, _, label in tabs} == LANDINGS
+    # Organised by the objects, which stay in the attributes: nothing for M.
+    assert re.findall(r'data-object="([^"]+)"', nav) == ["D", "E", "about"]
+    assert 'data-object="M"' not in nav
+
+
+def test_each_header_tab_has_a_disclosure_of_its_pages() -> None:
+    # A disclosure, not a menu widget: a button with aria-expanded controlling
+    # a list of links, closed until opened.
+    nav = nav_html()
+    assert 'role="menu' not in nav
+    for section in SECTION_KEYS:
+        button = re.search(rf'<button[^>]*id="toggle-{section}"[^>]*>', nav, re.DOTALL).group(0)
+        assert 'aria-expanded="false"' in button and f'aria-controls="menu-{section}"' in button
+        assert re.search(rf'<ul id="menu-{section}" class="menu" hidden>', nav)
+    # One collapsible nav at phone width, with its own disclosure button.
+    assert re.search(r'id="nav-toggle"[^>]*aria-expanded="false"[^>]*aria-controls="section-list"',
+                     re.sub(r"\s+", " ", nav))
+    # app.js fills each list with the section's pages, in order; the paper
+    # trail's six steps in trail order.
+    elements = render("overview")["elements"]
+    for section, pages in SUB_PAGES.items():
+        menu = elements[f"menu-{section}"]["innerHTML"]
+        links = [(unescape(label), href) for href, label in
+                 re.findall(r'<a href="([^"]+)" data-sub="[^"]+">([^<]+)</a>', menu)]
+        assert links == pages, (section, links)
+
+
+def test_a_header_disclosure_toggles_aria_expanded_and_one_menu_is_open_at_a_time() -> None:
+    probe = ("[...['the-paper-trail', 'the-tallies', 'about'].map((s) => ["
+             "document.getElementById('toggle-' + s).getAttribute('aria-expanded'), "
+             "document.getElementById('menu-' + s).getAttribute('hidden')])]")
+    opened = render("overview", {}, f"(openMenu('about'), {probe})")["eval"]
+    assert opened == [["false", ""], ["false", ""], ["true", None]], opened
+    switched = render("overview", {}, f"(openMenu('about'), openMenu('the-tallies'), {probe})")["eval"]
+    assert switched == [["false", ""], ["true", None], ["false", ""]], switched
+    closed = render("overview", {}, f"(openMenu('about'), closeMenus(), {probe})")["eval"]
+    assert closed == [["false", ""], ["false", ""], ["false", ""]], closed
+
+
+# Author's cold read, 2026-09-23: addresses match labels, and the addresses of
+# earlier previews — deep links and queries included — forward to them.
+FORWARDS = {
+    "countries": "funding",
+    "country/VNM": "funding/VNM",
+    "evidence": "on-the-record",
+    "numbers": "counts",
+    "by-the-numbers": "counts",
+    "counts-and-totals": "counts",
+    "the-tallies": "counts",
+    "comparison": "comparisons",
+    "historical-comparison": "comparisons",
+    "comparison?country=IDN": "comparisons?country=IDN",
+    "how-we-did-this": "methods",
+    "editions": "release-history",
+    "inventory/VNM": "entries/VNM",
+    "inventory/VNM?row=22": "entries/VNM?row=22",
+    "inventory/ZAF?tab=record": "on-the-record/ZAF",
+}
+OLD_ADDRESS = re.compile(r'href="#(?:(?:countries|evidence|numbers|by-the-numbers|counts-and-totals'
+                         r'|the-tallies|comparison|historical-comparison|how-we-did-this|editions)'
+                         r'(?=["?])|(?:country|inventory)/)')
+
+
+# Author's cold read, third batch (2026-09-23), as revised: "The tallies" is
+# one table, a row per computed figure, grouped by country, then two
+# numbered figures; it no longer repeats the landing page's stat grid.
+TALLY_COLUMNS = ["What it is", "Value", "Unit", "What it covers", "As of", "Computed from"]
+
+
+def test_the_tallies_are_one_table_grouped_by_country_then_numbered_figures() -> None:
+    main = render("the-tallies")["main"]
+    assert main.count("<table") == 1
+    table = re.search(r'<table class="counts">.*?</table>', main, re.DOTALL).group(0)
+    head = re.search(r"<thead>(.*?)</thead>", table, re.DOTALL).group(1)
+    assert [unescape(th) for th in re.findall(r">([^<]+)</th>", head)] == TALLY_COLUMNS
+    groups = re.findall(r'<tbody data-country="([A-Z]{3})">(.*?)</tbody>', table, re.DOTALL)
+    assert [code for code, _ in groups] == list(COUNTRIES)
+    for code, body in groups:
+        rows = re.findall(r'<tr data-computed-figure="[^"]+" data-country="([A-Z]{3})">(.*?)</tr>',
+                          body, re.DOTALL)
+        assert rows and {c for c, _ in rows} == {code}, code
+        assert all(len(re.findall(r"<td", cells)) == len(TALLY_COLUMNS) for _, cells in rows)
+    # Values are the countries' own, never summed: the VNM named-project row
+    # is the country view's count.
+    vnm = dict(groups)["VNM"]
+    named = re.search(r'data-computed-figure="Named projects"[^>]*>(.*?)</tr>', vnm, re.DOTALL).group(1)
+    expected = next(c for c in served("overview")["countries"] if c["code"] == "VNM")["named"]
+    assert f'<td class="num">{expected}</td>' in named, named
+    assert 'href="#projects?country=VNM">Computed from' in named
+    # No second homepage: neither the stat grid nor the card panels.
+    assert 'class="metrics"' not in main and 'class="stat' not in main and 'class="panel"' not in main
+    captions = re.findall(r'<figure class="counts-figure" data-figure="(\d)"><figcaption><strong>'
+                          r'(Figure \d\.)</strong>(.*?)</figcaption>', main, re.DOTALL)
+    assert [(n, f) for n, f, _ in captions] == [("1", "Figure 1."), ("2", "Figure 2.")]
+    assert all("Our calculation" in caption for *_, caption in captions)
+    assert 'href="#release-history"' in main
+
+
+def test_the_homepage_keeps_its_stat_grid_under_the_tallies() -> None:
+    main = render("overview")["main"]
+    aside = re.search(r'<aside class="evidence-box">.*?</aside>', main, re.DOTALL).group(0)
+    assert '<p class="eyebrow">The tallies</p>' in aside
+    assert '<a href="#counts">The tallies</a>' in aside
+    assert aside.count('class="stat computed"') == 4
+
+
+@pytest.mark.parametrize("route", ["whos-who", "documents", "project/" + BAC_AI])
+def test_no_fold_out_summary_repeats_its_count(route) -> None:
+    html = "".join(el["innerHTML"] for el in render(route)["elements"].values())
+    summaries_ = [unescape(s) for s in re.findall(r"<summary>([^<]*)</summary>", html)]
+    assert summaries_, route
+    for summary in summaries_:
+        numbers = re.findall(r"\d[\d,]*", summary)
+        assert len(numbers) == len(set(numbers)), summary
+
+
+def test_the_glossary_group_headings_are_sub_heading_size() -> None:
+    css = (SITE / "styles.css").read_text()
+    rule = re.search(r"\[data-glossary-group\] h2 \{(.*?)\}", css, re.DOTALL).group(1)
+    size = int(re.search(r"(\d+)px", rule).group(1))
+    h3 = int(re.search(r"^h3 \{\s*font-size: (\d+)px", css, re.MULTILINE).group(1))
+    assert size == h3, (size, h3)
+
+
+def test_the_glossary_is_grouped_by_theme_and_alphabetical_within_each_group() -> None:
+    main = render("glossary")["main"]
+    groups = re.findall(r'data-glossary-group="([^"]+)"><h2>[^<]*</h2>(.*?)</section>', main, re.DOTALL)
+    assert [unescape(g) for g, _ in groups] == [
+        "What we track", "How documents are read", "Statuses", "Measures", "Relations"]
+    for group, body in groups:
+        terms = [unescape(t) for t in re.findall(r"<dt>([^<]+)</dt>", body)]
+        assert len(terms) >= 3 and terms == sorted(terms, key=str.casefold), (group, terms)
+
+
+@pytest.mark.parametrize(("old", "new"), FORWARDS.items())
+def test_an_old_address_forwards_to_its_new_name(old, new) -> None:
+    forwarded = render(old, {}, "location.hash")
+    assert forwarded["eval"] == "#" + new
+    assert forwarded["main"] == render(new)["main"]
+
+
+@pytest.mark.parametrize("route", ["projects?country=IDN", "project/" + BAC_AI, "documents",
+                                   "overview", "entries/SEN?row=1", "methods",
+                                   "glossary", "release-history", "about", "who-we-are"])
+def test_an_address_that_kept_its_name_does_not_move(route) -> None:
+    assert render(route, {}, "location.hash")["eval"] == "#" + route
+
+
+def test_the_pages_emit_only_the_new_addresses() -> None:
+    assert not OLD_ADDRESS.search((SITE / "index.html").read_text())
+    for route in ROUTES:
+        html = "".join(el["innerHTML"] for el in render(route)["elements"].values())
+        assert not OLD_ADDRESS.search(html), (route, OLD_ADDRESS.search(html).group(0))
+
+
+def step_bar(route):
+    return render(route)["elements"].get("step-bar", {}).get("innerHTML", "")
+
+
+def test_a_page_of_the_paper_trail_shows_its_step_and_links_to_its_neighbours() -> None:
+    # The sub-bar is the position indicator (ticket 0881's test, as the
+    # author reshaped it on 2026-09-23): the selected tab is the step, and the
+    # tabs beside it are the neighbouring steps, each keeping the country.
+    bar = step_bar("entries/VNM")
+    links = re.findall(r'<li><a href="([^"]+)" data-sub="[^"]+" data-step="(D\d)"'
+                       r'( aria-current="page")?>([^<]+)</a></li>', bar)
+    assert [unescape(label) for *_, label in links] == STEPS, links
+    assert [(href, step) for href, step, current, _ in links if current] == [("#entries/VNM", "D2")]
+    hrefs = {unescape(label): href for href, _, _, label in links}
+    assert hrefs["Documents"] == "#documents?country=VNM"
+    assert hrefs["On the record"] == "#on-the-record/VNM"
+    # Six plain sibling tabs: no separator, no grouping of the last three.
+    assert "›" not in bar and "siblings" not in bar and bar.count("<li>") == 6
+    # The scope is a chip; removing it opens the same step, unscoped.
+    chip = re.search(r'<span class="scope-chip">([^<]+)<a href="([^"]+)"', bar)
+    assert chip and chip.group(1).strip() == "Viet Nam" and chip.group(2) == "#entries", bar
+
+
+@pytest.mark.parametrize("route", TRAIL_ROUTES)
+def test_a_trail_page_carries_no_second_position_indicator(route) -> None:
+    # The step bar replaces the eyebrow, the trail block and the in-page tabs.
+    main = render(route)["main"]
+    assert 'class="eyebrow"' not in main.split("</div>", 1)[0]
+    assert 'class="trail"' not in main and 'role="tablist"' not in main
+    assert 'aria-current="page"' in step_bar(route)
+
+
+@pytest.mark.parametrize(("route", "section"), [
+    ("documents", "the-paper-trail"), ("project/" + BAC_AI, "the-paper-trail"),
+    ("counts", "the-tallies"), ("comparisons", "the-tallies"), ("glossary", "about")])
+def test_every_sub_bar_is_the_same_component(route, section) -> None:
+    # Sixth batch: one markup and one class for the three sections' sub-bars,
+    # plain tabs, no separators; the country chip is the paper trail's alone.
+    bar = step_bar(route)
+    assert bar.startswith(f'<ul class="sub-tabs" data-sub-bar="{section}"><li><a href="#'), bar
+    tabs = re.findall(r"<li><a [^>]+>([^<]+)</a></li>", bar)
+    assert [unescape(t) for t in tabs] == [label for label, _ in SUB_PAGES[section]]
+    assert "›" not in bar and "<ol" not in bar
+    assert bar.count('aria-current="page"') == 1
+
+
+@pytest.mark.parametrize("route", ["overview"])
+def test_no_second_bar_outside_the_paper_trail_and_about(route) -> None:
+    assert step_bar(route) == ""
+
+
+def test_the_paper_trail_landing_shows_its_steps_with_none_current() -> None:
+    bar = step_bar("the-paper-trail")
+    assert 'data-step="D1"' in bar and 'aria-current' not in bar
+
+
+@pytest.mark.parametrize(("route", "current"), [
+    ("about", None), ("glossary", "Glossary"), ("methods", "Methods"),
+    ("who-we-are", "Who we are"), ("release-history", "Methods")])
+def test_about_pages_show_the_about_sub_bar_as_plain_siblings(route, current) -> None:
+    bar = step_bar(route)
+    links = re.findall(r'<a href="#([^"]+)" data-sub="[^"]+"[^>]*?( aria-current="page")?>([^<]+)</a>', bar)
+    assert [unescape(label) for *_, label in links] == ABOUT, bar
+    assert [unescape(label) for _, mark, label in links if mark] == ([current] if current else [])
+    # Plain siblings: one list item, so no arrow separates them.
+    assert bar.count("<li>") == 3 and 'data-sub-bar="about"' in bar and "›" not in bar
+    assert "data-step" not in bar
+    # The release history is in no bar.
+    assert "release-history" not in bar
+
+
+def test_methods_is_canonical_and_nothing_forwards_in_a_circle() -> None:
+    assert render("methods", {}, "location.hash")["eval"] == "#methods"
+    for old in ("methods", "how-we-did-this", *FORWARDS):
+        chain = render("overview", {}, f"(() => {{ let h = {json.dumps(old)}, seen = []; "
+                                       "while (h !== null && seen.length < 5) { seen.push(h); h = forwardOf(h); } "
+                                       "return seen; })()")["eval"]
+        assert len(chain) <= 2, (old, chain)
+
+
+# The author's own text for Who we are (supplied 2026-09-23, from his
+# homepage bio), kept as written: the page carries these paragraphs, these
+# two links, and nothing else about him — no phone, postal or e-mail address.
+WHO_WE_ARE = [
+    "The JETP Observatory is a research project of Minh Ha-Duong, Directeur de Recherche at CNRS, "
+    "working at CIRED (Centre international de recherche sur l'environnement et le développement) "
+    "near Paris.",
+    "He works on energy, climate change, society, economics and uncertainty. He was a lead author of "
+    "the IPCC's Fourth and Fifth Assessment Reports, founded the Vietnam Initiative for the Energy "
+    "Transition (VIET) in 2018, and set up the Clean Energy and Sustainable Development lab at the "
+    "University of Science and Technology of Hanoi in 2014.",
+    "The observatory reads what the four partnerships and their funders publish, archives every "
+    "document it relies on, and shows how each figure was reached. Its data and code are open.",
+    "Homepage: https://minh.haduong.com · ORCID: https://orcid.org/0000-0001-9988-2100",
+]
+
+
+def test_who_we_are_is_the_authors_text_and_nothing_else() -> None:
+    main = render("who-we-are")["main"]
+    paragraphs = [re.sub(r"\s+", " ", unescape(re.sub(r"<[^>]+>", "", p))).strip()
+                  for p in re.findall(r"<p[^>]*>(.*?)</p>", main, re.DOTALL)]
+    assert paragraphs == WHO_WE_ARE, paragraphs
+    assert re.findall(r'href="(https?://[^"]+)"', main) == [
+        "https://minh.haduong.com", "https://orcid.org/0000-0001-9988-2100"]
+    assert "placeholder" not in main and "@" not in text_of(main)
+
+
+@pytest.mark.parametrize("route", ["documents", "on-the-record", "entries", "whos-who",
+                                   "the-tallies", "methods"])
+def test_the_title_block_is_one_sentence_with_the_rest_folded(route) -> None:
+    head = re.search(r'<div class="page-head">(.*?)</div>', render(route)["main"], re.DOTALL).group(1)
+    lede = re.search(r'<p class="lede">(.*?)</p>', head, re.DOTALL).group(1)
+    assert len(re.findall(r"[.!?](\s|$)", lede)) == 1, lede
+    if "<details" in head:
+        assert re.search(r'<details class="about"><summary>About this page</summary>', head)
+
+
+def test_a_country_read_from_the_address_cannot_inject_markup_into_the_step_bar() -> None:
+    # PR #1459 review: #projects?country=… reached the trail's href unescaped.
+    payload = '"><img src=x onerror=alert(1)>'
+    bar = step_bar("projects?country=" + payload)
+    assert "<img" not in bar, bar
+    # An unknown country is no country: the bar falls back to the whole site.
+    assert 'href="#entries"' in bar and 'href="#on-the-record"' in bar, bar
+    assert "scope-chip" not in bar
+    # And the links are escaped even for a code the site knows, so the guard
+    # is not the escaping's only line of defence (round 2 of the review).
+    known = json.dumps(payload)
+    escaped = render("overview", {}, f"overview.countries.push({{code: {known}, name: {known}}}), "
+                                     f"subBar('the-paper-trail', 'entries', {known})")["eval"]
+    assert "<img" not in escaped and "&lt;img" in escaped, escaped
+
+
+def test_an_item_on_the_record_reads_according_to_its_publisher_with_the_date() -> None:
+    rendered = render("on-the-record/VNM")
+    results = rendered["elements"]["observations-results"]["innerHTML"]
+    sources = served("VNM")["sources"]
+    row = next(r for r in observations("VNM")
+               if sources[r["source_id"]].get("publisher") and sources[r["source_id"]].get("date"))
+    source = sources[row["source_id"]]
+    item = next(chunk for chunk in re.split(r"(?=<tr>)", results) if row["link_id"] in chunk)
+    said = re.sub(r"\s+", " ", text_of(item))
+    assert f"According to {source['publisher']}, " in said, said
+    day, year = int(source["date"][8:]), source["date"][:4]
+    assert re.search(rf"According to [^,]+, {day} \w+ {year}", said), said
+
+
+def test_a_count_on_the_viet_nam_page_is_marked_computed_with_its_unit() -> None:
+    main = render("funding/VNM")["main"]
+    assert "named projects" in re.findall(r'<div class="metric computed" data-unit="([^"]+)"', main)
+    metric = re.search(r'<div class="metric computed" data-unit="named projects">.*?</div>',
+                       main, re.DOTALL).group(0)
+    assert "Our calculation" in text_of(metric)
+    # Its pair: the publisher's headline is marked as published.
+    callout = re.search(r'<div class="callout published">.*?</div>', main, re.DOTALL).group(0)
+    assert "As published" in text_of(callout)
+    assert "Counted by us" not in main
+    assert 'href="#projects?country=VNM"' in metric
+
+
+@pytest.mark.parametrize("route", ROUTES)
+def test_the_page_copy_names_no_framework_and_no_retired_term(route) -> None:
+    rendered = render(route)
+    html = "".join(el["innerHTML"] for el in rendered["elements"].values())
+    words = sorted({m.group(0).lower() for m in FORBIDDEN.finditer(page_copy(html))})
+    assert not words, (route, words)
+
+
+def test_the_static_shell_names_no_framework_and_no_retired_term() -> None:
+    shell = re.sub(r"<script.*?</script>", "", (SITE / "index.html").read_text(), flags=re.DOTALL)
+    meta = " ".join(re.findall(r'content="([^"]+)"', shell))
+    words = sorted({m.group(0).lower() for m in FORBIDDEN.finditer(text_of(shell) + " " + meta)})
+    assert not words, words

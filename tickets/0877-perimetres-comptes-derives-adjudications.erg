@@ -8,6 +8,7 @@ Blocked-by: 0876
 2026-09-22T17:30Z HDMX-coding-agent created
 2026-09-23T10:30Z HDMX-coding-agent note revue du train (2026-09-23) : `perimeters` est une table de 0880, peuplée ici
 
+2026-09-23T13:53Z HDMX-coding-agent note from the author's decisions on PR #1459 (ticket 0881, 2026-09-23): the observatory's accounts page this ticket adds joins The tallies' sub-bar as 'Money', after Counts and Comparisons, and its entry in the header's The tallies dropdown. Until then The tallies lists only the pages with content today. To add it, append the page to SUB_PAGES['the-tallies'] and SECTIONS['the-tallies'] in deliverables/jetp-observatory/app.js.
 --- body ---
 ## Context
 

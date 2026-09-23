@@ -939,3 +939,337 @@ h1 .badge {
   cursor: pointer;
   font-size: 13px;
 }
+
+/* Ticket 0881, author's cold read of 2026-09-23: the page top is two bars of
+ * tabs — the four sections in the header, the steps of the paper trail in
+ * the bar under it, with a removable country chip at its right — and a
+ * number we calculated is set apart from a number a publisher printed: a
+ * dashed rule and "Our calculation" against a solid rule and "As published". */
+/* Header: three section tabs, each a link to its landing page beside a
+ * disclosure button that opens the list of its pages (fifth batch). */
+header nav.section-tabs {
+  align-self: stretch;
+  margin: -23px 0;
+  position: relative;
+}
+.nav-toggle {
+  display: none;
+}
+.sections {
+  display: flex;
+  gap: 4px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+.sections > .section {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  border-top: 0;
+  padding: 0;
+}
+header nav.section-tabs .sections > .section > a {
+  display: flex;
+  align-items: center;
+  padding: 0 6px 0 16px;
+  font-size: 14px;
+  border-bottom: 3px solid transparent;
+}
+header nav.section-tabs .sections > .section > a.active {
+  color: var(--green);
+  font-weight: 650;
+  box-shadow: none;
+  border-bottom-color: var(--green);
+}
+.menu-toggle {
+  align-self: center;
+  width: 26px;
+  height: 26px;
+  margin-right: 8px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--ink);
+  padding: 0;
+}
+.menu-toggle::after {
+  content: "▾";
+  font-size: 12px;
+}
+.menu-toggle:hover,
+.menu-toggle[aria-expanded="true"] {
+  border-color: var(--line);
+  background: var(--white);
+}
+.menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 20;
+  min-width: 190px;
+  list-style: none;
+  margin: 0;
+  padding: 6px 0;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  box-shadow: 0 6px 18px #2038311f;
+}
+.menu[hidden] {
+  display: none;
+}
+.menu a {
+  display: block;
+  padding: 7px 16px;
+  font-size: 13px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.menu a:hover,
+.menu a:focus-visible {
+  background: #edf0e7;
+}
+/* Hover opens a menu too, as an enhancement only: the button and its
+ * aria-expanded remain the way in. */
+@media (hover: hover) and (min-width: 681px) {
+  .sections > .section:hover > .menu[hidden] {
+    display: block;
+  }
+}
+/* The sub-bar: one component for all three sections — plain sibling tabs,
+ * no separators, the current page underlined — and, on the paper trail, the
+ * country chip at its right. Breadcrumbs, on detail pages, stay small muted
+ * text with arrows, so the two never look alike (sixth batch). */
+.step-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 16px;
+  padding: 0 4.3%;
+  background: #edf0e7;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+}
+.step-bar[hidden] {
+  display: none;
+}
+.sub-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.sub-tabs a {
+  display: block;
+  padding: 10px 14px 8px;
+  border-bottom: 3px solid transparent;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.sub-tabs a:hover {
+  background: var(--white);
+}
+.sub-tabs a[aria-current="page"] {
+  border-bottom-color: var(--green);
+  color: var(--green);
+  font-weight: 650;
+  background: var(--white);
+}
+.scope-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 4px 3px 12px;
+  border-radius: 999px;
+  background: var(--lime);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.scope-chip a {
+  text-decoration: none;
+  padding: 0 7px;
+  border-radius: 50%;
+}
+.scope-chip a:hover {
+  background: var(--white);
+}
+details.about {
+  margin: -6px 0 18px;
+  font-size: 14px;
+  color: var(--muted);
+}
+details.about summary {
+  cursor: pointer;
+}
+.trail-intro li {
+  margin: 8px 0;
+}
+/* Table column widths a filterTable column can ask for (PR #1459, cold
+ * read: the Documents rows ran to 250 px, because the fold-out column was
+ * squeezed to 100 px and wrapped at every word). A short label never wraps;
+ * a wide column claims the room, and its fold-out summaries stay on one
+ * line. On a phone the table scrolls inside its .table-wrap. */
+td.col-short,
+th.col-short {
+  white-space: nowrap;
+}
+td.col-wide,
+th.col-wide {
+  min-width: 300px;
+}
+td.col-wide summary {
+  white-space: nowrap;
+}
+/* Glossary group headings at the page's sub-heading size (h3), in
+ * proportion to the terms under them (cold read, third batch). */
+[data-glossary-group] {
+  padding: 20px 0;
+}
+[data-glossary-group] h2 {
+  font: 600 17px/1.3 var(--sans);
+  letter-spacing: 0;
+  margin: 0 0 10px;
+}
+/* The tallies: one table, a group row per country, then the two
+ * numbered figures. */
+table.counts caption {
+  caption-side: top;
+  text-align: left;
+  font-size: 13px;
+  color: var(--muted);
+  padding: 0 0 10px;
+}
+table.counts tr.group th {
+  font: 600 15px/1.4 var(--sans);
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--ink);
+  background: #edf0e7;
+  padding-top: 12px;
+}
+table.counts td.num {
+  font: normal 20px var(--serif);
+  text-align: right;
+  white-space: nowrap;
+}
+.counts-figure {
+  margin: 32px 0 0;
+  padding: 24px 0 0;
+  border-top: 1px solid var(--line);
+}
+.counts-figure figcaption {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 14px;
+  max-width: 760px;
+}
+.counts-figure figcaption strong {
+  color: var(--ink);
+}
+.computed-tag,
+.published-tag {
+  display: inline-block;
+  font: 600 10px/1.6 var(--sans);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--green);
+  border: 1px dashed var(--green);
+  padding: 0 5px;
+  margin-right: 4px;
+}
+.published-tag {
+  color: var(--ink);
+  border: 1px solid var(--ink);
+}
+.metric.computed,
+.stat.computed {
+  border-left: 2px dashed var(--green);
+  padding-left: 12px;
+}
+.metric.published {
+  border-left: 2px solid var(--ink);
+}
+.country-card .headline.published {
+  border-left: 2px solid var(--ink);
+  padding-left: 8px;
+}
+.card-bottom .computed {
+  border-left: 2px dashed var(--green);
+  padding-left: 8px;
+}
+.callout.published {
+  border-left: 3px solid var(--ink);
+}
+.country-links {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+@media (min-width: 1550px) {
+  .step-bar {
+    padding-left: calc((100vw - 1260px) / 2);
+    padding-right: calc((100vw - 1260px) / 2);
+  }
+}
+@media (max-width: 1100px) {
+  header nav.section-tabs {
+    margin: 0;
+  }
+  header nav.section-tabs .sections > .section > a {
+    padding: 8px 6px 8px 12px;
+  }
+}
+@media (max-width: 680px) {
+  /* One collapsible nav: the Menu button shows the three sections, and
+   * each section's pages stack under it rather than float. */
+  header nav.section-tabs {
+    overflow-x: visible;
+    padding-bottom: 0;
+    display: block;
+  }
+  .nav-toggle {
+    display: inline-block;
+    padding: 6px 12px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: var(--white);
+    font-size: 13px;
+  }
+  .sections {
+    display: none;
+  }
+  header nav.section-tabs[data-open] .sections {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 8px;
+  }
+  .sections > .section {
+    flex-wrap: wrap;
+    border-top: 1px solid var(--line);
+  }
+  header nav.section-tabs .sections > .section > a {
+    flex: 1;
+    padding: 10px 4px;
+  }
+  .menu {
+    position: static;
+    flex-basis: 100%;
+    box-shadow: none;
+    border: 0;
+    padding: 0 0 8px 12px;
+    background: transparent;
+  }
+  .step-bar {
+    padding: 0 5%;
+  }
+  .sub-tabs a {
+    padding: 8px 10px 6px;
+  }
+}

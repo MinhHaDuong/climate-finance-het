@@ -223,7 +223,7 @@ def test_static_renderer_exposes_release_history_and_monthly_change_route():
     assert 'editionHistoryPage' in renderer
     assert 'data/editions.json' in renderer
     assert 'catch(() => ({ editions: [] }))' in renderer
-    assert '#editions' in (root / 'deliverables/jetp-observatory/index.html').read_text()
+    assert '#release-history' in (root / 'deliverables/jetp-observatory/index.html').read_text()
 
 
 def test_static_renderer_has_a_non_aggregate_reviewed_evidence_route():
@@ -235,7 +235,8 @@ def test_static_renderer_has_a_non_aggregate_reviewed_evidence_route():
     assert 'data-reviewed-evidence-id' in renderer
     assert 'Non-aggregate record.' in renderer
     assert 'comparative staging snapshot is derived research material' in renderer
-    assert '#evidence' in (root / 'deliverables/jetp-observatory/index.html').read_text()
+    # Reached through the paper trail's step bar, which app.js draws (0881).
+    assert '"#on-the-record"' in renderer
 
 
 def test_edition_history_distinguishes_canonical_sources_and_staged_depth():
@@ -247,7 +248,8 @@ def test_edition_history_distinguishes_canonical_sources_and_staged_depth():
     renderer = (root / 'deliverables/jetp-observatory/app.js').read_text()
     evidence = json.loads((root / 'deliverables/jetp-observatory/data/reviewed-evidence.json').read_text())
 
-    assert 'evidenceDepthSummary' in renderer
+    # The staged depth is a row per country in The tallies (ticket 0881).
+    assert 'structured_atomic_observations?.by_country' in renderer
     assert evidence['evidence_depth'] == {
         'reviewed_canonical_records': 3,
         'canonical_named_records': 383,
@@ -259,8 +261,9 @@ def test_edition_history_distinguishes_canonical_sources_and_staged_depth():
             'status': 'not_deployed',
         },
     }
-    assert 'not deployed as canonical facts' in renderer
-    assert 'not a common record total' in renderer
+    # Worded without the retired terms since ticket 0881.
+    assert 'an analysis snapshot of the same documents, not published on these pages' in renderer
+    assert 'They are not a common total.' in renderer
 
 
 def test_country_preserves_principal_and_news_without_project_links():

@@ -145,12 +145,40 @@ def check_documents(page, url):
     assert popup.value is not None
     popup.value.close()
     # The climb lands on the one row, not on the 279.
-    position.locator('a[href="#inventory/VNM?row=22"]').click()
+    position.locator('a[href="#entries/VNM?row=22"]').click()
     page.wait_for_selector('[data-inventory-focus="22"]')
     assert page.locator('#inventory-count').inner_text().startswith('1 of 1 ')
     focused = page.locator('a[data-inventory-row="vnm-rmp-2023:annex-I.1:022"]')
     assert focused.get_attribute('href') == rmp['local_path'] + '#page=156'
     assert page.locator('#inventory-results details[open]').count() == 1
+
+
+def check_documents_row_height(page, url):
+    """The Documents rows stay short at desktop width (PR #1459, cold read).
+
+    Measured at 1280 px before the fix: the fold-out column was squeezed to
+    101 px, wrapped at every word and set every row's height (median 255 px,
+    max 276 px). Now a row is at most one line per fold-out: 120 px bounds
+    three fold-outs and the cell padding. A failed attempt shows a short label
+    with the collector's full message in its title, never a broken URL.
+    """
+    page.set_viewport_size({'width': 1280, 'height': 1000})
+    page.goto(url + '/#documents')
+    page.wait_for_selector('#documents-results tbody tr')
+    page.wait_for_function(
+        "!document.querySelector('#documents-results').textContent.includes('Loading what')")
+    heights = page.evaluate("[...document.querySelectorAll('#documents-results tbody tr')]"
+                            ".map((r) => r.getBoundingClientRect().height)")
+    assert max(heights) <= 120, sorted(heights)[-5:]
+    registry = page.request.get(url + '/data/documents.json').json()['documents']
+    failed = next(row for row in registry
+                  if row['error'] and len(row['error']) > 100 and not row['local_path'])
+    page.locator('#documents-search').fill(failed['id'])
+    label = page.locator(f'tr:has(code:text-is("{failed["id"]}")) [data-collection-error]').first
+    label.wait_for()
+    assert label.get_attribute('title') == failed['error']
+    assert len(label.inner_text()) <= 24, label.inner_text()
+    page.set_viewport_size({'width': 1440, 'height': 1100})
 
 
 def check_inventory(page, url):
@@ -163,7 +191,7 @@ def check_inventory(page, url):
     registry = page.request.get(url + '/data/documents.json').json()['documents']
     payload = page.request.get(url + '/data/m1a/VNM.json').json()
     rows = [dict(zip(payload['fields'], values)) for values in payload['rows']]
-    page.goto(url + '/#inventory/VNM')
+    page.goto(url + '/#entries/VNM')
     page.wait_for_selector('#inventory-filters')
     assert str(len(rows)) in page.locator('#inventory-count').inner_text()
     page.locator('#inventory-search').fill('Annex I.1')
@@ -190,7 +218,7 @@ def check_inventory(page, url):
 
     # A per-country column set must not need a renderer change: the 21 ZAF
     # pass-through columns appear in the row detail, in the export's own order.
-    page.goto(url + '/#inventory/ZAF')
+    page.goto(url + '/#entries/ZAF')
     page.wait_for_selector('#inventory-filters')
     page.locator('#inventory-filter-reported_status').select_option('D. Completed')
     assert '88 of 257' in page.locator('#inventory-count').inner_text()
@@ -222,7 +250,7 @@ def check_senegal_and_indonesia(page, url):
 
     annexes = next(row for row in registry
                    if row['id'] == 'sen-investment-plan-annexes-mirror' and row['local_path'])
-    page.goto(url + '/#inventory/SEN?row=1')
+    page.goto(url + '/#entries/SEN?row=1')
     page.wait_for_selector('[data-inventory-focus="1"]')
     link = page.locator('a[data-inventory-row="sen-annex-received-01"]')
     assert link.get_attribute('href') == annexes['local_path'] + '#page=13', \
@@ -268,8 +296,7 @@ def check_observations(page, url):
     is reached by the free-text field and not by the funder facet.
     """
     rows = page.request.get(url + '/data/observations/ZAF.json').json()
-    page.goto(url + '/#inventory/ZAF')
-    page.locator('#tab-observations').click()
+    page.goto(url + '/#on-the-record/ZAF')
     page.wait_for_selector('#observations-filters')
     assert str(len(rows)) in page.locator('#observations-count').inner_text()
     # The head-of-tab figures are per table and per country, never pooled.
@@ -298,8 +325,7 @@ def check_observations(page, url):
 
     # Recipe VN: the Bac Ai package, found through the source identifier.
     vietnam = page.request.get(url + '/data/observations/VNM.json').json()
-    page.goto(url + '/#inventory/VNM')
-    page.locator('#tab-observations').click()
+    page.goto(url + '/#on-the-record/VNM')
     page.wait_for_selector('#observations-filters')
     assert str(len(vietnam)) in page.locator('#observations-count').inner_text()
     page.locator('#observations-search').fill('eib')
@@ -309,8 +335,7 @@ def check_observations(page, url):
 
     # Recipe SA: a row read from the Q1 2026 register opens that register's
     # archived snapshot, at the page the locator names where it names one.
-    page.goto(url + '/#inventory/ZAF')
-    page.locator('#tab-observations').click()
+    page.goto(url + '/#on-the-record/ZAF')
     page.wait_for_selector('#observations-filters')
     registry = page.request.get(url + '/data/documents.json').json()['documents']
     register = next(row for row in rows
@@ -381,7 +406,7 @@ def check_facts(page, url):
     # Side by side, no link: the two figures come from the M1a manifest and the
     # country view, and the page counts stay 3 named + 21 unpublished.
     manifest = page.request.get(url + '/data/m1a/manifest.json').json()
-    page.goto(url + '/#country/VNM')
+    page.goto(url + '/#funding/VNM')
     page.wait_for_selector('#vnm-side-by-side')
     block = page.locator('#vnm-side-by-side')
     assert str(manifest['countries']['VNM']['row_count']) in block.locator(
@@ -443,13 +468,223 @@ def check_facts(page, url):
     page.locator(f'[data-uncited="{uncited["id"]}"]').first.wait_for()
 
     # A reviewed record's pedigree opens the archived bytes it pins.
-    page.goto(url + '/#evidence')
+    page.goto(url + '/#on-the-record')
     page.wait_for_selector('[data-reviewed-evidence-id]')
     evidence = page.request.get(url + '/data/reviewed-evidence.json').json()
     archived = {row['sha256'] for row in documents if row['local_path']}
     expected = sum(1 for record in evidence['records'] for proof in record['evidence']
                    if proof['sha256'] in archived)
     assert page.locator('a[data-reviewed-source]').count() == expected
+
+
+def check_paper_trail(page, url):
+    """Walk the paper trail both ways on the organisation of ticket 0881.
+
+    The navigation reads the paper trail, The tallies and About (Glossary,
+    Methods, Who we are in About's sub-bar) — earlier: Glossary and How we
+    did this, each at its label's slug, and the addresses of earlier previews
+    forward there (author's cold read, 2026-09-23). From Bac Ai, each step
+    toward the documents lands one step
+    down — what is on the record for Viet Nam, its entries, the Documents
+    page — and each step toward the projects climbs back. A Viet Nam count
+    is marked as counted by us and opens what it counted.
+    """
+    page.goto(url + '/#overview')
+    page.wait_for_selector('.country-grid')
+    labels = page.locator('header nav a[data-section]').all_text_contents()
+    assert labels == ['The paper trail', 'The tallies', 'About'], labels
+    # Old addresses forward in place, deep links and tabs included, and the
+    # back button does not bounce between the two names.
+    for old, new, ready in (
+        ('countries', 'funding', '.country-grid'),
+        ('country/IDN', 'funding/IDN', '.markdown h2'),
+        ('evidence', 'on-the-record', '[data-reviewed-evidence-id]'),
+        ('comparison?country=IDN', 'comparisons?country=IDN', '#history-table'),
+        ('how-we-did-this', 'methods', '.method-list'),
+        ('numbers', 'counts', 'table.counts'),
+        ('by-the-numbers', 'counts', 'table.counts'),
+        ('the-tallies', 'counts', 'table.counts'),
+        ('historical-comparison', 'comparisons', '#history-table'),
+        ('inventory/VNM?tab=record', 'on-the-record/VNM', '#observations-filters'),
+        ('inventory/VNM?row=22', 'entries/VNM?row=22', '[data-inventory-focus="22"]'),
+    ):
+        page.goto(url + '/#overview')
+        page.wait_for_selector('.country-grid')
+        page.goto(url + '/#' + old)
+        page.wait_for_selector(ready)
+        assert page.url.endswith('#' + new), (old, page.url)
+        page.go_back()
+        page.wait_for_selector('.country-grid')
+        assert page.url.endswith('#overview'), (old, page.url)
+    assert page.evaluate('location.hash') == '#overview'
+
+    # The step bar is the position indicator: the current step is marked, its
+    # neighbours are links, the country rides along as a removable chip, and
+    # the header keeps the paper trail's tab selected throughout.
+    def at_step(label, address):
+        page.wait_for_selector(f'#step-bar a[aria-current="page"]:text-is("{label}")')
+        assert page.url.endswith('#' + address), (label, page.url)
+        tab = page.locator('header nav a[data-section].active')
+        assert tab.count() == 1 and tab.get_attribute('href') == '#the-paper-trail'
+        assert page.locator('main .eyebrow, main nav.trail, main [role="tablist"]').count() == 0
+
+    def step(label):
+        page.locator(f'#step-bar a[data-step]:text-is("{label}")').click()
+
+    page.goto(url + '/#project/vnm-project-bac-ai-pumped-hydro')
+    at_step('Projects', 'project/vnm-project-bac-ai-pumped-hydro')
+    assert 'Viet Nam' in page.locator('#step-bar .scope-chip').inner_text()
+    step('On the record')
+    at_step('On the record', 'on-the-record/VNM')
+    page.wait_for_selector('#observations-results tbody tr')
+    assert 'According to' in page.locator('#observations-results tbody tr').first.inner_text()
+    step('Entries')
+    at_step('Entries', 'entries/VNM')
+    page.wait_for_selector('#panel-inventory')
+    step('Documents')
+    at_step('Documents', 'documents?country=VNM')
+    page.wait_for_selector('#documents-results')
+    assert page.locator('#documents-filter-country').input_value() == 'VNM'
+    step('Who\'s who')
+    at_step("Who's who", 'whos-who?country=VNM')
+    assert page.locator('#parties-filter-country').input_value() == 'VNM'
+    step('Funding')
+    at_step('Funding', 'funding/VNM')
+    step('Projects')
+    at_step('Projects', 'projects?country=VNM')
+    page.wait_for_selector('#results tbody tr')
+    # Removing the chip opens the same step for the whole site.
+    page.locator('#step-bar [data-scope-remove="VNM"]').click()
+    at_step('Projects', 'projects')
+    assert page.locator('#step-bar .scope-chip').count() == 0
+    assert page.locator('#country-filter').input_value() == ''
+    # The longer explanation is folded under the one-sentence lede.
+    page.goto(url + '/#documents')
+    about = page.locator('main .page-head details.about')
+    about.wait_for()
+    assert about.get_attribute('open') is None
+    assert page.locator('main .page-head .lede').count() == 1
+
+    page.goto(url + '/#funding/VNM')
+    page.wait_for_selector('.metric.computed')
+    counted = page.locator('.metric.computed[data-unit="named projects"]')
+    assert 'Our calculation' in counted.text_content()
+    assert 'As published' in page.locator('.callout.published').text_content()
+    counted.locator('a').click()
+    page.wait_for_selector('#results tbody tr')
+    assert page.locator('#country-filter').input_value() == 'VNM'
+
+
+
+def check_sections(page, url):
+    """About's sub-bar, the tallies' table and the Who's who count (ticket 0881)."""
+    page.goto(url + '/#overview')
+    page.wait_for_selector('.country-grid')
+    # About's sub-bar: plain siblings, the current page marked, the release
+    # history under Methods and in no bar.
+    page.locator('header nav a[data-section="about"]').click()
+    page.wait_for_selector('#step-bar [data-sub-bar="about"]')
+    assert page.locator('#step-bar a[data-sub]').all_text_contents() == [
+        'Glossary', 'Methods', 'Who we are']
+    page.locator('#step-bar a[data-sub="who-we-are"]').click()
+    page.wait_for_selector('[data-who-we-are]')
+    assert page.locator('#step-bar a[aria-current="page"]').inner_text() == 'Who we are'
+    page.locator('#step-bar a[data-sub="methods"]').click()
+    page.wait_for_selector('.method-list')
+    page.locator('.method-list a[href="#release-history"]').click()
+    page.wait_for_selector('main table')
+    assert page.locator('#step-bar a[aria-current="page"]').inner_text() == 'Methods'
+    assert page.locator('header nav a[data-section].active').get_attribute('href') == '#about'
+    page.goto(url + '/#overview')
+    page.wait_for_selector('.country-grid')
+    # The step bar belongs to the paper trail only.
+    assert page.locator('#step-bar').is_hidden()
+    # The tallies: one table grouped by country, then two numbered figures,
+    # and no second copy of the landing page's stat grid.
+    page.locator('header nav a[data-section="the-tallies"]').click()
+    page.wait_for_selector('table.counts')
+    assert page.locator('header nav a[data-section].active').get_attribute('href') == '#counts'
+    assert page.locator('table.counts tbody[data-country]').count() == 4
+    assert page.locator('main .stat-grid, main .metrics').count() == 0
+    assert page.locator('.counts-figure figcaption strong').all_text_contents() == [
+        'Figure 1.', 'Figure 2.']
+    page.locator('tbody[data-country="VNM"] tr[data-computed-figure="Named projects"] a').click()
+    page.wait_for_selector('#results tbody tr')
+    assert page.locator('#country-filter').input_value() == 'VNM'
+    # Who's who counts each name's projects once.
+    page.goto(url + '/#whos-who')
+    page.wait_for_selector('#parties-results details summary')
+    summary = page.locator('#parties-results details summary').first.inner_text()
+    assert summary.count('·') == 1, summary
+    page.goto(url + '/#overview')
+    page.wait_for_selector('.country-grid')
+
+
+
+def check_header_menus(page, url):
+    """The three header dropdowns (author, fifth batch, 2026-09-23).
+
+    Each tab's label links to its landing page; its button opens a
+    disclosure of the section's pages, so any page is two clicks away. Open
+    by click and by keyboard (Enter, ArrowDown), close by Escape and by a
+    click outside; hover opens one as an enhancement. At phone width the
+    three stack inside one collapsible nav.
+    """
+    page.goto(url + '/#overview')
+    page.wait_for_selector('.country-grid')
+    trail = page.locator('#toggle-the-paper-trail')
+    trail.focus()
+    page.keyboard.press('Enter')
+    assert trail.get_attribute('aria-expanded') == 'true'
+    menu = page.locator('#menu-the-paper-trail')
+    assert menu.is_visible()
+    assert menu.locator('a').all_text_contents() == [
+        'Documents', 'Entries', 'On the record', 'Projects', 'Funding', "Who's who"]
+    page.keyboard.press('Escape')
+    assert trail.get_attribute('aria-expanded') == 'false' and menu.is_hidden()
+    about = page.locator('#toggle-about')
+    about.focus()
+    page.keyboard.press('ArrowDown')
+    assert about.get_attribute('aria-expanded') == 'true'
+    assert page.evaluate('document.activeElement.textContent') == 'Glossary'
+    page.keyboard.press('Escape')
+    assert about.get_attribute('aria-expanded') == 'false'
+    assert page.evaluate('document.activeElement.id') == 'toggle-about'
+    # One menu at a time, and a click outside closes it.
+    about.click()
+    page.locator('#toggle-the-tallies').click()
+    assert about.get_attribute('aria-expanded') == 'false'
+    assert page.locator('#menu-the-tallies').is_visible()
+    page.locator('main h1').first.click()
+    assert page.locator('#toggle-the-tallies').get_attribute('aria-expanded') == 'false'
+    # Two clicks to a sub-page, from anywhere.
+    page.locator('#toggle-the-tallies').click()
+    page.locator('#menu-the-tallies a[data-sub="comparisons"]').click()
+    page.wait_for_selector('#history-table')
+    assert page.url.endswith('#comparisons')
+    assert page.locator('#toggle-the-tallies').get_attribute('aria-expanded') == 'false'
+    assert page.locator('#menu-the-tallies').get_attribute('hidden') is not None
+    assert page.locator('#step-bar a[aria-current="page"]').inner_text() == 'Comparisons'
+    # Hover opens a menu as an enhancement; the button's state is untouched.
+    page.locator('li.section:has(#toggle-about)').hover()
+    assert page.locator('#menu-about').is_visible()
+    assert about.get_attribute('aria-expanded') == 'false'
+    page.mouse.move(5, 900)
+
+    # Phone width: one collapsible nav, the menus stacked inside it.
+    page.set_viewport_size({'width': 390, 'height': 844})
+    page.goto(url + '/#overview')
+    page.wait_for_selector('.country-grid')
+    toggle = page.locator('#nav-toggle')
+    assert toggle.is_visible() and page.locator('#section-list').is_hidden()
+    toggle.click()
+    assert toggle.get_attribute('aria-expanded') == 'true'
+    assert page.locator('#section-list').is_visible()
+    page.locator('#toggle-about').click()
+    page.locator('#menu-about a[data-sub="who-we-are"]').click()
+    page.wait_for_selector('[data-who-we-are]')
+    assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
+    page.set_viewport_size({'width': 1440, 'height': 1100})
 
 
 def check_projects(page, url):
@@ -471,7 +706,7 @@ def check_projects(page, url):
     report = page.locator('[data-event-id="sen-puelec-three-villages-reported-20251109"]')
     report.wait_for()
     assert 'Event date not established' in report.inner_text()
-    assert 'Source published' in report.inner_text()
+    assert 'Document published' in report.inner_text()
 
 
 def check_site(url, output):
@@ -500,7 +735,7 @@ def check_site(url, output):
         page.wait_for_selector('.country-grid')
         page.screenshot(path=str(output), full_page=True)
         check_projects(page, url)
-        page.goto(url + '/#comparison')
+        page.goto(url + '/#comparisons')
         page.wait_for_selector('#history-country')
         assert page.locator('#history-table tbody tr').count() == count
         page.locator('#history-country').select_option('IDN')
@@ -521,30 +756,42 @@ def check_site(url, output):
             download_matches(page, url, f'data/m1a/{code}.csv')
         download_matches(page, url, 'data/m1a/manifest.json')
         check_documents(page, url)
+        check_documents_row_height(page, url)
         check_inventory(page, url)
         check_senegal_and_indonesia(page, url)
         check_observations(page, url)
         check_facts(page, url)
+        check_paper_trail(page, url)
+        check_sections(page, url)
+        check_header_menus(page, url)
         for code in ('ZAF', 'IDN', 'VNM', 'SEN'):
-            page.goto(url + '/#country/' + code)
+            page.goto(url + '/#funding/' + code)
             page.wait_for_selector('.markdown h2')
             assert page.locator('.markdown').inner_text().strip()
         # Hash routes must remain usable with a keyboard and expose the current
         # location to assistive technology.
-        page.goto(url + '/#country/IDN')
+        page.goto(url + '/#funding/IDN')
         page.wait_for_selector('.page-head h1')
-        active = page.locator('nav a[aria-current="page"]')
+        active = page.locator('#step-bar a[aria-current="page"]')
         assert active.count() == 1
-        assert active.get_attribute('href') == '#countries'
+        assert active.get_attribute('href') == '#funding/IDN'
+        section = page.locator('header nav a[data-section][aria-current]')
+        assert section.count() == 1 and section.get_attribute('href') == '#the-paper-trail'
         page.locator('.skip').focus()
         page.keyboard.press('Enter')
         assert page.evaluate('document.activeElement.id') == 'main'
+        # Skipping moves focus, never the page (#main is not a route).
+        assert page.url.endswith('#funding/IDN'), page.url
         page.keyboard.press('Tab')
         assert page.evaluate('document.activeElement.tagName') == 'A'
         page.set_viewport_size({'width': 390, 'height': 844})
-        for route in ('overview', 'countries', 'documents', 'projects', 'comparison',
-                      'inventory/SEN', 'country/VNM',
-                      'project/vnm-project-bac-ai-pumped-hydro', 'methods'):
+        for route in ('overview', 'the-paper-trail', 'funding', 'documents', 'projects',
+                      'comparisons', 'documents?country=VNM', 'whos-who?country=SEN',
+                      'entries/SEN', 'funding/VNM', 'entries', 'on-the-record',
+                      'on-the-record/ZAF', 'whos-who', 'counts', 'glossary', 'about',
+                      'who-we-are',
+                      'release-history', 'project/vnm-project-bac-ai-pumped-hydro',
+                      'methods'):
             page.goto(url + '/#' + route)
             page.wait_for_timeout(150)
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'), route

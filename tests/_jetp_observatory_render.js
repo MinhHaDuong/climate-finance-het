@@ -48,23 +48,39 @@ const element = (id) =>
     addEventListener() {},
     // The renderer reads back an attribute of markup it wrote itself (the
     // selected tab), so the attribute is read from that markup.
+    // An attribute the renderer set is read back as set (the header's
+    // disclosure buttons, ticket 0881); otherwise from the markup it wrote.
+    attributes: {},
     getAttribute(name) {
+      if (name in this.attributes) return this.attributes[name];
       const pattern = new RegExp(`id="${id}"[^>]*\\s${name}="([^"]*)"`);
       const match = pattern.exec(main.innerHTML);
       return match ? match[1] : null;
     },
-    setAttribute() {},
-    toggleAttribute() {},
+    setAttribute(name, value) {
+      this.attributes[name] = String(value);
+    },
+    toggleAttribute(name, force) {
+      if (force ?? !(name in this.attributes)) this.attributes[name] = "";
+      else this.attributes[name] = null;
+    },
     classList: { toggle() {} },
   });
 const main = element("main");
 const document = {
   getElementById: element,
   querySelectorAll: () => [],
+  addEventListener() {},
   title: "",
 };
 const location = { hash: "#" + route };
-const window = { addEventListener() {}, scrollTo() {} };
+// replaceState moves the address as a browser would, so an old route that
+// forwards to its new name (ticket 0881) is read back under the new one.
+const window = {
+  addEventListener() {},
+  scrollTo() {},
+  history: { replaceState(state, title, url) { location.hash = url; } },
+};
 const fetch = async (file) => {
   const target = path.join(site, file);
   if (!fs.existsSync(target)) return { ok: false, status: 404 };
