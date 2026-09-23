@@ -24,14 +24,14 @@ CSV dans git reste l'enregistrement, SQLite dérivé est le moteur de
 validation et de construction (ontologie § 10), forme normale maintenue
 ([[0858]]). Le principe « le MVP sert toutes les tables » ([[0860]]) est
 absorbé : chaque table de l'ontologie est servie, une par fichier, ou nommée
-comme non servie avec sa raison sur la page Methods (ontologie § 7) ; les
+comme non servie avec sa raison sur la page How we did this (ontologie § 7) ; les
 critères de sortie de 0860 sont repris ci-dessous.
 
 Langage et cadre ODEM (décision 11 du 2026-09-23, ontologie § 0) : le ledger
 est l'objet D, guidé par l'ontologie O ; les résultats E (comptes, totaux)
 viennent au-dessus ; il n'y a pas de M. Trois enfants s'ajoutent : les tables
 d'ontologie révisables ([[0880]]), l'organisation du MVP selon O-D-E-M, sans en
-afficher les mots, avec D en parcours ([[0881]]) et la page Definitions ([[0882]]).
+afficher les mots, avec D en parcours ([[0881]]) et le Glossary ([[0882]]).
 
 Ne pas lancer avant que l'auteur ait approuvé PR #1449.
 
@@ -49,7 +49,7 @@ Ne pas lancer avant que l'auteur ait approuvé PR #1449.
 | 6 | [[0877]] | observations de périmètre, comptes dérivés, adjudications (étape 6) |
 | 7 | [[0878]] | retrait des tables anciennes et des lecteurs de compatibilité (étape 7) |
 | — | [[0881]] | le MVP s'organise selon O, D, E, M sans en afficher les mots ; D en parcours (§ 7) ; présentation seule, parallèle aux vagues |
-| après 0 | [[0882]] | page Definitions du MVP, générée des tables de 0880 (§ 7) |
+| après 0 | [[0882]] | Glossary du MVP, générée des tables de 0880 (§ 7) |
 | 5' | [[0879]] | enregistrements comparateurs : Banque mondiale, CRS énergie quatre pays, IATI, identifiants externes, marqueurs |
 
 ## Relevant files
@@ -71,5 +71,5 @@ Ne pas lancer avant que l'auteur ait approuvé PR #1449.
 - [ ] Revue d'intégration : diffs des enfants relus, `make check` complet, recettes ZAF et VNM vertes
 - [ ] `docs/jetp-ontology.md` § 6 mis à jour avec les comptes réels de la migration
 - [ ] Aucune route publique cassée : chaque ancien identifiant résout par `routes`
-- [ ] Repris de [[0860]] : toute table du § 5 est servie, une table par fichier, ou nommée comme non servie avec sa raison sur la page Methods ; aucun compte affiché n'additionne deux tables
+- [ ] Repris de [[0860]] : toute table du § 5 est servie, une table par fichier, ou nommée comme non servie avec sa raison sur la page How we did this ; aucun compte affiché n'additionne deux tables
 - [ ] Repris de [[0860]] : depuis le compte des places non publiées du Viet Nam, le lecteur descend dans le navigateur à l'observation de périmètre, à sa ligne, à ses lignes de couverture et à leurs documents

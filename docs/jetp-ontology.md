@@ -67,8 +67,8 @@ words and uses them in no other sense.
 
 | ODEM object | In the JETP observatory | Where it lives |
 |---|---|---|
-| **O, Ontology** | What the ledger talks about and how it records it: classes, relations, closed value lists, status and sector axes, perimeter definitions, crosswalks and conversion rules. Every term has a definition, an external mapping where one exists, and a revision history | `data/jetp/ontology/` (section 5); the observatory's Definitions page |
-| **D, Data** | What publishers said, as the ledger read it. A pipeline of four steps, below | `data/jetp/` tables; the observatory's Documents, Extracts, Statements and Records pages |
+| **O, Ontology** | What the ledger talks about and how it records it: classes, relations, closed value lists, status and sector axes, perimeter definitions, crosswalks and conversion rules. Every term has a definition, an external mapping where one exists, and a revision history | `data/jetp/ontology/` (section 5); the observatory's Glossary |
+| **D, Data** | What publishers said, as the ledger read it. A pipeline of four steps, below | `data/jetp/` tables; the observatory's paper trail: Documents, Entries, On the record, Projects / Funding / Who's who |
 | **E, Evidence** | Results computed from D under a declared O version: every count shown with its unit and perimeter, the accounts of backend-design section 5, descriptive tables. E comes on top of D and never edits it | `data/derived/jetp/`, with a run record naming its inputs, cutoffs and ontology version |
 | **M, Models** | Candidate causal explanations. The observatory has none. A causal study, deferred in ticket 0729, would consume a frozen release from outside the ledger | none |
 
@@ -508,7 +508,7 @@ rules. The formal specification is the DDL of section 10 together with the
 prose glossary. Alignment is checked, not trusted. A test (ticket 0880) fails
 when a value listed in sections 2 to 4 is not a term in force, or a term in
 force appears nowhere in this document, and when a table or column declared
-here differs from the DDL. The observatory's Definitions page and a SKOS export
+here differs from the DDL. The observatory's Glossary and a SKOS export
 (section 10) are generated from the `terms` table, so the words a reader sees
 are the words the validator enforces.
 
@@ -628,7 +628,7 @@ before the current tables are removed. Counts below are from the tables on
 | `config/jetp_observatory.yaml` headlines | 4 | perimeter observations citing their lines | configuration keeps only display choices |
 | `data/jetp/comparison/*.json` | 1 119 records, 97 in the reference pool | lines of World Bank API snapshots, external identifiers, comparator status crosswalk | the reference pool is a perimeter whose members are those lines |
 | `config/jetp_tracking.yaml` vocabularies and the value lists of sections 2 to 4 | about 98 lines of YAML | `terms` rows under `data/jetp/ontology/`, each with a definition and, where one exists, an external mapping | the YAML keeps display choices only |
-| `news-leads.csv` | 18 | kept as today: a working file of the watch, not a ledger table | named as not served, with that reason, on the observatory's Methods page |
+| `news-leads.csv` | 18 | kept as today: a working file of the watch, not a ledger table | named as not served, with that reason, on the observatory's How we did this page |
 | figure scripts' inline exchange rates | 1 known (`2500 * 1.09`) | `rates` rows citing their source line | a script never carries a rate |
 
 Order of work, each step a ticket with its own byte-level check:
@@ -665,42 +665,53 @@ Order of work, each step a ticket with its own byte-level check:
 The four ODEM objects of section 0 are the observatory's organising
 principle: they decide what is grouped with what, in which order, and what
 may link to what. They are not its vocabulary. The pages assume a reader who
-knows how empirical work proceeds, that a figure rests on sources and that
+knows how empirical work proceeds, that a figure rests on documents and that
 words need definitions, and they never put the framework's names in front of
 that reader. "Ontology", "Evidence", "Model", the letters O, D, E, M and the
 step codes D1 to D4 appear in code, data attributes and these documents, not
 in page copy.
 
-| ODEM object | What the reader sees | Label on the page (default) |
-|---|---|---|
-| O | What each word, status, measure and relation means, where the definition comes from, and when it changed | **Definitions** |
-| D | The path from a publisher's document to the ledger's records, walked in order and in both directions | **Documents → Extracts → Statements → Records** |
-| E | Counts and totals, each with its unit, its perimeter and a link to what it was computed from | **Figures** |
-| M | Nothing | none |
+The page vocabulary is a newsroom's, decided by the author on 2026-09-23:
+data desks organise document-based work the same way, and their words are
+plain. It keeps to the neutral side of that vocabulary, attribution rather
+than suspicion, because the readers are researchers as well as journalists.
 
-- **Definitions.** The terms in force, grouped by list: each class,
-  relation and value with its definition, its external source and its
-  revision history. A relation shows what it connects. Every term used
-  elsewhere on the site links to its definition. Generated from
-  `data/jetp/ontology/`.
-- **The path.** Documents is D1, Extracts D2 (the M1a inventory tabs),
-  Statements D3 (the Observations tab), Records D4 (the record pages). Each
-  page shows where it sits on the path and lets the reader step up or down
-  one stage, from a record to its statements, their extracts and the page of
-  the document, or back.
-- **Figures.** A number the ledger computes is visibly set apart from a
-  number a publisher printed: it states its unit and perimeter and opens the
-  statements it was computed from. Accounts, when they exist, appear only
-  here.
+| ODEM object | What the reader sees | Label on the page |
+|---|---|---|
+| O | What each word, status, measure and relation means, where the definition comes from, and when it changed | **Glossary** |
+| D | The documented route from a figure back to the page that supports it, walked in both directions | **The paper trail**: **Documents** → **Entries** → **On the record** → **Projects**, **Funding**, **Who's who** |
+| E | Counts and totals computed by the ledger, each with its unit, its perimeter and a link to what it was computed from | **By the numbers** |
+| M | Nothing | none |
+| (methods) | What was done, what was not, and which tables are not served | **How we did this** |
+
+- **Glossary.** The terms in force, grouped by list: each class, relation
+  and value with its definition, its external source and its revision
+  history. A relation shows what it connects. Every term used elsewhere on
+  the site links to its glossary entry. Generated from `data/jetp/ontology/`.
+- **The paper trail.** Documents is D1 (publishers, documents, retrievals,
+  snapshots). Entries is D2: a row of a register, a line of a plan annex, a
+  submission in a list. On the record is D3: each item reads "according to"
+  its publisher, with the date. Projects, Funding and Who's who are D4:
+  projects and assets, agreements, and parties. Each page shows where it
+  sits on the trail and lets the reader step one stage up or down, from a
+  project to what is on the record about it, to the entries, to the page of
+  the document, and back.
+- **By the numbers.** A number the ledger computes is visibly set apart from
+  a number a publisher printed: it states its unit and perimeter and opens
+  the items on the record it was computed from. Accounts, when they exist,
+  appear only here.
 - **No models.** The observatory tests no causal explanation, and its
-  navigation has no place for one. The Methods page says in plain words what
+  navigation has no place for one. How we did this says in plain words what
   the observatory does not do.
 
-The labels are defaults, chosen for a reader who is not a data engineer; the
-organisation is the decision. Every table of section 5 is served, one file
-per table, or named on the Methods page as not served, with the reason.
-Nothing on a page adds lines of one document to lines of another or to
-referents.
+Words avoided on the pages: *claims* (it implies doubt about a publisher's
+statement), *deals* and *players* (loaded), *sources* (a source is also a
+person, and the ledger retired the word), *entities* and *records* (opaque to
+a general reader).
+
+Every table of section 5 is served, one file per table, or named on How we
+did this as not served, with the reason. Nothing on a page adds lines of one
+document to lines of another or to referents.
 
 ## 8. Consequences for the backend design
 
