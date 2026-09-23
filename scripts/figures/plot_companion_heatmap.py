@@ -109,7 +109,13 @@ def main() -> None:
     ax.set_yticks(range(len(row_order)))
     ax.set_yticklabels([methods_labels[m] for m in row_order])
     ax.set_xlabel("Year")
-    ax.set_xticks([y for y in years if y % 5 == 0 or y in (y0, y1)])
+    ticks = list(range(y0, y1 + 1, 5))
+    if ticks[-1] != y1:
+        if y1 - ticks[-1] < 3:
+            ticks[-1] = y1
+        else:
+            ticks.append(y1)
+    ax.set_xticks(ticks)
     ax.set_title(f"Transition zone heatmap (window = {window})")
 
     cbar = fig.colorbar(im, ax=ax, shrink=0.8, pad=0.02)

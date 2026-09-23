@@ -160,11 +160,11 @@ def main() -> None:
             loc="lower center",
             ncol=4,
             frameon=False,
-            bbox_to_anchor=(0.5, -0.02),
+            bbox_to_anchor=(0.5, 0.02),
             fontsize=6.5,
         )
 
-    fig.tight_layout()
+    fig.tight_layout(rect=(0, 0.17, 1, 1))
     save_companion_figure(fig, io_args.output, dpi=DPI)
     plt.close(fig)
 
