@@ -237,7 +237,7 @@ def check_senegal_and_indonesia(page, url):
     ledger = page.request.get(url + '/data/observations/IDN.json').json()
     cited = [row for row in ledger if row['source_id'] == report_id]
     counts = Counter(row['project_id'] for row in cited)
-    project_id = max(counts, key=lambda pid: (counts[pid], pid))
+    project_id = max(sorted(counts), key=counts.__getitem__)  # ties: smallest id
     served = [row for row in ledger if row['project_id'] == project_id]
     from_report = next(row for row in served if row['source_id'] == report_id)
     row_id = (from_report.get('event_id') or from_report.get('implementation_event_id')
