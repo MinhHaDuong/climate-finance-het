@@ -2,10 +2,13 @@
 Title: The multilayer paper's five figures have never been built
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: Three empirical figures generated and tracked; data-free checkout renders the paper, with unsupported figures withheld by 0651
 
 --- log ---
 2026-07-27T18:55Z HDMX-coding-agent created surfaced by 0359: wiring MULTILAYER_FIGS into the render rule turned a silent wrong output into a loud failure, and the loud failure is that the figures do not exist
 
+2026-09-23T18:32Z HDMX-coding-agent note 0651 withheld the uncomputed terms and community figures; the paper now embeds three computed figures (z-series, heatmap, sensitivity). Reproduction is running on padme in an isolated worktree.
+2026-09-23T21:27Z HDMX-coding-agent closed — Full configured companion run completed on padme; three empirical figures are tracked and a data-free worktree rendered the paper to PDF. Ticket 0651 withheld the two unsupported figures. The embedded-figure tracking guard passes.
 --- body ---
 ## Context
 
@@ -86,8 +89,8 @@ Two distinct questions, and the first must be answered before the second:
 
 ## Verification
 
-- [ ] `make figures-companion` completes, or its failure is diagnosed
-- [ ] A clean-room render of the multilayer paper either works, or the ticket
+- [x] `make figures-companion` completes, or its failure is diagnosed
+- [x] A clean-room render of the multilayer paper either works, or the ticket
       records why it is not meant to
 
 ## Invariants
@@ -98,6 +101,6 @@ Two distinct questions, and the first must be answered before the second:
 
 ## Exit criteria
 
-- [ ] The five figures exist and are reproducible, or their absence is a
+- [x] The five figures exist and are reproducible, or their absence is a
       recorded decision with the render path adjusted to match
-- [ ] A guard fails when a paper embeds a figure no clean checkout can obtain
+- [x] A guard fails when a paper embeds a figure no clean checkout can obtain

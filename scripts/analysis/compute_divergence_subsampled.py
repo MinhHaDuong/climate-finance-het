@@ -111,10 +111,15 @@ def subsample_one_window(X_before, Y_after, statistic_fn, R, seed, y, w):
 # ---------------------------------------------------------------------------
 
 
-def _collect_subsample_rows(window_iter, method_name, statistic_fn, R, seed, log):
+def _collect_subsample_rows(window_iter, method_name, statistic_fn, R, seed, log, cached_energy=False):
     rows = []
     for y, w, X, Y, _rng in window_iter:
-        values = subsample_one_window(X, Y, statistic_fn, R, seed, y, w)
+        if cached_energy:
+            from _energy_resample import subsample_energy
+
+            values = subsample_energy(X, Y, R, seed, y, w)
+        else:
+            values = subsample_one_window(X, Y, statistic_fn, R, seed, y, w)
         for rep, val in enumerate(values):
             rows.append(
                 {
@@ -132,6 +137,7 @@ def _collect_subsample_rows(window_iter, method_name, statistic_fn, R, seed, log
 
 def _run_semantic_subsampled(method_name, div_df, cfg, R):
     """R subsampling replicates for semantic methods (S1–S4)."""
+    from _divergence_backend import get_backend
     from _divergence_io import iter_semantic_windows
 
     statistic_fn = _make_semantic_statistic(method_name, cfg)
@@ -143,7 +149,8 @@ def _run_semantic_subsampled(method_name, div_df, cfg, R):
     cfg_raw["divergence"]["equal_n"] = False
 
     return _collect_subsample_rows(
-        iter_semantic_windows(div_df, cfg_raw), method_name, statistic_fn, R, seed, log
+        iter_semantic_windows(div_df, cfg_raw), method_name, statistic_fn, R, seed, log,
+        cached_energy=method_name == "S2_energy" and get_backend(cfg) == "numpy",
     )
 
 

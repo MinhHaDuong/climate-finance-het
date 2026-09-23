@@ -132,6 +132,12 @@ def _run_semantic_permutations(method_name, div_df, cfg, n_jobs=1):
 
     statistic_fn = _make_semantic_statistic(method_name, cfg)
     n_perm = cfg["divergence"]["permutation"]["n_perm"]
+    permutation_fn = None
+    if method_name == "S2_energy":
+        from _energy_resample import permutation_energy
+
+        permutation_fn = permutation_energy
     return _collect_permutation_rows(
-        iter_semantic_windows(div_df, cfg), statistic_fn, n_perm, n_jobs=n_jobs
+        iter_semantic_windows(div_df, cfg), statistic_fn, n_perm,
+        n_jobs=n_jobs, permutation_fn=permutation_fn,
     )

@@ -115,7 +115,7 @@ def _finalize_row(y, w, observed, null_stats):
 # ---------------------------------------------------------------------------
 
 
-def _collect_permutation_rows(window_iter, statistic_fn, n_perm, n_jobs=1):
+def _collect_permutation_rows(window_iter, statistic_fn, n_perm, n_jobs=1, permutation_fn=None):
     """Run permutation test over window iterator, collecting result rows.
 
     Shared logic for both semantic and lexical channels.
@@ -131,14 +131,21 @@ def _collect_permutation_rows(window_iter, statistic_fn, n_perm, n_jobs=1):
     n_jobs : int
         Number of parallel workers.  1 = sequential (original path),
         -1 = all available cores.
+    permutation_fn : callable or None
+        Optional precomputed statistic implementation for a specific method.
 
     """
     if n_jobs == 1:
         rows = []
         for y, w, X, Y, perm_rng in window_iter:
-            observed, null_mean, null_std, z, p = permutation_test(
-                X, Y, statistic_fn, n_perm, perm_rng
-            )
+            if permutation_fn is None:
+                observed, null_mean, null_std, z, p = permutation_test(
+                    X, Y, statistic_fn, n_perm, perm_rng
+                )
+            else:
+                observed, null_mean, null_std, z, p = permutation_fn(
+                    X, Y, n_perm, perm_rng
+                )
             rows.append(_result_row(y, w, observed, null_mean, null_std, z, p))
             log.info("  year=%d window=%d z=%.2f p=%.3f", y, w, z, p)
         return pd.DataFrame(rows)
@@ -149,7 +156,10 @@ def _collect_permutation_rows(window_iter, statistic_fn, n_perm, n_jobs=1):
     log.info("Parallel: %d (year, window) pairs on %d jobs", len(pairs), n_jobs)
 
     def _process(y, w, X, Y, perm_rng):
-        obs, nm, ns, z, p = permutation_test(X, Y, statistic_fn, n_perm, perm_rng)
+        if permutation_fn is None:
+            obs, nm, ns, z, p = permutation_test(X, Y, statistic_fn, n_perm, perm_rng)
+        else:
+            obs, nm, ns, z, p = permutation_fn(X, Y, n_perm, perm_rng)
         return _result_row(y, w, obs, nm, ns, z, p)
 
     results = Parallel(n_jobs=n_jobs)(

@@ -11,13 +11,13 @@
 #
 # Invoked by the root Makefile's `papers` target via `$(MAKE) -f` so this render
 # process never parses the root Phase-2 rules (ticket 0237). The Phase-2 remainder
-# of the old multilayer-detection.mk (the four companion-figure compute rules)
+# of the old multilayer-detection.mk (the companion-figure compute rules)
 # lives at scripts/analysis/multilayer-detection.mk (ticket 0239).
 
 -include paths.mk
 
 # The paper composes no shared include (MULTILAYER_INCLUDES is empty since 0359);
-# its five companion figures are what it actually needs on disk.
+# its three computed companion figures are what it needs on disk.
 deliverables/multilayer/multilayer-detection.pdf: deliverables/multilayer/multilayer-detection.qmd $(MULTILAYER_FIGS) $(BIB) deliverables/multilayer/multilayer-detection-vars.yml
 	quarto render $< --to pdf
 
