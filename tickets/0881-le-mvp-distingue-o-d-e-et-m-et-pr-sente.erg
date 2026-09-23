@@ -1,0 +1,67 @@
+%erg 0.1
+Title: Le MVP distingue O, D, E et M, et présente D comme un pipeline
+Created: 2026-09-23
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-23T06:45Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Décision de l'auteur du 2026-09-23 (`docs/jetp-ontology.md`, décision 11 et
+§ 7) : le MVP distingue visuellement les quatre objets ODEM, et la Data y est
+présentée comme un pipeline. L'observatoire n'a pas de M ; E vient au-dessus
+de D. Aujourd'hui le MVP parle de trois « étages » (0834), mêle comptes (E) et
+fiches (D4) sous « faits réconciliés », et emploie « evidence » pour le
+soutien documentaire.
+
+## Relevant files
+
+- `deliverables/jetp-observatory/app.js`, `index.html`, `styles.css` — navigation, pages, libellés
+- `deliverables/jetp-observatory/README.md` — « What is included »
+- `docs/jetp-ontology.md` § 0 (langage, étapes D1 à D4) et § 7
+- `tests/test_jetp_observatory_render.py`, `tests/_jetp_observatory_render.js`, `tests/browser/jetp_observatory.py`
+
+## Actions
+
+1. Un cadre de navigation à quatre entrées O, D, E, M, chacune avec une
+   couleur et un libellé constants ; M affiche qu'il n'y a pas de modèle et
+   renvoie à la page Methods.
+2. D se présente comme un pipeline D1 Register → D2 Lines → D3 Observations →
+   D4 Referents : la page Documents devient D1, les onglets d'inventaire D2,
+   l'onglet Observations D3, les fiches D4 ; chaque page de D montre sa place
+   dans le pipeline et permet de remonter ou descendre d'une étape.
+3. Chaque compte et chaque total porte la marque E, son unité, son périmètre
+   et un lien vers les lignes D dont il est calculé.
+4. Balayage du texte des pages et du README : les cinq termes retirés du § 0
+   disparaissent de la copie publique (« evidence », « layer », « stage »,
+   « reconciled », « edition » au sens de publication du ledger).
+5. Coordination : `app.js` est aussi touché par [[0873]] et [[0876]] ; ce
+   ticket ne change aucune vue JSON servie, seulement la présentation.
+
+## Test
+
+Red : `tests/test_jetp_observatory_render.py` — la page d'accueil rend quatre
+entrées O, D, E, M dans cet ordre ; une page D porte l'indicateur de son
+étape ; un compte de la page Viet Nam porte la marque E et son unité ; aucun
+texte rendu ne contient « evidence », « layer » ou « reconciled ».
+
+## Verification
+
+- [ ] Recettes ZAF et VNM de [[0834]] vertes dans le navigateur, sur le nouveau cadre
+- [ ] Capture desktop et mobile : les quatre objets sont distinguables sans lire le texte
+- [ ] Aucune vue JSON sous `deliverables/jetp-observatory/data/` ne change d'octets
+
+## Invariants
+
+- Routes publiques inchangées.
+- Aucune addition entre lignes de documents différents ni entre lignes et référents.
+
+## Exit criteria
+
+- [ ] Le MVP distingue visuellement O, D, E et M, et M est déclaré absent
+- [ ] D est présenté comme un pipeline D1 à D4 navigable dans les deux sens
+- [ ] Les comptes affichés sont marqués E avec unité et périmètre
+- [ ] La copie publique respecte le langage du § 0

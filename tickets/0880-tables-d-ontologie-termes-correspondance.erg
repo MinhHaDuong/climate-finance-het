@@ -1,0 +1,78 @@
+%erg 0.1
+Title: Tables d'ontologie : termes, correspondances et périmètres révisables, test d'alignement avec la spécification
+Created: 2026-09-23
+Author: HDMX-coding-agent
+Blocked-by: 0871
+
+--- log ---
+2026-09-23T06:45Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Décision de l'auteur du 2026-09-23 (`docs/jetp-ontology.md`, décision 11) :
+l'ontologie du ledger est l'objet O du cadre ODEM et doit être traçable,
+définie et révisable. L'ontologie v2 la tenait en listes closes dans le DDL
+et en prose dans `decisions.md` ; les correspondances de statut et de secteur
+et les périmètres n'avaient ni `supersedes` ni `status`, de sorte qu'un
+remappage réécrivait en silence tous les statuts partagés passés. La revue
+`docs/jetp-odem-acceptance-review-2026-09-23.md` § 2 le constate.
+
+Le contrat est désormais `docs/jetp-ontology.md` § 5, sous-sections
+« Ontology tables » et « English and formal specification ». Vague 0 de
+[[0870]], avec [[0871]] : les contraintes du DDL lisent les termes en vigueur.
+
+## Relevant files
+
+- `docs/jetp-ontology.md` § 0, § 2 à 4 (les listes), § 5 (tables d'ontologie, spécification formelle), § 6 étape 0
+- `config/jetp_tracking.yaml` — vocabulaires actuels, qui deviennent des lignes de `terms`
+- `data/jetp/ontology/` — à créer : `terms.csv`, `status-crosswalk.csv`, `sector-crosswalk.csv`, `perimeters.csv`, `marker-coefficients.csv`
+- `config/jetp-ledger.sql` — le DDL de [[0871]]
+
+## Actions
+
+1. Créer les cinq tables avec leurs colonnes de révision (`recorded_at`,
+   `decided_by`, `status`, `supersedes`) et la règle « en vigueur » des
+   tables de décision.
+2. Peupler `terms` : chaque classe, relation et valeur des listes closes des
+   § 2 à 4, avec une définition en une ou deux phrases, `domain` et `range`
+   pour une relation, et le schéma externe, l'URI et la relation SKOS quand
+   un vocabulaire externe existe (IATI, OC4IDS, GEM, CAD de l'OCDE, PROV-O),
+   `local` sinon. `config/jetp_tracking.yaml` ne garde que des choix
+   d'affichage.
+3. Fonction « ontologie à la date K » et `ontology_ref` (empreinte du
+   répertoire et du DDL) exposée pour les registres d'exécution des
+   résultats E.
+4. Test d'alignement : il échoue si une valeur listée aux § 2 à 4 n'est pas
+   un terme en vigueur, si un terme en vigueur n'apparaît nulle part dans le
+   document, si une table ou colonne décrite au § 5 diffère du DDL, ou si le
+   DDL déclare une table ou colonne nommée `evidence`, `model`,
+   `reconcil*`, `layer` ou `fact` (§ 0).
+
+## Test
+
+Red : `tests/test_jetp_ontology_tables.py`. Une fixture de `terms` où une
+définition est reformulée (même `term_id`, nouvelle ligne qui supersède),
+puis un sens change (nouveau `term_id`) ; l'ontologie à une date K antérieure
+rend l'ancienne définition, à K postérieure la nouvelle, et une ligne de
+données qui citait l'ancien terme reste valide. Une correspondance de statut
+remappée ne change pas le statut partagé lu à une date antérieure.
+
+## Verification
+
+- [ ] Le test d'alignement échoue sur une valeur ajoutée au § 4 sans ligne de `terms`, puis passe
+- [ ] Chaque terme en vigueur a une définition non vide
+- [ ] `ontology_ref` est identique pour deux calculs sur les mêmes entrées
+
+## Invariants
+
+- Aucune table de données de `data/jetp/` n'est modifiée.
+- Aucune liste de valeurs n'existe hors de `terms` une fois le ticket fermé.
+
+## Exit criteria
+
+- [ ] Les cinq tables d'ontologie existent avec leurs révisions et sont validées par le DDL
+- [ ] Toutes les valeurs des § 2 à 4 sont des termes définis, avec correspondance externe ou `local`
+- [ ] Le test d'alignement bidirectionnel spécification ↔ tables ↔ DDL est vert
+- [ ] `make check-fast` et `make lint` verts
