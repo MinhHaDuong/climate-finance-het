@@ -2,11 +2,14 @@
 Title: Collecter les deux sources non archivées des 21 places comptées du Viet Nam
 Created: 2026-09-22
 Author: HDMX-coding-agent
-Label: needs-human
+Closed: autoclosed — PR #1447
 
 --- log ---
 2026-09-22T10:22Z HDMX-coding-agent created
+2026-09-22T11:05Z HDMX-coding-agent note lancé par l'auteur le 2026-09-22 sur padme
+2026-09-22T11:20Z HDMX-coding-agent note collecte : 2/2 collected (HTTP 200, HTML) — eeas-jetp-project-progress-2025 6f3afc18 (60 684 o), moit-project-index-2026 ad1077b4 (21 523 o) ; aucun échec ; l'index MOIT est rendu côté serveur, les trois fiches nommées (Bác Ái, Bình Dương–Đồng Nai, Trị An) sont dans le texte archivé, prise telle quelle sans pagination ni autre route. Snapshot DVC 264 → 266 fichiers, poussé, « Cache and remote 'padme' are in sync ». Vues régénérées (VNM.json, documents.json 314 → 316 lignes, 156 656 o sous 512 000, overview.json) et recensement 0817 (unavailable → admitted) ; observations/*.json inchangés, aucune ligne de liaison ne cite ces sources. Les deux sources ne figurent pas dans la liste épinglée de test_jetp_observatory_observations.py : test de registre ajouté dans test_jetp_project_coverage.py, rouge contre le manifest d'origin/main, vert ici. Playwright depuis #documents : 2/2 ouvrent leur copie locale (href = local_path, sha256 conforme, titre lu) ; la remontée « Facts relying on it · 3 » liste les trois fiches nommées, les 21 places n'y figurent que par le compte unpublished, par conception. check-fast 2113 passed, lint 338 passed.
 
+2026-09-23T08:36Z HDMX-coding-agent closed — autoclosed — PR #1447
 --- body ---
 
 ## Context
@@ -56,12 +59,12 @@ de collecte consignée, `collected` ou un statut d'échec nommé.
 
 ## Verification
 
-- [ ] Registre : une ligne par source, statut consigné
-- [ ] Page Documents : les sources collectées ouvrent en local
-- [ ] `dvc status -c` en phase après push
+- [x] Registre : une ligne par source, statut consigné — `data/jetp/manifest.csv` lignes 316–317, statut `collected` (commit f7d9854e)
+- [x] Page Documents : les sources collectées ouvrent en local — Playwright 2/2, href = local_path, sha256 conforme (log 2026-09-22T11:20Z)
+- [x] `dvc status -c` en phase après push — « Cache and remote 'padme' are in sync » après `dvc push` (3 files pushed)
 
 ## Exit criteria
 
-- [ ] Les deux sources ont une tentative de collecte dans le registre, avec son résultat
-- [ ] Les vues servies sont régénérées sur ce registre
-- [ ] `make check-fast` et `make lint` passent
+- [x] Les deux sources ont une tentative de collecte dans le registre, avec son résultat — deux lignes `collected` dans `data/jetp/manifest.csv` (commit f7d9854e) ; `tests/test_jetp_project_coverage.py::test_the_vietnamese_count_slot_sources_have_a_recorded_collection_attempt` (commit 94ddde89)
+- [x] Les vues servies sont régénérées sur ce registre — VNM.json, documents.json, overview.json (commit 2089ee24) ; recensement 0817 (commit 71074ed0)
+- [x] `make check-fast` et `make lint` passent — sur 94ddde89 : check-fast 2113 passed, 15 skipped ; lint 338 passed, 12 skipped (log 2026-09-22T11:20Z)

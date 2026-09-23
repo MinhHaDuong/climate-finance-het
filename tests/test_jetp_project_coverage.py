@@ -335,3 +335,35 @@ def test_final_pipeline_cohort_has_terminal_evidence_verdicts() -> None:
     for project_id, search_id in FINAL_PIPELINE_DRY_SEARCHES.items():
         assert search_id in searches, project_id
         assert searches[search_id]["outcome"] == "central_only", project_id
+
+
+def test_the_vietnamese_count_slot_sources_have_a_recorded_collection_attempt() -> None:
+    """Every source behind the 21 counted Viet Nam slots has a registry row.
+
+    The 21 official_count_slot rows all cite the same source triplet; two of
+    those sources sat in sources.csv without any collection attempt (ticket
+    0859). The registry is append-only provenance: an attempt is a row with a
+    named status — `collected`, or a failure the collector wrote itself —
+    never a row invented to fill the gap, and never no row at all.
+    """
+    slot_ids = {
+        row["project_id"]
+        for row in read_csv(DATA / "projects.csv")
+        if row["country"] == "VNM" and row["verification_status"] == "official_count_slot"
+    }
+    assert len(slot_ids) == 21
+
+    cited = set()
+    for row in read_csv(DATA / "project-coverage.csv"):
+        if row["project_id"] in slot_ids:
+            cited |= {item for item in row["source_ids"].split(";") if item}
+    assert {"vnm-eeas-jetp-project-progress-2025", "vnm-moit-project-index-2026"} <= cited
+
+    attempts: dict[str, set[str]] = {}
+    for row in read_csv(DATA / "manifest.csv"):
+        attempts.setdefault(row["source_id"], set()).add(row["status"])
+
+    for source_id in sorted(cited):
+        assert source_id in attempts, f"{source_id}: no collection attempt in manifest.csv"
+        assert attempts[source_id], source_id
+        assert "" not in attempts[source_id], f"{source_id}: attempt without a status"
