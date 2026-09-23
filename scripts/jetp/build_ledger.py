@@ -29,7 +29,9 @@ import sqlite3
 import sys
 from pathlib import Path
 
-from jetp.ledger_headers import (
+from utils import get_logger
+
+from jetp._ledger_headers import (
     DDL_PATH,
     LEDGER_DIR,
     header_errors,
@@ -37,6 +39,8 @@ from jetp.ledger_headers import (
     read_csv,
     read_table,
 )
+
+log = get_logger('jetp.build_ledger')
 
 CONSTRAINT_REASONS = (
     ('UNIQUE constraint failed', 'unique'),
@@ -177,12 +181,12 @@ def main(argv=None):
     args = parser.parse_args(argv)
     errors = build(args.ledger_dir, None if args.check else args.output)
     for error in errors:
-        print(error, file=sys.stderr)
+        log.error('%s', error)
     if errors:
-        print(f'jetp ledger: {len(errors)} failure(s) in {args.ledger_dir}', file=sys.stderr)
+        log.error('jetp ledger: %d failure(s) in %s', len(errors), args.ledger_dir)
         return 1
-    print(f'jetp ledger: valid ({args.ledger_dir})'
-          + ('' if args.check else f', written to {args.output}'))
+    log.info('jetp ledger: valid (%s)%s', args.ledger_dir,
+             '' if args.check else f', written to {args.output}')
     return 0
 
 

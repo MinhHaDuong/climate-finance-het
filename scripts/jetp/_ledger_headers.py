@@ -10,18 +10,14 @@ tables under ``data/jetp/ontology/``, and a table too large for the
 pre-commit file ceiling chunked by country and year into
 ``<table>/<CODE>-<year>.csv``, which stays one table.
 
-Usage::
-
-    python scripts/jetp/ledger_headers.py --table lines        # print a header
-    python scripts/jetp/ledger_headers.py --check [--ledger-dir DIR]
+A library: ``build_ledger.py`` is its command line, and a writer of ledger
+rows calls ``write_table`` so its file carries the generated header.
 """
 
-import argparse
 import csv
 import io
 import re
 import sqlite3
-import sys
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -260,26 +256,3 @@ def write_table(ledger_dir, table, rows, ceiling=None, schema=None):
     single.unlink(missing_ok=True)
     return written
 
-
-def main(argv=None):
-    parser = argparse.ArgumentParser(description=__doc__.split('\n\n')[0])
-    mode = parser.add_mutually_exclusive_group(required=True)
-    mode.add_argument('--table', help='print the generated CSV header of a table')
-    mode.add_argument('--check', action='store_true',
-                      help='check the header of every ledger CSV present')
-    parser.add_argument('--ledger-dir', type=Path, default=LEDGER_DIR)
-    args = parser.parse_args(argv)
-    schema = load_schema()
-    if args.table:
-        if args.table not in schema.tables:
-            parser.error(f'unknown table {args.table!r}')
-        sys.stdout.write(_render(schema.header(args.table), []))
-        return 0
-    errors = check_headers(args.ledger_dir, schema)
-    for error in errors:
-        print(error, file=sys.stderr)
-    return 1 if errors else 0
-
-
-if __name__ == '__main__':
-    sys.exit(main())

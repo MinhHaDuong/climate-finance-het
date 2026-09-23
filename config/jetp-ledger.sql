@@ -2,10 +2,10 @@
 --
 -- Contract: docs/jetp-ledger-storage.md, sections 1 and 3 (ticket 0871).
 -- CSV in git is the system of record; this file is its schema. CSV headers
--- are generated from it (scripts/jetp/ledger_headers.py) and, at build time,
+-- are generated from it (scripts/jetp/_ledger_headers.py) and, at build time,
 -- the CSVs load into a SQLite file under data/derived/jetp/ where the keys,
 -- foreign keys and checks below act as the validator
--- (scripts/jetp/ledger_build.py).
+-- (scripts/jetp/build_ledger.py).
 --
 -- Conventions the tooling reads:
 --   * A table named foo_bar is stored as data/jetp/foo-bar.csv, or chunked as

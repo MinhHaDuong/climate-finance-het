@@ -13,7 +13,8 @@ import json
 from pathlib import Path
 
 import pytest
-from jetp import ledger_build, ledger_headers
+from jetp import _ledger_headers as ledger_headers
+from jetp import build_ledger as ledger_build
 
 ROOT = Path(__file__).resolve().parents[1]
 SHA_A = 'a' * 64
@@ -190,12 +191,21 @@ def test_row_order_does_not_change_the_database(tmp_path):
     assert (tmp_path / 'a.sqlite').read_bytes() == (tmp_path / 'b.sqlite').read_bytes()
 
 
-def test_cli_exits_nonzero_on_a_broken_ledger(tmp_path, capsys):
+def test_cli_exits_nonzero_on_a_broken_ledger(tmp_path, monkeypatch):
+    logged = []
+
+    class Recorder:
+        def error(self, fmt, *args):
+            logged.append(fmt % args)
+
+        info = error
+
+    monkeypatch.setattr(ledger_build, 'log', Recorder())
     tables = _valid_tables()
     _break_foreign_key(tables)
     _write(tmp_path / 'ledger', tables)
     assert ledger_build.main(['--ledger-dir', str(tmp_path / 'ledger'), '--check']) == 1
-    assert 'foreign_key:' in capsys.readouterr().err
+    assert any(line.startswith('foreign_key:') for line in logged), logged
 
 
 def test_empty_ledger_builds(tmp_path):
