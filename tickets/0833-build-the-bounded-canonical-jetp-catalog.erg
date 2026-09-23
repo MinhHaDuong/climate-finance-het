@@ -4,7 +4,6 @@ Created: 2026-09-17
 Author: HDMX-coding-agent
 Blocked-by: 0873
 Blocked-by: 0875
-Blocked-by: 0880
 
 --- log ---
 2026-09-17T08:48Z HDMX-coding-agent created
@@ -14,6 +13,7 @@ Blocked-by: 0880
 2026-09-17T20:05Z HDMX-coding-agent note M1a ZAF: ZAF.csv porte 21 colonnes raw_* de plus (registre JET complet); source_row_id, ordre et comptes inchanges; rejouer les tests M1a (ticket 0837)
 2026-09-23T06:47Z HDMX-coding-agent note restated on the ontology v2 contract at the author's request (2026-09-23): M1b is an acceptance milestone on top of 0870 (D4 over the four M1a documents, candidates counted, O v1 frozen); possible_matches become candidate rows; Blocked-by 0873, 0875, 0880
 2026-09-23T10:30Z HDMX-coding-agent note train review (2026-09-23 session): tier 2 is run once, by 0875; M1b reviews its candidates, it does not rerun matching
+2026-09-23T10:26Z HDMX-coding-agent note blocker 0880 closed — Blocked-by removed.
 --- body ---
 ## Context
 
