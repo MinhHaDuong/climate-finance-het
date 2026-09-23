@@ -263,8 +263,9 @@ const documentHref = (entry, page) =>
   entry.local_path ? entry.local_path + (page ? "#page=" + page : "") : null;
 /* Hand-written port of scripts/jetp/_m1a_document_links.py. The two are kept in
  * step by tests/test_jetp_observatory_inventories.py, never generated from one
- * another. Only the Viet Nam locators publish a PDF page, and they publish
- * three numbers — PDF page, printed page, ordinal — so the pattern is anchored
+ * another. The Viet Nam and Senegal locators publish a PDF page (Senegal's
+ * since ticket 0861), and Viet Nam's publish three numbers — PDF page, printed
+ * page, ordinal — so the pattern is anchored
  * on its own label rather than on "the first number in the string". [0-9]
  * rather than \d, which is ASCII-only here and every Unicode decimal in
  * Python: the two would read an OCR'd fullwidth digit differently. */

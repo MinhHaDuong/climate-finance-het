@@ -262,7 +262,24 @@ def _require_input(
     return path
 
 
+# A plan-project locator names the page printed on the source, ``p. 13``.
+# Where the layer declares how that printed page maps onto the archived file,
+# the locator also gets the ``PDF page N`` form ``_m1a_document_links`` reads
+# (ticket 0861); a layer that declares nothing keeps its locator as extracted.
+_PRINTED_PAGE = re.compile(r"\bp\. ([0-9]+)\b")
+
+
+def _with_pdf_page(locator: str, offset: object) -> str:
+    if offset is None:
+        return locator
+    match = _PRINTED_PAGE.search(locator)
+    if not match:
+        raise ValueError(f"locator names no printed page to anchor: {locator!r}")
+    return f"{locator}; PDF page {int(match.group(1)) + int(offset)}"
+
+
 def _plan_rows(rows: Sequence[Mapping[str, str]], specification: Mapping[str, object]) -> list[dict[str, object]]:
+    offset = specification.get("printed_to_pdf_page_offset")
     selected = [
         row for row in rows
         if row["country"] == specification["country"]
@@ -275,7 +292,7 @@ def _plan_rows(rows: Sequence[Mapping[str, str]], specification: Mapping[str, ob
             "record_type": specification["record_type"],
             "reported_status": row["priority_tier"] or "unknown",
             "identity_status": "named" if row["project_name"] else "unknown",
-            "evidence_locator": row["locator"],
+            "evidence_locator": _with_pdf_page(row["locator"], offset),
             "source_fields": dict(row),
         }
         for row in selected

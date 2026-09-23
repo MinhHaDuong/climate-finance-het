@@ -6,9 +6,11 @@ import csv
 import json
 from pathlib import Path
 
+import pytest
 from jetp.build_m1a_inventories import (
     FIELDS,
     FrozenLayer,
+    _plan_rows,
     build_existing_layers,
     write_inventories,
 )
@@ -242,3 +244,21 @@ def test_csv_width_is_per_country_and_excluded_rows_reach_the_manifest(
     for country in ("IDN", "VNM", "SEN"):
         assert manifest["countries"][country]["sublayers"][0]["excluded_source_rows"] == []
     assert json.loads((tmp_path / "manifest.json").read_text()) == manifest
+
+
+def test_a_declared_page_offset_adds_the_pdf_page_and_an_undeclared_one_adds_nothing() -> None:
+    # Ticket 0861: the offset is arithmetic on the printed page, so a nonzero
+    # fixture offset shows it is applied rather than the printed page copied.
+    rows = [{"country": "SEN", "source_id": "s", "plan_project_id": "r1",
+             "project_name": "A", "priority_tier": "", "locator": "Annex 2, p. 13, row 1"}]
+    spec = {"country": "SEN", "source_id": "s", "record_type": "plan_submission_row"}
+
+    assert _plan_rows(rows, spec)[0]["evidence_locator"] == "Annex 2, p. 13, row 1"
+    anchored = _plan_rows(rows, spec | {"printed_to_pdf_page_offset": 16})[0]
+    assert anchored["evidence_locator"] == "Annex 2, p. 13, row 1; PDF page 29"
+    # The source row itself keeps the locator as extracted.
+    assert anchored["source_fields"]["locator"] == "Annex 2, p. 13, row 1"
+
+    unpaged = [dict(rows[0], locator="Appendix 1, table 4, printed row 48")]
+    with pytest.raises(ValueError, match="no printed page"):
+        _plan_rows(unpaged, spec | {"printed_to_pdf_page_offset": 0})
