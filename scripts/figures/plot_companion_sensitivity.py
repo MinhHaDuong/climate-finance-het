@@ -14,6 +14,7 @@ import sys
 
 import matplotlib.pyplot as plt
 import pandas as pd
+from matplotlib.ticker import MaxNLocator
 from plot_style import apply_style
 from script_io_args import parse_io_args, validate_io
 from utils import get_logger, save_figure
@@ -78,6 +79,26 @@ def main():
             ax = axes[row_idx][col_idx]
             cell = df[(df["gap"] == gap) & (df["window"] == str(window))]
 
+            ax.set_title(f"w={window}, g={gap}", fontsize=9)
+            if col_idx == 0:
+                ax.set_ylabel("Z-score", fontsize=8)
+            if row_idx == n_rows - 1:
+                ax.set_xlabel("Year", fontsize=8)
+
+            if cell.empty:
+                ax.text(
+                    0.5,
+                    0.5,
+                    "No eligible years",
+                    ha="center",
+                    va="center",
+                    transform=ax.transAxes,
+                    fontsize=8,
+                )
+                ax.set_xticks([])
+                ax.set_yticks([])
+                continue
+
             for dim in dims:
                 dim_data = cell[cell["dim"] == dim].sort_values("year")
                 if dim_data.empty:
@@ -99,13 +120,8 @@ def main():
 
             ax.axhline(0, color="#999999", linewidth=0.6, linestyle="--")
             ax.axhline(2, color="#cccccc", linewidth=0.5, linestyle=":")
-            ax.set_title(f"w={window}, g={gap}", fontsize=9)
+            ax.xaxis.set_major_locator(MaxNLocator(nbins=4, integer=True))
             ax.tick_params(labelsize=7)
-
-            if col_idx == 0:
-                ax.set_ylabel("Z-score", fontsize=8)
-            if row_idx == n_rows - 1:
-                ax.set_xlabel("Year", fontsize=8)
 
     # Place legend in top-right cell
     ax_legend = axes[0][n_cols - 1]
