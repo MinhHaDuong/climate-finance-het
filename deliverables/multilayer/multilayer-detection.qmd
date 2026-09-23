@@ -273,4 +273,4 @@ The grid records parameter dependence rather than confirming a stable profile, b
 
 Two limits bound what this appendix supports. The gap and dimension axes are not anchored to a validated zone, so the sweep licenses no claim about their effect on localisation --- with no localised break in the results, they have nothing to displace. And the grid covers S2 only; the L1 and G9 layers that vote in the agreement rule are not swept here.
 
-![Sensitivity sweep: 4×4 grid of window × gap, 5 PCA dims per cell. Curves are S2 energy distance standardised across the years of each cell.](../_shared/figures/fig_companion_sensitivity.png){#fig-companion-sensitivity}
+![Sensitivity sweep: 4×4 grid of window × gap, with up to 5 PCA dims per cell. Curves are S2 energy distance standardised across the years of each cell. Cells marked “No eligible years” have no observations meeting the window and gap constraints.](../_shared/figures/fig_companion_sensitivity.png){#fig-companion-sensitivity}
