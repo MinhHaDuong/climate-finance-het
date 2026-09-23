@@ -296,10 +296,11 @@ def write_ledger(tables, ledger_dir=LEDGER_DIR):
 
 def main(argv: Sequence[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__.split('\n\n')[0])
-    parser.add_argument('--ledger-dir', type=Path, default=LEDGER_DIR)
+    parser.add_argument('--output-dir', type=Path, default=LEDGER_DIR,
+                        help='ledger directory the tables are written under')
     parser.add_argument('--config', type=Path)
     args = parser.parse_args(argv)
-    write_ledger(ingest(ROOT, args.config), args.ledger_dir)
+    write_ledger(ingest(ROOT, args.config), args.output_dir)
 
 
 if __name__ == '__main__':
