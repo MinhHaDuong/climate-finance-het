@@ -1,6 +1,6 @@
 # State
 
-Last updated: 2026-09-23T18:58Z
+Last updated: 2026-09-23T20:02Z
 
 ## Current goal
 
@@ -20,16 +20,23 @@ next wave ready: 0874, 0887, 0888** (parallel). Then 0875 (tier 2 by LLM,
 low confidence to `decisions.md`), 0876→0877→0889→0890, 0884, 0879→0885/0886,
 0878, 0833 (M1b). Codex takes the non-JETP queue.
 
+## Process pilot
+
+Since #1469, PRs verify in proportion to what can break (AGENTS.md § Verify)
+instead of the full /gaze loop; each PR states its checks. Review after a week
+or two: time to merge, follow-up fix PRs, `/lair` step 9 failures. Then decide
+/gaze's fate in the harness.
+
 ## Status
-<!-- generated 2026-09-23T18:58Z · as of 35de9325 -->
+<!-- generated 2026-09-23T20:02Z · as of e35bd2f0 -->
 
 **Tickets:** 56 ready · 64 blocked · 11 awaiting author — `erg ready tickets/` for full list
   next: 0272 Extract shared derive_companion_path() helper f… · 0273 load_cluster_labels() ignores --input, reads cl…
 **In flight:** no open PRs
 **Recent (first-parent):**
-  35de9325 Merge pull request #1467 from MinhHaDuong/t0873-lines-m1a
-  de71a3d7 Merge pull request #1466 from MinhHaDuong/t0872-joint-publishers
-  0618c984 fix: prevent NaN row text leakage (0550) (#1465)
+  e35bd2f0 Merge pull request #1470 from MinhHaDuong/t-workflow-trim
+  7bc3f995 Merge pull request #1469 from MinhHaDuong/explore-gaze-overuse
+  1be40a3b Merge pull request #1468 from MinhHaDuong/state-2026-09-23
 
 ## Corpus and submissions
 
