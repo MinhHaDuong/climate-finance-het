@@ -3,7 +3,6 @@
 import os
 import sys
 
-import dcor
 import numpy as np
 import pytest
 
@@ -26,31 +25,43 @@ def _tolerance(dtype):
     return 2e-5 if dtype is np.float32 else 1e-10
 
 
+def _original_statistic(tmp_path, monkeypatch):
+    # dcor's Numba cache needs a writable locator in the read-only shared env.
+    monkeypatch.setenv("NUMBA_CACHE_DIR", str(tmp_path))
+    import dcor
+
+    return dcor.energy_distance
+
+
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
-def test_cached_energy_bootstrap_matches_original_replicates(dtype):
+def test_cached_energy_bootstrap_matches_original_replicates(dtype, tmp_path, monkeypatch):
     from _energy_resample import bootstrap_energy
 
     x, y = _samples(dtype)
-    expected = bootstrap_one_window(x, y, dcor.energy_distance, 12, 42)
+    expected = bootstrap_one_window(x, y, _original_statistic(tmp_path, monkeypatch), 12, 42)
     actual = bootstrap_energy(x, y, 12, 42)
     np.testing.assert_allclose(actual, expected, rtol=_tolerance(dtype), atol=_tolerance(dtype))
 
 
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
-def test_cached_energy_permutations_match_original_rng_sequence(dtype):
+def test_cached_energy_permutations_match_original_rng_sequence(dtype, tmp_path, monkeypatch):
     from _energy_resample import permutation_energy
 
     x, y = _samples(dtype)
-    expected = permutation_test(x, y, dcor.energy_distance, 12, np.random.RandomState(42))
+    expected = permutation_test(
+        x, y, _original_statistic(tmp_path, monkeypatch), 12, np.random.RandomState(42)
+    )
     actual = permutation_energy(x, y, 12, np.random.RandomState(42))
     np.testing.assert_allclose(actual, expected, rtol=_tolerance(dtype), atol=_tolerance(dtype))
 
 
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
-def test_cached_energy_subsample_matches_original_replicates(dtype):
+def test_cached_energy_subsample_matches_original_replicates(dtype, tmp_path, monkeypatch):
     from _energy_resample import subsample_energy
 
     x, y = _samples(dtype)
-    expected = subsample_one_window(x, y, dcor.energy_distance, 12, 42, 2008, 3)
+    expected = subsample_one_window(
+        x, y, _original_statistic(tmp_path, monkeypatch), 12, 42, 2008, 3
+    )
     actual = subsample_energy(x, y, 12, 42, 2008, 3)
     np.testing.assert_allclose(actual, expected, rtol=_tolerance(dtype), atol=_tolerance(dtype))
