@@ -81,6 +81,7 @@
       "input_path": "data/jetp/plan-projects.csv",
       "input_sha256": "723b24f1e67da7420122bede26a997b002d2ff9683f3e7623da8c74f372ba5ca",
       "source_sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
+      "printed_to_pdf_page_offset": 0,
       "expected_rows": 38,
       "unavailable_source_rows": 0
     },
@@ -95,6 +96,7 @@
       "input_path": "data/jetp/plan-projects.csv",
       "input_sha256": "723b24f1e67da7420122bede26a997b002d2ff9683f3e7623da8c74f372ba5ca",
       "source_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
+      "printed_to_pdf_page_offset": 0,
       "expected_rows": 11,
       "unavailable_source_rows": 0
     }

@@ -322,3 +322,29 @@ def test_a_fact_page_lists_the_observations_view_rows_addressed_to_it() -> None:
         row.get("event_id") or row.get("implementation_event_id") or row["link_id"]
         for row in served_rows
     ]
+
+
+def test_a_senegal_annex_row_opens_the_archived_annexes_at_its_own_page() -> None:
+    # Ticket 0861: the Senegal annexes print their page numbers at the foot
+    # of each page, and on the archived file (dcd4fd92…) printed page N is
+    # PDF page N — Annex 2, printed pp. 13-15, sits on PDF pages 13-15; the
+    # main plan's quick-win table, printed p. 33, on PDF page 33 of 97c36b24….
+    # So row 1 of Annex 2 opens the archived annexes at page 13.
+    rows = positions("SEN")
+    assert rows[0]["source_row_id"] == "sen-annex-received-01"
+    annexes = entry_of("sen-investment-plan-annexes-mirror:1")
+
+    rendered = render("inventory/SEN?row=1")
+
+    results = rendered["elements"]["inventory-results"]["innerHTML"]
+    hrefs = [href for href, _ in anchors(results) if href.startswith(annexes["local_path"])]
+    assert hrefs == [annexes["local_path"] + "#page=13"], hrefs
+
+
+def test_every_senegal_row_names_a_pdf_page_and_no_other_non_rmp_country_does() -> None:
+    # Ticket 0861, verification 1: the 49 Senegal rows carry a PDF page; the
+    # Indonesian and South African rows carry none — their locators name a
+    # table row or an HTML snapshot, and no page is invented for them.
+    sen = positions("SEN")
+    assert len(sen) == 49 and all(r["pdf_page"] for r in sen)
+    assert not any(r["pdf_page"] for code in ("IDN", "ZAF") for r in positions(code))
