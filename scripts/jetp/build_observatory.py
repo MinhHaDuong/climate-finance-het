@@ -308,9 +308,9 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     config = yaml.safe_load((ROOT / 'config/jetp_observatory.yaml').read_text())
-    tables = read_inputs(ROOT)
+    # Only the overview and the country views read the legacy registries.
     if args.view == 'overview':
-        result = overview(ROOT, config, tables)
+        result = overview(ROOT, config, read_inputs(ROOT))
     elif args.view == 'comparison':
         result = comparison_data(ROOT, config)
     elif args.view == 'documents':
@@ -318,7 +318,7 @@ def main():
     elif args.view == 'editions':
         result = edition_history(ROOT)
     else:
-        result = country_data(ROOT, args.view, config, tables)
+        result = country_data(ROOT, args.view, config, read_inputs(ROOT))
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, ensure_ascii=False, separators=(',', ':')) + '\n')
 

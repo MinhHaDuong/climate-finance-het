@@ -434,17 +434,20 @@ def reconstruct(sources, manifest, languages=None, joint_publications=None,
 
 def snapshot_text(path):
     """The readable text of a snapshot, or '' when it has no text layer."""
-    data = Path(path).read_bytes()
-    if data[:5] == b'%PDF-':
+    # Sniff the format from the head: pdftotext reads a PDF itself, so its
+    # bytes, the bulk of the store, are never loaded here.
+    with Path(path).open('rb') as handle:
+        head = handle.read(5000)
+    if head[:5] == b'%PDF-':
         result = subprocess.run(['pdftotext', '-l', '5', str(path), '-'],
                                 capture_output=True, timeout=120, check=False)
         text = result.stdout.decode('utf-8', 'ignore')
-    elif b'<html' in data[:5000].lower() or b'<!doctype' in data[:500].lower():
-        page = data.decode('utf-8', 'ignore')
+    elif b'<html' in head.lower() or b'<!doctype' in head[:500].lower():
+        page = Path(path).read_bytes().decode('utf-8', 'ignore')
         page = re.sub(r'(?is)<(script|style|noscript)\b.*?</\1>', ' ', page)
         text = html.unescape(re.sub(r'<[^>]+>', ' ', page))
-    elif data[:1] in (b'{', b'['):
-        text = data.decode('utf-8', 'ignore')
+    elif head[:1] in (b'{', b'['):
+        text = Path(path).read_bytes().decode('utf-8', 'ignore')
     else:
         return ''
     return re.sub(r'\s+', ' ', text).strip()

@@ -504,7 +504,7 @@ UNION ALL SELECT 'marker_coefficients', coefficient_row_id FROM marker_coefficie
 -- Every identifier a typed reference (kind, id) may point to. A publisher is
 -- a party that publishes at least one document.
 CREATE VIEW ledger_identities AS
-          SELECT 'publisher' AS kind, party_id AS id FROM document_publishers
+          SELECT DISTINCT 'publisher' AS kind, party_id AS id FROM document_publishers
 UNION ALL SELECT 'document', document_id FROM documents
 UNION ALL SELECT 'retrieval', retrieval_id FROM retrievals
 UNION ALL SELECT 'snapshot', sha256 FROM snapshots
