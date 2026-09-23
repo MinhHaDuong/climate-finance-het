@@ -480,6 +480,14 @@ def check_paper_trail(page, url):
     page.locator('[data-trail-link="toward-documents"]').click()
     page.wait_for_selector('.trail[data-trail-step="D2"]')
     assert page.locator('#panel-inventory').is_visible()
+    # A tab click moves the address, the trail and the navigation with it.
+    page.locator('#tab-observations').click()
+    page.wait_for_selector('.trail[data-trail-step="D3"]')
+    assert page.url.endswith('#inventory/VNM?tab=record'), page.url
+    assert page.locator('header nav a[aria-current="page"]').get_attribute('href') == '#evidence'
+    page.locator('#tab-inventory').click()
+    page.wait_for_selector('.trail[data-trail-step="D2"]')
+    assert page.url.endswith('#inventory/VNM'), page.url
     page.locator('[data-trail-link="toward-documents"]').click()
     page.wait_for_selector('.trail[data-trail-step="D1"]')
     assert page.locator('[data-trail-link="toward-documents"]').count() == 0

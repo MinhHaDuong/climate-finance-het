@@ -1016,6 +1016,14 @@ h1 .badge {
 .metric.published {
   border-left: 2px solid var(--ink);
 }
+.country-card .headline.published {
+  border-left: 2px solid var(--ink);
+  padding-left: 8px;
+}
+.card-bottom .computed {
+  border-left: 2px dashed var(--green);
+  padding-left: 8px;
+}
 .callout.published {
   border-left: 3px solid var(--ink);
 }

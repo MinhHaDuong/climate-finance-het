@@ -58,19 +58,22 @@ const TRAIL = [
     href: (code) => (code ? `#projects?country=${code}` : "#projects"),
   },
 ];
-function trail(step, code) {
+function trail(step, rawCode) {
+  // A code the site does not know is no code: the trail falls back to the
+  // whole site rather than carry an address fragment into an href.
+  const code = rawCode && overview.countries.some((c) => c.code === rawCode) ? rawCode : "";
   const i = TRAIL.findIndex((t) => t.step === step);
   const [before, after] = [TRAIL[i - 1], TRAIL[i + 1]];
   return `<nav class="trail" aria-label="Where this page sits on the paper trail" data-trail-step="${step}"><ol>${TRAIL.map(
     (t) =>
-      `<li><a href="${t.href(code)}"${t.step === step ? ' aria-current="step"' : ""}>${esc(t.label)}</a></li>`,
+      `<li><a href="${esc(t.href(code))}"${t.step === step ? ' aria-current="step"' : ""}>${esc(t.label)}</a></li>`,
   ).join("")}</ol><p class="trail-steps">${
     before
-      ? `<a href="${before.href(code)}" data-trail-link="toward-documents">← One step toward the documents: ${esc(before.label)}</a>`
+      ? `<a href="${esc(before.href(code))}" data-trail-link="toward-documents">← One step toward the documents: ${esc(before.label)}</a>`
       : "<span>The paper trail starts here.</span>"
   }${
     after
-      ? `<a href="${after.href(code)}" data-trail-link="toward-projects">One step toward the projects: ${esc(after.label)} →</a>`
+      ? `<a href="${esc(after.href(code))}" data-trail-link="toward-projects">One step toward the projects: ${esc(after.label)} →</a>`
       : "<span>The paper trail ends here.</span>"
   }</p></nav>`;
 }
@@ -183,7 +186,7 @@ function countryPage(code) {
     c = country(code);
   if (!d) return notFound();
   const refs = Object.keys(d.sources).length;
-  main.innerHTML = `<div class="page-head"><div class="breadcrumb"><a href="#countries">Funding</a> / ${esc(c.name)}</div><p class="eyebrow">${c.code} · Partnership announced ${date(c.signed_on)}</p><h1>${esc(c.name)}</h1><p class="lede">${esc(c.headline_detail)}</p>${countryTabs(code)}</div>${trail("D4", code)}<div class="callout published"><h3>${esc(c.headline)}</h3><p>${esc(c.stage_label)} at ${date(c.headline_date)} · ${according(c.headline_source_record)} · ${sourceLink(c.headline_source_record, "Read the document")}</p></div><div class="metrics">${computedMetric(c.named, "named projects", "this partnership's portfolio", `#projects?country=${code}`)}${computedMetric(c.undisclosed, "unpublished identities", "counted in the country's own disclosure")}${computedMetric(refs, "documents cited", "by this country's projects and headline", "#documents")}<div class="metric published"><strong>${esc(c.pledge_label)}</strong><span>Original political pledge</span><small>As announced ${date(c.signed_on)}</small></div></div><div class="split"><div><h2>Reading this portfolio</h2><div class="markdown">${markdown(d.editorial)}</div><div class="actions"><a class="button" href="#projects?country=${code}">Explore ${c.named} projects ↗</a><a class="text-link" href="#comparison?country=${code}">Historical reference →</a></div></div><div class="panel"><h3>Furthest financing milestone on the record</h3>${stageChart([c])}<p class="note" style="margin-top:20px"><span class="computed-tag">Counted by us</span> Each named project once, at the most advanced financing milestone on the record for it — not the milestone of every tranche. Programmes overlap, so project amounts are never added.</p><h3 style="margin-top:25px">Portfolio composition</h3>${technologyChart(d.projects)}<p class="note"><span class="computed-tag">Counted by us</span> Named projects by the theme or technology their documents give.</p></div></div>${code === "VNM" ? vietnamSideBySide(d) : ""}<section class="section" style="margin-top:35px"><div class="section-head"><h2>Inside the portfolio</h2><a class="text-link" href="#projects?country=${code}">View all →</a></div>${projectTable(d.projects.slice(0, 8))}<div class="downloads"><a class="button light" href="#inventory/${code}">Read the entries, row by row ↗</a><a class="button light" href="data/${code}.json" download>Download ${c.name} data ↓</a></div></section>`;
+  main.innerHTML = `<div class="page-head"><div class="breadcrumb"><a href="#countries">Funding</a> / ${esc(c.name)}</div><p class="eyebrow">${c.code} · Partnership announced ${date(c.signed_on)}</p><h1>${esc(c.name)}</h1><p class="lede">${esc(c.headline_detail)}</p>${countryTabs(code)}</div>${trail("D4", code)}<div class="callout published"><h3>${esc(c.headline)}</h3><p>${esc(c.stage_label)} at ${date(c.headline_date)} · ${according(c.headline_source_record)} · ${sourceLink(c.headline_source_record, "Read the document")}</p></div><div class="metrics">${computedMetric(c.named, "named projects", "this partnership's portfolio", `#projects?country=${code}`)}${computedMetric(c.undisclosed, "unpublished identities", "counted in the country's own disclosure, which lists none of them by name")}${computedMetric(refs, "documents cited", "by this country's projects and headline", "#documents")}<div class="metric published"><strong>${esc(c.pledge_label)}</strong><span>Original political pledge</span><small>As announced ${date(c.signed_on)}</small></div></div><div class="split"><div><h2>Reading this portfolio</h2><div class="markdown">${markdown(d.editorial)}</div><div class="actions"><a class="button" href="#projects?country=${code}">Explore ${c.named} projects ↗</a><a class="text-link" href="#comparison?country=${code}">Historical reference →</a></div></div><div class="panel"><h3>Furthest financing milestone on the record</h3>${stageChart([c])}<p class="note" style="margin-top:20px"><span class="computed-tag">Counted by us</span> Each named project once, at the most advanced financing milestone on the record for it — not the milestone of every tranche. Programmes overlap, so project amounts are never added.</p><h3 style="margin-top:25px">Portfolio composition</h3>${technologyChart(d.projects)}<p class="note"><span class="computed-tag">Counted by us</span> Named projects by the theme or technology their documents give.</p></div></div>${code === "VNM" ? vietnamSideBySide(d) : ""}<section class="section" style="margin-top:35px"><div class="section-head"><h2>Inside the portfolio</h2><a class="text-link" href="#projects?country=${code}">View all →</a></div>${projectTable(d.projects.slice(0, 8))}<div class="downloads"><a class="button light" href="#inventory/${code}">Read the entries, row by row ↗</a><a class="button light" href="data/${code}.json" download>Download ${c.name} data ↓</a></div></section>`;
 }
 /* Rendering only: both figures already exist — the RMP row count in the M1a
  * manifest and the portfolio record count in the country view — and no field
@@ -940,9 +943,15 @@ function renderInventory(code, rows, observations, focus, tab) {
     { key: "inventory", mount: table.mount },
     { key: "observations", mount: observationsPanel.mount },
   ]);
-  [["inventory", "D2"], ["observations", "D3"]].forEach(([key, step]) =>
+  // The address, the trail, the navigation and the title follow the visible
+  // tab, so a reader who copies the address shares the tab they are reading.
+  [["inventory", "D2", ""], ["observations", "D3", "record"]].forEach(([key, step, tabParam]) =>
     document.getElementById("tab-" + key).addEventListener("click", () => {
       document.getElementById("trail").innerHTML = trail(step, code);
+      const params = new URLSearchParams(tabParam ? { tab: tabParam } : {});
+      window.history?.replaceState(null, "", `#inventory/${code}${tabParam ? "?" + params : ""}`);
+      markNav(navTarget("inventory", params));
+      document.title = pageTitle("inventory", code, params);
     }),
   );
 }
@@ -1342,18 +1351,32 @@ const TITLES = {
   glossary: "Glossary",
   methods: "How we did this",
 };
-function render() {
-  const raw = location.hash.slice(1) || "overview";
-  const [path, query] = raw.split("?"),
-    params = new URLSearchParams(query || "");
-  const [page, id] = path.split("/");
-  const target = navTarget(page, params);
-  document.querySelectorAll("nav a").forEach((a) => {
+/* The header's links only: the trail strip is a nav too, and its current
+ * step is marked by aria-current="step", not "page". */
+function markNav(target) {
+  document.querySelectorAll("header nav a").forEach((a) => {
     const active = a.hash === "#" + target;
     a.classList.toggle("active", active);
     a.toggleAttribute("aria-current", active);
     if (active) a.setAttribute("aria-current", "page");
   });
+}
+function pageTitle(page, id, params) {
+  const name = country(id)?.name || id;
+  return (
+    (page === "country"
+      ? name || "Country"
+      : page === "inventory"
+        ? `${name}: ${params.get("tab") === "record" ? "on the record" : "entries"}`
+        : TITLES[page] || TITLES.methods) + " · JETP Observatory"
+  );
+}
+function render() {
+  const raw = location.hash.slice(1) || "overview";
+  const [path, query] = raw.split("?"),
+    params = new URLSearchParams(query || "");
+  const [page, id] = path.split("/");
+  markNav(navTarget(page, params));
   if (page === "overview") overviewPage();
   else if (page === "countries") countriesPage();
   else if (page === "country") countryPage(id);
@@ -1369,12 +1392,7 @@ function render() {
   else if (page === "numbers") numbersPage();
   else if (page === "glossary") glossaryPage();
   else methodsPage();
-  document.title =
-    (page === "country"
-      ? country(id)?.name || "Country"
-      : page === "inventory"
-        ? (country(id)?.name || id) + " entries"
-        : TITLES[page] || TITLES.methods) + " · JETP Observatory";
+  document.title = pageTitle(page, id, params);
   window.scrollTo(0, 0);
 }
 const load = async (file) => {

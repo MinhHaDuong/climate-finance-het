@@ -399,9 +399,11 @@ def data_strings():
 
     for path in (SITE / "data").rglob("*.json"):
         walk(json.loads(path.read_text()))
-    # A bare word ("evidence", a key of reviewed-evidence.json) is not a
-    # proper name: excusing it would excuse the page copy's own use of it.
-    return sorted((s for s in found if FORBIDDEN.search(s) and not re.fullmatch(r"[A-Za-z]+", s)),
+    # A bare word ("evidence", a key of reviewed-evidence.json) or a short
+    # phrase is not a proper name: excusing it would excuse the page copy's
+    # own use of it. What is excused is a title, a note, an identifier.
+    return sorted((s for s in found if FORBIDDEN.search(s) and len(s) >= 12
+                   and not re.fullmatch(r"[A-Za-z]+", s)),
                   key=len, reverse=True)
 
 
@@ -436,6 +438,16 @@ def test_a_page_of_the_paper_trail_shows_its_step_and_links_to_its_neighbours() 
     assert links == {"toward-documents": "#documents",
                      "toward-projects": "#inventory/VNM?tab=record"}, links
     assert re.search(r'aria-current="step">Entries<', trail.group(0))
+
+
+def test_a_country_read_from_the_address_cannot_inject_markup_into_the_trail() -> None:
+    # PR #1459 review: #projects?country=… reached trail()'s href unescaped.
+    payload = '"><img src=x onerror=alert(1)>'
+    main = render("projects?country=" + payload)["main"]
+    trail = re.search(r'<nav class="trail".*?</nav>', main, re.DOTALL).group(0)
+    assert "<img" not in trail, trail
+    # An unknown country is no country: the trail falls back to the whole site.
+    assert 'href="#entries"' in trail and 'href="#evidence"' in trail, trail
 
 
 def test_an_item_on_the_record_reads_according_to_its_publisher_with_the_date() -> None:
