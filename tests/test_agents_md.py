@@ -1,7 +1,8 @@
 """AGENTS.md size guard.
 
-AGENTS.md is loaded into every Claude Code conversation via CLAUDE.md.
-Anthropic recommends keeping CLAUDE.md under 200 lines.
+AGENTS.md is loaded natively into every Claude Code conversation (the repo
+has no CLAUDE.md). Anthropic recommends keeping instruction files under 200
+lines.
 
 When the harness is extracted (PR #224), this test travels with it.
 """

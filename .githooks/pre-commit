@@ -18,9 +18,10 @@ case "$branch" in
         ;;
 esac
 
-# 2. CLAUDE.md is locked
-if git diff --cached --name-only | grep -qx 'CLAUDE.md'; then
-    echo "ERROR: CLAUDE.md is protected. Edit AGENTS.md instead." >&2
+# 2. No CLAUDE.md: Claude Code (2.1.277+) loads AGENTS.md natively, plus the
+#    parent ~/CNRS/AGENTS.md, only when no CLAUDE.md exists (root or .claude/).
+if git diff --cached --name-only --diff-filter=d | grep -qxE '(\.claude/)?CLAUDE\.md'; then
+    echo "ERROR: CLAUDE.md would disable the native AGENTS.md load. Edit AGENTS.md instead." >&2
     exit 1
 fi
 
