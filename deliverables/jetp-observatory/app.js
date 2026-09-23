@@ -1326,8 +1326,8 @@ function whosWhoPage(params) {
  * new list can never drop its terms from the page. */
 const GLOSSARY_THEMES = [
   ["What we track", {
-    classes: ["agreement", "asset", "country", "party", "perimeter", "project"],
-    lists: ["authority_category", "country", "project_classification", "role"],
+    classes: ["agreement", "asset", "country", "party", "party_name", "perimeter", "project"],
+    lists: ["authority_category", "country", "form_type", "project_classification", "role"],
   }],
   ["How documents are read", {
     classes: ["comparator_record", "crosswalk", "document", "external_identifier", "line",
