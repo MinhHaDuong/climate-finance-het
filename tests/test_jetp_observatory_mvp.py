@@ -248,7 +248,8 @@ def test_edition_history_distinguishes_canonical_sources_and_staged_depth():
     renderer = (root / 'deliverables/jetp-observatory/app.js').read_text()
     evidence = json.loads((root / 'deliverables/jetp-observatory/data/reviewed-evidence.json').read_text())
 
-    assert 'evidenceDepthSummary' in renderer
+    # The staged depth is a row per country in The tallies (ticket 0881).
+    assert 'structured_atomic_observations?.by_country' in renderer
     assert evidence['evidence_depth'] == {
         'reviewed_canonical_records': 3,
         'canonical_named_records': 383,
@@ -261,7 +262,7 @@ def test_edition_history_distinguishes_canonical_sources_and_staged_depth():
         },
     }
     # Worded without the retired terms since ticket 0881.
-    assert 'this snapshot is not published on these pages' in renderer
+    assert 'an analysis snapshot of the same documents, not published on these pages' in renderer
     assert 'They are not a common total.' in renderer
 
 

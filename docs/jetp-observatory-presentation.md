@@ -27,11 +27,11 @@ than suspicion, because the readers are researchers as well as journalists.
 |---|---|---|
 | O | What each word, status, measure and relation means, where the definition comes from, and when it changed | **Glossary** |
 | D | The documented route from a figure back to the page that supports it, walked in both directions | **The paper trail**: **Documents** → **Entries** → **On the record** → **Projects**, **Funding**, **Who's who** |
-| E | Counts and totals computed by the ledger, each with its unit, its perimeter and a link to what it was computed from | **By the numbers** |
+| E | Counts and totals computed by the ledger, each with its unit, its perimeter and a link to what it was computed from | **The tallies** |
 | M | Nothing | none |
 | (methods) | What was done, what was not, and which tables are not served | **How we did this** |
 
-**Navigation order.** The paper trail · By the numbers · Glossary · How we
+**Navigation order.** The paper trail · The tallies · Glossary · How we
 did this. The Glossary sits last, beside How we did this: a reader consults
 it, and does not start from it (author's cold read of ticket 0881,
 2026-09-23).
@@ -66,14 +66,16 @@ goes unmarked.
 
 **Addresses match labels.** Each page's address is its label's slug:
 `#documents`, `#entries`, `#on-the-record`, `#projects`, `#funding`,
-`#whos-who`, `#by-the-numbers`, `#glossary`, `#how-we-did-this`, and
+`#whos-who`, `#the-tallies`, `#glossary`, `#how-we-did-this`, and
 `#historical-comparison`, `#release-history` for the two pages reached from
-By the numbers and How we did this. A country's page nests under its step
+The tallies and How we did this. A country's page nests under its step
 (`#funding/<CODE>`, `#entries/<CODE>`, `#on-the-record/<CODE>`); a project is
 `#project/<project_id>`. The addresses of earlier previews (`#countries`,
-`#country/<CODE>`, `#evidence`, `#numbers`, `#comparison`, `#methods`,
-`#editions`, `#inventory/<CODE>` with its `?row=` and `?tab=record`) forward
-in place to the new ones; the pages emit only the new names (same decision).
+`#country/<CODE>`, `#evidence`, `#numbers`, `#by-the-numbers`, `#comparison`,
+`#methods`, `#editions`, `#inventory/<CODE>` with its `?row=` and
+`?tab=record`) forward in place to the new ones; the pages emit only the new
+names (same decision). The section first called By the numbers is **The
+tallies**, at `#the-tallies` (author's cold read, third batch, as revised).
 The full table is in the observatory's
 [README](../deliverables/jetp-observatory/README.md).
 
@@ -93,10 +95,16 @@ The full table is in the observatory's
   page sits on the trail and lets the reader step one level up or down: from
   a project to what is on the record about it, to the entries, to the page
   of the document, and back.
-- **By the numbers.** A number the ledger computes is visibly set apart from
+- **The tallies.** A number the ledger computes is visibly set apart from
   a number a publisher printed ("Our calculation" against "As published"):
   it states its unit and perimeter and opens the items on the record it was
-  computed from. Accounts, when they exist, appear only here.
+  computed from. Accounts, when they exist, appear only here. The page is
+  one table, not a second landing page: a row per computed figure — what it
+  is, value, unit, what it covers, as of, and a "computed from" link —
+  grouped under a subheading per country and never summed across countries.
+  The charts follow as numbered, captioned figures ("Figure 1. …"), each
+  marked "Our calculation". The landing page keeps its stat grid, under the
+  eyebrow "The tallies".
 - **No models.** The observatory tests no causal explanation, and its
   navigation has no place for one. How we did this says in plain words what
   the observatory does not do.

@@ -358,7 +358,7 @@ def test_every_senegal_row_names_a_pdf_page_and_no_other_non_rmp_country_does() 
 # Author's cold read, 2026-09-23: the header holds the four sections as tabs,
 # the Glossary last beside How we did this; the paper trail's steps sit in a
 # second bar, the last three as parallel siblings.
-NAVIGATION = ["The paper trail", "By the numbers", "Glossary", "How we did this"]
+NAVIGATION = ["The paper trail", "The tallies", "Glossary", "How we did this"]
 STEPS = ["Documents", "Entries", "On the record", "Projects", "Funding", "Who's who"]
 TRAIL_ROUTES = ("documents", "entries", "entries/VNM", "on-the-record", "on-the-record/ZAF",
                 "projects", "project/" + BAC_AI, "funding", "funding/VNM", "whos-who")
@@ -373,7 +373,7 @@ FORBIDDEN = re.compile(
     re.IGNORECASE,
 )
 ROUTES = ("overview", "the-paper-trail", "glossary", "documents", "entries", "on-the-record", "projects",
-          "funding", "whos-who", "by-the-numbers", "how-we-did-this", "release-history",
+          "funding", "whos-who", "the-tallies", "how-we-did-this", "release-history",
           "historical-comparison", *(f"funding/{code}" for code in COUNTRIES),
           "entries/VNM", "on-the-record/ZAF", "project/" + BAC_AI)
 
@@ -448,7 +448,9 @@ FORWARDS = {
     "countries": "funding",
     "country/VNM": "funding/VNM",
     "evidence": "on-the-record",
-    "numbers": "by-the-numbers",
+    "numbers": "the-tallies",
+    "by-the-numbers": "the-tallies",
+    "counts-and-totals": "the-tallies",
     "comparison": "historical-comparison",
     "comparison?country=IDN": "historical-comparison?country=IDN",
     "methods": "how-we-did-this",
@@ -457,8 +459,70 @@ FORWARDS = {
     "inventory/VNM?row=22": "entries/VNM?row=22",
     "inventory/ZAF?tab=record": "on-the-record/ZAF",
 }
-OLD_ADDRESS = re.compile(r'href="#(countries|country/|evidence|numbers|comparison|methods'
+OLD_ADDRESS = re.compile(r'href="#(countries|country/|evidence|numbers|by-the-numbers'
+                         r'|counts-and-totals|comparison|methods'
                          r'|editions|inventory/)')
+
+
+# Author's cold read, third batch (2026-09-23), as revised: "The tallies" is
+# one table, a row per computed figure, grouped by country, then two
+# numbered figures; it no longer repeats the landing page's stat grid.
+TALLY_COLUMNS = ["What it is", "Value", "Unit", "What it covers", "As of", "Computed from"]
+
+
+def test_the_tallies_are_one_table_grouped_by_country_then_numbered_figures() -> None:
+    main = render("the-tallies")["main"]
+    assert main.count("<table") == 1
+    table = re.search(r'<table class="counts">.*?</table>', main, re.DOTALL).group(0)
+    head = re.search(r"<thead>(.*?)</thead>", table, re.DOTALL).group(1)
+    assert [unescape(th) for th in re.findall(r">([^<]+)</th>", head)] == TALLY_COLUMNS
+    groups = re.findall(r'<tbody data-country="([A-Z]{3})">(.*?)</tbody>', table, re.DOTALL)
+    assert [code for code, _ in groups] == list(COUNTRIES)
+    for code, body in groups:
+        rows = re.findall(r'<tr data-computed-figure="[^"]+" data-country="([A-Z]{3})">(.*?)</tr>',
+                          body, re.DOTALL)
+        assert rows and {c for c, _ in rows} == {code}, code
+        assert all(len(re.findall(r"<td", cells)) == len(TALLY_COLUMNS) for _, cells in rows)
+    # Values are the countries' own, never summed: the VNM named-project row
+    # is the country view's count.
+    vnm = dict(groups)["VNM"]
+    named = re.search(r'data-computed-figure="Named projects"[^>]*>(.*?)</tr>', vnm, re.DOTALL).group(1)
+    expected = next(c for c in served("overview")["countries"] if c["code"] == "VNM")["named"]
+    assert f'<td class="num">{expected}</td>' in named, named
+    assert 'href="#projects?country=VNM">Computed from' in named
+    # No second homepage: neither the stat grid nor the card panels.
+    assert 'class="metrics"' not in main and 'class="stat' not in main and 'class="panel"' not in main
+    captions = re.findall(r'<figure class="counts-figure" data-figure="(\d)"><figcaption><strong>'
+                          r'(Figure \d\.)</strong>(.*?)</figcaption>', main, re.DOTALL)
+    assert [(n, f) for n, f, _ in captions] == [("1", "Figure 1."), ("2", "Figure 2.")]
+    assert all("Our calculation" in caption for *_, caption in captions)
+    assert 'href="#release-history"' in main
+
+
+def test_the_homepage_keeps_its_stat_grid_under_the_tallies() -> None:
+    main = render("overview")["main"]
+    aside = re.search(r'<aside class="evidence-box">.*?</aside>', main, re.DOTALL).group(0)
+    assert '<p class="eyebrow">The tallies</p>' in aside
+    assert '<a href="#the-tallies">The tallies</a>' in aside
+    assert aside.count('class="stat computed"') == 4
+
+
+@pytest.mark.parametrize("route", ["whos-who", "documents", "project/" + BAC_AI])
+def test_no_fold_out_summary_repeats_its_count(route) -> None:
+    html = "".join(el["innerHTML"] for el in render(route)["elements"].values())
+    summaries_ = [unescape(s) for s in re.findall(r"<summary>([^<]*)</summary>", html)]
+    assert summaries_, route
+    for summary in summaries_:
+        numbers = re.findall(r"\d[\d,]*", summary)
+        assert len(numbers) == len(set(numbers)), summary
+
+
+def test_the_glossary_group_headings_are_sub_heading_size() -> None:
+    css = (SITE / "styles.css").read_text()
+    rule = re.search(r"\[data-glossary-group\] h2 \{(.*?)\}", css, re.DOTALL).group(1)
+    size = int(re.search(r"(\d+)px", rule).group(1))
+    h3 = int(re.search(r"^h3 \{\s*font-size: (\d+)px", css, re.MULTILINE).group(1))
+    assert size == h3, (size, h3)
 
 
 def test_the_glossary_is_grouped_by_theme_and_alphabetical_within_each_group() -> None:
@@ -521,14 +585,14 @@ def test_a_trail_page_carries_no_second_position_indicator(route) -> None:
     assert 'aria-current="page"' in step_bar(route)
 
 
-@pytest.mark.parametrize("route", ["overview", "by-the-numbers", "glossary", "how-we-did-this",
+@pytest.mark.parametrize("route", ["overview", "the-tallies", "glossary", "how-we-did-this",
                                    "historical-comparison", "the-paper-trail"])
 def test_the_step_bar_is_drawn_on_trail_pages_only(route) -> None:
     assert step_bar(route) == ""
 
 
 @pytest.mark.parametrize("route", ["documents", "on-the-record", "entries", "whos-who",
-                                   "by-the-numbers", "how-we-did-this"])
+                                   "the-tallies", "how-we-did-this"])
 def test_the_title_block_is_one_sentence_with_the_rest_folded(route) -> None:
     head = re.search(r'<div class="page-head">(.*?)</div>', render(route)["main"], re.DOTALL).group(1)
     lede = re.search(r'<p class="lede">(.*?)</p>', head, re.DOTALL).group(1)

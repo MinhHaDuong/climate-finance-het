@@ -452,7 +452,7 @@ def check_facts(page, url):
 def check_paper_trail(page, url):
     """Walk the paper trail both ways on the organisation of ticket 0881.
 
-    The navigation reads the paper trail, By the numbers, Glossary and How we
+    The navigation reads the paper trail, The tallies, Glossary and How we
     did this, each at its label's slug, and the addresses of earlier previews
     forward there (author's cold read, 2026-09-23). From Bac Ai, each step
     toward the documents lands one step
@@ -463,9 +463,28 @@ def check_paper_trail(page, url):
     page.goto(url + '/#overview')
     page.wait_for_selector('.country-grid')
     labels = page.locator('header nav a').all_text_contents()
-    assert labels == ['The paper trail', 'By the numbers', 'Glossary', 'How we did this'], labels
+    assert labels == ['The paper trail', 'The tallies', 'Glossary', 'How we did this'], labels
     # The step bar belongs to the paper trail only.
     assert page.locator('#step-bar').is_hidden()
+    # The tallies: one table grouped by country, then two numbered figures,
+    # and no second copy of the landing page's stat grid.
+    page.locator('header nav a[href="#the-tallies"]').click()
+    page.wait_for_selector('table.counts')
+    assert page.locator('header nav a.active').get_attribute('href') == '#the-tallies'
+    assert page.locator('table.counts tbody[data-country]').count() == 4
+    assert page.locator('main .stat-grid, main .metrics').count() == 0
+    assert page.locator('.counts-figure figcaption strong').all_text_contents() == [
+        'Figure 1.', 'Figure 2.']
+    page.locator('tbody[data-country="VNM"] tr[data-computed-figure="Named projects"] a').click()
+    page.wait_for_selector('#results tbody tr')
+    assert page.locator('#country-filter').input_value() == 'VNM'
+    # Who's who counts each name's projects once.
+    page.goto(url + '/#whos-who')
+    page.wait_for_selector('#parties-results details summary')
+    summary = page.locator('#parties-results details summary').first.inner_text()
+    assert summary.count('·') == 1, summary
+    page.goto(url + '/#overview')
+    page.wait_for_selector('.country-grid')
 
     # Old addresses forward in place, deep links and tabs included, and the
     # back button does not bounce between the two names.
@@ -475,6 +494,8 @@ def check_paper_trail(page, url):
         ('evidence', 'on-the-record', '[data-reviewed-evidence-id]'),
         ('comparison?country=IDN', 'historical-comparison?country=IDN', '#history-table'),
         ('methods', 'how-we-did-this', '.method-list'),
+        ('numbers', 'the-tallies', 'table.counts'),
+        ('by-the-numbers', 'the-tallies', 'table.counts'),
         ('inventory/VNM?tab=record', 'on-the-record/VNM', '#observations-filters'),
         ('inventory/VNM?row=22', 'entries/VNM?row=22', '[data-inventory-focus="22"]'),
     ):
@@ -641,7 +662,7 @@ def check_site(url, output):
         for route in ('overview', 'the-paper-trail', 'funding', 'documents', 'projects',
                       'historical-comparison', 'documents?country=VNM', 'whos-who?country=SEN',
                       'entries/SEN', 'funding/VNM', 'entries', 'on-the-record',
-                      'on-the-record/ZAF', 'whos-who', 'by-the-numbers', 'glossary',
+                      'on-the-record/ZAF', 'whos-who', 'the-tallies', 'glossary',
                       'release-history', 'project/vnm-project-bac-ai-pumped-hydro',
                       'how-we-did-this'):
             page.goto(url + '/#' + route)

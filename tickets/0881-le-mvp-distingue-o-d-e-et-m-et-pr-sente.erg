@@ -8,6 +8,7 @@ Author: HDMX-coding-agent
 
 2026-09-23T12:17Z HDMX-coding-agent note cold read by the author (2026-09-23), decision: the Glossary moves to the end of the navigation, beside How we did this, grouped by theme and A–Z within each group; every address becomes its label's slug (#funding, #on-the-record, #by-the-numbers, #how-we-did-this, #historical-comparison, #release-history, #entries/<CODE>, #on-the-record/<CODE>), and the earlier addresses forward to them by replaceState. Test, Invariants and Exit reworded accordingly (PR #1459).
 2026-09-23T12:28Z HDMX-coding-agent note second batch of the author's cold read (2026-09-23), decision: the page top becomes two bars. The header holds the four sections as tabs (The paper trail, By the numbers, Glossary, How we did this). On paper-trail pages a step bar (Documents › Entries › On the record › Projects · Funding · Who's who) marks the current step with aria-current and shows a removable country chip. It replaces the eyebrow, the trail block and the in-page Entries / On the record tabs, which become two steps (#entries/<CODE>, #on-the-record/<CODE>; ?tab=record still forwards). The breadcrumb appears on detail pages only, and the title block is an h1, a one-sentence lede and a folded 'About this page'. Markers are paired: 'Our calculation' on computed figures and 'As published' on publishers' figures. This Test section's 'l'indicateur de son étape et des liens vers l'étape voisine' is met by the step bar: the marked step is the indicator, and the neighbouring steps are links in the same bar (PR #1459).
+2026-09-23T13:40Z HDMX-coding-agent note third batch of the author's cold read (2026-09-23), with the author's revision of item 7: the Who's who fold-out reads its count once, and the Glossary's group headings are set at sub-heading size. The section first called By the numbers is now 'The tallies' at #the-tallies; #by-the-numbers and #numbers forward to it. Its page is one table: a row per computed figure (what it is, value, unit, what it covers, as of, computed from), grouped by country and never summed across countries, followed by the two charts as numbered figures, each marked 'Our calculation'. It no longer shows the stat grid or the card panels; the landing page keeps its stat grid under the eyebrow 'The tallies' (PR #1459).
 --- body ---
 
 ## Context
@@ -39,12 +40,12 @@ soutien documentaire.
    rédaction décidé le 2026-09-23 (`docs/jetp-observatory-presentation.md`),
    dans l'ordre fixé par la lecture à froid de l'auteur du 2026-09-23 :
    **The paper trail** (D) : **Documents** → **Entries** → **On the record** →
-   **Projects**, **Funding**, **Who's who** ; **By the numbers** (E) ;
+   **Projects**, **Funding**, **Who's who** ; **The tallies** (E) ;
    **Glossary** (O), groupé par thème et A–Z dans chaque groupe ;
    **How we did this** (méthodes). Aucune entrée pour M. Chaque élément
    « On the record » se lit « according to » son éditeur, avec la date.
    Chaque adresse est le slug de son libellé (`#funding`, `#on-the-record`,
-   `#by-the-numbers`, `#how-we-did-this`, …) ; les anciennes adresses
+   `#the-tallies`, `#how-we-did-this`, …) ; les anciennes adresses
    redirigent vers les nouvelles.
 2. D se lit comme une piste documentaire : chaque page montre sa place sur
    la piste et permet de monter ou descendre d'une étape, d'un projet à ce
@@ -66,7 +67,7 @@ soutien documentaire.
 
 Red : `tests/test_jetp_observatory_render.py` — la navigation rend, dans cet
 ordre, The paper trail (Documents, Entries, On the record, Projects,
-Funding, Who's who), By the numbers, Glossary et How we did this, chaque
+Funding, Who's who), The tallies, Glossary et How we did this, chaque
 lien à l'adresse du slug de son libellé ; chaque ancienne adresse
 (`#countries`, `#country/<CODE>`, `#evidence`, `#numbers`, `#comparison`,
 `#methods`, `#editions`, `#inventory/<CODE>` avec `?row=` et `?tab=record`)

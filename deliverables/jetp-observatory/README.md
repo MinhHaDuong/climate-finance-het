@@ -38,11 +38,12 @@ adds the step bar under it.
   removable chip, and the step links keep the country. A breadcrumb appears
   on detail pages only; the title block is an h1 and a one-sentence lede, with
   the page's longer explanation folded under "About this page".
-- **By the numbers**: every count we computed, each with its unit, its
-  perimeter and a link to what it counts. A number we calculated carries
-  "Our calculation"; a number a publisher printed carries "As published" and
-  reads "according to" that publisher, with the date. The historical
-  comparison sits here.
+- **The tallies**: one table, a row per figure we computed — what it is,
+  value, unit, what it covers, as of, and a link to what was counted —
+  grouped by country and never summed across countries, then two numbered,
+  captioned figures. A number we calculated carries "Our calculation"; a
+  number a publisher printed carries "As published" and reads "according to"
+  that publisher, with the date. The historical comparison sits here.
 - **Glossary**: the words the pages use, grouped by theme (what we track, how
   documents are read, statuses, measures, relations) and alphabetical within
   each group. A first, hand-written list until the Glossary generated from the
@@ -69,7 +70,7 @@ emit only the new names.
 | Projects | `#projects`, `#projects?country=<CODE>`, `#project/<project_id>` | |
 | Funding | `#funding`, `#funding/<CODE>` | `#countries`, `#country/<CODE>` |
 | Who's who | `#whos-who`, `#whos-who?country=<CODE>` | |
-| By the numbers | `#by-the-numbers` | `#numbers` |
+| The tallies | `#the-tallies` | `#numbers`, `#by-the-numbers` |
 | Historical comparison | `#historical-comparison`, `#historical-comparison?country=<CODE>` | `#comparison`, `#comparison?country=<CODE>` |
 | Glossary | `#glossary` | |
 | How we did this | `#how-we-did-this` | `#methods` |
