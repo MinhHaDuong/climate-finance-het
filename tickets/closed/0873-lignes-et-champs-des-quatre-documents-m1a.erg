@@ -2,6 +2,7 @@
 Title: Lignes et champs des quatre documents M1a
 Created: 2026-09-22
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1467
 
 --- log ---
 2026-09-22T17:30Z HDMX-coding-agent created
@@ -12,6 +13,7 @@ Author: HDMX-coding-agent
 2026-09-23T16:00Z HDMX-coding-agent note plan (raid prep) : chemins et fonctions vérifiés contre origin/main (build_m1a_inventories.py, les fichiers 0818, le json vnm-migration-0764, app.js `inventoryRows()`/`?row=N` — la route est déjà `#entries/<CODE>?row=N` post-0881) ; comptes (257/1 579/49/279) confirmés contre les tables au dépôt (2026-09-23) ; `lines.groups` n'a pas de FK dans la DDL (config/jetp-ledger.sql le documente : « no key yet ») — la règle « pas de liste » du contrat de stockage § 1 force le sens ligne membre → ligne d'en-tête (une ligne ne peut porter qu'un seul `groups`), donc l'action 4 est réécrite pour l'expliciter ; ce ticket peut ajouter la contrainte FK correspondante en écrivant `lines`
 2026-09-23T16:43Z HDMX-coding-agent note blocker 0872 closed — Blocked-by removed.
 2026-09-23T17:04Z HDMX-coding-agent note execution (PR to come): 2 164 lines (ZAF 257, IDN 1 579, VNM 279, SEN 49) in six documents, lines.d/<CODE>-2026.csv; line-fields/ and line-field-specs for the six; 1 907 routes (plan_project_id and VNM inventory_id -> line); the eight m1a CSV/JSON files byte-identical. Deviations: (1) action 4 — the register snapshot's OANDA and United States notes are footnotes of the allocation summary table, not of the Overall - Data rows (17.7 matches only 178 of 250 rows' own ZAR conversion), and the pro-rating is a sentence inside one row's Project Description, kept verbatim; no ZAF heading line is minted, the FK groups -> lines(line_id) and a violation view (heading, same snapshot, not itself) are added and tested on a fixture; the footnotes become heading lines when the allocation summary table is extracted. (2) manifest.json unknown field values are now counted over the columns each table prints (IDN 7 522->55, SEN 430->0, VNM 1 116->104, ZAF 540->955), the old count running over extractor bookkeeping (canonical_project_id, null release keys). (3) SEN quick wins classified submission as the ticket says; the IDN (Kuota) rows stay named_item although a quota term exists — left to 0874/0875 review.
+2026-09-23T18:56Z HDMX-coding-agent closed — autoclosed — PR #1467
 --- body ---
 ## Context
 
