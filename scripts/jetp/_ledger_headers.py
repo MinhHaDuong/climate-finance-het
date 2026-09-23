@@ -26,9 +26,9 @@ DDL_PATH = ROOT / 'config' / 'jetp-ledger.sql'
 PRE_COMMIT = ROOT / '.githooks' / 'pre-commit'
 LEDGER_DIR = ROOT / 'data' / 'jetp'
 
-# Tables stored under data/jetp/ontology/ (ontology section 5). Ticket 0880
-# adds the crosswalks, perimeters and marker coefficients here with their DDL.
-ONTOLOGY_TABLES = frozenset({'terms'})
+# Tables stored under data/jetp/ontology/ (ontology section 5, ticket 0880).
+ONTOLOGY_TABLES = frozenset({'terms', 'status_crosswalk', 'sector_crosswalk',
+                             'perimeters', 'marker_coefficients'})
 
 # Files of the current ledger that share a path with a table of the new one
 # and are not yet replaced. Skipped only in the real data/jetp/ directory; the
