@@ -396,6 +396,9 @@ def build_existing_layers(
 
 def main() -> None:
     root = Path(__file__).resolve().parents[2]
+    # Deliberate script-io exception: nine files (a CSV and a JSON per country
+    # and the manifest) go into one directory, so the single --output contract
+    # of script_io_args does not fit; the Makefile names them as a group target.
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--output-dir",

@@ -295,6 +295,10 @@ def write_ledger(tables, ledger_dir=LEDGER_DIR):
 
 
 def main(argv: Sequence[str] | None = None) -> None:
+    # Deliberate script-io exception: this writes three ledger tables and one
+    # line-fields file per document into one directory, not one file to one
+    # path, so the single --output contract of script_io_args does not fit.
+    # Same multi-output precedent as build_evidence_layer.py.
     parser = argparse.ArgumentParser(description=__doc__.split('\n\n')[0])
     parser.add_argument('--output-dir', type=Path, default=LEDGER_DIR,
                         help='ledger directory the tables are written under')
