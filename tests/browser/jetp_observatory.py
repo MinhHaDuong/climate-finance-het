@@ -7,6 +7,7 @@ collected by the Python unit suite: browser installation is a developer tool.
 import argparse
 import hashlib
 import json
+from collections import Counter
 from pathlib import Path
 from urllib.parse import urlsplit
 
@@ -235,8 +236,8 @@ def check_senegal_and_indonesia(page, url):
     report = next(row for row in registry if row['id'] == report_id and row['local_path'])
     ledger = page.request.get(url + '/data/observations/IDN.json').json()
     cited = [row for row in ledger if row['source_id'] == report_id]
-    project_id = max(sorted({row['project_id'] for row in cited}),
-                     key=lambda pid: sum(row['project_id'] == pid for row in cited))
+    counts = Counter(row['project_id'] for row in cited)
+    project_id = max(counts, key=lambda pid: (counts[pid], pid))
     served = [row for row in ledger if row['project_id'] == project_id]
     from_report = next(row for row in served if row['source_id'] == report_id)
     row_id = (from_report.get('event_id') or from_report.get('implementation_event_id')
