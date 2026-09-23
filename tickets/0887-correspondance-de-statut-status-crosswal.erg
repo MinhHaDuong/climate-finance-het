@@ -1,0 +1,66 @@
+%erg 0.1
+Title: Correspondance de statut (status-crosswalk)
+Created: 2026-09-23
+Author: HDMX-coding-agent
+Blocked-by: 0873
+
+--- log ---
+2026-09-23T15:23Z HDMX-coding-agent created
+2026-09-23T15:23Z HDMX-coding-agent note scindé de [[0876]] (raid, tickets-migration-prep) : `status-crosswalk` lit les champs verbatim des lignes M1a ([[0873]]) et les tables de [[0880]] (déjà fusionné), pas les 451 observations que [[0876]] construit depuis `events.csv` — Blocked-by mis sur [[0873]], pas sur [[0876]], ce qui permet à ce ticket de tourner en parallèle de [[0874]]–[[0876]]. Preuve : les actions 3 de [[0876]] citent des lettres de registre, une approbation IDN et une mention de retraite VNM, toutes des valeurs de ligne, jamais un champ d'observation ; le journal de [[0876]] confirme la clé sur `publisher_id` (DDL), pas sur une observation.
+
+--- body ---
+
+## Context
+
+Scindé de [[0876]] au constat (raid prep, 2026-09-23) que `status-crosswalk`
+lit les valeurs verbatim des lignes des quatre documents M1a (lettres A–D du
+registre ZAF, statut d'approbation IDN, mention de retraite VNM) et les
+tables d'ontologie de [[0880]] (déjà fusionné), pas les observations que
+[[0876]] construit depuis `events.csv` : la table n'a pas besoin des 451
+observations pour exister, seulement des lignes et de leurs champs. La clé
+est `publisher_id` (DDL, contrat de stockage § 1) ; #1461 (0872 en cours de
+refonte) replie `publishers` dans `parties` avec un rôle de publication —
+si `publisher_id` change de forme avant que ce ticket ne s'exécute, relire
+#1461 et adapter la clé en conséquence, sans coder en dur la forme actuelle
+de `publishers`. Étape 5 de la migration (`docs/jetp-ledger-migration.md`),
+décisions 3, 9 et 10.
+
+## Relevant files
+
+- `data/jetp/lines.csv`, `line-fields/<document_id>.csv` — champs verbatim des quatre documents ([[0873]])
+- `data/jetp/ontology/` — table `status-crosswalk` ([[0880]])
+- `scripts/jetp/build_observations.py` — lit `status-crosswalk` pour l'axe delivery
+- `config/jetp_tracking.yaml` — quatre axes, correspondances actuelles à reprendre
+- `deliverables/jetp-observatory/app.js` — le Glossary ([[0882]]), clic statut → définition + correspondance IATI
+
+## Actions
+
+1. `status-crosswalk` : lettres A–D du registre ZAF → axe delivery (statut
+   d'activité IATI) ; approbation IDN → axe money ; mention `suspended` sur
+   une retraite VNM → état d'actif.
+2. Servir `status-crosswalk` depuis la table de [[0880]] pour les lecteurs
+   qui en ont besoin (`build_observations.py` notamment, sans attendre que
+   [[0876]] ait fusionné).
+
+## Test
+
+`tests/test_jetp_status_crosswalk.py`. Red : une fixture de quatre lignes
+(une lettre de registre ZAF, une approbation IDN, une mention de retraite
+VNM, un mot de publisher non couvert) donne trois lignes de
+`status-crosswalk` aux axes attendus et rejette le mot non couvert.
+
+## Verification
+
+- [ ] Glossary ([[0882]]) : depuis une observation ZAF, un clic sur le
+  statut ouvre sa définition et sa correspondance IATI (recette
+  navigateur) — déplacé de la vérification de [[0876]]
+
+## Invariants
+
+- Le mot du publisher n'est jamais normalisé dans `own_status`.
+- Recettes ZAF et VNM de [[0834]] vertes.
+
+## Exit criteria
+
+- [ ] Lignes de `status-crosswalk` écrites dans la table de [[0880]], validées par [[0871]] (`make jetp-ledger-check`)
+- [ ] `tests/test_jetp_status_crosswalk.py`, `make check-fast` et `make lint` verts (pas `make check` complet : ex post sur main)

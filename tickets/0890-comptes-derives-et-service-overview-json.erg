@@ -1,0 +1,68 @@
+%erg 0.1
+Title: Comptes dérivés et service overview.json
+Created: 2026-09-23
+Author: HDMX-coding-agent
+Blocked-by: 0889
+
+--- log ---
+2026-09-23T15:23Z HDMX-coding-agent created
+2026-09-23T15:23Z HDMX-coding-agent note scindé de [[0877]] (raid, tickets-migration-prep) : un compte retient ses `observation IDs` et `decision IDs` (dessin backend § 5) — `build_accounts.py` ne peut résoudre une ouverture disputée ou une couverture partielle sans les décisions d'arbitrage de [[0889]]. Blocked-by mis sur [[0889]] (le prérequis réel, direct), qui couvre transitivement [[0877]] (`perimeters`) puisque [[0889]] en dépend déjà — pas sur le suiveur [[0870]].
+
+--- body ---
+
+## Context
+
+Scindé de [[0877]] au constat (raid prep, 2026-09-23) que ce ticket empile
+une unité de signature testable séparément de `perimeters` et
+d'`adjudications` : les comptes dérivés
+(`build_accounts.py`, dessin backend § 5) et le service d'`overview.json`.
+Un compte déclare sujet, périmètre, mesure, devise, coupure valide et
+coupure de preuve, et retient positions, mouvements inclus/exclus, résidu,
+incertitude, `observation IDs` et `decision IDs` — il lit donc `perimeters`
+([[0877]]) et `adjudications`/`adjudication-members` ([[0889]]). Première
+métrique exécutable : engagement brut par accord en devise d'origine,
+jusqu'à ce qu'une observation de décaissement existe (aucune aujourd'hui :
+235 signed, 65 approved, 45 announced, 0 disbursed). Étape 6 de la
+migration (`docs/jetp-ledger-migration.md`), décision 9.
+
+## Relevant files
+
+- `scripts/jetp/build_accounts.py` — à créer : comptes dérivés depuis SQLite (absent d'origin/main, confirmé 2026-09-23)
+- `scripts/jetp/_reconciliation.py` — lecteur de compatibilité de [[0768]] à remplacer (retrait en [[0878]])
+- `deliverables/jetp-observatory/data/overview.json` — titres à comparer (« 6,12 Md$ alloués » cite sa ligne ; écart avec la somme des événements, 4,32 Md$, est un résidu de compte)
+- `data/derived/jetp/` — sorties dérivées, identifiant de run, deux dates de coupure
+- `deliverables/jetp-observatory/app.js` — `SUB_PAGES['the-tallies']`, `SECTIONS['the-tallies']` : la page comptes rejoint le sous-onglet Money (décision de l'auteur, PR #1459, ticket 0881)
+
+## Actions
+
+1. `build_accounts.py` : engagement brut par accord en devise d'origine, à
+   partir des observations, des périmètres ([[0877]]) et des décisions
+   d'arbitrage ([[0889]]) ; résidus et lacunes écrits, jamais comblés.
+2. `overview.json` lit les observations de périmètre ([[0877]]) au lieu
+   des constantes de `config/jetp_observatory.yaml` ; comparaison des
+   titres avant/après.
+3. Ajouter la page comptes au sous-onglet Money de The tallies dans
+   `app.js` (`SUB_PAGES`/`SECTIONS`), comme décidé pour [[0881]].
+
+## Test
+
+`tests/test_jetp_accounts.py` (repris du texte original de [[0877]]) :
+depuis une fixture de trois accords et cinq flux dont un doublon adjugé,
+le compte d'engagement brut donne la somme attendue, écrit le résidu, et
+change quand l'adjudication est supplantée par un rejet.
+
+## Verification
+
+- [ ] `overview.json` : mêmes titres, désormais cités
+- [ ] Aucune constante monétaire dans `config/jetp_observatory.yaml`
+- [ ] Un compte régénéré deux fois est identique
+
+## Invariants
+
+- Un compte ne modifie jamais une observation ni une décision d'arbitrage.
+- Recettes ZAF et VNM de [[0834]] vertes.
+
+## Exit criteria
+
+- [ ] Comptes dérivés validés par [[0871]] (`make jetp-ledger-check`)
+- [ ] `tests/test_jetp_accounts.py`, `make check-fast` et `make lint` verts (pas `make check` complet : ex post sur main)
