@@ -6,6 +6,7 @@ Blocked-by: 0871
 
 --- log ---
 2026-09-22T17:30Z HDMX-coding-agent created
+2026-09-23T10:30Z HDMX-coding-agent note revue du train (2026-09-23) : les comptes sont ceux des tables au lancement ; PR #1447 (0859) ajoute deux tentatives et deux instantanés
 
 --- body ---
 ## Context
@@ -51,7 +52,7 @@ change pas ; la page Documents de l'observatoire est la vérification.
 ## Verification
 
 - [ ] `documents.json` régénéré identique à l'actuel (octets), avant le balayage des libellés
-- [ ] 314 retrievals, 264 snapshots, 301 documents, 103 publishers
+- [ ] Comptes égaux à ceux des tables au lancement (au dépôt : 314 retrievals, 264 snapshots, 301 documents, 103 publishers ; 316 et 266 après PR #1447, ticket [[0859]])
 - [ ] Recettes ZAF et VNM de [[0834]] vertes
 
 ## Invariants

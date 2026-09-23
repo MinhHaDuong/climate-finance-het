@@ -6,6 +6,7 @@ Blocked-by: 0871
 
 --- log ---
 2026-09-23T06:45Z HDMX-coding-agent created
+2026-09-23T10:30Z HDMX-coding-agent note revue du train (2026-09-23) : partage explicite — 0880 possède le schéma des cinq tables et peuple `terms` ; les vagues suivantes peuplent les autres
 
 --- body ---
 
@@ -34,7 +35,10 @@ Le contrat est désormais `docs/jetp-ontology.md` § 5, sous-sections
 
 1. Créer les cinq tables avec leurs colonnes de révision (`recorded_at`,
    `decided_by`, `status`, `supersedes`) et la règle « en vigueur » des
-   tables de décision.
+   tables de décision. Ce ticket possède le schéma des cinq tables et peuple
+   `terms` ; les lignes des autres viennent avec leur vague :
+   `status-crosswalk` et `sector-crosswalk` en [[0876]], `perimeters` en
+   [[0877]], `marker-coefficients` en [[0885]].
 2. Peupler `terms` : chaque classe, relation et valeur des listes closes des
    § 2 à 4, avec une définition en une ou deux phrases, `domain` et `range`
    pour une relation, et le schéma externe, l'URI et la relation SKOS quand
