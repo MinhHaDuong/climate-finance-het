@@ -216,16 +216,17 @@ CREATE TABLE lines (
     line_id TEXT PRIMARY KEY,
     country TEXT NOT NULL,
     sha256 TEXT NOT NULL REFERENCES snapshots (sha256),
-    locator TEXT NOT NULL,
+    locator TEXT NOT NULL CHECK (length(trim(locator)) > 0),
     ordinal INTEGER NOT NULL CHECK (ordinal >= 0),
     label TEXT,
     classification TEXT NOT NULL,
     own_status TEXT,
     own_status_axis TEXT,
     own_sector TEXT,
-    -- Direction of `groups` (heading to member, or member to heading) is set
-    -- by the first extraction that writes it (ticket 0873); no key yet.
-    groups TEXT,
+    -- A member line names the heading line that governs it (ticket 0873):
+    -- `groups` holds one value, so under the no-list rule the key points from
+    -- member to heading, and a heading governing many lines is named by each.
+    groups TEXT REFERENCES lines (line_id),
     recorded_at TEXT NOT NULL,
     notes TEXT,
     -- No two lines claim the same place in the same bytes.
@@ -597,6 +598,16 @@ CREATE VIEW violation_line_snapshot_retrieved AS
 SELECT 'lines ' || l.line_id || ': snapshot ' || l.sha256 || ' is yielded by no retrieval' AS detail
 FROM lines AS l
 WHERE NOT EXISTS (SELECT 1 FROM retrievals AS r WHERE r.sha256 = l.sha256);
+
+-- A line's `groups` names a heading of the same bytes, never the line itself.
+CREATE VIEW violation_line_groups AS
+SELECT 'lines ' || m.line_id || ': groups ' || h.line_id || ', which is '
+       || CASE WHEN h.line_id = m.line_id THEN 'the line itself'
+               WHEN h.sha256 <> m.sha256 THEN 'a line of another snapshot'
+               ELSE 'a ' || h.classification || ' line, not a heading' END AS detail
+FROM lines AS m
+JOIN lines AS h ON h.line_id = m.groups
+WHERE h.line_id = m.line_id OR h.sha256 <> m.sha256 OR h.classification <> 'heading';
 
 -- A flow carries period_start and period_end, or one event timing.
 CREATE VIEW violation_flow_timing AS

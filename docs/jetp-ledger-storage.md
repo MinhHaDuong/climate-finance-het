@@ -96,7 +96,10 @@ Rules that the validator enforces:
 - A publisher's method note that governs a page or a table (a pro-rating,
   an exchange-rate policy, a footnote conditioning every row) is a line of
   classification `heading` that `groups` the lines it governs, so that an
-  observation reads the note through its line.
+  observation reads the note through its line. The relation is stored on the
+  member: its `groups` column names the heading, a foreign key into `lines`,
+  since a column holds one value and a heading governs many lines; the heading
+  is a line of the same snapshot and never the member itself (ticket 0873).
 - A `line_id` is minted by the extractor as `<document_id>-<table>-<ordinal>`,
   in extraction order, appended only and never renumbered: a re-extraction
   that finds a dropped row appends it under the next ordinal. The pair

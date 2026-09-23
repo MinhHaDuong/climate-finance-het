@@ -2,12 +2,12 @@
 Title: Correspondance de secteur (sector-crosswalk)
 Created: 2026-09-23
 Author: HDMX-coding-agent
-Blocked-by: 0873
 
 --- log ---
 2026-09-23T15:23Z HDMX-coding-agent created
 2026-09-23T15:23Z HDMX-coding-agent note scindé de [[0876]] (raid, tickets-migration-prep) : `sector-crosswalk` lit les fenêtres ZAF, les groupes technologiques IDN et les libellés d'annexe — des champs verbatim des lignes M1a ([[0873]]) — vers les codes objet CRS 231–236 des tables de [[0880]] (déjà fusionné), jamais une observation. Blocked-by mis sur [[0873]], pas sur [[0876]], ce qui permet à ce ticket de tourner en parallèle de [[0874]]–[[0876]]. Preuve : l'action 4 de [[0876]] ne cite aucune donnée d'observation, seulement des valeurs de ligne ; comme pour `status-crosswalk` ([[0887]]), la clé est `publisher_id` (DDL).
 
+2026-09-23T18:56Z HDMX-coding-agent note blocker 0873 closed — Blocked-by removed.
 --- body ---
 
 ## Context

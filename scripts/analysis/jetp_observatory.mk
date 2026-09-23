@@ -7,10 +7,14 @@ JETP_OBSERVATORY_PROVENANCE := $(JETP_OBSERVATORY)/data/provenance.json
 JETP_M1A_DIR := $(JETP_OBSERVATORY)/data/m1a
 JETP_M1A_FILES := $(addprefix $(JETP_M1A_DIR)/,ZAF.csv IDN.csv VNM.csv SEN.csv \
     ZAF.json IDN.json VNM.json SEN.json manifest.json)
+# The export is a view of the ledger lines of its six extracts (ticket 0873).
+# The pinned extracts they were ingested from once, by
+# scripts/jetp/build_m1a_lines.py, are not read here: that ingestion is a
+# record written once and reviewed as a diff, not a build step.
 JETP_M1A_INPUTS := config/jetp-m1a-inventories.json scripts/jetp/build_m1a_inventories.py \
-    docs/jetp-study/0818-zaf-q1-2026-rows.csv docs/jetp-study/0818-zaf-q1-2026-fields.csv \
-    data/jetp/plan-projects.csv \
-    data/jetp/releases/vnm-migration-0764.json
+    scripts/jetp/_ledger_headers.py config/jetp-ledger.sql .githooks/pre-commit \
+    $(wildcard data/jetp/lines.csv data/jetp/lines.d/*.csv data/jetp/line-fields/*.csv) \
+    data/jetp/line-field-specs.csv data/jetp/routes.csv
 JETP_OBSERVATORY_INPUTS := $(addprefix data/jetp/,$(addsuffix .csv,projects events implementation-events sources source-claims project-source-links project-coverage manifest event-timing documents retrievals snapshots)) \
     $(wildcard data/jetp/comparison/*.json) \
     $(wildcard data/jetp/editorial/countries/*.md) $(wildcard data/jetp/releases/*/release.json) \

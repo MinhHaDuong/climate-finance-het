@@ -1,0 +1,438 @@
+line_id,technology_group,priority_tier,ordinal,project_name,system,estimated_start,capacity_value,capacity_unit,estimated_investment_usd_mn,natural_retirement_year,estimated_retirement_year,ruptl
+idn-cipp-2023-cpr-mirror-bioenergy-1,bioenergy,priority,1,PLTBg Air Upas,Kalimantan,,2.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-bioenergy-2,bioenergy,priority,2,PLTSa Bandung,Java-Madura-Bali,,29.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-bioenergy-3,bioenergy,priority,3,PLTBg Kendawangan,Kalimantan,,2.5,MW,,,,YES
+idn-cipp-2023-cpr-mirror-bioenergy-4,bioenergy,priority,4,PLTBg Nanga Tayap,Kalimantan,,2.5,MW,,,,YES
+idn-cipp-2023-cpr-mirror-bioenergy-5,bioenergy,priority,5,PLTBg Sei Melayu,Kalimantan,,2.5,MW,,,,YES
+idn-cipp-2023-cpr-mirror-bioenergy-6,bioenergy,priority,6,PLTBio Bacan,Maluku-Papua-Nusa Tenggara,,4.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-bioenergy-7,bioenergy,priority,7,PLTBio Bangka,Sumatra,,12.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-bioenergy-8,bioenergy,priority,8,PLTBio Belitung,Sumatra,,12.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-bioenergy-9,bioenergy,priority,9,PLTBio Buru,Maluku-Papua-Nusa Tenggara,,10.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-bioenergy-10,bioenergy,priority,10,PLTBio Dodo,Maluku-Papua-Nusa Tenggara,,10.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-bioenergy-11,bioenergy,priority,11,PLTBio Halmahera,Maluku-Papua-Nusa Tenggara,,5.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-bioenergy-12,bioenergy,priority,12,PLTBio Kepri,Sumatra,,2.4,MW,,,,YES
+idn-cipp-2023-cpr-mirror-bioenergy-13,bioenergy,priority,13,PLTBio Khatulistiwa,Kalimantan,,44.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-bioenergy-14,bioenergy,priority,14,PLTBio Mahakam,Kalimantan,,10.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-bioenergy-15,bioenergy,priority,15,PLTBio Mahakam,Kalimantan,2024,10.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-bioenergy-16,bioenergy,priority,16,PLTBio Nias,Sumatra,2024,3.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-bioenergy-17,bioenergy,priority,17,PLTBio Sanana,Maluku-Papua-Nusa Tenggara,2024,10.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-bioenergy-18,bioenergy,priority,18,PLTBio Saumlaki,Maluku-Papua-Nusa Tenggara,2024,10.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-bioenergy-19,bioenergy,priority,19,PLTBio Sulbagsel,Sulawesi,2024,10.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-bioenergy-20,bioenergy,priority,20,PLTBio Sulbagsel,Sulawesi,2024,10.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-bioenergy-21,bioenergy,priority,21,PLTBio Sulbagut,Sulawesi,2024,10.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-bioenergy-22,bioenergy,priority,22,PLTBio Tual,Maluku-Papua-Nusa Tenggara,2024,10.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-bioenergy-23,bioenergy,priority,23,PLTBm Kaimana,Maluku-Papua-Nusa Tenggara,2024,10.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-bioenergy-24,bioenergy,priority,24,PLTBm Langsa,Sumatra,2024,10.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-bioenergy-25,bioenergy,priority,25,PLTBm Merauke,Maluku-Papua-Nusa Tenggara,2024,10.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-bioenergy-26,bioenergy,priority,26,PLTBm Sumbawa,Maluku-Papua-Nusa Tenggara,2024,10.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-bioenergy-27,bioenergy,priority,27,PLTSa Bekasi,Java-Madura-Bali,2024,12.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-bioenergy-28,bioenergy,priority,28,PLTSa Makassar,Sulawesi,2024,10.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-bioenergy-29,bioenergy,priority,29,PLTSa Palembang,Sumatra,2024,17.7,MW,,,,NO
+idn-cipp-2023-cpr-mirror-bioenergy-30,bioenergy,priority,30,PLTSa Tangerang,Java-Madura-Bali,2024,35.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-bioenergy-31,bioenergy,priority,31,PLTSa Tangerang Selatan,Java-Madura-Bali,2024,20.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-bioenergy-32,bioenergy,priority,32,PLTSa Semarang,Java-Madura-Bali,TBD,20.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-bioenergy-33,bioenergy,priority,33,PLTSa Sulbagut,Sulawesi,TBD,10.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-coal-retirement-1,coal_retirement,priority,1,PLTU Pelabuhan Ratu,Java-Madura-Bali,2037,1050,MW,830,2045,2037,
+idn-cipp-2023-cpr-mirror-coal-retirement-2,coal_retirement,priority,2,PLTU Cirebon-1,Java-Madura-Bali,2035,660,MW,300,2042,2035,
+idn-cipp-2023-cpr-mirror-geothermal-1,geothermal,priority,1,PLTP Arjuno Welirang,Java-Madura-Bali,N/A,40.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-2,geothermal,priority,2,PLTP Baturaden (FTP2),Java-Madura-Bali,2024,110.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-3,geothermal,priority,3,PLTP Baturaden (FTP2),Java-Madura-Bali,2024,75.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-4,geothermal,priority,4,PLTP Baturaden (FTP2),Java-Madura-Bali,2026,35.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-5,geothermal,priority,5,PLTP Bedugul,Java-Madura-Bali,2024,60.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-6,geothermal,priority,6,PLTP Candi Umbul Telomoyo,Java-Madura-Bali,N/A,60.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-7,geothermal,priority,7,PLTP Cibuni (FTP2),Java-Madura-Bali,2024,10.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-8,geothermal,priority,8,PLTP Dieng (FTP2),Java-Madura-Bali,2024,55.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-9,geothermal,priority,9,PLTP Dieng (FTP2),Java-Madura-Bali,2024,55.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-10,geothermal,priority,10,PLTP Dieng (FTP2),Java-Madura-Bali,2024,55.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-11,geothermal,priority,11,PLTP Dieng (FTP2),Java-Madura-Bali,2024,55.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-12,geothermal,priority,12,PLTP Dieng (FTP2),Java-Madura-Bali,2024,35.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-13,geothermal,priority,13,PLTP Dieng (FTP2),Java-Madura-Bali,2024,35.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-14,geothermal,priority,14,PLTP Gunung Salak 7,Java-Madura-Bali,2024,55.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-15,geothermal,priority,15,PLTP Gunung Salak 8,Java-Madura-Bali,2024,80.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-16,geothermal,priority,16,PLTP Halmahera (Kuota) Tersebar,Maluku-Papua-Nusa Tenggara,2025,20.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-17,geothermal,priority,17,PLTP Hululais,Sumatra,2024,110.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-18,geothermal,priority,18,PLTP Ijen (FTP2),Java-Madura-Bali,2024,50.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-19,geothermal,priority,19,PLTP Ijen (FTP2),Java-Madura-Bali,2024,30.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-20,geothermal,priority,20,PLTP Ijen (FTP2),Java-Madura-Bali,2024,30.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-21,geothermal,priority,21,PLTP Jaboi (FTP2),Sumatra,2023,5.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-22,geothermal,priority,22,PLTP Jaboi (FTP2),Sumatra,2028,2.50,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-23,geothermal,priority,23,PLTP Jaboi (FTP2),Sumatra,2028,2.50,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-24,geothermal,priority,24,PLTP Java-Bali (Kuota) Tersebar,Java-Madura-Bali,2026,60.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-25,geothermal,priority,25,PLTP Java-Bali (Kuota) Tersebar,Java-Madura-Bali,2026,60.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-26,geothermal,priority,26,PLTP Java-Bali (Kuota) Tersebar,Java-Madura-Bali,2026,55.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-27,geothermal,priority,27,PLTP Java-Bali (Kuota) Tersebar,Java-Madura-Bali,2026,55.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-28,geothermal,priority,28,PLTP Java-Bali (Kuota) Tersebar,Java-Madura-Bali,2026,55.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-29,geothermal,priority,29,PLTP Java-Bali (Kuota) Tersebar,Java-Madura-Bali,2026,55.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-30,geothermal,priority,30,PLTP Java-Bali (Kuota) Tersebar,Java-Madura-Bali,2026,55.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-31,geothermal,priority,31,PLTP Java-Bali (Kuota) Tersebar,Java-Madura-Bali,2026,55.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-32,geothermal,priority,32,PLTP Java-Bali (Kuota) Tersebar,Java-Madura-Bali,2026,55.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-33,geothermal,priority,33,PLTP Java-Bali (Kuota) Tersebar,Java-Madura-Bali,2026,55.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-34,geothermal,priority,34,PLTP Java-Bali (Kuota) Tersebar,Java-Madura-Bali,2026,55.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-35,geothermal,priority,35,PLTP Java-Bali (Kuota) Tersebar,Java-Madura-Bali,2026,55.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-36,geothermal,priority,36,PLTP Kotamobagu 1,Sulawesi,2024,20.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-37,geothermal,priority,37,PLTP Kotamobagu 2,Sulawesi,2024,20.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-38,geothermal,priority,38,PLTP Kotamobagu 3,Sulawesi,2024,20.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-39,geothermal,priority,39,PLTP Kotamobagu 4,Sulawesi,2024,20.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-40,geothermal,priority,40,PLTP Mataloko,Maluku-Papua-Nusa Tenggara,2024,20.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-41,geothermal,priority,41,PLTP Muara Laboh (FTP2),Sumatra,2024,80.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-42,geothermal,priority,42,PLTP Muara Laboh (FTP2),Sumatra,2024,60.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-43,geothermal,priority,43,PLTP Patuha (FTP2),Java-Madura-Bali,2024,55.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-44,geothermal,priority,44,PLTP Patuha (FTP2),Java-Madura-Bali,2024,55.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-45,geothermal,priority,45,PLTP Patuha (FTP2),Java-Madura-Bali,2024,55.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-46,geothermal,priority,46,PLTP Patuha (FTP2),Java-Madura-Bali,2024,55.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-47,geothermal,priority,47,PLTP Patuha (FTP2),Java-Madura-Bali,2024,55.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-48,geothermal,priority,48,PLTP Patuha (FTP2),Java-Madura-Bali,2024,55.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-49,geothermal,priority,49,PLTP Patuha (FTP2),Java-Madura-Bali,2024,55.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-50,geothermal,priority,50,PLTP Rajabasa (FTP2),Sumatra,2024,110.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-51,geothermal,priority,51,PLTP Rajabasa (FTP2),Sumatra,2026,110.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-52,geothermal,priority,52,PLTP Sokoria (FTP2),Maluku-Papua-Nusa Tenggara,2024,80.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-53,geothermal,priority,53,PLTP Sokoria (FTP2),Maluku-Papua-Nusa Tenggara,2024,30.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-54,geothermal,priority,54,PLTP Sokoria (FTP2),Maluku-Papua-Nusa Tenggara,2024,11.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-55,geothermal,priority,55,PLTP Sungai Penuh (FTP2),Sumatra,2024,55.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-56,geothermal,priority,56,PLTP Ulumbu,Maluku-Papua-Nusa Tenggara,2024,3.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-57,geothermal,priority,57,PLTP Ungaran,Java-Madura-Bali,2023,55.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-58,geothermal,priority,58,PLTP Wayang Windu 3 (FTP2),Java-Madura-Bali,2024,40.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-59,geothermal,priority,59,PLTP Wayang Windu 4 (FTP2),Java-Madura-Bali,2024,55.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-60,geothermal,priority,60,PLTP Atadei,Maluku-Papua-Nusa Tenggara,2024,30.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-61,geothermal,priority,61,PLTP Danau Ranau,Sumatra,2024,30.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-62,geothermal,priority,62,PLTP Gunung Sirung,Maluku-Papua-Nusa Tenggara,2024,10.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-63,geothermal,priority,63,PLTP Gunung Talang Bukit Kili,Sumatra,N/A,40.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-64,geothermal,priority,64,PLTP Gunung Ungaran,Java-Madura-Bali,N/A,5.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-65,geothermal,priority,65,PLTP Jaboi,Sumatra,N/A,20.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-66,geothermal,priority,66,PLTP Kaldera Danau Banten,Java-Madura-Bali,N/A,110.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-67,geothermal,priority,67,PLTP Kepahiang,Sumatra,2024,70.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-68,geothermal,priority,68,PLTP Oka Ile Ange,Maluku-Papua-Nusa Tenggara,2024,110.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-69,geothermal,priority,69,PLTP Songa Wayaua,Maluku-Papua-Nusa Tenggara,2024,110.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-70,geothermal,priority,70,PLTP Tangkuban Perahu,Java-Madura-Bali,2023,10.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-71,geothermal,priority,71,PLTP Telaga Ngebel (FTP2),Java-Madura-Bali,2024,10.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-72,geothermal,priority,72,PLTP Telaga Ngebel (FTP2),Java-Madura-Bali,2024,40.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-73,geothermal,priority,73,PLTP Telaga Ngebel (FTP2),Java-Madura-Bali,2024,55.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-74,geothermal,priority,74,PLTP Tulehu,Maluku-Papua-Nusa Tenggara,2024,20.00,MW,,,,YES
+idn-cipp-2023-cpr-mirror-geothermal-75,geothermal,priority,75,PLTP Sokoria (FTP2),Maluku-Papua-Nusa Tenggara,2024,55.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-76,geothermal,priority,76,PLTP Sokoria (FTP2),Maluku-Papua-Nusa Tenggara,2024,20.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-77,geothermal,priority,77,PLTP Cubadak,Sumatra,Post 2030,66.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-78,geothermal,priority,78,PLTP Gn. Ciremai,Java-Madura-Bali,Post 2030,27.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-79,geothermal,priority,79,PLTP Marana,Sulawesi,Post 2030,28.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-80,geothermal,priority,80,PLTP Lainea,Sulawesi,Post 2030,66.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-81,geothermal,priority,81,PLTP Songgoriti,Java-Madura-Bali,Post 2030,35.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-82,geothermal,priority,82,PLTP Sipaholon Ria-ria,Sulawesi,Post 2030,35.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-83,geothermal,priority,83,PLTP Bora-pulu,Sulawesi,Post 2030,123.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-84,geothermal,priority,84,PLTP Pentadio,Sulawesi,Post 2030,25.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-85,geothermal,priority,85,PLTP Suwawa,Sulawesi,Post 2030,20.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-86,geothermal,priority,86,PLTP Sembalun,Maluku-Papua-Nusa Tenggara,Post 2030,20.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-87,geothermal,priority,87,PLTP Gn. Pandan,Java-Madura-Bali,Post 2030,40.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-88,geothermal,priority,88,PLTP Gn.Willis,Java-Madura-Bali,Post 2030,50.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-89,geothermal,priority,89,PLTP Simbolon Samosir,Sumatra,Post 2030,150.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-geothermal-90,geothermal,priority,90,Government Drilling Program (Cost TBD),Nation-wide,TBD,2148.00,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-1,hydro,priority,1,PLTA NEW 9_PLTA Sumatra 1300 MW,Sumatra,2024,1300.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-2,hydro,priority,2,PS Grindulu,Java-Madura-Bali,2025,1000.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-3,hydro,priority,3,PLTA Java Bali (Kuota) Tersebar PSPP,Java-Madura-Bali,2025,760.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-4,hydro,priority,4,PLTA NEW 9_PLTA Sumatra 500 MW,Sumatra,2024,500.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-5,hydro,priority,5,PLTA Sumatra,Sumatra,2025,500.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-6,hydro,priority,6,PLTA Hidro Sumatra (kuota) tersebar*,Sumatra,2026,400.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-7,hydro,priority,7,PLTA Hidro Sumatra (kuota) tersebar*,Sumatra,2027,400.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-8,hydro,priority,8,PLTA Sulbagsel (Kuota) Tersebar,Sulawesi,2024,400.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-9,hydro,priority,9,PLTA Sumatra (Kuota) Tersebar,Sumatra,2025,400.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-10,hydro,priority,10,PLTA Sulbagsel (Kuota) Tersebar,Sulawesi,2025,350.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-11,hydro,priority,11,PS Upper Cisokan Pump Storage (FTP2),Java-Madura-Bali,2024,260.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-12,hydro,priority,12,PS Upper Cisokan Pump Storage (FTP2),Java-Madura-Bali,2024,260.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-13,hydro,priority,13,PS Upper Cisokan Pump Storage (FTP2),Java-Madura-Bali,2024,260.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-14,hydro,priority,14,PS Upper Cisokan Pump Storage (FTP2),Java-Madura-Bali,2024,260.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-15,hydro,priority,15,PLTA Sulawesi (Kuota) Tersebar,Sulawesi,2029,250.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-16,hydro,priority,16,PLTA Sulawesi (Kuota) Tersebar,Sulawesi,2030,250.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-17,hydro,priority,17,PLTA Sumatra (Kuota) Tersebar,Sumatra,2024,250.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-18,hydro,priority,18,PS Sumatra Pump Storage-1,Sumatra,2025,250.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-19,hydro,priority,19,PS Sumatra Pump Storage-2,Sumatra,2026,250.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-20,hydro,priority,20,PLTA Hidro Sumatra (kuota) tersebar*,Sumatra,2025,200.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-21,hydro,priority,21,PLTA Hidro Sumatra (kuota) tersebar*,Sumatra,2026,200.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-22,hydro,priority,22,PLTA Kalseltengtimra (Kuota) Tersebar,Kalimantan,2024,200.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-23,hydro,priority,23,PLTA Kalseltengtimra (Kuota) Tersebar,Kalimantan,2026,200.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-24,hydro,priority,24,PLTA Kalseltengtimra (Kuota) Tersebar,Kalimantan,2026,200.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-25,hydro,priority,25,PLTA Kaltimra,Kalimantan,2025,200.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-26,hydro,priority,26,PLTA Sulbagsel (Kuota) Tersebar,Sulawesi,2026,200.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-27,hydro,priority,27,PLTA Sulbagsel (Kuota) Tersebar,Sulawesi,2025,200.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-28,hydro,priority,28,PLTA Muara Juloi,Kalimantan,2026,170.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-29,hydro,priority,29,PLTA Muara Juloi,Kalimantan,2027,170.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-30,hydro,priority,30,PLTA Pokko,Sulawesi,2026,125.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-31,hydro,priority,31,PLTA Tanjung Sakti,Sumatra,2028,114.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-32,hydro,priority,32,PLTA Bendungan Merangin,Sumatra,2026,107.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-33,hydro,priority,33,PLTA Sesayap,Kalimantan,2028,103.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-34,hydro,priority,34,PLTA Tabang,Kalimantan,2028,101.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-35,hydro,priority,35,PLTA Buttu Batu,Sulawesi,2024,100.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-36,hydro,priority,36,PLTA Buttu Batu,Sulawesi,2024,100.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-37,hydro,priority,37,PLTA Kalseltengtimra (Kuota) Tersebar,Kalimantan,2025,100.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-38,hydro,priority,38,PLTA Kalseltengtimra (Kuota) Tersebar,Kalimantan,2027,100.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-39,hydro,priority,39,PLTA Kaltimra,Kalimantan,2026,100.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-40,hydro,priority,40,PLTA Nanga Pinoh,Kalimantan,2026,100.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-41,hydro,priority,41,PLTA Simonggo,Sumatra,2028,90.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-42,hydro,priority,42,PLTA Simonggo,Sumatra,2025,90.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-43,hydro,priority,43,PLTA Sulbagsel (Kuota) Tersebar,Sulawesi,2027,80.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-44,hydro,priority,44,PLTA Bakaru 2,Sulawesi,2024,70.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-45,hydro,priority,45,PLTA Bakaru 2,Sulawesi,2024,70.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-46,hydro,priority,46,PLTA Sulbagut (Kuota) Tersebar,Sulawesi,2027,70.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-47,hydro,priority,47,PLTA Sulbagut (Kuota) Tersebar,Sulawesi,2025,60.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-48,hydro,priority,48,PLTA Kelai,Kalimantan,2024,55.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-49,hydro,priority,49,PLTA Wai Tala,Maluku-Papua-Nusa Tenggara,2028,54.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-50,hydro,priority,50,PLTA Kelai,Sumatra,2028,45.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-51,hydro,priority,51,PLTA Kumbih-3,Sumatra,2024,45.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-52,hydro,priority,52,PLTA Masang-2 (FTP2),Sumatra,2024,44.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-53,hydro,priority,53,PLTA Sulbagut,Sulawesi,2024,30.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-54,hydro,priority,54,PLTM NTB (Kuota) Tersebar,Maluku-Papua-Nusa Tenggara,2029,30.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-55,hydro,priority,55,PLTA Wai Tala,Maluku-Papua-Nusa Tenggara,2025,27.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-56,hydro,priority,56,PLTA Wai Tala,Maluku-Papua-Nusa Tenggara,2025,27.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-57,hydro,priority,57,PLTA Watunohu,Sulawesi,2024,22.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-58,hydro,priority,58,PLTA Konawe (Bendung PUPR),Sulawesi,2028,21.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-59,hydro,priority,59,PLTM Papua (Kuota) Tersebar,Maluku-Papua-Nusa Tenggara,2030,20.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-60,hydro,priority,60,PLTM Sulbagsel (Kuota) Tersebar,Sulawesi,2024,20.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-61,hydro,priority,61,PLTM Minihidro (Kuota) Tersebar*,Sumatra,2024,19.1,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-62,hydro,priority,62,PLTA Lambakan,Kalimantan,2028,18.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-63,hydro,priority,63,PLTM Khatulistiwa (Kuota) Tersebar,Kalimantan,2024,17.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-64,hydro,priority,64,PLTA Orya 2. Papua,Maluku-Papua-Nusa Tenggara,2022,14.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-65,hydro,priority,65,PLTM Minihidro (Kuota) Tersebar*,Sumatra,2024,12.4,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-66,hydro,priority,66,PLTA Buru (Kuota) Tersebar,Maluku-Papua-Nusa Tenggara,2025,12.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-67,hydro,priority,67,PLTA Baliem (Bendung PUPR),Maluku-Papua-Nusa Tenggara,2028,10.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-68,hydro,priority,68,PLTA Hidro Sumatra (kuota) tersebar*,Sumatra,2024,10.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-69,hydro,priority,69,PLTM Batang Toru 4,Sumatra,2024,10.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-70,hydro,priority,70,PLTM Ketaun 3,Sumatra,2024,10.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-71,hydro,priority,71,PLTM Koro Yaentu,Sulawesi,2024,10.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-72,hydro,priority,72,PLTM NTB (Kuota) Tersebar,Maluku-Papua-Nusa Tenggara,2030,10.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-73,hydro,priority,73,PLTM Ordi Hulu,Sumatra,2024,10.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-74,hydro,priority,74,PLTM Sulbagut (Kuota) Tersebar,Sulawesi,2024,10.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-75,hydro,priority,75,PLTM Sulbagut (Kuota) Tersebar,Sulawesi,2024,10.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-76,hydro,priority,76,PLTM Sisira,Sumatra,2024,9.8,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-77,hydro,priority,77,PLTM Khatulistiwa (Kuota) Tersebar,Kalimantan,2024,9.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-78,hydro,priority,78,PLTM Minihidro (Kuota) Tersebar*,Sumatra,2024,8.8,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-79,hydro,priority,79,PLTM Sidikalang-1,Sumatra,2024,8.6,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-80,hydro,priority,80,PLTA Sawangan,Sulawesi,2024,8.3,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-81,hydro,priority,81,PLTA Sawangan,Sulawesi,2024,8.3,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-82,hydro,priority,82,PLTM Sulbagut (Kuota) Tersebar,Sulawesi,2024,8.3,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-83,hydro,priority,83,PLTM Aek Tomuan-1,Sumatra,2024,8.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-84,hydro,priority,84,PLTM Simonggo,Sumatra,2024,8.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-85,hydro,priority,85,PLTM Seram (Kuota) Tersebar,Maluku-Papua-Nusa Tenggara,2025,7.8,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-86,hydro,priority,86,PLTM Sumpur,Sumatra,2024,7.6,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-87,hydro,priority,87,PLTM Aek Situmandi,Sumatra,2024,7.5,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-88,hydro,priority,88,PLTM Batang Toru 1,Sumatra,2024,7.5,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-89,hydro,priority,89,PLTM Batang Toru 5,Sumatra,2024,7.5,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-90,hydro,priority,90,PLTM Sulbagsel (Kuota) Tersebar,Sulawesi,2024,7.4,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-91,hydro,priority,91,PLTM Alur Cincin,Sumatra,2024,7.2,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-92,hydro,priority,92,PLTM Raisan Hutadolok,Sumatra,2024,7.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-93,hydro,priority,93,PLTM Raisan Nagatimbul,Sumatra,2024,7.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-94,hydro,priority,94,PLTM Sukarame,Sumatra,2024,7.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-95,hydro,priority,95,PLTM Sumbawa-Bima (Kuota) Tersebar,Maluku-Papua-Nusa Tenggara,2024,7.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-96,hydro,priority,96,PLTM Kalibumi I,Maluku-Papua-Nusa Tenggara,2024,6.4,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-97,hydro,priority,97,PLTM Tuik,Sumatra,2024,6.3,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-98,hydro,priority,98,PLTM Bayang Nyalo,Sumatra,2024,6.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-99,hydro,priority,99,PLTM Cascade Walesi,Maluku-Papua-Nusa Tenggara,2024,6.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-100,hydro,priority,100,PLTM Sumber Jaya,Sumatra,2024,6.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-101,hydro,priority,101,PLTM Tongar,Sumatra,2024,6.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-102,hydro,priority,102,PLTM Alani,Sulawesi,2026,5.6,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-103,hydro,priority,103,PLTM Kukusan 2,Sumatra,2024,5.4,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-104,hydro,priority,104,PLTM Bendungan PU Batanghari,Sumatra,2024,5.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-105,hydro,priority,105,PLTM Flores,Maluku-Papua-Nusa Tenggara,2024,5.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-106,hydro,priority,106,PLTM Kanzy 3,Sumatra,2024,5.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-107,hydro,priority,107,PLTM Sumba,Maluku-Papua-Nusa Tenggara,2024,5.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-108,hydro,priority,108,PLTM Warnasi Warkapi,Maluku-Papua-Nusa Tenggara,2024,4.6,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-109,hydro,priority,109,PLTM Pantan Cuaca,Sumatra,2024,4.5,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-110,hydro,priority,110,PLTM Rabi Jonggor,Sumatra,2024,4.5,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-111,hydro,priority,111,PLTM Nua (Masohi),Maluku-Papua-Nusa Tenggara,2024,4.4,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-112,hydro,priority,112,PLTM Nua (Masohi),Maluku-Papua-Nusa Tenggara,2024,4.4,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-113,hydro,priority,113,PLTM Mamberamo Raya,Maluku-Papua-Nusa Tenggara,2025,4.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-114,hydro,priority,114,PLTM Sumbawa-Bima (Kuota) Tersebar,Maluku-Papua-Nusa Tenggara,2024,3.8,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-115,hydro,priority,115,PLTM Walesi Blok II,Maluku-Papua-Nusa Tenggara,2024,3.8,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-116,hydro,priority,116,PLTM Dominanga,Sulawesi,2024,3.5,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-117,hydro,priority,117,PLTM Java-Bali (Kuota) Tersebar,Java-Madura-Bali,2024,3.2,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-118,hydro,priority,118,PLTM Tarusan,Sumatra,2024,3.2,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-119,hydro,priority,119,PLTA Wai Tina,Maluku-Papua-Nusa Tenggara,2026,3.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-120,hydro,priority,120,PLTA Wai Tina,Maluku-Papua-Nusa Tenggara,2026,3.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-121,hydro,priority,121,PLTA Wai Tina,Maluku-Papua-Nusa Tenggara,2026,3.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-122,hydro,priority,122,PLTA Wai Tina,Maluku-Papua-Nusa Tenggara,2026,3.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-123,hydro,priority,123,PLTM Digoel,Maluku-Papua-Nusa Tenggara,2025,3.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-124,hydro,priority,124,PLTM Muara Sako,Sumatra,2024,3.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-125,hydro,priority,125,PLTM Wabudori,Maluku-Papua-Nusa Tenggara,2025,3.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-126,hydro,priority,126,PLTM Lapai 1,Sulawesi,2024,2.7,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-127,hydro,priority,127,PLTM Lapai 1,Sulawesi,2024,2.7,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-128,hydro,priority,128,PLTM Lombok (Kuota) Tersebar,Maluku-Papua-Nusa Tenggara,2024,2.6,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-129,hydro,priority,129,PLTM Sumbawa-Bima (Kuota) Tersebar,Maluku-Papua-Nusa Tenggara,2024,2.5,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-130,hydro,priority,130,PLTM Koko Babak,Maluku-Papua-Nusa Tenggara,2024,2.3,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-131,hydro,priority,131,PLTM Way Meleson 2,Sumatra,2024,2.3,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-132,hydro,priority,132,PLTM Aek Pungga,Sumatra,2024,2.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-133,hydro,priority,133,PLTM Biak I,Sulawesi,2024,2.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-134,hydro,priority,134,PLTM Iya,Sulawesi,2025,2.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-135,hydro,priority,135,PLTM Lapai 2,Sulawesi,2024,2.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-136,hydro,priority,136,PLTM Lapai 2,Sulawesi,2024,2.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-137,hydro,priority,137,PLTM Sumba (Kuota) Tersebar,Maluku-Papua-Nusa Tenggara,2024,2.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-138,hydro,priority,138,PLTM Tepuai,Kalimantan,2024,2.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-139,hydro,priority,139,PLTM Wae Lega - Ruteng,Maluku-Papua-Nusa Tenggara,2024,1.8,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-140,hydro,priority,140,PLTM Sumba (Kuota) Tersebar,Maluku-Papua-Nusa Tenggara,2024,1.6,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-141,hydro,priority,141,PLTM Tras,Sumatra,2024,1.6,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-142,hydro,priority,142,PLTM Uwe,Maluku-Papua-Nusa Tenggara,2024,1.5,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-143,hydro,priority,143,PLTM Lombok (Kuota) Tersebar,Maluku-Papua-Nusa Tenggara,2024,1.4,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-144,hydro,priority,144,PLTM Riorita,Sulawesi,2024,1.3,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-145,hydro,priority,145,PLTM Riorita,Sulawesi,2024,1.3,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-146,hydro,priority,146,PLTM Waigo,Maluku-Papua-Nusa Tenggara,2026,1.3,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-147,hydro,priority,147,PLTM Halulai,Sulawesi,2024,1.2,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-148,hydro,priority,148,PLTM Amai,Maluku-Papua-Nusa Tenggara,2024,1.1,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-149,hydro,priority,149,PLTM Wae Mala,Maluku-Papua-Nusa Tenggara,2025,1.1,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-150,hydro,priority,150,PLTM Biak II,Sulawesi,2024,1.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-151,hydro,priority,151,PLTM Biak III,Sulawesi,2024,1.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-152,hydro,priority,152,PLTM Lombok (Kuota) Tersebar,Maluku-Papua-Nusa Tenggara,2024,0.6,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-153,hydro,priority,153,PLTM Pandanduri,Maluku-Papua-Nusa Tenggara,2024,0.6,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-154,hydro,priority,154,PLTM Lombok (Kuota) Tersebar,Maluku-Papua-Nusa Tenggara,2024,0.5,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-155,hydro,priority,155,PLTM Lombok (Kuota) Tersebar,Maluku-Papua-Nusa Tenggara,2024,0.5,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-156,hydro,priority,156,PLTM Lombok (Kuota) Tersebar,Maluku-Papua-Nusa Tenggara,2024,0.3,MW,,,,YES
+idn-cipp-2023-cpr-mirror-hydro-157,hydro,priority,157,PLTA (PS) Jatiluhur,Java-Madura-Bali,TBD,760.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-hydro-158,hydro,priority,158,PLTA (PS) Matenggeng,Java-Madura-Bali,TBD,943.2,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-1,solar,priority,1,PLTS+BESS Dediesel,Indonesia,2024,550.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-2,solar,priority,2,PLTS Java-Bali (Kuota) Tersebar,Java-Madura-Bali,2024,140.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-3,solar,priority,3,PLTS Sutami / Karangkates,Java-Madura-Bali,2024,100.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-solar-4,solar,priority,4,PLTS Java-Bali (Kuota) Tersebar,Java-Madura-Bali,2024,100.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-5,solar,priority,5,PLTS Java-Bali (Kuota) Tersebar,Java-Madura-Bali,2024,100.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-6,solar,priority,6,PLTS Indramayu,Java-Madura-Bali,2024,100.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-solar-7,solar,priority,7,PLTS Java-Bali (Kuota) Tersebar,Java-Madura-Bali,2024,80.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-8,solar,priority,8,PLTS Java-Bali (Kuota) Tersebar,Java-Madura-Bali,2024,80.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-9,solar,priority,9,PLTS Saguling,Java-Madura-Bali,2024,60.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-10,solar,priority,10,PLTS Singkarak,Sumatra,2024,50.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-solar-11,solar,priority,11,PLTS Waduk Jatiluhur,Jave-Madura-Bali,TBD,100.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-solar-12,solar,priority,12,PLTS Gajahmungkur (Hijaunesia),Jave-Madura-Bali,TBD,100.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-solar-13,solar,priority,13,PLTS Kedung Ombo (Hijaunesia),Java-Madura-Bali,2024,50.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-solar-14,solar,priority,14,PLTS Jatigede (Hijaunesia),Java-Madura-Bali,TBD,100.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-solar-15,solar,priority,15,PLTS Banyuwangi (Hijaunesia),Java-Madura-Bali,TBD,100.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-solar-16,solar,priority,16,PLTS Pasuruan (Hijaunesia),Java-Madura-Bali,TBD,100.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-solar-17,solar,priority,17,PLTS Banten (Hijaunesia),Java-Madura-Bali,TBD,80.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-solar-18,solar,priority,18,PLTS Jabar (Hijaunesia),Java-Madura-Bali,TBD,80.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-solar-19,solar,priority,19,PLTS Banjar (Hijaunesia),Java-Madura-Bali,TBD,100.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-solar-20,solar,priority,20,PLTS Jateng 1 (Hijaunesia),Java-Madura-Bali,TBD,90.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-solar-21,solar,priority,21,PLTS Jateng 2 (Hijaunesia),Java-Madura-Bali,TBD,50.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-solar-22,solar,priority,22,PLTS Guluk – Guluk (Hijaunesia),Java-Madura-Bali,TBD,50.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-solar-23,solar,priority,23,PLTS Buleleng (Hijaunesia),Java-Madura-Bali,TBD,50.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-solar-24,solar,priority,24,PLTS Banten,Java-Madura-Bali,2024,50.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-25,solar,priority,25,PLTS Java-Bali (Kuota) Tersebar,Java-Madura-Bali,2024,50.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-26,solar,priority,26,PLTS Dedieselisasi,Kalimantan,2024,44.2,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-27,solar,priority,27,PLTS Dedieselisasi,Maluku-Papua-Nusa Tenggara,2024,40.1,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-28,solar,priority,28,PLTS Java-Bali (Kuota) Tersebar,Java-Madura-Bali,2024,40.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-29,solar,priority,29,PLTS Java-Bali (Kuota) Tersebar,Java-Madura-Bali,2024,40.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-30,solar,priority,30,PLTS Java-Bali (Kuota) Tersebar,Java-Madura-Bali,2024,40.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-31,solar,priority,31,PLTS Dedieselisasi,Maluku-Papua-Nusa Tenggara,2024,34.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-solar-32,solar,priority,32,PLTS Dedieselisasi,Sulawesi,2024,33.3,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-33,solar,priority,33,PLTS Dedieselisasi,Sulawesi,2024,25.9,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-34,solar,priority,34,PLTS Java-Bali (Kuota) Tersebar,Java-Madura-Bali,2024,25.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-35,solar,priority,35,PLTS Bali,Java-Madura-Bali,2024,25.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-36,solar,priority,36,PLTS Java-Bali (Kuota) Tersebar,Java-Madura-Bali,2024,25.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-37,solar,priority,37,PLTS Java-Bali (Kuota) Tersebar,Java-Madura-Bali,2025,25.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-38,solar,priority,38,PLTS Dedieselisasi,Sumatra,2024,24.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-39,solar,priority,39,PLTS Dedieselisasi,Java-Madura-Bali,2024,23.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-40,solar,priority,40,PLTS Java-Bali (Kuota) Tersebar,Java-Madura-Bali,2024,20.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-41,solar,priority,41,PLTS Dedieselisasi,Java-Madura-Bali,2024,16.1,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-42,solar,priority,42,PLTS Dedieselisasi,Sumatra,2024,15.2,MW,,,,NO
+idn-cipp-2023-cpr-mirror-solar-43,solar,priority,43,PLTS Dedieselisasi,Maluku-Papua-Nusa Tenggara,2024,13.9,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-44,solar,priority,44,PLTS Dedieselisasi,Sulawesi,2024,10.6,MW,,,,NO
+idn-cipp-2023-cpr-mirror-solar-45,solar,priority,45,PLTS Dedieselisasi,Maluku-Papua-Nusa Tenggara,2024,8.8,MW,,,,NO
+idn-cipp-2023-cpr-mirror-solar-46,solar,priority,46,PLTS Dedieselisasi,Sumatra,2024,7.4,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-47,solar,priority,47,PLTS Dedieselisasi,Java-Madura-Bali,2024,7.3,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-48,solar,priority,48,PLTS Dedieselisasi,Kalimantan,2024,6.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-49,solar,priority,49,PLTS Dedieselisasi,Java-Madura-Bali,2024,4.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-50,solar,priority,50,PLTS Dedieselisasi,Sumatra,2024,3.6,MW,,,,NO
+idn-cipp-2023-cpr-mirror-solar-51,solar,priority,51,PLTS Dedieselisasi,Java-Madura-Bali,2024,3.4,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-52,solar,priority,52,PLTS Dedieselisasi,Sumatra,2024,3.3,MW,,,,NO
+idn-cipp-2023-cpr-mirror-solar-53,solar,priority,53,PLTS Dedieselisasi,Java-Madura-Bali,2024,3.2,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-54,solar,priority,54,PLTS Dedieselisasi,Sumatra,2024,3.1,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-55,solar,priority,55,PLTS Dedieselisasi,Sumatra,2024,3.1,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-56,solar,priority,56,PLTS Dedieselisasi,Java-Madura-Bali,2024,2.6,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-57,solar,priority,57,PLTS Dedieselisasi,Java-Madura-Bali,2024,2.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-58,solar,priority,58,PLTS Dedieselisasi,Java-Madura-Bali,2024,1.6,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-59,solar,priority,59,PLTS Dedieselisasi,Sumatra,2024,1.4,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-60,solar,priority,60,PLTS Dedieselisasi,Kalimantan,2024,1.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-61,solar,priority,61,PLTS Dedieselisasi,Java-Madura-Bali,2024,1.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-62,solar,priority,62,PLTS Dedieselisasi,Sumatra,2024,0.6,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-63,solar,priority,63,PLTS Dedieselisasi,Sulawesi,2024,0.6,MW,,,,YES
+idn-cipp-2023-cpr-mirror-solar-64,solar,priority,64,PLTS Dedieselisasi,Maluku-Papua-Nusa Tenggara,2024,0.4,MW,,,,YES
+idn-cipp-2023-cpr-mirror-transmission-1,transmission,priority,1,SUTET 500 kV Upper Cisokan PLTA PS - Inc. (Cibinong - Saguling),Java-Madura-Bali,2024,60.0,km,22.4,,,NO
+idn-cipp-2023-cpr-mirror-transmission-2,transmission,priority,2,SUTET 500 kV Matenggeng PLTA PS - Inc. (Tasikmalaya - Kesugihan / Rawalo),Java-Madura-Bali,2024,120.0,km,39.3,,,YES
+idn-cipp-2023-cpr-mirror-transmission-3,transmission,priority,3,SUTET 500 kV Grindulu PLTA PS - Inc. (Pedan - Kediri),Java-Madura-Bali,2024,40.0,km,14.9,,,YES
+idn-cipp-2023-cpr-mirror-transmission-4,transmission,priority,4,SUTET 500 kV DC LP E. Java - Ngimbang Converter Station,Java-Madura-Bali,2030,120.0,km,65.0,,,NO
+idn-cipp-2023-cpr-mirror-transmission-5,transmission,priority,5,SUTET 500 kV PLTA Kelai - Inc 2 phi (M.Wahau-Tj.Redeb),Kalimantan,2024,1.0,km,0.1,,,YES
+idn-cipp-2023-cpr-mirror-transmission-6,transmission,priority,6,SUTET 500 kV GITET TJ. Selor - GITET Embalut,Kalimantan,2024,760.0,km,377.7,,,NO
+idn-cipp-2023-cpr-mirror-transmission-7,transmission,priority,7,SUTET 500 kV GITET Embalut - GITET IKN,Kalimantan,2024,150.0,km,74.5,,,NO
+idn-cipp-2023-cpr-mirror-transmission-8,transmission,priority,8,SUTET 500 kV PLTA Tabang - Kembang Janggut,Kalimantan,2024,140.0,km,16.2,,,YES
+idn-cipp-2023-cpr-mirror-transmission-9,transmission,priority,9,SUTET 500 kV PLTA Kaltara 1 - Tj. Selor,Kalimantan,2024,80.0,km,9.2,,,YES
+idn-cipp-2023-cpr-mirror-transmission-10,transmission,priority,10,SUTET 500 kV DC HEPP N. Kalimantan - LP S. Kalimantan,Kalimantan,2030,1800.0,km,975.0,,,NO
+idn-cipp-2023-cpr-mirror-transmission-11,transmission,priority,11,SUTET 500 kV DC LP S. Kalimantan - LP E. Java,Kalimantan,2030,920.0,km,7840.7,,,NO
+idn-cipp-2023-cpr-mirror-transmission-12,transmission,priority,12,Sulawesi Backbone SUTET 275 kV GITET Wotu - GITET Bungku,Sulawesi,2024,260.0,km,105.3,,,YES
+idn-cipp-2023-cpr-mirror-transmission-13,transmission,priority,13,Sulawesi Backbone UTET 275 kV GITET Bungku - GITET Andowia,Sulawesi,2024,260.0,km,105.3,,,NO
+idn-cipp-2023-cpr-mirror-transmission-14,transmission,priority,14,Sulawesi Backbone SUTET 275 kV GITET Andowia - GITET Kendari,Sulawesi,2024,135.0,km,54.7,,,YES
+idn-cipp-2023-cpr-mirror-transmission-15,transmission,priority,15,Sulawesi Backbone SUTET 275 kV GITET Sidrap - GITET Daya Baru,Sulawesi,2024,350.0,km,141.8,,,NO
+idn-cipp-2023-cpr-mirror-transmission-16,transmission,priority,16,Sulawesi Backbone SUTET 275 kV GITET Bakaru 2 - GITET Palopo,Sulawesi,2024,210.0,km,85.1,,,NO
+idn-cipp-2023-cpr-mirror-transmission-17,transmission,priority,17,Sulawesi Backbone SUTET 275 kV GITET Daya Baru - GITET Punagaya,Sulawesi,2024,140.0,km,56.7,,,NO
+idn-cipp-2023-cpr-mirror-transmission-18,transmission,priority,18,Sulawesi Backbone SUTET 275 kV GITET Bakaru 2 - GITET Sidrap,Sulawesi,2024,130.0,km,52.7,,,NO
+idn-cipp-2023-cpr-mirror-transmission-19,transmission,priority,19,Sulawesi Backbone SUTET 275 kV GITET Malili-GITET Pomalaa Switching,Sulawesi,2024,467.0,km,189.1,,,NO
+idn-cipp-2023-cpr-mirror-transmission-20,transmission,priority,20,Sulawesi Backbone SUTET 275 kV GITET Pomalaa-GITET Kendari,Sulawesi,2024,252.0,km,102.1,,,NO
+idn-cipp-2023-cpr-mirror-transmission-21,transmission,priority,21,Sulawesi Backbone SUTET 275 kV GITET Wotu - GITET Malili,Sulawesi,2024,95.0,km,38.5,,,YES
+idn-cipp-2023-cpr-mirror-transmission-22,transmission,priority,22,Sulawesi Backbone Further upgrades Marisa –-Tolitoli – Leok,Sulawesi,TBD,,km,,,,NO
+idn-cipp-2023-cpr-mirror-transmission-23,transmission,priority,23,Sulawesi Backbone Further upgrades on Gorontalo – Tolinggula,Sulawesi,TBD,,km,,,,NO
+idn-cipp-2023-cpr-mirror-transmission-24,transmission,priority,24,Sulawesi Backbone Further upgrades on Tolitoli - Bangkir – Tambu,Sulawesi,TBD,,km,,,,NO
+idn-cipp-2023-cpr-mirror-transmission-25,transmission,priority,25,SUTET 500 kV Cascade Tripa HPP (Upper Tripa 300 MW + Lower Tripa 140 MW) - GITET Takengon-2,Sumatra,>2024,90.0,km,46.2,,,NO
+idn-cipp-2023-cpr-mirror-transmission-26,transmission,priority,26,SUTET 500 kV PLTA WOYLA - Meurebo,Sumatra,>2024,26.0,km,10.9,,,YES
+idn-cipp-2023-cpr-mirror-transmission-27,transmission,priority,27,SUTET 500 kV PLTA Woyla Hulu & Hilir - PLTA Woyla,Sumatra,>2024,4.2,km,1.8,,,YES
+idn-cipp-2023-cpr-mirror-transmission-28,transmission,priority,28,SUTET 275 kV Sibual Buali - GITET Sarulla,Sumatra,>2024,2.0,km,0.5,,,NO
+idn-cipp-2023-cpr-mirror-transmission-29,transmission,priority,29,SUTET 500 kV GITTET Takengon-2 - Inc. 2 Phi (Naganraya - Takengon-2),Sumatra,>2024,0.5,km,0.3,,,YES
+idn-cipp-2023-cpr-mirror-transmission-30,transmission,priority,30,Sumatra-Batam-Bintan Interconnection,Sumatra,TBD,,km,,,,NO
+idn-cipp-2023-cpr-mirror-transmission-31,transmission,priority,31,Sumatra Backbone SUTET 275 kV GITET 275 kV Siborpa - Inc. 2 Phi Sarula Rantau Perapat,Sumatra,>2024,0.2,km,0.1,,,NO
+idn-cipp-2023-cpr-mirror-transmission-32,transmission,priority,32,Sumatra Backbone SUTET 500 kV Galang-PLTA Pump Storage-1,Sumatra,2024,100.0,km,49.7,,,YES
+idn-cipp-2023-cpr-mirror-transmission-33,transmission,priority,33,Sumatra Backbone SUTET 275kV Pangkalan Susu - Arun- Sigli,Sumatra,TBD,,km,,,,YES
+idn-cipp-2023-cpr-mirror-transmission-34,transmission,priority,34,Sumatra-Java Interconnector SUTET 500 kV DC Muara Enim - LP Ketapang - Salira Indah - Bogor + Subsea 40 KM,Sumatra,2024,570.0,km,1900.0,,,NO
+idn-cipp-2023-cpr-mirror-transmission-35,transmission,priority,35,Transmisi Papua-Maluku-Pulau Obi,Maluku-Papua-Nusa-Tenggara,TBD,,km,,,,NO
+idn-cipp-2023-cpr-mirror-transmission-36,transmission,priority,36,Deployment of Smart Grid Technologies,Tersebar,2024,,km,860.0,,,NO
+idn-cipp-2023-cpr-mirror-transmission-37,transmission,priority,37,Advanced Metering Deployment of Smart Grid Technologies Advanced Control Center,Tersebar,2024,,km,93.0,,,NO
+idn-cipp-2023-cpr-mirror-wind-1,wind,priority,1,PLTB Java Barat,Java-Madura-Bali,2024,60.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-wind-2,wind,priority,2,PLTB Sulbagsel (Kuota) Tersebar,Sulawesi,2024,60.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-3,wind,priority,3,PLTB Tanah Laut,Kalimantan,2024,40.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-wind-4,wind,priority,4,PLTB Tanah Laut,Kalimantan,2024,30.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-5,wind,priority,5,PLTB Timor (Kuota) Tersebar,Maluku-Papua-Nusa Tenggara,2024,11.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-6,wind,priority,6,PLTB Timor (Kuota) Tersebar,Maluku-Papua-Nusa Tenggara,2024,11.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-7,wind,priority,7,PLTB KarimunJava,Java-Madura-Bali,2024,2.2,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-8,wind,priority,8,PLTB Lombok (Kuota) Tersebar,Maluku-Papua-Nusa Tenggara,2024,30.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-9,wind,priority,9,PLTB Timor,Maluku-Papua-Nusa Tenggara,2024,22.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-10,wind,priority,10,PLTB Sumba (Kuota) Tersebar,Maluku-Papua-Nusa Tenggara,2024,3.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-11,wind,priority,11,PLTB Maubesi,Maluku-Papua-Nusa Tenggara,2024,2.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-12,wind,priority,12,PLTB Banten,Java-Madura-Bali,2024,100.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-wind-13,wind,priority,13,PLTB Banten,Java-Madura-Bali,2024,100.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-wind-14,wind,priority,14,PLTB Sulbagsel (Kuota) Tersebar,Sulawesi,2024,70.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-wind-15,wind,priority,15,PLTB Sulbagsel,Sulawesi,2024,60.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-wind-16,wind,priority,16,PLTB Sulbagsel,Sulawesi,2024,70.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-17,wind,priority,17,PLTB Aceh,Sumatra,2024,55.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-wind-18,wind,priority,18,PLTB Lombok (Kuota) Tersebar,Maluku-Papua-Nusa Tenggara,2024,30.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-19,wind,priority,19,PLTB NEW 1_PLTB JETP,Java-Madura-Bali,2025,375.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-20,wind,priority,20,PLTB NEW 2_PLTB JETP,Java-Madura-Bali,2025,375.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-21,wind,priority,21,PLTB NEW 2_PLTB JETP,Java-Madura-Bali,2025,375.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-22,wind,priority,22,PLTB NEW 3_PLTB JETP,Java-Madura-Bali,2025,375.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-23,wind,priority,23,PLTB NEW 3_PLTB JETP,Java-Madura-Bali,2025,375.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-24,wind,priority,24,PLTB NEW 4_PLTB JETP,Java-Madura-Bali,2025,375.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-25,wind,priority,25,PLTB NEW 4_PLTB JETP,Java-Madura-Bali,2025,375.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-26,wind,priority,26,PLTB NEW 1_PLTB,Java-Madura-Bali,2026,100.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-27,wind,priority,27,PLTB NEW 1_PLTB,Java-Madura-Bali,2026,100.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-28,wind,priority,28,PLTB Timor (Kuota) Tersebar,Maluku-Papua-Nusa Tenggara,2026,22.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-29,wind,priority,29,PLTB Timor (Kuota) Tersebar,Maluku-Papua-Nusa Tenggara,2026,22.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-30,wind,priority,30,PLTB NEW 1_PLTB,Java-Madura-Bali,2027,100.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-31,wind,priority,31,PLTB NEW 1_PLTB,Java-Madura-Bali,2027,100.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-32,wind,priority,32,PLTB NEW 1_PLTB,Java-Madura-Bali,2028,100.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-33,wind,priority,33,PLTB NEW 1_PLTB,Java-Madura-Bali,2028,100.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-34,wind,priority,34,PLTB Sulbagsel (Kuota) Tersebar,Sulawesi,2028,60.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-35,wind,priority,35,PLTB Sulbagsel (Kuota) Tersebar,Sulawesi,2028,60.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-36,wind,priority,36,PLTB Sumatra Tersebar,Sumatra,2028,60.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-wind-37,wind,priority,37,PLTB NTB (Kuota) Tersebar,Maluku-Papua-Nusa Tenggara,2028,10.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-38,wind,priority,38,PLTB NTB (Kuota) Tersebar,Maluku-Papua-Nusa Tenggara,2028,10.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-39,wind,priority,39,PLTB NEW 1_PLTB,Java-Madura-Bali,2029,100.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-40,wind,priority,40,PLTB NEW 1_PLTB,Java-Madura-Bali,2029,100.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-41,wind,priority,41,PLTB Sulbagsel (Kuota) Tersebar,Sulawesi,2029,60.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-42,wind,priority,42,PLTB Sulbagsel (Kuota) Tersebar,Sulawesi,2029,60.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-43,wind,priority,43,PLTB Sumatra Tersebar,Sumatra,2029,60.0,MW,,,,YES
+idn-cipp-2023-cpr-mirror-wind-44,wind,priority,44,PLTB Maluku (Kuota) Tersebar,Maluku-Papua-Nusa Tenggara,2029,10.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-45,wind,priority,45,PLTB Maluku (Kuota) Tersebar,Maluku-Papua-Nusa Tenggara,2029,10.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-46,wind,priority,46,PLTB NEW 1_PLTB,Java-Madura-Bali,2030,100.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-47,wind,priority,47,PLTB NEW 1_PLTB,Java-Madura-Bali,2030,100.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-48,wind,priority,48,PLTB NEW 3_PLTB,Java-Madura-Bali,2030,100.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-49,wind,priority,49,PLTB NEW 3_PLTB,Java-Madura-Bali,2030,100.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-50,wind,priority,50,PLTB Sulbagsel (Kuota) Tersebar,Sulawesi,2030,60.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-51,wind,priority,51,PLTB Sulbagsel (Kuota) Tersebar,Sulawesi,2030,60.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-52,wind,priority,52,PLTB NTB (Kuota) Tersebar,Maluku-Papua-Nusa Tenggara,2030,10.0,MW,,,,NO
+idn-cipp-2023-cpr-mirror-wind-53,wind,priority,53,PLTB NTB (Kuota) Tersebar,Maluku-Papua-Nusa Tenggara,2030,10.0,MW,,,,NO

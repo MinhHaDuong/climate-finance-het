@@ -2,7 +2,6 @@
 Title: Lignes des autres documents : plan-projects, portefeuille, pilote, claims, liens
 Created: 2026-09-22
 Author: HDMX-coding-agent
-Blocked-by: 0873
 
 --- log ---
 2026-09-22T17:30Z HDMX-coding-agent created
@@ -10,6 +9,7 @@ Blocked-by: 0873
 2026-09-23T16:00Z HDMX-coding-agent note plan (raid prep) : chemins vérifiés (`build_lines.py` à créer, confirmé absent d'origin/main) ; comptes confirmés contre les tables au dépôt (2026-09-23) : idn-portfolio-observations.csv 46, vnm-pilot-manifest.csv 66, vnm-pilot-observations.csv 46, source-claims.csv 151, project-source-links.csv 315 dont 11 `project_page_component` (le reste : named_in 109, possible_match 71, project_report 62, project_page 37, cmea_selected_monitoring 14, approval_document 9, data_portal 2)
 2026-09-23T16:00Z HDMX-coding-agent question (raid prep) : l'action 3 frappait des `line-referents` dont le `referent_id` est l'identifiant `project_id` actuel de `projects.csv` ; ce n'est pas une identité valide de la nouvelle `projects` tant que [[0875]] (vague 4, après ce ticket en vague 3) n'a pas frappé les identités et rempli `routes` — `violation_typed_reference` refuserait la ligne dès son écriture. De plus, chaque `source_id` cité par ces 304 liens (hors les 11 `project_page_component`) est un document (page projet, rapport), pas encore une `lines` row : aucune action de ce ticket n'en extrait une. Reformulé ci-dessous pour ne pas frapper ces `line-referents` ici ; question pour l'auteur, à trancher avant l'exécution : soit ce ticket mine une ligne minimale par document cité (classification `named_item`, locator le plus court disponible) et dépose les 304 décisions en candidates référençant l'ancien `project_id` dans `notes` pour re-résolution par [[0875]], soit [[0875]] absorbe cette action une fois les identités et `routes` en place. Les 11 `project_page_component` restent comme prévu à [[0875]] (relations, pas ce ticket).
 
+2026-09-23T18:56Z HDMX-coding-agent note blocker 0873 closed — Blocked-by removed.
 --- body ---
 ## Context
 

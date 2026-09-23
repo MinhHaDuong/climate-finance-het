@@ -28,6 +28,15 @@ view reads them. The two old tables stay, read only, until ticket 0878
 retires them with their readers; a new collection is not yet written to the new
 tables.
 
+The lines of the six M1a extracts (ticket 0873, migration step 2) are
+`lines.d/<CODE>-<year>.csv` (the `lines` table, chunked by country and year),
+`line-fields/<document_id>.csv` with each document's own columns,
+`line-field-specs.csv` declaring those columns, and `routes.csv` sending each
+plan and Viet Nam row identifier the M1a export served to its line. They were
+ingested once from the pinned extracts by `scripts/jetp/build_m1a_lines.py`;
+the M1a export is read from them. `plan-projects.csv` stays, read only, until
+ticket 0878.
+
 A local observatory MVP now lives in `deliverables/jetp-observatory/`; its
 committed JSON handoffs are a preview, not a deposited monthly edition.
 

@@ -65,7 +65,12 @@ Order of work, each step a ticket with its own byte-level check:
    observatory's Documents page is the check.
 2. Lines and line fields for the four M1a documents, replacing the M1a
    builder's product with the same rows under the new contract. The inventory
-   tab is the check: same rows, same order, same fields.
+   tab is the check: same rows, same order, same fields. Done by ticket 0873:
+   2 164 lines in six documents (ZAF 257, IDN 1 579, VNM 279, SEN 49), their
+   fields in `line-fields/`, and 1 907 `routes` for the plan and Viet Nam row
+   identifiers the export served; the eight exported files are unchanged byte
+   for byte. The export's count of unknown field values is now taken over the
+   columns each document prints, not over the extractor's bookkeeping columns.
 3. Lines for the remaining documents (plan-projects, portfolio, pilot, claims).
 4. Identity split: referents, routes, the five identity tables. Every old
    identifier resolves through `routes`. The party table, which step 1 starts

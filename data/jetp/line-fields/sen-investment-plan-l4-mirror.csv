@@ -1,0 +1,12 @@
+line_id,technology_group,priority_tier,ordinal,project_name,system,estimated_start,capacity_value,capacity_unit,estimated_investment_usd_mn,natural_retirement_year,estimated_retirement_year,ruptl
+sen-investment-plan-l4-mirror-quick-win-1,quick_win,top_priority,1,Projet Quick Win 1: 100 MWc + BESS 60 MW x 3h EPCF (JETP1 & JETP2),,,,,,,,
+sen-investment-plan-l4-mirror-quick-win-2,quick_win,top_priority,2,"Projet Quick Win 2: 100 MWc + BESS 60 MW x 3h IPP ""Champions nationaux""",,,,,,,,
+sen-investment-plan-l4-mirror-quick-win-3,quick_win,top_priority,3,"Projet Quick Win 3: 100 MWc + BESS 60 MW x 3h IPP IPP ""Leral""",,,,,,,,
+sen-investment-plan-l4-mirror-quick-win-4,quick_win,top_priority,4,PUELEC,,,,,,,,
+sen-investment-plan-l4-mirror-quick-win-5,quick_win,top_priority,5,Programme de réduction de la facture d’électricité de l’état par l’utilisation de sources d’énergies renouvelables et l’efficacité énergétique,,,,,,,,
+sen-investment-plan-l4-mirror-quick-win-6,quick_win,top_priority,6,Projet d'installation de 27 000 biodigesteurs,,,,,,,,
+sen-investment-plan-l4-mirror-quick-win-7,quick_win,top_priority,7,Mise en place d'une unité de production de BioGNV pour les autobus urbains à Dakar,,,,,,,,
+sen-investment-plan-l4-mirror-quick-win-8,quick_win,top_priority,8,Etude de stabilité du réseau et des besoins en stockage,,,,,,,,
+sen-investment-plan-l4-mirror-quick-win-9,quick_win,top_priority,9,Accès à l’énergie pour tous dans les Iles du Saloum,,,,,,,,
+sen-investment-plan-l4-mirror-quick-win-10,quick_win,top_priority,10,Intégration des énergies renouvelables (BESS de Diass),,,,,,,,
+sen-investment-plan-l4-mirror-quick-win-11,quick_win,top_priority,11,Hybridation de 2000 forages en milieu rural,,,,,,,,
