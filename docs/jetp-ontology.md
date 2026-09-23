@@ -97,8 +97,10 @@ is about.
 The body that publishes a document and answers for what it states: the JETP
 Indonesia Secretariat, the JET Project Management Unit, the Ministry of Industry
 and Trade, ANER, Senelec, the Asian Development Bank. A publisher has an
-authority category (`config/jetp_tracking.yaml` `authority_categories`) and a
-country or `international`. The registry holds 103 distinct publishers today,
+authority category, `national_government`, `jetp_secretariat`, `ipg`,
+`bilateral_funder`, `multilateral_funder`, `private_finance`, `operator` or
+`secondary_source`, and a country (`ZAF`, `IDN`, `VNM`, `SEN`) or
+`international`. The registry holds 103 distinct publishers today,
 as free text in a column.
 
 A publisher is what the project has so far called a source. The word source is
@@ -107,9 +109,11 @@ first harvest.
 
 ### Document
 
-A logical publication: a title, a document type (`source_types` in the
-vocabulary, renamed `document_types`), a canonical URL, and one or more
-publishers. The Resource Mobilisation Plan 2023, the Q1 2026 investment
+A logical publication: a title, a document type, a canonical URL, and one
+or more publishers. The document types are `political_declaration`,
+`investment_plan`, `implementation_plan`, `annual_report`, `progress_update`,
+`project_list`, `project_page`, `approval_document`, `financing_agreement`,
+`operator_report`, `official_news`, `secondary_news` and `data_portal`. The Resource Mobilisation Plan 2023, the Q1 2026 investment
 register, an EVN project page. Publication is a relation, not a column, so a
 declaration co-signed by a government and the International Partners Group, or
 a report issued jointly by a secretariat and a ministry, names every publisher.
@@ -123,7 +127,10 @@ the headers that matter and, when bytes came back, the fingerprint of the
 snapshot they form. This is the current manifest row. A retrieval may fail
 and hold no snapshot; two retrievals may return the same bytes and share one
 snapshot, as the manifest already shows with a `not_modified` re-fetch three
-minutes after a collection.
+minutes after a collection. A retrieval's status is `collected`,
+`not_modified`, `blocked`, `missing`, `invalid_content`, `invalid_response`,
+`retryable_http_error`, `http_error`, `fetch_error`, `not_published` or
+`not_applicable`.
 
 ### Snapshot
 
@@ -196,10 +203,10 @@ may be a tranche of another (`tranche_of`) and finances zero or more projects
 (`finances`); the hierarchy never splits money.
 
 An agreement carries a `modality`, the OECD DAC type-of-aid code that Paper A's
-result turns on: budget support (A01, A02), core contributions (B01 to B04),
-project-type interventions (C01), experts and technical assistance (D01,
-D02), scholarships (E01), debt relief (F01), and `unknown` when no line states
-it. Modality is a classification assigned from a line through a referent
+result turns on: budget support (`A01`, `A02`), core contributions (`B01`,
+`B02`, `B03`, `B04`), project-type interventions (`C01`), experts and
+technical assistance (`D01`, `D02`), scholarships (`E01`), debt relief
+(`F01`), and `unknown` when no line states it. Modality is a classification assigned from a line through a referent
 decision, never inferred from the instrument word. Loan terms, interest rate,
 maturity, grace period and the resulting grant element, are observations on
 the agreement, because a publisher reports them at a date and another may
@@ -210,8 +217,8 @@ tariff reform at Senelec is one agreement, one condition, one party.
 
 ### Party
 
-A named organisation in a role: funder, channel, promoter, implementing entity,
-beneficiary, contractor, operator. Replaces 61 free-text funder strings that
+A named organisation in a role: `funder`, `channel`, `promoter`,
+`implementing_entity`, `beneficiary`, `contractor`, `operator`. Replaces 61 free-text funder strings that
 conflate funder with channel ("Canada via World Bank and ADB"). A party may
 also be a publisher; the two registries share an organisation identifier when
 they do.
@@ -249,13 +256,14 @@ agreement, a state of an asset, a stage of a project, a capacity, an estimate
 on a plan line, a count on a perimeter, an envelope on a partnership. The
 subject is typed, `(subject_kind, subject_id)`, and may be a line itself when
 no identity has been minted. An observation has one or more timings, each
-with a role (event, approval, reporting cutoff, register date, report date,
-planned), a precision and bounds, so that an approval known only to the year
+with a role (`event`, `approval`, `reporting_cutoff`, `register_date`,
+`report_date`, `planned`), a precision (`day`, `month`, `quarter`, `year`,
+`unknown`) and bounds, so that an approval known only to the year
 and the cutoff of the report that states it are both kept. Values are the
 publisher's, in the publisher's unit and currency; conversion is a
 derivation through the sourced `rates` table. An observation names its
-`measure` from the closed list of section 4, its `basis` (gross, net,
-unknown) where money is involved, and its `flow_type` from the IATI list when
+`measure` from the closed list of section 4, its `basis` (`gross`, `net`,
+`unknown`) where money is involved, and its `flow_type` from the IATI list when
 the measure is a flow. It carries `recorded_at`, the date the ledger wrote
 it, and the same `status` and `supersedes` as a decision row, so a corrected
 publication is a new observation that supersedes the old one and an as-of
@@ -275,7 +283,7 @@ decided it and when.
 
 | Relation | From | To | Meaning |
 |---|---|---|---|
-| `published_by` | document | publisher | many-to-many; role optional (author, co-signatory, host) |
+| `published_by` | document | publisher | many-to-many; role optional (`author`, `co_signatory`, `host`) |
 | `edition_of` | document | document | succeeds a previous edition |
 | `same_as` (document) | document | document | one publication under two URLs or two exports; the lines belong to the canonical one |
 | `translation_of` | document | document | the same publication in another language; lines are extracted from one and cross-referenced, never doubled |
@@ -290,7 +298,7 @@ decided it and when.
 | `finances` | agreement | project | many-to-many |
 | `tranche_of` | agreement | agreement | at most one active parent |
 | `party_in` | party | agreement | one row per role; a party may fund one agreement and channel another |
-| `role_in` | party | project, asset, perimeter, document, line | a mandate outside any agreement: lead agency, coordinating agency, guarantor, endorser, signatory, host, standards body; one row per role |
+| `role_in` | party | project, asset, perimeter, document, line | a mandate outside any agreement: `lead_agency`, `coordinating_agency`, `guarantor`, `endorser`, `signatory`, `host`, `standards_body`; one row per role |
 | `same_as` (line) | line | line | the same published item in two places: a CRS activity across reporting years (keyed on donor and donor project id), one amount printed in a headline, a table and a chart |
 | `cites` (line) | line | document, line | a document's reference to another document or to a line of it, held or not |
 | `member_of` | line, project, asset, agreement | perimeter | dated, justified membership; a line may be a member before any identity is minted |
@@ -328,11 +336,11 @@ The `measure` of an observation is from a closed list, extended by decision:
 
 | Axis | Measures |
 |---|---|
-| money | `amount` (a state's amount, with `own_status`), `flow` (with `flow_type`: pledge, commitment, disbursement, expenditure, from IATI), `estimate` (a plan cost, no funder), `envelope` (a partnership or portfolio total), `interest_rate`, `maturity_years`, `grace_years`, `grant_element`, `condition` |
+| money | `amount` (a state's amount, with `own_status`), `flow` (with `flow_type`: `pledge`, `commitment`, `disbursement`, `expenditure`, from IATI), `estimate` (a plan cost, no funder), `envelope` (a partnership or portfolio total), `interest_rate`, `maturity_years`, `grace_years`, `grant_element`, `condition` |
 | physical | `capacity` (with unit), `length`, `state`, `target` (a physical or social objective with a `target` timing, such as a renewable share by 2030) |
 | counting | `count` (with the publisher's unit named: rows, locomotives, officials trained, households), `absence` |
 | macro | `indicator` (with the publisher's indicator code) |
-| marker | `marker` (the publisher's policy-marker score: Rio mitigation, adaptation, biodiversity, desertification, and non-Rio markers such as gender; value 0, 1 or 2, or `not_screened` when the field is blank, which is not 0) |
+| marker | `marker` (the publisher's policy-marker score: Rio `mitigation`, `adaptation`, `biodiversity`, `desertification`, and non-Rio markers such as `gender`; value `0`, `1` or `2`, or `not_screened` when the field is blank, which is not 0) |
 
 A marker is the donor's own scoring of an activity, at a reporting year,
 under the marker definition of that year. The "climate finance" that a
@@ -345,7 +353,7 @@ without any change in the loan. A value may be a range: `value_low` and
 `value_high` bound it, as the timing bounds bound a date, and a scalar has
 both equal.
 
-Money observations carry a `basis`, gross, net or unknown, and a flow carries
+Money observations carry a `basis`, `gross`, `net` or `unknown`, and a flow carries
 its interval through two timing roles, `period_start` and `period_end`, so a
 quarterly register total states the quarter it covers and the account
 of section 5 of the backend design can test coverage. A point flow has one
@@ -356,10 +364,10 @@ where the four publishers' practice requires it:
 
 | Axis | Subject | External list | Local additions |
 |---|---|---|---|
-| project stage | project | OC4IDS `projectStatus`: identification, preparation, implementation, completion, maintenance, decommissioning, decommissioned, cancelled | none |
-| asset state | asset | Global Energy Monitor: announced, pre-permit, permitted, construction, shelved, cancelled, operating, mothballed, retired | `retirement_proposed`, `retirement_agreed` |
-| money | agreement | states: announced, mou, approved, signed, cancelled, withdrawn; flows: IATI pledge, commitment, disbursement, expenditure | none |
-| delivery | agreement | IATI activity status: pipeline, implementation, finalisation, closed, cancelled, suspended | none; the South African register's letters A to D crosswalk here |
+| `project_stage` | project | OC4IDS `projectStatus`: `identification`, `preparation`, `implementation`, `completion`, `maintenance`, `decommissioning`, `decommissioned`, `cancelled` | none |
+| `asset_state` | asset | Global Energy Monitor: `announced`, `pre_permit`, `permitted`, `construction`, `shelved`, `cancelled`, `operating`, `mothballed`, `retired` | `retirement_proposed`, `retirement_agreed` |
+| `money` | agreement | states: `announced`, `mou`, `approved`, `signed`, `cancelled`, `withdrawn`; flows: IATI `pledge`, `commitment`, `disbursement`, `expenditure` | none |
+| `delivery` | agreement | IATI activity status: `pipeline`, `implementation`, `finalisation`, `closed`, `cancelled`, `suspended` | none; the South African register's letters A to D crosswalk here |
 | comparator statuses | comparator lines | World Bank project status (pipeline, active, closed, dropped), CRS and IATI activity status | crosswalked onto the axes above, never merged |
 
 The publisher's own words, all of them, are kept: the register's `A. Planned`
@@ -379,25 +387,30 @@ states this rather than filling it.
 The ontology is data about the ledger's words, stored like the ledger itself:
 one CSV per table under `data/jetp/ontology/`, reviewed by diff, revised by
 supersession and never edited in place. Each table is keyed by a row
-identifier; the column in *italics* is the chain key that successive
-revisions of one entry share.
+identifier; the columns in *italics* are the chain key that successive
+revisions of one entry share. A term's `term_id` is unique within its
+`list`, so `cancelled` can be a value of several axes.
 
 | Table | Key | Columns |
 |---|---|---|
-| `terms` | `term_row_id` | *term_id*, kind, list, label, definition, scope_note, domain, range, external_scheme, external_uri, mapping_relation, recorded_at, decided_by, status, supersedes, notes |
+| `terms` | `term_row_id` | *term_id*, kind, *list*, label, definition, scope_note, domain, range, external_scheme, external_uri, mapping_relation, recorded_at, decided_by, status, supersedes, notes |
 | `status-crosswalk` | `crosswalk_row_id` | *(publisher_id, own_status)*, axis, shared_status, recorded_at, decided_by, status, supersedes, notes |
 | `sector-crosswalk` | `crosswalk_row_id` | *(publisher_id, own_sector)*, purpose_code, recorded_at, decided_by, status, supersedes, notes |
 | `perimeters` | `perimeter_row_id` | *perimeter_id*, country, name, scope, definition, recorded_at, decided_by, status, supersedes, notes |
-| `marker-coefficients` | `coefficient_row_id` | *(donor_party_id, marker, score, year)*, coefficient, line_id, recorded_at, status, supersedes |
+| `marker-coefficients` | `coefficient_row_id` | *(donor_party_id, marker, score, year)*, coefficient, line_id, recorded_at, decided_by, status, supersedes |
 
 **Definition.** Every word the schema admits as a value is a `terms` row: the
 classes and relations of sections 2 and 3, the line classifications, measures,
 bases, flow types, modalities, date roles, roles, axes and axis values of
-section 4. `kind` says which (class, relation, value); `list` names the closed
+section 4. `kind` says which (`class`, `relation`, `value`); `list` names the closed
 list a value belongs to. The definition is plain English, one or two
 sentences, written for a reader of the observatory. A relation term also
 states its `domain` and `range`. The DDL's checks read the terms in force; no
-script or configuration file carries its own copy of a list.
+script or configuration file carries its own copy of a list. Sections 2 to 4
+write every value in code type, which is what the alignment test reads; an
+axis's `term_id` names the list of its values, and the OECD DAC purpose codes
+that `sector-crosswalk` maps onto are cited by their five digits, not copied
+as terms.
 
 **Traceability.** A term taken from an external vocabulary names its scheme
 (IATI, OC4IDS, GEM, OECD DAC, PROV-O, SKOS), the concept's URI or code, and a

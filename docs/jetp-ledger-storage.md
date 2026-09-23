@@ -34,11 +34,11 @@ file in `.githooks/pre-commit`, is chunked by country and year into
 | `observations` | `observation_id` | subject_kind, subject_id, axis, measure, flow_type, basis, value, value_low, value_high, unit, currency, own_status, indicator_code, line_id, method, method_version, recorded_at, status, supersedes, notes |
 | `timings` | `timing_id` | observation_id, date_role, date, date_precision, lower_bound, upper_bound, line_id, recorded_at |
 | `external-ids` | (scheme, external_id) | kind, id, line_id, recorded_at |
-| `adjudications` | `adjudication_id` | decision_type (occurrence membership, flow coverage, perimeter compatibility, identity), subject_kind, subject_id, verdict, status, decided_at, decided_by, supersedes, notes |
+| `adjudications` | `adjudication_id` | decision_type (`occurrence_membership`, `flow_coverage`, `perimeter_compatibility`, `identity`), subject_kind, subject_id, verdict, status, decided_at, decided_by, supersedes, notes |
 | `adjudication-members` | (adjudication_id, kind, id) | role |
 | `rates` | (currency, date, basis) | rate_to_usd, line_id, recorded_at (a publisher's own conversion, printed beside the original, is a `rates` row citing that line, so the ledger records that the publisher converted, at what rate) |
 | `deflators` | (series, year) | value, line_id, recorded_at |
-| `line-field-specs` | `document_id` | the ordered list of a document's own column names, written at extraction, against which each `line-fields/<document_id>` header is validated |
+| `line-field-specs` | `document_id` | columns (the ordered list of a document's own column names, written at extraction, against which each `line-fields/<document_id>` header is validated) |
 | `routes` | `old_id` | kind, new_id |
 | `coverage` | (referent_kind, referent_id) | review_status, checked_at, route, document_ids, notes |
 | `dry-searches` | as today | |

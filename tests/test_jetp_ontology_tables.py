@@ -20,8 +20,8 @@ from pathlib import Path
 
 import pytest
 from jetp import _ledger_headers as ledger_headers
+from jetp import _ontology as ontology
 from jetp import build_ledger as ledger_build
-from jetp import ontology
 
 ROOT = Path(__file__).resolve().parents[1]
 ONTOLOGY_DOC = ROOT / 'docs' / 'jetp-ontology.md'
@@ -103,9 +103,10 @@ def _write(ledger_dir, tables):
 
 def _fixture(tmp_path, tables=None):
     tables = tables or _fixture_tables()
-    # The fixture's retrieval status must itself be a term.
-    tables['terms'].append(_term('collected', 'retrieval_status', 'Bytes came back.',
-                                 '2026-01-01'))
+    # The fixture's retrieval and crosswalk statuses must themselves be terms.
+    tables['terms'] += [
+        _term('collected', 'retrieval_status', 'Bytes came back.', '2026-01-01'),
+        _term('accepted', 'decision_status', 'In force when terminal.', '2026-01-01')]
     _write(tmp_path, tables)
     return tmp_path
 
@@ -256,17 +257,21 @@ def test_terms_describe_themselves_in_their_own_lists(terms):
         assert {t[column] for t in terms} <= allowed, column
 
 
-def test_every_closed_list_the_ddl_checks_has_terms(terms):
+def _checked_lists():
+    """List names of violation_closed_list, read from its (tbl, col, list, value) rows."""
     ddl = ledger_headers.DDL_PATH.read_text(encoding='utf-8')
-    checked = set(re.findall(r"SELECT '\w+', '\w+', '(\w+)',", ddl))
+    return set(re.findall(r"SELECT '\w+', '\w+', '(\w+)',", ddl))
+
+
+def test_every_closed_list_the_ddl_checks_has_terms(terms):
+    checked = _checked_lists()
     assert checked
     assert sorted(name for name in checked if not _in_list(terms, name)) == []
 
 
 def test_the_legacy_kind_list_is_renamed_class(terms):
     """0871 named its typed-reference list `kind`, which reads as terms.kind; it is `class`."""
-    ddl = ledger_headers.DDL_PATH.read_text(encoding='utf-8')
-    assert ", 'kind', " not in ddl
+    assert 'kind' not in _checked_lists()
     assert {'line', 'project', 'asset', 'agreement', 'party', 'perimeter',
             'observation'} <= _in_list(terms, 'class')
 
@@ -336,19 +341,44 @@ def test_the_relation_table_is_the_terms_list(terms):
 
 def _spec_text():
     return (ONTOLOGY_DOC.read_text(encoding='utf-8') + '\n'
-            + STORAGE_DOC.read_text(encoding='utf-8')).lower()
+            + STORAGE_DOC.read_text(encoding='utf-8'))
+
+
+def _code_tokens(text):
+    tokens = set()
+    for span in re.findall(r'`([^`\n]+)`', text):
+        tokens |= set(re.split(r'[\s,()]+', span))
+    return tokens
+
+
+def missing_terms(text, terms):
+    """Terms in force the specification never mentions.
+
+    A value must appear in code type, as the specification writes values; a
+    class or a relation may appear by its label, as a heading or in prose.
+    """
+    code, lower = _code_tokens(text), text.lower()
+    missing = []
+    for term in terms:
+        if term['kind'] == 'value':
+            found = term['term_id'] in code
+        else:
+            found = any(form in lower for form in (
+                term['term_id'].lower(), term['label'].lower(),
+                term['term_id'].replace('_', ' ').lower()))
+        if not found:
+            missing.append(f"{term['list']}.{term['term_id']}")
+    return missing
 
 
 def test_every_term_in_force_appears_in_the_specification(terms):
+    assert missing_terms(_spec_text(), terms) == []
+
+
+def test_the_reverse_check_fails_on_a_term_the_specification_dropped(terms):
     text = _spec_text()
-    missing = []
-    for term in terms:
-        forms = {term['term_id'].lower(), term['label'].lower(),
-                 term['term_id'].replace('_', ' ').lower(),
-                 term['term_id'].replace('_', '-').lower()}
-        if not any(form in text for form in forms):
-            missing.append(f"{term['list']}.{term['term_id']}")
-    assert missing == []
+    assert '`quarter`, ' in text
+    assert missing_terms(text.replace('`quarter`, ', ''), terms) == ['date_precision.quarter']
 
 
 def _contract_tables():
