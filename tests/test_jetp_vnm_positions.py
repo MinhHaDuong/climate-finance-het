@@ -166,10 +166,11 @@ def test_real_candidate_covers_inventory_legacy_and_all_country_views():
     result = builder.build_migration(root)
     assert len(result['inventory_positions']) == 279
     # 227 before ticket 0854; its seven collected Viet Nam sources add seven
-    # acquisition_history dispositions (data/jetp/manifest.csv rows 309-315).
+    # acquisition_history dispositions (data/jetp/manifest.csv rows 309-315),
+    # and ticket 0859's two add rows 316-317.
     # This pin counts registry rows of the country, so it moves with every
     # collection; re-read the delta before re-pinning.
-    assert len(result['legacy_dispositions']) == 234
+    assert len(result['legacy_dispositions']) == 236
     assert len(result['legacy_position_candidates']) == 46
     assert len(result['legacy_unresolved']) == 53
     assert len(result['comparison']['existing_project_ids']) == 24
