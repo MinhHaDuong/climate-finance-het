@@ -10,7 +10,7 @@ const esc = (value) =>
       ],
   );
 const cleanURL = (value) =>
-  /^https?:\/\//i.test(value || "") ? value : "#how-we-did-this";
+  /^https?:\/\//i.test(value || "") ? value : "#methods";
 const fmt = (n) => new Intl.NumberFormat("en").format(n);
 const money = (n, c) =>
   n == null ? "Amount not published" : `${c || ""} ${fmt(Number(n))}`;
@@ -52,9 +52,23 @@ const SECTIONS = {
   "the-paper-trail": ["the-paper-trail", "documents", "entries", "on-the-record", "projects",
     "project", "funding", "whos-who"],
   "the-tallies": ["the-tallies", "historical-comparison"],
-  glossary: ["glossary"],
-  "how-we-did-this": ["how-we-did-this", "release-history"],
+  about: ["about", "glossary", "methods", "who-we-are", "release-history"],
 };
+/* About's sub-bar (author, fourth batch, 2026-09-23): the step bar's
+ * component, its entries plain siblings with no arrows between them. The
+ * release history sits under Methods, which it is linked from. */
+const ABOUT = [
+  { page: "glossary", label: "Glossary", object: "O" },
+  { page: "methods", label: "Methods", object: "methods" },
+  { page: "who-we-are", label: "Who we are", object: "" },
+];
+function aboutBar(page) {
+  const current = page === "release-history" ? "methods" : page;
+  return `<ol data-sub-bar="about"><li class="siblings">${ABOUT.map(
+    (s) =>
+      `<a href="#${s.page}" data-sub="${s.page}"${s.object ? ` data-object="${s.object}"` : ""}${s.page === current ? ' aria-current="page"' : ""}>${esc(s.label)}</a>`,
+  ).join("")}</li></ol>`;
+}
 const sectionOf = (page) =>
   Object.keys(SECTIONS).find((section) => SECTIONS[section].includes(page)) || "";
 const STEPS = [
@@ -168,7 +182,7 @@ function headlineCounts(tag) {
   ].join("");
 }
 function overviewPage() {
-  main.innerHTML = `<section class="hero"><div><p class="eyebrow">From promise to progress</p><h1>Where do the<br><em>JETPs stand?</em></h1><p class="lede">Four partnerships to support a just energy transition. Explore what has been planned, financed and documented — and what remains to be seen.</p><div class="actions"><a class="button" href="#funding">Explore the four partnerships ↗</a><a class="text-link" href="#documents">Follow the paper trail →</a></div></div><aside class="evidence-box"><p class="eyebrow">The tallies</p><div class="stat-grid">${headlineCounts("stat")}</div><div class="box-foot">Documents collected through ${date(overview.provenance.cutoff)}.<br>Each publisher's report keeps its own date. <a href="#the-tallies">The tallies</a> · <a href="#how-we-did-this">How we did this</a></div></aside></section>
+  main.innerHTML = `<section class="hero"><div><p class="eyebrow">From promise to progress</p><h1>Where do the<br><em>JETPs stand?</em></h1><p class="lede">Four partnerships to support a just energy transition. Explore what has been planned, financed and documented — and what remains to be seen.</p><div class="actions"><a class="button" href="#funding">Explore the four partnerships ↗</a><a class="text-link" href="#documents">Follow the paper trail →</a></div></div><aside class="evidence-box"><p class="eyebrow">The tallies</p><div class="stat-grid">${headlineCounts("stat")}</div><div class="box-foot">Documents collected through ${date(overview.provenance.cutoff)}.<br>Each publisher's report keeps its own date. <a href="#the-tallies">The tallies</a> · <a href="#methods">Methods</a></div></aside></section>
 <section class="section"><div class="section-head"><div><p class="eyebrow">Country snapshot</p><h2>A shared ambition.<br>Four different trajectories.</h2></div><p>Each national figure is shown as its publisher reported it, with its own date and definition.<br>Allocation, approval and payment are different milestones.</p></div><div class="country-grid">${overview.countries.map(card).join("")}</div></section>
 <section class="section"><div class="section-head"><div><p class="eyebrow">Reading across the documents</p><h2>What the documents tell us</h2></div></div><div class="insight-grid"><article class="insight"><span class="number">01</span><h3>Financing moves through different channels</h3><p>South Africa reports substantial allocations; Indonesia identifies approved programmes, investments and grants. Their headline figures measure different milestones, so there is no single comparable “delivery rate”.</p><a class="text-link" href="#funding">Read the four partnerships →</a></article><article class="insight"><span class="number">02</span><h3>A plan is not yet a transaction</h3><p>Senegal's portfolio mixes investment needs, programmes and components. Viet Nam's 2025 portfolio leaves most project identities unnamed. These gaps matter when interpreting totals.</p><a class="text-link" href="#funding/SEN">Explore the Senegal portfolio →</a></article><article class="insight"><span class="number">03</span><h3>Speed needs a historical reference</h3><p>${overview.historical_count} closed energy-related World Bank operations provide context from the same countries. Compare instruments and vintages before interpreting their financing windows as a benchmark.</p><a class="text-link" href="#historical-comparison">Explore the comparison pool →</a></article></div></section>
 <section class="section"><div class="section-head"><div><p class="eyebrow">The paper trail</p><h2>From a figure back to its page</h2></div><p>Every project on these pages can be followed to the document it comes from, and every document to what relies on it.</p></div><ol class="trail-intro"><li><a href="#documents"><strong>Documents</strong></a> Each report, register and plan we tried to retrieve, with an archived copy where we have one.</li><li><a href="#entries"><strong>Entries</strong></a> Rows of a register, lines of a plan annex, as the document prints them.</li><li><a href="#on-the-record"><strong>On the record</strong></a> What a publisher said in one document, read as a date, a status or an amount, according to that publisher.</li><li><a href="#projects"><strong>Projects</strong></a>, <a href="#funding"><strong>Funding</strong></a> and <a href="#whos-who"><strong>Who's who</strong></a> The projects, the partnerships and the organisations those statements are about.</li></ol><p class="note">The words are defined in the <a href="#glossary">Glossary</a>. Numbers we counted, rather than read in a document, are gathered in <a href="#the-tallies">The tallies</a>.</p></section>
@@ -1343,11 +1357,31 @@ function glossaryPage() {
           .join("")}</dl></section>`,
     ).join("");
 }
+/* About's landing page: one line per page under it, as #the-paper-trail. */
+const ABOUT_NOTES = {
+  glossary: "The words these pages use, grouped by theme.",
+  methods: "What we collected, how we read it, what we counted, and what this observatory does not do; the release history is linked from there.",
+  "who-we-are": "Who makes this observatory.",
+};
+function aboutPage() {
+  main.innerHTML =
+    header("About", "What stands behind these pages: their words, their methods and their authors.") +
+    `<ol class="trail-intro">${ABOUT.map((s) => `<li><a href="#${s.page}"><strong>${esc(s.label)}</strong></a> ${esc(ABOUT_NOTES[s.page])}</li>`).join("")}</ol>`;
+}
+/* Who we are (fourth batch): the author's name, affiliation and ORCID, and
+ * a placeholder the author fills. No biography, funding or contact detail is
+ * invented here. */
+function whoWeArePage() {
+  main.innerHTML =
+    header("Who we are", "The JETP Observatory is a research project, and its data and code are open.") +
+    `<p>Minh Ha-Duong, CNRS · <a href="https://orcid.org/0000-0001-9988-2100" target="_blank" rel="noopener">ORCID 0000-0001-9988-2100 ↗</a></p>` +
+    `<p class="callout" data-placeholder="author"><strong>Placeholder, for the author to write.</strong> This paragraph is left empty on purpose until the author supplies it.</p>`;
+}
 function methodsPage() {
   main.innerHTML =
     header(
-      "Follow any figure back to its page.",
-      "What we collected, how we read it, what we counted, and what this observatory does not do.",
+      "Methods",
+      "What we collected, how we read it, what we counted, and what this observatory does not do. Every figure can be followed back to its page.",
     ) +
     `<div class="method-list"><h2>What this release contains</h2><p>${projects.length} named projects, ${undisclosedCount()} unpublished identities, ${overview.source_count} curated documents and ${comparison.projects.length} closed historical operations. The named projects include programmes and components; they are not ${projects.length} distinct physical assets. Knowledge cutoff: ${date(overview.provenance.cutoff)}. Each country's reports keep their own dates.</p><h2>The paper trail, step by step</h2><p><a href="#documents">Documents</a>: we try to retrieve each report, register and plan, keep an archived copy where we can, and record every attempt, failed ones included. <a href="#entries">Entries</a>: from a few of those documents we copy the rows of a register or the lines of a plan annex, as printed. <a href="#on-the-record">On the record</a>: we read what a publisher said about a project — a date, a status, an amount — into one item, which keeps its publisher, its date and the page it came from. <a href="#projects">Projects</a>, <a href="#funding">Funding</a> and <a href="#whos-who">Who's who</a>: the projects, partnerships and organisations those items are about. Each page links one step toward the documents and one step toward the projects.</p><h2>Words and numbers</h2><p>The <a href="#glossary">Glossary</a> defines the words these pages use. A number a publisher printed is marked “As published” and shown with its publisher and date. A number we counted is marked “Our calculation”, with its unit and what it covers, and links to what was counted; <a href="#the-tallies">The tallies</a> gathers them.</p><h2>What this observatory does not do</h2><p>It does not explain. It tests no causal explanation of why a partnership moves fast or slow, and estimates no effect of the partnerships. It does not add amounts across documents, nor a project's amounts to a partnership's headline. It does not convert or deflate amounts. It does not treat a plan, an approval or a register line as a payment. It does not match a 2023 plan position to a 2025 portfolio project. Missing payment data is not a zero payment.</p><h2>Three different kinds of progress</h2><p>Financial items distinguish needs, announcements, memoranda, approvals, signatures and disbursements. Implementation items are a separate table. Documentary coverage describes what we could locate, not what a project achieved. Register-derived dates are not presented as verified signature dates.</p><h2>How the national figures work</h2><p>Headline financing amounts reproduce attributed national reports; they are not computed by adding project events. The milestones differ across countries, so headline amounts must not be pooled. Portfolio bars count each named project once, at the most advanced financing milestone on the record for it; tranches may be at different milestones. “Not coded in ledger” does not mean “no finance”. No project-level disbursement total is available in this release.</p><h2>Historical comparison: useful context, not an effect estimate</h2><p>${esc(comparison.method)} ${esc(comparison.date_note)} The API may contain older status snapshots; retrieval date is not the date of its latest substantive update. Energy-related includes mixed-sector operations, and additional-financing operations may refer to the same underlying investment. Comparisons of preparation speed require a credible causal design from the separate lifecycle research programme.</p><h2>Dates, conflicts and missing items</h2><p>Event dates, date intervals, dated status reports and collection dates remain distinct. Timing is adjudicated independently of the publisher's authority; unreviewed timing is labelled and cannot supply an event date. Document cards keep provisional, contextual and confirmed link decisions. Historical downloads preserve each acquisition date and query-page hash; the substantive update date is unknown unless separately documented. Conflicting values are preserved in notes; we do not average them. Unpublished identities appear in country disclosure counts rather than invented project pages. Original-currency amounts remain the reference.</p><h2>Download this snapshot</h2><div class="downloads">${overview.countries.map((c) => `<a class="button light" href="data/${c.code}.json" download>${esc(c.name)} ↓</a>`).join("")}<a class="button light" href="data/comparison.json" download>Historical cohort ↓</a><a class="button light" href="data/documents.json" download>Collection registry ↓</a><a class="button light" href="data/overview.json" download>Overview & input hashes ↓</a><a class="button light" href="data/provenance.json" download>Where each headline comes from ↓</a></div><div class="downloads"><a class="button light" href="data/m1a/ZAF.csv" download>South Africa entries ↓</a><a class="button light" href="data/m1a/IDN.csv" download>Indonesia entries ↓</a><a class="button light" href="data/m1a/VNM.csv" download>Viet Nam entries ↓</a><a class="button light" href="data/m1a/SEN.csv" download>Senegal entries ↓</a><a class="button light" href="data/m1a/manifest.json" download>Entries manifest ↓</a></div><p>JSON downloads include project data, document addresses and locators. Input SHA-256 hashes identify the files used to build this preview. This is a local preview, not yet a formally deposited monthly release; the <a href="#release-history">release history</a> lists what was prepared. Original documents retain their publishers' rights; their bulk redistribution is not implied.</p><h2>Reproducible, without a live database</h2><p>Markdown provides editorial context; CSV registries provide the structured data. The static website reads generated JSON. DVC preserves the research document archive, independently of the website. No visitor needs access to the archive or a database service.</p><p class="note">Input Git revision: <code>${esc(overview.provenance.input_git_sha || "Uncommitted preview inputs; use the file hashes")}</code><br>Release: ${esc(overview.provenance.edition)}</p></div>`;
 }
@@ -1371,7 +1405,10 @@ const RENAMED = {
   "by-the-numbers": "the-tallies",
   "counts-and-totals": "the-tallies",
   comparison: "historical-comparison",
-  methods: "how-we-did-this",
+  // #methods was renamed #how-we-did-this and is canonical again (fourth
+  // batch): the later name forwards to it, and #methods is not in this table,
+  // so nothing forwards in a circle.
+  "how-we-did-this": "methods",
   editions: "release-history",
 };
 function forwardOf(raw) {
@@ -1401,7 +1438,9 @@ const TITLES = {
   "whos-who": "Who's who",
   "the-tallies": "The tallies",
   glossary: "Glossary",
-  "how-we-did-this": "How we did this",
+  about: "About",
+  methods: "Methods",
+  "who-we-are": "Who we are",
 };
 /* The header's four section tabs: the current section is selected, and
  * aria-current says "page" when the tab is the page itself, "true" when the
@@ -1417,18 +1456,24 @@ function markNav(page) {
 }
 /* The step bar is drawn for the paper-trail pages only; a page scoped to a
  * country — by its address, or a project by its own country — shows it. */
+/* The second bar belongs to a section, on every page of it, its landing page
+ * included: the paper trail's steps, or About's three pages. The tallies
+ * has none. */
 function drawStepBar(page, id, params) {
   const bar = document.getElementById("step-bar");
   if (!bar) return;
-  const onTrail = sectionOf(page) === "the-paper-trail" && page !== "the-paper-trail";
+  const section = sectionOf(page);
   const code =
     page === "project"
       ? projects.find((p) => p.id === decodeURIComponent(id || ""))?.country
       : ["entries", "on-the-record", "funding"].includes(page)
         ? id
         : params.get("country");
-  bar.innerHTML = onTrail ? stepBar(page, code) : "";
-  bar.toggleAttribute("hidden", !onTrail);
+  const html =
+    section === "the-paper-trail" ? stepBar(page, code) : section === "about" ? aboutBar(page) : "";
+  bar.innerHTML = html;
+  bar.setAttribute("aria-label", section === "about" ? "About" : "The paper trail");
+  bar.toggleAttribute("hidden", !html);
 }
 function pageTitle(page, id) {
   const name = country(id)?.name;
@@ -1437,7 +1482,7 @@ function pageTitle(page, id) {
       ? name || "Country"
       : (page === "entries" || page === "on-the-record") && id
         ? `${name || "Country"}: ${page === "on-the-record" ? "on the record" : "entries"}`
-        : TITLES[page] || TITLES["how-we-did-this"]) + " · JETP Observatory"
+        : TITLES[page] || TITLES.methods) + " · JETP Observatory"
   );
 }
 /* The section's own page: what each step holds, one line each. */
@@ -1483,6 +1528,8 @@ function render() {
   else if (page === "whos-who") whosWhoPage(params);
   else if (page === "the-tallies") numbersPage();
   else if (page === "glossary") glossaryPage();
+  else if (page === "about") aboutPage();
+  else if (page === "who-we-are") whoWeArePage();
   else methodsPage();
   document.title = pageTitle(page, id);
   window.scrollTo(0, 0);

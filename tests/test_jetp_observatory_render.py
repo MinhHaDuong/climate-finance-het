@@ -355,10 +355,11 @@ def test_every_senegal_row_names_a_pdf_page_and_no_other_non_rmp_country_does() 
 # docs/jetp-language.md (O, D, E, M) without ever naming them, in the newsroom
 # vocabulary of docs/jetp-observatory-presentation.md.
 
-# Author's cold read, 2026-09-23: the header holds the four sections as tabs,
-# the Glossary last beside How we did this; the paper trail's steps sit in a
-# second bar, the last three as parallel siblings.
-NAVIGATION = ["The paper trail", "The tallies", "Glossary", "How we did this"]
+# Author, 2026-09-23 (fourth batch): the header holds three sections as tabs;
+# the paper trail's steps sit in a second bar, the last three as parallel
+# siblings, and About's pages in the same bar as plain siblings.
+NAVIGATION = ["The paper trail", "The tallies", "About"]
+ABOUT = ["Glossary", "Methods", "Who we are"]
 STEPS = ["Documents", "Entries", "On the record", "Projects", "Funding", "Who's who"]
 TRAIL_ROUTES = ("documents", "entries", "entries/VNM", "on-the-record", "on-the-record/ZAF",
                 "projects", "project/" + BAC_AI, "funding", "funding/VNM", "whos-who")
@@ -372,8 +373,8 @@ FORBIDDEN = re.compile(
     r"|\bfacts?\b|\bclaims?\b|\bdeals?\b|\bplayers?\b|\bsources\b|\bentities\b|\brecords\b",
     re.IGNORECASE,
 )
-ROUTES = ("overview", "the-paper-trail", "glossary", "documents", "entries", "on-the-record", "projects",
-          "funding", "whos-who", "the-tallies", "how-we-did-this", "release-history",
+ROUTES = ("overview", "the-paper-trail", "about", "who-we-are", "glossary", "documents", "entries", "on-the-record", "projects",
+          "funding", "whos-who", "the-tallies", "methods", "release-history",
           "historical-comparison", *(f"funding/{code}" for code in COUNTRIES),
           "entries/VNM", "on-the-record/ZAF", "project/" + BAC_AI)
 
@@ -434,7 +435,7 @@ def test_the_navigation_follows_glossary_paper_trail_numbers_and_methods() -> No
     labels = [unescape(t).strip() for t in re.findall(r">([^<>]+)<", nav) if t.strip()]
     assert labels == NAVIGATION, labels
     # Organised by the objects, which stay in the attributes: nothing for M.
-    assert re.findall(r'data-object="([^"]+)"', nav) == ["D", "E", "O", "methods"]
+    assert re.findall(r'data-object="([^"]+)"', nav) == ["D", "E", "about"]
     # Every address is its label's slug.
     for href, label in re.findall(r'<a href="#([^"]+)"[^>]*>([^<]+)<', nav):
         slug = re.sub(r"[^a-z]+", "-", unescape(label).lower().replace("'", "")).strip("-")
@@ -453,14 +454,14 @@ FORWARDS = {
     "counts-and-totals": "the-tallies",
     "comparison": "historical-comparison",
     "comparison?country=IDN": "historical-comparison?country=IDN",
-    "methods": "how-we-did-this",
+    "how-we-did-this": "methods",
     "editions": "release-history",
     "inventory/VNM": "entries/VNM",
     "inventory/VNM?row=22": "entries/VNM?row=22",
     "inventory/ZAF?tab=record": "on-the-record/ZAF",
 }
 OLD_ADDRESS = re.compile(r'href="#(countries|country/|evidence|numbers|by-the-numbers'
-                         r'|counts-and-totals|comparison|methods'
+                         r'|counts-and-totals|comparison|how-we-did-this'
                          r'|editions|inventory/)')
 
 
@@ -543,7 +544,8 @@ def test_an_old_address_forwards_to_its_new_name(old, new) -> None:
 
 
 @pytest.mark.parametrize("route", ["projects?country=IDN", "project/" + BAC_AI, "documents",
-                                   "overview", "entries/SEN?row=1"])
+                                   "overview", "entries/SEN?row=1", "methods",
+                                   "glossary", "release-history", "about", "who-we-are"])
 def test_an_address_that_kept_its_name_does_not_move(route) -> None:
     assert render(route, {}, "location.hash")["eval"] == "#" + route
 
@@ -585,14 +587,53 @@ def test_a_trail_page_carries_no_second_position_indicator(route) -> None:
     assert 'aria-current="page"' in step_bar(route)
 
 
-@pytest.mark.parametrize("route", ["overview", "the-tallies", "glossary", "how-we-did-this",
-                                   "historical-comparison", "the-paper-trail"])
-def test_the_step_bar_is_drawn_on_trail_pages_only(route) -> None:
+@pytest.mark.parametrize("route", ["overview", "the-tallies", "historical-comparison"])
+def test_no_second_bar_outside_the_paper_trail_and_about(route) -> None:
     assert step_bar(route) == ""
 
 
+def test_the_paper_trail_landing_shows_its_steps_with_none_current() -> None:
+    bar = step_bar("the-paper-trail")
+    assert 'data-step="D1"' in bar and 'aria-current' not in bar
+
+
+@pytest.mark.parametrize(("route", "current"), [
+    ("about", None), ("glossary", "Glossary"), ("methods", "Methods"),
+    ("who-we-are", "Who we are"), ("release-history", "Methods")])
+def test_about_pages_show_the_about_sub_bar_as_plain_siblings(route, current) -> None:
+    bar = step_bar(route)
+    links = re.findall(r'<a href="#([^"]+)" data-sub="[^"]+"[^>]*?( aria-current="page")?>([^<]+)</a>', bar)
+    assert [unescape(label) for *_, label in links] == ABOUT, bar
+    assert [unescape(label) for _, mark, label in links if mark] == ([current] if current else [])
+    # Plain siblings: one list item, so no arrow separates them.
+    assert bar.count("<li") == 1 and 'data-sub-bar="about"' in bar
+    assert "data-step" not in bar
+    # The release history is in no bar.
+    assert "release-history" not in bar
+
+
+def test_methods_is_canonical_and_nothing_forwards_in_a_circle() -> None:
+    assert render("methods", {}, "location.hash")["eval"] == "#methods"
+    for old in ("methods", "how-we-did-this", *FORWARDS):
+        chain = render("overview", {}, f"(() => {{ let h = {json.dumps(old)}, seen = []; "
+                                       "while (h !== null && seen.length < 5) { seen.push(h); h = forwardOf(h); } "
+                                       "return seen; })()")["eval"]
+        assert len(chain) <= 2, (old, chain)
+
+
+def test_who_we_are_invents_nothing() -> None:
+    main = render("who-we-are")["main"]
+    text = re.sub(r"\s+", " ", text_of(main))
+    assert "Minh Ha-Duong, CNRS" in text
+    assert 'href="https://orcid.org/0000-0001-9988-2100"' in main
+    assert re.search(r'data-placeholder="author"', main)
+    # Only the ORCID leaves the site: no invented contact, repository or funder.
+    assert re.findall(r'href="(https?://[^"]+)"', main) == ["https://orcid.org/0000-0001-9988-2100"]
+    assert "@" not in text
+
+
 @pytest.mark.parametrize("route", ["documents", "on-the-record", "entries", "whos-who",
-                                   "the-tallies", "how-we-did-this"])
+                                   "the-tallies", "methods"])
 def test_the_title_block_is_one_sentence_with_the_rest_folded(route) -> None:
     head = re.search(r'<div class="page-head">(.*?)</div>', render(route)["main"], re.DOTALL).group(1)
     lede = re.search(r'<p class="lede">(.*?)</p>', head, re.DOTALL).group(1)

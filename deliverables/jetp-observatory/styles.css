@@ -998,7 +998,8 @@ header nav.section-tabs a.active {
   flex-wrap: wrap;
   gap: 4px;
 }
-.step-bar a[data-step] {
+.step-bar a[data-step],
+.step-bar a[data-sub] {
   display: inline-block;
   padding: 4px 12px;
   border: 1px solid var(--line);

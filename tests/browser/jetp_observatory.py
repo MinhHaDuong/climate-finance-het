@@ -452,7 +452,8 @@ def check_facts(page, url):
 def check_paper_trail(page, url):
     """Walk the paper trail both ways on the organisation of ticket 0881.
 
-    The navigation reads the paper trail, The tallies, Glossary and How we
+    The navigation reads the paper trail, The tallies and About (Glossary,
+    Methods, Who we are in About's sub-bar) — earlier: Glossary and How we
     did this, each at its label's slug, and the addresses of earlier previews
     forward there (author's cold read, 2026-09-23). From Bac Ai, each step
     toward the documents lands one step
@@ -463,7 +464,24 @@ def check_paper_trail(page, url):
     page.goto(url + '/#overview')
     page.wait_for_selector('.country-grid')
     labels = page.locator('header nav a').all_text_contents()
-    assert labels == ['The paper trail', 'The tallies', 'Glossary', 'How we did this'], labels
+    assert labels == ['The paper trail', 'The tallies', 'About'], labels
+    # About's sub-bar: plain siblings, the current page marked, the release
+    # history under Methods and in no bar.
+    page.locator('header nav a[href="#about"]').click()
+    page.wait_for_selector('#step-bar [data-sub-bar="about"]')
+    assert page.locator('#step-bar a[data-sub]').all_text_contents() == [
+        'Glossary', 'Methods', 'Who we are']
+    page.locator('#step-bar a[data-sub="who-we-are"]').click()
+    page.wait_for_selector('[data-placeholder="author"]')
+    assert page.locator('#step-bar a[aria-current="page"]').inner_text() == 'Who we are'
+    page.locator('#step-bar a[data-sub="methods"]').click()
+    page.wait_for_selector('.method-list')
+    page.locator('.method-list a[href="#release-history"]').click()
+    page.wait_for_selector('main table')
+    assert page.locator('#step-bar a[aria-current="page"]').inner_text() == 'Methods'
+    assert page.locator('header nav a.active').get_attribute('href') == '#about'
+    page.goto(url + '/#overview')
+    page.wait_for_selector('.country-grid')
     # The step bar belongs to the paper trail only.
     assert page.locator('#step-bar').is_hidden()
     # The tallies: one table grouped by country, then two numbered figures,
@@ -493,7 +511,7 @@ def check_paper_trail(page, url):
         ('country/IDN', 'funding/IDN', '.markdown h2'),
         ('evidence', 'on-the-record', '[data-reviewed-evidence-id]'),
         ('comparison?country=IDN', 'historical-comparison?country=IDN', '#history-table'),
-        ('methods', 'how-we-did-this', '.method-list'),
+        ('how-we-did-this', 'methods', '.method-list'),
         ('numbers', 'the-tallies', 'table.counts'),
         ('by-the-numbers', 'the-tallies', 'table.counts'),
         ('inventory/VNM?tab=record', 'on-the-record/VNM', '#observations-filters'),
@@ -623,7 +641,7 @@ def check_site(url, output):
         assert page.locator('#history-table tbody tr').count() > 0
         page.locator('#history-search').fill('no-such-operation-12345')
         assert page.locator('#history-table .empty').count() == 1
-        page.goto(url + '/#how-we-did-this')
+        page.goto(url + '/#methods')
         page.wait_for_selector('.downloads')
         with page.expect_download() as download:
             page.locator('a[download][href="data/comparison.json"]').click()
@@ -662,9 +680,10 @@ def check_site(url, output):
         for route in ('overview', 'the-paper-trail', 'funding', 'documents', 'projects',
                       'historical-comparison', 'documents?country=VNM', 'whos-who?country=SEN',
                       'entries/SEN', 'funding/VNM', 'entries', 'on-the-record',
-                      'on-the-record/ZAF', 'whos-who', 'the-tallies', 'glossary',
+                      'on-the-record/ZAF', 'whos-who', 'the-tallies', 'glossary', 'about',
+                      'who-we-are',
                       'release-history', 'project/vnm-project-bac-ai-pumped-hydro',
-                      'how-we-did-this'):
+                      'methods'):
             page.goto(url + '/#' + route)
             page.wait_for_timeout(150)
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'), route

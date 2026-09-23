@@ -29,10 +29,10 @@ than suspicion, because the readers are researchers as well as journalists.
 | D | The documented route from a figure back to the page that supports it, walked in both directions | **The paper trail**: **Documents** → **Entries** → **On the record** → **Projects**, **Funding**, **Who's who** |
 | E | Counts and totals computed by the ledger, each with its unit, its perimeter and a link to what it was computed from | **The tallies** |
 | M | Nothing | none |
-| (methods) | What was done, what was not, and which tables are not served | **How we did this** |
+| (methods) | What was done, what was not, and which tables are not served | **Methods** |
 
 **Navigation order.** The paper trail · The tallies · Glossary · How we
-did this. The Glossary sits last, beside How we did this: a reader consults
+did this. The Glossary sits last, beside Methods: a reader consults
 it, and does not start from it (author's cold read of ticket 0881,
 2026-09-23).
 
@@ -66,9 +66,9 @@ goes unmarked.
 
 **Addresses match labels.** Each page's address is its label's slug:
 `#documents`, `#entries`, `#on-the-record`, `#projects`, `#funding`,
-`#whos-who`, `#the-tallies`, `#glossary`, `#how-we-did-this`, and
+`#whos-who`, `#the-tallies`, `#glossary`, `#methods`, and
 `#historical-comparison`, `#release-history` for the two pages reached from
-The tallies and How we did this. A country's page nests under its step
+The tallies and Methods. A country's page nests under its step
 (`#funding/<CODE>`, `#entries/<CODE>`, `#on-the-record/<CODE>`); a project is
 `#project/<project_id>`. The addresses of earlier previews (`#countries`,
 `#country/<CODE>`, `#evidence`, `#numbers`, `#by-the-numbers`, `#comparison`,
@@ -106,7 +106,7 @@ The full table is in the observatory's
   marked "Our calculation". The landing page keeps its stat grid, under the
   eyebrow "The tallies".
 - **No models.** The observatory tests no causal explanation, and its
-  navigation has no place for one. How we did this says in plain words what
+  navigation has no place for one. Methods says in plain words what
   the observatory does not do.
 
 Words avoided on the pages: *claims* (it implies doubt about a publisher's

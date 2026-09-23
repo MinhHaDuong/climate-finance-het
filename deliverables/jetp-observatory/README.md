@@ -48,7 +48,7 @@ adds the step bar under it.
   documents are read, statuses, measures, relations) and alphabetical within
   each group. A first, hand-written list until the Glossary generated from the
   ledger's term tables (ticket 0882).
-- **How we did this**: what was done, what the observatory does not do, and
+- **Methods**: what was done, what the observatory does not do, and
   the downloads. The release history sits here.
 
 Nothing is there for causal explanations: the observatory tests none.
@@ -73,7 +73,7 @@ emit only the new names.
 | The tallies | `#the-tallies` | `#numbers`, `#by-the-numbers` |
 | Historical comparison | `#historical-comparison`, `#historical-comparison?country=<CODE>` | `#comparison`, `#comparison?country=<CODE>` |
 | Glossary | `#glossary` | |
-| How we did this | `#how-we-did-this` | `#methods` |
+| Methods | `#methods` | `#methods` |
 | Release history | `#release-history` | `#editions` |
 
 The served views keep the addresses they were built with — `provenance.json`
