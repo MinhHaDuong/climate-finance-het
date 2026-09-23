@@ -8,6 +8,7 @@ Author: HDMX-coding-agent
 2026-09-23T10:30Z HDMX-coding-agent note revue du train (2026-09-23) : les comptes sont ceux des tables au lancement ; PR #1447 (0859) ajoute deux tentatives et deux instantanés
 
 2026-09-23T09:28Z HDMX-coding-agent note blocker 0871 closed — Blocked-by removed.
+2026-09-23T14:17Z HDMX-coding-agent note action 5 en partie différée : source_types renommé document_types dans config/jetp_tracking.yaml et le code Python ; le balayage des libellés du site (« source » → « publisher » ou « document ») dans deliverables/jetp-observatory/app.js, index.html et le README de l'observatoire attend la fin de PR #1459 (0881), qui réécrit ces fichiers
 --- body ---
 ## Context
 
