@@ -838,7 +838,7 @@ function observationsTable(rows) {
  * hidden one too on every visit. A panel mounts once, at the point it first
  * becomes visible: the one already marked selected in the static markup, or
  * whichever tab a click reveals — never both, on either path. */
-function mountTabs(panels) {
+function mountTabs(panels, onSelect) {
   const mounted = new Set();
   const mountOnce = (panel) => {
     if (panel.mount && !mounted.has(panel.key)) {
@@ -860,6 +860,7 @@ function mountTabs(panels) {
           .getElementById("panel-" + panel.key)
           .toggleAttribute("hidden", !selected);
       });
+      onSelect?.(key);
     });
   });
 }
@@ -939,20 +940,22 @@ function renderInventory(code, rows, observations, focus, tab) {
     observationTotals(observations, code) +
     observationsPanel.head +
     `<div class="downloads"><a class="button light" href="data/observations/${code}.json" download>Download the ${code} items on the record (JSON) ↓</a></div></section>`;
-  mountTabs([
-    { key: "inventory", mount: table.mount },
-    { key: "observations", mount: observationsPanel.mount },
-  ]);
-  // The address, the trail, the navigation and the title follow the visible
-  // tab, so a reader who copies the address shares the tab they are reading.
-  [["inventory", "D2", ""], ["observations", "D3", "record"]].forEach(([key, step, tabParam]) =>
-    document.getElementById("tab-" + key).addEventListener("click", () => {
+  const tabMeta = { inventory: ["D2", ""], observations: ["D3", "record"] };
+  mountTabs(
+    [
+      { key: "inventory", mount: table.mount },
+      { key: "observations", mount: observationsPanel.mount },
+    ],
+    // The address, the trail, the navigation and the title follow the visible
+    // tab, so a reader who copies the address shares the tab they are reading.
+    (key) => {
+      const [step, tabParam] = tabMeta[key];
       document.getElementById("trail").innerHTML = trail(step, code);
       const params = new URLSearchParams(tabParam ? { tab: tabParam } : {});
       window.history?.replaceState(null, "", `#inventory/${code}${tabParam ? "?" + params : ""}`);
       markNav(navTarget("inventory", params));
       document.title = pageTitle("inventory", code, params);
-    }),
+    },
   );
 }
 function inventoryPage(code, params) {
@@ -1227,17 +1230,24 @@ function entriesPage() {
 /* Who's who: the organisations the project documents name, one row per name,
  * role and country, spelled as the documents spell them. No party is matched
  * to another here; that is the parties table's work (ticket 0875). */
+// projects is fixed for the session once load() runs, so the funder/operator
+// index built from it needs computing only once per page load, not on every
+// visit to #whos-who.
+let whosWhoRows;
 function whosWhoPage() {
-  const byKey = {};
-  projects.forEach((p) => {
-    const named = [...p.funders.map((name) => [name, "Funder"]), [p.operator, "Operator"]];
-    named.forEach(([name, role]) => {
-      if (!name) return;
-      const key = [name, role, p.country].join("\u0000");
-      (byKey[key] ||= { name, role, country: p.country, projects: [] }).projects.push(p);
+  if (!whosWhoRows) {
+    const byKey = {};
+    projects.forEach((p) => {
+      const named = [...p.funders.map((name) => [name, "Funder"]), [p.operator, "Operator"]];
+      named.forEach(([name, role]) => {
+        if (!name) return;
+        const key = [name, role, p.country].join("\u0000");
+        (byKey[key] ||= { name, role, country: p.country, projects: [] }).projects.push(p);
+      });
     });
-  });
-  const rows = Object.values(byKey).sort((a, b) => a.name.localeCompare(b.name));
+    whosWhoRows = Object.values(byKey).sort((a, b) => a.name.localeCompare(b.name));
+  }
+  const rows = whosWhoRows;
   const table = filterTable("parties", rows, {
     facets: [
       { key: "role", label: "Named as", all: "Funders and operators", options: distinctValues(rows, "role") },
