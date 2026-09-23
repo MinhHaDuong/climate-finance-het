@@ -7,6 +7,7 @@ Author: HDMX-coding-agent
 2026-09-22T17:30Z HDMX-coding-agent created
 2026-09-23T10:30Z HDMX-coding-agent note revue du train (2026-09-23) : PR #1449 fusionnée (0ddf30e2), la porte de lancement est levée, label needs-human retiré ; 0880 en vague 0b (bloqué par 0871) ; [[0884]] ajouté (`coverage` sans propriétaire) ; [[0879]] scindé en 0879, [[0885]], [[0886]] ; quinze enfants
 
+2026-09-23T14:59Z HDMX-coding-agent note décision de l'auteur (2026-09-23) : contrôle d'autorité des organisations (ontologie, décision 12) ; publishers fondu dans parties, table party-names ; mis en œuvre par 0872 (PR #1461), étape parties de 0875 amendée pour en partir.
 --- body ---
 ## Context
 
