@@ -1,5 +1,15 @@
 # JETP documentary tracking contract
 
+**Terminology note (2026-09-23).** This document predates the ODEM language
+of [`jetp-language.md`](jetp-language.md), which governs where the two
+differ. Read *evidence* (a link, a layer, a table of documentary support) as
+**justification**, and *evidence cutoff* as **knowledge cutoff**; *model* (of the
+data) as **schema**; *reconciliation* as **matching** for identities or
+**account** for the balance computation; *edition* of the ledger or site as
+**release**; *layer*, *stage* and *fact* as the pipeline **steps D1 to D4** and
+**observations**. In ODEM terms the observatory is Data guided by Ontology,
+Evidence is computed on top, and there is no Model.
+
 OECD CRS is the lagged comparison layer. The current state of the four JETPs
 comes from dated official documents and project records. This contract keeps
 the two roles separate and makes every aggregate reversible.

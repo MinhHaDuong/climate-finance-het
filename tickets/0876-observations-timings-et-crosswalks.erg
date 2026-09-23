@@ -1,0 +1,70 @@
+%erg 0.1
+Title: Observations, timings, crosswalks de statut et de secteur
+Created: 2026-09-22
+Author: HDMX-coding-agent
+Blocked-by: 0875
+
+--- log ---
+2026-09-22T17:30Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Étape 5 de la migration (`docs/jetp-ledger-migration.md`), décisions 3, 9 et 10. Les 380 événements
+financiers et les 71 événements physiques deviennent des observations
+typées par sujet et axe, avec mesure d'une liste close, `basis`,
+`flow_type`, `recorded_at`, statut et supplantation ; leurs dates deviennent
+des lignes `timings` (451 depuis `event-timing.csv`, une par rôle de date,
+avec précision et bornes ; `period_start` et `period_end` pour un flux). Les
+34 `need` deviennent des `estimate` sur leur ligne de plan. Le mot du
+publisher reste ; `status-crosswalk` et `sector-crosswalk` sont les seuls
+lieux d'un statut ou d'un secteur partagé. La lecture ligne → observation
+est une règle versionnée par type de document.
+
+## Relevant files
+
+- `data/jetp/events.csv`, `implementation-events.csv`, `event-timing.csv` — entrées
+- `scripts/jetp/build_observations.py` — devient la vue des observations depuis les nouvelles tables
+- `scripts/jetp/_observatory_data.py` — `VERIFICATION_COLUMNS`, `OBSERVATION_KINDS` à retirer
+- `config/jetp_tracking.yaml` — quatre axes, liste close des mesures, codes objet CRS
+- `deliverables/jetp-observatory/data/observations/<CODE>.json` — vues à comparer
+
+## Actions
+
+1. Règles d'ingestion par document pour les observations (registre ZAF :
+   `amount` + `flow` commitment ; rapport IDN : approbation ; plan SEN :
+   `estimate`), versionnées.
+2. `timings` depuis `event-timing.csv` ; l'approbation IDN bornée à 2022
+   et sa date de coupure 2025-11-30 deviennent deux lignes d'une
+   observation.
+3. `status-crosswalk` : lettres A–D du registre → axe delivery (statut
+   d'activité IATI) ; IDN approbation → money ; `suspended` sur une
+   retraite → état d'actif.
+4. `sector-crosswalk` : fenêtres ZAF, groupes technologiques IDN, libellés
+   des annexes → codes objet CRS 231–236.
+5. Servir `observations/<CODE>.json` depuis les nouvelles tables ; même
+   contenu par ligne citée.
+
+## Test
+
+- `tests/test_jetp_observations.py` : une fixture d'un événement ZAF, d'un
+  IDN borné à l'année et d'un `need` SEN donne trois observations aux
+  mesures attendues, quatre timings, un `estimate` sans accord ; une
+  observation sans ligne citée est refusée ; un `measure` hors liste est
+  refusé.
+
+## Verification
+
+- [ ] 451 observations, 451+ timings ; 0 `disbursed` (la donnée, pas le dessin)
+- [ ] `observations/*.json` : chaque ligne d'avant retrouve son observation par sa ligne citée
+- [ ] Aucune conversion monétaire dans un script ; `rates` cite ses lignes
+
+## Invariants
+
+- Le mot du publisher n'est jamais normalisé dans `own_status`.
+- Recettes ZAF et VNM de [[0834]] vertes.
+
+## Exit criteria
+
+- [ ] `observations`, `timings`, `status-crosswalk`, `sector-crosswalk`, `rates` validées par [[0871]]
+- [ ] `make check-fast` et `make lint` verts

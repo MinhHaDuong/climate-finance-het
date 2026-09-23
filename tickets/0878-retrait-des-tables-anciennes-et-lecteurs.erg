@@ -1,0 +1,61 @@
+%erg 0.1
+Title: Retrait des tables anciennes et des lecteurs de compatibilité
+Created: 2026-09-22
+Author: HDMX-coding-agent
+Blocked-by: 0877
+
+--- log ---
+2026-09-22T17:30Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Étape 7 de la migration (`docs/jetp-ledger-migration.md`). Une fois chaque vue servie reconstruite depuis
+les nouvelles tables et comparée, les tables retirées par la migration
+(« what disappears ») sont supprimées avec leurs lecteurs : `sources.csv`,
+`manifest.csv`, `plan-projects.csv`, `events.csv`,
+`implementation-events.csv`, `event-timing.csv`, `project-source-links.csv`,
+`source-claims.csv`, `idn-portfolio-observations.csv`, `vnm-pilot-*.csv`,
+`project-coverage.csv`, `authority-coverage.csv` ; les lecteurs de
+compatibilité de [[0762]], [[0768]], [[0769]] ; `_contracts.py` et
+`schemas.py` côté JETP. Le vocabulaire `storage` de `config/jetp_tracking.yaml`
+liste les tables de l'ontologie.
+
+## Relevant files
+
+- `data/jetp/*.csv` — à retirer selon la liste
+- `scripts/jetp/_contracts.py`, `scripts/jetp/schemas.py`, `scripts/jetp/_reconciliation.py`, `scripts/jetp/_zaf_positions.py` — à retirer ou réduire
+- `docs/jetp-tracking.md` — le contrat de suivi renvoie à l'ontologie
+- `tests/test_jetp_*.py` — les tests des tables retirées
+
+## Actions
+
+1. Balayage des lecteurs : `grep -rn` de chaque nom de table retirée dans
+   `scripts/`, `tests/`, `deliverables/`, `docs/` ; chaque occurrence
+   remplacée ou supprimée dans le même commit.
+2. Suppression des fichiers ; `dvc.yaml` et les `.mk` mis à jour.
+3. `docs/jetp-tracking.md` : la table des objets renvoie à
+   `docs/jetp-ledger-storage.md` § 1 ; les règles de comptage restent.
+4. `make clean` puis `make all` ; comparaison des vues servies avec celles
+   de [[0877]].
+
+## Test
+
+- `tests/test_jetp_no_legacy_readers.py` : aucun fichier de `scripts/jetp/`
+  ne nomme une table retirée ; le test échoue sur une fixture qui en
+  nomme une.
+
+## Verification
+
+- [ ] `grep` de chaque nom retiré ne trouve rien hors `docs/jetp-study/` et `tickets/closed/`
+- [ ] Vues servies identiques à celles de [[0877]]
+
+## Invariants
+
+- Recettes ZAF et VNM de [[0834]] vertes.
+- Les octets sous DVC ne bougent pas.
+
+## Exit criteria
+
+- [ ] Tables et lecteurs retirés ; `storage` du vocabulaire à jour
+- [ ] `make check` complet vert (hors échecs environnementaux connus)

@@ -1,0 +1,86 @@
+%erg 0.1
+Title: Le MVP s'organise selon O, D, E, M sans en afficher les mots ; D se lit comme un parcours
+Created: 2026-09-23
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-23T06:45Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Décisions de l'auteur du 2026-09-23 (`docs/jetp-ontology.md` décision 11,
+`docs/jetp-language.md`, `docs/jetp-observatory-presentation.md`). Les quatre objets ODEM sont le principe d'organisation du MVP :
+ce qui est groupé ensemble, dans quel ordre, et ce qui renvoie à quoi. Ils
+n'en sont pas le vocabulaire. La présentation suppose un lecteur qui sait
+intuitivement comment procède un travail empirique, et ne lui jette pas au
+visage « Ontology », « Evidence » ou « Model » ; les lettres O, D, E, M et
+les codes D1 à D4 restent dans le code, les attributs de données et les
+documents de conception.
+
+Aujourd'hui le MVP parle de trois « étages » (0834), mêle comptes (E) et
+fiches (D4) sous « faits réconciliés », et emploie « evidence » pour le
+soutien documentaire.
+
+## Relevant files
+
+- `deliverables/jetp-observatory/app.js`, `index.html`, `styles.css` — navigation, pages, libellés
+- `deliverables/jetp-observatory/README.md` — « What is included »
+- `docs/jetp-language.md` (objets, étapes D1 à D4, termes retirés)
+- `docs/jetp-observatory-presentation.md` (organisation et vocabulaire des pages)
+- `tests/test_jetp_observatory_render.py`, `tests/_jetp_observatory_render.js`, `tests/browser/jetp_observatory.py`
+
+## Actions
+
+1. Réorganiser la navigation selon les objets, avec le vocabulaire de
+   rédaction décidé le 2026-09-23 (`docs/jetp-observatory-presentation.md`) : **Glossary** (O) ; **The paper
+   trail** (D) : **Documents** → **Entries** → **On the record** →
+   **Projects**, **Funding**, **Who's who** ; **By the numbers** (E) ;
+   **How we did this** (méthodes). Aucune entrée pour M. Chaque élément
+   « On the record » se lit « according to » son éditeur, avec la date.
+2. D se lit comme une piste documentaire : chaque page montre sa place sur
+   la piste et permet de monter ou descendre d'une étape, d'un projet à ce
+   qui est « on the record » à son sujet, aux entrées, à la page du
+   document, et retour.
+3. Tout nombre calculé par le ledger se distingue visuellement d'un nombre
+   imprimé par un éditeur : il porte son unité, son périmètre et ouvre les
+   déclarations dont il est calculé.
+4. Balayage de la copie publique et du README : ni les noms du cadre (O, D,
+   E, M, ontology, evidence, model, D1 à D4) ni les termes retirés de `docs/jetp-language.md`
+   (layer, stage, reconciled, edition au sens de publication du ledger), ni
+   les mots écartés par `docs/jetp-observatory-presentation.md` (claims, deals, players, sources, entities,
+   records). How we did this dit en mots simples ce que l'observatoire ne
+   fait pas.
+5. Coordination : `app.js` est aussi touché par [[0873]] et [[0876]] ; ce
+   ticket ne change aucune vue JSON servie, seulement la présentation.
+
+## Test
+
+Red : `tests/test_jetp_observatory_render.py` — la navigation rend, dans cet
+ordre, Glossary, The paper trail (Documents, Entries, On the record,
+Projects, Funding, Who's who), By the numbers et How we did this ; une page
+de la piste porte l'indicateur de son étape et des liens vers l'étape
+voisine ; un élément « On the record » porte « according to » et son éditeur ;
+un compte de la page Viet Nam est marqué comme calculé, avec son unité ; aucun
+texte rendu ne contient « ontology », « evidence », « model », « layer »,
+« reconciled » ni un code D1 à D4 (insensible à la casse, hors noms propres
+de documents).
+
+## Verification
+
+- [ ] Recettes ZAF et VNM de [[0834]] vertes dans le navigateur, sur la nouvelle organisation
+- [ ] Lecture à froid par une personne qui n'a pas lu ces documents : elle dit, sans aide, où sont les définitions, d'où vient un chiffre et quel chiffre est calculé
+- [ ] Aucune vue JSON sous `deliverables/jetp-observatory/data/` ne change d'octets
+
+## Invariants
+
+- Routes publiques inchangées.
+- Aucune addition entre lignes de documents différents ni entre lignes et référents.
+
+## Exit criteria
+
+- [ ] La navigation suit O, D, E sans en afficher les noms ; aucune place pour M
+- [ ] La piste Documents → Entries → On the record → Projects / Funding / Who's who se parcourt dans les deux sens
+- [ ] Les nombres calculés se distinguent des nombres publiés, avec unité et périmètre
+- [ ] La copie publique ne contient ni les noms du cadre ni les termes retirés

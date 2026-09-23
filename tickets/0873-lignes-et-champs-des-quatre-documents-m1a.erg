@@ -1,0 +1,63 @@
+%erg 0.1
+Title: Lignes et champs des quatre documents M1a
+Created: 2026-09-22
+Author: HDMX-coding-agent
+Blocked-by: 0872
+
+--- log ---
+2026-09-22T17:30Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Étape 2 de la migration (`docs/jetp-ledger-migration.md`). La ligne publiée est l'unité première
+(décision 2). Les quatre inventaires M1a (ZAF registre 257, IDN 1 579 sur
+deux éditions, VNM 279, SEN 49) deviennent des lignes de `lines` avec leurs
+champs verbatim dans `line-fields/<document_id>.csv` déclarés par
+`line-field-specs`. Le constructeur M1a devient l'ingestion ; l'onglet
+inventaire devient une vue sur les lignes. Identifiants frappés
+`<document_id>-<table>-<ordinal>` (décision 5) ; (sha256, locator) unique en
+contrainte ; syntaxe des locators par format (décision 10) ; lettres de
+statut du registre gardées verbatim avec `own_status_axis = delivery`.
+
+## Relevant files
+
+- `scripts/jetp/build_m1a_inventories.py` — devient l'ingestion des lignes
+- `docs/jetp-study/0818-zaf-q1-2026-rows.csv`, `0818-zaf-q1-2026-fields.csv` — les 21 champs du registre
+- `data/jetp/releases/vnm-migration-0764.json` — les 279 positions
+- `data/jetp/plan-projects.csv` — lignes IDN et SEN
+- `deliverables/jetp-observatory/data/m1a/<CODE>.json` — les vues à comparer
+- `deliverables/jetp-observatory/app.js` — `inventoryRows()`, `?row=N`
+
+## Actions
+
+1. Écrire `line-field-specs` pour les quatre documents depuis leurs en-têtes.
+2. Générer `lines` et `line-fields` ; classification par ligne (`named_item`,
+   `heading` pour les 73 groupes VNM, `unnamed_item` pour les 181 non
+   résolus, `register_allocation` pour ZAF, `submission` pour SEN).
+3. Servir `m1a/<CODE>.json` depuis les lignes ; même ordre, mêmes champs.
+4. Les notes de méthode du registre (pro-rata, taux Oanda) deviennent des
+   lignes `heading` qui `groups` les lignes qu'elles régissent.
+
+## Test
+
+- `tests/test_jetp_lines_m1a.py` : pour chaque pays, la vue régénérée est
+  identique à la vue actuelle octet pour octet ; deux lignes de même
+  (sha256, locator) sont refusées ; un locator « whole report » est refusé.
+
+## Verification
+
+- [ ] Quatre vues `m1a/*.json` identiques aux actuelles
+- [ ] `?row=N` ouvre la même ligne qu'avant
+- [ ] Comptes : 257 / 1 579 / 279 / 49 lignes
+
+## Invariants
+
+- L'export M1a gelé (release) reste l'édition archivée qu'il est.
+- `plan-projects.csv` n'est pas modifié ; il est lu.
+
+## Exit criteria
+
+- [ ] `lines`, `line-fields/*`, `line-field-specs` validés par [[0871]]
+- [ ] Recettes ZAF et VNM de [[0834]] vertes
+- [ ] `make check-fast` et `make lint` verts

@@ -1,0 +1,60 @@
+%erg 0.1
+Title: Lignes des autres documents : plan-projects, portefeuille, pilote, claims, liens
+Created: 2026-09-22
+Author: HDMX-coding-agent
+Blocked-by: 0873
+
+--- log ---
+2026-09-22T17:30Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Étape 3 de la migration (`docs/jetp-ledger-migration.md`). Tout ce qui reste d'assertion publiée devient
+ligne : les 1 628 lignes de plan (déjà lues en [[0873]] pour IDN et SEN, ici
+leurs colonnes propres et le drapeau `ruptl` en `member_of` d'un périmètre
+RUPTL depuis la ligne), les 46 observations de portefeuille IDN, les 66
+tentatives et 46 observations du pilote VN, les 151 `source-claims`
+(classification `envelope`, `count`, `absence`, `heading`), et les 315
+`project-source-links` qui deviennent des `refers_to` de base `discovery`
+ou `possible_match` (les 11 `project_page_component` deviennent des
+`component_of` en [[0875]]).
+
+## Relevant files
+
+- `data/jetp/plan-projects.csv`, `idn-portfolio-observations.csv`, `vnm-pilot-manifest.csv`, `vnm-pilot-observations.csv`, `source-claims.csv`, `project-source-links.csv` — entrées
+- `scripts/jetp/build_lines.py` — à créer, une règle d'ingestion par type de document, versionnée
+- `conception/jetp/papier-3-ledger/pilote-ledger-vn/feuille-arbitrage.md` — arbitrages du pilote à reporter en `decisions.md` ([[0719]])
+
+## Actions
+
+1. Une règle d'ingestion par document, nommée et versionnée sur chaque ligne.
+2. Les claims agrégés (les deux totaux financiers) deviennent des lignes
+   `envelope` ; leurs observations viennent en [[0877]].
+3. Les liens deviennent des `line-referents` candidats ou acceptés selon
+   `review_status` (confirmed → accepted, provisional → candidate), avec
+   méthode `legacy_link` et la date du lien.
+4. Les 230 lignes `plan_only` à `ruptl = YES` deviennent membres du
+   périmètre RUPTL depuis la ligne, sans identité.
+
+## Test
+
+- `tests/test_jetp_lines_rest.py` : une fixture avec un claim agrégé, un
+  lien confirmé, un lien provisoire et une ligne de plan `ruptl` ; la
+  reconstruction donne une ligne `envelope`, un référent accepté, un
+  référent candidat, une appartenance de ligne ; aucune identité n'est
+  frappée.
+
+## Verification
+
+- [ ] Comptes : 1 628 + 46 + 66 + 46 + 151 lignes ; 315 référents
+- [ ] Aucune ligne de `projects.csv` créée ou modifiée
+
+## Invariants
+
+- Les tables anciennes restent lues, jamais écrites.
+
+## Exit criteria
+
+- [ ] Toutes les assertions publiées sont des lignes validées par [[0871]]
+- [ ] `make check-fast` et `make lint` verts

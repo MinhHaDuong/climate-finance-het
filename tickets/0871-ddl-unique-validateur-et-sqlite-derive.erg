@@ -1,0 +1,65 @@
+%erg 0.1
+Title: DDL unique, validateur et SQLite dérivé du ledger
+Created: 2026-09-22
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-22T17:30Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Contrat de stockage (`docs/jetp-ledger-storage.md`) § 1 et § 3 : un seul fichier DDL sous `config/` déclare chaque
+table commune du ledger, ses clés, ses clés étrangères et ses contraintes ;
+les en-têtes CSV en sont générés ; à la construction, les CSV se chargent
+dans un SQLite sous `data/derived/jetp/` où les contraintes tiennent lieu
+de validateur et d'où les vues servies sont des requêtes. Les tables de
+champs par document ne sont pas dans le DDL : chacune est déclarée par sa
+ligne de `line-field-specs`, écrite à l'extraction, et le validateur
+compare l'en-tête du fichier à cette ligne. Vague 0 de [[0870]] : rien ne
+migre ici, l'outillage est posé sur des tables vides.
+
+## Relevant files
+
+- `config/jetp-ledger.sql` — à créer, le DDL
+- `scripts/jetp/ledger_build.py` — à créer : charge les CSV, applique le DDL, écrit le SQLite
+- `scripts/jetp/ledger_headers.py` — à créer : génère et vérifie les en-têtes CSV depuis le DDL
+- `scripts/analysis/jetp_observatory.mk` — cibles `jetp-ledger-db` et `jetp-ledger-check`
+- `.githooks/pre-commit` — le plafond de 512 000 octets par fichier que le découpage cite
+
+## Actions
+
+1. Écrire le DDL des tables du contrat de stockage § 1, avec les règles de la
+   section comme contraintes CHECK là où SQLite le permet, et les autres
+   comme requêtes de validation nommées.
+2. Générer les en-têtes CSV depuis le DDL ; un test vérifie que chaque CSV
+   présent porte l'en-tête généré.
+3. Charger, valider, écrire le SQLite ; déterministe à entrée égale
+   (`SOURCE_DATE_EPOCH`, ordre des lignes).
+4. Valider les `line-fields/<document_id>.csv` contre `line-field-specs`.
+5. Découpage : une table dont un fichier dépasse le plafond du hook est
+   découpée par pays et année ; le chargeur réunit les morceaux en une table.
+
+## Test
+
+- `tests/test_jetp_ledger_ddl.py` : une fixture de cinq tables minuscules
+  avec une clé étrangère cassée, une valeur hors liste close et un en-tête
+  divergent ; la construction échoue trois fois pour trois raisons nommées,
+  puis passe une fois les trois corrigées ; deux constructions consécutives
+  donnent le même SQLite octet pour octet.
+
+## Verification
+
+- [ ] `make jetp-ledger-check` échoue sur chacune des trois fixtures cassées
+- [ ] `sha256sum` identique pour deux constructions successives
+- [ ] Un CSV dont l'en-tête diverge du DDL est refusé avec le nom de la colonne
+
+## Invariants
+
+- Aucune table existante de `data/jetp/` n'est modifiée par ce ticket.
+- Le SQLite est sous `data/derived/`, jamais commis.
+
+## Exit criteria
+
+- [ ] DDL commis, en-têtes générés, test vert
+- [ ] `make check-fast` et `make lint` verts

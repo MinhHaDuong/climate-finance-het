@@ -1,5 +1,23 @@
 # JETP backend: evidence, reported positions and reconciled accounts
 
+**Terminology note (2026-09-23).** This document predates the ODEM language
+of [`jetp-language.md`](jetp-language.md), which governs where the two
+differ. Read *evidence* (a link, a layer, a table of documentary support) as
+**justification**, and *evidence cutoff* as **knowledge cutoff**; *model* (of the
+data) as **schema**; *reconciliation* as **matching** for identities or
+**account** for the balance computation; *edition* of the ledger or site as
+**release**; *layer*, *stage* and *fact* as the pipeline **steps D1 to D4** and
+**observations**. In ODEM terms the observatory is Data guided by Ontology,
+Evidence is computed on top, and there is no Model.
+
+**Revision note (2026-09-22).** [`jetp-ontology.md`](jetp-ontology.md) is now
+the reference for the vocabulary, the storage contract and the migration.
+Sections 2 to 4 and 9 below were rewritten against it, and sections 5 and 8
+were amended where its section 8 and the
+[data-model review](jetp-study/ontology-review-2026-09-22/review-3-data-model.md)
+require it. Where the two documents disagree, the ontology governs the tables
+and this note governs the accounts, the traceability chain and the process.
+
 Design note — 14 September 2026, revision 5 after the
 [Astra and Fable review](jetp-backend-review-2026-09-14/README.md) and the
 [four-scope research review](jetp-design-four-scope-review-2026-09-14/assessment.md).
@@ -18,7 +36,7 @@ implemented. It develops the [storage contract](jetp-storage.md) and the
 ## 1. Decision and purpose
 
 Keep structured evidence in Git-versioned CSV, interpretation in Markdown, and
-original source bytes in the existing content-addressed DVC archive. Generate
+original document bytes in the existing content-addressed DVC archive. Generate
 reconciled accounts, website JSON and any SQLite export from reviewed inputs.
 SQLite is an optional local query/export format, never a second editable store.
 The public website remains static and requires no database service.
@@ -35,12 +53,14 @@ Observing the whole energy transition across comparable countries, including a
 PyPSA electricity modelling arm, is a future research direction. Section 12
 anticipates migration only. It creates no current MVP requirement or enhancement.
 
-Two evidence layers support the account:
+Two evidence families support the account, both stored as observations in
+one table (ontology, section 4), distinguished by their timing roles:
 
-1. **Event journal:** documentary assertions that something happened, with an
-   event date or supported date interval.
-2. **Reported positions:** what a source says about an entity at a reporting
-   cutoff, whether or not the underlying event history is available.
+1. **Events:** documentary assertions that something happened, with an event
+   date or a supported date interval.
+2. **Reported positions:** what a publisher says about a subject at a
+   reporting cutoff, whether or not the underlying event history is
+   available.
 
 The **reconciled account** is generated from these layers, stable identities,
 reviewed relationships and explicit adjudications. It is not a third collection
@@ -60,571 +80,331 @@ perimeters, explicit movements and transparent reconciliation differences.
 
 ## 2. Stores, formats and authority
 
-Paths in this table are repository-relative. New filenames are proposed. Unless
-shown otherwise, canonical CSV tables below are under `data/jetp/`. Research
-contracts use the same authority rules as documentary accounts; they are not a
-second editable copy of the event history.
+The tables are those of the storage contract's section 1 ([`jetp-ledger-storage.md`](jetp-ledger-storage.md)), which is the reference for
+this section; their column lists live there and are not repeated here. Paths are
+repository-relative, and canonical CSV tables are under `data/jetp/` unless
+shown otherwise. A table too large for the repository's file ceiling is chunked
+by country and year into `<table>/<CODE>-<year>.csv`, which stays one table.
 
-| Store | Format and location | Authority and persistence |
+| Store | Location | Authority |
 |---|---|---|
-| Observation coverage and dry searches | Existing `project-coverage.csv`, `dry-searches.csv`, extended with immutable review/attempt IDs | Git; preserve search effort and unavailable evidence independently of project progress |
-| Source catalogue and retrieval history | `data/jetp/sources.csv`, `manifest.csv` | Git; stable source identities, immutable metadata revisions and triage; manifest preserves acquisitions |
-| Source watches and sweep plans | `config/jetp-source-watches.yaml`; `data/jetp/source-sweeps/<sweep_id>/plan.json` | Git; reviewed monitoring policies and immutable planned target lists, including deferred targets |
-| Source checks and discoveries | `source-checks.csv`, `source-discoveries.csv` | Git; append-only check attempts, discovered-source links and explicit outcomes; scheduling summaries are derived |
-| Claim-specific source dependencies | `evidence-dependencies.csv` | Git; reviewed, dated dependencies between evidence links, distinct from document-wide edition relations |
-| Source editions and dependencies | New `source-editions.csv`, `edition-snapshots.csv`, `edition-relations.csv` | Git; mandatory mapping between logical editions, exact bytes and upstream editions |
-| Original documents and register snapshots | `data/jetp/documents/objects/<prefix>/<sha256>.<ext>` | Immutable bytes; existing `documents.dvc` pointer in Git; archive ownership remains on padme |
-| Extracted text, OCR and table intermediates | Content-addressed extraction artifacts under `data/derived/jetp/` | Regenerable; retain extraction recipe, tool/version and input/output hashes |
-| Identities, relationships and financing agreements | Existing `projects.csv`; new `agreements.csv`, `occurrences.csv`, `entity-relations.csv`, `perimeters.csv` | Git; reviewed identifiers and links, independent of observation dates |
-| Event assertions | Existing `events.csv`, `implementation-events.csv`, `event-timing.csv`, with extensions | Git; retain original observations and explicit correction history |
-| Reported positions | New `reported-positions.csv` | Git; one assertion about one measure/status, subject and reporting cutoff |
-| Evidence and adjudications | New `evidence-links.csv`, `adjudications.csv`, `adjudication-members.csv` | Git; exact source support and reviewed decisions, including unresolved conflicts |
-| Legacy staging | `plan-projects.csv`, country-specific observation tables and `source-claims.csv` | Retained during migration with stable crosswalks; no competing long-term ownership of the same assertion |
-| Narrative and editorial dependencies | `data/jetp/editorial/` Markdown; new `editorial-evidence.csv` | Git; authored summaries with evidence references and review state |
-| Schema and interpretation policies | Existing configuration plus proposed versioned schema/metric definitions and `config/jetp-application-profile.yaml` | Git; one definition per field/concept, with reviewed mappings to external standards |
-| Study identities and protocols | `data/jetp/research/studies.csv`; `protocols/<study_id>/<protocol_revision_id>.yaml` with accompanying Markdown under that research directory | Git; stable study ID, immutable frozen protocol revisions and explicit amendments |
-| Study frames and eligibility evidence | `data/jetp/research/study-frames.csv`, `frame-members.csv`, `research-links.csv` | Git; immutable frame definitions, reviewed membership decisions and typed evidence links |
-| Qualitative codebooks and annotations | `data/jetp/research/codebooks/`, `annotations.csv`; existing editorial Markdown and evidence links for interpretations | Git; versioned codes and excerpt annotations; coding is distinct from factual acceptance |
-| Analytical run descriptors | `data/jetp/research/runs/<run_id>.json` | Git; generated immutable manifests pin protocol, input editions, configuration, code/environment, dependencies and output hashes |
-| Research datasets and exhibits | `data/derived/jetp/research/` for regenerable episodes/coded exports; durable publication tables, figures and packages in their owning deliverable/release | Generated; retain versioned release artifacts and hashes, with large artifacts in the versioned archive rather than Git |
-| Reconciled accounts and query exports | `data/derived/jetp/`; optional `<edition_id>.sqlite` | Generated; disposable, deterministic within a pinned build environment |
-| Website payloads and code | `deliverables/jetp-observatory/` | Generated JSON plus HTML/CSS/JS; existing small handoffs remain reviewable in Git |
-| Frozen editions | `data/jetp/releases/<edition_id>/release.json` and versioned public artifacts | Immutable descriptor and checksummed payloads; new correction edition for changed published content |
+| Publishers, documents, publication roles | `publishers.csv`, `documents.csv`, `document-publishers.csv` | Git; publication is a relation, not a column |
+| Retrievals and snapshots | `retrievals.csv`, `snapshots.csv` | Git; one row per fetch attempt, one per fingerprint |
+| Original document bytes | `data/jetp/documents/objects/<prefix>/<sha256>.<ext>` | Immutable bytes; `documents.dvc` pointer in Git, archive on padme |
+| Lines and their verbatim fields | `lines.csv`, `line-fields/<document_id>.csv`, `line-field-specs.csv` | Git; the first-class unit, its locator and ordinal, and the publisher's own columns validated against their spec |
+| Identities | `projects.csv`, `assets.csv`, `agreements.csv`, `parties.csv`, `perimeters.csv` | Git; minted only by a reviewed match, never by ingestion |
+| Reviewed matches and relations | `line-referents.csv`, `relations.csv` | Git; dated, defeasible decisions with method, confidence and evidence lines |
+| Observations and their dates | `observations.csv`, `timings.csv` | Git; one statement per row citing one line, one timing row per date role |
+| External identifiers | `external-ids.csv` | Git; another register's code, typed by scheme |
+| Adjudications | `adjudications.csv`, `adjudication-members.csv` | Git; reviewed decisions with typed member rows |
+| Sourced rates and deflators | `rates.csv`, `deflators.csv` | Git; each row cites the line that printed it |
+| Crosswalks | `status-crosswalk.csv`, `sector-crosswalk.csv`, `marker-coefficients.csv` | Git; reviewed, dated mappings onto a shared axis or coefficient |
+| Routes and coverage | `routes.csv`, `coverage.csv` | Git; every served identifier resolves; review effort per referent |
+| Search effort and vocabulary decisions | `dry-searches.csv`, `decisions.md` | Git; unchanged |
+| Extraction intermediates | Content-addressed artifacts under `data/derived/jetp/` | Derived; recipe, tool version and hashes retained |
+| Reconciled accounts | `data/derived/jetp/`, per run and per pair of cutoffs | Derived; never edited |
+| Schema, validator and query engine | One DDL under `config/`; `data/derived/jetp/<edition_id>.sqlite` | Derived; headers generated from the DDL, whose constraints run as the validator |
+| Translated labels and machine summaries | `data/derived/jetp/line-translations.csv`, `document-summaries.csv` | Derived aids, never evidence |
+| Website payloads and code | `deliverables/jetp-observatory/` | Derived JSON joined at read time, plus HTML/CSS/JS |
+| Narrative and editorial dependencies | `data/jetp/editorial/` Markdown; `editorial-evidence.csv` | Git; authored summaries with evidence references and review state |
+| Frozen editions | `data/jetp/releases/<edition_id>/release.json` and public artifacts | Immutable descriptor and checksummed payloads; a correction is a new edition |
+
+What the ontology retires, and where each surviving concept now lives:
+
+- the source-editions triple, `source-editions.csv`, `edition-snapshots.csv`
+  and `edition-relations.csv`, becomes `documents`, `retrievals` and
+  `snapshots`, with succession, duplication and translation as `edition_of`,
+  `same_as` and `translation_of` rows in `relations`;
+- `evidence-dependencies.csv` becomes the `cites` relation from a line to a
+  document or to a line of one;
+- `source-watches`, `source-checks` and `source-discoveries` leave the scope
+  with the sweep contract;
+- `reported-positions.csv` and the event journal merge into `observations`;
+- `occurrences.csv` disappears as a registry, and occurrence membership
+  survives as an adjudication decision type whose member rows name the
+  observations it groups;
+- `entity-relations.csv` becomes `relations`, which also holds a perimeter's
+  `member_of` evidence in place of any membership column;
+- `evidence-links.csv` disappears: an observation cites exactly one line, and
+  the line resolves its snapshot, its document and its publishers;
+- the concept-mapping profile and `config/jetp-application-profile.yaml` leave
+  the implementation scope until a metric needs them. IATI, PROV-O, SKOS and
+  OWL-Time remain the vocabularies the design borrows from, and an RDF
+  projection is a derived export built when a consumer asks for it.
 
 CSV conventions: UTF-8, header row, LF endings, standard quoting, stable column
 order, and deterministic row ordering on export. Identifiers are strings. Money
 is a decimal string in whole currency units plus currency; no binary-float
-rounding in canonical amounts. A source value of 3.92 in a table headed USD billion
+rounding in canonical amounts. A value of 3.92 in a table headed USD billion
 becomes `3920000000` USD, retaining the original value, scale and label in the
-extraction/evidence record. Formatting millions or billions is a display derivation.
-Do not add new semicolon-separated identifier lists: use relationship rows.
+line's verbatim fields. Formatting millions or billions is a display derivation.
+No column holds a semicolon-separated list: a list is rows in a relation table.
 
-Dates use ISO dates; timestamps use UTC with an explicit timezone. Unknown values
-are empty CSV fields with a typed missingness field where the distinction matters,
-and JSON `null` on export. Zero is a measured value. Distinguish `not_reported`,
-`not_applicable`, `withheld`, `unreadable` and `unresolved` rather than substituting
-zero. Estimated and rounded values carry a qualifier and, when supplied, bounds.
+Dates use ISO dates and timestamps use UTC. An unknown value is an empty field
+with a typed missingness reason, and JSON `null` on export; zero is a measured
+value.
 
-The current vocabulary file is `config/jetp_tracking.yaml`; proposed measures,
-value types, units and aggregation rules should be defined in a versioned metric
-dictionary, referenced by validators and exporters. Documentation describes that
-dictionary rather than maintaining another executable taxonomy.
-
-### Application profile and reusable precedents
-
-Define the local terms actually used by the observatory and present studies in a
-small application profile. It references the metric dictionary for executable
-value/unit/aggregation rules; it does not duplicate those rules. Each mapping has
-`mapping_id`, `local_term_id`, external concept URI or code plus scheme URI,
-external edition/version, mapping relation, explanation, recording fields and
-review decision. Definitions have stable local IDs, versioned wording and optional
-plain-language display wording. Preserve original source labels on assertions.
-
-Use [IATI 2.03](https://iatistandard.org/en/iati-standard/203/activity-standard/)
-for relevant activity, organisation, budget and transaction concepts; it is an
-exchange standard, not an OWL ontology. Use
-[PROV-O](https://www.w3.org/TR/prov-o/) to describe entities, activities, agents
-and derivation; [SKOS](https://www.w3.org/TR/skos-reference/) for concept labels
-and mappings; and [OWL-Time](https://www.w3.org/TR/owl-time/) for temporal concepts.
-Our distinction between an uncertain event-date bound and an observed period
-remains explicit. Consult [FIBO](https://spec.edmcouncil.org/fibo/) for specific
-financial semantics if needed and the
-[Open Energy Ontology](https://openenergyplatform.org/ontology/) when energy-system
-terms enter scope. Neither requires wholesale adoption.
-
-Mappings distinguish equivalent, narrower, broader, related and unmapped meanings;
-define direction from the local term to the external concept. Similar labels alone
-cannot justify equivalence. Pin the actual concept identifiers when implementing
-a mapping. Approval, disbursement, expenditure and a source's use of allocation
-must retain their separate meanings. Evidential concepts such as reported
-position, disputed occurrence and observation gap remain local where needed.
-The profile is serialisable from the existing stores; no RDF service is required.
-
-The [comparison research](jetp-design-four-scope-review-2026-09-14/comparables.md)
-supports selective reuse. AidData TUFF supplies documentary reconstruction methods;
-GEM informs inventory coverage and asset hierarchy; Oxford's Climate Policy Monitor
-informs independent coding and adjudication; Climate Policy Radar supplies passage
-annotation precedents. Climate Funds Update and CPI reinforce financial stage and
-perimeter distinctions. OWID's staged ETL supports the source-to-publication
-pipeline. OCDS releases and compiled records are a useful journal/status precedent,
-but publisher merge rules cannot adjudicate competing independent sources.
-These are adopted design patterns, not dependencies on the complete platforms.
+The current vocabulary file is `config/jetp_tracking.yaml`. The closed lists of
+measure, basis, flow type, modality, classification and status axis are the
+ontology's sections 2 and 4; a new value is a decision recorded in
+`decisions.md` before the validator accepts it.
 
 ## 3. Identities and relationships
 
-Preserve every existing `project_id` and public route. Registry identity is stable;
-classification is a dated assertion (`measure=entity_type`, value `project`,
-`programme`, `component` or `unknown`). A later classification does not change
-observation keys. A technical-assistance project is not automatically a physical
-asset. Unnamed legacy count slots retain their routes and crosswalks, but cannot
-be used as subjects representing inferred projects; report their aggregate count
-against its source-defined perimeter.
+Evidence has four layers, in the ontology's order. A **publisher** is the body
+that publishes a document and answers for what it states. A **document** is a
+logical publication with a type, a canonical URL and one or more publishers. A
+**retrieval** is one attempt to fetch one document at one time. A **snapshot**
+is the exact bytes under a SHA-256 fingerprint. An assertion cites a snapshot,
+never a URL and never a retrieval, so that what was read can be re-read.
 
-Use `subject_type` plus `subject_id` for observation subjects:
+A **line** is one publisher's dated assertion at one locator in one snapshot,
+and it is the first-class unit of the ledger: every identity is minted from
+lines, every observation cites one, and nothing is counted except lines and the
+identities that reviewed matches have produced from them.
 
-| Subject type | Identifier resolves to |
-|---|---|
-| `country` | Stable country code in the country registry/configuration, including admitted research comparators |
-| `partnership` | Current JETP entry in country configuration, keyed by country code as a legacy convention |
-| `perimeter` | `perimeters.csv` |
-| `entity` | `projects.csv`, irrespective of current classification |
-| `agreement` | `agreements.csv`, including tranches |
+Three identity kinds replace the former single `entity` registry. A **project**
+is an undertaking with a scope, an owner and a duration. An **asset** is a
+physical thing at a site, and may be a unit `part_of` a plant. An **agreement**
+is funder-side money: a party commits an amount under an instrument to a
+counterparty. **Party** and **perimeter** complete the registries; a party may
+also be a publisher, and the two registries share an organisation identifier
+when it is. A project's classification stays a dated assertion with values
+`project`, `programme` and `component`, and a later classification does not
+change observation keys; containment is a `component_of` relation, not a column.
 
-Typed references throughout the backend use `(record_kind, record_id)` where a
-reference can target several tables. Financial events and implementation events
-are distinct record kinds even if their legacy ID strings coincide. Validators
-resolve the pair, not the bare string. New IDs may use readable prefixes; legacy
-IDs need no renaming. A derived SQLite subject/record index enforces the same keys.
+Identity is minted only by a reviewed match (storage contract, section 4). No ingestion
+script writes to `projects`, `assets`, `agreements`, `parties` or `perimeters`.
+A `line-referents` row carrying method, version, confidence, evidence lines and
+decider is the only route in, and it is defeasible: what is in force is the
+terminal row of a supersession chain whose status is `accepted`, and a terminal
+`rejected` row revokes what that chain had accepted. Until such a row exists the
+line itself carries the observation, so a proposition with no identity keeps its
+per-row record instead of dissolving into an aggregate.
 
-`agreements.csv` minimum fields are `agreement_id`, `country`, `recorded_at` and
-`recorded_by`. Descriptive party names and original agreement identifiers may
-remain registry metadata initially. Agreement kind and instrument are sourced,
-dated classification assertions when they affect an account. An agreement or
-tranche has its own stable ID, including a named financing proposal before
-signature. Registry presence does not assert legal execution. Amounts and states
-belong to observations. Introduce a party registry only when matching requires it.
+Observation subjects are typed `(subject_kind, subject_id)` over `line`,
+`project`, `asset`, `agreement`, `party`, `perimeter` and `country`. The former
+`entity` and `partnership` subjects are gone: an entity subject resolves to one
+of the three identity kinds, and a partnership is a perimeter whose envelope
+observations cite the lines that state them. Typed references elsewhere use
+`(record_kind, record_id)`; validators resolve the pair, not the bare string.
+Legacy IDs need no renaming, and `routes` maps every identifier the observatory
+has ever served to its new kind and identifier, so no public route breaks.
 
-`entity-relations.csv` contains `relation_id`, typed `from` and `to` references,
-`relationship`, `valid_from`, `valid_to`, `date_precision`, `recorded_at`,
-`recorded_by`, `supersedes_id` and `correction_reason`. Review state is derived
-from adjudications. Validity is a half-open interval `[valid_from, valid_to)`;
-unknown bounds carry explicit missingness and are not silently read as infinity.
-A separately declared open-ended bound is allowed. Uncertain validity that affects
-an account leaves the relationship unresolved at that cutoff.
+Relations are the ontology's section 3 table, held in one `relations` table
+with the decision columns above:
 
-Relationships include `component_of`, `finances`, `tranche_of`, `member_of`,
-`perimeter_within`, `same_as`, `alias_of` and `successor_of`. These rows own all
-parentage: omit editable `parent_agreement_id` and `parent_perimeter_id` columns.
-A tranche has at most one active parent agreement; containment must be acyclic.
-An agreement may finance many projects and vice versa. Hierarchy never authorises
-splitting money; a project share needs a sourced observation.
+| Relation | From | To | Meaning |
+|---|---|---|---|
+| `published_by` | document | publisher | many-to-many; role optional |
+| `edition_of` | document | document | succession |
+| `same_as` (document) | document | document | one publication, two URLs; lines belong to the canonical one |
+| `translation_of` | document | document | lines extracted from one language only |
+| `retrieval_of` | retrieval | document | one fetch attempt |
+| `yields` | retrieval | snapshot | absent on failure |
+| `in_snapshot` | line | snapshot | with locator and ordinal |
+| `groups` | line | line | a heading over the lines it governs |
+| `refers_to` | line | project, asset, agreement, party, perimeter | the reviewed match; dated |
+| `same_as` (line) | line | line | one published item in two places |
+| `cites` (line) | line | document, line | a reference held or not |
+| `component_of` | project | project | containment; acyclic |
+| `part_of` | asset | asset | unit within plant |
+| `concerns` | project | asset | zero or more |
+| `finances` | agreement | project | many-to-many |
+| `tranche_of` | agreement | agreement | at most one active parent |
+| `party_in` | party | agreement | one row per role |
+| `role_in` | party | project, asset, perimeter, document, line | a mandate outside any agreement |
+| `member_of` | line, project, asset, agreement | perimeter | dated membership evidence |
+| `same_as` | any | same kind | equality evidence; chooses no route |
+| `about` | observation | any subject | typed |
+| `cites` (observation) | observation | line | exactly one |
+| `timed` | observation | timing | one row per date role |
 
-`same_as` records equality evidence; it does not select a route. An accepted,
-directed `alias_of` chooses one canonical target at a specified evidence cutoff.
-Each alias has at most one active target of the same subject type; no cycles or active alias targets that
-are themselves aliases are allowed. Flattening a chain requires dated replacement
-relations. Old IDs remain valid and historical queries retain the former mapping.
-Equality, overlap and succession remain distinct findings.
+`same_as` records equality evidence and does not select a route. The alias
+chain, its at-most-one-active-target and no-cycle rules, the flattening of a
+chain by dated replacement relations, and `successor_of` are dropped in favour
+of the supersession rule above: a wrong equality is revoked by a `rejected` row
+that supersedes it, and nothing else has to be minted. A tranche still has at
+most one active parent agreement, containment is still acyclic, and hierarchy
+never authorises splitting money: a project share needs a sourced observation.
 
-`perimeters.csv` contains `perimeter_id`, `country`, `name`, `scope`, `definition`,
-`membership_basis`, `recorded_at` and `recorded_by`. A perimeter is an immutable
-coverage definition, independent of the edition that first documents it; evidence
-links provide that attribution. A changed definition receives a new ID and a
-reviewed succession relation. Membership is time-varying `member_of` evidence,
-not a mutable list. A source-defined aggregate with undisclosed constituents
-remains usable as a reported position without fabricated membership.
+A **perimeter** is a coverage definition the ledger can count against: a pledge
+envelope and its revisions, a publisher-defined portfolio, a procurement quota,
+a plan's list at a cutoff. It is immutable and independent of the document that
+first states it, and a changed definition takes a new ID with a reviewed
+succession. Membership is evidence, not a list: `member_of` rows, which a line
+may carry before any identity is minted. A publisher's aggregate with
+undisclosed constituents stays usable as a count observation without fabricated
+membership; the 21 Viet Nam count slots are two `count` observations on one
+perimeter, not 21 registry rows. `scope` retains `jetp_strict` and
+`ipg_energy_extended`, which no more define the eligible research subjects than
+the four-country website selection does. A shared perimeter ID alone does not
+prove comparability: a metric must also check membership changes, instrument
+and measurement basis, and unknown compatibility blocks reconstruction, not
+publication of the separate observations.
 
-`scope` retains `jetp_strict` / `ipg_energy_extended` for the current JETP profile.
-Neither these values nor the four-country website selection define all eligible
-research subjects. A perimeter further defines
-such coverage as IPG-only pledges, all-partner allocations or register allocations,
-and gross/net treatment where relevant. A shared perimeter ID alone does not
-prove comparability: a metric must also check membership changes, instrument and
-measurement basis. Unknown compatibility blocks reconstruction, not publication
-of the separate source positions.
-
-Count exports must declare a counting unit, classification level and perimeter.
-There is no default sum of projects plus programmes plus components. Asset counts
-exclude unknown and count-slot rows; official record counts retain the source's
-unit and are not relabelled as asset counts. Overlapping hierarchies require an
-explicit selection policy before an aggregate is generated.
-
-Research units may be countries, operations, agreements or parent entities. Use
-typed references and reviewed crosswalks rather than equating these units. A study
-frame owns its frozen eligibility definition and decisions; a reporting perimeter
-owns official coverage. Changing the official inventory never silently changes a
-frozen study population. Country selection for each study is protocol-defined;
-the website's country list remains a publication choice.
-
-The country-keyed partnership lookup is a compatibility convention, not equality
-between a country and an initiative. Future initiatives and physical assets can
-receive separate identities without renaming current project IDs or public routes;
-section 12 describes the migration boundary.
+Every count names its unit — lines of a document, referents of a kind, or a
+perimeter observation — with its classification level and perimeter. There is
+no default sum of projects plus programmes plus components, and no page adds
+lines of one document to lines of another or to referents. A publisher's record
+count keeps that publisher's unit and is not relabelled an asset count.
+Overlapping hierarchies need an explicit selection policy before an aggregate.
 
 ## 4. Observation and research schemas
 
-These are minimum contracts, not implemented column declarations. Schemas validate
-all readers and writers; compatibility readers preserve current files during the
-migration. The core record kinds are `entity`, `agreement`, `perimeter`,
-`occurrence`, `financial_event`, `implementation_event`, `position`, `relation`,
-`evidence`, `editorial_claim`, `adjudication`, `edition`, `edition_snapshot` and
-`edition_relation`, plus `country` and `partnership` subjects and
-`concept_mapping` for reviewed profile entries. Source management adds `source`,
-`source_revision`, `source_watch`, `source_watch_revision`, `source_sweep`,
-`source_check`, `source_discovery` and `evidence_dependency`, resolved by the
-catalogue, watch configuration, sweep plans and corresponding tables. Research adds
-`study`, `protocol_revision`, `frame`, `frame_member`, `observation_attempt`,
-`codebook_revision`, `annotation`, `analysis_run`, `release` and `artifact`. Each kind has a
-registered resolver and schema; generated kinds resolve through pinned manifests
-or exports. Consumers declare supported schema versions. No unconstrained
-polymorphic references or placeholder research tables are required for the MVP.
+These are minimum contracts, not implemented column declarations. One DDL under
+`config/` declares every table, key, foreign key and check of section 2, the CSV
+headers are generated from it, and its constraints run as the validator;
+compatibility readers preserve current files until step 7 of the migration
+retires them. The record kinds are the tables of section 2, each with a
+registered resolver and schema; generated kinds resolve through pinned
+manifests, and consumers declare supported schema versions.
 
-### Shared assertion fields
+### Shared record fields
 
-Each event or position has a stable ID, typed subject, `measure`, typed value,
-`recorded_at`, `recorded_by`, `supersedes_id`, `correction_reason` and evidence
-links. Monetary assertions require `perimeter_id`; nonfinancial entity status or
-classification may omit it. Aggregate counts and partnership/perimeter subjects
-require coverage. A sourced single-agreement monetary coverage can be narrow;
-unknown coverage remains explicit and the assertion is excluded from sums.
-`scope` alone is not a substitute for financial coverage.
+Every record row carries `recorded_at`, the date the ledger wrote it, so an
+as-of state at cutoff K is the set of rows recorded on or before K and in force.
+It is system admission time, not publication or acquisition time. Every
+decision row — `line-referents`, `relations`, `adjudications` — additionally
+carries `status` (`accepted`, `candidate`, `rejected`), `method`,
+`method_version`, `confidence`, `decided_at`, `decided_by` and `supersedes`, is
+never edited or deleted, and sits in a linear chain. Any `review_status` column
+is a generated, validated cache.
 
-Use `value_type` (`money`, `number`, `count`, `status`, `text`), `value_decimal`,
-`value_text`, `unit`, `currency`, `value_qualifier`, `value_lower`, `value_upper`
-and `missing_reason` as applicable. Exactly one scalar representation is populated
-unless explicitly missing; optional numeric bounds qualify that value. Currency
-is mandatory for money, counting unit for counts. Preserve the original source
-label and amount scale. Dimensions for financing, preparation, implementation and
-disclosure remain separate. The versioned metric dictionary specifies allowed
-combinations of measure, status, `basis`, `amount_basis`, unit and currency.
+### Observations and timings
 
-`recorded_at` is immutable system admission time, not publication or acquisition
-time. Review changes are adjudications; any `review_status` convenience column is
-a generated, validated cache. Corrections create new assertions and typed
-supersession links. Derived values identify their calculation and inputs.
+The event journal, event timing and reported positions merge into two tables.
+An **observation** is one dated statement about one subject, cited to exactly
+one line. It carries:
 
-### Event journal and occurrences
+- `measure`, from the closed list of the ontology's section 4: `amount`, `flow`,
+  `estimate`, `envelope`, `interest_rate`, `maturity_years`, `grace_years`,
+  `grant_element`, `condition`, `capacity`, `length`, `state`, `target`,
+  `count`, `absence`, `indicator`, `marker`. The list is extended by a decision
+  recorded in `decisions.md`, never inferred from a label.
+- `basis` — gross, net or unknown — wherever money is involved.
+- `flow_type` from the IATI list — pledge, commitment, disbursement,
+  expenditure — when the measure is `flow`.
+- the value once, as `value` with `value_low` and `value_high` bounding a range
+  and equal for a scalar, plus `unit` and `currency`. Currency is mandatory for
+  money, a counting unit for counts, an indicator code for `indicator`.
+- `own_status`, the publisher's word copied verbatim, with the axis it belongs
+  to. `shared_status` appears only in `status-crosswalk`, which names who
+  decided the mapping and when. Nothing is normalised in place or inferred.
+- `sector`, inherited from the subject. An agreement or project carries one
+  assigned through a referent decision, from a line's `own_sector` and the
+  `sector-crosswalk` onto an OECD DAC purpose code. `modality` on an agreement
+  is only ever the DAC type-of-aid code, likewise assigned and never inferred
+  from an instrument word; a publisher's own modality scheme stays a verbatim
+  field of the line.
+- a `marker` measure holds the donor's policy-marker score at its reporting
+  year, with `not_screened` distinct from 0. The coefficient turning a score
+  into a climate-finance amount is a rule, not evidence: it lives in the sourced
+  `marker-coefficients` table and applies only in a derived account.
+- `recorded_at`, `status` and `supersedes`. A corrected publication is a new
+  observation superseding the old one, which is retained.
 
-Keep `events.csv` and `implementation-events.csv` and their legacy IDs. Extend
-subject, measure and `amount_basis` contracts; do not edit occurrence assignments
-onto these evidence rows. `occurrences.csv` supplies stable `occurrence_id`,
-`recorded_at` and `recorded_by` for underlying events, including singletons.
-Accepted occurrence-membership adjudications link assertions to an occurrence.
-Membership is derived at the evidence cutoff; later merging or splitting decisions
-retain old occurrence IDs and history. Each eligible event assertion has at most
-one active occurrence assignment. Conflicting accepted assignments must be resolved
-by a replacement decision; they are not ordered by CSV row or source priority. Several documents describing one payment must
-not create several payments; unresolved possible duplicates remain unsummed.
+An observation carries no date of its own. Each date it reports is a **timing**
+row with its role, precision and bounds: event, approval, reporting cutoff,
+register date, report date, planned, `target`, and `period_start` with
+`period_end` for a flow covering an interval. A point flow has one `event`
+timing. Bounds express uncertainty inclusively: a June-only cutoff spans 1 to 30
+June. A quarterly total states the quarter it covers, so section 5 can test
+coverage; no split of it into months is inferred, and a repeated cumulative
+balance is never a new movement. Timing corrections supersede the owning
+observation and receive new rows; old timing is immutable. An observed completed
+state invents neither a commissioning date nor a payment.
 
-Migrate `event-timing.csv` to `(record_kind, record_id, date_role)` keys, keeping
-`event_start`, `event_end` and `event_precision` for financial and implementation
-events. Date bounds express uncertainty about when an event happened, inclusively.
-Position dates are stored on positions, not duplicated here. Timing corrections
-supersede the owning assertion and receive new timing rows; old timing is immutable.
-An observed completed state does not invent a commissioning date.
+Signing, approval and disbursement are different measures and states, not a
+monotonic stage rank. Several documents describing one payment must not create
+several payments: unresolved duplicates remain unsummed, and occurrence
+membership is settled by an adjudication whose member rows name the observations
+grouped, never by CSV row order or publisher priority. Values are the
+publisher's, in the publisher's unit and currency; a conversion is a derivation
+citing a `rates` row, and a publisher's own printed conversion is itself a
+`rates` row citing that line.
 
-`amount_basis` distinguishes incremental payments, agreement face value,
-adjustments and cancellations. Signing, approval and disbursement are different
-measures; the metric dictionary determines eligibility, not a monotonic stage rank.
+### Documents, retrievals and where sweeps went
 
-### Reported positions and period flows
+The registry of places worth checking, its watch configuration, its sweep plans
+and the check and discovery tables leave the MVP. What remains is the evidence
+layer of section 3: a `documents` row per publication, a `retrievals` row per
+fetch attempt with its outcome and headers, and a `snapshots` row per
+fingerprint. A retrieval that failed, returned 304 or returned bytes already
+held is recorded as such and supports no assertion by itself. Document
+deduplication runs before extraction under the same reviewed-decision record as
+any other match (storage contract, section 4), because a duplicate extracted twice
+doubles every line downstream; mirrors are not independent confirmations.
 
-`reported-positions.csv` adds `position_id`, `basis`, `cutoff_earliest`,
-`cutoff_latest`, `cutoff_precision`, `coverage_start`, `coverage_end`,
-`coverage_precision` and `original_label`. Source editions resolve through evidence
-links; do not duplicate one privileged edition FK when an assertion has several
-supporting documents.
+The sweep contract of section 7 and the source-management acceptance tests
+of section 10 are deferred with those tables: the procedure stays in this
+document as the design of a future refresh, and none of it is an MVP
+requirement (decided 2026-09-22, with the ontology's decision 9).
 
-`basis` distinguishes cumulative amount, period flow, balance, status and inventory
-membership. Cumulative and status positions use cutoff bounds, which represent
-uncertainty about a point. A June-only cutoff spans 1–30 June; it is not an exact
-30 June observation. Period flows use coverage dates, inclusive calendar dates:
-Q2 covers 1 April through 30 June. Cutoff fields remain empty unless the source
-also states a distinct reference cutoff. Publication and retrieval are separate.
-Unknown or uncertain coverage cannot be treated as an exact account interval.
+### Study protocols, populations and analytical runs
 
-A period-flow position is eligible movement evidence when the metric permits it;
-it is not converted into fictitious individual payments. If it overlaps itemised
-payments or another flow, a coverage adjudication must establish containment or
-disjointness and select a non-overlapping representation. No proportional split
-of a quarterly total into months is inferred. A repeated cumulative balance is
-never a new movement.
+Deferred until a study needs them, per review 3: these remain prose contracts,
+with no tables, fixtures or schema work in the MVP. A commissioned study brings
+a frozen protocol revision stating its question, unit, time zero, follow-up
+horizon, eligibility rules, endpoints and evidence cutoff; an immutable
+sampling frame whose membership decisions record verdict, reason and supporting
+lines; an observation-process record keeping not published, blocked,
+unreadable, not sought and loss of visibility distinct; a versioned codebook
+whose annotations resolve their locator through the line they cite, with
+independent codings allowed to coexist; and an immutable run manifest pinning
+protocol, evidence edition, frame, code, environment, configuration, seeds and
+checksummed outputs. Episodes and coded exports are reproducible views of
+evidence, never a second editable history, and no correction is made by editing
+one. A failed run supplies no releasable result.
 
-One inventory row can yield several positions sharing the original row locator.
-An identified project may lack money or financing evidence. Preserve every source
-row, original label and inventory order through extraction and mapping.
-
-### Source registry, monitoring policy and intelligence origin
-
-The registry is both a catalogue of acquired publications and a directory of
-places worth checking. A Secretariat reports page, lender register, newsletter
-feed or a specific document can be a source even before useful bytes are acquired.
-A publication channel is not a document edition, and a publisher's institutional
-status is not a judgement that every claim it publishes is firsthand or correct.
-
-**Catalogue.** Preserve existing `source_id` values and the current fields
-`country`, `authority_category`, `publisher`, `source_type`, `title`,
-`published_date`, `url`, `project_id`, `expected_format`, `priority`, `active` and
-`notes`. Add `source_revision_id`, `source_kind` (`channel` or `document`),
-`intelligence_role_default` (`primary`, `secondary`, `mixed`, `unknown`), rationale,
-triage state/reason, and recording/supersession fields. Source revisions are
-immutable; `source_id` groups their history and `source_revision_id` uniquely keys
-a row. Compatibility readers expose one selected revision per source ID. URLs and
-publisher names are descriptive metadata, not identity keys. Unknown legacy
-classification stays unknown until reviewed.
-
-Triage distinguishes `discovered`, `accepted_for_use`, `context_only` and `rejected`.
-Acquisition is a separate dimension, derived from the manifest: a source can be
-retrieved yet rejected, or accepted as worth using but not yet accessible.
-`active` concerns monitoring eligibility; it does not delete evidence or invalidate
-an older citation. Priority controls search effort, not credibility. Review
-decisions about revisions follow the existing adjudication contract; any status
-column is a validated current-view cache. Rejection/deactivation retains the reason
-and prior history. Register a new source for a distinct channel or publication;
-revise metadata for the same source and preserve redirects through acquisitions.
-
-**Watches.** `config/jetp-source-watches.yaml` defines stable `watch_id` and immutable
-`watch_revision_id`, target `source_id`, owner, purpose, active state, priority,
-expected publication cadence, check interval, optional expected-publication window,
-retrieval method/adapter, route or query, access limitations and call/time budget.
-It also records scope as validated country, sector, language and topic arrays,
-acceptance criteria, recording/supersession fields and reviewed scheduling rules.
-Expected publisher cadence and our check interval are separate: neither promises
-that a report will appear. A watch may target a channel or a changing document URL;
-several watches may share a source for different scopes/routes. Static archived
-editions need not be polled individually. Credentials never belong in the registry.
-
-**Checks and discoveries.** A sweep plan pins `sweep_id`, creation time, owner,
-purpose, registry/configuration revision, budget and the selected watch revisions.
-Its target list includes initial due dates and reasons for explicit deferrals.
-`source-checks.csv` records immutable `check_id`, sweep and watch revision, start/end
-times, actual route/method, outcome, coverage limit, error/retry information and
-recording fields. A check may have multiple acquisition attempts; each manifest
-attempt carries its nullable `check_id`. `source-discoveries.csv` records immutable
-`discovery_id`, `check_id`, discovered `source_id`, discovery locator and
-recording/supersession fields. Repeated sightings of one source remain separate
-check links and do not create duplicate source identities.
-
-Outcomes distinguish `new_candidate`, `changed`, `checked_no_change`, `blocked`,
-`error` and `partial`; a deferred target is not a completed check. A new candidate
-can be logged without fetched bytes. A claim about its contents still requires
-acquisition and the ordinary evidence contract. Listing pagination, date filters
-and other limits determine whether a check was complete. No change means no change
-found through that route and scope, not proof of no national progress or no new
-publication anywhere. Source checks link to study observation attempts where
-relevant, but a successful channel check alone does not establish project follow-up.
-
-**Primary and secondary intelligence.** `authority_category` identifies the kind
-of publisher; `intelligence_role_default` describes expected information origin
-for discovery/triage. Neither replaces claim-level assessment. Extend each
-`evidence-links.csv` row with a reviewed `intelligence_role` using the same four
-values, `origin_rationale` and `upstream_status` (`linked`, `cited_not_acquired`,
-`unknown`, `not_applicable`), with an upstream citation description when useful.
-The link concerns one source's support for one assertion: the same document can
-be primary for one claim and secondary for another. Missing assessment is unknown;
-no catalogue default silently becomes a verified claim classification.
-
-Primary evidence originates the relevant record, observation or testimony;
-secondary evidence relays or interprets another origin. These labels do not rank
-truthfulness or imply direct physical measurement. A newspaper interview can be
-primary evidence of an official's statement, without proving a payment settled.
-An official report repeating a lender's total is secondary for that total. A
-source's own estimated series still needs its estimation method and qualifiers.
-When a passage combines origins, split evidence links where possible; otherwise
-retain `mixed` and explain the ambiguity. Accepted secondary evidence can support
-an attributed position; metric eligibility remains governed by section 5.
-
-`evidence-dependencies.csv` has stable dependency IDs, downstream/upstream evidence
-IDs, relation (`quotes`, `reproduces`, `derived_from`, `translation_of`), rationale,
-recording/supersession fields and review decisions. Both ends must resolve to
-acquired evidence. If the upstream is known only by citation, retain that citation
-and `cited_not_acquired` status rather than inventing an evidence ID. An unknown
-origin remains `unknown`; `linked` requires a reviewed dependency row.
-Use `edition-relations.csv` for broader document dependencies. Neither a different
-publisher nor a different URL proves independent confirmation. Dependency and
-occurrence decisions prevent copied claims from inflating support or amounts;
-unknown independence remains explicit. These fields describe origin, not the
-supporting/contradicting/contextual role already carried by evidence links.
-
-### Evidence, editions and acquisitions
-
-`sources.csv` keeps its curated source/URL IDs. An acquisition attempt has a stable
-`acquisition_id`, `source_id`, `source_revision_id`, nullable `check_id`,
-`retrieved_at`, `recorded_at`, outcome and, when material exists,
-`document_sha256`. A check-linked acquisition also has `check_role` (`target` or
-`discovered_document`): target acquisitions resolve to the pinned watch source;
-discovered-document acquisitions require a discovery link for that check/source.
-Direct acquisitions outside a sweep leave check fields null. Allocate collision-resistant attempt IDs; timestamps alone are
-not unique across runs. Migrate old attempts with a committed row-to-ID crosswalk,
-retaining repeated and failed attempts. Pin the consulted source revision and the
-actual requested/final URL, including redirects; validate its source identity.
-A 304 acquisition may reference the prior
-material hash; a failed attempt without bytes cannot support document evidence.
-
-The following Git tables are mandatory for snapshot-backed assertions:
-
-| Table | Minimum contract and cardinality |
-|---|---|
-| `source-editions.csv` | `report_edition_id`, `publication_key`, `title`, `publisher`, publication date/precision, `recorded_at`, `recorded_by`; one logical edition per ID, several editions per publication |
-| `edition-snapshots.csv` | Stable mapping ID, `report_edition_id`, `document_sha256`, recording/supersession fields; many-to-many reviewed mapping, allowing multi-file editions and identical bytes reused by distinct publications |
-| `edition-relations.csv` | Stable relation ID, from/to edition IDs, relation kind (`derived_from`, `corrects`, `translation_of`), recording/supersession fields and evidence; multiple upstream editions allowed |
-
-One source URL can yield many hashes; many URLs can yield the same hash. An
-acquisition fixes one source and at most one material hash; an edition can have
-many acquisitions through its mapped snapshots. Byte changes trigger review, not
-automatic equivalence or an automatically new logical edition. Evidence always
-pins exact bytes even when two snapshots belong to one logical edition.
-Edition metadata corrections use immutable revisions of the edition record with
-an explicit supersession crosswalk; old evidence remains attached to its original
-record. Snapshot membership and dependency corrections likewise create revised
-mapping/relation rows. All edition joins obey the evidence cutoff. Shared byte
-hashes do not imply shared publication dates, publishers or independent support.
-
-`evidence-links.csv` contains `evidence_id`, typed target reference,
-`report_edition_id`, `acquisition_id`, `document_sha256`, `locator`,
-`extraction_id`, `support_role` and recording/supersession fields. Supporting,
-contradicting and contextual links remain distinct. `source_id` is obtained from
-the acquisition; if exported redundantly, validate it against that acquisition.
-Validate the whole tuple: acquisition hash equals evidence hash, that hash belongs
-to the cited edition, and extraction input and locator resolve to those same bytes.
-Edition metadata does not override a source mismatch. Assertions without acquired
-bytes stay staged with an explicit evidence gap until this contract is satisfied.
-
-PDF locators retain printed and PDF page numbers plus table/row/cell; HTML locators
-retain heading and element/row identifiers. Extraction manifests record input hash,
-parser/OCR version/configuration and output hashes. Manual corrections and
-translations are versioned derivatives with their own inputs and authors; preserve
-original-language text. Generated intermediates can be rebuilt, but non-regenerable
-manual correction instructions must be retained in Git, not only in a scratch file.
-Mirrors do not count as independent confirmations; upstream edition relations
-support dependency analysis, with unresolved dependence shown explicitly.
-
-### Study protocols, populations and observation process
-
-These are contracts for the present research programme. Implement each with its
-own study/evidence work while preserving research-critical history during initial
-ingestion. Do not encode analytical eligibility by changing project identities.
-`research-links.csv` supplies immutable link IDs, typed from/to references, role,
-recording/supersession fields and review decisions. It links frame decisions,
-annotations and research claims to evidence without semicolon-separated ID lists.
-Authored research records carry `recorded_at` and `recorded_by`; revisions retain
-supersession links and reasons. Frozen protocol/codebook versions additionally
-record `frozen_at` and the responsible reviewer. Profile mappings use the same
-admission and reviewed-revision rules. These timestamps support section 6's
-knowledge-cutoff checks; a Git commit date alone is not a substitute.
-
-- **Frozen study protocol:** versioned YAML/Markdown with `study_id`, immutable
-  `protocol_revision_id`, research question and, where applicable, estimand,
-  unit, intervention definition, time zero, follow-up horizon, inclusion/exclusion
-  rules, endpoint definitions, policy versions and evidence cutoffs. Record prior
-  outcome inspection and freeze before primary estimation. Amendments receive
-  new versions and reasons. `studies.csv` owns stable study identity and
-  admission metadata; protocol revisions own study rules. State which exposure,
-  endpoint and observation definitions apply; a qualitative study need not invent
-  an estimand or a treatment date. Pin codebook revisions when used.
-- **Sampling frames:** `study-frames.csv` defines immutable `frame_id`,
-  `protocol_revision_id`, country, sector/lender/instrument stratum, historical
-  landmark, eligibility rule and evidence cutoff. `frame-members.csv` retains
-  immutable `frame_member_id`, `frame_id`, typed unit ID, inclusion verdict, reason,
-  source assertion IDs through joins and baseline maturity. Membership assertions
-  carry recording/supersession fields;
-  acceptance follows section 6. Frozen exports select decisions at their pinned
-  evidence cutoff and admit at most one operative verdict per typed unit/frame.
-  Changed frame definitions receive new frame IDs. Preserve active, cancelled and
-  failed cases; absence from a present-day completed list
-  cannot exclude a unit from a historical frame. Include source-frame coverage
-  verdicts for whole populations that cannot be reconstructed.
-- **Exposure and baseline evidence:** encode negotiations, anticipation,
-  partnership onset, actual project support and concurrent interventions as
-  distinct measures with source-backed date bounds. Extend the country registry
-  to candidate comparators, and the sector vocabulary to non-energy cases while
-  preserving the four-country website selection. Lack of JETP attribution is
-  unknown exposure, not an untreated control. Lender, instrument, technology,
-  scale, maturity and country conditions are dated baseline assertions; freeze
-  their admissible dates before treatment as the protocol requires.
-- **Observation process:** extend coverage/search records with immutable attempt
-  IDs, typed subject, sought milestone/document, route, check date, result and
-  source/evidence links. Derive observation windows from explicit follow-up
-  evidence, not simply the latest successful URL fetch. Preserve not published,
-  blocked, unreadable, not sought and loss of visibility separately. Actual searches
-  use attempt records; `not_sought`
-  is a dated coverage assessment, never a fictitious acquisition. A negative search
-  result needs its search record, not invented source bytes. Claims that a document
-  exists or states something require the ordinary source-evidence contract.
-- **Analysis episodes:** generated rows key `(protocol_revision_id, frame_id,
-  unit_kind, unit_id, endpoint_definition_id)` within a frozen study export. They
-  carry entry-date bounds, baseline state, endpoint bounds, follow-up cutoff,
-  observation/censoring classification, cancellation or other competing outcome,
-  included assertions through typed dependency links and exclusion reasons.
-  Distinguish exact, interval-censored, right-censored and left-censored endpoints,
-  delayed entry and genuinely missing endpoints. Missing publication does not
-  alone justify administrative right-censoring. Episode rows are reproducible
-  views of evidence, never a second editable event history.
-
-Research units may be countries, operations, agreements or parent projects; retain
-explicit crosswalks rather than equating them. External comparison datasets such
-as CRS keep their own snapshot/version, definition and operation-ID crosswalks.
-They remain lagged comparison evidence and cannot fill current JETP observations
-without a verified match. Frame membership frozen for a study is separate from a
-changing official reporting perimeter.
-
-### Qualitative coding, external datasets and analytical artifacts
-
-A versioned codebook defines codes, inclusion/exclusion guidance, interpretation
-rules and its `codebook_revision_id`. `annotations.csv` holds `annotation_id`,
-`study_id`, protocol/codebook revisions, code, coder and recording/supersession
-fields. Its evidence links resolve the exact extraction/span locator and bytes;
-the annotation does not maintain a second copy of source metadata. Several independent codings may coexist;
-reconciliation is a separate decision. A code attached to a passage is not an
-accepted financial or implementation event. Substantive interpretations use stable
-editorial claim/block IDs and supporting, contradicting or contextual links,
-including links to annotations and competing explanations. Case-selection rules
-belong to the protocol and frame contracts.
-
-External datasets use the source-edition/acquisition/archive contracts. Add an
-adapter manifest pinning schema, units, country/sector coverage, missingness,
-licence/access conditions, original identifiers and transformations. Review identity
-crosswalks independently from attribute compatibility. Preserve estimated dates,
-source classifications and aggregation thresholds; a shared identifier or unit
-alone does not establish comparability. Dataset versions may be upstream evidence
-without becoming new named JETP entities.
-
-Each `analysis_run` manifest has an immutable `run_id`, `study_id`,
-`protocol_revision_id`, `evidence_edition_id`, frame IDs, semantic/metric/codebook
-versions, code revision, environment lock/hash, configuration/hash, seeds where
-applicable, execution timestamps, outcome and diagnostics. Its structured input
-and output arrays contain typed references and checksummed artifact descriptors
-with `artifact_id`, role, format/schema version and location. The manifest is
-created after execution from pinned inputs; a failed run is retained but cannot
-supply a releasable result. A publication artifact must trace through its run or
-reviewed editorial derivation to evidence, not merely cite the dataset homepage.
-
-Episode tables, coded-case exports, estimates and figures are generated outputs.
-No analytical correction is made by editing a generated episode or chart value.
-Small durable descriptors and publication handoffs stay in Git; large released
-artifacts use the existing versioned archive with hashes in the manifest. Preserve
-released artifacts even when an intermediate could otherwise be regenerated.
-An artifact index/SQLite view is generated from these descriptors, not maintained
-as an independent registry of facts. `release` resolves to an immutable package
-descriptor: `evidence_edition_id` identifies a released evidence package, distinct
-from a source document's `report_edition_id` (`edition` record kind). Artifact IDs
-identify immutable artifact versions; descriptors supply their byte hashes and
-locations. Retain semantic exhibit/claim IDs separately across artifact revisions.
+External comparison datasets enter as comparator records: lines of a snapshot
+whose document is the dataset edition and whose publisher is the institution,
+with their fields verbatim, their identifiers in `external-ids` and their
+statuses crosswalked. They stay lagged comparison evidence and cannot fill a
+JETP observation without a reviewed match.
 
 ## 5. Reconciliation and generated accounts
 
 `adjudications.csv` contains `decision_id`, `decision_type`, `verdict`, `reason`,
 `reviewer`, `reviewed_at`, `recorded_at`, `policy_version` and `supersedes_id`.
-Its typed member rows have a controlled role vocabulary: `candidate`, `accepted`,
-`excluded`, `occurrence`, `covering_flow`, `covered_movement`, `opening`, `closing`
-and `context`. Each decision type defines its allowed roles and cardinalities.
-Decisions cover acceptance/withdrawal, identity, occurrence membership, flow
-coverage, source corrections, perimeter compatibility and interpretation. A
-superseding decision is a complete replacement of that decision's member set.
+Its typed member rows use a controlled role vocabulary — `candidate`,
+`accepted`, `excluded`, `occurrence`, `covering_flow`, `covered_movement`,
+`opening`, `closing`, `context` — and each decision type defines its allowed
+roles and cardinalities. Decisions cover acceptance, identity, occurrence
+membership, flow coverage, document corrections, perimeter compatibility and
+interpretation, and a superseding decision replaces the whole member set. These
+two tables stay record tables in Git (section 2); the accounts they feed are
+derived outputs under `data/derived/jetp/`, computed at build time with the run
+identifier and both cutoffs, and never edited.
 
 An account declares subject, perimeter, measure, currency, valid cutoff and
 evidence cutoff, plus pinned schema and policy versions. It retains separate
-reported positions, selected opening position, included/excluded movements,
+reported observations, selected opening position, included/excluded movements,
 reconstructed closing value or explicit unavailability, residual, uncertainty,
-assertion/occurrence IDs and decision IDs. Financial and physical status remain
+observation IDs and decision IDs. Financial and physical status remain
 separate. An incomplete movement subtotal is labelled as such, never as an exact
 reconstructed closing position.
 
 ### First executable metric
 
-Start with `gross_disbursement_original_currency_v1` for one agreement or tranche,
-in one original currency and declared coverage. No general rule engine or
-cross-currency reconciliation is required for the first release.
+Start with `gross_commitment_original_currency_v1` for one agreement or tranche,
+in one original currency and declared coverage. The metric is a commitment
+measure because no disbursement observation exists: `events.csv` today holds
+235 signed, 65 approved and 45 announced rows and no disbursed row, so a
+disbursement metric has no eligible movement. The rules below are written for
+the gross flow of the declared `flow_type` and apply unchanged to disbursement
+once such observations are collected. No general rule engine or cross-currency
+reconciliation is required for the first release.
 
 - An accepted opening cumulative gross position must have an exact cutoff and
   compatible measurement basis; zero needs evidence. Select among conflicting
-  openings by an explicit adjudication, never by source rank alone.
+  openings by an explicit adjudication, never by publisher rank alone.
 - For dates `t0` and `t1`, movements cover `(t0, t1]` at calendar-day resolution.
   An event is certainly inside only if its earliest date is after `t0` and latest
   date is on/before `t1`. A possible boundary overlap blocks an exact result;
   report an interval only when evidence bounds justify one.
-- Eligible movements are distinct accepted disbursements and accepted gross
-  period-flow positions wholly within that interval. Choose a disjoint cover:
+- Eligible movements are distinct accepted flows of that `flow_type` and
+  accepted gross period flows wholly within the interval. Choose a disjoint cover:
   an adjudicated quarterly total can stand for its covered itemised payments,
   which remain visible but excluded from addition. Partially overlapping totals
   with no supported decomposition block reconstruction.
@@ -634,38 +414,37 @@ cross-currency reconciliation is required for the first release.
 - Reported closing minus reconstructed closing is the residual only when the
   reported closing has a matching exact cutoff, currency, coverage and basis.
   Otherwise display both observations with the failed comparability condition.
-- Gross disbursements are not reduced by refunds, repayments or commitment
-  cancellations; retain those under their own measures. A verified bank reversal
-  of a purported payment requires a reviewed metric-specific adjustment. A source
-  typo is supersession, not an economic reversing payment. Net cash accounts need
-  a separately defined metric.
-- Compute with decimals in whole currency units. Rounded inputs carry source
+- Gross flows are not reduced by refunds, repayments or cancellations; retain
+  those under their own measures. A verified bank reversal of a purported
+  payment requires a reviewed metric-specific adjustment. A publisher's typo is
+  supersession, not an economic reversing payment. Net cash accounts need a
+  separately defined metric.
+- Compute with decimals in whole currency units. Rounded inputs carry their
   bounds when known; propagate them instead of inventing precision or treating a
   rounding residual as discrepancy. Formatting precision is separate from value.
 
-For example, a verified zero opening and complete EUR 15m movement coverage against
-an exact EUR 20m closing produce a EUR 5m unexplained residual. If only EUR 15m of
-known payments is available and completeness is unknown, publish a documented
-subtotal and gap, not that exact reconciliation. With a EUR 12m Q2 flow and three
-payments adjudicated as its components, include EUR 12m once, not flow plus payments.
+A verified zero opening and complete EUR 15m coverage against an exact EUR 20m
+closing produce a EUR 5m residual; the same EUR 15m with unknown completeness
+produces a subtotal and a gap, not a reconciliation. A EUR 12m Q2 flow with
+three payments adjudicated as its components counts once.
 
-Legacy converted amounts remain sourced/derived observations with their existing
-conversion provenance, excluded from original-currency sums. A future conversion
-contract must specify currency pair, quote direction, rate kind, date, rate source
-assertion and rounding policy, and distinguish conversion effects from cash flows.
-That extension requires its own schema and tests; no implicit USD conversion occurs.
+Legacy converted amounts remain derived observations with their existing
+conversion provenance, excluded from original-currency sums. Any conversion
+cites a `rates` row, which states the currency pair, date, basis and the line
+that printed the rate; a script never carries a rate, and no implicit USD
+conversion occurs.
 
-The South Africa Q1 report's 129 implementing/87 completed records and register's
-128/88 both total 257; retain each snapshot and investigate membership or timing.
-The USD 6.12bn instrument allocation and USD 4.32bn portfolio allocation have
-different perimeters and are not a failed balance reconciliation. Mixed agreement
-stages, cancellations and reversals must remain visible; replace the current
-highest-financing-stage summary progressively with these dated assessments.
+The South Africa Q1 report's 129 implementing and 87 completed records, and the
+register's 128 and 88, both total 257: retain each snapshot and investigate
+membership or timing. The USD 6.12bn instrument allocation and USD 4.32bn
+portfolio allocation have different perimeters and are not a failed balance.
+Mixed stages, cancellations and reversals stay visible, and the current
+highest-financing-stage summary gives way to these dated assessments.
 
 ## 6. Time, corrections and change control
 
 There are two query axes: the world described and accepted system knowledge.
-Source publication, retrieval, coding (`recorded_at`) and review (`reviewed_at`)
+Document publication, retrieval, coding (`recorded_at`) and review (`reviewed_at`)
 remain distinct. A July acquisition coded in September is unavailable to a July
 system-knowledge query. Retrieval remains usable for a separate “could have read”
 analysis, but that is not the account's evidence cutoff.
@@ -735,7 +514,10 @@ mutable locator nor a row-content hash alone defines enduring identity.
 
 ### Registry-driven sweeps
 
-At a deliberate refresh, derive a queue from active sources with triage
+Deferred with its tables (section 4): kept as the design of a future
+refresh, not an MVP requirement.
+
+At a deliberate refresh, derive a queue from active documents and channels with triage
 `accepted_for_use` or `context_only` and reviewed watches, plus discovered
 candidates explicitly selected for triage.
 Freeze the target watch revisions and scheduling policy before checks start.
@@ -755,13 +537,13 @@ completed, partial/failed or explicitly deferred, with check IDs and reasons;
 new out-of-plan targets require a linked supplemental plan. Report new candidates,
 changed documents, unchanged checks and access gaps separately. Acquisition hashes
 trigger candidate review, not automatic promotion of content. Triage discoveries
-before use; a rejected source stays discoverable in history. Sweep completion
-means the planned effort is accounted for, not that all sources were accessible
+before use; a rejected document stays discoverable in history. Sweep completion
+means the planned effort is accounted for, not that all documents were accessible
 or all assertions have been reviewed. No unattended scheduler is implied.
 
 ### Evidence refresh and publication
 
-1. **Discover:** run the planned source checks, including official report
+1. **Discover:** run the planned document checks, including official report
    inventories, subsequent official news and relevant secondary leads.
    Record the named document, routes, search date, budget and acceptance criteria.
    Recheck South Africa Q2 and other successor reports during refreshes; do not
@@ -771,14 +553,14 @@ or all assertions have been reviewed. No unattended scheduler is implied.
    creates no new substantive event. DVC push remains padme's responsibility.
 3. **Extract:** produce reproducible candidate inventory/position/event rows.
    Reconcile every official inventory section to extracted rows or explicit
-   exclusions. Preserve source rows before identity matching.
+   exclusions. Preserve every line as printed before identity matching.
 4. **Review:** match entities and agreements, classify measure and timing, add
    evidence links and adjudications. Automated extraction does not ratify its own
    outputs. Repeated runs must be idempotent for unchanged source assertions.
 5. **Reconcile:** rebuild affected accounts and identify affected study inputs.
    Do not rerun a frozen analysis implicitly. Compute changes in values, statuses,
-   perimeters and source availability; distinguish real developments, late reports,
-   corrected source data and changed interpretation.
+   perimeters and document availability; distinguish real developments, late reports,
+   corrected publisher data and changed interpretation.
 6. **Edit:** flag website narratives, coded interpretations, study exports and
    manuscript exhibits whose dependencies changed. Preserve
    relevant existing summaries; revise their interpretation and evidence links.
@@ -812,9 +594,9 @@ The required chain is bidirectional:
 
 ```mermaid
 flowchart LR
-    A[Archived source bytes and SHA-256] --> B[Acquisition and source edition]
-    B --> C[Extraction and page or row locator]
-    C --> D[Event or position assertion]
+    A[Archived document bytes and SHA-256] --> B[Retrieval and snapshot]
+    B --> C[Line at its locator]
+    C --> D[Observation]
     D --> E[Identity links and adjudication]
     E --> V[Frozen evidence edition]
     V --> F[Reconciled account or editorial claim]
@@ -826,233 +608,159 @@ flowchart LR
     K --> L[Paper figure table or substantive claim]
 ```
 
-Every published number, status and substantive narrative claim must resolve to
-assertion IDs or an explicitly identified calculation. Add an exported provenance
-index keyed by stable semantic `claim_id`, with assertion IDs, derivation/policy
-ID, input/output hashes and editorial evidence. For website output, each claim has one or more display
-occurrences, each with `display_id`, `payload`, `json_pointer`, `page_route`,
-`rendered_instance_locator` and rendering role. `(release_id, display_id)` is the
-occurrence identity; the enclosing release descriptor supplies `release_id`.
-A display ID is unique across all publications in that release. The route and
-stable rendered-instance locator identify its rendered location, including repeated
-components on the same page. Payload, JSON pointer and rendering role are
-non-unique attributes: several occurrences may reuse the same field and role.
-Several occurrences may reference the same claim; never overwrite the homepage
-location with the country-page location.
-Generated HTML carries both claim and display IDs. Reverse dependency traversal
-finds every affected occurrence and authored claim after a correction. The page
-provides a quiet evidence link/popover rather than internal build details.
+Every published number, status and substantive narrative claim resolves to
+observation IDs or to an explicitly identified calculation.
+
+**The provenance index is a build-time validation artifact, never a served
+file.** The index keyed by stable semantic `claim_id`, with observation IDs,
+derivation and policy ID, input and output hashes and editorial evidence, is
+generated and validated during the build so that the chain above is proved to
+resolve and a correction can be traced to every claim it touches. The same
+holds for the display-occurrence table, which records for each claim its
+`display_id`, payload, JSON pointer, page route, rendered-instance locator and
+rendering role. Neither is published. The site's climb from a displayed number
+to its evidence stays a read-time join over the served tables, as ticket 0858
+decided when it removed the 874 kB materialised join; rebuilding that join
+under another name is what this paragraph forbids.
+
+Within the build, `(release_id, display_id)` is the occurrence identity, unique
+across every publication in a release, so repeated components on one page and
+the same claim on two pages stay distinct; payload, pointer and rendering role
+are non-unique attributes. A manuscript occurrence replaces the route and
+pointer with a stable figure, table or block label plus a cell or paragraph
+locator, since a PDF page number is not a durable key. Reverse traversal
+enumerates display IDs rather than deduplicating by a shared locator, and
+returns every occurrence and authored claim a correction touches.
 
 `editorial-evidence.csv` links a stable narrative claim ID and Markdown block ID
-to supporting/contradicting assertions and review state. Give authored claims
-stable block identifiers; a file/line alone is fragile across edits. Rewording a
-claim requires review of its links. General explanatory prose needs no invented
-numeric assertion, but substantive interpretation must identify its evidence.
+to supporting and contradicting observations and review state. Give authored
+claims stable block identifiers; a file and line alone are fragile across edits.
+Rewording a claim requires review of its links. General explanatory prose needs
+no invented numeric observation, but substantive interpretation must identify
+its evidence.
 
-A provenance entry must resolve through the exact observation evidence link to
-the exact archived snapshot. The current source catalogue's latest retrieval is
-useful discovery metadata, but cannot stand in for the document used to support
-an older event. Export record-specific hashes and locators, not just a country-level
-list of sources. Identical bytes from two mirrors do not constitute two independent
-confirmations; derivative reports should retain their upstream evidence relationship.
+A provenance entry resolves through the observation's line to the exact
+archived snapshot: the latest retrieval of a document is discovery metadata and
+cannot stand in for the bytes that supported an older observation. Export
+record-specific hashes and locators, not a country-level list of documents.
 
-The public package includes the evidence graph, IDs, source URLs, hashes, locators,
-calculation definitions and editorial dependencies needed to inspect claims.
-Redistribute raw documents only under applicable terms. Where raw bytes cannot
-be public, retain internal archive availability and explain the public access
-limit. Reproducing the website from a frozen package and independently examining
-every original document are distinct capabilities.
+A research claim, when a study exists, resolves the same way through its run
+manifest to the protocol, frame decisions, accepted observations and exact
+bytes; an earlier paper's package keeps its inputs and results until a versioned
+correction is published.
 
-The release descriptor must cover all assets that affect rendering: country and
-overview JSON, HTML, JS, CSS, definitions, editorial payloads and provenance index.
-Pin software/environment versions for byte-level regeneration; a Git SHA alone
-does not identify external dependencies. Put output hashes in a later descriptor
-commit to avoid a self-referential checksum/commit dependency. Semantic claims
-remain reproducible even when an external live URL later changes or disappears.
-
-### Study and manuscript provenance
-
-The same semantic claim may appear on the website, in a data-paper table and in
-a research narrative. Add `publication_id` and `artifact_id` to the occurrence
-contract; `publication_id` resolves within the release's product list and
-`artifact_id` through its artifact descriptors. Website occurrences retain their
-routes and JSON pointers. Manuscript
-occurrences use a stable figure/table/block label plus a cell, series or paragraph
-locator where applicable. A PDF page number alone is not a durable semantic key.
-Use a discriminated website/manuscript occurrence schema so manuscript entries
-need no fictitious JSON pointer. Both variants use `(release_id, display_id)` as
-the occurrence identity, preserving existing website IDs. Publication, artifact,
-data locator and rendering role are non-unique attributes, not an alternative
-key. Each manuscript occurrence retains a stable rendered-instance locator within
-its publication artifact, distinguishing repeated uses of the same figure, cell
-or claim. Reverse traversal enumerates display IDs rather than deduplicating by
-a shared data locator.
-
-A research claim resolves through its artifact/run manifest to the protocol,
-frame membership decisions, accepted assertions and exact source bytes. Qualitative
-claims also resolve to codebook revisions, annotations and any contrary evidence.
-Keep data derivation, analytical method and interpretation as distinct dependency
-roles. General exposition does not require fabricated observation records.
-
-For example, a corrected financing date may affect a country timeline, one unit's
-analysis episode, a duration figure and a case interpretation. Reverse traversal
-must identify all four. The current evidence view can change immediately after
-review; an earlier paper's package retains its original inputs and results until
-an explicitly versioned correction or new analysis is published. Renderable public
-packages and full scientific replay have separate checks: replay additionally
-requires the pinned data, environment and access to permitted source artifacts.
-No live API call or latest-release lookup may alter a frozen study during replay.
+The public package carries the evidence graph, IDs, document URLs, hashes,
+locators, calculation definitions and editorial dependencies needed to inspect
+claims; raw documents are redistributed only under applicable terms, and where
+bytes cannot be public the limit is explained. The release descriptor must cover
+every asset that affects rendering, with software and environment versions
+pinned for byte-level regeneration and output hashes in a later commit to avoid
+a self-referential checksum. Reproducing the website from a frozen package and
+examining every original document are distinct capabilities.
 
 ### Country cards and pages
 
-Preserve two source roles: **principal official reference** and **latest subsequent
-official news**. Record source IDs, publication dates, selection/check date and
-scope qualifications independently of the headline. Each selected role also pins
-`report_edition_id` and `acquisition_id`; their snapshot mapping must validate.
-A live source URL remains the clickable link, while the selected bytes are fixed
-in the edition. Country source selections and editorial links follow the same
-recording/revision rules as other consequential publication inputs. The principal
-reference is normally the latest comprehensive Secretariat report; Vietnam may need an
-explicitly identified local substitute, and Senegal currently uses its plan.
+Preserve two document roles: **principal official reference** and **latest
+subsequent official news**. Each pins its document and the snapshot its
+retrieval yielded, with the publication date, the selection date and any scope
+qualification recorded independently of the headline; the live URL remains the
+clickable link while the selected bytes stay fixed. The principal reference is
+normally the latest comprehensive Secretariat report; Viet Nam may need an
+identified local substitute, and Senegal currently uses its plan.
 
-The homepage country box links only to the principal reference. Its text is a
-reviewed synthesis of the total evidence, not an extract constrained to that
-reference. The country page shows both source roles, their dates, the incremental
-update and the retained substantive summaries. A newer news figure must carry its
-own evidence in the export even when the card's sole reference link remains older.
-If no subsequent official item is located, retain an explicit gap rather than
-mislabel an earlier article as later news.
+The homepage country box links only to the principal reference, and its text is
+a reviewed synthesis of the total evidence rather than an extract from that one
+document. The country page shows both roles, their dates, the incremental update
+and the retained summaries. A newer news figure carries its own evidence in the
+export even when the card's sole link remains older, and where no later official
+item is found the gap is explicit rather than filled by relabelling an earlier
+article. Indonesia's USD 3.92bn approval headline may rest on the 8 September
+2026 JDU newsletter while its principal reference remains the 2025 report with
+an older USD 3.1bn snapshot: different dated observations, neither a payment
+total.
 
-For example, Indonesia's USD 3.92bn approval headline may be supported by the
-8 September 2026 JDU newsletter while its principal reference remains the 2025
-report with an older USD 3.1bn snapshot. They are different dated observations;
-neither is a payment total. The source-role distinction must survive the JSON
-handoff and cannot be encoded only in prose.
-
-The country publication contract should expose `principal_reference_source_id`,
-`latest_news_source_id`, the corresponding
-`principal_reference_edition_id` / `latest_news_edition_id` and acquisition IDs,
-`source_selection_checked_on`, `headline_claim_id` and `summary_claim_ids`.
-When no later news is found, its role IDs are null with an explicit gap reason.
-Keep `headline_source` as a compatibility alias for the principal reference until the frontend migrates; never interpret that alias as
-exhaustive support for the headline. Each claim ID resolves to the exported
-provenance index. Country-level claims must be exported even when they have no
-project association; the current project-only claim selection is insufficient.
-
-A generated provenance entry has this logical shape (illustrative IDs, routes
-and pointers; the exporter validates each location against its actual payload):
-
-```json
-{
-  "claim_id": "idn-approved-finance-20260908",
-  "displays": [
-    {"display_id": "idn-country-headline",
-     "publication_id": "jetp-observatory-202609",
-     "artifact_id": "artifact-idn-json-202609", "payload": "data/IDN.json",
-     "json_pointer": "/country/headline", "page_route": "country/IDN",
-     "rendered_instance_locator": "country-summary/headline",
-     "rendering_role": "headline"},
-    {"display_id": "idn-overview-headline",
-     "publication_id": "jetp-observatory-202609",
-     "artifact_id": "artifact-idn-json-202609", "payload": "data/IDN.json",
-     "json_pointer": "/country/headline", "page_route": "/",
-     "rendered_instance_locator": "country-grid/IDN/headline",
-     "rendering_role": "headline"}
-  ],
-  "assertions": [{"record_kind": "position",
-                  "record_id": "position-idn-jdu-approved-20260908"}],
-  "adjudication_ids": [],
-  "derivation": {"id": "format-money-billions", "version": "1"},
-  "evidence_ids": ["evidence-idn-jdu-newsletter-1"],
-  "editorial_claim_id": null
-}
-```
-
-The two displays intentionally share a payload, pointer and role. Required export
-acceptance cases: both validate and reverse traversal returns both after a shared
-assertion changes; a third display on the same route with a different display ID
-and rendered-instance locator also remains distinct. A duplicate display ID
-anywhere in the release fails validation, even across publications. Apply these
-same cases to manuscript occurrences sharing a data locator. These are future
-schema and traversal tests, not claims about the current exporter.
-
-The evidence ID resolves to a document hash, acquisition and paragraph locator;
-the release descriptor supplies the input revision and payload/code hashes. For
-a computed aggregate, typed assertion references enumerate the contributing
-observations and the derivation identifies exclusions and overlap rules. An authored summary uses
-an editorial claim ID and its evidence joins instead of pretending to be a formula.
+The country publication contract exposes `principal_reference_document_id`,
+`latest_news_document_id`, their snapshot fingerprints,
+`document_selection_checked_on`, `headline_claim_id` and `summary_claim_ids`,
+with null role IDs and an explicit reason when no later news is found.
+`headline_source` stays a compatibility alias for the principal reference until
+the frontend migrates, and is never read as exhaustive support for the headline.
+Country-level claims must be exported even when they have no project
+association; the current project-only selection is insufficient.
 
 Terms such as allocation, approval, disbursement, record, project, plan and
-programme can have short hover/focus/tap definitions generated from a shared
-public glossary derived from the reviewed application profile and metric dictionary.
-Definitions explain the measures without changing source
-semantics or implying cross-country equivalence. Keep methodological caveats in
-the relevant account/evidence view; keep build and migration scaffolding out of
-the country narratives.
+programme can have short hover definitions generated from the vocabulary of
+sections 2 and 4, without changing a publisher's semantics or implying
+cross-country equivalence. Keep methodological caveats in the account or
+evidence view, and build scaffolding out of the country narratives.
 
 ## 9. Migration from the current backend
 
-Audit baseline: `bbb3a215` on main. Related local MVP documentation/content commits
-`a3e30848` and `aac1ff2b` clarify report baselines and source fallbacks; they do not
-implement this data model. The two-link UI increment is also still pending.
+The migration is [`jetp-ledger-migration.md`](jetp-ledger-migration.md): a rebuild from snapshots, not a
+rename of columns. Each current table is read once, its rows become lines and
+observations under the target contract, and the result is checked against the
+served views before the old tables go. Audit baseline `bbb3a215` on main; row
+counts are those of 2026-09-22.
 
-| Current implementation | Required extension or migration |
-|---|---|
-| `projects.csv` holds projects and programmes with stable IDs | Add dated classification assertions and typed entity references; preserve IDs/routes and separate count slots |
-| No dedicated agreement/tranche identities | Add agreement registry and many-to-many project links; leave unidentifiable agreements unresolved |
-| `events.csv` mixes event assertions and register-derived observations | Classify each row; move/crosswalk reported states into positions; do not promote old register dates to event dates |
-| `implementation-events.csv` contains dated reports of states | Preserve the source assertion; create event timing only where an actual transition is supported |
-| `event-timing.csv` distinguishes date roles and precision | Use typed timing keys; put cutoff/coverage dates on positions and retain immutable timing with superseded assertions |
-| `plan-projects.csv` and country observation tables retain source rows | Ingest into the shared position contract with source-row crosswalks; start with Vietnam's un-ingested RMP inventories |
-| `source-claims.csv` includes structured facts in text and semicolon joins | Promote measurable assertions to typed positions and relational evidence links; preserve prose claims and legacy IDs |
-| `project-source-links.csv` is broad, project-level linkage | Keep it for discovery/context; add assertion-specific evidence links and snapshot identity |
-| Sources and manifest preserve hashes but lack stable acquisition IDs | Crosswalk attempt IDs; add mandatory edition/snapshot/dependency mapping and tuple validation |
-| Source catalogue has authority/type/priority/active fields but no explicit watch contract | Preserve source IDs, introduce immutable metadata revisions and reviewed watch policies; derive scheduling from check logs |
-| Old retrievals predate registry-driven sweeps | Retain attempts with null check IDs and explicit unknown historical metadata; never invent completed sweeps |
-| Primary/secondary origin is not systematically coded | Initialise unknown roles, review claim-level origin and add specific dependency links without treating official status as firsthand evidence |
-| Exporter picks most advanced coded financing stage | Generate as-of multidimensional accounts; retain reported versus inferred distinctions |
-| Country headline is manually configured with one source | Separate principal/news roles from headline claim IDs and its multiple evidence inputs |
-| Country Markdown is exported without statement-level dependencies | Add editorial claim IDs and evidence joins, preserving useful existing prose |
-| JSON contains source metadata and input hashes | Add exact assertion-to-display provenance and freeze all rendering assets |
-| Release directories describe a future process | Implement immutable package/descriptor validation and a two-edition refresh rehearsal |
-| Research requirements lack core store and release ownership | Add study/protocol/frame/coding contracts and run/artifact dependencies with the respective research work |
-| Source and classification vocabulary is local | Map used terms to versioned external concepts while preserving source wording and existing codes |
-| Coverage records describe research effort separately from lifecycle data | Retain immutable attempts and typed links during initial ingestion; derive observation windows only from supported follow-up |
+| Current | Rows | Target | Notes |
+|---|---|---|---|
+| `sources.csv` | 301 | 103 publishers, 301 documents, 301 publications | joint publications added by review, none derivable from the free text |
+| `manifest.csv` | 314 | 314 retrievals, 264 snapshots | 41 failed retrievals carry no snapshot; 9 snapshots are yielded by two retrievals |
+| `projects.csv` ZAF register | 257 | 257 lines of the Q1 2026 register, `register_allocation`; 257 agreements minted by basis `register_row`; projects only where the reviewed name match holds | the status letter becomes `own_status`, axis delivery |
+| `projects.csv` VNM count slots | 21 | 1 perimeter, 2 observations of measure `count` (7 initial, 17 screened) citing the portfolio lines | routes for the 21 slot identifiers point at the perimeter |
+| `projects.csv` SEN | 43 | the 49 lines already exist; 43 referents re-decided from the plan's submission and quick-win lines | quick win is a line classification, not a kind |
+| `projects.csv` IDN | 74 | 44 grant lines become agreements; 19 pipeline and 9 finance rows become projects or agreements on review; 2 monitoring rows become lines | |
+| `projects.csv` remainder | 9 | projects | |
+| `plan-projects.csv` | 1 628 | 1 628 lines in two IDN and two SEN documents; 67 `matched` become `refers_to` rows; capacity and estimates become observations on the line | the 230 `plan_only` lines flagged `ruptl` become `member_of` a RUPTL perimeter, no identity minted |
+| Viet Nam RMP release | 279 | 279 lines; 73 programme rows are `heading`, 181 unresolved are `unnamed_item` | |
+| `events.csv` | 380 | 380 observations, axis money; the 34 `need` rows become measure `estimate` on their plan lines | subject is the agreement minted from the same line |
+| `implementation-events.csv` | 71 | 71 observations on assets or projects after the subject review | `suspended` on a retirement is an asset state, not a project stage |
+| `event-timing.csv` | 451 | 451 timings, one per date role | a year-bounded approval and the report's cutoff are two rows of one observation |
+| `project-source-links.csv` | 315 | 315 `refers_to` rows of basis `discovery` or `possible_match` | the 11 `project_page_component` rows become `component_of` |
+| `source-claims.csv` | 151 | lines and observations | the two finance aggregates become perimeter observations replacing the hard-coded headlines |
+| `config/jetp_observatory.yaml` headlines | 4 | perimeter observations citing their lines | configuration keeps only display choices |
+| `data/jetp/comparison/*.json` | 1 119 records, 97 in the reference pool | lines of World Bank API snapshots, external identifiers, comparator crosswalk | the reference pool is a perimeter of those lines |
+| figure scripts' inline exchange rates | 1 known (`2500 * 1.09`) | `rates` rows citing their line | a script never carries a rate |
 
-Migrate in bounded slices: (1) prove schema, temporal and metric contracts with
-hand-written fixtures before mass crosswalks; (2) identity/evidence crosswalks,
-reported positions and official inventory ingestion, starting with Vietnam's RMP;
-(3) agreement/occurrence/flow reconciliation; (4) account exports and editorial/display
-provenance; (5) frozen release and update rehearsal. From slice 2, preserve full source
-inventories, exclusions, timing uncertainty, historical identities and search
-coverage needed for study frames. Evidence audits and study work implement the
-research contracts alongside these slices, before their analytical outputs are
-released: freeze protocols/frames, build episode or coding exports, then freeze
-run and publication dependencies. No estimator or completed study is a website
-release dependency. Keep compatibility readers until consumers switch. A migration manifest records old table/ID, new table/ID, transformation, reason and
-review status. Retire legacy write paths only after row-by-row reconciliation;
-never maintain two independently editable versions of the same assertion.
+Order of work, each step a ticket with its own byte-level check:
 
-A versioned migration manifest additionally selects `legacy` or `reconciled`
-publication mode per typed subject, measure and perimeter. New accounts publish
-only for migrated combinations; other subjects retain clearly identified legacy
-views. Aggregates must resolve every contributing assertion through the crosswalk
-and reject mixed duplicate ownership. A partly migrated combination cannot publish
-a reconciled total. Retained legacy rows remain provenance, not additional
-movements. Unknown historical review times follow section 6; no migration may
-fabricate knowledge before the earliest demonstrated admission date.
+1. Publishers, documents, publications, snapshots. A read-only rename of the
+   evidence layer; the observatory's Documents page is the check.
+2. Lines and line fields for the four M1a documents, replacing the M1a
+   builder's product with the same rows under the new contract. The inventory
+   tab is the check: same rows, same order, same fields.
+3. Lines for the remaining documents: plan-projects, portfolio, pilot, claims.
+4. Identity split: referents, routes, the five identity tables, every old
+   identifier resolving through `routes`. The party table is built here at its
+   minimum shape, identifier, name, kind, country and optional IATI
+   organisation identifier, with `party_in` carrying the role. The 61 funder
+   strings and the register's 14 funder prefixes are adjudicated into funder and
+   channel roles now; the other roles are filled as their lines are reviewed. A
+   party is minted from a line like every other identity.
+5. Observations and the status crosswalk, replacing events, implementation
+   events and event timing. The Observations tab and each record's evidence
+   fold-out are the check.
+6. Perimeter observations replace configured headlines.
+7. Remove the retired tables and the compatibility readers.
 
-The current `scripts/jetp/build_observatory.py` and `_observatory_data.py`, their
-Make inputs and browser renderer are the extension points. Reuse the existing
-harvester and DVC archive. Do not start with a new database service, application
-framework or duplicate corpus. Update 0726–0728 handoffs from this note before
-implementation; split substantial independently deliverable changes into their
-own tickets rather than silently enlarging the pending UI increment.
+Each step retires its legacy write path only after row-by-row reconciliation,
+and no combination is ever editable in two places at once. A migration manifest
+records old table and ID, new table and ID, transformation, reason and review
+status; a partly migrated combination cannot publish a reconciled total, and
+retained legacy rows remain provenance, not additional movements. Unknown
+historical admission and review times follow section 6: record admission at
+migration and mark earlier knowledge unavailable where it cannot be established.
+
+The current `scripts/jetp/build_observatory.py` and `_observatory_data.py`,
+their Make inputs and the browser renderer are the extension points. Reuse the
+existing harvester and DVC archive. Tickets 0762, 0768 and 0769 closed on the
+previous contract; their readers are retired at step 7. Update the 0726–0728
+handoffs from this note before implementation.
 
 ## 10. Acceptance and first tests
 
 Prove the contracts with a small hand-written schema/account/export fixture before
-bulk ingestion. Include a report-listed entity with no project page, unknown-to-
+bulk ingestion. Include a report-listed line with no project page, unknown-to-
 programme reclassification, two agreements at different stages, duplicate payment
 reports, a Q2 flow covering itemised payments, and an exact closing position.
 Required outcomes: stable references, retained inventory membership, mixed stages,
@@ -1076,7 +784,7 @@ Then test these independent failure cases:
   Unknown-to-programme classification preserves references and routes. Alias and
   containment cycles, multiple active parents and supersession forks fail.
 - Every official inventory row maps to retained positions, a reviewed crosswalk or
-  explicit exclusion. Unknown count slots never become invented entities; a
+  explicit exclusion. Unknown count slots never become invented identities; a
   programme and component do not double-count finance or asset totals.
 - A correction reaches all homepage, country-page and download occurrences and
   dependent narratives. Every displayed claim resolves to its exact saved bytes.
@@ -1091,11 +799,11 @@ Then test these independent failure cases:
 Source-management implementation must additionally prove that a blocked check
 records an attempt without advancing successful coverage; a complete unchanged
 check advances scheduling without creating an event; and every frozen sweep target
-has a check result or explicit deferral. Repeated discovery preserves one source
+has a check result or explicit deferral. Repeated discovery preserves one document
 identity with multiple discovery links. A publisher/cadence/classification revision
 must leave an old sweep and evidence-cutoff query unchanged. Acquisitions referencing
 a mismatched source revision or check/watch target fail validation; discovery-page
-and linked-document acquisitions distinguish their actual source IDs and roles.
+and linked-document acquisitions distinguish their actual document IDs and roles.
 A newspaper interview and an official reprint must permit different claim-level
 origin classifications, while copied reports cannot create independent support
 or duplicate payments. An unresolved upstream citation must not manufacture an
@@ -1113,7 +821,7 @@ manuscript exhibits while the old research package still replays; conflicting
 qualitative annotations survive an adjudication; a new codebook or concept mapping
 cannot silently change an older export; and a failed run cannot supply a published
 estimate. Export validators reject unresolved typed references, including collisions
-between country, agreement and entity IDs. These checks belong to the respective
+between country, agreement and project IDs. These checks belong to the respective
 research implementation tickets, not the immediate website increment.
 
 Implementation tests belong to the affected contracts and tickets. This note is
@@ -1180,7 +888,7 @@ validation would belong to that later research. Neither advertised geographic
 coverage nor a successful model solve establishes adequate national evidence.
 
 A future model package would consume a frozen evidence edition through a versioned
-adapter, with a many-to-many crosswalk from source assets to model components.
+adapter, with a many-to-many crosswalk from ledger assets to model components.
 Keep observed values, external estimates, scenario assumptions and simulated
 outputs distinct. Pin topology/aggregation, demand and weather series, units and
 cost base year, conversions/defaults, scenario constraints, environment and solver

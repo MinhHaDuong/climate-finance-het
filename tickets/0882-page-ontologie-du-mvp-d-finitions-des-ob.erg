@@ -1,0 +1,58 @@
+%erg 0.1
+Title: Glossary du MVP : définitions des observables et des relations, avec leurs révisions
+Created: 2026-09-23
+Author: HDMX-coding-agent
+Blocked-by: 0880
+
+--- log ---
+2026-09-23T06:45Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Décision de l'auteur du 2026-09-23 : l'ontologie est présentée dans le MVP, sous le libellé Glossary et sans le mot « ontology » (`docs/jetp-observatory-presentation.md`),
+avec les définitions des observables et des relations
+(`docs/jetp-observatory-presentation.md`, Glossary). Elle se génère depuis les tables
+d'ontologie de [[0880]], pour que les mots lus par le lecteur soient ceux que
+le validateur applique.
+
+## Relevant files
+
+- `data/jetp/ontology/terms.csv` et les autres tables d'ontologie ([[0880]])
+- `scripts/jetp/build_observatory.py` — une vue servie de plus, une table par fichier ([[0858]])
+- `deliverables/jetp-observatory/app.js` — le Glossary, organisé par [[0881]]
+
+## Actions
+
+1. Servir les termes en vigueur, les correspondances de statut et de secteur
+   et les périmètres, un fichier JSON par table, colonnes verbatim.
+2. Glossary : termes groupés par liste ; pour chacun la définition, le
+   schéma externe et sa relation SKOS, l'historique des révisions ; pour une
+   relation, son domaine et son image ; pour un axe de statut, les mots des
+   éditeurs qui s'y rattachent par correspondance.
+3. Tout terme affiché ailleurs sur le site (mesure, statut, classification,
+   relation) renvoie à sa définition sur cette page.
+
+## Test
+
+Red : `tests/test_jetp_observatory_render.py` — le Glossary rend chaque
+terme en vigueur de la fixture avec sa définition ; un terme superseded
+n'apparaît que dans l'historique de son successeur ; la relation `finances`
+affiche domaine `agreement` et image `project` ; le statut « D. Completed »
+d'une ligne ZAF renvoie à sa définition par la correspondance.
+
+## Verification
+
+- [ ] Le nombre de termes rendus égale le nombre de termes en vigueur
+- [ ] Depuis une observation ZAF, un clic sur le statut ouvre sa définition et sa correspondance IATI
+
+## Invariants
+
+- La page ne porte aucune définition écrite à la main : tout vient des tables.
+
+## Exit criteria
+
+- [ ] Le Glossary présente définitions, correspondances externes et révisions des observables et des relations
+- [ ] Les termes du site renvoient à leur définition
+- [ ] `make check-fast` et `make lint` verts
