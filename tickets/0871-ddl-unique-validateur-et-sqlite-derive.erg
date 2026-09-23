@@ -9,7 +9,7 @@ Author: HDMX-coding-agent
 --- body ---
 ## Context
 
-Ontologie § 5 et § 10 : un seul fichier DDL sous `config/` déclare chaque
+Contrat de stockage (`docs/jetp-ledger-storage.md`) § 1 et § 3 : un seul fichier DDL sous `config/` déclare chaque
 table commune du ledger, ses clés, ses clés étrangères et ses contraintes ;
 les en-têtes CSV en sont générés ; à la construction, les CSV se chargent
 dans un SQLite sous `data/derived/jetp/` où les contraintes tiennent lieu
@@ -29,7 +29,7 @@ migre ici, l'outillage est posé sur des tables vides.
 
 ## Actions
 
-1. Écrire le DDL des tables de l'ontologie § 5, avec les règles de la
+1. Écrire le DDL des tables du contrat de stockage § 1, avec les règles de la
    section comme contraintes CHECK là où SQLite le permet, et les autres
    comme requêtes de validation nommées.
 2. Générer les en-têtes CSV depuis le DDL ; un test vérifie que chaque CSV

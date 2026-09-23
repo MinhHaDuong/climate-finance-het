@@ -10,7 +10,7 @@ Blocked-by: 0875
 --- body ---
 ## Context
 
-Étape 5 de l'ontologie § 6, décisions 3, 9 et 10. Les 380 événements
+Étape 5 de la migration (`docs/jetp-ledger-migration.md`), décisions 3, 9 et 10. Les 380 événements
 financiers et les 71 événements physiques deviennent des observations
 typées par sujet et axe, avec mesure d'une liste close, `basis`,
 `flow_type`, `recorded_at`, statut et supplantation ; leurs dates deviennent

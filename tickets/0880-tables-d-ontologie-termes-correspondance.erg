@@ -46,7 +46,7 @@ Le contrat est désormais `docs/jetp-ontology.md` § 5, sous-sections
    résultats E.
 4. Test d'alignement : il échoue si une valeur listée aux § 2 à 4 n'est pas
    un terme en vigueur, si un terme en vigueur n'apparaît nulle part dans le
-   document, si une table ou colonne décrite au § 5 diffère du DDL, ou si le
+   document, si une table ou colonne décrite au contrat de stockage § 1 diffère du DDL, ou si le
    DDL déclare une table ou colonne nommée `evidence`, `model`,
    `reconcil*`, `layer` ou `fact` (`docs/jetp-language.md`).
 

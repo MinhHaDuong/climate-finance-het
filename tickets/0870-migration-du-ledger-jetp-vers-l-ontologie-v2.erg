@@ -10,10 +10,11 @@ Label: needs-human
 --- body ---
 ## Context
 
-`docs/jetp-ontology.md` (PR #1449) fixe le vocabulaire, le contrat de
-stockage, les axes de statut et la migration du ledger, après six revues
-indépendantes et dix décisions de l'auteur le 2026-09-22. Ce suiveur porte
-la migration de sa section 6 : une reconstruction depuis les instantanés,
+`docs/jetp-ontology.md` (PR #1449) fixe le vocabulaire et les axes de
+statut, `docs/jetp-ledger-storage.md` le contrat de stockage et
+`docs/jetp-ledger-migration.md` la migration du ledger (trois documents depuis
+le 2026-09-23), après six revues indépendantes et les décisions de l'auteur
+des 22 et 23 septembre. Ce suiveur porte cette migration : une reconstruction depuis les instantanés,
 pas un renommage de colonnes. Chaque enfant est une unité de validation
 avec sa vérification au bit près contre les vues servies actuelles.
 
@@ -21,10 +22,10 @@ Rayon d'action : toutes les tables `data/jetp/*.csv`, les générateurs
 `scripts/jetp/build_*.py`, les vues servies `deliverables/jetp-observatory/data/`,
 les tests `tests/test_jetp_*`. Décision d'architecture prise en amont :
 CSV dans git reste l'enregistrement, SQLite dérivé est le moteur de
-validation et de construction (ontologie § 10), forme normale maintenue
+validation et de construction (contrat de stockage § 3), forme normale maintenue
 ([[0858]]). Le principe « le MVP sert toutes les tables » ([[0860]]) est
 absorbé : chaque table de l'ontologie est servie, une par fichier, ou nommée
-comme non servie avec sa raison sur la page How we did this (ontologie § 7 ; présentation dans `docs/jetp-observatory-presentation.md`) ; les
+comme non servie avec sa raison sur la page How we did this (contrat de stockage § 2 ; présentation dans `docs/jetp-observatory-presentation.md`) ; les
 critères de sortie de 0860 sont repris ci-dessous.
 
 Langage et cadre ODEM (décision 11 du 2026-09-23, `docs/jetp-language.md`) : le ledger
@@ -37,9 +38,9 @@ Ne pas lancer avant que l'auteur ait approuvé PR #1449.
 
 ## Enfants, dans l'ordre des vagues
 
-| Vague | Enfant | Étape de l'ontologie § 6 |
+| Vague | Enfant | Étape de la migration |
 |---|---|---|
-| 0 | [[0871]] | DDL unique, validateur, SQLite dérivé (§ 10) |
+| 0 | [[0871]] | DDL unique, validateur, SQLite dérivé (contrat de stockage § 3) |
 | 0 | [[0880]] | tables d'ontologie : termes, correspondances, périmètres, révisions, test d'alignement (étape 0) |
 | 1 | [[0872]] | publishers, documents, publications, retrievals, snapshots (étape 1) |
 | 2 | [[0873]] | lignes et champs des quatre documents M1a (étape 2) |
@@ -54,7 +55,9 @@ Ne pas lancer avant que l'auteur ait approuvé PR #1449.
 
 ## Relevant files
 
-- `docs/jetp-ontology.md` — le contrat ; section 5 tables, section 6 migration
+- `docs/jetp-ontology.md` — l'ontologie : classes, relations, listes, tables d'ontologie
+- `docs/jetp-ledger-storage.md` — le contrat de stockage : tables et règles
+- `docs/jetp-ledger-migration.md` — la migration, étape par étape
 - `docs/jetp-backend-design.md` — révisé contre l'ontologie dans PR #1449
 - `docs/jetp-study/ontology-review-2026-09-22/` — les six revues et leurs réponses
 
@@ -69,7 +72,7 @@ Ne pas lancer avant que l'auteur ait approuvé PR #1449.
 
 - [ ] Les douze enfants sont fermés
 - [ ] Revue d'intégration : diffs des enfants relus, `make check` complet, recettes ZAF et VNM vertes
-- [ ] `docs/jetp-ontology.md` § 6 mis à jour avec les comptes réels de la migration
+- [ ] `docs/jetp-ledger-migration.md` mis à jour avec les comptes réels de la migration
 - [ ] Aucune route publique cassée : chaque ancien identifiant résout par `routes`
-- [ ] Repris de [[0860]] : toute table du § 5 est servie, une table par fichier, ou nommée comme non servie avec sa raison sur la page How we did this ; aucun compte affiché n'additionne deux tables
+- [ ] Repris de [[0860]] : toute table du contrat de stockage § 1 est servie, une table par fichier, ou nommée comme non servie avec sa raison sur la page How we did this ; aucun compte affiché n'additionne deux tables
 - [ ] Repris de [[0860]] : depuis le compte des places non publiées du Viet Nam, le lecteur descend dans le navigateur à l'observation de périmètre, à sa ligne, à ses lignes de couverture et à leurs documents

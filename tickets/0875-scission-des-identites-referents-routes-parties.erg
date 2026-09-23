@@ -10,12 +10,12 @@ Blocked-by: 0874
 --- body ---
 ## Context
 
-Étape 4 de l'ontologie § 6, décisions 1 et 6. `projects.csv` (404 lignes)
+Étape 4 de la migration (`docs/jetp-ledger-migration.md`), décisions 1 et 6. `projects.csv` (404 lignes)
 mélange quatre genres : 257 allocations de bailleur du registre ZAF (166
 noms distincts), 21 places comptées VNM, 43 soumissions SEN, 4 en-têtes de
 programme, et le reste des projets. Chaque ligne reçoit une disposition
 et une identité n'est frappée que par une ligne `line-referents` avec sa
-base (§ 11, palier 1 : identifiant exact ; palier 2 : libellé normalisé, en
+base (contrat de stockage § 4, palier 1 : identifiant exact ; palier 2 : libellé normalisé, en
 candidats revus à la main). La table `parties` est construite ici, forme
 minimale, rôles bailleur et canal d'abord depuis les 61 libellés et les 14
 préfixes du registre. `routes` fait résoudre chaque ancien identifiant.

@@ -80,7 +80,7 @@ perimeters, explicit movements and transparent reconciliation differences.
 
 ## 2. Stores, formats and authority
 
-The tables are those of the ontology's section 5, which is the reference for
+The tables are those of the storage contract's section 1 ([`jetp-ledger-storage.md`](jetp-ledger-storage.md)), which is the reference for
 this section; their column lists live there and are not repeated here. Paths are
 repository-relative, and canonical CSV tables are under `data/jetp/` unless
 shown otherwise. A table too large for the repository's file ceiling is chunked
@@ -173,7 +173,7 @@ when it is. A project's classification stays a dated assertion with values
 `project`, `programme` and `component`, and a later classification does not
 change observation keys; containment is a `component_of` relation, not a column.
 
-Identity is minted only by a reviewed match (ontology section 11). No ingestion
+Identity is minted only by a reviewed match (storage contract, section 4). No ingestion
 script writes to `projects`, `assets`, `agreements`, `parties` or `perimeters`.
 A `line-referents` row carrying method, version, confidence, evidence lines and
 decider is the only route in, and it is defeasible: what is in force is the
@@ -333,7 +333,7 @@ fetch attempt with its outcome and headers, and a `snapshots` row per
 fingerprint. A retrieval that failed, returned 304 or returned bytes already
 held is recorded as such and supports no assertion by itself. Document
 deduplication runs before extraction under the same reviewed-decision record as
-any other match (ontology section 11), because a duplicate extracted twice
+any other match (storage contract, section 4), because a duplicate extracted twice
 doubles every line downstream; mirrors are not independent confirmations.
 
 The sweep contract of section 7 and the source-management acceptance tests
@@ -696,7 +696,7 @@ evidence view, and build scaffolding out of the country narratives.
 
 ## 9. Migration from the current backend
 
-The migration is the ontology's section 6: a rebuild from snapshots, not a
+The migration is [`jetp-ledger-migration.md`](jetp-ledger-migration.md): a rebuild from snapshots, not a
 rename of columns. Each current table is read once, its rows become lines and
 observations under the target contract, and the result is checked against the
 served views before the old tables go. Audit baseline `bbb3a215` on main; row

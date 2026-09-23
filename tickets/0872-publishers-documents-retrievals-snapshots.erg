@@ -10,7 +10,7 @@ Blocked-by: 0871
 --- body ---
 ## Context
 
-Étape 1 de l'ontologie § 6. « Source » cesse de désigner une URL :
+Étape 1 de la migration (`docs/jetp-ledger-migration.md`). « Source » cesse de désigner une URL :
 `sources.csv` (301 lignes, 103 publishers en texte libre) devient
 `publishers`, `documents` et `document-publishers` (relation, une
 publication conjointe a plusieurs publishers) ; `manifest.csv` (314
@@ -32,7 +32,7 @@ change pas ; la page Documents de l'observatoire est la vérification.
    `authority_category` ; revue à la main des libellés proches.
 2. Une ligne `documents` par ancienne source, `language` renseigné ; une
    ligne `document-publishers` par publisher ; les trois miroirs connus
-   reçoivent un `same_as` candidat (ontologie § 11, déduplication).
+   reçoivent un `same_as` candidat (contrat de stockage § 4, déduplication).
 3. `retrievals` depuis le manifeste, `sha256` nul sur échec ; `snapshots`
    par empreinte distincte.
 4. Lecture de compatibilité dans le générateur, puis régénération de

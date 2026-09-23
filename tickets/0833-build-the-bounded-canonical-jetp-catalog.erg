@@ -42,7 +42,7 @@ ontology in force is frozen as its first release (O v1).
   those lines by matching tier 1 (exact identifier) and accepted tier-2
   decisions (normalised label, reviewed by hand), after [[0875]].
 - **Relations:** `component_of`, `part_of`, `tranche_of`, `finances` and
-  `same_as`, each with its justification lines and decision record (§ 11).
+  `same_as`, each with its justification lines and decision record (storage contract § 4).
 - **Candidates:** every tier-2 proposal not accepted stays a `candidate`
   row, counted by country and by relation. This is the former
   `possible_matches`: it changes no count of accepted referents.
@@ -51,7 +51,7 @@ ontology in force is frozen as its first release (O v1).
 
 ## Relevant files
 
-- `docs/jetp-language.md`; `docs/jetp-ontology.md` § 5 (tables, ontology tables), § 11 (matching)
+- `docs/jetp-language.md`; `docs/jetp-ontology.md` § 5 (ontology tables); `docs/jetp-ledger-storage.md` § 1 (tables), § 4 (matching)
 - `data/jetp/lines.csv`, `data/jetp/line-referents.csv`, `data/jetp/relations.csv` — after 0873 and 0875
 - `data/jetp/ontology/` — after 0880
 - `deliverables/jetp-observatory/` — D4 record pages and the candidate counts

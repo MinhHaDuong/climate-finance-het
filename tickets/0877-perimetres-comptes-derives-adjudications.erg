@@ -10,7 +10,7 @@ Blocked-by: 0876
 --- body ---
 ## Context
 
-Étape 6 de l'ontologie § 6, décision 9. Les quatre titres de page pays
+Étape 6 de la migration (`docs/jetp-ledger-migration.md`), décision 9. Les quatre titres de page pays
 (engagement, part allouée) codés en dur dans `config/jetp_observatory.yaml`
 deviennent des observations `envelope` sur le périmètre du partenariat,
 citant leurs lignes (les deux claims agrégés de [[0874]] et les lignes des

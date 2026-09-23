@@ -10,7 +10,7 @@ Blocked-by: 0872
 --- body ---
 ## Context
 
-Étape 2 de l'ontologie § 6. La ligne publiée est l'unité première
+Étape 2 de la migration (`docs/jetp-ledger-migration.md`). La ligne publiée est l'unité première
 (décision 2). Les quatre inventaires M1a (ZAF registre 257, IDN 1 579 sur
 deux éditions, VNM 279, SEN 49) deviennent des lignes de `lines` avec leurs
 champs verbatim dans `line-fields/<document_id>.csv` déclarés par

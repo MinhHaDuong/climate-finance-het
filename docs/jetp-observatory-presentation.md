@@ -57,5 +57,5 @@ person, and the ledger retired the word), *entities* and *records* (opaque to
 a general reader).
 
 The serving contract, every table served or named as not served, is
-[`jetp-ontology.md`](jetp-ontology.md) section 7.
+[`jetp-ledger-storage.md`](jetp-ledger-storage.md) section 2.
 

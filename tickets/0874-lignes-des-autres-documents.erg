@@ -10,7 +10,7 @@ Blocked-by: 0873
 --- body ---
 ## Context
 
-Étape 3 de l'ontologie § 6. Tout ce qui reste d'assertion publiée devient
+Étape 3 de la migration (`docs/jetp-ledger-migration.md`). Tout ce qui reste d'assertion publiée devient
 ligne : les 1 628 lignes de plan (déjà lues en [[0873]] pour IDN et SEN, ici
 leurs colonnes propres et le drapeau `ruptl` en `member_of` d'un périmètre
 RUPTL depuis la ligne), les 46 observations de portefeuille IDN, les 66

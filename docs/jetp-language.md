@@ -35,7 +35,7 @@ tables and never edits an upstream row.
 | D4 | Referents | Identities minted by matching decisions over lines, and the relations between them | `projects`, `assets`, `agreements`, `parties`, `line-referents`, `relations`, `adjudications`, `adjudication-members`, `routes` |
 
 D3 and D4 both read D2. An observation's subject is a line until matching
-attaches that line to a referent. The migration order of the [ontology](jetp-ontology.md) section 6 builds D4
+attaches that line to a referent. The order of the [migration](jetp-ledger-migration.md) builds D4
 before rewriting D3 because the old tables key observations on old
 identities.
 
@@ -45,7 +45,7 @@ identities.
 |---|---|---|
 | *evidence*, for documentary support | **justification**: the line and locator a row cites (a justification link, justification lines). *Evidence cutoff* becomes **knowledge cutoff**: rows recorded on or before K | In ODEM, Evidence is the computed result. Documentary support belongs to D |
 | *model*, for a schema or a language model | **schema** for tables and columns; **LLM** for a language model used in matching or translation | Model is reserved for ODEM's M, which the observatory does not contain |
-| *reconciliation* | **matching** for D4 decisions that mint or attach identities ([ontology](jetp-ontology.md) section 11); **account** for the E computation of opening, movements, closing and residual | One word named two operations at two ODEM levels |
+| *reconciliation* | **matching** for D4 decisions that mint or attach identities ([storage contract](jetp-ledger-storage.md) section 4); **account** for the E computation of opening, movements, closing and residual | One word named two operations at two ODEM levels |
 | *edition*, for the ledger's own output | **release** for a frozen package of ledger and site (`data/jetp/releases/<release_id>/`). *Edition* keeps only its document sense: a publisher's successive issue (`edition_of`) | "Evidence edition", "monthly edition" and "document edition" were three different objects |
 | *layer*, *stage* (*étage*), *fact* | **step D1 to D4** for the levels of the pipeline; **observation** for what a publisher stated | *Layer* named M1a sub-tables and *stage* the MVP levels; a ledger row is a publisher's statement read by a method, not a fact |
 

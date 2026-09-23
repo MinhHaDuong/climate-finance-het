@@ -10,8 +10,8 @@ Blocked-by: 0877
 --- body ---
 ## Context
 
-Étape 7 de l'ontologie § 6. Une fois chaque vue servie reconstruite depuis
-les nouvelles tables et comparée, les tables retirées par l'ontologie § 5
+Étape 7 de la migration (`docs/jetp-ledger-migration.md`). Une fois chaque vue servie reconstruite depuis
+les nouvelles tables et comparée, les tables retirées par la migration
 (« what disappears ») sont supprimées avec leurs lecteurs : `sources.csv`,
 `manifest.csv`, `plan-projects.csv`, `events.csv`,
 `implementation-events.csv`, `event-timing.csv`, `project-source-links.csv`,
@@ -35,7 +35,7 @@ liste les tables de l'ontologie.
    remplacée ou supprimée dans le même commit.
 2. Suppression des fichiers ; `dvc.yaml` et les `.mk` mis à jour.
 3. `docs/jetp-tracking.md` : la table des objets renvoie à
-   `docs/jetp-ontology.md` § 5 ; les règles de comptage restent.
+   `docs/jetp-ledger-storage.md` § 1 ; les règles de comptage restent.
 4. `make clean` puis `make all` ; comparaison des vues servies avec celles
    de [[0877]].
 
