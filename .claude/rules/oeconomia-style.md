@@ -1,5 +1,6 @@
 ---
-globs: ["deliverables/manuscript/manuscript.qmd"]
+paths:
+  - "deliverables/manuscript/manuscript.qmd"
 ---
 
 # Oeconomia House Style

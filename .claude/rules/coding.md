@@ -54,3 +54,4 @@ Two guards keep the fast tier honest (ticket 0216, owned by `tests/test_fast_pat
 
 - `make` builds all documents. `make manuscript` builds manuscript only. `make papers` builds the 3 companions. `make figures` regenerates all figures (byte-reproducible).
 - Add `*.stamp` to `.gitignore` for sentinel stamps.
+- **Makefile truth**: prerequisites and targets must match each script's actual file reads and writes.
