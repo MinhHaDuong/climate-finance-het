@@ -10,6 +10,7 @@ Blocked-by: 0884
 2026-09-22T17:30Z HDMX-coding-agent created
 2026-09-23T10:30Z HDMX-coding-agent note revue du train (2026-09-23) : bloqué par 0884 (`coverage` remplace les deux tables de couverture) et 0879 (les projets Banque mondiale remplacent `comparison/*.json`, ajouté à la liste de retrait)
 2026-09-23T13:00Z HDMX-coding-agent note 0880 : les listes `authority_categories`, `source_types`, `collection_statuses`, `financial_statuses`, `implementation_statuses`, `scopes` et `priority_tiers` de `config/jetp_tracking.yaml` restent pour les lecteurs anciens (`scripts/jetp/schemas.py`) ; les retirer avec eux, le YAML ne gardant que des choix d'affichage (les trois premières sont déjà des lignes de `terms`)
+2026-09-23T16:00Z HDMX-coding-agent note plan (raid prep) : chemins vérifiés (`scripts/analysis/jetp_observatory.mk` cite `data/jetp/plan-projects.csv` en prérequis, confirmé à mettre à jour ; `_contracts.py` et `schemas.py` présents) ; ce ticket clôt la vague et touche `scripts/`, les `.mk` et `tests/` sur tout le périmètre JETP, donc la portée de `make check` complet dépasse les autres enfants — narrowé ci-dessous aux passerelles étroites (tests ciblés, `make check-fast`, `make lint`) plus le balayage grep et la recette navigateur, qui sont les vérifications qui détectent réellement un lecteur oublié ; question pour l'auteur : garder `make check` complet comme un passage manuel avant de fusionner ce ticket précis (dernière vague, périmètre large), sans en faire un critère de sortie bloquant du train
 
 --- body ---
 ## Context
@@ -62,4 +63,4 @@ liste les tables de l'ontologie.
 ## Exit criteria
 
 - [ ] Tables et lecteurs retirés ; `storage` du vocabulaire à jour
-- [ ] `make check` complet vert (hors échecs environnementaux connus)
+- [ ] `tests/test_jetp_no_legacy_readers.py`, `make check-fast` et `make lint` verts ; `make jetp-ledger-check` vert ; balayage `grep` de chaque nom retiré vide hors `docs/jetp-study/` et `tickets/closed/` ; recette navigateur (`tests/browser/jetp_observatory.py`) verte (pas `make check` complet comme critère de sortie du train : ex post sur main, cf. journal)

@@ -9,6 +9,9 @@ Blocked-by: 0876
 2026-09-23T10:30Z HDMX-coding-agent note revue du train (2026-09-23) : `perimeters` est une table de 0880, peuplée ici
 
 2026-09-23T13:53Z HDMX-coding-agent note from the author's decisions on PR #1459 (ticket 0881, 2026-09-23): the observatory's accounts page this ticket adds joins The tallies' sub-bar as 'Money', after Counts and Comparisons, and its entry in the header's The tallies dropdown. Until then The tallies lists only the pages with content today. To add it, append the page to SUB_PAGES['the-tallies'] and SECTIONS['the-tallies'] in deliverables/jetp-observatory/app.js.
+2026-09-23T16:00Z HDMX-coding-agent note plan (raid prep) : chemins vérifiés (`build_accounts.py` à créer, confirmé absent d'origin/main ; `overview.json` présent ; titres `$8.5bn` / `$6,12bn allocated` confirmés dans `config/jetp_observatory.yaml`) ; ce ticket est aussi la destination du `member_of` RUPTL et VNM différé par [[0874]] (les identités et le périmètre n'existent pas avant l'action 1 de ce ticket) — l'action 1 est reformulée pour l'expliciter
+2026-09-23T16:00Z HDMX-coding-agent note plan (raid prep), vérification monstre : ce ticket empile trois unités de signature — (a) `perimeters` et les observations `envelope`/`count` qui les citent, (b) `adjudications`/`adjudication-members`, (c) les comptes dérivés (`build_accounts.py`) et le service d'`overview.json` — chacune testable séparément (fixture périmètre, fixture adjudication de doublon, fixture de compte) ; proposition : scinder en 0877a (périmètres + observations), 0877b (adjudications), 0877c (comptes dérivés + service). Non exécuté ici, signalé à l'auteur.
+
 --- body ---
 ## Context
 
@@ -35,7 +38,11 @@ qu'une observation de décaissement existe.
 ## Actions
 
 1. `perimeters` : un par partenariat, un pour le portefeuille VNM 2025, un
-   RUPTL ; `member_of` depuis lignes et identités.
+   RUPTL ; `member_of` depuis lignes et identités, y compris les 230
+   lignes `plan_only` marquées `ruptl` par [[0874]] (vers le périmètre
+   RUPTL) et les 21 places comptées VNM (vers le périmètre du portefeuille) :
+   ces appartenances ne pouvaient pas être frappées avant que ces
+   périmètres existent, donc elles le sont ici.
 2. Observations `envelope` et `count` citant leurs lignes ; le titre ZAF
    « 6,12 Md$ alloués » cite sa ligne et l'écart avec la somme des
    événements (4,32 Md$) est un résidu de compte, pas une correction.
@@ -64,5 +71,5 @@ qu'une observation de décaissement existe.
 
 ## Exit criteria
 
-- [ ] Lignes de `perimeters` écrites dans la table de [[0880]] ; `adjudications`, comptes dérivés validés par [[0871]]
-- [ ] `make check-fast` et `make lint` verts
+- [ ] Lignes de `perimeters` écrites dans la table de [[0880]] ; `adjudications`, comptes dérivés validés par [[0871]] (`make jetp-ledger-check`)
+- [ ] `tests/test_jetp_accounts.py`, `make check-fast` et `make lint` verts (pas `make check` complet : ex post sur main)
