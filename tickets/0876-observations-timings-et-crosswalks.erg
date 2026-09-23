@@ -7,6 +7,7 @@ Blocked-by: 0875
 --- log ---
 2026-09-22T17:30Z HDMX-coding-agent created
 2026-09-23T10:30Z HDMX-coding-agent note revue du train (2026-09-23) : les crosswalks sont des lignes dans les tables de 0880, pas des tables créées ici
+2026-09-23T15:10Z HDMX-coding-agent note reçoit de 0882 la vérification du clic réel statut → définition, qui demande les lignes de status-crosswalk écrites ici
 
 --- body ---
 ## Context
@@ -59,6 +60,7 @@ est une règle versionnée par type de document.
 - [ ] 451 observations, 451+ timings ; 0 `disbursed` (la donnée, pas le dessin)
 - [ ] `observations/*.json` : chaque ligne d'avant retrouve son observation par sa ligne citée
 - [ ] Aucune conversion monétaire dans un script ; `rates` cite ses lignes
+- [ ] Glossary ([[0882]]) : depuis une observation ZAF, un clic sur le statut ouvre sa définition et sa correspondance IATI (recette navigateur)
 
 ## Invariants
 
