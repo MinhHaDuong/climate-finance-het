@@ -82,7 +82,14 @@ Anything beyond tickets gets at least one independent reviewer on a model other
 than the coder's (`/review-pr`, scoped to the risk). Then run `/verify-gate`:
 every ticket exit criterion needs concrete evidence (commit SHA + file:line, or a
 test id). Two review rounds at most, then escalate to the author. The merge is
-the author's call when interactive, the raid's when autonomous.
+the author's call when interactive, the raid's when autonomous. The merge hook
+(`.claude/hooks/check-reviews.sh`) counts posted review cycles, not their
+independence: choosing a reviewer model other than the coder's is on the agent.
+
+## Scope
+
+One ticket per Execute conversation. If investigation reveals sub-issues, open
+them as new tickets rather than widening the current one.
 
 This replaces a fixed full-battery loop that cost up to an hour and a million
 tokens on diffs a ten-minute check covered (pilot opened 2026-09-23).
