@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-27T18:55Z HDMX-coding-agent created surfaced by 0359: wiring MULTILAYER_FIGS into the render rule turned a silent wrong output into a loud failure, and the loud failure is that the figures do not exist
 
+2026-09-23T18:32Z HDMX-coding-agent note 0651 withheld the uncomputed terms and community figures; the paper now embeds three computed figures (z-series, heatmap, sensitivity). Reproduction is running on padme in an isolated worktree.
 --- body ---
 ## Context
 

@@ -1,11 +1,11 @@
 # multilayer-detection.mk — Figures for the companion paper (ticket 0058)
 #
-# Four canonical PNGs consumed by deliverables/multilayer/multilayer-detection.qmd.
+# Three computed PNGs consumed by deliverables/multilayer/multilayer-detection.qmd.
 #
 # Include from the main Makefile:  -include scripts/analysis/multilayer-detection.mk
 #
 # Targets:
-#   companion-figures  — build all four PNGs
+#   figures-companion  — build the three embedded PNGs
 #
 # Inputs (ticket 0042 rerun outputs; produced by divergence-summary):
 #   $(COMP_TABLES)/tab_summary_{S2_energy,L1,G9_community,G2_spectral}.csv
@@ -21,6 +21,17 @@ COMP_CFG    := config/analysis.yaml
 COMP_UTILS  := scripts/_companion_plot_utils.py
 COMP_STYLE  := scripts/plot_style.py
 
+# Fresh worktrees have no ignored output directories. Create each directory
+# before a producer validates its --output path, including under parallel make.
+$(COMP_TABLES) $(COMP_FIGS):
+	mkdir -p $@
+
+$(COMP_FIGS)/fig_companion_zseries.png \
+$(COMP_FIGS)/fig_companion_heatmap.png \
+$(COMP_FIGS)/fig_companion_terms.png \
+$(COMP_FIGS)/fig_companion_community.png \
+$(COMP_FIGS)/fig_companion_sensitivity.png: | $(COMP_FIGS)
+
 # Required summary + C2ST inputs (Figures 1 and 2).
 COMP_DEPS_CORE := \
     $(COMP_TABLES)/tab_summary_S2_energy.csv \
@@ -29,6 +40,14 @@ COMP_DEPS_CORE := \
     $(COMP_TABLES)/tab_summary_G2_spectral.csv \
     $(COMP_TABLES)/tab_div_C2ST_embedding.csv \
     $(COMP_TABLES)/tab_div_C2ST_lexical.csv
+
+COMP_METHODS := S2_energy L1 G9_community G2_spectral
+COMP_REQUIRED_TABLES := $(foreach kind,div boot null subsample summary,\
+    $(foreach method,$(COMP_METHODS),$(COMP_TABLES)/tab_$(kind)_$(method).csv)) \
+    $(COMP_TABLES)/tab_div_C2ST_embedding.csv \
+    $(COMP_TABLES)/tab_div_C2ST_lexical.csv \
+    $(COMP_TABLES)/tab_sensitivity_grid.csv
+$(COMP_REQUIRED_TABLES): | $(COMP_TABLES)
 
 # ── Figure 1: Z-score time series ────────────────────────────────────────
 

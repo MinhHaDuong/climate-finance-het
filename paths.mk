@@ -89,7 +89,7 @@ DATAPAPER_INCLUDES := deliverables/_shared/tables/tab_corpus_sources.md \
 # The multilayer paper composes no shared include — it carries its method and
 # results sections inline (guarded by
 # tests/test_multilayer_detection_sections.py::test_no_old_method_includes) plus
-# its five companion figures (MULTILAYER_FIGS, which the render rule takes in
+# its three computed companion figures (MULTILAYER_FIGS, which the render rule takes in
 # this variable's place). Until 0359 it declared six top-level includes it had
 # stopped composing, all of them in the orphan set ticket 0290 audits.
 MULTILAYER_INCLUDES :=
