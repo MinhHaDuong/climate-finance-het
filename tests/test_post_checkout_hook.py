@@ -409,3 +409,41 @@ def test_fresh_worktree_shares_the_primary_dvc_cache():
         )
         subprocess.run(["git", "worktree", "prune"], cwd=REPO, capture_output=True)
         shutil.rmtree(parent, ignore_errors=True)
+
+
+def _scratch_repo_with_env(root: Path) -> tuple[Path, Path]:
+    """A throwaway primary checkout whose .venv links to a usable fake env."""
+    env = root / "env"
+    (env / "bin").mkdir(parents=True)
+    python = env / "bin" / "python3"
+    python.write_text("#!/bin/sh\n")
+    python.chmod(0o755)
+    primary = root / "primary"
+    primary.mkdir()
+    for args in (["init", "-q"], ["-c", "user.name=t", "-c", "user.email=t@t",
+                                  "commit", "-q", "--allow-empty", "-m", "root"]):
+        subprocess.run(["git", "-c", "core.hooksPath=/dev/null", *args], cwd=primary,
+                       check=True, capture_output=True)
+    (primary / ".venv").symlink_to(env)
+    return primary, env
+
+
+@pytest.mark.integration
+def test_hook_leaves_the_primary_checkouts_venv_alone(tmp_path):
+    """Run in the primary checkout (a switch or fast-forward there), the hook
+    once chose that checkout's own .venv as the shared env and relinked .venv
+    to itself: every session's Python broke until the next checkout flipped it
+    back (observed 2026-09-24). Environment wiring is a linked worktree's
+    business, like the machine configuration and JETP snapshots."""
+    primary, env = _scratch_repo_with_env(tmp_path)
+    hook = subprocess.run(["sh", str(HOOK)], cwd=primary, capture_output=True, text=True)
+    assert hook.returncode == 0, hook.stderr
+    assert os.readlink(primary / ".venv") == str(env)
+
+    # A linked worktree is still wired to the primary's env.
+    wt = tmp_path / "wt"
+    subprocess.run(["git", "-c", "core.hooksPath=/dev/null", "worktree", "add", "-q",
+                    "--detach", str(wt)], cwd=primary, check=True, capture_output=True)
+    hook = subprocess.run(["sh", str(HOOK)], cwd=wt, capture_output=True, text=True)
+    assert hook.returncode == 0, hook.stderr
+    assert (wt / ".venv").resolve() == env.resolve()

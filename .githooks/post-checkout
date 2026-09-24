@@ -39,26 +39,31 @@ initialize_machine_config || echo 'Worktree machine configuration was not provis
 # this worktree's default `.venv` location at it via a symlink. A dangling
 # symlink makes `uv run` error, so the shared env is created first. Skipped
 # where /data is absent (the default local .venv is then used).
-PRIMARY_ENV=${WORKTREE_ENV_SOURCE:-$PROJECT_PRIMARY/.venv}
-DATA_ENV=/data/envs/venv/oeconomia
-if [ ! -x "$PRIMARY_ENV/bin/python3" ] && [ -d /data/envs ]; then
-    # Create the shared env once. flock serializes the first-ever creation so
-    # concurrent worktree checkouts (parallel raids) don't race to build the
-    # same path; it is best-effort — without flock the env is still created.
-    {
-        flock 9 2>/dev/null || true
-        [ -d "$DATA_ENV" ] || uv venv "$DATA_ENV" >/dev/null 2>&1 || true
-    } 9>/data/envs/.oeconomia-env.lock
-fi
-if [ -x "$PRIMARY_ENV/bin/python3" ]; then
-    SHARED_ENV=$PRIMARY_ENV
-else
-    SHARED_ENV=$DATA_ENV
-fi
-# Point .venv at a usable shared env when it is absent or a stale symlink;
-# leave a real local .venv directory untouched.
-if [ -x "$SHARED_ENV/bin/python3" ] && { [ ! -e .venv ] || [ -L .venv ]; }; then
-    ln -sfn "$SHARED_ENV" .venv 2>/dev/null || true
+# Only a linked worktree is wired: a primary checkout owns its environment.
+# Run there (a switch or fast-forward), this block took the checkout's own
+# .venv as the shared env and relinked .venv to itself (2026-09-24).
+if [ -f .git ]; then
+    PRIMARY_ENV=${WORKTREE_ENV_SOURCE:-$PROJECT_PRIMARY/.venv}
+    DATA_ENV=/data/envs/venv/oeconomia
+    if [ ! -x "$PRIMARY_ENV/bin/python3" ] && [ -d /data/envs ]; then
+        # Create the shared env once. flock serializes the first-ever creation so
+        # concurrent worktree checkouts (parallel raids) don't race to build the
+        # same path; it is best-effort — without flock the env is still created.
+        {
+            flock 9 2>/dev/null || true
+            [ -d "$DATA_ENV" ] || uv venv "$DATA_ENV" >/dev/null 2>&1 || true
+        } 9>/data/envs/.oeconomia-env.lock
+    fi
+    if [ -x "$PRIMARY_ENV/bin/python3" ]; then
+        SHARED_ENV=$PRIMARY_ENV
+    else
+        SHARED_ENV=$DATA_ENV
+    fi
+    # Point .venv at a usable shared env when it is absent or a stale symlink;
+    # leave a real local .venv directory untouched.
+    if [ -x "$SHARED_ENV/bin/python3" ] && { [ ! -e .venv ] || [ -L .venv ]; }; then
+        ln -sfn "$SHARED_ENV" .venv 2>/dev/null || true
+    fi
 fi
 
 # Share the primary checkout's DVC cache.
