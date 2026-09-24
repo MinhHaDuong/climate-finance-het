@@ -1,0 +1,51 @@
+%erg 0.1
+Title: Pourriture des liens : capture Web Archive à la collecte et contrôle périodique des pages éditeur
+Created: 2026-09-24
+Author: HDMX-coding-agent
+Blocked-by: 0915
+
+--- log ---
+2026-09-24T15:00Z HDMX-coding-agent created
+2026-09-24T15:00Z HDMX-coding-agent decision Suite de [[0915]] demandée par l'auteur (session interactive du 2026-09-24).
+
+--- body ---
+## Context
+
+Suite de [[0915]]. Le site public renvoie chaque document à la page de son
+éditeur (liens additifs : la copie archivée n'apparaît qu'en aperçu local).
+Les éditeurs déplacent ou suppriment leurs pages : sans parade, le site public
+accumulera des liens morts, et le lecteur perdra l'accès au document même si
+l'empreinte SHA-256 continue de prouver quel octet a été lu.
+
+## Actions
+
+1. **Capture publique à la collecte.** Quand le collecteur
+   (`scripts/jetp/corpus_harvest_documents.py`) collecte un document, il
+   demande une capture à l'Internet Archive (Save Page Now) et consigne
+   l'adresse et la date de la capture dans le registre
+   (`data/jetp/manifest.csv`, nouvelles colonnes). Rattrapage une fois pour
+   les documents déjà collectés, à cadence polie. Un échec de capture est
+   consigné, jamais bloquant.
+2. **Affichage.** Le site montre « Publisher's page » et « Web Archive copy »
+   côte à côte. Pour un PDF, la page dit que l'empreinte permet de vérifier
+   l'identité de la capture ; pour une page HTML, elle dit que la capture
+   n'est pas identique à l'octet près.
+3. **Contrôle périodique.** Une cible make, lancée sur padme (mensuelle),
+   enregistre l'état de chaque lien éditeur. Un lien mort affiche « publisher
+   link dead since <date> » et met la capture en premier. L'adresse d'origine
+   n'est jamais réécrite.
+4. **Dernier recours**, hors de ce ticket : dépôt public de nos copies (Zenodo)
+   selon la licence de chaque éditeur — décision de l'auteur, éditeur par
+   éditeur.
+
+## Exit criteria
+
+- [ ] Le registre porte, pour chaque document collecté, l'adresse et la date de sa capture Web Archive, ou la raison de l'échec
+- [ ] Le site public affiche les deux liens, et la mention d'identité adaptée au type (PDF / HTML)
+- [ ] La cible de contrôle consigne l'état des liens ; un lien mort est signalé à l'écran avec sa date, sans réécrire l'adresse d'origine
+- [ ] Contrôle positif : un lien volontairement mort dans un jeu d'essai déclenche l'affichage « dead since »
+- [ ] `make check-fast` et `make lint` verts
+
+## Hors périmètre
+
+Le dépôt public de nos copies ; la collecte des sources bloquées ([[0926]]).

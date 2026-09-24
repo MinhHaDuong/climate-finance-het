@@ -2,12 +2,15 @@
 Title: Correspondance de statut (status-crosswalk)
 Created: 2026-09-23
 Author: HDMX-coding-agent
+Closed: Status crosswalk validated; Cirebon adjudication tracked in 0921
 
 --- log ---
 2026-09-23T15:23Z HDMX-coding-agent created
 2026-09-23T15:23Z HDMX-coding-agent note scindé de [[0876]] (raid, tickets-migration-prep) : `status-crosswalk` lit les champs verbatim des lignes M1a ([[0873]]) et les tables de [[0880]] (déjà fusionné), pas les 451 observations que [[0876]] construit depuis `events.csv` — Blocked-by mis sur [[0873]], pas sur [[0876]], ce qui permet à ce ticket de tourner en parallèle de [[0874]]–[[0876]]. Preuve : les actions 3 de [[0876]] citent des lettres de registre, une approbation IDN et une mention de retraite VNM, toutes des valeurs de ligne, jamais un champ d'observation ; le journal de [[0876]] confirme la clé sur `publisher_id` (DDL), pas sur une observation.
 
 2026-09-23T18:56Z HDMX-coding-agent note blocker 0873 closed — Blocked-by removed.
+2026-09-24T15:58Z Codex note correction de source : `implementation-events.csv` ne porte aucun retrait VNM suspendu ; deux lignes IDN sont suspendues, dont Cirebon. L'auteur choisit Cirebon non mappé en attendant l'arbitrage [[0921]]. Les quatre lettres ZAF et l'approbation IDN sont mappées ici.
+2026-09-24T14:05Z HDMX-coding-agent closed — Status crosswalk validated; Cirebon adjudication tracked in 0921
 --- body ---
 
 ## Context
@@ -36,24 +39,24 @@ décisions 3, 9 et 10.
 ## Actions
 
 1. `status-crosswalk` : lettres A–D du registre ZAF → axe delivery (statut
-   d'activité IATI) ; approbation IDN → axe money ; mention `suspended` sur
-   une retraite VNM → état d'actif.
+   d'activité IATI) ; approbation IDN → axe money. La mention `suspended`
+   attribuée à tort à une retraite VNM n'est pas frappée ; l'arbitrage de
+   l'événement IDN Cirebon est suivi par [[0921]].
 2. Servir `status-crosswalk` depuis la table de [[0880]] pour les lecteurs
    qui en ont besoin (`build_observations.py` notamment, sans attendre que
    [[0876]] ait fusionné).
 
 ## Test
 
-`tests/test_jetp_status_crosswalk.py`. Red : une fixture de quatre lignes
-(une lettre de registre ZAF, une approbation IDN, une mention de retraite
-VNM, un mot de publisher non couvert) donne trois lignes de
-`status-crosswalk` aux axes attendus et rejette le mot non couvert.
+`tests/test_jetp_status_crosswalk.py` : les quatre lettres du registre ZAF
+gardent leur orthographe et pointent sur delivery ; l'approbation IDN pointe
+sur money ; `suspended` et un mot non couvert restent sans correspondance.
 
 ## Verification
 
-- [ ] Glossary ([[0882]]) : depuis une observation ZAF, un clic sur le
-  statut ouvre sa définition et sa correspondance IATI (recette
-  navigateur) — déplacé de la vérification de [[0876]]
+- [x] Glossary ([[0882]]) : depuis une ligne du registre ZAF dans Entries,
+  un clic sur `D. Completed` ouvre la définition de `delivery/finalisation`
+  et sa correspondance IATI (recette navigateur).
 
 ## Invariants
 
@@ -62,5 +65,5 @@ VNM, un mot de publisher non couvert) donne trois lignes de
 
 ## Exit criteria
 
-- [ ] Lignes de `status-crosswalk` écrites dans la table de [[0880]], validées par [[0871]] (`make jetp-ledger-check`)
-- [ ] `tests/test_jetp_status_crosswalk.py`, `make check-fast` et `make lint` verts (pas `make check` complet : ex post sur main)
+- [x] Lignes de `status-crosswalk` écrites dans la table de [[0880]], validées par [[0871]] (`make jetp-ledger-check`)
+- [x] `tests/test_jetp_status_crosswalk.py`, `make check-fast` et `make lint` verts (pas `make check` complet : ex post sur main)

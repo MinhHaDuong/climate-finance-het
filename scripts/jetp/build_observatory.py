@@ -190,9 +190,17 @@ def retrieval_registry(ledger_dir):
         columns = schema.header(table)
         return [{c: '' if v is None else v for c, v in zip(columns, row)} for row in found]
 
+    # Migration step 3 adds local pilot transcription documents. This reader
+    # reconstructs the old manifest exactly until ticket 0878 retires it.
+    legacy_sources = Path(ledger_dir) / 'sources.csv'
+    legacy_ids = None
+    if legacy_sources.is_file():
+        with legacy_sources.open(encoding='utf-8', newline='') as handle:
+            legacy_ids = {row['source_id'] for row in csv.DictReader(handle)}
     countries = {d['document_id']: d['country'] for d in rows('documents')}
     snapshots = {s['sha256']: s for s in rows('snapshots')}
-    retrievals = sorted(rows('retrievals'), key=lambda r: (
+    retrievals = sorted((r for r in rows('retrievals')
+                         if legacy_ids is None or r['document_id'] in legacy_ids), key=lambda r: (
         r['document_id'], int(r['retrieval_id'].rsplit(':', 1)[1])))
     registry = []
     for r in retrievals:
