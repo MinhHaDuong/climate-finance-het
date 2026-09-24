@@ -541,9 +541,8 @@ def check_paper_trail(page, url):
     """Walk the paper trail both ways on the organisation of ticket 0881.
 
     The navigation reads the paper trail, The tallies and About (Glossary,
-    Methods, Who we are in About's sub-bar) — earlier: Glossary and How we
-    did this, each at its label's slug, and the addresses of earlier previews
-    forward there (author's cold read, 2026-09-23). From Bac Ai, each step
+    Methods, Who we are in About's sub-bar), each page at its label's slug
+    (author's cold read, 2026-09-23). From Bac Ai, each step
     toward the documents lands one step
     down — what is on the record for Viet Nam, its entries, the Documents
     page — and each step toward the projects climbs back. A Viet Nam count
@@ -935,9 +934,10 @@ def check_site(url, output, ticket_0902_only=False):
         assert page.evaluate('document.activeElement.tagName') == 'A'
         page.set_viewport_size({'width': 390, 'height': 844})
         for route in ('overview', 'the-paper-trail', 'funding', 'documents', 'projects',
-                      'comparisons', 'documents?country=VNM', 'whos-who?country=SEN',
-                      'entries/SEN', 'funding/VNM', 'entries', 'on-the-record',
-                      'on-the-record/ZAF', 'whos-who', 'counts', 'glossary', 'about',
+                      'non-jetp-energy-operations', 'documents?country=VNM',
+                      'organisations?country=SEN', 'document-rows/SEN', 'funding/VNM',
+                      'document-rows', 'statements', 'statements/ZAF', 'organisations',
+                      'counts', 'glossary', 'about',
                       'who-we-are',
                       'release-history', 'project/vnm-project-bac-ai-pumped-hydro',
                       'methods'):
