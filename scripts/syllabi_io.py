@@ -18,14 +18,20 @@ import os
 import re
 import threading
 
+from pipeline_keystore import credential_environment
+
 # --- Constants ---
 # No text truncation — make_chunks() handles splitting for LLM calls.
 # Tested: 20K chunks cause 0 extractions with gemma-2-27b-it on dense
 # bibliographies (Harvard FECS). 8K works. Model-dependent — recalibrate
 # if switching models (see #289).
-CHUNK_SIZE = 8000       # ~2K tokens per chunk — proven to work with gemma-2-27b-it
-CHUNK_OVERLAP = 500     # Overlap between chunks to avoid splitting references at boundaries
-MAX_TEXT_CHARS = 500000 # Skip pages over 500K chars (misclassified books/reports, not syllabi)
+CHUNK_SIZE = 8000  # ~2K tokens per chunk — proven to work with gemma-2-27b-it
+CHUNK_OVERLAP = (
+    500  # Overlap between chunks to avoid splitting references at boundaries
+)
+MAX_TEXT_CHARS = (
+    500000  # Skip pages over 500K chars (misclassified books/reports, not syllabi)
+)
 
 _log = logging.getLogger("pipeline.syllabi_io")
 
@@ -99,7 +105,8 @@ def llm_call(prompt, model="openrouter/google/gemma-2-27b-it", max_tokens=2000):
         ollama/qwen3.5:27b          → routes to local Ollama
         openrouter/google/gemma-2-27b-it → routes to OpenRouter
 
-    litellm reads OPENROUTER_API_KEY from env automatically.
+    LiteLLM reads its OpenRouter key from the process environment, so expose
+    this project's key only for the duration of the completion call.
 
     """
     import litellm
@@ -110,13 +117,18 @@ def llm_call(prompt, model="openrouter/google/gemma-2-27b-it", max_tokens=2000):
         actual_prompt = "/no_think\n" + prompt
 
     try:
-        response = litellm.completion(
-            model=model,
-            messages=[{"role": "user", "content": actual_prompt}],
-            max_tokens=max_tokens,
-            temperature=0,
-        )
-        return response.choices[0].message.content.strip()
+        with credential_environment(
+            "openrouter",
+            "OPENROUTER_API_KEY_CLIMATEFINANCE",
+            "OPENROUTER_API_KEY",
+        ):
+            response = litellm.completion(
+                model=model,
+                messages=[{"role": "user", "content": actual_prompt}],
+                max_tokens=max_tokens,
+                temperature=0,
+            )
+            return response.choices[0].message.content.strip()
     except Exception as e:
         _log.error("LLM error (%s): %s", model, e)
         return None
@@ -136,7 +148,7 @@ def extract_json_from_text(text):
         idx_start = text.find(start_char)
         idx_end = text.rfind(end_char)
         if idx_start != -1 and idx_end > idx_start:
-            candidate = text[idx_start:idx_end + 1]
+            candidate = text[idx_start : idx_end + 1]
             try:
                 return json.loads(candidate)
             except json.JSONDecodeError:

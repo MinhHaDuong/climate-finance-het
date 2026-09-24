@@ -19,17 +19,19 @@ import os
 from difflib import SequenceMatcher
 
 import pandas as pd
+from pipeline_keystore import read_credential
 from utils import (
     CATALOGS_DIR,
     CONSECUTIVE_FAIL_LIMIT,
     MAILTO,
-    OPENALEX_API_KEY,
     RateLimitExhausted,
     get_logger,
     normalize_doi,
     normalize_title,
     polite_get,
 )
+
+OPENALEX_API_KEY = read_credential("openalex", "OPENALEX_API_KEY")
 
 log = get_logger("enrich_dois")
 

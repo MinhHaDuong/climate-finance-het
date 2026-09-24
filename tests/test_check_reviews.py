@@ -63,7 +63,6 @@ def run_hook(
     env["CLAUDE_PROJECT_DIR"] = str(project_dir)
     env["PATH"] = f"{mock_dir}:{env['PATH']}"
     env["GH_TOKEN"] = "fake-token"
-    env["AGENT_GH_TOKEN"] = "fake-token"
     env["AGENT_GIT_NAME"] = "HDMX-coding-agent"
 
     result = subprocess.run(
@@ -1052,3 +1051,42 @@ class TestDefaultRepoBeatsOriginRemote:
             tmp_path=tmp_path,
         )
         assert decision_of(result) == "allow"
+
+
+@pytest.mark.integration
+def test_project_token_is_parsed_not_executed(tmp_path):
+    """The hook reads the scoped token from the provider file without shell
+    evaluation: a command substitution in that file must not run, and the
+    token must still reach gh."""
+    keys = tmp_path / "keys"
+    keys.mkdir()
+    pwned = tmp_path / "pwned"
+    (keys / "github.env").write_text(
+        f"MARKER=$(touch {pwned})\n"
+        'export AGENT_GH_TOKEN_CLIMATEFINANCE="tok-project"\r\n',
+        encoding="utf-8",
+    )
+    seen = tmp_path / "seen-token"
+    mock_dir = tmp_path / "bin"
+    mock_dir.mkdir()
+    mock_gh = mock_dir / "gh"
+    mock_gh.write_text(f'#!/bin/bash\nprintf "%s\\n" "$GH_TOKEN" >> {seen}\necho "[]"\n')
+    mock_gh.chmod(0o755)
+
+    env = os.environ.copy()
+    env.pop("GH_TOKEN", None)
+    env["CLAUDE_PROJECT_DIR"] = str(HOOK_SCRIPT.parent.parent.parent)
+    env["CLIMATE_FINANCE_KEYS_DIR"] = str(keys)
+    env["PATH"] = f"{mock_dir}:{env['PATH']}"
+    subprocess.run(
+        ["bash", str(HOOK_SCRIPT)],
+        input=make_bash_input("gh pr merge 42"),
+        capture_output=True,
+        text=True,
+        env=env,
+        timeout=10,
+    )
+    assert not pwned.exists()
+    assert seen.read_text().split() and set(seen.read_text().split()) == {
+        "tok-project"
+    }

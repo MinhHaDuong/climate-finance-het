@@ -24,15 +24,34 @@ set -euo pipefail
 
 cd "${CLAUDE_PROJECT_DIR:-.}" || exit 0
 
-# .env no longer carries AGENT_GH_TOKEN (ticket 0343) — the keystore loader
-# exports it. Still sourced for the non-secret settings, and the fallback below
-# takes whichever of the two is populated, so this works either way.
-if [ -f .env ]; then
-    set -a
-    source .env
-    set +a
-fi
-export GH_TOKEN="${AGENT_GH_TOKEN:-${GH_TOKEN:-}}"
+# Keep GitHub authentication local to each CLI process. Tests and deliberately
+# configured callers may supply GH_TOKEN; otherwise read this repository's
+# scoped token directly from the provider file. The local shell variable is
+# discarded when the function returns and its value is never printed.
+_project_gh() {
+    if [ -n "${GH_TOKEN:-}" ]; then
+        gh "$@"
+        return
+    fi
+    local key_file="${CLIMATE_FINANCE_KEYS_DIR:-$HOME/.config/keys}/github.env"
+    local token=""
+    if [ -r "$key_file" ]; then
+        # Parse, never source: the file is data. Last assignment wins, an
+        # optional `export `, CRLF and one matching quote pair are tolerated,
+        # as in scripts/pipeline_keystore.py.
+        token="$(sed -n -E 's/^[[:space:]]*(export[[:space:]]+)?AGENT_GH_TOKEN_CLIMATEFINANCE=//p' "$key_file" | tail -n 1)"
+        token="${token%$'\r'}"
+        case "$token" in
+            \"*\") token="${token:1:${#token}-2}" ;;
+            \'*\') token="${token:1:${#token}-2}" ;;
+        esac
+    fi
+    if [ -n "$token" ]; then
+        GH_TOKEN="$token" gh "$@"
+    else
+        gh "$@"
+    fi
+}
 
 # Read stdin (Claude Code sends the hook payload as JSON)
 INPUT=$(cat)
@@ -267,7 +286,7 @@ esac
 #     today. The hook itself never dies and never denies from this block.
 # The predicate is structural, so it holds for whichever repo is being judged:
 # every git-erg adopter shapes ticket-filing diffs the same way.
-TICKETS_ONLY=$(gh api "repos/$REPO_SLUG/pulls/$PR_NUMBER/files?per_page=100" 2>/dev/null \
+TICKETS_ONLY=$(_project_gh api "repos/$REPO_SLUG/pulls/$PR_NUMBER/files?per_page=100" 2>/dev/null \
     | python3 -c "
 import sys, json, re
 files = json.load(sys.stdin)
@@ -310,7 +329,7 @@ fi
 # copilot-pull-request-reviewer[bot]: genuinely independent of the PR author,
 #   counted when present. Not required — it does not review every PR.
 AGENT_LOGINS="MinhHaDuong copilot-pull-request-reviewer[bot]"
-REVIEW_COUNT=$(gh api "repos/$REPO_SLUG/pulls/$PR_NUMBER/reviews" 2>/dev/null \
+REVIEW_COUNT=$(_project_gh api "repos/$REPO_SLUG/pulls/$PR_NUMBER/reviews" 2>/dev/null \
     | AGENT_LOGINS="$AGENT_LOGINS" python3 -c "
 import os, sys, json
 allowed = set(os.environ['AGENT_LOGINS'].split())
@@ -320,7 +339,7 @@ print(count)
 " 2>/dev/null) || REVIEW_COUNT=0
 
 # Check for review:trivial label
-HAS_TRIVIAL=$(gh api "repos/$REPO_SLUG/issues/$PR_NUMBER/labels" 2>/dev/null \
+HAS_TRIVIAL=$(_project_gh api "repos/$REPO_SLUG/issues/$PR_NUMBER/labels" 2>/dev/null \
     | python3 -c "
 import sys, json
 labels = json.load(sys.stdin)

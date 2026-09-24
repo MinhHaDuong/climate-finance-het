@@ -15,15 +15,17 @@ import os
 import re
 from datetime import date
 
+from pipeline_keystore import read_credential
 from utils import (
     MAILTO,
-    OPENALEX_API_KEY,
     POOL_DIR,
     append_to_pool,
     get_logger,
     polite_get,
     pool_path,
 )
+
+OPENALEX_API_KEY = read_credential("openalex", "OPENALEX_API_KEY")
 
 log = get_logger("openalex_pool")
 

@@ -26,10 +26,10 @@ import os
 import time
 
 import pandas as pd
+from pipeline_keystore import read_credential
 from utils import (
     CATALOGS_DIR,
     MAILTO,
-    OPENALEX_API_KEY,
     check_rate_limit,
     get_logger,
     make_run_id,
@@ -38,6 +38,8 @@ from utils import (
     save_run_report,
     sort_dois_by_priority,
 )
+
+OPENALEX_API_KEY = read_credential("openalex", "OPENALEX_API_KEY")
 
 log = get_logger("enrich_citations_openalex")
 

@@ -44,11 +44,11 @@ from openalex_pool import (
     query_slug,
     write_last_run_date,
 )
+from pipeline_keystore import read_credential
 from utils import (
     CATALOGS_DIR,
     CONFIG_DIR,
     MAILTO,
-    OPENALEX_API_KEY,
     WORKS_COLUMNS,
     get_logger,
     load_collect_config,
@@ -59,6 +59,8 @@ from utils import (
     reconstruct_abstract,
     save_csv,
 )
+
+OPENALEX_API_KEY = read_credential("openalex", "OPENALEX_API_KEY")
 
 log = get_logger("catalog_openalex")
 

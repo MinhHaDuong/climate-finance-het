@@ -1,9 +1,7 @@
 # DVC pipeline — Phase 1: Corpus Building
 #
-# Env policy: .env holds no secret (ticket 0343). Credentials live in
-# ~/.config/keys/<provider>.env, are selected by the KEYS= line in .env, and
-# reach the environment through the keystore loader. Never via command-line
-# KEY=value — that leaks the value to `ps`.
+# Env policy: .env holds no secret. Each API consumer reads its own value from
+# ~/.config/keys/<provider>.env immediately before use.
 #
 # Mirrors Makefile Phase 1a–1f. Run with:
 #   dvc repro              (full pipeline)

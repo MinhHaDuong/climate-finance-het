@@ -15,14 +15,16 @@ import os
 from collections import Counter
 
 import pandas as pd
+from pipeline_keystore import read_credential
 from utils import (
     CATALOGS_DIR,
     MAILTO,
-    OPENALEX_API_KEY,
     check_rate_limit,
     get_logger,
     polite_get,
 )
+
+OPENALEX_API_KEY = read_credential("openalex", "OPENALEX_API_KEY")
 
 log = get_logger("enrich_openalex_keywords")
 

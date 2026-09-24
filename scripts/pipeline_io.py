@@ -51,7 +51,6 @@ _log = logging.getLogger("pipeline.io")
 # ---------------------------------------------------------------------------
 
 MAILTO = "minh.ha-duong@cnrs.fr"
-OPENALEX_API_KEY = os.environ.get("OPENALEX_API_KEY", "")
 
 # Retry budgets. RETRY_MAX_RETRIES is the single source of truth in the
 # openalex-corpus package (re-exported above for callers using it from here).

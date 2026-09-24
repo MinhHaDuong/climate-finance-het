@@ -10,13 +10,17 @@ set -a && source .env && set +a
 git config user.name  "$AGENT_GIT_NAME"
 git config user.email "$AGENT_GIT_EMAIL"
 git config core.hooksPath .githooks
-export GH_TOKEN="$AGENT_GH_TOKEN"
 ```
 
-`.env` supplies the first three; `AGENT_GH_TOKEN` comes from the keystore
-(ticket 0343), which the bash loader applies to every subprocess. Sourcing
-`.env` alone will not populate it — if `GH_TOKEN` ends up empty, the loader did
-not run, and no amount of re-sourcing `.env` will fix it.
+`.env` supplies only these non-secret settings. For an authenticated GitHub
+call, read the repository-scoped value immediately before the invocation:
+
+```bash
+GH_TOKEN="$(. "$HOME/.config/keys/github.env" && \
+  printf '%s' "$AGENT_GH_TOKEN_CLIMATEFINANCE")" gh <arguments>
+```
+
+Do not export that value into the session or fall back to the generic token.
 ## 2. Orient
 
 Read `STATE.md` and `ROADMAP.md`.

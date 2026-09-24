@@ -17,6 +17,7 @@ import time
 os.environ.setdefault("HF_HUB_DISABLE_PROGRESS_BARS", "1")
 
 import pandas as pd
+from pipeline_keystore import credential_environment
 from utils import CATALOGS_DIR, get_logger, normalize_doi_safe
 
 log = get_logger("filter_flags_llm")
@@ -26,11 +27,12 @@ log = get_logger("filter_flags_llm")
 # Private helpers (duplicated from filter_flags to avoid circular import)
 # ============================================================
 
+
 def _text_has_concept_groups(text, groups, min_groups):
     """Check if text mentions at least min_groups concept groups."""
     if not text:
         return False
-    words = set(re.findall(r'[a-z]{3,}', text.lower()))
+    words = set(re.findall(r"[a-z]{3,}", text.lower()))
     groups_hit = sum(1 for gw in groups.values() if words & set(gw))
     return groups_hit >= min_groups
 
@@ -89,17 +91,30 @@ def _save_llm_cache(cache, config):
     rows = []
     for doi, val in cache.items():
         if isinstance(val, float):
-            rows.append({"doi": doi, "relevant": str(val >= 0),
-                         "score": f"{val:.6f}", "config_hash": current_hash})
+            rows.append(
+                {
+                    "doi": doi,
+                    "relevant": str(val >= 0),
+                    "score": f"{val:.6f}",
+                    "config_hash": current_hash,
+                }
+            )
         else:
-            rows.append({"doi": doi, "relevant": str(val),
-                         "score": "", "config_hash": current_hash})
+            rows.append(
+                {
+                    "doi": doi,
+                    "relevant": str(val),
+                    "score": "",
+                    "config_hash": current_hash,
+                }
+            )
     pd.DataFrame(rows).to_csv(LLM_CACHE_PATH, index=False)
 
 
 # ============================================================
 # LLM call
 # ============================================================
+
 
 def _llm_call(prompt, model):
     """Send prompt to LLM via litellm. Model string encodes the provider.
@@ -108,23 +123,30 @@ def _llm_call(prompt, model):
         ollama/qwen3.5:27b          → routes to local Ollama
         openrouter/google/gemma-2-27b-it → routes to OpenRouter
 
-    litellm reads OPENROUTER_API_KEY from env automatically.
+    LiteLLM reads its OpenRouter key from the process environment, so expose
+    this project's key only for the duration of the completion call.
 
     """
     import litellm
 
-    response = litellm.completion(
-        model=model,
-        messages=[{"role": "user", "content": prompt}],
-        max_tokens=200,
-        temperature=0,
-    )
+    with credential_environment(
+        "openrouter",
+        "OPENROUTER_API_KEY_CLIMATEFINANCE",
+        "OPENROUTER_API_KEY",
+    ):
+        response = litellm.completion(
+            model=model,
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=200,
+            temperature=0,
+        )
     return response.choices[0].message.content.strip()
 
 
 # ============================================================
 # Helpers
 # ============================================================
+
 
 def _is_relevant(cache_val, threshold):
     """Check if a cached value indicates relevance.
@@ -160,13 +182,16 @@ def _identify_candidates(df, config, already_flagged):
     low_concept_abstract = ~abstract_s.apply(
         lambda a: _text_has_concept_groups(str(a), concept_groups, min_groups)
     )
-    candidates_mask = has_text & low_concept_title & low_concept_abstract & ~already_flagged
+    candidates_mask = (
+        has_text & low_concept_title & low_concept_abstract & ~already_flagged
+    )
     return candidates_mask, doi_norm
 
 
 # ============================================================
 # Reranker backend
 # ============================================================
+
 
 def _load_reranker_model(llm_cfg):
     """Load a CrossEncoder reranker model with auto-detected device and logging.
@@ -205,8 +230,12 @@ def _score_batch(batch_idx, df, doi_norm, query, title_max, abstract_max, rerank
     texts = []
     dois = []
     for idx in batch_idx:
-        title = str(df.at[idx, "title"] if pd.notna(df.at[idx, "title"]) else "")[:title_max]
-        abstract = str(df.at[idx, "abstract"] if pd.notna(df.at[idx, "abstract"]) else "")[:abstract_max]
+        title = str(df.at[idx, "title"] if pd.notna(df.at[idx, "title"]) else "")[
+            :title_max
+        ]
+        abstract = str(
+            df.at[idx, "abstract"] if pd.notna(df.at[idx, "abstract"]) else ""
+        )[:abstract_max]
         texts.append(f"{title}. {abstract}" if abstract else title)
         dois.append(doi_norm.at[idx])
 
@@ -215,7 +244,9 @@ def _score_batch(batch_idx, df, doi_norm, query, title_max, abstract_max, rerank
     return dois, scores
 
 
-def _yield_cached_results(priority_indices, doi_norm, cache, threshold, candidates_mask, df):
+def _yield_cached_results(
+    priority_indices, doi_norm, cache, threshold, candidates_mask, df
+):
     """Yield a partial series of flag decisions for already-cached candidate indices.
 
     Returns a generator that yields (priority_indices, cached_results) if any cached.
@@ -276,18 +307,27 @@ def _reranker_streaming(df, config, *, already_flagged):
     priority2_indices = df.index[scoreable & ~candidates_mask].tolist()
 
     def uncached(indices):
-        return [i for i in indices
-                if doi_norm.at[i] not in cache or doi_norm.at[i] == ""]
+        return [
+            i for i in indices if doi_norm.at[i] not in cache or doi_norm.at[i] == ""
+        ]
 
     p1_uncached = uncached(priority1_indices)
     p2_uncached = uncached(priority2_indices)
     p1_cached = len(priority1_indices) - len(p1_uncached)
     p2_cached = len(priority2_indices) - len(p2_uncached)
 
-    log.info("    Priority 1 (concept-group failures): %d (cached: %d, to score: %d)",
-             len(priority1_indices), p1_cached, len(p1_uncached))
-    log.info("    Priority 2 (background scoring): %d (cached: %d, to score: %d)",
-             len(priority2_indices), p2_cached, len(p2_uncached))
+    log.info(
+        "    Priority 1 (concept-group failures): %d (cached: %d, to score: %d)",
+        len(priority1_indices),
+        p1_cached,
+        len(p1_uncached),
+    )
+    log.info(
+        "    Priority 2 (background scoring): %d (cached: %d, to score: %d)",
+        len(priority2_indices),
+        p2_cached,
+        len(p2_uncached),
+    )
 
     if p1_cached > 0:
         yield from _yield_cached_results(
@@ -306,11 +346,15 @@ def _reranker_streaming(df, config, *, already_flagged):
     total_batches = (len(all_uncached) + batch_size - 1) // batch_size
     if max_batches > 0:
         effective_batches = min(max_batches, total_batches)
-        log.info("    Limited to %d/%d batches (%d papers)",
-                 effective_batches, total_batches, effective_batches * batch_size)
+        log.info(
+            "    Limited to %d/%d batches (%d papers)",
+            effective_batches,
+            total_batches,
+            effective_batches * batch_size,
+        )
 
     for batch_start in range(0, len(all_uncached), batch_size):
-        batch_idx = all_uncached[batch_start:batch_start + batch_size]
+        batch_idx = all_uncached[batch_start : batch_start + batch_size]
         current_batch = batch_start // batch_size + 1
 
         dois, scores = _score_batch(
@@ -343,6 +387,7 @@ def _reranker_streaming(df, config, *, already_flagged):
 # LLM backend
 # ============================================================
 
+
 def _resolve_llm_model(llm_cfg, backend):
     """Build provider-prefixed model string from config or env override.
 
@@ -373,11 +418,15 @@ def _score_llm_batch(batch_idx, df, doi_norm, llm_cfg, model, title_max, abstrac
     papers = []
     dois = []
     for j, idx in enumerate(batch_idx):
-        title = str(df.at[idx, "title"] if pd.notna(df.at[idx, "title"]) else "")[:title_max]
-        abstract = str(df.at[idx, "abstract"] if pd.notna(df.at[idx, "abstract"]) else "")[:abstract_max]
+        title = str(df.at[idx, "title"] if pd.notna(df.at[idx, "title"]) else "")[
+            :title_max
+        ]
+        abstract = str(
+            df.at[idx, "abstract"] if pd.notna(df.at[idx, "abstract"]) else ""
+        )[:abstract_max]
         doi = doi_norm.at[idx]
         dois.append(doi)
-        papers.append(f"{j+1}. Title: {title}\n   Abstract: {abstract}")
+        papers.append(f"{j + 1}. Title: {title}\n   Abstract: {abstract}")
 
     prompt = llm_cfg["prompt_template"] + "\n\n".join(papers)
     answer = _llm_call(prompt, model)
@@ -390,6 +439,7 @@ def _score_llm_batch(batch_idx, df, doi_norm, llm_cfg, model, title_max, abstrac
 # ============================================================
 # Public API
 # ============================================================
+
 
 def flag_llm_irrelevant_streaming(df, config, *, already_flagged):
     """Yield (batch_indices, partial_series) for Flag 6 scoring.
@@ -420,12 +470,17 @@ def flag_llm_irrelevant_streaming(df, config, *, already_flagged):
     cache = _load_llm_cache(config)
     candidate_indices = df.index[candidates_mask].tolist()
     uncached_indices = [
-        i for i in candidate_indices
+        i
+        for i in candidate_indices
         if doi_norm.at[i] not in cache or doi_norm.at[i] == ""
     ]
     cached_count = n_candidates - len(uncached_indices)
-    log.info("    Candidates: %d (cached: %d, to score: %d)",
-             n_candidates, cached_count, len(uncached_indices))
+    log.info(
+        "    Candidates: %d (cached: %d, to score: %d)",
+        n_candidates,
+        cached_count,
+        len(uncached_indices),
+    )
 
     if cached_count > 0:
         yield from _yield_cached_results(
@@ -436,7 +491,7 @@ def flag_llm_irrelevant_streaming(df, config, *, already_flagged):
     total_batches = (len(uncached_indices) + batch_size - 1) // batch_size
 
     for batch_num in range(0, len(uncached_indices), batch_size):
-        batch_idx = uncached_indices[batch_num:batch_num + batch_size]
+        batch_idx = uncached_indices[batch_num : batch_num + batch_size]
         current_batch = batch_num // batch_size + 1
 
         dois = [doi_norm.at[i] for i in batch_idx]
@@ -468,8 +523,12 @@ def flag_llm_irrelevant_streaming(df, config, *, already_flagged):
 
         remaining = len(uncached_indices) - (batch_num + len(batch_idx))
         if current_batch < total_batches and remaining > 0:
-            log.info("    batch %d/%d (%d candidates remaining)",
-                     current_batch, total_batches, remaining)
+            log.info(
+                "    batch %d/%d (%d candidates remaining)",
+                current_batch,
+                total_batches,
+                remaining,
+            )
 
         time.sleep(1.0 if backend == "openrouter" else 0.1)
 
@@ -481,6 +540,7 @@ def flag_llm_irrelevant(df, config, *, already_flagged):
     """
     result = pd.Series(False, index=df.index, dtype=bool)
     for batch_idx, partial in flag_llm_irrelevant_streaming(
-            df, config, already_flagged=already_flagged):
+        df, config, already_flagged=already_flagged
+    ):
         result.loc[partial.index] = partial
     return result

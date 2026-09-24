@@ -7,29 +7,28 @@ paths:
 
 # Credentials and the keystore
 
-`.env` holds no secret. It carries machine settings and a `KEYS=` line naming
-which credentials this project may load; the values live in
-`~/.config/keys/<provider>.env` (mode 0600), outside the repository. Entry forms
-are `provider`, `provider:VAR`, and `provider:SRC=DST` (rename on export), and
-selection is default-deny — an unlisted provider is never loaded, which is what
-stops a sibling project's keys from arriving here.
+`.env` holds machine settings and public Git identity only. Credential values
+live in `~/.config/keys/<provider>.env` (mode 0600), outside the repository, and
+must never be copied into `.env`, command arguments, logs, tickets, or commits.
 
-Two mechanisms apply the selection, because no single one covers every entry
-point: the harness bash loader, which the Makefile wires into recipe shells via
-`BASH_ENV`, and `scripts/pipeline_keystore.py`, which `pipeline_loaders` calls on
-import so `dvc repro` and a bare `uv run python scripts/…` resolve too. Neither
-overwrites an already-set variable. On a machine without the keystore both
-degrade quietly and scripts report the missing key themselves.
+Credentials are consumer-local. Each tool names the provider and source
+variable it needs, reads that one value immediately before the authenticated
+call, and does not export it into the surrounding shell. GitHub operations use
+the repository-scoped `AGENT_GH_TOKEN_CLIMATEFINANCE`, never the generic token.
 
-This `KEYS=` line **overrides** the harness one; it does not add to it. The bash
-loader exports every project-`.env` key verbatim, `KEYS` included, so whatever
-starts with this directory as its cwd sees this selection and only this one —
-including tools that have no code here, such as the harness `update-publist`
-skill. A credential this repo never imports can still need naming here, which is
-why `REQUIRED_KEYS_EXPORTS` in `tests/test_env_has_no_secret_literals.py` reads
-"must resolve for work started in this repo" rather than "is read by code in this
-repo" (ticket 0364).
+Python consumers use `scripts/pipeline_keystore.py`:
 
-Adding a credential means putting it in the right provider file and extending
-`KEYS=` — never writing it into `.env`, which `tests/test_env_has_no_secret_literals.py`
-enforces.
+- `read_credential(provider, source)` for clients that accept a value directly;
+- `credential_environment(provider, source, destination)` only for libraries
+  that insist on an environment variable. The destination exists only inside
+  the context and is restored afterwards.
+
+The helper reads one provider file and returns only the requested source.
+Missing files degrade quietly so clean-room builds retain their documented
+free-tier or missing-key behaviour. A value explicitly supplied to the process
+wins and is never overwritten.
+
+Shell tools load at invocation time. For example, an authenticated GitHub call
+reads `~/.config/keys/github.env` in a command substitution and supplies the
+project token only in that `gh` process's environment. Do not create a session
+export or a shared shell loader.
