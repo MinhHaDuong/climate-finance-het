@@ -14,17 +14,23 @@ Author: HDMX-coding-agent
 2026-09-24T19:00Z Codex note exécution : 423 événements ont un sujet résolu et une ligne citée dans les dispositions 0875 et deviennent observations valides. Les 28 autres restent dans `migration/0876-pending.csv` : leur source ou leur identité n'offre pas une ligne atomique citée. En particulier `zaf-murp-afdb-approved-2026` est une récupération AfDB bloquée (403, sans snapshot), donc aucune ligne ne peut être frappée sans inventer une citation. Parmi les 423, 343 timings ont un rôle sémantiquement supporté ; 80 rôles legacy ambigus, inconnus, d'observation ou d'autre jalon restent explicitement pending. Les vues servies conservent les 451 lignes legacy jusqu'à la résolution document-led ; le critère 451/451 reste ouvert.
 
 2026-09-24T18:45Z HDMX-coding-agent note blocker 0875 closed — Blocked-by removed.
+2026-09-24T19:39Z Codex decision de l'auteur : les 451 lignes legacy de `event-timing.csv` doivent être comptabilisées une par une, mais seules celles dont le rôle a un sens dans l'ontologie v2 deviennent `timings`. Les rôles `unknown`, `ambiguous`, `observation` et `other_milestone` restent des dispositions explicites ; aucun `report_date` ou `event` n'est inventé. Le critère de sortie 451 `timings` est remplacé par 451 dispositions vérifiables (timing typé ou attente documentée). L'exigence de preuve pour les 451 observations reste ouverte.
+2026-09-24T19:45Z Codex note réconciliation temporelle : `data/jetp/migration/0876-timing-reconciliation.csv` a 451 lignes, 343 `typed_timing` et 108 `pending` (80 rôles sans équivalent, 27 événements sans ligne précise, 1 sans snapshot). Deux lignes `reporting_cutoff` donnent chacune aussi un timing d'approbation borné à l'année, soit 345 timings produits ; `test_current_ledger_accounts_for_every_event_without_inventing_a_citation` vérifie les fichiers écrits. Les quatre vues pays ont été reconstruites identiques au SHA-256.
+2026-09-24T19:50Z Codex note audit des 27 événements avec snapshot : trois documents archivés, dont 24 lignes du rapport IDN 2025 et trois du portail ; leurs identités 0875 sont encore vides. [[0970]] porte les lignes et décisions d'identité, sans inférer l'avancement physique depuis un tableau de financement. L'événement AfDB sans snapshot reste lié à [[0926]]. Voir `docs/jetp-0876-evidence-gap-audit.md`.
 --- body ---
 ## Context
 
 Étape 5 de la migration (`docs/jetp-ledger-migration.md`), décisions 3, 9 et 10. Les 380 événements
 financiers et les 71 événements physiques deviennent des observations
 typées par sujet et axe, avec mesure d'une liste close, `basis`,
-`flow_type`, `recorded_at`, statut et supplantation ; leurs dates deviennent
-des lignes `timings` (451 depuis `event-timing.csv`, une par rôle de date,
-avec précision et bornes ; `period_start` et `period_end` pour un flux). Les
-34 `need` deviennent des `estimate` sur leur ligne de plan. Le mot du
-publisher reste ; `status-crosswalk` ([[0887]]) et `sector-crosswalk`
+`flow_type`, `recorded_at`, statut et supplantation. Les 34 `need`
+deviennent des `estimate` sur leur ligne de plan. Les 451 lignes
+legacy de `event-timing.csv` sont comptabilisées une par une : seules les
+dates au rôle sémantiquement établi deviennent des `timings` ; les dates
+inconnues, ambiguës, d'observation de page ou d'un autre jalon restent des
+dispositions explicites, sans changement de sens (décision du 2026-09-24).
+Un flux a `period_start` et `period_end`, ou une date d'événement lorsque
+celle-ci est établie. Le mot du publisher reste ; `status-crosswalk` ([[0887]]) et `sector-crosswalk`
 ([[0888]]) restent les seuls lieux d'un statut ou d'un secteur partagé,
 scindés de ce ticket (2026-09-23) car ils lisent des champs de ligne et
 les tables de [[0880]], jamais une observation. La lecture ligne →
@@ -37,14 +43,17 @@ observation est une règle versionnée par type de document.
 - `scripts/jetp/_observatory_data.py` — `VERIFICATION_COLUMNS`, `OBSERVATION_KINDS` à retirer
 - `config/jetp_tracking.yaml` — quatre axes, liste close des mesures, codes objet CRS
 - `deliverables/jetp-observatory/data/observations/<CODE>.json` — vues à comparer
+- `docs/jetp-0876-evidence-gap-audit.md` — vérification des 27 sources archivées et limites des preuves
 
 ## Actions
 
 1. Règles d'ingestion par document pour les observations (registre ZAF :
    `amount` + `flow` commitment ; rapport IDN : approbation ; plan SEN :
    `estimate`), versionnées.
-2. `timings` depuis `event-timing.csv` ; l'approbation IDN bornée à 2022
-   et sa date de coupure 2025-11-30 deviennent deux lignes d'une
+2. `timings` depuis les seules lignes de `event-timing.csv` dont le rôle se
+   mappe directement sur l'ontologie v2 ; chaque autre ligne garde une
+   disposition vérifiable liée à son événement. L'approbation IDN bornée à
+   2022 et sa date de coupure 2025-11-30 deviennent deux lignes d'une
    observation.
 3. Servir `observations/<CODE>.json` depuis les nouvelles tables ; même
    contenu par ligne citée. `status-crosswalk` ([[0887]]) et
@@ -62,8 +71,8 @@ observation est une règle versionnée par type de document.
 
 ## Verification
 
-- [ ] Comptes des tables au dépôt (2026-09-23) : 380 + 71 = 451 observations, 451 timings ; 0 valeur `disbursement`/`disbursed` dans `financial_status` ou dans un `flow_type` d'observation (vérifié par requête sur les données écrites, pas seulement absent du dessin)
-- [x] 423 observations et 343 timings validés ; 28 événements et 80 timings non mappés sont explicitement énumérés dans `data/jetp/migration/0876-pending.csv`, sans citation empruntée ni rôle de date inventé. Le total 451/451 reste bloqué par ces lignes, dont AfDB sans snapshot.
+- [ ] Comptes des tables au dépôt (2026-09-23) : 380 + 71 = 451 événements, chacun avec une observation citée ou une attente de preuve ; les 451 lignes de `event-timing.csv` ont chacune un timing typé ou une disposition explicite. Vérifier 0 valeur `disbursement`/`disbursed` dans `financial_status` ou dans un `flow_type` d'observation par requête sur les données écrites.
+- [x] 423 observations et 345 timings issus de 343 lignes legacy validées ; 28 événements et 80 rôles de date non mappés sont énumérés dans `data/jetp/migration/0876-pending.csv`, sans citation empruntée ni rôle inventé. La réconciliation des 451 lignes est dans `data/jetp/migration/0876-timing-reconciliation.csv` ; les 451 observations restent bloquées par les 28 événements, dont AfDB sans snapshot.
 - [ ] `observations/*.json` : chaque ligne d'avant retrouve son observation par sa ligne citée
 - [ ] Aucune conversion monétaire dans un script ; `rates` cite ses lignes
 
@@ -77,6 +86,7 @@ réel depuis une observation ZAF.
 
 ## Exit criteria
 
+- [x] Une réconciliation à une ligne par ancien `event-timing.csv` prouve 343 lignes source typées + 108 dispositions en attente = 451 ; deux timings d'approbation supplémentaires proviennent des deux lignes de cutoff bornées à l'année. Aucun rôle inconnu, ambigu, d'observation de page ou d'autre jalon n'est promu en `event` ou `report_date` (`0876-timing-reconciliation.csv` ; test ciblé).
 - [ ] `observations`, `timings`, `rates` validées par [[0871]] (`make jetp-ledger-check`)
 - [ ] `tests/test_jetp_observations.py`, `make check-fast` et `make lint` verts (pas `make check` complet : ex post sur main)
 

@@ -44,7 +44,7 @@ before the current tables are removed. Counts below are from the tables on
 | Viet Nam RMP release | 279 | 279 lines; the 73 programme rows are `heading`, the 181 unresolved are `unnamed_item` | |
 | `events.csv` | 380 | 380 observations, axis money; the 34 `need` rows become observations of measure `estimate` on their plan lines | subject is the agreement minted from the same line |
 | `implementation-events.csv` | 71 | 71 observations on assets or projects after the subject review | `suspended` on a retirement becomes an asset state, not a project stage |
-| `event-timing.csv` | 451 | 451 timings, one per date role, on the observations migrated from the two event tables | an approval bounded to a year and the cutoff of the report that states it become two rows of one observation |
+| `event-timing.csv` | 451 | one disposition per legacy row: a typed timing only when its date role is supported by ontology v2; otherwise an explicit pending disposition | an approval bounded to a year and the cutoff of the report that states it become two timings of one observation; an unknown event date or a page-observation date is not relabelled as `event` or `report_date` (author decision, 2026-09-24) |
 | `project-source-links.csv` | 315 | 315 `refers_to` rows of basis `discovery` or `possible_match` | the 11 `project_page_component` rows become `component_of` relations |
 | `source-claims.csv` | 151 | lines and observations; the two finance aggregates become perimeter observations that replace the hard-coded headlines | |
 | `config/jetp_observatory.yaml` headlines | 4 | perimeter observations citing their lines | configuration keeps only display choices |
@@ -96,7 +96,15 @@ Order of work, each step a ticket with its own byte-level check:
    lines are reviewed. A party is minted from a line like every other
    identity, so the table cannot grow ahead of its justification. Decided by the
    author on 2026-09-22.
-5. Observations and event timing replace the old event tables. Tickets 0887
+5. Observations and event timing replace the old event tables. The 451
+   legacy timing rows must reconcile one for one to a typed timing or an
+   explicit pending disposition; there is no target of 451 typed timings.
+   Ticket 0876 currently stages 423 cited observations and 345 typed timings
+   from 343 accepted source rows (two cutoff rows also provide a bounded
+   approval year); `0876-timing-reconciliation.csv` accounts for the other 108 legacy timing
+   rows (80 unsupported roles and 28 whose event lacks a cited line or
+   snapshot). The old served view remains authoritative
+   until its replacement passes the byte check. Tickets 0887
    and 0888 have already written the independent status and sector crosswalks:
    four South African register status words and Indonesia's approval word,
    plus four Indonesia technology groups with one clear CRS purpose. Broad

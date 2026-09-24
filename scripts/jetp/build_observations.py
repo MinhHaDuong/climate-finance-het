@@ -151,17 +151,43 @@ def normalize_event_tables(events, implementation_events, event_timings, disposi
                     'reason': f"unmapped_date_role_{row['date_role']}",
                 })
                 continue
+            if role == 'register_date' or role == 'report_date':
+                day = row['reported_on']
+                precision, lower, upper = 'day', day, day
+            elif role == 'reporting_cutoff':
+                day = row['observed_on']
+                precision, lower, upper = 'day', day, day
+            else:
+                lower, upper = row['event_start'], row['event_end']
+                precision = row['event_precision']
+                day = lower if precision == 'day' and lower == upper else ''
+            if not lower or not upper:
+                raise ValueError(f'{event_id}: {role} has no supported date bounds')
             timings.append({
                 'timing_id': f'timing-{event_id}-{ordinal}',
                 'observation_id': observation_id,
                 'date_role': role,
-                'date': row['event_start'] or None,
-                'date_precision': row['event_precision'] or None,
-                'lower_bound': row['event_start'] or None,
-                'upper_bound': row['event_end'] or None,
+                'date': day or None,
+                'date_precision': precision,
+                'lower_bound': lower,
+                'upper_bound': upper,
                 'line_id': line_id,
                 'recorded_at': RECORDED_AT,
             })
+            if role == 'reporting_cutoff' and row['event_start']:
+                if not row['event_end'] or row['event_precision'] != 'year':
+                    raise ValueError(f'{event_id}: approval year lacks bounds')
+                timings.append({
+                    'timing_id': f'timing-{event_id}-{ordinal}-approval',
+                    'observation_id': observation_id,
+                    'date_role': 'approval',
+                    'date': None,
+                    'date_precision': 'year',
+                    'lower_bound': row['event_start'],
+                    'upper_bound': row['event_end'],
+                    'line_id': line_id,
+                    'recorded_at': RECORDED_AT,
+                })
 
     def target(row, event_id, table):
         disposition = disposition_by_old_id.get(row['project_id'])
@@ -241,6 +267,47 @@ def normalize_event_tables(events, implementation_events, event_timings, disposi
     return observations, timings, pending
 
 
+def reconcile_timing_rows(event_timings, observations, timings, pending):
+    """Account for every legacy timing row without assigning an unsupported role."""
+    accepted = {row['timing_id'] for row in timings}
+    observed = {row['observation_id'] for row in observations}
+    event_gaps = {row['legacy_event_id']: row['reason'] for row in pending
+                  if row['legacy_table'] != 'event-timing'}
+    ordinals = {}
+    reconciliation = []
+    for source_row, row in enumerate(event_timings, start=2):
+        event_id = row['event_id']
+        ordinal = ordinals.get(event_id, 0) + 1
+        ordinals[event_id] = ordinal
+        timing_id = f'timing-{event_id}-{ordinal}'
+        approval_id = f'{timing_id}-approval'
+        if timing_id in accepted:
+            outcome, reason = 'typed_timing', ''
+            if row['date_role'] == 'reporting_cutoff' and row['event_start']:
+                if approval_id not in accepted:
+                    raise ValueError(f'{event_id}: approval-year timing missing')
+            else:
+                approval_id = ''
+        elif f'observation-{event_id}' not in observed:
+            outcome, reason = 'pending', event_gaps.get(event_id, 'no_observation')
+            approval_id = ''
+        elif row['date_role'] not in TIMING_ROLES:
+            outcome, reason = 'pending', f"unmapped_date_role_{row['date_role']}"
+            approval_id = ''
+        else:
+            raise ValueError(f'{event_id}: supported timing row has no output')
+        reconciliation.append({
+            'legacy_row_number': source_row,
+            'legacy_event_id': event_id,
+            'legacy_date_role': row['date_role'],
+            'outcome': outcome,
+            'timing_id': timing_id if outcome == 'typed_timing' else '',
+            'approval_timing_id': approval_id,
+            'reason': reason,
+        })
+    return reconciliation
+
+
 def write_normalized_event_tables(ledger_dir, events, implementation_events, event_timings):
     """Write v2 event tables and their evidence-gap register to ``ledger_dir``."""
     ledger_dir = Path(ledger_dir)
@@ -264,6 +331,8 @@ def write_normalized_event_tables(ledger_dir, events, implementation_events, eve
             row['reason'] = 'missing_snapshot'
         else:
             row['reason'] = 'missing_precise_cited_line'
+    timing_reconciliation = reconcile_timing_rows(
+        event_timings, observations, timings, pending)
     schema = load_schema()
     write_table(ledger_dir, 'observations', observations, schema=schema)
     write_table(ledger_dir, 'timings', timings, schema=schema)
@@ -274,6 +343,13 @@ def write_normalized_event_tables(ledger_dir, events, implementation_events, eve
             'legacy_table', 'legacy_event_id', 'legacy_project_id', 'source_id', 'locator', 'reason'))
         writer.writeheader()
         writer.writerows(pending)
+    reconciliation_path = ledger_dir / 'migration' / '0876-timing-reconciliation.csv'
+    with reconciliation_path.open('w', encoding='utf-8', newline='') as handle:
+        writer = csv.DictWriter(handle, fieldnames=(
+            'legacy_row_number', 'legacy_event_id', 'legacy_date_role',
+            'outcome', 'timing_id', 'approval_timing_id', 'reason'), lineterminator='\n')
+        writer.writeheader()
+        writer.writerows(timing_reconciliation)
     return observations, timings, pending
 
 

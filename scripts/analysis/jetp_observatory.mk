@@ -27,7 +27,7 @@ JETP_OBSERVATORY_INPUTS := data/jetp/migration/0875-projects-legacy.csv $(addpre
 JETP_OBSERVATIONS_DIR := $(JETP_OBSERVATORY)/data/observations
 JETP_OBSERVATIONS_FILES := $(addprefix $(JETP_OBSERVATIONS_DIR)/,ZAF.json IDN.json VNM.json SEN.json)
 JETP_V2_EVENT_FILES := data/jetp/observations.csv data/jetp/timings.csv data/jetp/rates.csv \
-    data/jetp/migration/0876-pending.csv
+    data/jetp/migration/0876-pending.csv data/jetp/migration/0876-timing-reconciliation.csv
 # Every table, not only the three served: build_observations.py goes through
 # read_inputs, which loads and cross-validates all nine. No DVC pointer, and
 # that is a property of the build rather than an omission: the registry is

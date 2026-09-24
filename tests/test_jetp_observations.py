@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from jetp.build_observations import normalize_event_tables
+from jetp.build_observations import normalize_event_tables, reconcile_timing_rows
 
 
 def _financial(event_id, project_id, status, amount='10', currency='USD'):
@@ -36,7 +36,7 @@ def test_document_rules_make_money_state_and_estimate_with_four_timings():
             {'event_id': 'idn-1', 'date_role': 'event', 'event_precision': 'year',
              'event_start': '2022-01-01', 'event_end': '2022-12-31'},
             {'event_id': 'idn-1', 'date_role': 'reporting_cutoff', 'event_precision': 'day',
-             'event_start': '2025-11-30', 'event_end': '2025-11-30'},
+             'event_start': '', 'event_end': '', 'observed_on': '2025-11-30'},
             {'event_id': 'sen-1', 'date_role': 'planned', 'event_precision': 'year',
              'event_start': '2025-01-01', 'event_end': '2025-12-31'},
         ],
@@ -78,12 +78,42 @@ def test_current_ledger_accounts_for_every_event_without_inventing_a_citation():
             return list(csv.DictReader(handle))
 
     ledger = root / 'data' / 'jetp'
+    event_timings = rows(ledger / 'event-timing.csv')
     observations, timings, pending = normalize_event_tables(
         rows(ledger / 'events.csv'), rows(ledger / 'implementation-events.csv'),
-        rows(ledger / 'event-timing.csv'), rows(ledger / 'migration' / '0875-dispositions.csv'))
+        event_timings, rows(ledger / 'migration' / '0875-dispositions.csv'))
     assert len(observations) == 423
-    assert len(timings) == 343
+    assert len(timings) == 345
     assert len(pending) == 108
     event_pending = [row for row in pending if row['legacy_table'] != 'event-timing']
     assert len(observations) + len(event_pending) == 451
+    reconciliation = reconcile_timing_rows(event_timings, observations, timings, pending)
+    assert len(reconciliation) == 451
+    assert sum(row['outcome'] == 'typed_timing' for row in reconciliation) == 343
+    assert sum(bool(row['approval_timing_id']) for row in reconciliation) == 2
+    assert all(row['lower_bound'] and row['upper_bound'] for row in timings)
+    assert all(row['date'] == row['lower_bound'] == row['upper_bound']
+               for row in timings if row['date_role'] in
+               {'register_date', 'report_date', 'reporting_cutoff'})
+    committed_reconciliation = rows(ledger / 'migration' / '0876-timing-reconciliation.csv')
+    assert [{key: value for key, value in row.items() if key != 'reason'}
+            for row in committed_reconciliation] == [
+        {key: str(value) for key, value in row.items() if key != 'reason'}
+        for row in reconciliation]
+    assert sum(row['reason'] == 'missing_precise_cited_line'
+               for row in committed_reconciliation) == 27
+    assert sum(row['reason'] == 'missing_snapshot'
+               for row in committed_reconciliation) == 1
+    committed_timings = rows(ledger / 'timings.csv')
+    assert {row['timing_id']: (row['date_role'], row['date_precision'],
+                               row['lower_bound'], row['upper_bound'])
+            for row in committed_timings} == {
+        row['timing_id']: (row['date_role'], row['date_precision'],
+                           row['lower_bound'], row['upper_bound'])
+        for row in timings}
+    assert all(row['lower_bound'] and row['upper_bound'] for row in committed_timings)
+    assert sum(row['reason'].startswith('unmapped_date_role_')
+               for row in reconciliation) == 80
+    assert sum(row['reason'] == 'no_resolved_subject_and_cited_line'
+               for row in reconciliation) == 28
     assert {row['legacy_event_id'] for row in pending} >= {'zaf-murp-afdb-approved-2026'}
