@@ -81,7 +81,9 @@ def test_current_ledger_accounts_for_every_event_without_inventing_a_citation():
     observations, timings, pending = normalize_event_tables(
         rows(ledger / 'events.csv'), rows(ledger / 'implementation-events.csv'),
         rows(ledger / 'event-timing.csv'), rows(ledger / 'migration' / '0875-dispositions.csv'))
-    assert len(observations) == len(timings) == 423
-    assert len(pending) == 28
-    assert len(observations) + len(pending) == 451
+    assert len(observations) == 423
+    assert len(timings) == 343
+    assert len(pending) == 108
+    event_pending = [row for row in pending if row['legacy_table'] != 'event-timing']
+    assert len(observations) + len(event_pending) == 451
     assert {row['legacy_event_id'] for row in pending} >= {'zaf-murp-afdb-approved-2026'}

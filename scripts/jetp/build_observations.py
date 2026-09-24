@@ -35,13 +35,7 @@ TIMING_ROLES = {
     'reporting_cutoff': 'reporting_cutoff',
     'planned': 'planned',
     'publication': 'report_date',
-    'observation': 'report_date',
     'event': 'event',
-    'other_milestone': 'event',
-    # These rows have no established bound.  ``report_date`` records the
-    # document context without promoting the legacy event_date to an event.
-    'unknown': 'report_date',
-    'ambiguous': 'report_date',
 }
 
 
@@ -151,7 +145,12 @@ def normalize_event_tables(events, implementation_events, event_timings, disposi
         for ordinal, row in enumerate(timing_by_event.get(event_id, ()), start=1):
             role = TIMING_ROLES.get(row['date_role'])
             if role is None:
-                raise ValueError(f"{event_id}: unknown legacy timing role {row['date_role']!r}")
+                pending.append({
+                    'legacy_table': 'event-timing', 'legacy_event_id': event_id,
+                    'legacy_project_id': '', 'source_id': '', 'locator': '',
+                    'reason': f"unmapped_date_role_{row['date_role']}",
+                })
+                continue
             timings.append({
                 'timing_id': f'timing-{event_id}-{ordinal}',
                 'observation_id': observation_id,
@@ -181,10 +180,13 @@ def normalize_event_tables(events, implementation_events, event_timings, disposi
             continue
         observation_id = f'observation-{event_id}'
         measure = 'estimate' if row['financial_status'] == 'need' else 'amount'
+        subject_kind, subject_id = disposition['disposition'], disposition['new_id']
+        if row['financial_status'] == 'need':
+            subject_kind, subject_id = 'line', disposition['line_id']
         observations.append({
             'observation_id': observation_id,
-            'subject_kind': disposition['disposition'],
-            'subject_id': disposition['new_id'],
+            'subject_kind': subject_kind,
+            'subject_id': subject_id,
             'axis': 'money',
             'measure': measure,
             'flow_type': None,
@@ -255,6 +257,8 @@ def write_normalized_event_tables(ledger_dir, events, implementation_events, eve
     for row in retrievals:
         retrieved.setdefault(row['document_id'], []).append(row)
     for row in pending:
+        if row['reason'] != 'no_resolved_subject_and_cited_line':
+            continue
         attempts = retrieved.get(row['source_id'], ())
         if not any(attempt['sha256'] for attempt in attempts):
             row['reason'] = 'missing_snapshot'
