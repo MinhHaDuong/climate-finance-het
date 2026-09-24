@@ -36,6 +36,79 @@ and which the pages fetch once at load. `documents/` is git-ignored, so the
 public bundle, the tracked tree, has no index and shows no archived link: there
 is one `app.js`, one set of served views and no build flag (ticket 0915).
 
+## Web Archive copies and link checks
+
+Publisher pages rot (ticket 0925). Beside each "Publisher's page" link the
+pages show "Web Archive copy — <date>", a copy held by the Internet Archive,
+where one is recorded. For a PDF the copy opens as the archived bytes
+themselves (Wayback's `id_` form, at the same `#page=N`), and the page says
+our SHA-256 lets a reader check it is the same file; for a web page it opens
+in the Wayback replay, and the page says the capture is not byte-identical to
+what we read. When the periodic check finds a publisher link dead, the pages
+say "publisher link dead since <date>" and put the Web Archive copy first.
+The publisher's address is never rewritten.
+
+Two tables of their own, never columns of the collection registry, each
+served as its own view and joined by the page to `documents.json` on the
+address:
+
+| Table | Served as | Written by |
+|-------|-----------|------------|
+| `data/jetp/web-archive-captures.csv` (`source_id`, `url`, `outcome`, `capture_url`, `captured_at`, `attempted_at`, `error`) | `data/web-archive.json` | `make jetp-web-archive` |
+| `data/jetp/publisher-link-checks.csv` (`url`, `checked_at`, `method`, `http_status`, `outcome`, `dead_since`, `error`) | `data/publisher-links.json` | `make jetp-link-check` |
+
+`make jetp-link-views` rebuilds the two served files from the two tables, and
+nothing else: the other views and their input hashes do not move.
+
+**Capture** (`scripts/jetp/corpus_web_archive_capture.py`). `make jetp-harvest` runs
+it after collecting; `make jetp-web-archive` runs it on everything. For each
+collected document it reuses a Wayback snapshot taken within a year of the
+collection date (`reused`), else asks Save Page Now, anonymously, for a new
+one (`captured`); a failure is recorded with its reason (`failed`) and never
+blocks; a Common Crawl WARC record is `not_applicable`. It is paced (15 s
+between capture requests), backs off on rate limits, and resumes: what is
+captured or reused is skipped, what failed is tried again. After five
+consecutive connection failures to Save Page Now it stops requesting captures
+for that run, still reusing existing snapshots, and marks the rest
+`wayback_unreachable` for the next run.
+
+**Link check** (`scripts/jetp/corpus_check_publisher_links.py`). HEAD, then GET
+(body never read) when HEAD is refused; 1.5 s between requests, 30 s timeout.
+`alive` is a 2xx/3xx answer; `dead` is 404, 410 or a host name that no longer
+resolves; anything else (403 to robots, 5xx, timeout, TLS) is `unreachable`
+and is never displayed as dead. `dead_since` is the first check of the
+current dead run: an `unreachable` check neither starts nor ends it. One row
+per address, rewritten in place; git history is the month-by-month record.
+
+**Monthly on padme — the author's step; nothing is installed by the repo.**
+The check needs network and the repo checkout, nothing else. A user timer
+such as
+
+```ini
+# ~/.config/systemd/user/jetp-link-check.service
+[Service]
+Type=oneshot
+WorkingDirectory=%h/CNRS/projets/actifs/climate-finance-het
+Environment=PATH=%h/.local/bin:/usr/bin:/bin
+ExecStart=/usr/bin/make jetp-link-check jetp-web-archive jetp-link-views
+
+# ~/.config/systemd/user/jetp-link-check.timer
+[Timer]
+OnCalendar=monthly
+RandomizedDelaySec=6h
+Persistent=true
+[Install]
+WantedBy=timers.target
+```
+
+(`systemctl --user enable --now jetp-link-check.timer`; units as real files,
+not symlinks) runs the check, retries the failed captures and rebuilds the
+two views. It leaves the result uncommitted in the checkout: review the diff,
+commit it on a branch, open a PR, and republish (`make
+jetp-observatory-publish`) after merge. A cron line
+(`0 4 1 * * cd ~/CNRS/projets/actifs/climate-finance-het && PATH=$HOME/.local/bin:$PATH make jetp-link-check jetp-web-archive jetp-link-views`)
+does the same.
+
 ## How the pages are organised
 
 The pages follow the four objects of [`docs/jetp-language.md`](../../docs/jetp-language.md)
