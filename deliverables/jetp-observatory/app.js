@@ -500,10 +500,24 @@ function webArchiveHref(entry, page) {
   if (!originIsPdf(entry)) return capture.capture_url;
   return capture.capture_url.replace(WAYBACK_STAMP, "/web/$1id_/") + (page ? "#page=" + page : "");
 }
-const identityNote = (entry) =>
-  originIsPdf(entry)
-    ? "Our SHA-256 lets you check that the Web Archive copy is the same file we read."
-    : "A Web Archive capture of a web page is not byte-identical to what we read.";
+/* A reference that pins no fingerprint (a ledger row with none, resolved by
+ * source id for the publisher's link only) has no SHA-256 to compare with,
+ * and must not claim one. */
+const identityKind = (entry) =>
+  !originIsPdf(entry) ? "html" : entry.sha256 ? "pdf" : "pdf-unpinned";
+const IDENTITY_NOTES = {
+  pdf: "Our SHA-256 lets you check that the Web Archive copy is the same file we read.",
+  "pdf-unpinned": "No fingerprint is recorded here to check the Web Archive copy against.",
+  html: "A Web Archive capture of a web page is not byte-identical to what we read.",
+};
+const identityNote = (entry) => IDENTITY_NOTES[identityKind(entry)];
+/* The same, short enough to sit on the link's line: a Documents row has a
+ * fixed height budget (PR #1459), which a sentence per row broke. */
+const IDENTITY_SHORT = {
+  pdf: "same file? compare the SHA-256",
+  "pdf-unpinned": "no fingerprint to compare",
+  html: "not byte-identical",
+};
 function webArchiveLink(entry, page, attrs = "", label) {
   const href = webArchiveHref(entry, page);
   if (!href) return "";
@@ -520,15 +534,14 @@ function deadNote(entry) {
  * once the publisher's link is dead. */
 function sourceLinks(entry, page, attrs = "", publisherLabel, archiveLabel) {
   const publisher = publisherLink(entry, page, attrs, publisherLabel) + deadNote(entry);
-  const copy = webArchiveLink(entry, page, attrs, archiveLabel);
-  if (!copy) return publisher;
+  const link = webArchiveLink(entry, page, attrs, archiveLabel);
+  if (!link) return publisher;
+  const copy = `${link} ${identityMark(entry)}`;
   return deadSince(entry) ? `${copy} · ${publisher}` : `${publisher} · ${copy}`;
 }
-/* Said beside a Web Archive copy where there is room: what it can prove. */
-const identitySmall = (entry) =>
-  webArchiveOf(entry)
-    ? `<small class="note" data-identity="${originIsPdf(entry) ? "pdf" : "html"}">${esc(identityNote(entry))}</small>`
-    : "";
+/* Said beside every Web Archive copy: what it can prove, by type. */
+const identityMark = (entry) =>
+  `<span class="note" data-identity="${identityKind(entry)}" title="${esc(identityNote(entry))}">(${esc(IDENTITY_SHORT[identityKind(entry)])})</span>`;
 /* What was read, and when: the collection date and the fingerprint of the
  * bytes, or the failure the collector recorded where no bytes were kept. */
 function collectedFacts(entry, separator = " · ") {
@@ -761,7 +774,7 @@ function documentsPage(params) {
   // of its own. The publisher's page is always there; the archived copy only
   // where this server holds it (ticket 0915).
   const links = (r) =>
-    `<span id="publisher-${esc(r.row_key)}">${sourceLinks(r, null, documentAttrs(r))}</span><small>${collectedFacts(r, "<br>")}</small>${identitySmall(r)}<span id="archived-${esc(r.row_key)}">${archivedLink(r, null, documentAttrs(r))}</span>`;
+    `<span id="publisher-${esc(r.row_key)}">${sourceLinks(r, null, documentAttrs(r))}</span><small>${collectedFacts(r, "<br>")}</small><span id="archived-${esc(r.row_key)}">${archivedLink(r, null, documentAttrs(r))}</span>`;
   const table = filterTable("documents", rows, {
     facets: [
       {
@@ -928,7 +941,7 @@ function evidenceLink(locator, entry, pdfPage, dataAttr, dataValue, noEntry) {
     return `<span class="note">${text}${noEntry ? "<br>" + noEntry : ""}</span>`;
   const attrs = ` ${dataAttr}="${esc(dataValue)}"`;
   const archived = archivedLink(entry, pdfPage, attrs, "archived copy");
-  return `<span class="document-ref">${text}<br>${sourceLinks(entry, pdfPage, attrs)}${archived ? " · " + archived : ""}<small>${collectedFacts(entry)}</small>${identitySmall(entry)}</span>`;
+  return `<span class="document-ref">${text}<br>${sourceLinks(entry, pdfPage, attrs)}${archived ? " · " + archived : ""}<small>${collectedFacts(entry)}</small></span>`;
 }
 function inventoryEvidence(row) {
   const entry = documentIndex[row.source_id];
@@ -1281,7 +1294,7 @@ function archivedCopy(id, source) {
   if (!entry) return "";
   const archived = archivedLink(entry, null, ` data-archived-source="${esc(id)}"`);
   const copy = webArchiveLink(entry, null, ` data-web-archive-source="${esc(id)}"`);
-  return `<small data-document-facts="${esc(id)}">Publisher's page: ${esc(hostOf(source.url) || "no address recorded")}${deadNote(entry)} · ${collectedFacts(entry)}</small>${copy ? `<small>${copy} · ${esc(identityNote(entry))}</small>` : ""}${archived ? `<small>${archived}</small>` : ""}`;
+  return `<small data-document-facts="${esc(id)}">Publisher's page: ${esc(hostOf(source.url) || "no address recorded")}${deadNote(entry)} · ${collectedFacts(entry)}</small>${copy ? `<small>${copy} ${identityMark(entry)}</small>` : ""}${archived ? `<small>${archived}</small>` : ""}`;
 }
 function projectPage(id) {
   const p = projects.find((p) => p.id === id);

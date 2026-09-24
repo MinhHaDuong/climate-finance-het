@@ -421,13 +421,13 @@ def test_the_shipped_site_shows_both_links_and_the_identity_note_by_type() -> No
     if not captures:
         pytest.skip("no Web Archive copy recorded yet")
     expression = ("documentsData.documents.filter((r) => r.sha256).map((r) => "
-                  "[r.url, sourceLinks(r, null, ''), identitySmall(r)])")
+                  "[r.url, sourceLinks(r, null, ''), sourceLinks(r, null, '')])")
     rendered = render("documents", {}, expression)["eval"]
     shown = 0
     for url, html, note in rendered:
         kinds = re.findall(r'data-link="([a-z-]+)"', html)
         if url not in captures:
-            assert kinds == ["publisher"] and note == "", url
+            assert kinds == ["publisher"] and "data-identity" not in note, url
             continue
         shown += 1
         assert sorted(kinds) == ["publisher", "web-archive"], url

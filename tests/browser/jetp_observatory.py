@@ -255,9 +255,11 @@ def check_documents_row_height(page, url):
     max 276 px). Now a row is at most one line per fold-out, and the links
     cell of ticket 0915 is a fixed block: the publisher's page (two lines at
     this width), the collection date and fingerprint, and the archived copy
-    where served — 126 px on the public site, 146 px in the preview. 150 px
-    bounds that block and the cell padding, well under the word-by-word wrap
-    it guards against. A failed attempt shows a short label with the
+    where served — 126 px on the public site, 146 px in the preview. Ticket
+    0925 adds the Web Archive copy and its short identity mark beside the
+    publisher's page, two more lines: 187 px at most in the preview
+    (measured 2026-09-24). 200 px bounds that block and the cell padding,
+    still under the word-by-word wrap it guards against. A failed attempt shows a short label with the
     collector's full message in its title, never a broken URL.
     """
     page.set_viewport_size({'width': 1280, 'height': 1000})
@@ -267,7 +269,7 @@ def check_documents_row_height(page, url):
         "!document.querySelector('#documents-results').textContent.includes('Loading what')")
     heights = page.evaluate("[...document.querySelectorAll('#documents-results tbody tr')]"
                             ".map((r) => r.getBoundingClientRect().height)")
-    assert max(heights) <= 150, sorted(heights)[-5:]
+    assert max(heights) <= 200, sorted(heights)[-5:]
     registry = page.request.get(url + '/data/documents.json').json()['documents']
     failed = next(row for row in registry
                   if row['error'] and len(row['error']) > 100 and not row['local_path'])
