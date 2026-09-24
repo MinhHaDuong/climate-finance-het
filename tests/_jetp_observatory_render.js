@@ -87,7 +87,7 @@ const fetch = async (file) => {
   return { ok: true, json: async () => JSON.parse(fs.readFileSync(target, "utf8")) };
 };
 const context = vm.createContext({
-  document, location, window, fetch, console, setTimeout, URLSearchParams,
+  document, location, window, fetch, console, setTimeout, URLSearchParams, URL,
 });
 vm.runInContext(fs.readFileSync(path.join(site, "app.js"), "utf8"), context, {
   filename: "app.js",

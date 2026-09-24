@@ -33,18 +33,18 @@ sibling tabs with the current one selected. The same component serves all
 three sections.
 
 - **The paper trail** (`#the-paper-trail`, a short page on what each step
-  holds and why they run in that order): **Documents** · **Entries** · **On
-  the record** · **Projects** · **Funding** · **Who's who**, in trail order.
-  Who's who lists funders and operators as the project documents spell them,
-  not yet matched to one another (the parties table of ticket 0875). The
+  holds and why they run in that order): **Documents** · **Document rows** ·
+  **Statements** · **Projects** · **Funding** · **Organisations**, in trail order.
+  Organisations combines a name's funder and operator roles in one country;
+  reviewed name forms appear as aliases, while unreviewed matches stay apart. The
   selected tab marks the step and the tabs beside it are its neighbours. A
   page scoped to a country shows it at the bar's right as a removable chip,
   and the trail tabs keep the country.
 - **The tallies** (the tab lands on Counts): **Counts** is one table, a row
   per figure we computed (what it is, value, unit, what it covers, as of,
   and a link to what was counted), grouped by country and never summed
-  across countries, then two numbered, captioned figures. **Comparisons** is
-  the historical World Bank pool. The accounts page of ticket 0877 will join
+  across countries, then two numbered, captioned figures. **Non-JETP energy
+  operations** is the historical World Bank pool. The accounts page of ticket 0877 will join
   as Money. A number we calculated carries "Our calculation"; a number a
   publisher printed carries "As published" and reads "according to" that
   publisher, with the date.
@@ -78,13 +78,13 @@ reload), query and deep link included. The pages emit only the new names.
 | Landing page | `#overview` | |
 | The paper trail | `#the-paper-trail` | |
 | Documents | `#documents`, `#documents?country=<CODE>` | |
-| Entries | `#entries`, `#entries/<CODE>`, `#entries/<CODE>?row=N` | `#inventory/<CODE>`, `#inventory/<CODE>?row=N` |
-| On the record | `#on-the-record`, `#on-the-record/<CODE>` | `#evidence`, `#inventory/<CODE>?tab=record` |
+| Document rows | `#document-rows`, `#document-rows/<CODE>`, `#document-rows/<CODE>?row=N` | `#entries`, `#entries/<CODE>`, `#inventory/<CODE>`, with `?row=N` |
+| Statements | `#statements`, `#statements/<CODE>` | `#on-the-record`, `#on-the-record/<CODE>`, `#evidence`, `#inventory/<CODE>?tab=record` |
 | Projects | `#projects`, `#projects?country=<CODE>`, `#project/<project_id>` | |
 | Funding | `#funding`, `#funding/<CODE>` | `#countries`, `#country/<CODE>` |
-| Who's who | `#whos-who`, `#whos-who?country=<CODE>` | |
+| Organisations | `#organisations`, `#organisations?country=<CODE>` | `#whos-who`, with country filter |
 | Counts | `#counts` | `#numbers`, `#by-the-numbers`, `#the-tallies` |
-| Comparisons | `#comparisons`, `#comparisons?country=<CODE>` | `#comparison`, `#historical-comparison`, with `?country=<CODE>` |
+| Non-JETP energy operations | `#non-jetp-energy-operations`, with `?country=<CODE>` | `#comparisons`, `#comparison`, `#historical-comparison`, with country filter |
 | About | `#about` | |
 | Glossary | `#glossary` | |
 | Methods | `#methods` | `#how-we-did-this` |
@@ -114,38 +114,48 @@ names `#country/<CODE>` routes — and those forward like any other.
   from any public release, which carry the registry and the origin URL alone.
   `scripts/jetp/_public_release.py` copies the whole tree at a pinned commit and
   does not go through that exclusion; it is out of scope until the next release.
-- The entries of ZAF, IDN, VNM and SEN (the frozen M1a inventories). These
+- The document rows of ZAF, IDN, VNM and SEN (the frozen M1a inventories). These
   keep every selected document row, the publisher's issue and its cutoff,
   without matching identities. Their manifest counts field, identity and
   availability unknowns separately for each document extract, and again per
-  country for the same export. The entries page shows the per-extract figures
+  country for the same export. The Document rows page shows the per-extract figures
   and, on its count line, the size of the export ("rows in this export"),
   labelled as such: the extracts overlap, so that number is a file size, not a
   project count (ticket 0856).
-  `#entries/<CODE>` explores them row by row: the CSV stays the download
+  `#document-rows/<CODE>` explores them row by row: the CSV stays the download
   artefact, while the page reads the `<CODE>.json` companion the same build
   writes from the same rows — column names once, then one array of values per
   row, so the browser parses no CSV text and the file stays under the
   repository's committed-file ceiling. Each row opens its archived document, at
   its PDF page where the document gives one. The export width is per country,
   so the page wires only the five facets every country carries and shows every
-  other column in the row detail.
-- What is on the record for the same four countries, at
-  `#on-the-record/<CODE>`, the step after the entries: the 766 rows of `data/jetp/events.csv`,
+  other column in the row detail. HTTP(S) URLs in `raw_project_description`
+  open as links without changing the archived text or the export.
+- Statements for the same four countries, at
+  `#statements/<CODE>`, the step after Document rows: the 766 rows of `data/jetp/events.csv`,
   `implementation-events.csv` and `project-source-links.csv`, served verbatim
   under `data/observations/<CODE>.json` with the table, the kind, the
   verification word the ledger wrote, and the fingerprint and PDF page of the
   document each was read from. Each item reads "according to" its publisher,
   with the document's date, as the country view names them. Counts are shown
-  per table and per country. The entries and these items are two extractions
+  per table and per country. Document rows and these items are two extractions
   of the same documents under two schemas; they are read separately and are
   never added together. No amount is summed, converted or promoted here, and
   no verification state is recoded.
-- The step down from a project to what is on the record about it, and the
+- Each Funding country page now lists one row per recorded financing statement,
+  with the project, milestone, original amount and currency, funder, date role,
+  and document location. Financing needs appear in a separate section. This
+  replaces the first eight rows of the Projects table; repeated milestones
+  and currencies are never summed.
+- Organisations combines a name's funder and operator roles within a country,
+  shows up to three project names directly, and unfolds the rest. The
+  `data/party-names.json` view comes from reviewed `parties.csv` and
+  `party-names.csv` rows; only those reviewed names are displayed as aliases.
+- The step down from a project to the statements recorded about it, and the
   step up from a document to what relies on it. Each named project's page
-  carries a review-state badge and an "On the record about this project"
-  fold-out: the items addressed to that identity, read from
-  `data/observations/<CODE>.json` — the view `#on-the-record/<CODE>` loads —
+  carries a review-state badge and a statements fold-out: the items addressed
+  to that identity, read from
+  `data/observations/<CODE>.json` — the view `#statements/<CODE>` loads —
   and filtered on `project_id` in the browser, each opening its archived
   document where the collection holds one. The country view carries no copy
   of them: `ZAF.json` has a publication cap of 512 000 bytes

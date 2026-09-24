@@ -1,7 +1,7 @@
 # JETP observatory: presentation
 
 What readers of the observatory see and how the site is organised. Decided by
-the author on 2026-09-23. Tickets [0881](../tickets/0881-le-mvp-distingue-o-d-e-et-m-et-pr-sente.erg)
+the author on 2026-09-23 and revised after the 2026-09-24 cold read (ticket 0902). Tickets [0881](../tickets/0881-le-mvp-distingue-o-d-e-et-m-et-pr-sente.erg)
 (organisation and page vocabulary) and
 [0882](../tickets/0882-page-ontologie-du-mvp-d-finitions-des-ob.erg) (Glossary)
 implement it. What the ledger's terms mean is [`jetp-ontology.md`](jetp-ontology.md);
@@ -26,7 +26,7 @@ than suspicion, because the readers are researchers as well as journalists.
 | ODEM object | What the reader sees | Label on the page |
 |---|---|---|
 | O | What each word, status, measure and relation means, where the definition comes from, and when it changed | **Glossary** |
-| D | The documented route from a figure back to the page that supports it, walked in both directions | **The paper trail**: **Documents** → **Entries** → **On the record** → **Projects**, **Funding**, **Who's who** |
+| D | The documented route from a figure back to the page that supports it, walked in both directions | **The paper trail**: **Documents** → **Document rows** → **Statements** → **Projects**, **Funding**, **Organisations** |
 | E | Counts and totals computed by the ledger, each with its unit, its perimeter and a link to what it was computed from | **The tallies** |
 | M | Nothing | none |
 | (methods) | What was done, what was not, and which tables are not served | **Methods** |
@@ -37,8 +37,8 @@ sections: **The paper trail** · **The tallies** · **About**.
 
 | Section | Its pages, in sub-bar order | Tab lands on |
 |---|---|---|
-| The paper trail | Documents · Entries · On the record · Projects · Funding · Who's who | `#the-paper-trail`, a short page on what each step holds and why they run in that order |
-| The tallies | Counts · Comparisons (the accounts page of ticket 0877 joins as Money) | `#counts`: two pages need no landing page |
+| The paper trail | Documents · Document rows · Statements · Projects · Funding · Organisations | `#the-paper-trail`, a short page on what each step holds and why they run in that order |
+| The tallies | Counts · Non-JETP energy operations (the accounts page of ticket 0877 joins as Money) | `#counts`: two pages need no landing page |
 | About | Glossary · Methods · Who we are | `#about`, one line per page |
 
 The Glossary sits under About: a reader consults it, and does not start
@@ -63,8 +63,8 @@ marked current when it is open.
   on `#the-paper-trail`, not by arrows or numerals. The selected tab is the
   page's position indicator, and the tabs beside it are the neighbouring
   steps. No page repeats it with an eyebrow, a trail block or in-page tabs,
-  so a country's entries and what is on the record about it are two steps
-  (`#entries/<CODE>`, `#on-the-record/<CODE>`).
+  so a country's selected document rows and attributed statements are two steps
+  (`#document-rows/<CODE>`, `#statements/<CODE>`).
 - **Country chip.** A trail page scoped to a country shows the country at
   the right of the sub-bar as a removable chip ("Viet Nam ×"). Removing it
   opens the same step unscoped, and every trail tab keeps the country.
@@ -81,13 +81,15 @@ labels are a pair: each kind of number carries its own, and neither kind
 goes unmarked.
 
 **Addresses match labels.** Each page's address is its label's slug:
-`#documents`, `#entries`, `#on-the-record`, `#projects`, `#funding`,
-`#whos-who`, `#counts`, `#comparisons`, `#glossary`, `#methods`,
+`#documents`, `#document-rows`, `#statements`, `#projects`, `#funding`,
+`#organisations`, `#counts`, `#non-jetp-energy-operations`, `#glossary`, `#methods`,
 `#who-we-are`, and the landing pages `#the-paper-trail` and `#about`; the
 release history is `#release-history`. A country's page nests under its step
-(`#funding/<CODE>`, `#entries/<CODE>`, `#on-the-record/<CODE>`); a project is
+(`#funding/<CODE>`, `#document-rows/<CODE>`, `#statements/<CODE>`); a project is
 `#project/<project_id>`. The addresses of earlier previews forward in place,
 in one hop, to the new ones: `#countries`, `#country/<CODE>`, `#evidence`,
+`#entries`, `#on-the-record`, `#whos-who`, `#comparisons` (including their
+country filters and deep links),
 `#numbers`, `#by-the-numbers`, `#the-tallies`, `#comparison`,
 `#historical-comparison`, `#how-we-did-this`, `#editions`, and
 `#inventory/<CODE>` with its `?row=` and `?tab=record`. The pages emit only
@@ -103,10 +105,18 @@ the new names. The full table is in the observatory's
   history. A relation shows what it connects. Every term used elsewhere on
   the site links to its glossary entry. Generated from the ontology tables, `data/jetp/ontology/` ([`jetp-ontology.md`](jetp-ontology.md) section 5).
 - **The paper trail.** Documents is D1 (publishers, documents, retrievals,
-  snapshots). Entries is D2: a row of a register, a line of a plan annex, a
-  submission in a list. On the record is D3: each item reads "according to"
-  its publisher, with the date. Projects, Funding and Who's who are D4:
-  projects and assets, agreements, and parties. The sub-bar shows where each
+  snapshots). Document rows is D2: selected rows from registers, annexes and
+  lists, with the original column wording preserved where available; an
+  extracted row is not necessarily a unique project. Statements is D3:
+  attributed amounts, dates and statuses, plus project–document links, with
+  a document location where recorded. Several statements may come from one
+  row, while some come from prose. Projects, Funding and Organisations are D4:
+  projects and assets, financing, and parties. Funding's country table lists
+  individual financing statements, with needs separately labelled; it does
+  not repeat the first eight projects or sum milestones. Organisations groups
+  exact names by country and combines funder and operator roles; reviewed
+  party-name forms appear as aliases without guessing unreviewed matches.
+  The sub-bar shows where each
   page sits on the trail and lets the reader step one level up or down: from
   a project to what is on the record about it, to the entries, to the page
   of the document, and back.
@@ -131,4 +141,3 @@ a general reader).
 
 The serving contract, every table served or named as not served, is
 [`jetp-ledger-storage.md`](jetp-ledger-storage.md) section 2.
-

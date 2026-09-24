@@ -4,6 +4,7 @@ JETP_OBSERVATORY_VIEWS := overview comparison documents ZAF IDN VNM SEN
 JETP_OBSERVATORY_EDITION_HISTORY := $(JETP_OBSERVATORY)/data/editions.json
 JETP_OBSERVATORY_JSON := $(addprefix $(JETP_OBSERVATORY)/data/,$(addsuffix .json,$(JETP_OBSERVATORY_VIEWS)))
 JETP_OBSERVATORY_PROVENANCE := $(JETP_OBSERVATORY)/data/provenance.json
+JETP_PARTY_NAMES_VIEW := $(JETP_OBSERVATORY)/data/party-names.json
 JETP_M1A_DIR := $(JETP_OBSERVATORY)/data/m1a
 JETP_M1A_FILES := $(addprefix $(JETP_M1A_DIR)/,ZAF.csv IDN.csv VNM.csv SEN.csv \
     ZAF.json IDN.json VNM.json SEN.json manifest.json)
@@ -64,7 +65,10 @@ jetp-ontology-views: $(JETP_ONTOLOGY_VIEWS)
 $(JETP_ONTOLOGY_VIEWS) &: $(JETP_ONTOLOGY_VIEWS_INPUTS)
 	$(PYTHON) scripts/jetp/build_ontology_views.py --output-dir $(JETP_ONTOLOGY_VIEWS_DIR)
 
-jetp-observatory: $(JETP_ONTOLOGY_VIEWS) $(JETP_OBSERVATORY_JSON) $(JETP_OBSERVATORY_EDITION_HISTORY) $(JETP_OBSERVATORY_PROVENANCE)
+jetp-observatory: $(JETP_ONTOLOGY_VIEWS) $(JETP_PARTY_NAMES_VIEW) $(JETP_OBSERVATORY_JSON) $(JETP_OBSERVATORY_EDITION_HISTORY) $(JETP_OBSERVATORY_PROVENANCE)
+
+$(JETP_PARTY_NAMES_VIEW): data/jetp/parties.csv data/jetp/party-names.csv scripts/jetp/build_party_names_view.py
+	$(PYTHON) scripts/jetp/build_party_names_view.py --output $@
 
 # The documents view is the collection registry alone (ticket 0858): it reads
 # no other view, so it has no prerequisite beyond the inputs above. The join

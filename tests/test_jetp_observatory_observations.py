@@ -385,4 +385,4 @@ def test_the_two_stage_two_products_are_declared_distinct_on_the_page() -> None:
     )
 
     assert "never added together" in renderer
-    assert "two extractions" in renderer
+    assert "two readings of some of the same publications" in renderer

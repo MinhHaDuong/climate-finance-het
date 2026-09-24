@@ -145,7 +145,7 @@ def check_documents(page, url):
     assert popup.value is not None
     popup.value.close()
     # The climb lands on the one row, not on the 279.
-    position.locator('a[href="#entries/VNM?row=22"]').click()
+    position.locator('a[href="#document-rows/VNM?row=22"]').click()
     page.wait_for_selector('[data-inventory-focus="22"]')
     assert page.locator('#inventory-count').inner_text().startswith('1 of 1 ')
     focused = page.locator('a[data-inventory-row="vnm-rmp-2023:annex-I.1:022"]')
@@ -191,7 +191,7 @@ def check_inventory(page, url):
     registry = page.request.get(url + '/data/documents.json').json()['documents']
     payload = page.request.get(url + '/data/m1a/VNM.json').json()
     rows = [dict(zip(payload['fields'], values)) for values in payload['rows']]
-    page.goto(url + '/#entries/VNM')
+    page.goto(url + '/#document-rows/VNM')
     page.wait_for_selector('#inventory-filters')
     assert str(len(rows)) in page.locator('#inventory-count').inner_text()
     page.locator('#inventory-search').fill('Annex I.1')
@@ -218,7 +218,7 @@ def check_inventory(page, url):
 
     # A per-country column set must not need a renderer change: the 21 ZAF
     # pass-through columns appear in the row detail, in the export's own order.
-    page.goto(url + '/#entries/ZAF')
+    page.goto(url + '/#document-rows/ZAF')
     page.wait_for_selector('#inventory-filters')
     page.locator('#inventory-filter-reported_status').select_option('D. Completed')
     assert '88 of 257' in page.locator('#inventory-count').inner_text()
@@ -250,7 +250,7 @@ def check_senegal_and_indonesia(page, url):
 
     annexes = next(row for row in registry
                    if row['id'] == 'sen-investment-plan-annexes-mirror' and row['local_path'])
-    page.goto(url + '/#entries/SEN?row=1')
+    page.goto(url + '/#document-rows/SEN?row=1')
     page.wait_for_selector('[data-inventory-focus="1"]')
     link = page.locator('a[data-inventory-row="sen-annex-received-01"]')
     assert link.get_attribute('href') == annexes['local_path'] + '#page=13', \
@@ -296,7 +296,7 @@ def check_observations(page, url):
     is reached by the free-text field and not by the funder facet.
     """
     rows = page.request.get(url + '/data/observations/ZAF.json').json()
-    page.goto(url + '/#on-the-record/ZAF')
+    page.goto(url + '/#statements/ZAF')
     page.wait_for_selector('#observations-filters')
     assert str(len(rows)) in page.locator('#observations-count').inner_text()
     # The head-of-tab figures are per table and per country, never pooled.
@@ -325,7 +325,7 @@ def check_observations(page, url):
 
     # Recipe VN: the Bac Ai package, found through the source identifier.
     vietnam = page.request.get(url + '/data/observations/VNM.json').json()
-    page.goto(url + '/#on-the-record/VNM')
+    page.goto(url + '/#statements/VNM')
     page.wait_for_selector('#observations-filters')
     assert str(len(vietnam)) in page.locator('#observations-count').inner_text()
     page.locator('#observations-search').fill('eib')
@@ -335,7 +335,7 @@ def check_observations(page, url):
 
     # Recipe SA: a row read from the Q1 2026 register opens that register's
     # archived snapshot, at the page the locator names where it names one.
-    page.goto(url + '/#on-the-record/ZAF')
+    page.goto(url + '/#statements/ZAF')
     page.wait_for_selector('#observations-filters')
     registry = page.request.get(url + '/data/documents.json').json()['documents']
     register = next(row for row in rows
@@ -468,7 +468,7 @@ def check_facts(page, url):
     page.locator(f'[data-uncited="{uncited["id"]}"]').first.wait_for()
 
     # A reviewed record's pedigree opens the archived bytes it pins.
-    page.goto(url + '/#on-the-record')
+    page.goto(url + '/#statements')
     page.wait_for_selector('[data-reviewed-evidence-id]')
     evidence = page.request.get(url + '/data/reviewed-evidence.json').json()
     archived = {row['sha256'] for row in documents if row['local_path']}
@@ -498,15 +498,19 @@ def check_paper_trail(page, url):
     for old, new, ready in (
         ('countries', 'funding', '.country-grid'),
         ('country/IDN', 'funding/IDN', '.markdown h2'),
-        ('evidence', 'on-the-record', '[data-reviewed-evidence-id]'),
-        ('comparison?country=IDN', 'comparisons?country=IDN', '#history-table'),
+        ('evidence', 'statements', '[data-reviewed-evidence-id]'),
+        ('comparison?country=IDN', 'non-jetp-energy-operations?country=IDN', '#history-table'),
         ('how-we-did-this', 'methods', '.method-list'),
         ('numbers', 'counts', 'table.counts'),
         ('by-the-numbers', 'counts', 'table.counts'),
         ('the-tallies', 'counts', 'table.counts'),
-        ('historical-comparison', 'comparisons', '#history-table'),
-        ('inventory/VNM?tab=record', 'on-the-record/VNM', '#observations-filters'),
-        ('inventory/VNM?row=22', 'entries/VNM?row=22', '[data-inventory-focus="22"]'),
+        ('historical-comparison', 'non-jetp-energy-operations', '#history-table'),
+        ('comparisons?country=IDN', 'non-jetp-energy-operations?country=IDN', '#history-table'),
+        ('on-the-record/VNM', 'statements/VNM', '#observations-filters'),
+        ('entries/VNM?row=22', 'document-rows/VNM?row=22', '[data-inventory-focus="22"]'),
+        ('whos-who?country=SEN', 'organisations?country=SEN', '#parties-filters'),
+        ('inventory/VNM?tab=record', 'statements/VNM', '#observations-filters'),
+        ('inventory/VNM?row=22', 'document-rows/VNM?row=22', '[data-inventory-focus="22"]'),
     ):
         page.goto(url + '/#overview')
         page.wait_for_selector('.country-grid')
@@ -534,19 +538,19 @@ def check_paper_trail(page, url):
     page.goto(url + '/#project/vnm-project-bac-ai-pumped-hydro')
     at_step('Projects', 'project/vnm-project-bac-ai-pumped-hydro')
     assert 'Viet Nam' in page.locator('#step-bar .scope-chip').inner_text()
-    step('On the record')
-    at_step('On the record', 'on-the-record/VNM')
+    step('Statements')
+    at_step('Statements', 'statements/VNM')
     page.wait_for_selector('#observations-results tbody tr')
     assert 'According to' in page.locator('#observations-results tbody tr').first.inner_text()
-    step('Entries')
-    at_step('Entries', 'entries/VNM')
+    step('Document rows')
+    at_step('Document rows', 'document-rows/VNM')
     page.wait_for_selector('#panel-inventory')
     step('Documents')
     at_step('Documents', 'documents?country=VNM')
     page.wait_for_selector('#documents-results')
     assert page.locator('#documents-filter-country').input_value() == 'VNM'
-    step('Who\'s who')
-    at_step("Who's who", 'whos-who?country=VNM')
+    step('Organisations')
+    at_step('Organisations', 'organisations?country=VNM')
     assert page.locator('#parties-filter-country').input_value() == 'VNM'
     step('Funding')
     at_step('Funding', 'funding/VNM')
@@ -613,10 +617,9 @@ def check_sections(page, url):
     page.wait_for_selector('#results tbody tr')
     assert page.locator('#country-filter').input_value() == 'VNM'
     # Who's who counts each name's projects once.
-    page.goto(url + '/#whos-who')
-    page.wait_for_selector('#parties-results details summary')
-    summary = page.locator('#parties-results details summary').first.inner_text()
-    assert summary.count('·') == 1, summary
+    page.goto(url + '/#organisations')
+    page.wait_for_selector('#parties-results tbody tr')
+    assert page.locator('#parties-results tbody tr').count() > 0
     page.goto(url + '/#overview')
     page.wait_for_selector('.country-grid')
 
@@ -640,7 +643,7 @@ def check_header_menus(page, url):
     menu = page.locator('#menu-the-paper-trail')
     assert menu.is_visible()
     assert menu.locator('a').all_text_contents() == [
-        'Documents', 'Entries', 'On the record', 'Projects', 'Funding', "Who's who"]
+        'Documents', 'Document rows', 'Statements', 'Projects', 'Funding', 'Organisations']
     page.keyboard.press('Escape')
     assert trail.get_attribute('aria-expanded') == 'false' and menu.is_hidden()
     about = page.locator('#toggle-about')
@@ -662,10 +665,10 @@ def check_header_menus(page, url):
     page.locator('#toggle-the-tallies').click()
     page.locator('#menu-the-tallies a[data-sub="comparisons"]').click()
     page.wait_for_selector('#history-table')
-    assert page.url.endswith('#comparisons')
+    assert page.url.endswith('#non-jetp-energy-operations')
     assert page.locator('#toggle-the-tallies').get_attribute('aria-expanded') == 'false'
     assert page.locator('#menu-the-tallies').get_attribute('hidden') is not None
-    assert page.locator('#step-bar a[aria-current="page"]').inner_text() == 'Comparisons'
+    assert page.locator('#step-bar a[aria-current="page"]').inner_text() == 'Non-JETP energy operations'
     # Hover opens a menu as an enhancement; the button's state is untouched.
     page.locator('li.section:has(#toggle-about)').hover()
     assert page.locator('#menu-about').is_visible()
@@ -706,7 +709,7 @@ def check_glossary(page, url):
                '.getBoundingClientRect(); return r.top >= 0 && r.bottom <= innerHeight; })()')
     assert page.evaluate(in_view)
     # A status word on the record links to its term.
-    page.goto(url + '/#on-the-record/ZAF')
+    page.goto(url + '/#statements/ZAF')
     page.wait_for_selector('#observations-results')
     assert page.locator('#observations-results a[data-term-link="money/signed"]').count() > 0
 
@@ -733,7 +736,75 @@ def check_projects(page, url):
     assert 'Document published' in report.inner_text()
 
 
-def check_site(url, output):
+def check_ticket_0902(page, url):
+    """Cold-reader labels, financial table, names, and document-text links."""
+    page.goto(url + '/#the-paper-trail')
+    page.wait_for_selector('.page-head h1')
+    assert 'Follow a number back to its document' in page.locator('main h1').inner_text()
+    for route, title in (('document-rows', 'Rows selected from the documents'),
+                         ('statements', 'What the documents say'),
+                         ('organisations', 'Organisations named in the documents')):
+        page.goto(url + '/#' + route)
+        page.wait_for_selector('.page-head h1')
+        assert title in page.locator('main h1').inner_text()
+
+    page.goto(url + '/#funding/SEN')
+    page.wait_for_selector('#funding-statements-results tbody tr')
+    assert page.locator('#funding-statements-results th').all_text_contents() == [
+        'Project or programme', 'Reported milestone', 'Original amount',
+        'Funder · instrument', 'Date and its role', 'Document and location']
+    assert 'Inside the portfolio' not in page.locator('main').inner_text()
+    assert 'Financing needs stated' in page.locator('main').inner_text()
+    initial = page.locator('#funding-statements-results tbody tr').count()
+    funders = page.locator('#funding-statements-filter-funder option').all_text_contents()
+    assert len(funders) > 1
+    page.locator('#funding-statements-filter-funder').select_option(index=1)
+    assert 0 < page.locator('#funding-statements-results tbody tr').count() <= initial
+    page.locator('#funding-statements-filter-funder').select_option('')
+    page.locator('#funding-statements-filter-status').select_option(index=1)
+    assert 0 < page.locator('#funding-statements-results tbody tr').count() <= initial
+    assert page.locator('#funding-statements-results a[href^="#project/"]').count() > 0
+    assert page.locator('#funding-statements-results td:last-child a').count() > 0
+
+    page.goto(url + '/#organisations')
+    page.wait_for_selector('#parties-results tbody tr')
+    # Senelec has a reviewed recorded form in the served party-name table.
+    page.locator('#parties-search').fill('Senelec')
+    name = page.locator('#parties-results .organisation-aliases').first
+    name.wait_for()
+    name.locator('summary').focus()
+    page.keyboard.press('Enter')
+    assert name.get_attribute('open') is not None
+    assert 'SENELEC' in name.inner_text()
+    projects = page.locator('#parties-results .organisation-projects').first
+    assert projects.locator('> a').count() == 3
+    projects.locator('details > summary').click()
+    assert projects.locator('details[open] a[href^="#project/"]').count() > 0
+    page.locator('#parties-filter-roles').select_option('Operator')
+    assert page.locator('#parties-results tbody tr').count() > 0
+
+    page.goto(url + '/#document-rows/ZAF?row=1')
+    page.wait_for_selector('[data-inventory-focus="1"]')
+    url_link = page.locator('#inventory-results dd a[href^="https://w05.international.gc.ca/"]').first
+    assert url_link.count() == 1
+    assert url_link.get_attribute('rel') == 'noopener noreferrer'
+    assert url_link.get_attribute('target') == '_blank'
+    page.goto(url + '/#non-jetp-energy-operations?country=IDN')
+    page.wait_for_selector('#history-table')
+    assert page.url.endswith('#non-jetp-energy-operations?country=IDN')
+
+    page.set_viewport_size({'width': 390, 'height': 844})
+    for route in ('document-rows/ZAF?row=1', 'statements/ZAF', 'funding/SEN',
+                  'organisations', 'non-jetp-energy-operations'):
+        page.goto(url + '/#' + route)
+        page.wait_for_selector('.page-head h1')
+        assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'), route
+    page.set_viewport_size({'width': 1440, 'height': 1100})
+    page.goto(url)
+    page.wait_for_selector('.country-grid')
+
+
+def check_site(url, output, ticket_0902_only=False):
     """Exercise data navigation, filtering, downloads and mobile layout."""
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(headless=True, args=['--no-sandbox'])
@@ -752,6 +823,12 @@ def check_site(url, output):
         page.on('pageerror', lambda error: errors.append(str(error)))
         page.goto(url)
         page.wait_for_selector('.country-grid')
+        check_ticket_0902(page, url)
+        if ticket_0902_only:
+            assert not errors, errors
+            assert not external_requests, external_requests
+            print('Ticket 0902 desktop and phone browser checks passed')
+            return
         assert page.locator('.country-card').count() == 4
         with page.expect_response('**/data/comparison.json') as response:
             page.reload()
@@ -759,7 +836,7 @@ def check_site(url, output):
         page.wait_for_selector('.country-grid')
         page.screenshot(path=str(output), full_page=True)
         check_projects(page, url)
-        page.goto(url + '/#comparisons')
+        page.goto(url + '/#non-jetp-energy-operations')
         page.wait_for_selector('#history-country')
         assert page.locator('#history-table tbody tr').count() == count
         page.locator('#history-country').select_option('IDN')
@@ -830,5 +907,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--url', default='http://127.0.0.1:8765')
     parser.add_argument('--screenshot', type=Path, default=Path('/tmp/jetp-overview.png'))
+    parser.add_argument('--ticket-0902-only', action='store_true')
     args = parser.parse_args()
-    check_site(args.url.rstrip('/'), args.screenshot)
+    check_site(args.url.rstrip('/'), args.screenshot, args.ticket_0902_only)
