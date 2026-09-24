@@ -2,7 +2,6 @@
 Title: Observations et timings
 Created: 2026-09-22
 Author: HDMX-coding-agent
-Blocked-by: 0875
 
 --- log ---
 2026-09-22T17:30Z HDMX-coding-agent created
@@ -13,6 +12,7 @@ Blocked-by: 0875
 2026-09-23T16:00Z HDMX-coding-agent note plan (raid prep), vérification monstre : ce ticket empile trois unités de signature indépendamment testables — (a) observations + timings depuis events/implementation-events/event-timing, (b) status-crosswalk (lettres ZAF, approbation IDN, retraite VNM), (c) sector-crosswalk (fenêtres ZAF, groupes IDN, libellés VNM → CRS 231-236) — chacune avec sa propre fixture et sa propre table cible ; proposition : scinder en 0876a (observations/timings), 0876b (status-crosswalk), 0876c (sector-crosswalk), 0876b bloquant la vérification navigateur de [[0882]] et 0876a bloquant [[0877]] et [[0884]] comme aujourd'hui. Non exécuté ici, signalé à l'auteur.
 2026-09-23T15:23Z HDMX-coding-agent note scission exécutée (raid, tickets-migration-prep) : status-crosswalk vers [[0887]], sector-crosswalk vers [[0888]], chacun Blocked-by [[0873]] (pas ce ticket) puisque les deux lisent des champs de ligne et les tables de [[0880]], jamais une observation — ce qui les laisse tourner en parallèle de [[0874]]–[[0876]]. Ce ticket garde observations, timings et rates ; la vérification du clic Glossary réel déplacée vers [[0887]].
 
+2026-09-24T18:45Z HDMX-coding-agent note blocker 0875 closed — Blocked-by removed.
 --- body ---
 ## Context
 

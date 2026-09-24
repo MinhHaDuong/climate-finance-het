@@ -2,6 +2,7 @@
 Title: Scission des identités : référents, projets, actifs, accords, parties, périmètres
 Created: 2026-09-22
 Author: HDMX-coding-agent
+Closed: PR #1496 merged at 8a91c1fd; independent postmerge review green (134 focused tests passed, no blocking findings); exit criteria and invariants verified
 
 --- log ---
 2026-09-22T17:30Z HDMX-coding-agent created
@@ -14,6 +15,7 @@ Author: HDMX-coding-agent
 2026-09-24T15:09Z Codex note décision de l'auteur dans cette session : après PR #1492, les adresses de l'ancien aperçu n'ont jamais été publiées ; ne pas ajouter les 404 anciens identifiants à routes et ne pas réintroduire leur redirection navigateur. Les routes de lignes M1a déjà présentes servent seulement à retrouver les identifiants de ligne imprimés dans l'export.
 2026-09-24T16:01Z Codex note vérification du contrat DDL : `line-referents` justifie projets, actifs et accords ; les parties ont leur base dans `party-names`, les périmètres dans la table d'ontologie et leurs observations chiffrées suivent en [[0877]]. Le critère de vérification ci-dessous est précisé en ce sens. Deux libellés IDN regroupent chacun deux lignes de subvention distinctes et restent en attente plutôt que d'être promus en accord unique.
 2026-09-24T16:04Z Codex note preuves de sortie sur PR #1496 : `test_committed_split_is_replayable_and_every_identity_has_a_line` (tables et validation SQL), `test_register_allocations_slots_and_component_links` (404 dispositions, routes figées par SHA-256, 21 places, 11 composants, dix candidats non acceptés), `test_ten_cases_cover_the_five_dispositions` (dix cas réels dont un en attente), rapport `docs/jetp-identity-split-0875.md` (comptes et vingt attentes). `make check-fast` : 2316 passés, 10 ignorés ; `make lint` : 339 passés, 11 ignorés. Les quatre vues pays restent identiques octet pour octet à `origin/main`.
+2026-09-24T18:45Z HDMX-coding-agent closed — PR #1496 merged at 8a91c1fd; independent postmerge review green (134 focused tests passed, no blocking findings); exit criteria and invariants verified
 --- body ---
 ## Context
 
