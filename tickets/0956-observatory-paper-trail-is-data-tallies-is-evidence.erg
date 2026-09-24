@@ -1,0 +1,104 @@
+%erg 0.1
+Title: Observatory: the paper trail shows Data steps D1–D4, the tallies hold all Evidence
+Created: 2026-09-24
+Author: claude
+Blocked-by: 0876
+
+--- log ---
+2026-09-24T21:00Z claude created — author's review of the local preview, 2026-09-24; UX structure, not cosmetic (cosmetic findings: 0955)
+2026-09-24T21:20Z claude note author decisions: menu follows pipeline and ontology; no codes in labels; paper trail is a CSV viewer, Agreements included; tallies one page per country and per theme
+
+--- body ---
+## Context
+
+The author reviewed the local preview on 2026-09-24. The paper trail today
+mixes views of tables with our calculations, and its pages follow the legacy
+tables, not the pipeline of `docs/jetp-language.md`.
+
+Author's rule, in their words:
+
+- **"The paper trail" = view of the system tables, raw counts.**
+- **"The tallies" = everything narrative, comparative, derived. Organized by
+  country and by themes.**
+- Use the ontology's language; design for the migrated tables, not the
+  legacy ones.
+
+In ODEM terms, the paper trail is **D** and the tallies are **E**. The
+Methods page already says "The tallies gathers" every "Our calculation"
+number (`app.js`, Methods). The site does not keep that promise yet.
+
+## What the review found
+
+- **Our calculations inside the paper trail.** The Funding country page
+  (`countryPage`) mixes the one published headline with three
+  `computedMetric()` counts, the milestone chart, the technology chart and
+  Viet Nam's side-by-side panel. The landing pages of Document rows,
+  Statements and Funding open on computed comparison tables. The home page's
+  `headlineCounts()` links its counts back into paper-trail pages.
+  `comparisonPage`, already under the tallies, conforms.
+- **The pages follow the legacy tables.** The step codes D1 → D2 → D3 → D4
+  claim a sequence the served data does not have: `events.csv` carries no
+  `line_id`, so a statement reaches the row it was coded from only by locator
+  text. The Statements page also serves `project-source-links.csv`, matching
+  decisions that are not statements; Viet Nam's page serves only those
+  7 links. Migration step 5 (0876, PR #1500) turns the events into D3
+  observations that cite their lines.
+- **Two shapes of page, one hidden entry.** Documents, Projects and
+  Organisations are one table with a country filter. Document rows,
+  Statements and Funding are a summary landing page, then a page per country
+  that the menu does not reveal: the country is chosen through a link inside
+  a summary table. The landing copy promises "Browse" and shows counts.
+- **Extraction covers six documents out of 269 collected.** The six are the
+  documents that print a project table. Most documents are prose. Nothing
+  shows, per document, what the ledger drew from it.
+
+## Target
+
+The paper trail follows the Data steps and reads the migrated tables:
+
+| Step | Page | Reads | Shows |
+|---|---|---|---|
+| D1 Register | Documents | `documents`, `retrievals`, `snapshots` | each document, its fetch status, and what was drawn from it: its lines, its observations, or "nothing drawn yet" (raw counts) |
+| D2 Lines | Lines, from tables and from text | `lines`, `line-fields`, `line-field-specs` | each line verbatim, at its locator |
+| D3 Observations | Observations | `observations`, `timings` | each typed statement, with the line it cites |
+| D4 Referents | Projects, Organisations, Agreements | `projects`, `parties`, `agreements`, `line-referents`, `relations` | each identity and the lines matched to it |
+
+- Every paper-trail page is one table, with country as a facet, the way
+  Documents, Projects and Organisations work today. Landing pages that exist
+  only to show a summary go.
+- Page labels use the ontology's words. The two kinds of extraction the author
+  wants visible (from tables, from text) are two views of D2, not two steps.
+  Until prose lines exist, the "from text" view is empty; say so rather than
+  hide it.
+- The tallies (E) take every "Our calculation": the Funding country pages,
+  the landing pages' comparison tables, the home page's counts, the
+  non-JETP comparison. They are organized **by country** and **by theme**.
+  Funding leaves the paper trail.
+- `docs/jetp-observatory-presentation.md` (ticket 0881) is amended to match
+  before the code changes.
+
+## Author's decisions (2026-09-24)
+
+Principle: **the navigation menu follows the data pipeline and the ontology.**
+
+1. Labels are the ontology's words, with no step codes in them.
+2. The paper trail is a viewer on the CSVs: one page per table the pipeline
+   serves, Agreements included.
+3. The tallies have one page for each country and one page for each theme.
+
+## Exit criteria
+- [ ] `docs/jetp-observatory-presentation.md` states the principle, the D/E
+      split and the page tree above
+- [ ] Each paper-trail page reads a migrated table, not a legacy one
+      (tested on the served view's inputs)
+- [ ] No `computedMetric()` and no chart on a paper-trail page (a test on the
+      rendered pages)
+- [ ] Every observation on the Observations page links to the line it cites
+- [ ] The Documents page shows, per document, how many lines and
+      observations it yielded, or that nothing was drawn yet
+- [ ] Country is a facet on every paper-trail page and survives a change of
+      page
+- [ ] The tallies hold every "Our calculation", on one page per country
+      and one page per theme
+- [ ] No menu label carries a step code
+- [ ] The author has read the preview and accepted it

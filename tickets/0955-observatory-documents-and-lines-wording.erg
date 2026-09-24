@@ -1,0 +1,47 @@
+%erg 0.1
+Title: Observatory: Documents table and Lines page wording (author review, cosmetic)
+Created: 2026-09-24
+Author: claude
+
+--- log ---
+2026-09-24T21:00Z claude created — author's review of the local preview (make jetp-observatory-preview), 2026-09-24
+
+--- body ---
+## Context
+
+The author reviewed the local preview on 2026-09-24. This ticket holds the
+cosmetic findings: wording, columns and labels, with no change to the site's
+structure. The structural findings are in ticket 0956, which renames the
+pages to the steps of `docs/jetp-language.md`. Where this ticket names the
+page that is "Document rows" today, it uses 0956's name, **Lines**.
+
+PR #1497 (ticket 0925, web-archive captures) is open and edits
+`deliverables/jetp-observatory/app.js` on the Documents page: rebase on it
+before starting.
+
+## Documents page (D1)
+
+1. The word "Collection" confuses readers. Rename it **"Fetch status"**, in
+   the column header and in the filter box.
+2. "Publisher's page —" appears on every row, which makes it noise. Show it
+   only when there is a value.
+3. In the same column, a document that was not collected must not carry a
+   "Collected" date. Label that date **"Tried"**.
+4. Put the document's **title** after its ID, in the same ID column.
+5. Put the **size** in the Content type column and drop the size column.
+6. Normalize the content-type string: one spelling per type, not a mix of
+   MIME types and short labels.
+
+## Lines page (D2, today "Document rows")
+
+7. "Six selected document extracts" reads as if the reader had selected
+   something. Say what the six are: the documents that publish a
+   project-by-project table and whose tables are transcribed in full.
+8. The CSV has no single "verbatim" field: each `raw_*` column is the
+   publisher's own column, copied unchanged. Say so on the page and in the
+   download's description, so a reader does not look for a quote column.
+
+## Exit criteria
+- [ ] Items 1–6 are visible on the Documents page of the preview
+- [ ] Items 7–8 are visible on the Lines page and on the CSV download
+- [ ] `make check-fast` and the observatory's browser and render tests pass
