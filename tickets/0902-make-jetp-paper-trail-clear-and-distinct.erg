@@ -1,0 +1,117 @@
+%erg 0.1
+Title: Clarify the JETP paper trail and give Funding and Who's who distinct views
+Created: 2026-09-24
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-24T12:45Z HDMX-coding-agent created from the author's cold read of the local demo: Entries versus On the record was unclear, Funding repeated the Projects table, and Who's who duplicated organisations by role and hid project names behind a count.
+2026-09-24T12:52Z HDMX-coding-agent added the author's fourth request: The tallies' “Comparisons” label misleadingly suggests a comparison between JETP countries; the page holds non-JETP World Bank operations.
+
+--- body ---
+## Context
+
+A reader unfamiliar with the ledger could not infer the distinction between
+Entries and On the record from the labels or the phrase “read under the
+ledger's schema.” The “Inside the portfolio” table on each Funding country
+page is the first eight rows of the Projects table, without a ranking.
+“Who is named, and where” currently keys rows by `(name, role, country)`, so
+one name with both Funder and Operator roles appears twice; the Projects
+column shows a count behind a fold-out rather than the names. These are three
+parts of one task: each step of The paper trail should answer a different
+reader question, in ordinary language, without overstating what the sources
+establish.
+
+## Proposed public copy for author review
+
+Keep the six-step order. Proposed navigation labels: **Documents · Document
+rows · Statements · Projects · Funding · Organisations**. Preserve the old
+hash addresses as forwards if labels and canonical addresses change. Avoid
+“raw,” “parsed,” “facts,” “evidence,” “ledger schema,” and “verified” in the
+public explanation: rows are selected extractions, statements are attributed
+and may be disputed, and neither is a count of unique projects.
+
+| Page | Proposed title | Proposed opening paragraph |
+|---|---|---|
+| The paper trail | Follow a number back to its document | Start with a project, amount or count, then follow the links to the statement we recorded and the document page behind it. You can also start with a document and see what we drew from it. The steps below show different views of the material, so their row counts should not be added together. |
+| Documents | Reports, plans and registers | See the publications we looked for, who issued them, when we retrieved them, and whether an archived copy is available. A listing documents a search or retrieval; it does not endorse everything the publication says. |
+| Document rows (currently Entries) | Rows as the documents print them | Browse selected rows from registers, annexes and lists, with their original wording, columns and document pages. One row can describe a programme, a project, or something else; it is not automatically one unique project. |
+| Statements (currently On the record) | What the documents say | Browse individual statements we recorded about amounts, dates, financing or implementation status, each attributed to its publisher and document page. Several statements may come from one document row, and some come from prose. A reported approval is not a payment. |
+| Projects | Named projects, programmes and components | Search the undertakings named in the documents and follow each one to its statements and sources. Programmes and components can overlap; this is not a count of distinct physical assets. |
+| Funding | Financing reported for each partnership | Compare each partnership's published headline with the financing statements recorded for it. Pledges, needs, approvals, signatures and payments are different milestones; amounts from different documents or milestones are not added here. |
+| Organisations (currently Who's who) | Organisations named in the documents | See which organisations are named as funders or operators, the projects that name them, and any reviewed alternative names. A matching spelling alone is not proof that two organisations are the same. |
+
+On a country page, use the country name plus the same plain-English purpose.
+Replace “read under the ledger's schema” with “recorded as an amount, date or
+status and linked to the document page.” Where the served data also includes
+project-document links, name them explicitly instead of calling every item a
+financial or implementation statement. The introduction and The paper trail,
+Methods, README and country pages must agree. Show one concrete example of a
+document row yielding a statement; state that there is no guaranteed 1:1
+pairing. The author can adjust these exact words in review while preserving
+the distinctions.
+
+## Funding: a different table
+
+Replace “Inside the portfolio” on each `#funding/<CODE>` page with **Financing
+statements in the documents**, one row per *financial statement*, not one row
+per project. Proposed columns: project or programme (linked); publisher's
+milestone; amount and original currency (or “not stated”); funder and
+instrument where stated; event date or reporting date, labelled by its actual
+role; document/page. Keep the attributed country headline above the table.
+Show needs separately from financing; a need is not money provided. Do not
+sum rows, convert currencies, or treat repeated amounts at approval and
+signature as two tranches. Preserve missingness and conflicting statements.
+A visitor can filter by milestone and funder and open the supporting document.
+The Projects page remains the complete, searchable list of named undertakings;
+the Funding page links to it without repeating its first eight rows. Use the
+current financial-event view until 0876 supplies ontology observations, then
+use those observations without changing the reader-facing meaning.
+
+## Organisations: one row per name and country
+
+Combine exact same-name, same-country Funder and Operator rows into one row
+with both role badges. Deduplicate linked projects by stable project ID. Keep
+the role filter inclusive: a row with both roles appears under either filter.
+When a reviewed party identity and its `party-names` forms exist, show its
+preferred name and the recorded aliases with their provenance. Never merge
+similar spellings or guessed acronyms into one organisation without the
+reviewed identity decision (0875). Make aliases discoverable by hover *and*
+keyboard focus/click; a tooltip alone is insufficient.
+
+Replace the “Project · 1” or “Projects · N” collapsed cell with links to up
+to three project names, then a labelled “and X more” disclosure showing the
+remaining linked names. Counts, if shown, are secondary; keep source names
+and countries legible at narrow width. The row should still link to each
+project's detail page.
+
+## The tallies: name the historical pool
+
+Rename **Comparisons** in The tallies to **Non-JETP energy operations**. This
+names the records more accurately than “Non-JETP projects”: the World Bank
+source calls them operations, and administrative closing is not physical
+project completion. Page title proposal: **Earlier energy operations outside
+the JETPs**. Opening paragraph proposal: “Browse closed World Bank
+energy-related operations approved before each country's JETP. They offer
+historical context for financing timelines, not a comparison between JETP
+countries or evidence that the partnerships caused a change.” Keep the
+mixed-sector and additional-financing qualifications and links to official
+records. Update the header menu, section sub-bar, page title, internal links,
+README and presentation document together. Preserve `#comparisons` and its
+earlier aliases as forwarding addresses, including the country filter.
+
+## Relevant files
+
+- `deliverables/jetp-observatory/app.js`, `styles.css` — page copy and tables
+- `deliverables/jetp-observatory/README.md`
+- `docs/jetp-observatory-presentation.md`, `docs/jetp-language.md`
+- `data/jetp/parties.csv`, `party-names.csv` (reviewed aliases); 0875 adds funders and channels
+- `tests/test_jetp_observatory_render.py`, `tests/browser/jetp_observatory.py`
+
+## Exit criteria
+
+- [ ] A cold reader can explain the difference between document rows and attributed statements from the page titles, opening paragraphs and one example; the public copy contains no internal schema jargon and does not equate rows with projects or approvals with payments.
+- [ ] Funding's country table is financing-oriented and no longer invokes `projectTable(d.projects.slice(0, 8))`; each row has a source and date role, needs are separate, and no cross-stage or cross-currency sum appears.
+- [ ] One same-name funder/operator within a country appears once with both roles and no duplicate project links; each role filter still finds it. Reviewed aliases are visible by mouse and keyboard without accepting unreviewed identity matches.
+- [ ] Up to three project names are directly visible in each organisation row; the rest open through an “and X more” disclosure with working project links.
+- [ ] The tallies labels the historical World Bank pool as non-JETP energy operations; no navigation text implies a country-to-country JETP comparison, and old addresses still forward with their filters.
+- [ ] Desktop and phone browser checks cover the copy, table width, filters, links and disclosures. Existing URLs forward if labels change. Run the checks required by AGENTS.md for a site/code change and record them on the PR.
