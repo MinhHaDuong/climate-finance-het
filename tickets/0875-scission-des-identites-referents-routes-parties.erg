@@ -1,5 +1,5 @@
 %erg 0.1
-Title: Scission des identités : référents, routes, projets, actifs, accords, parties, périmètres
+Title: Scission des identités : référents, projets, actifs, accords, parties, périmètres
 Created: 2026-09-22
 Author: HDMX-coding-agent
 
@@ -11,6 +11,7 @@ Author: HDMX-coding-agent
 2026-09-23T14:59Z HDMX-coding-agent note décision de l'auteur (2026-09-23, interactive) : contrôle d'autorité des organisations. La table publishers est fondue dans parties (un publisher est une partie dans un rôle de publication) ; nouvelle table party-names (une ligne par forme imprimée, form_type, langue, justification, une seule forme preferred en vigueur). L'étape 4 de ce ticket part des parties et formes déjà frappées par 0872 (PR #1461) : palier 1 par external-ids (IATI org, ROR, LEI, Wikidata), variantes de casse fusionnées à la frappe, acronymes/traductions/anciens noms en candidats de palier 2. Action 4 réécrite en conséquence.
 2026-09-23T17:04Z HDMX-coding-agent note 0873 opened data/jetp/routes.csv with 1 907 rows of kind line (plan_project_id and VNM inventory_id); the 404 projects.csv identifiers of action 5 are appended to it, not written over it — no key overlaps (checked).
 2026-09-24T14:05Z HDMX-coding-agent note blocker 0874 closed — Blocked-by removed.
+2026-09-24T15:09Z Codex note décision de l'auteur dans cette session : après PR #1492, les adresses de l'ancien aperçu n'ont jamais été publiées ; ne pas ajouter les 404 anciens identifiants à routes et ne pas réintroduire leur redirection navigateur. Les routes de lignes M1a déjà présentes servent seulement à retrouver les identifiants de ligne imprimés dans l'export.
 --- body ---
 ## Context
 
@@ -23,15 +24,15 @@ base (contrat de stockage § 4, palier 1 : identifiant exact ; palier 2 : libell
 candidats revus à la main). La table `parties` existe déjà : [[0872]] l'a
 ouverte avec les publishers, sous contrôle d'autorité (décision de l'auteur du
 2026-09-23, ontologie décision 12 ; contrat de stockage § 4, organisations).
-Ce ticket y ajoute les rôles bailleur et canal d'abord, depuis les 61 libellés
-et les 14 préfixes du registre. `routes` fait résoudre chaque ancien identifiant.
+Ce ticket y ajoute les rôles bailleur et canal d'abord, depuis les libellés
+du journal financier et les 14 préfixes du registre. Les anciens identifiants
+de l'aperçu non publié restent dans le rapport de disposition, pas dans `routes`.
 
 ## Relevant files
 
 - `data/jetp/projects.csv` — l'entrée à scinder
-- `scripts/jetp/reconcile.py` — à créer : paliers 1 et 2, enregistrement des décisions
-- `deliverables/jetp-observatory/data/<CODE>.json` — vues pays à comparer par `routes`
-- `deliverables/jetp-observatory/app.js` — `#project/<id>` résout par `routes`
+- `scripts/jetp/build_reconciliation.py` — paliers 1 et 2, enregistrement des décisions
+- `deliverables/jetp-observatory/data/<CODE>.json` — vues pays à comparer au bit près
 
 ## Actions
 
@@ -61,30 +62,30 @@ et les 14 préfixes du registre. `routes` fait résoudre chaque ancien identifia
      une seule forme `preferred` en vigueur par partie ;
    - `party_in` un rôle par ligne ; `role_in` pour les entités de mise en
      œuvre du registre.
-5. `routes` : 404 anciens identifiants → (genre, identifiant).
+5. Les 404 anciens identifiants ont chacun une disposition dans le rapport ;
+   aucune route publique ancienne n'est créée (décision de l'auteur du 2026-09-24).
 6. Les 11 `project_page_component` deviennent `component_of`.
 
 ## Test
 
 - `tests/test_jetp_identity_split.py` : depuis une fixture de dix lignes
   de `projects.csv` couvrant les cinq dispositions, la scission frappe les
-  identités attendues, n'en frappe aucune sans référent, et chaque ancien
-  identifiant résout par `routes` vers une page qui existe.
+  identités attendues et n'en frappe aucune sans référent.
 
 ## Verification
 
 - [ ] Aucune identité sans ligne `line-referents` acceptée
 - [ ] `COUNT(projects)` nomme son unité ; les 21 places ne sont plus des lignes de registre
-- [ ] Chaque `#project/<ancien id>` ouvre une page (test navigateur sur les 404)
+- [ ] Les 404 lignes ont une disposition ; aucune nouvelle route des anciens IDs n'est publiée
 
 ## Invariants
 
-- Les recettes ZAF et VNM de [[0834]] vertes, par `routes`.
+- Les recettes ZAF et VNM de [[0834]] restent vertes pour les adresses publiées.
 - La ligne M1a de 0725 et 0715 cochée par l'auteur n'est pas retouchée.
 
 ## Exit criteria
 
-- [ ] Cinq tables d'identité, `line-referents`, `relations` (dont les 11 `component_of`), `routes`, `parties` validées par [[0871]]
+- [ ] Cinq tables d'identité, `line-referents`, `relations` (dont les 11 `component_of`), `parties` validées par [[0871]]
 - [ ] Les candidats de palier 2 sont écrits pour les lignes des quatre documents M1a ; [[0833]] les revoit sans relancer le palier 2
 - [ ] Rapport de scission : comptes par disposition, candidats en attente
 - [ ] `make check-fast` et `make lint` verts

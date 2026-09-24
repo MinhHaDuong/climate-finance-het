@@ -38,7 +38,7 @@ def test_cipp_priority_project_appendices_are_exhaustive() -> None:
     }
     assert {row["document_sha256"] for row in indonesia} == {CIPP_SHA256}
     assert {row["priority_tier"] for row in indonesia} == {"priority"}
-    project_ids = {row["project_id"] for row in read_csv(DATA / "projects.csv")}
+    project_ids = {row["project_id"] for row in read_csv(DATA / "migration/0875-projects-legacy.csv")}
     source_ids = {row["source_id"] for row in read_csv(DATA / "sources.csv")}
     assert {row["source_id"] for row in indonesia} <= source_ids
     assert {

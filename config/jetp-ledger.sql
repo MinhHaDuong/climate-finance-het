@@ -593,6 +593,24 @@ FROM ref
 WHERE kind IN (SELECT kind FROM identity_kinds)
   AND NOT EXISTS (SELECT 1 FROM ledger_identities AS i WHERE i.kind = ref.kind AND i.id = ref.id);
 
+-- A project, asset or agreement is an accepted identity only when a cited
+-- line minted it.  Publishing parties use party_names as their separate basis.
+CREATE VIEW violation_identity_without_line AS
+WITH identity (kind, id) AS (
+          SELECT 'project', project_id FROM projects
+UNION ALL SELECT 'asset', asset_id FROM assets
+UNION ALL SELECT 'agreement', agreement_id FROM agreements
+)
+SELECT kind || ' ' || id || ': no accepted line_referents row' AS detail
+FROM identity AS i
+WHERE NOT EXISTS (
+    SELECT 1 FROM line_referents AS r
+    WHERE r.referent_kind = i.kind AND r.referent_id = i.id
+      AND r.status = 'accepted'
+      AND NOT EXISTS (SELECT 1 FROM line_referents AS s
+                      WHERE s.supersedes = r.referent_row_id)
+);
+
 -- A line's snapshot is yielded by at least one retrieval.
 CREATE VIEW violation_line_snapshot_retrieved AS
 SELECT 'lines ' || l.line_id || ': snapshot ' || l.sha256 || ' is yielded by no retrieval' AS detail

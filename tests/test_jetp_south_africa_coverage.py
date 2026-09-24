@@ -68,7 +68,7 @@ def test_south_africa_authority_matrix_is_terminal_and_sourced() -> None:
 def test_every_official_south_african_project_has_a_source() -> None:
     projects = [
         row
-        for row in read_csv(ROOT / "data" / "jetp" / "projects.csv")
+        for row in read_csv(ROOT / "data" / "jetp" / "migration/0875-projects-legacy.csv")
         if row["country"] == "ZAF"
     ]
     direct_project_sources = {

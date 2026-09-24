@@ -36,7 +36,7 @@ before the current tables are removed. Counts below are from the tables on
 | `sources.csv` | 301 | 94 parties with 95 name forms, 301 documents, 307 publications | case variants merged at minting; three joint publisher texts split into two parties each; "X via Y" and "X / Y" texts resolved to publisher X, three consulting firms linked as `author`; acronym pairs are tier-2 candidates |
 | `manifest.csv` | 314 | 314 retrievals, 264 snapshots | 41 failed retrievals carry no snapshot; 9 snapshots are yielded by two retrievals each |
 | `projects.csv` ZAF register | 257 | 257 lines of the Q1 2026 register, `register_allocation`; 257 agreements minted by basis `register_row`; projects minted only where the reviewed name match holds | the register's own status letter becomes `own_status`, axis delivery |
-| `projects.csv` VNM count slots | 21 | 1 perimeter, 2 observations of measure `count` (7 initial, 17 screened) citing the portfolio lines | routes for the 21 slot identifiers point at the perimeter |
+| `projects.csv` VNM count slots | 21 | 1 perimeter, 2 observations of measure `count` (7 initial, 17 screened) citing the portfolio lines | the 21 unpublished slot identifiers have dispositions, not browser redirects |
 | `projects.csv` SEN | 43 | 49 lines already exist; 43 referents re-decided from the plan's own submission and quick-win lines | quick win is a classification of a line, not a kind |
 | `projects.csv` IDN | 74 | 44 grant lines become agreements; 19 pipeline and 9 finance rows become projects or agreements on review; 2 monitoring rows become lines | |
 | `projects.csv` remainder | 9 | projects | |
@@ -83,8 +83,9 @@ Order of work, each step a ticket with its own byte-level check:
    `data/jetp/ledger-snapshots/`; their lines cite those local records and
    retain each original source identifier, locator and hash. No project or
    `line-referents` row is minted in this step.
-4. Identity split: referents, routes, the five identity tables. Every old
-   identifier resolves through `routes`. The party table, which step 1 starts
+4. Identity split: referents and the five identity tables. The 404 identifiers
+   from the unpublished preview have dispositions without new `routes` rows
+   (author decision, 2026-09-24). The party table, which step 1 starts
    with the publishers under authority control (decision 12 of the
    [ontology](jetp-ontology.md)), gains the funders and channels here, each
    with its `party-names` rows and, where one exists, its external identifier

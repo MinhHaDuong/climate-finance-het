@@ -938,8 +938,9 @@ def test_every_ontology_table_is_served_one_file_each_with_its_columns_verbatim(
         # Every row, superseded ones included, as the CSV holds it.
         assert view["rows"] == [list(row) for row in rows], table
         assert view["in_force"] == [row[view["key"]] for row in current[table]], table
-    # A table with no row yet is served, empty, not left out.
-    assert served("ontology/perimeters")["rows"] == []
+    # The Viet Nam count perimeter is now named; its observations follow in 0877.
+    assert [row[1] for row in served("ontology/perimeters")["rows"]] == [
+        "vnm-jetp-portfolio-2025"]
 
 
 def test_the_glossary_renders_each_term_in_force_with_its_definition() -> None:

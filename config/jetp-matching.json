@@ -1,0 +1,13 @@
+{
+  "tier2_method_version": "1",
+  "tier2_candidate_similarity": 1.0,
+  "tier2_llm_acceptance_confidence": 0.85,
+  "m1a_documents": [
+    "zaf-jet-investment-register-q1-2026",
+    "idn-cipp-2023-cpr-mirror",
+    "idn-jetp-progress-report-2025",
+    "vnm-rmp-2023",
+    "sen-investment-plan-l4-mirror",
+    "sen-investment-plan-annexes-mirror"
+  ]
+}

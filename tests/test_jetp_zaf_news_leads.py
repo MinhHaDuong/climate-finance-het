@@ -59,7 +59,7 @@ def test_canonical_leads_are_explicitly_non_evidentiary() -> None:
     projects = {
         row["project_id"]
         for row in csv.DictReader(
-            (ROOT / "data" / "jetp" / "projects.csv").open(
+            (ROOT / "data" / "jetp" / "migration/0875-projects-legacy.csv").open(
                 encoding="utf-8", newline=""
             )
         )

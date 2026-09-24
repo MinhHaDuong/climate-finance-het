@@ -1,0 +1,2 @@
+perimeter_row_id,perimeter_id,country,name,scope,definition,recorded_at,decided_by,status,supersedes,notes
+vnm-jetp-portfolio-2025.1,vnm-jetp-portfolio-2025,VNM,Viet Nam JETP portfolio reported in 2025,,The portfolio whose initial and screened counts the 2025 Secretariat source reports.,2026-09-24,scripts/jetp/reconcile.py,accepted,,Count observations follow in ticket 0877

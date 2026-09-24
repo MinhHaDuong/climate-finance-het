@@ -99,7 +99,7 @@ def test_indonesia_2025_report_series_is_archived() -> None:
 
 def test_indonesia_2025_approved_portfolio_is_project_level() -> None:
     all_projects = [
-        row for row in read_csv(DATA / "projects.csv") if row["country"] == "IDN"
+        row for row in read_csv(DATA / "migration/0875-projects-legacy.csv") if row["country"] == "IDN"
     ]
     projects = [
         row
@@ -145,7 +145,7 @@ def test_indonesia_2025_approved_portfolio_is_project_level() -> None:
 def test_indonesia_2025_finance_pipeline_is_project_level() -> None:
     projects = [
         row
-        for row in read_csv(DATA / "projects.csv")
+        for row in read_csv(DATA / "migration/0875-projects-legacy.csv")
         if row["country"] == "IDN" and row["project_id"].startswith("idn-pipe-")
     ]
     events = [
@@ -354,7 +354,7 @@ def test_indonesia_authority_matrix_is_terminal_and_sourced() -> None:
 def test_every_official_indonesian_project_has_a_source() -> None:
     projects = [
         row
-        for row in read_csv(ROOT / "data" / "jetp" / "projects.csv")
+        for row in read_csv(ROOT / "data" / "jetp" / "migration/0875-projects-legacy.csv")
         if row["country"] == "IDN"
     ]
     known_source_ids = {row["source_id"] for row in read_csv(SOURCES)}

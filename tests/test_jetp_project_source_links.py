@@ -29,7 +29,7 @@ def read_csv(path: Path) -> list[dict[str, str]]:
 
 def test_project_source_links_reference_canonical_records() -> None:
     links = read_csv(LINKS)
-    projects = read_csv(DATA / "projects.csv")
+    projects = read_csv(DATA / "migration/0875-projects-legacy.csv")
     sources = read_csv(DATA / "sources.csv")
     project_ids = {row["project_id"] for row in projects}
     source_ids = {row["source_id"] for row in sources}
@@ -44,7 +44,7 @@ def test_project_source_links_reference_canonical_records() -> None:
 
 def test_zaf_project_pages_are_evidence_not_duplicate_projects() -> None:
     projects = [
-        row for row in read_csv(DATA / "projects.csv") if row["country"] == "ZAF"
+        row for row in read_csv(DATA / "migration/0875-projects-legacy.csv") if row["country"] == "ZAF"
     ]
     links = [row for row in read_csv(LINKS) if row["country"] == "ZAF"]
     project_page_sources = {

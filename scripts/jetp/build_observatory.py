@@ -28,7 +28,9 @@ def read_inputs(root):
     """Load the named small registries without touching DVC or the network."""
     tables = {}
     for name in TABLES:
-        with (root / 'data/jetp' / f'{name}.csv').open() as stream:
+        path = (root / 'data/jetp' / 'migration/0875-projects-legacy.csv'
+                if name == 'projects' else root / 'data/jetp' / f'{name}.csv')
+        with path.open() as stream:
             tables[name] = list(csv.DictReader(stream))
     timing = unique_rows(tables['event-timing'], 'event_id')
     ids = {r['event_id'] for r in tables['events']} | {r['implementation_event_id'] for r in tables['implementation-events']}
@@ -268,7 +270,9 @@ def edition_history(root):
 
 def provenance(root, config):
     """Hash every input and record the code checkout; make file bytes authoritative."""
-    paths = [root / 'data/jetp' / f'{name}.csv' for name in TABLES]
+    paths = [(root / 'data/jetp' / 'migration/0875-projects-legacy.csv'
+              if name == 'projects' else root / 'data/jetp' / f'{name}.csv')
+             for name in TABLES]
     paths += sorted((root / 'data/jetp/comparison').glob('*.json'))
     paths += sorted((root / 'data/jetp/editorial/countries').glob('*.md'))
     paths += [root / 'config/jetp_observatory.yaml', root / 'data/jetp/documents.dvc',

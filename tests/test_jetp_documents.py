@@ -147,7 +147,7 @@ def test_canonical_implementation_events_reference_known_objects():
         newline="", encoding="utf-8"
     ) as stream:
         events = list(csv.DictReader(stream))
-    with (data / "projects.csv").open(newline="", encoding="utf-8") as stream:
+    with (data / "migration/0875-projects-legacy.csv").open(newline="", encoding="utf-8") as stream:
         project_ids = {row["project_id"] for row in csv.DictReader(stream)}
     with (data / "sources.csv").open(newline="", encoding="utf-8") as stream:
         source_ids = {row["source_id"] for row in csv.DictReader(stream)}
