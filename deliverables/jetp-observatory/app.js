@@ -470,6 +470,65 @@ function archivedLink(entry, page, attrs = "", label = "Open archived copy") {
     ? `<a href="${esc(href)}"${attrs} data-link="archived" target="_blank" rel="noopener">${esc(label)} ↗</a>`
     : "";
 }
+/* Ticket 0925: publisher pages rot. Two tables of their own, served beside
+ * the registry and joined to it here on the address the registry records
+ * (the entry's `url`): the Web Archive copy of that address
+ * (data/web-archive.json, from data/jetp/web-archive-captures.csv) and the
+ * last check of it (data/publisher-links.json, from
+ * data/jetp/publisher-link-checks.csv). Either may be missing or empty; a
+ * page then shows no copy and no dead link. The origin address is never
+ * rewritten: a dead publisher link stays the link we collected from, placed
+ * after the copy and marked with the date it was first found dead. */
+let webArchive = {};
+let linkChecks = {};
+const indexBy = (rows, key) => Object.fromEntries((rows || []).map((row) => [row[key], row]));
+const webArchiveOf = (entry) => {
+  const capture = webArchive[entry?.url];
+  return capture?.capture_url && ["captured", "reused"].includes(capture.outcome) ? capture : null;
+};
+const deadSince = (entry) => {
+  const check = linkChecks[entry?.url];
+  return check?.outcome === "dead" ? check.dead_since || (check.checked_at || "").slice(0, 10) : null;
+};
+/* A PDF opens as the archived bytes themselves (Wayback's id_ form), at the
+ * page, so its SHA-256 can be compared with ours; a web page opens in the
+ * Wayback replay, which rewrites it and so is never byte-identical. */
+const WAYBACK_STAMP = /\/web\/([0-9]{14})\//;
+function webArchiveHref(entry, page) {
+  const capture = webArchiveOf(entry);
+  if (!capture) return null;
+  if (!originIsPdf(entry)) return capture.capture_url;
+  return capture.capture_url.replace(WAYBACK_STAMP, "/web/$1id_/") + (page ? "#page=" + page : "");
+}
+const identityNote = (entry) =>
+  originIsPdf(entry)
+    ? "Our SHA-256 lets you check that the Web Archive copy is the same file we read."
+    : "A Web Archive capture of a web page is not byte-identical to what we read.";
+function webArchiveLink(entry, page, attrs = "", label) {
+  const href = webArchiveHref(entry, page);
+  if (!href) return "";
+  const when = (webArchiveOf(entry).captured_at || "").slice(0, 10);
+  return `<a href="${esc(href)}"${attrs} data-link="web-archive" title="${esc(identityNote(entry))}" target="_blank" rel="noopener">${esc(label || "Web Archive copy — " + date(when))} ↗</a>`;
+}
+function deadNote(entry) {
+  const since = deadSince(entry);
+  return since
+    ? ` <span class="note dead-link" data-dead-since="${esc(since)}">publisher link dead since ${esc(date(since))}</span>`
+    : "";
+}
+/* The publisher's page and its Web Archive copy side by side, the copy first
+ * once the publisher's link is dead. */
+function sourceLinks(entry, page, attrs = "", publisherLabel, archiveLabel) {
+  const publisher = publisherLink(entry, page, attrs, publisherLabel) + deadNote(entry);
+  const copy = webArchiveLink(entry, page, attrs, archiveLabel);
+  if (!copy) return publisher;
+  return deadSince(entry) ? `${copy} · ${publisher}` : `${publisher} · ${copy}`;
+}
+/* Said beside a Web Archive copy where there is room: what it can prove. */
+const identitySmall = (entry) =>
+  webArchiveOf(entry)
+    ? `<small class="note" data-identity="${originIsPdf(entry) ? "pdf" : "html"}">${esc(identityNote(entry))}</small>`
+    : "";
 /* What was read, and when: the collection date and the fingerprint of the
  * bytes, or the failure the collector recorded where no bytes were kept. */
 function collectedFacts(entry, separator = " · ") {
@@ -560,7 +619,7 @@ function extractedPageLink(row, entry, key) {
   if (!row.pdf_page) return "";
   const attrs = ` data-extracted-page="${esc(key)}"`;
   const archived = archivedLink(entry, row.pdf_page, attrs, "archived copy");
-  return ` · PDF page ${Number(row.pdf_page)}: ${publisherLink(entry, row.pdf_page, attrs, "publisher's page")}${archived ? " · " + archived : ""}`;
+  return ` · PDF page ${Number(row.pdf_page)}: ${sourceLinks(entry, row.pdf_page, attrs, "publisher's page", "Web Archive copy")}${archived ? " · " + archived : ""}`;
 }
 function extractedItem(row, entry) {
   if (row.product === "m1a")
@@ -667,7 +726,7 @@ function extractionCell(entry) {
       const page = firstPdfPage(extracted);
       const publisher = document.getElementById("publisher-" + entry.row_key);
       const archived = document.getElementById("archived-" + entry.row_key);
-      if (page && publisher) publisher.innerHTML = publisherLink(entry, page, documentAttrs(entry));
+      if (page && publisher) publisher.innerHTML = sourceLinks(entry, page, documentAttrs(entry));
       if (page && archived) archived.innerHTML = archivedLink(entry, page, documentAttrs(entry));
       cell.innerHTML =
         !extracted.length && !relying.length
@@ -702,7 +761,7 @@ function documentsPage(params) {
   // of its own. The publisher's page is always there; the archived copy only
   // where this server holds it (ticket 0915).
   const links = (r) =>
-    `<span id="publisher-${esc(r.row_key)}">${publisherLink(r, null, documentAttrs(r))}</span><small>${collectedFacts(r, "<br>")}</small><span id="archived-${esc(r.row_key)}">${archivedLink(r, null, documentAttrs(r))}</span>`;
+    `<span id="publisher-${esc(r.row_key)}">${sourceLinks(r, null, documentAttrs(r))}</span><small>${collectedFacts(r, "<br>")}</small>${identitySmall(r)}<span id="archived-${esc(r.row_key)}">${archivedLink(r, null, documentAttrs(r))}</span>`;
   const table = filterTable("documents", rows, {
     facets: [
       {
@@ -869,7 +928,7 @@ function evidenceLink(locator, entry, pdfPage, dataAttr, dataValue, noEntry) {
     return `<span class="note">${text}${noEntry ? "<br>" + noEntry : ""}</span>`;
   const attrs = ` ${dataAttr}="${esc(dataValue)}"`;
   const archived = archivedLink(entry, pdfPage, attrs, "archived copy");
-  return `<span class="document-ref">${text}<br>${publisherLink(entry, pdfPage, attrs)}${archived ? " · " + archived : ""}<small>${collectedFacts(entry)}</small></span>`;
+  return `<span class="document-ref">${text}<br>${sourceLinks(entry, pdfPage, attrs)}${archived ? " · " + archived : ""}<small>${collectedFacts(entry)}</small>${identitySmall(entry)}</span>`;
 }
 function inventoryEvidence(row) {
   const entry = documentIndex[row.source_id];
@@ -1221,7 +1280,8 @@ function archivedCopy(id, source) {
   const entry = documentIndex[id];
   if (!entry) return "";
   const archived = archivedLink(entry, null, ` data-archived-source="${esc(id)}"`);
-  return `<small data-document-facts="${esc(id)}">Publisher's page: ${esc(hostOf(source.url) || "no address recorded")} · ${collectedFacts(entry)}</small>${archived ? `<small>${archived}</small>` : ""}`;
+  const copy = webArchiveLink(entry, null, ` data-web-archive-source="${esc(id)}"`);
+  return `<small data-document-facts="${esc(id)}">Publisher's page: ${esc(hostOf(source.url) || "no address recorded")}${deadNote(entry)} · ${collectedFacts(entry)}</small>${copy ? `<small>${copy} · ${esc(identityNote(entry))}</small>` : ""}${archived ? `<small>${archived}</small>` : ""}`;
 }
 function projectPage(id) {
   const p = projects.find((p) => p.id === id);
@@ -1858,7 +1918,7 @@ function copiesCallout(lead) {
   const held = stagedCopies.size
     ? " This local preview also opens the archived copies staged in <code>documents/</code> by <code>make jetp-observatory-documents</code>; the public site serves none."
     : " This site serves no copy of the documents.";
-  return `<div class="callout" data-staged-copies="${stagedCopies.size}">${lead ? esc(lead) + " " : ""}Each document links to the page we collected it from, with the collection date and the SHA-256 fingerprint of the bytes we read. Page numbers refer to those bytes; the publisher's current file may differ.${held} Documents retain their publishers' rights.</div>`;
+  return `<div class="callout" data-staged-copies="${stagedCopies.size}">${lead ? esc(lead) + " " : ""}Each document links to the page we collected it from, with the collection date and the SHA-256 fingerprint of the bytes we read. Page numbers refer to those bytes; the publisher's current file may differ.${held} Where the Internet Archive holds a copy of that page, a dated “Web Archive copy” link sits beside it; once a periodic check finds the publisher's link dead, the copy comes first. Documents retain their publishers' rights.</div>`;
 }
 const load = async (file) => {
   const response = await fetch("data/" + file + ".json");
@@ -1867,8 +1927,8 @@ const load = async (file) => {
 };
 async function start() {
   try {
-    let termsView, statusCrosswalkView, staged;
-    [overview, comparison, documentsData, editions, evidence, m1a, termsView, statusCrosswalkView, partyNames, staged] = await Promise.all([
+    let termsView, statusCrosswalkView, staged, captures, checks;
+    [overview, comparison, documentsData, editions, evidence, m1a, termsView, statusCrosswalkView, partyNames, staged, captures, checks] = await Promise.all([
       load("overview"),
       load("comparison"),
       load("documents"),
@@ -1879,8 +1939,12 @@ async function start() {
       load("ontology/status-crosswalk"),
       load("party-names"),
       stagedIndex(),
+      load("web-archive").catch(() => ({ captures: [] })),
+      load("publisher-links").catch(() => ({ checks: [] })),
     ]);
     stagedCopies = new Set(staged?.objects || []);
+    webArchive = indexBy(captures.captures, "url");
+    linkChecks = indexBy(checks.checks, "url");
     ontology = readOntology(termsView, statusCrosswalkView);
     countries = Object.fromEntries(
       await Promise.all(
