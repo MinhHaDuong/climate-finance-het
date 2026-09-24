@@ -54,7 +54,7 @@ def _line_index(lines):
     return by_name, by_legacy, by_document, by_id
 
 
-def _basis(row, lines, plans, candidates, by_name, by_legacy):
+def _basis(row, lines, plans, routes, candidates, by_name, by_legacy):
     """Choose only an explicit or unique exact line; do not promote fuzzy hits."""
     old_id = row['project_id']
     if row['verification_status'] == 'official_register':
@@ -68,13 +68,21 @@ def _basis(row, lines, plans, candidates, by_name, by_legacy):
         if len(matching) == 1:
             return matching[0], 'register_id'
     explicit = by_legacy[old_id]
-    if explicit:
-        return sorted(explicit, key=lambda x: x['line_id'])[0], 'legacy_project_id'
-    plan_lines = [line for plan in plans if plan['canonical_project_id'] == old_id
-                  for line in lines if line['country'] == plan['country'] and
-                  line['label'] == plan['project_name'] and
-                  line['line_id'].startswith(plan['source_id'] + '-')]
+    if len(explicit) == 1:
+        return explicit[0], 'legacy_project_id'
+    if len(explicit) > 1:
+        return None, 'multiple_legacy_lines'
+    by_id = {line['line_id']: line for line in lines}
+    plan_lines = [by_id[routes[plan['plan_project_id']]] for plan in plans
+                  if plan['canonical_project_id'] == old_id
+                  and plan['reconciliation_status'] == 'matched'
+                  and plan['plan_project_id'] in routes
+                  and routes[plan['plan_project_id']] in by_id]
     if plan_lines:
+        # The legacy plan crosswalk explicitly reviewed each link to old_id.
+        # One such line suffices as the identity basis; this does not claim
+        # that the different published plan rows are the same line. Line-only
+        # dispositions retain the whole set in their report target below.
         return sorted(plan_lines, key=lambda x: x['line_id'])[0], 'reviewed_plan_match'
     exact = by_name[row['country'], label_key(row['canonical_name'])]
     if len(exact) == 1 and exact[0]['classification'] in ('named_item', 'submission'):
@@ -166,7 +174,8 @@ def tier2_candidates(ledger, lines, accepted_line_ids):
     return sorted(candidates, key=lambda r: r['relation_id'])
 
 
-def _write_results(ledger, schema, tables, report, identity_for, existing_names, output_path):
+def _write_results(ledger, schema, tables, report, identity_for, pending_lines,
+                   existing_names, output_path):
     frozen = ledger / LEGACY
     frozen.parent.mkdir(exist_ok=True)
     if not frozen.exists():
@@ -178,7 +187,8 @@ def _write_results(ledger, schema, tables, report, identity_for, existing_names,
     writer.writerow(('old_id', 'disposition', 'new_id', 'basis_method', 'line_id'))
     for old_id, kind, target, method in report:
         writer.writerow((old_id, kind, '' if target == 'pending' else target,
-                         method, identity_for.get(old_id, (None, None, ''))[2] or ''))
+                         method, identity_for.get(old_id, (None, None, ''))[2]
+                         or pending_lines.get(old_id, '')))
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(output.getvalue())
     _write_funder_audit(ledger, existing_names)
@@ -209,10 +219,11 @@ def _write_funder_audit(ledger, existing_names):
 
 def _register_roles(ledger, schema, legacy, identity_for, register_fields, relations):
     old_names = table_rows(ledger, 'party_names', schema)
-    parties = [r for r in table_rows(ledger, 'parties', schema)
-               if r['notes'] != 'Funder or channel named by a register line']
     party_names = [r for r in old_names if r['decided_by'] not in
                    {DECIDED_BY, 'scripts/jetp/reconcile.py'}]
+    baseline_ids = {r['party_id'] for r in party_names}
+    parties = [r for r in table_rows(ledger, 'parties', schema)
+               if r['party_id'] in baseline_ids]
     existing_names = {name_key(r['name']): r['party_id'] for r in party_names}
     existing_forms = {(r['party_id'], r['name']) for r in party_names}
     used_party_ids = {r['party_id'] for r in parties}
@@ -250,7 +261,8 @@ def _register_roles(ledger, schema, legacy, identity_for, register_fields, relat
         for role, column in (('funder', 'Funding Partners'), ('channel', 'Disbursement Channel')):
             form = fields[column].strip()
             if (not form or form.casefold() in {'service provider', 'tbd', 'tbc'}
-                    or any(sep in form for sep in (';', ' and ', ', ', ' & ', ' / '))):
+                    or any(sep in form for sep in (';', ' and ', ', ', ' & ',
+                                                   ' / ', ' or ', ' with ', ' ie. '))):
                 continue
             party_id = party(form, line_id)
             relations.append(_relation(f'0875.{role}.{old_id}', 'party', party_id,
@@ -290,11 +302,15 @@ def build(ledger=LEDGER_DIR, write=False, output=None):
     legacy = csv_rows(old_path)
     lines = table_rows(ledger, 'lines', schema)
     plans = csv_rows(ledger / 'plan-projects.csv')
+    routes = {row['old_id']: row['new_id'] for row in table_rows(ledger, 'routes', schema)
+              if row['kind'] == 'line'}
     link_candidates = csv_rows(ledger / 'migration/0874-link-candidates.csv')
     candidates = defaultdict(list)
     for candidate in link_candidates:
         candidates[candidate['old_project_id']].append(candidate)
     by_name, by_legacy, _, line_ids = _line_index(lines)
+    pending_lines = {old_id: ';'.join(sorted(line['line_id'] for line in matches))
+                     for old_id, matches in by_legacy.items() if len(matches) > 1}
     projects, assets, agreements, referents, report = [], [], [], [], []
     relations = [r for r in table_rows(ledger, 'relations', schema)
                  if not r['relation_id'].startswith('0875.')]
@@ -305,15 +321,21 @@ def build(ledger=LEDGER_DIR, write=False, output=None):
     for old in legacy:
         old_id = old['project_id']
         kind = disposition(old)
-        line, method = _basis(old, lines, plans, candidates, by_name, by_legacy)
+        line, method = _basis(old, lines, plans, routes, candidates, by_name, by_legacy)
         target_id = old_id
         if kind == 'perimeter':
             target_id = 'vnm-jetp-portfolio-2025'
         elif line is None:
-            report.append((old_id, kind, 'pending', 'no precise line'))
+            report.append((old_id, kind, 'pending', method))
             continue
         elif kind == 'line':
             target_id = line['line_id']
+            plan_targets = sorted({routes[plan['plan_project_id']] for plan in plans
+                                   if plan['canonical_project_id'] == old_id
+                                   and plan['reconciliation_status'] == 'matched'
+                                   and plan['plan_project_id'] in routes})
+            if plan_targets:
+                target_id = ';'.join(plan_targets)
         elif kind == 'agreement':
             target_id = 'agreement-' + old_id
             fields = register_fields.get(line['line_id'], {})
@@ -337,7 +359,8 @@ def build(ledger=LEDGER_DIR, write=False, output=None):
                                  classification='project', sector=None,
                                  notes=f'Legacy {old_id}; {old["notes"]}'))
             referents.append(_referent(line, 'project', target_id, method))
-        identity_for[old_id] = (kind, target_id, line['line_id'] if line else None)
+        identity_for[old_id] = (kind, target_id,
+                                target_id if kind == 'line' else line['line_id'] if line else None)
         report.append((old_id, kind, target_id, method))
 
     # A named, source-defined perimeter exists before 0877 adds its two count
@@ -400,7 +423,8 @@ def build(ledger=LEDGER_DIR, write=False, output=None):
                   line_referents=referents, relations=relations,
                   parties=parties, party_names=party_names, perimeters=perimeters)
     if write:
-        _write_results(ledger, schema, tables, report, identity_for, existing_names,
+        _write_results(ledger, schema, tables, report, identity_for, pending_lines,
+                       existing_names,
                        output or ledger / 'migration/0875-dispositions.csv')
     return tables, report
 

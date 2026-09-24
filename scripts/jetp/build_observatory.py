@@ -19,6 +19,7 @@ from jetp._observatory_data import (
 )
 
 ROOT = Path(__file__).resolve().parents[2]
+LEGACY_PROJECTS = Path('data/jetp/migration/0875-projects-legacy.csv')
 TABLES = ('projects', 'events', 'implementation-events', 'sources', 'source-claims',
           'project-source-links', 'project-coverage', 'manifest', 'event-timing')
 STAGES = ('Signed', 'Approved', 'Registered financing', 'Mou', 'Announced', 'Need')
@@ -28,7 +29,7 @@ def read_inputs(root):
     """Load the named small registries without touching DVC or the network."""
     tables = {}
     for name in TABLES:
-        path = (root / 'data/jetp' / 'migration/0875-projects-legacy.csv'
+        path = (root / LEGACY_PROJECTS
                 if name == 'projects' else root / 'data/jetp' / f'{name}.csv')
         with path.open() as stream:
             tables[name] = list(csv.DictReader(stream))
@@ -270,7 +271,7 @@ def edition_history(root):
 
 def provenance(root, config):
     """Hash every input and record the code checkout; make file bytes authoritative."""
-    paths = [(root / 'data/jetp' / 'migration/0875-projects-legacy.csv'
+    paths = [(root / LEGACY_PROJECTS
               if name == 'projects' else root / 'data/jetp' / f'{name}.csv')
              for name in TABLES]
     paths += sorted((root / 'data/jetp/comparison').glob('*.json'))

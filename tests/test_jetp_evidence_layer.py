@@ -354,10 +354,12 @@ def test_the_committed_layer_matches_its_inputs():
     joint_extra = sum(len(joint_forms(parts)) - 1
                       for parts in evidence.JOINT_LABELS.values())
     assert len(publications) == len(sources) + joint_extra + firm_written
-    # 0875 extends the publisher authority file with funders and channels.
-    # Replaying 0872 still compares exactly its own publisher rows.
+    # 0875 extends the authority file with funders and channels. Replaying
+    # 0872 compares only parties that hold a document publication role.
+    publisher_ids = {dict(zip(schema.header('document_publishers'), row))['party_id']
+                     for row in ledger_headers.read_table(ledger, 'document_publishers', schema)[0]}
     assert evidence.reconstruct(sources, manifest)['parties'] == [
         dict(zip(schema.header('parties'), row)) for row in
         ledger_headers.read_table(ledger, 'parties', schema)[0]
-        if dict(zip(schema.header('parties'), row))['notes'] !=
-        'Funder or channel named by a register line']
+        if dict(zip(schema.header('parties'), row))['party_id'] in publisher_ids
+    ]

@@ -12,6 +12,8 @@ Author: HDMX-coding-agent
 2026-09-23T17:04Z HDMX-coding-agent note 0873 opened data/jetp/routes.csv with 1 907 rows of kind line (plan_project_id and VNM inventory_id); the 404 projects.csv identifiers of action 5 are appended to it, not written over it — no key overlaps (checked).
 2026-09-24T14:05Z HDMX-coding-agent note blocker 0874 closed — Blocked-by removed.
 2026-09-24T15:09Z Codex note décision de l'auteur dans cette session : après PR #1492, les adresses de l'ancien aperçu n'ont jamais été publiées ; ne pas ajouter les 404 anciens identifiants à routes et ne pas réintroduire leur redirection navigateur. Les routes de lignes M1a déjà présentes servent seulement à retrouver les identifiants de ligne imprimés dans l'export.
+2026-09-24T16:01Z Codex note vérification du contrat DDL : `line-referents` justifie projets, actifs et accords ; les parties ont leur base dans `party-names`, les périmètres dans la table d'ontologie et leurs observations chiffrées suivent en [[0877]]. Le critère de vérification ci-dessous est précisé en ce sens. Deux libellés IDN regroupent chacun deux lignes de subvention distinctes et restent en attente plutôt que d'être promus en accord unique.
+2026-09-24T16:04Z Codex note preuves de sortie sur PR #1496 : `test_committed_split_is_replayable_and_every_identity_has_a_line` (tables et validation SQL), `test_register_allocations_slots_and_component_links` (404 dispositions, routes figées par SHA-256, 21 places, 11 composants, dix candidats non acceptés), `test_ten_cases_cover_the_five_dispositions` (dix cas réels dont un en attente), rapport `docs/jetp-identity-split-0875.md` (comptes et vingt attentes). `make check-fast` : 2316 passés, 10 ignorés ; `make lint` : 339 passés, 11 ignorés. Les quatre vues pays restent identiques octet pour octet à `origin/main`.
 --- body ---
 ## Context
 
@@ -30,7 +32,7 @@ de l'aperçu non publié restent dans le rapport de disposition, pas dans `route
 
 ## Relevant files
 
-- `data/jetp/projects.csv` — l'entrée à scinder
+- `data/jetp/migration/0875-projects-legacy.csv` — l'entrée figée à scinder ; `data/jetp/projects.csv` — la sortie
 - `scripts/jetp/build_reconciliation.py` — paliers 1 et 2, enregistrement des décisions
 - `deliverables/jetp-observatory/data/<CODE>.json` — vues pays à comparer au bit près
 
@@ -74,9 +76,9 @@ de l'aperçu non publié restent dans le rapport de disposition, pas dans `route
 
 ## Verification
 
-- [ ] Aucune identité sans ligne `line-referents` acceptée
-- [ ] `COUNT(projects)` nomme son unité ; les 21 places ne sont plus des lignes de registre
-- [ ] Les 404 lignes ont une disposition ; aucune nouvelle route des anciens IDs n'est publiée
+- [x] Aucun projet, actif ou accord sans ligne `line-referents` acceptée ; chaque partie a sa forme justifiée
+- [x] `COUNT(projects)` nomme son unité ; les 21 places ne sont plus des lignes de registre
+- [x] Les 404 lignes ont une disposition ; aucune nouvelle route des anciens IDs n'est publiée
 
 ## Invariants
 
@@ -85,7 +87,7 @@ de l'aperçu non publié restent dans le rapport de disposition, pas dans `route
 
 ## Exit criteria
 
-- [ ] Cinq tables d'identité, `line-referents`, `relations` (dont les 11 `component_of`), `parties` validées par [[0871]]
-- [ ] Les candidats de palier 2 sont écrits pour les lignes des quatre documents M1a ; [[0833]] les revoit sans relancer le palier 2
-- [ ] Rapport de scission : comptes par disposition, candidats en attente
-- [ ] `make check-fast` et `make lint` verts
+- [x] Cinq tables d'identité, `line-referents`, `relations` (dont les 11 `component_of`), `parties` validées par [[0871]]
+- [x] Les candidats de palier 2 sont écrits pour les lignes des quatre documents M1a ; [[0833]] les revoit sans relancer le palier 2
+- [x] Rapport de scission : comptes par disposition, candidats en attente
+- [x] `make check-fast` et `make lint` verts

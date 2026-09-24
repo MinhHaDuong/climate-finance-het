@@ -256,31 +256,31 @@ zaf-register-sp001,agreement,agreement-zaf-register-sp001,register_id,zaf-jet-in
 zaf-register-idc001,agreement,agreement-zaf-register-idc001,register_id,zaf-jet-investment-register-q1-2026-overall-data-255
 zaf-register-idc002,agreement,agreement-zaf-register-idc002,register_id,zaf-jet-investment-register-q1-2026-overall-data-256
 zaf-register-idc003,agreement,agreement-zaf-register-idc003,register_id,zaf-jet-investment-register-q1-2026-overall-data-257
-zaf-annex-zandkopsdrift,project,,no precise line,
-zaf-growth-gateway-smme-accelerator,line,,no precise line,
-zaf-murp,project,,no precise line,
+zaf-annex-zandkopsdrift,project,,no_precise_line,
+zaf-growth-gateway-smme-accelerator,line,,no_precise_line,
+zaf-murp,project,,no_precise_line,
 zaf-eepbip,line,zaf-eepbip-maf-claim-49,confirmed_document_link,zaf-eepbip-maf-claim-49
 zaf-uk-nev-support,line,zaf-dtic-parliament-nev-2025-claim-50,confirmed_document_link,zaf-dtic-parliament-nev-2025-claim-50
-zaf-eu-cso-green-economy-grants,line,,no precise line,
+zaf-eu-cso-green-economy-grants,line,,no_precise_line,
 idn-fin-isle-1,agreement,agreement-idn-fin-isle-1,confirmed_document_link,idn-world-bank-isle1-technical-assessment-2022-claim-66
-idn-fin-rbl-sreap,agreement,,no precise line,
+idn-fin-rbl-sreap,agreement,,no_precise_line,
 idn-fin-xurya-rooftop,agreement,agreement-idn-fin-xurya-rooftop,confirmed_document_link,idn-jetp-xurya-equity-2024-claim-75
 idn-fin-pbl-aset,agreement,agreement-idn-fin-pbl-aset,confirmed_document_link,idn-adb-aset-news-2024-claim-69
 idn-fin-rbl-aicet,agreement,agreement-idn-fin-rbl-aicet,confirmed_document_link,idn-adb-aicet-news-2025-claim-70
-idn-fin-muara-laboh-2,agreement,,no precise line,
+idn-fin-muara-laboh-2,agreement,,no_precise_line,
 idn-fin-saguling-floating-solar,agreement,agreement-idn-fin-saguling-floating-solar,reviewed_plan_match,idn-cipp-2023-cpr-mirror-solar-9
 idn-fin-mrt-north-south,agreement,agreement-idn-fin-mrt-north-south,confirmed_document_link,idn-jica-mrt-north-south-2023-claim-68
 idn-fin-mrt-east-west,agreement,agreement-idn-fin-mrt-east-west,reviewed_plan_match,idn-jetp-progress-report-2025-energy-efficiency-1
 idn-grant-wolcot,agreement,agreement-idn-grant-wolcot,legacy_project_id,idn-portfolio-wolcot-portfolio-1
 idn-grant-esmap-canada,agreement,agreement-idn-grant-esmap-canada,legacy_project_id,idn-portfolio-esmap-canada-portfolio-2
-idn-grant-jetp-etp,agreement,agreement-idn-grant-jetp-etp,legacy_project_id,idn-portfolio-etp-portfolio-3
+idn-grant-jetp-etp,agreement,,multiple_legacy_lines,idn-portfolio-etp-portfolio-3;idn-portfolio-etp-portfolio-4
 idn-grant-cefim,agreement,agreement-idn-grant-cefim,legacy_project_id,idn-portfolio-cefim-portfolio-5
 idn-grant-cetp,agreement,agreement-idn-grant-cetp,legacy_project_id,idn-portfolio-cetp-portfolio-6
 idn-grant-enerkey,agreement,agreement-idn-grant-enerkey,legacy_project_id,idn-portfolio-enerkey-portfolio-7
 idn-grant-eu-indonesia-cooperation-facility,agreement,agreement-idn-grant-eu-indonesia-cooperation-facility,legacy_project_id,idn-portfolio-euicf-portfolio-8
 idn-grant-s4i,agreement,agreement-idn-grant-s4i,legacy_project_id,idn-portfolio-s4i-portfolio-9
 idn-grant-sdg-indonesia-one,agreement,agreement-idn-grant-sdg-indonesia-one,legacy_project_id,idn-portfolio-sdg-one-portfolio-10
-idn-grant-ietf,agreement,agreement-idn-grant-ietf,legacy_project_id,idn-portfolio-ietf-portfolio-11
+idn-grant-ietf,agreement,,multiple_legacy_lines,idn-portfolio-ietf-portfolio-11;idn-portfolio-ietf-portfolio-12
 idn-grant-ipdf,agreement,agreement-idn-grant-ipdf,legacy_project_id,idn-portfolio-ipdf-portfolio-13
 idn-grant-efsd-energy-preparation,agreement,agreement-idn-grant-efsd-energy-preparation,legacy_project_id,idn-portfolio-efsd-portfolio-14
 idn-grant-etmptf,agreement,agreement-idn-grant-etmptf,legacy_project_id,idn-portfolio-etmptf-portfolio-15
@@ -315,11 +315,11 @@ idn-grant-esmap-uk,agreement,agreement-idn-grant-esmap-uk,legacy_project_id,idn-
 idn-grant-pt-smi-early-retirement,agreement,agreement-idn-grant-pt-smi-early-retirement,legacy_project_id,idn-portfolio-pt-smi-retirement-portfolio-44
 idn-grant-cfpp-site-repurposing,agreement,agreement-idn-grant-cfpp-site-repurposing,legacy_project_id,idn-portfolio-cfpp-repurposing-portfolio-45
 idn-grant-just-transition-coal-regions,agreement,agreement-idn-grant-just-transition-coal-regions,legacy_project_id,idn-portfolio-jt-coal-regions-portfolio-46
-idn-pipe-green-corridors-sulawesi,project,,no precise line,
+idn-pipe-green-corridors-sulawesi,project,,no_precise_line,
 idn-pipe-cirebon-1-retirement,asset,asset-idn-pipe-cirebon-1-retirement,reviewed_plan_match,idn-cipp-2023-cpr-mirror-coal-retirement-2
 idn-pipe-hululais-1-2,project,project-idn-pipe-hululais-1-2,reviewed_plan_match,idn-cipp-2023-cpr-mirror-geothermal-17
-idn-pipe-nagajaya-micro-hydro,project,,no precise line,
-idn-pipe-dediesel-east-phase1,project,,no precise line,
+idn-pipe-nagajaya-micro-hydro,project,,no_precise_line,
+idn-pipe-dediesel-east-phase1,project,,no_precise_line,
 idn-pipe-dediesel-west-phase1,project,project-idn-pipe-dediesel-west-phase1,confirmed_document_link,idn-ibvogt-diesel-west-2023-claim-100
 idn-pipe-tanah-laut-wind,project,project-idn-pipe-tanah-laut-wind,reviewed_plan_match,idn-cipp-2023-cpr-mirror-wind-3
 idn-pipe-legok-nangka-waste,project,project-idn-pipe-legok-nangka-waste,confirmed_document_link,idn-news-legok-groundbreaking-antara-2026-claim-91
@@ -327,18 +327,18 @@ idn-pipe-singkarak-floating-solar,project,project-idn-pipe-singkarak-floating-so
 idn-pipe-eib-sustainable-infrastructure,project,project-idn-pipe-eib-sustainable-infrastructure,confirmed_document_link,idn-eib-ptsmi-mou-2024-claim-96
 idn-pipe-sutami-floating-solar,project,project-idn-pipe-sutami-floating-solar,reviewed_plan_match,idn-cipp-2023-cpr-mirror-solar-3
 idn-pipe-solar-cell-manufacturing,project,project-idn-pipe-solar-cell-manufacturing,reviewed_plan_match,idn-jetp-progress-report-2025-supply-chain-3
-idn-pipe-e-taxi,project,,no precise line,
-idn-pipe-hijaunesia-2,project,,no precise line,
-idn-pipe-hydro-quota-sumatra,project,,no precise line,
-idn-pipe-hydro-quota-sulawesi,project,,no precise line,
-idn-pipe-dieng-3-4,project,,no precise line,
-idn-pipe-rscm-energy-efficiency,project,,no precise line,
+idn-pipe-e-taxi,project,,no_precise_line,
+idn-pipe-hijaunesia-2,project,,no_precise_line,
+idn-pipe-hydro-quota-sumatra,project,,no_precise_line,
+idn-pipe-hydro-quota-sulawesi,project,,no_precise_line,
+idn-pipe-dieng-3-4,project,,no_precise_line,
+idn-pipe-rscm-energy-efficiency,project,,no_precise_line,
 idn-pipe-rsud-energy-efficiency,project,project-idn-pipe-rsud-energy-efficiency,reviewed_plan_match,idn-jetp-progress-report-2025-energy-efficiency-3
-idn-monitor-gde-pipeline-2025,line,,no precise line,
-idn-monitor-cihaur-talaga-micro-hydro,line,idn-jetp-progress-report-2025-hydro-73,reviewed_plan_match,idn-jetp-progress-report-2025-hydro-73
+idn-monitor-gde-pipeline-2025,line,,no_precise_line,
+idn-monitor-cihaur-talaga-micro-hydro,line,idn-jetp-progress-report-2025-hydro-73;idn-jetp-progress-report-2025-hydro-75,reviewed_plan_match,idn-jetp-progress-report-2025-hydro-73;idn-jetp-progress-report-2025-hydro-75
 vnm-project-bac-ai-pumped-hydro,project,project-vnm-project-bac-ai-pumped-hydro,confirmed_document_link,vnm-evn-cdp-bac-ai-2025-discovery-1
-vnm-project-binh-duong-dong-nai-transmission,project,,no precise line,
-vnm-project-tri-an-expansion,project,,no precise line,
+vnm-project-binh-duong-dong-nai-transmission,project,,no_precise_line,
+vnm-project-tri-an-expansion,project,,no_precise_line,
 vnm-project-initial-undisclosed-04,perimeter,vnm-jetp-portfolio-2025,no_precise_line,
 vnm-project-initial-undisclosed-05,perimeter,vnm-jetp-portfolio-2025,no_precise_line,
 vnm-project-initial-undisclosed-06,perimeter,vnm-jetp-portfolio-2025,no_precise_line,

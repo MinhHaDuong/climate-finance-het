@@ -1,27 +1,35 @@
 # Ticket 0875: identity split report
 
 The frozen input is `data/jetp/migration/0875-projects-legacy.csv` (404
-rows). `scripts/jetp/build_reconciliation.py --write` generates the identity tables and
-two disposition reports deterministically. The old identifiers have no new
+rows). `scripts/jetp/build_reconciliation.py --write` generates the identity
+tables and two disposition reports deterministically. The old identifiers have no new
 public routes; the existing 1,907 M1a line routes remain for inventory
 exports only.
 
-| Disposition | Old rows | Minted | Pending |
+| Disposition | Old rows | Target assigned | Pending |
 |---|---:|---:|---:|
-| Agreement | 310 | 308 | 2 |
+| Agreement | 310 | 306 | 4 |
 | Project | 66 | 53 | 13 |
 | Asset | 1 | 1 | 0 |
 | Line only | 6 | 3 | 3 |
-| Perimeter count slot | 21 | 0 | 0 |
+| Perimeter count slot | 21 | 21 | 0 |
 
-Six source-defined component parent projects and one plan-defined asset
+"Target assigned" includes a line or the common perimeter and does not mean
+that every old row minted a new identity. Six source-defined component parent
+projects and one plan-defined asset
 (Pelabuhan Ratu) bring the identity tables to **59 projects, 2 assets and
-308 agreements**. The 21 count slots point to one Viet Nam portfolio
-perimeter; its count observations belong to ticket 0877. The 18 pending old
-rows have no precise source line and have no minted identity. Their IDs and
+306 agreements**. The 21 count slots point to one Viet Nam portfolio
+perimeter; its count observations belong to ticket 0877. Eighteen pending old
+rows have no precise source line. Two more old programme labels (ETP and
+IETF) each point to two distinct grant lines, so neither is silently turned
+into one agreement. These 20 rows have no minted identity. Their IDs and
 reasons are in `data/jetp/migration/0875-dispositions.csv`. The accepted
-identity rows have 369 `line-referents`; the SQLite validator rejects any
+identity rows have 367 `line-referents`; the SQLite validator rejects any
 project, asset or agreement without one.
+
+The three line-only dispositions mint no identity. One Indonesia monitoring
+label covers two separate printed plan lines; the disposition lists both
+line IDs rather than silently selecting one.
 
 The South African register's `Funding Instrument` is copied verbatim to
 `instrument`. It does not identify an OECD type of aid, so `modality` is
@@ -32,6 +40,10 @@ The South African register has 257 accepted `party_in` funder roles, 10
 channel roles and 126 `role_in` implementing-entity roles. The latter use
 only individually named organisations on the printed register line; the
 remaining composite and placeholder cells are not treated as organisations.
+The touched register cells contain no IATI organisation, ROR, LEI or Wikidata
+identifier, so no external-ID tier 1 party merge was possible here. Exact
+previously published party-name forms are reused; an acronym alone remains a
+candidate.
 The 11 reviewed project-page components are `component_of` relations. A
 parenthetical acronym yields one candidate `same_as` between parties, with
 no authority-record merge. The current financial event register contains
