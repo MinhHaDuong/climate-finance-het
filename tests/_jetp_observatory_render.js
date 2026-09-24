@@ -18,6 +18,10 @@
  * and tests/browser/jetp_observatory.py stays the check that the browser
  * then does the right thing with it. Fetches read files under <site-dir>.
  *
+ * The environment variable JETP_RENDER_STAGED, when set, names the file
+ * served as documents/index.json — the staged copies of the local preview;
+ * unset, the page renders as the public site does, with no archived copy.
+ *
  * Output: one JSON object, {"main": <#main innerHTML>, "elements": {id:
  * {"innerHTML", "textContent"}}} for every element the renderer touched —
  * a fold-out filled after a fetch lands in the element the renderer
@@ -81,7 +85,17 @@ const window = {
   scrollTo() {},
   history: { replaceState(state, title, url) { location.hash = url; } },
 };
+// The staged copies' index (ticket 0915) is never read from <site-dir>: a
+// checkout with documents/ staged would otherwise render differently from
+// one without. JETP_RENDER_STAGED names the index to serve, the local
+// preview's case; unset, the request 404s, the public site's case.
+const STAGED_INDEX = "documents/index.json";
 const fetch = async (file) => {
+  if (file === STAGED_INDEX) {
+    const staged = process.env.JETP_RENDER_STAGED;
+    if (!staged) return { ok: false, status: 404 };
+    return { ok: true, json: async () => JSON.parse(fs.readFileSync(staged, "utf8")) };
+  }
   const target = path.join(site, file);
   if (!fs.existsSync(target)) return { ok: false, status: 404 };
   return { ok: true, json: async () => JSON.parse(fs.readFileSync(target, "utf8")) };

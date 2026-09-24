@@ -46,7 +46,7 @@ JETP_ONTOLOGY_VIEWS_INPUTS := $(wildcard data/jetp/ontology/*.csv data/jetp/onto
     scripts/jetp/_ontology.py scripts/jetp/_ledger_headers.py
 
 .PHONY: jetp-m1a jetp-observations jetp-ontology-views jetp-observatory jetp-observatory-documents \
-    jetp-observatory-refresh jetp-observatory-preview
+    jetp-observatory-refresh jetp-observatory-preview jetp-observatory-bundle jetp-observatory-publish
 jetp-m1a: $(JETP_M1A_FILES)
 
 $(JETP_M1A_FILES) &: $(JETP_M1A_INPUTS)
@@ -83,27 +83,38 @@ $(JETP_OBSERVATORY_PROVENANCE): $(JETP_OBSERVATORY_JSON) $(JETP_OBSERVATORY_INPU
 # restages it. A reflink copy would otherwise keep serving the old bytes.
 # Objects are named by their hash, so differing file lists mean a stale copy:
 # say so rather than exit silently (two VNM sources 404'd on 2026-09-24).
+# Where reflinks are unsupported, documents/ is a real directory whose objects/
+# links to the checkout, so the index below never lands in data/jetp.
+# Every run rewrites documents/index.json, the list of copies the pages may
+# link (ticket 0915): the pages draw an archived link only for a copy it lists.
 jetp-observatory-documents:
 	@set -eu; \
-	if [ -e $(JETP_OBSERVATORY)/documents ] || [ -L $(JETP_OBSERVATORY)/documents ]; then \
-	    if [ ! -L $(JETP_OBSERVATORY)/documents ] && [ -d data/jetp/documents ] && \
-	        ! cmp -s <(cd data/jetp/documents && find . -type f | sort) \
-	                 <(cd $(JETP_OBSERVATORY)/documents && find . -type f | sort); then \
+	docs=$(JETP_OBSERVATORY)/documents; \
+	if [ -L "$$docs" ]; then \
+	    echo 'Staged JETP documents are a symlink; run make jetp-observatory-refresh to index them.' >&2; \
+	    exit 0; \
+	fi; \
+	if [ -e "$$docs" ]; then \
+	    if [ -d data/jetp/documents ] && \
+	        ! cmp -s <(cd data/jetp/documents && find -L . -type f | sort) \
+	                 <(cd "$$docs" && find -L . -type f ! -path ./index.json | sort); then \
 	        echo 'Staged JETP documents differ from data/jetp/documents; run make jetp-observatory-refresh.' >&2; \
 	    fi; \
-	    exit 0; \
-	fi; \
-	if [ ! -d data/jetp/documents ]; then \
-	    echo 'JETP snapshots absent; run make jetp-data to read documents locally.' >&2; \
-	    exit 0; \
-	fi; \
-	stage=$$(mktemp -d $(JETP_OBSERVATORY)/.documents-init.XXXXXX) || exit 0; \
-	trap 'rm -rf -- "$$stage"' 0; \
-	if cp -RL --reflink=always -- data/jetp/documents "$$stage/documents" 2>/dev/null; then \
-	    mv -Tn -- "$$stage/documents" $(JETP_OBSERVATORY)/documents; \
 	else \
-	    ln -s ../../data/jetp/documents $(JETP_OBSERVATORY)/documents; \
-	fi
+	    if [ ! -d data/jetp/documents ]; then \
+	        echo 'JETP snapshots absent; run make jetp-data to read documents locally.' >&2; \
+	        exit 0; \
+	    fi; \
+	    stage=$$(mktemp -d $(JETP_OBSERVATORY)/.documents-init.XXXXXX) || exit 0; \
+	    trap 'rm -rf -- "$$stage"' 0; \
+	    if ! cp -RL --reflink=always -- data/jetp/documents "$$stage/documents" 2>/dev/null; then \
+	        rm -rf -- "$$stage/documents"; \
+	        mkdir -- "$$stage/documents"; \
+	        ln -s ../../../data/jetp/documents/objects "$$stage/documents/objects"; \
+	    fi; \
+	    mv -Tn -- "$$stage/documents" "$$docs"; \
+	fi; \
+	$(PYTHON) scripts/jetp/build_documents_index.py --documents "$$docs"
 
 # The only recursive removal is the staged copy this file created.
 jetp-observatory-refresh:
@@ -113,6 +124,36 @@ jetp-observatory-refresh:
 # Preview only. Publication is a separate reviewed action.
 jetp-observatory-preview: jetp-observatory jetp-observatory-documents
 	$(PYTHON) -m http.server 8765 --bind 127.0.0.1 --directory $(JETP_OBSERVATORY)
+
+# The public bundle (ticket 0915) is the tracked site tree at one commit and
+# nothing else: no build flag, no rewritten file. documents/ is git-ignored, so
+# the tree cannot hold it; the target still refuses one, in the tree or in the
+# extracted bundle. It reads refs only — no network, no DVC — and writes into a
+# git-ignored directory. The default ref is the local origin/main, the tree
+# jetp-observatory-publish pushes: fetch first to preview what will go out.
+JETP_PAGES_REF ?= origin/main
+JETP_PAGES_BUNDLE ?= data/derived/jetp/observatory-pages
+jetp-observatory-bundle:
+	@set -eu; \
+	tree=$$(git rev-parse --verify '$(JETP_PAGES_REF):$(JETP_OBSERVATORY)'); \
+	top=$$(git ls-tree --name-only "$$tree"); \
+	if grep -qx documents <<<"$$top"; then \
+	    echo 'documents/ is tracked in the site tree; refusing to bundle.' >&2; exit 1; \
+	fi; \
+	git check-ignore -q '$(JETP_PAGES_BUNDLE)/index.html' || { \
+	    echo '$(JETP_PAGES_BUNDLE) is not git-ignored; refusing to write there.' >&2; exit 1; }; \
+	rm -rf -- '$(JETP_PAGES_BUNDLE)'; \
+	mkdir -p -- '$(JETP_PAGES_BUNDLE)'; \
+	git archive --format=tar "$$tree" | tar -x -C '$(JETP_PAGES_BUNDLE)'; \
+	if [ -e '$(JETP_PAGES_BUNDLE)/documents' ]; then \
+	    echo 'The bundle holds documents/; refusing it.' >&2; rm -rf -- '$(JETP_PAGES_BUNDLE)'; exit 1; \
+	fi; \
+	echo "Bundled $(JETP_PAGES_REF) (site tree $$tree) into $(JETP_PAGES_BUNDLE)"
+
+# Pushes the same tree to gh-pages; never enables GitHub Pages, which is the
+# author's step (deliverables/jetp-observatory/README.md). No CI (ticket 0321).
+jetp-observatory-publish:
+	bash scripts/jetp/publish_observatory_pages.sh --push '$(JETP_PAGES_REF)'
 
 # Ledger DDL tooling (ticket 0871): config/jetp-ledger.sql is the one schema of
 # the ledger's common tables; the CSVs load into a derived SQLite whose keys,

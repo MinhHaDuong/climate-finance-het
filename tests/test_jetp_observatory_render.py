@@ -19,9 +19,11 @@ must show is computed here from those same tables, never from an index in
 
 import csv
 import json
+import os
 import re
 import shutil
 import subprocess
+import tempfile
 from functools import cache
 from html import unescape
 from pathlib import Path
@@ -40,16 +42,28 @@ BAC_AI = "vnm-project-bac-ai-pumped-hydro"
 COUNTRIES = ("ZAF", "IDN", "VNM", "SEN")
 
 
-def render(route, state=None, expression=None, site=SITE):
-    """The elements app.js wrote for one route, with a reader's inputs preset."""
+def render(route, state=None, expression=None, site=SITE, staged=None):
+    """The elements app.js wrote for one route, with a reader's inputs preset.
+
+    ``staged`` is the list of archived copies the server holds, served as
+    ``documents/index.json`` (ticket 0915): None renders the public site, which
+    holds none, whatever happens to be staged in this checkout.
+    """
     node = shutil.which("node")
     if node is None:
         pytest.skip("node is not installed; the render harness needs it")
-    completed = subprocess.run(
-        [node, str(HARNESS), str(site), route, json.dumps(state or {}),
-         *([expression] if expression else [])],
-        capture_output=True, text=True, check=True, timeout=60,
-    )
+    env = dict(os.environ)
+    env.pop("JETP_RENDER_STAGED", None)
+    with tempfile.TemporaryDirectory() as scratch:
+        if staged is not None:
+            index = Path(scratch) / "index.json"
+            index.write_text(json.dumps({"objects": sorted(staged)}))
+            env["JETP_RENDER_STAGED"] = str(index)
+        completed = subprocess.run(
+            [node, str(HARNESS), str(site), route, json.dumps(state or {}),
+             *([expression] if expression else [])],
+            capture_output=True, text=True, check=True, timeout=60, env=env,
+        )
     return json.loads(completed.stdout)
 
 
@@ -64,6 +78,11 @@ def registry():
 
 def entry_of(row_key):
     return next(d for d in registry() if d["row_key"] == row_key)
+
+
+def every_copy():
+    """The local preview with every archived copy the registry names staged."""
+    return {d["local_path"] for d in registry() if d["local_path"]}
 
 
 @cache
@@ -99,7 +118,7 @@ def climb(source_id, code):
     }
 
 
-def documents_row(source_id, row_key):
+def documents_row(source_id, row_key, staged=None):
     """One Documents-page row, found by the search field and the row key.
 
     The fold-outs arrive after the page's own draw: the renderer fills a
@@ -107,7 +126,7 @@ def documents_row(source_id, row_key):
     stub DOM keeps that fill on the element rather than inside the results
     block.  Splice each filled placeholder back where the browser shows it.
     """
-    rendered = render("documents", {"documents-search": source_id})
+    rendered = render("documents", {"documents-search": source_id}, staged=staged)
     results = rendered["elements"]["documents-results"]["innerHTML"]
     rows = [chunk for chunk in re.split(r"(?=<tr>)", results)
             if f'data-document-id="{row_key}"' in chunk]
@@ -185,9 +204,9 @@ def test_a_failed_attempt_shows_a_short_label_with_the_full_message_in_its_title
     assert unescape(label.group(1)) == failed["error"]
     assert unescape(label.group(2)) == failed["error"].split(":")[0].strip()[:24]
     head = render("documents")["elements"]["documents-results"]["innerHTML"].split("</thead>")[0]
-    assert re.findall(r'<th class="col-(\w+)">([^<]+)</th>', head) == [
-        ("short", "Size"), ("short", "Archived copy"),
-        ("wide", "Entries and items on the record · relied on by"), ("short", "Origin")]
+    assert [(w, unescape(t)) for w, t in re.findall(r'<th class="col-(\w+)">([^<]+)</th>', head)] == [
+        ("short", "Size"), ("short", "Publisher's page"), ("short", "What we read"),
+        ("wide", "Entries and items on the record · relied on by")]
 
 
 def test_a_document_with_one_product_gets_one_fold_out() -> None:
@@ -276,16 +295,40 @@ def test_the_rmp_opens_at_its_first_extracted_page_and_each_position_at_its_own(
     assert pages and pages[0] == 155, pages[:3]
     assert linked["m1a"][21]["source_row_id"] == "vnm-rmp-2023:annex-I.1:022"
 
-    row = documents_row(RMP, RMP + ":1")
+    row = documents_row(RMP, RMP + ":1", staged=every_copy())
 
     archived = [href for href, text in anchors(row) if "Open archived copy" in text]
     assert archived == [rmp["local_path"] + "#page=155"], archived
+    # The publisher serves a PDF, so its page takes the same fragment.
+    publisher = [href for href, text in anchors(row) if text.startswith("Publisher's page")]
+    assert publisher == [rmp["url"] + "#page=155"], publisher
     items = re.findall(r"<li>.*?</li>", row, re.DOTALL)
     assert len(items) == len(linked["m1a"])
     assert anchors(items[21]) == [
         ("#entries/VNM?row=22", "vnm-rmp-2023:annex-I.1:022"),
-        (rmp["local_path"] + "#page=156", "PDF page 156 ↗"),
+        (rmp["url"] + "#page=156", "publisher's page ↗"),
+        (rmp["local_path"] + "#page=156", "archived copy ↗"),
     ], anchors(items[21])
+
+
+def test_the_public_site_links_the_rmp_to_its_publisher_at_the_same_pages() -> None:
+    # Ticket 0915: with no copy served, the same row and the same position
+    # open the publisher's PDF at the pages the archived copy would open, and
+    # no link points into documents/.
+    rmp = entry_of(RMP + ":1")
+
+    row = documents_row(RMP, RMP + ":1")
+
+    assert "documents/" not in "".join(href for href, _ in anchors(row))
+    assert [href for href, text in anchors(row) if text.startswith("Publisher's page")] == [
+        rmp["url"] + "#page=155"]
+    items = re.findall(r"<li>.*?</li>", row, re.DOTALL)
+    assert anchors(items[21]) == [
+        ("#entries/VNM?row=22", "vnm-rmp-2023:annex-I.1:022"),
+        (rmp["url"] + "#page=156", "publisher's page ↗"),
+    ], anchors(items[21])
+    # The fingerprint of the bytes read stays on the row.
+    assert f'data-sha256="{rmp["sha256"]}"' in row
 
 
 def test_a_document_without_a_page_gets_no_fragment() -> None:
@@ -293,10 +336,12 @@ def test_a_document_without_a_page_gets_no_fragment() -> None:
     linked = climb(ZAF_REGISTER, "ZAF")
     assert not any(r["pdf_page"] for r in linked["m1a"] + linked["ledger"])
 
-    row = documents_row(ZAF_REGISTER, ZAF_REGISTER + ":1")
+    row = documents_row(ZAF_REGISTER, ZAF_REGISTER + ":1", staged=every_copy())
 
     archived = [href for href, text in anchors(row) if "Open archived copy" in text]
     assert archived == [entry["local_path"]], archived
+    publisher = [href for href, text in anchors(row) if text.startswith("Publisher's page")]
+    assert publisher == [entry["url"]], publisher
 
 
 def test_the_archived_copy_opens_at_a_first_page_only_when_every_product_agrees() -> None:
@@ -356,11 +401,15 @@ def test_a_senegal_annex_row_opens_the_archived_annexes_at_its_own_page() -> Non
     assert rows[0]["source_row_id"] == "sen-annex-received-01"
     annexes = entry_of("sen-investment-plan-annexes-mirror:1")
 
-    rendered = render("entries/SEN?row=1")
+    rendered = render("entries/SEN?row=1", staged=every_copy())
 
     results = rendered["elements"]["inventory-results"]["innerHTML"]
     hrefs = [href for href, _ in anchors(results) if href.startswith(annexes["local_path"])]
     assert hrefs == [annexes["local_path"] + "#page=13"], hrefs
+    public = render("entries/SEN?row=1")["elements"]["inventory-results"]["innerHTML"]
+    assert [href for href, _ in anchors(public) if href.startswith(annexes["url"])] == [
+        annexes["url"] + "#page=13"]
+    assert not [href for href, _ in anchors(public) if href.startswith("documents/")]
 
 
 def test_every_senegal_row_names_a_pdf_page_and_no_other_non_rmp_country_does() -> None:
@@ -987,3 +1036,55 @@ def test_no_hand_written_definition_remains_on_the_glossary() -> None:
     for dd in re.findall(r'<p class="term-definition">(.*?)</p>', main, re.DOTALL):
         assert unescape(dd) in definitions, dd
     assert main.count('class="term-definition"') == len(glossary_entries(main))
+
+
+# Ticket 0915: one site, two audiences. The public bundle is the tracked tree,
+# which cannot hold documents/; the local preview is the same tree with the
+# archived copies staged and their index served. Links are additive: the
+# publisher's page always, the archived copy only where the index lists it.
+
+def test_every_registry_row_links_to_its_publisher_with_what_was_read() -> None:
+    # One process, the renderer's own functions over every collection attempt.
+    expression = ("documentsData.documents.map((r) => "
+                  "[publisherLink(r, null, ''), collectedFacts(r), archivedLink(r)])")
+
+    rendered = render("documents", {}, expression)["eval"]
+
+    assert len(rendered) == len(registry())
+    for entry, (publisher, facts, archived) in zip(registry(), rendered, strict=True):
+        host = re.match(r"https?://([^/?#]+)", entry["url"]).group(1)
+        assert [(unescape(href), text) for href, text in anchors(publisher)] == [
+            (entry["url"], f"Publisher's page — {host} ↗")], (entry["row_key"], publisher)
+        if entry["sha256"]:
+            assert f'data-sha256="{entry["sha256"]}"' in facts, entry["row_key"]
+        else:
+            # A failed attempt says so beside the publisher's page it names.
+            assert "data-collection-error" in facts, (entry["row_key"], facts)
+        assert entry["collected_on"][:4] in facts
+        assert archived == "", entry["row_key"]
+
+
+PUBLIC_ROUTES = ("documents", "entries/ZAF", "entries/IDN", "entries/VNM", "entries/SEN",
+                 "on-the-record", "on-the-record/ZAF", "on-the-record/IDN",
+                 "project/" + BAC_AI)
+
+
+@pytest.mark.parametrize("route", PUBLIC_ROUTES)
+def test_the_public_site_links_to_no_archived_copy(route) -> None:
+    rendered = render(route)
+    html = rendered["main"] + "".join(e["innerHTML"] for e in rendered["elements"].values())
+    assert 'href="documents/' not in html, route
+    assert 'data-link="archived"' not in html, route
+    assert 'data-link="publisher"' in html, route
+
+
+def test_the_preview_links_only_the_copies_its_index_lists() -> None:
+    # Two rows whose copies are both in the registry; only one is staged.
+    rmp, register = entry_of(RMP + ":1"), entry_of(ZAF_REGISTER + ":1")
+    staged = {rmp["local_path"]}
+    assert register["local_path"] and register["local_path"] not in staged
+
+    rendered = render("documents", {}, "[documentHref(%s), documentHref(%s)]"
+                      % (json.dumps(rmp), json.dumps(register)), staged=staged)
+
+    assert rendered["eval"] == [rmp["local_path"], None]

@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-09-24T14:00Z HDMX-coding-agent created
 2026-09-24T14:00Z HDMX-coding-agent decision Hébergement GitHub Pages depuis ce dépôt public ; mise en ligne après la démonstration à Christophe Cassen (décision de l'auteur, session interactive du 2026-09-24).
+2026-09-24T15:45Z HDMX-coding-agent decision Liens additifs, sans drapeau ni mode : page de l'éditeur partout, copie archivée en plus selon documents/index.json (décision de l'auteur relayée le 2026-09-24).
 
 --- body ---
 ## Context
@@ -31,21 +32,34 @@ Le paquet public exclut `documents/` (copies archivées de documents de tiers,
 aperçu local seulement, `deliverables/jetp-observatory/README.md`). Les pages
 servent pourtant des liens « Open archived copy » vers `documents/objects/…`
 (`archivedCopyLink`, `documentHref` dans `app.js`). Publié tel quel, chacun de
-ces liens rend 404. La version publique doit renvoyer à l'URL d'origine du
-document (colonne `url` de `data/documents.json`), en gardant l'empreinte
-SHA-256 visible comme preuve de l'octet lu, et dire honnêtement qu'aucune copie
-n'est servie. L'ancre de page PDF (`#page=N`) se reporte sur l'URL d'origine
-quand celle-ci est un PDF.
+ces liens rend 404.
 
-L'aperçu local, lui, garde ses liens vers les copies archivées : la bascule
-dépend de la présence de `documents/`, ou d'un drapeau de construction, au
-choix de l'exécutant, pourvu que le paquet public ne puisse pas contenir
-`documents/`.
+Conception retenue par l'auteur (2026-09-24) : les liens s'ajoutent, ils ne
+s'excluent pas, et l'aperçu et le site public ne forment pas deux branches de
+code. Un seul `app.js`, un seul jeu de vues servies, un seul paquet ; ni
+drapeau de construction, ni variable de mode, ni fichier réécrit à
+l'assemblage. Le paquet public est exactement l'arbre suivi du site ; l'aperçu
+local est ce même arbre plus `documents/`.
+
+- Chaque document nommé par les pages porte toujours le lien vers la page de
+  l'éditeur (colonne `url` de `data/documents.json`), étiqueté comme tel avec
+  le nom d'hôte visible, la date de collecte et l'empreinte SHA-256. Quand un
+  localisateur nomme une page PDF et que l'origine est un PDF, le lien porte
+  `#page=N`.
+- « Open archived copy » est un lien de plus, dessiné seulement quand la copie
+  est réellement servie. La disponibilité se décide à l'exécution, par les
+  données : `make jetp-observatory-documents` (et `-refresh`) écrit
+  `documents/index.json`, la liste des copies préparées, que `app.js` lit une
+  fois au chargement ; absent (404), aucun lien d'archive. `documents/` étant
+  ignoré par git, le site public ne peut pas afficher de lien mort.
+- Une collecte échouée garde son lien vers l'éditeur et dit qu'elle a échoué.
+- La recette navigateur exécute les mêmes vérifications sur les deux cibles ;
+  seules celles des copies archivées dépendent de la présence de l'index.
 
 ## Actions
 
-- Rendre les liens de document conditionnels : copie archivée en aperçu local,
-  URL d'origine dans le paquet public.
+- Rendre les liens de document additifs : page de l'éditeur partout, copie
+  archivée en plus là où l'index la déclare servie.
 - Une cible `make jetp-observatory-bundle` qui assemble le paquet public dans
   un répertoire ignoré par git, sans `documents/`, et échoue s'il y en a un.
 - Une cible ou un script de publication qui pousse ce paquet sur la branche
